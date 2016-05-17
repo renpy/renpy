@@ -1,13 +1,15 @@
 ################################################################################
-## Sizes
+## Initialization
 ##
-## These will need to be changed if you change the size of the game. Remember
-## to click "Window" in preferences to ensure the window itself is resized.
+## The offset ensures that these statements run before all others, while the
+## gui.init statement initializes the gui, and sets the width and height of
+## the game window.
 
 init offset = -1
 
 init python:
     gui.init(1280, 720)
+
 
 ################################################################################
 ## Colors
@@ -65,20 +67,25 @@ define gui.title_size = gui.scale(50)
 ## This is the icon displayer on the taskbar or dock.
 define config.window_icon = "gui/window_icon.png"
 
+
 ################################################################################
-## Padding and Spacing
+## Borders
+##
+## Borders objects control both the size of the left, top, right, and bottom
+## borders used by a Frame, and optionally additional padding added to each
+## side.
 
-## This is the default amout of padding that is used by Frame, and
-## styles that use Frame.
-
+## Interface buttons.
 define gui.button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.medium_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.small_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4), pad_left=gui.scale(10), pad_right=gui.scale(10))
 define gui.check_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.radio_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
 
+## Choice buttons used by the menu statement.
 define gui.choice_borders = Borders(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
 
+## Bars, scrollbars, and sliders.
 define gui.bar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.scrollbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.slider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
@@ -86,22 +93,42 @@ define gui.vbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.
 define gui.vscrollbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.vslider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
+## Frames.
 define gui.frame_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
 
+################################################################################
+## Sizes
+##
+## These control the size of various things in the interface.
 
-## The spacing between groups of buttons and labels.
 
-define gui.navigation_spacing = gui.scale(4)
-define gui.pref_spacing = gui.scale(0)
-define gui.page_spacing = gui.scale(0)
+## The height of horizontal and width of vertical bars, scrollbars, and sliders.
+define gui.bar_size = gui.scale(30)
+define gui.scrollbar_size = gui.scale(10)
+define gui.slider_size = gui.scale(30)
+
+## The width of the thumb on a horizontal slider, and the height of the thumb
+## on a vertical slider.
+define gui.slider_thumb_size = gui.scale(10)
+
+
+################################################################################
+## Sizes
+##
+## The spacing used between various elements of the interface.
+
+## The spacing between menu choices.
 define gui.choice_spacing = gui.scale(22)
 
+## Buttons in the navigation section of the main and game menus.
+define gui.navigation_spacing = gui.scale(4)
 
-define gui.bar_size = gui.scale(30)
-define gui.slider_size = gui.scale(30)
-define gui.slider_thumb_size = gui.scale(10)
-define gui.scrollbar_size = gui.scale(10)
+## Preference buttons.
+define gui.pref_spacing = gui.scale(0)
+
+## The spacing between file page buttons.
+define gui.page_spacing = gui.scale(0)
 
 
 ################################################################################
@@ -135,11 +162,12 @@ style small_button_text is button_text
 style label_text is gui_text
 style prompt_text is gui_text
 
-## Used for text inside the gui.
+## Used for non-interactive text inside the gui.
 style gui_text:
     font gui.interface_font
     color gui.interface_text_color
     size gui.text_size
+
 
 ## Used for the text of all buttons.
 style button_text:
@@ -154,46 +182,58 @@ style button:
     padding gui.button_borders.padding
     background Frame("gui/button/[prefix_]background.png", gui.button_borders)
 
-##
+## Used for medium-sized buttons, like the sound test and mute buttons.
 style medium_button:
     padding gui.medium_button_borders.padding
     background Frame("gui/button/medium/[prefix_]background.png", gui.medium_button_borders)
 
+## Used for small-sized buttons, like the file page navigation buttons.
 style small_button:
     padding gui.small_button_borders.padding
     background Frame("gui/button/small/[prefix_]background.png", gui.small_button_borders)
 
-## Used for checkbox-like buttons.
+## Used for checkbox buttons in the preferences.
 style check_button:
     padding gui.check_button_borders.padding
     background Frame("gui/button/check/[prefix_]background.png", gui.check_button_borders)
 
+## Used for radio buttons in the preferences.
 style radio_button:
     padding gui.radio_button_borders.padding
     background Frame("gui/button/radio/[prefix_]background.png", gui.radio_button_borders)
 
+
+## Labels a portion of the interface.
 style label_text:
     color gui.accent_color
     size gui.interface_size
 
+## Asks the user a question in the interface.
 style prompt_text:
     color gui.text_color
     size gui.interface_size
 
+
+## Bars are used to display value data to the user.
 style bar:
     ysize gui.bar_size
     left_bar Frame("gui/bar/left_bar.png", gui.bar_borders)
     right_bar Frame("gui/bar/right_bar.png", gui.bar_borders)
 
+## Scrollbars are used to scroll viewports.
 style scrollbar:
     ysize gui.scrollbar_size
     base_bar Frame("gui/scrollbar/horizontal_[prefix_]bar.png", gui.scrollbar_borders)
     thumb Frame("gui/scrollbar/horizontal_[prefix_]thumb.png", gui.scrollbar_borders)
 
+## Sliders are used to adjust values.
 style slider:
     ysize gui.slider_size
     base_bar Frame("gui/slider/horizontal_[prefix_]bar.png", gui.slider_borders)
     thumb Frame("gui/slider/horizontal_[prefix_]thumb.png", gui.slider_borders, xsize=gui.slider_thumb_size)
+
+
+## Vertical equivalents of bar, scrollbar, and slider.
 
 style vbar:
     xsize gui.bar_size
@@ -210,6 +250,9 @@ style vslider:
     base_bar Frame("gui/slider/vertical_[prefix_]bar.png", gui.vslider_borders)
     thumb Frame("gui/slider/vertical_[prefix_]thumb.png", gui.vslider_borders, ysize=gui.slider_thumb_size)
 
+
+## A frame that is intended to contain interface elements and make them usable
+## outside of the menus.
 style frame:
     padding gui.frame_borders.padding
     background Frame("gui/frame.png", gui.frame_borders)
@@ -492,7 +535,7 @@ screen quick_menu():
         textbutton _("Prefs") action ShowMenu('preferences')
 
 style quick_button is default
-style quick_button_text is default
+style quick_button_text is button_text
 
 style quick_button:
     xpadding gui.scale(10)
