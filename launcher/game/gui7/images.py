@@ -259,8 +259,8 @@ class ImageGenerator(object):
             (YSIZE, 0.0),
             ]
 
-        self.generate_image("choice/idle", X, Y, self.boring_color.opacity(.8))
-        self.generate_image("choice/hover", X, Y, self.accent_color.opacity(.95))
+        self.generate_image("choice/idle_background", X, Y, self.boring_color.opacity(.8))
+        self.generate_image("choice/hover_background", X, Y, self.accent_color.opacity(.95))
 
     def generate_overlay(self):
 
@@ -350,13 +350,13 @@ class ImageGenerator(object):
         fill("bar/left", self.accent_color, 350, 30, "bar/bottom")
         fill("bar/right", self.muted_color, 350, 30, "bar/top")
 
-        fill("slider/horizontal_idle", self.muted_color, 350, 30, "slider/vertical_idle")
-        fill("slider/horizontal_hover", self.hover_muted_color, 350, 30, "slider/vertical_hover")
-        fill("slider/horizontal_idle_thumb", self.accent_color, 10, 30, "slider/vertical_idle_thumb")
-        fill("slider/horizontal_hover_thumb", self.hover_color, 10, 30, "slider/vertical_hover_thumb")
+        fill("slider/horizontal_idle_bar", self.muted_color, 350, 30, "slider/vertical_idle_bar")
+        fill("slider/horizontal_hover_bar", self.hover_muted_color, 350, 30, "slider/vertical_hover_bar")
+        fill("slider/horizontal_idle_thumb", self.accent_color, 10, 30, "slider/vertical_idle_thumb_bar")
+        fill("slider/horizontal_hover_thumb", self.hover_color, 10, 30, "slider/vertical_hover_thumb_bar")
 
-        fill("scrollbar/horizontal_idle", self.muted_color, 350, 10, "scrollbar/vertical_idle")
-        fill("scrollbar/horizontal_hover", self.hover_muted_color, 350, 10, "scrollbar/vertical_hover")
+        fill("scrollbar/horizontal_idle_bar", self.muted_color, 350, 10, "scrollbar/vertical_idle_bar")
+        fill("scrollbar/horizontal_hover_bar", self.hover_muted_color, 350, 10, "scrollbar/vertical_hover_bar")
         fill("scrollbar/horizontal_idle_thumb", self.accent_color, 350, 10, "scrollbar/vertical_idle_thumb")
         fill("scrollbar/horizontal_hover_thumb", self.hover_color, 350, 10, "scrollbar/vertical_hover_thumb")
 
@@ -383,10 +383,12 @@ class ImageGenerator(object):
 
         def button_family(prefix, width, height, fill_width=None):
 
-            fill(prefix + "/idle", width, height)
-            fill(prefix + "/hover", width, height)
-            fill(prefix + "/selected_idle", width, height, self.accent_color, fill_width=fill_width)
-            fill(prefix + "/selected_hover", width, height, self.accent_color, fill_width=fill_width)
+            fill(prefix + "/idle_background", width, height)
+            fill(prefix + "/hover_background", width, height)
+
+            if fill_width is not None:
+                fill(prefix + "/selected_idle_background", width, height, self.accent_color, fill_width=fill_width)
+                fill(prefix + "/selected_hover_background", width, height, self.accent_color, fill_width=fill_width)
 
         button_family("button", 280, 37)
         button_family("button/medium", 106, 37)

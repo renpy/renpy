@@ -13,4 +13,14 @@ label start:
 
     e "It's good to see you."
 
+    menu:
+        "This is a choice."
+
+        "The first choice.":
+            pass
+        "The second choice.":
+            pass
+        "The third choice.":
+            pass
+
     return

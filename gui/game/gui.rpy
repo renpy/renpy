@@ -77,6 +77,8 @@ define gui.small_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(
 define gui.check_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.radio_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
 
+define gui.choice_borders = Borders(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
+
 define gui.bar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.scrollbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.slider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
@@ -86,7 +88,6 @@ define gui.vslider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), g
 
 define gui.frame_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
-define gui.choice_borders = Borders(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
 
 
 ## The spacing between groups of buttons and labels.
@@ -140,56 +141,36 @@ style gui_text:
     color gui.interface_text_color
     size gui.text_size
 
-## Used for full-sized buttons, like navigation buttons.
-style button:
-    padding gui.button_borders.padding
-
-    background Frame("gui/button/idle.png", gui.button_borders)
-    hover_background Frame("gui/button/hover.png", gui.button_borders)
-    selected_background Frame("gui/button/selected_idle.png", gui.button_borders)
-    selected_hover_background Frame("gui/button/selected_hover.png", gui.button_borders)
-
+## Used for the text of all buttons.
 style button_text:
     size gui.interface_size
-
     color gui.idle_color
     insensitive_color gui.insensitive_color
     selected_color gui.selected_color
     hover_color gui.hover_color
-    selected_hover_color gui.hover_color
 
-## Used for checkbox-like buttons
-style check_button:
-    padding gui.check_button_borders.padding
+## Used for full-sized buttons, like navigation buttons.
+style button:
+    padding gui.button_borders.padding
+    background Frame("gui/button/[prefix_]background.png", gui.button_borders)
 
-    background Frame("gui/button/check/idle.png", gui.check_button_borders)
-    hover_background Frame("gui/button/check/hover.png", gui.check_button_borders)
-    selected_background Frame("gui/button/check/selected_idle.png", gui.check_button_borders)
-    selected_hover_background Frame("gui/button/check/selected_hover.png", gui.check_button_borders)
-
-style radio_button:
-    padding gui.radio_button_borders.padding
-
-    background Frame("gui/button/radio/idle.png", gui.radio_button_borders)
-    hover_background Frame("gui/button/radio/hover.png", gui.radio_button_borders)
-    selected_background Frame("gui/button/radio/selected_idle.png", gui.radio_button_borders)
-    selected_hover_background Frame("gui/button/radio/selected_hover.png", gui.radio_button_borders)
-
+##
 style medium_button:
     padding gui.medium_button_borders.padding
-
-    background Frame("gui/button/medium/idle.png", gui.medium_button_borders)
-    hover_background Frame("gui/button/medium/hover.png", gui.medium_button_borders)
-    selected_background Frame("gui/button/medium/selected_idle.png", gui.medium_button_borders)
-    selected_hover_background Frame("gui/button/medium/selected_hover.png", gui.medium_button_borders)
+    background Frame("gui/button/medium/[prefix_]background.png", gui.medium_button_borders)
 
 style small_button:
     padding gui.small_button_borders.padding
+    background Frame("gui/button/small/[prefix_]background.png", gui.small_button_borders)
 
-    background Frame("gui/button/medium/idle.png", gui.small_button_borders)
-    hover_background Frame("gui/button/medium/hover.png", gui.small_button_borders)
-    selected_background Frame("gui/button/medium/selected_idle.png", gui.small_button_borders)
-    selected_hover_background Frame("gui/button/medium/selected_hover.png", gui.small_button_borders)
+## Used for checkbox-like buttons.
+style check_button:
+    padding gui.check_button_borders.padding
+    background Frame("gui/button/check/[prefix_]background.png", gui.check_button_borders)
+
+style radio_button:
+    padding gui.radio_button_borders.padding
+    background Frame("gui/button/radio/[prefix_]background.png", gui.radio_button_borders)
 
 style label_text:
     color gui.accent_color
@@ -201,71 +182,36 @@ style prompt_text:
 
 style bar:
     ysize gui.bar_size
-
-    left_bar Frame("gui/bar/left.png", gui.bar_borders)
-    right_bar Frame("gui/bar/right.png", gui.bar_borders)
+    left_bar Frame("gui/bar/left_bar.png", gui.bar_borders)
+    right_bar Frame("gui/bar/right_bar.png", gui.bar_borders)
 
 style scrollbar:
     ysize gui.scrollbar_size
-
-    left_bar Frame("gui/scrollbar/horizontal_idle.png", gui.scrollbar_borders)
-    thumb Frame("gui/scrollbar/horizontal_idle_thumb.png", gui.scrollbar_borders)
-    right_bar Frame("gui/scrollbar/horizontal_idle.png", gui.scrollbar_borders)
-
-    hover_left_bar Frame("gui/scrollbar/horizontal_hover.png", gui.scrollbar_borders)
-    hover_thumb Frame("gui/scrollbar/horizontal_hover_thumb.png", gui.scrollbar_borders)
-    hover_right_bar Frame("gui/scrollbar/horizontal_hover.png", gui.scrollbar_borders)
-
+    base_bar Frame("gui/scrollbar/horizontal_[prefix_]bar.png", gui.scrollbar_borders)
+    thumb Frame("gui/scrollbar/horizontal_[prefix_]thumb.png", gui.scrollbar_borders)
 
 style slider:
     ysize gui.slider_size
-
-    left_bar Frame("gui/slider/horizontal_idle.png", gui.slider_borders)
-    thumb Frame("gui/slider/horizontal_idle_thumb.png", gui.slider_borders, xsize=gui.slider_thumb_size)
-    right_bar Frame("gui/slider/horizontal_idle.png", gui.slider_borders)
-
-    hover_left_bar Frame("gui/slider/horizontal_hover.png", gui.slider_borders)
-    hover_thumb Frame("gui/slider/horizontal_hover_thumb.png", gui.slider_borders, xsize=gui.slider_thumb_size)
-    hover_right_bar Frame("gui/slider/horizontal_hover.png", gui.slider_borders)
+    base_bar Frame("gui/slider/horizontal_[prefix_]bar.png", gui.slider_borders)
+    thumb Frame("gui/slider/horizontal_[prefix_]thumb.png", gui.slider_borders, xsize=gui.slider_thumb_size)
 
 style vbar:
     xsize gui.bar_size
-
-    bar_vertical True
-
-    left_bar Frame("gui/bar/top.png", gui.vbar_borders)
-    right_bar Frame("gui/bar/bottom.png", gui.vbar_borders)
+    top_bar Frame("gui/bar/top_bar.png", gui.vbar_borders)
+    bottom_bar Frame("gui/bar/bottom_bar.png", gui.vbar_borders)
 
 style vscrollbar:
     xsize gui.scrollbar_size
-
-    bar_vertical True
-    bar_invert True
-
-    left_bar Frame("gui/scrollbar/vertical_idle.png", gui.vscrollbar_borders)
-    thumb Frame("gui/scrollbar/vertical_idle_thumb.png", gui.vscrollbar_borders)
-    right_bar Frame("gui/scrollbar/vertical_idle.png", gui.vscrollbar_borders)
-
-    hover_left_bar Frame("gui/scrollbar/vertical_hover.png", gui.vscrollbar_borders)
-    hover_thumb Frame("gui/scrollbar/vertical_hover_thumb.png", gui.vscrollbar_borders)
-    hover_right_bar Frame("gui/scrollbar/vertical_hover.png", gui.vscrollbar_borders)
+    base_bar Frame("gui/scrollbar/vertical_[prefix_]bar.png", gui.vscrollbar_borders)
+    thumb Frame("gui/scrollbar/vertical_[prefix_]thumb.png", gui.vscrollbar_borders)
 
 style vslider:
     xsize gui.slider_size
-
-    bar_vertical True
-
-    left_bar Frame("gui/slider/vertical_idle.png", gui.vslider_borders)
-    thumb Frame("gui/slider/vertical_idle_thumb.png", gui.vslider_borders, ysize=gui.slider_thumb_size)
-    right_bar Frame("gui/slider/vertical_idle.png", gui.vslider_borders)
-
-    hover_left_bar Frame("gui/slider/vertical_hover.png", gui.vslider_borders)
-    hover_thumb Frame("gui/slider/vertical_hover_thumb.png", gui.vslider_borders, ysize=gui.slider_thumb_size)
-    hover_right_bar Frame("gui/slider/vertical_hover.png", gui.vslider_borders)
+    base_bar Frame("gui/slider/vertical_[prefix_]bar.png", gui.vslider_borders)
+    thumb Frame("gui/slider/vertical_[prefix_]thumb.png", gui.vslider_borders, ysize=gui.slider_thumb_size)
 
 style frame:
     padding gui.frame_borders.padding
-
     background Frame("gui/frame.png", gui.frame_borders)
 
 
@@ -417,9 +363,7 @@ style choice_vbox:
 style choice_button is default:
     xsize gui.scale(790)
     padding gui.choice_borders.padding
-
-    background Frame("gui/choice/idle.png", gui.choice_borders)
-    hover_background Frame("gui/choice/hover.png", gui.choice_borders)
+    background Frame("gui/choice/[prefix_]background.png", gui.choice_borders)
 
 style choice_button_text is default:
     color gui.choice_text_color
