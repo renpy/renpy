@@ -44,8 +44,6 @@ init -1600 python hide:
     for i in xrange(0, 8):
         renpy.music.register_channel(i)
 
-    renpy.music.register_channel("movie", "music", False, stop_on_mute=False, movie=True)
-
     # Set up default names for some of the channels.
     renpy.music.alias_channel(0, "sound")
     renpy.music.alias_channel(7, "music")
@@ -54,6 +52,9 @@ init -1600 python hide:
 init 1600:
 
     python hide:
+
+        if not renpy.music.channel_defined("movie"):
+            renpy.music.register_channel("movie", "music", False, stop_on_mute=False, movie=True)
 
         if not config.has_music and not config.has_sound:
             mixers = None
