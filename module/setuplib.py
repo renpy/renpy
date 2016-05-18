@@ -126,7 +126,7 @@ def library(name, optional=False):
 
     for i in install:
 
-        for ldir in [i, os.path.join(i, "lib") ]:
+        for ldir in [i, os.path.join(i, "lib"), os.path.join(i, "lib64"), os.path.join(i, "lib32") ]:
 
             for suffix in ( ".so", ".a", ".dll.a", ".dylib" ):
 
