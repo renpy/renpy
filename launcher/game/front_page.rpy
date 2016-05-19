@@ -209,7 +209,12 @@ screen front_page_project:
 
                         textbutton "script.rpy" action editor.Edit("game/script.rpy", check=True)
                         textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
-                        textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
+
+                        if project.current.exists("game/gui.rpy"):
+                            textbutton "gui.rpy" action editor.Edit("game/gui.rpy", check=True)
+                        else:
+                            textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
+
                         textbutton _("All script files") action editor.EditAll()
 
         add SPACER

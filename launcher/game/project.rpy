@@ -328,6 +328,13 @@ init python in project:
 
             return rv
 
+        def exists(self, fn):
+            """
+            Returns true if the file exists in the game.
+            """
+
+            return os.path.exists(os.path.join(self.path, fn))
+
 
     class ProjectManager(object):
         """
