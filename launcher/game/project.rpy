@@ -133,10 +133,10 @@ init python in project:
             if self.tmp and os.path.isdir(self.tmp):
                 return
 
-            tmp = os.path.join(self.path, "tmp")
+            tmp = os.path.join(config.gamedir, "tmp", self.name)
 
             try:
-                os.mkdir(tmp)
+                os.makedirs(tmp)
             except:
                 pass
 
