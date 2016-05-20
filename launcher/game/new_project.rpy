@@ -75,8 +75,6 @@ label new_project:
 
         renpy.jump(gui_kind)
 
-
-
 screen select_template:
 
     default result = project.manager.get("english")
