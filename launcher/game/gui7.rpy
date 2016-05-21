@@ -33,7 +33,7 @@ init python:
     config.translate_comments = config.translate_files
 
 
-    DARK_COLORS = [
+    COLORS = [
         "#99ccff",
         "#cc3300",
         "#cc6600",
@@ -46,112 +46,117 @@ init python:
         "#cc0000",
     ]
 
-
-    LIGHT_COLORS = [
-        "#cc6600",
-        "#0099ff",
-        "#cc0066",
-        "#990000",
-        "#000000",
-        "#003366",
-        "#006666",
-        "#000066",
-        "#660066",
-        "#336600",
+    COLOR_OPTIONS = [
+        (i, "#000000", False) for i in COLORS
+    ] + [
+        (i, "#ffffff", True) for i in COLORS
     ]
+
+
+#     LIGHT_COLORS = [
+#         "#cc6600",
+#         "#0099ff",
+#         "#cc0066",
+#         "#990000",
+#         "#000000",
+#         "#003366",
+#         "#006666",
+#         "#000066",
+#         "#660066",
+#         "#336600",
+#     ]
 
 
 screen gui_swatches():
 
     default color = (None, None)
 
-    hbox:
+    grid 5 4:
 
-        frame:
-            style "empty"
-            background "#000000"
-            ypadding 13
+        for accent, bg, light in COLOR_OPTIONS:
 
-            has vbox
+            frame:
+                style "empty"
+                xysize (85, 60)
 
-            for i in DARK_COLORS:
-
-                button:
-                    style "empty"
-
-                    selected_background "#fff"
-
-                    xpadding 3
-                    ypadding 3
-                    xmargin 15
-                    ymargin 2
-
-                    xysize (100, 40)
-
-                    action SetScreenVariable("color", (False, i))
-
-                    idle_child Solid(i)
-                    hover_child Solid(Color(i).tint(.6))
-
-        frame:
-            style "empty"
-            background "#ffffff"
-            ypadding 13
-
-            has vbox
-
-            for i in DARK_COLORS:
+                add Color(accent).replace_hsv_saturation(.5).replace_value(1.0)
+                add Color(bg).opacity(.8)
 
                 button:
                     style "empty"
 
-                    selected_background "#fff"
+                    if light:
+                        selected_background "#000"
+                    else:
+                        selected_background "#fff"
 
                     xpadding 3
                     ypadding 3
-                    xmargin 15
-                    ymargin 2
+                    xmargin 10
+                    ymargin 10
 
-                    xysize (100, 40)
+                    action SetScreenVariable("gui_color", (accent, bg, light))
 
-                    action SetScreenVariable("color", (False, i))
+                    idle_child Solid(accent)
+                    hover_child Solid(Color(accent).tint(.6))
 
-                    idle_child Solid(i)
-                    hover_child Solid(Color(i).tint(.8))
 
-        frame:
-            style "empty"
-            background "#d0ffff"
-            ypadding 13
+screen choose_gui_color():
 
+    frame:
+        style_group "l"
+        style "l_root"
+
+        window:
             has vbox
 
-            for i in LIGHT_COLORS:
+            label _("Select Accent and Background Colors")
 
-                button:
-                    style "empty"
+            frame:
+                style "l_indent"
 
-                    selected_background "#fff"
+                has hbox:
+                    yfill True
 
-                    xpadding 3
-                    ypadding 3
-                    xmargin 15
-                    ymargin 2
+                frame:
+                    style "l_default"
+                    xsize 350
 
-                    xysize (100, 40)
+                    has vbox
 
-                    action SetScreenVariable("color", (False, i))
+                    text _("Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later.")
 
-                    idle_child Solid(i)
-                    hover_child Solid(Color(i).tint(.8))
+                    add SPACER
+
+                    use gui_swatches()
 
 
+                # Preview
+                frame:
+                    style "l_default"
+                    background Frame(PATTERN, 0, 0, tile=True)
+                    xpadding 5
+                    ypadding 5
+
+                    xfill True
+                    yfill True
+                    xmargin 20
+                    bottom_margin 6
+
+                    use theme_demo
+
+    textbutton _("Back") action Jump("front_page") style "l_left_button"
+
+    if gui_color:
+        textbutton _("Continue") action Return(True) style "l_right_button"
 
 
 
 label new_gui_project:
 
-    call screen gui_swatches
+    $ gui_color = None
+
+    call screen choose_gui_color
 
     python hide:
 
