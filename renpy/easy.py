@@ -49,6 +49,9 @@ def displayable_or_none(d, scope=None):
         else:
             return renpy.store.ImageReference(tuple(d.split()))
 
+    if isinstance(d, Color):
+        return renpy.store.Solid(d)
+
     # We assume the user knows what he's doing in this case.
     if hasattr(d, '_duplicate'):
         return d
@@ -82,6 +85,9 @@ def displayable(d, scope=None):
             return renpy.store.Image(d)
         else:
             return renpy.store.ImageReference(tuple(d.split()))
+
+    if isinstance(d, Color):
+        return renpy.store.Solid(d)
 
     # We assume the user knows what he's doing in this case.
     if hasattr(d, '_duplicate'):
