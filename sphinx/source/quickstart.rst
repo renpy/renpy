@@ -16,7 +16,7 @@ learn how the Ren'Py launcher works. The launcher lets you create,
 manage, edit, and run Ren'Py projects.
 
 **Getting Started.** To get started you'll want to
-`download Ren'Py <http://www.renpy.org/wiki/renpy/Download_Ren'Py>`_.
+`download Ren'Py <https://www.renpy.org/latest.html>`_.
 
 Once you've downloaded Ren'Py, you'll want to extract it. This can
 generally be done by right-clicking on the package file, and picking
