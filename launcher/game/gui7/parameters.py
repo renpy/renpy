@@ -62,8 +62,7 @@ class GuiParameters(object):
             self.muted_color = self.accent_color.shade(.4)
             self.hover_muted_color = self.accent_color.shade(.6)
 
-        self.menu_color = self.accent_color.replace_hsv_saturation(.1).replace_value(.5)
-
+        self.menu_color = self.accent_color.replace_hsv_saturation(.25).replace_value(.5)
         self.title_color = self.accent_color.replace_hsv_saturation(.5).replace_value(1.0)
 
         if light:

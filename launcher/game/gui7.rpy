@@ -34,14 +34,16 @@ init python:
 
 
     COLORS = [
-        "#99ccff",
-        "#cc3300",
-        "#cc6600",
-        "#66cc00",
-        "#00cc99",
         "#0099cc",
+        "#99ccff",
+        "#66cc00",
+        "#cccc00",
+        "#cc6600",
+        # "#cc3300",
+
         "#0066cc",
         "#9933ff",
+        "#00cc99",
         "#cc0066",
         "#cc0000",
     ]
@@ -77,7 +79,7 @@ screen gui_swatches():
                 style "empty"
                 xysize (85, 60)
 
-                add Color(accent).replace_hsv_saturation(.5).replace_value(1.0)
+                add Color(accent).replace_hsv_saturation(.25).replace_value(.5)
                 add Color(bg).opacity(.8)
 
                 button:
@@ -98,8 +100,85 @@ screen gui_swatches():
                     idle_child Solid(accent)
                     hover_child Solid(Color(accent).tint(.6))
 
+screen gui_demo(accent, boring, light, display):
+
+    $ p = gui7.GuiParameters(
+        "-",
+        "-",
+        1280,
+        720,
+        accent,
+        boring,
+        light,
+        None,
+        False,
+        False,
+        False,
+        "-"
+    )
+
+    frame:
+        style "empty"
+
+        add p.menu_color
+        add Solid(p.boring_color.opacity(.8))
+
+        frame:
+            style "empty"
+
+            xpadding 10
+            ypadding 10
+
+            has vbox
+
+            text _("Display"):
+                style "empty"
+                # font "DejaVuSans.ttf"
+                color p.accent_color
+                size 24
+
+            for i in [ _("Window"), _("Fullscreen"), _("Planetarium") ]:
+
+                textbutton i:
+                    action SetScreenVariable("display", i)
+                    style "empty"
+
+                    text_style "empty"
+                    text_size 24
+
+                    text_color p.idle_color
+                    text_hover_color p.hover_color
+                    text_selected_color p.selected_color
+
+                    xmargin 4
+                    ymargin 4
+                    left_padding 21
+
+                    selected_background Solid(p.accent_color, xsize=5)
+
+
+            null height 30
+
+            text _("Text Speed"):
+                style "empty"
+                color p.accent_color
+                size 24
+
+            bar:
+                value StaticValue(.5, 1.0)
+                style "empty"
+                base_bar Solid(p.muted_color)
+                hover_base_bar Solid(p.hover_muted_color)
+
+                thumb Solid(p.accent_color, xsize=10)
+                hover_thumb Solid(p.hover_color, xsize=10)
+
+                ysize 30
+
 
 screen choose_gui_color():
+
+    default display = "Window"
 
     frame:
         style_group "l"
@@ -141,7 +220,7 @@ screen choose_gui_color():
                     xmargin 20
                     bottom_margin 6
 
-                    use theme_demo
+                    use gui_demo(gui_color[0], gui_color[1], gui_color[2], display)
 
     textbutton _("Back") action Jump("front_page") style "l_left_button"
 
@@ -187,7 +266,7 @@ label new_gui_project:
     )
 
 
-    $ gui_color = None
+    $ gui_color = (COLORS[0], "#000000", False)
 
     call screen choose_gui_color
 
