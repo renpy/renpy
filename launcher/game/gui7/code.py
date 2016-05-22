@@ -80,26 +80,12 @@ class CodeGenerator(object):
         self.lines = lines
 
 
-    def update_defines(self):
+    def update_defines(self, replacements):
         """
         Replaces define statements in gui.rpy.
         """
 
         lines = [ ]
-
-        replacements = {
-            'gui.accent_color' : repr(self.p.accent_color.hexcode),
-            'gui.selected_color' : repr(self.p.selected_color.hexcode),
-            'gui.hover_color' : repr(self.p.hover_color.hexcode),
-            'gui.title_color' : repr(self.p.title_color.hexcode),
-            'gui.idle_color' : repr(self.p.idle_color.hexcode),
-            'gui.idle_small_color' : repr(self.p.idle_small_color.hexcode),
-            'gui.insensitive_color' : repr(self.p.insensitive_color.hexcode),
-            'gui.text_color' : repr(self.p.text_color.hexcode),
-            'gui.interface_text_color' : repr(self.p.text_color.hexcode),
-            'gui.choice_text_color' : repr(self.p.choice_color.hexcode),
-            }
-
 
         for l in self.lines:
 
@@ -115,6 +101,50 @@ class CodeGenerator(object):
             lines.append(l)
 
         self.lines = lines
+
+
+    def update_gui_defines(self):
+        """
+        Replaces define statements in gui.rpy.
+        """
+
+        replacements = {
+            'gui.accent_color' : repr(self.p.accent_color.hexcode),
+            'gui.selected_color' : repr(self.p.selected_color.hexcode),
+            'gui.hover_color' : repr(self.p.hover_color.hexcode),
+            'gui.title_color' : repr(self.p.title_color.hexcode),
+            'gui.idle_color' : repr(self.p.idle_color.hexcode),
+            'gui.idle_small_color' : repr(self.p.idle_small_color.hexcode),
+            'gui.insensitive_color' : repr(self.p.insensitive_color.hexcode),
+            'gui.text_color' : repr(self.p.text_color.hexcode),
+            'gui.interface_text_color' : repr(self.p.text_color.hexcode),
+            'gui.choice_text_color' : repr(self.p.choice_color.hexcode),
+            }
+
+        self.update_defines(replacements)
+
+
+    def update_options_defines(self):
+        """
+        Replaces define statements in options.rpy.
+        """
+
+        def rrepr(o):
+            rv = repr(o)
+
+            if rv.startswith("u'"):
+                rv = rv[1:]
+
+            return rv
+
+        replacements = {
+            'config.name' : rrepr(self.p.name),
+            'build.name' : rrepr(self.p.simple_name)[1:],
+            'config.save_directory' : rrepr(self.p.savedir)[1:]
+            }
+
+        self.update_defines(replacements)
+
 
     def write_target(self, filename):
 
@@ -222,12 +252,11 @@ class CodeGenerator(object):
             return
 
         self.load_template(fn)
-
-        self.remove_scale()
-        self.update_size()
-        self.update_defines()
+        self.update_gui_defines()
 
         if self.p.replace_code:
+            self.remove_scale()
+            self.update_size()
             self.translate_strings()
             self.translate_comments()
 
@@ -241,5 +270,6 @@ class CodeGenerator(object):
 
         self.translate_strings()
         self.translate_comments()
+        self.update_options_defines()
 
         self.write_target(fn)

@@ -80,6 +80,7 @@ def generate_gui_command():
         args.replace_images,
         args.replace_code,
         args.update_code,
+        os.path.basename(args.target),
         )
 
     generate_gui(p)

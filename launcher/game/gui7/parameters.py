@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from renpy.store import Color
+import time
 
 # The target width used in templates.
 WIDTH = 1280
@@ -32,7 +33,7 @@ class GuiParameters(object):
     parameters.
     """
 
-    def __init__(self, prefix, template, width, height, accent, boring, light, language, replace_images, replace_code, update_code):
+    def __init__(self, prefix, template, width, height, accent, boring, light, language, replace_images, replace_code, update_code, name=None):
 
         self.prefix = prefix
         self.template = template
@@ -95,3 +96,18 @@ class GuiParameters(object):
         self.update_code = update_code
 
         self.skip_backup = False
+
+        self.name = name
+
+        GOOD_CHARACTERS = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMMOPQRSTUVWXYZ-_"
+
+        simple_name = "".join(i for i in name if i in GOOD_CHARACTERS).encode("ascii")
+
+        if not simple_name:
+            simple_name = "game"
+
+
+        self.simple_name = name
+
+        self.savedir = name + "-" + str(int(time.time()))
+

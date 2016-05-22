@@ -69,8 +69,6 @@ init python:
 
 screen gui_swatches():
 
-    default color = (None, None)
-
     grid 5 4:
 
         for accent, bg, light in COLOR_OPTIONS:
@@ -95,7 +93,7 @@ screen gui_swatches():
                     xmargin 10
                     ymargin 10
 
-                    action SetScreenVariable("gui_color", (accent, bg, light))
+                    action SetVariable("gui_color", (accent, bg, light))
 
                     idle_child Solid(accent)
                     hover_child Solid(Color(accent).tint(.6))
@@ -154,22 +152,9 @@ screen choose_gui_color():
 
 label new_gui_project:
 
-    $ gui_size = interface.choice(
-        _("What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."),
-        [
-            ((1066, 600), "1066x600"),
-            ((1280, 720), "1280x720"),
-            ((1920, 1080), "1920x1080"),
-        ],
-        (1280, 720),
-    )
+    $ gui_new = True
 
-
-    $ gui_color = None
-
-    call screen choose_gui_color
-
-    python hide:
+    python:
 
         project_name = interface.input(
             _("PROJECT NAME"),
@@ -188,3 +173,69 @@ label new_gui_project:
 
         if os.path.exists(project_dir):
             interface.error(_("[project_dir!q] already exists. Please choose a different project name."), project_dir=project_dir)
+
+
+    $ gui_size = interface.choice(
+        _("What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."),
+        [
+            ((1066, 600), "1066x600"),
+            ((1280, 720), "1280x720"),
+            ((1920, 1080), "1920x1080"),
+        ],
+        (1280, 720),
+        cancel=Jump("front_page"),
+    )
+
+
+    $ gui_color = None
+
+    call screen choose_gui_color
+
+    python hide:
+
+        replace_images = True
+        replace_code = True
+        update_code = True
+
+        width, height = gui_size
+        accent, boring, light = gui_color
+
+        prefix = os.path.join(project_dir, "game")
+
+        if not os.path.isdir(prefix) and not gui_new:
+            interface.error("{} does not appear to be a Ren'Py game.".format(prefix))
+
+        template = os.path.join(config.renpy_base, "gui", "game")
+
+        if not os.path.isdir(template):
+            interface.error("{} does not appear to be a Ren'Py game.".format(template))
+
+        p = gui7.GuiParameters(
+            prefix,
+            template,
+            width,
+            height,
+            accent,
+            boring,
+            light,
+            _preferences.language,
+            replace_images,
+            replace_code,
+            update_code,
+            project_name,
+            )
+
+        if gui_new:
+            interface.processing(_("Creating the new project..."))
+        else:
+            interface.processing(_("Updating the project..."))
+
+        with interface.error_handling("creating a new project"):
+            gui7.generate_gui(p)
+
+        # Activate the project.
+        with interface.error_handling("activating the new project"):
+            project.manager.scan()
+            project.Select(project.manager.get(project_name))()
+
+    jump front_page
