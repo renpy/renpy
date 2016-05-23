@@ -35,8 +35,6 @@
             old_default = persistent._preference_default.get(name, undefined)
 
             if old_default != value:
-                print "Set {} to {}".format(name, value)
-
                 setattr(_preferences, name, value)
                 persistent._preference_default[name] = value
 
