@@ -139,8 +139,8 @@ class CodeGenerator(object):
 
         replacements = {
             'config.name' : rrepr(self.p.name),
-            'build.name' : rrepr(self.p.simple_name)[1:],
-            'config.save_directory' : rrepr(self.p.savedir)[1:]
+            'build.name' : rrepr(self.p.simple_name),
+            'config.save_directory' : rrepr(self.p.savedir),
             }
 
         self.update_defines(replacements)
