@@ -96,6 +96,8 @@ class GuiParameters(object):
 
         self.skip_backup = False
 
+        name = name or ''
+
         self.name = name
 
         GOOD_CHARACTERS = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMMOPQRSTUVWXYZ-_"

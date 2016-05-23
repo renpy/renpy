@@ -165,7 +165,7 @@ screen gui_demo(accent, boring, light, display):
                 size 24
 
             bar:
-                value StaticValue(.5, 1.0)
+                value ScreenVariableValue("value", 1.0)
                 style "empty"
                 base_bar Solid(p.muted_color)
                 hover_base_bar Solid(p.hover_muted_color)
@@ -179,6 +179,7 @@ screen gui_demo(accent, boring, light, display):
 screen choose_gui_color():
 
     default display = "Window"
+    default value = 0.5
 
     frame:
         style_group "l"
