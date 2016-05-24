@@ -156,7 +156,6 @@ screen gui_demo(accent, boring, light, display):
 
                     selected_background Solid(p.accent_color, xsize=5)
 
-
             null height 30
 
             text _("Text Speed"):
@@ -229,12 +228,40 @@ screen choose_gui_color():
         textbutton _("Continue") action Return(True) style "l_right_button"
 
 
+label change_gui:
+
+    python:
+
+        gui_new = False
+        gui_replace_images = True
+        gui_update_code = True
+
+        project.current.update_dump(True)
+        gui_size = tuple(project.current.dump["size"])
+
+        gui_replace_code = interface.choice(
+            _("{b}Warning:{/b} Both choices will overwrite all gui image files, except for main_menu.png, game_menu.png, and window_icon.png.\n\nUpdating gui.rpy will {b}destroy{/b} any changes you have made to gui.rpy.\n\nWhat would you like to do?"),
+            [
+                (False, _("Change gui colors.")),
+                (True, _("Update gui.rpy to the latest version, changing sizes and colors.")),
+            ],
+            False,
+            cancel=Jump("front_page"),
+        )
+
+        project_dir = project.current.path
+        project_name = project.current.name
+
+    if gui_replace_code:
+        jump gui_project_size
+    else:
+        jump gui_project_common
 
 label new_gui_project:
 
-    $ gui_new = True
-
     python:
+        gui_new = True
+
 
         project_name = interface.input(
             _("PROJECT NAME"),
@@ -254,28 +281,33 @@ label new_gui_project:
         if os.path.exists(project_dir):
             interface.error(_("[project_dir!q] already exists. Please choose a different project name."), project_dir=project_dir)
 
+        replace_images = True
+        replace_code = True
+        update_code = True
 
-    $ gui_size = interface.choice(
-        _("What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."),
-        [
-            ((1066, 600), "1066x600"),
-            ((1280, 720), "1280x720"),
-            ((1920, 1080), "1920x1080"),
-        ],
-        (1280, 720),
-        cancel=Jump("front_page"),
-    )
 
+label gui_project_size:
+
+    python:
+
+        gui_size = interface.choice(
+            _("What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."),
+            [
+                ((1066, 600), "1066x600"),
+                ((1280, 720), "1280x720"),
+                ((1920, 1080), "1920x1080"),
+            ],
+            (1280, 720),
+            cancel=Jump("front_page"),
+        )
+
+label gui_project_common:
 
     $ gui_color = (COLORS[0], "#000000", False)
 
     call screen choose_gui_color
 
     python hide:
-
-        replace_images = True
-        replace_code = True
-        update_code = True
 
         width, height = gui_size
         accent, boring, light = gui_color
@@ -299,9 +331,9 @@ label new_gui_project:
             boring,
             light,
             _preferences.language,
-            replace_images,
-            replace_code,
-            update_code,
+            gui_replace_images,
+            gui_replace_code,
+            gui_update_code,
             project_name,
             )
 

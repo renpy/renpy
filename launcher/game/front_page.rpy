@@ -121,8 +121,6 @@ screen front_page:
                             left_margin (HALF_INDENT)
                             action Jump("new_project")
 
-
-
         # Project section - on right.
 
         if project.current is not None:
@@ -236,7 +234,13 @@ screen front_page_project:
                 has vbox
 
                 textbutton _("Check Script (Lint)") action Jump("lint")
-                textbutton _("Change Theme") action Jump("choose_theme")
+
+                if project.current.exists("game/gui.rpy"):
+                    textbutton _("Change/Update GUI") action Jump("change_gui")
+                else:
+                    textbutton _("Change Theme") action Jump("choose_theme")
+
+
                 textbutton _("Delete Persistent") action Jump("rmpersistent")
                 textbutton _("Force Recompile") action Jump("force_recompile")
 

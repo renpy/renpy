@@ -454,7 +454,6 @@ class ImageGenerator(object):
         go -= 23
         bo -= 23
 
-
         for y in range(height):
             for x in range(width):
                 r, g, b, a = icon.get_at((x, y))
@@ -463,11 +462,9 @@ class ImageGenerator(object):
                 g = max(0, min(g + go, 255))
                 b = max(0, min(b + bo, 255))
 
-
-
                 surf.set_at((x, y), (r, g, b, a))
 
-        self.save(surf, "window_icon")
+        self.save(surf, "window_icon", overwrite=False)
 
 
     def generate_menus(self):

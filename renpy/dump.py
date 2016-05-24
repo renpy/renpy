@@ -106,6 +106,9 @@ def dump(error):
     # Error flag.
     result["error"] = error
 
+    # The size.
+    result["size"] = [ renpy.config.screen_width, renpy.config.screen_height ]
+
     # The JSON object we return.
     location = { }
     result["location"] = location
