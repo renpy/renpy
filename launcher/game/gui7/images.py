@@ -112,7 +112,7 @@ class ImageGenerator(object):
 
         return line[start:start + size ]
 
-    def save(self, s, filename):
+    def save(self, s, filename, overwrite=True):
 
         fn = self.prefix + filename + ".png"
         dn = os.path.dirname(fn)
@@ -123,6 +123,10 @@ class ImageGenerator(object):
             pass
 
         if os.path.exists(fn):
+
+            if not overwrite:
+                return
+
             if not self.overwrite:
                 return
 
@@ -470,8 +474,8 @@ class ImageGenerator(object):
         s = self.make_surface(self.width, self.height)
         s.fill(self.menu_color)
 
-        self.save(s, "main_menu")
-        self.save(s, "game_menu")
+        self.save(s, "main_menu", overwrite=False)
+        self.save(s, "game_menu", overwrite=False)
 
 
     def generate_all(self):
