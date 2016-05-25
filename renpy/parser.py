@@ -2127,13 +2127,15 @@ def translate_strings(init_loc, language, l):
             if old is None:
                 ll.error('no string to translate')
 
+            newloc = ll.get_location()
             new = parse_string(ll.rest())
 
-            block.append(renpy.ast.TranslateString(loc, language, old, new))
+            block.append(renpy.ast.TranslateString(loc, language, old, new, newloc))
 
             old = None
             new = None
             loc = None
+            newloc = None
 
         else:
             ll.error('unknown statement')

@@ -2029,14 +2029,17 @@ class TranslateString(Node):
     __slots__ = [
         "language",
         "old",
-        "new"
+        "new",
+        "newloc",
         ]
 
-    def __init__(self, loc, language, old, new):
+    def __init__(self, loc, language, old, new, newloc):
         super(TranslateString, self).__init__(loc)
         self.language = language
+
         self.old = old
         self.new = new
+        self.newloc = newloc
 
     def diff_info(self):
         return (TranslateString,)
@@ -2045,7 +2048,8 @@ class TranslateString(Node):
         next_node(self.next)
         statement_name("translate string")
 
-        renpy.translation.add_string_translation(self.language, self.old, self.new)
+        newloc = getattr(self, "newloc", (self.filename, self.linenumber + 1))
+        renpy.translation.add_string_translation(self.language, self.old, self.new, newloc)
 
 class TranslatePython(Node):
     """

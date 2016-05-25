@@ -321,14 +321,18 @@ class StringTranslator(object):
         # A map from translation to translated string.
         self.translations = { }
 
+        # A map from translation to the location of the translated string.
+        self.translation_loc = { }
+
         # A list of unknown translations.
         self.unknown = [ ]
 
-    def add(self, old, new):
+    def add(self, old, new, newloc):
         if old in self.translations:
             raise Exception("A translation for %r already exists." % old)
 
         self.translations[old] = new
+        self.translation_loc[old] = newloc
 
     def translate(self, old):
 
@@ -376,11 +380,11 @@ class StringTranslator(object):
 
         f.close()
 
-def add_string_translation(language, old, new):
+def add_string_translation(language, old, new, newloc):
     tl = renpy.game.script.translator
     stl = tl.strings[language]
     tl.languages.add(language)
-    stl.add(old, new)
+    stl.add(old, new, newloc)
 
 Default = renpy.object.Sentinel("default")
 
