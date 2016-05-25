@@ -361,6 +361,8 @@ def import_all():
 
     import renpy.substitutions
     import renpy.translation
+    import renpy.translation.generation
+    import renpy.translation.dialogue
 
     import renpy.display # @UnresolvedImport @Reimport
 
