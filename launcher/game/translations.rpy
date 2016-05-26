@@ -27,7 +27,167 @@ init python:
     if persistent.generate_empty_strings is None:
         persistent.generate_empty_strings = True
 
+    if persistent.replace_translations is None:
+        persistent.replace_translations = False
+
+    if persistent.reverse_languages is None:
+        persistent.reverse_languages = False
+
+
+
+screen translate:
+
+    default tt = Tooltip(None)
+    $ state = AndroidState()
+
+    frame:
+        style_group "l"
+        style "l_root"
+
+        window:
+
+            has vbox
+
+            label _("Translations: [project.current.name!q]")
+
+            add HALF_SPACER
+
+            hbox:
+
+                # Left side.
+                frame:
+                    style "l_indent"
+                    xmaximum ONEHALF
+                    xfill True
+
+                    has vbox
+
+                    frame:
+                        style "l_indent"
+                        has vbox
+
+                        text _("Language:")
+
+                        add HALF_SPACER
+
+                        frame style "l_indent":
+
+                            input style "l_default":
+                                value FieldInputValue(persistent, "translate_language")
+                                size 24
+                                color INPUT_COLOR
+
+                # Left side.
+                frame:
+                    style "l_indent"
+                    xmaximum ONEHALF
+                    xfill True
+
+                    has vbox
+
+                    frame:
+                        style "l_indent"
+                        has vbox
+
+                        text _("The language to work with. This should only contain lower-case ASCII characters and underscores.")
+
+            add SPACER
+
+            hbox:
+
+                frame:
+                    style "l_indent"
+                    xmaximum ONEHALF
+                    xfill True
+
+                    has vbox
+
+                    add SEPARATOR2
+                    add HALF_SPACER
+
+                    frame:
+                        style "l_indent"
+                        has vbox
+
+                        textbutton _("Generate Translations"):
+                            text_size 24
+                            action Jump("generate_translations")
+
+                        add HALF_SPACER
+
+                        textbutton _("Generate empty strings for translations") style "l_checkbox" action ToggleField(persistent, "generate_empty_strings")
+
+
+                frame:
+                    style "l_indent"
+                    xmaximum ONEHALF
+                    xfill True
+
+                    has vbox
+
+                    add SEPARATOR2
+
+                    frame:
+                        style "l_indent"
+                        top_padding 10
+
+                        has vbox
+
+                        text _("Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q].")
+
+            add SPACER
+
+            hbox:
+
+                frame:
+                    style "l_indent"
+                    xmaximum ONEHALF
+                    xfill True
+
+                    has vbox
+
+                    add SEPARATOR2
+                    add HALF_SPACER
+
+                    frame:
+                        style "l_indent"
+                        has vbox
+
+                        textbutton _("Extract Translations"):
+                            action Jump("extract_translations")
+                        textbutton _("Merge Translations"):
+                            action Jump("merge_translations")
+
+                        add HALF_SPACER
+
+                        textbutton _("Replace existing translations") style "l_checkbox" action ToggleField(persistent, "replace_translations")
+                        textbutton _("Reverse languages") style "l_checkbox" action ToggleField(persistent, "reverse_languages")
+
+
+                frame:
+                    style "l_indent"
+                    xmaximum ONEHALF
+                    xfill True
+
+                    has vbox
+
+                    add SEPARATOR2
+
+                    frame:
+                        style "l_indent"
+                        top_padding 10
+
+                        has vbox
+
+                        text _("The extract command allows you to extract translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project.")
+
+    textbutton _("Back") action Jump("front_page") style "l_left_button"
+
+
+
 label translate:
+
+    # call screen translate
 
     python:
 

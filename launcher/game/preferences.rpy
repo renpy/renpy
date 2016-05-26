@@ -173,7 +173,6 @@ screen preferences:
                         textbutton _("Show templates") style "l_checkbox" action ToggleField(persistent, "show_templates")
                         textbutton _("Show edit file section") style "l_checkbox" action ToggleField(persistent, "show_edit_funcs")
                         textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
-                        textbutton _("Generate empty strings for translations") style "l_checkbox" action ToggleField(persistent, "generate_empty_strings")
 
                         if renpy.windows:
                             textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
