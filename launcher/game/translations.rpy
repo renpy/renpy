@@ -190,10 +190,10 @@ screen translate:
 
 
 label translate:
-
     call screen translate
 
-label generate_translations:
+# Common code to create the new translations in the current game.
+label generate_translations_common:
 
     python:
 
@@ -214,6 +214,11 @@ label generate_translations:
 
         interface.info(_("Ren'Py has finished generating [language] translations."))
 
+    return
+
+# Code to generate translations by themselves.
+label generate_translations:
+    call generate_translations_common
     jump front_page
 
 screen extract_dialogue:
