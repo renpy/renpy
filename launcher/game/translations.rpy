@@ -21,6 +21,8 @@
 
 init python:
 
+    import re
+
     if persistent.translate_language is None:
         persistent.translate_language = "english"
 
@@ -32,6 +34,9 @@ init python:
 
     if persistent.reverse_languages is None:
         persistent.reverse_languages = False
+
+    def CheckLanguage():
+        return SensitiveIf(re.match(r'^\w+$', persistent.translate_language))
 
 
 
@@ -111,7 +116,7 @@ screen translate:
 
                         textbutton _("Generate Translations"):
                             text_size 24
-                            action Jump("generate_translations")
+                            action [ CheckLanguage(), Jump("generate_translations") ]
 
                         add HALF_SPACER
 
@@ -153,10 +158,10 @@ screen translate:
                         style "l_indent"
                         has vbox
 
-                        textbutton _("Extract Translations"):
-                            action Jump("extract_translations")
-                        textbutton _("Merge Translations"):
-                            action Jump("merge_translations")
+                        textbutton _("Extract String Translations"):
+                            action [ CheckLanguage(), Jump("extract_translations") ]
+                        textbutton _("Merge String Translations"):
+                            action [ CheckLanguage(), Jump("merge_translations") ]
 
                         add HALF_SPACER
 
@@ -179,26 +184,20 @@ screen translate:
 
                         has vbox
 
-                        text _("The extract command allows you to extract translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project.")
+                        text _("The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project.")
 
     textbutton _("Back") action Jump("front_page") style "l_left_button"
 
 
-
 label translate:
 
-    # call screen translate
+    call screen translate
+
+label generate_translations:
 
     python:
 
-        language = interface.input(_("Create or Update Translations"), _("Please enter the name of the language for which you want to create or update translations."), filename=True, default=persistent.translate_language, cancel=Jump("front_page"))
-
-        language = language.strip()
-
-        if not language:
-            interface.error(_("The language name can not be the empty string."))
-
-        persistent.translate_language = language
+        language = persistent.translate_language
 
         args = [ "translate", language ]
 
