@@ -38,6 +38,13 @@ init python:
     def CheckLanguage():
         return SensitiveIf(re.match(r'^\w+$', persistent.translate_language))
 
+    try:
+        os.makedirs(os.path.join(config.basedir, "tmp"))
+    except:
+        pass
+
+
+    STRINGS_JSON = os.path.join(config.basedir, "tmp", "strings.json")
 
 
 screen translate:
@@ -159,9 +166,9 @@ screen translate:
                         has vbox
 
                         textbutton _("Extract String Translations"):
-                            action [ CheckLanguage(), Jump("extract_translations") ]
+                            action [ CheckLanguage(), Jump("extract_strings") ]
                         textbutton _("Merge String Translations"):
-                            action [ CheckLanguage(), Jump("merge_translations") ]
+                            action [ CheckLanguage(), Jump("merge_strings") ]
 
                         add HALF_SPACER
 
@@ -212,14 +219,40 @@ label generate_translations_common:
         project.current.launch(args, wait=True)
         project.current.update_dump(force=True)
 
-        interface.info(_("Ren'Py has finished generating [language] translations."))
-
     return
 
 # Code to generate translations by themselves.
 label generate_translations:
     call generate_translations_common
+
+
+    python:
+        interface.info(_("Ren'Py has finished generating [language] translations."))
+
+
+
     jump front_page
+
+
+label extract_strings:
+
+    python:
+
+        language = persistent.translate_language
+
+        args = [ "extract_strings", language,  STRINGS_JSON ]
+
+        print args
+
+        interface.processing(_("Ren'Py is extracting string translations..."))
+        project.current.launch(args, wait=True)
+
+        interface.info(_("Ren'Py has finished extracting [language] string translations."))
+
+    return
+
+
+
 
 screen extract_dialogue:
 
