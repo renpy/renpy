@@ -33,193 +33,223 @@ init python hide:
     if renpy.loadable("gui.rpy") or renpy.loadable("gui.rpyc"):
         config.screen_width, config.screen_height = 1280, 720
 
-style _default:
+init label _errorhandling:
 
-    # Text properties
-    font "DejaVuSans.ttf"
-    language "unicode"
-    antialias True
-    size 14
-    color "#111"
-    black_color (0, 0, 0, 255)
-    bold False
-    italic False
-    underline False
-    strikethrough False
-    kerning 0.0
-    drop_shadow None
-    drop_shadow_color (0, 0, 0, 255)
-    outlines [ ]
-    minwidth 0
-    text_align 0
-    justify False
-    text_y_fudge 0
-    first_indent 0
-    rest_indent 0
-    line_spacing 0
-    line_leading 0
-    line_overlap_split 0
-    layout "tex"
-    subtitle_width 0.9
-    slow_cps None
-    slow_cps_multiplier 1.0
-    slow_abortable False
-    hinting "auto"
-    adjust_spacing True
+    style _default:
 
-    # Window properties
-    background None
-    xpadding 0
-    ypadding 0
-    xmargin 0
-    ymargin 0
-    xfill False
-    yfill False
-    xminimum 0
-    yminimum 0
+        # Text properties
+        font "DejaVuSans.ttf"
+        language "unicode"
+        antialias True
+        size 14
+        color "#111"
+        black_color (0, 0, 0, 255)
+        bold False
+        italic False
+        underline False
+        strikethrough False
+        kerning 0.0
+        drop_shadow None
+        drop_shadow_color (0, 0, 0, 255)
+        outlines [ ]
+        minwidth 0
+        text_align 0
+        justify False
+        text_y_fudge 0
+        first_indent 0
+        rest_indent 0
+        line_spacing 0
+        line_leading 0
+        line_overlap_split 0
+        layout "tex"
+        subtitle_width 0.9
+        slow_cps None
+        slow_cps_multiplier 1.0
+        slow_abortable False
+        hinting "auto"
+        adjust_spacing True
 
-    # Placement properties
-    xpos None
-    ypos None
-    xanchor None
-    yanchor None
-    xmaximum None
-    ymaximum None
-    xoffset 0
-    yoffset 0
-    subpixel False
+        # Window properties
+        background None
+        xpadding 0
+        ypadding 0
+        xmargin 0
+        ymargin 0
+        xfill False
+        yfill False
+        xminimum 0
+        yminimum 0
 
-    # Sound properties
-    activate_sound None
-    hover_sound None
+        # Placement properties
+        xpos None
+        ypos None
+        xanchor None
+        yanchor None
+        xmaximum None
+        ymaximum None
+        xoffset 0
+        yoffset 0
+        subpixel False
 
-    # Box properties
-    spacing 0
-    first_spacing None
-    box_layout None
-    box_wrap False
-    box_reverse False
-    order_reverse False
+        # Sound properties
+        activate_sound None
+        hover_sound None
 
-    # Button properties
-    focus_mask None
-    focus_rect None
-    keyboard_focus True
-    key_events False
-    hover_key_events True
+        # Box properties
+        spacing 0
+        first_spacing None
+        box_layout None
+        box_wrap False
+        box_reverse False
+        order_reverse False
 
-    # Bar properties
-    fore_bar Null()
-    aft_bar Null()
-    thumb None
-    thumb_shadow None
-    left_gutter 0
-    right_gutter 0
-    thumb_offset 0
-    unscrollable None
-    bar_invert False
-    bar_vertical False
+        # Button properties
+        focus_mask None
+        focus_rect None
+        keyboard_focus True
+        key_events False
+        hover_key_events True
 
-    # Viewport properties
-    clipping False
+        # Bar properties
+        fore_bar Null()
+        aft_bar Null()
+        thumb None
+        thumb_shadow None
+        left_gutter 0
+        right_gutter 0
+        thumb_offset 0
+        unscrollable None
+        bar_invert False
+        bar_vertical False
 
-init python:
-    # Temporarily, until the real styles can be defined.
-    style.default = style._default
-    style.image = style._default
-    style.fixed = style._default
+        # Viewport properties
+        clipping False
 
-    ##########################################################################
+    init python:
+        # Temporarily, until the real styles can be defined.
+        style.default = style._default
+        style.image = style._default
+        style.fixed = style._default
 
-style _frame is _default:
-    background Frame("_theme_amie2/frame.png", 40, 40)
-    xmargin 0
-    ymargin 0
-    xpadding 15
-    ypadding 10
+        ##########################################################################
 
-style _text is _default
-style _fixed is _default
+    style _frame is _default:
+        background Frame("_theme_amie2/frame.png", 40, 40)
+        xmargin 0
+        ymargin 0
+        xpadding 15
+        ypadding 10
 
-style _hbox is _default:
-    box_layout 'horizontal'
+    style _text is _default
+    style _fixed is _default
 
-style _vbox is _default:
-    box_layout 'vertical'
+    style _hbox is _default:
+        box_layout 'horizontal'
 
-style _grid is _default
-style _side is _default
+    style _vbox is _default:
+        box_layout 'vertical'
 
-style _viewport is _default:
-    clipping True
-    xfill True
-    yfill True
+    style _grid is _default
+    style _side is _default
 
-style _button is _default:
-    xpadding 8
-    ypadding 6
-    xoffset -5
-    background Frame("_theme_amie2/button.png", 10, 10)
-    hover_background Frame("_theme_amie2/button_hover.png", 10, 10)
+    style _viewport is _default:
+        clipping True
+        xfill True
+        yfill True
 
-style _button_text is _default:
-    size 16
-    color "#111"
-    selected_color "#11f"
-    insensitive_color "#ccc"
-    xalign 0.5
-    yoffset 0
+    style _button is _default:
+        xpadding 8
+        ypadding 6
+        xoffset -5
+        background Frame("_theme_amie2/button.png", 10, 10)
+        hover_background Frame("_theme_amie2/button_hover.png", 10, 10)
 
-style _label is _default:
-    top_margin 10
-    bottom_margin 5
+    style _button_text is _default:
+        size 16
+        color "#111"
+        selected_color "#11f"
+        insensitive_color "#ccc"
+        xalign 0.5
+        yoffset 0
 
-style _label_text is _default:
-    color "#000"
-    bold True
+    style _label is _default:
+        top_margin 10
+        bottom_margin 5
 
-style _bar is _default:
-    left_bar Frame("_theme_amie2/hover_frame.png", 10, 10)
-    right_bar Frame("_theme_amie2/bar.png", 10, 10)
-    thumb None
-    hover_thumb None
-    ymaximum 20
+    style _label_text is _default:
+        color "#000"
+        bold True
 
-style _vbar is _default:
-    bottom_bar Frame("_theme_amie2/hover_frame.png", 10, 10)
-    top_bar Frame("_theme_amie2/bar.png", 10, 10)
-    thumb None
-    hover_thumb None
-    xmaximum 20
-    bar_vertical True
+    style _bar is _default:
+        left_bar Frame("_theme_amie2/hover_frame.png", 10, 10)
+        right_bar Frame("_theme_amie2/bar.png", 10, 10)
+        thumb None
+        hover_thumb None
+        ymaximum 20
 
-style _scrollbar is _default:
-    left_bar Frame("_theme_amie2/bar.png", 10, 10)
-    right_bar Frame("_theme_amie2/bar.png", 10, 10)
-    thumb Frame("_theme_amie2/frame.png", 10, 10)
-    hover_thumb Frame("_theme_amie2/hover_frame.png", 10, 10)
-    thumb_offset 10
-    left_gutter 5
-    right_gutter 5
-    unscrollable "hide"
-    ymaximum 20
+    style _vbar is _default:
+        bottom_bar Frame("_theme_amie2/hover_frame.png", 10, 10)
+        top_bar Frame("_theme_amie2/bar.png", 10, 10)
+        thumb None
+        hover_thumb None
+        xmaximum 20
+        bar_vertical True
 
-style _vscrollbar is _default:
-    top_bar Frame("_theme_amie2/bar.png", 10, 10)
-    bottom_bar Frame("_theme_amie2/bar.png", 10, 10)
-    thumb Frame("_theme_amie2/frame.png", 10, 10)
-    hover_thumb Frame("_theme_amie2/hover_frame.png", 10, 10)
-    thumb_offset 10
-    top_gutter 5
-    bottom_gutter 5
-    unscrollable "hide"
-    xmaximum 20
-    bar_vertical True
-    bar_invert True
+    style _scrollbar is _default:
+        left_bar Frame("_theme_amie2/bar.png", 10, 10)
+        right_bar Frame("_theme_amie2/bar.png", 10, 10)
+        thumb Frame("_theme_amie2/frame.png", 10, 10)
+        hover_thumb Frame("_theme_amie2/hover_frame.png", 10, 10)
+        thumb_offset 10
+        left_gutter 5
+        right_gutter 5
+        unscrollable "hide"
+        ymaximum 20
 
-style _hyperlink is _default:
-    color "#008"
-    hover_underline True
+    style _vscrollbar is _default:
+        top_bar Frame("_theme_amie2/bar.png", 10, 10)
+        bottom_bar Frame("_theme_amie2/bar.png", 10, 10)
+        thumb Frame("_theme_amie2/frame.png", 10, 10)
+        hover_thumb Frame("_theme_amie2/hover_frame.png", 10, 10)
+        thumb_offset 10
+        top_gutter 5
+        bottom_gutter 5
+        unscrollable "hide"
+        xmaximum 20
+        bar_vertical True
+        bar_invert True
+
+    style _hyperlink is _default:
+        color "#008"
+        hover_underline True
+
+
+    # Early hyperlink support.
+    python hide:
+        def hyperlink_styler(target):
+            return style._hyperlink
+
+        def hyperlink_function(target):
+            if target.startswith("http:"):
+                try:
+                    import webbrowser
+                    webbrowser.open(target)
+                except:
+                    pass
+
+            if target.startswith("edit:"):
+                prefix, line, filename = target.split(":", 2)
+                line = int(line)
+
+                renpy.launch_editor([ filename ], line)
+
+        style._default.hyperlink_functions = (hyperlink_styler, hyperlink_function, None)
+
+    return
+
+# Invokes _errorhanding when this is first loaded.
+init:
+    call _errorhandling
 
 init python:
 
@@ -289,29 +319,6 @@ init python:
         "pad_lefty_pos" : [ "focus_down", "bar_down" ],
         "pad_righty_pos" : [ "focus_down", "bar_down" ],
     }
-
-# Early hyperlink support.
-init python hide:
-    def hyperlink_styler(target):
-        return style._hyperlink
-
-    def hyperlink_function(target):
-        if target.startswith("http:"):
-            try:
-                import webbrowser
-                webbrowser.open(target)
-            except:
-                pass
-
-        if target.startswith("edit:"):
-            prefix, line, filename = target.split(":", 2)
-            line = int(line)
-
-            renpy.launch_editor([ filename ], line)
-
-    style._default.hyperlink_functions = (hyperlink_styler, hyperlink_function, None)
-
-init python:
 
     # Null translation function. This gets redefined once things start
     # successfully.

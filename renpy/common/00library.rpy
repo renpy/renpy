@@ -22,8 +22,13 @@
 # This is kind of a catch-all file for things that are defined in the library,
 # but don't merit their own files.
 
+init -9999:
+    # Re-run the errorhandling setup, so we can adjust the styles to the new size
+    # of the screen.
+    call _errorhandling
 
 init -1700 python:
+
     class DictEquality(object):
         """
         Declares two objects equal if their types are the same, and
