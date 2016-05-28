@@ -196,12 +196,14 @@ init label _errorhandling:
     style _scrollbar is _default:
         thumb "#808080"
         hover_thumb "#a0a0a0"
+        base_bar "#b0b0b0"
         unscrollable "hide"
         ymaximum __scale(10)
 
     style _vscrollbar is _default:
         thumb "#808080"
         hover_thumb "#a0a0a0"
+        base_bar "#b0b0b0"
         unscrollable "hide"
         xmaximum __scale(10)
         bar_vertical True
