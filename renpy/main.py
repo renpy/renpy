@@ -379,6 +379,9 @@ def main():
     game.persistent = renpy.persistent.init()
     game.preferences = game.persistent._preferences
 
+    if game.persistent._virtual_size:
+        renpy.config.screen_width, renpy.config.screen_height = game.persistent._virtual_size
+
     # Init save locations.
     renpy.savelocation.init()
 
@@ -413,6 +416,8 @@ def main():
         # Run the post init code, if any.
         for i in renpy.game.post_init:
             i()
+
+        game.persistent._virtual_size = renpy.config.screen_width, renpy.config.screen_height
 
         if renpy.config.clear_lines:
             renpy.scriptedit.lines.clear()

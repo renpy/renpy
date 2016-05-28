@@ -27,6 +27,12 @@
 init python:
     style._default = Style(None)
 
+
+init python hide:
+
+    if renpy.loadable("gui.rpy") or renpy.loadable("gui.rpyc"):
+        config.screen_width, config.screen_height = 1280, 720
+
 style _default:
 
     # Text properties
