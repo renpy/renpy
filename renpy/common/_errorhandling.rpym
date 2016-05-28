@@ -27,7 +27,6 @@
 init python:
     style._default = Style(None)
 
-
 init python hide:
 
     if renpy.loadable("gui.rpy") or renpy.loadable("gui.rpyc"):
@@ -35,14 +34,20 @@ init python hide:
 
 init label _errorhandling:
 
+    python:
+        def __scale(n):
+            return int(n * config.screen_height / 720)
+
+        __wide = (config.screen_width >  (config.screen_height * 1.5))
+
     style _default:
 
         # Text properties
         font "DejaVuSans.ttf"
         language "unicode"
         antialias True
-        size 14
-        color "#111"
+        size __scale(16)
+        color "#404040"
         black_color (0, 0, 0, 255)
         bold False
         italic False
@@ -134,11 +139,11 @@ init label _errorhandling:
         ##########################################################################
 
     style _frame is _default:
-        background Frame("_theme_amie2/frame.png", 40, 40)
-        xmargin 0
-        ymargin 0
-        xpadding 15
-        ypadding 10
+        background "#d0d0d0"
+        xpadding __scale(150 if __wide else 15)
+        ypadding __scale(15)
+        xfill True
+        yfill True
 
     style _text is _default
     style _fixed is _default
@@ -157,71 +162,54 @@ init label _errorhandling:
         xfill True
         yfill True
 
-    style _button is _default:
-        xpadding 8
-        ypadding 6
-        xoffset -5
-        background Frame("_theme_amie2/button.png", 10, 10)
-        hover_background Frame("_theme_amie2/button_hover.png", 10, 10)
+    style _button is _default
 
     style _button_text is _default:
-        size 16
-        color "#111"
-        selected_color "#11f"
-        insensitive_color "#ccc"
-        xalign 0.5
-        yoffset 0
+        size __scale(24)
+        color "#048"
+        hover_color Color("#048").tint(.6)
+        insensitive_color "#00000020"
 
     style _label is _default:
-        top_margin 10
-        bottom_margin 5
+        top_margin __scale(10)
+        bottom_margin __scale(15)
 
     style _label_text is _default:
-        color "#000"
-        bold True
+        size __scale(40)
+        kerning -1
 
-    style _bar is _default:
-        left_bar Frame("_theme_amie2/hover_frame.png", 10, 10)
-        right_bar Frame("_theme_amie2/bar.png", 10, 10)
-        thumb None
-        hover_thumb None
-        ymaximum 20
-
-    style _vbar is _default:
-        bottom_bar Frame("_theme_amie2/hover_frame.png", 10, 10)
-        top_bar Frame("_theme_amie2/bar.png", 10, 10)
-        thumb None
-        hover_thumb None
-        xmaximum 20
-        bar_vertical True
+#     style _bar is _default:
+#         left_bar Frame("_theme_amie2/hover_frame.png", 10, 10)
+#         right_bar Frame("_theme_amie2/bar.png", 10, 10)
+#         thumb None
+#         hover_thumb None
+#         ymaximum 20
+#
+#     style _vbar is _default:
+#         bottom_bar Frame("_theme_amie2/hover_frame.png", 10, 10)
+#         top_bar Frame("_theme_amie2/bar.png", 10, 10)
+#         thumb None
+#         hover_thumb None
+#         xmaximum 20
+#         bar_vertical True
 
     style _scrollbar is _default:
-        left_bar Frame("_theme_amie2/bar.png", 10, 10)
-        right_bar Frame("_theme_amie2/bar.png", 10, 10)
-        thumb Frame("_theme_amie2/frame.png", 10, 10)
-        hover_thumb Frame("_theme_amie2/hover_frame.png", 10, 10)
-        thumb_offset 10
-        left_gutter 5
-        right_gutter 5
+        thumb "#808080"
+        hover_thumb "#a0a0a0"
         unscrollable "hide"
-        ymaximum 20
+        ymaximum __scale(10)
 
     style _vscrollbar is _default:
-        top_bar Frame("_theme_amie2/bar.png", 10, 10)
-        bottom_bar Frame("_theme_amie2/bar.png", 10, 10)
-        thumb Frame("_theme_amie2/frame.png", 10, 10)
-        hover_thumb Frame("_theme_amie2/hover_frame.png", 10, 10)
-        thumb_offset 10
-        top_gutter 5
-        bottom_gutter 5
+        thumb "#808080"
+        hover_thumb "#a0a0a0"
         unscrollable "hide"
-        xmaximum 20
+        xmaximum __scale(10)
         bar_vertical True
         bar_invert True
 
     style _hyperlink is _default:
-        color "#008"
-        hover_underline True
+        color "#048"
+        hover_color Color("#048").tint(.6)
 
 
     # Early hyperlink support.
@@ -332,11 +320,13 @@ init python:
 
         lines = [ i.replace("{", "{{") for i in s.split("\n") ]
 
-        rv = [ "{b}" + lines[0] + "{/b}" ]
+        rv = [ ("{size=%d}" % __scale(22)) + lines[0] + "{/size}" ]
 
         for i in lines[1:]:
             i = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', i)
-            rv.append(i)
+            rv.append("  " + i)
+
+        rv[1] = "{vspace=5}" + rv[1]
 
         return "\n".join(rv)
 
@@ -490,6 +480,23 @@ init python:
         def __call__(self):
             renpy.quit(status=1)
 
+# This screen can be customized to add additional actions to the exception
+# screen. It currently takes two positional parameters.
+#
+# * traceback_fn - a filename containing the exception text.
+# * tt - a tooltip used for help text.
+#
+# For forward-compatibility, custom implmentations should use *args to ignore
+# added arguments.
+screen _exception_actions(traceback_fn, tt, *args):
+
+    textbutton _("Open Traceback"):
+        action _EditFile(traceback_fn)
+        hovered tt.action(_("Opens the traceback.txt file in a text editor."))
+
+    textbutton _("Copy to Clipboard"):
+        action _CopyFile(traceback_fn)
+        hovered tt.action(_("Copies the traceback.txt file to the clipboard."))
 
 
 # The screen that is used for error handling.
@@ -501,41 +508,30 @@ screen _exception:
     default fmt_short = __format_traceback(short)
     default fmt_full = __format_traceback(full)
 
-    add Solid("#000")
-
     frame:
         style_group ""
-        xfill True
 
         at __transform
 
-        has side "t c r b"
+        has side "t c b":
+            spacing __scale(10)
 
-        vbox:
-            label _("An exception has occurred.")
+        label _("An exception has occurred.")
 
         viewport:
             id "viewport"
             child_size (4000, None)
             mousewheel True
+            scrollbars "both"
 
             has vbox
 
             text fmt_short substitute False
             text fmt_full substitute False
 
-        bar:
-            style "_vscrollbar"
-            value __YScrollValue("viewport")
-
         vbox:
-
-            bar:
-                style "_scrollbar"
-                value __XScrollValue("viewport")
-
             hbox:
-                box_wrap True
+                spacing __scale(25)
 
                 if rollback_action:
                     textbutton _("Rollback"):
@@ -552,23 +548,18 @@ screen _exception:
                         action reload_action
                         hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
 
-                textbutton _("Open Traceback"):
-                    action _EditFile(traceback_fn)
-                    hovered tt.action(_("Opens the traceback.txt file in a text editor."))
+                use _exception_actions(traceback_fn, tt)
 
-                if renpy.windows or renpy.macintosh:
-                    textbutton _("Copy to Clipboard"):
-                        action _CopyFile(traceback_fn)
-                        hovered tt.action(_("Copies the traceback.txt file to the clipboard."))
+                vbox:
+                    xfill True
 
-                null width 30
-
-                textbutton _("Quit"):
-                    action __ErrorQuit()
-                    hovered tt.action(_("Quits the game."))
+                    textbutton _("Quit"):
+                        xalign 1.0
+                        action __ErrorQuit()
+                        hovered tt.action(_("Quits the game."))
 
             # Tooltip.
-            text tt.value size 12
+            text tt.value
 
     if config.developer and reload_action:
         key "R" action reload_action
