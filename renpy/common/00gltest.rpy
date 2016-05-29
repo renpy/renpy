@@ -105,7 +105,7 @@ init -1500:
 
             hbox:
                 yfill True
-                spacing 22
+                spacing gui._scale(25)
 
                 textbutton _(u"Quit"):
                     action Quit(confirm=False)

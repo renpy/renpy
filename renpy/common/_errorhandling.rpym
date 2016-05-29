@@ -34,11 +34,13 @@ init python hide:
 
 init label _errorhandling:
 
-    python:
-        def __scale(n):
+    python in gui:
+        from store import config
+
+        def _scale(n):
             return int(n * config.screen_height / 720)
 
-        __wide = (config.screen_width >  (config.screen_height * 1.5))
+        _wide = (config.screen_width >  (config.screen_height * 1.5))
 
     style _default:
 
@@ -46,7 +48,7 @@ init label _errorhandling:
         font "DejaVuSans.ttf"
         language "unicode"
         antialias True
-        size __scale(16)
+        size gui._scale(16)
         color "#404040"
         black_color (0, 0, 0, 255)
         bold False
@@ -140,8 +142,8 @@ init label _errorhandling:
 
     style _frame is _default:
         background "#d0d0d0"
-        xpadding __scale(150 if __wide else 15)
-        ypadding __scale(15)
+        xpadding gui._scale(150 if gui._wide else 15)
+        ypadding gui._scale(15)
         xfill True
         yfill True
 
@@ -162,26 +164,27 @@ init label _errorhandling:
         xfill True
         yfill True
 
-    style _button is _default
+    style _button is _default:
+        ypadding gui._scale(2)
 
     style _button_text is _default:
-        size __scale(24)
-        color "#048"
-        hover_color Color("#048").tint(.6)
+        size gui._scale(26)
+        color "#405060"
+        hover_color "#048"
         insensitive_color "#00000020"
 
     style _radio_button is _button:
-        selected_background  Solid("#048", xsize=__scale(5), ysize=__scale(22), yalign=0.5)
-        left_padding __scale(15)
+        selected_background Solid("#048", xsize=gui._scale(5), ysize=gui._scale(22), yalign=0.5)
+        left_padding gui._scale(15)
 
     style _radio_button_text is _button_text
 
     style _label is _default:
-        top_margin __scale(10)
-        bottom_margin __scale(15)
+        top_margin gui._scale(10)
+        bottom_margin gui._scale(15)
 
     style _label_text is _default:
-        size __scale(40)
+        size gui._scale(40)
         kerning -1
 
 #     style _bar is _default:
@@ -204,20 +207,20 @@ init label _errorhandling:
         hover_thumb "#a0a0a0"
         base_bar "#b0b0b0"
         unscrollable "hide"
-        ymaximum __scale(10)
+        ymaximum gui._scale(10)
 
     style _vscrollbar is _default:
         thumb "#808080"
         hover_thumb "#a0a0a0"
         base_bar "#b0b0b0"
         unscrollable "hide"
-        xmaximum __scale(10)
+        xmaximum gui._scale(10)
         bar_vertical True
         bar_invert True
 
     style _hyperlink is _default:
-        color "#048"
-        hover_color Color("#048").tint(.6)
+        color "#405060"
+        hover_color Color("#048")
 
 
     # Early hyperlink support.
@@ -328,7 +331,7 @@ init python:
 
         lines = [ i.replace("{", "{{") for i in s.split("\n") ]
 
-        rv = [ ("{size=%d}" % __scale(22)) + lines[0] + "{/size}" ]
+        rv = [ ("{size=%d}" % gui._scale(22)) + lines[0] + "{/size}" ]
 
         for i in lines[1:]:
             i = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', i)
@@ -522,7 +525,7 @@ screen _exception:
         at __transform
 
         has side "t c b":
-            spacing __scale(10)
+            spacing gui._scale(10)
 
         label _("An exception has occurred.")
 
@@ -539,7 +542,7 @@ screen _exception:
 
         vbox:
             hbox:
-                spacing __scale(25)
+                spacing gui._scale(25)
 
                 if rollback_action:
                     textbutton _("Rollback"):
