@@ -170,6 +170,12 @@ init label _errorhandling:
         hover_color Color("#048").tint(.6)
         insensitive_color "#00000020"
 
+    style _radio_button is _button:
+        selected_background  Solid("#048", xsize=__scale(5), ysize=__scale(22), yalign=0.5)
+        left_padding __scale(15)
+
+    style _radio_button_text is _button_text
+
     style _label is _default:
         top_margin __scale(10)
         bottom_margin __scale(15)

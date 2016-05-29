@@ -56,13 +56,6 @@ init -1500:
         frame:
             style_group ""
 
-            xalign .5
-            yalign .33
-            xpadding 20
-            ypadding 20
-
-            xmaximum 400
-
             has vbox
 
             label _("Graphics Acceleration")
@@ -71,20 +64,20 @@ init -1500:
 
             textbutton _("Automatically Choose"):
                 action _SetRenderer("auto")
-                xfill True
+                style_suffix "radio_button"
 
             if renpy.renpy.windows:
                 textbutton _("Force Angle/DirectX Renderer"):
                     action _SetRenderer("angle")
-                    xfill True
+                    style_suffix "radio_button"
 
             textbutton _("Force OpenGL Renderer"):
                 action _SetRenderer("gl")
-                xfill True
+                style_suffix "radio_button"
 
             textbutton _("Force Software Renderer"):
                 action _SetRenderer("sw")
-                xfill True
+                style_suffix "radio_button"
 
             null height 10
 
@@ -94,13 +87,13 @@ init -1500:
 
             textbutton _("Enable"):
                 action SetField(_preferences, "pad_enabled", True)
-                xfill True
+                style_suffix "radio_button"
 
             textbutton _("Disable"):
                 action SetField(_preferences, "pad_enabled", False)
-                xfill True
+                style_suffix "radio_button"
 
-            null height 5
+            null height 10
 
             textbutton _("Calibrate"):
                 action ui.invokesinnewcontext(_gamepad.calibrate)
@@ -110,16 +103,18 @@ init -1500:
 
             text _("Changes will take effect the next time this program is run.") substitute True
 
-            null height 10
+            hbox:
+                yfill True
+                spacing 22
 
-            textbutton _(u"Quit"):
-                action Quit(confirm=False)
-                xfill True
+                textbutton _(u"Quit"):
+                    action Quit(confirm=False)
+                    yalign 1.0
 
-            if not renpy.display.interface.safe_mode:
-                textbutton _("Return"):
-                    action Return(0)
-                    xfill True
+                if not renpy.display.interface.safe_mode:
+                    textbutton _("Return"):
+                        action Return(0)
+                        yalign 1.0
 
 
     # This is displayed when a display performance problem occurs.
