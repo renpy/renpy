@@ -222,7 +222,6 @@ init label _errorhandling:
         color "#405060"
         hover_color Color("#048")
 
-
     # Early hyperlink support.
     python hide:
         def hyperlink_styler(target):
