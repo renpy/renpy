@@ -32,7 +32,8 @@ screen _inspector:
         style_group ""
         right_padding 0
 
-        has vbox
+        has side "t c b":
+            spacing gui._scale(10)
 
         label _("Displayable Inspector")
 
@@ -44,9 +45,9 @@ screen _inspector:
 
             viewport:
                 scrollbars "both"
-                child_size (1200, 0)
-                yfill False
-                xfill False
+                child_size (4000, 0)
+                yfill True
+                xfill True
                 mousewheel True
 
                 has vbox:
@@ -100,10 +101,10 @@ screen _inspector:
                                 style "_hyperlink_button"
                                 action _EditFile(d._location[0], d._location[1])
 
-        null height 20
+        hbox:
+            textbutton _("Return") action Return(True)
 
-        textbutton _("Return") action Return(True)
-        key "game_menu" action Return(True)
+    key "game_menu" action Return(True)
 
 screen _style_inspector:
     zorder 1020

@@ -56,55 +56,60 @@ init -1500:
         frame:
             style_group ""
 
-            has vbox
+            has side "t c b":
+                spacing gui._scale(10)
+                xfill True
+                yfill True
 
             label _("Graphics Acceleration")
 
-            null height 10
 
-            textbutton _("Automatically Choose"):
-                action _SetRenderer("auto")
-                style_suffix "radio_button"
+            fixed:
 
-            if renpy.renpy.windows:
-                textbutton _("Force Angle/DirectX Renderer"):
-                    action _SetRenderer("angle")
-                    style_suffix "radio_button"
+                vbox:
 
-            textbutton _("Force OpenGL Renderer"):
-                action _SetRenderer("gl")
-                style_suffix "radio_button"
+                    textbutton _("Automatically Choose"):
+                        action _SetRenderer("auto")
+                        style_suffix "radio_button"
 
-            textbutton _("Force Software Renderer"):
-                action _SetRenderer("sw")
-                style_suffix "radio_button"
+                    if renpy.renpy.windows:
+                        textbutton _("Force Angle/DirectX Renderer"):
+                            action _SetRenderer("angle")
+                            style_suffix "radio_button"
 
-            null height 10
+                    textbutton _("Force OpenGL Renderer"):
+                        action _SetRenderer("gl")
+                        style_suffix "radio_button"
 
-            label _("Gamepad")
+                    textbutton _("Force Software Renderer"):
+                        action _SetRenderer("sw")
+                        style_suffix "radio_button"
 
-            null height 10
+                    null height 10
 
-            textbutton _("Enable"):
-                action SetField(_preferences, "pad_enabled", True)
-                style_suffix "radio_button"
+                    label _("Gamepad")
 
-            textbutton _("Disable"):
-                action SetField(_preferences, "pad_enabled", False)
-                style_suffix "radio_button"
+                    null height 10
 
-            null height 10
+                    textbutton _("Enable"):
+                        action SetField(_preferences, "pad_enabled", True)
+                        style_suffix "radio_button"
 
-            textbutton _("Calibrate"):
-                action ui.invokesinnewcontext(_gamepad.calibrate)
-                xfill True
+                    textbutton _("Disable"):
+                        action SetField(_preferences, "pad_enabled", False)
+                        style_suffix "radio_button"
 
-            null height 10
+                    null height 10
 
-            text _("Changes will take effect the next time this program is run.") substitute True
+                    textbutton _("Calibrate"):
+                        action ui.invokesinnewcontext(_gamepad.calibrate)
+                        xfill True
+
+                    null height 10
+
+                    text _("Changes will take effect the next time this program is run.") substitute True
 
             hbox:
-                yfill True
                 spacing gui._scale(25)
 
                 textbutton _(u"Quit"):
