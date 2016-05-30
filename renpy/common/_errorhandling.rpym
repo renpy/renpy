@@ -411,21 +411,6 @@ init python:
     def __can_open_traceback():
         return True
 
-    # The transform used for errors. ATL isn't ready yet.
-    def __transform_function(state, st, at):
-        done = min(st / .1, 1.0)
-        state.zoom = .5 + .5 * done
-        state.alpha = done
-        state.xalign = 0.5
-        state.yalign = 0.5
-
-        if done < 1.0:
-            return 0
-        else:
-            return None
-
-    __transform = Transform(function=__transform_function, style='_default')
-
     class __TooltipAction(object):
 
         def __init__(self, tooltip, value):
@@ -517,8 +502,6 @@ screen _exception:
     frame:
         style_group ""
 
-        at __transform
-
         has side "t c b":
             spacing gui._scale(10)
 
@@ -578,39 +561,30 @@ screen _parse_errors:
     default tt = __Tooltip("")
     default fmt_errors = __format_parse_errors(errors)
 
-    add Solid("#000")
-
     frame:
         style_group ""
-        xfill True
 
-        at __transform
+        has side "t c b":
+            spacing gui._scale(10)
 
-        has side "t c r b"
-
-        vbox:
-            label _("Parsing the script failed.")
+        label _("Parsing the script failed.")
 
         viewport:
             id "viewport"
-            child_size (None, None)
+            child_size (4000, None)
             mousewheel True
+            scrollbars "both"
+            xfill True
+            yfill True
 
             has vbox
-            text fmt_errors substitute False
 
-        bar:
-            style "_vscrollbar"
-            value __YScrollValue("viewport")
+            text fmt_errors substitute False
 
         vbox:
 
-            bar:
-                style "_scrollbar"
-                value __XScrollValue("viewport")
-
             hbox:
-                box_wrap True
+                spacing gui._scale(25)
 
                 textbutton _("Reload"):
                     action reload_action
@@ -620,19 +594,20 @@ screen _parse_errors:
                     action _EditFile(error_fn)
                     hovered tt.action(_("Opens the errors.txt file in a text editor."))
 
-                if renpy.windows or renpy.macintosh:
-                    textbutton _("Copy to Clipboard"):
-                        action _CopyFile(error_fn)
-                        hovered tt.action(_("Copies the errors.txt file to the clipboard."))
+                textbutton _("Copy to Clipboard"):
+                    action _CopyFile(error_fn)
+                    hovered tt.action(_("Copies the errors.txt file to the clipboard."))
 
-                null width 30
+                vbox:
+                    xfill True
 
-                textbutton _("Quit"):
-                    action __ErrorQuit()
-                    hovered tt.action(_("Quits the game."))
+                    textbutton _("Quit"):
+                        action __ErrorQuit()
+                        hovered tt.action(_("Quits the game."))
+                        xalign 1.0
 
             # Tooltip.
-            text tt.value size 12
+            text tt.value
 
     if config.developer and reload_action:
         key "R" action reload_action

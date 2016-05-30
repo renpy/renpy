@@ -63,7 +63,6 @@ init -1500:
 
             label _("Graphics Acceleration")
 
-
             fixed:
 
                 vbox:
