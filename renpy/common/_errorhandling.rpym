@@ -187,20 +187,16 @@ init label _errorhandling:
         size gui._scale(40)
         kerning -1
 
-#     style _bar is _default:
-#         left_bar Frame("_theme_amie2/hover_frame.png", 10, 10)
-#         right_bar Frame("_theme_amie2/bar.png", 10, 10)
-#         thumb None
-#         hover_thumb None
-#         ymaximum 20
-#
-#     style _vbar is _default:
-#         bottom_bar Frame("_theme_amie2/hover_frame.png", 10, 10)
-#         top_bar Frame("_theme_amie2/bar.png", 10, 10)
-#         thumb None
-#         hover_thumb None
-#         xmaximum 20
-#         bar_vertical True
+    style _bar is _default:
+        left_bar "#048"
+        right_bar "#b0b0b0"
+        ysize gui._scale(20)
+
+    style _vbar is _default:
+        bottom_bar "#048"
+        top_bar "#b0b0b0"
+        xsize gui._scale(20)
+        bar_vertical True
 
     style _scrollbar is _default:
         thumb "#808080"
