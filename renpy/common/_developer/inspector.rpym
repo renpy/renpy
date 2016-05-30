@@ -112,28 +112,22 @@ screen _style_inspector:
 
     frame:
         style_group ""
+        right_padding 0
 
-        xmaximum 700
-        xfill True
-
-        xpadding 15
-        ypadding 15
-
-        xalign 0.5
-        yalign 0.25
-
-        has vbox
+        has side "t c b":
+            xfill True
+            spacing gui._scale(10)
 
         $ displayable_name = unicode(d)
         label _("Inspecting Styles of [displayable_name!q]")
 
-        null height 10
-
         $ styles = d.style.inspect()
 
         viewport:
-            yfill False
-            xfill False
+            child_size (4000, 0)
+
+            yfill True
+            xfill True
             mousewheel True
 
             vbox:
@@ -158,13 +152,9 @@ screen _style_inspector:
 
                     null height 5
 
-
-        # Code goes here.
-
-        null height 20
-
         textbutton _("Return") action Hide("_style_inspector")
-        key "game_menu" action Hide("_style_inspector")
+
+    key "game_menu" action Hide("_style_inspector")
 
 
 init python:
