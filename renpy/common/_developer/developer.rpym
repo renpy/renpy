@@ -24,82 +24,50 @@
 
 # List styles.
 
-style list is default
-style list_box is vbox
-style list_row is default
-style list_row_box is hbox
-style list_spacer is default
-style list_text is default
-
-style list_row:
-    xfill True
-    ymargin 0
-    background "#eee"
-    hover_background "#fff"
-    selected_background "#cce"
-
-init python:
-    style.list_row[1].background = "#ddd"
-    style.list_row[1].hover_background = "#fff"
-    style.list_row[1].selected_background = "#cce"
-
-style list_text:
-    color "#000"
-    size 14
-
-style list_spacer:
-    xminimum 15
-
 screen _developer:
 
     zorder 1001
     modal True
 
     frame:
-        style_group "_developer"
+        style_group ""
 
-        align (.025, .05)
-
-        has vbox
+        has side "t c b":
+            spacing gui._scale(10)
 
         label _(u"Developer Menu")
 
-        textbutton _("Reload Game (Shift+R)"):
-            action ui.callsinnewcontext("_save_reload_game")
-        textbutton _("Console (Shift+O)"):
-            action [ Hide("_developer"), _console.enter ]
-        textbutton _("Variable Viewer"):
-            action ui.callsinnewcontext("_debugger_screen")
-        textbutton _("Theme Test"):
-            action ui.callsinnewcontext("_theme_test")
-        textbutton _("Image Location Picker"):
-            action ui.callsinnewcontext("_image_location_picker")
-        textbutton _("Filename List"):
-            action ui.callsinnewcontext("_filename_list")
+        fixed:
+            vbox:
 
-        if not renpy.get_screen("_image_load_log"):
-            textbutton _("Show Image Load Log"):
-                action Show("_image_load_log")
-        else:
-            textbutton _("Hide Image Load Log"):
-                action Hide("_image_load_log")
+                textbutton _("Reload Game (Shift+R)"):
+                    action ui.callsinnewcontext("_save_reload_game")
+                textbutton _("Console (Shift+O)"):
+                    action [ Hide("_developer"), _console.enter ]
+                textbutton _("Variable Viewer"):
+                    action ui.callsinnewcontext("_debugger_screen")
+                textbutton _("Theme Test"):
+                    action ui.callsinnewcontext("_theme_test")
+                textbutton _("Image Location Picker"):
+                    action ui.callsinnewcontext("_image_location_picker")
+                textbutton _("Filename List"):
+                    action ui.callsinnewcontext("_filename_list")
 
-        null height 15
+                if not renpy.get_screen("_image_load_log"):
+                    textbutton _("Show Image Load Log"):
+                        action Show("_image_load_log")
+                else:
+                    textbutton _("Hide Image Load Log"):
+                        action Hide("_image_load_log")
 
-        textbutton _(u"Return"):
-            action Hide("_developer")
-            size_group "developer"
+        hbox:
+            spacing gui._scale(25)
 
-style _developer_default is _default
-style _developer_frame is _frame
-style _developer_vbox is _vbox
+            textbutton _(u"Return"):
+                action Hide("_developer")
+                size_group "developer"
 
-style _developer_button is _button:
-    size_group "developer"
 
-style _developer_button_text is _button_text
-style _developer_label is _label
-style _developer_label_text is _label_text
 
 
 label _debugger_screen:
@@ -436,6 +404,36 @@ init python:
                 import pygame.scrap
                 pygame.scrap.put(pygame.scrap.SCRAP_TEXT, text)
 
+screen _image_location_picker(image_files):
+
+    frame:
+        style_group ""
+
+        has side "t c b":
+            spacing gui._scale(10)
+
+        label _(u"Image Location Picker")
+
+        viewport:
+            xfill True
+            yfill True
+            scrollbars "both"
+            mousewheel True
+
+            has vbox
+
+            for fn in image_files:
+
+                textbutton "[fn!q]":
+                    action Return(fn)
+                    style_suffix "small_button"
+
+        hbox:
+            spacing gui._scale(25)
+
+            textbutton _(u"Return"):
+                action Return(False)
+
 
 label _image_location_picker:
 
@@ -459,31 +457,7 @@ label _image_location_picker:
 
         while True:
 
-            ui.frame()
-            ui.vbox()
-
-            layout.label(_(u"Image Location Picker"), None)
-
-            ui.textbutton(_(u"Done"), clicked=ui.returns(False), size_group="files")
-
-            ui.side(['c', 'b', 'r'], spacing=5)
-            vp = ui.viewport(xadjustment=xadjustment, yadjustment=yadjustment, mousewheel=True)
-
-            ui.vbox()
-
-            for fn in image_files:
-                ui.button(clicked=ui.returns(fn), size_group="files", xminimum=1.0)
-                ui.text(fn.replace("{", "{{").replace("[", "[["), style="button_text", xalign=0.0)
-
-            ui.close()
-
-            ui.bar(adjustment=xadjustment, style='scrollbar')
-            ui.bar(adjustment=yadjustment, style='vscrollbar')
-            ui.close()
-
-            ui.close()
-
-            rv = ui.interact()
+            rv = renpy.call_screen("_image_location_picker", image_files=image_files)
 
             if rv is False:
                 renpy.jump("_image_location_picker_done")

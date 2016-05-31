@@ -173,6 +173,11 @@ init label _errorhandling:
         hover_color "#048"
         insensitive_color "#00000020"
 
+    style _small_button is _button
+
+    style _small_button_text is _button_text:
+        size gui._scale(16)
+
     style _radio_button is _button:
         selected_background Solid("#048", xsize=gui._scale(5), ysize=gui._scale(22), yalign=0.5)
         left_padding gui._scale(15)
