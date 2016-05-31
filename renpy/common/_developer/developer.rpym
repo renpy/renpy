@@ -68,6 +68,40 @@ screen _developer:
                 size_group "developer"
 
 
+screen _variable_viewer(entries):
+
+    zorder 1010
+    modal True
+
+    frame:
+        style_group ""
+        right_padding 0
+
+        has side "t c b":
+            spacing gui._scale(10)
+
+        label _("Variable Viewer")
+
+        viewport:
+            scrollbars "both"
+            child_size (4000, 0)
+            yfill True
+            xfill True
+            mousewheel True
+
+            vbox:
+
+                if not entries:
+                    text _("Nothing to inspect.")
+
+                for vn, value in entries:
+                    text "[vn] = [value!q]"
+
+        hbox:
+            spacing gui._scale(25)
+
+            textbutton _(u"Return"):
+                action Return(True)
 
 
 label _debugger_screen:
@@ -76,55 +110,34 @@ label _debugger_screen:
 
     python hide:
 
-        ui.window(style=style.gm_root)
-        ui.null()
-
-        ui.frame(ymargin=10, xmargin=10, style=style.menu_frame)
-        ui.side(['t', 'c', 'r', 'b'])
-
-        layout.label(_("Variable Viewer"), None)
+        import repr
+        aRepr = repr.Repr()
+        aRepr.maxstring = 120
 
         entries = [ ]
 
-        ebc = store.__dict__.ever_been_changed
-        ebc = list(ebc)
-        ebc.sort()
+        for sn, d in renpy.python.store_dicts.items():
+            for vn in d.ever_been_changed:
 
-        ebc.remove("nvl_list")
+                if vn.startswith("__00"):
+                    continue
 
-        import repr
-        aRepr = repr.Repr()
-        aRepr.maxstring = 40
+                if vn.startswith("_") and not vn.startswith("__"):
+                    continue
 
-        for var in ebc:
-            if not hasattr(store, var):
-                continue
+                if vn not in d:
+                    value = "deleted"
+                else:
+                    value = aRepr.repr(d[vn])
 
-            if var.startswith("__00"):
-                continue
+                if vn == "nvl_list":
+                    continue
 
-            if var.startswith("_") and not var.startswith("__"):
-                continue
+                name = (sn + "." + vn)[6:]
 
-            val = aRepr.repr(getattr(store, var))
-            s = (var + " = " + val)
-            s = s.replace("{", "{{")
-            s = s.replace("[", "[[")
-            entries.append((0, s))
+                entries.append((name, value))
 
-        if entries:
-            vp = ui.viewport(mousewheel=True)
-            layout.list(entries)
-            ui.bar(adjustment=vp.yadjustment, style='vscrollbar')
-        else:
-            layout.prompt(_("No variables have changed since the game started."), None)
-            ui.null()
-
-        layout.button(_(u"Return to the developer menu"), None, clicked=ui.returns(True))
-
-        ui.close()
-
-        ui.interact()
+        renpy.call_screen("_variable_viewer", entries=entries)
 
     return
 
