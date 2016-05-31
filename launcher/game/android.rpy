@@ -95,7 +95,7 @@ init python:
             return ANDROID_NO_RAPT
         if renpy.windows and not "JAVA_HOME" in os.environ:
             return ANDROID_NO_JDK
-        if not os.path.exists(rapt.plat.path("android-sdk/extras/google/play_licensing")):
+        if not os.path.exists(rapt.plat.path("android-sdk/platforms/" + rapt.plat.target)):
             return ANDROID_NO_SDK
         if not os.path.exists(rapt.plat.path("android.keystore")):
             return ANDROID_NO_KEY
