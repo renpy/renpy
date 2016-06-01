@@ -364,6 +364,7 @@ def import_all():
     import renpy.translation.generation
     import renpy.translation.dialogue
     import renpy.translation.extract
+    import renpy.translation.merge
 
     import renpy.display # @UnresolvedImport @Reimport
 

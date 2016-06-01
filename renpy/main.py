@@ -97,6 +97,9 @@ def run(restart):
     if not renpy.arguments.post_init():
         renpy.exports.quit()
 
+    if renpy.config.clear_lines:
+        renpy.scriptedit.lines.clear()
+
     # Sleep to finish the presplash.
     renpy.display.presplash.sleep()
 
@@ -418,9 +421,6 @@ def main():
             i()
 
         game.persistent._virtual_size = renpy.config.screen_width, renpy.config.screen_height
-
-        if renpy.config.clear_lines:
-            renpy.scriptedit.lines.clear()
 
         for i in renpy.game.persistent._seen_translates: # @UndefinedVariable
             if i in renpy.game.script.translator.default_translates:
