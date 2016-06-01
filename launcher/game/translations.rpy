@@ -225,11 +225,8 @@ label generate_translations_common:
 label generate_translations:
     call generate_translations_common
 
-
     python:
         interface.info(_("Ren'Py has finished generating [language] translations."))
-
-
 
     jump front_page
 
@@ -242,8 +239,6 @@ label extract_strings:
 
         args = [ "extract_strings", language,  STRINGS_JSON ]
 
-        print args
-
         interface.processing(_("Ren'Py is extracting string translations..."))
         project.current.launch(args, wait=True)
 
@@ -251,8 +246,26 @@ label extract_strings:
 
     return
 
+label merge_strings:
 
+    call generate_translations_common
 
+    python:
+
+        language = persistent.translate_language
+
+        args = [ "merge_strings", language,  STRINGS_JSON ]
+
+        if persistent.replace_translations:
+            args.append("--replace")
+
+        if persistent.reverse_languages:
+            args.append("--reverse")
+
+        interface.processing(_("Ren'Py is merging string translations..."))
+        project.current.launch(args, wait=True)
+
+        interface.info(_("Ren'Py has finished merging [language] string translations."))
 
 screen extract_dialogue:
 
