@@ -960,11 +960,11 @@ inputs = [ ]
 def input_pre_per_interact():
     global input_values
     global inputs
-    global default_value
+    global default_input_value
 
     input_values = [ ]
     inputs = [ ]
-    default_value = None
+    default_input_value = None
 
 def input_post_per_interact():
 
