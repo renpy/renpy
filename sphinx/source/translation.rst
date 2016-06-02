@@ -288,7 +288,6 @@ language, to translate the Ren'Py user interface. ::
          old "Start Game"
          new "Artstay Amegay"
 
-
 Translating substitutions
 -------------------------
 
@@ -303,6 +302,31 @@ and code translation systems::
 
   "I'm feeling [mood!t]."
 
+.. _extract-merge-translations:
+
+Extracting and merging string translations
+------------------------------------------
+
+String translations can be extracted from one project, and moved to
+another. This is a multiple-step process:
+
+* Select the source project, and choose "Generate Translations".
+* Enter the language to extract, and click "Extract String Translations".
+* Return to the main menu, select the target project, and choose "Generate Translations".
+* Enter the language to merge to (often the same language), and choose "Merge String Translations".
+
+There are a couple of options that control merging:
+
+Replace existing translations
+    When checked, this will cause non-trivial existing translations (those
+    that are not empty or the source string) to be replaced. By default,
+    merging will refuse to overwrite non-trivial translations that already
+    exist.
+
+Reverse languages
+    Reverses the strings before merging. This can be used, for example,
+    to use a set of english -> russian translations to create a
+    russian -> english translation.
 
 Image and File Translations
 ===========================
@@ -316,6 +340,7 @@ Ren'Py handles this by looking in the translation directory for the
 image. For example, if the "piglatin" language is in use, and
 "library.png" is loaded, Ren'Py will use "game/tl/piglatin/library.png"
 in preference to "game/library.png".
+
 
 Style Translations
 ==================
