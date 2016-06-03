@@ -72,17 +72,31 @@ def start(basedir, gamedir):
     else:
         return
 
+    if renpy.windows:
+
+        import ctypes
+        from ctypes import c_void_p, c_int
+
+        ctypes.windll.user32.SetProcessDPIAware()
+
+
     pygame_sdl2.display.init()
 
     img = pygame_sdl2.image.load(fn, fn)
 
     global window
 
+    bounds = pygame_sdl2.display.get_display_bounds(0)
+
+    sw, sh = img.get_size()
+    x = bounds[0] + bounds[2] // 2 - sw // 2
+    y = bounds[1] + bounds[3] // 2 - sh // 2
+
     window = pygame_sdl2.display.Window(
         sys.argv[0],
         img.get_size(),
         flags=pygame_sdl2.WINDOW_BORDERLESS,
-        pos=(pygame_sdl2.WINDOWPOS_CENTERED, pygame_sdl2.WINDOWPOS_CENTERED))
+        pos=(x, y))
 
     window.get_surface().blit(img, (0, 0))
     window.update()
