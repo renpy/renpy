@@ -208,6 +208,8 @@ screen common:
 
 screen launcher_input:
 
+    default value = default
+
     frame:
         style "l_root"
 
@@ -223,7 +225,7 @@ screen launcher_input:
 
             add SPACER
 
-            input style "l_default" size 24 xalign 0.5 default default color INPUT_COLOR
+            input style "l_default" value ScreenVariableInputValue("value", returnable=True) size 24 xalign 0.5 color INPUT_COLOR
 
             if filename:
                 add SPACER
@@ -233,6 +235,9 @@ screen launcher_input:
 
     if cancel:
         textbutton _("Cancel") action cancel style "l_left_button"
+
+    textbutton _("Continue") action Return(value) style "l_right_button"
+
 
 init python in interface:
 
