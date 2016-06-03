@@ -68,6 +68,7 @@ init -1510 python:
 
         default = True
         editable = True
+        returnable = False
 
         def get_text(self):
             raise Exception("Not implemented.")
@@ -76,7 +77,10 @@ init -1510 python:
             raise Exception("Not implemented.")
 
         def enter(self):
-            return None
+            if self.returnable:
+                return self.get_text()
+            else:
+                return None
 
         def Enable(self):
             if self.editable:
@@ -108,14 +112,20 @@ init -1510 python:
 
         `default`
             If true, this input can be editable by default.
+
+        `returnable`
+            If true, the value of this input will be returned when the
+            user presses enter.
         """
 
         identity_fields = [ ]
-        equality_fields = [ "variable", "value" ]
+        equality_fields = [ "variable", "returnable" ]
 
-        def __init__(self, variable, default=True):
+        def __init__(self, variable, default=True, returnable=False):
             self.variable = variable
+
             self.default = default
+            self.returnable = returnable
 
         def get_text(self):
             return globals()[self.variable]
@@ -124,7 +134,6 @@ init -1510 python:
             globals()[self.variable] = s
             renpy.restart_interaction()
 
-    @renpy.pure
     class ScreenVariableInputValue(InputValue, FieldEquality):
         """
         :doc: input_value
@@ -136,21 +145,29 @@ init -1510 python:
 
         `default`
             If true, this input can be editable by default.
+
+        `returnable`
+            If true, the value of this input will be returned when the
+            user presses enter.
         """
 
-        identity_fields = [ ]
-        equality_fields = [ "variable", "value" ]
+        identity_fields = [ 'screen' ]
+        equality_fields = [ "variable", "returnable" ]
 
-        def __init__(self, variable, default=True):
+        def __init__(self, variable, default=True, returnable=False):
             self.variable = variable
+
             self.default = default
+            self.returnable = returnable
+
+            self.screen = renpy.current_screen()
 
         def get_text(self):
-            cs = renpy.current_screen()
+            cs = self.screen
             return cs.scope[self.variable]
 
         def set_text(self, s):
-            cs = renpy.current_screen()
+            cs = self.screen
             cs.scope[self.variable] = s
             renpy.restart_interaction()
 
@@ -166,16 +183,21 @@ init -1510 python:
 
         `default`
             If true, this input can be editable by default.
+
+        `returnable`
+            If true, the value of this input will be returned when the
+            user presses enter.
         """
 
         identity_fields = [ "object"]
-        equality_fields = [ "field" ]
+        equality_fields = [ "field", "returnable" ]
 
-        def __init__(self, object, field, default=True):
+        def __init__(self, object, field, default=True, returnable=False):
             self.object = object
             self.field = field
 
             self.default = default
+            self.returnable = returnable
 
         def get_text(self):
             return getattr(self.object, self.field)
@@ -193,16 +215,21 @@ init -1510 python:
 
         `default`
             If true, this input can be editable by default.
+
+        `returnable`
+            If true, the value of this input will be returned when the
+            user presses enter.
         """
 
         identity_fields = [ "dict", "key" ]
-        equality_fields = [ ]
+        equality_fields = [ "returnable" ]
 
-        def __init__(self, dict, key, default=True):
+        def __init__(self, dict, key, default=True, returnable=False):
             self.dict = dict
             self.key = key
 
             self.default = default
+            self.returnable = returnable
 
         def get_text(self):
             return self.dict[self.key]
