@@ -110,7 +110,7 @@ init -1500 python:
             renpy.restart_interaction()
 
         def get_selected(self):
-            return renpy.showing(self.screen)
+            return renpy.get_screen(self.screen) is not None
 
     @renpy.pure
     def ShowTransient(screen, *args, **kwargs):
