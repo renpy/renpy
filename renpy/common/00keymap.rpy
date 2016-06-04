@@ -290,6 +290,9 @@ init -1600 python:
         renpy.restart_interaction()
 
     def _memory_profile():
+        if not config.developer:
+            return
+
         renpy.memory.diff_memory()
 
     def _progress_screen():
