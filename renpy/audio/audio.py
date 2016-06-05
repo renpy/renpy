@@ -663,6 +663,9 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
         If true, this channel will be set up to play back videos.
     """
 
+    if name == "movie":
+        movie = True
+
     if not renpy.game.context().init_phase and (" " not in name):
         raise Exception("Can't register channel outside of init phase.")
 
