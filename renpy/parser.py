@@ -482,7 +482,7 @@ ESCAPED_OPERATORS = [
 operator_regexp = "|".join([ re.escape(i) for i in OPERATORS ] + ESCAPED_OPERATORS)
 
 word_regexp = ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*'
-image_word_regexp = ur'[-0-9a-zA-Z_\u00a0-\ufffd]+'
+image_word_regexp = ur'[-0-9a-zA-Z\u00a0-\ufffd][-0-9a-zA-Z_\u00a0-\ufffd]*'
 
 class Lexer(object):
     """
