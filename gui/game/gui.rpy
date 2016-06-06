@@ -95,6 +95,7 @@ define gui.vslider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), g
 
 ## Frames.
 define gui.frame_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.namebox_borders = Borders(gui.scale(50), gui.scale(4), gui.scale(50), gui.scale(4))
 
 
 ################################################################################
@@ -261,6 +262,9 @@ style frame:
 ################################################################################
 ## Say
 
+
+define gui.two_window = False
+
 screen say(who, what):
     style_group "say"
 
@@ -268,12 +272,22 @@ screen say(who, what):
         id "window"
 
         vbox:
+            xfill True
 
             null height gui.scale(5)
 
-            if who:
+            if (who is not None) and gui.two_window:
+
+                window:
+                    style "namebox"
+                    text who id "who"
+
+            elif who is not None:
+
                 text who id "who" xoffset gui.scale(-10)
+
             else:
+
                 text " " id "who" xoffset gui.scale(-10)
 
             null height gui.scale(5)
@@ -285,9 +299,14 @@ screen say(who, what):
     if not renpy.variant("small"):
         add SideImage() xalign 0.0 yalign 1.0
 
+
 style window is default
 style say_label is default
 style say_dialogue is default
+
+style namebox is default
+style namebox_label is say_label
+
 
 style window:
     xalign 0.5
@@ -301,6 +320,15 @@ style window:
 style say_label:
     color gui.accent_color
     size gui.label_size
+
+style namebox:
+    xalign 0.5
+    yoffset gui.scale(-22)
+
+    padding gui.namebox_borders.padding
+    background Frame("gui/namebox.png", gui.namebox_borders)
+
+
 
 ###############################################################################
 ## CTC

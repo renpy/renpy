@@ -337,6 +337,20 @@ class ImageGenerator(object):
         s.subsurface((border, border, width - 2 * border, height - 2 * border)).fill(self.boring_color)
         self.save(s, "frame")
 
+
+
+        width = self.scale_int(300)
+        height = self.scale_int(26)
+
+        border = self.scale_int(3)
+
+        s = self.make_surface(width, height)
+        s.fill(self.accent_color)
+        s.subsurface((border, border, width - 2 * border, height - 2 * border)).fill(self.boring_color)
+        self.save(s, "namebox")
+
+
+
     def generate_bars(self):
 
         def fill(name, color, width, height, vname):
