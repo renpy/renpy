@@ -1914,7 +1914,7 @@ class Screen(Node):
 class Translate(Node):
     """
     A translation block, produced either by explicit translation statements
-    or implicit translation blocs.
+    or implicit translation blocks.
 
     If language is None, when executed this transfers control to the translate
     statement in the current language, if any, and otherwise runs the block.

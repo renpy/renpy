@@ -219,7 +219,7 @@ class TranslateFile(object):
                 label = ""
 
             self.f.write(u"# {}:{}\n".format(t.filename, t.linenumber))
-            self.f.write(u"translate {} {}:\n".format(self.language, t.identifier))
+            self.f.write(u"translate {} {}:\n".format(self.language, t.identifier.replace('.', '_')))
             self.f.write(u"\n")
 
             for n in t.block:

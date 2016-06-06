@@ -491,7 +491,7 @@ class Lexer(object):
     sub-lexers to lex sub-blocks.
     """
 
-    def __init__(self, block, init=False, init_offset=0):
+    def __init__(self, block, init=False, init_offset=0, global_label=None):
 
         # Are we underneath an init block?
         self.init = init
@@ -509,6 +509,7 @@ class Lexer(object):
         self.text = ""
         self.number = 0
         self.subblock = [ ]
+        self.global_label = global_label
         self.pos = 0
         self.word_cache_pos = -1
         self.word_cache_newpos = -1
@@ -653,7 +654,7 @@ class Lexer(object):
 
         init = self.init or init
 
-        return Lexer(self.subblock, init=init, init_offset=self.init_offset)
+        return Lexer(self.subblock, init=init, init_offset=self.init_offset, global_label=self.global_label)
 
     def string(self):
         """
@@ -753,6 +754,61 @@ class Lexer(object):
             return None
 
         return rv
+
+    def set_global_label(self, label):
+        """
+        Set current global_label, which is used for label_name calculations.
+        label can be any valid label or None, but this has only effect if label
+        has global part.
+        """
+        if label and label[0] != '.':
+            self.global_label = label.split('.')[0]
+
+    def label_name(self, declare=False):
+        """
+        Try to parse label name. Returns name in form of "global.local" if local
+        is present, "global" otherwise; or None if it doesn't parse.
+        
+        If declare is True, allow only such names that are valid for declaration
+        (e.g. forbid global name mismatch)
+        """
+
+        old_pos = self.pos
+        local_name = None
+        global_name = self.name()
+
+        if not global_name:
+            # .local label
+            if not self.match('\.') or not self.global_label:
+                self.pos = old_pos
+                return None
+            global_name = self.global_label
+            local_name = self.name()
+            if not local_name:
+                self.pos = old_pos
+                return None
+        else:
+            if self.match('\.'):
+                # full global.local name
+                if declare and global_name != self.global_label:
+                    self.pos = old_pos
+                    return None
+
+                local_name = self.name()
+                if not local_name:
+                    self.pos = old_pos
+                    return None
+
+        if not local_name:
+            return global_name
+
+        return global_name+'.'+local_name
+
+    def label_name_declare(self):
+        """
+        Same as label_name, but set declare to True.
+        """
+        return self.label_name(declare=True)
 
     def image_name_component(self):
         """
@@ -1604,7 +1660,8 @@ def pass_statement(l, loc):
 @statement("menu")
 def menu_statement(l, loc):
     l.expect_block('menu statement')
-    label = l.name()
+    label = l.label_name_declare()
+    l.set_global_label(label)
     l.require(':')
     l.expect_eol()
 
@@ -1645,7 +1702,7 @@ def jump_statement(l, loc):
         target = l.require(l.simple_expression)
     else:
         expression = False
-        target = l.require(l.name)
+        target = l.require(l.label_name)
 
     l.expect_eol()
     l.advance()
@@ -1663,7 +1720,7 @@ def call_statement(l, loc):
 
     else:
         expression = False
-        target = l.require(l.name)
+        target = l.require(l.label_name)
 
     # Optional pass, to let someone write:
     # call expression foo pass (bar, baz)
@@ -1674,7 +1731,8 @@ def call_statement(l, loc):
     rv = [ ast.Call(loc, target, expression, arguments) ]
 
     if l.keyword('from'):
-        name = l.require(l.name)
+        name = l.require(l.label_name_declare)
+        l.set_global_label(name)
         rv.append(ast.Label(loc, name, [], None))
     else:
         if expression:
@@ -1949,8 +2007,9 @@ def python_statement(l, loc):
 
 @statement("label")
 def label_statement(l, loc, init=False):
-    name = l.require(l.name)
 
+    name = l.require(l.label_name_declare)
+    l.set_global_label(name)
     parameters = parse_parameters(l)
 
     if l.keyword('hide'):
