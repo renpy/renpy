@@ -30,6 +30,7 @@ import renpy.text.textsupport as textsupport
 # A list of text tags, mapping from the text tag prefix to if it
 # requires a closing tag.
 text_tags = dict(
+    alpha=True,
     image=False,
     p=False,
     w=False,
