@@ -338,7 +338,7 @@ def focus_extreme(xmul, ymul, wmul, hmul):
 
     for f in focus_list:
 
-        if not f.x:
+        if f.x is None:
             continue
 
         score = (f.x * xmul +
