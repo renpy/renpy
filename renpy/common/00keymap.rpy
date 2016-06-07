@@ -71,13 +71,19 @@ init -1600 python:
         input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
         input_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
         input_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
+        input_up = [ 'K_UP', 'repeat_K_UP' ],
+        input_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
         input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
         input_home = [ 'K_HOME' ],
         input_end = [ 'K_END' ],
 
         # Viewport.
-        viewport_up = [ 'mousedown_4' ],
-        viewport_down = [ 'mousedown_5' ],
+        viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],
+        viewport_rightarrow = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
+        viewport_uparrow = [ 'K_UP', 'repeat_K_UP' ],
+        viewport_downarrow = [ 'K_DOWN', 'repeat_K_DOWN' ],
+        viewport_wheelup = [ 'mousedown_4' ],
+        viewport_wheeldown = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
 
@@ -108,6 +114,8 @@ init -1600 python:
 
         # Ignored (kept for backwards compatibility).
         toggle_music = [ 'm' ],
+        viewport_up = [ 'mousedown_4' ],
+        viewport_down = [ 'mousedown_5' ],
 
         # Profile commands.
         profile_once = [ 'K_F8' ],
