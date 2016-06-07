@@ -120,7 +120,7 @@ class Viewport(renpy.display.layout.Container):
         self.arrowkeys = arrowkeys
 
         # Layout participates in the focus system so drags get migrated.
-        self.focusable = draggable
+        self.focusable = draggable or arrowkeys
 
         self.width = 0
         self.height = 0
@@ -255,6 +255,9 @@ class Viewport(renpy.display.layout.Container):
         rv = renpy.display.render.Render(width, height)
         rv.blit(surf, (cxo, cyo))
 
+        if self.arrowkeys:
+            rv.add_focus(self, None, None, None, None, None)
+
         return rv
 
     def check_edge_redraw(self, st):
@@ -305,6 +308,7 @@ class Viewport(renpy.display.layout.Container):
             self.edge_xspeed = 0
             self.edge_yspeed = 0
 
+        if not self.is_focused():
             return
 
         if self.mousewheel:
@@ -332,6 +336,10 @@ class Viewport(renpy.display.layout.Container):
         if self.arrowkeys:
 
             if renpy.display.behavior.map_event(ev, 'viewport_leftarrow'):
+
+                if self.xadjustment.value == 0:
+                    return None
+
                 rv = self.xadjustment.change(self.xadjustment.value - self.xadjustment.step)
                 if rv is not None:
                     return rv
@@ -339,6 +347,10 @@ class Viewport(renpy.display.layout.Container):
                     raise renpy.display.core.IgnoreEvent()
 
             if renpy.display.behavior.map_event(ev, 'viewport_rightarrow'):
+
+                if self.xadjustment.value == self.xadjustment.range:
+                    return None
+
                 rv = self.xadjustment.change(self.xadjustment.value + self.xadjustment.step)
                 if rv is not None:
                     return rv
@@ -346,6 +358,10 @@ class Viewport(renpy.display.layout.Container):
                     raise renpy.display.core.IgnoreEvent()
 
             if renpy.display.behavior.map_event(ev, 'viewport_uparrow'):
+
+                if self.yadjustment.value == 0:
+                    return None
+
                 rv = self.yadjustment.change(self.yadjustment.value - self.yadjustment.step)
                 if rv is not None:
                     return rv
@@ -353,6 +369,10 @@ class Viewport(renpy.display.layout.Container):
                     raise renpy.display.core.IgnoreEvent()
 
             if renpy.display.behavior.map_event(ev, 'viewport_downarrow'):
+
+                if self.yadjustment.value == self.yadjustment.range:
+                    return None
+
                 rv = self.yadjustment.change(self.yadjustment.value + self.yadjustment.step)
                 if rv is not None:
                     return rv
@@ -522,5 +542,8 @@ class VPGrid(Viewport):
             pos = c.place(rv, x, y, cw, ch, surf)
 
             self.offsets.append(pos)
+
+        if self.arrowkeys:
+            rv.add_focus(self, None, None, None, None, None)
 
         return rv
