@@ -141,21 +141,21 @@ init -1600 python:
         "pad_a_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
         "pad_b_press" : [ "button_alternate" ],
 
-        "pad_dpleft_press" : [ "focus_left", "bar_left" ],
-        "pad_leftx_neg" : [ "focus_left", "bar_left" ],
-        "pad_rightx_neg" : [ "focus_left", "bar_left" ],
+        "pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+        "pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+        "pad_rightx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
 
-        "pad_dpright_press" : [ "focus_right", "bar_right" ],
-        "pad_leftx_pos" : [ "focus_right", "bar_right" ],
-        "pad_rightx_pos" : [ "focus_right", "bar_right" ],
+        "pad_dpright_press" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+        "pad_leftx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+        "pad_rightx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
 
-        "pad_dpup_press" : [ "focus_up", "bar_up" ],
-        "pad_lefty_neg" :  [ "focus_up", "bar_up" ],
-        "pad_righty_neg" : [ "focus_up", "bar_up" ],
+        "pad_dpup_press" : [ "focus_up", "bar_up", "viewport_uparrow" ],
+        "pad_lefty_neg" :  [ "focus_up", "bar_up", "viewport_uparrow" ],
+        "pad_righty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
 
-        "pad_dpdown_press" : [ "focus_down", "bar_down" ],
-        "pad_lefty_pos" : [ "focus_down", "bar_down" ],
-        "pad_righty_pos" : [ "focus_down", "bar_down" ],
+        "pad_dpdown_press" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+        "pad_lefty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+        "pad_righty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
     }
 
     # Should we use the autoreload system?
