@@ -1518,7 +1518,7 @@ class Text(renpy.display.core.Displayable):
         rv = "".join(rv)
         _, _, rv = rv.rpartition("{fast}")
 
-        rv = renpy.translation.notags_filter(rv)
+        rv = renpy.translation.dialogue.notags_filter(rv)
 
         alt = self.style.alt
 
