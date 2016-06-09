@@ -308,10 +308,13 @@ class Viewport(renpy.display.layout.Container):
             self.edge_xspeed = 0
             self.edge_yspeed = 0
 
-        if not self.is_focused():
-            return
+            inside = False
 
-        if self.mousewheel:
+        else:
+
+            inside = True
+
+        if inside and self.mousewheel:
 
             if self.mousewheel == "horizontal":
                 adjustment = self.xadjustment
@@ -333,7 +336,7 @@ class Viewport(renpy.display.layout.Container):
                 else:
                     raise renpy.display.core.IgnoreEvent()
 
-        if self.arrowkeys:
+        if self.is_focused() and self.arrowkeys:
 
             if renpy.display.behavior.map_event(ev, 'viewport_leftarrow'):
 
@@ -379,7 +382,7 @@ class Viewport(renpy.display.layout.Container):
                 else:
                     raise renpy.display.core.IgnoreEvent()
 
-        if self.draggable:
+        if inside and self.draggable:
 
             if renpy.display.behavior.map_event(ev, 'viewport_drag_start'):
 
@@ -391,7 +394,7 @@ class Viewport(renpy.display.layout.Container):
                     renpy.display.focus.set_grab(self)
                     raise renpy.display.core.IgnoreEvent()
 
-        if self.edge_size and ev.type in [ pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP ]:
+        if inside and self.edge_size and ev.type in [ pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP ]:
 
             def speed(n, zero, one):
                 """
