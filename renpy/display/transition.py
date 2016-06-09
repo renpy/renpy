@@ -108,7 +108,7 @@ class MultipleTransition(Transition):
     scene following it. For example::
 
         define logodissolve = MultipleTransition([
-            False, Dissolve(0.5)
+            False, Dissolve(0.5),
             "logo.jpg", Pause(1.0),
             "logo.jpg", dissolve,
             True])
