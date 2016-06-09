@@ -81,6 +81,7 @@ define gui.medium_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale
 define gui.small_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4), pad_left=gui.scale(10), pad_right=gui.scale(10))
 define gui.check_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.radio_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.quick_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), 0)
 
 ## Choice buttons used by the menu statement.
 define gui.choice_borders = Borders(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
@@ -566,7 +567,8 @@ style quick_button is default
 style quick_button_text is button_text
 
 style quick_button:
-    xpadding gui.scale(10)
+    padding gui.quick_button_borders.padding
+    background Frame("gui/button/quick/[prefix_]background.png", gui.quick_button_borders)
 
 style quick_button_text:
     size gui.tiny_size
@@ -1522,11 +1524,11 @@ screen quick_menu():
         textbutton _("Menu") action ShowMenu()
         textbutton _("Auto") action Preference("auto-forward", "toggle")
 
-style quick_button:
-    variant "touch"
+init python:
 
-    xpadding gui.scale(60)
-    top_padding gui.scale(14)
+    if renpy.variant("touch"):
+        gui.quick_button_borders = Borders(gui.scale(60), gui.scale(14), gui.scale(60), gui.scale(0))
+
 
 ################################################################################
 ## Phone Variant

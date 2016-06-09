@@ -415,6 +415,17 @@ class ImageGenerator(object):
         button_family("button/radio", 280, 37,  self.scale_int(5))
 
 
+    def generate_quick_buttons(self):
+        width = self.scale_int(100)
+        height = self.scale_int(30)
+
+        s = self.make_surface(width, height)
+        self.save(s, "button/quick/idle_background")
+        self.save(s, "button/quick/selected_idle_background")
+        self.save(s, "button/quick/hover_background")
+        self.save(s, "button/quick/selected_hover_background")
+
+
     def generate_skip(self):
         XSIZE = 240
         XRIGHT = 50
@@ -498,6 +509,7 @@ class ImageGenerator(object):
         self.generate_nvl()
         self.generate_bars()
         self.generate_buttons()
+        self.generate_quick_buttons()
         self.generate_skip()
         self.generate_notify()
         self.generate_menus()
