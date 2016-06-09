@@ -37,6 +37,8 @@ class Viewport(renpy.display.layout.Container):
 
     __version__ = 5
 
+    arrowkeys = False
+
     def after_upgrade(self, version):
         if version < 1:
             self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
@@ -84,6 +86,7 @@ class Viewport(renpy.display.layout.Container):
                  xinitial=None,
                  yinitial=None,
                  replaces=None,
+                 arrowkeys=False,
                  **properties):
 
         super(Viewport, self).__init__(style=style, **properties)
@@ -114,9 +117,10 @@ class Viewport(renpy.display.layout.Container):
 
         self.mousewheel = mousewheel
         self.draggable = draggable
+        self.arrowkeys = arrowkeys
 
         # Layout participates in the focus system so drags get migrated.
-        self.focusable = draggable
+        self.focusable = draggable or arrowkeys
 
         self.width = 0
         self.height = 0
@@ -251,6 +255,9 @@ class Viewport(renpy.display.layout.Container):
         rv = renpy.display.render.Render(width, height)
         rv.blit(surf, (cxo, cyo))
 
+        if self.arrowkeys:
+            rv.add_focus(self, None, None, None, None, None)
+
         return rv
 
     def check_edge_redraw(self, st):
@@ -301,9 +308,13 @@ class Viewport(renpy.display.layout.Container):
             self.edge_xspeed = 0
             self.edge_yspeed = 0
 
-            return
+            inside = False
 
-        if self.mousewheel:
+        else:
+
+            inside = True
+
+        if inside and self.mousewheel:
 
             if self.mousewheel == "horizontal":
                 adjustment = self.xadjustment
@@ -325,7 +336,53 @@ class Viewport(renpy.display.layout.Container):
                 else:
                     raise renpy.display.core.IgnoreEvent()
 
-        if self.draggable:
+        if self.is_focused() and self.arrowkeys:
+
+            if renpy.display.behavior.map_event(ev, 'viewport_leftarrow'):
+
+                if self.xadjustment.value == 0:
+                    return None
+
+                rv = self.xadjustment.change(self.xadjustment.value - self.xadjustment.step)
+                if rv is not None:
+                    return rv
+                else:
+                    raise renpy.display.core.IgnoreEvent()
+
+            if renpy.display.behavior.map_event(ev, 'viewport_rightarrow'):
+
+                if self.xadjustment.value == self.xadjustment.range:
+                    return None
+
+                rv = self.xadjustment.change(self.xadjustment.value + self.xadjustment.step)
+                if rv is not None:
+                    return rv
+                else:
+                    raise renpy.display.core.IgnoreEvent()
+
+            if renpy.display.behavior.map_event(ev, 'viewport_uparrow'):
+
+                if self.yadjustment.value == 0:
+                    return None
+
+                rv = self.yadjustment.change(self.yadjustment.value - self.yadjustment.step)
+                if rv is not None:
+                    return rv
+                else:
+                    raise renpy.display.core.IgnoreEvent()
+
+            if renpy.display.behavior.map_event(ev, 'viewport_downarrow'):
+
+                if self.yadjustment.value == self.yadjustment.range:
+                    return None
+
+                rv = self.yadjustment.change(self.yadjustment.value + self.yadjustment.step)
+                if rv is not None:
+                    return rv
+                else:
+                    raise renpy.display.core.IgnoreEvent()
+
+        if inside and self.draggable:
 
             if renpy.display.behavior.map_event(ev, 'viewport_drag_start'):
 
@@ -337,7 +394,7 @@ class Viewport(renpy.display.layout.Container):
                     renpy.display.focus.set_grab(self)
                     raise renpy.display.core.IgnoreEvent()
 
-        if self.edge_size and ev.type in [ pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP ]:
+        if inside and self.edge_size and ev.type in [ pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP ]:
 
             def speed(n, zero, one):
                 """
@@ -488,5 +545,8 @@ class VPGrid(Viewport):
             pos = c.place(rv, x, y, cw, ch, surf)
 
             self.offsets.append(pos)
+
+        if self.arrowkeys:
+            rv.add_focus(self, None, None, None, None, None)
 
         return rv

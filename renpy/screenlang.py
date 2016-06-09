@@ -808,6 +808,7 @@ for name in [ "bar", "vbar" ]:
 FunctionStatementParser("viewport", "ui.viewport", 1)
 Keyword("child_size")
 Keyword("mousewheel")
+Keyword("arrowkeys")
 Keyword("draggable")
 Keyword("edgescroll")
 Keyword("xadjustment")

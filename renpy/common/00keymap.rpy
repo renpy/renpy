@@ -71,13 +71,19 @@ init -1600 python:
         input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
         input_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
         input_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
+        input_up = [ 'K_UP', 'repeat_K_UP' ],
+        input_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
         input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
         input_home = [ 'K_HOME' ],
         input_end = [ 'K_END' ],
 
         # Viewport.
-        viewport_up = [ 'mousedown_4' ],
-        viewport_down = [ 'mousedown_5' ],
+        viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],
+        viewport_rightarrow = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
+        viewport_uparrow = [ 'K_UP', 'repeat_K_UP' ],
+        viewport_downarrow = [ 'K_DOWN', 'repeat_K_DOWN' ],
+        viewport_wheelup = [ 'mousedown_4' ],
+        viewport_wheeldown = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
 
@@ -108,6 +114,8 @@ init -1600 python:
 
         # Ignored (kept for backwards compatibility).
         toggle_music = [ 'm' ],
+        viewport_up = [ 'mousedown_4' ],
+        viewport_down = [ 'mousedown_5' ],
 
         # Profile commands.
         profile_once = [ 'K_F8' ],
@@ -133,21 +141,21 @@ init -1600 python:
         "pad_a_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
         "pad_b_press" : [ "button_alternate" ],
 
-        "pad_dpleft_press" : [ "focus_left", "bar_left" ],
-        "pad_leftx_neg" : [ "focus_left", "bar_left" ],
-        "pad_rightx_neg" : [ "focus_left", "bar_left" ],
+        "pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+        "pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+        "pad_rightx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
 
-        "pad_dpright_press" : [ "focus_right", "bar_right" ],
-        "pad_leftx_pos" : [ "focus_right", "bar_right" ],
-        "pad_rightx_pos" : [ "focus_right", "bar_right" ],
+        "pad_dpright_press" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+        "pad_leftx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+        "pad_rightx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
 
-        "pad_dpup_press" : [ "focus_up", "bar_up" ],
-        "pad_lefty_neg" :  [ "focus_up", "bar_up" ],
-        "pad_righty_neg" : [ "focus_up", "bar_up" ],
+        "pad_dpup_press" : [ "focus_up", "bar_up", "viewport_uparrow" ],
+        "pad_lefty_neg" :  [ "focus_up", "bar_up", "viewport_uparrow" ],
+        "pad_righty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
 
-        "pad_dpdown_press" : [ "focus_down", "bar_down" ],
-        "pad_lefty_pos" : [ "focus_down", "bar_down" ],
-        "pad_righty_pos" : [ "focus_down", "bar_down" ],
+        "pad_dpdown_press" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+        "pad_lefty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+        "pad_righty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
     }
 
     # Should we use the autoreload system?

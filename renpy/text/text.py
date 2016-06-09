@@ -1287,6 +1287,7 @@ class Text(renpy.display.core.Displayable):
     __version__ = 4
 
     _uses_scope = True
+    _duplicatable = False
 
     def after_upgrade(self, version):
 
@@ -1359,6 +1360,14 @@ class Text(renpy.display.core.Displayable):
 
         # The list of displayables we use.
         self.displayables = None
+
+        self._duplicatable = self.slow
+
+    def _duplicate(self, args):
+        if self._duplicatable:
+            return self._copy(args)
+
+        return self
 
     def __unicode__(self):
         s = ""
@@ -1509,7 +1518,7 @@ class Text(renpy.display.core.Displayable):
         rv = "".join(rv)
         _, _, rv = rv.rpartition("{fast}")
 
-        rv = renpy.translation.notags_filter(rv)
+        rv = renpy.translation.dialogue.notags_filter(rv)
 
         alt = self.style.alt
 
