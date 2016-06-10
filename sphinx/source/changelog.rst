@@ -8,6 +8,66 @@ Full Changelog
 Ren'Py 6.99.11
 ==============
 
+New In-Game GUI
+----------------
+
+Ren'Py ships with a new default GUI. This system, used in-game to customize
+the main menu, game menu, and in-game screens, replaces the old themes
+and screens.rpy system with a new system that's intended to be an improvement
+for every creator:
+
+* For new creators, the new GUI is intended to look attractive (if generic)
+  out of the box. It is adaptable to a choice of sizes, and supports games
+  with light and dark backgrounds.
+
+* Intermediate creators will be able to more easily customize the new GUI,
+  by configuring a number of variables in the ``gui`` namespace, and editing
+  a series of template images.
+
+* Advanced creators will be able to replace the new gui entirely, either
+  piece by piece or wholesale. The new gui infrastructure resets all styles
+  to sensible defaults, making it easier to apply customization.
+
+In addition, the new GUI adds support for a number of new features. These
+features are generally implemented in a way that custom GUIs can take
+advantage of. Highlights include:
+
+* The GUI defaults to supporting 16:9 widescreen resolutions.
+
+* The new GUI is intended to support PCs and mobile devices in landscape
+  mode. Where appropriate, it conforms to iOS and Android interface
+  guidelines.
+
+* The new GUI includes native support for a history or readback
+  screen.
+
+* The new GUI includes support for assigning names to file pages,
+  allowing a certain amount of organization to be applied to
+  files.
+
+
+Improved Platform Support
+-------------------------
+
+In addition to the new GUI's support for mobile, there has been improvement
+to Ren'Py's support for non-PC platforms.
+
+**Android** The Android build system has undergone a rewrite, adding support
+for x86, while retaining and modernizing support for ARM devices.
+
+Ren'Py now supports immersive mode on Android's 4.4+. Immersive mode hides
+the system UI, including the navigation bar, allowing Ren'Py to take up the
+entire screen.
+
+**Chrome OS** Ren'Py now support ChromeOS by running the Android APKs via
+the Android Runtime for Chrome tool.
+
+
+
+
+
+
+
 Translate and Style Statement Order Changes
 -------------------------------------------
 
@@ -37,10 +97,6 @@ are executed) by setting :var:`config.new_translate_order` to False.
 
 Other
 -----
-
-Ren'Py now supports immersive mode on Android's 4.4+. Immersive mode hides
-the system UI, including the navigation bar, allowing Ren'Py to take up the
-entire screen.
 
 
 Ren'Py 6.99.10
