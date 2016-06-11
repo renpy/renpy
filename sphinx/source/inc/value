@@ -55,7 +55,7 @@
 
 .. function:: FieldValue(object, field, range, max_is_zero=False, style='bar', offset=0, step=None)
     
-    A value that allows the user to adjust the value of a field
+    A bar value that allows the user to adjust the value of a field
     on an object.
     
     `object`
@@ -88,6 +88,32 @@
         "music", "sfx", or "voice", but user code can create new
         mixers.
 
+.. function:: ScreenVariableValue(variable, range, max_is_zero=False, style='bar', offset=0, step=None)
+    
+    A bar value that adjusts the value of a variable in a screen.
+    
+    `object`
+        The object.
+    `field`
+        The field, a string.
+    `range`
+        The range to adjust over.
+    `max_is_zero`
+        If True, then when the field is zero, the value of the
+        bar will be range, and all other values will be shifted
+        down by 1. This works both ways - when the bar is set to
+        the maximum, the field is set to 0.
+    
+        This is used internally, for some preferences.
+    `style`
+        The styles of the bar created.
+    `offset`
+        An offset to add to the value.
+    `step`
+        The amount to change the bar by. If None, defaults to 1/10th of
+        the bar.
+     
+
 .. function:: StaticValue(value=0.0, range=1.0)
     
     This allows a value to be specified statically.
@@ -99,6 +125,9 @@
          The range of the value.
 
 .. function:: VariableValue(variable, range, max_is_zero=False, style='bar', offset=0, step=None)
+    
+    A bar value that allows the user to adjust the value of a variable
+    in the default store.
     
     `variable`
         A string giving the name of the variable to adjust.

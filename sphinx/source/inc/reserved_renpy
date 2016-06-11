@@ -12,11 +12,13 @@
 * :func:`AudioPositionValue`
 * Bar
 * :class:`BarValue`
+* :func:`Borders`
 * Button
 * :func:`Character`
 * :class:`Color`
 * :func:`ComposeTransition`
 * :func:`ConditionSwitch`
+* :func:`Confirm`
 * :func:`CropMove`
 * DictEquality
 * :func:`DictInputValue`
@@ -126,6 +128,7 @@
 * RotoZoom
 * RoundRect
 * :func:`ScreenVariableInputValue`
+* :func:`ScreenVariableValue`
 * :func:`Screenshot`
 * :func:`SelectedIf`
 * :func:`SensitiveIf`
@@ -205,6 +208,7 @@
 * easeouttop
 * extend
 * :var:`fade`
+* gui
 * :var:`hpunch`
 * hyperlink_function
 * hyperlink_styler
@@ -247,6 +251,7 @@
 * :var:`pixellate`
 * predict_menu
 * predict_say
+* preferences
 * pushdown
 * pushleft
 * :var:`pushright`

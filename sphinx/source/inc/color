@@ -71,6 +71,10 @@
         Returns the alpha (opacity) of this Color as a number between 0.0 and
         1.0, where 0.0 is transparent and 1.0 is opaque.
     
+    .. attribute:: hexcode
+    
+        Returns a string containing a hex color code of the form #rrggbbaa
+        or #rrggbb.
     
     Color objects have the following methods. Since Colors are immutable,
     these methods always return a new Color object.

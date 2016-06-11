@@ -13,6 +13,7 @@
 * :class:`Color`
 * :func:`ComposeTransition`
 * :func:`ConditionSwitch`
+* :func:`Confirm`
 * :func:`CropMove`
 * :func:`DictInputValue`
 * :func:`DictValue`
@@ -90,7 +91,7 @@
 * :func:`RollForward`
 * :func:`Rollback`
 * RotoZoom
-* :func:`ScreenVariableInputValue`
+* :func:`ScreenVariableValue`
 * :func:`Screenshot`
 * :func:`SelectedIf`
 * :func:`SensitiveIf`

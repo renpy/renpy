@@ -61,13 +61,15 @@
     
     Returns the number of dialogue blocks in the game's original language.
 
+.. function:: renpy.count_newly_seen_dialogue_blocks()
+    
+    Returns the number of dialogue blocks the user has seen for the first time
+    during this session.
+
 .. function:: renpy.count_seen_dialogue_blocks()
     
     Returns the number of dialogue blocks the user has seen in any play-through
     of the current game.
-    
-    This number may be larger than the result of :func:`renpy.count_dialogue_blocks`
-    when the script has changed and older dialogue blocks are no longer accessible.
 
 .. function:: renpy.dynamic(*vars)
     
@@ -150,6 +152,22 @@
 .. function:: renpy.get_physical_size()
     
     Returns the size of the physical window.
+
+.. function:: renpy.get_refresh_rate(precision=5)
+    
+    Returns the refresh rate of the current screen, as a floating-point
+    number of frames per second.
+    
+    `precision`
+        The raw data Ren'Py gets is numbe of frames per second, rounded down.
+        This means that a monitor that runs at 59.95 frames per second will
+        be reported at 59 fps. The precision argument reduces the precision
+        of this reading, such that the only valid readings are multiples of
+        the precision.
+    
+        Since all monitor framerates tend to be multiples of 5 (25, 30, 60,
+        75, and 120), this likely will improve accuracy. Setting precision
+        to 1 disables this.
 
 .. function:: renpy.get_renderer_info()
     

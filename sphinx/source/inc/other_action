@@ -1,5 +1,22 @@
 .. Automatically generated file - do not modify.
 
+.. function:: Confirm(prompt, yes, no=None, confirm_selected=False)
+    
+    Prompts the user for confirmation of an action. If the user
+    clicks yes, the yes action is performed. Otherwise, the `no`
+    action is performed.
+    
+    `prompt`
+        The prompt to display to the user.
+    
+    `confirm_selected`
+        If true, the prompt will be displayed even if the `yes` action
+        is already selected. If false (the default), the prompt
+        will not be displayed if the `yes` action is selected.
+    
+    The sensitivity and selectedness of this action match those
+    of the `yes` action.
+
 .. function:: Function(callable, *args, **kwargs)
     
     This Action calls `callable` with `args` and `kwargs`.
