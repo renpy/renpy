@@ -1,16 +1,9 @@
 Welcome to Ren'Py's documentation!
 ==================================
 
-We're in the process of rewriting Ren'Py's documentation. While what we have
-here is the most up-to-date documentation, it's also very incomplete. To find
-out more about Ren'Py, please visit the Ren'Py home page:
+To find out more about Ren'Py, please visit the Ren'Py home page:
 
     http://www.renpy.org/
-
-Some of Ren'Py is only documented in the older documentation, which is stored
-in the Ren'Py Wiki:
-
-    http://www.renpy.org/wiki/
 
 .. only:: not language_ja and not gettext
 
