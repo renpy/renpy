@@ -630,10 +630,13 @@ class Button(renpy.display.layout.Window):
 
     role_parameter = None
 
+    keysym = None
+    alternate_keysym = None
+
     def __init__(self, child=None, style='button', clicked=None,
                  hovered=None, unhovered=None, action=None, role=None,
                  time_policy=None, keymap={}, alternate=None,
-                 selected=None, sensitive=None,
+                 selected=None, sensitive=None, keysym=None, alternate_keysym=None,
                  **properties):
 
         if isinstance(clicked, renpy.ui.Action):
@@ -651,7 +654,11 @@ class Button(renpy.display.layout.Window):
 
         self.focusable = True #(clicked is not None) or (action is not None)
         self.role_parameter = role
+
         self.keymap = keymap
+
+        self.keysym = keysym
+        self.alternate_keysym = alternate_keysym
 
         self.time_policy_data = None
 
@@ -811,6 +818,14 @@ class Button(renpy.display.layout.Window):
             rv = super(Button, self).event(ev, x, y, st)
             if rv is not None:
                 return rv
+
+        if (self.keysym is not None) and (self.clicked is not None):
+            if map_event(ev, self.keysym):
+                return handle_click(self.clicked)
+
+        if (self.alternate_keysym is not None) and (self.alternate is not None):
+            if map_event(ev, self.alternate_keysym):
+                return handle_click(self.alternate)
 
         # If not focused, ignore all events.
         if not self.is_focused():

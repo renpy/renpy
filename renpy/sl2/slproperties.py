@@ -134,6 +134,8 @@ button_properties = [ Style(i) for i in [
         Keyword("alternate"),
         Keyword("selected"),
         Keyword("sensitive"),
+        Keyword("keysym"),
+        Keyword("alternate_keysym"),
     ]
 
 bar_properties = [ Style(i) for i in [
