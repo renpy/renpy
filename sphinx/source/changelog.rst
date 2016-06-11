@@ -45,15 +45,29 @@ advantage of. Highlights include:
   allowing a certain amount of organization to be applied to
   files.
 
+* Ren'Py supports the use of a ctc screen to display the click-to-continue
+  indicator.
+
+* The NVL and choice screens are now given lists of objects as parameters,
+  instead of tuples. (The objects also function as tuples, for compatibility
+  with old code.)
+
+* The yesno_prompt screen has been renamed to confirm.
+
+
 
 Improved Platform Support
 -------------------------
 
-In addition to the new GUI's support for mobile, there has been improvement
-to Ren'Py's support for non-PC platforms.
+There have been a number of fixes to Ren'Py's support for various
+platforms.
+
+**Windows** HighDPI mode is detected properly when displaying the
+presplash.
 
 **Android** The Android build system has undergone a rewrite, adding support
-for x86, while retaining and modernizing support for ARM devices.
+for x86, while retaining and modernizing support for ARM devices. RAPT now
+included many dependencies, fixing Android build problems.
 
 Ren'Py now supports immersive mode on Android's 4.4+. Immersive mode hides
 the system UI, including the navigation bar, allowing Ren'Py to take up the
@@ -64,9 +78,27 @@ the Android Runtime for Chrome tool.
 
 
 
+Style Prefix Support
+--------------------
 
+Ren'Py now supports the use of a prefix_ substitution with style properties.
+Where previously, one was required to write::
 
+    style button:
+        insensitive_background "insensitive_button.png"
+        idle_background "idle_button.png"
+        hover_background "hover_button.png"
+        selected_idle_background "selected_idle_button.png"
+        selected_hover_background "selected_hover_button.png"
 
+one can now write::
+
+    style button:
+        background "[prefix_]button.png"
+
+This searches through prefixes in a manner similar to the way styles do.
+When looking for a selected_idle_background, Ren'Py will search for
+selected_idle_background.png, idle_background.png, and background.png
 
 Translate and Style Statement Order Changes
 -------------------------------------------
@@ -93,10 +125,88 @@ have run), or when the language changes, the following steps occur.
 
 Ren'Py can be made to return to the old behavior (in which only ``translate``
 `language` ``style``, ``translate`` `language` ``python``, and callbacks
-are executed) by setting :var:`config.new_translate_order` to False.
+are executed) by setti
+
+
+Local Labels
+------------
+
+Ren'Py now supports labels scoped to inside another label. It's possible to
+write::
+
+    label day1:
+
+        menu:
+            "Should I sleep in?"
+
+            "Yes":
+                jump .afternoon
+
+            "No":
+                jump .morning
+
+    label .morning:
+
+        "It's the morning."
+
+    label .afternoon:
+
+        "It's the afternoon."
+
+In this code, the .morning and .afternoon labels can be jumped to directly
+from code that is immediately after the day1 label, or by jumping to
+day1.morning or day1.afternoon from other code.
+
+
+Transforms
+----------
+
+Transforms now support :tpref:`xtile` and :tpref:`ytile` transform
+properties. These properties allow the underlying displayable to
+be tiled multiple times.
+
+Transforms now support :tpref:`xpan` and :tpref:`ypan` transform
+properties. These properties take an angle (between 0 and 360 degrees,
+but angles outside that are clamped to that range). The angle is used to
+pan the image horizontally or vertically by that amount. This makes it
+possible to simulate a 360 degree panoramic image.
+
+Translations
+------------
+
+A Vietnamese translation of the launcher and tutorial have been added
+to Ren'Py. Thanks to Thuong Nguyen Huu for contributing it.
+
 
 Other
 -----
+
+Buttons now take `selected` and `sensitive` properties that directly
+control if the button is selected or sensitive.
+
+Ren'Py now supports extracting string translations from one project and
+applying them to another project. The translations can also be applied in
+reverse order, turning an English -> Russian interface translation into
+a Russian -> English translation.
+
+Viewports and vpgrids now support an arrowkeys property, that makes the
+viewport scrollable using arrow keys and a controller d-pad.
+
+Viewports and vpgrids now support horizontal scrolling via the mouse
+wheel, by setting their `mousewheel` parameter to "horizontal".
+
+InputValues now take a returnable property, that causes their value to be
+returned when enter is pressed.
+
+Ren'Py support a :func:`renpy.get_refresh_rate` function, which returns the
+referesh rate of the primary screen. This allows games using nearest neighbor
+mode to move at a whole-pixel rate - just like a Commodore 64 did.
+
+Ren'Py can now automatically upload your game to itch.io, if
+:var:`build.itch_project` is set.
+
+The :var:`config.after_load_callbacks` can be given callback functions
+to run once a load has been completed.
 
 
 Ren'Py 6.99.10
