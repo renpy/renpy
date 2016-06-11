@@ -346,6 +346,14 @@ action. A button takes no parameters, and the following properties.
     This expression is evaluated at least once per interaction.
     If not provided, the action will be used to determine sensitivity.
 
+`keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the action of this button.
+
+`alternate_keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the alternate action of this button.
+
 It also takes:
 
 * :ref:`Common Properties <common-properties>`
@@ -550,6 +558,14 @@ properties:
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
     If not provided, the action will be used to determine sensitivity.
+
+`keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the action of this button.
+
+`alternate_keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the alternate action of this button.
 
 It also takes:
 
@@ -889,6 +905,14 @@ following properties:
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
     If not provided, the action will be used to determine sensitivity.
+
+`keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the action of this button.
+
+`alternate_keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the alternate action of this button.
 
 `text_style`
     The name of the style to use for the button text. If not supplied,
@@ -1306,6 +1330,24 @@ also takes the following properties:
 
 `unhovered`
     An action to run when the button loses focus.
+
+`selected`
+    An expression that determines whether the button is selected or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine selectedness.
+
+`sensitive`
+    An expression that determines whether the button is sensitive or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine sensitivity.
+
+`keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the action of this button.
+
+`alternate_keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the alternate action of this button.
 
 It also takes:
 

@@ -359,11 +359,6 @@ Keyword("cache")
 
 DisplayableParser("hotspot", renpy.ui._hotspot, "hotspot", 1, hotspot=True)
 Positional("spot")
-Keyword("action")
-Keyword("alternate")
-Keyword("clicked")
-Keyword("hovered")
-Keyword("unhovered")
 add(window_properties)
 add(button_properties)
 

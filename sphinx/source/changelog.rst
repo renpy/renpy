@@ -181,8 +181,14 @@ to Ren'Py. Thanks to Thuong Nguyen Huu for contributing it.
 Other
 -----
 
-Buttons now take `selected` and `sensitive` properties that directly
-control if the button is selected or sensitive.
+Buttons, textbuttons, imagebuttons, and hotspots now take
+`selected` and `sensitive` properties that directly control if the
+button is selected or sensitive.
+
+Buttons, textbuttons, imagebuttons, and hotspots take `keysym` and
+`alternate_keysym` bindings, that make it possible to assign keys to the
+buttons. When the given key is pressed, the action or alternate
+action is run.
 
 Ren'Py now supports extracting string translations from one project and
 applying them to another project. The translations can also be applied in
