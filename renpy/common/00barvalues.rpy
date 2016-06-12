@@ -436,9 +436,9 @@ init -1500 python:
         """
          :doc: value
 
-         The value of an adjustment that horizontally scrolls the the viewport with the
-         given id, on the current screen. The viewport must be defined
-         before a bar with this value is.
+         The value of an adjustment that horizontally scrolls the viewport with the
+         given id, on the current screen. The viewport must be defined before a bar
+         with this value is.
          """
 
         equality_fields = [ 'viewport' ]
@@ -460,9 +460,9 @@ init -1500 python:
         """
          :doc: value
 
-         The value of an adjustment that vertically scrolls the the viewport with the
-         given id, on the current screen. The viewport must be defined
-         before a bar with this value is.
+         The value of an adjustment that vertically scrolls the viewport with the
+         given id, on the current screen. The viewport must be defined before a bar
+         with this value is.
          """
 
         equality_fields = [ 'viewport' ]

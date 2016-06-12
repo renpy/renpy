@@ -316,9 +316,9 @@ class Dissolve(Transition):
         The time the dissolve will take.
 
     `alpha`
-        If true, the dissolve will alpha-composite the the result of the
-        transition with the screen. If false, the result of the transition
-        will replace the screen, which is more efficient.
+        If true, the dissolve will alpha-composite the result of the transition
+        with the screen. If false, the result of the transition will replace the
+        screen, which is more efficient.
 
     `time_warp`
         A function that adjusts the timeline. If not None, this should be a
@@ -407,9 +407,9 @@ class ImageDissolve(Transition):
         If true, black pixels will dissolve in before white pixels.
 
     `alpha`
-        If true, the dissolve will alpha-composite the the result of the
-        transition with the screen. If false, the result of the transition
-        will replace the screen, which is more efficient.
+        If true, the dissolve will alpha-composite the result of the transition
+        with the screen. If false, the result of the transition will replace the
+        screen, which is more efficient.
 
     `time_warp`
         A function that adjusts the timeline. If not None, this should be a

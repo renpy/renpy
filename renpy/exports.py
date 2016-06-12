@@ -558,7 +558,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         zorder is preserved if it exists, and is otherwise set to 0.
 
     `tag`
-        A string, used to specify the the image tag of the shown image. The
+        A string, used to specify the image tag of the shown image. The
         equivalent of the ``as`` property.
 
     `behind`
@@ -3230,7 +3230,7 @@ def get_refresh_rate(precision=5):
     number of frames per second.
 
     `precision`
-        The raw data Ren'Py gets is numbe of frames per second, rounded down.
+        The raw data Ren'Py gets is number of frames per second, rounded down.
         This means that a monitor that runs at 59.95 frames per second will
         be reported at 59 fps. The precision argument reduces the precision
         of this reading, such that the only valid readings are multiples of

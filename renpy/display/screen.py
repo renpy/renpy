@@ -88,8 +88,8 @@ class ScreenProfile(renpy.object.Object):
             Displays the variables in the screen that are marked as const and
             not-const.
 
-        All profiling profiling output will be logged to profile_screen.txt in
-        the game directory.
+        All profiling output will be logged to profile_screen.txt in the game
+        directory.
         """
 
         self.predict = predict

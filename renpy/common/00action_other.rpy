@@ -276,7 +276,7 @@ init -1500 python:
 
             Returns an action that is generally used as the hovered property
             of a button. When the button is hovered, the value field of this
-            tooltip is set to `value`. When the buttton loses focus, the
+            tooltip is set to `value`. When the button loses focus, the
             value field of this tooltip reverts to the default.
             """
 
