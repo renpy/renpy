@@ -214,6 +214,9 @@ Ren'Py can now automatically upload your game to itch.io, if
 The :var:`config.after_load_callbacks` can be given callback functions
 to run once a load has been completed.
 
+The :var:`config.tts_voice` variable has been added, to allow for a
+platform-specific choice of text-to-speech voice to use.
+
 
 Ren'Py 6.99.10
 ==============

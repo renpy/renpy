@@ -709,6 +709,9 @@ translate_comments = [ ]
 # Should we pass the full argument list to the say screen?
 old_say_args = False
 
+# The text-to-speech voice.
+tts_voice = None
+
 del renpy
 del os
 

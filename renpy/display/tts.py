@@ -83,14 +83,34 @@ def default_tts_function(s):
         renpy.exports.restart_interaction()
         return
 
+    fsencode = renpy.exports.fsencode
+
     if renpy.linux:
-        process = subprocess.Popen([ "espeak", s.encode("utf-8") ])
+        if renpy.config.tts_voice is None:
+            process = subprocess.Popen([ "espeak", fsencode(s) ])
+        else:
+            process = subprocess.Popen([ "espeak", "-v", fsencode(renpy.config.tts_voice), fsencode(s) ])
+
+
     elif renpy.macintosh:
-        process = subprocess.Popen([ "say", renpy.exports.fsencode(s) ])
+
+        if renpy.config.tts_voice is None:
+            process = subprocess.Popen([ "say", fsencode(s) ])
+        else:
+            process = subprocess.Popen([ "say", "-v", fsencode(renpy.config.tts_voice), fsencode(s) ])
+
+
+
     elif renpy.windows:
+
+        if renpy.config.tts_voice is None:
+            voice = "default voice" # something that is unlikely to match.
+        else:
+            voice = renpy.config.tts_voice
+
         say_vbs = os.path.join(os.path.dirname(sys.executable), "say.vbs")
         s = s.replace('"', "")
-        process = subprocess.Popen([ "wscript", renpy.exports.fsencode(say_vbs), renpy.exports.fsencode(s) ])
+        process = subprocess.Popen([ "wscript", fsencode(say_vbs), fsencode(s), fsencode(voice) ])
 
 
 def tts(s):

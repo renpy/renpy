@@ -745,6 +745,13 @@ Occasionally Used
 
     When using a load_save layout, a different default may be used.
 
+.. var:: config.tts_voice = None
+
+    If not None, a string giving a non-default voice that is used to
+    play back text-to-speech for self voicing. The possible choices are
+    platform specific, and so this should be set in a platform-specific
+    manner. (It may make sense to change this in translations, as well.)
+
 .. var:: config.window_auto_hide = [ 'scene', 'call screen' ]
 
     A list of statements that cause ``window auto`` to hide the empty

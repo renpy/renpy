@@ -41,8 +41,23 @@ Linux
     installed using your package manager before self-voicing mode will
     work.
 
-Android
-    Self-voicing mode is not supported on Android
+Android, iOS, Chrome OS
+    Self-voicing mode is not supported on Android, iOS, or Chrome OS.
+
+The default voice can be selected on a per-platform basis, using the
+:var:`config.tts_voice` variable. For example::
+
+    init python:
+
+        if renpy.windows:
+            config.tts_voice = "Mark"
+        elif renpy.mac:
+            config.tts_voice = "Alex"
+        elif renpy.linux:
+            config.tts_voice = "english_rp"
+
+The available voice vary based on the platform.
+
 
 Creator Concerns
 ----------------
