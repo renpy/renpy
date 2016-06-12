@@ -309,7 +309,7 @@ init -1500 python in iap:
         `identifier`
             A string that's used to identify the product internally. Once used
             to represent a product, this must never change. These strings are
-            generall of the form "com.domain.game.product".
+            generally of the form "com.domain.game.product".
 
             If None, defaults to `product`.
 
@@ -428,11 +428,11 @@ init -1500 python in iap:
         :doc: iap_actions
 
         An action that attempts the purchase of `product`. This action is
-        sensitive iff and only if the product is purchasable (a store is
+        sensitive if and only if the product is purchasable (a store is
         enabled, and the product has not already been purchased.)
 
         `success`
-            If not None, this is an action or list of actions that are tun
+            If not None, this is an action or list of actions that are run
             when the purchase succeeds.
         """
 

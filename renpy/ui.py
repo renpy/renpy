@@ -236,10 +236,9 @@ def interact(type='misc', roll_forward=None, **kwargs): #@ReservedAssignment
     :args: (roll_forward=None, mouse='default')
 
     Causes an interaction with the user, and returns the result of that
-    interaction. This causes Ren'Py to to redraw the screen and begin
-    processing input events. When a displayable returns a value in
-    response to an event, that value is returned from ui.interact,
-    and the interaction ends.
+    interaction. This causes Ren'Py to redraw the screen and begin processing
+    input events. When a displayable returns a value in response to an event,
+    that value is returned from ui.interact, and the interaction ends.
 
     This function is rarely called directly. It is usually called by other
     parts of Ren'Py, including the say statement, menu statement, with statement,
