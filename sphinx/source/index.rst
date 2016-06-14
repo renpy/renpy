@@ -110,6 +110,7 @@ Building, Updating, and Other Platforms
    build
    updater
    android
+   chromeos
    ios
    iap
    gesture
