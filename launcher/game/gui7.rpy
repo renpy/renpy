@@ -262,7 +262,6 @@ label new_gui_project:
     python:
         gui_new = True
 
-
         project_name = interface.input(
             _("PROJECT NAME"),
             _("Please enter the name of your project:"),
@@ -281,9 +280,9 @@ label new_gui_project:
         if os.path.exists(project_dir):
             interface.error(_("[project_dir!q] already exists. Please choose a different project name."), project_dir=project_dir)
 
-        replace_images = True
-        replace_code = True
-        update_code = True
+        gui_replace_images = True
+        gui_replace_code = True
+        gui_update_code = True
 
 
 label gui_project_size:
