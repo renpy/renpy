@@ -1,3 +1,5 @@
+.. _screen-special:
+
 ====================
 Special Screen Names
 ====================
