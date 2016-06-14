@@ -63,6 +63,26 @@ gui code.
     A string giving the version of the game. This is presented to the
     user in various places.
 
+:var:`gui.about`
+    Additional text that is added to the about screen. If you want multiple
+    paragraphs of credits, \\n\\n can be used to separate the paragraphs.
+
+Here's an example of these three defines::
+
+    define config.name = _('Old School High School')
+
+    define config.version = "1.0"
+
+    define gui.about = _("Created by PyTom.\n\nHigh school backgrounds by Mugenjohncel.")
+
+For convenience, it might make sense to define gui.about using a triple-quoted
+string, in which case line endings are respected. ::
+
+    define gui.about = _("""\
+    Created by PyTom.
+
+    High school backgrounds by Mugenjohncel.""")
+
 
 Game and Main Menu Background Images
 -------------------------------------
