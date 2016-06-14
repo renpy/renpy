@@ -10,7 +10,7 @@
 ## A human-readable name of the game. This is used to set the default
 ## window title, and shows up in the interface and error reports.
 ##
-## The _() surrounding the string marks it for translation.
+## The _() surrounding the string marks it as eligible for translation.
 
 define config.name = _("Ren'Py 7 Default GUI")
 
@@ -27,6 +27,12 @@ define build.name = "gui"
 define config.version = "1.0"
 
 
+## Text that is placed on the game's about screen. To insert a blank line
+## between paragraphs, write \n\n.
+
+define gui.about = _("")
+
+
 ###############################################################################
 ## Sounds and music
 
@@ -38,6 +44,7 @@ define config.version = "1.0"
 define config.has_sound = True
 define config.has_music = True
 define config.has_voice = True
+
 
 ## To allow the user to play a test sound on the sound or voice channel,
 ## uncomment a line below and use it to set a sample sound to play.
