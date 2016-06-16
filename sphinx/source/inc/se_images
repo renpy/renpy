@@ -82,7 +82,7 @@
         zorder is preserved if it exists, and is otherwise set to 0.
     
     `tag`
-        A string, used to specify the the image tag of the shown image. The
+        A string, used to specify the image tag of the shown image. The
         equivalent of the ``as`` property.
     
     `behind`

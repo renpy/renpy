@@ -3,11 +3,11 @@
 .. function:: iap.Purchase(product, success=None)
     
     An action that attempts the purchase of `product`. This action is
-    sensitive iff and only if the product is purchasable (a store is
+    sensitive if and only if the product is purchasable (a store is
     enabled, and the product has not already been purchased.)
     
     `success`
-        If not None, this is an action or list of actions that are tun
+        If not None, this is an action or list of actions that are run
         when the purchase succeeds.
 
 .. function:: iap.Restore()
