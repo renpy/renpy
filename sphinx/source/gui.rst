@@ -111,6 +111,21 @@ overlay/game_menu.png
     preferences, about, help, etc. This overlay is selected by the
     screen in question, and is used even when at the main menu.
 
+.. figure:: gui/easy_main_menu.png
+    :scale: 50%
+
+    The main menu, with only gui/main_menu.png replaced.
+
+.. figure:: gui/easy_game_menu.png
+    :scale: 50%
+
+    The about screen can be part of the game menu (using game_menu.png
+    as the background) or the main menu (using main_menu.png as the
+    background). Both can be set to the same image.
+
+
+
+
 
 Window Icon
 -----------
