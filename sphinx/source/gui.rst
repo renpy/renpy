@@ -91,11 +91,11 @@ The images used by the GUI can be found in the game/gui directory,
 which can be opened by choosing "Open Directory: gui" from the
 launcher. The relevant files are:
 
-main_menu.png
+gui/main_menu.png
     A file that contains an image that is used in the background of
     all screens of the main menu.
 
-game_menu.png
+gui/game_menu.png
     A file that contains an image that is used in the background of
     all screens of the game menu.
 
@@ -112,18 +112,19 @@ overlay/game_menu.png
     screen in question, and is used even when at the main menu.
 
 
-Example...
+Window Icon
+-----------
 
+The window icon is the icon that is displayed (in places like the Windows
+task bar and Macintosh dock) by a running application.
 
+The window icon can be changed by replacing game/gui/window_icon.png.
 
-
-
-
+Note that this only changes the icon used by the running game. To change
+the icon used by Windows .exe files and Macintosh applications, see the
+:ref:`build documentation <special-files>`.
 
 
 Intermediate GUI Customization
 ==============================
 
-
-About
------
