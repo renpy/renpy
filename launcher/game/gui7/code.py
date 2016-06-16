@@ -129,18 +129,16 @@ class CodeGenerator(object):
         Replaces define statements in options.rpy.
         """
 
-        def rrepr(o):
-            rv = repr(o)
 
-            if rv.startswith("u'"):
-                rv = rv[1:]
-
-            return rv
+        def quote(s):
+            s = s.replace("\\", "\\\\")
+            s = s.replace("\"", "\\\"")
+            return '"' + s + '"'
 
         replacements = {
-            'config.name' : rrepr(self.p.name),
-            'build.name' : rrepr(self.p.simple_name),
-            'config.save_directory' : rrepr(self.p.savedir),
+            'config.name' : "_({})".format(quote(self.p.name)),
+            'build.name' : quote(self.p.simple_name),
+            'config.save_directory' : quote(self.p.savedir),
             }
 
         self.update_defines(replacements)
@@ -263,7 +261,10 @@ class CodeGenerator(object):
         self.write_target(fn)
 
     def generate_code(self, fn):
-        if not self.p.replace_code:
+
+        target = os.path.join(self.p.prefix, fn)
+
+        if os.path.exists(target):
             return
 
         self.load_template(fn)
