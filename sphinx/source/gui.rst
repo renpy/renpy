@@ -103,10 +103,10 @@ There are also a pair of overlay images. These are used to darken or
 lighten the background image to make buttons and other user interface
 components more readable. These images are in the overlay directory:
 
-overlay/main_menu.png
+gui/overlay/main_menu.png
     The overlay used by the main menu screen.
 
-overlay/game_menu.png
+gui/overlay/game_menu.png
     The overlay used by game-menu-like screens, including load, save,
     preferences, about, help, etc. This overlay is selected by the
     screen in question, and is used even when at the main menu.
@@ -119,8 +119,8 @@ overlay/game_menu.png
 .. figure:: gui/easy_game_menu.png
     :scale: 50%
 
-    The about screen can be part of the game menu (using game_menu.png
-    as the background) or the main menu (using main_menu.png as the
+    The about screen can be part of the game menu (using gui/game_menu.png
+    as the background) or the main menu (using gui/main_menu.png as the
     background). Both can be set to the same image.
 
 
@@ -133,7 +133,7 @@ Window Icon
 The window icon is the icon that is displayed (in places like the Windows
 task bar and Macintosh dock) by a running application.
 
-The window icon can be changed by replacing game/gui/window_icon.png.
+The window icon can be changed by replacing gui/window_icon.png.
 
 Note that this only changes the icon used by the running game. To change
 the icon used by Windows .exe files and Macintosh applications, see the
