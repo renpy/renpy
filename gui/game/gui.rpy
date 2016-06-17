@@ -639,9 +639,6 @@ style navigation_button:
 ## Used to display the main menu when Ren'Py starts.
 ##
 ## http://www.renpy.org/doc/html/screen_special.html#main-menu
-##
-## This lays out the main menu and its backgrounds, but uses the navigation
-## screen to actually supply the main menu buttons.
 
 screen main_menu():
 
@@ -656,7 +653,8 @@ screen main_menu():
     frame:
         pass
 
-    # The actual contents of the main menu are in the navigation screen, above.
+    ## The use statement includes another screen inside this one. The actual
+    ## contents of the main menu are in the navigation screen.
     use navigation
 
     if gui.show_name:
@@ -706,8 +704,9 @@ style main_menu_title:
 ##
 ## This lays out the basic common structure of a game menu screen. It's called
 ## with the screen title, and displays the background, title, and navigation.
-## When used with children (the expected case), it transcludes those children
-## in an hbox after the space reserved for navigation.
+##
+## The scroll parameter can be None, or one of "viewport" or "vpgrid". When
+## this screen is used, a child given to this screen is included inside it.
 
 screen game_menu(title, scroll=None):
 
@@ -820,6 +819,60 @@ style return_button:
     yalign 1.0
     yoffset gui.scale(-30)
 
+
+##############################################################################
+## About
+##
+## This screen gives credit and copyright information about the game and
+## Ren'Py.
+##
+## There's nothing special about this screen, and hence it also serves as an
+## example of how to make a custom screen.
+
+screen about():
+
+    tag menu
+
+    ## This use statement includes the game_menu screen inside this one.
+    ## The vbox child is then included inside the viewport inside the
+    ## game_menu screen.
+    use game_menu(_("About"), scroll="viewport"):
+
+        style_prefix "about"
+
+        vbox:
+
+            label "[config.name!t]"
+            text _("Version [config.version!t]\n")
+
+            ## gui.about is usually set in options.rpy.
+            if gui.about:
+                text "[gui.about!t]\n"
+
+            text _("Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]")
+
+## This can be set in options.rpy to add text to the about screen.
+define gui.about = ""
+
+style about_label is gui_label
+style about_label_text is gui_label_text
+style about_text is gui_text
+
+style about_label_text:
+    size gui.label_size
+
+
+
+##############################################################################
+## Load and Save Screens
+##
+## These screens are responsible for letting the player save the game and
+## load it again. Since they share nearly everything in common, both
+## are implemented in terms of a third screen, file_slots.
+##
+## https://www.renpy.org/doc/html/screen_special.html#save
+## https://www.renpy.org/doc/html/screen_special.html#load
+
 screen file_slots(title):
 
     default page_name_value = FilePageNameInputValue()
@@ -889,17 +942,17 @@ screen file_slots(title):
 
                 textbutton _(">") action FilePageNext()
 
-screen load():
-
-    tag menu
-
-    use file_slots(_("Load"))
-
 screen save():
 
     tag menu
 
     use file_slots(_("Save"))
+
+screen load():
+
+    tag menu
+
+    use file_slots(_("Load"))
 
 define config.thumbnail_width = gui.scale(256)
 define config.thumbnail_height = gui.scale(144)
@@ -950,6 +1003,8 @@ style slot_time_text:
 
 style slot_name_text:
     ypos gui.scale(164)
+
+##############################################################################
 
 
 screen preferences():
@@ -1238,39 +1293,6 @@ style confirm_button:
 
 style confirm_button_text:
     xalign 0.5
-
-
-##############################################################################
-## About
-##
-## A screen that gives copyright information about the game and Ren'Py.
-screen about():
-
-    tag menu
-
-    use game_menu(_("About"), scroll="viewport"):
-
-        style_prefix "about"
-
-        vbox:
-
-            label "[config.name!t]"
-            text _("Version [config.version!t]\n")
-
-            ## gui.about is usually set in options.rpy.
-            if gui.about:
-                text "[gui.about!t]\n"
-
-            text _("Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]")
-
-define gui.about = ""
-
-style about_label is gui_label
-style about_label_text is gui_label_text
-style about_text is gui_text
-
-style about_label_text:
-    size gui.label_size
 
 
 ##############################################################################
