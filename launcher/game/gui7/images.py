@@ -318,12 +318,12 @@ class ImageGenerator(object):
         s = self.make_surface(width, height)
         # s.subsurface((0, top_y, bar_width, top_height)).fill(self.accent_color)
         s.subsurface((shot_offset, top_y, shot_width, top_height)).fill(self.accent_color.shade(.33))
-        self.save(s, "idle_file_slot")
+        self.save(s, "file_slot/idle_background")
 
         s = self.make_surface(width, height)
         s.subsurface((0, top_y, bar_width, top_height)).fill(self.accent_color)
         s.subsurface((shot_offset, top_y, shot_width, top_height)).fill(self.accent_color.shade(.5))
-        self.save(s, "hover_file_slot")
+        self.save(s, "file_slot/hover_background")
 
 
     def generate_frame(self):
@@ -336,8 +336,6 @@ class ImageGenerator(object):
         s.fill(self.accent_color)
         s.subsurface((border, border, width - 2 * border, height - 2 * border)).fill(self.boring_color)
         self.save(s, "frame")
-
-
 
         width = self.scale_int(300)
         height = self.scale_int(26)

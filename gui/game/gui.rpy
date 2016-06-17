@@ -925,8 +925,7 @@ style page_label_text:
     layout "subtitle"
 
 style slot_button:
-    background "gui/idle_file_slot.png"
-    hover_background "gui/hover_file_slot.png"
+    background "gui/file_slot/[prefix_]background.png"
 
     # Note that xsize and ysize include the margins.
 
