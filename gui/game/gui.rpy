@@ -1005,7 +1005,12 @@ style slot_name_text:
     ypos gui.scale(164)
 
 ##############################################################################
-
+## Preferences
+##
+## The preferences screen allows the player to configure the game to better
+## suit themselves.
+##
+## https://www.renpy.org/doc/html/screen_special.html#preferences
 
 screen preferences():
 

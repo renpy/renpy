@@ -492,6 +492,9 @@ Preferences
 The ``preferences`` screen is used to select options that control the
 display of the game.
 
+In general, the preferences are either actions or bar values returned
+from :func:`Preference`.
+
 ::
 
     screen preferences():
