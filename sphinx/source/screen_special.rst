@@ -290,8 +290,45 @@ The default notify screen, and its associated transform, are::
             linear .5 alpha 0.0
 
 
-Menu Screens
-============
+.. _skip-indicator:
+
+Skip Indicator
+--------------
+
+If present, ``skip_indicator`` screen is displayed when skipping is in progress,
+and hidden when skipping finishes. It takes no parameters.
+
+Here's a very simple skip indicator screen::
+
+
+    screen skip_indicator():
+
+        zorder 100
+
+        text _("Skipping")
+
+
+CTC (Click-To-Continue)
+-----------------------
+
+If present, the ``ctc`` screen is displayed when dialogue has finished
+showing, to prompt the player to click to display more text.
+
+Here's a very simple ctc screen::
+
+    screen ctc():
+
+        zorder 100
+
+        text _("Click to Continue"):
+            size 12
+            xalign 0.98
+            yalign 0.98
+
+
+
+Out-Of-Game Menu Screens
+========================
 
 These are the menu screens. The ``main_menu`` and ``yesno_prompt`` are
 invoked implicitly.  When the user invokes the game menu, the screen

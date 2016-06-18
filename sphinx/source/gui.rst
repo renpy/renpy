@@ -143,3 +143,31 @@ the icon used by Windows .exe files and Macintosh applications, see the
 Intermediate GUI Customization
 ==============================
 
+::
+
+    screen ctc():
+        style_prefix "ctc"
+
+        # Place on top of normal screens.
+        zorder 1
+
+        hbox:
+            spacing gui.scale(6)
+
+            xalign 1.0
+            xoffset gui.scale(-20)
+            yalign 1.0
+            yoffset gui.scale(-20)
+
+            text "▶" at delayed_blink(2.0, 3.0) style "ctc_triangle"
+            text "▶" at delayed_blink(2.2, 3.0) style "ctc_triangle"
+            text "▶" at delayed_blink(2.4, 3.0) style "ctc_triangle"
+
+    style ctc_triangle:
+        # We have to use a font that has the BLACK RIGHT-POINTING TRIANGLE glyph
+        # in it.
+        color gui.accent_color
+        font gui.glyph_font
+
+
+

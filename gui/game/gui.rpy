@@ -331,48 +331,6 @@ style namebox:
 
 
 
-###############################################################################
-## CTC
-
-
-## This transform is also used by the skip screen, below.
-transform delayed_blink(delay, cycle):
-    alpha .5
-
-    pause delay
-
-    block:
-        linear .2 alpha 1.0
-        pause .2
-        linear .2 alpha 0.5
-        pause (cycle - .4)
-        repeat
-
-screen ctc():
-    style_prefix "ctc"
-
-    # Place on top of normal screens.
-    zorder 1
-
-    hbox:
-        spacing gui.scale(6)
-
-        xalign 1.0
-        xoffset gui.scale(-20)
-        yalign 1.0
-        yoffset gui.scale(-20)
-
-        text "▶" at delayed_blink(2.0, 3.0) style "ctc_triangle"
-        text "▶" at delayed_blink(2.2, 3.0) style "ctc_triangle"
-        text "▶" at delayed_blink(2.4, 3.0) style "ctc_triangle"
-
-style ctc_triangle:
-    # We have to use a font that has the BLACK RIGHT-POINTING TRIANGLE glyph
-    # in it.
-    color gui.accent_color
-    font gui.glyph_font
-
-
 
 ################################################################################
 ## Input
@@ -1050,6 +1008,9 @@ screen preferences():
                     textbutton _("After Choices") action Preference("after choices", "toggle")
                     textbutton _("Transitions") action InvertSelected(Preference("transitions", "toggle"))
 
+                ## Additional vboxes of type "radio_pref" or "check_pref" can be added here, to
+                ## add additional creator-defined preferences.
+
             null height gui.scale(50)
 
             hbox:
@@ -1170,6 +1131,12 @@ style slider_pref_vbox:
 
 ##############################################################################
 ## History
+##
+## This is a screen that displays the dialogue history to the player.
+## While there isn't anything special about this screen, it does have to
+## access the dialogue history stored in _history_list.
+##
+## https://www.renpy.org/doc/html/history.html
 
 screen history():
 
@@ -1233,7 +1200,8 @@ style history_label_text:
 ##############################################################################
 ## Confirm
 ##
-## Screen that asks the user a yes or no question.
+## The confirm screen is called when Ren'Py wants to ask the player a yes or
+## no question.
 ##
 ## http://www.renpy.org/doc/html/screen_special.html#confirm
 
@@ -1303,7 +1271,9 @@ style confirm_button_text:
 ##############################################################################
 ## Help
 ##
-## A screen that gives information about key and mouse bindings.
+## A screen that gives information about key and mouse bindings. It uses
+## other screens (keyboard_help, mouse_help, and gamepad_help) to display the
+## actual help.
 screen help():
 
     tag menu
@@ -1448,7 +1418,12 @@ style help_label_text:
     text_align 1.0
 
 ##############################################################################
-# Skip Indicator
+## Skip Indicator
+##
+## The skip_indicator screen is displayed to indicate that skipping is in
+## progress.
+##
+## https://www.renpy.org/doc/html/screen_special.html#skip-indicator
 
 screen skip_indicator():
 
@@ -1466,6 +1441,18 @@ screen skip_indicator():
             text "▸" at delayed_blink(0.2, 1.0) style "skip_triangle"
             text "▸" at delayed_blink(0.4, 1.0) style "skip_triangle"
 
+## This transform is used to blink the arrows one after another.
+transform delayed_blink(delay, cycle):
+    alpha .5
+
+    pause delay
+
+    block:
+        linear .2 alpha 1.0
+        pause .2
+        linear .2 alpha 0.5
+        pause (cycle - .4)
+        repeat
 
 style skip_frame is empty
 style skip_text is gui_text
@@ -1487,9 +1474,13 @@ style skip_triangle:
     # glyph in it.
     font gui.glyph_font
 
-
 ################################################################################
 ## Message notification.
+##
+## The notification screen is used to show the player a message. (For example,
+## when the game is quicksaved or a screenshot has been taken.)
+##
+## https://www.renpy.org/doc/html/screen_special.html#notify-screen
 
 screen notify(message):
 
@@ -1499,12 +1490,9 @@ screen notify(message):
     frame at notify_appear:
         text message
 
-    # This controls how long it takes between when the screen is
-    # first shown, and when it begins hiding.
     timer 3.25 action Hide('notify')
 
 transform notify_appear:
-    # These control the actions on show and hide.
     on show:
         alpha 0
         linear .25 alpha 1.0
@@ -1526,20 +1514,24 @@ style notify_frame:
 style notify_text:
     size gui.notify_size
 
+
 ################################################################################
-## Tablet variants.
+## Medium and Touch Variants
+##
+## This section changes certain styes to make them more suitable for use with
+## a tablet.
 
 style pref_vbox:
     variant "medium"
     xsize gui.scale(460)
 
+## Since a mouse may not be present, we replace the quick menu with a version
+## that uses fewer and bigger buttons that are easier to touch.
 screen quick_menu():
     variant "touch"
 
-    # Ensure this appears on top of other screens.
     zorder 100
 
-    # Add an in-game quick menu.
     hbox:
         style_group "quick"
 
@@ -1557,7 +1549,10 @@ init python:
 
 
 ################################################################################
-## Phone Variant
+## Small Variants
+##
+## This section changes many sizes and images to make the game suitable for
+## a small phone screen.
 
 init python:
 
