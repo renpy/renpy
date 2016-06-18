@@ -54,8 +54,6 @@ advantage of. Highlights include:
 
 * The yesno_prompt screen has been renamed to confirm.
 
-
-
 Improved Platform Support
 -------------------------
 
@@ -75,8 +73,6 @@ entire screen.
 
 **Chrome OS** Ren'Py now support ChromeOS by running the Android APKs via
 the Android Runtime for Chrome tool.
-
-
 
 Style Prefix Support
 --------------------
@@ -127,7 +123,6 @@ Ren'Py can be made to return to the old behavior (in which only ``translate``
 `language` ``style``, ``translate`` `language` ``python``, and callbacks
 are executed) by setti
 
-
 Local Labels
 ------------
 
@@ -157,7 +152,6 @@ In this code, the .morning and .afternoon labels can be jumped to directly
 from code that is immediately after the day1 label, or by jumping to
 day1.morning or day1.afternoon from other code.
 
-
 Transforms
 ----------
 
@@ -176,7 +170,6 @@ Translations
 
 A Vietnamese translation of the launcher and tutorial have been added
 to Ren'Py. Thanks to Thuong Nguyen Huu for contributing it.
-
 
 Other
 -----
@@ -216,6 +209,9 @@ to run once a load has been completed.
 
 The :var:`config.tts_voice` variable has been added, to allow for a
 platform-specific choice of text-to-speech voice to use.
+
+:var:`config.quit_action` now defaults to ``Quit()``, which will display
+the quit prompt over the in-game interface.
 
 
 Ren'Py 6.99.10

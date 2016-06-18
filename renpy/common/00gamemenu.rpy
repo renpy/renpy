@@ -74,9 +74,6 @@ init -1700 python:
     # Layers to clear when entering the menus.
     config.menu_clear_layers = [ ]
 
-    # What we do on a quit, by default.
-    config.quit_action = ui.gamemenus("_quit_prompt")
-
     # What we do on a game menu invokcation.
     config.game_menu_action = None
 
@@ -126,6 +123,11 @@ init -1700 python:
                 renpy.display.behavior.run(config.game_menu_action)
             else:
                 renpy.call_in_new_context('_game_menu')
+
+init -1100 python:
+
+    # What we do on a quit, by default.
+    config.quit_action = Quit()
 
 default _menu = False
 

@@ -23,6 +23,17 @@ revent this change, add the code::
 
 Note that reverting this change may prevent the new GUI from working.
 
+
+The :var:`config.quit_action` variable has changed it's default to one
+that cause the quit prompt to be displayed of the in-game context. To
+revert to the old behavior, add the code::
+
+    define config.quit_action = ui.gamemenus("_quit_prompt")
+
+
+
+
+
 6.99.9
 ------
 

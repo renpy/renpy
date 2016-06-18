@@ -129,6 +129,8 @@ init -1900 python:
             config.new_translate_order = False
             config.old_say_args = True
             config.window_auto_hide.remove("call screen")
+            config.quit_action = ui.gamemenus("_quit_prompt")
+
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
@@ -207,3 +209,5 @@ init 1900 python hide::
         config.has_quicksave = False
         config.quit_action = ui.gamemenus("_confirm_quit")
         config.default_afm_enable = None
+
+
