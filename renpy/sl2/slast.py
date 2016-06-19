@@ -487,6 +487,9 @@ class SLDisplayable(SLBlock):
 
     hotspot = False
 
+    # A list of variables that are locally constant.
+    local_constant = [ ]
+
     def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, default_keywords={}, hotspot=False):
         """
         `displayable`
@@ -574,6 +577,11 @@ class SLDisplayable(SLBlock):
         if self.imagemap:
             analysis.pop_control()
 
+        # If we use a scope, store the local constants that need to be
+        # kept and placed into the scope.
+        if self.scope:
+            self.local_constant = list(analysis.local_constant)
+
     def prepare(self, analysis):
 
         SLBlock.prepare(self, analysis)
@@ -648,13 +656,20 @@ class SLDisplayable(SLBlock):
 
         if cache.constant and (cache.style_prefix == context.style_prefix):
 
-            for i in cache.constant_uses_scope:
+            for i, local_scope in cache.constant_uses_scope:
+
+                if local_scope:
+                    scope = dict(context.scope)
+                    scope.update(local_scope)
+                else:
+                    scope = context.scope
+
                 if copy_on_change:
-                    if i._scope(context.scope, False):
+                    if i._scope(scope, False):
                         cache.constant = None
                         break
                 else:
-                    i._scope(context.scope, True)
+                    i._scope(scope, True)
 
             else:
 
@@ -953,7 +968,14 @@ class SLDisplayable(SLBlock):
                 cache.constant = d
 
                 if self.scope and main._uses_scope:
-                    ctx.uses_scope.append(main)
+
+                    local_scope = { }
+
+                    for i in self.local_constant:
+                        if i in ctx.scope:
+                            local_scope[i] = ctx.scope[i]
+
+                    ctx.uses_scope.append((main, local_scope))
 
                 cache.constant_uses_scope = ctx.uses_scope
 
@@ -1334,7 +1356,6 @@ class SLFor(SLBlock):
         self.last_keyword = True
 
     def execute(self, context):
-
 
         variable = self.variable
         expr = self.expression_expr
