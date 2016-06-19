@@ -222,6 +222,17 @@ class DeltaSet(object):
     def copy(self):
         return DeltaSet(self.base, self)
 
+    def __iter__(self):
+
+        for i in self.base:
+            if i not in self.removed:
+                yield i
+
+        for i in self.added:
+            yield i
+
+
+
 
 class Analysis(object):
     """
