@@ -673,7 +673,7 @@ style main_menu_frame:
     xsize gui.scale(280)
     yfill True
 
-    background "gui/overlay/main.png"
+    background "gui/overlay/main_menu.png"
 
 style main_menu_vbox:
     xalign 1.0
@@ -779,7 +779,7 @@ style game_menu_outer_frame:
     bottom_padding gui.scale(30)
     top_padding gui.scale(120)
 
-    background "gui/overlay/game.png"
+    background "gui/overlay/game_menu.png"
 
 style game_menu_navigation_frame:
     xsize gui.scale(280)
@@ -1649,11 +1649,11 @@ style quick_button_text:
 
 style main_menu_frame:
     variant "small"
-    background "gui/phone/overlay/main.png"
+    background "gui/phone/overlay/main_menu.png"
 
 style game_menu_outer_frame:
     variant "small"
-    background "gui/phone/overlay/game.png"
+    background "gui/phone/overlay/game_menu.png"
 
 style game_menu_navigation_frame:
     variant "small"

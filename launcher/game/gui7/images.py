@@ -280,23 +280,23 @@ class ImageGenerator(object):
         mm = self.make_surface(self.width, self.height)
         mm.subsurface((0, 0, width, self.height)).fill(self.boring_color.opacity(.8))
         mm.subsurface((width - line_width, 0, line_width, self.height)).fill(self.accent_color)
-        self.save(mm, "overlay/main")
+        self.save(mm, "overlay/main_menu")
 
         mm = self.make_surface(self.width, self.height)
         mm.subsurface((0, 0, phone_width, self.height)).fill(self.boring_color.opacity(.8))
         mm.subsurface((phone_width - line_width, 0, line_width, self.height)).fill(self.accent_color)
-        self.save(mm, "phone/overlay/main")
+        self.save(mm, "phone/overlay/main_menu")
 
         # Game menu.
         gm = self.make_surface(self.width, self.height)
         gm.fill(self.boring_color.opacity(.8))
         gm.subsurface((width - line_width, game_y, line_width, game_height)).fill(self.accent_color)
-        self.save(gm, "overlay/game")
+        self.save(gm, "overlay/game_menu")
 
         gm = self.make_surface(self.width, self.height)
         gm.fill(self.boring_color.opacity(.8))
         gm.subsurface((phone_width - line_width, game_y, line_width, game_height)).fill(self.accent_color)
-        self.save(gm, "phone/overlay/game")
+        self.save(gm, "phone/overlay/game_menu")
 
         # Confirm.
         gm = self.make_surface(self.width, self.height)

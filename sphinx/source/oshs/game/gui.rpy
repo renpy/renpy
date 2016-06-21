@@ -1651,11 +1651,11 @@ style quick_button_text:
 
 style main_menu_frame:
     variant "small"
-    background "gui/phone/overlay/main.png"
+    background "gui/phone/overlay/main_menu.png"
 
 style game_menu_outer_frame:
     variant "small"
-    background "gui/phone/overlay/game.png"
+    background "gui/phone/overlay/game_menu.png"
 
 style game_menu_navigation_frame:
     variant "small"

@@ -99,17 +99,6 @@ gui/game_menu.png
     A file that contains an image that is used in the background of
     all screens of the game menu.
 
-There are also a pair of overlay images. These are used to darken or
-lighten the background image to make buttons and other user interface
-components more readable. These images are in the overlay directory:
-
-gui/overlay/main_menu.png
-    The overlay used by the main menu screen.
-
-gui/overlay/game_menu.png
-    The overlay used by game-menu-like screens, including load, save,
-    preferences, about, help, etc. This overlay is selected by the
-    screen in question, and is used even when at the main menu.
 
 .. figure:: gui/easy_main_menu.png
     :scale: 50%
@@ -122,10 +111,6 @@ gui/overlay/game_menu.png
     The about screen can be part of the game menu (using gui/game_menu.png
     as the background) or the main menu (using gui/main_menu.png as the
     background). Both can be set to the same image.
-
-
-
-
 
 Window Icon
 -----------
@@ -142,6 +127,47 @@ the icon used by Windows .exe files and Macintosh applications, see the
 
 Intermediate GUI Customization
 ==============================
+
+Next, we will demonstrate the intermediate level of GUI customization.
+At the intermediate level, it's possible to change the colors, fonts,
+and images used by the game. In general, intermediate customization
+keeps the screens mostly the same, with buttons and bars in the same
+places, although modifying the screens to add new functionality
+is certainly possible.
+
+
+Overlay Images
+--------------
+
+There are also a pair of overlay images. These are used to darken or
+lighten the background image to make buttons and other user interface
+components more readable. These images are in the overlay directory:
+
+gui/overlay/main.png
+    The overlay used by the main menu screen.
+
+gui/overlay/game.png
+    The overlay used by game-menu-like screens, including load, save,
+    preferences, about, help, etc. This overlay is selected by the
+    screen in question, and is used even when at the main menu.
+
+
+Here are a pair of example overlay images, and what the game looks like
+with the overlay images added.
+
+.. figure:: oshs/game/gui/overlay/main.png
+    :scale: 50%
+
+    An example main menu overlay.
+
+.. figure:: oshs/game/gui/overlay/game.png
+    :scale: 50%
+
+    An example game menu overlay.
+
+
+
+
 
 ::
 
