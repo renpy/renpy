@@ -31,9 +31,7 @@ define config.version = "1.0"
 define gui.about = _("""\
 Created by PyTom.
 
-Backgrounds by Mugenjohncel.
-
-Paper textures by S3tpic Stock @ Deviantart.""")
+Backgrounds by Mugenjohncel.""")
 
 
 ###############################################################################

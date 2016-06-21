@@ -15,9 +15,10 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
 Getting Started
 ---------------
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   quickstart
+    quickstart
+    gui
 
 The Ren'Py Language
 -------------------

@@ -101,12 +101,12 @@ gui/game_menu.png
 
 
 .. figure:: gui/easy_main_menu.png
-    :scale: 50%
+    :scale: 25%
 
     The main menu, with only gui/main_menu.png replaced.
 
 .. figure:: gui/easy_game_menu.png
-    :scale: 50%
+    :scale: 25%
 
     The about screen can be part of the game menu (using gui/game_menu.png
     as the background) or the main menu (using gui/main_menu.png as the
@@ -143,10 +143,10 @@ There are also a pair of overlay images. These are used to darken or
 lighten the background image to make buttons and other user interface
 components more readable. These images are in the overlay directory:
 
-gui/overlay/main.png
+gui/overlay/main_menu.png
     The overlay used by the main menu screen.
 
-gui/overlay/game.png
+gui/overlay/game_menu.png
     The overlay used by game-menu-like screens, including load, save,
     preferences, about, help, etc. This overlay is selected by the
     screen in question, and is used even when at the main menu.
@@ -155,15 +155,26 @@ gui/overlay/game.png
 Here are a pair of example overlay images, and what the game looks like
 with the overlay images added.
 
-.. figure:: oshs/game/gui/overlay/main.png
+.. figure:: oshs/game/gui/overlay/main_menu.png
     :scale: 50%
 
-    An example main menu overlay.
+    An example gui/overlay/main_menu.png image.
 
-.. figure:: oshs/game/gui/overlay/game.png
+.. figure:: oshs/game/gui/overlay/game_menu.png
     :scale: 50%
 
-    An example game menu overlay.
+    An example gui/overlay/game_menu.png image.
+
+.. figure:: gui/overlay_main_menu.png
+    :scale: 50%
+
+    The main menu after changing the overlays.
+
+.. figure:: gui/overlay_game_menu.png
+    :scale: 50%
+
+    The game menu after changing the overlays.
+
 
 
 

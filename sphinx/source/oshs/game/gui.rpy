@@ -17,10 +17,10 @@ init python:
 ## The colors of various aspects of the interface.
 
 ## An accent color used throughout the interface.
-define gui.accent_color = '#cc0066'
+define gui.accent_color = '#0066cc'
 
 ## A version of the accent color that's used when buttons are hovered.
-define gui.hover_color = '#d63284'
+define gui.hover_color = '#3284d6'
 
 ## The color used for a text button when it is selected but not focused. A
 ## button is selected if it is the current screen or preference value
