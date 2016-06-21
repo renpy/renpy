@@ -179,7 +179,7 @@ prefixes searched vary based on the state.
    - search order
 
  * - idle
-   - "idle", ""
+   - "idle_", ""
 
  * - hover
    - "hover_", "",

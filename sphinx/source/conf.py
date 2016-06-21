@@ -12,6 +12,8 @@
 # serve to show the default.
 
 import sys, os
+import sphinx_bootstrap_theme
+import datetime
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -41,7 +43,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Ren\'Py Visual Novel Engine'
-copyright = u'2012, Tom Rothamel' #@ReservedAssignment
+copyright = u'2012-{}, Tom Rothamel'.format(datetime.date.today().year) #@ReservedAssignment
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -101,10 +103,19 @@ html_theme = 'renpydoc'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+    'navbar_title' : "Ren'Py Documentation",
+    'navbar_sidebarrel' : False,
+    'navbar_pagenav' : False,
+    'source_link_position': None,
+    'navbar_links': [
+        ("Home Page", "https://www.renpy.org", True),
+        ("Online Documentation", "https://www.renpy.org/doc/html/", True),
+    ],
+    }
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = [ '.' ]
+html_theme_path = sphinx_bootstrap_theme.get_html_theme_path() + [ '.' ]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -137,6 +148,7 @@ html_use_smartypants = False
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
+html_sidebars = { '**': ['localtoc.html' ] }
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -167,6 +179,8 @@ html_use_smartypants = False
 
 # If nonempty, this is the file name suffix for HTML files (e.g. ".xhtml").
 #html_file_suffix = ''
+
+html_add_permalinks = " link"
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'TheRenPyVisualNovelEnginedoc'

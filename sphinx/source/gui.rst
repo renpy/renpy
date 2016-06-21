@@ -101,12 +101,12 @@ gui/game_menu.png
 
 
 .. figure:: gui/easy_main_menu.png
-    :scale: 25%
+    :width: 100%
 
     The main menu, with only gui/main_menu.png replaced.
 
 .. figure:: gui/easy_game_menu.png
-    :scale: 25%
+    :width: 100%
 
     The about screen can be part of the game menu (using gui/game_menu.png
     as the background) or the main menu (using gui/main_menu.png as the
@@ -156,27 +156,29 @@ Here are a pair of example overlay images, and what the game looks like
 with the overlay images added.
 
 .. figure:: oshs/game/gui/overlay/main_menu.png
-    :scale: 50%
+    :width: 100%
 
     An example gui/overlay/main_menu.png image.
 
 .. figure:: oshs/game/gui/overlay/game_menu.png
-    :scale: 50%
+    :width: 100%
 
     An example gui/overlay/game_menu.png image.
 
 .. figure:: gui/overlay_main_menu.png
-    :scale: 50%
+    :width: 100%
 
     The main menu after changing the overlays.
 
 .. figure:: gui/overlay_game_menu.png
-    :scale: 50%
+    :width: 100%
 
     The game menu after changing the overlays.
 
 
 
+Other
+-----
 
 
 
