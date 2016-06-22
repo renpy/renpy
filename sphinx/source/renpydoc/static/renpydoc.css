@@ -22,8 +22,9 @@ table.indextable tbody tr.cap td, table.indextable tbody tr.pcap td {
     font-weight: normal !important;
 }
 
-.highlight .s {
+.highlight .s1, .highlight .s2, .highlight .se {
     color: #006000 !important;
+    font-weight: normal !important;
 }
 
 .highlight .na {

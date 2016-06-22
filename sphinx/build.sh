@@ -11,6 +11,8 @@ try find ../renpy -name \*.pyo -delete
 
 try ../renpy.sh .
 
-try sphinx-build -a source ../doc || exit 1
+try sphinx-build -a source ../doc-web &
+try sphinx-build -a source ../doc 2>/dev/null
+wait
 try python checks.py
 
