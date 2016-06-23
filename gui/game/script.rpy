@@ -1,26 +1,32 @@
-﻿# You can place the script of your game in this file.
+## The script of the game goes in this file.
 
-define e = Character("Eileen")
+## Declare characters used by this game. The color argument colorizes the
+## name of the character.
+
+define e = Character('Eileen', color="#c8ffc8")
+
+## The game starts here.
 
 label start:
 
-    scene expression "#ff0000"
+    ## Show a background. This uses a placeholder by default, but you can
+    ## add a file (named either "bg room.png" or "bg room.jpg") to the
+    ## images directory to show it.
 
-    e "Hello, and welcome to the game."
+    scene bg room
 
-    scene expression "#000080"
-    with dissolve
+    ## This shows a character sprite. A placeholder is used, but you can
+    ## replace it by adding a file named "eileen happy.png" to the images
+    ## directory.
 
-    e "It's good to see you."
+    show eileen happy
 
-    menu:
-        "This is a choice."
+    ## These display lines of dialogue.
 
-        "The first choice.":
-            pass
-        "The second choice.":
-            pass
-        "The third choice.":
-            pass
+    e "You've created a new Ren'Py game."
+
+    e "Once you add a story, pictures, and music, you can release it to the world!"
+
+    ## This ends the game.
 
     return
