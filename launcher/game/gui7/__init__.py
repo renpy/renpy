@@ -33,6 +33,12 @@ def generate_gui(p):
     CodeGenerator(p).generate_code("options.rpy")
     CodeGenerator(p).generate_code("script.rpy")
 
+    images = os.path.join(p.prefix, "images")
+
+    if not os.path.exists(images):
+        os.mkdir(images)
+
+
 def generate_gui_command():
 
     ap = renpy.arguments.ArgumentParser()
