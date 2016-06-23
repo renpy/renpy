@@ -4,23 +4,8 @@ define e = Character("Eileen")
 
 label start:
 
-    scene expression "#ff0000"
+    scene expression "gui/main_menu.png"
 
-    e "Hello, and welcome to the game."
+    show eileen happy
 
-    scene expression "#000080"
-    with dissolve
-
-    e "It's good to see you."
-
-    menu:
-        "This is a choice."
-
-        "The first choice.":
-            pass
-        "The second choice.":
-            pass
-        "The third choice.":
-            pass
-
-    return
+    e "Is there some reason why school-based games always seem to use handwriting fonts and paper textures?"

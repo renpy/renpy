@@ -37,7 +37,7 @@ define gui.idle_small_color = '#aaaaaa'
 define gui.insensitive_color = '#8888887f'
 
 ## The colors used for dialogue and menu choice text.
-define gui.text_color = '#404040'
+define gui.text_color = '#402000'
 define gui.interface_text_color = '#404040'
 define gui.choice_text_color = '#cccccc'
 
@@ -49,7 +49,7 @@ define gui.game_menu_background = "gui/game_menu.png"
 ################################################################################
 ## Fonts and Font Sizes
 
-define gui.default_font = "DejaVuSans.ttf"
+define gui.default_font = "ArchitectsDaughter.ttf"
 define gui.interface_font = "DejaVuSans.ttf"
 define gui.glyph_font = "DejaVuSans.ttf"
 
@@ -140,6 +140,7 @@ define gui.page_spacing = 0
 style default:
     font gui.default_font
     size gui.text_size
+    color gui.text_color
 
 style input:
     color gui.accent_color
