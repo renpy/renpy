@@ -139,6 +139,7 @@ define gui.page_spacing = gui.scale(0)
 style default:
     font gui.default_font
     size gui.text_size
+    color gui.text_color
 
 style input:
     color gui.accent_color
