@@ -126,6 +126,60 @@ the icon used by Windows .exe files and Macintosh applications, see the
 :ref:`build documentation <special-files>`.
 
 
+Say Screen and Textbox
+----------------------
+
+The say screen is used to display dialogue to the player. There are a number
+of relatively easy customizations that can be performed to the Say screen.
+The first is changing the textbox:
+
+gui/textbox.png
+    This file contains the background of the text window, displayed as part
+    of the say screen. While this should be the full width of the game, text
+    is only displayed in the central 60% of the screen, with a 20% border
+    on either side.
+
+In addition, there are a number of variables that can be customized to change
+the say screen.
+
+.. var:: gui.text_color = "#402000"
+
+    This sets the color of the dialogue text.
+
+.. var:: gui.text_font = "ArchitectsDaughter.ttf"
+
+    This sets the font that is used by dialogue text. The font file should
+    exist in the game directory.
+
+.. var:: gui.text_size = 33
+
+    Sets the size of the dialogue text. This may need to be increased or
+    decreased to fit the selected font in the space alloted.
+
+.. var:: gui.label_size = 45
+
+    Sets the size of character name labels.
+
+By default, the character name label uses the accent color. The color can
+be easily changed when defining a character::
+
+    define e = Character("Eileen", who_color="#104010")
+
+.. ifconfig:: renpy_figures
+
+    .. figure:: oshs/game/gui/textbox.png
+        :width: 100%
+
+        An example textbox image.
+
+    .. figure:: gui/easy_say_screen.jpg
+        :width: 100%
+
+        The say screen, customized using the textbox image and the variable
+        settings given above.
+
+
+
 Intermediate GUI Customization
 ==============================
 
