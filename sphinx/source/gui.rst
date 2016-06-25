@@ -133,10 +133,10 @@ the say screen.
 
     This sets the color of the dialogue text.
 
-.. var:: gui.text_font = "ArchitectsDaughter.ttf"
+.. var:: gui.default_font = "ArchitectsDaughter.ttf"
 
-    This sets the font that is used by dialogue text. The font file should
-    exist in the game directory.
+    This sets the font that is used for dialogue text, menus, inputs, and
+    other in-game text. The font file should exist in the game directory.
 
 .. var:: gui.text_size = 33
 
@@ -278,11 +278,11 @@ with the overlay images added.
         The game menu after changing the overlays.
 
 
-Colors
-------
+Colors, Fonts, and Font Sizes
+-----------------------------
 
-There are a number of gui variables that can be used to change the color
-of text.
+There are a number of gui variables that can be used to change the color, font,
+and size of text.
 
 .. raw:: html
 
@@ -307,8 +307,8 @@ documented above, the following variables exist:
 
 .. var:: gui.idle_small_color = '#404040'
 
-    The color used for the text of small buttons when not selected. This color
-    often needs to be a bit lighter or darker than idle_color to compensate
+    The color used for small text (like the dates of save slots) when not selected.
+    This color often needs to be a bit lighter or darker than idle_color to compensate
     for the smaller size of the font.
 
 .. var:: gui.hover_color = '#3284d6'
@@ -329,6 +329,48 @@ documented above, the following variables exist:
 
     The color used by static text in the game interface, such as text on the
     help and about screens.
+
+In additional to :var:`gui.default_font`, the following variables selects the
+fonts used for text. These fonts should also be placed in the game directory.
+
+.. var:: gui.interface_font = "ArchitectsDaughter.ttf"
+
+    The font used for text for user interface elements, like the main and
+    game menus, buttons, and so on.
+
+.. var:: gui.glyph_font = "DejaVuSans.ttf"
+
+    A font used for certain glyphs, such as the arrow glyphs used by the skip
+    indicator. DejaVuSans is a reasonable default for these glyphs, and is
+    automatically included with every Ren'Py game.
+
+In addition to :var:`gui.text_size` and :var:`gui.label_size`, the following
+variables control text sizes.
+
+.. var:: gui.tiny_size = 21
+
+    The smallest size text, used for dates and save names in the file picker.
+
+.. var:: gui.notify_size = 24
+
+    The size of text on the notification screen.
+
+.. var:: gui.interface_size = 36
+
+    The size of text that is part of an interface element like a button or
+    an interface label.
+
+.. var:: gui.title_size = 75
+
+    The size of text that's used on the main menu.
+
+.. ifconfig:: renpy_figures
+
+    .. figure:: gui/text.jpg
+        :width: 100%
+
+        The game menu after customizing text colors, fonts, and sizes.
+
 
 Other
 -----
