@@ -39,7 +39,8 @@ define gui.insensitive_color = '#8888887f'
 ## The colors used for dialogue and menu choice text.
 define gui.text_color = '#402000'
 define gui.interface_text_color = '#404040'
-define gui.choice_text_color = '#cccccc'
+define gui.choice_idle_color = '#cccccc'
+define gui.choice_hover_color = '#0066cc'
 
 ## The images used for the main and game menus.
 define gui.main_menu_background = "gui/main_menu.png"
@@ -420,8 +421,8 @@ style choice_button is default:
     background Frame("gui/choice/[prefix_]background.png", gui.choice_borders)
 
 style choice_button_text is default:
-    color gui.choice_text_color
-    hover_color gui.text_color
+    color gui.choice_idle_color
+    hover_color gui.choice_hover_color
 
     # Center the text.
     xalign 0.5

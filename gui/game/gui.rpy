@@ -14,17 +14,11 @@ init python:
 ################################################################################
 ## Colors
 ##
-## The colors of various aspects of the interface.
+## The colors of text in the interface.
 
-## An accent color used throughout the interface.
+## An accent color used throughout the interface to label and highlight
+## text.
 define gui.accent_color = "#00b8c3"
-
-## A version of the accent color that's used when buttons are hovered.
-define gui.hover_color = Color(gui.accent_color).tint(.6)
-
-## The color used for a text button when it is selected but not focused.
-## A button is selected if it is the current screen or preference value
-define gui.selected_color = "#ffffff"
 
 ## The color used for a text button when it is neither selected nor hovered.
 define gui.idle_color = "#555555"
@@ -32,6 +26,13 @@ define gui.idle_color = "#555555"
 ## The small color is used for small buttons, which need to be brighter/darker
 ## to achieve the same effect.
 define gui.idle_small_color = "#aaaaaa"
+
+## A version of the accent color that's used when buttons are hovered.
+define gui.hover_color = Color(gui.accent_color).tint(.6)
+
+## The color used for a text button when it is selected but not focused.
+## A button is selected if it is the current screen or preference value
+define gui.selected_color = "#ffffff"
 
 ## The color used for a text button when it cannot be selected.
 define gui.insensitive_color = "#55555580"
@@ -41,6 +42,11 @@ define gui.text_color = "#ffffff"
 define gui.interface_text_color = "#ffffff"
 define gui.choice_idle_color = "#cccccc"
 define gui.choice_hover_color = "#ffffff"
+
+
+################################################################################
+## Images
+
 
 ## The images used for the main and game menus.
 define gui.main_menu_background = "gui/main_menu.png"
@@ -1359,7 +1365,7 @@ screen keyboard_help():
 
     hbox:
         label _("Arrow Keys")
-        text _("Navigates the interface.")
+        text _("Navigate the interface.")
 
     hbox:
         label _("Escape")
@@ -1421,23 +1427,23 @@ screen gamepad_help():
 
     hbox:
         label _("Right Trigger\nA/Bottom Button")
-        text _("Advances dialogue and activates the interface.")
+        text _("Advance dialogue and activates the interface.")
 
     hbox:
         label ("Left Trigger\nLeft Shoulder")
-        text _("Rolls back to earlier dialogue.")
+        text _("Roll back to earlier dialogue.")
 
     hbox:
         label _("Right Shoulder")
-        text _("Rolls forward to later dialogue.")
+        text _("Roll forward to later dialogue.")
 
     hbox:
         label _("D-Pad, Sticks")
-        text _("Navigates the interface.")
+        text _("Navigate the interface.")
 
     hbox:
         label _("Start, Guide")
-        text _("Accesses the game menu.")
+        text _("Access the game menu.")
 
     hbox:
         label _("Y/Top Button")
