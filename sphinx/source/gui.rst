@@ -113,19 +113,6 @@ gui/game_menu.png
         as the background) or the main menu (using gui/main_menu.png as the
         background). Both can be set to the same image.
 
-Window Icon
------------
-
-The window icon is the icon that is displayed (in places like the Windows
-task bar and Macintosh dock) by a running application.
-
-The window icon can be changed by replacing gui/window_icon.png.
-
-Note that this only changes the icon used by the running game. To change
-the icon used by Windows .exe files and Macintosh applications, see the
-:ref:`build documentation <special-files>`.
-
-
 Say Screen and Textbox
 ----------------------
 
@@ -177,6 +164,63 @@ be easily changed when defining a character::
 
         The say screen, customized using the textbox image and the variable
         settings given above.
+
+Choice Menus
+------------
+
+The choice screen is used by the menu statement to display choices to
+the player. Again, there  are some relatively easy customizations that
+can be performed on the choice screen. The first are the two image
+files:
+
+gui/choice/idle_background.png
+    This image is used as the background of choice buttons that are not
+    focused.
+
+gui/choice/hover_background.png
+    This image is used as the background of choice buttons that are focused.
+
+By default, text is placed in the central 75% of these images. The color
+of choice text is controlled by two variables:
+
+.. var:: gui.choice_idle_color = '#cccccc'
+
+    The color used for the text of unfocused choice buttons.
+
+.. var:: gui.choice_hover_color = '#0066cc'
+
+    The color used for the text of focused choice buttons.
+
+.. ifconfig:: renpy_figures
+
+    .. figure:: oshs/game/gui/choice/idle_background.png
+        :width: 100%
+
+        An example gui/choice/idle_background.png image.
+
+    .. figure:: oshs/game/gui/choice/hover_background.png
+        :width: 100%
+
+        An example gui/choice/hover_background.png image.
+
+    .. figure:: gui/easy_choice_screen.jpg
+        :width: 100%
+
+        An example of the choice screen, as customized using the images
+        and variable settings given above.
+
+
+Window Icon
+-----------
+
+The window icon is the icon that is displayed (in places like the Windows
+task bar and Macintosh dock) by a running application.
+
+The window icon can be changed by replacing gui/window_icon.png.
+
+Note that this only changes the icon used by the running game. To change
+the icon used by Windows .exe files and Macintosh applications, see the
+:ref:`build documentation <special-files>`.
 
 
 
@@ -234,6 +278,57 @@ with the overlay images added.
         The game menu after changing the overlays.
 
 
+Colors
+------
+
+There are a number of gui variables that can be used to change the color
+of text.
+
+.. raw:: html
+
+   <p>These variables should generally be set to hexadecimal color
+   codes, which are strings of the form "#rrggbb", similar to color codes
+   used by web browsers. For example, "#663399" is the code for a shade of
+   <a href="http://www.economist.com/blogs/babbage/2014/06/digital-remembrance" style="text-decoration: none; color: rebeccapurple">purple</a>.
+   There are many tools online that let you create html color codes, such as
+   <a href="http://htmlcolorcodes.com/color-picker/">this one</a>.</p>
+
+In addition to :var:`gui.text_color`, :var:`gui.choice_idle_color`, and :var:`gui.choice_hover_color`,
+documented above, the following variables exist:
+
+.. var:: gui.accent_color = '#000060'
+
+    The accent color is used in many places in the GUI, including titles
+    and labels.
+
+.. var:: gui.idle_color = '#606060'
+
+    The color used for most buttons when not focused or selected.
+
+.. var:: gui.idle_small_color = '#404040'
+
+    The color used for the text of small buttons when not selected. This color
+    often needs to be a bit lighter or darker than idle_color to compensate
+    for the smaller size of the font.
+
+.. var:: gui.hover_color = '#3284d6'
+
+    The color used by the text of focused buttons.
+
+.. var:: gui.selected_color = '#555555'
+
+    The color used by the text of selected buttons. (This takes priority
+    over the selected and idle colors.)
+
+.. var:: gui.insensitive_color = '#8888887f'
+
+    The color used by buttons that are insensitive to user input. (For example,
+    the rollback button when no rollback is possible.)
+
+.. var:: gui.interface_text_color = '#404040'
+
+    The color used by static text in the game interface, such as text on the
+    help and about screens.
 
 Other
 -----

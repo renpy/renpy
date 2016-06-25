@@ -17,21 +17,21 @@ init python:
 ## The colors of various aspects of the interface.
 
 ## An accent color used throughout the interface.
-define gui.accent_color = '#0066cc'
+define gui.accent_color = '#000060'
 
 ## A version of the accent color that's used when buttons are hovered.
-define gui.hover_color = '#3284d6'
+define gui.hover_color = '#0066cc'
 
 ## The color used for a text button when it is selected but not focused. A
 ## button is selected if it is the current screen or preference value
-define gui.selected_color = '#555555'
+define gui.selected_color = '#000060'
 
 ## The color used for a text button when it is neither selected nor hovered.
-define gui.idle_color = '#888888'
+define gui.idle_color = '#606060'
 
 ## The small color is used for small buttons, which need to be brighter/darker
 ## to achieve the same effect.
-define gui.idle_small_color = '#aaaaaa'
+define gui.idle_small_color = '#404040'
 
 ## The color used for a text button when it cannot be selected.
 define gui.insensitive_color = '#8888887f'
@@ -51,7 +51,7 @@ define gui.game_menu_background = "gui/game_menu.png"
 ## Fonts and Font Sizes
 
 define gui.default_font = "ArchitectsDaughter.ttf"
-define gui.interface_font = "DejaVuSans.ttf"
+define gui.interface_font = "ArchitectsDaughter.ttf"
 define gui.glyph_font = "DejaVuSans.ttf"
 
 define gui.tiny_size = 21
