@@ -250,12 +250,13 @@ gui/overlay/game_menu.png
     preferences, about, help, etc. This overlay is selected by the
     screen in question, and is used even when at the main menu.
 
-
-Here are a pair of example overlay images, and what the game looks like
-with the overlay images added.
-
+gui/overlay/confirm.png
+    The overlay used in the confirm screen to darken the background.
 
 .. ifconfig:: renpy_figures
+
+    Here are a pair of example overlay images, and what the game looks like
+    with the overlay images added.
 
     .. figure:: oshs/game/gui/overlay/main_menu.png
         :width: 100%
@@ -371,9 +372,82 @@ variables control text sizes.
 
         The game menu after customizing text colors, fonts, and sizes.
 
-Borders
--------
+Frames and Borders
+------------------
 
+There are a number of GUI components - such as buttons and bars - that use
+:func:`Frame` displayables configured using :func:`Border` objects. So, before
+discussing how to customize buttons and bars, we'll first describe how
+these constructs work.
+
+A Frame takes an image, and divides it into nine parts - the four corners,
+the four sides, and the center. The corners always remain the same size,
+the left and right sides are stretched vertically, the top and bottom sides
+are stretched horizontally, and the center is stretched in both directions.
+
+A Borders object gives the size of each of the borders, in left, top, right,
+bottom order. So if the following border image is used:
+
+.. image:: oshs/game/images/borders.png
+
+along with the following borders::
+
+    Borders(40, 40, 40, 40)
+
+one possible result is this:
+
+.. image:: gui/borders1.png
+
+As the child changes size, so will the background.
+
+A Border object can also be given padding, including negative padding that
+causes the child to overlap the borders. For example, these borders::
+
+    Borders(40, 40, 40, 40, -20, -20, -20, -20)
+
+allow the child to overlap the sides. Note that due to this overlap, the
+result is smaller, since the borders themselves now take up less space.
+
+.. image:: gui/borders2.png
+
+Borders can also be given a tile keyword argument, which causes the
+sides and center to be tiled instead of linearly scaled. For example::
+
+    Borders(40, 40, 40, 40, tile=True)
+
+produces this result:
+
+.. image:: gui/borders3.png
+
+These example images are a bit ugly, since we need to show what's going on.
+In practice, Frame can produce quite pleasing results. This is the case when
+a Frame displayable is used as the background of a frame window holding
+user interface components.
+
+These frame windows can be customized in two ways. The first is by changing the
+background image file:
+
+gui/frame.png
+    The image used as the background of frames windows.
+
+And the second is by customizing the borders:
+
+.. var:: gui.frame_borders = Borders(40, 40, 40, 40)
+
+    The borders applied to frame windows.
+
+.. ifconfig:: renpy_figures
+
+    .. figure:: oshs/game/gui/frame.png
+        :width: 100%
+
+        An example gui/overlay/game_menu.png image.
+
+    .. figure:: gui/frame_confirm.jpg
+        :width: 100%
+
+        The confirm screen after applying the customizations given
+        above.
 
 
 Other

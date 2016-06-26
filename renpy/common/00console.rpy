@@ -375,7 +375,8 @@ init -1500 python in _console:
 
         renpy.call_in_new_context("_console")
 
-init 1500 python in _console:
+# Has to run after 00library.
+init 1701 python in _console:
 
     if config.developer or config.console:
         console = DebugConsole()
