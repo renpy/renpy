@@ -426,7 +426,7 @@ style choice_button is default:
     background Frame("gui/choice/[prefix_]background.png", gui.choice_borders)
 
 style choice_button_text is default:
-    color gui.choice_text_color
+    color gui.choice_idle_color
     hover_color gui.choice_hover_color
 
     # Center the text.
