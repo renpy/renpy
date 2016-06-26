@@ -2,6 +2,22 @@
 
 define e = Character("Eileen")
 
+define b = Borders(40, 40, 40, 40, tile=True)
+
+
+screen borders():
+    add "black"
+
+    textbutton "Child":
+        background Frame("borders.png", b)
+        padding b.padding
+        text_size 125
+        text_color "#484"
+
+        xalign 0.5
+        yalign 0.5
+
+
 label start:
 
     scene expression "gui/main_menu.png"
@@ -21,4 +37,5 @@ label start:
             pass
 
 
+    call screen borders
 

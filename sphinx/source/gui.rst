@@ -371,6 +371,10 @@ variables control text sizes.
 
         The game menu after customizing text colors, fonts, and sizes.
 
+Borders
+-------
+
+
 
 Other
 -----
