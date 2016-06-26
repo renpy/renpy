@@ -96,7 +96,7 @@ define gui.vscrollbar_borders = Borders(6, 6, 6, 6)
 define gui.vslider_borders = Borders(6, 6, 6, 6)
 
 ## Frames.
-define gui.frame_borders = Borders(6, 6, 6, 6)
+define gui.frame_borders = Borders(40, 40, 40, 40)
 define gui.namebox_borders = Borders(75, 6, 75, 6)
 
 
@@ -1296,11 +1296,8 @@ style confirm_button_text is gui_medium_button_text
 style confirm_frame:
     xalign .5
     xsize 900
-    xpadding 113
-
     yalign .5
     ysize 375
-    ypadding 75
 
 style confirm_prompt_text:
     text_align 0.5

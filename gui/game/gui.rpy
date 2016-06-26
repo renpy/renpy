@@ -1300,11 +1300,8 @@ style confirm_button_text is gui_medium_button_text
 style confirm_frame:
     xalign .5
     xsize gui.scale(600)
-    xpadding gui.scale(75)
-
     yalign .5
     ysize gui.scale(250)
-    ypadding gui.scale(50)
 
 style confirm_prompt_text:
     text_align 0.5
