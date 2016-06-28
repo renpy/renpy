@@ -2,23 +2,35 @@
 
 define e = Character("Eileen")
 
-define b = Borders(40, 40, 40, 40, tile=True)
+define b = Borders(40, 5, 40, 5, tile=True)
+
+define gui.frame_borders = Borders(20, 20, 20, 20, tile=True)
 
 
-screen borders():
-    add "black"
+screen buttons():
 
-    textbutton "Child":
-        background Frame("borders.png", b)
-        padding b.padding
-        text_size 125
-        text_color "#484"
+    frame:
+        has vbox
 
-        xalign 0.5
-        yalign 0.5
+
+
+        spacing 10
+
+        textbutton "Large Button":
+            action Return(None)
+            background Frame("btb.png", b)
+            padding b.padding
+
+        textbutton "1":
+            action Return(None)
+            background Frame("btb.png", b)
+            padding b.padding
+
 
 
 label start:
+
+    call screen buttons
 
     scene expression "gui/main_menu.png"
 
@@ -38,4 +50,5 @@ label start:
 
 
     call screen borders
+
 

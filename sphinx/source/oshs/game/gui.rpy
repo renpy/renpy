@@ -108,9 +108,10 @@ define gui.namebox_borders = Borders(75, 6, 75, 6)
 
 ## The height of horizontal and width of vertical bars, scrollbars, and
 ## sliders.
-define gui.bar_size = 45
-define gui.scrollbar_size = 15
-define gui.slider_size = 45
+define gui.bar_size = 54
+define gui.scrollbar_size = 18
+define gui.slider_size = 54
+define gui.button_size = 100
 
 ## The width of the thumb on a horizontal slider, and the height of the thumb
 ## on a vertical slider.
@@ -176,6 +177,7 @@ style gui_text:
 
 ## Used for the text of all buttons.
 style button_text:
+    yalign 0.5
     size gui.interface_size
     color gui.idle_color
     insensitive_color gui.insensitive_color
@@ -186,6 +188,7 @@ style button_text:
 style button:
     padding gui.button_borders.padding
     background Frame("gui/button/[prefix_]background.png", gui.button_borders)
+    ysize gui.button_size
 
 ## Used for medium-sized buttons, like the sound test and mute buttons.
 style medium_button:

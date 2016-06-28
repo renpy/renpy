@@ -52,6 +52,9 @@ def displayable_or_none(d, scope=None):
     if isinstance(d, Color):
         return renpy.store.Solid(d)
 
+    if isinstance(d, list):
+        return renpy.display.image.DynamicImage(d, scope=scope)
+
     # We assume the user knows what he's doing in this case.
     if hasattr(d, '_duplicate'):
         return d
@@ -89,6 +92,9 @@ def displayable(d, scope=None):
     if isinstance(d, Color):
         return renpy.store.Solid(d)
 
+    if isinstance(d, list):
+        return renpy.display.image.DynamicImage(d, scope=scope)
+
     # We assume the user knows what he's doing in this case.
     if hasattr(d, '_duplicate'):
         return d
@@ -107,9 +113,15 @@ def dynamic_image(d, scope=None, prefix=None):
     performed until a file is found. (Only a file can be used in this case.)
     """
 
-    if isinstance(d, basestring):
+    if not isinstance(d, list):
+        d = [ d ]
 
-        if (prefix is not None) and ("[prefix_" in d):
+    for i in d:
+
+        if not isinstance(i, basestring):
+            continue
+
+        if (prefix is not None) and ("[prefix_" in i):
 
             if scope:
                 scope = dict(scope)
@@ -119,22 +131,27 @@ def dynamic_image(d, scope=None, prefix=None):
             for p in renpy.styledata.stylesets.prefix_search[prefix]: # @UndefinedVariable
                 scope["prefix_"] = p
 
-                rv = renpy.substitutions.substitute(d, scope=scope, force=True, translate=False)[0]
+                rv = renpy.substitutions.substitute(i, scope=scope, force=True, translate=False)[0]
 
                 if renpy.loader.loadable(rv):
-                    break
+                    return displayable_or_none(rv)
 
                 if renpy.exports.image_exists(rv):
-                    break
-
-            else:
-                return None
+                    return displayable_or_none(rv)
 
         else:
 
-            rv = renpy.substitutions.substitute(d, scope=scope, force=True, translate=False)[0]
+            rv = renpy.substitutions.substitute(i, scope=scope, force=True, translate=False)[0]
 
-    return displayable_or_none(rv)
+            if renpy.loader.loadable(rv):
+                return displayable_or_none(rv)
+
+            if renpy.exports.image_exists(rv):
+                return displayable_or_none(rv)
+
+    else:
+
+        return displayable_or_none(d[-1])
 
 
 def predict(d):
