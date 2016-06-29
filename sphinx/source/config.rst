@@ -733,7 +733,7 @@ Occasionally Used
     rather than the value of this setting when the thumbnail is shown
     to the user.
 
-    When using a load_save layout, a different default may be used.
+    This is changed by the default GUI.
 
 .. var:: config.thumbnail_width = 100
 
@@ -743,7 +743,7 @@ Occasionally Used
     rather than the value of this setting when the thumbnail is shown
     to the user.
 
-    When using a load_save layout, a different default may be used.
+    This is changed by the default GUI.
 
 .. var:: config.tts_voice = None
 
