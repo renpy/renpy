@@ -310,6 +310,10 @@ class DynamicImage(renpy.display.core.Displayable):
         if isinstance(name, basestring) and ("[prefix_" in name):
             self._duplicatable = True
 
+        if isinstance(name, list):
+            self._duplicatable = True
+
+
     def _scope(self, scope, update):
         return self.find_target(scope, update)
 

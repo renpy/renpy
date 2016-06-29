@@ -29,7 +29,7 @@ import time
 Color = renpy.color.Color
 color = renpy.color.Color
 
-def displayable_or_none(d, scope=None):
+def displayable_or_none(d, scope=None, dynamic=False):
 
     if isinstance(d, renpy.display.core.Displayable):
         return d
@@ -40,7 +40,7 @@ def displayable_or_none(d, scope=None):
     if isinstance(d, basestring):
         if not d:
             raise Exception("An empty string cannot be used as a displayable.")
-        elif ("[" in d) and renpy.config.dynamic_images:
+        elif ("[" in d) and renpy.config.dynamic_images and dynamic:
             return renpy.display.image.DynamicImage(d, scope=scope)
         elif d[0] == '#':
             return renpy.store.Solid(d)
@@ -151,7 +151,7 @@ def dynamic_image(d, scope=None, prefix=None):
 
     else:
 
-        return displayable_or_none(d[-1])
+        return displayable_or_none(d[-1], dynamic=False)
 
 
 def predict(d):
