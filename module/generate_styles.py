@@ -217,7 +217,7 @@ style_properties = sorted_dict(
 # of prefixes.
 displayable_properties = {
     "background",
-    "foreground"
+    "foreground",
     "child",
     "fore_bar",
     "aft_bar",
