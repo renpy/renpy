@@ -89,6 +89,7 @@ define gui.small_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(
 define gui.check_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.radio_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.quick_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), 0)
+define gui.slot_borders = Borders(gui.scale(10), gui.scale(10), gui.scale(10), gui.scale(10))
 
 ## Choice buttons used by the menu statement.
 define gui.choice_borders = Borders(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
@@ -115,13 +116,19 @@ define gui.namebox_borders = Borders(gui.scale(50), gui.scale(4), gui.scale(50),
 ## The height of horizontal and width of vertical bars, scrollbars, and sliders.
 define gui.bar_size = gui.scale(36)
 define gui.scrollbar_size = gui.scale(12)
-define gui.slider_size = gui.scale(36)
-define gui.button_size = gui.scale(36)
+define gui.slider_size = gui.scale(30)
 
-## The width of the thumb on a horizontal slider, and the height of the thumb
-## on a vertical slider.
-define gui.slider_thumb_size = gui.scale(10)
+## The widths and heights of various buttons. Setting these to None allows
+## Ren'Py to choose a width or height.
+define gui.button_width = None
+define gui.medium_button_width = None
+define gui.small_button_width = None
+define gui.slot_width = gui.scale(276)
 
+define gui.button_height = gui.scale(36)
+define gui.medium_button_height = gui.scale(30)
+define gui.small_button_height = gui.scale(30)
+define gui.slot_height = gui.scale(206)
 
 ################################################################################
 ## Sizes
@@ -140,6 +147,8 @@ define gui.pref_spacing = gui.scale(0)
 ## The spacing between file page buttons.
 define gui.page_spacing = gui.scale(0)
 
+## The spacing between file slots.
+define gui.slot_spacing = gui.scale(20)
 
 ################################################################################
 ## Basic in-game styles.
@@ -193,27 +202,34 @@ style button_text:
 style button:
     padding gui.button_borders.padding
     background Frame("gui/button/[prefix_]background.png", gui.button_borders)
-    ysize gui.button_size
+    xsize gui.button_width
+    ysize gui.button_height
 
 ## Used for medium-sized buttons, like the sound test and mute buttons.
 style medium_button:
     padding gui.medium_button_borders.padding
-    background Frame("gui/button/medium/[prefix_]background.png", gui.medium_button_borders)
+    background Frame([ "gui/button/medium_[prefix_]background.png", "gui/button/[prefix_]background.png" ], gui.medium_button_borders)
+    xsize gui.medium_button_width
+    ysize gui.medium_button_height
 
 ## Used for small-sized buttons, like the file page navigation buttons.
 style small_button:
     padding gui.small_button_borders.padding
-    background Frame("gui/button/small/[prefix_]background.png", gui.small_button_borders)
+    background Frame([ "gui/button/small_[prefix_]background.png", "gui/button/[prefix_]background.png" ], gui.small_button_borders)
+    xsize gui.medium_button_width
+    ysize gui.medium_button_height
 
 ## Used for checkbox buttons in the preferences.
 style check_button:
     padding gui.check_button_borders.padding
-    background Frame("gui/button/check/[prefix_]background.png", gui.check_button_borders)
+    background Frame([ "gui/button/check_[prefix_]background.png", "gui/button/[prefix_]background.png" ], gui.check_button_borders)
+    foreground "gui/button/check_[prefix_]foreground.png"
 
 ## Used for radio buttons in the preferences.
 style radio_button:
     padding gui.radio_button_borders.padding
-    background Frame("gui/button/radio/[prefix_]background.png", gui.radio_button_borders)
+    background Frame([ "gui/button/radio_[prefix_]background.png", "gui/button/[prefix_]background.png" ], gui.radio_button_borders)
+    foreground "gui/button/check_[prefix_]foreground.png"
 
 
 ## Labels a portion of the interface.
@@ -243,7 +259,7 @@ style scrollbar:
 style slider:
     ysize gui.slider_size
     base_bar Frame("gui/slider/horizontal_[prefix_]bar.png", gui.slider_borders)
-    thumb Frame("gui/slider/horizontal_[prefix_]thumb.png", gui.slider_borders, xsize=gui.slider_thumb_size)
+    thumb "gui/slider/horizontal_[prefix_]thumb.png"
 
 
 ## Vertical equivalents of bar, scrollbar, and slider.
@@ -261,7 +277,7 @@ style vscrollbar:
 style vslider:
     xsize gui.slider_size
     base_bar Frame("gui/slider/vertical_[prefix_]bar.png", gui.vslider_borders)
-    thumb Frame("gui/slider/vertical_[prefix_]thumb.png", gui.vslider_borders, ysize=gui.slider_thumb_size)
+    thumb "gui/slider/vertical_[prefix_]thumb.png"
 
 
 ## A frame that is intended to contain interface elements and make them usable
@@ -911,6 +927,8 @@ screen file_slots(title):
                 xalign 0.5
                 yalign 0.5
 
+                spacing gui.slot_spacing
+
                 for i in range(gui.file_slot_cols * gui.file_slot_rows):
 
                     $ slot = i + 1
@@ -993,16 +1011,9 @@ style page_label_text:
 
 style slot_button:
     background "gui/file_slot/[prefix_]background.png"
-
-    # Note that xsize and ysize include the margins.
-
-    xsize gui.scale(296)
-    xpadding gui.scale(10)
-    xmargin gui.scale(10)
-
-    ysize gui.scale(226)
-    ypadding gui.scale(10)
-    ymargin gui.scale(5)
+    padding gui.slot_borders.padding
+    xsize gui.scale(gui.slot_width)
+    ysize gui.scale(gui.slot_height)
 
 style slot_text:
     xalign 0.5
