@@ -29,7 +29,7 @@ import time
 Color = renpy.color.Color
 color = renpy.color.Color
 
-def displayable_or_none(d, scope=None, dynamic=False):
+def displayable_or_none(d, scope=None, dynamic=True):
 
     if isinstance(d, renpy.display.core.Displayable):
         return d
