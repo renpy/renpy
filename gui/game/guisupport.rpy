@@ -25,3 +25,6 @@ init 100 python in gui:
         p.skip_backup = True
 
         generate_gui(p)
+
+        _skip_backup = True
+        _gui_images()
