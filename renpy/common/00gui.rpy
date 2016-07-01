@@ -124,6 +124,15 @@ init -1100 python in gui:
 
                 pygame_sdl2.image.save(s, fn)
 
+            def fill(self, color=None):
+                if color is None:
+                    color = gui.accent_color
+
+                color = tuple(Color(color))
+
+                self.s.fill(color)
+                return self
+
             def fill_rect(self, rect, color=None):
                 if color is None:
                     color = gui.accent_color
@@ -148,6 +157,7 @@ init -1100 python in gui:
             return int(scaled * factor)
 
 
+        # Buttons
         width = scale(gui.button_width, 300)
         height = scale(gui.button_height, 36)
 
@@ -175,6 +185,43 @@ init -1100 python in gui:
 
         Image("button", "radio_selected_foreground", radio_width, height).fill_rect(radio_rect).save()
         Image("button", "radio_foreground", radio_width, height).save()
+
+
+
+        # Bars.
+        long_size = scale(None, 350)
+
+        Image("bar", "left", long_size, gui.bar_size).fill(gui.hover_color).save()
+        Image("bar", "right", long_size, gui.bar_size).fill(gui.muted_color).save()
+        Image("bar", "bottom", gui.bar_size, long_size).fill(gui.hover_color).save()
+        Image("bar", "top", gui.bar_size, long_size).fill(gui.muted_color).save()
+
+        thumb_size = scale(None, 10)
+
+
+        Image("slider", "horizontal_idle_bar", long_size, gui.slider_size).fill(gui.muted_color).save()
+        Image("slider", "horizontal_idle_thumb", thumb_size, gui.slider_size).fill(gui.accent_color).save()
+        Image("slider", "horizontal_hover_bar", long_size, gui.slider_size).fill(gui.hover_muted_color).save()
+        Image("slider", "horizontal_hover_thumb", thumb_size, gui.slider_size).fill(gui.hover_color).save()
+
+        Image("slider", "vertical_idle_bar", gui.slider_size, long_size).fill(gui.muted_color).save()
+        Image("slider", "vertical_idle_thumb", gui.slider_size, thumb_size).fill(gui.accent_color).save()
+        Image("slider", "vertical_hover_bar", gui.slider_size, long_size).fill(gui.hover_muted_color).save()
+        Image("slider", "vertical_hover_thumb", gui.slider_size, thumb_size).fill(gui.hover_color).save()
+
+
+        long_size = scale(None, 700)
+
+        Image("scrollbar", "horizontal_idle_bar", long_size, gui.scrollbar_size).fill(gui.muted_color).save()
+        Image("scrollbar", "horizontal_idle_thumb", long_size, gui.scrollbar_size).fill(gui.accent_color).save()
+        Image("scrollbar", "horizontal_hover_bar", long_size, gui.scrollbar_size).fill(gui.hover_muted_color).save()
+        Image("scrollbar", "horizontal_hover_thumb", long_size, gui.scrollbar_size).fill(gui.hover_color).save()
+
+        Image("scrollbar", "vertical_idle_bar", gui.scrollbar_size, long_size).fill(gui.muted_color).save()
+        Image("scrollbar", "vertical_idle_thumb", gui.scrollbar_size, long_size).fill(gui.accent_color).save()
+        Image("scrollbar", "vertical_hover_bar", gui.scrollbar_size, long_size).fill(gui.hover_muted_color).save()
+        Image("scrollbar", "vertical_hover_thumb", gui.scrollbar_size, long_size).fill(gui.hover_color).save()
+
 
         return False
 
