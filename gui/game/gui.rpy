@@ -1018,6 +1018,7 @@ style page_label:
 style page_label_text:
     text_align 0.5
     layout "subtitle"
+    hover_color gui.hover_color
 
 style slot_button:
     xsize gui.scale(gui.slot_width)
@@ -1166,7 +1167,7 @@ style pref_label_text:
     yalign 1.0
 
 style pref_vbox:
-    xsize gui.scale(230)
+    xsize gui.scale(225)
 
 style radio_pref_vbox:
     spacing gui.pref_spacing
@@ -1195,7 +1196,7 @@ style mute_all_pref_button:
     top_margin gui.scale(10)
 
 style slider_pref_vbox:
-    xsize gui.scale(460)
+    xsize gui.scale(450)
 
 
 ##############################################################################
@@ -1597,7 +1598,7 @@ style notify_text:
 
 style pref_vbox:
     variant "medium"
-    xsize gui.scale(460)
+    xsize gui.scale(450)
 
 ## Since a mouse may not be present, we replace the quick menu with a version
 ## that uses fewer and bigger buttons that are easier to touch.
