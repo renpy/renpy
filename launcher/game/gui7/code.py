@@ -112,6 +112,8 @@ class CodeGenerator(object):
             'gui.accent_color' : repr(self.p.accent_color.hexcode),
             'gui.selected_color' : repr(self.p.selected_color.hexcode),
             'gui.hover_color' : repr(self.p.hover_color.hexcode),
+            'gui.muted_color' : repr(self.p.muted_color.hexcode),
+            'gui.hover_muted_color' : repr(self.p.hover_muted_color.hexcode),
             'gui.title_color' : repr(self.p.title_color.hexcode),
             'gui.idle_color' : repr(self.p.idle_color.hexcode),
             'gui.idle_small_color' : repr(self.p.idle_small_color.hexcode),
