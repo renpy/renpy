@@ -187,7 +187,6 @@ init -1100 python in gui:
         Image("button", "radio_foreground", radio_width, height).save()
 
 
-
         # Bars.
         long_size = scale(None, 350)
 
@@ -221,6 +220,20 @@ init -1100 python in gui:
         Image("scrollbar", "vertical_idle_thumb", gui.scrollbar_size, long_size).fill(gui.accent_color).save()
         Image("scrollbar", "vertical_hover_bar", gui.scrollbar_size, long_size).fill(gui.hover_muted_color).save()
         Image("scrollbar", "vertical_hover_thumb", gui.scrollbar_size, long_size).fill(gui.hover_color).save()
+
+        sbp = gui.slot_borders.padding
+        tnx = (gui.slot_width - config.thumbnail_width) // 2
+        bar_width = scale(None, 5)
+
+        s = Image("slot", "idle_background", gui.slot_width, gui.slot_height)
+        s.fill_rect((tnx, sbp[1], config.thumbnail_width, config.thumbnail_height), gui.muted_color)
+        s.save()
+
+        s = Image("slot", "hover_background", gui.slot_width, gui.slot_height)
+        s.fill_rect((tnx, sbp[1], config.thumbnail_width, config.thumbnail_height), gui.hover_muted_color)
+        s.fill_rect((0, sbp[1], bar_width, config.thumbnail_height))
+
+        s.save()
 
 
         return False

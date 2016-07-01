@@ -128,12 +128,15 @@ define gui.slider_size = gui.scale(30)
 define gui.button_width = None
 define gui.medium_button_width = None
 define gui.small_button_width = None
-define gui.slot_width = gui.scale(276)
 
 define gui.button_height = gui.scale(36)
 define gui.medium_button_height = gui.scale(30)
 define gui.small_button_height = gui.scale(30)
+
+## The width and height of a file page slot.
+define gui.slot_width = gui.scale(276)
 define gui.slot_height = gui.scale(206)
+
 
 ################################################################################
 ## Sizes
@@ -153,7 +156,7 @@ define gui.pref_spacing = gui.scale(0)
 define gui.page_spacing = gui.scale(0)
 
 ## The spacing between file slots.
-define gui.slot_spacing = gui.scale(20)
+define gui.slot_spacing = gui.scale(10)
 
 ################################################################################
 ## Basic in-game styles.
@@ -941,7 +944,9 @@ screen file_slots(title):
                     button:
                         action FileAction(slot)
 
-                        add FileScreenshot(slot)
+                        has vbox
+
+                        add FileScreenshot(slot) xalign 0.5
 
                         text FileTime(slot, format=_("{#file_time}%A, %B %d %Y, %H:%M"), empty=_("empty slot")):
                             style "slot_time_text"
@@ -1015,10 +1020,11 @@ style page_label_text:
     layout "subtitle"
 
 style slot_button:
-    background "gui/file_slot/[prefix_]background.png"
-    padding gui.slot_borders.padding
     xsize gui.scale(gui.slot_width)
     ysize gui.scale(gui.slot_height)
+    padding gui.slot_borders.padding
+
+    background "gui/slot/[prefix_]background.png"
 
 style slot_text:
     xalign 0.5
@@ -1027,12 +1033,6 @@ style slot_text:
     layout "subtitle"
     size gui.tiny_size
     text_align 0.5
-
-style slot_time_text:
-    ypos gui.scale(146)
-
-style slot_name_text:
-    ypos gui.scale(164)
 
 
 ##############################################################################
