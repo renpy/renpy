@@ -303,29 +303,6 @@ class ImageGenerator(object):
         gm.fill(self.boring_color.opacity(.6))
         self.save(gm, "overlay/confirm")
 
-    def generate_file_slot(self):
-
-        width = self.scale_int(276)
-        height = self.scale_int(216)
-
-        bar_width = self.scale_int(6)
-        shot_width = self.scale_int(256)
-        shot_offset = self.scale_int(10)
-
-        top_y = self.scale_int(10)
-        top_height = self.scale_int(144)
-
-        s = self.make_surface(width, height)
-        # s.subsurface((0, top_y, bar_width, top_height)).fill(self.accent_color)
-        s.subsurface((shot_offset, top_y, shot_width, top_height)).fill(self.accent_color.shade(.33))
-        self.save(s, "file_slot/idle_background")
-
-        s = self.make_surface(width, height)
-        s.subsurface((0, top_y, bar_width, top_height)).fill(self.accent_color)
-        s.subsurface((shot_offset, top_y, shot_width, top_height)).fill(self.accent_color.shade(.5))
-        self.save(s, "file_slot/hover_background")
-
-
     def generate_frame(self):
         width = self.scale_int(600)
         height = self.scale_int(250)
@@ -347,82 +324,13 @@ class ImageGenerator(object):
         s.subsurface((border, border, width - 2 * border, height - 2 * border)).fill(self.boring_color)
         self.save(s, "namebox")
 
-
-
-    def generate_bars(self):
-
-        def fill(name, color, width, height, vname):
-            width = self.scale_int(width)
-            height = self.scale_int(height)
-
-            s = self.make_surface(width, height)
-            s.fill(color)
-            self.save(s, name)
-
-            s = self.make_surface(height, width)
-            s.fill(color)
-            self.save(s, vname)
-
-        fill("bar/left", self.accent_color, 350, 30, "bar/bottom")
-        fill("bar/right", self.muted_color, 350, 30, "bar/top")
-
-        fill("slider/horizontal_idle_bar", self.muted_color, 350, 30, "slider/vertical_idle_bar")
-        fill("slider/horizontal_hover_bar", self.hover_muted_color, 350, 30, "slider/vertical_hover_bar")
-        fill("slider/horizontal_idle_thumb", self.accent_color, 10, 30, "slider/vertical_idle_thumb_bar")
-        fill("slider/horizontal_hover_thumb", self.hover_color, 10, 30, "slider/vertical_hover_thumb_bar")
-
-        fill("scrollbar/horizontal_idle_bar", self.muted_color, 350, 10, "scrollbar/vertical_idle_bar")
-        fill("scrollbar/horizontal_hover_bar", self.hover_muted_color, 350, 10, "scrollbar/vertical_hover_bar")
-        fill("scrollbar/horizontal_idle_thumb", self.accent_color, 350, 10, "scrollbar/vertical_idle_thumb")
-        fill("scrollbar/horizontal_hover_thumb", self.hover_color, 350, 10, "scrollbar/vertical_hover_thumb")
-
-    def generate_buttons(self):
-
-        padding = self.scale_int(4)
-
-        def fill(name, width, height, color=None, fill_width=None):
-            width = self.scale_int(width) + padding * 2
-            height = self.scale_int(height) + padding * 2
-
-            s = self.make_surface(width, height)
-
-            if fill_width is not None:
-                fill_width = self.scale_int(fill_width)
-                ss = s.subsurface((padding, padding, fill_width, height - padding * 2))
-            else:
-                ss = s
-
-            if color is not None:
-                ss.fill(color)
-
-            self.save(s, name)
-
-        def button_family(prefix, width, height, fill_width=None):
-
-            fill(prefix + "/idle_background", width, height)
-            fill(prefix + "/hover_background", width, height)
-
-            if fill_width is not None:
-                fill(prefix + "/selected_idle_background", width, height, self.accent_color, fill_width=fill_width)
-                fill(prefix + "/selected_hover_background", width, height, self.accent_color, fill_width=fill_width)
-
-        button_family("button", 280, 37)
-        button_family("button/medium", 106, 37)
-        button_family("button/small", 50, 37)
-        button_family("button/check", 280, 37, self.scale_int(5))
-        button_family("button/radio", 280, 37,  self.scale_int(5))
-
-
     def generate_quick_buttons(self):
         width = self.scale_int(100)
         height = self.scale_int(30)
 
         s = self.make_surface(width, height)
-        self.save(s, "button/quick/idle_background")
-        self.save(s, "button/quick/selected_idle_background")
-        self.save(s, "button/quick/hover_background")
-        self.save(s, "button/quick/selected_hover_background")
-
+        self.save(s, "button/quick_idle_background")
+        self.save(s, "button/quick_hover_background")
 
     def generate_skip(self):
         XSIZE = 240
@@ -502,11 +410,8 @@ class ImageGenerator(object):
         self.generate_textbox()
         self.generate_choice_button()
         self.generate_overlay()
-        self.generate_file_slot()
         self.generate_frame()
         self.generate_nvl()
-        self.generate_bars()
-        self.generate_buttons()
         self.generate_quick_buttons()
         self.generate_skip()
         self.generate_notify()

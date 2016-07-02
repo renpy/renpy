@@ -597,7 +597,7 @@ style quick_button_text is button_text
 
 style quick_button:
     padding gui.quick_button_borders.padding
-    background Frame("gui/button/quick/[prefix_]background.png", gui.quick_button_borders)
+    background Frame("gui/button/quick_[prefix_]background.png",  gui.quick_button_borders)
 
 style quick_button_text:
     size gui.tiny_size
