@@ -17,35 +17,35 @@ init python:
 ## The colors of text in the interface.
 
 ## An accent color used throughout the interface to label and highlight text.
-define gui.accent_color = '#cc0066'
+define gui.accent_color = '#000060'
 
 ## The color used for a text button when it is neither selected nor hovered.
-define gui.idle_color = '#888888'
+define gui.idle_color = '#606060'
 
 ## The small color is used for small buttons, which need to be brighter/darker
 ## to achieve the same effect.
-define gui.idle_small_color = '#aaaaaa'
+define gui.idle_small_color = '#404040'
 
 ## A version of the accent color that's used when buttons are hovered.
-define gui.hover_color = '#d63284'
+define gui.hover_color = '#3284d6'
 
 ## The color used for a text button when it is selected but not focused. A
 ## button is selected if it is the current screen or preference value
-define gui.selected_color = '#555555'
+define gui.selected_color = '#000060'
 
 ## The color used for a text button when it cannot be selected.
 define gui.insensitive_color = '#8888887f'
 
 ## Colors used for the portions of bars that are not filled in. These are not
 ## used directly, but are used when re-generating bar image files.
-define gui.muted_color = '#e066a3'
-define gui.hover_muted_color = '#ea99c1'
+define gui.muted_color = '#6080d0'
+define gui.hover_muted_color = '#8080f0'
 
 ## The colors used for dialogue and menu choice text.
-define gui.text_color = '#404040'
+define gui.text_color = '#402000'
 define gui.interface_text_color = '#404040'
 define gui.choice_idle_color = "#cccccc"
-define gui.choice_hover_color = "#ffffff"
+define gui.choice_hover_color = "#0066cc"
 
 
 ################################################################################
@@ -60,8 +60,8 @@ define gui.game_menu_background = "gui/game_menu.png"
 ################################################################################
 ## Fonts and Font Sizes
 
-define gui.default_font = "DejaVuSans.ttf"
-define gui.interface_font = "DejaVuSans.ttf"
+define gui.default_font = "ArchitectsDaughter.ttf"
+define gui.interface_font = "ArchitectsDaughter.ttf"
 define gui.glyph_font = "DejaVuSans.ttf"
 
 define gui.tiny_size = 21
