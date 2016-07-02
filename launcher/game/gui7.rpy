@@ -235,27 +235,28 @@ label change_gui:
         gui_new = False
         gui_replace_images = True
         gui_update_code = True
+        gui_replace_code = False
 
         project.current.update_dump(True)
         gui_size = tuple(project.current.dump["size"])
 
-        gui_replace_code = interface.choice(
-            _("{b}Warning:{/b} Both choices will overwrite all gui image files, except for main_menu.png, game_menu.png, and window_icon.png.\n\nUpdating gui.rpy will {b}destroy{/b} any changes you have made to gui.rpy.\n\nWhat would you like to do?"),
-            [
-                (False, _("Change gui colors.")),
-                (True, _("Update gui.rpy to the latest version, changing sizes and colors.")),
-            ],
-            False,
-            cancel=Jump("front_page"),
-        )
-
         project_dir = project.current.path
         project_name = project.current.name
 
-    if gui_replace_code:
-        jump gui_project_size
-    else:
+        mode = interface.choice(
+            _("{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"),
+            [
+                ("change", _("Choose new colors, then regenerate image files.")),
+                ("regenerate",  _("Regenerate the image files using the colors in gui.rpy.")),
+            ],
+            None,
+            cancel=Jump("front_page"),
+        )
+
+    if mode == "change":
         jump gui_project_common
+    else:
+        jump gui_generate_images
 
 label new_gui_project:
 
@@ -348,5 +349,12 @@ label gui_project_common:
         with interface.error_handling("activating the new project"):
             project.manager.scan()
             project.Select(project.manager.get(project_name))()
+
+label gui_generate_images:
+
+    python:
+
+        interface.processing(_("Updating the project..."))
+        project.current.launch([ 'gui_images' ])
 
     jump front_page
