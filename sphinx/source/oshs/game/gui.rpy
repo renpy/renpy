@@ -14,33 +14,43 @@ init python:
 ################################################################################
 ## Colors
 ##
-## The colors of various aspects of the interface.
+## The colors of text in the interface.
 
-## An accent color used throughout the interface.
-define gui.accent_color = '#000060'
-
-## A version of the accent color that's used when buttons are hovered.
-define gui.hover_color = '#0066cc'
-
-## The color used for a text button when it is selected but not focused. A
-## button is selected if it is the current screen or preference value
-define gui.selected_color = '#000060'
+## An accent color used throughout the interface to label and highlight text.
+define gui.accent_color = '#cc0066'
 
 ## The color used for a text button when it is neither selected nor hovered.
-define gui.idle_color = '#606060'
+define gui.idle_color = '#888888'
 
 ## The small color is used for small buttons, which need to be brighter/darker
 ## to achieve the same effect.
-define gui.idle_small_color = '#404040'
+define gui.idle_small_color = '#aaaaaa'
+
+## A version of the accent color that's used when buttons are hovered.
+define gui.hover_color = '#d63284'
+
+## The color used for a text button when it is selected but not focused. A
+## button is selected if it is the current screen or preference value
+define gui.selected_color = '#555555'
 
 ## The color used for a text button when it cannot be selected.
 define gui.insensitive_color = '#8888887f'
 
+## Colors used for the portions of bars that are not filled in. These are not
+## used directly, but are used when re-generating bar image files.
+define gui.muted_color = '#e066a3'
+define gui.hover_muted_color = '#ea99c1'
+
 ## The colors used for dialogue and menu choice text.
-define gui.text_color = '#402000'
+define gui.text_color = '#404040'
 define gui.interface_text_color = '#404040'
-define gui.choice_idle_color = '#cccccc'
-define gui.choice_hover_color = '#0066cc'
+define gui.choice_idle_color = "#cccccc"
+define gui.choice_hover_color = "#ffffff"
+
+
+################################################################################
+## Images
+
 
 ## The images used for the main and game menus.
 define gui.main_menu_background = "gui/main_menu.png"
@@ -50,8 +60,8 @@ define gui.game_menu_background = "gui/game_menu.png"
 ################################################################################
 ## Fonts and Font Sizes
 
-define gui.default_font = "ArchitectsDaughter.ttf"
-define gui.interface_font = "ArchitectsDaughter.ttf"
+define gui.default_font = "DejaVuSans.ttf"
+define gui.interface_font = "DejaVuSans.ttf"
 define gui.glyph_font = "DejaVuSans.ttf"
 
 define gui.tiny_size = 21
@@ -83,6 +93,7 @@ define gui.small_button_borders = Borders(6, 6, 6, 6, pad_left=15, pad_right=15)
 define gui.check_button_borders = Borders(38, 6, 6, 6)
 define gui.radio_button_borders = Borders(38, 6, 6, 6)
 define gui.quick_button_borders = Borders(15, 6, 15, 0)
+define gui.slot_borders = Borders(15, 15, 15, 15)
 
 ## Choice buttons used by the menu statement.
 define gui.choice_borders = Borders(150, 8, 150, 8)
@@ -96,7 +107,7 @@ define gui.vscrollbar_borders = Borders(6, 6, 6, 6)
 define gui.vslider_borders = Borders(6, 6, 6, 6)
 
 ## Frames.
-define gui.frame_borders = Borders(40, 40, 40, 40)
+define gui.frame_borders = Borders(6, 6, 6, 6)
 define gui.namebox_borders = Borders(75, 6, 75, 6)
 
 
@@ -110,12 +121,21 @@ define gui.namebox_borders = Borders(75, 6, 75, 6)
 ## sliders.
 define gui.bar_size = 54
 define gui.scrollbar_size = 18
-define gui.slider_size = 54
-define gui.button_size = 100
+define gui.slider_size = 45
 
-## The width of the thumb on a horizontal slider, and the height of the thumb
-## on a vertical slider.
-define gui.slider_thumb_size = 15
+## The widths and heights of various buttons. Setting these to None allows
+## Ren'Py to choose a width or height.
+define gui.button_width = None
+define gui.medium_button_width = None
+define gui.small_button_width = None
+
+define gui.button_height = 54
+define gui.medium_button_height = 45
+define gui.small_button_height = 45
+
+## The width and height of a file page slot.
+define gui.slot_width = 414
+define gui.slot_height = 309
 
 
 ################################################################################
@@ -135,6 +155,8 @@ define gui.pref_spacing = 0
 ## The spacing between file page buttons.
 define gui.page_spacing = 0
 
+## The spacing between file slots.
+define gui.slot_spacing = 15
 
 ################################################################################
 ## Basic in-game styles.
@@ -188,27 +210,34 @@ style button_text:
 style button:
     padding gui.button_borders.padding
     background Frame("gui/button/[prefix_]background.png", gui.button_borders)
-    ysize gui.button_size
+    xsize gui.button_width
+    ysize gui.button_height
 
 ## Used for medium-sized buttons, like the sound test and mute buttons.
 style medium_button:
     padding gui.medium_button_borders.padding
-    background Frame("gui/button/medium/[prefix_]background.png", gui.medium_button_borders)
+    background Frame([ "gui/button/medium_[prefix_]background.png", "gui/button/[prefix_]background.png" ], gui.medium_button_borders)
+    xsize gui.medium_button_width
+    ysize gui.medium_button_height
 
 ## Used for small-sized buttons, like the file page navigation buttons.
 style small_button:
     padding gui.small_button_borders.padding
-    background Frame("gui/button/small/[prefix_]background.png", gui.small_button_borders)
+    background Frame([ "gui/button/small_[prefix_]background.png", "gui/button/[prefix_]background.png" ], gui.small_button_borders)
+    xsize gui.medium_button_width
+    ysize gui.medium_button_height
 
 ## Used for checkbox buttons in the preferences.
 style check_button:
     padding gui.check_button_borders.padding
-    background Frame("gui/button/check/[prefix_]background.png", gui.check_button_borders)
+    background Frame([ "gui/button/check_[prefix_]background.png", "gui/button/[prefix_]background.png" ], gui.check_button_borders)
+    foreground "gui/button/check_[prefix_]foreground.png"
 
 ## Used for radio buttons in the preferences.
 style radio_button:
     padding gui.radio_button_borders.padding
-    background Frame("gui/button/radio/[prefix_]background.png", gui.radio_button_borders)
+    background Frame([ "gui/button/radio_[prefix_]background.png", "gui/button/[prefix_]background.png" ], gui.radio_button_borders)
+    foreground "gui/button/check_[prefix_]foreground.png"
 
 
 ## Labels a portion of the interface.
@@ -238,7 +267,7 @@ style scrollbar:
 style slider:
     ysize gui.slider_size
     base_bar Frame("gui/slider/horizontal_[prefix_]bar.png", gui.slider_borders)
-    thumb Frame("gui/slider/horizontal_[prefix_]thumb.png", gui.slider_borders, xsize=gui.slider_thumb_size)
+    thumb "gui/slider/horizontal_[prefix_]thumb.png"
 
 
 ## Vertical equivalents of bar, scrollbar, and slider.
@@ -256,7 +285,7 @@ style vscrollbar:
 style vslider:
     xsize gui.slider_size
     base_bar Frame("gui/slider/vertical_[prefix_]bar.png", gui.vslider_borders)
-    thumb Frame("gui/slider/vertical_[prefix_]thumb.png", gui.vslider_borders, ysize=gui.slider_thumb_size)
+    thumb "gui/slider/vertical_[prefix_]thumb.png"
 
 
 ## A frame that is intended to contain interface elements and make them usable
@@ -568,7 +597,7 @@ style quick_button_text is button_text
 
 style quick_button:
     padding gui.quick_button_borders.padding
-    background Frame("gui/button/quick/[prefix_]background.png", gui.quick_button_borders)
+    background Frame("gui/button/quick_[prefix_]background.png",  gui.quick_button_borders)
 
 style quick_button_text:
     size gui.tiny_size
@@ -906,6 +935,8 @@ screen file_slots(title):
                 xalign 0.5
                 yalign 0.5
 
+                spacing gui.slot_spacing
+
                 for i in range(gui.file_slot_cols * gui.file_slot_rows):
 
                     $ slot = i + 1
@@ -913,7 +944,9 @@ screen file_slots(title):
                     button:
                         action FileAction(slot)
 
-                        add FileScreenshot(slot)
+                        has vbox
+
+                        add FileScreenshot(slot) xalign 0.5
 
                         text FileTime(slot, format=_("{#file_time}%A, %B %d %Y, %H:%M"), empty=_("empty slot")):
                             style "slot_time_text"
@@ -985,19 +1018,14 @@ style page_label:
 style page_label_text:
     text_align 0.5
     layout "subtitle"
+    hover_color gui.hover_color
 
 style slot_button:
-    background "gui/file_slot/[prefix_]background.png"
+    xsize gui.slot_width
+    ysize gui.slot_height
+    padding gui.slot_borders.padding
 
-    # Note that xsize and ysize include the margins.
-
-    xsize 444
-    xpadding 15
-    xmargin 15
-
-    ysize 339
-    ypadding 15
-    ymargin 8
+    background "gui/slot/[prefix_]background.png"
 
 style slot_text:
     xalign 0.5
@@ -1006,12 +1034,6 @@ style slot_text:
     layout "subtitle"
     size gui.tiny_size
     text_align 0.5
-
-style slot_time_text:
-    ypos 219
-
-style slot_name_text:
-    ypos 246
 
 
 ##############################################################################
@@ -1146,7 +1168,7 @@ style pref_label_text:
     yalign 1.0
 
 style pref_vbox:
-    xsize 345
+    xsize 338
 
 style radio_pref_vbox:
     spacing gui.pref_spacing
@@ -1175,7 +1197,7 @@ style mute_all_pref_button:
     top_margin 15
 
 style slider_pref_vbox:
-    xsize 690
+    xsize 675
 
 
 ##############################################################################
@@ -1361,7 +1383,7 @@ screen keyboard_help():
 
     hbox:
         label _("Arrow Keys")
-        text _("Navigates the interface.")
+        text _("Navigate the interface.")
 
     hbox:
         label _("Escape")
@@ -1423,23 +1445,23 @@ screen gamepad_help():
 
     hbox:
         label _("Right Trigger\nA/Bottom Button")
-        text _("Advances dialogue and activates the interface.")
+        text _("Advance dialogue and activates the interface.")
 
     hbox:
         label ("Left Trigger\nLeft Shoulder")
-        text _("Rolls back to earlier dialogue.")
+        text _("Roll back to earlier dialogue.")
 
     hbox:
         label _("Right Shoulder")
-        text _("Rolls forward to later dialogue.")
+        text _("Roll forward to later dialogue.")
 
     hbox:
         label _("D-Pad, Sticks")
-        text _("Navigates the interface.")
+        text _("Navigate the interface.")
 
     hbox:
         label _("Start, Guide")
-        text _("Accesses the game menu.")
+        text _("Access the game menu.")
 
     hbox:
         label _("Y/Top Button")
@@ -1577,7 +1599,7 @@ style notify_text:
 
 style pref_vbox:
     variant "medium"
-    xsize 690
+    xsize 675
 
 ## Since a mouse may not be present, we replace the quick menu with a version
 ## that uses fewer and bigger buttons that are easier to touch.
