@@ -1021,8 +1021,8 @@ style page_label_text:
     hover_color gui.hover_color
 
 style slot_button:
-    xsize gui.scale(gui.slot_width)
-    ysize gui.scale(gui.slot_height)
+    xsize gui.slot_width
+    ysize gui.slot_height
     padding gui.slot_borders.padding
 
     background "gui/slot/[prefix_]background.png"
