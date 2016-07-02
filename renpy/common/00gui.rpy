@@ -195,7 +195,7 @@ init -1100 python in gui:
         Image("bar", "bottom", gui.bar_size, long_size).fill(gui.hover_color).save()
         Image("bar", "top", gui.bar_size, long_size).fill(gui.muted_color).save()
 
-        thumb_size = scale(None, 10)
+        thumb_size = scale(None, 15)
 
 
         Image("slider", "horizontal_idle_bar", long_size, gui.slider_size).fill(gui.muted_color).save()
