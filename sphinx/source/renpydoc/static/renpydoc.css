@@ -89,3 +89,11 @@ div.section {
     overflow-y: auto;
 }
 
+dl.var dt {
+	font-weight: inherit;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+}
+
+dl.var dd:empty {
+    margin-bottom: -20px !important;
+}
