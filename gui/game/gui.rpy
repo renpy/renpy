@@ -63,15 +63,20 @@ define gui.game_menu_background = "gui/game_menu.png"
 
 define gui.default_font = "DejaVuSans.ttf"
 define gui.interface_font = "DejaVuSans.ttf"
+define gui.quick_button_font = "DejaVuSans.ttf"
 define gui.glyph_font = "DejaVuSans.ttf"
 
-define gui.tiny_size = gui.scale(14)
-define gui.notify_size = gui.scale(16)
+define gui.notify_text_size = gui.scale(16)
 define gui.text_size = gui.scale(22)
-define gui.interface_size = gui.scale(24)
-define gui.label_size = gui.scale(30)
+define gui.interface_text_size = gui.scale(24)
+define gui.label_text_size = gui.scale(30)
 define gui.title_size = gui.scale(50)
 
+define gui.button_text_size = gui.scale(24)
+define gui.medium_button_text_size = gui.scale(24)
+define gui.small_button_text_size = gui.scale(24)
+define gui.quick_button_text_size = gui.scale(24)
+define gui.slot_text_size = gui.scale(24)
 
 ################################################################################
 ## Window icon.
@@ -128,13 +133,13 @@ define gui.slider_size = gui.scale(30)
 define gui.button_width = None
 define gui.medium_button_width = None
 define gui.small_button_width = None
+define gui.quick_button_width = None
+define gui.slot_width = gui.scale(276)
 
 define gui.button_height = gui.scale(36)
 define gui.medium_button_height = gui.scale(30)
 define gui.small_button_height = gui.scale(30)
-
-## The width and height of a file page slot.
-define gui.slot_width = gui.scale(276)
+define gui.quick_button_height = gui.scale(30)
 define gui.slot_height = gui.scale(206)
 
 
@@ -194,13 +199,12 @@ style prompt_text is gui_text
 style gui_text:
     font gui.interface_font
     color gui.interface_text_color
-    size gui.text_size
-
+    size gui.interface_text_size
 
 ## Used for the text of all buttons.
 style button_text:
     yalign 0.5
-    size gui.interface_size
+    size gui.button_text_size
     color gui.idle_color
     insensitive_color gui.insensitive_color
     selected_color gui.selected_color
@@ -220,12 +224,18 @@ style medium_button:
     xsize gui.medium_button_width
     ysize gui.medium_button_height
 
+style medium_button_text:
+    size gui.medium_button_text_size
+
 ## Used for small-sized buttons, like the file page navigation buttons.
 style small_button:
     padding gui.small_button_borders.padding
     background Frame([ "gui/button/small_[prefix_]background.png", "gui/button/[prefix_]background.png" ], gui.small_button_borders)
     xsize gui.medium_button_width
     ysize gui.medium_button_height
+
+style small_button_text:
+    size gui.medium_button_text_size
 
 ## Used for checkbox buttons in the preferences.
 style check_button:
@@ -243,12 +253,12 @@ style radio_button:
 ## Labels a portion of the interface.
 style label_text:
     color gui.accent_color
-    size gui.interface_size
+    size gui.interface_text_size
 
 ## Asks the user a question in the interface.
 style prompt_text:
     color gui.text_color
-    size gui.interface_size
+    size gui.interface_text_size
 
 
 ## Bars are used to display value data to the user.
@@ -368,7 +378,7 @@ style window:
 
 style say_label:
     color gui.accent_color
-    size gui.label_size
+    size gui.label_text_size
 
 style namebox:
     xalign 0.5
@@ -598,9 +608,12 @@ style quick_button_text is button_text
 style quick_button:
     padding gui.quick_button_borders.padding
     background Frame("gui/button/quick_[prefix_]background.png",  gui.quick_button_borders)
+    xsize gui.quick_button_width
+    ysize gui.quick_button_height
 
 style quick_button_text:
-    size gui.tiny_size
+    font gui.quick_button_font
+    size gui.quick_button_text_size
 
 
 ################################################################################
@@ -891,7 +904,7 @@ style about_label_text is gui_label_text
 style about_text is gui_text
 
 style about_label_text:
-    size gui.label_size
+    size gui.label_text_size
 
 
 ##############################################################################
@@ -1032,7 +1045,7 @@ style slot_text:
 
     color gui.idle_small_color
     layout "subtitle"
-    size gui.tiny_size
+    size gui.slot_text_size
     text_align 0.5
 
 
@@ -1540,7 +1553,7 @@ style skip_frame:
     background Frame("gui/skip.png", gui.scale(16), gui.scale(5), gui.scale(50), gui.scale(5))
 
 style skip_text:
-    size gui.notify_size
+    size gui.notify_text_size
 
 style skip_triangle:
     # We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE
@@ -1587,7 +1600,7 @@ style notify_frame:
         ypadding gui.scale(5)
 
 style notify_text:
-    size gui.notify_size
+    size gui.notify_text_size
 
 
 ################################################################################
@@ -1633,9 +1646,9 @@ init python:
 
     if renpy.variant("small"):
         gui.text_size = gui.scale(30)
-        gui.notify_size = gui.scale(25)
-        gui.interface_size = gui.scale(36)
-        gui.label_size = gui.scale(36)
+        gui.notify_text_size = gui.scale(25)
+        gui.interface_text_size = gui.scale(36)
+        gui.label_text_size = gui.scale(36)
 
         gui.file_slot_cols = 2
         gui.file_slot_rows = 2

@@ -234,6 +234,13 @@ keeps the screens mostly the same, with buttons and bars in the same
 places, although modifying the screens to add new functionality
 is certainly possible.
 
+Regenerating Images
+-------------------
+
+Some of the adjustments either partially or completely effect image
+files. As a result, the changes only take effect when the image files
+themselves are updated, which can be done by choosing "Change GUI" in
+the launcher, and telling it to regenerate image files.
 
 Overlay Images
 --------------
@@ -330,6 +337,13 @@ documented above, the following variables exist:
 
     The color used by static text in the game interface, such as text on the
     help and about screens.
+
+.. var:: gui.muted_color = '#6080d0'
+.. var:: gui.hover_muted_color = '#8080f0'
+
+    Muted colors, used for the sections of bars, scrollbars, and sliders that
+    do not represent the value or visible area. (These are only used when
+    generating images.
 
 In additional to :var:`gui.default_font`, the following variables selects the
 fonts used for text. These fonts should also be placed in the game directory.
