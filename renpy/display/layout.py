@@ -1020,10 +1020,10 @@ class Window(Container):
         # If we don't fill, shrink our size to fit.
 
         if not style.xfill:
-            width = max(cxmargin + cxpadding + sw, xminimum)
+            width = min(width, max(cxmargin + cxpadding + sw, xminimum))
 
         if not style.yfill:
-            height = max(cymargin + cypadding + sh, yminimum)
+            height = min(height, max(cymargin + cypadding + sh, yminimum))
 
         rv = renpy.display.render.Render(width, height)
 
