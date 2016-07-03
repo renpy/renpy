@@ -143,7 +143,7 @@ the say screen.
     Sets the size of the dialogue text. This may need to be increased or
     decreased to fit the selected font in the space alloted.
 
-.. var:: gui.label_size = 45
+.. var:: gui.label_text_size = 45
 
     Sets the size of character name labels.
 
@@ -353,27 +353,43 @@ fonts used for text. These fonts should also be placed in the game directory.
     The font used for text for user interface elements, like the main and
     game menus, buttons, and so on.
 
+.. var:: gui.quick_button_font = "ArchitectsDaughter.ttf"
+
+    The font used for the quick menu buttons - the buttons at the bottom
+    of the screen that offer access to history, saving, and so on. This is
+    its own variable so it can be made to match the text font, if so
+    desired.
+
 .. var:: gui.glyph_font = "DejaVuSans.ttf"
 
     A font used for certain glyphs, such as the arrow glyphs used by the skip
     indicator. DejaVuSans is a reasonable default for these glyphs, and is
     automatically included with every Ren'Py game.
 
-In addition to :var:`gui.text_size` and :var:`gui.label_size`, the following
+In addition to :var:`gui.text_size` and :var:`gui.label_text_size`, the following
 variables control text sizes.
 
 .. var:: gui.tiny_size = 21
 
     The smallest size text, used for dates and save names in the file picker.
 
-.. var:: gui.notify_size = 24
-
-    The size of text on the notification screen.
-
 .. var:: gui.interface_size = 36
 
-    The size of text that is part of an interface element like a button or
-    an interface label.
+    The size of text that is part of a non-button interface element, like
+    label and help text.
+
+.. var:: gui.button_text_size = 30
+.. var:: gui.medium_button_text_size = 30
+.. var:: gui.small_button_text_size = 36
+.. var:: gui.quick_button_text_size = 21
+.. var:: gui.slot_text_size = 21
+
+    The size of text used by various buttons. Please see the descriptions
+    of the buttons below for an explanation of what is used where.
+
+.. var:: gui.notify_text_size = 24
+
+    The size of text on the notification screen.
 
 .. var:: gui.title_size = 75
 
@@ -462,6 +478,129 @@ And the second is by customizing the borders:
 
         The confirm screen after applying the customizations given
         above.
+
+Buttons
+-------
+
+The Ren'Py user interface includes a large number of buttons, buttons
+that come in different sizes and that are used for different purposes.
+The various kinds of buttons are:
+
+``button``
+    A basic button. Used for navigation within the user interface.
+
+``radio_button``
+    A button that's the same size as the basic button, used to select one
+    of multiple choices in preferences.
+
+``check_button``
+    A button that's the same size as the basic button, used to to indicate
+    if a preference is selected or not.
+
+``medium_button``
+    A button that contains a word or so amount of text used with other user
+    interface elements. These are used in conjunctions with bars, and
+    should generally match the bar size vertically.
+
+``small_button``
+    A button that contains a very small amount of text - like a single
+    number of letter. These are generally used to select the file page.
+
+``quick_button``
+    Buttons that are displayed on in game-screens to provide quick
+    access to in-game functionality.
+
+The following image files are used to customize button backgrounds,
+if they exist.
+
+gui/button/idle_background.png
+    The background image used by buttons that are not focused.
+
+gui/button/hover_background.png
+    The background image used by buttons that are focused.
+
+gui/button/selected_idle_background.png
+    The background image used by buttons that are selected but not
+    focused. This is optional, and is used in preference to
+    idle_background.png if it exists.
+
+gui/button/selected_hover_background.png
+    The background image used by buttons that are selected but not
+    focused. This is optional, and is used in preference to
+    hover_background.png if it exists.
+
+More specific backgrounds can be given for each kind of button, by
+prefixing it with the kind. For example, gui/button/check_idle_background.png
+is used as the background of check buttons that are not focused.
+
+Four image files are used as foreground decorations on radio and check
+buttons, to indicate if the option is chosen or not.
+
+gui/button/check_foreground.png, gui/button/radio_foreground.png
+    These images are used when a check or radio button is not selected.
+
+gui/button/check_selected_foreground.png, gui/button/radio_selected_foreground.png
+    These images are used when a check or radio button is selected.
+
+
+The following variables set the width and height of vartious kinds of
+buttons. If a width or height is None, Ren'Py will try to automatically
+determine a width or height. (This works better for widths than heights.)
+
+.. var:: gui.button_width = 350
+.. var:: gui.medium_button_width = None
+.. var:: gui.small_button_width = None
+.. var:: gui.quick_button_width = None
+
+    Sets the width of various kinds of button.
+
+.. var:: gui.button_height = 64
+.. var:: gui.medium_button_height = 55
+.. var:: gui.small_button_height = 64
+.. var:: gui.quick_button_height = 45
+
+    Sets the height of various kinds of button.
+
+The following variables set the borders for the various kinds of buttons,
+as described above.
+
+.. var:: gui.button_borders = Borders(20, 20, 20, 20, tile=True)
+.. var:: gui.medium_button_borders = Borders(20, 20, 30, 20, tile=True)
+.. var:: gui.small_button_borders = Borders(20, 20, 30, 20, tile=True)
+.. var:: gui.check_button_borders = Borders(45, 20, 20, 20, tile=True)
+.. var:: gui.radio_button_borders = Borders(45, 20, 20, 20, tile=True)
+.. var:: gui.quick_button_borders = Borders(15, 6, 15, 0)
+
+    These control the borders, padding, and tiling of button backgrounds.
+
+.. ifconfig:: renpy_figures
+
+    Here's an example of how the play screen can be customized.
+
+    .. figure:: oshs/game/gui/button/idle_background.png
+
+        An example gui/button/idle_background.png image.
+
+    .. figure:: oshs/game/gui/button/hover_background.png
+
+        An example gui/button/hover_background.png image.
+
+    .. figure:: oshs/game/gui/button/check_foreground.png
+
+        An image that can be used as gui/button/check_foreground.png and
+        gui/button/radio_foreground.png.
+
+    .. figure:: oshs/game/gui/button/check_selected_foreground.png
+
+        An image that can be used as gui/button/check_selected_foreground.png and
+        gui/button/radio_selected_foreground.png.
+
+    .. figure:: gui/button_preferences.jpg
+        :width: 100%
+
+        The preferences screen with the customizations described in this
+        section applied.
+
 
 
 Other

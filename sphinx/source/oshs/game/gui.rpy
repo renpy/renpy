@@ -72,10 +72,10 @@ define gui.label_text_size = 45
 define gui.title_size = 75
 
 define gui.button_text_size = 30
-define gui.medium_button_text_size = 36
+define gui.medium_button_text_size = 30
 define gui.small_button_text_size = 36
-define gui.quick_button_text_size = 36
-define gui.slot_text_size = 36
+define gui.quick_button_text_size = 21
+define gui.slot_text_size = 21
 
 
 ################################################################################
@@ -93,11 +93,11 @@ define config.window_icon = "gui/window_icon.png"
 ## side.
 
 ## Interface buttons.
-define gui.button_borders = Borders(15, 10, 15, 10, tile=True)
-define gui.medium_button_borders = Borders(6, 6, 6, 6)
-define gui.small_button_borders = Borders(6, 6, 6, 6, pad_left=15, pad_right=15)
-define gui.check_button_borders = Borders(38, 6, 6, 6)
-define gui.radio_button_borders = Borders(38, 6, 6, 6)
+define gui.button_borders = Borders(20, 20, 20, 20, tile=True)
+define gui.medium_button_borders = Borders(20, 20, 30, 20, tile=True)
+define gui.small_button_borders = Borders(20, 20, 30, 20, tile=True)
+define gui.check_button_borders = Borders(45, 20, 20, 20, tile=True)
+define gui.radio_button_borders = Borders(45, 20, 20, 20, tile=True)
 define gui.quick_button_borders = Borders(15, 6, 15, 0)
 define gui.slot_borders = Borders(15, 15, 15, 15)
 
@@ -138,8 +138,8 @@ define gui.quick_button_width = None
 define gui.slot_width = 414
 
 define gui.button_height = 64
-define gui.medium_button_height = 45
-define gui.small_button_height = 45
+define gui.medium_button_height = 55
+define gui.small_button_height = 64
 define gui.quick_button_height = 45
 define gui.slot_height = 309
 
@@ -153,7 +153,7 @@ define gui.slot_height = 309
 define gui.choice_spacing = 33
 
 ## Buttons in the navigation section of the main and game menus.
-define gui.navigation_spacing = 6
+define gui.navigation_spacing = 0
 
 ## Preference buttons.
 define gui.pref_spacing = 0
@@ -1176,7 +1176,8 @@ style mute_all_pref_button is gui_medium_button
 style mute_all_pref_button_text is gui_medium_button_text
 
 style pref_label:
-    ysize 45
+    top_margin 15
+    bottom_margin 5
 
 style pref_label_text:
     yalign 1.0
@@ -1206,9 +1207,6 @@ style slider_pref_label:
 style slider_pref_button:
     yalign 1.0
     left_margin 15
-
-style mute_all_pref_button:
-    top_margin 15
 
 style slider_pref_vbox:
     xsize 675

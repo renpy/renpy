@@ -75,8 +75,8 @@ define gui.title_size = gui.scale(50)
 define gui.button_text_size = gui.scale(24)
 define gui.medium_button_text_size = gui.scale(24)
 define gui.small_button_text_size = gui.scale(24)
-define gui.quick_button_text_size = gui.scale(24)
-define gui.slot_text_size = gui.scale(24)
+define gui.quick_button_text_size = gui.scale(14)
+define gui.slot_text_size = gui.scale(14)
 
 ################################################################################
 ## Window icon.
@@ -1174,7 +1174,8 @@ style mute_all_pref_button is gui_medium_button
 style mute_all_pref_button_text is gui_medium_button_text
 
 style pref_label:
-    ysize gui.scale(30)
+    top_margin gui.scale(10)
+    bottom_margin gui.scale(2)
 
 style pref_label_text:
     yalign 1.0
@@ -1197,16 +1198,9 @@ style check_pref_button:
 style slider_pref_slider:
     xsize gui.scale(350)
 
-style slider_pref_label:
-    top_margin gui.scale(10)
-    bottom_margin gui.scale(3)
-
 style slider_pref_button:
     yalign 1.0
     left_margin gui.scale(10)
-
-style mute_all_pref_button:
-    top_margin gui.scale(10)
 
 style slider_pref_vbox:
     xsize gui.scale(450)

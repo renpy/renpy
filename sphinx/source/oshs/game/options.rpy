@@ -50,7 +50,7 @@ define config.has_voice = True
 ## uncomment a line below and use it to set a sample sound to play.
 
 # define config.sample_sound = "sample-sound.ogg"
-# define config.sample_voice = "sample-voice.ogg"
+define config.sample_voice = "sample_voice.opus"
 
 
 ## Uncomment the following line to set an audio file that will be played while
