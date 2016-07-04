@@ -655,6 +655,8 @@ gui/slot/hover_background.png
         The save screen after applying the customizations given in this
         section.
 
+Sliders, Bars, and Scrollbars
+-----------------------------
 
 
 

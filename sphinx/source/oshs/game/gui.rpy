@@ -127,7 +127,7 @@ define gui.namebox_borders = Borders(75, 6, 75, 6)
 ## sliders.
 define gui.bar_size = 54
 define gui.scrollbar_size = 18
-define gui.slider_size = 45
+define gui.slider_size = 64
 
 ## The widths and heights of various buttons. Setting these to None allows
 ## Ren'Py to choose a width or height.
@@ -138,7 +138,7 @@ define gui.quick_button_width = None
 define gui.slot_width = 414
 
 define gui.button_height = 64
-define gui.medium_button_height = 55
+define gui.medium_button_height = 64
 define gui.small_button_height = 64
 define gui.quick_button_height = 45
 define gui.slot_height = 309
