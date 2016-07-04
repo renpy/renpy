@@ -136,6 +136,11 @@ The style statement accepts the following clauses:
     least one of the variants given is active, the style statement is run,
     otherwise it is ignored.
 
+``properties`` `simple-expression`
+    Evaluates the simple expression to get a dictionary. The dictionary is
+    expected to map style properties to values, and the values are assigned
+    as if they were provided to the style statement.
+
 Examples of style statements are::
 
     # Creates a new style, inheriting from default.

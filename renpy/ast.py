@@ -2193,8 +2193,15 @@ class Style(Node):
 
         if self.properties:
             properties = { }
+
             for name, expr in self.properties.items():
-                properties[name] = renpy.python.py_eval(expr)
+
+                value = renpy.python.py_eval(expr)
+
+                if name == "properties":
+                    properties.update(value)
+                else:
+                    properties[name] = value
 
             s.add_properties(properties)
 

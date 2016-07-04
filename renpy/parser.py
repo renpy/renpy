@@ -768,7 +768,7 @@ class Lexer(object):
         """
         Try to parse label name. Returns name in form of "global.local" if local
         is present, "global" otherwise; or None if it doesn't parse.
-        
+
         If declare is True, allow only such names that are valid for declaration
         (e.g. forbid global name mismatch)
         """
@@ -2306,7 +2306,7 @@ def style_statement(l, loc):
         propname = l.name()
 
         if propname is not None:
-            if propname not in renpy.style.prefixed_all_properties: # @UndefinedVariable
+            if (propname != "properties") and (propname not in renpy.style.prefixed_all_properties): # @UndefinedVariable
                 l.error("style property %s is not known." % propname)
 
             if propname in rv.properties:
