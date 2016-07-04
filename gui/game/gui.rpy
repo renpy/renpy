@@ -627,8 +627,7 @@ screen navigation():
     vbox:
         style_prefix "navigation"
 
-        xpos gui.scale(40)
-        xmaximum gui.scale(227)
+        xpos gui.navigation_xpos
         yalign 0.5
 
         spacing gui.navigation_spacing
@@ -666,11 +665,19 @@ screen navigation():
             textbutton _("Quit") action Quit(confirm=not main_menu)
 
 
+## The position of the left side of the navigation buttons, relative
+## to the left side of the screen.
+define gui.navigation_xpos = gui.scale(40)
+
+## The width of a navigation button.
+define gui.navigation_width = gui.scale(225)
+
 style navigation_button is gui_button
 style navigation_button_text is gui_button_text
 
 style navigation_button:
     size_group "navigation"
+    xsize gui.navigation_width
 
 
 ##############################################################################
@@ -857,8 +864,7 @@ style game_menu_label_text:
     yalign 0.5
 
 style return_button:
-    xpos gui.scale(40)
-    xmaximum gui.scale(227)
+    xpos gui.navigation_xpos
     yalign 1.0
     yoffset gui.scale(-30)
 
