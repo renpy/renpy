@@ -601,6 +601,61 @@ as described above.
         The preferences screen with the customizations described in this
         section applied.
 
+Save Slots
+----------
+
+The load and save screens use file slots, which are buttons that present
+a thumbnail and information about when the file was saved.The following
+variables are quite useful when it comes to customizing the size of
+the save slots.
+
+.. var:: gui.slot_width = 414
+.. var:: gui.slot_height = 309
+
+    The width and height of the save slot button.
+
+.. var:: gui.slot_borders = Borders(15, 15, 15, 15)
+
+    The borders applied to each save slot.
+
+.. var:: config.thumbnail_width = 384
+.. var:: config.thumbnail_height = 216
+
+    The width and height of the save thumbnails. Note that these live in
+    the config namespace, not the gui namespace. These do not take effect
+    until the file is saved and loaded.
+
+.. var:: gui.file_slot_cols = 3
+.. var:: gui.file_slot_rows = 2
+
+    The number of columns and rows in the grid of save slots.
+
+Lastly, there are the background images used for save slots.
+
+gui/slot/idle_background.png
+    The image used for the background of save slots that are not focused.
+
+gui/slot/hover_background.png
+    The image used for the background of save slots that are not focused.
+
+.. ifconfig:: renpy_figures
+
+    Putting those to use, we get:
+
+    .. figure:: oshs/game/gui/slot/idle_background.png
+
+        An example gui/button/idle_background.png image.
+
+    .. figure:: oshs/game/gui/slot/hover_background.png
+
+        An example gui/button/hover_background.png image.
+
+    .. figure:: gui/slot_save.jpg
+
+        The save screen after applying the customizations given in this
+        section.
+
+
 
 
 Other
