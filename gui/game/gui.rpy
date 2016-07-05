@@ -88,47 +88,50 @@ define gui.button_font = gui.interface_font
 define gui.button_text_size = gui.interface_text_size
 define gui.button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
-define gui.navigation_button_width = gui.button_width
-define gui.navigation_button_height = gui.button_height
-define gui.navigation_button_font = gui.button_font
-define gui.navigation_button_text_size = gui.button_text_size
-define gui.navigation_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-
-define gui.radio_button_width = gui.button_width
-define gui.radio_button_height = gui.button_height
-define gui.radio_button_font = gui.button_font
-define gui.radio_button_text_size = gui.button_text_size
+# define gui.navigation_button_width = gui.button_width
+# define gui.navigation_button_height = gui.button_height
+# define gui.navigation_button_font = gui.button_font
+# define gui.navigation_button_text_size = gui.button_text_size
+# define gui.navigation_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+#
+# define gui.radio_button_width = gui.button_width
+# define gui.radio_button_height = gui.button_height
+# define gui.radio_button_font = gui.button_font
+# define gui.radio_button_text_size = gui.button_text_size
 define gui.radio_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
 
-define gui.check_button_width = gui.button_width
-define gui.check_button_height = gui.button_height
-define gui.check_button_font = gui.button_font
-define gui.check_button_text_size = gui.button_text_size
+#
+# define gui.check_button_width = gui.button_width
+# define gui.check_button_height = gui.button_height
+# define gui.check_button_font = gui.button_font
+# define gui.check_button_text_size = gui.button_text_size
 define gui.check_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
-
-define gui.test_button_width = gui.button_width
-define gui.test_button_height = gui.button_height
-define gui.test_button_font = gui.button_font
-define gui.test_button_text_size = gui.button_text_size
-define gui.test_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-
-define gui.page_button_width = gui.button_width
-define gui.page_button_height = gui.button_height
-define gui.page_button_font = gui.button_font
-define gui.page_button_text_size = gui.button_text_size
+#
+# define gui.test_button_width = gui.button_width
+# define gui.test_button_height = gui.button_height
+# define gui.test_button_font = gui.button_font
+# define gui.test_button_text_size = gui.button_text_size
+# define gui.test_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+#
+# define gui.page_button_width = gui.button_width
+# define gui.page_button_height = gui.button_height
+# define gui.page_button_font = gui.button_font
+# define gui.page_button_text_size = gui.button_text_size
 define gui.page_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), gui.scale(4))
-
-define gui.quick_button_width = gui.button_width
-define gui.quick_button_height = gui.button_height
-define gui.quick_button_font = gui.default_font
+#
+# define gui.quick_button_width = gui.button_width
+# define gui.quick_button_height = gui.button_height
+# define gui.quick_button_font = gui.default_font
 define gui.quick_button_text_size = gui.scale(14)
 define gui.quick_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), gui.scale(0))
 
-define gui.slot_width = gui.scale(276)
-define gui.slot_height = gui.scale(206)
-define gui.slot_font = gui.button_font
-define gui.slot_text_size = gui.button_text_size
-define gui.slot_borders = Borders(gui.scale(10), gui.scale(10), gui.scale(10), gui.scale(10))
+define gui.confirm_button_text_xalign = 0.5
+
+define gui.slot_button_width = gui.scale(276)
+define gui.slot_button_height = gui.scale(206)
+define gui.slot_button_text_size = gui.scale(14)
+define gui.slot_button_text_xalign = 0.5
+define gui.slot_button_borders = Borders(gui.scale(10), gui.scale(10), gui.scale(10), gui.scale(10))
 
 
 ################################################################################
@@ -1006,13 +1009,13 @@ define gui.file_slot_rows = 2
 
 style page_label is gui_label
 style page_label_text is gui_label_text
-style page_button is gui_small_button
-style page_button_text is gui_small_button_text
+style page_button is gui_button
+style page_button_text is gui_button_text
 
-style slot_button is empty
-style slot_text is gui_button_text
-style slot_time_text is slot_text
-style slot_name_text is slot_text
+style slot_button is gui_button
+style slot_button_text is gui_button_text
+style slot_time_text is slot_button_text
+style slot_name_text is slot_button_text
 
 style page_label:
     xpadding gui.scale(50)
@@ -1023,24 +1026,17 @@ style page_label_text:
     layout "subtitle"
     hover_color gui.hover_color
 
+style page_button:
+    properties gui.button_properties("page")
+
+style page_button_text:
+    properties gui.button_text_properties("page")
+
 style slot_button:
-    xsize gui.slot_width
-    ysize gui.slot_height
-    padding gui.slot_borders.padding
+    properties gui.button_properties("slot")
 
-    background [ "gui/slot/[prefix_]background.png", None ]
-
-style slot_text:
-    xalign 0.5
-
-    color gui.idle_small_color
-    selected_color gui.accent_color
-    hover_color gui.hover_color
-
-    layout "subtitle"
-    font gui.slot_font
-    size gui.slot_text_size
-    text_align 0.5
+style slot_button_text:
+    properties gui.button_text_properties("slot")
 
 
 ##############################################################################
@@ -1182,6 +1178,7 @@ style radio_vbox:
 
 style radio_button:
     properties gui.button_properties("radio")
+    foreground "gui/button/check_[prefix_]foreground.png"
 
 style radio_button_text:
     properties gui.button_text_properties("radio")
@@ -1191,6 +1188,7 @@ style check_vbox:
 
 style check_button:
     properties gui.button_properties("check")
+    foreground "gui/button/check_[prefix_]foreground.png"
 
 style check_button_text:
     properties gui.button_text_properties("check")
@@ -1339,8 +1337,6 @@ style confirm_button:
 
 style confirm_button_text:
     properties gui.button_text_properties("confirm")
-    xalign 0.5
-    text_align 0.5
 
 
 ##############################################################################

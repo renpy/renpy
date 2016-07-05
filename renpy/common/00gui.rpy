@@ -60,75 +60,96 @@ init -1100 python in gui:
         build.include_old_themes = False
 
     def button_properties(kind):
-#         """
-#         :doc: gui
-#
-#         Given a `kind` of button, returns a dictionary giving standard style
-#         properties for that button. This sets.
-#
-#         * Background, to Frame([ "gui/button/kind_[prefix_]background.png", "gui/button/"[prefix_]background.png", Null() ], gui.kind_borders.png)
-#         * Foreground, to [ "gui/button/kind_[prefix_]foreground.png", Null() ]
-#         * Padding, to gui.kind_button_borders.padding (if it exists).
-#         * Xsize, to gui.kind_button_width (if it exists).
-#         * Ysize, to gui.kind_button_height (if it exists).
-#         """
+        """
+        :doc: gui
+
+        Given a `kind` of button, returns a dictionary giving standard style
+        properties for that button. This sets:
+
+        * The background.
+        * Padding, to gui.kind_button_borders.padding (if it exists).
+        * Xsize, to gui.kind_button_width (if it exists).
+        * Ysize, to gui.kind_button_height (if it exists).
+
+        The background is a frame that takes its background picture from
+        the first existing one of:
+
+        * gui/button/kind_[prefix_].background.png
+        * gui/button/[prefix_].background.png
+
+        If a borders variables named gui.kind_borders is supplied, it's
+        used. Otherwise, button_borders is used.
+        """
 
         g = globals()
 
-        def value(suffix):
-            if kind + "_button_" + suffix in g:
-                return g[kind + "_button_" + suffix]
+        def get(prop):
+            if kind + "_button_" + prop in g:
+                return g[kind + "_button_" + prop]
 
-            return g["button_" + suffix]
+            return None
 
-        borders = value("borders")
+        borders = get("borders")
 
         rv = {
             "background" : Frame([
                 "gui/button/" + kind + "_[prefix_]background.png",
                 "gui/button/[prefix_]background.png",
-                _null,
-            ], borders),
-
-            "foreground" : [
-                "gui/button/" + kind + "_[prefix_]foreground.png",
-                "gui/button/[prefix_]foreground.png",
-                _null,
-            ],
-
-            "padding" : borders.padding,
-            "xsize" : value("width"),
-            "ysize" : value("height"),
+            ], borders or button_borders),
         }
 
-        print kind, rv
+        if borders is not None:
+            rv["padding"] = borders.padding
+
+        width = get("width")
+        height = get("height")
+
+        if width is not None:
+            rv["xsize"] = width
+
+        if height is not None:
+            rv["ysize"] = height
+
         return rv
 
     def button_text_properties(kind):
-#         """
-#         :doc: gui
-#
-#         Given a `kind` of button, returns a dictionary giving standard style
-#         properties for that button. This currently sets:
-#
-#         * Font, to gui.kind_button_font (if it exists).
-#         * Size, to gui.kind_button_text_size (if it exists).
-#         """
+        """
+        :doc: gui
+
+        Given a `kind` of button, returns a dictionary giving standard style
+        properties for that button. This currently sets:
+
+        * Font, to gui.kind_button_font (if it exists).
+        * Size, to gui.kind_button_text_size (if it exists).
+        """
 
         g = globals()
 
-        def value(suffix):
-            if kind + "_button_" + suffix in g:
-                return g[kind + "_button_" + suffix]
+        def get(prop):
+            print kind + "_button_" + prop
 
-            return g["button_" + suffix]
+            if kind + "_button_" + prop in g:
+                return g[kind + "_button_" + prop]
 
-        return {
-            "font" : value("font"),
-            "size" : value("text_size"),
-        }
+            return None
 
+        rv = { }
 
+        font = get("font")
+        text_size = get("text_size")
+        xalign = get("text_xalign")
+
+        if font is not None:
+            rv["font"] = font
+
+        if text_size is not None:
+            rv["size"] = text_size
+
+        if xalign is not None:
+            rv["xalign"] = xalign
+            rv["text_align"] = xalign
+
+        return rv
 
 
     ############################################################################
@@ -300,11 +321,11 @@ init -1100 python in gui:
         tnx = (gui.slot_width - config.thumbnail_width) // 2
         bar_width = scale(None, 5)
 
-        s = Image("slot", "idle_background", gui.slot_width, gui.slot_height)
+        s = Image("button", "slot_idle_background", gui.slot_width, gui.slot_height)
         s.fill_rect((tnx, sbp[1], config.thumbnail_width, config.thumbnail_height), gui.muted_color)
         s.save()
 
-        s = Image("slot", "hover_background", gui.slot_width, gui.slot_height)
+        s = Image("button", "slot_hover_background", gui.slot_width, gui.slot_height)
         s.fill_rect((tnx, sbp[1], config.thumbnail_width, config.thumbnail_height), gui.hover_muted_color)
         s.fill_rect((0, sbp[1], bar_width, config.thumbnail_height))
 

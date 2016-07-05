@@ -141,3 +141,37 @@ define config.save_directory = "oshs-1466351223"
 
 
 
+define gui.accent_color = '#000060'
+define gui.idle_color = '#606060'
+define gui.idle_small_color = '#404040'
+define gui.hover_color = '#3284d6'
+define gui.selected_color = '#000060'
+define gui.insensitive_color = '#8888887f'
+define gui.muted_color = '#6080d0'
+define gui.hover_muted_color = '#8080f0'
+define gui.text_color = '#402000'
+define gui.interface_text_color = '#404040'
+define gui.choice_idle_color = "#cccccc"
+define gui.choice_hover_color = "#0066cc"
+
+define gui.default_font = "ArchitectsDaughter.ttf"
+define gui.interface_font = "ArchitectsDaughter.ttf"
+define gui.button_font = "ArchitectsDaughter.ttf"
+define gui.slot_font = "ArchitectsDaughter.ttf"
+define gui.glyph_font = "DejaVuSans.ttf"
+
+define gui.button_height = 64
+define gui.slider_size = 64
+
+define gui.radio_button_width = 300
+define gui.check_button_width = 300
+
+define gui.button_borders = Borders(10, 10, 10, 10, tile=True)
+
+define gui.radio_button_borders = Borders(40, 10, 10, 10, tile=True)
+define gui.check_button_borders = Borders(40, 10, 10, 10, tile=True)
+
+define gui.page_button_width = 50
+define gui.page_button_text_xalign = 0.5
+
+define gui.confirm_button_width = 100
