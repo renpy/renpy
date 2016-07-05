@@ -63,7 +63,6 @@ define gui.game_menu_background = "gui/game_menu.png"
 
 define gui.default_font = "DejaVuSans.ttf"
 define gui.interface_font = "DejaVuSans.ttf"
-define gui.quick_button_font = "DejaVuSans.ttf"
 define gui.glyph_font = "DejaVuSans.ttf"
 
 define gui.notify_text_size = gui.scale(16)
@@ -72,11 +71,6 @@ define gui.interface_text_size = gui.scale(24)
 define gui.label_text_size = gui.scale(30)
 define gui.title_size = gui.scale(50)
 
-define gui.button_text_size = gui.scale(24)
-define gui.medium_button_text_size = gui.scale(24)
-define gui.small_button_text_size = gui.scale(24)
-define gui.quick_button_text_size = gui.scale(14)
-define gui.slot_text_size = gui.scale(14)
 
 ################################################################################
 ## Window icon.
@@ -86,20 +80,63 @@ define config.window_icon = "gui/window_icon.png"
 
 
 ################################################################################
+## Buttons
+
+define gui.button_width = None
+define gui.button_height = gui.scale(36)
+define gui.button_font = gui.interface_font
+define gui.button_text_size = gui.interface_text_size
+define gui.button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+
+define gui.navigation_button_width = gui.button_width
+define gui.navigation_button_height = gui.button_height
+define gui.navigation_button_font = gui.button_font
+define gui.navigation_button_text_size = gui.button_text_size
+define gui.navigation_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+
+define gui.radio_button_width = gui.button_width
+define gui.radio_button_height = gui.button_height
+define gui.radio_button_font = gui.button_font
+define gui.radio_button_text_size = gui.button_text_size
+define gui.radio_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
+
+define gui.check_button_width = gui.button_width
+define gui.check_button_height = gui.button_height
+define gui.check_button_font = gui.button_font
+define gui.check_button_text_size = gui.button_text_size
+define gui.check_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
+
+define gui.test_button_width = gui.button_width
+define gui.test_button_height = gui.button_height
+define gui.test_button_font = gui.button_font
+define gui.test_button_text_size = gui.button_text_size
+define gui.test_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+
+define gui.page_button_width = gui.button_width
+define gui.page_button_height = gui.button_height
+define gui.page_button_font = gui.button_font
+define gui.page_button_text_size = gui.button_text_size
+define gui.page_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), gui.scale(4))
+
+define gui.quick_button_width = gui.button_width
+define gui.quick_button_height = gui.button_height
+define gui.quick_button_font = gui.default_font
+define gui.quick_button_text_size = gui.scale(14)
+define gui.quick_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), gui.scale(0))
+
+define gui.slot_width = gui.scale(276)
+define gui.slot_height = gui.scale(206)
+define gui.slot_font = gui.button_font
+define gui.slot_text_size = gui.button_text_size
+define gui.slot_borders = Borders(gui.scale(10), gui.scale(10), gui.scale(10), gui.scale(10))
+
+
+################################################################################
 ## Borders
 ##
 ## Borders objects control both the size of the left, top, right, and bottom
 ## borders used by a Frame, and optionally additional padding added to each
 ## side.
-
-## Interface buttons.
-define gui.button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.medium_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.small_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4), pad_left=gui.scale(10), pad_right=gui.scale(10))
-define gui.check_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.radio_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.quick_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), 0)
-define gui.slot_borders = Borders(gui.scale(10), gui.scale(10), gui.scale(10), gui.scale(10))
 
 ## Choice buttons used by the menu statement.
 define gui.choice_borders = Borders(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
@@ -127,20 +164,6 @@ define gui.namebox_borders = Borders(gui.scale(50), gui.scale(4), gui.scale(50),
 define gui.bar_size = gui.scale(36)
 define gui.scrollbar_size = gui.scale(12)
 define gui.slider_size = gui.scale(30)
-
-## The widths and heights of various buttons. Setting these to None allows
-## Ren'Py to choose a width or height.
-define gui.button_width = None
-define gui.medium_button_width = None
-define gui.small_button_width = None
-define gui.quick_button_width = None
-define gui.slot_width = gui.scale(276)
-
-define gui.button_height = gui.scale(36)
-define gui.medium_button_height = gui.scale(30)
-define gui.small_button_height = gui.scale(30)
-define gui.quick_button_height = gui.scale(30)
-define gui.slot_height = gui.scale(206)
 
 
 ################################################################################
@@ -184,14 +207,6 @@ style hyperlink_text:
 ## Style common user interface components.
 
 style button_text is gui_text
-style check_button is button
-style check_button_text is button_text
-style radio_button is button
-style radio_button_text is button_text
-style medium_button is button
-style medium_button_text is button_text
-style small_button is button
-style small_button_text is button_text
 style label_text is gui_text
 style prompt_text is gui_text
 
@@ -201,14 +216,6 @@ style gui_text:
     color gui.interface_text_color
     size gui.interface_text_size
 
-## Used for the text of all buttons.
-style button_text:
-    yalign 0.5
-    size gui.button_text_size
-    color gui.idle_color
-    insensitive_color gui.insensitive_color
-    selected_color gui.selected_color
-    hover_color gui.hover_color
 
 ## Used for full-sized buttons, like navigation buttons.
 style button:
@@ -217,37 +224,16 @@ style button:
     xsize gui.button_width
     ysize gui.button_height
 
-## Used for medium-sized buttons, like the sound test and mute buttons.
-style medium_button:
-    padding gui.medium_button_borders.padding
-    background Frame([ "gui/button/medium_[prefix_]background.png", "gui/button/[prefix_]background.png" ], gui.medium_button_borders)
-    xsize gui.medium_button_width
-    ysize gui.medium_button_height
+style button_text:
+    yalign 0.5
 
-style medium_button_text:
-    size gui.medium_button_text_size
+    size gui.button_text_size
+    font gui.button_font
 
-## Used for small-sized buttons, like the file page navigation buttons.
-style small_button:
-    padding gui.small_button_borders.padding
-    background Frame([ "gui/button/small_[prefix_]background.png", "gui/button/[prefix_]background.png" ], gui.small_button_borders)
-    xsize gui.medium_button_width
-    ysize gui.medium_button_height
-
-style small_button_text:
-    size gui.medium_button_text_size
-
-## Used for checkbox buttons in the preferences.
-style check_button:
-    padding gui.check_button_borders.padding
-    background Frame([ "gui/button/check_[prefix_]background.png", "gui/button/[prefix_]background.png" ], gui.check_button_borders)
-    foreground "gui/button/check_[prefix_]foreground.png"
-
-## Used for radio buttons in the preferences.
-style radio_button:
-    padding gui.radio_button_borders.padding
-    background Frame([ "gui/button/radio_[prefix_]background.png", "gui/button/[prefix_]background.png" ], gui.radio_button_borders)
-    foreground "gui/button/check_[prefix_]foreground.png"
+    color gui.idle_color
+    insensitive_color gui.insensitive_color
+    selected_color gui.selected_color
+    hover_color gui.hover_color
 
 
 ## Labels a portion of the interface.
@@ -601,19 +587,14 @@ screen quick_menu():
 init python:
     config.overlay_screens.append("quick_menu")
 
-
 style quick_button is default
 style quick_button_text is button_text
 
 style quick_button:
-    padding gui.quick_button_borders.padding
-    background Frame("gui/button/quick_[prefix_]background.png",  gui.quick_button_borders)
-    xsize gui.quick_button_width
-    ysize gui.quick_button_height
+    properties gui.button_properties("quick")
 
 style quick_button_text:
-    font gui.quick_button_font
-    size gui.quick_button_text_size
+    properties gui.button_text_properties("quick")
 
 
 ################################################################################
@@ -677,7 +658,10 @@ style navigation_button_text is gui_button_text
 
 style navigation_button:
     size_group "navigation"
-    xsize gui.navigation_width
+    properties gui.button_properties("navigation")
+
+style navigation_button_text:
+    properties gui.button_text_properties("navigation")
 
 
 ##############################################################################
@@ -1044,13 +1028,17 @@ style slot_button:
     ysize gui.slot_height
     padding gui.slot_borders.padding
 
-    background "gui/slot/[prefix_]background.png"
+    background [ "gui/slot/[prefix_]background.png", None ]
 
 style slot_text:
     xalign 0.5
 
     color gui.idle_small_color
+    selected_color gui.accent_color
+    hover_color gui.hover_color
+
     layout "subtitle"
+    font gui.slot_font
     size gui.slot_text_size
     text_align 0.5
 
@@ -1082,20 +1070,20 @@ screen preferences():
                 if renpy.variant("pc"):
 
                     vbox:
-                        style_prefix "radio_pref"
+                        style_prefix "radio"
                         label _("Display")
                         textbutton _("Window") action Preference("display", "window")
                         textbutton _("Fullscreen") action Preference("display", "fullscreen")
 
                 vbox:
-                    style_prefix "radio_pref"
+                    style_prefix "radio"
                     label _("Rollback Side")
                     textbutton _("Disable") action Preference("rollback side", "disable")
                     textbutton _("Left") action Preference("rollback side", "left")
                     textbutton _("Right") action Preference("rollback side", "right")
 
                 vbox:
-                    style_prefix "check_pref"
+                    style_prefix "check"
                     label _("Skip")
                     textbutton _("Unseen Text") action Preference("skip", "toggle")
                     textbutton _("After Choices") action Preference("after choices", "toggle")
@@ -1107,7 +1095,7 @@ screen preferences():
             null height gui.scale(50)
 
             hbox:
-                style_prefix "slider_pref"
+                style_prefix "slider"
                 box_wrap True
 
                 vbox:
@@ -1150,34 +1138,34 @@ screen preferences():
 
                     textbutton _("Mute All"):
                         action Preference("all mute", "toggle")
-                        style "mute_all_pref_button"
+                        style "mute_all_button"
 
 
 style pref_label is gui_label
 style pref_label_text is gui_label_text
 style pref_vbox is vbox
 
-style radio_pref_label is pref_label
-style radio_pref_label_text is pref_label_text
-style radio_pref_button is gui_radio_button
-style radio_pref_button_text is gui_radio_button_text
-style radio_pref_vbox is pref_vbox
+style radio_label is pref_label
+style radio_label_text is pref_label_text
+style radio_button is gui_button
+style radio_button_text is gui_button_text
+style radio_vbox is pref_vbox
 
-style check_pref_label is pref_label
-style check_pref_label_text is pref_label_text
-style check_pref_button is gui_check_button
-style check_pref_button_text is gui_check_button_text
-style radio_pref_vbox is pref_vbox
+style check_label is pref_label
+style check_label_text is pref_label_text
+style check_button is gui_button
+style check_button_text is gui_button_text
+style check_vbox is pref_vbox
 
-style slider_pref_label is pref_label
-style slider_pref_label_text is pref_label_text
-style slider_pref_slider is gui_slider
-style slider_pref_button is gui_medium_button
-style slider_pref_button_text is gui_medium_button_text
+style slider_label is pref_label
+style slider_label_text is pref_label_text
+style slider_slider is gui_slider
+style slider_button is gui_button
+style slider_pref_button_text is gui_button_text
 style slider_pref_vbox is pref_vbox
 
-style mute_all_pref_button is gui_medium_button
-style mute_all_pref_button_text is gui_medium_button_text
+style mute_all_button is check_button
+style mute_all_button_text is check_button_text
 
 style pref_label:
     top_margin gui.scale(10)
@@ -1189,26 +1177,32 @@ style pref_label_text:
 style pref_vbox:
     xsize gui.scale(225)
 
-style radio_pref_vbox:
+style radio_vbox:
     spacing gui.pref_spacing
 
-style radio_pref_button:
-    size_group "preferences"
+style radio_button:
+    properties gui.button_properties("radio")
 
-style check_pref_vbox:
+style radio_button_text:
+    properties gui.button_text_properties("radio")
+
+style check_vbox:
     spacing gui.pref_spacing
 
-style check_pref_button:
-    size_group "preferences"
+style check_button:
+    properties gui.button_properties("check")
 
-style slider_pref_slider:
+style check_button_text:
+    properties gui.button_text_properties("check")
+
+style slider_slider:
     xsize gui.scale(350)
 
-style slider_pref_button:
-    yalign 1.0
+style slider_button:
+    yalign 0.5
     left_margin gui.scale(10)
 
-style slider_pref_vbox:
+style slider_vbox:
     xsize gui.scale(450)
 
 
@@ -1341,10 +1335,12 @@ style confirm_prompt_text:
     layout "subtitle"
 
 style confirm_button:
-    size_group "confirm"
+    properties gui.button_properties("confirm")
 
 style confirm_button_text:
+    properties gui.button_text_properties("confirm")
     xalign 0.5
+    text_align 0.5
 
 
 ##############################################################################
@@ -1489,7 +1485,11 @@ style help_label_text is gui_label_text
 style help_text is gui_text
 
 style help_button:
+    properties gui.button_properties("help")
     xmargin gui.scale(8)
+
+style help_button_text:
+    properties gui.button_text_properties("help")
 
 style help_label:
     xsize gui.scale(250)
@@ -1642,111 +1642,111 @@ init python:
 ## This section changes many sizes and images to make the game suitable for
 ## a small phone screen.
 
-init python:
-
-    if renpy.variant("small"):
-        gui.text_size = gui.scale(30)
-        gui.notify_text_size = gui.scale(25)
-        gui.interface_text_size = gui.scale(36)
-        gui.label_text_size = gui.scale(36)
-
-        gui.file_slot_cols = 2
-        gui.file_slot_rows = 2
-
-        gui.slider_size = gui.scale(44)
-        gui.thumb_size = gui.scale(15)
-
-style window:
-    variant "small"
-    xpadding gui.scale(90)
-    ysize gui.scale(240)
-    background "gui/phone/textbox.png"
-
-style choice_button:
-    variant "small"
-    xsize gui.scale(1190)
-    xpadding gui.scale(100)
-    ypadding gui.scale(8)
-
-style nvl_window:
-    variant "small"
-    background "gui/phone/nvl.png"
-    xpadding gui.scale(120)
-
-style nvl_entry:
-    variant "small"
-    ysize gui.scale(170)
-
-style nvl_dialogue:
-    variant "small"
-    ypos gui.scale(6)
-
-style quick_button_text:
-    variant "small"
-    size gui.scale(20)
-
-style main_menu_frame:
-    variant "small"
-    background "gui/phone/overlay/main_menu.png"
-
-style game_menu_outer_frame:
-    variant "small"
-    background "gui/phone/overlay/game_menu.png"
-
-style game_menu_navigation_frame:
-    variant "small"
-    xsize gui.scale(340)
-
-style game_menu_content_frame:
-    variant "small"
-    top_margin 0
-
-style navigation_vbox:
-    variant "small"
-    xsize gui.scale(334)
-
-style pref_vbox:
-    variant "small"
-    xsize gui.scale(400)
-
-style slider_pref_vbox:
-    variant "small"
-    xsize None
-
-style slider_pref_slider:
-    variant "small"
-    xsize gui.scale(600)
-
-style history_window:
-    variant "small"
-    ysize gui.scale(190)
-
-style history_who:
-    variant "small"
-    xmaximum gui.scale(150)
-    min_width gui.scale(150)
-    text_align 1.0
-    size gui.text_size
-
-style history_text:
-    variant "small"
-    ypos gui.scale(4)
-    size gui.scale(25)
-
-style history_label:
-    variant "small"
-    xfill True
-
-style history_label_text:
-    variant "small"
-    xalign 0.5
-
-style confirm_frame:
-    variant "small"
-    xsize gui.scale(844)
-    ysize gui.scale(475)
-
-style notify_frame:
-    variant "small"
-    ypos gui.scale(55)
+# init python:
+#
+#     if renpy.variant("small"):
+#         gui.text_size = gui.scale(30)
+#         gui.notify_text_size = gui.scale(25)
+#         gui.interface_text_size = gui.scale(36)
+#         gui.label_text_size = gui.scale(36)
+#
+#         gui.file_slot_cols = 2
+#         gui.file_slot_rows = 2
+#
+#         gui.slider_size = gui.scale(44)
+#         gui.thumb_size = gui.scale(15)
+#
+# style window:
+#     variant "small"
+#     xpadding gui.scale(90)
+#     ysize gui.scale(240)
+#     background "gui/phone/textbox.png"
+#
+# style choice_button:
+#     variant "small"
+#     xsize gui.scale(1190)
+#     xpadding gui.scale(100)
+#     ypadding gui.scale(8)
+#
+# style nvl_window:
+#     variant "small"
+#     background "gui/phone/nvl.png"
+#     xpadding gui.scale(120)
+#
+# style nvl_entry:
+#     variant "small"
+#     ysize gui.scale(170)
+#
+# style nvl_dialogue:
+#     variant "small"
+#     ypos gui.scale(6)
+#
+# style quick_button_text:
+#     variant "small"
+#     size gui.scale(20)
+#
+# style main_menu_frame:
+#     variant "small"
+#     background "gui/phone/overlay/main_menu.png"
+#
+# style game_menu_outer_frame:
+#     variant "small"
+#     background "gui/phone/overlay/game_menu.png"
+#
+# style game_menu_navigation_frame:
+#     variant "small"
+#     xsize gui.scale(340)
+#
+# style game_menu_content_frame:
+#     variant "small"
+#     top_margin 0
+#
+# style navigation_vbox:
+#     variant "small"
+#     xsize gui.scale(334)
+#
+# style pref_vbox:
+#     variant "small"
+#     xsize gui.scale(400)
+#
+# style slider_pref_vbox:
+#     variant "small"
+#     xsize None
+#
+# style slider_pref_slider:
+#     variant "small"
+#     xsize gui.scale(600)
+#
+# style history_window:
+#     variant "small"
+#     ysize gui.scale(190)
+#
+# style history_who:
+#     variant "small"
+#     xmaximum gui.scale(150)
+#     min_width gui.scale(150)
+#     text_align 1.0
+#     size gui.text_size
+#
+# style history_text:
+#     variant "small"
+#     ypos gui.scale(4)
+#     size gui.scale(25)
+#
+# style history_label:
+#     variant "small"
+#     xfill True
+#
+# style history_label_text:
+#     variant "small"
+#     xalign 0.5
+#
+# style confirm_frame:
+#     variant "small"
+#     xsize gui.scale(844)
+#     ysize gui.scale(475)
+#
+# style notify_frame:
+#     variant "small"
+#     ypos gui.scale(55)
 

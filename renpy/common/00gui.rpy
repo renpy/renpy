@@ -20,9 +20,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1100 python in gui:
-    from store import config, layout, _preferences
+    from store import config, layout, _preferences, Frame, Null
 
     config.translate_clean_stores.append("gui")
+
+    _null = Null()
 
     def init(width, height):
         """
@@ -57,6 +59,77 @@ init -1100 python in gui:
         from store import build
         build.include_old_themes = False
 
+    def button_properties(kind):
+#         """
+#         :doc: gui
+#
+#         Given a `kind` of button, returns a dictionary giving standard style
+#         properties for that button. This sets.
+#
+#         * Background, to Frame([ "gui/button/kind_[prefix_]background.png", "gui/button/"[prefix_]background.png", Null() ], gui.kind_borders.png)
+#         * Foreground, to [ "gui/button/kind_[prefix_]foreground.png", Null() ]
+#         * Padding, to gui.kind_button_borders.padding (if it exists).
+#         * Xsize, to gui.kind_button_width (if it exists).
+#         * Ysize, to gui.kind_button_height (if it exists).
+#         """
+
+        g = globals()
+
+        def value(suffix):
+            if kind + "_button_" + suffix in g:
+                return g[kind + "_button_" + suffix]
+
+            return g["button_" + suffix]
+
+        borders = value("borders")
+
+        rv = {
+            "background" : Frame([
+                "gui/button/" + kind + "_[prefix_]background.png",
+                "gui/button/[prefix_]background.png",
+                _null,
+            ], borders),
+
+            "foreground" : [
+                "gui/button/" + kind + "_[prefix_]foreground.png",
+                "gui/button/[prefix_]foreground.png",
+                _null,
+            ],
+
+            "padding" : borders.padding,
+            "xsize" : value("width"),
+            "ysize" : value("height"),
+        }
+
+        print kind, rv
+        return rv
+
+    def button_text_properties(kind):
+#         """
+#         :doc: gui
+#
+#         Given a `kind` of button, returns a dictionary giving standard style
+#         properties for that button. This currently sets:
+#
+#         * Font, to gui.kind_button_font (if it exists).
+#         * Size, to gui.kind_button_text_size (if it exists).
+#         """
+
+        g = globals()
+
+        def value(suffix):
+            if kind + "_button_" + suffix in g:
+                return g[kind + "_button_" + suffix]
+
+            return g["button_" + suffix]
+
+        return {
+            "font" : value("font"),
+            "size" : value("text_size"),
+        }
+
+
+
 
     ############################################################################
     # Strings used by the confirm screen.
@@ -72,10 +145,12 @@ init -1100 python in gui:
     FAST_SKIP_UNSEEN = layout.FAST_SKIP_UNSEEN
     FAST_SKIP_SEEN = layout.FAST_SKIP_SEEN
 
+    ############################################################################
+    # Image generation. This lives here since it wants to read data from
+    # the gui variables.
+
     # Should we skip backups?
     _skip_backup = False
-
-init -1100 python in gui:
 
     def _gui_images():
 
