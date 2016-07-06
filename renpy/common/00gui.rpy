@@ -130,8 +130,6 @@ init -1100 python in gui:
         g = globals()
 
         def get(prop):
-            print kind + "_button_" + prop
-
             if kind + "_button_" + prop in g:
                 return g[kind + "_button_" + prop]
 
