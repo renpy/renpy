@@ -87,6 +87,7 @@ define gui.button_height = gui.scale(36)
 define gui.button_font = gui.interface_font
 define gui.button_text_size = gui.interface_text_size
 define gui.button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.button_tile = False
 
 # define gui.navigation_button_width = gui.button_width
 # define gui.navigation_button_height = gui.button_height

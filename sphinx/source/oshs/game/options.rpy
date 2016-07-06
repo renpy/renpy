@@ -166,10 +166,11 @@ define gui.slider_size = 64
 define gui.radio_button_width = 300
 define gui.check_button_width = 300
 
-define gui.button_borders = Borders(10, 10, 10, 10, tile=True)
+define gui.button_tile = True
 
-define gui.radio_button_borders = Borders(40, 10, 10, 10, tile=True)
-define gui.check_button_borders = Borders(40, 10, 10, 10, tile=True)
+define gui.button_borders = Borders(10, 10, 10, 10)
+define gui.radio_button_borders = Borders(40, 10, 10, 10)
+define gui.check_button_borders = Borders(40, 10, 10, 10)
 
 define gui.page_button_width = 50
 define gui.page_button_text_xalign = 0.5
