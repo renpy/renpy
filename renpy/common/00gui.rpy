@@ -91,11 +91,15 @@ init -1100 python in gui:
 
         borders = get("borders")
 
+        tile = get("tile")
+        if tile is None:
+            tile = button_tile
+
         rv = {
             "background" : Frame([
                 "gui/button/" + kind + "_[prefix_]background.png",
                 "gui/button/[prefix_]background.png",
-            ], borders or button_borders),
+            ], borders or button_borders, tile=tile),
         }
 
         if borders is not None:

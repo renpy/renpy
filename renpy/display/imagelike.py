@@ -106,9 +106,6 @@ class Borders(object):
         negative. (For example, if `left` is 5 and `pad_left` is -3, the final
         padding is 2.)
 
-    `tile`
-        If True, the Frame is tiled rather than scaled.
-
     The padding information is supplied via a field:
 
     .. attribute:: padding
@@ -118,7 +115,7 @@ class Borders(object):
     """
 
 
-    def __init__(self, left, top, right, bottom, pad_left=0, pad_top=0, pad_right=0, pad_bottom=0, tile=False):
+    def __init__(self, left, top, right, bottom, pad_left=0, pad_top=0, pad_right=0, pad_bottom=0):
 
         self.left = left
         self.top = top
@@ -129,8 +126,6 @@ class Borders(object):
         self.pad_top = pad_top
         self.pad_right = pad_right
         self.pad_bottom = pad_bottom
-
-        self.tile = tile
 
     @property
     def padding(self):
@@ -207,8 +202,6 @@ class Frame(renpy.display.core.Displayable):
             top = insets.top
             right = insets.right
             bottom = insets.bottom
-
-            tile = insets.tile
 
         self.tile = tile
 

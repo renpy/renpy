@@ -2,11 +2,6 @@
 
 define e = Character("Eileen")
 
-define b = Borders(40, 5, 40, 5, tile=True)
-
-define gui.frame_borders = Borders(20, 20, 20, 20, tile=True)
-
-
 label start:
 
     scene expression "gui/main_menu.png"
