@@ -315,7 +315,7 @@ class ImageGenerator(object):
         self.save(s, "frame")
 
         width = self.scale_int(300)
-        height = self.scale_int(26)
+        height = self.scale_int(36)
 
         border = self.scale_int(3)
 

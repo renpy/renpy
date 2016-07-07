@@ -257,7 +257,7 @@ init -1100 python in gui:
 
         # Buttons
         width = scale(gui.button_width, 300)
-        height = scale(gui.button_height, 36)
+        height = scale(gui.button_height, 40)
 
         check_width = gui.check_button_borders.padding[0]
         check_rect = (
