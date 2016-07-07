@@ -319,15 +319,15 @@ init -1100 python in gui:
         Image("scrollbar", "vertical_hover_bar", gui.scrollbar_size, long_size).fill(gui.hover_muted_color).save()
         Image("scrollbar", "vertical_hover_thumb", gui.scrollbar_size, long_size).fill(gui.hover_color).save()
 
-        sbp = gui.slot_borders.padding
-        tnx = (gui.slot_width - config.thumbnail_width) // 2
+        sbp = gui.slot_button_borders.padding
+        tnx = (gui.slot_button_width - config.thumbnail_width) // 2
         bar_width = scale(None, 5)
 
-        s = Image("button", "slot_idle_background", gui.slot_width, gui.slot_height)
+        s = Image("button", "slot_idle_background", gui.slot_button_width, gui.slot_button_height)
         s.fill_rect((tnx, sbp[1], config.thumbnail_width, config.thumbnail_height), gui.muted_color)
         s.save()
 
-        s = Image("button", "slot_hover_background", gui.slot_width, gui.slot_height)
+        s = Image("button", "slot_hover_background", gui.slot_button_width, gui.slot_button_height)
         s.fill_rect((tnx, sbp[1], config.thumbnail_width, config.thumbnail_height), gui.hover_muted_color)
         s.fill_rect((0, sbp[1], bar_width, config.thumbnail_height))
 

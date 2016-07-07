@@ -48,6 +48,33 @@ define gui.interface_text_color = "#ffffff"
 define gui.choice_idle_color = "#cccccc"
 define gui.choice_hover_color = "#ffffff"
 
+################################################################################
+## Fonts and Font Sizes
+
+## The font used for in-game text.
+define gui.default_font = "DejaVuSans.ttf"
+
+## The font used for out-of-game text.
+define gui.interface_font = "DejaVuSans.ttf"
+
+## The size of normal dialogue text.
+define gui.text_size = gui.scale(22)
+
+## The size of character names.
+define gui.name_text_size = gui.scale(30)
+
+## The size of text in the game's user interface.
+define gui.interface_text_size = gui.scale(24)
+
+## The size of labels in the game's user interface.
+define gui.label_text_size = gui.scale(30)
+
+## The size of text on the notify screen.
+define gui.notify_text_size = gui.scale(16)
+
+## The size of the game's title.
+define gui.title_text_size = gui.scale(50)
+
 
 ################################################################################
 ## Images
@@ -57,76 +84,49 @@ define gui.choice_hover_color = "#ffffff"
 define gui.main_menu_background = "gui/main_menu.png"
 define gui.game_menu_background = "gui/game_menu.png"
 
-
-################################################################################
-## Fonts and Font Sizes
-
-define gui.default_font = "DejaVuSans.ttf"
-define gui.interface_font = "DejaVuSans.ttf"
-define gui.glyph_font = "DejaVuSans.ttf"
-
-define gui.notify_text_size = gui.scale(16)
-define gui.text_size = gui.scale(22)
-define gui.interface_text_size = gui.scale(24)
-define gui.label_text_size = gui.scale(30)
-define gui.title_size = gui.scale(50)
-
-
-################################################################################
-## Window icon.
-
 ## This is the icon displayer on the taskbar or dock.
 define config.window_icon = "gui/window_icon.png"
 
 
 ################################################################################
 ## Buttons
+##
+## These settings, along with the image files in gui/button, control aspects
+## of how buttons are displayed.
 
+## The width and height of a button, on pixels. If None, Ren'Py computes a size.
 define gui.button_width = None
 define gui.button_height = gui.scale(36)
-define gui.button_font = gui.interface_font
-define gui.button_text_size = gui.interface_text_size
+
+## The borders on each side of the button, in left, top, right, bottom order.
 define gui.button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+
+## If true, the backgound image will be tiled. If false, the background image
+## will be linearly scaled.
 define gui.button_tile = False
 
-# define gui.navigation_button_width = gui.button_width
-# define gui.navigation_button_height = gui.button_height
-# define gui.navigation_button_font = gui.button_font
-# define gui.navigation_button_text_size = gui.button_text_size
-# define gui.navigation_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-#
-# define gui.radio_button_width = gui.button_width
-# define gui.radio_button_height = gui.button_height
-# define gui.radio_button_font = gui.button_font
-# define gui.radio_button_text_size = gui.button_text_size
+## The font used by the button.
+define gui.button_font = gui.interface_font
+
+## The size of the text used by the button.
+define gui.button_text_size = gui.interface_text_size
+
+## These are variables that override settings for different kinds of
+## buttons. The available kinds of buttons are navigation_button (used for
+## navigation in the main and game menus), radio_button (multiple-choice
+## preferences), check_button (toggle preferences); test_button (testing sound
+## volume), confirm_button (yes and no), page_button (switching between pages in the file picker),
+## slot_button (file slots), and quick_button (quick access to the game menu).
+##
+## These are some default customizations:
+
 define gui.radio_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
 
-#
-# define gui.check_button_width = gui.button_width
-# define gui.check_button_height = gui.button_height
-# define gui.check_button_font = gui.button_font
-# define gui.check_button_text_size = gui.button_text_size
 define gui.check_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
-#
-# define gui.test_button_width = gui.button_width
-# define gui.test_button_height = gui.button_height
-# define gui.test_button_font = gui.button_font
-# define gui.test_button_text_size = gui.button_text_size
-# define gui.test_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-#
-# define gui.page_button_width = gui.button_width
-# define gui.page_button_height = gui.button_height
-# define gui.page_button_font = gui.button_font
-# define gui.page_button_text_size = gui.button_text_size
-define gui.page_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), gui.scale(4))
-#
-# define gui.quick_button_width = gui.button_width
-# define gui.quick_button_height = gui.button_height
-# define gui.quick_button_font = gui.default_font
-define gui.quick_button_text_size = gui.scale(14)
-define gui.quick_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), gui.scale(0))
 
 define gui.confirm_button_text_xalign = 0.5
+
+define gui.page_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), gui.scale(4))
 
 define gui.slot_button_width = gui.scale(276)
 define gui.slot_button_height = gui.scale(206)
@@ -134,40 +134,53 @@ define gui.slot_button_text_size = gui.scale(14)
 define gui.slot_button_text_xalign = 0.5
 define gui.slot_button_borders = Borders(gui.scale(10), gui.scale(10), gui.scale(10), gui.scale(10))
 
+define gui.quick_button_text_size = gui.scale(14)
+define gui.quick_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), gui.scale(0))
 
-################################################################################
-## Borders
-##
-## Borders objects control both the size of the left, top, right, and bottom
-## borders used by a Frame, and optionally additional padding added to each
-## side.
+## You can also add your own customizations, by adding code. For example, you
+## can uncomment the following line:
+
+# define gui.navigation_button_width = 250
 
 ## Choice buttons used by the menu statement.
 define gui.choice_borders = Borders(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
 
-## Bars, scrollbars, and sliders.
-define gui.bar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.scrollbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.slider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.vbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.vscrollbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.vslider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
 ## Frames.
 define gui.frame_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.namebox_borders = Borders(gui.scale(50), gui.scale(4), gui.scale(50), gui.scale(4))
 
 
+
 ################################################################################
-## Sizes
+## Bars, Scrollbars, and Sliders
 ##
-## These control the size of various things in the interface.
+## These control the look and size of bars, scrollbars, and sliders.
+##
+## The default GUI only uses horizontal sliders and vertical scrollbars.
+## All of the other bars are only used in creator-written code.
 
-
-## The height of horizontal and width of vertical bars, scrollbars, and sliders.
+## The height of horizontal bars, scrollbars, and sliders. The width of
+## vertical bars, scrollbars, and sliders.
 define gui.bar_size = gui.scale(36)
 define gui.scrollbar_size = gui.scale(12)
 define gui.slider_size = gui.scale(30)
+
+## True if bar images should be tiled. False if they should be linearly scaler.
+define gui.bar_tile = False
+define gui.scrollbar_tile = False
+define gui.slider_tile = False
+
+## Horizontal borders.
+define gui.bar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.scrollbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.slider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+
+## Vertical borders.
+define gui.vbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.vscrollbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.vslider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+
 
 
 ################################################################################
@@ -243,7 +256,7 @@ style button_text:
 ## Labels a portion of the interface.
 style label_text:
     color gui.accent_color
-    size gui.interface_text_size
+    size gui.label_text_size
 
 ## Asks the user a question in the interface.
 style prompt_text:
@@ -254,19 +267,19 @@ style prompt_text:
 ## Bars are used to display value data to the user.
 style bar:
     ysize gui.bar_size
-    left_bar Frame("gui/bar/left_bar.png", gui.bar_borders)
-    right_bar Frame("gui/bar/right_bar.png", gui.bar_borders)
+    left_bar Frame("gui/bar/left_bar.png", gui.bar_borders, tile=gui.bar_tile)
+    right_bar Frame("gui/bar/right_bar.png", gui.bar_borders, tile=gui.bar_tile)
 
 ## Scrollbars are used to scroll viewports.
 style scrollbar:
     ysize gui.scrollbar_size
-    base_bar Frame("gui/scrollbar/horizontal_[prefix_]bar.png", gui.scrollbar_borders)
-    thumb Frame("gui/scrollbar/horizontal_[prefix_]thumb.png", gui.scrollbar_borders)
+    base_bar Frame("gui/scrollbar/horizontal_[prefix_]bar.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
+    thumb Frame("gui/scrollbar/horizontal_[prefix_]thumb.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
 
 ## Sliders are used to adjust values.
 style slider:
     ysize gui.slider_size
-    base_bar Frame("gui/slider/horizontal_[prefix_]bar.png", gui.slider_borders)
+    base_bar Frame("gui/slider/horizontal_[prefix_]bar.png", gui.slider_borders, tile=gui.slider_tile)
     thumb "gui/slider/horizontal_[prefix_]thumb.png"
 
 
@@ -274,17 +287,17 @@ style slider:
 
 style vbar:
     xsize gui.bar_size
-    top_bar Frame("gui/bar/top_bar.png", gui.vbar_borders)
-    bottom_bar Frame("gui/bar/bottom_bar.png", gui.vbar_borders)
+    top_bar Frame("gui/bar/top_bar.png", gui.vbar_borders, tile=gui.bar_tile)
+    bottom_bar Frame("gui/bar/bottom_bar.png", gui.vbar_borders, tile=gui.bar_tile)
 
 style vscrollbar:
     xsize gui.scrollbar_size
-    base_bar Frame("gui/scrollbar/vertical_[prefix_]bar.png", gui.vscrollbar_borders)
-    thumb Frame("gui/scrollbar/vertical_[prefix_]thumb.png", gui.vscrollbar_borders)
+    base_bar Frame("gui/scrollbar/vertical_[prefix_]bar.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
+    thumb Frame("gui/scrollbar/vertical_[prefix_]thumb.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
 
 style vslider:
     xsize gui.slider_size
-    base_bar Frame("gui/slider/vertical_[prefix_]bar.png", gui.vslider_borders)
+    base_bar Frame("gui/slider/vertical_[prefix_]bar.png", gui.vslider_borders, tile=gui.slider_tile)
     thumb "gui/slider/vertical_[prefix_]thumb.png"
 
 
@@ -368,7 +381,7 @@ style window:
 
 style say_label:
     color gui.accent_color
-    size gui.label_text_size
+    size gui.name_text_size
 
 style namebox:
     xalign 0.5
@@ -733,7 +746,7 @@ style main_menu_text:
     color gui.accent_color
 
 style main_menu_title:
-    size gui.title_size
+    size gui.title_text_size
 
 
 ##############################################################################
@@ -847,7 +860,7 @@ style game_menu_label:
     ysize gui.scale(120)
 
 style game_menu_label_text:
-    size gui.title_size
+    size gui.title_text_size
     color gui.accent_color
     yalign 0.5
 
@@ -1555,7 +1568,7 @@ style skip_text:
 style skip_triangle:
     # We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE
     # glyph in it.
-    font gui.glyph_font
+    font "DejaVuSans.ttf"
 
 ################################################################################
 ## Message notification.
