@@ -98,7 +98,7 @@ init -1100 python in gui:
         backgrounds = [ ]
 
         if kind != "button":
-            backgrounds.append("gui/button/" + kind[:-6] + "_[prefix_]background.png")
+            backgrounds.append("gui/button/" + kind[:-7] + "_[prefix_]background.png")
 
         backgrounds.append("gui/button/[prefix_]background.png")
 
@@ -159,6 +159,9 @@ init -1100 python in gui:
         if xalign is not None:
             rv["xalign"] = xalign
             rv["text_align"] = xalign
+
+            if xalign > 0:
+                rv["layout"] = "subtitle"
 
         if insensitive_color is not None:
             rv["insensitive_color"] = insensitive_color

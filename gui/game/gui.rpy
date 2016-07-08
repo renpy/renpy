@@ -48,9 +48,6 @@ define gui.hover_muted_color = "#006e75"
 ## The colors used for dialogue and menu choice text.
 define gui.text_color = "#ffffff"
 define gui.interface_text_color = "#ffffff"
-define gui.choice_idle_color = "#cccccc"
-define gui.choice_hover_color = "#ffffff"
-
 
 ## Fonts and Font Sizes ########################################################
 
@@ -141,8 +138,22 @@ define gui.quick_button_text_idle_color = gui.idle_small_color
 
 # define gui.navigation_button_width = 250
 
-## Choice buttons used by the menu statement.
-define gui.choice_borders = Borders(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
+
+
+## Choice Buttons ##############################################################
+##
+## Choice buttons are used to in the in-game menus.
+
+
+define gui.choice_button_width = gui.scale(790)
+define gui.choice_button_height = None
+define gui.choice_button_tile = False
+define gui.choice_button_borders = Borders(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
+define gui.choice_button_text_font = gui.default_font
+define gui.choice_button_text_size = gui.text_size
+define gui.choice_button_text_xalign = 0.5
+define gui.choice_button_text_idle_color = "#cccccc"
+define gui.choice_button_text_hover_color = "#ffffff"
 
 
 ## File Slot Buttons ###########################################################
@@ -452,31 +463,21 @@ define config.narrator_menu = True
 
 
 style choice_vbox is vbox
-style choice_button is default
-style choice_button_text is default
+style choice_button is button
+style choice_button_text is button_text
 
 style choice_vbox:
-
     xalign 0.5
     ypos gui.scale(270)
     yanchor 0.5
 
-    # Add some space between choices.
     spacing gui.choice_spacing
 
 style choice_button is default:
-    xsize gui.scale(790)
-    padding gui.choice_borders.padding
-    background Frame("gui/choice/[prefix_]background.png", gui.choice_borders)
+    properties gui.button_properties("choice_button")
 
 style choice_button_text is default:
-    color gui.choice_idle_color
-    hover_color gui.choice_hover_color
-
-    # Center the text.
-    xalign 0.5
-    text_align 0.5
-    layout "subtitle"
+    properties gui.button_text_properties("choice_button")
 
 
 ## Quick Menu screen ###########################################################
@@ -510,6 +511,7 @@ screen quick_menu():
 ## the player has not explicitly hidden the interface.
 init python:
     config.overlay_screens.append("quick_menu")
+
 
 style quick_button is default
 style quick_button_text is button_text
@@ -1080,21 +1082,21 @@ style radio_vbox:
     spacing gui.pref_spacing
 
 style radio_button:
-    properties gui.button_properties("radio")
+    properties gui.button_properties("radio_button")
     foreground "gui/button/check_[prefix_]foreground.png"
 
 style radio_button_text:
-    properties gui.button_text_properties("radio")
+    properties gui.button_text_properties("radio_button")
 
 style check_vbox:
     spacing gui.pref_spacing
 
 style check_button:
-    properties gui.button_properties("check")
+    properties gui.button_properties("check_button")
     foreground "gui/button/check_[prefix_]foreground.png"
 
 style check_button_text:
-    properties gui.button_text_properties("check")
+    properties gui.button_text_properties("check_button")
 
 style slider_slider:
     xsize gui.scale(350)
@@ -1318,11 +1320,11 @@ style help_label_text is gui_label_text
 style help_text is gui_text
 
 style help_button:
-    properties gui.button_properties("help")
+    properties gui.button_properties("help_button")
     xmargin gui.scale(8)
 
 style help_button_text:
-    properties gui.button_text_properties("help")
+    properties gui.button_text_properties("help_button")
 
 style help_label:
     xsize gui.scale(250)
@@ -1396,10 +1398,10 @@ style confirm_prompt_text:
     layout "subtitle"
 
 style confirm_button:
-    properties gui.button_properties("confirm")
+    properties gui.button_properties("confirm_button")
 
 style confirm_button_text:
-    properties gui.button_text_properties("confirm")
+    properties gui.button_text_properties("confirm_button")
 
 
 ## Skip indicator screen #######################################################

@@ -246,7 +246,7 @@ class ImageGenerator(object):
         XSIZE = 790
         XINSIDE = 100
 
-        YSIZE = 30
+        YSIZE = 35
         YBORDER = 3
 
         X = [
