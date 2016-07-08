@@ -26,8 +26,8 @@ define gui.accent_color = "#00b8c3"
 ## The color used for a text button when it is neither selected nor hovered.
 define gui.idle_color = "#555555"
 
-## The small color is used for small buttons, which need to be brighter/darker
-## to achieve the same effect.
+## The small color is used for small text, which needs to be
+## brighter/darker to achieve the same effect.
 define gui.idle_small_color = "#aaaaaa"
 
 ## A version of the accent color that's used when buttons are hovered.
@@ -106,10 +106,17 @@ define gui.button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gu
 define gui.button_tile = False
 
 ## The font used by the button.
-define gui.button_font = gui.interface_font
+define gui.button_text_font = gui.interface_font
 
 ## The size of the text used by the button.
 define gui.button_text_size = gui.interface_text_size
+
+# The color of button text in various states.
+define gui.button_text_idle_color = gui.idle_color
+define gui.button_text_hover_color = gui.hover_color
+define gui.button_text_selected_color = gui.accent_color
+define gui.button_text_insensitive_color = gui.insensitive_color
+
 
 ## These variables override settings for different kinds of buttons. Please
 ## see the gui documentation for the kinds of buttons available, and what
@@ -125,8 +132,9 @@ define gui.confirm_button_text_xalign = 0.5
 
 define gui.page_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), gui.scale(4))
 
-define gui.quick_button_text_size = gui.scale(14)
 define gui.quick_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), gui.scale(0))
+define gui.quick_button_text_size = gui.scale(14)
+define gui.quick_button_text_idle_color = gui.idle_small_color
 
 ## You can also add your own customizations, by adding code. For example, you
 ## can uncomment the following line:
@@ -146,9 +154,10 @@ define gui.choice_borders = Borders(gui.scale(100), gui.scale(5), gui.scale(100)
 ## The save slot button.
 define gui.slot_button_width = gui.scale(276)
 define gui.slot_button_height = gui.scale(206)
+define gui.slot_button_borders = Borders(gui.scale(10), gui.scale(10), gui.scale(10), gui.scale(10))
 define gui.slot_button_text_size = gui.scale(14)
 define gui.slot_button_text_xalign = 0.5
-define gui.slot_button_borders = Borders(gui.scale(10), gui.scale(10), gui.scale(10), gui.scale(10))
+define gui.slot_button_text_idle_color = gui.idle_small_color
 
 ## The width and height of thumbnails used by the save slots.
 define config.thumbnail_width = gui.scale(256)
@@ -167,7 +176,6 @@ define gui.file_slot_rows = 2
 ## The position of the left side of the navigation buttons, relative
 ## to the left side of the screen.
 define gui.navigation_xpos = gui.scale(40)
-
 
 ## The spacing between menu choices.
 define gui.choice_spacing = gui.scale(22)
@@ -225,7 +233,7 @@ define gui.vslider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), g
 
 ## Setting this to true causes the character's name to be displayed in a
 ## second window, with the background of that window being gui/namebox.png
-define gui.two_window = True
+define gui.two_window = False
 
 
 ################################################################################
@@ -253,21 +261,11 @@ style gui_text:
 
 
 style button:
-    padding gui.button_borders.padding
-    background Frame("gui/button/[prefix_]background.png", gui.button_borders)
-    xsize gui.button_width
-    ysize gui.button_height
+    properties gui.button_properties("button")
 
 style button_text is gui_text:
+    properties gui.button_text_properties("button")
     yalign 0.5
-
-    size gui.button_text_size
-    font gui.button_font
-
-    color gui.idle_color
-    insensitive_color gui.insensitive_color
-    selected_color gui.selected_color
-    hover_color gui.hover_color
 
 
 style label_text is gui_text:
@@ -517,10 +515,10 @@ style quick_button is default
 style quick_button_text is button_text
 
 style quick_button:
-    properties gui.button_properties("quick")
+    properties gui.button_properties("quick_button")
 
 style quick_button_text:
-    properties gui.button_text_properties("quick")
+    properties gui.button_text_properties("quick_button")
 
 
 ################################################################################
@@ -580,10 +578,10 @@ style navigation_button_text is gui_button_text
 
 style navigation_button:
     size_group "navigation"
-    properties gui.button_properties("navigation")
+    properties gui.button_properties("navigation_button")
 
 style navigation_button_text:
-    properties gui.button_text_properties("navigation")
+    properties gui.button_text_properties("navigation_button")
 
 
 ## Main Menu screen ############################################################
@@ -933,16 +931,16 @@ style page_label_text:
     hover_color gui.hover_color
 
 style page_button:
-    properties gui.button_properties("page")
+    properties gui.button_properties("page_button")
 
 style page_button_text:
-    properties gui.button_text_properties("page")
+    properties gui.button_text_properties("page_button")
 
 style slot_button:
-    properties gui.button_properties("slot")
+    properties gui.button_properties("slot_button")
 
 style slot_button_text:
-    properties gui.button_text_properties("slot")
+    properties gui.button_text_properties("slot_button")
 
 
 ## Preferences screen ##########################################################

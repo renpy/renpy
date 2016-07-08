@@ -263,8 +263,8 @@ class ImageGenerator(object):
             (YSIZE, 0.0),
             ]
 
-        self.generate_image("choice/idle_background", X, Y, self.boring_color.opacity(.8))
-        self.generate_image("choice/hover_background", X, Y, self.accent_color.opacity(.95))
+        self.generate_image("button/choice_idle_background", X, Y, self.boring_color.opacity(.8))
+        self.generate_image("button/choice_hover_background", X, Y, self.accent_color.opacity(.95))
 
     def generate_overlay(self):
 

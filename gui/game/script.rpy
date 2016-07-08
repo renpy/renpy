@@ -29,4 +29,11 @@ label start:
 
     ## This ends the game.
 
+    menu:
+        "Yes.":
+            pass
+
+        "No.":
+            pass
+
     return

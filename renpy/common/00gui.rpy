@@ -84,8 +84,8 @@ init -1100 python in gui:
         g = globals()
 
         def get(prop):
-            if kind + "_button_" + prop in g:
-                return g[kind + "_button_" + prop]
+            if kind + "_" + prop in g:
+                return g[kind + "_" + prop]
 
             return None
 
@@ -95,11 +95,15 @@ init -1100 python in gui:
         if tile is None:
             tile = button_tile
 
+        backgrounds = [ ]
+
+        if kind != "button":
+            backgrounds.append("gui/button/" + kind[:-6] + "_[prefix_]background.png")
+
+        backgrounds.append("gui/button/[prefix_]background.png")
+
         rv = {
-            "background" : Frame([
-                "gui/button/" + kind + "_[prefix_]background.png",
-                "gui/button/[prefix_]background.png",
-            ], borders or button_borders, tile=tile),
+            "background" : Frame(backgrounds, borders or button_borders, tile=tile),
         }
 
         if borders is not None:
@@ -130,16 +134,21 @@ init -1100 python in gui:
         g = globals()
 
         def get(prop):
-            if kind + "_button_" + prop in g:
-                return g[kind + "_button_" + prop]
+            if kind + "_" + prop in g:
+                return g[kind + "_" + prop]
 
             return None
 
         rv = { }
 
-        font = get("font")
+        font = get("text_font")
         text_size = get("text_size")
         xalign = get("text_xalign")
+
+        insensitive_color = get("text_insensitive_color")
+        idle_color = get("text_idle_color")
+        hover_color = get("text_hover_color")
+        selected_color = get("text_selected_color")
 
         if font is not None:
             rv["font"] = font
@@ -150,6 +159,18 @@ init -1100 python in gui:
         if xalign is not None:
             rv["xalign"] = xalign
             rv["text_align"] = xalign
+
+        if insensitive_color is not None:
+            rv["insensitive_color"] = insensitive_color
+
+        if idle_color is not None:
+            rv["idle_color"] = idle_color
+
+        if hover_color is not None:
+            rv["hover_color"] = hover_color
+
+        if selected_color is not None:
+            rv["selected_color"] = selected_color
 
         return rv
 
