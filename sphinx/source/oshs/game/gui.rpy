@@ -10,9 +10,13 @@ init offset = -1
 init python:
     gui.init(1920, 1080)
 
-
 ################################################################################
+# GUI Configuration Variables
+################################################################################
+
+
 ## Colors
+## ######################################################################
 ##
 ## The colors of text in the interface.
 
@@ -22,7 +26,7 @@ define gui.accent_color = '#00b8c3'
 ## The color used for a text button when it is neither selected nor hovered.
 define gui.idle_color = '#555555'
 
-## The small color is used for small buttons, which need to be brighter/darker
+## The small color is used for small text, which needs to be brighter/darker
 ## to achieve the same effect.
 define gui.idle_small_color = '#aaaaaa'
 
@@ -44,136 +48,152 @@ define gui.hover_muted_color = '#006e75'
 ## The colors used for dialogue and menu choice text.
 define gui.text_color = '#ffffff'
 define gui.interface_text_color = '#ffffff'
-define gui.choice_idle_color = "#cccccc"
-define gui.choice_hover_color = "#ffffff"
+
+## Fonts and Font Sizes
+## ########################################################
+
+## The font used for in-game text.
+define gui.default_font = "DejaVuSans.ttf"
+
+## The font used for out-of-game text.
+define gui.interface_font = "DejaVuSans.ttf"
+
+## The size of normal dialogue text.
+define gui.text_size = 33
+
+## The size of character names.
+define gui.name_text_size = 45
+
+## The size of text in the game's user interface.
+define gui.interface_text_size = 36
+
+## The size of labels in the game's user interface.
+define gui.label_text_size = 45
+
+## The size of text on the notify screen.
+define gui.notify_text_size = 24
+
+## The size of the game's title.
+define gui.title_text_size = 75
 
 
-################################################################################
 ## Images
-
+## ######################################################################
 
 ## The images used for the main and game menus.
 define gui.main_menu_background = "gui/main_menu.png"
 define gui.game_menu_background = "gui/game_menu.png"
 
-
-################################################################################
-## Fonts and Font Sizes
-
-define gui.default_font = "DejaVuSans.ttf"
-define gui.interface_font = "DejaVuSans.ttf"
-define gui.glyph_font = "DejaVuSans.ttf"
-
-define gui.notify_text_size = 24
-define gui.text_size = 33
-define gui.interface_text_size = 36
-define gui.label_text_size = 45
-define gui.title_size = 75
-
-
-################################################################################
-## Window icon.
-
 ## This is the icon displayer on the taskbar or dock.
 define config.window_icon = "gui/window_icon.png"
 
 
-################################################################################
 ## Buttons
+## #####################################################################
+##
+## These variables, along with the image files in gui/button, control aspects
+## of how buttons are displayed.
 
+## The width and height of a button, on pixels. If None, Ren'Py computes a
+## size.
 define gui.button_width = None
 define gui.button_height = 54
-define gui.button_font = gui.interface_font
-define gui.button_text_size = gui.interface_text_size
+
+## The borders on each side of the button, in left, top, right, bottom order.
 define gui.button_borders = Borders(6, 6, 6, 6)
+
+## If true, the backgound image will be tiled. If false, the background image
+## will be linearly scaled.
 define gui.button_tile = False
 
-# define gui.navigation_button_width = gui.button_width
-# define gui.navigation_button_height = gui.button_height
-# define gui.navigation_button_font = gui.button_font
-# define gui.navigation_button_text_size = gui.button_text_size
-# define gui.navigation_button_borders = Borders(6, 6, 6, 6)
-#
-# define gui.radio_button_width = gui.button_width
-# define gui.radio_button_height = gui.button_height
-# define gui.radio_button_font = gui.button_font
-# define gui.radio_button_text_size = gui.button_text_size
+## The font used by the button.
+define gui.button_text_font = gui.interface_font
+
+## The size of the text used by the button.
+define gui.button_text_size = gui.interface_text_size
+
+# The color of button text in various states.
+define gui.button_text_idle_color = gui.idle_color
+define gui.button_text_hover_color = gui.hover_color
+define gui.button_text_selected_color = gui.accent_color
+define gui.button_text_insensitive_color = gui.insensitive_color
+
+
+## These variables override settings for different kinds of buttons. Please
+## see the gui documentation for the kinds of buttons available, and what each
+## is used for.
+##
+## These customizations are used by the default interface:
+
 define gui.radio_button_borders = Borders(38, 6, 6, 6)
 
-#
-# define gui.check_button_width = gui.button_width
-# define gui.check_button_height = gui.button_height
-# define gui.check_button_font = gui.button_font
-# define gui.check_button_text_size = gui.button_text_size
 define gui.check_button_borders = Borders(38, 6, 6, 6)
-#
-# define gui.test_button_width = gui.button_width
-# define gui.test_button_height = gui.button_height
-# define gui.test_button_font = gui.button_font
-# define gui.test_button_text_size = gui.button_text_size
-# define gui.test_button_borders = Borders(6, 6, 6, 6)
-#
-# define gui.page_button_width = gui.button_width
-# define gui.page_button_height = gui.button_height
-# define gui.page_button_font = gui.button_font
-# define gui.page_button_text_size = gui.button_text_size
-define gui.page_button_borders = Borders(15, 6, 15, 6)
-#
-# define gui.quick_button_width = gui.button_width
-# define gui.quick_button_height = gui.button_height
-# define gui.quick_button_font = gui.default_font
-define gui.quick_button_text_size = 21
-define gui.quick_button_borders = Borders(15, 6, 15, 0)
 
 define gui.confirm_button_text_xalign = 0.5
 
+define gui.page_button_borders = Borders(15, 6, 15, 6)
+
+define gui.quick_button_borders = Borders(15, 6, 15, 0)
+define gui.quick_button_text_size = 21
+define gui.quick_button_text_idle_color = gui.idle_small_color
+
+## You can also add your own customizations, by adding code. For example, you
+## can uncomment the following line:
+
+# define gui.navigation_button_width = 250
+
+
+
+## Choice Buttons
+## ##############################################################
+##
+## Choice buttons are used to in the in-game menus.
+
+
+define gui.choice_button_width = 1185
+define gui.choice_button_height = None
+define gui.choice_button_tile = False
+define gui.choice_button_borders = Borders(150, 8, 150, 8)
+define gui.choice_button_text_font = gui.default_font
+define gui.choice_button_text_size = gui.text_size
+define gui.choice_button_text_xalign = 0.5
+define gui.choice_button_text_idle_color = "#cccccc"
+define gui.choice_button_text_hover_color = "#ffffff"
+
+
+## File Slot Buttons
+## ###########################################################
+##
+## A file slot button is a special kind of button. It contains a thumbnail
+## image, and text describing the contents of the save slot. A save slot uses
+## image files in gui/button, like the other kinds of buttons.
+
+## The save slot button.
 define gui.slot_button_width = 414
 define gui.slot_button_height = 309
+define gui.slot_button_borders = Borders(15, 15, 15, 15)
 define gui.slot_button_text_size = 21
 define gui.slot_button_text_xalign = 0.5
-define gui.slot_button_borders = Borders(15, 15, 15, 15)
+define gui.slot_button_text_idle_color = gui.idle_small_color
+
+## The width and height of thumbnails used by the save slots.
+define config.thumbnail_width = 384
+define config.thumbnail_height = 216
+
+## The number of columns and rows in the grid of save slots.
+define gui.file_slot_cols = 3
+define gui.file_slot_rows = 2
 
 
-################################################################################
-## Borders
+## Positioning and Spacing
+## #####################################################
 ##
-## Borders objects control both the size of the left, top, right, and bottom
-## borders used by a Frame, and optionally additional padding added to each
-## side.
+## These variables control the positining and spacing of various user
+## interface elements.
 
-## Choice buttons used by the menu statement.
-define gui.choice_borders = Borders(150, 8, 150, 8)
-
-## Bars, scrollbars, and sliders.
-define gui.bar_borders = Borders(6, 6, 6, 6)
-define gui.scrollbar_borders = Borders(6, 6, 6, 6)
-define gui.slider_borders = Borders(6, 6, 6, 6)
-define gui.vbar_borders = Borders(6, 6, 6, 6)
-define gui.vscrollbar_borders = Borders(6, 6, 6, 6)
-define gui.vslider_borders = Borders(6, 6, 6, 6)
-
-## Frames.
-define gui.frame_borders = Borders(6, 6, 6, 6)
-define gui.namebox_borders = Borders(75, 6, 75, 6)
-
-
-################################################################################
-## Sizes
-##
-## These control the size of various things in the interface.
-
-
-## The height of horizontal and width of vertical bars, scrollbars, and
-## sliders.
-define gui.bar_size = 54
-define gui.scrollbar_size = 18
-define gui.slider_size = 45
-
-
-################################################################################
-## Sizes
-##
-## The spacing used between various elements of the interface.
+## The position of the left side of the navigation buttons, relative to the
+## left side of the screen.
+define gui.navigation_xpos = 60
 
 ## The spacing between menu choices.
 define gui.choice_spacing = 33
@@ -190,8 +210,57 @@ define gui.page_spacing = 0
 ## The spacing between file slots.
 define gui.slot_spacing = 15
 
+
+## Frames
+## ######################################################################
+##
+## This variable, along with gui/frame.png, controls the look of a frame.
+
+define gui.frame_borders = Borders(6, 6, 6, 6)
+
+
+## Bars, Scrollbars, and Sliders
+## ###############################################
+##
+## These control the look and size of bars, scrollbars, and sliders.
+##
+## The default GUI only uses horizontal sliders and vertical scrollbars. All
+## of the other bars are only used in creator-written code.
+
+## The height of horizontal bars, scrollbars, and sliders. The width of
+## vertical bars, scrollbars, and sliders.
+define gui.bar_size = 54
+define gui.scrollbar_size = 18
+define gui.slider_size = 45
+
+## True if bar images should be tiled. False if they should be linearly
+## scaler.
+define gui.bar_tile = False
+define gui.scrollbar_tile = False
+define gui.slider_tile = False
+
+## Horizontal borders.
+define gui.bar_borders = Borders(6, 6, 6, 6)
+define gui.scrollbar_borders = Borders(6, 6, 6, 6)
+define gui.slider_borders = Borders(6, 6, 6, 6)
+
+## Vertical borders.
+define gui.vbar_borders = Borders(6, 6, 6, 6)
+define gui.vscrollbar_borders = Borders(6, 6, 6, 6)
+define gui.vslider_borders = Borders(6, 6, 6, 6)
+
+
+## Two-window dialogue mode
+## ####################################################
+
+## Setting this to true causes the character's name to be displayed in a
+## second window, with the background of that window being gui/namebox.png
+define gui.two_window = False
+
+
 ################################################################################
-## Basic in-game styles.
+## Styles.
+################################################################################
 
 style default:
     font gui.default_font
@@ -207,96 +276,72 @@ style hyperlink_text:
     hover_underline True
 
 
-################################################################################
-## Style common user interface components.
-
-style button_text is gui_text
-style label_text is gui_text
-style prompt_text is gui_text
-
-## Used for non-interactive text inside the gui.
 style gui_text:
     font gui.interface_font
     color gui.interface_text_color
     size gui.interface_text_size
 
 
-## Used for full-sized buttons, like navigation buttons.
 style button:
-    padding gui.button_borders.padding
-    background Frame("gui/button/[prefix_]background.png", gui.button_borders)
-    xsize gui.button_width
-    ysize gui.button_height
+    properties gui.button_properties("button")
 
-style button_text:
+style button_text is gui_text:
+    properties gui.button_text_properties("button")
     yalign 0.5
 
-    size gui.button_text_size
-    font gui.button_font
 
-    color gui.idle_color
-    insensitive_color gui.insensitive_color
-    selected_color gui.selected_color
-    hover_color gui.hover_color
-
-
-## Labels a portion of the interface.
-style label_text:
+style label_text is gui_text:
     color gui.accent_color
-    size gui.interface_text_size
+    size gui.label_text_size
 
-## Asks the user a question in the interface.
-style prompt_text:
+style prompt_text is gui_text:
     color gui.text_color
     size gui.interface_text_size
 
 
-## Bars are used to display value data to the user.
 style bar:
     ysize gui.bar_size
-    left_bar Frame("gui/bar/left_bar.png", gui.bar_borders)
-    right_bar Frame("gui/bar/right_bar.png", gui.bar_borders)
-
-## Scrollbars are used to scroll viewports.
-style scrollbar:
-    ysize gui.scrollbar_size
-    base_bar Frame("gui/scrollbar/horizontal_[prefix_]bar.png", gui.scrollbar_borders)
-    thumb Frame("gui/scrollbar/horizontal_[prefix_]thumb.png", gui.scrollbar_borders)
-
-## Sliders are used to adjust values.
-style slider:
-    ysize gui.slider_size
-    base_bar Frame("gui/slider/horizontal_[prefix_]bar.png", gui.slider_borders)
-    thumb "gui/slider/horizontal_[prefix_]thumb.png"
-
-
-## Vertical equivalents of bar, scrollbar, and slider.
+    left_bar Frame("gui/bar/left_bar.png", gui.bar_borders, tile=gui.bar_tile)
+    right_bar Frame("gui/bar/right_bar.png", gui.bar_borders, tile=gui.bar_tile)
 
 style vbar:
     xsize gui.bar_size
-    top_bar Frame("gui/bar/top_bar.png", gui.vbar_borders)
-    bottom_bar Frame("gui/bar/bottom_bar.png", gui.vbar_borders)
+    top_bar Frame("gui/bar/top_bar.png", gui.vbar_borders, tile=gui.bar_tile)
+    bottom_bar Frame("gui/bar/bottom_bar.png", gui.vbar_borders, tile=gui.bar_tile)
+
+style scrollbar:
+    ysize gui.scrollbar_size
+    base_bar Frame("gui/scrollbar/horizontal_[prefix_]bar.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
+    thumb Frame("gui/scrollbar/horizontal_[prefix_]thumb.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
 
 style vscrollbar:
     xsize gui.scrollbar_size
-    base_bar Frame("gui/scrollbar/vertical_[prefix_]bar.png", gui.vscrollbar_borders)
-    thumb Frame("gui/scrollbar/vertical_[prefix_]thumb.png", gui.vscrollbar_borders)
+    base_bar Frame("gui/scrollbar/vertical_[prefix_]bar.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
+    thumb Frame("gui/scrollbar/vertical_[prefix_]thumb.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
+
+style slider:
+    ysize gui.slider_size
+    base_bar Frame("gui/slider/horizontal_[prefix_]bar.png", gui.slider_borders, tile=gui.slider_tile)
+    thumb "gui/slider/horizontal_[prefix_]thumb.png"
 
 style vslider:
     xsize gui.slider_size
-    base_bar Frame("gui/slider/vertical_[prefix_]bar.png", gui.vslider_borders)
+    base_bar Frame("gui/slider/vertical_[prefix_]bar.png", gui.vslider_borders, tile=gui.slider_tile)
     thumb "gui/slider/vertical_[prefix_]thumb.png"
 
 
-## A frame that is intended to contain interface elements and make them usable
-## outside of the menus.
 style frame:
     padding gui.frame_borders.padding
     background Frame("gui/frame.png", gui.frame_borders)
 
 
 ################################################################################
-## Say
+## In-game screens
+################################################################################
+
+
+## Say screen
+## ##################################################################
 ##
 ## The say screen is used to display dialogue to the player. It take two
 ## parameters, who and what, which are the name of the speaking character and
@@ -344,11 +389,6 @@ screen say(who, what):
         add SideImage() xalign 0.0 yalign 1.0
 
 
-## A flag used by the say screen to determine if it should show the
-## character's name in a second window.
-define gui.two_window = False
-
-
 style window is default
 style say_label is default
 style say_dialogue is default
@@ -368,18 +408,20 @@ style window:
 
 style say_label:
     color gui.accent_color
-    size gui.label_text_size
+    size gui.name_text_size
 
 style namebox:
     xalign 0.5
     yoffset -33
 
-    padding gui.namebox_borders.padding
-    background Frame("gui/namebox.png", gui.namebox_borders)
+    background Image("gui/namebox.png", xalign=0.5, yalign=0.5)
+
+style namebox_label:
+    yalign 0.5
 
 
-################################################################################
-## Input
+## Input screen
+## ################################################################
 ##
 ## This screen is used to display renpy.input. The prompt parameter is used to
 ## pass a text prompt in.
@@ -412,8 +454,8 @@ screen input(prompt):
 style input_prompt is default
 
 
-##############################################################################
-## Choice
+## Choice screen
+## ###############################################################
 ##
 ## This screen is used to display the in-game choices presented by the menu
 ## statement. The one parameter, items, is a list of objects, each with
@@ -435,131 +477,25 @@ define config.narrator_menu = True
 
 
 style choice_vbox is vbox
-style choice_button is default
-style choice_button_text is default
+style choice_button is button
+style choice_button_text is button_text
 
 style choice_vbox:
-
     xalign 0.5
     ypos 405
     yanchor 0.5
 
-    # Add some space between choices.
     spacing gui.choice_spacing
 
 style choice_button is default:
-    xsize 1185
-    padding gui.choice_borders.padding
-    background Frame("gui/choice/[prefix_]background.png", gui.choice_borders)
+    properties gui.button_properties("choice_button")
 
 style choice_button_text is default:
-    color gui.choice_idle_color
-    hover_color gui.choice_hover_color
-
-    # Center the text.
-    xalign 0.5
-    text_align 0.5
-    layout "subtitle"
+    properties gui.button_text_properties("choice_button")
 
 
-##############################################################################
-## Nvl
-##
-## This screen is used for NVL-mode dialogue and menus.
-##
-## http://www.renpy.org/doc/html/screen_special.html#nvl
-
-screen nvl(dialogue, items=None):
-
-    window:
-        style "nvl_window"
-
-        has vbox:
-            spacing 15
-
-        vpgrid:
-            cols 1
-            yinitial 1.0
-
-            # Display dialogue.
-            for d in dialogue:
-
-                window:
-                    id d.window_id
-
-                    has hbox:
-                        yfill True
-                        spacing 30
-
-                    if d.who is not None:
-
-                        text d.who:
-                            id d.who_id
-
-                    else:
-
-                        text " ":
-                            style "nvl_label"
-
-                    text d.what:
-                        id d.what_id
-
-        # Displays the menu, if given. The menu may be displayed incorrectly
-        # if config.narrator_menu is set to True, as it is above.
-        for i in items:
-
-            textbutton i.caption:
-                action i.action
-                style "nvl_menu_button"
-
-    add SideImage() xalign 0.0 yalign 1.0
-
-
-## This controls the maximum number of NVL-mode entries that can be displayed
-## at once.
-define config.nvl_list_length = 6
-
-
-style nvl_window is default
-style nvl_entry is default
-
-style nvl_label is say_label
-style nvl_dialogue is say_dialogue
-
-style nvl_menu_button is button
-style nvl_menu_button_text is button_text
-
-style nvl_window:
-    xfill True
-    yfill True
-
-    xpadding 360
-    top_padding 15
-    bottom_padding 30
-
-    background "gui/nvl.png"
-
-style nvl_entry:
-    xfill True
-    ysize 173
-
-style nvl_label:
-    xmaximum 225
-    min_width 225
-    text_align 1.0
-
-style nvl_dialogue:
-    ypos 11
-
-style nvl_menu_button:
-    left_padding 255
-
-style nvl_menu_button_text:
-    insensitive_color gui.text_color
-
-
-################################################################################
-## Quick Menu
+## Quick Menu screen
+## ###########################################################
 ##
 ## The quick menu is displayed in-game to provide easy access to the out-of-
 ## game menus.
@@ -591,18 +527,23 @@ screen quick_menu():
 init python:
     config.overlay_screens.append("quick_menu")
 
+
 style quick_button is default
 style quick_button_text is button_text
 
 style quick_button:
-    properties gui.button_properties("quick")
+    properties gui.button_properties("quick_button")
 
 style quick_button_text:
-    properties gui.button_text_properties("quick")
+    properties gui.button_text_properties("quick_button")
 
 
 ################################################################################
-## Navigation
+# Main and Game Menu Screens
+################################################################################
+
+## Navigation screen
+## ###########################################################
 ##
 ## This screen is included in the main and game menus, and provides navigation
 ## to other menus, and to start the game.
@@ -650,26 +591,19 @@ screen navigation():
             textbutton _("Quit") action Quit(confirm=not main_menu)
 
 
-## The position of the left side of the navigation buttons, relative to the
-## left side of the screen.
-define gui.navigation_xpos = 60
-
-## The width of a navigation button.
-define gui.navigation_width = 338
-
 style navigation_button is gui_button
 style navigation_button_text is gui_button_text
 
 style navigation_button:
     size_group "navigation"
-    properties gui.button_properties("navigation")
+    properties gui.button_properties("navigation_button")
 
 style navigation_button_text:
-    properties gui.button_text_properties("navigation")
+    properties gui.button_text_properties("navigation_button")
 
 
-##############################################################################
-## Main Menu
+## Main Menu screen
+## ############################################################
 ##
 ## Used to display the main menu when Ren'Py starts.
 ##
@@ -733,11 +667,11 @@ style main_menu_text:
     color gui.accent_color
 
 style main_menu_title:
-    size gui.title_size
+    size gui.title_text_size
 
 
-##############################################################################
-## Game Menu
+## Game Menu screen
+## ############################################################
 ##
 ## This lays out the basic common structure of a game menu screen. It's called
 ## with the screen title, and displays the background, title, and navigation.
@@ -847,7 +781,7 @@ style game_menu_label:
     ysize 180
 
 style game_menu_label_text:
-    size gui.title_size
+    size gui.title_text_size
     color gui.accent_color
     yalign 0.5
 
@@ -857,8 +791,8 @@ style return_button:
     yoffset -45
 
 
-##############################################################################
-## About
+## About screen
+## ################################################################
 ##
 ## This screen gives credit and copyright information about the game and
 ## Ren'Py.
@@ -889,7 +823,7 @@ screen about():
             text _("Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]")
 
 
-## This can be set in options.rpy to add text to the about screen.
+## This is redefined in options.rpy to add text to the about screen.
 define gui.about = ""
 
 
@@ -901,8 +835,8 @@ style about_label_text:
     size gui.label_text_size
 
 
-##############################################################################
-## Load and Save Screens
+## Load and Save screens
+## #######################################################
 ##
 ## These screens are responsible for letting the player save the game and load
 ## it again. Since they share nearly everything in common, both are
@@ -910,6 +844,20 @@ style about_label_text:
 ##
 ## https://www.renpy.org/doc/html/screen_special.html#save
 ## https://www.renpy.org/doc/html/screen_special.html#load
+
+screen save():
+
+    tag menu
+
+    use file_slots(_("Save"))
+
+
+screen load():
+
+    tag menu
+
+    use file_slots(_("Load"))
+
 
 screen file_slots(title):
 
@@ -985,29 +933,6 @@ screen file_slots(title):
                 textbutton _(">") action FilePageNext()
 
 
-screen save():
-
-    tag menu
-
-    use file_slots(_("Save"))
-
-
-screen load():
-
-    tag menu
-
-    use file_slots(_("Load"))
-
-
-## The width and height of the thumbnails used by the save slots.
-define config.thumbnail_width = 384
-define config.thumbnail_height = 216
-
-## The layout of the save slots.
-define gui.file_slot_cols = 3
-define gui.file_slot_rows = 2
-
-
 style page_label is gui_label
 style page_label_text is gui_label_text
 style page_button is gui_button
@@ -1028,20 +953,20 @@ style page_label_text:
     hover_color gui.hover_color
 
 style page_button:
-    properties gui.button_properties("page")
+    properties gui.button_properties("page_button")
 
 style page_button_text:
-    properties gui.button_text_properties("page")
+    properties gui.button_text_properties("page_button")
 
 style slot_button:
-    properties gui.button_properties("slot")
+    properties gui.button_properties("slot_button")
 
 style slot_button_text:
-    properties gui.button_text_properties("slot")
+    properties gui.button_text_properties("slot_button")
 
 
-##############################################################################
-## Preferences
+## Preferences screen
+## ##########################################################
 ##
 ## The preferences screen allows the player to configure the game to better
 ## suit themselves.
@@ -1179,21 +1104,21 @@ style radio_vbox:
     spacing gui.pref_spacing
 
 style radio_button:
-    properties gui.button_properties("radio")
+    properties gui.button_properties("radio_button")
     foreground "gui/button/check_[prefix_]foreground.png"
 
 style radio_button_text:
-    properties gui.button_text_properties("radio")
+    properties gui.button_text_properties("radio_button")
 
 style check_vbox:
     spacing gui.pref_spacing
 
 style check_button:
-    properties gui.button_properties("check")
+    properties gui.button_properties("check_button")
     foreground "gui/button/check_[prefix_]foreground.png"
 
 style check_button_text:
-    properties gui.button_text_properties("check")
+    properties gui.button_text_properties("check_button")
 
 style slider_slider:
     xsize 525
@@ -1206,8 +1131,8 @@ style slider_vbox:
     xsize 675
 
 
-##############################################################################
-## History
+## History screen
+## ##############################################################
 ##
 ## This is a screen that displays the dialogue history to the player. While
 ## there isn't anything special about this screen, it does have to access the
@@ -1277,72 +1202,8 @@ style history_label_text:
     xalign 0.5
 
 
-##############################################################################
-## Confirm
-##
-## The confirm screen is called when Ren'Py wants to ask the player a yes or
-## no question.
-##
-## http://www.renpy.org/doc/html/screen_special.html#confirm
-
-screen confirm(message, yes_action, no_action):
-
-    ## Ensure other screens do not get input while this screen is displayed.
-    modal True
-
-    zorder 200
-
-    style_prefix "confirm"
-
-    add "gui/overlay/confirm.png"
-
-    frame:
-
-        vbox:
-            xalign .5
-            yalign .5
-            spacing 45
-
-            label _(message):
-                style "confirm_prompt"
-                xalign 0.5
-
-            hbox:
-                xalign 0.5
-                spacing 150
-
-                textbutton _("Yes") action yes_action
-                textbutton _("No") action no_action
-
-    ## Right-click and escape answer "no".
-    key "game_menu" action no_action
-
-
-style confirm_frame is gui_frame
-style confirm_prompt is gui_prompt
-style confirm_prompt_text is gui_prompt_text
-style confirm_button is gui_medium_button
-style confirm_button_text is gui_medium_button_text
-
-style confirm_frame:
-    xalign .5
-    xsize 900
-    yalign .5
-    ysize 375
-
-style confirm_prompt_text:
-    text_align 0.5
-    layout "subtitle"
-
-style confirm_button:
-    properties gui.button_properties("confirm")
-
-style confirm_button_text:
-    properties gui.button_text_properties("confirm")
-
-
-##############################################################################
-## Help
+## Help screen
+## #################################################################
 ##
 ## A screen that gives information about key and mouse bindings. It uses other
 ## screens (keyboard_help, mouse_help, and gamepad_help) to display the actual
@@ -1483,11 +1344,11 @@ style help_label_text is gui_label_text
 style help_text is gui_text
 
 style help_button:
-    properties gui.button_properties("help")
+    properties gui.button_properties("help_button")
     xmargin 12
 
 style help_button_text:
-    properties gui.button_text_properties("help")
+    properties gui.button_text_properties("help_button")
 
 style help_label:
     xsize 375
@@ -1499,8 +1360,77 @@ style help_label_text:
     text_align 1.0
 
 
-##############################################################################
-## Skip Indicator
+################################################################################
+## Additional screens
+################################################################################
+
+
+## Confirm screen
+## ##############################################################
+##
+## The confirm screen is called when Ren'Py wants to ask the player a yes or
+## no question.
+##
+## http://www.renpy.org/doc/html/screen_special.html#confirm
+
+screen confirm(message, yes_action, no_action):
+
+    ## Ensure other screens do not get input while this screen is displayed.
+    modal True
+
+    zorder 200
+
+    style_prefix "confirm"
+
+    add "gui/overlay/confirm.png"
+
+    frame:
+
+        vbox:
+            xalign .5
+            yalign .5
+            spacing 45
+
+            label _(message):
+                style "confirm_prompt"
+                xalign 0.5
+
+            hbox:
+                xalign 0.5
+                spacing 150
+
+                textbutton _("Yes") action yes_action
+                textbutton _("No") action no_action
+
+    ## Right-click and escape answer "no".
+    key "game_menu" action no_action
+
+
+style confirm_frame is gui_frame
+style confirm_prompt is gui_prompt
+style confirm_prompt_text is gui_prompt_text
+style confirm_button is gui_medium_button
+style confirm_button_text is gui_medium_button_text
+
+style confirm_frame:
+    xalign .5
+    xsize 900
+    yalign .5
+    ysize 375
+
+style confirm_prompt_text:
+    text_align 0.5
+    layout "subtitle"
+
+style confirm_button:
+    properties gui.button_properties("confirm_button")
+
+style confirm_button_text:
+    properties gui.button_text_properties("confirm_button")
+
+
+## Skip indicator screen
+## #######################################################
 ##
 ## The skip_indicator screen is displayed to indicate that skipping is in
 ## progress.
@@ -1556,13 +1486,14 @@ style skip_text:
 style skip_triangle:
     # We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE
     # glyph in it.
-    font gui.glyph_font
+    font "DejaVuSans.ttf"
 
-################################################################################
-## Message notification.
+
+## Notify screen
+## ###############################################################
 ##
-## The notification screen is used to show the player a message. (For example,
-## when the game is quicksaved or a screenshot has been taken.)
+## The notify screen is used to show the player a message. (For example, when
+## the game is quicksaved or a screenshot has been taken.)
 ##
 ## https://www.renpy.org/doc/html/screen_special.html#notify-screen
 
@@ -1601,11 +1532,107 @@ style notify_text:
     size gui.notify_text_size
 
 
+## NVL screen
+## ##################################################################
+##
+## This screen is used for NVL-mode dialogue and menus.
+##
+## http://www.renpy.org/doc/html/screen_special.html#nvl
+
+screen nvl(dialogue, items=None):
+
+    window:
+        style "nvl_window"
+
+        has vbox:
+            spacing 15
+
+        vpgrid:
+            cols 1
+            yinitial 1.0
+
+            # Display dialogue.
+            for d in dialogue:
+
+                window:
+                    id d.window_id
+
+                    has hbox:
+                        yfill True
+                        spacing 30
+
+                    if d.who is not None:
+
+                        text d.who:
+                            id d.who_id
+
+                    else:
+
+                        text " ":
+                            style "nvl_label"
+
+                    text d.what:
+                        id d.what_id
+
+        # Displays the menu, if given. The menu may be displayed incorrectly
+        # if config.narrator_menu is set to True, as it is above.
+        for i in items:
+
+            textbutton i.caption:
+                action i.action
+                style "nvl_menu_button"
+
+    add SideImage() xalign 0.0 yalign 1.0
+
+
+## This controls the maximum number of NVL-mode entries that can be displayed
+## at once.
+define config.nvl_list_length = 6
+
+style nvl_window is default
+style nvl_entry is default
+
+style nvl_label is say_label
+style nvl_dialogue is say_dialogue
+
+style nvl_menu_button is button
+style nvl_menu_button_text is button_text
+
+style nvl_window:
+    xfill True
+    yfill True
+
+    xpadding 360
+    top_padding 15
+    bottom_padding 30
+
+    background "gui/nvl.png"
+
+style nvl_entry:
+    xfill True
+    ysize 173
+
+style nvl_label:
+    xmaximum 225
+    min_width 225
+    text_align 1.0
+
+style nvl_dialogue:
+    ypos 11
+
+style nvl_menu_button:
+    left_padding 255
+
+style nvl_menu_button_text:
+    insensitive_color gui.text_color
+
+
 ################################################################################
 ## Medium and Touch Variants
 ##
 ## This section changes certain styes to make them more suitable for use with
-## a tablet.
+## touch devices like tablets.
+################################################################################
 
 style pref_vbox:
     variant "medium"
@@ -1639,6 +1666,7 @@ init python:
 ##
 ## This section changes many sizes and images to make the game suitable for a
 ## small phone screen.
+################################################################################
 
 # init python:
 #

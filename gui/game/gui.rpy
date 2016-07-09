@@ -139,11 +139,9 @@ define gui.quick_button_text_idle_color = gui.idle_small_color
 # define gui.navigation_button_width = 250
 
 
-
 ## Choice Buttons ##############################################################
 ##
-## Choice buttons are used to in the in-game menus.
-
+## Choice buttons are used in the in-game menus.
 
 define gui.choice_button_width = gui.scale(790)
 define gui.choice_button_height = None

@@ -176,3 +176,14 @@ define gui.page_button_width = 50
 define gui.page_button_text_xalign = 0.5
 
 define gui.confirm_button_width = 100
+
+
+
+define gui.choice_button_tile = True
+define gui.choice_button_borders = Borders(150, 7, 150, 10)
+define gui.choice_button_text_font = gui.default_font
+
+define gui.choice_button_text_idle_color = "#606060"
+define gui.choice_button_text_hover_color = "#0066CC"
+
+
