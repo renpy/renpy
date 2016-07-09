@@ -222,6 +222,12 @@ class CodeGenerator(object):
                 if comment:
                     s = "## " + ' '.join(comment)
 
+                    if s.endswith("#"):
+                        hashpad = True
+                        s = s.rstrip('# ')
+                    else:
+                        hashpad = False
+
                     s = renpy.translation.translate_string(s, language=self.p.language)
                     m = re.match(r'## ([ *]*)(.*)', s)
 
@@ -230,7 +236,7 @@ class CodeGenerator(object):
                     rest = m.group(2)
 
                     len_prefix = len(indent) + len(prefix)
-                    len_wrap = 78 - len_prefix
+                    len_wrap = 80 - len_prefix
 
                     for i, s in enumerate(textwrap.wrap(rest, width=len_wrap)):
 
@@ -238,6 +244,9 @@ class CodeGenerator(object):
                             s = indent + prefix + s
                         else:
                             s = indent + empty + s
+
+                        if hashpad and len(s) < 79:
+                            s = s + " " + "#" * (79 - len(s))
 
                         lines.append(s)
 

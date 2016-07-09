@@ -290,6 +290,6 @@ def setup(app):
     app.add_config_value('is_renpy', '', True)
     app.add_config_value('renpy_figures', '', True)
 
-is_renpy = True
-renpy_figures = "RENPY_NO_FIGURES" not in os.environ
+is_renpy = "renpy"
+renpy_figures = ("figures" if ("RENPY_NO_FIGURES" not in os.environ) else '')
 
