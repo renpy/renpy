@@ -103,6 +103,10 @@ def scan_comments(filename):
 
         elif comment:
             s = "## " + " ".join(comment)
+
+            if s.endswith("#"):
+                s = s.rstrip("# ")
+
             comment = [ ]
 
             rv.append((start, s))
