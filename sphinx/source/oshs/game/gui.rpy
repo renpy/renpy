@@ -30,7 +30,7 @@ define gui.idle_color = '#555555'
 ## to achieve the same effect.
 define gui.idle_small_color = '#aaaaaa'
 
-## A version of the accent color that's used when buttons are hovered.
+## The color that is used for buttons and bars that are hovered.
 define gui.hover_color = '#66d4db'
 
 ## The color used for a text button when it is selected but not focused. A
@@ -97,7 +97,7 @@ define config.window_icon = "gui/window_icon.png"
 ## The width and height of a button, on pixels. If None, Ren'Py computes a
 ## size.
 define gui.button_width = None
-define gui.button_height = 54
+define gui.button_height = 64
 
 ## The borders on each side of the button, in left, top, right, bottom order.
 define gui.button_borders = Borders(6, 6, 6, 6)
@@ -117,6 +117,10 @@ define gui.button_text_idle_color = gui.idle_color
 define gui.button_text_hover_color = gui.hover_color
 define gui.button_text_selected_color = gui.accent_color
 define gui.button_text_insensitive_color = gui.insensitive_color
+
+# The horizontal alignment of the button text. (0.0 is left, 0.5 is center,
+# 1.0 is right).
+define gui.button_text_xalign = 0.0
 
 
 ## These variables override settings for different kinds of buttons. Please
@@ -143,12 +147,10 @@ define gui.quick_button_text_idle_color = gui.idle_small_color
 # define gui.navigation_button_width = 250
 
 
-
 ## Choice Buttons
 ## ##############################################################
 ##
-## Choice buttons are used to in the in-game menus.
-
+## Choice buttons are used in the in-game menus.
 
 define gui.choice_button_width = 1185
 define gui.choice_button_height = None

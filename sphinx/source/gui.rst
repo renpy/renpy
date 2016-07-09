@@ -69,16 +69,16 @@ gui code.
 
 Here's an example of these three defines::
 
-    define config.name = _('Old School High School')
+    .. var:: config.name = _('Old School High School')
 
-    define config.version = "1.0"
+    .. var:: config.version = "1.0"
 
-    define gui.about = _("Created by PyTom.\n\nHigh school backgrounds by Mugenjohncel.")
+    .. var:: gui.about = _("Created by PyTom.\n\nHigh school backgrounds by Mugenjohncel.")
 
-For convenience, it might make sense to define gui.about using a triple-quoted
+For convenience, it might make sense to .. var:: gui.about using a triple-quoted
 string, in which case line endings are respected. ::
 
-    define gui.about = _("""\
+    .. var:: gui.about = _("""\
     Created by PyTom.
 
     High school backgrounds by Mugenjohncel.""")
@@ -143,14 +143,14 @@ the say screen.
     Sets the size of the dialogue text. This may need to be increased or
     decreased to fit the selected font in the space alloted.
 
-.. var:: gui.label_text_size = 45
+.. var:: gui.name_text_size = 45
 
-    Sets the size of character name labels.
+    Sets the size of character names.
 
 By default, the character name label uses the accent color. The color can
 be easily changed when defining a character::
 
-    define e = Character("Eileen", who_color="#104010")
+    .. var:: e = Character("Eileen", who_color="#104010")
 
 .. ifconfig:: renpy_figures
 
@@ -173,35 +173,40 @@ the player. Again, there  are some relatively easy customizations that
 can be performed on the choice screen. The first are the two image
 files:
 
-gui/choice/idle_background.png
+gui/button/choice_idle_background.png
     This image is used as the background of choice buttons that are not
     focused.
 
-gui/choice/hover_background.png
+gui/button/choice_hover_background.png
     This image is used as the background of choice buttons that are focused.
 
-By default, text is placed in the central 75% of these images. The color
-of choice text is controlled by two variables:
+By default, text is placed in the central 75% of these images. There are
+also a couple of variables that control the color of the text in choice
+buttons.
 
-.. var:: gui.choice_idle_color = '#cccccc'
+.. var:: gui.choice_button_text_idle_color = '#888888'
 
     The color used for the text of unfocused choice buttons.
 
-.. var:: gui.choice_hover_color = '#0066cc'
+.. var:: gui.choice_text_hover_color = '#0066cc'
 
     The color used for the text of focused choice buttons.
 
+These should suffice for simple customization, where the size of the images
+does not need to be changed. For more complex customizations, check out the
+section on buttons, below.
+
 .. ifconfig:: renpy_figures
 
-    .. figure:: oshs/game/gui/choice/idle_background.png
+    .. figure:: oshs/game/gui/button/choice_idle_background.png
         :width: 100%
 
-        An example gui/choice/idle_background.png image.
+        An example gui/button/idle_background.png image.
 
-    .. figure:: oshs/game/gui/choice/hover_background.png
+    .. figure:: oshs/game/gui/button/choice_hover_background.png
         :width: 100%
 
-        An example gui/choice/hover_background.png image.
+        An example gui/button/choice_hover_background.png image.
 
     .. figure:: gui/easy_choice_screen.jpg
         :width: 100%
@@ -315,23 +320,25 @@ documented above, the following variables exist:
 
 .. var:: gui.idle_small_color = '#404040'
 
-    The color used for small text (like the dates of save slots) when not selected.
-    This color often needs to be a bit lighter or darker than idle_color to compensate
-    for the smaller size of the font.
+    The color used for small text (like the date and name of a save slot,
+    and quick menu buttons) when not hovered. This color often needs to be a
+    bit lighter or darker than idle_color to compensate for the smaller size
+    of the font.
 
 .. var:: gui.hover_color = '#3284d6'
 
-    The color used by the text of focused buttons.
+    The color used by focused items in the gui, including the text of
+    of buttons and the thumbs (movable areas) of sliders and scrollbars.
 
 .. var:: gui.selected_color = '#555555'
 
     The color used by the text of selected buttons. (This takes priority
-    over the selected and idle colors.)
+    over the hover and idle colors.)
 
 .. var:: gui.insensitive_color = '#8888887f'
 
-    The color used by buttons that are insensitive to user input. (For example,
-    the rollback button when no rollback is possible.)
+    The color used by the text of buttons that are insensitive to user input.
+    (For example, the rollback button when no rollback is possible.)
 
 .. var:: gui.interface_text_color = '#404040'
 
@@ -343,7 +350,8 @@ documented above, the following variables exist:
 
     Muted colors, used for the sections of bars, scrollbars, and sliders that
     do not represent the value or visible area. (These are only used when
-    generating images.
+    generating images, and will not take effect until images are regenerated
+    in the launcher.)
 
 In additional to :var:`gui.default_font`, the following variables selects the
 fonts used for text. These fonts should also be placed in the game directory.
@@ -353,47 +361,31 @@ fonts used for text. These fonts should also be placed in the game directory.
     The font used for text for user interface elements, like the main and
     game menus, buttons, and so on.
 
-.. var:: gui.quick_button_font = "ArchitectsDaughter.ttf"
-
-    The font used for the quick menu buttons - the buttons at the bottom
-    of the screen that offer access to history, saving, and so on. This is
-    its own variable so it can be made to match the text font, if so
-    desired.
-
 .. var:: gui.glyph_font = "DejaVuSans.ttf"
 
     A font used for certain glyphs, such as the arrow glyphs used by the skip
     indicator. DejaVuSans is a reasonable default for these glyphs, and is
     automatically included with every Ren'Py game.
 
-In addition to :var:`gui.text_size` and :var:`gui.label_text_size`, the following
+In addition to :var:`gui.text_size` and :var:`gui.name_text_size`, the following
 variables control text sizes.
 
-.. var:: gui.tiny_size = 21
+.. var:: gui.interface_text_size = 36
 
-    The smallest size text, used for dates and save names in the file picker.
+    The size of static text in the game's user interface, and the default size
+    of button text in the game's interface.
 
-.. var:: gui.interface_size = 36
+.. var:: gui.label_text_size = 45
 
-    The size of text that is part of a non-button interface element, like
-    label and help text.
-
-.. var:: gui.button_text_size = 30
-.. var:: gui.medium_button_text_size = 30
-.. var:: gui.small_button_text_size = 36
-.. var:: gui.quick_button_text_size = 21
-.. var:: gui.slot_text_size = 21
-
-    The size of text used by various buttons. Please see the descriptions
-    of the buttons below for an explanation of what is used where.
+    The size of section labels in the game's user interface.
 
 .. var:: gui.notify_text_size = 24
 
-    The size of text on the notification screen.
+    The size of notification text.
 
-.. var:: gui.title_size = 75
+.. var:: gui.title_text_size = 75
 
-    The size of text that's used on the main menu.
+    The size of the game's title.
 
 .. ifconfig:: renpy_figures
 
@@ -402,14 +394,14 @@ variables control text sizes.
 
         The game menu after customizing text colors, fonts, and sizes.
 
-Frames and Borders
-------------------
+Borders
+-------
 
 There are a number of GUI components - such as buttons and bars - that use
-:func:`Frame` displayables configured using :func:`Border` objects. So, before
-discussing how to customize buttons and bars, we'll first describe how
-these constructs work.
+scalable backgrounds confgured using Border objects. Before discussing,
+how to customize buttons and bars, we'll first describe how this works.
 
+Borders are given to the :func:`Frame` displayable.
 A Frame takes an image, and divides it into nine parts - the four corners,
 the four sides, and the center. The corners always remain the same size,
 the left and right sides are stretched vertically, the top and bottom sides
@@ -440,17 +432,13 @@ result is smaller, since the borders themselves now take up less space.
 
 .. image:: gui/borders2.png
 
-Borders can also be given a tile keyword argument, which causes the
-sides and center to be tiled instead of linearly scaled. For example::
-
-    Borders(40, 40, 40, 40, tile=True)
-
-produces this result:
+Borders can also be tiled, rather than scaled. This is invoked by variables,
+and produces this result.
 
 .. image:: gui/borders3.png
 
 These example images are a bit ugly, since we need to show what's going on.
-In practice, Frame can produce quite pleasing results. This is the case when
+In practice, this system can produce quite pleasing results. This is the case when
 a Frame displayable is used as the background of a frame window holding
 user interface components.
 
@@ -486,29 +474,45 @@ The Ren'Py user interface includes a large number of buttons, buttons
 that come in different sizes and that are used for different purposes.
 The various kinds of buttons are:
 
-``button``
+button
     A basic button. Used for navigation within the user interface.
 
-``radio_button``
-    A button that's the same size as the basic button, used to select one
-    of multiple choices in preferences.
+choice_button
+    A button used for choices in the in-game menu.
 
-``check_button``
-    A button that's the same size as the basic button, used to to indicate
-    if a preference is selected or not.
+quick_button
+    A button, displayed in-game, that is intended to allow quick access
+    to the game menu.
 
-``medium_button``
-    A button that contains a word or so amount of text used with other user
-    interface elements. These are used in conjunctions with bars, and
-    should generally match the bar size vertically.
+navigation_button
+    A button used in main and game menu for navigation between screens,
+    and to start the game.
 
-``small_button``
-    A button that contains a very small amount of text - like a single
-    number of letter. These are generally used to select the file page.
+page_button
+    A button used to switch between pages on the load and save screens.
 
-``quick_button``
-    Buttons that are displayed on in game-screens to provide quick
-    access to in-game functionality.
+slot_button
+    Buttons that represent file slots, and contain a thumbnail, the save
+    time, and an optional save name. These are described in more detail
+    below.
+
+radio_button
+    A button used for multiple-choice preferences on the preferences
+    screen.
+
+check_button
+    A button used for toggleable preferences on the preferences screen.
+
+test_button
+    A button used to test audio playback on the preferences screen. This
+    should be the same height as a horizontal slider.
+
+help_button
+    A button used to select what kind of help the player wants.
+
+confirm_button
+    A button used on the confirm screen to select yes or no.
+
 
 The following image files are used to customize button backgrounds,
 if they exist.
@@ -543,35 +547,60 @@ gui/button/check_selected_foreground.png, gui/button/radio_selected_foreground.p
     These images are used when a check or radio button is selected.
 
 
-The following variables set the width and height of vartious kinds of
-buttons. If a width or height is None, Ren'Py will try to automatically
-determine a width or height. (This works better for widths than heights.)
+The following variables set various properties of buttons:
 
-.. var:: gui.button_width = 350
-.. var:: gui.medium_button_width = None
-.. var:: gui.small_button_width = None
-.. var:: gui.quick_button_width = None
-
-    Sets the width of various kinds of button.
-
+.. var:: gui.button_width = None
 .. var:: gui.button_height = 64
-.. var:: gui.medium_button_height = 55
-.. var:: gui.small_button_height = 64
-.. var:: gui.quick_button_height = 45
 
-    Sets the height of various kinds of button.
+    The width and height of a button, in pixels. If None, the size is
+    automatically determined based on the size of the text inside a button,
+    and the borders given below.
 
-The following variables set the borders for the various kinds of buttons,
-as described above.
+.. var:: gui.button_borders = Borders(10, 10, 10, 10)
 
-.. var:: gui.button_borders = Borders(20, 20, 20, 20, tile=True)
-.. var:: gui.medium_button_borders = Borders(20, 20, 30, 20, tile=True)
-.. var:: gui.small_button_borders = Borders(20, 20, 30, 20, tile=True)
-.. var:: gui.check_button_borders = Borders(45, 20, 20, 20, tile=True)
-.. var:: gui.radio_button_borders = Borders(45, 20, 20, 20, tile=True)
-.. var:: gui.quick_button_borders = Borders(15, 6, 15, 0)
+    The borders surrounding a button, in left, top, right, bottom order.
 
-    These control the borders, padding, and tiling of button backgrounds.
+.. var:: gui.button_tile = True
+
+    If true, the sides and center of the button background are tiled to
+    increase or  decrease their size. If false, the sides and center are
+    scaled.
+
+.. var:: gui.button_text_font = gui.interface_font
+.. var:: gui.button_text_size = gui.interface_text_size
+
+    The font and size of the button text.
+
+.. var:: gui.button_text_idle_color = gui.idle_color
+.. var:: gui.button_text_hover_color = gui.hover_color
+.. var:: gui.button_text_selected_color = gui.accent_color
+.. var:: gui.button_text_insensitive_color = gui.insensitive_color
+
+    The color of the button text in various states.
+
+.. var:: gui.button_text_xalign = 0.0
+
+    The horizontal alignment of the button text. 0.0 is left-aligned,
+    0.5 is centered, and 1.0 is right-aligned.
+
+
+These variables can be prefixed with the button kind to configure a
+property for a particular kind of button. For example,
+:var:`gui.choice_button_text_idle_color` configures the color of
+an idle choice button.
+
+For example, we customize these variables in our sample game.
+
+.. var:: gui.navigation_button_width = 290
+
+    Increases the width of navigation buttons.
+
+.. var:: gui.radio_button_borders = Borders(40, 10, 10, 10)
+.. var:: gui.check_button_borders = Borders(40, 10, 10, 10)
+
+    Increases the width of radio and check button borders, leaving extra
+    space on the left for the check mark.
+
 
 .. ifconfig:: renpy_figures
 
@@ -601,20 +630,20 @@ as described above.
         The preferences screen with the customizations described in this
         section applied.
 
-Save Slots
-----------
+Save Slot Buttons
+------------------
 
-The load and save screens use file slots, which are buttons that present
-a thumbnail and information about when the file was saved.The following
+The load and save screens use slot buttons, which are buttons that present
+a thumbnail and information about when the file was saved. The following
 variables are quite useful when it comes to customizing the size of
 the save slots.
 
-.. var:: gui.slot_width = 414
-.. var:: gui.slot_height = 309
+.. var:: gui.slot_button_width = 414
+.. var:: gui.slot_button_height = 309
 
     The width and height of the save slot button.
 
-.. var:: gui.slot_borders = Borders(15, 15, 15, 15)
+.. var:: gui.slot_button_borders = Borders(15, 15, 15, 15)
 
     The borders applied to each save slot.
 
@@ -632,31 +661,31 @@ the save slots.
 
 Lastly, there are the background images used for save slots.
 
-gui/slot/idle_background.png
+gui/button/slot_idle_background.png
     The image used for the background of save slots that are not focused.
 
-gui/slot/hover_background.png
-    The image used for the background of save slots that are not focused.
+gui/button/slot_hover_background.png
+    The image used for the background of save slots that arefocused.
 
 .. ifconfig:: renpy_figures
 
     Putting those to use, we get:
 
-    .. figure:: oshs/game/gui/slot/idle_background.png
+    .. figure:: oshs/game/gui/button/slot_idle_background.png
 
-        An example gui/button/idle_background.png image.
+        An example gui/button/slot_idle_background.png image.
 
-    .. figure:: oshs/game/gui/slot/hover_background.png
+    .. figure:: oshs/game/gui/button/slot_hover_background.png
 
-        An example gui/button/hover_background.png image.
+        An example gui/button/slot/slot_hover_background.png image.
 
     .. figure:: gui/slot_save.jpg
 
         The save screen after applying the customizations given in this
         section.
 
-Sliders, Bars, and Scrollbars
------------------------------
+Sliders
+-------
 
 
 

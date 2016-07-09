@@ -30,7 +30,7 @@ define gui.idle_color = "#555555"
 ## brighter/darker to achieve the same effect.
 define gui.idle_small_color = "#aaaaaa"
 
-## A version of the accent color that's used when buttons are hovered.
+## The color that is used for buttons and bars that are hovered.
 define gui.hover_color = Color(gui.accent_color).tint(.6)
 
 ## The color used for a text button when it is selected but not focused.
@@ -113,6 +113,10 @@ define gui.button_text_idle_color = gui.idle_color
 define gui.button_text_hover_color = gui.hover_color
 define gui.button_text_selected_color = gui.accent_color
 define gui.button_text_insensitive_color = gui.insensitive_color
+
+# The horizontal alignment of the button text. (0.0 is left, 0.5 is center,
+# 1.0 is right).
+define gui.button_text_xalign = 0.0
 
 
 ## These variables override settings for different kinds of buttons. Please

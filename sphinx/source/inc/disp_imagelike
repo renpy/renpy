@@ -15,7 +15,7 @@
     Note that this takes different arguments from :func:`im.AlphaMask`,
     which uses the mask's color channel.
 
-.. function:: Borders(left, top, right, bottom, pad_left=0, pad_top=0, pad_right=0, pad_bottom=0, tile=False)
+.. function:: Borders(left, top, right, bottom, pad_left=0, pad_top=0, pad_right=0, pad_bottom=0)
     
     This object provides border size and tiling information to a :func:`Frame`.
     It can also provide padding information that can be supplied to the
@@ -35,9 +35,6 @@
         These are added to the padding on each side, and may be positive or
         negative. (For example, if `left` is 5 and `pad_left` is -3, the final
         padding is 2.)
-    
-    `tile`
-        If True, the Frame is tiled rather than scaled.
     
     The padding information is supplied via a field:
     
