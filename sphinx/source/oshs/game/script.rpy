@@ -8,6 +8,11 @@ label start:
 
     show eileen happy
 
+    e "Quidquid latine dictum sit, altum videtur."
+    e "Quidquid latine dictum sit, altum videtur."
+    e "Quidquid latine dictum sit, altum videtur."
+    e "Quidquid latine dictum sit, altum videtur."
+
     e "Is there some reason why school-based games always seem to use handwriting fonts and paper textures?"
 
     menu:

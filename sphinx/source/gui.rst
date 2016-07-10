@@ -688,24 +688,17 @@ Sliders
 -------
 
 Sliders are a type of bar that is used in the preferences screen to
-allow the player to adjust a value with a large number of properties.
-By default, the gui only uses horizontal sliders, but games with more
-complicated interfaces may also use vertical sliders.
+allow the player to adjust preference with a large number of values.
+By default, the gui only uses horizontal sliders, but in-game code
+may also use vertical sliders.
 
 Sliders are customized with the following images:
 
-
-gui/slider/horizontal_idle_bar.png
-gui/slider/horizontal_hover_bar.png
-gui/slider/vertical_idle_bar.png
-gui/slider/vertical_hover_bar.png
+gui/slider/horizontal_idle_bar.png, gui/slider/horizontal_hover_bar.png, gui/slider/vertical_idle_bar.png, gui/slider/vertical_hover_bar.png
     Images used for vertical and idle bar backgrounds in idle and
     hover states.
 
-gui/slider/horizontal_idle_thumb.png
-gui/slider/horizontal_hover_thumb.png
-gui/slider/vertical_idle_thumb.png
-gui/slider/vertical_hover_thumb.png
+gui/slider/horizontal_idle_thumb.png, gui/slider/horizontal_hover_thumb.png, gui/slider/vertical_idle_thumb.png, gui/slider/vertical_hover_thumb.png
     Images used for the thumb - the movable part of the bar.
 
 The following variables are also used:
@@ -747,9 +740,77 @@ The following variables are also used:
     .. figure:: gui/slider_preferences.jpg
         :width: 100%
 
-        The save screen after applying the customizations given in this
+        The preferences screen after applying the customizations given in this
         section.
 
+
+
+Scrollbars
+----------
+
+Scrollbars are bars that are used to scroll viewports. In the gui,
+the most obvious place a scrollbar is used is the history screen,
+but vertical scrollbars can be used on other screens as well.
+
+Sliders are customized with the following images:
+
+gui/scrollbar/horizontal_idle_bar.png, gui/scrollbar/horizontal_hover_bar.png, gui/scrollbar/vertical_idle_bar.png, gui/scrollbar/vertical_hover_bar.png
+    Images used for vertical and idle bar backgrounds in idle and
+    hover states.
+
+gui/scrollbar/horizontal_idle_thumb.png, gui/scrollbar/horizontal_hover_thumb.png, gui/scrollbar/vertical_idle_thumb.png, gui/scrollbar/vertical_hover_thumb.png
+    Images used for the thumb - the movable part of the bar.
+
+The following variables are also used:
+
+.. var:: gui.scrollbar_size = 24
+
+    The height of vertical scrollbars, and width of vertical scrollbars.
+
+.. var:: gui.scrollbar_tile = True
+
+    If true, the frame containing the bar of a scrollbar is tiled. If False,
+    if it scaled.
+
+.. var:: gui.scrollbar_borders = Borders(10, 6, 10, 6)
+.. var:: gui.vscrollbar_borders = Borders(6, 10, 6, 10)
+
+    The borders that are used with the Frame containing the bar image.
+
+.. var:: gui.unscrollable = "hide"
+
+    This controls what to do if the bar is unscrollable. "hide" hides
+    the bar, while None keeps it shown.
+
+.. ifconfig:: renpy_figures
+
+    Here's an example of how we customize the vertical scrollbar.
+
+    .. figure:: oshs/game/gui/scrollbar/vertical_idle_bar.png
+        :height: 150
+
+        An example gui/scrollbar/vertical_idle_bar.png image.
+
+    .. figure:: oshs/game/gui/scrollbar/vertical_hover_bar.png
+        :height: 150
+
+        An example gui/scrollbar/vertical_hover_bar.png image.
+
+    .. figure:: oshs/game/gui/scrollbar/vertical_idle_thumb.png
+        :height: 150
+
+        An example gui/scrollbar/vertical_idle_thumb.png image.
+
+    .. figure:: oshs/game/gui/scrollbar/vertical_hover_thumb.png
+        :height: 150
+
+        An example gui/scrollbar/vertical_hover_thumb.png image.
+
+    .. figure:: gui/scrollbar_history.jpg
+        :width: 100%
+
+        The history screen after applying the customizations given in this
+        section.
 
 
 

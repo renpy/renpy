@@ -192,3 +192,5 @@ define gui.choice_button_text_hover_color = "#0066CC"
 define gui.scrollbar_size = 24
 define gui.scrollbar_tile = True
 define gui.unscrollable = None
+
+define gui.vscrollbar_borders = Borders(7, 10, 7, 10)
