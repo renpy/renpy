@@ -1457,6 +1457,12 @@ class Side(Container):
         bottoms = self.bottom_space
 
 
+        if self.style.xfill:
+            cwidth = width
+
+        if self.style.yfill:
+            cheight = height
+
         cwidth = min(cwidth, width - left - lefts - right - rights)
         cheight = min(cheight, height - top - tops - bottom - bottoms)
 
