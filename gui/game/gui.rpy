@@ -208,10 +208,17 @@ define gui.slot_spacing = gui.scale(10)
 
 ## Frames ######################################################################
 ##
-## This variable, along with gui/frame.png, controls the look of a frame.
+## These variables controls the look of frames that can contain user interface
+## components when an overlay is not present.
 
+## Generic frames that are introduced by player code.
 define gui.frame_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
+## The confirm frame that is used as part of the confirm screen.
+define gui.confirm_frame_borders = Borders(gui.scale(40), gui.scale(40), gui.scale(40), gui.scale(40))
+
+## Should frame backgrounds be tiled?
+define gui.frame_tile = False
 
 ## Bars, Scrollbars, and Sliders ###############################################
 ##
@@ -327,7 +334,7 @@ style vslider:
 
 style frame:
     padding gui.frame_borders.padding
-    background Frame("gui/frame.png", gui.frame_borders)
+    background Frame("gui/frame.png", gui.frame_borders, tile=gui.frame_tile)
 
 
 ################################################################################
@@ -1398,10 +1405,10 @@ style confirm_button is gui_medium_button
 style confirm_button_text is gui_medium_button_text
 
 style confirm_frame:
+    background Frame([ "gui/confirm_frame.png", "gui/frame.png"], gui.confirm_frame_borders, tile=gui.frame_tile)
+    padding gui.confirm_frame_borders.padding
     xalign .5
-    xsize gui.scale(600)
     yalign .5
-    ysize gui.scale(250)
 
 style confirm_prompt_text:
     text_align 0.5

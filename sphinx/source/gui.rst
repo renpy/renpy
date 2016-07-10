@@ -448,18 +448,27 @@ background image file:
 gui/frame.png
     The image used as the background of frames windows.
 
-And the second is by customizing the borders:
+And the second is by customizing variables.
 
-.. var:: gui.frame_borders = Borders(40, 40, 40, 40)
+.. var:: gui.frame_borders = Borders(15, 15, 15, 15)
 
     The borders applied to frame windows.
+
+.. var:: gui.confirm_frame_borders = Borders(60, 60, 60, 60)
+
+    The borders applied to the fame used in the confirm screen.
+
+.. var:: gui.frame_tile
+
+    If true, the sides and center of the confirm screen are tiled. If false,
+    they are scaled.
 
 .. ifconfig:: renpy_figures
 
     .. figure:: oshs/game/gui/frame.png
         :width: 100%
 
-        An example gui/overlay/game_menu.png image.
+        An example gui/frame.png image.
 
     .. figure:: gui/frame_confirm.jpg
         :width: 100%
