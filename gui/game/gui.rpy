@@ -696,6 +696,8 @@ screen game_menu(title, scroll=None):
                         mousewheel True
                         draggable True
 
+                        side_yfill True
+
                         transclude
 
                 elif scroll == "vpgrid":
@@ -707,6 +709,8 @@ screen game_menu(title, scroll=None):
                         scrollbars "vertical"
                         mousewheel True
                         draggable True
+
+                        side_yfill True
 
                         transclude
 

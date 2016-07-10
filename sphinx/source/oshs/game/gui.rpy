@@ -240,6 +240,10 @@ define gui.vbar_borders = Borders(6, 6, 6, 6)
 define gui.vscrollbar_borders = Borders(6, 6, 6, 6)
 define gui.vslider_borders = Borders(6, 6, 6, 6)
 
+## What to do with unscrollable scrollbars in the gui. "hide" hides them, while
+## None shows them.
+define gui.unscrollable = "hide"
+
 
 ## Two-window dialogue mode ####################################################
 
@@ -691,6 +695,8 @@ screen game_menu(title, scroll=None):
                         mousewheel True
                         draggable True
 
+                        side_yfill True
+
                         transclude
 
                 elif scroll == "vpgrid":
@@ -702,6 +708,8 @@ screen game_menu(title, scroll=None):
                         scrollbars "vertical"
                         mousewheel True
                         draggable True
+
+                        side_yfill True
 
                         transclude
 
@@ -754,7 +762,7 @@ style game_menu_viewport:
     xsize 1380
 
 style game_menu_vscrollbar:
-    unscrollable "hide"
+    unscrollable gui.unscrollable
 
 style game_menu_side:
     spacing 15

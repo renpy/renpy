@@ -189,4 +189,6 @@ define gui.choice_button_text_font = gui.default_font
 define gui.choice_button_text_idle_color = "#606060"
 define gui.choice_button_text_hover_color = "#0066CC"
 
-
+define gui.scrollbar_size = 24
+define gui.scrollbar_tile = True
+define gui.unscrollable = None
