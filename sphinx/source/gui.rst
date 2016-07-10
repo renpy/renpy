@@ -774,7 +774,7 @@ The following variables are also used:
 
 .. var:: gui.scrollbar_size = 24
 
-    The height of vertical scrollbars, and width of vertical scrollbars.
+    The height of horizontal scrollbars, and width of vertical scrollbars.
 
 .. var:: gui.scrollbar_tile = True
 
@@ -820,6 +820,56 @@ The following variables are also used:
 
         The history screen after applying the customizations given in this
         section.
+
+Bars
+----
+
+Plain old bars are used to display a number to the player. They're not
+used in the gui, but can be used in creator-defined screens.
+
+A bar can customized by editing the following images:
+
+gui/bar/left.png, gui/bar/bottom.png
+    Images that are used for the filled section of horizontal and vertical bars.
+
+gui/bar/right.pbg, gui/bar/top.png
+    Images that are used for the filled section of horizontal and vertical bars.
+
+There are also the usual variables that control bars:
+
+.. var:: gui.bar_size = 64
+
+    The height of horizontal bars, and width of vertical bars.
+
+.. var:: gui.bar_tile = False
+
+    If true, the bar images are tiled. If false, the images are linearly
+    scaled.
+
+.. var:: gui.bar_borders = Borders(10, 10, 10, 10)
+.. var:: gui.bar_borders = Borders(10, 10, 10, 10)
+
+    The borders that are used with the Frames containing the bar images.
+
+
+.. ifconfig:: renpy_figures
+
+    Here's an example of how we customize horizontal bars.
+
+    .. figure:: oshs/game/gui/bar/left.png
+        :width: 100%
+
+        An example gui/bar/left.png image.
+
+    .. figure:: oshs/game/gui/bar/right.png
+        :width: 100%
+
+        An example gui/bar/right.png image.
+
+    .. figure:: gui/bar.jpg
+        :width: 100%
+
+        A screen we defined to give an example of a bar.
 
 
 

@@ -2,16 +2,28 @@
 
 define e = Character("Eileen")
 
+screen bar_test:
+    frame:
+        xalign 0.5
+        yalign 0.5
+
+        xsize 800
+
+        hbox:
+            spacing 10
+            text "Progress"
+            bar value StaticValue(60, 100)
+
 label start:
 
     scene expression "gui/main_menu.png"
 
-    show eileen happy
+    show screen bar_test
+    pause
+    hide screen bar_test
 
-    e "Quidquid latine dictum sit, altum videtur."
-    e "Quidquid latine dictum sit, altum videtur."
-    e "Quidquid latine dictum sit, altum videtur."
-    e "Quidquid latine dictum sit, altum videtur."
+
+    show eileen happy
 
     e "Is there some reason why school-based games always seem to use handwriting fonts and paper textures?"
 
