@@ -241,6 +241,10 @@ define gui.vbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.
 define gui.vscrollbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 define gui.vslider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
+## What to do with unscrollable scrollbars in the gui. "hide" hides them, while
+## None shows them.
+define gui.unscrollable = "hide"
+
 
 ## Two-window dialogue mode ####################################################
 
@@ -755,7 +759,7 @@ style game_menu_viewport:
     xsize gui.scale(920)
 
 style game_menu_vscrollbar:
-    unscrollable "hide"
+    unscrollable gui.unscrollable
 
 style game_menu_side:
     spacing gui.scale(10)
