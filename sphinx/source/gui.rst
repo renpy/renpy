@@ -659,7 +659,7 @@ the save slots.
 
     The number of columns and rows in the grid of save slots.
 
-Lastly, there are the background images used for save slots.
+There are the background images used for save slots.
 
 gui/button/slot_idle_background.png
     The image used for the background of save slots that are not focused.
@@ -686,6 +686,70 @@ gui/button/slot_hover_background.png
 
 Sliders
 -------
+
+Sliders are a type of bar that is used in the preferences screen to
+allow the player to adjust a value with a large number of properties.
+By default, the gui only uses horizontal sliders, but games with more
+complicated interfaces may also use vertical sliders.
+
+Sliders are customized with the following images:
+
+
+gui/slider/horizontal_idle_bar.png
+gui/slider/horizontal_hover_bar.png
+gui/slider/vertical_idle_bar.png
+gui/slider/vertical_hover_bar.png
+    Images used for vertical and idle bar backgrounds in idle and
+    hover states.
+
+gui/slider/horizontal_idle_thumb.png
+gui/slider/horizontal_hover_thumb.png
+gui/slider/vertical_idle_thumb.png
+gui/slider/vertical_hover_thumb.png
+    Images used for the thumb - the movable part of the bar.
+
+The following variables are also used:
+
+.. var:: gui.slider_size = 64
+
+    The height of horizontal sliders, and width of vertical sliders.
+
+.. var:: gui.slider_tile = True
+
+    If true, the frame containing the bar of a slider is tiled. If False,
+    if it scaled.
+
+.. var:: gui.slider_borders = Borders(6, 6, 6, 6)
+.. var:: gui.vslider_borders = Borders(6, 6, 6, 6)
+
+    The borders that are used with the Frame containing the bar image.
+
+.. ifconfig:: renpy_figures
+
+    Here's an example of how we customize the horizontal slider.
+
+    .. figure:: oshs/game/gui/slider/horizontal_idle_bar.png
+
+        An example gui/slider/horizontal_idle_bar.png image.
+
+    .. figure:: oshs/game/gui/slider/horizontal_hover_bar.png
+
+        An example gui/slider/horizontal_hover_bar.png image.
+
+    .. figure:: oshs/game/gui/slider/horizontal_idle_thumb.png
+
+        An example gui/slider/horizontal_idle_thumb.png image.
+
+    .. figure:: oshs/game/gui/slider/horizontal_hover_thumb.png
+
+        An example gui/slider/horizontal_hover_thumb.png image.
+
+    .. figure:: gui/slider_preferences.jpg
+        :width: 100%
+
+        The save screen after applying the customizations given in this
+        section.
+
 
 
 
