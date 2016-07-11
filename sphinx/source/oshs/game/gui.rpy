@@ -182,12 +182,18 @@ define gui.file_slot_rows = 2
 
 ## Positioning and Spacing #####################################################
 ##
-## These variables control the positining and spacing of various user interface
+## These variables control the positioning and spacing of various user interface
 ## elements.
 
 ## The position of the left side of the navigation buttons, relative to the left
 ## side of the screen.
 define gui.navigation_xpos = 60
+
+## The vertical position of the skip indicator.
+define gui.skip_ypos = 15
+
+## The vertical position of the notify screen.
+define gui.notify_ypos = 68
 
 ## The spacing between menu choices.
 define gui.choice_spacing = 33
@@ -208,23 +214,30 @@ define gui.slot_spacing = 15
 ## Frames ######################################################################
 ##
 ## These variables controls the look of frames that can contain user interface
-## components when an overlay is not present.
+## components when an overlay or window is not present.
 
 ## Generic frames that are introduced by player code.
 define gui.frame_borders = Borders(6, 6, 6, 6)
 
-## The confirm frame that is used as part of the confirm screen.
+## The frame that is used as part of the confirm screen.
 define gui.confirm_frame_borders = Borders(60, 60, 60, 60)
+
+## The frame that is used as part of the skip screen.
+define gui.skip_frame_borders = Borders(24, 8, 75, 8)
+
+## The frame that is used as part of the notify screen.
+define gui.notify_frame_borders = Borders(24, 8, 60, 8)
 
 ## Should frame backgrounds be tiled?
 define gui.frame_tile = False
+
 
 ## Bars, Scrollbars, and Sliders ###############################################
 ##
 ## These control the look and size of bars, scrollbars, and sliders.
 ##
-## The default GUI only uses horizontal sliders and vertical scrollbars. All of
-## the other bars are only used in creator-written code.
+## The default GUI only uses sliders and vertical scrollbars. All of the other
+## bars are only used in creator-written code.
 
 ## The height of horizontal bars, scrollbars, and sliders. The width of vertical
 ## bars, scrollbars, and sliders.
@@ -1462,12 +1475,9 @@ style skip_text is gui_text
 style skip_triangle is skip_text
 
 style skip_frame:
-    ypos 15
-    ypadding 8
-    left_padding 24
-    right_padding 60
-
-    background Frame("gui/skip.png", 24, 8, 75, 8)
+    ypos gui.skip_ypos
+    background Frame("gui/skip.png", gui.skip_frame_borders, tile=gui.frame_tile)
+    padding gui.skip_frame_borders.padding
 
 style skip_text:
     size gui.notify_text_size
@@ -1508,13 +1518,10 @@ style notify_frame is empty
 style notify_text is gui_text
 
 style notify_frame:
-        background Frame("gui/notify.png", 24, 8, 75, 8)
+    ypos gui.notify_ypos
 
-        left_padding 24
-        right_padding 60
-
-        ypos 68
-        ypadding 8
+    background Frame("gui/notify.png", gui.notify_frame_borders, tile=gui.frame_tile)
+    padding gui.notify_frame_borders.padding
 
 style notify_text:
     size gui.notify_text_size

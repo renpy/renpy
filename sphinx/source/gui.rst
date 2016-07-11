@@ -872,6 +872,57 @@ There are also the usual variables that control bars:
         A screen we defined to give an example of a bar.
 
 
+Skip and Notify
+---------------
+
+The skip and notify screens both display frames with messages in them. Both
+use custom frame background images:
+
+
+gui/skip.png
+    The background of the skip indicator.
+
+gui/notify.png
+    The background of the notify screen.
+
+The variables that control these are:
+
+.. var:: gui.skip_frame_borders = Borders(24, 8, 75, 8)
+
+    The borders of the frame that is used by the skip screen.
+
+.. var:: gui.notify_frame_borders = Borders(24, 8, 60, 8)
+
+    The borders of the frame that is used by the notify screen.
+
+.. var:: gui.skip_ypos = 15
+
+    The vertical position of the skip indicator, in pixels from the top of the
+    window.
+
+.. var:: gui.notify_ypos = 68
+
+    The vertical position of the notify message, in pixels from the top of the
+    window.
+
+.. ifconfig:: renpy_figures
+
+    Here are some example images we can use to customize these screens.
+
+    .. figure:: oshs/game/gui/skip.png
+        :width: 100%
+
+        An example gui/skip.png image.
+
+    .. figure:: oshs/game/gui/notify.png
+        :width: 100%
+
+        An example gui/notify.png image.
+
+    .. figure:: gui/skip_notify.jpg
+
+        These skip and notify screens in action.
+
 
 Other
 -----
