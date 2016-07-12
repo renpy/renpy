@@ -86,6 +86,42 @@ define gui.game_menu_background = "gui/game_menu.png"
 define config.window_icon = "gui/window_icon.png"
 
 
+## Dialogue ####################################################################
+##
+## These variables control how dialogue is displayed on the screen one line
+## at a time.
+
+## The height of the textbox containing dialogue.
+define gui.textbox_height = gui.scale(185)
+
+## The placement of the textbox vertically on the screen. 0.0 is the top, 0.5 is
+## center, and 1.0 is the bottom.
+define gui.textbox_yalign = 1.0
+
+
+## The placement of the speaking character's name, relative to the textbox.
+## These can be a whole number of pixels from the left or top, or 0.5 to center.
+define gui.name_xpos = gui.scale(246)
+define gui.name_ypos = gui.scale(5)
+
+## The horizontal alignment of the character's name. This can be 0.0 for
+## left-aligned, 0.5 for centered, and 1.0 for right-aligned.
+define gui.name_xalign = gui.scale(0.0)
+
+
+## The placement of dialogue relative to the textbox. These can be a whole
+## number of pixels relative to the left or to, or 0.5 to center.
+define gui.text_xpos = gui.scale(268)
+define gui.text_ypos = gui.scale(50)
+
+## The maxium width of dialogue text, in pixels.
+define gui.text_width = gui.scale(744)
+
+## The horizontal alignment of the character's name. This can be 0.0 for
+## left-aligned, 0.5 for centered, and 1.0 for right-aligned.
+define gui.text_xalign = 0.0
+
+
 ## Buttons #####################################################################
 ##
 ## These variables, along with the image files in gui/button, control aspects
@@ -265,14 +301,6 @@ define gui.vslider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), g
 ## None shows them.
 define gui.unscrollable = "hide"
 
-
-## Two-window dialogue mode ####################################################
-
-## Setting this to true causes the character's name to be displayed in a
-## second window, with the background of that window being gui/namebox.png
-define gui.two_window = False
-
-
 ################################################################################
 ## Styles.
 ################################################################################
@@ -374,28 +402,13 @@ screen say(who, what):
     window:
         id "window"
 
-        vbox:
-            xfill True
+        text what id "what"
 
-            null height gui.scale(5)
+        if who is not None:
 
-            if (who is not None) and gui.two_window:
-
-                window:
-                    style "namebox"
-                    text who id "who"
-
-            elif who is not None:
-
-                text who id "who" xoffset gui.scale(-10)
-
-            else:
-
-                text " " id "who" xoffset gui.scale(-10)
-
-            null height gui.scale(5)
-
-            text what id "what"
+            window:
+                style "namebox"
+                text who id "who"
 
     # If there's a side image, display it above the text. Do not display
     # on the phone variant - there's no room.
@@ -412,26 +425,33 @@ style namebox_label is say_label
 
 
 style window:
-    xalign 0.5
     xfill True
-    xpadding gui.scale(268)
-    yalign 1.0
-    ysize gui.scale(185)
+    yalign gui.textbox_yalign
+    ysize gui.textbox_height
 
-    background "gui/textbox.png"
+    background Image("gui/textbox.png", xalign=0.5, yalign=1.0)
+
+style namebox:
+    xpos gui.name_xpos
+    xanchor gui.name_xalign
+    ypos gui.name_ypos
+
+    background Image("gui/namebox.png", xalign=gui.name_xalign, yalign=0.5)
 
 style say_label:
     color gui.accent_color
     size gui.name_text_size
-
-style namebox:
-    xalign 0.5
-    yoffset gui.scale(-22)
-
-    background Image("gui/namebox.png", xalign=0.5, yalign=0.5)
-
-style namebox_label:
+    xalign gui.name_xalign
     yalign 0.5
+
+style say_dialogue:
+    xpos gui.text_xpos
+    xanchor gui.text_xalign
+    xsize gui.text_width
+    ypos gui.text_ypos
+
+    text_align gui.text_xalign
+
 
 
 ## Input screen ################################################################

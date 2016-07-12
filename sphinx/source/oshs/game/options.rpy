@@ -197,3 +197,5 @@ define gui.vscrollbar_borders = Borders(7, 10, 7, 10)
 
 define gui.frame_borders = Borders(20, 20, 20, 20)
 define gui.frame_tile = True
+
+define gui.two_window = True

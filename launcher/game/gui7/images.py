@@ -207,6 +207,12 @@ class ImageGenerator(object):
 
         self.generate_image("phone/textbox", X, Y, self.boring_color.opacity(.8))
 
+        width = self.scale_int(300)
+        height = self.scale_int(36)
+
+        s = self.make_surface(width, height)
+        self.save(s, "namebox")
+
     def generate_nvl(self):
         XSIZE = self.full_width
         XINSIDE = (XSIZE - 800) // 2
@@ -314,15 +320,6 @@ class ImageGenerator(object):
         s.subsurface((border, border, width - 2 * border, height - 2 * border)).fill(self.boring_color)
         self.save(s, "frame")
 
-        width = self.scale_int(300)
-        height = self.scale_int(36)
-
-        border = self.scale_int(3)
-
-        s = self.make_surface(width, height)
-        s.fill(self.accent_color)
-        s.subsurface((border, border, width - 2 * border, height - 2 * border)).fill(self.boring_color)
-        self.save(s, "namebox")
 
     def generate_quick_buttons(self):
         width = self.scale_int(100)

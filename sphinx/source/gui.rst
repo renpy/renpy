@@ -113,12 +113,12 @@ gui/game_menu.png
         as the background) or the main menu (using gui/main_menu.png as the
         background). Both can be set to the same image.
 
-Say Screen and Textbox
-----------------------
+Dialogue
+---------
 
-The say screen is used to display dialogue to the player. There are a number
-of relatively easy customizations that can be performed to the Say screen.
-The first is changing the textbox:
+There are a number of relatively easy customizations that can be performed
+to change how dialogue is displayed to the player. The first is changing
+the textbox.
 
 gui/textbox.png
     This file contains the background of the text window, displayed as part
@@ -127,7 +127,7 @@ gui/textbox.png
     on either side.
 
 In addition, there are a number of variables that can be customized to change
-the say screen.
+dialogue.
 
 .. var:: gui.text_color = "#402000"
 
@@ -150,7 +150,7 @@ the say screen.
 By default, the character name label uses the accent color. The color can
 be easily changed when defining a character::
 
-    .. var:: e = Character("Eileen", who_color="#104010")
+    define e = Character("Eileen", who_color="#104010")
 
 .. ifconfig:: renpy_figures
 
@@ -162,7 +162,7 @@ be easily changed when defining a character::
     .. figure:: gui/easy_say_screen.jpg
         :width: 100%
 
-        The say screen, customized using the textbox image and the variable
+        Dialogue customized using the textbox image and the variable
         settings given above.
 
 Choice Menus
@@ -907,7 +907,7 @@ The variables that control these are:
 
 .. ifconfig:: renpy_figures
 
-    Here are some example images we can use to customize these screens.
+    Here is an example of customizing the say and notify screens.
 
     .. figure:: oshs/game/gui/skip.png
         :width: 100%
@@ -922,6 +922,35 @@ The variables that control these are:
     .. figure:: gui/skip_notify.jpg
 
         These skip and notify screens in action.
+
+Dialogue, Continued
+-------------------
+
+There are a few more dialogue customizations that can occur. A mode in
+which character names are displayed in a second window can be invoked
+by customizing an image and changing a variable.
+
+gui/namebox.png
+    The background of the window containing the name of the speaking
+    character.
+
+.. var:: gui.two_window = True
+
+    When set to true, the name of the speaking character is displayed
+    in its own window.
+
+
+.. ifconfig:: renpy_figures
+
+    .. figure:: oshs/game/gui/namebox.png
+        :width: 100%
+
+        An example gui/namebox.png image.
+
+    .. figure:: gui/namebox.jpg
+        :width: 100%
+
+        How dialogue is displayed when gui.two_window is set to True.
 
 
 Other
