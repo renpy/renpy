@@ -18,12 +18,11 @@ label start:
 
     scene expression "gui/main_menu.png"
 
-    show screen bar_test
-    pause
-    hide screen bar_test
-
-
     show eileen happy
+
+    e "Hello!"
+
+    $ renpy.input("What's your name?", "Hiro Protagonist")
 
     e "Is there some reason why school-based games always seem to use handwriting fonts and paper textures?"
 

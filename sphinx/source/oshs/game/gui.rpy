@@ -466,6 +466,7 @@ style say_dialogue:
     ypos gui.text_ypos
 
     text_align gui.text_xalign
+    layout ("subtitle" if gui.text_xalign else "tex")
 
 
 
@@ -485,22 +486,25 @@ screen input(prompt):
     window:
 
         vbox:
-            xsize 1116
-            xalign 0.5
-
-            null height 8
-
-            text " " style "say_label"
-
-            null height 8
+            xpos gui.text_xpos
+            xanchor gui.text_xalign
+            ypos gui.text_ypos
 
             text prompt style "input_prompt"
-
             input id "input"
 
 
 style input_prompt is default
 
+style input_prompt:
+    xmaximum gui.text_width
+    xalign gui.text_xalign
+    text_align gui.text_xalign
+
+style input:
+    xmaximum gui.text_width
+    xalign gui.text_xalign
+    text_align gui.text_xalign
 
 ## Choice screen ###############################################################
 ##

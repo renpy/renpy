@@ -205,3 +205,6 @@ define gui.namebox_width = 300
 define gui.name_ypos = -22
 define gui.namebox_borders = Borders(15, 7, 15, 7)
 define gui.namebox_tile = True
+
+define gui.text_xpos = 0.5
+define gui.text_xalign = 0.5
