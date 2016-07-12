@@ -101,12 +101,25 @@ define gui.textbox_yalign = 1.0
 
 ## The placement of the speaking character's name, relative to the textbox.
 ## These can be a whole number of pixels from the left or top, or 0.5 to center.
-define gui.name_xpos = gui.scale(246)
-define gui.name_ypos = gui.scale(5)
+define gui.name_xpos = gui.scale(240)
+define gui.name_ypos = gui.scale(0)
 
 ## The horizontal alignment of the character's name. This can be 0.0 for
 ## left-aligned, 0.5 for centered, and 1.0 for right-aligned.
-define gui.name_xalign = gui.scale(0.0)
+define gui.name_xalign = 0.0
+
+## The width, height, and borders of the box containing the character's
+## name, or None to automatically size it.
+define gui.namebox_width = None
+define gui.namebox_height = None
+
+## The borders of the box containing the character's name, in left, top,
+## right, bottom order.
+define gui.namebox_borders = Borders(5, 5, 5, 5)
+
+## If True, the background of the namebox will be tiled, if False, the background
+## if the namebox will be scaled.
+define gui.namebox_tile = False
 
 
 ## The placement of dialogue relative to the textbox. These can be a whole
@@ -134,7 +147,7 @@ define gui.button_height = gui.scale(36)
 ## The borders on each side of the button, in left, top, right, bottom order.
 define gui.button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
-## If true, the backgound image will be tiled. If false, the background image
+## If True, the backgound image will be tiled. If False, the background image
 ## will be linearly scaled.
 define gui.button_tile = False
 
@@ -282,7 +295,7 @@ define gui.bar_size = gui.scale(36)
 define gui.scrollbar_size = gui.scale(12)
 define gui.slider_size = gui.scale(30)
 
-## True if bar images should be tiled. False if they should be linearly scaler.
+## True if bar images should be tiled. False if they should be linearly scaled.
 define gui.bar_tile = False
 define gui.scrollbar_tile = False
 define gui.slider_tile = False
@@ -434,9 +447,12 @@ style window:
 style namebox:
     xpos gui.name_xpos
     xanchor gui.name_xalign
+    xsize gui.namebox_width
     ypos gui.name_ypos
+    ysize gui.namebox_height
 
-    background Image("gui/namebox.png", xalign=gui.name_xalign, yalign=0.5)
+    background Frame("gui/namebox.png", gui.namebox_borders, tile=gui.namebox_tile, xalign=gui.name_xalign)
+    padding gui.namebox_borders.padding
 
 style say_label:
     color gui.accent_color

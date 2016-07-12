@@ -48,7 +48,6 @@ define gui.hover_muted_color = '#006e75'
 define gui.text_color = '#ffffff'
 define gui.interface_text_color = '#ffffff'
 
-
 ## Fonts and Font Sizes ########################################################
 
 ## The font used for in-game text.
@@ -86,6 +85,55 @@ define gui.game_menu_background = "gui/game_menu.png"
 define config.window_icon = "gui/window_icon.png"
 
 
+## Dialogue ####################################################################
+##
+## These variables control how dialogue is displayed on the screen one line at a
+## time.
+
+## The height of the textbox containing dialogue.
+define gui.textbox_height = 278
+
+## The placement of the textbox vertically on the screen. 0.0 is the top, 0.5 is
+## center, and 1.0 is the bottom.
+define gui.textbox_yalign = 1.0
+
+
+## The placement of the speaking character's name, relative to the textbox.
+## These can be a whole number of pixels from the left or top, or 0.5 to center.
+define gui.name_xpos = 360
+define gui.name_ypos = 0
+
+## The horizontal alignment of the character's name. This can be 0.0 for left-
+## aligned, 0.5 for centered, and 1.0 for right-aligned.
+define gui.name_xalign = 0.0
+
+## The width, height, and borders of the box containing the character's name, or
+## None to automatically size it.
+define gui.namebox_width = None
+define gui.namebox_height = None
+
+## The borders of the box containing the character's name, in left, top, right,
+## bottom order.
+define gui.namebox_borders = Borders(5, 5, 5, 5)
+
+## If True, the background of the namebox will be tiled, if False, the
+## background if the namebox will be scaled.
+define gui.namebox_tile = False
+
+
+## The placement of dialogue relative to the textbox. These can be a whole
+## number of pixels relative to the left or to, or 0.5 to center.
+define gui.text_xpos = 402
+define gui.text_ypos = 75
+
+## The maxium width of dialogue text, in pixels.
+define gui.text_width = 1116
+
+## The horizontal alignment of the character's name. This can be 0.0 for left-
+## aligned, 0.5 for centered, and 1.0 for right-aligned.
+define gui.text_xalign = 0.0
+
+
 ## Buttons #####################################################################
 ##
 ## These variables, along with the image files in gui/button, control aspects of
@@ -98,7 +146,7 @@ define gui.button_height = 54
 ## The borders on each side of the button, in left, top, right, bottom order.
 define gui.button_borders = Borders(6, 6, 6, 6)
 
-## If true, the backgound image will be tiled. If false, the background image
+## If True, the backgound image will be tiled. If False, the background image
 ## will be linearly scaled.
 define gui.button_tile = False
 
@@ -246,7 +294,7 @@ define gui.bar_size = 54
 define gui.scrollbar_size = 18
 define gui.slider_size = 45
 
-## True if bar images should be tiled. False if they should be linearly scaler.
+## True if bar images should be tiled. False if they should be linearly scaled.
 define gui.bar_tile = False
 define gui.scrollbar_tile = False
 define gui.slider_tile = False
@@ -264,14 +312,6 @@ define gui.vslider_borders = Borders(6, 6, 6, 6)
 ## What to do with unscrollable scrollbars in the gui. "hide" hides them, while
 ## None shows them.
 define gui.unscrollable = "hide"
-
-
-## Two-window dialogue mode ####################################################
-
-## Setting this to true causes the character's name to be displayed in a second
-## window, with the background of that window being gui/namebox.png
-define gui.two_window = False
-
 
 ################################################################################
 ## Styles.
@@ -374,28 +414,13 @@ screen say(who, what):
     window:
         id "window"
 
-        vbox:
-            xfill True
+        text what id "what"
 
-            null height 8
+        if who is not None:
 
-            if (who is not None) and gui.two_window:
-
-                window:
-                    style "namebox"
-                    text who id "who"
-
-            elif who is not None:
-
-                text who id "who" xoffset -15
-
-            else:
-
-                text " " id "who" xoffset -15
-
-            null height 8
-
-            text what id "what"
+            window:
+                style "namebox"
+                text who id "who"
 
     # If there's a side image, display it above the text. Do not display
     # on the phone variant - there's no room.
@@ -412,26 +437,36 @@ style namebox_label is say_label
 
 
 style window:
-    xalign 0.5
     xfill True
-    xpadding 402
-    yalign 1.0
-    ysize 278
+    yalign gui.textbox_yalign
+    ysize gui.textbox_height
 
-    background "gui/textbox.png"
+    background Image("gui/textbox.png", xalign=0.5, yalign=1.0)
+
+style namebox:
+    xpos gui.name_xpos
+    xanchor gui.name_xalign
+    xsize gui.namebox_width
+    ypos gui.name_ypos
+    ysize gui.namebox_height
+
+    background Frame("gui/namebox.png", gui.namebox_borders, tile=gui.namebox_tile, xalign=gui.name_xalign)
+    padding gui.namebox_borders.padding
 
 style say_label:
     color gui.accent_color
     size gui.name_text_size
-
-style namebox:
-    xalign 0.5
-    yoffset -33
-
-    background Image("gui/namebox.png", xalign=0.5, yalign=0.5)
-
-style namebox_label:
+    xalign gui.name_xalign
     yalign 0.5
+
+style say_dialogue:
+    xpos gui.text_xpos
+    xanchor gui.text_xalign
+    xsize gui.text_width
+    ypos gui.text_ypos
+
+    text_align gui.text_xalign
+
 
 
 ## Input screen ################################################################

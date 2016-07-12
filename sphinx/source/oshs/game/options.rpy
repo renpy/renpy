@@ -198,4 +198,10 @@ define gui.vscrollbar_borders = Borders(7, 10, 7, 10)
 define gui.frame_borders = Borders(20, 20, 20, 20)
 define gui.frame_tile = True
 
-define gui.two_window = True
+define gui.text_ypos = 60
+define gui.name_xalign = 0.5
+define gui.name_xpos = 0.5
+define gui.namebox_width = 300
+define gui.name_ypos = -22
+define gui.namebox_borders = Borders(15, 7, 15, 7)
+define gui.namebox_tile = True
