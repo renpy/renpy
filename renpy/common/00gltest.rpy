@@ -136,14 +136,6 @@ init -1500:
         frame:
             style_group ""
 
-            xalign .5
-            yalign .33
-
-            xpadding 20
-            ypadding 20
-
-            xmaximum 400
-
             has vbox
 
             label _("Performance Warning")
@@ -194,14 +186,6 @@ init -1500:
 
         frame:
             style_group ""
-
-            xalign .5
-            yalign .33
-
-            xpadding 20
-            ypadding 20
-
-            xmaximum 400
 
             has vbox
 
@@ -320,7 +304,7 @@ init -1500 python:
         ui.interact(suppress_underlay=True, suppress_overlay=True)
 
         # The problem we have.
-        problem = None
+        problem = "sw"
 
         renderer_info = renpy.get_renderer_info()
 
