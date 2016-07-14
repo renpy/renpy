@@ -907,7 +907,7 @@ The variables that control these are:
 
 .. ifconfig:: renpy_figures
 
-    Here is an example of customizing the say and notify screens.
+    Here is an example of customizing the skip and notify screens.
 
     .. figure:: oshs/game/gui/skip.png
         :width: 100%
@@ -926,32 +926,108 @@ The variables that control these are:
 Dialogue, Continued
 -------------------
 
-There are a few more dialogue customizations that can occur. A mode in
-which character names are displayed in a second window can be invoked
-by customizing an image and changing a variable.
+In addition to the simple customizations given above, there are a number
+of ways to control how dialogue is presented to the player.
 
-gui/namebox.png
-    The background of the window containing the name of the speaking
-    character.
+Textbox
+^^^^^^^
 
-.. var:: gui.two_window = True
+The textbox (or window) is the window the dialogue is displayed in. In addition
+to changing gui/textbox.png, the following variables control how the textbox
+is displayed.
 
-    When set to true, the name of the speaking character is displayed
-    in its own window.
+.. var: gui.textbox_height = 278
 
+    The height of the textbox window, which should also be the height of gui/
+    textbox.png.
+
+.. var: gui.textbox_yalign = 1.0
+
+    The placement of the textbox vertically on the screen. 0.0 is the top,
+    0.5 is center, and 1.0 is the bottom.
+
+Name and Namebox
+^^^^^^^^^^^^^^^^
+
+The character's name is placed inside a frame that uses gui/namebox.png as
+it's background. In addition, there are a number of variables that control
+the presentation of the name. The namebox is only show if the speaking character
+has a name (an empty name, like " ", counts).
+
+.. var:: gui.name_xpos = 360
+.. var:: gui.name_ypos = 0
+
+    The horizontal and vertical positions of the name and namebox. These
+    are usually a number of pixels from the left or top side of the textbox.
+    Setting a variable to 0.5 centers the name in the textbox (see below).
+    These numbers can also be negative - for example, setting gui.name_ypos
+    to -22 causes it to be places 22 pixels above the top of the textbox.
+
+.. var:: gui.name_xalign = 0.0
+
+    The horizontal alignment of the character's name. This can be 0.0 for left-
+    aligned, 0.5 for centered, and 1.0 for right-aligned. (It's almost always
+    0.0 or 0.5) This is used for both the position of the namebox relative
+    to the textbox, and the position of the name itself within the
+    namebox.
+
+.. var:: gui.namebox_width = None
+.. var:: gui.namebox_height = None
+.. var:: gui.namebox_borders = Borders(5, 5, 5, 5)
+.. var:: gui.namebox_tile = False
+
+    These variables control the display of the frame containing the namebox.
+
+Text
+^^^^
+
+.. var:: gui.text_xpos = 402
+.. var:: gui.text_ypos = 75
+
+    The horizontal and vertical positions of the actual dialogue. These
+    are usually a number of pixels from the left or top side of the textbox.
+    Setting a variable to 0.5 centers the dialogue in the textbox (see below).
+
+.. var:: gui.text_width = 1116
+
+    This variable gives the maximum width of a line of dialogue, in pixels.
+    When dialogue reaches this width, it will be wrapped by Ren'Py.
+
+.. var:: gui.text_xalign = 0.0
+
+    The horizontal alignment of dialogue text. 0.0 is left aligned, 0.5 is
+    centered, and 1.0 is right-aligned.
+
+Examples
+^^^^^^^^
+
+To center the character's name, use::
+
+    define gui.name_xpos = 0.5
+    define gui.name_xalign = 0.5
+
+To center dialogue text, use::
+
+    define gui.text_xpos = 0.5
+    define gui.text_xalign = 1.0
+
+Our example game uses this code to customize the centered namebox::
+
+    define gui.namebox_width = 300
+    define gui.name_ypos = -22
+    define gui.namebox_borders = Borders(15, 7, 15, 7)
+    define gui.namebox_tile = True
 
 .. ifconfig:: renpy_figures
 
     .. figure:: oshs/game/gui/namebox.png
-        :width: 100%
 
         An example gui/namebox.png image.
 
-    .. figure:: gui/namebox.jpg
+    .. figure:: gui/intermediate_dialogue.png
         :width: 100%
 
-        How dialogue is displayed when gui.two_window is set to True.
-
+        The example game, customized with the settings above.
 
 Other
 -----

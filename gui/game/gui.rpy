@@ -130,7 +130,7 @@ define gui.text_ypos = gui.scale(50)
 ## The maxium width of dialogue text, in pixels.
 define gui.text_width = gui.scale(744)
 
-## The horizontal alignment of the character's name. This can be 0.0 for
+## The horizontal alignment of the dialoge text. This can be 0.0 for
 ## left-aligned, 0.5 for centered, and 1.0 for right-aligned.
 define gui.text_xalign = 0.0
 

@@ -129,7 +129,7 @@ define gui.text_ypos = 75
 ## The maxium width of dialogue text, in pixels.
 define gui.text_width = 1116
 
-## The horizontal alignment of the character's name. This can be 0.0 for left-
+## The horizontal alignment of the dialoge text. This can be 0.0 for left-
 ## aligned, 0.5 for centered, and 1.0 for right-aligned.
 define gui.text_xalign = 0.0
 
