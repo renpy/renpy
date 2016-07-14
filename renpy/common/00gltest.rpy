@@ -304,7 +304,7 @@ init -1500 python:
         ui.interact(suppress_underlay=True, suppress_overlay=True)
 
         # The problem we have.
-        problem = "sw"
+        problem = None
 
         renderer_info = renpy.get_renderer_info()
 
