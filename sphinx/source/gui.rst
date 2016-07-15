@@ -968,8 +968,8 @@ has a name (an empty name, like " ", counts).
     The horizontal alignment of the character's name. This can be 0.0 for left-
     aligned, 0.5 for centered, and 1.0 for right-aligned. (It's almost always
     0.0 or 0.5) This is used for both the position of the namebox relative
-    to the textbox, and the position of the name itself within the
-    namebox.
+    to gui.name_xpos, and to select the side of of the namebox that is aligned
+    with xpos.
 
 .. var:: gui.namebox_width = None
 .. var:: gui.namebox_height = None
@@ -1028,6 +1028,56 @@ Our example game uses this code to customize the centered namebox::
         :width: 100%
 
         The example game, customized with the settings above.
+
+
+History
+-------
+
+There are a few variables that control the way the history screen
+is displayed.
+
+.. var:: config.history_length = 250
+
+    The number of blocks of dialogue Ren'Py will keep at history.
+
+.. var:: gui.history_height = 210
+
+    The height of a history entry, in pixels. This has to be a fixed number
+    to allow efficent scrolling of history.
+
+.. var:: gui.history_name_xpos = 0.5
+.. var:: gui.history_text_xpos = 0.5
+
+    The horizontal positions of the name label and dialogue text. These
+    can be a number of pixels from the left side of the history entry,
+    or 0.5 to center.
+
+.. var:: gui.history_name_ypos = 0
+.. var:: gui.history_text_ypos = 60
+
+    The vertical positions of the name label and dialogue text, relative
+    to the top of a history entry, in pixels.
+
+
+.. var:: gui.history_name_width = 225
+.. var:: gui.history_text_width = 1110
+
+    The width of the name label and dialogue text, in pixels.
+
+.. var:: gui.history_name_xalign = 0.5
+.. var:: gui.history_text_xalign = 0.5
+
+    This controls the alignment of text and the side of the text that is
+    aligned with xpos. 0.0 is left-aligned, 0.5 is center-aligned, 1.0 is
+    right-aligned.
+
+.. ifconfig:: renpy_figures
+
+    .. figure:: gui/history.png
+        :width: 100%
+
+        The history screen customized with the settings given above.
+
 
 Other
 -----
