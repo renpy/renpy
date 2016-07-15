@@ -1,12 +1,13 @@
 ################################################################################
 ## Initialization
-##
-## The offset ensures that these statements run before all others, while the
-## gui.init statement initializes the gui, and sets the width and height of
-## the game window.
+################################################################################
 
+## The init offset statement causes the init code in this file to run before
+## init code in any other file.
 init offset = -1
 
+## Calling gui.init resets the styles to sensible default values, and sets the
+## width and heigh of the game.
 init python:
     gui.init(1280, 720)
 
@@ -419,6 +420,7 @@ style frame:
     background Frame("gui/frame.png", gui.frame_borders, tile=gui.frame_tile)
 
 
+
 ################################################################################
 ## In-game screens
 ################################################################################
@@ -497,7 +499,6 @@ style say_dialogue:
 
     text_align gui.text_xalign
     layout ("subtitle" if gui.text_xalign else "tex")
-
 
 
 ## Input screen ################################################################
@@ -1445,6 +1446,7 @@ style help_label_text:
     text_align 1.0
 
 
+
 ################################################################################
 ## Additional screens
 ################################################################################
@@ -1702,6 +1704,7 @@ style nvl_menu_button_text:
     insensitive_color gui.text_color
 
 
+
 ################################################################################
 ## Medium and Touch Variants
 ##
@@ -1734,6 +1737,7 @@ init python:
 
     if renpy.variant("touch"):
         gui.quick_button_borders = Borders(gui.scale(60), gui.scale(14), gui.scale(60), gui.scale(0))
+
 
 
 ################################################################################
