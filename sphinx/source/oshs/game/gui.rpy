@@ -1,14 +1,17 @@
 ﻿################################################################################
 ## Initialization
-##
-## The offset ensures that these statements run before all others, while the
-## gui.init statement initializes the gui, and sets the width and height of the
-## game window.
+################################################################################
 
+## The init offset statement causes the init code in this file to run before
+## init code in any other file.
 init offset = -1
 
+## Calling gui.init resets the styles to sensible default values, and sets the
+## width and heigh of the game.
 init python:
     gui.init(1920, 1080)
+
+
 
 ################################################################################
 # GUI Configuration Variables
@@ -48,10 +51,14 @@ define gui.hover_muted_color = '#006e75'
 define gui.text_color = '#ffffff'
 define gui.interface_text_color = '#ffffff'
 
+
 ## Fonts and Font Sizes ########################################################
 
 ## The font used for in-game text.
 define gui.default_font = "DejaVuSans.ttf"
+
+## The font used for character names.
+define gui.name_font = "DejaVuSans.ttf"
 
 ## The font used for out-of-game text.
 define gui.interface_font = "DejaVuSans.ttf"
@@ -313,6 +320,28 @@ define gui.vslider_borders = Borders(6, 6, 6, 6)
 ## None shows them.
 define gui.unscrollable = "hide"
 
+
+## History #####################################################################
+
+## The number of blocks of dialogue history Ren'Py will keep.
+define config.history_length = 250
+
+## The height of a history screen entry.
+define gui.history_height = 210
+
+define gui.history_name_xpos = 0
+define gui.history_name_ypos = 0
+define gui.history_name_width = 225
+define gui.history_name_xalign = 1.0
+
+
+define gui.history_text_xpos = 255
+define gui.history_text_ypos = 9
+define gui.history_text_width = 1110
+define gui.history_text_xalign = 0.0
+
+
+
 ################################################################################
 ## Styles.
 ################################################################################
@@ -390,6 +419,7 @@ style frame:
     background Frame("gui/frame.png", gui.frame_borders, tile=gui.frame_tile)
 
 
+
 ################################################################################
 ## In-game screens
 ################################################################################
@@ -431,6 +461,7 @@ screen say(who, what):
 style window is default
 style say_label is default
 style say_dialogue is default
+style say_thought is say_dialogue
 
 style namebox is default
 style namebox_label is say_label
@@ -455,6 +486,7 @@ style namebox:
 
 style say_label:
     color gui.accent_color
+    font gui.name_font
     size gui.name_text_size
     xalign gui.name_xalign
     yalign 0.5
@@ -467,7 +499,6 @@ style say_dialogue:
 
     text_align gui.text_xalign
     layout ("subtitle" if gui.text_xalign else "tex")
-
 
 
 ## Input screen ################################################################
@@ -1200,17 +1231,16 @@ screen history():
         for h in _history_list:
 
             window:
-                has hbox:
-                    yfill True
-                    spacing 30
 
-                    text (h.who or " "):
-                        style "history_who"
+                if h.who:
+
+                    label h.who:
+                        style "history_name"
 
                         # Take the color of the who text from the
                         # Character, if set.
                         if "color" in h.who_args:
-                            color h.who_args["color"]
+                            text_color h.who_args["color"]
 
                 text h.what
 
@@ -1218,27 +1248,41 @@ screen history():
             label _("The dialogue history is empty.")
 
 
-## The number of blocks of dialogue history Ren'Py will keep.
-define config.history_length = 250
-
 
 style history_window is empty
-style history_who is say_label
+
+style history_name is gui_label
+style history_name_text is gui_label_text
 style history_text is gui_text
+
+style history_text is gui_text
+
 style history_label is gui_label
 style history_label_text is gui_label_text
 
 style history_window:
     xfill True
-    ysize 210
+    ysize gui.history_height
 
-style history_who:
-    xmaximum 225
-    min_width 225
-    text_align 1.0
+style history_name:
+    xpos gui.history_name_xpos
+    xanchor gui.history_name_xalign
+    ypos gui.history_name_ypos
+    xsize gui.history_name_width
+
+style history_name_text:
+    min_width gui.history_name_width
+    text_align gui.history_name_xalign
 
 style history_text:
-    ypos 11
+    xpos gui.history_text_xpos
+    ypos gui.history_text_ypos
+    xanchor gui.history_text_xalign
+    xsize gui.history_text_width
+    min_width gui.history_text_width
+    text_align gui.history_text_xalign
+    layout ("subtitle" if gui.history_text_xalign else "tex")
+
 
 style history_label:
     xfill True
@@ -1402,6 +1446,7 @@ style help_label_text:
     size gui.text_size
     xalign 1.0
     text_align 1.0
+
 
 
 ################################################################################
@@ -1661,6 +1706,7 @@ style nvl_menu_button_text:
     insensitive_color gui.text_color
 
 
+
 ################################################################################
 ## Medium and Touch Variants
 ##
@@ -1693,6 +1739,7 @@ init python:
 
     if renpy.variant("touch"):
         gui.quick_button_borders = Borders(90, 21, 90, 0)
+
 
 
 ################################################################################

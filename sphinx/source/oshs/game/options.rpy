@@ -157,6 +157,7 @@ define gui.choice_idle_color = "#cccccc"
 define gui.choice_hover_color = "#0066cc"
 
 define gui.default_font = "ArchitectsDaughter.ttf"
+define gui.name_font = "ArchitectsDaughter.ttf"
 define gui.interface_font = "ArchitectsDaughter.ttf"
 define gui.button_text_font = "ArchitectsDaughter.ttf"
 define gui.slot_font = "ArchitectsDaughter.ttf"
@@ -191,7 +192,6 @@ define gui.choice_button_text_hover_color = "#0066CC"
 
 define gui.scrollbar_size = 24
 define gui.scrollbar_tile = True
-define gui.unscrollable = None
 
 define gui.vscrollbar_borders = Borders(7, 10, 7, 10)
 
@@ -208,3 +208,11 @@ define gui.namebox_tile = True
 
 define gui.text_xpos = 0.5
 define gui.text_xalign = 0.5
+
+
+define gui.history_name_xpos = 0.5
+define gui.history_name_xalign = 0.5
+
+define gui.history_text_xpos = 0.5
+define gui.history_text_ypos = 50
+define gui.history_text_xalign = 0.5

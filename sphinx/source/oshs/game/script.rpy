@@ -20,9 +20,9 @@ label start:
 
     show eileen happy
 
-    e "Hello!"
+    "Quidquid latine dictum sit, altum videtur."
 
-    $ renpy.input("What's your name?", "Hiro Protagonist")
+    e "Hello!"
 
     e "Is there some reason why school-based games always seem to use handwriting fonts and paper textures?"
 
