@@ -353,8 +353,13 @@ define gui.history_text_xalign = 0.0
 ## The borders of the background of the NVL-mode background window.
 define gui.nvl_borders = Borders(0, gui.scale(10), 0, gui.scale(20))
 
-## The height of an NVL-mode entry.
+## The height of an NVL-mode entry. Set this to None to have the entries
+## dynamically adjust height.
 define gui.nvl_height = gui.scale(115)
+
+## The spacing between NVL-mode entries when gui.nvl_height is None, and
+## between NVL-mode entries and an NVL-mode menu.
+define gui.nvl_spacing = gui.scale(10)
 
 ## The position, width, and alignment of the label giving the name of the
 ## speaking character.
@@ -369,7 +374,8 @@ define gui.nvl_text_ypos = gui.scale(8)
 define gui.nvl_text_width = gui.scale(590)
 define gui.nvl_text_xalign = 0.0
 
-
+## The position of nvl buttons.
+define gui.nvl_button_xpos = gui.scale(450)
 
 
 ################################################################################
@@ -1294,6 +1300,7 @@ style history_label_text is gui_label_text
 style history_window:
     xfill True
     ysize gui.history_height
+    yfit (not gui.history_height)
 
 style history_name:
     xpos gui.history_name_xpos
@@ -1649,33 +1656,26 @@ style notify_text:
 ## http://www.renpy.org/doc/html/screen_special.html#nvl
 
 
-
-
 screen nvl(dialogue, items=None):
 
     window:
         style "nvl_window"
 
         has vbox:
-            spacing gui.scale(10)
+            spacing gui.nvl_spacing
 
-        ## Displays dialogue.
-        vpgrid:
-            cols 1
-            yinitial 1.0
+        ## Displays dialogue in either a vpgrid or the vbox.
+        if gui.nvl_height:
 
-            for d in dialogue:
+            vpgrid:
+                cols 1
+                yinitial 1.0
 
-                window:
-                    id d.window_id
+                use nvl_dialogue(dialogue)
 
-                    if d.who is not None:
+        else:
 
-                        text d.who:
-                            id d.who_id
-
-                    text d.what:
-                        id d.what_id
+            use nvl_dialogue(dialogue)
 
         ## Displays the menu, if given. The menu may be displayed incorrectly
         ## if config.narrator_menu is set to True, as it is above.
@@ -1688,6 +1688,23 @@ screen nvl(dialogue, items=None):
     add SideImage() xalign 0.0 yalign 1.0
 
 
+screen nvl_dialogue(dialogue):
+
+    for d in dialogue:
+
+        window:
+            id d.window_id
+
+            fixed:
+                yfit gui.nvl_height is None
+
+                if d.who is not None:
+
+                    text d.who:
+                        id d.who_id
+
+                text d.what:
+                    id d.what_id
 
 
 ## This controls the maximum number of NVL-mode entries that can be displayed
@@ -1700,8 +1717,8 @@ style nvl_entry is default
 style nvl_label is say_label
 style nvl_dialogue is say_dialogue
 
-style nvl_menu_button is button
-style nvl_menu_button_text is button_text
+style nvl_button is button
+style nvl_button_text is button_text
 
 style nvl_window:
     xfill True
@@ -1731,11 +1748,12 @@ style nvl_dialogue:
     min_width gui.nvl_text_width
     text_align gui.nvl_text_xalign
 
-style nvl_menu_button:
-    left_padding gui.scale(170)
+style nvl_button:
+    properties gui.button_properties("nvl_button")
+    xpos gui.nvl_button_xpos
 
-style nvl_menu_button_text:
-    insensitive_color gui.text_color
+style nvl_button_text:
+    properties gui.button_text_properties("nvl_button")
 
 
 
