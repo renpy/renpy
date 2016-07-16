@@ -323,6 +323,8 @@ define gui.unscrollable = "hide"
 
 
 ## History #####################################################################
+##
+## The history screen displays dialogue that the player has already dismissed.
 
 ## The number of blocks of dialogue history Ren'Py will keep.
 define config.history_length = 250
@@ -337,12 +339,36 @@ define gui.history_name_ypos = 0
 define gui.history_name_width = gui.scale(150)
 define gui.history_name_xalign = 1.0
 
-
 ## The position, width, and alignment of the dialogue text.
 define gui.history_text_xpos = gui.scale(170)
 define gui.history_text_ypos = gui.scale(6)
 define gui.history_text_width = gui.scale(740)
 define gui.history_text_xalign = 0.0
+
+
+## NVL-Mode ###################################################################
+##
+## The NVL-mode screen displays the dialogue spoken by NVL-mode characters.
+
+## The borders of the background of the NVL-mode background window.
+define gui.nvl_borders = Borders(0, gui.scale(10), 0, gui.scale(20))
+
+## The height of an NVL-mode entry.
+define gui.nvl_height = gui.scale(115)
+
+## The position, width, and alignment of the label giving the name of the
+## speaking character.
+define gui.nvl_name_xpos = gui.scale(430)
+define gui.nvl_name_ypos = 0
+define gui.nvl_name_width = gui.scale(150)
+define gui.nvl_name_xalign = 1.0
+
+## The position, width, and alignment of the dialogue text.
+define gui.nvl_text_xpos = gui.scale(450)
+define gui.nvl_text_ypos = gui.scale(8)
+define gui.nvl_text_width = gui.scale(590)
+define gui.nvl_text_xalign = 0.0
+
 
 
 
@@ -1288,7 +1314,6 @@ style history_text:
     text_align gui.history_text_xalign
     layout ("subtitle" if gui.history_text_xalign else "tex")
 
-
 style history_label:
     xfill True
 
@@ -1623,6 +1648,7 @@ style notify_text:
 ##
 ## http://www.renpy.org/doc/html/screen_special.html#nvl
 
+
 screen nvl(dialogue, items=None):
 
     window:
@@ -1641,30 +1667,21 @@ screen nvl(dialogue, items=None):
                 window:
                     id d.window_id
 
-                    has hbox:
-                        yfill True
-                        spacing gui.scale(20)
-
                     if d.who is not None:
 
                         text d.who:
                             id d.who_id
 
-                    else:
-
-                        text " ":
-                            style "nvl_label"
-
                     text d.what:
                         id d.what_id
 
-        # Displays the menu, if given. The menu may be displayed incorrectly
-        # if config.narrator_menu is set to True, as it is above.
+        ## Displays the menu, if given. The menu may be displayed incorrectly
+        ## if config.narrator_menu is set to True, as it is above.
         for i in items:
 
             textbutton i.caption:
                 action i.action
-                style "nvl_menu_button"
+                style "nvl_button"
 
     add SideImage() xalign 0.0 yalign 1.0
 
@@ -1686,23 +1703,29 @@ style nvl_window:
     xfill True
     yfill True
 
-    xpadding gui.scale(240)
-    top_padding gui.scale(10)
-    bottom_padding gui.scale(20)
-
     background "gui/nvl.png"
+    padding gui.nvl_borders.padding
 
 style nvl_entry:
     xfill True
-    ysize gui.scale(115)
+    ysize gui.nvl_height
 
 style nvl_label:
-    xmaximum gui.scale(150)
-    min_width gui.scale(150)
-    text_align 1.0
+    xpos gui.nvl_name_xpos
+    xanchor gui.nvl_name_xalign
+    ypos gui.nvl_name_ypos
+    yanchor 0.0
+    xsize gui.nvl_name_width
+    min_width gui.nvl_name_width
+    text_align gui.nvl_name_xalign
 
 style nvl_dialogue:
-    ypos gui.scale(7)
+    xpos gui.nvl_text_xpos
+    xanchor gui.nvl_text_xalign
+    ypos gui.nvl_text_ypos
+    xsize gui.nvl_text_width
+    min_width gui.nvl_text_width
+    text_align gui.nvl_text_xalign
 
 style nvl_menu_button:
     left_padding gui.scale(170)
