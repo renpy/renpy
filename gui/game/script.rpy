@@ -3,13 +3,9 @@
 ## Declare characters used by this game. The color argument colorizes the
 ## name of the character.
 
-define e = Character('Eileen', color="#c8ffc8", kind=nvl)
+define e = Character('Eileen', color="#c8ffc8")
 
 ## The game starts here.
-
-init python:
-    menu = nvl_menu
-    narrator = nvl_narrator
 
 label start:
 
@@ -34,12 +30,5 @@ label start:
     e "Once you add a story, pictures, and music, you can release it to the world!"
 
     ## This ends the game.
-
-    menu:
-        "Yes.":
-            pass
-
-        "No.":
-            pass
 
     return

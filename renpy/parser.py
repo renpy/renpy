@@ -1876,11 +1876,11 @@ def define_statement(l, loc):
         priority = 0
 
     store = 'store'
-    name = l.require(l.name)
+    name = l.require(l.word)
 
     while l.match(r'\.'):
         store = store + "." + name
-        name = l.require(l.name)
+        name = l.require(l.word)
 
     l.require('=')
     expr = l.rest()
@@ -1910,11 +1910,11 @@ def default_statement(l, loc):
         priority = 0
 
     store = 'store'
-    name = l.require(l.name)
+    name = l.require(l.word)
 
     while l.match(r'\.'):
         store = store + "." + name
-        name = l.require(l.name)
+        name = l.require(l.word)
 
     l.require('=')
     expr = l.rest()
