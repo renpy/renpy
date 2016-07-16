@@ -9,6 +9,7 @@ define e = Character('Eileen', color="#c8ffc8", kind=nvl)
 
 init python:
     menu = nvl_menu
+    narrator = nvl_narrator
 
 label start:
 
@@ -25,6 +26,8 @@ label start:
     show eileen happy
 
     ## These display lines of dialogue.
+
+    "Hello, world."
 
     e "You've created a new Ren'Py game."
 

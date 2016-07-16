@@ -46,6 +46,7 @@ init -1500 python:
     style.create('nvl_vbox', 'vbox', 'the vbox containing each box of nvl-mode dialogue')
     style.create('nvl_label', 'say_label', 'an nvl-mode character\'s name')
     style.create('nvl_dialogue', 'say_dialogue', 'nvl-mode character dialogue')
+    style.create('nvl_thought', 'nvl_dialogue', 'nvl-mode character thoughts')
     style.create('nvl_entry', 'default', 'a window containing each line of nvl-mode dialogue')
 
     style.create('nvl_menu_window', 'default', 'a window containing an nvl-mode menu')
@@ -332,6 +333,15 @@ init -1500 python:
     nvl = NVLCharacter(
         who_style='nvl_label',
         what_style='nvl_dialogue',
+        window_style='nvl_entry',
+        type='nvl',
+        mode='nvl',
+        clear=False,
+        kind=adv)
+
+    nvl_narrator = NVLCharacter(
+        who_style='nvl_label',
+        what_style='nvl_thought',
         window_style='nvl_entry',
         type='nvl',
         mode='nvl',

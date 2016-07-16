@@ -374,6 +374,13 @@ define gui.nvl_text_ypos = gui.scale(8)
 define gui.nvl_text_width = gui.scale(590)
 define gui.nvl_text_xalign = 0.0
 
+## The position, width, and alignment of nvl_thought text (the text said by
+## the nvl_narrator character.)
+define gui.nvl_thought_xpos = gui.scale(240)
+define gui.nvl_thought_ypos = gui.scale(0)
+define gui.nvl_thought_width = gui.scale(1040)
+define gui.nvl_thought_xalign = 0.0
+
 ## The position of nvl buttons.
 define gui.nvl_button_xpos = gui.scale(450)
 
@@ -1747,6 +1754,14 @@ style nvl_dialogue:
     xsize gui.nvl_text_width
     min_width gui.nvl_text_width
     text_align gui.nvl_text_xalign
+
+style nvl_thought:
+    xpos gui.nvl_thought_xpos
+    xanchor gui.nvl_thought_xalign
+    ypos gui.nvl_thought_ypos
+    xsize gui.nvl_thought_width
+    min_width gui.nvl_thought_width
+    text_align gui.nvl_thought_xalign
 
 style nvl_button:
     properties gui.button_properties("nvl_button")
