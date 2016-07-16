@@ -1649,6 +1649,8 @@ style notify_text:
 ## http://www.renpy.org/doc/html/screen_special.html#nvl
 
 
+
+
 screen nvl(dialogue, items=None):
 
     window:
@@ -1657,11 +1659,11 @@ screen nvl(dialogue, items=None):
         has vbox:
             spacing gui.scale(10)
 
+        ## Displays dialogue.
         vpgrid:
             cols 1
             yinitial 1.0
 
-            # Display dialogue.
             for d in dialogue:
 
                 window:
@@ -1684,6 +1686,8 @@ screen nvl(dialogue, items=None):
                 style "nvl_button"
 
     add SideImage() xalign 0.0 yalign 1.0
+
+
 
 
 ## This controls the maximum number of NVL-mode entries that can be displayed

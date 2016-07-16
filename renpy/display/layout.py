@@ -637,26 +637,28 @@ class MultiBox(Container):
             else:
                 iterator = zip(self.children, csts, cats)
 
+
+            rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
+
+            fit_first = self.style.fit_first
+
+            xfit = self.style.xfit
+            yfit = self.style.yfit
+
+            if fit_first == "width":
+                xfit = True
+            elif fit_first == "height":
+                yfit = True
+            else:
+                xfit = True
+                yfit = True
+
+            sizes = [ ]
+
             for child, cst, cat in iterator:
 
                 surf = render(child, width, height, cst, cat)
-
-                if rv is None:
-
-                    ff = self.style.fit_first
-
-                    if ff:
-                        w, h = surf.get_size()
-
-                        if ff == "width":
-                            width = w
-                        elif ff == "height":
-                            height = h
-                        else:
-                            width = w
-                            height = h
-
-                    rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
+                sizes.append(surf.get_size())
 
                 if surf:
                     offset = child.place(rv, 0, 0, width, height, surf)
@@ -664,8 +666,28 @@ class MultiBox(Container):
                 else:
                     offsets.append((0, 0))
 
-            if rv is None:
-                rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
+
+            if xfit:
+                width = 0
+
+                for o, s in zip(offsets, sizes):
+                    width = max(o[0] + s[0], width)
+
+                    if fit_first:
+                        break
+
+                rv.width = width
+
+            if yfit:
+                height = 0
+
+                for o, s in zip(offsets, sizes):
+                    height = max(o[1] + s[1], height)
+
+                    if fit_first:
+                        break
+
+                rv.height = height
 
             if self.style.order_reverse:
                 offsets.reverse()

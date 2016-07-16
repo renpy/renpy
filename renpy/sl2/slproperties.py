@@ -167,6 +167,8 @@ box_properties = [ Style(i) for i in [
         "spacing",
         "first_spacing",
         "fit_first",
+        "xfit",
+        "yfit",
         "minimum",
         "xminimum",
         "yminimum",

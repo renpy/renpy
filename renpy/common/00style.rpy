@@ -204,6 +204,8 @@ init -1800:
         box_wrap False
         box_reverse False
         order_reverse False
+        xfit False
+        yfit False
 
         # Button properties
         focus_mask None
