@@ -74,7 +74,7 @@ define gui.name_text_size = gui.scale(30)
 define gui.interface_text_size = gui.scale(24)
 
 ## The size of labels in the game's user interface.
-define gui.label_text_size = gui.scale(30)
+define gui.label_text_size = gui.scale(28)
 
 ## The size of text on the notify screen.
 define gui.notify_text_size = gui.scale(16)
@@ -258,8 +258,11 @@ define gui.choice_spacing = gui.scale(22)
 ## Buttons in the navigation section of the main and game menus.
 define gui.navigation_spacing = gui.scale(4)
 
-## Preference buttons.
-define gui.pref_spacing = gui.scale(0)
+## Controls the amount of spacing between preferences.
+define gui.pref_spacing = gui.scale(10)
+
+## Controls the amount of spacing between preference buttons.
+define gui.pref_button_spacing = gui.scale(0)
 
 ## The spacing between file page buttons.
 define gui.page_spacing = gui.scale(0)
@@ -1132,7 +1135,7 @@ screen preferences():
                 ## Additional vboxes of type "radio_pref" or "check_pref" can be added here, to
                 ## add additional creator-defined preferences.
 
-            null height gui.scale(50)
+            null height (4 * gui.pref_spacing)
 
             hbox:
                 style_prefix "slider"
@@ -1176,9 +1179,12 @@ screen preferences():
                             if config.sample_voice:
                                 textbutton _("Test") action Play("voice", config.sample_voice)
 
-                    textbutton _("Mute All"):
-                        action Preference("all mute", "toggle")
-                        style "mute_all_button"
+                    if config.has_music or config.has_sound or config.has_voice:
+                        null height gui.pref_spacing
+
+                        textbutton _("Mute All"):
+                            action Preference("all mute", "toggle")
+                            style "mute_all_button"
 
 
 style pref_label is gui_label
@@ -1201,14 +1207,14 @@ style slider_label is pref_label
 style slider_label_text is pref_label_text
 style slider_slider is gui_slider
 style slider_button is gui_button
-style slider_pref_button_text is gui_button_text
+style slider_button_text is gui_button_text
 style slider_pref_vbox is pref_vbox
 
 style mute_all_button is check_button
 style mute_all_button_text is check_button_text
 
 style pref_label:
-    top_margin gui.scale(10)
+    top_margin gui.pref_spacing
     bottom_margin gui.scale(2)
 
 style pref_label_text:
@@ -1218,7 +1224,7 @@ style pref_vbox:
     xsize gui.scale(225)
 
 style radio_vbox:
-    spacing gui.pref_spacing
+    spacing gui.pref_button_spacing
 
 style radio_button:
     properties gui.button_properties("radio_button")
@@ -1228,7 +1234,7 @@ style radio_button_text:
     properties gui.button_text_properties("radio_button")
 
 style check_vbox:
-    spacing gui.pref_spacing
+    spacing gui.pref_button_spacing
 
 style check_button:
     properties gui.button_properties("check_button")
@@ -1241,8 +1247,12 @@ style slider_slider:
     xsize gui.scale(350)
 
 style slider_button:
+    properties gui.button_properties("slider_button")
     yalign 0.5
     left_margin gui.scale(10)
+
+style slider_button_text:
+    properties gui.button_text_properties("slider_button")
 
 style slider_vbox:
     xsize gui.scale(450)
