@@ -69,16 +69,16 @@ gui code.
 
 Here's an example of these three defines::
 
-    .. var:: config.name = _('Old School High School')
+    define config.name = _('Old School High School')
 
-    .. var:: config.version = "1.0"
+    define config.version = "1.0"
 
-    .. var:: gui.about = _("Created by PyTom.\n\nHigh school backgrounds by Mugenjohncel.")
+    define gui.about = _("Created by PyTom.\n\nHigh school backgrounds by Mugenjohncel.")
 
-For convenience, it might make sense to .. var:: gui.about using a triple-quoted
+For convenience, it might make sense to define gui.about using a triple-quoted
 string, in which case line endings are respected. ::
 
-    .. var:: gui.about = _("""\
+    define gui.about = _("""\
     Created by PyTom.
 
     High school backgrounds by Mugenjohncel.""")
@@ -113,8 +113,62 @@ gui/game_menu.png
         as the background) or the main menu (using gui/main_menu.png as the
         background). Both can be set to the same image.
 
+
+Window Icon
+-----------
+
+The window icon is the icon that is displayed (in places like the Windows
+task bar and Macintosh dock) by a running application.
+
+The window icon can be changed by replacing gui/window_icon.png.
+
+Note that this only changes the icon used by the running game. To change
+the icon used by Windows .exe files and Macintosh applications, see the
+:ref:`build documentation <special-files>`.
+
+
+
+Intermediate GUI Customization
+==============================
+
+Next, we will demonstrate the intermediate level of GUI customization.
+At the intermediate level, it's possible to change the colors, fonts,
+and images used by the game. In general, intermediate customization
+keeps the screens mostly the same, with buttons and bars in the same
+places, although modifying the screens to add new functionality
+is certainly possible.
+
+Many of these changes involve editing variables in gui.rpy. For example,
+to increase the dialogue font size, find the line that reads::
+
+    define gui.font_size = 22
+
+and increase or decrease it, for example, to::
+
+    define gui.font_size = 20
+
+Note that the default values are often different than what's found in
+this documentation. The default values can changed based on size and
+colors selected for the game, and the values in this file are an example
+of extensive gui customization. It's best to search gui.rpy for define and
+the variable in question - for example, "define gui.font_size".
+
+Some of the adjustments below either partially or completely effect image
+files. As a result, the changes only take effect when the image files
+themselves are updated, which can be done by choosing "Change GUI" in
+the launcher, and telling it to regenerate image files. (But note that
+doing so will overwrite any image files you have already modified.)
+
+You may want to consider waiting until your game is nearly complete before
+customizing gui.rpy in this way. While old gui.rpys will work in newer
+Ren'Py versions, newer gui.rpys may have features and fixes that older
+versions lack. Customizing the gui early may make it harder to take
+advantage of such improvements.
+
+
+
 Dialogue
----------
+--------
 
 There are a number of relatively easy customizations that can be performed
 to change how dialogue is displayed to the player. The first is changing
@@ -213,39 +267,6 @@ section on buttons, below.
 
         An example of the choice screen, as customized using the images
         and variable settings given above.
-
-
-Window Icon
------------
-
-The window icon is the icon that is displayed (in places like the Windows
-task bar and Macintosh dock) by a running application.
-
-The window icon can be changed by replacing gui/window_icon.png.
-
-Note that this only changes the icon used by the running game. To change
-the icon used by Windows .exe files and Macintosh applications, see the
-:ref:`build documentation <special-files>`.
-
-
-
-Intermediate GUI Customization
-==============================
-
-Next, we will demonstrate the intermediate level of GUI customization.
-At the intermediate level, it's possible to change the colors, fonts,
-and images used by the game. In general, intermediate customization
-keeps the screens mostly the same, with buttons and bars in the same
-places, although modifying the screens to add new functionality
-is certainly possible.
-
-Regenerating Images
--------------------
-
-Some of the adjustments either partially or completely effect image
-files. As a result, the changes only take effect when the image files
-themselves are updated, which can be done by choosing "Change GUI" in
-the launcher, and telling it to regenerate image files.
 
 Overlay Images
 --------------
@@ -458,7 +479,7 @@ And the second is by customizing variables.
 
     The borders applied to the fame used in the confirm screen.
 
-.. var:: gui.frame_tile
+.. var:: gui.frame_tile = True
 
     If true, the sides and center of the confirm screen are tiled. If false,
     they are scaled.
@@ -1170,39 +1191,164 @@ characters, and by defining a few variables in script.rpy. ::
         The example game, customized with the settings above.
 
 
+Advanced Customization
+======================
+
+Far more advanced customization are customizable, up to and including
+deleting gui.rpy entirely and replacing it with your own code. Here are
+a few places to get started.
+
+Styles
+------
+
+:ref:`Styles <styles>` and :ref:`style properties` control how displayabes
+are displayed. To find out what style a displayable is using, put the mouse
+over it and type shift+I. This invokes the style inspector, which shows
+style names. Once the style name is known, a style statement can be used
+to customize it.
+
+For example, say we've lost our minds writing gui documentation, and want to
+add a bright red outline to the dialogue text. We can hover the text and press
+shift+I to find out the style used is named say_dialogue. We can then
+add (to the end of gui.rpy, or somewhere in options.rpy) the style statement::
+
+    style nvl_dialogue:
+        outlines [ (1, "#f00", 0, 0 ) ]
+
+A huge number of customizations are possible using style statements.
 
 
+Screens - Navigation
+--------------------
 
-Other
------
+The next level of customization is to modify the screens. The most
+important documentation about screens is located in the :ref:`screens`
+and  :ref:`screen-actions` sections.
 
 
+One of the most important screens is the navigation screen, which serves
+both as the main menu, and to provide navigation for the game menu. This
+screen can be edited to add more buttons to one or both of those. For
+example, by changing the navigation screen to::
 
-::
+    screen navigation():
+
+        vbox:
+            style_prefix "navigation"
+
+            xpos gui.navigation_xpos
+            yalign 0.5
+
+            spacing gui.navigation_spacing
+
+            if main_menu:
+
+                textbutton _("Start") action Start()
+
+                textbutton _("Prologue") action Start("prologue")
+
+            else:
+
+                textbutton _("Codex") action ShowMenu("codex")
+
+                textbutton _("History") action ShowMenu("history")
+
+                textbutton _("Save") action ShowMenu("save")
+
+            textbutton _("Load") action ShowMenu("load")
+
+            textbutton _("Preferences") action ShowMenu("preferences")
+
+            if _in_replay:
+
+                textbutton _("End Replay") action EndReplay(confirm=True)
+
+            elif not main_menu:
+
+                textbutton _("Main Menu") action MainMenu()
+
+            textbutton _("About") action ShowMenu("about")
+
+            textbutton _("Extras") action ShowMenu("extras")
+
+            if renpy.variant("pc"):
+
+                textbutton _("Help") action ShowMenu("help")
+
+                textbutton _("Quit") action Quit(confirm=not main_menu)
+
+We add access to a prologue screen from the main menu, a codex screen from
+the game menu, and an extras screen from both menus.
+
+Screens - Game Menu
+-------------------
+
+Custom game menu screens can also be created. These screens can use the
+game_menu screen to provide a title and scrollable viewport. An minimal
+custom game menu screen is::
+
+    screen codex():
+
+        tag menu
+
+        use game_menu(_("Codex"), scroll="viewport"):
+
+            style_prefix "codex"
+
+            has vbox:
+                spacing 20
+
+            text _("{b}Mechanical Engineering:{/b} Where we learn to build things like missiles and bombs.")
+
+            text _("{b}Civil Engineering:{/b} Where we learn to build targets.")
+
+Clearly, a functional codex would need to be more elaborate than this.
+
+Note
+the "tag menu" line. This line is important, as it hides other menu screens
+when the codex is shown. Without it, it would be hard to switch to and
+from the other menu screens.
+
+Screens - Click to Continue
+---------------------------
+
+A screen we expect to be commonly added is the click to continue screen. This
+is a screen that is shown when text finishes displaying. Here's a simple
+example::
 
     screen ctc():
-        style_prefix "ctc"
 
-        # Place on top of normal screens.
-        zorder 1
+        frame:
+            at ctc_appear
+            xalign .99
+            yalign .99
 
-        hbox:
-            spacing gui.scale(6)
+            text _("(click to continue)"):
+                size 18
 
-            xalign 1.0
-            xoffset gui.scale(-20)
-            yalign 1.0
-            yoffset gui.scale(-20)
+    transform ctc_appear:
+        alpha 0.0
+        pause 5.0
+        linear 0.5 alpha 1.0
 
-            text "▶" at delayed_blink(2.0, 3.0) style "ctc_triangle"
-            text "▶" at delayed_blink(2.2, 3.0) style "ctc_triangle"
-            text "▶" at delayed_blink(2.4, 3.0) style "ctc_triangle"
-
-    style ctc_triangle:
-        # We have to use a font that has the BLACK RIGHT-POINTING TRIANGLE glyph
-        # in it.
-        color gui.accent_color
-        font gui.glyph_font
+This particular ctc screen uses a transform to show the frame after 5 seconds.
+It's a good idea to delay CTC animations for several seconds, to give Ren'Py
+time to predict and load images.
 
 
+Total GUI Replacement
+^^^^^^^^^^^^^^^^^^^^^
+
+Advanced creators can replace some or all of gui.rpy in its entirely. It's
+probably a good idea to call :func:`gui.init` to reset styles - but after
+that, a creator can do whatever they want. It usually makes sense to include
+some or all of the :ref:`special screens <screen-special>`, to make sure
+players can have access to all the functionality Ren'Py provides.
+
+Python Functions
+================
+
+There are some Python functions that support gui code.
+
+.. include:: inc/gui
 

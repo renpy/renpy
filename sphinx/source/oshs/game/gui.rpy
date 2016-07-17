@@ -377,7 +377,7 @@ define gui.nvl_text_xalign = 0.0
 ## nvl_narrator character.)
 define gui.nvl_thought_xpos = 360
 define gui.nvl_thought_ypos = 0
-define gui.nvl_thought_width = 1560
+define gui.nvl_thought_width = 1170
 define gui.nvl_thought_xalign = 0.0
 
 ## The position of nvl menu_buttons.
