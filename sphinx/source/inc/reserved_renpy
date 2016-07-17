@@ -241,6 +241,7 @@
 * nvl_hide
 * nvl_list
 * nvl_menu
+* nvl_narrator
 * nvl_show
 * nvl_show_core
 * nvl_variant

@@ -522,6 +522,8 @@ help_button
 confirm_button
     A button used on the confirm screen to select yes or no.
 
+nvl_button
+    A button used for an NVL-mode menu choice.
 
 The following image files are used to customize button backgrounds,
 if they exist.
@@ -1024,7 +1026,7 @@ Our example game uses this code to customize the centered namebox::
 
         An example gui/namebox.png image.
 
-    .. figure:: gui/intermediate_dialogue.png
+    .. figure:: gui/intermediate_dialogue.jpg
         :width: 100%
 
         The example game, customized with the settings above.
@@ -1077,6 +1079,98 @@ is displayed.
         :width: 100%
 
         The history screen customized with the settings given above.
+
+
+NVL
+---
+
+The nvl screen displays NVL-mode dialogue. There are a number of ways it
+can be customized. The first is to customize the NVL-mode background image:
+
+gui/nvl.png
+    The background image used in NVL-mode. This should be the same size as
+    the game window.
+
+There are also a number of variables that are used to customize the way
+nvl-mode text is displayed.
+
+
+.. var:: gui.nvl_borders = Borders(0, 15, 0, 30)
+
+    The borders around the background of the NVL-mode. Since the
+    background is not a frame, this is only used to pad out the NVL-mode
+    to prevent it from pressing up against the sides of the screen.
+
+.. var:: gui.nvl_height = 173
+
+    The height of a single NVL-mode entry. Setting this to a fixed height
+    makes it possible to have NVL-mode without paging, showing a fixed number
+    of entries at once. Setting this to None allows entries to be of a
+    variable size.
+
+.. var:: gui.nvl_spacing = 15
+
+    The spacing beween entries when gui.nvl_height is None, and the spacing
+    between NVL-mode menu buttons.
+
+.. var:: gui.nvl_name_xpos = 0.5
+.. var:: gui.nvl_text_xpos = 0.5
+.. var:: gui.nvl_thought_xpos = 0.5
+
+    The positioning of character names, dialogue text, and thought/narration
+    text, relative to the left side of the entry. This can be a number of
+    pixels, or 0.5 to represent the center of the entry.
+
+.. var:: gui.nvl_name_xalign = 0.5
+.. var:: gui.nvl_text_xalign = 0.5
+.. var:: gui.nvl_thought_xalign = 0.5
+
+    The alignment of the text. This controls both the alignment of the text,
+    and the side of the text that is placed at xpos. This can be 0.0 for left,
+    0.5 for center, and 1.0 for right.
+
+.. var:: gui.nvl_name_ypos = 0
+.. var:: gui.nvl_text_ypos = 60
+.. var:: gui.nvl_thought_ypos = 0
+
+    The position of character names, dialogue text, and thought/narration text,
+    relative to the top of the entry. This should be a number of pixels from
+    the top.
+
+.. var:: gui.nvl_name_width = 740
+.. var:: gui.nvl_text_width = 740
+.. var:: gui.nvl_thought_width = 740
+
+    The width of each kind of text, in pixels.
+
+.. var:: gui.nvl_button_xpos = 0.5
+.. var:: gui.nvl_button_xalign = 0.5
+
+    The position and alignment of NVL-mode menu buttons.
+
+Ren'Py does not use NVL-mode by default. It must be invoked using NVL-mode
+characters, and by defining a few variables in script.rpy. ::
+
+    define e = Character("Eileen", kind=nvl)
+    define narrator = nvl_narrator
+    define menu = nvl_menu
+
+
+.. ifconfig:: renpy_figures
+
+    Here's an example of the NVL screen customized with the code above.
+
+    .. figure:: oshs/game/gui/nvl.png
+
+        An example gui/nvl.png image.
+
+    .. figure:: gui/nvl.jpg
+        :width: 100%
+
+        The example game, customized with the settings above.
+
+
+
 
 
 Other
