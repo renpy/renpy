@@ -1337,7 +1337,7 @@ time to predict and load images.
 
 
 Total GUI Replacement
-^^^^^^^^^^^^^^^^^^^^^
+---------------------
 
 Advanced creators can replace some or all of gui.rpy in its entirely. It's
 probably a good idea to call :func:`gui.init` to reset styles - but after

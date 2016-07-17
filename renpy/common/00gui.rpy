@@ -66,19 +66,34 @@ init -1100 python in gui:
         Given a `kind` of button, returns a dictionary giving standard style
         properties for that button. This sets:
 
-        * The background.
-        * Padding, to gui.kind_button_borders.padding (if it exists).
-        * Xsize, to gui.kind_button_width (if it exists).
-        * Ysize, to gui.kind_button_height (if it exists).
+        :propref:`background`
+            As described below.
+
+        :propref:`padding`
+            To gui.kind_borders.padding (if it exists).
+
+        :propref:`xsize`
+            To gui.kind_width (if it exists).
+
+        :propref:`ysize`
+            To gui.kind_height (if it exists).
+
+        (Note that if `kind` is the string "nvl_button", this will look for
+        the gui.nvl_button_background variable.)
 
         The background is a frame that takes its background picture from
         the first existing one of:
 
-        * gui/button/kind_[prefix_].background.png
-        * gui/button/[prefix_].background.png
+        * gui/button/kind_[prefix\_].background.png
+        * gui/button/[prefix\_].background.png
 
-        If a borders variables named gui.kind_borders is supplied, it's
-        used. Otherwise, button_borders is used.
+        If a gui variables named gui.kind_borders exists, it's
+        used. Otherwise, :var:`gui.button_borders` is used. If gui.kind_tile
+        exists, it determines if the borders are tiled, else :var:`gui.button_tile`
+        controls tiling.
+
+        For what [prefix\_] means, check out the :ref:`style prefix search <style-prefix-search>
+        documentation.
         """
 
         g = globals()
@@ -127,8 +142,36 @@ init -1100 python in gui:
         Given a `kind` of button, returns a dictionary giving standard style
         properties for that button. This currently sets:
 
-        * Font, to gui.kind_button_font (if it exists).
-        * Size, to gui.kind_button_text_size (if it exists).
+        :propref:`font`
+            To gui.kind_text_font, if it exists.
+
+        :propref:`size`
+            To gui.kind_text_size, if it exists.
+
+        :propref:`xalign`
+            To gui.kind_text_xalign, if it exists.
+
+        :propref:`text_align`
+            To gui.kind_text_xalign, if it exists.
+
+        :propref:`layout`
+            To "subtitle" if gui.kind_text_xalign is greater than zero
+            and less than one.
+
+        There are also a number of variables that set the text
+        :propref:`color` style property:
+
+        insensitive_color
+            To gui.kind_text_insensitive_color, if it exists.
+
+        idle_color
+            To gui.kind_text_idle_color, if it exists.
+
+        hover_color
+            To gui.kind_text_hover_color, if it exists.
+
+        selected_color
+            To gui.kind_text_selected_color, if it exists.
         """
 
         g = globals()
@@ -160,7 +203,7 @@ init -1100 python in gui:
             rv["xalign"] = xalign
             rv["text_align"] = xalign
 
-            if xalign > 0:
+            if (xalign > 0) and (xalign < 1):
                 rv["layout"] = "subtitle"
 
         if insensitive_color is not None:

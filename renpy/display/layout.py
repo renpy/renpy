@@ -40,6 +40,7 @@ def scale(num, base):
 class Null(renpy.display.core.Displayable):
     """
     :doc: disp_imagelike
+    :name: Null
 
     A displayable that creates an empty box on the screen. The size
     of the box is controlled by `width` and `height`. This can be used

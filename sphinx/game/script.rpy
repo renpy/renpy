@@ -15,6 +15,7 @@ init 1000000 python:
     doc.scan_section("updater.", updater)
     doc.scan_section("iap.", iap)
     doc.scan_section("achievement.", achievement)
+    doc.scan_section("gui.", gui)
 
     doc.write_line_buffer()
     doc.write_keywords()
