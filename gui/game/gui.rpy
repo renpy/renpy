@@ -1827,25 +1827,40 @@ init python:
 ## a small phone screen.
 ################################################################################
 
-# init python:
-#
-#     if renpy.variant("small"):
-#         gui.text_size = gui.scale(30)
-#         gui.notify_text_size = gui.scale(25)
-#         gui.interface_text_size = gui.scale(36)
-#         gui.label_text_size = gui.scale(36)
-#
-#         gui.file_slot_cols = 2
-#         gui.file_slot_rows = 2
-#
-#         gui.slider_size = gui.scale(44)
-#         gui.thumb_size = gui.scale(15)
-#
-# style window:
-#     variant "small"
-#     xpadding gui.scale(90)
-#     ysize gui.scale(240)
-#     background "gui/phone/textbox.png"
+init python:
+
+    if renpy.variant("small"):
+
+        ## Adjust font sizes.
+        gui.text_size = gui.scale(30)
+        gui.name_text_size = gui.scale(36)
+        gui.notify_text_size = gui.scale(25)
+        gui.interface_text_size = gui.scale(36)
+        gui.button_text_size = gui.scale(34)
+        gui.label_text_size = gui.scale(36)
+
+        gui.file_slot_cols = 2
+        gui.file_slot_rows = 2
+
+        ## Adjust the location of the textbox.
+        gui.textbox_height = gui.scale(240)
+        gui.name_xpos = gui.scale(80)
+        gui.text_xpos = gui.scale(90)
+        gui.text_width = gui.scale(1100)
+
+
+        gui.navigation_spacing = gui.scale(20)
+        gui.pref_button_spacing = gui.scale(10)
+
+
+
+        ## Adjust the main menu.
+
+style window:
+    variant "small"
+    background "gui/phone/textbox.png"
+
+
 #
 # style choice_button:
 #     variant "small"
@@ -1870,38 +1885,39 @@ init python:
 #     variant "small"
 #     size gui.scale(20)
 #
-# style main_menu_frame:
-#     variant "small"
-#     background "gui/phone/overlay/main_menu.png"
-#
-# style game_menu_outer_frame:
-#     variant "small"
-#     background "gui/phone/overlay/game_menu.png"
-#
-# style game_menu_navigation_frame:
-#     variant "small"
-#     xsize gui.scale(340)
-#
-# style game_menu_content_frame:
-#     variant "small"
-#     top_margin 0
-#
-# style navigation_vbox:
-#     variant "small"
-#     xsize gui.scale(334)
-#
-# style pref_vbox:
-#     variant "small"
-#     xsize gui.scale(400)
-#
-# style slider_pref_vbox:
-#     variant "small"
-#     xsize None
-#
-# style slider_pref_slider:
-#     variant "small"
-#     xsize gui.scale(600)
-#
+style main_menu_frame:
+    variant "small"
+    background "gui/phone/overlay/main_menu.png"
+
+style game_menu_outer_frame:
+    variant "small"
+    background "gui/phone/overlay/game_menu.png"
+
+style game_menu_navigation_frame:
+    variant "small"
+    xsize gui.scale(340)
+
+style game_menu_content_frame:
+    variant "small"
+    top_margin 0
+
+
+style pref_vbox:
+    variant "small"
+    xsize gui.scale(400)
+
+
+
+style slider_pref_vbox:
+    variant "small"
+    xsize None
+
+style slider_pref_slider:
+    variant "small"
+    xsize gui.scale(600)
+
+
+
 # style history_window:
 #     variant "small"
 #     ysize gui.scale(190)
