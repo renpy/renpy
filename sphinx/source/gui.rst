@@ -59,6 +59,11 @@ gui code.
     window title, and throughout the GUI wherever the title of the
     game is needed.
 
+:var:`gui.show_name`
+    This should be set to False to hide the title and version number from
+    the main menu. (Say, because the title is "baked into" the main menu
+    image.)
+
 :var:`config.version`
     A string giving the version of the game. This is presented to the
     user in various places.
@@ -67,9 +72,11 @@ gui code.
     Additional text that is added to the about screen. If you want multiple
     paragraphs of credits, \\n\\n can be used to separate the paragraphs.
 
-Here's an example of these three defines::
+Here's an example of these defines::
 
     define config.name = _('Old School High School')
+
+    define gui.show_name = True
 
     define config.version = "1.0"
 

@@ -83,14 +83,14 @@ define gui.notify_text_size = gui.scale(16)
 define gui.title_text_size = gui.scale(50)
 
 
-## Images ######################################################################
+## Main and Game Menus #########################################################
 
 ## The images used for the main and game menus.
 define gui.main_menu_background = "gui/main_menu.png"
 define gui.game_menu_background = "gui/game_menu.png"
 
-## This is the icon displayer on the taskbar or dock.
-define config.window_icon = "gui/window_icon.png"
+## Should we show the name and version of the game?
+define gui.show_name = True
 
 
 ## Dialogue ####################################################################
@@ -756,10 +756,6 @@ screen main_menu():
 
             text "[config.version]":
                 style "main_menu_version"
-
-
-## Should we show the name and version of the game?
-define gui.show_name = True
 
 
 style main_menu_frame is empty
@@ -1773,6 +1769,10 @@ style nvl_button:
 style nvl_button_text:
     properties gui.button_text_properties("nvl_button")
 
+## Window Icon #################################################################
+
+## This is the icon displayed on the taskbar or dock.
+define config.window_icon = "gui/window_icon.png"
 
 
 ################################################################################
