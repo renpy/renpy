@@ -328,7 +328,7 @@ init -1100 python in gui:
 
         check_width = gui.check_button_borders.padding[0]
         check_rect = (
-            0,
+            scale(None, 3),
             gui.check_button_borders.padding[1],
             min(check_width, scale(None, 5)),
             height - gui.check_button_borders.padding[1] - gui.check_button_borders.padding[3],
@@ -336,7 +336,7 @@ init -1100 python in gui:
 
         radio_width = gui.radio_button_borders.padding[0]
         radio_rect = (
-            0,
+            scale(None, 3),
             gui.radio_button_borders.padding[1],
             min(radio_width, scale(None, 5)),
             height - gui.radio_button_borders.padding[1] - gui.radio_button_borders.padding[3],
