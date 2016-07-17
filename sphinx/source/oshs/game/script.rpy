@@ -1,18 +1,26 @@
 ﻿# You can place the script of your game in this file.
 
-define e = Character("Eileen")
+define e = Character("Eileen", kind=nvl)
 
-screen bar_test:
-    frame:
-        xalign 0.5
-        yalign 0.5
+define narrator = nvl_narrator
+define menu = nvl_menu
 
-        xsize 800
+define gui.nvl_name_xpos = 0.5
+define gui.nvl_name_xalign = 0.5
 
-        hbox:
-            spacing 10
-            text "Progress"
-            bar value StaticValue(60, 100)
+define gui.nvl_text_xpos = 0.5
+define gui.nvl_text_ypos = 50
+define gui.nvl_text_xalign = 0.5
+define gui.nvl_text_width = 1120
+
+define gui.nvl_thought_xpos = 0.5
+define gui.nvl_thought_xalign = 0.5
+define gui.nvl_thought_width = 1120
+
+define gui.nvl_button_xpos = 0.5
+define gui.nvl_button_xalign = 0.5
+define gui.nvl_button_width = 1000
+define gui.nvl_button_text_xalign = 0.5
 
 label start:
 
@@ -35,8 +43,4 @@ label start:
 
         "Sometimes the old ways are the best ways.":
             pass
-
-
-    call screen borders
-
 

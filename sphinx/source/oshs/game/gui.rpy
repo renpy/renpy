@@ -322,6 +322,8 @@ define gui.unscrollable = "hide"
 
 
 ## History #####################################################################
+##
+## The history screen displays dialogue that the player has already dismissed.
 
 ## The number of blocks of dialogue history Ren'Py will keep.
 define config.history_length = 250
@@ -336,7 +338,6 @@ define gui.history_name_ypos = 0
 define gui.history_name_width = 225
 define gui.history_name_xalign = 1.0
 
-
 ## The position, width, and alignment of the dialogue text.
 define gui.history_text_xpos = 255
 define gui.history_text_ypos = 9
@@ -344,6 +345,44 @@ define gui.history_text_width = 1110
 define gui.history_text_xalign = 0.0
 
 
+## NVL-Mode ####################################################################
+##
+## The NVL-mode screen displays the dialogue spoken by NVL-mode characters.
+
+## The borders of the background of the NVL-mode background window.
+define gui.nvl_borders = Borders(0, 15, 0, 30)
+
+## The height of an NVL-mode entry. Set this to None to have the entries
+## dynamically adjust height.
+define gui.nvl_height = 173
+
+## The spacing between NVL-mode entries when gui.nvl_height is None, and between
+## NVL-mode entries and an NVL-mode menu.
+define gui.nvl_spacing = 15
+
+## The position, width, and alignment of the label giving the name of the
+## speaking character.
+define gui.nvl_name_xpos = 645
+define gui.nvl_name_ypos = 0
+define gui.nvl_name_width = 225
+define gui.nvl_name_xalign = 1.0
+
+## The position, width, and alignment of the dialogue text.
+define gui.nvl_text_xpos = 675
+define gui.nvl_text_ypos = 12
+define gui.nvl_text_width = 885
+define gui.nvl_text_xalign = 0.0
+
+## The position, width, and alignment of nvl_thought text (the text said by the
+## nvl_narrator character.)
+define gui.nvl_thought_xpos = 360
+define gui.nvl_thought_ypos = 0
+define gui.nvl_thought_width = 1560
+define gui.nvl_thought_xalign = 0.0
+
+## The position of nvl menu_buttons.
+define gui.nvl_button_xpos = 675
+define gui.nvl_button_xalign = 0.0
 
 ################################################################################
 ## Styles.
@@ -1266,6 +1305,7 @@ style history_label_text is gui_label_text
 style history_window:
     xfill True
     ysize gui.history_height
+    yfit (not gui.history_height)
 
 style history_name:
     xpos gui.history_name_xpos
@@ -1285,7 +1325,6 @@ style history_text:
     min_width gui.history_text_width
     text_align gui.history_text_xalign
     layout ("subtitle" if gui.history_text_xalign else "tex")
-
 
 style history_label:
     xfill True
@@ -1621,50 +1660,56 @@ style notify_text:
 ##
 ## http://www.renpy.org/doc/html/screen_special.html#nvl
 
+
 screen nvl(dialogue, items=None):
 
     window:
         style "nvl_window"
 
         has vbox:
-            spacing 15
+            spacing gui.nvl_spacing
 
-        vpgrid:
-            cols 1
-            yinitial 1.0
+        ## Displays dialogue in either a vpgrid or the vbox.
+        if gui.nvl_height:
 
-            # Display dialogue.
-            for d in dialogue:
+            vpgrid:
+                cols 1
+                yinitial 1.0
 
-                window:
-                    id d.window_id
+                use nvl_dialogue(dialogue)
 
-                    has hbox:
-                        yfill True
-                        spacing 30
+        else:
 
-                    if d.who is not None:
+            use nvl_dialogue(dialogue)
 
-                        text d.who:
-                            id d.who_id
-
-                    else:
-
-                        text " ":
-                            style "nvl_label"
-
-                    text d.what:
-                        id d.what_id
-
-        # Displays the menu, if given. The menu may be displayed incorrectly
-        # if config.narrator_menu is set to True, as it is above.
+        ## Displays the menu, if given. The menu may be displayed incorrectly if
+        ## config.narrator_menu is set to True, as it is above.
         for i in items:
 
             textbutton i.caption:
                 action i.action
-                style "nvl_menu_button"
+                style "nvl_button"
 
     add SideImage() xalign 0.0 yalign 1.0
+
+
+screen nvl_dialogue(dialogue):
+
+    for d in dialogue:
+
+        window:
+            id d.window_id
+
+            fixed:
+                yfit gui.nvl_height is None
+
+                if d.who is not None:
+
+                    text d.who:
+                        id d.who_id
+
+                text d.what:
+                    id d.what_id
 
 
 ## This controls the maximum number of NVL-mode entries that can be displayed at
@@ -1677,36 +1722,54 @@ style nvl_entry is default
 style nvl_label is say_label
 style nvl_dialogue is say_dialogue
 
-style nvl_menu_button is button
-style nvl_menu_button_text is button_text
+style nvl_button is button
+style nvl_button_text is button_text
 
 style nvl_window:
     xfill True
     yfill True
 
-    xpadding 360
-    top_padding 15
-    bottom_padding 30
-
     background "gui/nvl.png"
+    padding gui.nvl_borders.padding
 
 style nvl_entry:
     xfill True
-    ysize 173
+    ysize gui.nvl_height
 
 style nvl_label:
-    xmaximum 225
-    min_width 225
-    text_align 1.0
+    xpos gui.nvl_name_xpos
+    xanchor gui.nvl_name_xalign
+    ypos gui.nvl_name_ypos
+    yanchor 0.0
+    xsize gui.nvl_name_width
+    min_width gui.nvl_name_width
+    text_align gui.nvl_name_xalign
 
 style nvl_dialogue:
-    ypos 11
+    xpos gui.nvl_text_xpos
+    xanchor gui.nvl_text_xalign
+    ypos gui.nvl_text_ypos
+    xsize gui.nvl_text_width
+    min_width gui.nvl_text_width
+    text_align gui.nvl_text_xalign
+    layout ("subtitle" if gui.nvl_text_xalign else "tex")
 
-style nvl_menu_button:
-    left_padding 255
+style nvl_thought:
+    xpos gui.nvl_thought_xpos
+    xanchor gui.nvl_thought_xalign
+    ypos gui.nvl_thought_ypos
+    xsize gui.nvl_thought_width
+    min_width gui.nvl_thought_width
+    text_align gui.nvl_thought_xalign
+    layout ("subtitle" if gui.nvl_text_xalign else "tex")
 
-style nvl_menu_button_text:
-    insensitive_color gui.text_color
+style nvl_button:
+    properties gui.button_properties("nvl_button")
+    xpos gui.nvl_button_xpos
+    xanchor gui.nvl_button_xalign
+
+style nvl_button_text:
+    properties gui.button_text_properties("nvl_button")
 
 
 
