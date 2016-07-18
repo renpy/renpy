@@ -1823,15 +1823,15 @@ init python:
 ################################################################################
 ## Small Variants
 ##
-## This section changes many sizes and images to make the game suitable for
-## a small phone screen.
+## This section changes sizes, images, ans positions to make the game suitable
+## for a small phone screen.
 ################################################################################
 
 init python:
 
     if renpy.variant("small"):
 
-        ## Adjust font sizes.
+        ## Font sizes.
         gui.text_size = gui.scale(30)
         gui.name_text_size = gui.scale(36)
         gui.notify_text_size = gui.scale(25)
@@ -1839,52 +1839,52 @@ init python:
         gui.button_text_size = gui.scale(34)
         gui.label_text_size = gui.scale(36)
 
-        gui.file_slot_cols = 2
-        gui.file_slot_rows = 2
-
         ## Adjust the location of the textbox.
         gui.textbox_height = gui.scale(240)
         gui.name_xpos = gui.scale(80)
         gui.text_xpos = gui.scale(90)
         gui.text_width = gui.scale(1100)
 
+        gui.choice_button_width = gui.scale(1240)
 
         gui.navigation_spacing = gui.scale(20)
         gui.pref_button_spacing = gui.scale(10)
 
+        gui.history_height = gui.scale(190)
+        gui.history_text_width = gui.scale(690)
 
 
-        ## Adjust the main menu.
+        ## NVL-mode.
+        gui.nvl_height = gui.scale(170)
+
+        gui.nvl_name_width = gui.scale(305)
+        gui.nvl_name_xpos = gui.scale(325)
+
+        gui.nvl_text_width = gui.scale(915)
+        gui.nvl_text_xpos = gui.scale(345)
+        gui.nvl_text_ypos = gui.scale(5)
+
+        gui.nvl_thought_width = gui.scale(1240)
+        gui.nvl_thought_xpos = gui.scale(20)
+
+        gui.nvl_button_width = gui.scale(1240)
+        gui.nvl_button_xpos = gui.scale(20)
+
+        ## Quick buttons.
+        gui.quick_button_text_size = gui.scale(20)
+
+        ## File button layout.
+        gui.file_slot_cols = 2
+        gui.file_slot_rows = 2
 
 style window:
     variant "small"
     background "gui/phone/textbox.png"
 
+style nvl_window:
+    variant "small"
+    background "gui/phone/nvl.png"
 
-#
-# style choice_button:
-#     variant "small"
-#     xsize gui.scale(1190)
-#     xpadding gui.scale(100)
-#     ypadding gui.scale(8)
-#
-# style nvl_window:
-#     variant "small"
-#     background "gui/phone/nvl.png"
-#     xpadding gui.scale(120)
-#
-# style nvl_entry:
-#     variant "small"
-#     ysize gui.scale(170)
-#
-# style nvl_dialogue:
-#     variant "small"
-#     ypos gui.scale(6)
-#
-# style quick_button_text:
-#     variant "small"
-#     size gui.scale(20)
-#
 style main_menu_frame:
     variant "small"
     background "gui/phone/overlay/main_menu.png"
@@ -1901,12 +1901,9 @@ style game_menu_content_frame:
     variant "small"
     top_margin 0
 
-
 style pref_vbox:
     variant "small"
     xsize gui.scale(400)
-
-
 
 style slider_pref_vbox:
     variant "small"
@@ -1918,36 +1915,4 @@ style slider_pref_slider:
 
 
 
-# style history_window:
-#     variant "small"
-#     ysize gui.scale(190)
-#
-# style history_who:
-#     variant "small"
-#     xmaximum gui.scale(150)
-#     min_width gui.scale(150)
-#     text_align 1.0
-#     size gui.text_size
-#
-# style history_text:
-#     variant "small"
-#     ypos gui.scale(4)
-#     size gui.scale(25)
-#
-# style history_label:
-#     variant "small"
-#     xfill True
-#
-# style history_label_text:
-#     variant "small"
-#     xalign 0.5
-#
-# style confirm_frame:
-#     variant "small"
-#     xsize gui.scale(844)
-#     ysize gui.scale(475)
-#
-# style notify_frame:
-#     variant "small"
-#     ypos gui.scale(55)
 

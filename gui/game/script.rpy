@@ -5,6 +5,7 @@
 
 define e = Character('Eileen', color="#c8ffc8")
 
+
 ## The game starts here.
 
 label start:
