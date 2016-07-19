@@ -338,8 +338,8 @@ cdef class GLDraw:
 
             ratio = min(1.0 * pwidth / vwidth, 1.0 * pheight / vheight)
 
-            view_width = int(vwidth * ratio)
-            view_height = int(vheight * ratio)
+            view_width = max(int(vwidth * ratio), 1)
+            view_height = max(int(vheight * ratio), 1)
 
         px_padding = pwidth - view_width
         py_padding = pheight - view_height
