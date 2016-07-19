@@ -940,6 +940,7 @@ class ScreenParser(Parser):
         screen.zorder = keyword.get("zorder", "0")
         screen.variant = keyword.get("variant", "None")
         screen.predict = keyword.get("predict", "None")
+        screen.layer = keyword.get("layer", "'screens'")
 
         return screen
 
@@ -950,6 +951,7 @@ Keyword("variant")
 Keyword("predict")
 Keyword("style_group")
 Keyword("style_prefix")
+Keyword("layer")
 
 def init():
     screen_parser.add(all_statements)

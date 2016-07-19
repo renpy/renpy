@@ -1776,6 +1776,7 @@ class SLScreen(SLBlock):
     # The analysis
     analysis = None
 
+    layer = "'screens'"
 
     def __init__(self, loc):
 
@@ -1841,6 +1842,7 @@ class SLScreen(SLBlock):
             predict=renpy.python.py_eval(self.predict),
             parameters=self.parameters,
             location=self.location,
+            layer=renpy.python.py_eval(self.layer),
             )
 
     def analyze(self, analysis):

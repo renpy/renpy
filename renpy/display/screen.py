@@ -199,7 +199,8 @@ class Screen(renpy.object.Object):
                  predict=None,
                  variant=None,
                  parameters=False,
-                 location=None):
+                 location=None,
+                 layer="screens"):
 
         # The name of this screen.
         if isinstance(name, basestring):
@@ -244,6 +245,9 @@ class Screen(renpy.object.Object):
 
         # The location (filename, linenumber) of this screen.
         self.location = location
+
+        # The layer the screen will be shown on.
+        self.layer = layer
 
         global prepared
         global analyzed
@@ -875,7 +879,23 @@ def define_screen(*args, **kwargs):
     Screen(*args, **kwargs)
 
 
-def get_screen(name, layer="screens"):
+def get_screen_layer(name):
+    """
+    Returns the layer that the screen with `name` is part of.
+    """
+
+    if not isinstance(name, basestring):
+        name = name[0]
+
+    screen = get_screen_variant(name)
+
+    if screen is None:
+        return "screens"
+    else:
+        return screen.layer
+
+
+def get_screen(name, layer=None):
     """
     :doc: screens
 
@@ -895,6 +915,9 @@ def get_screen(name, layer="screens"):
             text "The say screen is hidden."
 
     """
+
+    if layer is None:
+        layer = get_screen_layer(name)
 
     if isinstance(name, basestring):
         name = (name, )
@@ -958,7 +981,7 @@ def show_screen(_screen_name, *_args, **kwargs):
     initialize the screen's scope.
     """
 
-    _layer = kwargs.pop("_layer", "screens")
+    _layer = kwargs.pop("_layer", None)
     _tag = kwargs.pop("_tag", None)
     _widget_properties = kwargs.pop("_widget_properties", {})
     _transient = kwargs.pop("_transient", False)
@@ -972,6 +995,9 @@ def show_screen(_screen_name, *_args, **kwargs):
 
     if screen is None:
         raise Exception("Screen %s is not known.\n" % (name[0],))
+
+    if _layer is None:
+        _layer = get_screen_layer(name)
 
     if _tag is None:
         _tag = screen.tag
@@ -1015,7 +1041,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
     initialize the screen's scope.
     """
 
-    _layer = kwargs.pop("_layer", "screens")
+    _layer = kwargs.pop("_layer", None)
     _tag = kwargs.pop("_tag", None)
     _widget_properties = kwargs.pop("_widget_properties", {})
     _transient = kwargs.pop("_transient", False)
@@ -1032,6 +1058,9 @@ def predict_screen(_screen_name, *_args, **kwargs):
 
     if screen is None:
         return
+
+    if _layer is None:
+        _layer = get_screen_layer(name)
 
     scope = { }
     scope["_scope"] = scope
@@ -1067,7 +1096,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
     renpy.ui.reset()
 
 
-def hide_screen(tag, layer='screens'):
+def hide_screen(tag, layer=None):
     """
     :doc: screens
 
@@ -1075,6 +1104,9 @@ def hide_screen(tag, layer='screens'):
 
     Hides the screen with `tag` on `layer`.
     """
+
+    if layer is None:
+        layer = get_screen_layer((tag,))
 
     screen = get_screen(tag, layer)
 
@@ -1117,7 +1149,7 @@ def use_screen(_screen_name, *_args, **kwargs):
 def current_screen():
     return _current_screen
 
-def get_widget(screen, id, layer='screens'): #@ReservedAssignment
+def get_widget(screen, id, layer=None): #@ReservedAssignment
     """
     :doc: screens
 
@@ -1132,6 +1164,9 @@ def get_widget(screen, id, layer='screens'): #@ReservedAssignment
     if screen is None:
         screen = current_screen()
     else:
+        if layer is None:
+            layer = get_screen_layer(screen)
+
         screen = get_screen(screen, layer)
 
     if not isinstance(screen, ScreenDisplayable):
@@ -1143,7 +1178,7 @@ def get_widget(screen, id, layer='screens'): #@ReservedAssignment
     rv = screen.widgets.get(id, None)
     return rv
 
-def get_widget_properties(id, screen=None, layer='screens'): # @ReservedAssignment
+def get_widget_properties(id, screen=None, layer=None): # @ReservedAssignment
     """
     :doc: screens
 
@@ -1160,6 +1195,9 @@ def get_widget_properties(id, screen=None, layer='screens'): # @ReservedAssignme
     if screen is None:
         s = current_screen()
     else:
+        if layer is None:
+            layer = get_screen_layer(screen)
+
         s = get_screen(screen, layer)
 
     if s is None:
