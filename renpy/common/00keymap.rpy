@@ -335,7 +335,7 @@ init -1100 python:
 
     # The default keymap. We might also want to put some of this into
     # the launcher.
-    km = renpy.Keymap(
+    _default_keymap = renpy.Keymap(
         rollback = renpy.rollback,
         screenshot = _screenshot,
         toggle_fullscreen = renpy.toggle_fullscreen,
@@ -359,9 +359,15 @@ init -1100 python:
         progress_screen = _progress_screen,
         )
 
-    config.underlay = [ km ]
+    config.underlay = [ _default_keymap ]
 
-    del km
+init 1100 python hide:
+
+    import os
+
+    if "RENPY_DEFAULT_KEYMAP" in os.environ:
+        renpy.config.keymap = renpy.config.default_keymap
+        config.underlay.insert(0, _default_keymap)
 
 
 label _hide_windows:
