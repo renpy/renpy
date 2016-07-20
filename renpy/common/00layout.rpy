@@ -456,7 +456,7 @@ init -1400 python hide:
     layout.END_REPLAY = _("Are you sure you want to end the replay?")
     layout.SLOW_SKIP = _("Are you sure you want to begin skipping?")
     layout.FAST_SKIP_SEEN = _("Are you sure you want to skip to the next choice?")
-    layout.FAST_SKIP_UNSEEN = _("Are you sure you want to skip to unseen dialogue to the next choice?")
+    layout.FAST_SKIP_UNSEEN = _("Are you sure you want to skip unseen dialogue to the next choice?")
 
     config.enter_yesno_transition = None
     config.exit_yesno_transition = None
