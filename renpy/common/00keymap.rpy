@@ -40,7 +40,7 @@ init -1600 python:
         iconify = [ ],
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = [ 'G' ],
-        progress_screen = [ 'alt_P', 'meta_P' ],
+        progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
 
         # Accessibility.
         self_voicing = [ 'v', 'V' ],

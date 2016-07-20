@@ -413,6 +413,7 @@ class Keymap(renpy.display.layout.Null):
     def event(self, ev, x, y, st):
 
         for name, action in self.keymap.iteritems():
+
             if map_event(ev, name):
 
                 renpy.exports.play(self.style.activate_sound)
