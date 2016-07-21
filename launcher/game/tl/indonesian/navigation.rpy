@@ -39,7 +39,7 @@ translate indonesian strings:
 
     # game/navigation.rpy:180
     old "defines"
-    new "Defines"
+    new "Definisi"
 
     # game/navigation.rpy:181
     old "transforms"
@@ -51,7 +51,7 @@ translate indonesian strings:
 
     # game/navigation.rpy:183
     old "callables"
-    new "Callables"
+    new "Panggilan"
 
     # game/navigation.rpy:184
     old "TODOs"
