@@ -70,7 +70,7 @@ label new_project:
             _("Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."),
             [ ( 'new_gui_project', _("New GUI Interface") ), ( 'new_theme_project', _("Legacy Theme Interface")) ],
             "new_gui_project",
-            cancel="front_page",
+            cancel=Jump("front_page"),
             )
 
         renpy.jump(gui_kind)
