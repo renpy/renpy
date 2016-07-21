@@ -574,155 +574,155 @@ translate indonesian strings:
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Monday"
-    new "{#Hari Kerja}Senin"
+    new "{#weekday}Senin"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Tuesday"
-    new "{#Hari Kerja}Selasa"
+    new "{#weekday}Selasa"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Wednesday"
-    new "{#Hari Kerja}Rabu"
+    new "{#weekday}Rabu"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Thursday"
-    new "{#Hari Kerja}Kamis"
+    new "{#weekday}Kamis"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Friday"
-    new "{#Hari Kerja}Jumat"
+    new "{#weekday}Jumat"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Saturday"
-    new "{#Hari Kerja}Sabtu"
+    new "{#weekday}Sabtu"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Sunday"
-    new "{#Hari Kerja}Minggu"
+    new "{#weekday}Minggu"
 
     # renpy/common/00action_file.rpy:37
     old "{#weekday_short}Mon"
-    new "{#HariKerja_Pendek}Sen"
+    new "{#weekday_short}Sen"
 
     # renpy/common/00action_file.rpy:37
     old "{#weekday_short}Tue"
-    new "{#HariKerja_Pendek}Sel"
+    new "{#weekday_short}Sel"
 
     # renpy/common/00action_file.rpy:37
     old "{#weekday_short}Wed"
-    new "{#HariKerja_Pendek}Rab"
+    new "{#weekday_short}Rab"
 
     # renpy/common/00action_file.rpy:37
     old "{#weekday_short}Thu"
-    new "{#HariKerja_Pendek}Kam"
+    new "{#weekday_short}Kam"
 
     # renpy/common/00action_file.rpy:37
     old "{#weekday_short}Fri"
-    new "{#HariKerja_Pendek}Jum"
+    new "{#weekday_short}Jum"
 
     # renpy/common/00action_file.rpy:37
     old "{#weekday_short}Sat"
-    new "{#HariKerja_Pendek}Sab"
+    new "{#weekday_short}Sab"
 
     # renpy/common/00action_file.rpy:37
     old "{#weekday_short}Sun"
-    new "{#HariKerja_Pendek}Ming"
+    new "{#weekday_short}Ming"
 
     # renpy/common/00action_file.rpy:47
     old "{#month}January"
-    new "{#Bulan}Januari"
+    new "{#month}Januari"
 
     # renpy/common/00action_file.rpy:47
     old "{#month}February"
-    new "{#Bulan}Febuari"
+    new "{#month}Febuari"
 
     # renpy/common/00action_file.rpy:47
     old "{#month}March"
-    new "{#Bulan}Maret"
+    new "{#month}Maret"
 
     # renpy/common/00action_file.rpy:47
     old "{#month}April"
-    new "{#Bulan}April"
+    new "{#month}April"
 
     # renpy/common/00action_file.rpy:47
     old "{#month}May"
-    new "{#Bulan}Mei"
+    new "{#month}Mei"
 
     # renpy/common/00action_file.rpy:47
     old "{#month}June"
-    new "{#Bulan}Juni"
+    new "{#month}Juni"
 
     # renpy/common/00action_file.rpy:47
     old "{#month}July"
-    new "{#Bulan}Juli"
+    new "{#month}Juli"
 
     # renpy/common/00action_file.rpy:47
     old "{#month}August"
-    new "{#Bulan}Agustus"
+    new "{#month}Agustus"
 
     # renpy/common/00action_file.rpy:47
     old "{#month}September"
-    new "{#Bulan}September"
+    new "{#month}September"
 
     # renpy/common/00action_file.rpy:47
     old "{#month}October"
-    new "{#Bulan}Oktober"
+    new "{#month}Oktober"
 
     # renpy/common/00action_file.rpy:47
     old "{#month}November"
-    new "{#Bulan}November"
+    new "{#month}November"
 
     # renpy/common/00action_file.rpy:47
     old "{#month}December"
-    new "{#Bulan}Desember"
+    new "{#month}Desember"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Jan"
-    new "{#Bulan_Pendek}Jan"
+    new "{#month_short}Jan"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Feb"
-    new "{#Bulan_Pendek}Feb"
+    new "{#month_short}Feb"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Mar"
-    new "{#Bulan_Pendek}Mar"
+    new "{#month_short}Mar"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Apr"
-    new "{#Bulan_Pendek}Aprl"
+    new "{#month_short}Aprl"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}May"
-    new "{#Bulan_Pendek}Mei"
+    new "{#month_short}Mei"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Jun"
-    new "{#Bulan_Pendek}Jun"
+    new "{#month_short}Jun"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Jul"
-    new "{#Bulan_Pendek}Jul"
+    new "{#month_short}Jul"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Aug"
-    new "{#Bulan_Pendek}Agust"
+    new "{#month_short}Agust"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Sep"
-    new "{#Bulan_Pendek}Sep"
+    new "{#month_short}Sep"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Oct"
-    new "{#Bulan_Pendek}Okt"
+    new "{#month_short}Okt"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Nov"
-    new "{#Bulan_Pendek}Nov"
+    new "{#month_short}Nov"
 
     # renpy/common/00action_file.rpy:63
     old "{#month_short}Dec"
-    new "{#Bulan_Pendek}Des"
+    new "{#month_short}Des"
 
     # renpy/common/00action_file.rpy:550
     old "Page {}"
@@ -802,7 +802,7 @@ translate indonesian strings:
 
     # renpy/common/00library.rpy:140
     old "Clipboard voicing enabled. "
-    new "Catatan voicing di nyalakan. "
+    new "Papan Klip voicing di nyalakan. "
 
     # renpy/common/00library.rpy:141
     old "Self-voicing enabled. "
@@ -810,11 +810,11 @@ translate indonesian strings:
 
     # renpy/common/00library.rpy:262
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "Program ini mengandung software gratis di bawah banyak lisensi, termasuk lisensi MIT dan GNU Lesser General Public License. Daftar komplit software, termasuk link penuh untuk source code, dapat di temukan di {a=https://www.renpy.org/l/license}here{/a}."
+    new "Program ini berisi software gratis di bawah banyak lisensi, termasuk lisensi 'MIT' dan 'GNU Lesser General Public License'.Daftar komplit software, termasuk link penuh untuk source code, dapat di temukan {a=https://www.renpy.org/l/license}disini{/a}."
 
     # renpy/common/00library.rpy:292
     old "A Ren'Py Game"
-    new "Sebuah Permainan Ren'Py"
+    new "Permainan Ren'Py"
 
 
 translate indonesian strings:
