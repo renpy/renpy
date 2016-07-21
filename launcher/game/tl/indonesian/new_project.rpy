@@ -41,7 +41,7 @@ translate indonesian strings:
 
     # game/new_project.rpy:71
     old "The projects directory could not be set. Giving up."
-    new "Direktori proyek tidak bisa di set. Menyerah."
+    new "Direktori proyek tidak bisa di set."
 
 
 translate indonesian strings:
@@ -68,9 +68,9 @@ translate indonesian strings:
 
     # game/new_project.rpy:69
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
-    new "Interface mana yang ingin kamu gunakan? GUI baru memiliki tampilan moderen, mendukung layar lebar dan perangkat mobile, dan lebih mudah di kustomisasi. Tema legasi lebih di peruntukan untuk di gunakan dengan kode yang lama.\n\n[language_support!t]\n\nJika begitu, pilih GUI baru, dan klikk 'Continue' di pojok kanan bawah."
+    new "Interface mana yang ingin kamu gunakan? GUI baru memiliki tampilan moderen, mendukung layar lebar dan perangkat mobile, dan lebih mudah di kustomisasi. Tema legasi lebih di peruntukan untuk di gunakan dengan kode yang lama.\n\n[language_support!t]\n\nJika begitu, pilih GUI baru, dan klikk 'Lanjutkan' di pojok kanan bawah."
 
     # game/new_project.rpy:69
     old "Legacy Theme Interface"
-    new "Interface Tema Legasi"
+    new "Tema Interface Legacy"
 
