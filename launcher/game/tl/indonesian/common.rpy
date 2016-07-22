@@ -563,11 +563,11 @@ translate indonesian strings:
 
     # renpy/common/_developer/developer.rpym:437
     old "Rectangle copied to clipboard."
-    new "Persegi di copy ke catatan."
+    new "Persegi di salin ke catatan."
 
     # renpy/common/_developer/developer.rpym:440
     old "Position copied to clipboard."
-    new "Posisi di copy ke catatan."
+    new "Posisi di salin ke catatan."
 
 
 translate indonesian strings:
@@ -838,3 +838,8 @@ translate indonesian strings:
     old "Copies the errors.txt file to the clipboard."
     new "Salin file errors.txt ke Papan Klip."
 
+translate indonesian strings:
+
+    # renpy/common/00layout.rpy:459
+    old "Are you sure you want to skip unseen dialogue to the next choice?"
+    new "Apakah kamu yakin ingin meloncati dialog yang\nbelum terlihat sampai ke pilihan berikutnya?"
