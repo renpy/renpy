@@ -842,4 +842,4 @@ translate indonesian strings:
 
     # renpy/common/00layout.rpy:459
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "Apakah kamu yakin ingin meloncati dialog yang\nbelum terlihat sampai ke pilihan berikutnya?"
+    new "Apakah kamu yakin ingin meloncati dialog yang belum terlihat sampai ke pilihan berikutnya?"
