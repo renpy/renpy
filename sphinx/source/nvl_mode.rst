@@ -31,7 +31,11 @@ Changed to use NVL-mode, those declarations become::
 
     define s = Character('Sylvie', kind=nvl, color="#c8ffc8")
     define m = Character('Me', kind=nvl, color="#c8c8ff")
-    define narrator = Character(None, kind=nvl)
+
+An NVL-mode narrator can also be used by including the following
+definition::
+
+    define narrator = nvl_narrator
 
 Note that we have also added an NVL-mode declaration of
 ``narrator``. The ``narrator`` character is used to speak
@@ -73,8 +77,7 @@ text.
 
 To access this alternate menu presentation, write::
 
-    init python:
-        menu = nvl_menu
+    define menu = nvl_menu
 
 The menu will disappear after the choice has been made, so it usually
 makes sense to follow menus with an "nvl clear" or some sort of

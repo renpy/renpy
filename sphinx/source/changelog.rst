@@ -21,12 +21,17 @@ for every creator:
   with light and dark backgrounds.
 
 * Intermediate creators will be able to more easily customize the new GUI,
-  by configuring a number of variables in the ``gui`` namespace, and editing
-  a series of template images.
+  without having to to work with screens and styles directly. It's now
+  possible to completely re-theme the GUI by changing variables in the ``gui``
+  namespace, and editing template images.
 
 * Advanced creators will be able to replace the new gui entirely, either
   piece by piece or wholesale. The new gui infrastructure resets all styles
   to sensible defaults, making it easier to apply customization.
+
+There is also a :ref:`gui customization guide <gui>`, consisting of over 5,000
+words of documentation and code, and 40 images, that explains how to
+change the look of the GUI.
 
 In addition, the new GUI adds support for a number of new features. These
 features are generally implemented in a way that custom GUIs can take
@@ -45,14 +50,14 @@ advantage of. Highlights include:
   allowing a certain amount of organization to be applied to
   files.
 
-* Ren'Py supports the use of a ctc screen to display the click-to-continue
-  indicator.
-
 * The NVL and choice screens are now given lists of objects as parameters,
   instead of tuples. (The objects also function as tuples, for compatibility
   with old code.)
 
 * The yesno_prompt screen has been renamed to confirm.
+
+* Ren'Py supports the use of a ctc screen to display the click-to-continue
+  indicator.
 
 Improved Platform Support
 -------------------------
@@ -95,6 +100,25 @@ one can now write::
 This searches through prefixes in a manner similar to the way styles do.
 When looking for a selected_idle_background, Ren'Py will search for
 selected_idle_background.png, idle_background.png, and background.png
+
+Style Properties
+----------------
+
+Windows and buttons can take the :propref:`padding` and :propref:`margin`
+style properties. These properties can take a tuple that gives the
+margin and padding on all four sides.
+
+The new :propref:`base_bar` style property sets the left and right (or
+top and bottom) bars to the same value. It can be to set the background
+of a slider or scrollbar the uses a thumb image.
+
+The :propref:`xfit` and :propref:`yfit` style properties can be given to
+the :ref:`fixed <sl-fixed>` screen language statement and :func:`Fixed`
+displayable. When a fit property is true, the fixed shrinks in the given
+axis to fit all child displayables.
+
+Buttons and Windows now fully respect the :propref:`xmaximum` and
+:propref:`ymaximum` style properties.
 
 Translate and Style Statement Order Changes
 -------------------------------------------
@@ -168,11 +192,31 @@ possible to simulate a 360 degree panoramic image.
 Translations
 ------------
 
+When generating a new project, all of the strings in the new game are
+translated using translations taken from the launcher project.
+
 A Vietnamese translation of the launcher and tutorial have been added
 to Ren'Py. Thanks to Thuong Nguyen Huu for contributing it.
 
+A Indonesian translation of the launcher and default project has been
+added to Ren'Py. Thanks to Pratomo Asta Nugraha for contributing it.
+
+Ren'Py can now automatically generate a piglatin translation for test
+purposes.
+
 Other
 -----
+
+The new nvl_narrator character can be used to as the narrator
+while in NVL-mode.
+
+The define statement can be used to define variables that are also
+Ren'Py keywords. For example, "define menu = nvl_menu" now works.
+
+A :func:`Frame` can now be given a :func:`Borders` object, that
+encapsulates the borders of a Frame into a single object. Borders
+objects also have a padding field that can be passed into the new
+:properf:`padding` style property.
 
 Buttons, textbuttons, imagebuttons, and hotspots now take
 `selected` and `sensitive` properties that directly control if the
