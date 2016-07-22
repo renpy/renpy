@@ -1,5 +1,5 @@
 ﻿
-translate Vietnamese strings:
+translate vietnamese strings:
 
     # game/distribute.rpy:384
     old "Scanning project files..."
