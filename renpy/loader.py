@@ -27,6 +27,7 @@ import sys
 import types
 import threading
 import zlib
+import re
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
 # to look up filenames.
@@ -524,6 +525,8 @@ def load(name):
 
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
+
+    name = re.sub(r'/+', '/', name)
 
     for p in get_prefixes():
         rv = load_core(p + name)
