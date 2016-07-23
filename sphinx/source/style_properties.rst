@@ -197,7 +197,7 @@ prefixes searched vary based on the state.
    - "selected_insensitive_", "hover_", "selected_", "", "selected_idle_", "idle_"
 
 When a search is performed, each prefix is tried in the order given. The string
-has "[prefix_]" replaced with the prefix, and then Ren'Py checkes to see if
+has "[prefix_]" replaced with the prefix, and then Ren'Py checks to see if
 a loadable file or image with that name exists. If the file or image exists,
 the search stops and the displayable found is used. Otherwise, it proceeds to
 the next prefix.
@@ -407,7 +407,7 @@ Text Style Properties
     change.
 
     When set to False, text will not change in size, but it is the creator's
-    responsiblity to ensure there is enough space to layout text at any
+    responsibility to ensure there is enough space to layout text at any
     window size.
 
     Defaults to True for most text, but False for text in an ``input``.
@@ -779,7 +779,7 @@ Button Style Properties
 .. style-property:: focus_mask multiple
 
     A mask that's used to control what portions of the button can be
-    focused, and hence clicked on. The type of this propertie determines
+    focused, and hence clicked on. The type of this property determines
     how it is interpreted.
 
     Displayable
