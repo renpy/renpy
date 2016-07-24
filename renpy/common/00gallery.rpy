@@ -179,6 +179,11 @@ init -1500 python:
             gallery_navigation screen. The default screen is defined in
             common/00gallery.rpy
 
+        .. attribute:: unlocked_navigation
+
+            If true, the gallery will only navigate through unlocked
+            images.
+
         .. attribute:: span_buttons
 
             If true, the gallery will advance between buttons.
@@ -214,6 +219,8 @@ init -1500 python:
             self.unlockable = None
 
             self.navigation = False
+            self.unlocked_navigation = False
+
             self.span_buttons = False
             self.locked = True
 
@@ -578,8 +585,8 @@ init -1500:
             style_group "gallery"
             align (.98, .98)
 
-            textbutton _("prev") action gallery.Previous()
-            textbutton _("next") action gallery.Next()
+            textbutton _("prev") action gallery.Previous(unlocked=gallery.unlocked_navigation)
+            textbutton _("next") action gallery.Next(unlocked=gallery.unlocked_navigation)
             textbutton _("slideshow") action gallery.ToggleSlideshow()
             textbutton _("return") action gallery.Return()
 
