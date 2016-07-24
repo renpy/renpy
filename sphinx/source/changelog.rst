@@ -257,6 +257,10 @@ platform-specific choice of text-to-speech voice to use.
 :var:`config.quit_action` now defaults to ``Quit()``, which will display
 the quit prompt over the in-game interface.
 
+The progress indicator now can be accessed using the F2 key, in addition to
+the shift-alt-P binding. The latter binding has been fixed to work reliably
+on PC platforms.
+
 
 Ren'Py 6.99.10
 ==============
