@@ -197,7 +197,7 @@ screen choose_gui_color():
 
                 frame:
                     style "l_default"
-                    xsize 350
+                    xsize 425
 
                     has vbox
 
@@ -210,6 +210,8 @@ screen choose_gui_color():
 
                 # Preview
                 frame:
+                    xsize 350
+
                     style "l_default"
                     background Frame(PATTERN, 0, 0, tile=True)
                     xpadding 5
