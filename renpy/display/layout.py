@@ -1055,11 +1055,13 @@ class Window(Container):
         if not style.yfill:
             height = max(cymargin + cypadding + sh, yminimum)
 
-        if style.xmaximum is not None:
-            width = min(width, style.xmaximum)
+        if renpy.config.enforce_window_max_size:
 
-        if style.ymaximum is not None:
-            height = min(height, style.ymaximum)
+            if style.xmaximum is not None:
+                width = min(width, style.xmaximum)
+
+            if style.ymaximum is not None:
+                height = min(height, style.ymaximum)
 
         rv = renpy.display.render.Render(width, height)
 

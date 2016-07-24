@@ -715,6 +715,9 @@ tts_voice = None
 # The maximum size of xfit, yfit, first_fit, etc.
 max_fit_size = 8192
 
+# Should the window max size be enforced?
+enforce_window_max_size = True
+
 del renpy
 del os
 

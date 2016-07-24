@@ -130,6 +130,7 @@ init -1900 python:
             config.old_say_args = True
             config.window_auto_hide.remove("call screen")
             config.quit_action = ui.gamemenus("_quit_prompt")
+            config.enforce_window_max_size = False
 
 
     # The version of Ren'Py this script is intended for, or

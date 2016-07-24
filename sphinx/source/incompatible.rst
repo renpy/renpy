@@ -31,6 +31,10 @@ revert to the old behavior, add the code::
     define config.quit_action = ui.gamemenus("_quit_prompt")
 
 
+Ren'Py now enforces maximum sizes given to buttons and windows. To disable
+this behavior, add the code::
+
+    define config.enforce_window_max_size = False
 
 
 
