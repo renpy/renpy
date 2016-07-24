@@ -650,7 +650,7 @@ class MultiBox(Container):
                 xfit = True
             elif fit_first == "height":
                 yfit = True
-            else:
+            elif fit_first:
                 xfit = True
                 yfit = True
 
@@ -679,6 +679,9 @@ class MultiBox(Container):
 
                 rv.width = width
 
+                if width > renpy.config.max_fit_size:
+                    raise Exception("Fixed fit width ({}) is too large.".format(width))
+
             if yfit:
                 height = 0
 
@@ -689,6 +692,10 @@ class MultiBox(Container):
                         break
 
                 rv.height = height
+
+                if height > renpy.config.max_fit_size:
+                    raise Exception("Fixed fit width ({}) is too large.".format(height))
+
 
             if self.style.order_reverse:
                 offsets.reverse()

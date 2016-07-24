@@ -712,6 +712,9 @@ old_say_args = False
 # The text-to-speech voice.
 tts_voice = None
 
+# The maximum size of xfit, yfit, first_fit, etc.
+max_fit_size = 8192
+
 del renpy
 del os
 
