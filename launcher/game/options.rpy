@@ -298,8 +298,12 @@ init python:
 
     # games.
     build.classify_renpy("launcher/game/theme/", None)
+    build.classify_renpy("gui/game/gui/", None)
+
     source_and_binary("launcher")
     source_and_binary("templates", binary=None)
+    source_and_binary("gui", binary=None)
+
     source_and_binary("the_question")
     source_and_binary("tutorial")
 
