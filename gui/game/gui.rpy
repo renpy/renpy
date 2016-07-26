@@ -7,7 +7,7 @@
 init offset = -1
 
 ## Calling gui.init resets the styles to sensible default values, and sets the
-## width and heigh of the game.
+## width and height of the game.
 init python:
     gui.init(1280, 720)
 
@@ -37,7 +37,7 @@ define gui.idle_small_color = "#aaaaaa"
 define gui.hover_color = Color(gui.accent_color).tint(.6)
 
 ## The color used for a text button when it is selected but not focused.
-## A button is selected if it is the current screen or preference value
+## A button is selected if it is the current screen or preference value.
 define gui.selected_color = "#ffffff"
 
 ## The color used for a text button when it cannot be selected.
@@ -130,14 +130,15 @@ define gui.namebox_tile = False
 
 
 ## The placement of dialogue relative to the textbox. These can be a whole
-## number of pixels relative to the left or to, or 0.5 to center.
+## number of pixels relative to the left or top side of the textbox, or 0.5
+## to center.
 define gui.text_xpos = gui.scale(268)
 define gui.text_ypos = gui.scale(50)
 
-## The maxium width of dialogue text, in pixels.
+## The maximum width of dialogue text, in pixels.
 define gui.text_width = gui.scale(744)
 
-## The horizontal alignment of the dialoge text. This can be 0.0 for
+## The horizontal alignment of the dialogue text. This can be 0.0 for
 ## left-aligned, 0.5 for centered, and 1.0 for right-aligned.
 define gui.text_xalign = 0.0
 
@@ -147,14 +148,14 @@ define gui.text_xalign = 0.0
 ## These variables, along with the image files in gui/button, control aspects
 ## of how buttons are displayed.
 
-## The width and height of a button, on pixels. If None, Ren'Py computes a size.
+## The width and height of a button, in pixels. If None, Ren'Py computes a size.
 define gui.button_width = None
 define gui.button_height = gui.scale(36)
 
 ## The borders on each side of the button, in left, top, right, bottom order.
 define gui.button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
-## If True, the backgound image will be tiled. If False, the background image
+## If True, the background image will be tiled. If False, the background image
 ## will be linearly scaled.
 define gui.button_tile = False
 
@@ -273,7 +274,7 @@ define gui.slot_spacing = gui.scale(10)
 
 ## Frames ######################################################################
 ##
-## These variables controls the look of frames that can contain user interface
+## These variables control the look of frames that can contain user interface
 ## components when an overlay or window is not present.
 
 ## Generic frames that are introduced by player code.
@@ -473,7 +474,7 @@ style frame:
 
 ## Say screen ##################################################################
 ##
-## The say screen is used to display dialogue to the player. It take two
+## The say screen is used to display dialogue to the player. It takes two
 ## parameters, who and what, which are the name of the speaking character and
 ## the text to be displayed, respectively. (The who parameter can be None
 ## if no name is given.)
@@ -599,8 +600,8 @@ screen choice(items):
             textbutton i.caption action i.action
 
 
-## When this is true, labels will spoken by the narrator rather then
-## displayed as empty buttons.
+## When this is true, menu captions will be spoken by the narrator. When
+## false, menu captions will be displayed as empty buttons.
 define config.narrator_menu = True
 
 
@@ -1788,7 +1789,7 @@ define config.window_icon = "gui/window_icon.png"
 ################################################################################
 ## Medium and Touch Variants
 ##
-## This section changes certain styes to make them more suitable for use with
+## This section changes certain styles to make them more suitable for use with
 ## touch devices like tablets.
 ################################################################################
 
@@ -1823,7 +1824,7 @@ init python:
 ################################################################################
 ## Small Variants
 ##
-## This section changes sizes, images, ans positions to make the game suitable
+## This section changes sizes, images, and positions to make the game suitable
 ## for a small phone screen.
 ################################################################################
 
