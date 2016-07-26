@@ -57,7 +57,6 @@ class GuiParameters(object):
 
         else:
 
-            # Do not change!
             self.hover_color = self.accent_color.tint(.6)
             self.muted_color = self.accent_color.shade(.4)
             self.hover_muted_color = self.accent_color.shade(.6)
@@ -75,7 +74,6 @@ class GuiParameters(object):
 
         else:
 
-            # Do not change!
             self.selected_color = Color("#ffffff")
             self.idle_color = Color("#555555")
             self.idle_small_color = Color("#aaaaaa")
@@ -107,8 +105,7 @@ class GuiParameters(object):
         if not simple_name:
             simple_name = "game"
 
+        self.simple_name = simple_name
 
-        self.simple_name = name
-
-        self.savedir = name + "-" + str(int(time.time()))
+        self.savedir = self.simple_name + "-" + str(int(time.time()))
 
