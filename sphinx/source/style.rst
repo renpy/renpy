@@ -58,7 +58,7 @@ of the displayable's style::
 
 When no ``style`` property is given, a parent is chosen based on the kind of
 displayable be that has been supplied. The parent chosen can be influenced
-by the :ref:`style_group <style-group>` property of user interface statements
+by the :ref:`style_prefix <style-prefix>` property of user interface statements
 in the screen language.
 
 When a style is defined without a parent being specified, a default

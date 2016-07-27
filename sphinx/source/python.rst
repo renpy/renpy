@@ -170,7 +170,7 @@ prepending it to the variable name with a dot. For example::
     default schedule.day = 0
 
 
-.. init-offset-statement
+.. _init-offset-statement:
 
 Init Offset Statement
 ---------------------

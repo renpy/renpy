@@ -885,7 +885,7 @@ There are also the usual variables that control bars:
     scaled.
 
 .. var:: gui.bar_borders = Borders(10, 10, 10, 10)
-.. var:: gui.bar_borders = Borders(10, 10, 10, 10)
+.. var:: gui.vbar_borders = Borders(10, 10, 10, 10)
 
     The borders that are used with the Frames containing the bar images.
 
@@ -1216,7 +1216,7 @@ a few places to get started.
 Styles
 ------
 
-:ref:`Styles <styles>` and :ref:`style properties` control how displayabes
+:ref:`Styles <styles>` and :ref:`style properties <style-properties>` control how displayables
 are displayed. To find out what style a displayable is using, put the mouse
 over it and type shift+I. This invokes the style inspector, which shows
 style names. Once the style name is known, a style statement can be used

@@ -650,7 +650,7 @@ from :func:`Preference`.
         style.soundtest_button.xalign = 1.0
 
 .. _yesno-prompt-screen:
-.. _confirm-screem:
+.. _confirm-screen:
 
 Confirm
 -------

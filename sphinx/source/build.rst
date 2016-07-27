@@ -82,7 +82,7 @@ use.
    to run mygame.exe on Windows, mygame.app on Macintosh, and
    mygame.sh on Linux.
 
-.. _special-files::
+.. _special-files:
 
 Special Files
 -------------
