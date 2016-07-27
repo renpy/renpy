@@ -452,7 +452,13 @@ label android_installsdk:
 label android_configure:
 
     python:
-        rapt.configure.configure(MobileInterface("android", edit=False), project.current.path)
+        project.current.update_dump(force=True)
+
+        rapt.configure.configure(
+            MobileInterface("android", edit=False),
+            project.current.path,
+            default_name=project.current.dump.get("name", None),
+            default_version=project.current.dump.get("version", None))
 
     jump android
 
