@@ -394,6 +394,7 @@ screen preferences():
                 textbutton "한국어" text_font "tl/korean/NanumGothic.ttf" action Language("korean")
                 textbutton "Русский" action Language("russian")
                 textbutton "Tiếng Việt" action Language("vietnamese")
+                textbutton "Indonesian" action Language("indonesian")
 
             # end-tutorial-only
 
