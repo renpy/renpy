@@ -11,7 +11,7 @@ translate indonesian strings:
 
     # gui/game/options.rpy:10
     old "## A human-readable name of the game. This is used to set the default window title, and shows up in the interface and error reports."
-    new "## Nama game yang dapat dibaca oleh manusia. Ini digunakan untuk menset judul jendela, dan juga di tampilkan di laporan tatapmuka dan kesalahan. "
+    new "## Nama game yang dapat dibaca oleh manusia. Ini digunakan untuk menset judul jendela, dan juga di tampilkan di antarmuka dan laporan kesalahan. "
 
     # gui/game/options.rpy:13
     old "## The _() surrounding the string marks it as eligible for translation."
