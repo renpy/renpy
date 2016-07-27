@@ -31,6 +31,11 @@
         gallery_navigation screen. The default screen is defined in
         common/00gallery.rpy
     
+    .. attribute:: unlocked_navigation
+    
+        If true, the gallery will only navigate through unlocked
+        images.
+    
     .. attribute:: span_buttons
     
         If true, the gallery will advance between buttons.

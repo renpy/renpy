@@ -4,6 +4,14 @@
 GUI Customization Guide
 =======================
 
+.. ifconfig:: not renpy_figures
+
+    .. note::
+
+        This version of the documentation has the images omitted to
+        save space. To view the full version, please visit
+        https://www.renpy.org/doc/html/gui.html
+
 Ren'Py features a GUI system that (we hope) looks attractive out of the box,
 can be customized somewhat, and can be replaced entirely if necessary. This
 page explains how to do simple and intermediate levels of GUI customization.

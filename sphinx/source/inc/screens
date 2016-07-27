@@ -49,7 +49,7 @@
     `variant`
         String. Gives the variant of the screen to use.
 
-.. function:: renpy.get_screen(name, layer='screens')
+.. function:: renpy.get_screen(name, layer=None)
     
     Returns the ScreenDisplayable with the given `name` on layer. `name`
     is first interpreted as a tag name, and then a screen name. If the
@@ -66,13 +66,13 @@
         else:
             text "The say screen is hidden."
 
-.. function:: renpy.get_widget(screen, id, layer='screens')
+.. function:: renpy.get_widget(screen, id, layer=None)
     
     From the `screen` on `layer`, returns the widget with
     `id`. Returns None if the screen doesn't exist, or there is no
     widget with that id on the screen.
 
-.. function:: renpy.get_widget_properties(id, screen=None, layer='screens')
+.. function:: renpy.get_widget_properties(id, screen=None, layer=None)
     
     Returns the properties for the widget with `id` in the `screen`
     on `layer`. If `screen` is None, returns the properties for the
@@ -83,7 +83,7 @@
     Note that this returns a dictionary containing the widget properties,
     and so to get an individual property
 
-.. function:: renpy.hide_screen(tag, layer='screens')
+.. function:: renpy.hide_screen(tag, layer=None)
     
     The programmatic equivalent of the hide screen statement.
     
