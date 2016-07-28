@@ -133,10 +133,6 @@ translate indonesian strings:
     old "No"
     new "Tidak"
 
-    # game/screens.rpy:551
-    old "Back"
-    new "Kembali"
-
     # game/screens.rpy:552
     old "Save"
     new "Simpan"
