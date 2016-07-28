@@ -26,6 +26,8 @@ init -1200 python in audio:
 
 init -1200 python:
 
+    config.default_sound_loop = None
+
     def _audio_eval(expr):
         return eval(expr, locals=store.audio.__dict__)
 
@@ -235,6 +237,9 @@ python early hide:
 
         loop = p.get("loop", False)
 
+        if loop is None:
+            loop = config.default_sound_loop
+
         renpy.sound.play(_audio_eval(p["file"]),
                          fadeout=fadeout,
                          fadein=eval(p["fadein"]),
@@ -256,6 +261,9 @@ python early hide:
             channel = "sound"
 
         loop = p.get("loop", False)
+
+        if loop is None:
+            loop = config.default_sound_loop
 
         renpy.sound.queue(_audio_eval(p["file"]), channel=channel, loop=loop)
 

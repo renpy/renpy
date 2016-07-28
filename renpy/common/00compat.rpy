@@ -100,6 +100,9 @@ init -1900 python:
         if version <= (6, 17, 0):
             config.keymap['toggle_music'] = [ 'm' ]
 
+        if version <= (6, 17, 4):
+            config.default_sound_loop = False
+
         if version <= (6, 18, 0):
             config.predict_screen_statements = False
             config.transition_screens = False
