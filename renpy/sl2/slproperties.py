@@ -105,7 +105,7 @@ window_properties = [ Style(i) for i in [
         "top_margin",
         "xmargin",
         "ymargin",
-        "padding",
+        "margin",
         "left_padding",
         "right_padding",
         "top_padding",
