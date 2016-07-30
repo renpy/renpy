@@ -1275,7 +1275,7 @@ screen history():
     # predicted by one of the other screens.
     predict False
 
-    use game_menu(_("History"), scroll=("vpgrid" if gui.history_height else "viewport"):
+    use game_menu(_("History"), scroll=("vpgrid" if gui.history_height else "viewport")):
 
         style_prefix "history"
 
