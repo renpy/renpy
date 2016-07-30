@@ -345,7 +345,7 @@ define gui.history_name_xalign = 1.0
 
 ## The position, width, and alignment of the dialogue text.
 define gui.history_text_xpos = gui.scale(170)
-define gui.history_text_ypos = gui.scale(6)
+define gui.history_text_ypos = gui.scale(5)
 define gui.history_text_width = gui.scale(740)
 define gui.history_text_xalign = 0.0
 
@@ -798,7 +798,8 @@ style main_menu_title:
 ## with the screen title, and displays the background, title, and navigation.
 ##
 ## The scroll parameter can be None, or one of "viewport" or "vpgrid". When
-## this screen is used, a child given to this screen is included inside it.
+## this screen is intended to be used with one or more children, which are
+## transcluded (placed) inside it.
 
 screen game_menu(title, scroll=None):
 
@@ -831,7 +832,8 @@ screen game_menu(title, scroll=None):
 
                         side_yfill True
 
-                        transclude
+                        vbox:
+                            transclude
 
                 elif scroll == "vpgrid":
 
@@ -1271,8 +1273,7 @@ screen history():
 
     tag menu
 
-    # Avoid predicting this screen. It's big, and all the images should be
-    # predicted by one of the other screens.
+    ## Avoid predicting this screen, as it can be very large.
     predict False
 
     use game_menu(_("History"), scroll=("vpgrid" if gui.history_height else "viewport")):
@@ -1283,13 +1284,16 @@ screen history():
 
             window:
 
+                ## This lays things out properly if history_height is None.
+                has fixed:
+                    yfit True
+
                 if h.who:
 
                     label h.who:
                         style "history_name"
 
-                        # Take the color of the who text from the
-                        # Character, if set.
+                        ## Take the color of the who text from the Character, if set.
                         if "color" in h.who_args:
                             text_color h.who_args["color"]
 
@@ -1313,7 +1317,6 @@ style history_label_text is gui_label_text
 style history_window:
     xfill True
     ysize gui.history_height
-    yfit (not gui.history_height)
 
 style history_name:
     xpos gui.history_name_xpos
