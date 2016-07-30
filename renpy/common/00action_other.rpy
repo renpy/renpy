@@ -192,10 +192,30 @@ init -1500 python:
         """
 
         def __call__(self):
-            renpy.rollback()
+            renpy.rollback(force="menu")
 
         def get_sensitive(self):
             return renpy.can_rollback()
+
+    class RollbackToIdentifier(Action, DictEquality):
+        """
+        :doc: other_action
+
+        This causes a rollback to an identifier to occur. Rollback
+        identifiers are returned as part of HistoryEntry objects.
+        """
+
+        def __init__(self, identifier):
+            self.identifier = identifier
+
+        def __call__(self):
+            checkpoints = renpy.get_identifier_checkpoints(self.identifier)
+
+            if checkpoints is not None:
+                renpy.rollback(checkpoints=checkpoints, force="menu")
+
+        def get_sensitive(self):
+            return (renpy.get_identifier_checkpoints(self.identifier) is not None)
 
     @renpy.pure
     class RestartStatement(Action, DictEquality):

@@ -947,6 +947,11 @@ class ADVCharacter(object):
 
         h.image_tag = self.image_tag
 
+        if renpy.game.context().rollback:
+            h.rollback_identifier = renpy.game.log.current.identifier
+        else:
+            h.rollback_identifier = None
+
         for k, v in kwargs.items():
             setattr(h, k, v)
 

@@ -1416,7 +1416,7 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None):
 
     renpy.config.skipping = None
     renpy.game.log.complete()
-    renpy.game.log.rollback(checkpoints, greedy=greedy, label=label, force=force)
+    renpy.game.log.rollback(checkpoints, greedy=greedy, label=label, force=(force is True))
 
 
 def toggle_fullscreen():
