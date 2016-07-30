@@ -32,6 +32,7 @@ import weakref
 import re
 import sets
 import sys
+import time
 
 import renpy.audio
 
@@ -913,6 +914,9 @@ rng = DetRandom()
 ##### This is the code that actually handles the logging and managing
 ##### of the rollbacks.
 
+generation = time.time()
+serial = 0
+
 class Rollback(renpy.object.Object):
     """
     Allows the state of the game to be rolled back to the point just
@@ -944,6 +948,8 @@ class Rollback(renpy.object.Object):
 
     __version__ = 4
 
+    identifier = None
+
     def __init__(self):
 
         super(Rollback, self).__init__()
@@ -967,6 +973,11 @@ class Rollback(renpy.object.Object):
         # decreases.
         self.hard_checkpoint = False
 
+        # A unique identifier for this rollback object.
+
+        global serial
+        self.identifier = (generation, serial)
+        serial += 1
 
     def after_upgrade(self, version):
 
@@ -1095,7 +1106,8 @@ class RollbackLog(renpy.object.Object):
 
     __version__ = 4
 
-    nosave = [ 'old_store', 'mutated' ]
+    nosave = [ 'old_store', 'mutated', 'identifier_cache' ]
+    identifier_cache = None
 
     def __init__(self):
 
@@ -1139,6 +1151,8 @@ class RollbackLog(renpy.object.Object):
         Called before a node begins executing, to indicate that the
         state needs to be saved for rollbacking.
         """
+
+        self.identifier_cache = None
 
         context = renpy.game.context()
 
@@ -1582,6 +1596,36 @@ class RollbackLog(renpy.object.Object):
         self.rollback(0, force=True, label=label, greedy=False, on_load=True)
 
         # Because of the rollback, we never make it this far.
+
+
+    def build_identifier_cache(self):
+
+        if self.identifier_cache is not None:
+            return
+
+        rollback_limit = self.rollback_limit
+        checkpoints = 1
+
+        self.identifier_cache = { }
+
+        for i in reversed(self.log):
+
+            if i.identifier is not None:
+                if renpy.game.script.has_label(i.context.current):
+                    self.identifier_cache[i.identifier] = checkpoints
+
+            if i.hard_checkpoint:
+                checkpoints += 1
+
+            if i.checkpoint:
+                rollback_limit -= 1
+
+            if not rollback_limit:
+                break
+
+    def get_identifier_checkpoints(self, identifier):
+        self.build_identifier_cache()
+        return self.identifier_cache.get(identifier, None)
 
 
 def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"): #@ReservedAssignment

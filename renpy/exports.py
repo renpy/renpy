@@ -3248,3 +3248,16 @@ def get_refresh_rate(precision=5):
     rv = round(rv / precision) * precision
 
     return rv
+
+
+def get_identifier_checkpoints(identifier):
+    """
+    :doc: rollback
+
+    Given a rollback_identifier from a HistoryEntry object, returns the number
+    of checkpoints that need to be passed to :func:`renpy.rollback` to reach
+    that identifier. Returns None of the identifier is not in the rollback
+    history.
+    """
+
+    return renpy.game.log.get_identifier_checkpoints(identifier)
