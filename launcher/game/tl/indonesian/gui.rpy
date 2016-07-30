@@ -99,7 +99,7 @@ translate indonesian strings:
 
     # gui/game/gui.rpy:1132
     old "Unseen Text"
-    new "Tex Belum Terlihat"
+    new "Belum Terlihat"
 
     # gui/game/gui.rpy:1133
     old "After Choices"
