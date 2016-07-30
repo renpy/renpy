@@ -63,6 +63,13 @@ their fields, as defined below.
         This is the object returned from :func:`_get_voice_info`, storing
         information about the voice that is being played.
 
+    .. attribute:: rollback_identifier
+
+        This is an identifier that can be passed to the :func:`RollbackToIdentifier`
+        action, to cause a rollback to the line of script code that generated
+        this history entry. The rollback only occurs if the code is still in
+        the script log, otherwise the action is insensitive.
+
 
 Once a HistoryEntry has been created, it is passed to each of the
 callbacks in :var:`config.history_callbacks`, which allows creator-written
