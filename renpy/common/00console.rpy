@@ -130,7 +130,7 @@ init -1500 python in _console:
         def clear(self):
             self[:] = [ ]
 
-    class HistoryEntry(object):
+    class ConsoleHistoryEntry(object):
         """
         Represents an entry in the history list.
         """
@@ -139,6 +139,8 @@ init -1500 python in _console:
             self.command = command
             self.result = result
             self.is_error = is_error
+
+    HistoryEntry = ConsoleHistoryEntry
 
     class ScriptErrorHandler(object):
         """
@@ -172,7 +174,7 @@ init -1500 python in _console:
             self.reset()
 
         def start(self):
-            he = HistoryEntry(None)
+            he = ConsoleHistoryEntry(None)
 
             message = ""
 
@@ -285,7 +287,7 @@ init -1500 python in _console:
             line_count = len(lines)
             code = "\n".join(lines)
 
-            he = HistoryEntry(code)
+            he = ConsoleHistoryEntry(code)
             self.history.append(he)
 
             try:
