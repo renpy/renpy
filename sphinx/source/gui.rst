@@ -1080,8 +1080,10 @@ is displayed.
 
 .. var:: gui.history_height = 210
 
-    The height of a history entry, in pixels. This has to be a fixed number
-    to allow efficent scrolling of history.
+    The height of a history entry, in pixels. This can be None to allow
+    the height of a history entry to vary at the cost of performance -
+    config.history_length may need to be lowered significantly when this
+    is None.
 
 .. var:: gui.history_name_xpos = 0.5
 .. var:: gui.history_text_xpos = 0.5

@@ -333,7 +333,8 @@ define gui.unscrollable = "hide"
 ## The number of blocks of dialogue history Ren'Py will keep.
 define config.history_length = 250
 
-## The height of a history screen entry.
+## The height of a history screen entry, or None to make the height variable
+## at the cost of performance.
 define gui.history_height = gui.scale(140)
 
 ## The position, width, and alignment of the label giving the name of the
