@@ -635,7 +635,7 @@ translate indonesian strings:
 
     # gui/game/gui.rpy:1124
     old "Rollback Side"
-    new "Sisi Rollback"
+    new "Arah Rollback"
 
     # gui/game/gui.rpy:1126
     old "Left"
@@ -803,7 +803,7 @@ translate indonesian strings:
 
     # gui/game/gui.rpy:1442
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "Wheel Mouse Atas\nKlik Side Rollback"
+    new "Wheel Mouse Atas\nKlik Arah Rollback"
 
     # gui/game/gui.rpy:1446
     old "Mouse Wheel Down"
