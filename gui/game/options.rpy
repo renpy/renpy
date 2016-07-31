@@ -157,21 +157,15 @@ init python:
     ##
     ## In a pattern:
     ##
-    ## /
-    ##     Is the directory separator.
-    ## *
-    ##     Matches all characters, except the directory separator.
-    ## **
-    ##     Matches all characters, including the directory separator.
+    ## / is the directory separator.
     ##
-    ## For example:
+    ## * matches all characters, except the directory separator.
     ##
-    ## *.txt
-    ##     Matches txt files in the base directory.
-    ## game/**.ogg
-    ##     Matches ogg files in the game directory or any of its subdirectories.
-    ## **.psd
-    ##    Matches psd files anywhere in the project.
+    ## ** matches all characters, including the directory separator.
+    ##
+    ## For example, "*.txt" matches txt files in the base directory, "game/**.ogg"
+    ## matches ogg files in the game directory or any of its subdirectories, and
+    ## "**.psd" matches psd files anywhere in the project.
 
     ## Classify files as None to exclude them from the built distributions.
 
