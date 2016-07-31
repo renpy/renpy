@@ -7,6 +7,8 @@
 ## appropriate.
 
 
+## Basics ######################################################################
+
 ## A human-readable name of the game. This is used to set the default
 ## window title, and shows up in the interface and error reports.
 ##
@@ -39,9 +41,7 @@ define gui.about = _("")
 define build.name = "gui"
 
 
-###############################################################################
-## Sounds and music
-
+## Sounds and music ############################################################
 
 ## These three variables control which mixers are shown to the player
 ## by default. Setting one of these to False will hide the appropriate
@@ -66,8 +66,7 @@ define config.has_voice = True
 # define config.main_menu_music = "main-menu-theme.ogg"
 
 
-###############################################################################
-## Transitions
+## Transitions #################################################################
 ##
 ## These variables set transitions that are used when certain events occur.
 ## Each variable should be set to a transition, or None to indicate that
@@ -94,9 +93,8 @@ define config.end_game_transition = None
 ## the initial scene.
 
 
-###############################################################################
-## Window management.
-
+## Window management ###########################################################
+##
 ## This controls when the dialogue window is displayed. If "show", it is always
 ## displayed. If "hide", it is only displayed when dialogue is present. If
 ## "auto", the window is hidden before scene statements and shown again
@@ -114,8 +112,7 @@ define config.window_show_transition = Dissolve(.2)
 define config.window_hide_transition = Dissolve(.2)
 
 
-###############################################################################
-## Preference defaults
+## Preference defaults #########################################################
 
 ## Controls the default text speed. The default, 0, is infinite, while any
 ## other number is the number of characters per second to type out.
@@ -129,9 +126,8 @@ default preferences.text_cps = 0
 default preferences.afm_time = 15
 
 
-###############################################################################
-## Save directory
-
+## Save directory ##############################################################
+##
 ## Controls the platform-specific place Ren'Py will place the save
 ## files for this game. The save files will be placed in:
 ##
@@ -145,4 +141,60 @@ default preferences.afm_time = 15
 ## literal string, not an expression.
 
 define config.save_directory = "gui-7"
+
+
+## Build configuration #########################################################
+##
+## This section controls how Ren'Py turns your project into distribution
+## files.
+
+init python:
+
+    ## The following functions take file patterns. File patterns are case-
+    ## insensitive, and matched against the path relative to the base
+    ## directory, with and without a leading /. If multiple patterns match,
+    ## the first is used.
+    ##
+    ## In a pattern:
+    ##
+    ## /
+    ##     Is the directory separator.
+    ## *
+    ##     Matches all characters, except the directory separator.
+    ## **
+    ##     Matches all characters, including the directory separator.
+    ##
+    ## For example:
+    ##
+    ## *.txt
+    ##     Matches txt files in the base directory.
+    ## game/**.ogg
+    ##     Matches ogg files in the game directory or any of its subdirectories.
+    ## **.psd
+    ##    Matches psd files anywhere in the project.
+
+    ## Classify files as None to exclude them from the built distributions.
+
+    build.classify('**~', None)
+    build.classify('**.bak', None)
+    build.classify('**/.**', None)
+    build.classify('**/#**', None)
+    build.classify('**/thumbs.db', None)
+
+    ## To archive files, classify them as 'archive'.
+
+    # build.classify('game/**.png', 'archive')
+    # build.classify('game/**.jpg', 'archive')
+
+    ## Files matching documentation patterns are duplicated in a mac app
+    ## build, so they appear in both the app and the zip file.
+
+    build.documentation('*.html')
+    build.documentation('*.txt')
+
+## A Google Play license key is required to download expansion files and
+## perform in-app purchases. It can be found on the "Services & APIs" page
+## of the Google Play developer console.
+
+# define build.google_play_key = "..."
 
