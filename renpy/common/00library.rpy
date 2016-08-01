@@ -91,8 +91,11 @@ init -1700 python:
 
     def _default_empty_window():
 
-        who = _last_say_who
-        who = renpy.eval_who(who)
+        try:
+            who = _last_say_who
+            who = renpy.eval_who(who)
+        except:
+            who = None
 
         if who is None:
             who = narrator
