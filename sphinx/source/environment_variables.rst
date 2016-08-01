@@ -43,11 +43,15 @@ The following environment variables control the behavior of Ren'Py:
     This causes Ren'Py to reduce its memory usage, in exchange for reductions
     in speed.
 
-``RENPY_LESS_UPDATES``
-    This causes Ren'Py to reduce the number of screen updates that occur.
-
 ``RENPY_LESS_MOUSE``
     This causes Ren'Py to disable the mouse at all times.
+
+``RENPY_LESS_PAUSES``
+    This causes Ren'Py to disable the pauses created by the {p} and {w}
+    text tags.
+
+``RENPY_LESS_UPDATES``
+    This causes Ren'Py to reduce the number of screen updates that occur.
 
 ``RENPY_SCREENSHOT_PATTERN``
     A pattern used to create screenshot filenames. It should contain a single

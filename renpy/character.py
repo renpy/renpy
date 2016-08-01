@@ -24,9 +24,12 @@
 import renpy.display
 
 import re
+import os
 
 # This matches the dialogue-relevant text tags.
 TAG_RE = re.compile(r'(\{\{)|(\{(p|w|nw|fast)(?:\=([^}]*))?\})', re.S)
+
+less_pauses = ("RENPY_LESS_PAUSES" in os.environ)
 
 class DialogueTextTags(object):
     """
@@ -71,9 +74,10 @@ class DialogueTextTags(object):
                     continue
 
                 if tag == "p" or tag == "w":
-                    self.pause_start.append(len(self.text))
-                    self.pause_end.append(len(self.text))
-                    self.pause_delay.append(value)
+                    if not less_pauses:
+                        self.pause_start.append(len(self.text))
+                        self.pause_end.append(len(self.text))
+                        self.pause_delay.append(value)
 
                 elif tag == "nw":
                     self.no_wait = True
