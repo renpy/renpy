@@ -318,7 +318,7 @@ init -1100 python in gui:
             if fixed is not None:
                 return fixed
 
-            factor = config.screen_height / 720
+            factor = 1.0 * config.screen_height / 720
             return int(scaled * factor)
 
 
