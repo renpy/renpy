@@ -25,8 +25,9 @@ init python:
 
 label main_menu_screen:
 
-    $ renpy.show_screen("main_menu")
-    $ ui.interact()
+    python hide:
+        renpy.show_screen(renpy.session.pop("_main_menu_screen", "main_menu"))
+        ui.interact()
 
     return
 

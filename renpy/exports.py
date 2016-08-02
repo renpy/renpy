@@ -1517,10 +1517,18 @@ def reload_script():
 
     s = get_screen("menu")
 
-    if s is not None:
-        session["_reload_screen"] = s.screen_name[0]
+    if not renpy.store.main_menu:
+        if s is not None:
+            session["_reload_screen"] = s.screen_name[0]
 
-    renpy.game.call_in_new_context("_save_reload_game")
+        renpy.game.call_in_new_context("_save_reload_game")
+
+    else:
+        if s is not None:
+            session["_main_menu_screen"] = s.screen_name[0]
+
+        utter_restart()
+
 
 
 def quit(relaunch=False, status=0): #@ReservedAssignment
