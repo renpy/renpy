@@ -584,7 +584,7 @@ init python:
 
         args = ap.parse_args()
 
-        persistent.projects_directory = args.projects
+        persistent.projects_directory = renpy.fsdecode(args.projects)
         renpy.save_persistent()
 
         return False
@@ -595,7 +595,7 @@ init python:
         ap = renpy.arguments.ArgumentParser()
         args = ap.parse_args()
 
-        print persistent.projects_directory
+        print renpy.fsencode(persistent.projects_directory)
 
         return False
 
