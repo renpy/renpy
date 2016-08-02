@@ -1400,11 +1400,6 @@ style nvl_button_text:
     properties gui.button_text_properties("nvl_button")
 
 
-## Window Icon #################################################################
-
-## This is the icon displayed on the taskbar or dock.
-define config.window_icon = "gui/window_icon.png"
-
 
 ################################################################################
 ## Mobile Variants

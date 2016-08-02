@@ -143,6 +143,13 @@ default preferences.afm_time = 15
 define config.save_directory = "gui-7"
 
 
+## Icon ########################################################################'
+
+## The icon displayed on the taskbar or dock.
+
+define config.window_icon = "gui/window_icon.png"
+
+
 ## Build configuration #########################################################
 ##
 ## This section controls how Ren'Py turns your project into distribution
