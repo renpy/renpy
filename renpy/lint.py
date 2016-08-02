@@ -470,19 +470,51 @@ def check_define(node, kind):
         report("'%s %s' replaces a Ren'Py built-in name, which may cause problems.", kind, node.varname)
 
 
+def check_style_property_displayable(name, property, d):
+
+    if not d._duplicatable:
+        check_displayable(
+            "{}, property {}".format(name, property),
+            d)
+        return
+
+    renpy.style.init_inspect()
+
+    def sort_short(l):
+        l = list(l)
+        l.sort(key=lambda a : len(a))
+        return l
+
+    alts = sort_short(renpy.style.prefix_alts)
+
+    for p in sort_short(renpy.style.affects.get(property, [ ])):
+        for prefix in alts:
+            rest = p[len(prefix):]
+            if rest in renpy.style.all_properties:
+                args = d._args.copy(prefix=prefix)
+                dd = d._duplicate(args)
+
+                check_displayable(
+                    "{}, property {}".format(name, prefix + property),
+                    dd)
+
+                break
+
+        # print property, p
+
+
 def check_style(name, s):
 
     for p in s.properties:
         for k, v in p.iteritems():
-
-            kname = name + ", property " + k
 
             # Treat font specially.
             if k.endswith("font"):
                 check_file(name, v)
 
             if isinstance(v, renpy.display.core.Displayable):
-                check_displayable(kname, v)
+                check_style_property_displayable(name, k, v)
+#                check_displayable(kname, v)
 
 def check_label(node):
 

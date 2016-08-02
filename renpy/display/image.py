@@ -427,6 +427,7 @@ class DynamicImage(renpy.display.core.Displayable):
         return self.target.get_placement()
 
     def visit(self):
+
         if self.target is None:
             self.find_target()
 
