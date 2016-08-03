@@ -1208,6 +1208,40 @@ characters, and by defining a few variables in script.rpy. ::
         The example game, customized with the settings above.
 
 
+Translation and GUI Variables
+-----------------------------
+
+The gui namespace is special, in that it is saved after the init phase,
+but before any translate python blocks are run. This makes it possible to
+change any gui variable in a translate python block to accomodate a second
+language. For example, the following code change the default text font
+and size.
+
+    translate japanese python:
+        gui.default_font = "MTLc3m.ttf"
+        gui.text_size = 24
+
+There is one issue that translators need to be aware of, and that is that
+in some places in gui.rpy, one variable is assigned the value of another.
+For example, the default gui.rpy has::
+
+    define gui.interface_font = "DejaVuSans.ttf"
+
+and later on::
+
+    define gui.button_text_font = gui.interface_font
+
+Since both of these statements run before any translate block runs, both
+variables need to be changed. ::
+
+    translate japanese python::
+
+        define gui.interface_font = "MTLc3m.ttf"
+        define gui.button_text_font = "MTLc3m.ttf"
+
+If the second statement was missing, DejaVuSans would still be used.
+
+
 Advanced Customization
 ======================
 
