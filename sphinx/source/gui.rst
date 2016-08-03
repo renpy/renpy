@@ -1211,9 +1211,9 @@ characters, and by defining a few variables in script.rpy. ::
 Advanced Customization
 ======================
 
-Far more advanced customization are customizable, up to and including
-deleting gui.rpy entirely and replacing it with your own code. Here are
-a few places to get started.
+More advanced customization is possible by customizing screens.rpy,
+up to and including deleting it entirely and replacing it with
+your own code. Here are a few places to get started.
 
 Styles
 ------
@@ -1227,9 +1227,9 @@ to customize it.
 For example, say we've lost our minds writing gui documentation, and want to
 add a bright red outline to the dialogue text. We can hover the text and press
 shift+I to find out the style used is named say_dialogue. We can then
-add (to the end of gui.rpy, or somewhere in options.rpy) the style statement::
+add (to the end of screens.rpy, or somewhere in options.rpy) the style statement::
 
-    style nvl_dialogue:
+    style say_dialogue:
         outlines [ (1, "#f00", 0, 0 ) ]
 
 A huge number of customizations are possible using style statements.
@@ -1356,8 +1356,9 @@ time to predict and load images.
 Total GUI Replacement
 ---------------------
 
-Advanced creators can replace some or all of gui.rpy in its entirely. It's
-probably a good idea to call :func:`gui.init` to reset styles - but after
+Advanced creators can replace some or all of screens.rpy in its entirely.
+When doing so, some or all of the code in gui.rpy may become redundant.
+It's probably a good idea to call :func:`gui.init` to reset styles - but after
 that, a creator can do whatever they want. It usually makes sense to include
 some or all of the :ref:`special screens <screen-special>`, to make sure
 players can have access to all the functionality Ren'Py provides.
