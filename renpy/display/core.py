@@ -1502,11 +1502,14 @@ class Interface(object):
         # The thread that can do display operations.
         self.thread = threading.current_thread()
 
-        # Initialize pygame.
-
-        # pygame.font.init()
+        # Initialize audio.
         renpy.audio.audio.init()
-        pygame.display.init()
+
+        # Initialize pygame.
+        try:
+            pygame.display.init()
+        except:
+            pass
 
         # Init timing.
         init_time()
