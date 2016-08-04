@@ -820,7 +820,7 @@ cdef class Render:
                 xo, cx, fw = compute_subline(xo, fw, x, w)
                 yo, cy, fh = compute_subline(yo, fh, y, h)
 
-                if cw <= 0 or ch <= 0:
+                if fw <= 0 or fh <= 0:
                     continue
 
                 if mx is not None:
