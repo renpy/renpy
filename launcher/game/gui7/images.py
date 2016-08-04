@@ -23,6 +23,7 @@ import pygame_sdl2
 import os
 
 from renpy.store import config
+import renpy.display
 
 class ImageGenerator(object):
 
@@ -143,7 +144,12 @@ class ImageGenerator(object):
             if not self.p.skip_backup:
                 os.rename(fn, bfn)
 
-        pygame_sdl2.image.save(s, fn)
+        import cStringIO
+        sio = cStringIO.StringIO()
+        renpy.display.module.save_png(s, sio, 3)
+
+        with open(fn, "wb") as f:
+            f.write(sio.getvalue())
 
     def make_surface(self, width, height):
         return pygame_sdl2.Surface((width, height), pygame_sdl2.SRCALPHA)

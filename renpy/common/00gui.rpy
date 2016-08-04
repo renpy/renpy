@@ -287,7 +287,12 @@ init -1100 python in gui:
                     if not gui._skip_backup:
                         os.rename(fn, bfn)
 
-                pygame_sdl2.image.save(s, fn)
+                import cStringIO
+                sio = cStringIO.StringIO()
+                renpy.display.module.save_png(s, sio, 3)
+
+                with open(fn, "wb") as f:
+                    f.write(sio.getvalue())
 
             def fill(self, color=None):
                 if color is None:
