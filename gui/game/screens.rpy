@@ -102,7 +102,7 @@ style frame:
 ## https://www.renpy.org/doc/html/screen_special.html#say
 
 screen say(who, what):
-    style_group "say"
+    style_prefix "say"
 
     window:
         id "window"
@@ -176,7 +176,7 @@ style say_dialogue:
 ## http://www.renpy.org/doc/html/screen_special.html#input
 
 screen input(prompt):
-    style_group "input"
+    style_prefix "input"
 
     window:
 
@@ -210,7 +210,7 @@ style input:
 ## http://www.renpy.org/doc/html/screen_special.html#choice
 
 screen choice(items):
-    style_group "choice"
+    style_prefix "choice"
 
     vbox:
         for i in items:
@@ -252,7 +252,7 @@ screen quick_menu():
 
     # Add an in-game quick menu.
     hbox:
-        style_group "quick"
+        style_prefix "quick"
 
         xalign 0.5
         yalign 1.0
@@ -1417,7 +1417,7 @@ screen quick_menu():
     zorder 100
 
     hbox:
-        style_group "quick"
+        style_prefix "quick"
 
         xalign 0.5
         yalign 1.0
