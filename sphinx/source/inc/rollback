@@ -14,6 +14,13 @@
         This data is returned by :func:`renpy.roll_forward_info` when the
         game is being rolled back.
 
+.. function:: renpy.get_identifier_checkpoints(identifier)
+    
+    Given a rollback_identifier from a HistoryEntry object, returns the number
+    of checkpoints that need to be passed to :func:`renpy.rollback` to reach
+    that identifier. Returns None of the identifier is not in the rollback
+    history.
+
 .. function:: renpy.in_rollback()
     
     Returns true if the game has been rolled back.

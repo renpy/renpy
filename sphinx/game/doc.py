@@ -2,7 +2,7 @@ import inspect
 import re
 import collections
 import keyword
-import renpy
+import renpy.sl2
 import shutil
 import StringIO
 import os
@@ -103,7 +103,7 @@ def write_keywords():
 
     f.write("keywords = %r\n" % kwlist)
 
-    properties = list(i for i in renpy.screenlang.all_keyword_names if i not in kwlist)
+    properties = list(i for i in renpy.sl2.slparser.all_keyword_names if i not in kwlist)
     properties.sort()
 
     f.write("properties = %r\n" % properties)

@@ -22,6 +22,10 @@
     
         The default idle border used by make_button.
     
+    .. attribute:: unlocked_advance
+    
+        If true, the gallery will only advance through unlocked images.
+    
     .. attribute:: navigation
     
         If true, the gallery will display navigation and slideshow
@@ -31,18 +35,9 @@
         gallery_navigation screen. The default screen is defined in
         common/00gallery.rpy
     
-    .. attribute:: unlocked_navigation
-    
-        If true, the gallery will only navigate through unlocked
-        images.
-    
     .. attribute:: span_buttons
     
         If true, the gallery will advance between buttons.
-    
-    .. attribute:: locked
-    
-        If true, the gallery will advance through locked images.
     
     .. attribute:: slideshow_delay
     

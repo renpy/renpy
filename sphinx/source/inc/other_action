@@ -105,6 +105,11 @@
     This action causes a rollback to occur, when a rollback is possible.
     Otherwise, nothing happens.
 
+.. function:: RollbackToIdentifier(identifier)
+    
+    This causes a rollback to an identifier to occur. Rollback
+    identifiers are returned as part of HistoryEntry objects.
+
 .. function:: Screenshot()
     
     Takes a screenshot.

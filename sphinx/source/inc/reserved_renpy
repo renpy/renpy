@@ -125,6 +125,7 @@
 * RevolveInOut
 * :func:`RollForward`
 * :func:`Rollback`
+* :func:`RollbackToIdentifier`
 * RotoZoom
 * RoundRect
 * :func:`ScreenVariableInputValue`
