@@ -1410,7 +1410,10 @@ class Text(renpy.display.core.Displayable):
                     i, did_sub = renpy.substitutions.substitute(i, scope, substitute)
                     uses_scope = uses_scope or did_sub
 
-                i = unicode(i)
+                if isinstance(i, str):
+                    i = unicode(i, "utf-8", "replace")
+                else:
+                    i = unicode(i)
 
             new_text.append(i)
 
