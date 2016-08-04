@@ -1223,7 +1223,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     `checkpoint`
         If true, a checkpoint will be set, and players will be able to roll
         back to this statement. If false, no checkpoint will be set. If None,
-        a checkpoint will only be set if display is set.
+        a checkpoint will only be set if delay is set.
     """
 
 
