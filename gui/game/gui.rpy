@@ -193,6 +193,7 @@ define gui.page_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(
 define gui.quick_button_borders = Borders(gui.scale(10), gui.scale(4), gui.scale(10), gui.scale(0))
 define gui.quick_button_text_size = gui.scale(14)
 define gui.quick_button_text_idle_color = gui.idle_small_color
+define gui.quick_button_text_selected_color = gui.accent_color
 
 ## You can also add your own customizations, by adding properly-named variables.
 ## For example, you can uncomment the following line to set the width of a
