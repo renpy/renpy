@@ -794,8 +794,11 @@ class ADVCharacter(object):
 
         return who
 
+    def empty_window(self):
+        self("", interact=False, _call_done=False)
 
-    def __call__(self, what, interact=True, **kwargs):
+
+    def __call__(self, what, interact=True, _call_done=True, **kwargs):
 
         # Check self.condition to see if we should show this line at all.
         if not (self.condition is None or renpy.python.py_eval(self.condition)):
@@ -870,13 +873,14 @@ class ADVCharacter(object):
             self.do_display(who, what, cb_args=self.cb_args, **display_args)
 
             # Indicate that we're done.
-            self.do_done(who, what)
+            if _call_done:
+                self.do_done(who, what)
 
-            # Finally, log this line of dialogue.
-            if who and isinstance(who, (str, unicode)):
-                renpy.exports.log(who)
-            renpy.exports.log(what)
-            renpy.exports.log("")
+                # Finally, log this line of dialogue.
+                if who and isinstance(who, (str, unicode)):
+                    renpy.exports.log(who)
+                renpy.exports.log(what)
+                renpy.exports.log("")
 
         finally:
 

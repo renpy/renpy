@@ -102,10 +102,10 @@ init -1700 python:
 
         if isinstance(who, NVLCharacter):
             nvl_show_core()
-        elif not isinstance(store.narrator, NVLCharacter):
-            store.narrator("", interact=False)
-        else:
-            store._narrator("", interact=False)
+        elif isinstance(store.narrator, ADVCharacter):
+            store.narrator.empty_window()
+        elif isinstance(store._narrator, ADVCharacter):
+            store._narrator.empty_window()
 
     config.empty_window = _default_empty_window
 
