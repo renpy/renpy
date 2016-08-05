@@ -2228,7 +2228,7 @@ class Interface(object):
 
     def get_mouse_info(self):
         # Figure out if the mouse visibility algorithm is hiding the mouse.
-        if self.mouse_event_time + renpy.config.mouse_hide_time < renpy.display.core.get_time():
+        if (renpy.config.mouse_hide_time is not None) and (self.mouse_event_time + renpy.config.mouse_hide_time < renpy.display.core.get_time()):
             visible = False
         else:
             visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)

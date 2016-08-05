@@ -1096,6 +1096,8 @@ Rarely or Internally Used
     will not experience the mouse appearing then disappearing between
     clicks.
 
+    If None, the mouse will never be hidden.
+
 .. var:: config.movie_mixer = "music"
 
     The mixer that is used when a :func:`Movie` automatically defines

@@ -188,7 +188,7 @@ init -1 python hide:
     config.windows_icon = "images/logo32.png"
     config.has_autosave = False
     config.log_enable = False
-    config.mouse_hide_time = 86400 * 366
+    config.mouse_hide_time = None
 
     _game_menu_screen = None
 
