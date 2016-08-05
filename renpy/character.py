@@ -481,21 +481,24 @@ def display_say(
             c("show", interact=interact, type=type, **cb_args)
 
         # Show the text.
-        what_text = show_function(who, what_string)
+        what_text_lst = show_function(who, what_string)
+        if not isinstance(what_text_lst, list):
+            what_text_lst = [what_text_lst]
 
-        if not isinstance(what_text, renpy.text.text.Text): #@UndefinedVariable
-            raise Exception("The say screen (or show_function) must return a Text object.")
+        for what_text in what_text_lst:
+            if not isinstance(what_text, renpy.text.text.Text): #@UndefinedVariable
+                raise Exception("The say screen (or show_function) must return a Text object.")
 
-        if what_ctc and ctc_position == "nestled":
-            what_text.set_ctc(what_ctc)
+            if what_ctc and ctc_position == "nestled":
+                what_text.set_ctc(what_ctc)
 
-        # Update the properties of the what_text widget.
-        what_text.start = start
-        what_text.end = end
-        what_text.slow = slow
-        what_text.slow_done = slow_done
+            # Update the properties of the what_text widget.
+            what_text.start = start
+            what_text.end = end
+            what_text.slow = slow
+            what_text.slow_done = slow_done
 
-        what_text.update()
+            what_text.update()
 
         for c in callback:
             c("show_done", interact=interact, type=type, **cb_args)
@@ -795,7 +798,7 @@ class ADVCharacter(object):
         return who
 
 
-    def __call__(self, what, interact=True, **kwargs):
+    def __call__(self, what, interact=True, showlater=False, **kwargs):
 
         # Check self.condition to see if we should show this line at all.
         if not (self.condition is None or renpy.python.py_eval(self.condition)):
@@ -866,11 +869,12 @@ class ADVCharacter(object):
             # things like NVL-mode.
             self.do_add(who, what)
 
-            # Now, display the damned thing.
-            self.do_display(who, what, cb_args=self.cb_args, **display_args)
+            if not showlater:
+                # Now, display the damned thing.
+                self.do_display(who, what, cb_args=self.cb_args, **display_args)
 
-            # Indicate that we're done.
-            self.do_done(who, what)
+                # Indicate that we're done.
+                self.do_done(who, what)
 
             # Finally, log this line of dialogue.
             if who and isinstance(who, (str, unicode)):

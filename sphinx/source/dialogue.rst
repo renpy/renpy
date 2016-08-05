@@ -298,3 +298,8 @@ This character can then be used alongside a variable in the default store::
         e = 100
 
         e "Our starting energy is [e] units."
+
+Multi character
+------------------
+
+.. include:: inc/multi_character
