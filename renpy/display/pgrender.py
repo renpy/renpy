@@ -140,14 +140,19 @@ def load_image(f, filename):
 
     _basename, _dot, ext = filename.rpartition('.')
 
-    if ext.lower() in safe_formats:
-        surf = pygame.image.load(f, renpy.exports.fsencode(filename))
-    else:
+    try:
 
-        # Non-whitelisted formats may not be able to load in a reentrant
-        # fashion.
-        with image_load_lock:
+        if ext.lower() in safe_formats:
             surf = pygame.image.load(f, renpy.exports.fsencode(filename))
+        else:
+
+            # Non-whitelisted formats may not be able to load in a reentrant
+            # fashion.
+            with image_load_lock:
+                surf = pygame.image.load(f, renpy.exports.fsencode(filename))
+
+    except Exception as e:
+        raise Exception("Could not load image {!r}: {!r}".format(filename, e))
 
     rv = copy_surface_unscaled(surf)
     return rv
