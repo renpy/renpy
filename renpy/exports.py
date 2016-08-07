@@ -3269,3 +3269,21 @@ def get_identifier_checkpoints(identifier):
     """
 
     return renpy.game.log.get_identifier_checkpoints(identifier)
+
+def get_adjustment(bar_value):
+    """
+    :doc: other
+
+    Given `bar_value`, a  :class:`BarValue`, returns the :func:`ui.adjustment`
+    if uses. The adjustment has the following to attributes defined:
+
+    .. attribute:: value
+
+        The current value of the bar.
+
+    .. attribute:: range
+
+        The current range of the bar.
+    """
+
+    return bar_value.get_adjustment()
