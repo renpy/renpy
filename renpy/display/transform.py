@@ -940,7 +940,9 @@ class Transform(Container):
     _duplicatable = True
 
     def _duplicate(self, args):
-        return self(_args=args)
+        rv = self(_args=args)
+        rv.take_execution_state(self)
+        return rv
 
     def _show(self):
         self.update_state()
