@@ -220,8 +220,14 @@ class ImageReference(renpy.display.core.Displayable):
     _duplicatable = True
 
     def _duplicate(self, args):
-        rv =  self._copy(args)
+
+        rv = self._copy(args)
         rv.target = None
+
+        if isinstance(rv.name, renpy.display.core.Displayable):
+            if rv.name._duplicatable:
+                rv.name = rv.name._duplicate(args)
+
         return rv
 
     def _hide(self, st, at, kind):
