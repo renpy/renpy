@@ -262,7 +262,7 @@ class Frame(renpy.display.core.Displayable):
         bh = self.top + self.bottom
 
         xborder = min(bw, sw - 2, dw)
-        if xborder:
+        if xborder and bw:
             left = self.left * xborder / bw
             right = self.right * xborder / bw
         else:
@@ -270,7 +270,7 @@ class Frame(renpy.display.core.Displayable):
             right = 0
 
         yborder = min(bh, sh - 2, dh)
-        if yborder:
+        if yborder and bh:
             top = self.top * yborder / bh
             bottom = self.bottom * yborder / bh
         else:
