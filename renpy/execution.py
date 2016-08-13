@@ -383,7 +383,7 @@ class Context(renpy.object.Object):
             self.defer_rollback = None
 
             if renpy.config.line_log:
-                ll_entry = (node.filename, node.linenumber)
+                ll_entry = (node.filename, node.linenumber, type(node).__name__)
 
                 if ll_entry not in self.line_log:
                     self.line_log.append(ll_entry)
