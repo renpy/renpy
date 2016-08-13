@@ -133,3 +133,74 @@ translate indonesian strings:
     old "## This generally should not be changed, and if it is, should always be a literal string, not an expression."
     new "## Ini shearus nya tidak usah di ganti, dan juga iya, harus selalu berisi string, bukan expresi."
 
+## Updated At Aug 13 2016 17:05
+translate indonesian strings:
+
+    # gui/game/options.rpy:10
+    old "## Basics"
+    new "## Dasar"
+
+    # gui/game/options.rpy:96
+    old "## Window management"
+    new "## Managemen Jendela"
+
+    # gui/game/options.rpy:146
+    old "## Icon ########################################################################'"
+    new "## Ikon ########################################################################'"
+
+    # gui/game/options.rpy:148
+    old "## The icon displayed on the taskbar or dock."
+    new "## Ikon yang di tampilkan di taskbar atau dock."
+
+    # gui/game/options.rpy:153
+    old "## Build configuration"
+    new "## Pengaturan Build"
+
+    # gui/game/options.rpy:155
+    old "## This section controls how Ren'Py turns your project into distribution files."
+    new "## Bagian ini mengendalikan bagaimana Ren'Py mengubah proyek mu ke file distribusi."
+
+    # gui/game/options.rpy:160
+    old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
+    new "## Fungsi berikut mengambil pola file. Pola file merupakan case- insensitiv, dan sama dengan arah direktori dasar, dengan atau tanpa awalan /. Jika banyak pola sama, yang pertama yang akan di gunakan."
+
+    # gui/game/options.rpy:165
+    old "## In a pattern:"
+    new "## Di dalam pola:"
+
+    # gui/game/options.rpy:167
+    old "## / is the directory separator."
+    new "## / Ini adlaah"
+
+    # gui/game/options.rpy:169
+    old "## * matches all characters, except the directory separator."
+    new "## * mencocokan semua karakter, kecuali pemisah direktori."
+
+    # gui/game/options.rpy:171
+    old "## ** matches all characters, including the directory separator."
+    new "## ** mencocokan semua karakter, termasuk pemisah direktori."
+
+    # gui/game/options.rpy:173
+    old "## For example, \"*.txt\" matches txt files in the base directory, \"game/**.ogg\" matches ogg files in the game directory or any of its subdirectories, and \"**.psd\" matches psd files anywhere in the project."
+    new "## Contohnya, \"*.txt\" mencocokan file txt di direktori dasar, \"game/**.ogg\" matches ogg files in the game directory or any of its subdirectories, and \"**.psd\" matches psd files anywhere in the project."
+
+    # gui/game/options.rpy:177
+    old "## Classify files as None to exclude them from the built distributions."
+    new "## Mengklasifikasi file sebagai None  untuk memisahkannya dari distribusi build."
+
+    # gui/game/options.rpy:185
+    old "## To archive files, classify them as 'archive'."
+    new "## Untuk mengarsipkan file, mengklasifikasikannya sebagai 'archive'."
+
+    # gui/game/options.rpy:190
+    old "## Files matching documentation patterns are duplicated in a mac app build, so they appear in both the app and the zip file."
+    new "## Alur Dokumentasi pencocokan file di duplikasikan di build app mac, jadi mereka tampil di kedua aplikasi dan juga file zip."
+
+    # gui/game/options.rpy:196
+    old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
+    new "## Kunci Lisensi Google Play di butuhkan untuk mendownload file tambahan dan untuk dapat melakukan pembelian in-app. Itu dapat di temukan di halaman \"Services & APIs\" delveloper konsol Google Play."
+
+    # gui/game/options.rpy:203
+    old "## The username and project name associated with an itch.io project, separated by a slash."
+    new "## Nama pengguna dan nama proyek yang di asosiasikan dengan proyek itch.io, di pisahkan dengan garis miring."
+
