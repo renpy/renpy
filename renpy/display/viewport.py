@@ -336,7 +336,7 @@ class Viewport(renpy.display.layout.Container):
                 else:
                     raise renpy.display.core.IgnoreEvent()
 
-        if self.is_focused() and self.arrowkeys:
+        if self.arrowkeys:
 
             if renpy.display.behavior.map_event(ev, 'viewport_leftarrow'):
 

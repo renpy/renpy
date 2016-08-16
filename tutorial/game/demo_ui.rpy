@@ -14,6 +14,7 @@ screen viewport_screen:
 
         draggable True
         mousewheel True
+        arrowkeys True
 
         add "concert2"
 
