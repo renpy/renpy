@@ -53,6 +53,9 @@ init -1600 python hide:
     # Callbacks to run after load.
     config.after_load_callbacks = [ ]
 
+    # Should we suppress overlay during the splashscreen?
+    config.splashscreen_suppress_overlay = True
+
 init -1600 python:
 
     def _init_language():
@@ -148,6 +151,17 @@ label _start_replay:
     jump expression _in_replay
 
 
+label _splashscreen:
+
+    python:
+
+        if config.splashscreen_suppress_overlay:
+            renpy.dynamic("suppress_overlay")
+            suppress_overlay = True
+
+    jump expression "splashscreen"
+
+
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
 label _start:
@@ -188,7 +202,7 @@ label _start:
     $ _history = False
 
     if renpy.has_label("splashscreen") and (not _restart) and (not renpy.os.environ.get("RENPY_SKIP_SPLASHSCREEN", None)):
-        call expression "splashscreen" from _call_splashscreen_1
+        call _splashscreen from _call_splashscreen_1
 
     $ _game_menu_screen = _old_game_menu_screen
     $ del _old_game_menu_screen
