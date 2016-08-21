@@ -92,6 +92,7 @@ class Preferences(renpy.object.Object):
             self.init_rollback_side()
         if version < 18:
             self.virtual_size = None
+            self.video_image_fallback = False
 
     def __init__(self):
         self.fullscreen = False
@@ -113,6 +114,9 @@ class Preferences(renpy.object.Object):
         # 1 - Only non-default transitions.
         # 0 - No transitions.
         self.transitions = 2
+
+        # Should video sprites always default to provided displayables if possible?
+        self.video_image_fallback = False
 
         self.skip_after_choices = False
 

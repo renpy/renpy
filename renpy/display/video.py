@@ -229,7 +229,8 @@ class Movie(renpy.display.core.Displayable):
         An image that is displayed when `play` has been given, but the
         file it refers to does not exist. (For example, this can be used
         to create a slimmed-down mobile version that does not use movie
-        sprites.)
+        sprites.) Users can also choose to fall back to this image as a
+        preference if video is too taxing for their system.
 
     This displayable will be transparent when the movie is not playing.
     """
@@ -278,15 +279,17 @@ class Movie(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
-        if (self.image is not None) and (self._play is not None) and (not renpy.loader.loadable(self._play)):
-            surf = renpy.display.render.render(self.image, width, height, st, at)
+        if (self.image is not None) and (self._play is not None):
+            # Checks if the given movie is loadable or if the user prefers images only
+            if (not renpy.loader.loadable(self._play)) or (renpy.game.preferences.video_image_fallback is True):
+                surf = renpy.display.render.render(self.image, width, height, st, at)
 
-            w, h = surf.get_size()
+                w, h = surf.get_size()
 
-            rv = renpy.display.render.Render(w, h)
-            rv.blit(surf, (0, 0))
+                rv = renpy.display.render.Render(w, h)
+                rv.blit(surf, (0, 0))
 
-            return rv
+                return rv
 
         if self._play:
             channel_movie[self.channel] = self
