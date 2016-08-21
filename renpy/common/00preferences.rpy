@@ -70,6 +70,10 @@ init -1500 python:
          * Preference("transitions", "none") - do not show transitions.
          * Preference("transitions", "toggle") - toggle transitions.
 
+         * Preference("video sprites", "show") - show all video sprites.
+         * Preference("video sprites", "hide") - fall back to images where possible.
+         * Preference("video sprites", "toggle") - toggle image fallback behavior. 
+
          * Preference("show empty window", "show") - Allow the "window show" and "window auto" statement to show an empty window outside of the say statement.
          * Preference("show empty window", "hide") - Prevent the above.
          * Preference("show empty window", "toggle") - Toggle the above.
@@ -196,6 +200,15 @@ init -1500 python:
                     return SetField(_preferences, "transitions", 0)
                 elif value == "toggle":
                     return ToggleField(_preferences, "transitions", true_value=2, false_value=0)
+
+            elif name == "video sprites":
+
+                if value == "show":
+                    return SetField(_preferences, "video_image_fallback", False)
+                elif value == "hide":
+                    return SetField(_preferences, "video_image_fallback", True)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "video_image_fallback")
 
             elif name == "show empty window":
 
