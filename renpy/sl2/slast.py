@@ -1266,7 +1266,10 @@ class SLShowIf(SLNode):
 
     def execute(self, context):
 
-        first_true = True
+        # This is true when the block should be executed - when no outer
+        # showif is False, and when no prior block in this showif has
+        # executed.
+        first_true = context.showif is not False
 
         for cond, block in self.prepared_entries:
 
