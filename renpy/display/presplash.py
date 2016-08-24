@@ -98,6 +98,8 @@ def start(basedir, gamedir):
         flags=pygame_sdl2.WINDOW_BORDERLESS,
         pos=(x, y))
 
+    img = img.convert_alpha(window.get_surface())
+
     window.get_surface().blit(img, (0, 0))
     window.update()
 
