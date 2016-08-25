@@ -128,7 +128,7 @@ cdef class StyleCore:
     cdef PyObject **cache
 
     # The offset in the cache corresponding to self.prefix.
-    cdef int offset
+    cdef int prefix_offset
 
     #################################################################### Methods
 

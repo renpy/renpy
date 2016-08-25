@@ -273,7 +273,7 @@ cdef class StyleCore:
         """
 
         self.prefix = "insensitive_"
-        self.offset = INSENSITIVE_PREFIX
+        self.prefix_offset = INSENSITIVE_PREFIX
 
         self.properties = [ ]
 
@@ -422,20 +422,20 @@ cdef class StyleCore:
         self.prefix = prefix
 
         if prefix == "insensitive_":
-            self.offset = INSENSITIVE_PREFIX
+            self.prefix_offset = INSENSITIVE_PREFIX
         elif prefix == "idle_":
-            self.offset = IDLE_PREFIX
+            self.prefix_offset = IDLE_PREFIX
         elif prefix == "hover_":
-            self.offset = HOVER_PREFIX
+            self.prefix_offset = HOVER_PREFIX
         elif prefix == "selected_insensitive_":
-            self.offset = SELECTED_INSENSITIVE_PREFIX
+            self.prefix_offset = SELECTED_INSENSITIVE_PREFIX
         elif prefix == "selected_idle_":
-            self.offset = SELECTED_IDLE_PREFIX
+            self.prefix_offset = SELECTED_IDLE_PREFIX
         elif prefix == "selected_hover_":
-            self.offset = SELECTED_HOVER_PREFIX
+            self.prefix_offset = SELECTED_HOVER_PREFIX
 
     def get_offset(self):
-        return self.offset
+        return self.prefix_offset
 
     def get_placement(self):
         """
@@ -467,7 +467,7 @@ cdef class StyleCore:
         # A limit to the number of styles we'll consider.
         cdef int limit
 
-        index += self.offset
+        index += self.prefix_offset
 
         if not self.built:
             build_style(self)
@@ -505,7 +505,7 @@ cdef class StyleCore:
 
 
     cpdef _get_unoffset(self, int index):
-        return self._get(index - self.offset)
+        return self._get(index - self.prefix_offset)
 
 
     def _predict_window(self, pd):

@@ -323,11 +323,10 @@ synthetic_properties = sorted_dict(
         ('yanchor', 'index_1'),
         ],
 
-    # Conflicts w/ a variable used in the Style implementation.
-    # offset = [
-    #     ('xoffset', index_0),
-    #     ('yoffset', index_1),
-    #     ],
+    offset = [
+        ('xoffset', 'index_0'),
+        ('yoffset', 'index_1'),
+        ],
 
     align = [
         ('xpos', 'index_0'),
