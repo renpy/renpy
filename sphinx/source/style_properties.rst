@@ -315,6 +315,11 @@ or on the screen when not inside a layout.
     Gives a number of pixels that are added to the vertical position
     computed using ypos and yalign.
 
+.. style-property:: offset tuple of (position, position)
+
+    Equivalent to setting xpos to the first component of the tuple,
+    and ypos to the second component of the tuple.
+
 .. style-property:: xmaximum int
 
     Specifies the maximum horizontal size of the displayable, in pixels.
