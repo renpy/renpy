@@ -31,6 +31,7 @@ position_property_names = [
         "align",
         "xalign",
         "yalign",
+        "offset",
         "xoffset",
         "yoffset",
         "maximum",
