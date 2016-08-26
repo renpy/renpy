@@ -120,6 +120,10 @@ axis to fit all child displayables.
 Buttons and Windows now fully respect the :propref:`xmaximum` and
 :propref:`ymaximum` style properties.
 
+There is now a :propref:`offset` style property, which sets the
+:propref:`xoffset` and :propfref:`yoffset` properties to the first and
+second components of a tuple.
+
 Translate and Style Statement Order Changes
 -------------------------------------------
 
