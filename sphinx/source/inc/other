@@ -113,6 +113,19 @@
         If given, the transition to run, or None to not run a transition.
         False uses :var:`config.end_game_transition`.
 
+.. function:: renpy.get_adjustment(bar_value)
+    
+    Given `bar_value`, a  :class:`BarValue`, returns the :func:`ui.adjustment`
+    if uses. The adjustment has the following to attributes defined:
+    
+    .. attribute:: value
+    
+        The current value of the bar.
+    
+    .. attribute:: range
+    
+        The current range of the bar.
+
 .. function:: renpy.get_autoreload()
     
     Gets the autoreload flag.

@@ -40,7 +40,8 @@
         An image that is displayed when `play` has been given, but the
         file it refers to does not exist. (For example, this can be used
         to create a slimmed-down mobile version that does not use movie
-        sprites.)
+        sprites.) Users can also choose to fall back to this image as a
+        preference if video is too taxing for their system.
     
     This displayable will be transparent when the movie is not playing.
 
