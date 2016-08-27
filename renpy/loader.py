@@ -526,7 +526,7 @@ def load(name):
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
-    name = re.sub(r'/+', '/', name)
+    name = re.sub(r'/+', '/', name).lstrip('/')
 
     for p in get_prefixes():
         rv = load_core(p + name)
@@ -570,6 +570,8 @@ def loadable_core(name):
 
 def loadable(name):
 
+    name = name.lstrip('/')
+
     for p in get_prefixes():
         if loadable_core(p + name):
             return True
@@ -583,10 +585,12 @@ def transfn(name):
     searched directories.
     """
 
-    name = lower_map.get(name.lower(), name)
+    name = name.lstrip('/')
 
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
+
+    name = lower_map.get(name.lower(), name)
 
     if isinstance(name, str):
         name = name.decode("utf-8")
