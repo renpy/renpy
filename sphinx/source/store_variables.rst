@@ -11,6 +11,12 @@ and rolled-back when rollback occurs.
     This is a template ADV-mode character, and the default character kind
     that is used when :func:`Character` is called.
 
+.. var:: _confirm_quit = True
+
+    This determines if quitting the game asks for confirmation. It is
+    set to False during the splashscreen, and is ignored when in the main
+    menu.
+
 .. var:: _dismiss_pause = True
 
     If True, the player can dismiss pauses and transitions.

@@ -173,6 +173,8 @@ init -1500 python:
         def get_sensitive(self):
             return not renpy.context()._main_menu
 
+    _confirm_quit = True
+
     @renpy.pure
     class Quit(Action, DictEquality):
         """
@@ -311,5 +313,3 @@ init -1500 python:
 
         def __call__(self):
             _help(self.help)
-
-default _confirm_quit = True
