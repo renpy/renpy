@@ -156,8 +156,9 @@ label _splashscreen:
     python:
 
         if config.splashscreen_suppress_overlay:
-            renpy.dynamic("suppress_overlay")
+            renpy.dynamic("suppress_overlay", "_confirm_quit")
             suppress_overlay = True
+            _confirm_quit = False
 
     jump expression "splashscreen"
 

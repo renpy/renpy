@@ -194,7 +194,7 @@ init -1500 python:
             confirm = self.confirm
 
             if confirm is None:
-                confirm = not main_menu
+                confirm = (not main_menu) and _confirm_quit
 
             if confirm:
                 if config.autosave_on_quit:
@@ -312,3 +312,4 @@ init -1500 python:
         def __call__(self):
             _help(self.help)
 
+default _confirm_quit = True
