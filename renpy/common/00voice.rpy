@@ -50,6 +50,7 @@ init -1500 python:
     _voice.tlid = None
     _voice.auto_file = None
     _voice.info = None
+    _voice.last_playing = 0.0
 
     # If true, the voice system ignores the interaction.
     _voice.ignore_interaction = False
@@ -386,10 +387,15 @@ init -1500 python hide:
 
     config.start_interact_callbacks.append(voice_interact)
     config.say_sustain_callbacks.append(voice_sustain)
+    config.afm_voice_delay = .5
 
     def voice_afm_callback():
+
+        if renpy.sound.is_playing(channel="voice"):
+            _voice.last_playing = renpy.time.time()
+
         if _preferences.wait_voice:
-            return not renpy.sound.is_playing(channel="voice")
+            return renpy.time.time() > (_voice.last_playing + config.afm_voice_delay)
         else:
             return True
 

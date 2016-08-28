@@ -824,6 +824,11 @@ Rarely or Internally Used
     of time specified in the auto forward mode preference to be
     delayed before auto-forward mode takes effect.
 
+.. var:: config.afm_voice_delay = .5
+
+    The number of seconds after a voice file finishes playing
+    before AFM can advance text.
+
 .. var:: config.all_character_callbacks = [ ]
 
     A list of callbacks that are called by all characters. This list
