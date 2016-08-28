@@ -11,6 +11,9 @@ find ../renpy -name \*.pyo -delete
 
 ../renpy.sh .
 
+rm -Rf ../doc-web/_images || true
+rm -Rf ../doc/_images || true
+
 sphinx-build -a source ../doc-web &
 RENPY_NO_FIGURES=1 sphinx-build -a source ../doc 2>/dev/null
 wait
