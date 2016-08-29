@@ -43,7 +43,8 @@ except ImportError:
 version_tuple = (6, 99, 11, vc_version)
 
 # The name of this version.
-version_name = "We came in peace..."
+# version_name = "We came in peace..."
+version_name = "Who tells your story?"
 
 # A string giving the version number only (7.0.1.123).
 version_only = ".".join(str(i) for i in version_tuple)
