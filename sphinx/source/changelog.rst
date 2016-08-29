@@ -261,6 +261,14 @@ platform-specific choice of text-to-speech voice to use.
 :var:`config.quit_action` now defaults to ``Quit()``, which will display
 the quit prompt over the in-game interface.
 
+The :var:`config.afm_voice_delay` has been added, and allows a pause to
+occur after the voice finishes in auto-forward mode, before advancing the
+text.
+
+The new "video sprites" :func:`Preference` makes it possible to disable
+video sprites (and use fallback images) on hardware too slow to support
+them.
+
 The progress indicator now can be accessed using the F2 key, in addition to
 the shift-alt-P binding. The latter binding has been fixed to work reliably
 on PC platforms.
