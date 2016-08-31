@@ -1024,7 +1024,7 @@ def show_imspec(imspec, atl=None):
 
     at_list = [ renpy.python.py_eval(i) for i in at_list ]
 
-    layer = renpy.exports.default_layer(layer, tag or name, expression)
+    layer = renpy.exports.default_layer(layer, tag or name, expression and (tag is None))
 
     renpy.config.show(name,
                       at_list=at_list,
