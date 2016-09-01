@@ -141,12 +141,18 @@ class ArgumentParser(argparse.ArgumentParser):
         if rv.command in compile_commands:
             rv.compile = True
 
+        if renpy.session.get("compile", False):
+            rv.compile = True
+
         return rv
 
     def parse_known_args(self, *args, **kwargs):
         args, rest = argparse.ArgumentParser.parse_known_args(self, *args, **kwargs)
 
         if args.command in compile_commands:
+            args.compile = True
+
+        if renpy.session.get("compile", False):
             args.compile = True
 
         return args, rest
