@@ -99,6 +99,10 @@ init -1700 python:
         renpy.context_dynamic("_history")
         renpy.context_dynamic("_menu")
 
+        renpy.context_dynamic("_side_image_old")
+        renpy.context_dynamic("_side_image_raw")
+        renpy.context_dynamic("_side_image")
+
         store._window_subtitle = config.menu_window_subtitle
         store._window = False
         store._history = False
