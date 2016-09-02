@@ -159,7 +159,7 @@ class Preferences(renpy.object.Object):
         self.init_rollback_side()
 
     def init_rollback_side(self):
-        self.mobile_rollback_side = "left"
+        self.mobile_rollback_side = "disable"
         self.desktop_rollback_side = "disable"
 
     def set_volume(self, mixer, volume):
