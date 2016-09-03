@@ -1706,7 +1706,6 @@ class Interface(object):
             im = renpy.display.scale.image_load_unscaled(
                 renpy.loader.load(icon),
                 icon,
-                convert=False,
                 )
 
             # Convert the aspect ratio to be square.
