@@ -1516,9 +1516,6 @@ class RollbackLog(renpy.object.Object):
         # Stop the sounds.
         renpy.audio.audio.rollback()
 
-        # Apply defaults.
-        renpy.exports.execute_default_statement()
-
         renpy.game.contexts.extend(other_contexts)
 
         # Restart the context or the top context.

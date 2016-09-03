@@ -741,6 +741,9 @@ def run_context(top):
 
         except renpy.game.RestartContext as e:
 
+            # Apply defaults.
+            renpy.exports.execute_default_statement(False)
+
             if e.label:
                 label = e.label
 
@@ -748,6 +751,9 @@ def run_context(top):
 
         except renpy.game.RestartTopContext as e:
             if top:
+
+                # Apply defaults.
+                renpy.exports.execute_default_statement(False)
 
                 if e.label:
                     label = e.label

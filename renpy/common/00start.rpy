@@ -85,6 +85,7 @@ label _after_load:
         main_menu = False
         _in_replay = None
 
+        renpy.execute_default_statement(False)
 
     python hide:
 
@@ -140,6 +141,9 @@ label _start_store:
 label _start_replay:
 
     call _start_store
+
+    python:
+        renpy.execute_default_statement(False)
 
     if config.start_scene_black:
         scene black

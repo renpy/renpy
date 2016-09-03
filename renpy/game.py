@@ -351,8 +351,6 @@ def call_replay(label, scope={}):
     if renpy.display.interface is not None:
         renpy.display.interface.enter_context()
 
-    renpy.exports.execute_default_statement(True)
-
     for k, v in renpy.config.replay_scope.iteritems():
         setattr(renpy.store, k, v)
 
