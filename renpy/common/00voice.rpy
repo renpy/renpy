@@ -62,6 +62,11 @@ init -1500 python:
     # exists, it's played as a voice file.
     config.auto_voice = None
 
+    # The last sound played on the voice channel. (This is used to replay
+    # it.)
+    _last_voice_play = None
+
+
     # Call this to specify the voice file that will be played for
     # the user. This peice only gathers the information so
     # voice_interact can play the right file.
