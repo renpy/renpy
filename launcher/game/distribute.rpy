@@ -183,6 +183,9 @@ init python in distribute:
             if self.directory:
                 return
 
+            if self.name == "update/current.json":
+                return
+
             if self.path in distributor.hash_cache:
                 digest = distributor.hash_cache[self.path]
             else:
@@ -352,6 +355,9 @@ init python in distribute:
             `report_success`
                 If true, we report that the build succeeded.
             """
+
+            # A map from a package to a unique update version hash.
+            self.update_versions = { }
 
             # Map from destination file with extension to (that file's hash,
             # hash of the file list)
@@ -912,16 +918,18 @@ init python in distribute:
                 if i.executable:
                     update_xbit.append(i.name)
 
-            update = { variant : { "version" : self.update_version, "pretty_version" : self.pretty_version, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
+            self.update_versions[variant] = fl.hash(self)
+
+            update = { variant : { "version" : self.update_versions[variant], "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
             if self.include_update and (variant not in [ 'ios', 'android', 'source' ]):
 
                 update_fn = os.path.join(self.destination, filename + ".update.json")
 
                 with open(update_fn, "wb") as f:
-                    json.dump(update, f)
+                    json.dump(update, f, indent=2)
 
-                if not dlc:
+                if (not dlc) or (format == "update"):
 
                     fl.append(File("update", None, True, False))
                     fl.append(File("update/current.json", update_fn, False, False))
@@ -1027,15 +1035,12 @@ init python in distribute:
 
             def add_variant(variant):
 
-#                 with open(fn, "rb") as f:
-#                     digest = hashlib.sha256(f.read()).hexdigest()
-
                 digest = self.build_cache[self.base_name + "-" + variant + ".update"][0]
 
                 sums_size = os.path.getsize(self.destination + "/" + self.base_name + "-" + variant + ".sums")
 
                 index[variant] = {
-                    "version" : self.update_version,
+                    "version" : self.update_versions[variant],
                     "pretty_version" : self.pretty_version,
                     "digest" : digest,
                     "zsync_url" : self.base_name + "-" + variant + ".zsync",
@@ -1055,7 +1060,7 @@ init python in distribute:
 
             fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
             with open(fn, "wb") as f:
-                json.dump(index, f)
+                json.dump(index, f, indent=2)
 
 
         def save_build_cache(self):
