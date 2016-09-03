@@ -35,7 +35,7 @@ translate greek strings:
 
     # game/distribute_gui.rpy:231
     old "Options:"
-    new "Επικογές:"
+    new "Επιλογές:"
 
     # game/distribute_gui.rpy:236
     old "Build Updates"

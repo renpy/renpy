@@ -99,7 +99,7 @@ translate greek strings:
 
     # game/front_page.rpy:265
     old "Checking script for potential problems..."
-    new "Έλεγχος εναρίου κώδικα για πιθανά προβλήματα..."
+    new "Έλεγχος σεναρίου κώδικα για πιθανά προβλήματα..."
 
     # game/front_page.rpy:280
     old "Deleting persistent data..."

@@ -47,7 +47,7 @@ translate greek strings:
 
     # game/updater.rpy:154
     old "Checking for updates."
-    new "ΈΛεγχος για διαθέσιμες ενημερώσεις"
+    new "Έλεγχος για διαθέσιμες ενημερώσεις"
 
     # game/updater.rpy:156
     old "Ren'Py is up to date."
