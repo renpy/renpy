@@ -1,4 +1,4 @@
-
+﻿
 translate indonesian strings:
 
     # gui/game/options.rpy:1

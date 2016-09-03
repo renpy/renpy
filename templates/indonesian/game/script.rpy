@@ -9,7 +9,7 @@ define e = Character('Eileen', color="#c8ffc8")
 
 # Game dimulai disini.
 label start:
-    
+
     scene bg blck with dissolve
     e "Kamu telah membuat game Ren'Py baru."
 

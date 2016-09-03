@@ -1,4 +1,4 @@
-
+﻿
 # ../tutorial_video.rpyc:11
 translate indonesian tutorial_video_f34a17f5:
 

@@ -1,4 +1,4 @@
-
+﻿
 # game/demo_dynamic.rpy:27
 translate indonesian demo_dynamic_b72548ea:
 

@@ -500,7 +500,7 @@ translate indonesian strings:
     # renpy/common/_developer/inspector.rpym:174
     old "<repr() failed>"
     new "<repr() failed>"
-    
+
 
 translate indonesian strings:
 

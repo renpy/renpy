@@ -1,4 +1,4 @@
-
+﻿
 # ../tutorial_sprite.rpyc:63
 translate indonesian tutorial_sprite_d2ca6a0c:
 

@@ -1,4 +1,4 @@
-
+﻿
 # game/demo_nvlmode.rpy:14
 translate indonesian demo_nvlmode_76b2fe88:
 

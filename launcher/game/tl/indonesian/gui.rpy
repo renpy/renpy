@@ -1,4 +1,4 @@
-
+﻿
 translate indonesian strings:
 
     # gui/game/gui.rpy:644
@@ -372,7 +372,7 @@ translate indonesian strings:
     # gui/game/gui.rpy:82
     old "## The size of the game's title."
     new "## Ukuran judul permainan."
-    
+
     # gui/game/gui.rpy:86
     old "## Main and Game Menus"
     new "## Menu utama dan Menu permainan."

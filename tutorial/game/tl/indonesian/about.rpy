@@ -1,4 +1,4 @@
-
+﻿
 translate indonesian strings:
 
     # game/about.rpy:21

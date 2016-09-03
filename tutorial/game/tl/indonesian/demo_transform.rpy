@@ -1,4 +1,4 @@
-
+﻿
 # game/demo_transform.rpy:156
 translate indonesian demo_transform_f10e08f5:
 

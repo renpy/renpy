@@ -1,4 +1,4 @@
-
+﻿
 # game/demo_imageops.rpy:69
 translate indonesian demo_imageops_0e0e59e0:
 

@@ -1,4 +1,4 @@
-
+﻿
 # game/demo_persistent.rpy:6
 translate indonesian demo_persistent_abef5d83:
 

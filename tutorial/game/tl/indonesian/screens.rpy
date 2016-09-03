@@ -1,4 +1,4 @@
-
+﻿
 translate indonesian strings:
 
     # game/screens.rpy:194

@@ -1,4 +1,4 @@
-
+﻿
 translate indonesian strings:
 
     # game/add_file.rpy:7

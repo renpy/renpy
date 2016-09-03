@@ -1,4 +1,4 @@
-
+﻿
 # game/demo_minigame.rpy:204
 translate indonesian demo_minigame_03fc91ef:
 

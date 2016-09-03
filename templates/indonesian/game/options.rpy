@@ -2,7 +2,7 @@
 ## permainan Ren'Py mu. Ini hanya berisi opsi yang paling sering di gunakan...
 ## Masih ada banyak lagi yang dapat kamu lakukan.
 ##
-## Line yang di awali dengan dua tanda '#' Contoh : '##' 
+## Line yang di awali dengan dua tanda '#' Contoh : '##'
 ## Adalah komentar dan kamu tidak seharus nya menghilangkan nya.
 ## Line dengan satu tanda '#' adalah kode yang di komentari / di matikan, dan kamu dapat menyalakan nya kembali
 ## Dengan menghapus tanda '#' jika di perlukan.
@@ -10,8 +10,8 @@
 init -1 python hide:
 
     ## Ini mengendalikan panjang dan lebar dari layar.
-    
-    config.screen_width = 800                         
+
+    config.screen_width = 800
     config.screen_height = 600
 
     ## Ini mengatur nama jendela saat Ren'Py
@@ -19,7 +19,7 @@ init -1 python hide:
 
     config.window_title = u"NAMA_PROYEK"
 
-    # Ini mengendalikan nama dan versi game, yang di laporkan di 
+    # Ini mengendalikan nama dan versi game, yang di laporkan di
     # Traceback dan log debug lainnya
     config.name = "NAMA_PROYEK"
     config.version = "0.0"
@@ -30,11 +30,11 @@ init -1 python hide:
     ## Kita ingin memanggil fungsi tema. theme.roundrect adalah
     ## tema yang memiliki fitur penggunaan persegi panjang bulat.
     ##
-    ## Fungsi tema mengambil sejumlah parameter 
+    ## Fungsi tema mengambil sejumlah parameter
     ## yang dapat menyesuaikan skema warna.
 
     theme.roundrect(
-        
+
         ## Warna dari widget yang idle.
         widget = "#003c78",
 
@@ -64,8 +64,8 @@ init -1 python hide:
         ## Jika 'False' Jendela in-game akan kotak.
         rounded_window = False,
 
-        ## Latar belakang menu utama. Ini bisa menjadi warna yang diawali dengan '#', 
-        ## atau nama file gambar. 
+        ## Latar belakang menu utama. Ini bisa menjadi warna yang diawali dengan '#',
+        ## atau nama file gambar.
         ## Yang terakhir ini harus mengambil tinggi penuh dan lebar layar.
         mm_root = "#dcebff",
 
@@ -90,7 +90,7 @@ init -1 python hide:
 
     # style.window.background = Frame("frame.png", 12, 12)
 
-    ## 'Margin' Adalah jarak yang mengelilingi jendela, yang dimana 
+    ## 'Margin' Adalah jarak yang mengelilingi jendela, yang dimana
     ## latar belakang tidak di gambar
 
     # style.window.left_margin = 6
@@ -98,7 +98,7 @@ init -1 python hide:
     # style.window.top_margin = 6
     # style.window.bottom_margin = 6
 
-    ## 'Padding' Adalah jarak di dalam jendela, yang dimana 
+    ## 'Padding' Adalah jarak di dalam jendela, yang dimana
     ## latar belakang tidak di gambar
 
     # style.window.left_padding = 6
@@ -138,16 +138,16 @@ init -1 python hide:
 
     ## File yang berisi font bawaan.
 
-    # style.default.font = "DejaVuSans.ttf" 
-    
+    # style.default.font = "DejaVuSans.ttf"
+
     ## Ukuran Text.
 
-    # style.default.size = 22    
+    # style.default.size = 22
 
-    ## Catatan ini hanya mengubah ukuran beberapa text    
+    ## Catatan ini hanya mengubah ukuran beberapa text
     ## Tombol lain mempunyai gaya tersendiri.
 
-    
+
     #########################################
     ## Pengaturan ini memungkinkan kamu untuk mengubah
     ## beberapa suara yang di gunakan oleh Ren'Py.
@@ -190,7 +190,7 @@ init -1 python hide:
     ## Dapat berisi:
     ## - Label di script, yang dimana label tersebut di panggil
     ##   untuk menunjukkan bantuan ke pengguna.
-    ## - Namafile yang relatif di direktori dasar , yang dimana terbuka di    
+    ## - Namafile yang relatif di direktori dasar , yang dimana terbuka di
     ##   peramban web.
     ## - None, Untuk mematikan bantuan.
     config.help = "README.html"

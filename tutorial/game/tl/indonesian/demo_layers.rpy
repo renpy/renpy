@@ -1,4 +1,4 @@
-
+﻿
 # game/demo_layers.rpy:15
 translate indonesian demo_layers_c4715eb5:
 
