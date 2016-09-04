@@ -56,7 +56,7 @@ class GuiParameters(object):
             self.muted_color = self.accent_color.tint(.6)
             self.hover_muted_color = self.accent_color.tint(.4)
         else:
-            self.hover_color = self.accent_color # .tint(.6)
+            self.hover_color = self.accent_color.tint(.6)
             self.muted_color = self.accent_color.shade(.4)
             self.hover_muted_color = self.accent_color.shade(.6)
 
