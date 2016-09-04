@@ -67,7 +67,7 @@ class GuiParameters(object):
 
             self.selected_color = Color("#555555")
             self.idle_color = Color("#aaaaaa")
-            self.idle_small_color = Color("#aaaaaa")
+            self.idle_small_color = Color("#888888")
             self.text_color = Color("#404040")
             self.choice_color = Color("#cccccc")
 
