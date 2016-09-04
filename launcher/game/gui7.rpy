@@ -33,7 +33,7 @@ init python:
     config.translate_comments = config.translate_files
 
 
-    COLORS = [
+    DARK_COLORS = [
         "#0099cc",
         "#99ccff",
         "#66cc00",
@@ -48,25 +48,30 @@ init python:
         "#cc0000",
     ]
 
-    COLOR_OPTIONS = [
-        (i, "#000000", False) for i in COLORS
-    ] + [
-        (i, "#ffffff", True) for i in COLORS
+    LIGHT_COLORS = [
+        "#003366", # Dark Blue
+        "#0099ff", # Light Blue
+        "#336600", # Green
+        "#000000", # Black
+        "#cc6600", # Orange
+
+        "#000066", # Darkest Blue
+        "#660066", # Purple
+        "#006666", # Dark Green
+        "#cc0066", # Pinkish
+        "#990000", # Red
     ]
 
 
-#     LIGHT_COLORS = [
-#         "#cc6600",
-#         "#0099ff",
-#         "#cc0066",
-#         "#990000",
-#         "#000000",
-#         "#003366",
-#         "#006666",
-#         "#000066",
-#         "#660066",
-#         "#336600",
-#     ]
+    # LIGHT_COLORS = DARK_COLORS
+
+    COLOR_OPTIONS = [
+        (i, "#000000", False) for i in DARK_COLORS
+    ] + [
+        (i, "#ffffff", True) for i in LIGHT_COLORS
+    ]
+
+
 
 
 screen gui_swatches():
@@ -80,7 +85,11 @@ screen gui_swatches():
                 xysize (85, 60)
 
                 add Color(accent).replace_hsv_saturation(.25).replace_value(.5)
-                add Color(bg).opacity(.8)
+
+                if light:
+                    add Color(bg).opacity(.9)
+                else:
+                    add Color(bg).opacity(.8)
 
                 button:
                     style "empty"
@@ -121,7 +130,12 @@ screen gui_demo(accent, boring, light, display):
         style "empty"
 
         add p.menu_color
-        add Solid(p.boring_color.opacity(.8))
+
+        if light:
+            add Solid(p.boring_color.opacity(.9))
+        else:
+            add Solid(p.boring_color.opacity(.8))
+
 
         frame:
             style "empty"
@@ -305,7 +319,7 @@ label gui_project_size:
 
 label gui_project_common:
 
-    $ gui_color = (COLORS[0], "#000000", False)
+    $ gui_color = (DARK_COLORS[0], "#000000", False)
 
     call screen choose_gui_color
 

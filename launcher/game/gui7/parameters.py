@@ -49,15 +49,14 @@ class GuiParameters(object):
         # tint = n * color + (1-n) * white
         # shade = n * color + (1-n) * black
 
+        self.light = light
+
         if light:
-            self.accent_color = self.accent_color.tint(1.0)
-            self.hover_color = self.accent_color.tint(.8)
+            self.hover_color = self.accent_color # .tint(.95)
             self.muted_color = self.accent_color.tint(.6)
             self.hover_muted_color = self.accent_color.tint(.4)
-
         else:
-
-            self.hover_color = self.accent_color.tint(.6)
+            self.hover_color = self.accent_color # .tint(.6)
             self.muted_color = self.accent_color.shade(.4)
             self.hover_muted_color = self.accent_color.shade(.6)
 
@@ -67,7 +66,7 @@ class GuiParameters(object):
         if light:
 
             self.selected_color = Color("#555555")
-            self.idle_color = Color("#888888")
+            self.idle_color = Color("#aaaaaa")
             self.idle_small_color = Color("#aaaaaa")
             self.text_color = Color("#404040")
             self.choice_color = Color("#cccccc")
