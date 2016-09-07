@@ -52,6 +52,7 @@ int media_video_ready(struct MediaState *ms);
 SDL_Surface *media_read_video(struct MediaState *ms);
 
 double media_duration(struct MediaState *ms);
+void media_wait_ready(struct MediaState *ms);
 
 /* The current Python. */
 PyInterpreterState* interp;
@@ -919,6 +920,13 @@ void RPS_unpause_all(void) {
     BEGIN();
 
     ENTER();
+
+    for (i = 0; i < num_channels; i++) {
+        if (channels[i].playing && channels[i].paused) {
+            media_wait_ready(channels[i].playing);
+        }
+    }
+
 
     for (i = 0; i < num_channels; i++) {
         channels[i].paused = 0;

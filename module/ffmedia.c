@@ -1100,6 +1100,17 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 	return rv;
 }
 
+void media_wait_ready(struct MediaState *ms) {
+    SDL_LockMutex(ms->lock);
+
+    while (!ms->ready) {
+        SDL_CondWait(ms->cond, ms->lock);
+    }
+
+    SDL_UnlockMutex(ms->lock);
+}
+
+
 double media_duration(MediaState *ms) {
 	return ms->total_duration;
 }
