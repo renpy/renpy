@@ -11,6 +11,9 @@
 /* The output audio sample rate. */
 static int audio_sample_rate = 44100;
 
+static int audio_sample_increase = 44100 / 5;
+static int audio_target_samples = 44100 * 2;
+
 const int CHANNELS = 2;
 const int BPC = 2; // Bytes per channel.
 const int BPS = 4; // Bytes per sample.
@@ -183,7 +186,7 @@ typedef struct MediaState {
 
 	/* The size of the audio queue, and the target size in seconds. */
 	int audio_queue_samples;
-	int audio_queue_target_seconds;
+	int audio_queue_target_samples;
 
 	/* A frame used for decoding. */
 	AVFrame *audio_decode_frame;
@@ -509,7 +512,11 @@ static void decode_audio(MediaState *ms) {
 
 	double timebase = av_q2d(ms->ctx->streams[ms->audio_stream]->time_base);
 
-	while (ms->audio_queue_samples < ms->audio_queue_target_seconds * audio_sample_rate ) {
+	if (ms->audio_queue_target_samples < audio_target_samples) {
+	    ms->audio_queue_target_samples += audio_sample_increase;
+	}
+
+	while (ms->audio_queue_samples < ms->audio_queue_target_samples) {
 
 		read_packet(ms, &ms->audio_packet_queue, &pkt);
 
@@ -1118,7 +1125,6 @@ MediaState *media_open(SDL_RWops *rwops, const char *filename) {
 	ms->lock = SDL_CreateMutex();
 
 	ms->audio_duration = -1;
-	ms->audio_queue_target_seconds = 2;
 
 	return ms;
 }
