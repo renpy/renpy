@@ -130,7 +130,7 @@ copy_surface_unscaled = copy_surface
 # Wrapper around image loading.
 
 # Formats we can load reentrantly.
-safe_formats = { "png", "jpg", "jpeg" }
+safe_formats = { "png", "jpg", "jpeg", "webp" }
 
 # Lock used for loading unsafe formats.
 image_load_lock = threading.RLock()
