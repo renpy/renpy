@@ -1020,8 +1020,10 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 
 	SDL_LockMutex(ms->lock);
 
-	while (!ms->ready) {
-		SDL_CondWait(ms->cond, ms->lock);
+    if(!ms->ready) {
+	    SDL_UnlockMutex(ms->lock);
+	    memset(stream, 0, len);
+	    return len;
 	}
 
 	int rv = 0;
