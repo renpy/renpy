@@ -179,7 +179,6 @@ init -1500 python in _console:
             message = ""
 
             if self.first_time:
-                message += __("%(version)s console, originally by Shiz, C, and delta.\n") % {"version": renpy.version()}
                 message += __("Press <esc> to exit console. Type help for help.\n")
                 self.first_time = False
 
@@ -349,6 +348,9 @@ init -1500 python in _console:
                 raise
 
             except:
+                import traceback
+                traceback.print_exc()
+
                 he.result = self.format_exception()
                 he.is_error = True
 
