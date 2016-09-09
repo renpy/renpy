@@ -522,6 +522,7 @@ screen _exception:
             id "viewport"
             child_size (4000, None)
             mousewheel True
+            draggable True
             scrollbars "both"
 
             has vbox
@@ -584,6 +585,7 @@ screen _parse_errors:
             id "viewport"
             child_size (4000, None)
             mousewheel True
+            draggable True
             scrollbars "both"
             xfill True
             yfill True
