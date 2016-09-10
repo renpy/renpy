@@ -257,8 +257,8 @@ so you can run this example.
 
 Ren'Py does not make any distinction between character and background
 art, as they're both treated as images. In general, character art
-needs to be transparent, which means it should be a PNG
-file. Background art can be JPEG or PNG files. By convention,
+needs to be transparent, which means it should be a PNG or WEBP
+file. Background art can be JPEG, PNG, or WEBP files. By convention,
 background images start with the "bg" tag.
 
 **Hide Statement.**

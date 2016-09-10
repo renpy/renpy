@@ -60,6 +60,15 @@ properties.
     # an image.
     image logo right = Image("logo.png", xalign=1.0)
 
+There are three image file formats we recommend you use:
+
+* Webp
+* Png
+* Jpg
+
+Non-animated Gif and Bmp files are also supported, but should not be
+used in modern games.
+
 Loading an Image from from a file on disk and decoding it so it can be
 drawn to the screen takes a long amount of time. While measured in the
 tenths or hundreds of seconds, the duration of the loading process is
