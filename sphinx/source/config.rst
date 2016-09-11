@@ -586,7 +586,7 @@ Occasionally Used
     is absent.
 
     Each value in the dictionary should be a list of (`image`,
-    `xoffset`, `offset`) tuples, representing frames.
+    `xoffset`, `yoffset`) tuples, representing frames.
 
     `image`
         The mouse cursor image.
@@ -598,7 +598,7 @@ Occasionally Used
     `yoffset`
         The offset of the hotspot pixel from the top of the cursor.
 
-    The frames are played back at 20hz, and the animation loops after
+    The frames are played back at 20Hz, and the animation loops after
     all frames have been shown.
 
 .. var:: config.narrator_menu = False
@@ -621,7 +621,7 @@ Occasionally Used
 .. var:: config.overlay_screens = [ ... ]
 
     A list of screens that are displayed when the overlay is enabled,
-    and hidden when the overlay is supressed. (The screens are shown
+    and hidden when the overlay is suppressed. (The screens are shown
     on the screens layer, not the overlay layer.)
 
 .. var:: config.python_callbacks = [ ]
@@ -715,7 +715,7 @@ Occasionally Used
 
     A dictionary mapping image tag strings to transforms or lists of
     transforms. When an image is newly-shown without an at clause,
-    the image's tag is looked up in ths dictionary to find a transform
+    the image's tag is looked up in this dictionary to find a transform
     or list of transforms to use.
 
 .. var:: config.tag_zorder = { }
@@ -792,7 +792,7 @@ Rarely or Internally Used
     If not None, this should be a function taking two arguments, the width
     and height of the physical window. It is expected to return a tuple
     giving the width and height of the OpenGL viewport, the portion of the
-    screen that Ren'Py wil draw pictures to.
+    screen that Ren'Py will draw pictures to.
 
     This can be used to configure Ren'Py to only allow certain sizes of
     screen. For example, the following code allows only integer multiples
@@ -1139,7 +1139,7 @@ Rarely or Internally Used
 .. var:: config.periodic_callback = None
 
     If not None, this should be a function. The function is called,
-    with no arguments, at around 20hz.
+    with no arguments, at around 20Hz.
 
 .. var:: config.play_channel = "audio"
 
