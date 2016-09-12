@@ -545,6 +545,25 @@ init -1500 python:
     class FilePageNameInputValue(InputValue, DictEquality):
         """
         :doc: input_value
+
+        An input value that updates the name of a file page.
+
+        `pattern`
+            This is used for the default name of a page. Python-style substition
+            is performed, such that {} is replaced with the number of the page.
+
+        `auto`
+            The name of the autosave page.
+
+        `quick`
+            The name of the quicksave page.
+
+        `page`
+            If given, the number of the page to display. This should usually
+            be left as None, to give the current page.
+
+        `default`
+            If true, this input can be editable by default.
         """
 
         def __init__(self, pattern=_("Page {}"), auto=_("Automatic saves"), quick=_("Quick saves"), page=None, default=False):
@@ -584,7 +603,7 @@ init -1500 python:
             else:
 
                 page = int(page)
-                default = self.pattern.format(page)
+                default = __(self.pattern).format(page)
                 rv = persistent._file_page_name.get(page, default)
 
                 if not rv.strip():
@@ -603,8 +622,16 @@ init -1500 python:
             if page == "auto" or page =="quick":
                 return
 
+            default = __(self.pattern).format(page)
+
             page = int(page)
-            persistent._file_page_name[page] = s
+
+            fnp = persistent._file_page_name
+
+            if s == default:
+                fnp.pop(page, None)
+            else:
+                fnp[page] = s
 
         def enter(self):
             renpy.run(self.Disable())
