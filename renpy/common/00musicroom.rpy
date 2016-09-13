@@ -35,7 +35,6 @@ init -1500 python:
         identity_fields = [ "mr" ]
         equality_fields = [ "filename" ]
 
-
         def __init__(self, mr, filename):
             self.mr = mr
             self.filename = filename
@@ -99,6 +98,34 @@ init -1500 python:
 
         def get_selected(self):
             return renpy.music.get_playing(self.mr.channel) is not None
+
+
+    @renpy.pure
+    class __MusicRoomStop(Action, FieldEquality):
+        """
+        The action returned by MusicRoom.Stop.
+        """
+
+        identity_fields = [ "mr" ]
+
+        def __init__(self, mr):
+            self.mr = mr
+            self.selected = self.get_selected()
+
+        def __call__(self):
+            self.mr.stop()
+
+        def get_selected(self):
+            return renpy.music.get_playing() is None
+
+        def periodic(self, st):
+            if self.selected != self.get_selected():
+                self.selected = self.get_selected()
+                renpy.restart_interaction()
+
+            self.mr.periodic(st)
+
+            return .1
 
 
     class MusicRoom(object):
@@ -417,8 +444,7 @@ init -1500 python:
             This action stops the music.
             """
 
-            return self.stop
-
+            return __MusicRoomStop(self)
 
         def Next(self):
             """
