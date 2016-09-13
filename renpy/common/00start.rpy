@@ -86,6 +86,7 @@ label _after_load:
         _in_replay = None
 
         renpy.execute_default_statement(False)
+        _init_language()
 
     python hide:
 
@@ -150,6 +151,7 @@ label _start_replay:
     else:
         scene
 
+    $ _init_language()
     $ renpy.block_rollback()
 
     jump expression _in_replay
