@@ -404,7 +404,7 @@ init python:
     ## touch on tablets and phones.
     if renpy.variant("touch"):
 
-        gui.quick_button_borders = Borders(gui.scale(60), gui.scale(14), gui.scale(60), gui.scale(0))
+        gui.quick_button_borders = Borders(gui.scale(40), gui.scale(14), gui.scale(40), gui.scale(0))
 
     ## This changes the size and spacing of various GUI elements to ensure
     ## they are easily visible on phones.
