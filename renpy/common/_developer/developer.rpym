@@ -520,19 +520,39 @@ init python:
 
         for when, filename, preload in ill:
             if preload:
-                color="#ffffff"
+                color="#ccffcc"
+                prefix=__("✔ ")
             else:
                 color="#ffcccc"
+                prefix=__("✘ ")
 
-            vbox.add(Text(filename.replace("{", "{{").replace("[", "[["), size=12, color=color, style="_default"))
+            vbox.add(Text(prefix + filename.replace("{", "{{").replace("[", "[["), size=14, color=color, style="_default"))
 
-        rv = Window(vbox, style="_frame", background="#0004", xpadding=5, ypadding=5, xminimum=200)
-        return rv, .25
+        if at < 10.0:
+            vbox.add(Text(
+            _("\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"),
+            size=14, style="_default"))
+
+        return vbox, .25
 
 screen _image_load_log:
+
     zorder 1000
 
-    add DynamicDisplayable(_image_load_log_function)
+    drag:
+        draggable True
+        focus_mask None
+        xpos 0
+        ypos 0
+
+        frame:
+            style "empty"
+            background "#0004"
+            xpadding 5
+            ypadding 5
+            xminimum 200
+
+            add DynamicDisplayable(_image_load_log_function)
 
 
 
