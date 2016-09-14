@@ -602,6 +602,10 @@ class SayBehavior(renpy.display.layout.Null):
                     return True
                 elif renpy.game.context().seen_current(True):
                     return True
+                else:
+                    renpy.config.skipping = False
+                    renpy.exports.restart_interaction()
+
             else:
                 renpy.game.interface.timeout(skip_delay - st)
 
