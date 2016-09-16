@@ -31,7 +31,7 @@ testcase default:
     "That's enough for now."
     click until "Quit"
 
-    pause .6 # Wait out the main menut transition.
+    pause .6 # Wait out the main menu transition.
     "Quit"
 
 testcase quick:
