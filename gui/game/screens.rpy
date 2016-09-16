@@ -107,13 +107,14 @@ screen say(who, what):
     window:
         id "window"
 
-        text what id "what"
-
         if who is not None:
 
             window:
                 style "namebox"
                 text who id "who"
+
+        text what id "what"
+
 
     # If there's a side image, display it above the text. Do not display
     # on the phone variant - there's no room.
