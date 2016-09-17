@@ -222,6 +222,7 @@ init python in distribute:
 
         def add_file(self, name, path, xbit):
             fn = os.path.join(self.path, name)
+
             shutil.copy2(path, fn)
 
             if xbit:

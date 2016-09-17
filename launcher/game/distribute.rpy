@@ -605,6 +605,20 @@ init python in distribute:
             for fl in file_list:
                 self.file_lists[fl].append(f)
 
+        def add_directory(self, file_list, name):
+            """
+            Adds an empty directory to the file lists.
+            """
+
+            if isinstance(file_list, basestring):
+                file_list = file_list.split()
+
+            f = File(name, None, True, False)
+
+            for fl in file_list:
+                self.file_lists[fl].append(f)
+
+
         def ignore_archives(self, archives):
             """
             Ignore archiving commands by adding the files that would be in
@@ -791,6 +805,10 @@ init python in distribute:
 
             contents = self.app + "/Contents"
 
+            self.add_directory(filelist, self.app)
+            self.add_directory(filelist, contents)
+            self.add_directory(filelist, contents + "/MacOS")
+
             plist_fn = self.write_plist()
             self.add_file(filelist, contents + "/Info.plist", plist_fn)
             self.add_file(filelist, contents + "/MacOS/" + self.executable_name, os.path.join(config.renpy_base, "renpy.sh"))
@@ -803,7 +821,10 @@ init python in distribute:
             else:
                 icon_fn = default_fn
 
-            self.add_file(filelist, contents + "/Resources/icon.icns", icon_fn)
+            resources = contents + "/Resources"
+
+            self.add_directory(filelist, resources)
+            self.add_file(filelist, resources + "/icon.icns", icon_fn)
 
 
         def add_windows_files(self):
