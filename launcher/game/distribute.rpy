@@ -305,6 +305,27 @@ init python in distribute:
 
             return rv
 
+        def mac_lib_transform(self, app, duplicate):
+            """
+            Moves the mac lib into position. If duplicate is set, the
+
+            Creates a new file list that has lib/darwin-x86_64 copied into
+            the mac app.
+            """
+
+            for f in list(self):
+                if f.name.startswith("lib/darwin-x86_64"):
+
+                    new = f.copy()
+                    new.name = app + "/Contents/MacOS/" + f.name
+                    self.append(new)
+
+                    if not duplicate:
+                        self.remove(f)
+
+            self.sort()
+
+
         def hash(self, distributor):
             """
             Returns a hex digest representing this file list.
@@ -826,6 +847,9 @@ init python in distribute:
             self.add_directory(filelist, resources)
             self.add_file(filelist, resources + "/icon.icns", icon_fn)
 
+            if False:
+                self.add_directory(filelist, contents + "/MacOS/lib")
+                self.file_lists[filelist].mac_lib_transform(self.app, self.build['renpy'])
 
         def add_windows_files(self):
             """

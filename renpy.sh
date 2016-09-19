@@ -57,6 +57,12 @@ for BASE in "$ROOT" "$ROOT1" "$ROOT2"; do
     fi
 done
 
+for BASE in "$ROOT" "$ROOT1" "$ROOT2"; do
+    if test -d "$BASE/$BASEFILE"; then
+        break
+    fi
+done
+
 if ! test -d "$LIB"; then
     echo "Ren'Py platform files not found in any of $ROOT, $ROOT1 or $ROOT2!"
     echo "Please compile the platform files using the instructions in README.md"
