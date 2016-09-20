@@ -313,15 +313,25 @@ init python in distribute:
             the mac app.
             """
 
+
+
+
             for f in list(self):
-                if f.name.startswith("lib/darwin-x86_64"):
+                if f.name.startswith("lib/darwin-x86_64/lib/python2.7"):
+                    name = app + "/Contents/MacOS/lib/darwin-x86_64/Lib" + f.name[31:]
 
-                    new = f.copy()
-                    new.name = app + "/Contents/MacOS/" + f.name
-                    self.append(new)
+                elif f.name.startswith("lib/darwin-x86_64"):
+                    name = app + "/Contents/MacOS/" + f.name
 
-                    if not duplicate:
-                        self.remove(f)
+                else:
+                    continue
+
+                new = f.copy()
+                new.name = name
+                self.append(new)
+
+                if not duplicate:
+                    self.remove(f)
 
             self.sort()
 
@@ -847,9 +857,18 @@ init python in distribute:
             self.add_directory(filelist, resources)
             self.add_file(filelist, resources + "/icon.icns", icon_fn)
 
-            if False:
-                self.add_directory(filelist, contents + "/MacOS/lib")
-                self.file_lists[filelist].mac_lib_transform(self.app, self.build['renpy'])
+            self.add_directory(filelist, contents + "/MacOS/lib")
+            self.add_directory(filelist, contents + "/MacOS/lib/darwin-x86_64")
+            self.add_directory(filelist, contents + "/MacOS/lib/darwin-x86_64/Lib")
+            self.add_directory(filelist, contents + "/MacOS/lib/darwin-x86_64/Modules")
+
+            sfn = self.temp_filename("Setup")
+            with open(sfn, "wb") as f:
+                pass
+
+            self.add_file(filelist, contents + "/MacOS/lib/darwin-x86_64/Modules/Setup", sfn)
+
+            self.file_lists[filelist].mac_lib_transform(self.app, self.build['renpy'])
 
         def add_windows_files(self):
             """
