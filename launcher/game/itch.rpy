@@ -27,6 +27,10 @@ init python:
 
         if renpy.windows:
             rv = os.path.join(os.environ.get("APPDATA", ""), "Roaming", "itch", "bin", "butler.exe")
+
+            if not os.path.exists(rv):
+                rv = os.path.join(os.environ.get("APPDATA", ""), "itch", "bin", "butler.exe")
+
         elif renpy.macintosh:
             rv = os.path.join(os.environ.get("HOME", ""), "Library", "Application Support", "itch", "bin", "butler")
         else:
