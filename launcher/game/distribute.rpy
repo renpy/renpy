@@ -397,6 +397,10 @@ init python in distribute:
             # A map from file to its hash.
             self.hash_cache = { }
 
+            # A map from a list of file lists and formats to a single integrated
+            # file list with transforms applied.
+            self.file_list_cache = { }
+
             # Status reporter.
             self.reporter = reporter
 
@@ -520,6 +524,7 @@ init python in distribute:
             for p in build_packages:
 
                 for f in p["formats"]:
+
                     self.make_package(
                         p["name"],
                         f,
@@ -547,8 +552,6 @@ init python in distribute:
 
             if open_directory:
                 store.OpenDirectory(self.destination)()
-
-
 
         def scan_and_classify(self, directory, patterns):
             """
@@ -936,6 +939,32 @@ init python in distribute:
                 for f in l:
                     f.name = rename_one(f.name)
 
+        def prepare_file_list(self, format, file_lists):
+            """
+            Prepares a master list of files, given the format and file lists.
+            This also takes care of the mac transforms, and signing the app
+            if necessary.
+            """
+
+            appzip = (format == "app-zip")
+            key = (appzip, tuple(file_lists))
+
+            if key in self.file_list_cache:
+                return self.file_list_cache[key].copy()
+
+            fl = FileList.merge([ self.file_lists[i] for i in file_lists ])
+            fl = fl.copy()
+            fl.sort()
+
+            if self.build.get("exclude_empty_directories", True):
+                fl = fl.filter_empty()
+
+            if format == "app-zip":
+                fl = fl.mac_transform(self.app, self.documentation_patterns)
+
+            self.file_list_cache[key] = fl
+            return fl.copy()
+
         def make_package(self, variant, format, file_lists, dlc=False):
             """
             Creates a package file in the projects directory.
@@ -961,12 +990,7 @@ init python in distribute:
             if self.packagedest:
                 path = self.packagedest
 
-            fl = FileList.merge([ self.file_lists[i] for i in file_lists ])
-            fl = fl.copy()
-            fl.sort()
-
-            if self.build.get("exclude_empty_directories", True):
-                fl = fl.filter_empty()
+            fl = self.prepare_file_list(format, file_lists)
 
             # Write the update information.
             update_files = [ ]
@@ -986,7 +1010,7 @@ init python in distribute:
 
             update = { variant : { "version" : self.update_versions[variant], "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
-            if self.include_update and (variant not in [ 'ios', 'android', 'source' ]):
+            if self.include_update and (variant not in [ 'ios', 'android', 'source', "app-zip" ]):
 
                 update_fn = os.path.join(self.destination, filename + ".update.json")
 
@@ -998,9 +1022,6 @@ init python in distribute:
                     fl.append(File("update", None, True, False))
                     fl.append(File("update/current.json", update_fn, False, False))
 
-            # The mac transform.
-            if format == "app-zip":
-                fl = fl.mac_transform(self.app, self.documentation_patterns)
 
             # If we're not an update file, prepend the directory.
             if (not dlc) and format != "update" and format != "directory":
