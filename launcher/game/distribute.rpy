@@ -50,6 +50,7 @@ init python in distribute:
     import re
     import plistlib
     import time
+    import shutil
 
     match_cache = { }
 
@@ -347,6 +348,23 @@ init python in distribute:
                 f.hash(sha, distributor)
 
             return sha.hexdigest()
+
+        def split_by_prefix(self, prefix):
+            """
+            Returns two filelists, one that contains all the files starting with prefix,
+            and one tht contains all other files.
+            """
+
+            yes = FileList()
+            no = FileList()
+
+            for f in self:
+                if f.name.startswith(prefix):
+                    yes.append(f)
+                else:
+                    no.append(f)
+
+            return yes, no
 
 
     class Distributor(object):
@@ -939,6 +957,39 @@ init python in distribute:
                 for f in l:
                     f.name = rename_one(f.name)
 
+        def sign_app(self, fl, appzip):
+            """
+            Signs the mac app contained in appzip.
+            """
+
+            # Figure out where it goes.
+            if appzip:
+                dn = "sign.appzip"
+            else:
+                dn = "sign.app"
+
+            dn = self.temp_filename(dn)
+
+            if os.path.exists(dn):
+                shutil.rmtree(dn)
+
+            # Unpack the app.
+            pkg = DirectoryPackage(dn)
+
+            for i, f in enumerate(fl):
+                self.reporter.progress(_("Unpacking the mac app for signing..."), i, len(fl))
+
+                if f.directory:
+                    pkg.add_directory(f.name, f.path)
+                else:
+                    pkg.add_file(f.name, f.path, f.executable)
+
+            pkg.close()
+
+            return fl
+
+
+
         def prepare_file_list(self, format, file_lists):
             """
             Prepares a master list of files, given the format and file lists.
@@ -961,6 +1012,13 @@ init python in distribute:
 
             if format == "app-zip":
                 fl = fl.mac_transform(self.app, self.documentation_patterns)
+
+            app, rest = fl.split_by_prefix(self.app)
+
+            if app:
+                app = self.sign_app(app, appzip)
+
+                fl = FileList.merge([ app, rest ])
 
             self.file_list_cache[key] = fl
             return fl.copy()
