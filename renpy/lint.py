@@ -107,7 +107,7 @@ def try_compile(where, expr, additional=None):
 
     try:
         renpy.python.py_compile_eval_bytecode(expr)
-    except SyntaxError:
+    except:
         report("'%s' could not be compiled as a python expression, %s.", expr, where)
         if additional:
             add(additional)
