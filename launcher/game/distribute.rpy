@@ -1004,11 +1004,16 @@ init python in distribute:
             Signs the mac app contained in appzip.
             """
 
+            identity = self.build.get('mac_identity', None)
+
+            if identity is None:
+                return fl
+
             # Figure out where it goes.
             if appzip:
-                dn = "sign.appzip"
+                dn = "sign.app-standalone"
             else:
-                dn = "sign.app"
+                dn = "sign.app-crossplatform"
 
             dn = self.temp_filename(dn)
 
@@ -1040,8 +1045,10 @@ init python in distribute:
             if necessary.
             """
 
-            appzip = (format == "app-zip")
-            key = (appzip, tuple(file_lists))
+            macapp = (format in { "app-zip", "app-directory", "app-dmg" })
+            key = (macapp, tuple(file_lists))
+
+            print key
 
             if key in self.file_list_cache:
                 return self.file_list_cache[key].copy()
@@ -1053,13 +1060,13 @@ init python in distribute:
             if self.build.get("exclude_empty_directories", True):
                 fl = fl.filter_empty()
 
-            if format == "app-zip":
+            if macapp:
                 fl = fl.mac_transform(self.app, self.documentation_patterns)
 
             app, rest = fl.split_by_prefix(self.app)
 
             if app:
-                app = self.sign_app(app, appzip)
+                app = self.sign_app(app, macapp)
 
                 fl = FileList.merge([ app, rest ])
 
@@ -1088,6 +1095,26 @@ init python in distribute:
             filename = self.base_name + "-" + variant
             path = os.path.join(self.destination, filename)
 
+
+            if format == "tar.bz2":
+                ext = ".tar.bz2"
+                directory = False
+            elif format == "update":
+                ext = ".update"
+                directory = False
+            elif format == "zip" or format == "app-zip":
+                ext = ".zip"
+                directory = False
+            elif format == "directory":
+                ext = ""
+                directory = True
+            elif format == "app-directory":
+                ext = "-app"
+                directory = True
+            elif format == "app-dmg":
+                ext = "-dmg"
+                directory = True
+
             if self.packagedest:
                 path = self.packagedest
 
@@ -1111,7 +1138,7 @@ init python in distribute:
 
             update = { variant : { "version" : self.update_versions[variant], "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
-            if self.include_update and (variant not in [ 'ios', 'android', 'source', "app-zip" ]):
+            if self.include_update and (variant not in [ 'ios', 'android', 'source', "app-zip", "app-directory", "app-dmg" ]):
 
                 update_fn = os.path.join(self.destination, filename + ".update.json")
 
@@ -1125,17 +1152,8 @@ init python in distribute:
 
 
             # If we're not an update file, prepend the directory.
-            if (not dlc) and format != "update" and format != "directory":
+            if (not dlc) and format != "update" and not directory:
                 fl.prepend_directory(filename)
-
-            if format == "tar.bz2":
-                ext = ".tar.bz2"
-            elif format == "update":
-                ext = ".update"
-            elif format == "zip" or format == "app-zip":
-                ext = ".zip"
-            elif format == "directory":
-                ext = ""
 
             full_filename = filename + ext
             path += ext
@@ -1147,7 +1165,7 @@ init python in distribute:
 
             file_hash, old_fl_hash = self.build_cache.get(full_filename, ("", ""))
 
-            if format == "directory" or old_fl_hash != fl_hash:
+            if directory or old_fl_hash != fl_hash:
 
                 if format == "tar.bz2":
                     pkg = TarPackage(path, "w:bz2")
@@ -1155,7 +1173,7 @@ init python in distribute:
                     pkg = TarPackage(path, "w", notime=True)
                 elif format == "zip" or format == "app-zip":
                     pkg = ZipPackage(path)
-                elif format == "directory":
+                elif directory:
                     pkg = DirectoryPackage(path)
 
                 for i, f in enumerate(fl):
@@ -1201,7 +1219,7 @@ init python in distribute:
                 if self.include_update and not self.build_update and not dlc:
                     os.unlink(update_fn)
 
-                if format != "directory":
+                if not directory:
                     file_hash = hash_file(path)
                 else:
                     file_hash = ""

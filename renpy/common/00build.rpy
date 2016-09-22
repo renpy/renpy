@@ -262,6 +262,12 @@ init -1500 python in build:
                 A zip file containing a macintosh application.
             tar.bz2
                 A tar.bz2 file.
+            directory
+                A directory containing the files.
+            app-directory
+                A directory containing the mac app.
+            app-dmg
+                A macintosh drive image containing a dmg. (Mac only.)
 
             The empty string will not build any package formats (this
             makes dlc possible).
@@ -289,7 +295,7 @@ init -1500 python in build:
         formats = format.split()
 
         for i in formats:
-            if i not in [ "zip", "app-zip", "tar.bz2", "directory" ]:
+            if i not in [ "zip", "app-zip", "tar.bz2", "directory", "app-directory", "app-dmg" ]:
                 raise Exception("Format {} not known.".format(i))
 
         if description is None:
@@ -359,6 +365,15 @@ init -1500 python in build:
     # Should we include the old Ren'Py themes?
     include_old_themes = True
 
+    # The identity used for codesigning and dmg building.
+    mac_identity = None
+
+    # The command used for mac codesigning.
+    mac_codesign_command = [ ]
+
+    # The command used to build and sign a dmg.
+    mac_dmg_command = [ ]
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
@@ -375,8 +390,6 @@ init -1500 python in build:
             ]
         else:
             exclude_old_themes = [ ]
-
-
 
         rv["directory_name"] = directory_name
         rv["executable_name"] = executable_name
@@ -412,6 +425,11 @@ init -1500 python in build:
 
         if itch_project:
             rv["itch_project"] = itch_project
+
+        if mac_identity:
+            rv["mac_identity"] = mac_identity
+            rv["mac_codesign_command"] = mac_codesign_command
+            rv["mac_dmg_command"] = mac_dmg_command
 
         return rv
 
