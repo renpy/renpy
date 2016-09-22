@@ -20,6 +20,7 @@ Based upon STDWIN dialogs with the same names and functions.
 """
 
 from __future__ import division
+from __future__ import print_function
 
 import os
 
@@ -1029,7 +1030,7 @@ def test():
     argv = GetArgv(optionlist=optionlist, commandlist=commandlist, addoldfile=0)
     Message("Command line: %s"%' '.join(argv))
     for i in range(len(argv)):
-        print 'arg[%d] = %r' % (i, argv[i])
+        print(('arg[%d] = %r' % (i, argv[i])))
     ok = AskYesNoCancel("Do you want to proceed?")
     ok = AskYesNoCancel("Do you want to identify?", yes="Identify", no="No")
     if ok > 0:

@@ -1,11 +1,12 @@
 #!/usr/bin/env python2
+from __future__ import print_function
 
 import argparse
 import os
 import subprocess
 import sys
 
-from renpy import version_tuple #@UnresolvedImport
+from renpy import version_tuple  # @UnresolvedImport
 
 SOURCE = [
     "/home/tom/ab/renpy",
@@ -18,7 +19,7 @@ SOURCE = [
 
 version = ".".join(str(i) for i in version_tuple)
 short_version = ".".join(str(i) for i in version_tuple[:3])
-print "Version", version
+print("Version", version)
 
 ap = argparse.ArgumentParser()
 
@@ -53,10 +54,10 @@ if args.push_tags:
         os.chdir(i)
 
         if subprocess.call([ "git", "push", "--tags" ]):
-            print "Tags not pushed: {}".format(os.getcwd())
+            print("Tags not pushed: {}".format(os.getcwd()))
             sys.exit(1)
 
-    print "Pushed tags."
+    print("Pushed tags.")
     sys.exit(0)
 
 if args.release:
@@ -80,7 +81,7 @@ if tag:
         os.chdir(i)
 
         if subprocess.call([ "git", "diff", "--quiet", "HEAD" ]):
-            print "Directory not checked in: {}".format(os.getcwd())
+            print("Directory not checked in: {}".format(os.getcwd()))
             sys.exit(1)
 
     for i in SOURCE:
@@ -105,4 +106,4 @@ for i in links:
 os.chdir("/home/tom/ab/website")
 subprocess.check_call("./upload.sh")
 
-print "Version", version
+print("Version", version)

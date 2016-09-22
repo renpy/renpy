@@ -24,6 +24,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 import os
 import sys
 import warnings
@@ -32,13 +34,17 @@ import warnings
 
 # Given the Ren'Py base directory (usually the directory containing
 # this file), this is expected to return the path to the common directory.
+
+
 def path_to_common(renpy_base):
     return renpy_base + "/renpy/common"
 
 # Given a directory holding a Ren'Py game, this is expected to return
 # the path to a directory that will hold save files.
+
+
 def path_to_saves(gamedir, save_directory=None):
-    import renpy #@UnresolvedImport
+    import renpy  # @UnresolvedImport
 
     if save_directory is None:
         save_directory = renpy.config.save_directory
@@ -54,7 +60,6 @@ def path_to_saves(gamedir, save_directory=None):
         except:
             return False
 
-
     # Android.
     if renpy.android:
         paths = [
@@ -67,7 +72,7 @@ def path_to_saves(gamedir, save_directory=None):
             if os.path.isdir(rv) and test_writable(rv):
                 break
 
-        print "Saving to", rv
+        print("Saving to", rv)
 
         # We return the last path as the default.
 
@@ -93,7 +98,7 @@ def path_to_saves(gamedir, save_directory=None):
         except:
             rv = url.path.UTF8String().decode("utf-8")
 
-        print "Saving to", rv
+        print("Saving to", rv)
         return rv
 
     # No save directory given.
@@ -146,7 +151,7 @@ try:
     import ast; ast
 except:
     raise
-    print "Ren'Py requires at least python 2.6."
+    print("Ren'Py requires at least python 2.6.")
     sys.exit(0)
 
 android = ("ANDROID_PRIVATE" in os.environ)
@@ -159,6 +164,7 @@ if android:
     __main__.path_to_common = path_to_common
     __main__.path_to_saves = path_to_saves
     os.environ["RENPY_RENDERER"] = "gl"
+
 
 def main():
 
@@ -181,8 +187,8 @@ def main():
     try:
         import renpy.bootstrap
     except ImportError:
-        print >>sys.stderr, "Could not import renpy.bootstrap. Please ensure you decompressed Ren'Py"
-        print >>sys.stderr, "correctly, preserving the directory structure."
+        print("Could not import renpy.bootstrap. Please ensure you decompressed Ren'Py", file=sys.stderr)
+        print("correctly, preserving the directory structure.", file=sys.stderr)
         raise
 
     renpy.bootstrap.bootstrap(renpy_base)

@@ -22,6 +22,7 @@
 # This file ensures that renpy packages will be imported in the right
 # order.
 
+from __future__ import print_function
 import sys
 import os
 import copy
@@ -72,6 +73,7 @@ android = False
 ios = False
 
 import platform
+
 
 def get_windows_version():
     """
@@ -184,6 +186,7 @@ name_blacklist = {
     "renpy.display.screen.cprof",
     }
 
+
 class Backup():
     """
     This represents a backup of all of the fields in the python modules
@@ -262,8 +265,8 @@ class Backup():
             try:
                 cPickle.dumps(v, cPickle.HIGHEST_PROTOCOL)
             except:
-                print "Cannot pickle", name + "." + k, "=", repr(v)
-                print "Reduce Ex is:", repr(v.__reduce_ex__(cPickle.HIGHEST_PROTOCOL))
+                print("Cannot pickle", name + "." + k, "=", repr(v))
+                print("Reduce Ex is:", repr(v.__reduce_ex__(cPickle.HIGHEST_PROTOCOL)))
 
     def restore(self):
         """
@@ -280,7 +283,6 @@ class Backup():
             for name in set(modvars.keys()) - names:
                 del modvars[name]
 
-
         objects = cPickle.loads(self.objects_pickle)
 
         for k, v in self.variables.iteritems():
@@ -293,6 +295,7 @@ backup = None
 ################################################################################
 # Import
 ################################################################################
+
 
 def update_path(package):
     """
@@ -311,16 +314,17 @@ def update_path(package):
     libexec = os.path.dirname(encodings.__path__[0])
     package.__path__.append(os.path.join(libexec, *name))
 
+
 def import_all():
 
     # Note: If we add a new update_path, we have to add an equivalent
     # hook in the renpython hooks dir.
 
-    import renpy # @UnresolvedImport
+    import renpy  # @UnresolvedImport
 
     update_path(renpy)
 
-    import renpy.arguments # @UnresolvedImport
+    import renpy.arguments  # @UnresolvedImport
 
     import renpy.log
 
@@ -352,7 +356,7 @@ def import_all():
     import renpy.script
     import renpy.statements
 
-    import renpy.styledata # @UnresolvedImport
+    import renpy.styledata  # @UnresolvedImport
     update_path(renpy.styledata)
 
     import renpy.style
@@ -367,7 +371,7 @@ def import_all():
     import renpy.translation.extract
     import renpy.translation.merge
 
-    import renpy.display # @UnresolvedImport @Reimport
+    import renpy.display  # @UnresolvedImport @Reimport
 
     update_path(renpy.display)
 
@@ -375,8 +379,8 @@ def import_all():
     import renpy.display.pgrender
     import renpy.display.scale
     import renpy.display.module
-    import renpy.display.render # Most display stuff depends on this. @UnresolvedImport
-    import renpy.display.core # object @UnresolvedImport
+    import renpy.display.render  # Most display stuff depends on this. @UnresolvedImport
+    import renpy.display.core  # object @UnresolvedImport
 
     import renpy.text
 
@@ -400,13 +404,13 @@ def import_all():
     import renpy.display.layout
     import renpy.display.viewport
     import renpy.display.transform
-    import renpy.display.motion # layout @UnresolvedImport
-    import renpy.display.behavior # layout @UnresolvedImport
-    import renpy.display.transition # core, layout @UnresolvedImport
-    import renpy.display.movetransition # core @UnresolvedImport
+    import renpy.display.motion  # layout @UnresolvedImport
+    import renpy.display.behavior  # layout @UnresolvedImport
+    import renpy.display.transition  # core, layout @UnresolvedImport
+    import renpy.display.movetransition  # core @UnresolvedImport
     import renpy.display.im
     import renpy.display.imagelike
-    import renpy.display.image # core, behavior, im, imagelike @UnresolvedImport
+    import renpy.display.image  # core, behavior, im, imagelike @UnresolvedImport
     import renpy.display.video
     import renpy.display.focus
     import renpy.display.anim
@@ -453,13 +457,13 @@ def import_all():
     import renpy.memory
 
     import renpy.exports
-    import renpy.character # depends on exports. @UnresolvedImport
+    import renpy.character  # depends on exports. @UnresolvedImport
 
     import renpy.add_from
     import renpy.dump
 
-    import renpy.config # depends on lots. @UnresolvedImport
-    import renpy.minstore # depends on lots. @UnresolvedImport
+    import renpy.config  # depends on lots. @UnresolvedImport
+    import renpy.minstore  # depends on lots. @UnresolvedImport
     import renpy.defaultstore  # depends on everything. @UnresolvedImport
 
     import renpy.test
@@ -471,7 +475,6 @@ def import_all():
     import renpy.test.testexecution
 
     import renpy.main
-
 
     # Back up the Ren'Py modules.
 
@@ -489,7 +492,7 @@ def post_import():
     of various modules.
     """
 
-    import renpy # @UnresolvedImport
+    import renpy  # @UnresolvedImport
 
     # Create the store.
     renpy.python.create_store("store")
@@ -528,7 +531,7 @@ def reload_all():
     sys.exc_clear()
 
     # Reset the styles.
-    renpy.style.reset() # @UndefinedVariable
+    renpy.style.reset()  # @UndefinedVariable
 
     # Shut down the cache thread.
     renpy.display.im.cache.quit()
@@ -617,7 +620,6 @@ def import_cython():
     import renpy.angle.glrtt_copy
     import renpy.angle.glrtt_fbo
     import renpy.angle.gltexture
-
 
 
 if False:

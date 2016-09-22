@@ -19,6 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
 import renpy
 import os.path
 from pickle import loads
@@ -34,7 +35,7 @@ import re
 u"".encode("utf-8")
 
 
-################################################################# Physical Paths
+# Physical Paths
 
 def get_path(fn):
     """
@@ -55,14 +56,14 @@ def get_path(fn):
 
     return fn
 
-################################################################## Asset Loading
+# Asset Loading
 
 try:
     import android.apk
 
     expansion = os.environ.get("ANDROID_EXPANSION", None)
     if expansion is not None:
-        print "Using expansion file", expansion
+        print("Using expansion file", expansion)
 
         apks = [
             android.apk.APK(apk=expansion, prefix='assets/x-game/'),
@@ -72,7 +73,7 @@ try:
         game_apks = [ apks[0] ]
 
     else:
-        print "Not using expansion file."
+        print("Not using expansion file.")
 
         apks = [
             android.apk.APK(prefix='assets/x-game/'),
@@ -95,6 +96,7 @@ old_config_archives = None
 
 # A map from lower-case filename to regular-case filename.
 lower_map = { }
+
 
 def index_archives():
     """
@@ -164,10 +166,11 @@ def index_archives():
         except:
             raise
 
-    for dir, fn in listdirfiles(): #@ReservedAssignment
+    for dir, fn in listdirfiles():  # @ReservedAssignment
         lower_map[fn.lower()] = fn
 
-def walkdir(dir): #@ReservedAssignment
+
+def walkdir(dir):  # @ReservedAssignment
     rv = [ ]
 
     if not os.path.exists(dir) and not renpy.config.developer:
@@ -192,6 +195,7 @@ game_files = [ ]
 # A list of files that are in the common directory.
 common_files = [ ]
 
+
 def cleardirfiles():
     """
     Clears the lists above when the game has changed.
@@ -202,6 +206,7 @@ def cleardirfiles():
 
     game_files = [ ]
     common_files = [ ]
+
 
 def scandirfiles():
     """
@@ -228,9 +233,9 @@ def scandirfiles():
     for apk in apks:
 
         if apk not in game_apks:
-            files = common_files # @UnusedVariable
+            files = common_files  # @UnusedVariable
         else:
-            files = game_files # @UnusedVariable
+            files = game_files  # @UnusedVariable
 
         for f in apk.list():
 
@@ -243,9 +248,9 @@ def scandirfiles():
     for i in renpy.config.searchpath:
 
         if (renpy.config.commondir) and (i == renpy.config.commondir):
-            files = common_files # @UnusedVariable
+            files = common_files  # @UnusedVariable
         else:
-            files = game_files # @UnusedVariable
+            files = game_files  # @UnusedVariable
 
         i = os.path.join(renpy.config.basedir, i)
         for j in walkdir(i):
@@ -256,7 +261,6 @@ def scandirfiles():
     for _prefix, index in archives:
         for j in index.iterkeys():
             add(None, j)
-
 
 
 def listdirfiles(common=True):
@@ -381,7 +385,7 @@ class SubFile(object):
     def __iter__(self):
         return self
 
-    def next(self): #@ReservedAssignment
+    def next(self):  # @ReservedAssignment
         rv = self.readline()
 
         if not rv:
@@ -437,6 +441,7 @@ if "RENPY_FORCE_SUBFILE" in os.environ:
         f.seek(0, 0)
 
         return SubFile(f, 0, length, '')
+
 
 def load_core(name):
     """
@@ -503,6 +508,7 @@ def load_core(name):
 
     return None
 
+
 def get_prefixes():
     """
     Returns a list of prefixes to search for files.
@@ -521,6 +527,7 @@ def get_prefixes():
 
     return rv
 
+
 def load(name):
 
     if renpy.config.reject_backslash and "\\" in name:
@@ -537,6 +544,7 @@ def load(name):
 
 
 loadable_cache = { }
+
 
 def loadable_core(name):
     """
@@ -567,6 +575,7 @@ def loadable_core(name):
 
     loadable_cache[name] = False
     return False
+
 
 def loadable(name):
 
@@ -608,6 +617,7 @@ def transfn(name):
 
 hash_cache = dict()
 
+
 def get_hash(name):
     """
     Returns the time the file m was last modified, or 0 if it
@@ -639,7 +649,7 @@ def get_hash(name):
     return rv
 
 
-################################################################# Module Loading
+# Module Loading
 
 class RenpyImporter(object):
     """
@@ -703,15 +713,17 @@ class RenpyImporter(object):
     def get_data(self, filename):
         return load(filename).read()
 
+
 def init_importer():
     sys.meta_path.insert(0, RenpyImporter("python-packages/"))
     sys.meta_path.insert(0, RenpyImporter())
+
 
 def quit_importer():
     sys.meta_path.pop(0)
     sys.meta_path.pop(0)
 
-#################################################################### Auto-Reload
+# Auto-Reload
 
 # This is set to True if autoreload hads detected an autoreload is needed.
 needs_autoreload = False
@@ -731,6 +743,7 @@ auto_lock = threading.Condition()
 # Used to indicate that this file is blacklisted.
 auto_blacklisted = renpy.object.Sentinel("auto_blacklisted")
 
+
 def auto_mtime(fn):
     """
     Gets the mtime of fn, or None if the file does not exist.
@@ -740,6 +753,7 @@ def auto_mtime(fn):
         return os.path.getmtime(fn)
     except:
         return None
+
 
 def add_auto(fn, force=False):
     """
@@ -763,6 +777,7 @@ def add_auto(fn, force=False):
 
     with auto_lock:
         auto_mtimes[fn] = mtime
+
 
 def auto_thread_function():
     """
@@ -793,6 +808,7 @@ def auto_thread_function():
                     if auto_mtime(fn) != auto_mtimes[fn]:
                         needs_autoreload = True
 
+
 def auto_init():
     """
     Starts the autoreload thread.
@@ -812,6 +828,7 @@ def auto_init():
     auto_thread = threading.Thread(target=auto_thread_function)
     auto_thread.daemon = True
     auto_thread.start()
+
 
 def auto_quit():
     """

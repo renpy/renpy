@@ -21,6 +21,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 import platform
 import sys
 import os
@@ -235,4 +237,4 @@ import renpy
 setuplib.setup("Ren'Py", renpy.version[7:]) # @UndefinedVariable
 
 if not has_fribidi:
-    print "Warning: Did not include fribidi."
+    print("Warning: Did not include fribidi.")

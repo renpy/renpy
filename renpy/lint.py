@@ -19,6 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
 import renpy.display
 import renpy.text
 import codecs
@@ -51,6 +52,8 @@ image_prefixes = None
 report_node = None
 
 # Reports a message to the user.
+
+
 def report(msg, *args):
     if report_node:
         out = u"%s:%d " % (renpy.parser.unicode_filename(report_node.filename), report_node.linenumber)
@@ -58,17 +61,19 @@ def report(msg, *args):
         out = ""
 
     out += msg % args
-    print
-    print out.encode('utf-8')
+    print()
+    print(out.encode('utf-8'))
 
 added = { }
 
 # Reports additional information about a message, the first time it
 # occurs.
+
+
 def add(msg):
     if not msg in added:
         added[msg] = True
-        print unicode(msg).encode('utf-8')
+        print(unicode(msg).encode('utf-8'))
 
 
 # Trys to evaluate an expression, announcing an error if it fails.
@@ -90,17 +95,19 @@ def try_eval(where, expr, additional=None):
     if m.group(1) in __builtins__:
         return
 
-    report( "Could not evaluate '%s', in %s.", expr, where)
+    report("Could not evaluate '%s', in %s.", expr, where)
     if additional:
         add(additional)
 
 # Returns True of the expression can be compiled as python, False
 # otherwise.
+
+
 def try_compile(where, expr, additional=None):
 
     try:
         renpy.python.py_compile_eval_bytecode(expr)
-    except:
+    except SyntaxError:
         report("'%s' could not be compiled as a python expression, %s.", expr, where)
         if additional:
             add(additional)
@@ -109,13 +116,13 @@ def try_compile(where, expr, additional=None):
 # The sets of names + attributes that we know are valid.
 imprecise_cache = set()
 
+
 def image_exists_imprecise(name):
     """
     Returns true if the image is a plausible image that can be used in a show
     statement. This returns true if at least one image exists with the same
     tag and containing all of the attributes (and none of the removed attributes).
     """
-
 
     if name in imprecise_cache:
         return True
@@ -151,6 +158,7 @@ def image_exists_imprecise(name):
 
 
 precise_cache = set()
+
 
 def image_exists_precise(name):
     """
@@ -217,6 +225,7 @@ def image_exists(name, expression, tag, precise=True):
 # Only check each file once.
 check_file_cache = { }
 
+
 def check_file(what, fn):
 
     present = check_file_cache.get(fn, None)
@@ -245,7 +254,7 @@ def check_displayable(what, d):
 
     try:
         if isinstance(d, renpy.display.core.Displayable):
-            d.visit_all(lambda a : a.predict_one())
+            d.visit_all(lambda a: a.predict_one())
     except:
         pass
 
@@ -259,6 +268,7 @@ def check_image(node):
     name = " ".join(node.imgname)
 
     check_displayable('image %s' % name, renpy.display.image.images[node.imgname])
+
 
 def imspec(t):
     if len(t) == 3:
@@ -318,6 +328,7 @@ def check_hide(node):
 def check_with(node):
     try_eval("a with statement or clause", node.expr, "Perhaps you forgot to declare, or misspelled, a transition?")
 
+
 def check_user(node):
 
     def error(msg):
@@ -333,6 +344,7 @@ def check_user(node):
         node.get_next()
     except:
         report("Didn't properly report what the next statement should be.")
+
 
 def text_checks(s):
     msg = renpy.text.extras.check_text_tags(s)
@@ -375,6 +387,7 @@ def text_checks(s):
 
         if state != 0:
             report("Unterminated string format code '%s' (in %s)", fmt, repr(s)[1:])
+
 
 def check_say(node):
 
@@ -432,6 +445,7 @@ def check_menu(node):
 
         text_checks(l)
 
+
 def check_jump(node):
 
     if node.expression:
@@ -439,6 +453,7 @@ def check_jump(node):
 
     if not renpy.game.script.has_label(node.target):
         report("The jump is to nonexistent label '%s'.", node.target)
+
 
 def check_call(node):
 
@@ -448,13 +463,16 @@ def check_call(node):
     if not renpy.game.script.has_label(node.label):
         report("The call is to nonexistent label '%s'.", node.label)
 
+
 def check_while(node):
     try_compile("in the condition of the while statement", node.condition)
+
 
 def check_if(node):
 
     for condition, _block in node.entries:
         try_compile("in a condition of the if statement", condition)
+
 
 def check_define(node, kind):
     if node.store != 'store':
@@ -482,7 +500,7 @@ def check_style_property_displayable(name, property, d):
 
     def sort_short(l):
         l = list(l)
-        l.sort(key=lambda a : len(a))
+        l.sort(key=lambda a: len(a))
         return l
 
     alts = sort_short(renpy.style.prefix_alts)
@@ -516,6 +534,7 @@ def check_style(name, s):
                 check_style_property_displayable(name, k, v)
 #                check_displayable(kname, v)
 
+
 def check_label(node):
 
     def add_arg(n):
@@ -536,12 +555,13 @@ def check_label(node):
 
 
 def check_styles():
-    for full_name, s in renpy.style.styles.iteritems(): # @UndefinedVariable
+    for full_name, s in renpy.style.styles.iteritems():  # @UndefinedVariable
         name = "style." + full_name[0]
         for i in full_name[1:]:
             name += "[{!r}]".format(i)
 
         check_style("Style " + name, s)
+
 
 def humanize(n):
     s = str(n)
@@ -555,6 +575,7 @@ def humanize(n):
         rv.insert(0, c)
 
     return ''.join(rv)
+
 
 def check_filename_encodings():
     """
@@ -570,6 +591,7 @@ def check_filename_encodings():
 
         report("%s contains non-ASCII characters in its filename.", filename)
         add("(ZIP file distributions can only reliably include ASCII filenames.)")
+
 
 class Count(object):
     """
@@ -591,6 +613,7 @@ class Count(object):
         self.words += len(s.split())
         self.characters += len(s)
 
+
 def common(n):
     """
     Returns true if the node is in the common directory.
@@ -602,6 +625,7 @@ def common(n):
         return True
     else:
         return False
+
 
 def lint():
     """
@@ -620,8 +644,8 @@ def lint():
 
     renpy.game.lint = True
 
-    print codecs.BOM_UTF8
-    print unicode(renpy.version + " lint report, generated at: " + time.ctime()).encode("utf-8")
+    print(codecs.BOM_UTF8)
+    print(unicode(renpy.version + " lint report, generated at: " + time.ctime()).encode("utf-8"))
 
     # This supports check_hide.
     global image_prefixes
@@ -680,7 +704,6 @@ def lint():
 
             counts[language].add(node.what)
 
-
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
             menu_count += 1
@@ -718,8 +741,6 @@ def lint():
         elif isinstance(node, renpy.ast.Default):
             check_define(node, "default")
 
-
-
     report_node = None
 
     check_styles()
@@ -727,7 +748,6 @@ def lint():
 
     for f in renpy.config.lint_hooks:
         f()
-
 
     lines = [ ]
 
@@ -754,11 +774,10 @@ characters per block. """.format(
 
         lines.append(s)
 
-
-    print
-    print
-    print "Statistics:"
-    print
+    print()
+    print()
+    print("Statistics:")
+    print()
 
     languages = list(counts)
     languages.sort()
@@ -770,17 +789,17 @@ characters per block. """.format(
 
     for l in lines:
         for ll in textwrap.wrap(l, 78):
-            print ll.encode("utf-8")
+            print(ll.encode("utf-8"))
 
-        print
+        print()
 
-    print
+    print()
     if renpy.config.developer and (renpy.config.developer != "auto"):
-        print "Remember to set config.developer to False before releasing."
-        print
+        print("Remember to set config.developer to False before releasing.")
+        print()
 
-    print "Lint is not a substitute for thorough testing. Remember to update Ren'Py"
-    print "before releasing. New releases fix bugs and improve compatibility."
+    print("Lint is not a substitute for thorough testing. Remember to update Ren'Py")
+    print("before releasing. New releases fix bugs and improve compatibility.")
 
     return False
 

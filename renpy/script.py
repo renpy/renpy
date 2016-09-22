@@ -22,6 +22,7 @@
 # This file contains code that is responsible for storing and executing a
 # Ren'Py script.
 
+from __future__ import print_function
 import renpy
 
 import os
@@ -51,11 +52,13 @@ RPYC2_HEADER = "RENPY RPC2"
 # A string
 BYTECODE_FILE = "cache/bytecode.rpyb"
 
+
 class ScriptError(Exception):
     """
     Exception that is raised if the script is somehow inconsistent,
     or otherwise wrong.
     """
+
 
 def collapse_stmts(stmts):
     """
@@ -69,6 +72,7 @@ def collapse_stmts(stmts):
         i.get_children(rv.append)
 
     return rv
+
 
 class Script(object):
     """
@@ -145,7 +149,7 @@ class Script(object):
                 return None
 
         import __main__
-        backups = __main__.path_to_saves(renpy.config.gamedir, "backups") # @UndefinedVariable
+        backups = __main__.path_to_saves(renpy.config.gamedir, "backups")  # @UndefinedVariable
 
         if backups is None:
             return
@@ -204,7 +208,6 @@ class Script(object):
             except:
                 pass
 
-
     def scan_script_files(self):
         """
         Scan the directories for script files.
@@ -220,7 +223,7 @@ class Script(object):
         # Similar, but for modules:
         self.module_files = [ ]
 
-        for dir, fn in dirlist: #@ReservedAssignment
+        for dir, fn in dirlist:  # @ReservedAssignment
 
             if fn.endswith(".rpy"):
                 if dir is None:
@@ -255,7 +258,7 @@ class Script(object):
 
         initcode = [ ]
 
-        for fn, dir in script_files: #@ReservedAssignment
+        for fn, dir in script_files:  # @ReservedAssignment
             self.load_appropriate_file(".rpyc", ".rpy", dir, fn, initcode)
 
         # Make the sort stable.
@@ -266,10 +269,9 @@ class Script(object):
 
         self.initcode = [ (prio, code) for prio, index, code in initcode ]
 
-
     def load_module(self, name):
 
-        files = [ (fn, dir) for fn, dir in self.module_files if fn == name ] #@ReservedAssignment
+        files = [ (fn, dir) for fn, dir in self.module_files if fn == name ]  # @ReservedAssignment
 
         if not files:
             raise Exception("Module %s could not be loaded." % name)
@@ -277,7 +279,7 @@ class Script(object):
         if len(files) > 2:
             raise Exception("Module %s ambiguous, multiple variants exist." % name)
 
-        fn, dir = files[0] #@ReservedAssignment
+        fn, dir = files[0]  # @ReservedAssignment
         initcode = [ ]
 
         self.load_appropriate_file(".rpymc", ".rpym", dir, fn, initcode)
@@ -300,7 +302,6 @@ class Script(object):
             if s.name is None:
                 s.name = (fn, version, self.serial)
                 self.serial += 1
-
 
     def merge_names(self, old_stmts, new_stmts):
 
@@ -448,7 +449,6 @@ class Script(object):
         for _i in range(3):
             f.write(struct.pack("III", 0, 0, 0))
 
-
     def write_rpyc_data(self, f, slot, data):
         """
         Writes data into `slot` of a .rpyc file. The data should be a binary
@@ -524,8 +524,7 @@ class Script(object):
         # Generate translate nodes.
         renpy.translation.restructure(stmts)
 
-
-    def load_file(self, dir, fn): #@ReservedAssignment
+    def load_file(self, dir, fn):  # @ReservedAssignment
 
         if fn.endswith(".rpy") or fn.endswith(".rpym"):
 
@@ -615,7 +614,7 @@ class Script(object):
                     return None, None
 
                 if data is None:
-                    print "Failed to load", fn
+                    print("Failed to load", fn)
                     return None, None
 
                 if not isinstance(data, dict):
@@ -638,7 +637,7 @@ class Script(object):
 
         return data, stmts
 
-    def load_appropriate_file(self, compiled, source, dir, fn, initcode): #@ReservedAssignment
+    def load_appropriate_file(self, compiled, source, dir, fn, initcode):  # @ReservedAssignment
         # This can only be a .rpyc file, since we're loading it
         # from an archive.
 
@@ -684,7 +683,7 @@ class Script(object):
             if os.path.exists(rpyfn) and os.path.exists(rpycfn):
 
                 # Are we forcing a compile?
-                force_compile = renpy.game.args.compile # @UndefinedVariable
+                force_compile = renpy.game.args.compile  # @UndefinedVariable
 
                 # Use the source file here since it'll be loaded if it exists.
                 lastfn = rpyfn
@@ -698,11 +697,11 @@ class Script(object):
                         data, stmts = self.load_file(dir, fn + compiled)
 
                         if data is None:
-                            print "Could not load " + rpycfn
+                            print("Could not load " + rpycfn)
 
                 except:
                     if "RENPY_RPYC_EXCEPTIONS" in os.environ:
-                        print "While loading", rpycfn
+                        print("While loading", rpycfn)
                         raise
 
                     pass
@@ -738,7 +737,6 @@ class Script(object):
         self.finish_load(stmts, initcode, filename=fn + source)
 
         self.digest.update(digest)
-
 
     def init_bytecode(self):
         """
@@ -811,7 +809,6 @@ class Script(object):
 
         self.all_pycode = [ ]
 
-
     def save_bytecode(self):
         if self.bytecode_dirty:
             try:
@@ -822,7 +819,6 @@ class Script(object):
                     f.write(dumps(data, 2).encode("zlib"))
             except:
                 pass
-
 
     def lookup(self, label):
         """

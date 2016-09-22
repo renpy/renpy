@@ -1,9 +1,11 @@
+from __future__ import print_function
 import renpy
 import jnius  # @UnresolvedImport
 
 from renpy.audio.audio import MusicContext
 
 VideoPlayer = jnius.autoclass("org.renpy.android.VideoPlayer")
+
 
 class AndroidVideoChannel(object):
 
@@ -51,7 +53,6 @@ class AndroidVideoChannel(object):
             self.default_loop = default_loop
             self.default_loop_set = True
 
-
     def get_context(self):
         """
         Returns the MusicContext corresponding to this channel, taken from
@@ -68,7 +69,6 @@ class AndroidVideoChannel(object):
 
     context = property(get_context)
 
-
     def start(self):
         """
         Starts playing the first video in the queue.
@@ -79,7 +79,7 @@ class AndroidVideoChannel(object):
 
         filename = self.queue.pop(0)
 
-        print "Playing", filename
+        print("Playing", filename)
 
         f = renpy.loader.load(filename)
 
@@ -123,7 +123,6 @@ class AndroidVideoChannel(object):
         if self.queue:
             self.start()
 
-
     def dequeue(self, even_tight=False):
         """
         Clears the queued music, except for a first item that has
@@ -135,14 +134,12 @@ class AndroidVideoChannel(object):
         else:
             self.queue = self.queue[:1]
 
-
     def interact(self):
         """
         Called (mostly) once per interaction.
         """
 
         self.periodic()
-
 
     def fadeout(self, secs):
         """

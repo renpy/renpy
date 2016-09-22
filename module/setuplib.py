@@ -22,6 +22,8 @@
 # This file encapsulates much of the complexity of the Ren'Py build process,
 # so setup.py can be clean by comparison.
 
+from __future__ import print_function
+
 import os
 import sys
 import re
@@ -105,9 +107,9 @@ def include(header, directory=None, optional=True):
         return False
 
     if directory is None:
-        print "Could not find required header {0}.".format(header)
+        print(("Could not find required header {0}.".format(header)))
     else:
-        print "Could not find required header {0}/{1}.".format(directory, header)
+        print(("Could not find required header {0}/{1}.".format(directory, header)))
 
     sys.exit(-1)
 
@@ -142,7 +144,7 @@ def library(name, optional=False):
     if optional:
         return False
 
-    print "Could not find required library {0}.".format(name)
+    print(("Could not find required library {0}.".format(name)))
     sys.exit(-1)
 
 # A list of extension objects that we use.
@@ -150,6 +152,7 @@ extensions = [ ]
 
 # A list of macros that are defined for all modules.
 global_macros = [ ]
+
 
 def cmodule(name, source, libs=[], define_macros=[], language="c"):
     """
@@ -177,6 +180,7 @@ def cmodule(name, source, libs=[], define_macros=[], language="c"):
 
 necessary_gen = [ ]
 
+
 def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None, language="c"):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
@@ -198,7 +202,7 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
     elif os.path.exists(fn):
         pass
     else:
-        print "Could not find {0}.".format(fn)
+        print(("Could not find {0}.".format(fn)))
         sys.exit(-1)
 
     module_dir = os.path.dirname(fn)
@@ -259,19 +263,19 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
         elif os.path.exists(dep_fn):
             pass
         else:
-            print "{0} depends on {1}, which can't be found.".format(fn, dep_fn)
+            print(("{0} depends on {1}, which can't be found.".format(fn, dep_fn)))
             sys.exit(-1)
 
         if os.path.getmtime(dep_fn) > c_mtime:
             out_of_date = True
 
     if out_of_date and not cython_command:
-        print "WARNING:", name, "is out of date, but RENPY_CYTHON isn't set."
+        print(("WARNING:", name, "is out of date, but RENPY_CYTHON isn't set."))
         out_of_date = False
 
     # If the file is out of date, regenerate it.
     if out_of_date:
-        print name, "is out of date."
+        print((name, "is out of date."))
 
         try:
             import subprocess
@@ -302,9 +306,9 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
                 c_fn])
 
         except subprocess.CalledProcessError, e:
-            print
-            print str(e)
-            print
+            print()
+            print((str(e)))
+            print()
             sys.exit(-1)
 
     # Build the module normally once we have the c file.
@@ -315,6 +319,7 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
 
         cmodule(name, [ c_fn ] + source, libs=libs, define_macros=define_macros, language=language)
 
+
 def find_unnecessary_gen():
 
     for i in os.listdir(gen):
@@ -324,10 +329,11 @@ def find_unnecessary_gen():
         if i in necessary_gen:
             continue
 
-        print "Unnecessary file", os.path.join(gen, i)
+        print(("Unnecessary file", os.path.join(gen, i)))
 
 
 py_modules = [ ]
+
 
 def pymodule(name):
     """
@@ -335,6 +341,7 @@ def pymodule(name):
     """
 
     py_modules.append(name)
+
 
 def copyfile(source, dest, replace=None, replace_with=None):
     """
@@ -367,16 +374,17 @@ def copyfile(source, dest, replace=None, replace_with=None):
     import shutil
     shutil.copystat(sfn, dfn)
 
+
 def setup(name, version):
     """
     Calls the distutils setup function.
     """
 
     distutils.core.setup(
-        name = name,
-        version = version,
-        ext_modules = extensions,
-        py_modules = py_modules,
+        name=name,
+        version=version,
+        ext_modules=extensions,
+        py_modules=py_modules,
         )
 
 # Ensure the gen directory exists.

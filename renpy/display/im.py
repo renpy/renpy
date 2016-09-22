@@ -23,6 +23,7 @@
 # size-based caching and constructing images from operations (like
 # cropping and scaling).
 
+from __future__ import print_function
 import renpy.display
 
 import math
@@ -52,6 +53,8 @@ class CacheEntry(object):
         self.time = 0
 
 # This is the singleton image cache.
+
+
 class Cache(object):
 
     def __init__(self):
@@ -111,7 +114,6 @@ class Cache(object):
         # This is only updated when config.developer is True.
         self.load_log = [ ]
 
-
     def init(self):
         """
         Updates the cache object to make use of settings that might be provided
@@ -120,7 +122,7 @@ class Cache(object):
 
         self.cache_limit = renpy.config.image_cache_size * renpy.config.screen_width * renpy.config.screen_height
 
-    def quit(self): #@ReservedAssignment
+    def quit(self):  # @ReservedAssignment
         if not self.preload_thread.isAlive():
             return
 
@@ -131,7 +133,6 @@ class Cache(object):
         self.preload_thread.join()
 
         self.clear()
-
 
     # Clears out the cache.
     def clear(self):
@@ -169,7 +170,6 @@ class Cache(object):
     # to lock things.
     def end_tick(self):
         self.preloads = [ ]
-
 
     # This returns the pygame surface corresponding to the provided
     # image. It also takes care of updating the age of images in the
@@ -222,7 +222,6 @@ class Cache(object):
                     else:
                         renpy.display.ic_log.write("Total Miss %r", ce.what)
 
-
         # Move it into the current generation. This isn't protected by
         # a lock, so in certain circumstances we could have an
         # inaccurate size - but that will be cured at the end of the
@@ -234,7 +233,6 @@ class Cache(object):
 
         # Done... return the surface.
         return ce.surf
-
 
     # This kills off a given cache entry.
     def kill(self, ce):
@@ -319,7 +317,6 @@ class Cache(object):
         if in_cache and renpy.config.debug_image_cache:
             renpy.display.ic_log.write("Kept %r", im)
 
-
     def start_prediction(self):
         """
         Called at the start of prediction, to ensure the thread runs
@@ -384,7 +381,6 @@ class Cache(object):
 
                         del self.pin_cache[i]
 
-
                 # For each image in the worklist...
                 for image in workset:
 
@@ -415,9 +411,9 @@ class Cache(object):
             self.load_log.pop()
 
 
-
 # The cache object.
 cache = Cache()
+
 
 def free_memory():
     """
@@ -449,7 +445,6 @@ class ImageBase(renpy.display.core.Displayable):
 
         super(ImageBase, self).__init__(**properties)
         self.identity = (type(self).__name__, ) + args
-
 
     def __hash__(self):
         return hash(self.identity)
@@ -494,6 +489,7 @@ class ImageBase(renpy.display.core.Displayable):
 
         return [ ]
 
+
 class Image(ImageBase):
     """
     This image manipulator loads an image from a file.
@@ -512,7 +508,6 @@ class Image(ImageBase):
             return u"Image %r" % self.filename
         else:
             return u"Image \u2026%s" % self.filename[-20:]
-
 
     def get_hash(self):
         return renpy.loader.get_hash(self.filename)
@@ -553,6 +548,7 @@ class Image(ImageBase):
 
             return [ self.filename ]
 
+
 class ZipFileImage(ImageBase):
 
     def __init__(self, zipfilename, filename, mtime=0, **properties):
@@ -572,11 +568,8 @@ class ZipFileImage(ImageBase):
         except:
             return renpy.display.pgrender.surface((2, 2), True)
 
-
-
     def predict_files(self):
         return [ ]
-
 
 
 class Composite(ImageBase):
@@ -648,6 +641,7 @@ class Composite(ImageBase):
 
         return rv
 
+
 class Scale(ImageBase):
     """
     :doc: im_im
@@ -698,6 +692,7 @@ class Scale(ImageBase):
     def predict_files(self):
         return self.image.predict_files()
 
+
 class FactorScale(ImageBase):
     """
     :doc: im_im
@@ -713,7 +708,6 @@ class FactorScale(ImageBase):
 
         image logo doubled = im.FactorScale("logo.png", 1.5)
     """
-
 
     def __init__(self, im, width, height=None, bilinear=True, **properties):
 
@@ -784,7 +778,6 @@ class Flip(ImageBase):
         self.horizontal = horizontal
         self.vertical = vertical
 
-
     def get_hash(self):
         return self.image.get_hash()
 
@@ -800,10 +793,8 @@ class Flip(ImageBase):
 
         return rv
 
-
     def predict_files(self):
         return self.image.predict_files()
-
 
 
 class Rotozoom(ImageBase):
@@ -846,7 +837,6 @@ class Rotozoom(ImageBase):
 
     def predict_files(self):
         return self.image.predict_files()
-
 
 
 class Crop(ImageBase):
@@ -914,6 +904,7 @@ def ramp(start, end):
 
 identity = ramp(0, 255)
 
+
 class Map(ImageBase):
     """
     This adjusts the colors of the image that is its child. It takes
@@ -953,6 +944,7 @@ class Map(ImageBase):
 
     def predict_files(self):
         return self.image.predict_files()
+
 
 class Twocolor(ImageBase):
     """
@@ -1036,6 +1028,7 @@ class Recolor(ImageBase):
     def predict_files(self):
         return self.image.predict_files()
 
+
 class MatrixColor(ImageBase):
     """
     :doc: im_matrixcolor
@@ -1097,6 +1090,7 @@ class MatrixColor(ImageBase):
     def predict_files(self):
         return self.image.predict_files()
 
+
 class matrix(tuple):
     """
     :doc: im_matrixcolor
@@ -1132,8 +1126,6 @@ class matrix(tuple):
         if not isinstance(a, matrix):
             a = matrix(a)
 
-
-
         if not isinstance(b, matrix):
 
             if isinstance(b, renpy.easy.Color):
@@ -1160,7 +1152,6 @@ class matrix(tuple):
                 o[0]*self[10] + o[1]*self[11] + o[2]*self[12] + o[3]*self[13] + self[14],
                 o[0]*self[15] + o[1]*self[16] + o[2]*self[17] + o[3]*self[18] + self[19],
                 1)
-
 
     def __add__(self, other):
         if isinstance(other, (int, float)):
@@ -1198,7 +1189,6 @@ im.matrix(%f, %f, %f, %f, %f.
           %f, %f, %f, %f, %f,
           %f, %f, %f, %f, %f)""" % self
 
-
     @staticmethod
     def identity():
         """
@@ -1213,6 +1203,7 @@ im.matrix(%f, %f, %f, %f, %f.
                       0, 1, 0, 0, 0,
                       0, 0, 1, 0, 0,
                       0, 0, 0, 1, 0)
+
     @staticmethod
     def saturation(level, desat=(0.2126, 0.7152, 0.0722)):
         """
@@ -1399,7 +1390,6 @@ im.matrix(%f, %f, %f, %f, %f.
                       0, 0, 0, 1, 0)
 
 
-
 def Grayscale(im, desat=(0.2126, 0.7152, 0.0722), **properties):
     """
     :doc: im_im
@@ -1447,6 +1437,7 @@ def Alpha(image, alpha, **properties):
 
     return Recolor(image, 255, 255, 255, int(255 * alpha), force_alpha=True, **properties)
 
+
 class Tile(ImageBase):
     """
     :doc: im_im
@@ -1493,6 +1484,7 @@ class Tile(ImageBase):
     def predict_files(self):
         return self.image.predict_files()
 
+
 class AlphaMask(ImageBase):
     """
     :doc: im_im
@@ -1535,6 +1527,7 @@ class AlphaMask(ImageBase):
 
     def predict_files(self):
         return self.base.predict_files() + self.mask.predict_files()
+
 
 def image(arg, loose=False, **properties):
     """
@@ -1597,6 +1590,7 @@ def load_image(im):
     surf = cache.get(image(im))
     return renpy.display.draw.load_texture(surf)
 
+
 def load_surface(im):
     """
     :doc: udd_utility
@@ -1608,7 +1602,7 @@ def load_surface(im):
 
 
 def reset_module():
-    print "Resetting cache."
+    print("Resetting cache.")
 
     global cache
     cache = Cache()

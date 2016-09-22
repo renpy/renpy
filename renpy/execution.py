@@ -22,6 +22,7 @@
 # This file contains code responsible for managing the execution of a
 # renpy object, as well as the context object.
 
+from __future__ import print_function
 import sys
 import time
 
@@ -36,6 +37,7 @@ il_statements = 0
 
 # The deadline for reporting we're not in an infinite loop.
 il_time = 0
+
 
 def check_infinite_loop():
     global il_statements
@@ -55,6 +57,7 @@ def check_infinite_loop():
 
     return
 
+
 def not_infinite_loop(delay):
     """
     :doc: other
@@ -65,13 +68,16 @@ def not_infinite_loop(delay):
     global il_time
     il_time = time.time() + delay
 
+
 class Delete(object):
     pass
+
 
 class PredictInfo(renpy.object.Object):
     """
     Not used anymore, but needed for backwards compatibility.
     """
+
 
 class Context(renpy.object.Object):
     """
@@ -145,7 +151,6 @@ class Context(renpy.object.Object):
 
         if version < 13:
             self.line_log = [ ]
-
 
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -243,7 +248,6 @@ class Context(renpy.object.Object):
         # The language of the current translate block.
         self.translate_block_language = None
 
-
     def make_dynamic(self, names, context=False):
         """
         Makes the variable names listed in names dynamic, by backing up
@@ -266,7 +270,6 @@ class Context(renpy.object.Object):
                 self.dynamic_stack[index][i] = store[i]
             else:
                 self.dynamic_stack[index][i] = Delete()
-
 
     def pop_dynamic(self):
         """
@@ -295,7 +298,6 @@ class Context(renpy.object.Object):
 
         while self.dynamic_stack:
             self.pop_dynamic()
-
 
     def goto_label(self, node_name):
         """
@@ -456,7 +458,6 @@ class Context(renpy.object.Object):
             if self.rollback and renpy.game.log:
                 renpy.game.log.complete()
 
-
     def mark_seen(self):
         """
         Marks the current statement as one that has been seen by the user.
@@ -572,7 +573,6 @@ class Context(renpy.object.Object):
 
         return renpy.game.script.lookup(label)
 
-
     def predict_return(self):
         """
         This predicts that a return will occur.
@@ -649,9 +649,9 @@ class Context(renpy.object.Object):
                 if renpy.config.debug_image_cache:
                     import traceback
 
-                    print
+                    print()
                     traceback.print_exc()
-                    print "While predicting images."
+                    print("While predicting images.")
 
             self.images = old_images
             self.predict_return_stack = None
@@ -659,7 +659,6 @@ class Context(renpy.object.Object):
             yield True
 
         yield False
-
 
     def seen_current(self, ever):
         """

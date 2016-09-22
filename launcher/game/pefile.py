@@ -41,6 +41,8 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 """
 
+from __future__ import print_function
+
 __revision__ = "$LastChangedRevision: 63 $"
 __author__ = 'Ero Carrera'
 __version__ = '1.2.10-%d' % int( __revision__[21:-2] )
@@ -1668,7 +1670,7 @@ class PE:
         """
 
         for warning in self.__warnings:
-            print '>', warning
+            print('>', warning)
 
 
     def full_load(self):
@@ -3251,7 +3253,7 @@ class PE:
 
     def print_info(self):
         """Print all the PE header information in a human readable from."""
-        print self.dump_info()
+        print(self.dump_info())
 
 
     def dump_info(self, dump=None):
@@ -3930,5 +3932,4 @@ class PE:
 if __name__ == "__main__":
     import sys
     pe = PE(sys.argv[1])
-    print pe
-
+    print(pe)

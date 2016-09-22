@@ -23,13 +23,17 @@
 # http://www.csn.ul.ie/~caolan/publink/winresdump/winresdump/doc/pefile.html
 # Contains a reasonable description of the format.
 
+from __future__ import print_function
+
 import struct
 import sys
 import array
-import pefile # @UnresolvedImport
+import pefile  # @UnresolvedImport
 
 # This class performs various operations on memory-loaded binary files,
 # including modifications.
+
+
 class BinFile(object):
 
     def set_u32(self, addr, value):
@@ -74,7 +78,7 @@ class BinFile(object):
     def tostring(self):
         return self.a.tostring()
 
-    def substring(self, start, len): #@ReservedAssignment
+    def substring(self, start, len):  # @ReservedAssignment
         return self.a[start:start+len].tostring()
 
     def __init__(self, data):
@@ -89,6 +93,8 @@ class BinFile(object):
 resource_virtual = 0
 
 # This parses a data block out of the resources.
+
+
 def parse_data(bf, offset):
     bf.seek(offset)
     data_offset = bf.u32()
@@ -105,13 +111,15 @@ def parse_data(bf, offset):
     return (code_page, "".join(l))
 
 # This parses a resource directory.
+
+
 def parse_directory(bf, offset):
 
     bf.seek(offset)
-    char = bf.u32() #@UnusedVariable
-    timedate = bf.u32() #@UnusedVariable
-    major = bf.u16() #@UnusedVariable
-    minor = bf.u16() #@UnusedVariable
+    char = bf.u32()  # @UnusedVariable
+    timedate = bf.u32()  # @UnusedVariable
+    major = bf.u16()  # @UnusedVariable
+    minor = bf.u16()  # @UnusedVariable
     n_named = bf.u16()
     n_id = bf.u16()
 
@@ -143,16 +151,17 @@ def parse_directory(bf, offset):
 def show_resources(d, prefix):
 
     if not isinstance(d, dict):
-        print prefix, "Codepage", d[0], "length", len(d[1])
+        print(prefix, "Codepage", d[0], "length", len(d[1]))
         return
 
     for k in d:
-        print prefix, k
+        print(prefix, k)
         show_resources(d[k], prefix + "  ")
 
 ##############################################################################
 # These functions repack the resources into a new resource segment. Here,
 # the offset is relative to the start of the resource segment.
+
 
 class Packer(object):
 
@@ -229,6 +238,8 @@ class Packer(object):
 ##############################################################################
 # This loads in an icon file, and returns a dictionary that is suitable for
 # use in the resources of an exe file.
+
+
 def load_icon(fn):
     f = BinFile(file(fn, "rb").read())
 
@@ -258,7 +269,6 @@ def load_icon(fn):
             f.set_u32(offset + 20, 0)
 
         rv[3][i + 1] = { 0 : (1252, f.substring(offset, size)) }
-
 
         group += struct.pack("BBBBHHIH", width, height, colors, reserved,
                              planes, bpp, size, i + 1)
@@ -346,4 +356,3 @@ if __name__ == "__main__":
     f = file(sys.argv[3], "wb")
     f.write(change_icons(sys.argv[1], sys.argv[2]))
     f.close()
-
