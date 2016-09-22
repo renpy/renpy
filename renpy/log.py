@@ -21,6 +21,7 @@
 
 # This module handles the logging of messages to a file.
 
+from __future__ import print_function
 import os.path
 import codecs
 import traceback
@@ -33,6 +34,7 @@ import sys
 
 # The file events are logged to.
 log_file = None
+
 
 class LogFile(object):
     """
@@ -68,7 +70,7 @@ class LogFile(object):
         if renpy.ios:
             self.file = sys.stdout
 
-    def open(self): #@ReservedAssignment
+    def open(self):  # @ReservedAssignment
 
         if self.file:
             return True
@@ -86,7 +88,7 @@ class LogFile(object):
             altfn = os.path.join(tempfile.gettempdir(), "renpy-" + self.name + ".txt")
 
             if renpy.android:
-                print "Logging to", fn
+                print("Logging to", fn)
 
             if self.append:
                 mode = "a"
@@ -152,7 +154,8 @@ class LogFile(object):
 # A map from the log name to a log object.
 log_cache = { }
 
-def open(name, append=False, developer=False, flush=False): #@ReservedAssignment
+
+def open(name, append=False, developer=False, flush=False):  # @ReservedAssignment
     rv = log_cache.get(name, None)
 
     if rv is None:

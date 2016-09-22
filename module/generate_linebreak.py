@@ -3,6 +3,8 @@
 # Based on: http://www.unicode.org/Public/UNIDATA/LineBreak.txt
 # Based on: http://unicode.org/reports/tr14/#PairBasedImplementation
 
+from __future__ import print_function
+
 import re
 
 breaking = """OP    CL    CP    QU    GL    NS    EX    SY    IS    PR    PO    NU    AL    HL    ID    IN    HY    BA    BB    B2    ZW    CM    WJ    H2    H3    JL    JV    JT    RI
@@ -41,24 +43,24 @@ other_classes = " PITCH AI BK CB CJ CR LF NL SA SG SP XX"
 
 lines = breaking.split("\n")
 
-print "# This is generated code. Do not edit."
-print
+print("# This is generated code. Do not edit.")
+print()
 
 # A map from character class to the number that represents it.
 cl = { }
 
 
 for i, j in enumerate((lines[0] + other_classes).split()):
-    print "cdef char BC_{} = {}".format(j, i)
+    print(("cdef char BC_{} = {}".format(j, i)))
     cl[j] = i
 
-print "CLASSES = {"
+print("CLASSES = {")
 
 for i, j in enumerate((lines[0] + other_classes).split()):
-    print "    \"{}\" : {},".format(j, i)
+    print(("    \"{}\" : {},".format(j, i)))
     cl[j] = i
 
-print "}"
+print("}")
 
 rules = [ ]
 
@@ -66,8 +68,8 @@ for l in lines[1:]:
     for c in l.split()[1:]:
         rules.append(c)
 
-print
-print "cdef char *break_rules = \"" + "".join(rules) + "\""
+print()
+print(("cdef char *break_rules = \"" + "".join(rules) + "\""))
 
 cc = [ 'XX' ] * 65536
 
@@ -98,6 +100,7 @@ for l in file("LineBreak.txt"):
         cc[start] = m.group(2)
         continue
 
+
 def generate(name, func):
 
     ncc = [ ]
@@ -108,7 +111,8 @@ def generate(name, func):
     assert "CJ" not in ncc
     assert "AI" not in ncc
 
-    print "cdef char *break_" + name + " = \"" + "".join("\\x%02x" % cl[i] for i in ncc) + "\""
+    print(("cdef char *break_" + name + " = \"" + "".join("\\x%02x" % cl[i] for i in ncc) + "\""))
+
 
 def western(i, cl):
     if cl == "CJ":
@@ -127,6 +131,7 @@ centered = [ 0x003A, 0x003B, 0x30FB, 0xff1a, 0xff1b, 0xff65, 0x0021, 0x003f, 0x2
 postfixes = [ 0x0025, 0x00A2, 0x00B0, 0x2030, 0x2032, 0x2033, 0x2103, 0xff05, 0xffe0 ]
 prefixes = [ 0x0024, 0x00a3, 0x00a5, 0x20ac, 0x2116, 0xff04, 0xffe1, 0xffe5 ]
 
+
 def cjk_strict(i, cl):
 
     if cl == "CJ":
@@ -135,6 +140,7 @@ def cjk_strict(i, cl):
         return "ID"
 
     return cl
+
 
 def cjk_normal(i, cl):
 
@@ -147,6 +153,7 @@ def cjk_normal(i, cl):
         return "ID"
 
     return cl
+
 
 def cjk_loose(i, cl):
 

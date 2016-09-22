@@ -21,6 +21,7 @@
 
 # Functions that make the user's life easier.
 
+from __future__ import print_function
 import renpy.display
 import renpy.styledata
 import contextlib
@@ -28,6 +29,7 @@ import time
 
 Color = renpy.color.Color
 color = renpy.color.Color
+
 
 def displayable_or_none(d, scope=None, dynamic=True):
 
@@ -63,6 +65,7 @@ def displayable_or_none(d, scope=None, dynamic=True):
         return d
 
     raise Exception("Not a displayable: %r" % (d,))
+
 
 def displayable(d, scope=None):
     """
@@ -128,7 +131,7 @@ def dynamic_image(d, scope=None, prefix=None):
             else:
                 scope = { }
 
-            for p in renpy.styledata.stylesets.prefix_search[prefix]: # @UndefinedVariable
+            for p in renpy.styledata.stylesets.prefix_search[prefix]:  # @UndefinedVariable
                 scope["prefix_"] = p
 
                 rv = renpy.substitutions.substitute(i, scope=scope, force=True, translate=False)[0]
@@ -165,7 +168,7 @@ def predict(d):
 def timed(name):
     start = time.time()
     yield
-    print "{0}: {1:.2f} ms".format(name, (time.time() - start) * 1000.0)
+    print("{0}: {1:.2f} ms".format(name, (time.time() - start) * 1000.0))
 
 
 def split_properties(properties, *prefixes):

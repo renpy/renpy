@@ -19,14 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
+from __future__ import print_function
 import renpy.test
 import renpy.display
 import random
 
 
 def find_focus(pattern):
-
     """
     Trues to find the focus with the shortest alt text containing `pattern`.
     If found, returns a random coordinate within that displayable.
@@ -46,7 +45,7 @@ def find_focus(pattern):
                 return None
 
         if f.x is None:
-            t = renpy.display.tts.root._tts_all() # @UndefinedVariable
+            t = renpy.display.tts.root._tts_all()  # @UndefinedVariable
         else:
             t = f.widget._tts_all()
 
@@ -54,7 +53,6 @@ def find_focus(pattern):
             return t
         else:
             return None
-
 
     # A list of alt_text_length, focus pairs.
     matching = [ ]
@@ -141,8 +139,6 @@ def find_position(f, position):
         y = random.randrange(f.y, f.y + f.h)
 
     else:
-        print
+        print()
 
         raise Exception("Could not locate the displayable.")
-
-

@@ -22,6 +22,7 @@
 # This file contains functions used to help debug memory leaks. They aren't
 # called by default, but can be used when problems occur.
 
+from __future__ import print_function
 import time
 import weakref
 import types
@@ -33,9 +34,11 @@ import renpy
 
 memory_log = renpy.log.open("memory")
 
+
 def write(s):
     sys.stdout.write(s + "\n")
     memory_log.write("%s", s)
+
 
 def walk_memory(roots, seen=None):
     """
@@ -101,6 +104,7 @@ def walk_memory(roots, seen=None):
             worklist_append((name, v))
 
     return size, seen
+
 
 def profile_memory_common(packages=[ "renpy", "store" ]):
     """
@@ -190,6 +194,7 @@ def profile_memory(fraction=1.0, minimum=0):
 
 old_usage = { }
 old_total = 0
+
 
 def diff_memory(update=True):
     """
@@ -342,15 +347,15 @@ def find_parents(cls):
 
             objects.append(o)
 
-            print prefix + str(id(o)), type(o),
+            print(prefix + str(id(o)), type(o), end=' ')
 
             try:
                 if isinstance(o, dict) and "__name__" in o:
-                    print "with name", o["__name__"]
+                    print("with name", o["__name__"])
                 else:
-                    print repr(o)#[:1000]
+                    print(repr(o))  # [:1000]
             except:
-                print "Bad repr."
+                print("Bad repr.")
 
             found = False
 
@@ -388,7 +393,7 @@ def find_parents(cls):
                 break
 
             if not found:
-                print "<no parent, popping>"
+                print("<no parent, popping>")
 
             o, prefix = queue.pop()
 
@@ -397,8 +402,8 @@ def find_parents(cls):
             import random
             if random.random() < .1:
 
-                print
-                print "==================================================="
-                print
+                print()
+                print("===================================================")
+                print()
 
                 print_path(o)

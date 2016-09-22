@@ -1,6 +1,7 @@
 #!/home/tom/ab/renpy/lib/linux-x86_64/python -O
 
 # Builds a distribution of Ren'Py.
+from __future__ import print_function
 
 import sys
 import os
@@ -13,6 +14,7 @@ if not sys.flags.optimize:
     raise Exception("Optimization disabled.")
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
+
 
 def copy_tutorial_file(src, dest):
     """
@@ -60,7 +62,7 @@ def main():
     # file has changed, bump it by 1.
     import renpy
 
-    match_version = ".".join(str(i) for i in renpy.version_tuple[:2]) #@UndefinedVariable
+    match_version = ".".join(str(i) for i in renpy.version_tuple[:2])  # @UndefinedVariable
 
     s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", "--match", "start-" + match_version ])
     parts = s.strip().split("-")
@@ -77,14 +79,14 @@ def main():
         f.write("vc_version = {}".format(vc_version))
 
     try:
-        reload(sys.modules['renpy.vc_version']) #@UndefinedVariable
+        reload(sys.modules['renpy.vc_version'])  # @UndefinedVariable
     except:
-        import renpy.vc_version # @UnusedImport
+        import renpy.vc_version  # @UnusedImport
 
     reload(sys.modules['renpy'])
 
     # Check that the versions match.
-    full_version = renpy.version_only #@UndefinedVariable
+    full_version = renpy.version_only  # @UndefinedVariable
     if "-" not in args.version \
         and not full_version.startswith(args.version):
         raise Exception("The command-line and Ren'Py versions do not match.")
@@ -97,7 +99,7 @@ def main():
     if args.variant:
         destination += "-" + args.variant
 
-    print "Version {} ({})".format(args.version, full_version)
+    print("Version {} ({})".format(args.version, full_version))
 
     # Perhaps autobuild.
     if "RENPY_BUILD_ALL" in os.environ:
@@ -113,23 +115,23 @@ def main():
     # Compile the various games.
     if not args.fast:
         for i in [ 'tutorial', 'launcher', 'the_question' ]:
-            print "Compiling", i
+            print("Compiling", i)
             subprocess.check_call(["./renpy.sh", i, "quit" ])
 
     # Kick off the rapt build.
     if not args.fast:
 
-        print "Cleaning RAPT."
+        print("Cleaning RAPT.")
 
         sys.path.insert(0, os.path.join(ROOT, "rapt", "buildlib"))
 
-        import rapt.interface # @UnresolvedImport
-        import rapt.build # @UnresolvedImport
+        import rapt.interface  # @UnresolvedImport
+        import rapt.build  # @UnresolvedImport
 
         interface = rapt.interface.Interface()
         rapt.build.distclean(interface)
 
-        print "Compiling RAPT and renios."
+        print("Compiling RAPT and renios.")
 
         compileall.compile_dir("rapt/buildlib/", ddir="rapt/buildlib/", quiet=1)
         compileall.compile_dir("renios/buildlib/", ddir="renios/buildlib/", quiet=1)
@@ -161,7 +163,7 @@ def main():
             destination,
             ]
 
-    print
+    print()
     subprocess.check_call(cmd)
 
     # Sign the update.
@@ -234,9 +236,7 @@ def main():
         if os.path.exists(sdk + ".7z.exe"):
             os.unlink(sdk + ".7z.exe")
 
-    print
-
-
+    print()
 
 
 if __name__ == "__main__":
