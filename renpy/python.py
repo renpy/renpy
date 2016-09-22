@@ -30,7 +30,6 @@ import marshal
 import random
 import weakref
 import re
-import sets
 import sys
 import time
 
@@ -42,11 +41,13 @@ import renpy.audio
 # Deleted is a singleton object that's used to represent an object that has
 # been deleted from the store.
 
+
 class StoreDeleted(object):
     def __reduce__(self):
         return "deleted"
 
 deleted = StoreDeleted()
+
 
 class StoreModule(object):
     """
@@ -68,9 +69,11 @@ class StoreModule(object):
     def __delattr__(self, key):
         del self.__dict__[key]
 
+
 # Used to unpickle a store module.
 def get_store_module(name):
     return sys.modules[name]
+
 
 class StoreDict(dict):
     """
@@ -146,6 +149,7 @@ store_modules = { }
 # run.
 initialized_store_dicts = set()
 
+
 def create_store(name):
     """
     Creates the store with `name`.
@@ -183,6 +187,7 @@ def create_store(name):
     if name.startswith("store."):
         store_dicts["store"][name[6:]] = sys.modules[name]
 
+
 class StoreBackup():
     """
     This creates a copy of the current store, as it was at the start of
@@ -199,7 +204,6 @@ class StoreBackup():
 
         # The contents of ever_been_changed for each store.
         self.ever_been_changed = { }
-
 
         for k, v in store_dicts.iteritems():
             self.store[k] = dict(v)
@@ -226,6 +230,7 @@ class StoreBackup():
 
 clean_store_backup = None
 
+
 def make_clean_stores():
     """
     Copy the clean stores.
@@ -240,12 +245,14 @@ def make_clean_stores():
 
     clean_store_backup = StoreBackup()
 
+
 def clean_stores():
     """
     Revert the store to the clean copy.
     """
 
     clean_store_backup.restore()
+
 
 def clean_store(name):
     """
@@ -257,6 +264,7 @@ def clean_store(name):
 
     clean_store_backup.restore_one(name)
 
+
 def reset_store_changes(name):
 
     if not name.startswith("store."):
@@ -267,6 +275,7 @@ def reset_store_changes(name):
 
 ##### Code that computes reachable objects, which is used to filter
 ##### the rollback list before rollback or serialization.
+
 
 class NoRollback(object):
     """
@@ -338,6 +347,7 @@ def reached(obj, reachable, wait):
 
     # parents.pop()
 
+
 def reached_vars(store, reachable, wait):
     """
     Marks everything reachable from the variables in the store
@@ -363,64 +373,74 @@ def reached_vars(store, reachable, wait):
 
 class WrapNode(ast.NodeTransformer):
 
-    def visit_SetComp(self, n):
+    def visit_Set(self, n):
         return ast.Call(
-            func = ast.Name(
+            func=ast.Name(
                 id="__renpy__set__",
                 ctx=ast.Load()
                 ),
-            args = [ self.generic_visit(n) ],
-            keywords = [ ],
-            starargs = None,
-            kwargs = None)
+            args=[ self.generic_visit(n) ],
+            keywords=[ ],
+            starargs=None,
+            kwargs=None)
+
+    def visit_SetComp(self, n):
+        return ast.Call(
+            func=ast.Name(
+                id="__renpy__set__",
+                ctx=ast.Load()
+                ),
+            args=[ self.generic_visit(n) ],
+            keywords=[ ],
+            starargs=None,
+            kwargs=None)
 
     def visit_ListComp(self, n):
         return ast.Call(
-            func = ast.Name(
+            func=ast.Name(
                 id="__renpy__list__",
                 ctx=ast.Load()
                 ),
-            args = [ self.generic_visit(n) ],
-            keywords = [ ],
-            starargs = None,
-            kwargs = None)
+            args=[ self.generic_visit(n) ],
+            keywords=[ ],
+            starargs=None,
+            kwargs=None)
 
     def visit_List(self, n):
         if not isinstance(n.ctx, ast.Load):
             return self.generic_visit(n)
 
         return ast.Call(
-            func = ast.Name(
+            func=ast.Name(
                 id="__renpy__list__",
                 ctx=ast.Load()
                 ),
-            args = [ self.generic_visit(n) ],
-            keywords = [ ],
-            starargs = None,
-            kwargs = None)
+            args=[ self.generic_visit(n) ],
+            keywords=[ ],
+            starargs=None,
+            kwargs=None)
 
     def visit_DictComp(self, n):
         return ast.Call(
-            func = ast.Name(
+            func=ast.Name(
                 id="__renpy__dict__",
                 ctx=ast.Load()
                 ),
-            args = [ self.generic_visit(n) ],
-            keywords = [ ],
-            starargs = None,
-            kwargs = None)
+            args=[ self.generic_visit(n) ],
+            keywords=[ ],
+            starargs=None,
+            kwargs=None)
 
     def visit_Dict(self, n):
-
         return ast.Call(
-            func = ast.Name(
+            func=ast.Name(
                 id="__renpy__dict__",
                 ctx=ast.Load()
                 ),
-            args = [ self.generic_visit(n) ],
-            keywords = [ ],
-            starargs = None,
-            kwargs = None)
+            args=[ self.generic_visit(n) ],
+            keywords=[ ],
+            starargs=None,
+            kwargs=None)
 
 wrap_node = WrapNode()
 
@@ -440,6 +460,7 @@ def set_filename(filename, offset, tree):
 
 
 unicode_re = re.compile(ur'[\u0080-\uffff]')
+
 
 def unicode_sub(m):
     """
@@ -466,11 +487,13 @@ def unicode_sub(m):
 
 string_re = re.compile(r'([uU]?[rR]?)("""|"|\'\'\'|\')((\\.|.)*?)\2')
 
+
 def escape_unicode(s):
     if unicode_re.search(s):
         s = string_re.sub(unicode_sub, s)
 
     return s
+
 
 def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
     """
@@ -545,7 +568,6 @@ def py_compile_eval_bytecode(source, **kwargs):
     return marshal.dumps(code)
 
 
-
 ##### Classes that are exported in place of the normal list, dict, and
 ##### object.
 
@@ -553,13 +575,14 @@ def py_compile_eval_bytecode(source, **kwargs):
 # this to check to see if a background-save is valid.
 mutate_flag = True
 
+
 def mutator(method):
 
     def do_mutation(self, *args, **kwargs):
 
         global mutate_flag
 
-        mutated = renpy.game.log.mutated #@UndefinedVariable
+        mutated = renpy.game.log.mutated  # @UndefinedVariable
 
         if id(self) not in mutated:
             mutated[id(self)] = ( weakref.ref(self), self._clean())
@@ -666,9 +689,9 @@ class RevertableList(list):
     reverse = mutator(list.reverse)
     sort = mutator(list.sort)
 
-    def wrapper(method): # E0213 @NoSelf
+    def wrapper(method):  # E0213 @NoSelf
         def newmethod(*args, **kwargs):
-            return RevertableList(method(*args, **kwargs)) # E1102
+            return RevertableList(method(*args, **kwargs))  # E1102
 
         return newmethod
 
@@ -716,11 +739,14 @@ class RevertableList(list):
         else:
             self[:] = compressed
 
+
 def revertable_range(*args):
     return RevertableList(range(*args))
 
+
 def revertable_sorted(*args, **kwargs):
     return RevertableList(sorted(*args, **kwargs))
+
 
 class RevertableDict(dict):
 
@@ -739,9 +765,9 @@ class RevertableDict(dict):
     popitem = mutator(dict.popitem)
     setdefault = mutator(dict.setdefault)
 
-    def list_wrapper(method): # E0213 @NoSelf
+    def list_wrapper(method):  # E0213 @NoSelf
         def newmethod(*args, **kwargs):
-            return RevertableList(method(*args, **kwargs)) # E1102
+            return RevertableList(method(*args, **kwargs))  # E1102
 
         return newmethod
 
@@ -769,7 +795,7 @@ class RevertableDict(dict):
             self[k] = v
 
 
-class RevertableSet(sets.Set):
+class RevertableSet(set):
 
     def __init__(self, *args):
         log = renpy.game.log
@@ -777,44 +803,41 @@ class RevertableSet(sets.Set):
         if log is not None:
             log.mutated[id(self)] = None
 
-        sets.Set.__init__(self, *args)
+        set.__init__(self, *args)
 
-    __iand__ = mutator(sets.Set.__iand__)
-    __ior__ = mutator(sets.Set.__ior__)
-    __isub__ = mutator(sets.Set.__isub__)
-    __ixor__ = mutator(sets.Set.__ixor__)
-    add = mutator(sets.Set.add)
-    clear = mutator(sets.Set.clear)
-    difference_update = mutator(sets.Set.difference_update)
-    discard = mutator(sets.Set.discard)
-    intersection_update = mutator(sets.Set.intersection_update)
-    pop = mutator(sets.Set.pop)
-    remove = mutator(sets.Set.remove)
-    symmetric_difference_update = mutator(sets.Set.symmetric_difference_update)
-    union_update = mutator(sets.Set.union_update)
-    update = mutator(sets.Set.update)
+    __iand__ = mutator(set.__iand__)
+    __ior__ = mutator(set.__ior__)
+    __isub__ = mutator(set.__isub__)
+    __ixor__ = mutator(set.__ixor__)
+    add = mutator(set.add)
+    clear = mutator(set.clear)
+    difference_update = mutator(set.difference_update)
+    discard = mutator(set.discard)
+    intersection_update = mutator(set.intersection_update)
+    pop = mutator(set.pop)
+    remove = mutator(set.remove)
+    symmetric_difference_update = mutator(set.symmetric_difference_update)
+    update = mutator(set.update)
 
-    def wrapper(method): # E0213 @NoSelf
+    def wrapper(method):  # E0213 @NoSelf
         def newmethod(*args, **kwargs):
-            rv = method(*args, **kwargs) # E1102
-            if isinstance(rv, sets.Set):
+            rv = method(*args, **kwargs)  # E1102
+            if isinstance(rv, (set, frozenset)):
                 return RevertableSet(rv)
             else:
                 return rv
 
         return newmethod
 
-    __and__ = wrapper(sets.Set.__and__)
-    __copy__ = wrapper(sets.Set.__copy__)
-    __deepcopy__ = wrapper(sets.Set.__deepcopy__)
-    __sub__ = wrapper(sets.Set.__sub__)
-    __xor__ = wrapper(sets.Set.__xor__)
-    __or__ = wrapper(sets.Set.__or__)
-    copy = wrapper(sets.Set.copy)
-    difference = wrapper(sets.Set.difference)
-    intersection = wrapper(sets.Set.intersection)
-    symmetric_difference = wrapper(sets.Set.symmetric_difference)
-    union = wrapper(sets.Set.union)
+    __and__ = wrapper(set.__and__)
+    __sub__ = wrapper(set.__sub__)
+    __xor__ = wrapper(set.__xor__)
+    __or__ = wrapper(set.__or__)
+    copy = wrapper(set.copy)
+    difference = wrapper(set.difference)
+    intersection = wrapper(set.intersection)
+    symmetric_difference = wrapper(set.symmetric_difference)
+    union = wrapper(set.union)
 
     del wrapper
 
@@ -825,8 +848,8 @@ class RevertableSet(sets.Set):
         return clean
 
     def _rollback(self, compressed):
-        sets.Set.clear(self)
-        sets.Set.update(self, compressed)
+        set.clear(self)
+        set.update(self, compressed)
 
 
 class RevertableObject(object):
@@ -900,7 +923,7 @@ class DetRandom(random.Random):
 
         self.stack = [ ]
 
-    def Random(self,seed=None):
+    def Random(self, seed=None):
         """
         Returns a new RNG object separate from the main one.
         """
@@ -916,6 +939,7 @@ rng = DetRandom()
 
 generation = time.time()
 serial = 0
+
 
 class Rollback(renpy.object.Object):
     """
@@ -998,7 +1022,6 @@ class Rollback(renpy.object.Object):
         if version < 4:
             self.hard_checkpoint = self.checkpoint
 
-
     def purge_unreachable(self, reachable, wait):
         """
         Adds objects that are reachable from the store of this
@@ -1047,7 +1070,6 @@ class Rollback(renpy.object.Object):
 
         return True
 
-
     def rollback(self):
         """
         Reverts the state of the game to what it was at the start of the
@@ -1083,7 +1105,6 @@ class Rollback(renpy.object.Object):
 
         renpy.game.contexts.pop()
         renpy.game.contexts.append(self.context)
-
 
 
 class RollbackLog(renpy.object.Object):
@@ -1240,8 +1261,6 @@ class RollbackLog(renpy.object.Object):
                 # This can occur when self.mutated is changed as we're
                 # iterating over it.
                 pass
-
-
 
     def get_roots(self):
         """
@@ -1524,7 +1543,6 @@ class RollbackLog(renpy.object.Object):
         else:
             raise renpy.game.RestartContext(label)
 
-
     def freeze(self, wait=None):
         """
         This is called to freeze the store and the log, in preparation
@@ -1562,7 +1580,7 @@ class RollbackLog(renpy.object.Object):
         """
 
         # Fix up old screens.
-        renpy.display.screen.before_restart() # @UndefinedVariable
+        renpy.display.screen.before_restart()  # @UndefinedVariable
 
         # Set us up as the game log.
         renpy.game.log = self
@@ -1596,7 +1614,6 @@ class RollbackLog(renpy.object.Object):
 
         # Because of the rollback, we never make it this far.
 
-
     def build_identifier_cache(self):
 
         if self.identifier_cache is not None:
@@ -1627,16 +1644,16 @@ class RollbackLog(renpy.object.Object):
         return self.identifier_cache.get(identifier, None)
 
 
-def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"): #@ReservedAssignment
+def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"):  # @ReservedAssignment
 
     if hide:
-        locals = { } #@ReservedAssignment
+        locals = { }  # @ReservedAssignment
 
     if globals is None:
-        globals = store_dicts[store] #@ReservedAssignment
+        globals = store_dicts[store]  # @ReservedAssignment
 
     if locals is None:
-        locals = globals #@ReservedAssignment
+        locals = globals  # @ReservedAssignment
 
     exec bytecode in globals, locals
 
@@ -1647,24 +1664,25 @@ def py_exec(source, hide=False, store=None):
         store = store_dicts["store"]
 
     if hide:
-        locals = { } #@ReservedAssignment
+        locals = { }  # @ReservedAssignment
     else:
-        locals = store #@ReservedAssignment
+        locals = store  # @ReservedAssignment
 
     exec py_compile(source, 'exec') in store, locals
 
 
-def py_eval_bytecode(bytecode, globals=None, locals=None): #@ReservedAssignment
+def py_eval_bytecode(bytecode, globals=None, locals=None):  # @ReservedAssignment
 
     if globals is None:
-        globals = store_dicts["store"] #@ReservedAssignment
+        globals = store_dicts["store"]  # @ReservedAssignment
 
     if locals is None:
-        locals = globals #@ReservedAssignment
+        locals = globals  # @ReservedAssignment
 
     return eval(bytecode, globals, locals)
 
-def py_eval(code, globals=None, locals=None): #@ReservedAssignment
+
+def py_eval(code, globals=None, locals=None):  # @ReservedAssignment
     if isinstance(code, basestring):
         code = py_compile(code, 'eval')
     return py_eval_bytecode(code, globals, locals)
@@ -1693,13 +1711,13 @@ def raise_at_location(e, loc):
 class StoreProxy(object):
 
     def __getattr__(self, k):
-        return getattr(renpy.store, k) #@UndefinedVariable
+        return getattr(renpy.store, k)  # @UndefinedVariable
 
     def __setattr__(self, k, v):
-        setattr(renpy.store, k, v) #@UndefinedVariable
+        setattr(renpy.store, k, v)  # @UndefinedVariable
 
     def __delattr__(self, k):
-        delattr(renpy.store, k) #@UndefinedVariable
+        delattr(renpy.store, k)  # @UndefinedVariable
 
 
 # Code for pickling bound methods.
@@ -1712,6 +1730,7 @@ def method_pickle(method):
         obj = method.im_class
 
     return method_unpickle, (obj, name)
+
 
 def method_unpickle(obj, name):
     return getattr(obj, name)
