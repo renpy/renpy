@@ -628,6 +628,48 @@ init python in distribute:
             for fn in os.listdir(directory):
                 walk(fn, os.path.join(directory, fn))
 
+        def rescan(self, oldlist, directory):
+            """
+            Scans `directory`, and produces a filelist from it. Returns the
+            produced filelist.
+
+            `oldlist`
+                Is a filelist. If a file has the xbit set in the oldlist, it
+                has the xbit set in the new list.
+            """
+
+            executable = set()
+
+            for f in oldlist:
+                if f.executable:
+                    executable.add(f.name)
+
+            rv = FileList()
+
+            def walk(name, path):
+
+                # Ignore ASCII control characters, like (Icon\r on the mac).
+                if re.search('[\x00-\x19]', name):
+                    return
+
+                is_dir = os.path.isdir(path)
+
+                f = File(name, path, is_dir, name in executable)
+                rv.append(f)
+
+                if is_dir:
+
+                    for fn in os.listdir(path):
+                        walk(
+                            name + "/" + fn,
+                            os.path.join(path, fn),
+                            )
+
+            for fn in os.listdir(directory):
+                walk(fn, os.path.join(directory, fn))
+
+            return rv
+
         def temp_filename(self, name):
             self.project.make_tmp()
             return os.path.join(self.project.tmp, name)
@@ -986,9 +1028,10 @@ init python in distribute:
 
             pkg.close()
 
+            # Rescan the signed app.
+            fl = self.rescan(fl, dn)
+
             return fl
-
-
 
         def prepare_file_list(self, format, file_lists):
             """
