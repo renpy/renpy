@@ -25,10 +25,10 @@
 from __future__ import print_function
 import renpy
 
+import hashlib
 import os
 import imp
 import difflib
-import md5
 import time
 import marshal
 import struct
@@ -134,7 +134,7 @@ class Script(object):
 
         self.serial = 0
 
-        self.digest = md5.md5(renpy.version_only)
+        self.digest = hashlib.md5(renpy.version_only)
 
         self.loaded_rpy = False
         self.backup_list = [ ]
@@ -578,7 +578,7 @@ class Script(object):
                 self.write_rpyc_data(f, 2, dumps((data, stmts), 2))
 
                 with open(fullfn, "rU") as fullf:
-                    rpydigest = md5.md5(fullf.read()).digest()
+                    rpydigest = hashlib.md5(fullf.read()).digest()
 
                 self.write_rpyc_md5(f, rpydigest)
 
@@ -651,8 +651,8 @@ class Script(object):
                 raise Exception("Could not load from archive %s." % (lastfn,))
 
             f = renpy.loader.load(fn + compiled)
-            f.seek(-md5.digest_size, 2)
-            digest = f.read(md5.digest_size)
+            f.seek(-hashlib.md5().digest_size, 2)
+            digest = f.read(hashlib.md5().digest_size)
             f.close()
 
         else:
@@ -666,15 +666,15 @@ class Script(object):
 
             if os.path.exists(rpyfn):
                 with open(rpyfn, "rU") as f:
-                    rpydigest = md5.md5(f.read()).digest()
+                    rpydigest = hashlib.md5(f.read()).digest()
             else:
                 rpydigest = None
 
             try:
                 if os.path.exists(rpycfn):
                     with open(rpycfn, "rb") as f:
-                        f.seek(-md5.digest_size, 2)
-                        rpycdigest = f.read(md5.digest_size)
+                        f.seek(-hashlib.md5().digest_size, 2)
+                        rpycdigest = f.read(hashlib.md5().digest_size)
                 else:
                     rpycdigest = None
             except:
