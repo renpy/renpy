@@ -999,6 +999,20 @@ init python in distribute:
                 for f in l:
                     f.name = rename_one(f.name)
 
+        def run(self, message, command, **kwargs):
+            """
+            Runs a command.
+            """
+
+            interface.processing(message)
+
+            cmd = [ renpy.fsencode(i.format(**kwargs)) for i in command ]
+
+            # print "\"" + "\" \"".join(cmd) + "\""
+
+            subprocess.check_call(cmd, stdout=self.log, stderr=subprocess.STDOUT)
+
+
         def sign_app(self, fl, appzip):
             """
             Signs the mac app contained in appzip.
@@ -1024,7 +1038,7 @@ init python in distribute:
             pkg = DirectoryPackage(dn)
 
             for i, f in enumerate(fl):
-                self.reporter.progress(_("Unpacking the mac app for signing..."), i, len(fl))
+                self.reporter.progress(_("Unpacking the Macintosh application for signing..."), i, len(fl))
 
                 if f.directory:
                     pkg.add_directory(f.name, f.path)
@@ -1032,6 +1046,14 @@ init python in distribute:
                     pkg.add_file(f.name, f.path, f.executable)
 
             pkg.close()
+
+            # Sign the mac app.
+            self.run(
+                _("Signing the Macintosh application..."),
+                self.build["mac_codesign_command"],
+                identity=identity,
+                app=os.path.join(dn, self.app),
+                )
 
             # Rescan the signed app.
             fl = self.rescan(fl, dn)
@@ -1047,8 +1069,6 @@ init python in distribute:
 
             macapp = (format in { "app-zip", "app-directory", "app-dmg" })
             key = (macapp, tuple(file_lists))
-
-            print key
 
             if key in self.file_list_cache:
                 return self.file_list_cache[key].copy()

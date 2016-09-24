@@ -369,7 +369,7 @@ init -1500 python in build:
     mac_identity = None
 
     # The command used for mac codesigning.
-    mac_codesign_command = [ ]
+    mac_codesign_command = [ "codesign", "-s", "{identity}", "-f", "--deep", "--no-strict", "{app}" ]
 
     # The command used to build and sign a dmg.
     mac_dmg_command = [ ]
@@ -379,7 +379,6 @@ init -1500 python in build:
     def dump():
 
         rv = { }
-
 
         if not include_old_themes:
             exclude_old_themes = [
