@@ -258,12 +258,14 @@ init -1500 python in build:
 
             zip
                 A zip file.
-            app-zip
-                A zip file containing a macintosh application.
             tar.bz2
                 A tar.bz2 file.
             directory
                 A directory containing the files.
+            dmg
+                A Macintosh DMG containing the files.
+            app-zip
+                A zip file containing a macintosh application.
             app-directory
                 A directory containing the mac app.
             app-dmg
@@ -295,7 +297,7 @@ init -1500 python in build:
         formats = format.split()
 
         for i in formats:
-            if i not in [ "zip", "app-zip", "tar.bz2", "directory", "app-directory", "app-dmg" ]:
+            if i not in [ "zip", "app-zip", "tar.bz2", "directory", "dmg", "app-directory", "app-dmg" ]:
                 raise Exception("Format {} not known.".format(i))
 
         if description is None:
@@ -369,10 +371,14 @@ init -1500 python in build:
     mac_identity = None
 
     # The command used for mac codesigning.
-    mac_codesign_command = [ "codesign", "-s", "{identity}", "-f", "--deep", "--no-strict", "{app}" ]
+    mac_codesign_command = [ "/usr/bin/codesign", "-s", "{identity}", "-f", "--deep", "--no-strict", "{app}" ]
 
-    # The command used to build and sign a dmg.
-    mac_dmg_command = [ ]
+    # The command used to build a dmg.
+    mac_create_dmg_command = [ "/usr/bin/hdiutil", "create", "-format", "UDBZ", "-volname", "{volname}", "-sourcedir", "{sourcedir}", "-ov", "{dmg}" ]
+
+    # The command used to sign a dmg.
+    mac_codesign_dmg_command = [ "/usr/bin/codesign", "-s", "{identity}", "-f", "{dmg}" ]
+
 
     # This function is called by the json_dump command to dump the build data
     # into the json file.
@@ -428,7 +434,8 @@ init -1500 python in build:
         if mac_identity:
             rv["mac_identity"] = mac_identity
             rv["mac_codesign_command"] = mac_codesign_command
-            rv["mac_dmg_command"] = mac_dmg_command
+            rv["mac_create_dmg_command"] = mac_create_dmg_command
+            rv["mac_codesign_dmg_command"] = mac_codesign_dmg_command
 
         return rv
 

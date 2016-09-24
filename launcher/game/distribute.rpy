@@ -1010,7 +1010,16 @@ init python in distribute:
 
             # print "\"" + "\" \"".join(cmd) + "\""
 
-            subprocess.check_call(cmd, stdout=self.log, stderr=subprocess.STDOUT)
+            try:
+                import sys, os
+                isatty = os.isatty(sys.stdin.fileno())
+            except:
+                isatty = False
+
+            if isatty:
+                subprocess.check_call(cmd)
+            else:
+                subprocess.check_call(cmd, stdout=self.log, stderr=subprocess.STDOUT)
 
 
         def sign_app(self, fl, appzip):
@@ -1060,6 +1069,34 @@ init python in distribute:
 
             return fl
 
+        def make_dmg(self, volname, sourcedir, dmg):
+            """
+            Packages `sourcedir` as a dmg.
+            """
+
+            identity = self.build.get('mac_identity', None)
+
+            if identity is None:
+                raise Exception("Creating an unsigned DMG is not supported. Please set build.mac_identity.")
+
+            self.run(
+                _("Creating the Macintosh DMG..."),
+                self.build["mac_create_dmg_command"],
+                identity=identity,
+                volname=volname,
+                sourcedir=sourcedir,
+                dmg=dmg,
+            )
+
+            self.run(
+                _("Signing the Macintosh DMG..."),
+                self.build["mac_codesign_dmg_command"],
+                identity=identity,
+                volname=volname,
+                sourcedir=sourcedir,
+                dmg=dmg,
+            )
+
         def prepare_file_list(self, format, file_lists):
             """
             Prepares a master list of files, given the format and file lists.
@@ -1102,9 +1139,7 @@ init python in distribute:
                 part of the file and directory names.
 
             `format`
-                The format things will be packaged in. This should be one of "zip", "tar.bz2", or
-                "update".
-
+                The format things will be packaged in. See the table of formats below.
             `file_lists`
                 A string containing a space-separated list of file_lists to include in this
                 package.
@@ -1116,24 +1151,36 @@ init python in distribute:
             path = os.path.join(self.destination, filename)
 
 
-            if format == "tar.bz2":
-                ext = ".tar.bz2"
-                directory = False
-            elif format == "update":
-                ext = ".update"
-                directory = False
-            elif format == "zip" or format == "app-zip":
-                ext = ".zip"
-                directory = False
-            elif format == "directory":
-                ext = ""
-                directory = True
-            elif format == "app-directory":
-                ext = "-app"
-                directory = True
-            elif format == "app-dmg":
-                ext = "-dmg"
-                directory = True
+            # A map from the name of the format, to the options that will be
+            # used with it. The fields are:
+            #
+            # - The extension used.
+            # - Is this a directory based format?
+            # - Should the directory be turned into a dmg?
+            # - Should a directory name be prepended?
+
+            FORMATS = {
+                "update" : (".update", False, False, False),
+
+                "tar.bz2" : (".tar.bz2", False, False, True),
+                "zip" : (".zip", False, False, True),
+                "directory" : ("", True, False, False),
+                "dmg" : ("-dmg", True, True, True),
+
+                "app-zip" : (".zip", False, False, False),
+                "app-directory" : ("-app", True, False, False),
+                "app-dmg" : ("-app-dmg", True, True, False),
+            }
+
+            if format not in FORMATS:
+                raise Exception("Format %r is unknown." % format)
+
+            ext, directory, dmg, prepend = FORMATS[format]
+
+            mac_identity = self.build.get('mac_identity', None)
+
+            if dmg and (mac_identity is None):
+                return
 
             if self.packagedest:
                 path = self.packagedest
@@ -1158,7 +1205,7 @@ init python in distribute:
 
             update = { variant : { "version" : self.update_versions[variant], "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
-            if self.include_update and (variant not in [ 'ios', 'android', 'source', "app-zip", "app-directory", "app-dmg" ]):
+            if self.include_update and (variant not in [ 'ios', 'android', 'source']) and (not format.startswith("app-")):
 
                 update_fn = os.path.join(self.destination, filename + ".update.json")
 
@@ -1166,14 +1213,15 @@ init python in distribute:
                     json.dump(update, f, indent=2)
 
                 if (not dlc) or (format == "update"):
-
                     fl.append(File("update", None, True, False))
                     fl.append(File("update/current.json", update_fn, False, False))
 
-
             # If we're not an update file, prepend the directory.
-            if (not dlc) and format != "update" and not directory:
+            if (not dlc) and prepend:
                 fl.prepend_directory(filename)
+
+            # The path to the DMG, if we're going to make one.
+            dmg_path = path + ".dmg"
 
             full_filename = filename + ext
             path += ext
@@ -1243,6 +1291,10 @@ init python in distribute:
                     file_hash = hash_file(path)
                 else:
                     file_hash = ""
+
+            if dmg:
+                self.make_dmg(filename, path, dmg_path)
+                shutil.rmtree(path)
 
             if file_hash:
                 self.build_cache[full_filename] = (file_hash, fl_hash)
