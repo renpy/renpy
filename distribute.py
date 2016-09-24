@@ -52,8 +52,12 @@ def main():
     ap.add_argument("--pygame", action="store", default=None)
     ap.add_argument("--no-rapt", action="store_true")
     ap.add_argument("--variant", action="store")
+    ap.add_argument("--sign", action="store_true")
 
     args = ap.parse_args()
+
+    if args.sign:
+        os.environ["RENPY_MAC_IDENTITY"] = "Developer ID Application: Tom Rothamel (XHTE5H7Z79)"
 
     # Revision updating is done early, so we can do it even if the rest
     # of the program fails.
@@ -88,7 +92,7 @@ def main():
     # Check that the versions match.
     full_version = renpy.version_only  # @UndefinedVariable
     if "-" not in args.version \
-        and not full_version.startswith(args.version):
+            and not full_version.startswith(args.version):
         raise Exception("The command-line and Ren'Py versions do not match.")
 
     os.environ['RENPY_BUILD_VERSION'] = args.version
@@ -237,6 +241,9 @@ def main():
             os.unlink(sdk + ".7z.exe")
 
     print()
+
+    if not (args.fast or args.sign):
+        print("For a final-ish release, remember to use --sign so we're signed on the mac.")
 
 
 if __name__ == "__main__":

@@ -1004,7 +1004,7 @@ init python in distribute:
             Runs a command.
             """
 
-            interface.processing(message)
+            self.reporter.info(message)
 
             cmd = [ renpy.fsencode(i.format(**kwargs)) for i in command ]
 
