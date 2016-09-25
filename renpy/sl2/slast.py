@@ -43,7 +43,7 @@ from renpy.display.predict import displayable as predict_displayable
 
 from renpy.python import py_eval_bytecode
 from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST, ccache
-import md5
+import hashlib
 
 # This file contains the abstract syntax tree for a screen language
 # screen.
@@ -1999,7 +1999,7 @@ def load_cache():
     try:
         f = renpy.loader.load(CACHE_FILENAME)
 
-        digest = f.read(md5.digest_size)
+        digest = f.read(hashlib.md5().digest_size)
         if digest != renpy.game.script.digest.digest():
             return
 

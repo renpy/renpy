@@ -29,9 +29,9 @@
 import renpy.display
 import renpy.test
 
+import hashlib
 import re
 import time
-import md5
 
 def statement_name(name):
     """
@@ -261,7 +261,7 @@ class PyCode(object):
         if isinstance(code, renpy.python.ast.AST): #@UndefinedVariable
             code = renpy.python.ast.dump(code) #@UndefinedVariable
 
-        self.hash = chr(renpy.bytecode_version) + md5.md5(repr(self.location) + code.encode("utf-8")).digest()
+        self.hash = chr(renpy.bytecode_version) + hashlib.md5(repr(self.location) + code.encode("utf-8")).digest()
         return self.hash
 
 
