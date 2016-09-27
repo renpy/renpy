@@ -75,6 +75,9 @@ class LogFile(object):
         if self.file:
             return True
 
+        if renpy.macapp:
+            return False
+
         if self.developer and not renpy.config.developer:
             return False
 
