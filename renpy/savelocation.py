@@ -36,6 +36,7 @@ import shutil
 
 disk_lock = threading.RLock()
 
+
 class FileLocation(object):
     """
     A location that saves files to a directory on disk.
@@ -75,14 +76,12 @@ class FileLocation(object):
         # The data loaded from the persistent file.
         self.persistent_data = None
 
-
     def filename(self, slotname):
         """
         Given a slot name, returns a filename.
         """
 
         return os.path.join(self.directory, slotname + renpy.savegame_suffix)
-
 
     def scan(self):
         """
@@ -129,7 +128,6 @@ class FileLocation(object):
                     self.persistent_mtime = mtime
                     self.persistent_data = data
 
-
     def save(self, slotname, record):
         """
         Saves the save record in slotname.
@@ -150,7 +148,6 @@ class FileLocation(object):
 
         return list(self.mtimes)
 
-
     def mtime(self, slotname):
         """
         For a slot, returns the time the object was saved in that
@@ -160,7 +157,6 @@ class FileLocation(object):
         """
 
         return self.mtimes.get(slotname, None)
-
 
     def json(self, slotname):
         """
@@ -196,7 +192,6 @@ class FileLocation(object):
 
             finally:
                 zf.close()
-
 
     def screenshot(self, slotname):
         """
@@ -262,7 +257,6 @@ class FileLocation(object):
                 os.unlink(filename)
 
             self.scan()
-
 
     def rename(self, old, new):
         """
@@ -347,6 +341,7 @@ class FileLocation(object):
 
         return self.directory == other.directory
 
+
 class MultiLocation(object):
     """
     A location that saves in multiple places. When loading or otherwise
@@ -425,7 +420,6 @@ class MultiLocation(object):
 
         return l.json(slotname)
 
-
     def screenshot(self, slotname):
         l = self.newest(slotname)
 
@@ -491,6 +485,7 @@ quit_scan_thread = False
 # The condition we wait on.
 scan_thread_condition = threading.Condition()
 
+
 def run_scan_thread():
     global quit_scan_thread
 
@@ -506,6 +501,7 @@ def run_scan_thread():
         with scan_thread_condition:
             scan_thread_condition.wait(5.0)
 
+
 def quit():  # @ReservedAssignment
     global quit_scan_thread
 
@@ -514,6 +510,7 @@ def quit():  # @ReservedAssignment
         scan_thread_condition.notifyAll()
 
     scan_thread.join()
+
 
 def init():
     global scan_thread
@@ -524,7 +521,7 @@ def init():
     location.add(FileLocation(renpy.config.savedir))
 
     # 2. Game-local savedir.
-    if not renpy.mobile:
+    if (not renpy.mobile) and (not renpy.macapp):
         path = os.path.join(renpy.config.gamedir, "saves")
         location.add(FileLocation(path))
 
@@ -535,4 +532,3 @@ def init():
 
     scan_thread = threading.Thread(target=run_scan_thread)
     scan_thread.start()
-
