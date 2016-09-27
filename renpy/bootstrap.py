@@ -214,9 +214,13 @@ def bootstrap(renpy_base):
 
     sys.path.insert(0, basedir)
 
-    # If we're on a mac, install our own os.start.
     if renpy.macintosh:
+        # If we're on a mac, install our own os.start.
         os.startfile = mac_start
+
+        # Are we starting from inside a mac app resources directory?
+        if basedir.endswith("Contents/Resources/autorun"):
+            renpy.macapp = True
 
     # Check that we have installed pygame properly. This also deals with
     # weird cases on Windows and Linux where we can't import modules. (On

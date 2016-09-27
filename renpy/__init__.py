@@ -125,6 +125,9 @@ else:
 # A flag that's true if we're on a smartphone or tablet-like platform.
 mobile = android or ios
 
+# A flag that's set to true if the game directory is bundled inside a mac app.
+macapp = False
+
 
 ################################################################################
 # Backup Data for Reload
@@ -624,5 +627,3 @@ def import_cython():
 
 if False:
     import renpy.defaultstore as store
-
-
