@@ -564,27 +564,31 @@ class Script(object):
 
             self.assign_names(stmts, fullfn)
 
-            try:
-                f = file(rpycfn, "wb")
+            if not renpy.macapp:
 
-                self.write_rpyc_header(f)
-                self.write_rpyc_data(f, 1, dumps((data, stmts), 2))
-            except:
-                pass
+                try:
+                    f = file(rpycfn, "wb")
+
+                    self.write_rpyc_header(f)
+                    self.write_rpyc_data(f, 1, dumps((data, stmts), 2))
+                except:
+                    pass
 
             self.static_transforms(stmts)
 
-            try:
-                self.write_rpyc_data(f, 2, dumps((data, stmts), 2))
+            if not renpy.macapp:
 
-                with open(fullfn, "rU") as fullf:
-                    rpydigest = hashlib.md5(fullf.read()).digest()
+                try:
+                    self.write_rpyc_data(f, 2, dumps((data, stmts), 2))
 
-                self.write_rpyc_md5(f, rpydigest)
+                    with open(fullfn, "rU") as fullf:
+                        rpydigest = hashlib.md5(fullf.read()).digest()
 
-                f.close()
-            except:
-                pass
+                    self.write_rpyc_md5(f, rpydigest)
+
+                    f.close()
+                except:
+                    pass
 
             self.loaded_rpy = True
 
@@ -792,11 +796,11 @@ class Script(object):
                         text = text.decode("latin-1")
 
                     pem = renpy.parser.ParseError(
-                        filename = e.filename,
-                        number = e.lineno,
-                        msg = e.msg,
-                        line = text,
-                        pos = e.offset)
+                        filename=e.filename,
+                        number=e.lineno,
+                        msg=e.msg,
+                        line=text,
+                        pos=e.offset)
 
                     renpy.parser.parse_errors.append(pem.message)
 
@@ -810,6 +814,9 @@ class Script(object):
         self.all_pycode = [ ]
 
     def save_bytecode(self):
+        if renpy.macapp:
+            return
+
         if self.bytecode_dirty:
             try:
                 fn = renpy.loader.get_path(BYTECODE_FILE)

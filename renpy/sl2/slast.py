@@ -61,6 +61,7 @@ filename = '<screen language>'
 # A log that's used for profiling information.
 profile_log = renpy.log.open("profile_screen", developer=True, append=False, flush=False)
 
+
 def compile_expr(node):
     """
     Wraps the node in a python AST, and compiles it.
@@ -203,7 +204,6 @@ class SLNode(object):
 
         raise Exception("copy not implemented by " + type(self).__name__)
 
-
     def report_traceback(self, name, last):
         if last:
             return None
@@ -288,6 +288,7 @@ class SLNode(object):
 # A sentinel used to indicate a keyword argument was not given.
 NotGiven = renpy.object.Sentinel("NotGiven")
 
+
 class SLBlock(SLNode):
     """
     Represents a screen language block that can contain keyword arguments
@@ -340,7 +341,7 @@ class SLBlock(SLNode):
                 keyword_values[k] = py_eval_bytecode(compile_expr(node))
             else:
                 keyword_keys.append(ast.Str(s=k))
-                keyword_exprs.append(node) # Will be compiled as part of ast.Dict below.
+                keyword_exprs.append(node)  # Will be compiled as part of ast.Dict below.
 
             self.constant = min(self.constant, const)
 
@@ -367,7 +368,6 @@ class SLBlock(SLNode):
             if i.last_keyword:
                 self.last_keyword = True
                 break
-
 
     def execute(self, context):
 
@@ -422,6 +422,7 @@ class SLBlock(SLNode):
 
 
 list_or_tuple = (list, tuple)
+
 
 class SLCache(object):
     """
@@ -478,6 +479,7 @@ class SLCache(object):
 # A magic value that, if returned by a displayable function, is not added to
 # the parent.
 NO_DISPLAYABLE = renpy.display.layout.Null()
+
 
 class SLDisplayable(SLBlock):
     """
@@ -604,7 +606,7 @@ class SLDisplayable(SLBlock):
                 has_values = True
             else:
                 values.append(use_expression)
-                exprs.append(node) # Will be compiled as part of the tuple.
+                exprs.append(node)  # Will be compiled as part of the tuple.
                 has_exprs = True
 
             self.constant = min(self.constant, const)
@@ -821,8 +823,8 @@ class SLDisplayable(SLBlock):
 
                 imagemap = self.imagemap
 
-                cache.copy_on_change = False # We no longer need to copy on change.
-                cache.children = None # Re-add the children.
+                cache.copy_on_change = False  # We no longer need to copy on change.
+                cache.children = None  # Re-add the children.
 
             if debug:
                 if reused:
@@ -1217,6 +1219,7 @@ class SLIf(SLNode):
 
         return False
 
+
 class SLShowIf(SLNode):
     """
     The AST node that corresponds to the showif statement.
@@ -1339,7 +1342,6 @@ class SLFor(SLBlock):
 
         analysis.pop_control()
 
-
     def prepare(self, analysis):
         node = ccache.ast_eval(self.expression)
 
@@ -1456,6 +1458,7 @@ class SLPass(SLNode):
         rv = self.instantiate(transclude)
 
         return rv
+
 
 class SLDefault(SLNode):
 
@@ -1641,7 +1644,6 @@ class SLUse(SLNode):
             if cache is None:
                 context.cache[self.serial] = cache = { }
 
-
         # Evaluate the arguments.
         try:
             if self.args:
@@ -1710,7 +1712,6 @@ class SLTransclude(SLNode):
 
     def __init__(self, loc):
         SLNode.__init__(self, loc)
-
 
     def copy(self, transclude):
         rv = self.instantiate(transclude)
@@ -1798,10 +1799,10 @@ class SLScreen(SLBlock):
         self.tag = None
 
         # The variant of screen we're defining.
-        self.variant = "None" # expr.
+        self.variant = "None"  # expr.
 
         # Should we predict this screen?
-        self.predict = "None" # expr.
+        self.predict = "None"  # expr.
 
         # The parameters this screen takes.
         self.parameters = None
@@ -1873,7 +1874,6 @@ class SLScreen(SLBlock):
         else:
             self.not_const_ast = self.const_ast
             targets = [ self.const_ast ]
-
 
         for ast in targets:
             analysis = ast.analysis = Analysis(None)
@@ -1978,6 +1978,7 @@ class SLScreen(SLBlock):
         for i in context.children:
             renpy.ui.implicit_add(i)
 
+
 class ScreenCache(object):
 
     def __init__(self):
@@ -1992,8 +1993,9 @@ scache = ScreenCache()
 
 CACHE_FILENAME = "cache/screens.rpyb"
 
+
 def load_cache():
-    if renpy.game.args.compile: # @UndefinedVariable
+    if renpy.game.args.compile:  # @UndefinedVariable
         return
 
     try:
@@ -2014,8 +2016,12 @@ def load_cache():
     except:
         pass
 
+
 def save_cache():
     if not scache.updated:
+        return
+
+    if renpy.macapp:
         return
 
     try:
@@ -2026,5 +2032,3 @@ def save_cache():
             f.write(data)
     except:
         pass
-
-

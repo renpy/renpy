@@ -24,7 +24,7 @@ from __future__ import unicode_literals
 from __future__ import division
 from __future__ import absolute_import
 
-import renpy # @UnusedImport
+import renpy  # @UnusedImport
 from renpy.python import py_compile
 
 # Import the Python AST module, instead of the Ren'Py ast module.
@@ -91,6 +91,7 @@ not_constants = set()
 
 # The base set for the local constants.
 local_constants = set()
+
 
 def const(name):
     """
@@ -175,12 +176,13 @@ class Control(object):
         self.imagemap = imagemap
 
 # Three levels of constness.
-GLOBAL_CONST = 2 # Expressions that are const everywhere.
+GLOBAL_CONST = 2  # Expressions that are const everywhere.
 LOCAL_CONST = 1  # Expressions that are const with regard to a screen + parameters.
 NOT_CONST = 0    # Expressions that are not const.
 
 
 class DeltaSet(object):
+
     def __init__(self, base, copy=None):
         """
         Represents a set that stores its contents as differences from a base
@@ -230,8 +232,6 @@ class DeltaSet(object):
 
         for i in self.added:
             yield i
-
-
 
 
 class Analysis(object):
@@ -320,11 +320,10 @@ class Analysis(object):
             if not i.at_fixed_point():
                 return False
 
-
         if (self.not_constant.changed or
-            self.global_constant.changed or
-            self.local_constant.changed or
-            self.pure_functions.changed):
+                self.global_constant.changed or
+                self.local_constant.changed or
+                self.pure_functions.changed):
 
             self.not_constant.changed = False
             self.global_constant.changed = False
@@ -365,7 +364,7 @@ class Analysis(object):
         object equality.
         """
 
-        def check_slice(slice): # @ReservedAssignment
+        def check_slice(slice):  # @ReservedAssignment
 
             if isinstance(slice, ast.Index):
                 return check_node(slice.value)
@@ -467,7 +466,7 @@ class Analysis(object):
                 const, name = check_name(node.func)
 
                 # The function must have a name, and must be declared pure.
-                if (const != GLOBAL_CONST) or  (name not in self.pure_functions):
+                if (const != GLOBAL_CONST) or (name not in self.pure_functions):
                     return NOT_CONST
 
                 consts = [ ]
@@ -646,6 +645,7 @@ class PyAnalysis(ast.NodeVisitor):
     def visit_Continue(self, node):
         self.analysis.exit_loop()
 
+
 class CompilerCache(object):
     """
     Objects of this class are used to cache the compiliation of Python code.
@@ -719,8 +719,9 @@ ccache = CompilerCache()
 
 CACHE_FILENAME = "cache/pyanalysis.rpyb"
 
+
 def load_cache():
-    if renpy.game.args.compile: # @UndefinedVariable
+    if renpy.game.args.compile:  # @UndefinedVariable
         return
 
     try:
@@ -734,8 +735,12 @@ def load_cache():
     except:
         pass
 
+
 def save_cache():
     if not ccache.updated:
+        return
+
+    if renpy.macapp:
         return
 
     try:
