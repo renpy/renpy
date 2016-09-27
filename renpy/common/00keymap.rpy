@@ -224,16 +224,8 @@ init -1600 python:
         import os
         import __main__
 
-        # Pick the directory to save into.
-        dest = config.renpy_base.rstrip("/")
-
-        # Guess if we're an OSX App.
-        if dest.endswith("/Contents/Resources/autorun"):
-            # Go up 4 directories.
-            dest = os.path.dirname(dest)
-            dest = os.path.dirname(dest)
-            dest = os.path.dirname(dest)
-            dest = os.path.dirname(dest)
+        if renpy.macapp:
+            dest = os.expanduser("~/Desktop")
 
         # Try to pick a filename.
         i = 1
