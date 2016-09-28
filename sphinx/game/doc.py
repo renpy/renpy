@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import inspect
 import re
 import collections
@@ -160,7 +162,6 @@ def scan(name, o, prefix=""):
 
         lines.append(l)
 
-
     if section is None:
         return
 
@@ -190,7 +191,7 @@ def scan(name, o, prefix=""):
             args = inspect.getargspec(o)
 
         else:
-            print "Warning: %s has section but not args." % name
+            print("Warning: %s has section but not args." % name)
 
             return
 
@@ -201,7 +202,6 @@ def scan(name, o, prefix=""):
             args = args.replace("(self, ", "(")
         else:
             args = "()"
-
 
     # Put it into the line buffer.
     lb = line_buffer[section]
@@ -235,21 +235,21 @@ def write_line_buffer():
 
         f = StringIO.StringIO()
 
-        print >>f, ".. Automatically generated file - do not modify."
-        print >>f
+        print(".. Automatically generated file - do not modify.", file=f)
+        print(file=f)
 
         for l in v:
-            print >>f, l
+            print(l, file=f)
 
         s = f.getvalue()
 
         if os.path.exists("source/inc/" + k):
             with open("source/inc/" + k) as f:
                 if f.read() == s:
-                    print "Retaining", k
+                    print("Retaining", k)
                     continue
 
-        print "Generating", k
+        print("Generating", k)
 
         with open("source/inc/" + k, "w") as f:
             f.write(s)
@@ -257,11 +257,11 @@ def write_line_buffer():
 
 name_kind = collections.defaultdict(str)
 
+
 def scan_docs():
     """
     Scans the documentation for functions, classes, and variables.
     """
-
 
     def scan_file(fn):
         f = open(fn)
@@ -293,9 +293,10 @@ def format_name(name):
 
     return name
 
+
 def write_reserved(module, dest, ignore_builtins):
 
-    print "Writing", dest
+    print("Writing", dest)
 
     with open(dest, "w") as f:
 
@@ -312,6 +313,7 @@ def write_reserved(module, dest, ignore_builtins):
 
             f.write("* " + format_name(i) + "\n")
 
+
 def write_pure_const():
 
     def write_set(f, s):
@@ -321,8 +323,8 @@ def write_pure_const():
         for i in l:
             f.write("* " + format_name(i) + "\n")
 
-    pure = renpy.pyanalysis.pure_functions # @UndefinedVariable
-    constants = renpy.pyanalysis.constants - pure # @UndefinedVariable
+    pure = renpy.pyanalysis.pure_functions  # @UndefinedVariable
+    constants = renpy.pyanalysis.constants - pure  # @UndefinedVariable
 
     with open("source/inc/pure_vars", "w") as f:
         write_set(f, pure)
