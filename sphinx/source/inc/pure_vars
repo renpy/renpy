@@ -141,6 +141,7 @@
 * _m1_00gallery__GalleryToggleSlideshow
 * _m1_00musicroom__MusicRoomPlay
 * _m1_00musicroom__MusicRoomRandomPlay
+* _m1_00musicroom__MusicRoomStop
 * _m1_00musicroom__MusicRoomTogglePlay
 * _m1_00preferences__DisplayAction
 * _movebottom

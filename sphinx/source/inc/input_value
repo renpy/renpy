@@ -26,6 +26,25 @@
         user presses enter.
 
 .. function:: FilePageNameInputValue(pattern='Page {}', auto='Automatic saves', quick='Quick saves', page=None, default=False)
+    
+    An input value that updates the name of a file page.
+    
+    `pattern`
+        This is used for the default name of a page. Python-style substition
+        is performed, such that {} is replaced with the number of the page.
+    
+    `auto`
+        The name of the autosave page.
+    
+    `quick`
+        The name of the quicksave page.
+    
+    `page`
+        If given, the number of the page to display. This should usually
+        be left as None, to give the current page.
+    
+    `default`
+        If true, this input can be editable by default.
 
 .. function:: ScreenVariableInputValue(variable, default=True, returnable=False)
     

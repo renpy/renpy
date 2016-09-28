@@ -2,6 +2,26 @@
 Full Changelog
 ==============
 
+.. _renpy-6.99.12:
+
+Ren'Py 6.99.12
+==============
+
+Python Changes
+--------------
+
+Ren'Py will now compile Python code as if::
+
+    from __future__ import absolute_imports, print_function, unicode_literals
+
+was true. If compilation fails, it will then re-compile the code without these
+settings. This is intended to allow new code to be written that will be
+compatible with a future Python 3-based Ren'Py.
+
+This should have minimal impact to existing code. The one case where it could
+be a problem is if a character string is used to encode binary data, in
+which case a binary string (b"string") should be explictly used.
+
 
 .. _renpy-6.99.11:
 

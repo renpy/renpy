@@ -39,10 +39,18 @@
     
         zip
             A zip file.
-        app-zip
-            A zip file containing a macintosh application.
         tar.bz2
             A tar.bz2 file.
+        directory
+            A directory containing the files.
+        dmg
+            A Macintosh DMG containing the files.
+        app-zip
+            A zip file containing a macintosh application.
+        app-directory
+            A directory containing the mac app.
+        app-dmg
+            A macintosh drive image containing a dmg. (Mac only.)
     
         The empty string will not build any package formats (this
         makes dlc possible).
