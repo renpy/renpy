@@ -28,6 +28,9 @@ from __future__ import print_function
 # Import the python ast module, not ours.
 ast = __import__("ast", { })
 
+# Import the future module itself.
+import __future__
+
 import marshal
 import random
 import weakref
@@ -46,6 +49,7 @@ import renpy.audio
 
 
 class StoreDeleted(object):
+
     def __reduce__(self):
         return "deleted"
 
@@ -379,62 +383,62 @@ class WrapNode(ast.NodeTransformer):
 
     def visit_SetComp(self, n):
         return ast.Call(
-            func = ast.Name(
+            func=ast.Name(
                 id="__renpy__set__",
                 ctx=ast.Load()
                 ),
-            args = [ self.generic_visit(n) ],
-            keywords = [ ],
-            starargs = None,
-            kwargs = None)
+            args=[ self.generic_visit(n) ],
+            keywords=[ ],
+            starargs=None,
+            kwargs=None)
 
     def visit_ListComp(self, n):
         return ast.Call(
-            func = ast.Name(
+            func=ast.Name(
                 id="__renpy__list__",
                 ctx=ast.Load()
                 ),
-            args = [ self.generic_visit(n) ],
-            keywords = [ ],
-            starargs = None,
-            kwargs = None)
+            args=[ self.generic_visit(n) ],
+            keywords=[ ],
+            starargs=None,
+            kwargs=None)
 
     def visit_List(self, n):
         if not isinstance(n.ctx, ast.Load):
             return self.generic_visit(n)
 
         return ast.Call(
-            func = ast.Name(
+            func=ast.Name(
                 id="__renpy__list__",
                 ctx=ast.Load()
                 ),
-            args = [ self.generic_visit(n) ],
-            keywords = [ ],
-            starargs = None,
-            kwargs = None)
+            args=[ self.generic_visit(n) ],
+            keywords=[ ],
+            starargs=None,
+            kwargs=None)
 
     def visit_DictComp(self, n):
         return ast.Call(
-            func = ast.Name(
+            func=ast.Name(
                 id="__renpy__dict__",
                 ctx=ast.Load()
                 ),
-            args = [ self.generic_visit(n) ],
-            keywords = [ ],
-            starargs = None,
-            kwargs = None)
+            args=[ self.generic_visit(n) ],
+            keywords=[ ],
+            starargs=None,
+            kwargs=None)
 
     def visit_Dict(self, n):
 
         return ast.Call(
-            func = ast.Name(
+            func=ast.Name(
                 id="__renpy__dict__",
                 ctx=ast.Load()
                 ),
-            args = [ self.generic_visit(n) ],
-            keywords = [ ],
-            starargs = None,
-            kwargs = None)
+            args=[ self.generic_visit(n) ],
+            keywords=[ ],
+            starargs=None,
+            kwargs=None)
 
 wrap_node = WrapNode()
 
@@ -489,6 +493,18 @@ def escape_unicode(s):
     return s
 
 
+# Flags used by py_compile.
+old_compile_flags = ( __future__.nested_scopes.compiler_flag
+                      | __future__.with_statement.compiler_flag
+                      )
+
+new_compile_flags = (  old_compile_flags
+                       | __future__.absolute_import.compiler_flag
+                       | __future__.print_function.compiler_flag
+                       | __future__.unicode_literals.compiler_flag
+                       )
+
+
 def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
     """
     Compiles the given source code using the supplied codegenerator.
@@ -529,7 +545,12 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
     try:
         line_offset = lineno - 1
 
-        tree = ast.parse(source, filename, mode)
+        try:
+            flags = new_compile_flags
+            tree = compile(source, filename, mode, ast.PyCF_ONLY_AST | flags, 1)
+        except:
+            flags = old_compile_flags
+            tree = compile(source, filename, mode, ast.PyCF_ONLY_AST | flags, 1)
 
         tree = wrap_node.visit(tree)
 
@@ -541,7 +562,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
         if ast_node:
             return tree.body
 
-        return compile(tree, filename, mode)
+        return compile(tree, filename, mode, flags, 1)
 
     except SyntaxError, e:
 
@@ -920,7 +941,7 @@ class DetRandom(random.Random):
 
         self.stack = [ ]
 
-    def Random(self,seed=None):
+    def Random(self, seed=None):
         """
         Returns a new RNG object separate from the main one.
         """
@@ -1440,7 +1461,7 @@ class RollbackLog(renpy.object.Object):
             return
 
         self.suspend_checkpointing(False)
-            # will always rollback to before suspension
+        # will always rollback to before suspension
 
         self.purge_unreachable(self.get_roots())
 
