@@ -1354,13 +1354,13 @@ init -1500 python in updater:
 
             state = u.state
 
-            print "State:", state
+            print("State:", state)
 
             if u.progress:
-                print "Progress: {:.1%}".format(u.progress)
+                print("Progress: {:.1%}".format(u.progress))
 
             if u.message:
-                print "Message:", u.message
+                print("Message:", u.message)
 
             if state == u.ERROR:
                 break

@@ -48,6 +48,7 @@ all_statements = [ ]
 # Statements that can contain children.
 childbearing_statements = set()
 
+
 class Positional(object):
     """
     This represents a positional parameter to a function.
@@ -62,6 +63,7 @@ class Positional(object):
 # Used to generate the documentation
 all_keyword_names = set()
 
+
 class Keyword(object):
     """
     This represents an optional keyword parameter to a function.
@@ -74,6 +76,7 @@ class Keyword(object):
 
         if parser:
             parser.add(self)
+
 
 class Style(object):
     """
@@ -107,6 +110,11 @@ class PrefixStyle(object):
 
 
 class Parser(object):
+
+    # The number of children this statement takes, out of 0, 1, or "many".
+    # This defaults to "many" so the has statement errors out when not
+    # inside something that takes a single child.
+    nchildren = "many"
 
     def __init__(self, name):
 
@@ -233,7 +241,6 @@ class Parser(object):
 
             seen_keywords.add(name)
 
-
             expr = l.comma_expression()
 
             target.keyword.append((name, expr))
@@ -260,7 +267,6 @@ class Parser(object):
                     break
 
                 parse_keyword(l, 'expected a keyword argument, colon, or end of line.')
-
 
         # The index of the child we're adding to this statement.
         child_index = 0
@@ -319,7 +325,6 @@ class Parser(object):
 
                 while not l.eol():
                     parse_keyword(l, "expected a keyword argument or end of line.")
-
 
     def add_positional(self, name):
         global parser
@@ -483,9 +488,8 @@ def register_sl_displayable(*args, **kwargs):
 class DisplayableParser(Parser):
 
     def __init__(self, name, displayable, style, nchildren=0, scope=False,
-        pass_context=False, imagemap=False, replaces=False, default_keywords={},
-        hotspot=False, default_properties=True):
-
+                 pass_context=False, imagemap=False, replaces=False, default_keywords={},
+                 hotspot=False, default_properties=True):
         """
         `scope`
             If true, the scope is passed into the displayable functionas a keyword
@@ -536,7 +540,6 @@ class DisplayableParser(Parser):
             add(renpy.sl2.slproperties.ui_properties)
             add(renpy.sl2.slproperties.position_properties)
 
-
     def parse_layout(self, loc, l, parent):
         return self.parse(loc, l, parent, True)
 
@@ -575,6 +578,7 @@ class DisplayableParser(Parser):
 
         return rv
 
+
 class IfParser(Parser):
 
     def __init__(self, name, node_type, parent_contents):
@@ -594,7 +598,6 @@ class IfParser(Parser):
 
         if not parent_contents:
             childbearing_statements.add(self)
-
 
     def parse(self, loc, l, parent):
 
@@ -826,6 +829,7 @@ UseParser("use")
 Keyword("style_prefix")
 Keyword("style_group")
 
+
 class TranscludeParser(Parser):
 
     def parse(self, loc, l, parent):
@@ -953,6 +957,7 @@ Keyword("style_group")
 Keyword("style_prefix")
 Keyword("layer")
 
+
 def init():
     screen_parser.add(all_statements)
 
@@ -970,4 +975,3 @@ def parse_screen(l, loc):
     """
 
     return screen_parser.parse(loc, l, None)
-

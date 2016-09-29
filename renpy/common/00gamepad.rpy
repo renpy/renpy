@@ -231,8 +231,8 @@ init -1200 python in _gamepad:
         for k, v in sorted(mappings.items()):
             mapping += ",{}:{}".format(k, v)
 
-        print "Controller mapping for", name, "is:"
-        print mapping
+        print("Controller mapping for", name, "is:")
+        print(mapping)
 
         try:
             with open(os.path.join(renpy.config.renpy_base, "gamecontrollerdb.txt"), "a") as f:
