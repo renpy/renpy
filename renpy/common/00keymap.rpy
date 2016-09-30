@@ -224,6 +224,8 @@ init -1600 python:
         import os
         import __main__
 
+        dest = config.renpy_base
+
         if renpy.macapp:
             dest = os.expanduser("~/Desktop")
 
