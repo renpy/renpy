@@ -93,6 +93,7 @@ persistent = None
 # The current preferences.
 preferences = None
 
+
 class ExceptionInfo(object):
     """
     Context manager that sets exception_info iff an exception occurs.
@@ -116,6 +117,7 @@ class ExceptionInfo(object):
 
         return False
 
+
 class RestartContext(Exception):
     """
     Restarts the current context. If `label` is given, calls that label
@@ -124,6 +126,7 @@ class RestartContext(Exception):
 
     def __init__(self, label):
         self.label = label
+
 
 class RestartTopContext(Exception):
     """
@@ -134,20 +137,23 @@ class RestartTopContext(Exception):
     def __init__(self, label):
         self.label = label
 
+
 class FullRestartException(Exception):
     """
     An exception of this type forces a hard restart, completely
     destroying the store and config and so on.
     """
 
-    def __init__(self, reason="end_game"): # W0231
+    def __init__(self, reason="end_game"):  # W0231
         self.reason = reason
+
 
 class UtterRestartException(Exception):
     """
     An exception of this type forces an even harder restart, causing
     Ren'Py and the script to be reloaded.
     """
+
 
 class QuitException(Exception):
     """
@@ -167,6 +173,7 @@ class QuitException(Exception):
         self.relaunch = relaunch
         self.status = status
 
+
 class JumpException(Exception):
     """
     This should be raised with a label as the only argument. This causes
@@ -174,11 +181,13 @@ class JumpException(Exception):
     to the named label.
     """
 
+
 class JumpOutException(Exception):
     """
     This should be raised with a label as the only argument. This exits
     the current context, and then raises a JumpException.
     """
+
 
 class CallException(Exception):
     """
@@ -196,11 +205,13 @@ class CallException(Exception):
     def __reduce__(self):
         return (CallException, (self.label, self.args, self.kwargs))
 
+
 class EndReplay(Exception):
     """
     Raise this exception to end the current replay (the current call to
     call_replay).
     """
+
 
 class ParseErrorException(Exception):
     """
@@ -233,7 +244,8 @@ def context(index=-1):
 
     return contexts[index]
 
-def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
+
+def invoke_in_new_context(callable, *args, **kwargs):  # @ReservedAssignment
     """
     :doc: label
 
@@ -273,12 +285,13 @@ def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
 
     finally:
 
+        context.pop_all_dynamic()
+
         contexts.pop()
         contexts[-1].do_deferred_rollback()
 
         if interface and interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
-
 
 
 def call_in_new_context(label, *args, **kwargs):
@@ -327,6 +340,7 @@ def call_in_new_context(label, *args, **kwargs):
         if interface and interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
+
 def call_replay(label, scope={}):
     """
     :doc: replay
@@ -368,6 +382,9 @@ def call_replay(label, scope={}):
         pass
 
     finally:
+
+        context.pop_all_dynamic()
+
         contexts.pop()
         renpy.game.log = old_log
         sb.restore()
