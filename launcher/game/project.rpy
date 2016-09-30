@@ -53,7 +53,7 @@ init python in project:
 
     class Project(object):
 
-        def __init__(self, path):
+        def __init__(self, path, name):
 
             while path.endswith("/"):
                 path = path[:-1]
@@ -61,11 +61,7 @@ init python in project:
             if not os.path.exists(path):
                 raise Exception("{} does not exist.".format(path))
 
-            # The name of the project.
-            if path.endswith(".app/Contents/Resources/autorun"):
-                self.name = os.path.basename(path[:-len(".app/Contents/Resources/autorun")])
-            else:
-                self.name = os.path.basename(path)
+            self.name = name
 
             # The path to the project.
             self.path = path
@@ -385,6 +381,33 @@ init python in project:
             self.projects.sort(key=lambda p : p.name.lower())
             self.templates.sort(key=lambda p : p.name.lower())
 
+
+        def find_basedir(self, d):
+            """
+            Try to find a project basedir in d.
+            """
+
+            def has_game(dn):
+                return os.path.isdir(os.path.join(dn, "game"))
+
+            if has_game(d):
+                return d
+
+            dn = os.path.join(d, "Contents", "Resources", "autorun")
+            if has_game(dn):
+                return dn
+
+            for dn in os.listdir(d):
+                if not dn.endswith(".app"):
+                    continue
+
+                dn = os.path.join(d, dn, "Contents", "Resources", "autorun")
+
+                if has_game(dn):
+                    return dn
+
+            return None
+
         def scan_directory(self, d):
             """
             Scans for projects in directories directly underneath `d`.
@@ -405,21 +428,21 @@ init python in project:
                 if not os.path.isdir(ppath):
                     continue
 
-                autorun = os.path.join(ppath, "Contents", "Resources", "autorun")
-                if os.path.exists(autorun):
-                    ppath = autorun
+                try:
+                    ppath = self.find_basedir(ppath)
+                except:
+                    continue
 
-                # A project has either a game/ directory, or a project.json
-                # file.
-                if (not os.path.isdir(os.path.join(ppath, "game"))) and (not os.path.exists(os.path.join(ppath, "project.json"))):
+                if ppath is None:
                     continue
 
                 if ppath in self.scanned:
                     continue
+
                 self.scanned.add(ppath)
 
                 # We have a project directory, so create a Project.
-                p = Project(ppath)
+                p = Project(ppath, pdir)
 
                 project_type = p.data.get("type", "normal")
 
