@@ -53,7 +53,10 @@ init python in project:
 
     class Project(object):
 
-        def __init__(self, path, name):
+        def __init__(self, path, name=None):
+
+            if name is None:
+                name = os.path.basename(path)
 
             while path.endswith("/"):
                 path = path[:-1]
