@@ -549,23 +549,6 @@ Releasing Your Game
 Once you've made a game, there are a number of things you should do
 before releasing it:
 
-**Edit options.rpy.**
-    The options.rpy file, created when you create a new game, contains
-    a number of settings that you may want to customize. Some of them,
-    like the screen height and screen width, should probably be set
-    before making the game. Others, like the window title, can be set
-    any time.
-
-**Add a plug for Ren'Py.**
-   This step is completely optional, but we do ask that if you have
-   credits in your game, you mention Ren'Py in them. We suggest using
-   something like "Made with the Ren'Py visual novel engine.", but
-   that's just a suggestion, and what you write is up to you.
-
-   We think that the games people make are the best advertising for
-   Ren'Py, and we hope that by including this, you'll help more people
-   learn how to make visual novels in Ren'Py.
-
 **Check for a new version of Ren'Py.**
    New versions of Ren'Py are released on a regular basis, to fix bugs
    and add new features. Before releasing, click update in the launcher
