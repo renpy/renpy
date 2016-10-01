@@ -794,7 +794,7 @@ characters per block. """.format(
         print()
 
     print()
-    if renpy.config.developer and (renpy.config.developer != "auto"):
+    if renpy.config.developer and (renpy.config.original_developer != "auto"):
         print("Remember to set config.developer to False before releasing.")
         print()
 
@@ -802,4 +802,3 @@ characters per block. """.format(
     print("before releasing. New releases fix bugs and improve compatibility.")
 
     return False
-

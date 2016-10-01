@@ -277,6 +277,8 @@ init -1000 python:
 # After init, make some changes based on if config.developer is True.
 init 1700 python hide:
 
+    config.original_developer = config.developer
+
     if config.developer == "auto":
         if config.script_version:
             config.developer = False

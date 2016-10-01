@@ -31,7 +31,7 @@ import os
 locked = False
 
 # Contains help for config variables.
-help = [ ] #@ReservedAssignment
+help = [ ]  # @ReservedAssignment
 
 # The title of the game window.
 window_title = None
@@ -232,17 +232,20 @@ frames = 0
 
 # NOT USED: A text editor that is launched at the location of the current
 # statement.
-editor = None # os.environ.get('RENPY_EDITOR', None)
+editor = None  # os.environ.get('RENPY_EDITOR', None)
 
 # NOT USED: Text editor, with arguments to reload or clobber the file - used,
 # for example, to display traceback.txt.
-editor_transient = None # os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
+editor_transient = None  # os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
 
 # NOT USED: The separator used between files in the text editor.
-editor_file_separator = None # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
+editor_file_separator = None  # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
 
 # Enable developer mode?
-developer = False # Changed to True or False in the init code.
+developer = False  # Changed to True or False in the init code.
+
+# The original value of config.developer.
+original_developer = False
 
 # A logfile that logging messages are sent to.
 log = None
@@ -378,7 +381,7 @@ gamedir = None
 basedir = None
 renpy_base = None
 commondir = None
-logdir = None # Where log and error files go.
+logdir = None  # Where log and error files go.
 
 # Should we enable OpenGL mode?
 gl_enable = True
@@ -720,6 +723,7 @@ enforce_window_max_size = True
 
 del renpy
 del os
+
 
 def init():
     pass
