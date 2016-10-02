@@ -211,13 +211,18 @@ init python in project:
             environ = dict(os.environ)
             environ.update(env)
 
-            for k in environ:
-                environ[k] = renpy.fsencode(environ[k])
+            encoded_environ = { }
+
+            for k, v in environ.items():
+                if v is None:
+                    continue
+
+                encoded_environ[renpy.fsencode(k)] = renpy.fsencode(v)
 
             # Launch the project.
             cmd = [ renpy.fsencode(i) for i in cmd ]
 
-            p = subprocess.Popen(cmd, env=environ)
+            p = subprocess.Popen(cmd, env=encoded_environ)
 
             if wait:
                 if p.wait():
