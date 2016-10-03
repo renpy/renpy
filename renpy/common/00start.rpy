@@ -246,6 +246,8 @@ label _start:
             renpy.transition(config.end_splash_transition)
         else:
             renpy.transition(_restart[0])
+
+            renpy.game.context().force_checkpoint = True
             renpy.jump(_restart[1])
 
 label _invoke_main_menu:
@@ -259,7 +261,10 @@ label _invoke_main_menu:
 
 
     # If the main menu returns, then start the game.
-    jump start
+
+    python:
+        renpy.game.context().force_checkpoint = True
+        renpy.jump("start")
 
 # At this point, we've been switched into a new context. So we
 # initialize it.

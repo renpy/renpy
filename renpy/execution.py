@@ -108,6 +108,8 @@ class Context(renpy.object.Object):
 
     next_node = None
 
+    force_checkpoint = False
+
     def after_upgrade(self, version):
         if version < 1:
             self.scene_lists.image_predict_info = self.predict_info.images
@@ -210,6 +212,10 @@ class Context(renpy.object.Object):
         # A list of lines that were run since the last time this log was
         # cleared.
         self.line_log = [ ]
+
+        # Do we want to force a checkpoint before the next statement
+        # executed?
+        self.force_checkpoint = False
 
         if context:
             oldsl = context.scene_lists
@@ -392,6 +398,10 @@ class Context(renpy.object.Object):
 
             if self.rollback and renpy.game.log:
                 renpy.game.log.begin()
+
+            if self.force_checkpoint:
+                renpy.game.log.checkpoint(hard=False)
+                self.force_checkpoint = False
 
             self.seen = False
 

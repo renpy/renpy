@@ -281,6 +281,7 @@ def invoke_in_new_context(callable, *args, **kwargs):  # @ReservedAssignment
 
     except renpy.game.JumpOutException, e:
 
+        contexts[-2].force_checkpoint = True
         raise renpy.game.JumpException(e.args[0])
 
     finally:
@@ -329,7 +330,7 @@ def call_in_new_context(label, *args, **kwargs):
         return renpy.execution.run_context(False)
 
     except renpy.game.JumpOutException, e:
-
+        contexts[-2].force_checkpoint = True
         raise renpy.game.JumpException(e.args[0])
 
     finally:
