@@ -959,9 +959,9 @@ class SceneLists(renpy.object.Object):
                 st = sle.show_time
 
             if (not atl and
-                not at_list and
-                renpy.config.keep_running_transform and
-                isinstance(old, renpy.display.motion.Transform)):
+                    not at_list and
+                    renpy.config.keep_running_transform and
+                    isinstance(old, renpy.display.motion.Transform)):
 
                 thing = sle.displayable._change_transform_child(thing)
             else:
@@ -1468,15 +1468,15 @@ class Interface(object):
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
                 self.layer_properties[layer] = dict(
-                    xpos = x,
-                    xanchor = 0,
-                    ypos = y,
-                    yanchor = 0,
-                    xmaximum = w,
-                    ymaximum = h,
-                    xminimum = w,
-                    yminimum = h,
-                    clipping = True,
+                    xpos=x,
+                    xanchor=0,
+                    ypos=y,
+                    yanchor=0,
+                    xmaximum=w,
+                    ymaximum=h,
+                    xminimum=w,
+                    yminimum=h,
+                    clipping=True,
                     )
 
             else:
@@ -1668,7 +1668,7 @@ class Interface(object):
 
         # Needed for Unity.
         wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
-        os.environ['SDL_VIDEO_X11_WMCLASS'] = wmclass
+        os.environ[b'SDL_VIDEO_X11_WMCLASS'] = wmclass.encode("utf-8")
 
         self.set_window_caption(force=True)
         self.set_icon()
@@ -2662,7 +2662,7 @@ class Interface(object):
             focus_roots.append(scene_layer)
 
             if (self.ongoing_transition.get(layer, None) and
-                not suppress_transition):
+                    not suppress_transition):
 
                 trans = self.ongoing_transition[layer](
                     old_widget=self.transition_from[layer],
@@ -2686,7 +2686,7 @@ class Interface(object):
 
         # Add layers_root to root_widget, perhaps through a transition.
         if (self.ongoing_transition.get(None, None) and
-            not suppress_transition):
+                not suppress_transition):
 
             old_root = renpy.display.layout.MultiBox(layout='fixed')
             old_root.layers = { }
@@ -2853,18 +2853,18 @@ class Interface(object):
 
                     if first_pass and self.last_event and self.last_event.type in [ pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION ]:
 
-                            x, y = renpy.display.draw.get_mouse_pos()
-                            ev, x, y = renpy.display.emulator.emulator(self.last_event, x, y)
+                        x, y = renpy.display.draw.get_mouse_pos()
+                        ev, x, y = renpy.display.emulator.emulator(self.last_event, x, y)
 
-                            if self.ignore_touch:
-                                x = -1
-                                y = -1
+                        if self.ignore_touch:
+                            x = -1
+                            y = -1
 
-                            if renpy.android and self.last_event.type == pygame.MOUSEBUTTONUP:
-                                x = -1
-                                y = -1
+                        if renpy.android and self.last_event.type == pygame.MOUSEBUTTONUP:
+                            x = -1
+                            y = -1
 
-                            renpy.display.focus.mouse_handler(None, x, y, default=False)
+                        renpy.display.focus.mouse_handler(None, x, y, default=False)
 
                     needs_redraw = False
                     first_pass = False
@@ -3075,8 +3075,8 @@ class Interface(object):
                 # If we're ignoring touch events, and get a mouse up, stop
                 # ignoring those events.
                 if self.ignore_touch and \
-                    ev.type == pygame.MOUSEBUTTONUP and \
-                    ev.button == 1:
+                        ev.type == pygame.MOUSEBUTTONUP and \
+                        ev.button == 1:
 
                     self.ignore_touch = False
                     continue

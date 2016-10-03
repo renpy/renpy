@@ -238,13 +238,13 @@ init 1 python in editor:
             if i.name == persistent.editor:
                 if i.installed and i.name in editors:
                     ei = editors[i.name]
-                    os.environ["RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
+                    os.environ[b"RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
                     error_message = i.error_message
                     break
 
         else:
             persistent.editor = None
-            os.environ.pop("RENPY_EDIT_PY", None)
+            os.environ.pop(b"RENPY_EDIT_PY", None)
 
         renpy.editor.init()
 
