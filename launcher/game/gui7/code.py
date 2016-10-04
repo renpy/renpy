@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import unicode_literals
+
 import os
 import codecs
 import re
@@ -26,6 +28,42 @@ import math
 
 import renpy
 import textwrap
+
+import collections
+
+
+class Define(object):
+
+    def __init__(self, name, value, comment):
+        self.name = name
+        self.value = value
+        self.comment = comment
+
+# A map from language name to a list of defines.
+language_defines = collections.defaultdict(list)
+
+
+def translate_define(language, name, value, comment=None):
+    """
+    This function should be called to register the value of a define that is
+    set when generating code in `language`.
+
+    `name`
+        A string giving the name of the define.
+
+    `value`
+        A string giving the value of the define. Be sure to quote it properly,
+        or use repr().
+
+    `comment`
+        If not None, a comment that will be generated before the define. The
+        comment will only be generated if the define does not exist in
+        gui.rpy. There is no need to use "## ", as the comment will be
+        added and wrapped automatically.
+    """
+
+    language_defines[language].append(Define(name, value, comment))
+
 
 class CodeGenerator(object):
     """
@@ -58,7 +96,6 @@ class CodeGenerator(object):
             scaled = int(math.ceil(original * self.p.scale))
             return str(scaled)
 
-
         lines = [ ]
 
         for l in self.lines:
@@ -79,11 +116,17 @@ class CodeGenerator(object):
 
         self.lines = lines
 
-
-    def update_defines(self, replacements):
+    def update_defines(self, replacements, additions=[]):
         """
         Replaces define statements in gui.rpy.
         """
+
+        replacements = dict(replacements)
+
+        for d in additions:
+            replacements[d.name] = d.value
+
+        seen = set()
 
         lines = [ ]
 
@@ -98,10 +141,26 @@ class CodeGenerator(object):
                 if variable in replacements:
                     l = "{}define {} = {}".format(indent, variable, replacements[variable])
 
+                seen.add(variable)
+
             lines.append(l)
 
-        self.lines = lines
+        for d in additions:
 
+            if d.name in seen:
+                continue
+
+            seen.add(d.name)
+
+            lines.append("")
+
+            if d.comment:
+                for s in textwrap.wrap(d.comment):
+                    lines.append("## " + s)
+
+            lines.append("define {} = {}".format(d.name, d.value))
+
+        self.lines = lines
 
     def update_gui_defines(self):
         """
@@ -123,14 +182,12 @@ class CodeGenerator(object):
             'gui.choice_text_color' : repr(self.p.choice_color.hexcode),
             }
 
-        self.update_defines(replacements)
-
+        self.update_defines(replacements, language_defines[self.p.language])
 
     def update_options_defines(self):
         """
         Replaces define statements in options.rpy.
         """
-
 
         def quote(s):
             s = s.replace("\\", "\\\\")
@@ -144,7 +201,6 @@ class CodeGenerator(object):
             }
 
         self.update_defines(replacements)
-
 
     def write_target(self, filename):
 

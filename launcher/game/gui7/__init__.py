@@ -19,12 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from gui7.code import CodeGenerator
+from gui7.code import CodeGenerator, translate_define
 from gui7.images import ImageGenerator
 from gui7.parameters import GuiParameters
 
 import renpy.arguments
 import os
+
 
 def generate_gui(p):
 
@@ -93,10 +94,3 @@ def generate_gui_command():
     generate_gui(p)
 
 renpy.arguments.register_command("generate_gui", generate_gui_command)
-
-
-
-
-
-
-

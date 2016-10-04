@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-init python:
+init -1 python:
     import gui7
     import os
 
@@ -70,8 +70,6 @@ init python:
     ] + [
         (i, "#ffffff", True) for i in LIGHT_COLORS
     ]
-
-
 
 
 screen gui_swatches():
