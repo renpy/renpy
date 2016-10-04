@@ -25,11 +25,11 @@ import os
 import codecs
 import re
 import math
+import textwrap
+import collections
+import shutil
 
 import renpy
-import textwrap
-
-import collections
 
 
 class Define(object):
@@ -63,6 +63,26 @@ def translate_define(language, name, value, comment=None):
     """
 
     language_defines[language].append(Define(name, value, comment))
+
+
+# A map from a language name to a list of (src, dst) pairs. Each represents a
+# file that is copied into place.
+language_copies = collections.defaultdict(list)
+
+
+def translate_copy(language, src, dst):
+    """
+    This function should be called to copy a file from `src` to `dst`
+    when generating code in `language`.
+
+    `src`
+        A path, relative to the launcher game directory.
+
+    `dst`
+        A path, relative to the game directory of the new game.
+    """
+
+    language_copies[language].append((src, dst))
 
 
 class CodeGenerator(object):
@@ -311,6 +331,22 @@ class CodeGenerator(object):
                 lines.append(l)
 
         self.lines = lines
+
+    def copy_files(self):
+
+        for src, dst in language_copies[self.p.language]:
+            src = os.path.join(renpy.config.gamedir, src)
+            dst = os.path.join(self.p.prefix, dst)
+
+            if os.path.exists(dst):
+                continue
+
+            dstdir = os.path.dirname(dst)
+
+            if not os.path.exists(dstdir):
+                os.makedirs(dstdir, 0o777)
+
+            shutil.copy(src, dst)
 
     def generate_gui(self, fn):
         if not self.p.update_code:

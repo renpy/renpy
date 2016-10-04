@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from gui7.code import CodeGenerator, translate_define
+from gui7.code import CodeGenerator, translate_define, translate_copy
 from gui7.images import ImageGenerator
 from gui7.parameters import GuiParameters
 
@@ -34,6 +34,7 @@ def generate_gui(p):
     CodeGenerator(p).generate_gui("screens.rpy")
     CodeGenerator(p).generate_code("options.rpy")
     CodeGenerator(p).generate_code("script.rpy")
+    CodeGenerator(p).copy_files()
 
     images = os.path.join(p.prefix, "images")
 
