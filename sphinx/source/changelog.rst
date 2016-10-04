@@ -169,7 +169,7 @@ have run), or when the language changes, the following steps occur.
 
 Ren'Py can be made to return to the old behavior (in which only ``translate``
 `language` ``style``, ``translate`` `language` ``python``, and callbacks
-are executed) by setti
+are executed) by setting :var:`config.new_translate_order` to False.
 
 Local Labels
 ------------
