@@ -192,6 +192,8 @@ init -1500 python:
         _duplicatable = True
 
         def _duplicate(self, args):
+            args = args or self._args
+
             rv = Placeholder(self.base, self.full, self.flip)
             rv.name = list(args.name) + list(args.args)
             return rv
