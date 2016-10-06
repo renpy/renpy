@@ -82,7 +82,7 @@ class BinFile(object):
         return self.a[start:start+len].tostring()
 
     def __init__(self, data):
-        self.a = array.array('B')
+        self.a = array.array(b'B')
         self.a.fromstring(data)
 
 ##############################################################################
@@ -108,7 +108,7 @@ def parse_data(bf, offset):
     for _i in range(data_len):
         l.append(chr(bf.u8()))
 
-    return (code_page, "".join(l))
+    return (code_page, b"".join(l))
 
 # This parses a resource directory.
 
@@ -166,18 +166,18 @@ def show_resources(d, prefix):
 class Packer(object):
 
     def pack(self, d):
-        self.data = ""
+        self.data = b""
         self.data_offset = 0
 
-        self.entries = ""
+        self.entries = b""
         self.entries_offset = 0
 
         head = self.pack_dict(d, 0)
 
-        self.data = ""
+        self.data = b""
         self.data_offset = len(head) + len(self.entries)
 
-        self.entries = ""
+        self.entries = b""
         self.entries_offset = len(head)
 
         return self.pack_dict(d, 0) + self.entries + self.data
@@ -187,7 +187,7 @@ class Packer(object):
 
         l = len(s)
         s = s.encode("utf-16le")
-        self.data += struct.pack("<H", l) + s + "\0\0"
+        self.data += struct.pack("<H", l) + s + b"\0\0"
 
         return rv
 
@@ -197,7 +197,7 @@ class Packer(object):
         rv = len(self.entries) + self.entries_offset
 
         if len(self.data) % 2:
-            self.data += "P"
+            self.data += b"P"
 
         daddr = len(self.data) + self.data_offset
 
@@ -217,7 +217,7 @@ class Packer(object):
 
         offset += len(rv) + (len(name_entries) + len(id_entries)) * 8
 
-        rest = ""
+        rest = b""
 
         for (name, value) in name_entries + id_entries:
             if isinstance(name, unicode):
@@ -289,7 +289,7 @@ def change_icons(oldexe, icofn):
     pe = pefile.PE(oldexe)
 
     for s in pe.sections:
-        if s.Name == ".rsrc\0\0\0":
+        if s.Name == b".rsrc\0\0\0":
             rsrc_section = s
             break
     else:
@@ -321,7 +321,7 @@ def change_icons(oldexe, icofn):
 
     if len(rsrc) % alignment:
         pad = alignment - (len(rsrc) % alignment)
-        padding = "RENPYVNE" * (pad / 8 + 1)
+        padding = b"RENPYVNE" * (pad / 8 + 1)
         padding = padding[:pad]
         rsrc += padding
 
