@@ -221,11 +221,18 @@ init -1500 python in build:
         "**/*.so.*",
         "**/*.so",
         "**/*.dylib",
-        "**.app/Contents/MacOS/*",
+
         "lib/**/python",
         "lib/**/pythonw",
         "lib/**/zsync",
         "lib/**/zsyncmake",
+
+        "**.app/Contents/MacOS/*",
+
+        "**.app/Contents/MacOS/lib/**/python",
+        "**.app/Contents/MacOS/lib/**/pythonw",
+        "**.app/Contents/MacOS/lib/**/zsync",
+        "**.app/Contents/MacOS/lib/**/zsyncmake",
         ]
 
     def executable(pattern):
