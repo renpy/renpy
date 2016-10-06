@@ -132,7 +132,7 @@ init python in project:
             if self.tmp and os.path.isdir(self.tmp):
                 return
 
-            tmp = os.path.join(config.basedir, "tmp", self.name)
+            tmp = os.path.join(config.renpy_base, "tmp", self.name)
 
             try:
                 os.makedirs(tmp)
