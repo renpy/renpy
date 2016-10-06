@@ -707,11 +707,7 @@ class RenpyImporter(object):
 
         source = source.replace("\r", "")
 
-        try:
-            code = compile(source, filename, 'exec', renpy.python.new_compile_flags, 1)
-        except:
-            code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
-
+        code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
         exec code in mod.__dict__
 
         return mod
