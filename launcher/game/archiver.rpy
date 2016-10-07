@@ -48,7 +48,7 @@ init python in archiver:
             # A fixed key minimizes difference between archive versions.
             self.key = 0x42424242
 
-            padding = "RPA-3.0 XXXXXXXXXXXXXXXX XXXXXXXX\n"
+            padding = b"RPA-3.0 XXXXXXXXXXXXXXXX XXXXXXXX\n"
             self.f.write(padding)
 
         def add(self, name, path):
@@ -63,14 +63,14 @@ init python in archiver:
                 dlen = len(data)
 
             # Pad.
-            padding = "Made with Ren'Py."
+            padding = b"Made with Ren'Py."
             self.f.write(padding)
 
             offset = self.f.tell()
 
             self.f.write(data)
 
-            self.index[name].append((offset ^ self.key, dlen ^ self.key, ""))
+            self.index[name].append((offset ^ self.key, dlen ^ self.key, b""))
 
         def close(self):
 
@@ -79,7 +79,7 @@ init python in archiver:
             self.f.write(dumps(self.index, HIGHEST_PROTOCOL).encode("zlib"))
 
             self.f.seek(0)
-            self.f.write("RPA-3.0 %016x %08x\n" % (indexoff, self.key))
+            self.f.write(b"RPA-3.0 %016x %08x\n" % (indexoff, self.key))
 
             self.f.close()
 
