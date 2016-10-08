@@ -462,8 +462,8 @@ python early hide:
         except:
             return
 
-        if not renpy.loadable(fn):
-            renpy.error('voice file %r is not loadable' % fn)
+        if not renpy.music.playable(fn, 'voice'):
+            renpy.error('voice file %r is not playable' % fn)
 
     renpy.statements.register('voice',
                               parse=parse_voice,
