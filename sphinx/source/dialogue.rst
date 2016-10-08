@@ -236,7 +236,8 @@ This enables automatic management of the window. The window is shown
 before statements listed in :var:`config.window_auto_show` - by default,
 say statements. The window is hidden before statements listed in
 :var:`config.window_auto_hide` - by default, ``scene`` and ``call screen``
-statements.
+statements. (Only statements are considered, not statement equivalent
+functions.)
 
 The ``window auto`` statement uses :var:`config.window_show_transition`
 and :var:`config.window_hide_transition` to show and hide the window,
@@ -298,3 +299,8 @@ This character can then be used alongside a variable in the default store::
         e = 100
 
         e "Our starting energy is [e] units."
+
+Window management is performed by setting the :var:`_window` and
+:var:`_window_auto` variables, and by using the following two functions:
+
+.. include:: inc/window

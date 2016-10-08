@@ -37,6 +37,17 @@ init -1200 python:
     _window_auto = False
 
     def _window_show(trans=False):
+        """
+        :doc: window
+
+        The python equivalent of the "window show" statement.
+
+        `trans`
+            If False, the default window show transition is used. If None,
+            no transition is used. Otherwise, the specified transition is
+            used.
+        """
+
         if store._window:
             return
 
@@ -51,6 +62,17 @@ init -1200 python:
             store._window = True
 
     def _window_hide(trans=False):
+        """
+        :doc: window
+
+        The python equivalent of the "window hide" statement.
+
+        `trans`
+            If False, the default window hide transition is used. If None,
+            no transition is used. Otherwise, the specified transition is
+            used.
+        """
+
         if not store._window:
             return
 
