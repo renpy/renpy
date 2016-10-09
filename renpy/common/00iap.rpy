@@ -212,6 +212,10 @@ init -1500 python in iap:
             else:
                 return None
 
+
+        def set_title():
+            self.helper.dialogTitle = __("Contacting App Store\nPlease Wait...")
+
         def identifier(self, p):
             """
             Returns the identifier for a store purchase.
@@ -246,6 +250,7 @@ init -1500 python in iap:
             self.validated_products = True
 
         def purchase(self, p, interact=True):
+            self.set_title()
             self.validate_products(interact)
 
             identifier = objc_str(self.identifier(p))
@@ -253,6 +258,7 @@ init -1500 python in iap:
             self.wait_for_result(interact=interact)
 
         def restore_purchases(self, interact=True):
+            self.set_title()
             self.validate_products(interact)
 
             self.helper.restorePurchases()
