@@ -184,8 +184,8 @@ init -1500 python in iap:
 
     if renpy.ios:
         import pyobjus
-        IAPHelper = pyobjus.autoclass("IAPHelper")
-        NSMutableArray = pyobjus.autoclass("NSMutableArray")
+        IAPHelper = pyobjus.autoclass(b"IAPHelper")
+        NSMutableArray = pyobjus.autoclass(b"NSMutableArray")
 
         from pyobjus import objc_str, objc_arr
 
@@ -556,7 +556,7 @@ init -1500 python in iap:
         """
 
         from jnius import autoclass
-        Store = autoclass('org.renpy.iap.Store')
+        Store = autoclass(b'org.renpy.iap.Store')
         store = Store.getStore()
 
         store_name = store.getStoreName()
