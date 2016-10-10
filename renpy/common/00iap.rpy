@@ -213,7 +213,7 @@ init -1500 python in iap:
                 return None
 
 
-        def set_title():
+        def set_title(self):
             self.helper.dialogTitle = __("Contacting App Store\nPlease Wait...")
 
         def identifier(self, p):
@@ -281,8 +281,6 @@ init -1500 python in iap:
             if renpy.predicting():
                 return None
 
-            self.validate_products(False)
-
             identifier = objc_str(self.identifier(p))
             rv = self.helper.formatPrice_(identifier)
 
@@ -292,7 +290,7 @@ init -1500 python in iap:
             return rv
 
         def init(self):
-            return
+            self.helper.validateProductIdentifiersInBackground()
 
 
     # The backend we're using.
