@@ -1192,7 +1192,7 @@ class RollbackLog(renpy.object.Object):
             if self.rollback_limit:
                 nrbl = 0
 
-                for rb in self.log[-self.rollback_limit]:
+                for rb in self.log[-self.rollback_limit:]:
                     if rb.hard_checkpoint:
                         nrbl += 1
 
