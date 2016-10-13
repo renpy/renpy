@@ -425,6 +425,32 @@ def piglatin_filter(s):
     return generic_filter(s, piglatin_transform)
 
 
+def translate_list_files():
+    """
+    Returns a list of files that exist and should be scanned for translations.
+    """
+
+    filenames = list(renpy.config.translate_files)
+
+    for dirname, filename in renpy.loader.listdirfiles():
+        if dirname is None:
+            continue
+
+        filename = os.path.join(dirname, filename)
+
+        if not (filename.endswith(".rpy") or filename.endswith(".rpym")):
+            continue
+
+        filename = os.path.normpath(filename)
+
+        if not os.path.exists(filename):
+            continue
+
+        filenames.append(filename)
+
+    return filenames
+
+
 def translate_command():
     """
     The translate command. When called from the command line, this generates
@@ -449,34 +475,18 @@ def translate_command():
     else:
         filter = null_filter  # @ReservedAssignment
 
-    strings = renpy.translation.scanstrings.scan()
+    filenames = translate_list_files()
+    strings = renpy.translation.scanstrings.scan(filenames)
 
     for i in strings:
         print(i)
 
     return False
 
-    filenames = list(renpy.config.translate_files)
-
-    for dirname, filename in renpy.loader.listdirfiles():
-        if dirname is None:
-            continue
-
-        filename = os.path.join(dirname, filename)
-
-        if not (filename.endswith(".rpy") or filename.endswith(".rpym")):
-            continue
-
-        filenames.append(filename)
-
     missing_translates = 0
     missing_strings = 0
 
     for filename in filenames:
-        filename = os.path.normpath(filename)
-
-        if not os.path.exists(filename):
-            continue
 
         tf = TranslateFile(filename, args.language, filter, args.count)
 

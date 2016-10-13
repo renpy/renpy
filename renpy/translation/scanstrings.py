@@ -160,24 +160,11 @@ def scan_comments(filename):
     return rv
 
 
-def scan():
+def scan(filenames):
     """
     Scans all files for translatable strings and comments, and returns
     all available translations.
     """
-
-    filenames = list(renpy.config.translate_files)
-
-    for dirname, filename in renpy.loader.listdirfiles():
-        if dirname is None:
-            continue
-
-        filename = os.path.join(dirname, filename)
-
-        if not (filename.endswith(".rpy") or filename.endswith(".rpym")):
-            continue
-
-        filenames.append(filename)
 
     rv = [ ]
 
