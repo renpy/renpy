@@ -44,6 +44,7 @@ STRING_RE = r"""(?x)
 )\s*\)
 """
 
+
 def scan_strings(filename):
     """
     Scans `filename`, a file containing Ren'Py script, for translatable
@@ -52,10 +53,9 @@ def scan_strings(filename):
     Generates a list of (line, string) tuples.
     """
 
-
     rv = [ ]
 
-    for line, s in renpy.game.script.translator.additional_strings[filename]: # @UndefinedVariable
+    for line, s in renpy.game.script.translator.additional_strings[filename]:  # @UndefinedVariable
         rv.append((line, s))
 
     line = 1
@@ -72,6 +72,7 @@ def scan_strings(filename):
                 rv.append((lineno, s))
 
     return rv
+
 
 def scan_comments(filename):
 
@@ -138,7 +139,7 @@ def open_tl_file(fn):
 
 class TranslateFile(object):
 
-    def __init__(self, filename, language, filter, count=False): # @ReservedAssignment
+    def __init__(self, filename, language, filter, count=False):  # @ReservedAssignment
         self.filename = filename
         self.filter = filter
 
@@ -255,7 +256,7 @@ class TranslateFile(object):
 
         for line, s in strings:
 
-            stl = renpy.game.script.translator.strings[self.language] # @UndefinedVariable
+            stl = renpy.game.script.translator.strings[self.language]  # @UndefinedVariable
 
             if s in stl.translations:
                 continue
@@ -305,7 +306,7 @@ class TranslateFile(object):
 
         for _, s in strings:
 
-            stl = renpy.game.script.translator.strings[self.language] # @UndefinedVariable
+            stl = renpy.game.script.translator.strings[self.language]  # @UndefinedVariable
 
             if s in stl.translations:
                 continue
@@ -315,11 +316,14 @@ class TranslateFile(object):
         self.missing_translates = missing_translates
         self.missing_strings = missing_strings
 
+
 def null_filter(s):
     return s
 
+
 def empty_filter(s):
     return ""
+
 
 def generic_filter(s, transform):
 
@@ -372,6 +376,7 @@ def generic_filter(s, transform):
 
     return remove_special(s, "[", "]", remove_braces)
 
+
 def rot13_transform(s):
 
     ROT13 = { }
@@ -388,8 +393,10 @@ def rot13_transform(s):
 
     return "".join(ROT13.get(i, i) for i in s)
 
+
 def rot13_filter(s):
     return generic_filter(s, rot13_transform)
+
 
 def piglatin_transform(s):
     # Based on http://stackoverflow.com/a/23177629/3549890
@@ -413,8 +420,10 @@ def piglatin_transform(s):
 
     return re.sub(r'\w+', replace, s)
 
+
 def piglatin_filter(s):
     return generic_filter(s, piglatin_transform)
+
 
 def translate_command():
     """
@@ -432,13 +441,20 @@ def translate_command():
     args = ap.parse_args()
 
     if args.rot13:
-        filter = rot13_filter #@ReservedAssignment
+        filter = rot13_filter  # @ReservedAssignment
     elif args.piglatin:
-        filter = piglatin_filter #@ReservedAssignment
+        filter = piglatin_filter  # @ReservedAssignment
     elif args.empty:
-        filter = empty_filter # @ReservedAssignment
+        filter = empty_filter  # @ReservedAssignment
     else:
-        filter = null_filter #@ReservedAssignment
+        filter = null_filter  # @ReservedAssignment
+
+    strings = renpy.translation.scanstrings.scan()
+
+    for i in strings:
+        print(i)
+
+    return False
 
     filenames = list(renpy.config.translate_files)
 
@@ -453,10 +469,8 @@ def translate_command():
 
         filenames.append(filename)
 
-
     missing_translates = 0
     missing_strings = 0
-
 
     for filename in filenames:
         filename = os.path.normpath(filename)
@@ -481,6 +495,3 @@ def translate_command():
     return False
 
 renpy.arguments.register_command("translate", translate_command)
-
-
-
