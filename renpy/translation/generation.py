@@ -115,7 +115,13 @@ def scan_comments(filename):
     return rv
 
 
+tl_file_cache = { }
+
+
 def open_tl_file(fn):
+
+    if fn in tl_file_cache:
+        return tl_file_cache[fn]
 
     if not os.path.exists(fn):
         dn = os.path.dirname(fn)
@@ -134,187 +140,160 @@ def open_tl_file(fn):
     f.write(u"# TO" + "DO: Translation updated at {}\n".format(time.strftime("%Y-%m-%d %H:%M")))
     f.write(u"\n")
 
+    tl_file_cache[fn] = f
+
     return f
 
 
-class TranslateFile(object):
+def close_tl_files():
 
-    def __init__(self, filename, language, filter, count=False):  # @ReservedAssignment
-        self.filename = filename
-        self.filter = filter
+    for i in tl_file_cache.values():
+        i.close()
 
-        commondir = os.path.normpath(renpy.config.commondir)
-        gamedir = os.path.normpath(renpy.config.gamedir)
+    tl_file_cache.clear()
 
-        if filename.startswith(commondir):
-            relfn = os.path.relpath(filename, commondir)
 
-            if relfn == "_developer.rpym":
-                return
+def shorten_filename(filename):
+    """
+    Shortens a file name. Returns the shortened filename, and a flag that says
+    if the filename is in the common directory.
+    """
 
-            if relfn.startswith("compat"):
-                return
+    commondir = os.path.normpath(renpy.config.commondir)
+    gamedir = os.path.normpath(renpy.config.gamedir)
 
-            self.tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, "common.rpy")
+    if filename.startswith(commondir):
+        fn = os.path.relpath(filename, commondir)
+        common = True
 
-        elif filename.startswith(gamedir):
-            fn = os.path.relpath(filename, gamedir)
-            self.tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, fn)
+    elif filename.startswith(gamedir):
+        fn = os.path.relpath(filename, gamedir)
+        common = False
 
-        else:
+    else:
+        fn = os.path.basename(filename)
+        common = False
 
-            fn = os.path.basename(filename)
-            self.tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, fn)
+    return fn, common
 
-        if self.tl_filename.endswith(".rpym"):
-            self.tl_filename = self.tl_filename[:-1]
 
-        if language == "None":
-            language = None
+def write_translates(filename, language, filter):  # @ReservedAssignment
 
-        self.language = language
-        self.f = None
+    fn, common = shorten_filename(filename)
 
-        if count:
+    # The common directory should not have dialogue in it.
+    if common:
+        return
 
-            self.count_missing()
+    tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, fn)
 
-        else:
+    if language == "None":
+        language = None
 
-            if language is not None:
-                self.write_translates()
+    translator = renpy.game.script.translator
 
-            self.write_strings()
+    for label, t in translator.file_translates[filename]:
 
-        self.close()
+        if (t.identifier, language) in translator.language_translates:
+            continue
 
-    def open(self):
-        """
-        Opens a translation file.
-        """
+        f = open_tl_file(tl_filename)
 
-        if self.f is not None:
-            return
+        if label is None:
+            label = ""
 
-        self.f = open_tl_file(self.tl_filename)
+        f.write(u"# {}:{}\n".format(t.filename, t.linenumber))
+        f.write(u"translate {} {}:\n".format(language, t.identifier.replace('.', '_')))
+        f.write(u"\n")
 
-    def close(self):
-        """
-        Closes the translation file, if it's open.
-        """
+        for n in t.block:
+            f.write(u"    # " + n.get_code() + "\n")
 
-        if self.f is not None:
-            self.f.close()
+        for n in t.block:
+            f.write(u"    " + n.get_code(filter) + "\n")
 
-    def write_translates(self):
-        """
-        Writes the translates to the file.
-        """
+        f.write(u"\n")
 
-        translator = renpy.game.script.translator
-
-        for label, t in translator.file_translates[self.filename]:
-
-            if (t.identifier, self.language) in translator.language_translates:
-                continue
-
-            self.open()
-
-            if label is None:
-                label = ""
-
-            self.f.write(u"# {}:{}\n".format(t.filename, t.linenumber))
-            self.f.write(u"translate {} {}:\n".format(self.language, t.identifier.replace('.', '_')))
-            self.f.write(u"\n")
-
-            for n in t.block:
-                self.f.write(u"    # " + n.get_code() + "\n")
-
-            for n in t.block:
-                self.f.write(u"    " + n.get_code(self.filter) + "\n")
-
-            self.f.write(u"\n")
-
-    def write_strings(self):
-        """
-        Writes strings to the file.
-        """
-
-        # If this function changes, count_missing may also need to
-        # change.
-
-        started = False
-        filename = renpy.parser.elide_filename(self.filename)
-
-        strings = scan_strings(self.filename)
-
-        if renpy.config.translate_comments:
-            strings.extend(scan_comments(self.filename))
-
-        # Sort by line number.
-        strings.sort(key=lambda a : a[0])
-
-        for line, s in strings:
-
-            stl = renpy.game.script.translator.strings[self.language]  # @UndefinedVariable
-
-            if s in stl.translations:
-                continue
-
-            stl.translations[s] = s
-
-            if not started:
-                started = True
-
-                self.open()
-                self.f.write(u"translate {} strings:\n".format(self.language))
-                self.f.write(u"\n")
-
-            fs = self.filter(s)
-
-            self.f.write(u"    # {}:{}\n".format(filename, line))
-            self.f.write(u"    old \"{}\"\n".format(quote_unicode(s)))
-            self.f.write(u"    new \"{}\"\n".format(quote_unicode(fs)))
-            self.f.write(u"\n")
-
-    def count_missing(self):
-        """
-        Counts the number of missing translations.
-        """
-
-        # Translates.
-
-        missing_translates = 0
-
-        translator = renpy.game.script.translator
-
-        for _, t in translator.file_translates[self.filename]:
-
-            if (t.identifier, self.language) in translator.language_translates:
-                continue
-
-            missing_translates += 1
-
-        # Strings.
-
-        missing_strings = 0
-
-        strings = scan_strings(self.filename)
-
-        if renpy.config.translate_comments:
-            strings.extend(scan_comments(self.filename))
-
-        for _, s in strings:
-
-            stl = renpy.game.script.translator.strings[self.language]  # @UndefinedVariable
-
-            if s in stl.translations:
-                continue
-
-            missing_strings += 1
-
-        self.missing_translates = missing_translates
-        self.missing_strings = missing_strings
+#     def write_strings(self):
+#         """
+#         Writes strings to the file.
+#         """
+#
+#         # If this function changes, count_missing may also need to
+#         # change.
+#
+#         started = False
+#         filename = renpy.parser.elide_filename(self.filename)
+#
+#         strings = scan_strings(self.filename)
+#
+#         if renpy.config.translate_comments:
+#             strings.extend(scan_comments(self.filename))
+#
+#         # Sort by line number.
+#         strings.sort(key=lambda a : a[0])
+#
+#         for line, s in strings:
+#
+#             stl = renpy.game.script.translator.strings[self.language]  # @UndefinedVariable
+#
+#             if s in stl.translations:
+#                 continue
+#
+#             stl.translations[s] = s
+#
+#             if not started:
+#                 started = True
+#
+#                 self.open()
+#                 self.f.write(u"translate {} strings:\n".format(self.language))
+#                 self.f.write(u"\n")
+#
+#             fs = self.filter(s)
+#
+#             self.f.write(u"    # {}:{}\n".format(filename, line))
+#             self.f.write(u"    old \"{}\"\n".format(quote_unicode(s)))
+#             self.f.write(u"    new \"{}\"\n".format(quote_unicode(fs)))
+#             self.f.write(u"\n")
+#
+#     def count_missing(self):
+#         """
+#         Counts the number of missing translations.
+#         """
+#
+#         # Translates.
+#
+#         missing_translates = 0
+#
+#         translator = renpy.game.script.translator
+#
+#         for _, t in translator.file_translates[self.filename]:
+#
+#             if (t.identifier, self.language) in translator.language_translates:
+#                 continue
+#
+#             missing_translates += 1
+#
+#         # Strings.
+#
+#         missing_strings = 0
+#
+#         strings = scan_strings(self.filename)
+#
+#         if renpy.config.translate_comments:
+#             strings.extend(scan_comments(self.filename))
+#
+#         for _, s in strings:
+#
+#             stl = renpy.game.script.translator.strings[self.language]  # @UndefinedVariable
+#
+#             if s in stl.translations:
+#                 continue
+#
+#             missing_strings += 1
+#
+#         self.missing_translates = missing_translates
+#         self.missing_strings = missing_strings
 
 
 def null_filter(s):
@@ -476,31 +455,26 @@ def translate_command():
         filter = null_filter  # @ReservedAssignment
 
     filenames = translate_list_files()
+
     strings = renpy.translation.scanstrings.scan(filenames)
-
-    for i in strings:
-        print(i)
-
-    return False
 
     missing_translates = 0
     missing_strings = 0
 
     for filename in filenames:
+        write_translates(filename, args.language, filter)
 
-        tf = TranslateFile(filename, args.language, filter, args.count)
-
-        if args.count:
-            missing_translates += tf.missing_translates
-            missing_strings += tf.missing_strings
-
-    if args.count:
-
-        print("{}: {} missing dialogue translations, {} missing string translations.".format(
-            args.language,
-            missing_translates,
-            missing_strings
-            ))
+#         if args.count:
+#             missing_translates += tf.missing_translates
+#             missing_strings += tf.missing_strings
+#
+#     if args.count:
+#
+#         print("{}: {} missing dialogue translations, {} missing string translations.".format(
+#             args.language,
+#             missing_translates,
+#             missing_strings
+#             ))
 
     return False
 
