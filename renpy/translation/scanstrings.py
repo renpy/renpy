@@ -25,7 +25,7 @@ import os
 import re
 import codecs
 
-import renpy
+import renpy.translation
 
 ################################################################################
 
@@ -44,10 +44,10 @@ class String(object):
     This stores information about a translation string or comment.
     """
 
-    def __init__(self, filename, line, text):
+    def __init__(self, filename, line, text, comment):
 
-        # The full path to the file that contained this translation.
-        self.full_filename = filename
+        # The full path to the file the strings came from.
+        self.filename = filename
 
         # The line number of the translation string.
         self.line = line
@@ -55,39 +55,11 @@ class String(object):
         # The translation text.
         self.text = text
 
-        # A friendly (elided) name for the translation file.
-        self.filename = None
-
-        # True if this file is from the common directory.
-        self.common = False
-
-        # A tag we apply to the strings.
-        self.tag = "strings"
-
-        commondir = os.path.normpath(renpy.config.commondir)
-        gamedir = os.path.normpath(renpy.config.gamedir)
-
-        if filename.startswith(commondir):
-            self.common = True
-            self.filename = os.path.relpath(filename, commondir)
-
-        elif filename.startswith(gamedir):
-            self.filename = os.path.relpath(filename, gamedir)
-
-        else:
-            self.filename = os.path.basename(filename)
-
-        # The destination file.
-        if self.common:
-            self.destination = "common.rpy"
-        else:
-            self.destination = self.filename
-
-        if self.destination[-1] == "m":
-            self.destination = self.destination[:-1]
+        # True if this is the translation of a comment.
+        self.comment = comment
 
     def __repr__(self):
-        return "<String {self.filename}:{self.line} {self.text!r} {self.tag} {self.destination}>".format(self=self)
+        return "<String {self.filename}:{self.line} {self.text!r}>".format(self=self)
 
 
 def scan_strings(filename):
@@ -114,7 +86,7 @@ def scan_strings(filename):
                 s = s.strip()
                 s = "u" + s
                 s = eval(s)
-                rv.append(String(filename, lineno, s))
+                rv.append(String(filename, lineno, s, False))
 
     return rv
 
@@ -155,16 +127,18 @@ def scan_comments(filename):
 
             comment = [ ]
 
-            rv.append(String(filename, start, s))
+            rv.append(String(filename, start, s, True))
 
     return rv
 
 
-def scan(filenames):
+def scan():
     """
-    Scans all files for translatable strings and comments, and returns
-    all available translations.
+    Scans all files for translatable strings and comments. Returns a list
+    of String objects.
     """
+
+    filenames = renpy.translation.generation.translate_list_files()
 
     rv = [ ]
 

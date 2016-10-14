@@ -21,13 +21,14 @@
 
 from __future__ import print_function
 
-import renpy
+import renpy.translation
 
 import re
 import os
 import time
 import io
 import codecs
+import collections
 
 from renpy.translation import quote_unicode
 
@@ -187,6 +188,9 @@ def write_translates(filename, language, filter):  # @ReservedAssignment
 
     tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, fn)
 
+    if tl_filename[-1] == "m":
+        tl_filename = tl_filename[:-1]
+
     if language == "None":
         language = None
 
@@ -214,47 +218,71 @@ def write_translates(filename, language, filter):  # @ReservedAssignment
 
         f.write(u"\n")
 
-#     def write_strings(self):
-#         """
-#         Writes strings to the file.
-#         """
-#
-#         # If this function changes, count_missing may also need to
-#         # change.
-#
-#         started = False
-#         filename = renpy.parser.elide_filename(self.filename)
-#
-#         strings = scan_strings(self.filename)
-#
-#         if renpy.config.translate_comments:
-#             strings.extend(scan_comments(self.filename))
-#
-#         # Sort by line number.
-#         strings.sort(key=lambda a : a[0])
-#
-#         for line, s in strings:
-#
-#             stl = renpy.game.script.translator.strings[self.language]  # @UndefinedVariable
-#
-#             if s in stl.translations:
-#                 continue
-#
-#             stl.translations[s] = s
-#
-#             if not started:
-#                 started = True
-#
-#                 self.open()
-#                 self.f.write(u"translate {} strings:\n".format(self.language))
-#                 self.f.write(u"\n")
-#
-#             fs = self.filter(s)
-#
-#             self.f.write(u"    # {}:{}\n".format(filename, line))
-#             self.f.write(u"    old \"{}\"\n".format(quote_unicode(s)))
-#             self.f.write(u"    new \"{}\"\n".format(quote_unicode(fs)))
-#             self.f.write(u"\n")
+
+def translation_file_callback(filename, common, comment):
+
+    if common:
+
+        if filename.startswith("_compat"):
+            return None
+
+        return "common.rpy"
+
+    else:
+        if filename[-1] == "m":
+            filename = filename[:-1]
+
+        return filename
+
+
+def write_strings(language, filter):  # @ReservedAssignment
+    """
+    Writes strings to the file.
+    """
+
+    # If this function changes, count_missing may also need to
+    # change.
+
+    stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
+
+    strings = renpy.translation.scanstrings.scan()
+
+    stringfiles = collections.defaultdict(list)
+
+    for s in strings:
+
+        fn, common = shorten_filename(s.filename)
+        tlfn = translation_file_callback(fn, common, s.comment)
+
+        if tlfn is None:
+            continue
+
+        # Already seen.
+        if s.text in stl.translations:
+            continue
+
+        stringfiles[tlfn].append(s)
+
+    for tlfn, sl in stringfiles.items():
+
+        sl.sort(key=lambda s : (s.filename, s.line))
+
+        tlfn = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, tlfn)
+
+        f = open_tl_file(tlfn)
+        sfn, _ = shorten_filename(s.filename)
+
+        f.write(u"translate {} strings:\n".format(language))
+        f.write(u"\n")
+
+        for s in sl:
+            text = filter(s.text)
+
+            f.write(u"    # {}:{}\n".format(sfn, s.line))
+            f.write(u"    old \"{}\"\n".format(quote_unicode(s.text)))
+            f.write(u"    new \"{}\"\n".format(quote_unicode(text)))
+            f.write(u"\n")
+
 #
 #     def count_missing(self):
 #         """
@@ -454,15 +482,17 @@ def translate_command():
     else:
         filter = null_filter  # @ReservedAssignment
 
-    filenames = translate_list_files()
-
-    strings = renpy.translation.scanstrings.scan(filenames)
+    strings = renpy.translation.scanstrings.scan()  # @UndefinedVariable
 
     missing_translates = 0
     missing_strings = 0
 
-    for filename in filenames:
+    for filename in translate_list_files():
         write_translates(filename, args.language, filter)
+
+    write_strings(args.language, filter)
+
+    close_tl_files()
 
 #         if args.count:
 #             missing_translates += tf.missing_translates
