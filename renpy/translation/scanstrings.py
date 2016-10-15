@@ -62,7 +62,7 @@ class String(object):
         return "<String {self.filename}:{self.line} {self.text!r}>".format(self=self)
 
 
-def scan_strings(filename):
+def scan_strings(filename, seen):
     """
     Scans `filename`, a file containing Ren'Py script, for translatable
     strings.
@@ -86,12 +86,17 @@ def scan_strings(filename):
                 s = s.strip()
                 s = "u" + s
                 s = eval(s)
-                rv.append(String(filename, lineno, s, False))
+
+                if s not in seen:
+
+                    seen.add(s)
+
+                    rv.append(String(filename, lineno, s, False))
 
     return rv
 
 
-def scan_comments(filename):
+def scan_comments(filename, seen):
 
     rv = [ ]
 
@@ -127,7 +132,11 @@ def scan_comments(filename):
 
             comment = [ ]
 
-            rv.append(String(filename, start, s, True))
+            if s not in seen:
+
+                seen.add(s)
+
+                rv.append(String(filename, start, s, True))
 
     return rv
 
@@ -142,13 +151,15 @@ def scan():
 
     rv = [ ]
 
+    seen = set()
+
     for filename in filenames:
         filename = os.path.normpath(filename)
 
         if not os.path.exists(filename):
             continue
 
-        rv.extend(scan_strings(filename))
-        rv.extend(scan_comments(filename))
+        rv.extend(scan_strings(filename, seen))
+        rv.extend(scan_comments(filename, seen))
 
     return rv
