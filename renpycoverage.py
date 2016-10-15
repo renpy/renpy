@@ -2,11 +2,12 @@ from __future__ import print_function, unicode_literals, division, absolute_impo
 
 import Cython.Coverage
 import os
-import coverage # @UnresolvedImport
+import coverage  # @UnresolvedImport
 import cPickle
 import ast
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
+
 
 def _find_c_source(base_path):
 
@@ -27,12 +28,12 @@ Cython.Coverage._find_c_source = _find_c_source
 class FixedCythonReporter(coverage.FileReporter):
 
     def __init__(self, old, fn):
-#         fn = old.filename
-#
-#         if not os.path.exists(fn):
-#             new_fn = os.path.join(os.path.dirname(fn), "module", os.path.basename(fn))
-#             if os.path.exists(new_fn):
-#                 fn = new_fn
+        #         fn = old.filename
+        #
+        #         if not os.path.exists(fn):
+        #             new_fn = os.path.join(os.path.dirname(fn), "module", os.path.basename(fn))
+        #             if os.path.exists(new_fn):
+        #                 fn = new_fn
 
         super(FixedCythonReporter, self).__init__(fn)
 
@@ -63,6 +64,7 @@ class CythonCoverage(Cython.Coverage.Plugin):
             "renpy/gl",
             "renpy/styledata",
             "renpy/text",
+            "renpy/audio",
             ]
 
         for i in pyx_search:
@@ -71,9 +73,7 @@ class CythonCoverage(Cython.Coverage.Plugin):
             if os.path.exists(pyx_fn):
                 break
         else:
-            print("Could not find pyx for", filename)
             return None, None
-
 
         c_base = os.path.basename(filename)[:-4] + ".c"
 
@@ -84,6 +84,7 @@ class CythonCoverage(Cython.Coverage.Plugin):
             "renpy.gl.",
             "renpy.styledata.",
             "renpy.text.",
+            "renpy.audio.",
             "pysdlsound."
             ]
 
@@ -96,7 +97,6 @@ class CythonCoverage(Cython.Coverage.Plugin):
             return None, None
 
         return c_fn, pyx_fn
-
 
     def file_tracer(self, filename):
 
@@ -135,6 +135,7 @@ renpy_import_all = False
 
 
 class PycodeVisitor(ast.NodeVisitor):
+
     def __init__(self, lines):
         self.lines = lines
 
@@ -237,6 +238,7 @@ class RenpyReporter(coverage.FileReporter):
 
     def lines(self):
         return self._lines
+
 
 class RenpyCoverage(coverage.CoveragePlugin):
 
