@@ -458,6 +458,46 @@ def translate_list_files():
     return filenames
 
 
+def count_missing(language):
+    """
+    Prints a count of missing translations for `language`.
+    """
+
+    translator = renpy.game.script.translator
+
+    missing_translates = 0
+
+    for filename in translate_list_files():
+        for _, t in translator.file_translates[filename]:
+            if (t.identifier, language) not in translator.language_translates:
+                missing_translates += 1
+
+    missing_strings = 0
+
+    stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
+
+    strings = renpy.translation.scanstrings.scan()
+
+    for s in strings:
+
+        fn, common = shorten_filename(s.filename)
+        tlfn = translation_file_callback(fn, common, s.comment)
+
+        if tlfn is None:
+            continue
+
+        if s.text in stl.translations:
+            continue
+
+        missing_strings += 1
+
+    print("{}: {} missing dialogue translations, {} missing string translations.".format(
+        language,
+        missing_translates,
+        missing_strings
+        ))
+
+
 def translate_command():
     """
     The translate command. When called from the command line, this generates
@@ -473,6 +513,10 @@ def translate_command():
 
     args = ap.parse_args()
 
+    if args.count:
+        count_missing(args.language)
+        return False
+
     if args.rot13:
         filter = rot13_filter  # @ReservedAssignment
     elif args.piglatin:
@@ -481,11 +525,6 @@ def translate_command():
         filter = empty_filter  # @ReservedAssignment
     else:
         filter = null_filter  # @ReservedAssignment
-
-    strings = renpy.translation.scanstrings.scan()  # @UndefinedVariable
-
-    missing_translates = 0
-    missing_strings = 0
 
     for filename in translate_list_files():
         write_translates(filename, args.language, filter)
