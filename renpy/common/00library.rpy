@@ -175,11 +175,7 @@ init -1700 python:
 
         if config.skip_indicator is True:
 
-            if config.skipping == "slow" and config.skip_indicator:
-                ui.text(_(u"Skip Mode"), style='skip_indicator')
-
-            if config.skipping == "fast" and config.skip_indicator:
-                ui.text(_(u"Fast Skip Mode"), style='skip_indicator')
+            ui.text(_(u"Skip Mode"), style='skip_indicator')
 
             return
 
@@ -294,7 +290,7 @@ init 1700 python hide:
         renpy.load_module("_developer/inspector")
 
     if config.window_title is None:
-        config.window_title = config.name or _("A Ren'Py Game")
+        config.window_title = config.name or "A Ren'Py Game"
 
 
 # Used by renpy.return() to return.

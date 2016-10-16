@@ -224,16 +224,16 @@ init -1100 python in gui:
     ############################################################################
     # Strings used by the confirm screen.
 
-    ARE_YOU_SURE = layout.ARE_YOU_SURE
-    DELETE_SAVE = layout.DELETE_SAVE
-    OVERWRITE_SAVE = layout.OVERWRITE_SAVE
-    LOADING = layout.LOADING
-    QUIT = layout.QUIT
-    MAIN_MENU = layout.MAIN_MENU
-    END_REPLAY = layout.END_REPLAY
-    SLOW_SKIP = layout.SLOW_SKIP
-    FAST_SKIP_UNSEEN = layout.FAST_SKIP_UNSEEN
-    FAST_SKIP_SEEN = layout.FAST_SKIP_SEEN
+    ARE_YOU_SURE = _("Are you sure?")
+    DELETE_SAVE = _("Are you sure you want to delete this save?")
+    OVERWRITE_SAVE = _("Are you sure you want to overwrite your save?")
+    LOADING = _("Loading will lose unsaved progress.\nAre you sure you want to do this?")
+    QUIT = _("Are you sure you want to quit?")
+    MAIN_MENU = _("Are you sure you want to return to the main menu?\nThis will lose unsaved progress.")
+    END_REPLAY = _("Are you sure you want to end the replay?")
+    SLOW_SKIP = _("Are you sure you want to begin skipping?")
+    FAST_SKIP_SEEN = _("Are you sure you want to skip to the next choice?")
+    FAST_SKIP_UNSEEN = _("Are you sure you want to skip unseen dialogue to the next choice?")
 
     ############################################################################
     # Image generation. This lives here since it wants to read data from

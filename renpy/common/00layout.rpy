@@ -447,16 +447,16 @@ init -1400 python hide:
     def screen_yesno_prompt():
         renpy.load_module("_layout/screen_yesno_prompt")
 
-    layout.ARE_YOU_SURE = _("Are you sure?")
-    layout.DELETE_SAVE = _("Are you sure you want to delete this save?")
-    layout.OVERWRITE_SAVE = _("Are you sure you want to overwrite your save?")
-    layout.LOADING = _("Loading will lose unsaved progress.\nAre you sure you want to do this?")
-    layout.QUIT = _("Are you sure you want to quit?")
-    layout.MAIN_MENU = _("Are you sure you want to return to the main menu?\nThis will lose unsaved progress.")
-    layout.END_REPLAY = _("Are you sure you want to end the replay?")
-    layout.SLOW_SKIP = _("Are you sure you want to begin skipping?")
-    layout.FAST_SKIP_SEEN = _("Are you sure you want to skip to the next choice?")
-    layout.FAST_SKIP_UNSEEN = _("Are you sure you want to skip unseen dialogue to the next choice?")
+    layout.ARE_YOU_SURE = "Are you sure?"
+    layout.DELETE_SAVE = "Are you sure you want to delete this save?"
+    layout.OVERWRITE_SAVE = "Are you sure you want to overwrite your save?"
+    layout.LOADING = "Loading will lose unsaved progress.\nAre you sure you want to do this?"
+    layout.QUIT = "Are you sure you want to quit?"
+    layout.MAIN_MENU = "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
+    layout.END_REPLAY = "Are you sure you want to end the replay?"
+    layout.SLOW_SKIP = "Are you sure you want to begin skipping?"
+    layout.FAST_SKIP_SEEN = "Are you sure you want to skip to the next choice?"
+    layout.FAST_SKIP_UNSEEN = "Are you sure you want to skip unseen dialogue to the next choice?"
 
     config.enter_yesno_transition = None
     config.exit_yesno_transition = None
