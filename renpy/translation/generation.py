@@ -235,7 +235,7 @@ def translation_file_callback(filename, common, comment):
         return filename
 
 
-def write_strings(language, filter):  # @ReservedAssignment
+def write_strings(language, filter, min_priority, max_priority):  # @ReservedAssignment
     """
     Writes strings to the file.
     """
@@ -245,7 +245,7 @@ def write_strings(language, filter):  # @ReservedAssignment
 
     stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
 
-    strings = renpy.translation.scanstrings.scan()
+    strings = renpy.translation.scanstrings.scan(min_priority, max_priority)
 
     stringfiles = collections.defaultdict(list)
 
@@ -282,46 +282,6 @@ def write_strings(language, filter):  # @ReservedAssignment
             f.write(u"    old \"{}\"\n".format(quote_unicode(s.text)))
             f.write(u"    new \"{}\"\n".format(quote_unicode(text)))
             f.write(u"\n")
-
-#
-#     def count_missing(self):
-#         """
-#         Counts the number of missing translations.
-#         """
-#
-#         # Translates.
-#
-#         missing_translates = 0
-#
-#         translator = renpy.game.script.translator
-#
-#         for _, t in translator.file_translates[self.filename]:
-#
-#             if (t.identifier, self.language) in translator.language_translates:
-#                 continue
-#
-#             missing_translates += 1
-#
-#         # Strings.
-#
-#         missing_strings = 0
-#
-#         strings = scan_strings(self.filename)
-#
-#         if renpy.config.translate_comments:
-#             strings.extend(scan_comments(self.filename))
-#
-#         for _, s in strings:
-#
-#             stl = renpy.game.script.translator.strings[self.language]  # @UndefinedVariable
-#
-#             if s in stl.translations:
-#                 continue
-#
-#             missing_strings += 1
-#
-#         self.missing_translates = missing_translates
-#         self.missing_strings = missing_strings
 
 
 def null_filter(s):
@@ -458,7 +418,7 @@ def translate_list_files():
     return filenames
 
 
-def count_missing(language):
+def count_missing(language, min_priority, max_priority):
     """
     Prints a count of missing translations for `language`.
     """
@@ -476,7 +436,7 @@ def count_missing(language):
 
     stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
 
-    strings = renpy.translation.scanstrings.scan()
+    strings = renpy.translation.scanstrings.scan(min_priority, max_priority)
 
     for s in strings:
 
@@ -510,11 +470,13 @@ def translate_command():
     ap.add_argument("--piglatin", help="Apply pig latin while generating translations.", dest="piglatin", action="store_true")
     ap.add_argument("--empty", help="Produce empty strings while generating translations.", dest="empty", action="store_true")
     ap.add_argument("--count", help="Instead of generating files, print a count of missing translations.", dest="count", action="store_true")
+    ap.add_argument("--min-priority", help="Translate strings with more than this priority.", dest="min_priority", default=0, type=int)
+    ap.add_argument("--max-priority", help="Translate strings with more than this priority.", dest="max_priority", default=299, type=int)
 
     args = ap.parse_args()
 
     if args.count:
-        count_missing(args.language)
+        count_missing(args.language, args.min_priority, args.max_priority)
         return False
 
     if args.rot13:
@@ -529,7 +491,7 @@ def translate_command():
     for filename in translate_list_files():
         write_translates(filename, args.language, filter)
 
-    write_strings(args.language, filter)
+    write_strings(args.language, filter, args.min_priority, args.max_priority)
 
     close_tl_files()
 
