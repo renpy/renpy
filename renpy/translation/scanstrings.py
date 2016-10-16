@@ -38,6 +38,34 @@ STRING_RE = r"""(?x)
 )\s*\)
 """
 
+REGULAR_PRIORITIES = [
+    ("options.rpy", 10, "options.rpy"),
+    ("gui.rpy", 20, "gui.rpy"),
+    ("screens.rpy", 30, "screens.rpy"),
+    ("", 100, "launcher.rpy"),
+]
+
+
+COMMON_PRIORITIES = [
+    ("_compat/", 420, "obsolete.rpy"),
+    ("_layout/", 410, "obsolete.rpy"),
+    ("00layout.rpy", 400, "obsolete.rpy"),
+
+    ("00console.rpy", 320, "developer.rpy"),
+    ("_developer/", 310, "developer.rpy"),
+
+    ("_errorhandling.rpym", 220, "error.rpy"),
+    ("00gamepad.rpy", 210, "error.rpy"),
+    ("00gltest.rpy", 200, "error.rpy"),
+
+    ("00gallery.rpy", 180, "common.rpy"),
+    ("00compat.rpy", 180, "common.rpy"),
+    ("00updater.rpy", 170, "common.rpy"),
+    ("00gamepad.rpy", 160, "common.rpy"),
+    ("00iap.rpy", 150, "common.rpy"),
+    ("", 50, "common.rpy"),
+]
+
 
 class String(object):
     """
@@ -58,11 +86,29 @@ class String(object):
         # True if this is the translation of a comment.
         self.comment = comment
 
+        # The elided filename, and if this is in the common directory.
+        self.elided, common = renpy.translation.generation.shorten_filename(self.filename)
+
+        if common:
+            pl = COMMON_PRIORITIES
+        else:
+            pl = REGULAR_PRIORITIES
+
+        for prefix, priority, launcher_file in pl:
+            if self.elided.startswith(prefix):
+                break
+
+        self.priority = priority
+        self.sort_key = (priority, self.filename, self.line)
+
+        # The launcher translation file this goes into.
+        self.launcher_file = launcher_file
+
     def __repr__(self):
         return "<String {self.filename}:{self.line} {self.text!r}>".format(self=self)
 
 
-def scan_strings(filename, seen):
+def scan_strings(filename):
     """
     Scans `filename`, a file containing Ren'Py script, for translatable
     strings.
@@ -73,9 +119,7 @@ def scan_strings(filename, seen):
     rv = [ ]
 
     for line, s in renpy.game.script.translator.additional_strings[filename]:  # @UndefinedVariable
-        rv.append((line, s))
-
-    line = 1
+        rv.append(String(filename, line, s, False))
 
     for _filename, lineno, text in renpy.parser.list_logical_lines(filename):
 
@@ -87,16 +131,13 @@ def scan_strings(filename, seen):
                 s = "u" + s
                 s = eval(s)
 
-                if s not in seen:
-
-                    seen.add(s)
-
+                if s:
                     rv.append(String(filename, lineno, s, False))
 
     return rv
 
 
-def scan_comments(filename, seen):
+def scan_comments(filename):
 
     rv = [ ]
 
@@ -132,16 +173,12 @@ def scan_comments(filename, seen):
 
             comment = [ ]
 
-            if s not in seen:
-
-                seen.add(s)
-
-                rv.append(String(filename, start, s, True))
+            rv.append(String(filename, start, s, True))
 
     return rv
 
 
-def scan():
+def scan(min_priority=0, max_priority=299):
     """
     Scans all files for translatable strings and comments. Returns a list
     of String objects.
@@ -149,9 +186,7 @@ def scan():
 
     filenames = renpy.translation.generation.translate_list_files()
 
-    rv = [ ]
-
-    seen = set()
+    strings = [ ]
 
     for filename in filenames:
         filename = os.path.normpath(filename)
@@ -159,7 +194,26 @@ def scan():
         if not os.path.exists(filename):
             continue
 
-        rv.extend(scan_strings(filename, seen))
-        rv.extend(scan_comments(filename, seen))
+        strings.extend(scan_strings(filename))
+        strings.extend(scan_comments(filename))
+
+    strings.sort(key=lambda s : s.sort_key)
+
+    rv = [  ]
+    seen = set()
+
+    for s in strings:
+
+        if s.priority < min_priority:
+            continue
+
+        if s.priority > max_priority:
+            continue
+
+        if s.text in seen:
+            continue
+
+        seen.add(s.text)
+        rv.append(s)
 
     return rv
