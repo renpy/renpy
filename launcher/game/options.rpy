@@ -372,3 +372,7 @@ init python:
     build.package("editra-windows", "zip", "editra-all editra-windows", dlc=True)
     build.package("rapt", "zip", "rapt", dlc=True)
     build.package("renios", "zip", "renios", dlc=True)
+
+
+# Enable the special launcher translation mode.
+define config.translate_launcher = True

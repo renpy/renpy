@@ -39,6 +39,7 @@ STRING_RE = r"""(?x)
 """
 
 REGULAR_PRIORITIES = [
+    ("script.rpy", 5, "script.rpy"),
     ("options.rpy", 10, "options.rpy"),
     ("gui.rpy", 20, "gui.rpy"),
     ("screens.rpy", 30, "screens.rpy"),

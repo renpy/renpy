@@ -721,6 +721,9 @@ max_fit_size = 8192
 # Should the window max size be enforced?
 enforce_window_max_size = True
 
+# The max priority to translate to.
+translate_launcher = False
+
 del renpy
 del os
 

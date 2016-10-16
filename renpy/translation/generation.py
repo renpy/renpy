@@ -219,20 +219,20 @@ def write_translates(filename, language, filter):  # @ReservedAssignment
         f.write(u"\n")
 
 
-def translation_file_callback(filename, common, comment):
+def translation_filename(s):
 
-    if common:
+    if renpy.config.translate_launcher:
+        return s.launcher_file
 
-        if filename.startswith("_compat"):
-            return None
-
+    if s.common:
         return "common.rpy"
 
-    else:
-        if filename[-1] == "m":
-            filename = filename[:-1]
+    filename = s.elided
 
-        return filename
+    if filename[-1] == "m":
+        filename = filename[:-1]
+
+    return filename
 
 
 def write_strings(language, filter, min_priority, max_priority):  # @ReservedAssignment
@@ -251,8 +251,7 @@ def write_strings(language, filter, min_priority, max_priority):  # @ReservedAss
 
     for s in strings:
 
-        fn, common = shorten_filename(s.filename)
-        tlfn = translation_file_callback(fn, common, s.comment)
+        tlfn = translation_filename(s)
 
         if tlfn is None:
             continue
@@ -265,12 +264,10 @@ def write_strings(language, filter, min_priority, max_priority):  # @ReservedAss
 
     for tlfn, sl in stringfiles.items():
 
-        sl.sort(key=lambda s : (s.filename, s.line))
+        # sl.sort(key=lambda s : (s.filename, s.line))
 
         tlfn = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, tlfn)
-
         f = open_tl_file(tlfn)
-        sfn, _ = shorten_filename(s.filename)
 
         f.write(u"translate {} strings:\n".format(language))
         f.write(u"\n")
@@ -278,7 +275,7 @@ def write_strings(language, filter, min_priority, max_priority):  # @ReservedAss
         for s in sl:
             text = filter(s.text)
 
-            f.write(u"    # {}:{}\n".format(sfn, s.line))
+            f.write(u"    # {}:{}\n".format(s.elided, s.line))
             f.write(u"    old \"{}\"\n".format(quote_unicode(s.text)))
             f.write(u"    new \"{}\"\n".format(quote_unicode(text)))
             f.write(u"\n")
@@ -471,12 +468,18 @@ def translate_command():
     ap.add_argument("--empty", help="Produce empty strings while generating translations.", dest="empty", action="store_true")
     ap.add_argument("--count", help="Instead of generating files, print a count of missing translations.", dest="count", action="store_true")
     ap.add_argument("--min-priority", help="Translate strings with more than this priority.", dest="min_priority", default=0, type=int)
-    ap.add_argument("--max-priority", help="Translate strings with more than this priority.", dest="max_priority", default=299, type=int)
+    ap.add_argument("--max-priority", help="Translate strings with more than this priority.", dest="max_priority", default=0, type=int)
+    ap.add_argument("--strings-only", help="Only translate strings (not dialogue).", dest="strings_only", default=False, action="store_true")
 
     args = ap.parse_args()
 
+    if renpy.config.translate_launcher:
+        max_priority = args.max_priority or 499
+    else:
+        max_priority = args.max_priority or 299
+
     if args.count:
-        count_missing(args.language, args.min_priority, args.max_priority)
+        count_missing(args.language, args.min_priority, max_priority)
         return False
 
     if args.rot13:
@@ -488,10 +491,11 @@ def translate_command():
     else:
         filter = null_filter  # @ReservedAssignment
 
-    for filename in translate_list_files():
-        write_translates(filename, args.language, filter)
+    if not args.strings_only:
+        for filename in translate_list_files():
+            write_translates(filename, args.language, filter)
 
-    write_strings(args.language, filter, args.min_priority, args.max_priority)
+    write_strings(args.language, filter, args.min_priority, max_priority)
 
     close_tl_files()
 
