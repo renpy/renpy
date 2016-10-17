@@ -26,6 +26,25 @@ import json
 import io
 
 
+def extract_strings_core(language, destination):
+
+    if language not in renpy.game.script.translator.strings:  # @UndefinedVariable
+        raise Exception("Language %r does not have any translations." % language)
+
+    st = renpy.game.script.translator.strings[language]  # @UndefinedVariable
+
+    result = { }
+
+    for k, v in st.translations.iteritems():
+        result[k] = v
+
+    data = json.dumps(result, ensure_ascii=False)
+    data = unicode(data)
+
+    with io.open(destination, "w", encoding="utf-8") as f:
+        f.write(data)
+
+
 def extract_strings():
     """
     The extract strings command.
@@ -42,20 +61,7 @@ def extract_strings():
     if language == 'None':
         language = None
 
-    if language not in renpy.game.script.translator.strings:  # @UndefinedVariable
-        raise Exception("Language %r does not have any translations." % language)
-
-    st = renpy.game.script.translator.strings[language]  # @UndefinedVariable
-
-    result = { }
-
-    for k, v in st.translations.iteritems():
-        result[k] = v
-
-    data = json.dumps(result, ensure_ascii=False)
-
-    with io.open(args.destination, "w", encoding="utf-8") as f:
-        f.write(data)
+    extract_strings_core(language, args.destination)
 
     return False
 

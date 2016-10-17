@@ -35,6 +35,7 @@ import codecs
 # Script
 ################################################################################
 
+
 class ScriptTranslator(object):
 
     def __init__(self):
@@ -174,6 +175,7 @@ class ScriptTranslator(object):
 
         return tl.block[0]
 
+
 def encode_say_string(s):
     """
     Encodes a string in the format used by Ren'Py say statements.
@@ -186,6 +188,7 @@ def encode_say_string(s):
 
     return "\"" + s + "\""
 
+
 class Restructurer(object):
 
     def __init__(self, children):
@@ -197,7 +200,7 @@ class Restructurer(object):
         if identifier in self.identifiers:
             return True
 
-        if identifier in renpy.game.script.translator.default_translates: # @UndefinedVariable
+        if identifier in renpy.game.script.translator.default_translates:  # @UndefinedVariable
             return True
 
         return False
@@ -284,6 +287,7 @@ class Restructurer(object):
             group = [ ]
 
         children[:] = new_children
+
 
 def restructure(children):
     Restructurer(children)
@@ -381,13 +385,16 @@ class StringTranslator(object):
 
         f.close()
 
+
 def add_string_translation(language, old, new, newloc):
+
     tl = renpy.game.script.translator
     stl = tl.strings[language]
     tl.languages.add(language)
     stl.add(old, new, newloc)
 
 Default = renpy.object.Sentinel("default")
+
 
 def translate_string(s, language=Default):
     """
@@ -398,11 +405,12 @@ def translate_string(s, language=Default):
     if language is Default:
         language = renpy.game.preferences.language
 
-    stl = renpy.game.script.translator.strings[language] # @UndefinedVariable
+    stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
     return stl.translate(s)
 
+
 def write_updated_strings():
-    stl = renpy.game.script.translator.strings[renpy.game.preferences.language] # @UndefinedVariable
+    stl = renpy.game.script.translator.strings[renpy.game.preferences.language]  # @UndefinedVariable
     stl.write_updated_strings(renpy.game.preferences.language)
 
 
@@ -458,6 +466,7 @@ def load_rpt(fn):
     if old is not None:
         raise Exception("{0} string {1!r} does not have a translation.".format(language, old))
 
+
 def load_all_rpts():
     """
     Loads all .rpt files.
@@ -473,23 +482,25 @@ def load_all_rpts():
 
 style_backup = None
 
+
 def init_translation():
     """
     Called before the game starts.
     """
 
     global style_backup
-    style_backup = renpy.style.backup() # @UndefinedVariable
+    style_backup = renpy.style.backup()  # @UndefinedVariable
 
     load_all_rpts()
 
-    renpy.store._init_language() # @UndefinedVariable
+    renpy.store._init_language()  # @UndefinedVariable
 
 old_language = "language never set"
 
 # A list of styles that have beend deferred to right before translate
 # styles are run.
 deferred_styles = [ ]
+
 
 def old_change_language(tl, language):
 
@@ -520,6 +531,7 @@ def new_change_language(tl, language):
 
     renpy.game.invoke_in_new_context(run_blocks)
 
+
 def change_language(language):
     """
     :doc: translation_functions
@@ -534,8 +546,8 @@ def change_language(language):
 
     tl = renpy.game.script.translator
 
-    renpy.style.restore(style_backup) # @UndefinedVariable
-    renpy.style.rebuild() # @UndefinedVariable
+    renpy.style.restore(style_backup)  # @UndefinedVariable
+    renpy.style.rebuild()  # @UndefinedVariable
 
     for i in renpy.config.translate_clean_stores:
         renpy.python.clean_store(i)
@@ -555,7 +567,7 @@ def change_language(language):
         renpy.exports.free_memory()
 
         # Rebuild the styles.
-        renpy.style.rebuild() # @UndefinedVariable
+        renpy.style.rebuild()  # @UndefinedVariable
 
         old_language = language
 
@@ -567,6 +579,7 @@ def change_language(language):
 
     if language != old_language:
         renpy.exports.block_rollback()
+
 
 def check_language():
     """
@@ -584,10 +597,11 @@ def check_language():
         tid = ctx.translate_identifier
 
         if tid is not None:
-            node = renpy.game.script.translator.lookup_translate(tid) # @UndefinedVariable
+            node = renpy.game.script.translator.lookup_translate(tid)  # @UndefinedVariable
 
             if node is not None:
                 raise renpy.game.JumpException(node.name)
+
 
 def known_languages():
     """
@@ -597,4 +611,4 @@ def known_languages():
     language, None.
     """
 
-    return renpy.game.script.translator.languages # @UndefinedVariable
+    return renpy.game.script.translator.languages  # @UndefinedVariable

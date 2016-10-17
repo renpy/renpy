@@ -175,6 +175,12 @@ screen translate:
                         textbutton _("Replace existing translations") style "l_checkbox" action ToggleField(persistent, "replace_translations")
                         textbutton _("Reverse languages") style "l_checkbox" action ToggleField(persistent, "reverse_languages")
 
+                        add HALF_SPACER
+
+                        textbutton _("Update Default Interface Translations"):
+                            action [ Jump("update_renpy_strings") ]
+
+
 
                 frame:
                     style "l_indent"
@@ -266,6 +272,26 @@ label merge_strings:
         project.current.launch(args, wait=True)
 
         interface.info(_("Ren'Py has finished merging [language] string translations."))
+
+label update_renpy_strings:
+
+    python:
+
+        language = _preferences.language
+
+        interface.processing(_("Updating default interface translations..."))
+
+        renpy.translation.extract.extract_strings_core(language, STRINGS_JSON)
+
+        args = [ "translate", "None", "--common-only", "--strings-only", "--max-priority", "399", "--no-todo" ]
+        project.current.launch(args, wait=True)
+
+        args = [ "merge_strings", "None",  STRINGS_JSON ]
+        project.current.launch(args, wait=True)
+
+    return
+
+
 
 screen extract_dialogue:
 

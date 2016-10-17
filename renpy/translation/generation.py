@@ -245,10 +245,13 @@ def write_strings(language, filter, min_priority, max_priority, common_only):  #
     Writes strings to the file.
     """
 
+    if language == "None":
+        stl = renpy.game.script.translator.strings[None]  # @UndefinedVariable
+    else:
+        stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
+
     # If this function changes, count_missing may also need to
     # change.
-
-    stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
 
     strings = renpy.translation.scanstrings.scan(min_priority, max_priority, common_only)
 
