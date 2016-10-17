@@ -126,7 +126,7 @@ The three properties are:
     (This defaults to the full duration of the file.)
 
 ``loop``
-    Specifies the position in the file at which the second and laterr
+    Specifies the position in the file at which the second and later
     play-throughs begin playing. (This defaults to the start time
     given by ``from`` if specified, or to the start of the file.)
 
