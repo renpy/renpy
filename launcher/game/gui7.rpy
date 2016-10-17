@@ -25,7 +25,7 @@ init -1 python:
 
     from store import config
 
-    for fn in [ "gui.rpy", "options.rpy", "script.rpy", "screens.rpy" ]:
+    for fn in [ "gui.rpy", "options.rpy", "screens.rpy" ]:
         fn = os.path.join(config.renpy_base, "gui", "game", fn)
         if os.path.exists(fn):
             config.translate_files.append(fn)
@@ -363,6 +363,9 @@ label gui_project_common:
         with interface.error_handling("activating the new project"):
             project.manager.scan()
             project.Select(project.manager.get(project_name))()
+
+    if gui_new:
+        call update_renpy_strings
 
 label gui_generate_images:
 

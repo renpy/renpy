@@ -29,6 +29,7 @@ import time
 import io
 import codecs
 import collections
+import shutil
 
 from renpy.translation import quote_unicode
 
@@ -511,17 +512,12 @@ def translate_command():
 
     close_tl_files()
 
-#         if args.count:
-#             missing_translates += tf.missing_translates
-#             missing_strings += tf.missing_strings
-#
-#     if args.count:
-#
-#         print("{}: {} missing dialogue translations, {} missing string translations.".format(
-#             args.language,
-#             missing_translates,
-#             missing_strings
-#             ))
+    if renpy.config.translate_launcher and (not args.strings_only):
+        src = os.path.join(renpy.config.renpy_base, "gui", "game", "script.rpy")
+        dst = os.path.join(renpy.config.gamedir, "tl", args.language, "script.rpym")
+
+        if os.path.exists(src) and not os.path.exists(dst):
+            shutil.copy(src, dst)
 
     return False
 

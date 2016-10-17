@@ -348,6 +348,24 @@ class CodeGenerator(object):
 
             shutil.copy(src, dst)
 
+    def copy_script(self, name):
+        dst = os.path.join(self.p.prefix, name)
+
+        if os.path.exists(dst):
+            return
+
+        language = renpy.store._preferences.language  # @UndefinedVariable
+
+        if language is None:
+            language = "None"
+
+        src = os.path.join(renpy.config.gamedir, "tl", language, name + "m")
+
+        if not os.path.exists(src):
+            src = os.path.join(self.p.template, name)
+
+        shutil.copy(src, dst)
+
     def generate_gui(self, fn):
         if not self.p.update_code:
             return

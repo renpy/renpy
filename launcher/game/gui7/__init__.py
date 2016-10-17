@@ -33,7 +33,7 @@ def generate_gui(p):
     CodeGenerator(p).generate_gui("gui.rpy")
     CodeGenerator(p).generate_gui("screens.rpy")
     CodeGenerator(p).generate_code("options.rpy")
-    CodeGenerator(p).generate_code("script.rpy")
+    CodeGenerator(p).copy_script("script.rpy")
     CodeGenerator(p).copy_files()
 
     images = os.path.join(p.prefix, "images")
