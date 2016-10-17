@@ -25,13 +25,14 @@ import renpy
 import json
 import io
 
+
 def merge_strings():
     """
     The merge strings command.
     """
 
     ap = renpy.arguments.ArgumentParser(description="Merges translated strings with the game script.")
-    ap.add_argument("language", help="The language to merge translated strings from.")
+    ap.add_argument("language", help="The language to merge translated strings to.")
     ap.add_argument("source", help="The json file to take translated strings from.")
     ap.add_argument("--reverse", action="store_true", help="Reverses the languages in the json file.")
     ap.add_argument("--replace", action="store_true", help="Replaces non-trivial translations.")
@@ -40,7 +41,10 @@ def merge_strings():
 
     language = args.language
 
-    if language not in renpy.game.script.translator.strings: # @UndefinedVariable
+    if language == 'None':
+        language = None
+
+    if language not in renpy.game.script.translator.strings:  # @UndefinedVariable
         raise Exception("Language %r does not have any translations." % language)
 
     with io.open(args.source, "r", encoding="utf-8") as f:
@@ -54,7 +58,7 @@ def merge_strings():
 
         data = new_data
 
-    st = renpy.game.script.translator.strings[language] # @UndefinedVariable
+    st = renpy.game.script.translator.strings[language]  # @UndefinedVariable
 
     renpy.config.clear_lines = False
 
@@ -79,4 +83,3 @@ def merge_strings():
     return False
 
 renpy.arguments.register_command("merge_strings", merge_strings)
-

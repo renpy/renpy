@@ -25,6 +25,7 @@ import renpy
 import json
 import io
 
+
 def extract_strings():
     """
     The extract strings command.
@@ -38,10 +39,13 @@ def extract_strings():
 
     language = args.language
 
-    if language not in renpy.game.script.translator.strings: # @UndefinedVariable
+    if language == 'None':
+        language = None
+
+    if language not in renpy.game.script.translator.strings:  # @UndefinedVariable
         raise Exception("Language %r does not have any translations." % language)
 
-    st = renpy.game.script.translator.strings[language] # @UndefinedVariable
+    st = renpy.game.script.translator.strings[language]  # @UndefinedVariable
 
     result = { }
 
@@ -56,4 +60,3 @@ def extract_strings():
     return False
 
 renpy.arguments.register_command("extract_strings", extract_strings)
-

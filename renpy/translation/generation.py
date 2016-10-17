@@ -118,6 +118,9 @@ def scan_comments(filename):
 
 tl_file_cache = { }
 
+# Should we write the TODO marker?
+todo = True
+
 
 def open_tl_file(fn):
 
@@ -138,7 +141,9 @@ def open_tl_file(fn):
     else:
         f = io.open(fn, "a", encoding="utf-8")
 
-    f.write(u"# TO" + "DO: Translation updated at {}\n".format(time.strftime("%Y-%m-%d %H:%M")))
+    if todo:
+        f.write(u"# TO" + "DO: Translation updated at {}\n".format(time.strftime("%Y-%m-%d %H:%M")))
+
     f.write(u"\n")
 
     tl_file_cache[fn] = f
@@ -235,7 +240,7 @@ def translation_filename(s):
     return filename
 
 
-def write_strings(language, filter, min_priority, max_priority):  # @ReservedAssignment
+def write_strings(language, filter, min_priority, max_priority, common_only):  # @ReservedAssignment
     """
     Writes strings to the file.
     """
@@ -245,7 +250,7 @@ def write_strings(language, filter, min_priority, max_priority):  # @ReservedAss
 
     stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
 
-    strings = renpy.translation.scanstrings.scan(min_priority, max_priority)
+    strings = renpy.translation.scanstrings.scan(min_priority, max_priority, common_only)
 
     stringfiles = collections.defaultdict(list)
 
@@ -415,7 +420,7 @@ def translate_list_files():
     return filenames
 
 
-def count_missing(language, min_priority, max_priority):
+def count_missing(language, min_priority, max_priority, common_only):
     """
     Prints a count of missing translations for `language`.
     """
@@ -433,12 +438,11 @@ def count_missing(language, min_priority, max_priority):
 
     stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
 
-    strings = renpy.translation.scanstrings.scan(min_priority, max_priority)
+    strings = renpy.translation.scanstrings.scan(min_priority, max_priority, common_only)
 
     for s in strings:
 
-        fn, common = shorten_filename(s.filename)
-        tlfn = translation_file_callback(fn, common, s.comment)
+        tlfn = translation_filename(s)
 
         if tlfn is None:
             continue
@@ -470,8 +474,13 @@ def translate_command():
     ap.add_argument("--min-priority", help="Translate strings with more than this priority.", dest="min_priority", default=0, type=int)
     ap.add_argument("--max-priority", help="Translate strings with more than this priority.", dest="max_priority", default=0, type=int)
     ap.add_argument("--strings-only", help="Only translate strings (not dialogue).", dest="strings_only", default=False, action="store_true")
+    ap.add_argument("--common-only", help="Only translate string from the common code.", dest="common_only", default=False, action="store_true")
+    ap.add_argument("--no-todo", help="Do not include the TODO flag.", dest="todo", default=True, action="store_false")
 
     args = ap.parse_args()
+
+    global todo
+    todo = args.todo
 
     if renpy.config.translate_launcher:
         max_priority = args.max_priority or 499
@@ -479,7 +488,7 @@ def translate_command():
         max_priority = args.max_priority or 299
 
     if args.count:
-        count_missing(args.language, args.min_priority, max_priority)
+        count_missing(args.language, args.min_priority, max_priority, args.common_only)
         return False
 
     if args.rot13:
@@ -495,7 +504,7 @@ def translate_command():
         for filename in translate_list_files():
             write_translates(filename, args.language, filter)
 
-    write_strings(args.language, filter, args.min_priority, max_priority)
+    write_strings(args.language, filter, args.min_priority, max_priority, args.common_only)
 
     close_tl_files()
 

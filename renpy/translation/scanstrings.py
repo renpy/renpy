@@ -88,9 +88,9 @@ class String(object):
         self.comment = comment
 
         # The elided filename, and if this is in the common directory.
-        self.elided, common = renpy.translation.generation.shorten_filename(self.filename)
+        self.elided, self.common = renpy.translation.generation.shorten_filename(self.filename)
 
-        if common:
+        if self.common:
             pl = COMMON_PRIORITIES
         else:
             pl = REGULAR_PRIORITIES
@@ -179,7 +179,7 @@ def scan_comments(filename):
     return rv
 
 
-def scan(min_priority=0, max_priority=299):
+def scan(min_priority=0, max_priority=299, common_only=False):
     """
     Scans all files for translatable strings and comments. Returns a list
     of String objects.
@@ -209,6 +209,9 @@ def scan(min_priority=0, max_priority=299):
             continue
 
         if s.priority > max_priority:
+            continue
+
+        if common_only and not s.common:
             continue
 
         if s.text in seen:
