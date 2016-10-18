@@ -175,7 +175,8 @@ init -1700 python:
 
         if config.skip_indicator is True:
 
-            ui.text(_(u"Skip Mode"), style='skip_indicator')
+            if config.skipping:
+                ui.text(_(u"Skip Mode"), style='skip_indicator')
 
             return
 
