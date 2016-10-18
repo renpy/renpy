@@ -111,7 +111,7 @@
     `confirm`
         If true and not at the main menu, prompt for confirmation before loading the file.
 
-.. function:: QuickSave(message='Quick save complete.', newest=False)
+.. function:: QuickSave(message=u'Quick save complete.', newest=False)
     
     Performs a quick save.
     

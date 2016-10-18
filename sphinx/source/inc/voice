@@ -50,7 +50,7 @@
     
     Replays the current voice, if possible.
 
-.. function:: voice_sustain(ignored='', **kwargs)
+.. function:: voice_sustain(ignored=u'', **kwargs)
     
     The equivalent of the voice sustain statement.
 

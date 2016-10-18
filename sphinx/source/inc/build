@@ -1,6 +1,6 @@
 .. Automatically generated file - do not modify.
 
-.. function:: build.archive(name, file_list='all')
+.. function:: build.archive(name, file_list=u'all')
     
     Declares the existence of an archive. If one or more files are
     classified with `name`, `name`.rpa is build as an archive. The

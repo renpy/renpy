@@ -95,7 +95,7 @@
         Adds a new image to the current button, where an image consists
         of one or more displayables.
     
-    .. method:: get_fraction(name, format='{seen}/{total}')
+    .. method:: get_fraction(name, format=u'{seen}/{total}')
         
         Returns a text string giving the number of unlocked images and total number of images in the button
         named `name`.

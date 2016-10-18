@@ -42,7 +42,7 @@
     
     Extra arguments and keyword arguments are passed on to the screen
 
-.. function:: Start(label='start')
+.. function:: Start(label=u'start')
     
     Causes Ren'Py to jump out of the menu context to the named
     label. The main use of this is to start a new game from the

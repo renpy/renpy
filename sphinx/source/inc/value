@@ -20,7 +20,7 @@
         AnimatedValue we replaced, if any. Otherwise, it is initialized
         to `value`.
 
-.. function:: AudioPositionValue(channel='music', update_interval=0.1)
+.. function:: AudioPositionValue(channel=u'music', update_interval=0.1)
     
     A value that shows the playback position of the audio file playing
     in `channel`.
@@ -28,7 +28,7 @@
     `update_interval`
         How often the value updates, in seconds.
 
-.. function:: DictValue(dict, key, range, max_is_zero=False, style='bar', offset=0, step=None)
+.. function:: DictValue(dict, key, range, max_is_zero=False, style=u'bar', offset=0, step=None)
     
     A value that allows the user to adjust the value of a key
     in a dict.
@@ -53,7 +53,7 @@
         The amount to change the bar by. If None, defaults to 1/10th of
         the bar.
 
-.. function:: FieldValue(object, field, range, max_is_zero=False, style='bar', offset=0, step=None)
+.. function:: FieldValue(object, field, range, max_is_zero=False, style=u'bar', offset=0, step=None)
     
     A bar value that allows the user to adjust the value of a field
     on an object.
@@ -88,7 +88,7 @@
         "music", "sfx", or "voice", but user code can create new
         mixers.
 
-.. function:: ScreenVariableValue(variable, range, max_is_zero=False, style='bar', offset=0, step=None)
+.. function:: ScreenVariableValue(variable, range, max_is_zero=False, style=u'bar', offset=0, step=None)
     
     A bar value that adjusts the value of a variable in a screen.
     
@@ -124,7 +124,7 @@
     `range`
          The range of the value.
 
-.. function:: VariableValue(variable, range, max_is_zero=False, style='bar', offset=0, step=None)
+.. function:: VariableValue(variable, range, max_is_zero=False, style=u'bar', offset=0, step=None)
     
     A bar value that allows the user to adjust the value of a variable
     in the default store.

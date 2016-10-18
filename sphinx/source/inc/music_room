@@ -1,6 +1,6 @@
 .. Automatically generated file - do not modify.
 
-.. class:: MusicRoom(channel='music', fadeout=0.0, fadein=0.0, loop=True, single_track=False, shuffle=False, stop_action=None)
+.. class:: MusicRoom(channel=u'music', fadeout=0.0, fadein=0.0, loop=True, single_track=False, shuffle=False, stop_action=None)
     
     A music room that contains a series of songs that can be unlocked
     by the user, and actions that can play entries from the list in

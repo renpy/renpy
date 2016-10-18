@@ -25,7 +25,7 @@
         If true, the value of this input will be returned when the
         user presses enter.
 
-.. function:: FilePageNameInputValue(pattern='Page {}', auto='Automatic saves', quick='Quick saves', page=None, default=False)
+.. function:: FilePageNameInputValue(pattern=u'Page {}', auto=u'Automatic saves', quick=u'Quick saves', page=None, default=False)
     
     An input value that updates the name of a file page.
     
