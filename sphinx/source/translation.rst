@@ -216,6 +216,8 @@ have side effects visible outside of the block. That's because
 changing languages will restart the translation block, causing the
 side effects to occur multiple times.
 
+.. _string-translations:
+
 Menu and String Translations
 ============================
 

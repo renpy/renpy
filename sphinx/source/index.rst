@@ -134,6 +134,7 @@ Engine Developer Documentation
 
    editor
    skins
+   translating_renpy
 
 Changes, License, and Documentation Credits
 -------------------------------------------
