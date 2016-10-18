@@ -65,6 +65,10 @@ class ScriptTranslator(object):
         # that language.
         self.block = collections.defaultdict(list)
 
+        # A map from language to a list of TranslateEarlyBlock objects for
+        # that language.
+        self.early_block = collections.defaultdict(list)
+
         # A map from language to a list of TranslatePython objects for
         # that language.
         self.python = collections.defaultdict(list)
@@ -93,6 +97,7 @@ class ScriptTranslator(object):
 
         TranslatePython = renpy.ast.TranslatePython
         TranslateBlock = renpy.ast.TranslateBlock
+        TranslateEarlyBlock = renpy.ast.TranslateEarlyBlock
         Menu = renpy.ast.Menu
         Translate = renpy.ast.Translate
 
@@ -114,6 +119,11 @@ class ScriptTranslator(object):
                 if n.language is not None:
                     self.languages.add(n.language)
                 self.python[n.language].append(n)
+
+            elif type_n is TranslateEarlyBlock:
+                if n.language is not None:
+                    self.languages.add(n.language)
+                self.early_block[n.language].append(n)
 
             elif type_n is TranslateBlock:
                 if n.language is not None:
@@ -508,6 +518,9 @@ def old_change_language(tl, language):
         i.apply()
 
     def run_blocks():
+        for i in tl.early_block[language]:
+            renpy.game.context().run(i.block[0])
+
         for i in tl.block[language]:
             renpy.game.context().run(i.block[0])
 
@@ -521,6 +534,12 @@ def new_change_language(tl, language):
 
     for i in tl.python[language]:
         renpy.python.py_exec_bytecode(i.code.bytecode)
+
+    def run_blocks():
+        for i in tl.early_block[language]:
+            renpy.game.context().run(i.block[0])
+
+    renpy.game.invoke_in_new_context(run_blocks)
 
     for i in deferred_styles:
         i.apply()

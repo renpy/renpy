@@ -19,7 +19,18 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+init -1:
+
+    # Fonts.
+    define gui.LIGHT_FONT = "Roboto-Light.ttf"
+    define gui.REGULAR_FONT = "Regular-Font.ttf"
+
+    # Used to scale the size of fonts.
+    define gui.FONT_SCALE = 1.0
+
 init -1 python:
+
+    config.defer_styles = True
 
     # The color of non-interactive text.
     TEXT = "#545454"
@@ -63,12 +74,6 @@ init -1 python:
     # The color of input text.
     INPUT_COLOR = "#d86b45"
 
-    # FONTS/WEIGHTS
-    LIGHT = "Roboto-Light.ttf"
-    REGULAR = "Roboto-Regular.ttf"
-
-    if persistent.large_print:
-        LIGHT = REGULAR
 
 init 1 python:
 
@@ -80,7 +85,18 @@ init 1 python:
         if persistent.large_print and n < 18:
             n = 18
 
+        n = int(n * gui.FONT_SCALE)
+
         return n
+
+    def light_font():
+        if persistent.large_print:
+            return gui.REGULAR_FONT
+
+        return gui.LIGHT_FONT
+
+    def regular_font():
+        return gui.REGULAR_FONT
 
 
     INDENT = 20
@@ -108,240 +124,240 @@ init 1 python:
         else:
             return im.Twocolor("images/checkbox_empty.png", color, color, style="l_checkbox_box")
 
-init 1:
-
-    # The default style.
-    style l_default is default:
-        font LIGHT
-        color TEXT
-        idle_color IDLE
-        hover_color HOVER
-        size size(18)
-
-    style l_text is l_default
-
-    style l_button is l_default
-    style l_button_text is l_default:
-        insensitive_color DISABLED
-        selected_font REGULAR
-
-    # A small button, used at the bottom of the screen.
-    style l_link is l_default
-    style l_link_text is l_default:
-        size size(14)
-        font LIGHT
-
-    # Action buttons on the bottom of the screen.
-    style l_right_button is l_default:
-        xalign 1.0
-        ypos 600 - 128 + 12
-        left_margin 8 + INDENT
-        right_margin 10 + INDENT
-
-    style l_right_button_text is l_default:
-        size size(30)
-
-    style l_left_button is l_right_button:
-        xalign 0.0
-
-    style l_left_button_text is l_right_button_text
 
 
-    # The root frame. This contains everything but the bottom navigation,
-    # and buttons.
-    style l_root is l_default:
-        background BACKGROUND
-        xpadding 10
-        top_padding 64
-        bottom_padding 128
+# The default style.
+style l_default is default:
+    font light_font()
+    color TEXT
+    idle_color IDLE
+    hover_color HOVER
+    size size(18)
 
-    # An inner window.
-    style l_window is l_default:
-        background WINDOW
-        left_padding 6
-        xfill True
-        yfill True
+style l_text is l_default
 
-    # Normal size labels.
-    style l_label is l_default:
-        xfill True
-        top_padding 10
-        bottom_padding 8
-        bottom_margin 12
-        background SEPARATOR
+style l_button is l_default
+style l_button_text is l_default:
+    insensitive_color DISABLED
+    selected_font regular_font()
 
-    style l_label_text is l_default:
-        size size(24)
-        xpos INDENT
-        yoffset 6
+# A small button, used at the bottom of the screen.
+style l_link is l_default
+style l_link_text is l_default:
+    size size(14)
+    font light_font()
 
-    style l_label_small is l_default:
-        xfill True
-        bottom_padding 8
-        bottom_margin HALF_SPACER_HEIGHT
-        background SEPARATOR
+# Action buttons on the bottom of the screen.
+style l_right_button is l_default:
+    xalign 1.0
+    ypos 600 - 128 + 12
+    left_margin 8 + INDENT
+    right_margin 10 + INDENT
 
-    # Small labels.
-    style l_label_small_text is l_default:
-        xpos INDENT
-        yoffset 6
-        size size(20)
+style l_right_button_text is l_default:
+    size size(30)
 
-    # Alternate labels. This nests inside an l_label, and gives a button
-    # or label that's nested inside another label.
+style l_left_button is l_right_button:
+    xalign 0.0
 
-    style l_alternate is l_default:
-        xalign 1.0
-        yalign 1.0
-        yoffset 4
-        right_margin INDENT
+style l_left_button_text is l_right_button_text
 
-    style l_alternate_text is l_default:
-        size size(14)
-        font LIGHT
-        text_align 1.0
 
-    style l_small_button is l_button
+# The root frame. This contains everything but the bottom navigation,
+# and buttons.
+style l_root is l_default:
+    background BACKGROUND
+    xpadding 10
+    top_padding 64
+    bottom_padding 128
 
-    style l_small_button_text is l_button_text:
-        size size(14)
+# An inner window.
+style l_window is l_default:
+    background WINDOW
+    left_padding 6
+    xfill True
+    yfill True
 
-    style l_small_text is l_text:
-        size size(14)
+# Normal size labels.
+style l_label is l_default:
+    xfill True
+    top_padding 10
+    bottom_padding 8
+    bottom_margin 12
+    background SEPARATOR
 
-    # Indents its contents.
-    style l_indent is l_default:
-        left_margin INDENT
+style l_label_text is l_default:
+    size size(24)
+    xpos INDENT
+    yoffset 6
 
-    # Indents its contents and pads vertically.
-    style l_indent_margin is l_indent:
-        ymargin 6
+style l_label_small is l_default:
+    xfill True
+    bottom_padding 8
+    bottom_margin HALF_SPACER_HEIGHT
+    background SEPARATOR
 
-    # Lists.
-    style l_list is l_default:
-        left_padding HALF_INDENT
-        xfill True
-        selected_background REVERSE_IDLE
-        selected_hover_background REVERSE_HOVER
+# Small labels.
+style l_label_small_text is l_default:
+    xpos INDENT
+    yoffset 6
+    size size(20)
 
-    style l_list_text is l_default:
-        idle_color IDLE
-        hover_color HOVER
-        selected_idle_color REVERSE_TEXT
-        selected_hover_color REVERSE_TEXT
-        insensitive_color DISABLED
+# Alternate labels. This nests inside an l_label, and gives a button
+# or label that's nested inside another label.
 
-    style l_list2 is l_list:
-        left_padding (HALF_INDENT + INDENT)
+style l_alternate is l_default:
+    xalign 1.0
+    yalign 1.0
+    yoffset 4
+    right_margin INDENT
 
-    style l_list2_text is l_list_text
+style l_alternate_text is l_default:
+    size size(14)
+    font light_font()
+    text_align 1.0
 
-    # Scrollbar.
-    style l_vscrollbar is l_default:
-        thumb Fixed(
-            Solid(SCROLLBAR_IDLE, xmaximum=8, xalign=0.5),
-            Image("images/vscrollbar_center.png", xalign=0.5, yalign=0.5),
-            xmaximum = SCROLLBAR_SIZE)
-        hover_thumb Fixed(
-            Solid(SCROLLBAR_HOVER, xmaximum=8, xalign=0.5),
-            Image("images/vscrollbar_center.png", xalign=0.5, yalign=0.5),
-            xmaximum = SCROLLBAR_SIZE)
-        xmaximum SCROLLBAR_SIZE
-        bar_vertical True
-        bar_invert True
-        unscrollable "hide"
+style l_small_button is l_button
 
-    # Information window.
-    style l_info_vbox is vbox:
-        yalign 0.5
-        xalign 0.5
-        xfill True
+style l_small_button_text is l_button_text:
+    size size(14)
 
-    style l_info_frame is l_default:
-        ypadding 21
-        xfill True
-        background Fixed(
-            INFO_WINDOW,
-            Frame(PATTERN, 0, 0, tile=True, ymaximum=5, yalign=0.0, yoffset=8),
-            Frame(PATTERN, 0, 0, tile=True, ymaximum=5, yalign=1.0, yoffset=-8),
-            )
-        yminimum 180
-        ypos 75
+style l_small_text is l_text:
+    size size(14)
 
-    style l_info_label is l_default:
-        xalign 0.5
-        ypos 75
-        yanchor 1.0
-        yoffset 12
+# Indents its contents.
+style l_indent is l_default:
+    left_margin INDENT
 
-    style l_info_label_text is l_default:
-        size size(36)
+# Indents its contents and pads vertically.
+style l_indent_margin is l_indent:
+    ymargin 6
 
-    style l_info_text is l_default:
-        xalign 0.5
+# Lists.
+style l_list is l_default:
+    left_padding HALF_INDENT
+    xfill True
+    selected_background REVERSE_IDLE
+    selected_hover_background REVERSE_HOVER
 
-    style l_info_button is l_button:
-        xalign 0.5
-        xmargin 50
+style l_list_text is l_default:
+    idle_color IDLE
+    hover_color HOVER
+    selected_idle_color REVERSE_TEXT
+    selected_hover_color REVERSE_TEXT
+    insensitive_color DISABLED
 
-    style l_info_button_text is l_button_text:
-        text_align 0.5
-        layout "subtitle"
+style l_list2 is l_list:
+    left_padding (HALF_INDENT + INDENT)
 
-    # Progress bar.
-    style l_progress_frame is l_default:
-        background Frame(PATTERN, 0, 0, tile=True)
-        ypadding 5
+style l_list2_text is l_list_text
 
-    style l_progress_bar is l_default:
-        left_bar REVERSE_IDLE
-        right_bar Null()
-        ymaximum 24
+# Scrollbar.
+style l_vscrollbar is l_default:
+    thumb Fixed(
+        Solid(SCROLLBAR_IDLE, xmaximum=8, xalign=0.5),
+        Image("images/vscrollbar_center.png", xalign=0.5, yalign=0.5),
+        xmaximum = SCROLLBAR_SIZE)
+    hover_thumb Fixed(
+        Solid(SCROLLBAR_HOVER, xmaximum=8, xalign=0.5),
+        Image("images/vscrollbar_center.png", xalign=0.5, yalign=0.5),
+        xmaximum = SCROLLBAR_SIZE)
+    xmaximum SCROLLBAR_SIZE
+    bar_vertical True
+    bar_invert True
+    unscrollable "hide"
 
-    # Navigation.
-    style l_navigation_button is l_button:
-        size_group "navigation"
-        right_margin INDENT
-        top_margin 3
+# Information window.
+style l_info_vbox is vbox:
+    yalign 0.5
+    xalign 0.5
+    xfill True
 
-    style l_navigation_button_text is l_button_text:
-        size size(14)
-        font REGULAR
+style l_info_frame is l_default:
+    ypadding 21
+    xfill True
+    background Fixed(
+        INFO_WINDOW,
+        Frame(PATTERN, 0, 0, tile=True, ymaximum=5, yalign=0.0, yoffset=8),
+        Frame(PATTERN, 0, 0, tile=True, ymaximum=5, yalign=1.0, yoffset=-8),
+        )
+    yminimum 180
+    ypos 75
 
-    style l_navigation_text is l_text:
-        size size(14)
-        font LIGHT
-        color TEXT
+style l_info_label is l_default:
+    xalign 0.5
+    ypos 75
+    yanchor 1.0
+    yoffset 12
 
-    # Checkboxes.
-    style l_checkbox is l_button:
-        left_padding INDENT
-        background checkbox(False, IDLE)
-        hover_background checkbox(False, HOVER)
-        selected_idle_background checkbox(True, IDLE)
-        selected_hover_background checkbox(True, HOVER)
-        insensitive_background checkbox(False, DISABLED)
+style l_info_label_text is l_default:
+    size size(36)
 
-    style l_checkbox_box:
-        yanchor 0.5
-        ypos 11
+style l_info_text is l_default:
+    xalign 0.5
 
-    style l_checkbox_text is l_button_text:
-        selected_font LIGHT
+style l_info_button is l_button:
+    xalign 0.5
+    xmargin 50
 
-    # Lines up with a checkbox.
-    style l_nonbox is l_button:
-        xpadding INDENT
+style l_info_button_text is l_button_text:
+    text_align 0.5
+    layout "subtitle"
 
-    style l_nonbox_text is l_button_text:
-        selected_font LIGHT
+# Progress bar.
+style l_progress_frame is l_default:
+    background Frame(PATTERN, 0, 0, tile=True)
+    ypadding 5
 
-    # Projects list.
-    style l_projects is l_default:
-        background PROJECTS_WINDOW
+style l_progress_bar is l_default:
+    left_bar REVERSE_IDLE
+    right_bar Null()
+    ymaximum 24
 
-    style hyperlink_text:
-        size size(18)
-        font LIGHT
-        color IDLE
-        hover_color HOVER
+# Navigation.
+style l_navigation_button is l_button:
+    size_group "navigation"
+    right_margin INDENT
+    top_margin 3
+
+style l_navigation_button_text is l_button_text:
+    size size(14)
+    font regular_font()
+
+style l_navigation_text is l_text:
+    size size(14)
+    font light_font()
+    color TEXT
+
+# Checkboxes.
+style l_checkbox is l_button:
+    left_padding INDENT
+    background checkbox(False, IDLE)
+    hover_background checkbox(False, HOVER)
+    selected_idle_background checkbox(True, IDLE)
+    selected_hover_background checkbox(True, HOVER)
+    insensitive_background checkbox(False, DISABLED)
+
+style l_checkbox_box:
+    yanchor 0.5
+    ypos 11
+
+style l_checkbox_text is l_button_text:
+    selected_font light_font()
+
+# Lines up with a checkbox.
+style l_nonbox is l_button:
+    xpadding INDENT
+
+style l_nonbox_text is l_button_text:
+    selected_font light_font()
+
+# Projects list.
+style l_projects is l_default:
+    background PROJECTS_WINDOW
+
+style hyperlink_text:
+    size size(18)
+    font light_font()
+    color IDLE
+    hover_color HOVER

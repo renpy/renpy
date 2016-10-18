@@ -430,60 +430,60 @@ def group_logical_lines(lines):
 # are banned in simple_expressions, where we might want to use
 # some of them.
 KEYWORDS = set([
-            '$',
-            'as',
-            'at',
-            'behind',
-            'call',
-            'expression',
-            'hide',
-            'if',
-            'in',
-            'image',
-            'init',
-            'jump',
-            'menu',
-            'onlayer',
-            'python',
-            'return',
-            'scene',
-            'set',
-            'show',
-            'with',
-            'while',
-            'zorder',
-            'transform',
-            ])
+    '$',
+    'as',
+    'at',
+    'behind',
+    'call',
+    'expression',
+    'hide',
+    'if',
+    'in',
+    'image',
+    'init',
+    'jump',
+    'menu',
+    'onlayer',
+    'python',
+    'return',
+    'scene',
+    'set',
+    'show',
+    'with',
+    'while',
+    'zorder',
+    'transform',
+    ])
 
 OPERATORS = [
-        '<',
-        '<=',
-        '>',
-        '>=',
-        '<>',
-        '!=',
-        '==',
-        '|',
-        '^',
-        '&',
-        '<<',
-        '>>',
-        '+',
-        '-',
-        '*',
-        '/',
-        '//',
-        '%',
-        '~',
-        '**',
-        ]
+    '<',
+    '<=',
+    '>',
+    '>=',
+    '<>',
+    '!=',
+    '==',
+    '|',
+    '^',
+    '&',
+    '<<',
+    '>>',
+    '+',
+    '-',
+    '*',
+    '/',
+    '//',
+    '%',
+    '~',
+    '**',
+    ]
 
 ESCAPED_OPERATORS = [
-        r'\bor\b',
-        r'\band\b',
-        r'\bnot\b',
-        r'\bin\b',
-        r'\bis\b',
+    r'\bor\b',
+    r'\band\b',
+    r'\bnot\b',
+    r'\bin\b',
+    r'\bis\b',
     ]
 
 operator_regexp = "|".join([ re.escape(i) for i in OPERATORS ] + ESCAPED_OPERATORS)
@@ -993,9 +993,9 @@ class Lexer(object):
             # We start with either a name, a python_string, or parenthesized
             # python
             if not (self.python_string() or
-                self.name() or
-                self.float() or
-                self.parenthesised_python()):
+                    self.name() or
+                    self.float() or
+                    self.parenthesised_python()):
 
                 break
 
@@ -2233,7 +2233,7 @@ def translate_statement(l, loc):
             l.init = True
 
             block = [ python_statement(l, loc) ]
-            return [ ast.TranslateBlock(loc, language, block) ]
+            return [ ast.TranslateEarlyBlock(loc, language, block) ]
         finally:
             l.init = old_init
 
