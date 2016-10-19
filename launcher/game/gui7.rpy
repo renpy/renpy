@@ -20,10 +20,44 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1 python:
+
     import gui7
+    from gui7 import translate_define, translate_copy
+
     import os
 
     from store import config
+
+    def translate_font(language, font, path=None):
+        """
+        Selects the font file that is used when translating `language`.
+
+        `font`
+            Is the name of the font file used for both the launcher and
+            the new GUI template. This should be a string giving the name
+            of the font file.
+
+        `path`
+            The path to the font file, relative to the launcher's game
+            directory. If not given, defaults to tl/`language`.
+        """
+
+        if path is None:
+            path = "tl/" + language
+
+        fullfont = path + "/" + font
+
+        def callback():
+            gui.REGULAR_FONT = fullfont
+            gui.LIGHT_FONT = fullfont
+
+        config.language_callbacks[language].append(callback)
+
+        gui7.translate_copy(language, fullfont, font)
+        gui7.translate_define(language, "gui.default_font", repr(font))
+        gui7.translate_define(language, "gui.name_font", repr(font))
+        gui7.translate_define(language, "gui.interface_font", repr(font))
+
 
     for fn in [ "gui.rpy", "options.rpy", "screens.rpy" ]:
         fn = os.path.join(config.renpy_base, "gui", "game", fn)
