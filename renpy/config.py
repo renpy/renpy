@@ -25,6 +25,8 @@
 
 # This will be deleted by the end of this file.
 import renpy.display
+
+import collections
 import os
 
 # Can we add more config variables?
@@ -723,6 +725,10 @@ enforce_window_max_size = True
 
 # The max priority to translate to.
 translate_launcher = False
+
+# A map from language to a list of callbacks that are used to help set it
+# up.
+language_callbacks = collections.defaultdict(list)
 
 del renpy
 del os
