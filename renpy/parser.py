@@ -426,7 +426,7 @@ def group_logical_lines(lines):
 # A list of keywords which should not be parsed as names, because
 # there is a huge chance of confusion.
 #
-# Note: We need to be careful with what's in here, because thse
+# Note: We need to be careful with what's in here, because these
 # are banned in simple_expressions, where we might want to use
 # some of them.
 KEYWORDS = set([
@@ -722,7 +722,7 @@ class Lexer(object):
 
     def hash(self):
         """
-        Matches the chatacters in an md5 hash, and then some.
+        Matches the characters in an md5 hash, and then some.
         """
 
         return self.match(r'\w+')
@@ -918,7 +918,7 @@ class Lexer(object):
             if c in delim:
                 return renpy.ast.PyExpr(self.text[start:self.pos], self.filename, self.number)
 
-            if c == '"' or c == "'":
+            if c in ['"', "'"]:
                 self.python_string()
                 continue
 
@@ -948,7 +948,7 @@ class Lexer(object):
         """
         Tries to match a parenthesised python expression. If it can,
         returns true and updates the current position to be after the
-        closing parenthesis. Returns False otherewise.
+        closing parenthesis. Returns False otherwise.
         """
 
         c = self.text[self.pos]
@@ -1562,7 +1562,7 @@ class ParseTrie(object):
 
         word = l.word() or l.match(r'\$')
 
-        if not word in self.words:
+        if word not in self.words:
             l.pos = old_pos
             return self.default
 
