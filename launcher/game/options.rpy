@@ -194,12 +194,22 @@ init -1 python hide:
 
     config.underlay = [
         renpy.Keymap(
+            screenshot = _screenshot,
+            reload_game = _reload_game,
+            developer = _developer,
             quit = renpy.quit_event,
             iconify = renpy.iconify,
+            help = _help,
             choose_renderer = renpy.curried_call_in_new_context("_choose_renderer"),
+            console = _console.enter,
+            profile_once = _profile_once,
+            memory_profile = _memory_profile,
             self_voicing = Preference("self voicing", "toggle"),
+            clipboard_voicing = Preference("clipboard voicing", "toggle"),
+            debug_voicing = Preference("debug voicing", "toggle"),
+            progress_screen = _progress_screen,
             ),
-    ]
+        ]
 
     config.rollback_enabled = False
 
