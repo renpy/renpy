@@ -918,7 +918,7 @@ class Lexer(object):
             if c in delim:
                 return renpy.ast.PyExpr(self.text[start:self.pos], self.filename, self.number)
 
-            if c in ['"', "'"]:
+            if c in "'\"":
                 self.python_string()
                 continue
 
