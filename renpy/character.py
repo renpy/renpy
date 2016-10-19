@@ -31,6 +31,7 @@ TAG_RE = re.compile(r'(\{\{)|(\{(p|w|nw|fast)(?:\=([^}]*))?\})', re.S)
 
 less_pauses = ("RENPY_LESS_PAUSES" in os.environ)
 
+
 class DialogueTextTags(object):
     """
     This object parses the text tags that only make sense in dialogue,
@@ -143,7 +144,7 @@ def compute_widget_properties(who_args, what_args, window_args, variant=None):
 
     def style_args(d):
 
-        if not "style" in d:
+        if "style" not in d:
             return d
 
         in_rollback = renpy.exports.in_rollback()
@@ -270,8 +271,8 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         renpy.display.screen.show_screen(
             screen,
             _widget_properties=props,
-            _transient = True,
-            _tag = tag,
+            _transient=True,
+            _tag=tag,
             who=who,
             what=what,
             _layer=layer,
@@ -280,7 +281,6 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         renpy.exports.shown_window()
 
         return renpy.display.screen.get_widget(screen, "what", layer)
-
 
     # Apply the transform.
     if transform:
@@ -318,11 +318,10 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     return rv
 
 
-
 class SlowDone(object):
     delay = None
 
-    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay): #@ReservedAssignment
+    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay):  # @ReservedAssignment
         self.ctc = ctc
         self.ctc_position = ctc_position
         self.callback = callback
@@ -371,7 +370,7 @@ def display_say(
     cb_args,
     with_none,
     callback,
-    type, #@ReservedAssignment
+    type,  # @ReservedAssignment
     checkpoint=True,
     ctc_timedpause=None,
     ctc_force=False):
@@ -551,6 +550,7 @@ class HistoryEntry(renpy.object.Object):
 # This is used to flag values that haven't been set by the user.
 NotSet = renpy.object.Sentinel("NotSet")
 
+
 class ADVCharacter(object):
     """
     The character object contains information about a character. When
@@ -592,7 +592,6 @@ class ADVCharacter(object):
                 return properties.pop(n)
             else:
                 return getattr(kind, n)
-
 
         # Similar, but it grabs the value out of kind.display_args instead.
         def d(n):
@@ -705,7 +704,6 @@ class ADVCharacter(object):
     def do_done(self, who, what):
         self.add_history("adv", who, what)
 
-
     # This is called when an extend occurs, before the usual add/show
     # cycel.
     def do_extend(self):
@@ -717,7 +715,6 @@ class ADVCharacter(object):
                     what,
                     self.do_show,
                     **display_args)
-
 
     # This is called to predict images that will be used by this
     # statement.
@@ -796,7 +793,6 @@ class ADVCharacter(object):
 
     def empty_window(self):
         self("", interact=False, _call_done=False)
-
 
     def __call__(self, what, interact=True, _call_done=True, **kwargs):
 
@@ -889,7 +885,6 @@ class ADVCharacter(object):
 
                 self.resolve_say_attributes(False, remove=speaking)
 
-
     def predict(self, what):
 
         self.resolve_say_attributes(True)
@@ -936,10 +931,10 @@ class ADVCharacter(object):
         if history_length is None:
             return
 
-        if not renpy.store._history: # @UndefinedVariable
+        if not renpy.store._history:  # @UndefinedVariable
             return
 
-        history = renpy.store._history_list # @UndefinedVariable
+        history = renpy.store._history_list  # @UndefinedVariable
 
         h = HistoryEntry()
 
@@ -1161,4 +1156,3 @@ def Character(name=NotSet, kind=None, **properties):
 
 def DynamicCharacter(name_expr, **properties):
     return Character(name_expr, dynamic=True, **properties)
-

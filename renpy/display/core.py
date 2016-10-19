@@ -1093,7 +1093,7 @@ class SceneLists(renpy.object.Object):
         totally wiped out.
         """
 
-        if not layer in self.layers:
+        if layer not in self.layers:
             return
 
         if not hide:
