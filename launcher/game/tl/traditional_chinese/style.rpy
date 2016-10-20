@@ -1,31 +1,10 @@
-﻿translate traditional_chinese python:
+init python:
+    translate_font("traditional_chinese", "DroidSansFallback.ttf")
 
-    DSF = "tl/traditional_chinese/DroidSansFallback.ttf"
+translate traditional_chinese python:
+    gui.REGULAR_BOLD = True
+    gui.FONT_SCALE = .9
 
-    style.l_default.font = DSF
-    style.l_default.size = 16
-    style.l_default.selected_font = DSF
-    style.l_default.selected_bold = 1
-
-    style.l_button_text.font = DSF
-    style.l_button_text.selected_bold = True
-    style.l_checkbox_text.font = DSF
-    style.l_link_text.font = DSF
-
-    style.l_button_text.selected_font = DSF
-    style.l_button_text.selected_bold = 1
-
-    style.l_checkbox_text.selected_font = DSF
-    style.l_checkbox_text.selected_bold = 1
-
-    style.l_navigation_button_text.font = DSF
-    style.l_navigation_text.font = DSF
-    style.l_navigation_text.bold = True
-
-    style.l_link_text.selected_font = DSF
-    style.l_link_text.selected_bold = 1
-
-    style.l_alternate_text.font = DSF
-    style.l_nonbox_text.font = DSF
-    style.hyperlink_text.font = DSF
-
+# translate traditional_chinese style l_default:
+#     line_leading 1.5
+#     line_spacing 1.5

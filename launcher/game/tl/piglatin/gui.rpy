@@ -1,3 +1,6 @@
+init python:
+    translate_font("piglatin", "wildwords.ttf")
+
 translate piglatin strings:
 
     # gui.rpy:2

@@ -51,6 +51,8 @@ init -1 python hide:
     config.name = "Ren'Py Launcher"
     config.version = renpy.version().split()[1]
 
+    config.rtl = True
+
     #####################
     # Themes
 

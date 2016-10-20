@@ -1,16 +1,6 @@
-﻿translate indonesian python:
-    idn = "DejaVuSans.ttf"
-    style.l_default.font = idn
-    style.l_default.size = 10
-    style.l_button_text.selected_font = idn
-    style.l_button_text.selected_bold = True
-    style.l_link_text.font = idn
-    style.l_alternate_text.font = idn
-    style.l_navigation_button_text.font = idn
-    style.l_navigation_text.font = idn
-    style.l_navigation_text.bold = True
-    style.l_checkbox_text.selected_font = idn
-    style.l_nonbox_text.selected_font = idn
-    style.hyperlink_text.font = idn
+translate indonesian python:
+    gui.REGULAR_FONT = "DejaVuSans.ttf"
+    gui.LIGHT_FONT = "DejaVuSans.ttf"
+    gui.FONT_SCALE = .9
+    gui.REGULAR_BOLD = True
 
-    config.rtl = True

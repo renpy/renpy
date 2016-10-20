@@ -28,6 +28,9 @@ init -1:
     # Used to scale the size of fonts.
     define gui.FONT_SCALE = 1.0
 
+    # Should places where the regular font used be bolded?
+    define gui.REGULAR_BOLD = False
+
 init -1 python:
 
     config.defer_styles = True
@@ -98,7 +101,6 @@ init 1 python:
     def regular_font():
         return gui.REGULAR_FONT
 
-
     INDENT = 20
     HALF_INDENT = 10
 
@@ -140,6 +142,7 @@ style l_button is l_default
 style l_button_text is l_default:
     insensitive_color DISABLED
     selected_font regular_font()
+    selected_bold gui.REGULAR_BOLD
 
 # A small button, used at the bottom of the screen.
 style l_link is l_default
@@ -344,6 +347,7 @@ style l_checkbox_box:
 
 style l_checkbox_text is l_button_text:
     selected_font light_font()
+    selected_bold False
 
 # Lines up with a checkbox.
 style l_nonbox is l_button:
