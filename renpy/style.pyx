@@ -751,12 +751,6 @@ def reset():
 
     styles.clear()
 
-#     import gc
-#
-#     for i in gc.get_objects():
-#         if isinstance(i, Style):
-#             unbuild_style(i)
-
 
 def build_styles():
     """
@@ -809,8 +803,14 @@ def restore(o):
 
     cdef StyleCore s
 
+    reset()
+
     for k, v in o.iteritems():
-        s = get_full_style(k)
+
+        s = get_or_create_style(k[0])
+
+        for i in k[1:]:
+            s = s[i]
 
         parent, properties = v
 
