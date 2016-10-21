@@ -31,6 +31,7 @@ import codecs
 # that line.
 lines = { }
 
+
 class Line(object):
     """
     Represents a logical line in a file.
@@ -116,7 +117,7 @@ def insert_line_before(code, filename, linenumber):
     if renpy.config.clear_lines:
         raise Exception("config.clear_lines must be False for script editing to work.")
 
-    if not renpy.game.args.compile: # @UndefinedVariable
+    if not renpy.game.args.compile:  # @UndefinedVariable
         raise Exception("The compile flag must have been given for script editing to work.")
 
     old_line = lines[filename, linenumber]
@@ -148,6 +149,7 @@ def insert_line_before(code, filename, linenumber):
 
     lines[filename, linenumber] = new_line
 
+
 def remove_line(filename, linenumber):
     """
     Removes `linenumber` from `filename`. The line must exist and correspond
@@ -157,9 +159,8 @@ def remove_line(filename, linenumber):
     if renpy.config.clear_lines:
         raise Exception("config.clear_lines must be False for script editing to work.")
 
-    if not renpy.game.args.compile: # @UndefinedVariable
+    if not renpy.game.args.compile:  # @UndefinedVariable
         raise Exception("The compile flag must have been given for script editing to work.")
-
 
     line = lines[filename, linenumber]
 
@@ -179,6 +180,7 @@ def remove_line(filename, linenumber):
 
         renpy.loader.add_auto(line.filename, force=True)
 
+
 def nodes_on_line(filename, linenumber):
     """
     Returns a list of nodes that are found on the given line.
@@ -191,6 +193,7 @@ def nodes_on_line(filename, linenumber):
             rv.append(i)
 
     return rv
+
 
 def first_and_last_nodes(nodes):
     """
@@ -269,6 +272,7 @@ def add_to_ast_before(code, filename, linenumber):
 
     renpy.ast.chain_block(block, old)
 
+
 def remove_from_ast(filename, linenumber):
     """
     Removes from the AST all statements that happen to be at `filename`
@@ -294,11 +298,20 @@ def remove_from_ast(filename, linenumber):
 
     renpy.game.script.all_stmts = new_stmts
 
+    namemap = renpy.game.script.namemap
+
+    # This is fairly slow - when we remove a node, we have to replace it with
+    # the next node. But if we then remove the next node, we have to replace it
+    # again. So we just walk all the known names to do this.
+    for k in list(namemap):
+        if namemap[k] in nodes:
+            namemap[k] = last.next
+
     adjust_ast_linenumbers(filename, linenumber, -1)
 
 
-
 serial = 1
+
 
 def test_add():
 
@@ -313,6 +326,7 @@ def test_add():
     add_to_ast_before(s, filename, linenumber)
     insert_line_before(s, filename, linenumber)
     renpy.exports.restart_interaction()
+
 
 def test_remove():
 
