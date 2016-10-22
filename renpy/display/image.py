@@ -209,7 +209,7 @@ class ImageReference(renpy.display.core.Displayable):
             a = self._args.copy(name=name, args=args)
             self.target = target._duplicate(a)
 
-        except Exception, e:
+        except Exception as e:
 
             if renpy.config.debug:
                 raise

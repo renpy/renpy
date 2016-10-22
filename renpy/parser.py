@@ -2456,7 +2456,7 @@ def parse_block(l):
             else:
                 rv.append(stmt)
 
-        except ParseError, e:
+        except ParseError as e:
             parse_errors.append(e.message)
             l.advance()
 

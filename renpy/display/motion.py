@@ -314,7 +314,9 @@ class Revolver(object):
         self.pos = pos
         self.child = child
 
-    def __call__(self, t, (w, h, cw, ch)):
+    def __call__(self, t, rect):
+
+        (w, h, cw, ch) = rect
 
         # Converts a float to an integer in the given range, passes
         # integers through unchanged.

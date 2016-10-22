@@ -242,7 +242,7 @@ class Parser(object):
 
         try:
             rv = ast.parse(expr, 'eval').body[0].value
-        except SyntaxError, e:
+        except SyntaxError as e:
             raise renpy.parser.ParseError(
                 filename,
                 lineno + e[1][1] - 1,
@@ -265,7 +265,7 @@ class Parser(object):
 
         try:
             rv = ast.parse(code, 'exec')
-        except SyntaxError, e:
+        except SyntaxError as e:
 
             raise renpy.parser.ParseError(
                 filename,

@@ -2514,7 +2514,7 @@ def call_screen(_screen_name, *args, **kwargs):
 
     try:
         rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
-    except (renpy.game.JumpException, renpy.game.CallException), e:
+    except (renpy.game.JumpException, renpy.game.CallException) as e:
         rv = e
 
     renpy.exports.checkpoint(rv)

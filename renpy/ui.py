@@ -509,7 +509,7 @@ class Wrapper(renpy.object.Object):
 
         try:
             w = self.function(*args, **keyword)
-        except TypeError, e:
+        except TypeError as e:
             etype, e, tb = sys.exc_info(); etype
 
             if tb.tb_next is None:

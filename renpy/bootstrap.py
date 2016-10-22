@@ -285,7 +285,7 @@ You may be using a system install of python. Please run {0}.sh,
                     renpy.config.logdir = basedir
 
                 if not os.path.exists(renpy.config.logdir):
-                    os.makedirs(renpy.config.logdir, 0777)
+                    os.makedirs(renpy.config.logdir, 0o777)
 
                 renpy.main.main()
 
@@ -313,7 +313,7 @@ You may be using a system install of python. Please run {0}.sh,
             except renpy.game.ParseErrorException:
                 pass
 
-            except Exception, e:
+            except Exception as e:
                 renpy.error.report_exception(e)
                 pass
 

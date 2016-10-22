@@ -364,7 +364,7 @@ class Context(renpy.object.Object):
         ps = pyast.Pass(lineno=node.linenumber, col_offset=0)
         module = pyast.Module(lineno=node.linenumber, col_offset=0, body=[ ps ])
         code = compile(module, node.filename, 'exec')
-        exec code
+        exec(code)
 
     def run(self, node=None):
         """
@@ -422,14 +422,14 @@ class Context(renpy.object.Object):
                     if developer and self.next_node:
                         self.check_stacks()
 
-                except renpy.game.CONTROL_EXCEPTIONS, e:
+                except renpy.game.CONTROL_EXCEPTIONS as e:
 
                     # An exception ends the current translation.
                     self.translate_interaction = None
 
                     raise
 
-                except Exception, e:
+                except Exception as e:
                     self.translate_interaction = None
 
                     exc_info = sys.exc_info()
@@ -440,18 +440,18 @@ class Context(renpy.object.Object):
                             self.exception_handler(short, full, traceback_fn)
                         elif renpy.display.error.report_exception(short, full, traceback_fn):
                             raise
-                    except renpy.game.CONTROL_EXCEPTIONS, ce:
+                    except renpy.game.CONTROL_EXCEPTIONS as ce:
                         raise ce
-                    except Exception, ce:
+                    except Exception as ce:
                         raise exc_info[0], exc_info[1], exc_info[2]
 
                 node = self.next_node
 
-            except renpy.game.JumpException, e:
+            except renpy.game.JumpException as e:
                 node = renpy.game.script.lookup(e.args[0])
                 self.abnormal = True
 
-            except renpy.game.CallException, e:
+            except renpy.game.CallException as e:
 
                 if self.next_node is None:
                     raise Exception("renpy.call can't be used when the next node is undefined.")

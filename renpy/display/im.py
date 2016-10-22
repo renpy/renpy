@@ -525,7 +525,7 @@ class Image(ImageBase):
 
             return surf
 
-        except Exception, e:
+        except Exception as e:
 
             if renpy.config.missing_image_callback:
                 im = renpy.config.missing_image_callback(self.filename)

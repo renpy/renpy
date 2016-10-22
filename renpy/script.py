@@ -199,7 +199,7 @@ class Script(object):
                 continue
 
             try:
-                os.makedirs(os.path.dirname(target_fn), 0700)
+                os.makedirs(os.path.dirname(target_fn), 0o700)
             except:
                 pass
 
@@ -783,7 +783,7 @@ class Script(object):
                     elif i.mode == 'eval':
                         code = renpy.python.py_compile_eval_bytecode(i.source, filename=i.location[0], lineno=i.location[1])
 
-                except SyntaxError, e:
+                except SyntaxError as e:
 
                     text = e.text
 
