@@ -29,6 +29,7 @@ from renpy.audio.audio import get_channel, get_serial
 from renpy.audio.audio import register_channel, alias_channel
 register_channel; alias_channel
 
+
 def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=False, fadein=0, tight=None, if_changed=False):
     """
     :doc: audio
@@ -190,6 +191,7 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
         if renpy.config.debug_sound:
             raise
 
+
 def playable(filename, channel="music"):
     """
     Return true if the given filename is playable on the channel. This
@@ -323,6 +325,7 @@ def get_pos(channel="music"):
 
         return None
 
+
 def get_duration(channel="music"):
     """
     :doc: audio
@@ -359,6 +362,7 @@ def get_playing(channel="music"):
 
         return None
 
+
 def is_playing(channel="music"):
     """
     :doc: audio
@@ -368,6 +372,7 @@ def is_playing(channel="music"):
     """
 
     return (get_playing(channel=channel) is not None)
+
 
 def set_volume(volume, delay=0, channel="music"):
     """
@@ -396,6 +401,7 @@ def set_volume(volume, delay=0, channel="music"):
         if renpy.config.debug_sound:
             raise
 
+
 def set_pan(pan, delay, channel="music"):
     """
     :doc: audio
@@ -423,6 +429,7 @@ def set_pan(pan, delay, channel="music"):
         if renpy.config.debug_sound:
             raise
 
+
 def set_queue_empty_callback(callback, channel="music"):
     """
     :doc: audio
@@ -443,6 +450,7 @@ def set_queue_empty_callback(callback, channel="music"):
         if renpy.config.debug_sound:
             raise
 
+
 def set_pause(value, channel="music"):
     """
     :doc: audio
@@ -456,6 +464,7 @@ def set_pause(value, channel="music"):
     except:
         if renpy.config.debug_sound:
             raise
+
 
 def get_pause(channel="music"):
     """
@@ -493,6 +502,7 @@ def set_mixer(channel, mixer, default=False):
         if renpy.config.debug_sound:
             raise
 
+
 def get_all_mixers():
     """
     This gets all mixers in use.
@@ -504,6 +514,7 @@ def get_all_mixers():
         rv.add(i.mixer)
 
     return list(rv)
+
 
 def channel_defined(channel):
     """
@@ -538,4 +549,3 @@ def channel_defined(channel):
 
 # if m_loop:
 #     queue m_filenames looping
-

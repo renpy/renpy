@@ -501,4 +501,3 @@ def main():
     # This is stuff we do on a normal, non-error return.
     if not renpy.display.error.error_handled:
         renpy.display.render.check_at_shutdown()
-

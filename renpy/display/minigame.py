@@ -22,4 +22,3 @@
 
 def Minigame(*args, **kwargs):
     raise Exception("Minigame is no longer implemented.")
-

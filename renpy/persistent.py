@@ -28,6 +28,8 @@ import renpy
 from renpy.loadsave import dump, dumps, loads
 
 # The class that's used to hold the persistent data.
+
+
 class Persistent(object):
 
     def __init__(self):
@@ -131,6 +133,7 @@ def safe_deepcopy(o):
 # object.
 backup = { }
 
+
 def find_changes():
     """
     This finds changes in the persistent object. When it finds a change, it
@@ -215,6 +218,7 @@ def init():
 # A map from field name to merge function.
 registry = { }
 
+
 def register_persistent(field, func):
     """
     :doc: persistent
@@ -246,8 +250,10 @@ def register_persistent(field, func):
 
     registry[field] = func
 
+
 def default_merge(old, new, current):
     return new
+
 
 def dictset_merge(old, new, current):
     current.update(old)
@@ -258,6 +264,7 @@ register_persistent("_seen_ever", dictset_merge)
 register_persistent("_seen_images", dictset_merge)
 register_persistent("_seen_audio", dictset_merge)
 register_persistent("_chosen", dictset_merge)
+
 
 def merge(other):
     """
@@ -359,6 +366,7 @@ def update(force_save=False):
 
 should_save_persistent = True
 
+
 def save():
     """
     Saves the persistent data to disk.
@@ -440,7 +448,7 @@ def MultiPersistent(name):
     except:
         pass
 
-    fn = "" # prevent a warning from happening.
+    fn = ""  # prevent a warning from happening.
 
     # Find the first file that actually exists. Otherwise, use the last
     # file.
@@ -454,7 +462,7 @@ def MultiPersistent(name):
     except:
         rv = _MultiPersistent()
 
-    rv._filename = fn # W0201
+    rv._filename = fn  # W0201
     return rv
 
 renpy.loadsave._MultiPersistent = _MultiPersistent

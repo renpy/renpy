@@ -52,6 +52,7 @@ action = None
 # has been called.
 labels = set()
 
+
 def take_name(name):
     """
     Takes the name of a statement that is about to run.
@@ -63,6 +64,7 @@ def take_name(name):
     if isinstance(name, basestring):
         labels.add(name)
 
+
 class TestJump(Exception):
     """
     An exception that is raised in order to jump to `node`.
@@ -70,6 +72,7 @@ class TestJump(Exception):
 
     def __init__(self, node):
         self.node = node
+
 
 def lookup(name, from_node):
     """
@@ -81,6 +84,7 @@ def lookup(name, from_node):
         return testcases[name]
 
     raise Exception("Testcase {} not found at {}:{}.".format(name, from_node.filename, from_node.linenumber))
+
 
 def execute_node(now, node, state, start):
     """
@@ -138,7 +142,7 @@ def execute():
         renpy.exports.maximum_framerate(None)
 
     # Make sure there are no test events in the event queue.
-    for e in pygame_sdl2.event.copy_event_queue(): # @UndefinedVariable
+    for e in pygame_sdl2.event.copy_event_queue():  # @UndefinedVariable
         if getattr(e, "test", False):
             return
 

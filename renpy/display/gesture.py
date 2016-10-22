@@ -25,6 +25,7 @@ import renpy.display
 
 DIRECTIONS = [ "n", "ne", "e", "se", "s", "sw", "w", "nw" ]
 
+
 def dispatch_gesture(gesture):
     """
     This is called with a gesture to dispatch it as an event.
@@ -131,7 +132,6 @@ class GestureRecognizer(object):
 
             if ev.button == 1:
                 return self.finish()
-
 
 
 recognizer = GestureRecognizer()

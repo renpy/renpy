@@ -24,19 +24,22 @@ import renpy.pyanalysis
 
 import random
 
+
 def compiling(loc):
-    file, number = loc #@ReservedAssignment
+    file, number = loc  # @ReservedAssignment
 
     renpy.game.exception_info = "Compiling ATL code at %s:%d" % (file, number)
 
+
 def executing(loc):
-    file, number = loc #@ReservedAssignment
+    file, number = loc  # @ReservedAssignment
 
     renpy.game.exception_info = "Executing ATL code at %s:%d" % (file, number)
 
 
 # A map from the name of a time warp function to the function itself.
 warpers = { }
+
 
 def atl_warper(f):
     name = f.func_name
@@ -45,6 +48,8 @@ def atl_warper(f):
 
 # The pause warper is used internally when no other warper is
 # specified.
+
+
 @atl_warper
 def pause(t):
     if t < 1.0:
@@ -54,13 +59,16 @@ def pause(t):
 
 position = renpy.object.Sentinel("position")
 
+
 def any_object(x):
     return x
+
 
 def bool_or_none(x):
     if x is None:
         return x
     return bool(x)
+
 
 def float_or_none(x):
     if x is None:
@@ -70,51 +78,51 @@ def float_or_none(x):
 # A dictionary giving property names and the corresponding default
 # values.
 PROPERTIES = {
-        "pos" : (position, position),
-        "xpos" : position,
-        "ypos" : position,
-        "anchor" : (position, position),
-        "xanchor" : position,
-        "yanchor" : position,
-        "xaround" : position,
-        "yaround" : position,
-        "xanchoraround" : float,
-        "yanchoraround" : float,
-        "align" : (float, float),
-        "xalign" : float,
-        "yalign" : float,
-        "rotate" : float,
-        "rotate_pad" : bool,
-        "transform_anchor" : bool,
-        "xzoom" : float,
-        "yzoom" : float,
-        "zoom" : float,
-        "nearest" : bool_or_none,
-        "alpha" : float,
-        "additive" : float,
-        "around" : (position, position),
-        "alignaround" : (float, float),
-        "angle" : float,
-        "radius" : float,
-        "crop" : (float, float, float, float),
-        "crop_relative" : bool,
-        "size" : (int, int),
-        "corner1" : (float, float),
-        "corner2" : (float, float),
-        "subpixel" : bool,
-        "delay" : float,
-        "xoffset" : float,
-        "yoffset" : float,
-        "offset" : (int, int),
-        "xcenter" : position,
-        "ycenter" : position,
-        "debug" : any_object,
-        "events" : bool,
-        "xpan" : float_or_none,
-        "ypan" : float_or_none,
-        "xtile" : int,
-        "ytile" : int,
-        }
+    "pos" : (position, position),
+    "xpos" : position,
+    "ypos" : position,
+    "anchor" : (position, position),
+    "xanchor" : position,
+    "yanchor" : position,
+    "xaround" : position,
+    "yaround" : position,
+    "xanchoraround" : float,
+    "yanchoraround" : float,
+    "align" : (float, float),
+    "xalign" : float,
+    "yalign" : float,
+    "rotate" : float,
+    "rotate_pad" : bool,
+    "transform_anchor" : bool,
+    "xzoom" : float,
+    "yzoom" : float,
+    "zoom" : float,
+    "nearest" : bool_or_none,
+    "alpha" : float,
+    "additive" : float,
+    "around" : (position, position),
+    "alignaround" : (float, float),
+    "angle" : float,
+    "radius" : float,
+    "crop" : (float, float, float, float),
+    "crop_relative" : bool,
+    "size" : (int, int),
+    "corner1" : (float, float),
+    "corner2" : (float, float),
+    "subpixel" : bool,
+    "delay" : float,
+    "xoffset" : float,
+    "yoffset" : float,
+    "offset" : (int, int),
+    "xcenter" : position,
+    "ycenter" : position,
+    "debug" : any_object,
+    "events" : bool,
+    "xpan" : float_or_none,
+    "ypan" : float_or_none,
+    "xtile" : int,
+    "ytile" : int,
+    }
 
 
 def correct_type(v, b, ty):
@@ -131,7 +139,7 @@ def correct_type(v, b, ty):
         return ty(v)
 
 
-def interpolate(t, a, b, type): #@ReservedAssignment
+def interpolate(t, a, b, type):  # @ReservedAssignment
     """
     Linearly interpolate the arguments.
     """
@@ -159,6 +167,8 @@ def interpolate(t, a, b, type): #@ReservedAssignment
 
 # Interpolate the value of a spline. This code is based on Aenakume's code,
 # from 00splines.rpy.
+
+
 def interpolate_spline(t, spline):
 
     if isinstance(spline[-1], tuple):
@@ -196,6 +206,7 @@ def interpolate_spline(t, spline):
 # A list of atl transforms that may need to be compile.
 compile_queue = [ ]
 
+
 def compile_all():
     """
     Called after the init phase is finished and transforms are compiled,
@@ -215,12 +226,13 @@ def compile_all():
 # scopes that are used to evaluate the various expressions in the statement,
 # and has a method to do the evaluation and return a result.
 class Context(object):
+
     def __init__(self, context):
         self.context = context
 
-    def eval(self, expr): #@ReservedAssignment
+    def eval(self, expr):  # @ReservedAssignment
         expr = renpy.python.escape_unicode(expr)
-        return eval(expr, renpy.store.__dict__, self.context) #@UndefinedVariable
+        return eval(expr, renpy.store.__dict__, self.context)  # @UndefinedVariable
 
     def __eq__(self, other):
         if not isinstance(other, Context):
@@ -231,6 +243,8 @@ class Context(object):
 # This is intended to be subclassed by ATLTransform. It takes care of
 # managing ATL execution, which allows ATLTransform itself to not care
 # much about the contents of this file.
+
+
 class ATLTransformBase(renpy.object.Object):
 
     # Compatibility with older saves.
@@ -421,8 +435,7 @@ class ATLTransformBase(renpy.object.Object):
 
         return rv
 
-
-    def compile(self): #@ReservedAssignment
+    def compile(self):  # @ReservedAssignment
         """
         Compiles the ATL code into a block. As necessary, updates the
         properties.
@@ -471,7 +484,6 @@ class ATLTransformBase(renpy.object.Object):
             self.parent_transform = None
 
         return block
-
 
     def execute(self, trans, st, at):
 
@@ -539,6 +551,8 @@ is_constant_expr = renpy.pyanalysis.Analysis().is_constant_expr
 GLOBAL_CONST = renpy.pyanalysis.GLOBAL_CONST
 
 # The base class for raw ATL statements.
+
+
 class RawStatement(object):
 
     constant = None
@@ -549,7 +563,7 @@ class RawStatement(object):
 
     # Compiles this RawStatement into a Statement, by using ctx to
     # evaluate expressions as necessary.
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         raise Exception("Compile not implemented.")
 
     # Predicts the images used by this statement.
@@ -565,6 +579,8 @@ class RawStatement(object):
         self.constant = 0
 
 # The base class for compiled ATL Statements.
+
+
 class Statement(renpy.object.Object):
 
     def __init__(self, loc):
@@ -604,6 +620,8 @@ class Statement(renpy.object.Object):
         return [ ]
 
 # This represents a Raw ATL block.
+
+
 class RawBlock(RawStatement):
 
     # Should we use the animation timebase or the showing timebase?
@@ -618,7 +636,7 @@ class RawBlock(RawStatement):
 
         self.animation = animation
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
 
         statements = [ i.compile(ctx) for i in self.statements ]
@@ -642,6 +660,7 @@ class RawBlock(RawStatement):
 
 # A compiled ATL block.
 class Block(Statement):
+
     def __init__(self, loc, statements):
 
         super(Block, self).__init__(loc)
@@ -696,7 +715,6 @@ class Block(Statement):
                 # this block.
                 if index >= len(self.statements):
                     return "next", target - start, None
-
 
                 # Find the statement and try to run it.
                 stmt = self.statements[index]
@@ -773,6 +791,8 @@ class Block(Statement):
 #
 # We won't decide which it is until runtime, as we need the
 # values of the variables here.
+
+
 class RawMultipurpose(RawStatement):
 
     warp_function = None
@@ -809,7 +829,7 @@ class RawMultipurpose(RawStatement):
     def add_spline(self, name, exprs):
         self.splines.append((name, exprs))
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
 
         compiling(self.loc)
 
@@ -820,7 +840,7 @@ class RawMultipurpose(RawStatement):
             self.warp_function is None and
             not self.properties and
             not self.splines and
-            len(self.expressions) == 1):
+                len(self.expressions) == 1):
 
             expr, withexpr = self.expressions[0]
 
@@ -886,7 +906,6 @@ class RawMultipurpose(RawStatement):
             if value.properties is None:
                 raise Exception("ATL transform %r is too complicated to be included in interpolation." % expr)
 
-
             properties.extend(value.properties)
 
         duration = ctx.eval(self.duration)
@@ -914,7 +933,6 @@ class RawMultipurpose(RawStatement):
 
         self.constant = constant
 
-
     def predict(self, ctx):
 
         for i, _j in self.expressions:
@@ -934,6 +952,8 @@ class RawMultipurpose(RawStatement):
                 continue
 
 # This lets us have an ATL transform as our child.
+
+
 class RawContainsExpr(RawStatement):
 
     def __init__(self, loc, expr):
@@ -942,7 +962,7 @@ class RawContainsExpr(RawStatement):
 
         self.expression = expr
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
         child = ctx.eval(self.expression)
         return Child(self.loc, child, None)
@@ -960,7 +980,7 @@ class RawChild(RawStatement):
 
         self.children = [ child ]
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
 
         children = [ ]
 
@@ -973,7 +993,6 @@ class RawChild(RawStatement):
             box.add(i)
 
         return Child(self.loc, box, None)
-
 
     def mark_constant(self):
 
@@ -1141,7 +1160,6 @@ class Interpolation(Statement):
             trans.state.angle = interpolate(complete, startangle, endangle, float)
             trans.state.radius = interpolate(complete, startradius, endradius, float)
 
-
         # Handle any splines we might have.
         for name, values in splines:
             value = interpolate_spline(complete, values)
@@ -1165,7 +1183,7 @@ class RawRepeat(RawStatement):
 
         self.repeats = repeats
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
 
         compiling(self.loc)
 
@@ -1178,6 +1196,7 @@ class RawRepeat(RawStatement):
 
     def mark_constant(self):
         self.constant = is_constant_expr(self.repeats)
+
 
 class Repeat(Statement):
 
@@ -1200,7 +1219,7 @@ class RawParallel(RawStatement):
         super(RawParallel, self).__init__(loc)
         self.blocks = [ block ]
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         return Parallel(self.loc, [i.compile(ctx) for i in self.blocks])
 
     def predict(self, ctx):
@@ -1215,6 +1234,7 @@ class RawParallel(RawStatement):
             constant = min(constant, i.constant)
 
         self.constant = constant
+
 
 class Parallel(Statement):
 
@@ -1270,7 +1290,7 @@ class RawChoice(RawStatement):
 
         self.choices = [ (chance, block) ]
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
         return Choice(self.loc, [ (ctx.eval(chance), block.compile(ctx)) for chance, block in self.choices])
 
@@ -1286,6 +1306,7 @@ class RawChoice(RawStatement):
             constant = min(constant, block.constant)
 
         self.constant = constant
+
 
 class Choice(Statement):
 
@@ -1337,12 +1358,13 @@ class RawTime(RawStatement):
         super(RawTime, self).__init__(loc)
         self.time = time
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
         return Time(self.loc, ctx.eval(self.time))
 
     def mark_constant(self):
         self.constant = is_constant_expr(self.time)
+
 
 class Time(Statement):
 
@@ -1367,7 +1389,7 @@ class RawOn(RawStatement):
         for i in names:
             self.handlers[i] = block
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
 
         compiling(self.loc)
 
@@ -1479,11 +1501,12 @@ class RawEvent(RawStatement):
 
         self.name = name
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         return Event(self.loc, self.name)
 
     def mark_constant(self):
         self.constant = GLOBAL_CONST
+
 
 class Event(Statement):
 
@@ -1503,12 +1526,13 @@ class RawFunction(RawStatement):
 
         self.expr = expr
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
         return Function(self.loc, ctx.eval(self.expr))
 
     def mark_constant(self):
         self.constant = is_constant_expr(self.expr)
+
 
 class Function(Statement):
 
@@ -1656,7 +1680,6 @@ def parse_atl(l):
             cp = l.checkpoint()
             warper = l.name()
 
-
             if warper in warpers:
                 duration = l.require(l.simple_expression)
                 warp_function = None
@@ -1750,13 +1773,11 @@ def parse_atl(l):
 
             statements.append(rm)
 
-
         if l.eol():
             l.advance()
             continue
 
         l.require(",", "comma or end of line")
-
 
     # Merge together statements that need to be merged together.
 

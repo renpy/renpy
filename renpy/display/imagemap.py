@@ -31,6 +31,7 @@ import hashlib
 # A list of cache images we've already written.
 cached = set()
 
+
 class ImageMapCrop(renpy.display.core.Displayable):
     """
     This handles the cropping of uncached imagemap components.
@@ -69,6 +70,7 @@ class ImageCacheCrop(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
         return self.cache.render(self.index, width, height, st, at)
+
 
 class ImageMapCache(renpy.object.Object):
 
@@ -212,7 +214,6 @@ class ImageMapCache(renpy.object.Object):
 
         if renpy.loader.loadable(filename):
             self.cache = renpy.display.im.Image(filename)
-
 
     def render(self, index, width, height, st, at):
         if self.cache is None:

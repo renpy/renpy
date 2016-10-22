@@ -30,10 +30,11 @@ import renpy.display
 import renpy.text.ftfont as ftfont
 import renpy.text.textsupport as textsupport
 
-ftfont.init() #@UndefinedVariable
+ftfont.init()  # @UndefinedVariable
 
 WHITE = (255, 255, 255, 255)
 BLACK = (0, 0, 0, 255)
+
 
 class ImageFont(object):
 
@@ -52,7 +53,6 @@ class ImageFont(object):
     # offsets - The x and y offsets of each character.
     # chars - A map from a character to the surface containing that character.
 
-
     def glyphs(self, s):
 
         rv = [ ]
@@ -61,7 +61,7 @@ class ImageFont(object):
             return rv
 
         for c in s:
-            g = textsupport.Glyph() #@UndefinedVariable
+            g = textsupport.Glyph()  # @UndefinedVariable
 
             g.character = ord(c)
             g.ascent = self.height
@@ -129,18 +129,18 @@ class SFont(ImageFont):
 
     def load(self):
 
-        self.chars = { } # W0201
-        self.width = { } # W0201
-        self.advance = { } # W0201
-        self.offsets = { } # W0201
+        self.chars = { }  # W0201
+        self.width = { }  # W0201
+        self.advance = { }  # W0201
+        self.offsets = { }  # W0201
 
         # Load in the image.
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
 
         sw, sh = surf.get_size()
         height = sh
-        self.height = height # W0201
-        self.baseline = height # W0201
+        self.height = height  # W0201
+        self.baseline = height  # W0201
 
         # Create space characters.
         self.chars[u' '] = renpy.display.pgrender.surface((self.spacewidth, height), True)
@@ -214,10 +214,10 @@ class MudgeFont(ImageFont):
 
     def load(self):
 
-        self.chars = { } # W0201
-        self.width = { } # W0201
-        self.advance = { } # W0201
-        self.offsets = { } # W0201
+        self.chars = { }  # W0201
+        self.width = { }  # W0201
+        self.advance = { }  # W0201
+        self.offsets = { }  # W0201
 
         # Load in the image.
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
@@ -250,8 +250,8 @@ class MudgeFont(ImageFont):
 
             height = max(height, h)
 
-        self.height = height # W0201
-        self.baseline = height # W0201
+        self.height = height  # W0201
+        self.baseline = height  # W0201
 
         # Create space characters.
         if u' ' not in self.chars:
@@ -270,7 +270,6 @@ class MudgeFont(ImageFont):
         self.width[u'\u200b'] = 0
         self.advance[u'\u200b'] = 0
         self.offsets[u'\u200b'] = (0, 0)
-
 
 
 def parse_bmfont_line(l):
@@ -298,8 +297,9 @@ def parse_bmfont_line(l):
     if w:
         line.append(w)
 
-    map = dict(i.split("=", 1) for i in line[1:]) #@ReservedAssignment
+    map = dict(i.split("=", 1) for i in line[1:])  # @ReservedAssignment
     return line[0], map
+
 
 class BMFont(ImageFont):
 
@@ -310,12 +310,12 @@ class BMFont(ImageFont):
 
     def load(self):
 
-        self.chars = { } # W0201
-        self.width = { } # W0201
-        self.advance = { } # W0201
-        self.offsets = { } # W0201
-        self.kerns = { } # W0201
-        self.default_kern = 0 # W0201
+        self.chars = { }  # W0201
+        self.width = { }  # W0201
+        self.advance = { }  # W0201
+        self.offsets = { }  # W0201
+        self.kerns = { }  # W0201
+        self.default_kern = 0  # W0201
 
         pages = { }
 
@@ -325,8 +325,8 @@ class BMFont(ImageFont):
             kind, args = parse_bmfont_line(l)
 
             if kind == "common":
-                self.height = int(args["lineHeight"]) # W0201
-                self.baseline = int(args["base"]) # W0201
+                self.height = int(args["lineHeight"])  # W0201
+                self.baseline = int(args["base"])  # W0201
             elif kind == "page":
                 pages[int(args["id"])] = renpy.display.im.Image(args["file"]).load(unscaled=True)
             elif kind == "char":
@@ -356,11 +356,11 @@ class BMFont(ImageFont):
             self.advance[u'\u00a0'] = self.advance[u' ']
             self.offsets[u'\u00a0'] = self.offsets[u' ']
 
-
         self.chars[u'\u200b'] = renpy.display.pgrender.surface((0, self.height), True)
         self.width[u'\u200b'] = 0
         self.advance[u'\u200b'] = 0
         self.offsets[u'\u200b'] = (0, 0)
+
 
 class ScaledImageFont(ImageFont):
     """
@@ -393,7 +393,6 @@ class ScaledImageFont(ImageFont):
 def register_sfont(name=None, size=None, bold=False, italics=False, underline=False,
                    filename=None, spacewidth=10, default_kern=0, kerns={},
                    charset=u"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"):
-
     """
     :doc: image_fonts
 
@@ -446,9 +445,9 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
     sf = SFont(filename, spacewidth, default_kern, kerns, charset)
     image_fonts[(name, size, bold, italics)] = sf
 
-def register_mudgefont(name=None, size=None, bold=False, italics=False, underline=False,
-                   filename=None, xml=None, spacewidth=10, default_kern=0, kerns={}):
 
+def register_mudgefont(name=None, size=None, bold=False, italics=False, underline=False,
+                       filename=None, xml=None, spacewidth=10, default_kern=0, kerns={}):
     """
     :doc: image_fonts
 
@@ -500,9 +499,9 @@ def register_mudgefont(name=None, size=None, bold=False, italics=False, underlin
     mf = MudgeFont(filename, xml, spacewidth, default_kern, kerns)
     image_fonts[(name, size, bold, italics)] = mf
 
+
 def register_bmfont(name=None, size=None, bold=False, italics=False, underline=False,
                     filename=None):
-
     """
     :doc: image_fonts
 
@@ -545,6 +544,7 @@ def register_bmfont(name=None, size=None, bold=False, italics=False, underline=F
 # A map from face name to ftfont.FTFace
 face_cache = { }
 
+
 def load_face(fn):
 
     if fn in face_cache:
@@ -584,11 +584,10 @@ def load_face(fn):
             if font_file:
                 break
 
-
     if font_file is None:
         raise Exception("Could not find font {0!r}.".format(orig_fn))
 
-    rv = ftfont.FTFace(font_file, index) #@UndefinedVariable
+    rv = ftfont.FTFace(font_file, index)  # @UndefinedVariable
 
     face_cache[orig_fn] = rv
 
@@ -605,6 +604,7 @@ font_cache = { }
 
 # The last_scale we last accessed fonts at. (Used to clear caches.)
 last_scale = 1.0
+
 
 def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale):
 
@@ -644,11 +644,12 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
 
     # Load a TTF.
     face = load_face(fn)
-    rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting) #@UndefinedVariable
+    rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting)  # @UndefinedVariable
 
     font_cache[key] = rv
 
     return rv
+
 
 def free_memory():
     """
@@ -760,4 +761,3 @@ class FontGroup(object):
             pos += 1
 
         yield self.fonts[old_index], s[mark:]
-

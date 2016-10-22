@@ -33,6 +33,7 @@ import renpy.audio
 sample_alpha = None
 sample_noalpha = None
 
+
 def set_rgba_masks():
     """
     This rebuilds the sample surfaces, to ones that use the given
@@ -65,6 +66,7 @@ def set_rgba_masks():
 
     renpy.audio.audio.sample_surfaces(sample_noalpha, sample_alpha)
 
+
 class Surface(pygame.Surface):
     """
     This allows us to wrap around pygame's surface, to change
@@ -89,6 +91,7 @@ class Surface(pygame.Surface):
         rv = pygame.Surface.subsurface(self, rect)
         return rv
 
+
 def surface((width, height), alpha):
     """
     Constructs a new surface. The allocated surface is actually a subsurface
@@ -111,9 +114,10 @@ def surface((width, height), alpha):
         sample = pygame.Surface((4, 4), pygame.SRCALPHA, 32)
 
     surf = Surface((width + 4, height + 4), 0, sample)
-    return surf.subsurface((2, 2, width, height)) # E1101
+    return surf.subsurface((2, 2, width, height))  # E1101
 
 surface_unscaled = surface
+
 
 def copy_surface(surf, alpha=True):
     """
@@ -121,7 +125,7 @@ def copy_surface(surf, alpha=True):
     """
 
     rv = surface_unscaled(surf.get_size(), alpha)
-    renpy.display.accelerator.nogil_copy(surf, rv) # @UndefinedVariable
+    renpy.display.accelerator.nogil_copy(surf, rv)  # @UndefinedVariable
     return rv
 
 copy_surface_unscaled = copy_surface
@@ -134,6 +138,7 @@ safe_formats = { "png", "jpg", "jpeg", "webp" }
 
 # Lock used for loading unsafe formats.
 image_load_lock = threading.RLock()
+
 
 def load_image(f, filename):
     global count

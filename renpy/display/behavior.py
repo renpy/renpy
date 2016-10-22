@@ -31,6 +31,7 @@ import pygame_sdl2 as pygame
 
 import math
 
+
 def compile_event(key, keydown):
     """
     Compiles a keymap entry into a python expression.
@@ -185,6 +186,7 @@ def queue_event(name, up=False, **kwargs):
     ev = pygame.event.Event(renpy.display.core.EVENTNAME, data)
     pygame.event.post(ev)
 
+
 def map_event(ev, keysym):
     """
     :doc: udd_utility
@@ -211,6 +213,7 @@ def map_event(ev, keysym):
         event_cache[keysym] = check_code
 
     return check_code(ev)
+
 
 def map_keyup(ev, name):
     """Returns true if the event matches the named keycode being released."""
@@ -272,6 +275,7 @@ def predict_action(var):
         for i in var:
             predict_action(i)
 
+
 def run(action, *args, **kwargs):
     """
     :doc: run
@@ -301,6 +305,7 @@ def run(action, *args, **kwargs):
 
     return action(*args, **kwargs)
 
+
 def run_unhovered(var):
     """
     Calls the unhovered method on the variable, if it exists.
@@ -319,6 +324,7 @@ def run_unhovered(var):
     if f is not None:
         f()
 
+
 def run_periodic(var, st):
 
     if isinstance(var, (list, tuple)):
@@ -335,6 +341,7 @@ def run_periodic(var, st):
     if isinstance(var, renpy.ui.Action):
         return var.periodic(st)
 
+
 def is_selected(action):
     """
     :doc: run
@@ -344,7 +351,7 @@ def is_selected(action):
 
     if isinstance(action, (list, tuple)):
         for i in action:
-            if isinstance(i, renpy.store.SelectedIf): # @UndefinedVariable
+            if isinstance(i, renpy.store.SelectedIf):  # @UndefinedVariable
                 return i.get_selected()
         return any(is_selected(i) for i in action)
 
@@ -363,7 +370,7 @@ def is_sensitive(action):
 
     if isinstance(action, (list, tuple)):
         for i in action:
-            if isinstance(i, renpy.store.SensitiveIf): # @UndefinedVariable
+            if isinstance(i, renpy.store.SensitiveIf):  # @UndefinedVariable
                 return i.get_sensitive()
         return all(is_sensitive(i) for i in action)
 
@@ -371,6 +378,7 @@ def is_sensitive(action):
         return action.get_sensitive()
     else:
         return True
+
 
 def alt(clicked):
 
@@ -394,6 +402,7 @@ def alt(clicked):
 
 ##############################################################################
 # Special-Purpose Displayables
+
 
 class Keymap(renpy.display.layout.Null):
     """
@@ -468,8 +477,8 @@ class PauseBehavior(renpy.display.layout.Null):
             else:
                 renpy.game.interface.force_redraw = True
 
-
         renpy.game.interface.timeout(max(self.delay - st, 0))
+
 
 class SoundStopBehavior(renpy.display.layout.Null):
     """
@@ -483,7 +492,6 @@ class SoundStopBehavior(renpy.display.layout.Null):
 
         self.channel = channel
         self.result = result
-
 
     def event(self, ev, x, y, st):
 
@@ -578,8 +586,8 @@ class SayBehavior(renpy.display.layout.Null):
                         raise renpy.display.core.IgnoreEvent()
 
                 if renpy.game.preferences.using_afm_enable and \
-                    renpy.game.preferences.afm_enable and \
-                    not renpy.game.preferences.afm_after_click:
+                        renpy.game.preferences.afm_enable and \
+                        not renpy.game.preferences.afm_after_click:
 
                     renpy.game.preferences.afm_enable = False
                     renpy.exports.restart_interaction()
@@ -609,7 +617,6 @@ class SayBehavior(renpy.display.layout.Null):
             else:
                 renpy.game.interface.timeout(skip_delay - st)
 
-
         return None
 
 
@@ -622,6 +629,7 @@ KEY_EVENTS = (
     pygame.TEXTEDITING,
     pygame.TEXTINPUT
     )
+
 
 class Button(renpy.display.layout.Window):
 
@@ -657,7 +665,7 @@ class Button(renpy.display.layout.Window):
         self.unhovered = unhovered
         self.alternate = alternate
 
-        self.focusable = True #(clicked is not None) or (action is not None)
+        self.focusable = True  # (clicked is not None) or (action is not None)
         self.role_parameter = role
 
         self.keymap = keymap
@@ -876,7 +884,6 @@ class Button(renpy.display.layout.Window):
 
         return None
 
-
     def set_style_prefix(self, prefix, root):
         if root:
             super(Button, self).set_style_prefix(prefix, root)
@@ -889,11 +896,14 @@ class Button(renpy.display.layout.Window):
 
 # Reimplementation of the TextButton widget as a Button and a Text
 # widget.
+
+
 def TextButton(text, style='button', text_style='button_text',
                clicked=None, **properties):
 
-    text = renpy.text.text.Text(text, style=text_style) #@UndefinedVariable
+    text = renpy.text.text.Text(text, style=text_style)  # @UndefinedVariable
     return Button(text, style=style, clicked=clicked, **properties)
+
 
 class ImageButton(Button):
     """
@@ -902,13 +912,13 @@ class ImageButton(Button):
 
     def __init__(self,
                  idle_image,
-                 hover_image = None,
-                 insensitive_image = None,
-                 activate_image = None,
-                 selected_idle_image = None,
-                 selected_hover_image = None,
-                 selected_insensitive_image = None,
-                 selected_activate_image = None,
+                 hover_image=None,
+                 insensitive_image=None,
+                 activate_image=None,
+                 selected_idle_image=None,
+                 selected_hover_image=None,
+                 selected_insensitive_image=None,
+                 selected_activate_image=None,
                  style='image_button',
                  clicked=None,
                  hovered=None,
@@ -924,15 +934,15 @@ class ImageButton(Button):
         selected_activate_image = selected_activate_image or activate_image
 
         self.state_children = dict(
-            idle_ = renpy.easy.displayable(idle_image),
-            hover_ = renpy.easy.displayable(hover_image),
-            insensitive_ = renpy.easy.displayable(insensitive_image),
-            activate_ = renpy.easy.displayable(activate_image),
+            idle_=renpy.easy.displayable(idle_image),
+            hover_=renpy.easy.displayable(hover_image),
+            insensitive_=renpy.easy.displayable(insensitive_image),
+            activate_=renpy.easy.displayable(activate_image),
 
-            selected_idle_ = renpy.easy.displayable(selected_idle_image),
-            selected_hover_ = renpy.easy.displayable(selected_hover_image),
-            selected_insensitive_ = renpy.easy.displayable(selected_insensitive_image),
-            selected_activate_ = renpy.easy.displayable(selected_activate_image),
+            selected_idle_=renpy.easy.displayable(selected_idle_image),
+            selected_hover_=renpy.easy.displayable(selected_hover_image),
+            selected_insensitive_=renpy.easy.displayable(selected_insensitive_image),
+            selected_activate_=renpy.easy.displayable(selected_activate_image),
             )
 
         super(ImageButton, self).__init__(None,
@@ -950,6 +960,7 @@ class ImageButton(Button):
 
 # This is used for an input that takes its focus from a button.
 class HoveredProxy(object):
+
     def __init__(self, a, b):
         self.a = a
         self.b = b
@@ -986,6 +997,7 @@ def input_pre_per_interact():
     inputs = [ ]
     default_input_value = None
 
+
 def input_post_per_interact():
 
     global current_input_value
@@ -1012,7 +1024,7 @@ def input_post_per_interact():
             i.caret_pos = len(content)
 
 
-class Input(renpy.text.text.Text): #@UndefinedVariable
+class Input(renpy.text.text.Text):  # @UndefinedVariable
     """
     This is a Displayable that takes text as input.
     """
@@ -1087,7 +1099,6 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
         self.update_text(self.content, self.editable)
 
-
     def _show(self):
         if self.default != self.content:
             self.content = self.default
@@ -1142,7 +1153,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
             if editable:
                 l = len(content)
                 self.set_text([self.prefix, content[0:self.caret_pos].replace("{", "{{"), edit_text, caret,
-                                            content[self.caret_pos:l].replace("{", "{{"), self.suffix])
+                               content[self.caret_pos:l].replace("{", "{{"), self.suffix])
             else:
                 self.set_text([self.prefix, content.replace("{", "{{"), self.suffix ])
 
@@ -1311,6 +1322,8 @@ adj_registered = { }
 
 # This class contains information about an adjustment that can change the
 # position of content.
+
+
 class Adjustment(renpy.object.Object):
     """
     :doc: ui
@@ -1324,7 +1337,7 @@ class Adjustment(renpy.object.Object):
 
     """
 
-    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=None, ranged=None): #@ReservedAssignment
+    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=None, ranged=None):  # @ReservedAssignment
         """
         The following parameters correspond to fields or properties on
         the adjustment object:
@@ -1373,7 +1386,6 @@ class Adjustment(renpy.object.Object):
             any bars and viewports that use the adjustment.
          """
 
-
         super(Adjustment, self).__init__()
 
         if adjustable is None:
@@ -1407,7 +1419,7 @@ class Adjustment(renpy.object.Object):
         if self.ranged:
             self.ranged(self)
 
-    range = property(get_range, set_range) #@ReservedAssignment
+    range = property(get_range, set_range)  # @ReservedAssignment
 
     def get_page(self):
         if self._page is not None:
@@ -1457,6 +1469,7 @@ class Adjustment(renpy.object.Object):
 
         return None
 
+
 class Bar(renpy.display.core.Displayable):
     """
     Implements a bar that can display an integer value, and respond
@@ -1468,17 +1481,17 @@ class Bar(renpy.display.core.Displayable):
     def after_upgrade(self, version):
 
         if version < 1:
-            self.adjustment = Adjustment(self.range, self.value, changed=self.changed) # E1101
+            self.adjustment = Adjustment(self.range, self.value, changed=self.changed)  # E1101
             self.adjustment.register(self)
-            del self.range # E1101
-            del self.value # E1101
-            del self.changed # E1101
+            del self.range  # E1101
+            del self.value  # E1101
+            del self.changed  # E1101
 
         if version < 2:
             self.value = None
 
     def __init__(self,
-                 range=None, #@ReservedAssignment
+                 range=None,  # @ReservedAssignment
                  value=None,
                  width=None,
                  height=None,
@@ -1576,7 +1589,7 @@ class Bar(renpy.display.core.Displayable):
         # Store the width and height for the event function to use.
         self.width = width
         self.height = height
-        range = self.adjustment.range #@ReservedAssignment
+        range = self.adjustment.range  # @ReservedAssignment
         value = self.adjustment.value
         page = self.adjustment.page
 
@@ -1681,14 +1694,12 @@ class Bar(renpy.display.core.Displayable):
 
         return rv
 
-
     def focus(self, default=False):
         super(Bar, self).focus(default)
         self.set_transform_event("hover")
 
         if not default:
             run(self.hovered)
-
 
     def unfocus(self, default=False):
         super(Bar, self).unfocus()
@@ -1709,7 +1720,7 @@ class Bar(renpy.display.core.Displayable):
         if self.hidden:
             return None
 
-        range = self.adjustment.range #@ReservedAssignment
+        range = self.adjustment.range  # @ReservedAssignment
         old_value = self.adjustment.value
         value = old_value
 
@@ -1864,6 +1875,7 @@ class TimerState(renpy.python.RevertableObject):
     started = False
     next_event = None
 
+
 class Timer(renpy.display.layout.Null):
 
     __version__ = 1
@@ -1906,7 +1918,6 @@ class Timer(renpy.display.layout.Null):
             self.state = replaces.state
         else:
             self.state = TimerState()
-
 
     def event(self, ev, x, y, st):
 
@@ -1989,12 +2000,12 @@ class MouseArea(renpy.display.core.Displayable):
             run_unhovered(self.hovered)
             run(self.unhovered)
 
+
 class OnEvent(renpy.display.core.Displayable):
     """
     This is a displayable that runs an action in response to a transform
     event. It's used to implement the screen language on statement.
     """
-
 
     def __init__(self, event, action=[ ]):
         """

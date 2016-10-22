@@ -47,6 +47,7 @@ class SpriteCache(renpy.object.Object):
     # If true, then the render is simple enough it can just be appended to
     # the manager's render's children list.
 
+
 class Sprite(renpy.object.Object):
     """
     :doc: sprites class
@@ -120,7 +121,6 @@ class Sprite(renpy.object.Object):
         self.manager.dead_child = True
         self.live = False
         self.events = False
-
 
 
 class SpriteManager(renpy.display.core.Displayable):
@@ -227,7 +227,6 @@ class SpriteManager(renpy.display.core.Displayable):
             for i in self.predict_function():
                 renpy.display.predict.displayable(i)
 
-
     def redraw(self, delay=0):
         """
         :doc: sprites method
@@ -255,7 +254,7 @@ class SpriteManager(renpy.display.core.Displayable):
         if self.dead_child:
             self.children = [ i for i in self.children if i.live ]
 
-        self.children.sort(key=lambda sc:sc.zorder)
+        self.children.sort(key=lambda sc: sc.zorder)
 
         caches = [ ]
 
@@ -280,7 +279,6 @@ class SpriteManager(renpy.display.core.Displayable):
                 rv.depends_on(r)
 
                 caches.append(cache)
-
 
             if cache.fast:
                 for child, xo, yo, _focus, _main in r.children:
@@ -415,6 +413,7 @@ class Particles(renpy.display.core.Displayable, renpy.python.NoRollback):
     def render(self, w, h, st, at):
         return renpy.display.render.render(self.sm, w, h, st, at)
 
+
 class SnowBlossomFactory(renpy.python.NoRollback):
 
     rotate = False
@@ -436,7 +435,7 @@ class SnowBlossomFactory(renpy.python.NoRollback):
         self.init()
 
     def init(self):
-        self.starts = [ random.uniform(0, self.start) for _i in xrange(0, self.count) ] # W0201
+        self.starts = [ random.uniform(0, self.start) for _i in xrange(0, self.count) ]  # W0201
         self.starts.append(self.start)
         self.starts.sort()
 
@@ -461,7 +460,6 @@ class SnowBlossomFactory(renpy.python.NoRollback):
                                               fast=True,
                                               rotate=self.rotate))
             return rv
-
 
         if particles is None or len(particles) < self.count:
 
@@ -499,7 +497,6 @@ class SnowBlossomParticle(renpy.python.NoRollback):
         self.offset = offset
         self.rotate = rotate
 
-
         if not rotate:
             sh = renpy.config.screen_height
             sw = renpy.config.screen_width
@@ -507,12 +504,10 @@ class SnowBlossomParticle(renpy.python.NoRollback):
             sw = renpy.config.screen_height
             sh = renpy.config.screen_width
 
-
         if self.yspeed > 0:
             self.ystart = -border
         else:
             self.ystart = sh + border
-
 
         travel_time = (2.0 * border + sh) / abs(yspeed)
 
@@ -549,6 +544,7 @@ class SnowBlossomParticle(renpy.python.NoRollback):
         else:
             return int(ypos), int(xpos), to + self.offset, self.image
 
+
 def SnowBlossom(d,
                 count=10,
                 border=50,
@@ -557,7 +553,6 @@ def SnowBlossom(d,
                 start=0,
                 fast=False,
                 horizontal=False):
-
     """
     :doc: sprites_extra
 
@@ -606,4 +601,3 @@ def SnowBlossom(d,
                                         start=start,
                                         fast=fast,
                                         rotate=horizontal))
-

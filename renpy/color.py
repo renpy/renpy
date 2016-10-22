@@ -23,6 +23,7 @@
 import renpy.display
 import colorsys
 
+
 class Color(tuple):
     """
     :doc: color class
@@ -189,7 +190,6 @@ class Color(tuple):
         else:
             return "#{self[0]:02x}{self[1]:02x}{self[2]:02x}".format(self=self)
 
-
     def __repr__(self):
         return "<Color {}>".format(self.hexcode)
 
@@ -320,7 +320,6 @@ class Color(tuple):
         elif not isinstance(other, Color):
             other = Color(hsv=other, alpha=self.alpha)
 
-
         hsv = self.interpolate_core(self.hsv, other.hsv, fraction)
         alpha = self.interpolate_core(self.alpha, other.alpha, fraction)
 
@@ -341,7 +340,6 @@ class Color(tuple):
             other = Color(other, alpha=self.alpha)
         elif not isinstance(other, Color):
             other = Color(hls=other, alpha=self.alpha)
-
 
         hls = self.interpolate_core(self.hls, other.hls, fraction)
         alpha = self.interpolate_core(self.alpha, other.alpha, fraction)

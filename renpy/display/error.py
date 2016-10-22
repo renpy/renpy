@@ -29,6 +29,7 @@ error_handled = False
 ##############################################################################
 # Initialized approach.
 
+
 def call_exception_screen(screen_name, **kwargs):
     try:
 
@@ -44,8 +45,10 @@ def call_exception_screen(screen_name, **kwargs):
     finally:
         renpy.config.quit_action = old_quit
 
+
 def rollback_action():
     renpy.exports.rollback(force=True)
+
 
 def init_display():
     """
@@ -59,12 +62,14 @@ def init_display():
 
     renpy.ui.reset()
 
+
 def error_dump():
     """
     Handles dumps in the case where an error occurs.
     """
 
     renpy.dump.dump(True)
+
 
 def report_exception(short, full, traceback_fn):
     """
@@ -78,7 +83,7 @@ def report_exception(short, full, traceback_fn):
 
     error_dump()
 
-    if renpy.game.args.command != "run": #@UndefinedVariable
+    if renpy.game.args.command != "run":  # @UndefinedVariable
         return True
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
@@ -148,7 +153,7 @@ def report_parse_errors(errors, error_fn):
 
     error_dump()
 
-    if renpy.game.args.command != "run": #@UndefinedVariable
+    if renpy.game.args.command != "run":  # @UndefinedVariable
         return True
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
@@ -168,7 +173,7 @@ def report_parse_errors(errors, error_fn):
             "_parse_errors",
             reload_action=reload_action,
             errors=errors,
-            error_fn = error_fn,
+            error_fn=error_fn,
             )
 
     except renpy.game.CONTROL_EXCEPTIONS:

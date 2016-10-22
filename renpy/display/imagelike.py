@@ -25,6 +25,7 @@ from renpy.display.render import render, Render, Matrix2D
 # This file contains displayables that are image-like, because they take
 # up a rectangular area of the screen, and do not respond to input.
 
+
 class Solid(renpy.display.core.Displayable):
     """
     :doc: disp_imagelike
@@ -83,6 +84,7 @@ class Solid(renpy.display.core.Displayable):
 
         return rv
 
+
 class Borders(object):
     """
     :doc: disp_imagelike
@@ -114,7 +116,6 @@ class Borders(object):
         four sides.
     """
 
-
     def __init__(self, left, top, right, bottom, pad_left=0, pad_top=0, pad_right=0, pad_bottom=0):
 
         self.left = left
@@ -135,6 +136,7 @@ class Borders(object):
             self.right + self.pad_right,
             self.bottom + self.pad_bottom,
             )
+
 
 class Frame(renpy.display.core.Displayable):
     """
@@ -397,8 +399,6 @@ class Frame(renpy.display.core.Displayable):
             if right:
                 draw(-right, 0, -bottom, 0)
 
-
-
     def sw_render(self, crend, dw, dh, left, top, right, bottom):
 
         source = crend.render_to_texture(True)
@@ -505,6 +505,7 @@ class Frame(renpy.display.core.Displayable):
         self.style._predict_frame(pd)
         pd(self.image)
 
+
 class FileCurrentScreenshot(renpy.display.core.Displayable):
     """
     :doc: file_action_function
@@ -526,7 +527,6 @@ class FileCurrentScreenshot(renpy.display.core.Displayable):
 
         self.empty = empty
 
-
     def render(self, width, height, st, at):
 
         ss = renpy.display.interface.screenshot_surface
@@ -541,4 +541,3 @@ class FileCurrentScreenshot(renpy.display.core.Displayable):
         rv.blit(tex, (0, 0))
 
         return rv
-

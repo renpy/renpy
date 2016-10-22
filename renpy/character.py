@@ -357,23 +357,23 @@ class SlowDone(object):
 # This function takes care of repeatably showing the screen as part of
 # an interaction.
 def display_say(
-    who,
-    what,
-    show_function,
-    interact,
-    slow,
-    afm,
-    ctc,
-    ctc_pause,
-    ctc_position,
-    all_at_once,
-    cb_args,
-    with_none,
-    callback,
-    type,  # @ReservedAssignment
-    checkpoint=True,
-    ctc_timedpause=None,
-    ctc_force=False):
+        who,
+        what,
+        show_function,
+        interact,
+        slow,
+        afm,
+        ctc,
+        ctc_pause,
+        ctc_position,
+        all_at_once,
+        cb_args,
+        with_none,
+        callback,
+        type,  # @ReservedAssignment
+        checkpoint=True,
+        ctc_timedpause=None,
+        ctc_force=False):
 
     if interact and (not renpy.game.preferences.skip_unseen) and (not renpy.game.context().seen_current(True)) and renpy.config.skipping == "fast":
         renpy.config.skipping = None
@@ -436,7 +436,6 @@ def display_say(
         pause_end = dtt.pause_end
         pause_delay = dtt.pause_delay
 
-
     for i, (start, end, delay) in enumerate(zip(pause_start, pause_end, pause_delay)):
 
         last_pause = (i == len(pause_start) - 1)
@@ -447,7 +446,6 @@ def display_say(
             behavior = renpy.ui.saybehavior(allow_dismiss=renpy.config.say_allow_dismiss)
         else:
             behavior = None
-
 
         # The string to show.
         what_string = dtt.text
@@ -482,7 +480,7 @@ def display_say(
         # Show the text.
         what_text = show_function(who, what_string)
 
-        if not isinstance(what_text, renpy.text.text.Text): #@UndefinedVariable
+        if not isinstance(what_text, renpy.text.text.Text):  # @UndefinedVariable
             raise Exception("The say screen (or show_function) must return a Text object.")
 
         if what_ctc and ctc_position == "nestled":
@@ -574,10 +572,10 @@ class ADVCharacter(object):
 
     # When adding a new argument here, remember to add it to copy below.
     def __init__(
-        self,
-        name=NotSet,
-        kind=None,
-        **properties):
+            self,
+            name=NotSet,
+            kind=None,
+            **properties):
 
         if kind is None:
             kind = renpy.store.adv
@@ -625,17 +623,17 @@ class ADVCharacter(object):
             self.image_tag = None
 
         self.display_args = dict(
-            interact = d('interact'),
-            slow = d('slow'),
-            afm = d('afm'),
-            ctc = renpy.easy.displayable_or_none(d('ctc')),
-            ctc_pause = renpy.easy.displayable_or_none(d('ctc_pause')),
-            ctc_timedpause = renpy.easy.displayable_or_none(d('ctc_timedpause')),
-            ctc_position = d('ctc_position'),
-            all_at_once = d('all_at_once'),
-            with_none = d('with_none'),
-            callback = d('callback'),
-            type = d('type'),
+            interact=d('interact'),
+            slow=d('slow'),
+            afm=d('afm'),
+            ctc=renpy.easy.displayable_or_none(d('ctc')),
+            ctc_pause=renpy.easy.displayable_or_none(d('ctc_pause')),
+            ctc_timedpause=renpy.easy.displayable_or_none(d('ctc_timedpause')),
+            ctc_position=d('ctc_position'),
+            all_at_once=d('all_at_once'),
+            with_none=d('with_none'),
+            callback=d('callback'),
+            type=d('type'),
             )
 
         if kind:
@@ -977,10 +975,10 @@ class ADVCharacter(object):
         if history_length is None:
             return
 
-        if not renpy.store._history: # @UndefinedVariable
+        if not renpy.store._history:  # @UndefinedVariable
             return
 
-        renpy.store._history_list.pop() # @UndefinedVariable
+        renpy.store._history_list.pop()  # @UndefinedVariable
 
 
 def Character(name=NotSet, kind=None, **properties):

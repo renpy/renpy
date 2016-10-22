@@ -24,6 +24,7 @@
 import pygame_sdl2 as pygame
 import renpy.display
 
+
 class Focus(object):
 
     def __init__(self, widget, arg, x, y, w, h, screen):
@@ -79,6 +80,8 @@ focus_type = "mouse"
 pending_focus_type = "mouse"
 
 # Sets the currently focused widget.
+
+
 def set_focused(widget, arg, screen):
     global argument
     argument = arg
@@ -91,10 +94,14 @@ def set_focused(widget, arg, screen):
     renpy.display.tts.displayable(widget)
 
 # Gets the currently focused widget.
+
+
 def get_focused():
     return renpy.game.context().scene_lists.focused
 
 # Get the mouse cursor for the focused widget.
+
+
 def get_mouse():
     focused = get_focused()
     if focused is None:
@@ -102,11 +109,13 @@ def get_mouse():
     else:
         return focused.style.mouse
 
+
 def set_grab(widget):
     global grab
     grab = widget
 
     renpy.exports.cancel_gesture()
+
 
 def get_grab():
     return grab
@@ -115,6 +124,8 @@ def get_grab():
 focus_list = [ ]
 
 # This takes in a focus list from the rendering system.
+
+
 def take_focuses():
     global focus_list
     focus_list = [ ]
@@ -130,6 +141,7 @@ def take_focuses():
 
     if (default_focus is not None) and (get_focused() is None):
         change_focus(default_focus, True)
+
 
 def focus_coordinates():
     """
@@ -152,12 +164,12 @@ def focus_coordinates():
 # A map from id(displayable) to the displayable that replaces it.
 replaced_by = { }
 
+
 def before_interact(roots):
     """
     Called before each interaction to choose the focused and grabbed
     displayables.
     """
-
 
     global new_grab
     global grab
@@ -251,6 +263,8 @@ def before_interact(roots):
 
 # This changes the focus to be the widget contained inside the new
 # focus object.
+
+
 def change_focus(newfocus, default=False):
     rv = None
 
@@ -294,6 +308,7 @@ def change_focus(newfocus, default=False):
 
     return rv
 
+
 def clear_focus():
     """
     Clears the focus when the window loses mouse focus.
@@ -302,6 +317,8 @@ def clear_focus():
     change_focus(None)
 
 # This handles mouse events, to see if they change the focus.
+
+
 def mouse_handler(ev, x, y, default=False):
     """
     Handle mouse events, to see if they change the focus.
@@ -317,7 +334,6 @@ def mouse_handler(ev, x, y, default=False):
             return
         else:
             pending_focus_type = "mouse"
-
 
     new_focus = renpy.display.render.focus_at_point(x, y)
 

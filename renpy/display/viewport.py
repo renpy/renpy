@@ -33,6 +33,7 @@ def edgescroll_proportional(n):
     """
     return n
 
+
 class Viewport(renpy.display.layout.Container):
 
     __version__ = 5
@@ -70,7 +71,6 @@ class Viewport(renpy.display.layout.Container):
 
         if version < 5:
             self.focusable = self.draggable
-
 
     def __init__(self,
                  child=None,
@@ -236,7 +236,6 @@ class Viewport(renpy.display.layout.Container):
 
         return cxo, cyo, width, height
 
-
     def render(self, width, height, st, at):
 
         self.width = width
@@ -298,7 +297,7 @@ class Viewport(renpy.display.layout.Container):
             self.xadjustment.change(self.xadjustment.value - dx)
             self.yadjustment.change(self.yadjustment.value - dy)
 
-            self.drag_position = (x, y) # W0201
+            self.drag_position = (x, y)  # W0201
 
             if renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
                 renpy.display.focus.set_grab(None)
@@ -320,7 +319,6 @@ class Viewport(renpy.display.layout.Container):
                 adjustment = self.xadjustment
             else:
                 adjustment = self.yadjustment
-
 
             if renpy.display.behavior.map_event(ev, 'viewport_up'):
                 rv = adjustment.change(adjustment.value - adjustment.step)
@@ -459,7 +457,6 @@ class VPGrid(Viewport):
         self.grid_rows = rows
         self.grid_transpose = transpose
 
-
     def render(self, width, height, st, at):
 
         self.width = width
@@ -496,7 +493,6 @@ class VPGrid(Viewport):
 
         tw = (cw + spacing) * cols - spacing
         th = (ch + spacing) * rows - spacing
-
 
         if self.style.xfill:
             tw = child_width

@@ -757,7 +757,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     if roll_forward is not None:
         default = roll_forward
 
-    fixed = in_fixed_rollback();
+    fixed = in_fixed_rollback()
 
     if has_screen("input"):
         widget_properties = { }
@@ -1050,6 +1050,7 @@ def display_menu(items,
 
 
 class TagQuotingDict(object):
+
     def __getitem__(self, key):
 
         store = renpy.store.__dict__
@@ -2304,6 +2305,7 @@ def shown_window():
 
 
 class placement(renpy.python.RevertableObject):
+
     def __init__(self, p):
         super(placement, self).__init__()
 

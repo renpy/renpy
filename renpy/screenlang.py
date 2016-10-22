@@ -31,6 +31,8 @@ filename = None
 new_variable_serial = 0
 
 # Returns the name of a new variable.
+
+
 @contextlib.contextmanager
 def new_variable():
     global new_variable_serial
@@ -39,10 +41,12 @@ def new_variable():
     yield "_%d" % new_variable_serial
     new_variable_serial -= 1
 
+
 def increment_lineno(node, amount):
     for node in ast.walk(node):
         if hasattr(node, 'lineno'):
             node.lineno += amount
+
 
 class LineNumberNormalizer(ast.NodeVisitor):
 
@@ -64,6 +68,7 @@ class LineNumberNormalizer(ast.NodeVisitor):
 # The parser that things are being added to.
 parser = None
 
+
 class Positional(object):
     """
     This represents a positional parameter to a function.
@@ -77,6 +82,7 @@ class Positional(object):
 
 # Used to generate the documentation
 all_keyword_names = set()
+
 
 class Keyword(object):
     """
@@ -103,6 +109,7 @@ STYLE_PREFIXES = [
     'selected_idle_',
     'selected_activate_',
 ]
+
 
 class Style(object):
     """
@@ -222,7 +229,6 @@ class Parser(object):
                 rv.extend(c)
                 count += 1
 
-
         return rv
 
     def parse_eval(self, expr, lineno=1):
@@ -300,6 +306,7 @@ class Parser(object):
 
 # A singleton value.
 many = renpy.object.Sentinel("many")
+
 
 class FunctionStatementParser(Parser):
     """
@@ -494,139 +501,139 @@ all_statements = [ ]
 childbearing_statements = [ ]
 
 position_property_names = [
-        "anchor",
-        "xanchor",
-        "yanchor",
-        "pos",
-        "xpos",
-        "ypos",
-        "align",
-        "xalign",
-        "yalign",
-        "xoffset",
-        "yoffset",
-        "maximum",
-        "xmaximum",
-        "ymaximum",
-        "area",
-        "clipping",
-        "xfill",
-        "yfill",
-        # no center, since it can conflict with the center transform.
-        "xcenter",
-        "ycenter",
-        "xsize",
-        "ysize",
-        "xysize",
-        "alt",
-        "debug",
-        ]
+    "anchor",
+    "xanchor",
+    "yanchor",
+    "pos",
+    "xpos",
+    "ypos",
+    "align",
+    "xalign",
+    "yalign",
+    "xoffset",
+    "yoffset",
+    "maximum",
+    "xmaximum",
+    "ymaximum",
+    "area",
+    "clipping",
+    "xfill",
+    "yfill",
+    # no center, since it can conflict with the center transform.
+    "xcenter",
+    "ycenter",
+    "xsize",
+    "ysize",
+    "xysize",
+    "alt",
+    "debug",
+    ]
 
 position_properties = [ Style(i) for i in position_property_names ]
 text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ]
 side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ]
 
 text_property_names = [
-        "antialias",
-        "vertical",
-        "black_color",
-        "bold",
-        "color",
-        "drop_shadow",
-        "drop_shadow_color",
-        "first_indent",
-        "font",
-        "size",
-        "hyperlink_functions",
-        "italic",
-        "justify",
-        "kerning",
-        "language",
-        "layout",
-        "line_leading",
-        "line_spacing",
-        "minwidth",
-        "min_width",
-        "newline_indent",
-        "outlines",
-        "rest_indent",
-        "ruby_style",
-        "slow_cps",
-        "slow_cps_multiplier",
-        "slow_abortable",
-        "strikethrough",
-        "text_align",
-        "text_y_fudge",
-        "underline",
-        "minimum",
-        "xminimum",
-        "yminimum",
-        ]
+    "antialias",
+    "vertical",
+    "black_color",
+    "bold",
+    "color",
+    "drop_shadow",
+    "drop_shadow_color",
+    "first_indent",
+    "font",
+    "size",
+    "hyperlink_functions",
+    "italic",
+    "justify",
+    "kerning",
+    "language",
+    "layout",
+    "line_leading",
+    "line_spacing",
+    "minwidth",
+    "min_width",
+    "newline_indent",
+    "outlines",
+    "rest_indent",
+    "ruby_style",
+    "slow_cps",
+    "slow_cps_multiplier",
+    "slow_abortable",
+    "strikethrough",
+    "text_align",
+    "text_y_fudge",
+    "underline",
+    "minimum",
+    "xminimum",
+    "yminimum",
+    ]
 
 text_properties = [ Style(i) for i in text_property_names ]
 text_text_properties = [ PrefixStyle("text_", i) for i in text_property_names ]
 
 window_properties = [ Style(i) for i in [
-        "background",
-        "foreground",
-        "left_margin",
-        "right_margin",
-        "bottom_margin",
-        "top_margin",
-        "xmargin",
-        "ymargin",
-        "left_padding",
-        "right_padding",
-        "top_padding",
-        "bottom_padding",
-        "xpadding",
-        "ypadding",
-        "size_group",
-        "minimum",
-        "xminimum",
-        "yminimum",
-        ] ]
+    "background",
+    "foreground",
+    "left_margin",
+    "right_margin",
+    "bottom_margin",
+    "top_margin",
+    "xmargin",
+    "ymargin",
+    "left_padding",
+    "right_padding",
+    "top_padding",
+    "bottom_padding",
+    "xpadding",
+    "ypadding",
+    "size_group",
+    "minimum",
+    "xminimum",
+    "yminimum",
+    ] ]
 
 button_properties = [ Style(i) for i in [
-        "sound",
-        "mouse",
-        "focus_mask",
-        "child",
-        "keyboard_focus",
-        ] ]
+    "sound",
+    "mouse",
+    "focus_mask",
+    "child",
+    "keyboard_focus",
+    ] ]
 
 bar_properties = [ Style(i) for i in [
-        "bar_vertical",
-        "bar_invert",
-        "bar_resizing",
-        "left_gutter",
-        "right_gutter",
-        "top_gutter",
-        "bottom_gutter",
-        "left_bar",
-        "right_bar",
-        "top_bar",
-        "bottom_bar",
-        "thumb",
-        "thumb_shadow",
-        "thumb_offset",
-        "mouse",
-        "unscrollable",
-        "keyboard_focus",
-        ] ]
+    "bar_vertical",
+    "bar_invert",
+    "bar_resizing",
+    "left_gutter",
+    "right_gutter",
+    "top_gutter",
+    "bottom_gutter",
+    "left_bar",
+    "right_bar",
+    "top_bar",
+    "bottom_bar",
+    "thumb",
+    "thumb_shadow",
+    "thumb_offset",
+    "mouse",
+    "unscrollable",
+    "keyboard_focus",
+    ] ]
 
 box_properties = [ Style(i) for i in [
-        "box_layout",
-        "box_wrap",
-        "box_reverse",
-        "order_reverse",
-        "spacing",
-        "first_spacing",
-        "fit_first",
-        "minimum",
-        "xminimum",
-        "yminimum",
-        ] ]
+    "box_layout",
+    "box_wrap",
+    "box_reverse",
+    "order_reverse",
+    "spacing",
+    "first_spacing",
+    "fit_first",
+    "minimum",
+    "xminimum",
+    "yminimum",
+    ] ]
 
 ui_properties = [
     Keyword("at"),
@@ -1101,12 +1108,12 @@ class ForParser(Parser):
             rv = self.parse_exec("%s = 0" % counter_name)
 
             rv.append(ast.For(
-                    target=pattern,
-                    iter=expression,
-                    body=children,
-                    orelse=[],
-                    lineno=lineno,
-                    col_offset=0))
+                target=pattern,
+                iter=expression,
+                body=children,
+                orelse=[],
+                lineno=lineno,
+                col_offset=0))
 
         return rv
 
@@ -1214,10 +1221,10 @@ class ScreenLangScreen(renpy.object.Object):
         self.code = None
 
         # The variant of screen we're defining.
-        self.variant = "None" # expr.
+        self.variant = "None"  # expr.
 
         # Should we predict this screen?
-        self.predict = "None" # expr.
+        self.predict = "None"  # expr.
 
         # The parameters this screen takes.
         self.parameters = None
@@ -1256,7 +1263,6 @@ class ScreenLangScreen(renpy.object.Object):
             scope.update(values)
 
         renpy.python.py_exec_bytecode(self.code.bytecode, locals=scope)
-
 
 
 class ScreenParser(Parser):
@@ -1353,6 +1359,7 @@ class ScreenParser(Parser):
 
 screen_parser = ScreenParser()
 screen_parser.add(all_statements)
+
 
 def parse_screen(l):
     """

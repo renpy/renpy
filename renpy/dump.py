@@ -41,6 +41,7 @@ screens = [ ]
 # Does a file exist? We cache the result here.
 file_exists_cache = { }
 
+
 def file_exists(fn):
     rv = file_exists_cache.get(fn, None)
 
@@ -56,6 +57,7 @@ def file_exists(fn):
 # Did we do a dump?
 completed_dump = False
 
+
 def dump(error):
     """
     Causes a JSON dump file to be written, if the user has requested it.
@@ -63,7 +65,6 @@ def dump(error):
     `error`
         An error flag that is added to the written file.
     """
-
 
     global completed_dump
 
@@ -77,7 +78,7 @@ def dump(error):
     if not args.json_dump:
         return
 
-    def filter(name, filename): #@ReservedAssignment
+    def filter(name, filename):  # @ReservedAssignment
         """
         Returns true if the name is included by the filter, or false if it is excluded.
         """
@@ -132,7 +133,6 @@ def dump(error):
 
         label[name] = [ filename, line ]
 
-
     # Definitions.
     define = location["define"] = { }
 
@@ -159,7 +159,6 @@ def dump(error):
             continue
 
         transform[name] = [ filename, line ]
-
 
     # Code.
 
@@ -238,7 +237,7 @@ def dump(error):
 
     # Add the build info from 00build.rpy, if it's available.
     try:
-        result["build"] = renpy.store.build.dump() #@UndefinedVariable
+        result["build"] = renpy.store.build.dump()  # @UndefinedVariable
     except:
         pass
 

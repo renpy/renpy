@@ -22,15 +22,16 @@
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
 import math
-import types #@UnresolvedImport
+import types  # @UnresolvedImport
 
-import renpy.display #@UnusedImport
+import renpy.display  # @UnusedImport
 from renpy.display.layout import Container
 
 import renpy.display.accelerator
 
 # The null object that's used if we don't have a defined child.
 null = None
+
 
 def get_null():
     global null
@@ -41,6 +42,8 @@ def get_null():
     return null
 
 # Convert a position from cartesian to polar coordinates.
+
+
 def cartesian_to_polar(x, y, xaround, yaround):
     """
     Converts cartesian coordinates to polar coordinates.
@@ -57,6 +60,7 @@ def cartesian_to_polar(x, y, xaround, yaround):
 
     return angle, radius
 
+
 def polar_to_cartesian(angle, radius, xaround, yaround):
     """
     Converts polart coordinates to cartesian coordinates.
@@ -71,6 +75,7 @@ def polar_to_cartesian(angle, radius, xaround, yaround):
     y = type(yaround)(yaround + dy)
 
     return x, y
+
 
 def first_not_none(*args):
     """
@@ -148,7 +153,6 @@ class TransformState(renpy.object.Object):
         # - diff
         # - renpy.atl.PROPERTIES
         # - Proxies in Transform
-
 
         # An xpos (etc) inherited from our child overrides an xpos inherited
         # from an old transform, but not an xpos set in the current transform.
@@ -401,6 +405,7 @@ class TransformState(renpy.object.Object):
     xcenter = property(get_xcenter, set_xcenter)
     ycenter = property(get_ycenter, set_ycenter)
 
+
 class Proxy(object):
     """
     This class proxies a field from the transform to its state.
@@ -414,6 +419,7 @@ class Proxy(object):
 
     def __set__(self, instance, value):
         return setattr(instance.state, self.name, value)
+
 
 class Transform(Container):
     """
@@ -517,16 +523,16 @@ class Transform(Container):
             self.replaced_response = True
 
     DEFAULT_ARGUMENTS = {
-            "selected_activate" : { },
-            "selected_hover" : { },
-            "selected_idle" : { },
-            "selected_insensitive" : { },
-            "activate" : { },
-            "hover" : { },
-            "idle" : { },
-            "insensitive" : { },
-            "" : { },
-            }
+        "selected_activate" : { },
+        "selected_hover" : { },
+        "selected_idle" : { },
+        "selected_insensitive" : { },
+        "activate" : { },
+        "hover" : { },
+        "idle" : { },
+        "insensitive" : { },
+        "" : { },
+        }
 
     # Compatibility with old versions of the class.
     active = False
@@ -543,7 +549,7 @@ class Transform(Container):
                  style='transform',
                  focus=None,
                  default=False,
-                 _args = None,
+                 _args=None,
 
                  **kwargs):
 
@@ -662,7 +668,6 @@ class Transform(Container):
 
         super(Transform, self).set_transform_event(event)
 
-
     def take_state(self, t):
         """
         Takes the transformation state from object t into this object.
@@ -678,7 +683,6 @@ class Transform(Container):
 
         # The arguments will be applied when the default function is
         # called.
-
 
     def take_execution_state(self, t):
         """
@@ -704,7 +708,6 @@ class Transform(Container):
 
         if isinstance(self.child, Transform) and isinstance(t.child, Transform):
             self.child.take_execution_state(t.child)
-
 
     def copy(self):
         """
@@ -810,7 +813,6 @@ class Transform(Container):
                 renpy.display.render.redraw(self, fr)
 
         self.active = True
-
 
     # The render method is now defined in accelerator.pyx.
 
@@ -949,6 +951,7 @@ class Transform(Container):
 
 Transform.render = types.MethodType(renpy.display.accelerator.transform_render, None, Transform)
 
+
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
     def __init__(self, atl, child=None, context={}, parameters=None, **properties):
@@ -963,4 +966,3 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
     def _show(self):
         super(ATLTransform, self)._show()
         self.execute(self, self.st, self.at)
-

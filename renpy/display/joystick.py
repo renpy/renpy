@@ -28,6 +28,7 @@ import pygame_sdl2
 # Do we have a joystick enabled?
 enabled = False
 
+
 class JoyBehavior(renpy.display.layout.Null):
     """
     This is a behavior intended for joystick calibration. If a joystick
@@ -38,8 +39,10 @@ class JoyBehavior(renpy.display.layout.Null):
 
 joysticks = { }
 
+
 def count():
     return pygame_sdl2.joystick.get_count()
+
 
 def get(n):
 
@@ -51,4 +54,3 @@ def get(n):
         return joysticks[n]
     except:
         return None
-

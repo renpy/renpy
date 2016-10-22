@@ -31,6 +31,7 @@ from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSO
 # A map from cached surface to rle version of cached surface.
 rle_cache = weakref.WeakKeyDictionary()
 
+
 class Clipper(object):
     """
     This is used to calculate the clipping rectangle and update rectangles
@@ -171,7 +172,6 @@ class Clipper(object):
         while sized:
             area, x0, y0, x1, y1 = sized.pop()
 
-
             merged = False
 
             if nca + area >= sa:
@@ -234,6 +234,7 @@ class Clipper(object):
 
 clippers = [ Clipper() ]
 
+
 def surface(w, h, alpha):
     """
     Creates a surface that shares a pixel format with the screen. The created
@@ -247,12 +248,14 @@ def surface(w, h, alpha):
 
     return rv.subsurface((2, 2, w, h))
 
+
 def copy_surface(surf):
     w, h = surf.get_size()
     rv = surface(w, h, True)
 
-    renpy.display.accelerator.nogil_copy(surf, rv) # @UndefinedVariable
+    renpy.display.accelerator.nogil_copy(surf, rv)  # @UndefinedVariable
     return rv
+
 
 def draw_special(what, dest, x, y):
     """
@@ -428,7 +431,6 @@ def draw(dest, clip, what, xo, yo, screen):
             # what.draw_func(newdest, newx, newy)
             draw_special(what, newdest, newx, newy)
 
-
         return
 
     # Deal with clipping, if necessary.
@@ -490,10 +492,11 @@ def draw(dest, clip, what, xo, yo, screen):
     for child, cxo, cyo, _focus, _main in what.visible_children:
         draw(dest, clip, child, xo + cxo, yo + cyo, screen)
 
+
 def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
 
     # If our alpha has hit 0, don't do anything.
-    if alpha <= 0.003: # (1 / 256)
+    if alpha <= 0.003:  # (1 / 256)
         return
 
     if forward is None:
@@ -638,7 +641,6 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         draw_transformed(dest, clip, child, xo + cxo, yo + cyo, alpha * what.alpha * what.over, child_forward, child_reverse)
 
 
-
 def do_draw_screen(screen_render, full_redraw, swdraw):
     """
     Draws the render produced by render_screen to the screen.
@@ -689,7 +691,6 @@ class SWDraw(object):
         self.mouse_backing = None
         self.mouse_backing_pos = None
         self.mouse_info = None
-
 
         # Is the mouse currently visible?
         self.mouse_old_visible = None
@@ -858,7 +859,7 @@ class SWDraw(object):
         if self.mouse_location:
             updates.append(self.hide_mouse())
 
-        if tex and pos and renpy.game.interface.mouse_focused: # @UndefinedVariable
+        if tex and pos and renpy.game.interface.mouse_focused:  # @UndefinedVariable
             updates.append(self.show_mouse(pos, info))
 
         return updates
@@ -949,7 +950,6 @@ class SWDraw(object):
 
         return True
 
-
     def draw_screen(self, surftree, fullscreen_video):
         """
         Draws the screen.
@@ -998,10 +998,8 @@ class SWDraw(object):
             self.draw_mouse(True)
             pygame.display.flip()
 
-
         if fullscreen_video:
             self.full_redraw = True
-
 
     def render_to_texture(self, render, alpha):
 
@@ -1033,7 +1031,6 @@ class SWDraw(object):
             if what.forward:
                 cx, cy = what.forward.transform(cx, cy)
 
-
             if isinstance(child, renpy.display.render.Render):
                 if self.is_pixel_opaque(child, x, y):
                     return True
@@ -1050,7 +1047,6 @@ class SWDraw(object):
                     return True
 
         return False
-
 
     def mutated_surface(self, surf):
         """
@@ -1097,7 +1093,6 @@ class SWDraw(object):
         self.mutated_surface(surf)
         return surf
 
-
     def free_memory(self):
         """
         Frees up memory.
@@ -1114,7 +1109,7 @@ class SWDraw(object):
 
         return
 
-    def quit(self): #@ReservedAssignment
+    def quit(self):  # @ReservedAssignment
         """
         Shuts down the drawing system.
         """

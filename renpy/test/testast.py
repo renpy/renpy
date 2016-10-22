@@ -35,6 +35,7 @@ _test.timeout = 5.0
 # Should we force the test to proceed despite suppress_underlay?
 _test.force = False
 
+
 class Node(object):
     """
     An AST node for a test script.
@@ -141,11 +142,13 @@ class Click(Pattern):
         click_mouse(self.button, x, y)
         return None
 
+
 class Move(Pattern):
 
     def perform(self, x, y, state, t):
         move_mouse(x, y)
         return None
+
 
 class Drag(Node):
 
@@ -214,14 +217,12 @@ class Drag(Node):
             x, y = interpoints.pop(0)
             renpy.test.testmouse.move_mouse(x, y)
 
-
         if not interpoints:
             renpy.test.testmouse.release_mouse(self.button)
             return None
 
         else:
             return interpoints
-
 
     def ready(self):
 
@@ -234,7 +235,6 @@ class Drag(Node):
             return True
         else:
             return False
-
 
 
 class Type(Pattern):
@@ -260,6 +260,7 @@ class Type(Pattern):
         renpy.test.testkey.up(self, keysym)
 
         return state + 1
+
 
 class Action(Node):
 
@@ -306,6 +307,7 @@ class Pause(Node):
         else:
             return None
 
+
 class Label(Node):
 
     def __init__(self, loc, name):
@@ -323,7 +325,6 @@ class Label(Node):
 
     def ready(self):
         return self.name in renpy.test.testexecution.labels
-
 
 
 ################################################################################
@@ -442,7 +443,6 @@ class Call(Node):
         return (node, child_state, start)
 
 
-
 ################################################################################
 # Control structures.
 
@@ -472,4 +472,3 @@ class Block(Node):
             i += 1
 
         return i, start, s
-

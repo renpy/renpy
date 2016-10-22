@@ -42,6 +42,7 @@ start_time = time.time()
 
 PRESPLASHEVENT = pygame_sdl2.event.register("PRESPLASHEVENT")
 
+
 def run_event_thread():
     """
     Disposes of events while the window is running.
@@ -60,7 +61,6 @@ def start(basedir, gamedir):
     Called to display the presplash when necessary.
     """
 
-
     if "RENPY_LESS_UPDATES" in os.environ:
         return
 
@@ -78,7 +78,6 @@ def start(basedir, gamedir):
         from ctypes import c_void_p, c_int
 
         ctypes.windll.user32.SetProcessDPIAware()
-
 
     pygame_sdl2.display.init()
 

@@ -78,7 +78,7 @@ def check_text_tags(s):
 
     tag_stack = [ ]
 
-    for type, text in tokens: #@ReservedAssignment
+    for type, text in tokens:  # @ReservedAssignment
         if type != TAG:
             continue
 

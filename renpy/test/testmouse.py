@@ -27,6 +27,7 @@ mouse_pos = None
 # The mouse buttons.
 mouse_buttons = [ 0, 0, 0 ]
 
+
 def get_mouse_pos(x, y):
     """
     Called to get the overridden mouse position.
@@ -37,8 +38,10 @@ def get_mouse_pos(x, y):
 
     return mouse_pos
 
+
 def post(event_type, **kwargs):
     pygame.event.post(pygame.event.Event(event_type, test=True, **kwargs))
+
 
 def move_mouse(x, y):
     """
@@ -59,6 +62,7 @@ def move_mouse(x, y):
 
     mouse_pos = pos
 
+
 def press_mouse(button):
     """
     Presses mouse button `button`.
@@ -69,6 +73,7 @@ def press_mouse(button):
     if button < 3:
         mouse_buttons[button - 1] = 1
 
+
 def release_mouse(button):
     """
     Releases mouse button `button`.
@@ -78,6 +83,7 @@ def release_mouse(button):
     if button < 3:
         mouse_buttons[button - 1] = 0
 
+
 def click_mouse(button, x, y):
     """
     Clicks the mouse at x, y
@@ -86,6 +92,7 @@ def click_mouse(button, x, y):
     move_mouse(x, y)
     press_mouse(button)
     release_mouse(button)
+
 
 def reset():
     """

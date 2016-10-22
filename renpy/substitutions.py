@@ -28,6 +28,7 @@ import os
 
 update_translations = "RENPY_UPDATE_TRANSLATIONS" in os.environ
 
+
 class Formatter(string.Formatter):
     """
     A string formatter that uses Ren'Py's formatting rules. Ren'Py uses
@@ -55,7 +56,7 @@ class Formatter(string.Formatter):
         # The parts we've seen.
         literal = ''
         value = ''
-        format = '' #@ReservedAssignment
+        format = ''  # @ReservedAssignment
         conversion = None
 
         state = LITERAL
@@ -101,7 +102,7 @@ class Formatter(string.Formatter):
                         state = LITERAL
                         literal = ''
                         value = ''
-                        format = '' #@ReservedAssignment
+                        format = ''  # @ReservedAssignment
                         conversion = None
                         continue
 
@@ -125,7 +126,7 @@ class Formatter(string.Formatter):
                     state = LITERAL
                     literal = ''
                     value = ''
-                    format = '' #@ReservedAssignment
+                    format = ''  # @ReservedAssignment
                     conversion = None
                     continue
 
@@ -138,14 +139,13 @@ class Formatter(string.Formatter):
                     format += c
                     continue
 
-
             elif state == CONVERSION:
                 if c == ']':
                     yield (literal, value, format, conversion)
                     state = LITERAL
                     literal = ''
                     value = ''
-                    format = '' #@ReservedAssignment
+                    format = ''  # @ReservedAssignment
                     conversion = None
                     continue
 
@@ -180,7 +180,9 @@ class Formatter(string.Formatter):
 # The instance of Formatter we use.
 formatter = Formatter()
 
+
 class MultipleDict(object):
+
     def __init__(self, *dicts):
         self.dicts = dicts
 
@@ -190,6 +192,7 @@ class MultipleDict(object):
                 return d[key]
 
         raise KeyError(key)
+
 
 def substitute(s, scope=None, force=False, translate=True):
     """
@@ -222,9 +225,9 @@ def substitute(s, scope=None, force=False, translate=True):
     old_s = s
 
     if scope is not None:
-        kwargs = MultipleDict(scope, renpy.store.__dict__) #@UndefinedVariable
+        kwargs = MultipleDict(scope, renpy.store.__dict__)  # @UndefinedVariable
     else:
-        kwargs = renpy.store.__dict__ #@UndefinedVariable
+        kwargs = renpy.store.__dict__  # @UndefinedVariable
 
     s = formatter.vformat(s, (), kwargs)
 

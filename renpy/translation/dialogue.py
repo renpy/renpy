@@ -28,6 +28,7 @@ import os
 from renpy.translation import quote_unicode
 from renpy.translation.generation import scan_strings
 
+
 def notags_filter(s):
 
     def tag_pass(s):
@@ -106,12 +107,12 @@ def notags_filter(s):
 
         return rv
 
-
     return square_pass(s)
+
 
 class DialogueFile(object):
 
-    def __init__(self, filename, output, tdf=True, strings=False, notags=True, escape=True): # @ReservedAssignment
+    def __init__(self, filename, output, tdf=True, strings=False, notags=True, escape=True):  # @ReservedAssignment
         """
         `filename`
             The file we're extracting dialogue from.
@@ -198,7 +199,7 @@ class DialogueFile(object):
             # If we're tab-delimited, we have line number info, which means we
             # can sort the list so everything's in order, for menus and stuff.
             if self.tdf:
-                lines.sort(key = lambda x: int(x[4]))
+                lines.sort(key=lambda x: int(x[4]))
 
         for line in lines:
             self.f.write("\t".join(line).encode("utf-8") + "\n")
@@ -214,7 +215,7 @@ class DialogueFile(object):
 
         for line, s in scan_strings(self.filename):
 
-            stl = renpy.game.script.translator.strings[None] # @UndefinedVariable
+            stl = renpy.game.script.translator.strings[None]  # @UndefinedVariable
 
             if s in stl.translations:
                 continue
@@ -234,6 +235,7 @@ class DialogueFile(object):
                 lines.append([s])
 
         return lines
+
 
 def dialogue_command():
     """

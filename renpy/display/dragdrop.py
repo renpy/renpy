@@ -29,6 +29,7 @@ from renpy.display.behavior import map_event, run, run_unhovered
 
 import pygame_sdl2 as pygame
 
+
 def default_drag_group():
     """
     Gets the default drag group. If it doesn't exist yet, creates it.
@@ -44,8 +45,10 @@ def default_drag_group():
 
     return rv
 
+
 def default_drag_joined(drag):
     return [ (drag, 0, 0) ]
+
 
 class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     """
@@ -273,7 +276,6 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         if d is not None:
             self.add(d)
 
-
     def snap(self, x, y, delay=0):
         """
         :doc: drag_drop method
@@ -425,7 +427,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             # Snap starts now
             self.target_at = at + self.target_at_delay
             self.target_at_delay = 0
-            redraw(self,0)
+            redraw(self, 0)
         elif at >= self.target_at:
             # Snap complete
             self.x = self.target_x
@@ -634,7 +636,6 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         if handled:
             raise renpy.display.core.IgnoreEvent()
 
-
     def get_placement(self):
 
         if self.x is not None:
@@ -685,7 +686,6 @@ class DragGroup(renpy.display.layout.MultiBox):
         for i in children:
             self.add(i)
 
-
     def add(self, child):
         """
         :doc: drag_drop method
@@ -706,13 +706,11 @@ class DragGroup(renpy.display.layout.MultiBox):
         Removes `child` from this DragGroup.
         """
 
-
         if not isinstance(child, Drag):
             raise Exception("Only drags can be removed from a drag group.")
 
         child.x = None
         super(DragGroup, self).remove(child)
-
 
     def event(self, ev, x, y, st):
 
@@ -753,7 +751,6 @@ class DragGroup(renpy.display.layout.MultiBox):
 
         self.children = self._list_type(children)
         self.offsets = self._list_type(offsets)
-
 
     def get_best_drop(self, joined):
         """

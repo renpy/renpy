@@ -27,6 +27,7 @@ import codecs
 # A map from filename to position, target label pairs.
 missing = collections.defaultdict(list)
 
+
 def report_missing(target, filename, position):
     """
     Reports that the call statement ending at `position` in `filename`
@@ -41,6 +42,7 @@ def report_missing(target, filename, position):
 
 # Labels that we've created while running add_from.
 new_labels = set()
+
 
 def generate_label(target):
     """
@@ -103,6 +105,7 @@ def process_file(fn):
     os.rename(fn, fn + ".bak")
     os.rename(fn + ".new", fn)
 
+
 def add_from():
 
     renpy.arguments.takes_no_arguments("Adds from clauses to call statements that are missing them.")
@@ -114,4 +117,3 @@ def add_from():
     return False
 
 renpy.arguments.register_command("add_from", add_from)
-

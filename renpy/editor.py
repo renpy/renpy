@@ -24,6 +24,7 @@ import renpy
 import traceback
 import subprocess
 
+
 class Editor(object):
     """
     This class is intended to be subclassed by editor subclasses. It provides a
@@ -63,7 +64,7 @@ class Editor(object):
         Ends an editor transaction.
         """
 
-    def open(self, filename, line=None, **kwargs): #@ReservedAssignment
+    def open(self, filename, line=None, **kwargs):  # @ReservedAssignment
         """
         Ensures `path` is open in the editor. This may be called multiple
         times per transaction.
@@ -79,25 +80,25 @@ class Editor(object):
 
 class SystemEditor(Editor):
 
-    def open(self, filename, line=None, **kwargs): #@ReservedAssignment
+    def open(self, filename, line=None, **kwargs):  # @ReservedAssignment
 
         filename = renpy.exports.fsencode(filename)
 
         try:
             if renpy.windows:
-                os.startfile(filename) #@UndefinedVariable
+                os.startfile(filename)  # @UndefinedVariable
             elif renpy.macintosh:
-                subprocess.call([ "open", filename ]) #@UndefinedVariable
+                subprocess.call([ "open", filename ])  # @UndefinedVariable
             elif renpy.linux:
-                subprocess.call([ "xdg-open", filename ]) #@UndefinedVariable
+                subprocess.call([ "xdg-open", filename ])  # @UndefinedVariable
         except:
             traceback.print_exc()
-
 
 
 # The editor that Ren'Py is using. It should be a subclass of the Editor
 # class.
 editor = None
+
 
 def init():
     """
@@ -122,6 +123,7 @@ def init():
 
     raise Exception("{0} did not define an Editor class.".format(path))
 
+
 def launch_editor(filenames, line=1, transient=False):
     """
     Causes the editor to be launched.
@@ -144,7 +146,7 @@ def launch_editor(filenames, line=1, transient=False):
 
         for i in filenames:
             editor.open(i, line)
-            line = None # The line number only applies to the first filename.
+            line = None  # The line number only applies to the first filename.
 
         editor.end()
 

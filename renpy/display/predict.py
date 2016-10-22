@@ -38,6 +38,7 @@ predicting = False
 # like to predict.
 screens = [ ]
 
+
 def displayable(d):
     """
     Called to predict that the displayable `d` will be shown.
@@ -49,6 +50,7 @@ def displayable(d):
     if d not in predicted:
         predicted.add(d)
         d.visit_all(lambda i : i.predict_one())
+
 
 def screen(_screen_name, *args, **kwargs):
     """
@@ -88,7 +90,6 @@ def prediction_coroutine(root_widget):
     # Start the prediction thread (to clean out the cache).
     renpy.display.im.cache.start_prediction()
 
-
     # Set up the image prediction method.
     global image
     image = renpy.display.im.cache.preload_image
@@ -102,7 +103,6 @@ def prediction_coroutine(root_widget):
         predicting = False
         yield True
         predicting = True
-
 
     # Predict images that are going to be reached in the next few
     # clicks.
@@ -135,7 +135,6 @@ def prediction_coroutine(root_widget):
 
     while not (yield True):
         continue
-
 
     # Predict screens given with renpy.start_predict_screen.
     for name, value in renpy.store._predict_screen.items():
@@ -185,4 +184,3 @@ def prediction_coroutine(root_widget):
         predicting = False
 
     yield False
-

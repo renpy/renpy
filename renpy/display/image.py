@@ -47,6 +47,7 @@ def get_available_image_tags():
 
     return [ k for k, v in image_attributes.items() if v ]
 
+
 def get_available_image_attributes(tag, attributes=()):
     """
     :doc: image_func
@@ -319,7 +320,6 @@ class DynamicImage(renpy.display.core.Displayable):
         if isinstance(name, list):
             self._duplicatable = True
 
-
     def _scope(self, scope, update):
         return self.find_target(scope, update)
 
@@ -480,7 +480,6 @@ class ShownImageInfo(renpy.object.Object):
             self.attributes = old.attributes.copy()
             self.shown = old.shown.copy()
 
-
     def after_upgrade(self, version):
         if version < 2:
 
@@ -601,7 +600,6 @@ class ShownImageInfo(renpy.object.Object):
         for i in remove:
             optional.discard(i)
 
-
         return self.choose_image(nametag, required, optional, name)
 
     def choose_image(self, tag, required, optional, exception_name):
@@ -663,4 +661,3 @@ Image = renpy.display.im.image
 Solid = renpy.display.imagelike.Solid
 Frame = renpy.display.imagelike.Frame
 ImageButton = renpy.display.behavior.ImageButton
-

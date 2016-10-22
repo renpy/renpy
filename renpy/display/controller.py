@@ -30,6 +30,7 @@ import pygame_sdl2 as pygame
 
 import os
 
+
 def load_mappings():
 
     try:
@@ -52,6 +53,7 @@ def load_mappings():
         f.close()
     except:
         pass
+
 
 def init():
     """
@@ -89,6 +91,7 @@ THRESHOLD = (32768 // 2)
 # Should we ignore events?
 ignore = False
 
+
 def make_event(name):
     """
     Creates an EVENTNAME event with `name`, and returns it.
@@ -122,7 +125,8 @@ def exists():
     else:
         return False
 
-def quit(index): # @ReservedAssignment
+
+def quit(index):  # @ReservedAssignment
     """
     Quits the controller at index.
     """
@@ -144,6 +148,7 @@ def start(index):
     c.init()
 
     renpy.exports.restart_interaction()
+
 
 def event(ev):
     """
@@ -192,14 +197,14 @@ def event(ev):
         ev = make_event(name)
 
     elif ev.type in (
-        pygame.JOYAXISMOTION,
-        pygame.JOYHATMOTION,
-        pygame.JOYBALLMOTION,
-        pygame.JOYBUTTONDOWN,
-        pygame.JOYBUTTONUP,
-        pygame.JOYDEVICEADDED,
-        pygame.JOYDEVICEREMOVED,
-        ):
+            pygame.JOYAXISMOTION,
+            pygame.JOYHATMOTION,
+            pygame.JOYBALLMOTION,
+            pygame.JOYBUTTONDOWN,
+            pygame.JOYBUTTONUP,
+            pygame.JOYDEVICEADDED,
+            pygame.JOYDEVICEREMOVED,
+            ):
 
         if not renpy.config.pass_joystick_events:
             return None

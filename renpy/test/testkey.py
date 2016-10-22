@@ -267,6 +267,7 @@ for k, v in sorted(code_to_unicode.items()):
     if v and (v not in unicode_to_code):
         unicode_to_code[v] = k
 
+
 def get_keycode(node, keysym):
 
     c = keysym.split("_")
@@ -348,6 +349,7 @@ def down(node, keysym):
             mod=mods,
             repeat=False,
             test=True))
+
 
 def up(node, keysym):
     code, _, mods = get_keycode(node, keysym)

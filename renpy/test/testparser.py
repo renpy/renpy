@@ -76,7 +76,6 @@ def parse_move(l, loc):
     return rv
 
 
-
 def parse_drag(l, loc):
 
     points = l.require(l.simple_expression)
@@ -143,6 +142,7 @@ def parse_clause(l, loc):
     l.error("Expected a test language statement or clause.")
     return testast.Click(loc, target)
 
+
 def parse_statement(l, loc):
 
     if l.keyword('python'):
@@ -186,6 +186,7 @@ def parse_statement(l, loc):
         rv = testast.Until(rv, right)
 
     return rv
+
 
 def parse_block(l, loc):
     """

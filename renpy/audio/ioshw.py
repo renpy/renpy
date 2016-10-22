@@ -1,9 +1,10 @@
 import renpy
-import pyobjus # @UnresolvedImport
+import pyobjus  # @UnresolvedImport
 
 from renpy.audio.audio import MusicContext
 
 VideoPlayer = pyobjus.autoclass("VideoPlayer")
+
 
 class IOSVideoChannel(object):
 
@@ -51,7 +52,6 @@ class IOSVideoChannel(object):
             self.default_loop = default_loop
             self.default_loop_set = True
 
-
     def get_context(self):
         """
         Returns the MusicContext corresponding to this channel, taken from
@@ -67,7 +67,6 @@ class IOSVideoChannel(object):
         return rv
 
     context = property(get_context)
-
 
     def start(self):
         """
@@ -118,7 +117,6 @@ class IOSVideoChannel(object):
         if self.queue:
             self.start()
 
-
     def dequeue(self, even_tight=False):
         """
         Clears the queued music, except for a first item that has
@@ -130,14 +128,12 @@ class IOSVideoChannel(object):
         else:
             self.queue = self.queue[:1]
 
-
     def interact(self):
         """
         Called (mostly) once per interaction.
         """
 
         self.periodic()
-
 
     def fadeout(self, secs):
         """
@@ -172,4 +168,3 @@ class IOSVideoChannel(object):
 
     def set_secondary_volume(self, volume, delay):
         pass
-

@@ -39,6 +39,7 @@ surface_file = None
 # The surface to display the movie on, if not fullscreen.
 surface = None
 
+
 def movie_stop(clear=True, only_fullscreen=False):
     """
     Stops the currently playing movie.
@@ -94,6 +95,7 @@ old_channel_movie = { }
 # Is there a video being displayed fullscreen?
 fullscreen = False
 
+
 def early_interact():
     """
     Called early in the interact process, to clear out the fullscreen
@@ -115,8 +117,6 @@ def interact():
     for i in list(texture.keys()):
         if not renpy.audio.music.get_playing(i):
             del texture[i]
-
-
 
     if renpy.audio.music.get_playing("movie"):
 
@@ -165,6 +165,7 @@ def get_movie_texture(channel, mask_channel=None):
         new = False
 
     return tex, new
+
 
 def render_movie(channel, width, height):
     tex, _new = get_movie_texture(channel)
@@ -354,7 +355,6 @@ class Movie(renpy.display.core.Displayable):
             if self.mask:
                 renpy.audio.music.stop(channel=self.mask_channel)
 
-
     def per_interact(self):
         displayable_channels[(self.channel, self.mask_channel)].append(self)
         renpy.display.render.redraw(self, 0)
@@ -369,6 +369,7 @@ def playing():
 
         if renpy.audio.music.get_playing(channel):
             return True
+
 
 def update_playing():
     """
@@ -388,6 +389,7 @@ def update_playing():
             m.stop()
 
     old_channel_movie = dict(channel_movie)
+
 
 def frequent():
     """

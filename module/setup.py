@@ -71,10 +71,10 @@ include("png.h")
 include("SDL.h", directory="SDL2")
 include("ft2build.h")
 include("freetype/freetype.h", directory="freetype2", optional=True) or include("freetype.h", directory="freetype2")
-include("libavutil/avstring.h",   directory="ffmpeg", optional=True) or include("libavutil/avstring.h")
+include("libavutil/avstring.h", directory="ffmpeg", optional=True) or include("libavutil/avstring.h")
 include("libavformat/avformat.h", directory="ffmpeg", optional=True) or include("libavformat/avformat.h")
-include("libavcodec/avcodec.h",   directory="ffmpeg", optional=True) or include("libavcodec/avcodec.h")
-include("libswscale/swscale.h",   directory="ffmpeg", optional=True) or include("libswscale/swscale.h")
+include("libavcodec/avcodec.h", directory="ffmpeg", optional=True) or include("libavcodec/avcodec.h")
+include("libswscale/swscale.h", directory="ffmpeg", optional=True) or include("libswscale/swscale.h")
 include("GL/glew.h")
 include("pygame_sdl2/pygame_sdl2.h", directory="python{}.{}".format(sys.version_info.major, sys.version_info.minor))
 
@@ -150,7 +150,7 @@ if has_swscale:
 cython(
     "renpy.audio.renpysound",
     [ "renpysound_core.c", "ffmedia.c" ],
-    libs = sdl + sound,
+    libs=sdl + sound,
     define_macros=macros)
 
 # renpy
@@ -225,7 +225,7 @@ cython("renpy.text.texwrap")
 cython(
     "renpy.text.ftfont",
     [ "ftsupport.c", "ttgsubtable.c" ],
-    libs = sdl + [ 'freetype', 'z', 'm' ])
+    libs=sdl + [ 'freetype', 'z', 'm' ])
 
 find_unnecessary_gen()
 
@@ -234,7 +234,7 @@ sys.path.insert(0, '..')
 
 import renpy
 
-setuplib.setup("Ren'Py", renpy.version[7:]) # @UndefinedVariable
+setuplib.setup("Ren'Py", renpy.version[7:])  # @UndefinedVariable
 
 if not has_fribidi:
     print("Warning: Did not include fribidi.")

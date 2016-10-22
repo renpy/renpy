@@ -537,9 +537,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
             if profile:
                 profile_log.write("%s %s %s",
-                    phase_name[self.phase],
-                    " ".join(self.screen_name),
-                    datetime.datetime.now().strftime("%H:%M:%S.%f"))
+                                  phase_name[self.phase],
+                                  " ".join(self.screen_name),
+                                  datetime.datetime.now().strftime("%H:%M:%S.%f"))
 
                 start = time.time()
 

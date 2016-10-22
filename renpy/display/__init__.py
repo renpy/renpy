@@ -38,6 +38,7 @@ touch = False
 # The pygame.display.Info object, which we want to survive a reload.
 info = None
 
+
 def get_info():
     global info
 

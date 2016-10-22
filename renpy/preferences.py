@@ -46,13 +46,14 @@ pad_bindings = {
     "pad_rightx_pos" : [ "focus_right", "bar_right" ],
 
     "pad_dpup_press" : [ "focus_up", "bar_up" ],
-    "pad_lefty_neg" :  [ "focus_up", "bar_up" ],
+    "pad_lefty_neg" : [ "focus_up", "bar_up" ],
     "pad_righty_neg" : [ "focus_up", "bar_up" ],
 
     "pad_dpdown_press" : [ "focus_down", "bar_down" ],
     "pad_lefty_pos" : [ "focus_down", "bar_down" ],
     "pad_righty_pos" : [ "focus_down", "bar_down" ],
 }
+
 
 class Preferences(renpy.object.Object):
     """

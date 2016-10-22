@@ -30,9 +30,10 @@ import renpy.text.font as font
 import renpy.text.extras as extras
 
 try:
-    from _renpybidi import log2vis, WRTL, RTL, ON # @UnresolvedImport
+    from _renpybidi import log2vis, WRTL, RTL, ON  # @UnresolvedImport
 except:
     pass
+
 
 class Blit(object):
     """
@@ -96,7 +97,6 @@ def outline_blits(blits, outline):
 
     # The y coordinate of the bottom of the current line.
     bottom_y = 0
-
 
     # The maximum x coordinate of the previous blit on this line.
     max_x = 0
@@ -288,7 +288,6 @@ class TextSegment(object):
         on the font group.
         """
 
-
         if not isinstance(self.font, font.FontGroup):
             yield (self, s)
             return
@@ -319,6 +318,7 @@ class TextSegment(object):
 
         fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample)
         return fo.bounds(glyphs, bounds)
+
 
 class SpaceSegment(object):
     """
@@ -423,6 +423,7 @@ class DisplayableSegment(object):
     def bounds(self, glyphs, bounds, layout):
         return bounds
 
+
 class FlagSegment(object):
     """
     A do-nothing segment that just exists so we can flag the start and end
@@ -440,6 +441,7 @@ class FlagSegment(object):
 
     def bounds(self, glyphs, bounds, layout):
         return bounds
+
 
 class Layout(object):
     """
@@ -590,7 +592,7 @@ class Layout(object):
             self.paragraph_glyphs.append(list(par_glyphs))
 
             if splits_from:
-                textsupport.copy_splits(splits_from.paragraph_glyphs[p_num], par_glyphs) # @UndefinedVariable
+                textsupport.copy_splits(splits_from.paragraph_glyphs[p_num], par_glyphs)  # @UndefinedVariable
 
             else:
 
@@ -686,7 +688,7 @@ class Layout(object):
             target_x = self.scale_int(splits_from.size[0] - splits_from.xborder)
             target_y = self.scale_int(splits_from.size[1] - splits_from.yborder)
 
-            textsupport.tweak_glyph_spacing(all_glyphs, lines, target_x - maxx, target_y - y, maxx, y) # @UndefinedVariable
+            textsupport.tweak_glyph_spacing(all_glyphs, lines, target_x - maxx, target_y - y, maxx, y)  # @UndefinedVariable
 
             maxx = target_x
             y = target_y
@@ -751,7 +753,6 @@ class Layout(object):
 
                 ts.draw(glyphs, di, self.add_left, self.add_top, self)
 
-
             renpy.display.draw.mutated_surface(surf)
             tex = renpy.display.draw.load_texture(surf)
 
@@ -782,7 +783,6 @@ class Layout(object):
                 renpy.display.to_log.write("     Available: (%d, %d) Laid-out: (%d, %d)", width, height, sw, sh)
                 renpy.display.to_log.write("     Text: %r", text.text)
 
-
     def scale(self, n):
         if n is None:
             return n
@@ -806,7 +806,6 @@ class Layout(object):
             return n
 
         return n * int(self.oversample)
-
 
     def unscale_pair(self, x, y):
         return x / self.oversample, y / self.oversample
@@ -854,7 +853,7 @@ class Layout(object):
 
             line.extend(tss[-1].subsegment(u" "))
 
-        for type, text in tokens: #@ReservedAssignment
+        for type, text in tokens:  # @ReservedAssignment
 
             if type == PARAGRAPH:
 
@@ -1070,7 +1069,6 @@ class Layout(object):
 
         return l, rtl
 
-
     def figure_outlines(self, style):
         """
         Return a list containing the outlines, including an outline
@@ -1094,7 +1092,6 @@ class Layout(object):
 
             for dsx, dsy in dslist:
                 outlines.append((0, style.drop_shadow_color, self.scale_outline(dsx), self.scale_outline(dsy)))
-
 
         for size, color, xo, yo in style_outlines:
             outlines.append((self.scale_outline(size), color, self.scale_outline(xo), self.scale_outline(yo)))
@@ -1127,7 +1124,6 @@ class Layout(object):
         outlines.append((0, None, 0, 0))
 
         return outlines, right - left, bottom - top, -left, -top
-
 
     def blits_typewriter(self, st):
         """
@@ -1170,7 +1166,6 @@ class Layout(object):
 
         min_x = width
         max_x = 0
-
 
         left = False
         right = False
@@ -1227,7 +1222,6 @@ virtual_layout_cache_old = { }
 virtual_layout_cache_new = { }
 
 
-
 def layout_cache_clear():
     """
     Clears the old and new layout caches.
@@ -1257,6 +1251,7 @@ def layout_cache_tick():
 
 VERT_REVERSE = renpy.display.render.Matrix2D(0, -1, 1, 0)
 VERT_FORWARD = renpy.display.render.Matrix2D(0, 1, -1, 0)
+
 
 class Text(renpy.display.core.Displayable):
 
@@ -1499,7 +1494,6 @@ class Text(renpy.display.core.Displayable):
         # Text.
         self.tokens, self.displayables = self.get_displayables(tokens)
 
-
     def visit(self):
 
         if self.dirty or self.displayables is None:
@@ -1545,7 +1539,6 @@ class Text(renpy.display.core.Displayable):
 
         virtual_layout_cache_old.pop(key, None)
         virtual_layout_cache_new.pop(key, None)
-
 
     def get_layout(self):
         """
@@ -1593,7 +1586,6 @@ class Text(renpy.display.core.Displayable):
 
         if hyperlink_focus:
             return hyperlink_focus(target)
-
 
     def set_style_prefix(self, prefix, root):
         if prefix != self.style.prefix:
@@ -1645,7 +1637,7 @@ class Text(renpy.display.core.Displayable):
                 return rv
 
         if (self.is_focused() and
-            renpy.display.behavior.map_event(ev, "button_select")):
+                renpy.display.behavior.map_event(ev, "button_select")):
 
             clicked = self.style.hyperlink_functions[1]
 
@@ -1811,13 +1803,12 @@ class Text(renpy.display.core.Displayable):
                 else:
                     b_y += layout.add_top
 
-
                 # Blit.
                 rv.absolute_blit(
                     tex.subsurface((b_x, b_y, b_w, b_h)),
                     layout.unscale_pair(b_x + xo + layout.xoffset - o - layout.add_left,
-                     b_y + yo + layout.yoffset - o - layout.add_top)
-                     )
+                                        b_y + yo + layout.yoffset - o - layout.add_top)
+                    )
 
         # Blit displayables.
         if layout.displayable_blits:
@@ -1862,7 +1853,6 @@ class Text(renpy.display.core.Displayable):
 
         return rv
 
-
     def tokenize(self, text):
         """
         Convert the text into a list of tokens.
@@ -1885,7 +1875,6 @@ class Text(renpy.display.core.Displayable):
                 raise Exception("Can't display {0!r} as Text.".format(i))
 
         return tokens
-
 
     def apply_custom_tags(self, tokens):
         """
@@ -1999,4 +1988,3 @@ language_tailor = textsupport.language_tailor
 
 # Compatibility, in case one of these was pickled.
 ParameterizedText = extras.ParameterizedText
-

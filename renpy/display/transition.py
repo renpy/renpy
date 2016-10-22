@@ -42,12 +42,12 @@ class Transition(renpy.display.core.Displayable):
     def event(self, ev, x, y, st):
 
         if self.events or ev.type == renpy.display.core.TIMEEVENT:
-            return self.new_widget.event(ev, x, y, st) # E1101
+            return self.new_widget.event(ev, x, y, st)  # E1101
         else:
             return None
 
     def visit(self):
-        return [ self.new_widget, self.old_widget ] # E1101
+        return [ self.new_widget, self.old_widget ]  # E1101
 
 
 def null_render(d, width, height, st, at):
@@ -62,6 +62,7 @@ def null_render(d, width, height, st, at):
     rv.blit(surf, (0, 0))
 
     return rv
+
 
 class NoTransition(Transition):
     """
@@ -196,7 +197,6 @@ def Fade(out_time,
          widget=None,
          alpha=False,
          ):
-
     """
     :doc: transition function
     :args: (out_time, hold_time, in_time, color="#000")
@@ -290,7 +290,6 @@ class Pixellate(Transition):
             visible = self.new_widget
             self.events = True
 
-
         rdr = render(visible, width, height, st, at)
         rv = renpy.display.render.Render(rdr.width, rdr.height)
 
@@ -343,7 +342,6 @@ class Dissolve(Transition):
         self.events = False
         self.alpha = alpha
         self.time_warp = time_warp
-
 
     def render(self, width, height, st, at):
 
@@ -432,18 +430,18 @@ class ImageDissolve(Transition):
     time_warp = None
 
     def __init__(
-        self,
-        image,
-        time,
-        ramplen=8,
-        ramptype='linear',
-        ramp=None,
-        reverse=False,
-        alpha=False,
-        old_widget=None,
-        new_widget=None,
-        time_warp=None,
-        **properties):
+            self,
+            image,
+            time,
+            ramplen=8,
+            ramptype='linear',
+            ramp=None,
+            reverse=False,
+            alpha=False,
+            old_widget=None,
+            new_widget=None,
+            time_warp=None,
+            **properties):
 
         # ramptype and ramp are now unused, but are kept for compatbility with
         # older code.
@@ -482,10 +480,8 @@ class ImageDissolve(Transition):
         # The length of the ramp.
         self.ramplen = max(ramplen, 1)
 
-
     def visit(self):
         return super(ImageDissolve, self).visit() + [ self.image ]
-
 
     def render(self, width, height, st, at):
 
@@ -551,14 +547,14 @@ class AlphaDissolve(Transition):
      """
 
     def __init__(
-        self,
-        control,
-        delay=0.0,
-        old_widget=None,
-        new_widget=None,
-        alpha=False,
-        reverse=False,
-        **properties):
+            self,
+            control,
+            delay=0.0,
+            old_widget=None,
+            new_widget=None,
+            alpha=False,
+            reverse=False,
+            **properties):
 
         super(AlphaDissolve, self).__init__(delay, **properties)
 
@@ -804,7 +800,6 @@ class CropMove(Transition):
             endcrop = (0.5, 0.5, 0.0, 0.0)
             topnew = False
 
-
         elif mode == "custom":
             pass
         else:
@@ -854,7 +849,6 @@ class CropMove(Transition):
 
         crop = interpolate_tuple(self.startcrop, self.endcrop)
         pos = interpolate_tuple(self.startpos, self.endpos)
-
 
         top = render(self.top, width, height, st, at)
         bottom = render(self.bottom, width, height, st, at)
@@ -915,7 +909,7 @@ class PushMove(Transition):
             self.old_endcrop = (0.0, 0.0, 0.0, 1.0)
             self.old_startpos = (0.0, 0.0)
             self.old_startcrop = (0.0, 0.0, 1.0, 1.0)
-            
+
         elif mode == "pushleft":
             self.new_startpos = (1.0, 0.0)
             self.new_startcrop = (0.0, 0.0, 0.0, 1.0)
@@ -925,7 +919,7 @@ class PushMove(Transition):
             self.old_endcrop = (1.0, 0.0, 0.0, 1.0)
             self.old_startpos = (0.0, 0.0)
             self.old_startcrop = (0.0, 0.0, 1.0, 1.0)
-            
+
         elif mode == "pushup":
             self.new_startpos = (0.0, 1.0)
             self.new_startcrop = (0.0, 0.0, 1.0, 0.0)
@@ -935,7 +929,7 @@ class PushMove(Transition):
             self.old_endcrop = (0.0, 1.0, 1.0, 0.0)
             self.old_startpos = (0.0, 0.0)
             self.old_startcrop = (0.0, 0.0, 1.0, 1.0)
-            
+
         elif mode == "pushdown":
             self.new_startpos = (0.0, 0.0)
             self.new_startcrop = (0.0, 1.0, 1.0, 0.0)
@@ -945,7 +939,7 @@ class PushMove(Transition):
             self.old_endcrop = (0.0, 0.0, 1.0, 0.0)
             self.old_startpos = (0.0, 0.0)
             self.old_startcrop = (0.0, 0.0, 1.0, 1.0)
-            
+
         else:
             raise Exception("Invalid mode %s passed into PushMove." % mode)
 
@@ -978,24 +972,24 @@ class PushMove(Transition):
 
         new_crop = interpolate_tuple(self.new_startcrop, self.new_endcrop)
         new_pos = interpolate_tuple(self.new_startpos, self.new_endpos)
-        
+
         old_crop = interpolate_tuple(self.old_startcrop, self.old_endcrop)
         old_pos = interpolate_tuple(self.old_startpos, self.old_endpos)
-
 
         new = render(self.new_widget, width, height, st, at)
         old = render(self.old_widget, width, height, st, at)
 
         rv = renpy.display.render.Render(width, height)
 
-        old_ss = old.subsurface(old_crop, focus = True)
-        rv.blit(old_ss, old_pos, focus = True)
+        old_ss = old.subsurface(old_crop, focus=True)
+        rv.blit(old_ss, old_pos, focus=True)
 
-        new_ss = new.subsurface(new_crop, focus = True)
-        rv.blit(new_ss, new_pos, focus = True)
+        new_ss = new.subsurface(new_crop, focus=True)
+        rv.blit(new_ss, new_pos, focus=True)
 
         renpy.display.render.redraw(self, 0)
         return rv
+
 
 def ComposeTransition(trans, before=None, after=None, new_widget=None, old_widget=None):
     """
@@ -1045,4 +1039,3 @@ def SubTransition(rect, trans, old_widget=None, new_widget=None, **properties):
     f.add(inner)
 
     return NoTransition(delay, old_widget=f, new_widget=f)
-

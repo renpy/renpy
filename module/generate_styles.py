@@ -21,15 +21,15 @@
 
 from __future__ import print_function, unicode_literals, division, absolute_import
 
-str = unicode # @ReservedAssignment
+str = unicode  # @ReservedAssignment
 
 import collections
 import os
 
 try:
-    from io import StringIO # @UnusedImport
+    from io import StringIO  # @UnusedImport
 except:
-    from StringIO import StringIO # @Reimport
+    from StringIO import StringIO  # @Reimport
 
 # Paths
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -54,7 +54,9 @@ def sorted_dict(**kwargs):
 # A map from prefix name to Prefix object.
 prefixes = collections.OrderedDict()
 
+
 class Prefix(object):
+
     def __init__(self, index, name, priority, alts):
 
         # The index of where this prefix is stored in memory, or -1 if this
@@ -122,97 +124,97 @@ PREFIX_SEARCH = {
 # to a function that is called when it is set, or None if no such function
 # is needed.
 style_properties = sorted_dict(
-    activate_sound = None,
-    adjust_spacing = None,
-    aft_bar = 'none_is_null',
-    aft_gutter = None,
-    alt = None,
-    antialias = None,
-    vertical = None,
-    background = 'renpy.easy.displayable_or_none',
-    bar_invert = None,
-    bar_resizing = None,
-    unscrollable = None,
-    bar_vertical = None,
-    black_color = 'renpy.easy.color',
-    bold = None,
-    bottom_margin = None,
-    bottom_padding = None,
-    box_layout = None,
-    box_reverse = None,
-    box_wrap = None,
-    caret = 'renpy.easy.displayable_or_none',
-    child = 'renpy.easy.displayable_or_none',
-    clipping = None,
-    color = 'renpy.easy.color',
-    debug = None,
-    drop_shadow = None,
-    drop_shadow_color = 'renpy.easy.color',
-    first_indent = None,
-    first_spacing = None,
-    fit_first = None,
-    focus_mask = 'expand_focus_mask',
-    focus_rect = None,
-    font = None,
-    fore_bar = 'none_is_null',
-    fore_gutter = None,
-    foreground = 'renpy.easy.displayable_or_none',
-    hinting = None,
-    hover_sound = None,
+    activate_sound=None,
+    adjust_spacing=None,
+    aft_bar='none_is_null',
+    aft_gutter=None,
+    alt=None,
+    antialias=None,
+    vertical=None,
+    background='renpy.easy.displayable_or_none',
+    bar_invert=None,
+    bar_resizing=None,
+    unscrollable=None,
+    bar_vertical=None,
+    black_color='renpy.easy.color',
+    bold=None,
+    bottom_margin=None,
+    bottom_padding=None,
+    box_layout=None,
+    box_reverse=None,
+    box_wrap=None,
+    caret='renpy.easy.displayable_or_none',
+    child='renpy.easy.displayable_or_none',
+    clipping=None,
+    color='renpy.easy.color',
+    debug=None,
+    drop_shadow=None,
+    drop_shadow_color='renpy.easy.color',
+    first_indent=None,
+    first_spacing=None,
+    fit_first=None,
+    focus_mask='expand_focus_mask',
+    focus_rect=None,
+    font=None,
+    fore_bar='none_is_null',
+    fore_gutter=None,
+    foreground='renpy.easy.displayable_or_none',
+    hinting=None,
+    hover_sound=None,
     hyperlink_functions=None,
-    italic = None,
-    justify = None,
-    kerning = None,
-    key_events = None,
-    keyboard_focus = None,
-    language = None,
-    layout = None,
-    line_leading = None,
-    left_margin = None,
+    italic=None,
+    justify=None,
+    kerning=None,
+    key_events=None,
+    keyboard_focus=None,
+    language=None,
+    layout=None,
+    line_leading=None,
+    left_margin=None,
     line_overlap_split=None,
-    left_padding = None,
-    line_spacing = None,
-    mouse = None,
-    min_width = None,
-    newline_indent = None,
-    order_reverse = None,
-    outlines = 'expand_outlines',
-    rest_indent = None,
-    right_margin = None,
-    right_padding = None,
-    ruby_style = None,
-    size = None,
-    size_group = None,
-    slow_abortable = None,
-    slow_cps = None,
-    slow_cps_multiplier = None,
-    spacing = None,
-    strikethrough = None,
-    subtitle_width = None,
-    subpixel = None,
-    text_y_fudge = None,
-    text_align = None,
-    thumb = 'none_is_null',
-    thumb_offset = None,
-    thumb_shadow = 'none_is_null',
-    time_policy = None,
-    top_margin = None,
-    top_padding = None,
-    underline = None,
-    xanchor = 'expand_anchor',
-    xfill = None,
-    xfit = None,
-    xmaximum = None,
-    xminimum = None,
-    xoffset = None,
-    xpos = None,
-    yanchor = 'expand_anchor',
-    yfill = None,
-    yfit = None,
-    ymaximum = None,
-    yminimum = None,
-    yoffset = None,
-    ypos = None,
+    left_padding=None,
+    line_spacing=None,
+    mouse=None,
+    min_width=None,
+    newline_indent=None,
+    order_reverse=None,
+    outlines='expand_outlines',
+    rest_indent=None,
+    right_margin=None,
+    right_padding=None,
+    ruby_style=None,
+    size=None,
+    size_group=None,
+    slow_abortable=None,
+    slow_cps=None,
+    slow_cps_multiplier=None,
+    spacing=None,
+    strikethrough=None,
+    subtitle_width=None,
+    subpixel=None,
+    text_y_fudge=None,
+    text_align=None,
+    thumb='none_is_null',
+    thumb_offset=None,
+    thumb_shadow='none_is_null',
+    time_policy=None,
+    top_margin=None,
+    top_padding=None,
+    underline=None,
+    xanchor='expand_anchor',
+    xfill=None,
+    xfit=None,
+    xmaximum=None,
+    xminimum=None,
+    xoffset=None,
+    xpos=None,
+    yanchor='expand_anchor',
+    yfill=None,
+    yfit=None,
+    ymaximum=None,
+    yminimum=None,
+    yoffset=None,
+    ypos=None,
     )
 
 # Properties that take displayables that should be given the right set
@@ -246,123 +248,123 @@ style_property_count = len(style_properties)
 #   numeric value, or None to not change the argument.
 synthetic_properties = sorted_dict(
 
-    margin = [
+    margin=[
         ('left_margin', 'index_0'),
         ('top_margin', 'index_1'),
         ('right_margin', 'index_2_or_0'),
         ('bottom_margin', 'index_3_or_1'),
         ],
 
-    xmargin = [
+    xmargin=[
         ('left_margin', None),
         ('right_margin', None)
         ],
 
-    ymargin = [
+    ymargin=[
         ('top_margin', None),
         ('bottom_margin', None),
         ],
 
-    xalign = [
+    xalign=[
         ('xpos', None),
         ('xanchor', None),
         ],
 
-    yalign = [
+    yalign=[
         ('ypos', None),
         ('yanchor', None),
         ],
 
-    padding = [
+    padding=[
         ('left_padding', 'index_0'),
         ('top_padding', 'index_1'),
         ('right_padding', 'index_2_or_0'),
         ('bottom_padding', 'index_3_or_1'),
         ],
 
-    xpadding = [
+    xpadding=[
         ('left_padding', None),
         ('right_padding', None),
         ],
 
-    ypadding = [
+    ypadding=[
         ('top_padding', None),
         ('bottom_padding', None),
         ],
 
-    minwidth = [ ('min_width', None) ],
-    textalign = [ ('text_align', None) ],
-    slow_speed = [ ('slow_cps', None) ],
-    enable_hover = [ ],
+    minwidth=[ ('min_width', None) ],
+    textalign=[ ('text_align', None) ],
+    slow_speed=[ ('slow_cps', None) ],
+    enable_hover=[ ],
 
-    left_gutter = [ ('fore_gutter', None) ],
-    right_gutter = [ ('aft_gutter', None) ],
-    top_gutter = [ ('fore_gutter', None) ],
-    bottom_gutter = [ ('aft_gutter', None) ],
+    left_gutter=[ ('fore_gutter', None) ],
+    right_gutter=[ ('aft_gutter', None) ],
+    top_gutter=[ ('fore_gutter', None) ],
+    bottom_gutter=[ ('aft_gutter', None) ],
 
-    left_bar = [ ('fore_bar', None) ],
-    right_bar = [ ('aft_bar', None) ],
-    top_bar = [ ('fore_bar', None) ],
-    bottom_bar = [ ('aft_bar', None) ],
+    left_bar=[ ('fore_bar', None) ],
+    right_bar=[ ('aft_bar', None) ],
+    top_bar=[ ('fore_bar', None) ],
+    bottom_bar=[ ('aft_bar', None) ],
 
-    base_bar = [
+    base_bar=[
         ('fore_bar', None),
         ('aft_bar', None),
         ],
 
-    box_spacing = [ ( 'spacing', None ) ],
-    box_first_spacing = [ ( 'first_spacing', None) ],
+    box_spacing=[ ( 'spacing', None ) ],
+    box_first_spacing=[ ( 'first_spacing', None) ],
 
-    pos = [
+    pos=[
         ('xpos', 'index_0'),
         ('ypos', 'index_1'),
         ],
 
-    anchor = [
+    anchor=[
         ('xanchor', 'index_0'),
         ('yanchor', 'index_1'),
         ],
 
-    offset = [
+    offset=[
         ('xoffset', 'index_0'),
         ('yoffset', 'index_1'),
         ],
 
-    align = [
+    align=[
         ('xpos', 'index_0'),
         ('ypos', 'index_1'),
         ('xanchor', 'index_0'),
         ('yanchor', 'index_1'),
         ],
 
-    maximum = [
+    maximum=[
         ('xmaximum', 'index_0'),
         ('ymaximum', 'index_1'),
         ],
 
-    minimum = [
+    minimum=[
         ('xminimum', 'index_0'),
         ('yminimum', 'index_1'),
         ],
 
-    xsize = [
+    xsize=[
         ('xminimum', None),
         ('xmaximum', None),
         ],
 
-    ysize = [
+    ysize=[
         ('yminimum', None),
         ('ymaximum', None),
         ],
 
-    xysize = [
+    xysize=[
         ('xminimum', 'index_0'),
         ('xmaximum', 'index_0'),
         ('yminimum', 'index_1'),
         ('ymaximum', 'index_1'),
         ],
 
-    area = [
+    area=[
         ('xpos', 'index_0'),
         ('ypos', 'index_1'),
         ('xanchor', 0),
@@ -375,12 +377,12 @@ synthetic_properties = sorted_dict(
         ('yminimum', 'index_3'),
         ],
 
-    xcenter = [
+    xcenter=[
         ('xpos', None),
         ('xanchor', 0.5),
         ],
 
-    ycenter = [
+    ycenter=[
         ('ypos', None),
         ('yanchor', 0.5),
         ],
@@ -396,6 +398,7 @@ all_properties.update(synthetic_properties)
 ################################################################################
 # Code Generation
 ################################################################################
+
 
 class CodeGen(object):
     """
@@ -467,6 +470,7 @@ def generate_constants():
 
     g.close()
 
+
 def generate_property_function(g, prefix, propname, properties):
 
     name = prefix.name + propname
@@ -498,14 +502,12 @@ def generate_property_function(g, prefix, propname, properties):
 
             if stylepropname in displayable_properties:
                 g.write("assign_prefixed({}, cache, cache_priorities, priority, {}, '{}') # {}{}",
-                    alt * len(style_properties) + style_property_index[stylepropname],
-                    value, alt_name, alt_name, stylepropname)
+                        alt * len(style_properties) + style_property_index[stylepropname],
+                        value, alt_name, alt_name, stylepropname)
             else:
                 g.write("assign({}, cache, cache_priorities, priority, <PyObject *> {}) # {}{}",
-                    alt * len(style_properties) + style_property_index[stylepropname],
-                    value, alt_name, stylepropname)
-
-
+                        alt * len(style_properties) + style_property_index[stylepropname],
+                        value, alt_name, stylepropname)
 
     g.write("return 0")
     g.dedent()
@@ -515,6 +517,7 @@ def generate_property_function(g, prefix, propname, properties):
     g.write("")
 
     pass
+
 
 def generate_property_functions():
     """
@@ -531,6 +534,7 @@ def generate_property_functions():
             generate_property_function(g, prefix, propname, proplist)
 
         g.close()
+
 
 def generate_property(g, propname):
     """
@@ -561,6 +565,7 @@ def generate_property(g, propname):
     g.dedent()
     g.write("")
 
+
 def generate_properties():
 
     g = CodeGen(module_gen + "/styleclass.pxi")
@@ -575,6 +580,7 @@ def generate_properties():
 
     g.dedent()
     g.close()
+
 
 def generate_sets():
     """

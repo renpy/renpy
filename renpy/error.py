@@ -252,5 +252,3 @@ def report_exception(e, editor=True):
         pass
 
     return simple.decode("utf-8", "replace"), full.decode("utf-8", "replace"), traceback_fn
-
-

@@ -22,7 +22,7 @@
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
 
-from renpy.display.transform import * # @UnusedWildImport
+from renpy.display.transform import *  # @UnusedWildImport
 
 import math
 
@@ -107,7 +107,6 @@ class Motion(Container):
         self.add_sizes = add_sizes
 
         self.position = None
-
 
     def update_position(self, t, sizes):
 
@@ -260,6 +259,7 @@ def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   time_warp=time_warp,
                   **properties)
 
+
 def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
          anim_timebase=False, style='motion', time_warp=None, **properties):
     """
@@ -376,7 +376,6 @@ def Revolve(start, end, time, child, around=(0.5, 0.5), cor=(0.5, 0.5), pos=None
                   **properties)
 
 
-
 def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
     """
     This creates a render that zooms its child.
@@ -392,7 +391,6 @@ def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
     if zw == 0 or zh == 0 or w == 0 or h == 0:
         return rv
 
-
     rv.forward = renpy.display.render.Matrix2D(w / zw, 0, 0, h / zh)
     rv.reverse = renpy.display.render.Matrix2D(zw / w, 0, 0, zh / h)
 
@@ -404,6 +402,7 @@ def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
 
 
 class ZoomCommon(renpy.display.core.Displayable):
+
     def __init__(self,
                  time, child,
                  end_identity=False,
@@ -452,7 +451,6 @@ class ZoomCommon(renpy.display.core.Displayable):
         self.bilinear = bilinear
         self.opaque = opaque
         self.anim_timebase = anim_timebase
-
 
     def visit(self):
         return [ self.child, self.after_child ]
@@ -547,7 +545,6 @@ class FactorZoom(ZoomCommon):
         return 0, 0, width, height, factor * width, factor * height
 
 
-
 class SizeZoom(ZoomCommon):
 
     def __init__(self, start, end, time, child, **properties):
@@ -620,10 +617,8 @@ class RotoZoom(renpy.display.core.Displayable):
 
         self.opaque = opaque
 
-
     def visit(self):
         return [ self.child ]
-
 
     def render(self, width, height, st, at):
 
@@ -674,7 +669,6 @@ class RotoZoom(renpy.display.core.Displayable):
         if self.zoom_time_warp:
             zoom_time = self.zoom_time_warp(zoom_time)
 
-
         angle = self.rot_start + (1.0 * self.rot_end - self.rot_start) * rot_time
         zoom = self.zoom_start + (1.0 * self.zoom_end - self.zoom_start) * zoom_time
         # angle = -angle * math.pi / 180
@@ -706,6 +700,6 @@ renpy.display.layout.Motion = Motion
 renpy.display.layout.Interpolate = Interpolate
 
 # Leave these functions around - they might have been pickled somewhere.
-renpy.display.layout.Revolve = Revolve # function
-renpy.display.layout.Move = Move # function
-renpy.display.layout.Pan = Pan # function
+renpy.display.layout.Revolve = Revolve  # function
+renpy.display.layout.Move = Move  # function
+renpy.display.layout.Pan = Pan  # function

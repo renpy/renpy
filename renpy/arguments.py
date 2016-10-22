@@ -31,7 +31,7 @@ import renpy
 
 try:
     import site
-    site._renpy_argv_emulation() # @UndefinedVariable
+    site._renpy_argv_emulation()  # @UndefinedVariable
 except:
     pass
 
@@ -42,6 +42,7 @@ commands = { }
 
 # Commands that force compile to be set.
 compile_commands = { "compile", "add_from", "merge_strings" }
+
 
 class ArgumentParser(argparse.ArgumentParser):
     """
@@ -74,7 +75,6 @@ class ArgumentParser(argparse.ArgumentParser):
                 "basedir",
                 help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.")
 
-
             self.add_argument(
                 "command",
                 help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.")
@@ -86,7 +86,6 @@ class ArgumentParser(argparse.ArgumentParser):
                 default='',
                 nargs='?',
                 help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.")
-
 
             self.add_argument(
                 "command",
@@ -126,7 +125,7 @@ class ArgumentParser(argparse.ArgumentParser):
         if second_pass:
             self.add_argument("-h", "--help", action="help", help="Displays this help message, then exits.")
 
-            command = renpy.game.args.command #@UndefinedVariable
+            command = renpy.game.args.command  # @UndefinedVariable
             self.group = self.add_argument_group("{0} command arguments".format(command), description)
 
     def add_argument(self, *args, **kwargs):
@@ -157,6 +156,7 @@ class ArgumentParser(argparse.ArgumentParser):
 
         return args, rest
 
+
 def run():
     """
     The default command, that (when called) leads to normal game startup.
@@ -181,7 +181,7 @@ def run():
     if args.warp:
         renpy.warp.warp_spec = args.warp
 
-    if args.profile_display: #@UndefinedVariable
+    if args.profile_display:  # @UndefinedVariable
         renpy.config.profile = True
 
     if args.debug_image_cache:
@@ -189,7 +189,8 @@ def run():
 
     return True
 
-def compile(): #@ReservedAssignment
+
+def compile():  # @ReservedAssignment
     """
     This command forces the game script to be recompiled.
     """
@@ -199,7 +200,7 @@ def compile(): #@ReservedAssignment
     return False
 
 
-def quit(): #@ReservedAssignment
+def quit():  # @ReservedAssignment
     """
     This command is used to quit without doing anything.
     """
@@ -207,6 +208,7 @@ def quit(): #@ReservedAssignment
     takes_no_arguments("Recompiles the game script.")
 
     return False
+
 
 def rmpersistent():
     """
@@ -236,6 +238,7 @@ def register_command(name, function):
 
     commands[name] = function
 
+
 def bootstrap():
     """
     Called during bootstrap to perform an initial parse of the arguments, ignoring
@@ -248,6 +251,7 @@ def bootstrap():
     args, _rest = ap.parse_known_args()
 
     return args
+
 
 def pre_init():
     """
@@ -270,15 +274,16 @@ def post_init():
     if execution should continue and False otherwise.
     """
 
-    command = renpy.game.args.command #@UndefinedVariable
+    command = renpy.game.args.command  # @UndefinedVariable
 
-    if command == "run" and renpy.game.args.lint: # @UndefinedVariable
+    if command == "run" and renpy.game.args.lint:  # @UndefinedVariable
         command = "lint"
 
     if command not in commands:
         ArgumentParser().error("Command {0} is unknown.".format(command))
 
     return commands[command]()
+
 
 def takes_no_arguments(description=None):
     """

@@ -48,6 +48,7 @@ pcm_ok = None
 unique = time.time()
 serial = 0
 
+
 def get_serial():
     """
     Gets a globally unique serial number for each music change.
@@ -133,6 +134,7 @@ class MusicContext(renpy.python.RevertableObject):
 
 # The next channel number to be assigned.
 next_channel_number = 0
+
 
 class Channel(object):
     """
@@ -324,7 +326,6 @@ class Channel(object):
             renpysound.set_volume(self.number, vol)
             self.actual_volume = vol
 
-
         # This should be set from something that checks to see if our
         # mixer is muted.
         force_stop = self.context.force_stop or (renpy.game.preferences.mute[self.mixer] and self.stop_on_mute)
@@ -431,7 +432,7 @@ class Channel(object):
 
         # Queue empty callback.
         if do_callback and self.callback:
-            self.callback() # E1102
+            self.callback()  # E1102
 
         want_pause = self.context.pause or global_pause
 
@@ -443,7 +444,6 @@ class Channel(object):
                 self.unpause()
 
             self.paused = want_pause
-
 
     def dequeue(self, even_tight=False):
         """
@@ -474,19 +474,17 @@ class Channel(object):
             if self.pan_time != self.context.pan_time:
                 self.pan_time = self.context.pan_time
                 renpysound.set_pan(self.number,
-                            self.context.pan,
-                            0)
-
+                                   self.context.pan,
+                                   0)
 
             if self.secondary_volume_time != self.context.secondary_volume_time:
                 self.secondary_volume_time = self.context.secondary_volume_time
                 renpysound.set_secondary_volume(self.number,
-                                         self.context.secondary_volume,
-                                         0)
+                                                self.context.secondary_volume,
+                                                0)
 
         if not self.queue and self.callback:
-            self.callback() # E1102
-
+            self.callback()  # E1102
 
     def fadeout(self, secs):
         """
@@ -735,8 +733,10 @@ def get_channel(name):
 
     return rv
 
+
 def set_force_stop(name, value):
     get_channel(name).context.force_stop = value
+
 
 def init():
 
@@ -776,7 +776,7 @@ def init():
         renpy.game.preferences.mute.setdefault(m, False)
 
 
-def quit(): #@ReservedAssignment
+def quit():  # @ReservedAssignment
 
     global pcm_ok
     global mix_ok
@@ -805,6 +805,7 @@ pcm_volume = None
 
 old_emphasized = False
 
+
 def periodic():
     """
     The periodic sound callback. This is called at around 20hz, and is
@@ -818,7 +819,6 @@ def periodic():
 
     if not pcm_ok:
         return False
-
 
     try:
 
@@ -921,6 +921,7 @@ def interact():
 
     periodic()
 
+
 def rollback():
     """
     On rollback, we want to stop all the channels with non-empty sounds.
@@ -932,6 +933,7 @@ def rollback():
 
 global_pause = False
 
+
 def pause_all():
     """
     Pause all playback channels.
@@ -941,6 +943,7 @@ def pause_all():
     global_pause = True
 
     periodic()
+
 
 def unpause_all():
     """
@@ -952,15 +955,16 @@ def unpause_all():
 
     periodic()
 
+
 def sample_surfaces(rgb, rgba):
     if not renpysound:
         return
 
     renpysound.sample_surfaces(rgb, rgba)
 
+
 def advance_time():
     if not renpysound:
         return
 
     renpysound.advance_time()
-

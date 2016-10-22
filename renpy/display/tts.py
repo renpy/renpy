@@ -25,6 +25,7 @@ import renpy.audio
 import subprocess
 import pygame
 
+
 class TTSRoot(Exception):
     """
     An exception that can be used to cause the TTS system to read the text
@@ -40,6 +41,7 @@ last = ""
 
 # The speech synthesis process.
 process = None
+
 
 def periodic():
     global process
@@ -91,7 +93,6 @@ def default_tts_function(s):
         else:
             process = subprocess.Popen([ "espeak", "-v", fsencode(renpy.config.tts_voice), fsencode(s) ])
 
-
     elif renpy.macintosh:
 
         if renpy.config.tts_voice is None:
@@ -99,12 +100,10 @@ def default_tts_function(s):
         else:
             process = subprocess.Popen([ "say", "-v", fsencode(renpy.config.tts_voice), fsencode(s) ])
 
-
-
     elif renpy.windows:
 
         if renpy.config.tts_voice is None:
-            voice = "default voice" # something that is unlikely to match.
+            voice = "default voice"  # something that is unlikely to match.
         else:
             voice = renpy.config.tts_voice
 
@@ -141,12 +140,14 @@ def speak(s, translate=True, force=False):
 
     tts(s)
 
+
 def set_root(d):
     global root
     root = d
 
 # The old value of the self_voicing preference.
 old_self_voicing = False
+
 
 def displayable(d):
     """

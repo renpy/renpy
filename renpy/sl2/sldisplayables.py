@@ -34,6 +34,7 @@ from renpy.sl2.slproperties import bar_properties, button_properties
 from renpy.sl2.slproperties import text_position_properties, text_text_properties
 from renpy.sl2.slproperties import side_position_properties
 
+
 class ShowIf(renpy.display.layout.Container):
     """
     This is a displayable that wraps displayables that are
@@ -100,7 +101,6 @@ class ShowIf(renpy.display.layout.Container):
 
     def get_placement(self):
         return self.child.get_placement()
-
 
 
 DisplayableParser("null", renpy.display.layout.Null, "default", 0)
@@ -210,8 +210,9 @@ add(window_properties)
 add(text_position_properties)
 add(text_text_properties)
 
+
 def sl2bar(context=None, **properties):
-    range = 1 #@ReservedAssignment
+    range = 1  # @ReservedAssignment
     value = 0
     width = None
     height = None
@@ -221,7 +222,7 @@ def sl2bar(context=None, **properties):
     if "height" in properties:
         height  = properties.pop("height")
     if "range" in properties:
-        range = properties.pop("range") #@ReservedAssignment
+        range = properties.pop("range")  # @ReservedAssignment
     if "value" in properties:
         value = properties.pop("value")
 
@@ -243,7 +244,7 @@ add(bar_properties)
 
 
 def sl2vbar(context=None, **properties):
-    range = 1 #@ReservedAssignment
+    range = 1  # @ReservedAssignment
     value = 0
     width = None
     height = None
@@ -253,7 +254,7 @@ def sl2vbar(context=None, **properties):
     if "height" in properties:
         height  = properties.pop("height")
     if "range" in properties:
-        range = properties.pop("range") #@ReservedAssignment
+        range = properties.pop("range")  # @ReservedAssignment
     if "value" in properties:
         value = properties.pop("value")
 
@@ -274,7 +275,6 @@ Keyword("unhovered")
 add(bar_properties)
 
 
-
 # Omit autobar. (behavior)
 
 def sl2viewport(**kwargs):
@@ -293,6 +293,7 @@ def sl2viewport(**kwargs):
     rv._composite_parts = list(rv.children)
 
     return rv
+
 
 def sl2vpgrid(**kwargs):
     """
@@ -375,6 +376,7 @@ Keyword("at")
 Keyword("id")
 for i in renpy.atl.PROPERTIES:
     Style(i)
+
 
 def sl2add(d, replaces=None, scope=None, **kwargs):
 
