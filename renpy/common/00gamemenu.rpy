@@ -157,7 +157,7 @@ label _enter_game_menu:
     return
 
 # Entry points from the game into menu-space.
-label _game_menu(_game_menu_screen=_game_menu_screen, *args, **kwargs):
+label _game_menu(*args, _game_menu_screen=_game_menu_screen, **kwargs):
     if not _game_menu_screen:
         return
 
