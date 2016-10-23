@@ -1,4 +1,4 @@
-translate piglatin strings:
+﻿translate piglatin strings:
 
     # 00gltest.rpy:64
     old "Graphics Acceleration"

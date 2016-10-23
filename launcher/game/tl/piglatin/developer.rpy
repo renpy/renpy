@@ -1,4 +1,4 @@
-translate piglatin strings:
+﻿translate piglatin strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"

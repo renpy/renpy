@@ -1,4 +1,4 @@
-translate piglatin strings:
+﻿translate piglatin strings:
 
     # _layout/classic_joystick_preferences.rpym:94
     old "Joystick Mapping"

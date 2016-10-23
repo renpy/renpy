@@ -1,4 +1,4 @@
-translate piglatin strings:
+﻿translate piglatin strings:
 
     # about.rpy:39
     old "[version!q]"

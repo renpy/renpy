@@ -1,178 +1,335 @@
 ﻿
 translate simplified_chinese strings:
 
-    # renpy/common/00action_file.rpy:142
+    # 00action_file.rpy:26
+    old "{#weekday}Monday"
+    new "{#weekday}Monday"
+
+    # 00action_file.rpy:26
+    old "{#weekday}Tuesday"
+    new "{#weekday}Tuesday"
+
+    # 00action_file.rpy:26
+    old "{#weekday}Wednesday"
+    new "{#weekday}Wednesday"
+
+    # 00action_file.rpy:26
+    old "{#weekday}Thursday"
+    new "{#weekday}Thursday"
+
+    # 00action_file.rpy:26
+    old "{#weekday}Friday"
+    new "{#weekday}Friday"
+
+    # 00action_file.rpy:26
+    old "{#weekday}Saturday"
+    new "{#weekday}Saturday"
+
+    # 00action_file.rpy:26
+    old "{#weekday}Sunday"
+    new "{#weekday}Sunday"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Mon"
+    new "{#weekday_short}Mon"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Tue"
+    new "{#weekday_short}Tue"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Wed"
+    new "{#weekday_short}Wed"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Thu"
+    new "{#weekday_short}Thu"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Fri"
+    new "{#weekday_short}Fri"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Sat"
+    new "{#weekday_short}Sat"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Sun"
+    new "{#weekday_short}Sun"
+
+    # 00action_file.rpy:47
+    old "{#month}January"
+    new "{#month}January"
+
+    # 00action_file.rpy:47
+    old "{#month}February"
+    new "{#month}February"
+
+    # 00action_file.rpy:47
+    old "{#month}March"
+    new "{#month}March"
+
+    # 00action_file.rpy:47
+    old "{#month}April"
+    new "{#month}April"
+
+    # 00action_file.rpy:47
+    old "{#month}May"
+    new "{#month}May"
+
+    # 00action_file.rpy:47
+    old "{#month}June"
+    new "{#month}June"
+
+    # 00action_file.rpy:47
+    old "{#month}July"
+    new "{#month}July"
+
+    # 00action_file.rpy:47
+    old "{#month}August"
+    new "{#month}August"
+
+    # 00action_file.rpy:47
+    old "{#month}September"
+    new "{#month}September"
+
+    # 00action_file.rpy:47
+    old "{#month}October"
+    new "{#month}October"
+
+    # 00action_file.rpy:47
+    old "{#month}November"
+    new "{#month}November"
+
+    # 00action_file.rpy:47
+    old "{#month}December"
+    new "{#month}December"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Jan"
+    new "{#month_short}Jan"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Feb"
+    new "{#month_short}Feb"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Mar"
+    new "{#month_short}Mar"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Apr"
+    new "{#month_short}Apr"
+
+    # 00action_file.rpy:63
+    old "{#month_short}May"
+    new "{#month_short}May"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Jun"
+    new "{#month_short}Jun"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Jul"
+    new "{#month_short}Jul"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Aug"
+    new "{#month_short}Aug"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Sep"
+    new "{#month_short}Sep"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Oct"
+    new "{#month_short}Oct"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Nov"
+    new "{#month_short}Nov"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Dec"
+    new "{#month_short}Dec"
+
+    # 00action_file.rpy:235
     old "%b %d, %H:%M"
-    new "%m-%d  %H:%M"
+    new "%m月%d日, %H:%M"
 
-    # renpy/common/00action_file.rpy:621
+    # 00action_file.rpy:820
     old "Quick save complete."
-    new "快速保存完成。"
+    new "快速存档。"
 
-
-### Due the font issue, console, gltest and developer menu can't show chinese, so it is useless to translate.
-
-
-translate simplified_chinese strings:
-
-    # renpy/common/00keymap.rpy:206
-    old "Saved screenshot as %s."
-    new "截图已保存为 %s。"
-
-
-translate simplified_chinese strings:
-
-    # renpy/common/00layout.rpy:444
+    # 00gui.rpy:227
     old "Are you sure?"
-    new "您确定吗？"
+    new "是否确认？"
 
-    # renpy/common/00layout.rpy:445
+    # 00gui.rpy:228
     old "Are you sure you want to delete this save?"
-    new "您确定要删除此存档吗？"
+    new "您确定您要删掉这份存档吗？"
 
-    # renpy/common/00layout.rpy:446
+    # 00gui.rpy:229
     old "Are you sure you want to overwrite your save?"
-    new "您确定要覆盖此存档吗？"
+    new "您确定您要覆盖存档？"
 
-    # renpy/common/00layout.rpy:447
+    # 00gui.rpy:230
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "读取存档将会使未保存的进度丢失。\n您确定要继续吗？"
+    new "载入将会失去所有未储存的进度。\n您确定您要这么做吗？"
 
-    # renpy/common/00layout.rpy:448
+    # 00gui.rpy:231
     old "Are you sure you want to quit?"
-    new "您确定要退出吗？"
+    new "您确定您要退出吗？"
 
-    # renpy/common/00layout.rpy:449
+    # 00gui.rpy:232
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "您确定要返回到主菜单吗？\n此操作将会使未保存的进度丢失。"
+    new "您确定您想回到标题画面吗？\n未保存的进度将会丢失。"
 
-    # renpy/common/00layout.rpy:450
+    # 00gui.rpy:233
+    old "Are you sure you want to end the replay?"
+    new "Are you sure you want to end the replay?"
+
+    # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
-    new "您确定要开始快进吗？"
+    new "是否确定开始快进？"
 
-    # renpy/common/00layout.rpy:451
+    # 00gui.rpy:235
     old "Are you sure you want to skip to the next choice?"
-    new "您确定要直接快进到下个选择支吗？"
+    new "是否确定跳到下一个选项？"
 
-    # renpy/common/00layout.rpy:452
-    old "Are you sure you want to skip to unseen dialogue or the next choice?"
-    new "您确定要直接跳过未读对话或下个选择支吗？"
+    # 00gui.rpy:236
+    old "Are you sure you want to skip unseen dialogue to the next choice?"
+    new "Are you sure you want to skip unseen dialogue to the next choice?"
 
+    # 00keymap.rpy:250
+    old "Saved screenshot as %s."
+    new "储存屏幕截图为 %s。"
 
-translate simplified_chinese strings:
+    # 00library.rpy:142
+    old "Self-voicing disabled."
+    new "Self-voicing disabled."
 
-    # renpy/common/00library.rpy:149
+    # 00library.rpy:143
+    old "Clipboard voicing enabled. "
+    new "Clipboard voicing enabled. "
+
+    # 00library.rpy:144
+    old "Self-voicing enabled. "
+    new "Self-voicing enabled. "
+
+    # 00library.rpy:179
     old "Skip Mode"
-    new "快进模式"
+    new "快进"
 
-    # renpy/common/00library.rpy:152
-    old "Fast Skip Mode"
-    new "跃进模式"
+    # 00library.rpy:262
+    old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
+    new "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
 
-
-translate simplified_chinese strings:
-
-    # renpy/common/00preferences.rpy:387
+    # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "剪贴板朗读已开启。按 Shift+C 来关闭。"
 
-    # renpy/common/00preferences.rpy:389
+    # 00preferences.rpy:424
+    old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
+    new "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
+
+    # 00preferences.rpy:426
     old "Self-voicing enabled. Press 'v' to disable."
     new "自动朗读已开启。按 V 来关闭。"
 
+    # 00iap.rpy:217
+    old "Contacting App Store\nPlease Wait..."
+    new "Contacting App Store\nPlease Wait..."
 
-translate simplified_chinese strings:
-
-    # renpy/common/00updater.rpy:362
+    # 00updater.rpy:367
     old "The Ren'Py Updater is not supported on mobile devices."
     new "Ren'Py 更新器在移动设备上尚不支持。"
 
-    # renpy/common/00updater.rpy:478
+    # 00updater.rpy:486
     old "An error is being simulated."
     new "已模拟一个错误。"
 
-    # renpy/common/00updater.rpy:654
+    # 00updater.rpy:662
     old "Either this project does not support updating, or the update status file was deleted."
     new "此工程不支持更新，或者是更新状态文件已被删除。"
 
-    # renpy/common/00updater.rpy:668
+    # 00updater.rpy:676
     old "This account does not have permission to perform an update."
     new "此帐号没有执行更新的权限。"
 
-    # renpy/common/00updater.rpy:671
+    # 00updater.rpy:679
     old "This account does not have permission to write the update log."
     new "此帐号没有写入更新日志的权限。"
 
-    # renpy/common/00updater.rpy:696
+    # 00updater.rpy:704
     old "Could not verify update signature."
     new "无法验证更新签名。"
 
-    # renpy/common/00updater.rpy:956
+    # 00updater.rpy:975
     old "The update file was not downloaded."
     new "更新文件未能下载。"
 
-    # renpy/common/00updater.rpy:974
+    # 00updater.rpy:993
     old "The update file does not have the correct digest - it may have been corrupted."
     new "更新文件校验失败。文件可能已损坏。"
 
-    # renpy/common/00updater.rpy:1030
+    # 00updater.rpy:1049
     old "While unpacking {}, unknown type {}."
     new "解压 {} 时出现未知错误 {}。"
 
-    # renpy/common/00updater.rpy:1380
+    # 00updater.rpy:1393
     old "Updater"
-    new "更新器"
+    new "更新"
 
-    # renpy/common/00updater.rpy:1389
+    # 00updater.rpy:1404
     old "This program is up to date."
-    new "程序已更新到最新版本。"
+    new "该程序已是最新版本。"
 
-    # renpy/common/00updater.rpy:1391
+    # 00updater.rpy:1406
     old "[u.version] is available. Do you want to install it?"
-    new "[u.version] 现已可用。您希望现在安装吗？"
+    new "[u.version] 已放出。是否确认安装？"
 
-    # renpy/common/00updater.rpy:1393
+    # 00updater.rpy:1408
     old "Preparing to download the updates."
     new "正在准备下载更新。"
 
-    # renpy/common/00updater.rpy:1395
+    # 00updater.rpy:1410
     old "Downloading the updates."
     new "正在下载更新。"
 
-    # renpy/common/00updater.rpy:1397
+    # 00updater.rpy:1412
     old "Unpacking the updates."
-    new "正在解压更新。"
+    new "解压缩更新包。"
 
-    # renpy/common/00updater.rpy:1401
+    # 00updater.rpy:1416
     old "The updates have been installed. The program will restart."
-    new "更新已安装。程序即将重启。"
+    new "该更新包已安装，程序将会重新启动。"
 
-    # renpy/common/00updater.rpy:1403
+    # 00updater.rpy:1418
     old "The updates have been installed."
-    new "更新已安装。"
+    new "已完成更新。"
 
-    # renpy/common/00updater.rpy:1405
+    # 00updater.rpy:1420
     old "The updates were cancelled."
-    new "更新已取消。"
+    new "已取消更新。"
 
+    # 00gallery.rpy:563
+    old "Image [index] of [count] locked."
+    new "[count]个图片中的第[index]个图片被锁定。"
 
-translate simplified_chinese strings:
-
-    # renpy/common/_compat/gamemenu.rpym:198
-    old "Empty Slot."
-    new "空存档位。"
-
-    # renpy/common/_compat/gamemenu.rpym:355
-    old "Previous"
+    # 00gallery.rpy:583
+    old "prev"
     new "上一页"
 
-    # renpy/common/_compat/gamemenu.rpym:362
-    old "Next"
+    # 00gallery.rpy:584
+    old "next"
     new "下一页"
 
+    # 00gallery.rpy:585
+    old "slideshow"
+    new "幻灯片"
 
-translate simplified_chinese strings:
+    # 00gallery.rpy:586
+    old "return"
+    new "返回"
 
-    # renpy/common/_compat/preferences.rpym:428
-    old "Joystick Mapping"
-    new "手柄按键映射"

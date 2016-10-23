@@ -1,4 +1,4 @@
-translate piglatin strings:
+﻿translate piglatin strings:
 
     # screens.rpy:9
     old "## Styles"

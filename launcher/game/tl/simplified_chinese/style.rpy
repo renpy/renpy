@@ -1,4 +1,4 @@
-init python:
+﻿init python:
     translate_font("simplified_chinese", "DroidSansFallback.ttf")
 
 translate simplified_chinese python:

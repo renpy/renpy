@@ -1,313 +1,335 @@
 ﻿
 translate russian strings:
 
-    # renpy/common/_layout/classic_load_save.rpym:120
-    old "Empty Slot."
-    new "Пустой слот."
+    # 00action_file.rpy:26
+    old "{#weekday}Monday"
+    new "{#weekday}Monday"
 
-    # renpy/common/_layout/classic_load_save.rpym:152
-    old "a"
-    new "a"
+    # 00action_file.rpy:26
+    old "{#weekday}Tuesday"
+    new "{#weekday}Tuesday"
 
-    # renpy/common/_layout/classic_load_save.rpym:161
-    old "q"
-    new "q"
+    # 00action_file.rpy:26
+    old "{#weekday}Wednesday"
+    new "{#weekday}Wednesday"
 
+    # 00action_file.rpy:26
+    old "{#weekday}Thursday"
+    new "{#weekday}Thursday"
 
-translate russian strings:
+    # 00action_file.rpy:26
+    old "{#weekday}Friday"
+    new "{#weekday}Friday"
 
-    # renpy/common/_layout/classic_joystick_preferences.rpym:76
-    old "Joystick Mapping"
-    new "Назначение джойстика"
+    # 00action_file.rpy:26
+    old "{#weekday}Saturday"
+    new "{#weekday}Saturday"
 
+    # 00action_file.rpy:26
+    old "{#weekday}Sunday"
+    new "{#weekday}Sunday"
 
-translate russian strings:
+    # 00action_file.rpy:37
+    old "{#weekday_short}Mon"
+    new "{#weekday_short}Mon"
 
-    # renpy/common/00action_file.rpy:124
+    # 00action_file.rpy:37
+    old "{#weekday_short}Tue"
+    new "{#weekday_short}Tue"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Wed"
+    new "{#weekday_short}Wed"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Thu"
+    new "{#weekday_short}Thu"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Fri"
+    new "{#weekday_short}Fri"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Sat"
+    new "{#weekday_short}Sat"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Sun"
+    new "{#weekday_short}Sun"
+
+    # 00action_file.rpy:47
+    old "{#month}January"
+    new "{#month}January"
+
+    # 00action_file.rpy:47
+    old "{#month}February"
+    new "{#month}February"
+
+    # 00action_file.rpy:47
+    old "{#month}March"
+    new "{#month}March"
+
+    # 00action_file.rpy:47
+    old "{#month}April"
+    new "{#month}April"
+
+    # 00action_file.rpy:47
+    old "{#month}May"
+    new "{#month}May"
+
+    # 00action_file.rpy:47
+    old "{#month}June"
+    new "{#month}June"
+
+    # 00action_file.rpy:47
+    old "{#month}July"
+    new "{#month}July"
+
+    # 00action_file.rpy:47
+    old "{#month}August"
+    new "{#month}August"
+
+    # 00action_file.rpy:47
+    old "{#month}September"
+    new "{#month}September"
+
+    # 00action_file.rpy:47
+    old "{#month}October"
+    new "{#month}October"
+
+    # 00action_file.rpy:47
+    old "{#month}November"
+    new "{#month}November"
+
+    # 00action_file.rpy:47
+    old "{#month}December"
+    new "{#month}December"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Jan"
+    new "{#month_short}Jan"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Feb"
+    new "{#month_short}Feb"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Mar"
+    new "{#month_short}Mar"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Apr"
+    new "{#month_short}Apr"
+
+    # 00action_file.rpy:63
+    old "{#month_short}May"
+    new "{#month_short}May"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Jun"
+    new "{#month_short}Jun"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Jul"
+    new "{#month_short}Jul"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Aug"
+    new "{#month_short}Aug"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Sep"
+    new "{#month_short}Sep"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Oct"
+    new "{#month_short}Oct"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Nov"
+    new "{#month_short}Nov"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Dec"
+    new "{#month_short}Dec"
+
+    # 00action_file.rpy:235
     old "%b %d, %H:%M"
     new "%b %d, %H:%M"
 
-    # renpy/common/00action_file.rpy:587
+    # 00action_file.rpy:820
     old "Quick save complete."
     new "Быстрое сохранение завершено."
 
-
-translate russian strings:
-
-    # renpy/common/00layout.rpy:421
+    # 00gui.rpy:227
     old "Are you sure?"
     new "Вы уверены?"
 
-    # renpy/common/00layout.rpy:422
+    # 00gui.rpy:228
     old "Are you sure you want to delete this save?"
     new "Вы уверены, что хотите удалить это сохранение?"
 
-    # renpy/common/00layout.rpy:423
+    # 00gui.rpy:229
     old "Are you sure you want to overwrite your save?"
     new "Вы уверены, что хотите перезаписать ваше сохранение?"
 
-    # renpy/common/00layout.rpy:424
+    # 00gui.rpy:230
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Загрузка игры приведет к потере несохраненного прогресса.\nВы уверены, что вы хотите это сделать?"
 
-    # renpy/common/00layout.rpy:425
+    # 00gui.rpy:231
     old "Are you sure you want to quit?"
     new "Вы уверены, что вы хотите выйти?"
 
-    # renpy/common/00layout.rpy:426
+    # 00gui.rpy:232
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Вы уверены, что вы хотите вернуться в главное меню?\nЭто приведет к потере несохраненного прогресса."
 
-    # renpy/common/00layout.rpy:427
+    # 00gui.rpy:233
+    old "Are you sure you want to end the replay?"
+    new "Are you sure you want to end the replay?"
+
+    # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
     new "Вы уверены, что хотите начать пропуск?"
 
-    # renpy/common/00layout.rpy:428
+    # 00gui.rpy:235
     old "Are you sure you want to skip to the next choice?"
     new "Вы хотите пропустить все до следующего выбора?"
 
-    # renpy/common/00layout.rpy:429
-    old "Are you sure you want to skip to unseen dialogue or the next choice?"
-    new "Вы уверены, что хотите пропустить все до невиданного диалога или следующего выбора?"
+    # 00gui.rpy:236
+    old "Are you sure you want to skip unseen dialogue to the next choice?"
+    new "Are you sure you want to skip unseen dialogue to the next choice?"
 
-
-translate russian strings:
-
-    # renpy/common/_compat/gamemenu.rpym:337
-    old "Previous"
-    new "Предыдущий"
-
-    # renpy/common/_compat/gamemenu.rpym:344
-    old "Next"
-    new "Следующий"
-
-
-translate russian strings:
-
-    # renpy/common/00keymap.rpy:168
+    # 00keymap.rpy:250
     old "Saved screenshot as %s."
     new "Скришнот сохранен как %s."
 
+    # 00library.rpy:142
+    old "Self-voicing disabled."
+    new "Self-voicing disabled."
 
-translate russian strings:
+    # 00library.rpy:143
+    old "Clipboard voicing enabled. "
+    new "Clipboard voicing enabled. "
 
-    # renpy/common/00updater.rpy:1258
-    old "Updater"
-    new "Обновление"
+    # 00library.rpy:144
+    old "Self-voicing enabled. "
+    new "Self-voicing enabled. "
 
-    # renpy/common/00updater.rpy:1267
-    old "This program is up to date."
-    new "Это программа обновлена."
-
-    # renpy/common/00updater.rpy:1269
-    old "[u.version] is available. Do you want to install it?"
-    new "[u.version] доступна. Вы хотите её установить?"
-
-    # renpy/common/00updater.rpy:1271
-    old "Preparing to download the updates."
-    new "Подготовка к загрузке обновлений."
-
-    # renpy/common/00updater.rpy:1273
-    old "Downloading the updates."
-    new "Загрузка обновлений."
-
-    # renpy/common/00updater.rpy:1275
-    old "Unpacking the updates."
-    new "Распаковка обновлений."
-
-    # renpy/common/00updater.rpy:1279
-    old "The updates have been installed. The program will restart."
-    new "Обновления установлены. Программа будет перезапущена."
-
-    # renpy/common/00updater.rpy:1281
-    old "The updates have been installed."
-    new "Обновления были установлены."
-
-    # renpy/common/00updater.rpy:1283
-    old "The updates were cancelled."
-    new "Обновления были отменены."
-
-
-translate russian strings:
-
-    # renpy/common/00gltest.rpy:50
-    old "Graphics Acceleration"
-    new "Графическое Ускорение"
-
-    # renpy/common/00gltest.rpy:54
-    old "Automatically Choose"
-    new "Выбирать Автоматически"
-
-    # renpy/common/00gltest.rpy:59
-    old "Force Angle/DirectX Renderer"
-    new "Насильно Отображать Через Angle/DirectX"
-
-    # renpy/common/00gltest.rpy:63
-    old "Force OpenGL Renderer"
-    new "Насильно Отображать Через OpenGL"
-
-    # renpy/common/00gltest.rpy:67
-    old "Force Software Renderer"
-    new "Насильно Отображать Програмно"
-
-    # renpy/common/00gltest.rpy:73
-    old "Changes will take effect the next time this program is run."
-    new "Изменения вступят в силу при следующем запуске программы."
-
-    # renpy/common/00gltest.rpy:77
-    old "Quit"
-    new "Выйти"
-
-    # renpy/common/00gltest.rpy:82
-    old "Return"
-    new "Вернуться"
-
-    # renpy/common/00gltest.rpy:112
-    old "Performance Warning"
-    new "Предупреждение о Производительности"
-
-    # renpy/common/00gltest.rpy:117
-    old "This computer is using software rendering."
-    new "Этот компьютер использует програмный рендеринг."
-
-    # renpy/common/00gltest.rpy:119
-    old "This computer is not using shaders."
-    new "Этот компьютер не использует шейдеры."
-
-    # renpy/common/00gltest.rpy:121
-    old "This computer is displaying graphics slowly."
-    new "Этот компьютер медленно отображает графику."
-
-    # renpy/common/00gltest.rpy:123
-    old "This computer has a problem displaying graphics: [problem]."
-    new "У этого компьютера проблема с отображением графики: [problem]"
-
-    # renpy/common/00gltest.rpy:128
-    old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
-    new "Графические драйвера устарели или работают неверно. Это может привести к медленному или неверному отображению графики. Обновление DirectX может решить эту проблему."
-
-    # renpy/common/00gltest.rpy:130
-    old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
-    new "Графические драйвера устарели или работают неверно. Это может привести к медленному или неверному отображению графики."
-
-    # renpy/common/00gltest.rpy:135
-    old "Update DirectX"
-    new "Обновить DirectX"
-
-    # renpy/common/00gltest.rpy:141
-    old "Continue, Show this warning again"
-    new "Продолжить, Показать это предупреждение снова"
-
-    # renpy/common/00gltest.rpy:145
-    old "Continue, Don't show warning again"
-    new "Продолжить, Не показывать это предупреждение снова."
-
-    # renpy/common/00gltest.rpy:171
-    old "Updating DirectX."
-    new "Обновляется DirectX."
-
-    # renpy/common/00gltest.rpy:175
-    old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
-    new "Установщик DirectX был запущен. Вероятно, он запустился в свернутом состоянии. Пожалуйста, следуйте инструкциям для установки DirectX."
-
-    # renpy/common/00gltest.rpy:179
-    old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}Предупреждение:{/b} Установщик DirectX по умолчанию попытается установить панель инструментов Bing. Если вы этого не хотите, снимите соответствующую галочку."
-
-    # renpy/common/00gltest.rpy:183
-    old "When setup finishes, please click below to restart this program."
-    new "По завершению установки, щелкните, чтобы перезапустить программу."
-
-    # renpy/common/00gltest.rpy:185
-    old "Restart"
-    new "Перезапустить"
-
-
-translate russian strings:
-
-    # renpy/common/00gallery.rpy:521
-    old "Image [index] of [count] locked."
-    new "Изображение [index] из [count] заблокированных."
-
-    # renpy/common/00gallery.rpy:539
-    old "prev"
-    new "пред"
-
-    # renpy/common/00gallery.rpy:540
-    old "next"
-    new "след"
-
-    # renpy/common/00gallery.rpy:541
-    old "slideshow"
-    new "слайдшоу"
-
-    # renpy/common/00gallery.rpy:542
-    old "return"
-    new "вернуться"
-
-
-translate russian strings:
-
-    # renpy/common/_errorhandling.rpym:408
-    old "An exception has occurred."
-    new "Возникло исключение."
-
-    # renpy/common/_errorhandling.rpym:434
-    old "Rollback"
-    new "Вернуться назад"
-
-    # renpy/common/_errorhandling.rpym:436
-    old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "Пытается вернуться назад, позволяя вам сохраниться или выбрать другой выбор."
-
-    # renpy/common/_errorhandling.rpym:439
-    old "Ignore"
-    new "Игнорировать"
-
-    # renpy/common/_errorhandling.rpym:441
-    old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "Игнорирует это исключение, позволяя вам продолжить. Это зачастую ведет к дополнительным ошибкам."
-
-    # renpy/common/_errorhandling.rpym:444
-    old "Reload"
-    new "Перезагрузить"
-
-    # renpy/common/_errorhandling.rpym:446
-    old "Reloads the game from disk, saving and restoring game state if possible."
-    new "Перезагружает игру с диска, сохраняя и восстанавливая состояние, если это возможно."
-
-    # renpy/common/_errorhandling.rpym:448
-    old "Open Traceback"
-    new "Открыть Журнал"
-
-    # renpy/common/_errorhandling.rpym:450
-    old "Opens the traceback.txt file in a text editor."
-    new "Открывает файл traceback.txt в текстовом редакторе."
-
-    # renpy/common/_errorhandling.rpym:456
-    old "Quits the game."
-    new "Выходит из игры."
-
-    # renpy/common/_errorhandling.rpym:483
-    old "Parsing the script failed."
-    new "Обработка сценария завершилась неудачно."
-
-    # renpy/common/_errorhandling.rpym:510
-    old "Open Parse Errors"
-    new "Открыть Ошибки Обработки"
-
-    # renpy/common/_errorhandling.rpym:512
-    old "Opens the errors.txt file in a text editor."
-    new "Открывает файл errors.txt в текстовом редакторе."
-
-
-translate russian strings:
-
-    # renpy/common/00library.rpy:77
+    # 00library.rpy:179
     old "Skip Mode"
     new "Режим Пропуска"
 
-    # renpy/common/00library.rpy:80
-    old "Fast Skip Mode"
-    new "Режим Быстрого Пропуска"
+    # 00library.rpy:262
+    old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
+    new "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
+
+    # 00preferences.rpy:422
+    old "Clipboard voicing enabled. Press 'shift+C' to disable."
+    new "Clipboard voicing enabled. Press 'shift+C' to disable."
+
+    # 00preferences.rpy:424
+    old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
+    new "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
+
+    # 00preferences.rpy:426
+    old "Self-voicing enabled. Press 'v' to disable."
+    new "Self-voicing enabled. Press 'v' to disable."
+
+    # 00iap.rpy:217
+    old "Contacting App Store\nPlease Wait..."
+    new "Contacting App Store\nPlease Wait..."
+
+    # 00updater.rpy:367
+    old "The Ren'Py Updater is not supported on mobile devices."
+    new "The Ren'Py Updater is not supported on mobile devices."
+
+    # 00updater.rpy:486
+    old "An error is being simulated."
+    new "An error is being simulated."
+
+    # 00updater.rpy:662
+    old "Either this project does not support updating, or the update status file was deleted."
+    new "Either this project does not support updating, or the update status file was deleted."
+
+    # 00updater.rpy:676
+    old "This account does not have permission to perform an update."
+    new "This account does not have permission to perform an update."
+
+    # 00updater.rpy:679
+    old "This account does not have permission to write the update log."
+    new "This account does not have permission to write the update log."
+
+    # 00updater.rpy:704
+    old "Could not verify update signature."
+    new "Could not verify update signature."
+
+    # 00updater.rpy:975
+    old "The update file was not downloaded."
+    new "The update file was not downloaded."
+
+    # 00updater.rpy:993
+    old "The update file does not have the correct digest - it may have been corrupted."
+    new "The update file does not have the correct digest - it may have been corrupted."
+
+    # 00updater.rpy:1049
+    old "While unpacking {}, unknown type {}."
+    new "While unpacking {}, unknown type {}."
+
+    # 00updater.rpy:1393
+    old "Updater"
+    new "Обновление"
+
+    # 00updater.rpy:1404
+    old "This program is up to date."
+    new "Это программа обновлена."
+
+    # 00updater.rpy:1406
+    old "[u.version] is available. Do you want to install it?"
+    new "[u.version] доступна. Вы хотите её установить?"
+
+    # 00updater.rpy:1408
+    old "Preparing to download the updates."
+    new "Подготовка к загрузке обновлений."
+
+    # 00updater.rpy:1410
+    old "Downloading the updates."
+    new "Загрузка обновлений."
+
+    # 00updater.rpy:1412
+    old "Unpacking the updates."
+    new "Распаковка обновлений."
+
+    # 00updater.rpy:1416
+    old "The updates have been installed. The program will restart."
+    new "Обновления установлены. Программа будет перезапущена."
+
+    # 00updater.rpy:1418
+    old "The updates have been installed."
+    new "Обновления были установлены."
+
+    # 00updater.rpy:1420
+    old "The updates were cancelled."
+    new "Обновления были отменены."
+
+    # 00gallery.rpy:563
+    old "Image [index] of [count] locked."
+    new "Изображение [index] из [count] заблокированных."
+
+    # 00gallery.rpy:583
+    old "prev"
+    new "пред"
+
+    # 00gallery.rpy:584
+    old "next"
+    new "след"
+
+    # 00gallery.rpy:585
+    old "slideshow"
+    new "слайдшоу"
+
+    # 00gallery.rpy:586
+    old "return"
+    new "вернуться"
 
