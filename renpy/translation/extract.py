@@ -25,9 +25,9 @@ import renpy
 import json
 
 
-def extract_strings_core(language, destination, merge=False):
+def extract_strings_core(language, destination, merge=False, force=False):
 
-    if language not in renpy.game.script.translator.strings:  # @UndefinedVariable
+    if (not force) and (language not in renpy.game.script.translator.strings):  # @UndefinedVariable
         raise Exception("Language %r does not have any translations." % language)
 
     st = renpy.game.script.translator.strings[language]  # @UndefinedVariable
@@ -39,10 +39,13 @@ def extract_strings_core(language, destination, merge=False):
             result.update(json.load(f, "utf-8"))
 
     for k, v in st.translations.iteritems():
-        result[k] = v
+        if v and v != k:
+            result[k] = v
+
+    print(destination)
 
     with open(destination, "wb") as f:
-        json.dumps(result, f, ensure_ascii=False)
+        json.dump(result, f, ensure_ascii=True)
 
 
 def extract_strings():
@@ -54,6 +57,7 @@ def extract_strings():
     ap.add_argument("language", help="The language to extract translated strings from.")
     ap.add_argument("destination", help="The json file to store the translated strings into.")
     ap.add_argument("--merge", help="If given, the current contents of the file are preserved, and new contents are merged into the file.", action="store_true")
+    ap.add_argument("--force", help="If given, noting happens if the language does not exist.", action="store_true")
 
     args = ap.parse_args()
 
@@ -62,7 +66,7 @@ def extract_strings():
     if language == 'None':
         language = None
 
-    extract_strings_core(language, args.destination, args.merge)
+    extract_strings_core(language, args.destination, args.merge, args.force)
 
     return False
 
