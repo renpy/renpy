@@ -4,3 +4,5 @@
     gui.FONT_SCALE = .9
     gui.REGULAR_BOLD = True
 
+init python:
+    translate_define("arabic", "config.rtl", "True")
