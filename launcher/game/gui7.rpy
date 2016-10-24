@@ -50,6 +50,7 @@ init -1 python:
         def callback():
             gui.REGULAR_FONT = fullfont
             gui.LIGHT_FONT = fullfont
+            gui.REGULAR_BOLD = True
 
         config.language_callbacks[language].append(callback)
 

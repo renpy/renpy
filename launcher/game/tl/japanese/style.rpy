@@ -3,4 +3,3 @@
 
 translate japanese python:
     gui.FONT_SCALE = .9
-    gui.REGULAR_BOLD = True
