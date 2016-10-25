@@ -1144,6 +1144,7 @@ class SceneLists(renpy.object.Object):
         rv = renpy.display.layout.MultiBox(layout='fixed', focus=layer, **properties)
         rv.append_scene_list(self.layers[layer])
         rv.layer_name = layer
+        rv._duplicatable = False
 
         time, at_list = self.layer_at_list[layer]
 
