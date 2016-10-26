@@ -128,8 +128,12 @@ init python in project:
 
                 if "all" in dp:
                     dp.remove("all")
-                    dp.append("pc")
-                    dp.append("mac")
+
+                    if "pc" not in dp:
+                        dp.append("pc")
+
+                    if "mac" not in dp:
+                        dp.append("mac")
 
                 data["renamed_all"] = True
 
