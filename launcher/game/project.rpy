@@ -119,9 +119,19 @@ init python in project:
             data = self.data
 
             data.setdefault("build_update", False)
-            data.setdefault("packages", [ "all" ])
+            data.setdefault("packages", [ "pc", "mac" ])
             data.setdefault("add_from", True)
             data.setdefault("force_recompile", True)
+
+            if "renamed_all" not in data:
+                dp = data["packages"]
+
+                if "all" in dp:
+                    dp.remove("all")
+                    dp.append("pc")
+                    dp.append("mac")
+
+                data["renamed_all"] = True
 
         def make_tmp(self):
             """
