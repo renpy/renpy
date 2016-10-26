@@ -7,6 +7,40 @@ Full Changelog
 Ren'Py 6.99.12
 ==============
 
+Macintosh Support
+-----------------
+
+This release includes a number of changes to support macOS Sierra. These
+include:
+
+* The Macintosh application produced by Ren'Py is now read-only by default.
+  Save files will be placed in a system-global directory, while screenshots
+  will be written to the Desktop.
+
+* The organization of the Mac application has been changed to allow the
+  application to be code-signed.
+
+* When run on a Macintosh with Xcode installed and the :var:`build.mac_identity`
+  variable set properly, Ren'Py will use the codesign tool to sign the package
+  before archiving it.
+
+* When run on a Macintosh, Ren'Py will create a .dmg file containing the
+  application. When Xcode is installed and :var:`build.mac_identity` is set,
+  the package will be signed.
+
+The result of this is that, when a creator has a Macintosh computer and a
+(free) Developer ID Application certificate, it is possible to create
+distribute downloadable Ren'Py games that satisfy Gatekeeper and Gatekeeper
+Path Randomization.
+
+Since it is no longer possible to make a single distribution that runs on all
+desktop platforms, the all (Windows, Mac, and Linux) package type has been
+removed. It's been replace with a pc package type that supports Windows and
+Linux, and a Mac type that support macOS.
+
+
+
+
 Python Changes
 --------------
 
