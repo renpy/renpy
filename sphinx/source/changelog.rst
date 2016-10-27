@@ -65,6 +65,28 @@ This should have minimal impact to existing code. The one case where it could
 be a problem is if a character string is used to encode binary data, in
 which case a binary string (b"string") should be explictly used.
 
+Other Fixes and Changes
+-----------------------
+
+An issue introduced in 6.99.11 that could cause ATL Transforms to repeat has
+been fixed.
+
+A regression with first_fit that caused it to not work has been rectified.
+
+An issue that cause ongoing sound playback to skip while a new sound sample
+was loaded has been eliminated.
+
+Support for the itch.io butler tool on Widnows has been fixed.
+
+It is now possible to pass positional arguments to a game menu screen via
+ShowMenu.
+
+The iOS app store is queried for the price of available in-app purchases
+when the game starts. This allows the price of such purchases to be
+presented without the game blocking.
+
+The dialog window that is presented when accessing the iOS app store can
+now be translated.
 
 .. _renpy-6.99.11:
 
