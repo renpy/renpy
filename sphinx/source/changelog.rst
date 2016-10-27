@@ -36,8 +36,17 @@ Path Randomization.
 Since it is no longer possible to make a single distribution that runs on all
 desktop platforms, the all (Windows, Mac, and Linux) package type has been
 removed. It's been replace with a pc package type that supports Windows and
-Linux, and a Mac type that support macOS.
+Linux, and the existing mac type that supports macOS.
 
+The launcher has been modified so it can launch games created using older
+versions of Ren'Py, even under Sierra. This can be done by placing the game
+inside the Ren'Py directory, starting Ren'Py, choosing the game in the
+launcher, and choosing "Launch Project".
+
+WEBP Support
+------------
+
+Ren'Py now supports the WEBP image format.
 
 
 
