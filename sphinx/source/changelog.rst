@@ -43,11 +43,28 @@ versions of Ren'Py, even under Sierra. This can be done by placing the game
 inside the Ren'Py directory, starting Ren'Py, choosing the game in the
 launcher, and choosing "Launch Project".
 
-WEBP Support
-------------
+Translation Changes
+-------------------
 
-Ren'Py now supports the WEBP image format.
+Support generating projects in non-English languages has been
+improved. When a new project is created, it includes translations of the
+interface strings into the project's language, allowing the translation
+of text presented to the player by Ren'Py.
 
+There is now a single place for translating Ren'Py - translating
+the launcher also now translates the comments of a generated game. The process
+of translating Ren'Py (the launcher and the GUI) is now documented
+on the :ref:`Translating Ren'py <translating-renpy>` page. This page also
+suggests a logical order in which strings should be translated.
+
+Functions have been added for selecting an alternate font, changing defines
+(such a text size), and copying files into a generated project, based on the
+translation.
+
+Translate python blocks are now executed before regular style statements
+(translate style statements are executed after both). This change was
+intended for and documented 6.99.11, but the implementation was flawed,
+so a corrected implementation is used now.
 
 
 Python Changes
@@ -65,8 +82,23 @@ This should have minimal impact to existing code. The one case where it could
 be a problem is if a character string is used to encode binary data, in
 which case a binary string (b"string") should be explictly used.
 
-Other Fixes and Changes
+Other Changes and Fixes
 -----------------------
+
+Ren'Py now supports the WEBP image format.
+
+This version of Ren'Py includes fixes to support the interactive director
+tool.
+
+The iOS app store is queried for the price of available in-app purchases
+when the game starts. This allows the price of such purchases to be
+presented without the game blocking.
+
+The dialog window that is presented when accessing the iOS app store can
+now be translated.
+
+It is now possible to pass positional arguments to a game menu screen via
+ShowMenu.
 
 An issue introduced in 6.99.11 that could cause ATL Transforms to repeat has
 been fixed.
@@ -76,17 +108,9 @@ A regression with first_fit that caused it to not work has been rectified.
 An issue that cause ongoing sound playback to skip while a new sound sample
 was loaded has been eliminated.
 
-Support for the itch.io butler tool on Widnows has been fixed.
+Support for the itch.io butler tool on Windows has been fixed.
 
-It is now possible to pass positional arguments to a game menu screen via
-ShowMenu.
 
-The iOS app store is queried for the price of available in-app purchases
-when the game starts. This allows the price of such purchases to be
-presented without the game blocking.
-
-The dialog window that is presented when accessing the iOS app store can
-now be translated.
 
 .. _renpy-6.99.11:
 

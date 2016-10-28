@@ -1,3 +1,5 @@
+.. _translating-renpy:
+
 ==================
 Translating Ren'Py
 ==================
