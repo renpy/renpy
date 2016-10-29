@@ -2442,7 +2442,7 @@ class Interface(object):
         else:
             self.maximum_framerate_time = max(self.maximum_framerate_time, get_time() + t)
 
-    def interact(self, clear=True, suppress_window=False, **kwargs):
+    def interact(self, clear=True, suppress_window=False, trans_pause=False, **kwargs):
         """
         This handles an interaction, restarting it if necessary. All of the
         keyword arguments are passed off to interact_core.
@@ -2450,6 +2450,8 @@ class Interface(object):
 
         if not self.started:
             self.start()
+
+        self.trans_pause = trans_pause
 
         # Cancel magic error reporting.
         renpy.bootstrap.report_error = None
@@ -2479,7 +2481,7 @@ class Interface(object):
             self.start_interact = True
 
             while repeat:
-                repeat, rv = self.interact_core(preloads=preloads, **kwargs)
+                repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, **kwargs)
                 self.start_interact = False
 
             return rv
