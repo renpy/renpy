@@ -163,6 +163,11 @@ def create_store(name):
     Creates the store with `name`.
     """
 
+    parent, _, var = name.rpartition('.')
+
+    if parent:
+        create_store(parent)
+
     name = str(name)
 
     if name in initialized_store_dicts:
@@ -191,9 +196,8 @@ def create_store(name):
     else:
         store_modules[name] = sys.modules[name] = StoreModule(d)
 
-    # If we're a module in the store, add us to the store.
-    if name.startswith("store."):
-        store_dicts["store"][name[6:]] = sys.modules[name]
+    if parent:
+        store_dicts[parent][var] = sys.modules[name]
 
 
 class StoreBackup():
@@ -1397,8 +1401,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                        and data == fwd_data
-                        and (keep_rollback or self.rolled_forward)
+                    and data == fwd_data
+                    and (keep_rollback or self.rolled_forward)
                     ):
                     self.forward.pop(0)
                 else:
