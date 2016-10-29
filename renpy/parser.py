@@ -1990,7 +1990,7 @@ def python_statement(l, loc):
         hide = True
 
     if l.keyword('in'):
-        store = "store." + l.require(l.name)
+        store = "store." + l.require(l.dotted_name)
 
     l.require(':')
     l.expect_block('python block')
