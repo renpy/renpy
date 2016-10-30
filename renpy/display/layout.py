@@ -487,7 +487,7 @@ class MultiBox(Container):
         self.layers = None
         self.scene_list = None
 
-    def _in_old_scene(self):
+    def _in_current_scope(self):
 
         if self.layer_name is not None:
 
@@ -501,7 +501,7 @@ class MultiBox(Container):
             for old_sle in self.scene_list:
                 new_sle = old_sle.copy()
 
-                d = new_sle.displayable._in_old_scene()
+                d = new_sle.displayable._in_current_scope()
 
                 if d is not new_sle.displayable:
                     new_sle.displayable = d
@@ -524,7 +524,7 @@ class MultiBox(Container):
 
             for layer in renpy.config.layers:
                 old_d = self.layers[layer]
-                new_d = old_d._in_old_scene()
+                new_d = old_d._in_current_scope()
 
                 if new_d is not old_d:
                     changed = True
