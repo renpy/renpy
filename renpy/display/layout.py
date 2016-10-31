@@ -552,7 +552,7 @@ class MultiBox(Container):
                 return self
 
         else:
-            return super(self, MultiBox)._in_current_store()
+            return super(MultiBox, self)._in_current_store()
 
         if self.offsets:
             rv.offsets = list(self.offsets)
