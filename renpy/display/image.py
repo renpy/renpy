@@ -178,7 +178,7 @@ class ImageReference(renpy.display.core.Displayable):
 
         if isinstance(name, renpy.display.core.Displayable):
             self.target = name
-            self._child_uses_scope = name._child_uses_scope
+            self._child_uses_store = name._child_uses_store
             return True
 
         if not isinstance(name, tuple):
@@ -210,7 +210,7 @@ class ImageReference(renpy.display.core.Displayable):
             a = self._args.copy(name=name, args=args)
 
             self.target = target._duplicate(a)
-            self._child_uses_scope = self.target._child_uses_scope
+            self._child_uses_store = self.target._child_uses_store
 
         except Exception as e:
 
@@ -234,18 +234,18 @@ class ImageReference(renpy.display.core.Displayable):
 
         return rv
 
-    def _in_current_scope(self):
+    def _in_current_store(self):
 
         rv = self._copy()
         rv.target = self.target
 
         if isinstance(self.target, renpy.display.core.Displayable):
-            if rv.target._child_uses_scope:
-                rv.target = self.target._in_current_scope()
+            if rv.target._child_uses_store:
+                rv.target = self.target._in_current_store()
 
         if isinstance(rv.name, renpy.display.core.Displayable):
             if rv.name._uses_current_scope:
-                rv.name = rv.name._in_current_scope()
+                rv.name = rv.name._in_current_store()
 
         return rv
 
@@ -336,7 +336,7 @@ class DynamicImage(renpy.display.core.Displayable):
             self._uses_scope = False
 
         if "[" in name:
-            self._child_uses_scope = True
+            self._child_uses_store = True
 
         if isinstance(name, basestring) and ("[prefix_" in name):
             self._duplicatable = True
@@ -407,8 +407,8 @@ class DynamicImage(renpy.display.core.Displayable):
             target = target._duplicate(self._args)
 
         self.target = target
-        if target._child_uses_scope:
-            self._child_uses_scope = True
+        if target._child_uses_store:
+            self._child_uses_store = True
 
         renpy.display.render.redraw(self, 0)
 
@@ -430,9 +430,9 @@ class DynamicImage(renpy.display.core.Displayable):
         rv.target = None
         return rv
 
-    def _in_current_scope(self):
+    def _in_current_store(self):
         rv = self._copy()
-        rv.target = rv.target._in_current_scope()
+        rv.target = rv.target._in_current_store()
         rv.locked = True
         return rv
 

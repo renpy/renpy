@@ -1282,7 +1282,7 @@ class Text(renpy.display.core.Displayable):
     __version__ = 4
 
     _uses_scope = True
-    _child_uses_scope = True
+    _child_uses_store = True
     _duplicatable = False
     locked = False
 
@@ -1366,12 +1366,12 @@ class Text(renpy.display.core.Displayable):
 
         return self
 
-    def _in_current_scope(self):
-        if self._child_uses_scope:
+    def _in_current_store(self):
+        if self._child_uses_store:
             rv = self._copy()
 
             rv._uses_scope = False
-            rv._child_uses_scope = False
+            rv._child_uses_store = False
             rv.locked = True
 
             return rv
@@ -1433,7 +1433,7 @@ class Text(renpy.display.core.Displayable):
             new_text.append(i)
 
         self._uses_scope = uses_scope
-        self._child_uses_scope = uses_scope
+        self._child_uses_store = uses_scope
 
         if new_text == old_text:
             return False

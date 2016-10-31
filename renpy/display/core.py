@@ -290,7 +290,7 @@ class Displayable(renpy.object.Object):
 
     # Set to true if this displayable, or any of its children, uses the
     # scope.
-    _child_uses_scope = False
+    _child_uses_store = False
 
     # Arguments supplied to this displayable.
     _args = DisplayableArguments()
@@ -336,7 +336,7 @@ class Displayable(renpy.object.Object):
 
         return self
 
-    def _in_current_scope(self):
+    def _in_current_store(self):
         """
         Returns a version of this displayable that will not change as it is
         rendered.
@@ -2557,7 +2557,7 @@ class Interface(object):
                 continue
 
             self.ongoing_transition[k] = self.transition[k]
-            self.transition_from[k] = self.old_scene[k]._in_current_scope()
+            self.transition_from[k] = self.old_scene[k]._in_current_store()
             self.transition_time[k] = None
 
         self.transition.clear()

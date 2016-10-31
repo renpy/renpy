@@ -197,7 +197,7 @@ class Frame(renpy.display.core.Displayable):
 
         self.image = renpy.easy.displayable(image)
         self._duplicatable = self.image._duplicatable
-        self._child_uses_scope = self.image._child_uses_scope
+        self._child_uses_store = self.image._child_uses_store
 
         if isinstance(left, Borders):
             insets = left
@@ -498,8 +498,8 @@ class Frame(renpy.display.core.Displayable):
         rv.image = image
         return rv
 
-    def _in_current_scope(self):
-        image = self.image._in_current_scope()
+    def _in_current_store(self):
+        image = self.image._in_current_store()
 
         if image is self.image:
             return self

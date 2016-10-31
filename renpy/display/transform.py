@@ -785,7 +785,7 @@ class Transform(Container):
         if child._duplicatable:
             child = child._duplicate(self._args)
 
-        self._child_uses_scope = child._child_uses_scope
+        self._child_uses_store = child._child_uses_store
 
         self.child = child
         self.children = [ child ]
@@ -952,7 +952,7 @@ class Transform(Container):
         rv = self()
         rv.take_execution_state(self)
 
-        if rv.child._child_uses_scope:
+        if rv.child._child_uses_store:
             rv.child = rv.child._in_child_scope()
 
         return rv

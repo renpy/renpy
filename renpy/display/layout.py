@@ -122,13 +122,13 @@ class Container(renpy.display.core.Displayable):
 
         return rv
 
-    def _in_current_scope(self):
+    def _in_current_store(self):
 
-        if not self._child_uses_scope:
+        if not self._child_uses_store:
             return self
 
         rv = self._copy()
-        rv.children = [ i._in_current_scope() for i in self.children ]
+        rv.children = [ i._in_current_store() for i in self.children ]
 
         if rv.children:
             rv.child = rv.children[-1]
@@ -150,8 +150,8 @@ class Container(renpy.display.core.Displayable):
         if child._duplicatable:
             self._duplicatable = True
 
-        if child._child_uses_scope:
-            self._child_uses_scope = True
+        if child._child_uses_store:
+            self._child_uses_store = True
 
     def _clear(self):
         self.child = None
@@ -503,7 +503,7 @@ class MultiBox(Container):
         self.layers = None
         self.scene_list = None
 
-    def _in_current_scope(self):
+    def _in_current_store(self):
 
         if self.layer_name is not None:
 
@@ -517,7 +517,7 @@ class MultiBox(Container):
             for old_sle in self.scene_list:
                 new_sle = old_sle.copy()
 
-                d = new_sle.displayable._in_current_scope()
+                d = new_sle.displayable._in_current_store()
 
                 if d is not new_sle.displayable:
                     new_sle.displayable = d
@@ -540,7 +540,7 @@ class MultiBox(Container):
 
             for layer in renpy.config.layers:
                 old_d = self.layers[layer]
-                new_d = old_d._in_current_scope()
+                new_d = old_d._in_current_store()
 
                 if new_d is not old_d:
                     changed = True
@@ -552,7 +552,7 @@ class MultiBox(Container):
                 return self
 
         else:
-            return super(self, MultiBox)._in_current_scope()
+            return super(self, MultiBox)._in_current_store()
 
         if self.offsets:
             rv.offsets = list(self.offsets)

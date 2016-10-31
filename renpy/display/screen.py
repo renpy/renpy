@@ -484,7 +484,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         return rv
 
-    def _in_current_scope(self):
+    def _in_current_store(self):
 
         if self.screen is None:
             return self
