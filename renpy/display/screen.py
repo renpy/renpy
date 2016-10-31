@@ -500,6 +500,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         rv = self.copy()
         rv.phase = OLD
+        rv.child = self.child._in_current_store()
+
         return rv
 
     def update(self):
