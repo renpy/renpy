@@ -122,6 +122,19 @@ class Container(renpy.display.core.Displayable):
 
         return rv
 
+    def _in_current_scope(self):
+
+        if not self._child_uses_scope:
+            return self
+
+        rv = self._copy()
+        rv.children = [ i._in_current_scope() for i in self.children ]
+
+        if rv.children:
+            rv.child = rv.children[-1]
+
+        return rv
+
     def add(self, d):
         """
         Adds a child to this container.
@@ -136,6 +149,9 @@ class Container(renpy.display.core.Displayable):
 
         if child._duplicatable:
             self._duplicatable = True
+
+        if child._child_uses_scope:
+            self._child_uses_scope = True
 
     def _clear(self):
         self.child = None
@@ -536,7 +552,7 @@ class MultiBox(Container):
                 return self
 
         else:
-            return self
+            return super(self, MultiBox)._in_current_scope()
 
         if self.offsets:
             rv.offsets = list(self.offsets)

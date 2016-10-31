@@ -178,6 +178,7 @@ class ImageReference(renpy.display.core.Displayable):
 
         if isinstance(name, renpy.display.core.Displayable):
             self.target = name
+            self._child_uses_scope = name._child_uses_scope
             return True
 
         if not isinstance(name, tuple):
@@ -207,7 +208,9 @@ class ImageReference(renpy.display.core.Displayable):
         try:
 
             a = self._args.copy(name=name, args=args)
+
             self.target = target._duplicate(a)
+            self._child_uses_scope = self.target._child_uses_scope
 
         except Exception as e:
 
@@ -228,6 +231,21 @@ class ImageReference(renpy.display.core.Displayable):
         if isinstance(rv.name, renpy.display.core.Displayable):
             if rv.name._duplicatable:
                 rv.name = rv.name._duplicate(args)
+
+        return rv
+
+    def _in_current_scope(self):
+
+        rv = self._copy()
+        rv.target = self.target
+
+        if isinstance(self.target, renpy.display.core.Displayable):
+            if rv.target._child_uses_scope:
+                rv.target = self.target._in_current_scope()
+
+        if isinstance(rv.name, renpy.display.core.Displayable):
+            if rv.name._uses_current_scope:
+                rv.name = rv.name._in_current_scope()
 
         return rv
 
@@ -303,6 +321,9 @@ class DynamicImage(renpy.display.core.Displayable):
     # The raw target that the image resolves to, before it has been parameterized.
     raw_target = None
 
+    # Have we been locked, so we never change?
+    locked = False
+
     def __init__(self, name, scope=None, **properties):
         super(DynamicImage, self).__init__(**properties)
 
@@ -313,6 +334,9 @@ class DynamicImage(renpy.display.core.Displayable):
             self._uses_scope = True
         else:
             self._uses_scope = False
+
+        if "[" in name:
+            self._child_uses_scope = True
 
         if isinstance(name, basestring) and ("[prefix_" in name):
             self._duplicatable = True
@@ -349,6 +373,9 @@ class DynamicImage(renpy.display.core.Displayable):
 
     def find_target(self, scope=None, update=True):
 
+        if self.locked and (self.target is not None):
+            return
+
         if self._args.prefix is None:
             prefix = ""
         else:
@@ -357,7 +384,6 @@ class DynamicImage(renpy.display.core.Displayable):
         try:
             target = renpy.easy.dynamic_image(self.name, scope, prefix=prefix)
         except Exception as e:
-            raise
             raise Exception("In DynamicImage %r: %r" % (self.name, e))
 
         if target is None:
@@ -381,6 +407,8 @@ class DynamicImage(renpy.display.core.Displayable):
             target = target._duplicate(self._args)
 
         self.target = target
+        if target._child_uses_scope:
+            self._child_uses_scope = True
 
         renpy.display.render.redraw(self, 0)
 
@@ -400,6 +428,12 @@ class DynamicImage(renpy.display.core.Displayable):
     def _duplicate(self, args):
         rv = self._copy(args)
         rv.target = None
+        return rv
+
+    def _in_current_scope(self):
+        rv = self._copy()
+        rv.target = rv.target._in_current_scope()
+        rv.locked = True
         return rv
 
     def _hide(self, st, at, kind):

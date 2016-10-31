@@ -288,6 +288,10 @@ class Displayable(renpy.object.Object):
     # Does this displayable use the scope?
     _uses_scope = False
 
+    # Set to true if this displayable, or any of its children, uses the
+    # scope.
+    _child_uses_scope = False
+
     # Arguments supplied to this displayable.
     _args = DisplayableArguments()
 
@@ -328,6 +332,14 @@ class Displayable(renpy.object.Object):
 
         Displayables that contain state that can be manipulated by the user
         are never copied.
+        """
+
+        return self
+
+    def _in_current_scope(self):
+        """
+        Returns a version of this displayable that will not change as it is
+        rendered.
         """
 
         return self
@@ -593,14 +605,6 @@ class Displayable(renpy.object.Object):
         """
 
         return
-
-    def _in_current_scope(self):
-        """
-        Returns a version of this displayable that will not change as it is
-        rendered.
-        """
-
-        return self
 
     def _tts_common(self, default_alt=None):
 

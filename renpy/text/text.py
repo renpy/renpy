@@ -1282,7 +1282,9 @@ class Text(renpy.display.core.Displayable):
     __version__ = 4
 
     _uses_scope = True
+    _child_uses_scope = True
     _duplicatable = False
+    locked = False
 
     def after_upgrade(self, version):
 
@@ -1364,6 +1366,18 @@ class Text(renpy.display.core.Displayable):
 
         return self
 
+    def _in_current_scope(self):
+        if self._child_uses_scope:
+            rv = self._copy()
+
+            rv._uses_scope = False
+            rv._child_uses_scope = False
+            rv.locked = True
+
+            return rv
+
+        return self
+
     def __unicode__(self):
         s = ""
 
@@ -1383,9 +1397,15 @@ class Text(renpy.display.core.Displayable):
         Called to update the scope, when necessary.
         """
 
+        if self.locked:
+            return False
+
         return self.set_text(self.text_parameter, scope, self.substitute, update)
 
     def set_text(self, text, scope=None, substitute=False, update=True):
+
+        if self.locked:
+            return
 
         old_text = self.text
 
@@ -1413,6 +1433,7 @@ class Text(renpy.display.core.Displayable):
             new_text.append(i)
 
         self._uses_scope = uses_scope
+        self._child_uses_scope = uses_scope
 
         if new_text == old_text:
             return False
