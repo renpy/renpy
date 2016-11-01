@@ -949,11 +949,16 @@ class Transform(Container):
         return rv
 
     def _in_current_store(self):
+
+        if self.child is None:
+            return self
+
+        child = self.child._in_current_store()
+        if child is self.child:
+            return self
         rv = self()
         rv.take_execution_state(self)
-
-        if rv.child._child_uses_store:
-            rv.child = rv.child._in_current_store()
+        rv.child = child
 
         return rv
 

@@ -236,17 +236,16 @@ class ImageReference(renpy.display.core.Displayable):
 
     def _in_current_store(self):
 
+        if self.target is None:
+            self.find_target()
+
+        target = self.target._in_current_store()
+
+        if target is self.target:
+            return self
+
         rv = self._copy()
-        rv.target = self.target
-
-        if isinstance(self.target, renpy.display.core.Displayable):
-            if rv.target._child_uses_store:
-                rv.target = self.target._in_current_store()
-
-        if isinstance(rv.name, renpy.display.core.Displayable):
-            if rv.name._uses_current_scope:
-                rv.name = rv.name._in_current_store()
-
+        rv.target = target
         return rv
 
     def _hide(self, st, at, kind):

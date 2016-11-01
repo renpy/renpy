@@ -1367,16 +1367,15 @@ class Text(renpy.display.core.Displayable):
         return self
 
     def _in_current_store(self):
-        if self._child_uses_store:
-            rv = self._copy()
+        if not self._uses_scope:
+            return self
 
-            rv._uses_scope = False
-            rv._child_uses_store = False
-            rv.locked = True
+        rv = self._copy()
+        rv.displayables = [ rv._in_current_store() for i in rv.displayables ]
+        rv.slow_done = None
+        rv.locked = True
 
-            return rv
-
-        return self
+        return rv
 
     def __unicode__(self):
         s = ""

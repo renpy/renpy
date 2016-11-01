@@ -124,11 +124,20 @@ class Container(renpy.display.core.Displayable):
 
     def _in_current_store(self):
 
-        if not self._child_uses_store:
+        children = [ ]
+
+        changed = False
+
+        for old in self.children:
+            new = old._in_current_store()
+            changed |= (old is not new)
+            children.append(new)
+
+        if not changed:
             return self
 
         rv = self._copy()
-        rv.children = [ i._in_current_store() for i in self.children ]
+        rv.children = children
 
         if rv.children:
             rv.child = rv.children[-1]
