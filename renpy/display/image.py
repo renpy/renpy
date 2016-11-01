@@ -178,7 +178,6 @@ class ImageReference(renpy.display.core.Displayable):
 
         if isinstance(name, renpy.display.core.Displayable):
             self.target = name
-            self._child_uses_store = name._child_uses_store
             return True
 
         if not isinstance(name, tuple):
@@ -210,7 +209,6 @@ class ImageReference(renpy.display.core.Displayable):
             a = self._args.copy(name=name, args=args)
 
             self.target = target._duplicate(a)
-            self._child_uses_store = self.target._child_uses_store
 
         except Exception as e:
 
@@ -334,9 +332,6 @@ class DynamicImage(renpy.display.core.Displayable):
         else:
             self._uses_scope = False
 
-        if "[" in name:
-            self._child_uses_store = True
-
         if isinstance(name, basestring) and ("[prefix_" in name):
             self._duplicatable = True
 
@@ -406,8 +401,6 @@ class DynamicImage(renpy.display.core.Displayable):
             target = target._duplicate(self._args)
 
         self.target = target
-        if target._child_uses_store:
-            self._child_uses_store = True
 
         renpy.display.render.redraw(self, 0)
 

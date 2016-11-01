@@ -288,10 +288,6 @@ class Displayable(renpy.object.Object):
     # Does this displayable use the scope?
     _uses_scope = False
 
-    # Set to true if this displayable, or any of its children, uses the
-    # scope.
-    _child_uses_store = False
-
     # Arguments supplied to this displayable.
     _args = DisplayableArguments()
 

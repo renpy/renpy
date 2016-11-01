@@ -197,7 +197,6 @@ class Frame(renpy.display.core.Displayable):
 
         self.image = renpy.easy.displayable(image)
         self._duplicatable = self.image._duplicatable
-        self._child_uses_store = self.image._child_uses_store
 
         if isinstance(left, Borders):
             insets = left

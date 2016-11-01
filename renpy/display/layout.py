@@ -159,9 +159,6 @@ class Container(renpy.display.core.Displayable):
         if child._duplicatable:
             self._duplicatable = True
 
-        if child._child_uses_store:
-            self._child_uses_store = True
-
     def _clear(self):
         self.child = None
         self.children = self._list_type()

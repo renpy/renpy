@@ -1282,7 +1282,6 @@ class Text(renpy.display.core.Displayable):
     __version__ = 4
 
     _uses_scope = True
-    _child_uses_store = True
     _duplicatable = False
     locked = False
 
@@ -1432,7 +1431,6 @@ class Text(renpy.display.core.Displayable):
             new_text.append(i)
 
         self._uses_scope = uses_scope
-        self._child_uses_store = uses_scope
 
         if new_text == old_text:
             return False
