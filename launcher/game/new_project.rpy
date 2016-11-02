@@ -108,7 +108,7 @@ screen select_template:
                     text _("Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'.")
 
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
     textbutton _("Continue") action Return(result) style "l_right_button"
 
 

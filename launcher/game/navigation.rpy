@@ -257,7 +257,7 @@ screen navigation:
                                 xalign 0.5
                                 yalign 0.5
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
     textbutton _("Launch Project") action project.Launch() style "l_right_button"
 
 label navigation:

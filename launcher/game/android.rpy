@@ -428,7 +428,7 @@ screen android:
                             text AndroidStateText(state)
 
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
 
 
 label android:

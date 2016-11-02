@@ -271,7 +271,7 @@ screen choose_gui_color():
 
                     use gui_demo(gui_color[0], gui_color[1], gui_color[2], display)
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
 
     if gui_color:
         textbutton _("Continue") action Return(True) style "l_right_button"

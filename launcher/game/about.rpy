@@ -42,7 +42,7 @@ screen about:
 
             textbutton _("View license") action interface.OpenLicense() xalign 0.5
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
 
 label about:
     call screen about

@@ -199,7 +199,7 @@ screen translate:
 
                         text _("The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project.")
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
 
 
 label translate:

@@ -242,7 +242,7 @@ screen build_distributions:
                         textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
 
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
     textbutton _("Build") action Jump("start_distribute") style "l_right_button"
 
 label add_from_common:

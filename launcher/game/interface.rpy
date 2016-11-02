@@ -197,7 +197,7 @@ screen common:
         label title text_color title_color style "l_info_label"
 
     if back:
-        textbutton _("Back") action back style "l_left_button"
+        textbutton _("Return") action back style "l_left_button"
     elif cancel:
         textbutton _("Cancel") action cancel style "l_left_button"
 

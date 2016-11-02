@@ -491,7 +491,7 @@ screen choose_theme:
 
                     use theme_demo
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
     textbutton _("Continue") action Return(True) style "l_right_button"
 
 
