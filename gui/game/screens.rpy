@@ -116,8 +116,8 @@ screen say(who, what):
         text what id "what"
 
 
-    # If there's a side image, display it above the text. Do not display
-    # on the phone variant - there's no room.
+    ## If there's a side image, display it above the text. Do not display
+    ## on the phone variant - there's no room.
     if not renpy.variant("small"):
         add SideImage() xalign 0.0 yalign 1.0
 
@@ -248,10 +248,9 @@ style choice_button_text is default:
 
 screen quick_menu():
 
-    # Ensure this appears on top of other screens.
+    ## Ensure this appears on top of other screens.
     zorder 100
 
-    # Add an in-game quick menu.
     hbox:
         style_prefix "quick"
 
@@ -355,14 +354,14 @@ style navigation_button_text:
 
 screen main_menu():
 
-    # This ensures that any other menu screen is replaced.
+    ## This ensures that any other menu screen is replaced.
     tag menu
 
     style_prefix "main_menu"
 
     add gui.main_menu_background
 
-    # This empty frame darkens the main menu.
+    ## This empty frame darkens the main menu.
     frame:
         pass
 
@@ -421,20 +420,19 @@ style main_menu_title:
 
 screen game_menu(title, scroll=None):
 
-    # Add the backgrounds.
+    style_prefix "game_menu"
+
     if main_menu:
         add gui.main_menu_background
     else:
         add gui.game_menu_background
-
-    style_prefix "game_menu"
 
     frame:
         style "game_menu_outer_frame"
 
         hbox:
 
-            # Reserve space for the navigation section.
+            ## Reserve space for the navigation section.
             frame:
                 style "game_menu_navigation_frame"
 
@@ -614,7 +612,7 @@ screen file_slots(title):
             ## event before any of the buttons do.
             order_reverse True
 
-            # The page name, which can be edited by clicking on a button.
+            ## The page name, which can be edited by clicking on a button.
             button:
                 style "page_label"
 
@@ -669,7 +667,7 @@ screen file_slots(title):
 
                 textbutton _("{#quick_page}Q") action FilePage("quick")
 
-                # range(1, 10) gives the numbers from 1 to 9.
+                ## range(1, 10) gives the numbers from 1 to 9.
                 for page in range(1, 10):
                     textbutton "[page]" action FilePage(page)
 
