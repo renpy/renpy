@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+define gui.project_system_font = None
+
 init -1 python:
 
     import gui7
@@ -53,6 +55,9 @@ init -1 python:
             gui.REGULAR_BOLD = True
 
             style._default.font = fullfont
+
+            gui.system_font = fullfont
+            gui.project_system_font = font
 
         config.language_callbacks[language].append(callback)
 
@@ -403,6 +408,12 @@ label gui_project_common:
 
     if gui_new:
         call update_renpy_strings
+
+        python hide:
+            if gui.project_system_font:
+                with open(os.path.join(project.current.gamedir, "tl/None/common.rpym"), "ab") as f:
+                    f.write("define gui.system_font = {!r}\r\n".format(gui.project_system_font))
+
 
 label gui_generate_images:
 
