@@ -1039,9 +1039,23 @@ following properties:
     compute it's own size. If either component is None, the child's
     size is used.
 `mousewheel`
-    If True, the mouse wheel can be used to scroll the viewport vertically.
-    If "horizontal", the mouse wheel can be used to scroll the viewport
-    horizontally.
+    This should be one of:
+
+    False
+        To ignore the mousewheel. (The default.)
+    True
+        To scroll vertically.
+    "horizontal"
+        To scroll horizontally.
+    "change"
+        To scroll the viewport vertically, only if doing so would cause the
+        viewport to move. If not, the mousewheel event is passed to the rest
+        of the interface. (For example, if change is given, placing
+        ``key "viewport_wheeldown" action Return()`` before the viewport
+        will cause the screen to return if the viewport scrolls past the
+        bottom.)
+    "horizontal-change"
+        Combines horizontal scrolling with change mode.
 `draggable`
     If True, dragging the mouse will scroll the viewport.
 `edgescroll`
