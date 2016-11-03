@@ -329,10 +329,12 @@ def main():
 
     # Set up error handling.
     renpy.exports.load_module("_errorhandling")
-    renpy.style.build_styles()  # @UndefinedVariable
 
     if renpy.exports.loadable("tl/None/common.rpym") or renpy.exports.loadable("tl/None/common.rpymc"):
         renpy.exports.load_module("tl/None/common")
+
+    renpy.config.init_system_styles()
+    renpy.style.build_styles()  # @UndefinedVariable
 
     log_clock("Loading error handling")
 

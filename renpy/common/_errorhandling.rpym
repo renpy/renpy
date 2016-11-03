@@ -24,6 +24,9 @@
 # that it is fully loaded or run before any other Ren'Py code runs.
 
 
+init python in gui:
+    system_font = None
+
 init python:
     style._default = Style(None)
 
@@ -31,6 +34,12 @@ init python hide:
 
     if renpy.loadable("gui.rpy") or renpy.loadable("gui.rpyc"):
         config.screen_width, config.screen_height = 1280, 720
+
+    def init_system_styles():
+        if gui.system_font is not None:
+            style._default.font = gui.system_font
+
+    config.init_system_styles = init_system_styles
 
 init label _errorhandling:
 

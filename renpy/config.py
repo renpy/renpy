@@ -730,6 +730,9 @@ translate_launcher = False
 # up.
 language_callbacks = collections.defaultdict(list)
 
+# A function that is called to init system styles.
+init_system_styles = None
+
 del renpy
 del os
 
