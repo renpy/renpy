@@ -331,6 +331,9 @@ def main():
     renpy.exports.load_module("_errorhandling")
     renpy.style.build_styles()  # @UndefinedVariable
 
+    if renpy.exports.loadable("tl/None/common.rpym") or renpy.exports.loadable("tl/None/common.rpymc"):
+        renpy.exports.load_module("tl/None/common")
+
     log_clock("Loading error handling")
 
     # If recompiling everything, remove orphan .rpyc files.

@@ -269,6 +269,9 @@ def write_strings(language, filter, min_priority, max_priority, common_only):  #
         if s.text in stl.translations:
             continue
 
+        if language == "None" and tlfn == "common.rpy":
+            tlfn = "common.rpym"
+
         stringfiles[tlfn].append(s)
 
     for tlfn, sl in stringfiles.items():
