@@ -52,6 +52,8 @@ init -1 python:
             gui.LIGHT_FONT = fullfont
             gui.REGULAR_BOLD = True
 
+            style._default.font = fullfont
+
         config.language_callbacks[language].append(callback)
 
         gui7.translate_copy(language, fullfont, font)
