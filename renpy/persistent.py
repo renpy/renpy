@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 import os
 import copy
 import time
@@ -101,7 +103,13 @@ class Persistent(object):
         # A map from the name of a field to the time that field was last
         # changed at.
         if self._changed is None:
-            self._changed = { }
+            self._changed = {
+                "_preferences" : 0,
+                "_seen_ever" : 0,
+                "_chosen" : 0,
+                "_seen_audio" : 0,
+                "_seen_translates" : 0,
+            }
 
 
 renpy.game.Persistent = Persistent
@@ -269,7 +277,7 @@ register_persistent("_chosen", dictset_merge)
 def merge(other):
     """
     Merges `other` (which must be a persistent object) into the
-    current persistent object. This updates deep
+    current persistent object.
     """
 
     now = time.time()
@@ -305,6 +313,7 @@ def merge(other):
         merge_func = registry.get(f, default_merge)
 
         val = merge_func(old, new, pval)
+
         pvars[f] = val
         backup[f] = safe_deepcopy(val)
         persistent._changed[f] = t

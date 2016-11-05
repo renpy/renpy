@@ -399,6 +399,7 @@ def main():
 
         # Load persistent data from all save locations.
         renpy.persistent.update()
+        game.preferences = game.persistent._preferences
         log_clock("Loading persistent")
 
         # Clear the list of seen statements in this game.

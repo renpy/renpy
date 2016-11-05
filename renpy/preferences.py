@@ -199,7 +199,7 @@ class Preferences(renpy.object.Object):
         return renpy.audio.music.get_all_mixers()
 
     def __eq__(self, other):
-        return True
+        return vars(self) == vars(other)
 
 renpy.game.Preferences = Preferences
 renpy.game.preferences = Preferences()
