@@ -120,13 +120,16 @@ class FileLocation(object):
                 if slotname not in new_mtimes:
                     clear_slot(slotname)
 
-            if os.path.exists(self.persistent):
-                mtime = os.path.getmtime(self.persistent)
+            for pfn in [ self.persistent + ".new", self.persistent ]:
+                if os.path.exists(pfn):
+                    mtime = os.path.getmtime(pfn)
 
-                if mtime != self.persistent_mtime:
-                    data = renpy.persistent.load(self.persistent)
-                    self.persistent_mtime = mtime
-                    self.persistent_data = data
+                    if mtime != self.persistent_mtime:
+                        data = renpy.persistent.load(self.persistent)
+                        if data is not None:
+                            self.persistent_mtime = mtime
+                            self.persistent_data = data
+                            break
 
     def save(self, slotname, record):
         """
@@ -318,11 +321,13 @@ class FileLocation(object):
                 return
 
             fn = self.persistent
+            fn_tmp = fn + ".tmp"
             fn_new = fn + ".new"
 
-            with open(fn_new, "wb") as f:
+            with open(fn_tmp, "wb") as f:
                 f.write(data)
 
+            safe_rename(fn_tmp, fn_new)
             safe_rename(fn_new, fn)
 
     def unlink_persistent(self):
