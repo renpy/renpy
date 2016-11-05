@@ -99,7 +99,8 @@ class.
 
 Ren'Py-defined input values inherit from InputValue, which means that
 all values also include Enable(), Disable(), and Toggle() methods that return
-actions that enable, disable, and toggle editing, respectively.
+actions that enable, disable, and toggle editing, respectively. See also
+the :func:`DisableAllInputValues` action.
 
 .. include:: inc/input_value
 

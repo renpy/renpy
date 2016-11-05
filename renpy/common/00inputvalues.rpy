@@ -64,6 +64,20 @@ init -1510 python:
             return rv
 
     @renpy.pure
+    class DisableAllInputValues(Action):
+        """
+        :doc: other_action
+
+        Disables all active InputValue. This will re-focus the default
+        InputValue, if there is one. Otherwise, no InputValue will be
+        focused.
+        """
+
+        def __call__(self):
+            renpy.set_editable_input_value(None, False)
+            renpy.restart_interaction()
+
+    @renpy.pure
     class InputValue(renpy.object.Object):
 
         default = True
