@@ -326,6 +326,7 @@ init -1500 python in build:
     package("linux", "tar.bz2", "linux renpy all", "Linux x86/x86_64")
     package("mac", "app-zip app-dmg", "mac renpy all", "Macintosh x86_64")
     package("win", "zip", "windows renpy all", "Windows x86")
+    package("steam", "zip", "windows linux mac renpy all", "Windows, Mac, Linux for Steam")
     package("android", "directory", "android renpy all", hidden=True, update=False, dlc=True)
     package("ios", "directory", "ios renpy all", hidden=True, update=False, dlc=True)
 
