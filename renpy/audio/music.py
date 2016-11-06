@@ -89,6 +89,8 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
         if loop is None:
             loop = c.default_loop
 
+        loop_is_filenames = (c.loop == filenames)
+
         c.dequeue()
 
         if fadeout is None:
@@ -96,10 +98,12 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
         if if_changed and c.get_playing() in filenames:
             fadein = 0
+            loop_only = loop_is_filenames
         else:
             c.fadeout(fadeout)
+            loop_only = False
 
-        c.enqueue(filenames, loop=loop, synchro_start=synchro_start, fadein=fadein, tight=tight)
+        c.enqueue(filenames, loop=loop, synchro_start=synchro_start, fadein=fadein, tight=tight, loop_only=loop_only)
 
         t = get_serial()
         ctx.last_changed = t

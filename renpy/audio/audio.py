@@ -345,6 +345,8 @@ class Channel(object):
         # Should we do the callback?
         do_callback = False
 
+        topq = None
+
         # This has been modified so we only queue a single sound file
         # per call, to prevent memory leaks with really short sound
         # files. So this loop will only execute once, in practice.
@@ -425,7 +427,11 @@ class Channel(object):
 
         if self.loop and not self.queue:
             for i in self.loop:
-                newq = QueueEntry(i, 0, topq.tight, True)
+                if topq is not None:
+                    newq = QueueEntry(i, 0, topq.tight, True)
+                else:
+                    newq = QueueEntry(i, 0, False, True)
+
                 self.queue.append(newq)
         else:
             do_callback = True
@@ -503,7 +509,7 @@ class Channel(object):
         else:
             renpysound.fadeout(self.number, int(secs * 1000))
 
-    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None):
+    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False):
 
         for filename in filenames:
             filename, _, _ = self.split_filename(filename, False)
@@ -512,25 +518,27 @@ class Channel(object):
         if not pcm_ok:
             return
 
-        if tight is None:
-            tight = self.tight
+        if not loop_only:
 
-        self.keep_queue += 1
+            if tight is None:
+                tight = self.tight
 
-        for filename in filenames:
-            qe = QueueEntry(filename, int(fadein * 1000), tight, False)
-            self.queue.append(qe)
+            self.keep_queue += 1
 
-            # Only fade the first thing in.
-            fadein = 0
+            for filename in filenames:
+                qe = QueueEntry(filename, int(fadein * 1000), tight, False)
+                self.queue.append(qe)
+
+                # Only fade the first thing in.
+                fadein = 0
+
+            self.wait_stop = synchro_start
+            self.synchro_start = synchro_start
 
         if loop:
             self.loop = list(filenames)
         else:
             self.loop = [ ]
-
-        self.wait_stop = synchro_start
-        self.synchro_start = synchro_start
 
     def get_playing(self):
 
