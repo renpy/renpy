@@ -125,7 +125,7 @@ class FileLocation(object):
                     mtime = os.path.getmtime(pfn)
 
                     if mtime != self.persistent_mtime:
-                        data = renpy.persistent.load(self.persistent)
+                        data = renpy.persistent.load(pfn)
                         if data is not None:
                             self.persistent_mtime = mtime
                             self.persistent_data = data

@@ -208,8 +208,12 @@ def init():
     disk, so that we can configure the savelocation system.
     """
 
-    filename = os.path.join(renpy.config.savedir, "persistent")
+    filename = os.path.join(renpy.config.savedir, "persistent.new")
     persistent = load(filename)
+
+    if persistent is None:
+        filename = os.path.join(renpy.config.savedir, "persistent")
+        persistent = load(filename)
 
     if persistent is None:
         persistent = Persistent()
