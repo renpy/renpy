@@ -36,7 +36,9 @@ Path Randomization.
 Since it is no longer possible to make a single distribution that runs on all
 desktop platforms, the all (Windows, Mac, and Linux) package type has been
 removed. It's been replace with a pc package type that supports Windows and
-Linux, and the existing mac type that supports macOS.
+Linux, and the existing mac type that supports macOS. (There is a new steam
+package type to help with app store bundles, but that's not recommended for
+distribution to end users, since it won't work with macOS Sierra.)
 
 The launcher has been modified so it can launch games created using older
 versions of Ren'Py, even under Sierra. This can be done by placing the game
@@ -85,6 +87,10 @@ which case a binary string (b"string") should be explictly used.
 Other Changes and Fixes
 -----------------------
 
+Dynamic images are now copied before a transition occurs. This makes it
+possible to use dynamic variables and the with statement together, to
+transition from one value of the variable to another.
+
 Ren'Py now supports the WEBP image format.
 
 This version of Ren'Py includes fixes to support the interactive director
@@ -110,6 +116,17 @@ was loaded has been eliminated.
 
 Support for the itch.io butler tool on Windows has been fixed.
 
+Hiding the interface no longer stops voice playback.
+
+The new :func:`DisableAllInputValues` action can disable input values all at
+once.
+
+The mousewheel property of viewports and vpgrids supports a new value,
+"change". When this value is given, the viewport only consumes mouse events
+when the event would change the viewport. The motivating use of this is a
+history window that dismisses when it reaches the bottom.
+
+Namespaces may now contain dots in their names.
 
 
 .. _renpy-6.99.11:
