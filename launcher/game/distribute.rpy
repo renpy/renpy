@@ -1208,9 +1208,9 @@ init python in distribute:
 
             update = { variant : { "version" : self.update_versions[variant], "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
-            if self.include_update and (variant not in [ 'ios', 'android', 'source']) and (not format.startswith("app-")):
+            update_fn = os.path.join(self.destination, filename + ".update.json")
 
-                update_fn = os.path.join(self.destination, filename + ".update.json")
+            if self.include_update and (variant not in [ 'ios', 'android', 'source']) and (not format.startswith("app-")):
 
                 with open(update_fn, "wb") as f:
                     json.dump(update, f, indent=2)
