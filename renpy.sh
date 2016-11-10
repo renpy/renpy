@@ -58,7 +58,7 @@ for BASE in "$ROOT" "$ROOT1" "$ROOT2"; do
 done
 
 for BASE in "$ROOT" "$ROOT1" "$ROOT2"; do
-    if test -d "$BASE/$BASEFILE"; then
+    if test -e "$BASE/$BASEFILE.py"; then
         break
     fi
 done
