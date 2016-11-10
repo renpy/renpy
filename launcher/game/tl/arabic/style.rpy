@@ -6,6 +6,5 @@
 
     config.rtl = True
 
-
 init python:
     translate_define("arabic", "config.rtl", "True")

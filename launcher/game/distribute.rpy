@@ -310,16 +310,19 @@ init python in distribute:
             """
             Moves the mac lib into position. If duplicate is set, the
 
-            Creates a new file list that has lib/darwin-x86_64 copied into
-            the mac app.
+            Creates a new file list that has lib/darwin-x86_64 and lib/pythonlib2.7
+            copied into the mac app, the latter iff it's not duplicated elsewhere.
             """
 
-
-
-
             for f in list(self):
+
+                print(f.name)
+
                 if f.name.startswith("lib/darwin-x86_64/lib/python2.7"):
                     name = app + "/Contents/MacOS/lib/darwin-x86_64/Lib" + f.name[31:]
+
+                elif f.name.startswith("lib/pythonlib2.7") and (not duplicate):
+                    name = app + "/Contents/MacOS/lib/darwin-x86_64/Lib" + f.name[16:]
 
                 elif f.name.startswith("lib/darwin-x86_64"):
                     name = app + "/Contents/MacOS/" + f.name
