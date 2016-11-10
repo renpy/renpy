@@ -23,6 +23,7 @@
 * DictEquality
 * :func:`DictInputValue`
 * :func:`DictValue`
+* :func:`DisableAllInputValues`
 * :func:`Dissolve`
 * :class:`Drag`
 * :class:`DragGroup`

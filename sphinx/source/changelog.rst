@@ -247,7 +247,7 @@ Buttons and Windows now fully respect the :propref:`xmaximum` and
 :propref:`ymaximum` style properties.
 
 There is now a :propref:`offset` style property, which sets the
-:propref:`xoffset` and :propfref:`yoffset` properties to the first and
+:propref:`xoffset` and :propref:`yoffset` properties to the first and
 second components of a tuple.
 
 Translate and Style Statement Order Changes
@@ -346,7 +346,7 @@ Ren'Py keywords. For example, "define menu = nvl_menu" now works.
 A :func:`Frame` can now be given a :func:`Borders` object, that
 encapsulates the borders of a Frame into a single object. Borders
 objects also have a padding field that can be passed into the new
-:properf:`padding` style property.
+:propref:`padding` style property.
 
 Buttons, textbuttons, imagebuttons, and hotspots now take
 `selected` and `sensitive` properties that directly control if the

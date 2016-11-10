@@ -17,6 +17,7 @@
 * :func:`CropMove`
 * :func:`DictInputValue`
 * :func:`DictValue`
+* :func:`DisableAllInputValues`
 * :func:`Dissolve`
 * :class:`Drag`
 * DynamicCharacter

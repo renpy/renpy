@@ -17,6 +17,12 @@
     The sensitivity and selectedness of this action match those
     of the `yes` action.
 
+.. function:: DisableAllInputValues()
+    
+    Disables all active InputValue. This will re-focus the default
+    InputValue, if there is one. Otherwise, no InputValue will be
+    focused.
+
 .. function:: Function(callable, *args, **kwargs)
     
     This Action calls `callable` with `args` and `kwargs`.
