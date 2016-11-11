@@ -1061,7 +1061,7 @@ init python in distribute:
 
             # Sign the mac app.
             self.run(
-                _("Signing the Macintosh application..."),
+                _("Signing the Macintosh application...\n(This may take a long time.)"),
                 self.build["mac_codesign_command"],
                 identity=identity,
                 app=os.path.join(dn, self.app),
