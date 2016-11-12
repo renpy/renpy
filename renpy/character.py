@@ -780,14 +780,23 @@ class ADVCharacter(object):
             # Otherwise, just record the attributes of the image.
             images.predict_show("master", tagged_attrs, show=False)
 
-    def __str__(self):
+    def __unicode__(self):
+
         who = self.name
 
-        # If dynamic is set, evaluate the name expression.
         if self.dynamic:
             who = renpy.python.py_eval(who)
 
-        return who
+        return renpy.substitutions.substitute(who)[0]
+
+    def __str__(self):
+        return unicode(self).encode("utf-8")
+
+    def __format__(self, spec):
+        return format(unicode(self), spec)
+
+    def __repr__(self):
+        return "<Character: {!r}>".format(self.name)
 
     def empty_window(self):
         self("", interact=False, _call_done=False)
