@@ -316,8 +316,6 @@ init python in distribute:
 
             for f in list(self):
 
-                print(f.name)
-
                 if f.name.startswith("lib/darwin-x86_64/lib/python2.7"):
                     name = app + "/Contents/MacOS/lib/darwin-x86_64/Lib" + f.name[31:]
 
