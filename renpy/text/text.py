@@ -1370,7 +1370,10 @@ class Text(renpy.display.core.Displayable):
             return self
 
         rv = self._copy()
-        rv.displayables = [ rv._in_current_store() for i in rv.displayables ]
+
+        if rv.displayables is not None:
+            rv.displayables = [ i._in_current_store() for i in rv.displayables ]
+
         rv.slow_done = None
         rv.locked = True
 
