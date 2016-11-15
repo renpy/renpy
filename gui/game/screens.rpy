@@ -1069,15 +1069,15 @@ screen gamepad_help():
 
     hbox:
         label _("Right Trigger\nA/Bottom Button")
-        text _("Advance dialogue and activates the interface.")
+        text _("Advances dialogue and activates the interface.")
 
     hbox:
         label ("Left Trigger\nLeft Shoulder")
-        text _("Roll back to earlier dialogue.")
+        text _("Rolls back to earlier dialogue.")
 
     hbox:
         label _("Right Shoulder")
-        text _("Roll forward to later dialogue.")
+        text _("Rolls forward to later dialogue.")
 
     hbox:
         label _("D-Pad, Sticks")
@@ -1085,7 +1085,7 @@ screen gamepad_help():
 
     hbox:
         label _("Start, Guide")
-        text _("Access the game menu.")
+        text _("Accesses the game menu.")
 
     hbox:
         label _("Y/Top Button")
