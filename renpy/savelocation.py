@@ -81,7 +81,7 @@ class FileLocation(object):
         Given a slot name, returns a filename.
         """
 
-        return os.path.join(self.directory, slotname + renpy.savegame_suffix)
+        return os.path.join(self.directory, renpy.exports.fsencode(slotname + renpy.savegame_suffix))
 
     def scan(self):
         """
