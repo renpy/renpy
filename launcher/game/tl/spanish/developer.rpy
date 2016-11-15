@@ -55,7 +55,7 @@ translate spanish strings:
 
     # _developer/developer.rpym:383
     old "Right-click or escape to quit."
-    new "Click-derecho o escape para salir."
+    new "Clic-derecho o escape para salir."
 
     # _developer/developer.rpym:412
     old "Rectangle copied to clipboard."
