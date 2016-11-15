@@ -106,9 +106,9 @@ init -1500 python:
 
             alt = persistent._style_preferences.get(preference, None)
 
-            for alternative, style, property, value in alternatives:
+            for alternative, s, property, value in alternatives:
                 if alternative == alt:
-                    setattr(style, property, value)
+                    setattr(s, property, value)
 
     def __check(preference, alternative=None):
 

@@ -805,7 +805,12 @@ def restore(o):
 
     cdef StyleCore s
 
-    reset()
+    keys = list(styles.keys())
+
+    for i in keys:
+        if i not in o:
+            del styles[i]
+
 
     for k, v in o.iteritems():
 
@@ -816,6 +821,7 @@ def restore(o):
 
         parent, properties = v
 
+        s.clear()
         s.set_parent(parent)
         s.properties = copy_properties(properties)
 
