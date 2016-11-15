@@ -733,6 +733,9 @@ language_callbacks = collections.defaultdict(list)
 # A function that is called to init system styles.
 init_system_styles = None
 
+# Callbacks that are called just before rebuilding styles.
+build_styles_callbacks = [ ]
+
 del renpy
 del os
 

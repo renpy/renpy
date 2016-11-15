@@ -756,6 +756,8 @@ def build_styles():
     """
     Builds or rebuilds all styles.
     """
+    for i in renpy.config.build_styles_callbacks:
+        i()
 
     for s in styles.values():
         unbuild_style(s)
