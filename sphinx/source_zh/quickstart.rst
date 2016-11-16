@@ -1,29 +1,23 @@
-
+快速开始
 ==========
 
-Welcome to the Ren'Py quickstart manual. The purpose of this manual is
-to demonstrate how you can make a Ren'Py game from scratch, in a few
-easy steps. We'll do this by showing how to make a simple game, *The
-Question*, from scratch. This manual contains a number of examples,
-which are included as part of the demo game.
+欢迎来到Ren'Py的快速开始手册。 这份手册是为了让你只需要几个简单步骤的拼凑就能创作出Ren'Py游戏。我们会展示怎样用拼凑的方法创作出 *The
+Question*这样一款简单的游戏。这份手册包含着多个示例，同时也是示例游戏中的一部分。
 
-The Ren'Py Launcher
+Ren'Py 启动器
 -------------------
 
 
-Before you begin making a game, you should first take some time to
-learn how the Ren'Py launcher works. The launcher lets you create,
-manage, edit, and run Ren'Py projects.
+在你开始创作游戏之前，应该首先花点时间了解一下Ren'Py启动器是怎样运作的。启动器让你可以新建，管理，修改和运行Ren'Py游戏项目。
 
-**Getting Started.** To get started you'll want to
-`download Ren'Py <https://www.renpy.org/latest.html>`_.
+**开始入门** 你应该通过下载Ren'Py来开始入门 <https://www.renpy.org/latest.html>`_.
 
-Once you've downloaded Ren'Py, you'll want to extract it. This can
+当下载Ren'Py完毕，你可能会想解压缩它。This can
 generally be done by right-clicking on the package file, and picking
 "Extract" if that's an option, or "Open" if it's not. Follow the
 prompts, and you'll have a working copy of Ren'Py.
 
-.. note::
+.. 注意::
 
     Please be sure you've extracted Ren'Py to its own directory or
     folder on disk. If you try to run it from inside a ZIP file, it
@@ -61,7 +55,7 @@ theme for the project. It doesn't matter what you pick at this point,
 just choose something that appeals to you. You'll be returned to the
 top menu of the launcher with your new game chosen.
 
-A Simple Game
+一个简单的游戏示例
 -------------
 
 ::
@@ -77,9 +71,7 @@ A Simple Game
 
         "Sylvie" "Sure, but what is a \"visual novel?\""
 
-This is perhaps one of the simplest Ren'Py games. It doesn't include
-any pictures or anything like that, but it does show a conversation
-between the two characters.
+这可能时最简单的Ren'Py游戏之一了。虽然这不包含任何的图片或者其他元素，但它展示了两个角色之间的对话了
 
 To try this out, go into the launcher, select the "My Question
 Project", and choose "script.rpy" from under Edit File. Ren'Py may
