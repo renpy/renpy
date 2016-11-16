@@ -1,0 +1,43 @@
+.. Automatically generated file - do not modify.
+
+.. function:: Hide(screen, transition=None)
+    
+    This causes the screen named `screen` to be hidden, if it is shown.
+    
+    `transition`
+        If not None, a transition that occurs when hiding the screen.
+
+.. function:: Jump(label)
+    
+    Causes control to transfer to the given label. This can be used in
+    conjunction with renpy.run_screen to define an imagemap that jumps
+    to a label when run.
+
+.. function:: NullAction()
+    
+    Does nothing.
+    
+    This can be used to make a button responsive to hover/unhover events,
+    without actually doing anything.
+
+.. function:: Return(value=None)
+    
+    Causes the current interaction to return the supplied value. This is
+    often used with menus and imagemaps, to select what the return value
+    of the interaction is.
+    
+    When in a menu, this returns from the menu.
+
+.. function:: Show(screen, transition=None, *args, **kwargs)
+    
+    This causes another screen to be shown. `screen` is a string
+    giving the name of the screen. The keyword arguments are
+    passed to the screen being shown.
+    
+    If not None, `transition` is use to show the new screen.
+
+.. function:: ShowTransient(screen, *args, **kwargs)
+    
+    Shows a transient screen. A transient screen will be hidden when
+    the current interaction completes.
+

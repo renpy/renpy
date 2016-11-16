@@ -1,0 +1,8 @@
+Authors
+-------------
+
+This documentation is written by:
+
+* Tom Rothamel <pytom@bishoujo.us>
+
+

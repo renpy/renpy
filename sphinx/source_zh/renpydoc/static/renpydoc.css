@@ -1,0 +1,99 @@
+@import url("basic.css");
+
+/* Syntax highlighting. */
+pre {
+    overflow-y: hidden;
+}
+
+.function, .class {
+    margin-top: 2em;
+}
+
+table.indextable tbody tr.cap, table.indextable tbody tr.pcap {
+	background: #f6f9fb;
+}
+
+table.indextable tbody tr.cap td, table.indextable tbody tr.pcap td {
+	background: none;
+}
+
+.highlight .k {
+    color: #804000 !important;
+    font-weight: normal !important;
+}
+
+.highlight .s1, .highlight .s2, .highlight .se {
+    color: #006000 !important;
+    font-weight: normal !important;
+}
+
+.highlight .na {
+    color: #004080 !important;
+}
+
+.highlight .c {
+    color: #600000 !important;
+}
+
+.highlight .mi, .highlight .mf {
+    color: #222 !important;
+}
+
+.descname, .descclassname {
+    padding: 0;
+}
+
+/*  Definition list. */
+dd {
+    padding-left: 1em;
+}
+
+/* The " link" text. */
+
+a.headerlink {
+	font-size: 12px;
+}
+
+/* Navbar */
+
+.navbar-version {
+	display: none;
+}
+
+.globaltoc-container {
+	display: none !important;
+}
+
+.navbar-brand {
+    background: url(navbar-logo.png);
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+    padding-left: 50px !important;
+    color: #444 !important;
+    font-size: 20px;
+}
+
+div.section {
+	overflow: auto;
+}
+
+.figure {
+	width: 405px;
+	float: left;
+	display: block;
+    font-size: 95%;
+}
+
+#sidebar {
+	max-height: 95%;
+    overflow-y: auto;
+}
+
+dl.var dt {
+	font-weight: inherit;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+}
+
+dl.var dd:empty {
+    margin-bottom: -20px !important;
+}

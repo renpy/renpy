@@ -1,0 +1,73 @@
+.. Automatically generated file - do not modify.
+
+.. function:: renpy.call_in_new_context(label, *args, **kwargs)
+    
+    This code creates a new context, and starts executing code from
+    that label in the new context. Rollback is disabled in the
+    new context. (Actually, it will just bring you back to the
+    real context.)
+    
+    Use this to begin a second interaction with the user while
+    inside an interaction.
+
+.. function:: renpy.get_all_labels()
+    
+    Returns the set of all labels defined in the program, including labels
+    defined for internal use in the libraries.
+
+.. function:: renpy.get_return_stack()
+    
+    Returns a list giving the current return stack. The return stack is a
+    list of statement names.
+    
+    The statement names will be strings (for labels), or opaque tuples (for
+    non-label statements).
+
+.. function:: renpy.has_label(name)
+    
+    Returns true if `name` is a valid label the program, or false otherwise.
+    
+    `name`
+        Should be a string to check for the existence of a label. It can
+        also be an opaque tuple giving the name of a non-label statement.
+
+.. function:: renpy.invoke_in_new_context(callable, *args, **kwargs)
+    
+    This pushes the current context, and invokes the given python
+    function in a new context. When that function returns or raises an
+    exception, it removes the new context, and restores the current
+    context.
+    
+    Additional arguments and keyword arguments are passed to the
+    callable.
+    
+    Please note that the context so created cannot execute renpy
+    code. So exceptions that change the flow of renpy code (like
+    the one created by renpy.jump) cause this context to terminate,
+    and are handled by the next higher context.
+    
+    If you want to execute renpy code from the function, you can call
+    it with renpy.call_in_new_context.
+    
+    Use this to begin a second interaction with the user while
+    inside an interaction.
+
+.. function:: renpy.jump_out_of_context(label)
+    
+    Causes control to leave the current context, and then to be
+    transferred in the parent context to the given label.
+
+.. function:: renpy.seen_label(label)
+    
+    Returns true if the named label has executed at least once on the current user's
+    system, and false otherwise. This can be used to unlock scene galleries, for
+    example.
+
+.. function:: renpy.set_return_stack(stack)
+    
+    Sets the current return stack. The return stack is a list of statement
+    names.
+    
+    Statement names may be strings (for labels) or opaque tuples (for
+    non-label statements).
+

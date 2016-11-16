@@ -1,0 +1,12 @@
+.. Automatically generated file - do not modify.
+
+.. function:: renpy.call(label, *args, **kwargs)
+    
+    Causes the current Ren'Py statement to terminate, and a jump to a
+    `label` to occur. When the jump returns, control will be passed
+    to the statement following the current statement.
+
+.. function:: renpy.return_statement()
+    
+    Causes Ren'Py to return from the current Ren'Py-level call.
+

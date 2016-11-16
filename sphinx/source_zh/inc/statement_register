@@ -1,0 +1,45 @@
+.. Automatically generated file - do not modify.
+
+.. function:: renpy.register_statement(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False)
+    
+    This registers a user-defined statement.
+    
+    `name`
+        This is either a space-separated list of names that begin the statement, or the
+        empty string to define a new default statement (the default statement will
+        replace the say statement).
+    
+    `parse`
+        This is a function that takes a Lexer object. This function should parse the
+        statement, and return an object. This object is passed as an argument to all the
+        other functions. The lexer argument has the following methods:
+    
+    `lint`
+        This is called to check the statement. It is passed a single object, the
+        argument returned from parse. It should call renpy.error to report errors.
+    
+    `execute`
+        This is a function that is called when the statement executes. It is passed a
+        single object, the argument returned from parse.
+    
+    `predict`
+        This is a function that is called to predict the images used by the statement.
+        It is passed a single object, the argument returned from parse. It should return
+        a list of displayables used by the statement.
+    
+    `next`
+        This is called to determine the next statement. It is passed a single object,
+        the argument returned from parse. It should either return a label, or return
+        None if execution should continue to the next statement.
+    
+    `scry`
+        Used internally by Ren'Py.
+    
+    `block`
+        True if this takes a block, false otherwise.
+    
+    `init`
+        True if this statement should be run at init-time. (If the statement
+        is not already inside an init block, it's automatically placed inside
+        an init 0 block.)
+
