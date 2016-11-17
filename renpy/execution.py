@@ -79,6 +79,20 @@ class PredictInfo(renpy.object.Object):
     """
 
 
+class LineLogEntry(object):
+
+    def __init__(self, filename, line, node):
+        self.filename = filename
+        self.line = line
+        self.node = node
+
+    def __eq__(self, other):
+        if not isinstance(other, LineLogEntry):
+            return False
+
+        return (self.filename == other.filename) and (self.line == other.line) and (self.node is other.node)
+
+
 class Context(renpy.object.Object):
     """
     This is the context object which stores the current context
@@ -391,7 +405,7 @@ class Context(renpy.object.Object):
             self.defer_rollback = None
 
             if renpy.config.line_log:
-                ll_entry = (node.filename, node.linenumber, node)
+                ll_entry = LineLogEntry(node.filename, node.linenumber, node)
 
                 if ll_entry not in self.line_log:
                     self.line_log.append(ll_entry)
