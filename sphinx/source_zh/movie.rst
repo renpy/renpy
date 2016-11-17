@@ -3,17 +3,17 @@
 Movie
 =====
 
-Ren'Py is capable of using libav (included) to play movies using the
-video codecs:
+Ren'Py兼容 libav (已包含)的使用并使用
+视频编码器来播放视频:
 
 * VP9
 * VP8
 * Theora
-* MPEG 4 part 2 (including Xvid and DivX)
+* MPEG 4 part 2 (包含 Xvid and DivX)
 * MPEG 2
 * MPEG 1
 
-and the following audio codecs:
+还有以下的音频编码器:
 
 * OPUS
 * Vorbis
@@ -21,34 +21,26 @@ and the following audio codecs:
 * MP2
 * PCM
 
-inside the following container formats:
+以下容器格式之中:
 
 * WebM
 * Matroska
 * Ogg
 * Avi
-* Various kinds of MPEG stream.
+* 各种不同的 MPEG 流.
 
-(Note that using some of these formats may require patent licenses.
-When in doubt, and especially for commercial games, we recommend using
-VP9, VP8, or Theora, Opus or Vorbis, and WebM, Matroska, or Ogg.)
+(要留意以上某些格式的使用可能需要专利许可。当你对此有疑问时，特别是在制作商业游戏的情况下，我们推荐你使用VP9, VP8, 或者 Theora, Opus 或者 Vorbis, 和 WebM, Matroska, 或者 Ogg。)
 
-Movies can be displayed fullscreen, or in a displayable. Fullscreen movies
-are the more efficient.
+视频能够全屏播放，在displayable之中也是. 全屏视频播放会更有效率
 
-
-Fullscreen Movies
+全屏视频
 -----------------
 
-The easiest and most efficient way to display a movie fullscreen is
-to use the renpypy.movie_cutscene function. This function displays the
-movie fullscreen until it either ends, or the player clicks to dismiss
-it. ::
+全屏播放视频最简单并且最有效率的方法是使用 renpypy.movie_cutscene 函数。这个函数会播放视频直到视频完结或者玩家点击解除视频。 ::
 
         $ renpy.movie_cutscene("On_Your_Mark.webm")
 
-On mobile platforms, such as Android and iOS, hardware video decoding is
-used when :var:`config.hw_video` is true, the default. This is generally
+在移动平台，比如Android and iOS, 当:var:`config.hw_video` 值为true时硬件视频解码就能默认开启。This is generally
 much faster, but the list of supported movie formats depends on the
 platform.
 

@@ -35,22 +35,17 @@ Ren'Py启动器已经被多种语言翻译。要想改变界面语言，选择"p
 .. image:: launcher.png
    :align: right
 
-**Choosing and Launching a Project.** You should first see what the
-completed *The Question* game looks like. To do this, start the Ren'Py
-launcher, and choose "The Question" from the first screen. Choose
-"Launch Project" to start *The Question*.
+**选择并启动项目** 你最好先看一下完整的示例游戏
+*The Question*是怎样的。通过启动Ren'Py
+启动器，并在开始屏幕中选择"The Question"，选择
+启动项目"来启动*The Question*游戏。
 
-You can get back to the Ren'Py demo by doing the same thing, but
-choosing "Tutorial" instead of "The Question".
+你可以用同样的方式回到Ren'Py demo，但要选择"Tutorial"而不是"The Question"。
 
-**Creating a new Project.**
-Create a new project by choosing "Create New Project" from the
-launcher. The launcher will then ask you for a project name. Since
-"The Question" is already taken, you should enter something different,
-like "My Question". The launcher will then ask you to choose a color
-theme for the project. It doesn't matter what you pick at this point,
-just choose something that appeals to you. You'll be returned to the
-top menu of the launcher with your new game chosen.
+**创建一个新项目**
+从启动器中选择"Create New Project"来创建一个新项目。启动器会询问你为项目起的名称。因为
+"The Question"这个名称已经被占用了，你应该输入其他不同的名称诸如
+"My Question"这样的。接下来，启动器会询问你为项目选择一个颜色主题。在这一点上，你选择什么颜色主题是没有多大问题的，只要从显示出来的主题中选择即可。然后你就会返回到启动器的最初菜单，此时已经生成了你刚刚新建的游戏了。
 
 一个简单的游戏示例
 -------------
@@ -70,85 +65,40 @@ top menu of the launcher with your new game chosen.
 
 这可能时最简单的Ren'Py游戏之一了。虽然这不包含任何的图片或者其他元素，但它展示了两个角色之间的对话了
 
-To try this out, go into the launcher, select the "My Question
-Project", and choose "script.rpy" from under Edit File. Ren'Py may
-ask you to select a text editor, after which it will download the
-editor you select. When it finishes, script.rpy will open in an
-editor.  Erase everything in script.rpy, as we're starting from
-scratch, so you don't need what's there. Copy the example above into
-script.rpy, and save it.
+你可以动手实践一遍，打开启动器，选择"My Question
+Project"，并在 Edit File 一栏选择"script.rpy"这个脚本文件。Ren'Py会让你选择一个文本编辑器，然后会下载你所选择的文本编辑器。当下载完成后，script.rpy会在编辑器中打开。清除 script.rpy 中的所有内容,因为要从拼凑开始,不需要现成的这些东西。把上面的代码复制到 script.rpy 中，并保存。
 
-You're now ready to run this example. Go back to the launcher, and
-choose "Launch Project". Ren'Py will start up. Notice how, without any
-extra work, Ren'Py has given you menus that let you load and save the
-game, and change various preferences. When ready, click "Launch Project",
-and play through this example game.
+到现在你已经可以准备运行这个示例项目了。回到启动器，并选择"Launch Project"。Ren'Py将会启动，注意,即使没有额外的工作，Ren'Py仍会给予你菜单以便于加载和保存游戏，并改变不同的偏好设置。准备好的话，点击"Launch Project"，就可以游玩这个示例游戏了。
 
-This example shows some of the commonly-used Ren'Py statements.
+这个示例游戏展示了一些常用的Ren'Py语句。
 
-The first line is a label statement. The label statement is used to
-give a name to a place in the program. In this case, we create a label
-named ``start``. The start label is special, as it's where Ren'Py
-scripts begin running when the user clicks "Start Game" on the main
-menu.
+第一行是一个 label 语句。label语句用于给程序中的一段建立一个名称。在这个例子中，我们新建了 label 名称``start``. 这个 start label 比较特殊,用户在游戏主菜单中点击了"Start Game"后，这个Ren'Py脚本从这里开始运行。
 
-The other lines are say statements. There are two forms of the say
-statement. The first is a string (beginning with a double-quote,
-containing characters, and ending with a double-quote) on a line by
-itself, which is used for narration, and the thoughts of the main
-character. The second form consists of two strings. It's used for
-dialogue, with the first string being a character name and the second
-being what that character is saying.
+另外一行是 say 语句，它具有两种形式。第一种是它自己本身是一行字符串 (由双引号开始，包含一连串的字符，并以双引号结束)，用于旁白和主角的内心想法。第二种时包含两组字符串。它用于对话，第一个字符串时角色的名字，第二个是角色说话的内容。
 
-Note that all the say statements are indented by four spaces. This is
-because they are a block underneath the label statement. In Ren'Py,
-blocks must be indented relative to the prior statement, and all of
-the statements in a block must be indented by the same amount.
+请留意所有的 say 语句都被缩进了四个空格的位置。这是因为它们都从属于 label 语句。在 Ren'Py 之中，
+代码区块必须相对于优先语句进行缩进，而且，代码区快中的所有语句都必须以相同的宽度进行缩进。
 
-When strings contain double-quote characters, those characters need to
-be preceded by a backslash. This is done in the last line of our
-example.
+如果字符串里面包含双引号这个字符，这个字符必须在前面添加一个反斜杠字符。示例中的最后一行就是这样做。
 
-While this simple game isn't much to look at, it's an example of how
-easy it is to get something working in Ren'Py. We'll add the pictures
-in a little bit, but first, let's see how to declare characters.
+虽然这个简单的示例游戏看上去有些空洞，但这说明了在Ren'Py中做出什么东西来是多么简单。我们将会为其添加一点图片，但首先，让我们来了解一下如何声明角色。
 
 Init
 ----
 
-The init statement is used to execute blocks of Ren'Py statements before the
-script executes. Init blocks are used to define images and characters, to set
-up unchanging game data structures, and to customize Ren'Py. Code inside init
-blocks should not interact with the user or change any of the layers, and so
-should not contain say, menu, scene, show, or hide statements, as well as calls
-to any function that can do these things.
+init 语句用于在脚本运行前执行一些 Ren'Py 语句的代码块。Init 区块被用于定义图像和角色，设置一些恒定的游戏数据结构，和定制 Ren'Py 。init
+区块中的代码不应该与用户进行交互或者改变不同的层， 所以不应该包含 say, menu, scene, show, 或者 hide 语句, 和调用能实现类似功能的函数。
 
-An init statement is introduced with the keyword init, followed by an optional
-priority number, and a mandatory colon. If the priority is not given, it
-defaults to 0. Priority numbers should be in the range -999 to 999. Numbers
-outside of this range are reserved for Ren'Py code.
+一个 init 语句由关键词 init 开始, 后面接着一个可选的表示优先度的数字，和一个必须写上的冒号. 如果优先度没有给定，会默认设置为0。优先度数字应该在-999到999之间的范围内。超过这个范围的数字会被反转。
 
-The priority number is used to determine when the code inside the init block
-executes. Init blocks are executed in priority order from low to high. Within a
-file, init blocks with the same priority are run in order from the top of the
-file to the bottom. The order of evaluation of priority blocks with the same
-priority between files is undefined.
+优先度数字被用于确定在 init 区块中代码的执行时间。Init 区块会以优先度从低到高的顺序执行。在一个文件当中，具有相同优先度的 init 区块会以文件的顶部到底部的顺序执行。而文件间，拥有相同优先度的优先度区块的赋值顺序则是不确定的。
 
-The init blocks are all run once, during a special init phase. When control
-reaches the end of an init block during normal execution, execution of that
-block ends. If an init statement is encountered during normal execution, the
-init block is not run. Instead, control passes to the next statement.
+在特殊的 init 时期，所有 init 区块都只运行一次。 控制器运行到在普通执行中的 init 区块的结尾时，该区块的执行就结束了。如果 init 语句是在普通执行时遇到，init 区块就不能运行。取而代之的是，控制器跳过了下一个语句。
 
-Characters
+角色
 ----------
 
-One problem with the first example is that it requires you to
-repeatedly type the name of a character each time they speak. In a
-dialogue-heavy game, this might be a lot of typing. Also, both
-character names are displayed in the same way, in fairly boring white
-text. To fix this, Ren'Py lets you define characters in advance. This
-lets you associate a short name with a character, and to change the
-color of the character's name.
+第一个示例中存在着一个问题，就是需要你不断重复地在每次角色说话前输入他们的名称。在一个大量对话的游戏里，就需要多次重复的输入。然而，所有角色名称子啊表现出来是都是一样的，所以输入这些重复文字真是无趣乏味。为了安排这些名称，Ren'Py 能让你以更佳的方式区定义角色。这就是用简称与名称相关联，并改变角色名称对应的显示颜色。
 
 ::
 
@@ -181,7 +131,7 @@ We've also changed the say statements to use character objects instead
 of a character name string. This tells Ren'Py to use the characters we
 defined in the init block.
 
-Images
+图像
 ------
 
 A visual novel isn't much of a visual novel without pictures. Let's
@@ -270,7 +220,7 @@ used when a character is changing emotions, while scene is used when
 everyone leaves. You only need to use hide when a character leaves and
 the scene stays the same.
 
-Transitions
+过渡效果
 -----------
 
 Simply having pictures pop in and out is boring, so Ren'Py implements
@@ -342,7 +292,7 @@ Here, None is used to indicate a special transition that updates
 Ren'Py's idea of what the prior screen was, without actually showing
 anything to the user.
 
-Positions
+位置
 ---------
 
 By default, images are shown centered horizontally, and with their
@@ -367,7 +317,7 @@ horizontally and vertically.
 A user can define their own positions, and event complicated moves,
 but that's outside of the scope of this quickstart.
 
-Music and Sound
+音乐和声效
 ---------------
 
 Most games play music in the background. Music is played with the play music
@@ -410,14 +360,14 @@ Ren'Py support many formats for sound and music, but OGG Vorbis is
 preferred. Like image files, sound and music files must be placed in
 the game directory.
 
-Pause Statement
+Pause 语句
 ---------------
 
 The pause statement causes Ren'Py to pause until the mouse is clicked. If the
 optional expression is given, it will be evaluated to a number, and the pause
 will automatically terminate once that number of seconds has elapsed.
 
-Ending the Game
+结束游戏
 ---------------
 
 You can end the game by running the return statement, without having
@@ -434,7 +384,7 @@ That's all you need to make a kinetic novel, a game without any
 choices in it. Now, we'll look at what it takes to make a game that
 presents menus to the user.
 
-Menus, Labels, and Jumps
+菜单, 标签, 和跳转
 -------------------------
 
 The menu statement lets you present a choice to the user::
