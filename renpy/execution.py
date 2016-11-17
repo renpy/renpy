@@ -81,10 +81,11 @@ class PredictInfo(renpy.object.Object):
 
 class LineLogEntry(object):
 
-    def __init__(self, filename, line, node):
+    def __init__(self, filename, line, node, abnormal):
         self.filename = filename
         self.line = line
         self.node = node
+        self.abnormal = abnormal
 
     def __eq__(self, other):
         if not isinstance(other, LineLogEntry):
@@ -405,7 +406,7 @@ class Context(renpy.object.Object):
             self.defer_rollback = None
 
             if renpy.config.line_log:
-                ll_entry = LineLogEntry(node.filename, node.linenumber, node)
+                ll_entry = LineLogEntry(node.filename, node.linenumber, node, self.last_abnormal)
 
                 if ll_entry not in self.line_log:
                     self.line_log.append(ll_entry)
