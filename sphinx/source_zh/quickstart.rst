@@ -10,7 +10,7 @@ Ren'Py 启动器
 
 在你开始创作游戏之前，应该首先花点时间了解一下Ren'Py启动器是怎样运作的。启动器让你可以新建，管理，修改和运行Ren'Py游戏项目。
 
-**开始入门** 你应该通过下载Ren'Py来开始入门 <https://www.renpy.org/latest.html>`_.
+**开始入门** 你应该通过`下载 Ren'Py<https://www.renpy.org/latest.html>`_来开始入门.
 
 当下载Ren'Py完毕，你可能会想解压缩它。This can
 generally be done by right-clicking on the package file, and picking
@@ -19,21 +19,18 @@ prompts, and you'll have a working copy of Ren'Py.
 
 .. 注意::
 
-    Please be sure you've extracted Ren'Py to its own directory or
-    folder on disk. If you try to run it from inside a ZIP file, it
-    won't work properly.
+    请确保你已经把解压缩至硬盘上所在的文件夹中(或目录中)。如果你尝试着在ZIP文件内运行它，可能会出现不能正常工作的问题。
 
-Once you've extracted Ren'Py, you'll need to run it.
+当你把Ren'Py解压完毕后，你将要运行一下的程序。
 
-* On Windows, run the ``renpy`` or ``renpy.exe`` program.
-* On Mac OS X, run the ``renpy`` application.
-* On Linux, run the ``renpy.sh`` script.
+* 在Windows系统上，运行``renpy``或者``renpy.exe``程序。
+* 在Mac OS X系统上，运行``renpy``应用。
+* 在Linux系统上，运行``renpy.sh``脚本。
 
 
-After running this, the Ren'Py launcher should run.
+运行之后，Ren'Py启动器应该就会运行。
 
-The Ren'Py launcher has been translated to multiple languages. To
-change the language, choose "preferences" and then select the language.
+Ren'Py启动器已经被多种语言翻译。要想改变界面语言，选择"preferences"并选择对应的语言。
 
 .. image:: launcher.png
    :align: right
