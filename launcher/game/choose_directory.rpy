@@ -21,6 +21,20 @@
 
 init python:
 
+    def directory_is_writable(path):
+        test = os.path.join(path, "renpy test do not use")
+
+        try:
+            if os.path.isdir(test):
+                os.rmdir(test)
+
+            os.mkdir(test)
+            os.rmdir(test)
+
+            return True
+
+        except:
+            return False
 
     def choose_directory(path):
         """
@@ -86,8 +100,12 @@ init python:
 
         path = renpy.fsdecode(path)
 
-        if not os.path.isdir(path):
-            path = os.path.abspath(config.renpy_base)
+        if (not os.path.isdir(path)) or (not directory_is_writable(path)):
+            interface.error(_("The selected projects directory is not writable."))
+            path = default_path
             is_default = True
+
+        if is_default and (not directory_is_writable(path)):
+            path = os.path.expanduser("~")
 
         return path, is_default
