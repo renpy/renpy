@@ -340,47 +340,28 @@ menu 语句能够让你向玩家展示一组选项::
 
         "--- years later ---"
 
-This example shows how menus are used with Ren'Py. The menu statement
-introduces an in-game-menu. The menu statement takes a block of lines,
-each consisting of a string followed by a colon. These are the menu
-choices which are presented to the user. Each menu choice should be
-followed by a block of one or more Ren'Py statements. When a choice is
-chosen, the statements following it are run.
+这个示例展示了如何在 Ren'Py 中使用菜单功能。menu 语句开启了游戏内置菜单。而且 menu 语句占用了多个行组成的一个区块，每一行都以一个字符串和结尾的冒号组成。他们是向玩家展示的菜单选项。每一个菜单选项必须在后面带有一个或多个 Ren'Py 语句。当一个选项被选择时，跟随在其后面的语句就会被执行。
 
-In our example, each menu choice runs a jump statement. The jump
-statement transfers control to a label defined using the label
-statement. The code following that label is run.
+在这个例子中，每一个菜单选项都会执行 jump 语句。jump 语句会转移游戏控制器到对应的标签中，而这个标签时用 label 语句定义好的。然后，这个标签内的代码就会运行。
 
-In our example above, after Sylvie asks her question, the user is
-presented with a menu containing two choices. If the user picks "It's
-a story with pictures.", the first jump statement is run, and control
-is transferred to the ``vn`` label. This will cause the pov character to
-say "It's a story with pictures and music.", after which control is
-transferred to the ``marry`` label.
+在上面的例子中，当 Sylvie 询问她问题之后，玩家面前出现了带有两个选项的菜单。如果玩家选择了"It's
+a story with pictures.", 那第一个跳转就会被执行，控制器就会被跳转到 ``vn`` 标签。就会让主角说 "It's a story with pictures and music."，然后控制器转移到 ``marry`` 标签。
 
-Labels may be defined in any file that is in the game directory, and
-ends with .rpy. The filename doesn't matter to Ren'Py, only the labels
-contained within it. A label may only appear in a single file.
+你可以在游戏目录下的多个文件里定义标签，然后以 .rpy 作为文件的拓展名。在 Ren'Py里，文件名不是很大问题, 只有在一个文件内存在多个标签时，要注意一个标签只能在一个文件里出现一次。
 
-Python and If Statements
+Python 和 If 语句
 ------------------------
 
-While simple (and even fairly complex) games can be made using only
-using menus and jump statements, after a point it becomes necessary to
-store the user's choices in variables, and access them again
-later. This is what Ren'Py's python support is for.
+当一个简单的 (又或者甚至时复杂的) 游戏能只用菜单和 jump 语句就能组成。有一点就变得很重要了，就是储存用户的选择在变量里，并可以在之后访问它们。这就是由  Ren'Py 的 python 语句所支持。
 
-Python support can be accessed in two ways. A line beginning with a
-dollar-sign is a single-line python statement, while the keyword
-"python:" is used to introduce a block of python statements.
+有两种方法去使用 Python。其一是，一行以美元符号来开头，这是单行 python 语句，其二是用"python:" 来引出一个 python 语句区块。
 
-Python makes it easy to store flags in response to user input. Just
-initialize the flag at the start of the game::
+Python 语言使储存玩家输入变得简单。只要在游戏开始时初始化一下储存量::
 
     label start:
         $ bl_game = False
 
-You can then change the flag in code that is chosen by menus::
+你可以在代码中实现菜单选择能够改变储存量的功能::
 
     label hentai:
 
@@ -393,7 +374,7 @@ You can then change the flag in code that is chosen by menus::
 
         jump marry
 
-And check it later::
+然后检查一下储存量::
 
         "And so, we became a visual novel creating team."
         "We made games and had a lot of fun making them."
@@ -403,57 +384,38 @@ And check it later::
 
         "And one day..."
 
-Of course, python variables need not be simple True/False values. They
-can be arbitrary python values. They can be used to store the player's
-name, to store a points score, or for any other purpose. Since Ren'Py
-includes the ability to use the full Python programming language, many
-things are possible.
+当然，python 变量不一定是这么简单的真/假值。它可以使任意的 python 变量值。可以是储存玩家的名称，游戏分数，或者用于更多的用途。因为 Ren'Py 包含了 Python程序语言的所有功能，一切皆有可能。
 
-Releasing Your Game
+发布你的游戏
 -------------------
 
-Once you've made a game, there are a number of things you should do
-before releasing it:
+当你完成了一部游戏后，有一系列的事情需要你去做，以便于发布游戏:
 
-**Check for a new version of Ren'Py.**
-   New versions of Ren'Py are released on a regular basis, to fix bugs
-   and add new features. Before releasing, click update in the launcher
-   to update Ren'Py to the latest version. You can also download new
-   versions and view a list of changes at
+**检查 Ren'Py 的新版本**
+   新版本的 Ren'Py 是基于通常的基础版本，修复了bug和增加了新功能。在发布游戏之前，请使用启动器来把 Ren'Py 升级到最新版本。你也可以下载新版本并查看更新记录，在以下网站
    `http://www.renpy.org/latest.html <http://www.renpy.org/latest.html>`_.
 
-**Check the Script.**
-   From the front page of the launcher, choose "Check Script
-   (Lint)". This will check your games for errors that may affect some
-   users. These errors can affect users on the Mac and Linux
-   platforms, so it's important to fix them all, even if you don't see
-   them on your computer.
+**检查代码。**
+   在启动器的首页中，选择 "Check Script
+   (Lint)"。这会检查游戏中影响玩家的错误。这些错误可能会影响 Mac 和 Linux 平台上的玩家。所以这很重要，即使没有在你电脑上看到错误的报告。
 
-**Build Distributions.**
-   From the front page of the launcher, choose "Build Distributions". Based
-   on the information contained in options.rpy, the launcher will build one
-   or more archive files containing your game.
+**创建发行版**
+   在启动器的首页中，选择 "Build Distributions". 基于 options.rpy 中包含的信息，启动器会创建一个或者多个包含你游戏本体的压缩包。
 
-**Test.**
-   Lint is not a substitute for thorough testing. It's your
-   responsibility to check your game before it is released. Consider asking
-   friends to help beta-test your game, as often a tester can find problems
-   you can't.
+**测试。**
+   Lint 不是全面测试的替代品。在发布之前检查游戏中的bug是你的责任。让你朋友去帮你玩游戏找bug，能找到你所不能找到的bug。
 
-**Release.**
-   You should post the generated files (for Windows, Mac, and Linux) up
-   on the web somewhere, and tell people where to download them
-   from. Congratulations, you've released a game!
+**发布。**
+   你可以上传完成后的文件(基于 Windows, Mac, 和 Linux) 到网络上，然后告诉朋友哪里可以下载它。恭喜，你已经发布了你的游戏了！
 
-   Please also add your released game to our `games database <http://games.renpy.org>`_,
-   so we can keep track of the Ren'Py games being made.
+   请你同时为`games database <http://games.renpy.org>`_ 添加你已经发布的游戏，以便于我们能够追踪  Ren'Py 游戏。
 
-Script of The Question
+The Question 的源代码
 -----------------------
 
-You can view the full script of ''The Question'' :ref:`here <thequestion>`.
+你可以查看 ''The Question'' 的完整代码 :ref:`here <thequestion>`.
 
-Where do we go from here?
+接下来我们应该怎么做？
 -------------------------
 
 This Quickstart has barely scratched the surface of what Ren'Py is
