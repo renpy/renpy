@@ -12,10 +12,7 @@ Ren'Py 启动器
 
 **开始入门** 你应该通过`下载 Ren'Py<https://www.renpy.org/latest.html>`_来开始入门.
 
-当下载Ren'Py完毕，你可能会想解压缩它。This can
-generally be done by right-clicking on the package file, and picking
-"Extract" if that's an option, or "Open" if it's not. Follow the
-prompts, and you'll have a working copy of Ren'Py.
+当下载Ren'Py完毕，你可能会想解压缩它。对压缩包文件右键点击，选择"解压"选项或者"打开"选项就能够实现解压了。按照提示去做，就能得到 Ren'Py 的工作目录。
 
 .. 注意::
 
@@ -117,25 +114,16 @@ init 语句用于在脚本运行前执行一些 Ren'Py 语句的代码块。Init
         s "Sure, but what is a \"visual novel?\""
 
 
-The first and and second lines define characters. The first line
-defines a character with the short name of "s", the long name
-"Sylvie", with a name that is shown in a greenish color. (The colors
-are red-green-blue hex triples, as used in web pages.)
+第一行和第二行定义了角色。第一行定义了定义了全名为"Sylvie"，缩略名为"s"的角色，并以偏绿色的颜色来显示(颜色是使用RGB十六位颜色编号，和使用在网页上的一样。)
 
-The second line creates a character with a short name "m", a long name
-"Me", with the name shown in a reddish color. Other characters can be
-defined by copying one of the character lines, and changing the short
-name, long name, and color.
+第二行新建了一个全名为"Me"，缩略名为"m"的角色，并以偏红色的颜色来显示。更多其他角色可以通过复制这其中的一个角色定义的代码行，修改其缩略名，全名和颜色来进行定义。
 
-We've also changed the say statements to use character objects instead
-of a character name string. This tells Ren'Py to use the characters we
-defined in the init block.
+我们也可以通过使用角色对象代替角色名称字符串来改变 say 语句。这命令 Ren'Py 去使用定义在 init 区块中已经定义好的角色。
 
 图像
 ------
 
-A visual novel isn't much of a visual novel without pictures. Let's
-add some pictures to our game.
+现在这个视觉小说还只是缺乏图片的视觉小说。为我们的游戏加点图片吧。
 
 ::
 
@@ -167,41 +155,20 @@ add some pictures to our game.
         s "Sure, but what is a \"visual novel?\""
 
 
-The first new thing we needed to do was to declare the images, using
-image statements on lines 2, 3, 5, and 6, inside the init block. These
-image statements give an image name, and the filename the image is
-found in.
+第一个新要点是定义图像，就像 init 区块中第2，3，5，6行中使用的 image 语句。这些 image 语句给定了图像名称和用于查找的图片所在文件名。
 
-For example, line 5 declares an image named "sylvie smile", found in
-the filename "sylvie_smile.png", with the tag "sylvie".
+例如，第5行定义了一副图像，名称为 "sylvie smile"，能够根据为"sylvie_smile.png"的文件名来查找到该图像，并赋予名称为"sylvie"的标签。
 
-We have a scene statement on line 12. This statement clears out the
-screen, and shows the "bg meadow" image. The next line is a show
-statement, which shows the "sylvie smile" image on the screen.
+在第12行，我们使用了 scene 语句. 这个语句会清除屏幕，并呈现 "bg meadow" 图像。下一行为 show 语句，它在屏幕上显示出"sylvie smile"图像。
 
-The first part of an image name is the image tag. If an image is being
-shown, and another image with the same tag is on the screen, then the
-image that's on the screen is replaced with the one being shown. This
-happens on line 19, the second show statement. Before line 19 is run,
-the image "sylvie smile" is on the screen. When line 19 is run, that
-image is replaces with "sylvie surprised", since they share the
-"sylvie" tag.
+image 名称的第一个部分是图像标签名。当屏幕上同时存在具有相同标签的多幅图像时，如果一张特定的图像被显现出来，这一幅图像会替换掉它们。第19行，也就是第二个 show 语句，就是这样的一个情况。在第19行运行之前，"sylvie smile"图像存在在屏幕上。当第19行运行后，图像就被替换成"sylvie surprised"的图像了，因为它们共享了便签"sylvie"。
 
-For Ren'Py to find the image files, they need to be placed in the game
-directory of the current project. The game directory can be found at
-"`Project-Name`/game/", or by clicking the "Game Directory" button in
-the launcher. You'll probably want to copy the image files from the
-"the_question/game/" directory into the "my_question/game/" directory,
-so you can run this example.
+为了能让 Ren'Py 能够查找到图像文件，图像文件需要被存放在当前项目的当前游戏目录中。游戏目录可以是"`Project-Name`/game/"，或者在启动器中点击"Game Directory"的按钮。 你可能会想复制"the_question/game/" 目录到"my_question/game/" 目录下，然后你就能运行这个示例了。
 
-Ren'Py does not make any distinction between character and background
-art, as they're both treated as images. In general, character art
-needs to be transparent, which means it should be a PNG or WEBP
-file. Background art can be JPEG, PNG, or WEBP files. By convention,
-background images start with the "bg" tag.
+Ren'Py 不会区分人物立绘和背景，因为它们都被看做是图像。一般情况下，人物立绘会要求有透明部分，意味着需要以 PNG,WEBP 这些格式来储存。而背景就能以 JPEG, PNG, 或者 WEBP 文件格式储存。按照惯例，背景图像一般具有以"bg"开头的标签。
 
-**Hide Statement.**
-Ren'Py also supports a hide statement, which hides the given image.
+**Hide 语句。**
+Ren'Py 同时也支持 hide 语句，用于隐藏给定的图像。
 
 ::
 
@@ -215,19 +182,12 @@ Ren'Py also supports a hide statement, which hides the given image.
 
         m "That wasn't what I meant!"
 
-It's actually pretty rare that you'll need to use hide. Show can be
-used when a character is changing emotions, while scene is used when
-everyone leaves. You only need to use hide when a character leaves and
-the scene stays the same.
+你需要用上 hide 语句的场合其实是很少。Show 语句能够在角色转换表情时用上，而 scene 语句用于所有人物立绘离开时。你只需要在保持当前背景但人物离开时使用 hide 语句即可。
 
 过渡效果
 -----------
 
-Simply having pictures pop in and out is boring, so Ren'Py implements
-transitions that can make changes to the screen more
-interesting. Transitions change the screen from what it looked like at
-the end of the last interaction (dialogue, menu, or transition), to
-what it looks like after any scene, show, and hide statements.
+简单地是图片弹出或者弹入其实是很枯燥突兀的，所以Ren'Py 实现了能让屏幕效果变得更加有趣的过渡效果。过渡改变了当前最后一次的交互(对话，菜单，或者过渡本身)的外观，变成执行 scene，show，hide语句后的外观效果。
 
 ::
 
@@ -255,22 +215,17 @@ what it looks like after any scene, show, and hide statements.
         m "Ummm... will you..."
         m "Will you be my artist for a visual novel?"
 
-The with statement takes the name of a transition to use. The most
-common one is ``dissolve`` which dissolves from one screen to the
-next. Another useful transition is ``fade`` which fades the
-screen to black, and then fades in the new screen.
+with 语句调用了要使用的过渡的名称。最常见的是 ``dissolve`` 过渡效果，用于以溶解效果来切换到下一个场景。另一个很实用的过渡效果是 ``fade`` ，它能使屏幕图像渐变成黑色，再渐变为新的屏幕图像。
 
-When a transition is placed after multiple scene, show, or hide
-statements, it applies to them all at once. If you were to write::
+当把过渡放置在多个 scene，show 或者 hide
+语句后时,会一次性地应用在多个语句上。当你这样写的话::
 
     ###
         scene bg meadow
         show sylvie smile
         with dissolve
 
-Both the "bg meadow" and "sylvie smiles" would be dissolved in at the
-same time. To dissolve them in one at a time, you need to write two
-with statements::
+"bg meadow"和"sylvie smiles"都会在同一时间出现溶解过渡效果。如果想让它们各自出现溶解效果，你需要两次写上这个语句::
 
     ###
         scene bg meadow
@@ -278,9 +233,7 @@ with statements::
         show sylvie smile
         with dissolve
 
-This first dissolves in the meadow, and then dissolves in sylvie. If
-you wanted to instantly show the meadow, and then show sylvie, you
-could write::
+第一个溶解效果出现在 meadow 中，然后第二个溶解效果出现在 sylvie 中。如果你想立即显现 meadow，然后再显现 sylvie，你可以这样写::
 
     ###
         scene bg meadow
@@ -288,106 +241,80 @@ could write::
         show sylvie smile
         with dissolve
 
-Here, None is used to indicate a special transition that updates
-Ren'Py's idea of what the prior screen was, without actually showing
-anything to the user.
+在这里，None 关键词属于一种特殊的过渡效果，它告诉
+Ren'Py前面的场景是什么，并且不向用户显示任何效果。
 
 位置
 ---------
 
-By default, images are shown centered horizontally, and with their
-bottom edge touching the bottom of the screen. This is usually okay
-for backgrounds and single characters, but when showing more than one
-character on the screen it probably makes sense to do it at another
-position. It also might make sense to reposition a character for story
-purposes.
+默认情况下，图片回忆水平居中显示，而且图片的底部会接触到屏幕的底部。这对于背景图片和单个角色是可以的，但场景里同时存在一个以上的角色时，就要考虑把他们放置在另一个位置了。为了故事剧情的需要，角色位置的变动是合情合理的。
 
 ::
 
    ###
         show sylvie smile at right
 
-To do this repositioning, add an at-clause to a show statement. The at
-clause takes a position, and shows the image at that position. Ren'Py
-includes several pre-defined positions: ``left`` for the left side of
-the screen, ``right`` for the right side, ``center`` for centered
-horizontally (the default), and ``truecenter`` for centered
-horizontally and vertically.
+给 show 语句添加一个 at 从句就能做到位置的重排。at 从句调用位置参数，并且令图像显示在该位置上。Ren'Py 内置了多个预定义位置参数：``left`` 代表了屏幕左侧，``right`` 是右侧，``center`` 是水平居中(默认的)和 ``truecenter`` 代表着同时水平方向和垂直方向上的居中。
 
-A user can define their own positions, and event complicated moves,
-but that's outside of the scope of this quickstart.
+用户可以自定义位置参数，和基于事件的复杂移动，但这些超越了本快速入门的讨论范畴了。
 
 音乐和声效
 ---------------
 
-Most games play music in the background. Music is played with the play music
-statement. It can take either a string containing a filename, or a list of filenames
-to be played. When the list is given, the item of it is played in order. ::
+大多数游戏都会播放背景音乐。可以通过 play music
+语句来控制音乐播放。你既可以给定一个表示文件名的字符串，也可以是一个包含多个文件名的列表。当给定的是列表时，将会按顺序地播放列表中的音乐。 ::
 
     ###
         play music "illurock.ogg"
         play music ["1.ogg", "2.ogg"]
 
 
-When changing music, one can supply a fadeout and a fadein clause, which
-are used to fade out the old music and fade in the new music. ::
+你可以使用 fadeout 和 fadein 从句来控制音乐之间的切换。这样你就可以令到以隐出的方式结束旧的音乐，并以隐入的方式来进入新的音乐。 ::
 
     ###
         play music "illurock.ogg" fadeout 1.0 fadein 1.0
 
-And if you supply a loop clause, it loops. if you supply a noloop clause, it
-doesn't loop. In Ren'Py, music files automatically loop until they are stopped
-by the user. ::
+而且，当你使用了 loop 从句时，它就会循环播放。当你使用了 noloop 从句，它就不会循环播放。在 Ren'Py 中，音乐文件会自动地被不断循环播放，直到用户手动去暂停它。 ::
 
     ###
         play music "illurock.ogg" loop
         play music "illurock.ogg" noloop
 
-Music can be stopped with the stop music statement, which can also
-optionally take a fadeout clause. ::
+可以使用 stop music 从句来停止音乐播放，也可以加上可选的的 fadeout 从句。 ::
 
     ###
         stop music
 
-Sound effects can be played with the play sound statement. It defaults to not looping. ::
+使用 play sound 语句可以播放声效。默认情况下这不会循环播放的。 ::
 
     ###
         play sound "effect.ogg"
 
-The play sound statement can have same clauses with the play music statement.
+play sound 语句和 play music 语句具有一些相同的从句可以搭配。
 
-Ren'Py support many formats for sound and music, but OGG Vorbis is
-preferred. Like image files, sound and music files must be placed in
-the game directory.
+Ren'Py 支持多种声效和音乐文件格式，但其中，OGG 格式是最好的。就像图像文件，声效和音乐文件必须放置在游戏目录之中。
 
 Pause 语句
 ---------------
 
-The pause statement causes Ren'Py to pause until the mouse is clicked. If the
-optional expression is given, it will be evaluated to a number, and the pause
-will automatically terminate once that number of seconds has elapsed.
+pause 语句能够令 Ren'Py 暂停，直到点击鼠标后解除。 如果给定可选的表达式的话，而且是为数值的赋值的话，将会自动地在指定秒数后结束游戏暂停
 
 结束游戏
 ---------------
 
-You can end the game by running the return statement, without having
-called anything. Before doing this, it's best to put something in the
-game that indicates that the game is ending, and perhaps giving the
-user an ending number or ending name. ::
+你可以使用 return 语句来结束整个游戏，而且不需要调用任何东西。在结束之前，最好给游戏添加一些内容，来指示游戏将要结束，一般可能是一个表示结束用的数字或者结束用的名称。 ::
 
     ###
         ".:. Good Ending."
 
         return
 
-That's all you need to make a kinetic novel, a game without any
-choices in it. Now, we'll look at what it takes to make a game that
-presents menus to the user.
+以上就是制作一个动态小说所必不可少的东西。现在，让我们来了解一下游戏中展现菜单需要做什么。
 
 菜单, 标签, 和跳转
 -------------------------
 
-The menu statement lets you present a choice to the user::
+menu 语句能够让你向玩家展示一组选项::
 
     ###
         s "Sure, but what's a \"visual novel?\""
