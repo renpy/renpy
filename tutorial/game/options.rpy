@@ -376,3 +376,9 @@ init python:
 
     build.documentation('*.html')
     build.documentation('*.txt')
+
+    # This is tutorial specific code that searches for fonts in
+    # launcher/fonts, reducing the size of the zip file containing
+    # the SDK.
+    config.searchpath.append("../launcher/game/fonts")
+

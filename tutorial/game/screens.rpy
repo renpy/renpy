@@ -389,12 +389,12 @@ screen preferences():
                 has vbox
 
                 label _("Language")
-                textbutton "English" action Language(None)
-                textbutton "日本語" text_font "tl/japanese/MTLc3m.ttf" action Language("japanese")
-                textbutton "한국어" text_font "tl/korean/NanumGothic.ttf" action Language("korean")
-                textbutton "Русский" action Language("russian")
-                textbutton "Tiếng Việt" action Language("vietnamese")
-                textbutton "Indonesian" action Language("indonesian")
+                textbutton "English" text_font "DejaVuSans.ttf" action Language(None)
+                textbutton "日本語" text_font "MTLc3m.ttf" action Language("japanese")
+                textbutton "한국어" text_font "NanumGothic.ttf" action Language("korean")
+                textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
+                textbutton "Tiếng Việt" text_font "DejaVuSans.ttf" action Language("vietnamese")
+                textbutton "Indonesian" text_font "DejaVuSans.ttf" action Language("indonesian")
 
             # end-tutorial-only
 
