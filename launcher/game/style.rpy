@@ -22,8 +22,8 @@
 init -1:
 
     # Fonts.
-    define gui.LIGHT_FONT = "Roboto-Light.ttf"
-    define gui.REGULAR_FONT = "Roboto-Regular.ttf"
+    define gui.LIGHT_FONT = "fonts/Roboto-Light.ttf"
+    define gui.REGULAR_FONT = "fonts/Roboto-Regular.ttf"
 
     # Used to scale the size of fonts.
     define gui.FONT_SCALE = 1.0

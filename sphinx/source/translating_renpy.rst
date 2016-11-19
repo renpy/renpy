@@ -134,17 +134,14 @@ Functions
 The following functions are used to configure translation in the launcher.
 They should be called from the init python block.
 
-.. function:: translate_font(language, font, prefix=None)
+.. function:: translate_font(language, font)
 
     This is used to set a font for `language`. The font is used in the
-    launcher, and also used to in games generated in that language.
+    launcher, and also used to in games generated in that language. The
+    font file should be placed in game/fonts.
 
     `font`
         A string giving the name of the font file.
-
-    `prefix`
-        The path to the font file (not including the font itself), relative
-        to the launcher game directory. If not given, tl/`language` is used.
 
 
 .. function:: translate_define(language, define, value, help=None)

@@ -41,11 +41,11 @@ init -1 python:
 
         `path`
             The path to the font file, relative to the launcher's game
-            directory. If not given, defaults to tl/`language`.
+            directory. If not given, defaults to fonts.
         """
 
         if path is None:
-            path = "tl/" + language
+            path = "fonts"
 
         fullfont = path + "/" + font
 
