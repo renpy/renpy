@@ -162,6 +162,12 @@ label new_theme_project:
             with open(fn, "wb") as f:
                 f.write(options.encode("utf-8"))
 
+            font = template.data.get("font", None)
+            if font is not None:
+                src = os.path.join(config.gamedir, "fonts", font)
+                dst = os.path.join(project_dir, "game", "tl", "None", font)
+                shutil.copy(src, dst)
+
         # Activate the project.
         with interface.error_handling("activating the new project"):
             project.manager.scan()
