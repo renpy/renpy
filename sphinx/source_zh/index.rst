@@ -1,7 +1,7 @@
-Welcome to Ren'Py's documentation!
+欢迎来到 Ren'Py 文档！
 ==================================
 
-To find out more about Ren'Py, please visit the Ren'Py home page:
+想了解更多关于 Ren'Py，请访问 Ren'Py 的主页：
 
     http://www.renpy.org/
 
@@ -12,30 +12,30 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
         http://ja.renpy.org/doc/html/
 
 
-Getting Started
+入门
 ---------------
 .. toctree::
     :maxdepth: 3
 
-    quickstart
+    快速入门
     gui
 
-The Ren'Py Language
+Ren'Py 语言
 -------------------
 
 .. toctree::
    :maxdepth: 1
 
-   language_basics
-   label
-   dialogue
-   displaying_images
-   menus
+   语言基础
+   标签
+   对话
+   展现图片
+   菜单
    python
-   conditional
-   audio
-   movie
-   voice
+   条件语句
+   音频
+   视频
+   声音
 
 Text, Displayables, Transforms, and Transitions
 -----------------------------------------------
@@ -43,12 +43,12 @@ Text, Displayables, Transforms, and Transitions
 .. toctree::
    :maxdepth: 1
 
-   text
-   translation
-   displayables
-   transforms
-   transitions
-   atl
+   文本
+   翻译
+   可展示性
+   变形效果
+   过渡效果
+   改变
 
 Customizing Ren'Py
 ------------------

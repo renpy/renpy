@@ -40,51 +40,35 @@ Ren'Py兼容 libav (已包含)的使用并使用
 
         $ renpy.movie_cutscene("On_Your_Mark.webm")
 
-在移动平台，比如Android and iOS, 当:var:`config.hw_video` 值为true时硬件视频解码就能默认开启。This is generally
-much faster, but the list of supported movie formats depends on the
-platform.
+在移动平台，比如Android and iOS, 当:var:`config.hw_video` 值为true时硬件视频解码就能默认开启。编码速度通常都很快，但能支持的视频格式取决于平台。
 
-Movie Displayables and Movie Sprites
+视频的可展示性和视频精灵元素
 ------------------------------------
 
-The Movie displayable can be used to display a movie anywhere Ren'Py can
-show a displayable. For example, a movie can be displayed as the background
-of a menu screen, or as a background.
+视频的可展示性能够令视频在 Ren'Py 允许展示的地方显现出来。例如，视频可以作为菜单背景来展示，或者是充当背景。视频的可展示型同样可以用于定义视频精灵元素，这是由两个视频元素共同渲染出来的。第一个视频元素提供了精灵的颜色。第二个视频元素是一个遮罩视频，提供了透明通道，当不透明全满时为白色，当透明度为满时为黑色。
 
-The Movie displayable can also be used to define a movie sprite, which is
-a sprite that is backed by two movies. The primary movie provides the
-color of the sprite. A second movie, the mask movie, provides the alpha
-channel, with white being full opacity and black being full transparency.
+受视频可展示性控制的视频会自动循环播放的。
 
-Movies played by the Movie displayable loop automatically.
-
-There are three very important parameters to the Movie displayable, two of
-which should always be provided.
+视频可展示性有三个特别重要的参数，其中的两个时经常用到。
 
 `channel`
-    A string giving the name of the channel that the movie will be played on.
+    一段字符串，它表明了播放视频所在的频道的名称。
 
-    This must always be provided, and should never
-    *not* be left at the default of "movie", and should not be the name
-    of an audio channel. Names should be chosen such that only one
-    Movie will be displaying on a given channel at the same time. Channels
-    provided will be automatically registered using :func:`renpy.music.register_channel`,
-    if not already registered.
+    此参数必须给定，千万 *不要* 在默认的"movie" 中遗漏它,并且不要和声音频道的名称一样。名称不要和同一时间给定频道播放的视频重名。如果指定的频道没有注册过的话，会自动使用 :func:`renpy.music.register_channel` 来进行注册。
 
 `play`
-    A string giving the name of a movie file to play.
+    一段字符串，给定的视频文件的文件名。
 
-    This should always be provided.
+    此参数必须给定。
 
 `mask`
-    A string giving the name of a movie file to use as an alpha mask.
+    一段字符串，作为透明度遮罩的视频文件的名称。
 
-Here's an example of defining a movie sprite::
+以下是视频精灵的一个示例::
 
     image eileen movie = Movie(channel="eileen", play="eileen_movie.webm", mask="eileen_mask.webm")
 
-The movie sprite can be shown using the show statement, which automatically starts the
-movie playing. It will be automatically stopped when the displayable is hidden. ::
+可以使用 show 语句来显示视频精灵，它会自动地开始视频播放。当可显示性被隐藏时，它就会自动停止视频播放。 ::
 
     show eileen movie
 
@@ -94,8 +78,7 @@ movie playing. It will be automatically stopped when the displayable is hidden. 
 
     e "But there's no point on wasting energy when I'm not around."
 
-A Movie displayable can also be used as part of a screen, provided it is created
-during the init phase (for example, as part of an image statement.) ::
+视频可展示性也可以作为屏幕的一部分来使用，在 init 时期给定并创建(例如，作为 image 语句的一部分。) ::
 
 
     image main_menu = Movie(channel="main_menu", play="main_menu.ogv")
@@ -104,10 +87,7 @@ during the init phase (for example, as part of an image statement.) ::
         add "main_menu"
         textbutton "Start" action Start() xalign 0.5 yalign 0.5
 
-Multiple movie displayables or sprites can be displayed on the screen at once,
-subject to system performance, and provided all share the same framerate. The
-behavior of Ren'Py when displaying movies with different framerates is
-undefined, but will likely include a significant amount of frame drop.
+多个视频可展示性或者视频精灵可以在屏幕中显示一次，为了迁就系统的性能并保持相同的帧率。当视频以不同的帧率被播放时，Ren'Py 的行为时不确定的，比如会有明显的掉帧现象。
 
 
 Python Functions
