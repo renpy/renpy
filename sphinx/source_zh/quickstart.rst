@@ -418,21 +418,10 @@ The Question 的源代码
 接下来我们应该怎么做？
 -------------------------
 
-This Quickstart has barely scratched the surface of what Ren'Py is
-capable of. For simplicity's sake, we've omitted many features Ren'Py
-supports. To get a feel for what Ren'Py is capable of, we suggest
-playing through the Tutorial, and having Eileen demonstrate these features
-to you.
+这篇快速开始仅仅就是介绍了 Ren'Py 的基础功能。因为要令教程尽量简单易懂，我们已经省略了很多 Ren'Py 提供的功能。要想了解 Ren'Py 的更多功能，我们强烈建议去玩一下 Tutorial，让 Eileen 告诉你更多功能。
 
-You may also want to read the rest of this (complex) manual, as it's
-the definitive guide to Ren'Py.
+你也可以阅读手册剩下的章节，那是 Ren'Py 的权威指南。
 
-On the Ren'Py website, there's the a `FAQ <http://www.renpy.org/wiki/renpy/doc/FAQ>`_ giving answers to
-common questions, and a `Cookbook <http://www.renpy.org/wiki/renpy/doc/cookbook/Cookbook>`_ giving
-useful code snippets. If you have questions, we suggest asking them at
-the `Lemma Soft Forums <http://lemmasoft.renai.us/forums/>`_, the
-official forum of Ren'Py. This is the central hub of the Ren'Py
-community, where we welcome new users and the questions they bring.
+Ren'Py 网站里的 `FAQ <http://www.renpy.org/wiki/renpy/doc/FAQ>`_ 对于常见问题给出了答案，还有 `Cookbook <http://www.renpy.org/wiki/renpy/doc/cookbook/Cookbook>`_ 给出了一些有用的代码片段。如果你还有疑问，我们建议你在 `Lemma Soft Forums <http://lemmasoft.renai.us/forums/>`_提问，这是 Ren'Py 的官方论坛。也是 Ren'Py 社区的中心。我们欢迎新用户并乐意倾听他们的疑问。
 
-Thank you for choosing the Ren'Py visual novel engine. We look forward
-to seeing what you create with it!
+最后衷心感谢你选择了 Ren'Py 视觉小说引擎。我们期待它能够帮助你创造出游戏作品！
