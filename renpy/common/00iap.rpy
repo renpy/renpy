@@ -531,8 +531,8 @@ init -1500 python in iap:
         :doc: iap
 
         Returns the name of the enabled store for in-app purchase. This
-        currently returns one of "amazon", "google", "ios" or None if no store
-        is available.
+        currently returns one of "amazon", "play" (for Google Play), "ios"
+        or None if no store is available.
         """
 
         return backend.get_store_name()
