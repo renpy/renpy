@@ -1686,7 +1686,16 @@ class LiveTile(Container):
 
         for y in range(0, height, ch):
             for x in range(0, width, cw):
-                rv.blit(cr, (x, y), focus=False)
+
+                ccw = min(cw, width - x)
+                cch = min(ch, height - y)
+
+                if (ccw < cw) or (cch < ch):
+                    ccr = cr.subsurface((0, 0, ccw, cch))
+                else:
+                    ccr = cr
+
+                rv.blit(ccr, (x, y), focus=False)
 
         return rv
 

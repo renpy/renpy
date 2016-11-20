@@ -295,6 +295,9 @@ class Displayable(renpy.object.Object):
     # duplicate method), or one of its children is.
     _duplicatable = False
 
+    # Does this displayable require clipping?
+    _clipping = False
+
     def __init__(self, focus=None, default=False, style='default', _args=None, **properties):
         self.style = renpy.style.Style(style, properties)  # @UndefinedVariable
         self.focus_name = focus

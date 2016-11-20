@@ -193,7 +193,7 @@ cpdef render(d, object widtho, object heighto, double st, double at):
 
     rv.render_of.append(d)
 
-    if style.clipping:
+    if d._clipping:
         rv = rv.subsurface((0, 0, rv.width, rv.height), focus=True)
         rv.render_of.append(d)
 
