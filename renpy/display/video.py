@@ -207,8 +207,9 @@ class Movie(renpy.display.core.Displayable):
 
     `channel`
         The audio channel associated with this movie. When a movie file
-        is played on that channel, it wil be displayed in this Movie
-        displayable.
+        is played on that channel, it will be displayed in this Movie
+        displayable. If this is not given, and the `play` is provided,
+        a channel name is automatically selected.
 
     `play`
         If given, this should be the path to a movie file. The movie
@@ -257,6 +258,12 @@ class Movie(renpy.display.core.Displayable):
 
     def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, **properties):
         super(Movie, self).__init__(**properties)
+
+        global auto_channel_serial
+
+        if channel == "movie" and play and renpy.config.auto_movie_channel:
+            channel = "movie_{}_{}".format(play, mask)
+
         self.size = size
         self.channel = channel
         self._play = play

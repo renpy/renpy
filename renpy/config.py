@@ -736,6 +736,9 @@ init_system_styles = None
 # Callbacks that are called just before rebuilding styles.
 build_styles_callbacks = [ ]
 
+# Should movie displayables be given their own channels?
+auto_movie_channel = True
+
 del renpy
 del os
 

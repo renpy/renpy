@@ -3,7 +3,7 @@
 # Ren'Py does support movies, and we'll add them sometime later.
 
 #begin movie_image
-image shuttle = Movie(channel="shuttle", play="shuttle.ogv", pos=(475, 50), anchor=(0, 0))
+image shuttle = Movie(play="shuttle.ogv", pos=(475, 50), anchor=(0, 0))
 #end movie_image
 
 label tutorial_video:
