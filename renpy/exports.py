@@ -2777,6 +2777,7 @@ def set_physical_size(size):
     if get_renderer_info()["resizable"]:
         renpy.display.draw.quit()
         renpy.display.interface.set_mode(size)
+        renpy.display.interface.last_resize = size
 
 
 def reset_physical_size():
