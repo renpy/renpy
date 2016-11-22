@@ -876,3 +876,15 @@ class Script(object):
             i.analyze()
 
         self.need_analysis = [ ]
+
+    def report_duplicate_labels(self):
+        if not renpy.config.developer:
+            return
+
+        if renpy.config.ignore_duplicate_labels:
+            return
+
+        renpy.parser.parse_errors = self.duplicate_labels
+
+        if renpy.parser.report_parse_errors():
+            raise SystemExit(-1)

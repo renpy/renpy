@@ -739,6 +739,9 @@ build_styles_callbacks = [ ]
 # Should movie displayables be given their own channels?
 auto_movie_channel = True
 
+# Should we ignore duplicate labels?
+ignore_duplicate_labels = False
+
 del renpy
 del os
 

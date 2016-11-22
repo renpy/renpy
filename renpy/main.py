@@ -427,6 +427,8 @@ def main():
         for i in renpy.game.post_init:
             i()
 
+        renpy.game.script.report_duplicate_labels()
+
         game.persistent._virtual_size = renpy.config.screen_width, renpy.config.screen_height
 
         for i in renpy.game.persistent._seen_translates:  # @UndefinedVariable
