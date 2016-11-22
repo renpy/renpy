@@ -382,7 +382,7 @@ init -1500 python hide:
         elif not _voice.sustain:
             renpy.sound.stop(channel="voice")
 
-            if not renpy.context()._menu:
+            if not getattr(renpy.context(), "_menu", False):
                 store._last_voice_play = None
 
         _voice.play = None
