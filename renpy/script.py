@@ -139,6 +139,8 @@ class Script(object):
         self.loaded_rpy = False
         self.backup_list = [ ]
 
+        self.duplicate_labels = [ ]
+
     def choose_backupdir(self):
 
         if renpy.mobile:
@@ -403,16 +405,25 @@ class Script(object):
                 name = node.name
 
                 if name in self.namemap:
-                    if not isinstance(bad_name, basestring):
-                        bad_name = name
-                        bad_node = node
-                        old_node = self.namemap[name]
 
-            if bad_name is not None:
-                raise ScriptError("Name %s is defined twice, at %s:%d and %s:%d." %
-                                  (repr(bad_name),
-                                   old_node.filename, old_node.linenumber,
-                                   bad_node.filename, bad_node.linenumber))
+                    bad_name = name
+                    bad_node = node
+                    old_node = self.namemap[name]
+
+                    if not isinstance(bad_name, basestring):
+
+                        raise ScriptError("Name %s is defined twice, at %s:%d and %s:%d." %
+                                          (repr(bad_name),
+                                           old_node.filename, old_node.linenumber,
+                                           bad_node.filename, bad_node.linenumber))
+
+                    else:
+                        self.duplicate_labels.append(
+                            u'The label {} is defined twice, at\n  File "{}", line {} and\n  File "{}", line {}.'.format(
+                                bad_name, old_node.filename, old_node.linenumber, bad_node.filename, bad_node.linenumber))
+
+                # Add twice, so we can find duplicates in the same file.
+                self.namemap[name] = node
 
         self.update_bytecode()
 
