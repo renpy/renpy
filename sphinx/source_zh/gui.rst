@@ -1,7 +1,7 @@
 .. _gui:
 
 =======================
-GUI Customization Guide
+GUI 自定义向导
 =======================
 
 .. ifconfig:: not renpy_figures
@@ -12,75 +12,51 @@ GUI Customization Guide
         save space. To view the full version, please visit
         https://www.renpy.org/doc/html/gui.html
 
-Ren'Py features a GUI system that (we hope) looks attractive out of the box,
-can be customized somewhat, and can be replaced entirely if necessary. This
-page explains how to do simple and intermediate levels of GUI customization.
+Ren'Py 能够赋予 GUI 系统比单纯的盒子模型更加吸引人，并且能够被自定义化。甚至在需要的时候能够被完全替代。此页面介绍了如何进行初级到中级的 GUI 自定义化。
 
-For more advanced customization, please take a look at the documentation for
-:ref:`styles <styles>` (including the list of :ref:`style properties <style-properties>`
-and :ref:`screens <screens>` (including
-:ref:`screen actions <screen-actions>` and :ref:`special screens <screen-special>`).
+想要更深入的自定义化，请查阅文档:ref:`styles <styles>` (包括 :ref:`样式特征 <style-properties>`的列表
+和 :ref:`屏幕 <screens>` (包含
+:ref:`屏幕动作 <screen-actions>` 和 :ref:`特殊屏幕 <screen-special>`).
 
-This assumes that you're using a new-style Ren'Py GUI (contained in the gui.rpy
-file). Older GUIs (that use the screens.rpy file) should be treated as advanced
-gui customization for the purposes of this guide.
+可能你正在使用 Ren'Py GUI 的新样式(包含在 gui.rpy 文件)。根据这篇向导，旧的 GUI (在 screens.rpy 文件中使用)应该看作进阶的 GUI 自定义化。
 
 
-Simple GUI Customization
+简单的 GUI 自定义化
 ========================
 
-There are a few simple pieces of GUI customization that make sense for
-all but the simplest visual novels. What these customizations have in
-common is that they do not require editing gui.rpy. These customizations
-change the GUI somewhat, but do not drastically change the look of the
-GUI.
+除了最简单的视觉小说，一丁点的 GUI 自定义化都能令游戏作品变得。一般的自定义化使不需要通过编辑 gui.py 来实现的。这些自定义化只是稍微修改一下 GUI 的细节,并不会对于 GUI 的外观大动干戈。
 
 
-Change Size and Colors
+改变尺寸大小的颜色
 ----------------------
 
-The easiest thing to change about the GUI is to change the size and
-color of the GUI. Ren'Py will prompt you to make these choices when
-you first create a project, but choosing "Change/Update GUI" in the
-launcher will let you change your choice.
+对 GUI 最简单的修改就是改变尺寸大小和颜色。Ren'Py会在你第一次新建项目的时候提醒你进行这些设置，但在启动器里选择 "Change/Update GUI" 能让你修改你之前的设置。
 
-When changing the GUI through the launcher, Ren'Py will prompt if you
-want to simply change the launcher, or update gui.rpy. Both choices
-will overwrite most image files, and overwriting gui.rpy will get rid
-of changes to that file.
+当你通过启动器来修改 GUI 的话，Ren'Py 会在第一次新建项目的时候，提示你选择 GUI 的设定，或者通过修改 gui.rpy。所有的选项会覆盖大多是的图像文件，并且重写 gui.rpy 会重置这些文件的修改。
 
-As a result, you probably want to do this before any other customization.
+结果，你可能更想在其他自定义化之前完成这些设置。
 
-Ren'Py will prompt for the default resolution of the project, and then
-also for the color scheme to use. Once you select those, it will update
-the GUI to match your choices.
+Ren'Py 会提示你设置项目默认的分辨率，还有选择要使用的颜色主题。当你都设置好这些选项后，GUI 就会根据你的设定进行更新。
 
 
 Options.rpy
 -----------
 
-There are a couple of variables in options.rpy that are used by the
-gui code.
+在 options.rpy 中有一对使用 gui 代码的变量
 
 :var:`config.name`
-    A string giving a human-readable name for the game. This is used as the
-    window title, and throughout the GUI wherever the title of the
-    game is needed.
+    一段字符串，给定了游戏可读的名称。同时也作为游戏窗口的标题，并贯穿了整个 GUI。
 
 :var:`gui.show_name`
-    This should be set to False to hide the title and version number from
-    the main menu. (Say, because the title is "baked into" the main menu
-    image.)
+    当此变量设置为 False 时，主菜单的游戏标题和版本号就会被隐藏起来。(这是因为标题是内嵌进主菜单的图像中的。)
 
 :var:`config.version`
-    A string giving the version of the game. This is presented to the
-    user in various places.
+    一段字符串，表示游戏的版本号，在游戏中多处向玩家展示。
 
 :var:`gui.about`
-    Additional text that is added to the about screen. If you want multiple
-    paragraphs of credits, \\n\\n can be used to separate the paragraphs.
+    游戏中”关于“界面中的附加文本。如果你想在鸣谢列表中使用多行的文本，可以使用 \\n\\n 来分隔段落。
 
-Here's an example of these defines::
+以下是关于定义这些变量的示例::
 
     define config.name = _('Old School High School')
 
@@ -90,8 +66,7 @@ Here's an example of these defines::
 
     define gui.about = _("Created by PyTom.\n\nHigh school backgrounds by Mugenjohncel.")
 
-For convenience, it might make sense to define gui.about using a triple-quoted
-string, in which case line endings are respected. ::
+为了简便起见，你可以使用三重引号字符串来定义 gui.about 这个变量，这样你就可以令段落能够分隔开来。 ::
 
     define gui.about = _("""\
     Created by PyTom.
@@ -99,125 +74,89 @@ string, in which case line endings are respected. ::
     High school backgrounds by Mugenjohncel.""")
 
 
-Game and Main Menu Background Images
+游戏和主菜单的背景图像
 -------------------------------------
 
-The images used by the GUI can be found in the game/gui directory,
-which can be opened by choosing "Open Directory: gui" from the
-launcher. The relevant files are:
+可以在 game/gui 目录中找到应用在 GUI 中的图像，可以在启动器中点击 "Open Directory: gui" 来打开。相关文件如下：
 
 gui/main_menu.png
-    A file that contains an image that is used in the background of
-    all screens of the main menu.
+    这个图像文件作为主菜单所有画面的背景。
 
 gui/game_menu.png
-    A file that contains an image that is used in the background of
-    all screens of the game menu.
+    这个图像文件作为游戏菜单所有画面的背景。
 
 .. ifconfig:: renpy_figures
 
     .. figure:: gui/easy_main_menu.jpg
         :width: 100%
 
-        The main menu, with only gui/main_menu.png replaced.
+        主菜单的背景图像，只需要替换 gui/main_menu.png 这个文件就可。
 
     .. figure:: gui/easy_game_menu.jpg
         :width: 100%
 
-        The about screen can be part of the game menu (using gui/game_menu.png
-        as the background) or the main menu (using gui/main_menu.png as the
-        background). Both can be set to the same image.
+        ”关于“画面可以作为游戏菜单的一部分(把 gui/game_menu.png
+        作为背景)或者主菜单(把 gui/main_menu.png 作为背景)。两者都可以设置成同一幅图像。
 
-
-Window Icon
+窗口图标
 -----------
 
-The window icon is the icon that is displayed (in places like the Windows
-task bar and Macintosh dock) by a running application.
+窗口图标是在运行中的应用中显示 (在类似 Windows 的任务栏或者 Macintosh dock 这些地方上显示)。
 
-The window icon can be changed by replacing gui/window_icon.png.
+可以通过替换 gui/window_icon.png 这个文件来改变窗口图标的样式。
 
-Note that this only changes the icon used by the running game. To change
-the icon used by Windows .exe files and Macintosh applications, see the
-:ref:`build documentation <special-files>`.
+请注意，这只能改变运行中的游戏的窗口上的图标。如果想改变 Windows 的 .exe 可执行文件的图标，和 Macintosh 的应用的图标，请查阅:ref:`build documentation <special-files>`.
 
 
 
-Intermediate GUI Customization
+中级 GUI 自定义化
 ==============================
 
-Next, we will demonstrate the intermediate level of GUI customization.
-At the intermediate level, it's possible to change the colors, fonts,
-and images used by the game. In general, intermediate customization
-keeps the screens mostly the same, with buttons and bars in the same
-places, although modifying the screens to add new functionality
-is certainly possible.
+接下来，我们来介绍一下中级的 GUI 自定义化。到了中级程度，我们就能改变游戏中的颜色，字体和图片。一般来说，中级程度的自定义化能够保持画面一致，还有按钮和条框会在相同的位置，当然，通过改变画面来加入新功能也是可行的。
 
-Many of these changes involve editing variables in gui.rpy. For example,
-to increase the dialogue font size, find the line that reads::
+在 gui.rpy 这个文件中有很多变量可以改变 GUI 的自定义化。例如，要想增加对话框中的字体大小，请查看以下这行字段::
 
     define gui.font_size = 22
 
-and increase or decrease it, for example, to::
+如果想要增加或者减少字体大小，可以这样做::
 
     define gui.font_size = 20
 
-Note that the default values are often different than what's found in
-this documentation. The default values can changed based on size and
-colors selected for the game, and the values in this file are an example
-of extensive gui customization. It's best to search gui.rpy for define and
-the variable in question - for example, "define gui.font_size".
+请注意，这些变量的默认值大多与这篇文档上显示的所不同。因为默认值能随游戏中的字体大小和颜色而改变，这些文件中的变量是 gui 额外自定义化中的示例。你最好通过搜索 gui.rpy 来查找有疑问的变量定义 - 比如，"define gui.font_size".
 
-Some of the adjustments below either partially or completely effect image
-files. As a result, the changes only take effect when the image files
-themselves are updated, which can be done by choosing "Change GUI" in
-the launcher, and telling it to regenerate image files. (But note that
-doing so will overwrite any image files you have already modified.)
+以下一些操作可能会局部地或者完全影响到图像文件。结果是，这些修改只会在更新图像文件后才会生效，你可以通过在启动器中选择 "Change GUI" 选项，并使其重新生成图像文件来实现。(但要注意的是，这样做会覆盖掉你已经修改过的图像文件。)
 
-You may want to consider waiting until your game is nearly complete before
-customizing gui.rpy in this way. While old gui.rpys will work in newer
-Ren'Py versions, newer gui.rpys may have features and fixes that older
-versions lack. Customizing the gui early may make it harder to take
-advantage of such improvements.
+你可能想在游戏项目差不多完成时在自定义 gui.rpy。当旧的 gui.rpy 文件在新的 Ren'Py 版本下运行时，较新的 gui.rpy 文件可能会增加新的特性并且修复了旧版本的缺陷。所以，过早自定义化 gui 不利于获取版本提升后的增益。
 
 
 
-Dialogue
+对话框
 --------
 
-There are a number of relatively easy customizations that can be performed
-to change how dialogue is displayed to the player. The first is changing
-the textbox.
+这里有大量相对简单的自定义化设置去修改对话框的外观形式。首先就是改变文本框。
 
 gui/textbox.png
-    This file contains the background of the text window, displayed as part
-    of the say screen. While this should be the full width of the game, text
-    is only displayed in the central 60% of the screen, with a 20% border
-    on either side.
+    这个文件是文本窗口的背景图像，作为对话画面的一部分来显示的。它应该具有与游戏窗口相同的宽度，文本只会占用画面中部60%来显示，剩下的20%宽度是两边的边框。
 
-In addition, there are a number of variables that can be customized to change
-dialogue.
+顺带，还有很多变量是与对话框的自定义有关的。
 
 .. var:: gui.text_color = "#402000"
 
-    This sets the color of the dialogue text.
+    对话框文本颜色的设置。
 
 .. var:: gui.default_font = "ArchitectsDaughter.ttf"
 
-    This sets the font that is used for dialogue text, menus, inputs, and
-    other in-game text. The font file should exist in the game directory.
+    对话框，菜单，输入框和其他游戏内文本的字体设置。字体文件本事应该放置在游戏目录下面。
 
 .. var:: gui.text_size = 33
 
-    Sets the size of the dialogue text. This may need to be increased or
-    decreased to fit the selected font in the space alloted.
+    对话框文本大小的设置。这可能需要通过增加或者减少大小来适应空格分配中所选择的字体。
 
 .. var:: gui.name_text_size = 45
 
-    Sets the size of character names.
+    角色名称处的字体大小。
 
-By default, the character name label uses the accent color. The color can
-be easily changed when defining a character::
+默认情况下，角色名称标签是继承祖先元素定义的颜色。当定义角色时可以方便地改变其颜色::
 
     define e = Character("Eileen", who_color="#104010")
 
@@ -226,182 +165,148 @@ be easily changed when defining a character::
     .. figure:: oshs/game/gui/textbox.png
         :width: 100%
 
-        An example textbox image.
+        文本框背景图像示例。
 
     .. figure:: gui/easy_say_screen.jpg
         :width: 100%
 
-        Dialogue customized using the textbox image and the variable
-        settings given above.
+       文本框背景图像和上文给出的变量设置都可以自定义化对话框。
 
-Choice Menus
+选项菜单
 ------------
 
-The choice screen is used by the menu statement to display choices to
-the player. Again, there  are some relatively easy customizations that
-can be performed on the choice screen. The first are the two image
-files:
+使用 menu 语句创建可以给作者展示选项菜单。与上文相似，选项画面也有很多相对简单的自定义化。首先介绍的是两个图像文件：
 
 gui/button/choice_idle_background.png
-    This image is used as the background of choice buttons that are not
-    focused.
+    这个图像是闲置按钮的背景图。
 
 gui/button/choice_hover_background.png
-    This image is used as the background of choice buttons that are focused.
+    这个图像是鼠标经过时按钮的背景图。
 
-By default, text is placed in the central 75% of these images. There are
-also a couple of variables that control the color of the text in choice
-buttons.
+默认情况下，选项按钮中的文本是位于背景图中部75%的区域中。这里有两个变量能够控制被选中按钮中文本的显示颜色。
 
 .. var:: gui.choice_button_text_idle_color = '#888888'
 
-    The color used for the text of unfocused choice buttons.
+    这是闲置按钮的文本颜色。
 
 .. var:: gui.choice_text_hover_color = '#0066cc'
 
-    The color used for the text of focused choice buttons.
+    则是选中鼠标经过时按钮的文本颜色。
 
-These should suffice for simple customization, where the size of the images
-does not need to be changed. For more complex customizations, check out the
-section on buttons, below.
+如果图像不需要修改的话，这些简单的自定义就足够了。如果想要更复杂的自定义化，请查询关于按钮的那一章节，如下。
 
 .. ifconfig:: renpy_figures
 
     .. figure:: oshs/game/gui/button/choice_idle_background.png
         :width: 100%
 
-        An example gui/button/idle_background.png image.
+        gui/button/idle_background.png 示例图像。
 
     .. figure:: oshs/game/gui/button/choice_hover_background.png
         :width: 100%
 
-        An example gui/button/choice_hover_background.png image.
+        gui/button/choice_hover_background.png 示例图像。
 
     .. figure:: gui/easy_choice_screen.jpg
         :width: 100%
 
-        An example of the choice screen, as customized using the images
-        and variable settings given above.
+        选项画面示例，使用了上文提及的图像文件和设置了给定的变量来进行自定义化。
 
-Overlay Images
+遮罩图像
 --------------
 
-There are also a pair of overlay images. These are used to darken or
-lighten the background image to make buttons and other user interface
-components more readable. These images are in the overlay directory:
+有一对遮罩图像可供使用。它们是用来令背景图像变暗或者变亮，使得按钮和其他用户界面元件更具可读性。这两个图像文件被放置在 overlay 目录下：
 
 gui/overlay/main_menu.png
-    The overlay used by the main menu screen.
+    用于主菜单画面的遮罩图像。
 
 gui/overlay/game_menu.png
-    The overlay used by game-menu-like screens, including load, save,
-    preferences, about, help, etc. This overlay is selected by the
-    screen in question, and is used even when at the main menu.
+    用于游戏内菜单一类的画面，这一类菜单包括读取游戏，储存游戏，偏好设置，关于，游戏帮助等等。这类遮罩图像可以放置在谈话画面中，甚至是放置在主菜单中。
 
 gui/overlay/confirm.png
-    The overlay used in the confirm screen to darken the background.
+    这类遮罩图像用于确定框画面并令背景变暗。
 
 .. ifconfig:: renpy_figures
 
-    Here are a pair of example overlay images, and what the game looks like
-    with the overlay images added.
+    这里有遮罩图像的示例，显示了加入遮罩图像后，游戏画面是如何变化的。
 
     .. figure:: oshs/game/gui/overlay/main_menu.png
         :width: 100%
 
-        An example gui/overlay/main_menu.png image.
+        gui/overlay/main_menu.png 图像示例。
 
     .. figure:: oshs/game/gui/overlay/game_menu.png
         :width: 100%
 
-        An example gui/overlay/game_menu.png image.
+        gui/overlay/game_menu.png 图像示例。
 
     .. figure:: gui/overlay_main_menu.jpg
         :width: 100%
 
-        The main menu after changing the overlays.
+        修改遮罩图像后的主菜单。
 
     .. figure:: gui/overlay_game_menu.jpg
         :width: 100%
 
-        The game menu after changing the overlays.
+        修改遮罩图像后的游戏菜单。
 
 
-Colors, Fonts, and Font Sizes
+字体颜色，字体，和字体大小
 -----------------------------
 
-There are a number of gui variables that can be used to change the color, font,
-and size of text.
+Ren`py 有大量的 GUI 有关的变量可以用于改变字体颜色，字体和文本大小。
 
 .. raw:: html
 
-   <p>These variables should generally be set to hexadecimal color
-   codes, which are strings of the form "#rrggbb", similar to color codes
-   used by web browsers. For example, "#663399" is the code for a shade of
-   <a href="http://www.economist.com/blogs/babbage/2014/06/digital-remembrance" style="text-decoration: none; color: rebeccapurple">purple</a>.
-   There are many tools online that let you create html color codes, such as
-   <a href="http://htmlcolorcodes.com/color-picker/">this one</a>.</p>
+   <p>与颜色有关的变量一般应写成十六进制颜色代码，比如像 "#rrggbb" 这样的字符串，与网络浏览器使用的相似。例如，"#663399"就是
+   <a href="http://www.economist.com/blogs/babbage/2014/06/digital-remembrance" style="text-decoration: none; color: rebeccapurple">purple</a>的着色。
+   网上有很多工具可以创建 HTML 颜色代码，比如<a href="http://htmlcolorcodes.com/color-picker/">这个</a>.</p>
 
-In addition to :var:`gui.text_color`, :var:`gui.choice_idle_color`, and :var:`gui.choice_hover_color`,
-documented above, the following variables exist:
+另外， :var:`gui.text_color`, :var:`gui.choice_idle_color`, 和 :var:`gui.choice_hover_color`,
+已经在上文提及过，以下是各个变量的介绍
 
 .. var:: gui.accent_color = '#000060'
 
-    The accent color is used in many places in the GUI, including titles
-    and labels.
+    GUI 中多处的祖先颜色，包括标题和标签。
 
 .. var:: gui.idle_color = '#606060'
 
-    The color used for most buttons when not focused or selected.
+    此颜色用于大部分没有鼠标经过和选择过的按钮。
 
 .. var:: gui.idle_small_color = '#404040'
 
-    The color used for small text (like the date and name of a save slot,
-    and quick menu buttons) when not hovered. This color often needs to be a
-    bit lighter or darker than idle_color to compensate for the smaller size
-    of the font.
+    此颜色用于没有鼠标经过时的小型文本(比如存档处的储存时间和存档名称，和快捷菜单的按钮)。此颜色经常要比 idle_color 的颜色要明亮或者黯淡，以便于补偿其小尺寸来引起玩家的注意
 
 .. var:: gui.hover_color = '#3284d6'
 
-    The color used by focused items in the gui, including the text of
-    of buttons and the thumbs (movable areas) of sliders and scrollbars.
+    此颜色用于 GUI 中鼠标经过时的元素，包括按钮上的文本和滑动条上的手柄(上面可以移动的部分)，还有滚动条。
 
 .. var:: gui.selected_color = '#555555'
 
-    The color used by the text of selected buttons. (This takes priority
-    over the hover and idle colors.)
+    此颜色用于已点击按钮的文本(),它的优先度继承于 hover_color 和 idle_color。
 
 .. var:: gui.insensitive_color = '#8888887f'
 
-    The color used by the text of buttons that are insensitive to user input.
-    (For example, the rollback button when no rollback is possible.)
+    此颜色用于对用户输入不敏感的按钮。(例如，回滚不允许情况下的回滚按钮)
 
 .. var:: gui.interface_text_color = '#404040'
 
-    The color used by static text in the game interface, such as text on the
-    help and about screens.
+    此颜色用于游戏界面中的静态文本，比如游戏帮助和关于游戏画面中的文本。
 
 .. var:: gui.muted_color = '#6080d0'
 .. var:: gui.hover_muted_color = '#8080f0'
 
-    Muted colors, used for the sections of bars, scrollbars, and sliders that
-    do not represent the value or visible area. (These are only used when
-    generating images, and will not take effect until images are regenerated
-    in the launcher.)
+    暗哑的颜色，用于滑块，滚动条和滑动条中不表示数值和可视区域的地方(一般只用于生成图像时，但启动器中还没有图像生成出来时。)
 
-In additional to :var:`gui.default_font`, the following variables selects the
-fonts used for text. These fonts should also be placed in the game directory.
+除了 :var:`gui.default_font`之外，以下变量被用于文本的字体。这些字体文件必须放置在游戏目录之下。
 
 .. var:: gui.interface_font = "ArchitectsDaughter.ttf"
 
-    The font used for text for user interface elements, like the main and
-    game menus, buttons, and so on.
+    此字体用于用户界面元素中的文本，比如主菜单和游戏中菜单，等等。
 
 .. var:: gui.glyph_font = "DejaVuSans.ttf"
 
-    A font used for certain glyphs, such as the arrow glyphs used by the skip
-    indicator. DejaVuSans is a reasonable default for these glyphs, and is
-    automatically included with every Ren'Py game.
+    用于符号字体，比如跳转指示中的箭头符号。非衬线字体是这些符号的默认字体，每个 Ren'Py 游戏都自动载入它的。
 
 In addition to :var:`gui.text_size` and :var:`gui.name_text_size`, the following
 variables control text sizes.
