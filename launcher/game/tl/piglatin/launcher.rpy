@@ -1184,3 +1184,18 @@
     old "Proceed"
     new "Roceedpay"
 
+
+translate piglatin strings:
+
+    # choose_directory.rpy:104
+    old "The selected projects directory is not writable."
+    new "Hetay electedsay rojectspay irectoryday isay otnay ritableway."
+
+    # distribute.rpy:1061
+    old "Signing the Macintosh application...\n(This may take a long time.)"
+    new "Igningsay hetay Acintoshmay applicationay...\n(Histay aymay aketay aay onglay imetay.)"
+
+    # front_page.rpy:91
+    old "PROJECTS:"
+    new "Rojectspay:"
+

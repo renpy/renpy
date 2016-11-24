@@ -1,5 +1,5 @@
 ﻿init python:
-    translate_font("piglatin", "DroidSansFallback.ttf", 'tl/simplified_chinese')
+    translate_font("piglatin", "DroidSansFallback.ttf")
 
 translate piglatin python:
     gui.FONT_SCALE = .9

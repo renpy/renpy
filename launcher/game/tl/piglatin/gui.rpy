@@ -408,3 +408,22 @@
     old "## Quick buttons."
     new "## Uickqay uttonsbay."
 
+
+translate piglatin strings:
+
+    # gui.rpy:17
+    old "## GUI Configuration Variables"
+    new "## Uigay Onfigurationcay Ariablesvay"
+
+    # gui.rpy:168
+    old "## The color of button text in various states."
+    new "## Hetay olorcay ofay uttonbay exttay inay ariousvay atesstay."
+
+    # gui.rpy:174
+    old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
+    new "## Hetay orizontalhay alignmentay ofay hetay uttonbay exttay. (0ay.0ay isay eftlay, 0ay.5ay isay entercay, 1ay.0ay isay ightray)."
+
+    # gui.rpy:398
+    old "## Mobile devices"
+    new "## Obilemay evicesday"
+

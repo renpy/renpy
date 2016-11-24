@@ -640,3 +640,34 @@
     old "Menu"
     new "Enumay"
 
+
+translate piglatin strings:
+
+    # screens.rpy:119
+    old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
+    new "## Fiay heretay'say aay idesay imageay, isplayday itay aboveay hetay exttay. Oday otnay isplayday onay hetay onephay ariantvay - heretay'say onay oomray."
+
+    # screens.rpy:251
+    old "## Ensure this appears on top of other screens."
+    new "## Nsureeay histay appearsay onay optay ofay otheray creenssay."
+
+    # screens.rpy:360
+    old "## This ensures that any other menu screen is replaced."
+    new "## Histay ensuresay hattay anyay otheray enumay creensay isay eplacedray."
+
+    # screens.rpy:367
+    old "## This empty frame darkens the main menu."
+    new "## Histay emptyay amefray arkensday hetay ainmay enumay."
+
+    # screens.rpy:438
+    old "## Reserve space for the navigation section."
+    new "## Eserveray pacesay orfay hetay avigationnay ectionsay."
+
+    # screens.rpy:618
+    old "## The page name, which can be edited by clicking on a button."
+    new "## Hetay agepay amenay, hichway ancay ebay editeday ybay ickingclay onay aay uttonbay."
+
+    # screens.rpy:673
+    old "## range(1, 10) gives the numbers from 1 to 9."
+    new "## angeray(1ay, 01ay) ivesgay hetay umbersnay omfray 1ay otay 9ay."
+
