@@ -399,6 +399,33 @@ def linebreak_debug(list glyphs):
     return rv
 
 
+def linebreak_list(list glyphs):
+    """
+    Returns a list of unicode strings, one per broken line.
+    """
+
+    cdef Glyph g
+
+    rv = [ ]
+    line = u""
+
+    for g in glyphs:
+
+        if g.split == SPLIT_INSTEAD:
+            rv.append(line)
+            line = u""
+        elif g.split == SPLIT_BEFORE:
+            rv.append(line)
+            line = unichr(g.character)
+        else:
+            line += unichr(g.character)
+
+    if line:
+        rv.append(line)
+
+    return rv
+
+
 def place_horizontal(list glyphs, float start_x, float first_indent, float rest_indent):
     """
     Place the glyphs horizontally, without taking into account the indentation

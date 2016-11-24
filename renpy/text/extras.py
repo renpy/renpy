@@ -21,6 +21,8 @@
 
 # Other text-related things.
 
+from __future__ import print_function
+
 import renpy.text
 
 from renpy.text.textsupport import TAG
@@ -149,3 +151,46 @@ class ParameterizedText(object):
         string = renpy.python.py_eval(param)
 
         return renpy.text.text.Text(string, style=self.style, **self.properties)
+
+
+def textwrap(s, width=78, asian=False):
+    """
+    Wraps the unicode string `s`, and returns a list of strings.
+
+    `width`
+        The number of half-width characters that fit on a line.
+    `asian`
+        True if we should make ambiguous width characters full-width, as is
+        done in Asian encodings.
+    """
+
+    import unicodedata
+
+    glyphs = [ ]
+
+    for c in unicode(s):
+
+        eaw = unicodedata.east_asian_width(c)
+
+        if (eaw == "F") or (eaw =="W"):
+            gwidth = 20
+        elif (eaw == "A"):
+            if asian:
+                gwidth = 20
+            else:
+                gwidth = 10
+        else:
+            gwidth = 10
+
+        g = textsupport.Glyph()
+        g.character = ord(c)
+        g.ascent = 10
+        g.line_spacing = 10
+        g.width = gwidth
+        g.advance = gwidth
+
+        glyphs.append(g)
+
+    textsupport.annotate_unicode(glyphs, False, 2)
+    renpy.text.texwrap.linebreak_tex(glyphs, width * 10, width * 10, False)
+    return textsupport.linebreak_list(glyphs)
