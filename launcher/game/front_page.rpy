@@ -88,7 +88,7 @@ screen front_page:
                     has hbox:
                         xfill True
 
-                    text "PROJECTS:" style "l_label_text" size 36 yoffset 10
+                    text _("PROJECTS:") style "l_label_text" size 36 yoffset 10
 
                     textbutton _("refresh"):
                         xalign 1.0
