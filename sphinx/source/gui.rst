@@ -434,7 +434,7 @@ Borders
 -------
 
 There are a number of GUI components - such as buttons and bars - that use
-scalable backgrounds confgured using Border objects. Before discussing,
+scalable backgrounds configured using Border objects. Before discussing
 how to customize buttons and bars, we'll first describe how this works.
 
 Borders are given to the :func:`Frame` displayable.

@@ -308,39 +308,35 @@ Ren`py 有大量的 GUI 有关的变量可以用于改变字体颜色，字体�
 
     用于符号字体，比如跳转指示中的箭头符号。非衬线字体是这些符号的默认字体，每个 Ren'Py 游戏都自动载入它的。
 
-In addition to :var:`gui.text_size` and :var:`gui.name_text_size`, the following
-variables control text sizes.
+除了 :var:`gui.text_size` 和 :var:`gui.name_text_size`，以下变量同样是控制文本大小的。
 
 .. var:: gui.interface_text_size = 36
 
-    The size of static text in the game's user interface, and the default size
-    of button text in the game's interface.
+    游戏用户界面中静态文本的大小和游戏界面的按钮文本的默认大小。
 
 .. var:: gui.label_text_size = 45
 
-    The size of section labels in the game's user interface.
+    游戏界面中章节标签的文本大小
 
 .. var:: gui.notify_text_size = 24
 
-    The size of notification text.
+    提示文本的大小
 
 .. var:: gui.title_text_size = 75
 
-    The size of the game's title.
+    游戏标题的文本大小
 
 .. ifconfig:: renpy_figures
 
     .. figure:: gui/text.jpg
         :width: 100%
 
-        The game menu after customizing text colors, fonts, and sizes.
+        自定义化文本颜色，文本字体和大小后的游戏菜单。
 
-Borders
+边框
 -------
 
-There are a number of GUI components - such as buttons and bars - that use
-scalable backgrounds confgured using Border objects. Before discussing,
-how to customize buttons and bars, we'll first describe how this works.
+有很多的 GUI 组件，比如按钮和条块这些使用可拓展尺寸的背景，并用边框对象来使之成型的元素。在讨论怎样自定义化按钮和条块，我们先叙述一下它的工作原理。
 
 Borders are given to the :func:`Frame` displayable.
 A Frame takes an image, and divides it into nine parts - the four corners,
