@@ -611,9 +611,14 @@ class Displayable(renpy.object.Object):
 
         for i in self.visit():
             if i is not None:
-                rv.append(i._tts())
+                speech = i._tts()
 
-        rv = " ".join(rv)
+                if speech.strip():
+                    rv.append(speech)
+
+        rv = ": ".join(rv)
+        rv = rv.replace("::", ":")
+        rv = rv.replace(": :", ":")
 
         alt = self.style.alt
 
