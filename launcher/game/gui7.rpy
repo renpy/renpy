@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 define gui.project_system_font = None
+define gui.asian = False
 
 init -1 python:
 

@@ -314,7 +314,9 @@ class CodeGenerator(object):
                     len_prefix = len(indent) + len(prefix)
                     len_wrap = 80 - len_prefix
 
-                    for i, s in enumerate(textwrap.wrap(rest, width=len_wrap)):
+                    import store.gui
+
+                    for i, s in enumerate(renpy.text.extras.textwrap(rest, len_wrap, store.gui.asian)):
 
                         if i == 0:
                             s = indent + prefix + s
