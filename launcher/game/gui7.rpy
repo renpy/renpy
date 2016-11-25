@@ -188,7 +188,7 @@ screen gui_demo(accent, boring, light, display):
 
             text _("Display"):
                 style "empty"
-                # font "DejaVuSans.ttf"
+                font (gui.system_font or "DejaVuSans.ttf")
                 color p.accent_color
                 size 24
 
@@ -199,6 +199,7 @@ screen gui_demo(accent, boring, light, display):
                     style "empty"
 
                     text_style "empty"
+                    text_font (gui.system_font or "DejaVuSans.ttf")
                     text_size 24
 
                     text_color p.idle_color
@@ -217,6 +218,7 @@ screen gui_demo(accent, boring, light, display):
                 style "empty"
                 color p.accent_color
                 size 24
+                font (gui.system_font or "DejaVuSans.ttf")
 
             bar:
                 value ScreenVariableValue("value", 1.0)
