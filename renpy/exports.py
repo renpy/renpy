@@ -1378,7 +1378,7 @@ def with_statement(trans, always=False, paired=None, clear=True):
 globals()["with"] = with_statement
 
 
-def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None):
+def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, abnormal=True):
     """
     :doc: rollback
 
@@ -1403,6 +1403,11 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None):
 
     `label`
         If not None, a label that is called when rollback completes.
+
+    `abnormal`
+        If true, the default, the code executed after the transition is run in
+        an abnormal mode that skips transitions that would have otherwise
+        occured.
     """
 
     if defer and len(renpy.game.contexts) > 1:

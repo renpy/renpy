@@ -1447,7 +1447,7 @@ class RollbackLog(renpy.object.Object):
 
         return self.rollback_limit > 0
 
-    def rollback(self, checkpoints, force=False, label=None, greedy=True, on_load=False):
+    def rollback(self, checkpoints, force=False, label=None, greedy=True, on_load=False, abnormal=True):
         """
         This rolls the system back to the first valid rollback point
         after having rolled back past the specified number of checkpoints.
@@ -1471,6 +1471,10 @@ class RollbackLog(renpy.object.Object):
         `on_load`
             Should be true if this rollback is being called in response to a
             load. Used to implement .retain_after_load()
+
+        `abnormal`
+            If true, treats this as an abnormal event, suppresisng rollback
+            and so on.
         """
 
         # If we have exceeded the rollback limit, and don't have force,
@@ -1555,7 +1559,7 @@ class RollbackLog(renpy.object.Object):
             self.log.append(retained)
 
         # Disable the next transition, as it's pointless. (Only when not used with a label.)
-        renpy.game.interface.suppress_transition = True
+        renpy.game.interface.suppress_transition = abnormal
 
         # If necessary, reset the RNG.
         if force:
@@ -1563,7 +1567,7 @@ class RollbackLog(renpy.object.Object):
             self.forward = [ ]
 
         # Flag that we're in the transition immediately after a rollback.
-        renpy.game.after_rollback = True
+        renpy.game.after_rollback = abnormal
 
         # Stop the sounds.
         renpy.audio.audio.rollback()
