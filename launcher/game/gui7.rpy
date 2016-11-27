@@ -195,7 +195,7 @@ screen gui_demo(accent, boring, light, display):
             for i in [ _("Window"), _("Fullscreen"), _("Planetarium") ]:
 
                 textbutton i:
-                    action SetScreenVariable("display", i)
+                    action (None if i == "Planetarium" else SetScreenVariable("display", i))
                     style "empty"
 
                     text_style "empty"
@@ -205,6 +205,7 @@ screen gui_demo(accent, boring, light, display):
                     text_color p.idle_color
                     text_hover_color p.hover_color
                     text_selected_color p.selected_color
+                    text_insensitive_color p.insensitive_color
 
                     xmargin 4
                     ymargin 4
