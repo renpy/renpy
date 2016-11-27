@@ -525,10 +525,14 @@ def check_style(name, s):
 
     for p in s.properties:
         for k, v in p.iteritems():
-
+            
             # Treat font specially.
             if k.endswith("font"):
-                check_file(name, v)
+                if isinstance(v, renpy.text.font.FontGroup):
+                    for f in v.fonts:
+                        check_file(name, f)
+                else:
+                    check_file(name, v)
 
             if isinstance(v, renpy.display.core.Displayable):
                 check_style_property_displayable(name, k, v)
