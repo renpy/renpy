@@ -1,23 +1,30 @@
-﻿# You can place the script of your game in this file.
-# - Puedes colocar el 'script' de tu juego en este archivo.
+﻿# Coloca el código de tu juego en este archivo.
 
-# Declare images below this line, using the image statement.
-# - Declara imágenes bajo esta línea, usando 'image' como
-#   en el ejemplo.
-# eg. image eileen happy = "eileen_happy.png"
+# Declara los personajes usados en el juego como en el ejemplo:
 
-# Declare characters used by this game.
-# - Declara los personajes usados en el juego como en el
-#   ejemplo.
-define e = Character('Eileen', color="#c8ffc8")
+define e = Character("Eileen")
 
 
-# The game starts here.
-# - El juego comienza aquí.
+# El juego comienza aquí.
+
 label start:
+
+    # Muestra una imagen de fondo:
+
+    scene bg room
+
+    # Muestra un personaje:
+
+    show eileen happy
+
+    # Presenta las líneas del diálogo.
+
+    "¡Hola, mundo!"
 
     e "Has creado un nuevo juego Ren'Py."
 
     e "Añade una historia, imágenes y música, ¡y puedes presentarlo al mundo!"
+
+    # Finaliza el juego:
 
     return

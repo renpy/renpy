@@ -71,7 +71,7 @@ translate spanish strings:
 
     # screens.rpy:262
     old "History"
-    new "History"
+    new "Historial"
 
     # screens.rpy:263
     old "Skip"
@@ -111,11 +111,11 @@ translate spanish strings:
 
     # screens.rpy:308
     old "Start"
-    new "Start"
+    new "Comenzar"
 
     # screens.rpy:316
     old "Load"
-    new "Load"
+    new "Cargar"
 
     # screens.rpy:318
     old "Preferences"
@@ -123,7 +123,7 @@ translate spanish strings:
 
     # screens.rpy:322
     old "End Replay"
-    new "End Replay"
+    new "Fin repetición"
 
     # screens.rpy:326
     old "Main Menu"
@@ -199,7 +199,7 @@ translate spanish strings:
 
     # screens.rpy:561
     old "Version [config.version!t]\n"
-    new "Version [config.version!t]\n"
+    new "Versión [config.version!t]\n"
 
     # screens.rpy:563
     old "## gui.about is usually set in options.rpy."
@@ -207,7 +207,7 @@ translate spanish strings:
 
     # screens.rpy:567
     old "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
-    new "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
+    new "Hecho con {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
 
     # screens.rpy:570
     old "## This is redefined in options.rpy to add text to the about screen."
@@ -251,7 +251,7 @@ translate spanish strings:
 
     # screens.rpy:649
     old "empty slot"
-    new "empty slot"
+    new "vacío"
 
     # screens.rpy:657
     old "## Buttons to access other pages."
@@ -267,7 +267,7 @@ translate spanish strings:
 
     # screens.rpy:670
     old "{#quick_page}Q"
-    new "{#quick_page}Q"
+    new "{#quick_page}R"
 
     # screens.rpy:676
     old ">"
@@ -299,7 +299,7 @@ translate spanish strings:
 
     # screens.rpy:744
     old "Rollback Side"
-    new "Rollback Side"
+    new "Lado de retroceso"
 
     # screens.rpy:745
     old "Disable"
@@ -307,15 +307,15 @@ translate spanish strings:
 
     # screens.rpy:746
     old "Left"
-    new "Left"
+    new "Izquierda"
 
     # screens.rpy:747
     old "Right"
-    new "Right"
+    new "Derecha"
 
     # screens.rpy:752
     old "Unseen Text"
-    new "Unseen Text"
+    new "Texto no visto"
 
     # screens.rpy:753
     old "After Choices"
@@ -355,7 +355,7 @@ translate spanish strings:
 
     # screens.rpy:806
     old "Mute All"
-    new "Mute All"
+    new "Silencia todo"
 
     # screens.rpy:882
     old "## History screen"
@@ -383,7 +383,7 @@ translate spanish strings:
 
     # screens.rpy:921
     old "The dialogue history is empty."
-    new "The dialogue history is empty."
+    new "El historial está vacío."
 
     # screens.rpy:965
     old "## Help screen"
@@ -395,11 +395,11 @@ translate spanish strings:
 
     # screens.rpy:986
     old "Keyboard"
-    new "Keyboard"
+    new "Teclado"
 
     # screens.rpy:987
     old "Mouse"
-    new "Mouse"
+    new "Ratón"
 
     # screens.rpy:990
     old "Gamepad"
@@ -411,23 +411,23 @@ translate spanish strings:
 
     # screens.rpy:1004
     old "Advances dialogue and activates the interface."
-    new "Advances dialogue and activates the interface."
+    new "Avanza el diálogo y activa la interfaz."
 
     # screens.rpy:1007
     old "Space"
-    new "Space"
+    new "Espacio"
 
     # screens.rpy:1008
     old "Advances dialogue without selecting choices."
-    new "Advances dialogue without selecting choices."
+    new "Avanza el dilogo sin seleccionar opciones."
 
     # screens.rpy:1011
     old "Arrow Keys"
-    new "Arrow Keys"
+    new "Teclas de flecha"
 
     # screens.rpy:1012
     old "Navigate the interface."
-    new "Navigate the interface."
+    new "Navega la interfaz."
 
     # screens.rpy:1015
     old "Escape"
@@ -435,7 +435,7 @@ translate spanish strings:
 
     # screens.rpy:1016
     old "Accesses the game menu."
-    new "Accesses the game menu."
+    new "Accede al menú del juego."
 
     # screens.rpy:1019
     old "Ctrl"
@@ -443,83 +443,71 @@ translate spanish strings:
 
     # screens.rpy:1020
     old "Skips dialogue while held down."
-    new "Skips dialogue while held down."
+    new "Salta el diálogo mientras se presiona."
 
     # screens.rpy:1023
     old "Tab"
-    new "Tab"
+    new "Tabulador"
 
     # screens.rpy:1024
     old "Toggles dialogue skipping."
-    new "Toggles dialogue skipping."
+    new "Activa/desactiva el salto de diálogo."
 
     # screens.rpy:1027
     old "Page Up"
-    new "Page Up"
+    new "Av. pág."
 
     # screens.rpy:1028
     old "Rolls back to earlier dialogue."
-    new "Rolls back to earlier dialogue."
+    new "Retrocede al diálogo anterior."
 
     # screens.rpy:1031
     old "Page Down"
-    new "Page Down"
+    new "Re. pág."
 
     # screens.rpy:1032
     old "Rolls forward to later dialogue."
-    new "Rolls forward to later dialogue."
+    new "Avanza hacia el diálogo siguiente."
 
     # screens.rpy:1036
     old "Hides the user interface."
-    new "Hides the user interface."
+    new "Oculta la interfaz."
 
     # screens.rpy:1040
     old "Takes a screenshot."
-    new "Takes a screenshot."
+    new "Captura la pantalla."
 
     # screens.rpy:1044
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
-    new "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
+    new "Activa/desactiva la asistencia por {a=https://www.renpy.org/l/voicing}voz-automática{/a}."
 
     # screens.rpy:1050
     old "Left Click"
-    new "Left Click"
+    new "Clic izquierdo"
 
     # screens.rpy:1054
     old "Middle Click"
-    new "Middle Click"
+    new "Clic medio"
 
     # screens.rpy:1058
     old "Right Click"
-    new "Right Click"
+    new "Clic derecho"
 
     # screens.rpy:1062
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "Mouse Wheel Up\nClick Rollback Side"
+    new "Rueda del ratón arriba\nClic en lado de retroceso"
 
     # screens.rpy:1066
     old "Mouse Wheel Down"
-    new "Mouse Wheel Down"
+    new "Rueda del ratón abajo"
 
     # screens.rpy:1073
     old "Right Trigger\nA/Bottom Button"
     new "Right Trigger\nA/Bottom Button"
 
-    # screens.rpy:1074
-    old "Advance dialogue and activates the interface."
-    new "Advance dialogue and activates the interface."
-
-    # screens.rpy:1078
-    old "Roll back to earlier dialogue."
-    new "Roll back to earlier dialogue."
-
     # screens.rpy:1081
     old "Right Shoulder"
     new "Right Shoulder"
-
-    # screens.rpy:1082
-    old "Roll forward to later dialogue."
-    new "Roll forward to later dialogue."
 
     # screens.rpy:1085
     old "D-Pad, Sticks"
@@ -527,11 +515,7 @@ translate spanish strings:
 
     # screens.rpy:1089
     old "Start, Guide"
-    new "Start, Guide"
-
-    # screens.rpy:1090
-    old "Access the game menu."
-    new "Access the game menu."
+    new "Comenzar, Guía"
 
     # screens.rpy:1093
     old "Y/Top Button"
@@ -587,7 +571,7 @@ translate spanish strings:
 
     # screens.rpy:1208
     old "Skipping"
-    new "Skipping"
+    new "Saltando"
 
     # screens.rpy:1215
     old "## This transform is used to blink the arrows one after another."
@@ -639,5 +623,6 @@ translate spanish strings:
 
     # screens.rpy:1429
     old "Menu"
-    new "Menu"
+    new "Menú"
+
 

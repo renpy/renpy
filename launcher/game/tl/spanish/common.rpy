@@ -167,23 +167,23 @@ translate spanish strings:
 
     # 00gui.rpy:228
     old "Are you sure you want to delete this save?"
-    new "¿Seguro que desea borrar esta partida?"
+    new "¿Seguro que quieres borrar esta partida?"
 
     # 00gui.rpy:229
     old "Are you sure you want to overwrite your save?"
-    new "¿Seguro que desea sobreescribir esta partida?"
+    new "¿Seguro que quieres sobreescribir esta partida?"
 
     # 00gui.rpy:230
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "Al cargar se perderá el progreso no guardado.\n¿Seguro que desea hacer esto?"
+    new "Al cargar se perderá el progreso no guardado.\n¿Seguro que quieres hacer esto?"
 
     # 00gui.rpy:231
     old "Are you sure you want to quit?"
-    new "¿Seguro que desea salir?"
+    new "¿Seguro que quieres salir?"
 
     # 00gui.rpy:232
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "¿Seguro que desea volver al menú principal?\nSe perderá el progreso no guardado."
+    new "¿Seguro que quieres volver al menú principal?\nSe perderá el progreso no guardado."
 
     # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
@@ -191,15 +191,15 @@ translate spanish strings:
 
     # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
-    new "¿Seguro que desea empezar el modo salto?"
+    new "¿Seguro que quieres empezar el modo salto?"
 
     # 00gui.rpy:235
     old "Are you sure you want to skip to the next choice?"
-    new "¿Seguro que desea saltar hasta la próxima elección?"
+    new "¿Seguro que quieres saltar hasta la próxima elección?"
 
     # 00gui.rpy:236
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "Are you sure you want to skip unseen dialogue to the next choice?"
+    new "¿Seguro que quieres saltar el texto no visto hasta la próxima elección?"
 
     # 00keymap.rpy:250
     old "Saved screenshot as %s."
@@ -207,7 +207,7 @@ translate spanish strings:
 
     # 00library.rpy:142
     old "Self-voicing disabled."
-    new "Auto-voz desactivada."
+    new "Voz automática desactivada."
 
     # 00library.rpy:143
     old "Clipboard voicing enabled. "
@@ -215,15 +215,15 @@ translate spanish strings:
 
     # 00library.rpy:144
     old "Self-voicing enabled. "
-    new "Auto-voz activada. "
+    new "Voz automática activada. "
 
     # 00library.rpy:179
     old "Skip Mode"
-    new "Modo Salto"
+    new "Modo salto"
 
     # 00library.rpy:262
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
+    new "Este programa contiene software libre sujeto a diversas licencias que incluyen la licencia MIT y la {i}GNU Lesser General Public License{/i} (Licencia Pública General Reducida de GNU). Puedes encontrar la lista completa de software, con enlaces al código fuente completo, {a=https://www.renpy.org/l/license}aquí (en inglés){/a}."
 
     # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
@@ -231,15 +231,15 @@ translate spanish strings:
 
     # 00preferences.rpy:424
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Auto-voz dirà \"[renpy.display.tts.last]\". Pulsa 'alt+shift+V' para desactivar."
+    new "Voz automática dirà \"[renpy.display.tts.last]\". Pulsa 'alt+shift+V' para desactivar."
 
     # 00preferences.rpy:426
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Self-voicing activado. Presiona 'v' para desactivarlo."
+    new "Voz automática activada. Presiona 'v' para desactivarla."
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
-    new "Contacting App Store\nPlease Wait..."
+    new "Contactando App Store\nPor favor, espera..."
 
     # 00updater.rpy:367
     old "The Ren'Py Updater is not supported on mobile devices."
@@ -287,7 +287,7 @@ translate spanish strings:
 
     # 00updater.rpy:1406
     old "[u.version] is available. Do you want to install it?"
-    new "[u.version] está disponible. ¿Desea instalarla?"
+    new "[u.version] está disponible. ¿Quieres instalarla?"
 
     # 00updater.rpy:1408
     old "Preparing to download the updates."
