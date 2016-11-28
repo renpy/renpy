@@ -99,11 +99,11 @@ translate japanese strings:
 
     # android.rpy:50
     old "Retrieves the log from the Android device and writes it to a file."
-    new "Retrieves the log from the Android device and writes it to a file."
+    new "Androidデバイスからログを獲得し、ファイルに書き出します。"
 
     # android.rpy:240
     old "Copying Android files to distributions directory."
-    new "Copying Android files to distributions directory."
+    new "Androidファイルを distributions ディレクトリにコピーしています。"
 
     # android.rpy:304
     old "Android: [project.current.name!q]"
@@ -195,7 +195,7 @@ translate japanese strings:
 
     # android.rpy:544
     old "Retrieving logcat information from device."
-    new "Retrieving logcat information from device."
+    new "デバイスから logcat のインフォメーションを獲得しています。"
 
     # choose_directory.rpy:73
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
@@ -207,11 +207,11 @@ translate japanese strings:
 
     # choose_theme.rpy:370
     old "Planetarium"
-    new "Planetarium"
+    new "プラネタリウム"
 
     # choose_theme.rpy:425
     old "Choose Theme"
-    new "Choose Theme"
+    new "テーマ選択"
 
     # choose_theme.rpy:438
     old "Theme"
@@ -231,7 +231,7 @@ translate japanese strings:
 
     # consolecommand.rpy:84
     old "The command is being run in a new operating system console window."
-    new "The command is being run in a new operating system console window."
+    new "このコマンドは、OSのコンソールウィンドウで実行されています。"
 
     # distribute.rpy:443
     old "Scanning project files..."
@@ -259,19 +259,19 @@ translate japanese strings:
 
     # distribute.rpy:1050
     old "Unpacking the Macintosh application for signing..."
-    new "Unpacking the Macintosh application for signing..."
+    new "署名のため、Macintosh application を展開しています…"
 
     # distribute.rpy:1060
     old "Signing the Macintosh application..."
-    new "Signing the Macintosh application..."
+    new "Macintosh application に署名しています…"
 
     # distribute.rpy:1082
     old "Creating the Macintosh DMG..."
-    new "Creating the Macintosh DMG..."
+    new "Macintosh DMG を作成しています…"
 
     # distribute.rpy:1091
     old "Signing the Macintosh DMG..."
-    new "Signing the Macintosh DMG..."
+    new "Macintosh DMG に署名しています…"
 
     # distribute.rpy:1248
     old "Writing the [variant] [format] package."
@@ -315,7 +315,7 @@ translate japanese strings:
 
     # distribute_gui.rpy:199
     old "Upload to itch.io"
-    new "Upload to itch.io"
+    new "itch.io にアップロードする"
 
     # distribute_gui.rpy:215
     old "Build Packages:"
@@ -479,7 +479,7 @@ translate japanese strings:
 
     # front_page.rpy:237
     old "Change/Update GUI"
-    new "Change/Update GUI"
+    new "GUIを変更・更新"
 
     # front_page.rpy:239
     old "Change Theme"
@@ -523,23 +523,23 @@ translate japanese strings:
 
     # gui7.rpy:236
     old "Select Accent and Background Colors"
-    new "Select Accent and Background Colors"
+    new "アクセントカラーとバックグラウンドカラーを選択"
 
     # gui7.rpy:250
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
-    new "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
+    new "使用したいカラースキームをクリックしたのち、続行をクリックしてください。カラーは後で変えたり、カスタマイズしたりできます。"
 
     # gui7.rpy:294
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
+    new "{b}警告{/b}\n続行すると、カスタマイズしたバー、ボタン、セーブスロット、スクロールバー、スライダーの画像が上書きされます。\n\nそれでよろしいでしょうか？"
 
     # gui7.rpy:294
     old "Choose new colors, then regenerate image files."
-    new "Choose new colors, then regenerate image files."
+    new "新しいカラーを選び、画像を再生成する"
 
     # gui7.rpy:294
     old "Regenerate the image files using the colors in gui.rpy."
-    new "Regenerate the image files using the colors in gui.rpy."
+    new "gui.rpy のカラーを元に、画像を再生成する."
 
     # gui7.rpy:314
     old "PROJECT NAME"
@@ -563,15 +563,15 @@ translate japanese strings:
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
+    new "どの解像度をこのプロジェクトに使用しますか？Ren'pyはウィンドウを拡大縮小することができますが、これは初期のウィンドウサイズ・描画される各アセットのサイズ・アセットが最もシャープに見えるサイズを決定します。\n\nデフォルトの 1280x720 が合理的な妥協案になります。"
 
     # gui7.rpy:389
     old "Creating the new project..."
-    new "Creating the new project..."
+    new "新しいプロジェクトを作成中…"
 
     # gui7.rpy:391
     old "Updating the project..."
-    new "Updating the project..."
+    new "プロジェクトを更新しています…"
 
     # interface.rpy:107
     old "Documentation"
@@ -735,27 +735,27 @@ translate japanese strings:
 
     # itch.rpy:60
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "The built distributions could not be found. Please choose 'Build' and try again."
+    new "ビルドされた配布物が見つかりません。ビルドを選択し、やり直してください。"
 
     # itch.rpy:91
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "No uploadable files were found. Please choose 'Build' and try again."
+    new "アップロードできるファイルが見つかりません。ビルドを選択し、やり直してください。"
 
     # itch.rpy:99
     old "The butler program was not found."
-    new "The butler program was not found."
+    new "butler プログラムが見つかりません"
 
     # itch.rpy:99
     old "Please install the itch.io app, which includes butler, and try again."
-    new "Please install the itch.io app, which includes butler, and try again."
+    new "butler を含む itch.io app をインストールして、やり直してください。"
 
     # itch.rpy:108
     old "The name of the itch project has not been set."
-    new "The name of the itch project has not been set."
+    new "itch project の名前が設定されていません。"
 
     # itch.rpy:108
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
-    new "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
+    new "{a=https://itch.io/game/new}プロジェクトを作成{/a}して、options.rpy に次のような命令を追加してください。\n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5}"
 
     # mobilebuild.rpy:109
     old "{a=%s}%s{/a}"
@@ -779,7 +779,7 @@ translate japanese strings:
 
     # navigation.rpy:182
     old "natural"
-    new "natural"
+    new "記載順"
 
     # navigation.rpy:194
     old "Category:"
@@ -827,11 +827,11 @@ translate japanese strings:
 
     # new_project.rpy:38
     old "New GUI Interface"
-    new "New GUI Interface"
+    new "New GUI インターフェース"
 
     # new_project.rpy:48
     old "Both interfaces have been translated to your language."
-    new "Both interfaces have been translated to your language."
+    new "どちらのインターフェースも日本語に翻訳されています。"
 
     # new_project.rpy:50
     old "Only the new GUI has been translated to your language."
@@ -851,11 +851,11 @@ translate japanese strings:
 
     # new_project.rpy:69
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
-    new "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
+    new "どちらのインターフェースを使用しますか？New GUI はモダンな外見で、ワイドスクリーンとモバイルデバイスをサポートし、カスタマイズも容易です。Legacy themes は古いコードの例を利用するのに必要になるでしょう。\n\n[language_support!t]\n\n判断がつかない場合は、New GUI を選択肢して、右下の続行をクリックします。"
 
     # new_project.rpy:69
     old "Legacy Theme Interface"
-    new "Legacy Theme Interface"
+    new "Legacy Theme インターフェース"
 
     # new_project.rpy:90
     old "Choose Project Template"
@@ -991,43 +991,43 @@ translate japanese strings:
 
     # translations.rpy:63
     old "Translations: [project.current.name!q]"
-    new "Translations: [project.current.name!q]"
+    new "翻訳: [project.current.name!q]"
 
     # translations.rpy:104
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
-    new "The language to work with. This should only contain lower-case ASCII characters and underscores."
+    new "翻訳に使う言語。半角小文字の ASCII 文字とアンダースコアのみが使用できます。"
 
     # translations.rpy:130
     old "Generate empty strings for translations"
-    new "空の文字列でも翻訳を生成する"
+    new "翻訳を空の文字列で生成する"
 
     # translations.rpy:148
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
+    new "翻訳ファイルを生成、または更新します。翻訳ファイルは、game/tl/[persistent.translate_language!q] に置かれます。"
 
     # translations.rpy:168
     old "Extract String Translations"
-    new "Extract String Translations"
+    new "文字列の翻訳を抽出"
 
     # translations.rpy:170
     old "Merge String Translations"
-    new "Merge String Translations"
+    new "文字列の翻訳を併合"
 
     # translations.rpy:175
     old "Replace existing translations"
-    new "Replace existing translations"
+    new "既にある翻訳を置き換える"
 
     # translations.rpy:176
     old "Reverse languages"
-    new "Reverse languages"
+    new "言語を反転させる"
 
     # translations.rpy:180
     old "Update Default Interface Translations"
-    new "Update Default Interface Translations"
+    new "デフォルトインターフェースの翻訳を更新する。"
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
+    new "抽出コマンドは、既存のプロジェクトから文字列の翻訳（台詞以外の翻訳）を一時ファイルとして抽出します。\n\n併合コマンドは、抽出した翻訳を他のプロジェクトに併合します。"
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
@@ -1039,51 +1039,51 @@ translate japanese strings:
 
     # translations.rpy:248
     old "Ren'Py is extracting string translations..."
-    new "Ren'Py is extracting string translations..."
+    new "Ren'Py は文字列の翻訳を抽出しています…"
 
     # translations.rpy:251
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py has finished extracting [language] string translations."
+    new "Ren'Py [language] の文字列の翻訳の抽出しました。"
 
     # translations.rpy:271
     old "Ren'Py is merging string translations..."
-    new "Ren'Py is merging string translations..."
+    new "Ren'Py は文字列の翻訳を併合しています…"
 
     # translations.rpy:274
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py has finished merging [language] string translations."
+    new "Ren'Py [language] の文字列の翻訳を併合しました。"
 
     # translations.rpy:282
     old "Updating default interface translations..."
-    new "Updating default interface translations..."
+    new "デフォルトインターフェースの翻訳を更新しています…"
 
     # translations.rpy:306
     old "Extract Dialogue: [project.current.name!q]"
-    new "Extract Dialogue: [project.current.name!q]"
+    new "台詞の抽出: [project.current.name!q]"
 
     # translations.rpy:322
     old "Format:"
-    new "Format:"
+    new "フォーマット:"
 
     # translations.rpy:330
     old "Tab-delimited Spreadsheet (dialogue.tab)"
-    new "Tab-delimited Spreadsheet (dialogue.tab)"
+    new "タブ区切りのスプレッドシート (dialogue.tab)"
 
     # translations.rpy:331
     old "Dialogue Text Only (dialogue.txt)"
-    new "Dialogue Text Only (dialogue.txt)"
+    new "台詞のテキストのみ (dialogue.txt)"
 
     # translations.rpy:344
     old "Strip text tags from the dialogue."
-    new "Strip text tags from the dialogue."
+    new "台詞からテキストタグを取り除く"
 
     # translations.rpy:345
     old "Escape quotes and other special characters."
-    new "Escape quotes and other special characters."
+    new "引用符や他の特殊文字をエスケープする"
 
     # translations.rpy:346
     old "Extract all translatable strings, not just dialogue."
-    new "Extract all translatable strings, not just dialogue."
+    new "台詞だけでなく、翻訳可能なすべての文字列を抽出する"
 
     # translations.rpy:374
     old "Ren'Py is extracting dialogue...."
@@ -1091,7 +1091,7 @@ translate japanese strings:
 
     # translations.rpy:378
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
+    new "Ren'Py は台詞の抽出を終了しました。抽出した台詞は、base ディレクトリーの、[persistent.dialogue_format] にあります。"
 
     # updater.rpy:75
     old "Select Update Channel"
@@ -1183,5 +1183,13 @@ translate japanese strings:
 
     # updater.rpy:195
     old "Proceed"
-    new "処理中"
+    new "続行"
+
+    # choose_directory.rpy:104
+    old "The selected projects directory is not writable."
+    new "選択されたプロジェクトディレクトリーは、書き込み不可です。"
+
+    # distribute.rpy:1061
+    old "Signing the Macintosh application...\n(This may take a long time.)"
+    new "Macintosh application に署名しています…\n（この処理にはしばらくかかります。）"
 

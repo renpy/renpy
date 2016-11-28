@@ -3,155 +3,155 @@ translate japanese strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
-    new "{#weekday}Monday"
+    new "{#weekday}月曜日"
 
     # 00action_file.rpy:26
     old "{#weekday}Tuesday"
-    new "{#weekday}Tuesday"
+    new "{#weekday}火曜日"
 
     # 00action_file.rpy:26
     old "{#weekday}Wednesday"
-    new "{#weekday}Wednesday"
+    new "{#weekday}水曜日"
 
     # 00action_file.rpy:26
     old "{#weekday}Thursday"
-    new "{#weekday}Thursday"
+    new "{#weekday}木曜日"
 
     # 00action_file.rpy:26
     old "{#weekday}Friday"
-    new "{#weekday}Friday"
+    new "{#weekday}金曜日"
 
     # 00action_file.rpy:26
     old "{#weekday}Saturday"
-    new "{#weekday}Saturday"
+    new "{#weekday}土曜日"
 
     # 00action_file.rpy:26
     old "{#weekday}Sunday"
-    new "{#weekday}Sunday"
+    new "{#weekday}日曜日"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Mon"
-    new "{#weekday_short}Mon"
+    new "{#weekday_short}月"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Tue"
-    new "{#weekday_short}Tue"
+    new "{#weekday_short}火"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Wed"
-    new "{#weekday_short}Wed"
+    new "{#weekday_short}水"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Thu"
-    new "{#weekday_short}Thu"
+    new "{#weekday_short}木"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Fri"
-    new "{#weekday_short}Fri"
+    new "{#weekday_short}金"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Sat"
-    new "{#weekday_short}Sat"
+    new "{#weekday_short}土"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Sun"
-    new "{#weekday_short}Sun"
+    new "{#weekday_short}日"
 
     # 00action_file.rpy:47
     old "{#month}January"
-    new "{#month}January"
+    new "{#month}１月"
 
     # 00action_file.rpy:47
     old "{#month}February"
-    new "{#month}February"
+    new "{#month}２月"
 
     # 00action_file.rpy:47
     old "{#month}March"
-    new "{#month}March"
+    new "{#month}３月"
 
     # 00action_file.rpy:47
     old "{#month}April"
-    new "{#month}April"
+    new "{#month}４月"
 
     # 00action_file.rpy:47
     old "{#month}May"
-    new "{#month}May"
+    new "{#month}５月"
 
     # 00action_file.rpy:47
     old "{#month}June"
-    new "{#month}June"
+    new "{#month}６月"
 
     # 00action_file.rpy:47
     old "{#month}July"
-    new "{#month}July"
+    new "{#month}７月"
 
     # 00action_file.rpy:47
     old "{#month}August"
-    new "{#month}August"
+    new "{#month}８月"
 
     # 00action_file.rpy:47
     old "{#month}September"
-    new "{#month}September"
+    new "{#month}９月"
 
     # 00action_file.rpy:47
     old "{#month}October"
-    new "{#month}October"
+    new "{#month}１０月"
 
     # 00action_file.rpy:47
     old "{#month}November"
-    new "{#month}November"
+    new "{#month}１１月"
 
     # 00action_file.rpy:47
     old "{#month}December"
-    new "{#month}December"
+    new "{#month}１２月"
 
     # 00action_file.rpy:63
     old "{#month_short}Jan"
-    new "{#month_short}Jan"
+    new "{#month_short}１月"
 
     # 00action_file.rpy:63
     old "{#month_short}Feb"
-    new "{#month_short}Feb"
+    new "{#month_short}２月"
 
     # 00action_file.rpy:63
     old "{#month_short}Mar"
-    new "{#month_short}Mar"
+    new "{#month_short}３月"
 
     # 00action_file.rpy:63
     old "{#month_short}Apr"
-    new "{#month_short}Apr"
+    new "{#month_short}４月"
 
     # 00action_file.rpy:63
     old "{#month_short}May"
-    new "{#month_short}May"
+    new "{#month_short}５月"
 
     # 00action_file.rpy:63
     old "{#month_short}Jun"
-    new "{#month_short}Jun"
+    new "{#month_short}６月"
 
     # 00action_file.rpy:63
     old "{#month_short}Jul"
-    new "{#month_short}Jul"
+    new "{#month_short}７月"
 
     # 00action_file.rpy:63
     old "{#month_short}Aug"
-    new "{#month_short}Aug"
+    new "{#month_short}８月"
 
     # 00action_file.rpy:63
     old "{#month_short}Sep"
-    new "{#month_short}Sep"
+    new "{#month_short}９月"
 
     # 00action_file.rpy:63
     old "{#month_short}Oct"
-    new "{#month_short}Oct"
+    new "{#month_short}１０月"
 
     # 00action_file.rpy:63
     old "{#month_short}Nov"
-    new "{#month_short}Nov"
+    new "{#month_short}１１月"
 
     # 00action_file.rpy:63
     old "{#month_short}Dec"
-    new "{#month_short}Dec"
+    new "{#month_short}１２月"
 
     # 00action_file.rpy:235
     old "%b %d, %H:%M"
@@ -175,7 +175,7 @@ translate japanese strings:
 
     # 00gui.rpy:230
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "セーブされていないデータは失われます\n続けますか？"
+    new "ロードすると、セーブされていない進行状況は失われます。\nロードしますか？"
 
     # 00gui.rpy:231
     old "Are you sure you want to quit?"
@@ -183,11 +183,11 @@ translate japanese strings:
 
     # 00gui.rpy:232
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "メインメニューに戻りますか？\nセーブされていないデータは破棄されます"
+    new "メインメニューに戻りますか？\nセーブされていない進行状況は破棄されます。"
 
     # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
-    new "Are you sure you want to end the replay?"
+    new "リプレイを終了しますか？"
 
     # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
@@ -199,7 +199,7 @@ translate japanese strings:
 
     # 00gui.rpy:236
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "Are you sure you want to skip unseen dialogue to the next choice?"
+    new "次の選択肢まで、未読テキストをスキップしますか？"
 
     # 00keymap.rpy:250
     old "Saved screenshot as %s."
@@ -207,15 +207,15 @@ translate japanese strings:
 
     # 00library.rpy:142
     old "Self-voicing disabled."
-    new "Self-voicing disabled."
+    new "セルフボイシング無効化。"
 
     # 00library.rpy:143
     old "Clipboard voicing enabled. "
-    new "Clipboard voicing enabled. "
+    new "クリップボードボイシング有効化。"
 
     # 00library.rpy:144
     old "Self-voicing enabled. "
-    new "Self-voicing enabled. "
+    new "セルフボイシング有効化。"
 
     # 00library.rpy:179
     old "Skip Mode"
@@ -223,27 +223,27 @@ translate japanese strings:
 
     # 00library.rpy:262
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
+    new "本プログラムは、MIT License や GNU Lesser General Public License など、様々なライセンスのフリーウェアを含んでいます。 フルソースコードへのリンクを含む、完全なソフトウェアのリストは、{a=https://www.renpy.org/l/license}ここ{/a}にあります。"
 
     # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "クリップボードボイシングが有効化しました。 'shift+C'で無効化します。"
+    new "クリップボードボイシングを有効化しました。 'shift+C'で無効化します。"
 
     # 00preferences.rpy:424
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
+    new "セルフボイシングは次のように話します。 \"[renpy.display.tts.last]\". 'alt+shift+V' で無効化します。"
 
     # 00preferences.rpy:426
     old "Self-voicing enabled. Press 'v' to disable."
-    new "セルフボイシングが有効化しました。 'v' で無効化します。"
+    new "セルフボイシングを有効化しました。 'v' で無効化します。"
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
-    new "Contacting App Store\nPlease Wait..."
+    new "App Store にコンタクトしています。\nしばらくお待ちください…"
 
     # 00updater.rpy:367
     old "The Ren'Py Updater is not supported on mobile devices."
-    new "モバイル板でのアップデートはサポートしていません。"
+    new "モバイルデバイスでのアップデートはサポートしていません。"
 
     # 00updater.rpy:486
     old "An error is being simulated."
@@ -251,7 +251,7 @@ translate japanese strings:
 
     # 00updater.rpy:662
     old "Either this project does not support updating, or the update status file was deleted."
-    new "このプロジェクトはアップデートをサポートしていないか、アップデート用のファイルが削除されました。"
+    new "このプロジェクトはアップデートをサポートしていないか、アップデート用のファイルが削除されています。"
 
     # 00updater.rpy:676
     old "This account does not have permission to perform an update."
