@@ -336,48 +336,40 @@ Ren`py 有大量的 GUI 有关的变量可以用于改变字体颜色，字体�
 边框
 -------
 
-有很多的 GUI 组件，比如按钮和条块这些使用可拓展尺寸的背景，并用边框对象来使之成型的元素。在讨论怎样自定义化按钮和条块，我们先叙述一下它的工作原理。
+有很多的 GUI 组件，比如按钮和条块这些使用可拉伸尺寸的背景，并用边框对象来使之成型的元素。在讨论怎样自定义化按钮和条块，我们先叙述一下它的工作原理。
 
-Borders are given to the :func:`Frame` displayable.
-A Frame takes an image, and divides it into nine parts - the four corners,
-the four sides, and the center. The corners always remain the same size,
-the left and right sides are stretched vertically, the top and bottom sides
-are stretched horizontally, and the center is stretched in both directions.
+边框给定了 :func:`Frame` 可展示性。
+一个框架把一副图像分成了九个部分 - 四个边角，
+四个测边，和中央部分，四个边角是保持原来的尺寸的，
+左侧边和右侧边是垂直方向拉伸的，上侧边和下侧边是水平方向拉伸的，而中央部分以两个方向进行拉伸。
 
-A Borders object gives the size of each of the borders, in left, top, right,
-bottom order. So if the following border image is used:
+一个边框对象以左，上，右，下的顺序给定了每个侧边的尺寸。所以，当使用以下这个边框图像时：
 
 .. image:: oshs/game/images/borders.png
 
-along with the following borders::
+就会具有下面这边框对象::
 
     Borders(40, 40, 40, 40)
 
-one possible result is this:
+有一种可能是这样:
 
 .. image:: gui/borders1.png
 
-As the child changes size, so will the background.
+当子对象变化时，背景也会变化。
 
-A Border object can also be given padding, including negative padding that
-causes the child to overlap the borders. For example, these borders::
+边框对象能够给定内边框属性，如果内边框为负值时能够令子对象覆盖边框。例如这种边框对象::
 
     Borders(40, 40, 40, 40, -20, -20, -20, -20)
 
-allow the child to overlap the sides. Note that due to this overlap, the
-result is smaller, since the borders themselves now take up less space.
+它允许子对象能够覆盖边框。你应该主要到，因为子对象的覆盖，使得整个边框对象尺寸更小了，因为占用的空间变小了。
 
 .. image:: gui/borders2.png
 
-Borders can also be tiled, rather than scaled. This is invoked by variables,
-and produces this result.
+除了尺寸拉伸，边框对象同样能够使用平铺。这是由一些变量来进行调用，并产生如下的效果。
 
 .. image:: gui/borders3.png
 
-These example images are a bit ugly, since we need to show what's going on.
-In practice, this system can produce quite pleasing results. This is the case when
-a Frame displayable is used as the background of a frame window holding
-user interface components.
+这副示例图像有点丑，这是因为我们需要展示平铺时怎样发生的。实际上，系统会产生比较适宜的人处理结果。这个示例是框架作为容纳用户界面组件的框架窗口的背景。
 
 These frame windows can be customized in two ways. The first is by changing the
 background image file:

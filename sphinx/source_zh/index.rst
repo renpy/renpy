@@ -37,7 +37,7 @@ Ren'Py 语言
    视频
    声音
 
-Text, Displayables, Transforms, and Transitions
+文本，可展示性，变形效果和过渡效果
 -----------------------------------------------
 
 .. toctree::
@@ -50,81 +50,81 @@ Text, Displayables, Transforms, and Transitions
    过渡效果
    改变
 
-Customizing Ren'Py
+自定义化 Ren'Py
 ------------------
 
 .. toctree::
    :maxdepth: 1
 
-   style
-   style_properties
-   screens
-   screen_actions
-   screen_special
-   screen_optimization
-   config
-   store_variables
+   样式
+   样式属性
+   画面
+   画面动作
+   画面特效
+   画面优化
+   设置
+   储存变量
 
-Other Functionality
+其他功能
 -------------------
 
 .. toctree::
    :maxdepth: 1
 
-   nvl_mode
-   input
-   side_image
-   rooms
-   drag_drop
-   sprites
-   keymap
-   developer_tools
-   achievement
-   history
+   nvl 模式
+   输入
+   侧边图像
+   房间
+   可拖拽元素
+   精灵
+   快捷键
+   开发工具
+   成就
+   历史
 
-Python and Ren'Py
+Python 和 Ren'Py
 -----------------
 
 .. toctree::
    :maxdepth: 1
 
-   statement_equivalents
-   save_load_rollback
+   等价语句
+   保存，载入与回滚
    persistent
    trans_trans_python
    screen_python
-   modes
+   模式
    udd
    cds
-   custom_text_tags
-   character_callbacks
-   file_python
-   color_class
+   自定义文本标签
+   角色回调
+   python 文件
+   颜色类
    other
 
-Building, Updating, and Other Platforms
+构建
 ---------------------------------------
 
 .. toctree::
    :maxdepth: 1
 
-   build
-   updater
+   构建
+   升级器
    android
-   chromeos
+   chrome系统
    ios
    iap
    gesture
 
-End-User Documentation
+终端用户文档
 ----------------------
 
 .. toctree::
    :maxdepth: 1
 
-   problems
-   environment_variables
-   self_voicing
+   问题
+   环境变量
+   自发声
 
 Engine Developer Documentation
 ------------------------------
