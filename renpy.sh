@@ -70,4 +70,8 @@ if ! test -d "$LIB"; then
     exit 1
 fi
 
+if test -n "$LD_LIBRARY_PATH"; then
+    export LD_LIBRARY_PATH="$LIB:$LD_LIBRARY_PATH"
+fi
+
 exec $RENPY_GDB "$LIB/$BASEFILE" $RENPY_PYARGS -EO "$BASE/$BASEFILE.py" "$@"
