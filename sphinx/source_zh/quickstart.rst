@@ -4,6 +4,8 @@
 欢迎来到Ren'Py的快速开始手册。 这份手册是为了让你只需要几个简单步骤的拼凑就能创作出Ren'Py游戏。我们会展示怎样用拼凑的方法创作出 *The
 Question*这样一款简单的游戏。这份手册包含着多个示例，同时也是示例游戏中的一部分。
 
+翻译者：`Haitao(Kaitou)<https://github.com/HaitaoBio>`_
+
 Ren'Py 启动器
 -------------------
 
@@ -410,7 +412,7 @@ Python 语言使储存玩家输入变得简单。只要在游戏开始时初始�
 **发布。**
    你可以上传完成后的文件(基于 Windows, Mac, 和 Linux) 到网络上，然后告诉朋友哪里可以下载它。恭喜，你已经发布了你的游戏了！
 
-   请你同时为`games database <http://games.renpy.org>`_ 添加你已经发布的游戏，以便于我们能够追踪  Ren'Py 游戏。
+   请你同时为 `games database <http://games.renpy.org>`_ 添加你已经发布的游戏，以便于我们能够追踪  Ren'Py 游戏。
 
 The Question 的源代码
 -----------------------

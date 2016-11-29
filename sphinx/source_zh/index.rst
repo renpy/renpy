@@ -126,17 +126,17 @@ Python 和 Ren'Py
    环境变量
    自发声
 
-Engine Developer Documentation
+引擎开发者文档
 ------------------------------
 
 .. toctree::
    :maxdepth: 1
 
-   editor
-   skins
-   translating_renpy
+   编辑器
+   皮肤
+   翻译Renpy
 
-Changes, License, and Documentation Credits
+更新，协议，和文档贡献者 License, and Documentation Credits
 -------------------------------------------
 
 .. toctree::

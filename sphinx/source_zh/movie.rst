@@ -90,7 +90,7 @@ Ren'Py兼容 libav (已包含)的使用并使用
 多个视频可展示性或者视频精灵可以在屏幕中显示一次，为了迁就系统的性能并保持相同的帧率。当视频以不同的帧率被播放时，Ren'Py 的行为时不确定的，比如会有明显的掉帧现象。
 
 
-Python Functions
+Python 函数
 ----------------
 
 .. include:: inc/movie_cutscene
