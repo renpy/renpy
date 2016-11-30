@@ -492,7 +492,7 @@ And the second is by customizing variables.
 
 .. var:: gui.confirm_frame_borders = Borders(60, 60, 60, 60)
 
-    The borders applied to the fame used in the confirm screen.
+    The borders applied to the frame used in the confirm screen.
 
 .. var:: gui.frame_tile = True
 
@@ -1403,4 +1403,3 @@ Python Functions
 There are some Python functions that support gui code.
 
 .. include:: inc/gui
-

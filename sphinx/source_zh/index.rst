@@ -5,12 +5,17 @@
 
     http://www.renpy.org/
 
-.. only:: not language_ja and not gettext
-
-    日本語のドキュメントは以下にあります:
-
-        http://ja.renpy.org/doc/html/
-
+简体中文版翻译人员名单：
+    坑主：fk1995
+    翻译：fk1995,
+          Orion,
+          今夜不谈风月,
+          Icemaple,
+          星云月,
+          okami2012,
+          喵呜咪,
+          `Haitao(Kaitou) <https://github.com/HaitaoBio>`_
+    润色：fk1995
 
 入门
 ---------------
@@ -166,4 +171,3 @@ Example Scripts
 
    thequestion
    thequestion_nvl
-

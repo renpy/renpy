@@ -4,7 +4,6 @@
 欢迎来到Ren'Py的快速开始手册。 这份手册是为了让你只需要几个简单步骤的拼凑就能创作出Ren'Py游戏。我们会展示怎样用拼凑的方法创作出 *The
 Question*这样一款简单的游戏。这份手册包含着多个示例，同时也是示例游戏中的一部分。
 
-翻译者：`Haitao(Kaitou)<https://github.com/HaitaoBio>`_
 
 Ren'Py 启动器
 -------------------
@@ -13,7 +12,7 @@ Ren'Py 启动器
 在你开始创作游戏之前，应该首先花点时间了解一下Ren'Py启动器是怎样运作的。启动器让你可以新建，管理，修改和运行Ren'Py游戏项目。
 
 **开始入门** 你应该通过
-`下载 Ren'Py<https://www.renpy.org/latest.html>`_
+`下载 Ren'Py <https://www.renpy.org/latest.html>`_
 来开始入门.
 
 当下载Ren'Py完毕，你可能会想解压缩它。对压缩包文件右键点击，选择"解压"选项或者"打开"选项就能够实现解压了。按照提示去做，就能得到 Ren'Py 的工作目录。
@@ -426,6 +425,6 @@ The Question 的源代码
 
 你也可以阅读手册剩下的章节，那是 Ren'Py 的权威指南。
 
-Ren'Py 网站里的 `FAQ <http://www.renpy.org/wiki/renpy/doc/FAQ>`_ 对于常见问题给出了答案，还有 `Cookbook <http://www.renpy.org/wiki/renpy/doc/cookbook/Cookbook>`_ 给出了一些有用的代码片段。如果你还有疑问，我们建议你在 `Lemma Soft Forums <http://lemmasoft.renai.us/forums/>`_提问，这是 Ren'Py 的官方论坛。也是 Ren'Py 社区的中心。我们欢迎新用户并乐意倾听他们的疑问。
+Ren'Py 网站里的 `FAQ <http://www.renpy.org/wiki/renpy/doc/FAQ>`_ 对于常见问题给出了答案，还有 `Cookbook <http://www.renpy.org/wiki/renpy/doc/cookbook/Cookbook>`_ 给出了一些有用的代码片段。如果你还有疑问，我们建议你在 `Lemma Soft Forums <http://lemmasoft.renai.us/forums/>`_ 提问，这是 Ren'Py 的官方论坛。也是 Ren'Py 社区的中心。我们欢迎新用户并乐意倾听他们的疑问。
 
 最后衷心感谢你选择了 Ren'Py 视觉小说引擎。我们期待它能够帮助你创造出游戏作品！

@@ -371,87 +371,83 @@ Ren`py 有大量的 GUI 有关的变量可以用于改变字体颜色，字体�
 
 这副示例图像有点丑，这是因为我们需要展示平铺时怎样发生的。实际上，系统会产生比较适宜的人处理结果。这个示例是框架作为容纳用户界面组件的框架窗口的背景。
 
-These frame windows can be customized in two ways. The first is by changing the
-background image file:
+这些框架窗口能够以两种方法来进行自定义化。一是通过改变背景图像文件：
 
 gui/frame.png
-    The image used as the background of frames windows.
+    作为框架窗口的背景图像。
 
-And the second is by customizing variables.
+第二种方法时通过自定义化变量。
 
 .. var:: gui.frame_borders = Borders(15, 15, 15, 15)
 
-    The borders applied to frame windows.
+    框架窗口的边框。
 
 .. var:: gui.confirm_frame_borders = Borders(60, 60, 60, 60)
 
-    The borders applied to the fame used in the confirm screen.
+    确认框窗口的边框
 
 .. var:: gui.frame_tile = True
 
-    If true, the sides and center of the confirm screen are tiled. If false,
-    they are scaled.
+    如果为 Ture 的话，确认框窗口的九宫图中间部分会被平铺。为 False的话，则会被拉伸。
 
 .. ifconfig:: renpy_figures
 
     .. figure:: oshs/game/gui/frame.png
         :width: 100%
 
-        An example gui/frame.png image.
+        gui/frame.png 示例图像。
 
     .. figure:: gui/frame_confirm.jpg
         :width: 100%
 
-        The confirm screen after applying the customizations given
-        above.
+        用上面给出的方法自定义化后的确认框窗口。
 
-Buttons
+按钮
 -------
 
-The Ren'Py user interface includes a large number of buttons, buttons
-that come in different sizes and that are used for different purposes.
-The various kinds of buttons are:
+Ren'Py 的用户界面包含着众多的按钮，它们有着不同的尺寸大小，并用于不同的用途。
+这里就列举了以下各种按钮：
 
-button
+按钮(button)
     A basic button. Used for navigation within the user interface.
 
-choice_button
+选项按钮(choice_button)
     A button used for choices in the in-game menu.
 
-quick_button
+快捷按钮(quick_button)
     A button, displayed in-game, that is intended to allow quick access
     to the game menu.
 
-navigation_button
+导航按钮(navigation_button)
     A button used in main and game menu for navigation between screens,
     and to start the game.
 
-page_button
+换页按钮(page_button)
     A button used to switch between pages on the load and save screens.
 
-slot_button
+槽位按钮(slot_button)
     Buttons that represent file slots, and contain a thumbnail, the save
     time, and an optional save name. These are described in more detail
     below.
 
-radio_button
+单选选项按钮(radio_button)
     A button used for multiple-choice preferences on the preferences
     screen.
 
-check_button
+多选选项按钮(check_button)
     A button used for toggleable preferences on the preferences screen.
 
-test_button
+测试按钮(test_button)
     A button used to test audio playback on the preferences screen. This
     should be the same height as a horizontal slider.
 
-help_button
+帮助按钮help_button
     A button used to select what kind of help the player wants.
 
-confirm_button
+确认按钮confirm_button
     A button used on the confirm screen to select yes or no.
 
-nvl_button
+NVL按钮nvl_button
     A button used for an NVL-mode menu choice.
 
 The following image files are used to customize button backgrounds,
@@ -1296,4 +1292,3 @@ Python Functions
 There are some Python functions that support gui code.
 
 .. include:: inc/gui
-
