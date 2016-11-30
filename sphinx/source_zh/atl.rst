@@ -1,38 +1,30 @@
 .. _atl:
 
 =====================================
-Animation and Transformation Language
+动画变换语言(Animation and Transformation Language)
 =====================================
 
-The Animation and Transformation Language (ATL) provides a high-level way of
-choosing a displayable to show, positioning it on the screen, and applying
-transformations such as rotation, zoom, and alpha-modification. These can be
-changed over time, and in response to events.
+动画变换语言(Animation and Transformation LanguageATL)提供了一套应用于可显示对象的高级变换方法，包括显示，放置在视屏上和应用诸如旋转，缩放，透明度设置等变形效果。这些具体的变换可以随时间改变，也可以响应事件。
 
-The Python equivalent of an ATL transform is the :func:`Transform`
-displayable. There is no way to create an ATL transform programmatically.
+ATL transform对象在 Python 中是等价于函数 :func:`Transform` 返回的可显示对象。您无法使用其他的代码来创建ATLTransform对象。
 
-Ren'Py Script Statements
+Ren'Py 脚本语句
 ========================
 
-ATL Code can be included as part of three Ren'Py script statements.
+ATL代码可以在三种 Ren'Py 脚本语句中使用。
 
 .. _transform-statement:
 
-Transform Statement
+Transform 语句
 -------------------
 
-The transform statement creates a transform that can be supplied as part of an
-at clause. The syntax of the transform statement is:
+transform 语句用于定义一个 transform 对象，可以在at从句中使用。该命令的语法如下：
 
 .. productionlist:: script
     atl_transform : "transform" `name` "(" `parameters` ")" ":"
                   :    `atl_block`
 
-The transform statement  must be run at init time. If it is found outside an
-init block, then it is automatically placed inside an init block with a
-priority of 0. The transform may have a list of parameters, which must be
-supplied when it is called.
+transform 命令必须在初始化时运行。如果它在 init 区块之外，会以优先度为0的情况下在程序初始化时运行。transform 对象可以带有一系列的参数，当调用它时提供相应的参数。
 
 `Name` must be a python identifier. The transform created by the ATL block is
 bound to this name.::
@@ -44,13 +36,10 @@ bound to this name.::
 
 .. _atl-image-statement:
 
-Image Statement With ATL Block
+带 ATL 区块的 image 语句
 ------------------------------
 
-The second way to use ATL is as part of an image statement with ATL block.
-This binds an image name to the given transform. As there's no way to supply
-parameters to this transform, it's only useful if the transform defines an
-animation. The syntax for an image statement with ATL block is:
+ATL 的第二种用途就是作为 image 语句的一部分。您可以将一个 transform 对象绑定到一个图像名称上。因为无法向该命令提供参数，所以只有当这个 transform 对象定义为动画时，这么做才有意义。相关语法如下：
 
 .. productionlist:: script
     atl_image : "image" `image_name` ":"
@@ -1009,4 +998,3 @@ The following events can be triggered automatically:
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``
    Triggered when button containing this transform, or a button contained
    by this transform, enters the named state.
-

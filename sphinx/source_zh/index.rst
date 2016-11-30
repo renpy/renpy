@@ -7,14 +7,7 @@
 
 简体中文版翻译人员名单：
     坑主：fk1995
-    翻译：fk1995,
-          Orion,
-          今夜不谈风月,
-          Icemaple,
-          星云月,
-          okami2012,
-          喵呜咪,
-          `Haitao(Kaitou) <https://github.com/HaitaoBio>`_
+    翻译：fk1995,Orion,今夜不谈风月,Icemaple,星云月,okami2012,喵呜咪, `Haitao(Kaitou) <https://github.com/HaitaoBio>`_
     润色：fk1995
 
 入门
@@ -42,7 +35,7 @@ Ren'Py 语言
    视频
    声音
 
-文本，可展示性，变形效果和过渡效果
+文本，可显示对象，变形效果和过渡效果
 -----------------------------------------------
 
 .. toctree::
@@ -50,7 +43,7 @@ Ren'Py 语言
 
    文本
    翻译
-   可展示性
+   可显示对象
    变形效果
    过渡效果
    改变
