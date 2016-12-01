@@ -222,6 +222,10 @@ init -1500 python in updater:
 
             threading.Thread.__init__(self)
 
+            import os
+            if "RENPY_FORCE_UPDATE" in os.environ:
+                force = True
+
             # The main state.
             self.state = Updater.CHECKING
 
