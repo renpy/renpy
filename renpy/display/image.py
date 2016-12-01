@@ -136,7 +136,17 @@ class ImageReference(renpy.display.core.Displayable):
     """
 
     nosave = [ 'target' ]
+
     target = None
+    old_transform = None
+    param_target = None
+
+    __version__ = 1
+
+    def after_upgrade(self, version):
+        if version < 1:
+            if isinstance(self.param_target, renpy.display.transform.Transform):
+                self.old_transform = self.param_target
 
     def __init__(self, name, **properties):
         """
@@ -167,6 +177,7 @@ class ImageReference(renpy.display.core.Displayable):
         return True
 
     def _target(self):
+
         if self.target is None:
             self.find_target()
 
@@ -216,6 +227,18 @@ class ImageReference(renpy.display.core.Displayable):
                 raise
 
             error(str(e))
+
+        # Copy the old transform over.
+        new_transform = self.target._target()
+
+        if isinstance(new_transform, renpy.display.transform.Transform):
+            if self.old_transform is not None:
+                new_transform.take_state(self.old_transform)
+
+            self.old_transform = new_transform
+
+        else:
+            self.old_transform = None
 
         return True
 

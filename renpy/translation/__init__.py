@@ -638,4 +638,4 @@ def known_languages():
     language, None.
     """
 
-    return renpy.game.script.translator.languages  # @UndefinedVariable
+    return { i for i in renpy.game.script.translator.languages if i is not None }  # @UndefinedVariable
