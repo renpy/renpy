@@ -527,11 +527,11 @@ translate japanese strings:
 
     # gui7.rpy:250
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
-    new "使用したいカラースキームをクリックしたのち、続行をクリックしてください。カラーは後で変えたり、カスタマイズしたりできます。"
+    new "使用したいカラースキームをクリックした後、続行をクリックしてください。カラーは後で変更・カスタマイズすることができます。"
 
     # gui7.rpy:294
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new "{b}警告{/b}\n続行すると、カスタマイズしたバー、ボタン、セーブスロット、スクロールバー、スライダーの画像が上書きされます。\n\nそれでよろしいでしょうか？"
+    new "{b}警告{/b}\n続行すると、カスタマイズしたバー・ボタン・セーブスロット・スクロールバー・スライダーの画像が上書きされます。\n\nそれでもよろしいでしょうか？"
 
     # gui7.rpy:294
     old "Choose new colors, then regenerate image files."
@@ -563,7 +563,7 @@ translate japanese strings:
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "どの解像度をこのプロジェクトに使用しますか？Ren'pyはウィンドウを拡大縮小することができますが、これは初期のウィンドウサイズ・描画される各アセットのサイズ・アセットが最もシャープに見えるサイズを決定します。\n\nデフォルトの 1280x720 が合理的な妥協案になります。"
+    new "どの解像度をこのプロジェクトに使用しますか？ Ren'py はウィンドウを拡大縮小することができますが、この設定は初期のウィンドウサイズ・描画される各アセットのサイズ・アセットが最もシャープに見えるサイズを決定します。\n\nデフォルトの 1280x720 が合理的な妥協サイズです。"
 
     # gui7.rpy:389
     old "Creating the new project..."
@@ -835,11 +835,11 @@ translate japanese strings:
 
     # new_project.rpy:50
     old "Only the new GUI has been translated to your language."
-    new "Only the new GUI has been translated to your language."
+    new "New GUI のみが日本語に翻訳されています。"
 
     # new_project.rpy:52
     old "Only the legacy theme interface has been translated to your language."
-    new "Only the legacy theme interface has been translated to your language."
+    new "Legacy Theme のみが日本語に翻訳されています。"
 
     # new_project.rpy:54
     old "Neither interface has been translated to your language."
@@ -851,7 +851,7 @@ translate japanese strings:
 
     # new_project.rpy:69
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
-    new "どちらのインターフェースを使用しますか？New GUI はモダンな外見で、ワイドスクリーンとモバイルデバイスをサポートし、カスタマイズも容易です。Legacy themes は古いコードの例を利用するのに必要になるでしょう。\n\n[language_support!t]\n\n判断がつかない場合は、New GUI を選択肢して、右下の続行をクリックします。"
+    new "どちらのインターフェースを使用しますか？ New GUI はモダンな外見で、ワイドスクリーンとモバイルデバイスをサポートし、カスタマイズも容易です。Legacy Theme は古いコード例を利用するのに必要になるでしょう。\n\n[language_support!t]\n\n判断がつかない場合は、New GUI を選択して、右下の続行をクリックしてください。"
 
     # new_project.rpy:69
     old "Legacy Theme Interface"
@@ -1043,7 +1043,7 @@ translate japanese strings:
 
     # translations.rpy:251
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py [language] の文字列の翻訳の抽出しました。"
+    new "Ren'Py は [language] の文字列の翻訳を抽出しました。"
 
     # translations.rpy:271
     old "Ren'Py is merging string translations..."
@@ -1051,7 +1051,7 @@ translate japanese strings:
 
     # translations.rpy:274
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py [language] の文字列の翻訳を併合しました。"
+    new "Ren'Py は [language] の文字列の翻訳を併合しました。"
 
     # translations.rpy:282
     old "Updating default interface translations..."
@@ -1192,4 +1192,8 @@ translate japanese strings:
     # distribute.rpy:1061
     old "Signing the Macintosh application...\n(This may take a long time.)"
     new "Macintosh application に署名しています…\n（この処理にはしばらくかかります。）"
+
+    # front_page.rpy:91
+    old "PROJECTS:"
+    new "プロジェクト:"
 

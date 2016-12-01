@@ -51,11 +51,11 @@ translate japanese strings:
 
     # options.rpy:55
     old "## To allow the user to play a test sound on the sound or voice channel, uncomment a line below and use it to set a sample sound to play."
-    new "## サウンドやボイスの設定画面で、ユーザーがテストサウンドを再生できるようにしたい場合、以下の行をアンコメントして、サンプルサウンドを指定します。"
+    new "## サウンドやボイスの設定画面で、ユーザーがテストサウンドを再生できるようにする場合、以下の行をアンコメントして、サンプルサウンドを指定します。"
 
     # options.rpy:62
     old "## Uncomment the following line to set an audio file that will be played while the player is at the main menu. This file will continue playing into the game, until it is stopped or another file is played."
-    new "## 次の行をアンコメントしてオーディオファイルを指定すると、メインメニューで再生することができます。このファイルは、停止するか他の音楽が再生されない限り、ゲーム中流れ続けます。"
+    new "## 次の行をアンコメントして、オーディオファイルを指定すると、メインメニューで再生することができます。このファイルは、停止するか他の音楽が再生されない限り、ゲーム中で流れ続けます。"
 
     # options.rpy:69
     old "## Transitions"
@@ -63,7 +63,7 @@ translate japanese strings:
 
     # options.rpy:71
     old "## These variables set transitions that are used when certain events occur. Each variable should be set to a transition, or None to indicate that no transition should be used."
-    new "## 以下の変数は、メニュー切り替えなどのイベントが発生した場合のトランジションを設定します。各変数には、トランジションオブジェクトを指定します。トランジションを使わない場合は、None に設定します。"
+    new "## 以下の変数は、メニュー切り替えなどのイベントに対するトランジションを設定します。各変数には、トランジションオブジェクトを指定します。トランジションを使わない場合は、None に設定します。"
 
     # options.rpy:75
     old "## Entering or exiting the game menu."
@@ -79,7 +79,7 @@ translate japanese strings:
 
     # options.rpy:91
     old "## A variable to set the transition used when the game starts does not exist. Instead, use a with statement after showing the initial scene."
-    new "## メインメニューからゲームを開始する時のトランジションは、ここでは設定できません。代わりに、ゲーム開始直後の最初のシーンで、with ステートメント（文）を使ってくらさい。"
+    new "## メインメニューからゲームを開始する時のトランジションは、ここでは設定できません。代わりに、ゲーム開始後の最初のシーンで、with ステートメント（文）を使ってください。"
 
     # options.rpy:96
     old "## Window management"
@@ -87,7 +87,7 @@ translate japanese strings:
 
     # options.rpy:98
     old "## This controls when the dialogue window is displayed. If \"show\", it is always displayed. If \"hide\", it is only displayed when dialogue is present. If \"auto\", the window is hidden before scene statements and shown again once dialogue is displayed."
-    new "## 以下は、台詞を表示するテキストウィンドウの挙動を制御します。\"show\" であれば、常に表示し、\"hide\" であれば、台詞が表示されているときにのみ表示します。\"auto\" であれば、scene ステートメントの直前に非表示にし、say ステートメントの直前に表示します。"
+    new "## 以下は、台詞を表示するテキストウィンドウの挙動を制御します。\"show\" であれば常に表示し、\"hide\" であれば台詞が表示されているときにのみ表示します。\"auto\" であれば scene ステートメントの直前に非表示、say ステートメントの直前に表示します。"
 
     # options.rpy:103
     old "## After the game has started, this can be changed with the \"window show\", \"window hide\", and \"window auto\" statements."
@@ -115,7 +115,7 @@ translate japanese strings:
 
     # options.rpy:131
     old "## Controls the platform-specific place Ren'Py will place the save files for this game. The save files will be placed in:"
-    new "## プラットフォーム毎に、Ren'Py がゲームのセーブデータを作成する場所を制御します。セーブファイルは、以下の場所に作成されます："
+    new "## プラットフォーム毎の、Ren'Py がゲームのセーブデータを作成する場所を制御します。セーブファイルは、以下の場所に作成されます："
 
     # options.rpy:134
     old "## Windows: %APPDATA\\RenPy\\<config.save_directory>"
@@ -151,11 +151,11 @@ translate japanese strings:
 
     # options.rpy:160
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
-    new "## 以下の機能は、特有のファイルパターンを利用します。ファイルパターンは、大文字小文字を区別せず、ベースディレクトリーからの相対パスを参照します（最初の / は無視します）。複数のパターンが一致すれば、先に定義された方が優先されます。"
+    new "## 以下の機能は、ファイルパターン（ワイルドカード等で複数ファイルを指定する文字列）を利用します。ファイルパターンは、大文字小文字を区別せず、ベースディレクトリーからの相対パスを参照します（最初の / は無視します）。複数のパターンが一致した場合、先に定義した方が優先されます。"
 
     # options.rpy:165
     old "## In a pattern:"
-    new "## 以下のパターンがあります："
+    new "## パターンは、以下の記号を使用します："
 
     # options.rpy:167
     old "## / is the directory separator."
@@ -175,7 +175,7 @@ translate japanese strings:
 
     # options.rpy:177
     old "## Classify files as None to exclude them from the built distributions."
-    new "## classify （分類）を None に設定したファイルは、配布物から除外されます。"
+    new "## classify（分類）を None に設定したファイルは、配布物から除外されます。"
 
     # options.rpy:185
     old "## To archive files, classify them as 'archive'."
@@ -183,7 +183,7 @@ translate japanese strings:
 
     # options.rpy:190
     old "## Files matching documentation patterns are duplicated in a mac app build, so they appear in both the app and the zip file."
-    new "## documentation （ドキュメント）に指定したパターンと一致するファイルは、 mac 用アプリのビルドで複製され、app と zip のどちらにも含まれるようになります。"
+    new "## documentation（ドキュメント）に指定したパターンと一致するファイルは、 mac 用アプリのビルドで複製され、app と zip のどちらにも含まれるようになります。"
 
     # options.rpy:196
     old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
@@ -191,5 +191,5 @@ translate japanese strings:
 
     # options.rpy:203
     old "## The username and project name associated with an itch.io project, separated by a slash."
-    new "## itch.io project に関連付けられたユーザー名とプロジェクト名です。二つの名前は、スラッシュで分けてください。"
+    new "## itch.io project に関連付けられたユーザー名とプロジェクト名。二つの名前は、スラッシュで分けてください。"
 

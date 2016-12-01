@@ -183,7 +183,7 @@ translate japanese strings:
 
     # 00gui.rpy:232
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "メインメニューに戻りますか？\nセーブされていない進行状況は破棄されます。"
+    new "メインメニューに戻りますか？\nセーブされていない進行状況は失われます。"
 
     # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
@@ -303,7 +303,7 @@ translate japanese strings:
 
     # 00updater.rpy:1416
     old "The updates have been installed. The program will restart."
-    new "アップデートがインストールされました。プログラムを再起動します。"
+    new "アップデートをインストールしました。プログラムを再起動します。"
 
     # 00updater.rpy:1418
     old "The updates have been installed."

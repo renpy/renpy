@@ -7,11 +7,11 @@ translate japanese strings:
 
     # gui.rpy:5
     old "## The init offset statement causes the init code in this file to run before init code in any other file."
-    new "## このファイルは、GUI をカスタマイズするための基本的なオプションを記載しています。次の init offset 文によって、このファイルの init コードを、他のファイルよりも先に実行しています。"
+    new "## このファイルは、GUI をカスタマイズする基本的なオプションを記載しています。次の init offset 文は、このファイルの init コードを、他のファイルよりも先に実行しています。"
 
     # gui.rpy:9
     old "## Calling gui.init resets the styles to sensible default values, and sets the width and height of the game."
-    new "## まず最初に、 gui.init を実行して、スタイルを扱いやすい初期値にリセットし、ゲームの横幅と縦幅を設定します。"
+    new "## まず最初に、gui.init を実行して、スタイルを扱いやすい初期値にリセットし、ゲームの横幅と縦幅を設定します。"
 
     # gui.rpy:17
     old "## GUI Configuration Variables"
@@ -31,7 +31,7 @@ translate japanese strings:
 
     # gui.rpy:29
     old "## The color used for a text button when it is neither selected nor hovered."
-    new "## selected（選択中）でも hover （フォーカス中）でもない状態の、テキストボタンのカラー。"
+    new "## selected（選択中）でも hover（フォーカス中）でもない状態の、テキストボタンのカラー。"
 
     # gui.rpy:32
     old "## The small color is used for small text, which needs to be brighter/darker to achieve the same effect."
@@ -39,11 +39,11 @@ translate japanese strings:
 
     # gui.rpy:36
     old "## The color that is used for buttons and bars that are hovered."
-    new "## hover （フォーカス中）のテキストボタンのカラー。また、バーの充足部分（左側）・hover のスライダーのつまみ等の画像を再生成するときにも使われます。"
+    new "## hover（フォーカス中）のテキストボタンのカラー。また、バーの充足部分（左側）・hover のスライダーのつまみ等の画像を再生成するときにも使われます。"
 
     # gui.rpy:39
     old "## The color used for a text button when it is selected but not focused. A button is selected if it is the current screen or preference value."
-    new "## 選択中のテキストボタンのカラー。ボタンは、現在の環境設定の値や、表示中のスクリーンと一致するものが、選択中になります。"
+    new "## selected（選択中）のテキストボタンのカラー。ボタンは、現在の環境設定の値や、表示中のスクリーンと一致するものが、選択中になります。"
 
     # gui.rpy:43
     old "## The color used for a text button when it cannot be selected."
@@ -55,7 +55,7 @@ translate japanese strings:
 
     # gui.rpy:51
     old "## The colors used for dialogue and menu choice text."
-    new "## 次の text_color は、台詞や選択肢のテキストのカラーです。その次の interface_text_color は、ヒストリーはヘルプなど、それ以外のテキストのカラーです。"
+    new "## 次の text_color は、台詞や選択肢のテキストのカラーです。その次の interface_text_color は、ヒストリーやヘルプなど、それ以外のテキストのカラーです。"
 
     # gui.rpy:56
     old "## Fonts and Font Sizes"
@@ -91,7 +91,7 @@ translate japanese strings:
 
     # gui.rpy:79
     old "## The size of text on the notify screen."
-    new "## notify （通知）スクリーンのテキストサイズ。"
+    new "## notify（通知）スクリーンのテキストサイズ。"
 
     # gui.rpy:82
     old "## The size of the game's title."
@@ -115,7 +115,7 @@ translate japanese strings:
 
     # gui.rpy:98
     old "## These variables control how dialogue is displayed on the screen one line at a time."
-    new "## 以下の変数は、一度に表示される台詞とキャラクター名を、スクリーンにどのように表示するか制御します。"
+    new "## 以下の変数は、一度に表示される台詞とキャラクターの名前を、スクリーンにどのように表示するか制御します。"
 
     # gui.rpy:101
     old "## The height of the textbox containing dialogue."
@@ -131,7 +131,7 @@ translate japanese strings:
 
     # gui.rpy:114
     old "## The horizontal alignment of the character's name. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
-    new "## キャラクター名の文字揃え。 0.0 は左揃え、0.5 は中央揃え、 1.0 は右揃えになります。0.0以外にした場合、台詞の位置の調整も必要になります。"
+    new "## キャラクター名の文字揃え。 0.0 は左揃え、0.5 は中央揃え、 1.0 は右揃えになります。0.0 以外にした場合、キャラクター名の位置の調整も必要になります。"
 
     # gui.rpy:118
     old "## The width, height, and borders of the box containing the character's name, or None to automatically size it."
@@ -139,11 +139,11 @@ translate japanese strings:
 
     # gui.rpy:123
     old "## The borders of the box containing the character's name, in left, top, right, bottom order."
-    new "## ネームボックスのボーダーのサイズ。左、上、右、下の順で指定します。ボックスのサイズは、その中に表示されるキャラクター名のサイズから、さらにボーダー分拡張されたサイズになります。"
+    new "## ネームボックスのボーダーのサイズ。左、上、右、下の順で指定します。ボックスのサイズは、その中に表示されるキャラクター名のサイズから、さらにボーダー分拡張したサイズになります。"
 
     # gui.rpy:127
     old "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
-    new "## True に設定すると、ネームボックスの背景を、スケーリングではなくタイリングで表示します。"
+    new "## True に設定すると、ネームボックスの背景画像を、スケーリングではなくタイリングで表示します。"
 
     # gui.rpy:132
     old "## The placement of dialogue relative to the textbox. These can be a whole number of pixels relative to the left or top side of the textbox, or 0.5 to center."
@@ -151,7 +151,7 @@ translate japanese strings:
 
     # gui.rpy:138
     old "## The maximum width of dialogue text, in pixels."
-    new "## 台詞の最大ピクセル幅。"
+    new "## 台詞の最大ピクセル幅。このピクセル幅以上の台詞は、折り返して表示されます。"
 
     # gui.rpy:141
     old "## The horizontal alignment of the dialogue text. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
@@ -163,7 +163,7 @@ translate japanese strings:
 
     # gui.rpy:148
     old "## These variables, along with the image files in gui/button, control aspects of how buttons are displayed."
-    new "## 以下の変数は、どうのようにボタンを表示するかを制御します。画像を変えたい場合は、gui/botton ディレクトリーにある background.png の画像を入れ替えます（デフォルト画像は透明なので、表示されません）。ボタンの状態に合わせて画像を変えたい場合は、ファイル名に idle_、hover_、selected_、selected_hover_ の接頭辞を付けます。"
+    new "## 以下の変数は、ボタンをどのように表示するか制御します。画像を変えたい場合は、gui/button ディレクトリーにある、各 background.png の画像を入れ替えます（デフォルト画像は透明なので、表示されません）。ボタンの状態に合わせて画像を変えたい場合は、ファイル名に idle_、hover_、selected_、selected_hover_ の接頭辞を付けます。"
 
     # gui.rpy:151
     old "## The width and height of a button, in pixels. If None, Ren'Py computes a size."
@@ -171,15 +171,15 @@ translate japanese strings:
 
     # gui.rpy:155
     old "## The borders on each side of the button, in left, top, right, bottom order."
-    new "## ボタンのボーダーのサイズ。左、上、右、下の順で指定します。ボタンのサイズは、その中のテキストやコンテンツのサイズから、さらにボーダー分拡張されたサイズになります。"
+    new "## ボタンのボーダーのサイズ。左、上、右、下の順で指定します。ボタンのサイズは、その中のテキストやオブジェクトのサイズから、さらにボーダー分拡張したサイズになります。"
 
     # gui.rpy:158
     old "## If True, the background image will be tiled. If False, the background image will be linearly scaled."
-    new "## True に設定すると、ボタンの背景を、スケーリングではなくタイリングで表示します。"
+    new "## True に設定すると、ボタンの背景画像を、スケーリングではなくタイリングで表示します。"
 
     # gui.rpy:162
     old "## The font used by the button."
-    new "## ボタンのテキストに使用するフォント"
+    new "## ボタンのテキストに使用するフォント。"
 
     # gui.rpy:165
     old "## The size of the text used by the button."
@@ -187,7 +187,7 @@ translate japanese strings:
 
     # gui.rpy:168
     old "## The color of button text in various states."
-    new "## 各々の状態のボタンのテキストのカラー。idle は選択可能、hover はフォーカス中、selected は選択中、insensitive は選択不可能な状態です。"
+    new "## 状態別のボタンのテキストのカラー。idle は選択可能、hover はフォーカス中、selected は選択中、insensitive は選択不可能な状態です。"
     
     # gui.rpy:174
     old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
@@ -195,28 +195,28 @@ translate japanese strings:
     
     # gui.rpy:179
     old "## These variables override settings for different kinds of buttons. Please see the gui documentation for the kinds of buttons available, and what each is used for."
-    new "## 以下の変数は、様々なボタンの種類ごとに、デフォルトのボタン設定を上書きします。詳細は gui ドキュメンテーションを参考にしてください。"
+    new "## 以下の変数は、様々なボタンの種類ごとに、ボタンの基本設定を上書きします。詳細は gui ドキュメンテーションを参考にしてください。"
 
     # gui.rpy:183
     old "## These customizations are used by the default interface:"
-    new "## 標準で、以下のボタンが用意されています： radio, check, confirm, page, quick, navigation, choice, slot, test, help, nvl。\
+    new "## デフォルトのインターフェースには、以下のボタンが用意されています。： radio, check, confirm, page, quick, navigation, choice, slot, test, help, nvl。\
 radio と check は環境設定の各項目のボタン（デフォルトでは同じ画像）。confirm は確認画面の選択肢、page は セーブ・ロード画面のページ切り替え、quick はクイックメニュー、 navigation はゲームメニューのメニュー切り替えに使うボタンです。"
 
     # gui.rpy:198
     old "## You can also add your own customizations, by adding properly-named variables. For example, you can uncomment the following line to set the width of a navigation button."
-    new "## 上記以外にも、接頭辞と接尾辞を適切に組み合わせた変数名を使えば、様々なカスタマイズが可能です。例えば、次の行をアンコメントすると、navigation （メニュー切り替え）ボタンの横幅を指定することができます。"
+    new "## 上記以外にも、接頭辞と接尾辞を適切に組み合わせた変数名を追加すれば、様々なカスタマイズが可能になります。例えば、次の行をアンコメントすると、navigation（メニュー切り替え）ボタンの横幅を指定することができます。"
 
     # gui.rpy:205
     old "## Choice Buttons"
-    new "## Choice （選択）ボタン"
+    new "## Choice（選択）ボタン"
 
     # gui.rpy:207
     old "## Choice buttons are used in the in-game menus."
-    new "## Choice ボタンはゲーム中の選択肢に使うボタンです。"
+    new "## Choice ボタンは、ゲーム内の選択肢に使うボタンです。"
 
     # gui.rpy:220
     old "## File Slot Buttons"
-    new "## File Slot （ファイルスロット）ボタン"
+    new "## File Slot（ファイルスロット）ボタン"
 
     # gui.rpy:222
     old "## A file slot button is a special kind of button. It contains a thumbnail image, and text describing the contents of the save slot. A save slot uses image files in gui/button, like the other kinds of buttons."
@@ -232,7 +232,7 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:238
     old "## The number of columns and rows in the grid of save slots."
-    new "## １ページにおける、File slot の列数（cols）と行数（rows）。"
+    new "## １ページあたりの、File slot の列数（cols）と行数（rows）。"
 
     # gui.rpy:243
     old "## Positioning and Spacing"
@@ -240,11 +240,11 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:245
     old "## These variables control the positioning and spacing of various user interface elements."
-    new "## 以下の変数は、インターフェイスの様々な要素の位置と間隔を制御します。"
+    new "## 以下の変数は、インターフェースの様々な要素の位置と間隔を制御します。"
 
     # gui.rpy:248
     old "## The position of the left side of the navigation buttons, relative to the left side of the screen."
-    new "## 画面の左端からの、navigation （メニュー切り替え）ボタンの位置。"
+    new "## 画面左端からの、navigation（メニュー切り替え）ボタンの位置。"
 
     # gui.rpy:252
     old "## The vertical position of the skip indicator."
@@ -252,15 +252,15 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:255
     old "## The vertical position of the notify screen."
-    new "## 画面上端からの、notify （通知）スクリーンの位置。"
+    new "## 画面上端からの、notify（通知）スクリーンの位置。"
 
     # gui.rpy:258
     old "## The spacing between menu choices."
-    new "## ゲーム中の choice （選択）ボタンの間隔。"
+    new "## ゲーム中の choice（選択）ボタンの間隔。"
 
     # gui.rpy:261
     old "## Buttons in the navigation section of the main and game menus."
-    new "## メインメニューやゲームメニューの navigation （メニュー切り替え）ボタンの間隔。"
+    new "## メインメニューやゲームメニューの navigation（メニュー切り替え）ボタンの間隔。"
 
     # gui.rpy:264
     old "## Controls the amount of spacing between preferences."
@@ -272,11 +272,11 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:270
     old "## The spacing between file page buttons."
-    new "## セーブ・ロード画面の、file page （ページ切り替え）ボタンの間隔。"
+    new "## セーブ・ロード画面の、file page（ページ切り替え）ボタンの間隔。"
 
     # gui.rpy:273
     old "## The spacing between file slots."
-    new "## セーブ・ロード画面の、file slot （ファイルスロット）ボタン間隔。."
+    new "## セーブ・ロード画面の、file slot（ファイルスロット）ボタン間隔。."
 
     # gui.rpy:277
     old "## Frames"
@@ -284,11 +284,11 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:279
     old "## These variables control the look of frames that can contain user interface components when an overlay or window is not present."
-    new "## 以下の変数は、インターフェースのコンポーネントを収納するフレームを制御します。フレームは、主にウィンドウやオーバーレイ用いられない場面で使います。"
+    new "## 以下の変数は、インターフェースのコンポーネントを収納するフレームを制御します。フレームは、ウィンドウやオーバーレイが用いられない場面で使われます。"
 
     # gui.rpy:282
     old "## Generic frames that are introduced by player code."
-    new "## 一般的なフレーム。標準では使用せず、開発者の書いたコードでのみ使用します。画像は gui/frame.png。"
+    new "## 一般的なフレーム。デフォルトのインターフェースでは使われず、開発者の書いたコードでのみ使用します。画像は gui/frame.png。"
 
     # gui.rpy:285
     old "## The frame that is used as part of the confirm screen."
@@ -304,7 +304,7 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:294
     old "## Should frame backgrounds be tiled?"
-    new "## True に設定すると、フレームの背景を、スケーリングではなくタイリングで表示します。"
+    new "## True に設定すると、フレームの背景画像を、スケーリングではなくタイリングで表示します。"
 
     # gui.rpy:298
     old "## Bars, Scrollbars, and Sliders"
@@ -320,7 +320,7 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:305
     old "## The height of horizontal bars, scrollbars, and sliders. The width of vertical bars, scrollbars, and sliders."
-    new "## バー、スクロールバー、スライダーの太さ。（水平バーでは縦幅、垂直バーでは横幅）"
+    new "## バー・スクロールバー・スライダーの各々の太さ（水平バーでは縦幅、垂直バーでは横幅）。"
 
     # gui.rpy:311
     old "## True if bar images should be tiled. False if they should be linearly scaled."
@@ -328,15 +328,15 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:316
     old "## Horizontal borders."
-    new "## 水平バーのボーダー。画像はそれぞれ、gui/bar/left.png と right.png、gui/slide/horizontal_**.png、gui/scrollbar/horizontal_**.png。"
+    new "## 水平バーのボーダー。画像はそれぞれ、gui/bar/left.png と right.png、gui/slider/horizontal_**.png、gui/scrollbar/horizontal_**.png。"
 
     # gui.rpy:321
     old "## Vertical borders."
-    new "## 垂直バーのバーダー。画像はそれぞれ、gui/bar/bottom.png と top.png、gui/slide/vertical_**.png、gui/scrollbar/vartical_**.png。"
+    new "## 垂直バーのボーダー。画像はそれぞれ、gui/bar/bottom.png と top.png、gui/slider/vertical_**.png、gui/scrollbar/vartical_**.png。"
 
     # gui.rpy:326
     old "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
-    new "## スクロール不可能なスクロールバーをどう扱うか。 \"hide\" なら非表示、 None なら表示します。"
+    new "## スクロール不可能なスクロールバーをどう扱うか。 \"hide\" なら非表示、None なら表示します。"
 
     # gui.rpy:331
     old "## History"
@@ -344,7 +344,7 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:333
     old "## The history screen displays dialogue that the player has already dismissed."
-    new "## History （履歴）スクリーンはプレイヤーが見終わった台詞を表示します。"
+    new "## History（履歴）スクリーンは、プレイヤーが見終わった台詞を表示します。"
 
     # gui.rpy:335
     old "## The number of blocks of dialogue history Ren'Py will keep."
@@ -352,7 +352,7 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:338
     old "## The height of a history screen entry, or None to make the height variable at the cost of performance."
-    new "## History スクリーンにおける、エントリー（１台詞）の高さ。None にすると可変になりますが、パフォーマンスが低下します。"
+    new "## History スクリーンにおける、エントリーの高さ。None にすると可変になりますが、パフォーマンスが低下します。"
 
     # gui.rpy:342
     old "## The position, width, and alignment of the label giving the name of the speaking character."
@@ -368,7 +368,7 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:358
     old "## The NVL-mode screen displays the dialogue spoken by NVL-mode characters."
-    new "## NVL （ノベル）スクリーンは、 NVL モード（全画面方式）のキャラクターの台詞を表示するスクリーンです。"
+    new "## NVL（ノベル）スクリーンは、 NVL モード（全画面方式）のキャラクターの台詞を表示するスクリーンです。"
 
     # gui.rpy:360
     old "## The borders of the background of the NVL-mode background window."
@@ -400,7 +400,7 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:409
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
-    new "## スマートフォンで見やすいように、GUI の各要素のサイズと間隔を変更しています。"
+    new "## スマートフォンで見やすいように、GUI の各要素のサイズと間隔を変更します。"
 
     # gui.rpy:413
     old "## Font sizes."

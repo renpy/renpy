@@ -15,7 +15,7 @@ translate japanese strings:
 
     # screens.rpy:93
     old "## The say screen is used to display dialogue to the player. It takes two parameters, who and what, which are the name of the speaking character and the text to be displayed, respectively. (The who parameter can be None if no name is given.)"
-    new "## Say スクリーンは、プレイヤーにダイアローグ（台詞）を表示するのに使います。who、what の二つのパラメーターをとり、who は発話しているキャラクター、what は表示されるテキストを意味します。（名前がない場合、who は None になります）"
+    new "## Say スクリーンは、プレイヤーにダイアローグ（台詞）を表示するのに使います。who、what の二つのパラメーターをとり、who は発話しているキャラクターの名前、what は表示されるテキストを意味します。（キャラクターの名前がない場合、who は None になります）"
 
     # screens.rpy:98
     old "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. It can also create displayables with id \"who\" and id \"window\" to apply style properties."
@@ -27,11 +27,11 @@ translate japanese strings:
 
     # screens.rpy:119
     old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
-    new "## サイドイメージ（テキストボックス横に表示するイメージ）があれば、テキストの上に表示します。ただし、スペースが無いので、variant（画面のタイプ）が phone の場合は表示しません。"
+    new "## サイドイメージ（テキストボックス横に表示するイメージ）があれば、テキストの上に表示します。ただし、variant（画面のタイプ）が phone の場合は、スペースが足りないので表示しません。"
     
     # screens.rpy:169
     old "## Input screen"
-    new "## Input （入力）スクリーン"
+    new "## Input（入力）スクリーン"
 
     # screens.rpy:171
     old "## This screen is used to display renpy.input. The prompt parameter is used to pass a text prompt in."
@@ -39,7 +39,7 @@ translate japanese strings:
 
     # screens.rpy:174
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
-    new "## このスクリーンは、input のパラメーター を受け付けるために、 \"input\" をＩＤに持つ input displayable （表示可能オブジェクト）を作成する必要があります。"
+    new "## このスクリーンは、input のパラメーター を受け付けるために、 \"input\" をＩＤに持つ input displayable（表示可能オブジェクト）を作成する必要があります。"
 
     # screens.rpy:177
     old "## http://www.renpy.org/doc/html/screen_special.html#input"
@@ -47,11 +47,11 @@ translate japanese strings:
 
     # screens.rpy:205
     old "## Choice screen"
-    new "## Choice （選択）スクリーン"
+    new "## Choice（選択）スクリーン"
 
     # screens.rpy:207
     old "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
-    new "## このスクリーンは、ゲーム内の選択肢を表示するのに使います。ただ一つ、items のパラメーターをとります。これは、 caption （選択肢のテキスト）と action （クリック時の実行内容） を要素に持つオブジェクトを、リスト（配列）にしたものです。"
+    new "## このスクリーンは、ゲーム内の選択肢を表示するのに使います。items のパラメーターは、 caption（選択肢のテキスト）と action（クリック時の実行内容）を要素に持つオブジェクトのリスト（配列）です。"
 
     # screens.rpy:211
     old "## http://www.renpy.org/doc/html/screen_special.html#choice"
@@ -59,15 +59,15 @@ translate japanese strings:
 
     # screens.rpy:221
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
-    new "## 次が True の場合、menu の見出しテキストを、narrator を使って say スクリーンで表示します。 False の場合、選択肢の上に押せないボタンとして表示します。"
+    new "## 次が True の場合、menu の見出しテキストを、narrator を使って say（発話）スクリーンで表示します。 False の場合、選択肢の上に押せないボタンとして表示します。"
 
     # screens.rpy:244
     old "## Quick Menu screen"
-    new "## Quick Menu （クイックメニュー）スクリーン"
+    new "## Quick Menu（クイックメニュー）スクリーン"
 
     # screens.rpy:246
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
-    new "## クイックメニューは、ゲーム内で、ゲーム外の機能に素早くアクセスするために表示しています。"
+    new "## クイックメニューは、ゲーム中に常に表示されるスクリーンで、ゲーム外の機能に素早くアクセスすることができます。"
 
     # screens.rpy:251
     old "## Ensure this appears on top of other screens."
@@ -107,15 +107,18 @@ translate japanese strings:
 
     # screens.rpy:271
     old "## This code ensures that the quick_menu screen is displayed in-game, whenever the player has not explicitly hidden the interface."
-    new "## 次のコードは、プレイヤーガ明示的にインターフェースを隠さない限り、quick_menu スクリーンが常にゲーム中に表示されるようにしています。"
+    new "## 次のコードは、プレイヤーが明示的にインターフェースを隠さない限り、quick_menu スクリーンが常にゲーム中に表示されるようにしています。"
+    
+    old "## Main and Game Menu Screens"
+    new "## メインメニュースクリーンとゲームメニュースクリーン"
 
     # screens.rpy:291
     old "## Navigation screen"
-    new "## Navigation （ナビゲーション）スクリーン"
+    new "## Navigation（ナビゲーション）スクリーン"
 
     # screens.rpy:293
     old "## This screen is included in the main and game menus, and provides navigation to other menus, and to start the game."
-    new "## このスクリーンは、メインメニューとゲームメニューに表示され、そこに含まれるメニュー間を移動したり、ゲームをスタートする機能を提供しています。"
+    new "## このスクリーンは、メインメニューとゲームメニューに表示され、各メニュー間を移動したり、ゲームをスタートしたりする機能を提供しています。"
 
     # screens.rpy:308
     old "Start"
@@ -143,7 +146,7 @@ translate japanese strings:
 
     # screens.rpy:332
     old "## Help isn't necessary or relevant to mobile devices."
-    new "## モバイルデバイスには、ヘルプは不要か不適切です。"
+    new "## モバイルデバイスには、ヘルプは不要であるか不適切です。"
 
     # screens.rpy:333
     old "Help"
@@ -151,7 +154,7 @@ translate japanese strings:
 
     # screens.rpy:335
     old "## The quit button is banned on iOS and unnecessary on Android."
-    new "## 終了ボタンは、iOS では使えず、 Android では不要です。"
+    new "## 終了ボタンは、iOS では使えず、Android では不要です。"
 
     # screens.rpy:336
     old "Quit"
@@ -159,7 +162,7 @@ translate japanese strings:
 
     # screens.rpy:350
     old "## Main Menu screen"
-    new "## Main Menu （メインメニュー）スクリーン"
+    new "## Main Menu（メインメニュー）スクリーン"
 
     # screens.rpy:352
     old "## Used to display the main menu when Ren'Py starts."
@@ -179,23 +182,23 @@ translate japanese strings:
     
     # screens.rpy:369
     old "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
-    new "## use 文は、別のスクリーンを内側に表示するのに使います。メインメニューの実際のコンテンツは、navigation スクリーンです。"
+    new "## use 文は、他のスクリーンを現在のスクリーンの内に表示するのに使います。メインメニューの実際のコンテンツは、navigation（ナビゲーション）スクリーンです。"
 
     # screens.rpy:413
     old "## Game Menu screen"
-    new "## Game Menu （ゲームメニュー）スクリーン"
+    new "## Game Menu（ゲームメニュー）スクリーン"
 
     # screens.rpy:415
     old "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
-    new "## このスクリーンは、ゲームメニューの基本的な共通構造をレイアウトします。各ゲームメニュースクリーンによって呼び出され、背景・現在のスクリーンタイトル・ナビゲーションを表示します。"
+    new "## このスクリーンは、様々なゲームメニューの基本的な共通構造をレイアウトします。各ゲームメニュースクリーンによって呼び出され、背景・現在のスクリーンタイトル・ナビゲーションを表示します。"
 
     # screens.rpy:418
     old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## scroll パラメーターは None 、 \"viewport\" 、 \"vpgrid\" のいずれかをとります。呼び出し親のスクリーンのコンテンツは、このスクリーンの中の transclude の部分に配置されます。"
+    new "## scroll パラメーターは、None 、\"viewport\" 、\"vpgrid\" のいずれかをとります。呼び出し親のスクリーンのコンテンツは、このスクリーンの中の transclude の部分に配置されます。"
 
     # screens.rpy:435
     old "## Reserve space for the navigation section."
-    new "## 次のフレームは、ナビゲーションを表示するためのスペースを空けています。"
+    new "## 次のフレームは、ナビゲーションを表示するスペースを空けています。"
     
     # screens.rpy:476
     old "Return"
@@ -203,11 +206,11 @@ translate japanese strings:
 
     # screens.rpy:539
     old "## About screen"
-    new "## About （バージョン情報）スクリーン"
+    new "## About（バージョン情報）スクリーン"
 
     # screens.rpy:541
     old "## This screen gives credit and copyright information about the game and Ren'Py."
-    new "## このスクリーンは、Ren'Py とゲームに関するコピーライトとクレジットを表示します。"
+    new "## このスクリーンは、本ゲームと Ren'Py に関するコピーライトとクレジットを表示します。"
 
     # screens.rpy:544
     old "## There's nothing special about this screen, and hence it also serves as an example of how to make a custom screen."
@@ -215,7 +218,7 @@ translate japanese strings:
 
     # screens.rpy:551
     old "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
-    new "## 次の use 文は、 game_menu スクリーンを内包します。子（内包されたオブジェクト）の vbox は、game_menu スクリーンの中の viewport に配置されます。"
+    new "## 次の use 文は、game_menu（ゲームメニュー）スクリーンを、このスクリーンの内に表示しています。use 文の子（内包されたオブジェクト）の vbox は、game_menu スクリーンの中の viewport に配置されます。"
 
     # screens.rpy:561
     old "Version [config.version!t]\n"
@@ -235,11 +238,11 @@ translate japanese strings:
 
     # screens.rpy:582
     old "## Load and Save screens"
-    new "## Load and Save （セーブ・ロード）スクリーン"
+    new "## Load and Save（セーブ・ロード）スクリーン"
 
     # screens.rpy:584
     old "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
-    new "## 以下のスクリーンは、プレイヤーにゲームデータをセーブ・ロードするのに使用します。どちらも構造はほとんど等しいため、第三の file_slots （セーブスロット）スクリーンで実装しています。"
+    new "## 以下のスクリーンは、プレイヤーにゲームデータをセーブ・ロードするのに使用します。どちらも構造はほとんど等しいため、第三の file_slots（ファイルスロット）スクリーンで実装しています。"
 
     # screens.rpy:588
     old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
@@ -259,7 +262,7 @@ translate japanese strings:
 
     # screens.rpy:613
     old "## This ensures the input will get the enter event before any of the buttons do."
-    new "## 次の文は、input がより後に定義したボタンのイベントより優先されるように、重なり順を反転しています。"
+    new "## 次の文は、ページ名の input のイベントが、より後に定義したボタンよりも優先されるように、重なり順を反転しています。"
 
     # screens.rpy:615
     old "## The page name, which can be edited by clicking on a button."
@@ -267,7 +270,7 @@ translate japanese strings:
     
     # screens.rpy:629
     old "## The grid of file slots."
-    new "## セーブスロットを配置するグリッド。"
+    new "## ファイルスロットを配置するグリッド。"
 
     # screens.rpy:649
     old "{#file_time}%A, %B %d %Y, %H:%M"
@@ -295,7 +298,7 @@ translate japanese strings:
 
     # screens.rpy:670
     old "## range(1, 10) gives the numbers from 1 to 9."
-    new "## range(1, 10) は、１から９まで数字を生成します。（１０でありません）"
+    new "## range(1, 10) は、１から９までの数字を生成します。（１０でありません）"
 
     # screens.rpy:676
     old ">"
@@ -303,11 +306,11 @@ translate japanese strings:
 
     # screens.rpy:711
     old "## Preferences screen"
-    new "## Preferences （環境設定）スクリーン"
+    new "## Preferences（環境設定）スクリーン"
 
     # screens.rpy:713
     old "## The preferences screen allows the player to configure the game to better suit themselves."
-    new "## 環境設定スクリーンは、プレイヤーが自分に合う環境にゲームをカスタマイズする機能を提供します。"
+    new "## Preferences スクリーンは、各プレイヤーがゲームを自分に合う環境にカスタマイズできるようにします。"
 
     # screens.rpy:716
     old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
@@ -355,7 +358,7 @@ translate japanese strings:
 
     # screens.rpy:756
     old "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
-    new "## これ以下に、\"radio_pref\" または \"check_pref\" をスタイルに持つ vbox を追加して、開発者が定義した設定を増やすことができます。"
+    new "## ここ以下に、\"radio_pref\" または \"check_pref\" をスタイルに持つ vbox を追加して、開発者が定義した環境設定を増やすことができます。"
 
     # screens.rpy:767
     old "Text Speed"
@@ -387,7 +390,7 @@ translate japanese strings:
 
     # screens.rpy:882
     old "## History screen"
-    new "## History （履歴）スクリーン"
+    new "## History（履歴）スクリーン"
 
     # screens.rpy:884
     old "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
@@ -403,7 +406,7 @@ translate japanese strings:
 
     # screens.rpy:905
     old "## This lays things out properly if history_height is None."
-    new "## 次の文により、history_height が None の場合でも、正しくレイアウトされるようにしています。"
+    new "## 次の文は、history_height が None の場合でも、レイアウトが正しくなるようにします。"
 
     # screens.rpy:914
     old "## Take the color of the who text from the Character, if set."
@@ -415,7 +418,7 @@ translate japanese strings:
 
     # screens.rpy:965
     old "## Help screen"
-    new "## Help （ヘルプ）スクリーン"
+    new "## Help（ヘルプ）スクリーン"
 
     # screens.rpy:967
     old "## A screen that gives information about key and mouse bindings. It uses other screens (keyboard_help, mouse_help, and gamepad_help) to display the actual help."
@@ -439,7 +442,7 @@ translate japanese strings:
 
     # screens.rpy:1004
     old "Advances dialogue and activates the interface."
-    new "台詞を読み進める。ボタンを選択する。"
+    new "台詞を読み進める。または、ボタンを選択する。"
 
     # screens.rpy:1007
     old "Space"
@@ -447,7 +450,7 @@ translate japanese strings:
 
     # screens.rpy:1008
     old "Advances dialogue without selecting choices."
-    new "台詞を読み進める。ボタンは選択しない。"
+    new "台詞を読み進める。ただし、ボタンは選択しない。"
 
     # screens.rpy:1011
     old "Arrow Keys"
@@ -511,59 +514,46 @@ translate japanese strings:
 
     # screens.rpy:1050
     old "Left Click"
-    new "Left Click"
+    new "左クリック"
 
     # screens.rpy:1054
     old "Middle Click"
-    new "Middle Click"
+    new "中クリック"
 
     # screens.rpy:1058
     old "Right Click"
-    new "Right Click"
+    new "右クリック"
 
     # screens.rpy:1062
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "Mouse Wheel Up\nClick Rollback Side"
+    new "マウスホイール上回転\n画面サイドをタッチ"
 
     # screens.rpy:1066
     old "Mouse Wheel Down"
-    new "Mouse Wheel Down"
+    new "マウスホイール下回転"
 
     # screens.rpy:1073
     old "Right Trigger\nA/Bottom Button"
-    new "Right Trigger\nA/Bottom Button"
-
-    # screens.rpy:1074
-    old "Advance dialogue and activates the interface."
-    new "Advance dialogue and activates the interface."
-
-    # screens.rpy:1078
-    old "Roll back to earlier dialogue."
-    new "Roll back to earlier dialogue."
-
+    new "Ｒトリガー\nＡ／下ボタン"
+    
+    old "Left Trigger\nLeft Shoulder"
+    new "Ｌトリガー\nＬボタン"
+    
     # screens.rpy:1081
     old "Right Shoulder"
-    new "Right Shoulder"
-
-    # screens.rpy:1082
-    old "Roll forward to later dialogue."
-    new "Roll forward to later dialogue."
+    new "Ｒボタン"
 
     # screens.rpy:1085
     old "D-Pad, Sticks"
-    new "D-Pad, Sticks"
+    new "方向パッド, 左右スティック"
 
     # screens.rpy:1089
     old "Start, Guide"
-    new "Start, Guide"
-
-    # screens.rpy:1090
-    old "Access the game menu."
-    new "Access the game menu."
+    new "スタート、ガイド"
 
     # screens.rpy:1093
     old "Y/Top Button"
-    new "Y/Top Button"
+    new "Ｙ／上ボタン"
 
     # screens.rpy:1096
     old "Calibrate"
@@ -575,7 +565,7 @@ translate japanese strings:
 
     # screens.rpy:1128
     old "## Confirm screen"
-    new "## Confirm （確認）スクリーン"
+    new "## Confirm（確認）スクリーン"
 
     # screens.rpy:1130
     old "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
@@ -603,7 +593,7 @@ translate japanese strings:
 
     # screens.rpy:1191
     old "## Skip indicator screen"
-    new "## Skip indicator （スキップ表示）スクリーン"
+    new "## Skip indicator（スキップ表示）スクリーン"
 
     # screens.rpy:1193
     old "## The skip_indicator screen is displayed to indicate that skipping is in progress."
@@ -619,11 +609,11 @@ translate japanese strings:
 
     # screens.rpy:1215
     old "## This transform is used to blink the arrows one after another."
-    new "## 矢印を次から次へと点滅させる transform （変換）。"
+    new "## 矢印を次から次へと点滅させる transform（変換）。"
 
     # screens.rpy:1247
     old "## Notify screen"
-    new "## Notify （通知）スクリーン"
+    new "## Notify（通知）スクリーン"
 
     # screens.rpy:1249
     old "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
@@ -635,11 +625,11 @@ translate japanese strings:
 
     # screens.rpy:1286
     old "## NVL screen"
-    new "## NVL （ノベル）スクリーン"
+    new "## NVL（ノベル）スクリーン"
     
     # screens.rpy:1288
     old "## This screen is used for NVL-mode dialogue and menus."
-    new "## このスクリーンは、NVL モード （全画面方式）の台詞と選択肢を表示します。"
+    new "## このスクリーンは、NVL モード（全画面方式）の台詞と選択肢を表示します。"
 
     # screens.rpy:1290
     old "## http://www.renpy.org/doc/html/screen_special.html#nvl"
@@ -663,7 +653,7 @@ translate japanese strings:
 
     # screens.rpy:1413
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
-    new "## マウスがないため、タッチしやすいように、ボタン大きく、数が少ないクイックメニューに置き換えます。"
+    new "## マウスが無いので、ボタンが大きくて数が少ないクイックメニューに置き換えて、タッチしやすいようにしています。"
 
     # screens.rpy:1429
     old "Menu"

@@ -111,7 +111,7 @@ translate japanese strings:
 
     # 00gamepad.rpy:69
     old "Back (B)"
-    new "戻る (B)"
+    new " 戻る (B)"
 
     # _errorhandling.rpym:495
     old "Open Traceback"
