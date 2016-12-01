@@ -531,7 +531,7 @@ Text Style Properties
     ``"greedy"``
         A word is placed on the first line that has room for it.
 
-    ``"nowrap"``
+    ``"nobreak"``
         Do not line-break.
 
 .. style-property:: line_leading int
