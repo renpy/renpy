@@ -132,7 +132,9 @@ init -1500 python in updater:
         else:
             suffix = ""
 
-        rv = os.path.join(os.path.dirname(sys.executable), command + suffix)
+        executable = renpy.fsdecode(sys.executable)
+
+        rv = os.path.join(os.path.dirname(executable), command + suffix)
 
         if os.path.exists(rv):
             return rv
