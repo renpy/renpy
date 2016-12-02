@@ -159,8 +159,11 @@ They should be called from the init python block.
         A string giving the value the define should be set to. (ie. "10",
         "False", or "'Font.ttf'").
 
-    `help`
-        If not None, help text that is placed before the define.
+    `comment`
+        If not None, a comment that will be generated before the define. The
+        comment will only be generated if the define does not exist in
+        gui.rpy. There is no need to use "## ", as the comment will be
+        added and wrapped automatically.
 
     For example, the following code changes the size of dialogue text::
 
