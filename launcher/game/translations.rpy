@@ -273,6 +273,8 @@ label merge_strings:
 
         interface.info(_("Ren'Py has finished merging [language] string translations."))
 
+    return
+
 label update_renpy_strings:
 
     python:
