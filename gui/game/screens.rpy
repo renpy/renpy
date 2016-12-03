@@ -287,7 +287,7 @@ style quick_button_text:
 
 
 ################################################################################
-# Main and Game Menu Screens
+## Main and Game Menu Screens
 ################################################################################
 
 ## Navigation screen ###########################################################
@@ -1075,7 +1075,7 @@ screen gamepad_help():
         text _("Advances dialogue and activates the interface.")
 
     hbox:
-        label ("Left Trigger\nLeft Shoulder")
+        label _("Left Trigger\nLeft Shoulder")
         text _("Rolls back to earlier dialogue.")
 
     hbox:

@@ -256,6 +256,8 @@ class Viewport(renpy.display.layout.Container):
         rv = renpy.display.render.Render(width, height)
         rv.blit(surf, (cxo, cyo))
 
+        rv = rv.subsurface((0, 0, width, height), focus=True)
+
         if self.arrowkeys:
             rv.add_focus(self, None, None, None, None, None)
 
@@ -559,6 +561,8 @@ class VPGrid(Viewport):
             pos = c.place(rv, x, y, cw, ch, surf)
 
             self.offsets.append(pos)
+
+        rv = rv.subsurface((0, 0, width, height), focus=True)
 
         if self.arrowkeys:
             rv.add_focus(self, None, None, None, None, None)
