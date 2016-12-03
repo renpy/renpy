@@ -4,7 +4,9 @@ init python:
 
 testcase default:
     call new_project
-    call build_project
+    call translate_project
+
+    # call build_project
 
 testcase new_project:
     python:
@@ -32,6 +34,42 @@ testcase new_project:
 
     # Color Selection
     "Continue"
+
+testcase translate_project:
+    "Generate Translations"
+
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+
+    type "piglatin"
+
+    "Generate Translations"
+    "Continue"
+
+    "Generate Translations"
+    "Extract String Translations"
+    "Continue"
+
+    "Generate Translations"
+    "Merge String Translations"
+    "Continue"
+
+    "Generate Translations"
+    "Update Default"
 
 testcase build_project:
     "Build Distributions"
