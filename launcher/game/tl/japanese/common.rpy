@@ -267,7 +267,7 @@ translate japanese strings:
 
     # 00updater.rpy:975
     old "The update file was not downloaded."
-    new "アップデートファイルがダウンロードされませんでした。"
+    new "アップデートファイルをダウンロードできませんでした。"
 
     # 00updater.rpy:993
     old "The update file does not have the correct digest - it may have been corrupted."
@@ -311,7 +311,7 @@ translate japanese strings:
 
     # 00updater.rpy:1420
     old "The updates were cancelled."
-    new "アップデートがキャンセルされました。"
+    new "アップデートをキャンセルしました。"
 
     # 00gallery.rpy:563
     old "Image [index] of [count] locked."

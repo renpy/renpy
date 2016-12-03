@@ -47,7 +47,7 @@ translate japanese strings:
 
     # 00gltest.rpy:152
     old "This computer has a problem displaying graphics: [problem]."
-    new "このコンピューターではグラフィックに以下の問題があります：[problem] "
+    new "このコンピューターではグラフィックに以下の問題があります: [problem] "
 
     # 00gltest.rpy:157
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
@@ -79,7 +79,7 @@ translate japanese strings:
 
     # 00gltest.rpy:200
     old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}注意:{/b} MicrosoftのDirectXウェブセットアッププログラムは、デフォルトでBingツールバーをインストールします。このツールバーが不要な場合は、対応したチェックボックスを解除して下さい。"
+    new "{b}注意:{/b} Microsoft の DirectX ウェブセットアッププログラムは、デフォルトで Bing ツールバーをインストールします。このツールバーが不要な場合は、対応したチェックボックスを解除して下さい。"
 
     # 00gltest.rpy:204
     old "When setup finishes, please click below to restart this program."
