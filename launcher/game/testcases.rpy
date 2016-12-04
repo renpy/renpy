@@ -5,6 +5,7 @@ init python:
 testcase default:
     call new_project
     call translate_project
+    call extract_dialogue
 
     # call build_project
 
@@ -75,3 +76,20 @@ testcase build_project:
     "Build Distributions"
     "Build"
 
+testcase extract_dialogue_common:
+    "Extract Dialogue"
+    "Strip text tags"
+    "Escape quotes"
+    "Extract all"
+
+testcase extract_dialogue:
+    call extract_dialogue_common
+    "Tab-delimited"
+    "Continue"
+    "Continue"
+
+
+    call extract_dialogue_common
+    "Text Only"
+    "Continue"
+    "Continue"
