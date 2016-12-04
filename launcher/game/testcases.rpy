@@ -4,8 +4,11 @@ init python:
 
 testcase default:
     call new_project
-    call translate_project
-    call extract_dialogue
+#     call translate_project
+#     call extract_dialogue
+
+    "Delete Persistent"
+    "Force Recompile"
 
     # call build_project
 
@@ -35,6 +38,18 @@ testcase new_project:
 
     # Color Selection
     "Continue"
+
+testcase choose_colors:
+    "Change/Update GUI"
+    "Choose new colors"
+    "Continue"
+    "Continue"
+
+    "Change/Update GUI"
+    "Regenerate the"
+    "Continue"
+
+
 
 testcase translate_project:
     "Generate Translations"
