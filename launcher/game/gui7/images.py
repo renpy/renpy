@@ -134,7 +134,7 @@ class ImageGenerator(object):
             index = 1
 
             while True:
-                bfn = "{}.{}.bak".format(fn, index)
+                bfn = u"{}.{}.bak".format(fn, index)
 
                 if not os.path.exists(bfn):
                     break
