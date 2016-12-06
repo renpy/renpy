@@ -56,6 +56,7 @@ init -1 python:
             gui.REGULAR_BOLD = True
 
             style._default.font = fullfont
+            style.default.font = fullfont
 
             gui.system_font = fullfont
             gui.project_system_font = font
