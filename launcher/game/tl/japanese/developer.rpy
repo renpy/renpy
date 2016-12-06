@@ -59,11 +59,11 @@ translate japanese strings:
 
     # _developer/developer.rpym:412
     old "Rectangle copied to clipboard."
-    new "クリップボードに矩形領域がコピーされました"
+    new "クリップボードに矩形領域をコピーしました"
 
     # _developer/developer.rpym:415
     old "Position copied to clipboard."
-    new "クリップボードに座標がコピーされました"
+    new "クリップボードに座標をコピーしました"
 
     # _developer/developer.rpym:524
     old "✔ "
@@ -75,7 +75,7 @@ translate japanese strings:
 
     # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    new "\n{color=#cfc}✔ 予測済みの画像 (good){/color}\n{color=#fcc}✘ 未予測の画像 (bad){/color}\n{color=#fff}ドラッグすると動かせます。{/color}"
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"

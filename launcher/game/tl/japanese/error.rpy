@@ -23,7 +23,7 @@ translate japanese strings:
 
     # 00gltest.rpy:93
     old "Enable"
-    new "Enable"
+    new "有効"
 
     # 00gltest.rpy:109
     old "Changes will take effect the next time this program is run."
@@ -47,7 +47,7 @@ translate japanese strings:
 
     # 00gltest.rpy:152
     old "This computer has a problem displaying graphics: [problem]."
-    new "このコンピューターではグラフィックに以下の問題があります：[problem] "
+    new "このコンピューターではグラフィックに以下の問題があります: [problem] "
 
     # 00gltest.rpy:157
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
@@ -63,11 +63,11 @@ translate japanese strings:
 
     # 00gltest.rpy:170
     old "Continue, Show this warning again"
-    new "次回もこの注意を表示する。"
+    new "次回もこの警告を表示する"
 
     # 00gltest.rpy:174
     old "Continue, Don't show warning again"
-    new "次回はこの注意を表示しない。"
+    new "次回はこの警告を表示しない"
 
     # 00gltest.rpy:192
     old "Updating DirectX."
@@ -79,7 +79,7 @@ translate japanese strings:
 
     # 00gltest.rpy:200
     old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}注意:{/b} MicrosoftのDirectXウェブセットアッププログラムは、デフォルトでBingツールバーをインストールします。このツールバーが不要な場合は、対応したチェックボックスを解除して下さい。"
+    new "{b}注意:{/b} Microsoft の DirectX ウェブセットアッププログラムは、デフォルトで Bing ツールバーをインストールします。このツールバーが不要な場合は、対応したチェックボックスを解除して下さい。"
 
     # 00gltest.rpy:204
     old "When setup finishes, please click below to restart this program."
@@ -91,27 +91,27 @@ translate japanese strings:
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "Select Gamepad to Calibrate"
+    new "キャリブレートするゲームパッドを選択してください。"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "No Gamepads Available"
+    new "有効なゲームパッドがありません。"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
-    new "Calibrating [name] ([i]/[total])"
+    new "キャリブレート [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
     old "Press or move the [control!r] [kind]."
-    new "Press or move the [control!r] [kind]."
+    new "[control!r] [kind] を押すか、倒すかしてください。"
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    new "Skip (A)"
+    new " スキップ (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
-    new "Back (B)"
+    new " 戻る (B)"
 
     # _errorhandling.rpym:495
     old "Open Traceback"
@@ -123,11 +123,11 @@ translate japanese strings:
 
     # _errorhandling.rpym:499
     old "Copy to Clipboard"
-    new "Copy to Clipboard"
+    new "クリップボードにコピー"
 
     # _errorhandling.rpym:501
     old "Copies the traceback.txt file to the clipboard."
-    new "Copies the traceback.txt file to the clipboard."
+    new "traceback.txt をクリップボードにコピーします。"
 
     # _errorhandling.rpym:519
     old "An exception has occurred."
@@ -175,5 +175,5 @@ translate japanese strings:
 
     # _errorhandling.rpym:612
     old "Copies the errors.txt file to the clipboard."
-    new "Copies the errors.txt file to the clipboard."
+    new "errors.txt をクリップボードにコピーします。"
 
