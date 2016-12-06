@@ -1134,7 +1134,7 @@ init -1500 python in updater:
                 self.unlink(i)
 
                 if os.path.exists(i):
-                    self.log.write("could not delete file %s" % path.encode("utf-8"))
+                    self.log.write("could not delete file %s" % i.encode("utf-8"))
                     with open(DEFERRED_UPDATE_FILE, "wb") as f:
                         f.write("D " + i.encode("utf-8") + "\n")
 
