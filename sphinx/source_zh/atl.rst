@@ -15,7 +15,7 @@ ATL代码可以在三种 Ren'Py 脚本语句中使用。
 
 .. _transform-statement:
 
-Transform 语句
+transform 语句
 -------------------
 
 transform 语句用于定义一个 transform 对象，可以在at从句中使用。该命令的语法如下：
@@ -39,7 +39,7 @@ bound to this name.::
 带 ATL 区块的 image 语句
 ------------------------------
 
-ATL 的第二种用途就是作为 image 语句的一部分。您可以将一个 transform 对象绑定到一个图像名称上。因为无法向该命令提供参数，所以只有当这个 transform 对象定义为动画时，这么做才有意义。相关语法如下：
+ATL 的第二种用途就是被包含在 image 语句。您可以将一个 transform 对象绑定到一个图像名称上。因为无法向该命令提供参数，所以只有当这个 transform 对象定义为动画时，这么做才有意义。相关语法如下：
 
 .. productionlist:: script
     atl_image : "image" `image_name` ":"
@@ -55,11 +55,10 @@ ATL 的第二种用途就是作为 image 语句的一部分。您可以将一个
         repeat
 
 
-Scene and Show Statements with ATL Block
+带 ATL 区块的 scene 和 show 语句
 ----------------------------------------
 
-The final way to use ATL is as part of a scene or show statement. This wraps
-the image being shown inside an ATL transformation.
+ATL 的最后一个用途是被包含在 scene 和 show 语句。这将把一张图像作为 ATL 变换的一部分使用。
 
 .. productionlist:: script
     atl_scene : `stmt_scene` ":"
@@ -77,40 +76,28 @@ the image being shown inside an ATL transformation.
         xalign 1.0
 
 
-ATL Syntax and Semantics
+ATL 的语法与语义
 ========================
 
-An ATL block consists of one or more logical lines, all at the same
-indentation, and indented relative to the statement containing the block.
-Each logical line in an ATL block must contain one or more ATL statements.
+一个 ATL 区块由一行或几行的逻辑语句构成，前排缩进必须对齐，并且相对前一个语句缩进。每一个在 ATL 区块里的逻辑语句必须包含一句或更多的 ATL 语句。
 
-There are two kinds of ATL statements: simple and complex. Simple statements
-do not take an ATL block. A single logical line may contain one or more ATL
-statements, separated by commas. A complex statement contains a block, must
-be on its own line. The first line of a complex statement always ends with a
-colon (":").
+ATL 语句分为简单的和复杂的两种：简单的 ATL 语句不带有一个 ATL 区块，包括一句或几句 ATL 语句，用逗号隔开；复杂的 ATL 语句包含一个 ATL 区块，必须和它自己同一行。复杂的 ATL 语句的第一行总以冒号结束(":")。
 
-By default, statements in a block are executed in the order in which they
-appear, starting with the first statement in the block. Execution terminates
-when the end of the block is reached. Time statements change this, as
-described in the appropriate section below.
+默认情况下，ATL区块中的命令将会被按从上到下的顺序执行，直到区块结束为止。但是time命令将会改变这个顺序，后面会给出说明。
 
-Execution of a block terminates when all statements in the block have
-terminated.
+一个区块的执行在它里面所有的命令执行完毕后才会结束。
 
-If an ATL statement requires evaluation of an expression, such evaluation
-occurs when the transform is first added to the scene list. (Such as when
-using a show statement or ui function.)
+如果一个ATL命令需要对表达式进行求值，这个求值行为会在这个 transform 对象第一次加入到场景列表中时进行。（例如使用了 show 语句或者 ui 函数。）
 
-ATL Statements
+ ATL 语句
 ==============
 
-The following are the ATL statements.
+下面介绍的是所有的 ATL 语句。
 
-Interpolation Statement
+补间动画语句
 -----------------------
 
-The interpolation statement is the main way that ATL controls transformations.
+补间动画语句(interpolation statement)是 ATL 控制变换效果的主要方法。
 
 .. productionlist:: atl
     atl_interp : ( `warper` `simple_expression` | "warp" `simple_expression` `simple_expression` )?
@@ -120,42 +107,28 @@ The interpolation statement is the main way that ATL controls transformations.
                : | "circles" simple_expression
                : | simple_expression )*
 
-The first part of the interpolation statement is used to select a function
-that time-warps the interpolation. (That is, a function from linear time to
-non-linear time.) This can either be done by giving the name of a warper
-registered with ATL, or by giving the keyword "warp" followed by an
-expression giving a function. Either case is followed by a number, giving the
-number of seconds the interpolation should take.
+补间动画语句的第一部分是选择该补间动画使用的时间轴函数（也就是一个能把线性运动变成非线性运动的函数）。您可以使用 ATL 内置的时间轴函数，也可以使用关键字"warp"，并在后面给出您自己的时间轴函数。不管您选择的是默认的时间轴函数或是自定义的，您都需要在后面添加一个数字，用来告诉 Ren'Py 这个补间动画将会持续几秒。
 
-If no warp function is given, the interpolation is run for 0 seconds, using
-the pause function.
+若不提供时间轴函数，该补间动画将会是一个0秒的 pause 函数（也就是被无视）。
 
-The warper and duration are used to compute a completion fraction. This is
-done by dividing the time taken by the interpolation by the duration of the
-interpolation. This is clamped to the duration, and then passed to the
-warper. The result returned by the warper is the completion fraction.
+warper 和 duration 被用来计算完整片段(completion fraction)。通过补间动画的占用时间除以补间动画的持续时间来得到计算结果。而这会被 duration 把持住，并传值到 warper。之后 warper 返回的结构就是完成片段。
 
-The interpolation statement can then contain a number of other clauses. When a
-property and value are present, then the value is the value the property will
-obtain at the end of the statement. The value can be obtained in several ways:
+补间动画命令可以包含一些从句。当属性和对应值给定时，该值会在此补间动画结束时被获取。这个参数值可以通过以下方式给出：
 
-* If the value is followed by one or two knots, then spline motion is used.
-  The starting point is the value of the property at the start of the
-  interpolation, the end point is the property value, and the knots are used
-  to control the spline.
+* 如果该参数值后面跟着1到2个节点（knots）的话，系统会使用动作插值（spline motion）。该属性值的起始值为补间动画开始时的值，结束值为该参数值，而节点是用来调整这个动画的具体细节的。具体效果可以自行尝试一下。
 
-* If the interpolation statement contains a "clockwise" or
-  "counterclockwise" clause, circular motion is used, as described below.
+* 如果该补间动画包含"clockwise"或者 "counterclockwise"从句，那么这个动画将被处理为圆周运动(circular motion)，会在稍后的部分里详细介绍。
 
-* Otherwise, the value is linearly interpolated between the start and end
-  locations, using the completion fraction.
+* 否则，如果值是设定为开始和结束位置之间是线性补间动画(linearly interpolate)，就会使用完整的动画片段。
+
+* 如果使用的是一个简单表达式，它应该是一个只含有位置信息的 transform 对象，不应该包含 warper ，spline 或者圆周运动，骨骼。这个对象的所有属性会作为这个补间动画结束时的各个属性值。
 
 If a simple expression is present, it should evaluate to a transform with only
 a single interpolation statement, without a warper, splines, or circular
 motion. The properties from the transform are processed as if they were
 included in this statement.
 
-Some sample interpolations are::
+下面是一些补间动画的例子::
 
     show logo base:
          # Show the logo at the upper right side of the screen.
@@ -181,34 +154,23 @@ Some sample interpolations are::
          # Use a spline motion to move us around the screen.
          linear 2.0 align (0.5, 1.0) knot (0.0, .33) knot (1.0, .66)
 
-An important special case is that the pause warper, followed by a time and
-nothing else, causes ATL execution to pause for that amount of time.
+使用pause命令可以使该变换暂停一定的时间。
 
-Some properties can have values of multiple types. For example, the xpos
-property can be an int, float, or absolute. The behavior is undefined when an
-interpolation has old and new property values of different types.
+有些属性可以带许多种不同类型的参数值。比如说，xpos可以是个整数，浮点数或者绝对值。当补间动画的初始值和目标值的类型不同时，该动画的行为是未定义的。
 
-Time Statement
+time 语句
 --------------
 
-The time statement is a simple control statement. It contains a single
-simple_expression, which is evaluated to give a time, expressed as seconds
-from the start of execution of the containing block.
+time 命令是一个简单的控制命令。它接受一个简单表达式作为参数，值为一个时间长度。当该ATL区块开始运行时，计时器开始计时。
 
 .. productionlist:: atl
     atl_time : "time" `simple_expression`
 
-When the time given in the statement is reached, the following statement
-begins to execute.This transfer of control occurs even if a previous
-statement is still executing, and causes any prior statement to immediately
-terminate.
+当该长度的时间过去之后，系统会开始执行 timer 命令之后的命令，就算之前的命令还没有结束。time命令会导致任何正在执行的命令强制立刻停止。
 
-Time statements are implicitly preceded by a pause statement with an infinite
-time. This means that if control would otherwise reach the time statement, it
-waits until the time statement would take control.
+在处理 time 命令时，系统会隐式地在前面执行一个无限等待的 pause 命令。也就是说，如果脚本运行到了没有被触发的time命令的话，它会一直等待到该time命令被触发为止。
 
-When there are multiple time statements in a block, they must strictly
-increase in order.
+当一个区块里有很多 time 命令的时候，它们所带的参数必须从小到大严格递增。
 
 ::
 
@@ -220,29 +182,21 @@ increase in order.
         "bg washington"
 
 
-Expression Statement
+表达式语句
 --------------------
 
-An expression statement is a simple statement that starts with a simple
-expression. It then contains an optional with clause, with a second simple
-expression.
+表达式命令就是一条简单表达式。它可以带一个从句，该从句之后是第二条简单表达式。
 
 .. productionlist:: atl
     atl_expression :  `simple_expression` ("with" `simple_expression`)?
 
-There are three things the first simple expression may evaluate to:
+该简单表达式的求值结果可以是以下三者之一：
 
-* If it's a transform, that transform is executed. With clauses are ignored
-  when a transform is supplied.
+* 如果是个 transform 对象，该变换将被执行。若提供的是 transform 对象，with从句的内容将被无视。
 
-* If it's an integer or floating point number,  it's taken as a number of
-  seconds to pause execution for.
+* 如果是个 transform 对象，该变换将被执行。若提供的是 transform 对象，with从句的内容将被无视。
 
-* Otherwise, the expression is interpreted to be a displayable. This
-  displayable replaces the child of the transform when this clause executes,
-  making it useful for animation. If a with clause is present, the second
-  expression is evaluated as a transition, and the transition is applied to
-  the old and new displayables.
+* 否则，该表达式将被认为是一个可显示对象。该可显示对象将作为此变换的子对象，因此您就可以在动画过程中显示新的图像。若使用 with 从句，第二个简单表达式将被解释为一个转场效果，并在显示该可显示对象时使用。
 
 ::
 
@@ -259,24 +213,19 @@ There are three things the first simple expression may evaluate to:
          # Run the move_right tranform.
          move_right
 
-Pass Statement
+Pass 语句
 --------------
 
 .. productionlist:: atl
     atl_pass : "pass"
 
-The pass statement is a simple statement that causes nothing to happen. This
-can be used when there's a desire to separate statements, like when there are
-two sets of choice statements that would otherwise be back-to-back.
+pass命令是一条什么都不会发生的简单命令。通常用于分隔多条不能放在一起的命令或是充当占位符。就像两套 choic 语句，否则就要以背靠背的形式存在。
 
-Repeat Statement
+Repeat 语句
 ----------------
 
 
-The repeat statement is a simple statement that causes the block containing it
-to resume execution from the beginning. If the expression is present, then it
-is evaluated to give an integer number of times the block will execute. (So a
-block ending with "repeat 2" will execute at most twice.)
+repeat命令会导致含有这条命令的ATL区块不断地重复。若提供一个表达式，该表达式的求值结果表示该区块重复的次数。（所以一个含有repeat 2的区块最多会重复2次）
 
 .. productionlist:: atl
     atl_repeat : "repeat" (`simple_expression`)?
@@ -290,11 +239,10 @@ The repeat statement must be the last statement in a block.::
         repeat
 
 
-Block Statement
+Block 语句
 ---------------
 
-The block statement is a complex statement that contains a block of ATL code.
-This can be used to group statements that will repeat.
+block命令是带一个ATL区块的复杂命令。可以用来限定重复的一段命令。
 
 .. productionlist:: atl
     atl_block_stmt : "block" ":"
@@ -311,22 +259,16 @@ This can be used to group statements that will repeat.
             linear 1.0 xalign 0.0
             repeat
 
-Choice Statement
+Choice 语句
 ----------------
 
-The choice statement is a complex statement that defines one of a set of
-potential choices. Ren'Py will pick one of the choices in the set, and
-execute the ATL block associated with it, and then continue execution after
-the last choice in the choice set.
+choise 语句是带一个ATL区块的复杂命令。Ren'Py会从一系列连续的 choice 语句中随机挑出一个执行，然后从最后一个 choice 语句之后的一条命令开始继续执行下去。
 
 .. productionlist:: atl
    atl_choice : "choice" (`simple_expression`)? ":"
               :     `atl_block`
 
-Choice statements are greedily grouped into a choice set when more than one
-choice statement appears consecutively in a block. If the `simple_expression`
-is supplied, it is a floating-point weight given to that block, otherwise 1.0
-is assumed.
+Ren'Py会读取尽可能多的连续的choice命令。如果choice后面有个简单表达式，它的值应该是一个浮点数，表示该选项的权重。默认情况下，权重为1.0。
 
 ::
 
@@ -341,24 +283,18 @@ is assumed.
         pause 1.0
         repeat
 
-Parallel Statement
+Parallel 语句
 ------------------
 
-The parallel statement is used to define a set of ATL blocks to execute in
-parallel.
+parallel命令允许多个ATL区块并行（同步执行）。
 
 .. productionlist:: atl
     atl_parallel : "parallel" ":"
                  :    `atl_block`
 
-Parallel statements are greedily grouped into a parallel set when more than
-one parallel statement appears consecutively in a block. The blocks of all
-parallel statements are then executed simultaneously. The parallel statement
-terminates when the last block terminates.
+Ren'Py会读取尽可能多的连续的parallel命令。这些parallel命令带的区块会同步执行，当这些区块全部执行完毕时，该parallel命令组结束。
 
-The blocks within a set should be independent of each other, and manipulate
-different properties. When two blocks change the same property, the result is
-undefined.
+这些区块的内容应该是相互独立的。如果两个区块试图同时改变一个属性，结果将会是未定义的。
 
 ::
 
@@ -374,38 +310,28 @@ undefined.
             linear 1.6 yalign 0.0
             repeat
 
-Event Statement
+Event 语句
 ---------------
 
-The event statement is a simple statement that causes an event with the given
-name to be produced.
+event 命令会触发相应的事件。
 
 .. productionlist:: atl
     atl_event : "event" `name`
 
-When an event is produced inside a block, the block is checked to see if an
-event handler for the given name exists. If it does, control is transferred
-to the event handler. Otherwise, the event propagates to any containing event
-handler.
+当在区块内有事件被触发时，该区块会检查相应的事件处理器是否存在。若存在，则会将控制权交给相应的处理器，否则该事件会交给其他任何存在的事件处理器处理。
 
-On Statement
+On 语句
 ------------
 
-The On statement is a complex statement that defines an event handler. On
-statements are greedily grouped into a single statement. On statement can
-handle a single event name, or a comma-separated list of event names.
+On 语句是一个用于定义事件处理器的命令。连续的on命令会尽可能地被合并成一个命令。On 语句能够控制单独一个事件名称，或者以逗号分隔开的事件名称列表。
 
 .. productionlist:: atl
    atl_on : "on" `name` [ "," `name` ] * ":"
           :      `atl_block`
 
-The on statement is used to handle events. When an event is handled, handling
-of any other event ends and handing of the new event immediately starts. When
-an event handler ends without another event occurring, the ``default`` event
-is produced (unless were already handing the ``default`` event).
+on 语句用于接收事件。当事件被接收到之后，之前接收到的事件会被覆盖，系统会立即开始处理新接收到的事件。当一个事件处理完毕而没有新事件被触发时，会触发 default 事件（除非处理完毕的事件就是default 事件）。
 
-Execution of the on statement will never naturally end. (But it can be ended
-by the time statement, or an enclosing event handler.)
+on命令一般不会停止执行，但是可以使用time命令或者一个手动停止的事件处理器来结束它。
 
 ::
 
@@ -421,16 +347,12 @@ by the time statement, or an enclosing event handler.)
             linear .25 zoom 1.25
             linear .25 zoom 1.0
 
-Contains Statement
+Contains 语句
 ------------------
 
-The contains statement sets the displayable contained by this ATL transform.
-(The child of the transform.) There are two variants of the contains
-statement.
+contains 命令用于向该变换添加可显示对象（也就是它的子对象）。它有两个版本：
 
-The contains expression variant takes an expression, and sets that expression
-as the child of the transform. This is useful when an ATL transform wishes to
-contain, rather than include, a second ATL transform.
+contains 简单表达式可以将一个简单表达式的值作为该变换的子对象。当您希望向一个变换添加子对象而不是包含另一个 ATL 变换。
 
 .. productionlist:: atl
     atl_contains : "contains" `expression`
@@ -453,19 +375,13 @@ contain, rather than include, a second ATL transform.
         linear 1.0 yalign 1.0
 
 
-The contains block allows one to define an ATL block that is used for the
-child of this ATL transform. One or more contains block statements will be
-greedily grouped together, wrapped inside a :func:`Fixed`, and set as the
-child of this transform.
+“contians 区块”则允许您直接定义一个ATL区块并添加到当前的ATL变换。一个或多个contains 区块会被一起处理，并放在一个 :func:`Fixed` 对象中，作为该变换的子对象之一。
 
 .. productionlist:: atl
     atl_counts : "contains" ":"
          `atl_block`
 
-Each block should define a displayable to use, or else an error will occur.
-The contains statement executes instantaneously, without waiting for the
-children to complete. This statement is mostly syntactic sugar, as it allows
-arguments to be easily passed to the children.
+每一个区块应该定义一个可显示对象，否则将会引起错误。这些 contains 语句会立即执行，不会等待子对象的动画结束。contains 语句主要是个语法糖，因为这样您可以很方便地向子对象传递参数。
 
 ::
 
@@ -482,30 +398,23 @@ arguments to be easily passed to the children.
             linear 1.0 xalign 0.0
             repeat
 
-Function Statement
+Function 语句
 ------------------
 
-The function statement allows ATL to use Python functions to control the ATL
-properties.
+function 语句允许 ATL 使用 Python 函数来控制 ATL 属性。
 
 .. productionlist:: atl
     atl_function : "function" `expression`
 
-The functions have the same signature as those used with :func:`Transform`:
+这些函数带的参数与 :func:`Transform` 相同：
 
-* The first argument is a transform object. Transform properties can be set
-  on this object.
+* 第一个参数是 transform 对象。该 transform 对象的属性将被调整。
 
-* The second argument is the shown timebase, the number of seconds since the
-  function began executing.
+* 第二个参数是执行时间。从函数开始运行时开始计算。
 
-* The third argument is the the animation timebase, which is the number of
-  seconds something with the same tag has been on the screen.
+* 第三个参数是动画时间。从相同标签的对象在屏幕上显示时开始计算。
 
-* If the function returns a number, it will be called again after that
-  number of seconds has elapsed. (0 seconds means to call the function as
-  soon as possible.) If the function returns None, control will pass to the
-  next ATL statement.
+* 若函数返回一个数字x，该函数将在x秒后被再次调用（0表示尽可能快地再次调用该函数）。若返回None，脚本将继续向下运行。
 
 ::
 
@@ -527,43 +436,32 @@ The functions have the same signature as those used with :func:`Transform`:
 
 .. _warpers:
 
-Warpers
+时间轴函数
 =======
 
-A warper is a function that can change the amount of time an interpolation
-statement considers to have elapsed. The following warpers are defined by
-default. They are defined as functions from t to t', where t and t' are
-floating point numbers, with t ranging from 0.0 to 1.0 over the given
-amount of time. (If the statement has 0 duration, then t is 1.0 when it runs.)
-t' should start at 0.0 and end at 1.0, but can be greater or less.
+时间轴函数是一种可以扭曲动画时间轴的函数。以下为预定义的时间轴函数。它们接受一个0到1之间的参数t并返回一个0到1之间的值t'。t表示已经经过的时间占总时间的比例，而t'表示使用了这个时间轴函数的动画认为已经经过的时间占总时间的比例。(如果该语句是设定经过时间为0时，当 Ren`py 运行时，t就会设置成1.0.)t'应该在0.0到1.0之间的范围，但也可以大一点或者小一点。
 
 ``pause``
-    Pause, then jump to the new value. If t == 1.0, t = 1.0. Otherwise, t'
-    = 0.0.
+    暂停，然后直接跃迁到新值。若t==1.0，t'=1.0，否则t'=0。
+linear
 
 ``linear``
-    Linear interpolation. t' = t
+    线性补间，t'=t。
 
 ``ease``
-    Start slow, speed up, then slow down. t' = .5 - math.cos(math.pi
-    * t) / 2.0
+    开始比较慢，加速，再减速。t' = .5 - math.cos(math.pi * t) / 2.0
 
 ``easein``
-    Start fast, then slow down. t' = math.cos((1.0 - t) * math.pi / 2.0
+    开始比较快，然后减速。t' = math.cos((1.0 - t) * math.pi / 2.0
 
 ``easeout``
-    Start slow, then speed up. t' = 1.0 - math.cos(t * math.pi / 2.0)
+    开始比较慢，然后加速。t' = 1.0 - math.cos(t * math.pi / 2.0)
 
-In addition, most of Robert Penner's easing functions are supported. To
-make the names match those above, the functions have been renamed
-somewhat. Graphs of these standard functions can be found at
-http://www.easings.net/.
+另外，Ren`py 是支持大多数的 Robert Penner 的简化函数的。为了令其名称与上文的相符，函数已经被稍微重新命名了。标准函数的图表可以在 http://www.easings.net/ 找到。
 
 .. include:: inc/easings
 
-New warpers can be defined using the renpy.atl_warper decorator, in a python
-early block. It should be placed in a file that is parsed before any file
-that uses the warper. The code looks like:
+在python early里使用renpy.atl_warper修饰符可以定义新的时间轴函数。它应该在任何使用该时间轴函数的ATL区块之前被定义好。代码类似于：
 
 ::
 
@@ -575,324 +473,265 @@ that uses the warper. The code looks like:
 
 .. _transform-properties:
 
-List of Transform Properties
+变换属性列表
 ============================
 
-The following transform properties exist.
+Ren'Py中有以下的变换属性。
 
-When the type is given as position, it may be an int, renpy.absolute, or
-float. If it's a float, it's interpreted as a fraction of the size of the
-containing area (for pos) or displayable (for anchor).
+当属性的类型是关于位置的时候，它可以是整型，renpy.absolute或者浮点型。如果是浮点型，则表示相对于包含区域（对于pos属性来说）或者是相对于可显示对象（对于anchor属性来说）的比例，否则就是像素的个数。
 
-Note that not all properties are independent. For example, xalign and xpos
-both update some of the same underlying data. In a parallel statement, only
-one block should adjust horizontal position, and one should adjust vertical
-positions. (These may be the same block.) The angle and radius properties set
-both horizontal and vertical positions.
+请您注意，这些属性不是完全独立的。比如说 xalign 和 xpos 都会影响到某些内部数据。在 parallel 命令中，多个区块不应该改变同一个属性。angle 和 radius 属性会同时影响到水平和垂直位置。
 
 .. transform-property:: pos
 
-    :type: (position, position)
-    :default: (0, 0)
+    :类型: (position, position)
+    :默认值: (0, 0)
 
-    The position, relative to the top-left corner of the containing
-    area.
+    相对于包含区域左上角的位置。
 
 .. transform-property:: xpos
 
-    :type: position
-    :default: 0
+    :类型: position
+    :默认值: 0
 
-    The horizontal position, relative to the left side of the
-    containing area.
+    相对于包含区域左侧的水平位置。
 
 .. transform-property:: ypos
 
-    :type: position
-    :default: 0
+    :类型: position
+    :默认值: 0
 
-    The vertical position, relative to the top of the containing area.
+    相对于包含区域顶部的垂直位置。
 
 .. transform-property:: anchor
 
-    :type: (position, position)
-    :default: (0, 0)
+    :类型: (position, position)
+    :默认值: (0, 0)
 
-    The anchor position, relative to the top-left corner of the
-    displayable.
+    锚点位置，相对于可显示对象的左上角。
 
 .. transform-property:: xanchor
 
-    :type: position
-    :default: 0
+    :类型: position
+    :默认值: 0
 
-    The horizontal anchor position, relative to the left side of the
-    displayable.
+    水平锚点位置，相对于可显示对象的左侧。
 
 .. transform-property:: yanchor
 
-    :type: position
-    :default: 0
+    :类型: position
+    :默认值: 0
 
-    The vertical anchor position, relative to the top of the
-    displayable.
+    垂直锚点位置，相对于可显示对象的顶部。
 
 .. transform-property:: align
 
-    :type: (float, float)
-    :default: (0.0, 0.0)
+    :类型: (float, float)
+    :默认值: (0.0, 0.0)
 
-    Equivalent to setting pos and anchor to the same value.
+    等价于将 pos 和 anchor 设定为同一个值。
 
 .. transform-property:: xalign
 
-    :type: float
-    :default: 0.0
+    :类型: float
+    :默认值: 0.0
 
-    Equivalent to setting xpos and xanchor to this value.
+    等价于将 xpos 和 xanchor 设定为同一个值。
 
 .. transform-property:: yalign
 
-    :type: float
-    :default: 0.0
+    :类型: float
+    :默认值: 0.0
 
-    Equivalent to setting ypos and yanchor to this value.
+    等价于将 ypos 和 yanchor 设定为同一个值。
 
 .. transform-property:: xoffset
 
-    :type: float
-    :default: 0.0
+    :类型: float
+    :默认值: 0.0
 
-    The number of pixels the displayable is offset by in the horizontal
-    direction. Positive values offset toward the right.
+    水平方向可显示对象的偏移量（单位为像素）。正值表示向右偏移。
 
 .. transform-property:: yoffset
 
-    :type: float
-    :default: 0.0
+    :类型: float
+    :默认值: 0.0
 
-    The number of pixels the displayable is offset by in the vertical
-    direction. Positive values offset toward the bottom.
+    垂直方向可显示对象的偏移量（单位为像素）。正值表示向下偏移。
 
 
 
 .. transform-property:: xcenter
 
-    :type: float
-    :default: 0.0
+    :类型: float
+    :默认值: 0.0
 
-    Equivalent to setting xpos to the value of this property, and
-    xanchor to 0.5.
+    等价于将 xpos 设为这个值，同时将xanchor设为0.5。
 
 .. transform-property:: ycenter
 
-    :type: float
-    :default: 0.0
+    :类型: float
+    :默认值: 0.0
 
-    Equivalent to setting ypos to the value of this property, and
-    yanchor to 0.5.
+    等价于将 ypos 设为这个值，同时将yanchor设为0.5。
 
 .. transform-property:: rotate
 
-    :type: float or None
-    :default: None
+    :类型: float 或 None
+    :默认值: None
 
-    If None, no rotation occurs. Otherwise, the image will be rotated
-    by this many degrees clockwise. Rotating the displayable causes it
-    to be resized, according to the setting of rotate_pad, below. This
-    can cause positioning to change if xanchor and yanchor are not
-    0.5.
+    若为 None，则无旋转，否则图像将被旋转特定角度。旋转某个可显示对象会导致它被缩放，缩放的比例基于下文要介绍的 rotate_pad 。若 anchor 不是（0.5，0.5），图片的位置将发生变化。
 
 .. transform-property:: rotate_pad
 
-    :type: boolean
-    :default: True
+    :类型: boolean
+    :默认值: True
 
-    If True, then a rotated displayable is padded such that the width
-    and height are equal to the hypotenuse of the original width and
-    height. This ensures that the transform will not change size as
-    its contents rotate. If False, the transform will be given the
-    minimal size that contains the transformed displayable. This is
-    more suited to fixed rotations.
+    若为 True，被旋转的可显示对象所在的变换的属性值不会被改变。若为 False，相应变换的大小将被调整为能够包含旋转后的可显示对象的最小尺寸。
 
 .. transform-property:: transform_anchor
 
-   :type: boolean
-   :default: False
+   :类型: boolean
+   :默认值: False
 
-   If true, the anchor point is located on the cropped child, and is scaled
-   and rotated as the child is transformed. Effectively, this makes the
-   anchor the point that the child is rotated and scaled around.
+   若为True，锚点会随着缩放以及旋转一起变化位置。这意味着该对象将以锚点作为固定点缩放或是旋转。
 
 .. transform-property:: zoom
 
-    :type: float
-    :default: 1.0
+    :类型: float
+    :默认值: 1.0
 
-    This causes the displayable to be zoomed by the supplied
-    factor.
+    以接受的因数为比例缩放可显示对象。
 
 .. transform-property:: xzoom
 
-    :type: float
-    :default: 1.0
+    :类型: float
+    :默认值: 1.0
 
-    This causes the displayable to be horizontally zoomed by the
-    supplied factor. A negative value causes the image to be
-    flipped horizontally.
+    水平方向缩放可显示对象。若为负值，则会导致图像左右翻转。
 
 .. transform-property:: yzoom
 
-   :type: float
-   :default: 1.0
+   :类型: float
+   :默认值: 1.0
 
-   This causes the displayable to be vertically zoomed by the supplied
-   factor. A negative value causes the image to be flipped vertically.
+   垂直方向缩放可显示对象。若为负值，则会导致图像上下翻转。
 
 .. transform-property:: nearest
 
-    :type: boolean
-    :default: None
+    :类型: boolean
+    :默认值: None
 
-    If true, the displayable and its children are drawn using nearest-neighbor
-    filtering. If False, the displayable and its children are drawn using
-    bilinear filtering. If None, this is inherited from the parent, or
-    :var:`config.nearest_neighbor`, which defaults to False.
+    如果为 True 的话，可显示对象和它的子对象将会使用最近邻域过滤(nearest-neighbor filtering)来描绘。如果为 False 的话，可显示对象和它的子对象将会以双线性过滤(bilinear filtering)来描绘。如果为 None 的话，它就会继承父类的方法，或者 :var:`config.nearest_neighbor` 里定义的样式，它是值为 False 的默认处理方法。
 
 .. transform-property:: alpha
 
-    :type: float
-    :default: 1.0
+    :类型: float
+    :默认值: 1.0
 
-    This controls the opacity of the displayable.
+    该属性控制可显示对象的透明度。
 
-    The alpha transform is applied to each image comprising the child of
-    the transform independently. This can lead to unexpected results when
-    the children overlap, such as as seeing a character through clothing.
-    The :func:`Flatten` displayable can help with these problems.
+    该属性会独立地作用于可显示对象的每一个子对象。如果子对象有重叠部分，可能会产生不正确的结果。在这种情况下，您可以使用 :func:`Flatten` 来解决这个问题。
 
 .. transform-property:: additive
 
-    :type: float
-    :default: 0.0
+    :类型: float
+    :默认值: 0.0
 
-    This controls how much additive blending Ren'Py performs. When 1.0,
-    Ren'Py draws using the ADD operator. When 0.0, Ren'Py draws using
-    the OVER operator.
+    该属性控制Ren'Py使用增量混合的程度。若为1.0，Ren'Py使用 ADD 操作符来描绘新图像，若为0.0，Ren'Py使用 OVER 操作符来描绘新图像。
 
-    Additive blending is performed on each child of the transform independently.
+    增量混合也是独立地作用于可显示对象的每一个子对象的。
 
-    Fully additive blending doesn't alter the alpha channel of the destination,
-    and additive images may not be visible if they're not drawn directly onto
-    an opaque surface. (Complex operations, like viewport, :func:`Flatten`, :func:`Frame`,
-    and certain transitions may cause problems with additive blending.)
+    完全使用增量混合不会改变目标图像的透明通道。若增量混合绘制的图片不是直接画在一个不透明的对象上的话，它们可能会是不可见的。（复杂的图像操作，如视端，:func:`Flatten` , :func:`Frame` ,以及某些转场效果可能在使用增量混合时出现问题）。
 
-    .. warning::
+    .. 警告::
 
-        Additive blending is only supported by hardware-based renderers, such
-        as the OpenGL and DirectX/ANGLE renderers. The software renderer will
-        draw additive images incorrectly.
+        只有硬件解码器支持增量混合，例如OpenGl和DirectX/ANGLE解码器。软件解码器会不正确地绘制增量图像。
 
-        Once the graphics system has started, ``renpy.get_renderer_info()["additive"]``
-        will be true if additive blending is supported.
+        当图像系统启动后，若当期解码器支持增量混合， ``renpy.get_renderer_info()["additive"]``
+        会返回True。
 
 
 .. transform-property:: around
 
-    :type: (position, position)
-    :default: (0.0, 0.0)
+    :类型: (position, position)
+    :默认值: (0.0, 0.0)
 
-    If not None, specifies the polar coordinate center, relative to
-    the upper-left of the containing area. Setting the center using
-    this allows for circular motion in position mode.
+    若不为None，则用于指定极坐标系的原点，相对于包含区域的左上角。使用该属性后就可以创建圆周动画了。
 
 .. transform-property:: alignaround
 
-    :type: (float, float)
-    :default: (0.0, 0.0)
+    :类型: (float, float)
+    :默认值: (0.0, 0.0)
 
-    If not None, specifies the polar coordinate center, relative to
-    the upper-left of the containing area. Setting the center using
-    this allows for circular motion in align mode.
+    若不为 None，则用于指定极坐标系的原点，相对于包含区域的左上角。使用该属性后就可以创建圆周动画了。（与上个不同的是这个属性同时设置了 align 的值）
 
 .. transform-property:: angle
 
-    :type: float
+    :类型: float
 
-    Get the angle component of the polar coordinate position. This is
-    undefined when the polar coordinate center is not set.
+    设置当前角度值。若没有定义极坐标原点则无效。
 
 .. transform-property:: radius
 
-    :type: position
+    :类型: position
 
-    Get the radius component of the polar coordinate position. This is
-    undefined when the polar coordinate center is not set.
+    设置当前半径。若没有定义极坐标原点则无效。
 
 .. transform-property:: crop
 
-    :type: None or (int, int, int, int) or (float, float, float, float)
-    :default: None
+    :类型: None or (int, int, int, int) or (float, float, float, float)
+    :默认值: None
 
-    If not None, causes the displayable to be cropped to the given
-    box. The box is specified as a tuple of (x, y, width, height).
-    If floats are given and crop_relative is true, the components are
-    taken as a fraction of the width and hight of the source image.
-    Otherwise, the components are considered to be an absolute number
-    of pixels.
+    若不为None，导致可显示对象变成被某个矩形裁切后的新的可显示对象。矩形由（x,y,宽，高）的四元组指定。如果浮点数是给定的，而且 crop_relative 的值是 true 时，组件是作为原图像的宽度和高度的片段被提取。否则，组件被视为一个像素的绝对数值。
 
 .. transform-property:: crop_relative
 
-    :type: boolean
-    :default: False
+    :类型: boolean
+    :默认值: False
 
-    If True, float components of crop are take as a fraction of the width
+    如果为 True 的话，要剪裁的浮动组件将会以原图像的宽度和高度的片段提取出来。If True, float components of crop are take as a fraction of the width
     and height of the source image.
 
 .. transform-property:: corner1
 
-    :type: None or (int, int)
-    :default: None
+    :类型: None or (int, int)
+    :默认值: None
 
-    If not None, gives the upper-left corner of the crop box. This
-    takes priority over crop.
+    若不为 None，指定裁切框的左上角位置。该属性的优先级比crop高。
 
 .. transform-property:: corner2
 
-    :type: None or (int, int)
-    :default: None
+    :类型: None or (int, int)
+    :默认值: None
 
-    If not None, gives the lower right corner of the crop box. This
-    takes priority over crop.
+    若不为 None，指定裁切框的右下角位置。该属性的优先级比crop高。
 
 .. transform-property:: size
 
-    :type: None or (int, int)
-    :default: None
+    :类型: None or (int, int)
+    :默认值: None
 
-    If not None, causes the displayable to be scaled to the given
-    size.
+    若不为 None，将该可显示对象伸缩至指定尺寸（不一定保持原有长宽比）。
 
 .. transform-property:: subpixel
 
-    :type: boolean
-    :default: False
+    :类型: boolean
+    :默认值: False
 
-    If True, causes things to be drawn on the screen using subpixel
-    positioning.
+    若为 True，使用亚像素位置来描绘图像。
 
 .. transform-property:: delay
 
-    :type: float
-    :default: 0.0
+    :类型: float
+    :默认值: 0.0
 
-    If this transform is being used as a transition, then this is the
-    duration of the transition.
+    若该变化被作为一个转场效果使用，那么该属性指定了这个转场效果的持续时间。
 
 .. transform-property:: events
 
-    :type: boolean
-    :default: True
+    :类型: boolean
+    :默认值: True
 
     If true, events are passed to the child of this transform. If false,
     events are blocked. (This can be used in ATL transforms to prevent
@@ -900,8 +739,8 @@ both horizontal and vertical positions.
 
 .. transform-property:: xpan
 
-    :type: None or float
-    :default: None
+    :类型: None or float
+    :默认值: None
 
     If not None, this interpreted as an angle that is used to pan horizontally
     across a 360 degree panoramic image. The center of the image is used as the
@@ -910,8 +749,8 @@ both horizontal and vertical positions.
 
 .. transform-property:: ypan
 
-    :type: None or float
-    :default: None
+    :类型: None or float
+    :默认值: None
 
     If not None, this interpreted as an angle that is used to pan vertically
     across a 360 degree panoramic image. The center of the image is used as the
@@ -920,21 +759,21 @@ both horizontal and vertical positions.
 
 .. transform-property:: xtile
 
-    :type: int
-    :default: 1
+    :类型: int
+    :默认值: 1
 
     The number of times to tile the image horizontally. (This is ignored when
     xpan is given.)
 
 .. transform-property:: ytile
 
-    :type: int
-    :default: 1
+    :类型: int
+    :默认值: 1
 
     The number of times to tile the image vertically. (This is ignored when
     ypan is given.)
 
-These properties are applied in the following order:
+这些属性以以下顺序生效：
 
 #. tile
 #. crop, corner1, corner2
@@ -945,50 +784,34 @@ These properties are applied in the following order:
 #. position properties
 
 
-Circular Motion
+圆周运动
 ===============
 
-When an interpolation statement contains the ``clockwise`` or
-``counterclockwise`` keywords, the interpolation will cause circular motion.
-Ren'Py will compare the start and end locations and figure out the polar
-coordinate center. Ren'Py will then compute the number of degrees it will
-take to go from the start angle to the end angle, in the specified direction
-of rotation. If the circles clause is given, Ren'Py will ensure that the
-appropriate number of circles will be made.
+当补间动画命令包含 ``clockwise`` 或者 ``counterclockwise`` 关键字时，该补间动画是一个圆周运动。Ren'Py 会以初始和结束位置计算旋转的中心，角度。如果提供了 circle 从句，Ren'Py 会保证旋转相应的圈数。
 
-Ren'Py will then interpolate the angle and radius properties, as appropriate,
-to cause the circular motion to happen. If the transform is in align mode,
-setting the angle and radius will set the align property. Otherwise, the pos
-property will be set.
+Ren'Py会按照相应的角度和半径属性来调整其他属性实现该圆周运动变化。若使用的是alignaround模式，调整的会是对象的align属性，否则是对象的pos属性。
 
-External Events
+外部事件
 ===============
 
-The following events can be triggered automatically:
+以下事件可以被自动触发：
 
 ``start``
-    A pseudo-event, triggered on entering an on statement, if no event of
-    higher priority has happened.
+    伪事件，在运行到on命令时出发，如果没有其他优先级更高的事件的话。
 
 ``show``
-    Triggered when the transform is shown using the show or scene
-    statement, and no image with the given tag exists.
+    当该变换在show或者scene命令中使用时且没有相同标签的对象存在时触发该事件。
 
 ``replace``
-    Triggered when transform is shown using the show statement, replacing
-    an image with the given tag.
+    当该变换在show或者scene命令中使用时且已有相同标签的对象存在时触发该事件。
 
 ``hide``
-    Triggered when the transform is hidden using the hide statement or its
-    python equivalent.
+    在使用 hide 或者等价于 python 的语句来隐藏该变化时触发。
 
-    Note that this isn't triggered when the transform is eliminated via
-    the scene statement or exiting the context it exists in, such as when
-    exiting the game menu.
+    注意该事件并不会在使用scene命令清屏或者退出其所在环境（如退出游戏菜单）时触发。
 
 ``replaced``
-    Triggered when the transform is replaced by another. The image will
-    not actually hide until the ATL block finishes.
+    当该变换被其他变换所替换时触发。该图像在ATL区块结束前并不会真正地从屏幕上消失。
 
 ``update``
     Triggered when a screen is updated without being shown or replacing
@@ -996,5 +819,4 @@ The following events can be triggered automatically:
     the game is loaded and when styles or translations change.
 
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``
-   Triggered when button containing this transform, or a button contained
-   by this transform, enters the named state.
+   当button对象包含这个变换时，或者这个变换包含button对象时，该button对象进入这些状态时触发相应事件。
