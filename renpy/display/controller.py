@@ -171,7 +171,7 @@ def event(ev):
         elif ev.value < -THRESHOLD:
             pos = "neg"
         else:
-            pos = None
+            pos = "zero"
 
         old_pos = axis_positions.get((ev.which, ev.axis), None)
 
@@ -179,9 +179,6 @@ def event(ev):
             return None
 
         axis_positions[(ev.which, ev.axis)] = pos
-
-        if pos is None:
-            return None
 
         name = "pad_{}_{}".format(get_string_for_axis(ev.axis), pos)
         ev = make_event(name)
