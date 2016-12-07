@@ -246,7 +246,7 @@ def skipping(ev):
         renpy.config.skipping = "slow"
         renpy.exports.restart_interaction()
 
-    if map_keyup(ev, "skip"):
+    if map_keyup(ev, "skip") or map_event(ev, "stop_skipping"):
         renpy.config.skipping = None
         renpy.exports.restart_interaction()
 

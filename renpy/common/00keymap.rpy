@@ -89,6 +89,7 @@ init -1600 python:
 
         # These keys control skipping.
         skip = [ 'K_LCTRL', 'K_RCTRL' ],
+        stop_skipping = [ ],
         toggle_skip = [ 'K_TAB' ],
         fast_skip = [ '>' ],
 
