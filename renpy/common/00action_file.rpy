@@ -85,10 +85,10 @@ init -1500 python:
         month = t[1] - 1
         wday = t[6]
 
-        rv.replace("%a", __(_weekday_name_short[wday]))
-        rv.replace("%A", __(_weekday_name_long[wday]))
-        rv.replace("%b", __(_month_name_short[month]))
-        rv.replace("%B", __(_month_name_long[month]))
+        rv = rv.replace("%a", __(_weekday_name_short[wday]))
+        rv = rv.replace("%A", __(_weekday_name_long[wday]))
+        rv = rv.replace("%b", __(_month_name_short[month]))
+        rv = rv.replace("%B", __(_month_name_long[month]))
 
         if "%" in rv:
             import time
