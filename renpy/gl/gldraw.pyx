@@ -979,7 +979,7 @@ cdef class GLDraw:
             # Non-aligned clipping uses RTT.
             if reverse.ydx != 0 or reverse.xdy != 0:
                 tex = what.render_to_texture(True)
-                self.draw_transformed(tex, clip, xo, yo, alpha, over, reverse, nearest, subpixel)
+                self.draw_transformed(tex, clip, xo, yo, alpha, over, reverse * self.draw_to_virt, nearest, subpixel)
                 return 0
 
             minx, miny, maxx, maxy = clip
