@@ -28,7 +28,7 @@ translate japanese strings:
     # screens.rpy:119
     old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
     new "## サイドイメージ（テキストボックス横に表示するイメージ）があれば、テキストの上に表示します。ただし variant（画面のタイプ）が phone の場合は、スペースが足りないので表示しません。"
-    
+
     # screens.rpy:169
     old "## Input screen"
     new "## Input（入力）スクリーン"
@@ -72,7 +72,7 @@ translate japanese strings:
     # screens.rpy:251
     old "## Ensure this appears on top of other screens."
     new "## 他のスクリーンの上に表示する。"
-    
+
     # screens.rpy:261
     old "Back"
     new "ロールバック"
@@ -108,7 +108,7 @@ translate japanese strings:
     # screens.rpy:271
     old "## This code ensures that the quick_menu screen is displayed in-game, whenever the player has not explicitly hidden the interface."
     new "## 次のコードは、プレイヤーが明示的にインターフェースを隠さない限り quick_menu スクリーンが常にゲーム中に表示されるようにしています。"
-    
+
     old "## Main and Game Menu Screens"
     new "## メインメニュースクリーンとゲームメニュースクリーン"
 
@@ -175,11 +175,11 @@ translate japanese strings:
     # screens.rpy:357
     old "## This ensures that any other menu screen is replaced."
     new "## 次のコードは、同じタグを持つ他のメニュースクリーンが表示された時にスクリーンを置換します。"
-    
+
     # screens.rpy:364
     old "## This empty frame darkens the main menu."
     new "## 次の空のフレームは gui/overlay/main_menu.png を表示してメインメニューを暗くしています。"
-    
+
     # screens.rpy:369
     old "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
     new "## use 文は、他のスクリーンを現在のスクリーンの内に表示するのに使います。メインメニューの実際のコンテンツは navigation（ナビゲーション）スクリーンです。"
@@ -199,7 +199,7 @@ translate japanese strings:
     # screens.rpy:435
     old "## Reserve space for the navigation section."
     new "## 次のフレームはナビゲーションを表示するスペースを空けています。"
-    
+
     # screens.rpy:476
     old "Return"
     new "戻る"
@@ -267,14 +267,14 @@ translate japanese strings:
     # screens.rpy:615
     old "## The page name, which can be edited by clicking on a button."
     new "## ページ名。クリックすると編集できるように、ボタンとして表示しています。"
-    
+
     # screens.rpy:629
     old "## The grid of file slots."
     new "## ファイルスロットを配置するグリッド。"
 
     # screens.rpy:649
     old "{#file_time}%A, %B %d %Y, %H:%M"
-    new "{#file_time}%Y年 %m月 %d日 %H:%M"
+    new "{#file_time}%Y年%m月%d日(%a) %H時%M分"
 
     # screens.rpy:649
     old "empty slot"
@@ -535,17 +535,17 @@ translate japanese strings:
     # screens.rpy:1073
     old "Right Trigger\nA/Bottom Button"
     new "Ｒトリガー\nＡ／下ボタン"
-    
+
     old "Left Trigger\nLeft Shoulder"
     new "Ｌトリガー\nＬボタン"
-    
+
     # screens.rpy:1081
     old "Right Shoulder"
     new "Ｒボタン"
 
     # screens.rpy:1085
     old "D-Pad, Sticks"
-    new "方向パッド, 左右スティック"
+    new "方向パッド\n左右スティック"
 
     # screens.rpy:1089
     old "Start, Guide"
@@ -626,7 +626,7 @@ translate japanese strings:
     # screens.rpy:1286
     old "## NVL screen"
     new "## NVL（ノベル）スクリーン"
-    
+
     # screens.rpy:1288
     old "## This screen is used for NVL-mode dialogue and menus."
     new "## このスクリーンは NVL モード（全画面方式）の台詞と選択肢を表示します。"
