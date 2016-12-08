@@ -545,7 +545,7 @@ translate japanese strings:
 
     # screens.rpy:1085
     old "D-Pad, Sticks"
-    new "方向パッド, 左右スティック"
+    new "方向パッド\n左右スティック"
 
     # screens.rpy:1089
     old "Start, Guide"
