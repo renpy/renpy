@@ -143,7 +143,7 @@ default preferences.afm_time = 15
 define config.save_directory = "gui-7"
 
 
-## Icon ########################################################################'
+## Icon ########################################################################
 ##
 ## The icon displayed on the taskbar or dock.
 
