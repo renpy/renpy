@@ -134,7 +134,7 @@ translate japanese strings:
     new "## この値は一般的に変更するべきではありません。もし変更する場合、式や変数ではなく文字列で直接指定しなければなりません。"
 
     # options.rpy:146
-    old "## Icon ########################################################################'"
+    old "## Icon"
     new "## アイコン"
 
     # options.rpy:148
@@ -192,4 +192,5 @@ translate japanese strings:
     # options.rpy:203
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## itch.io project に関連付けられたユーザー名とプロジェクト名。二つの名前はスラッシュで分けてください。"
+
 
