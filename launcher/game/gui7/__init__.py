@@ -30,7 +30,7 @@ import os
 def generate_gui(p):
 
     ImageGenerator(p).generate_all()
-    CodeGenerator(p).generate_gui("gui.rpy")
+    CodeGenerator(p).generate_gui("gui.rpy", defines=True)
     CodeGenerator(p).generate_gui("screens.rpy")
     CodeGenerator(p).generate_code("options.rpy")
     CodeGenerator(p).copy_script("script.rpy")

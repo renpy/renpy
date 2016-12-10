@@ -368,12 +368,14 @@ class CodeGenerator(object):
 
         shutil.copy(src, dst)
 
-    def generate_gui(self, fn):
+    def generate_gui(self, fn, defines=False):
         if not self.p.update_code:
             return
 
         self.load_template(fn)
-        self.update_gui_defines()
+
+        if defines:
+            self.update_gui_defines()
 
         if self.p.replace_code:
             self.remove_scale()
