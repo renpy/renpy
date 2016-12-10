@@ -4,13 +4,15 @@ init python:
 
 testcase default:
     call new_project
-#     call translate_project
-#     call extract_dialogue
+    call translate_project
+    call extract_dialogue
 
     "Delete Persistent"
     "Force Recompile"
 
-    # call build_project
+    call build_project
+
+    "quit"
 
 testcase new_project:
     python:
