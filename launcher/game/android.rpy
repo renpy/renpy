@@ -280,7 +280,7 @@ screen android_process(interface):
     text "[ft.text!q]":
         size 14
         color TEXT
-        font "Roboto-Light.ttf"
+        font gui.LIGHT_FONT
         xpos 75
         ypos 350
 
