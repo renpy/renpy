@@ -426,3 +426,11 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
     old "## Quick buttons."
     new "## Quick ボタン。"
 
+    # gui.rpy:395
+    old "## Localization"
+    new "## 多言語対応"
+
+    # gui.rpy:397
+    old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+    new "## 次の変数は改行・禁則処理を制御します。デフォルトの値が推奨です。他の値は https://www.renpy.org/doc/html/style_properties.html#style-property-language を参照してください。"
+
