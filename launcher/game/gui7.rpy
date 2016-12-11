@@ -25,7 +25,7 @@ define gui.asian = False
 init -1 python:
 
     import gui7
-    from gui7 import translate_define, translate_copy
+    from gui7 import translate_define, translate_copy, translate_code
 
     import os
 

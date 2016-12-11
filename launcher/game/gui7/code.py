@@ -85,6 +85,20 @@ def translate_copy(language, src, dst):
     language_copies[language].append((src, dst))
 
 
+# A map from language name and filename to code that should be added to the
+# end of a newly-generated file.
+language_code = collections.defaultdict(list)
+
+
+def translate_code(language, filename, code):
+    """
+    This function can be called to include a block of code verbatim
+    into `file` when a game is generated in `language`.
+    """
+
+    language_code[language, filename].extend([''] + code.split("\n"))
+
+
 class CodeGenerator(object):
     """
     This is used to generate and update the GUI code.
@@ -368,6 +382,17 @@ class CodeGenerator(object):
 
         shutil.copy(src, dst)
 
+    def add_code(self, fn):
+
+        print(self.p.language, fn)
+        print(language_code)
+        print(self.p.replace_code)
+
+        if not self.p.replace_code:
+            return
+
+        self.lines.extend(language_code[self.p.language, fn])
+
     def generate_gui(self, fn, defines=False):
         if not self.p.update_code:
             return
@@ -382,6 +407,7 @@ class CodeGenerator(object):
             self.update_size()
             self.translate_strings()
             self.translate_comments()
+            self.add_code(fn)
 
         self.write_target(fn)
 
@@ -397,5 +423,7 @@ class CodeGenerator(object):
         self.translate_strings()
         self.translate_comments()
         self.update_options_defines()
+
+        self.add_code(fn)
 
         self.write_target(fn)
