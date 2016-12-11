@@ -42,8 +42,6 @@ def extract_strings_core(language, destination, merge=False, force=False):
         if v and v != k:
             result[k] = v
 
-    print(destination)
-
     with open(destination, "wb") as f:
         json.dump(result, f, ensure_ascii=True)
 

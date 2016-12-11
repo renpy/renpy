@@ -384,10 +384,6 @@ class CodeGenerator(object):
 
     def add_code(self, fn):
 
-        print(self.p.language, fn)
-        print(language_code)
-        print(self.p.replace_code)
-
         if not self.p.replace_code:
             return
 
