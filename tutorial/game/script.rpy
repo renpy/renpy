@@ -102,7 +102,7 @@ label tutorials:
     if _return is False:
         jump end
 
-    call expression _return
+    call expression _return from _call_expression
 
     jump tutorials
 

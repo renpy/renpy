@@ -69,7 +69,7 @@ label demo_transitions:
 
         "AlphaDissolve Transitions":
 
-            call demo_alphadissolve
+            call demo_alphadissolve from _call_demo_alphadissolve
 
         ""
 
