@@ -228,7 +228,7 @@ init -1600 python:
         dest = config.renpy_base
 
         if renpy.macapp:
-            dest = os.expanduser(b"~/Desktop")
+            dest = os.path.expanduser(b"~/Desktop")
 
         # Try to pick a filename.
         i = 1
