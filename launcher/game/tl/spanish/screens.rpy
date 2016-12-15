@@ -643,7 +643,7 @@ translate spanish strings:
 
     # screens.rpy:368
     old "## This empty frame darkens the main menu."
-    new "## Este marco vacio oscurece el menu principal."
+    new "## Este marco vacío oscurece el menu principal."
 
     # screens.rpy:439
     old "## Reserve space for the navigation section."
