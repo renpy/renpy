@@ -625,4 +625,38 @@ translate spanish strings:
     old "Menu"
     new "Menú"
 
+    # screens.rpy:120
+    old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
+    new "## Si hay una imagen lateral, la muestra encima del texto. No la muestra en la variante de teléfono - no hay lugar."
 
+    # screens.rpy:252
+    old "## Ensure this appears on top of other screens."
+    new "## Asegúrese de que esto aparezca en la parte superior de otras pantallas."
+
+    # screens.rpy:291
+    old "## Main and Game Menu Screens"
+    new "## Principal y Pantalla de menu del juego."
+
+    # screens.rpy:361
+    old "## This ensures that any other menu screen is replaced."
+    new "## Esto asegura que cualquier otra pantalla de menu es remplazada."
+
+    # screens.rpy:368
+    old "## This empty frame darkens the main menu."
+    new "## Este marco vacio oscurece el menu principal."
+
+    # screens.rpy:439
+    old "## Reserve space for the navigation section."
+    new "## Reservar espacio para la sección de navegación."
+
+    # screens.rpy:619
+    old "## The page name, which can be edited by clicking on a button."
+    new "## El nombre de la pagina, se puede editar haciendo clic en el botón."
+
+    # screens.rpy:674
+    old "## range(1, 10) gives the numbers from 1 to 9."
+    new "## range(1, 10) da los numeros del 1 al 9."
+
+    # screens.rpy:1079
+    old "Left Trigger\nLeft Shoulder"
+    new "Left Trigger\nLeft Shoulder"

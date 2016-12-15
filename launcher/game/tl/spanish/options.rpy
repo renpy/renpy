@@ -193,3 +193,6 @@ translate spanish strings:
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## The username and project name associated with an itch.io project, separated by a slash."
 
+    # options.rpy:146
+    old "## Icon"
+    new "## Icono"

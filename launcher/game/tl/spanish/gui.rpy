@@ -409,3 +409,26 @@ translate spanish strings:
     old "## Quick buttons."
     new "## Quick buttons."
 
+    # gui.rpy:17
+    old "## GUI Configuration Variables"
+    new "## Variables de configuración de la interfaz."
+
+    # gui.rpy:168
+    old "## The color of button text in various states."
+    new "## El color del texto del botón en varios estados."
+
+    # gui.rpy:174
+    old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
+    new "## La alineación horizontal del texto del botón. (0.0 es izquierda, 0.5 es centro, 1.0 es derecha)."
+
+    # gui.rpy:395
+    old "## Localization"
+    new "## Localización"
+
+    # gui.rpy:397
+    old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+    new "## Esto controla donde se permite un salto de linea. El valor por defecto es adecuado para la mayoria de idiomas. Puede encontrar una lista de valores disponibles en https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+
+    # gui.rpy:405
+    old "## Mobile devices"
+    new "## Dispositivos Móviles"

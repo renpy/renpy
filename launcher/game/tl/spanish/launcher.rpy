@@ -1185,3 +1185,14 @@ translate spanish strings:
     old "Proceed"
     new "Continuar"
 
+    # choose_directory.rpy:104
+    old "The selected projects directory is not writable."
+    new "El directorio de proyectos seleccionado no puede ser escrito"
+
+    # distribute.rpy:1061
+    old "Signing the Macintosh application...\n(This may take a long time.)"
+    new "Firmando la aplicación para Macintosh...\n(Esto puede tardar mucho tiempo)"
+
+    # front_page.rpy:91
+    old "PROJECTS:"
+    new "PROYECTOS:"
