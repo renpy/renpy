@@ -128,6 +128,11 @@ history window that dismisses when it reaches the bottom.
 
 Namespaces may now contain dots in their names.
 
+The new :func:`QueueEvent` action queues a key binding event when activated.
+This can be used to activate many bindings, including the new
+'dismiss_unfocused' binding, which dismisses the current dialogue even
+if it is not focused.
+
 
 .. _renpy-6.99.11:
 

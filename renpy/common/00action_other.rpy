@@ -431,6 +431,23 @@ init -1500 python:
             if _preferences.mouse_move:
                 renpy.set_mouse_pos(self.x, self.y, self.duration)
 
+
+    @renpy.pure
+    class QueueEvent(Action, DictEquality):
+        """
+        :doc: other_action
+
+        Queues the given event using :func:`renpy.queue_event`.
+        """
+
+        def __init__(self, event, up=False):
+            self.event = event
+            self.up = up
+
+        def __call__(self):
+            renpy.queue_event(self.event, up=self.up)
+
+
     class Function(Action, DictEquality):
         """
         :doc: other_action
