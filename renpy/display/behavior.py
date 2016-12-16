@@ -512,7 +512,9 @@ class SayBehavior(renpy.display.layout.Null):
     focusable = True
     text = None
 
-    def __init__(self, default=True, afm=None, dismiss=[ 'dismiss' ], allow_dismiss=None, **properties):
+    dismiss_unfocused = [ 'dismiss_unfocused' ]
+
+    def __init__(self, default=True, afm=None, dismiss=[ 'dismiss' ], allow_dismiss=None, dismiss_unfocused=[ 'dismiss_unfocused' ], **properties):
         super(SayBehavior, self).__init__(default=default, **properties)
 
         if not isinstance(dismiss, (list, tuple)):
@@ -555,9 +557,14 @@ class SayBehavior(renpy.display.layout.Null):
             else:
                 renpy.game.interface.timeout(afm_delay - st)
 
-        for dismiss in self.dismiss:
+        dismiss = [ (i, True) for i in self.dismiss ] + [ (i, False) for i in self.dismiss_unfocused ]
 
-            if map_event(ev, dismiss) and self.is_focused():
+        for dismiss_event, check_focus in dismiss:
+
+            if map_event(ev, dismiss_event):
+
+                if check_focus and not self.is_focused():
+                    continue
 
                 if renpy.config.skipping:
                     renpy.config.skipping = None
@@ -571,19 +578,21 @@ class SayBehavior(renpy.display.layout.Null):
                 else:
                     rollback_side = renpy.game.preferences.desktop_rollback_side
 
-                percent = 1.0 * x / renpy.config.screen_width
+                if ev.type == pygame.MOUSEBUTTONUP:
 
-                if rollback_side == "left":
+                    percent = 1.0 * x / renpy.config.screen_width
 
-                    if percent < renpy.config.rollback_side_size:
-                        renpy.exports.rollback()
-                        raise renpy.display.core.IgnoreEvent()
+                    if rollback_side == "left":
 
-                elif rollback_side == "right":
+                        if percent < renpy.config.rollback_side_size:
+                            renpy.exports.rollback()
+                            raise renpy.display.core.IgnoreEvent()
 
-                    if (1.0 - percent) < renpy.config.rollback_side_size:
-                        renpy.exports.rollback()
-                        raise renpy.display.core.IgnoreEvent()
+                    elif rollback_side == "right":
+
+                        if (1.0 - percent) < renpy.config.rollback_side_size:
+                            renpy.exports.rollback()
+                            raise renpy.display.core.IgnoreEvent()
 
                 if renpy.game.preferences.using_afm_enable and \
                         renpy.game.preferences.afm_enable and \

@@ -50,6 +50,7 @@ init -1600 python:
         # Say.
         rollforward = [ 'mousedown_5', 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
         dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'K_SELECT' ],
+        dismiss_unfocused = [ ],
 
         # Pause.
         dismiss_hard_pause = [ ],
