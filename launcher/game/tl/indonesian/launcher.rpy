@@ -1185,3 +1185,16 @@ translate indonesian strings:
     old "Proceed"
     new "Lanjut."
 
+translate indonesian strings:
+
+    # choose_directory.rpy:104
+    old "The selected projects directory is not writable."
+    new "Direktori proyek terpilih tidak dapat di tulis (not writable)"
+
+    # distribute.rpy:1061
+    old "Signing the Macintosh application...\n(This may take a long time.)"
+    new "Menandatangani aplikasi Macintosh...\n(Ini mungkin memakan waktu lama.)"
+
+    # front_page.rpy:91
+    old "PROJECTS:"
+    new "PROYEK:"

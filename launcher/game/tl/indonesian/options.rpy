@@ -193,3 +193,8 @@ translate indonesian strings:
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Nama pengguna dan nama proyek yang di asosiasikan dengan proyek itch.io, di pisahkan dengan garis miring."
 
+translate indonesian strings:
+
+    # options.rpy:146
+    old "## Icon"
+    new "## Ikon"

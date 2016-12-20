@@ -543,15 +543,15 @@ translate indonesian strings:
 
     # screens.rpy:1124
     old "## Additional screens"
-    new "## Additional screens"
+    new "## Layar Tambahan"
 
     # screens.rpy:1128
     old "## Confirm screen"
-    new "## Confirm screen"
+    new "## Layar konfirmasi"
 
     # screens.rpy:1130
     old "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
-    new "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
+    new "## Layar konfirmasi di panggil ketika Ren'Py mau menanyakan ke pemain pertanyaan ya atau tidak."
 
     # screens.rpy:1133
     old "## http://www.renpy.org/doc/html/screen_special.html#confirm"
@@ -559,7 +559,7 @@ translate indonesian strings:
 
     # screens.rpy:1137
     old "## Ensure other screens do not get input while this screen is displayed."
-    new "## Ensure other screens do not get input while this screen is displayed."
+    new "## Memastikan layar lain tidak mendapatkan input ketika layar ini di panggil."
 
     # screens.rpy:1161
     old "Yes"
@@ -571,15 +571,15 @@ translate indonesian strings:
 
     # screens.rpy:1164
     old "## Right-click and escape answer \"no\"."
-    new "## Right-click and escape answer \"no\"."
+    new "## Klik kanan dan jawaban escape \"Tidak\"."
 
     # screens.rpy:1191
     old "## Skip indicator screen"
-    new "## Skip indicator screen"
+    new "## Lompati indikator layar"
 
     # screens.rpy:1193
     old "## The skip_indicator screen is displayed to indicate that skipping is in progress."
-    new "## The skip_indicator screen is displayed to indicate that skipping is in progress."
+    new "## layar skip_indicator di tampilkan untuk mengindikasian proses skipping sedang dalam proses."
 
     # screens.rpy:1196
     old "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
@@ -591,15 +591,15 @@ translate indonesian strings:
 
     # screens.rpy:1215
     old "## This transform is used to blink the arrows one after another."
-    new "## This transform is used to blink the arrows one after another."
+    new "## transform digunakan untuk mengkedipkan panah setelah yang lain."
 
     # screens.rpy:1247
     old "## Notify screen"
-    new "## Notify screen"
+    new "## Layar pemberitahuan"
 
     # screens.rpy:1249
     old "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
-    new "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
+    new "## layar notify digunakan untuk menampilkan pesan kepada pemain. (Seperti, ketika game di simpan cepat atau screenshot di ambil.)"
 
     # screens.rpy:1252
     old "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
@@ -607,11 +607,11 @@ translate indonesian strings:
 
     # screens.rpy:1286
     old "## NVL screen"
-    new "## NVL screen"
+    new "## Layar NVL"
 
     # screens.rpy:1288
     old "## This screen is used for NVL-mode dialogue and menus."
-    new "## This screen is used for NVL-mode dialogue and menus."
+    new "## Layar ini digunakan untuk dialog dan menu mode-NVL."
 
     # screens.rpy:1290
     old "## http://www.renpy.org/doc/html/screen_special.html#nvl"
@@ -619,25 +619,62 @@ translate indonesian strings:
 
     # screens.rpy:1301
     old "## Displays dialogue in either a vpgrid or the vbox."
-    new "## Displays dialogue in either a vpgrid or the vbox."
+    new "## Menampilkan dialog pada vpgrid atau vbox."
 
     # screens.rpy:1314
     old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
-    new "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
+    new "## Menampilkan menu, jika di berikan. Menu mungkin akan di tampilkan secara tidak benar jika config.narrator_menu di set ke True, seperti di atas."
 
     # screens.rpy:1344
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
-    new "## This controls the maximum number of NVL-mode entries that can be displayed at once."
+    new "## Ini mengendalikan angka maksimum entri mode-NVL yang dapat di tampilkan sekaligus."
 
     # screens.rpy:1406
     old "## Mobile Variants"
-    new "## Mobile Variants"
+    new "## Versi Mobile(HP/Handphone/Android)"
 
     # screens.rpy:1413
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
-    new "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
+    new "## Semenjak mouse tidak ada, kami mengganti menu cepat dengan yang menggunakan tombol yang lebih besar dan sedikit, yang memudahkan untuk di sentuh."
 
     # screens.rpy:1429
     old "Menu"
     new "Menu"
 
+translate indonesian strings:
+
+    # screens.rpy:120
+    old "## Jika ada gambar di sisi, tampilkan di atas text. Jangan tampilkan di versi HP[Handphone)(Android) - Karena tidak ada ruang."
+    new "## Jika "
+
+    # screens.rpy:252
+    old "## Ensure this appears on top of other screens."
+    new "## Memastikan ini muncul di atas layar yang lain."
+
+    # screens.rpy:291
+    old "## Main and Game Menu Screens"
+    new "## Layar Menu Utama dan Menu Permainan"
+
+    # screens.rpy:361
+    old "## This ensures that any other menu screen is replaced."
+    new "## Ini Memastikan Layar Menu Yang Lain Telah Di Timpa"
+
+    # screens.rpy:368
+    old "## This empty frame darkens the main menu."
+    new "## Frame kosong ini menggelap di menu utama."
+
+    # screens.rpy:439
+    old "## Reserve space for the navigation section."
+    new "## Memesan tempat untuk bagian navigasi."
+
+    # screens.rpy:619
+    old "## The page name, which can be edited by clicking on a button."
+    new "## Nama halaman, yang dapat di edit dengan mengklik tombol."
+
+    # screens.rpy:674
+    old "## range(1, 10) gives the numbers from 1 to 9."
+    new "## antara(1,10) beri nomor antara 1 sampai 9."
+
+    # screens.rpy:1079
+    old "Left Trigger\nLeft Shoulder"
+    new "Trigger Kiri\nBahu Kiri"

@@ -16,7 +16,7 @@ translate japanese strings:
     # gui.rpy:17
     old "## GUI Configuration Variables"
     new "## GUI 設定変数"
-    
+
     # gui.rpy:21
     old "## Colors"
     new "## カラー"
@@ -188,11 +188,11 @@ translate japanese strings:
     # gui.rpy:168
     old "## The color of button text in various states."
     new "## 状態別のボタンのテキストのカラー。idle は選択可能、hover はフォーカス中、selected は選択中、insensitive は選択不可能な状態です。"
-    
+
     # gui.rpy:174
     old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
     new "## ボタンのフレームに対する、テキストの文字揃え。 0.0 は左揃え、0.5 は中央揃え、 1.0 は右揃えになります。"
-    
+
     # gui.rpy:179
     old "## These variables override settings for different kinds of buttons. Please see the gui documentation for the kinds of buttons available, and what each is used for."
     new "## 以下の変数は、様々なボタンの種類ごとにボタンの基本設定を上書きします。詳細は gui ドキュメンテーションを参考にしてください。"
@@ -381,7 +381,7 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
     # gui.rpy:367
     old "## The spacing between NVL-mode entries when gui.nvl_height is None, and between NVL-mode entries and an NVL-mode menu."
     new "## NVL モードにおいて、gui.nvl_height を None に設定した場合の各エントリーの間隔。また、台詞と選択肢との間隔にも使われます。"
-    
+
     # gui.rpy:384
     old "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"
     new "## nvl_thought（モノローグ）の縦座標・横座標・横幅・文字揃え。"
