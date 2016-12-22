@@ -1353,7 +1353,11 @@ def invokesinnewcontext(*args, **kwargs):
 
 
 def gamemenus(*args):
-    return callsinnewcontext("_game_menu", *args)
+
+    if args:
+        return callsinnewcontext("_game_menu", _game_menu_screen=args[0])
+    else:
+        return callsinnewcontext("_game_menu")
 
 ##############################################################################
 # The on statement.
