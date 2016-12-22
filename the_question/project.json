@@ -1,1 +1,1 @@
-{"build_update": true, "type": "hidden", "packages": ["linux", "all", "mac", "win"], "add_from": true, "force_recompile": true}
+{"type": "hidden", "renamed_all": true, "force_recompile": true, "build_update": true, "packages": ["mac", "linux", "pc", "win"], "add_from": true}

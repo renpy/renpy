@@ -1286,7 +1286,8 @@ init python in distribute:
                                 sums.write(struct.pack("<I", zlib.adler32(data) & 0xffffffff))
 
                 if self.include_update and not self.build_update and not dlc:
-                    os.unlink(update_fn)
+                    if os.path.exists(update_fn):
+                        os.unlink(update_fn)
 
                 if not directory:
                     file_hash = hash_file(path)
