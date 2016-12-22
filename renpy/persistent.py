@@ -434,6 +434,8 @@ class _MultiPersistent(object):
 
 def MultiPersistent(name):
 
+    name = renpy.exports.fsencode(name)
+
     if not renpy.game.context().init_phase:
         raise Exception("MultiPersistent objects must be created during the init phase.")
 
