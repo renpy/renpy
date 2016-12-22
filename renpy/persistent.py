@@ -455,6 +455,9 @@ def MultiPersistent(name):
     else:
         files = [ os.path.expanduser("~/.renpy/persistent") ]
 
+    if "RENPY_MULTIPERSISTENT" in os.environ:
+        files = [ os.environ["RENPY_MULTIPERSISTENT"] ]
+
     # Make the new persistent directory, why not?
     try:
         os.makedirs(files[-1])

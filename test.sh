@@ -35,5 +35,7 @@ rmln launcher
 rmln tutorial
 rmln the_question
 
+export RENPY_MULTIPERSISTENT="$T/persistent"
+
 exec "$T/run.sh" "$@"
 
