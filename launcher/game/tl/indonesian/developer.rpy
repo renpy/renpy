@@ -27,7 +27,7 @@ translate indonesian strings:
 
     # _developer/developer.rpym:53
     old "Filename List"
-    new "List Namafile"
+    new "List Nama File"
 
     # _developer/developer.rpym:57
     old "Show Image Load Log"
@@ -75,7 +75,7 @@ translate indonesian strings:
 
     # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    new "\n{color=#cfc}✔ gambar di prediksikan (baik){/color}\n{color=#fcc}✘ gambar tidak diprediksi (buruk){/color}\n{color=#fff}Drag untuk pindah.{/color}"
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"

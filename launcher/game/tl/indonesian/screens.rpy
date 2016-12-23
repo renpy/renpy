@@ -99,15 +99,15 @@ translate indonesian strings:
 
     # screens.rpy:271
     old "## This code ensures that the quick_menu screen is displayed in-game, whenever the player has not explicitly hidden the interface."
-    new "## This code ensures that the quick_menu screen is displayed in-game, whenever the player has not explicitly hidden the interface."
+    new "## Kode ini memastikan layar quick_menu di tampilkan di dalam permainan, kapanpun player tidak secaralangsung menyembunyikan antarmuka."
 
     # screens.rpy:291
     old "## Navigation screen"
-    new "## Navigation screen"
+    new "## Layar navigasi"
 
     # screens.rpy:293
     old "## This screen is included in the main and game menus, and provides navigation to other menus, and to start the game."
-    new "## This screen is included in the main and game menus, and provides navigation to other menus, and to start the game."
+    new "## Layar ini di ikutsertakan di menu utama dan permainan, dan menyediakan navigasi ke menu lainnya, dan untuk memulai permainan."
 
     # screens.rpy:308
     old "Start"
@@ -135,7 +135,7 @@ translate indonesian strings:
 
     # screens.rpy:332
     old "## Help isn't necessary or relevant to mobile devices."
-    new "## Help isn't necessary or relevant to mobile devices."
+    new "## Bantuan tidak perlu atau relevan dengan perangkat mobile."
 
     # screens.rpy:333
     old "Help"
@@ -143,7 +143,7 @@ translate indonesian strings:
 
     # screens.rpy:335
     old "## The quit button is banned on iOS and unnecessary on Android."
-    new "## The quit button is banned on iOS and unnecessary on Android."
+    new "## Tombol keluar di banned di iOS dan tidak diperlukan di Android."
 
     # screens.rpy:336
     old "Quit"
@@ -151,11 +151,11 @@ translate indonesian strings:
 
     # screens.rpy:350
     old "## Main Menu screen"
-    new "## Main Menu screen"
+    new "## Layar Menu utama"
 
     # screens.rpy:352
     old "## Used to display the main menu when Ren'Py starts."
-    new "## Used to display the main menu when Ren'Py starts."
+    new "## Digunakan untuk menampilkan menu utama ketika Ren'Py dimulai."
 
     # screens.rpy:354
     old "## http://www.renpy.org/doc/html/screen_special.html#main-menu"
@@ -163,19 +163,19 @@ translate indonesian strings:
 
     # screens.rpy:369
     old "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
-    new "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
+    new "## Pernyataan 'use' mengikutsertakan layar lain ke layar ini. Isi sebenarnya dari menu utama adalah layar navigasi."
 
     # screens.rpy:413
     old "## Game Menu screen"
-    new "## Game Menu screen"
+    new "## layar Menu Permainan"
 
     # screens.rpy:415
     old "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
-    new "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
+    new "## Ini menjalaskan struktur dasar yang paling sering di gunakan di layar menu permainan, ini ditampilkan beserta layar judul, dan menampilkan latar belakang,judul,dan navigasi."
 
     # screens.rpy:418
     old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    new "## Parameter scroll dapat berisi 'None', atau \"viewport\" dan \"vpgrid\". Ketika layar ini di maksudkan untuk di gunakan dengan cabang satu atau lebih, yang di tempatkan di dalamnya."
 
     # screens.rpy:476
     old "Return"
@@ -183,19 +183,19 @@ translate indonesian strings:
 
     # screens.rpy:539
     old "## About screen"
-    new "## About screen"
+    new "## Layar About"
 
     # screens.rpy:541
     old "## This screen gives credit and copyright information about the game and Ren'Py."
-    new "## This screen gives credit and copyright information about the game and Ren'Py."
+    new "## Layar ini menampilkan credit dan informasi copyright tentang game dan Ren.Py."
 
     # screens.rpy:544
     old "## There's nothing special about this screen, and hence it also serves as an example of how to make a custom screen."
-    new "## There's nothing special about this screen, and hence it also serves as an example of how to make a custom screen."
+    new "## Tidak ada yang spesial dengan layar ini, semenjak ini juga berperan sebagai contoh bagaimana membuat layar custom."
 
     # screens.rpy:551
     old "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
-    new "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
+    new "## Pernyataan 'use' ini mengikutsertakan layar game_menu ke dalam layar ini. Percabangan vbox lalu di ikutsertakan kedalam viewport di dalam layar game_menu."
 
     # screens.rpy:561
     old "Version [config.version!t]\n"
@@ -203,7 +203,7 @@ translate indonesian strings:
 
     # screens.rpy:563
     old "## gui.about is usually set in options.rpy."
-    new "## gui.about is usually set in options.rpy."
+    new "## gui.about biasanya di set di options.rpy."
 
     # screens.rpy:567
     old "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
@@ -211,15 +211,15 @@ translate indonesian strings:
 
     # screens.rpy:570
     old "## This is redefined in options.rpy to add text to the about screen."
-    new "## This is redefined in options.rpy to add text to the about screen."
+    new "## Ini di definisikan kembali di options.rpy untuk menambahkan text ke layar About."
 
     # screens.rpy:582
     old "## Load and Save screens"
-    new "## Load and Save screens"
+    new "## Layar Load and Save"
 
     # screens.rpy:584
     old "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
-    new "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
+    new "## Layar ini bertanggungjawab untuk mengijinkan pemain menyimpan dan meload lagi. Semenjak mereke hampir memiliki hal yang sama, keduanya di implementasinan di percabangan layar ketiga, file_slots."
 
     # screens.rpy:588
     old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
@@ -239,11 +239,11 @@ translate indonesian strings:
 
     # screens.rpy:613
     old "## This ensures the input will get the enter event before any of the buttons do."
-    new "## This ensures the input will get the enter event before any of the buttons do."
+    new "## Ini memastikan input akan mendapat event masuk sebelum tombol lainnya."
 
     # screens.rpy:629
     old "## The grid of file slots."
-    new "## The grid of file slots."
+    new "## Kolom slot file."
 
     # screens.rpy:649
     old "{#file_time}%A, %B %d %Y, %H:%M"
@@ -255,7 +255,7 @@ translate indonesian strings:
 
     # screens.rpy:657
     old "## Buttons to access other pages."
-    new "## Buttons to access other pages."
+    new "## Tombol untuk mengakses halaman lain."
 
     # screens.rpy:666
     old "<"
@@ -275,11 +275,11 @@ translate indonesian strings:
 
     # screens.rpy:711
     old "## Preferences screen"
-    new "## Preferences screen"
+    new "## Layar preferensi/opsi"
 
     # screens.rpy:713
     old "## The preferences screen allows the player to configure the game to better suit themselves."
-    new "## The preferences screen allows the player to configure the game to better suit themselves."
+    new "## Layar preferensi mengijinkan pemain untuk mengkonfigurasi permainan untuk menyesuaikan gaya bermain masing masing individu."
 
     # screens.rpy:716
     old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
@@ -327,7 +327,7 @@ translate indonesian strings:
 
     # screens.rpy:756
     old "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
-    new "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
+    new "## Tipe tambahan vboxes \"radio_pref\" atau \"check_pref\" dapat di tambahkan disini, untuk menambahkan tambahan preferensi yang dibuat creator."
 
     # screens.rpy:767
     old "Text Speed"
@@ -359,27 +359,26 @@ translate indonesian strings:
 
     # screens.rpy:882
     old "## History screen"
-    new "## History screen"
+    new "## Layar History"
 
     # screens.rpy:884
     old "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
-    new "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
-
+    new "## Layar yang menampilkan History dialog kepada pemain. Semenjak tidak ada yang spesial tentang layar ini, ini memiliki akses ke history dialog yang di simpan di _history_list."
     # screens.rpy:888
     old "## https://www.renpy.org/doc/html/history.html"
     new "## https://www.renpy.org/doc/html/history.html"
 
     # screens.rpy:894
     old "## Avoid predicting this screen, as it can be very large."
-    new "## Avoid predicting this screen, as it can be very large."
+    new "## Hindari mempredisi layar ini, ini dapat berukuran sangat besar."
 
     # screens.rpy:905
     old "## This lays things out properly if history_height is None."
-    new "## This lays things out properly if history_height is None."
+    new "## Ini menampilkan layar secara semestinya jika history_height memiliki value None."
 
     # screens.rpy:914
     old "## Take the color of the who text from the Character, if set."
-    new "## Take the color of the who text from the Character, if set."
+    new "## Mengambil warna dari text 'who' dari karakter, jika di set."
 
     # screens.rpy:921
     old "The dialogue history is empty."
@@ -387,11 +386,11 @@ translate indonesian strings:
 
     # screens.rpy:965
     old "## Help screen"
-    new "## Help screen"
+    new "## Layar Bantuan"
 
     # screens.rpy:967
     old "## A screen that gives information about key and mouse bindings. It uses other screens (keyboard_help, mouse_help, and gamepad_help) to display the actual help."
-    new "## A screen that gives information about key and mouse bindings. It uses other screens (keyboard_help, mouse_help, and gamepad_help) to display the actual help."
+    new "## Layar yang memberikan informasi tentang keyboard dan mouse binding. Ini menggunakan layar lain (keyboard_help, mouse_help, and gamepad_help) untuk menampilkan bantuan yang sebenarnya."
 
     # screens.rpy:986
     old "Keyboard"
@@ -644,8 +643,8 @@ translate indonesian strings:
 translate indonesian strings:
 
     # screens.rpy:120
-    old "## Jika ada gambar di sisi, tampilkan di atas text. Jangan tampilkan di versi HP[Handphone)(Android) - Karena tidak ada ruang."
-    new "## Jika "
+    old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
+    new "## Jika ada gambar di sisi, tampilkan di atas text. Jangan tampilkan di versi HP[Handphone)(Android) - Karena tidak ada ruang."
 
     # screens.rpy:252
     old "## Ensure this appears on top of other screens."

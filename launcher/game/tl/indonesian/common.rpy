@@ -263,7 +263,7 @@ translate indonesian strings:
 
     # 00updater.rpy:704
     old "Could not verify update signature."
-    new "Tidak dapat memverifikasi signature update."
+    new "Tidak dapat memverifikasi tandatangan update."
 
     # 00updater.rpy:975
     old "The update file was not downloaded."
@@ -303,7 +303,7 @@ translate indonesian strings:
 
     # 00updater.rpy:1416
     old "The updates have been installed. The program will restart."
-    new "Update sudah terpasang. Program akan me restart."
+    new "Update sudah terpasang. Program akan melakukan restart."
 
     # 00updater.rpy:1418
     old "The updates have been installed."

@@ -259,19 +259,19 @@ translate indonesian strings:
 
     # distribute.rpy:1050
     old "Unpacking the Macintosh application for signing..."
-    new "Unpacking the Macintosh application for signing..."
+    new "Mengunpack aplikasi Macintosh untuk tandatangan..."
 
     # distribute.rpy:1060
     old "Signing the Macintosh application..."
-    new "Signing the Macintosh application..."
+    new "Menandatangani aplikasi Macintosh..."
 
     # distribute.rpy:1082
     old "Creating the Macintosh DMG..."
-    new "Creating the Macintosh DMG..."
+    new "Membuat Macintosh DMG..."
 
     # distribute.rpy:1091
     old "Signing the Macintosh DMG..."
-    new "Signing the Macintosh DMG..."
+    new "Menandatangani Macintosh DMG..."
 
     # distribute.rpy:1248
     old "Writing the [variant] [format] package."
@@ -279,7 +279,7 @@ translate indonesian strings:
 
     # distribute.rpy:1261
     old "Making the [variant] update zsync file."
-    new "Membuat [variant] zsync update file."
+    new "Membuat file update zsync : [variant] ."
 
     # distribute.rpy:1404
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
@@ -399,7 +399,7 @@ translate indonesian strings:
 
     # editor.rpy:472
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
-    new "Text editor adalah program yang akan kamu gunakan untuk mengedit file script Ren'Pu, Kamu dapat memilih editor Ren'Py yang akan kamu pakai. Jika belum ada, editor akan otomatis di download dan di pasang."
+    new "Text editor adalah program yang akan kamu gunakan untuk mengedit file script Ren'Py, Kamu dapat memilih editor Ren'Py yang akan kamu pakai. Jika belum ada, editor akan otomatis di download dan di pasang."
 
     # editor.rpy:494
     old "Cancel"
@@ -483,7 +483,7 @@ translate indonesian strings:
 
     # front_page.rpy:239
     old "Change Theme"
-    new "Gant Tema"
+    new "Ganti Tema"
 
     # front_page.rpy:242
     old "Delete Persistent"
@@ -607,7 +607,7 @@ translate indonesian strings:
 
     # interface.rpy:356
     old "While [what!q], an error occured:"
-    new "Ketika [what!q], Kesalahakn Terjadi:"
+    new "Kesalahan terjadi ketika : [what!q] adalah :"
 
     # interface.rpy:356
     old "[exception!q]"
@@ -1131,7 +1131,7 @@ translate indonesian strings:
 
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
-    new "Update berdarah dari pengembangan Ren'Py. Ini mungikin mempunyai fitur terbaru. Bahkan tidak jalan sama sekali."
+    new "Update terbaru dari pengembangan Ren'Py. Ini mungikin mempunyai fitur terbaru. Bahkan tidak jalan sama sekali."
 
     # updater.rpy:152
     old "An error has occured:"
@@ -1198,3 +1198,5 @@ translate indonesian strings:
     # front_page.rpy:91
     old "PROJECTS:"
     new "PROYEK:"
+
+
