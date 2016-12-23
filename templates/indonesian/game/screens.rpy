@@ -12,10 +12,10 @@
 # http://www.renpy.org/doc/html/screen_special.html#say
 screen say(who, what, side_image=None, two_window=False):
 
-    # Decide if we want to use the one-window or two-window variant.
+    # Memutuskan apakah kita mau menggunakan varian satu jendela atau dua jendela.
     if not two_window:
 
-        # The one window variant.
+        # Varian satu jendela.
         window:
             id "window"
 
@@ -29,7 +29,7 @@ screen say(who, what, side_image=None, two_window=False):
 
     else:
 
-        # The two window variant.
+        # Varian dua jendela.
         vbox:
             style "say_two_window_vbox"
 
@@ -48,13 +48,13 @@ screen say(who, what, side_image=None, two_window=False):
 
                 text what id "what"
 
-    # If there's a side image, display it above the text.
+    # Jika ada gambar samping, tampilkan di atas text.
     if side_image:
         add side_image
     else:
         add SideImage() xalign 0.0 yalign 1.0
 
-    # Use the quick menu.
+    # Menggunakan menu cepat.
     use quick_menu
 
 
@@ -344,15 +344,15 @@ screen preferences():
 
     tag menu
 
-    # Include the navigation.
+    # Mengikutsertakan navigasi.
     use navigation
 
-    # Put the navigation columns in a three-wide grid.
+    # Menaruh kolom navigasi di tiga kolom lebar.
     grid 3 1:
         style_group "prefs"
         xfill True
 
-        # The left column.
+        # Kolom kiri.
         vbox:
             frame:
                 style_group "pref"
@@ -509,7 +509,7 @@ screen yesno_prompt(message, yes_action, no_action):
             textbutton _("Ya") action yes_action
             textbutton _("Tidak") action no_action
 
-    # Right-click and escape answer "no".
+    # Klik-kanan dan jawaban escape "Tidak/No"
     key "game_menu" action no_action
 
 init -2:
@@ -528,7 +528,7 @@ init -2:
 # Beberapa fungsi yang berguna.
 screen quick_menu():
 
-    # Add an in-game quick menu.
+    # Menambahkan menucepat di dalam permainan.
     hbox:
         style_group "quick"
 

@@ -48,13 +48,13 @@ init -1 python hide:
         ## contoh, nilai sekarang dari preferensi.)
         widget_selected = "#ffffc8",
 
-        ## The color of a disabled widget face. Warna dari widget yang dimatikan
+        ##Warna dari widget yang dimatikan
         disabled = "#404040",
 
-        ## The color of disabled widget text. Warna dari text widget yang dimatikan
+        ##Warna dari text widget yang dimatikan
         disabled_text = "#c8c8c8",
 
-        ## The color of informational labels. Warna label informasi
+        ##Warna label informasi
         label = "#ffffff",
 
         ## The color of a frame containing widgets. Warna frame yang berisi widget
