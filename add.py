@@ -18,7 +18,7 @@ SOURCE = [
     ]
 
 version = ".".join(str(i) for i in version_tuple)
-short_version = ".".join(str(i) for i in version_tuple[:3])
+short_version = ".".join(str(i) for i in version_tuple[:-1])
 print("Version", version)
 
 ap = argparse.ArgumentParser()
