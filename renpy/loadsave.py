@@ -28,7 +28,7 @@ try:
 except ImportError:
     cPickle = pickle
 
-from cStringIO import StringIO
+from io import StringIO
 
 import zipfile
 import re

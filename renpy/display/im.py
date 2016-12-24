@@ -28,7 +28,7 @@ import renpy.display
 
 import math
 import zipfile
-import cStringIO
+import io
 import threading
 import time
 
@@ -561,7 +561,7 @@ class ZipFileImage(ImageBase):
         try:
             zf = zipfile.ZipFile(self.zipfilename, 'r')
             data = zf.read(self.filename)
-            sio = cStringIO.StringIO(data)
+            sio = io.StringIO(data)
             rv = renpy.display.pgrender.load_image(sio, self.filename)
             zf.close()
             return rv

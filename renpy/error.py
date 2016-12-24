@@ -24,7 +24,7 @@
 from __future__ import print_function
 import traceback
 import sys
-import cStringIO
+import io
 import platform
 import linecache
 
@@ -185,8 +185,8 @@ def report_exception(e, editor=True):
             return m
 
     # Return values - which can be displayed to the user.
-    simple = cStringIO.StringIO()
-    full = cStringIO.StringIO()
+    simple = io.StringIO()
+    full = io.StringIO()
 
     full_tl = traceback_list(tb)
     simple_tl = filter_traceback_list(full_tl)

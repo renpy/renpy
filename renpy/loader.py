@@ -23,7 +23,7 @@ from __future__ import print_function
 import renpy
 import os.path
 from pickle import loads
-from cStringIO import StringIO
+from io import StringIO
 import sys
 import types
 import threading

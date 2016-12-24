@@ -287,8 +287,8 @@ init -1100 python in gui:
                     if not gui._skip_backup:
                         os.rename(fn, bfn)
 
-                import cStringIO
-                sio = cStringIO.StringIO()
+                import io
+                sio = io.StringIO()
                 renpy.display.module.save_png(s, sio, 3)
 
                 with open(fn, "wb") as f:

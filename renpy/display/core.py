@@ -33,7 +33,7 @@ import pygame_sdl2 as pygame
 import sys
 import os
 import time
-import cStringIO
+import io
 import threading
 import copy
 
@@ -1964,7 +1964,7 @@ class Interface(object):
 
         self.screenshot_surface = surf
 
-        sio = cStringIO.StringIO()
+        sio = io.StringIO()
         renpy.display.module.save_png(surf, sio, 0)
         self.screenshot = sio.getvalue()
         sio.close()
