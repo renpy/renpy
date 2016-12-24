@@ -107,7 +107,7 @@ if has_fribidi and (not android) and (not ios):
         # Some versions of fribidi require glib, and it doesn't hurt to include it in
         # our path.
         glib_flags = subprocess.check_output(["pkg-config", "--cflags", "glib-2.0"])
-        setuplib.extra_compile_args.extend(glib_flags.split())
+        setuplib.extra_compile_args.extend(glib_flags.decode('utf-8').split())
     except:
         pass
 
