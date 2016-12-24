@@ -93,7 +93,7 @@ init -1500 python in updater:
         time.sleep(3)
 
         try:
-            log = file(DEFERRED_UPDATE_LOG, "ab")
+            log = open(DEFERRED_UPDATE_LOG, "ab")
         except:
             log = StringIO.StringIO()
 
@@ -930,7 +930,7 @@ init -1500 python in updater:
                     break
 
                 try:
-                    f = file(new_fn + ".part", "rb")
+                    f = open(new_fn + ".part", "rb")
                 except:
                     self.log.write("partfile does not exist\n")
                     continue
@@ -1057,7 +1057,7 @@ init -1500 python in updater:
                 # Extract regular files.
                 tff = tf.extractfile(info)
                 new_path = path + ".new"
-                f = file(new_path, "wb")
+                f = open(new_path, "wb")
 
                 while True:
                     data = tff.read(1024 * 1024)

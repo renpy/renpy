@@ -291,7 +291,7 @@ init python in project:
 
             for f in files:
 
-                data = file(self.unelide_filename(f))
+                data = open(self.unelide_filename(f))
 
                 for l, line in enumerate(data):
                     l += 1

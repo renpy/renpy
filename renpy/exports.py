@@ -1960,7 +1960,7 @@ def seen_image(name):
     return name in renpy.game.persistent._seen_images  # @UndefinedVariable
 
 
-def file(fn):  # @ReservedAssignment
+def open(fn):  # @ReservedAssignment
     """
     :doc: file
 

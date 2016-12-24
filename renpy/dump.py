@@ -242,7 +242,7 @@ def dump(error):
         pass
 
     if args.json_dump != "-":
-        with file(args.json_dump, "w") as f:
+        with open(args.json_dump, "w") as f:
             json.dump(result, f)
     else:
         json.dump(result, sys.stdout, indent=2)

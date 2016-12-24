@@ -128,7 +128,7 @@ init python hide:
 
     for fn in files:
 
-        f = file(fn, "r")
+        f = open(fn, "r")
 
         open_examples = set()
 

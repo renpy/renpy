@@ -95,7 +95,7 @@ style
 
 
 def write_keywords():
-    f = file("source/keywords.py", "w")
+    f = open("source/keywords.py", "w")
 
     kwlist = list(keyword.kwlist)
     kwlist.extend(KEYWORD1.split())
@@ -231,7 +231,7 @@ def write_line_buffer():
 
     for k, v in line_buffer.iteritems():
 
-        # f = file("source/inc/" + k, "w")
+        # f = open("source/inc/" + k, "w")
 
         f = StringIO.StringIO()
 
