@@ -34,7 +34,11 @@ import marshal
 import struct
 import zlib
 
-from cPickle import loads, dumps
+# TODO: get rid of cPickle when py3 migration is complete
+try:
+    from cPickle import loads, dumps
+except ImportError:
+    from pickle import loads, dumps
 import shutil
 
 # The version of the dumped script.

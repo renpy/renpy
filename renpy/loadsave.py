@@ -21,8 +21,12 @@
 
 # This file contains functions that load and save the game state.
 
+# TODO: get rid of cPickle when py3 migration is complete
 import pickle
-import cPickle
+try:
+    import cPickle
+except ImportError:
+    cPickle = pickle
 
 from cStringIO import StringIO
 

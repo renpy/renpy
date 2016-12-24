@@ -30,7 +30,11 @@
 import ast
 import collections
 import linecache
-from cPickle import loads, dumps
+# TODO: get rid of cPickle when py3 migration is complete
+try:
+    from cPickle import loads, dumps
+except ImportError:
+    from pickle import loads, dumps
 import zlib
 
 import renpy.display

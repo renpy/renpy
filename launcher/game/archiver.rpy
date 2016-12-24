@@ -29,7 +29,11 @@ init python in archiver:
     import random
     import glob
 
-    from cPickle import dumps, HIGHEST_PROTOCOL
+    # TODO: get rid of cPickle when py3 migration is complete
+    try:
+        from cPickle import dumps, HIGHEST_PROTOCOL
+    except ImportError:
+        from pickle import dumps, HIGHEST_PROTOCOL
 
 
     class Archive(object):
