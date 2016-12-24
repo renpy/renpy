@@ -358,14 +358,14 @@ def copyfile(source, dest, replace=None, replace_with=None):
         if os.path.getmtime(sfn) <= os.path.getmtime(dfn):
             return
 
-    sf = open(sfn, "rb")
+    sf = open(sfn, 'r')
     data = sf.read()
     sf.close()
 
     if replace:
         data = data.replace(replace, replace_with)
 
-    df = open(dfn, "wb")
+    df = open(dfn, 'w')
     df.write("# This file was automatically generated from " + source + "\n")
     df.write("# Modifications will be automatically overwritten.\n\n")
     df.write(data)
