@@ -20,8 +20,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import print_function, unicode_literals, division, absolute_import
+from six import text_type
 
-str = unicode  # @ReservedAssignment
+str = text_type  # @ReservedAssignment
 
 import collections
 import os
