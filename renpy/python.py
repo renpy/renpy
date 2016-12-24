@@ -24,6 +24,7 @@
 # game state to some time in the past.
 
 from __future__ import print_function
+from six import text_type
 
 # Import the python ast module, not ours.
 ast = __import__("ast", { })
@@ -542,7 +543,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
         filename = source.filename
         lineno = source.linenumber
 
-    source = unicode(source)
+    source = text_type(source)
     source = source.replace("\r", "")
     source = escape_unicode(source)
 

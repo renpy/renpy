@@ -21,6 +21,7 @@ Based upon STDWIN dialogs with the same names and functions.
 
 from __future__ import division
 from __future__ import print_function
+from six import text_type
 
 import os
 
@@ -772,7 +773,7 @@ def AskFolder(
     def BrowseCallback(hwnd, uMsg, lParam, lpData):
         if uMsg == BFFM_INITIALIZED:
             if actionButtonLabel:
-                label = unicode(actionButtonLabel, errors='replace')
+                label = text_type(actionButtonLabel, errors='replace')
                 user32.SendMessageW(hwnd, BFFM_SETOKTEXT, 0, label)
             if cancelButtonLabel:
                 cancelButton = user32.GetDlgItem(hwnd, IDCANCEL)

@@ -19,6 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from six import text_type
 import math
 import renpy.display
 
@@ -1427,9 +1428,9 @@ class Text(renpy.display.core.Displayable):
                     uses_scope = uses_scope or did_sub
 
                 if isinstance(i, str):
-                    i = unicode(i, "utf-8", "replace")
+                    i = text_type(i, "utf-8", "replace")
                 else:
-                    i = unicode(i)
+                    i = text_type(i)
 
             new_text.append(i)
 
@@ -1887,7 +1888,7 @@ class Text(renpy.display.core.Displayable):
                 tokens.extend(textsupport.tokenize(i))
 
             elif isinstance(i, str):
-                tokens.extend(textsupport.tokenize(unicode(i)))
+                tokens.extend(textsupport.tokenize(text_type(i)))
 
             elif isinstance(i, renpy.display.core.Displayable):
                 tokens.append((DISPLAYABLE, i))
@@ -1910,7 +1911,7 @@ class Text(renpy.display.core.Displayable):
             kind, text = t
 
             if kind == TEXT and renpy.config.replace_text:
-                rv.append((TEXT, unicode(renpy.config.replace_text(text))))
+                rv.append((TEXT, text_type(renpy.config.replace_text(text))))
 
             elif kind != TAG:
                 rv.append(t)
@@ -1962,7 +1963,7 @@ class Text(renpy.display.core.Displayable):
 
                 for kind2, text2 in new_contents:
                     if isinstance(text2, str):
-                        text2 = unicode(text2)
+                        text2 = text_type(text2)
 
                     new_tokens.append((kind2, text2))
 

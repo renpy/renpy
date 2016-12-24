@@ -25,6 +25,7 @@
 # alone as part of the api.
 
 from __future__ import print_function
+from six import text_type
 
 # Remember the real file.
 _file = file
@@ -2231,7 +2232,7 @@ def load_string(s, filename="<string>"):
         old_locked = renpy.config.locked
         renpy.config.locked = False
 
-        stmts, initcode = renpy.game.script.load_string(filename, unicode(s))
+        stmts, initcode = renpy.game.script.load_string(filename, text_type(s))
 
         if stmts is None:
             return None

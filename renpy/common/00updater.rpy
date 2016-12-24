@@ -350,7 +350,7 @@ init -1500 python in updater:
                     self.log.flush()
 
             except Exception as e:
-                self.message = _type(e).__name__ + ": " + unicode(e)
+                self.message = _type(e).__name__ + ": " + text_type(e)
                 self.can_cancel = True
                 self.can_proceed = False
                 self.state = self.ERROR

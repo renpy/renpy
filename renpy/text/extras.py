@@ -22,6 +22,7 @@
 # Other text-related things.
 
 from __future__ import print_function
+from six import text_type
 
 import renpy.text
 
@@ -76,7 +77,7 @@ def check_text_tags(s):
     else:
         all_tags = text_tags
 
-    tokens = textsupport.tokenize(unicode(s))
+    tokens = textsupport.tokenize(text_type(s))
 
     tag_stack = [ ]
 
@@ -168,7 +169,7 @@ def textwrap(s, width=78, asian=False):
 
     glyphs = [ ]
 
-    for c in unicode(s):
+    for c in text_type(s):
 
         eaw = unicodedata.east_asian_width(c)
 

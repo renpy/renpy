@@ -22,6 +22,7 @@
 # This contains various Displayables that handle events.
 
 
+from six import text_type
 import renpy.display
 import renpy.audio
 
@@ -1071,7 +1072,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             changed = value.set_text
             default = value.get_text()
 
-        self.default = unicode(default)
+        self.default = text_type(default)
         self.content = self.default
 
         self.length = length

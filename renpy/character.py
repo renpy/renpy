@@ -21,6 +21,7 @@
 
 # The Character object (and friends).
 
+from six import text_type
 import renpy.display
 
 import re
@@ -790,10 +791,10 @@ class ADVCharacter(object):
         return renpy.substitutions.substitute(who)[0]
 
     def __str__(self):
-        return unicode(self).encode("utf-8")
+        return text_type(self).encode("utf-8")
 
     def __format__(self, spec):
-        return format(unicode(self), spec)
+        return format(text_type(self), spec)
 
     def __repr__(self):
         return "<Character: {!r}>".format(self.name)

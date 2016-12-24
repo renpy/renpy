@@ -23,6 +23,7 @@
 # window.
 
 from __future__ import print_function
+from six import text_type
 import renpy.display
 import renpy.audio
 import renpy.text
@@ -376,7 +377,7 @@ class Displayable(renpy.object.Object):
         return self.__class__.__name__
 
     def __repr__(self):
-        return "<{} at {:x}>".format(unicode(self).encode("utf-8"), id(self))
+        return "<{} at {:x}>".format(text_type(self).encode("utf-8"), id(self))
 
     def find_focusable(self, callback, focus_name):
 

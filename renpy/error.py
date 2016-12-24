@@ -22,6 +22,7 @@
 # This file contains code for formatting tracebacks.
 
 from __future__ import print_function
+from six import text_type, binary_type
 import traceback
 import sys
 import io
@@ -44,15 +45,15 @@ def write_utf8_traceback_list(out, l):
     for filename, line, what, text in l:
 
         # Filename is either unicode or an fsecoded string.
-        if not isinstance(filename, unicode):
-            filename = unicode(filename, FSENCODING, "replace")
+        if not isinstance(filename, text_type):
+            filename = text_type(filename, FSENCODING, "replace")
 
         # Line is a number.
 
         # Assume what is in a unicode encoding, since it is either python,
         # or comes from inside Ren'Py.
 
-        if isinstance(text, str):
+        if isinstance(text, binary_type):
             text = text.decode("utf-8", "replace")
 
         ul.append((filename, line, what, text))
@@ -164,7 +165,7 @@ def report_exception(e, editor=True):
 
     def safe_utf8(e):
         try:
-            m = unicode(e)
+            m = text_type(e)
         except:
             try:
                 if len(e.args) == 0:

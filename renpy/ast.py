@@ -26,13 +26,13 @@
 # When updating this file, consider if lint.py or warp.py also need
 # updating.
 
+from six import text_type
 import renpy.display
 import renpy.test
 
 import hashlib
 import re
 import time
-
 
 def statement_name(name):
     """
@@ -213,7 +213,7 @@ class PyExpr(unicode):
         return self
 
     def __getnewargs__(self):
-        return (unicode(self), self.filename, self.linenumber)  # E1101
+        return (text_type(self), self.filename, self.linenumber)  # E1101
 
 
 class PyCode(object):

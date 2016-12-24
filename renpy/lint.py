@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import print_function
+from six import text_type
 import renpy.display
 import renpy.text
 import codecs
@@ -73,7 +74,7 @@ added = { }
 def add(msg):
     if not msg in added:
         added[msg] = True
-        print(unicode(msg).encode('utf-8'))
+        print(text_type(msg).encode('utf-8'))
 
 
 # Trys to evaluate an expression, announcing an error if it fails.
@@ -649,7 +650,7 @@ def lint():
     renpy.game.lint = True
 
     print(codecs.BOM_UTF8)
-    print(unicode(renpy.version + " lint report, generated at: " + time.ctime()).encode("utf-8"))
+    print(text_type(renpy.version + " lint report, generated at: " + time.ctime()).encode("utf-8"))
 
     # This supports check_hide.
     global image_prefixes

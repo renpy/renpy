@@ -23,6 +23,7 @@
 # called when parsing is necessary, and creates an AST from the script.
 
 from __future__ import print_function
+from six import text_type
 import codecs
 import re
 import os
@@ -1159,7 +1160,7 @@ def parse_image_name(l, string=False, nodash=False):
         s = l.simple_expression()
 
         if s is not None:
-            rv.append(unicode(s))
+            rv.append(text_type(s))
         else:
             points.pop()
 
