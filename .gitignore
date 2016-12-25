@@ -38,6 +38,7 @@ styles.txt
 /.pydevproject.bak
 /.project
 /.cproject
+/.idea
 /.settings
 /LICENSE.txt
 /templates/english/README.html
