@@ -214,24 +214,23 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
     # Figure out what it depends on.
     deps = [ fn ]
 
-    f = file(fn)
-    for l in f:
+    with open(fn) as f:
+        for l in f:
 
-        m = re.search(r'from\s*([\w.]+)\s*cimport', l)
-        if m:
-            deps.append(m.group(1).replace(".", "/") + ".pxd")
-            continue
+            m = re.search(r'from\s*([\w.]+)\s*cimport', l)
+            if m:
+                deps.append(m.group(1).replace(".", "/") + ".pxd")
+                continue
 
-        m = re.search(r'cimport\s*([\w.]+)', l)
-        if m:
-            deps.append(m.group(1).replace(".", "/") + ".pxd")
-            continue
+            m = re.search(r'cimport\s*([\w.]+)', l)
+            if m:
+                deps.append(m.group(1).replace(".", "/") + ".pxd")
+                continue
 
-        m = re.search(r'include\s*"(.*?)"', l)
-        if m:
-            deps.append(m.group(1))
-            continue
-    f.close()
+            m = re.search(r'include\s*"(.*?)"', l)
+            if m:
+                deps.append(m.group(1))
+                continue
 
     # Filter out cython stdlib dependencies.
     deps = [ i for i in deps if (not i.startswith("cpython/")) and (not i.startswith("libc/")) ]
@@ -362,18 +361,16 @@ def copyfile(source, dest, replace=None, replace_with=None):
         if os.path.getmtime(sfn) <= os.path.getmtime(dfn):
             return
 
-    sf = file(sfn, "rb")
-    data = sf.read()
-    sf.close()
+    with open(sfn, "rb") as sf:
+        data = sf.read()
 
     if replace:
         data = data.replace(replace, replace_with)
 
-    df = file(dfn, "wb")
-    df.write("# This file was automatically generated from " + source + "\n")
-    df.write("# Modifications will be automatically overwritten.\n\n")
-    df.write(data)
-    df.close()
+    with open(dfn, "wb") as df:
+        df.write("# This file was automatically generated from " + source + "\n")
+        df.write("# Modifications will be automatically overwritten.\n\n")
+        df.write(data)
 
     import shutil
     shutil.copystat(sfn, dfn)

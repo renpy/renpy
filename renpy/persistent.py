@@ -191,9 +191,8 @@ def load(filename):
 
     # Unserialize the persistent data.
     try:
-        f = file(filename, "rb")
-        s = f.read().decode("zlib")
-        f.close()
+        with open(filename, "rb") as f:
+            s = f.read().decode("zlib")
         persistent = loads(s)
     except:
         import renpy.display
@@ -435,9 +434,8 @@ class _MultiPersistent(object):
     def save(self):
 
         fn = self._filename
-        f = file(fn + ".new", "wb")
-        dump(self, f)
-        f.close()
+        with open(fn + ".new", "wb") as f:
+            dump(self, f)
 
         try:
             os.rename(fn + ".new", fn)

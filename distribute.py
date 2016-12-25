@@ -22,23 +22,18 @@ def copy_tutorial_file(src, dest):
     "# end-tutorial-only" comments are omitted from the copy.
     """
 
-    sf = open(src, "rb")
-    df = open(dest, "wb")
-
     # True if we want to copy the line.
     copy = True
 
-    for l in sf:
-        if "# tutorial-only" in l:
-            copy = False
-        elif "# end-tutorial-only" in l:
-            copy = True
-        else:
-            if copy:
-                df.write(l)
-
-    sf.close()
-    df.close()
+    with open(src, "rb") as sf, open(dest, "wb") as df:
+        for l in sf:
+            if "# tutorial-only" in l:
+                copy = False
+            elif "# end-tutorial-only" in l:
+                copy = True
+            else:
+                if copy:
+                    df.write(l)
 
 
 def main():

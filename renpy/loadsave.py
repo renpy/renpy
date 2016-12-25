@@ -176,12 +176,10 @@ def save_dump(roots, log):
 
         return size
 
-    f = file("save_dump.txt", "w")
+    with open("save_dump.txt", "w") as f:
+        visit(roots, "roots")
+        visit(log, "log")
 
-    visit(roots, "roots")
-    visit(log, "log")
-
-    f.close()
 
 
 def find_bad_reduction(roots, log):
