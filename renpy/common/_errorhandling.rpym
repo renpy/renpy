@@ -171,7 +171,6 @@ init label _errorhandling:
     style _side is _default
 
     style _viewport is _default:
-        clipping True
         xfill True
         yfill True
 

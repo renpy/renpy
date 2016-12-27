@@ -341,7 +341,6 @@ init -1800:
         bar_invert True
 
     style viewport:
-        clipping True
         xfill True
         yfill True
 
