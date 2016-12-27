@@ -800,6 +800,10 @@ cdef class Render:
                     newchild.width = cw
                     newchild.height = ch
                     newchild.render_of = child.render_of[:]
+                elif isinstance(child, Render):
+                    crop = (cx, cy, cw, ch)
+                    newchild = child.subsurface(crop, focus=focus)
+                    renpy.display.draw.mutated_surface(newchild)
                 else:
                     crop = (cx, cy, cw, ch)
                     newchild = child.subsurface(crop)
