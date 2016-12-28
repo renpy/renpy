@@ -337,9 +337,9 @@ and size of text.
 
    <p>These variables should generally be set to hexadecimal color codes, which are 
    are strings of the form "#rrggbb" (or "#rrggbbaa" to specify an alpha component),
-   similar to color code used by web browsers. For example, "#663399" is the code
+   similar to color codes used by web browsers. For example, "#663399" is the code
    for a shade of <a href="http://www.economist.com/blogs/babbage/2014/06/digital-remembrance" style="text-decoration: none; color: rebeccapurple">purple</a>.
-   There are many tools online that let you create html color codes, such as
+   There are many tools online that let you create HTML color codes, such as
    <a href="http://htmlcolorcodes.com/color-picker/">this one</a>.</p>
 
 In addition to :var:`gui.text_color`, :var:`gui.choice_idle_color`, and :var:`gui.choice_hover_color`,
@@ -988,7 +988,7 @@ Name and Namebox
 ^^^^^^^^^^^^^^^^
 
 The character's name is placed inside a frame that uses gui/namebox.png as
-it's background. In addition, there are a number of variables that control
+its background. In addition, there are a number of variables that control
 the presentation of the name. The namebox is only show if the speaking character
 has a name (an empty name, like " ", counts).
 
