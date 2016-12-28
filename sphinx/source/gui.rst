@@ -335,10 +335,10 @@ and size of text.
 
 .. raw:: html
 
-   <p>These variables should generally be set to hexadecimal color
-   codes, which are strings of the form "#rrggbb", similar to color codes
-   used by web browsers. For example, "#663399" is the code for a shade of
-   <a href="http://www.economist.com/blogs/babbage/2014/06/digital-remembrance" style="text-decoration: none; color: rebeccapurple">purple</a>.
+   <p>These variables should generally be set to hexadecimal color codes, which are 
+   are strings of the form "#rrggbb" (or "#rrggbbaa" to specify an alpha component),
+   similar to color code used by web browsers. For example, "#663399" is the code
+   for a shade of <a href="http://www.economist.com/blogs/babbage/2014/06/digital-remembrance" style="text-decoration: none; color: rebeccapurple">purple</a>.
    There are many tools online that let you create html color codes, such as
    <a href="http://htmlcolorcodes.com/color-picker/">this one</a>.</p>
 
@@ -371,7 +371,7 @@ documented above, the following variables exist:
     The color used by the text of selected buttons. (This takes priority
     over the hover and idle colors.)
 
-.. var:: gui.insensitive_color = '#88887f'
+.. var:: gui.insensitive_color = '#8888887f'
 
     The color used by the text of buttons that are insensitive to user input.
     (For example, the rollback button when no rollback is possible.)
