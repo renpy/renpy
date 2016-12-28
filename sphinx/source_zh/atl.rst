@@ -690,8 +690,7 @@ Ren'Py中有以下的变换属性。
     :类型: boolean
     :默认值: False
 
-    如果为 True 的话，要剪裁的浮动组件将会以原图像的宽度和高度的片段提取出来。If True, float components of crop are take as a fraction of the width
-    and height of the source image.
+    如果为 True 的话，要剪裁的浮动组件将会以原图像的宽度和高度的片段提取出来。
 
 .. transform-property:: corner1
 
@@ -733,9 +732,7 @@ Ren'Py中有以下的变换属性。
     :类型: boolean
     :默认值: True
 
-    If true, events are passed to the child of this transform. If false,
-    events are blocked. (This can be used in ATL transforms to prevent
-    events from reaching the old_widget.)
+    如果为 True 的话，events 会被传递到这个变换的子对象里。如果为 False 的话，events 会被禁止。(能够在 ATL 变换里面被应用于阻止 events 收到 old_widget。)
 
 .. transform-property:: xpan
 
