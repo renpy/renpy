@@ -742,6 +742,9 @@ auto_movie_channel = True
 # Should we ignore duplicate labels?
 ignore_duplicate_labels = False
 
+# A list of callbacks when creating a line log entry.
+line_log_callbacks = [ ]
+
 del renpy
 del os
 

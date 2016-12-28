@@ -87,6 +87,9 @@ class LineLogEntry(object):
         self.node = node
         self.abnormal = abnormal
 
+        for i in renpy.config.line_log_callbacks:
+            i(self)
+
     def __eq__(self, other):
         if not isinstance(other, LineLogEntry):
             return False
