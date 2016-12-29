@@ -17,13 +17,13 @@ can be customized somewhat, and can be replaced entirely if necessary. This
 page explains how to do simple and intermediate levels of GUI customization.
 
 For more advanced customization, please take a look at the documentation for
-:ref:`styles <styles>` (including the list of :ref:`style properties <style-properties>`
-and :ref:`screens <screens>` (including
-:ref:`screen actions <screen-actions>` and :ref:`special screens <screen-special>`).
+:ref:`styles <styles>` (including the list of :ref:`style properties <style-properties>`)
+and :ref:`screens <screens>` (including :ref:`screen actions <screen-actions>`
+and :ref:`special screens <screen-special>`).
 
 This assumes that you're using a new-style Ren'Py GUI (contained in the gui.rpy
 file). Older GUIs (that use the screens.rpy file) should be treated as advanced
-gui customization for the purposes of this guide.
+GUI customization for the purposes of this guide.
 
 
 Simple GUI Customization
@@ -60,7 +60,7 @@ Options.rpy
 -----------
 
 There are a couple of variables in options.rpy that are used by the
-gui code.
+GUI code.
 
 :var:`config.name`
     A string giving a human-readable name for the game. This is used as the
@@ -165,7 +165,7 @@ and increase or decrease it, for example, to::
 Note that the default values are often different than what's found in
 this documentation. The default values can changed based on size and
 colors selected for the game, and the values in this file are an example
-of extensive gui customization. It's best to search gui.rpy for define and
+of extensive GUI customization. It's best to search gui.rpy for define and
 the variable in question - for example, "define gui.font_size".
 
 Some of the adjustments below either partially or completely effect image
@@ -177,7 +177,7 @@ doing so will overwrite any image files you have already modified.)
 You may want to consider waiting until your game is nearly complete before
 customizing gui.rpy in this way. While old gui.rpys will work in newer
 Ren'Py versions, newer gui.rpys may have features and fixes that older
-versions lack. Customizing the gui early may make it harder to take
+versions lack. Customizing the GUI early may make it harder to take
 advantage of such improvements.
 
 
@@ -210,7 +210,7 @@ dialogue.
 .. var:: gui.text_size = 33
 
     Sets the size of the dialogue text. This may need to be increased or
-    decreased to fit the selected font in the space alloted.
+    decreased to fit the selected font in the space allotted.
 
 .. var:: gui.name_text_size = 45
 
@@ -330,16 +330,16 @@ gui/overlay/confirm.png
 Colors, Fonts, and Font Sizes
 -----------------------------
 
-There are a number of gui variables that can be used to change the color, font,
+There are a number of GUI variables that can be used to change the color, font,
 and size of text.
 
 .. raw:: html
 
-   <p>These variables should generally be set to hexadecimal color
-   codes, which are strings of the form "#rrggbb", similar to color codes
-   used by web browsers. For example, "#663399" is the code for a shade of
-   <a href="http://www.economist.com/blogs/babbage/2014/06/digital-remembrance" style="text-decoration: none; color: rebeccapurple">purple</a>.
-   There are many tools online that let you create html color codes, such as
+   <p>These variables should generally be set to hexadecimal color codes, which are 
+   are strings of the form "#rrggbb" (or "#rrggbbaa" to specify an alpha component),
+   similar to color codes used by web browsers. For example, "#663399" is the code
+   for a shade of <a href="http://www.economist.com/blogs/babbage/2014/06/digital-remembrance" style="text-decoration: none; color: rebeccapurple">purple</a>.
+   There are many tools online that let you create HTML color codes, such as
    <a href="http://htmlcolorcodes.com/color-picker/">this one</a>.</p>
 
 In addition to :var:`gui.text_color`, :var:`gui.choice_idle_color`, and :var:`gui.choice_hover_color`,
@@ -363,7 +363,7 @@ documented above, the following variables exist:
 
 .. var:: gui.hover_color = '#3284d6'
 
-    The color used by focused items in the gui, including the text of
+    The color used by focused items in the GUI, including the text of
     of buttons and the thumbs (movable areas) of sliders and scrollbars.
 
 .. var:: gui.selected_color = '#555555'
@@ -434,7 +434,7 @@ Borders
 -------
 
 There are a number of GUI components - such as buttons and bars - that use
-scalable backgrounds confgured using Border objects. Before discussing,
+scalable backgrounds configured using Border objects. Before discussing,
 how to customize buttons and bars, we'll first describe how this works.
 
 Borders are given to the :func:`Frame` displayable.
@@ -712,7 +712,7 @@ gui/button/slot_idle_background.png
     The image used for the background of save slots that are not focused.
 
 gui/button/slot_hover_background.png
-    The image used for the background of save slots that arefocused.
+    The image used for the background of save slots that are focused.
 
 .. ifconfig:: renpy_figures
 
@@ -736,7 +736,7 @@ Sliders
 
 Sliders are a type of bar that is used in the preferences screen to
 allow the player to adjust preference with a large number of values.
-By default, the gui only uses horizontal sliders, but in-game code
+By default, the GUI only uses horizontal sliders, but in-game code
 may also use vertical sliders.
 
 Sliders are customized with the following images:
@@ -795,7 +795,7 @@ The following variables are also used:
 Scrollbars
 ----------
 
-Scrollbars are bars that are used to scroll viewports. In the gui,
+Scrollbars are bars that are used to scroll viewports. In the GUI,
 the most obvious place a scrollbar is used is the history screen,
 but vertical scrollbars can be used on other screens as well.
 
@@ -863,7 +863,7 @@ Bars
 ----
 
 Plain old bars are used to display a number to the player. They're not
-used in the gui, but can be used in creator-defined screens.
+used in the GUI, but can be used in creator-defined screens.
 
 A bar can customized by editing the following images:
 
@@ -988,7 +988,7 @@ Name and Namebox
 ^^^^^^^^^^^^^^^^
 
 The character's name is placed inside a frame that uses gui/namebox.png as
-it's background. In addition, there are a number of variables that control
+its background. In addition, there are a number of variables that control
 the presentation of the name. The namebox is only show if the speaking character
 has a name (an empty name, like " ", counts).
 
@@ -1130,7 +1130,7 @@ gui/nvl.png
     the game window.
 
 There are also a number of variables that are used to customize the way
-nvl-mode text is displayed.
+NVL-mode text is displayed.
 
 
 .. var:: gui.nvl_borders = Borders(0, 15, 0, 30)
@@ -1148,7 +1148,7 @@ nvl-mode text is displayed.
 
 .. var:: gui.nvl_spacing = 15
 
-    The spacing beween entries when gui.nvl_height is None, and the spacing
+    The spacing between entries when gui.nvl_height is None, and the spacing
     between NVL-mode menu buttons.
 
 .. var:: gui.nvl_name_xpos = 0.5
@@ -1213,7 +1213,7 @@ Translation and GUI Variables
 
 The gui namespace is special, in that it is saved after the init phase,
 but before any translate python blocks are run. This makes it possible to
-change any gui variable in a translate python block to accomodate a second
+change any GUI variable in a translate python block to accommodate a second
 language. For example, the following code change the default text font
 and size.
 
@@ -1258,7 +1258,7 @@ over it and type shift+I. This invokes the style inspector, which shows
 style names. Once the style name is known, a style statement can be used
 to customize it.
 
-For example, say we've lost our minds writing gui documentation, and want to
+For example, say we've lost our minds writing GUI documentation, and want to
 add a bright red outline to the dialogue text. We can hover the text and press
 shift+I to find out the style used is named say_dialogue. We can then
 add (to the end of screens.rpy, or somewhere in options.rpy) the style statement::
@@ -1400,7 +1400,7 @@ players can have access to all the functionality Ren'Py provides.
 Python Functions
 ================
 
-There are some Python functions that support gui code.
+There are some Python functions that support GUI code.
 
 .. include:: inc/gui
 
