@@ -2,7 +2,9 @@ init python:
     TEST_PROJECTS = u"/tmp/renpy-moé"
     import shutil
 
+
 testcase default:
+
     call new_project
     call translate_project
     call extract_dialogue
@@ -13,6 +15,7 @@ testcase default:
     call build_project
 
     "quit"
+
 
 testcase new_project:
     python:
@@ -41,6 +44,7 @@ testcase new_project:
     # Color Selection
     "Continue"
 
+
 testcase choose_colors:
     "Change/Update GUI"
     "Choose new colors"
@@ -52,26 +56,29 @@ testcase choose_colors:
     "Continue"
 
 
+testcase delete10:
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+    type BACKSPACE
+
+
+testcase delete30:
+    call delete10
+    call delete10
+    call delete10
+
 
 testcase translate_project:
     "Generate Translations"
 
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
-    type BACKSPACE
+    call delete30
 
     type "piglatin"
 
@@ -89,9 +96,11 @@ testcase translate_project:
     "Generate Translations"
     "Update Default"
 
+
 testcase build_project:
     "Build Distributions"
     "Build"
+
 
 testcase extract_dialogue_common:
     "Extract Dialogue"
@@ -105,8 +114,80 @@ testcase extract_dialogue:
     "Continue"
     "Continue"
 
-
     call extract_dialogue_common
     "Text Only"
     "Continue"
     "Continue"
+
+
+testcase android:
+
+    $ _test.timeout = 60.0
+    $ _test.maximum_framerate = False
+
+    "Tutorial"
+    "Android"
+
+    # Download and install RAPT.
+    if "Yes":
+
+        "Yes"
+        "Proceed"
+
+    "Install SDK"
+    "Yes" until "Continue"
+
+    # We have to create the key.
+    if "Cancel":
+        type "Test Key"
+        "Continue"
+        "Continue"
+
+    # Configure the application.
+    "Configure"
+
+    $ _test.maximum_framerate = True
+
+    call delete30
+    type "Ren'Py Tutorial"
+    "Continue"
+
+    call delete30
+    type "Ren'Py Tutorial"
+    "Continue"
+
+    call delete30
+    type "org.renpy.tutorial"
+    "Continue"
+
+    call delete30
+    type "1.2.3"
+    "Continue"
+
+    call delete30
+    type "10203"
+    "Continue"
+
+    $ _test.maximum_framerate = False
+
+    "In landscape"
+    "Continue"
+
+    "Neither"
+    "Continue"
+
+    "No."
+    "Continue"
+
+    "Android 4.0"
+    "Continue"
+
+    # Access the internet.
+    "No"
+    "Continue"
+
+    # Build the package.
+    "Build Package"
+    "Continue"
+
+    "quit"
