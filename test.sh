@@ -35,6 +35,10 @@ rmln launcher
 rmln tutorial
 rmln the_question
 
+if [ -e "$S/testing" ]; then
+    rmln testing
+fi
+
 export RENPY_MULTIPERSISTENT="$T/persistent"
 
 exec "$T/run.sh" "$@"
