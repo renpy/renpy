@@ -98,7 +98,10 @@ def traceback_list(tb):
 
     for filename, line_number, name, line in l:
         if line is None:
-            line = linecache.getline(filename, line_number)
+            try:
+                line = linecache.getline(filename, line_number)
+            except:
+                line = ''
 
         rv.append((filename, line_number, name, line))
 
