@@ -366,6 +366,36 @@ class Until(Node):
         return child, child_state, start
 
 
+class If(Node):
+    """
+    If `condition` is ready, runs the block. Otherwise, goes to the next
+    statement.
+    """
+
+    def __init__(self, condition, block):
+        self.condition = condition
+        self.block = block
+
+    def start(self):
+        return (None, None, 0)
+
+    def execute(self, state, t):
+        node, child_state, start = state
+
+        if node is None:
+            if not self.condition.ready():
+                return None
+
+            node = self.block
+
+        node, child_state, start = renpy.test.testexecution.execute_node(t, node, child_state, start)
+
+        if node is None:
+            return None
+
+        return (node, child_state, start)
+
+
 class Python(Node):
 
     def __init__(self, loc, code):

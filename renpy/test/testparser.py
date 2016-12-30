@@ -156,6 +156,15 @@ def parse_statement(l, loc):
         code = renpy.ast.PyCode(source, loc)
         return testast.Python(loc, code)
 
+    if l.keyword("if"):
+        l.expect_block("if block")
+
+        condition = parse_clause(l, loc)
+        l.require(':')
+        block = parse_block(l.subblock_lexer(False), loc)
+
+        return testast.If(condition, block)
+
     # Single-line statements only below here.
 
     l.expect_noblock('statement')
