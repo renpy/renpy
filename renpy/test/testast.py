@@ -239,7 +239,7 @@ class Drag(Node):
 
 class Type(Pattern):
 
-    interval = .05
+    interval = .01
 
     def __init__(self, loc, keys):
         Pattern.__init__(self, loc)
