@@ -17,8 +17,9 @@
     
     `channel`
         The audio channel associated with this movie. When a movie file
-        is played on that channel, it wil be displayed in this Movie
-        displayable.
+        is played on that channel, it will be displayed in this Movie
+        displayable. If this is not given, and the `play` is provided,
+        a channel name is automatically selected.
     
     `play`
         If given, this should be the path to a movie file. The movie

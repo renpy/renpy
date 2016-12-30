@@ -30,7 +30,7 @@
     When in rollback, returns the data that was supplied to :func:`renpy.checkpoint`
     the last time this statement executed. Outside of rollback, returns None.
 
-.. function:: renpy.rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None)
+.. function:: renpy.rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, abnormal=True)
     
     Rolls the state of the game back to the last checkpoint.
     
@@ -53,6 +53,11 @@
     
     `label`
         If not None, a label that is called when rollback completes.
+    
+    `abnormal`
+        If true, the default, the code executed after the transition is run in
+        an abnormal mode that skips transitions that would have otherwise
+        occured.
 
 .. function:: renpy.suspend_rollback(flag)
     

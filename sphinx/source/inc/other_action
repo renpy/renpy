@@ -91,6 +91,10 @@
     
     Causes `url` to be opened in a web browser.
 
+.. function:: QueueEvent(event, up=False)
+    
+    Queues the given event using :func:`renpy.queue_event`.
+
 .. function:: RestartStatement()
     
     This action causes Ren'Py to rollback to before the current

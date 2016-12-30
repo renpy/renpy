@@ -123,22 +123,11 @@
     
     Keyword arguments beginning with ``show_`` have the prefix
     stripped off, and are passed to the screen as arguments. For
-    example, the value of ``show_side_image`` will become the
-    value of the ``side_image`` variable in the screen.
+    example, the value of ``show_myflag`` will become the value of
+    the ``myflag`` variable in the screen. (The myflag variable isn't
+    used by default, but can be used by a custom say screen.)
     
-    Some useful ``show_`` variables implemented by the default screens are:
-    
-    `show_side_image`
-        When given a Displayable, shows that displayable when the
-        dialogue is shown. The position of that displayable is
-        controlled by its position properties. This is often used
-        to show an image of the speaking character to the side
-        of the dialogue.
-    
-    `show_two_window`
-        If true, restructures the layout so that the name of the
-        character is placed in one window, and the dialogue text in a
-        second window.
+    One show variable is, for historical reasons, handled by Ren'Py itself:
     
     `show_layer`
         If given, this should be a string giving the name of the layer

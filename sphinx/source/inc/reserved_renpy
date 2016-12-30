@@ -115,6 +115,7 @@
 * :func:`Preference`
 * :func:`PushMove`
 * :func:`Queue`
+* :func:`QueueEvent`
 * :func:`QuickLoad`
 * :func:`QuickSave`
 * :func:`Quit`
