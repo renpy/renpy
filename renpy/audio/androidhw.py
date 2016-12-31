@@ -150,7 +150,7 @@ class AndroidVideoChannel(object):
         self.stop()
         self.queue = [ ]
 
-    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None):
+    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False):
         self.queue.extend(filenames)
 
     def set_volume(self, volume):
