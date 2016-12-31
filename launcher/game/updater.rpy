@@ -36,7 +36,7 @@ init python:
 
     version_tuple = renpy.version(tuple=True)
 
-    DLC_URL = "http://update.renpy.org/{0}.{1}.{2}/updates.json".format(version_tuple[0], version_tuple[1], version_tuple[2])
+    DLC_URL = "http://update.renpy.org/{}/updates.json".format(".".join(str(i) for i in version_tuple[:-1]))
 
     if persistent.update_channel not in UPDATE_URLS:
         persistent.update_channel = "Release"
