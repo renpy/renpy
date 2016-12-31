@@ -191,7 +191,7 @@ class MultipleDict(object):
             if key in d:
                 return d[key]
 
-        raise KeyError(key)
+        raise NameError("Name '{}' is not defined.".format(key))
 
 
 def substitute(s, scope=None, force=False, translate=True):
