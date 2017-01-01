@@ -184,6 +184,44 @@ def remove_line(filename, linenumber):
         renpy.loader.add_auto(line.filename, force=True)
 
 
+def find_physical_file(filename, linenumber):
+    """
+    Given a filename and linenumber, returns the path to the file on disk that
+    """
+
+    for i in range(-100, 100):
+        line = lines.get((filename, linenumber + i), None)
+        if line is not None:
+            return line.filename
+
+    raise Exception("File {} not found during physical editing.".format(filename))
+
+
+def physical_lines(fn):
+    """
+    Returns a list of physical lines in `fn`.
+    """
+
+    with codecs.open(fn, "r", "utf-8") as f:
+        return list(f.readlines())
+
+
+def get_physical_line(filename, linenumber):
+    """
+    Returns the physical `linenumber` from `filename`, or the empty string if
+    the line doesn't exist. \r and \n are stripped from the right side of the
+    retuned line.
+    """
+
+    fn = find_physical_file(filename, linenumber)
+    lines = physical_lines(fn)
+
+    if (linenumber < 1) or (linenumber > len(lines)):
+        return ""
+
+    return lines[linenumber - 1].rstrip(u"\r\n")
+
+
 def nodes_on_line(filename, linenumber):
     """
     Returns a list of nodes that are found on the given line.
