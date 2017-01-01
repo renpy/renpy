@@ -249,16 +249,16 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
                     # Add to the results.
                     rv.append((filename, start_number, line))
 
-                    if endpos is None:
-                        endpos = pos
+                if endpos is None:
+                    endpos = pos
 
-                    lines[loc].end_delim = endpos + 1
+                lines[loc].end_delim = endpos + 1
 
-                    while data[endpos-1] in ' \r':
-                        endpos -= 1
+                while data[endpos-1] in ' \r':
+                    endpos -= 1
 
-                    lines[loc].end = endpos
-                    lines[loc].text = data[lines[loc].start:lines[loc].end]
+                lines[loc].end = endpos
+                lines[loc].text = data[lines[loc].start:lines[loc].end]
 
                 pos += 1
                 number += 1
