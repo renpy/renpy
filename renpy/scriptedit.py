@@ -125,6 +125,9 @@ def insert_line_before(code, filename, linenumber):
     m = re.match(r' *', old_line.text)
     indent = m.group(0)
 
+    if not code:
+        indent = ''
+
     raw_code = indent + code
     code = indent + code + "\r\n"
 
