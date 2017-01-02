@@ -63,14 +63,14 @@ class Line(object):
 
 def get_line_text(filename, linenumber):
     """
-    Gets the text of the line with `filename` and `linenumber`, or the empty
-    string if the line does not exist.
+    Gets the text of the line with `filename` and `linenumber`, or the None if
+    the line does not exist.
     """
 
     if (filename, linenumber) in lines:
         return lines[filename, linenumber].text
     else:
-        return ""
+        return None
 
 
 def adjust_line_locations(filename, linenumber, char_offset, line_offset):
@@ -133,6 +133,7 @@ def insert_line_before(code, filename, linenumber):
 
     new_line = Line(old_line.filename, old_line.number, old_line.start)
     new_line.text = raw_code
+    new_line.full_text = code
     new_line.end = new_line.start + len(raw_code)
     new_line.end_delim = new_line.start + len(code)
 
@@ -184,42 +185,16 @@ def remove_line(filename, linenumber):
         renpy.loader.add_auto(line.filename, force=True)
 
 
-def find_physical_file(filename, linenumber):
+def get_full_text(filename, linenumber):
     """
-    Given a filename and linenumber, returns the path to the file on disk that
-    """
-
-    for i in range(-100, 100):
-        line = lines.get((filename, linenumber + i), None)
-        if line is not None:
-            return line.filename
-
-    raise Exception("File {} not found during physical editing.".format(filename))
-
-
-def physical_lines(fn):
-    """
-    Returns a list of physical lines in `fn`.
+    Returns the full text of `linenumber` from `filename`, including
+    any comment or delimiter characters that exist.
     """
 
-    with codecs.open(fn, "r", "utf-8") as f:
-        return list(f.readlines())
+    if (filename, linenumber) not in lines:
+        return None
 
-
-def get_physical_line(filename, linenumber):
-    """
-    Returns the physical `linenumber` from `filename`, or the empty string if
-    the line doesn't exist. \r and \n are stripped from the right side of the
-    retuned line.
-    """
-
-    fn = find_physical_file(filename, linenumber)
-    lines = physical_lines(fn)
-
-    if (linenumber < 1) or (linenumber > len(lines)):
-        return ""
-
-    return lines[linenumber - 1].rstrip(u"\r\n")
+    return lines[filename, linenumber].full_text
 
 
 def nodes_on_line(filename, linenumber):

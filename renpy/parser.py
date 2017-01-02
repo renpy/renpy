@@ -259,6 +259,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
 
                 lines[loc].end = endpos
                 lines[loc].text = data[lines[loc].start:lines[loc].end]
+                lines[loc].full_text = data[lines[loc].start:lines[loc].end_delim]
 
                 pos += 1
                 number += 1
