@@ -20,7 +20,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 screen about:
-
+    $ import sys
+    $ platform = sys.platform
+    $ major = str(sys.version_info[0])
+    $ minor = str(sys.version_info[1])
+    $ micro = str(sys.version_info[2])
+    $ release = str(sys.version_info[3])
+    $ serial = str(sys.version_info[4])
     $ version = renpy.version()
 
     frame:
@@ -32,13 +38,17 @@ screen about:
 
             has vbox xfill True
 
-            add "images/logo.png" xalign 0.5 yoffset -5
+            add "images/logo.png" xalign 0.5
 
             null height 15
 
             text _("[version!q]") xalign 0.5 bold True
 
-            null height 20
+            null height 15
+
+            text _("{b}{size=-1}{color=#e8c764}Python {/color}{/size}[major!q].[minor!q].[micro!q] {size=-5}[release!q] [serial!q] {color=#d86e6e}[platform!q]{/color}{/size}{/b}") xalign 0.5
+
+            null height 15
 
             textbutton _("View license") action interface.OpenLicense() xalign 0.5
 
@@ -46,4 +56,3 @@ screen about:
 
 label about:
     call screen about
-
