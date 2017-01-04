@@ -173,7 +173,7 @@ init -1600 python:
         if renpy.context()._menu:
             return
         
-        renpy.run(Preference("auto-forward mode", "toggle"))
+        renpy.run(Preference("auto-forward", "toggle"))
 
     def _toggle_skipping():
 
