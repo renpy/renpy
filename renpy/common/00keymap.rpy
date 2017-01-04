@@ -27,7 +27,7 @@ init -1600 python:
         # disabled.
         rollback = [ 'K_PAGEUP', 'repeat_K_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
         screenshot = [ 's' ],
-        toggle_afm = [ 'a' ],
+        toggle_afm = [ ],
         toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
         game_menu = [ 'K_ESCAPE', 'K_MENU', 'mouseup_3' ],
         hide_windows = [ 'mouseup_2', 'h' ],
@@ -169,17 +169,11 @@ init -1600 python:
     # Are the windows currently hidden?
     _windows_hidden = False
 
-    def _toggle_afm():
-        _preferences.afm_enable = not _preferences.afm_enable
-        renpy.restart_interaction()
-
-    toggle_afm = _toggle_afm
-
     def _keymap_toggle_afm():
         if renpy.context()._menu:
             return
         
-        _toggle_afm()
+        renpy.run(Preference("auto-forward mode", "toggle"))
 
     def _toggle_skipping():
 
