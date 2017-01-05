@@ -1,4 +1,4 @@
-init python:
+﻿init python:
     TEST_PROJECTS = u"/tmp/renpy-moé"
     import shutil
 
