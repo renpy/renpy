@@ -276,7 +276,7 @@ def interact(type='misc', roll_forward=None, **kwargs):  # @ReservedAssignment
         renpy.config.skipping = None
 
     if len(stack) != 1:
-        raise Exception("ui.interact called with non-empty widget/layer stack. Did you forget a ui.close() somewhere?")
+        raise Exception("ui.interact called with non-empty widget/layer stack. Did you forget a ui.close() somewhere?\nStack was "+('\n'.join([str(item) for item in stack])))
 
     if at_stack:
         raise Exception("ui.interact called with non-empty at stack.")
