@@ -11,11 +11,11 @@ translate russian strings:
 
     # _layout/classic_load_save.rpym:170
     old "a"
-    new "a"
+    new "а"
 
     # _layout/classic_load_save.rpym:179
     old "q"
-    new "q"
+    new "б"
 
     # _compat/gamemenu.rpym:355
     old "Previous"

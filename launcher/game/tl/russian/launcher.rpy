@@ -7,7 +7,7 @@ translate russian strings:
 
     # about.rpy:43
     old "View license"
-    new "View license"
+    new "Посмотреть лицензию"
 
     # add_file.rpy:28
     old "FILENAME"
@@ -27,19 +27,19 @@ translate russian strings:
 
     # add_file.rpy:42
     old "# Ren'Py automatically loads all script files ending with .rpy. To use this\n# file, define a label and jump to it from another file.\n"
-    new "# Ren'Py автоматически загружает все файлы сценариев, заканчивающиеся на .rpy\n#Чтобы использовать этот файл, определите метку и прыгните (jump) к ней из другого файла.\n"
+    new "# Ren'Py автоматически загружает все файлы сценариев, заканчивающиеся на .rpy\n#Чтобы использовать этот файл, определите метку и перейдите (jump) к ней из другого файла.\n"
 
     # android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
+    new "Чтобы построить Android-пакет, пожалуйста, загрузите RAPT, разъархивируйте его и поместить в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
 
     # android.rpy:31
     old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "32-разрядный инструментарий разработки Java требуется, чтобы построить Android-пакеты на Windows. JDK отличен от JRE, и возможно, у вас есть Java без JDK.\n\nПожалуйста, {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}загрузите и установите JDK{/a}, и перезапустите Ren'Py Launcher."
+    new "Чтобы построить Android-пакеты на Windows требуется 32-разрядный инструментарий разработки Java. JDK отличен от JRE, и возможно, у вас есть Java без JDK.\n\nПожалуйста, {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}загрузите и установите JDK{/a}, и перезапустите Лаунчер Ren'Py."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
-    new "RAPT установлен, но вам понадобится установить Android SDK до того, как вы сможете создавать Android-пакеты. Выберите Установить SDK, чтобы сделать это."
+    new "RAPT установлен, но вам понадобится установить Android SDK до того, как вы сможете создать Android-пакеты. Выберите \"Установить SDK\", чтобы сделать это."
 
     # android.rpy:33
     old "RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore."
@@ -55,19 +55,19 @@ translate russian strings:
 
     # android.rpy:37
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Пытается эмулировать Android-телефон.\n\nПрикосновения иммитируются мышью при зажатой кнопке. Escape назначен на кнопку меню, а PageUp - на кнопку назад."
+    new "Пытается эмулировать Android-телефон.\n\nПрикосновения имитируются мышью при зажатой кнопке. Escape назначен на кнопку меню, а PageUp - на кнопку назад."
 
     # android.rpy:38
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Пытается эмулировать Android-планшет.\n\nПрикосновения иммитируются мышью при зажатой кнопке. Escape назначен на кнопку меню, а PageUp - на кнопку назад."
+    new "Пытается эмулировать Android-планшет.\n\nПрикосновения имитируются мышью при зажатой кнопке. Escape назначен на кнопку меню, а PageUp - на кнопку назад."
 
     # android.rpy:39
     old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    new "Пытается эмулировать ориентированную на телевизор консоль Android, такую как OUYA или Fire TV.\n\nКонтроллер назначен стрелки, Enter назначен на кнопку выбора, Escape назначен на кнопку меню, а PageUp — на кнопку назад."
 
     # android.rpy:41
     old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
-    new "Скачивает и устанавливает Android SDK и поддерживающие пакеты. При желании, создает ключи для подписи пакета."
+    new "Скачивает и устанавливает Android SDK и поддерживающие пакеты. При желании, создаёт ключи для подписи пакета."
 
     # android.rpy:42
     old "Configures the package name, version, and other information about this project."
@@ -83,27 +83,27 @@ translate russian strings:
 
     # android.rpy:45
     old "Builds the Android package, and installs it on an Android device connected to your computer."
-    new "Собирает Android-пакет, устанавливает его на Android-устройстве, подключенном к компьютеру."
+    new "Собирает Android-пакет, устанавливает его на Android-устройстве, подключённом к компьютеру."
 
     # android.rpy:46
     old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
-    new "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
+    new "Собирает Android-пакет, устанавливает его на Android-устройстве, подключённом к компьютеру, а затем запускает приложение на устройстве.."
 
     # android.rpy:48
     old "Connects to an Android device running ADB in TCP/IP mode."
-    new "Connects to an Android device running ADB in TCP/IP mode."
+    new "Присоединение к Android-устройства, запуская ADB в режиме TCP/IP."
 
     # android.rpy:49
     old "Disconnects from an Android device running ADB in TCP/IP mode."
-    new "Disconnects from an Android device running ADB in TCP/IP mode."
+    new "Отсоединение от Android-устройства, запуская ADB в режиме TCP/IP."
 
     # android.rpy:50
     old "Retrieves the log from the Android device and writes it to a file."
-    new "Retrieves the log from the Android device and writes it to a file."
+    new "Берёт лог с Android-устройства и пишет его в файл."
 
     # android.rpy:240
     old "Copying Android files to distributions directory."
-    new "Copying Android files to distributions directory."
+    new "Копирую файлы Android в директорию дистрибутивов."
 
     # android.rpy:304
     old "Android: [project.current.name!q]"
@@ -123,7 +123,7 @@ translate russian strings:
 
     # android.rpy:341
     old "Television"
-    new "Television"
+    new "Телевизор"
 
     # android.rpy:353
     old "Build:"
@@ -139,27 +139,27 @@ translate russian strings:
 
     # android.rpy:369
     old "Build Package"
-    new "Собрать пакет"
+    new "Собрать Пакет"
 
     # android.rpy:373
     old "Build & Install"
-    new "Собрать и установить"
+    new "Собрать и Установить"
 
     # android.rpy:377
     old "Build, Install & Launch"
-    new "Build, Install & Launch"
+    new "Собрать, Установить и Запустить"
 
     # android.rpy:388
     old "Other:"
-    new "Other:"
+    new "Другое:"
 
     # android.rpy:396
     old "Remote ADB Connect"
-    new "Remote ADB Connect"
+    new "Удалённое Соединение с ADB"
 
     # android.rpy:400
     old "Remote ADB Disconnect"
-    new "Remote ADB Disconnect"
+    new "Удалённое Отсоединение от ADB"
 
     # android.rpy:404
     old "Logcat"
@@ -167,43 +167,43 @@ translate russian strings:
 
     # android.rpy:437
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
-    new "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
+    new "Перед тем как собирать приложения Android, вам нужно загрузить RAPT, инструмент Ren'Py для сбора пакетов Android. Хотите загрузить RAPT сейчас?"
 
     # android.rpy:496
     old "Remote ADB Address"
-    new "Remote ADB Address"
+    new "Удалённый адрес ADB"
 
     # android.rpy:496
     old "Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."
-    new "Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."
+    new "Пожалуйста, введите IP-адрес и номер порта, чтобы соединиться с устройством, по форме \"192.168.1.143:5555\". Ознакомьтесь с документацией своего устройства, чтобы определить поддерживает ли оно удалённый ADB, и если так, адрес и порт для использования."
 
     # android.rpy:508
     old "Invalid remote ADB address"
-    new "Invalid remote ADB address"
+    new "Неверный адрес удалённого ADB"
 
     # android.rpy:508
     old "The address must contain one exactly one ':'."
-    new "The address must contain one exactly one ':'."
+    new "Адрес должен содержать один, только один ':'."
 
     # android.rpy:512
     old "The host may not contain whitespace."
-    new "The host may not contain whitespace."
+    new "Хост не может создержать пробелы."
 
     # android.rpy:518
     old "The port must be a number."
-    new "The port must be a number."
+    new "Порт должен содержать только цифры."
 
     # android.rpy:544
     old "Retrieving logcat information from device."
-    new "Retrieving logcat information from device."
+    new "Извлекаю информацию logcat из устройства."
 
     # choose_directory.rpy:73
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
-    new "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
+    new "Ren'Py не удалось запустить python с tkinter, чтобы выбрать директорию. Пожалуйста, установите python-tk или пакет tkinter."
 
     # choose_theme.rpy:303
     old "Could not change the theme. Perhaps options.rpy was changed too much."
-    new "Невозможно изменить тему. Возможно, options.rpy был сильно изменен."
+    new "Невозможно изменить тему. Возможно, options.rpy был сильно изменён."
 
     # choose_theme.rpy:370
     old "Planetarium"
@@ -231,7 +231,7 @@ translate russian strings:
 
     # consolecommand.rpy:84
     old "The command is being run in a new operating system console window."
-    new "The command is being run in a new operating system console window."
+    new "Комманда будет запущена в новом окне консоли операционной системы."
 
     # distribute.rpy:443
     old "Scanning project files..."
@@ -239,11 +239,11 @@ translate russian strings:
 
     # distribute.rpy:459
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
-    new "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
+    new "Постройка дистрибутивов провалилась:\n\nПеременная build.directory_name не должна содержать пробелов, двоеточий и точек с запятой."
 
     # distribute.rpy:504
     old "No packages are selected, so there's nothing to do."
-    new "Пакеты не выбраны. Делать нечего."
+    new "Пакеты не выбраны. Нечего делать."
 
     # distribute.rpy:516
     old "Scanning Ren'Py files..."
@@ -259,19 +259,19 @@ translate russian strings:
 
     # distribute.rpy:1050
     old "Unpacking the Macintosh application for signing..."
-    new "Unpacking the Macintosh application for signing..."
+    new "Распаковываю приложение Macintosh для подписи..."
 
     # distribute.rpy:1060
     old "Signing the Macintosh application..."
-    new "Signing the Macintosh application..."
+    new "Подписываю приложение Macintosh..."
 
     # distribute.rpy:1082
     old "Creating the Macintosh DMG..."
-    new "Creating the Macintosh DMG..."
+    new "Создаю Macintosh DMG..."
 
     # distribute.rpy:1091
     old "Signing the Macintosh DMG..."
-    new "Signing the Macintosh DMG..."
+    new "Подписываю Macintosh DMG..."
 
     # distribute.rpy:1248
     old "Writing the [variant] [format] package."
@@ -307,7 +307,7 @@ translate russian strings:
 
     # distribute_gui.rpy:194
     old "Add from clauses to calls, once"
-    new "Add from clauses to calls, once"
+    new "Добавить from clauses к calls один раз"
 
     # distribute_gui.rpy:195
     old "Refresh"
@@ -315,7 +315,7 @@ translate russian strings:
 
     # distribute_gui.rpy:199
     old "Upload to itch.io"
-    new "Upload to itch.io"
+    new "Загрузить на itch.io"
 
     # distribute_gui.rpy:215
     old "Build Packages:"
@@ -323,7 +323,7 @@ translate russian strings:
 
     # distribute_gui.rpy:234
     old "Options:"
-    new "Options:"
+    new "Опции:"
 
     # distribute_gui.rpy:239
     old "Build Updates"
@@ -331,7 +331,7 @@ translate russian strings:
 
     # distribute_gui.rpy:241
     old "Add from clauses to calls"
-    new "Add from clauses to calls"
+    new "Добавить from clauses к calls"
 
     # distribute_gui.rpy:242
     old "Force Recompile"
@@ -343,7 +343,7 @@ translate russian strings:
 
     # distribute_gui.rpy:250
     old "Adding from clauses to call statements that do not have them."
-    new "Adding from clauses to call statements that do not have them."
+    new "Добавляю from clauses к выражениям call, если они их не имеют."
 
     # distribute_gui.rpy:271
     old "Errors were detected when running the project. Please ensure the project runs without errors before building distributions."
@@ -351,15 +351,15 @@ translate russian strings:
 
     # distribute_gui.rpy:288
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
-    new "Ваш проект не содержит информацию, необходимую для сборки. Добавить её к концу options.rpy?"
+    new "Ваш проект не содержит информации, необходимой для сборки. Добавить её к концу options.rpy?"
 
     # editor.rpy:150
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
-    new "{b}Рекомендуется.{/b} Beta-редактор с простым интерфейсом и возможностями, помогающими в разработке, такими, как проверка орфографии. Editra сейчас не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов."
+    new "{b}Рекомендуется.{/b} Бета-редактор с простым интерфейсом и возможностями, помогающими в разработке, такими, как проверка орфографии. Editra сейчас не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов."
 
     # editor.rpy:151
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
-    new "{b}Рекомендуется.{/b} Beta-редактор с простым интерфейсом и возможностями, помогающими в разработке, такими, как проверка орфографии. Editra сейчас не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов. На Linux, Editra требует wxPython."
+    new "{b}Рекомендуется.{/b} Бета-редактор с простым интерфейсом и возможностями, помогающими в разработке, такими, как проверка орфографии. Editra сейчас не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов. На Linux, Editra требует wxPython."
 
     # editor.rpy:167
     old "This may have occured because wxPython is not installed on this system."
@@ -399,7 +399,7 @@ translate russian strings:
 
     # editor.rpy:472
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
-    new "Текстовый редактор - программа, необходимая для редактирования сценариев Ren'Py. Здесь, вы можете выбрать редактор, который Ren'Py будет использовать. Если такового нет, редактор будет автоматически загружен и установлен."
+    new "Текстовый редактор - программа, необходимая для редактирования сценариев Ren'Py. Здесь, вы можете выбрать редактор, который будет использовать Ren'Py. Если такового нет, редактор будет автоматически загружен и установлен."
 
     # editor.rpy:494
     old "Cancel"
@@ -479,7 +479,7 @@ translate russian strings:
 
     # front_page.rpy:237
     old "Change/Update GUI"
-    new "Change/Update GUI"
+    new "Изменить/Обновить GUI"
 
     # front_page.rpy:239
     old "Change Theme"
@@ -487,7 +487,7 @@ translate russian strings:
 
     # front_page.rpy:242
     old "Delete Persistent"
-    new "Очистить постоянные данные"
+    new "Очистить постоянные"
 
     # front_page.rpy:251
     old "Build Distributions"
@@ -507,7 +507,7 @@ translate russian strings:
 
     # front_page.rpy:256
     old "Extract Dialogue"
-    new "Извлечь диалог"
+    new "Извлечь Диалог"
 
     # front_page.rpy:272
     old "Checking script for potential problems..."
@@ -523,23 +523,23 @@ translate russian strings:
 
     # gui7.rpy:236
     old "Select Accent and Background Colors"
-    new "Select Accent and Background Colors"
+    new "Выберите Акцентный и Фоновый Цвета"
 
     # gui7.rpy:250
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
-    new "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
+    new "Пожалуйста, кликните на цветовую схему, которую вы хотите использовать, а затем кликните Продолжить. Эти цвета можно изменить позже."
 
     # gui7.rpy:294
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
+    new "{b}Внимание{/b}\nПродолжив, вы перепишете настроенные полосы, кнопки, слоты сохранения, полосы прокрутки и ползунки.\n\nЧто вы хотите сделать?"
 
     # gui7.rpy:294
     old "Choose new colors, then regenerate image files."
-    new "Choose new colors, then regenerate image files."
+    new "Выбрать новые цвета, затем воссоздать файлы изображений."
 
     # gui7.rpy:294
     old "Regenerate the image files using the colors in gui.rpy."
-    new "Regenerate the image files using the colors in gui.rpy."
+    new "Воссоздать файлы изображений используя цвета из gui.rpy."
 
     # gui7.rpy:314
     old "PROJECT NAME"
@@ -547,7 +547,7 @@ translate russian strings:
 
     # gui7.rpy:314
     old "Please enter the name of your project:"
-    new "Пожалуйтса, введите имя проекта:"
+    new "Пожалуйста, введите имя проекта:"
 
     # gui7.rpy:322
     old "The project name may not be empty."
@@ -563,15 +563,15 @@ translate russian strings:
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
+    new "Какое разрешение должен использовать ваш проект? Хотя Ren'Py может масштабировать окно, это целевой размер окна, по размеру которого должны рисоваться ресурсы и размер, на котором они будут наиболее чёткие.\n\nСтандартный 1280x720 — резонный компромис."
 
     # gui7.rpy:389
     old "Creating the new project..."
-    new "Creating the new project..."
+    new "Создаю новый проект..."
 
     # gui7.rpy:391
     old "Updating the project..."
-    new "Updating the project..."
+    new "Обновляю проект..."
 
     # interface.rpy:107
     old "Documentation"
@@ -639,51 +639,51 @@ translate russian strings:
 
     # ios.rpy:28
     old "To build iOS packages, please download renios, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "To build iOS packages, please download renios, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
+    new "Чтобы построить iOS-пакеты, пожалуйста, загрузите renios, разъархивируйте его и положите в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
 
     # ios.rpy:29
     old "The directory in where Xcode projects will be placed has not been selected. Choose 'Select Directory' to select it."
-    new "The directory in where Xcode projects will be placed has not been selected. Choose 'Select Directory' to select it."
+    new "Директория, куда должны складываться проекты Xcode не выбрана. Выберите 'Указать Директорию', чтобы её выбрать."
 
     # ios.rpy:30
     old "There is no Xcode project corresponding to the current Ren'Py project. Choose 'Create Xcode Project' to create one."
-    new "There is no Xcode project corresponding to the current Ren'Py project. Choose 'Create Xcode Project' to create one."
+    new "Нет проекта Xcode, соответствующего текущему проекту Ren'Py. Выберите 'Создать Проект Xcode', чтобы создать его."
 
     # ios.rpy:31
     old "An Xcode project exists. Choose 'Update Xcode Project' to update it with the latest game files, or use Xcode to build and install it."
-    new "An Xcode project exists. Choose 'Update Xcode Project' to update it with the latest game files, or use Xcode to build and install it."
+    new "Проект Xcode уже существует. Выберите 'Обновить Проект Xcode', чтобы обновить его последними файлами игры или используйте Xcode, чтобы построить и установить её."
 
     # ios.rpy:33
     old "Attempts to emulate an iPhone.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Attempts to emulate an iPhone.\n\nTouch input is emulated through the mouse, but only when the button is held down."
+    new "Пытается эмулировать iPhone.\n\nПрикосновения эмулируются мышью, но только когда кнопка зажата."
 
     # ios.rpy:34
     old "Attempts to emulate an iPad.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Attempts to emulate an iPad.\n\nTouch input is emulated through the mouse, but only when the button is held down."
+    new "Пытается эмулировать iPad.\n\nПрикосновения эмулируются мышью, но только когда кнопка зажата."
 
     # ios.rpy:36
     old "Selects the directory where Xcode projects will be placed."
-    new "Selects the directory where Xcode projects will be placed."
+    new "Выбрать директорию, куда будут складываться проекты Xcode."
 
     # ios.rpy:37
     old "Creates an Xcode project corresponding to the current Ren'Py project."
-    new "Creates an Xcode project corresponding to the current Ren'Py project."
+    new "Создаёт проект Xcode, соответствующий текущему проекту Ren'Py."
 
     # ios.rpy:38
     old "Updates the Xcode project with the latest game files. This must be done each time the Ren'Py project changes."
-    new "Updates the Xcode project with the latest game files. This must be done each time the Ren'Py project changes."
+    new "Обновляет проект Xcode последними файлами игры. Это должно выполняться каждый раз, когда проект Ren'Py изменяется."
 
     # ios.rpy:39
     old "Opens the Xcode project in Xcode."
-    new "Opens the Xcode project in Xcode."
+    new "Открывает проект Xcode в Xcode."
 
     # ios.rpy:41
     old "Opens the directory containing Xcode projects."
-    new "Opens the directory containing Xcode projects."
+    new "Открывает директорию, содержащую проекты Xcode."
 
     # ios.rpy:126
     old "The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"
-    new "The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"
+    new "Проект Xcode уже существует. Хотите переименовать старый проект или заменить его новым?"
 
     # ios.rpy:211
     old "iOS: [project.current.name!q]"
@@ -699,19 +699,19 @@ translate russian strings:
 
     # ios.rpy:264
     old "Select Xcode Projects Directory"
-    new "Select Xcode Projects Directory"
+    new "Выбрать Директорию Проектов Xcode"
 
     # ios.rpy:268
     old "Create Xcode Project"
-    new "Create Xcode Project"
+    new "Создать Проект Xcode"
 
     # ios.rpy:272
     old "Update Xcode Project"
-    new "Update Xcode Project"
+    new "Обновить Проект Xcode"
 
     # ios.rpy:277
     old "Launch Xcode"
-    new "Launch Xcode"
+    new "Запустить Xcode"
 
     # ios.rpy:312
     old "Open Xcode Projects Directory"
@@ -719,43 +719,43 @@ translate russian strings:
 
     # ios.rpy:345
     old "Before packaging iOS apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"
-    new "Before packaging iOS apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"
+    new "Перед упаковкой приложений iOS, вам требуется загрузить renios, поддержка iOS для Ren'Py. Хотите загрузить renios прямо сейчас?"
 
     # ios.rpy:354
     old "XCODE PROJECTS DIRECTORY"
-    new "XCODE PROJECTS DIRECTORY"
+    new "ДИРЕКТОРИЯ ПРОЕКТОВ XCODE"
 
     # ios.rpy:354
     old "Please choose the Xcode Projects Directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new "Please choose the Xcode Projects Directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
+    new "Пожалуйста, выберите Директорию Проектов Xcode, используя выборщик папок.\n{b}Выборщик папок может быть открыт за этим окном.{/b}"
 
     # ios.rpy:359
     old "Ren'Py has set the Xcode Projects Directory to:"
-    new "Ren'Py has set the Xcode Projects Directory to:"
+    new "Ren'Py установила Директорию Проектов Xcode в:"
 
     # itch.rpy:60
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "The built distributions could not be found. Please choose 'Build' and try again."
+    new "Собранный дистрибутив не найден. Пожалуйста, выберите 'Построить' и попытайтесь снова."
 
     # itch.rpy:91
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "No uploadable files were found. Please choose 'Build' and try again."
+    new "Загружаемые файлы не были найдены. Пожалуйста, выберите 'Построить' и попытайтесь снова."
 
     # itch.rpy:99
     old "The butler program was not found."
-    new "The butler program was not found."
+    new "Программа butler не найдена."
 
     # itch.rpy:99
     old "Please install the itch.io app, which includes butler, and try again."
-    new "Please install the itch.io app, which includes butler, and try again."
+    new "Пожалуйста, установите приложение itch.io, которое содержит butler, и попытайтесь снова."
 
     # itch.rpy:108
     old "The name of the itch project has not been set."
-    new "The name of the itch project has not been set."
+    new "Имя itch проекта не установлено."
 
     # itch.rpy:108
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
-    new "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
+    new "Пожалуйста, {a=https://itch.io/game/new}создайте ваш проект{/a}, затем добавьте строку типа\n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} в options.rpy."
 
     # mobilebuild.rpy:109
     old "{a=%s}%s{/a}"
@@ -823,39 +823,39 @@ translate russian strings:
 
     # navigation.rpy:256
     old "The list of names is empty."
-    new "Список имен пуст."
+    new "Список имён пуст."
 
     # new_project.rpy:38
     old "New GUI Interface"
-    new "New GUI Interface"
+    new "Новый Интерфейс GUI"
 
     # new_project.rpy:48
     old "Both interfaces have been translated to your language."
-    new "Both interfaces have been translated to your language."
+    new "Все интерфейсы переведены на ваш язык."
 
     # new_project.rpy:50
     old "Only the new GUI has been translated to your language."
-    new "Only the new GUI has been translated to your language."
+    new "Только новый GUI переведён на ваш язык."
 
     # new_project.rpy:52
     old "Only the legacy theme interface has been translated to your language."
-    new "Only the legacy theme interface has been translated to your language."
+    new "Только старые темы интерфейса переведены на ваш язык."
 
     # new_project.rpy:54
     old "Neither interface has been translated to your language."
-    new "Neither interface has been translated to your language."
+    new "Ни один из интерфейсов не переведён на ваш язык."
 
     # new_project.rpy:63
     old "The projects directory could not be set. Giving up."
-    new "The projects directory could not be set. Giving up."
+    new "Директория проектов не может быть установлена. Сдаюсь."
 
     # new_project.rpy:69
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
-    new "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
+    new "Какой интерфейс вы хотите использовать? У нового GUI современный вид, поддержка широких экранов и мобильных устройств, и его легче изменять. Старые темы могут быть необходимы для работы со старым кодом.\n\n[language_support!t]\n\nЕсли сомневаетесь, выберите новый GUI, затем кликните на кнопку Продолжить."
 
     # new_project.rpy:69
     old "Legacy Theme Interface"
-    new "Legacy Theme Interface"
+    new "Старые Темы Интерфейса"
 
     # new_project.rpy:90
     old "Choose Project Template"
@@ -863,7 +863,7 @@ translate russian strings:
 
     # new_project.rpy:108
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
-    new "Пожалуйста, выберите образец, на котором основывать ваш проект. Образец задает шрифт и язык по умолчанию для интерфейса. Если ваш язык не поддерживается, выберите 'english'."
+    new "Пожалуйста, выберите образец, на котором основывать ваш проект. Образец задаёт шрифт и язык по умолчанию для интерфейса. Если ваш язык не поддерживается, выберите 'english'."
 
     # preferences.rpy:64
     old "Launcher Preferences"
@@ -923,7 +923,7 @@ translate russian strings:
 
     # preferences.rpy:174
     old "Show edit file section"
-    new "Show edit file section"
+    new "Показать секцию редактирования"
 
     # preferences.rpy:175
     old "Large fonts"
@@ -943,27 +943,27 @@ translate russian strings:
 
     # project.rpy:47
     old "After making changes to the script, press shift+R to reload your game."
-    new "After making changes to the script, press shift+R to reload your game."
+    new "После применения изменений в скрипте, нажмите shift+R, чтобы перезагрузить вашу игру."
 
     # project.rpy:47
     old "Press shift+O (the letter) to access the console."
-    new "Press shift+O (the letter) to access the console."
+    new "Нажмите shift+O (the letter), чтобы войти в консоль."
 
     # project.rpy:47
     old "Press shift+D to access the developer menu."
-    new "Press shift+D to access the developer menu."
+    new "Нажмите shift+D, чтобы получить доступ к меню разработчика."
 
     # project.rpy:47
     old "Have you backed up your projects recently?"
-    new "Have you backed up your projects recently?"
+    new "Давно сохраняли свои проекты?"
 
     # project.rpy:229
     old "Launching the project failed."
-    new "Launching the project failed."
+    new "Запуск проекта провален."
 
     # project.rpy:229
     old "Please ensure that your project launches normally before running this command."
-    new "Please ensure that your project launches normally before running this command."
+    new "Пожалуйста, убедитесь, что ваш проект нормально запускается перед использованием этой команды."
 
     # project.rpy:242
     old "Ren'Py is scanning the project..."
@@ -971,7 +971,7 @@ translate russian strings:
 
     # project.rpy:568
     old "Launching"
-    new "Launching"
+    new "Запускаю"
 
     # project.rpy:597
     old "PROJECTS DIRECTORY"
@@ -983,7 +983,7 @@ translate russian strings:
 
     # project.rpy:597
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
-    new "Launcher будет искать проекты в этой директории, создавать новые проекты в этой директории, и размещать построенные проекты в этой директории."
+    new "Лаунчер будет искать проекты в этой директории, создавать новые проекты в этой директории, и размещать построенные проекты в этой директории."
 
     # project.rpy:602
     old "Ren'Py has set the projects directory to:"
@@ -991,47 +991,47 @@ translate russian strings:
 
     # translations.rpy:63
     old "Translations: [project.current.name!q]"
-    new "Translations: [project.current.name!q]"
+    new "Переводы: [project.current.name!q]"
 
     # translations.rpy:104
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
-    new "The language to work with. This should only contain lower-case ASCII characters and underscores."
+    new "Язык работы. Он должен содержать только не-заглавные символы ASCII и подчёркивания."
 
     # translations.rpy:130
     old "Generate empty strings for translations"
-    new "Generate empty strings for translations"
+    new "Генерирую пустые строки для переводов"
 
     # translations.rpy:148
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
+    new "Генерирует или обновляет файлы переводов. Файлы будут помещены в game/tl/[persistent.translate_language!q]."
 
     # translations.rpy:168
     old "Extract String Translations"
-    new "Extract String Translations"
+    new "Извлечь Строки Для Перевода"
 
     # translations.rpy:170
     old "Merge String Translations"
-    new "Merge String Translations"
+    new "Объединить Строки Перевода"
 
     # translations.rpy:175
     old "Replace existing translations"
-    new "Replace existing translations"
+    new "Заменить существующие переводы"
 
     # translations.rpy:176
     old "Reverse languages"
-    new "Reverse languages"
+    new "Обратить языки"
 
     # translations.rpy:180
     old "Update Default Interface Translations"
-    new "Update Default Interface Translations"
+    new "Обновить Базовый Перевод Интерфейса"
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
+    new "Команда извлечения позволяет вам извлечь переводимые строки из существующего проекта во временный файл.\n\nКоманда объединения объединяет извлечённые переводы в другой перевод."
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
-    new "Ren'Py создает переводы..."
+    new "Ren'Py создаёт переводы..."
 
     # translations.rpy:235
     old "Ren'Py has finished generating [language] translations."
@@ -1039,51 +1039,51 @@ translate russian strings:
 
     # translations.rpy:248
     old "Ren'Py is extracting string translations..."
-    new "Ren'Py is extracting string translations..."
+    new "Ren'Py извлекает строки для переводов..."
 
     # translations.rpy:251
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py has finished extracting [language] string translations."
+    new "Ren'Py закончила извлекать [language] строки перевода."
 
     # translations.rpy:271
     old "Ren'Py is merging string translations..."
-    new "Ren'Py is merging string translations..."
+    new "Ren'Py объединяет строки перевода..."
 
     # translations.rpy:274
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py has finished merging [language] string translations."
+    new "Ren'Py закончила объединять [language] строки перевода."
 
     # translations.rpy:282
     old "Updating default interface translations..."
-    new "Updating default interface translations..."
+    new "Обновляю базовый перевод интерфейса..."
 
     # translations.rpy:306
     old "Extract Dialogue: [project.current.name!q]"
-    new "Extract Dialogue: [project.current.name!q]"
+    new "Извлечь Диалог: [project.current.name!q]"
 
     # translations.rpy:322
     old "Format:"
-    new "Format:"
+    new "Формат:"
 
     # translations.rpy:330
     old "Tab-delimited Spreadsheet (dialogue.tab)"
-    new "Tab-delimited Spreadsheet (dialogue.tab)"
+    new "Табулированная таблица (dialogue.tab)"
 
     # translations.rpy:331
     old "Dialogue Text Only (dialogue.txt)"
-    new "Dialogue Text Only (dialogue.txt)"
+    new "Только Текст Диалога (dialogue.txt)"
 
     # translations.rpy:344
     old "Strip text tags from the dialogue."
-    new "Strip text tags from the dialogue."
+    new "Убрать текстовые теги из диалога."
 
     # translations.rpy:345
     old "Escape quotes and other special characters."
-    new "Escape quotes and other special characters."
+    new "Включать кавычки и регулярные выражения."
 
     # translations.rpy:346
     old "Extract all translatable strings, not just dialogue."
-    new "Extract all translatable strings, not just dialogue."
+    new "Извлечь все переводимые строки, не только диалог."
 
     # translations.rpy:374
     old "Ren'Py is extracting dialogue...."
@@ -1091,7 +1091,7 @@ translate russian strings:
 
     # translations.rpy:378
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
+    new "Ren'Py завершила извлекать диалог. Извлечённый диалог можно найти в файле dialogue.[persistent.dialogue_format] в директории base."
 
     # updater.rpy:75
     old "Select Update Channel"
@@ -1127,11 +1127,11 @@ translate russian strings:
 
     # updater.rpy:126
     old "Nightly"
-    new "Nightly"
+    new "Ночная"
 
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
-    new "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
+    new "Развитие Ren'Py на краю горизонта событий. Здесь можно найти самые последние возможности или всё может просто не запуститься."
 
     # updater.rpy:152
     old "An error has occured:"
@@ -1143,7 +1143,7 @@ translate russian strings:
 
     # updater.rpy:156
     old "Ren'Py is up to date."
-    new "Ren'Py обновлен."
+    new "Ren'Py обновлён."
 
     # updater.rpy:158
     old "[u.version] is now available. Do you want to install it?"
@@ -1163,7 +1163,7 @@ translate russian strings:
 
     # updater.rpy:166
     old "Finishing up."
-    new "Завершение."
+    new "Завершаю."
 
     # updater.rpy:168
     old "The update has been installed. Ren'Py will restart."

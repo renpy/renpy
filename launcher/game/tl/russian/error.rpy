@@ -23,7 +23,7 @@ translate russian strings:
 
     # 00gltest.rpy:93
     old "Enable"
-    new "Enable"
+    new "Активировать"
 
     # 00gltest.rpy:109
     old "Changes will take effect the next time this program is run."
@@ -31,11 +31,11 @@ translate russian strings:
 
     # 00gltest.rpy:141
     old "Performance Warning"
-    new "Предупреждение о Производительности"
+    new "Предупреждение Производительности"
 
     # 00gltest.rpy:146
     old "This computer is using software rendering."
-    new "Этот компьютер использует програмный рендеринг."
+    new "Этот компьютер использует программный рендеринг."
 
     # 00gltest.rpy:148
     old "This computer is not using shaders."
@@ -71,19 +71,19 @@ translate russian strings:
 
     # 00gltest.rpy:192
     old "Updating DirectX."
-    new "Обновляется DirectX."
+    new "Обновляю DirectX."
 
     # 00gltest.rpy:196
     old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
-    new "Установщик DirectX был запущен. Вероятно, он запустился в свернутом состоянии. Пожалуйста, следуйте инструкциям для установки DirectX."
+    new "Установщик DirectX был запущен. Возможно, что он запустился в свёрнутом состоянии. Пожалуйста, следуйте инструкциям для установки DirectX."
 
     # 00gltest.rpy:200
     old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}Предупреждение:{/b} Установщик DirectX по умолчанию попытается установить панель инструментов Bing. Если вы этого не хотите, снимите соответствующую галочку."
+    new "{b}Предупреждение:{/b} Установщик DirectX по умолчанию пытается установить панель инструментов Bing. Если вы этого не хотите, снимите соответствующую галочку."
 
     # 00gltest.rpy:204
     old "When setup finishes, please click below to restart this program."
-    new "По завершению установки, щелкните, чтобы перезапустить программу."
+    new "По завершению установки, щёлкните, чтобы перезапустить программу."
 
     # 00gltest.rpy:206
     old "Restart"
@@ -91,19 +91,19 @@ translate russian strings:
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "Select Gamepad to Calibrate"
+    new "Выберите Геймпад для Калибровки"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "No Gamepads Available"
+    new "Геймпады Не Обнаружены"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
-    new "Calibrating [name] ([i]/[total])"
+    new "Калибрую [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
     old "Press or move the [control!r] [kind]."
-    new "Press or move the [control!r] [kind]."
+    new "Нажмите или передвиньте [control!r] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
@@ -123,11 +123,11 @@ translate russian strings:
 
     # _errorhandling.rpym:499
     old "Copy to Clipboard"
-    new "Copy to Clipboard"
+    new "Копировать в буфер обмена"
 
     # _errorhandling.rpym:501
     old "Copies the traceback.txt file to the clipboard."
-    new "Copies the traceback.txt file to the clipboard."
+    new "Копирует файл traceback.txt в буфер обмена."
 
     # _errorhandling.rpym:519
     old "An exception has occurred."
@@ -147,7 +147,7 @@ translate russian strings:
 
     # _errorhandling.rpym:545
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "Игнорирует это исключение, позволяя вам продолжить. Это зачастую ведет к дополнительным ошибкам."
+    new "Игнорирует это исключение, позволяя вам продолжить. Зачастую это ведёт к дополнительным ошибкам."
 
     # _errorhandling.rpym:548
     old "Reload"
@@ -155,7 +155,7 @@ translate russian strings:
 
     # _errorhandling.rpym:550
     old "Reloads the game from disk, saving and restoring game state if possible."
-    new "Перезагружает игру с диска, сохраняя и восстанавливая состояние, если это возможно."
+    new "Перезагружает игру с диска, сохраняя и восстанавливая её состояние, если это возможно."
 
     # _errorhandling.rpym:560
     old "Quits the game."
@@ -167,7 +167,7 @@ translate russian strings:
 
     # _errorhandling.rpym:606
     old "Open Parse Errors"
-    new "Открыть Ошибки Обработки"
+    new "Открыть Файл Ошибок"
 
     # _errorhandling.rpym:608
     old "Opens the errors.txt file in a text editor."
@@ -175,5 +175,5 @@ translate russian strings:
 
     # _errorhandling.rpym:612
     old "Copies the errors.txt file to the clipboard."
-    new "Copies the errors.txt file to the clipboard."
+    new "Копирует файл errors.txt в буфер обмена."
 
