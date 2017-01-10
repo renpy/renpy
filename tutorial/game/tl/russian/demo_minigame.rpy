@@ -33,7 +33,7 @@ translate russian demo_minigame_4d7b5701:
 translate russian demo_minigame_bb13a57e:
 
     # e "When using renpygame, Ren'Py steps out of the way and gives you total control over the user's experience."
-    e "При использовании renpygame, Ren'Py не мешает вам, и дает вам полный контроль над тем, что чувствует пользователь."
+    e "При использовании renpygame, Ren'Py не мешает вам, и даёт вам полный контроль над тем, что чувствует пользователь."
 
 # game/demo_minigame.rpy:216
 translate russian demo_minigame_4f4537ea:
@@ -81,7 +81,7 @@ translate russian demo_minigame_pong_68c82e98:
 translate russian demo_minigame_pong_dde7e31a:
 
     # e "Would you like to play again?" nointeract
-    e "Хотите еще поиграть?" nointeract
+    e "Хотите ещё поиграть?" nointeract
 
 # game/demo_minigame.rpy:264
 translate russian demo_minigame_pong_cd12159e:

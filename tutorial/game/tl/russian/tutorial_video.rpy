@@ -39,5 +39,5 @@ translate russian tutorial_video_a66b154c:
 translate russian tutorial_video_7b2dc95f:
 
     # e "And that's all there is when it comes to movie playback in Ren'Py."
-    e "Это все, что касается воспроизведения фильмов в Ren'Py."
+    e "Это всё, что касается воспроизведения фильмов в Ren'Py."
 

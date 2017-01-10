@@ -39,13 +39,13 @@ translate russian demo_simple_transitions_5b9f711f:
 translate russian demo_simple_transitions_79816523:
 
     # e "The 'fade' transition fades to black, and then fades back in to the new scene."
-    e "Переход 'fade' затухает до черного экрана, а потом переходит к новой сцене."
+    e "Переход 'fade' затухает до чёрного экрана, а потом переходит к новой сцене."
 
 # game/demo_transitions.rpy:100
 translate russian demo_simple_transitions_141bb95d:
 
     # e "If you're going to stay at a black screen, you'll probably want to use 'dissolve' rather than 'fade'."
-    e "Если вы хотите остаться на черном экране, лучше использовать 'dissolve' а не 'fade'."
+    e "Если вы хотите остаться на чёрном экране, лучше использовать 'dissolve' а не 'fade'."
 
 # game/demo_transitions.rpy:104
 translate russian demo_simple_transitions_f059f4ae:
@@ -112,13 +112,13 @@ translate russian demo_simple_transitions_57f19473:
 translate russian demo_simple_transitions_fce83e12:
 
     # e "There's also the 'move' transition, which is confusingly enough defined using the 'MoveTransition' function."
-    e "Также существует переход 'move', который определен, как ни странно, функцией 'MoveTransition'."
+    e "Также существует переход 'move', который определён, как ни странно, функцией 'MoveTransition'."
 
 # game/demo_transitions.rpy:141
 translate russian demo_simple_transitions_1050b6a4:
 
     # e "The 'move' transition finds images that have changed placement, and slides them to their new place. It's an easy way to get motion in your game."
-    e "Этот переход находит изображение, которые поменяли свое место на экране, и передвигает их к новому месту. Это простой способ привести вашу игру в движение."
+    e "Этот переход находит изображение, которые поменяли своё место на экране, и передвигает их к новому месту. Это простой способ привести вашу игру в движение."
 
 # game/demo_transitions.rpy:143
 translate russian demo_simple_transitions_fbb1838e:
@@ -142,7 +142,7 @@ translate russian demo_simple_transitions_3b8c0bce:
 translate russian demo_simple_transitions_6cad71a4:
 
     # e "Try clicking during the following transitions:"
-    e "Попробуйте щелкнуть мышью сейчас:"
+    e "Попробуйте щёлкнуть мышью сейчас:"
 
 # game/demo_transitions.rpy:157
 translate russian demo_simple_transitions_c75a0d2d:
@@ -154,7 +154,7 @@ translate russian demo_simple_transitions_c75a0d2d:
 translate russian demo_simple_transitions_4632f134:
 
     # e "Anyway, that's it for the simple transitions."
-    e "Это все, что касается простых переходов."
+    e "Это всё, что касается простых переходов."
 
 # game/demo_transitions.rpy:166
 translate russian demo_imagedissolve_transitions_2db67018:
@@ -190,7 +190,7 @@ translate russian demo_imagedissolve_transitions_12e2e0d0:
 translate russian demo_imagedissolve_transitions_bbf73d1c:
 
     # e "I'm not sure why anyone would want to use it, but it was used in some translated games, so we added it."
-    e "Не знаю, зачем они кому-либо могли бы понадобится, но их использовали многие переведенные игры, так что мы решили добавить это."
+    e "Не знаю, зачем они кому-либо могли бы понадобится, но их использовали многие переведённые игры, так что мы решили добавить это."
 
 # game/demo_transitions.rpy:194
 translate russian demo_imagedissolve_transitions_0ab2902d:
@@ -208,7 +208,7 @@ translate russian demo_imagedissolve_transitions_54aa9bf9:
 translate russian demo_imagedissolve_transitions_70cfd5ed:
 
     # e "You can click the button above to see how they are defined in the demo script."
-    e "Вы можете щелкнуть на кнопку выше, чтобы увидеть их определение в этой демо-игре."
+    e "Вы можете щёлкнуть на кнопку выше, чтобы увидеть их определение в этой демо-игре."
 
 # game/demo_transitions.rpy:203
 translate russian demo_imagedissolve_transitions_ca316184:
@@ -250,13 +250,13 @@ translate russian demo_imagedissolve_transitions_72ba11d4:
 translate russian demo_imagedissolve_transitions_fc3b3339:
 
     # e "When we use an ImageDissolve, the white will dissolve in first, followed by progressively darker colors. Let's try it."
-    e "Когда мы используем ImageDissolve, белый цвет появится первым, а потом все более темные цвета."
+    e "Когда мы используем ImageDissolve, белый цвет появится первым, а потом всё более тёмные цвета."
 
 # game/demo_transitions.rpy:235
 translate russian demo_imagedissolve_transitions_4327dca2:
 
     # e "If we give ImageDissolve the 'reverse' parameter, black areas will dissolve in first."
-    e "Если передать ImageDissolve параметр 'reverse', черные области появятся первыми."
+    e "Если передать ImageDissolve параметр 'reverse', чёрные области появятся первыми."
 
 # game/demo_transitions.rpy:240
 translate russian demo_imagedissolve_transitions_3a401ee7:
@@ -292,7 +292,7 @@ translate russian demo_imagedissolve_transitions_e16f8d3a:
 translate russian demo_imagedissolve_transitions_b6dbf68b:
 
     # e "It shows how a clever game-maker can use ImageDissolve to create all sorts of effects."
-    e "В нем показано как можно использовать ImageDissolve для создания разных видов эффектов."
+    e "В нём показано как можно использовать ImageDissolve для создания разных видов эффектов."
 
 # game/demo_transitions.rpy:265
 translate russian demo_cropmove_transitions_1711a91e:
@@ -454,7 +454,7 @@ translate russian demo_movetransition_20946d36:
 translate russian demo_movetransition_569952e3:
 
     # e "That's it for the moveins and moveouts."
-    e "Это все, что касается переходов movein и moveout."
+    e "Это всё, что касается переходов movein и moveout."
 
 # game/demo_transitions.rpy:398
 translate russian demo_movetransition_af4c53cf:
@@ -496,13 +496,13 @@ translate russian demo_alphadissolve_6a1b6203:
 translate russian demo_alphadissolve_80a728b6:
 
     # e "For our spotlight example, the old screen is this all-black image."
-    e "Для примера, возьмем в качестве старого экрана вот это черное изображение."
+    e "Для примера, возьмём в качестве старого экрана вот это чёрное изображение."
 
 # game/demo_transitions.rpy:436
 translate russian demo_alphadissolve_ce4380eb:
 
     # e "The new screen is me just standing here."
-    e "В качестве нового - возьмем меня."
+    e "В качестве нового - возьмём меня."
 
 # game/demo_transitions.rpy:444
 translate russian demo_alphadissolve_2e95917b:
@@ -538,5 +538,5 @@ translate russian strings:
 
     # game/demo_transitions.rpy:46
     old "How about something else?"
-    new "Как насчет чего-нибдь еще?"
+    new "Как насчёт чего-нибдь ещё?"
 

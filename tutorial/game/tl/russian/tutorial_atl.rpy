@@ -57,7 +57,7 @@ translate russian tutorial_positions_9b91be6c:
 translate russian tutorial_positions_80be064f:
 
     # e "We can also use an absolute xpos, which is given in an absolute number of pixels from the left side of the screen. For example, since this window is 800 pixels across, using an xpos of 400 will return the target to the center of the top row."
-    e "Мы также можем использовать абсолютный xpos, который задается числом пикселей с левого края экрана. Например, так как это окно имеет размер 800х600, использование xpos в 400 вернет цель к центру верхнего ряда."
+    e "Мы также можем использовать абсолютный xpos, который задаётся числом пикселей с левого края экрана. Например, так как это окно имеет размер 800х600, использование xpos в 400 вернёт цель к центру верхнего ряда."
 
 # game/tutorial_atl.rpy:230
 translate russian tutorial_positions_c4d18c0a:
@@ -171,7 +171,7 @@ translate russian tutorial_positions_5aac4f3f:
 translate russian tutorial_positions_3b59b797:
 
     # e "It's often useful to set xpos and xanchor to the same value. We call that xalign, and it gives a fractional position on the screen."
-    e "Полезно бывает установить xpos и xanchor в одно значение. Мы называем это xalign и это дает нам долевую позицию на экране."
+    e "Полезно бывает установить xpos и xanchor в одно значение. Мы называем это xalign и это даёт нам долевую позицию на экране."
 
 # game/tutorial_atl.rpy:345
 translate russian tutorial_positions_b8ebf9fe:
@@ -189,7 +189,7 @@ translate russian tutorial_positions_8ce35d52:
 translate russian tutorial_positions_6745825f:
 
     # e "And when we set it to 0.5, we're back to the center of the screen."
-    e "А установив его в 0.5, мы вернемся к центру экрана."
+    e "А установив его в 0.5, мы вернёмся к центру экрана."
 
 # game/tutorial_atl.rpy:357
 translate russian tutorial_positions_64428a07:
@@ -207,7 +207,7 @@ translate russian tutorial_positions_cfb77d42:
 translate russian tutorial_positions_0f4ca2b6:
 
     # e "Once you understand positions, you can use transformations to move things around the Ren'Py screen."
-    e "Когда вы разберетесь с позициями, вы сможете использовать преобразования для перемещения вещей по экрану."
+    e "Когда вы разберётесь с позициями, вы сможете использовать преобразования для перемещения вещей по экрану."
 
 # game/tutorial_atl.rpy:373
 translate russian tutorial_atl_a1cc1bff:
@@ -231,13 +231,13 @@ translate russian tutorial_atl_65badef3:
 translate russian tutorial_atl_3ccfe2ac:
 
     # e "That was a lot of work, and before you can do that, we'll need to start with the basics of using ATL."
-    e "Что-то такое сделать очень тяжело, поэтому начнем с основ ATL."
+    e "Что-то такое сделать очень тяжело, поэтому начнём с основ ATL."
 
 # game/tutorial_atl.rpy:393
 translate russian tutorial_atl_1f22f875:
 
     # e "There are currently three places where ATL can be used in Ren'Py."
-    e "ATL может быть использован в трех местах в Ren'Py."
+    e "ATL может быть использован в трёх местах в Ren'Py."
 
 # game/tutorial_atl.rpy:397
 translate russian tutorial_atl_fd036bdf:
@@ -267,7 +267,7 @@ translate russian tutorial_atl_da7a7759:
 translate russian tutorial_atl_c21bc1d1:
 
     # e "The key to ATL is what we call composeability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
-    e "Ключом к ATL является то, что он создается из относительно простых комманд, но их можно сочетать для создания сложных трансформаций."
+    e "Ключом к ATL является то, что он создаётся из относительно простых комманд, но их можно сочетать для создания сложных трансформаций."
 
 # game/tutorial_atl.rpy:413
 translate russian tutorial_atl_ed82983f:
@@ -279,7 +279,7 @@ translate russian tutorial_atl_ed82983f:
 translate russian tutorial_atl_2807adff:
 
     # e "Animation is when the displayable being shown changes. For example, right now I am changing my expression."
-    e "Анимация - изменение показываемого объекта. Например, прямо сейчас, я изменяю свое выражение лица."
+    e "Анимация - изменение показываемого объекта. Например, прямо сейчас, я изменяю своё выражение лица."
 
 # game/tutorial_atl.rpy:445
 translate russian tutorial_atl_3eec202b:
@@ -291,7 +291,7 @@ translate russian tutorial_atl_3eec202b:
 translate russian tutorial_atl_fbc9bf83:
 
     # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
-    e "Для введения ATL, начнем с простой анимации. Вот анимация, состоящая из пяти строк кода ATL, содержащаяся внутри оператора image."
+    e "Для введения ATL, начнём с простой анимации. Вот анимация, состоящая из пяти строк кода ATL, содержащаяся внутри оператора image."
 
 # game/tutorial_atl.rpy:455
 translate russian tutorial_atl_12c839ee:
@@ -309,7 +309,7 @@ translate russian tutorial_atl_c671ed7d:
 translate russian tutorial_atl_99386181:
 
     # e "The second and fourth lines are pause statements, which cause ATL to wait half of a second each before continuing. That's how we give the delay between images."
-    e "Вторая и четвертая строки - операторы паузы, которые заставят ATL ждать полсекунды перед продолжением. Это позволяет нам добавить задержку между изображениями."
+    e "Вторая и четвёртая строки - операторы паузы, которые заставят ATL ждать полсекунды перед продолжением. Это позволяет нам добавить задержку между изображениями."
 
 # game/tutorial_atl.rpy:461
 translate russian tutorial_atl_60f2a5e8:
@@ -357,13 +357,13 @@ translate russian tutorial_atl_43516492:
 translate russian tutorial_atl_8b053b5a:
 
     # e "This code starts the image off at the top-right of the screen, and waits a second."
-    e "Этот код начинает с изображением в правом верхнем углу и ждет секунду."
+    e "Этот код начинает с изображением в правом верхнем углу и ждёт секунду."
 
 # game/tutorial_atl.rpy:501
 translate russian tutorial_atl_d7fc5372:
 
     # e "It then moves it to the left side, waits another second, and repeats."
-    e "После этого он перемещает изображение влево, ждет еще секунду и повторяет."
+    e "После этого он перемещает изображение влево, ждёт ещё секунду и повторяет."
 
 # game/tutorial_atl.rpy:503
 translate russian tutorial_atl_7650ec09:
@@ -507,13 +507,13 @@ translate russian tutorial_atl_331126c1:
 translate russian tutorial_atl_24f67b67:
 
     # e "We also have the time statement, which runs after the given number of seconds have elapsed from the start of the block. It will run even if another statement is running, stopping the other statement."
-    e "У нас также есть оператор time, который выполняется после истечения определенного периода времени от начала блока. Он выполнится даже если другой код уже выполняется, и прервет его."
+    e "У нас также есть оператор time, который выполняется после истечения определённого периода времени от начала блока. Он выполнится даже если другой код уже выполняется, и прервёт его."
 
 # game/tutorial_atl.rpy:702
 translate russian tutorial_atl_30dc0008:
 
     # e "So this code will bounce the image back and forth for eleven and a half seconds, and then move back to the right side of the screen."
-    e "Этот код будет прыгать изображением взад-вперед одиннадцать с половиной секунд, а потом вернет его в правую сторону экрана."
+    e "Этот код будет прыгать изображением взад-вперёд одиннадцать с половиной секунд, а потом вернёт его в правую сторону экрана."
 
 # game/tutorial_atl.rpy:718
 translate russian tutorial_atl_f903bc3b:
@@ -525,7 +525,7 @@ translate russian tutorial_atl_f903bc3b:
 translate russian tutorial_atl_5d0f8f9d:
 
     # e "Here, the top block move the image in the horizontal direction, and the bottom block moves it in the vertical direction. Since they're moving at different speeds, it looks like the image is bouncing on the screen."
-    e "Здесь верхний блок двигает изображение горизонтально, а нижний - вертикально. Так как они двигаются на разных скоростях, это создает ощущения скачка изображения по экрану."
+    e "Здесь верхний блок двигает изображение горизонтально, а нижний - вертикально. Так как они двигаются на разных скоростях, это создаёт ощущения скачка изображения по экрану."
 
 # game/tutorial_atl.rpy:737
 translate russian tutorial_atl_28a7d27e:

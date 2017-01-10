@@ -111,7 +111,7 @@ translate russian demo_nvlmode_750cd9a1:
 translate russian demo_nvlmode_146d840b:
 
     # nvle "And that's it for NVL-mode."
-    nvle "Это все, что касается режима NVL."
+    nvle "Это всё, что касается режима NVL."
 
 translate russian strings:
 

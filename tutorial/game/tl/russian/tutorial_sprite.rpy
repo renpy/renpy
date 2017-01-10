@@ -9,7 +9,7 @@ translate russian tutorial_sprite_d2ca6a0c:
 translate russian tutorial_sprite_40df8d5d:
 
     # e "The background behind me consists of one hundred and seventy-five stars, being moved at several different speeds, to give a starflight effect."
-    e "Фон сзади меня состоит из ста семидесяти пяти звезд, двигающихся с разной скоростью и создающих эффект звездного света."
+    e "Фон сзади меня состоит из ста семидесяти пяти звёзд, двигающихся с разной скоростью и создающих эффект звёздного света."
 
 # game/tutorial_sprite.rpy:72
 translate russian tutorial_sprite_29c5e523:
@@ -21,7 +21,7 @@ translate russian tutorial_sprite_29c5e523:
 translate russian tutorial_sprite_90927173:
 
     # e "You'll need to decide which older systems to support."
-    e "Вам придется решать, хотите ли вы поддерживать старые системы."
+    e "Вам придётся решать, хотите ли вы поддерживать старые системы."
 
 # game/tutorial_sprite.rpy:80
 translate russian tutorial_sprite_9afa1448:
@@ -45,5 +45,5 @@ translate russian tutorial_sprite_595d03b3:
 translate russian tutorial_sprite_4f82c848:
 
     # e "And that's it for sprites."
-    e "Это все, что касается спрайтов."
+    e "Это всё, что касается спрайтов."
 

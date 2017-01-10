@@ -135,9 +135,9 @@ translate russian strings:
 
     # game/script.rpy:99
     old "What would you like to see?"
-    new "Что еще вы хотели бы увидеть?"
+    new "Что ещё вы хотели бы увидеть?"
 
     # game/script.rpy:101
     old "Is there anything else you'd like to see?"
-    new "Хотите ли вы увидеть еще что-то?"
+    new "Хотите ли вы увидеть ещё что-то?"
 

@@ -9,7 +9,7 @@ translate russian tutorial_dialogue_f6d3ddd3:
 translate russian tutorial_dialogue_49c65906:
 
     # e "Code examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
-    e "Примеры кода будут показываться в таких окнах, как то, что вверху. Вам нужно будет щелкнуть вне окна с примером чтобы продолжить обучение."
+    e "Примеры кода будут показываться в таких окнах, как то, что вверху. Вам нужно будет щёлкнуть вне окна с примером чтобы продолжить обучение."
 
 # game/tutorial_quickstart.rpy:27
 translate russian tutorial_dialogue_5c2cb6f9:
@@ -27,7 +27,7 @@ translate russian tutorial_dialogue_3528a1fe:
 translate russian tutorial_dialogue_3ef9231c:
 
     # e "If it's your first time making a Ren'Py game, you'll be asked to pick a directory to store your projects in."
-    e "Если вы впервые создаете игру на Ren'Py, система попросит вас выбрать папку для хранения проектов."
+    e "Если вы впервые создаёте игру на Ren'Py, система попросит вас выбрать папку для хранения проектов."
 
 # game/tutorial_quickstart.rpy:36
 translate russian tutorial_dialogue_15734bf9:
@@ -39,7 +39,7 @@ translate russian tutorial_dialogue_15734bf9:
 translate russian tutorial_dialogue_46edb91d:
 
     # e "Once that's done, Ren'Py will automatically create a directory and fill it with the files needed to make a project."
-    e "После этого, Ren'Py создаст папку и заполнит ее необходимыми проекту файлами."
+    e "После этого, Ren'Py создаст папку и заполнит её необходимыми проекту файлами."
 
 # game/tutorial_quickstart.rpy:40
 translate russian tutorial_dialogue_66d639af:
@@ -93,7 +93,7 @@ translate russian tutorial_dialogue_b20db833:
 translate russian tutorial_dialogue_b0afbe96:
 
     # e "The next line is a simple say statement. It consists of a string beginning with a double-quote, and ending at the next double-quote."
-    e "Следующая строка - простой оператор речи. Он состоит из текста заключенного в двойные кавычки."
+    e "Следующая строка - простой оператор речи. Он состоит из текста заключённого в двойные кавычки."
 
 # game/tutorial_quickstart.rpy:69
 translate russian tutorial_dialogue_628c9e4c:
@@ -135,7 +135,7 @@ translate russian tutorial_dialogue_64ffe685:
 translate russian tutorial_dialogue_97a33275:
 
     # e "If you'd like, you can run this game yourself by erasing everything in your project's script.rpy file, and replacing it with the code in the box above."
-    e "Если вы хотите, вы можете запустить эту игру сами, заменив все в своем файле script.rpy на код, находящийся в коробке сверху."
+    e "Если вы хотите, вы можете запустить эту игру сами, заменив все в своём файле script.rpy на код, находящийся в коробке сверху."
 
 # game/tutorial_quickstart.rpy:101
 translate russian tutorial_dialogue_c5e70d7e:
@@ -231,7 +231,7 @@ translate russian tutorial_dialogue_48bb9547:
 translate russian tutorial_dialogue_56a9936f:
 
     # e "When this say statement is run, Ren'Py will look up the short name, which is really a Python variable. It will then use the associated Character to show the dialogue."
-    e "При запуске этого оператора речи, Ren'Py найдет короткое имя, являющееся переменной Python. Потом будет использован ассоциированный с ним объект Character для отображения диалога."
+    e "При запуске этого оператора речи, Ren'Py найдёт короткое имя, являющееся переменной Python. Потом будет использован ассоциированный с ним объект Character для отображения диалога."
 
 # game/tutorial_quickstart.rpy:151
 translate russian tutorial_dialogue_d5984a21:
@@ -285,7 +285,7 @@ translate russian tutorial_images_0b9f7257:
 translate russian tutorial_images_5d67054c:
 
     # e "The image statement begins with the keyword \"image\", which is followed by an image name, a space-separated list of words."
-    e "Объявление изображения начинается с ключевого слова \"image\", после которого следует имя изображение - список слов, разделенных пробелом."
+    e "Объявление изображения начинается с ключевого слова \"image\", после которого следует имя изображение - список слов, разделённых пробелом."
 
 # game/tutorial_quickstart.rpy:177
 translate russian tutorial_images_4c9a51ec:
@@ -345,7 +345,7 @@ translate russian tutorial_images_672c8cb8:
 translate russian tutorial_images_2fc7baee:
 
     # e "If there was already an image with the same tag, the new image is used to replace the old one."
-    e "Если у нового изображения такой же тег, как у того, что уже показано, произойдет замена."
+    e "Если у нового изображения такой же тег, как у того, что уже показано, произойдёт замена."
 
 # game/tutorial_quickstart.rpy:213
 translate russian tutorial_images_802825f2:
@@ -363,7 +363,7 @@ translate russian tutorial_images_b246dfdd:
 translate russian tutorial_images_bc4ae0c7:
 
     # e "In this example, we show an image named logo base, and we show it at a user-defined position, logopos."
-    e "В этом примере, мы показываем изображение с именем logo base, и мы показываем его на определенной пользователем позиции, logopos."
+    e "В этом примере, мы показываем изображение с именем logo base, и мы показываем его на определённой пользователем позиции, logopos."
 
 # game/tutorial_quickstart.rpy:225
 translate russian tutorial_images_9defda43:
@@ -441,7 +441,7 @@ translate russian tutorial_transitions_0ba82f00:
 translate russian tutorial_transitions_51ff9600:
 
     # e "Ren'Py defines some transitions for you, like dissolve, fade, and move. For more complex or customized transitions, you'll have to define your own."
-    e "Ren'Py определяет для вас несколько популярных переходов, таких, как растворения (dissolve), затухания (fade) и передвижения (move). Для более сложных переходов, вам придется создавать свои сообственные."
+    e "Ren'Py определяет для вас несколько популярных переходов, таких, как растворения (dissolve), затухания (fade) и передвижения (move). Для более сложных переходов, вам придётся создавать свои сообственные."
 
 # game/tutorial_quickstart.rpy:298
 translate russian tutorial_transitions_a7905e16:
@@ -465,7 +465,7 @@ translate russian tutorial_music_53910317:
 translate russian tutorial_music_a1e37712:
 
     # e "When a sound is played on the music channel, it is looped, and it is saved when the game is saved."
-    e "Когда звук играет на канале music, он будет воспроизведен циклично и сохранен вместе с игрой."
+    e "Когда звук играет на канале music, он будет воспроизведён циклично и сохранён вместе с игрой."
 
 # game/tutorial_quickstart.rpy:310
 translate russian tutorial_music_d9086d22:
@@ -507,7 +507,7 @@ translate russian tutorial_music_413d91fc:
 translate russian tutorial_music_a282a0e3:
 
     # e "The queue statement also adds music to the named channel, but it waits until the currently-playing song is finished before playing the new music."
-    e "Операция queue добавляет музыку на указанный канал, и воспроизводит ее по завершению текущей."
+    e "Операция queue добавляет музыку на указанный канал, и воспроизводит её по завершению текущей."
 
 # game/tutorial_quickstart.rpy:339
 translate russian tutorial_music_01ca6bad:
@@ -537,7 +537,7 @@ translate russian tutorial_music_abcc2214:
 translate russian tutorial_menus_0426904b:
 
     # e "Many visual novels require the player to make choices from in-game menus. These choices can add some challenge to the game, or adjust it to the player's preferences."
-    e "Многие визуальные новеллы требуют от пользователя принимать решения во внутриигровых меню. Эти решения могут добавить в игру сложности или подстроить ее под предпочтения игрока."
+    e "Многие визуальные новеллы требуют от пользователя принимать решения во внутриигровых меню. Эти решения могут добавить в игру сложности или подстроить её под предпочтения игрока."
 
 # game/tutorial_quickstart.rpy:374
 translate russian tutorial_menus_9c3b9154:
@@ -549,7 +549,7 @@ translate russian tutorial_menus_9c3b9154:
 translate russian choice1_yes_f6d95df8:
 
     # e "While creating a multi-path visual novel can be a bit more work, it can yield a unique experience."
-    e "Хотя создание разветвленного сюжета требует много работы, это позволяет создать уникальный опыт."
+    e "Хотя создание разветвлённого сюжета требует много работы, это позволяет создать уникальный опыт."
 
 # game/tutorial_quickstart.rpy:396
 translate russian choice1_no_72958b50:
@@ -609,7 +609,7 @@ translate russian choice1_done_31d12b1e:
 translate russian choice1_done_88398d3e:
 
     # e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag, so the game can remember the user's choices."
-    e "Флаг назван menu_flag, и мы даем ему значение True или False в зависимости от выбора пользователя. Оператор if можно использовать для тестирования флага."
+    e "Флаг назван menu_flag, и мы даём ему значение True или False в зависимости от выбора пользователя. Оператор if можно использовать для тестирования флага."
     e "Так вы можете позволять своей игре помнить выборы пользователей."
 
 # game/tutorial_quickstart.rpy:432

@@ -45,7 +45,7 @@ translate russian demo_ui_d77a671d:
 translate russian demo_ui_b50edd86:
 
     # e "Imagemaps let the user click on an image to make a choice. For example, the following screen lets you pick what to do after school:"
-    e "Карты изображений позволяют пользователю щелкнуть на изображение, чтобы сделать выбор. Например, следующий экран позволит вам выбрать действие после школы:"
+    e "Карты изображений позволяют пользователю щёлкнуть на изображение, чтобы сделать выбор. Например, следующий экран позволит вам выбрать действие после школы:"
 
 # game/demo_ui.rpy:261
 translate russian demo_ui_405542a5:
@@ -233,7 +233,7 @@ translate russian strings:
 
     # game/demo_ui.rpy:168
     old "To get to the next screen, click the 'Continue' button."
-    new "Для перехода к следующему экрану, щелкните кнопку \"Продолжить\"."
+    new "Для перехода к следующему экрану, щёлкните кнопку \"Продолжить\"."
 
     # game/demo_ui.rpy:243
     old "What is your name?"

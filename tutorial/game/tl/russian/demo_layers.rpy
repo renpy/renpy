@@ -57,7 +57,7 @@ translate russian demo_layers_a983efbd:
 translate russian demo_layers_1185c462:
 
     # e "And that's it for layers and advanced show."
-    e "Это все, что касается слоев и продвинутого отображения."
+    e "Это всё, что касается слоёв и продвинутого отображения."
 
 translate russian strings:
 
