@@ -385,6 +385,14 @@ def reached_vars(store, reachable, wait):
 
 class WrapNode(ast.NodeTransformer):
 
+    def visit_ClassDef(self, n):
+        n = self.generic_visit(n)
+
+        if not n.bases:
+            n.bases.append(ast.Name(id="object", ctx=ast.Load()))
+
+        return n
+
     def visit_SetComp(self, n):
         return ast.Call(
             func=ast.Name(
