@@ -1,7 +1,7 @@
 ﻿# Вы можете расположить сценарий своей игры в этом файле.
 
 # Объявляйте изображения здесь, используя оператор image.
-# например, image eileen happy = "eileen_happy.png"
+# Например, image eileen happy = "eileen_happy.png"
 
 # Определение персонажей игры.
 define e = Character('Эйлин', color="#c8ffc8")

@@ -383,7 +383,7 @@ screen preferences:
                 has vbox
 
                 label _("Пропуск")
-                textbutton _("Прочтенных сообщений") action Preference("skip", "seen")
+                textbutton _("Прочтённых сообщений") action Preference("skip", "seen")
                 textbutton _("Всех сообщений") action Preference("skip", "all")
 
             frame:
