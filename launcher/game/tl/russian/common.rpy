@@ -31,7 +31,7 @@ translate russian strings:
 
     # 00action_file.rpy:37
     old "{#weekday_short}Mon"
-    new "{#weekday_short}Пон"
+    new "{#weekday_short}Пн"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Tue"
@@ -47,11 +47,11 @@ translate russian strings:
 
     # 00action_file.rpy:37
     old "{#weekday_short}Fri"
-    new "{#weekday_short}Пят"
+    new "{#weekday_short}Пт"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Sat"
-    new "{#weekday_short}Суб"
+    new "{#weekday_short}Сб"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Sun"
