@@ -247,7 +247,7 @@ translate russian strings:
 
     # 00updater.rpy:486
     old "An error is being simulated."
-    new "Была обнаружена ошибка."
+    new "Симулируется ошибка."
 
     # 00updater.rpy:662
     old "Either this project does not support updating, or the update status file was deleted."
