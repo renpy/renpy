@@ -1409,8 +1409,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                    and data == fwd_data
-                    and (keep_rollback or self.rolled_forward)
+                        and data == fwd_data
+                        and (keep_rollback or self.rolled_forward)
                     ):
                     self.forward.pop(0)
                 else:
@@ -1524,15 +1524,24 @@ class RollbackLog(renpy.object.Object):
             self.log = self.log + revlog
             return
 
+        force_checkpoint = False
+
         # Try to rollback to just after the previous checkpoint.
         while greedy and self.log:
 
             rb = self.log[-1]
 
-            if rb.checkpoint:
+            if not renpy.game.script.has_label(rb.context.current):
                 break
 
-            if not renpy.game.script.has_label(rb.context.current):
+            if rb.checkpoint:
+
+                # If the last checkpoint is a label, it's likely the start label.
+                # go back to it.
+                if isinstance(rb.context.current, basestring):
+                    force_checkpoint = True
+                    revlog.append(self.log.pop())
+
                 break
 
             revlog.append(self.log.pop())
@@ -1581,6 +1590,9 @@ class RollbackLog(renpy.object.Object):
         renpy.audio.audio.rollback()
 
         renpy.game.contexts.extend(other_contexts)
+
+        if force_checkpoint:
+            renpy.game.context().force_checkpoint = True
 
         # Restart the context or the top context.
         if replace_context:
