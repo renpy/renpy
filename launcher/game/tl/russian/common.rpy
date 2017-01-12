@@ -271,7 +271,7 @@ translate russian strings:
 
     # 00updater.rpy:993
     old "The update file does not have the correct digest - it may have been corrupted."
-    new "Файл обновления не соддержит корректного дайджеста - он может быть повреждён."
+    new "Файл обновления не соддержит корректного дайджеста — он может быть повреждён."
 
     # 00updater.rpy:1049
     old "While unpacking {}, unknown type {}."

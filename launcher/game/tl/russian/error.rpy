@@ -167,7 +167,7 @@ translate russian strings:
 
     # _errorhandling.rpym:606
     old "Open Parse Errors"
-    new "Открыть Файл Ошибок"
+    new "Открыть файл ошибок"
 
     # _errorhandling.rpym:608
     old "Opens the errors.txt file in a text editor."

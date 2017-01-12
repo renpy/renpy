@@ -3,11 +3,11 @@ translate russian strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"
-    new "Меню Разработчика"
+    new "Меню разработчика"
 
     # _developer/developer.rpym:43
     old "Reload Game (Shift+R)"
-    new "Перезагрузить Игру (Shift+R)"
+    new "Перезагрузить игру (Shift+R)"
 
     # _developer/developer.rpym:45
     old "Console (Shift+O)"
@@ -15,15 +15,15 @@ translate russian strings:
 
     # _developer/developer.rpym:47
     old "Variable Viewer"
-    new "Просмотр Переменных"
+    new "Просмотр переменных"
 
     # _developer/developer.rpym:49
     old "Theme Test"
-    new "Тест Темы"
+    new "Тест темы"
 
     # _developer/developer.rpym:51
     old "Image Location Picker"
-    new "Инструмент Позиционирования на Изображениях"
+    new "Инструмент позиционирования на изображениях"
 
     # _developer/developer.rpym:53
     old "Filename List"
@@ -31,11 +31,11 @@ translate russian strings:
 
     # _developer/developer.rpym:57
     old "Show Image Load Log"
-    new "Показать Лог Загрузки Изображений"
+    new "Показать лог загрузки изображений"
 
     # _developer/developer.rpym:60
     old "Hide Image Load Log"
-    new "Скрыть Лог Загрузки Изображений"
+    new "Скрыть лог загрузки изображений"
 
     # _developer/developer.rpym:95
     old "Nothing to inspect."
@@ -79,7 +79,7 @@ translate russian strings:
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
-    new "Инспектор Отображений"
+    new "Инспектор отображений"
 
     # _developer/inspector.rpym:61
     old "Size"
@@ -95,7 +95,7 @@ translate russian strings:
 
     # _developer/inspector.rpym:122
     old "Inspecting Styles of [displayable_name!q]"
-    new "Инспектировать Стили [displayable_name!q]"
+    new "Инспектировать стили [displayable_name!q]"
 
     # _developer/inspector.rpym:139
     old "displayable:"
@@ -131,7 +131,7 @@ translate russian strings:
 
     # 00console.rpy:403
     old "commands:\n"
-    new "Команды:\n"
+    new "команды:\n"
 
     # 00console.rpy:413
     old " <renpy script statement>: run the statement\n"

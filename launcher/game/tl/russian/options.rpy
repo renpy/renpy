@@ -75,7 +75,7 @@ translate russian strings:
 
     # options.rpy:86
     old "## Used when entering the main menu after the game has ended."
-    new "## Используется при входа в главное меню после того, как игра закончится."
+    new "## Используется при входе в главное меню после того, как игра закончится."
 
     # options.rpy:91
     old "## A variable to set the transition used when the game starts does not exist. Instead, use a with statement after showing the initial scene."

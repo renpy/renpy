@@ -619,7 +619,7 @@ translate russian strings:
 
     # screens.rpy:1301
     old "## Displays dialogue in either a vpgrid or the vbox."
-    new "## Показывает диалог или в vpgrid или в vbox."
+    new "## Показывает диалог или в vpgrid, или в vbox."
 
     # screens.rpy:1314
     old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."

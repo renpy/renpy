@@ -87,7 +87,7 @@ translate russian strings:
 
     # android.rpy:46
     old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
-    new "Собирает Android-пакет, устанавливает его на Android-устройстве, подключённом к компьютеру, а затем запускает приложение на устройстве.."
+    new "Собирает Android-пакет, устанавливает его на Android-устройстве, подключённом к компьютеру, а затем запускает приложение на устройстве."
 
     # android.rpy:48
     old "Connects to an Android device running ADB in TCP/IP mode."
@@ -399,7 +399,7 @@ translate russian strings:
 
     # editor.rpy:472
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
-    new "Текстовый редактор - программа, необходимая для редактирования сценариев Ren'Py. Здесь, вы можете выбрать редактор, который будет использовать Ren'Py. Если такового нет, редактор будет автоматически загружен и установлен."
+    new "Текстовый редактор — программа, необходимая для редактирования сценариев Ren'Py. Здесь, вы можете выбрать редактор, который будет использовать Ren'Py. Если такового нет, редактор будет автоматически загружен и установлен."
 
     # editor.rpy:494
     old "Cancel"
@@ -439,7 +439,7 @@ translate russian strings:
 
     # front_page.rpy:182
     old "Active Project"
-    new "Активный Проект"
+    new "Активный проект"
 
     # front_page.rpy:190
     old "Open Directory"
@@ -475,7 +475,7 @@ translate russian strings:
 
     # front_page.rpy:234
     old "Check Script (Lint)"
-    new "Проверить Сценарий (Lint)"
+    new "Проверить сценарий (Lint)"
 
     # front_page.rpy:237
     old "Change/Update GUI"
@@ -507,7 +507,7 @@ translate russian strings:
 
     # front_page.rpy:256
     old "Extract Dialogue"
-    new "Извлечь Диалог"
+    new "Извлечь диалог"
 
     # front_page.rpy:272
     old "Checking script for potential problems..."
@@ -563,7 +563,7 @@ translate russian strings:
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "Какое разрешение должен использовать ваш проект? Хотя Ren'Py может масштабировать окно, это целевой размер окна, по размеру которого должны рисоваться ресурсы и размер, на котором они будут наиболее чёткие.\n\nСтандартный 1280x720 — резонный компромис."
+    new "Какое разрешение должен использовать ваш проект? Хотя Ren'Py может масштабировать окно, это целевой размер окна, по размеру которого должны рисоваться ресурсы, и размер, на котором они будут наиболее чёткие.\n\nСтандартный 1280x720 — резонный компромис."
 
     # gui7.rpy:389
     old "Creating the new project..."
@@ -583,7 +583,7 @@ translate russian strings:
 
     # interface.rpy:109
     old "Ren'Py Games List"
-    new "Список Игр Ren'Py"
+    new "Список игр Ren'Py"
 
     # interface.rpy:117
     old "update"
@@ -867,7 +867,7 @@ translate russian strings:
 
     # preferences.rpy:64
     old "Launcher Preferences"
-    new "Настройки Launcher"
+    new "Настройки лаунчера"
 
     # preferences.rpy:85
     old "Projects Directory:"
@@ -911,7 +911,7 @@ translate russian strings:
 
     # preferences.rpy:168
     old "Launcher Options:"
-    new "Опции Launcher:"
+    new "Опции лаунчера:"
 
     # preferences.rpy:172
     old "Hardware rendering"
@@ -935,7 +935,7 @@ translate russian strings:
 
     # preferences.rpy:199
     old "Open launcher project"
-    new "Открыть проект launcher"
+    new "Открыть проект лаунчера"
 
     # preferences.rpy:213
     old "Language:"
@@ -947,7 +947,7 @@ translate russian strings:
 
     # project.rpy:47
     old "Press shift+O (the letter) to access the console."
-    new "Нажмите shift+O (the letter), чтобы войти в консоль."
+    new "Нажмите shift+O (букву), чтобы войти в консоль."
 
     # project.rpy:47
     old "Press shift+D to access the developer menu."
@@ -979,7 +979,7 @@ translate russian strings:
 
     # project.rpy:597
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new "Пожалуйста, выберите директорию проектов, используя выбиратель директорий.\n{b}Он мог появится сзади этого окна.{/b}"
+    new "Пожалуйста, выберите директорию проектов, используя выбиратель директорий.\n{b}Он мог появиться позади этого окна.{/b}"
 
     # project.rpy:597
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
