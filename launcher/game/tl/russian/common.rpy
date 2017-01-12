@@ -183,7 +183,7 @@ translate russian strings:
 
     # 00gui.rpy:232
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "Вы уверены, что хотите вернуться в главное меню?\nЭто приведёт к потере несохраненного прогресса."
+    new "Вы уверены, что хотите вернуться в главное меню?\nЭто приведёт к потере несохранённого прогресса."
 
     # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
