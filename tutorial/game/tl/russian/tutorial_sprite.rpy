@@ -32,13 +32,13 @@ translate russian tutorial_sprite_9afa1448:
 # game/tutorial_sprite.rpy:84
 translate russian tutorial_sprite_2c9a79ad:
 
-    # e "In many cases, all you need is something moving around the screen - like cherry blossoms, or snow."
+    # e "In many cases, all you need is something moving around the screen — like cherry blossoms, or snow."
     e "Во многих случаях, вам нужно лишь перемещать что-то по экрану, например, вишенки или снег."
 
 # game/tutorial_sprite.rpy:86
 translate russian tutorial_sprite_595d03b3:
 
-    # e "That's what the snowblossom function gives you - a simple way to have things falling from the top of the screen."
+    # e "That's what the snowblossom function gives you — a simple way to have things falling from the top of the screen."
     e "Функция snowblossom позволяет вам сделать именно это. Это простой способ заставлять вещи падать сверху."
 
 # game/tutorial_sprite.rpy:91

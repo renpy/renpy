@@ -147,7 +147,7 @@ translate russian demo_text_9eb0448e:
 translate russian demo_text_eb22992d:
 
     # esubtitle "The bottom one is a translucent black that's offset a little, while the top one is green."
-    esubtitle "Нижний - прозрачно-чёрный с небольшим отступом, верхний - зелёный."
+    esubtitle "Нижний — прозрачно-чёрный с небольшим отступом, верхний — зелёный."
 
 # game/demo_text.rpy:120
 translate russian demo_text_7067acb5:
@@ -183,5 +183,5 @@ translate russian demo_text_418ffc27:
 translate russian define_hyperlink_8863ed04:
 
     # definition "A hyperlink is a button that is defined inside text, using text tags. They're ideal for including definitions of words used in the script, but they shouldn't be used in place of menus."
-    definition "Гиперссылка - кнопка, находящаяся внутри текста. Они идеальны для включения определений слов внутри сценария, но их не следует использовать вместо меню."
+    definition "Гиперссылка — кнопка, находящаяся внутри текста. Они идеальны для включения определений слов внутри сценария, но их не следует использовать вместо меню."
 

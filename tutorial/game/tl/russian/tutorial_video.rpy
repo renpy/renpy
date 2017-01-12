@@ -9,7 +9,7 @@ translate russian tutorial_video_f34a17f5:
 translate russian tutorial_video_4aefd413:
 
     # e "The first way allows you to show a movie as an image, along with every other image that's displayed on the screen."
-    e "Первый - отображение фильма как изображения вместе со всеми другими."
+    e "Первый — отображение фильма как изображения вместе со всеми другими."
 
 # game/tutorial_video.rpy:17
 translate russian tutorial_video_b927d009:
@@ -21,7 +21,7 @@ translate russian tutorial_video_b927d009:
 translate russian tutorial_video_d4860780:
 
     # e "Then, we can show the movie displayable, and start the movie playing with a play statement."
-    e "Потом можно показать этот объект и начать воспроизведение фильма оператором play."
+    e "Потом можно показать этот объект, и начать воспроизведение фильма оператором play."
 
 # game/tutorial_video.rpy:37
 translate russian tutorial_video_373e48d8:
@@ -33,7 +33,7 @@ translate russian tutorial_video_373e48d8:
 translate russian tutorial_video_a66b154c:
 
     # e "The other way to show a movie is with the renpy.movie_cutscene python function. This shows the movie fullscreen, either until it ends or until the user clicks."
-    e "Другой способ воспроизвести фильм - использовать функцию renpy.movie_cutscene в Python. Это покажет фильм на весь экран и будет воспроизводить его до конца, либо до щелчка мышью пользователя."
+    e "Другой способ воспроизвести фильм — использовать функцию renpy.movie_cutscene в Python. Это покажет фильм на весь экран и будет воспроизводить его до конца, либо до щелчка мышью пользователя."
 
 # game/tutorial_video.rpy:49
 translate russian tutorial_video_7b2dc95f:

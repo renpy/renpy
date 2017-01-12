@@ -51,7 +51,7 @@ translate russian tutorial_playing_8e7e83a8:
 translate russian tutorial_playing_2bad7992:
 
     # e "The other screen of the game menu is the preferences screen."
-    e "Еще один экран меню - экран настроек."
+    e "Еще один экран меню — экран настроек."
 
 # game/tutorial_playing.rpy:41
 translate russian tutorial_playing_eaac8ba9:

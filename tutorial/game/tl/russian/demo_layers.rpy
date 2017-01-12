@@ -63,5 +63,5 @@ translate russian strings:
 
     # game/demo_layers.rpy:53
     old "This is text."
-    new "Это - текст."
+    new "Это — текст."
 

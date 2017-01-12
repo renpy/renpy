@@ -3,7 +3,7 @@
 translate russian tutorial_dialogue_f6d3ddd3:
 
     # e "Probably the best way to learn Ren'Py is to see it in action. In this tutorial, I'll be showing you some of the things Ren'Py can do, and also showing you how to do them."
-    e "Лучший способ изучить Ren'Py - увидеть его в действий. В этой обучающей программе, я покажу вам некоторые вещи, на которые Ren'Py способен, и также покажу как они сделаны."
+    e "Лучший способ изучить Ren'Py — увидеть его в действии. В этой обучающей программе, я покажу вам некоторые вещи, на которые Ren'Py способен, и также покажу как они сделаны."
 
 # game/tutorial_quickstart.rpy:25
 translate russian tutorial_dialogue_49c65906:
@@ -81,19 +81,19 @@ translate russian tutorial_dialogue_6943c36d:
 translate russian tutorial_dialogue_bc7ec147:
 
     # e "The first line is a label statement. The label statement is used to give a name to a place in the program."
-    e "Первая строка - метка. Они используются для обозначения мест в программе именами."
+    e "Первая строка — метка. Они используются для обозначения мест в программе именами."
 
 # game/tutorial_quickstart.rpy:65
 translate russian tutorial_dialogue_b20db833:
 
     # e "In this case, we're naming a place \"start\". The start label is special, as it marks the place a game begins running."
-    e "В этом случае, мы называем место \"start\". Метка start - особенная, она отмечает место, где игра начинает выполнение."
+    e "В этом случае, мы называем место \"start\". Метка start — особенная, она отмечает место, где игра начинает выполнение."
 
 # game/tutorial_quickstart.rpy:67
 translate russian tutorial_dialogue_b0afbe96:
 
     # e "The next line is a simple say statement. It consists of a string beginning with a double-quote, and ending at the next double-quote."
-    e "Следующая строка - простой оператор речи. Он состоит из текста заключённого в двойные кавычки."
+    e "Следующая строка — простой оператор речи. Он состоит из текста заключённого в двойные кавычки."
 
 # game/tutorial_quickstart.rpy:69
 translate russian tutorial_dialogue_628c9e4c:
@@ -123,7 +123,7 @@ translate russian tutorial_dialogue_5072a404_1:
 translate russian tutorial_dialogue_9dd2d543:
 
     # e "When we have two strings separated by a space, the first is used as the character's name, and the second is what the character is saying."
-    e "Когда две строки разделяет пробел, первая из них служит именем персонажа, а вторая - его словами."
+    e "Когда две строки разделяет пробел, первая из них служит именем персонажа, а вторая — его словами."
 
 # game/tutorial_quickstart.rpy:97
 translate russian tutorial_dialogue_64ffe685:
@@ -159,7 +159,7 @@ translate russian tutorial_dialogue_910f286a:
 translate russian tutorial_dialogue_9c9d59c2:
 
     # e "The second is that it doesn't leave any place to put styling, which can change the look of a character."
-    e "Вторая - такой подход не позволяет вам использовать стили, которые могут изменить вид персонажа."
+    e "Вторая — такой подход не позволяет вам использовать стили, которые могут изменить вид персонажа."
 
 # game/tutorial_quickstart.rpy:112
 translate russian tutorial_dialogue_2a2d1e51:
@@ -189,7 +189,7 @@ translate russian tutorial_dialogue_67f90201:
 translate russian tutorial_dialogue_4e454a89:
 
     # e "On the first line, the character's name is given to be \"Lucy\", and her name will be drawn a reddish color."
-    e "На первой строке, мы говорим, что имя персонажа - \"Люси\", и то, что имя нужно рисовать красноватым цветом."
+    e "На первой строке, мы говорим, что имя персонажа — \"Люси\", и то, что имя нужно рисовать красноватым цветом."
 
 # game/tutorial_quickstart.rpy:124
 translate russian tutorial_dialogue_db11f026:
@@ -267,7 +267,7 @@ translate russian tutorial_images_a664a8bc:
 translate russian tutorial_images_1d6236ee:
 
     # e "The easiest way to open the game directory is to click the Game Directory button in the Ren'Py launcher."
-    e "Самый простой способ открыть игровую папку - нажать кнопку \"Открыть папку game\" в Ren'Py Launcher."
+    e "Самый простой способ открыть игровую папку — нажать кнопку \"Открыть папку game\" в Ren'Py Launcher."
 
 # game/tutorial_quickstart.rpy:169
 translate russian tutorial_images_e41986f0:
@@ -285,13 +285,13 @@ translate russian tutorial_images_0b9f7257:
 translate russian tutorial_images_5d67054c:
 
     # e "The image statement begins with the keyword \"image\", which is followed by an image name, a space-separated list of words."
-    e "Объявление изображения начинается с ключевого слова \"image\", после которого следует имя изображение - список слов, разделённых пробелом."
+    e "Объявление изображения начинается с ключевого слова \"image\", после которого следует имя изображение — список слов, разделённых пробелом."
 
 # game/tutorial_quickstart.rpy:177
 translate russian tutorial_images_4c9a51ec:
 
     # e "The first word in the image name is the image tag. For the first image the tag is \"bg\", and for the others, it's \"lucy\"."
-    e "Первое слово в списке - тег изображения. Для нашего первого изображения тег - \"bg\", а для остальных - \"lucy\"."
+    e "Первое слово в списке — тег изображения. Для нашего первого изображения тег — \"bg\", а для остальных — \"lucy\"."
 
 # game/tutorial_quickstart.rpy:179
 translate russian tutorial_images_bda71aa3:
@@ -303,7 +303,7 @@ translate russian tutorial_images_bda71aa3:
 translate russian tutorial_images_6d88aaa3:
 
     # e "A string giving an image name is only one of the dozens of kinds of displayable that Ren'Py supports."
-    e "Строка с именем файла - лишь один из многочисленных способов создания отображаемых объектов в Ren'Py."
+    e "Строка с именем файла — лишь один из многочисленных способов создания отображаемых объектов в Ren'Py."
 
 # game/tutorial_quickstart.rpy:185
 translate russian tutorial_images_76b954de:
@@ -315,7 +315,7 @@ translate russian tutorial_images_76b954de:
 translate russian tutorial_images_f04e72ea:
 
     # l "Now that the lights are on, we don't have to worry about Grues anymore."
-    l "Ну хоть свет включили. Теперь не нужно беспокоится о Грю."
+    l "Ну хоть свет включили. Теперь не нужно беспокоиться о Грю."
 
 # game/tutorial_quickstart.rpy:196
 translate russian tutorial_images_d77ffa1c:
@@ -327,7 +327,7 @@ translate russian tutorial_images_d77ffa1c:
 translate russian tutorial_images_6c0c938b:
 
     # e "Here's the script for that scene. Notice how it includes two new statements, the scene and show statement."
-    e "Вот код для этой сцены. Заметьте, что он включает два новых оператора - scene и show."
+    e "Вот код для этой сцены. Заметьте, что он включает два новых оператора — scene и show."
 
 # game/tutorial_quickstart.rpy:207
 translate russian tutorial_images_1a4660b9:
@@ -387,7 +387,7 @@ translate russian tutorial_images_f34f62d5:
 translate russian tutorial_images_e06fa53a:
 
     # e "The main use is for when a character or prop leaves before the scene is over."
-    e "Главное использование этого - уход персонажа до завершения сцены."
+    e "Главное использование этого — уход персонажа до завершения сцены."
 
 # game/tutorial_quickstart.rpy:246
 translate russian tutorial_transitions_9b8c714c:
@@ -417,19 +417,19 @@ translate russian tutorial_transitions_3e490d40:
 translate russian tutorial_transitions_a43847df:
 
     # e "It takes a transition as an argument. In this case, we're using the Dissolve transition. This transition takes as an argument the amount of time the dissolve should take."
-    e "Он принимает имя перехода как аргумент. В этом случае используется переход Dissolve. Этот переход принимает аргумент - время, которое он будет длится."
+    e "Он принимает имя перехода как аргумент. В этом случае используется переход Dissolve. Этот переход принимает аргумент — время, которое он будет длиться."
 
 # game/tutorial_quickstart.rpy:274
 translate russian tutorial_transitions_6fcee414:
 
     # e "In this case, each transition takes half a second."
-    e "В этом случае, длительность - полсекунды."
+    e "В этом случае, длительность — полсекунды."
 
 # game/tutorial_quickstart.rpy:278
 translate russian tutorial_transitions_033042cc:
 
     # e "We can define a short name for a transition, using the define statement. Here, we're defining slowdissolve to be a dissolve that takes a whole second."
-    e "Мы можем определить для перехода короткое имя используя оператор define. Здесь, мы определяем showdissolve - переход Dissolve, занимающий секунду."
+    e "Мы можем определить для перехода короткое имя используя оператор define. Здесь, мы определяем showdissolve — переход Dissolve, занимающий секунду."
 
 # game/tutorial_quickstart.rpy:292
 translate russian tutorial_transitions_0ba82f00:
@@ -441,7 +441,7 @@ translate russian tutorial_transitions_0ba82f00:
 translate russian tutorial_transitions_51ff9600:
 
     # e "Ren'Py defines some transitions for you, like dissolve, fade, and move. For more complex or customized transitions, you'll have to define your own."
-    e "Ren'Py определяет для вас несколько популярных переходов, таких, как растворения (dissolve), затухания (fade) и передвижения (move). Для более сложных переходов, вам придётся создавать свои сообственные."
+    e "Ren'Py определяет для вас несколько популярных переходов, таких как растворения (dissolve), затухания (fade) и передвижения (move). Для более сложных переходов, вам придётся создавать свои сообственные."
 
 # game/tutorial_quickstart.rpy:298
 translate russian tutorial_transitions_a7905e16:
@@ -513,7 +513,7 @@ translate russian tutorial_music_a282a0e3:
 translate russian tutorial_music_01ca6bad:
 
     # e "The third statement is the stop statement. It stops the music playing on a channel. It too takes the fadeout clause."
-    e "Третий оператор - stop. Он останавливает музыку на канале, и также поддерживает условие fadeout."
+    e "Третий оператор — stop. Он останавливает музыку на канале, и также поддерживает условие fadeout."
 
 # game/tutorial_quickstart.rpy:348
 translate russian tutorial_music_384937da:
@@ -531,7 +531,7 @@ translate russian tutorial_music_dc707e58:
 translate russian tutorial_music_abcc2214:
 
     # e "Ren'Py has separate mixers for sound, music, and voices, so the player can adjust them as he likes."
-    e "Ren'Py содержит отдельные миксеры для звука, музыки и голоса, так что игрок может настроить их громкость как захочет."
+    e "Ren'Py содержит отдельные миксеры для звука, музыки и голоса, так что игрок может настроить их громкость, как захочет."
 
 # game/tutorial_quickstart.rpy:372
 translate russian tutorial_menus_0426904b:
@@ -585,7 +585,7 @@ translate russian choice1_done_59cac95d:
 translate russian choice1_done_2851a313:
 
     # e "Scrolling down past the menu, you can see the labels that the menu jumps to. There are three labels here, named choice1_yes, choice1_no, and choice1_done."
-    e "Ниже меню вы можете видеть те метки, к которым меню осуществляет переход. Их три - choice1_yes, choice1_no и choice1_done."
+    e "Ниже меню вы можете видеть те метки, к которым меню осуществляет переход. Их три — choice1_yes, choice1_no и choice1_done."
 
 # game/tutorial_quickstart.rpy:418
 translate russian choice1_done_ff761b03:
@@ -603,7 +603,7 @@ translate russian choice1_done_664fe702:
 translate russian choice1_done_31d12b1e:
 
     # e "The lines beginning with the dollar sign are lines of python code, which are used to set a flag based on the user's choice."
-    e "Строки, наинающиеся со знака доллара - код Python. Мы используем его для создания флага, хранящего выбор пользователя."
+    e "Строки, наинающиеся со знака доллара — код Python. Мы используем его для создания флага, хранящего выбор пользователя."
 
 # game/tutorial_quickstart.rpy:424
 translate russian choice1_done_88398d3e:
@@ -640,7 +640,7 @@ translate russian choice1_done_47fa2268:
 translate russian choice1_done_826a600b:
 
     # e "One of Ren'Py's big advantages is the flexibility using a scripting language like Python provides us. It lets us easily scale from kinetic novels to complex simulation games."
-    e "Одно из больших преимуществ Ren'Py - использование гибкого языка, такого как Python. Это позволяет вам быстро вырасти из кинетической новеллы до сложной игры-симулятора."
+    e "Одно из больших преимуществ Ren'Py — использование гибкого языка, такого как Python. Это позволяет вам быстро вырасти из кинетической новеллы до сложной игры-симулятора."
 
 # game/tutorial_quickstart.rpy:449
 translate russian choice1_done_c2efd260:

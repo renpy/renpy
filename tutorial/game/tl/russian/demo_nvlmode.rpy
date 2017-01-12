@@ -99,13 +99,13 @@ translate russian demo_nvlmode_d43b28d1:
 translate russian demo_nvlmode_f056c7ad:
 
     # nvle "Text tags like {{w}{w} work in NVL-mode."
-    nvle "Тектсовые теги, такие, как {{w}{w} работают в режиме NVL."
+    nvle "Текстовые теги, такие как {{w}{w} работают в режиме NVL."
 
 # game/demo_nvlmode.rpy:69
 translate russian demo_nvlmode_750cd9a1:
 
     # extend " As does the \"extend\" special character."
-    extend "Также как и особый персонаж \"extend\"."
+    extend "Так же как и особый персонаж \"extend\"."
 
 # game/demo_nvlmode.rpy:71
 translate russian demo_nvlmode_146d840b:

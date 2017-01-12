@@ -9,7 +9,7 @@ translate russian demo_minigame_03fc91ef:
 translate russian demo_minigame_8c389a44:
 
     # e "The first is with the UI functions, which can be used to create powerful button and menu based interfaces."
-    e "Первый способ - использование функций UI, которые могут создать мощные кнопочные интерфейсы-меню."
+    e "Первый способ — использование функций UI, которые могут создать мощные кнопочные интерфейсы-меню."
 
 # game/demo_minigame.rpy:208
 translate russian demo_minigame_0d5698fc:
@@ -21,13 +21,13 @@ translate russian demo_minigame_0d5698fc:
 translate russian demo_minigame_abc48e39:
 
     # e "We also have two more ways in which Ren'Py can be extended. Both require experience with Python programming, and so aren't for the faint of heart."
-    e "Существует два других способа расширения Ren'Py. Оба требуют навыков программирования на Python, так что это - не для слабонервных."
+    e "Существует два других способа расширения Ren'Py. Оба требуют навыков программирования на Python, так что это — не для слабонервных."
 
 # game/demo_minigame.rpy:212
 translate russian demo_minigame_4d7b5701:
 
     # e "Renpygame is a library that allows pygame games to be run inside Ren'Py."
-    e "Renpygame - библиотека, позволяющая играть в игры pygame внутри Ren'Py."
+    e "Renpygame — библиотека, позволяющая играть в игры pygame внутри Ren'Py."
 
 # game/demo_minigame.rpy:214
 translate russian demo_minigame_bb13a57e:
@@ -57,7 +57,7 @@ translate russian demo_minigame_9d67e41d:
 translate russian demo_minigame_59b3fdfd:
 
     # e "For example, one could support loading and saving while a user-defined displayable is shown."
-    e "Например, возможна поддержка загрузки и сохранения при использований таких объектов."
+    e "Например, возможна поддержка загрузки и сохранения при использовании таких объектов."
 
 # game/demo_minigame.rpy:224
 translate russian demo_minigame_e02e509d:

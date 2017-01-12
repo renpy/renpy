@@ -51,7 +51,7 @@ translate russian demo_character_fceb39fb:
 translate russian demo_character_92ae524c:
 
     # eside "A more practical use of that is in conjunction with show_side_image, which lets us position an image next to the text."
-    eside "Более практичное использование этого - в сочетании с show_side_image, что позволит разместить изображение рядом с текстом."
+    eside "Более практичное использование этого — в сочетании с show_side_image, что позволит разместить изображение рядом с текстом."
 
 # game/demo_character.rpy:63
 translate russian demo_character_ba09ee13:

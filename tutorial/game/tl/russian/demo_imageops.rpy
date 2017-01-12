@@ -147,7 +147,7 @@ translate russian demo_imageops_4c62de6f:
 translate russian demo_imageops_7d471e4b:
 
     # e "... while im.Sepia can sepia-tone an image."
-    e "... а im.Sepia - к сепии."
+    e "... а im.Sepia — к сепии."
 
 # game/demo_imageops.rpy:179
 translate russian demo_imageops_59ca3a66:
@@ -159,13 +159,13 @@ translate russian demo_imageops_59ca3a66:
 translate russian demo_imageops_514a55db:
 
     # e "It's useful if a character just happens to be ghost."
-    e "Это полезно, если ваш персонаж - призрак."
+    e "Это полезно, если ваш персонаж — призрак."
 
 # game/demo_imageops.rpy:190
 translate russian demo_imageops_05fc1200:
 
     # e "But that isn't the case with me."
-    e "Но я - не такая."
+    e "Но я — не такая."
 
 # game/demo_imageops.rpy:197
 translate russian demo_imageops_cf7fbb57:

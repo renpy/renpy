@@ -27,7 +27,7 @@ translate russian demo_simple_transitions_4b235ac2:
 translate russian demo_simple_transitions_af0431ac:
 
     # e "The 'dissolve' transition is probably the most useful, blending one scene into another."
-    e "Переход 'dissolve' - один из самых полезных, он растворяет одну сцену в другой."
+    e "Переход 'dissolve' — один из самых полезных, он растворяет одну сцену в другой."
 
 # game/demo_transitions.rpy:93
 translate russian demo_simple_transitions_5b9f711f:
@@ -160,13 +160,13 @@ translate russian demo_simple_transitions_4632f134:
 translate russian demo_imagedissolve_transitions_2db67018:
 
     # e "Perhaps the most flexible kind of transition is the ImageDissolve, which lets you use an image to control a dissolve."
-    e "Пожалуй, самый гибкий вид перехода - ImageDissolve, который позволяет использовать изображения для управления растворением."
+    e "Пожалуй, самый гибкий вид перехода — ImageDissolve, который позволяет использовать изображения для управления растворением."
 
 # game/demo_transitions.rpy:168
 translate russian demo_imagedissolve_transitions_429f8d03:
 
     # e "This lets us specify very complex transitions, fairly simply. Let's try some, and then I'll show you how they work."
-    e "Это позволяет создавать весьма сложные переходы довольно простым способом. Давайте попробуем несколько, а потом я покажу как они работают."
+    e "Это позволяет создавать весьма сложные переходы довольно простым способом. Давайте попробуем несколько, а потом я покажу, как они работают."
 
 # game/demo_transitions.rpy:170
 translate russian demo_imagedissolve_transitions_1ce501b0:
@@ -244,7 +244,7 @@ translate russian demo_imagedissolve_transitions_c0b9d74d:
 translate russian demo_imagedissolve_transitions_72ba11d4:
 
     # e "This is the background picture used with the circleirisout transition."
-    e "Это - фон, который мы использовали с переходом circleirisout."
+    e "Это — фон, который мы использовали с переходом circleirisout."
 
 # game/demo_transitions.rpy:230
 translate russian demo_imagedissolve_transitions_fc3b3339:
@@ -364,7 +364,7 @@ translate russian demo_cropmove_transitions_9e00a7a6:
 translate russian demo_cropmove_transitions_b8a710c1:
 
     # e "While the slide transitions slide in the new scene, the slideaways slide out the old scene."
-    e "Переходы slide \"вскальзывают\" в новую сцену, а переходы slidaway - \"выскальзывают\" из старой."
+    e "Переходы slide \"вскальзывают\" в новую сцену, а переходы slidaway — \"выскальзывают\" из старой."
 
 # game/demo_transitions.rpy:320
 translate russian demo_cropmove_transitions_1efb4cd0:
@@ -418,7 +418,7 @@ translate russian demo_cropmove_transitions_08d753ed:
 translate russian demo_movetransition_14df0e34:
 
     # e "The most common MoveTransition is move, which slides around images that have changed position on the screen."
-    e "Самый обычный MoveTransition - это move, который передвигает изображения, изменившие свою позицию."
+    e "Самый обычный MoveTransition — это move, который передвигает изображения, изменившие свою позицию."
 
 # game/demo_transitions.rpy:362
 translate russian demo_movetransition_84e40422:
@@ -490,7 +490,7 @@ translate russian demo_alphadissolve_068e3e98:
 translate russian demo_alphadissolve_6a1b6203:
 
     # e "During an AlphaDissolve, the old screen is used to fill the transparent areas of the image, while the new screen fills the opaque areas."
-    e "Во время AlphaDissolve, старый экран заполняет прозрачную область изображения, а новый - непрозрачную."
+    e "Во время AlphaDissolve, старый экран заполняет прозрачную область изображения, а новый — непрозрачную."
 
 # game/demo_transitions.rpy:431
 translate russian demo_alphadissolve_80a728b6:
@@ -502,7 +502,7 @@ translate russian demo_alphadissolve_80a728b6:
 translate russian demo_alphadissolve_ce4380eb:
 
     # e "The new screen is me just standing here."
-    e "В качестве нового - возьмём меня."
+    e "В качестве нового — возьмём меня."
 
 # game/demo_transitions.rpy:444
 translate russian demo_alphadissolve_2e95917b:

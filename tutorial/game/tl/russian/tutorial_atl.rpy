@@ -3,25 +3,25 @@
 translate russian tutorial_positions_a09a3fd1:
 
     # e "In this tutorial, I'll teach you how Ren'Py positions things on the screen. But before that, let's learn a little bit about how Python handles numbers."
-    e "В этой части обучения, я расскажу вам, как Ren'Py позиционирует вещи на экране. Но до этого, давайте немного узнаем о обработке чисел в Python."
+    e "В этой части обучения, я расскажу вам, как Ren'Py позиционирует вещи на экране. Но до этого, давайте немного узнаем об обработке чисел в Python."
 
 # game/tutorial_atl.rpy:189
 translate russian tutorial_positions_ba39aabc:
 
     # e "There are two main kinds of numbers in Python: integers and floating point numbers. An integer consists entirely of digits, while a floating point number has a decimal point."
-    e "Python поддерживает два вида чисел - целые и дробные. Целое число состоит полностью из цифр, а дробные числа содержат точку."
+    e "Python поддерживает два вида чисел — целые и дробные. Целое число состоит полностью из цифр, а дробные числа содержат точку."
 
 # game/tutorial_atl.rpy:191
 translate russian tutorial_positions_a60b775d:
 
     # e "For example, 100 is an integer, while 0.5 is a floating point number, or float for short. In this system, there are two zeros: 0 is an integer, and 0.0 is a float."
-    e "Например, 100 - целое число, а 0.5 - дробное. В такой системе также есть два нуля - целый 0, и дробный 0.0."
+    e "Например, 100 — целое число, а 0.5 — дробное. В такой системе также есть два нуля — целый 0, и дробный 0.0."
 
 # game/tutorial_atl.rpy:193
 translate russian tutorial_positions_7f1a560c:
 
     # e "Ren'Py uses integers to represent absolute coordinates, and floats to represent fractions of an area with known size."
-    e "Ren'Py использует целые числа для абсолютных координат, а дробные - для долей площади с известными размерами."
+    e "Ren'Py использует целые числа для абсолютных координат, а дробные — для долей площади с известными размерами."
 
 # game/tutorial_atl.rpy:195
 translate russian tutorial_positions_8e7d3e52:
@@ -123,7 +123,7 @@ translate russian tutorial_positions_5d5feb98_1:
 translate russian tutorial_positions_e4380a83:
 
     # e "The second position we care about is the anchor. The anchor is a spot on the thing being positioned."
-    e "Вторая позиция - якорь. Якорь - место на той вещи, которую мы позиционируем."
+    e "Вторая позиция — якорь. Якорь — место на той вещи, которую мы позиционируем."
 
 # game/tutorial_atl.rpy:283
 translate russian tutorial_positions_d1db1246:
@@ -183,7 +183,7 @@ translate russian tutorial_positions_b8ebf9fe:
 translate russian tutorial_positions_8ce35d52:
 
     # e "When we set it to 1.0, then we're aligned to the right side of the screen."
-    e "В 1.0 - по правой."
+    e "В 1.0 — по правой."
 
 # game/tutorial_atl.rpy:355
 translate russian tutorial_positions_6745825f:
@@ -201,7 +201,7 @@ translate russian tutorial_positions_64428a07:
 translate russian tutorial_positions_cfb77d42:
 
     # e "Remember that xalign is just setting xpos and xanchor to the same value, and yalign is just setting ypos and yanchor to the same value."
-    e "Помните, что используя xalign вы просто устанавливаете одинаковые значения xpos и xanchor, а с yalign - ypos и yanchor."
+    e "Помните, что используя xalign вы просто устанавливаете одинаковые значения xpos и xanchor, а с yalign — ypos и yanchor."
 
 # game/tutorial_atl.rpy:366
 translate russian tutorial_positions_0f4ca2b6:
@@ -243,7 +243,7 @@ translate russian tutorial_atl_1f22f875:
 translate russian tutorial_atl_fd036bdf:
 
     # e "The first place ATL can be used is as part of an image statement. Instead of a displayable, an image may be defined as a block of ATL code."
-    e "Первое место, где можно использовать ATL - часть оператора image. Вместо отображаемого объекта, изображение можно определить как блок кода ATL."
+    e "Первое место, где можно использовать ATL — часть оператора image. Вместо отображаемого объекта, изображение можно определить как блок кода ATL."
 
 # game/tutorial_atl.rpy:399
 translate russian tutorial_atl_7cad2ab9:
@@ -255,7 +255,7 @@ translate russian tutorial_atl_7cad2ab9:
 translate russian tutorial_atl_c78b2a1e:
 
     # e "The second way is through the use of the transform statement. This assigns the ATL block to a python variable, allowing it to be used in at clauses and inside other transforms."
-    e "Второй способ - использование оператора трансформации. Это присвоит блок ATL переменной Python, что позволит использовать его в условиях at и внутри других трансформации."
+    e "Второй способ — использование оператора трансформации. Это присвоит блок ATL переменной Python, что позволит использовать его в условиях at и внутри других трансформации."
 
 # game/tutorial_atl.rpy:407
 translate russian tutorial_atl_da7a7759:
@@ -279,13 +279,13 @@ translate russian tutorial_atl_ed82983f:
 translate russian tutorial_atl_2807adff:
 
     # e "Animation is when the displayable being shown changes. For example, right now I am changing my expression."
-    e "Анимация - изменение показываемого объекта. Например, прямо сейчас, я изменяю своё выражение лица."
+    e "Анимация — изменение показываемого объекта. Например, прямо сейчас, я изменяю своё выражение лица."
 
 # game/tutorial_atl.rpy:445
 translate russian tutorial_atl_3eec202b:
 
     # e "Transformation involves moving or distorting an image. This includes placing it on the screen, zooming it in and out, rotating it, and changing its opacity."
-    e "Трансформация - передвижение или изменение вида изображения. Например, размещение его на экране, масштабирование, вращение, изменение прозрачности."
+    e "Трансформация — передвижение или изменение вида изображения. Например, размещение его на экране, масштабирование, вращение, изменение прозрачности."
 
 # game/tutorial_atl.rpy:453
 translate russian tutorial_atl_fbc9bf83:
@@ -309,13 +309,13 @@ translate russian tutorial_atl_c671ed7d:
 translate russian tutorial_atl_99386181:
 
     # e "The second and fourth lines are pause statements, which cause ATL to wait half of a second each before continuing. That's how we give the delay between images."
-    e "Вторая и четвёртая строки - операторы паузы, которые заставят ATL ждать полсекунды перед продолжением. Это позволяет нам добавить задержку между изображениями."
+    e "Вторая и четвёртая строки — операторы паузы, которые заставят ATL ждать полсекунды перед продолжением. Это позволяет нам добавить задержку между изображениями."
 
 # game/tutorial_atl.rpy:461
 translate russian tutorial_atl_60f2a5e8:
 
     # e "The final line is a repeat statement. This causes the current block of ATL to be restarted. You can only have one repeat statement per block."
-    e "Последняя строка - оператор repeat. Он перезапускает текущий блок ATL. В одном блоке ATL может быть лишь один оператор repeat."
+    e "Последняя строка — оператор repeat. Он перезапускает текущий блок ATL. В одном блоке ATL может быть лишь один оператор repeat."
 
 # game/tutorial_atl.rpy:466
 translate russian tutorial_atl_146cf4c4:
@@ -345,7 +345,7 @@ translate russian tutorial_atl_a7f8ed01:
 translate russian tutorial_atl_24501213:
 
     # e "Perhaps the simplest thing we can do is to position the images on the screen. This can be done by simply giving the names of the transform properties, each followed by the value."
-    e "Размещение - одна из простейших вещей. Его можно выполнить просто задав имена свойств трансформации, а затем их значения."
+    e "Размещение — одна из простейших вещей. Его можно выполнить просто задав имена свойств трансформации, а затем их значения."
 
 # game/tutorial_atl.rpy:497
 translate russian tutorial_atl_43516492:
@@ -369,7 +369,7 @@ translate russian tutorial_atl_d7fc5372:
 translate russian tutorial_atl_7650ec09:
 
     # e "The pause and repeat statements are the same statements we used in our animations. They work throughout ATL code."
-    e "Операции pause и repeat - те же, что мы использовали в анимации. Они работают в любом коде ATL."
+    e "Операции pause и repeat — те же, что мы использовали в анимации. Они работают в любом коде ATL."
 
 # game/tutorial_atl.rpy:508
 translate russian tutorial_atl_d3416d4f:
@@ -393,7 +393,7 @@ translate russian tutorial_atl_685eeeaa:
 translate russian tutorial_atl_c5cb49de:
 
     # e "That's followed by an amount of time, in this case three seconds. It ends with a list of properties, each followed by its new value."
-    e "После этого следует количество времени, в нашем случае - три секунды. Он заканчивается списком свойств и их новых значений."
+    e "После этого следует количество времени, в нашем случае — три секунды. Он заканчивается списком свойств и их новых значений."
 
 # game/tutorial_atl.rpy:516
 translate russian tutorial_atl_72d47fb6:
@@ -405,7 +405,7 @@ translate russian tutorial_atl_72d47fb6:
 translate russian tutorial_atl_2958f397:
 
     # e "ATL supports more complicated move types, like circle and spline motion. But I won't be showing those here."
-    e "ATL поддерживает более сложные виды движений, такие, как круговое. Но я их вам не покажу."
+    e "ATL поддерживает более сложные виды движений, такие как круговое. Но я их вам не покажу."
 
 # game/tutorial_atl.rpy:528
 translate russian tutorial_atl_4a02c8d8:
@@ -525,7 +525,7 @@ translate russian tutorial_atl_f903bc3b:
 translate russian tutorial_atl_5d0f8f9d:
 
     # e "Here, the top block move the image in the horizontal direction, and the bottom block moves it in the vertical direction. Since they're moving at different speeds, it looks like the image is bouncing on the screen."
-    e "Здесь верхний блок двигает изображение горизонтально, а нижний - вертикально. Так как они двигаются на разных скоростях, это создаёт ощущения скачка изображения по экрану."
+    e "Здесь верхний блок двигает изображение горизонтально, а нижний — вертикально. Так как они двигаются на разных скоростях, это создаёт ощущения скачка изображения по экрану."
 
 # game/tutorial_atl.rpy:737
 translate russian tutorial_atl_28a7d27e:
@@ -543,7 +543,7 @@ translate russian tutorial_atl_5fc8c0df:
 translate russian tutorial_atl_1358c6b4:
 
     # e "But for now, just remember that when it comes to animating and transforming, ATL is the hot new thing."
-    e "А сейчас, запомните, что когда вы анимацией и трансформацией занимаетесь, ATL - то, что нужно вам."
+    e "А сейчас, запомните, что когда вы анимацией и трансформацией занимаетесь, ATL — то, что нужно вам."
 
 translate russian strings:
 
