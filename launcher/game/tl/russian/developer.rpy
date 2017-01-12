@@ -63,7 +63,7 @@ translate russian strings:
 
     # _developer/developer.rpym:415
     old "Position copied to clipboard."
-    new "Координата позиции скопирована в буфер обмена."
+    new "Координаты позиции скопированы в буфер обмена."
 
     # _developer/developer.rpym:524
     old "✔ "

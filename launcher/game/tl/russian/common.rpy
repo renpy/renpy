@@ -35,15 +35,15 @@ translate russian strings:
 
     # 00action_file.rpy:37
     old "{#weekday_short}Tue"
-    new "{#weekday_short}Вто"
+    new "{#weekday_short}Вт"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Wed"
-    new "{#weekday_short}Сре"
+    new "{#weekday_short}Ср"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Thu"
-    new "{#weekday_short}Чет"
+    new "{#weekday_short}Чт"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Fri"
@@ -55,7 +55,7 @@ translate russian strings:
 
     # 00action_file.rpy:37
     old "{#weekday_short}Sun"
-    new "{#weekday_short}Вос"
+    new "{#weekday_short}Вс"
 
     # 00action_file.rpy:47
     old "{#month}January"
@@ -175,7 +175,7 @@ translate russian strings:
 
     # 00gui.rpy:230
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "Загрузка игры приведёт к потере несохранённого прогресса.\nВы уверены, что вы хотите это сделать?"
+    new "Загрузка игры приведёт к потере несохранённого прогресса.\nВы уверены, что хотите это сделать?"
 
     # 00gui.rpy:231
     old "Are you sure you want to quit?"
@@ -223,7 +223,7 @@ translate russian strings:
 
     # 00library.rpy:262
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "Эта программа содержит бесплатное программное обеспечение под некоторыми лицензиями, включаю лицензию MIT и GNU Lesser General Public. Полный список лицензий, включая ссылки на полный исходный код, можно найти {a=https://www.renpy.org/l/license}здесь{/a}."
+    new "Эта программа содержит свободное и открытое программное обеспечение под несколькими лицензиями, включая лицензию MIT и GNU Lesser General Public. Полный список лицензий, включая ссылки на полный исходный код, можно найти {a=https://www.renpy.org/l/license}здесь{/a}."
 
     # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
