@@ -252,7 +252,7 @@ translate russian strings:
 
     # renpy/common/00preferences.rpy:373
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Включен режим авто-озвучки. Нажмите v, чтобы выключить."
+    new "Включён режим авто-озвучки. Нажмите v, чтобы выключить."
 
 
 translate russian strings:
@@ -377,7 +377,7 @@ translate russian strings:
 
     # renpy/common/_developer/developer.rpym:392
     old "Right-click or escape to quit."
-    new "Щелкните правой кнопкой мыши или нажмите escape, чтобы выйти."
+    new "Щёлкните правой кнопкой мыши или нажмите escape, чтобы выйти."
 
     # renpy/common/_developer/developer.rpym:443
     old "Done"

@@ -466,7 +466,7 @@ translate russian demo_movetransition_af4c53cf:
 translate russian demo_movetransition_dc5ccd54:
 
     # e "And that's all there is."
-    e "Вот и все."
+    e "Вот и всё."
 
 # game/demo_transitions.rpy:412
 translate russian demo_alphadissolve_3efbde9f:
@@ -538,5 +538,5 @@ translate russian strings:
 
     # game/demo_transitions.rpy:46
     old "How about something else?"
-    new "Как насчёт чего-нибдь ещё?"
+    new "Как насчёт чего-нибудь ещё?"
 

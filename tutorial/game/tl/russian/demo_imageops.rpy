@@ -33,7 +33,7 @@ translate russian demo_imageops_e3887927:
 translate russian demo_imageops_d05ba9d9:
 
     # e "The im.Crop operation can take the image, and chop it up into a smaller image."
-    e "Операция im.Crop берет изображение и режет его в более мелкое."
+    e "Операция im.Crop берёт изображение и режет его в более мелкое."
 
 # game/demo_imageops.rpy:92
 translate russian demo_imageops_f57f6496:
@@ -81,7 +81,7 @@ translate russian demo_imageops_eeaec24a:
 translate russian demo_imageops_a2ed064d:
 
     # e "In this case, we removed all the red from the image, leaving only the blue and green channels."
-    e "В этом случае, мы убрали все красное из изображения, оставив лишь синее и зелёное."
+    e "В этом случае, мы убрали всё красное из изображения, оставив лишь синее и зелёное."
 
 # game/demo_imageops.rpy:125
 translate russian demo_imageops_77b0a263:
@@ -93,7 +93,7 @@ translate russian demo_imageops_77b0a263:
 translate russian demo_imageops_360723bc:
 
     # e "The im.Twocolor operation lets you take a black and white image, like this one..."
-    e "Операция im.Twocolor позволит взять черно-белое изображение, вроде такого..."
+    e "Операция im.Twocolor позволит взять чёрно-белое изображение, вроде такого..."
 
 # game/demo_imageops.rpy:135
 translate russian demo_imageops_0948998c:

@@ -135,7 +135,7 @@ translate russian tutorial_dialogue_64ffe685:
 translate russian tutorial_dialogue_97a33275:
 
     # e "If you'd like, you can run this game yourself by erasing everything in your project's script.rpy file, and replacing it with the code in the box above."
-    e "Если вы хотите, вы можете запустить эту игру сами, заменив все в своём файле script.rpy на код, находящийся в коробке сверху."
+    e "Если вы хотите, вы можете запустить эту игру сами, заменив всё в своём файле script.rpy на код, находящийся в коробке сверху."
 
 # game/tutorial_quickstart.rpy:101
 translate russian tutorial_dialogue_c5e70d7e:

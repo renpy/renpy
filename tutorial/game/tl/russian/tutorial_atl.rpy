@@ -339,7 +339,7 @@ translate russian tutorial_atl_e5872360:
 translate russian tutorial_atl_a7f8ed01:
 
     # e "Now, let's move on to see how we can use ATL to transform an image. We'll start off by seeing what we can do to position images on the screen."
-    e "Попробуем преобразовать изображение с помощью ATL. Начнем с размещения изображений на экране."
+    e "Попробуем преобразовать изображение с помощью ATL. Начнём с размещения изображений на экране."
 
 # game/tutorial_atl.rpy:492
 translate russian tutorial_atl_24501213:

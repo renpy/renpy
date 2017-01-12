@@ -51,7 +51,7 @@ translate russian tutorial_playing_8e7e83a8:
 translate russian tutorial_playing_2bad7992:
 
     # e "The other screen of the game menu is the preferences screen."
-    e "Еще один экран меню — экран настроек."
+    e "Ещё один экран меню — экран настроек."
 
 # game/tutorial_playing.rpy:41
 translate russian tutorial_playing_eaac8ba9:
@@ -165,5 +165,5 @@ translate russian tutorial_rollback_dce979d4:
 translate russian tutorial_rollback_done_54d6ee45:
 
     # e "By allowing Ren'Py to take care of out-of-game issues like loading and saving, you can focus on making your game, while still giving users the experience they've come to expect."
-    e "Позволяя Ren'Py справится с внеигровыми задачами, такими, как загрузка и сохранение, вы можете сфокусироваться на создании игры, и все ещё давать пользователям опыт, которого они ожидают."
+    e "Позволяя Ren'Py справится с внеигровыми задачами, такими, как загрузка и сохранение, вы можете сфокусироваться на создании игры, и всё ещё давать пользователям опыт, которого они ожидают."
 

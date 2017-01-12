@@ -105,5 +105,5 @@ translate russian strings:
 
     # game/demo_minigame.rpy:18
     old "Click to Begin"
-    new "Щелкните, чтобы начать."
+    new "Щёлкните, чтобы начать."
 

@@ -111,7 +111,7 @@ translate russian demo_text_fcb34ec8:
 translate russian demo_text_3154619a:
 
     # e "With great power comes great responsibility, after all."
-    e "С большой силой приходит большая ответственность и все такое."
+    e "С большой силой приходит большая ответственность и всё такое."
 
 # game/demo_text.rpy:106
 translate russian demo_text_12873855:

@@ -39,7 +39,7 @@ translate russian demo_ui_7cfaf270:
 translate russian demo_ui_d77a671d:
 
     # pov "My name is [povname!t]."
-    pov "Мое имя [povname!t]."
+    pov "Моё имя [povname!t]."
 
 # game/demo_ui.rpy:248
 translate russian demo_ui_b50edd86:
