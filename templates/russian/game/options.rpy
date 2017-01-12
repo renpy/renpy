@@ -101,7 +101,7 @@ init -1 python hide:
 
     # style.window.background = Frame("frame.png", 12, 12)
 
-    ## Внешние поля - пространство, окружающее окно, на котором
+    ## Внешние поля — пространство, окружающее окно, на котором
     ## не рисуется фон.
 
     # style.window.left_margin = 6
@@ -109,7 +109,7 @@ init -1 python hide:
     # style.window.top_margin = 6
     # style.window.bottom_margin = 6
 
-    ## Внутренние поля - пространство внутри окна, где
+    ## Внутренние поля — пространство внутри окна, где
     ## рисуется фон.
 
     # style.window.left_padding = 6

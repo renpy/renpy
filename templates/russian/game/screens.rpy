@@ -281,7 +281,7 @@ screen file_picker:
             # Отобразить 10 слотов, с номерами от 1 до 10.
             for i in range(1, columns * rows + 1):
 
-                # Каждый из них - кнопка.
+                # Каждый из них — кнопка.
                 button:
                     action FileAction(i)
                     xfill True
