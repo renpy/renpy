@@ -7,11 +7,11 @@ translate russian strings:
 
     # gui.rpy:5
     old "## The init offset statement causes the init code in this file to run before init code in any other file."
-    new "## Значение init позволяет init коду в этом файле запускать перед init кодом других файлов."
+    new "## Значение инициализации позволяет init коду в этом файле запускаться перед init кодом других файлов."
 
     # gui.rpy:9
     old "## Calling gui.init resets the styles to sensible default values, and sets the width and height of the game."
-    new "## Вызывайте gui.init, чтобы сбросить стили, чувствительные к стандартным значениям и задать высоту и ширину окна игры."
+    new "## Вызываю gui.init, чтобы сбросить стили, чувствительные к стандартным значениям и задать высоту и ширину окна игры."
 
     # gui.rpy:17
     old "## GUI Configuration Variables"
@@ -35,7 +35,7 @@ translate russian strings:
 
     # gui.rpy:32
     old "## The small color is used for small text, which needs to be brighter/darker to achieve the same effect."
-    new "## Small_color используется в маленьком тексте, который должен быть ярче/темнее, для достижения нужного эффекта."
+    new "## Small_color используется в маленьком тексте, который должен быть ярче/темнее, для достижения вышеуказанного эффекта."
 
     # gui.rpy:36
     old "## The color that is used for buttons and bars that are hovered."
@@ -115,7 +115,7 @@ translate russian strings:
 
     # gui.rpy:98
     old "## These variables control how dialogue is displayed on the screen one line at a time."
-    new "## Эти переменные контролируют как диалог появляется на отдельной строчке."
+    new "## Эти переменные контролируют, как диалог появляется на отдельной строчке."
 
     # gui.rpy:101
     old "## The height of the textbox containing dialogue."
@@ -127,11 +127,11 @@ translate russian strings:
 
     # gui.rpy:109
     old "## The placement of the speaking character's name, relative to the textbox. These can be a whole number of pixels from the left or top, or 0.5 to center."
-    new "## Местоположении имени говорящего персонажа в отношении текстового окна. Это могут быть целые значения в пикселях слева и сверху от начала окна или процентное отношение, например, 0.5 по центру."
+    new "## Местоположении имени говорящего персонажа в отношении текстового окна. Это могут быть целые значения в пикселях слева и сверху от начала окна или процентное отношение, например, 0.5 для центрирования."
 
     # gui.rpy:114
     old "## The horizontal alignment of the character's name. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
-    new "## Горизонтальное выранивание имени персонажа. Это может быть 0.0 для левоориентированного, 0.5 для центрированного, и 1.0 для правоориентированного."
+    new "## Горизонтальное выранивание имени персонажа. Это может быть 0.0 для левоориентированного, 0.5 для центрированного, и 1.0 для правоориентированного выравнивания."
 
     # gui.rpy:118
     old "## The width, height, and borders of the box containing the character's name, or None to automatically size it."
@@ -147,7 +147,7 @@ translate russian strings:
 
     # gui.rpy:132
     old "## The placement of dialogue relative to the textbox. These can be a whole number of pixels relative to the left or top side of the textbox, or 0.5 to center."
-    new "## Размещение диалога по отношению к текстовому окну. Это могут быть целые значения в пикселях слева и сверху от текстового окна или процентное отношение, например, 0.5 по центру."
+    new "## Размещение диалога по отношению к текстовому окну. Это могут быть целые значения в пикселях слева и сверху от текстового окна или процентное отношение, например, 0.5 для центрирования."
 
     # gui.rpy:138
     old "## The maximum width of dialogue text, in pixels."
@@ -155,7 +155,7 @@ translate russian strings:
 
     # gui.rpy:141
     old "## The horizontal alignment of the dialogue text. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
-    new "## Горизонтальное выравнивание диалогового текста. Это может быть 0.0 для левоориентированного, 0.5 для центрированного, и 1.0 для правоориентированного."
+    new "## Горизонтальное выравнивание диалогового текста. Это может быть 0.0 для левоориентированного, 0.5 для центрированного, и 1.0 для правоориентированного выравнивания."
 
     # gui.rpy:146
     old "## Buttons"
@@ -163,7 +163,7 @@ translate russian strings:
 
     # gui.rpy:148
     old "## These variables, along with the image files in gui/button, control aspects of how buttons are displayed."
-    new "## Эти переменные вместе с файлами изображений в gui/button, контролируют аспекты того, как кнопки отображаются."
+    new "## Эти переменные, вместе с файлами изображений в gui/button, контролируют аспекты того, как кнопки отображаются."
 
     # gui.rpy:151
     old "## The width and height of a button, in pixels. If None, Ren'Py computes a size."
@@ -195,7 +195,7 @@ translate russian strings:
 
     # gui.rpy:179
     old "## These variables override settings for different kinds of buttons. Please see the gui documentation for the kinds of buttons available, and what each is used for."
-    new "## Эти переменные переписывают настройки различных видов кнопок. Пожалуйста, посмотрите документацию по gui, для просмотра всех вариаций кнопок и для чего каждая из них нужна."
+    new "## Эти переменные переписывают настройки различных видов кнопок. Пожалуйста, посмотрите документацию по gui, для просмотра всех вариаций кнопок, и для чего каждая из них нужна."
 
     # gui.rpy:183
     old "## These customizations are used by the default interface:"
@@ -231,7 +231,7 @@ translate russian strings:
 
     # gui.rpy:238
     old "## The number of columns and rows in the grid of save slots."
-    new "## Количество колонок и ряд в таблице слотов."
+    new "## Количество колонок и рядов в таблице слотов."
 
     # gui.rpy:243
     old "## Positioning and Spacing"
@@ -271,7 +271,7 @@ translate russian strings:
 
     # gui.rpy:270
     old "## The spacing between file page buttons."
-    new "## Интервал между кнопка страниц."
+    new "## Интервал между кнопками страниц."
 
     # gui.rpy:273
     old "## The spacing between file slots."
@@ -283,7 +283,7 @@ translate russian strings:
 
     # gui.rpy:279
     old "## These variables control the look of frames that can contain user interface components when an overlay or window is not present."
-    new "## Эти переменные контролируют вид фреймов, содержащий компоненты пользовательского интерфейса, когда наложение или окно не представлены."
+    new "## Эти переменные контролируют вид рамок, содержащих компоненты пользовательского интерфейса, когда наложения или окна не представлены."
 
     # gui.rpy:282
     old "## Generic frames that are introduced by player code."
@@ -315,7 +315,7 @@ translate russian strings:
 
     # gui.rpy:302
     old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written code."
-    new "## Стандартный GUI использует только ползунки и вертикальные полосы прокрутки. Все остальные панели используются только в программируемом коде."
+    new "## Стандартный GUI использует только ползунки и вертикальные полосы прокрутки. Все остальные панели используются только через программируемый код."
 
     # gui.rpy:305
     old "## The height of horizontal bars, scrollbars, and sliders. The width of vertical bars, scrollbars, and sliders."
@@ -335,7 +335,7 @@ translate russian strings:
 
     # gui.rpy:326
     old "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
-    new "## Что делать с непрокручиваемыми полосами прокрутки в интерфейсе. \"hide\" прячет их, а None показывает их."
+    new "## Что делать с непрокручиваемыми полосами прокрутки в интерфейсе. \"hide\" прячет их, а None их показывает."
 
     # gui.rpy:331
     old "## History"
@@ -375,7 +375,7 @@ translate russian strings:
 
     # gui.rpy:363
     old "## The height of an NVL-mode entry. Set this to None to have the entries dynamically adjust height."
-    new "## Высота доступных строчек в режиме NVL. Установить это на None, чтобы строчки динамически регулировали высоту."
+    new "## Высота доступных строчек в режиме NVL. Установите это на None, чтобы строчки динамически регулировали высоту."
 
     # gui.rpy:367
     old "## The spacing between NVL-mode entries when gui.nvl_height is None, and between NVL-mode entries and an NVL-mode menu."
@@ -383,7 +383,7 @@ translate russian strings:
 
     # gui.rpy:384
     old "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"
-    new "## Местоположение, ширина и выравнивание текста nvl_thought (текст от лица персонажа nvl_narrator.)"
+    new "## Местоположение, ширина и выравнивание текста nvl_thought (текст от лица персонажа nvl_narrator)."
 
     # gui.rpy:391
     old "## The position of nvl menu_buttons."
@@ -395,7 +395,7 @@ translate russian strings:
 
     # gui.rpy:397
     old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
-    new "## Эта настройка контролирует разрешение разрыва линий. Стандартный подходит для большинства языков. Список доступных значений можно найти на https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+    new "## Эта настройка контролирует доступ к разрыву линий. Стандартная настройка подходит для большинства языков. Список доступных значений можно найти на https://www.renpy.org/doc/html/style_properties.html#style-property-language"
 
     # gui.rpy:405
     old "## Mobile devices"

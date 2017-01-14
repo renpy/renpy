@@ -19,11 +19,15 @@ translate russian strings:
 
     # screens.rpy:98
     old "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. It can also create displayables with id \"who\" and id \"window\" to apply style properties."
-    new "## Этот экран должен создать текст с id \"what\", чтобы Ren'Py могла показать текст. Здесь также можно создать наложения с id \"who\" и id \"window\", чтобы применить настройки стиля."
+    new "## Этот экран должен создать текст с id \"what\", чтобы Ren'Py могла показать текст. Здесь также можно создать наложения с id \"who\" и id \"window\", чтобы применить к ним настройки стиля."
 
     # screens.rpy:102
     old "## https://www.renpy.org/doc/html/screen_special.html#say"
     new "## https://www.renpy.org/doc/html/screen_special.html#say"
+
+    # screens.rpy:120
+    old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
+    new "## Если есть боковое изображение (\"голова\"), показывает его над текстом. Не показывается на варианте для мобильных устройств — места нет."
 
     # screens.rpy:169
     old "## Input screen"
@@ -35,7 +39,7 @@ translate russian strings:
 
     # screens.rpy:174
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
-    new "## Этот экран должен создать наложение ввода с id \"input\", чтобы принять различных вводимые параметры."
+    new "## Этот экран должен создать наложение ввода с id \"input\", чтобы принять различные вводимые параметры."
 
     # screens.rpy:177
     old "## http://www.renpy.org/doc/html/screen_special.html#input"
@@ -64,6 +68,10 @@ translate russian strings:
     # screens.rpy:246
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
     new "## Быстрое меню показывается внутри игры, чтобы обеспечить лёгкий доступ к внеигровым меню."
+
+    # screens.rpy:252
+    old "## Ensure this appears on top of other screens."
+    new "## Гарантирует, что это появляется поверх других экранов."
 
     # screens.rpy:261
     old "Back"
@@ -102,12 +110,16 @@ translate russian strings:
     new "## Данный код гарантирует, что экран быстрого меню будет показан в игре в любое время, если только игрок не скроет интерфейс."
 
     # screens.rpy:291
+    old "## Main and Game Menu Screens"
+    new "## Экраны Главного и Игрового меню"
+
+    # screens.rpy:291
     old "## Navigation screen"
     new "## Экран навигации"
 
     # screens.rpy:293
     old "## This screen is included in the main and game menus, and provides navigation to other menus, and to start the game."
-    new "## Этот экран включает в себе главное и игровое меню и обеспечивает навигацию к другим меня и к началу игры."
+    new "## Этот экран включает в себя главное и игровое меню и обеспечивает навигацию к другим меню, и к началу игры."
 
     # screens.rpy:308
     old "Start"
@@ -157,9 +169,17 @@ translate russian strings:
     old "## Used to display the main menu when Ren'Py starts."
     new "## Используется, чтобы показывать главное меню, когда Ren'Py запустилась."
 
-    # screens.rpy:354
+    # screens.rpy:357
     old "## http://www.renpy.org/doc/html/screen_special.html#main-menu"
     new "## http://www.renpy.org/doc/html/screen_special.html#main-menu"
+
+    # screens.rpy:361
+    old "## This ensures that any other menu screen is replaced."
+    new "## Это гарантирует, что любой другой экран будет заменён."
+
+    # screens.rpy:368
+    old "## This empty frame darkens the main menu."
+    new "## Эта пустая рамка затеняет главное меню."
 
     # screens.rpy:369
     old "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
@@ -171,11 +191,15 @@ translate russian strings:
 
     # screens.rpy:415
     old "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
-    new "## Это показывает основную и общую структуру экрана игрового меню. Оно вызывается с экраном заголовка, и показывает фон, заголовок и навигацию."
+    new "## Этот показывает основную и общую структуру экрана игрового меню. Он вызывается с экраном заголовка, и показывает фон, заголовок и навигацию."
 
     # screens.rpy:418
     old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
     new "## Параметр scroll может быть None, или одним из \"viewport\" или \"vpgrid\", когда этот экран предназначается для использования с одним или больше дочерними экранами, которые включены в него."
+
+    # screens.rpy:439
+    old "## Reserve space for the navigation section."
+    new "## Резервирует пространство для навигации."
 
     # screens.rpy:476
     old "Return"
@@ -191,7 +215,7 @@ translate russian strings:
 
     # screens.rpy:544
     old "## There's nothing special about this screen, and hence it also serves as an example of how to make a custom screen."
-    new "## В этом экране нет ничего особенного, и он служит только для примера того, как можно сделать свой экран."
+    new "## В этом экране нет ничего особенного, и он служит только для примера того, каким можно сделать свой экран."
 
     # screens.rpy:551
     old "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
@@ -221,7 +245,7 @@ translate russian strings:
     old "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
     new "## Эти экраны ответственны за возможность сохранять и загружать игру. Так как они почти одинаковые, оба реализованы по правилам третьего экрана, file_slots."
 
-    # screens.rpy:588
+    # screens.rpy:590
     old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
     new "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
 
@@ -231,7 +255,7 @@ translate russian strings:
 
     # screens.rpy:607
     old "Automatic saves"
-    new "Авто-сохранения"
+    new "Автосохранения"
 
     # screens.rpy:607
     old "Quick saves"
@@ -240,6 +264,10 @@ translate russian strings:
     # screens.rpy:613
     old "## This ensures the input will get the enter event before any of the buttons do."
     new "## Это гарантирует, что событие входа будет выполняться перед чем либо."
+
+    # screens.rpy:619
+    old "## The page name, which can be edited by clicking on a button."
+    new "## Номер страницы, который может быть изменён посредством клика на кнопку."
 
     # screens.rpy:629
     old "## The grid of file slots."
@@ -551,7 +579,7 @@ translate russian strings:
 
     # screens.rpy:1130
     old "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
-    new "## Экран подтверждения вызывается, когда Ren'Py хочет спросить пользовать вопрос да или нет."
+    new "## Экран подтверждения вызывается, когда Ren'Py хочет спросить у пользователя вопрос да или нет."
 
     # screens.rpy:1133
     old "## http://www.renpy.org/doc/html/screen_special.html#confirm"
@@ -592,6 +620,10 @@ translate russian strings:
     # screens.rpy:1215
     old "## This transform is used to blink the arrows one after another."
     new "## Эта трансформация используется, чтобы мигать стрелками одной за другой."
+
+    # screens.rpy:1244
+    old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
+    new "## Нам надо использовать шрифт, имеющий в себе символ U+25B8 (стрелку выше)."
 
     # screens.rpy:1247
     old "## Notify screen"
@@ -635,7 +667,7 @@ translate russian strings:
 
     # screens.rpy:1413
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
-    new "## Раз мышь может не использоваться, мы заменили быстрое меню версией, использующей меньшие и бОльшие кнопки, которых легче коснуться."
+    new "## Раз мышь может не использоваться, мы заменили быстрое меню версией, использующей меньше кнопок и больше по размеру, чтобы легче их коснуться."
 
     # screens.rpy:1429
     old "Menu"
