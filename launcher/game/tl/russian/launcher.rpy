@@ -201,6 +201,10 @@ translate russian strings:
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
     new "Ren'Py не удалось запустить python с tkinter, чтобы выбрать директорию. Пожалуйста, установите python-tk или пакет tkinter."
 
+    # choose_directory.rpy:104
+    old "The selected projects directory is not writable."
+    new "Выбранная директория проектов недоступна для записи."
+
     # choose_theme.rpy:303
     old "Could not change the theme. Perhaps options.rpy was changed too much."
     new "Невозможно изменить тему. Возможно, options.rpy был сильно изменён."
@@ -408,6 +412,10 @@ translate russian strings:
     # front_page.rpy:35
     old "Open [text] directory."
     new "Открыть папку [text]."
+
+    # front_page.rpy:91
+    old "PROJECTS:"
+    new "ПРОЕКТЫ:"
 
     # front_page.rpy:93
     old "refresh"
@@ -1053,43 +1061,43 @@ translate russian strings:
     old "Ren'Py has finished merging [language] string translations."
     new "Ren'Py закончила объединять [language] строки перевода."
 
-    # translations.rpy:282
+    # translations.rpy:284
     old "Updating default interface translations..."
     new "Обновляю базовый перевод интерфейса..."
 
-    # translations.rpy:306
+    # translations.rpy:308
     old "Extract Dialogue: [project.current.name!q]"
     new "Извлечь Диалог: [project.current.name!q]"
 
-    # translations.rpy:322
+    # translations.rpy:324
     old "Format:"
     new "Формат:"
 
-    # translations.rpy:330
+    # translations.rpy:332
     old "Tab-delimited Spreadsheet (dialogue.tab)"
     new "Табулированная таблица (dialogue.tab)"
 
-    # translations.rpy:331
+    # translations.rpy:333
     old "Dialogue Text Only (dialogue.txt)"
     new "Только Текст Диалога (dialogue.txt)"
 
-    # translations.rpy:344
+    # translations.rpy:346
     old "Strip text tags from the dialogue."
     new "Убрать текстовые теги из диалога."
 
-    # translations.rpy:345
+    # translations.rpy:347
     old "Escape quotes and other special characters."
     new "Включать кавычки и регулярные выражения."
 
-    # translations.rpy:346
+    # translations.rpy:348
     old "Extract all translatable strings, not just dialogue."
     new "Извлечь все переводимые строки, не только диалог."
 
-    # translations.rpy:374
+    # translations.rpy:376
     old "Ren'Py is extracting dialogue...."
     new "Ren'Py извлекает диалог..."
 
-    # translations.rpy:378
+    # translations.rpy:380
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
     new "Ren'Py завершила извлекать диалог. Извлечённый диалог можно найти в файле dialogue.[persistent.dialogue_format] в директории base."
 

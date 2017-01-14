@@ -13,6 +13,10 @@ translate russian strings:
     old "## Calling gui.init resets the styles to sensible default values, and sets the width and height of the game."
     new "## Вызывайте gui.init, чтобы сбросить стили, чувствительные к стандартным значениям и задать высоту и ширину окна игры."
 
+    # gui.rpy:17
+    old "## GUI Configuration Variables"
+    new "## Конфигурируемые Переменные GUI"
+
     # gui.rpy:21
     old "## Colors"
     new "## Цвета"
@@ -180,6 +184,14 @@ translate russian strings:
     # gui.rpy:165
     old "## The size of the text used by the button."
     new "## Размер текста, используемый кнопкой."
+
+    # gui.rpy:168
+    old "## The color of button text in various states."
+    new "## Цвет текста в кнопке в различных состояниях."
+
+    # gui.rpy:174
+    old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
+    new "## Горизонтальное выравнивание текста в кнопке. (0.0 — лево, 0.5 — по центру, 1.0 — право)."
 
     # gui.rpy:179
     old "## These variables override settings for different kinds of buttons. Please see the gui documentation for the kinds of buttons available, and what each is used for."
@@ -376,6 +388,18 @@ translate russian strings:
     # gui.rpy:391
     old "## The position of nvl menu_buttons."
     new "## Местоположение кнопок меню NVL."
+
+    # gui.rpy:395
+    old "## Localization"
+    new "## Локализация"
+
+    # gui.rpy:397
+    old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+    new "## Эта настройка контролирует разрешение разрыва линий. Стандартный подходит для большинства языков. Список доступных значений можно найти на https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+
+    # gui.rpy:405
+    old "## Mobile devices"
+    new "## Мобильные устройства"
 
     # gui.rpy:403
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
