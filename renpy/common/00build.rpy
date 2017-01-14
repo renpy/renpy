@@ -387,6 +387,9 @@ init -1500 python in build:
     # The command used to sign a dmg.
     mac_codesign_dmg_command = [ "/usr/bin/codesign", "-s", "{identity}", "-f", "{dmg}" ]
 
+    # Do we want to add the script_version file?
+    script_version = False
+
 
     # This function is called by the json_dump command to dump the build data
     # into the json file.
@@ -422,6 +425,8 @@ init -1500 python in build:
         rv["allow_integrated_gpu"] = allow_integrated_gpu
 
         rv["renpy"] = renpy
+
+        rv["script_version"] = script_version
 
         rv["destination"] = destination.format(
             directory_name=directory_name,

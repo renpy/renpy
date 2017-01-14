@@ -771,15 +771,17 @@ init python in distribute:
             if os.path.exists(LICENSE_TXT):
                 self.add_file("renpy", "renpy/LICENSE.txt", LICENSE_TXT)
 
-            if (not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpy"))) and \
-                (not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpyc"))):
+            if self.build["script_version"]:
 
-                script_version_txt = self.temp_filename("script_version.txt")
+                if (not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpy"))) and \
+                    (not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpyc"))):
 
-                with open(script_version_txt, "w") as f:
-                    f.write(repr(renpy.renpy.version_tuple[:-1]))
+                    script_version_txt = self.temp_filename("script_version.txt")
 
-                self.add_file("all", "game/script_version.txt", script_version_txt)
+                    with open(script_version_txt, "w") as f:
+                        f.write(repr(renpy.renpy.version_tuple[:-1]))
+
+                    self.add_file("all", "game/script_version.txt", script_version_txt)
 
         def add_file_list_hash(self, list_name):
             """
