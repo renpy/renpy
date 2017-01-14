@@ -667,11 +667,9 @@ screen file_slots(title):
 
                 textbutton _("<") action FilePagePrevious()
 
-                if config.has_autosave:
-                    textbutton _("{#auto_page}A") action FilePage("auto")
+                textbutton _("{#auto_page}A") action FilePage("auto")
 
-                if config.has_quicksave:
-                    textbutton _("{#quick_page}Q") action FilePage("quick")
+                textbutton _("{#quick_page}Q") action FilePage("quick")
 
                 ## range(1, 10) gives the numbers from 1 to 9.
                 for page in range(1, 10):
@@ -1243,8 +1241,8 @@ style skip_text:
     size gui.notify_text_size
 
 style skip_triangle:
-    # We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE
-    # glyph in it.
+    ## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE
+    ## glyph in it.
     font "DejaVuSans.ttf"
 
 
