@@ -17,17 +17,17 @@ translate russian tutorial_video_b927d009:
     # e "To do this, we first have to define an image to be a Movie displayable. Movie displayables require a size argument, and also use properties to position themselves on the screen."
     e "Для этого следует определить отображаемый объект Movie. Это потребует укзазания размера, а также позволит определить местоположение видео на экране."
 
-# game/tutorial_video.rpy:28
-translate russian tutorial_video_d4860780:
+# game/tutorial_video.rpy:27
+translate russian tutorial_video_fbaa71e4:
 
-    # e "Then, we can show the movie displayable, and start the movie playing with a play statement."
-    e "Потом можно показать этот объект, и начать воспроизведение фильма оператором play."
+    # e "Then, we can show the movie displayable, which starts the movie playing."
+    e "Затем мы можем показать (show) этот объект, что начнёт воспроизведение видео."
 
-# game/tutorial_video.rpy:37
-translate russian tutorial_video_373e48d8:
+# game/tutorial_video.rpy:35
+translate russian tutorial_video_bbbb242d:
 
-    # e "When we no longer want to play the movie, we can stop it, and then hide it."
-    e "Когда мы хотим прекратить воспроизведение, мы останавливаем и прячем его."
+    # e "When we no longer want to play the movie, we can hide it."
+    e "Когда мы хотим прекратить воспроизведение, мы просто прячем (hide) его."
 
 # game/tutorial_video.rpy:41
 translate russian tutorial_video_a66b154c:

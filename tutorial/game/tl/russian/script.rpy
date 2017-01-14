@@ -83,7 +83,7 @@ translate russian strings:
 
     # game/script.rpy:18
     old "Transition Gallery"
-    new "Галлерея переходов"
+    new "Галерея переходов"
 
     # game/script.rpy:18
     old "Image Operations"

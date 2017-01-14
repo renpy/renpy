@@ -468,6 +468,24 @@ translate russian demo_movetransition_dc5ccd54:
     # e "And that's all there is."
     e "Вот и всё."
 
+# game/demo_transitions.rpy:361
+translate russian demo_pushmove_transitions_003e506d:
+
+    # e "The PushMove transitions use the new scene to push the old one out. Let's take a look."
+    e "Переходы PushMove используют новую сцену, чтобы вытеснить старую. Давайте на них взглянем."
+
+# game/demo_transitions.rpy:367
+translate russian demo_pushmove_transitions_124f375d:
+
+    # "There's pushright..."
+    "Вот pushright..."
+
+# game/demo_transitions.rpy:383
+translate russian demo_pushmove_transitions_b7f33c95:
+
+    # e "... and pushup. And that's it the for the PushMove-based transitions."
+    "...и pushup. И на этом мы с переходами на основе PushMove закончили."
+
 # game/demo_transitions.rpy:412
 translate russian demo_alphadissolve_3efbde9f:
 
@@ -529,12 +547,12 @@ translate russian strings:
     new "Переходы CropMove"
 
     # game/demo_transitions.rpy:46
-    old "AlphaDissolve Transitions"
-    new "Переходы AlphaDissolve"
+    old "PushMove Transitions"
+    new "Переходы PushMove"
 
     # game/demo_transitions.rpy:46
-    old ""
-    new "" # wut
+    old "AlphaDissolve Transitions"
+    new "Переходы AlphaDissolve"
 
     # game/demo_transitions.rpy:46
     old "How about something else?"

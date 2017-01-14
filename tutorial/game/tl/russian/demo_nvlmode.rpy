@@ -105,7 +105,7 @@ translate russian demo_nvlmode_f056c7ad:
 translate russian demo_nvlmode_750cd9a1:
 
     # extend " As does the \"extend\" special character."
-    extend "Так же как и особый персонаж \"extend\"."
+    extend " Так же как и особый персонаж \"extend\"."
 
 # game/demo_nvlmode.rpy:71
 translate russian demo_nvlmode_146d840b:

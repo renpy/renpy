@@ -51,7 +51,7 @@ translate russian demo_text_90c83bb6:
 translate russian demo_text_a134abb3:
 
     # extend " when we reach the end of a block of text, in slow text mode."
-    extend "когда закончится предыдущий, в режиме медленных текстов."
+    extend " когда закончится предыдущий, в режиме медленных текстов."
 
 # game/demo_text.rpy:84
 translate russian demo_text_d2b1ebbe:
@@ -165,13 +165,13 @@ translate russian demo_text_123ff836:
 translate russian demo_text_d742e133:
 
     # esfont "For even more control, Ren'Py supports SFonts, image files containing font information."
-    esfont "Ren'Py также поддерживает SFonts, файлы изображений имеющие информацию о шрифтах."
+    esfont "Ren'Py takzhe podderzhivaet SFonts, faily izobrazheniy, imeyuschie informaciyu o shriftah."
 
 # game/demo_text.rpy:128
 translate russian demo_text_2a8833c0:
 
     # esfont "SFonts let you use fonts you otherwise couldn't, and apply special effects to fonts using your favorite image editor."
-    esfont "SFonts позволяет вам использовать шрифты, которые иначе вы бы использовать не смогли, и применять к ним спецэффекты используя любой графический редактор."
+    esfont "SFonts pozvolyaet vam ispol'zovat shrifty, kotorymi bi vi inache pol'zovatsya ne mogli, i primenyat k nim speceffecty, ispolzuya graficheskiy redaktor. A inogda iz-za nih prihoditsya pisat' na translite, hehe."
 
 # game/demo_text.rpy:130
 translate russian demo_text_418ffc27:
