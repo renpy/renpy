@@ -667,9 +667,11 @@ screen file_slots(title):
 
                 textbutton _("<") action FilePagePrevious()
 
-                textbutton _("{#auto_page}A") action FilePage("auto")
+                if config.has_autosave:
+                    textbutton _("{#auto_page}A") action FilePage("auto")
 
-                textbutton _("{#quick_page}Q") action FilePage("quick")
+                if config.has_quicksave:
+                    textbutton _("{#quick_page}Q") action FilePage("quick")
 
                 ## range(1, 10) gives the numbers from 1 to 9.
                 for page in range(1, 10):
