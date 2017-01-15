@@ -115,7 +115,7 @@ translate russian strings:
 
     # _errorhandling.rpym:495
     old "Open Traceback"
-    new "Открыть Журнал"
+    new "Журнал"
 
     # _errorhandling.rpym:497
     old "Opens the traceback.txt file in a text editor."
@@ -135,7 +135,7 @@ translate russian strings:
 
     # _errorhandling.rpym:538
     old "Rollback"
-    new "Вернуться назад"
+    new "Назад"
 
     # _errorhandling.rpym:540
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
