@@ -31,7 +31,7 @@ translate russian strings:
 
     # android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Чтобы построить Android-пакет, пожалуйста, загрузите RAPT, разъархивируйте его и поместить в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
+    new "Чтобы построить Android-пакет, пожалуйста, загрузите RAPT, разархивируйте его и поместить в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
 
     # android.rpy:31
     old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
@@ -187,7 +187,7 @@ translate russian strings:
 
     # android.rpy:512
     old "The host may not contain whitespace."
-    new "Хост не может создержать пробелы."
+    new "Хост не может содержать пробелы."
 
     # android.rpy:518
     old "The port must be a number."
@@ -235,7 +235,7 @@ translate russian strings:
 
     # consolecommand.rpy:84
     old "The command is being run in a new operating system console window."
-    new "Комманда будет запущена в новом окне консоли операционной системы."
+    new "Команда будет запущена в новом окне консоли операционной системы."
 
     # distribute.rpy:443
     old "Scanning project files..."
@@ -311,7 +311,7 @@ translate russian strings:
 
     # distribute_gui.rpy:194
     old "Add from clauses to calls, once"
-    new "Добавить from clauses к calls один раз"
+    new "Один раз добавить from clauses к calls"
 
     # distribute_gui.rpy:195
     old "Refresh"
@@ -571,7 +571,7 @@ translate russian strings:
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "Какое разрешение должен использовать ваш проект? Хотя Ren'Py может масштабировать окно, это целевой размер окна, по размеру которого должны рисоваться ресурсы, и размер, на котором они будут наиболее чёткие.\n\nСтандартный 1280x720 — резонный компромис."
+    new "Какое разрешение должен использовать ваш проект? Хотя Ren'Py может масштабировать окно, это целевой размер окна, по размеру которого должны рисоваться ресурсы, и размер, на котором они будут наиболее чёткие.\n\nСтандартный 1280x720 — резонный компромисс."
 
     # gui7.rpy:389
     old "Creating the new project..."
@@ -647,7 +647,7 @@ translate russian strings:
 
     # ios.rpy:28
     old "To build iOS packages, please download renios, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Чтобы построить iOS-пакеты, пожалуйста, загрузите renios, разъархивируйте его и положите в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
+    new "Чтобы построить iOS-пакеты, пожалуйста, загрузите renios, разархивируйте его и положите в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
 
     # ios.rpy:29
     old "The directory in where Xcode projects will be placed has not been selected. Choose 'Select Directory' to select it."
@@ -987,7 +987,7 @@ translate russian strings:
 
     # project.rpy:597
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new "Пожалуйста, выберите директорию проектов, используя выбиратель директорий.\n{b}Он мог появиться позади этого окна.{/b}"
+    new "Пожалуйста, выберите директорию проектов, используя выборщик директорий.\n{b}Он мог появиться позади этого окна.{/b}"
 
     # project.rpy:597
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
@@ -1007,7 +1007,7 @@ translate russian strings:
 
     # translations.rpy:130
     old "Generate empty strings for translations"
-    new "Генерирую пустые строки для переводов"
+    new "Генерировать пустые строки для переводов"
 
     # translations.rpy:148
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."

@@ -127,11 +127,11 @@ translate russian strings:
 
     # gui.rpy:109
     old "## The placement of the speaking character's name, relative to the textbox. These can be a whole number of pixels from the left or top, or 0.5 to center."
-    new "## Местоположении имени говорящего персонажа в отношении текстового окна. Это могут быть целые значения в пикселях слева и сверху от начала окна или процентное отношение, например, 0.5 для центрирования."
+    new "## Местоположение имени говорящего персонажа в отношении текстового окна. Это могут быть целые значения в пикселях слева и сверху от начала окна или процентное отношение, например, 0.5 для центрирования."
 
     # gui.rpy:114
     old "## The horizontal alignment of the character's name. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
-    new "## Горизонтальное выранивание имени персонажа. Это может быть 0.0 для левоориентированного, 0.5 для центрированного, и 1.0 для правоориентированного выравнивания."
+    new "## Горизонтальное выравнивание имени персонажа. Это может быть 0.0 для левоориентированного, 0.5 для центрированного, и 1.0 для правоориентированного выравнивания."
 
     # gui.rpy:118
     old "## The width, height, and borders of the box containing the character's name, or None to automatically size it."
@@ -151,7 +151,7 @@ translate russian strings:
 
     # gui.rpy:138
     old "## The maximum width of dialogue text, in pixels."
-    new "## Максиальная ширина диалогового текста в пикселях."
+    new "## Максимальная ширина диалогового текста в пикселях."
 
     # gui.rpy:141
     old "## The horizontal alignment of the dialogue text. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."

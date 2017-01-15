@@ -203,7 +203,7 @@ translate russian strings:
 
     # 00keymap.rpy:250
     old "Saved screenshot as %s."
-    new "Скришнот сохранён как %s."
+    new "Скриншот сохранён как %s."
 
     # 00library.rpy:142
     old "Self-voicing disabled."
@@ -271,7 +271,7 @@ translate russian strings:
 
     # 00updater.rpy:993
     old "The update file does not have the correct digest - it may have been corrupted."
-    new "Файл обновления не соддержит корректного дайджеста — он может быть повреждён."
+    new "Файл обновления не содержит корректного дайджеста — он может быть повреждён."
 
     # 00updater.rpy:1049
     old "While unpacking {}, unknown type {}."
@@ -327,7 +327,7 @@ translate russian strings:
 
     # 00gallery.rpy:585
     old "slideshow"
-    new "слайдшоу"
+    new "слайд-шоу"
 
     # 00gallery.rpy:586
     old "return"

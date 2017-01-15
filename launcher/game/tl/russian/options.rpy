@@ -91,7 +91,7 @@ translate russian strings:
 
     # options.rpy:103
     old "## After the game has started, this can be changed with the \"window show\", \"window hide\", and \"window auto\" statements."
-    new "## После того, как игра началась, это может быть изменено с помощью \"window show\", \"window hide\", и \"window auto\"."
+    new "## После того как игра началась, это может быть изменено с помощью \"window show\", \"window hide\", и \"window auto\"."
 
     # options.rpy:109
     old "## Transitions used to show and hide the dialogue window"
@@ -151,7 +151,7 @@ translate russian strings:
 
     # options.rpy:160
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
-    new "## Следующие функции избирают образцы файлов. Образцы файлов не учитывают регистр и соответствующе зависят от директории base, с или без учёта /, задавающей директорию. Если обнаруживается множество одноимённых файлы, используется только первый."
+    new "## Следующие функции избирают образцы файлов. Образцы файлов не учитывают регистр и соответствующе зависят от директории base, с или без учёта /, задающей директорию. Если обнаруживается множество одноимённых файлы, используется только первый."
 
     # options.rpy:165
     old "## In a pattern:"

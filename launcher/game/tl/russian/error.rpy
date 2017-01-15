@@ -19,7 +19,7 @@ translate russian strings:
 
     # 00gltest.rpy:83
     old "Force Software Renderer"
-    new "Насильно Отображать Програмно"
+    new "Насильно Отображать Программно"
 
     # 00gltest.rpy:93
     old "Enable"
