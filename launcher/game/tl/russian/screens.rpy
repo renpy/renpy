@@ -251,7 +251,7 @@ translate russian strings:
 
     # screens.rpy:607
     old "Page {}"
-    new "Страница {}"
+    new "{} страница"
 
     # screens.rpy:607
     old "Automatic saves"

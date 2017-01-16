@@ -331,7 +331,7 @@ translate russian strings:
 
     # distribute_gui.rpy:239
     old "Build Updates"
-    new "Построить Обновления"
+    new "Обновить сборку"
 
     # distribute_gui.rpy:241
     old "Add from clauses to calls"
@@ -1103,11 +1103,11 @@ translate russian strings:
 
     # updater.rpy:75
     old "Select Update Channel"
-    new "Выберите Канал Обновлений"
+    new "Выберите канал обновлений"
 
     # updater.rpy:86
     old "The update channel controls the version of Ren'Py the updater will download. Please select an update channel:"
-    new "Канал Обновлений выбирает, какую версию Ren'Py скачает программа для обновления. Выберите канал обновлений:"
+    new "Канал обновлений выбирает, какую версию Ren'Py скачает программа для обновления. Выберите канал:"
 
     # updater.rpy:91
     old "Release"
@@ -1127,7 +1127,7 @@ translate russian strings:
 
     # updater.rpy:114
     old "Experimental"
-    new "Экспериментальная"
+    new "Экспериментальный"
 
     # updater.rpy:120
     old "Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer."
@@ -1135,7 +1135,7 @@ translate russian strings:
 
     # updater.rpy:126
     old "Nightly"
-    new "Ночная"
+    new "Ночной"
 
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
@@ -1151,7 +1151,7 @@ translate russian strings:
 
     # updater.rpy:156
     old "Ren'Py is up to date."
-    new "Ren'Py обновлён."
+    new "Ren'Py обновлена."
 
     # updater.rpy:158
     old "[u.version] is now available. Do you want to install it?"
@@ -1175,7 +1175,7 @@ translate russian strings:
 
     # updater.rpy:168
     old "The update has been installed. Ren'Py will restart."
-    new "Обновление было установлено. Ren'Py будет перезапущен."
+    new "Обновление было установлено. Ren'Py будет перезапущена."
 
     # updater.rpy:170
     old "The update has been installed."
