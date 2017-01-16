@@ -9,7 +9,7 @@ translate russian demo_dynamic_b72548ea:
 translate russian demo_dynamic_0276dbb9:
 
     # e "This makes it possible to display things like countdown timers and progress bars."
-    e "Это помогает отображать вещи, такие, как таймеры обратного отсчета и полосы прогресса."
+    e "Это помогает отображать вещи, такие как таймеры обратного отсчёта и полосы прогресса."
 
 # game/demo_dynamic.rpy:33
 translate russian demo_dynamic_4cabf539:

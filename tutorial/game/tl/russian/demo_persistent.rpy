@@ -33,5 +33,5 @@ translate russian demo_persistent_4ff5d824:
 translate russian demo_persistent_634f6d6d:
 
     # "According to the multipersistent data, you've seen this line [plays] times total."
-    "Если верить разделенным постоянным данным, вы видели эту строку [plays] раз всего."
+    "Если верить постоянным данным, вы видели эту строку всего [plays] раз."
 

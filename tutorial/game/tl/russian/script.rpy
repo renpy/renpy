@@ -33,13 +33,13 @@ translate russian end_894a9e66:
 translate russian end_a898b369:
 
     # e "We'd like to thank Piroshki for contributing my sprites, Mugenjohncel for Lucy and the band, and Jake for the magic circle."
-    e "Мы хотели бы поблагодарить Piroshki за мои изображения, Mugenjohncel за Люси и рок-группу, и Jake - за волшебный круг."
+    e "Мы хотели бы поблагодарить Piroshki за мои изображения, Mugenjohncel за Люси и рок-группу, и Jake — за волшебный круг."
 
 # game/script.rpy:126
 translate russian end_762dc07a:
 
     # e "The background music is \"Sunflower Slow Drag\", by Scott Joplin and Scott Hayden, performed by the United States Marine Band. The concert music is by Alessio."
-    e "Музыка, играющая на заднем фоне - \"Sunflower Slow Drag\", написанная Scott Joplin и Scott Hayden, и исполненная United States Marine Band. Музыка концерта написана Alessio."
+    e "Музыка, играющая на заднем фоне — \"Sunflower Slow Drag\", написанная Scott Joplin и Scott Hayden, и исполненная United States Marine Band. Музыка концерта написана Alessio."
 
 # game/script.rpy:130
 translate russian end_57c21073:
@@ -83,7 +83,7 @@ translate russian strings:
 
     # game/script.rpy:18
     old "Transition Gallery"
-    new "Галлерея переходов"
+    new "Галерея переходов"
 
     # game/script.rpy:18
     old "Image Operations"
@@ -135,9 +135,9 @@ translate russian strings:
 
     # game/script.rpy:99
     old "What would you like to see?"
-    new "Что еще вы хотели бы увидеть?"
+    new "Что ещё вы хотели бы увидеть?"
 
     # game/script.rpy:101
     old "Is there anything else you'd like to see?"
-    new "Хотите ли вы увидеть еще что-то?"
+    new "Хотите ли вы увидеть ещё что-то?"
 

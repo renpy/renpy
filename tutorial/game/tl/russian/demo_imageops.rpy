@@ -33,7 +33,7 @@ translate russian demo_imageops_e3887927:
 translate russian demo_imageops_d05ba9d9:
 
     # e "The im.Crop operation can take the image, and chop it up into a smaller image."
-    e "Операция im.Crop берет изображение и режет его в более мелкое."
+    e "Операция im.Crop берёт изображение и режет его в более мелкое."
 
 # game/demo_imageops.rpy:92
 translate russian demo_imageops_f57f6496:
@@ -57,7 +57,7 @@ translate russian demo_imageops_3a9392e4:
 translate russian demo_imageops_aab0c08f:
 
     # e "It isn't really an image operation, but we don't know where else to put it."
-    e "Это, вообщем-то, не операция над изображением, но мы не знаем, где еще о нем сказать."
+    e "Это, в общем-то, не операция над изображением, но мы не знаем, где ещё о нём сказать."
 
 # game/demo_imageops.rpy:106
 translate russian demo_imageops_23cd24da:
@@ -75,13 +75,13 @@ translate russian demo_imageops_dcaf5d6b:
 translate russian demo_imageops_eeaec24a:
 
     # e "The im.Map operation lets us mess with the red, green, blue, and alpha channels of an image."
-    e "Операция im.Map позволяет издеваться над количеством красного, зеленого, синего и прозрачностью в изображении."
+    e "Операция im.Map позволяет издеваться над количеством красного, зелёного, синего и прозрачностью в изображении."
 
 # game/demo_imageops.rpy:118
 translate russian demo_imageops_a2ed064d:
 
     # e "In this case, we removed all the red from the image, leaving only the blue and green channels."
-    e "В этом случае, мы убрали все красное из изображения, оставив лишь синее и зеленое."
+    e "В этом случае, мы убрали всё красное из изображения, оставив лишь синее и зелёное."
 
 # game/demo_imageops.rpy:125
 translate russian demo_imageops_77b0a263:
@@ -93,13 +93,13 @@ translate russian demo_imageops_77b0a263:
 translate russian demo_imageops_360723bc:
 
     # e "The im.Twocolor operation lets you take a black and white image, like this one..."
-    e "Операция im.Twocolor позволит взять черно-белое изображение, вроде такого..."
+    e "Операция im.Twocolor позволит взять чёрно-белое изображение, вроде такого..."
 
 # game/demo_imageops.rpy:135
 translate russian demo_imageops_0948998c:
 
     # e "... and assign colors to replace black and white."
-    e "... и заменить белый и черный на два других цвета."
+    e "... и заменить белый и чёрный на два других цвета."
 
 # game/demo_imageops.rpy:140
 translate russian demo_imageops_75522403:
@@ -147,7 +147,7 @@ translate russian demo_imageops_4c62de6f:
 translate russian demo_imageops_7d471e4b:
 
     # e "... while im.Sepia can sepia-tone an image."
-    e "... а im.Sepia - к сепии."
+    e "... а im.Sepia — к сепии."
 
 # game/demo_imageops.rpy:179
 translate russian demo_imageops_59ca3a66:
@@ -159,13 +159,13 @@ translate russian demo_imageops_59ca3a66:
 translate russian demo_imageops_514a55db:
 
     # e "It's useful if a character just happens to be ghost."
-    e "Это полезно, если ваш персонаж - призрак."
+    e "Это полезно, если ваш персонаж — призрак."
 
 # game/demo_imageops.rpy:190
 translate russian demo_imageops_05fc1200:
 
     # e "But that isn't the case with me."
-    e "Но я - не такая."
+    e "Но я — не такая."
 
 # game/demo_imageops.rpy:197
 translate russian demo_imageops_cf7fbb57:

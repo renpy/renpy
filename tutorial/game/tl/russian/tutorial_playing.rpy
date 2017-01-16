@@ -21,7 +21,7 @@ translate russian tutorial_playing_f30f1979:
 translate russian tutorial_playing_afa743e7:
 
     # e "While you're in the game, you can access the game menu by right clicking or hitting the escape key."
-    e "Когда вы играете, вы можете достичь игрового меню щелкнув правой кнопкой мыши или нажав клавишу Escape."
+    e "Когда вы играете, вы можете достичь игрового меню щёлкнув правой кнопкой мыши или нажав клавишу Escape."
 
 # game/tutorial_playing.rpy:28
 translate russian tutorial_playing_8360224a:
@@ -51,7 +51,7 @@ translate russian tutorial_playing_8e7e83a8:
 translate russian tutorial_playing_2bad7992:
 
     # e "The other screen of the game menu is the preferences screen."
-    e "Еще один экран меню - экран настроек."
+    e "Ещё один экран меню — экран настроек."
 
 # game/tutorial_playing.rpy:41
 translate russian tutorial_playing_eaac8ba9:
@@ -75,7 +75,7 @@ translate russian tutorial_playing_790f9dc7:
 translate russian tutorial_playing_bc29822e:
 
     # e "While inside the game, there are a few more things you can do."
-    e "Внутри игры, есть еще несколько вещей, которые вы можете делать."
+    e "Внутри игры, есть ещё несколько вещей, которые вы можете делать."
 
 # game/tutorial_playing.rpy:56
 translate russian tutorial_playing_dc0f9cf7:
@@ -117,13 +117,13 @@ translate russian tutorial_playing_ffcaf528:
 translate russian tutorial_rollback_40b09eaf:
 
     # e "You can invoke a rollback by scrolling the mouse wheel up, or by pushing the page up key. That'll bring you back to the previous screen."
-    e "Вы можете включить откат прокрутив колесом мыши вверх или нажав клавишу Page Up. Это вернет вас к прошлому экрану."
+    e "Вы можете включить откат прокрутив колесом мыши вверх или нажав клавишу Page Up. Это вернёт вас к прошлому экрану."
 
 # game/tutorial_playing.rpy:82
 translate russian tutorial_rollback_041be71b:
 
     # e "While at a previous screen, you can roll forward by scrolling the mouse wheel down, or pushing the page down key."
-    e "Когда вы вернетесь, вы сможете прокручивать текст вперед крутя колесико вниз или нажимая кнопку Page Down."
+    e "Когда вы вернётесь, вы сможете прокручивать текст вперёд крутя колёсико вниз или нажимая кнопку Page Down."
 
 # game/tutorial_playing.rpy:84
 translate russian tutorial_rollback_1d0e55c3:
@@ -141,7 +141,7 @@ translate russian tutorial_rollback_a4633f53:
 translate russian tutorial_rollback_a30f8a06:
 
     # e "Press page up, or scroll up the mouse wheel."
-    e "Нажмите Page Up или прокрутите колесиком вверх."
+    e "Нажмите Page Up или прокрутите колёсиком вверх."
 
 # game/tutorial_playing.rpy:92
 translate russian tutorial_rollback_de0b6f5a:
@@ -165,5 +165,5 @@ translate russian tutorial_rollback_dce979d4:
 translate russian tutorial_rollback_done_54d6ee45:
 
     # e "By allowing Ren'Py to take care of out-of-game issues like loading and saving, you can focus on making your game, while still giving users the experience they've come to expect."
-    e "Позволяя Ren'Py справится с внеигровыми задачами, такими, как загрузка и сохранение, вы можете сфокусироваться на создании игры, и все еще давать пользователям опыт, которого они ожидают."
+    e "Позволяя Ren'Py справится с внеигровыми задачами, такими, как загрузка и сохранение, вы можете сфокусироваться на создании игры, и всё ещё давать пользователям опыт, которого они ожидают."
 

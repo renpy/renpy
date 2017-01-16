@@ -1243,8 +1243,8 @@ style skip_text:
     size gui.notify_text_size
 
 style skip_triangle:
-    # We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE
-    # glyph in it.
+    ## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE
+    ## glyph in it.
     font "DejaVuSans.ttf"
 
 

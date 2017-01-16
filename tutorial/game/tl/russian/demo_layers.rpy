@@ -9,7 +9,7 @@ translate russian demo_layers_c4715eb5:
 translate russian demo_layers_c385f69e:
 
     # e "The \"onlayer\" clause of the scene, show, and hide statements lets us pick which layers the commands affect."
-    e "Условие \"onlayer\" для операций scene, show и hide позволяет выбрать то, на какие слои влияют комманды."
+    e "Условие \"onlayer\" для операций scene, show и hide позволяет выбрать то, на какие слои влияют команды."
 
 # game/demo_layers.rpy:28
 translate russian demo_layers_89a87205:
@@ -57,11 +57,11 @@ translate russian demo_layers_a983efbd:
 translate russian demo_layers_1185c462:
 
     # e "And that's it for layers and advanced show."
-    e "Это все, что касается слоев и продвинутого отображения."
+    e "Это всё, что касается слоёв и продвинутого отображения."
 
 translate russian strings:
 
     # game/demo_layers.rpy:53
     old "This is text."
-    new "Это - текст."
+    new "Это — текст."
 

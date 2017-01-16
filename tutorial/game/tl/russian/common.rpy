@@ -3,7 +3,7 @@ translate russian strings:
 
     # renpy/common/00action_file.rpy:142
     old "%b %d, %H:%M"
-    new "%b %d, %H:%M"
+    new "%d %b, %H:%M"
 
     # renpy/common/00action_file.rpy:621
     old "Quick save complete."
@@ -34,7 +34,7 @@ translate russian strings:
 
     # renpy/common/00console.rpy:397
     old "commands:\n"
-    new "комманды:\n"
+    new "команды:\n"
 
     # renpy/common/00console.rpy:407
     old " <renpy script statement>: run the statement\n"
@@ -97,7 +97,7 @@ translate russian strings:
 
     # renpy/common/00gallery.rpy:583
     old "slideshow"
-    new "слайдшоу"
+    new "слайд-шоу"
 
     # renpy/common/00gallery.rpy:584
     old "return"
@@ -184,7 +184,7 @@ translate russian strings:
 
     # renpy/common/00gltest.rpy:201
     old "When setup finishes, please click below to restart this program."
-    new "Когда установка завершиться, щелкните ниже, чтобы перезапустить эту программу."
+    new "Когда установка завершиться, щёлкните ниже, чтобы перезапустить эту программу."
 
     # renpy/common/00gltest.rpy:203
     old "Restart"
@@ -195,7 +195,7 @@ translate russian strings:
 
     # renpy/common/00keymap.rpy:199
     old "Saved screenshot as %s."
-    new "Скриншот сохранен как %s."
+    new "Скриншот сохранён как %s."
 
 
 translate russian strings:
@@ -206,15 +206,15 @@ translate russian strings:
 
     # renpy/common/00layout.rpy:445
     old "Are you sure you want to delete this save?"
-    new "Вы уверены, что хотите удалить сохраненную игру?"
+    new "Вы уверены, что хотите удалить сохранённую игру?"
 
     # renpy/common/00layout.rpy:446
     old "Are you sure you want to overwrite your save?"
-    new "Вы уверены, что хотите перезаписать сохраненную игру?"
+    new "Вы уверены, что хотите перезаписать сохранённую игру?"
 
     # renpy/common/00layout.rpy:447
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "Загрузка другой игры приведет к потере текущего прогресса.\nВы уверены?"
+    new "Загрузка другой игры приведёт к потере текущего прогресса.\nВы уверены?"
 
     # renpy/common/00layout.rpy:448
     old "Are you sure you want to quit?"
@@ -222,7 +222,7 @@ translate russian strings:
 
     # renpy/common/00layout.rpy:449
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "Вы точно хотите вернуться в главное меню?\nЭто приведет к потере несохраненного прогресса."
+    new "Вы точно хотите вернуться в главное меню?\nЭто приведёт к потере несохраненного прогресса."
 
     # renpy/common/00layout.rpy:450
     old "Are you sure you want to begin skipping?"
@@ -252,7 +252,7 @@ translate russian strings:
 
     # renpy/common/00preferences.rpy:373
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Включен режим авто-озвучки. Нажмите v, чтобы выключить."
+    new "Включён режим авто-озвучки. Нажмите v, чтобы выключить."
 
 
 translate russian strings:
@@ -377,7 +377,7 @@ translate russian strings:
 
     # renpy/common/_developer/developer.rpym:392
     old "Right-click or escape to quit."
-    new "Щелкните правой кнопкой мыши или нажмите escape, чтобы выйти."
+    new "Щёлкните правой кнопкой мыши или нажмите escape, чтобы выйти."
 
     # renpy/common/_developer/developer.rpym:443
     old "Done"
@@ -447,7 +447,7 @@ translate russian strings:
 
     # renpy/common/_errorhandling.rpym:484
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "Игнорирует исключение, позволяя вам продолжить. Это зачастую вызовет еще больше ошибок."
+    new "Игнорирует исключение, позволяя вам продолжить. Это зачастую вызовет ещё больше ошибок."
 
     # renpy/common/_errorhandling.rpym:487
     old "Reload"
@@ -486,9 +486,9 @@ translate russian strings:
 
     # renpy/common/_layout/classic_load_save.rpym:170
     old "a"
-    new "a"
+    new "а"
 
     # renpy/common/_layout/classic_load_save.rpym:179
     old "q"
-    new "q"
+    new "б"
 

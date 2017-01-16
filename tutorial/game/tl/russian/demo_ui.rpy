@@ -33,19 +33,19 @@ translate russian demo_ui_f34995a5:
 translate russian demo_ui_7cfaf270:
 
     # e "We can also prompt the user to enter some text."
-    e "Мы также можем попроситьь пользователя ввести текст."
+    e "Мы также можем попросить пользователя ввести текст."
 
 # game/demo_ui.rpy:245
 translate russian demo_ui_d77a671d:
 
     # pov "My name is [povname!t]."
-    pov "Мое имя [povname!t]."
+    pov "Моё имя [povname!t]."
 
 # game/demo_ui.rpy:248
 translate russian demo_ui_b50edd86:
 
     # e "Imagemaps let the user click on an image to make a choice. For example, the following screen lets you pick what to do after school:"
-    e "Карты изображений позволяют пользователю щелкнуть на изображение, чтобы сделать выбор. Например, следующий экран позволит вам выбрать действие после школы:"
+    e "Карты изображений позволяют пользователю щёлкнуть на изображение, чтобы сделать выбор. Например, следующий экран позволит вам выбрать действие после школы:"
 
 # game/demo_ui.rpy:261
 translate russian demo_ui_405542a5:
@@ -69,19 +69,19 @@ translate russian demo_ui_83e5c0cc:
 translate russian demo_ui_319cdf4b:
 
     # e "I've heard that some schools have a competitive science team, but to me research is something that can't be rushed."
-    e "Я слышала, что в некоторых школах есть научные комманды, но я считаю, что с исследованиями нельзя спешить."
+    e "Я слышала, что в некоторых школах есть научные команды, но я считаю, что с исследованиями нельзя спешить."
 
 # game/demo_ui.rpy:273
 translate russian demo_ui_d2a94440:
 
     # e "You chose art."
-    e "Вы выбрали исскуство."
+    e "Вы выбрали искусство."
 
 # game/demo_ui.rpy:275
 translate russian demo_ui_e6af6f1d:
 
     # e "Really good background art is hard to make, which is why so many games use filtered photographs. Maybe you can change that."
-    e "Хорошее исскуство тяжело рисовать, поэтому во многих играх используются фото с фильтрами. Возможно, вам удастся это изменить."
+    e "Хорошие фоны тяжело рисовать, поэтому во многих играх используются фото с фильтрами. Возможно, вам удастся это изменить."
 
 # game/demo_ui.rpy:279
 translate russian demo_ui_373ea9a5:
@@ -95,11 +95,11 @@ translate russian demo_ui_48eca0a4:
     # e "Anyway..."
     e "Ладно..."
 
-# game/demo_ui.rpy:283
-translate russian demo_ui_f936ccad:
+# game/demo_ui.rpy:284
+translate russian demo_ui_aa9bd954:
 
-    # e "We also support viewports, that allow us to display things that are bigger then the screen."
-    e "Мы также поддерживаем прокрутку, что позволяет отображать вещи размером больше чем экран."
+    # e "We also support viewports, that allow us to display things that are bigger than the screen."
+    e "Мы также поддерживаем прокрутку, что позволяет отображать вещи, размером больше чем экран."
 
 # game/demo_ui.rpy:285
 translate russian demo_ui_a9db7181:
@@ -233,7 +233,7 @@ translate russian strings:
 
     # game/demo_ui.rpy:168
     old "To get to the next screen, click the 'Continue' button."
-    new "Для перехода к следующему экрану, щелкните кнопку \"Продолжить\"."
+    new "Для перехода к следующему экрану, щёлкните кнопку \"Продолжить\"."
 
     # game/demo_ui.rpy:243
     old "What is your name?"

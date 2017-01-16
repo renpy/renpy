@@ -51,7 +51,7 @@ translate russian demo_character_fceb39fb:
 translate russian demo_character_92ae524c:
 
     # eside "A more practical use of that is in conjunction with show_side_image, which lets us position an image next to the text."
-    eside "Более практичное использование этого - в сочетании с show_side_image, что позволит разместить изображение рядом с текстом."
+    eside "Более практичное использование этого — в сочетании с show_side_image, что позволит разместить изображение рядом с текстом."
 
 # game/demo_character.rpy:63
 translate russian demo_character_ba09ee13:
@@ -63,7 +63,7 @@ translate russian demo_character_ba09ee13:
 translate russian demo_character_91f8f1cc:
 
     # ectc "Finally, we demonstrate a click to continue indicator. In this example, it's nestled in with the text."
-    ectc "Наконец, существует индикатор \"щелкните, чтобы продолжить\". В этом примере, он встроен в текст."
+    ectc "Наконец, существует индикатор \"щёлкните, чтобы продолжить\". В этом примере, он встроен в текст."
 
 # game/demo_character.rpy:67
 translate russian demo_character_90e5383f:
@@ -81,7 +81,7 @@ translate russian demo_character_4a210bad:
 translate russian demo_character_0393756f:
 
     # e "Finally, let me point out a couple of special characters we pre-define."
-    e "Наконец, позвольте показать вам несколько особых, предопределенных персонажей."
+    e "Наконец, позвольте показать вам несколько особых, предопределённых персонажей."
 
 # game/demo_character.rpy:76
 translate russian demo_character_29688b7c:
@@ -93,7 +93,7 @@ translate russian demo_character_29688b7c:
 translate russian demo_character_496243d7:
 
     # centered "It's just a highly customized normal character, that's useful for dates and titles."
-    centered "Это обычный персонаж, который имеет множество предопределенных настроек. Он полезен для дат и заголовков."
+    centered "Это обычный персонаж, который имеет множество предопределённых настроек. Он полезен для дат и заголовков."
 
 # game/demo_character.rpy:83
 translate russian demo_character_e79e9042:
@@ -129,7 +129,7 @@ translate russian demo_character_170d938b:
 translate russian demo_character_4adb20a9:
 
     # e "Hopefully, these characters, along with the ones you define, will lead to a very expressive game."
-    e "Надеемся, что эти персонажи, как и другие, определенные вами, приведут к очень выразительной игре."
+    e "Надеемся, что эти персонажи, как и другие, определённые вами, приведут к очень выразительной игре."
 
 translate russian strings:
 

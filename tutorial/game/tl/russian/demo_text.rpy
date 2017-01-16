@@ -3,7 +3,7 @@
 translate russian demo_text_ff47a1f2:
 
     # e "Ren'Py gives you quite a bit of control over how text appears."
-    e "Ren'Py дает вам довольно много власти над внешним видом текста."
+    e "Ren'Py даёт вам довольно много власти над внешним видом текста."
 
 # game/demo_text.rpy:67
 translate russian demo_text_ab9b2f08:
@@ -15,7 +15,7 @@ translate russian demo_text_ab9b2f08:
 translate russian demo_text_12663c84:
 
     # e "Text tags can make text {b}bold{/b}, {i}italic{/i}, {s}struckthrough{/s}, or {u}underlined{/u}."
-    e "Это позволяет {b}ужирнять{/b}, {i}наклонять{/i}, {s}зачеркивать{/s} и {u}подчеркивать{/u} текст."
+    e "Это позволяет {b}ужирнять{/b}, {i}наклонять{/i}, {s}зачёркивать{/s} и {u}подчёркивать{/u} текст."
 
 # game/demo_text.rpy:71
 translate russian demo_text_bdfcba5a:
@@ -51,7 +51,7 @@ translate russian demo_text_90c83bb6:
 translate russian demo_text_a134abb3:
 
     # extend " when we reach the end of a block of text, in slow text mode."
-    extend "когда закончится предыдущий, в режиме медленных текстов."
+    extend " когда закончится предыдущий, в режиме медленных текстов."
 
 # game/demo_text.rpy:84
 translate russian demo_text_d2b1ebbe:
@@ -111,13 +111,13 @@ translate russian demo_text_fcb34ec8:
 translate russian demo_text_3154619a:
 
     # e "With great power comes great responsibility, after all."
-    e "С большой силой приходит большая ответственность и все такое."
+    e "С большой силой приходит большая ответственность и всё такое."
 
 # game/demo_text.rpy:106
 translate russian demo_text_12873855:
 
     # e "And we want to give you all the power you need."
-    e "И мы даем вам ту силу, которая вам нужна."
+    e "И мы даём вам ту силу, которая вам нужна."
 
 # game/demo_text.rpy:108
 translate russian demo_text_63b9c010:
@@ -141,13 +141,13 @@ translate russian demo_text_c130dcd4:
 translate russian demo_text_9eb0448e:
 
     # esubtitle "Here, we have two outlines around the white text."
-    esubtitle "Здесь, у нас есть белый текст, обведенный двумя контурами."
+    esubtitle "Здесь, у нас есть белый текст, обведённый двумя контурами."
 
 # game/demo_text.rpy:118
 translate russian demo_text_eb22992d:
 
     # esubtitle "The bottom one is a translucent black that's offset a little, while the top one is green."
-    esubtitle "Нижний - прозрачно-черный с небольшим отступом, верхний - зеленый."
+    esubtitle "Нижний — прозрачно-чёрный с небольшим отступом, верхний — зелёный."
 
 # game/demo_text.rpy:120
 translate russian demo_text_7067acb5:
@@ -165,23 +165,23 @@ translate russian demo_text_123ff836:
 translate russian demo_text_d742e133:
 
     # esfont "For even more control, Ren'Py supports SFonts, image files containing font information."
-    esfont "Ren'Py также поддерживает SFonts, файлы изображений имеющие информацию о шрифтах."
+    esfont "Ren'Py takzhe podderzhivaet SFonts, faily izobrazheniy, imeyuschie informaciyu o shriftah."
 
 # game/demo_text.rpy:128
 translate russian demo_text_2a8833c0:
 
     # esfont "SFonts let you use fonts you otherwise couldn't, and apply special effects to fonts using your favorite image editor."
-    esfont "SFonts позволяет вам использовать шрифты, которые иначе вы бы использовать не смогли, и применять к ним спецэффекты используя любой графический редактор."
+    esfont "SFonts pozvolyaet vam ispol'zovat shrifty, kotorymi bi vi inache pol'zovatsya ne mogli, i primenyat k nim speceffecty, ispolzuya graficheskiy redaktor. A inogda iz-za nih prihoditsya pisat' na translite, hehe."
 
 # game/demo_text.rpy:130
 translate russian demo_text_418ffc27:
 
     # e "Well, that's it for fonts and text tags."
-    e "Это все, что касается шрифтов и тегов тектса."
+    e "Это всё, что касается шрифтов и тегов текста."
 
 # game/demo_text.rpy:138
 translate russian define_hyperlink_8863ed04:
 
     # definition "A hyperlink is a button that is defined inside text, using text tags. They're ideal for including definitions of words used in the script, but they shouldn't be used in place of menus."
-    definition "Гиперссылка - кнопка, находящаяся внутри текста. Они идеальны для включения определений слов внутри сценария, но их не следует использовать вместо меню."
+    definition "Гиперссылка — кнопка, находящаяся внутри текста. Они идеальны для включения определений слов внутри сценария, но их не следует использовать вместо меню."
 
