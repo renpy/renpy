@@ -177,7 +177,7 @@ translate russian demo_text_2a8833c0:
 translate russian demo_text_418ffc27:
 
     # e "Well, that's it for fonts and text tags."
-    e "Это всё, что касается шрифтов и тегов тектса."
+    e "Это всё, что касается шрифтов и тегов текста."
 
 # game/demo_text.rpy:138
 translate russian define_hyperlink_8863ed04:

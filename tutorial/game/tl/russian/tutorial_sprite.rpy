@@ -15,7 +15,7 @@ translate russian tutorial_sprite_40df8d5d:
 translate russian tutorial_sprite_29c5e523:
 
     # e "The OpenGL system should be able to animate this smoothly, but you might see a bit of stuttering if your computer is using software."
-    e "Система OpenGL должна легко справлятся с такой анимацией, но вы можете наблюдать проседание при работе с программным обработчиком."
+    e "Система OpenGL должна легко справляться с такой анимацией, но вы можете наблюдать проседание при работе с программным обработчиком."
 
 # game/tutorial_sprite.rpy:74
 translate russian tutorial_sprite_90927173:

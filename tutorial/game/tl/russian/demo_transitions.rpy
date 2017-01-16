@@ -268,7 +268,7 @@ translate russian demo_imagedissolve_transitions_3a401ee7:
 translate russian demo_imagedissolve_transitions_20d9cf6c:
 
     # e "The teleport transition uses a different image, one that dissolves things in one line at a time."
-    e "Переход teleport использует другое изображение, такое, которое позволяет вещам появлятся построчно."
+    e "Переход teleport использует другое изображение, такое, которое позволяет вещам появляться построчно."
 
 # game/demo_transitions.rpy:250
 translate russian demo_imagedissolve_transitions_906f7800:
@@ -304,7 +304,7 @@ translate russian demo_cropmove_transitions_1711a91e:
 translate russian demo_cropmove_transitions_6d82cfd7:
 
     # e "I'll stand offscreen, so you can see some of its modes. I'll read out the mode name after each transition."
-    e "Я отойду с экрана, и вы увидете несколько режимов этого перехода. Я скажу имя режима после каждого перехода."
+    e "Я отойду с экрана, и вы увидите несколько режимов этого перехода. Я скажу имя режима после каждого перехода."
 
 # game/demo_transitions.rpy:275
 translate russian demo_cropmove_transitions_4427c78c:
@@ -412,7 +412,7 @@ translate russian demo_cropmove_transitions_016a1e0a:
 translate russian demo_cropmove_transitions_08d753ed:
 
     # e "It's enough to make you feel a bit dizzy."
-    e "Этого достаточно, чтобы добится головокружения."
+    e "Этого достаточно, чтобы добиться головокружения."
 
 # game/demo_transitions.rpy:357
 translate russian demo_movetransition_14df0e34:

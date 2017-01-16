@@ -57,7 +57,7 @@ translate russian demo_imageops_3a9392e4:
 translate russian demo_imageops_aab0c08f:
 
     # e "It isn't really an image operation, but we don't know where else to put it."
-    e "Это, вообщем-то, не операция над изображением, но мы не знаем, где ещё о нём сказать."
+    e "Это, в общем-то, не операция над изображением, но мы не знаем, где ещё о нём сказать."
 
 # game/demo_imageops.rpy:106
 translate russian demo_imageops_23cd24da:

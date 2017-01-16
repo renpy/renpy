@@ -34,7 +34,7 @@ translate russian strings:
 
     # renpy/common/00console.rpy:397
     old "commands:\n"
-    new "комманды:\n"
+    new "команды:\n"
 
     # renpy/common/00console.rpy:407
     old " <renpy script statement>: run the statement\n"
@@ -97,7 +97,7 @@ translate russian strings:
 
     # renpy/common/00gallery.rpy:583
     old "slideshow"
-    new "слайдшоу"
+    new "слайд-шоу"
 
     # renpy/common/00gallery.rpy:584
     old "return"

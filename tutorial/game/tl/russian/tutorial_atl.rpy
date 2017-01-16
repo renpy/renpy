@@ -45,7 +45,7 @@ translate russian tutorial_positions_76d7a5bf:
 translate russian tutorial_positions_be14c7c3:
 
     # e "When we increase xpos, we move to the right. So here's an xpos of .5, meaning half the width across the screen."
-    e "Когда мы увеличиваем xpos, мы движемся вправо. Значит, если xpos равен 0.5, мы находимя в середине экрана по горизонтали."
+    e "Когда мы увеличиваем xpos, мы движемся вправо. Значит, если xpos равен 0.5, мы находимся в середине экрана по горизонтали."
 
 # game/tutorial_atl.rpy:222
 translate russian tutorial_positions_9b91be6c:
@@ -267,7 +267,7 @@ translate russian tutorial_atl_da7a7759:
 translate russian tutorial_atl_c21bc1d1:
 
     # e "The key to ATL is what we call composeability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
-    e "Ключом к ATL является то, что он создаётся из относительно простых комманд, но их можно сочетать для создания сложных трансформаций."
+    e "Ключом к ATL является то, что он создаётся из относительно простых команд, но их можно сочетать для создания сложных трансформаций."
 
 # game/tutorial_atl.rpy:413
 translate russian tutorial_atl_ed82983f:
@@ -393,7 +393,7 @@ translate russian tutorial_atl_685eeeaa:
 translate russian tutorial_atl_c5cb49de:
 
     # e "That's followed by an amount of time, in this case three seconds. It ends with a list of properties, each followed by its new value."
-    e "После этого следует количество времени, в нашем случае — три секунды. Он заканчивается списком свойств и их новых значений."
+    e "После этого следует количество времени, в нашем случае — три секунды. Он заканчивается списком свойств, и их новых значений."
 
 # game/tutorial_atl.rpy:516
 translate russian tutorial_atl_72d47fb6:
@@ -483,7 +483,7 @@ translate russian tutorial_atl_ebb84988:
 translate russian tutorial_atl_d08fe8d9:
 
     # e "Apart from displayables, pause, interpolation, and repeat, there are a few other statements we can use as part of ATL."
-    e "Помимо отображаемых объектов, пауз, интерполяций и повторов, существует несколько других ATL-комманд."
+    e "Помимо отображаемых объектов, пауз, интерполяций и повторов, существует несколько других ATL-команд."
 
 # game/tutorial_atl.rpy:678
 translate russian tutorial_atl_db6302bd:

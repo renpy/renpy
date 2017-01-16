@@ -9,7 +9,7 @@ translate russian demo_layers_c4715eb5:
 translate russian demo_layers_c385f69e:
 
     # e "The \"onlayer\" clause of the scene, show, and hide statements lets us pick which layers the commands affect."
-    e "Условие \"onlayer\" для операций scene, show и hide позволяет выбрать то, на какие слои влияют комманды."
+    e "Условие \"onlayer\" для операций scene, show и hide позволяет выбрать то, на какие слои влияют команды."
 
 # game/demo_layers.rpy:28
 translate russian demo_layers_89a87205:

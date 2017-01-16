@@ -141,7 +141,7 @@ translate russian tutorial_dialogue_97a33275:
 translate russian tutorial_dialogue_c5e70d7e:
 
     # e "Be sure to preserve the spacing before lines. That's known as indentation, and it's used to help Ren'Py group lines of script into blocks."
-    e "Убедитесь, что вы сохраняете пробелы перед строками. Эта индентация помогает Ren'Py группировать строки кода в блоки."
+    e "Убедитесь, что вы сохраняете пробелы перед строками. Такой отступ называется индентация и помогает Ren'Py группировать строки кода в блоки."
 
 # game/tutorial_quickstart.rpy:106
 translate russian tutorial_dialogue_90719f73:
@@ -165,7 +165,7 @@ translate russian tutorial_dialogue_9c9d59c2:
 translate russian tutorial_dialogue_2a2d1e51:
 
     # e "To solve these problems, Ren'Py lets you define Characters."
-    e "Для решения этих проблем, Ren'Py позволяет объевлять объекты персонажей."
+    e "Для решения этих проблем, Ren'Py позволяет объявлять объекты персонажей."
 
 # game/tutorial_quickstart.rpy:116
 translate russian tutorial_dialogue_16e8c5fd:
@@ -441,7 +441,7 @@ translate russian tutorial_transitions_0ba82f00:
 translate russian tutorial_transitions_51ff9600:
 
     # e "Ren'Py defines some transitions for you, like dissolve, fade, and move. For more complex or customized transitions, you'll have to define your own."
-    e "Ren'Py определяет для вас несколько популярных переходов, таких как растворения (dissolve), затухания (fade) и передвижения (move). Для более сложных переходов, вам придётся создавать свои сообственные."
+    e "Ren'Py определяет для вас несколько популярных переходов, таких как растворения (dissolve), затухания (fade) и передвижения (move). Для более сложных переходов, вам придётся создавать свои собственные."
 
 # game/tutorial_quickstart.rpy:298
 translate russian tutorial_transitions_a7905e16:
@@ -483,13 +483,13 @@ translate russian tutorial_music_45cd30df:
 translate russian tutorial_music_a776b6ad:
 
     # e "Let's check out some of the commands that can effect the music channel."
-    e "Давайте посмотрим на комманды влияющие на канал музыки."
+    e "Давайте посмотрим на команды влияющие на канал музыки."
 
 # game/tutorial_quickstart.rpy:324
 translate russian tutorial_music_8b606a55:
 
     # e "The play music command replaces the currently playing music, and replaces it with the named filename."
-    e "Комманда play music заменяет текущую музыку на файл \"filename\"."
+    e "Команда play music заменяет текущую музыку на файл \"filename\"."
 
 # game/tutorial_quickstart.rpy:326
 translate russian tutorial_music_18650fe7:
@@ -603,7 +603,7 @@ translate russian choice1_done_664fe702:
 translate russian choice1_done_31d12b1e:
 
     # e "The lines beginning with the dollar sign are lines of python code, which are used to set a flag based on the user's choice."
-    e "Строки, наинающиеся со знака доллара — код Python. Мы используем его для создания флага, хранящего выбор пользователя."
+    e "Строки, начинающиеся со знака доллара — код Python. Мы используем его для создания флага, хранящего выбор пользователя."
 
 # game/tutorial_quickstart.rpy:424
 translate russian choice1_done_88398d3e:

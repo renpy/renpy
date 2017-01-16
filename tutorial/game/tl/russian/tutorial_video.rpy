@@ -15,7 +15,7 @@ translate russian tutorial_video_4aefd413:
 translate russian tutorial_video_b927d009:
 
     # e "To do this, we first have to define an image to be a Movie displayable. Movie displayables require a size argument, and also use properties to position themselves on the screen."
-    e "Для этого следует определить отображаемый объект Movie. Это потребует укзазания размера, а также позволит определить местоположение видео на экране."
+    e "Для этого следует определить отображаемый объект Movie. Это потребует указания размера, а также позволит определить местоположение видео на экране."
 
 # game/tutorial_video.rpy:27
 translate russian tutorial_video_fbaa71e4:
