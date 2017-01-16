@@ -763,13 +763,30 @@ cdef class Render:
 
         reverse = self.reverse
 
-        # This doesn't actually make a subsurface, as we can't easily do
-        # so for non-rectangle-aligned renders.
-        if (reverse is not None) and (
+        if ((reverse is not None) and
+            (reverse.xdx != 1.0 or reverse.ydy != 1.0) and
+            reverse.xdx > 0.0 and
+            reverse.xdy == 0.0 and
+            reverse.ydx == 0.0 and
+            reverse.ydy > 0.0):
+
+            # When rectangle-aligned but not 1:1, transform the rectangle and
+            # keep cropping.
+
+            rv.reverse = reverse
+            rv.forward = self.forward
+            x, y = self.forward.transform(x, y)
+            w, h = self.forward.transform(w, h)
+
+        if ((reverse is not None) and
             reverse.xdx != 1.0 or
             reverse.xdy != 0.0 or
             reverse.ydx != 0.0 or
             reverse.ydy != 1.0):
+
+
+            # This doesn't actually make a subsurface, as we can't easily do
+            # so for non-rectangle-aligned renders.
 
             rv.clipping = True
             rv.blit(self, (-x, -y), focus=focus, main=True)
@@ -800,10 +817,12 @@ cdef class Render:
                     newchild.width = cw
                     newchild.height = ch
                     newchild.render_of = child.render_of[:]
+
                 elif isinstance(child, Render):
                     crop = (cx, cy, cw, ch)
                     newchild = child.subsurface(crop, focus=focus)
                     renpy.display.draw.mutated_surface(newchild)
+
                 else:
                     crop = (cx, cy, cw, ch)
                     newchild = child.subsurface(crop)
