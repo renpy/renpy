@@ -135,7 +135,7 @@ init -1100 python in gui:
 
         return rv
 
-    def button_text_properties(kind):
+    def text_properties(kind=None):
         """
         :doc: gui
 
@@ -180,8 +180,14 @@ init -1100 python in gui:
         g = globals()
 
         def get(prop):
-            if kind + "_" + prop in g:
-                return g[kind + "_" + prop]
+
+            if kind is not None:
+                name = kind + "_" + prop
+            else:
+                name = prop
+
+            if name in g:
+                return g[name]
 
             return None
 
@@ -226,6 +232,8 @@ init -1100 python in gui:
             rv["selected_color"] = selected_color
 
         return rv
+
+    button_text_properties = text_properties
 
 
     ############################################################################

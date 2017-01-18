@@ -10,10 +10,13 @@ init offset = -1
 ################################################################################
 
 style default:
-    font gui.default_font
-    size gui.text_size
-    color gui.text_color
+    properties gui.text_properties()
+#     font gui.default_font
+#     size gui.text_size
+#     color gui.text_color
+
     language gui.language
+
 
 style input:
     color gui.accent_color
@@ -23,11 +26,12 @@ style hyperlink_text:
     hover_color gui.hover_color
     hover_underline True
 
-
 style gui_text:
-    font gui.interface_font
-    color gui.interface_text_color
-    size gui.interface_text_size
+    properties gui.text_properties("interface")
+
+#     font gui.interface_font
+#     color gui.interface_text_color
+#     size gui.interface_text_size
 
 
 style button:
