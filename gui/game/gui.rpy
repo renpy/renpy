@@ -56,13 +56,13 @@ define gui.interface_text_color = "#ffffff"
 ## Fonts and Font Sizes ########################################################
 
 ## The font used for in-game text.
-define gui.default_font = "DejaVuSans.ttf"
+define gui.text_font = "DejaVuSans.ttf"
 
 ## The font used for character names.
-define gui.name_font = "DejaVuSans.ttf"
+define gui.name_text_font = "DejaVuSans.ttf"
 
 ## The font used for out-of-game text.
-define gui.interface_font = "DejaVuSans.ttf"
+define gui.interface_text_font = "DejaVuSans.ttf"
 
 ## The size of normal dialogue text.
 define gui.text_size = gui.scale(22)
@@ -160,7 +160,7 @@ define gui.button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gu
 define gui.button_tile = False
 
 ## The font used by the button.
-define gui.button_text_font = gui.interface_font
+define gui.button_text_font = gui.interface_text_font
 
 ## The size of the text used by the button.
 define gui.button_text_size = gui.interface_text_size
@@ -210,7 +210,7 @@ define gui.choice_button_width = gui.scale(790)
 define gui.choice_button_height = None
 define gui.choice_button_tile = False
 define gui.choice_button_borders = Borders(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
-define gui.choice_button_text_font = gui.default_font
+define gui.choice_button_text_font = gui.text_font
 define gui.choice_button_text_size = gui.text_size
 define gui.choice_button_text_xalign = 0.5
 define gui.choice_button_text_idle_color = "#cccccc"
@@ -272,6 +272,9 @@ define gui.page_spacing = gui.scale(0)
 
 ## The spacing between file slots.
 define gui.slot_spacing = gui.scale(10)
+
+## The position of the main menu text.
+define gui.main_menu_text_xalign = 1.0
 
 
 ## Frames ######################################################################

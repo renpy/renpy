@@ -11,44 +11,34 @@ init offset = -1
 
 style default:
     properties gui.text_properties()
-#     font gui.default_font
-#     size gui.text_size
-#     color gui.text_color
-
     language gui.language
 
 
 style input:
+    properties gui.text_properties("input", accent=True)
     color gui.accent_color
 
 style hyperlink_text:
-    color gui.accent_color
-    hover_color gui.hover_color
+    properties gui.text_properties("hyperlink", accent=True)
     hover_underline True
 
 style gui_text:
     properties gui.text_properties("interface")
-
-#     font gui.interface_font
-#     color gui.interface_text_color
-#     size gui.interface_text_size
 
 
 style button:
     properties gui.button_properties("button")
 
 style button_text is gui_text:
-    properties gui.button_text_properties("button")
+    properties gui.text_properties("button")
     yalign 0.5
 
 
 style label_text is gui_text:
-    color gui.accent_color
-    size gui.label_text_size
+    properties gui.text_properties("label", accent=True)
 
 style prompt_text is gui_text:
-    color gui.text_color
-    size gui.interface_text_size
+    properties gui.text_properties("prompt")
 
 
 style bar:
@@ -155,9 +145,7 @@ style namebox:
     padding gui.namebox_borders.padding
 
 style say_label:
-    color gui.accent_color
-    font gui.name_font
-    size gui.name_text_size
+    properties gui.text_properties("name", accent=True)
     xalign gui.name_xalign
     yalign 0.5
 
@@ -407,14 +395,13 @@ style main_menu_vbox:
     yoffset gui.scale(-20)
 
 style main_menu_text:
-    xalign 1.0
-
-    layout "subtitle"
-    text_align 1.0
-    color gui.accent_color
+    properties gui.text_properties("main_menu", accent=True)
 
 style main_menu_title:
-    size gui.title_text_size
+    properties gui.text_properties("title")
+
+style main_menu_version:
+    properties gui.text_properties("version")
 
 
 ## Game Menu screen ############################################################
@@ -1288,7 +1275,7 @@ style notify_frame:
     padding gui.notify_frame_borders.padding
 
 style notify_text:
-    size gui.notify_text_size
+    properties gui.text_properties("notify")
 
 
 ## NVL screen ##################################################################
