@@ -135,7 +135,13 @@ init -1100 python in gui:
 
         return rv
 
-    def text_properties(kind=None):
+    _aliases = {
+        "text_font" : "default_font",
+        "interface_text_font" : "interface_font",
+        "name_text_font" : "name_font",
+    }
+
+    def text_properties(kind=None, accent=False):
         """
         :doc: gui
 
@@ -164,6 +170,11 @@ init -1100 python in gui:
         There are also a number of variables that set the text
         :propref:`color` style property:
 
+        color
+            To gui.kind_text_color, if it exists. If the variable is not
+            set, and `accent` is True, sets the text color to the default
+            accent color.
+
         insensitive_color
             To gui.kind_text_insensitive_color, if it exists.
 
@@ -189,6 +200,12 @@ init -1100 python in gui:
             if name in g:
                 return g[name]
 
+            elif name in _aliases:
+                alias = _aliases[name]
+
+                if alias in g:
+                    return g[alias]
+
             return None
 
         rv = { }
@@ -198,10 +215,14 @@ init -1100 python in gui:
         xalign = get("text_xalign")
         outlines = get("text_outlines")
 
+        color = get("text_color")
         insensitive_color = get("text_insensitive_color")
         idle_color = get("text_idle_color")
         hover_color = get("text_hover_color")
         selected_color = get("text_selected_color")
+
+        if (color is None) and accent and (accent_color is not None):
+            color = accent_color
 
         if font is not None:
             rv["font"] = font
@@ -218,6 +239,9 @@ init -1100 python in gui:
 
         if outlines is not None:
             rv["outlines"] = outlines
+
+        if color is not None:
+            rv["color"] = color
 
         if insensitive_color is not None:
             rv["insensitive_color"] = insensitive_color
