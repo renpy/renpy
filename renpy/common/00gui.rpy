@@ -154,6 +154,9 @@ init -1100 python in gui:
         :propref:`text_align`
             To gui.kind_text_xalign, if it exists.
 
+        :propref:`outlines`
+            To gui.kind_text_outlines, if it exists.
+
         :propref:`layout`
             To "subtitle" if gui.kind_text_xalign is greater than zero
             and less than one.
@@ -187,6 +190,7 @@ init -1100 python in gui:
         font = get("text_font")
         text_size = get("text_size")
         xalign = get("text_xalign")
+        outlines = get("text_outlines")
 
         insensitive_color = get("text_insensitive_color")
         idle_color = get("text_idle_color")
@@ -205,6 +209,9 @@ init -1100 python in gui:
 
             if (xalign > 0) and (xalign < 1):
                 rv["layout"] = "subtitle"
+
+        if outlines is not None:
+            rv["outlines"] = outlines
 
         if insensitive_color is not None:
             rv["insensitive_color"] = insensitive_color
