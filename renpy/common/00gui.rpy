@@ -135,11 +135,6 @@ init -1100 python in gui:
 
         return rv
 
-    _aliases = {
-        "text_font" : "default_font",
-        "interface_text_font" : "interface_font",
-        "name_text_font" : "name_font",
-    }
 
     def text_properties(kind=None, accent=False):
         """
@@ -199,12 +194,6 @@ init -1100 python in gui:
 
             if name in g:
                 return g[name]
-
-            elif name in _aliases:
-                alias = _aliases[name]
-
-                if alias in g:
-                    return g[alias]
 
             return None
 
