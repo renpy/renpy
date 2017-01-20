@@ -202,7 +202,7 @@ dialogue.
 
     This sets the color of the dialogue text.
 
-.. var:: gui.default_font = "ArchitectsDaughter.ttf"
+.. var:: gui.text_font = "ArchitectsDaughter.ttf"
 
     This sets the font that is used for dialogue text, menus, inputs, and
     other in-game text. The font file should exist in the game directory.
@@ -335,7 +335,7 @@ and size of text.
 
 .. raw:: html
 
-   <p>These variables should generally be set to hexadecimal color codes, which are 
+   <p>These variables should generally be set to hexadecimal color codes, which are
    are strings of the form "#rrggbb" (or "#rrggbbaa" to specify an alpha component),
    similar to color codes used by web browsers. For example, "#663399" is the code
    for a shade of <a href="http://www.economist.com/blogs/babbage/2014/06/digital-remembrance" style="text-decoration: none; color: rebeccapurple">purple</a>.
@@ -389,10 +389,10 @@ documented above, the following variables exist:
     generating images, and will not take effect until images are regenerated
     in the launcher.)
 
-In additional to :var:`gui.default_font`, the following variables selects the
+In additional to :var:`gui.text_font`, the following variables selects the
 fonts used for text. These fonts should also be placed in the game directory.
 
-.. var:: gui.interface_font = "ArchitectsDaughter.ttf"
+.. var:: gui.interface_text_font = "ArchitectsDaughter.ttf"
 
     The font used for text for user interface elements, like the main and
     game menus, buttons, and so on.

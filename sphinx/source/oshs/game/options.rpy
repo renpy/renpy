@@ -156,9 +156,9 @@ define gui.interface_text_color = '#404040'
 define gui.choice_idle_color = "#cccccc"
 define gui.choice_hover_color = "#0066cc"
 
-define gui.default_font = "ArchitectsDaughter.ttf"
-define gui.name_font = "ArchitectsDaughter.ttf"
-define gui.interface_font = "ArchitectsDaughter.ttf"
+define gui.text_font = "ArchitectsDaughter.ttf"
+define gui.name_text_font = "ArchitectsDaughter.ttf"
+define gui.interface_text_font = "ArchitectsDaughter.ttf"
 define gui.button_text_font = "ArchitectsDaughter.ttf"
 define gui.slot_font = "ArchitectsDaughter.ttf"
 define gui.glyph_font = "DejaVuSans.ttf"
@@ -185,7 +185,7 @@ define gui.confirm_button_width = 100
 
 define gui.choice_button_tile = True
 define gui.choice_button_borders = Borders(150, 7, 150, 10)
-define gui.choice_button_text_font = gui.default_font
+define gui.choice_button_text_font = gui.text_font
 
 define gui.choice_button_text_idle_color = "#606060"
 define gui.choice_button_text_hover_color = "#0066CC"
