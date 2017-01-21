@@ -132,15 +132,15 @@ define gui.namebox_tile = False
 ## The placement of dialogue relative to the textbox. These can be a whole
 ## number of pixels relative to the left or top side of the textbox, or 0.5
 ## to center.
-define gui.text_xpos = gui.scale(268)
-define gui.text_ypos = gui.scale(50)
+define gui.dialogue_xpos = gui.scale(268)
+define gui.dialogue_ypos = gui.scale(50)
 
 ## The maximum width of dialogue text, in pixels.
-define gui.text_width = gui.scale(744)
+define gui.dialogue_width = gui.scale(744)
 
 ## The horizontal alignment of the dialogue text. This can be 0.0 for
 ## left-aligned, 0.5 for centered, and 1.0 for right-aligned.
-define gui.text_xalign = 0.0
+define gui.dialogue_text_xalign = 0.0
 
 
 ## Buttons #####################################################################

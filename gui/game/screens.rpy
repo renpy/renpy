@@ -16,7 +16,6 @@ style default:
 
 style input:
     properties gui.text_properties("input", accent=True)
-    color gui.accent_color
 
 style hyperlink_text:
     properties gui.text_properties("hyperlink", accent=True)
@@ -150,13 +149,12 @@ style say_label:
     yalign 0.5
 
 style say_dialogue:
-    xpos gui.text_xpos
-    xanchor gui.text_xalign
-    xsize gui.text_width
-    ypos gui.text_ypos
+    properties gui.text_properties("dialogue")
 
-    text_align gui.text_xalign
-    layout ("subtitle" if gui.text_xalign else "tex")
+    xpos gui.dialogue_xpos
+    xsize gui.dialogue_width
+    ypos gui.dialogue_ypos
+
 
 
 ## Input screen ################################################################
@@ -175,25 +173,23 @@ screen input(prompt):
     window:
 
         vbox:
-            xpos gui.text_xpos
-            xanchor gui.text_xalign
-            ypos gui.text_ypos
+            xpos gui.dialogue_xpos
+            xanchor gui.dialogue_xalign
+            ypos gui.dialogue_ypos
+            xsize gui.dialogue_width
 
             text prompt style "input_prompt"
             input id "input"
 
 
-style input_prompt is default
+style input_prompt is say_dialogue
 
 style input_prompt:
-    xmaximum gui.text_width
-    xalign gui.text_xalign
-    text_align gui.text_xalign
+    properties gui.text_properties("input_prompt")
+    xmaximum gui.dialogue_width
 
 style input:
-    xmaximum gui.text_width
-    xalign gui.text_xalign
-    text_align gui.text_xalign
+    xmaximum gui.dialogue_width
 
 ## Choice screen ###############################################################
 ##
