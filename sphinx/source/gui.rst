@@ -1016,22 +1016,22 @@ has a name (an empty name, like " ", counts).
 
     These variables control the display of the frame containing the namebox.
 
-Text
+Dialogue
 ^^^^
 
-.. var:: gui.text_xpos = 402
-.. var:: gui.text_ypos = 75
+.. var:: gui.dialogue_xpos = 402
+.. var:: gui.dialogue_ypos = 75
 
     The horizontal and vertical positions of the actual dialogue. These
     are usually a number of pixels from the left or top side of the textbox.
     Setting a variable to 0.5 centers the dialogue in the textbox (see below).
 
-.. var:: gui.text_width = 1116
+.. var:: gui.dialogue_width = 1116
 
     This variable gives the maximum width of a line of dialogue, in pixels.
     When dialogue reaches this width, it will be wrapped by Ren'Py.
 
-.. var:: gui.text_xalign = 0.0
+.. var:: gui.dialogue_text_xalign = 0.0
 
     The horizontal alignment of dialogue text. 0.0 is left aligned, 0.5 is
     centered, and 1.0 is right-aligned.
@@ -1046,8 +1046,8 @@ To center the character's name, use::
 
 To center dialogue text, use::
 
-    define gui.text_xpos = 0.5
-    define gui.text_xalign = 1.0
+    define gui.dialogue_xpos = 0.5
+    define gui.dialogue_xalign = 1.0
 
 Our example game uses this code to customize the centered namebox::
 
