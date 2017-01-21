@@ -346,8 +346,12 @@ init python:
             maxx = max(x1, x2)
             maxy = max(y1, y2)
 
-            w = maxx - minx
-            h = maxy - miny
+            w = int(maxx - minx)
+            h = int(maxy - miny)
+
+            minx = int(minx)
+            miny = int(miny)
+
 
             return (minx, miny, w, h)
 
@@ -391,6 +395,9 @@ init python:
 
         def event(self, ev, x, y, st):
             import pygame_sdl2 as pygame
+
+            if (x < 0 or y < 0):
+                return None
 
             self.mouse = (x, y)
             renpy.redraw(self, 0)
