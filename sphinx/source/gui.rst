@@ -625,6 +625,13 @@ The following variables set various properties of buttons:
 
     The color of the button text in various states.
 
+.. var:: gui.button_text_outlines = [ ]
+
+    A list of outline definitions that apply to buttons. An outline
+    definion is in the form (size, color, x-offset, y-offset). For example,
+    ``[ (2, "#ffffc0", 0, 0) ]`` creates a light-yellow outline centered on
+    the button text.
+
 .. var:: gui.button_text_xalign = 0.0
 
     The horizontal alignment of the button text. 0.0 is left-aligned,
@@ -1206,6 +1213,60 @@ characters, and by defining a few variables in script.rpy. ::
         :width: 100%
 
         The example game, customized with the settings above.
+
+Text
+----
+
+Most text can be customized using GUI variables. The variables used
+are of the form:
+
+.. var:: gui.kind_text_font
+
+    If present, the font used for the text.
+
+.. var:: gui.kind_text_size
+
+    If present, the size of the text.
+
+.. var:: gui.kind_text_color
+
+    If present, the color of the text.
+
+.. var:: gui.kind_text_outlines
+
+    If present, a list of the outlines that are applied to the text. See
+    :var:`gui.button_text_outlines` for an explanation of how this works.
+
+The kind prefix can be omitted, in which case it customizes the default look
+of text. Otherwise, it may be:
+
+interface
+    For default text in the out-of-game interface.
+
+input
+    For text in a text input widget.
+
+input_prompt
+    For the prompt portion of a text input.
+
+label
+    For decorative labels.
+
+prompt
+    For confirmation prompts asking the player a question.
+
+dialogue
+    For dialogue.
+
+notify
+    For notification text.
+
+
+For example::
+
+    define gui.dialogue_text_outlines = [ (0, "#00000080", 2, 2) ]
+
+puts a drop shadow to the right of and below dialogue text.
 
 
 Translation and GUI Variables
