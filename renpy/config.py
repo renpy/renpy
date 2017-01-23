@@ -745,6 +745,10 @@ ignore_duplicate_labels = False
 # A list of callbacks when creating a line log entry.
 line_log_callbacks = [ ]
 
+# A list of screens for which screen profiling should be enabled.
+profile_screens = [ ]
+
+
 del renpy
 del os
 

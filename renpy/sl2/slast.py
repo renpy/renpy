@@ -1956,6 +1956,9 @@ class SLScreen(SLBlock):
 
         current_screen = renpy.display.screen.current_screen()
 
+        if current_screen.screen_name[0] in renpy.config.profile_screens:
+            debug = True
+
         context = SLContext()
         context.scope = scope
         context.globals = renpy.python.store_dicts["store"]
@@ -1964,6 +1967,7 @@ class SLScreen(SLBlock):
         context.updating = (current_screen.phase == renpy.display.screen.UPDATE)
 
         name = scope["_name"]
+
         main_cache = current_screen.cache
 
         cache = main_cache.get(name, None)
