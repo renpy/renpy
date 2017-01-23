@@ -932,6 +932,11 @@ class SLDisplayable(SLBlock):
 
         if (transform is not None) and (d is not NO_DISPLAYABLE):
             if reused and (transform == cache.raw_transform):
+
+                if isinstance(cache.transform, renpy.display.transform.Transform):
+                    if cache.transform.child is not d:
+                        cache.transform.set_child(d)
+
                 d = cache.transform
             else:
                 cache.raw_transform = transform
