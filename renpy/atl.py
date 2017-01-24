@@ -1032,7 +1032,7 @@ class Child(Statement):
         else:
             child = child
 
-        trans.set_child(child)
+        trans.set_child(child, duplicate=False)
         trans.raw_child = self.child
 
         return "next", st, None

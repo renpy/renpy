@@ -778,11 +778,11 @@ class Transform(Container):
 
         return None
 
-    def set_child(self, child):
+    def set_child(self, child, duplicate=True):
 
         child = renpy.easy.displayable(child)
 
-        if child._duplicatable:
+        if duplicate and child._duplicatable:
             child = child._duplicate(self._args)
 
         self.child = child

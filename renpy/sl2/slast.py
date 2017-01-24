@@ -935,7 +935,7 @@ class SLDisplayable(SLBlock):
 
                 if isinstance(cache.transform, renpy.display.transform.Transform):
                     if cache.transform.child is not d:
-                        cache.transform.set_child(d)
+                        cache.transform.set_child(d, duplicate=False)
 
                 d = cache.transform
             else:
