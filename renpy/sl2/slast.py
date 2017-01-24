@@ -943,14 +943,20 @@ class SLDisplayable(SLBlock):
 
                 if isinstance(transform, Transform):
                     d = transform(child=d)
+                    d._unique()
+
                 elif isinstance(transform, list_or_tuple):
                     for t in transform:
                         if isinstance(t, Transform):
                             d = t(child=d)
                         else:
                             d = t(d)
+
+                        d._unique()
+
                 else:
                     d = transform(d)
+                    d._unique()
 
                 if isinstance(d, Transform):
                     old_transform = cache.transform

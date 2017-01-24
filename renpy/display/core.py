@@ -343,6 +343,14 @@ class Displayable(renpy.object.Object):
 
         return self
 
+    def _unique(self):
+        """
+        Called to tell a displayable there is only a single reference to it,
+        and hence it does not need to be duplicated.
+        """
+
+        return
+
     def parameterize(self, name, parameters):
         """
         Obsolete alias for _duplicate.
