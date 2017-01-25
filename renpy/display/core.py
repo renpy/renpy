@@ -331,6 +331,9 @@ class Displayable(renpy.object.Object):
 
         Displayables that contain state that can be manipulated by the user
         are never copied.
+
+        This should call _unique on children that have been copied before
+        setting its own _duplicatable flag.
         """
 
         return self
@@ -345,8 +348,10 @@ class Displayable(renpy.object.Object):
 
     def _unique(self):
         """
-        Called to tell a displayable there is only a single reference to it,
-        and hence it does not need to be duplicated.
+        This is called when a displayable is "born" unique, which occurs
+        when there is only a single reference to it. What it does is to
+        manage the _duplicatable flag - setting it false unless one of
+        the displayable's children happens to be duplicatable.
         """
 
         return
