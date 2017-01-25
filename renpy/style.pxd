@@ -66,7 +66,7 @@ cdef inline void assign_prefixed(int index, PyObject **cache, int *cache_priorit
 
         args = d._args.copy(prefix=prefix)
         dd = d._duplicate(args)
-
+        dd._unique()
     else:
 
         dd = d

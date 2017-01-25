@@ -493,8 +493,11 @@ class Frame(renpy.display.core.Displayable):
         if image is self.image:
             return self
 
+        image._unique()
+
         rv = self._copy(args)
         rv.image = image
+        rv._duplicatable = image._duplicatable
         return rv
 
     def _in_current_store(self):

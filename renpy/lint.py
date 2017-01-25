@@ -511,6 +511,7 @@ def check_style_property_displayable(name, property, d):
             if rest in renpy.style.all_properties:
                 args = d._args.copy(prefix=prefix)
                 dd = d._duplicate(args)
+                dd._unique()
 
                 check_displayable(
                     "{}, property {}".format(name, prefix + property),
@@ -525,7 +526,7 @@ def check_style(name, s):
 
     for p in s.properties:
         for k, v in p.iteritems():
-            
+
             # Treat font specially.
             if k.endswith("font"):
                 if isinstance(v, renpy.text.font.FontGroup):

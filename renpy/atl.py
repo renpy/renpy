@@ -1025,10 +1025,12 @@ class Child(Statement):
 
         if child._duplicatable:
             child = self.child._duplicate(trans._args)
+            child._unique()
 
         if (old_child is not None) and (old_child is not renpy.display.motion.null) and (self.transition is not None):
             child = self.transition(old_widget=old_child,
                                     new_widget=child)
+            child._unique()
         else:
             child = child
 

@@ -576,6 +576,7 @@ def _add(d, **kwargs):
 
     if d._duplicatable:
         d = d._duplicate(None)
+        d._unique()
 
     rv = d
 
@@ -603,6 +604,7 @@ def _image(im, **properties):
 
     if d._duplicatable:
         d = d._duplicate(None)
+        d._unique()
 
     return d
 
