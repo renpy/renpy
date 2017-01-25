@@ -103,6 +103,7 @@ class Sprite(renpy.object.Object):
 
             if d._duplicatable:
                 sc.child_copy = d._duplicate(None)
+                sc.child_copy._unique()
             else:
                 sc.child_copy = d
 

@@ -466,6 +466,7 @@ def display_say(
 
         if (what_ctc is not None) and what_ctc._duplicatable:
             what_ctc = what_ctc._duplicate(None)
+            what_ctc._unique()
 
         if delay == 0:
             what_ctc = None

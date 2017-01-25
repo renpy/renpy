@@ -784,9 +784,10 @@ class Transform(Container):
 
         if duplicate and child._duplicatable:
             child = child._duplicate(self._args)
+            child._unique()
 
         if child._duplicatable:
-            child._duplicatable = True
+            self._duplicatable = True
 
         self.child = child
         self.children = [ child ]
@@ -951,8 +952,14 @@ class Transform(Container):
     _duplicatable = True
 
     def _duplicate(self, args):
+
+        if not self._duplicatable:
+            return self
+
         rv = self(_args=args)
         rv.take_execution_state(self)
+        rv._unique()
+
         return rv
 
     def _in_current_store(self):
@@ -966,6 +973,7 @@ class Transform(Container):
         rv = self()
         rv.take_execution_state(self)
         rv.child = child
+        rv._unique()
 
         return rv
 

@@ -1361,7 +1361,10 @@ class Text(renpy.display.core.Displayable):
 
     def _duplicate(self, args):
         if self._duplicatable:
-            return self._copy(args)
+            rv = self._copy(args)
+            rv.unique()
+
+            return rv
 
         return self
 

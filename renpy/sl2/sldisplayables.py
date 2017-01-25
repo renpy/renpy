@@ -387,6 +387,7 @@ def sl2add(d, replaces=None, scope=None, **kwargs):
 
     if d._duplicatable:
         d = d._duplicate(None)
+        d._unique()
 
     rv = d
 
