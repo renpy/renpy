@@ -530,6 +530,8 @@ def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
         else:
             img = i(img)
 
+        img._unique()
+
     renpy.game.context().images.predict_show(layer, name, True)
     renpy.display.predict.displayable(img)
 
@@ -641,6 +643,9 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
             img = i(child=img)
         else:
             img = i(img)
+
+        # Mark the newly created images unique.
+        img._unique()
 
     # Update the list of images we have ever seen.
     renpy.game.persistent._seen_images[name] = True  # @UndefinedVariable
