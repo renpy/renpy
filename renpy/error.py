@@ -214,7 +214,7 @@ def report_exception(e, editor=True):
     try:
         print(platform.platform(), file=full)
         print(renpy.version, file=full)
-        print(renpy.config.name + " " + renpy.config.version, file=full)
+        print(safe_utf8(renpy.config.name + " " + renpy.config.version), file=full)
     except:
         pass
 
