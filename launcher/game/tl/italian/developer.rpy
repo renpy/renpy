@@ -3,7 +3,7 @@ translate italian strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"
-    new "Menù dello sviluppatore"
+    new "Menu Sviluppatore"
 
     # _developer/developer.rpym:43
     old "Reload Game (Shift+R)"
@@ -15,27 +15,27 @@ translate italian strings:
 
     # _developer/developer.rpym:47
     old "Variable Viewer"
-    new "Visualizzatore di variabili"
+    new "Visualizzatore Variabili"
 
     # _developer/developer.rpym:49
     old "Theme Test"
-    new "Prova tema"
+    new "Prova Tema"
 
     # _developer/developer.rpym:51
     old "Image Location Picker"
-    new "Selettore dell'ubicazione delle immagini"
+    new "Selettore Locazione Immagini"
 
     # _developer/developer.rpym:53
     old "Filename List"
-    new "Lista dei file"
+    new "Lista File"
 
     # _developer/developer.rpym:57
     old "Show Image Load Log"
-    new "Mostra log di caricamento delle immagini"
+    new "Mostra Log di Caricamento Immagini"
 
     # _developer/developer.rpym:60
     old "Hide Image Load Log"
-    new "Nascondi log di caricamento delle immagini"
+    new "Nascondi Log di Caricamento Immagini"
 
     # _developer/developer.rpym:95
     old "Nothing to inspect."
@@ -43,7 +43,7 @@ translate italian strings:
 
     # _developer/developer.rpym:217
     old "Return to the developer menu"
-    new "Ritorna al menù dello sviluppatore"
+    new "Ritorna al menu sviluppatore"
 
     # _developer/developer.rpym:373
     old "Rectangle: %r"
@@ -59,11 +59,11 @@ translate italian strings:
 
     # _developer/developer.rpym:412
     old "Rectangle copied to clipboard."
-    new "Rettangolo copiato nella clipboard."
+    new "Rettangolo copiato negli appunti."
 
     # _developer/developer.rpym:415
     old "Position copied to clipboard."
-    new "Posizione copiata nella clipboard."
+    new "Posizione copiata negli appunti."
 
     # _developer/developer.rpym:524
     old "✔ "
@@ -75,11 +75,11 @@ translate italian strings:
 
     # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    new "\n{color=#cfc}✔ immagine predetta (bene){/color}\n{color=#fcc}✘ immagine non predetta (male){/color}\n{color=#fff}Trascina per muovere.{/color}"
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
-    new "Ispettore di displayable"
+    new "Ispettore dei Displayable"
 
     # _developer/inspector.rpym:61
     old "Size"
@@ -95,11 +95,11 @@ translate italian strings:
 
     # _developer/inspector.rpym:122
     old "Inspecting Styles of [displayable_name!q]"
-    new "Ispezionando stili di [displayable_name!q]"
+    new "Ispezione Stili di [displayable_name!q]"
 
     # _developer/inspector.rpym:139
     old "displayable:"
-    new "visualizzabile:"
+    new "displayable:"
 
     # _developer/inspector.rpym:145
     old "        (no properties affect the displayable)"

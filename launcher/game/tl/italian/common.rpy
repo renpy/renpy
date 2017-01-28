@@ -3,111 +3,111 @@ translate italian strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
-    new "{#weekday}Monday"
+    new "{#weekday}Lunedì"
 
     # 00action_file.rpy:26
     old "{#weekday}Tuesday"
-    new "{#weekday}Tuesday"
+    new "{#weekday}Martedì"
 
     # 00action_file.rpy:26
     old "{#weekday}Wednesday"
-    new "{#weekday}Wednesday"
+    new "{#weekday}Mercoledì"
 
     # 00action_file.rpy:26
     old "{#weekday}Thursday"
-    new "{#weekday}Thursday"
+    new "{#weekday}Giovedì"
 
     # 00action_file.rpy:26
     old "{#weekday}Friday"
-    new "{#weekday}Friday"
+    new "{#weekday}Venerdì"
 
     # 00action_file.rpy:26
     old "{#weekday}Saturday"
-    new "{#weekday}Saturday"
+    new "{#weekday}Sabato"
 
     # 00action_file.rpy:26
     old "{#weekday}Sunday"
-    new "{#weekday}Sunday"
+    new "{#weekday}Domenica"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Mon"
-    new "{#weekday_short}Mon"
+    new "{#weekday_short}Lun"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Tue"
-    new "{#weekday_short}Tue"
+    new "{#weekday_short}Mar"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Wed"
-    new "{#weekday_short}Wed"
+    new "{#weekday_short}Mer"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Thu"
-    new "{#weekday_short}Thu"
+    new "{#weekday_short}Gio"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Fri"
-    new "{#weekday_short}Fri"
+    new "{#weekday_short}Ven"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Sat"
-    new "{#weekday_short}Sat"
+    new "{#weekday_short}Sab"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Sun"
-    new "{#weekday_short}Sun"
+    new "{#weekday_short}Dom"
 
     # 00action_file.rpy:47
     old "{#month}January"
-    new "{#month}January"
+    new "{#month}Gennaio"
 
     # 00action_file.rpy:47
     old "{#month}February"
-    new "{#month}February"
+    new "{#month}Febbraio"
 
     # 00action_file.rpy:47
     old "{#month}March"
-    new "{#month}March"
+    new "{#month}Marzo"
 
     # 00action_file.rpy:47
     old "{#month}April"
-    new "{#month}April"
+    new "{#month}Aprile"
 
     # 00action_file.rpy:47
     old "{#month}May"
-    new "{#month}May"
+    new "{#month}Maggio"
 
     # 00action_file.rpy:47
     old "{#month}June"
-    new "{#month}June"
+    new "{#month}Giugno"
 
     # 00action_file.rpy:47
     old "{#month}July"
-    new "{#month}July"
+    new "{#month}Luglio"
 
     # 00action_file.rpy:47
     old "{#month}August"
-    new "{#month}August"
+    new "{#month}Agosto"
 
     # 00action_file.rpy:47
     old "{#month}September"
-    new "{#month}September"
+    new "{#month}Settembre"
 
     # 00action_file.rpy:47
     old "{#month}October"
-    new "{#month}October"
+    new "{#month}Ottobre"
 
     # 00action_file.rpy:47
     old "{#month}November"
-    new "{#month}November"
+    new "{#month}Novembre"
 
     # 00action_file.rpy:47
     old "{#month}December"
-    new "{#month}December"
+    new "{#month}Dicembre"
 
     # 00action_file.rpy:63
     old "{#month_short}Jan"
-    new "{#month_short}Jan"
+    new "{#month_short}Gen"
 
     # 00action_file.rpy:63
     old "{#month_short}Feb"
@@ -123,27 +123,27 @@ translate italian strings:
 
     # 00action_file.rpy:63
     old "{#month_short}May"
-    new "{#month_short}May"
+    new "{#month_short}Mag"
 
     # 00action_file.rpy:63
     old "{#month_short}Jun"
-    new "{#month_short}Jun"
+    new "{#month_short}Giu"
 
     # 00action_file.rpy:63
     old "{#month_short}Jul"
-    new "{#month_short}Jul"
+    new "{#month_short}Lug"
 
     # 00action_file.rpy:63
     old "{#month_short}Aug"
-    new "{#month_short}Aug"
+    new "{#month_short}Ago"
 
     # 00action_file.rpy:63
     old "{#month_short}Sep"
-    new "{#month_short}Sep"
+    new "{#month_short}Set"
 
     # 00action_file.rpy:63
     old "{#month_short}Oct"
-    new "{#month_short}Oct"
+    new "{#month_short}Ott"
 
     # 00action_file.rpy:63
     old "{#month_short}Nov"
@@ -151,7 +151,7 @@ translate italian strings:
 
     # 00action_file.rpy:63
     old "{#month_short}Dec"
-    new "{#month_short}Dec"
+    new "{#month_short}Dic"
 
     # 00action_file.rpy:235
     old "%b %d, %H:%M"
@@ -175,7 +175,7 @@ translate italian strings:
 
     # 00gui.rpy:230
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "Caricare causerà la perdita di progressi non salvati.\n Confermi?"
+    new "Caricare causerà la perdita di progressi non salvati.\nConfermi?"
 
     # 00gui.rpy:231
     old "Are you sure you want to quit?"
@@ -187,7 +187,7 @@ translate italian strings:
 
     # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
-    new "Are you sure you want to end the replay?"
+    new "Confermi di voler terminare il replay?"
 
     # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
@@ -199,7 +199,7 @@ translate italian strings:
 
     # 00gui.rpy:236
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "Are you sure you want to skip unseen dialogue to the next choice?"
+    new "Confermi di voler saltare il testo non letto fino alla prossima scelta?"
 
     # 00keymap.rpy:250
     old "Saved screenshot as %s."
@@ -207,39 +207,39 @@ translate italian strings:
 
     # 00library.rpy:142
     old "Self-voicing disabled."
-    new "Self-voicing disabled."
+    new "Assistente Vocale disabilitato."
 
     # 00library.rpy:143
     old "Clipboard voicing enabled. "
-    new "Clipboard voicing enabled. "
+    new "Vocalizza Appunti abilitato. "
 
     # 00library.rpy:144
     old "Self-voicing enabled. "
-    new "Self-voicing enabled. "
+    new "Assistente Vocale abilitato. "
 
     # 00library.rpy:179
     old "Skip Mode"
-    new "Modalità salto"
+    new "Modalità Salto"
 
     # 00library.rpy:262
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
+    new "Questo programma contiene software libero rilasciato sotto una quantità di licenze, che includono la MIT License e la GNU Lesser General Public License. Una lista completa dei software, inclusi link al codice sorgente completo, si può trovare {a=https://www.renpy.org/l/license}qui{/a}."
 
     # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "Clipboard voicing abilitato. Premi 'shift+C' per disabilitarlo."
+    new "Vocalizza Appunti abilitato. Premi 'shift+C' per disabilitarlo."
 
     # 00preferences.rpy:424
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
+    new "L'Assistente Vocale tenta di dire \"[renpy.display.tts.last]\". Premi 'alt+shift+V' per disabilitare."
 
     # 00preferences.rpy:426
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Self-voicing abilitato. Premi 'v' per disabilitarlo."
+    new "Assistente Vocale abilitato. Premi 'v' per disabilitarlo."
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
-    new "Contacting App Store\nPlease Wait..."
+    new "Contatto App Store\nAttendere prego..."
 
     # 00updater.rpy:367
     old "The Ren'Py Updater is not supported on mobile devices."
@@ -247,7 +247,7 @@ translate italian strings:
 
     # 00updater.rpy:486
     old "An error is being simulated."
-    new "Un errore viene simulato."
+    new "Viene simulato un errore."
 
     # 00updater.rpy:662
     old "Either this project does not support updating, or the update status file was deleted."
@@ -275,11 +275,11 @@ translate italian strings:
 
     # 00updater.rpy:1049
     old "While unpacking {}, unknown type {}."
-    new "Durante lo spacchettamento {}, tipo sconosciuto {}."
+    new "Durante lo spacchettamento di {}, tipo sconosciuto {}."
 
     # 00updater.rpy:1393
     old "Updater"
-    new "Updater"
+    new "Aggiornamenti"
 
     # 00updater.rpy:1404
     old "This program is up to date."
@@ -291,15 +291,15 @@ translate italian strings:
 
     # 00updater.rpy:1408
     old "Preparing to download the updates."
-    new "Preparando lo scaricamento dell'aggiornamento."
+    new "Preparazione allo scaricamento degli aggiornamenti."
 
     # 00updater.rpy:1410
     old "Downloading the updates."
-    new "Scaricando l'aggiornamento."
+    new "Scaricamento degli aggiornamenti."
 
     # 00updater.rpy:1412
     old "Unpacking the updates."
-    new "Estraendo l'aggiornamento."
+    new "Estrazione degli aggiornamenti."
 
     # 00updater.rpy:1416
     old "The updates have been installed. The program will restart."
@@ -331,5 +331,5 @@ translate italian strings:
 
     # 00gallery.rpy:586
     old "return"
-    new "ritorna"
+    new "chiudi"
 
