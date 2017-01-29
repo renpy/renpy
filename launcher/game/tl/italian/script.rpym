@@ -1,18 +1,36 @@
-﻿# Puoi inserire lo script (sceneggiatura) del tuo gioco in questo file.
+#  Lo script di gioco va in questo file.
 
-# Declare images below this line, using the image statement.
-# Dichiare le immagini sotto questa line usando il comando "image", esempio:
-# image eileen happy = "eileen_happy.png"
+#  Dichiara i personaggi usati in questo gioco. L'argomento 'color' colora il nome del personaggio.
 
-# Dichiara i personaggi usati in questo gioco
-define e = Character('Eileen', color="#c8ffc8")
+define e = Character("Eileen", color="#f44")
 
 
-# Inizio del gioco
+# Il gioco comincia qui.
+
 label start:
 
-    e "Hai creato un nuovo gioco di Ren'Py."
+    # Mostra uno sfondo. Al momento mostra una sagoma generica, ma puoi
+    # aggiungere un file (chiamato "bg room.png" oppure "bg room.jpg") 
+    # alla directory 'images' per cambiarla.
+    
 
-    e "Ed appena avrai aggiunto storia, immagini e musica potrai mostrarlo a tutto il mondo!"
+    scene bg room
+    
+    # Mostra lo sprite di un personaggio. 
+    # Al momento mostra una sagoma generica, ma puoi aggiungere un file
+    # (chiamato "eileen_happy.png") alla directory 'images' per cambiarla.
+
+    show eileen happy
+
+    # Questo mostra linee di dialogo.
+
+    "Funziona davvero!"
+
+    e "Hai creato un nuovo gioco Ren'py."
+
+    e "Quando aggiungerai una storia, immagini e musica, potrai distribuirlo nel mondo!"
+
+    # Questo finisce il gioco.
 
     return
+
