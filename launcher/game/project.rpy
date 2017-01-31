@@ -185,7 +185,7 @@ init python in project:
             self.make_tmp()
 
             # Find the python executable to run.
-            executable_path = os.path.dirname(sys.executable)
+            executable_path = os.path.dirname(renpy.fsdecode(sys.executable))
 
             if renpy.renpy.windows:
                 extension = ".exe"
