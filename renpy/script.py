@@ -157,7 +157,8 @@ class Script(object):
             return
 
         basename = os.path.basename(renpy.config.basedir)
-        backupdir = os.path.join(backups, renpy.exports.fsencode(basename))
+        backupdir = renpy.os.path.join(renpy.exports.fsencode(backups),
+                                       renpy.exports.fsencode(basename))
 
         renpy.exports.write_log("Backing up script files to %r:", backupdir)
 
