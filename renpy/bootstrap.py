@@ -29,6 +29,11 @@ import renpy.error
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
+# Sets the default encoding to the filesystem encoding.
+reload(sys)
+sys.setdefaultencoding(FSENCODING)  # @UndefinedVariable
+
+
 # Extra things used for distribution.
 
 
