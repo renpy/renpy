@@ -1465,3 +1465,23 @@ There are some Python functions that support GUI code.
 
 .. include:: inc/gui
 
+
+.. _gui-changes:
+
+Incompatible GUI Changes
+========================
+
+As the GUI is changed, occasionally some of the variables change name. These
+changes only take effect when the GUI is regenerated - until then, the game
+will continue to use the old variable names in the new Ren'Py.
+
+6.99.12.3
+---------
+
+* gui.default_font -> gui.text_font
+* gui.name_font -> gui.name_text_font
+* gui.interface_font -> gui.interface_text_font
+* gui.text_xpos -> gui.dialogue_xpos
+* gui.text_ypos -> gui.dialogue_ypos
+* gui.text_width -> gui.dialogue_width
+* gui.text_xalign -> gui.dialogue_text_xalign

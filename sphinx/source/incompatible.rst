@@ -9,6 +9,8 @@ Note that setting :var:`config.script_version` will cause many of
 these changes to be reverted, at the cost of losing access to recent
 features.
 
+Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
+such changes only take effect when the gui is regenerated.
 
 .. _incompatible-6.99:
 
