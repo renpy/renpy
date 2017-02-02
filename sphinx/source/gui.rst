@@ -1255,6 +1255,9 @@ label
 prompt
     For confirmation prompts asking the player a question.
 
+name
+    For character names.
+
 dialogue
     For dialogue.
 

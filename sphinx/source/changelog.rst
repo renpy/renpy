@@ -2,7 +2,66 @@
 Full Changelog
 ==============
 
+.. _renpy-6.99.12.3:
+
+
+Ren'Py 6.99.12.3
+================
+
+GUI
+---
+
+It is now possible to systematically customize the look of different
+kinds of text in Ren'Py. For example, one can now choose different sizes
+for name, dialogue, interface, label and prompt text. This makes more
+customization of the GUI possible.
+
+To make this change, some of the gui variable names have been renamed in
+a more systematic manner. For example, gui.default_font has been renamed
+gui.text_font, while gui.name_font has become gui.name_text_font.
+
+It is now possible to outline gui text using variables like gui.text_outlines
+and gui.interface_text_outlines.
+
+Due to the design of the new GUI, the changes described in this section will
+only take effect when a new game is created, or a game's GUI is updated.
+
+
+Translations
+------------
+
+The Russian translation has been updated and modernized, thanks to Ria-kon
+and Project Gardares.
+
+The Italian translation has been updated and modernized, thanks to Gas.
+
+
+Other
+-----
+
+A crash on video playback on Android and iOS has been fixed.
+
+The default encoding for non-unicode strings in Ren'Py has been changed to
+the filesystem encoding. This should address a series of encoding issues
+that have occured on non-ascii systems since 6.99.12.
+
+In some cases, Ren'Py duplicates displayables to ensure that displayable
+state is not aliased. (For example, a transform is duplicated when it is
+show, so that when it is shown a second time it will not retain its
+state.) This copying has been optimized so it only occurs when necessary.
+
+The :var:`config.replace_text` callback now runs even if no custom
+text tags have been defined.
+
+An issue where text could be clipped when it was not necessary has been
+fixed.
+
+Viewports are now draggable when other focusable things are on the screen.
+
+
+
 .. _renpy-6.99.12:
+
 
 Ren'Py 6.99.12
 ==============
