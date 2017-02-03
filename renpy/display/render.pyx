@@ -139,7 +139,8 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     cdef Render rv
 
     if not render_is_ready:
-        raise Exception("Displayables may not be rendered during the init phase.")
+        if renpy.config.developer:
+            raise Exception("Displayables may not be rendered during the init phase.")
 
     orig_wh = (widtho, heighto, frame_time-st, frame_time-at)
 
