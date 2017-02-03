@@ -1655,6 +1655,8 @@ class Interface(object):
         if self.started:
             return
 
+        renpy.display.render.render_ready()
+
         # Kill off the presplash.
         renpy.display.presplash.end()
 

@@ -100,6 +100,13 @@ rendering = 0
 render_st = 0.0
 render_at = 0.0
 
+cdef bint render_is_ready
+render_is_ready = 0
+
+def render_ready():
+    global render_is_ready
+    render_is_ready = 1
+
 cpdef render(d, object widtho, object heighto, double st, double at):
     """
     :doc: udd_utility
@@ -130,6 +137,9 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     cdef tuple orig_wh, wh
     cdef dict render_cache_d
     cdef Render rv
+
+    if not render_is_ready:
+        raise Exception("Displayables may not be rendered during the init phase.")
 
     orig_wh = (widtho, heighto, frame_time-st, frame_time-at)
 
