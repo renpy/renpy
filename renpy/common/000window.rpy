@@ -91,11 +91,17 @@ init -1200 python:
         if not store._window_auto:
             return
 
+        #prevent interaction from interfering voice system.
+        _has_voice = config.has_voice
+        config.has_voice = False
+
         if statement in config.window_auto_hide:
             _window_hide()
 
         if statement in config.window_auto_show:
             _window_show()
+
+        config.has_voice = _has_voice
 
     config.statement_callbacks.append(_window_auto_callback)
 
