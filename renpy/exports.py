@@ -68,7 +68,7 @@ from renpy.display.focus import focus_coordinates
 from renpy.display.predict import screen as predict_screen
 
 from renpy.display.image import image_exists, image_exists as has_image
-from renpy.display.image import get_available_image_tags, get_available_image_attributes
+from renpy.display.image import get_available_image_tags, get_available_image_attributes, check_image_attributes, get_ordered_image_attributes
 
 from renpy.display.im import load_surface, load_image
 
@@ -157,7 +157,7 @@ def public_api():
     map_event, queue_event, clear_keymap_cache
     const, pure, not_const
     image_exists, has_image
-    get_available_image_tags, get_available_image_attributes
+    get_available_image_tags, get_available_image_attributes, check_image_attributes, get_ordered_image_attributes
     load_image, load_surface
     profile_memory, diff_memory, profile_rollback
     TEXT_TAG

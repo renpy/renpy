@@ -50,7 +50,7 @@ def get_available_image_tags():
 
 def get_available_image_attributes(tag, attributes=()):
     """
-    :doc: image_func
+    :undocumented:
 
     Returns a list of tuples, with each tuple representing a possible
     combination of image attributes that can be associated with `tag`.
@@ -71,6 +71,87 @@ def get_available_image_attributes(tag, attributes=()):
             rv.append(at)
 
     return rv
+
+
+def get_tag_method(tag, method):
+    """
+    This looks for an image named `tag`, then tries to grab the given method
+    from it. If it can do that, returns a reference to the method. Otherwise,
+    it returns None.
+    """
+
+    ti =  images.get((tag,), None)
+
+    if ti is None:
+        return None
+
+    return getattr(ti, method, None)
+
+
+def check_image_attributes(tag, attributes):
+    """
+    :doc: image_func
+
+    Checks to see if there is a unique image with the given tag and
+    attributes. If there is, returns the tag and attributes in order.
+    Otherwise, returns None.
+    """
+
+    ca = get_tag_method(tag, "_choose_attributes")
+
+    if ca is not None:
+        return ca(tag, attributes, None)
+
+    l = get_available_image_attributes(tag, attributes)
+
+    if len(l) != 1:
+        return None
+
+    return tuple(l[0])
+
+
+def get_ordered_image_attributes(tag, attributes=(), sort=None):
+    """
+    :doc: Returns a list of image tags, ordered in a way that makes sense to
+    present to the user.
+
+    `attributes`
+        If present, only attributes that are compatible with the given
+        attributes are considered. (Compatible means that the attributes
+        can be in a single image at the same time.)
+
+    `sort`
+        If not None, the returned list of attributes is sorted. This is a function
+        that should be used as a tiebreaker.
+
+    """
+
+    la = get_tag_method(tag, "_list_attributes")
+
+    if la is not None:
+        return la(tag, attributes)
+
+    attrcount = collections.defaultdict(int)
+    attrtotalpos = collections.defaultdict(float)
+
+    for attrlist in get_available_image_attributes(tag, attributes):
+        for i, attr in enumerate(attrlist):
+            attrcount[attr] += 1
+            attrtotalpos[attr] += i
+
+    if sort is None:
+
+        return list(attrcount.keys())
+
+    else:
+
+        l = [ ]
+
+        for attr in attrcount:
+            l.append((attrtotalpos[attr] / attrcount[attr], sort(attr), attr))
+
+        l.sort()
+        return [ i[2] for i in l ]
 
 
 def register_image(name, d):
@@ -666,6 +747,13 @@ class ShownImageInfo(renpy.object.Object):
         return self.choose_image(nametag, required, optional, name)
 
     def choose_image(self, tag, required, optional, exception_name):
+
+        ca = get_tag_method(tag, "_choose_attributes")
+        if ca is not None:
+            attrs = ca(tag, required, optional)
+
+            if attrs is not None:
+                return (tag,) + attrs
 
         # The longest length of an image that matches.
         max_len = -1
