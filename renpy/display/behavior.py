@@ -1478,6 +1478,15 @@ class Adjustment(renpy.object.Object):
 
         return None
 
+    def update(self):
+        """
+        Updates things that depend on this adjustment without firing the
+        changed handler.
+        """
+
+        for d in adj_registered.setdefault(self, [ ]):
+            renpy.display.render.redraw(d, 0)
+
 
 class Bar(renpy.display.core.Displayable):
     """

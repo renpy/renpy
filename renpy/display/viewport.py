@@ -202,10 +202,20 @@ class Viewport(renpy.display.layout.Container):
         height = max(height, self.style.yminimum)
 
         if self.set_adjustments:
-            self.xadjustment.range = max(cw - width, 0)
-            self.xadjustment.page = width
-            self.yadjustment.range = max(ch - height, 0)
-            self.yadjustment.page = height
+
+            xarange = max(cw - width, 0)
+
+            if (self.xadjustment.range != xarange) or (self.xadjustment.page != width):
+                self.xadjustment.range = xarange
+                self.xadjustment.page = width
+                self.xadjustment.update()
+
+            yarange = max(ch - height, 0)
+
+            if (self.yadjustment.range != yarange) or (self.yadjustment.page != height):
+                self.yadjustment.range = yarange
+                self.yadjustment.page = height
+                self.yadjustment.update()
 
         if self.xoffset is not None:
             if isinstance(self.xoffset, int):
