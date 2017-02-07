@@ -382,7 +382,7 @@ init -1500 python in build:
     mac_codesign_command = [ "/usr/bin/codesign", "-s", "{identity}", "-f", "--deep", "--no-strict", "{app}" ]
 
     # The command used to build a dmg.
-    mac_create_dmg_command = [ "/usr/bin/hdiutil", "create", "-format", "UDBZ", "-volname", "{volname}", "-sourcedir", "{sourcedir}", "-ov", "{dmg}" ]
+    mac_create_dmg_command = [ "/usr/bin/hdiutil", "create", "-format", "UDBZ", "-volname", "{volname}", "-srcfolder", "{sourcedir}", "-ov", "{dmg}" ]
 
     # The command used to sign a dmg.
     mac_codesign_dmg_command = [ "/usr/bin/codesign", "-s", "{identity}", "-f", "{dmg}" ]
