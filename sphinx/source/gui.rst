@@ -625,13 +625,6 @@ The following variables set various properties of buttons:
 
     The color of the button text in various states.
 
-.. var:: gui.button_text_outlines = [ ]
-
-    A list of outline definitions that apply to buttons. An outline
-    definion is in the form (size, color, x-offset, y-offset). For example,
-    ``[ (2, "#ffffc0", 0, 0) ]`` creates a light-yellow outline centered on
-    the button text.
-
 .. var:: gui.button_text_xalign = 0.0
 
     The horizontal alignment of the button text. 0.0 is left-aligned,
@@ -1232,13 +1225,13 @@ are of the form:
 
     If present, the color of the text.
 
-.. var:: gui.kind_text_outlines
+Other :ref:`text style properties <text-style-properties>` cam also be
+set in the same way. For example, gui.kind_text_outlines sets the
+:propref:`outlines` property.
 
-    If present, a list of the outlines that are applied to the text. See
-    :var:`gui.button_text_outlines` for an explanation of how this works.
 
 The kind prefix can be omitted, in which case it customizes the default look
-of text. Otherwise, it may be:
+of text. Otherwise, it may be one of the button kinds above, or one of:
 
 interface
     For default text in the out-of-game interface.
@@ -1263,6 +1256,7 @@ dialogue
 
 notify
     For notification text.
+
 
 
 For example::

@@ -13,10 +13,13 @@ GUI
 
 It is now possible to systematically customize the look of different
 kinds of text in Ren'Py. For example, one can now choose different sizes
-for name, dialogue, interface, label and prompt text. This makes more
-customization of the GUI possible.
+for name, dialogue, interface, label and prompt text.
 
-To make this change, some of the gui variable names have been renamed in
+All text properties are now available through the gui system. For example,
+gui.text_outlines can be used to make text outlined by default, while
+gui.name_text_bold can be used to make character names bold.
+
+To allow for the above two changes, some of the gui variable names have been renamed in
 a more systematic manner. For example, gui.default_font has been renamed
 gui.text_font, while gui.name_font has become gui.name_text_font.
 
@@ -57,6 +60,9 @@ An issue where text could be clipped when it was not necessary has been
 fixed.
 
 Viewports are now draggable when other focusable things are on the screen.
+
+This release adds more functions to support the Interactive Directory,
+and basic support for attribute images.
 
 
 

@@ -179,7 +179,7 @@ init -1100 python in gui:
         selected_color
             To gui.kind_text_selected_color, if it exists.
 
-        All other :ref:`text-style-properties` are also available. For
+        All other :ref:`text style properties <text-style-properties>` are also available. For
         example, gui.kind_text_outlines sets the outlines style property,
         gui.kind_text_kerning sets kerning, and so on.
         """
