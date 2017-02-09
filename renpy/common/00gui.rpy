@@ -141,7 +141,7 @@ init -1100 python in gui:
         :doc: gui
 
         Given a `kind` of button, returns a dictionary giving standard style
-        properties for that button. This currently sets:
+        properties for that button. This sets:
 
         :propref:`font`
             To gui.kind_text_font, if it exists.
@@ -154,9 +154,6 @@ init -1100 python in gui:
 
         :propref:`text_align`
             To gui.kind_text_xalign, if it exists.
-
-        :propref:`outlines`
-            To gui.kind_text_outlines, if it exists.
 
         :propref:`layout`
             To "subtitle" if gui.kind_text_xalign is greater than zero
@@ -181,6 +178,10 @@ init -1100 python in gui:
 
         selected_color
             To gui.kind_text_selected_color, if it exists.
+
+        All other :ref:`text-style-properties` are also available. For
+        example, gui.kind_text_outlines sets the outlines style property,
+        gui.kind_text_kerning sets kerning, and so on.
         """
 
         g = globals()
@@ -199,25 +200,10 @@ init -1100 python in gui:
 
         rv = { }
 
-        font = get("text_font")
-        text_size = get("text_size")
         xalign = get("text_xalign")
-        outlines = get("text_outlines")
 
-        color = get("text_color")
-        insensitive_color = get("text_insensitive_color")
-        idle_color = get("text_idle_color")
-        hover_color = get("text_hover_color")
-        selected_color = get("text_selected_color")
-
-        if (color is None) and accent and (accent_color is not None):
-            color = accent_color
-
-        if font is not None:
-            rv["font"] = font
-
-        if text_size is not None:
-            rv["size"] = text_size
+        if accent and (accent_color is not None):
+            rv["color"] = accent_color
 
         if xalign is not None:
             rv["xalign"] = xalign
@@ -226,23 +212,16 @@ init -1100 python in gui:
             if (xalign > 0) and (xalign < 1):
                 rv["layout"] = "subtitle"
 
-        if outlines is not None:
-            rv["outlines"] = outlines
+        for prefix in renpy.sl2.slparser.STYLE_PREFIXES:
+            for property in renpy.sl2.slproperties.text_property_names:
+                prop = prefix + property
 
-        if color is not None:
-            rv["color"] = color
+                text_prop = "text_" + prop
 
-        if insensitive_color is not None:
-            rv["insensitive_color"] = insensitive_color
+                v = get(text_prop)
 
-        if idle_color is not None:
-            rv["idle_color"] = idle_color
-
-        if hover_color is not None:
-            rv["hover_color"] = hover_color
-
-        if selected_color is not None:
-            rv["selected_color"] = selected_color
+                if v is not None:
+                    rv[prop] = v
 
         return rv
 
