@@ -92,7 +92,7 @@ init -1100 python in gui:
         exists, it determines if the borders are tiled, else :var:`gui.button_tile`
         controls tiling.
 
-        For what [prefix\_] means, check out the :ref:`style prefix search <style-prefix-search>
+        For what [prefix\_] means, check out the :ref:`style prefix search <style-prefix-search>`
         documentation.
         """
 

@@ -1017,7 +1017,7 @@ has a name (an empty name, like " ", counts).
     These variables control the display of the frame containing the namebox.
 
 Dialogue
-^^^^
+^^^^^^^^
 
 .. var:: gui.dialogue_xpos = 402
 .. var:: gui.dialogue_ypos = 75
