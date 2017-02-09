@@ -59,6 +59,20 @@
     `layer`
         If None, uses the default layer for `tag`.
 
+.. function:: renpy.get_ordered_image_attributes(tag, attributes=(), sort=None)
+    
+    Returns a list of image tags, ordered in a way that makes sense to
+    present to the user.
+    
+    `attributes`
+        If present, only attributes that are compatible with the given
+        attributes are considered. (Compatible means that the attributes
+        can be in a single image at the same time.)
+    
+    `sort`
+        If not None, the returned list of attributes is sorted. This is a function
+        that should be used as a tiebreaker.
+
 .. function:: renpy.get_placement(d)
     
     This gets the placement of displayable d. There's very little warranty on this

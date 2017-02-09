@@ -112,7 +112,9 @@ def check_image_attributes(tag, attributes):
 
 def get_ordered_image_attributes(tag, attributes=(), sort=None):
     """
-    :doc: Returns a list of image tags, ordered in a way that makes sense to
+    :doc: image_func
+
+    Returns a list of image tags, ordered in a way that makes sense to
     present to the user.
 
     `attributes`
