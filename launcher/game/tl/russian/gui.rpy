@@ -277,6 +277,10 @@ translate russian strings:
     old "## The spacing between file slots."
     new "## Интервал между слотами."
 
+    # gui.rpy:276
+    old "## The position of the main menu text."
+    new "## Позиция текста главного меню."
+
     # gui.rpy:277
     old "## Frames"
     new "## Рамки"

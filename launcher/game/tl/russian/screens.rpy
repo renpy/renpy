@@ -67,7 +67,7 @@ translate russian strings:
 
     # screens.rpy:246
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
-    new "## Быстрое меню показывается внутри игры, чтобы обеспечить лёгкий доступ к внеигровым меню."
+    new "## Быстрое меню показывается внутри игры, чтобы обеспечить лёгкий доступ ко внеигровым меню."
 
     # screens.rpy:252
     old "## Ensure this appears on top of other screens."
@@ -159,7 +159,7 @@ translate russian strings:
 
     # screens.rpy:336
     old "Quit"
-    new "Выйти"
+    new "Выход"
 
     # screens.rpy:350
     old "## Main Menu screen"
@@ -285,6 +285,10 @@ translate russian strings:
     old "## Buttons to access other pages."
     new "## Кнопки для доступа к другим страницам."
 
+    # screens.rpy:663
+    old "## range(1, 10) gives the numbers from 1 to 9."
+    new "## range(1, 10) задаёт диапазон значений от 1 до 9."
+
     # screens.rpy:666
     old "<"
     new "<"
@@ -315,7 +319,7 @@ translate russian strings:
 
     # screens.rpy:738
     old "Display"
-    new "Экран"
+    new "Режим экрана"
 
     # screens.rpy:739
     old "Window"
@@ -323,7 +327,7 @@ translate russian strings:
 
     # screens.rpy:740
     old "Fullscreen"
-    new "Полный экран"
+    new "Полный"
 
     # screens.rpy:744
     old "Rollback Side"
@@ -343,7 +347,7 @@ translate russian strings:
 
     # screens.rpy:752
     old "Unseen Text"
-    new "Весь текст"
+    new "Всего текста"
 
     # screens.rpy:753
     old "After Choices"
@@ -351,7 +355,7 @@ translate russian strings:
 
     # screens.rpy:754
     old "Transitions"
-    new "Переходы"
+    new "Переходов"
 
     # screens.rpy:756
     old "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
@@ -533,10 +537,6 @@ translate russian strings:
     old "Right Trigger\nA/Bottom Button"
     new "Правый триггер\nA/Нижняя кнопка"
 
-    # screens.rpy:1074
-    old "Advance dialogue and activates the interface."
-    new "Прохождение диалогов и активация интерфейса."
-
     # screens.rpy:1078
     old "Roll back to earlier dialogue."
     new "Возврат назад по сюжету игры."
@@ -545,10 +545,6 @@ translate russian strings:
     old "Right Shoulder"
     new "Правый бампер"
 
-    # screens.rpy:1082
-    old "Roll forward to later dialogue."
-    new "Откатывает предыдущее действие вперёд."
-
     # screens.rpy:1085
     old "D-Pad, Sticks"
     new "Крестовина, Стики"
@@ -556,10 +552,6 @@ translate russian strings:
     # screens.rpy:1089
     old "Start, Guide"
     new "Start, Guide"
-
-    # screens.rpy:1090
-    old "Access the game menu."
-    new "Вход в игровое меню."
 
     # screens.rpy:1093
     old "Y/Top Button"
