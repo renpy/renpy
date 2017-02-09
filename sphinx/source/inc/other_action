@@ -37,6 +37,10 @@
     This Action takes an optional _update_screens keyword argument, which
     defaults to true. When it is true, the interaction restarts and
     the screens are updated after the function returns.
+    
+    If the function returns a non-None value, the interaction stops and
+    returns that value. (When called using the call screen statement, the
+    result is placed in the `_return` variable.)
 
 .. function:: Help(help=None)
     

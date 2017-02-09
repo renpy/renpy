@@ -15,6 +15,12 @@
     `layer`
         The layer to check. If None, uses the default layer for `tag`.
 
+.. function:: renpy.check_image_attributes(tag, attributes)
+    
+    Checks to see if there is a unique image with the given tag and
+    attributes. If there is, returns the tag and attributes in order.
+    Otherwise, returns None.
+
 .. function:: renpy.copy_images(old, new)
     
     Copies images beginning with one prefix to images beginning with
@@ -33,13 +39,6 @@
     `new`
         A space-separated string giving the components of the new image
         name.
-
-.. function:: renpy.get_available_image_attributes(tag, attributes=())
-    
-    Returns a list of tuples, with each tuple representing a possible
-    combination of image attributes that can be associated with `tag`.
-    If `attributes` is given, only images that contain all the attributes
-    in that iterable are returned.
 
 .. function:: renpy.get_available_image_tags()
     

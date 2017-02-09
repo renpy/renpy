@@ -34,7 +34,7 @@
     For what [prefix\_] means, check out the :ref:`style prefix search <style-prefix-search>
     documentation.
 
-.. function:: gui.button_text_properties(kind)
+.. function:: gui.button_text_properties(kind=None, accent=False)
     
     Given a `kind` of button, returns a dictionary giving standard style
     properties for that button. This currently sets:
@@ -51,12 +51,20 @@
     :propref:`text_align`
         To gui.kind_text_xalign, if it exists.
     
+    :propref:`outlines`
+        To gui.kind_text_outlines, if it exists.
+    
     :propref:`layout`
         To "subtitle" if gui.kind_text_xalign is greater than zero
         and less than one.
     
     There are also a number of variables that set the text
     :propref:`color` style property:
+    
+    color
+        To gui.kind_text_color, if it exists. If the variable is not
+        set, and `accent` is True, sets the text color to the default
+        accent color.
     
     insensitive_color
         To gui.kind_text_insensitive_color, if it exists.
@@ -79,4 +87,48 @@
     
     `height`
         The height of the default window.
+
+.. function:: gui.text_properties(kind=None, accent=False)
+    
+    Given a `kind` of button, returns a dictionary giving standard style
+    properties for that button. This currently sets:
+    
+    :propref:`font`
+        To gui.kind_text_font, if it exists.
+    
+    :propref:`size`
+        To gui.kind_text_size, if it exists.
+    
+    :propref:`xalign`
+        To gui.kind_text_xalign, if it exists.
+    
+    :propref:`text_align`
+        To gui.kind_text_xalign, if it exists.
+    
+    :propref:`outlines`
+        To gui.kind_text_outlines, if it exists.
+    
+    :propref:`layout`
+        To "subtitle" if gui.kind_text_xalign is greater than zero
+        and less than one.
+    
+    There are also a number of variables that set the text
+    :propref:`color` style property:
+    
+    color
+        To gui.kind_text_color, if it exists. If the variable is not
+        set, and `accent` is True, sets the text color to the default
+        accent color.
+    
+    insensitive_color
+        To gui.kind_text_insensitive_color, if it exists.
+    
+    idle_color
+        To gui.kind_text_idle_color, if it exists.
+    
+    hover_color
+        To gui.kind_text_hover_color, if it exists.
+    
+    selected_color
+        To gui.kind_text_selected_color, if it exists.
 
