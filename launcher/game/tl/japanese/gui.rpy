@@ -276,7 +276,7 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:273
     old "## The spacing between file slots."
-    new "## セーブ・ロード画面の file slot（ファイルスロット）ボタン間隔。."
+    new "## セーブ・ロード画面の file slot（ファイルスロット）ボタン間隔。"
 
     # gui.rpy:277
     old "## Frames"
@@ -433,4 +433,8 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
     # gui.rpy:397
     old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
     new "## 次の変数は改行・禁則処理を制御します。デフォルトの値が推奨です。他の値は https://www.renpy.org/doc/html/style_properties.html#style-property-language を参照してください。"
+
+    # gui.rpy:276
+    old "## The position of the main menu text."
+    new "## メインメニューのテキストの文字揃え。"
 
