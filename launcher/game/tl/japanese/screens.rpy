@@ -653,9 +653,13 @@ translate japanese strings:
 
     # screens.rpy:1413
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
-    new "## マウスが無いので、ボタンが大きくて数が少ないクイックメニューに置き換えてタッチしやすいようにしています。"
+    new "## マウスが使用できないので、ボタンが大きくて数が少ないクイックメニューに置き換えて、タッチしやすいようにしています。"
 
     # screens.rpy:1429
     old "Menu"
     new "メニュー"
+
+    # screens.rpy:1233
+    old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
+    new "## 小さな黒い矢印型のグリフが入ったフォントが必要になります。"
 
