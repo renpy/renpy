@@ -64,9 +64,9 @@ init -1 python:
         config.language_callbacks[language].append(callback)
 
         gui7.translate_copy(language, fullfont, font)
-        gui7.translate_define(language, "gui.default_font", repr(font))
-        gui7.translate_define(language, "gui.name_font", repr(font))
-        gui7.translate_define(language, "gui.interface_font", repr(font))
+        gui7.translate_define(language, "gui.text_font", repr(font))
+        gui7.translate_define(language, "gui.name_text_font", repr(font))
+        gui7.translate_define(language, "gui.interface_text_font", repr(font))
 
 
     for fn in [ "gui.rpy", "options.rpy", "screens.rpy" ]:
