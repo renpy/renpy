@@ -357,6 +357,10 @@ init -1500 python hide:
         if renpy.get_mode() == "with":
             return
 
+        if _menu:
+            renpy.sound.stop(channel="voice")
+            return
+
         vi = VoiceInfo()
         if not _voice.sustain:
             _voice.info = vi
