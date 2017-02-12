@@ -748,6 +748,8 @@ line_log_callbacks = [ ]
 # A list of screens for which screen profiling should be enabled.
 profile_screens = [ ]
 
+# Should Ren'Py search for system fonts.
+allow_sysfonts = False
 
 del renpy
 del os
