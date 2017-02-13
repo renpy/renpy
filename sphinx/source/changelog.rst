@@ -48,6 +48,9 @@ The default encoding for non-unicode strings in Ren'Py has been changed to
 the filesystem encoding. This should address a series of encoding issues
 that have occured on non-ascii systems since 6.99.12.
 
+Ren'Py will no longer search for system-installed fonts when in developer
+mode.
+
 In some cases, Ren'Py duplicates displayables to ensure that displayable
 state is not aliased. (For example, a transform is duplicated when it is
 show, so that when it is shown a second time it will not retain its
@@ -61,7 +64,7 @@ fixed.
 
 Viewports are now draggable when other focusable things are on the screen.
 
-This release adds more functions to support the Interactive Directory,
+This release adds more functions to support the Interactive Director,
 and basic support for attribute images.
 
 

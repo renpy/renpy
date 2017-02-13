@@ -14,6 +14,15 @@ such changes only take effect when the gui is regenerated.
 
 .. _incompatible-6.99:
 
+6.99.12.3
+---------
+
+Ren'Py will no longer search for system-installed fonts when in developer
+mode. If you game was using a system installed font, the font file should
+be copied into the game/ directory. (But please make sure that this is
+compatible with the font file's license.)
+
+
 6.99.11
 -------
 
