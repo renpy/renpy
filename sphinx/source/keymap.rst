@@ -208,7 +208,7 @@ gamepad bindings is given below::
         "pad_dpdown_press" : [ "focus_down", "bar_down", "viewport_downarrow" ],
         "pad_lefty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
         "pad_righty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
-}
+    }
 
 Gamepad buttons have an event name of the form "pad_*button*_press" or
 "pad_*button*_release". Analog axis events have the form "pad_*axis*_pos",
