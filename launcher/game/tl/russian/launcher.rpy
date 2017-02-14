@@ -197,7 +197,7 @@ translate russian strings:
     old "Retrieving logcat information from device."
     new "Извлекаю информацию logcat из устройства."
 
-    # choose_directory.rpy:73
+    # choose_directory.rpy:87
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
     new "Ren'Py не удалось запустить python с tkinter, чтобы выбрать директорию. Пожалуйста, установите python-tk или пакет tkinter."
 
@@ -237,55 +237,55 @@ translate russian strings:
     old "The command is being run in a new operating system console window."
     new "Команда будет запущена в новом окне консоли операционной системы."
 
-    # distribute.rpy:443
+    # distribute.rpy:444
     old "Scanning project files..."
     new "Сканирую файлы проекта..."
 
-    # distribute.rpy:459
+    # distribute.rpy:460
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
     new "Постройка дистрибутивов провалилась:\n\nПеременная build.directory_name не должна содержать пробелов, двоеточий и точек с запятой."
 
-    # distribute.rpy:504
+    # distribute.rpy:505
     old "No packages are selected, so there's nothing to do."
     new "Пакеты не выбраны. Нечего делать."
 
-    # distribute.rpy:516
+    # distribute.rpy:517
     old "Scanning Ren'Py files..."
     new "Сканирую файлы Ren'Py..."
 
-    # distribute.rpy:569
+    # distribute.rpy:570
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
     new "Все пакеты были построены.\n\nВ связи с наличием информации о правах доступа, не распаковывайте дистрибутивы для Linux и Macintosh на Windows."
 
-    # distribute.rpy:752
+    # distribute.rpy:753
     old "Archiving files..."
     new "Архивирую файлы..."
 
-    # distribute.rpy:1050
+    # distribute.rpy:1053
     old "Unpacking the Macintosh application for signing..."
     new "Распаковываю приложение Macintosh для подписи..."
 
-    # distribute.rpy:1060
-    old "Signing the Macintosh application..."
-    new "Подписываю приложение Macintosh..."
+    # distribute.rpy:1063
+    old "Signing the Macintosh application...\n(This may take a long time.)"
+    new "Подписываю приложение Macintosh...\n(Это может занять время.)"
 
-    # distribute.rpy:1082
+    # distribute.rpy:1085
     old "Creating the Macintosh DMG..."
     new "Создаю Macintosh DMG..."
 
-    # distribute.rpy:1091
+    # distribute.rpy:1094
     old "Signing the Macintosh DMG..."
     new "Подписываю Macintosh DMG..."
 
-    # distribute.rpy:1248
+    # distribute.rpy:1251
     old "Writing the [variant] [format] package."
     new "Пишу пакет [variant] [format]"
 
-    # distribute.rpy:1261
+    # distribute.rpy:1264
     old "Making the [variant] update zsync file."
     new "Создаю файл zsync для обновления [variant]"
 
-    # distribute.rpy:1404
+    # distribute.rpy:1408
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
     new "Обработано {b}[complete]{/b} из {b}[total]{/b} файлов."
 
@@ -529,55 +529,55 @@ translate russian strings:
     old "Recompiling all rpy files into rpyc files..."
     new "Перекомпиляция всех файлов rpy в файлы rpyc..."
 
-    # gui7.rpy:236
+    # gui7.rpy:252
     old "Select Accent and Background Colors"
     new "Выберите Акцентный и Фоновый Цвета"
 
-    # gui7.rpy:250
+    # gui7.rpy:266
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
     new "Пожалуйста, кликните на цветовую схему, которую вы хотите использовать, а затем кликните Продолжить. Эти цвета можно изменить позже."
 
-    # gui7.rpy:294
+    # gui7.rpy:310
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
     new "{b}Внимание{/b}\nПродолжив, вы перепишете настроенные полосы, кнопки, слоты сохранения, полосы прокрутки и ползунки.\n\nЧто вы хотите сделать?"
 
-    # gui7.rpy:294
+    # gui7.rpy:310
     old "Choose new colors, then regenerate image files."
     new "Выбрать новые цвета, затем воссоздать файлы изображений."
 
-    # gui7.rpy:294
+    # gui7.rpy:310
     old "Regenerate the image files using the colors in gui.rpy."
     new "Воссоздать файлы изображений используя цвета из gui.rpy."
 
-    # gui7.rpy:314
+    # gui7.rpy:330
     old "PROJECT NAME"
     new "ИМЯ ПРОЕКТА"
 
-    # gui7.rpy:314
+    # gui7.rpy:330
     old "Please enter the name of your project:"
     new "Пожалуйста, введите имя проекта:"
 
-    # gui7.rpy:322
+    # gui7.rpy:338
     old "The project name may not be empty."
     new "Имя проекта не должно быть пустым."
 
-    # gui7.rpy:327
+    # gui7.rpy:343
     old "[project_name!q] already exists. Please choose a different project name."
     new "[project_name!q] уже существует. Выберите другое имя проекта."
 
-    # gui7.rpy:330
+    # gui7.rpy:346
     old "[project_dir!q] already exists. Please choose a different project name."
     new "[project_dir!q] уже существует. Выберите другое имя проекта."
 
-    # gui7.rpy:341
+    # gui7.rpy:357
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
     new "Какое разрешение должен использовать ваш проект? Хотя Ren'Py может масштабировать окно, это целевой размер окна, по размеру которого должны рисоваться ресурсы, и размер, на котором они будут наиболее чёткие.\n\nСтандартный 1280x720 — резонный компромисс."
 
-    # gui7.rpy:389
+    # gui7.rpy:405
     old "Creating the new project..."
     new "Создаю новый проект..."
 
-    # gui7.rpy:391
+    # gui7.rpy:407
     old "Updating the project..."
     new "Обновляю проект..."
 
@@ -965,35 +965,35 @@ translate russian strings:
     old "Have you backed up your projects recently?"
     new "Давно сохраняли свои проекты?"
 
-    # project.rpy:229
+    # project.rpy:243
     old "Launching the project failed."
     new "Запуск проекта провален."
 
-    # project.rpy:229
+    # project.rpy:243
     old "Please ensure that your project launches normally before running this command."
     new "Пожалуйста, убедитесь, что ваш проект нормально запускается перед использованием этой команды."
 
-    # project.rpy:242
+    # project.rpy:256
     old "Ren'Py is scanning the project..."
     new "Ren'Py сканирует проект..."
 
-    # project.rpy:568
+    # project.rpy:582
     old "Launching"
     new "Запускаю"
 
-    # project.rpy:597
+    # project.rpy:616
     old "PROJECTS DIRECTORY"
     new "ДИРЕКТОРИЯ ПРОЕКТОВ"
 
-    # project.rpy:597
+    # project.rpy:616
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Пожалуйста, выберите директорию проектов, используя выборщик директорий.\n{b}Он мог появиться позади этого окна.{/b}"
 
-    # project.rpy:597
+    # project.rpy:616
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Лаунчер будет искать проекты в этой директории, создавать новые проекты в этой директории, и размещать построенные проекты в этой директории."
 
-    # project.rpy:602
+    # project.rpy:621
     old "Ren'Py has set the projects directory to:"
     new "Ren'Py установила директорию проектов на:"
 

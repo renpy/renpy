@@ -113,67 +113,67 @@ translate russian strings:
     old "Back (B)"
     new "Back (B)"
 
-    # _errorhandling.rpym:495
+    # _errorhandling.rpym:503
     old "Open Traceback"
     new "Журнал"
 
-    # _errorhandling.rpym:497
+    # _errorhandling.rpym:505
     old "Opens the traceback.txt file in a text editor."
     new "Открывает файл traceback.txt в текстовом редакторе."
 
-    # _errorhandling.rpym:499
+    # _errorhandling.rpym:507
     old "Copy to Clipboard"
     new "Копировать в буфер обмена"
 
-    # _errorhandling.rpym:501
+    # _errorhandling.rpym:509
     old "Copies the traceback.txt file to the clipboard."
     new "Копирует файл traceback.txt в буфер обмена."
 
-    # _errorhandling.rpym:519
+    # _errorhandling.rpym:527
     old "An exception has occurred."
     new "Возникло исключение."
 
-    # _errorhandling.rpym:538
+    # _errorhandling.rpym:546
     old "Rollback"
     new "Назад"
 
-    # _errorhandling.rpym:540
+    # _errorhandling.rpym:548
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "Пытается вернуться назад, позволяя вам сохраниться или выбрать другой выбор."
 
-    # _errorhandling.rpym:543
+    # _errorhandling.rpym:551
     old "Ignore"
     new "Игнорировать"
 
-    # _errorhandling.rpym:545
+    # _errorhandling.rpym:553
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "Игнорирует это исключение, позволяя вам продолжить. Зачастую это ведёт к дополнительным ошибкам."
 
-    # _errorhandling.rpym:548
+    # _errorhandling.rpym:556
     old "Reload"
     new "Перезагрузить"
 
-    # _errorhandling.rpym:550
+    # _errorhandling.rpym:558
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "Перезагружает игру с диска, сохраняя и восстанавливая её состояние, если это возможно."
 
-    # _errorhandling.rpym:560
+    # _errorhandling.rpym:568
     old "Quits the game."
     new "Выходит из игры."
 
-    # _errorhandling.rpym:582
+    # _errorhandling.rpym:590
     old "Parsing the script failed."
     new "Обработка сценария завершилась неудачно."
 
-    # _errorhandling.rpym:606
+    # _errorhandling.rpym:614
     old "Open Parse Errors"
     new "Открыть файл ошибок"
 
-    # _errorhandling.rpym:608
+    # _errorhandling.rpym:616
     old "Opens the errors.txt file in a text editor."
     new "Открывает файл errors.txt в текстовом редакторе."
 
-    # _errorhandling.rpym:612
+    # _errorhandling.rpym:620
     old "Copies the errors.txt file to the clipboard."
     new "Копирует файл errors.txt в буфер обмена."
 

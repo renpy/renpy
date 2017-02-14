@@ -285,10 +285,6 @@ translate russian strings:
     old "## Buttons to access other pages."
     new "## Кнопки для доступа к другим страницам."
 
-    # screens.rpy:663
-    old "## range(1, 10) gives the numbers from 1 to 9."
-    new "## range(1, 10) задаёт диапазон значений от 1 до 9."
-
     # screens.rpy:666
     old "<"
     new "<"
@@ -300,6 +296,10 @@ translate russian strings:
     # screens.rpy:670
     old "{#quick_page}Q"
     new "{#quick_page}Б"
+
+    # screens.rpy:663
+    old "## range(1, 10) gives the numbers from 1 to 9."
+    new "## range(1, 10) задаёт диапазон значений от 1 до 9."
 
     # screens.rpy:676
     old ">"

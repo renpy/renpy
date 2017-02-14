@@ -281,159 +281,159 @@ translate russian strings:
     old "## The position of the main menu text."
     new "## Позиция текста главного меню."
 
-    # gui.rpy:277
+    # gui.rpy:280
     old "## Frames"
     new "## Рамки"
 
-    # gui.rpy:279
+    # gui.rpy:282
     old "## These variables control the look of frames that can contain user interface components when an overlay or window is not present."
     new "## Эти переменные контролируют вид рамок, содержащих компоненты пользовательского интерфейса, когда наложения или окна не представлены."
 
-    # gui.rpy:282
+    # gui.rpy:285
     old "## Generic frames that are introduced by player code."
     new "## Генерирует рамки, представленные кодом игрока."
 
-    # gui.rpy:285
+    # gui.rpy:288
     old "## The frame that is used as part of the confirm screen."
     new "## Рамки, используемые в частях экрана подтверждения."
 
-    # gui.rpy:288
+    # gui.rpy:291
     old "## The frame that is used as part of the skip screen."
     new "## Рамки, используемые в частях экрана пропуска."
 
-    # gui.rpy:291
+    # gui.rpy:294
     old "## The frame that is used as part of the notify screen."
     new "## Рамки, используемые в частях экрана уведомлений."
 
-    # gui.rpy:294
+    # gui.rpy:297
     old "## Should frame backgrounds be tiled?"
     new "## Должны ли фоны рамок моститься?"
 
-    # gui.rpy:298
+    # gui.rpy:301
     old "## Bars, Scrollbars, and Sliders"
     new "## Панели, Полосы прокрутки и Ползунки"
 
-    # gui.rpy:300
+    # gui.rpy:303
     old "## These control the look and size of bars, scrollbars, and sliders."
     new "## Эти настройки контролируют вид и размер панелей, полос прокрутки и ползунков."
 
-    # gui.rpy:302
+    # gui.rpy:305
     old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written code."
     new "## Стандартный GUI использует только ползунки и вертикальные полосы прокрутки. Все остальные панели используются только через программируемый код."
 
-    # gui.rpy:305
+    # gui.rpy:308
     old "## The height of horizontal bars, scrollbars, and sliders. The width of vertical bars, scrollbars, and sliders."
     new "## Высота горизонтальных панелей, полос прокрутки и ползунков. Ширина вертикальных панелей, полос прокрутки и ползунков."
 
-    # gui.rpy:311
+    # gui.rpy:314
     old "## True if bar images should be tiled. False if they should be linearly scaled."
     new "## True, если изображения панелей должны моститься. False, если они должны быть линейно масштабированы."
 
-    # gui.rpy:316
+    # gui.rpy:319
     old "## Horizontal borders."
     new "## Горизонтальные границы."
 
-    # gui.rpy:321
+    # gui.rpy:324
     old "## Vertical borders."
     new "## Вертикальные границы."
 
-    # gui.rpy:326
+    # gui.rpy:329
     old "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
     new "## Что делать с непрокручиваемыми полосами прокрутки в интерфейсе. \"hide\" прячет их, а None их показывает."
 
-    # gui.rpy:331
+    # gui.rpy:334
     old "## History"
     new "## История"
 
-    # gui.rpy:333
+    # gui.rpy:336
     old "## The history screen displays dialogue that the player has already dismissed."
     new "## Экран истории показывает диалог, который игрок уже прошёл."
 
-    # gui.rpy:335
+    # gui.rpy:338
     old "## The number of blocks of dialogue history Ren'Py will keep."
     new "## Количество диалоговых блоков истории, которых Ren'Py будет хранить."
 
-    # gui.rpy:338
+    # gui.rpy:341
     old "## The height of a history screen entry, or None to make the height variable at the cost of performance."
     new "## Высота доступных записей на экране истории, или None, чтобы задать высоту в зависимость от производительности."
 
-    # gui.rpy:342
+    # gui.rpy:345
     old "## The position, width, and alignment of the label giving the name of the speaking character."
     new "## Местоположение, ширина и выравнивание заголовка, показывающего имя говорящего персонажа."
 
-    # gui.rpy:349
+    # gui.rpy:352
     old "## The position, width, and alignment of the dialogue text."
     new "## Местоположение, ширина и выравнивание диалогового текста."
 
-    # gui.rpy:356
+    # gui.rpy:359
     old "## NVL-Mode"
     new "## Режим NVL"
 
-    # gui.rpy:358
+    # gui.rpy:361
     old "## The NVL-mode screen displays the dialogue spoken by NVL-mode characters."
     new "## Экран режима NVL показывает диалог NVL персонажей."
 
-    # gui.rpy:360
+    # gui.rpy:363
     old "## The borders of the background of the NVL-mode background window."
     new "## Границы фона окна NVL."
 
-    # gui.rpy:363
+    # gui.rpy:366
     old "## The height of an NVL-mode entry. Set this to None to have the entries dynamically adjust height."
     new "## Высота доступных строчек в режиме NVL. Установите это на None, чтобы строчки динамически регулировали высоту."
 
-    # gui.rpy:367
+    # gui.rpy:370
     old "## The spacing between NVL-mode entries when gui.nvl_height is None, and between NVL-mode entries and an NVL-mode menu."
     new "## Интервал между строчками в режиме NVL, если gui.nvl_height имеет значение None, и между строчками режима NVL и его меню."
 
-    # gui.rpy:384
+    # gui.rpy:387
     old "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"
     new "## Местоположение, ширина и выравнивание текста nvl_thought (текст от лица персонажа nvl_narrator)."
 
-    # gui.rpy:391
+    # gui.rpy:394
     old "## The position of nvl menu_buttons."
     new "## Местоположение кнопок меню NVL."
 
-    # gui.rpy:395
+    # gui.rpy:398
     old "## Localization"
     new "## Локализация"
 
-    # gui.rpy:397
+    # gui.rpy:400
     old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
     new "## Эта настройка контролирует доступ к разрыву линий. Стандартная настройка подходит для большинства языков. Список доступных значений можно найти на https://www.renpy.org/doc/html/style_properties.html#style-property-language"
 
-    # gui.rpy:405
+    # gui.rpy:408
     old "## Mobile devices"
     new "## Мобильные устройства"
 
-    # gui.rpy:403
+    # gui.rpy:413
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
     new "## Это увеличивает размер быстрых кнопок, чтобы сделать их доступнее для касания на планшетах и телефонах."
 
-    # gui.rpy:409
+    # gui.rpy:419
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
     new "## Это изменяет размеры и интервалы различных элементов GUI, чтобы убедиться, что они будут лучше видны на телефонах."
 
-    # gui.rpy:413
+    # gui.rpy:423
     old "## Font sizes."
     new "## Размеры шрифтов."
 
-    # gui.rpy:421
+    # gui.rpy:431
     old "## Adjust the location of the textbox."
     new "## Регулирует местоположение текстового окна."
 
-    # gui.rpy:427
+    # gui.rpy:437
     old "## Change the size and spacing of items in the game menu."
     new "## Изменяет размеры и интервалы объектов в игровом меню."
 
-    # gui.rpy:436
+    # gui.rpy:446
     old "## File button layout."
     new "## Местоположение кнопок слотов."
 
-    # gui.rpy:440
+    # gui.rpy:450
     old "## NVL-mode."
     new "## Режим NVL."
 
-    # gui.rpy:456
+    # gui.rpy:466
     old "## Quick buttons."
     new "## Быстрые кнопки."
 
