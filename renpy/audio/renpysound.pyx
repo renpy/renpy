@@ -170,7 +170,7 @@ def read_video(channel):
 
     # Remove padding from the edges of the surface.
     w, h = rv.get_size()
-    return rv.subsurface((2, 2, w-4, h-4))
+    return rv.subsurface((4, 4, w-8, h-8))
 
 def set_video(channel, video):
     """

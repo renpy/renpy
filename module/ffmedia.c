@@ -8,6 +8,8 @@
 #include <SDL.h>
 #include <SDL_thread.h>
 
+#include <malloc.h>
+
 /* The output audio sample rate. */
 static int audio_sample_rate = 44100;
 
@@ -19,7 +21,12 @@ const int BPC = 2; // Bytes per channel.
 const int BPS = 4; // Bytes per sample.
 
 const int FRAMES = 3;
-const int FRAME_PADDING = 2; // Pixels on each side.
+
+// The number of pixels on each side. This has to be greater that 0 (since
+// Ren'Py needs some padding), FRAME_PADDING * BPS has to be a multiple of
+// 16 (alignment issues on ARM NEON), and has to match the crop in the
+// read_video function of renpysound.pyx.
+const int FRAME_PADDING = 4;
 
 const int SPEED = 1;
 
@@ -702,7 +709,18 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 	rv->w = ms->video_decode_frame->width + FRAME_PADDING * 2;
 	rv->pitch = rv->w * sample->format->BytesPerPixel;
 	rv->h = ms->video_decode_frame->height + FRAME_PADDING * 2;
+
+	// We have to use SDL_calloc here, since SDL frees these pixels. This
+	// Should be
+
+
+#if __MACOS__ || __IPHONEOS__
 	rv->pixels = SDL_calloc(1, rv->pitch * rv->h);
+#else
+	rv->pixels = memalign(16, rv->pitch * rv->h);
+	memset(rv->pixels, 0, rv->pitch * rv->h);
+#endif
+
 	rv->format = sample->format;
 	rv->next = NULL;
 	rv->pts = pts;
