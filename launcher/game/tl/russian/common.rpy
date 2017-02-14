@@ -237,6 +237,142 @@ translate russian strings:
     old "Self-voicing enabled. Press 'v' to disable."
     new "Синтезатор речи включён. Нажмите 'v', чтобы отключить."
 
+    # _layout/classic_load_save.rpym:138
+    old "Empty Slot."
+    new "Пустой слот."
+
+    # _compat/gamemenu.rpym:355
+    old "Previous"
+    new "Предыдущий"
+
+    # _compat/gamemenu.rpym:362
+    old "Next"
+    new "Следующий"
+
+    # _layout/classic_joystick_preferences.rpym:94
+    old "Joystick Mapping"
+    new "Назначение джойстика"
+
+    # _developer/developer.rpym:38
+    old "Developer Menu"
+    new "Меню разработчика"
+
+    # _developer/developer.rpym:43
+    old "Reload Game (Shift+R)"
+    new "Перезагрузить игру (Shift+R)"
+
+    # _developer/developer.rpym:45
+    old "Console (Shift+O)"
+    new "Консоль (Shift+O)"
+
+    # _developer/developer.rpym:47
+    old "Variable Viewer"
+    new "Просмотр переменных"
+
+    # _developer/developer.rpym:49
+    old "Theme Test"
+    new "Тест темы"
+
+    # _developer/developer.rpym:51
+    old "Image Location Picker"
+    new "Инструмент позиционирования на изображениях"
+
+    # _developer/developer.rpym:53
+    old "Filename List"
+    new "Список файлов"
+
+    # _developer/developer.rpym:57
+    old "Show Image Load Log"
+    new "Показать лог загрузки изображений"
+
+    # _developer/developer.rpym:60
+    old "Hide Image Load Log"
+    new "Скрыть лог загрузки изображений"
+
+    # _developer/developer.rpym:95
+    old "Nothing to inspect."
+    new "Переменные не заданы."
+
+    # _developer/developer.rpym:217
+    old "Return to the developer menu"
+    new "Вернуться в меню разработчика"
+
+    # _developer/developer.rpym:373
+    old "Rectangle: %r"
+    new "Прямоугольник: %r"
+
+    # _developer/developer.rpym:378
+    old "Mouse position: %r"
+    new "Позиция мыши: %r"
+
+    # _developer/developer.rpym:383
+    old "Right-click or escape to quit."
+    new "Нажмите правую кнопку мыши или ESC чтобы выйти."
+
+    # _developer/developer.rpym:412
+    old "Rectangle copied to clipboard."
+    new "Координаты прямоугольника скопированы в буфер обмена."
+
+    # _developer/developer.rpym:415
+    old "Position copied to clipboard."
+    new "Координаты позиции скопированы в буфер обмена."
+
+    # _developer/developer.rpym:524
+    old "✔ "
+    new "✔ "
+
+    # _developer/developer.rpym:527
+    old "✘ "
+    new "✘ "
+
+    # _developer/developer.rpym:532
+    old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    new "\n{color=#cfc}✔ предсказанное изображение (хорошо){/color}\n{color=#fcc}✘ внезапное изображение (плохо){/color}\n{color=#fff}Нажмите, чтобы передвинуть.{/color}"
+
+    # _developer/inspector.rpym:38
+    old "Displayable Inspector"
+    new "Инспектор отображений"
+
+    # _developer/inspector.rpym:61
+    old "Size"
+    new "Разрешение"
+
+    # _developer/inspector.rpym:65
+    old "Style"
+    new "Стиль"
+
+    # _developer/inspector.rpym:71
+    old "Location"
+    new "Местоположение"
+
+    # _developer/inspector.rpym:122
+    old "Inspecting Styles of [displayable_name!q]"
+    new "Инспектировать стили [displayable_name!q]"
+
+    # _developer/inspector.rpym:139
+    old "displayable:"
+    new "отображение:"
+
+    # _developer/inspector.rpym:145
+    old "        (no properties affect the displayable)"
+    new "        (ни одна из настроек не влияет на отображение)"
+
+    # _developer/inspector.rpym:147
+    old "        (default properties omitted)"
+    new "        (настройки по умолчанию опущены)"
+
+    # _developer/inspector.rpym:185
+    old "<repr() failed>"
+    new "<repr() провален>"
+
+    # _layout/classic_load_save.rpym:170
+    old "a"
+    new "а"
+
+    # _layout/classic_load_save.rpym:179
+    old "q"
+    new "б"
+
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
     new "Связываюсь с App Store\nПожалуйста, ждите..."

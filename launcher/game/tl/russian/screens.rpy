@@ -323,7 +323,7 @@ translate russian strings:
 
     # screens.rpy:739
     old "Window"
-    new "Окно"
+    new "Оконный"
 
     # screens.rpy:740
     old "Fullscreen"
@@ -537,9 +537,9 @@ translate russian strings:
     old "Right Trigger\nA/Bottom Button"
     new "Правый триггер\nA/Нижняя кнопка"
 
-    # screens.rpy:1078
-    old "Roll back to earlier dialogue."
-    new "Возврат назад по сюжету игры."
+    # screens.rpy:1068
+    old "Left Trigger\nLeft Shoulder"
+    new "Левый Триггер\nЛевый Бампер"
 
     # screens.rpy:1081
     old "Right Shoulder"

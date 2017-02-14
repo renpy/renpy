@@ -1043,7 +1043,7 @@ translate russian strings:
 
     # translations.rpy:235
     old "Ren'Py has finished generating [language] translations."
-    new "Ren'Py закончил создавать переводы для [language]."
+    new "Ren'Py закончила создавать переводы для [language]."
 
     # translations.rpy:248
     old "Ren'Py is extracting string translations..."
@@ -1099,7 +1099,7 @@ translate russian strings:
 
     # translations.rpy:380
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new "Ren'Py завершила извлекать диалог. Извлечённый диалог можно найти в файле dialogue.[persistent.dialogue_format] в директории base."
+    new "Ren'Py завершила извлечение диалога. Извлечённый диалог можно найти в файле dialogue.[persistent.dialogue_format] в директории base."
 
     # updater.rpy:75
     old "Select Update Channel"
