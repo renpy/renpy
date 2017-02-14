@@ -506,13 +506,14 @@ from occurring.
 Fonts
 =====
 
-Ren'Py supports Truetype and Image-Based fonts.
+Ren'Py supports TrueType/OpenType fonts and collections, and
+Image-Based fonts.
 
-A Truetype font is specified by giving the name of the font file. The
-file must be present in the game directory, or one of the archive
+A TrueType or OpenType font is specified by giving the name of the font
+file. The file must be present in the game directory, or one of the archive
 files.
 
-Ren'Py also supports Truetype collections that define more than one
+Ren'Py also supports TrueType/OpenType collections that define more than one
 font. When accessing a collection, use the 0-based font index,
 followed by an at-sign and the file name. For example, "0@font.ttc" is
 the first font in a collection, "1@font.ttc" the second, and so on.
