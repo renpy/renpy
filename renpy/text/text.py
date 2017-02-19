@@ -29,10 +29,7 @@ import renpy.text.texwrap as texwrap
 import renpy.text.font as font
 import renpy.text.extras as extras
 
-try:
-    from _renpybidi import log2vis, WRTL, RTL, ON  # @UnresolvedImport
-except:
-    pass
+from _renpybidi import log2vis, WRTL, RTL, ON  # @UnresolvedImport
 
 
 class Blit(object):

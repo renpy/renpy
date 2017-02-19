@@ -69,7 +69,8 @@
         first loop only.
     
     `tight`
-        If this is True, then fadeouts will span into the next-queued sound.
+        If this is True, then fadeouts will span into the next-queued sound. If
+        None, this is true when loop is True, and false otherwise.
     
     `if_changed`
         If this is True, and the music file is currently playing,
@@ -104,7 +105,8 @@
         first loop only.
     
     `tight`
-        If this is True, then fadeouts will span into the next-queued sound.
+        If this is True, then fadeouts will span into the next-queued sound. If
+        None, this is true when loop is True, and false otherwise.
     
     This clears the pause flag for `channel`.
 

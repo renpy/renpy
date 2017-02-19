@@ -751,6 +751,10 @@ profile_screens = [ ]
 # Should Ren'Py search for system fonts.
 allow_sysfonts = False
 
+# Should Ren'Py tightly loop during fadeouts? (That is, not stop the fadeout
+# if it reaches the end of a trac.)
+tight_loop_default = True
+
 del renpy
 del os
 

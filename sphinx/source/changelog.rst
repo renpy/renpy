@@ -2,8 +2,22 @@
 Full Changelog
 ==============
 
-.. _renpy-6.99.12.3:
+.. _renpy-6.99.12.4:
 
+Ren'Py 6.99.12.4
+================
+
+Fadeouts now span looping audio by default. Previously, a fadeout would come
+to a stop at the end of an audio track.
+
+Right-to-left (Arabic and Hebrew) language support has been enabled on the iOS
+platform.
+
+A memory alignment issue that could result in a SIGBUS on ARM-based Android
+devices has been fixed.
+
+
+.. _renpy-6.99.12.3:
 
 Ren'Py 6.99.12.3
 ================

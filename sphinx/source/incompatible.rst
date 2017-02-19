@@ -101,6 +101,15 @@ The meaning of the `loop` parameter to :func:`MusicRoom` has changed. To
 get the old behavior, set both `loop` and `single_track` to true.
 
 
+.. _incompatible-6.15.7:
+
+6.15.7
+------
+
+Ren'Py now expects auto-forward mode to be controlled by the "auto-forward" :func:`Preference`.
+To have it controlled by the auto-forward mode slider, set :var:`config.default_afm_enable` to
+None.
+
 .. _incompatible-6.14:
 
 6.14
