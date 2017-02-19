@@ -106,7 +106,7 @@ get the old behavior, set both `loop` and `single_track` to true.
 6.15.7
 ------
 
-Ren'Py now expects auto-forward mode to be controlled by the "auto-forwad" :func:`Preference`.
+Ren'Py now expects auto-forward mode to be controlled by the "auto-forward" :func:`Preference`.
 To have it controlled by the auto-forward mode slider, set :var:`config.default_afm_enable` to
 None.
 
