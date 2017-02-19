@@ -62,7 +62,8 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
         first loop only.
 
     `tight`
-        If this is True, then fadeouts will span into the next-queued sound.
+        If this is True, then fadeouts will span into the next-queued sound. If
+        None, this is true when loop is True, and false otherwise.
 
     `if_changed`
         If this is True, and the music file is currently playing,
@@ -88,6 +89,9 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
         if loop is None:
             loop = c.default_loop
+
+        if (tight is None) and renpy.config.tight_loop_default:
+            tight = loop
 
         loop_is_filenames = (c.loop == filenames)
 
@@ -150,7 +154,8 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
         first loop only.
 
     `tight`
-        If this is True, then fadeouts will span into the next-queued sound.
+        If this is True, then fadeouts will span into the next-queued sound. If
+        None, this is true when loop is True, and false otherwise.
 
     This clears the pause flag for `channel`.
     """
@@ -172,6 +177,9 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
 
         if loop is None:
             loop = c.default_loop
+
+        if (tight is None) and renpy.config.tight_loop_default:
+            tight = loop
 
         if clear_queue:
             c.dequeue(True)
