@@ -298,6 +298,9 @@ init python:
         bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
         bar_decrease = [ 'K_LEFT' ],
         bar_increase = [ 'K_RIGHT' ],
+
+        # Null console, just in case.
+        console = [ ],
         )
 
     config.pad_bindings = {
@@ -490,6 +493,19 @@ init python:
         def __call__(self):
             renpy.quit(status=1)
 
+    class __EnterConsole(Action):
+        """
+        An action that enters the console if we can.
+        """
+
+        def __call__(self):
+            try:
+                f = _console.enter
+            except:
+                return None
+
+            return f()
+
 # This screen can be customized to add additional actions to the exception
 # screen. It currently takes two positional parameters.
 #
@@ -557,6 +573,12 @@ screen _exception:
                         action reload_action
                         hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
 
+                    textbutton _("Console"):
+                        action __EnterConsole()
+                        hovered tt.action(_("Opens a console to allow debugging the problem."))
+
+
+
                 use _exception_actions(traceback_fn, tt)
 
                 vbox:
@@ -572,6 +594,8 @@ screen _exception:
 
     if config.developer and reload_action:
         key "R" action reload_action
+
+    key "console" action __EnterConsole()
 
 # The screen that is used for error handling.
 screen _parse_errors:

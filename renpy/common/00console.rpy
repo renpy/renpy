@@ -1,6 +1,6 @@
 ﻿# console.rpy
 # Ren'Py console
-# Copyright (C) 2012 Shiz, C, delta, PyTom
+# Copyright (C) 2012-2017 Shiz, C, delta, PyTom
 #
 # This program is free software. It comes without any warranty, to the extent permitted by applicable law.
 # You can redistribute it and/or modify it under the terms of the Do What The Fuck You Want To Public License,
