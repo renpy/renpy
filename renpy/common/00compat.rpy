@@ -136,6 +136,9 @@ init -1900 python:
             config.enforce_window_max_size = False
             config.splashscreen_suppress_overlay = False
 
+        if version <= (6, 99, 12, 3):
+            config.prefix_viewport_scrollbar_styles = False
+
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

@@ -755,6 +755,9 @@ allow_sysfonts = False
 # if it reaches the end of a trac.)
 tight_loop_default = True
 
+# Should Ren'Py apply style_prefix to viewport scrollbar styles?
+prefix_viewport_scrollbar_styles = True
+
 del renpy
 del os
 

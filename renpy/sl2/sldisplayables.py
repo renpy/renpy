@@ -277,13 +277,17 @@ add(bar_properties)
 
 # Omit autobar. (behavior)
 
-def sl2viewport(**kwargs):
+def sl2viewport(context=None, **kwargs):
     """
     This converts the output of renpy.ui.viewport into something that
     sl.displayable can use.
     """
 
     d = renpy.ui.detached()
+
+    if context is not None:
+        renpy.ui.stack[-1].style_prefix = context.style_prefix
+
     vp = renpy.ui.viewport(**kwargs)
 
     renpy.ui.stack.pop()
@@ -295,13 +299,17 @@ def sl2viewport(**kwargs):
     return rv
 
 
-def sl2vpgrid(**kwargs):
+def sl2vpgrid(context=None, **kwargs):
     """
     This converts the output of renpy.ui.viewport into something that
     sl.displayable can use.
     """
 
     d = renpy.ui.detached()
+
+    if context is not None:
+        renpy.ui.stack[-1].style_prefix = context.style_prefix
+
     vp = renpy.ui.vpgrid(**kwargs)
 
     renpy.ui.stack.pop()
@@ -312,7 +320,7 @@ def sl2vpgrid(**kwargs):
 
     return rv
 
-DisplayableParser("viewport", sl2viewport, "viewport", 1, replaces=True)
+DisplayableParser("viewport", sl2viewport, "viewport", 1, replaces=True, pass_context=True)
 Keyword("child_size")
 Keyword("mousewheel")
 Keyword("arrowkeys")
@@ -328,7 +336,7 @@ Style("yminimum")
 PrefixStyle("side_", "spacing")
 add(side_position_properties)
 
-DisplayableParser("vpgrid", sl2vpgrid, "vpgrid", many, replaces=True)
+DisplayableParser("vpgrid", sl2vpgrid, "vpgrid", many, replaces=True, pass_context=True)
 Keyword("rows")
 Keyword("cols")
 Keyword("child_size")

@@ -571,7 +571,7 @@ screen _console:
         style "_console"
 
         has viewport:
-            style_prefix ""
+            style_prefix "_console"
             mousewheel True
             scrollbars "vertical"
             yinitial 1.0
