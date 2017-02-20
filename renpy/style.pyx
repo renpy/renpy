@@ -77,10 +77,18 @@ cpdef get_style(name):
 
     start, _mid, end = name.partition("_")
 
-    # We need both sides of the _, as we don't want to have
-    # _foo auto-inherit from foo.
-    if not start or not end:
+    if not end:
         raise Exception("Style %r does not exist." % name)
+
+    # Deal with inheritance of styles beginning with _ a bit specially,
+    # so _foo_bar inherits from _bar, not bar.
+    if not start:
+        _start, _mid, end = name[1:].partition("_")
+
+        if not end:
+            raise Exception("Style %r does not exist." % name)
+
+        end = "_" + end
 
     try:
         parent = get_style(end)
