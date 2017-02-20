@@ -500,11 +500,11 @@ init python:
 # added arguments.
 screen _exception_actions(traceback_fn, tt, *args):
 
-    textbutton _("Open Traceback"):
+    textbutton _("Open"):
         action _EditFile(traceback_fn)
         hovered tt.action(_("Opens the traceback.txt file in a text editor."))
 
-    textbutton _("Copy to Clipboard"):
+    textbutton _("Copy"):
         action _CopyFile(traceback_fn)
         hovered tt.action(_("Copies the traceback.txt file to the clipboard."))
 
@@ -611,11 +611,11 @@ screen _parse_errors:
                     action reload_action
                     hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
 
-                textbutton _("Open Parse Errors"):
+                textbutton _("Open"):
                     action _EditFile(error_fn)
                     hovered tt.action(_("Opens the errors.txt file in a text editor."))
 
-                textbutton _("Copy to Clipboard"):
+                textbutton _("Copy"):
                     action _CopyFile(error_fn)
                     hovered tt.action(_("Copies the errors.txt file to the clipboard."))
 
