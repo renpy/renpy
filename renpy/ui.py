@@ -1060,6 +1060,16 @@ def viewport_common(vpfunc, scrollbars=None, **properties):
     viewport_properties = { }
     side_properties = { }
 
+    if renpy.config.prefix_viewport_scrollbar_styles and (scrollbars != "vertical"):
+        scrollbar_style = prefixed_style("scrollbar")
+    else:
+        scrollbar_style = "scrollbar"
+
+    if renpy.config.prefix_viewport_scrollbar_styles and (scrollbars != "horizontal"):
+        vscrollbar_style = prefixed_style("vscrollbar")
+    else:
+        vscrollbar_style = "vscrollbar"
+
     for k, v in properties.iteritems():
         if k.startswith("side_"):
             side_properties[k[5:]] = v
@@ -1074,7 +1084,7 @@ def viewport_common(vpfunc, scrollbars=None, **properties):
         rv = vpfunc(**viewport_properties)
         addable = stack.pop()
 
-        vscrollbar(adjustment=rv.yadjustment, alt=alt + " vertical scrollbar")
+        vscrollbar(adjustment=rv.yadjustment, alt=alt + " vertical scrollbar", style=vscrollbar_style)
         close()
 
         stack.append(addable)
@@ -1087,7 +1097,7 @@ def viewport_common(vpfunc, scrollbars=None, **properties):
         rv = vpfunc(**viewport_properties)
         addable = stack.pop()
 
-        scrollbar(adjustment=rv.xadjustment, alt=alt + " horizontal scrollbar")
+        scrollbar(adjustment=rv.xadjustment, alt=alt + " horizontal scrollbar", style=scrollbar_style)
         close()
 
         stack.append(addable)
@@ -1101,8 +1111,8 @@ def viewport_common(vpfunc, scrollbars=None, **properties):
         rv = vpfunc(**viewport_properties)
         addable = stack.pop()
 
-        vscrollbar(adjustment=rv.yadjustment, alt=alt + " vertical scrollbar")
-        scrollbar(adjustment=rv.xadjustment, alt=alt +" horizontal scrollbar")
+        vscrollbar(adjustment=rv.yadjustment, alt=alt + " vertical scrollbar", style=vscrollbar_style)
+        scrollbar(adjustment=rv.xadjustment, alt=alt +" horizontal scrollbar", style=scrollbar_style)
         close()
 
         stack.append(addable)

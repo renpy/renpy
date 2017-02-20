@@ -298,6 +298,9 @@ init python:
         bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
         bar_decrease = [ 'K_LEFT' ],
         bar_increase = [ 'K_RIGHT' ],
+
+        # Null console, just in case.
+        console = [ ],
         )
 
     config.pad_bindings = {
@@ -490,6 +493,19 @@ init python:
         def __call__(self):
             renpy.quit(status=1)
 
+    class __EnterConsole(Action):
+        """
+        An action that enters the console if we can.
+        """
+
+        def __call__(self):
+            try:
+                f = _console.enter
+            except:
+                return None
+
+            return f()
+
 # This screen can be customized to add additional actions to the exception
 # screen. It currently takes two positional parameters.
 #
@@ -500,11 +516,11 @@ init python:
 # added arguments.
 screen _exception_actions(traceback_fn, tt, *args):
 
-    textbutton _("Open Traceback"):
+    textbutton _("Open"):
         action _EditFile(traceback_fn)
         hovered tt.action(_("Opens the traceback.txt file in a text editor."))
 
-    textbutton _("Copy to Clipboard"):
+    textbutton _("Copy"):
         action _CopyFile(traceback_fn)
         hovered tt.action(_("Copies the traceback.txt file to the clipboard."))
 
@@ -557,6 +573,12 @@ screen _exception:
                         action reload_action
                         hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
 
+                    textbutton _("Console"):
+                        action __EnterConsole()
+                        hovered tt.action(_("Opens a console to allow debugging the problem."))
+
+
+
                 use _exception_actions(traceback_fn, tt)
 
                 vbox:
@@ -572,6 +594,8 @@ screen _exception:
 
     if config.developer and reload_action:
         key "R" action reload_action
+
+    key "console" action __EnterConsole()
 
 # The screen that is used for error handling.
 screen _parse_errors:
@@ -611,11 +635,11 @@ screen _parse_errors:
                     action reload_action
                     hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
 
-                textbutton _("Open Parse Errors"):
+                textbutton _("Open"):
                     action _EditFile(error_fn)
                     hovered tt.action(_("Opens the errors.txt file in a text editor."))
 
-                textbutton _("Copy to Clipboard"):
+                textbutton _("Copy"):
                     action _CopyFile(error_fn)
                     hovered tt.action(_("Copies the errors.txt file to the clipboard."))
 

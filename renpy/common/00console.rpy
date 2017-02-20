@@ -1,6 +1,6 @@
 ﻿# console.rpy
 # Ren'Py console
-# Copyright (C) 2012 Shiz, C, delta, PyTom
+# Copyright (C) 2012-2017 Shiz, C, delta, PyTom
 #
 # This program is free software. It comes without any warranty, to the extent permitted by applicable law.
 # You can redistribute it and/or modify it under the terms of the Do What The Fuck You Want To Public License,
@@ -37,48 +37,52 @@
 init -1500:
 
     style _console is _default:
-        background None
+        xpadding gui._scale(20)
+        ypadding gui._scale(10)
+        xfill True
+        yfill True
+        background "#d0d0d0d0"
+
+    style _console_backdrop:
+        background "#d0d0d0"
+
+    style _console_vscrollbar is _vscrollbar
 
     style _console_text is _default:
-        size 14
-        color "#ffffff"
+        size gui._scale(16)
 
     style _console_input is _default:
-        background "#0000006f"
         xfill True
 
     style _console_prompt is _console_text:
-        minwidth 20
+        minwidth gui._scale(22)
         text_align 1.0
 
     style _console_input_text is _console_text:
-        color "#fafafa"
+        color "#000000"
         adjust_spacing False
 
     style _console_history is _default:
-        background "#00000000"
         xfill True
-        yfill True
 
     style _console_history_item is _default:
-        background "#00000040"
-        top_margin 4
         xfill True
+        bottom_margin gui._scale(8)
 
     style _console_command is _default:
-        background "#00000040"
-        left_padding 24
+        left_padding gui._scale(26)
 
-    style _console_command_text is _console_text
+    style _console_command_text is _console_text:
+        color "#000000"
 
     style _console_result is _default:
-        background "#00000000"
-        left_padding 24
+        left_padding gui._scale(26)
 
     style _console_result_text is _console_text
 
     style _console_error_text is _console_text:
-        color "#ff8080"
+        color "#603030"
+        # color "#ff8080"
 
     style _console_trace is _default:
         background "#00000040"
@@ -559,10 +563,45 @@ screen _console:
     zorder 1500
     modal True
 
+    if not _console.console.can_renpy():
+        frame:
+            style "_console_backdrop"
+
     frame:
         style "_console"
 
+        has viewport:
+            style_prefix "_console"
+            mousewheel True
+            scrollbars "vertical"
+            yinitial 1.0
+
         has vbox
+
+        # Draw historical console input.
+
+        frame style "_console_history":
+
+            has vbox:
+                xfill True
+
+            for he in history:
+
+                frame style "_console_history_item":
+                    has vbox
+
+                    if he.command is not None:
+                        frame style "_console_command":
+                            xfill True
+                            text "[he.command!q]" style "_console_command_text"
+
+                    if he.result is not None:
+
+                        frame style "_console_result":
+                            if he.is_error:
+                                text "[he.result!q]" style "_console_error_text"
+                            else:
+                                text "[he.result!q]" style "_console_result_text"
 
         # Draw the current input.
         frame style "_console_input":
@@ -590,36 +629,6 @@ screen _console:
 
                 input default default style "_console_input_text" exclude ""
 
-
-        # Draw historical console input.
-        $ rev_history = list(history)
-        $ rev_history.reverse()
-
-        frame style "_console_history":
-
-            has viewport:
-                mousewheel True
-
-            has vbox:
-                xfill True
-
-            for he in rev_history:
-
-                frame style "_console_history_item":
-                    has vbox
-
-                    if he.command is not None:
-                        frame style "_console_command":
-                            xfill True
-                            text "[he.command!q]" style "_console_command_text"
-
-                    if he.result is not None:
-
-                        frame style "_console_result":
-                            if he.is_error:
-                                text "[he.result!q]" style "_console_error_text"
-                            else:
-                                text "[he.result!q]" style "_console_result_text"
 
     key "game_menu" action Jump("_console_return")
     key "console_older" action _console.console.older
