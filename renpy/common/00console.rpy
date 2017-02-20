@@ -43,6 +43,9 @@ init -1500:
         yfill True
         background "#d0d0d0d0"
 
+    style _console_backdrop:
+        background "#d0d0d0"
+
     style _console_vscrollbar is _vscrollbar
 
     style _console_text is _default:
@@ -559,6 +562,10 @@ screen _console:
     #    A list of command, result, is_error tuples.
     zorder 1500
     modal True
+
+    if not _console.console.can_renpy():
+        frame:
+            style "_console_backdrop"
 
     frame:
         style "_console"
