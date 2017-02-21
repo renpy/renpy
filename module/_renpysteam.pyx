@@ -65,6 +65,8 @@ cdef extern from "steam/steam_api.h":
     cdef cppclass ISteamUtils:
         bint IsOverlayEnabled()
         void SetOverlayNotificationPosition(ENotificationPosition eNotificationPosition)
+        bool BOverlayNeedsPresent()
+        char *GetSteamUILanguage()
 
     ISteamUtils *SteamUtils()
 
@@ -305,6 +307,16 @@ def get_current_game_language():
     cdef const char *s = SteamApps().GetCurrentGameLanguage()
     return str(s)
 
+def get_steam_ui_language():
+    """
+    :doc: steam_apps
+
+    Return the name of the language the steam UI is using.
+    """
+
+    cdef const char *s = SteamUtils().GetSteamUILanguage()
+    return str(s)
+
 def get_current_beta_name():
     """
     :doc: steam_apps
@@ -380,6 +392,17 @@ def is_overlay_enabled():
     """
 
     return SteamUtils().IsOverlayEnabled()
+
+def overlay_needs_present():
+    """
+    :doc: steam_overlay
+
+    Returns true if the steam overlay is enabled. (This might take a while to
+    return true once the game starts.)
+    """
+
+    return SteamUtils().BOverlayNeedsPresent()
+
 
 POSITION_TOP_LEFT = k_EPositionTopLeft
 POSITION_TOP_RIGHT = k_EPositionTopRight
