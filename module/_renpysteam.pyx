@@ -553,6 +553,7 @@ def init():
 
         if initialized:
             renpy.config.periodic_callbacks.append(periodic)
+            renpy.config.needs_redraw_callbacks.append(overlay_needs_present)
             set_overlay_notification_position(POSITION_TOP_RIGHT)
 
     return initialized

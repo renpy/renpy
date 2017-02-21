@@ -2834,6 +2834,10 @@ class Interface(object):
                     renpy.loader.needs_autoreload = False
                     renpy.exports.reload_script()
 
+                for i in renpy.config.needs_redraw_callbacks:
+                    if i():
+                        needs_redraw = True
+
                 # Redraw the screen.
                 if (self.force_redraw or
                     ((first_pass or not pygame.event.peek(ALL_EVENTS)) and

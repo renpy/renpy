@@ -758,6 +758,9 @@ tight_loop_default = True
 # Should Ren'Py apply style_prefix to viewport scrollbar styles?
 prefix_viewport_scrollbar_styles = True
 
+# These functions are called to determine if Ren'Py needs to redraw the screen.
+needs_redraw_callbacks = [ ]
+
 del renpy
 del os
 
