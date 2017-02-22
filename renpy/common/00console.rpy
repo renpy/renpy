@@ -89,11 +89,17 @@ init -1500:
         xalign 1.0
         top_margin 20
         right_margin 20
+        xpadding 2
+        ypadding 2
 
-    style _console_trace_var is _console_text:
+    style _console_trace_text is _default:
+        color "#fff"
+        size gui._scale(16)
+
+    style _console_trace_var is _console_trace_text:
         bold True
 
-    style _console_trace_value is _console_text
+    style _console_trace_value is _console_trace_text
 
 # Configuration and style initalization.
 init -1500 python:
@@ -110,12 +116,16 @@ init -1500 python:
     # be actually run.
     config.console_callback = None
 
-
 init -1500 python in _console:
-    from store import config, persistent
+    from store import config, persistent, NoRollback
     import sys
     import traceback
     import store
+
+
+    # The list of traced expressions.
+    class TracedExpressionsList(NoRollback, list):
+        pass
 
     class BoundedList(list):
         """
@@ -188,9 +198,6 @@ init -1500 python in _console:
 
             persistent._console_history = [ (i.command, i.result, i.is_error) for i in self.history ]
             persistent._console_line_history = list(self.line_history)
-
-            print(persistent._console_history)
-
 
         def start(self):
             he = ConsoleHistoryEntry(None)
@@ -378,8 +385,6 @@ init -1500 python in _console:
 
     console = None
 
-    traced_expressions = [ ]
-
     def enter():
         """
         Called to enter the debug console.
@@ -519,6 +524,11 @@ init -1500 python in _console:
         if expr in traced_expressions:
             traced_expressions.remove(expr)
 
+    def watch_after_load():
+        if config.developer and traced_expressions:
+            renpy.show_screen("_trace_screen")
+
+    config.after_load_callbacks.append(watch_after_load)
 
     def renpy_unwatch(expr):
         """
@@ -651,6 +661,7 @@ screen _console:
     key "console_older" action _console.console.older
     key "console_newer" action _console.console.newer
 
+default _console.traced_expressions = _console.TracedExpressionsList()
 
 screen _trace_screen:
 
