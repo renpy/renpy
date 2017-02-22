@@ -112,7 +112,7 @@ init -1500 python:
 
 
 init -1500 python in _console:
-    from store import config
+    from store import config, persistent
     import sys
     import traceback
     import store
@@ -173,9 +173,24 @@ init -1500 python in _console:
             self.line_history = BoundedList(config.console_history_size)
             self.line_index = 0
 
+            if persistent._console_history is not None:
+                for i in persistent._console_history:
+                    self.history.append(ConsoleHistoryEntry(i[0], i[1], i[2]))
+
+            if persistent._console_line_history is not None:
+                self.line_history.extend(persistent._console_line_history)
+
             self.first_time = True
 
             self.reset()
+
+        def backup(self):
+
+            persistent._console_history = [ (i.command, i.result, i.is_error) for i in self.history ]
+            persistent._console_line_history = list(self.line_history)
+
+            print(persistent._console_history)
+
 
         def start(self):
             he = ConsoleHistoryEntry(None)
@@ -260,7 +275,6 @@ init -1500 python in _console:
                 self.lines.append(indent)
                 return
 
-
             lines = self.lines
             self.line_history.append(lines)
 
@@ -272,7 +286,10 @@ init -1500 python in _console:
                 if not lines:
                     return
 
-            self.run(lines)
+            try:
+                self.run(lines)
+            finally:
+                self.backup()
 
         def can_renpy(self):
             """
