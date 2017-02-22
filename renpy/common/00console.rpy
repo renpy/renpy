@@ -379,7 +379,7 @@ init -1500 python in _console:
                 import traceback
                 traceback.print_exc()
 
-                he.result = self.format_exception()
+                he.result = self.format_exception().rstrip()
                 he.is_error = True
 
 
