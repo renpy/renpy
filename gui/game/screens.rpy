@@ -13,9 +13,9 @@ style default:
     properties gui.text_properties()
     language gui.language
 
-
 style input:
     properties gui.text_properties("input", accent=True)
+    adjust_spacing False
 
 style hyperlink_text:
     properties gui.text_properties("hyperlink", accent=True)
@@ -156,7 +156,6 @@ style say_dialogue:
     ypos gui.dialogue_ypos
 
 
-
 ## Input screen ################################################################
 ##
 ## This screen is used to display renpy.input. The prompt parameter is used
@@ -173,23 +172,24 @@ screen input(prompt):
     window:
 
         vbox:
+            xalign gui.dialogue_text_xalign
             xpos gui.dialogue_xpos
-            xanchor gui.dialogue_xalign
-            ypos gui.dialogue_ypos
             xsize gui.dialogue_width
+            ypos gui.dialogue_ypos
 
             text prompt style "input_prompt"
             input id "input"
 
-
-style input_prompt is say_dialogue
+style input_prompt is default
 
 style input_prompt:
+    xalign gui.dialogue_text_xalign
     properties gui.text_properties("input_prompt")
-    xmaximum gui.dialogue_width
 
 style input:
+    xalign gui.dialogue_text_xalign
     xmaximum gui.dialogue_width
+
 
 ## Choice screen ###############################################################
 ##
