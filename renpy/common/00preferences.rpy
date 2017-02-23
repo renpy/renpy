@@ -72,7 +72,7 @@ init -1500 python:
 
          * Preference("video sprites", "show") - show all video sprites.
          * Preference("video sprites", "hide") - fall back to images where possible.
-         * Preference("video sprites", "toggle") - toggle image fallback behavior. 
+         * Preference("video sprites", "toggle") - toggle image fallback behavior.
 
          * Preference("show empty window", "show") - Allow the "window show" and "window auto" statement to show an empty window outside of the say statement.
          * Preference("show empty window", "hide") - Prevent the above.
@@ -409,6 +409,12 @@ init -1500 python:
             renpy.show_screen("_self_voicing")
         elif not _preferences.self_voicing and has_screen:
             renpy.hide_screen("_self_voicing")
+
+        if _preferences.self_voicing:
+            if _preferences.using_afm_enable:
+                _preferences.afm_enable = False
+            else:
+                _preferences.afm_time = 0
 
     config.interact_callbacks.append(__show_self_voicing)
 

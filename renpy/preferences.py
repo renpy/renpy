@@ -101,6 +101,7 @@ class Preferences(renpy.object.Object):
         self.text_cps = 0
         self.afm_time = 0
         self.afm_enable = True
+        self.using_afm_enable = False
         self.voice_sustain = False
         self.mouse_move = False
         self.show_empty_window = True
