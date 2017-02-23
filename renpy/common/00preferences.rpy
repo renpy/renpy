@@ -401,6 +401,7 @@ init -1500 python:
 
         return rv
 
+    config.self_voicing_stops_afm = True
 
     def __show_self_voicing():
         has_screen = renpy.get_screen("_self_voicing")
@@ -410,7 +411,7 @@ init -1500 python:
         elif not _preferences.self_voicing and has_screen:
             renpy.hide_screen("_self_voicing")
 
-        if _preferences.self_voicing:
+        if _preferences.self_voicing and config.self_voicing_stops_afm:
             if _preferences.using_afm_enable:
                 _preferences.afm_enable = False
             else:
