@@ -1409,9 +1409,9 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                        and data == fwd_data
-                        and (keep_rollback or self.rolled_forward)
-                    ):
+                            and data == fwd_data
+                            and (keep_rollback or self.rolled_forward)
+                        ):
                     self.forward.pop(0)
                 else:
                     self.forward = [ ]
@@ -1588,6 +1588,10 @@ class RollbackLog(renpy.object.Object):
 
         # Stop the sounds.
         renpy.audio.audio.rollback()
+
+        # Stop any hiding in progress.
+        for i in renpy.game.contexts:
+            i.scene_lists.remove_all_hidden()
 
         renpy.game.contexts.extend(other_contexts)
 

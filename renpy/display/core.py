@@ -1228,6 +1228,25 @@ class SceneLists(renpy.object.Object):
 
             self.layers[l] = newl
 
+    def remove_all_hidden(self):
+        """
+        Removes everything hidden, even if it's not time yet. (Used when making a rollback copy).
+        """
+
+        for l in self.layers:
+            newl = [ ]
+
+            for sle in self.layers[l]:
+
+                if sle.tag:
+
+                    if "$" in sle.tag:
+                        continue
+
+                newl.append(sle)
+
+            self.layers[l] = newl
+
     def get_displayable_by_tag(self, layer, tag):
         """
         Returns the displayable on the layer with the given tag, or None
