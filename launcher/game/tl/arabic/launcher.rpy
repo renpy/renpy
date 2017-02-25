@@ -315,11 +315,11 @@ translate arabic strings:
 
     # distribute_gui.rpy:199
     old "Upload to itch.io"
-    new "Upload to itch.io"
+    new "تحميل المشروع إلى itch.io"
 
     # distribute_gui.rpy:215
     old "Build Packages:"
-    new "بناء الرزمة البيانية:"
+    new "بناء الحزمة البيانية:"
 
     # distribute_gui.rpy:234
     old "Options:"
@@ -459,7 +459,7 @@ translate arabic strings:
 
     # front_page.rpy:198
     old "gui"
-    new "gui"
+    new "الواجهة"
 
     # front_page.rpy:204
     old "Edit File"
@@ -479,7 +479,7 @@ translate arabic strings:
 
     # front_page.rpy:237
     old "Change/Update GUI"
-    new "Change/Update GUI"
+    new "نغيير او تحديث الواجهة"
 
     # front_page.rpy:239
     old "Change Theme"
@@ -523,11 +523,11 @@ translate arabic strings:
 
     # gui7.rpy:236
     old "Select Accent and Background Colors"
-    new "Select Accent and Background Colors"
+    new "اختر لون الخلفية و المجموعة اللونية"
 
     # gui7.rpy:250
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
-    new "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
+    new "الرجاء اختيار الألوان التي ترغب بها ثم اضغط زر الاستمرار, ستتمكن من تغيير هذه الالوان لاحقا."
 
     # gui7.rpy:294
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
@@ -535,11 +535,11 @@ translate arabic strings:
 
     # gui7.rpy:294
     old "Choose new colors, then regenerate image files."
-    new "Choose new colors, then regenerate image files."
+    new "اختر الوان جديدة ثم أعد تكوين ملفات الصور لتطابق اللون الذي اخترته."
 
     # gui7.rpy:294
     old "Regenerate the image files using the colors in gui.rpy."
-    new "Regenerate the image files using the colors in gui.rpy."
+    new "يقوم بإعادة تكوين الصور حسب الألوان التي تم وضعها في ملف gui.rpy."
 
     # gui7.rpy:314
     old "PROJECT NAME"
@@ -563,15 +563,15 @@ translate arabic strings:
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
+    new "ما هو الحجم المطلوب للمشروع؟ رينباي يستطيع تكبير و تصغير حجم النافذة لتناسب الشاشة, لكن الحجم الذي ستختاره هنا هو الحجم القياسي, و الذي ستظهر فيه الصور و الشخصيات في أوضح شكل لها. \n\n الحجم الذي يناسب اغلب الشاشات هو 1280×730 بكسل."
 
     # gui7.rpy:389
     old "Creating the new project..."
-    new "Creating the new project..."
+    new "يتم الآن تكوين المشروع الجديد..."
 
     # gui7.rpy:391
     old "Updating the project..."
-    new "Updating the project..."
+    new "يتم الآن تحديث معلومات المشروع..."
 
     # interface.rpy:107
     old "Documentation"
@@ -735,11 +735,11 @@ translate arabic strings:
 
     # itch.rpy:60
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "The built distributions could not be found. Please choose 'Build' and try again."
+    new "لم يتمكن رينباي من ايجاد حزمة المشروع الجاهزة للرفع, الرجاء ضغط زر البناء و المحاولة مجدداَ."
 
     # itch.rpy:91
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "No uploadable files were found. Please choose 'Build' and try again."
+    new "لم يتمكن رينباي من ايجاد ملفات جاهزة للرفع. الرجاء ضغط زر البناء و المحاولة مجدداَ."
 
     # itch.rpy:99
     old "The butler program was not found."
@@ -751,7 +751,7 @@ translate arabic strings:
 
     # itch.rpy:108
     old "The name of the itch project has not been set."
-    new "The name of the itch project has not been set."
+    new "لم تقم باختيار اسم للمشروع للرفع على itch."
 
     # itch.rpy:108
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
@@ -827,23 +827,23 @@ translate arabic strings:
 
     # new_project.rpy:38
     old "New GUI Interface"
-    new "New GUI Interface"
+    new "واجهة المستخدم الجديدة"
 
     # new_project.rpy:48
     old "Both interfaces have been translated to your language."
-    new "Both interfaces have been translated to your language."
+    new "تمت ترجمة كلا الواجهتين إلى اللغة التي قمت باختيارها."
 
     # new_project.rpy:50
     old "Only the new GUI has been translated to your language."
-    new "Only the new GUI has been translated to your language."
+    new "تمت ترجمة الواجهة الجديدة فقط إلى اللغه التي قمت باختيارها."
 
     # new_project.rpy:52
     old "Only the legacy theme interface has been translated to your language."
-    new "Only the legacy theme interface has been translated to your language."
+    new "تمت ترجمة الواجهة القديمة فقط إلى اللغه التي قمت باختيارها."
 
     # new_project.rpy:54
     old "Neither interface has been translated to your language."
-    new "Neither interface has been translated to your language."
+    new "لم تتم ترجمة اي من الواجهتين إلى اللغه المطلوبة."
 
     # new_project.rpy:63
     old "The projects directory could not be set. Giving up."
@@ -851,11 +851,11 @@ translate arabic strings:
 
     # new_project.rpy:69
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
-    new "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
+    new "أي من الواجهتين ترغب في استخدامه؟ واجهة المستخدم الجديدة تناسب الاجهزة المحمولة وجميع احجام الشاشات, و أسهل في اضافة التفاصيل و التخصيص. الواجهة القديمة قد تكون مهمة للمشاريع التي تم انجازها سابقا.\n\n ان لم تكن متأكدا قم باختيار الواجهة الجديدة ثم اضغط استمرار في الجهة اليمنى السفلى."
 
     # new_project.rpy:69
     old "Legacy Theme Interface"
-    new "Legacy Theme Interface"
+    new "واجهة المستخدم القديمة"
 
     # new_project.rpy:90
     old "Choose Project Template"
@@ -995,7 +995,7 @@ translate arabic strings:
 
     # translations.rpy:104
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
-    new "The language to work with. This should only contain lower-case ASCII characters and underscores."
+    new "اختر اللغه التي ستعمل بها. يجب ان يكون اسم اللغه مكتوبا باحرف انجليزية فقط: lower-case ASCII and underscores"
 
     # translations.rpy:130
     old "Generate empty strings for translations"
@@ -1003,31 +1003,31 @@ translate arabic strings:
 
     # translations.rpy:148
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
+    new "يقوم بتكوين او تحديث ملفات الترجمة. سيتم وضع الملفات في game/tl/[persistent.translate_language!q]."
 
     # translations.rpy:168
     old "Extract String Translations"
-    new "Extract String Translations"
+    new "استخراج نصوص الترجمة"
 
     # translations.rpy:170
     old "Merge String Translations"
-    new "Merge String Translations"
+    new "دمج نصوص الترجمة"
 
     # translations.rpy:175
     old "Replace existing translations"
-    new "Replace existing translations"
+    new "استبدال نصوص الترجمة الحالية"
 
     # translations.rpy:176
     old "Reverse languages"
-    new "Reverse languages"
+    new "استبدال لغه بالأخرى"
 
     # translations.rpy:180
     old "Update Default Interface Translations"
-    new "Update Default Interface Translations"
+    new "تحديث لغة واجهة رينباي التشغيلية"
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
+    new "أمر استخراج نصوص الترجمة يقوم بنسخ الأسطر إلى ملف مؤقت. \n\n أمر دمج نصوص الترجمة يقوم باستخراج النصوص إلى مشروع آخر."
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
@@ -1039,23 +1039,23 @@ translate arabic strings:
 
     # translations.rpy:248
     old "Ren'Py is extracting string translations..."
-    new "Ren'Py is extracting string translations..."
+    new "يقوم رينباي باستخراج ملفات الترجمة..."
 
     # translations.rpy:251
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py has finished extracting [language] string translations."
+    new "انتهى رينباي من استخراج أسطر الترجمة الخاصة باللغه [language]."
 
     # translations.rpy:271
     old "Ren'Py is merging string translations..."
-    new "Ren'Py is merging string translations..."
+    new "يقوم رينباي بدمج اسطر الترجمة..."
 
     # translations.rpy:274
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py has finished merging [language] string translations."
+    new "انتهى رينباي من دمج أسطر الترجمة الخاصة باللغه [language]."
 
     # translations.rpy:282
     old "Updating default interface translations..."
-    new "Updating default interface translations..."
+    new "يقوم رينباي بتحديث اسطر الترجمة الخاصة بالواجهة التشغيلية..."
 
     # translations.rpy:306
     old "Extract Dialogue: [project.current.name!q]"
@@ -1063,7 +1063,7 @@ translate arabic strings:
 
     # translations.rpy:322
     old "Format:"
-    new "Format:"
+    new "الصيغة:"
 
     # translations.rpy:330
     old "Tab-delimited Spreadsheet (dialogue.tab)"
@@ -1091,7 +1091,7 @@ translate arabic strings:
 
     # translations.rpy:378
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
+    new "انتهى رينباي من استخراج اسطر النص. الحوار الذي تم استخراجه موجود في المجلد الرئيسي للمشروع dialogue.[persistent.dialogue_format]."
 
     # updater.rpy:75
     old "Select Update Channel"
