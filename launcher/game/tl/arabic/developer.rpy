@@ -163,7 +163,7 @@ translate arabic strings:
 
     # 00console.rpy:467
     old "watch <expression>: watch a python expression"
-    new "مشاهده <expression>: يقوم بعرض تبيرات بايثون"
+    new "مشاهده <expression>: يقوم بعرض تعبيرات بايثون"
 
     # 00console.rpy:493
     old "unwatch <expression>: stop watching an expression"
