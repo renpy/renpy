@@ -1,33 +1,33 @@
-﻿
+
 translate arabic strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
-    new "{#weekday}Monday"
+    new "{#weekday}الأثنين"
 
     # 00action_file.rpy:26
     old "{#weekday}Tuesday"
-    new "{#weekday}Tuesday"
+    new "{#weekday}الثلاثاء"
 
     # 00action_file.rpy:26
     old "{#weekday}Wednesday"
-    new "{#weekday}Wednesday"
+    new "{#weekday}الأربعاء"
 
     # 00action_file.rpy:26
     old "{#weekday}Thursday"
-    new "{#weekday}Thursday"
+    new "{#weekday}الخميس"
 
     # 00action_file.rpy:26
     old "{#weekday}Friday"
-    new "{#weekday}Friday"
+    new "{#weekday}الجمعة"
 
     # 00action_file.rpy:26
     old "{#weekday}Saturday"
-    new "{#weekday}Saturday"
+    new "{#weekday}السبت"
 
     # 00action_file.rpy:26
     old "{#weekday}Sunday"
-    new "{#weekday}Sunday"
+    new "{#weekday}الأحد"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Mon"
@@ -59,51 +59,51 @@ translate arabic strings:
 
     # 00action_file.rpy:47
     old "{#month}January"
-    new "{#month}January"
+    new "{#month}يناير"
 
     # 00action_file.rpy:47
     old "{#month}February"
-    new "{#month}February"
+    new "{#month}فبراير"
 
     # 00action_file.rpy:47
     old "{#month}March"
-    new "{#month}March"
+    new "{#month}مارس"
 
     # 00action_file.rpy:47
     old "{#month}April"
-    new "{#month}April"
+    new "{#month}أبريل"
 
     # 00action_file.rpy:47
     old "{#month}May"
-    new "{#month}May"
+    new "{#month}مايو"
 
     # 00action_file.rpy:47
     old "{#month}June"
-    new "{#month}June"
+    new "{#month}يونيو"
 
     # 00action_file.rpy:47
     old "{#month}July"
-    new "{#month}July"
+    new "{#month}يوليو"
 
     # 00action_file.rpy:47
     old "{#month}August"
-    new "{#month}August"
+    new "{#month}أغسطس"
 
     # 00action_file.rpy:47
     old "{#month}September"
-    new "{#month}September"
+    new "{#month}سبتمبر"
 
     # 00action_file.rpy:47
     old "{#month}October"
-    new "{#month}October"
+    new "{#month}أكتوبر"
 
     # 00action_file.rpy:47
     old "{#month}November"
-    new "{#month}November"
+    new "{#month}نوفمبر"
 
     # 00action_file.rpy:47
     old "{#month}December"
-    new "{#month}December"
+    new "{#month}ديسمبر"
 
     # 00action_file.rpy:63
     old "{#month_short}Jan"
@@ -187,7 +187,7 @@ translate arabic strings:
 
     # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
-    new "Are you sure you want to end the replay?"
+    new "هل أنت متأكد من رغبتك في الخروج من الإعادة؟"
 
     # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
@@ -199,7 +199,7 @@ translate arabic strings:
 
     # 00gui.rpy:236
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "Are you sure you want to skip unseen dialogue to the next choice?"
+    new "هل أنت متأكد من رغبتك في تسريع كل الحوارات حتى التي لم تسبق رؤيتها؟"
 
     # 00keymap.rpy:250
     old "Saved screenshot as %s."
@@ -207,15 +207,15 @@ translate arabic strings:
 
     # 00library.rpy:142
     old "Self-voicing disabled."
-    new "Self-voicing disabled."
+    new "تم الغاء تفعيل النطق التلقائي."
 
     # 00library.rpy:143
     old "Clipboard voicing enabled. "
-    new "Clipboard voicing enabled. "
+    new "تم تفعيل النطق التلقائي من لوح الحفظ. "
 
     # 00library.rpy:144
     old "Self-voicing enabled. "
-    new "Self-voicing enabled. "
+    new "تم تفعيل النطق التلقائي."
 
     # 00library.rpy:179
     old "Skip Mode"
@@ -235,7 +235,7 @@ translate arabic strings:
 
     # 00preferences.rpy:426
     old "Self-voicing enabled. Press 'v' to disable."
-    new "التكلّم التلقائي مفعَل. لإيقافه إضغط زر V"
+    new "النطق التلقائي مفعَل. لإيقافه إضغط زر V"
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
