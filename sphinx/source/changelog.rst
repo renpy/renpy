@@ -7,14 +7,47 @@ Full Changelog
 Ren'Py 6.99.12.4
 ================
 
+Console
+-------
+
+The Ren'Py console has been updated to match the neutral Ren'Py style, and
+to add a number of new features:
+
+* The console is now available during exception handling. (As always, it
+  accesses the global scope.)
+
+* The console history is kept as part of persistent data.
+
+* Watched variables are stored as part of save files, which means that the
+  watch is restored when the game is (automatically or manually) reloaded.
+
+
+Other
+-----
+
+A regression (bug) introduced in version 6.99.4 that prevented the default
+input screen (and hence renpy.input) from working has been fixed.
+
+
+A memory alignment issue that could result in a SIGBUS crash on ARM-based
+Android devices when playing video has been fixed.
+
+Hide and replace animations are removed from Ren'Py when a rollback or
+load occurs. This prevents loading or rolling back when the
+
+Auto-forward mode is disabled when self-voicing is enabled, to prevent the
+game from automatically advancing and making self-voicing information
+obsolete.
+
+When running with Steam support enabled, Ren'Py will query the Steam overlay
+and redraw the screen when Steam asks for an update. (This should increase
+the FPS of the Steam overlay.)
+
 Fadeouts now span looping audio by default. Previously, a fadeout would come
 to a stop at the end of an audio track.
 
 Right-to-left (Arabic and Hebrew) language support has been enabled on the iOS
 platform.
-
-A memory alignment issue that could result in a SIGBUS on ARM-based Android
-devices has been fixed.
 
 
 .. _renpy-6.99.12.3:
