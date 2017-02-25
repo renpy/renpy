@@ -28,7 +28,6 @@ Other
 A regression (bug) introduced in version 6.99.4 that prevented the default
 input screen (and hence renpy.input) from working has been fixed.
 
-
 A memory alignment issue that could result in a SIGBUS crash on ARM-based
 Android devices when playing video has been fixed.
 

@@ -22,7 +22,7 @@
     
     * Preference("video sprites", "show") - show all video sprites.
     * Preference("video sprites", "hide") - fall back to images where possible.
-    * Preference("video sprites", "toggle") - toggle image fallback behavior. 
+    * Preference("video sprites", "toggle") - toggle image fallback behavior.
     
     * Preference("show empty window", "show") - Allow the "window show" and "window auto" statement to show an empty window outside of the say statement.
     * Preference("show empty window", "hide") - Prevent the above.

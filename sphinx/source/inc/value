@@ -92,10 +92,8 @@
     
     A bar value that adjusts the value of a variable in a screen.
     
-    `object`
-        The object.
-    `field`
-        The field, a string.
+    `variable`
+        A string giving the name of the variable to adjust.
     `range`
         The range to adjust over.
     `max_is_zero`
