@@ -32,7 +32,8 @@ A memory alignment issue that could result in a SIGBUS crash on ARM-based
 Android devices when playing video has been fixed.
 
 Hide and replace animations are removed from Ren'Py when a rollback or
-load occurs. This prevents loading or rolling back when the
+load occurs. This prevents hide animations from playing when a displayable
+has not been showing.
 
 Auto-forward mode is disabled when self-voicing is enabled, to prevent the
 game from automatically advancing and making self-voicing information
