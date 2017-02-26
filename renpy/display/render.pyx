@@ -774,8 +774,7 @@ cdef class Render:
 
         reverse = self.reverse
 
-        if ((reverse is not None) and
-            (reverse.xdx != 1.0 or reverse.ydy != 1.0) and
+        if ((reverse is not None) and (reverse.xdx != 1.0 or reverse.ydy != 1.0) and
             reverse.xdx > 0.0 and
             reverse.xdy == 0.0 and
             reverse.ydx == 0.0 and
@@ -784,12 +783,24 @@ cdef class Render:
             # When rectangle-aligned but not 1:1, transform the rectangle and
             # keep cropping.
 
-            rv.reverse = reverse
-            rv.forward = self.forward
-            x, y = self.forward.transform(x, y)
-            w, h = self.forward.transform(w, h)
+            w, h = self.reverse.transform(w+x, h+y)
+            x, y = self.reverse.transform(x, y)
 
-        if ((reverse is not None) and
+            x = int(x)
+            y = int(y)
+            w = int(w - x)
+            h = int(h - y)
+
+            if (w <= 0) or (h <= 0):
+                return rv
+
+            xdx = 1.0 * rect[2] / w
+            ydy = 1.0 * rect[3] / h
+
+            rv.forward = Matrix2D(xdx, 0.0, 0.0, ydy)
+            rv.reverse = Matrix2D(1.0 / xdx, 0.0, 0.0, 1.0 / ydy)
+
+        elif ((reverse is not None) and
             reverse.xdx != 1.0 or
             reverse.xdy != 0.0 or
             reverse.ydx != 0.0 or
