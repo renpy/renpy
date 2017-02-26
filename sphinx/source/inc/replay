@@ -1,8 +1,12 @@
 .. Automatically generated file - do not modify.
 
-.. function:: EndReplay()
+.. function:: EndReplay(confirm=True)
     
-    An action that ends the current memory.
+    Ends the current replay.
+    
+    `confirm`
+        If true, prompts the user for confirmation before ending the
+        replay.
 
 .. function:: Replay(label, scope={}, locked=None)
     

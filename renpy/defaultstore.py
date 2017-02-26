@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -45,15 +45,22 @@ _window_subtitle = ''
 # Should rollback be allowed?
 _rollback = True
 
+# Should skipping be allowed?
+_skipping = True
+
+# Should dismissing pauses and transitions be allowed?
+_dismiss_pause = True
+
 # config.
 _config = renpy.config
-
-# The special character used for name-only dialogue.
-name_only = None
 
 # Used by the ui functions.
 _widget_by_id = None
 _widget_properties = { }
+
+# The text rectangle, or None to use the automatic code.
+_text_rect = None
+
 
 class _Config(object):
 
@@ -63,7 +70,7 @@ class _Config(object):
     def __setstate__(self, data):
         return
 
-    def register(self, name, default, cat=None, help=None): #@ReservedAssignment
+    def register(self, name, default, cat=None, help=None):  # @ReservedAssignment
         setattr(self, name, default)
         _config.help.append((cat, name, help))
 
@@ -82,7 +89,7 @@ class _Config(object):
             raise Exception('config.%s is not a known configuration variable.' % (name))
 
         if name == "script_version":
-            renpy.store._set_script_version(value) # E1101 @UndefinedVariable
+            renpy.store._set_script_version(value)  # E1101 @UndefinedVariable
 
         cvars[name] = value
 
@@ -98,7 +105,7 @@ style = None
 config = _Config()
 library = config
 
-eval = renpy.python.py_eval #@ReservedAssignment
+eval = renpy.python.py_eval  # @ReservedAssignment
 
 # Displayables.
 Bar = renpy.display.behavior.Bar
@@ -106,9 +113,12 @@ Button = renpy.display.behavior.Button
 Input = renpy.display.behavior.Input
 
 ImageReference = renpy.display.image.ImageReference
+DynamicImage = renpy.display.image.DynamicImage
+
 Image = renpy.display.im.image
 
 Frame = renpy.display.imagelike.Frame
+Borders = renpy.display.imagelike.Borders
 Solid = renpy.display.imagelike.Solid
 FileCurrentScreenshot = renpy.display.imagelike.FileCurrentScreenshot
 
@@ -119,10 +129,11 @@ Flatten = renpy.display.layout.Flatten
 
 Null = renpy.display.layout.Null
 Window = renpy.display.layout.Window
-Viewport = renpy.display.layout.Viewport
+Viewport = renpy.display.viewport.Viewport
 DynamicDisplayable = renpy.display.layout.DynamicDisplayable
 ConditionSwitch = renpy.display.layout.ConditionSwitch
 ShowingSwitch = renpy.display.layout.ShowingSwitch
+AlphaMask = renpy.display.layout.AlphaMask
 
 Transform = renpy.display.motion.Transform
 
@@ -158,6 +169,7 @@ Dissolve = renpy.curry.curry(renpy.display.transition.Dissolve)
 ImageDissolve = renpy.curry.curry(renpy.display.transition.ImageDissolve)
 AlphaDissolve = renpy.curry.curry(renpy.display.transition.AlphaDissolve)
 CropMove = renpy.curry.curry(renpy.display.transition.CropMove)
+PushMove = renpy.curry.curry(renpy.display.transition.PushMove)
 Pixellate = renpy.curry.curry(renpy.display.transition.Pixellate)
 
 
@@ -173,7 +185,6 @@ MultipleTransition = renpy.curry.curry(renpy.display.transition.MultipleTransiti
 ComposeTransition = renpy.curry.curry(renpy.display.transition.ComposeTransition)
 Pause = renpy.curry.curry(renpy.display.transition.NoTransition)
 SubTransition = renpy.curry.curry(renpy.display.transition.SubTransition)
-
 # Misc.
 ADVSpeaker = ADVCharacter = renpy.character.ADVCharacter
 Speaker = Character = renpy.character.Character
@@ -183,11 +194,15 @@ MultiPersistent = renpy.persistent.MultiPersistent
 Action = renpy.ui.Action
 BarValue = renpy.ui.BarValue
 
-Style = renpy.style.Style # @UndefinedVariable
+# NOTE: When exporting something from here, decide if we need to add it to
+# renpy.pyanalysis.pure_functions.
+
+Style = renpy.style.Style  # @UndefinedVariable
 
 absolute = renpy.display.core.absolute
 
 NoRollback = renpy.python.NoRollback
+
 
 class _layout_class(__builtins__["object"]):
     """
@@ -241,7 +256,7 @@ A layout that lays out its members from top to bottom.
 Grid = _layout_class(renpy.display.layout.Grid, """
 :doc: disp_grid
 
-Lays out displayables in a a grid. The first two positional arguments
+Lays out displayables in a grid. The first two positional arguments
 are the number of columns and rows in the grid. This must be followed
 by `columns * rows` positional arguments giving the displayables that
 fill the grid.
@@ -264,6 +279,7 @@ def AlphaBlend(control, old, new, alpha=False):
 
     return renpy.display.transition.AlphaDissolve(control, 0.0, old_widget=old, new_widget=new, alpha=alpha)
 
+
 def At(d, *args):
     """
     :doc: disp_at
@@ -284,16 +300,21 @@ def At(d, *args):
     rv = renpy.easy.displayable(d)
 
     for i in args:
-        rv = i(rv)
+
+        if isinstance(i, renpy.display.motion.Transform):
+            rv = i(child=rv)
+        else:
+            rv = i(rv)
 
     return rv
 
 
-# The color function. (Moved, since text needs it, too.)
-color = renpy.easy.color
+# The color class/function.
+Color = renpy.color.Color
+color = renpy.color.Color
 
 # Conveniently get rid of all the packages we had imported before.
-import renpy.exports as renpy #@Reimport
+import renpy.exports as renpy  # @Reimport
 
 # The default menu functions.
 menu = renpy.display_menu
@@ -344,15 +365,21 @@ adv = ADVCharacter(None,
 
                    kind=False)
 
+# predict_say and who are defined in 00library.rpy, but we add default
+# versions here in case there is a problem with initialization. (And
+# for pickling purposes.)
+
+
 def predict_say(who, what):
-    who = Character(who, kind=name_only)
+    who = Character(who, kind=adv)
     try:
         who.predict(what)
     except:
         pass
 
+
 def say(who, what, interact=True):
-    who = Character(who, kind=name_only)
+    who = Character(who, kind=adv)
     who(what, interact=interact)
 
 # Used by renpy.reshow_say.
@@ -361,6 +388,16 @@ _last_say_what = None
 
 # Used to store the things pinned into the cache.
 _cache_pin_set = set()
+
+# Used to store displayables that should be predicted.
+_predict_set = set()
+
+# A map from a screen name to an (args, kwargs) tuple. The arguments and
+# keyword arguments can be
+_predict_screen = dict()
+
+# Should the default screens be shown?
+_overlay_screens = None
 
 # If we're in a replay, the label of the start of the replay.
 _in_replay = None
@@ -376,6 +413,7 @@ main_menu = False
 import sys
 import os
 
+
 def public_api():
     ui
     im
@@ -386,4 +424,3 @@ def public_api():
     sys
 
 del public_api
-

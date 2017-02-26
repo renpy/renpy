@@ -74,13 +74,36 @@ These are other actions, not found anywhere else.
 
 .. include:: inc/other_action
 
-Values
-======
 
-Values are used with bars, to set the bar value, and to allow the bar
-to adjust an underlying property.
+.. _bar-values:
+
+Bar Values
+==========
+
+Bar values are used with bars, to set the bar value, and to allow the bar
+to adjust an underlying property. To create a new bar value, subclass
+the :class:`BarValue` class.
 
 .. include:: inc/value
+
+
+.. _input-values:
+
+Input Values
+============
+
+Input values are used with text inputs, to set the default text, to accept
+changed text, to respond to the enter key, and to determine if the text is
+editable by default. To create a new input value, subclass the :class:`InputValue`
+class.
+
+Ren'Py-defined input values inherit from InputValue, which means that
+all values also include Enable(), Disable(), and Toggle() methods that return
+actions that enable, disable, and toggle editing, respectively. See also
+the :func:`DisableAllInputValues` action.
+
+.. include:: inc/input_value
+
 
 Functions and Classes
 =====================
@@ -98,6 +121,12 @@ names used in the default preferences screen.
 
 .. include:: inc/preference_action
 
+Gamepad
+-------
+
+These functions and actions work with the gamepad.
+
+.. include:: inc/gamepad
 
 File Functions
 --------------

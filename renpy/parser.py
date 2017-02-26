@@ -1,5 +1,4 @@
-
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,16 +22,20 @@
 # This module contains the parser for the Ren'Py script language. It's
 # called when parsing is necessary, and creates an AST from the script.
 
+from __future__ import print_function
 import codecs
 import re
 import os
 
 import renpy.display
+import renpy.test
+
 import renpy.ast as ast
 import renpy.sl2
 
 # A list of parse error messages.
 parse_errors = [ ]
+
 
 class ParseError(Exception):
 
@@ -84,6 +87,8 @@ class ParseError(Exception):
         return self.message
 
 # Something to hold the expected line number.
+
+
 class LineNumberHolder(object):
     """
     Holds the expected line number.
@@ -91,6 +96,7 @@ class LineNumberHolder(object):
 
     def __init__(self):
         self.line = 0
+
 
 def unicode_filename(fn):
     """
@@ -119,6 +125,7 @@ def unicode_filename(fn):
 # before this.
 lllword = re.compile(r'__(\w+)|\w+| +|.', re.S)
 
+
 def munge_filename(fn):
     # The prefix that's used when __ is found in the file.
     rv = os.path.basename(fn)
@@ -131,6 +138,7 @@ def munge_filename(fn):
     rv = re.sub(r'[^a-zA-Z0-9_]', munge_char, rv)
 
     return "_m1_" + rv + "__"
+
 
 def elide_filename(fn):
     """
@@ -149,6 +157,7 @@ def elide_filename(fn):
     else:
         return fn.replace("\\", "/")
 
+
 def unelide_filename(fn):
     fn1 = os.path.join(renpy.config.basedir, fn)
     if os.path.exists(fn1):
@@ -160,7 +169,11 @@ def unelide_filename(fn):
 
     return fn
 
-def list_logical_lines(filename, filedata=None):
+# The filename that the start and end positions are relative to.
+original_filename = ""
+
+
+def list_logical_lines(filename, filedata=None, linenumber=1):
     """
     Reads `filename`, and divides it into logical lines.
 
@@ -170,15 +183,16 @@ def list_logical_lines(filename, filedata=None):
     contents. In that case, `filename` need not exist.
     """
 
+    global original_filename
+
+    original_filename = filename
+
     if filedata:
         data = filedata
     else:
         f = codecs.open(filename, "r", "utf-8")
         data = f.read()
         f.close()
-
-    data = data.replace("\r\n", "\n")
-    data = data.replace("\r", "\n")
 
     filename = elide_filename(filename)
     prefix = munge_filename(filename)
@@ -190,7 +204,7 @@ def list_logical_lines(filename, filedata=None):
     rv = []
 
     # The line number in the physical file.
-    number = 1
+    number = linenumber
 
     # The current position we're looking at in the buffer.
     pos = 0
@@ -198,6 +212,11 @@ def list_logical_lines(filename, filedata=None):
     # Skip the BOM, if any.
     if len(data) and data[0] == u'\ufeff':
         pos += 1
+
+    if renpy.game.context().init_phase:
+        lines = renpy.scriptedit.lines
+    else:
+        lines = { }
 
     # Looping over the lines in the file.
     while pos < len(data):
@@ -211,16 +230,17 @@ def list_logical_lines(filename, filedata=None):
         # The number of open parenthesis there are right now.
         parendepth = 0
 
-        # Looping over the characters in a single logical line.
+        loc = (filename, start_number)
+        lines[loc] = renpy.scriptedit.Line(original_filename, start_number, pos)
+
+        endpos = None
+
         while pos < len(data):
 
             c = data[pos]
 
             if c == '\t':
                 raise ParseError(filename, number, "Tab characters are not allowed in Ren'Py scripts.")
-
-            if c == '\n':
-                number += 1
 
             if c == '\n' and not parendepth:
                 # If not blank...
@@ -229,10 +249,32 @@ def list_logical_lines(filename, filedata=None):
                     # Add to the results.
                     rv.append((filename, start_number, line))
 
+                if endpos is None:
+                    endpos = pos
+
+                lines[loc].end_delim = endpos + 1
+
+                while data[endpos-1] in ' \r':
+                    endpos -= 1
+
+                lines[loc].end = endpos
+                lines[loc].text = data[lines[loc].start:lines[loc].end]
+                lines[loc].full_text = data[lines[loc].start:lines[loc].end_delim]
+
                 pos += 1
+                number += 1
+                endpos = None
                 # This helps out error checking.
                 line = ""
                 break
+
+            if c == '\n':
+                number += 1
+                endpos = None
+
+            if c == "\r":
+                pos += 1
+                continue
 
             # Backslash/newline.
             if c == "\\" and data[pos+1] == "\n":
@@ -250,6 +292,8 @@ def list_logical_lines(filename, filedata=None):
 
             # Comments.
             if c == '#':
+                endpos = pos
+
                 while data[pos] != '\n':
                     pos += 1
 
@@ -269,6 +313,10 @@ def list_logical_lines(filename, filedata=None):
 
                     if c == '\n':
                         number += 1
+
+                    if c == '\r':
+                        pos += 1
+                        continue
 
                     if escape:
                         escape = False
@@ -306,14 +354,10 @@ def list_logical_lines(filename, filedata=None):
 
             pos = m.end(0)
 
-            # print repr(data[pos:])
-
-
     if not line == "":
         raise ParseError(filename, start_number, "is not terminated with a newline. (Check strings and parenthesis.)", line=line, first=True)
 
     return rv
-
 
 
 def group_logical_lines(lines):
@@ -383,64 +427,71 @@ def group_logical_lines(lines):
 # A list of keywords which should not be parsed as names, because
 # there is a huge chance of confusion.
 #
-# Note: We need to be careful with what's in here, because thse
+# Note: We need to be careful with what's in here, because these
 # are banned in simple_expressions, where we might want to use
 # some of them.
 KEYWORDS = set([
-            '$',
-            'as',
-            'at',
-            'behind',
-            'call',
-            'expression',
-            'hide',
-            'if',
-            'in',
-            'image',
-            'init',
-            'jump',
-            'menu',
-            'onlayer',
-            'python',
-            'return',
-            'scene',
-            'set',
-            'show',
-            'with',
-            'while',
-            'zorder',
-            'transform',
-            ])
+    '$',
+    'as',
+    'at',
+    'behind',
+    'call',
+    'expression',
+    'hide',
+    'if',
+    'in',
+    'image',
+    'init',
+    'jump',
+    'menu',
+    'onlayer',
+    'python',
+    'return',
+    'scene',
+    'set',
+    'show',
+    'with',
+    'while',
+    'zorder',
+    'transform',
+    ])
 
 OPERATORS = [
-        'or\b',
-        'and\b',
-        'not\b',
-        'in\b',
-        'is\b',
-        '<',
-        '<=',
-        '>',
-        '>=',
-        '<>',
-        '!=',
-        '==',
-        '|',
-        '^',
-        '&',
-        '<<',
-        '>>',
-        '+',
-        '-',
-        '*',
-        '/',
-        '//',
-        '%',
-        '~',
-        '**',
-        ]
+    '<',
+    '<=',
+    '>',
+    '>=',
+    '<>',
+    '!=',
+    '==',
+    '|',
+    '^',
+    '&',
+    '<<',
+    '>>',
+    '+',
+    '-',
+    '*',
+    '/',
+    '//',
+    '%',
+    '~',
+    '**',
+    ]
 
-operator_regexp = "|".join(re.escape(i) for i in OPERATORS)
+ESCAPED_OPERATORS = [
+    r'\bor\b',
+    r'\band\b',
+    r'\bnot\b',
+    r'\bin\b',
+    r'\bis\b',
+    ]
+
+operator_regexp = "|".join([ re.escape(i) for i in OPERATORS ] + ESCAPED_OPERATORS)
+
+word_regexp = ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*'
+image_word_regexp = ur'[-0-9a-zA-Z_\u00a0-\ufffd][-0-9a-zA-Z_\u00a0-\ufffd]*'
+
 
 class Lexer(object):
     """
@@ -449,10 +500,13 @@ class Lexer(object):
     sub-lexers to lex sub-blocks.
     """
 
-    def __init__(self, block, init=False):
+    def __init__(self, block, init=False, init_offset=0, global_label=None):
 
         # Are we underneath an init block?
         self.init = init
+
+        # The priority of auto-defined init statements.
+        self.init_offset = init_offset
 
         self.block = block
         self.eob = False
@@ -464,11 +518,11 @@ class Lexer(object):
         self.text = ""
         self.number = 0
         self.subblock = [ ]
+        self.global_label = global_label
         self.pos = 0
         self.word_cache_pos = -1
         self.word_cache_newpos = -1
         self.word_cache = ""
-
 
     def advance(self):
         """
@@ -536,7 +590,6 @@ class Lexer(object):
         self.skip_whitespace()
         return self.match_regexp(regexp)
 
-
     def keyword(self, word):
         """
         Matches a keyword at the current position. A keyword is a word
@@ -550,7 +603,6 @@ class Lexer(object):
 
         self.pos = oldpos
         return ''
-
 
     def error(self, msg):
         """
@@ -598,7 +650,6 @@ class Lexer(object):
         if not self.subblock:
             self.error('%s expects a non-empty block.' % stmt)
 
-
     def subblock_lexer(self, init=False):
         """
         Returns a new lexer object, equiped to parse the block
@@ -607,7 +658,7 @@ class Lexer(object):
 
         init = self.init or init
 
-        return Lexer(self.subblock, init=init)
+        return Lexer(self.subblock, init=init, init_offset=self.init_offset, global_label=self.global_label)
 
     def string(self):
         """
@@ -646,6 +697,7 @@ class Lexer(object):
 
             s = s.replace("\\n", "\n")
             s = s.replace("\\{", "{{")
+            s = s.replace("\\[", "[[")
             s = s.replace("\\%", "%%")
             s = re.sub(r'\\u([0-9a-fA-F]{1,4})',
                        lambda m : unichr(int(m.group(1), 16)), s)
@@ -661,7 +713,7 @@ class Lexer(object):
 
         return self.match(r'(\+|\-)?\d+')
 
-    def float(self): #@ReservedAssignment
+    def float(self):  # @ReservedAssignment
         """
         Tries to parse a number (float). Returns a string containing the
         number, or None.
@@ -671,7 +723,7 @@ class Lexer(object):
 
     def hash(self):
         """
-        Matches the chatacters in an md5 hash, and then some.
+        Matches the characters in an md5 hash, and then some.
         """
 
         return self.match(r'\w+')
@@ -686,12 +738,11 @@ class Lexer(object):
             return self.word_cache
 
         self.word_cache_pos = self.pos
-        rv = self.match(ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*')
+        rv = self.match(word_regexp)
         self.word_cache = rv
         self.word_cache_newpos = self.pos
 
         return rv
-
 
     def name(self):
         """
@@ -700,6 +751,76 @@ class Lexer(object):
 
         oldpos = self.pos
         rv = self.word()
+
+        if rv in KEYWORDS:
+            self.pos = oldpos
+            return None
+
+        return rv
+
+    def set_global_label(self, label):
+        """
+        Set current global_label, which is used for label_name calculations.
+        label can be any valid label or None, but this has only effect if label
+        has global part.
+        """
+        if label and label[0] != '.':
+            self.global_label = label.split('.')[0]
+
+    def label_name(self, declare=False):
+        """
+        Try to parse label name. Returns name in form of "global.local" if local
+        is present, "global" otherwise; or None if it doesn't parse.
+
+        If declare is True, allow only such names that are valid for declaration
+        (e.g. forbid global name mismatch)
+        """
+
+        old_pos = self.pos
+        local_name = None
+        global_name = self.name()
+
+        if not global_name:
+            # .local label
+            if not self.match('\.') or not self.global_label:
+                self.pos = old_pos
+                return None
+            global_name = self.global_label
+            local_name = self.name()
+            if not local_name:
+                self.pos = old_pos
+                return None
+        else:
+            if self.match('\.'):
+                # full global.local name
+                if declare and global_name != self.global_label:
+                    self.pos = old_pos
+                    return None
+
+                local_name = self.name()
+                if not local_name:
+                    self.pos = old_pos
+                    return None
+
+        if not local_name:
+            return global_name
+
+        return global_name+'.'+local_name
+
+    def label_name_declare(self):
+        """
+        Same as label_name, but set declare to True.
+        """
+        return self.label_name(declare=True)
+
+    def image_name_component(self):
+        """
+        Matches a word that is a component of an image name. (These are
+        strings of numbers, letters, and underscores.)
+        """
+
+        oldpos = self.pos
+        rv = self.match(image_word_regexp)
 
         if rv in KEYWORDS:
             self.pos = oldpos
@@ -756,7 +877,6 @@ class Lexer(object):
         self.pos += 1
         return True
 
-
     def dotted_name(self):
         """
         This tries to match a dotted name, which is one or more names,
@@ -799,7 +919,7 @@ class Lexer(object):
             if c in delim:
                 return renpy.ast.PyExpr(self.text[start:self.pos], self.filename, self.number)
 
-            if c == '"' or c == "'":
+            if c in "'\"":
                 self.python_string()
                 continue
 
@@ -821,7 +941,7 @@ class Lexer(object):
         if not pe:
             self.error("expected python_expression")
 
-        rv = renpy.ast.PyExpr(pe.strip(), pe.filename, pe.linenumber) # E1101
+        rv = renpy.ast.PyExpr(pe.strip(), pe.filename, pe.linenumber)  # E1101
 
         return rv
 
@@ -829,7 +949,7 @@ class Lexer(object):
         """
         Tries to match a parenthesised python expression. If it can,
         returns true and updates the current position to be after the
-        closing parenthesis. Returns False otherewise.
+        closing parenthesis. Returns False otherwise.
         """
 
         c = self.text[self.pos]
@@ -846,7 +966,6 @@ class Lexer(object):
             self.pos += 1
             return True
 
-
         if c == '{':
             self.pos += 1
             self.delimited_python('}')
@@ -855,8 +974,7 @@ class Lexer(object):
 
         return False
 
-
-    def simple_expression(self):
+    def simple_expression(self, comma=False):
         """
         Tries to parse a simple_expression. Returns the text if it can, or
         None if it cannot.
@@ -876,9 +994,9 @@ class Lexer(object):
             # We start with either a name, a python_string, or parenthesized
             # python
             if not (self.python_string() or
-                self.name() or
-                self.float() or
-                self.parenthesised_python()):
+                    self.name() or
+                    self.float() or
+                    self.parenthesised_python()):
 
                 break
 
@@ -890,7 +1008,7 @@ class Lexer(object):
 
                 # If we see a dot, expect a dotted name.
                 if self.match(r'\.'):
-                    n = self.name()
+                    n = self.word()
                     if not n:
                         self.error("expecting name after dot.")
 
@@ -905,6 +1023,9 @@ class Lexer(object):
             if self.match(operator_regexp):
                 continue
 
+            if comma and self.match(r','):
+                continue
+
             break
 
         text = self.text[start:self.pos].strip()
@@ -913,6 +1034,14 @@ class Lexer(object):
             return None
 
         return renpy.ast.PyExpr(self.text[start:self.pos].strip(), self.filename, self.number)
+
+    def comma_expression(self):
+        """
+        One or more simple expressions, separated by commas, including an
+        optional trailing comma.
+        """
+
+        return self.simple_expression(comma=True)
 
     def checkpoint(self):
         """
@@ -1003,22 +1132,47 @@ class Lexer(object):
         process(self.subblock, '')
         return ''.join(rv)
 
-def parse_image_name(l):
+
+def parse_image_name(l, string=False, nodash=False):
     """
     This parses an image name, and returns it as a tuple. It requires
     that the image name be present.
     """
 
-    rv = [ l.require(l.name) ]
+    points = [ l.checkpoint() ]
+    rv = [ l.require(l.image_name_component) ]
 
     while True:
-        n = l.simple_expression()
+
+        points.append(l.checkpoint())
+
+        n = l.image_name_component()
+
         if not n:
+            points.pop()
             break
 
         rv.append(n.strip())
 
+    if string:
+        points.append(l.checkpoint())
+
+        s = l.simple_expression()
+
+        if s is not None:
+            rv.append(unicode(s))
+        else:
+            points.pop()
+
+    if nodash:
+        for i, p in zip(rv, points):
+            if i and i[0] == '-':
+                l.revert(p)
+                l.skip_whitespace()
+                l.error("image name components may not begin with a '-'.")
+
     return tuple(rv)
+
 
 def parse_simple_expression_list(l):
     """
@@ -1042,6 +1196,7 @@ def parse_simple_expression_list(l):
 
     return rv
 
+
 def parse_image_specifier(l):
     """
     This parses an image specifier.
@@ -1057,7 +1212,7 @@ def parse_image_specifier(l):
         expression = l.require(l.simple_expression)
         image_name = ( expression.strip(), )
     else:
-        image_name = parse_image_name(l)
+        image_name = parse_image_name(l, True)
         expression = None
 
     while True:
@@ -1112,12 +1267,8 @@ def parse_image_specifier(l):
 
         break
 
-    if layer is None:
-        layer = 'master'
-
-
-
     return image_name, expression, tag, at_list, layer, zorder, behind
+
 
 def parse_with(l, node):
     """
@@ -1149,7 +1300,7 @@ def parse_menu(stmtl, loc):
     has_caption = False
 
     with_ = None
-    set = None #@ReservedAssignment
+    set = None  # @ReservedAssignment
 
     say_who = None
     say_what = None
@@ -1170,7 +1321,7 @@ def parse_menu(stmtl, loc):
             continue
 
         if l.keyword('set'):
-            set = l.require(l.simple_expression) #@ReservedAssignment
+            set = l.require(l.simple_expression)  # @ReservedAssignment
             l.expect_eol()
             l.expect_noblock('set menuitem')
             l.advance()
@@ -1203,7 +1354,6 @@ def parse_menu(stmtl, loc):
             continue
 
         l.revert(state)
-
 
         label = l.string()
 
@@ -1288,7 +1438,6 @@ def parse_parameters(l):
 
             names.add(extrakw)
 
-
         elif l.match(r'\*'):
 
             if not add_positional:
@@ -1357,7 +1506,6 @@ def parse_arguments(l):
 
             extrakw = l.delimited_python("),")
 
-
         elif l.match(r'\*'):
             if extrapos is not None:
                 l.error('a call may have only one * argument')
@@ -1415,7 +1563,7 @@ class ParseTrie(object):
 
         word = l.word() or l.match(r'\$')
 
-        if not word in self.words:
+        if word not in self.words:
             l.pos = old_pos
             return self.default
 
@@ -1511,7 +1659,8 @@ def pass_statement(l, loc):
 @statement("menu")
 def menu_statement(l, loc):
     l.expect_block('menu statement')
-    label = l.name()
+    label = l.label_name_declare()
+    l.set_global_label(label)
     l.require(':')
     l.expect_eol()
 
@@ -1552,7 +1701,7 @@ def jump_statement(l, loc):
         target = l.require(l.simple_expression)
     else:
         expression = False
-        target = l.require(l.name)
+        target = l.require(l.label_name)
 
     l.expect_eol()
     l.advance()
@@ -1570,7 +1719,7 @@ def call_statement(l, loc):
 
     else:
         expression = False
-        target = l.require(l.name)
+        target = l.require(l.label_name)
 
     # Optional pass, to let someone write:
     # call expression foo pass (bar, baz)
@@ -1581,10 +1730,17 @@ def call_statement(l, loc):
     rv = [ ast.Call(loc, target, expression, arguments) ]
 
     if l.keyword('from'):
-        name = l.require(l.name)
+        name = l.require(l.label_name_declare)
+        l.set_global_label(name)
         rv.append(ast.Label(loc, name, [], None))
     else:
-        rv.append(ast.Pass(loc))
+        if renpy.scriptedit.lines and (loc in renpy.scriptedit.lines):
+            if expression:
+                renpy.add_from.report_missing("expression", original_filename, renpy.scriptedit.lines[loc].end)
+            else:
+                renpy.add_from.report_missing(target, original_filename, renpy.scriptedit.lines[loc].end)
+
+    rv.append(ast.Pass(loc))
 
     l.expect_eol()
     l.advance()
@@ -1635,6 +1791,7 @@ def show_statement(l, loc):
 
     return rv
 
+
 @statement("show layer")
 def show_layer_statement(l, loc):
 
@@ -1683,7 +1840,7 @@ def with_statement(l, loc):
 
 @statement("image")
 def image_statement(l, loc):
-    name = parse_image_name(l)
+    name = parse_image_name(l, nodash=True)
 
     if l.match(':'):
         l.expect_eol()
@@ -1691,14 +1848,19 @@ def image_statement(l, loc):
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         l.require('=')
+
         expr = l.rest()
+
+        if not expr:
+            l.error('expected expression')
+
         atl = None
         l.expect_noblock('image statement')
 
     rv = ast.Image(loc, name, expr, atl)
 
     if not l.init:
-        rv = ast.Init(loc, [ rv ], 990)
+        rv = ast.Init(loc, [ rv ], 500 + l.init_offset)
 
     l.advance()
 
@@ -1714,16 +1876,59 @@ def define_statement(l, loc):
     else:
         priority = 0
 
-    name = l.require(l.name)
+    store = 'store'
+    name = l.require(l.word)
+
+    while l.match(r'\.'):
+        store = store + "." + name
+        name = l.require(l.word)
+
     l.require('=')
     expr = l.rest()
 
+    if not expr:
+        l.error("expected expression")
+
     l.expect_noblock('define statement')
 
-    rv = ast.Define(loc, name, expr)
+    rv = ast.Define(loc, store, name, expr)
 
     if not l.init:
-        rv = ast.Init(loc, [ rv ], priority)
+        rv = ast.Init(loc, [ rv ], priority + l.init_offset)
+
+    l.advance()
+
+    return rv
+
+
+@statement("default")
+def default_statement(l, loc):
+
+    priority = l.integer()
+    if priority:
+        priority = int(priority)
+    else:
+        priority = 0
+
+    store = 'store'
+    name = l.require(l.word)
+
+    while l.match(r'\.'):
+        store = store + "." + name
+        name = l.require(l.word)
+
+    l.require('=')
+    expr = l.rest()
+
+    if not expr:
+        l.error("expected expression")
+
+    l.expect_noblock('default statement')
+
+    rv = ast.Default(loc, store, name, expr)
+
+    if not l.init:
+        rv = ast.Init(loc, [ rv ], priority + l.init_offset)
 
     l.advance()
 
@@ -1753,7 +1958,7 @@ def transform_statement(l, loc):
     rv = ast.Transform(loc, name, atl, parameters)
 
     if not l.init:
-        rv = ast.Init(loc, [ rv ], priority)
+        rv = ast.Init(loc, [ rv ], priority + l.init_offset)
 
     l.advance()
 
@@ -1763,6 +1968,10 @@ def transform_statement(l, loc):
 @statement("$")
 def one_line_python(l, loc):
     python_code = l.rest()
+
+    if not python_code:
+        l.error('expected python code')
+
     l.expect_noblock('one-line python statement')
     l.advance()
 
@@ -1782,7 +1991,7 @@ def python_statement(l, loc):
         hide = True
 
     if l.keyword('in'):
-        store = "store." + l.require(l.name)
+        store = "store." + l.require(l.dotted_name)
 
     l.require(':')
     l.expect_block('python block')
@@ -1798,9 +2007,10 @@ def python_statement(l, loc):
 
 
 @statement("label")
-def label_statement(l, loc):
-    name = l.require(l.name)
+def label_statement(l, loc, init=False):
 
+    name = l.require(l.label_name_declare)
+    l.set_global_label(name)
     parameters = parse_parameters(l)
 
     if l.keyword('hide'):
@@ -1813,10 +2023,29 @@ def label_statement(l, loc):
 
     # Optional block here. It's empty if no block is associated with
     # this statement.
-    block = parse_block(l.subblock_lexer())
+    block = parse_block(l.subblock_lexer(init))
 
     l.advance()
     return ast.Label(loc, name, block, parameters, hide=hide)
+
+
+@statement("init offset")
+def init_offset_statement(l, loc):
+
+    l.require('=')
+    offset = l.require(l.integer)
+
+    l.expect_eol()
+    l.expect_noblock('init offset statement')
+    l.advance()
+
+    l.init_offset = int(offset)
+    return [ ]
+
+
+@statement("init label")
+def init_label_statement(l, loc):
+    return label_statement(l, loc, init=True)
 
 
 @statement("init")
@@ -1849,11 +2078,10 @@ def init_statement(l, loc):
         finally:
             l.init = old_init
 
-    return ast.Init(loc, block, priority)
+    return ast.Init(loc, block, priority + l.init_offset)
 
 
-@statement("screen")
-def screen_statement(l, loc):
+def screen1_statement(l, loc):
 
     # The guts of screen language parsing is in screenlang.py. It
     # assumes we ate the "screen" keyword before it's called.
@@ -1867,24 +2095,62 @@ def screen_statement(l, loc):
     rv = ast.Screen(loc, screen)
 
     if not l.init:
-        rv = ast.Init(loc, [ rv ], -500)
+        rv = ast.Init(loc, [ rv ], -500 + l.init_offset)
 
     return rv
 
 
-@statement("screen2")
 def screen2_statement(l, loc):
 
     # The guts of screen language parsing is in screenlang.py. It
     # assumes we ate the "screen" keyword before it's called.
-    screen = renpy.sl2.slparser.parse_screen(l)
+    screen = renpy.sl2.slparser.parse_screen(l, loc)
 
     l.advance()
 
     rv = ast.Screen(loc, screen)
 
     if not l.init:
-        rv = ast.Init(loc, [ rv ], -500)
+        rv = ast.Init(loc, [ rv ], -500 + l.init_offset)
+
+    return rv
+
+# The version of screen language to use by default.
+default_screen_language = int(os.environ.get("RENPY_SCREEN_LANGUAGE", "2"))
+
+
+@statement("screen")
+def screen_statement(l, loc):
+
+    screen_language = default_screen_language
+
+    slver = l.integer()
+    if slver is not None:
+        screen_language = int(slver)
+
+    if screen_language == 1:
+        return screen1_statement(l, loc)
+    elif screen_language == 2:
+        return screen2_statement(l, loc)
+    else:
+        l.error("Bad screen language version.")
+
+
+@statement("testcase")
+def testcase_statement(l, loc):
+    name = l.require(l.name)
+    l.require(':')
+    l.expect_eol()
+    l.expect_block('testcase statement')
+
+    test = renpy.test.testparser.parse_block(l.subblock_lexer(), loc)
+
+    l.advance()
+
+    rv = ast.Testcase(loc, name, test)
+
+    if not l.init:
+        rv = ast.Init(loc, [ rv ], 500 + l.init_offset)
 
     return rv
 
@@ -1925,13 +2191,15 @@ def translate_strings(init_loc, language, l):
             if old is None:
                 ll.error('no string to translate')
 
+            newloc = ll.get_location()
             new = parse_string(ll.rest())
 
-            block.append(renpy.ast.TranslateString(loc, language, old, new))
+            block.append(renpy.ast.TranslateString(loc, language, old, new, newloc))
 
             old = None
             new = None
             loc = None
+            newloc = None
 
         else:
             ll.error('unknown statement')
@@ -1944,7 +2212,8 @@ def translate_strings(init_loc, language, l):
     if l.init:
         return block
 
-    return ast.Init(init_loc, block, 0)
+    return ast.Init(init_loc, block, l.init_offset)
+
 
 @statement("translate")
 def translate_statement(l, loc):
@@ -1965,7 +2234,7 @@ def translate_statement(l, loc):
             l.init = True
 
             block = [ python_statement(l, loc) ]
-            return [ ast.TranslateBlock(loc, language, block) ]
+            return [ ast.TranslateEarlyBlock(loc, language, block) ]
         finally:
             l.init = old_init
 
@@ -1978,7 +2247,6 @@ def translate_statement(l, loc):
             return [ ast.TranslateBlock(loc, language, block) ]
         finally:
             l.init = old_init
-
 
     l.require(':')
     l.expect_eol()
@@ -2026,7 +2294,7 @@ def style_statement(l, loc):
         if l.keyword("del"):
             propname = l.require(l.name)
 
-            if propname not in renpy.style.prefixed_all_properties: # @UndefinedVariable
+            if propname not in renpy.style.prefixed_all_properties:  # @UndefinedVariable
                 l.error("style property %s is not known." % propname)
 
             rv.delattr.append(propname)
@@ -2043,7 +2311,7 @@ def style_statement(l, loc):
         propname = l.name()
 
         if propname is not None:
-            if propname not in renpy.style.prefixed_all_properties: # @UndefinedVariable
+            if (propname != "properties") and (propname not in renpy.style.prefixed_all_properties):  # @UndefinedVariable
                 l.error("style property %s is not known." % propname)
 
             if propname in rv.properties:
@@ -2075,7 +2343,7 @@ def style_statement(l, loc):
             ll.expect_eol()
 
     if not l.init:
-        rv = ast.Init(loc, [ rv ], 0)
+        rv = ast.Init(loc, [ rv ], l.init_offset)
 
     l.advance()
 
@@ -2112,7 +2380,7 @@ def say_statement(l, loc):
         if not prefix:
             prefix = ""
 
-        component = l.word()
+        component = l.image_name_component()
 
         if component is None:
             break
@@ -2169,7 +2437,6 @@ def parse_statement(l):
     return pf(l, loc)
 
 
-
 def parse_block(l):
     """
     This parses a block of Ren'Py statements. It returns a list of the
@@ -2190,13 +2457,14 @@ def parse_block(l):
             else:
                 rv.append(stmt)
 
-        except ParseError, e:
+        except ParseError as e:
             parse_errors.append(e.message)
             l.advance()
 
     return rv
 
-def parse(fn, filedata=None):
+
+def parse(fn, filedata=None, linenumber=1):
     """
     Parses a Ren'Py script contained within the file `fn`.
 
@@ -2205,12 +2473,14 @@ def parse(fn, filedata=None):
 
     If `filedata` is given, it should be a unicode string giving the file
     contents.
+
+    If `linenumber` is given, the parse starts at `linenumber`.
     """
 
     renpy.game.exception_info = 'While parsing ' + fn + '.'
 
     try:
-        lines = list_logical_lines(fn, filedata)
+        lines = list_logical_lines(fn, filedata, linenumber)
         nested = group_logical_lines(lines)
     except ParseError, e:
         parse_errors.append(e.message)
@@ -2223,13 +2493,18 @@ def parse(fn, filedata=None):
     if parse_errors:
         return None
 
+    if rv:
+        rv.append(ast.Return( (rv[-1].filename, rv[-1].linenumber), None ))
+
     return rv
+
 
 def get_parse_errors():
     global parse_errors
     rv = parse_errors
     parse_errors = [ ]
     return rv
+
 
 def report_parse_errors():
 
@@ -2238,12 +2513,12 @@ def report_parse_errors():
 
     full_text = ""
 
-    f, error_fn = renpy.bootstrap.open_error_file("errors.txt", "w")
+    f, error_fn = renpy.error.open_error_file("errors.txt", "w")
     f.write(codecs.BOM_UTF8)
 
-    print >>f, "I'm sorry, but errors were detected in your script. Please correct the"
-    print >>f, "errors listed below, and try again."
-    print >>f
+    print("I'm sorry, but errors were detected in your script. Please correct the", file=f)
+    print("errors listed below, and try again.", file=f)
+    print(file=f)
 
     for i in parse_errors:
 
@@ -2255,21 +2530,20 @@ def report_parse_errors():
         except:
             pass
 
-        print
-        print >>f
-        print i
-        print >>f, i
+        print()
+        print(file=f)
+        print(i)
+        print(i, file=f)
 
-
-    print >>f
-    print >>f, "Ren'Py Version:", renpy.version
+    print(file=f)
+    print("Ren'Py Version:", renpy.version, file=f)
 
     f.close()
 
     renpy.display.error.report_parse_errors(full_text, error_fn)
 
     try:
-        if renpy.game.args.command == "run": #@UndefinedVariable
+        if renpy.game.args.command == "run":  # @UndefinedVariable
             renpy.exports.launch_editor([ error_fn ], 1, transient=1)
     except:
         pass

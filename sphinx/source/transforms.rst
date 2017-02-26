@@ -17,7 +17,7 @@ the eileen happy displayable.::
 
 Multiple transforms can be applied by separating them with commas. These
 transforms are applied from left-to-right, with the rightmost
-transform taking precendece in the case of conflicts. ::
+transform taking precedence in the case of conflicts. ::
 
     show eileen happy at halfsize, right
 
@@ -81,7 +81,7 @@ The transforms are:
 .. var:: reset
 
     Resets the transform. Places the displayable in the top-left
-    corner of the scren, and also eliminates any zoom, rotation, or
+    corner of the screen, and also eliminates any zoom, rotation, or
     other effects.
 
 .. var:: right

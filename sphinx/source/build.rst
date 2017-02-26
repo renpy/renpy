@@ -10,7 +10,7 @@ update files.
 With no configuration, Ren'Py will build the following four kinds of
 packages:
 
-All Desktop Platofrms
+All Desktop Platforms
 
    A zip file targeting Windows x86, Macintosh x86, Linux x86, and
    Linux x86_64.
@@ -48,6 +48,12 @@ inside an init python block.
 There are a few basic variables and functions that many games will
 use.
 
+.. var:: build.name = "..."
+
+    This is used to automatically generate build.directory_name
+    and build.executable_name, if neither is set. This should not
+    contain spaces, colons, or semicolons.
+
 .. var:: build.directory_name = "..."
 
    This is used to create the names of directories in the archive
@@ -60,14 +66,23 @@ use.
    be placed in mygame-1.0-dists in the directory above the base
    directory.
 
+   This variable should not contain special characters like spaces,
+   colons, and semicolons. If not set, it defaults to :var:`build.name`
+   a dash, and :var:`config.version`.
+
 .. var:: build.executable_name = "..."
 
    This variable controls the name of the executables that the user
    clicks on to start the game.
 
+   This variable should not contain special characters like spaces,
+   colons, and semicolons. If not set, it defaults to :var:`build.name`.
+
    For example, if this is set to "mygame", the user will be able
    to run mygame.exe on Windows, mygame.app on Macintosh, and
    mygame.sh on Linux.
+
+.. _special-files:
 
 Special Files
 -------------
@@ -164,6 +179,7 @@ documentation, call::
     build.documentation("*.txt")
     build.documentation("*.html")
 
+.. _packages:
 
 Packages
 --------
@@ -178,6 +194,10 @@ containing bonus material. We could classify the bonus files in to a
 "bonus" file list, and then declare an all-premium package with::
 
     build.package("all-premium", "zip", "windows mac linux all bonus")
+
+Supported package types are "zip" and "tar.bz2" to generate files in
+those formats, and "directory" to create a directory filled with
+files.
 
 Archives
 --------
@@ -248,4 +268,18 @@ The following variables provide further control of the build process:
 
     ``{version}``
         The value of build.version.
+
+.. var:: build.allow_integrated_gpu = True
+
+    Allows Ren'Py to run on the integrated GPU on platforms that have both
+    integrated and discrete GPUs. Right now, this is only supported on Mac
+    OS X.
+
+.. var:: build.include_old_themes = True
+
+    When true, files required to support themes that existed before Ren'Py
+    6.99.9 will be included in the build. When false, such files are excluded.
+
+    This is set to False when :func:`gui.init` is called.
+
 

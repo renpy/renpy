@@ -7,6 +7,7 @@ http://www.renpy.org
 Ren'Py development takes place on the ``master`` branch, and occasionally
 on feature branches.
 
+
 Getting Started
 ===============
 
@@ -48,30 +49,45 @@ Building the modules requires you have the many dependencies installed on
 your system. On Ubuntu and Debian, these dependencies can be installed with
 the command::
 
-    apt-get install python-dev python-pygame libavcodec-dev libavformat-dev \
-        libavresample-dev libfreetype6-dev libglew1.6-dev libsdl1.2-dev \
-        libsdl-image1.2-dev libfribidi-dev libswscale-dev libesd0-dev libpulse-dev
-
-Other platforms may have an equivalent command. Otherwise, you'll need to
-build `renpy-deps <https://github.com/renpy/renpy-deps>`_.
+    apt-get install virtualenvwrapper python-dev libavcodec-dev libavformat-dev \
+        libavresample-dev libswresample-dev libswscale-dev libfreetype6-dev libglew1.6-dev \
+        libfribidi-dev libsdl2-dev libsdl2-image-dev libsdl2-gfx-dev \
+        libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-turbo8-dev
 
 We strongly suggest installing the Ren'Py modules into a Python
-virtualenv. `This page <http://dabapps.com/blog/introduction-to-pip-and-virtualenv-python/>`_
-describes how to install pip and the virtualenv tool, and set up a new virtualenv.
+virtualenv. To create a new virtualenv, open a new terminal and run::
+
+    mkvirtualenv renpy
+
+To return to this virtualenv later, run::
+
+    workon renpy
 
 After activating the virtualenv, install cython::
 
     pip install -U cython
 
+Then, install pygame_sdl2 by running the following commands::
+
+    git clone https://www.github.com/renpy/pygame_sdl2
+    pushd pygame_sdl2
+    python fix_virtualenv.py $VIRTUAL_ENV
+    python setup.py install
+    python setup.py install_headers
+    popd
+
 Next, set RENPY_DEPS_INSTALL To a \::-separated list of paths containing the
 dependencies, and RENPY_CYTHON to the name of the cython command::
 
-    export RENPY_DEPS_INSTALL=/usr::/usr/lib/x86_64-linux-gnu/
+    export RENPY_DEPS_INSTALL="/usr::/usr/lib/x86_64-linux-gnu/"
     export RENPY_CYTHON=cython
 
-Finally, change into the `modules` directory, and run::
+Finally, use setup.py in the Ren'Py ``module`` directory to compile and
+install the modules that support Ren'Py::
 
+    pushd module
     python setup.py install
+    popd
 
 Ren'Py will be installed into the activated virtualenv. It can then be run
 using the command::
@@ -132,10 +148,18 @@ For example::
         renpy.engine.warp_drive.engage(factor)
 
 
+Translating
+===========
+
+For best practices when it comes to translating the launcher and template
+game, please read:
+
+http://lemmasoft.renai.us/forums/viewtopic.php?p=321603#p321603
+
+
 Contributing
 ============
 
 For bug fixes, documentation improvements, and simple changes, just
 make a pull request. For more complex changes, it might make sense
 to file an issue first so we can discuss the design.
-

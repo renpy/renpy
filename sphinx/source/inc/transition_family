@@ -1,6 +1,6 @@
 .. Automatically generated file - do not modify.
 
-.. function:: define.move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=['master'], **kwargs)
+.. function:: define.move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[u'master'], **kwargs)
     
     This defines a family of move transitions, similar to the move and ease
     transitions. For a given `prefix`, this defines the transitions:

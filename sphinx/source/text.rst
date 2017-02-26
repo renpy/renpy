@@ -64,6 +64,8 @@ ensure that their writing is not accidentally misinterpreted by the engine.
     brace in your text, double it - write ``{{``.
 
 
+.. _text-interpolation:
+
 Interpolating Data
 ==================
 
@@ -182,6 +184,20 @@ Tags that apply to all text are:
             return
 
 
+.. text-tag:: alpha
+
+    The alpha text tag renders the text between itself and its closing
+    tag in the specified opacity. The opacity should be a value between
+    0.0 and 1.0, corresponding to fully invisible and fully opaque,
+    respectively. If the value is prefixed by + or -, the opacity will
+    be changed by that amount instead of completely replaced. If
+    the value is prefixed by \*, the opacity will be multiplied by
+    that amount. ::
+
+        "{alpha=0.1}This text is barely readable!{/alpha}"
+        "{alpha=-0.1}This text is 10 percent more transparent than the default.{/alpha}"
+        "{alpha=*0.5}This text is half as opaque as the default.{/alpha}"
+
 .. text-tag:: b
 
     The bold tag renders the text between itself and its closing tag
@@ -195,7 +211,7 @@ Tags that apply to all text are:
     tag in the specified color. The color should be in #rgb, #rgba,
     #rrggbb, or #rrggbbaa format. ::
 
-        "{color=#f00}Red{/color}, {color=#00ff00}Green{color}, {color=#0000ffff}Blue{/color}"
+        "{color=#f00}Red{/color}, {color=#00ff00}Green{/color}, {color=#0000ffff}Blue{/color}"
 
 .. text-tag:: cps
 
@@ -344,15 +360,19 @@ Text tags that only apply to dialogue are:
 
         "Line 1{w} Line 1{w=1.0} Line 1"
 
+It's also possible to define :ref:`custom text tags <custom-text-tags>` using
+Python.
 
-User-Defined Text Tags
-----------------------
+Style Text Tags
+---------------
 
-Ren'Py also supports user-defined text tags. A user-defined text tag
-is a text tag where the tag name is empty. In this case, the argument
-is taken to be the name of a style. The text between this tag and the
-closing tag has the following properties set to those defined in the
-style:
+Ren'Py supports text tags that access styles. These are text tags
+where the tag name is empty. In this case, the argument
+is taken to be the name of a style. For example, the {=mystyle} tag
+will acces the ``mystyle`` style.
+
+The text between the tag and the corresponding closing tag has the following
+properties set to those defined in the style:
 
 * antialias
 * font
@@ -486,13 +506,14 @@ from occurring.
 Fonts
 =====
 
-Ren'Py supports Truetype and Image-Based fonts.
+Ren'Py supports TrueType/OpenType fonts and collections, and
+Image-Based fonts.
 
-A Truetype font is specified by giving the name of the font file. The
-file must be present in the game directory, or one of the archive
+A TrueType or OpenType font is specified by giving the name of the font
+file. The file must be present in the game directory, or one of the archive
 files.
 
-Ren'Py also supports Truetype collections that define more than one
+Ren'Py also supports TrueType/OpenType collections that define more than one
 font. When accessing a collection, use the 0-based font index,
 followed by an at-sign and the file name. For example, "0@font.ttc" is
 the first font in a collection, "1@font.ttc" the second, and so on.
@@ -562,8 +583,10 @@ For example::
 .. include:: inc/font_group
 
 
-Text Displayable
-================
+.. _text-displayables:
+
+Text Displayables
+=================
 
 Text can also be used as a :ref:`displayable <displayables>`, which
 allows you to apply transforms to text, displaying it as if it was an
@@ -583,7 +606,7 @@ artifacts when characters overlap. To minimize these rendering
 artifacts, ensure that the :propref:`line_leading` and
 :propref:`line_spacing` properties are large enough that lines do not
 overlap. If the bottoms of characters on the first line are clipped,
-espeically if line_spacing is negative, consider increasing
+especially if line_spacing is negative, consider increasing
 :propref:`line_overlap_split`.
 
 Horizontal artifacts are also possible when characters are kerned

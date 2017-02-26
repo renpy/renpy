@@ -10,7 +10,7 @@ transformations such as rotation, zoom, and alpha-modification. These can be
 changed over time, and in response to events.
 
 The Python equivalent of an ATL transform is the :func:`Transform`
-displayable. There is no way to create an ATL transform programatically.
+displayable. There is no way to create an ATL transform programmatically.
 
 Ren'Py Script Statements
 ========================
@@ -403,15 +403,16 @@ On Statement
 ------------
 
 The On statement is a complex statement that defines an event handler. On
-statements are greedily grouped into a single statement.
+statements are greedily grouped into a single statement. On statement can
+handle a single event name, or a comma-separated list of event names.
 
 .. productionlist:: atl
-   atl_on : "on" `name` ":"
+   atl_on : "on" `name` [ "," `name` ] * ":"
           :      `atl_block`
 
 The on statement is used to handle events. When an event is handled, handling
 of any other event ends and handing of the new event immediately starts. When
-an event handler ends without another event occuring, the ``default`` event
+an event handler ends without another event occurring, the ``default`` event
 is produced (unless were already handing the ``default`` event).
 
 Execution of the on statement will never naturally end. (But it can be ended
@@ -425,6 +426,11 @@ by the time statement, or an enclosing event handler.)
             linear .5 alpha 1.0
         on hide:
             linear .5 alpha 0.0
+
+    transform pulse_button:
+        on hover, idle:
+            linear .25 zoom 1.25
+            linear .25 zoom 1.0
 
 Contains Statement
 ------------------
@@ -530,14 +536,17 @@ The functions have the same signature as those used with :func:`Transform`:
             repeat
 
 
+.. _warpers:
+
 Warpers
 =======
 
 A warper is a function that can change the amount of time an interpolation
 statement considers to have elapsed. The following warpers are defined by
 default. They are defined as functions from t to t', where t and t' are
-floating point numbers between 0.0 and 1.0. (If the statement has 0 duration,
-than t is 1.0 when it runs.)
+floating point numbers, with t ranging from 0.0 to 1.0 over the given
+amount of time. (If the statement has 0 duration, then t is 1.0 when it runs.)
+t' should start at 0.0 and end at 1.0, but can be greater or less.
 
 ``pause``
     Pause, then jump to the new value. If t == 1.0, t = 1.0. Otherwise, t'
@@ -555,6 +564,13 @@ than t is 1.0 when it runs.)
 
 ``easeout``
     Start slow, then speed up. t' = 1.0 - math.cos(t * math.pi / 2.0)
+
+In addition, most of Robert Penner's easing functions are supported. To
+make the names match those above, the functions have been renamed
+somewhat. Graphs of these standard functions can be found at
+http://www.easings.net/.
+
+.. include:: inc/easings
 
 New warpers can be defined using the renpy.atl_warper decorator, in a python
 early block. It should be placed in a file that is parsed before any file
@@ -695,7 +711,7 @@ both horizontal and vertical positions.
     If None, no rotation occurs. Otherwise, the image will be rotated
     by this many degrees clockwise. Rotating the displayable causes it
     to be resized, according to the setting of rotate_pad, below. This
-    can cause positioning to change if Add 'xanchor' to dictionary and yanchor are not
+    can cause positioning to change if xanchor and yanchor are not
     0.5.
 
 .. transform-property:: rotate_pad
@@ -743,6 +759,16 @@ both horizontal and vertical positions.
 
    This causes the displayable to be vertically zoomed by the supplied
    factor. A negative value causes the image to be flipped vertically.
+
+.. transform-property:: nearest
+
+    :type: boolean
+    :default: None
+
+    If true, the displayable and its children are drawn using nearest-neighbor
+    filtering. If False, the displayable and its children are drawn using
+    bilinear filtering. If None, this is inherited from the parent, or
+    :var:`config.nearest_neighbor`, which defaults to False.
 
 .. transform-property:: alpha
 
@@ -816,11 +842,23 @@ both horizontal and vertical positions.
 
 .. transform-property:: crop
 
-    :type: None or (int, int, int, int)
+    :type: None or (int, int, int, int) or (float, float, float, float)
     :default: None
 
     If not None, causes the displayable to be cropped to the given
     box. The box is specified as a tuple of (x, y, width, height).
+    If floats are given and crop_relative is true, the components are
+    taken as a fraction of the width and hight of the source image.
+    Otherwise, the components are considered to be an absolute number
+    of pixels.
+
+.. transform-property:: crop_relative
+
+    :type: boolean
+    :default: False
+
+    If True, float components of crop are take as a fraction of the width
+    and height of the source image.
 
 .. transform-property:: corner1
 
@@ -862,11 +900,58 @@ both horizontal and vertical positions.
     If this transform is being used as a transition, then this is the
     duration of the transition.
 
+.. transform-property:: events
+
+    :type: boolean
+    :default: True
+
+    If true, events are passed to the child of this transform. If false,
+    events are blocked. (This can be used in ATL transforms to prevent
+    events from reaching the old_widget.)
+
+.. transform-property:: xpan
+
+    :type: None or float
+    :default: None
+
+    If not None, this interpreted as an angle that is used to pan horizontally
+    across a 360 degree panoramic image. The center of the image is used as the
+    zero angle, while the left and right edges are -180 and 180 degrees,
+    respectively.
+
+.. transform-property:: ypan
+
+    :type: None or float
+    :default: None
+
+    If not None, this interpreted as an angle that is used to pan vertically
+    across a 360 degree panoramic image. The center of the image is used as the
+    zero angle, while the top and bottom edges are -180 and 180 degrees,
+    respectively.
+
+.. transform-property:: xtile
+
+    :type: int
+    :default: 1
+
+    The number of times to tile the image horizontally. (This is ignored when
+    xpan is given.)
+
+.. transform-property:: ytile
+
+    :type: int
+    :default: 1
+
+    The number of times to tile the image vertically. (This is ignored when
+    ypan is given.)
+
 These properties are applied in the following order:
 
+#. tile
 #. crop, corner1, corner2
 #. size
 #. zoom, xzoom, yzoom
+#. pan
 #. rotate
 #. position properties
 
@@ -915,6 +1000,11 @@ The following events can be triggered automatically:
 ``replaced``
     Triggered when the transform is replaced by another. The image will
     not actually hide until the ATL block finishes.
+
+``update``
+    Triggered when a screen is updated without being shown or replacing
+    another screen. This happens in rare but possible cases, such as when
+    the game is loaded and when styles or translations change.
 
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``
    Triggered when button containing this transform, or a button contained

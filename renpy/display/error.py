@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,6 +29,7 @@ error_handled = False
 ##############################################################################
 # Initialized approach.
 
+
 def call_exception_screen(screen_name, **kwargs):
     try:
 
@@ -44,20 +45,26 @@ def call_exception_screen(screen_name, **kwargs):
     finally:
         renpy.config.quit_action = old_quit
 
+
 def rollback_action():
     renpy.exports.rollback(force=True)
+
 
 def init_display():
     """
     The minimum amount of code required to init the display.
     """
 
+    if renpy.config.init_system_styles is not None:
+        renpy.config.init_system_styles()
+
     if not renpy.game.interface:
-        renpy.display.core.Interface()
+        renpy.display.core.Interface().start()
         renpy.loader.index_archives()
         renpy.display.im.cache.init()
 
     renpy.ui.reset()
+
 
 def error_dump():
     """
@@ -65,6 +72,7 @@ def error_dump():
     """
 
     renpy.dump.dump(True)
+
 
 def report_exception(short, full, traceback_fn):
     """
@@ -78,7 +86,7 @@ def report_exception(short, full, traceback_fn):
 
     error_dump()
 
-    if renpy.game.args.command != "run": #@UndefinedVariable
+    if renpy.game.args.command != "run":  # @UndefinedVariable
         return True
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
@@ -107,20 +115,33 @@ def report_exception(short, full, traceback_fn):
 
             reload_action = renpy.exports.curried_call_in_new_context("_save_reload_game")
 
+        else:
+            reload_action = renpy.exports.utter_restart
+
         if renpy.game.context(-1).next_node is not None:
             ignore_action = renpy.ui.returns(False)
     except:
         pass
 
-    renpy.game.invoke_in_new_context(
-        call_exception_screen,
-        "_exception",
-        short=short, full=full,
-        rollback_action=rollback_action,
-        reload_action=reload_action,
-        ignore_action=ignore_action,
-        traceback_fn=traceback_fn,
-        )
+    try:
+
+        renpy.game.invoke_in_new_context(
+            call_exception_screen,
+            "_exception",
+            short=short, full=full,
+            rollback_action=rollback_action,
+            reload_action=reload_action,
+            ignore_action=ignore_action,
+            traceback_fn=traceback_fn,
+            )
+
+    except renpy.game.CONTROL_EXCEPTIONS:
+        raise
+
+    except:
+        renpy.display.log.write("While handling exception:")
+        renpy.display.log.exception()
+        raise
 
 
 def report_parse_errors(errors, error_fn):
@@ -135,7 +156,7 @@ def report_parse_errors(errors, error_fn):
 
     error_dump()
 
-    if renpy.game.args.command != "run": #@UndefinedVariable
+    if renpy.game.args.command != "run":  # @UndefinedVariable
         return True
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
@@ -148,11 +169,20 @@ def report_parse_errors(errors, error_fn):
 
     reload_action = renpy.exports.utter_restart
 
-    renpy.game.invoke_in_new_context(
-        call_exception_screen,
-        "_parse_errors",
-        reload_action=reload_action,
-        errors=errors,
-        error_fn = error_fn,
-        )
+    try:
 
+        renpy.game.invoke_in_new_context(
+            call_exception_screen,
+            "_parse_errors",
+            reload_action=reload_action,
+            errors=errors,
+            error_fn=error_fn,
+            )
+
+    except renpy.game.CONTROL_EXCEPTIONS:
+        raise
+
+    except:
+        renpy.display.log.write("While handling exception:")
+        renpy.display.log.exception()
+        raise

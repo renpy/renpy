@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,16 +21,16 @@
 
 # This file handles imagemap caching.
 
-import pygame
+import pygame_sdl2 as pygame
 import renpy.display
 
 from renpy.display.render import render
 
 import hashlib
-import os
 
 # A list of cache images we've already written.
 cached = set()
+
 
 class ImageMapCrop(renpy.display.core.Displayable):
     """
@@ -70,6 +70,7 @@ class ImageCacheCrop(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
         return self.cache.render(self.index, width, height, st, at)
+
 
 class ImageMapCache(renpy.object.Object):
 
@@ -117,7 +118,7 @@ class ImageMapCache(renpy.object.Object):
             return rv
 
         self.md5.update(repr(d.identity))
-        self.md5.update(repr(d.identity))
+        self.md5.update(repr(rect))
 
         index = len(self.imagerect)
         rv = ImageCacheCrop(self, index)
@@ -163,28 +164,10 @@ class ImageMapCache(renpy.object.Object):
 
         cached.add(filename)
 
-        # If all of our dependencies are of the same age or less,
-        # we don't need to rebuild the cache.
-
         if renpy.loader.loadable(filename):
-            d_set = set()
-            mtime = 0
+            return
 
-            for i, rect in self.imagerect:
-                if i in d_set:
-                    continue
-
-                d_set.add(i)
-                mtime = max(i.get_mtime(), mtime)
-
-            if renpy.loader.get_mtime(filename) >= mtime:
-                return
-
-        fn = os.path.join(renpy.config.gamedir, filename)
-        dir = os.path.dirname(fn) #@ReservedAssignment
-
-        if not os.path.exists(dir):
-            os.makedirs(dir)
+        fn = renpy.loader.get_path(filename)
 
         cache = pygame.Surface((self.cache_width, self.cache_height), pygame.SRCALPHA, 32)
 
@@ -196,11 +179,23 @@ class ImageMapCache(renpy.object.Object):
 
         pygame.image.save(cache, renpy.exports.fsencode(fn))
 
+    def image_file_hash(self):
+        """
+        Returns a hash of the contents of the image files. (As an integer.)
+        """
+
+        rv = 0
+
+        for i in self.imagerect:
+            rv += i[0].get_hash()
+
+        return rv & 0x7fffffff
+
     def finish(self):
         if not self.areas:
             return
 
-        filename = "im-%s.png" % (self.md5.hexdigest())
+        filename = "im-%s-%x.png" % (self.md5.hexdigest(), self.image_file_hash())
 
         if renpy.game.preferences.language:
             filename = renpy.game.preferences.language + "-" + filename
@@ -219,7 +214,6 @@ class ImageMapCache(renpy.object.Object):
 
         if renpy.loader.loadable(filename):
             self.cache = renpy.display.im.Image(filename)
-
 
     def render(self, index, width, height, st, at):
         if self.cache is None:

@@ -90,7 +90,9 @@ To invoke warping, run Ren'Py with the ``--warp`` command-line argument followed
 by a filename:line combination, to specify where you would like to warp to. For
 example ::
 
-    run_game --warp script.rpy:458
+    renpy.exe my_project --warp script.rpy:458
+
+(Where `my_project` is the full path to the base directory of your project.)
 
 When warping is invoked, Ren'Py does a number of things. It first finds all of
 the scene statements in the program. It then tries to find a path from the
@@ -105,22 +107,18 @@ that it only examines a single path, which means that while the path may be
 representative of some route of execution, it's possible that there may be a
 bug along some other route. In general, the path doesn't consider game logic,
 so it's also possible to have a path that isn't actually reachable. (This is
-only really a problem on control-heavy games, espcially those that use a lot of
+only really a problem on control-heavy games, especially those that use a lot of
 python code.
 
 The biggest problem, though, is that no python code is executed before the
 statement that is warped to. This means that all variables will be
-uninitalized, which can lead to crashes when they are used. To overcome this,
+uninitialized, which can lead to crashes when they are used. To overcome this,
 one can define a label ``after_warp``, which is called after a warp but before
 the warped-to statement executes. The code reached by this label can set up
 variables in the program, and then return to the preview.
 
 The warp feature requires :var:`config.developer` to be True to operate.
 
-When using renpy.sh or renpy.py from the SDK to run Ren'Py, you will also need
-to give the ``--game`` option. For example ::
-
-    ./renpy.sh --game ./the_question/game/ --warp script.rpy:98
 
 Debug Functions
 ---------------

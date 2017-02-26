@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,7 +21,7 @@
 
 # This code applies an update.
 init -1500 python in updater:
-    from store import renpy, config, Action
+    from store import renpy, config, Action, DictEquality, persistent
     import store.build as build
 
     import tarfile
@@ -46,6 +46,14 @@ init -1500 python in updater:
         rsa = None
 
     from renpy.exports import fsencode
+
+    # A map from update URL to the last version found at that URL.
+    if persistent._update_version is None:
+        persistent._update_version = { }
+
+    # A map from update URL to the time we last checked that URL.
+    if persistent._update_last_checked is None:
+        persistent._update_last_checked = { }
 
     # A file containing deferred update commands, one per line. Right now,
     # there are two commands:
@@ -115,7 +123,8 @@ init -1500 python in updater:
     def zsync_path(command):
         """
         Returns the full platform-specific path to command, which is one
-        of zsync or zsyncmake.
+        of zsync or zsyncmake. If the file doesn't exists, returns the
+        command so the system-wide copy is used.
         """
 
         if renpy.windows:
@@ -123,8 +132,14 @@ init -1500 python in updater:
         else:
             suffix = ""
 
-        return os.path.join(os.path.dirname(sys.executable), command + suffix)
+        executable = renpy.fsdecode(sys.executable)
 
+        rv = os.path.join(os.path.dirname(executable), command + suffix)
+
+        if os.path.exists(rv):
+            return rv
+
+        return command + suffix
 
     class UpdateError(Exception):
         """
@@ -202,12 +217,16 @@ init -1500 python in updater:
         # The update was cancelled.
         CANCELLED = "CANCELLED"
 
-        def __init__(self, url, base, force=False, public_key=None, simulate=None, add=[], restart=True):
+        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False):
             """
             Takes the same arguments as update().
             """
 
             threading.Thread.__init__(self)
+
+            import os
+            if "RENPY_FORCE_UPDATE" in os.environ:
+                force = True
 
             # The main state.
             self.state = Updater.CHECKING
@@ -236,11 +255,15 @@ init -1500 python in updater:
             # Force the update?
             self.force = force
 
+            # Packages to add during the update.
+            self.add = add
+
             # Do we need to restart Ren'Py at the end?
             self.restart = restart
 
-            # Packages to add during the update.
-            self.add = add
+            # If true, we check for an update, and update persistent._update_version
+            # as appropriate.
+            self.check_only = check_only
 
             # The base path of the game that we're updating, and the path to the update
             # directory underneath it.
@@ -327,7 +350,7 @@ init -1500 python in updater:
                     self.log.flush()
 
             except Exception as e:
-                self.message = type(e).__name__ + ": " + unicode(e)
+                self.message = _type(e).__name__ + ": " + unicode(e)
                 self.can_cancel = True
                 self.can_proceed = False
                 self.state = self.ERROR
@@ -346,8 +369,8 @@ init -1500 python in updater:
             Performs the update.
             """
 
-            if renpy.android:
-                raise UpdateError("The Ren'Py Updater is not supported on Android.")
+            if getattr(renpy, "mobile", False):
+                raise UpdateError(_("The Ren'Py Updater is not supported on mobile devices."))
 
             self.load_state()
             self.test_write()
@@ -359,6 +382,14 @@ init -1500 python in updater:
                 self.can_cancel = False
                 self.can_proceed = True
                 self.state = self.UPDATE_NOT_AVAILABLE
+                persistent._update_version[self.url] = None
+                renpy.restart_interaction()
+                return
+
+            persistent._update_version[self.url] = pretty_version
+
+            if self.check_only:
+                renpy.restart_interaction()
                 return
 
             if not self.add:
@@ -369,6 +400,8 @@ init -1500 python in updater:
                     self.can_proceed = True
                     self.state = self.UPDATE_AVAILABLE
                     self.version = pretty_version
+
+                    renpy.restart_interaction()
 
                     while True:
                         if self.cancelled or self.proceeded:
@@ -384,6 +417,7 @@ init -1500 python in updater:
 
             # Perform the update.
             self.new_state = dict(self.current_state)
+            renpy.restart_interaction()
 
             self.progress = 0.0
             self.state = self.PREPARING
@@ -393,21 +427,27 @@ init -1500 python in updater:
 
             self.progress = 0.0
             self.state = self.DOWNLOADING
+            renpy.restart_interaction()
 
             for i in self.modules:
-                self.download(i)
+                try:
+                    self.download(i)
+                except:
+                    self.download(i, standalone=True)
 
             self.clean_old()
 
             self.can_cancel = False
             self.progress = 0.0
             self.state = self.UNPACKING
+            renpy.restart_interaction()
 
             for i in self.modules:
                 self.unpack(i)
 
             self.progress = None
             self.state = self.FINISHING
+            renpy.restart_interaction()
 
             self.move_files()
             self.delete_obsolete()
@@ -419,10 +459,14 @@ init -1500 python in updater:
             self.can_proceed = True
             self.can_cancel = False
 
+            persistent._update_version[self.url] = None
+
             if self.restart:
                 self.state = self.DONE
             else:
                 self.state = self.DONE_NO_RESTART
+
+            renpy.restart_interaction()
 
             return
 
@@ -445,12 +489,20 @@ init -1500 python in updater:
                 raise UpdateCancelled()
 
             if self.simulate == "error":
-                raise UpdateError("An error is being simulated.")
+                raise UpdateError(_("An error is being simulated."))
 
             if self.simulate == "not_available":
                 self.can_cancel = False
                 self.can_proceed = True
                 self.state = self.UPDATE_NOT_AVAILABLE
+                persistent._update_version[self.url] = None
+                return
+
+            pretty_version = build.version or build.directory_name
+            persistent._update_version[self.url] = pretty_version
+
+            if self.check_only:
+                renpy.restart_interaction()
                 return
 
             # Confirm with the user that the update is available.
@@ -458,7 +510,7 @@ init -1500 python in updater:
                 self.can_cancel = True
                 self.can_proceed = True
                 self.state = self.UPDATE_AVAILABLE
-                self.version = build.version or build.directory_name
+                self.version = pretty_version
 
                 while True:
                     if self.cancelled or self.proceeded:
@@ -473,22 +525,26 @@ init -1500 python in updater:
 
             self.progress = 0.0
             self.state = self.PREPARING
+            renpy.restart_interaction()
 
             simulate_progress()
 
             self.progress = 0.0
             self.state = self.DOWNLOADING
+            renpy.restart_interaction()
 
             simulate_progress()
 
             self.can_cancel = False
             self.progress = 0.0
             self.state = self.UNPACKING
+            renpy.restart_interaction()
 
             simulate_progress()
 
             self.progress = None
             self.state = self.FINISHING
+            renpy.restart_interaction()
 
             time.sleep(1.5)
 
@@ -497,10 +553,14 @@ init -1500 python in updater:
             self.can_proceed = True
             self.can_cancel = False
 
+            persistent._update_version[self.url] = None
+
             if self.restart:
                 self.state = self.DONE
             else:
                 self.state = self.DONE_NO_RESTART
+
+            renpy.restart_interaction()
 
             return
 
@@ -605,7 +665,7 @@ init -1500 python in updater:
             fn = os.path.join(self.updatedir, "current.json")
 
             if not os.path.exists(fn):
-                raise UpdateError("Either this project does not support updating, or the update status file was deleted.")
+                raise UpdateError(_("Either this project does not support updating, or the update status file was deleted."))
 
             with open(fn, "rb") as f:
                 self.current_state = json.load(f)
@@ -619,10 +679,10 @@ init -1500 python in updater:
 
                 os.unlink(fn)
             except:
-                raise UpdateError("This account does not have permission to perform an update.")
+                raise UpdateError(_("This account does not have permission to perform an update."))
 
             if not self.log:
-                raise UpdateError("This account does not have permission to write the update log.")
+                raise UpdateError(_("This account does not have permission to write the update log."))
 
         def check_updates(self):
             """
@@ -647,7 +707,7 @@ init -1500 python in updater:
                 try:
                     rsa.verify(updates_json, signature, self.public_key)
                 except:
-                    raise UpdateError("Could not verify update signature.")
+                    raise UpdateError(_("Could not verify update signature."))
 
                 if "monkeypatch" in self.updates:
                     exec self.updates["monkeypatch"] in globals(), globals()
@@ -773,7 +833,7 @@ init -1500 python in updater:
 
             tf.close()
 
-        def download(self, module):
+        def download(self, module, standalone=False):
             """
             Uses zsync to download the module.
             """
@@ -782,18 +842,17 @@ init -1500 python in updater:
 
             new_fn = self.update_filename(module, True)
 
-
             # Download the sums file.
             sums = [ ]
 
             f = urllib.urlopen(urlparse.urljoin(self.url, self.updates[module]["sums_url"]))
-            while True:
-                data = f.read(4)
+            data = f.read()
 
-                if len(data) != 4:
-                    break
-
-                sums.append(struct.unpack("I", data)[0])
+            for i in range(0, len(data), 4):
+                try:
+                    sums.append(struct.unpack("<I", data[i:i+4])[0])
+                except:
+                    pass
 
             f.close()
 
@@ -807,20 +866,32 @@ init -1500 python in updater:
             except:
                 pass
 
+            try:
+                os.unlink(new_fn)
+            except:
+                pass
+
             cmd = [
                 zsync_path("zsync"),
                 "-o", new_fn,
-                "-k", zsync_fn,
                 ]
+
+            if not standalone:
+                cmd.extend([
+                    "-k", zsync_fn,
+                ])
 
             if os.path.exists(new_fn + ".part"):
                 self.rename(new_fn + ".part", new_fn + ".part.old")
-                cmd.append("-i")
-                cmd.append(new_fn + ".part.old")
 
-            for i in self.modules:
-                cmd.append("-i")
-                cmd.append(self.update_filename(module, False))
+                if not standalone:
+                    cmd.append("-i")
+                    cmd.append(new_fn + ".part.old")
+
+            if not standalone:
+                for i in self.modules:
+                    cmd.append("-i")
+                    cmd.append(self.update_filename(module, False))
 
             cmd.append(urlparse.urljoin(self.url, self.updates[module]["zsync_url"]))
 
@@ -907,7 +978,7 @@ init -1500 python in updater:
                 if os.path.exists(new_fn + ".part"):
                     os.rename(new_fn + ".part", new_fn)
                 else:
-                    raise UpdateError("The update file was not downloaded.")
+                    raise UpdateError(_("The update file was not downloaded."))
 
             # Check that the downloaded file has the right digest.
             import hashlib
@@ -925,7 +996,7 @@ init -1500 python in updater:
                 digest = hash.hexdigest()
 
             if digest != self.updates[module]["digest"]:
-                raise UpdateError("The update file does not have the correct digest - it may have been corrupted.")
+                raise UpdateError(_("The update file does not have the correct digest - it may have been corrupted."))
 
             if os.path.exists(new_fn + ".part.old"):
                 os.unlink(new_fn + ".part.old")
@@ -981,7 +1052,7 @@ init -1500 python in updater:
                     continue
 
                 if not info.isreg():
-                    raise UpdateError("While unpacking {}, unknown type {}.".format(info.name, info.type))
+                    raise UpdateError(__("While unpacking {}, unknown type {}.").format(info.name, info.type))
 
                 # Extract regular files.
                 tff = tf.extractfile(info)
@@ -1063,7 +1134,7 @@ init -1500 python in updater:
                 self.unlink(i)
 
                 if os.path.exists(i):
-                    self.log.write("could not delete file %s" % path.encode("utf-8"))
+                    self.log.write("could not delete file %s" % i.encode("utf-8"))
                     with open(DEFERRED_UPDATE_FILE, "wb") as f:
                         f.write("D " + i.encode("utf-8") + "\n")
 
@@ -1106,6 +1177,7 @@ init -1500 python in updater:
 
     installed_packages_cache = None
 
+
     def get_installed_packages(base=None):
         """
         :doc: updater
@@ -1137,6 +1209,7 @@ init -1500 python in updater:
         installed_packages_cache = rv
         return rv
 
+
     def can_update(base=None):
         """
         :doc: updater
@@ -1144,12 +1217,21 @@ init -1500 python in updater:
         Returns true if it's possible that an update can succeed. Returns false
         if updating is totally impossible. (For example, if the update directory
         was deleted.)
+
+
+        Note that this does not determine if an update is actually available.
+        To do that, use :func:`updater.UpdateVersion`.
         """
+
+        # Written this way so we can use this code with 6.18 and earlier.
+        if getattr(renpy, "mobile", False):
+            return False
 
         if rsa is None:
             return False
 
         return not not get_installed_packages(base)
+
 
     def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True):
         """
@@ -1196,7 +1278,9 @@ init -1500 python in updater:
         ui.timer(.1, repeat=True, action=renpy.restart_interaction)
         renpy.call_screen("updater", u=u)
 
-    class Update(Action):
+
+    @renpy.pure
+    class Update(Action, DictEquality):
         """
         :doc: updater
 
@@ -1210,6 +1294,52 @@ init -1500 python in updater:
 
         def __call__(self):
             renpy.invoke_in_new_context(update, *self.args, **self.kwargs)
+
+
+    # A list of URLs that we've checked for the update version.
+    checked = set()
+
+    def UpdateVersion(url, check_interval=3600*6, simulate=None, **kwargs):
+        """
+        :doc: updater
+
+        This function contacts the server at `url`, and determines if there is
+        a newer version of software available at that url. If there is, this
+        function returns the new version. Otherwise, it returns None.
+
+        Since contacting the server can take some time, this function launches
+        a thread in the background, and immediately returns the version from
+        the last time the server was contacted, or None if the server has never
+        been contacted. The background thread will restart the current interaction
+        once the server has been contacted, which will cause screens that call
+        this function to update.
+
+        Each url will be contacted at most once per Ren'Py session, and not
+        more than once every `check_interval` seconds. When the server is not
+        contacted, cached data will be returned.
+
+        Additional keyword arguments (including `simulate`) are passed to the
+        update mechanism as if they were given to :func:`updater.update`.
+        """
+
+        if not can_update() and not simulate:
+            return None
+
+        check = True
+
+        if url in checked:
+            check = False
+
+        if time.time() < persistent._update_last_checked.get(url, 0) + check_interval:
+            check = False
+
+        if check:
+            checked.add(url)
+            persistent._update_last_checked[url] = time.time()
+            Updater(url, check_only=True, simulate=simulate, **kwargs)
+
+        return persistent._update_version.get(url, None)
+
 
     def update_command():
         import time
@@ -1230,13 +1360,13 @@ init -1500 python in updater:
 
             state = u.state
 
-            print "State:", state
+            print("State:", state)
 
             if u.progress:
-                print "Progress: {:.1f}%".format(u.progress * 100.0)
+                print("Progress: {:.1%}".format(u.progress))
 
             if u.message:
-                print "Message:", u.message
+                print("Message:", u.message)
 
             if state == u.ERROR:
                 break
@@ -1263,56 +1393,52 @@ init -1500:
         frame:
             style_group ""
 
-            xalign .5
-            ypos 100
-            xpadding 20
-            ypadding 20
-
-            xmaximum 400
-            xfill True
-
-            has vbox
+            has side "t c b":
+                spacing gui._scale(10)
 
             label _("Updater")
 
-            null height 10
+            fixed:
 
-            if u.state == u.ERROR:
-                text _("An error has occured:")
-            elif u.state == u.CHECKING:
-                text _("Checking for updates.")
-            elif u.state == u.UPDATE_NOT_AVAILABLE:
-                text _("This program is up to date.")
-            elif u.state == u.UPDATE_AVAILABLE:
-                text _("[u.version] is available. Do you want to install it?")
-            elif u.state == u.PREPARING:
-                text _("Preparing to download the updates.")
-            elif u.state == u.DOWNLOADING:
-                text _("Downloading the updates.")
-            elif u.state == u.UNPACKING:
-                text _("Unpacking the updates.")
-            elif u.state == u.FINISHING:
-                text _("Finishing up.")
-            elif u.state == u.DONE:
-                text _("The updates have been installed. The program will restart.")
-            elif u.state == u.DONE_NO_RESTART:
-                text _("The updates have been installed.")
-            elif u.state == u.CANCELLED:
-                text _("The updates were cancelled.")
+                vbox:
 
-            if u.message is not None:
-                null height 10
-                text "[u.message!q]"
+                    if u.state == u.ERROR:
+                        text _("An error has occured:")
+                    elif u.state == u.CHECKING:
+                        text _("Checking for updates.")
+                    elif u.state == u.UPDATE_NOT_AVAILABLE:
+                        text _("This program is up to date.")
+                    elif u.state == u.UPDATE_AVAILABLE:
+                        text _("[u.version] is available. Do you want to install it?")
+                    elif u.state == u.PREPARING:
+                        text _("Preparing to download the updates.")
+                    elif u.state == u.DOWNLOADING:
+                        text _("Downloading the updates.")
+                    elif u.state == u.UNPACKING:
+                        text _("Unpacking the updates.")
+                    elif u.state == u.FINISHING:
+                        text _("Finishing up.")
+                    elif u.state == u.DONE:
+                        text _("The updates have been installed. The program will restart.")
+                    elif u.state == u.DONE_NO_RESTART:
+                        text _("The updates have been installed.")
+                    elif u.state == u.CANCELLED:
+                        text _("The updates were cancelled.")
 
-            if u.progress is not None:
-                null height 10
-                bar value u.progress range 1.0 style "_bar"
+                    if u.message is not None:
+                        null height gui._scale(10)
+                        text "[u.message!q]"
 
-            if u.can_proceed or u.can_cancel:
-                null height 10
+                    if u.progress is not None:
+                        null height gui._scale(10)
+                        bar value u.progress range 1.0 style "_bar"
 
-            if u.can_proceed:
-                textbutton _("Proceed") action u.proceed xfill True
+            hbox:
 
-            if u.can_cancel:
-                textbutton _("Cancel") action u.cancel xfill True
+                spacing gui._scale(25)
+
+                if u.can_proceed:
+                    textbutton _("Proceed") action u.proceed
+
+                if u.can_cancel:
+                    textbutton _("Cancel") action u.cancel

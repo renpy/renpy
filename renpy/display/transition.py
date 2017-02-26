@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -42,12 +42,12 @@ class Transition(renpy.display.core.Displayable):
     def event(self, ev, x, y, st):
 
         if self.events or ev.type == renpy.display.core.TIMEEVENT:
-            return self.new_widget.event(ev, x, y, st) # E1101
+            return self.new_widget.event(ev, x, y, st)  # E1101
         else:
             return None
 
     def visit(self):
-        return [ self.new_widget, self.old_widget ] # E1101
+        return [ self.new_widget, self.old_widget ]  # E1101
 
 
 def null_render(d, width, height, st, at):
@@ -63,9 +63,11 @@ def null_render(d, width, height, st, at):
 
     return rv
 
+
 class NoTransition(Transition):
     """
     :doc: transition function
+    :name: Pause
     :args: (delay)
 
     Returns a transition that only displays the new screen for `delay` seconds.
@@ -107,8 +109,8 @@ class MultipleTransition(Transition):
     scene following it. For example::
 
         define logodissolve = MultipleTransition([
-            False, Dissolve(0.5)
-            "logo.jpg", NoTransition(1.0),
+            False, Dissolve(0.5),
+            "logo.jpg", Pause(1.0),
             "logo.jpg", dissolve,
             True])
 
@@ -195,7 +197,6 @@ def Fade(out_time,
          widget=None,
          alpha=False,
          ):
-
     """
     :doc: transition function
     :args: (out_time, hold_time, in_time, color="#000")
@@ -289,7 +290,6 @@ class Pixellate(Transition):
             visible = self.new_widget
             self.events = True
 
-
         rdr = render(visible, width, height, st, at)
         rv = renpy.display.render.Render(rdr.width, rdr.height)
 
@@ -315,9 +315,9 @@ class Dissolve(Transition):
         The time the dissolve will take.
 
     `alpha`
-        If true, the dissolve will alpha-composite the the result of the
-        transition with the screen. If false, the result of the transition
-        will replace the screen, which is more efficient.
+        If true, the dissolve will alpha-composite the result of the transition
+        with the screen. If false, the result of the transition will replace the
+        screen, which is more efficient.
 
     `time_warp`
         A function that adjusts the timeline. If not None, this should be a
@@ -342,7 +342,6 @@ class Dissolve(Transition):
         self.events = False
         self.alpha = alpha
         self.time_warp = time_warp
-
 
     def render(self, width, height, st, at):
 
@@ -406,9 +405,9 @@ class ImageDissolve(Transition):
         If true, black pixels will dissolve in before white pixels.
 
     `alpha`
-        If true, the dissolve will alpha-composite the the result of the
-        transition with the screen. If false, the result of the transition
-        will replace the screen, which is more efficient.
+        If true, the dissolve will alpha-composite the result of the transition
+        with the screen. If false, the result of the transition will replace the
+        screen, which is more efficient.
 
     `time_warp`
         A function that adjusts the timeline. If not None, this should be a
@@ -431,18 +430,18 @@ class ImageDissolve(Transition):
     time_warp = None
 
     def __init__(
-        self,
-        image,
-        time,
-        ramplen=8,
-        ramptype='linear',
-        ramp=None,
-        reverse=False,
-        alpha=False,
-        old_widget=None,
-        new_widget=None,
-        time_warp=None,
-        **properties):
+            self,
+            image,
+            time,
+            ramplen=8,
+            ramptype='linear',
+            ramp=None,
+            reverse=False,
+            alpha=False,
+            old_widget=None,
+            new_widget=None,
+            time_warp=None,
+            **properties):
 
         # ramptype and ramp are now unused, but are kept for compatbility with
         # older code.
@@ -481,10 +480,8 @@ class ImageDissolve(Transition):
         # The length of the ramp.
         self.ramplen = max(ramplen, 1)
 
-
     def visit(self):
         return super(ImageDissolve, self).visit() + [ self.image ]
-
 
     def render(self, width, height, st, at):
 
@@ -550,14 +547,14 @@ class AlphaDissolve(Transition):
      """
 
     def __init__(
-        self,
-        control,
-        delay=0.0,
-        old_widget=None,
-        new_widget=None,
-        alpha=False,
-        reverse=False,
-        **properties):
+            self,
+            control,
+            delay=0.0,
+            old_widget=None,
+            new_widget=None,
+            alpha=False,
+            reverse=False,
+            **properties):
 
         super(AlphaDissolve, self).__init__(delay, **properties)
 
@@ -803,7 +800,6 @@ class CropMove(Transition):
             endcrop = (0.5, 0.5, 0.0, 0.0)
             topnew = False
 
-
         elif mode == "custom":
             pass
         else:
@@ -854,7 +850,6 @@ class CropMove(Transition):
         crop = interpolate_tuple(self.startcrop, self.endcrop)
         pos = interpolate_tuple(self.startpos, self.endpos)
 
-
         top = render(self.top, width, height, st, at)
         bottom = render(self.bottom, width, height, st, at)
 
@@ -866,6 +861,131 @@ class CropMove(Transition):
 
         ss = top.subsurface(crop, focus=self.topnew)
         rv.blit(ss, pos, focus=self.topnew)
+
+        renpy.display.render.redraw(self, 0)
+        return rv
+
+
+class PushMove(Transition):
+    """
+    :doc: transition function
+    :args: (time, mode="pushright")
+    :name: PushMove
+
+    Returns a transition that works by taking the new scene and using it to
+    "push" the old scene off the screen. 
+
+    `time`
+        The time the transition takes.
+
+    `mode`
+        There are four possible modes: "pushright", "pushleft", "pushup",
+        and "pushdown", which push the old scene off the screen in the
+        direction indicated.
+
+    ::
+
+        define pushright = PushMove(1.0, "pushright")
+        define pushleft = PushMove(1.0, "pushleft")
+        define pushup = PushMove(1.0, "pushup")
+        define pushdown = PushMove(1.0, "pushdown")
+    """
+
+    def __init__(self, time,
+                 mode="pushright",
+                 old_widget=None,
+                 new_widget=None,
+                 **properties):
+
+        super(PushMove, self).__init__(time, **properties)
+        self.time = time
+
+        if mode == "pushright":
+            self.new_startpos = (0.0, 0.0)
+            self.new_startcrop = (1.0, 0.0, 0.0, 1.0)
+            self.new_endpos = (0.0, 0.0)
+            self.new_endcrop = (0.0, 0.0, 1.0, 1.0)
+            self.old_endpos = (1.0, 0.0)
+            self.old_endcrop = (0.0, 0.0, 0.0, 1.0)
+            self.old_startpos = (0.0, 0.0)
+            self.old_startcrop = (0.0, 0.0, 1.0, 1.0)
+
+        elif mode == "pushleft":
+            self.new_startpos = (1.0, 0.0)
+            self.new_startcrop = (0.0, 0.0, 0.0, 1.0)
+            self.new_endpos = (0.0, 0.0)
+            self.new_endcrop = (0.0, 0.0, 1.0, 1.0)
+            self.old_endpos = (0.0, 0.0)
+            self.old_endcrop = (1.0, 0.0, 0.0, 1.0)
+            self.old_startpos = (0.0, 0.0)
+            self.old_startcrop = (0.0, 0.0, 1.0, 1.0)
+
+        elif mode == "pushup":
+            self.new_startpos = (0.0, 1.0)
+            self.new_startcrop = (0.0, 0.0, 1.0, 0.0)
+            self.new_endpos = (0.0, 0.0)
+            self.new_endcrop = (0.0, 0.0, 1.0, 1.0)
+            self.old_endpos = (0.0, 0.0)
+            self.old_endcrop = (0.0, 1.0, 1.0, 0.0)
+            self.old_startpos = (0.0, 0.0)
+            self.old_startcrop = (0.0, 0.0, 1.0, 1.0)
+
+        elif mode == "pushdown":
+            self.new_startpos = (0.0, 0.0)
+            self.new_startcrop = (0.0, 1.0, 1.0, 0.0)
+            self.new_endpos = (0.0, 0.0)
+            self.new_endcrop = (0.0, 0.0, 1.0, 1.0)
+            self.old_endpos = (0.0, 1.0)
+            self.old_endcrop = (0.0, 0.0, 1.0, 0.0)
+            self.old_startpos = (0.0, 0.0)
+            self.old_startcrop = (0.0, 0.0, 1.0, 1.0)
+
+        else:
+            raise Exception("Invalid mode %s passed into PushMove." % mode)
+
+        self.delay = time
+        self.time = time
+
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+
+        self.events = False
+
+    def render(self, width, height, st, at):
+
+        if renpy.game.less_updates:
+            return null_render(self, width, height, st, at)
+
+        time = 1.0 * st / self.time
+
+        # Done rendering.
+        if time >= 1.0:
+            self.events = True
+            return render(self.new_widget, width, height, st, at)
+
+        # How we scale each element of a tuple.
+        scales = (width, height, width, height)
+
+        def interpolate_tuple(t0, t1):
+            return tuple([ int(s * (a * (1.0 - time) + b * time))
+                           for a, b, s in zip(t0, t1, scales) ])
+
+        new_crop = interpolate_tuple(self.new_startcrop, self.new_endcrop)
+        new_pos = interpolate_tuple(self.new_startpos, self.new_endpos)
+
+        old_crop = interpolate_tuple(self.old_startcrop, self.old_endcrop)
+        old_pos = interpolate_tuple(self.old_startpos, self.old_endpos)
+
+        new = render(self.new_widget, width, height, st, at)
+        old = render(self.old_widget, width, height, st, at)
+
+        rv = renpy.display.render.Render(width, height)
+
+        old_ss = old.subsurface(old_crop, focus=True)
+        rv.blit(old_ss, old_pos, focus=True)
+
+        new_ss = new.subsurface(new_crop, focus=True)
+        rv.blit(new_ss, new_pos, focus=True)
 
         renpy.display.render.redraw(self, 0)
         return rv
@@ -919,4 +1039,3 @@ def SubTransition(rect, trans, old_widget=None, new_widget=None, **properties):
     f.add(inner)
 
     return NoTransition(delay, old_widget=f, new_widget=f)
-

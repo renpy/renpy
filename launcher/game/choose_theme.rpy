@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -85,6 +85,12 @@ init python:
         return theme, scheme
 
     def implement_theme(theme, scheme):
+        """
+        Implement the current theme.
+
+        This function uses non-public APIs.
+        """
+
         global showing_theme, showing_scheme
 
         if theme == showing_theme and scheme == showing_scheme:
@@ -92,7 +98,12 @@ init python:
 
         renpy.style.restore(style_backup)
         exec theme_data.THEME[theme][scheme] in globals()
-        renpy.style.rebuild()
+
+        # Rebuild the style cache.
+        renpy.style.rebuild(False)
+
+        # Bust the render cache, so we re-evaluate the styles.
+        renpy.display.interface.kill_textures()
 
         showing_theme = theme
         showing_scheme = scheme
@@ -334,8 +345,7 @@ init python:
         global style_backup
         style_backup = renpy.style.backup()
 
-translate None python:
-    make_style_backup()
+    config.change_language_callbacks.append(make_style_backup)
 
 screen theme_demo:
 
@@ -387,8 +397,22 @@ init -2 python:
 
     style.soundtest_button.xalign = 1.0
 
-
 screen choose_theme:
+
+    default scheme_yadjustment = ui.adjustment()
+    default theme_yadjustment = ui.adjustment()
+
+    default first = True
+
+    python:
+        if first:
+            theme_yinitial_value = theme_yinitial()
+            scheme_yinitial_value = scheme_yinitial()
+        else:
+            theme_yinitial_value = None
+            scheme_yinitial_value = None
+
+        first = False
 
     frame:
         style_group "l"
@@ -415,8 +439,9 @@ screen choose_theme:
 
                     viewport:
                         scrollbars "vertical"
-                        yinitial theme_yinitial()
                         mousewheel True
+                        yadjustment theme_yadjustment
+                        yinitial theme_yinitial_value
 
                         has vbox
 
@@ -440,7 +465,8 @@ screen choose_theme:
                     viewport:
                         scrollbars "vertical"
                         mousewheel True
-                        yinitial scheme_yinitial()
+                        yadjustment scheme_yadjustment
+                        yinitial scheme_yinitial_value
 
                         has vbox
 
@@ -465,7 +491,7 @@ screen choose_theme:
 
                     use theme_demo
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
     textbutton _("Continue") action Return(True) style "l_right_button"
 
 

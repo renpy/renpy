@@ -22,22 +22,40 @@ For example, "mousedown_1" is generally a press of the left mouse button,
 "mouseup_1" is a release of that button, and "mousedown_4" is a turn of the
 scroll wheel to the top.
 
-Joystick keysyms begin with joy\_. They are defined in :var:`config.joystick_keys`,
-and mapped to actual joystick events by the user.
-
 There are two kinds of keyboard keysyms. The first is a string containing a
 character that is generated when a key is pressed. This is useful for
 binding alphabetic keys and numbers. Examples of these keysyms include "a", "A", and "7".
 
-Keboard keysyms can also be the symbolic name for the key. This can be any of
+Keyboard keysyms can also be the symbolic name for the key. This can be any of
 the K\_ constants taken from pygame.constants. This type of keysym looks like
 "K\_BACKSPACE", "K\_RETURN", and "K\_TAB"; a full list of this kind of keysyms may
 be found `here <http://www.pygame.org/docs/ref/key.html>`_.
 
-Keyboard keysyms may be preceded by the prefixes "alt\_", "meta\_", "shift\_",
-or "noshift\_". The first three of these require the corresponding modifier
-key to be pressed. (Meta is present on Linux keyboards, and corresponds to the
-Command key on a Mac.) "noshift\_" requires that the shift key not be pressed.
+Keyboard keysyms may be preceded by the following prefixes, separated by
+underscores:
+
+alt
+    Matches if the alt key is pressed. Keysyms without this prefix match
+    when the alt key is not pressed.
+meta
+    Matches if the meta, command, or windows key is pressed. Keysyms without
+    this prefix match when the meta key is not pressed.
+ctrl
+    Matches if the ctrl key is pressed. Keysyms without this prefix match
+    when the ctrl key is not pressed. (Ctrl is not very useful, as it
+    usually triggers skipping.)
+shift
+    Matches when the shift key is pressed.
+noshift
+    Matches when the shift key is not pressed. A K\_ keysym ignores the state
+    of the shift key when matching.
+repeat
+    Matches when the key is a repeat due to the key being held down. Keysyms
+    without this prefix do not match repeats.
+
+For example, the keysym "shift_alt_K_F5" will match the F5 key being pressed
+while shift and alt are held down.
+
 
 To change a binding, update the appropriate list in :var:`config.keymap`. The
 following code adds the 't' key to the list of keys that dismiss a say
@@ -47,72 +65,90 @@ statement, and removes the space key from that list. ::
         $ config.keymap['dismiss'].append('t')
         $ config.keymap['dismiss'].remove('K_SPACE')
 
-The default keymap is contained inside the python code implementing Ren'Py, and
-as of version 6.17 is as follows::
+The default keymap is contained inside renpy/common/00keymap.rpy, and
+as of version 6.99 is as follows::
 
     config.keymap = dict(
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
-        rollback = [ 'K_PAGEUP', 'mousedown_4', 'joy_rollback' ],
+        rollback = [ 'K_PAGEUP', 'repeat_K_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
         screenshot = [ 's' ],
+        toggle_afm = [ ],
         toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
-        game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
-        hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
+        game_menu = [ 'K_ESCAPE', 'K_MENU', 'mouseup_3' ],
+        hide_windows = [ 'mouseup_2', 'h' ],
         launch_editor = [ 'E' ],
         dump_styles = [ ],
         reload_game = [ 'R' ],
         inspector = [ 'I' ],
+        full_inspector = [ 'alt_I' ],
         developer = [ 'D' ],
-        quit = [ 'meta_q', 'alt_K_F4', 'alt_q' ],
-        iconify = [ 'meta_m', 'alt_m' ],
+        quit = [ ],
+        iconify = [ ],
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = [ 'G' ],
+        progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
+
+        # Accessibility.
+        self_voicing = [ 'v', 'V' ],
+        clipboard_voicing = [ 'C' ],
+        debug_voicing = [ 'alt_V', 'meta_V' ],
 
         # Say.
-        rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
-        dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
+        rollforward = [ 'mousedown_5', 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
+        dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'K_SELECT' ],
+        dismiss_unfocused = [ ],
 
         # Pause.
         dismiss_hard_pause = [ ],
 
         # Focus.
-        focus_left = [ 'K_LEFT', 'joy_left' ],
-        focus_right = [ 'K_RIGHT', 'joy_right' ],
-        focus_up = [ 'K_UP', 'joy_up' ],
-        focus_down = [ 'K_DOWN', 'joy_down' ],
+        focus_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
+        focus_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
+        focus_up = [ 'K_UP', 'repeat_K_UP' ],
+        focus_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
-        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
         button_alternate = [ 'mouseup_3' ],
         button_alternate_ignore = [ 'mousedown_3' ],
 
         # Input.
-        input_backspace = [ 'K_BACKSPACE' ],
+        input_backspace = [ 'K_BACKSPACE', 'repeat_K_BACKSPACE' ],
         input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
-        input_left = [ 'K_LEFT' ],
-        input_right = [ 'K_RIGHT' ],
-        input_delete = [ 'K_DELETE' ],
+        input_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
+        input_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
+        input_up = [ 'K_UP', 'repeat_K_UP' ],
+        input_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
+        input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
+        input_home = [ 'K_HOME' ],
+        input_end = [ 'K_END' ],
 
         # Viewport.
-        viewport_up = [ 'mousedown_4' ],
-        viewport_down = [ 'mousedown_5' ],
+        viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],
+        viewport_rightarrow = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
+        viewport_uparrow = [ 'K_UP', 'repeat_K_UP' ],
+        viewport_downarrow = [ 'K_DOWN', 'repeat_K_DOWN' ],
+        viewport_wheelup = [ 'mousedown_4' ],
+        viewport_wheeldown = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
 
         # These keys control skipping.
-        skip = [ 'K_LCTRL', 'K_RCTRL', 'joy_holdskip' ],
-        toggle_skip = [ 'K_TAB', 'joy_toggleskip' ],
+        skip = [ 'K_LCTRL', 'K_RCTRL' ],
+        stop_skipping = [ ],
+        toggle_skip = [ 'K_TAB' ],
         fast_skip = [ '>' ],
 
         # Bar.
-        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-        bar_left = [ 'K_LEFT', 'joy_left' ],
-        bar_right = [ 'K_RIGHT', 'joy_right' ],
-        bar_up = [ 'K_UP', 'joy_up' ],
-        bar_down = [ 'K_DOWN', 'joy_down' ],
+        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
+        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
+        bar_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
+        bar_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
+        bar_up = [ 'K_UP', 'repeat_K_UP' ],
+        bar_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
 
         # Delete a save.
         save_delete = [ 'K_DELETE' ],
@@ -123,10 +159,57 @@ as of version 6.17 is as follows::
 
         # Debug console.
         console = [ 'shift_O' ],
-        console_older = [ 'K_UP' ],
-        console_newer = [ 'K_DOWN' ],
+        console_older = [ 'K_UP', 'repeat_K_UP' ],
+        console_newer = [ 'K_DOWN', 'repeat_K_DOWN'],
 
         # Ignored (kept for backwards compatibility).
         toggle_music = [ 'm' ],
+        viewport_up = [ 'mousedown_4' ],
+        viewport_down = [ 'mousedown_5' ],
+
+        # Profile commands.
+        profile_once = [ 'K_F8' ],
+        memory_profile = [ 'K_F7' ],
 
         )
+
+Gamepad bindings work a little differently. Gamepad bindings work by mapping
+a gamepad event to one or more Ren'Py event names. The default set of
+gamepad bindings is given below::
+
+    config.pad_bindings = {
+        "pad_leftshoulder_press" : [ "rollback", ],
+        "pad_lefttrigger_pos" : [ "rollback", ],
+        "pad_back_press" : [ "rollback", ],
+
+        "pad_guide_press" : [ "game_menu", ],
+        "pad_start_press" : [ "game_menu", ],
+
+        "pad_y_press" : [ "hide_windows", ],
+
+        "pad_rightshoulder_press" : [ "rollforward", ],
+
+        "pad_righttrigger_pos" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate" ],
+        "pad_a_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
+        "pad_b_press" : [ "button_alternate" ],
+
+        "pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+        "pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+        "pad_rightx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+
+        "pad_dpright_press" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+        "pad_leftx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+        "pad_rightx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+
+        "pad_dpup_press" : [ "focus_up", "bar_up", "viewport_uparrow" ],
+        "pad_lefty_neg" :  [ "focus_up", "bar_up", "viewport_uparrow" ],
+        "pad_righty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
+
+        "pad_dpdown_press" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+        "pad_lefty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+        "pad_righty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+    }
+
+Gamepad buttons have an event name of the form "pad_*button*_press" or
+"pad_*button*_release". Analog axis events have the form "pad_*axis*_pos",
+"pad_*axis*_neg", or "pad_*axis*_zero".

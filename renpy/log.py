@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,6 +21,7 @@
 
 # This module handles the logging of messages to a file.
 
+from __future__ import print_function
 import os.path
 import codecs
 import traceback
@@ -29,16 +30,18 @@ import time
 import tempfile
 
 import renpy
+import sys
 
 # The file events are logged to.
 log_file = None
+
 
 class LogFile(object):
     """
     This manages one of our logfiles.
     """
 
-    def __init__(self, name, append=False, developer=False):
+    def __init__(self, name, append=False, developer=False, flush=True):
         """
         `name`
             The name of the logfile, without the .txt extension.
@@ -47,11 +50,14 @@ class LogFile(object):
             it to an empty file the first time we write to it.
         `developer`
             If true, nothing happens if config.developer is not set to True.
+        `flush`
+            Determines if the file is flushed after each write.
         """
 
         self.name = name
         self.append = append
         self.developer = developer
+        self.flush = flush
         self.file = None
 
         # File-like attributes.
@@ -61,10 +67,16 @@ class LogFile(object):
         # Should we emulate file's write method? We do so if this is True.
         self.raw_write = False
 
-    def open(self): #@ReservedAssignment
+        if renpy.ios:
+            self.file = sys.stdout
+
+    def open(self):  # @ReservedAssignment
 
         if self.file:
             return True
+
+        if renpy.macapp:
+            return False
 
         if self.developer and not renpy.config.developer:
             return False
@@ -78,19 +90,23 @@ class LogFile(object):
 
             altfn = os.path.join(tempfile.gettempdir(), "renpy-" + self.name + ".txt")
 
-
             if renpy.android:
-                print "Logging to", fn
+                print("Logging to", fn)
 
             if self.append:
                 mode = "a"
             else:
                 mode = "w"
 
-            try:
-                self.file = codecs.open(fn, mode, "utf-8")
-            except:
-                self.file = codecs.open(altfn, mode, "utf-8")
+            if renpy.config.log_to_stdout:
+                self.file = sys.stdout
+
+            else:
+
+                try:
+                    self.file = codecs.open(fn, mode, "utf-8")
+                except:
+                    self.file = codecs.open(altfn, mode, "utf-8")
 
             if self.append:
                 self.write('')
@@ -125,7 +141,9 @@ class LogFile(object):
             s = s.replace("\n", "\r\n")
 
             self.file.write(s)
-            self.file.flush()
+
+            if self.flush:
+                self.file.flush()
 
     def exception(self):
         """
@@ -139,11 +157,12 @@ class LogFile(object):
 # A map from the log name to a log object.
 log_cache = { }
 
-def open(name, append=False, developer=False): #@ReservedAssignment
+
+def open(name, append=False, developer=False, flush=False):  # @ReservedAssignment
     rv = log_cache.get(name, None)
 
     if rv is None:
-        rv = LogFile(name, append=append, developer=developer)
+        rv = LogFile(name, append=append, developer=developer, flush=flush)
         log_cache[name] = rv
 
     return rv

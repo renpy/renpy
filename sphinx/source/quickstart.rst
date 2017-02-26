@@ -16,7 +16,7 @@ learn how the Ren'Py launcher works. The launcher lets you create,
 manage, edit, and run Ren'Py projects.
 
 **Getting Started.** To get started you'll want to
-`download Ren'Py <http://www.renpy.org/wiki/renpy/Download_Ren'Py>`_.
+`download Ren'Py <https://www.renpy.org/latest.html>`_.
 
 Once you've downloaded Ren'Py, you'll want to extract it. This can
 generally be done by right-clicking on the package file, and picking
@@ -37,6 +37,9 @@ Once you've extracted Ren'Py, you'll need to run it.
 
 
 After running this, the Ren'Py launcher should run.
+
+The Ren'Py launcher has been translated to multiple languages. To
+change the language, choose "preferences" and then select the language.
 
 .. image:: launcher.png
    :align: right
@@ -254,8 +257,8 @@ so you can run this example.
 
 Ren'Py does not make any distinction between character and background
 art, as they're both treated as images. In general, character art
-needs to be transparent, which means it should be a PNG
-file. Background art can be JPEG or PNG files. By convention,
+needs to be transparent, which means it should be a PNG or WEBP
+file. Background art can be JPEG, PNG, or WEBP files. By convention,
 background images start with the "bg" tag.
 
 **Hide Statement.**
@@ -367,7 +370,7 @@ purposes.
 
 To do this repositioning, add an at-clause to a show statement. The at
 clause takes a position, and shows the image at that position. Ren'Py
-includes several pre-defined positions: ``left`` for the right side of
+includes several pre-defined positions: ``left`` for the left side of
 the screen, ``right`` for the right side, ``center`` for centered
 horizontally (the default), and ``truecenter`` for centered
 horizontally and vertically.
@@ -545,23 +548,6 @@ Releasing Your Game
 
 Once you've made a game, there are a number of things you should do
 before releasing it:
-
-**Edit options.rpy.**
-    The options.rpy file, created when you create a new game, contains
-    a number of settings that you may want to customize. Some of them,
-    like the screen height and screen width, should probably be set
-    before making the game. Others, like the window title, can be set
-    any time.
-
-**Add a plug for Ren'Py.**
-   This step is completely optional, but we do ask that if you have
-   credits in your game, you mention Ren'Py in them. We suggest using
-   something like "Made with the Ren'Py visual novel engine.", but
-   that's just a suggestion, and what you write is up to you.
-
-   We think that the games people make are the best advertising for
-   Ren'Py, and we hope that by including this, you'll help more people
-   learn how to make visual novels in Ren'Py.
 
 **Check for a new version of Ren'Py.**
    New versions of Ren'Py are released on a regular basis, to fix bugs

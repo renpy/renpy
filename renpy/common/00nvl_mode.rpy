@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -46,6 +46,7 @@ init -1500 python:
     style.create('nvl_vbox', 'vbox', 'the vbox containing each box of nvl-mode dialogue')
     style.create('nvl_label', 'say_label', 'an nvl-mode character\'s name')
     style.create('nvl_dialogue', 'say_dialogue', 'nvl-mode character dialogue')
+    style.create('nvl_thought', 'nvl_dialogue', 'nvl-mode character thoughts')
     style.create('nvl_entry', 'default', 'a window containing each line of nvl-mode dialogue')
 
     style.create('nvl_menu_window', 'default', 'a window containing an nvl-mode menu')
@@ -88,11 +89,15 @@ init -1500 python:
     # The layer the nvl screens are shown on.
     config.nvl_layer = "screens"
 
+    # The maximum number of entries in nvl_list.
+    config.nvl_list_length = None
+
     # A list of arguments that have been passed to nvl_record_show.
     nvl_list = None
 
     # If set, then all of the nvl-specific style get indexed with this.
     nvl_variant = None
+
 
     # Returns the appropriate variant style.
     def __s(s):
@@ -100,6 +105,12 @@ init -1500 python:
             return s[nvl_variant]
         else:
             return s
+
+    class _NVLEntry(tuple):
+        """
+        NVLEntry objects are added to the list of dialogue that's
+        shown on the screen.
+        """
 
     def __nvl_screen_dialogue():
         """
@@ -109,6 +120,7 @@ init -1500 python:
 
         widget_properties = { }
         dialogue = [ ]
+        kwargs = { }
 
         for i, entry in enumerate(nvl_list):
             if not entry:
@@ -130,16 +142,38 @@ init -1500 python:
             widget_properties[what_id] = kwargs["what_args"]
             widget_properties[window_id] = kwargs["window_args"]
 
-            dialogue.append((who, what, who_id, what_id, window_id))
+            e = _NVLEntry((who, what, who_id, what_id, window_id))
 
-        return widget_properties, dialogue
+            e.current = (i == (len(nvl_list) - 1))
+
+            e.who = who
+            e.what = what
+
+            e.who_id = who_id
+            e.what_id = what_id
+            e.window_id = window_id
+
+            e.who_args = kwargs["who_args"]
+            e.what_args = kwargs["what_args"]
+            e.window_args = kwargs["window_args"]
+
+            dialogue.append(e)
+
+        show_args = dict(kwargs)
+        if show_args:
+            del show_args["who_args"]
+            del show_args["what_args"]
+            del show_args["window_args"]
+
+        return widget_properties, dialogue, show_args
 
     def __nvl_show_screen(screen_name, **scope):
         """
          Shows an nvl-mode screen. Returns the "what" widget.
          """
 
-        widget_properties, dialogue = __nvl_screen_dialogue()
+        widget_properties, dialogue, show_args = __nvl_screen_dialogue()
+        scope.update(show_args)
 
         renpy.show_screen(screen_name, _layer=config.nvl_layer, _transient=True, _widget_properties=widget_properties, dialogue=dialogue, **scope)
         renpy.shown_window()
@@ -169,6 +203,8 @@ init -1500 python:
                 continue
 
             who, what, kw = i
+            kw = dict(kw)
+            kw.setdefault("show_say_vbox_properties",  { 'box_layout' : 'horizontal' }),
             rv = config.nvl_show_display_say(who, what, variant=nvl_variant, **kw)
 
         ui.close()
@@ -215,7 +251,7 @@ init -1500 python:
 
             scry = scry.next()
 
-
+    @renpy.pure
     class NVLCharacter(ADVCharacter):
 
         def __init__(self,
@@ -243,11 +279,14 @@ init -1500 python:
                 store.nvl_list = [ ]
 
             kwargs = self.show_args.copy()
-            kwargs["what_args"] = self.what_args
-            kwargs["who_args"] = self.who_args
-            kwargs["window_args"] = self.window_args
+            kwargs["what_args"] = dict(self.what_args)
+            kwargs["who_args"] = dict(self.who_args)
+            kwargs["window_args"] = dict(self.window_args)
 
             store.nvl_list.append((who, what, kwargs))
+
+            while config.nvl_list_length and (len(nvl_list) > config.nvl_list_length):
+                nvl_list.pop(0)
 
         def do_display(self, who, what, **display_args):
 
@@ -275,18 +314,34 @@ init -1500 python:
                 **display_args)
 
         def do_done(self, who, what):
+            nvl_list[-1][2]["what_args"]["alt"] = ""
+            nvl_list[-1][2]["who_args"]["alt"] = ""
+
             if self.clear:
                 nvl_clear()
+
+            self.add_history("adv", who, what)
 
         def do_extend(self):
             renpy.mode(self.mode)
             store.nvl_list = store.nvl_list[:-1]
 
+            self.pop_history()
+
+
     # The default NVLCharacter.
     nvl = NVLCharacter(
-        show_say_vbox_properties={ 'box_layout' : 'horizontal' },
         who_style='nvl_label',
         what_style='nvl_dialogue',
+        window_style='nvl_entry',
+        type='nvl',
+        mode='nvl',
+        clear=False,
+        kind=adv)
+
+    nvl_narrator = NVLCharacter(
+        who_style='nvl_label',
+        what_style='nvl_thought',
         window_style='nvl_entry',
         type='nvl',
         mode='nvl',
@@ -316,13 +371,15 @@ init -1500 python:
 
         if screen is not None:
 
-            widget_properties, dialogue = __nvl_screen_dialogue()
+            widget_properties, dialogue, show_args = __nvl_screen_dialogue()
+            scope = show_args.copy()
+            scope["dialogue"] = dialogue
 
             return renpy.display_menu(
                 items,
                 widget_properties=widget_properties,
                 screen=screen,
-                scope={ "dialogue" : dialogue },
+                scope=scope,
                 window_style=__s(style.nvl_menu_window),
                 choice_style=__s(style.nvl_menu_choice),
                 choice_chosen_style=__s(style.nvl_menu_choice_chosen),
@@ -345,6 +402,8 @@ init -1500 python:
                 continue
 
             who, what, kw = i
+            kw = dict(kw)
+            kw.setdefault("show_say_vbox_properties",  { 'box_layout' : 'horizontal' }),
             rv = renpy.show_display_say(who, what, **kw)
 
         renpy.display_menu(items, interact=False,
@@ -392,7 +451,7 @@ python early hide:
     def parse_nvl_show_hide(l):
         rv = l.simple_expression()
         if rv is None:
-            renpy.error('expected simple expression')
+            rv = "None"
 
         if not l.eol():
             renpy.error('expected end of line')

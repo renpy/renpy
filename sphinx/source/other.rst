@@ -1,12 +1,49 @@
-===============
-Other Functions
-===============
+=============================
+Other Functions and Variables
+=============================
 
 We're in the process of migrating the documentation over to a new
 tool. As not every page has been migrated yet, this exists to document
 new functionality that has no other place to go.
 
 .. include:: inc/other
+
+Ren'Py Version
+--------------
+
+.. include:: inc/renpy_version
+
+.. var:: renpy.version_string
+
+    The version number of Ren'Py, as a string of the form "Ren'Py 1.2.3.456".
+
+.. var:: renpy.version_only
+
+    The version number of Ren'Py, without the Ren'Py prefix. A string of
+    the form "1.2.3.456".
+
+.. var:: renpy.version_tuple
+
+    The version number of Ren'Py, as a tuple of the form (1, 2, 3, 456).
+
+.. var:: renpy.version_name
+
+    A human readable version name, of the form "Example Version."
+
+.. var:: renpy.license
+
+    A string giving license text that should be included in a game's
+    about screen.
+
+Memory Profiling
+-----------------
+
+.. include:: inc/memory
+
+Contexts
+---------
+
+.. include:: inc/context
 
 renpy.random
 -------------
@@ -39,9 +76,14 @@ It should be used instead of the standard Python random module. ::
 
     # return a random float between 0 and 1
     $ randfloat = renpy.random.random()
-    
+
     # return a random integer between 1 and 20
     $ d20roll = renpy.random.randint(1, 20)
-    
+
     # return a random element from a list
     $ randfruit = renpy.random.choice(['apple', 'orange', 'plum'])
+
+* ``renpy.random.Random(seed=None)``
+
+Returns a new random number generator object separate from the main one, seeded
+with the specified value if provided.

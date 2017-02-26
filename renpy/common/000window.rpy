@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,20 +26,32 @@ init -1200 python:
 
     config.window_show_transition = None
     config.window_hide_transition = None
+    config.window = None
 
     # A list of statements that cause the window to be auto-shown.
     config.window_auto_show = [ "say" ]
 
     # A list of statements that cause the window to be auto-hidden.
-    config.window_auto_hide = [ "scene" ]
+    config.window_auto_hide = [ "scene", "call screen" ]
 
     _window_auto = False
 
-    def _window_show(trans=None):
+    def _window_show(trans=False):
+        """
+        :doc: window
+
+        The python equivalent of the "window show" statement.
+
+        `trans`
+            If False, the default window show transition is used. If None,
+            no transition is used. Otherwise, the specified transition is
+            used.
+        """
+
         if store._window:
             return
 
-        if trans is None:
+        if trans is False:
             trans = config.window_show_transition
 
         if _preferences.show_empty_window:
@@ -49,11 +61,22 @@ init -1200 python:
         else:
             store._window = True
 
-    def _window_hide(trans=None):
+    def _window_hide(trans=False):
+        """
+        :doc: window
+
+        The python equivalent of the "window hide" statement.
+
+        `trans`
+            If False, the default window hide transition is used. If None,
+            no transition is used. Otherwise, the specified transition is
+            used.
+        """
+
         if not store._window:
             return
 
-        if trans is None:
+        if trans is False:
             trans = config.window_hide_transition
 
         if _preferences.show_empty_window:
@@ -76,6 +99,24 @@ init -1200 python:
 
     config.statement_callbacks.append(_window_auto_callback)
 
+    def _init_window():
+
+        global _window
+        global _window_auto
+
+        if config.window == "auto":
+            _window_auto = True
+            _window = False
+
+        elif config.window == "show":
+            _window_auto = False
+            _window = True
+
+        elif config.window == "hide":
+            _window_auto = False
+            _window = False
+
+
 python early hide:
     ##########################################################################
     # "window show" and "window hide" statements.
@@ -97,7 +138,7 @@ python early hide:
         if p is not None:
             trans = eval(p)
         else:
-            trans = None
+            trans = False
 
         _window_show(trans)
 
@@ -107,7 +148,7 @@ python early hide:
         if p is not None:
             trans = eval(p)
         else:
-            trans = None
+            trans = False
 
         _window_hide(trans)
 

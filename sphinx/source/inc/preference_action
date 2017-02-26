@@ -2,7 +2,7 @@
 
 .. function:: Preference(name, value=None)
     
-    This constructs the approprate action or value from a preference.
+    This constructs the appropriate action or value from a preference.
     The preference name should be the name given in the standard
     menus, while the value should be either the name of a choice,
     "toggle" to cycle through choices, a specific value, or left off
@@ -19,6 +19,10 @@
     * Preference("transitions", "all") - show all transitions.
     * Preference("transitions", "none") - do not show transitions.
     * Preference("transitions", "toggle") - toggle transitions.
+    
+    * Preference("video sprites", "show") - show all video sprites.
+    * Preference("video sprites", "hide") - fall back to images where possible.
+    * Preference("video sprites", "toggle") - toggle image fallback behavior.
     
     * Preference("show empty window", "show") - Allow the "window show" and "window auto" statement to show an empty window outside of the say statement.
     * Preference("show empty window", "hide") - Prevent the above.
@@ -74,9 +78,38 @@
     * Preference("voice mute", "disable") - Un-mute the voice mixer.
     * Preference("voice mute", "toggle") - Toggle voice mute.
     
+    * Preference("mixer <mixer> mute", "enable") - Mute the specified mixer.
+    * Preference("mixer <mixer> mute", "disable") - Unmute the specified mixer.
+    * Preference("mixer <mixer> mute", "toggle") - Toggle mute of specified mixer.
+    
+    * Preference("all mute", "enable") - Mute all mixers.
+    * Preference("all mute", "disable") - Unmute all mixers.
+    * Preference("all mute", "toggle") - Toggle mute of all mixers.
+    
     * Preference("music volume", 0.5) - Set the music volume.
     * Preference("sound volume", 0.5) - Set the sound volume.
     * Preference("voice volume", 0.5) - Set the voice volume.
+    * Preference("mixer <mixer> volume", 0.5) - Set the specified mixer volume.
+    
+    * Preference("emphasize audio", "enable") - Emphasize the audio channels found in :var:`config.emphasize_audio_channels`.
+    * Preference("emphasize audio", "disable") - Do not emphasize audio channels.
+    * Preference("emphasize audio", "toggle") - Toggle emphasize audio.
+    
+    * Preference("self voicing", "enable") - Enables self-voicing.
+    * Preference("self voicing", "disable") - Disable self-voicing.
+    * Preference("self voicing", "toggle") - Toggles self-voicing.
+    
+    * Preference("clipboard voicing", "enable") - Enables clipboard-voicing.
+    * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
+    * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
+    
+    * Preference("debug voicing", "enable") - Enables self.-voicing debug
+    * Preference("debug voicing", "disable") - Disable self-voicing debug.
+    * Preference("debug voicing", "toggle") - Toggles self-voicing debug.
+    
+    * Preference("rollback side", "left") - Touching the left side of the screen causes rollback.
+    * Preference("rollback side", "right") - Touching the right side of the screen causes rollback.
+    * Preference("rollback side", "disable") - Touching the screen will not cause rollback.
     
     Values that can be used with bars are:
     
@@ -85,4 +118,5 @@
     * Preference("music volume")
     * Preference("sound volume")
     * Preference("voice volume")
+    * Preference("mixer <mixer> volume")
 

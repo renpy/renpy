@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,7 +29,8 @@ registry = { }
 
 parsers = renpy.parser.ParseTrie()
 
-def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False): #@ReservedAssignment
+
+def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False):  # @ReservedAssignment
     """
     :doc: statement_register
     :name: renpy.register_statement
@@ -142,6 +143,7 @@ def call(method, parsed, *args, **kwargs):
         return None
 
     return method(parsed, *args, **kwargs)
+
 
 def get_name(parsed):
     name, _parsed = parsed

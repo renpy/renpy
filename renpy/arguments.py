@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,7 +31,7 @@ import renpy
 
 try:
     import site
-    site._renpy_argv_emulation() # @UndefinedVariable
+    site._renpy_argv_emulation()  # @UndefinedVariable
 except:
     pass
 
@@ -39,6 +39,10 @@ except:
 # A map from command name to a (function, flag) tuple. The flag is true if the
 # function will parse command line arguments, and false otherwise.
 commands = { }
+
+# Commands that force compile to be set.
+compile_commands = { "compile", "add_from", "merge_strings" }
+
 
 class ArgumentParser(argparse.ArgumentParser):
     """
@@ -63,19 +67,31 @@ class ArgumentParser(argparse.ArgumentParser):
 
         argparse.ArgumentParser.__init__(self, description="The Ren'Py visual novel engine.", add_help=False)
 
-        self.add_argument(
-            "basedir", default=None,
-            help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.",
-            nargs=1 if require_command else '?'
-            )
-
         command_names = ", ".join(sorted(commands))
 
-        self.add_argument(
-            "command",
-            help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
-            default="run",
-            nargs=1 if require_command else '?')
+        if require_command:
+
+            self.add_argument(
+                "basedir",
+                help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.")
+
+            self.add_argument(
+                "command",
+                help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.")
+
+        else:
+
+            self.add_argument(
+                "basedir",
+                default='',
+                nargs='?',
+                help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.")
+
+            self.add_argument(
+                "command",
+                help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
+                nargs='?',
+                default="run")
 
         self.add_argument(
             "--savedir", dest='savedir', default=None, metavar="DIRECTORY",
@@ -89,9 +105,19 @@ class ArgumentParser(argparse.ArgumentParser):
             "--version", action='version', version=renpy.version,
             help="Displays the version of Ren'Py in use.")
 
-        self.add_argument("--lint", action="store_const", dest="command", const="lint", help=argparse.SUPPRESS)
+        self.add_argument(
+            "--compile", action='store_true', dest='compile',
+            help='Forces all .rpy scripts to be recompiled before proceeding.')
 
-        dump = self.add_argument_group("JSON Dump Arguments", description="Ren'Py can dump information about the game to a JSON file. These options let you select the file, and choose what is dumped.")
+        self.add_argument(
+            "--keep-orphan-rpyc", action="store_true",
+            help="Prevents the compile command from deleting orphan rpyc files.")
+
+        self.add_argument(
+            "--lint", action="store_true", dest="lint",
+            help=argparse.SUPPRESS)
+
+        dump = self.add_argument_group("JSON dump arguments", description="Ren'Py can dump information about the game to a JSON file. These options let you select the file, and choose what is dumped.")
         dump.add_argument("--json-dump", action="store", metavar="FILE", help="The name of the JSON file.")
         dump.add_argument("--json-dump-private", action="store_true", default=False, help="Include private names. (Names beginning with _.)")
         dump.add_argument("--json-dump-common", action="store_true", default=False, help="Include names defined in the common directory.")
@@ -99,8 +125,8 @@ class ArgumentParser(argparse.ArgumentParser):
         if second_pass:
             self.add_argument("-h", "--help", action="help", help="Displays this help message, then exits.")
 
-            command = renpy.game.args.command #@UndefinedVariable
-            self.group = self.add_argument_group("{0} command".format(command), description)
+            command = renpy.game.args.command  # @UndefinedVariable
+            self.group = self.add_argument_group("{0} command arguments".format(command), description)
 
     def add_argument(self, *args, **kwargs):
         if self.group is self:
@@ -108,6 +134,27 @@ class ArgumentParser(argparse.ArgumentParser):
         else:
             self.group.add_argument(*args, **kwargs)
 
+    def parse_args(self, *args, **kwargs):
+        rv = argparse.ArgumentParser.parse_args(self, *args, **kwargs)
+
+        if rv.command in compile_commands:
+            rv.compile = True
+
+        if renpy.session.get("compile", False):
+            rv.compile = True
+
+        return rv
+
+    def parse_known_args(self, *args, **kwargs):
+        args, rest = argparse.ArgumentParser.parse_known_args(self, *args, **kwargs)
+
+        if args.command in compile_commands:
+            args.compile = True
+
+        if renpy.session.get("compile", False):
+            args.compile = True
+
+        return args, rest
 
 
 def run():
@@ -134,7 +181,7 @@ def run():
     if args.warp:
         renpy.warp.warp_spec = args.warp
 
-    if args.profile_display: #@UndefinedVariable
+    if args.profile_display:  # @UndefinedVariable
         renpy.config.profile = True
 
     if args.debug_image_cache:
@@ -142,7 +189,8 @@ def run():
 
     return True
 
-def compile(): #@ReservedAssignment
+
+def compile():  # @ReservedAssignment
     """
     This command forces the game script to be recompiled.
     """
@@ -152,7 +200,7 @@ def compile(): #@ReservedAssignment
     return False
 
 
-def quit(): #@ReservedAssignment
+def quit():  # @ReservedAssignment
     """
     This command is used to quit without doing anything.
     """
@@ -160,6 +208,7 @@ def quit(): #@ReservedAssignment
     takes_no_arguments("Recompiles the game script.")
 
     return False
+
 
 def rmpersistent():
     """
@@ -169,6 +218,7 @@ def rmpersistent():
     takes_no_arguments("Deletes the persistent data.")
 
     renpy.loadsave.location.unlink_persistent()
+    renpy.persistent.should_save_persistent = False
 
     return False
 
@@ -188,6 +238,7 @@ def register_command(name, function):
 
     commands[name] = function
 
+
 def bootstrap():
     """
     Called during bootstrap to perform an initial parse of the arguments, ignoring
@@ -198,7 +249,9 @@ def bootstrap():
 
     ap = ArgumentParser(False, require_command=False)
     args, _rest = ap.parse_known_args()
+
     return args
+
 
 def pre_init():
     """
@@ -221,12 +274,16 @@ def post_init():
     if execution should continue and False otherwise.
     """
 
-    command = renpy.game.args.command #@UndefinedVariable
+    command = renpy.game.args.command  # @UndefinedVariable
+
+    if command == "run" and renpy.game.args.lint:  # @UndefinedVariable
+        command = "lint"
 
     if command not in commands:
         ArgumentParser().error("Command {0} is unknown.".format(command))
 
     return commands[command]()
+
 
 def takes_no_arguments(description=None):
     """

@@ -1,5 +1,5 @@
 # -*- python -*-
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,17 +23,13 @@
 def version():
     return (6, 12, 0)
 
-cdef extern from "pygame/pygame.h":
-    cdef struct SDL_RWops:
-        pass
-
-    void import_pygame_rwobject()
-    SDL_RWops* RWopsFromPython(object obj)
-
+from sdl2 cimport *
+from pygame_sdl2 cimport *
 
 cdef extern from "renpy.h":
 
     void core_init()
+    void subpixel_init()
 
     void save_png_core(object, SDL_RWops *, int)
 
@@ -425,6 +421,6 @@ def subpixel(pysrc, pydst, xoffset, yoffset, shift):
 
 # Be sure to update scale.py when adding something new here!
 
-import_pygame_rwobject()
+import_pygame_sdl2()
 core_init()
-
+subpixel_init()

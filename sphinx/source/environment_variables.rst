@@ -1,6 +1,9 @@
 Environment Variables
 =====================
 
+Ren'Py accepts a number of environment variables that influence its behavior.
+These environment variables may disappear or change between Ren'Py releases.
+
 The following environment variables control the behavior of Ren'Py:
 
 ``RENPY_DISABLE_JOYSTICK``
@@ -11,8 +14,11 @@ The following environment variables control the behavior of Ren'Py:
     If set, Ren'Py will refuse to go into fullscreen mode.
 
 ``RENPY_DISABLE_SOUND``
-    This prevents sound playback from occuring. If this variable contains
+    This prevents sound playback from occurring. If this variable contains
     "pss", sound playback will be disabled.
+
+``RENPY_DRAWABLE_RESOLUTION_TEXT``
+    If set to 0, Ren'Py will not use draw text at the screen's resolution.
 
 ``RENPY_EDIT_PY``
     The path to an .edit.py file telling Ren'Py how to invoke a text editor.
@@ -37,11 +43,15 @@ The following environment variables control the behavior of Ren'Py:
     This causes Ren'Py to reduce its memory usage, in exchange for reductions
     in speed.
 
-``RENPY_LESS_UPDATES``
-    This causes Ren'Py to reduce the number of screen updates that occur.
-
 ``RENPY_LESS_MOUSE``
     This causes Ren'Py to disable the mouse at all times.
+
+``RENPY_LESS_PAUSES``
+    This causes Ren'Py to disable the pauses created by the {p} and {w}
+    text tags.
+
+``RENPY_LESS_UPDATES``
+    This causes Ren'Py to reduce the number of screen updates that occur.
 
 ``RENPY_SCREENSHOT_PATTERN``
     A pattern used to create screenshot filenames. It should contain a single
@@ -51,10 +61,26 @@ The following environment variables control the behavior of Ren'Py:
 ``RENPY_SIMPLE_EXCEPTIONS``
     When set, this disables Ren'Py's graphical exception handling.
 
+``RENPY_SKIP_MAIN_MENU``
+    When set, skips the main menu.
+
+``RENPY_SKIP_SPLASHSCREEN``
+    When set, skips the splashscreen.
+
 ``RENPY_SOUND_BUFSIZE``
     This controls the sound buffer size. Values larger than the default (2048)
     can prevent sound from skipping, at the cost of a larger delay from when a
     sound is invoked to when it is played.
+
+``RENPY_TIMEWARP``
+    This can be set to make time run faster or slower. For example, setting
+    a timewarp of 0.5 makes things run at half-speed, while a timewarp of
+    2.0 makes everything run at twice normal speed.
+
+``RENPY_USE_DRAWABLE_RESOLUTION``
+    If set to 0, Ren'Py will perform certain operations (including dissolve
+    transforms and text rendering) at the game's virtual resolution rather
+    than the screen's native resolution.
 
 ``RENPY_VARIANT``
     This should be set to a space-separated list of screen variants that

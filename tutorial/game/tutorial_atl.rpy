@@ -9,17 +9,17 @@ image concert:
     yalign .5
 
     parallel:
-        "concert2.jpg"
+        "concert2"
         pause 1.0
 
         block:
-            "concert1.jpg" with Dissolve(.1)
+            "concert1" with Dissolve(.1)
             pause .4
-            "concert2.jpg" with Dissolve(.1)
+            "concert2" with Dissolve(.1)
             pause .4
-            "concert3.jpg" with Dissolve(.1)
+            "concert3" with Dissolve(.1)
             pause .4
-            "concert2.jpg" with Dissolve(.1)
+            "concert2" with Dissolve(.1)
             pause .4
             repeat
 
@@ -119,27 +119,27 @@ image anchor:
 
 #begin atl_image
 image eileen animated:
-    "eileen_vhappy.png"
+    "eileen vhappy"
     pause .5
-    "eileen_happy.png"
+    "eileen happy"
     pause .5
     repeat
 #end atl_image
 
 #begin atl_image1
 image eileen animated twice:
-    "eileen_vhappy.png"
+    "eileen vhappy"
     pause .5
-    "eileen_happy.png"
+    "eileen happy"
     pause .5
     repeat 2
 #end atl_image1
 
 #begin atl_image2
 image eileen animated once:
-    "eileen_vhappy.png"
+    "eileen vhappy"
     pause .5
-    "eileen_happy.png"
+    "eileen happy"
 #end atl_image2
 
 #begin atl_with

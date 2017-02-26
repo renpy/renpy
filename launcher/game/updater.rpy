@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -36,7 +36,7 @@ init python:
 
     version_tuple = renpy.version(tuple=True)
 
-    DLC_URL = "http://update.renpy.org/{0}.{1}.{2}/updates.json".format(version_tuple[0], version_tuple[1], version_tuple[2])
+    DLC_URL = "http://update.renpy.org/{}/updates.json".format(".".join(str(i) for i in version_tuple[:-1]))
 
     if persistent.update_channel not in UPDATE_URLS:
         persistent.update_channel = "Release"
@@ -54,9 +54,6 @@ init python:
 
         Returns True if the DLC is installed, False otherwise.
         """
-
-        if check_dlc(name):
-            return True
 
         if persistent.update_channel == "Nightly":
             dlc_url = UPDATE_URLS["Nightly"]

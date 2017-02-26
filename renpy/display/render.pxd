@@ -26,6 +26,7 @@ cdef class Matrix2D:
     cdef public double ydy
 
     cpdef tuple transform(Matrix2D self, double x, double y)
+    cpdef bint is_unit_aligned(Matrix2D self)
 
 cdef class Render:
 
@@ -46,9 +47,12 @@ cdef class Render:
     cdef public Matrix2D forward, reverse
     cdef public double alpha
     cdef public double over
+    cdef public object nearest
 
     cdef public list focuses
     cdef public list pass_focuses
+    cdef public object focus_screen
+
     cdef public object draw_func
     cdef public object render_of
 
@@ -61,8 +65,11 @@ cdef class Render:
 
     cdef public bint modal
 
+    cdef public bint text_input
+
     cpdef int blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
     cpdef int subpixel_blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
+    cpdef int absolute_blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
 
 
 cpdef render(object d, object widtho, object heighto, double st, double at)

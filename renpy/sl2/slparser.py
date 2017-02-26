@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,8 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy.display
-
+import renpy.sl2
 import renpy.sl2.slast as slast
 
 # A list of style prefixes that we know of.
@@ -49,6 +48,7 @@ all_statements = [ ]
 # Statements that can contain children.
 childbearing_statements = set()
 
+
 class Positional(object):
     """
     This represents a positional parameter to a function.
@@ -63,6 +63,7 @@ class Positional(object):
 # Used to generate the documentation
 all_keyword_names = set()
 
+
 class Keyword(object):
     """
     This represents an optional keyword parameter to a function.
@@ -75,6 +76,7 @@ class Keyword(object):
 
         if parser:
             parser.add(self)
+
 
 class Style(object):
     """
@@ -109,6 +111,11 @@ class PrefixStyle(object):
 
 class Parser(object):
 
+    # The number of children this statement takes, out of 0, 1, or "many".
+    # This defaults to "many" so the has statement errors out when not
+    # inside something that takes a single child.
+    nchildren = "many"
+
     def __init__(self, name):
 
         # The name of this object.
@@ -121,6 +128,9 @@ class Parser(object):
         self.children = { }
 
         all_statements.append(self)
+
+        global parser
+        parser = self
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.name)
@@ -153,31 +163,35 @@ class Parser(object):
         elif isinstance(i, Parser):
             self.children[i.name] = i
 
-    def parse_statement(self, l, layout_mode=False):
+    def parse_statement(self, loc, l, layout_mode=False):
         word = l.word() or l.match(r'\$')
 
         if word and word in self.children:
             if layout_mode:
-                c = self.children[word].parse_layout(l, self)
+                c = self.children[word].parse_layout(loc, l, self)
             else:
-                c = self.children[word].parse(l, self)
+                c = self.children[word].parse(loc, l, self)
 
             return c
         else:
             return None
 
-    def parse_layout(self, l, parent):
+    def parse_layout(self, loc, l, parent):
         l.error("The %s statement cannot be used as a container for the has statement." % self.name)
 
-    def parse(self, l, parent):
+    def parse(self, loc, l, parent):
         """
         This is expected to parse a function statement, and to return
         a list of python ast statements.
 
-        `l` the lexer.
+        `loc`
+            The location of the current statement.
 
-        `name` the name of the variable containing the name of the
-        current statement.
+        `l`
+            The lexer.
+
+        `parent`
+            The parent Parser of the current statement.
         """
 
         raise Exception("Not Implemented")
@@ -205,11 +219,11 @@ class Parser(object):
         seen_keywords = set()
 
         # Parses a keyword argument from the lexer.
-        def parse_keyword(l):
+        def parse_keyword(l, expect):
             name = l.word()
 
             if name is None:
-                l.error('expected a keyword argument, colon, or end of line.')
+                l.error(expect)
 
             if can_tag and name == "tag":
                 if target.tag is not None:
@@ -227,8 +241,7 @@ class Parser(object):
 
             seen_keywords.add(name)
 
-
-            expr = l.simple_expression()
+            expr = l.comma_expression()
 
             target.keyword.append((name, expr))
 
@@ -253,8 +266,7 @@ class Parser(object):
                     block = False
                     break
 
-                parse_keyword(l)
-
+                parse_keyword(l, 'expected a keyword argument, colon, or end of line.')
 
         # The index of the child we're adding to this statement.
         child_index = 0
@@ -276,6 +288,7 @@ class Parser(object):
             while l.advance():
 
                 state = l.checkpoint()
+                loc = l.get_location()
 
                 if l.keyword(r'has'):
                     if self.nchildren != 1:
@@ -284,7 +297,7 @@ class Parser(object):
                     if child_index != 0:
                         l.error("The has statement may not be given after a child has been supplied.")
 
-                    c = self.parse_statement(l, layout_mode=True)
+                    c = self.parse_statement(loc, l, layout_mode=True)
 
                     if c is None:
                         l.error('Has expects a child statement.')
@@ -293,7 +306,7 @@ class Parser(object):
 
                     continue
 
-                c = self.parse_statement(l)
+                c = self.parse_statement(loc, l)
 
                 # Ignore passes.
                 if isinstance(c, slast.SLPass):
@@ -307,51 +320,180 @@ class Parser(object):
 
                 l.revert(state)
 
+                if not l.eol():
+                    parse_keyword(l, "expected a keyword argument or child statement.")
+
                 while not l.eol():
-                    parse_keyword(l)
+                    parse_keyword(l, "expected a keyword argument or end of line.")
+
+    def add_positional(self, name):
+        global parser
+        parser = self
+
+        Positional(name)
+        return self
+
+    def add_property(self, name):
+        global parser
+        parser = self
+
+        Keyword(name)
+        return self
+
+    def add_style_property(self, name):
+        global parser
+        parser = self
+
+        Style(name)
+        return self
+
+    def add_prefix_style_property(self, prefix, name):
+        global parser
+        parser = self
+
+        PrefixStyle(prefix, name)
+        return self
+
+    def add_property_group(self, group, prefix=''):
+        global parser
+        parser = self
+
+        if group not in renpy.sl2.slproperties.property_groups:
+            raise Exception("{!r} is not a known property group.".format(group))
+
+        for prop in renpy.sl2.slproperties.property_groups[group]:
+            if isinstance(prop, Keyword):
+                Keyword(prefix + prop.name)
+            else:
+                PrefixStyle(prefix, prop.name)
+
+        return self
 
 
 def add(thing):
     parser.add(thing)
 
 # A singleton value.
-many = object()
+many = renpy.object.Sentinel("many")
+
+
+def register_sl_displayable(*args, **kwargs):
+    """
+    :doc: custom_sl class
+    :args: (name, displayable, style, nchildren=0, scope=False, replaces=False, default_keywords={})
+
+    Registers a screen language statement that creates a displayable.
+
+    `name`
+        The name of the screen language statement, a string containing a Ren'Py
+        keyword. This keyword is used to introduce the new statement.
+
+    `displayable`
+        This is a function that, when called, returns a displayable
+        object. All position arguments, properties, and style properties
+        are passed as arguments to this function. Other keyword arguments
+        are also given to this function, a described below.
+
+        This must return a Displayable. If it returns multiple displayables,
+        the _main attribute of the outermost displayable should be set to
+        the "main" displayable - the one that children should be added
+        to.
+
+    `style`
+        The base name of the style of this displayable. If the style property
+        is not given, this will have the style prefix added to it. The
+        computed style is passed to the `displayable` function as the
+        ``style`` keyword argument.
+
+    `nchildren`
+        The number of children of this displayable. One of:
+
+        0
+            The displayable takes no children.
+        1
+            The displayable takes 1 child. If more than one child is given,
+            the children are placed in a Fixed.
+        "many"
+            The displayable takes more than one child.
+
+
+    The following arguments should be passed in using keyword arguments:
+
+    `replaces`
+        If true, and the displayable replaces a prior displayable, that displayable
+        is passed as a parameter to the new displayable.
+
+    `default_keywords`
+        The default set of keyword arguments to supply to the displayable.
+
+    Returns an object that can have positional arguments and properties
+    added to it by calling the following methods. Each of these methods
+    returns the object it is called on, allowing methods to be chained
+    together.
+
+    .. method:: add_positional(name)
+
+        Adds a positional argument with `name`
+
+    .. method:: add_property(name):
+
+        Adds a property with `name`. Properties are passed as keyword
+        arguments.
+
+    .. method:: add_style_property(name):
+
+        Adds a family of properties, ending with `name` and prefixed with
+        the various style property prefixes. For example, if called with
+        ("size"), this will define size, idle_size, hover_size, etc.
+
+    .. method:: add_prefix_style_property(prefix, name):
+
+        Adds a family of properties with names consisting of `prefix`,
+        a style property prefix, and `name`. For example, if called
+        with a prefix of `text_` and a name of `size`, this will
+        create text_size, text_idle_size, text_hover_size, etc.
+
+    .. method:: add_property_group(group, prefix=''):
+
+        Adds a group of properties, prefixed with `prefix`. `Group` may
+        be one of the strings:
+
+        * "bar"
+        * "box"
+        * "button"
+        * "position"
+        * "text"
+        * "window"
+
+        These correspond to groups of :ref:`style-properties`. Group can
+        also be "ui", in which case it adds the :ref:`common ui properties <common-properties>`.
+    """
+
+    rv = DisplayableParser(*args, **kwargs)
+
+    for i in childbearing_statements:
+        i.add(rv)
+
+    screen_parser.add(rv)
+
+    if rv.nchildren != 0:
+        childbearing_statements.add(rv)
+
+        for i in all_statements:
+            rv.add(i)
+
+    return rv
+
 
 class DisplayableParser(Parser):
-    """
-    This is responsible for parsing statements that create displayables.
-    """
 
-    def __init__(self, name, displayable, style, nchildren=0, scope=False, text_style=None,
-        pass_context=False, imagemap=False, replaces=False):
+    def __init__(self, name, displayable, style, nchildren=0, scope=False,
+                 pass_context=False, imagemap=False, replaces=False, default_keywords={},
+                 hotspot=False, default_properties=True):
         """
-        `name`
-            The name of the statement that creates the displayable.
-
-        `displayable`
-            A function that creates the displayable.
-
-        `style`
-            The name of the style that is applied to this displayable.
-
-        `nchildren`
-            The number of children of this displayable. One of:
-
-            0
-                The displayable takes no children.
-            1
-                The displayable takes 1 child. If more than one child is given,
-                the children are placed in a Fixed.
-            many
-                The displayable takes more than one child.
-
         `scope`
-            If true, the scope is passed into the displayable as a keyword
+            If true, the scope is passed into the displayable functionas a keyword
             argument named "scope".
-
-        `text_style`
-            The name of the text style that is applied to this displayable. This
-            also enables the whole text style handling mechanism.
 
         `pass_context`
             If true, the context is passed as the first positional argument of the
@@ -359,11 +501,14 @@ class DisplayableParser(Parser):
 
         `imagemap`
             If true, the displayable is treated as defining an imagemap. (The imagemap
-            is added to and removed from renpy.ui.imagemap_stack as appropraite.)
+            is added to and removed from renpy.ui.imagemap_stack as appropriate.)
 
-        `replaces`
-            If true, and the displayable replaces a prior displayable, that displayable
-            is passed as a parameter to the new displayable.
+        `hotspot`
+            If true, the displayable is treated as a hotspot. (It needs to be
+            re-created if the imagemap it belongs to has changed.)
+
+        `default_properties`
+            If true, the ui and positional properties are added by default.
         """
 
         super(DisplayableParser, self).__init__(name)
@@ -371,60 +516,104 @@ class DisplayableParser(Parser):
         # The displayable that is called when this statement runs.
         self.displayable = displayable
 
+        if nchildren == "many":
+            nchildren = many
+
         # The number of children we have.
         self.nchildren = nchildren
-
-        # Add us to the appropriate lists.
-        global parser
-        parser = self
 
         if nchildren != 0:
             childbearing_statements.add(self)
 
         self.style = style
         self.scope = scope
-        self.text_style = text_style
         self.pass_context = pass_context
         self.imagemap = imagemap
+        self.hotspot = hotspot
         self.replaces = replaces
+        self.default_keywords = default_keywords
 
-    def parse_layout(self, l, parent):
-        return self.parse(l, parent, True)
+        Keyword("arguments")
+        Keyword("properties")
 
-    def parse(self, l, parent, layout_mode=False):
+        if default_properties:
+            add(renpy.sl2.slproperties.ui_properties)
+            add(renpy.sl2.slproperties.position_properties)
 
-        rv = slast.SLDisplayable(self.displayable,
+    def parse_layout(self, loc, l, parent):
+        return self.parse(loc, l, parent, True)
+
+    def parse(self, loc, l, parent, layout_mode=False):
+
+        rv = slast.SLDisplayable(
+            loc,
+            self.displayable,
             scope=self.scope,
             child_or_fixed=(self.nchildren == 1),
             style=self.style,
-            text_style=self.text_style,
             pass_context=self.pass_context,
             imagemap=self.imagemap,
-            replaces=self.replaces)
+            replaces=self.replaces,
+            default_keywords=self.default_keywords,
+            hotspot=self.hotspot,
+            )
 
         for _i in self.positional:
-            rv.positional.append(l.simple_expression())
+            expr = l.simple_expression()
+
+            if expr is None:
+                break
+
+            rv.positional.append(expr)
 
         can_has = (self.nchildren == 1)
         self.parse_contents(l, rv, layout_mode=layout_mode, can_has=can_has, can_tag=False)
 
+        if len(rv.positional) != len(self.positional):
+            for i in rv.keyword:
+                if i[0] == 'arguments':
+                    break
+            else:
+                l.error("{} statement expects {} positional arguments, got {}.".format(self.name, len(self.positional), len(rv.positional)))
+
         return rv
+
 
 class IfParser(Parser):
 
-    def __init__(self, name):
+    def __init__(self, name, node_type, parent_contents):
+        """
+        `node_type`
+            The type of node to create.
+
+        `parent_contents`
+            If true, our children must be children of our parent. Otherwise,
+            our children must be children of ourself.
+        """
+
         super(IfParser, self).__init__(name)
 
-    def parse(self, l, parent):
+        self.node_type = node_type
+        self.parent_contents = parent_contents
 
-        rv = slast.SLIf()
+        if not parent_contents:
+            childbearing_statements.add(self)
+
+    def parse(self, loc, l, parent):
+
+        if self.parent_contents:
+            contents_from = parent
+        else:
+            contents_from = self
+
+        rv = self.node_type(loc)
 
         condition = l.require(l.python_expression)
 
         l.require(':')
 
-        block = slast.SLBlock()
-        parent.parse_contents(l, block, block_only=True)
+        block = slast.SLBlock(loc)
+        contents_from.parse_contents(l, block, block_only=True)
 
         rv.entries.append((condition, block))
 
@@ -432,13 +621,15 @@ class IfParser(Parser):
 
         while l.advance():
 
+            loc = l.get_location()
+
             if l.keyword("elif"):
 
                 condition = l.require(l.python_expression)
                 l.require(':')
 
-                block = slast.SLBlock()
-                parent.parse_contents(l, block, block_only=True)
+                block = slast.SLBlock(loc)
+                contents_from.parse_contents(l, block, block_only=True)
 
                 rv.entries.append((condition, block))
 
@@ -449,8 +640,8 @@ class IfParser(Parser):
                 condition = None
                 l.require(':')
 
-                block = slast.SLBlock()
-                parent.parse_contents(l, block, block_only=True)
+                block = slast.SLBlock(loc)
+                contents_from.parse_contents(l, block, block_only=True)
 
                 rv.entries.append((condition, block))
 
@@ -464,7 +655,9 @@ class IfParser(Parser):
 
         return rv
 
-if_statement = IfParser("if")
+if_statement = IfParser("if", slast.SLIf, True)
+IfParser("showif", slast.SLShowIf, False)
+
 
 class ForParser(Parser):
 
@@ -478,6 +671,9 @@ class ForParser(Parser):
         matched, returns it. Otherwise, returns None.
         """
 
+        name = None
+        pattern = False
+
         while True:
 
             if l.match(r"\("):
@@ -486,17 +682,23 @@ class ForParser(Parser):
             else:
                 name = l.name()
 
-                if not name:
-                    l.error("Expected tuple pattern.")
+                if name is None:
+                    break
 
             if l.match(r","):
-                name = None
+                pattern = True
             else:
                 break
 
-        return name
+        if pattern:
+            return None
 
-    def parse(self, l, parent):
+        if name is not None:
+            return name
+
+        l.error("expected variable or tuple pattern.")
+
+    def parse(self, loc, l, parent):
 
         l.skip_whitespace()
 
@@ -504,10 +706,10 @@ class ForParser(Parser):
         name = self.name_or_tuple_pattern(l)
 
         if not name:
-            name = "_i_" + str(self.serial)
+            name = "_sl2_i"
             pattern = l.text[tuple_start:l.pos]
             stmt = pattern + " = " + name
-            code = renpy.ast.PyCode(stmt, (l.filename, l.lineno))
+            code = renpy.ast.PyCode(stmt, loc)
         else:
             code = None
 
@@ -518,10 +720,10 @@ class ForParser(Parser):
         l.require(':')
         l.expect_eol()
 
-        rv = slast.SLFor(name, expression)
+        rv = slast.SLFor(loc, name, expression)
 
         if code:
-            rv.children.append(slast.SLPython(code))
+            rv.children.append(slast.SLPython(loc, code))
 
         self.parse_contents(l, rv, block_only=True)
 
@@ -532,7 +734,7 @@ ForParser("for")
 
 class OneLinePythonParser(Parser):
 
-    def parse(self, l, parent):
+    def parse(self, loc, l, parent):
 
         loc = l.get_location()
         source = l.require(l.rest)
@@ -541,14 +743,14 @@ class OneLinePythonParser(Parser):
         l.expect_noblock("one-line python")
 
         code = renpy.ast.PyCode(source, loc)
-        return slast.SLPython(code)
+        return slast.SLPython(loc, code)
 
 OneLinePythonParser("$")
 
 
 class MultiLinePythonParser(Parser):
 
-    def parse(self, l, parent):
+    def parse(self, loc, l, parent):
 
         loc = l.get_location()
 
@@ -560,25 +762,25 @@ class MultiLinePythonParser(Parser):
         source = l.python_block()
 
         code = renpy.ast.PyCode(source, loc)
-        return slast.SLPython(code)
+        return slast.SLPython(loc, code)
 
 MultiLinePythonParser("python")
 
 
 class PassParser(Parser):
 
-    def parse(self, l, parent):
+    def parse(self, loc, l, parent):
 
         l.expect_eol()
 
-        return slast.SLPass()
+        return slast.SLPass(loc)
 
 PassParser("pass")
 
 
 class DefaultParser(Parser):
 
-    def parse(self, l, parent):
+    def parse(self, loc, l, parent):
 
         name = l.require(l.word)
         l.require(r'=')
@@ -587,90 +789,139 @@ class DefaultParser(Parser):
         l.expect_eol()
         l.expect_noblock('default statement')
 
-        return slast.SLDefault(name, rest)
+        return slast.SLDefault(loc, name, rest)
 
 DefaultParser("default")
 
 
-class ScreenLangScreen(renpy.object.Object):
+class UseParser(Parser):
+
+    def __init__(self, name):
+        super(UseParser, self).__init__(name)
+        childbearing_statements.add(self)
+
+    def parse(self, loc, l, parent):
+
+        target = l.require(l.word)
+        args = renpy.parser.parse_arguments(l)
+
+        if l.keyword('id'):
+            id_expr = l.simple_expression()
+        else:
+            id_expr = None
+
+        if l.match(':'):
+            l.expect_eol()
+            l.expect_block("use statement")
+
+            block = slast.SLBlock(loc)
+            self.parse_contents(l, block, block_only=True)
+
+        else:
+            l.expect_eol()
+            l.expect_noblock("use statement")
+
+            block = None
+
+        return slast.SLUse(loc, target, args, id_expr, block)
+
+UseParser("use")
+Keyword("style_prefix")
+Keyword("style_group")
+
+
+class TranscludeParser(Parser):
+
+    def parse(self, loc, l, parent):
+        l.expect_eol()
+        return slast.SLTransclude(loc)
+
+TranscludeParser("transclude")
+
+
+class CustomParser(Parser):
     """
-    This represents a screen defined in the screen language.
+    :doc: custom_sl class
+    :name: renpy.register_sl_statement
+
+    Registers a custom screen language statement with Ren'Py.
+
+    `name`
+        This must be a word. It's the name of the custom screen language
+        statement.
+
+    `positional`
+        The number of positional parameters this statement takes.
+
+    `children`
+        The number of children this custom statement takes. This should
+        be 0, 1, or "many", which means zero or more.
+
+    `screen`
+        The screen to use. If not given, defaults to `name`.
+
+    Returns an object that can have positional arguments and properties
+    added to it. This object has the same .add_ methods as the objects
+    returned by :class:`renpy.register_sl_displayable`.
     """
 
-    def __init__(self):
+    def __init__(self, name, positional=0, children="many", screen=None):
+        Parser.__init__(self, name)
 
-        # The name of the screen.
-        self.name = None
+        if children == "many":
+            children = many
 
-        # Should this screen be declared as modal?
-        self.modal = "False"
+        for i in childbearing_statements:
+            i.add(self)
 
-        # The screen's zorder.
-        self.zorder = "0"
+        screen_parser.add(self)
 
-        # The screen's tag.
-        self.tag = None
+        self.nchildren = children
 
-        # The variant of screen we're defining.
-        self.variant = "None" # expr.
+        if self.nchildren != 0:
+            childbearing_statements.add(self)
 
-        # Should we predict this screen?
-        self.predict = "None" # expr.
+            for i in all_statements:
+                self.add(i)
 
-        # The parameters this screen takes.
-        self.parameters = None
+        global parser
+        parser = None
 
-        # True if this screen has been prepared.
-        self.prepared = False
+        # The screen to use.
+        if screen is not None:
+            self.screen = screen
+        else:
+            self.screen = name
 
-        # The keywords that make up the screen. (This is removed once parsing
-        # is finished.)
-        self.keywords = [ ]
+        # The number of positional parameters required.
+        self.positional = positional
 
-        # The children that make up the screen's ast.
-        self.children = [ ]
+    def parse(self, loc, l, parent):
 
-    def define(self):
-        """
-        Defines a screen.
-        """
+        arguments = [ ]
 
-        renpy.display.screen.define_screen(
-            self.name,
-            self,
-            modal=self.modal,
-            zorder=self.zorder,
-            tag=self.tag,
-            variant=renpy.python.py_eval(self.variant),
-            predict=renpy.python.py_eval(self.predict),
-            parameters=self.parameters,
-            )
+        # Parse positional arguments.
+        for _i in range(self.positional):
+            expr = l.require(l.simple_expression)
+            arguments.append((None, expr))
 
-    def __call__(self, *args, **kwargs):
-        scope = kwargs["_scope"]
+        # Parser keyword arguments and children.
+        block = slast.SLBlock(loc)
+        can_has = (self.nchildren == 1)
+        self.parse_contents(l, block, can_has=can_has, can_tag=False)
 
-        if self.parameters:
+        # Add the keyword arguments, and create an ArgumentInfo object.
+        arguments.extend(block.keyword)
+        block.keyword = [ ]
 
-            args = scope.get("_args", ())
-            kwargs = scope.get("_kwargs", { })
+        args = renpy.ast.ArgumentInfo(arguments, None, None)
 
-            values = renpy.ast.apply_arguments(self.parameters, args, kwargs)
-            scope.update(values)
+        # We only need a SLBlock if we have children.
+        if not block.children:
+            block = None
 
-        context = slast.SLContext()
-        context.scope = scope
-
-        if not self.prepared:
-            self.prepared = True
-
-            for i in self.children:
-                i.prepare()
-
-        for i in self.children:
-            i.execute(context)
-
-        for i in context.children:
-            renpy.ui.add(i)
+        # Create the Use statement.
+        return slast.SLUse(loc, self.screen, args, None, block)
 
 
 class ScreenParser(Parser):
@@ -678,23 +929,22 @@ class ScreenParser(Parser):
     def __init__(self):
         super(ScreenParser, self).__init__("screen")
 
-    def parse(self, l, parent, name="_name"):
+    def parse(self, loc, l, parent, name="_name"):
 
-        screen = ScreenLangScreen()
+        screen = slast.SLScreen(loc)
 
         screen.name = l.require(l.word)
         screen.parameters = renpy.parser.parse_parameters(l)
 
         self.parse_contents(l, screen, can_tag=True)
 
-        keywords = dict(screen.keywords)
+        keyword = dict(screen.keyword)
 
-        screen.modal = keywords.get("modal", "False")
-        screen.zorder = keywords.get("modal", "0")
-        screen.variant = keywords.get("modal", "None")
-        screen.predict = keywords.get("modal", "None")
-
-        del screen.keywords
+        screen.modal = keyword.get("modal", "False")
+        screen.zorder = keyword.get("zorder", "0")
+        screen.variant = keyword.get("variant", "None")
+        screen.predict = keyword.get("predict", "None")
+        screen.layer = keyword.get("layer", "'screens'")
 
         return screen
 
@@ -703,6 +953,10 @@ Keyword("modal")
 Keyword("zorder")
 Keyword("variant")
 Keyword("predict")
+Keyword("style_group")
+Keyword("style_prefix")
+Keyword("layer")
+
 
 def init():
     screen_parser.add(all_statements)
@@ -715,11 +969,9 @@ def init():
             i.add(if_statement)
 
 
-
-def parse_screen(l):
+def parse_screen(l, loc):
     """
     Parses the screen statement.
     """
 
-    return screen_parser.parse(l, None)
-
+    return screen_parser.parse(loc, l, None)

@@ -74,7 +74,7 @@
     `clicked`
         A callback this is called, with no arguments, when the Drag is
         clicked without being moved. A droppable can also be focused
-        and clicked.  If the callback returns a value othe than None,
+        and clicked.  If the callback returns a value other than None,
         that value is returned as the result of the interaction.
     
     `drag_handle`
@@ -89,6 +89,12 @@
         the draggables to drag as a unit. `x` and `y` are the offsets
         of the drags relative to each other, they are not relative
         to the corner of this drag.
+    
+    `drag_offscreen`
+        If true, this draggable can be moved offscreen. This can be
+        dangerous to use with drag_joined or drags that can change
+        size, as the drags can leave the screen entirely, with no
+        way to get them back on the screen.
     
     Except for `d`, all of the parameters are available as fields (with
     the same name) on the Drag object. In addition, after the drag has

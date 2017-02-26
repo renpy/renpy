@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,10 +26,14 @@
 
 init -1500 python:
 
-    class __MusicRoomPlay(Action):
+    @renpy.pure
+    class __MusicRoomPlay(Action, FieldEquality):
         """
         The action returned by MusicRoom.Play when called with a file.
         """
+
+        identity_fields = [ "mr" ]
+        equality_fields = [ "filename" ]
 
         def __init__(self, mr, filename):
             self.mr = mr
@@ -47,16 +51,21 @@ init -1500 python:
 
         def periodic(self, st):
             if self.selected != self.get_selected():
+                self.selected = self.get_selected()
                 renpy.restart_interaction()
 
             self.mr.periodic(st)
 
             return .1
 
-    class __MusicRoomRandomPlay(Action):
+    @renpy.pure
+    class __MusicRoomRandomPlay(Action, FieldEquality):
         """
         The action returned by MusicRoom.RandomPlay
         """
+
+        identity_fields = [ "mr" ]
+
         def __init__(self, mr):
             self.mr = mr
 
@@ -69,10 +78,14 @@ init -1500 python:
             self.mr.shuffled = None
             self.mr.play(renpy.random.choice(playlist), 0)
 
-    class __MusicRoomTogglePlay(Action):
+    @renpy.pure
+    class __MusicRoomTogglePlay(Action, FieldEquality):
         """
         The action returned by MusicRoom.TogglePlay
         """
+
+        identity_fields = [ "mr" ]
+
         def __init__(self, mr):
             self.mr = mr
 
@@ -85,6 +98,34 @@ init -1500 python:
 
         def get_selected(self):
             return renpy.music.get_playing(self.mr.channel) is not None
+
+
+    @renpy.pure
+    class __MusicRoomStop(Action, FieldEquality):
+        """
+        The action returned by MusicRoom.Stop.
+        """
+
+        identity_fields = [ "mr" ]
+
+        def __init__(self, mr):
+            self.mr = mr
+            self.selected = self.get_selected()
+
+        def __call__(self):
+            self.mr.stop()
+
+        def get_selected(self):
+            return renpy.music.get_playing() is None
+
+        def periodic(self, st):
+            if self.selected != self.get_selected():
+                self.selected = self.get_selected()
+                renpy.restart_interaction()
+
+            self.mr.periodic(st)
+
+            return .1
 
 
     class MusicRoom(object):
@@ -403,8 +444,7 @@ init -1500 python:
             This action stops the music.
             """
 
-            return self.stop
-
+            return __MusicRoomStop(self)
 
         def Next(self):
             """
@@ -443,9 +483,9 @@ init -1500 python:
             """
 
             if value:
-                return [ SetField(self, "single_track", value), SetField(self, "shuffle", False), self.queue_if_playing ]
+                return [SelectedIf(self.single_track), SetField(self, "single_track", value), SetField(self, "shuffle", False), self.queue_if_playing ]
             else:
-                return [ SetField(self, "single_track", value), self.queue_if_playing ]
+                return [SelectedIf(not self.single_track), SetField(self, "single_track", value), self.queue_if_playing ]
 
 
         def SetShuffle(self, value):
@@ -456,9 +496,9 @@ init -1500 python:
             """
 
             if value:
-                return [ SetField(self, "shuffle", value), SetField(self, "single_track", False), self.queue_if_playing ]
+                return [SelectedIf(self.shuffle), SetField(self, "shuffle", value), SetField(self, "single_track", False), self.queue_if_playing ]
             else:
-                return [ SetField(self, "shuffle", value), self.queue_if_playing ]
+                return [SelectedIf(not self.shuffle), SetField(self, "shuffle", value), self.queue_if_playing ]
 
         def ToggleLoop(self):
             """
@@ -477,7 +517,7 @@ init -1500 python:
             This action toggles the value of the single_track property.
             """
 
-            return [ ToggleField(self, "single_track"), SetField(self, "shuffle", False), self.queue_if_playing ]
+            return [SelectedIf(self.single_track), ToggleField(self, "single_track"), SetField(self, "shuffle", False), self.queue_if_playing ]
 
         def ToggleShuffle(self):
             """
@@ -486,4 +526,4 @@ init -1500 python:
             This action toggles the value of the shuffle property.
             """
 
-            return [ ToggleField(self, "shuffle"), SetField(self, "single_track", False), self.queue_if_playing ]
+            return [SelectedIf(self.shuffle), ToggleField(self, "shuffle"), SetField(self, "single_track", False), self.queue_if_playing ]

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,6 +27,7 @@ init -1800 python:
     # The style hierarchy root has to be initialized through python
     # code.
     style.default = Style(None)
+    style.empty = Style(None)
 
     # Fix up some styles originally defined in _errorhandling.rpym.
     style.image = Style(style.default)
@@ -85,6 +86,8 @@ init -1800:
     style ruby_text is default
 
     style viewport is default
+    style vpgrid is viewport
+    style drag is default
 
     style motion is default
     style transform is motion
@@ -163,6 +166,8 @@ init -1800:
         slow_abortable False
         ruby_style style.ruby_text
         # hyperlink_functions is set in 00defaults.rpy
+        hinting "auto"
+        adjust_spacing True
 
         # Window properties
         background None
@@ -199,10 +204,15 @@ init -1800:
         box_wrap False
         box_reverse False
         order_reverse False
+        xfit False
+        yfit False
 
         # Button properties
         focus_mask None
         focus_rect None
+        keyboard_focus True
+        key_events False
+        hover_key_events True
 
         # Bar properties
         fore_bar Null()
@@ -219,6 +229,9 @@ init -1800:
 
         # Viewport properties
         clipping False
+
+    style empty:
+        take default
 
     # Boxes
 
@@ -279,6 +292,7 @@ init -1800:
 
     style input:
         color "#ff0"
+        adjust_spacing False
 
     # Centered text and dialogue
 
@@ -327,9 +341,15 @@ init -1800:
         bar_invert True
 
     style viewport:
-        clipping True
         xfill True
         yfill True
+
+    style vpgrid:
+        xfill False
+        yfill False
+
+    style drag:
+        focus_mask True
 
     # Out-of-game menu root windows
 
@@ -347,3 +367,70 @@ init -1800:
 
     style tile:
         clipping True
+
+    # Labels
+    style pref_label:
+        alt "" # We expect the labelled buttons/bars to read themselves out.
+
+
+################################################################################
+# Style reset.
+#
+# Resets styles that are changed above to their defaults.
+
+init label _style_reset:
+
+    style say_label:
+        clear
+
+    style window:
+        clear
+
+    style say_vbox:
+        clear
+
+    style say_who_window:
+        clear
+
+    style say_two_window_vbox:
+        clear
+
+    style menu_choice:
+        clear
+
+    style input:
+        clear
+
+    style hyperlink_text:
+        clear
+
+    style button:
+        clear
+
+    style button_text:
+        clear
+
+    style nvl_window:
+        clear
+
+    style nvl_entry:
+        clear
+
+    style nvl_label:
+        clear
+
+    style nvl_dialogue:
+        clear
+
+    style nvl_menu_button:
+        clear
+
+    style nvl_menu_button_text:
+        clear
+
+    return
+
+# Older init code doesn't necessarily like defer styles.
+init 1001 python:
+    config.defer_styles = False
+

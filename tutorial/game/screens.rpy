@@ -1,16 +1,16 @@
 ﻿# This file is in the public domain. Feel free to modify it as a basis
 # for your own screens.
 
+# Note that many of these screens may be given additional arguments in the
+# future. The use of **kwargs in the parameter list ensures your code will
+# work in the future.
+
 ##############################################################################
 # Say
 #
 # Screen that's used to display adv-mode dialogue.
 # http://www.renpy.org/doc/html/screen_special.html#say
-screen say:
-
-    # Defaults for side_image and two_window
-    default side_image = None
-    default two_window = False
+screen say(who, what, side_image=None, two_window=False):
 
     # Decide if we want to use the one-window or two-window variant.
     if not two_window:
@@ -64,7 +64,7 @@ screen say:
 # Screen that's used to display in-game menus.
 # http://www.renpy.org/doc/html/screen_special.html#choice
 
-screen choice:
+screen choice(items):
 
     window:
         style "menu_window"
@@ -107,7 +107,7 @@ init -2:
 # Screen that's used to display renpy.input()
 # http://www.renpy.org/doc/html/screen_special.html#input
 
-screen input:
+screen input(prompt):
 
     window style "input_window":
         has vbox
@@ -123,7 +123,7 @@ screen input:
 # Screen used for nvl-mode dialogue and menus.
 # http://www.renpy.org/doc/html/screen_special.html#nvl
 
-screen nvl:
+screen nvl(dialogue, items=None):
 
     window:
         style "nvl_window"
@@ -174,7 +174,7 @@ screen nvl:
 # Screen that's used to display the main menu, when Ren'Py first starts
 # http://www.renpy.org/doc/html/screen_special.html#main-menu
 
-screen main_menu:
+screen main_menu():
 
     # This ensures that any other menu screen is replaced.
     tag menu
@@ -211,7 +211,7 @@ init -2:
 # Screen that's included in other screens to display the game menu
 # navigation and background.
 # http://www.renpy.org/doc/html/screen_special.html#navigation
-screen navigation:
+screen navigation():
 
     # The background of the game menu.
     window:
@@ -251,7 +251,7 @@ init -2:
 # a single screen, file_picker. We then use the file_picker screen
 # from simple load and save screens.
 
-screen file_picker:
+screen file_picker():
 
     frame:
         style "file_picker_frame"
@@ -310,7 +310,7 @@ screen file_picker:
                     key "save_delete" action FileDelete(i)
 
 
-screen save:
+screen save():
 
     # This ensures that any other menu screen is replaced.
     tag menu
@@ -318,7 +318,7 @@ screen save:
     use navigation
     use file_picker
 
-screen load:
+screen load():
 
     # This ensures that any other menu screen is replaced.
     tag menu
@@ -340,7 +340,7 @@ init -2:
 # Screen that allows the user to change the preferences.
 # http://www.renpy.org/doc/html/screen_special.html#prefereces
 
-screen preferences:
+screen preferences():
 
     tag menu
 
@@ -389,8 +389,13 @@ screen preferences:
                 has vbox
 
                 label _("Language")
-                textbutton "English" action Language(None)
-                textbutton u"日本語" text_font "tl/japanese/MTLc3m.ttf" action Language("japanese")
+                textbutton "English" text_font "DejaVuSans.ttf" action Language(None)
+                textbutton "日本語" text_font "MTLc3m.ttf" action Language("japanese")
+                textbutton "한국어" text_font "NanumGothic.ttf" action Language("korean")
+                textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
+                textbutton "Tiếng Việt" text_font "DejaVuSans.ttf" action Language("vietnamese")
+                textbutton "Indonesian" text_font "DejaVuSans.ttf" action Language("indonesian")
+
             # end-tutorial-only
 
         vbox:
@@ -487,7 +492,7 @@ init -2:
 # Screen that asks the user a yes or no question.
 # http://www.renpy.org/doc/html/screen_special.html#yesno-prompt
 
-screen yesno_prompt:
+screen yesno_prompt(message, yes_action, no_action):
 
     modal True
 
@@ -535,7 +540,7 @@ init -2:
 #
 # A screen that's included by the default say screen, and adds quick access to
 # several useful functions.
-screen quick_menu:
+screen quick_menu():
 
     # Add an in-game quick menu.
     hbox:

@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,7 +22,7 @@
 # This used to hack pygame to support resolution-scaling. Now it just kinda
 # sits here, to provide compatibility with what it used to be.
 
-import pygame
+import pygame_sdl2 as pygame
 import renpy.display
 import renpy.display.pgrender as pgrender
 
@@ -32,12 +32,17 @@ import _renpy
 # The scaling API that's used if we don't enable scaling.
 
 # Gets the real pygame surface.
+
+
 def real(s):
     return s
 
 # Scales the number, n.
+
+
 def scale(n):
     return n
+
 
 def real_bilinear(src, size):
     rv = pgrender.surface_unscaled(size, src)
@@ -45,24 +50,33 @@ def real_bilinear(src, size):
     return rv
 
 # Does pygame.transform.scale.
+
+
 def real_transform_scale(surf, size):
     return pgrender.transform_scale_unscaled(surf, size)
 
 # Loads an image, without scaling it.
+
+
 def image_load_unscaled(f, hint, convert=True):
     rv = pgrender.load_image_unscaled(f, hint)
     return rv
 
 # Saves an image without rescaling.
+
+
 def image_save_unscaled(surf, filename):
     pygame.image.save(surf, renpy.exports.fsencode(filename))
 
 # Scales down a surface.
+
+
 def surface_scale(full):
     return full
 
 real_renpy_pixellate = _renpy.pixellate
 real_renpy_transform = _renpy.transform
+
 
 def real_smoothscale(src, size, dest=None):
     """
@@ -106,4 +120,3 @@ def real_smoothscale(src, size, dest=None):
     return dest
 
 smoothscale = real_smoothscale
-

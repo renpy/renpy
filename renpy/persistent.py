@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,29 +19,35 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 import os
 import copy
 import time
 
 import renpy
 
-from renpy.loadsave import dump, loads
-from cPickle import dumps
+from renpy.loadsave import dump, dumps, loads
 
 # The class that's used to hold the persistent data.
+
+
 class Persistent(object):
 
     def __init__(self):
         self._update()
 
     def __setstate__(self, data):
-        vars(self).update(data)
+        self.__dict__.update(data)
 
     def __getstate__(self):
-        return vars(self)
+        return self.__dict__
 
     # Undefined attributes return None.
     def __getattr__(self, attr):
+        if attr.startswith("__") and attr.endswith("__"):
+            raise AttributeError("Persistent object has no attribute %r", attr)
+
         return None
 
     def _clear(self, progress=False):
@@ -51,7 +57,6 @@ class Persistent(object):
         `progress`
             If true, also resets progress data that Ren'Py keeps.
         """
-
 
         keys = list(self.__dict__)
 
@@ -91,11 +96,20 @@ class Persistent(object):
         if not self._seen_audio:
             self._seen_audio = { }
 
+        # The set of seen translate identifiers.
+        if not self._seen_translates:
+            self._seen_translates = set()
+
         # A map from the name of a field to the time that field was last
         # changed at.
         if self._changed is None:
-            self._changed = { }
-
+            self._changed = {
+                "_preferences" : 0,
+                "_seen_ever" : 0,
+                "_chosen" : 0,
+                "_seen_audio" : 0,
+                "_seen_translates" : 0,
+            }
 
 
 renpy.game.Persistent = Persistent
@@ -126,6 +140,7 @@ def safe_deepcopy(o):
 # A map from field names to a backup of the field names in the persistent
 # object.
 backup = { }
+
 
 def find_changes():
     """
@@ -193,8 +208,12 @@ def init():
     disk, so that we can configure the savelocation system.
     """
 
-    filename = os.path.join(renpy.config.savedir, "persistent")
+    filename = os.path.join(renpy.config.savedir, "persistent.new")
     persistent = load(filename)
+
+    if persistent is None:
+        filename = os.path.join(renpy.config.savedir, "persistent")
+        persistent = load(filename)
 
     if persistent is None:
         persistent = Persistent()
@@ -210,6 +229,7 @@ def init():
 
 # A map from field name to merge function.
 registry = { }
+
 
 def register_persistent(field, func):
     """
@@ -242,8 +262,10 @@ def register_persistent(field, func):
 
     registry[field] = func
 
+
 def default_merge(old, new, current):
     return new
+
 
 def dictset_merge(old, new, current):
     current.update(old)
@@ -255,10 +277,11 @@ register_persistent("_seen_images", dictset_merge)
 register_persistent("_seen_audio", dictset_merge)
 register_persistent("_chosen", dictset_merge)
 
+
 def merge(other):
     """
     Merges `other` (which must be a persistent object) into the
-    current persistent object. This updates deep
+    current persistent object.
     """
 
     now = time.time()
@@ -294,6 +317,7 @@ def merge(other):
         merge_func = registry.get(f, default_merge)
 
         val = merge_func(old, new, pval)
+
         pvars[f] = val
         backup[f] = safe_deepcopy(val)
         persistent._changed[f] = t
@@ -353,11 +377,16 @@ def update(force_save=False):
     if need_save:
         save()
 
+should_save_persistent = True
+
 
 def save():
     """
     Saves the persistent data to disk.
     """
+
+    if not should_save_persistent:
+        return
 
     try:
         data = dumps(renpy.game.persistent).encode("zlib")
@@ -405,10 +434,18 @@ class _MultiPersistent(object):
 
 def MultiPersistent(name):
 
+    name = renpy.exports.fsencode(name)
+
     if not renpy.game.context().init_phase:
         raise Exception("MultiPersistent objects must be created during the init phase.")
 
-    if renpy.windows:
+    if renpy.android:
+        files = [ os.path.join(os.environ['ANDROID_OLD_PUBLIC'], '../RenPy/Persistent') ]
+
+    elif renpy.ios:
+        raise Exception("MultiPersistent is not supported on iOS.")
+
+    elif renpy.windows:
         files = [ os.path.expanduser("~/RenPy/Persistent") ]
 
         if 'APPDATA' in os.environ:
@@ -420,13 +457,16 @@ def MultiPersistent(name):
     else:
         files = [ os.path.expanduser("~/.renpy/persistent") ]
 
+    if "RENPY_MULTIPERSISTENT" in os.environ:
+        files = [ os.environ["RENPY_MULTIPERSISTENT"] ]
+
     # Make the new persistent directory, why not?
     try:
         os.makedirs(files[-1])
     except:
         pass
 
-    fn = "" # prevent a warning from happening.
+    fn = ""  # prevent a warning from happening.
 
     # Find the first file that actually exists. Otherwise, use the last
     # file.
@@ -440,7 +480,7 @@ def MultiPersistent(name):
     except:
         rv = _MultiPersistent()
 
-    rv._filename = fn # W0201
+    rv._filename = fn  # W0201
     return rv
 
 renpy.loadsave._MultiPersistent = _MultiPersistent

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,7 +21,8 @@
 
 init -1500 python:
 
-    class InvertSelected(Action):
+    @renpy.pure
+    class InvertSelected(Action, DictEquality):
         """
          :doc: other_action
 
@@ -47,6 +48,7 @@ init -1500 python:
         def predict(self):
             self.action.predict()
 
+    @renpy.pure
     def If(expression, true=None, false=None):
         """
          :doc: other_action
@@ -62,8 +64,8 @@ init -1500 python:
         else:
             return false
 
-
-    class SelectedIf(Action):
+    @renpy.pure
+    class SelectedIf(Action, DictEquality):
         """
         :doc: other_action
 
@@ -85,7 +87,31 @@ init -1500 python:
         def get_selected(self):
             return self.expression
 
-    class Screenshot(Action):
+    @renpy.pure
+    class SensitiveIf(Action, DictEquality):
+        """
+        :doc: other_action
+
+        This allows an expression to control if a button should be marked
+        as sensitive. It should be used as part of a list with one or more
+        actions. For example::
+
+            # The button is sensitive if mars_flag is True
+            textbutton "Marsopolis":
+                action [ Jump("mars"), SensitiveIf(mars_flag) ]
+        """
+
+        def __init__(self, expression):
+            self.expression = expression
+
+        def __call__(self):
+            return None
+
+        def get_sensitive(self):
+            return self.expression
+
+    @renpy.pure
+    class Screenshot(Action, DictEquality):
         """
          :doc: other_action
 
@@ -95,18 +121,20 @@ init -1500 python:
         def __call__(self):
             _screenshot()
 
-
-    def HideInterface():
+    @renpy.pure
+    class HideInterface(Action, DictEquality):
         """
-         :doc other_action
+         :doc: other_action
 
          Causes the interface to be hidden until the user clicks.
          """
 
-        return ui.callsinnewcontext("_hide_windows")
+        def __call__(self):
+            renpy.call_in_new_context("_hide_windows")
 
 
-    class OpenURL(Action):
+    @renpy.pure
+    class OpenURL(Action, DictEquality):
         """
         :doc: other_action
 
@@ -123,8 +151,7 @@ init -1500 python:
             except:
                 pass
 
-
-    class With(Action):
+    class With(Action, DictEquality):
         """
          :doc: other_action
 
@@ -138,7 +165,8 @@ init -1500 python:
             renpy.transition(self.transition)
             renpy.restart_interaction()
 
-    class Notify(Action):
+    @renpy.pure
+    class Notify(Action, DictEquality):
         """
          :doc: other_action
 
@@ -154,7 +182,8 @@ init -1500 python:
         def __call__(self):
             renpy.notify(self.message)
 
-    class Rollback(Action):
+    @renpy.pure
+    class Rollback(Action, DictEquality):
         """
         :doc: other_action
 
@@ -163,12 +192,50 @@ init -1500 python:
         """
 
         def __call__(self):
-            renpy.rollback()
+            renpy.rollback(force="menu")
 
         def get_sensitive(self):
             return renpy.can_rollback()
 
-    class RollForward(Action):
+    class RollbackToIdentifier(Action, DictEquality):
+        """
+        :doc: other_action
+
+        This causes a rollback to an identifier to occur. Rollback
+        identifiers are returned as part of HistoryEntry objects.
+        """
+
+        def __init__(self, identifier):
+            self.identifier = identifier
+
+        def __call__(self):
+            checkpoints = renpy.get_identifier_checkpoints(self.identifier)
+
+            if checkpoints is not None:
+                renpy.rollback(checkpoints=checkpoints, force="menu")
+
+        def get_sensitive(self):
+            return (renpy.get_identifier_checkpoints(self.identifier) is not None)
+
+    @renpy.pure
+    class RestartStatement(Action, DictEquality):
+        """
+        :doc: other_action
+
+        This action causes Ren'Py to rollback to before the current
+        statement, and then re-run the current statement. This may be used
+        when changing a persistent variable that affects how the statement
+        is displayed.
+
+        If run in a menu context, this waits until the player exits to a
+        top-level context before performing the rollback.
+        """
+
+        def __call__(self):
+            renpy.rollback(force=True, checkpoints=0, defer=True)
+
+    @renpy.pure
+    class RollForward(Action, DictEquality):
         """
         :doc: other_action
 
@@ -177,7 +244,7 @@ init -1500 python:
         """
 
         def __call__(self):
-            return renpy.roll_forward_info()
+            return renpy.exports.roll_forward_core()
 
         def get_sensitive(self):
             return renpy.roll_forward_info() is not None
@@ -185,7 +252,9 @@ init -1500 python:
 
     #########################################################################
 
-    class __TooltipAction(object):
+    class __TooltipAction(Action, FieldEquality):
+
+        identity_fields = [ "tooltip", "value" ]
 
         def __init__(self, tooltip, value):
             self.tooltip = tooltip
@@ -212,7 +281,7 @@ init -1500 python:
 
         A tooltip object has a ``value`` field, which is set to the `default`
         value passed to the constructor when the tooltip is created. When
-        a button using an action creadted by the tooltip is hovered, the
+        a button using an action created by the tooltip is hovered, the
         value field changes to the value associated with the action.
         """
 
@@ -227,7 +296,7 @@ init -1500 python:
 
             Returns an action that is generally used as the hovered property
             of a button. When the button is hovered, the value field of this
-            tooltip is set to `value`. When the buttton loses focus, the
+            tooltip is set to `value`. When the button loses focus, the
             value field of this tooltip reverts to the default.
             """
 
@@ -238,7 +307,8 @@ init -1500 python:
 
     #########################################################################
 
-    class Language(Action):
+    @renpy.pure
+    class Language(Action, DictEquality):
         """
         :doc: language_action
 
@@ -248,6 +318,8 @@ init -1500 python:
             A string giving the language to translate to, or None to use
             the default language of the game script.
         """
+
+        alt = "Language [text]"
 
         def __init__(self, language):
             self.language = language
@@ -271,7 +343,8 @@ init -1500 python:
     config.enter_replay_transition = None
     config.exit_replay_transition = None
 
-    class Replay(Action):
+    @renpy.pure
+    class Replay(Action, DictEquality):
         """
         :doc: replay
 
@@ -306,24 +379,39 @@ init -1500 python:
 
         def get_sensitive(self):
             if self.locked is not None:
-                return self.locked
+                return not self.locked
 
             return renpy.seen_label(self.label)
 
-    class EndReplay(Action):
+    @renpy.pure
+    class EndReplay(Action, DictEquality):
         """
         :doc: replay
 
-        An action that ends the current memory.
+        Ends the current replay.
+
+        `confirm`
+            If true, prompts the user for confirmation before ending the
+            replay.
         """
+        def __init__(self, confirm=True):
+            self.confirm = confirm
 
         def __call__(self):
-            renpy.end_replay()
+
+            if not self.get_sensitive():
+                return
+
+            if self.confirm:
+                layout.yesno_screen(layout.END_REPLAY, EndReplay(False))
+            else:
+                renpy.end_replay()
 
         def get_sensitive(self):
             return _in_replay
 
-    class MouseMove(Action):
+    @renpy.pure
+    class MouseMove(Action, DictEquality):
         """
         :doc: other_action
 
@@ -344,22 +432,123 @@ init -1500 python:
                 renpy.set_mouse_pos(self.x, self.y, self.duration)
 
 
-transform _notify_transform:
-    # These control the position.
-    xalign .02 yalign .015
+    @renpy.pure
+    class QueueEvent(Action, DictEquality):
+        """
+        :doc: other_action
 
-    # These control the actions on show and hide.
-    on show:
-        alpha 0
-        linear .25 alpha 1.0
-    on hide:
-        linear .5 alpha 0.0
+        Queues the given event using :func:`renpy.queue_event`.
+        """
 
-screen notify:
-    zorder 100
+        def __init__(self, event, up=False):
+            self.event = event
+            self.up = up
 
-    text message at _notify_transform
+        def __call__(self):
+            renpy.queue_event(self.event, up=self.up)
 
-    # This controls how long it takes between when the screen is
-    # first shown, and when it begins hiding.
-    timer 3.25 action Hide('notify')
+
+    class Function(Action, DictEquality):
+        """
+        :doc: other_action
+
+        This Action calls `callable` with `args` and `kwargs`.
+
+        `callable`
+            Callable object.
+        `args`
+            position arguments to be passed to `callable`.
+        `kwargs`
+            keyword arguments to be passed to `callable`.
+
+        This Action takes an optional _update_screens keyword argument, which
+        defaults to true. When it is true, the interaction restarts and
+        the screens are updated after the function returns.
+
+        If the function returns a non-None value, the interaction stops and
+        returns that value. (When called using the call screen statement, the
+        result is placed in the `_return` variable.)
+        """
+
+        update_screens = True
+
+        def __init__(self, callable, *args, **kwargs):
+            self.callable = callable
+            self.args = args
+
+            self.update_screens = kwargs.pop("_update_screens", True)
+
+            self.kwargs = kwargs
+
+        def __call__(self):
+            rv = self.callable(*self.args, **self.kwargs)
+
+            if self.update_screens:
+                renpy.restart_interaction()
+
+            return rv
+
+    @renpy.pure
+    class Confirm(Action, DictEquality):
+        """
+        :doc: other_action
+
+        Prompts the user for confirmation of an action. If the user
+        clicks yes, the yes action is performed. Otherwise, the `no`
+        action is performed.
+
+        `prompt`
+            The prompt to display to the user.
+
+        `confirm_selected`
+            If true, the prompt will be displayed even if the `yes` action
+            is already selected. If false (the default), the prompt
+            will not be displayed if the `yes` action is selected.
+
+        The sensitivity and selectedness of this action match those
+        of the `yes` action.
+        """
+
+
+        def __init__(self, prompt, yes, no=None, confirm_selected=False):
+            self.prompt = prompt
+            self.yes = yes
+            self.no = no
+            self.confirm_selected = confirm_selected
+
+        def __call__(self):
+            if self.get_selected() and not self.confirm_selected:
+                return renpy.run(self.yes)
+
+            return layout.yesno_screen(self.prompt, self.yes, self.no)
+
+        def get_sensitive(self):
+            if self.yes is None:
+                return False
+
+            return renpy.is_sensitive(self.yes)
+
+        def get_selected(self):
+            return renpy.is_selected(self.yes)
+
+init -1500:
+
+    transform _notify_transform:
+        # These control the position.
+        xalign .02 yalign .015
+
+        # These control the actions on show and hide.
+        on show:
+            alpha 0
+            linear .25 alpha 1.0
+        on hide:
+            linear .5 alpha 0.0
+
+    screen notify:
+        zorder 100
+
+        text message at _notify_transform
+
+        # This controls how long it takes between when the screen is
+        # first shown, and when it begins hiding.
+        timer 3.25 action Hide('notify')

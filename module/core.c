@@ -1,6 +1,7 @@
 #include "renpy.h"
 #include "IMG_savepng.h"
-#include <pygame/pygame.h>
+#include <SDL.h>
+#include <pygame_sdl2/pygame_sdl2.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -16,18 +17,17 @@
 
 // Shows how to do this.
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-#endif 
+#endif
 
 /* Initializes the stuff found in this file.
  */
 void core_init() {
-    import_pygame_base();
-    import_pygame_surface();
+    import_pygame_sdl2();
 }
 
 void save_png_core(PyObject *pysurf, SDL_RWops *rw, int compress) {
     SDL_Surface *surf;
-    
+
     surf = PySurface_AsSurface(pysurf);
 
     /* Can't release GIL, since we're not using threaded RWops. */
@@ -59,13 +59,13 @@ void pixellate32_core(PyObject *pysrc,
 
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     int x, y, i, j;
     Uint32 srcpitch, dstpitch;
     Uint32 srcw, srch;
     Uint32 dstw, dsth;
     int vw, vh;
-    
+
     unsigned char *srcpixels;
     unsigned char *dstpixels;
 
@@ -73,7 +73,7 @@ void pixellate32_core(PyObject *pysrc,
     dst = PySurface_AsSurface(pydst);
 
     Py_BEGIN_ALLOW_THREADS
-    
+
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -85,10 +85,10 @@ void pixellate32_core(PyObject *pysrc,
 
     /* Compute the virtual width and height. */
     vw = ( srcw + avgwidth - 1) / avgwidth;
-    vh = ( srch + avgheight - 1) / avgheight; 
-    
+    vh = ( srch + avgheight - 1) / avgheight;
+
     /* Iterate through each of the virtual pixels. */
-    
+
     for (y = 0; y < vh; y++) {
         int srcy = avgheight * y;
         int dsty = outheight * y;
@@ -103,7 +103,7 @@ void pixellate32_core(PyObject *pysrc,
         if (dstylimit > dsth) {
             dstylimit = dsth;
         }
-        
+
         for (x = 0; x < vw; x++) {
             int srcx = avgwidth * x;
             int dstx = outwidth * x;
@@ -118,7 +118,7 @@ void pixellate32_core(PyObject *pysrc,
             if (dstxlimit > dstw) {
                 dstxlimit = dstw;
             }
-                        
+
             // Please note that these names are just
             // suggestions... It's possible that alpha will be
             // in r, for example.
@@ -133,11 +133,11 @@ void pixellate32_core(PyObject *pysrc,
             unsigned char *pos = &srcpixels[srcy * srcpitch + srcx * 4];
 
             /* Sum up the pixel values. */
-            
+
             for (j = srcy; j < srcylimit; j++) {
-                // po points to the current pixel.                
+                // po points to the current pixel.
                 unsigned char *po = pos;
-                
+
                 for (i = srcx; i < srcxlimit; i++) {
                     r += *po++;
                     g += *po++;
@@ -156,10 +156,10 @@ void pixellate32_core(PyObject *pysrc,
             a /= number;
 
             /* Write out the average pixel values. */
-            pos = &dstpixels[dsty * dstpitch + dstx * 4];            
+            pos = &dstpixels[dsty * dstpitch + dstx * 4];
             for (j = dsty; j < dstylimit; j++) {
                 unsigned char *po = pos;
-                
+
                 for (i = dstx; i < dstxlimit; i++) {
                     *po++ = r;
                     *po++ = g;
@@ -201,19 +201,19 @@ void pixellate24_core(PyObject *pysrc,
 
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     int x, y, i, j;
     Uint32 srcpitch, dstpitch;
     Uint32 srcw, srch;
     Uint32 dstw, dsth;
     int vw, vh;
-    
+
     unsigned char *srcpixels;
     unsigned char *dstpixels;
 
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-        
+
     Py_BEGIN_ALLOW_THREADS
 
     srcpixels = (unsigned char *) src->pixels;
@@ -227,10 +227,10 @@ void pixellate24_core(PyObject *pysrc,
 
     /* Compute the virtual width and height. */
     vw = ( srcw + avgwidth - 1) / avgwidth;
-    vh = ( srch + avgheight - 1) / avgheight; 
-    
+    vh = ( srch + avgheight - 1) / avgheight;
+
     /* Iterate through each of the virtual pixels. */
-    
+
     for (y = 0; y < vh; y++) {
         int srcy = avgheight * y;
         int dsty = outheight * y;
@@ -245,7 +245,7 @@ void pixellate24_core(PyObject *pysrc,
         if (dstylimit > dsth) {
             dstylimit = dsth;
         }
-        
+
         for (x = 0; x < vw; x++) {
             int srcx = avgwidth * x;
             int dstx = outwidth * x;
@@ -260,7 +260,7 @@ void pixellate24_core(PyObject *pysrc,
             if (dstxlimit > dstw) {
                 dstxlimit = dstw;
             }
-                        
+
             // Please note that these names are just
             // suggestions... It's possible that blue will be
             // in r, for example.
@@ -274,11 +274,11 @@ void pixellate24_core(PyObject *pysrc,
             unsigned char *pos = &srcpixels[srcy * srcpitch + srcx * 3];
 
             /* Sum up the pixel values. */
-            
+
             for (j = srcy; j < srcylimit; j++) {
-                // po points to the current pixel.                
+                // po points to the current pixel.
                 unsigned char *po = pos;
-                
+
                 for (i = srcx; i < srcxlimit; i++) {
                     r += *po++;
                     g += *po++;
@@ -295,10 +295,10 @@ void pixellate24_core(PyObject *pysrc,
             b /= number;
 
             /* Write out the average pixel values. */
-            pos = &dstpixels[dsty * dstpitch + dstx * 3];            
+            pos = &dstpixels[dsty * dstpitch + dstx * 3];
             for (j = dsty; j < dstylimit; j++) {
                 unsigned char *po = pos;
-                
+
                 for (i = dstx; i < dstxlimit; i++) {
                     *po++ = r;
                     *po++ = g;
@@ -330,12 +330,12 @@ void map32_core(PyObject *pysrc,
 
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     int x, y;
     Uint32 srcpitch, dstpitch;
     Uint32 srcw, srch;
     Uint32 dstw, dsth;
-    
+
     char *srcpixels;
     char *dstpixels;
 
@@ -346,7 +346,7 @@ void map32_core(PyObject *pysrc,
 
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-        
+
     Py_BEGIN_ALLOW_THREADS
 
     srcpixels = (char *) src->pixels;
@@ -360,7 +360,7 @@ void map32_core(PyObject *pysrc,
 
     srcrow = srcpixels;
     dstrow = dstpixels;
-    
+
     for (y = 0; y < srch; y++) {
         srcp = srcrow;
         dstp = dstrow;
@@ -370,7 +370,7 @@ void map32_core(PyObject *pysrc,
             *dstp++ = rmap[(unsigned char) *srcp++];
             *dstp++ = gmap[(unsigned char) *srcp++];
             *dstp++ = bmap[(unsigned char) *srcp++];
-            *dstp++ = amap[(unsigned char) *srcp++];            
+            *dstp++ = amap[(unsigned char) *srcp++];
         }
 
         srcrow += srcpitch;
@@ -389,12 +389,12 @@ void map24_core(PyObject *pysrc,
 
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     int x, y;
     Uint32 srcpitch, dstpitch;
     Uint32 srcw, srch;
     Uint32 dstw, dsth;
-    
+
     char *srcpixels;
     char *dstpixels;
 
@@ -405,7 +405,7 @@ void map24_core(PyObject *pysrc,
 
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-        
+
     Py_BEGIN_ALLOW_THREADS
 
     srcpixels = (char *) src->pixels;
@@ -419,7 +419,7 @@ void map24_core(PyObject *pysrc,
 
     srcrow = srcpixels;
     dstrow = dstpixels;
-    
+
     for (y = 0; y < srch; y++) {
         srcp = srcrow;
         dstp = dstrow;
@@ -454,12 +454,12 @@ void linmap32_core(PyObject *pysrc,
 
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     int x, y;
     Uint32 srcpitch, dstpitch;
     Uint32 srcw, srch;
     Uint32 dstw, dsth;
-    
+
     char *srcpixels;
     char *dstpixels;
 
@@ -484,7 +484,7 @@ void linmap32_core(PyObject *pysrc,
 
     srcrow = srcpixels;
     dstrow = dstpixels;
-    
+
     for (y = 0; y < srch; y++) {
         srcp = srcrow;
         dstp = dstrow;
@@ -494,7 +494,7 @@ void linmap32_core(PyObject *pysrc,
             *dstp++ = ((unsigned char) *srcp++) * rmul >> 8;
             *dstp++ = ((unsigned char) *srcp++) * gmul >> 8;
             *dstp++ = ((unsigned char) *srcp++) * bmul >> 8;
-            *dstp++ = ((unsigned char) *srcp++) * amul >> 8;            
+            *dstp++ = ((unsigned char) *srcp++) * amul >> 8;
         }
 
         srcrow += srcpitch;
@@ -513,12 +513,12 @@ void linmap24_core(PyObject *pysrc,
 
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     int x, y;
     Uint32 srcpitch, dstpitch;
     Uint32 srcw, srch;
     Uint32 dstw, dsth;
-    
+
     char *srcpixels;
     char *dstpixels;
 
@@ -531,7 +531,7 @@ void linmap24_core(PyObject *pysrc,
     dst = PySurface_AsSurface(pydst);
 
     Py_BEGIN_ALLOW_THREADS
-    
+
     srcpixels = (char *) src->pixels;
     dstpixels = (char *) dst->pixels;
     srcpitch = src->pitch;
@@ -543,7 +543,7 @@ void linmap24_core(PyObject *pysrc,
 
     srcrow = srcpixels;
     dstrow = dstpixels;
-    
+
     for (y = 0; y < srch; y++) {
         srcp = srcrow;
         dstp = dstrow;
@@ -568,16 +568,16 @@ void linmap24_core(PyObject *pysrc,
 void xblur32_core(PyObject *pysrc,
                   PyObject *pydst,
                   int radius) {
-    
+
     int i, x, y;
 
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     Uint32 srcpitch, dstpitch;
     Uint32 srcw, srch;
     Uint32 dstw, dsth;
-    
+
     unsigned char *srcpixels;
     unsigned char *dstpixels;
 
@@ -586,12 +586,12 @@ void xblur32_core(PyObject *pysrc,
     unsigned char *srcp;
     unsigned char *dstp;
 
-    
+
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
 
     Py_BEGIN_ALLOW_THREADS
-    
+
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -602,14 +602,14 @@ void xblur32_core(PyObject *pysrc,
     dsth = dst->h;
 
     int divisor = radius * 2 + 1;
-    
+
     for (y = 0; y < dsth; y++) {
 
         // The values of the pixels on the left and right ends of the
-        // line. 
+        // line.
         unsigned char lr, lg, lb, la;
         unsigned char rr, rg, rb, ra;
-        
+
         unsigned char *leader = srcpixels + y * srcpitch;
         unsigned char *trailer = leader;
         dstp = dstpixels + y * dstpitch;
@@ -618,7 +618,7 @@ void xblur32_core(PyObject *pysrc,
         lg = *(leader + 1);
         lb = *(leader + 2);
         la = *(leader + 3);
-        
+
         int sumr = lr * radius;
         int sumg = lg * radius;
         int sumb = lb * radius;
@@ -631,14 +631,14 @@ void xblur32_core(PyObject *pysrc,
             sumb += *leader++;
             suma += *leader++;
         }
-        
+
         // left side of the kernel is off of the screen.
         for (x = 0; x < radius; x++) {
             sumr += *leader++;
             sumg += *leader++;
             sumb += *leader++;
             suma += *leader++;
-            
+
             *dstp++ = sumr / divisor;
             *dstp++ = sumg / divisor;
             *dstp++ = sumb / divisor;
@@ -651,14 +651,14 @@ void xblur32_core(PyObject *pysrc,
         }
 
         int end = srcw - radius - 1;
-        
+
         // The kernel is fully on the screen.
         for (; x < end; x++) {
             sumr += *leader++;
             sumg += *leader++;
             sumb += *leader++;
             suma += *leader++;
-            
+
             *dstp++ = sumr / divisor;
             *dstp++ = sumg / divisor;
             *dstp++ = sumb / divisor;
@@ -674,14 +674,14 @@ void xblur32_core(PyObject *pysrc,
         rg = *leader++;
         rb = *leader++;
         ra = *leader++;
-               
+
         // The kernel is off the right side of the screen.
         for (; x < srcw; x++) {
             sumr += rr;
             sumg += rg;
             sumb += rb;
             suma += ra;
-            
+
             *dstp++ = sumr / divisor;
             *dstp++ = sumg / divisor;
             *dstp++ = sumb / divisor;
@@ -691,7 +691,7 @@ void xblur32_core(PyObject *pysrc,
             sumg -= *trailer++;
             sumb -= *trailer++;
             suma -= *trailer++;
-        }    
+        }
     }
 
     Py_END_ALLOW_THREADS
@@ -712,31 +712,31 @@ void alphamunge_core(PyObject *pysrc,
                      int src_aoff, // alpha offset.
                      int dst_aoff, // alpha offset.
                      char *amap) {
-    
+
     int x, y;
 
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     Uint32 srcpitch, dstpitch;
     Uint32 srcw, srch;
     Uint32 dstw, dsth;
-    
+
     unsigned char *srcpixels;
     unsigned char *dstpixels;
 
     unsigned char *srcline;
     unsigned char *dstline;
-    
+
     unsigned char *srcp;
     unsigned char *dstp;
 
-    
+
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-        
+
     Py_BEGIN_ALLOW_THREADS
-    
+
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -762,17 +762,17 @@ void alphamunge_core(PyObject *pysrc,
 
             *dstp = amap[*srcp];
             srcp += src_bypp;
-            dstp += 4; // Need an alpha channel.                
+            dstp += 4; // Need an alpha channel.
         }
 
         srcline += srcpitch;
         dstline += dstpitch;
 
     }
-    
+
     Py_END_ALLOW_THREADS
 }
-        
+
 void scale32_core(PyObject *pysrc, PyObject *pydst,
                   float source_xoff, float source_yoff,
                   float source_width, float source_height,
@@ -784,20 +784,20 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
 
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     int y;
     Uint32 srcpitch, dstpitch;
     Uint32 srcw, srch;
     Uint32 dstw, dsth;
     float xdelta, ydelta;
-    
+
     unsigned char *srcpixels;
     unsigned char *dstpixels;
 
-    
+
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-        
+
     Py_BEGIN_ALLOW_THREADS
 
     srcpixels = (unsigned char *) src->pixels;
@@ -822,12 +822,12 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
         } else {
             ydelta = 0;
         }
-        
+
     } else {
         xdelta = 255.0 * (source_width - 1) / dest_width;
         ydelta = 255.0 * (source_height - 1) / dest_height;
     }
-        
+
     for (y = 0; y < dsth; y++) {
 
         unsigned char *s0;
@@ -839,7 +839,7 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
         short s0frac;
         short s1frac;
         float scol;
-        
+
         d = dstpixels + dstpitch * y;
         dend = d + 4 * dstw; // bpp
 
@@ -859,7 +859,7 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
 
             short xfrac = 256 - ((int) scol & 255);
             unsigned short r, g, b, a;
-            
+
             s0p = s0 + ((int) scol >> 8) * 4; // bpp
             s1p = s0p + srcpitch;
 
@@ -897,22 +897,22 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
 
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     int y;
     Uint32 srcpitch, dstpitch;
     Uint32 srcw, srch;
     Uint32 dstw, dsth;
     float xdelta, ydelta;
-    
+
     unsigned char *srcpixels;
     unsigned char *dstpixels;
 
-    
+
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
 
     Py_BEGIN_ALLOW_THREADS
-        
+
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -936,7 +936,7 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
         short s0frac;
         short s1frac;
         float scol;
-        
+
         d = dstpixels + dstpitch * y;
         dend = d + 3 * dstw; // bpp
 
@@ -956,7 +956,7 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
 
             short xfrac = 256 - ((int) scol & 255);
             unsigned short r, g, b;
-            
+
             s0p = s0 + ((int) scol >> 8) * 3; // bpp
             s1p = s0p + srcpitch;
 
@@ -1001,12 +1001,12 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
 
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     int y;
     int srcpitch, dstpitch;
     int srcw, srch;
     int dstw, dsth;
-    
+
     // The x and y source pixel coordinates, times 65536. And their
     // delta-per-dest-x-pixel.
     int sxi = 0, syi = 0, dsxi = 0, dsyi = 0;
@@ -1016,9 +1016,9 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
 
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-        
+
     Py_BEGIN_ALLOW_THREADS
-        
+
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -1034,13 +1034,13 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
     // Compute the maximum x and y coordinates.
     double maxsx = srcw;
     double maxsy = srch;
-    
+
     // Deal with pre-6.10.1 versions of Ren'Py, which didn't give us
     // that 1px border that allows us to be precise.
     if (! precise) {
         maxsx -= EPSILON;
         maxsy -= EPSILON;
-    
+
         // If a delta is too even, subtract epsilon (towards 0) from it.
         if (xdx && fabs(fmodf(1.0 / xdx, 1)) < EPSILON) {
             xdx -= (xdx / fabs(xdx)) * EPSILON;
@@ -1056,14 +1056,14 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
         }
     }
 
-    
+
     // Loop through every line.
     for (y = 0; y < dsth; y++) {
-        
+
         // The source coordinates of the leftmost pixel in the line.
         double leftsx = corner_x + y * xdy;
         double leftsy = corner_y + y * ydy;
-        
+
         // Min and max x-extent to draw on the current line.
         double minx = 0;
         double maxx = dstw - 1;
@@ -1075,10 +1075,10 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
 
             if (x1 < x2) {
                 minx = fmax(x1, minx);
-                maxx = fmin(x2, maxx);                
+                maxx = fmin(x2, maxx);
             } else {
                 minx = fmax(x2, minx);
-                maxx = fmin(x1, maxx);                
+                maxx = fmin(x1, maxx);
             }
 
         } else {
@@ -1094,34 +1094,34 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
 
             if (x1 < x2) {
                 minx = fmax(x1, minx);
-                maxx = fmin(x2, maxx);                
+                maxx = fmin(x2, maxx);
             } else {
                 minx = fmax(x2, minx);
-                maxx = fmin(x1, maxx);                
+                maxx = fmin(x1, maxx);
             }
-            
+
         } else {
             if (leftsy < 0 || leftsy > maxsy) {
                 continue;
             }
         }
-                
+
         minx = ceil(minx);
         maxx = floor(maxx);
 
         if (minx >= maxx) {
             continue;
         }
-        
+
         // The start and end of line pointers.
         unsigned char *d = dstpixels + dstpitch * y;
         unsigned char *dend = d + 4 * (int) maxx;
 
         // Advance start of line by 4.
         d += 4 * (int) minx;
-        
+
         // Starting coordinates and deltas.
-        sxi = (int) ((leftsx + minx * xdx) * 65536); 
+        sxi = (int) ((leftsx + minx * xdx) * 65536);
         syi = (int) ((leftsy + minx * ydx) * 65536);
         dsxi = (int) (xdx * 65536);
         dsyi = (int) (ydx * 65536);
@@ -1157,16 +1157,16 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
 
             unsigned int alpha = (((rh << 8) | rl) >> ashift) & 0xff;
             alpha = (alpha * amul) >> 8;
-            
+
             unsigned int dl = * (unsigned int *) d;
             unsigned int dh = (dl >> 8) & 0xff00ff;
             dl &= 0xff00ff;
 
             dl = I(dl, rl, alpha);
             dh = I(dh, rh, alpha);
-            
+
             * (unsigned int *) d = (dh << 8) | dl;
-            
+
             d += 4;
             sxi += dsxi;
             syi += dsyi;
@@ -1200,12 +1200,12 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
 
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     int y;
     int srcpitch, dstpitch;
     int srcw, srch;
     int dstw, dsth;
-    
+
     // The x and y source pixel coordinates, times 65536. And their
     // delta-per-dest-x-pixel.
     int sxi = 0, syi = 0, dsxi = 0, dsyi = 0;
@@ -1215,9 +1215,9 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
 
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-        
+
     Py_BEGIN_ALLOW_THREADS
-        
+
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -1236,13 +1236,13 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
     // Compute the maximum x and y coordinates.
     double maxsx = srcw;
     double maxsy = srch;
-    
+
     // Deal with pre-6.10.1 versions of Ren'Py, which didn't give us
     // that 1px border that allows us to be precise.
     if (! precise) {
         maxsx -= EPSILON;
         maxsy -= EPSILON;
-    
+
         // If a delta is too even, subtract epsilon (towards 0) from it.
         if (xdx && fabs(fmodf(1.0 / xdx, 1)) < EPSILON) {
             xdx -= (xdx / fabs(xdx)) * EPSILON;
@@ -1258,10 +1258,10 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
         }
     }
 
-    
+
     // Loop through every line.
     for (y = 0; y < dsth; y++) {
-        
+
         // The source coordinates of the leftmost pixel in the line.
         double leftsx = corner_x + y * xdy;
         double leftsy = corner_y + y * ydy;
@@ -1277,10 +1277,10 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
 
             if (x1 < x2) {
                 minx = fmax(x1, minx);
-                maxx = fmin(x2, maxx);                
+                maxx = fmin(x2, maxx);
             } else {
                 minx = fmax(x2, minx);
-                maxx = fmin(x1, maxx);                
+                maxx = fmin(x1, maxx);
             }
 
         } else {
@@ -1296,12 +1296,12 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
 
             if (x1 < x2) {
                 minx = fmax(x1, minx);
-                maxx = fmin(x2, maxx);                
+                maxx = fmin(x2, maxx);
             } else {
                 minx = fmax(x2, minx);
-                maxx = fmin(x1, maxx);                
+                maxx = fmin(x1, maxx);
             }
-            
+
         } else {
             if (leftsy < 0 || leftsy > maxsy) {
                 continue;
@@ -1314,7 +1314,7 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
         if (minx >= maxx) {
             continue;
         }
-        
+
         // The start and end of line pointers.
         unsigned char *d = dstpixels + dstpitch * y;
         unsigned char *dend = d + 4 * (int) maxx;
@@ -1323,7 +1323,7 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
         d += 4 * (int) minx;
 
         // Starting coordinates and deltas.
-        sxi = (int) ((leftsx + minx * xdx) * 65536); 
+        sxi = (int) ((leftsx + minx * xdx) * 65536);
         syi = (int) ((leftsy + minx * ydx) * 65536);
         dsxi = (int) (xdx * 65536);
         dsyi = (int) (ydx * 65536);
@@ -1339,7 +1339,7 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
 
         // amul -> mm4
         movd_m2r(amul, mm4);
-        
+
         while (d <= dend) {
 
             int px = sxi >> 16;
@@ -1357,14 +1357,14 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
             movd_m2r(yfrac, mm6);
             punpcklwd_r2r(mm5, mm5);
             punpcklwd_r2r(mm6, mm6);
-            punpckldq_r2r(mm5, mm5); /* 0X0X0X0X -> mm5 */                
+            punpckldq_r2r(mm5, mm5); /* 0X0X0X0X -> mm5 */
             punpckldq_r2r(mm6, mm6); /* 0Y0Y0Y0Y -> mm6 */
-            
+
             // Load in the 4 bytes.
             movd_m2r(*(unsigned int *) sp, mm1);
             movd_m2r(*(unsigned int *) (sp + 4), mm2);
-            punpcklbw_r2r(mm7, mm1);            
-            punpcklbw_r2r(mm7, mm2);            
+            punpcklbw_r2r(mm7, mm1);
+            punpcklbw_r2r(mm7, mm2);
 
             // Interpolate between a and b.
             psubw_r2r(mm1, mm2);
@@ -1376,9 +1376,9 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
             movd_m2r(*(unsigned int *) sp, mm3);
             movd_m2r(*(unsigned int *) (sp + 4), mm2);
 
-            punpcklbw_r2r(mm7, mm3);            
+            punpcklbw_r2r(mm7, mm3);
             punpcklbw_r2r(mm7, mm2);
-            
+
             // Interpolate between c and d.
             psubw_r2r(mm3, mm2);
             pmullw_r2r(mm5, mm2);
@@ -1391,7 +1391,7 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
             psrlw_i2r(8, mm3);
             paddb_r2r(mm3, mm1); /* mm1 contains I(ab, cd, yfrac) */
 
-            
+
             // Store the result.
             // packuswb_r2r(mm7, mm1);
             // movd_r2m(mm1, *(unsigned int *)d);
@@ -1408,14 +1408,14 @@ int transform32_mmx(PyObject *pysrc, PyObject *pydst,
             punpcklwd_r2r(mm3, mm3); /* AAAAAAAA -> m3 */
             punpcklbw_r2r(mm7, mm2); /* a -> m2 */
             psubw_r2r(mm2, mm1); /* b - a -> m1 */
-            pmullw_r2r(mm3, mm1); 
+            pmullw_r2r(mm3, mm1);
             psrlw_i2r(8, mm1); /* alpha * (b-a) -> m1 */
             paddb_r2r(mm2, mm1); /* a + alpha*(b-a) -> mm1 */
 
             // Store the result.
             packuswb_r2r(mm7, mm1);
             movd_r2m(mm1, *(unsigned int *)d);
-            
+
             d += 4;
             sxi += dsxi;
             syi += dsyi;
@@ -1448,7 +1448,7 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
     static int has_mmx = 0;
 
 
-    
+
     if (! checked_mmx) {
         has_mmx = SDL_HasMMX();
         checked_mmx = 1;
@@ -1459,24 +1459,24 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
                         xdx, ydx, xdy, ydy, ashift, a, precise);
         return;
     }
-    
+
 #endif
-    
+
     transform32_std(pysrc, pydst, corner_x, corner_y,
                     xdx, ydx, xdy, ydy, ashift, a, precise);
 
 }
-                     
 
 
-                     
+
+
 void blend32_core_std(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
                       int alpha) {
 
     SDL_Surface *srca;
     SDL_Surface *srcb;
     SDL_Surface *dst;
-    
+
     int srcapitch, srcbpitch, dstpitch;
     unsigned short dstw, dsth;
     unsigned short y;
@@ -1488,7 +1488,7 @@ void blend32_core_std(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
     srca = PySurface_AsSurface(pysrca);
     srcb = PySurface_AsSurface(pysrcb);
     dst = PySurface_AsSurface(pydst);
-        
+
     Py_BEGIN_ALLOW_THREADS
 
     srcapixels = (unsigned char *) srca->pixels;
@@ -1514,7 +1514,7 @@ void blend32_core_std(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
 
             unsigned int sah = (sal >> 8) & 0xff00ff;
             unsigned int sbh = (sbl >> 8) & 0xff00ff;
-            
+
             sal &= 0xff00ff;
             sbl &= 0xff00ff;
 
@@ -1534,7 +1534,7 @@ void blend32_core_mmx(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
     SDL_Surface *srca;
     SDL_Surface *srcb;
     SDL_Surface *dst;
-    
+
     int srcapitch, srcbpitch, dstpitch;
     unsigned short dstw, dsth;
     unsigned short y;
@@ -1546,7 +1546,7 @@ void blend32_core_mmx(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
     srca = PySurface_AsSurface(pysrca);
     srcb = PySurface_AsSurface(pysrcb);
     dst = PySurface_AsSurface(pydst);
-        
+
     Py_BEGIN_ALLOW_THREADS
 
     srcapixels = (unsigned char *) srca->pixels;
@@ -1560,13 +1560,13 @@ void blend32_core_mmx(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
 
     /* This code is a slightly modified version of that found in
      * SDL_blit_A.c */
-    
+
     pxor_r2r(mm5, mm5); /* 0 -> mm5 */
     /* form the alpha mult */
     movd_m2r(alpha, mm4); /* 0000000A -> mm4 */
     punpcklwd_r2r(mm4, mm4); /* 00000A0A -> mm4 */
     punpckldq_r2r(mm4, mm4); /* 0A0A0A0A -> mm4 */
-    
+
     for (y = 0; y < dsth; y++) {
 
         unsigned int *dp = (unsigned int *)(dstpixels + dstpitch * y);
@@ -1576,10 +1576,10 @@ void blend32_core_mmx(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
         unsigned int *sbp = (unsigned int *)(srcbpixels + srcbpitch * y);
 
         while (dp < dpe) {
-            
+
             movd_m2r((*sbp++), mm1);
             movd_m2r((*sap++), mm2);
-            punpcklbw_r2r(mm5, mm1); /* 0A0R0G0B -> mm1(b) */                                      
+            punpcklbw_r2r(mm5, mm1); /* 0A0R0G0B -> mm1(b) */
             punpcklbw_r2r(mm5, mm2); /* 0A0R0G0B -> mm2(a) */
             psubw_r2r(mm2, mm1);/* a - b -> mm1 */
             pmullw_r2r(mm4, mm1); /* mm1 * alpha -> mm1 */
@@ -1587,15 +1587,15 @@ void blend32_core_mmx(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
             paddb_r2r(mm1, mm2); /* mm1 + mm2(a) -> mm2 */
             packuswb_r2r(mm5, mm2); /* ARGBARGB -> mm2 */
             movd_r2m(mm2, *dp++);
-            
-            
+
+
         }
     }
 
     emms();
     Py_END_ALLOW_THREADS
 }
-    
+
 #endif
 
 void blend32_core(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
@@ -1614,7 +1614,7 @@ void blend32_core(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
         blend32_core_mmx(pysrca, pysrcb, pydst, alpha);
         return;
     }
-    
+
 #endif
 
     blend32_core_std(pysrca, pysrcb, pydst, alpha);
@@ -1629,7 +1629,7 @@ void imageblend32_core_std(PyObject *pysrca, PyObject *pysrcb,
     SDL_Surface *srcb;
     SDL_Surface *dst;
     SDL_Surface *img;
-    
+
     int srcapitch, srcbpitch, dstpitch, imgpitch;
     unsigned short dstw, dsth;
     unsigned short y;
@@ -1643,7 +1643,7 @@ void imageblend32_core_std(PyObject *pysrca, PyObject *pysrcb,
     srcb = PySurface_AsSurface(pysrcb);
     dst = PySurface_AsSurface(pydst);
     img = PySurface_AsSurface(pyimg);
-    
+
     Py_BEGIN_ALLOW_THREADS
 
     srcapixels = (unsigned char *) srca->pixels;
@@ -1668,7 +1668,7 @@ void imageblend32_core_std(PyObject *pysrca, PyObject *pysrcb,
 
         unsigned char *ip = (unsigned char *)(imgpixels + imgpitch * y);
         ip += alpha_off;
-        
+
         while (dp < dpe) {
             unsigned char alpha = (unsigned char) amap[*ip];
             ip += 4;
@@ -1678,7 +1678,7 @@ void imageblend32_core_std(PyObject *pysrca, PyObject *pysrcb,
 
             unsigned int sah = (sal >> 8) & 0xff00ff;
             unsigned int sbh = (sbl >> 8) & 0xff00ff;
-            
+
             sal &= 0xff00ff;
             sbl &= 0xff00ff;
 
@@ -1699,7 +1699,7 @@ void imageblend32_core_mmx(PyObject *pysrca, PyObject *pysrcb,
     SDL_Surface *srcb;
     SDL_Surface *dst;
     SDL_Surface *img;
-    
+
     int srcapitch, srcbpitch, dstpitch, imgpitch;
     unsigned short dstw, dsth;
     unsigned short y;
@@ -1715,7 +1715,7 @@ void imageblend32_core_mmx(PyObject *pysrca, PyObject *pysrcb,
     img = PySurface_AsSurface(pyimg);
 
     Py_BEGIN_ALLOW_THREADS
-    
+
     srcapixels = (unsigned char *) srca->pixels;
     srcbpixels = (unsigned char *) srcb->pixels;
     dstpixels = (unsigned char *) dst->pixels;
@@ -1740,7 +1740,7 @@ void imageblend32_core_mmx(PyObject *pysrca, PyObject *pysrcb,
 
         unsigned char *ip = (unsigned char *)(imgpixels + imgpitch * y);
         ip += alpha_off;
-        
+
         while (dp < dpe) {
             unsigned int alpha = (unsigned char) amap[*ip];
             ip += 4;
@@ -1749,10 +1749,10 @@ void imageblend32_core_mmx(PyObject *pysrca, PyObject *pysrcb,
             movd_m2r(alpha, mm4); /* 0000000A -> mm4 */
             punpcklwd_r2r(mm4, mm4); /* 00000A0A -> mm4 */
             punpckldq_r2r(mm4, mm4); /* 0A0A0A0A -> mm4 */
-            
+
             movd_m2r((*sbp++), mm1);
             movd_m2r((*sap++), mm2);
-            punpcklbw_r2r(mm5, mm1); /* 0A0R0G0B -> mm1(b) */                                      
+            punpcklbw_r2r(mm5, mm1); /* 0A0R0G0B -> mm1(b) */
             punpcklbw_r2r(mm5, mm2); /* 0A0R0G0B -> mm2(a) */
             psubw_r2r(mm2, mm1);/* a - b -> mm1 */
             pmullw_r2r(mm4, mm1); /* mm1 * alpha -> mm1 */
@@ -1764,7 +1764,7 @@ void imageblend32_core_mmx(PyObject *pysrca, PyObject *pysrcb,
     }
 
     emms();
-    Py_END_ALLOW_THREADS   
+    Py_END_ALLOW_THREADS
 }
 
 #endif
@@ -1786,7 +1786,7 @@ void imageblend32_core(PyObject *pysrca, PyObject *pysrcb,
         imageblend32_core_mmx(pysrca, pysrcb, pydst, pyimg, aoff, amap);
         return;
     }
-    
+
 #endif
 
     imageblend32_core_std(pysrca, pysrcb, pydst, pyimg, aoff, amap);
@@ -1798,10 +1798,10 @@ void colormatrix32_core(PyObject *pysrc, PyObject *pydst,
                         float c10, float c11, float c12, float c13, float c14,
                         float c20, float c21, float c22, float c23, float c24,
                         float c30, float c31, float c32, float c33, float c34) {
-    
+
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     int srcpitch, dstpitch;
     unsigned short dstw, dsth;
     unsigned short y;
@@ -1811,7 +1811,7 @@ void colormatrix32_core(PyObject *pysrc, PyObject *pydst,
 
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-    
+
     Py_BEGIN_ALLOW_THREADS
 
     srcpixels = (unsigned char *) src->pixels;
@@ -1826,15 +1826,15 @@ void colormatrix32_core(PyObject *pysrc, PyObject *pydst,
     int o1 = c14 * 255;
     int o2 = c24 * 255;
     int o3 = c34 * 255;
-        
+
     for (y = 0; y < dsth; y++) {
 
         int r;
-        
+
         unsigned char *dp =  dstpixels + dstpitch * y;
         unsigned char *dpe = dp + dstw * 4;
         unsigned char *sp = srcpixels + srcpitch * y;
-        
+
         while (dp < dpe) {
             unsigned char s0 = *sp++;
             unsigned char s1 = *sp++;
@@ -1877,10 +1877,10 @@ void colormatrix32_core(PyObject *pysrc, PyObject *pydst,
 
 void staticgray_core(PyObject *pysrc, PyObject *pydst,
                      int rmul, int gmul, int bmul, int amul, int shift, char *vmap) {
-    
+
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     int srcpitch, dstpitch;
     unsigned short dstw, dsth;
     unsigned short x, y;
@@ -1890,7 +1890,7 @@ void staticgray_core(PyObject *pysrc, PyObject *pydst,
 
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-    
+
     Py_BEGIN_ALLOW_THREADS;
 
     srcpixels = (unsigned char *) src->pixels;

@@ -120,9 +120,9 @@
         The time the dissolve will take.
     
     `alpha`
-        If true, the dissolve will alpha-composite the the result of the
-        transition with the screen. If false, the result of the transition
-        will replace the screen, which is more efficient.
+        If true, the dissolve will alpha-composite the result of the transition
+        with the screen. If false, the result of the transition will replace the
+        screen, which is more efficient.
     
     `time_warp`
         A function that adjusts the timeline. If not None, this should be a
@@ -170,9 +170,9 @@
         If true, black pixels will dissolve in before white pixels.
     
     `alpha`
-        If true, the dissolve will alpha-composite the the result of the
-        transition with the screen. If false, the result of the transition
-        will replace the screen, which is more efficient.
+        If true, the dissolve will alpha-composite the result of the transition
+        with the screen. If false, the result of the transition will replace the
+        screen, which is more efficient.
     
     `time_warp`
         A function that adjusts the timeline. If not None, this should be a
@@ -217,7 +217,7 @@
     `enter_time_warp`
         A time warp function that's applied to images entering the scene.
     
-    `enter_time_warp`
+    `leave_time_warp`
         A time warp function that's applied to images leaving the scene.
 
 .. function:: MultipleTransition(args)
@@ -241,8 +241,8 @@
     scene following it. For example::
     
         define logodissolve = MultipleTransition([
-            False, Dissolve(0.5)
-            "logo.jpg", NoTransition(1.0),
+            False, Dissolve(0.5),
+            "logo.jpg", Pause(1.0),
             "logo.jpg", dissolve,
             True])
     
@@ -266,4 +266,24 @@
         The number of steps that will occur, in each direction. Each step
         creates pixels about twice the size of those in the previous step,
         so a 5-step pixellation will create 32x32 pixels.
+
+.. function:: PushMove(time, mode="pushright")
+    
+    Returns a transition that works by taking the new scene and using it to
+    "push" the old scene off the screen. 
+    
+    `time`
+        The time the transition takes.
+    
+    `mode`
+        There are four possible modes: "pushright", "pushleft", "pushup",
+        and "pushdown", which push the old scene off the screen in the
+        direction indicated.
+    
+    ::
+    
+        define pushright = PushMove(1.0, "pushright")
+        define pushleft = PushMove(1.0, "pushleft")
+        define pushup = PushMove(1.0, "pushup")
+        define pushdown = PushMove(1.0, "pushdown")
 

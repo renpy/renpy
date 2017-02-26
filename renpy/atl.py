@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,21 +20,26 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.display
+import renpy.pyanalysis
+
 import random
 
+
 def compiling(loc):
-    file, number = loc #@ReservedAssignment
+    file, number = loc  # @ReservedAssignment
 
     renpy.game.exception_info = "Compiling ATL code at %s:%d" % (file, number)
 
+
 def executing(loc):
-    file, number = loc #@ReservedAssignment
+    file, number = loc  # @ReservedAssignment
 
     renpy.game.exception_info = "Executing ATL code at %s:%d" % (file, number)
 
 
 # A map from the name of a time warp function to the function itself.
 warpers = { }
+
 
 def atl_warper(f):
     name = f.func_name
@@ -43,6 +48,8 @@ def atl_warper(f):
 
 # The pause warper is used internally when no other warper is
 # specified.
+
+
 @atl_warper
 def pause(t):
     if t < 1.0:
@@ -50,48 +57,72 @@ def pause(t):
     else:
         return 1.0
 
-position = object()
+position = renpy.object.Sentinel("position")
+
+
+def any_object(x):
+    return x
+
+
+def bool_or_none(x):
+    if x is None:
+        return x
+    return bool(x)
+
+
+def float_or_none(x):
+    if x is None:
+        return x
+    return float(x)
 
 # A dictionary giving property names and the corresponding default
 # values.
 PROPERTIES = {
-        "pos" : (position, position),
-        "xpos" : position,
-        "ypos" : position,
-        "anchor" : (position, position),
-        "xanchor" : position,
-        "yanchor" : position,
-        "xaround" : position,
-        "yaround" : position,
-        "xanchoraround" : float,
-        "yanchoraround" : float,
-        "align" : (float, float),
-        "xalign" : float,
-        "yalign" : float,
-        "rotate" : float,
-        "rotate_pad" : bool,
-        "transform_anchor" : bool,
-        "xzoom" : float,
-        "yzoom" : float,
-        "zoom" : float,
-        "alpha" : float,
-        "additive" : float,
-        "around" : (position, position),
-        "alignaround" : (float, float),
-        "angle" : float,
-        "radius" : float,
-        "crop" : (float, float, float, float),
-        "size" : (int, int),
-        "corner1" : (float, float),
-        "corner2" : (float, float),
-        "subpixel" : bool,
-        "delay" : float,
-        "xoffset" : float,
-        "yoffset" : float,
-        "offset" : (int, int),
-        "xcenter" : position,
-        "ycenter" : position,
-        }
+    "pos" : (position, position),
+    "xpos" : position,
+    "ypos" : position,
+    "anchor" : (position, position),
+    "xanchor" : position,
+    "yanchor" : position,
+    "xaround" : position,
+    "yaround" : position,
+    "xanchoraround" : float,
+    "yanchoraround" : float,
+    "align" : (float, float),
+    "xalign" : float,
+    "yalign" : float,
+    "rotate" : float,
+    "rotate_pad" : bool,
+    "transform_anchor" : bool,
+    "xzoom" : float,
+    "yzoom" : float,
+    "zoom" : float,
+    "nearest" : bool_or_none,
+    "alpha" : float,
+    "additive" : float,
+    "around" : (position, position),
+    "alignaround" : (float, float),
+    "angle" : float,
+    "radius" : float,
+    "crop" : (float, float, float, float),
+    "crop_relative" : bool,
+    "size" : (int, int),
+    "corner1" : (float, float),
+    "corner2" : (float, float),
+    "subpixel" : bool,
+    "delay" : float,
+    "xoffset" : float,
+    "yoffset" : float,
+    "offset" : (int, int),
+    "xcenter" : position,
+    "ycenter" : position,
+    "debug" : any_object,
+    "events" : bool,
+    "xpan" : float_or_none,
+    "ypan" : float_or_none,
+    "xtile" : int,
+    "ytile" : int,
+    }
 
 
 def correct_type(v, b, ty):
@@ -108,13 +139,10 @@ def correct_type(v, b, ty):
         return ty(v)
 
 
-def interpolate(t, a, b, type): #@ReservedAssignment
+def interpolate(t, a, b, type):  # @ReservedAssignment
     """
     Linearly interpolate the arguments.
     """
-
-    if t >= 1.0:
-        return b
 
     # Recurse into tuples.
     if isinstance(b, tuple):
@@ -124,7 +152,7 @@ def interpolate(t, a, b, type): #@ReservedAssignment
         return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, type))
 
     # Deal with booleans, nones, etc.
-    elif b is None or isinstance(b, bool):
+    elif b is None or isinstance(b, (bool, basestring)):
         if t >= 1.0:
             return b
         else:
@@ -139,6 +167,8 @@ def interpolate(t, a, b, type): #@ReservedAssignment
 
 # Interpolate the value of a spline. This code is based on Aenakume's code,
 # from 00splines.rpy.
+
+
 def interpolate_spline(t, spline):
 
     if isinstance(spline[-1], tuple):
@@ -173,25 +203,59 @@ def interpolate_spline(t, spline):
 
     return correct_type(rv, spline[-1], position)
 
+# A list of atl transforms that may need to be compile.
+compile_queue = [ ]
+
+
+def compile_all():
+    """
+    Called after the init phase is finished and transforms are compiled,
+    to compile all transforms.
+    """
+
+    global compile_queue
+
+    for i in compile_queue:
+        if i.atl.constant == GLOBAL_CONST:
+            i.compile()
+
+    compile_queue = [ ]
+
 
 # This is the context used when compiling an ATL statement. It stores the
 # scopes that are used to evaluate the various expressions in the statement,
 # and has a method to do the evaluation and return a result.
 class Context(object):
+
     def __init__(self, context):
         self.context = context
 
-    def eval(self, expr): #@ReservedAssignment
+    def eval(self, expr):  # @ReservedAssignment
         expr = renpy.python.escape_unicode(expr)
-        return eval(expr, renpy.store.__dict__, self.context) #@UndefinedVariable
+        return eval(expr, renpy.store.__dict__, self.context)  # @UndefinedVariable
+
+    def __eq__(self, other):
+        if not isinstance(other, Context):
+            return False
+
+        return self.context == other.context
 
 # This is intended to be subclassed by ATLTransform. It takes care of
 # managing ATL execution, which allows ATLTransform itself to not care
 # much about the contents of this file.
+
+
 class ATLTransformBase(renpy.object.Object):
 
     # Compatibility with older saves.
     parameters = renpy.ast.ParameterInfo([ ], [ ], None, None)
+    parent_transform = None
+    atl_st_offset = 0
+
+    # The block, as first compiled for prediction.
+    predict_block = None
+
+    nosave = [ 'parent_transform' ]
 
     def __init__(self, atl, context, parameters):
 
@@ -211,6 +275,10 @@ class ATLTransformBase(renpy.object.Object):
 
         # The code after it has been compiled into a block.
         self.block = None
+
+        # The same thing, but only if the code was compiled into a block
+        # for prediction purposes only.
+        self.predict_block = None
 
         # The properties of the block, if it contains only an
         # Interpolation.
@@ -233,6 +301,30 @@ class ATLTransformBase(renpy.object.Object):
         # The child transform event we last processed.
         self.last_child_transform_event = None
 
+        # The child, without any transformations.
+        self.raw_child = None
+
+        # The parent transform that was called to create this transform.
+        self.parent_transform = None
+
+        # The offset between st and when this ATL block first executed.
+        self.atl_st_offset = 0
+
+        if renpy.game.context().init_phase:
+            compile_queue.append(self)
+
+    def get_block(self):
+        """
+        Returns the compiled block to use.
+        """
+
+        if self.block:
+            return self.block
+        elif self.predict_block and renpy.display.predict.predicting:
+            return self.predict_block
+        else:
+            return None
+
     def take_execution_state(self, t):
         """
         Updates self to begin executing from the same point as t. This
@@ -241,8 +333,22 @@ class ATLTransformBase(renpy.object.Object):
 
         super(ATLTransformBase, self).take_execution_state(t)
 
-        if t.atl is not self.atl:
+        self.atl_st_offset = None
+
+        if self is t:
             return
+        elif not isinstance(t, ATLTransformBase):
+            return
+        elif t.atl is not self.atl:
+            return
+
+        # Important to do it this way, so we use __eq__. The exception handling
+        # optimistically assumes that uncomparable objects are the same.
+        try:
+            if not (t.context == self.context):
+                return
+        except:
+            pass
 
         self.done = t.done
         self.block = t.block
@@ -256,11 +362,15 @@ class ATLTransformBase(renpy.object.Object):
         self.st_offset = t.st_offset
         self.at_offset = t.at_offset
 
+        self.atl_st_offset = t.atl_st_offset
+
         if self.child is renpy.display.motion.null:
             self.child = t.child
-
+            self.raw_child = t.raw_child
 
     def __call__(self, *args, **kwargs):
+
+        _args = kwargs.pop("_args", None)
 
         context = self.context.context.copy()
 
@@ -309,51 +419,80 @@ class ATLTransformBase(renpy.object.Object):
             child = renpy.display.motion.get_null()
 
         # Create a new ATL Transform.
-        parameters = renpy.ast.ParameterInfo({}, positional, None, None)
+        parameters = renpy.ast.ParameterInfo({ }, positional, None, None)
 
         rv = renpy.display.motion.ATLTransform(
             atl=self.atl,
             child=child,
             style=self.style_arg,
             context=context,
-            parameters=parameters)
+            parameters=parameters,
+            _args=_args,
+            )
 
+        rv.parent_transform = self
         rv.take_state(self)
 
         return rv
 
-
-    def compile(self): #@ReservedAssignment
+    def compile(self):  # @ReservedAssignment
         """
         Compiles the ATL code into a block. As necessary, updates the
         properties.
         """
 
-        if self.parameters.positional and self.parameters.positional[0][1] is None:
-            raise Exception("Cannot compile ATL Transform, as it's missing positional parameter %s." % self.parameters.positional[0])
+        constant = (self.atl.constant == GLOBAL_CONST)
+
+        if not constant:
+            for p in self.parameters.positional:
+                if p not in self.context.context:
+                    raise Exception("Cannot compile ATL Transform at %s:%d, as it's missing positional parameter %s." % (
+                        self.atl.loc[0],
+                        self.atl.loc[1],
+                        self.parameters.positional[0],
+                        ))
+
+        if constant and self.parent_transform:
+            if self.parent_transform.block:
+                self.block = self.parent_transform.block
+                self.properties = self.parent_transform.properties
+                self.parent_transform = None
+                return self.block
 
         old_exception_info = renpy.game.exception_info
 
-        self.block = self.atl.compile(self.context)
+        block = self.atl.compile(self.context)
 
-        if len(self.block.statements) == 1 \
-                and isinstance(self.block.statements[0], Interpolation):
+        if len(block.statements) == 1 and isinstance(block.statements[0], Interpolation):
 
-            interp = self.block.statements[0]
+            interp = block.statements[0]
 
             if interp.duration == 0 and interp.properties:
                 self.properties = interp.properties[:]
 
+        if not constant and renpy.display.predict.predicting:
+            self.predict_block = block
+        else:
+            self.block = block
+            self.predict_block = None
+
         renpy.game.exception_info = old_exception_info
 
+        if constant and self.parent_transform:
+            self.parent_transform.block = self.block
+            self.parent_transform.properties = self.properties
+            self.parent_transform = None
+
+        return block
 
     def execute(self, trans, st, at):
 
         if self.done:
             return None
 
-        if not self.block:
-            self.compile()
+        block = self.get_block()
+        if block is None:
+            block = self.compile()
 
         # Propagate transform_events from children.
         if self.child:
@@ -377,18 +516,19 @@ class ATLTransformBase(renpy.object.Object):
 
         old_exception_info = renpy.game.exception_info
 
+        if (self.atl_st_offset is None) or (st - self.atl_st_offset) < 0:
+            self.atl_st_offset = st
+
         if self.atl.animation:
             timebase = at
         else:
-            timebase = st
+            timebase = st - self.atl_st_offset
 
-        action, arg, pause = self.block.execute(trans, timebase, self.atl_state, event)
+        action, arg, pause = block.execute(trans, timebase, self.atl_state, event)
 
         renpy.game.exception_info = old_exception_info
 
-        # print "Executing", self, self.state, self.xpos, self.ypos
-
-        if action == "continue":
+        if action == "continue" and not renpy.display.predict.predicting:
             self.atl_state = arg
         else:
             self.done = True
@@ -399,14 +539,23 @@ class ATLTransformBase(renpy.object.Object):
         self.atl.predict(self.context)
 
     def visit(self):
-        if not self.block:
-            self.compile()
+        block = self.get_block()
 
-        return self.children + self.block.visit()
+        if block is None:
+            block = self.compile()
 
+        return self.children + block.visit()
+
+# This is used in mark_constant to analyze expressions for constness.
+is_constant_expr = renpy.pyanalysis.Analysis().is_constant_expr
+GLOBAL_CONST = renpy.pyanalysis.GLOBAL_CONST
 
 # The base class for raw ATL statements.
-class RawStatement(renpy.object.Object):
+
+
+class RawStatement(object):
+
+    constant = None
 
     def __init__(self, loc):
         super(RawStatement, self).__init__()
@@ -414,14 +563,24 @@ class RawStatement(renpy.object.Object):
 
     # Compiles this RawStatement into a Statement, by using ctx to
     # evaluate expressions as necessary.
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         raise Exception("Compile not implemented.")
 
     # Predicts the images used by this statement.
     def predict(self, ctx):
         return
 
+    def mark_constant(self):
+        """
+        Sets self.constant to true if all expressions used in this statement
+        and its children are constant.
+        """
+
+        self.constant = 0
+
 # The base class for compiled ATL Statements.
+
+
 class Statement(renpy.object.Object):
 
     def __init__(self, loc):
@@ -461,6 +620,8 @@ class Statement(renpy.object.Object):
         return [ ]
 
 # This represents a Raw ATL block.
+
+
 class RawBlock(RawStatement):
 
     # Should we use the animation timebase or the showing timebase?
@@ -475,7 +636,7 @@ class RawBlock(RawStatement):
 
         self.animation = animation
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
 
         statements = [ i.compile(ctx) for i in self.statements ]
@@ -486,9 +647,20 @@ class RawBlock(RawStatement):
         for i in self.statements:
             i.predict(ctx)
 
+    def mark_constant(self):
+
+        constant = GLOBAL_CONST
+
+        for i in self.statements:
+            i.mark_constant()
+            constant = min(constant, i.constant)
+
+        self.constant = constant
+
 
 # A compiled ATL block.
 class Block(Statement):
+
     def __init__(self, loc, statements):
 
         super(Block, self).__init__(loc)
@@ -543,7 +715,6 @@ class Block(Statement):
                 # this block.
                 if index >= len(self.statements):
                     return "next", target - start, None
-
 
                 # Find the statement and try to run it.
                 stmt = self.statements[index]
@@ -620,6 +791,8 @@ class Block(Statement):
 #
 # We won't decide which it is until runtime, as we need the
 # values of the variables here.
+
+
 class RawMultipurpose(RawStatement):
 
     warp_function = None
@@ -656,7 +829,7 @@ class RawMultipurpose(RawStatement):
     def add_spline(self, name, exprs):
         self.splines.append((name, exprs))
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
 
         compiling(self.loc)
 
@@ -667,7 +840,7 @@ class RawMultipurpose(RawStatement):
             self.warp_function is None and
             not self.properties and
             not self.splines and
-            len(self.expressions) == 1):
+                len(self.expressions) == 1):
 
             expr, withexpr = self.expressions[0]
 
@@ -680,10 +853,11 @@ class RawMultipurpose(RawStatement):
             if isinstance(child, (int, float)):
                 return Interpolation(self.loc, "pause", child, [ ], None, 0, [ ])
 
+            child = renpy.easy.displayable(child)
+
             if isinstance(child, ATLTransformBase):
                 child.compile()
-                return child.block
-
+                return child.get_block()
             else:
                 return Child(self.loc, child, transition)
 
@@ -732,13 +906,32 @@ class RawMultipurpose(RawStatement):
             if value.properties is None:
                 raise Exception("ATL transform %r is too complicated to be included in interpolation." % expr)
 
-
             properties.extend(value.properties)
 
         duration = ctx.eval(self.duration)
         circles = ctx.eval(self.circles)
 
         return Interpolation(self.loc, warper, duration, properties, self.revolution, circles, splines)
+
+    def mark_constant(self):
+        constant = GLOBAL_CONST
+
+        constant = min(constant, is_constant_expr(self.warp_function))
+        constant = min(constant, is_constant_expr(self.duration))
+        constant = min(constant, is_constant_expr(self.circles))
+
+        for _name, expr in self.properties:
+            constant = min(constant, is_constant_expr(expr))
+
+        for _name, exprs in self.splines:
+            for expr in exprs:
+                constant = min(constant, is_constant_expr(expr))
+
+        for expr, withexpr in self.expressions:
+            constant = min(constant, is_constant_expr(expr))
+            constant = min(constant, is_constant_expr(withexpr))
+
+        self.constant = constant
 
     def predict(self, ctx):
 
@@ -759,6 +952,8 @@ class RawMultipurpose(RawStatement):
                 continue
 
 # This lets us have an ATL transform as our child.
+
+
 class RawContainsExpr(RawStatement):
 
     def __init__(self, loc, expr):
@@ -767,13 +962,16 @@ class RawContainsExpr(RawStatement):
 
         self.expression = expr
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
         child = ctx.eval(self.expression)
         return Child(self.loc, child, None)
 
+    def mark_constant(self):
+        self.constant = is_constant_expr(self.expression)
 
-# This allows us to have multiple children, inside a Fixed.
+
+# This allows us to have multiple ATL transforms as children.
 class RawChild(RawStatement):
 
     def __init__(self, loc, child):
@@ -782,13 +980,29 @@ class RawChild(RawStatement):
 
         self.children = [ child ]
 
-    def compile(self, ctx): #@ReservedAssignment
-        box = renpy.display.layout.MultiBox(layout='fixed')
+    def compile(self, ctx):  # @ReservedAssignment
+
+        children = [ ]
 
         for i in self.children:
-            box.add(renpy.display.motion.ATLTransform(i, context=ctx.context))
+            children.append(renpy.display.motion.ATLTransform(i, context=ctx.context))
+
+        box = renpy.display.layout.MultiBox(layout='fixed')
+
+        for i in children:
+            box.add(i)
 
         return Child(self.loc, box, None)
+
+    def mark_constant(self):
+
+        constant = GLOBAL_CONST
+
+        for i in self.children:
+            i.mark_constant()
+            constant = min(constant, i.constant)
+
+        self.constant = constant
 
 
 # This changes the child of this statement, optionally with a transition.
@@ -798,7 +1012,7 @@ class Child(Statement):
 
         super(Child, self).__init__(loc)
 
-        self.child = renpy.easy.displayable(child)
+        self.child = child
         self.transition = transition
 
     def execute(self, trans, st, state, event):
@@ -807,13 +1021,20 @@ class Child(Statement):
 
         old_child = trans.raw_child
 
+        child = self.child
+
+        if child._duplicatable:
+            child = self.child._duplicate(trans._args)
+            child._unique()
+
         if (old_child is not None) and (old_child is not renpy.display.motion.null) and (self.transition is not None):
             child = self.transition(old_widget=old_child,
-                                    new_widget=self.child)
+                                    new_widget=child)
+            child._unique()
         else:
-            child = self.child
+            child = child
 
-        trans.set_child(child)
+        trans.set_child(child, duplicate=False)
         trans.raw_child = self.child
 
         return "next", st, None
@@ -941,7 +1162,6 @@ class Interpolation(Statement):
             trans.state.angle = interpolate(complete, startangle, endangle, float)
             trans.state.radius = interpolate(complete, startradius, endradius, float)
 
-
         # Handle any splines we might have.
         for name, values in splines:
             value = interpolate_spline(complete, values)
@@ -965,7 +1185,7 @@ class RawRepeat(RawStatement):
 
         self.repeats = repeats
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
 
         compiling(self.loc)
 
@@ -975,6 +1195,10 @@ class RawRepeat(RawStatement):
             repeats = ctx.eval(repeats)
 
         return Repeat(self.loc, repeats)
+
+    def mark_constant(self):
+        self.constant = is_constant_expr(self.repeats)
+
 
 class Repeat(Statement):
 
@@ -997,12 +1221,21 @@ class RawParallel(RawStatement):
         super(RawParallel, self).__init__(loc)
         self.blocks = [ block ]
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         return Parallel(self.loc, [i.compile(ctx) for i in self.blocks])
 
     def predict(self, ctx):
         for i in self.blocks:
             i.predict(ctx)
+
+    def mark_constant(self):
+        constant = GLOBAL_CONST
+
+        for i in self.blocks:
+            i.mark_constant()
+            constant = min(constant, i.constant)
+
+        self.constant = constant
 
 
 class Parallel(Statement):
@@ -1059,13 +1292,23 @@ class RawChoice(RawStatement):
 
         self.choices = [ (chance, block) ]
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
         return Choice(self.loc, [ (ctx.eval(chance), block.compile(ctx)) for chance, block in self.choices])
 
     def predict(self, ctx):
         for _i, j in self.choices:
             j.predict(ctx)
+
+    def mark_constant(self):
+        constant = GLOBAL_CONST
+
+        for _chance, block in self.choices:
+            block.mark_constant()
+            constant = min(constant, block.constant)
+
+        self.constant = constant
+
 
 class Choice(Statement):
 
@@ -1117,9 +1360,13 @@ class RawTime(RawStatement):
         super(RawTime, self).__init__(loc)
         self.time = time
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
         return Time(self.loc, ctx.eval(self.time))
+
+    def mark_constant(self):
+        self.constant = is_constant_expr(self.time)
+
 
 class Time(Statement):
 
@@ -1136,12 +1383,15 @@ class Time(Statement):
 
 class RawOn(RawStatement):
 
-    def __init__(self, loc, name, block):
+    def __init__(self, loc, names, block):
         super(RawOn, self).__init__(loc)
 
-        self.handlers = { name : block }
+        self.handlers = { }
 
-    def compile(self, ctx): #@ReservedAssignment
+        for i in names:
+            self.handlers[i] = block
+
+    def compile(self, ctx):  # @ReservedAssignment
 
         compiling(self.loc)
 
@@ -1155,6 +1405,16 @@ class RawOn(RawStatement):
     def predict(self, ctx):
         for i in self.handlers.itervalues():
             i.predict(ctx)
+
+    def mark_constant(self):
+        constant = GLOBAL_CONST
+
+        for block in self.handlers.itervalues():
+            block.mark_constant()
+            constant = min(constant, block.constant)
+
+        self.constant = constant
+
 
 class On(Statement):
 
@@ -1177,13 +1437,13 @@ class On(Statement):
         # handle it.
         if event in self.handlers:
 
-            # Do not allow people to abort the hide handler with another
-            # event.
-            if name != "hide":
+            # Do not allow people to abort the hide or replaced event.
+            lock_event = (name == "hide" and trans.hide_request) or (name == "replaced" and trans.replaced_request)
+
+            if not lock_event:
                 name = event
                 start = st
                 cstate = None
-
 
         while True:
 
@@ -1243,8 +1503,11 @@ class RawEvent(RawStatement):
 
         self.name = name
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         return Event(self.loc, self.name)
+
+    def mark_constant(self):
+        self.constant = GLOBAL_CONST
 
 
 class Event(Statement):
@@ -1265,9 +1528,12 @@ class RawFunction(RawStatement):
 
         self.expr = expr
 
-    def compile(self, ctx): #@ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
         return Function(self.loc, ctx.eval(self.expr))
+
+    def mark_constant(self):
+        self.constant = is_constant_expr(self.expr)
 
 
 class Function(Statement):
@@ -1354,14 +1620,22 @@ def parse_atl(l):
 
         elif l.keyword('on'):
 
-            name = l.require(l.word)
+            names = [ l.require(l.word) ]
+
+            while l.match(','):
+                name = l.word()
+
+                if name is None:
+                    break
+
+                names.append(name)
 
             l.require(':')
             l.expect_eol()
             l.expect_block('on')
 
             block = parse_atl(l.subblock_lexer())
-            statements.append(RawOn(loc, name, block))
+            statements.append(RawOn(loc, names, block))
 
         elif l.keyword('time'):
             time = l.require(l.simple_expression)
@@ -1407,7 +1681,6 @@ def parse_atl(l):
             # First, look for a warper.
             cp = l.checkpoint()
             warper = l.name()
-
 
             if warper in warpers:
                 duration = l.require(l.simple_expression)
@@ -1502,13 +1775,11 @@ def parse_atl(l):
 
             statements.append(rm)
 
-
         if l.eol():
             l.advance()
             continue
 
         l.require(",", "comma or end of line")
-
 
     # Merge together statements that need to be merged together.
 

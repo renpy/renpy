@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,13 +23,17 @@
 # http://www.csn.ul.ie/~caolan/publink/winresdump/winresdump/doc/pefile.html
 # Contains a reasonable description of the format.
 
+from __future__ import print_function
+
 import struct
 import sys
 import array
-import pefile # @UnresolvedImport
+import pefile  # @UnresolvedImport
 
 # This class performs various operations on memory-loaded binary files,
 # including modifications.
+
+
 class BinFile(object):
 
     def set_u32(self, addr, value):
@@ -74,11 +78,11 @@ class BinFile(object):
     def tostring(self):
         return self.a.tostring()
 
-    def substring(self, start, len): #@ReservedAssignment
+    def substring(self, start, len):  # @ReservedAssignment
         return self.a[start:start+len].tostring()
 
     def __init__(self, data):
-        self.a = array.array('B')
+        self.a = array.array(b'B')
         self.a.fromstring(data)
 
 ##############################################################################
@@ -89,6 +93,8 @@ class BinFile(object):
 resource_virtual = 0
 
 # This parses a data block out of the resources.
+
+
 def parse_data(bf, offset):
     bf.seek(offset)
     data_offset = bf.u32()
@@ -102,16 +108,18 @@ def parse_data(bf, offset):
     for _i in range(data_len):
         l.append(chr(bf.u8()))
 
-    return (code_page, "".join(l))
+    return (code_page, b"".join(l))
 
 # This parses a resource directory.
+
+
 def parse_directory(bf, offset):
 
     bf.seek(offset)
-    char = bf.u32() #@UnusedVariable
-    timedate = bf.u32() #@UnusedVariable
-    major = bf.u16() #@UnusedVariable
-    minor = bf.u16() #@UnusedVariable
+    char = bf.u32()  # @UnusedVariable
+    timedate = bf.u32()  # @UnusedVariable
+    major = bf.u16()  # @UnusedVariable
+    minor = bf.u16()  # @UnusedVariable
     n_named = bf.u16()
     n_id = bf.u16()
 
@@ -143,32 +151,33 @@ def parse_directory(bf, offset):
 def show_resources(d, prefix):
 
     if not isinstance(d, dict):
-        print prefix, "Codepage", d[0], "length", len(d[1])
+        print(prefix, "Codepage", d[0], "length", len(d[1]))
         return
 
     for k in d:
-        print prefix, k
+        print(prefix, k)
         show_resources(d[k], prefix + "  ")
 
 ##############################################################################
 # These functions repack the resources into a new resource segment. Here,
 # the offset is relative to the start of the resource segment.
 
+
 class Packer(object):
 
     def pack(self, d):
-        self.data = ""
+        self.data = b""
         self.data_offset = 0
 
-        self.entries = ""
+        self.entries = b""
         self.entries_offset = 0
 
         head = self.pack_dict(d, 0)
 
-        self.data = ""
+        self.data = b""
         self.data_offset = len(head) + len(self.entries)
 
-        self.entries = ""
+        self.entries = b""
         self.entries_offset = len(head)
 
         return self.pack_dict(d, 0) + self.entries + self.data
@@ -178,7 +187,7 @@ class Packer(object):
 
         l = len(s)
         s = s.encode("utf-16le")
-        self.data += struct.pack("<H", l) + s + "\0\0"
+        self.data += struct.pack("<H", l) + s + b"\0\0"
 
         return rv
 
@@ -188,7 +197,7 @@ class Packer(object):
         rv = len(self.entries) + self.entries_offset
 
         if len(self.data) % 2:
-            self.data += "P"
+            self.data += b"P"
 
         daddr = len(self.data) + self.data_offset
 
@@ -208,7 +217,7 @@ class Packer(object):
 
         offset += len(rv) + (len(name_entries) + len(id_entries)) * 8
 
-        rest = ""
+        rest = b""
 
         for (name, value) in name_entries + id_entries:
             if isinstance(name, unicode):
@@ -229,6 +238,8 @@ class Packer(object):
 ##############################################################################
 # This loads in an icon file, and returns a dictionary that is suitable for
 # use in the resources of an exe file.
+
+
 def load_icon(fn):
     f = BinFile(file(fn, "rb").read())
 
@@ -259,7 +270,6 @@ def load_icon(fn):
 
         rv[3][i + 1] = { 0 : (1252, f.substring(offset, size)) }
 
-
         group += struct.pack("BBBBHHIH", width, height, colors, reserved,
                              planes, bpp, size, i + 1)
 
@@ -279,7 +289,7 @@ def change_icons(oldexe, icofn):
     pe = pefile.PE(oldexe)
 
     for s in pe.sections:
-        if s.Name == ".rsrc\0\0\0":
+        if s.Name == b".rsrc\0\0\0":
             rsrc_section = s
             break
     else:
@@ -311,7 +321,7 @@ def change_icons(oldexe, icofn):
 
     if len(rsrc) % alignment:
         pad = alignment - (len(rsrc) % alignment)
-        padding = "RENPYVNE" * (pad / 8 + 1)
+        padding = b"RENPYVNE" * (pad / 8 + 1)
         padding = padding[:pad]
         rsrc += padding
 
@@ -346,4 +356,3 @@ if __name__ == "__main__":
     f = file(sys.argv[3], "wb")
     f.write(change_icons(sys.argv[1], sys.argv[2]))
     f.close()
-

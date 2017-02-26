@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -93,17 +93,22 @@ init -1500 python:
         if not __spdirty.flag:
             return
 
+        renpy.style.rebuild()
+
+        __spdirty.flag = False
+
+    def __apply_styles():
+        """
+        Called to apply the style preferences
+        """
+
         for preference, alternatives in __preferences.iteritems():
 
             alt = persistent._style_preferences.get(preference, None)
 
-            for alternative, style, property, value in alternatives:
+            for alternative, s, property, value in alternatives:
                 if alternative == alt:
-                    setattr(style, property, value)
-
-        renpy.style.rebuild()
-
-        __spdirty.flag = False
+                    setattr(s, property, value)
 
     def __check(preference, alternative=None):
 
@@ -116,7 +121,7 @@ init -1500 python:
 
     def __change_language():
         __spdirty.flag = True
-
+        __update()
 
     def __set_style_preference(preference, alternative):
         """
@@ -154,6 +159,7 @@ init -1500 python:
 
         return persistent._style_preferences[preference]
 
+    @renpy.pure
     class StylePreference(Action):
         """
         :doc: style_preferences
@@ -186,7 +192,7 @@ init -1500 python:
 
     config.interact_callbacks.append(__update)
     config.change_language_callbacks.append(__change_language)
+    config.build_styles_callbacks.append(__apply_styles)
 
 init 1500 python:
-
     __init()

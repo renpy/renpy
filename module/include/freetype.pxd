@@ -597,6 +597,7 @@ cdef extern from "pyfreetype.h":
                   FT_Fixed             miter_limit )
 
     void FT_Glyph_StrokeBorder(FT_Glyph *, FT_Stroker, FT_Bool, FT_Bool)
+    void FT_Glyph_Stroke(FT_Glyph *, FT_Stroker, FT_Bool)
 
     void FT_Stroker_Done(FT_Stroker)
 

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -44,8 +44,6 @@ init -1600 python hide:
     for i in xrange(0, 8):
         renpy.music.register_channel(i)
 
-    renpy.music.register_channel("movie", "music", False, stop_on_mute=False, buffer_queue=False)
-
     # Set up default names for some of the channels.
     renpy.music.alias_channel(0, "sound")
     renpy.music.alias_channel(7, "music")
@@ -54,6 +52,9 @@ init -1600 python hide:
 init 1600:
 
     python hide:
+
+        if not renpy.music.channel_defined("movie"):
+            renpy.music.register_channel("movie", "music", False, stop_on_mute=False, movie=True)
 
         if not config.has_music and not config.has_sound:
             mixers = None
@@ -84,3 +85,4 @@ init 1600:
                 else:
                     renpy.music.set_music(i, False, default=True)
 
+        _preferences.init_mixers()

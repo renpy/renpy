@@ -36,7 +36,7 @@ Creating an image gallery consists of the following four steps.
    2. Optionally, add one or more unlock conditions to the button by
       calling :meth:`Gallery.unlock` or :meth:`Gallery.condition`.
 
-   3. Declare an image by calling :meth:`Gallery.image` with one or
+   3. Declare an image by calling :meth:`Gallery.image` with one or more
       displayables as arguments. Or call the convenience method
       :meth:`Gallery.unlock_image` instead.
 
@@ -332,7 +332,10 @@ There is one store variable used by replay mode:
 
 In addition, :var:`config.enter_replay_transition` and
 :var:`config.exit_replay_transition` are used when entering and exiting
-replay mode, respectively.
+replay mode, respectively. :var:`config.replay_scope` adds variables
+to the cleaned store when entering a replay, and by default sets
+:var:`_game_menu_screen` to cause right-clicking in a replay to
+default to showing the preferences screen.
 
 The following variables and actions are used in replay mode:
 

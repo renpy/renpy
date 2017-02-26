@@ -240,7 +240,8 @@ init -1 python hide:
     ## The default text speed in characters per second. 0 is infinite.
     config.default_text_cps = 0
 
-
+    ## Since we're using a very old interface here, set config.default_afm_enable = None
+    config.default_afm_enable = None
 
 ## This section contains information about how to build your project into
 ## distribution files.
@@ -305,3 +306,4 @@ init python:
     build.documentation('*.html')
     build.documentation('*.txt')
 
+define build.itch_project = 'renpytom/the-question'

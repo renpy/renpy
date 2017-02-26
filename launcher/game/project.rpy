@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,9 +22,9 @@
 # Code that manages projects.
 
 init python:
-    try:
+    if renpy.windows:
         import EasyDialogsWin as EasyDialogs
-    except:
+    else:
         EasyDialogs = None
 
     import os
@@ -48,11 +48,15 @@ init python in project:
         _("After making changes to the script, press shift+R to reload your game."),
         _("Press shift+O (the letter) to access the console."),
         _("Press shift+D to access the developer menu."),
+        _("Have you backed up your projects recently?"),
     ]
 
     class Project(object):
 
-        def __init__(self, path):
+        def __init__(self, path, name=None):
+
+            if name is None:
+                name = os.path.basename(path)
 
             while path.endswith("/"):
                 path = path[:-1]
@@ -60,8 +64,7 @@ init python in project:
             if not os.path.exists(path):
                 raise Exception("{} does not exist.".format(path))
 
-            # The name of the project.
-            self.name = os.path.basename(path)
+            self.name = name
 
             # The path to the project.
             self.path = path
@@ -116,7 +119,23 @@ init python in project:
             data = self.data
 
             data.setdefault("build_update", False)
-            data.setdefault("packages", [ "all" ])
+            data.setdefault("packages", [ "pc", "mac" ])
+            data.setdefault("add_from", True)
+            data.setdefault("force_recompile", True)
+
+            if "renamed_all" not in data:
+                dp = data["packages"]
+
+                if "all" in dp:
+                    dp.remove("all")
+
+                    if "pc" not in dp:
+                        dp.append("pc")
+
+                    if "mac" not in dp:
+                        dp.append("mac")
+
+                data["renamed_all"] = True
 
         def make_tmp(self):
             """
@@ -127,10 +146,10 @@ init python in project:
             if self.tmp and os.path.isdir(self.tmp):
                 return
 
-            tmp = os.path.join(self.path, "tmp")
+            tmp = os.path.join(config.renpy_base, "tmp", self.name)
 
             try:
-                os.mkdir(tmp)
+                os.makedirs(tmp)
             except:
                 pass
 
@@ -166,7 +185,7 @@ init python in project:
             self.make_tmp()
 
             # Find the python executable to run.
-            executable_path = os.path.dirname(sys.executable)
+            executable_path = os.path.dirname(renpy.fsdecode(sys.executable))
 
             if renpy.renpy.windows:
                 extension = ".exe"
@@ -206,19 +225,24 @@ init python in project:
             environ = dict(os.environ)
             environ.update(env)
 
-            for k in environ:
-                environ[k] = renpy.fsencode(environ[k])
+            encoded_environ = { }
+
+            for k, v in environ.items():
+                if v is None:
+                    continue
+
+                encoded_environ[renpy.fsencode(k)] = renpy.fsencode(v)
 
             # Launch the project.
             cmd = [ renpy.fsencode(i) for i in cmd ]
 
-            p = subprocess.Popen(cmd, env=environ)
+            p = subprocess.Popen(cmd, env=encoded_environ)
 
             if wait:
                 if p.wait():
                     interface.error(_("Launching the project failed."), _("Please ensure that your project launches normally before running this command."))
 
-        def update_dump(self, force=False, gui=True):
+        def update_dump(self, force=False, gui=True, compile=False):
             """
             If the dumpfile does not exist, runs Ren'Py to create it. Otherwise,
             loads it in iff it's newer than the one that's already loaded.
@@ -231,7 +255,10 @@ init python in project:
                 if gui:
                     interface.processing(_("Ren'Py is scanning the project..."))
 
-                self.launch(["quit"], wait=True)
+                if compile:
+                    self.launch(["compile", "--keep-orphan-rpyc" ], wait=True)
+                else:
+                    self.launch(["quit"], wait=True)
 
             if not os.path.exists(dump_filename):
                 self.dump["error"] = True
@@ -314,9 +341,17 @@ init python in project:
             """
 
             rv = [ ]
-            rv.extend(i for i, isdir in util.walk(self.path) if (not isdir) and (i.endswith(".rpy") or i.endswith(".rpym")) )
+            rv.extend(i for i, isdir in util.walk(self.path)
+                if (not isdir) and (i.endswith(".rpy") or i.endswith(".rpym")) and (not i.startswith("tmp/")) )
 
             return rv
+
+        def exists(self, fn):
+            """
+            Returns true if the file exists in the game.
+            """
+
+            return os.path.exists(os.path.join(self.path, fn))
 
 
     class ProjectManager(object):
@@ -368,6 +403,33 @@ init python in project:
             self.projects.sort(key=lambda p : p.name.lower())
             self.templates.sort(key=lambda p : p.name.lower())
 
+
+        def find_basedir(self, d):
+            """
+            Try to find a project basedir in d.
+            """
+
+            def has_game(dn):
+                return os.path.isdir(os.path.join(dn, "game"))
+
+            if has_game(d):
+                return d
+
+            dn = os.path.join(d, "Contents", "Resources", "autorun")
+            if has_game(dn):
+                return dn
+
+            for dn in os.listdir(d):
+                if not dn.endswith(".app"):
+                    continue
+
+                dn = os.path.join(d, dn, "Contents", "Resources", "autorun")
+
+                if has_game(dn):
+                    return dn
+
+            return None
+
         def scan_directory(self, d):
             """
             Scans for projects in directories directly underneath `d`.
@@ -388,17 +450,21 @@ init python in project:
                 if not os.path.isdir(ppath):
                     continue
 
-                # A project has either a game/ directory, or a project.json
-                # file.
-                if (not os.path.isdir(os.path.join(ppath, "game"))) and (not os.path.exists(os.path.join(ppath, "project.json"))):
+                try:
+                    ppath = self.find_basedir(ppath)
+                except:
+                    continue
+
+                if ppath is None:
                     continue
 
                 if ppath in self.scanned:
                     continue
+
                 self.scanned.add(ppath)
 
                 # We have a project directory, so create a Project.
-                p = Project(ppath)
+                p = Project(ppath, pdir)
 
                 project_type = p.data.get("type", "normal")
 
@@ -535,6 +601,11 @@ init python in project:
     if isinstance(persistent.projects_directory, str):
         persistent.projects_directory = renpy.fsdecode(persistent.projects_directory)
 
+init 10 python:
+    if persistent.projects_directory is not None:
+        if not directory_is_writable(persistent.projects_directory):
+            persistent.projects_directory = None
+
 ###############################################################################
 # Code to choose the projects directory.
 
@@ -544,62 +615,12 @@ label choose_projects_directory:
 
         interface.interaction(_("PROJECTS DIRECTORY"), _("Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"), _("This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."),)
 
-        path = persistent.projects_directory
+        path, is_default = choose_directory(persistent.projects_directory)
 
-        if path:
-            default_path = path
-        else:
-            try:
-                default_path = os.path.dirname(os.path.abspath(config.renpy_base))
-            except:
-                default_path = os.path.abspath(config.renpy_base)
-
-
-        if EasyDialogs:
-
-            choice = EasyDialogs.AskFolder(defaultLocation=default_path, wanted=unicode)
-
-            if choice is not None:
-                path = choice
-            else:
-                path = None
-
-        else:
-
-            try:
-
-                cmd = [ "/usr/bin/python", os.path.join(config.gamedir, "tkaskdir.py"), renpy.fsencode(default_path) ]
-
-                p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-                choice = p.stdout.read()
-                code = p.wait()
-
-            except:
-                import traceback
-                traceback.print_exc()
-
-                code = 0
-                choice = ""
-                path = None
-
-                interface.error(_("Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."), label=None)
-
-            if code:
-                interface.error(_("Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."), label=None)
-
-            elif choice:
-                path = renpy.fsdecode(choice)
-
-        if path is None:
-            path = default_path
+        if is_default:
             interface.info(_("Ren'Py has set the projects directory to:"), "[path!q]", path=path)
 
-        path = renpy.fsdecode(path)
-
-        if os.path.isdir(path):
-            persistent.projects_directory = path
-        else:
-            path = os.path.abspath(config.renpy_base)
+        persistent.projects_directory = path
 
         project.manager.scan()
 
@@ -613,7 +634,7 @@ init python:
 
         args = ap.parse_args()
 
-        persistent.projects_directory = args.projects
+        persistent.projects_directory = renpy.fsdecode(args.projects)
         renpy.save_persistent()
 
         return False
@@ -624,7 +645,7 @@ init python:
         ap = renpy.arguments.ArgumentParser()
         args = ap.parse_args()
 
-        print persistent.projects_directory
+        print renpy.fsencode(persistent.projects_directory)
 
         return False
 

@@ -12,18 +12,29 @@ displayables can be used in many ways.
 * Assignment to certain style properties.
 
 When a Ren'Py function or variable expects a displayable, there are
-four things that can be provided:
+five things that can be provided:
 
 * An object of type Displayable, created by calling one of the
   functions given below.
 * A string with a dot (.) in it. Such a string is interpreted as
   a filename by :func:`Image`.
-* A color. A color may either be given as a hexidecimal color string in "#rgb",
-  "#rgba", "#rrggbb", or "#rrggbbaa" form, or an (r, g, b, a) tuple,
+* A color. A color may either be given as a hexadecimal color string in "#rgb",
+  "#rgba", "#rrggbb", or "#rrggbbaa" form, a :class:`Color`, or an (r, g, b, a) tuple,
   where each component is an integer between 0 and 255. Colors are
   passed to :func:`Solid`.
 * An image name. Any other string is interpreted as a reference to an
   image defined with the image statement.
+* A list. If a list is provided, each item is expanded as described
+  below, and checked to see if it matches a filename or image name.
+  If so, expansion stops and the matched thing is then processed
+  as described above.
+
+Strings may have one or more square-bracket substitutions in them,
+such as "eileen [mood]" or "eileen_[outfit]_[mood].png". When such a
+string is given, a dynamic image is created. A dynamic image has
+:ref:`text interpolation <text-interpolation>` performed at the start
+of each interaction (such as say statements and menus). The resulting
+string is processed according to the rules above.
 
 .. _images:
 
@@ -48,6 +59,15 @@ properties.
     # Using Image allows us to specify a default position as part of
     # an image.
     image logo right = Image("logo.png", xalign=1.0)
+
+There are three image file formats we recommend you use:
+
+* Webp
+* Png
+* Jpg
+
+Non-animated Gif and Bmp files are also supported, but should not be
+used in modern games.
 
 Loading an Image from from a file on disk and decoding it so it can be
 drawn to the screen takes a long amount of time. While measured in the
@@ -89,6 +109,11 @@ size (LiveComposite, LiveCrop, Null). They are not image manipulators.
 Image-like displayables take :ref:`position-style-properties`.
 
 .. include:: inc/disp_imagelike
+
+Text Displayables
+-----------------
+
+See :ref:`text-displayables`.
 
 
 Dynamic Displayables
@@ -204,3 +229,20 @@ more efficient, in both time and image cache space, than using
 two im.MatrixColors.
 
 .. include:: inc/im_matrixcolor
+
+Placeholders
+------------
+
+The Placeholder displayable is used to display background or character
+images as appropriate. Placeholders are used automatically when an undefined
+image is used in developer mode. Placeholder displayables can also be used
+manually when the defaults are inappropriate. ::
+
+    # By default, the girl placeholer will be used.
+    image sue = Placeholder("boy")
+
+    label start:
+         show sue angry
+         "Sue" "How do you do? Now you gonna die!"
+
+.. include:: inc/placeholder

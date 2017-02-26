@@ -1,281 +1,335 @@
-﻿translate french strings:
+﻿
+translate french strings:
 
-    # renpy/common/00updater.rpy:1258
-    old "Updater"
-    new "Programme de mise à jour"
+    # 00action_file.rpy:26
+    old "{#weekday}Monday"
+    new "{#weekday}Monday"
 
-    # renpy/common/00updater.rpy:1267
-    old "This program is up to date."
-    new "Ce programme est à jour."
+    # 00action_file.rpy:26
+    old "{#weekday}Tuesday"
+    new "{#weekday}Tuesday"
 
-    # renpy/common/00updater.rpy:1269
-    old "[u.version] is available. Do you want to install it?"
-    new "La version [u.version]. Voulez-vous l'installer ?"
+    # 00action_file.rpy:26
+    old "{#weekday}Wednesday"
+    new "{#weekday}Wednesday"
 
-    # renpy/common/00updater.rpy:1271
-    old "Preparing to download the updates."
-    new "Préparation du téléchargement de la mise à jour."
+    # 00action_file.rpy:26
+    old "{#weekday}Thursday"
+    new "{#weekday}Thursday"
 
-    # renpy/common/00updater.rpy:1273
-    old "Downloading the updates."
-    new "Téléchargement de la mise à jour."
+    # 00action_file.rpy:26
+    old "{#weekday}Friday"
+    new "{#weekday}Friday"
 
-    # renpy/common/00updater.rpy:1275
-    old "Unpacking the updates."
-    new "Dépaquetage de la mise à jour."
+    # 00action_file.rpy:26
+    old "{#weekday}Saturday"
+    new "{#weekday}Saturday"
 
-    # renpy/common/00updater.rpy:1279
-    old "The updates have been installed. The program will restart."
-    new "La mise à jour a bien été effectuée. Le programme va redémarrer."
+    # 00action_file.rpy:26
+    old "{#weekday}Sunday"
+    new "{#weekday}Sunday"
 
-    # renpy/common/00updater.rpy:1281
-    old "The updates have been installed."
-    new "La mise à jour a bien été effectuée."
+    # 00action_file.rpy:37
+    old "{#weekday_short}Mon"
+    new "{#weekday_short}Mon"
 
-    # renpy/common/00updater.rpy:1283
-    old "The updates were cancelled."
-    new "La mise à jour a été annullée."
+    # 00action_file.rpy:37
+    old "{#weekday_short}Tue"
+    new "{#weekday_short}Tue"
 
-    # renpy/common/_layout/classic_load_save.rpym:120
-    old "Empty Slot."
-    new "Emplacement vide."
+    # 00action_file.rpy:37
+    old "{#weekday_short}Wed"
+    new "{#weekday_short}Wed"
 
-    # renpy/common/_layout/classic_load_save.rpym:152
-    old "a"
-    new "a"
+    # 00action_file.rpy:37
+    old "{#weekday_short}Thu"
+    new "{#weekday_short}Thu"
 
-    # renpy/common/_layout/classic_load_save.rpym:161
-    old "q"
-    new "q"
+    # 00action_file.rpy:37
+    old "{#weekday_short}Fri"
+    new "{#weekday_short}Fri"
 
-    # renpy/common/_layout/classic_joystick_preferences.rpym:76
-    old "Joystick Mapping"
-    new "Joystick"
+    # 00action_file.rpy:37
+    old "{#weekday_short}Sat"
+    new "{#weekday_short}Sat"
 
-    # renpy/common/00layout.rpy:421
-    old "Are you sure?"
-    new "Êtes-vous sûr ?"
+    # 00action_file.rpy:37
+    old "{#weekday_short}Sun"
+    new "{#weekday_short}Sun"
 
-    # renpy/common/00layout.rpy:422
-    old "Are you sure you want to delete this save?"
-    new "Êtes-vous sûr de vouloir supprimer cette sauvegarde ?"
+    # 00action_file.rpy:47
+    old "{#month}January"
+    new "{#month}January"
 
-    # renpy/common/00layout.rpy:423
-    old "Are you sure you want to overwrite your save?"
-    new "Êtes-vous sûr de vouloir écraser cette sauvegarde ?"
+    # 00action_file.rpy:47
+    old "{#month}February"
+    new "{#month}February"
 
-    # renpy/common/00layout.rpy:424
-    old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "En effectuant ce chargement, vous perderez votre avancement non sauvegardé.\nÊtes-vous sûr de vouloire faire ça ?"
+    # 00action_file.rpy:47
+    old "{#month}March"
+    new "{#month}March"
 
-    # renpy/common/00layout.rpy:425
-    old "Are you sure you want to quit?"
-    new "Êtes-vous sûr de vouloir quitter ?"
+    # 00action_file.rpy:47
+    old "{#month}April"
+    new "{#month}April"
 
-    # renpy/common/00layout.rpy:426
-    old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "Êtes-vous sûr de vouloir retourner au menu principal ?\nVous perdrez votre avancement non sauvegardé."
+    # 00action_file.rpy:47
+    old "{#month}May"
+    new "{#month}May"
 
-    # renpy/common/00keymap.rpy:167
-    old "Saved screenshot as %s."
-    new "La capture d'écran a été enregistrée en tant que %s"
+    # 00action_file.rpy:47
+    old "{#month}June"
+    new "{#month}June"
 
-    # renpy/common/00gltest.rpy:50
-    old "Graphics Acceleration"
-    new "Accélération graphique"
+    # 00action_file.rpy:47
+    old "{#month}July"
+    new "{#month}July"
 
-    # renpy/common/00gltest.rpy:54
-    old "Automatically Choose"
-    new "Choix automatique"
+    # 00action_file.rpy:47
+    old "{#month}August"
+    new "{#month}August"
 
-    # renpy/common/00gltest.rpy:59
-    old "Force Angle/DirectX Renderer"
-    new "Forcer le rendu Angle/DirectX"
+    # 00action_file.rpy:47
+    old "{#month}September"
+    new "{#month}September"
 
-    # renpy/common/00gltest.rpy:63
-    old "Force OpenGL Renderer"
-    new "Forcer le rendu OpenGL"
+    # 00action_file.rpy:47
+    old "{#month}October"
+    new "{#month}October"
 
-    # renpy/common/00gltest.rpy:67
-    old "Force Software Renderer"
-    new "Forcer le rendu logiciel"
+    # 00action_file.rpy:47
+    old "{#month}November"
+    new "{#month}November"
 
-    # renpy/common/00gltest.rpy:73
-    old "Changes will take effect the next time this program is run."
-    new "Les changement seront pris en compte au prochin démarrage du programme."
+    # 00action_file.rpy:47
+    old "{#month}December"
+    new "{#month}December"
 
-    # renpy/common/00gltest.rpy:77
-    old "Quit"
-    new "Quitter"
+    # 00action_file.rpy:63
+    old "{#month_short}Jan"
+    new "{#month_short}Jan"
 
-    # renpy/common/00gltest.rpy:82
-    old "Return"
-    new "Retour"
+    # 00action_file.rpy:63
+    old "{#month_short}Feb"
+    new "{#month_short}Feb"
 
-    # renpy/common/00gltest.rpy:112
-    old "Performance Warning"
-    new "Avertissement sur les performances"
+    # 00action_file.rpy:63
+    old "{#month_short}Mar"
+    new "{#month_short}Mar"
 
-    # renpy/common/00gltest.rpy:117
-    old "This computer is using software rendering."
-    new "Cet ordinateur utilise le rendu logiciel."
+    # 00action_file.rpy:63
+    old "{#month_short}Apr"
+    new "{#month_short}Apr"
 
-    # renpy/common/00gltest.rpy:119
-    old "This computer is not using shaders."
-    new "Cet ordinateur n'utilise pas les shaders."
+    # 00action_file.rpy:63
+    old "{#month_short}May"
+    new "{#month_short}May"
 
-    # renpy/common/00gltest.rpy:121
-    old "This computer is displaying graphics slowly."
-    new "Cet ordinateur affiche lentement les graphismes."
+    # 00action_file.rpy:63
+    old "{#month_short}Jun"
+    new "{#month_short}Jun"
 
-    # renpy/common/00gltest.rpy:123
-    old "This computer has a problem displaying graphics: [problem]."
-    new "Cet ordinateur rencontre des difficultés à afficher les graphismes: [problem]."
+    # 00action_file.rpy:63
+    old "{#month_short}Jul"
+    new "{#month_short}Jul"
 
-    # renpy/common/00gltest.rpy:128
-    old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
-    new "Les pilotes graphiques ne semblent pas à jour ou dysfonctionnent. Cela peut entraîner des ralentissements ou de mauvais affichages. Mettre à jour DirectX pourraît régler ce problème."
+    # 00action_file.rpy:63
+    old "{#month_short}Aug"
+    new "{#month_short}Aug"
 
-    # renpy/common/00gltest.rpy:130
-    old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
-    new "Les pilotes graphiques ne semblent pas à jour ou dysfonctionnent. Cela peut entraîner des ralentissements ou de mauvais affichages."
+    # 00action_file.rpy:63
+    old "{#month_short}Sep"
+    new "{#month_short}Sep"
 
-    # renpy/common/00gltest.rpy:135
-    old "Update DirectX"
-    new "Mettre à jour DirectX"
+    # 00action_file.rpy:63
+    old "{#month_short}Oct"
+    new "{#month_short}Oct"
 
-    # renpy/common/00gltest.rpy:141
-    old "Continue, Show this warning again"
-    new "Continer, Afficher cet avertissement la prochaine fois."
+    # 00action_file.rpy:63
+    old "{#month_short}Nov"
+    new "{#month_short}Nov"
 
-    # renpy/common/00gltest.rpy:145
-    old "Continue, Don't show warning again"
-    new "Continer, Ne plus afficher cet avertissement."
+    # 00action_file.rpy:63
+    old "{#month_short}Dec"
+    new "{#month_short}Dec"
 
-    # renpy/common/00gltest.rpy:171
-    old "Updating DirectX."
-    new "Mettre à jour de DirectX en cours"
-
-    # renpy/common/00gltest.rpy:175
-    old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
-    new "La mise à jour de DirectX a débutée. Elle est sans doute minimisée dans la bare de tâche. Merci de suivre les instructions pour installer DirectX."
-
-    # renpy/common/00gltest.rpy:179
-    old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}Note:{/b} le programme d'installation de Microsoft's DirectX va, par defaut, installer la barre d'outils Bing. Si vous ne voulez pas de cette barre, décochez la case appropriée."
-
-    # renpy/common/00gltest.rpy:183
-    old "When setup finishes, please click below to restart this program."
-    new "Lorsque l'instllation sera terminée, cliquez ci-dessous pour redémarrer ce programme."
-
-    # renpy/common/00gltest.rpy:185
-    old "Restart"
-    new "Redémarrer"
-
-    # renpy/common/_errorhandling.rpym:408
-    old "An exception has occurred."
-    new "Une exception a été levée."
-
-    # renpy/common/_errorhandling.rpym:434
-    old "Rollback"
-    new "Revenir en arrière"
-
-    # renpy/common/_errorhandling.rpym:436
-    old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "Tenter de revenir en arrière, vous permet de sauvegarder ou de faire un autre choix."
-
-    # renpy/common/_errorhandling.rpym:439
-    old "Ignore"
-    new "Ignorer"
-
-    # renpy/common/_errorhandling.rpym:441
-    old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "Ignorer l'exception vous permet de continuer. Cela entraîne généralement des erreurs additionelles."
-
-    # renpy/common/_errorhandling.rpym:444
-    old "Reload"
-    new "Recharger"
-
-    # renpy/common/_errorhandling.rpym:446
-    old "Reloads the game from disk, saving and restoring game state if possible."
-    new "Recharger le jeu depuis le disque dur and tenter de restaurer le jeu dans l'état actuel."
-
-    # renpy/common/_errorhandling.rpym:448
-    old "Open Traceback"
-    new "Ouvrir la pile d'appel"
-
-    # renpy/common/_errorhandling.rpym:450
-    old "Opens the traceback.txt file in a text editor."
-    new "Ouvrir traceback.txt dans un éditeur de texte."
-
-    # renpy/common/_errorhandling.rpym:456
-    old "Quits the game."
-    new "Quitter le jeu."
-
-    # renpy/common/_errorhandling.rpym:483
-    old "Parsing the script failed."
-    new "L'analyse du script a échouée."
-
-    # renpy/common/_errorhandling.rpym:510
-    old "Open Parse Errors"
-    new "Ouvrir les erreurs d'analyse."
-
-    # renpy/common/_errorhandling.rpym:512
-    old "Opens the errors.txt file in a text editor."
-    new "Ouvrir errors.txt dans un éditeur de texte."
-
-    # renpy/common/00action_file.rpy:118
+    # 00action_file.rpy:235
     old "%b %d, %H:%M"
     new "%b %d, %H:%M"
 
-    # renpy/common/_compat/gamemenu.rpym:337
-    old "Previous"
-    new "Précédent"
+    # 00action_file.rpy:820
+    old "Quick save complete."
+    new "Sauvegarde rapide effectuée."
 
-    # renpy/common/_compat/gamemenu.rpym:344
-    old "Next"
-    new "Suivant"
+    # 00gui.rpy:227
+    old "Are you sure?"
+    new "Êtes-vous sûr ?"
 
-    # renpy/common/00library.rpy:77
+    # 00gui.rpy:228
+    old "Are you sure you want to delete this save?"
+    new "Êtes-vous sûr de vouloir supprimer cette sauvegarde ?"
+
+    # 00gui.rpy:229
+    old "Are you sure you want to overwrite your save?"
+    new "Êtes-vous sûr de vouloir écraser cette sauvegarde ?"
+
+    # 00gui.rpy:230
+    old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
+    new "Le chargement entraînera la perte des données non sauvegardées.\nÊtes-vous sûr de vouloir faire cela ?"
+
+    # 00gui.rpy:231
+    old "Are you sure you want to quit?"
+    new "Êtes-vous sûr de vouloir quitter ?"
+
+    # 00gui.rpy:232
+    old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
+    new "Êtes-vous sûr de vouloir retourner au menu principal ?\nVous perdrez les données non sauvegardées."
+
+    # 00gui.rpy:233
+    old "Are you sure you want to end the replay?"
+    new "Are you sure you want to end the replay?"
+
+    # 00gui.rpy:234
+    old "Are you sure you want to begin skipping?"
+    new "Êtes-vous sûr de vouloir commencer à sauter ?"
+
+    # 00gui.rpy:235
+    old "Are you sure you want to skip to the next choice?"
+    new "Êtes-vous sûr de vouloir sauter jusqu'au prochain choix ?"
+
+    # 00gui.rpy:236
+    old "Are you sure you want to skip unseen dialogue to the next choice?"
+    new "Are you sure you want to skip unseen dialogue to the next choice?"
+
+    # 00keymap.rpy:250
+    old "Saved screenshot as %s."
+    new "Sauvez cette capture d'écran sous le nom %s."
+
+    # 00library.rpy:142
+    old "Self-voicing disabled."
+    new "Self-voicing disabled."
+
+    # 00library.rpy:143
+    old "Clipboard voicing enabled. "
+    new "Clipboard voicing enabled. "
+
+    # 00library.rpy:144
+    old "Self-voicing enabled. "
+    new "Self-voicing enabled. "
+
+    # 00library.rpy:179
     old "Skip Mode"
-    new "Mode rapide"
+    new "Mode saut"
 
-    # renpy/common/00library.rpy:80
-    old "Fast Skip Mode"
-    new "Mode très rapide"
+    # 00library.rpy:262
+    old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
+    new "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
 
-    # renpy/common/00gallery.rpy:521
+    # 00preferences.rpy:422
+    old "Clipboard voicing enabled. Press 'shift+C' to disable."
+    new "Clipboard voicing enabled. Press 'shift+C' to disable."
+
+    # 00preferences.rpy:424
+    old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
+    new "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
+
+    # 00preferences.rpy:426
+    old "Self-voicing enabled. Press 'v' to disable."
+    new "Self-voicing enabled. Press 'v' to disable."
+
+    # 00iap.rpy:217
+    old "Contacting App Store\nPlease Wait..."
+    new "Contacting App Store\nPlease Wait..."
+
+    # 00updater.rpy:367
+    old "The Ren'Py Updater is not supported on mobile devices."
+    new "The Ren'Py Updater is not supported on mobile devices."
+
+    # 00updater.rpy:486
+    old "An error is being simulated."
+    new "An error is being simulated."
+
+    # 00updater.rpy:662
+    old "Either this project does not support updating, or the update status file was deleted."
+    new "Either this project does not support updating, or the update status file was deleted."
+
+    # 00updater.rpy:676
+    old "This account does not have permission to perform an update."
+    new "This account does not have permission to perform an update."
+
+    # 00updater.rpy:679
+    old "This account does not have permission to write the update log."
+    new "This account does not have permission to write the update log."
+
+    # 00updater.rpy:704
+    old "Could not verify update signature."
+    new "Could not verify update signature."
+
+    # 00updater.rpy:975
+    old "The update file was not downloaded."
+    new "The update file was not downloaded."
+
+    # 00updater.rpy:993
+    old "The update file does not have the correct digest - it may have been corrupted."
+    new "The update file does not have the correct digest - it may have been corrupted."
+
+    # 00updater.rpy:1049
+    old "While unpacking {}, unknown type {}."
+    new "While unpacking {}, unknown type {}."
+
+    # 00updater.rpy:1393
+    old "Updater"
+    new "Mise à jour"
+
+    # 00updater.rpy:1404
+    old "This program is up to date."
+    new "Ce programme est à jour."
+
+    # 00updater.rpy:1406
+    old "[u.version] is available. Do you want to install it?"
+    new "[u.version] est disponible. Voulez-vous l'installer ?"
+
+    # 00updater.rpy:1408
+    old "Preparing to download the updates."
+    new "Préparation au téléchargement de la mise à jour."
+
+    # 00updater.rpy:1410
+    old "Downloading the updates."
+    new "Téléchargement de la mise à jour."
+
+    # 00updater.rpy:1412
+    old "Unpacking the updates."
+    new "Dépaquetage de la mise à jour."
+
+    # 00updater.rpy:1416
+    old "The updates have been installed. The program will restart."
+    new "La mise à jour a été installée. Le programme va redémarrer."
+
+    # 00updater.rpy:1418
+    old "The updates have been installed."
+    new "La mise à jour a été installée."
+
+    # 00updater.rpy:1420
+    old "The updates were cancelled."
+    new "La mise à jour a été annulée."
+
+    # 00gallery.rpy:563
     old "Image [index] of [count] locked."
-    new "Image [index] sur [count] verrouillée."
+    new "Image [index] sur [count] bloquée."
 
-    # renpy/common/00gallery.rpy:539
+    # 00gallery.rpy:583
     old "prev"
-    new "précédent"
+    new "prec."
 
-    # renpy/common/00gallery.rpy:540
+    # 00gallery.rpy:584
     old "next"
-    new "suivant"
+    new "suiv."
 
-    # renpy/common/00gallery.rpy:541
+    # 00gallery.rpy:585
     old "slideshow"
     new "diaporama"
 
-    # renpy/common/00gallery.rpy:542
+    # 00gallery.rpy:586
     old "return"
     new "retour"
 
-    # renpy/common/00layout.rpy:427
-    old "Are you sure you want to begin skipping?"
-    new "Êtes-vous sûr de vouloir commencer à sauter certaines étapes ?"
-
-    # renpy/common/00layout.rpy:428
-    old "Are you sure you want to skip to the next choice?"
-    new "Êtes-vous sûr de vouloir sauter le prochain choix ?"
-
-    # renpy/common/00layout.rpy:429
-    old "Are you sure you want to skip to unseen dialogue or the next choice?"
-    new "Êtes-vous sûr de vouloir sauter des dialogues non lus or le prochain choix ?"
-
-    # renpy/common/00action_file.rpy:587
-    old "Quick save complete."
-    new "Sauvegarde rapide effectuée."

@@ -38,12 +38,14 @@ import sphinx.domains
 def parse_var_node(env, sig, signode):
     m = re.match(r'(\S+)(.*)', sig)
 
+    if m.group(1).split('.')[0] in [ "config", "gui" ]:
+        signode += docutils.nodes.Text("define ", "define" )
+
     signode += sphinx.addnodes.desc_name(m.group(1), m.group(1))
     signode += docutils.nodes.Text(m.group(2), m.group(2))
 
     ref = m.group(1)
     return ref
-
 
 style_seen_ids = set()
 

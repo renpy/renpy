@@ -23,6 +23,8 @@
     Otherwise, this returns json[key] if `key` is defined on the json object of the save,
     `missing` if there is a save with the given name, but it does not contain `key`, or
     `empty` if the save slot is empty.
+    
+    Json is added to a save slot by callbacks registered using :var:`config.save_json_callbacks`.
 
 .. function:: FileLoadable(name, page=None)
     
@@ -33,13 +35,13 @@
     
     Returns True if this is the newest file slot, or False otherwise.
 
-.. function:: FilePageName(auto='a', quick='q')
+.. function:: FilePageName(auto=u'a', quick=u'q')
     
     Returns the name of the current file page, as a string. If a normal
     page, this returns the page number. Otherwise, it returns
     `auto` or `quick`.
 
-.. function:: FileSaveName(name, empty='', page=None)
+.. function:: FileSaveName(name, empty=u'', page=None)
     
     Return the save_name that was in effect when the file was saved,
     or `empty` if the file does not exist.
@@ -52,7 +54,7 @@
     
     The return value is a displayable.
 
-.. function:: FileSlotName(slot, slots_per_page, auto='a', quick='q', format='%s%d')
+.. function:: FileSlotName(slot, slots_per_page, auto=u'a', quick=u'q', format=u'%s%d')
     
     Returns the name of the numbered slot. This assumes that slots on
     normal pages are numbered in a linear order starting with 1, and
@@ -80,7 +82,7 @@
         The formatting code to use. This is given two arguments: A string
         giving the page prefix, and an integer giving the slot number.
 
-.. function:: FileTime(name, format='%b %d, %H:%M', empty='', page=None)
+.. function:: FileTime(name, format=u'%b %d, %H:%M', empty=u'', page=None)
     
     Returns the time the file was saved, formatted according
     to the supplied `format`. If the file is not found, `empty` is

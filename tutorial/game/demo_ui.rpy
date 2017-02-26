@@ -14,8 +14,9 @@ screen viewport_screen:
 
         draggable True
         mousewheel True
+        arrowkeys True
 
-        add "concert2.jpg"
+        add "concert2"
 
     textbutton _("Dismiss"):
         xpos 300
@@ -29,16 +30,16 @@ screen edgescroll_screen:
 
     viewport:
         edgescroll (150, 500)
-        add "concert2.jpg"
+        add "concert2"
 
 screen demo_imagemap:
     imagemap:
         auto "imagemap_%s.jpg"
 
-        hotspot (8, 200, 78, 78) action Return("swimming")
-        hotspot (204, 50, 78, 78) action Return("science")
-        hotspot (452, 79, 78, 78) action Return("art")
-        hotspot (602, 316, 78, 78) action Return("go home")
+        hotspot (8, 200, 78, 78) action Return("swimming") alt "Swimming"
+        hotspot (204, 50, 78, 78) action Return("science") alt "Science"
+        hotspot (452, 79, 78, 78) action Return("art") alt "Art"
+        hotspot (602, 316, 78, 78) action Return("go home") alt "Go Home"
 
 init:
 
@@ -280,7 +281,7 @@ label demo_ui:
 
     e "Anyway..."
 
-    e "We also support viewports, that allow us to display things that are bigger then the screen."
+    e "We also support viewports, that allow us to display things that are bigger than the screen."
 
     e "This viewport can be adjusted by dragging, by the mouse wheel, and by the scrollbars."
 

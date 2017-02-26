@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,6 +28,7 @@ import os
 
 update_translations = "RENPY_UPDATE_TRANSLATIONS" in os.environ
 
+
 class Formatter(string.Formatter):
     """
     A string formatter that uses Ren'Py's formatting rules. Ren'Py uses
@@ -55,7 +56,7 @@ class Formatter(string.Formatter):
         # The parts we've seen.
         literal = ''
         value = ''
-        format = '' #@ReservedAssignment
+        format = ''  # @ReservedAssignment
         conversion = None
 
         state = LITERAL
@@ -101,7 +102,7 @@ class Formatter(string.Formatter):
                         state = LITERAL
                         literal = ''
                         value = ''
-                        format = '' #@ReservedAssignment
+                        format = ''  # @ReservedAssignment
                         conversion = None
                         continue
 
@@ -125,7 +126,7 @@ class Formatter(string.Formatter):
                     state = LITERAL
                     literal = ''
                     value = ''
-                    format = '' #@ReservedAssignment
+                    format = ''  # @ReservedAssignment
                     conversion = None
                     continue
 
@@ -138,14 +139,13 @@ class Formatter(string.Formatter):
                     format += c
                     continue
 
-
             elif state == CONVERSION:
                 if c == ']':
                     yield (literal, value, format, conversion)
                     state = LITERAL
                     literal = ''
                     value = ''
-                    format = '' #@ReservedAssignment
+                    format = ''  # @ReservedAssignment
                     conversion = None
                     continue
 
@@ -180,7 +180,9 @@ class Formatter(string.Formatter):
 # The instance of Formatter we use.
 formatter = Formatter()
 
+
 class MultipleDict(object):
+
     def __init__(self, *dicts):
         self.dicts = dicts
 
@@ -189,7 +191,8 @@ class MultipleDict(object):
             if key in d:
                 return d[key]
 
-        raise KeyError(key)
+        raise NameError("Name '{}' is not defined.".format(key))
+
 
 def substitute(s, scope=None, force=False, translate=True):
     """
@@ -204,6 +207,9 @@ def substitute(s, scope=None, force=False, translate=True):
 
     `translate`
         Determines if translation occurs.
+
+    Returns the substituted string, and a flag that is True if substitution
+    occurred, or False if no substitution occurred.
     """
 
     if translate:
@@ -211,15 +217,18 @@ def substitute(s, scope=None, force=False, translate=True):
 
     # Substitute.
     if not renpy.config.new_substitutions and not force:
-        return s
+        return s, False
 
-    if "[" in s:
+    if "[" not in s:
+        return s, False
 
-        if scope is not None:
-            kwargs = MultipleDict(scope, renpy.store.__dict__) #@UndefinedVariable
-        else:
-            kwargs = renpy.store.__dict__ #@UndefinedVariable
+    old_s = s
 
-        s = formatter.vformat(s, (), kwargs)
+    if scope is not None:
+        kwargs = MultipleDict(scope, renpy.store.__dict__)  # @UndefinedVariable
+    else:
+        kwargs = renpy.store.__dict__  # @UndefinedVariable
 
-    return s
+    s = formatter.vformat(s, (), kwargs)
+
+    return s, (s != old_s)

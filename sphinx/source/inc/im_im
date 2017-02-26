@@ -10,6 +10,9 @@
     image, like having one jpeg for color data, and a second one
     for alpha. In some cases, two jpegs can be smaller than a
     single png file.
+    
+    Note that this takes different arguments from :func:`AlphaMask`,
+    which uses the mask's alpha channel.
 
 .. function:: im.Composite(size, *args, **properties)
     
@@ -47,7 +50,7 @@
     
     An image manipulator that scales `im` (a second image manipulator)
     to `width` times its original `width`, and `height` times its
-    original height. If `height` is ommitted, it defaults to `width`.
+    original height. If `height` is omitted, it defaults to `width`.
     
     If `bilinear` is true, then bilinear interpolation is used for
     the scaling. Otherwise, nearest neighbor interpolation is used.
@@ -68,7 +71,7 @@
 
 .. function:: im.Grayscale(im, **properties)
     
-    An image manipulator that creats a desaturated version of the image
+    An image manipulator that creates a desaturated version of the image
     manipulator `im`.
 
 .. function:: im.Scale(im, width, height, bilinear=True, **properties)

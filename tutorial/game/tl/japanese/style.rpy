@@ -1,4 +1,4 @@
-translate japanese style default:
+﻿translate japanese style default:
     font "MTLc3m.ttf"
     language "japanese-strict"
 

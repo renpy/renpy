@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,6 +32,8 @@ init python:
         the project root.
         """
 
+        alt = _("Open [text] directory.")
+
         def __init__(self, directory, absolute=False):
             if absolute:
                 self.directory = directory
@@ -62,6 +64,8 @@ init python:
 
 screen front_page:
     frame:
+        alt ""
+
         style_group "l"
         style "l_root"
 
@@ -84,7 +88,7 @@ screen front_page:
                     has hbox:
                         xfill True
 
-                    text "PROJECTS:" style "l_label_text" size 36 yoffset 10
+                    text _("PROJECTS:") style "l_label_text" size 36 yoffset 10
 
                     textbutton _("refresh"):
                         xalign 1.0
@@ -117,8 +121,6 @@ screen front_page:
                             left_margin (HALF_INDENT)
                             action Jump("new_project")
 
-
-
         # Project section - on right.
 
         if project.current is not None:
@@ -126,6 +128,7 @@ screen front_page:
 
     if project.current is not None:
         textbutton _("Launch Project") action project.Launch() style "l_right_button"
+        key "K_F5" action project.Launch()
 
 
 
@@ -143,6 +146,7 @@ screen front_page_project_list:
 
                 textbutton _("[p.name!q] (template)"):
                     action project.Select(p)
+                    alt _("Select project [text].")
                     style "l_list"
 
             null height 12
@@ -153,12 +157,13 @@ screen front_page_project_list:
 
                 textbutton "[p.name!q]":
                     action project.Select(p)
+                    alt _("Select project [text].")
                     style "l_list"
 
             null height 12
 
-        textbutton _("Tutorial") action project.Select("tutorial") style "l_list"
-        textbutton _("The Question") action project.Select("the_question") style "l_list"
+        textbutton _("Tutorial") action project.Select("tutorial") style "l_list" alt _("Select project [text].")
+        textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
 
 
 # This is used for the right side of the screen, which is where the project-specific
@@ -189,20 +194,24 @@ screen front_page_project:
 
                     textbutton _("game") action OpenDirectory("game")
                     textbutton _("base") action OpenDirectory(".")
-                    # textbutton _("images") action OpenDirectory("game/images") style "l_list"
+                    textbutton _("images") action OpenDirectory("game/images")
+                    textbutton _("gui") action OpenDirectory("game/gui")
                     # textbutton _("save") action None style "l_list"
 
             vbox:
+                if persistent.show_edit_funcs:
 
-                label _("Edit File") style "l_label_small"
+                    label _("Edit File") style "l_label_small"
 
-                frame style "l_indent":
-                    has vbox
+                    frame style "l_indent":
+                        has vbox
 
-                    textbutton "script.rpy" action editor.Edit("game/script.rpy", check=True)
-                    textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
-                    textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
-                    textbutton _("All script files") action editor.EditAll()
+                        textbutton "script.rpy" action editor.Edit("game/script.rpy", check=True)
+                        textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
+                        textbutton "gui.rpy" action editor.Edit("game/gui.rpy", check=True)
+                        textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
+
+                        textbutton _("All script files") action editor.EditAll()
 
         add SPACER
         add SEPARATOR
@@ -223,8 +232,15 @@ screen front_page_project:
                 has vbox
 
                 textbutton _("Check Script (Lint)") action Jump("lint")
-                textbutton _("Change Theme") action Jump("choose_theme")
+
+                if project.current.exists("game/gui.rpy"):
+                    textbutton _("Change/Update GUI") action Jump("change_gui")
+                else:
+                    textbutton _("Change Theme") action Jump("choose_theme")
+
+
                 textbutton _("Delete Persistent") action Jump("rmpersistent")
+                textbutton _("Force Recompile") action Jump("force_recompile")
 
                 # textbutton "Relaunch" action Relaunch
 
@@ -235,6 +251,7 @@ screen front_page_project:
                     textbutton _("Build Distributions") action Jump("build_distributions")
 
                 textbutton _("Android") action Jump("android")
+                textbutton _("iOS") action Jump("ios")
                 textbutton _("Generate Translations") action Jump("translate")
                 textbutton _("Extract Dialogue") action Jump("extract_dialogue")
 
@@ -272,3 +289,10 @@ label rmpersistent:
 
     jump front_page
 
+label force_recompile:
+
+    python hide:
+        interface.processing(_("Recompiling all rpy files into rpyc files..."))
+        project.current.launch([ 'compile' ], wait=True)
+
+    jump front_page

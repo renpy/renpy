@@ -6,7 +6,7 @@ Reserved Names
 ==============
 
 Ren'Py reserves all names beginning with a single underscore (\_). Do not
-names beginning with an underscore in your code.
+use names beginning with an underscore in your code.
 
 The following is a list of names that are used by Python. Re-using these
 names can lead to obscure problems.

@@ -8,15 +8,15 @@
 .. function:: renpy.log(msg)
     
     If :var:`config.log` is not set, this does nothing. Otherwise, it opens
-    the logfile (if not already open), formats the message to 70
+    the logfile (if not already open), formats the message to :var:`config.log_width`
     columns, and prints it to the logfile.
 
-.. function:: renpy.watch(expression, style='default', **properties)
+.. function:: renpy.unwatch(expr)
+    
+    Stops watching the given python expression.
+
+.. function:: renpy.watch(expr)
     
     This watches the given python expression, by displaying it in the
-    upper-left corner of the screen (although position properties
-    can change that). The expression should always be
-    defined, never throwing an exception.
-    
-    A watch will not persist through a save or restart.
+    upper-right corner of the screen.
 

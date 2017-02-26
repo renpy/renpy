@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -82,36 +82,26 @@ init -1400:
     python:
         config.default_transform = default
 
+        # These names are unlikely to be used in screens - except as arguments -
+        # so mark them not-const.
+
+        renpy.not_const("reset")
+        renpy.not_const("left")
+        renpy.not_const("right")
+        renpy.not_const("center")
+        renpy.not_const("truecenter")
+        renpy.not_const("topleft")
+        renpy.not_const("topright")
+        renpy.not_const("top")
+        renpy.not_const("offscreenleft")
+        renpy.not_const("offscreenright")
+        renpy.not_const("default")
+
+# Transitions ##################################################################
 
 init -1400 python:
 
     _define = define = object()
-
-    # Transitions ############################################################
-
-    # Simple transitions.
-    fade = Fade(.5, 0, .5) # Fade to black and back.
-    dissolve = Dissolve(0.5)
-    pixellate = Pixellate(1.0, 5)
-
-    # Various uses of CropMove.
-    wiperight = CropMove(1.0, "wiperight")
-    wipeleft = CropMove(1.0, "wipeleft")
-    wipeup = CropMove(1.0, "wipeup")
-    wipedown = CropMove(1.0, "wipedown")
-
-    slideright = CropMove(1.0, "slideright")
-    slideleft = CropMove(1.0, "slideleft")
-    slideup = CropMove(1.0, "slideup")
-    slidedown = CropMove(1.0, "slidedown")
-
-    slideawayright = CropMove(1.0, "slideawayright")
-    slideawayleft = CropMove(1.0, "slideawayleft")
-    slideawayup = CropMove(1.0, "slideawayup")
-    slideawaydown = CropMove(1.0, "slideawaydown")
-
-    irisout = CropMove(1.0, "irisout")
-    irisin = CropMove(1.0, "irisin")
 
     # Ease images around. These are basically cosine-warped moves.
     def _ease_out_time_warp(x):
@@ -125,7 +115,6 @@ init -1400 python:
     def _ease_time_warp(x):
         import math
         return .5 - math.cos(math.pi * x) / 2.0
-
 
     # Back up the move transition, so that if MoveTransition gets replaced by
     # renpy.compat, this still works.
@@ -337,35 +326,70 @@ init -1400 python:
     define.move_transitions("move", 0.5)
     define.move_transitions("ease", 0.5, _ease_time_warp, _ease_in_time_warp, _ease_out_time_warp)
 
-    # Zoom-based transitions. Legacy - nowadays, these are probably best done with ATL.
-    zoomin = OldMoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0))
-    zoomout = OldMoveTransition(0.5, leave_factory=ZoomInOut(1.0, 0.01))
-    zoominout = OldMoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0), leave_factory=ZoomInOut(1.0, 0.01))
-
-    # These shake the screen up and down for a quarter second.
-    # The delay needs to be an integer multiple of the period.
-    vpunch = Move((0, 10), (0, -10), .10, bounce=True, repeat=True, delay=.275)
-    hpunch = Move((15, 0), (-15, 0), .10, bounce=True, repeat=True, delay=.275)
-
-    # These use the ImageDissolve to do some nifty effects.
-    blinds = ImageDissolve(im.Tile("blindstile.png"), 1.0, 8)
-    squares = ImageDissolve(im.Tile("squarestile.png"), 1.0, 256)
-
-
 init -1400:
     image black = Solid("#000")
 
+    # Simple transitions.
+    define fade = Fade(.5, 0, .5) # Fade to black and back.
+    define dissolve = Dissolve(0.5)
+    define pixellate = Pixellate(1.0, 5)
+
+    # Various uses of CropMove.
+    define wiperight = CropMove(1.0, "wiperight")
+    define wipeleft = CropMove(1.0, "wipeleft")
+    define wipeup = CropMove(1.0, "wipeup")
+    define wipedown = CropMove(1.0, "wipedown")
+
+    define slideright = CropMove(1.0, "slideright")
+    define slideleft = CropMove(1.0, "slideleft")
+    define slideup = CropMove(1.0, "slideup")
+    define slidedown = CropMove(1.0, "slidedown")
+
+    define slideawayright = CropMove(1.0, "slideawayright")
+    define slideawayleft = CropMove(1.0, "slideawayleft")
+    define slideawayup = CropMove(1.0, "slideawayup")
+    define slideawaydown = CropMove(1.0, "slideawaydown")
+
+    define irisout = CropMove(1.0, "irisout")
+    define irisin = CropMove(1.0, "irisin")
+    
+    # Various uses of PushMove.
+    define pushright = PushMove(1.0, "pushright")
+    define pushleft = PushMove(1.0, "pushleft")
+    define pushup = PushMove(1.0, "pushup")
+    define pushdown = PushMove(1.0, "pushdown")
+
+    # Zoom-based transitions. Legacy - nowadays, these are probably best done with ATL.
+    define zoomin = OldMoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0))
+    define zoomout = OldMoveTransition(0.5, leave_factory=ZoomInOut(1.0, 0.01))
+    define zoominout = OldMoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0), leave_factory=ZoomInOut(1.0, 0.01))
+
+    # These shake the screen up and down for a quarter second.
+    # The delay needs to be an integer multiple of the period.
+    define vpunch = Move((0, 10), (0, -10), .10, bounce=True, repeat=True, delay=.275)
+    define hpunch = Move((15, 0), (-15, 0), .10, bounce=True, repeat=True, delay=.275)
+
+    # These use the ImageDissolve to do some nifty effects.
+    define blinds = ImageDissolve(im.Tile("blindstile.png"), 1.0, 8)
+    define squares = ImageDissolve(im.Tile("squarestile.png"), 1.0, 256)
+
+    # The default narrator.
+    define _narrator = Character(None, kind=adv, what_style='say_thought')
+
 init 1400 python:
     if not hasattr(store, 'narrator'):
-        narrator = Character(None, kind=adv, what_style='say_thought')
+        narrator = _narrator
 
-    if not hasattr(store, 'name_only'):
-        name_only = adv
+    renpy.pure('narrator')
+    renpy.pure('name_only')
 
     if not hasattr(store, 'centered'):
         centered = Character(None, what_style="centered_text", window_style="centered_window")
     if not hasattr(store, 'vcentered'):
         vcentered = Character(None, what_style="centered_vtext", window_style="centered_window")
+
+    renpy.pure('centered')
+    renpy.pure('vcentered')
 
     # This is necessary to ensure that config.default_transform works.
     if config.default_transform:

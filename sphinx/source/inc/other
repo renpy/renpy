@@ -1,5 +1,27 @@
 .. Automatically generated file - do not modify.
 
+.. function:: renpy.add_layer(layer, above=None, below=None, menu_clear=True)
+    
+    Adds a new layer to the screen. If the layer already exists, this
+    function does nothing.
+    
+    One of `behind` or `above` must be given.
+    
+    `layer`
+        A string giving the name of the new layer to add.
+    
+    `above`
+        If not None, a string giving the name of a layer the new layer will
+        be placed above.
+    
+    `below`
+        If not None, a string giving the name of a layer the new layer will
+        be placed below.
+    
+    `menu_clear`
+        If true, this layer will be cleared when entering the game menu
+        context, and restored when leaving the
+
 .. function:: renpy.call_stack_depth()
     
     Returns the depth of the call stack of the current context - the number
@@ -20,6 +42,11 @@
     
     Resets the game runtime counter.
 
+.. function:: renpy.clear_keymap_cache()
+    
+    Clears the keymap cache. This allows changes to :var:`config.keymap` to
+    take effect without restarting Ren'Py.
+
 .. function:: renpy.context_dynamic(*vars)
     
     This can be given one or more variable names as arguments. This makes
@@ -29,6 +56,20 @@
     An example call is::
     
         $ renpy.context_dynamic("x", "y", "z")
+
+.. function:: renpy.count_dialogue_blocks()
+    
+    Returns the number of dialogue blocks in the game's original language.
+
+.. function:: renpy.count_newly_seen_dialogue_blocks()
+    
+    Returns the number of dialogue blocks the user has seen for the first time
+    during this session.
+
+.. function:: renpy.count_seen_dialogue_blocks()
+    
+    Returns the number of dialogue blocks the user has seen in any play-through
+    of the current game.
 
 .. function:: renpy.dynamic(*vars)
     
@@ -45,6 +86,14 @@
     This attempts to find the coordinates of the currently-focused
     displayable. If it can, it will return them as a (x, y, w, h)
     tuple. If not, it will return a (None, None, None, None) tuple.
+
+.. function:: renpy.force_autosave(take_screenshot=False)
+    
+    Forces a background autosave to occur.
+    
+    `take_screenshot`
+        If True, a new screenshot will be taken. If False, the existing
+        screenshot will be used.
 
 .. function:: renpy.force_full_redraw()
     
@@ -63,6 +112,19 @@
     `transition`
         If given, the transition to run, or None to not run a transition.
         False uses :var:`config.end_game_transition`.
+
+.. function:: renpy.get_adjustment(bar_value)
+    
+    Given `bar_value`, a  :class:`BarValue`, returns the :func:`ui.adjustment`
+    if uses. The adjustment has the following to attributes defined:
+    
+    .. attribute:: value
+    
+        The current value of the bar.
+    
+    .. attribute:: range
+    
+        The current range of the bar.
 
 .. function:: renpy.get_autoreload()
     
@@ -104,6 +166,22 @@
     
     Returns the size of the physical window.
 
+.. function:: renpy.get_refresh_rate(precision=5)
+    
+    Returns the refresh rate of the current screen, as a floating-point
+    number of frames per second.
+    
+    `precision`
+        The raw data Ren'Py gets is number of frames per second, rounded down.
+        This means that a monitor that runs at 59.95 frames per second will
+        be reported at 59 fps. The precision argument reduces the precision
+        of this reading, such that the only valid readings are multiples of
+        the precision.
+    
+        Since all monitor framerates tend to be multiples of 5 (25, 30, 60,
+        75, and 120), this likely will improve accuracy. Setting precision
+        to 1 disables this.
+
 .. function:: renpy.get_renderer_info()
     
     Returns a dictionary, giving information about the renderer Ren'Py is
@@ -143,6 +221,9 @@
     
     If not_showing is True, this only returns a side image if the image the
     attributes are taken from is not on the screen.
+    
+    If `layer` is None, uses the default layer for the currently showing
+    tag.
 
 .. function:: renpy.get_transition(layer=None)
     
@@ -155,6 +236,15 @@
     
     Iconifies the game.
 
+.. function:: renpy.invoke_in_thread(fn, *args, **kwargs)
+    
+    Invokes the function `fn` in a background thread, passing it the
+    provided arguments and keyword arguments. Restarts the interaction
+    once the thread returns.
+    
+    This function creates a daemon thread, which will be automatically
+    stopped when Ren'Py is shutting down.
+
 .. function:: renpy.is_seen(ever=True)
     
     Returns true if the current line has been seen by the player.
@@ -162,6 +252,12 @@
     If `ever` is true, we check to see if the line has ever been seen by the
     player. If false, we check if the line has been seen in the current
     play-through.
+
+.. function:: renpy.is_start_interact()
+    
+    Returns true if restart_interaction has not been called during the current
+    interaction. This can be used to determine if the interaction is just being
+    started, or has been restarted.
 
 .. function:: renpy.load_module(name, **kwargs)
     
@@ -184,6 +280,23 @@
     `filename` is the name of the filename that statements in the string will
     appear to be from.
 
+.. function:: renpy.maximum_framerate(t)
+    
+    Forces Ren'Py to draw the screen at the maximum framerate for `t` seconds.
+    If `t` is None, cancels the maximum framerate request.
+
+.. function:: renpy.munge(name, filename=None)
+    
+    Munges `name`, which must begin with __.
+    
+    `filename`
+        The filename the name is munged into. If None, the name is munged
+        into the filename containing the call to this function.
+
+.. function:: renpy.not_infinite_loop(delay)
+    
+    Resets the infinite loop detection timer to `delay` seconds.
+
 .. function:: renpy.notify(message)
     
     Causes Ren'Py to display the `message` using the notify screen. By
@@ -196,7 +309,7 @@
     Only one notification is displayed at a time. If a second notification
     is displayed, the first notification is replaced.
 
-.. function:: renpy.pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True)
+.. function:: renpy.pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None)
     
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
@@ -215,7 +328,9 @@
         as it's hard to distinguish a hard pause from a crashing game.
     
     `checkpoint`
-        If true, a checkpoint is placed so rollback can occur.
+        If true, a checkpoint will be set, and players will be able to roll
+        back to this statement. If false, no checkpoint will be set. If None,
+        a checkpoint will only be set if delay is set.
 
 .. function:: renpy.pop_call()
     
@@ -225,13 +340,21 @@
     This can be used if a label that is called decides not to return
     to its caller.
 
-.. function:: renpy.pop_return()
+.. function:: renpy.queue_event(name, up=False, **kwargs)
     
-    Pops the current call from the call stack, without returning to
-    the location.
+    Queues an event with the given name. `Name` should be one of the event
+    names in :var:`config.keymap`, or a list of such names.
     
-    This can be used if a label that is called decides not to return
-    to its caller.
+    `up`
+        This should be false when the event begins (for example, when a keyboard
+        button is pressed.) It should be true when the event ends (when the
+        button is released.)
+    
+    The event is queued at the time this function is called. This function will
+    not work to replace an event with another - doing so will change event order.
+    (Use :var:`config.keymap` instead.)
+    
+    This method is threadsafe.
 
 .. function:: renpy.quit(relaunch=False, status=0)
     
@@ -253,6 +376,12 @@
     
     Causes Ren'Py to save the game, reload the script, and then load the
     save.
+
+.. function:: renpy.reset_physical_size()
+    
+    Attempts to set the size of the physical window to the specified values
+    in renpy.config. (That is, screen_width and screen_height.) This has the
+    side effect of taking the screen out of fullscreen mode.
 
 .. function:: renpy.restart_interaction()
     
@@ -283,7 +412,7 @@
 .. function:: renpy.set_autoreload(autoreload)
     
     Sets the autoreload flag, which determines if the game will be
-    automatically reloated after file changes. Autoreload will not be
+    automatically reloaded after file changes. Autoreload will not be
     fully enabled until the game is reloaded with :func:`renpy.utter_restart`.
 
 .. function:: renpy.set_mouse_pos(x, y, duration=0)
@@ -306,6 +435,34 @@
     with the "window show" statement, which shows an empty window whenever
     this functions has not been called during an interaction.
 
+.. function:: renpy.split_properties(properties, *prefixes)
+    
+    Splits up `properties` into multiple dictionaries, one per `prefix`. This
+    function checks each key in properties against each prefix, in turn.
+    When a prefix matches, the prefix is stripped from the key, and the
+    resulting key is mapped to the value in the corresponding dictionary.
+    
+    If no prefix matches, an exception is thrown. (The empty string, "",
+    can be used as the last prefix to create a catch-all dictionary.)
+    
+    For example, this code splits properties beginning with text from
+    those that do not::
+    
+        text_properties, button_properties = renpy.split_properties("text_", "")
+
+.. function:: renpy.substitute(s, scope=None, translate=True)
+    
+    Applies translation and new-style formatting to the string `s`.
+    
+    `scope`
+        If not None, a scope which is used in formatting, in addition to the
+        default store.
+    
+    `translate`
+        Determines if translation occurs.
+    
+    Returns the translated and formatted string.
+
 .. function:: renpy.transition(trans, layer=None, always=False)
     
     Sets the transition that will be used during the next interaction.
@@ -317,14 +474,6 @@
     `always`
         If false, this respects the transition preference. If true, the
         transition is always run.
-
-.. function:: renpy.version(tuple=False)
-    
-    If `tuple` is false, returns a string containing "Ren'Py ", followed by
-    the current version of Ren'Py.
-    
-    If `tuple` is true, returns a tuple giving each component of the
-    version as an integer.
 
 .. function:: renpy.vibrate(duration)
     

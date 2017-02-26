@@ -85,10 +85,40 @@ the various other layer-related config variables. Using
 :func:`renpy.layer_at_list`, one or more transforms can be applied to
 a layer.
 
+Defining Images
+===============
+
+There are two ways to define images. You can either place an image file
+in the image directory, or an image can be defined using the image statement.
+The former is simple, as it involves placing properly named files in a directory,
+while the latter a allows more control over how the image is defined, and allows
+images that are not image files.
+
+Images defined using the image statement take precedence over those defined
+by the image directory.
+
+.. _image-directory:
+
+Image Directory
+---------------
+
+The image directory is named "images", and is placed under the game directory.
+When a file with the .jpg or .png extension is placed underneath this directory,
+the extension is stripped, the rest of the filename is forced to lower case,
+and the resulting filename is use as the image name if an image with that
+name has not been previously defined.
+
+This process place in all directories underneath the image directory. For
+example, all of these files will define the image ``eileen happy``::
+
+    game/images/eileen happy.png
+    game/images/Eileen Happy.jpg
+    game/images/eileen/eileen happy.png
+
 .. _image-statement:
 
 Image Statement
-===============
+---------------
 
 An image statement is used to define an image. An image statement
 consists of a single logical line beginning with the keyword ``image``,
@@ -107,7 +137,7 @@ displayable. For example::
 The image statement must be run at init-time, before game code
 runs. When not contained inside an init block, image statements are
 run at init-time, as if they were placed inside an init block of
-priority 0.
+priority 500.
 
 See also the :ref:`ATL variant of the image statement. <atl-image-statement>`
 
@@ -201,7 +231,7 @@ Some example show statements are::
     show moon behind mary, mary2
 
     # Show an image on a user-defined layer.
-    show moon on user_layer
+    show moon onlayer user_layer
 
 **Show Expression.**
 A variant of the show statement replaces the image name with the
@@ -228,6 +258,10 @@ or::
 To stop applying transforms to the layer, use::
 
     show layer master
+
+Transforms used with show should not may any assumptions about their starting
+state. Currently, transforms used with show layer do not take their state from
+prior layer transforms, but we plan to change this in the future.
 
 .. _scene-statement:
 
@@ -304,7 +338,7 @@ value ``None``.
 
 The transition effect is applied between the contents of the screen at
 the end of the previous interaction (with transient screens and
-displayables hiddden), and the current contents of the scene, after the
+displayables hidden), and the current contents of the scene, after the
 show and hide statements have executed.
 
 The with statement causes an interaction to occur. The duration of
@@ -399,7 +433,7 @@ the window.
 If the optional transition is given, it's used to show and hide the window.
 If not given, it defaults to :var:`config.window_show_transition` and
 :var:`config.window_hide_transition`. Giving None as the transition prevents
-it from occuring.
+it from occurring.
 
 The window itself is displayed by calling :var:`config.empty_window`. It defaults to
 having the narrator say an empty string.::

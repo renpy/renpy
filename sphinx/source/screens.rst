@@ -5,7 +5,7 @@ Screens and Screen Language
 ===========================
 
 The things that a user sees when looking at a Ren'Py game can be
-broken divided into images and user interface. Images are displayed to
+divided into images and user interface. Images are displayed to
 the user using the scene, show, and hide statements, and are generally
 part of the story being told. Everything else the user sees is part of
 the user interface, which is customized using screens.
@@ -62,7 +62,7 @@ statements.
 
 Here's an example of a screen.::
 
-    screen say:
+    screen say(who, what):
         window id "window":
             vbox:
                 spacing 10
@@ -72,7 +72,8 @@ Here's an example of a screen.::
 
 The first line of this is a screen statement, a Ren'Py language
 statement that's used to declare a screen. The name of the screen is
-`say`, so this is the screen that's used to display dialogue.
+`say`, so this is the screen that's used to display dialogue. It takes
+two parameters, `who` and `what`.
 
 The screen contains a window, which has been given the id of
 "window". This window contains a vertical box, and the spacing inside
@@ -129,12 +130,16 @@ expression. It takes the following properties:
     user. It defaults to 0.
 
 `variant`
-    If present, this should be a string giving the variant of screen
-    to be defined. See :ref:`screen-variants`.
+    If present, this should be a string or list of strings giving the
+    variant of screen to be defined. See :ref:`screen-variants`.
+
+`style_prefix`
+    A string that's used to provide a prefix for the style for the
+    children of this screen, as :ref:`described below <style-prefix>`.
 
 ::
 
-   screen hello_world:
+   screen hello_world():
         tag example
         zorder 1
         modal False
@@ -187,23 +192,38 @@ All user interface statements take the following common properties:
     string name, or a style object. The style gives default
     values for style properties.
 
+`style_prefix`
+    .. _style-prefix:
+
+    Provides a prefix to the style of this displayable and all of its
+    children, unless those children have a more specific style or
+    style prefix set.
+
+    The style name is created by concatenating a style prefix, underscore,
+    and a style suffix. The style suffix is either specified using
+    `style_suffix`, or determined by the displayable.
+
+    For example, if a vbox has a style prefix of ``"pref"``, the vbox
+    will be given the style ``"pref_vbox"``. Unless a more specific style
+    or style prefix is set, a button inside the vbox will have the style
+    ``"pref_button"``.
+
+    Styles accessed in this way are automatically created, if the style
+    does not exist. Setting a prefix of ``None`` removes the prefix from
+    this displayable and its children.
+
 `style_group`
-    .. _style-group:
+    An alias for `style_prefix`, used in older code.
 
-    Style_group is used to provide a prefix to the style of a displayable,
-    for this displayable and all of its children (unless they have a
-    more specific group set).
+`style_suffix`
+    Specifies the suffix that is combined with the `style_prefix` to
+    generate a style name. If this is ``"small_button"`` and the
+    style prefix is ``"pref"``, the style ``"pref_small_button"`` is
+    used.
 
-    For example, if a vbox has a group of ``"pref"``, then the vbox will
-    have the style ``"pref_vbox"``, unless a more specific style is
-    supplied to it. A button inside that vbox would default to the
-    style ``"pref_button"``.
-
-    Styles accessed in this way are automatically created, if they do
-    not exist. This prevents an error from being signalled.
-
-    Setting a group of ``None`` disables this behavior for a
-    displayable and all of its children.
+    If no style prefix is in use, this is used directly as the name of
+    the style. A style suffix applies to a single displayable only, not
+    a displayable and all children.
 
 `focus`
     Takes a string or integer, and gives a name to the displayable
@@ -231,11 +251,13 @@ takes :ref:`transform properties <transform-properties>`. If at least
 one transform property is given, a Transform is created to wrap the
 image, and the properties are given to the transform.
 
+If the displayable is None, nothing is added to the screen.
+
 This does not take any children.
 
 ::
 
-    screen add_test:
+    screen add_test():
         add "logo.png" xalign 1.0 yalign 0.0
 
 
@@ -248,8 +270,8 @@ Creates a horizontally-oriented bar that can be used to view or adjust
 data. It takes the following properties:
 
 `value`
-    The current value of the bar. This can be either a BarValue object,
-    or a number.
+    The current value of the bar. This can be either a :ref:`bar value <input-values>`
+    object, or a number.
 
 `range`
     The maximum value of the bar. This is required if `value` is a
@@ -279,7 +301,7 @@ This does not take children.
 
 ::
 
-    screen volume_controls:
+    screen volume_controls():
         frame:
             has vbox
 
@@ -298,8 +320,9 @@ action. A button takes no parameters, and the following properties.
 `action`
     The action to run when the button is activated. A button is activated
     when it is clicked, or when the player selects it and hits enter on the
-    keyboard. This also controls if the button is sensitive, and if the button
-    is selected.
+    keyboard. This also controls if the button is sensitive if `sensitive`
+    is not provided, and if the button is selected if `selected` is not
+    provided.
 
 `alternate`
     An action that is run if the button is activated in an alternate manner.
@@ -312,6 +335,24 @@ action. A button takes no parameters, and the following properties.
 
 `unhovered`
     An action to run when the button loses focus.
+
+`selected`
+    An expression that determines whether the button is selected or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine selectedness.
+
+`sensitive`
+    An expression that determines whether the button is sensitive or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine sensitivity.
+
+`keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the action of this button.
+
+`alternate_keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the alternate action of this button.
 
 It also takes:
 
@@ -377,7 +418,7 @@ a fixed is created to contain them.
 
 ::
 
-    screen test_frame:
+    screen test_frame():
         frame:
             xpadding 10
             ypadding 10
@@ -446,7 +487,7 @@ UI displayable children are added to the box.
 
 ::
 
-   screen hbox_text:
+   screen hbox_text():
        hbox:
             text "Left"
             text "Right"
@@ -469,7 +510,8 @@ properties:
     property.
 
     For example, if `auto` is "button_%s.png", and `idle` is omitted, then
-    idle defaults to "button_idle.png".
+    idle defaults to "button_idle.png". Similarly, if `auto` is "button %s",
+    the ``button idle`` image is used.
 
     The behavior of `auto` can be customized by changing
     :var:`config.imagemap_auto_function`.
@@ -491,14 +533,39 @@ properties:
     The image used when the button is selected and hovered.
 
 `action`
-    The action to run when the button is activated. This also controls
-    if the button is sensitive, and if the button is selected.
+    The action to run when the button is activated. This also controls if
+    the button is sensitive if `sensitive` is not provided, and if the button
+    is selected if `selected` is not provided.
+
+`alternate`
+    An action that is run if the button is activated in an alternate manner.
+    Alternate activation occurs when the player right-clicks on the button
+    on a mouse-based platform, or when the player long presses the button
+    on a touch-based platform.
 
 `hovered`
     An action to run when the button gains focus.
 
 `unhovered`
     An action to run when the button loses focus.
+
+`selected`
+    An expression that determines whether the button is selected or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine selectedness.
+
+`sensitive`
+    An expression that determines whether the button is sensitive or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine sensitivity.
+
+`keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the action of this button.
+
+`alternate_keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the alternate action of this button.
 
 It also takes:
 
@@ -511,7 +578,7 @@ This takes no children.
 
 ::
 
-    screen gui_game_menu:
+    screen gui_game_menu():
          vbox xalign 1.0 yalign 1.0:
               imagebutton auto "save_%s.png" action ShowMenu('save')
               imagebutton auto "prefs_%s.png" action ShowMenu('preferences')
@@ -526,7 +593,18 @@ Input
 
 Creates a text input area, which allows the user to enter text. When
 the user presses return, the text will be returned by the
-interaction. This takes no parameters, and the following properties:
+interaction. (When the screen is invoked through ``call screen``, the result
+will be placed in the ``_return`` variable.)
+
+The input statement takes no parameters, and the following properties:
+
+`value`
+    An :ref:`input value <input-values>` object that this input uses.
+    InputValue objects determine where the default value is taken from,
+    what happens when the text is changed, what happens when enter is
+    pressed, and if the text is editable by default.
+
+    This should not be given at the same time as `default` and `changed`.
 
 `default`
     The default text in this input.
@@ -567,7 +645,7 @@ This does not take any children.
 
 ::
 
-    screen input_screen:
+    screen input_screen():
         window:
             has vbox
 
@@ -596,7 +674,7 @@ It takes no children.
 
 ::
 
-    screen keymap_screen:
+    screen keymap_screen():
         key "game_menu" action ShowMenu('save')
         key "p" action ShowMenu('preferences')
         key "s" action Screenshot()
@@ -633,7 +711,7 @@ It does not take children.
 
 ::
 
-    screen display_preference:
+    screen display_preference():
         frame:
             has vbox
 
@@ -666,7 +744,7 @@ It does not take children.
 
 ::
 
-    screen text_box:
+    screen text_box():
         vbox:
              text "The title."
              null height 20
@@ -681,13 +759,19 @@ Mousearea
 A mouse area is an area of the screen that can react to the mouse
 entering or leaving it. Unlike a button, a mouse area does not take
 focus, so it's possible to have a mouse area with buttons inside it.
-The mousearea statement takes not parameters, and the following properties:
+The mousearea statement takes no parameters, and the following properties:
 
 `hovered`
     An action to run when the mouse enters the mouse area.
 
 `unhovered`
     An action to run when the mouse leaves the mouse area.
+
+`focus_mask`
+    The :propref:`focus_mask` style property, which may be a Displayable
+    or None. If a displayable, the mousearea will only be hovered if the
+    mouse is over an opaque portion of the displayable. (The displayable
+    is not shown to the user.)
 
 It also takes:
 
@@ -709,13 +793,13 @@ take up the entire screen, a less useful behavior.
 
 ::
 
-    screen button_overlay:
+    screen button_overlay():
         mousearea:
             area (0, 0, 1.0, 100)
             hovered Show("buttons", transition=dissolve)
             unhovered Hide("buttons", transition=dissolve)
 
-    screen buttons:
+    screen buttons():
         hbox:
             textbutton "Save" action ShowMenu("save")
             textbutton "Prefs" action ShowMenu("preferences")
@@ -761,7 +845,7 @@ the same number of children as there are entries in the places list.
 
 ::
 
-    screen side_test:
+    screen side_test():
          side "c tl br":
               text "Center"
               text "Top-Left"
@@ -783,7 +867,7 @@ It does not take children.
 
 ::
 
-    screen hello_world:
+    screen hello_world():
         text "Hello, World." size 40
 
 .. _sl-textbutton:
@@ -796,14 +880,39 @@ parameter, the text to include as part of the button. It takes the
 following properties:
 
 `action`
-    The action to run when the button is activated. This also controls
-    if the button is sensitive, and if the button is selected.
+    The action to run when the button is activated. This also controls if
+    the button is sensitive if `sensitive` is not provided, and if the button
+    is selected if `selected` is not provided.
+
+`alternate`
+    An action that is run if the button is activated in an alternate manner.
+    Alternate activation occurs when the player right-clicks on the button
+    on a mouse-based platform, or when the player long presses the button
+    on a touch-based platform.
 
 `hovered`
     An action to run when the button gains focus.
 
 `unhovered`
     An action to run when the button loses focus.
+
+`selected`
+    An expression that determines whether the button is selected or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine selectedness.
+
+`sensitive`
+    An expression that determines whether the button is sensitive or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine sensitivity.
+
+`keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the action of this button.
+
+`alternate_keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the alternate action of this button.
 
 `text_style`
     The name of the style to use for the button text. If not supplied,
@@ -825,7 +934,7 @@ It does not take children.
 
 ::
 
-    screen textbutton_screen:
+    screen textbutton_screen():
         vbox:
             textbutton "Wine" action Jump("wine")
             textbutton "Women" action Jump("women")
@@ -851,7 +960,7 @@ It takes no children.
 
 ::
 
-    screen timer_test:
+    screen timer_test():
         vbox:
              textbutton "Yes." action Jump("yes")
              textbutton "No." action Jump("no")
@@ -882,7 +991,7 @@ as `bar`.
 
 ::
 
-    screen volume_controls:
+    screen volume_controls():
          frame:
              has hbox
 
@@ -908,7 +1017,7 @@ UI displayable children are added to the box.
 
 ::
 
-    screen vbox_test:
+    screen vbox_test():
         vbox:
              text "Top."
              text "Bottom."
@@ -930,7 +1039,23 @@ following properties:
     compute it's own size. If either component is None, the child's
     size is used.
 `mousewheel`
-    If True, the mouse wheel can be used to scroll the viewport.
+    This should be one of:
+
+    False
+        To ignore the mousewheel. (The default.)
+    True
+        To scroll vertically.
+    "horizontal"
+        To scroll horizontally.
+    "change"
+        To scroll the viewport vertically, only if doing so would cause the
+        viewport to move. If not, the mousewheel event is passed to the rest
+        of the interface. (For example, if change is given, placing
+        ``key "viewport_wheeldown" action Return()`` before the viewport
+        will cause the screen to return if the viewport scrolls past the
+        bottom.)
+    "horizontal-change"
+        Combines horizontal scrolling with change mode.
 `draggable`
     If True, dragging the mouse will scroll the viewport.
 `edgescroll`
@@ -947,11 +1072,11 @@ following properties:
 
     * If present, the third element is a function that adjusts the
       scrolling speed, based on how close to the pointer is to an
-      edge. The function should take a number between 0.0 and 1.0, and
+      edge. The function should take a number between -1.0 and 1.0, and
       return a number in the same range. The default function returns
       its input, and implements proportional scrolling.  A function
-      that always returns 1.0 would implement constant-speed
-      scrolling.
+      that returned -1.0 or 1.0 based on the sign of its input would
+      implement constant-speed scrolling.
 
 `xadjustment`
     The :func:`ui.adjustment` used for the x-axis of the
@@ -968,7 +1093,7 @@ following properties:
     giving the number of pixels, or a float giving a fraction of the
     possible offset.
 `scrollbars`
-    If not None, scrollbars are added allong with this viewport.
+    If not None, scrollbars are added along with this viewport.
     This works by creating a side layout, and placing the created
     viewport in the center of the side. If `scrollbars` is "horizontal",
     a horizontal scrollbar is placed beneath the viewport. If `scrollbars`
@@ -994,7 +1119,7 @@ id.
 
 ::
 
-    screen viewport_example:
+    screen viewport_example():
         side "c b r":
              area (100, 100, 600, 400)
 
@@ -1005,6 +1130,71 @@ id.
 
              bar value XScrollValue("vp")
              vbar value YScrollValue("vp")
+
+
+.. _sl-vpgrid:
+
+Vpgrid
+------
+
+A vpgrid (viewport grid) combines a viewport and grid into a single
+displayable. The vpgrid takes multiple children, like a grid, and
+rendering of those children is optimized so that only children
+being displayed within the viewport are rendered.
+
+A vpgrid assumes all the cells are the same size, and the size of
+the first child. If a vpgrid appears to be rendering incorrectly,
+please check that all children have of the same side.
+
+A vpgrid must be given at least one of the `cols` and `rows` properties,
+but may be given both. If one is omitted or None, it is automatically
+determind from the other and the number of children.
+
+Vpgrids take the the following properties:
+
+`cols`
+    The number of columns in the grid.
+
+`rows`
+    The number of rows in the grid.
+
+`transpose`
+    If true, columns are filled before rows. The default of this depends
+    on the `cols` ans `rows` properties. If `cols` is given, columns
+    are filled before rows, otherwise rows are filled before columns.
+
+`spacing`
+
+    The spacing between columns in pixels.
+
+In addition, a vpgrid takes all properties a :ref:`viewport <sl-viewport>` can.
+It takes multiple children, up to the size of the grid. If there are not
+enough children to fill all cells, some cells are not rendered.
+
+::
+
+    screen vpgrid_test():
+
+        vpgrid:
+
+            cols 2
+            spacing 5
+            draggable True
+            mousewheel True
+
+            scrollbars "vertical"
+
+            # Since we have scrollbars, we have to position the side, rather
+            # than the vpgrid proper.
+            side_xalign 0.5
+
+            for i in range(1, 100):
+
+                textbutton "Button [i]":
+                    xysize (200, 50)
+                    action Return(i)
+
+
 
 .. _sl-window:
 
@@ -1024,7 +1214,7 @@ a fixed is created to contain them.
 
 ::
 
-    screen say:
+    screen say(who, what):
         window id "window"
             vbox:
                 spacing 10
@@ -1046,7 +1236,7 @@ Here's an example of a preferences screen that uses imagemaps.
 
 ::
 
-    screen preferences:
+    screen preferences():
 
         tag menu
         use navigation
@@ -1054,15 +1244,15 @@ Here's an example of a preferences screen that uses imagemaps.
         imagemap:
             auto "gui_set/gui_prefs_%s.png"
 
-            hotspot (740, 232, 75, 73) clicked Preference("display", "fullscreen")
-            hotspot (832, 232, 75, 73) clicked Preference("display", "window")
-            hotspot (1074, 232, 75, 73) clicked Preference("transitions", "all")
-            hotspot (1166, 232, 75, 73) clicked Preference("transitions", "none")
+            hotspot (740, 232, 75, 73) action Preference("display", "fullscreen") alt _("Display Fullscreen")
+            hotspot (832, 232, 75, 73) action Preference("display", "window") alt _("Display Window")
+            hotspot (1074, 232, 75, 73) action Preference("transitions", "all") alt _("Transitions All")
+            hotspot (1166, 232, 75, 73) action  Preference("transitions", "none") alt _("Transitions None")
 
-            hotbar (736, 415, 161, 20) value Preference("music volume")
-            hotbar (1070, 415, 161, 20) value Preference("sound volume")
-            hotbar (667, 535, 161, 20) value Preference("voice volume")
-            hotbar (1001, 535, 161, 20) value Preference("text speed")
+            hotbar (736, 415, 161, 20) value Preference("music volume") alt _("Music Volume")
+            hotbar (1070, 415, 161, 20) value Preference("sound volume") alt _("Sound Volume")
+            hotbar (667, 535, 161, 20) value Preference("voice volume") alt _("Voice Volume")
+            hotbar (1001, 535, 161, 20) value Preference("text speed") alt _("Text Speed")
 
 
 .. _sl-imagemap:
@@ -1081,7 +1271,8 @@ parameters, and the following properties:
     property.
 
     For example, if `auto` is "imagemap_%s.png", and `idle` is omitted, then
-    idle defaults to "imagemap_idle.png".
+    idle defaults to "imagemap_idle.png". If `auto` is "imagemap %s", the
+    ``imagemap idle`` image is used.
 
     The behavior of `auto` can be customized by changing
     :var:`config.imagemap_auto_function`.
@@ -1142,11 +1333,35 @@ also takes the following properties:
     The action to run when the button is activated. This also controls
     if the button is sensitive, and if the button is selected.
 
+`alternate`
+    An action that is run if the hotspot is activated in an alternate manner.
+    Alternate activation occurs when the player right-clicks on the hotspot
+    on a mouse-based platform, or when the player long presses the hotspot
+    on a touch-based platform.
+
 `hovered`
     An action to run when the button gains focus.
 
 `unhovered`
     An action to run when the button loses focus.
+
+`selected`
+    An expression that determines whether the button is selected or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine selectedness.
+
+`sensitive`
+    An expression that determines whether the button is sensitive or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine sensitivity.
+
+`keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the action of this button.
+
+`alternate_keysym`
+    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    when pressed, invokes the alternate action of this button.
 
 It also takes:
 
@@ -1155,8 +1370,10 @@ It also takes:
 
 A hotspot creates a fixed, allowing children to be added to it. The
 fixed has an area that is the same size as the hotspot, meaning that
-the children will be positioned relative to the hotpsot.
+the children will be positioned relative to the hotspot.
 
+Hotspots should be given the ``alt`` style property to allow Ren'Py's
+self-voicing feature to work.
 
 .. _sl-hotbar:
 
@@ -1169,8 +1386,8 @@ tuple giving the area of the imagemap that makes up the button. It
 also takes the following properties:
 
 `value`
-    The current value of the bar. This can be either a Value object,
-    or a number.
+    The current value of the bar. This can be either a :ref:`bar value <input-values>`
+    object, or a number.
 
 `range`
     The maximum value of the bar. This is required if `value` is a
@@ -1187,6 +1404,10 @@ function takes:
 
 This does not take children.
 
+Hotbars should be given the ``alt`` style property to allow Ren'Py's
+self-voicing feature to work.
+
+
 Advanced Displayables
 =====================
 
@@ -1202,7 +1423,8 @@ The advanced displayable statements are:
 ``drag``
     Creates a :class:`Drag`. A drag can be given an optional child,
     or the :propref:`child` style property can be used to supply the child,
-    and its focused variants.
+    and its focused variants. Drags also take the :propref:`focus_mask`
+    style property.
 
 ``draggroup``
     Creates a :class:`DragGroup`. A drag group may have zero or more
@@ -1214,7 +1436,7 @@ The advanced displayable statements are:
 Has Statement
 =============
 
-The has statment allows you to specify a container to use, instead of
+The has statement allows you to specify a container to use, instead of
 fixed, for statements that take only one child. The has statement
 may only be used inside a statement that takes one child. The keyword
 ``has`` is followed (on the same line) by another statement, which
@@ -1245,7 +1467,7 @@ container.
 
 ::
 
-   screen volume_controls:
+   screen volume_controls():
         frame:
             has vbox
 
@@ -1266,15 +1488,24 @@ events occur, and executing arbitrary python code.
 Default
 -------
 
+The default statement sets the default value of a variable when the
+screen is first one. :func:`SetScreenVariable`
+
 The default statement sets the default value of a variable, if it is not
 passed as an argument to the screen, or inherited from a screen that calls
 us using the use statement.
 
 ::
 
-    screen message:
-         default message = "No message defined."
-         text message
+    screen scheduler():
+        default club = None
+        vbox:
+             text "What would you like to do?"
+             textbutton "Art Club" action SetScreenVariable("club", "art")
+             textbutton "Writing Club" action SetScreenVariable("club", "writing")
+
+             if club:
+                 textbutton "Select" action Return(club)
 
 
 .. _sl-for:
@@ -1282,7 +1513,7 @@ us using the use statement.
 For
 ---
 
-The for statement is similar to the Python for statment, except that
+The for statement is similar to the Python for statement, except that
 it does not support the else clause. It supports assignment to
 (optionally nested) tuple patterns, as well as variables.
 
@@ -1290,7 +1521,7 @@ it does not support the else clause. It supports assignment to
 
     $ numerals = [ 'I', 'II', 'III', 'IV', 'V' ]
 
-    screen five_buttons:
+    screen five_buttons():
         vbox:
             for i, numeral in enumerate(numerals):
                 textbutton numeral action Return(i + 1)
@@ -1306,7 +1537,7 @@ statement. It supports the if, elif, and else clauses.
 
 ::
 
-    screen skipping_indicator:
+    screen skipping_indicator():
         if config.skipping:
              text "Skipping."
         else:
@@ -1331,7 +1562,7 @@ occurs.
 
 ::
 
-    screen preferences:
+    screen preferences():
         frame:
             has hbox
 
@@ -1352,9 +1583,10 @@ The use statement allows a screen to include another. The use
 statement takes the name of the screen to use. This can optionally be
 followed by an argument list, in parenthesis.
 
-The scope of the included code includes the scope of the current
-statement's code, updated by assinging the parameters their new
-values.
+If the used screen include parameters, its scope is initialized to the
+result of assigning the arguments to those parameters. Otherwise, it
+is passed the scope of the current screen, updated with any keyword
+arguments passed to the screen.
 
 ::
 
@@ -1370,10 +1602,79 @@ values.
                 text FileSaveName(slot)
 
 
-     screen save:
+     screen save():
          grid 2 5:
              for i in range(1, 11):
                   use file_slot(i)
+
+
+The use statement may take one property, ``id``, which must be placed
+after the parameter list if present. This screen is only useful when
+two screens with the same tag use the same screen. In this case,
+when one screen replaces the other, the state of the used screen
+is transfered from old to new.
+
+::
+
+    transform t1():
+        xpos 150
+        linear 1.0 xpos 0
+
+    screen common():
+        text "Test" at t1
+
+    screen s1():
+        tag s
+        use common id "common"
+        text "s1" ypos 100
+
+    screen s2():
+        tag s
+        use common id "common"
+        text "s2" ypos 100
+
+    label start:
+        show screen s1
+        pause
+        show screen s2
+        pause
+        return
+
+Use and Transclude
+^^^^^^^^^^^^^^^^^^
+
+A use statement may also take a block containing screen language statements.
+When a block is given, the screen that is used may contain the ``transclude``
+statement. The ``transclude`` statement is replaces with the statements
+contained within the use statement's block.
+
+This makes it possible to define reusable layouts using screens. For example,
+the screen::
+
+    screen movable_frame(pos):
+        drag:
+            pos pos
+
+            frame:
+                background Frame("movable_frame.png", 10, 10)
+                top_padding 20
+
+                transclude
+
+is meant to be a reusable component that wraps other components. Here's
+an example of how it can be used::
+
+    screen test:
+        use movable_frame((0, 0)):
+            text "You can drag me."
+
+        use movable_frame((0, 100)):
+            vbox:
+                text "You can drag me too."
+                textbutton "Got it!" action Return(True)
+
+The use and transclude constructs form the basis of
+:ref:`creator-defined screen language statements <creator-defined-sl>`.
 
 .. _sl-python:
 
@@ -1403,6 +1704,73 @@ has side effects, those side effects may occur at unpredictable times.
         textbutton "Run Test" action Jump(test_label)
 
 
+.. _sl-showif:
+
+Showif Statement
+================
+
+The showif statement takes a condition. It shows its children when the
+condition is true, and hides the children when the condition is false.
+When showif's children have transforms, it will supply them with ATL
+events to manage the show and hide process, so that Ren'Py can animate
+the show and hide process.
+
+Multiple showif statements can be grouped together into a single
+showif/elif/else construct, similiar to an if statement.
+**Unlike the if statement, showif executes all of its blocks, including python code, even if the condition is false.**
+This is because the showif statement needs to create the children that it is
+hiding.
+
+Showif delivers three events to its children:
+
+``appear``
+    Is delivered if the condition is true when the screen is first shown,
+    to instantly show the child.
+``show``
+    Is delivered when the condition changes from false to true.
+``hide``
+    Is delivered when the condition changes from true to false.
+
+For these purposes, the condition of an elif clause is always false if any
+prior condition is true, while the condition of an else clause is only true
+when all prior conditions are false.
+
+For example::
+
+    transform cd_transform:
+        # This is run before appear, show, or hide.
+        xalign 0.5 yalign 0.5 alpha 0.0
+
+        on appear:
+            alpha 1.0
+        on show:
+            zoom .75
+            linear .25 zoom 1.0 alpha 1.0
+        on hide:
+            linear .25 zoom 1.25 alpha 0.0
+
+    screen countdown():
+        default n = 3
+
+        vbox:
+            textbutton "3" action SetScreenVariable("n", 3)
+            textbutton "2" action SetScreenVariable("n", 2)
+            textbutton "1" action SetScreenVariable("n", 1)
+            textbutton "0" action SetScreenVariable("n", 0)
+
+        showif n == 3:
+            text "Three" size 100 at cd_transform
+        elif n == 2:
+            text "Two" size 100 at cd_transform
+        elif n == 1:
+            text "One" size 100 at cd_transform
+        else:
+            text "Liftoff!" size 100 at cd_transform
+
+    label start:
+        call screen countdown
+
+
 Screen Statements
 =================
 
@@ -1419,7 +1787,17 @@ Show Screen
 
 The show screen statement causes a screen to be shown. It takes an
 screen name, and an optional argument list. If present, the arguments
-are used to intialize the scope of the screen.
+are used to initialize the scope of the screen.
+
+The show screen statement takes an optional nopredict keyword, that
+prevents screen prediction from occurring. During screen prediction,
+arguments to the screen are evaluated. Please ensure that evaluating
+the screen arguments does not cause unexpected side-effects to occur.
+
+.. warning::
+
+    If evaluating the arguments to a screen causes side-effects to occur,
+    your game may behave in unexpected ways.
 
 Screens shown in this way are displayed until they are explicitly
 hidden. This allows them to be used for overlay purposes.
@@ -1428,6 +1806,10 @@ hidden. This allows them to be used for overlay purposes.
 
     show screen overlay_screen
     show screen clock_screen(hour=11, minute=30)
+
+    if rare_case:
+        show rare_screen nopredict
+
 
 Hide Screen
 -----------
@@ -1452,10 +1834,21 @@ This can be used to display an imagemap. The imagemap can place a
 value into the `_return` variable using the :func:`Return` action,
 or can jump to a label using the :func:`Jump` action.
 
+The call screen statement takes an optional nopredict keyword, that
+prevents screen prediction from occurring. During screen prediction,
+arguments to the screen are evaluated. Please ensure that evaluating
+the screen arguments does not cause unexpected side-effects to occur.
+
+.. warning::
+
+    If evaluating the arguments to a screen causes side-effects to occur,
+    your game may behave in unexpected ways.
+
 ::
 
-   call screen my_imagemap
+    call screen my_imagemap
 
+    call screen my_screen(side_effect_function()) nopredict
 
 .. _screen-variants:
 
@@ -1504,7 +1897,7 @@ and choosing the entries that apply to the current platform.
    be used instead of ``"tablet"``.)
 
 ``"phone"``
-   Defined on touchscren-based devices where the diagonal size of
+   Defined on touchscreen-based devices where the diagonal size of
    the screen is less than 6 inches. On such a small device, it's
    important to make buttons large enough a user can easily choose
    them. (In general, ``"small"`` should be used instead of ``"phone"``.)
@@ -1521,6 +1914,17 @@ and choosing the entries that apply to the current platform.
 ``"firetv"``
    Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
 
+``"android"``
+   Defined on all Android devices.
+
+``"ios"``
+   Defined on iOS devices, like the iPad (where ``"tablet"`` and ``"medium"``
+   are also defined) and the iPhone (where ``"phone"`` and ``"small"`` are
+   also defined).
+
+``"mobile"``
+   Defined on mobile platforms, such as Android and iOS.
+
 ``"pc"``
    Defined on Windows, Mac OS X, and Linux. A PC is expected to have
    a mouse and keyboard present, to allow buttons to be hovered, and
@@ -1535,7 +1939,7 @@ An example of defining a screen variant is:
 
    # A variant hello_world screen, used on small touch-based
    # devices.
-   screen hello_world:
+   screen hello_world():
         tag example
         zorder 1
         modal False

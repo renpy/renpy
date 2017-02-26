@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,6 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
 class Object(object):
     """
     Our own base class. Contains methods to simplify serialization.
@@ -35,11 +36,9 @@ class Object(object):
             if f in rv:
                 del rv[f]
 
-
         rv["__version__"] = self.__version__
 
         return rv
-
 
     # None, to prevent this from being called when unnecessary.
     after_setstate = None
@@ -51,10 +50,34 @@ class Object(object):
         self.__dict__.update(new_dict)
 
         if version != self.__version__:
-            self.after_upgrade(version) # E1101
+            self.after_upgrade(version)  # E1101
 
         if self.after_setstate:
-            self.after_setstate() # E1102
+            self.after_setstate()  # E1102
 
 # We don't handle slots with this mechanism, since the call to vars should
 # throw an error.
+
+sentinels = { }
+
+
+class Sentinel(object):
+    """
+    This is used to represent a sentinel object. There will be exactly one
+    sentinel object with a name existing in the system at any time.
+    """
+
+    def __new__(cls, name):
+        rv = sentinels.get(name, None)
+
+        if rv is None:
+            rv = object.__new__(cls, name)
+            sentinels[name] = rv
+
+        return rv
+
+    def __init__(self, name):
+        self.name = name
+
+    def __reduce__(self):
+        return (Sentinel, (self.name, ))

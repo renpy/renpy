@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,156 +24,88 @@
 
 import renpy.display
 import renpy.text.text
+import renpy.sl2
 
 from renpy.sl2.slparser import Positional, Keyword, Style, PrefixStyle, add
 from renpy.sl2.slparser import DisplayableParser, many
 
-position_property_names = [
-        "anchor",
-        "xanchor",
-        "yanchor",
-        "pos",
-        "xpos",
-        "ypos",
-        "align",
-        "xalign",
-        "yalign",
-        "xoffset",
-        "yoffset",
-        "maximum",
-        "xmaximum",
-        "ymaximum",
-        "area",
-        "clipping",
-        "xfill",
-        "yfill",
-        # no center, since it can conflict with the center transform.
-        "xcenter",
-        "ycenter",
-        "xsize",
-        "ysize",
-        "xysize",
-        ]
+from renpy.sl2.slproperties import text_properties, box_properties, window_properties
+from renpy.sl2.slproperties import bar_properties, button_properties
+from renpy.sl2.slproperties import text_position_properties, text_text_properties
+from renpy.sl2.slproperties import side_position_properties
 
-position_properties = [ Style(i) for i in position_property_names ]
-text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ]
-side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ]
 
-text_property_names = [
-        "antialias",
-        "vertical",
-        "black_color",
-        "bold",
-        "color",
-        "drop_shadow",
-        "drop_shadow_color",
-        "first_indent",
-        "font",
-        "size",
-        "hyperlink_functions",
-        "italic",
-        "justify",
-        "kerning",
-        "language",
-        "layout",
-        "line_leading",
-        "line_spacing",
-        "minwidth",
-        "min_width",
-        "newline_indent",
-        "outlines",
-        "rest_indent",
-        "ruby_style",
-        "slow_cps",
-        "slow_cps_multiplier",
-        "slow_abortable",
-        "strikethrough",
-        "text_align",
-        "text_y_fudge",
-        "underline",
-        "minimum",
-        "xminimum",
-        "yminimum",
-        ]
+class ShowIf(renpy.display.layout.Container):
+    """
+    This is a displayable that wraps displayables that are
+    underneath a showif statement.
+    """
 
-text_properties = [ Style(i) for i in text_property_names ]
-text_text_properties = [ PrefixStyle("text_", i) for i in text_property_names ]
+    def __init__(self, condition, replaces=None):
+        super(ShowIf, self).__init__()
 
-window_properties = [ Style(i) for i in [
-        "background",
-        "foreground",
-        "left_margin",
-        "right_margin",
-        "bottom_margin",
-        "top_margin",
-        "xmargin",
-        "ymargin",
-        "left_padding",
-        "right_padding",
-        "top_padding",
-        "bottom_padding",
-        "xpadding",
-        "ypadding",
-        "size_group",
-        "minimum",
-        "xminimum",
-        "yminimum",
-        ] ]
+        self.condition = condition
 
-button_properties = [ Style(i) for i in [
-        "sound",
-        "mouse",
-        "focus_mask",
-        "child",
-        ] ]
+        if replaces is None:
+            if condition:
+                self.pending_event = "appear"
+            else:
+                self.pending_event = None
 
-bar_properties = [ Style(i) for i in [
-        "bar_vertical",
-        "bar_invert",
-        "bar_resizing",
-        "left_gutter",
-        "right_gutter",
-        "top_gutter",
-        "bottom_gutter",
-        "left_bar",
-        "right_bar",
-        "top_bar",
-        "bottom_bar",
-        "thumb",
-        "thumb_shadow",
-        "thumb_offset",
-        "mouse",
-        "unscrollable",
-        ] ]
+            self.show_child = condition
 
-box_properties = [ Style(i) for i in [
-        "box_layout",
-        "box_wrap",
-        "box_reverse",
-        "order_reverse",
-        "spacing",
-        "first_spacing",
-        "fit_first",
-        "minimum",
-        "xminimum",
-        "yminimum",
-        ] ]
+        else:
+            if self.condition and not replaces.condition:
+                self.pending_event = "show"
+            elif not self.condition and replaces.condition:
+                self.pending_event = "hide"
+            else:
+                self.pending_event = replaces.pending_event
 
-ui_properties = [
-    Keyword("at"),
-    Keyword("id"),
-    Keyword("style"),
-    Keyword("style_group"),
-    Keyword("focus"),
-    Keyword("default"),
-    ]
+            self.show_child = replaces.show_child
+
+    def per_interact(self):
+        if self.pending_event:
+            self.child.set_transform_event(self.pending_event)
+            self.pending_event = None
+
+    def render(self, width, height, st, at):
+
+        if isinstance(self.child, renpy.display.motion.Transform):
+            if self.condition or self.show_child:
+                cr = renpy.display.render.render(self.child, width, height, st, at)
+                self.show_child = self.condition or not self.child.hide_response
+        else:
+            if self.condition:
+                cr = renpy.display.render.render(self.child, width, height, st, at)
+                self.show_child = True
+            else:
+                self.show_child = False
+
+        if self.show_child:
+            cw, ch = cr.get_size()
+            rv = renpy.display.render.Render(cw, ch)
+            rv.blit(cr, (0, 0))
+        else:
+            rv = renpy.display.render.Render(0, 0)
+
+        self.offsets = [ (0, 0) ]
+
+        return rv
+
+    def event(self, ev, x, y, st):
+        if self.condition:
+            return self.child.event(ev, x, y, st)
+        else:
+            return None
+
+    def get_placement(self):
+        return self.child.get_placement()
 
 
 DisplayableParser("null", renpy.display.layout.Null, "default", 0)
 Keyword("width")
 Keyword("height")
-add(ui_properties)
-add(position_properties)
 
 DisplayableParser("text", renpy.text.text.Text, "text", 0, scope=True, replaces=True)
 Positional("text")
@@ -181,23 +113,15 @@ Keyword("slow")
 Keyword("slow_done")
 Keyword("substitute")
 Keyword("scope")
-add(ui_properties)
-add(position_properties)
 add(text_properties)
 
-DisplayableParser("hbox", renpy.display.layout.MultiBox, "hbox", many)
-add(ui_properties)
-add(position_properties)
+DisplayableParser("hbox", renpy.display.layout.MultiBox, "hbox", many, default_keywords={ 'layout' : 'horizontal' })
 add(box_properties)
 
-DisplayableParser("vbox", renpy.display.layout.MultiBox, "vbox", many)
-add(ui_properties)
-add(position_properties)
+DisplayableParser("vbox", renpy.display.layout.MultiBox, "vbox", many, default_keywords={ 'layout' : 'vertical' })
 add(box_properties)
 
-DisplayableParser("fixed", renpy.display.layout.Fixed, "fixed", many)
-add(ui_properties)
-add(position_properties)
+DisplayableParser("fixed", renpy.display.layout.MultiBox, "fixed", many, default_keywords={ 'layout' : 'fixed' })
 add(box_properties)
 
 DisplayableParser("grid", renpy.display.layout.Grid, "grid", many)
@@ -205,26 +129,21 @@ Positional("cols")
 Positional("rows")
 Keyword("transpose")
 Style("spacing")
-add(ui_properties)
-add(position_properties)
 
 DisplayableParser("side", renpy.display.layout.Side, "side", many)
 Positional("positions")
 Style("spacing")
-add(ui_properties)
-add(position_properties)
 
 # Omit sizer, as we can always just put an xmaximum and ymaximum on an item.
 
 for name in [ "window", "frame" ]:
     DisplayableParser(name, renpy.display.layout.Window, name, 1)
-    add(ui_properties)
-    add(position_properties)
     add(window_properties)
 
 DisplayableParser("key", renpy.ui._key, None, 0)
 Positional("key")
 Keyword("action")
+Keyword("activate_sound")
 
 DisplayableParser("timer", renpy.display.behavior.Timer, "default", 0, replaces=True)
 Positional("delay")
@@ -243,23 +162,12 @@ Keyword("prefix")
 Keyword("suffix")
 Keyword("changed")
 Keyword("pixel_width")
-add(ui_properties)
-add(position_properties)
+Keyword("value")
 add(text_properties)
-
-DisplayableParser("image", renpy.display.im.image, "default", 0)
-Positional("im")
 
 # Omit imagemap_compat for being too high level (and obsolete).
 
 DisplayableParser("button", renpy.display.behavior.Button, "button", 1)
-Keyword("action")
-Keyword("clicked")
-Keyword("hovered")
-Keyword("unhovered")
-Keyword("alternate")
-add(ui_properties)
-add(position_properties)
 add(window_properties)
 add(button_properties)
 
@@ -277,8 +185,6 @@ Keyword("hovered")
 Keyword("unhovered")
 Keyword("alternate")
 Keyword("image_style")
-add(ui_properties)
-add(position_properties)
 add(window_properties)
 add(button_properties)
 
@@ -292,8 +198,6 @@ Keyword("alternate")
 Keyword("text_style")
 Keyword("substitute")
 Keyword("scope")
-add(ui_properties)
-add(position_properties)
 add(window_properties)
 add(button_properties)
 add(text_position_properties)
@@ -302,27 +206,139 @@ add(text_text_properties)
 DisplayableParser("label", renpy.ui._label, "label", 0, scope=True)
 Positional("label")
 Keyword("text_style")
-add(ui_properties)
-add(position_properties)
 add(window_properties)
 add(text_position_properties)
 add(text_text_properties)
 
-for name in [ "bar", "vbar" ]:
-    DisplayableParser(name, renpy.display.behavior.Bar, name, 0, replaces=True)
-    Keyword("adjustment")
-    Keyword("range")
-    Keyword("value")
-    Keyword("changed")
-    Keyword("hovered")
-    Keyword("unhovered")
-    add(ui_properties)
-    add(position_properties)
-    add(bar_properties)
+
+def sl2bar(context=None, **properties):
+    range = 1  # @ReservedAssignment
+    value = 0
+    width = None
+    height = None
+
+    if "width" in properties:
+        width = properties.pop("width")
+    if "height" in properties:
+        height  = properties.pop("height")
+    if "range" in properties:
+        range = properties.pop("range")  # @ReservedAssignment
+    if "value" in properties:
+        value = properties.pop("value")
+
+    if "style" not in properties:
+        if isinstance(value, renpy.ui.BarValue):
+            style = renpy.ui.combine_style(context.style_prefix, value.get_style()[0])
+            properties["style"] = style
+
+    return renpy.display.behavior.Bar(range, value, width, height, vertical=False, **properties)
+
+DisplayableParser("bar", sl2bar, None, 0, replaces=True, pass_context=True)
+Keyword("adjustment")
+Keyword("range")
+Keyword("value")
+Keyword("changed")
+Keyword("hovered")
+Keyword("unhovered")
+add(bar_properties)
+
+
+def sl2vbar(context=None, **properties):
+    range = 1  # @ReservedAssignment
+    value = 0
+    width = None
+    height = None
+
+    if "width" in properties:
+        width = properties.pop("width")
+    if "height" in properties:
+        height  = properties.pop("height")
+    if "range" in properties:
+        range = properties.pop("range")  # @ReservedAssignment
+    if "value" in properties:
+        value = properties.pop("value")
+
+    if "style" not in properties:
+        if isinstance(value, renpy.ui.BarValue):
+            style = renpy.ui.combine_style(context.style_prefix, value.get_style()[1])
+            properties["style"] = style
+
+    return renpy.display.behavior.Bar(range, value, width, height, vertical=True, **properties)
+
+DisplayableParser("vbar", sl2vbar, None, 0, replaces=True, pass_context=True)
+Keyword("adjustment")
+Keyword("range")
+Keyword("value")
+Keyword("changed")
+Keyword("hovered")
+Keyword("unhovered")
+add(bar_properties)
+
 
 # Omit autobar. (behavior)
 
-DisplayableParser("viewport", renpy.ui._viewport, "viewport", 1, replaces=True)
+def sl2viewport(context=None, **kwargs):
+    """
+    This converts the output of renpy.ui.viewport into something that
+    sl.displayable can use.
+    """
+
+    d = renpy.ui.detached()
+
+    if context is not None:
+        renpy.ui.stack[-1].style_prefix = context.style_prefix
+
+    vp = renpy.ui.viewport(**kwargs)
+
+    renpy.ui.stack.pop()
+
+    rv = d.child
+    rv._main = vp
+    rv._composite_parts = list(rv.children)
+
+    return rv
+
+
+def sl2vpgrid(context=None, **kwargs):
+    """
+    This converts the output of renpy.ui.viewport into something that
+    sl.displayable can use.
+    """
+
+    d = renpy.ui.detached()
+
+    if context is not None:
+        renpy.ui.stack[-1].style_prefix = context.style_prefix
+
+    vp = renpy.ui.vpgrid(**kwargs)
+
+    renpy.ui.stack.pop()
+
+    rv = d.child
+    rv._main = vp
+    rv._composite_parts = list(rv.children)
+
+    return rv
+
+DisplayableParser("viewport", sl2viewport, "viewport", 1, replaces=True, pass_context=True)
+Keyword("child_size")
+Keyword("mousewheel")
+Keyword("arrowkeys")
+Keyword("draggable")
+Keyword("edgescroll")
+Keyword("xadjustment")
+Keyword("yadjustment")
+Keyword("xinitial")
+Keyword("yinitial")
+Keyword("scrollbars")
+Style("xminimum")
+Style("yminimum")
+PrefixStyle("side_", "spacing")
+add(side_position_properties)
+
+DisplayableParser("vpgrid", sl2vpgrid, "vpgrid", many, replaces=True, pass_context=True)
+Keyword("rows")
+Keyword("cols")
 Keyword("child_size")
 Keyword("mousewheel")
 Keyword("draggable")
@@ -332,9 +348,10 @@ Keyword("yadjustment")
 Keyword("xinitial")
 Keyword("yinitial")
 Keyword("scrollbars")
+Style("spacing")
+Style("xminimum")
+Style("yminimum")
 PrefixStyle("side_", "spacing")
-add(ui_properties)
-add(position_properties)
 add(side_position_properties)
 
 DisplayableParser("imagemap", renpy.ui._imagemap, "imagemap", many, imagemap=True)
@@ -348,48 +365,60 @@ Keyword("selected_insensitive")
 Keyword("auto")
 Keyword("alpha")
 Keyword("cache")
-add(ui_properties)
-add(position_properties)
 
-DisplayableParser("hotspot", renpy.ui._hotspot, "hotspot", 1)
+DisplayableParser("hotspot", renpy.ui._hotspot, "hotspot", 1, hotspot=True)
 Positional("spot")
-Keyword("action")
-Keyword("clicked")
-Keyword("hovered")
-Keyword("unhovered")
-add(ui_properties)
-add(position_properties)
 add(window_properties)
 add(button_properties)
 
-DisplayableParser("hotbar", renpy.ui._hotbar, "hotbar", 0, replaces=True)
+DisplayableParser("hotbar", renpy.ui._hotbar, "hotbar", 0, replaces=True, hotspot=True)
 Positional("spot")
 Keyword("adjustment")
 Keyword("range")
 Keyword("value")
-add(ui_properties)
-add(position_properties)
 add(bar_properties)
 
 
-DisplayableParser("transform", renpy.display.motion.Transform, "transform", 1)
+DisplayableParser("transform", renpy.display.motion.Transform, "transform", 1, default_properties=False)
 Keyword("at")
 Keyword("id")
 for i in renpy.atl.PROPERTIES:
     Style(i)
 
-DisplayableParser("add", renpy.ui._add, None, 0)
-Positional("im")
-Keyword("at")
-Keyword("id")
-for i in renpy.atl.PROPERTIES:
-    Style(i)
 
-DisplayableParser("on", renpy.ui.on, None, 0)
-Positional("event")
-Keyword("action")
+def sl2add(d, replaces=None, scope=None, **kwargs):
 
-DisplayableParser("drag", renpy.display.dragdrop.Drag, None, 1, replaces=True)
+    if d is None:
+        return renpy.sl2.slast.NO_DISPLAYABLE
+
+    d = renpy.easy.displayable(d, scope=scope)
+
+    if d._duplicatable:
+        d = d._duplicate(None)
+        d._unique()
+
+    rv = d
+
+    Transform = renpy.display.motion.Transform
+
+    if kwargs:
+        rv = Transform(child=d, **kwargs)
+
+    if isinstance(rv, Transform):
+        rv.take_state(replaces)
+        rv.take_execution_state(replaces)
+
+    return rv
+
+for name in [ "add", "image" ]:
+    DisplayableParser(name, sl2add, None, 0, replaces=True, default_properties=False, scope=True)
+    Positional("im")
+    Keyword("at")
+    Keyword("id")
+    for i in renpy.atl.PROPERTIES:
+        Style(i)
+
+DisplayableParser("drag", renpy.display.dragdrop.Drag, "drag", 1, replaces=True)
 Keyword("drag_name")
 Keyword("draggable")
 Keyword("droppable")
@@ -398,22 +427,23 @@ Keyword("dragged")
 Keyword("dropped")
 Keyword("drag_handle")
 Keyword("drag_joined")
+Keyword("drag_offscreen")
 Keyword("clicked")
 Keyword("hovered")
 Keyword("unhovered")
+Keyword("focus_mask")
 Style("child")
-add(ui_properties)
-add(position_properties)
 
 DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many, replaces=True)
-add(ui_properties)
-add(position_properties)
 
 DisplayableParser("mousearea", renpy.display.behavior.MouseArea, 0, replaces=True)
 Keyword("hovered")
 Keyword("unhovered")
-add(ui_properties)
-add(position_properties)
+Style("focus_mask")
 
+DisplayableParser("on", renpy.display.behavior.OnEvent, None, 0)
+Positional("event")
+Keyword("action")
 
-
+# Ensure that Parsers are no longer added automatically.
+renpy.sl2.slparser.parser = None

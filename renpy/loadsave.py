@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -38,11 +38,21 @@ import renpy
 from json import dumps as json_dumps
 
 # Dump that chooses which pickle to use:
+
+
 def dump(o, f):
     if renpy.config.use_cpickle:
         cPickle.dump(o, f, cPickle.HIGHEST_PROTOCOL)
     else:
         pickle.dump(o, f, pickle.HIGHEST_PROTOCOL)
+
+
+def dumps(o):
+    if renpy.config.use_cpickle:
+        return cPickle.dumps(o, cPickle.HIGHEST_PROTOCOL)
+    else:
+        return pickle.dumps(o, pickle.HIGHEST_PROTOCOL)
+
 
 def loads(s):
     if renpy.config.use_cpickle:
@@ -54,6 +64,7 @@ def loads(s):
 # files.
 savegame_suffix = renpy.savegame_suffix
 
+
 def save_dump(roots, log):
     """
     Dumps information about the save to save_dump.txt. We dump the size
@@ -62,7 +73,6 @@ def save_dump(roots, log):
     """
 
     o_repr_cache = { }
-
 
     def visit(o, path):
         ido = id(o)
@@ -94,7 +104,6 @@ def save_dump(roots, log):
 
         else:
             o_repr = "BAD TYPE <{0}>".format(type(o).__name__)
-
 
         o_repr_cache[ido] = o_repr
 
@@ -161,7 +170,6 @@ def save_dump(roots, log):
                 size += 2
                 size += visit(v, "{0}[{1!r}]".format(path, k))
 
-
         f.write("{0: 7d} {1} = {2}\n".format(size, path, o_repr_cache[ido]))
 
         return size
@@ -179,8 +187,11 @@ def save_dump(roots, log):
 
 # Used to indicate an aborted save, due to the game being mutated
 # while the save is in progress.
+
+
 class SaveAbort(Exception):
     pass
+
 
 def safe_rename(old, new):
     """
@@ -191,6 +202,7 @@ def safe_rename(old, new):
         os.unlink(new)
 
     os.rename(old, new)
+
 
 class SaveRecord(object):
     """
@@ -216,7 +228,7 @@ class SaveRecord(object):
 
         # For speed, copy the file after we've written it at least once.
         if self.first_filename is not None:
-            shutil.copy(self.first_filename, filename_new)
+            shutil.copyfile(self.first_filename, filename_new)
             safe_rename(filename_new, filename)
             return
 
@@ -244,7 +256,6 @@ class SaveRecord(object):
         self.first_filename = filename
 
 
-
 def save(slotname, extra_info='', mutate_flag=False):
     """
     :doc: loadsave
@@ -268,14 +279,14 @@ def save(slotname, extra_info='', mutate_flag=False):
 
     roots = renpy.game.log.freeze(None)
 
+    if renpy.config.save_dump:
+        save_dump(roots, renpy.game.log)
+
     logf = StringIO()
     dump((roots, renpy.game.log), logf)
 
     if mutate_flag and renpy.python.mutate_flag:
         raise SaveAbort()
-
-    if renpy.config.save_dump:
-        save_dump(roots, renpy.game.log)
 
     screenshot = renpy.game.interface.get_screenshot()
 
@@ -293,13 +304,13 @@ def save(slotname, extra_info='', mutate_flag=False):
     clear_slot(slotname)
 
 
-
 # Flag that lets us know if an autosave is in progress.
 autosave_not_running = threading.Event()
 autosave_not_running.set()
 
 # The number of times autosave has been called without a save occuring.
 autosave_counter = 0
+
 
 def autosave_thread(take_screenshot):
 
@@ -327,7 +338,6 @@ def autosave_thread(take_screenshot):
 
     finally:
         autosave_not_running.set()
-
 
 
 def autosave():
@@ -359,6 +369,15 @@ def autosave():
 
 # This assumes a screenshot has already been taken.
 def force_autosave(take_screenshot=False):
+    """
+    :doc: other
+
+    Forces a background autosave to occur.
+
+    `take_screenshot`
+        If True, a new screenshot will be taken. If False, the existing
+        screenshot will be used.
+    """
 
     # That is, autosave is running.
     if not autosave_not_running.isSet():
@@ -443,11 +462,17 @@ def list_saved_games(regexp=r'.', fast=False):
 
         c = get_cache(s)
 
-        extra_info = c.get_json().get("_save_name", "")
-        screenshot = c.get_screenshot()
-        mtime = c.get_mtime()
+        if c is not None:
+            json = c.get_json()
+            if json is not None:
+                extra_info = json.get("_save_name", "")
+            else:
+                extra_info = ""
 
-        rv.append((s, extra_info, screenshot, mtime))
+            screenshot = c.get_screenshot()
+            mtime = c.get_mtime()
+
+            rv.append((s, extra_info, screenshot, mtime))
 
     return rv
 
@@ -473,6 +498,7 @@ def list_slots(regexp=None):
 
 # A cache for newest slot info.
 newest_slot_cache = { }
+
 
 def newest_slot(regexp=None):
     """
@@ -518,6 +544,7 @@ def slot_mtime(slotname):
 
     return get_cache(slotname).get_mtime()
 
+
 def slot_json(slotname):
     """
     :doc: loadsave
@@ -528,6 +555,7 @@ def slot_json(slotname):
 
     return get_cache(slotname).get_json()
 
+
 def slot_screenshot(slotname):
     """
     :doc: loadsave
@@ -537,6 +565,7 @@ def slot_screenshot(slotname):
     """
 
     return get_cache(slotname).get_screenshot()
+
 
 def can_load(filename, test=False):
     """
@@ -552,6 +581,7 @@ def can_load(filename, test=False):
     else:
         return False
 
+
 def load(filename):
     """
     :doc: loadsave
@@ -562,6 +592,7 @@ def load(filename):
 
     roots, log = loads(location.load(filename))
     log.unfreeze(roots, label="_after_load")
+
 
 def unlink_save(filename):
     """
@@ -588,6 +619,18 @@ def rename_save(old, new):
     clear_slot(new)
 
 
+def copy_save(old, new):
+    """
+    :doc: loadsave
+
+    Copies the save at `old` to `new`. (Does nothing if `old` does not
+    exist.)
+    """
+
+    location.copy(old, new)
+    clear_slot(new)
+
+
 def cycle_saves(name, count):
     """
     :doc: loadsave
@@ -607,7 +650,8 @@ def cycle_saves(name, count):
 ################################################################################
 
 # None is a possible value for some of the attributes.
-unknown = object()
+unknown = renpy.object.Sentinel("unknown")
+
 
 class Cache(object):
     """
@@ -659,6 +703,7 @@ class Cache(object):
 # data until the slot changes.
 cache = { }
 
+
 def get_cache(slotname):
 
     rv = cache.get(slotname, None)
@@ -680,6 +725,7 @@ def clear_slot(slotname):
 
     renpy.exports.restart_interaction()
 
+
 def clear_cache():
     """
     Clears the entire cache.
@@ -699,6 +745,3 @@ location = None
 
 if False:
     location = renpy.savelocation.FileLocation("blah")
-
-
-

@@ -58,14 +58,14 @@ of the displayable's style::
 
 When no ``style`` property is given, a parent is chosen based on the kind of
 displayable be that has been supplied. The parent chosen can be influenced
-by the :ref:`style_group <style-group>` property of user interface statements
+by the :ref:`style_prefix <style-prefix>` property of user interface statements
 in the screen language.
 
 When a style is defined without a parent being specified, a default
 parent is chosen for the style. If the style contains an underscore (_)
 in its name, the parent is named by removing everything up to and
 including the first underscore. For example, a style named ``my_button``
-will inherity from ``button``. This inheritance can be changed using the
+will inherit from ``button``. This inheritance can be changed using the
 style statement or by calling a method on a style object.  When a style that
 does not exist is used, and the style has an underscore in its name, Ren'Py will create
 it using the default parent.
@@ -135,6 +135,11 @@ The style statement accepts the following clauses:
     which are interpreted as :ref:`screen variants <screen-variants>`. If at
     least one of the variants given is active, the style statement is run,
     otherwise it is ignored.
+
+``properties`` `simple-expression`
+    Evaluates the simple expression to get a dictionary. The dictionary is
+    expected to map style properties to values, and the values are assigned
+    as if they were provided to the style statement.
 
 Examples of style statements are::
 

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -118,7 +118,10 @@ init -1500 python:
             return False
 
 
-    class __GalleryToggleSlideshow(Action):
+    @renpy.pure
+    class __GalleryToggleSlideshow(Action, FieldEquality):
+
+        identity_fields = [ "gallery" ]
 
         def __init__(self, gallery):
             self.gallery = gallery
@@ -130,6 +133,18 @@ init -1500 python:
         def get_selected(self):
             return self.gallery.slideshow
 
+    @renpy.pure
+    class __GalleryAction(Action, FieldEquality):
+
+        identity_fields = [ "gallery" ]
+        equality_fields = [ "index" ]
+
+        def __init__(self, gallery, index):
+            self.gallery = gallery
+            self.index = index
+
+        def __call__(self):
+            renpy.invoke_in_new_context(self.gallery.show, self.index)
 
     class Gallery(object):
         """
@@ -155,18 +170,22 @@ init -1500 python:
 
             The default idle border used by make_button.
 
+        .. attribute:: unlocked_advance
+
+            If true, the gallery will only advance through unlocked images.
+
         .. attribute:: navigation
 
             If true, the gallery will display navigation and slideshow
             buttons on top of the images.
 
+            To customize the look of the navigation, you may override the
+            gallery_navigation screen. The default screen is defined in
+            common/00gallery.rpy
+
         .. attribute:: span_buttons
 
             If true, the gallery will advance between buttons.
-
-        .. attribute:: locked
-
-            If true, the gallery will advance through locked images.
 
         .. attribute:: slideshow_delay
 
@@ -194,9 +213,11 @@ init -1500 python:
 
             self.unlockable = None
 
+            self.unlocked_advance = False
+
             self.navigation = False
+
             self.span_buttons = False
-            self.locked = True
 
             self.slideshow_delay = 5
 
@@ -309,7 +330,7 @@ init -1500 python:
             b = self.buttons[name]
 
             if b.check_unlock():
-                return ui.invokesinnewcontext(self.show, b.index)
+                return __GalleryAction(self, b.index)
             else:
                 return None
 
@@ -431,7 +452,7 @@ init -1500 python:
                 b = self.button_list[button]
                 i = b.images[image]
 
-                result = i.show((button, image) not in all_images, image, len(b.images))
+                result = i.show((button, image) not in unlocked_images, image, len(b.images))
 
                 # Default action for click.
 
@@ -444,12 +465,15 @@ init -1500 python:
                 # At this point, result is either 'next', "next_unlocked", "previous", or "previous_unlocked"
                 # Go through the common advance code.
 
-                if self.locked and result.endswith("_unlocked"):
-                    images = all_images
-                else:
+                if self.unlocked_advance:
                     images = unlocked_images
+                else:
+                    images = all_images
 
-                index = images.index((button, image))
+                if (button, image) in images:
+                    index = images.index((button, image))
+                else:
+                    index = -1
 
                 if result.startswith('previous'):
                     index -= 1
@@ -542,22 +566,24 @@ init -1500:
                 add d
 
         if gallery.slideshow:
-            timer gallery.slideshow_delay action Return("next")
+            timer gallery.slideshow_delay action Return("next") repeat True
 
         key "game_menu" action gallery.Return()
 
         if gallery.navigation:
+            use gallery_navigation
 
-            hbox:
-                spacing 20
+    screen gallery_navigation:
+        hbox:
+            spacing 20
 
-                style_group "gallery"
-                align (.98, .98)
+            style_group "gallery"
+            align (.98, .98)
 
-                textbutton _("prev") action gallery.Previous()
-                textbutton _("next") action gallery.Next()
-                textbutton _("slideshow") action gallery.ToggleSlideshow()
-                textbutton _("return") action gallery.Return()
+            textbutton _("prev") action gallery.Previous(unlocked=gallery.unlocked_advance)
+            textbutton _("next") action gallery.Next(unlocked=gallery.unlocked_advance)
+            textbutton _("slideshow") action gallery.ToggleSlideshow()
+            textbutton _("return") action gallery.Return()
 
     python:
         style.gallery = Style(style.default)

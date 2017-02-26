@@ -14,14 +14,6 @@ translate None strings:
     old "Updater"
     new "アップデーター"
 
-    # renpy/common/00updater.rpy:1260
-    old "An error has occured:"
-    new "エラーが発生しました:"
-
-    # renpy/common/00updater.rpy:1262
-    old "Checking for updates."
-    new "アップデートを確認しています。"
-
     # renpy/common/00updater.rpy:1264
     old "This program is up to date."
     new "このプログラムは最新の状態です。"
@@ -42,10 +34,6 @@ translate None strings:
     old "Unpacking the updates."
     new "アップデートを展開しています。"
 
-    # renpy/common/00updater.rpy:1274
-    old "Finishing up."
-    new "最終処理中です。"
-
     # renpy/common/00updater.rpy:1276
     old "The updates have been installed. The program will restart."
     new "アップデートがインストールされました。プログラムを再起動します。"
@@ -58,21 +46,13 @@ translate None strings:
     old "The updates were cancelled."
     new "アップデートがキャンセルされました。"
 
-    # renpy/common/00updater.rpy:1294
-    old "Proceed"
-    new "続行"
-
-    # renpy/common/00updater.rpy:1297
-    old "Cancel"
-    new "中止"
-
     # renpy/common/_compat/preferences.rpym:411
     old "Joystick Mapping"
     new "ジョイスティックの割り当て"
 
     # renpy/common/00layout.rpy:421
     old "Are you sure?"
-    new "よろしいですか？"
+    new "続けますか？"
 
     # renpy/common/00layout.rpy:422
     old "Are you sure you want to delete this save?"
@@ -84,7 +64,7 @@ translate None strings:
 
     # renpy/common/00layout.rpy:424
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "現在の状況を破棄してロードしますか？"
+    new "セーブされていないデータは失われます\n続けますか？"
 
     # renpy/common/00layout.rpy:425
     old "Are you sure you want to quit?"
@@ -92,7 +72,7 @@ translate None strings:
 
     # renpy/common/00layout.rpy:426
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "現在の状況を破棄してメインメニューに戻りますか？"
+    new "メインメニューに戻りますか？\nセーブされていないデータは破棄されます"
 
     # renpy/common/_errorhandling.rpym:408
     old "An exception has occurred."
@@ -282,10 +262,6 @@ translate None strings:
     old "Quick save complete."
     new "クイックセーブ完了。"
 
-# Translation updated at 2014-02-08 16:38
-
-translate None strings:
-
     # renpy/common/_developer/inspector.rpym:43
     old "Displayable Inspector"
     new "Displayable インスペクター"
@@ -321,10 +297,6 @@ translate None strings:
     # renpy/common/_developer/inspector.rpym:174
     old "<repr() failed>"
     new "<repr() 失敗>"
-
-# Translation updated at 2014-02-08 16:38
-
-translate None strings:
 
     # renpy/common/_developer/developer.rpym:65
     old "Developer Menu"
@@ -389,10 +361,6 @@ translate None strings:
     # renpy/common/_developer/developer.rpym:467
     old "Done"
     new "完了"
-
-# Translation updated at 2014-02-24 16:15
-
-translate None strings:
 
     # renpy/common/00console.rpy:179
     old "%(version)s console, originally by Shiz, C, and delta.\n"
@@ -462,3 +430,108 @@ translate None strings:
     old "jump <label>: jumps to label"
     new "jump <ラベル>: ラベルにジャンプ"
 
+    # renpy/common/00keymap.rpy:332
+    old "Autoreload"
+    new "オートリロード"
+
+    # renpy/common/_developer/developer.rpym:272
+    old "{b}Missing Images{/b}"
+    new "{b}M画像が見付かりません{/b}"
+
+    # renpy/common/_developer/inspector.rpym:80
+    old "Location"
+    new "ファイル"
+
+    # renpy/common/00preferences.rpy:387
+    old "Clipboard voicing enabled. Press 'shift+C' to disable."
+    new "クリップボードボイシングが有効化しました。 'shift+C'で無効化します。"
+
+    # renpy/common/00preferences.rpy:389
+    old "Self-voicing enabled. Press 'v' to disable."
+    new "セルフボイシングが有効化しました。 'v' で無効化します。"
+
+    # renpy/common/00updater.rpy:362
+    old "The Ren'Py Updater is not supported on mobile devices."
+    new "モバイル板でのアップデートはサポートしていません。"
+
+    # renpy/common/00updater.rpy:478
+    old "An error is being simulated."
+    new "エラーがシミュレートされました。"
+
+    # renpy/common/00updater.rpy:654
+    old "Either this project does not support updating, or the update status file was deleted."
+    new "このプロジェクトはアップデートをサポートしていないか、アップデート用のファイルが削除されました。"
+
+    # renpy/common/00updater.rpy:668
+    old "This account does not have permission to perform an update."
+    new "このアカウントにはアップデート処理の権限がありません。"
+
+    # renpy/common/00updater.rpy:671
+    old "This account does not have permission to write the update log."
+    new "このアカウントにはアップデートログを記録する権限がありません。"
+
+    # renpy/common/00updater.rpy:696
+    old "Could not verify update signature."
+    new "アップデートシグネチャーを認証出来ません。"
+
+    # renpy/common/00updater.rpy:956
+    old "The update file was not downloaded."
+    new "アップデートファイルがダウンロードされませんでした。"
+
+    # renpy/common/00updater.rpy:974
+    old "The update file does not have the correct digest - it may have been corrupted."
+    new "アップデートファイルは正しい digest を持っていません - 破損の可能性がありまます。"
+
+    # renpy/common/00updater.rpy:1030
+    old "While unpacking {}, unknown type {}."
+    new "{} を解凍中に、未知のタイプ {} を検出しました。"
+
+    # renpy/common/_developer/developer.rpym:437
+    old "Rectangle copied to clipboard."
+    new "クリップボードに矩形領域がコピーされました"
+
+    # renpy/common/_developer/developer.rpym:440
+    old "Position copied to clipboard."
+    new "クリップボードに座標がコピーされました"
+
+##Lancherでのみ必要###########################################
+    # # renpy/common/00gltest.rpy:95
+    # old "Quit"
+    # new "終了"
+    #
+    # # renpy/common/00gltest.rpy:100
+    # old "Return"
+    # new "戻る"
+    #
+    # # renpy/common/_compat/gamemenu.rpym:198
+    # old "Empty Slot."
+    # new "空のスロット"
+    #
+    # # renpy/common/_compat/gamemenu.rpym:355
+    # old "Previous"
+    # new "前へ"
+    #
+    # # renpy/common/_compat/gamemenu.rpym:362
+    # old "Next"
+    # new "次へ"
+##templateでのみ必要############################################
+
+    # renpy/common/00updater.rpy:1385
+    old "An error has occured:"
+    new "エラーが派生しました。"
+
+    # renpy/common/00updater.rpy:1387
+    old "Checking for updates."
+    new "更新をチェックしています。"
+
+    # renpy/common/00updater.rpy:1399
+    old "Finishing up."
+    new "更新を完了しました。"
+
+    # renpy/common/00updater.rpy:1419
+    old "Proceed"
+    new "処理中"
+
+    # renpy/common/00updater.rpy:1422
+    old "Cancel"
+    new "キャンセル"

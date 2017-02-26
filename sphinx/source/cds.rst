@@ -3,8 +3,7 @@ Creator-Defined Statements
 
 Creator-defined statements allow you to add your own statements to Ren'Py. This
 makes it possible to add things that are not supported by the current syntax of
-Ren'Py. creator-defined statements are currently limited to a single line, and may
-not contain blocks.
+Ren'Py.
 
 Creator-defined statements must be defined in a python early block. What's more,
 the filename containing the user-defined statement must be be loaded earlier
@@ -46,8 +45,8 @@ The parse method takes a Lexer object:
 
     .. method:: word()
 
-        Matches any word, including keywords. Returns the
-
+        Matches any word, including keywords. Returns the text of the
+        matched word.
 
     .. method:: string()
 
@@ -112,7 +111,7 @@ without quotes. ::
 
         def execute_smartline(o):
             who, what = o
-            renpy.say(who, what)
+            renpy.say(eval(who), what)
 
         def lint_smartline(o):
             who, what = o

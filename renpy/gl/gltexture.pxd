@@ -48,14 +48,14 @@ cdef class TextureCore:
 
 cdef class TextureGrid:
 
-   cdef public int width
-   cdef public int height
-   cdef list rows
-   cdef list columns
-   cdef list tiles # list of lists.
-   cdef public TextureGrid half_cache
+    cdef public int width
+    cdef public int height
+    cdef list rows
+    cdef list columns
+    cdef list tiles # list of lists.
+    cdef public TextureGrid half_cache
 
-   cdef void make_ready(self, bint nearest)
+    cdef void make_ready(self, bint nearest)
 
 cpdef blit(
     TextureGrid tg,
@@ -76,7 +76,8 @@ cpdef blend(
     double alpha,
     double over,
     double fraction,
-    Environ environ)
+    Environ environ,
+    bint nearest)
 
 cpdef imageblend(
     TextureGrid tg0,
@@ -89,4 +90,5 @@ cpdef imageblend(
     double over,
     double fraction,
     int ramp,
-    Environ environ)
+    Environ environ,
+    bint nearest)

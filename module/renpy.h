@@ -2,9 +2,10 @@
 #define RENPY_H
 
 #include <Python.h>
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 void core_init(void);
+void subpixel_init(void);
 
 void save_png_core(PyObject *pysurf, SDL_RWops *file, int compress);
 
@@ -62,7 +63,7 @@ void alphamunge_core(PyObject *pysrc,
                      int src_aoff, // alpha offset.
                      int dst_aoff, // alpha offset.
                      char *amap);
-    
+
 /* int stretch_core(PyObject *pysrc, */
 /*                  PyObject *pydst, */
 /*                  int x, */
@@ -114,4 +115,4 @@ int subpixel32(
     float xoffset, float yoffset, int ashift);
 
 
-#endif 
+#endif

@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,6 +21,8 @@
 
 # Other text-related things.
 
+from __future__ import print_function
+
 import renpy.text
 
 from renpy.text.textsupport import TAG
@@ -30,6 +32,7 @@ import renpy.text.textsupport as textsupport
 # A list of text tags, mapping from the text tag prefix to if it
 # requires a closing tag.
 text_tags = dict(
+    alpha=True,
     image=False,
     p=False,
     w=False,
@@ -62,14 +65,22 @@ def check_text_tags(s):
     :doc: lint
 
     Checks the text tags in s for correctness. Returns an error string if there is
-    an error, or None if there is no error. 
+    an error, or None if there is no error.
     """
+
+    custom_tags = renpy.config.custom_text_tags
+
+    if custom_tags:
+        all_tags = dict(text_tags)
+        all_tags.update(renpy.config.custom_text_tags)
+    else:
+        all_tags = text_tags
 
     tokens = textsupport.tokenize(unicode(s))
 
     tag_stack = [ ]
 
-    for type, text in tokens: #@ReservedAssignment
+    for type, text in tokens:  # @ReservedAssignment
         if type != TAG:
             continue
 
@@ -91,10 +102,10 @@ def check_text_tags(s):
             tag_stack.pop()
             continue
 
-        if text not in text_tags:
+        if text not in all_tags:
             return "Text tag '%s' is not known." % text
 
-        if text_tags[text]:
+        if all_tags[text]:
             tag_stack.append(text)
 
     if tag_stack:
@@ -105,21 +116,81 @@ def check_text_tags(s):
 
 class ParameterizedText(object):
     """
-    This can be used as an image. When used, this image is expected to
-    have a single parameter, a string which is rendered as the image.
+    :doc: text
+
+    This is a displayable that can be shown with an additional string
+    parameter, which then shows that string as if it was an image.
+    This is usually used as part of the pre-defined ``text`` image.
+
+    For example, one can do::
+
+        show text "Hello, World" at truecenter
+        with dissolve
+        pause 1
+        hide text
+        with dissolve
+
+    You can use ParameterizedText directly to define similar images with
+    different style properties. For example, one can write::
+
+        image top_text = ParameterizedText(xalign=0.5, yalign=0.0)
     """
 
     def __init__(self, style='default', **properties):
         self.style = style
         self.properties = properties
 
-    def parameterize(self, name, parameters):
+    _duplicatable = True
 
-        if len(parameters) != 1:
-            raise Exception("'%s' takes a single string parameter." %
-                            ' '.join(name))
+    def _duplicate(self, args):
 
-        param = parameters[0]
+        if len(args.args) != 1:
+            raise Exception("'%s' takes a single string parameter." % ' '.join(args.name))
+
+        param = args.args[0]
         string = renpy.python.py_eval(param)
 
         return renpy.text.text.Text(string, style=self.style, **self.properties)
+
+
+def textwrap(s, width=78, asian=False):
+    """
+    Wraps the unicode string `s`, and returns a list of strings.
+
+    `width`
+        The number of half-width characters that fit on a line.
+    `asian`
+        True if we should make ambiguous width characters full-width, as is
+        done in Asian encodings.
+    """
+
+    import unicodedata
+
+    glyphs = [ ]
+
+    for c in unicode(s):
+
+        eaw = unicodedata.east_asian_width(c)
+
+        if (eaw == "F") or (eaw =="W"):
+            gwidth = 20
+        elif (eaw == "A"):
+            if asian:
+                gwidth = 20
+            else:
+                gwidth = 10
+        else:
+            gwidth = 10
+
+        g = textsupport.Glyph()
+        g.character = ord(c)
+        g.ascent = 10
+        g.line_spacing = 10
+        g.width = gwidth
+        g.advance = gwidth
+
+        glyphs.append(g)
+
+    textsupport.annotate_unicode(glyphs, False, 2)
+    renpy.text.texwrap.linebreak_tex(glyphs, width * 10, width * 10, False)
+    return textsupport.linebreak_list(glyphs)

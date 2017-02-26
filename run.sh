@@ -1,3 +1,4 @@
+#!/bin/bash
 # This builds out of date modules using the default C compiler, and then
 # runs them.
 
@@ -6,6 +7,14 @@ export RENPY_CYTHON=cython
 try () {
     "$@" || exit -1
 }
+
+QUIET=${RENPY_QUIET- --quiet}
+
+if [ -n "$RENPY_COVERAGE" ]; then
+    variant="renpy-coverage"
+else
+    variant="renpy-run"
+fi
 
 if [ -n "$RENPY_VIRTUAL_ENV" ] ; then
     . "$RENPY_VIRTUAL_ENV/bin/activate"
@@ -16,18 +25,32 @@ if [ -z "$PYTHONPATH" -a -z "$VIRTUAL_ENV" ] ; then
     exit 1
 fi
 
-if [ -n "$PYTHONPATH" ]; then
-    try python module/setup.py --quiet \
-        build -b build/lib.renpy-run -t build/tmp.renpy-run \
-        $RENPY_BUILD_ARGS install_lib -d "$PYTHONPATH"
-else
-    try python module/setup.py --quiet \
-        build -b build/lib.renpy-run -t build/tmp.renpy-run \
-        $RENPY_BUILD_ARGS install
+ROOT="$(dirname $(realpath $0))"
+
+setup () {
+    pushd $1 >/dev/null
+
+    if [ -n "$PYTHONPATH" ]; then
+        try python setup.py $QUIET \
+            build -b build/lib.$variant -t build/tmp.$variant \
+            $RENPY_BUILD_ARGS install_lib -d "$PYTHONPATH"
+    else
+        try python setup.py $QUIET \
+            build -b build/lib.$variant -t build/tmp.$variant \
+            $RENPY_BUILD_ARGS install
+    fi
+
+    popd >/dev/null
+}
+
+if [ -e "$ROOT/pygame_sdl2" ]; then
+    setup "$ROOT/pygame_sdl2/"
 fi
+
+setup "$ROOT/module/"
 
 if  [ "$1" = "--build" ] ; then
     echo "Ren'Py build complete."
 else
-    exec python -O ./renpy.py "$@"
+    exec $RENPY_GDB python -O $ROOT/renpy.py "$@"
 fi

@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,13 +22,16 @@
 # This file contains support for state-machine controlled animations.
 
 import renpy.display
+import renpy.game
+import renpy.easy
+
 import random
+
 
 class State(object):
     """
     This creates a state that can be used in a SMAnimation.
     """
-
 
     def __init__(self, name, image, *atlist, **properties):
         """
@@ -57,7 +60,6 @@ class State(object):
         self.image = image
         self.atlist = atlist
         self.properties = properties
-
 
     def add(self, sma):
         sma.states[self.name] = self
@@ -223,7 +225,6 @@ class SMAnimation(renpy.display.core.Displayable):
         the old and new states, and any transition that is present.
         """
 
-
         if self.edge.trans:
             im = self.edge.trans(old_widget=self.states[self.edge.old].get_image(),
                                  new_widget=self.states[self.edge.new].get_image())
@@ -269,7 +270,6 @@ class SMAnimation(renpy.display.core.Displayable):
                                              width, height,
                                              st - self.edge_start, at)
 
-
         # Otherwise, we have another edge.
 
         else:
@@ -280,7 +280,6 @@ class SMAnimation(renpy.display.core.Displayable):
 
             if not renpy.game.less_updates:
                 renpy.display.render.redraw(self.edge_cache, self.edge.delay - (t - self.edge_start))
-
 
         iw, ih = im.get_size()
 
@@ -429,7 +428,7 @@ class TransitionAnimation(renpy.display.core.Displayable):
                 transitions.append(arg)
 
         if len(images) > len(delays):
-            delays.append(365.25 * 86400.0) # One year, give or take.
+            delays.append(365.25 * 86400.0)  # One year, give or take.
         if len(images) > len(transitions):
             transitions.append(None)
 
@@ -437,7 +436,6 @@ class TransitionAnimation(renpy.display.core.Displayable):
         self.prev_images = [ images[-1] ] + images[:-1]
         self.delays = delays
         self.transitions = [ transitions[-1] ] + transitions[:-1]
-
 
     def render(self, width, height, st, at):
 
@@ -469,13 +467,13 @@ class TransitionAnimation(renpy.display.core.Displayable):
     def visit(self):
         return self.images
 
+
 class Blink(renpy.display.core.Displayable):
     """
     """
 
-    def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5, #@ReservedAssignment
+    def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5,  # @ReservedAssignment
                  high=1.0, low=0.0, offset=0.0, anim_timebase=False, **properties):
-
         """
         This takes as an argument an image or widget, and blinks that image
         by varying its alpha. The sequence of phases is
@@ -516,7 +514,6 @@ class Blink(renpy.display.core.Displayable):
 
         self.cycle = on + set + off + rise
 
-
     def visit(self):
         return [ self.image ]
 
@@ -554,7 +551,6 @@ class Blink(renpy.display.core.Displayable):
             frac = time / self.rise
             alpha = self.high * frac + self.low * (1.0 - frac)
 
-
         rend = renpy.display.render.render(self.image, height, width, st, at)
         w, h = rend.get_size()
         rv = renpy.display.render.Render(w, h)
@@ -566,7 +562,6 @@ class Blink(renpy.display.core.Displayable):
             renpy.display.render.redraw(self, delay)
 
         return rv
-
 
 
 def Filmstrip(image, framesize, gridsize, delay, frames=None, loop=True, **properties):

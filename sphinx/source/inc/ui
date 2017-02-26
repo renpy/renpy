@@ -56,7 +56,7 @@
 
 .. function:: ui.at(transform)
     
-    Specifieds a transform that is applied to the next displayable to
+    Specifies a transform that is applied to the next displayable to
     be created. This is largely obsolete, as all UI functions now take
     an `at` argument.
 
@@ -71,8 +71,41 @@
     Do not add the next displayable to any later or container. Use this if
     you want to assign the result of a ui function to a variable.
 
+.. function:: ui.interact(roll_forward=None, mouse='default')
+    
+    Causes an interaction with the user, and returns the result of that
+    interaction. This causes Ren'Py to redraw the screen and begin processing
+    input events. When a displayable returns a value in response to an event,
+    that value is returned from ui.interact, and the interaction ends.
+    
+    This function is rarely called directly. It is usually called by other
+    parts of Ren'Py, including the say statement, menu statement, with statement,
+    pause statement, call screen, :func:`renpy.input`, among many other
+    functions. However, it can be called directly if necessary.
+    
+    When an interaction ends, the transient layer and all screens shown with
+    transient=True are cleared from the scene lists.
+    
+    The following arguments are documented. As other, undocumented arguments
+    exist for Ren'Py's internal use, please pass all arguments as keyword
+    arguments.
+    
+    `roll_forward`
+        The information that will be returned by this function when a
+        roll forward occurs. (If None, the roll forward is ignored.) This
+        should usually be passed the result of the :func:`renpy.roll_forward_info`
+        function.
+    
+    `mouse`
+        The style of mouse cursor to use during this function.
+
 .. function:: ui.layer(name)
     
     Adds displayables to the layer named `name`. The later must be
     closed with :func:`ui.close`.
+
+.. function:: ui.screen_id(id_, d)
+    
+    Assigns the displayable `d` the screen widget id `id_`, as if it had
+    been created by a screen statement with that id.
 

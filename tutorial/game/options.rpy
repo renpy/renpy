@@ -28,9 +28,10 @@ init -1 python hide:
     # These control the name and version of the game, that are reported
     # with tracebacks and other debugging logs.
     config.name = "Ren'Py Tutorial"
-    config.version = '{}.{} "{}"'.format(
+    config.version = '{}.{}.{} "{}"'.format(
         renpy.renpy.version_tuple[0],
         renpy.renpy.version_tuple[1],
+        renpy.renpy.version_tuple[2],
         renpy.renpy.version_name)
 
     ## We then want to call a theme function. themes.roundrect is
@@ -300,7 +301,7 @@ image main_menu:
         "#000"
 
     contains:
-        "concert2.jpg"
+        "concert2"
         size (800, 509)
 
     contains:
@@ -375,3 +376,9 @@ init python:
 
     build.documentation('*.html')
     build.documentation('*.txt')
+
+    # This is tutorial specific code that searches for fonts in
+    # launcher/fonts, reducing the size of the zip file containing
+    # the SDK.
+    config.searchpath.append("../launcher/game/fonts")
+

@@ -1,325 +1,6 @@
-/*
- * sphinxdoc.css_t
- * ~~~~~~~~~~~~~~~
- *
- * Sphinx stylesheet -- sphinxdoc theme.  Originally created by
- * Armin Ronacher for Werkzeug.
- *
- * :copyright: Copyright 2007-2010 by the Sphinx team, see AUTHORS.
- * :license: BSD, see LICENSE for details.
- *
- */
-
 @import url("basic.css");
 
-/* -- page layout ----------------------------------------------------------- */
-
-html {
-    background: #acd;
-}
-
-body {
-    background: white;
-    font-size: 14px;
-    line-spacing: 21px;
-}
-
-UL {
-	list-style-type: square;	
-}
-
-div.bodywrapper {
-    margin: 0 240px 0 0;
-    border-right: 1px solid #ccc;
-}
-
-div.body {
-    margin: 0;
-    padding: 0.5em 20px 20px 20px;
-}
-
-div.related {
-    font-size: 1em;
-}
-
-div.related ul {
-    height: 2em;
-    border-bottom: 1px solid #ddd;
-    border-top: 1px solid #ddd;
-}
-
-div.related ul li {
-    margin: 0;
-    padding: 0;
-    height: 2em;
-    float: left;
-}
-
-div.related ul li.right {
-    float: right;
-    margin-right: 5px;
-}
-
-div.related ul li a {
-    margin: 0;
-    padding: 0 5px 0 5px;
-    line-height: 1.75em;
-}
-
-div.related ul li a:hover {
-}
-
-div.sphinxsidebarwrapper {
-    padding: 0;
-}
-
-div.sphinxsidebar {
-    margin: 0;
-    padding: 0.5em 15px 15px 0;
-    width: 210px;
-    float: right;
-    font-size: 1em;
-    text-align: left;
-}
-
-div.sphinxsidebar h3, div.sphinxsidebar h4 {
-    margin: 21px 0 0 0;
-    border-bottom: 1px solid #ACD;
-}
-
-
-div.sphinxsidebar ul {
-    padding-left: 1.5em;
-    margin-top: 7px;
-    padding: 0;
-    line-height: 130%;
-}
-
-div.sphinxsidebar ul ul {
-    margin-left: 20px;
-}
-
-/* -- search styles --------------------------------------------------------- */
-
-.gsc-search-button, .gsc-clear-button, .gsc-branding-text, .gsc-branding-img {
-	display: none;	
-}
-
-/* -- body styles ----------------------------------------------------------- */
-
-p {    
-    margin: 0.8em 0 0.5em 0;
-}
-
-a {
-    color: #3183A3;
-    text-decoration: none;
-}
-
-a:hover {
-    color: #F16838;
-}
-
-div.body a {
-    text-decoration: underline;
-}
-
-h1 {
-    margin-top: .5em;
-    font-size: 1.85em;
-    border-bottom: 1px solid #ACD;
-}
-
-h2 {
-    margin-top: 1.5em;
-    font-size: 1.5em;
-    border-bottom: 1px solid #ACD;
-}
-
-h3 {
-    margin-top: 3.5em;
-    font-size: 1.2em;
-}
-
-div.body h1 a, div.body h2 a, div.body h3 a, div.body h4 a, div.body h5 a, div.body h6 a {
-    color: black!important;
-}
-
-
-h1 a.anchor, h2 a.anchor, h3 a.anchor, h4 a.anchor, h5 a.anchor, h6 a.anchor {
-    display: none;
-    margin: 0 0 0 0.3em;
-    padding: 0 0.2em 0 0.2em;
-    color: #aaa!important;
-}
-
-h1:hover a.anchor, h2:hover a.anchor, h3:hover a.anchor, h4:hover a.anchor,
-h5:hover a.anchor, h6:hover a.anchor {
-    display: inline;
-}
-
-h1 a.anchor:hover, h2 a.anchor:hover, h3 a.anchor:hover, h4 a.anchor:hover,
-h5 a.anchor:hover, h6 a.anchor:hover {
-    color: #777;
-    background-color: #eee;
-}
-
-a.headerlink {
-    color: #c60f0f!important;
-    font-size: 1em;
-    margin-left: 6px;
-    padding: 0 4px 0 4px;
-    text-decoration: none!important;
-}
-
-a.headerlink:hover {
-    background-color: #ccc;
-    color: white!important;
-}
-
-cite, code, tt {
-    font-family: 'Consolas', 'Deja Vu Sans Mono',
-                 'Bitstream Vera Sans Mono', monospace;
-    font-size: 0.95em;
-    letter-spacing: 0.01em;
-}
-
-tt {
-    background-color: #f2f2f2;
-    border-bottom: 1px solid #ddd;
-    color: #333;
-}
-
-tt.descname, tt.descclassname, tt.xref {
-    border: 0;
-}
-
-hr {
-    border: 1px solid #abc;
-    margin: 2em;
-}
-
-a tt {
-    border: 0;
-}
-
-pre {
-    font-family: 'Consolas', 'Deja Vu Sans Mono',
-                 'Bitstream Vera Sans Mono', monospace;
-    font-size: 0.95em;
-    letter-spacing: 0.015em;
-    line-height: 120%;
-    padding: 0.5em;
-    border: 1px solid #ccc;
-    background-color: #f8f8f8;
-}
-
-pre a {
-    color: inherit;
-    text-decoration: underline;
-}
-
-td.linenos pre {
-    padding: 0.5em 0;
-}
-
-div.quotebar {
-    background-color: #f8f8f8;
-    max-width: 250px;
-    float: right;
-    padding: 2px 7px;
-    border: 1px solid #ccc;
-}
-
-div.topic {
-    background-color: #f8f8f8;
-}
-
-table {
-    border-collapse: collapse;
-    margin: 0 -0.5em 0 -0.5em;
-}
-
-table.field-list {
-	width: auto;	
-}
-
-table.field-list td {
-	background: none !important;
-	
-}
-
-table td, table th {
-    padding: 0.2em 0.5em 0.2em 0.5em;
-}
-
-div.admonition, div.warning {
-    font-size: 0.9em;
-    margin: 1em 0 1em 0;
-    border: 1px solid #86989B;
-    background-color: #f7f7f7;
-    padding: 0;
-}
-
-div.admonition p, div.warning p {
-    margin: 0.5em 1em 0.5em 1em;
-    padding: 0;
-}
-
-div.admonition pre, div.warning pre {
-    margin: 0.4em 1em 0.4em 1em;
-}
-
-div.admonition p.admonition-title,
-div.warning p.admonition-title {
-    margin: 0;
-    padding: 0.1em 0 0.1em 0.5em;
-    color: white;
-    border-bottom: 1px solid #86989B;
-    font-weight: bold;
-    background-color: #AFC1C4;
-}
-
-div.warning {
-    border: 1px solid #940000;
-}
-
-div.warning p.admonition-title {
-    background-color: #CF0000;
-    border-bottom-color: #940000;
-}
-
-div.admonition ul, div.admonition ol,
-div.warning ul, div.warning ol {
-    margin: 0.1em 0.5em 0.5em 3em;
-    padding: 0;
-}
-
-div.versioninfo {
-    margin: 1em 0 0 0;
-    border: 1px solid #ccc;
-    background-color: #DDEAF0;
-    padding: 8px;
-    line-height: 1.3em;
-    font-size: 0.9em;
-}
-
-.viewcode-back {
-    font-family: sans-serif;
-}
-
-div.viewcode-block:target {
-    background-color: #f4debf;
-    border-top: 1px solid #ac9;
-    border-bottom: 1px solid #ac9;
-}
-
-
-div.copydata {
-font-size: 90%;
-margin-top: 2em;
-}
-
+/* Syntax highlighting. */
 pre {
     overflow-y: hidden;
 }
@@ -333,7 +14,7 @@ table.indextable tbody tr.cap, table.indextable tbody tr.pcap {
 }
 
 table.indextable tbody tr.cap td, table.indextable tbody tr.pcap td {
-	background: none;	
+	background: none;
 }
 
 .highlight .k {
@@ -341,8 +22,9 @@ table.indextable tbody tr.cap td, table.indextable tbody tr.pcap td {
     font-weight: normal !important;
 }
 
-.highlight .s {
+.highlight .s1, .highlight .s2, .highlight .se {
     color: #006000 !important;
+    font-weight: normal !important;
 }
 
 .highlight .na {
@@ -355,4 +37,63 @@ table.indextable tbody tr.cap td, table.indextable tbody tr.pcap td {
 
 .highlight .mi, .highlight .mf {
     color: #222 !important;
+}
+
+.descname, .descclassname {
+    padding: 0;
+}
+
+/*  Definition list. */
+dd {
+    padding-left: 1em;
+}
+
+/* The " link" text. */
+
+a.headerlink {
+	font-size: 12px;
+}
+
+/* Navbar */
+
+.navbar-version {
+	display: none;
+}
+
+.globaltoc-container {
+	display: none !important;
+}
+
+.navbar-brand {
+    background: url(navbar-logo.png);
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+    padding-left: 50px !important;
+    color: #444 !important;
+    font-size: 20px;
+}
+
+div.section {
+	overflow: auto;
+}
+
+.figure {
+	width: 405px;
+	float: left;
+	display: block;
+    font-size: 95%;
+}
+
+#sidebar {
+	max-height: 95%;
+    overflow-y: auto;
+}
+
+dl.var dt {
+	font-weight: inherit;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+}
+
+dl.var dd:empty {
+    margin-bottom: -20px !important;
 }

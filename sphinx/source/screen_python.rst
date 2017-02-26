@@ -22,9 +22,9 @@ with the same id. Ids are generated automatically by the screen
 language, but when doing things by hand, they must be manually
 specified.
 
-Here's an example python screen:
+Warning: UI Functions are deprecated and not recommended.
 
-::
+Here's an example python screen::
 
     init python:
         def say_screen(who, what, **kwargs):
@@ -50,6 +50,8 @@ screens.
 
 UI Functions
 ============
+
+With the advent of SL2, UI Functions are deprecated and not recommended.
 
 The UI functions are python equivalents of the screen language
 statements. For each screen language statement, there is a ui function
@@ -113,7 +115,7 @@ taking children until :func:`ui.close` is called.
 * ui.draggroup
 
 There are a few UI functions that do not correspond to screen language
-statments, as they correspond to concepts that are not present in the
+statements, as they correspond to concepts that are not present in the
 screen language.
 
 .. include:: inc/ui
@@ -144,7 +146,7 @@ sensitive, and when it is selected.
        activated. In many cases, returning a non-None value from the
        action will cause the current interaction to end.
 
-       This method must be overriden, as the default method will
+       This method must be overridden, as the default method will
        raise NotImplemented (and hence cause Ren'Py to report an
        error).
 
@@ -187,11 +189,15 @@ sensitive, and when it is selected.
        When the action is used as the `hovered` parameter to a button (or
        similar object), this method is called when the object loses focus.
 
+To run an action from python, use renpy.run.
+
+.. include:: inc/run
+
 BarValues
 =========
 
 When creating a bar, vbar, or hotbar, a BarValue object can be supplied as
-the `value` argument. Methods on the BarValue object are called to get
+the `value` property. Methods on the BarValue object are called to get
 the adjustment and styles.
 
 
@@ -207,7 +213,7 @@ the adjustment and styles.
         :func:`ui.adjustment`, and then return the object created this
         way.
 
-        This method must be overriden, as the default method will
+        This method must be overridden, as the default method will
         raise NotImplemented (and hence cause Ren'Py to report an
         error).
 
@@ -237,5 +243,123 @@ the adjustment and styles.
 
        It can be used to update the value of the bar over time, like
        :func:`AnimatedValue` does. To do this, get_adjustment should
-       store the adjustment, and periodic should calle the
+       store the adjustment, and periodic should call the
        adjustment's changed method.
+
+InputValue
+==========
+
+When creating an input, an InputValue object can be supplied as the
+`value` property. Methods on the InputValue object are called to
+get and set the text, determine if the input is editable, and handle
+the enter key being pressed.
+
+.. class:: InputValue
+
+    To define a new InputValue, inherit from this class, override
+    some or all of the methods, and set the value of the default
+    field.
+
+    .. field:: editable
+
+        If true, this field is editable at all.
+
+    .. field:: default
+
+        If true, the input is eligible to be editable by default. (That
+        is, it may be given the caret when the screen is shown.)
+
+    .. method:: get_text(self)
+
+        Returns the default text of the input. This must be implemented.
+
+    .. method:: set_text(self, s)
+
+        Called when the text of the input is changed, with the new text.
+        This must be implemented.
+
+    .. method:: enter(self)
+
+        Called when the user presses enter. If this returns a non-None
+        value, that value is returned from the interacton. This may also
+        raise renpy.IgnoreEvent() to ignore the press. Otherwise, the
+        enter-press is propagated to other displayables.
+
+    The following actions are available as methods on InputValue:
+
+    .. method:: Enable()
+
+        Returns an action that enables text editing on the input.
+
+    .. method:: Disable()
+
+        Returns an action that disables text editing on the input.
+
+    .. method:: Toggle()
+
+        Returns an action that toggles text editing on the input.
+
+
+.. _creator-defined-sl:
+
+Creator-Defined Screen Language Statements
+==========================================
+
+Ren'Py supports defining custom screen language statements. Creator-defined screen
+language statements are wrappers for the screen language :ref:`use statement <sl-use>`.
+Positional arguments remain positional arguments, properties become keyword
+arguments, and if the statement takes a block, so does the use statement. For
+example, the custom screen language statement::
+
+    titledwindow "Test Window":
+        icon "icon.png"
+
+        text "This is a test."
+
+becomes::
+
+    use titledwindow("Test Window", icon="icon.png"):
+        text "This is a test."
+
+Creator-defined screen language statements must be registered in a python early block.
+What's more, the filename containing the creator-defined statement must be be loaded earlier
+than any file that uses it. Since Ren'Py loads files in unicode sort order, it
+generally makes sense to prefix the name of any file registering a user-defined
+statement with 01, or some other small number.
+
+Creator-defined screen language statements are registered with the renpy.register_sl_statement
+function:
+
+.. include:: inc/custom_sl
+
+As an example of a creator-defined screen language statement, here's an
+implementation of the ``titledwindow`` statement given above. First, the
+statement must be registered in a python early block in a file that is loaded
+early - a name like 01custom.rpy will often load soon enough. The registration
+call looks like::
+
+
+    python early:
+        renpy.register_sl_statement("titledwindow", positional=1, children=1).add_property("icon").add_property("pos")
+
+Then, we define a screen that implements the custom statement. This screen can be defined in
+any file. One such screen is::
+
+    screen titledwindow(title, icon=None, pos=(0, 0)):
+        drag:
+            pos pos
+
+            frame:
+                background "#00000080"
+
+                has vbox
+
+                hbox:
+                    if icon is not None:
+                        add icon
+
+                    text title
+
+                null height 15
+
+                transclude

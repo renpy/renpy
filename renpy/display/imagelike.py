@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,6 +25,7 @@ from renpy.display.render import render, Render, Matrix2D
 # This file contains displayables that are image-like, because they take
 # up a rectangular area of the screen, and do not respond to input.
 
+
 class Solid(renpy.display.core.Displayable):
     """
     :doc: disp_imagelike
@@ -46,10 +47,22 @@ class Solid(renpy.display.core.Displayable):
         else:
             self.color = None
 
+    def __hash__(self):
+        return hash(self.color)
+
+    def __eq__(self, o):
+        if not self._equals(o):
+            return False
+
+        return (self.color == o.color)
+
     def visit(self):
         return [ ]
 
     def render(self, width, height, st, at):
+
+        width = max(self.style.xminimum, width)
+        height = max(self.style.yminimum, height)
 
         color = self.color or self.style.color
 
@@ -71,10 +84,65 @@ class Solid(renpy.display.core.Displayable):
 
         return rv
 
+
+class Borders(object):
+    """
+    :doc: disp_imagelike
+
+    This object provides border size and tiling information to a :func:`Frame`.
+    It can also provide padding information that can be supplied to the
+    :propref:`padding` style property of a window or frame.
+
+    `left`
+    `top`
+    `right`
+    `bottom`
+        These provide the size of the insets used by a frame, and are added
+        to the padding on each side. They should zero or a positive integer.
+
+    `pad_left`
+    `pad_top`
+    `pad_right`
+    `pad_bottom`
+        These are added to the padding on each side, and may be positive or
+        negative. (For example, if `left` is 5 and `pad_left` is -3, the final
+        padding is 2.)
+
+    The padding information is supplied via a field:
+
+    .. attribute:: padding
+
+        This is a four-element tuple containing the padding on each of the
+        four sides.
+    """
+
+    def __init__(self, left, top, right, bottom, pad_left=0, pad_top=0, pad_right=0, pad_bottom=0):
+
+        self.left = left
+        self.top = top
+        self.right = right
+        self.bottom = bottom
+
+        self.pad_left = pad_left
+        self.pad_top = pad_top
+        self.pad_right = pad_right
+        self.pad_bottom = pad_bottom
+
+    @property
+    def padding(self):
+        return (
+            self.left + self.pad_left,
+            self.top + self.pad_top,
+            self.right + self.pad_right,
+            self.bottom + self.pad_bottom,
+            )
+
+
 class Frame(renpy.display.core.Displayable):
     """
     :doc: disp_imagelike
-    :args: (image, left, top, right=None, bottom=None, tile=False, **properties)
+    :args: (image, left=0, top=0, right=None, bottom=None, tile=False, **properties)
+    :name: Frame
 
     A displayable that resizes an image to fill the available area,
     while preserving the width and height of its borders.  is often
@@ -88,7 +156,9 @@ class Frame(renpy.display.core.Displayable):
         An image manipulator that will be resized by this frame.
 
     `left`
-        The size of the border on the left side.
+        The size of the border on the left side. This can also be an
+        :func:`Borders` object, in which case that object is use in place
+        of the other parameters.
 
     `top`
         The size of the border on the top.
@@ -113,6 +183,8 @@ class Frame(renpy.display.core.Displayable):
 
     __version__ = 1
 
+    properties = { }
+
     def after_upgrade(self, version):
         if version < 2:
             self.left = self.xborder
@@ -120,17 +192,27 @@ class Frame(renpy.display.core.Displayable):
             self.top = self.yborder
             self.bottom = self.yborder
 
-    def __init__(self, image, left=None, top=None, right=None, bottom=None, xborder=None, yborder=None, bilinear=True, tile=False, **properties):
+    def __init__(self, image, left=None, top=None, right=None, bottom=None, xborder=0, yborder=0, bilinear=True, tile=False, **properties):
         super(Frame, self).__init__(**properties)
 
         self.image = renpy.easy.displayable(image)
+        self._duplicatable = self.image._duplicatable
+
+        if isinstance(left, Borders):
+            insets = left
+
+            left = insets.left
+            top = insets.top
+            right = insets.right
+            bottom = insets.bottom
+
         self.tile = tile
 
         # Compat for old argument names.
         if left is None:
             left = xborder
         if top is None:
-            top= yborder
+            top = yborder
 
         if right is None:
             right = left
@@ -142,9 +224,34 @@ class Frame(renpy.display.core.Displayable):
         self.right = right
         self.bottom = bottom
 
+    def __eq__(self, o):
+        if not self._equals(o):
+            return False
+
+        if self.image != o.image:
+            return False
+
+        if self.left != o.left:
+            return False
+        if self.top != o.top:
+            return False
+        if self.right != o.right:
+            return False
+        if self.bottom != o.bottom:
+            return False
+
+        if self.tile != o.tile:
+            return False
+
+        return True
+
     def render(self, width, height, st, at):
 
-        crend = render(self.image, width, height, st, at)
+        width = max(self.style.xminimum, width)
+        height = max(self.style.yminimum, height)
+
+        image = self.style.child or self.image
+        crend = render(image, width, height, st, at)
 
         sw, sh = crend.get_size()
         sw = int(sw)
@@ -157,7 +264,7 @@ class Frame(renpy.display.core.Displayable):
         bh = self.top + self.bottom
 
         xborder = min(bw, sw - 2, dw)
-        if xborder:
+        if xborder and bw:
             left = self.left * xborder / bw
             right = self.right * xborder / bw
         else:
@@ -165,7 +272,7 @@ class Frame(renpy.display.core.Displayable):
             right = 0
 
         yborder = min(bh, sh - 2, dh)
-        if yborder:
+        if yborder and bh:
             top = self.top * yborder / bh
             bottom = self.bottom * yborder / bh
         else:
@@ -292,8 +399,6 @@ class Frame(renpy.display.core.Displayable):
             if right:
                 draw(-right, 0, -bottom, 0)
 
-
-
     def sw_render(self, crend, dw, dh, left, top, right, bottom):
 
         source = crend.render_to_texture(True)
@@ -382,8 +487,36 @@ class Frame(renpy.display.core.Displayable):
         # And, finish up.
         return rrv
 
+    def _duplicate(self, args):
+        image = self.image._duplicate(args)
+
+        if image is self.image:
+            return self
+
+        image._unique()
+
+        rv = self._copy(args)
+        rv.image = image
+        rv._duplicatable = image._duplicatable
+        return rv
+
+    def _in_current_store(self):
+        image = self.image._in_current_store()
+
+        if image is self.image:
+            return self
+
+        rv = self._copy()
+        rv.image = image
+        return rv
+
     def visit(self):
-        return [ self.image ]
+        return [ ]
+
+    def predict_one(self):
+        pd = renpy.display.predict.displayable
+        self.style._predict_frame(pd)
+        pd(self.image)
 
 
 class FileCurrentScreenshot(renpy.display.core.Displayable):
@@ -407,7 +540,6 @@ class FileCurrentScreenshot(renpy.display.core.Displayable):
 
         self.empty = empty
 
-
     def render(self, width, height, st, at):
 
         ss = renpy.display.interface.screenshot_surface
@@ -422,4 +554,3 @@ class FileCurrentScreenshot(renpy.display.core.Displayable):
         rv.blit(tex, (0, 0))
 
         return rv
-

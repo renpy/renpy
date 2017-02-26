@@ -1,13 +1,38 @@
 .. Automatically generated file - do not modify.
 
+.. function:: renpy.play(filename, channel=None, **kwargs)
+    
+    Plays a sound effect. If `channel` is None, it defaults to
+    :var:`config.play_channel`. This is used to play sounds defined in
+    styles, :propref:`hover_sound` and :propref:`activate_sound`.
+
 .. function:: renpy.seen_audio(filename)
     
     Returns True if the given filename has been played at least once on the current
     user's system.
 
+.. function:: renpy.music.get_duration(channel='music')
+    
+    Returns the duration of the audio or video file on `channel`. Returns
+    0.0 if no file is playing on `channel`.
+
+.. function:: renpy.music.get_pause(channel='music')
+    
+    Returns the pause flag for `channel`.
+
 .. function:: renpy.music.get_playing(channel='music')
     
-    Returns true if the given channel is playing.
+    If the given channel is playing, returns the playing file name.
+    Otherwise, returns None.
+
+.. function:: renpy.music.get_pos(channel='music')
+    
+    Returns the current position of the audio or video file on `channel`, in
+    seconds. Returns None if no audio is playing on `channel`.
+    
+    As this may return None before a channel starts playing, or if the audio
+    channel involved has been muted, code that calls this function should
+    always handle a None value.
 
 .. function:: renpy.music.is_playing(channel='music')
     
@@ -44,13 +69,16 @@
         first loop only.
     
     `tight`
-        If this is True, then fadeouts will span into the next-queued sound.
+        If this is True, then fadeouts will span into the next-queued sound. If
+        None, this is true when loop is True, and false otherwise.
     
     `if_changed`
         If this is True, and the music file is currently playing,
         then it will not be stopped/faded out and faded back in again, but
         instead will be kept playing. (This will always queue up an additional
         loop of the music.)
+    
+    This clears the pause flag for `channel`.
 
 .. function:: renpy.music.queue(filenames, channel='music', loop=None, clear_queue=True, fadein=0, tight=None)
     
@@ -77,9 +105,12 @@
         first loop only.
     
     `tight`
-        If this is True, then fadeouts will span into the next-queued sound.
+        If this is True, then fadeouts will span into the next-queued sound. If
+        None, this is true when loop is True, and false otherwise.
+    
+    This clears the pause flag for `channel`.
 
-.. function:: renpy.music.register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix='', file_suffix='', buffer_queue=True)
+.. function:: renpy.music.register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix='', file_suffix='', buffer_queue=True, movie=False)
     
     This registers a new audio channel named `name`. Audio can then be
     played on the channel by supplying the channel name to the play or
@@ -98,7 +129,7 @@
         If true, music on the channel is stopped when the channel is muted.
     
     `tight`
-        If true, sounds will loop even when fadeout is occuring. This should
+        If true, sounds will loop even when fadeout is occurring. This should
         be set to True for a sound effects or seamless music channel, and False
         if the music fades out on its own.
     
@@ -113,6 +144,9 @@
     `buffer_queue`
         Should we buffer the first second or so of a queued file? This should
         be True for audio, and False for movie playback.
+    
+    `movie`
+        If true, this channel will be set up to play back videos.
 
 .. function:: renpy.music.set_pan(pan, delay, channel='music')
     
@@ -130,6 +164,11 @@
     `channel`
         The channel the panning takes place on. This can be a sound or a music
         channel. Often, this is channel 7, the default music channel.
+
+.. function:: renpy.music.set_pause(value, channel='music')
+    
+    Sets the pause flag for `channel` to `value`. If True, the channel
+    will pause, otherwise it will play normally.
 
 .. function:: renpy.music.set_queue_empty_callback(callback, channel='music')
     

@@ -50,7 +50,6 @@ statement. For example::
     These move entering images onto the screen from the appropriate
     side, taking 0.5 seconds to do so.
 
-
 .. var:: moveoutright
 
     Also: **moveoutleft, moveouttop, moveoutbottom**
@@ -117,6 +116,13 @@ statement. For example::
 
     Slides the old scene in the given direction. Instances of the
     :func:`CropMove` transition class.
+
+.. var:: pushright
+
+    Also: **pushleft, pushtop, pushbottom**
+
+    These use the new scene to slide the old scene out the named
+    side. Instances of the :func:`PushMove` transition class.
 
 .. var:: irisin
 

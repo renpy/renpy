@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -61,6 +61,13 @@ style = None
 # The set of statements we've seen in this session.
 seen_session = { }
 
+# The number of entries in persistent._seen_translates that are also in
+# the current game.
+seen_translates_count = 0
+
+# The number of new translates we've seen today.
+new_translates_count = 0
+
 # True if we're in the first interaction after a rollback or rollforward.
 after_rollback = False
 
@@ -86,6 +93,31 @@ persistent = None
 # The current preferences.
 preferences = None
 
+
+class ExceptionInfo(object):
+    """
+    Context manager that sets exception_info iff an exception occurs.
+
+    `s`
+        A percent-format string to use.
+    `args`
+        The arguments that are percent-formatted with `s`.
+    """
+
+    def __init__(self, s, args):
+        self.s = s
+        self.args = args
+
+    def __enter__(self):
+        return
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type:
+            renpy.game.exception_info = self.s % self.args
+
+        return False
+
+
 class RestartContext(Exception):
     """
     Restarts the current context. If `label` is given, calls that label
@@ -94,6 +126,7 @@ class RestartContext(Exception):
 
     def __init__(self, label):
         self.label = label
+
 
 class RestartTopContext(Exception):
     """
@@ -104,20 +137,23 @@ class RestartTopContext(Exception):
     def __init__(self, label):
         self.label = label
 
+
 class FullRestartException(Exception):
     """
     An exception of this type forces a hard restart, completely
     destroying the store and config and so on.
     """
 
-    def __init__(self, reason="end_game"): # W0231
+    def __init__(self, reason="end_game"):  # W0231
         self.reason = reason
+
 
 class UtterRestartException(Exception):
     """
     An exception of this type forces an even harder restart, causing
     Ren'Py and the script to be reloaded.
     """
+
 
 class QuitException(Exception):
     """
@@ -137,6 +173,7 @@ class QuitException(Exception):
         self.relaunch = relaunch
         self.status = status
 
+
 class JumpException(Exception):
     """
     This should be raised with a label as the only argument. This causes
@@ -144,11 +181,13 @@ class JumpException(Exception):
     to the named label.
     """
 
+
 class JumpOutException(Exception):
     """
     This should be raised with a label as the only argument. This exits
     the current context, and then raises a JumpException.
     """
+
 
 class CallException(Exception):
     """
@@ -163,11 +202,16 @@ class CallException(Exception):
         self.args = args
         self.kwargs = kwargs
 
+    def __reduce__(self):
+        return (CallException, (self.label, self.args, self.kwargs))
+
+
 class EndReplay(Exception):
     """
     Raise this exception to end the current replay (the current call to
     call_replay).
     """
+
 
 class ParseErrorException(Exception):
     """
@@ -200,7 +244,8 @@ def context(index=-1):
 
     return contexts[index]
 
-def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
+
+def invoke_in_new_context(callable, *args, **kwargs):  # @ReservedAssignment
     """
     :doc: label
 
@@ -234,18 +279,20 @@ def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
 
         return callable(*args, **kwargs)
 
-    except renpy.game.JumpOutException, e:
+    except renpy.game.JumpOutException as e:
 
+        contexts[-2].force_checkpoint = True
         raise renpy.game.JumpException(e.args[0])
 
     finally:
 
+        context.pop_all_dynamic()
+
         contexts.pop()
         contexts[-1].do_deferred_rollback()
 
-        if interface.restart_interaction and contexts:
+        if interface and interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
-
 
 
 def call_in_new_context(label, *args, **kwargs):
@@ -282,8 +329,8 @@ def call_in_new_context(label, *args, **kwargs):
         context.goto_label(label)
         return renpy.execution.run_context(False)
 
-    except renpy.game.JumpOutException, e:
-
+    except renpy.game.JumpOutException as e:
+        contexts[-2].force_checkpoint = True
         raise renpy.game.JumpException(e.args[0])
 
     finally:
@@ -291,8 +338,9 @@ def call_in_new_context(label, *args, **kwargs):
         contexts.pop()
         contexts[-1].do_deferred_rollback()
 
-        if interface.restart_interaction and contexts:
+        if interface and interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
+
 
 def call_replay(label, scope={}):
     """
@@ -318,6 +366,9 @@ def call_replay(label, scope={}):
     if renpy.display.interface is not None:
         renpy.display.interface.enter_context()
 
+    for k, v in renpy.config.replay_scope.iteritems():
+        setattr(renpy.store, k, v)
+
     for k, v in scope.iteritems():
         setattr(renpy.store, k, v)
 
@@ -332,13 +383,20 @@ def call_replay(label, scope={}):
         pass
 
     finally:
+
+        context.pop_all_dynamic()
+
         contexts.pop()
         renpy.game.log = old_log
         sb.restore()
 
-        if interface.restart_interaction and contexts:
+        if interface and interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
+        renpy.config.skipping = None
+
+    if renpy.config.after_replay_callback:
+        renpy.config.after_replay_callback()
 
 # Type information.
 if False:

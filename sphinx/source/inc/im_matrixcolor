@@ -56,7 +56,7 @@
     
     Returns an im.matrix that colorizes a black and white image.
     `black_color` and `white_color` are Ren'Py style colors, so
-    they may be specfied as strings or tuples of (0-255) color
+    they may be specified as strings or tuples of (0-255) color
     values. ::
     
         # This makes black colors red, and white colors blue.

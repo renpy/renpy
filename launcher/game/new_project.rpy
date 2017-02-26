@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,6 +24,56 @@ init python:
     import os
     import time
     import re
+
+    def check_language_support():
+
+        language = _preferences.language
+
+
+        new = False
+        legacy = False
+
+
+        # Check for a translation of the words "New GUI Interface".
+        if (language is None) or (__("New GUI Interface") != "New GUI Interface"):
+            new = True
+
+        try:
+            if (language is None) or os.path.exists(os.path.join(config.renpy_base, "templates", language)):
+                legacy = True
+        except:
+            pass
+
+        if new and legacy:
+            store.language_support = _("Both interfaces have been translated to your language.")
+        elif new:
+            store.language_support = _("Only the new GUI has been translated to your language.")
+        elif legacy:
+            store.language_support = _("Only the legacy theme interface has been translated to your language.")
+        else:
+            store.language_support = _("Neither interface has been translated to your language.")
+
+
+label new_project:
+
+    if persistent.projects_directory is None:
+        call choose_projects_directory
+
+    if persistent.projects_directory is None:
+        $ interface.error(_("The projects directory could not be set. Giving up."))
+
+    python:
+
+        check_language_support()
+
+        gui_kind = interface.choice(
+            _("Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."),
+            [ ( 'new_gui_project', _("New GUI Interface") ), ( 'new_theme_project', _("Legacy Theme Interface")) ],
+            "new_gui_project",
+            cancel=Jump("front_page"),
+            )
+
+        renpy.jump(gui_kind)
 
 screen select_template:
 
@@ -58,17 +108,11 @@ screen select_template:
                     text _("Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'.")
 
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
     textbutton _("Continue") action Return(result) style "l_right_button"
 
 
-label new_project:
-
-    if persistent.projects_directory is None:
-        call choose_projects_directory
-
-    if persistent.projects_directory is None:
-        $ interface.error(_("The projects directory could not be set. Giving up."))
+label new_theme_project:
 
     python hide:
 
@@ -98,7 +142,7 @@ label new_project:
         template_path = template.path
 
         with interface.error_handling("creating a new project"):
-            shutil.copytree(template_path, project_dir)
+            shutil.copytree(template_path, project_dir, symlinks=False)
 
             # Delete the tmp directory, if it exists.
             if os.path.isdir(os.path.join(project_dir, "tmp")):
@@ -117,6 +161,12 @@ label new_project:
 
             with open(fn, "wb") as f:
                 f.write(options.encode("utf-8"))
+
+            font = template.data.get("font", None)
+            if font is not None:
+                src = os.path.join(config.gamedir, "fonts", font)
+                dst = os.path.join(project_dir, "game", "tl", "None", font)
+                shutil.copy(src, dst)
 
         # Activate the project.
         with interface.error_handling("activating the new project"):

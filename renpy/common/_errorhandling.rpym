@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,192 +24,241 @@
 # that it is fully loaded or run before any other Ren'Py code runs.
 
 
+init python in gui:
+    system_font = None
+
 init python:
     style._default = Style(None)
 
-style _default:
+init python hide:
 
-    # Text properties
-    font "DejaVuSans.ttf"
-    language "unicode"
-    antialias True
-    size 14
-    color "#111"
-    black_color (0, 0, 0, 255)
-    bold False
-    italic False
-    underline False
-    strikethrough False
-    kerning 0.0
-    drop_shadow None
-    drop_shadow_color (0, 0, 0, 255)
-    outlines [ ]
-    minwidth 0
-    text_align 0
-    justify False
-    text_y_fudge 0
-    first_indent 0
-    rest_indent 0
-    line_spacing 0
-    line_leading 0
-    line_overlap_split 0
-    layout "tex"
-    subtitle_width 0.9
-    slow_cps None
-    slow_cps_multiplier 1.0
-    slow_abortable False
+    if renpy.loadable("gui.rpy") or renpy.loadable("gui.rpyc"):
+        config.screen_width, config.screen_height = 1280, 720
 
-    # Window properties
-    background None
-    xpadding 0
-    ypadding 0
-    xmargin 0
-    ymargin 0
-    xfill False
-    yfill False
-    xminimum 0
-    yminimum 0
+    def init_system_styles():
+        if gui.system_font is not None:
+            style._default.font = gui.system_font
 
-    # Placement properties
-    xpos None
-    ypos None
-    xanchor None
-    yanchor None
-    xmaximum None
-    ymaximum None
-    xoffset 0
-    yoffset 0
-    subpixel False
+    config.init_system_styles = init_system_styles
 
-    # Sound properties
-    activate_sound None
-    hover_sound None
+init label _errorhandling:
 
-    # Box properties
-    spacing 0
-    first_spacing None
-    box_layout None
-    box_wrap False
-    box_reverse False
-    order_reverse False
+    python in gui:
+        from store import config
 
-    # Button properties
-    focus_mask None
-    focus_rect None
+        def _scale(n):
+            return int(n * config.screen_height / 720)
 
-    # Bar properties
-    fore_bar Null()
-    aft_bar Null()
-    thumb None
-    thumb_shadow None
-    left_gutter 0
-    right_gutter 0
-    thumb_offset 0
-    unscrollable None
-    bar_invert False
-    bar_vertical False
+        _wide = (config.screen_width >  (config.screen_height * 1.5))
 
-    # Viewport properties
-    clipping False
+    style _default:
 
-init python:
-    # Temporarily, until the real styles can be defined.
-    style.default = style._default
-    style.image = style._default
-    style.fixed = style._default
+        # Text properties
+        font "DejaVuSans.ttf"
+        language "unicode"
+        antialias True
+        size gui._scale(16)
+        color "#404040"
+        black_color (0, 0, 0, 255)
+        bold False
+        italic False
+        underline False
+        strikethrough False
+        kerning 0.0
+        drop_shadow None
+        drop_shadow_color (0, 0, 0, 255)
+        outlines [ ]
+        minwidth 0
+        text_align 0
+        justify False
+        text_y_fudge 0
+        first_indent 0
+        rest_indent 0
+        line_spacing 0
+        line_leading 0
+        line_overlap_split 0
+        layout "tex"
+        subtitle_width 0.9
+        slow_cps None
+        slow_cps_multiplier 1.0
+        slow_abortable False
+        hinting "auto"
+        adjust_spacing True
 
-    ##########################################################################
+        # Window properties
+        background None
+        xpadding 0
+        ypadding 0
+        xmargin 0
+        ymargin 0
+        xfill False
+        yfill False
+        xminimum 0
+        yminimum 0
 
-style _frame is _default:
-    background Frame("_theme_amie2/frame.png", 40, 40)
-    xmargin 0
-    ymargin 0
-    xpadding 15
-    ypadding 10
+        # Placement properties
+        xpos None
+        ypos None
+        xanchor None
+        yanchor None
+        xmaximum None
+        ymaximum None
+        xoffset 0
+        yoffset 0
+        subpixel False
 
-style _text is _default
-style _fixed is _default
+        # Sound properties
+        activate_sound None
+        hover_sound None
 
-style _hbox is _default:
-    box_layout 'horizontal'
+        # Box properties
+        spacing 0
+        first_spacing None
+        box_layout None
+        box_wrap False
+        box_reverse False
+        order_reverse False
+        xfit False
+        yfit False
 
-style _vbox is _default:
-    box_layout 'vertical'
+        # Button properties
+        focus_mask None
+        focus_rect None
+        keyboard_focus True
+        key_events False
+        hover_key_events True
 
-style _grid is _default
-style _side is _default
+        # Bar properties
+        fore_bar Null()
+        aft_bar Null()
+        thumb None
+        thumb_shadow None
+        left_gutter 0
+        right_gutter 0
+        thumb_offset 0
+        unscrollable None
+        bar_invert False
+        bar_vertical False
 
-style _viewport is _default:
-    clipping True
-    xfill True
-    yfill True
+        # Viewport properties
+        clipping False
 
+    init python:
+        # Temporarily, until the real styles can be defined.
+        style.default = style._default
+        style.image = style._default
+        style.fixed = style._default
 
-style _button is _default:
-    xpadding 8
-    ypadding 6
-    xoffset -5
-    background Frame("_theme_amie2/button.png", 10, 10)
-    hover_background Frame("_theme_amie2/button_hover.png", 10, 10)
+        ##########################################################################
 
-style _button_text is _default:
-    size 16
-    color "#111"
-    selected_color "#11f"
-    insensitive_color "#ccc"
-    xalign 0.5
-    yoffset 0
+    style _frame is _default:
+        background "#d0d0d0"
+        xpadding gui._scale(150 if gui._wide else 15)
+        ypadding gui._scale(15)
+        xfill True
+        yfill True
 
-style _label is _default:
-    top_margin 10
-    bottom_margin 5
+    style _text is _default
+    style _fixed is _default
 
-style _label_text is _default:
-    color "#000"
-    bold True
+    style _hbox is _default:
+        box_layout 'horizontal'
 
-style _bar is _default:
-    left_bar Frame("_theme_amie2/hover_frame.png", 10, 10)
-    right_bar Frame("_theme_amie2/bar.png", 10, 10)
-    thumb None
-    hover_thumb None
-    ymaximum 20
+    style _vbox is _default:
+        box_layout 'vertical'
 
-style _vbar is _default:
-    bottom_bar Frame("_theme_amie2/hover_frame.png", 10, 10)
-    top_bar Frame("_theme_amie2/bar.png", 10, 10)
-    thumb None
-    hover_thumb None
-    xmaximum 20
-    bar_vertical True
+    style _grid is _default
+    style _side is _default
 
-style _scrollbar is _default:
-    left_bar Frame("_theme_amie2/bar.png", 10, 10)
-    right_bar Frame("_theme_amie2/bar.png", 10, 10)
-    thumb Frame("_theme_amie2/frame.png", 10, 10)
-    hover_thumb Frame("_theme_amie2/hover_frame.png", 10, 10)
-    thumb_offset 10
-    left_gutter 5
-    right_gutter 5
-    unscrollable "hide"
-    ymaximum 20
+    style _viewport is _default:
+        xfill True
+        yfill True
 
-style _vscrollbar is _default:
-    top_bar Frame("_theme_amie2/bar.png", 10, 10)
-    bottom_bar Frame("_theme_amie2/bar.png", 10, 10)
-    thumb Frame("_theme_amie2/frame.png", 10, 10)
-    hover_thumb Frame("_theme_amie2/hover_frame.png", 10, 10)
-    thumb_offset 10
-    top_gutter 5
-    bottom_gutter 5
-    unscrollable "hide"
-    xmaximum 20
-    bar_vertical True
-    bar_invert True
+    style _button is _default:
+        ypadding gui._scale(2)
 
-style _hyperlink is _default:
-    color "#008"
-    hover_underline True
+    style _button_text is _default:
+        size gui._scale(26)
+        color "#405060"
+        hover_color "#048"
+        insensitive_color "#00000020"
+
+    style _small_button is _button
+
+    style _small_button_text is _button_text:
+        size gui._scale(16)
+
+    style _radio_button is _button:
+        selected_background Solid("#048", xsize=gui._scale(5), ysize=gui._scale(22), yalign=0.5)
+        left_padding gui._scale(15)
+
+    style _radio_button_text is _button_text
+
+    style _label is _default:
+        top_margin gui._scale(10)
+        bottom_margin gui._scale(15)
+
+    style _label_text is _default:
+        size gui._scale(40)
+        kerning -1
+
+    style _bar is _default:
+        left_bar "#048"
+        right_bar "#b0b0b0"
+        ysize gui._scale(20)
+
+    style _vbar is _default:
+        bottom_bar "#048"
+        top_bar "#b0b0b0"
+        xsize gui._scale(20)
+        bar_vertical True
+
+    style _scrollbar is _default:
+        thumb "#808080"
+        hover_thumb "#a0a0a0"
+        base_bar "#b0b0b0"
+        unscrollable "hide"
+        ymaximum gui._scale(10)
+
+    style _vscrollbar is _default:
+        thumb "#808080"
+        hover_thumb "#a0a0a0"
+        base_bar "#b0b0b0"
+        unscrollable "hide"
+        xmaximum gui._scale(10)
+        bar_vertical True
+        bar_invert True
+
+    style _hyperlink is _default:
+        color "#405060"
+        hover_color Color("#048")
+
+    # Early hyperlink support.
+    python hide:
+        def hyperlink_styler(target):
+            return style._hyperlink
+
+        def hyperlink_function(target):
+            if target.startswith("http:"):
+                try:
+                    import webbrowser
+                    webbrowser.open(target)
+                except:
+                    pass
+
+            if target.startswith("edit:"):
+                prefix, line, filename = target.split(":", 2)
+                line = int(line)
+
+                renpy.launch_editor([ filename ], line)
+
+        style._default.hyperlink_functions = (hyperlink_styler, hyperlink_function, None)
+
+    return
+
+# Invokes _errorhanding when this is first loaded.
+init:
+    call _errorhandling
 
 init python:
 
@@ -225,51 +274,67 @@ init python:
         choose_renderer = [ 'G' ],
 
         # Focus.
-        focus_left = [ 'K_LEFT', 'joy_left' ],
-        focus_right = [ 'K_RIGHT', 'joy_right' ],
-        focus_up = [ 'K_UP', 'joy_up' ],
-        focus_down = [ 'K_DOWN', 'joy_down' ],
+        focus_left = [ 'K_LEFT' ],
+        focus_right = [ 'K_RIGHT' ],
+        focus_up = [ 'K_UP' ],
+        focus_down = [ 'K_DOWN' ],
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
-        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
 
         # Viewport.
-        viewport_up = [ 'mousedown_4' ],
-        viewport_down = [ 'mousedown_5' ],
+        viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],
+        viewport_rightarrow = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
+        viewport_uparrow = [ 'K_UP', 'repeat_K_UP' ],
+        viewport_downarrow = [ 'K_DOWN', 'repeat_K_DOWN' ],
+        viewport_wheelup = [ 'mousedown_4' ],
+        viewport_wheeldown = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
 
         # These control the bar.
-        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-        bar_decrease = [ 'K_LEFT', 'joy_left' ],
-        bar_increase = [ 'K_RIGHT', 'joy_right' ],
+        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
+        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
+        bar_decrease = [ 'K_LEFT' ],
+        bar_increase = [ 'K_RIGHT' ],
+
+        # Null console, just in case.
+        console = [ ],
         )
 
+    config.pad_bindings = {
+        "pad_leftshoulder_press" : [ "rollback", ],
+        "pad_lefttrigger_pos" : [ "rollback", ],
+        "pad_back_press" : [ "rollback", ],
 
-# Early hyperlink support.
-init python hide:
-    def hyperlink_styler(target):
-        return style._hyperlink
+        "pad_guide_press" : [ "game_menu", ],
+        "pad_start_press" : [ "game_menu", ],
 
-    def hyperlink_function(target):
-        if target.startswith("http:"):
-            try:
-                import webbrowser
-                webbrowser.open(target)
-            except:
-                pass
+        "pad_y_press" : [ "hide_windows", ],
 
-        if target.startswith("edit:"):
-            prefix, line, filename = target.split(":", 2)
-            line = int(line)
+        "pad_rightshoulder_press" : [ "rollforward", ],
 
-            renpy.launch_editor([ filename ], line)
+        "pad_righttrigger_pos" : [ "dismiss", "button_select" ],
+        "pad_a_press" : [ "dismiss", "button_select" ],
+        "pad_b_press" : [ "button_alternate" ],
 
-    style._default.hyperlink_functions = (hyperlink_styler, hyperlink_function, None)
+        "pad_dpleft_press" : [ "focus_left", "bar_left" ],
+        "pad_leftx_neg" : [ "focus_left", "bar_left" ],
+        "pad_rightx_neg" : [ "focus_left", "bar_left" ],
 
-init python:
+        "pad_dpright_press" : [ "focus_right", "bar_right" ],
+        "pad_leftx_pos" : [ "focus_right", "bar_right" ],
+        "pad_rightx_pos" : [ "focus_right", "bar_right" ],
+
+        "pad_dpup_press" : [ "focus_up", "bar_up" ],
+        "pad_lefty_neg" :  [ "focus_up", "bar_up" ],
+        "pad_righty_neg" : [ "focus_up", "bar_up" ],
+
+        "pad_dpdown_press" : [ "focus_down", "bar_down" ],
+        "pad_lefty_pos" : [ "focus_down", "bar_down" ],
+        "pad_righty_pos" : [ "focus_down", "bar_down" ],
+    }
 
     # Null translation function. This gets redefined once things start
     # successfully.
@@ -283,11 +348,13 @@ init python:
 
         lines = [ i.replace("{", "{{") for i in s.split("\n") ]
 
-        rv = [ "{b}" + lines[0] + "{/b}" ]
+        rv = [ ("{size=%d}" % gui._scale(22)) + lines[0] + "{/size}" ]
 
         for i in lines[1:]:
             i = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', i)
-            rv.append(i)
+            rv.append("  " + i)
+
+        rv[1] = "{vspace=5}" + rv[1]
 
         return "\n".join(rv)
 
@@ -336,33 +403,35 @@ init python:
 
         return rv
 
-    class __EditFile(Action):
+    class _EditFile(Action):
+        def __init__(self, filename, line=1):
+            self.filename = filename
+            self.line = line
+
+        def __call__(self):
+            try:
+                renpy.launch_editor([ self.filename ], self.line, transient=1)
+            except:
+                pass
+
+    class _CopyFile(Action):
         def __init__(self, filename):
             self.filename = filename
 
         def __call__(self):
-            try:
-                renpy.launch_editor([ self.filename ], 1, transient=1)
-            except:
-                pass
+            import pygame.scrap
+
+            with open(self.filename, "rb") as f:
+                f.read(3) # skip the BOM.
+                s = u"[code]\n{}[/code]\n".format(f.read().decode("utf-8"))
+
+            s = s.replace("\n", "\r\n")
+            s = s.replace("\r\r", "\r")
+
+            pygame.scrap.put(pygame.SCRAP_TEXT, s.encode("utf-8"))
 
     def __can_open_traceback():
         return True
-
-    # The transform used for errors. ATL isn't ready yet.
-    def __transform_function(state, st, at):
-        done = min(st / .1, 1.0)
-        state.zoom = .5 + .5 * done
-        state.alpha = done
-        state.xalign = 0.5
-        state.yalign = 0.5
-
-        if done < 1.0:
-            return 0
-        else:
-            return None
-
-    __transform = Transform(function=__transform_function, style='_default')
 
     class __TooltipAction(object):
 
@@ -424,6 +493,36 @@ init python:
         def __call__(self):
             renpy.quit(status=1)
 
+    class __EnterConsole(Action):
+        """
+        An action that enters the console if we can.
+        """
+
+        def __call__(self):
+            try:
+                f = _console.enter
+            except:
+                return None
+
+            return f()
+
+# This screen can be customized to add additional actions to the exception
+# screen. It currently takes two positional parameters.
+#
+# * traceback_fn - a filename containing the exception text.
+# * tt - a tooltip used for help text.
+#
+# For forward-compatibility, custom implmentations should use *args to ignore
+# added arguments.
+screen _exception_actions(traceback_fn, tt, *args):
+
+    textbutton _("Open"):
+        action _EditFile(traceback_fn)
+        hovered tt.action(_("Opens the traceback.txt file in a text editor."))
+
+    textbutton _("Copy"):
+        action _CopyFile(traceback_fn)
+        hovered tt.action(_("Copies the traceback.txt file to the clipboard."))
 
 
 # The screen that is used for error handling.
@@ -435,41 +534,29 @@ screen _exception:
     default fmt_short = __format_traceback(short)
     default fmt_full = __format_traceback(full)
 
-    add Solid("#000")
-
     frame:
         style_group ""
-        xfill True
 
-        at __transform
+        has side "t c b":
+            spacing gui._scale(10)
 
-        has side "t c r b"
-
-        vbox:
-            label _("An exception has occurred.")
+        label _("An exception has occurred.")
 
         viewport:
             id "viewport"
             child_size (4000, None)
             mousewheel True
+            draggable True
+            scrollbars "both"
 
             has vbox
 
             text fmt_short substitute False
             text fmt_full substitute False
 
-        bar:
-            style "_vscrollbar"
-            value __YScrollValue("viewport")
-
         vbox:
-
-            bar:
-                style "_scrollbar"
-                value __XScrollValue("viewport")
-
             hbox:
-                box_wrap True
+                spacing gui._scale(25)
 
                 if rollback_action:
                     textbutton _("Rollback"):
@@ -481,26 +568,34 @@ screen _exception:
                         action ignore_action
                         hovered tt.action(_("Ignores the exception, allowing you to continue. This often leads to additional errors."))
 
-                if config.developer:
+                if config.developer and not renpy.mobile:
                     textbutton _("Reload"):
                         action reload_action
                         hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
 
-                textbutton _("Open Traceback"):
-                    action __EditFile(traceback_fn)
-                    hovered tt.action(_("Opens the traceback.txt file in a text editor."))
+                    textbutton _("Console"):
+                        action __EnterConsole()
+                        hovered tt.action(_("Opens a console to allow debugging the problem."))
 
-                null width 30
 
-                textbutton _("Quit"):
-                    action __ErrorQuit()
-                    hovered tt.action(_("Quits the game."))
+
+                use _exception_actions(traceback_fn, tt)
+
+                vbox:
+                    xfill True
+
+                    textbutton _("Quit"):
+                        xalign 1.0
+                        action __ErrorQuit()
+                        hovered tt.action(_("Quits the game."))
 
             # Tooltip.
-            text tt.value size 12
+            text tt.value
 
     if config.developer and reload_action:
         key "R" action reload_action
+
+    key "console" action __EnterConsole()
 
 # The screen that is used for error handling.
 screen _parse_errors:
@@ -510,56 +605,54 @@ screen _parse_errors:
     default tt = __Tooltip("")
     default fmt_errors = __format_parse_errors(errors)
 
-    add Solid("#000")
-
     frame:
         style_group ""
-        xfill True
 
-        at __transform
+        has side "t c b":
+            spacing gui._scale(10)
 
-        has side "t c r b"
-
-        vbox:
-            label _("Parsing the script failed.")
+        label _("Parsing the script failed.")
 
         viewport:
             id "viewport"
-            child_size (None, None)
+            child_size (4000, None)
             mousewheel True
+            draggable True
+            scrollbars "both"
+            xfill True
+            yfill True
 
             has vbox
-            text fmt_errors substitute False
 
-        bar:
-            style "_vscrollbar"
-            value __YScrollValue("viewport")
+            text fmt_errors substitute False
 
         vbox:
 
-            bar:
-                style "_scrollbar"
-                value __XScrollValue("viewport")
-
             hbox:
-                box_wrap True
+                spacing gui._scale(25)
 
                 textbutton _("Reload"):
                     action reload_action
                     hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
 
-                textbutton _("Open Parse Errors"):
-                    action __EditFile(error_fn)
+                textbutton _("Open"):
+                    action _EditFile(error_fn)
                     hovered tt.action(_("Opens the errors.txt file in a text editor."))
 
-                null width 30
+                textbutton _("Copy"):
+                    action _CopyFile(error_fn)
+                    hovered tt.action(_("Copies the errors.txt file to the clipboard."))
 
-                textbutton _("Quit"):
-                    action __ErrorQuit()
-                    hovered tt.action(_("Quits the game."))
+                vbox:
+                    xfill True
+
+                    textbutton _("Quit"):
+                        action __ErrorQuit()
+                        hovered tt.action(_("Quits the game."))
+                        xalign 1.0
 
             # Tooltip.
-            text tt.value size 12
+            text tt.value
 
     if config.developer and reload_action:
         key "R" action reload_action

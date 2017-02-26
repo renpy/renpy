@@ -9,13 +9,14 @@
          return to the main menu, rather than returning
          directly.
 
-.. function:: Quit(confirm=True)
+.. function:: Quit(confirm=None)
     
     Quits the game.
     
     `confirm`
          If true, prompts the user if he wants to quit, rather
-         than quitting directly.
+         than quitting directly. If None, asks if and only if
+         the user is not at the main menu.
 
 .. function:: ShowMenu(screen=None, *args, **kwargs)
     
@@ -39,9 +40,9 @@
     ShowMenu without an argument will enter the game menu at the
     default screen, taken from _game_menu_screen.
     
-    Extra arguments and kewyord arguments are passed on to the screen
+    Extra arguments and keyword arguments are passed on to the screen
 
-.. function:: Start(label='start')
+.. function:: Start(label=u'start')
     
     Causes Ren'Py to jump out of the menu context to the named
     label. The main use of this is to start a new game from the

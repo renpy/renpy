@@ -1,4 +1,4 @@
-﻿# Этот файл публично доступен. Модифицируйте его под свои сообственные экраны.
+﻿# Этот файл публично доступен. Модифицируйте его под свои собственные экраны.
 
 ##############################################################################
 # Say
@@ -281,7 +281,7 @@ screen file_picker:
             # Отобразить 10 слотов, с номерами от 1 до 10.
             for i in range(1, columns * rows + 1):
 
-                # Каждый из них - кнопка.
+                # Каждый из них — кнопка.
                 button:
                     action FileAction(i)
                     xfill True
@@ -383,7 +383,7 @@ screen preferences:
                 has vbox
 
                 label _("Пропуск")
-                textbutton _("Прочтенных сообщений") action Preference("skip", "seen")
+                textbutton _("Прочтённых сообщений") action Preference("skip", "seen")
                 textbutton _("Всех сообщений") action Preference("skip", "all")
 
             frame:

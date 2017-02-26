@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -74,9 +74,6 @@ init -1700 python:
     # Layers to clear when entering the menus.
     config.menu_clear_layers = [ ]
 
-    # What we do on a quit, by default.
-    config.quit_action = ui.gamemenus("_quit_prompt")
-
     # What we do on a game menu invokcation.
     config.game_menu_action = None
 
@@ -99,12 +96,21 @@ init -1700 python:
         renpy.context_dynamic("main_menu")
         renpy.context_dynamic("_window_subtitle")
         renpy.context_dynamic("_window")
+        renpy.context_dynamic("_history")
+        renpy.context_dynamic("_menu")
+
+        renpy.context_dynamic("_side_image_old")
+        renpy.context_dynamic("_side_image_raw")
+        renpy.context_dynamic("_side_image")
 
         store._window_subtitle = config.menu_window_subtitle
         store._window = False
+        store._history = False
+        store._menu = True
 
         store.mouse_visible = True
         store.suppress_overlay = True
+
         ui.clear()
 
         for i in config.clear_layers:
@@ -122,14 +128,18 @@ init -1700 python:
             else:
                 renpy.call_in_new_context('_game_menu')
 
+init -1100 python:
+
+    # What we do on a quit, by default.
+    config.quit_action = Quit()
+
+default _menu = False
 
 # Run at the end of init, to set up autosaving based on the user's
 # choices.
 init 1700 python:
 
-    if config.has_autosave:
-        config.autosave_slots = 10
-    else:
+    if not config.has_autosave:
         config.autosave_frequency = None
 
 # Factored this all into one place, to make our lives a bit easier.
@@ -147,7 +157,7 @@ label _enter_game_menu:
     return
 
 # Entry points from the game into menu-space.
-label _game_menu(_game_menu_screen=_game_menu_screen, *args, **kwargs):
+label _game_menu(*args, _game_menu_screen=_game_menu_screen, **kwargs):
     if not _game_menu_screen:
         return
 

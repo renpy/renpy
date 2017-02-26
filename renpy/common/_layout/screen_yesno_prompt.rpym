@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,10 +24,16 @@ init python hide:
     layout.provides('yesno_prompt')
 
     def yesno_prompt(screen, message):
+
+        if config.confirm_screen and renpy.has_screen('confirm'):
+            screen = "confirm"
+        else:
+            screen = "yesno_prompt"
+
         try:
-            renpy.show_screen('yesno_prompt', message=message, yes_action=Return(True), no_action=Return(False))
+            renpy.show_screen(screen, message=message, yes_action=Return(True), no_action=Return(False))
             return ui.interact()
         finally:
-            renpy.hide_screen('yesno_prompt')
+            renpy.hide_screen(screen)
 
     layout.yesno_prompt = yesno_prompt

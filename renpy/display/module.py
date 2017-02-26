@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,11 +22,12 @@
 # This file mediates access to the _renpy module, which is a C module that
 # allows us to enhance the feature set of pygame in a renpy specific way.
 
-import pygame; pygame
+import pygame_sdl2; pygame_sdl2
 import renpy.display
 import _renpy
 
 import sys
+
 
 def convert_and_call(function, src, dst, *args):
     """
@@ -93,6 +94,7 @@ else:
 
 bo_cache = None
 
+
 def byte_offset(src):
     """
     Given the surface src, returns a 4-tuple giving the byte offsets
@@ -107,6 +109,7 @@ def byte_offset(src):
 
     return bo_cache
 
+
 def endian_order(src, r, g, b, a):
 
     if bo_cache is None:
@@ -118,7 +121,6 @@ def endian_order(src, r, g, b, a):
         rv[index_i] = i
 
     return rv
-
 
 
 def linmap(src, dst, rmap, gmap, bmap, amap):
@@ -134,7 +136,8 @@ def linmap(src, dst, rmap, gmap, bmap, amap):
 
 save_png = _renpy.save_png
 
-def map(src, dst, rmap, gmap, bmap, amap): #@ReservedAssignment
+
+def map(src, dst, rmap, gmap, bmap, amap):  # @ReservedAssignment
     """
     This maps the colors between two surfaces. The various map
     parameters must be 256 character long strings, with the value
@@ -145,7 +148,6 @@ def map(src, dst, rmap, gmap, bmap, amap): #@ReservedAssignment
     convert_and_call(_renpy.map,
                      src, dst,
                      *endian_order(dst, rmap, gmap, bmap, amap))
-
 
 
 def twomap(src, dst, white, black):
@@ -227,6 +229,7 @@ transform = _renpy.transform
 
 # Note: Blend requires all surfaces to be the same size.
 blend = _renpy.blend
+
 
 def imageblend(a, b, dst, img, amap):
     alpha = byte_offset(img)[3]

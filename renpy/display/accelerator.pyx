@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,13 +23,17 @@
 import renpy
 import math
 from renpy.display.render cimport Render, Matrix2D, render
+from renpy.display.core import absolute
 
+from sdl2 cimport *
+from pygame_sdl2 cimport *
+
+import_pygame_sdl2()
 
 ################################################################################
 # Surface copying
 ################################################################################
 
-from pygame cimport *
 
 def nogil_copy(src, dest):
     """
@@ -42,18 +46,9 @@ def nogil_copy(src, dest):
     src_surf = PySurface_AsSurface(src)
     dest_surf = PySurface_AsSurface(dest)
 
-    old_alpha = src_surf.flags & SDL_SRCALPHA
-
-    if old_alpha:
-        SDL_SetAlpha(src_surf, 0, 255)
-
     with nogil:
-        SDL_BlitSurface(src_surf, NULL, dest_surf, NULL)
-
-    if old_alpha:
-        SDL_SetAlpha(src_surf, SDL_SRCALPHA, 255)
-
-
+        SDL_SetSurfaceBlendMode(src_surf, SDL_BLENDMODE_NONE)
+        SDL_UpperBlit(src_surf, NULL, dest_surf, NULL)
 
 ################################################################################
 # Transform render function
@@ -73,11 +68,15 @@ def transform_render(self, widtho, heighto, st, at):
     cdef double yo, y1, y2, y3, py
     cdef float zoom, xzoom, yzoom
     cdef double cw, ch, nw, nh
-    cdef Render rv, cr
+    cdef Render rv, cr, tcr
     cdef double angle
     cdef double alpha
     cdef double width = widtho
     cdef double height = heighto
+    cdef double cwidth
+    cdef double cheight
+    cdef int xtile, ytile
+    cdef int i, j
 
     # Should we perform clipping?
     clipping = False
@@ -108,6 +107,34 @@ def transform_render(self, widtho, heighto, st, at):
 
     cr = render(child, widtho, heighto, st - self.child_st_base, at)
 
+    cwidth = cr.width
+    cheight = cr.height
+
+    # Tile the child to make it bigger.
+
+    xtile = state.xtile
+    ytile = state.ytile
+
+    xpan = state.xpan
+    ypan = state.ypan
+
+    if xpan is not None:
+        xtile = 2
+
+    if ypan is not None:
+        ytile = 2
+
+    if (xtile != 1) or (ytile != 1):
+        tcr = renpy.display.render.Render(cwidth * xtile, cheight * ytile)
+
+        for i in range(xtile):
+            for j in range(ytile):
+                tcr.blit(cr, (i * cwidth, j * cheight))
+
+        cr = tcr
+
+
+    # The width and height of the child.
     width = cr.width
     height = cr.height
 
@@ -141,6 +168,22 @@ def transform_render(self, widtho, heighto, st, at):
 
     if crop is not None:
 
+        if state.crop_relative:
+            x, y, w, h = crop
+
+            def relative(n, base, limit):
+                if isinstance(n, (int, absolute)):
+                    return n
+                else:
+                    return min(int(n * base), limit)
+
+            x = relative(x, width, width)
+            y = relative(y, height, height)
+            w = relative(w, width, width - x)
+            h = relative(h, height, height - y)
+
+            crop = (x, y, w, h)
+
         negative_xo, negative_yo, width, height = crop
 
         if state.rotate:
@@ -155,8 +198,9 @@ def transform_render(self, widtho, heighto, st, at):
 
     # Size.
     size = state.size
-    if (size is not None) and (size != (width, height)):
+    if (size is not None) and (size != (width, height)) and (width != 0) and (height != 0):
         nw, nh = size
+
         xzoom = 1.0 * nw / width
         yzoom = 1.0 * nh / height
 
@@ -200,6 +244,17 @@ def transform_render(self, widtho, heighto, st, at):
         # origin corrections for flipping
         if yzoom < 0:
             yo += height
+
+    # Pan.
+
+    if xpan is not None:
+        xpan = (xpan % 360) + 180
+        xo += xzoom * cwidth * -(xpan / 360.0) + widtho / 2.0
+
+    if ypan is not None:
+        ypan = (ypan % 360) + 180
+        yo += yzoom * cheight * -(ypan / 360.0) + heighto / 2.0
+
 
     # Rotation.
     rotate = state.rotate
@@ -277,7 +332,17 @@ def transform_render(self, widtho, heighto, st, at):
                 -rydx / inv_det,
                 rxdx / inv_det)
 
-    rv.alpha = state.alpha
+    rv.nearest = state.nearest
+
+    alpha = state.alpha
+
+    if alpha < 0.0:
+        alpha = 0.0
+    elif alpha > 1.0:
+        alpha = 1.0
+
+    rv.alpha = alpha
+
     rv.over = 1.0 - state.additive
     rv.clipping = clipping
 

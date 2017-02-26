@@ -13,6 +13,9 @@ init 1000000 python:
     doc.scan_section("im.matrix.", im.matrix)
     doc.scan_section("build.", build)
     doc.scan_section("updater.", updater)
+    doc.scan_section("iap.", iap)
+    doc.scan_section("achievement.", achievement)
+    doc.scan_section("gui.", gui)
 
     doc.write_line_buffer()
     doc.write_keywords()
@@ -20,6 +23,10 @@ init 1000000 python:
     doc.scan_docs()
     doc.write_reserved(__builtin__, "source/inc/reserved_builtins", False)
     doc.write_reserved(store, "source/inc/reserved_renpy", True)
+
+    doc.write_pure_const()
+
+    doc.write_easings(_warper)
 
     raise SystemExit
 

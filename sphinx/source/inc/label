@@ -15,10 +15,21 @@
     Returns the set of all labels defined in the program, including labels
     defined for internal use in the libraries.
 
+.. function:: renpy.get_return_stack()
+    
+    Returns a list giving the current return stack. The return stack is a
+    list of statement names.
+    
+    The statement names will be strings (for labels), or opaque tuples (for
+    non-label statements).
+
 .. function:: renpy.has_label(name)
     
-    Returns true if name is a valid label in the program, or false
-    otherwise.
+    Returns true if `name` is a valid label the program, or false otherwise.
+    
+    `name`
+        Should be a string to check for the existence of a label. It can
+        also be an opaque tuple giving the name of a non-label statement.
 
 .. function:: renpy.invoke_in_new_context(callable, *args, **kwargs)
     
@@ -51,4 +62,12 @@
     Returns true if the named label has executed at least once on the current user's
     system, and false otherwise. This can be used to unlock scene galleries, for
     example.
+
+.. function:: renpy.set_return_stack(stack)
+    
+    Sets the current return stack. The return stack is a list of statement
+    names.
+    
+    Statement names may be strings (for labels) or opaque tuples (for
+    non-label statements).
 

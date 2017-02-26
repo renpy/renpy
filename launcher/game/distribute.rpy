@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -50,6 +50,7 @@ init python in distribute:
     import re
     import plistlib
     import time
+    import shutil
 
     match_cache = { }
 
@@ -111,6 +112,25 @@ init python in distribute:
 
         return False
 
+    def hash_file(fn):
+        """
+        Returns the hash of `fn`.
+        """
+
+        sha = hashlib.sha256()
+
+        with open(renpy.fsencode(fn), "rb") as f:
+            while True:
+
+                data = f.read(8 * 1024 * 1024)
+
+                if not data:
+                    break
+
+                sha.update(data)
+
+        return sha.hexdigest()
+
     class File(object):
         """
         Represents a file that we can distribute.
@@ -149,6 +169,31 @@ init python in distribute:
         def copy(self):
             return File(self.name, self.path, self.directory, self.executable)
 
+        def hash(self, hash, distributor):
+            """
+            Update hash with information about this entry.
+            """
+
+            key = (self.name, self.path, self.directory, self.executable)
+
+            hash.update(repr(key))
+
+            if self.path is None:
+                return
+
+            if self.directory:
+                return
+
+            if self.name == "update/current.json":
+                return
+
+            if self.path in distributor.hash_cache:
+                digest = distributor.hash_cache[self.path]
+            else:
+                digest = hash_file(self.path)
+                distributor.hash_cache[self.path] = digest
+
+            hash.update(digest)
 
     class FileList(list):
         """
@@ -261,6 +306,67 @@ init python in distribute:
 
             return rv
 
+        def mac_lib_transform(self, app, duplicate):
+            """
+            Moves the mac lib into position. If duplicate is set, the
+
+            Creates a new file list that has lib/darwin-x86_64 and lib/pythonlib2.7
+            copied into the mac app, the latter iff it's not duplicated elsewhere.
+            """
+
+            for f in list(self):
+
+                if f.name.startswith("lib/darwin-x86_64/lib/python2.7"):
+                    name = app + "/Contents/MacOS/lib/darwin-x86_64/Lib" + f.name[31:]
+
+                elif f.name.startswith("lib/pythonlib2.7") and (not duplicate):
+                    name = app + "/Contents/MacOS/lib/darwin-x86_64/Lib" + f.name[16:]
+
+                elif f.name.startswith("lib/darwin-x86_64"):
+                    name = app + "/Contents/MacOS/" + f.name
+
+                else:
+                    continue
+
+                new = f.copy()
+                new.name = name
+                self.append(new)
+
+                if not duplicate:
+                    self.remove(f)
+
+            self.sort()
+
+
+        def hash(self, distributor):
+            """
+            Returns a hex digest representing this file list.
+            """
+
+            sha = hashlib.sha256()
+
+            for f in sorted(self, key=lambda a : a.name):
+                f.hash(sha, distributor)
+
+            return sha.hexdigest()
+
+        def split_by_prefix(self, prefix):
+            """
+            Returns two filelists, one that contains all the files starting with prefix,
+            and one tht contains all other files.
+            """
+
+            yes = FileList()
+            no = FileList()
+
+            for f in self:
+                if f.name.startswith(prefix):
+                    yes.append(f)
+                else:
+                    no.append(f)
+
+            return yes, no
+
 
     class Distributor(object):
         """
@@ -300,6 +406,23 @@ init python in distribute:
                 If true, we report that the build succeeded.
             """
 
+            # A map from a package to a unique update version hash.
+            self.update_versions = { }
+
+            # Map from destination file with extension to (that file's hash,
+            # hash of the file list)
+            self.build_cache = { }
+
+            # A map from file to its hash.
+            self.hash_cache = { }
+
+            # A map from a list of file lists and formats to a single integrated
+            # file list with transforms applied.
+            self.file_list_cache = { }
+
+            # Status reporter.
+            self.reporter = reporter
+
             if packagedest is not None:
                 if packages is None or len(packages) != 1:
                     raise Exception("Packagedest requires a single package be given.")
@@ -318,7 +441,9 @@ init python in distribute:
             # dictionaries.
             data = project.data
 
-            project.update_dump(force=True, gui=False)
+            self.reporter.info(_("Scanning project files..."))
+            project.update_dump(force=True, gui=False, compile=project.data['force_recompile'])
+
             if project.dump.get("error", False):
                 raise Exception("Could not get build data from the project. Please ensure the project runs.")
 
@@ -350,10 +475,9 @@ init python in distribute:
                 except:
                     pass
 
-            self.packagedest = packagedest
+                self.load_build_cache()
 
-            # Status reporter.
-            self.reporter = reporter
+            self.packagedest = packagedest
 
             self.include_update = build['include_update']
             self.build_update = self.include_update and build_update
@@ -382,9 +506,6 @@ init python in distribute:
                 self.log.close()
                 return
 
-            # add the game.
-            self.reporter.info(_("Scanning project files..."))
-
             self.scan_and_classify(project.path, build["base_patterns"])
 
             if noarchive:
@@ -399,13 +520,15 @@ init python in distribute:
             # Add Python (with the same name as our executables)
             self.add_python()
 
-            # Build the mac app.
+            # Build the mac app and windows exes.
             self.add_mac_files()
+            self.add_windows_files()
 
             # Add generated/special files.
-            if not build['renpy']:
-                self.add_renpy_files()
-                self.add_windows_files()
+            if build['renpy']:
+                self.add_renpy_distro_files()
+            else:
+                self.add_renpy_game_files()
 
             # Assign the x-bit as necessary.
             self.mark_executable()
@@ -420,6 +543,7 @@ init python in distribute:
             for p in build_packages:
 
                 for f in p["formats"]:
+
                     self.make_package(
                         p["name"],
                         f,
@@ -431,11 +555,13 @@ init python in distribute:
                         p["name"],
                         "update",
                         p["file_lists"],
-                        dlc=False)
-
+                        dlc=p["dlc"])
 
             if self.build_update:
                 self.finish_updates(build_packages)
+
+            if not packagedest:
+                self.save_build_cache()
 
             # Finish up.
             self.log.close()
@@ -445,8 +571,6 @@ init python in distribute:
 
             if open_directory:
                 store.OpenDirectory(self.destination)()
-
-
 
         def scan_and_classify(self, directory, patterns):
             """
@@ -464,6 +588,11 @@ init python in distribute:
             """
 
             def walk(name, path):
+
+                # Ignore ASCII control characters, like (Icon\r on the mac).
+                if re.search('[\x00-\x19]', name):
+                    return
+
                 is_dir = os.path.isdir(path)
 
                 if is_dir:
@@ -500,6 +629,48 @@ init python in distribute:
             for fn in os.listdir(directory):
                 walk(fn, os.path.join(directory, fn))
 
+        def rescan(self, oldlist, directory):
+            """
+            Scans `directory`, and produces a filelist from it. Returns the
+            produced filelist.
+
+            `oldlist`
+                Is a filelist. If a file has the xbit set in the oldlist, it
+                has the xbit set in the new list.
+            """
+
+            executable = set()
+
+            for f in oldlist:
+                if f.executable:
+                    executable.add(f.name)
+
+            rv = FileList()
+
+            def walk(name, path):
+
+                # Ignore ASCII control characters, like (Icon\r on the mac).
+                if re.search('[\x00-\x19]', name):
+                    return
+
+                is_dir = os.path.isdir(path)
+
+                f = File(name, path, is_dir, name in executable)
+                rv.append(f)
+
+                if is_dir:
+
+                    for fn in os.listdir(path):
+                        walk(
+                            name + "/" + fn,
+                            os.path.join(path, fn),
+                            )
+
+            for fn in os.listdir(directory):
+                walk(fn, os.path.join(directory, fn))
+
+            return rv
+
         def temp_filename(self, name):
             self.project.make_tmp()
             return os.path.join(self.project.tmp, name)
@@ -528,6 +699,20 @@ init python in distribute:
 
             for fl in file_list:
                 self.file_lists[fl].append(f)
+
+        def add_directory(self, file_list, name):
+            """
+            Adds an empty directory to the file lists.
+            """
+
+            if isinstance(file_list, basestring):
+                file_list = file_list.split()
+
+            f = File(name, None, True, False)
+
+            for fl in file_list:
+                self.file_lists[fl].append(f)
+
 
         def ignore_archives(self, archives):
             """
@@ -576,25 +761,59 @@ init python in distribute:
 
                 self.add_file(file_list, "game/" + arcfn, arcpath)
 
-        def add_renpy_files(self):
+        def add_renpy_game_files(self):
             """
-            Add Ren'Py-generic files to the project.
+            Add Ren'Py file to the game.
             """
 
-            SCRIPT_VERSION_RPY = os.path.join(config.gamedir, "script_version.rpy")
-            SCRIPT_VERSION_RPYC = os.path.join(config.gamedir, "script_version.rpyc")
             LICENSE_TXT = os.path.join(config.renpy_base, "LICENSE.txt")
-
-            if os.path.exists(SCRIPT_VERSION_RPY):
-                if not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpy")):
-                    self.add_file("all", "game/script_version.rpy", SCRIPT_VERSION_RPY)
-
-            if os.path.exists(SCRIPT_VERSION_RPYC):
-                if not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpyc")):
-                    self.add_file("all", "game/script_version.rpyc", SCRIPT_VERSION_RPYC)
 
             if os.path.exists(LICENSE_TXT):
                 self.add_file("renpy", "renpy/LICENSE.txt", LICENSE_TXT)
+
+            if self.build["script_version"]:
+
+                if (not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpy"))) and \
+                    (not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpyc"))):
+
+                    script_version_txt = self.temp_filename("script_version.txt")
+
+                    with open(script_version_txt, "w") as f:
+                        f.write(repr(renpy.renpy.version_tuple[:-1]))
+
+                    self.add_file("all", "game/script_version.txt", script_version_txt)
+
+        def add_file_list_hash(self, list_name):
+            """
+            Hashes a file list, then adds that file to the Ren'Py distribution.
+            """
+
+            tfn = self.temp_filename(list_name + "_hash.txt")
+
+            with open(tfn, "w") as tf:
+                tf.write(self.file_lists[list_name].hash(self))
+
+            self.add_file("binary", "launcher/game/" + list_name + "_hash.txt", tfn)
+            self.add_file(list_name, list_name + "/hash.txt", tfn)
+
+        def add_renpy_distro_files(self):
+            """
+            Add additional files to Ren'Py.
+            """
+
+            self.add_file_list_hash("rapt")
+            self.add_file_list_hash("renios")
+
+            tmp_fn = self.temp_filename("renpy.py")
+
+            with open(os.path.join(config.renpy_base, "renpy.py"), "rb") as f:
+                data = f.read()
+
+            with open(tmp_fn, "wb") as f:
+                f.write("#!/usr/bin/env python2\n")
+                f.write(data)
+
+            self.add_file("source_only", "renpy.py", tmp_fn, True)
 
 
         def write_plist(self):
@@ -613,6 +832,7 @@ init python in distribute:
                 CFBundlePackageType="APPL",
                 CFBundleShortVersionString=version,
                 CFBundleVersion="1.0.{0}".format(int(time.time())),
+                LSApplicationCategoryType="public.app-category.simulation-games",
                 CFBundleDocumentTypes = [
                     {
                         "CFBundleTypeOSTypes" : [ "****", "fold", "disk" ],
@@ -628,6 +848,9 @@ init python in distribute:
                     },
                     ],
                 )
+
+            if self.build.get('allow_integrated_gpu', False):
+                plist["NSSupportsAutomaticGraphicsSwitching"] = True
 
             rv = self.temp_filename("Info.plist")
             plistlib.writePlist(plist, rv)
@@ -662,10 +885,10 @@ init python in distribute:
                 os.path.join(config.renpy_base, "lib/darwin-x86_64/pythonw"),
                 True)
 
-            self.add_file(
-                windows,
-                "lib/windows-i686/" + self.executable_name + ".exe",
-                os.path.join(config.renpy_base, "lib/windows-i686/pythonw.exe"))
+#             self.add_file(
+#                 windows,
+#                 "lib/windows-i686/" + self.executable_name + ".exe",
+#                 os.path.join(config.renpy_base, "lib/windows-i686/renpy.exe"))
 
         def add_mac_files(self):
             """
@@ -679,6 +902,10 @@ init python in distribute:
 
             contents = self.app + "/Contents"
 
+            self.add_directory(filelist, self.app)
+            self.add_directory(filelist, contents)
+            self.add_directory(filelist, contents + "/MacOS")
+
             plist_fn = self.write_plist()
             self.add_file(filelist, contents + "/Info.plist", plist_fn)
             self.add_file(filelist, contents + "/MacOS/" + self.executable_name, os.path.join(config.renpy_base, "renpy.sh"))
@@ -691,27 +918,54 @@ init python in distribute:
             else:
                 icon_fn = default_fn
 
-            self.add_file(filelist, contents + "/Resources/icon.icns", icon_fn)
+            resources = contents + "/Resources"
 
+            self.add_directory(filelist, resources)
+            self.add_file(filelist, resources + "/icon.icns", icon_fn)
+
+            self.add_directory(filelist, contents + "/MacOS/lib")
+            self.add_directory(filelist, contents + "/MacOS/lib/darwin-x86_64")
+            self.add_directory(filelist, contents + "/MacOS/lib/darwin-x86_64/Lib")
+            self.add_directory(filelist, contents + "/MacOS/lib/darwin-x86_64/Modules")
+
+            sfn = self.temp_filename("Setup")
+            with open(sfn, "wb") as f:
+                pass
+
+            self.add_file(filelist, contents + "/MacOS/lib/darwin-x86_64/Modules/Setup", sfn)
+
+            self.file_lists[filelist].mac_lib_transform(self.app, self.build['renpy'])
 
         def add_windows_files(self):
             """
             Adds windows-specific files.
             """
 
+            if self.build['renpy']:
+                windows = 'binary'
+            else:
+                windows = 'windows'
+
             icon_fn = os.path.join(self.project.path, "icon.ico")
             old_exe_fn = os.path.join(config.renpy_base, "renpy.exe")
+            old_main_fn = os.path.join(config.renpy_base, "lib/windows-i686/renpy.exe")
 
             if os.path.exists(icon_fn):
                 exe_fn = self.temp_filename("renpy.exe")
+                main_fn = self.temp_filename("main.exe")
 
                 with open(exe_fn, "wb") as f:
                     f.write(change_icons(old_exe_fn, icon_fn))
 
+                with open(main_fn, "wb") as f:
+                    f.write(change_icons(old_main_fn, icon_fn))
+
             else:
                 exe_fn = old_exe_fn
+                main_fn = old_main_fn
 
-            self.add_file("windows", "renpy.exe", exe_fn)
+            self.add_file(windows, self.exe, exe_fn)
+            self.add_file(windows, "lib/windows-i686/" + self.exe, main_fn)
 
         def mark_executable(self):
             """
@@ -736,9 +990,7 @@ init python in distribute:
                 parts = fn.split('/')
                 p = parts[0]
 
-                if p == "renpy.exe":
-                    p = self.exe
-                elif p == "renpy.sh":
+                if p == "renpy.sh":
                     p = self.sh
                 elif p == "renpy.py":
                     p = self.py
@@ -750,6 +1002,137 @@ init python in distribute:
                 for f in l:
                     f.name = rename_one(f.name)
 
+        def run(self, message, command, **kwargs):
+            """
+            Runs a command.
+            """
+
+            self.reporter.info(message)
+
+            cmd = [ renpy.fsencode(i.format(**kwargs)) for i in command ]
+
+            # print "\"" + "\" \"".join(cmd) + "\""
+
+            try:
+                import sys, os
+                isatty = os.isatty(sys.stdin.fileno())
+            except:
+                isatty = False
+
+            if isatty:
+                subprocess.check_call(cmd)
+            else:
+                subprocess.check_call(cmd, stdout=self.log, stderr=subprocess.STDOUT)
+
+
+        def sign_app(self, fl, appzip):
+            """
+            Signs the mac app contained in appzip.
+            """
+
+            identity = self.build.get('mac_identity', None)
+
+            if identity is None:
+                return fl
+
+            # Figure out where it goes.
+            if appzip:
+                dn = "sign.app-standalone"
+            else:
+                dn = "sign.app-crossplatform"
+
+            dn = self.temp_filename(dn)
+
+            if os.path.exists(dn):
+                shutil.rmtree(dn)
+
+            # Unpack the app.
+            pkg = DirectoryPackage(dn)
+
+            for i, f in enumerate(fl):
+                self.reporter.progress(_("Unpacking the Macintosh application for signing..."), i, len(fl))
+
+                if f.directory:
+                    pkg.add_directory(f.name, f.path)
+                else:
+                    pkg.add_file(f.name, f.path, f.executable)
+
+            pkg.close()
+
+            # Sign the mac app.
+            self.run(
+                _("Signing the Macintosh application...\n(This may take a long time.)"),
+                self.build["mac_codesign_command"],
+                identity=identity,
+                app=os.path.join(dn, self.app),
+                )
+
+            # Rescan the signed app.
+            fl = self.rescan(fl, dn)
+
+            return fl
+
+        def make_dmg(self, volname, sourcedir, dmg):
+            """
+            Packages `sourcedir` as a dmg.
+            """
+
+            identity = self.build.get('mac_identity', None)
+
+            if identity is None:
+                raise Exception("Creating an unsigned DMG is not supported. Please set build.mac_identity.")
+
+            self.run(
+                _("Creating the Macintosh DMG..."),
+                self.build["mac_create_dmg_command"],
+                identity=identity,
+                volname=volname,
+                sourcedir=sourcedir,
+                dmg=dmg,
+            )
+
+            self.run(
+                _("Signing the Macintosh DMG..."),
+                self.build["mac_codesign_dmg_command"],
+                identity=identity,
+                volname=volname,
+                sourcedir=sourcedir,
+                dmg=dmg,
+            )
+
+        def prepare_file_list(self, format, file_lists):
+            """
+            Prepares a master list of files, given the format and file lists.
+            This also takes care of the mac transforms, and signing the app
+            if necessary.
+            """
+
+            macapp = (format in { "app-zip", "app-directory", "app-dmg" })
+            key = (macapp, tuple(file_lists))
+
+            if key in self.file_list_cache:
+                return self.file_list_cache[key].copy()
+
+            fl = FileList.merge([ self.file_lists[i] for i in file_lists ])
+            fl = fl.copy()
+            fl.sort()
+
+            if self.build.get("exclude_empty_directories", True):
+                fl = fl.filter_empty()
+
+            if macapp:
+                fl = fl.mac_transform(self.app, self.documentation_patterns)
+
+            app, rest = fl.split_by_prefix(self.app)
+
+            if app:
+                app = self.sign_app(app, macapp)
+
+                fl = FileList.merge([ app, rest ])
+
+            self.file_list_cache[key] = fl
+            return fl.copy()
+
         def make_package(self, variant, format, file_lists, dlc=False):
             """
             Creates a package file in the projects directory.
@@ -759,9 +1142,7 @@ init python in distribute:
                 part of the file and directory names.
 
             `format`
-                The format things will be packaged in. This should be one of "zip", "tar.bz2", or
-                "update".
-
+                The format things will be packaged in. See the table of formats below.
             `file_lists`
                 A string containing a space-separated list of file_lists to include in this
                 package.
@@ -772,15 +1153,42 @@ init python in distribute:
             filename = self.base_name + "-" + variant
             path = os.path.join(self.destination, filename)
 
+
+            # A map from the name of the format, to the options that will be
+            # used with it. The fields are:
+            #
+            # - The extension used.
+            # - Is this a directory based format?
+            # - Should the directory be turned into a dmg?
+            # - Should a directory name be prepended?
+
+            FORMATS = {
+                "update" : (".update", False, False, False),
+
+                "tar.bz2" : (".tar.bz2", False, False, True),
+                "zip" : (".zip", False, False, True),
+                "directory" : ("", True, False, False),
+                "dmg" : ("-dmg", True, True, True),
+
+                "app-zip" : (".zip", False, False, False),
+                "app-directory" : ("-app", True, False, False),
+                "app-dmg" : ("-app-dmg", True, True, False),
+            }
+
+            if format not in FORMATS:
+                raise Exception("Format %r is unknown." % format)
+
+            ext, directory, dmg, prepend = FORMATS[format]
+
+            mac_identity = self.build.get('mac_identity', None)
+
+            if dmg and (mac_identity is None):
+                return
+
             if self.packagedest:
                 path = self.packagedest
 
-            fl = FileList.merge([ self.file_lists[i] for i in file_lists ])
-            fl = fl.copy()
-            fl.sort()
-
-            if self.build.get("exclude_empty_directories", True):
-                fl = fl.filter_empty()
+            fl = self.prepare_file_list(format, file_lists)
 
             # Write the update information.
             update_files = [ ]
@@ -796,80 +1204,104 @@ init python in distribute:
                 if i.executable:
                     update_xbit.append(i.name)
 
-            update = { variant : { "version" : self.update_version, "pretty_version" : self.pretty_version, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
+            self.update_versions[variant] = fl.hash(self)
 
-            if self.include_update and not dlc:
-                update_fn = os.path.join(self.destination, filename + ".update.json")
+            update = { variant : { "version" : self.update_versions[variant], "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
+
+            update_fn = os.path.join(self.destination, filename + ".update.json")
+
+            if self.include_update and (variant not in [ 'ios', 'android', 'source']) and (not format.startswith("app-")):
 
                 with open(update_fn, "wb") as f:
-                    json.dump(update, f)
+                    json.dump(update, f, indent=2)
 
-                fl.append(File("update", None, True, False))
-                fl.append(File("update/current.json", update_fn, False, False))
-
-            # The mac transform.
-            if format == "app-zip":
-                fl = fl.mac_transform(self.app, self.documentation_patterns)
+                if (not dlc) or (format == "update"):
+                    fl.append(File("update", None, True, False))
+                    fl.append(File("update/current.json", update_fn, False, False))
 
             # If we're not an update file, prepend the directory.
-            if (not dlc) and format != "update" and format != "directory":
+            if (not dlc) and prepend:
                 fl.prepend_directory(filename)
 
-            if format == "tar.bz2":
-                path += ".tar.bz2"
-                pkg = TarPackage(path, "w:bz2")
-            elif format == "update":
-                path += ".update"
-                pkg = TarPackage(path, "w", notime=True)
-            elif format == "zip" or format == "app-zip":
-                path += ".zip"
-                pkg = ZipPackage(path)
-            elif format == "directory":
-                pkg = DirectoryPackage(path)
+            # The path to the DMG, if we're going to make one.
+            dmg_path = path + ".dmg"
 
-            for i, f in enumerate(fl):
-                self.reporter.progress(_("Writing the [variant] [format] package."), i, len(fl), variant=variant, format=format)
+            full_filename = filename + ext
+            path += ext
 
-                if f.directory:
-                    pkg.add_directory(f.name, f.path)
+            if self.build['renpy']:
+                fl_hash = fl.hash(self)
+            else:
+                fl_hash = '<not building renpy>'
+
+            file_hash, old_fl_hash = self.build_cache.get(full_filename, ("", ""))
+
+            if directory or old_fl_hash != fl_hash:
+
+                if format == "tar.bz2":
+                    pkg = TarPackage(path, "w:bz2")
+                elif format == "update":
+                    pkg = TarPackage(path, "w", notime=True)
+                elif format == "zip" or format == "app-zip":
+                    pkg = ZipPackage(path)
+                elif directory:
+                    pkg = DirectoryPackage(path)
+
+                for i, f in enumerate(fl):
+                    self.reporter.progress(_("Writing the [variant] [format] package."), i, len(fl), variant=variant, format=format)
+
+                    if f.directory:
+                        pkg.add_directory(f.name, f.path)
+                    else:
+                        pkg.add_file(f.name, f.path, f.executable)
+
+                self.reporter.progress_done()
+                pkg.close()
+
+                if format == "update":
+                    # Build the zsync file.
+
+                    self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
+
+                    cmd = [
+                        updater.zsync_path("zsyncmake"),
+                        "-z",
+                        # -u url to gzipped data - not a local filename!
+                        "-u", filename + ".update.gz",
+                        "-o", os.path.join(self.destination, filename + ".zsync"),
+                        os.path.abspath(path),
+                        ]
+
+                    subprocess.check_call([ renpy.fsencode(i) for i in cmd ])
+
+                    # Build the sums file. This is a file with an adler32 hash of each 64k block
+                    # of the zsync file. It's used to help us determine how much of the file is
+                    # downloaded.
+                    with open(path, "rb") as src:
+                        with open(renpy.fsencode(os.path.join(self.destination, filename + ".sums")), "wb") as sums:
+                            while True:
+                                data = src.read(65536)
+
+                                if not data:
+                                    break
+
+                                sums.write(struct.pack("<I", zlib.adler32(data) & 0xffffffff))
+
+                if self.include_update and not self.build_update and not dlc:
+                    if os.path.exists(update_fn):
+                        os.unlink(update_fn)
+
+                if not directory:
+                    file_hash = hash_file(path)
                 else:
-                    pkg.add_file(f.name, f.path, f.executable)
+                    file_hash = ""
 
-            self.reporter.progress_done()
-            pkg.close()
+            if dmg:
+                self.make_dmg(filename, path, dmg_path)
+                shutil.rmtree(path)
 
-            if format == "update":
-                # Build the zsync file.
-
-                self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
-
-                cmd = [
-                    updater.zsync_path("zsyncmake"),
-                    "-z",
-                    # -u url to gzipped data - not a local filename!
-                    "-u", filename + ".update.gz",
-                    "-o", os.path.join(self.destination, filename + ".zsync"),
-                    os.path.abspath(path),
-                    ]
-
-                subprocess.check_call([ renpy.fsencode(i) for i in cmd ])
-
-                # Build the sums file. This is a file with an adler32 hash of each 64k block
-                # of the zsync file. It's used to help us determine how much of the file is
-                # downloaded.
-                with open(path, "rb") as src:
-                    with open(renpy.fsencode(os.path.join(self.destination, filename + ".sums")), "wb") as sums:
-                        while True:
-                            data = src.read(65536)
-
-                            if not data:
-                                break
-
-                            sums.write(struct.pack("I", zlib.adler32(data) & 0xffffffff))
-
-            if self.include_update and not self.build_update and not dlc:
-                os.unlink(update_fn)
-
+            if file_hash:
+                self.build_cache[full_filename] = (file_hash, fl_hash)
 
         def finish_updates(self, packages):
             """
@@ -882,21 +1314,25 @@ init python in distribute:
             index = { }
 
             def add_variant(variant):
-                fn = renpy.fsencode(os.path.join(self.destination, self.base_name + "-" + variant + ".update"))
 
-                with open(fn, "rb") as f:
-                    digest = hashlib.sha256(f.read()).hexdigest()
+                digest = self.build_cache[self.base_name + "-" + variant + ".update"][0]
+
+                sums_size = os.path.getsize(self.destination + "/" + self.base_name + "-" + variant + ".sums")
 
                 index[variant] = {
-                    "version" : self.update_version,
+                    "version" : self.update_versions[variant],
                     "pretty_version" : self.pretty_version,
                     "digest" : digest,
                     "zsync_url" : self.base_name + "-" + variant + ".zsync",
                     "sums_url" : self.base_name + "-" + variant + ".sums",
+                    "sums_size" : sums_size,
                     "json_url" : self.base_name + "-" + variant + ".update.json",
                     }
 
-                os.unlink(fn)
+                fn = renpy.fsencode(os.path.join(self.destination, self.base_name + "-" + variant + ".update"))
+
+                if os.path.exists(fn):
+                    os.unlink(fn)
 
             for p in packages:
                 if p["update"]:
@@ -904,8 +1340,40 @@ init python in distribute:
 
             fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
             with open(fn, "wb") as f:
-                json.dump(index, f)
+                json.dump(index, f, indent=2)
 
+
+        def save_build_cache(self):
+            if not self.build['renpy']:
+                return
+
+            fn = renpy.fsencode(os.path.join(self.destination, ".build_cache"))
+
+            with open(fn, "wb") as f:
+                for k, v in self.build_cache.items():
+                    l = "\t".join([k, v[0], v[1]]) + "\n"
+                    f.write(l.encode("utf-8"))
+
+        def load_build_cache(self):
+            if not self.build['renpy']:
+                return
+
+            fn = renpy.fsencode(os.path.join(self.destination, ".build_cache"))
+
+            if not os.path.exists(fn):
+                return
+
+            with open(fn, "rb") as f:
+                for l in f:
+                    if not l:
+                        continue
+
+                    l = l.decode("utf-8").rstrip()
+                    l = l.split("\t")
+
+                    self.build_cache[l[0]] = (l[1], l[2])
+
+            os.unlink(fn)
 
         def dump(self):
             for k, v in sorted(self.file_lists.items()):

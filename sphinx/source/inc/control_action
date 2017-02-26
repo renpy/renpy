@@ -22,11 +22,14 @@
 
 .. function:: Return(value=None)
     
-    Causes the current interaction to return the supplied value. This is
-    often used with menus and imagemaps, to select what the return value
-    of the interaction is.
+    Causes the current interaction to return the supplied value, which
+    must not be None. This is often used with menus and imagemaps, to
+    select what the return value of the interaction is. If the screen
+    was called using the ``call screen`` statement, the return value
+    is placed in the `_return` variable.
     
-    When in a menu, this returns from the menu.
+    When in a menu, this returns from the menu. (The value should be
+    None in this case.)
 
 .. function:: Show(screen, transition=None, *args, **kwargs)
     

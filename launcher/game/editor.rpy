@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -238,13 +238,13 @@ init 1 python in editor:
             if i.name == persistent.editor:
                 if i.installed and i.name in editors:
                     ei = editors[i.name]
-                    os.environ["RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
+                    os.environ[b"RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
                     error_message = i.error_message
                     break
 
         else:
             persistent.editor = None
-            os.environ.pop("RENPY_EDIT_PY", None)
+            os.environ.pop(b"RENPY_EDIT_PY", None)
 
         renpy.editor.init()
 
@@ -297,7 +297,7 @@ init 1 python in editor:
         if not set_editor:
             return True
 
-        if persistent.editor:
+        if persistent.editor and persistent.editor != "None":
             return True
 
         return renpy.invoke_in_new_context(renpy.call_screen, "editor")
@@ -307,6 +307,8 @@ init 1 python in editor:
 
 
     class Edit(Action):
+        alt = "Edit [text]."
+
         def __init__(self, filename, line=None, check=False):
             """
             An action that opens the given line of the given file in a
@@ -407,6 +409,8 @@ init 1 python in editor:
         """
         Opens all scripts that are part of the current project in a web browser.
         """
+
+        alt = "Edit [text]."
 
         def __init__(self):
             return

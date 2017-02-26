@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,28 +21,21 @@
 
 # The displayable and style inspectors.
 
+style _hyperlink_button is _default
+style _hyperlink_button_text is _hyperlink
+
 screen _inspector:
     zorder 1010
     modal True
 
     frame:
         style_group ""
+        right_padding 0
 
-        xmaximum 770
-        xfill True
-
-        xpadding 15
-        ypadding 15
-
-        xalign 0.5
-        yalign 0.25
-
-
-        has vbox
+        has side "t c b":
+            spacing gui._scale(10)
 
         label _("Displayable Inspector")
-
-        null height 10
 
         if not tree:
 
@@ -50,56 +43,68 @@ screen _inspector:
 
         else:
 
-            hbox:
-                text " ":
-                    min_width 400
-                    xmaximum 400
+            viewport:
+                scrollbars "both"
+                child_size (4000, 0)
+                yfill True
+                xfill True
+                mousewheel True
 
-                text _("Size"):
-                    min_width 100
-                    xmaximum 100
-                    underline True
+                has vbox:
+                    spacing gui._scale(3)
 
-                text _("Style"):
-                    underline True
+                hbox:
+                    text " ":
+                        min_width gui._scale(350)
+                        xmaximum gui._scale(350)
 
-            null height 5
+                    text _("Size"):
+                        min_width gui._scale(90)
+                        underline True
 
-            for depth, width, height, d in tree:
+                    text _("Style"):
+                        min_width gui._scale(225)
+                        underline True
 
-                $ t = "  " * depth + u"\u2022 " + unicode(d)
-                $ s = __format_style(d.style.parent)
+                    null width gui._scale(5)
 
-                button:
-                    xfill True
-                    xmargin 0
-                    ymargin 0
-                    xpadding 0
-                    ypadding 0
-                    xoffset 0
+                    text _("Location"):
+                        underline True
 
-                    background None
-                    hover_background "#fff4"
+                null height gui._scale(5)
 
-                    action Show("_style_inspector", d=d)
+                for depth, width, height, d in tree:
+
+                    $ t = "  " * depth + u"\u2022 " + unicode(d)
+                    $ s = __format_style(d.style.parent)
+
 
                     hbox:
 
                         text "[t!q]":
-                            min_width 400
-                            xmaximum 400
+                            min_width gui._scale(350)
 
                         text "[width:.0f]x[height:.0f]":
-                            min_width 100
-                            xmaximum 100
+                            min_width gui._scale(90)
 
-                        text "[s!q]":
-                            style "_hyperlink"
+                        textbutton "[s!q]":
+                            style "_hyperlink_button"
+                            text_min_width gui._scale(225)
+                            action Show("_style_inspector", d=d)
 
-        null height 20
+                        null width 5
 
-        textbutton _("Return") action Return(True)
-        key "game_menu" action Return(True)
+                        if d._location:
+                            $ l = __format_location(d._location)
+
+                            textbutton "[l!q]":
+                                style "_hyperlink_button"
+                                action _EditFile(d._location[0], d._location[1])
+
+        hbox:
+            textbutton _("Return") action Return(True)
+
+    key "game_menu" action Return(True)
 
 screen _style_inspector:
     zorder 1020
@@ -107,29 +112,28 @@ screen _style_inspector:
 
     frame:
         style_group ""
+        right_padding 0
 
-        xmaximum 700
-        xfill True
-
-        xpadding 15
-        ypadding 15
-
-        xalign 0.5
-        yalign 0.25
-
-        has vbox
+        has side "t c b":
+            xfill True
+            spacing gui._scale(10)
 
         $ displayable_name = unicode(d)
         label _("Inspecting Styles of [displayable_name!q]")
 
-        null height 10
+        $ styles = d.style.inspect()
 
         viewport:
-            yfill False
+            child_size (4000, 0)
+
+            yfill True
+            xfill True
             mousewheel True
 
             vbox:
-                for name, properties in d.style.inspect():
+                for i, j in enumerate(styles):
+
+                    $ name, properties = j
 
                     if name is None:
                         text _("displayable:")
@@ -137,10 +141,9 @@ screen _style_inspector:
                         $ style_name = __format_style(name)
                         text "style [style_name!q]:"
 
-
                     if not properties:
                         text _("        (no properties affect the displayable)")
-                    elif name in [ ("default",), ("_default",) ]:
+                    elif i == (len(styles) - 1):
                         text _("        (default properties omitted)")
                     else:
                         for propname in sorted(properties):
@@ -149,19 +152,27 @@ screen _style_inspector:
 
                     null height 5
 
-
-        # Code goes here.
-
-        null height 20
-
         textbutton _("Return") action Hide("_style_inspector")
-        key "game_menu" action Hide("_style_inspector")
+
+    key "game_menu" action Hide("_style_inspector")
 
 
 init python:
 
     def __format_style(name):
         return name[0] + "".join([ "[%r]" % i for i in name[1:] ])
+
+    def __format_location(l):
+        if l is None:
+            return ""
+        else:
+            fn = l[0]
+            if fn.startswith("game/"):
+                fn = fn[5:]
+            elif fn.startswith("renpy/common"):
+                fn = fn[6:]
+
+            return "%s:%d" % (fn, l[1])
 
     def __safe_repr(name):
         try:

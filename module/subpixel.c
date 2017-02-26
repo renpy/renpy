@@ -7,14 +7,20 @@
  */
 
 #include "renpy.h"
-#include <pygame/pygame.h>
+#include <SDL.h>
+#include <pygame_sdl2/pygame_sdl2.h>
 #include <stdio.h>
 #include <math.h>
+
+void subpixel_init() {
+    import_pygame_sdl2();
+}
 
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 #define GCC_MMX 1
 #include "mmx.h"
 #endif
+
 
 /* MMX Register assignments (between applications of the blitter core).
  *
@@ -33,7 +39,7 @@
  * This is the basic algorithm that does the subpixel blit
  * interpolation.
  *************************************************************************/
-   
+
 /* mm2 = destination; */
 
 /* unpack mm0; */
@@ -83,8 +89,8 @@
 #define MMX_EXPAND()                            \
     pxor_r2r(mm2, mm2);                         \
     punpcklbw_r2r(mm2, mm4);                    \
-    punpcklbw_r2r(mm2, mm5);                    
-    
+    punpcklbw_r2r(mm2, mm5);
+
 
 // This expects the two old pixels to be arranged like:
 // mm4 mm0
@@ -140,7 +146,7 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
                float xoffset, float yoffset, int ashift) {
     SDL_Surface *src;
     SDL_Surface *dst;
-    
+
     int srcpitch, dstpitch;
     int srcw, srch;
     int dstw, dsth;
@@ -148,7 +154,7 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
     unsigned char *dstpixels;
 
     int xfrac, yfrac;
-    int xo, yo; 
+    int xo, yo;
     int sx, sy;
 
     int draw_finalx;
@@ -158,7 +164,7 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
 
     unsigned int pixel;
     unsigned int blankpixel;
-    
+
     unsigned char *s0;
     unsigned char *s1;
     unsigned char *d;
@@ -170,12 +176,12 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
     if (!SDL_HasMMX()) {
         return 0;
     }
-    
+
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
-        
+
     Py_BEGIN_ALLOW_THREADS
-        
+
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
@@ -186,7 +192,7 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
     dsth = dst->h;
 
     inverted_alpha_mask = ~(0xff << ashift);
-    
+
     // Due to mmx.
     ashift *= 2;
 
@@ -216,7 +222,7 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
     if (sx >= srcw - 1 || sy >= srch - 1) {
         goto done;
     }
-    
+
     // Figure out how many pixels we need to draw on each line.
     normal_pixels = min(srcw - sx - 1, dstw - xo);
 
@@ -236,7 +242,7 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
     punpckldq_r2r(mm7, mm7);
 
     movd_m2r(ashift, mm3);
-    
+
     if (xo >= dstw) {
         goto done;
     }
@@ -244,27 +250,27 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
     // Draw the first line, when sy == -1.
 
     if (sy == -1) {
-        
+
         if (yo >= dsth) {
             goto done;
         }
 
         s1 = srcpixels + sx * 4;
-    
+
         if (sx < 0) {
-            pixel = (* (unsigned int *) (s1 + 4)) & inverted_alpha_mask;            
+            pixel = (* (unsigned int *) (s1 + 4)) & inverted_alpha_mask;
         } else {
             pixel = * (unsigned int *) s1;
         }
 
         blankpixel = pixel & inverted_alpha_mask;
-        
+
         movd_m2r(blankpixel, mm4);
         movd_m2r(pixel, mm5);
 
         MMX_EXPAND();
         s1 += 4;
-        
+
         d = dstpixels + xo * 4 + yo * dstpitch;
         dend = d + normal_pixels * 4;
 
@@ -272,7 +278,7 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
             pixel = * (unsigned int *) s1;
             blankpixel = pixel & inverted_alpha_mask;
             movd_m2r(blankpixel, mm0);
-            movd_m2r(pixel, mm1);        
+            movd_m2r(pixel, mm1);
             MMX_INTERP(* (unsigned int *) d);
             d += 4;
             s1 += 4;
@@ -300,7 +306,7 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
 
         s0 = srcpixels + sx * 4 + (srcpitch * sy);
         s1 = srcpixels + sx * 4 + (srcpitch * (sy + 1));
-        
+
         if (sx < 0) {
             blankpixel = (* (unsigned int *) (s0 + 4)) & inverted_alpha_mask;
             movd_m2r(blankpixel, mm4);
@@ -314,20 +320,20 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
         }
 
         MMX_EXPAND();
-        
+
         s0 += 4;
         s1 += 4;
-        
+
         d = dstpixels + xo * 4 + yo * dstpitch;
         dend = d + normal_pixels * 4;
 
         unsigned char *dp = d;
-        
+
         while (d != dend) {
-            movd_m2r(* (unsigned int *) s0, mm0);        
-            movd_m2r(* (unsigned int *) s1, mm1);        
+            movd_m2r(* (unsigned int *) s0, mm0);
+            movd_m2r(* (unsigned int *) s1, mm1);
             MMX_INTERP(* (unsigned int *) d);
-            
+
             d += 4;
             s0 += 4;
             s1 += 4;
@@ -350,7 +356,7 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
     }
 
     // The final part, where we handle the bottom line of the source surface.
-    
+
     if (yo >= dsth) {
         goto done;
     }
@@ -360,29 +366,29 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
     if (sx < 0) {
         pixel = * (unsigned int *) (s0 + 4);
         blankpixel = pixel & inverted_alpha_mask;
-        
+
         movd_m2r(blankpixel, mm4);
         movd_m2r(blankpixel, mm5);
     } else {
         pixel = * (unsigned int *) s0;
         blankpixel = pixel & inverted_alpha_mask;
-        
+
         movd_m2r(pixel, mm4);
         movd_m2r(blankpixel, mm5);
     }
 
     MMX_EXPAND();
-    
+
     s0 += 4;
-        
+
     d = dstpixels + xo * 4 + yo * dstpitch;
     dend = d + normal_pixels * 4;
 
     while (d != dend) {
         pixel = * (unsigned int *) s0;
         blankpixel = pixel & inverted_alpha_mask;
-        
-        movd_m2r(pixel, mm0);        
+
+        movd_m2r(pixel, mm0);
         movd_m2r(blankpixel, mm1);
         MMX_INTERP(* (unsigned int *) d);
         d += 4;
@@ -395,7 +401,7 @@ int subpixel32(PyObject *pysrc, PyObject *pydst,
         MMX_INTERP(* (unsigned int *) d);
     }
 
-    
+
 done:
 
     // Reset the MMX unit and call it a night.
@@ -403,7 +409,7 @@ done:
 
     Py_END_ALLOW_THREADS
 
-        
+
     return 1;
 }
 

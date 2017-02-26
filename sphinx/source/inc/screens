@@ -2,7 +2,7 @@
 
 .. function:: renpy.call_screen(_screen_name, *args, **kwargs)
     
-    The programmatic equivalent of the show screen statement.
+    The programmatic equivalent of the call screen statement.
     
     This shows `_screen_name` as a screen, then causes an interaction
     to occur. The screen is hidden at the end of the interaction, and
@@ -49,24 +49,49 @@
     `variant`
         String. Gives the variant of the screen to use.
 
-.. function:: renpy.get_screen(name, layer='screens')
+.. function:: renpy.get_screen(name, layer=None)
     
-    Returns the ScreenDisplayable with the given `tag`, on
-    `layer`. If no displayable with the tag is not found, it is
-    interpreted as screen name. If it's still not found, None is returned.
-     
+    Returns the ScreenDisplayable with the given `name` on layer. `name`
+    is first interpreted as a tag name, and then a screen name. If the
+    screen is not showing, returns None.
+    
+    This can also take a list of names, in which case the first screen
+    that is showing is returned.
+    
+    This function can be used to check if a screen is showing, using code
+    like::
+    
+        if renpy.get_screen("say"):
+            text "The say screen is showing."
+        else:
+            text "The say screen is hidden."
 
-.. function:: renpy.get_widget(screen, id, layer='screens')
+.. function:: renpy.get_widget(screen, id, layer=None)
     
     From the `screen` on `layer`, returns the widget with
     `id`. Returns None if the screen doesn't exist, or there is no
     widget with that id on the screen.
 
-.. function:: renpy.hide_screen(tag, layer='screens')
+.. function:: renpy.get_widget_properties(id, screen=None, layer=None)
+    
+    Returns the properties for the widget with `id` in the `screen`
+    on `layer`. If `screen` is None, returns the properties for the
+    current screen.
+    
+    This can be used inside screen code.
+    
+    Note that this returns a dictionary containing the widget properties,
+    and so to get an individual property
+
+.. function:: renpy.hide_screen(tag, layer=None)
     
     The programmatic equivalent of the hide screen statement.
     
     Hides the screen with `tag` on `layer`.
+
+.. function:: renpy.predicting()
+    
+    Returns true if Ren'Py is currently predicting the screen.
 
 .. function:: renpy.show_screen(_screen_name, *_args, **kwargs)
     
@@ -92,6 +117,16 @@
     
     Keyword arguments not beginning with underscore (_) are used to
     initialize the screen's scope.
+
+.. function:: renpy.start_predict_screen(_screen_name, *args, **kwargs)
+    
+    Causes Ren'Py to start predicting the screen named `_screen_name`
+    will be shown with the given arguments. This replaces  any previous prediction
+    of `_screen_name`. To stop predicting a screen, call :func:`renpy.stop_predict_screen`.
+
+.. function:: renpy.stop_predict_screen(name)
+    
+    Causes Ren'Py to stop predicting the screen named `name` will be shown.
 
 .. function:: renpy.variant(name)
     

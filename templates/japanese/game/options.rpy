@@ -1,4 +1,4 @@
-## This file contains some of the options that can be changed to customize
+﻿## This file contains some of the options that can be changed to customize
 ## your Ren'Py game. It only contains the most common options... there
 ## is quite a bit more customization you can do.
 ## ゲームをカスタマイズするオプションを記述したファイルです。
@@ -52,9 +52,8 @@ init -1 python hide:
     ## 訳注：現在のバージョンでは、ほとんどのカスタマイズはスタイルと
     ## スクリーンで行われます。そのため、本項目は未翻訳です。
 
-    ## We then want to call a theme function. themes.roundrect is
-    ## a theme that features the use of rounded rectangles. It's
-    ## the only theme we currently support.
+    ## We then want to call a theme function. theme.roundrect is
+    ## a theme that features the use of rounded rectangles.
     ##
     ## The theme function takes a number of parameters that can
     ## customize the color scheme.
@@ -444,7 +443,7 @@ init -1 python hide:
     #########################################
     ## This is the name of the directory where the game's data is
     ## stored. (It needs to be set early, before any other init code
-    ## is run, so the persisten information can be found by the init code.)
+    ## is run, so the persistent information can be found by the init code.)
     ## 以下の項目はゲームデータがセーブされるディレクトリ名です。
     ## （他の init コードで使用するデータを参照できるように、 全ての init コードより
     ## 前の python early でセットしておく必要があります。）
@@ -477,7 +476,7 @@ init -1 python hide:
     config.default_fullscreen = False
 
     ## The default text speed in characters per second. 0 is infinite.
-    ## デフォルト文字表示速度。０だと瞬間表示します。
+    ## デフォルト文字表示速度。０だと無限に時間がかかります。
 
     config.default_text_cps = 0
 
@@ -490,6 +489,14 @@ init -1 python hide:
     ## More customizations can go here.
     ## 他のカスタマイズは以下に記述します。
     ## 訳注：以下は原文にはない追加コードです。
+
+    # テキストがウィンドウの許可された領域からはみ出ると text_overflow.txt
+    # に記録します。
+    # config.debug_text_overflow = False
+
+    # オートリロードを有効化します。オートリロードが有効だと
+    # スクリプト変更を検出し、自動でリロードします。
+    # config.autoreload = False
 
     ## マウスホイールで読み進められるようにします。
     # config.keymap['dismiss'].append('mousedown_5')

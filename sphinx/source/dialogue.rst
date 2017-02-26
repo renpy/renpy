@@ -46,7 +46,7 @@ giving a character name, or a Character object. In the latter case,
 the character object is used to control how the dialogue is shown.
 
 The final form consists of a string and a with clause which has a
-transition. In this case, the string is shown and a screen is shaked
+transition. In this case, the string is shown and a screen is shaken
 at the same time.
 
 
@@ -206,6 +206,7 @@ For example::
     show eileen happy
     extend " But I usually quickly get over it!"
 
+.. _dialogue-window-management:
 
 Dialogue Window Management
 --------------------------
@@ -234,7 +235,9 @@ used.
 This enables automatic management of the window. The window is shown
 before statements listed in :var:`config.window_auto_show` - by default,
 say statements. The window is hidden before statements listed in
-:var:`config.window_auto_hide` - by default, scene statements.
+:var:`config.window_auto_hide` - by default, ``scene`` and ``call screen``
+statements. (Only statements are considered, not statement equivalent
+functions.)
 
 The ``window auto`` statement uses :var:`config.window_show_transition`
 and :var:`config.window_hide_transition` to show and hide the window,
@@ -264,3 +267,40 @@ For example::
 Dialogue window management is subject to the "show empty window"
 :func:`Preference`. If the preference is disabled, the statements above
 have no effect.
+
+Python Equivalents
+------------------
+
+.. note::
+
+   This may only make sense if you've read the :ref:`python` section.
+
+When the first parameter to a say statement is present and an expression,
+the say statement is equivalent to calling that expressing with the dialogue
+and an `interact` argument of True. For example::
+
+    e "Hello, world."
+
+is equivalent to::
+
+    $ e("Hello, world.", interact=True)
+
+The say statement will search the ``character`` named store before the default
+store. If you want to have a character with the same name as a variable in
+the default store, it can be defined using::
+
+    define character.e = Character("Eileen")
+
+This character can then be used alongside a variable in the default store::
+
+    label start:
+
+        # This is a terrible variable name.
+        e = 100
+
+        e "Our starting energy is [e] units."
+
+Window management is performed by setting the :var:`_window` and
+:var:`_window_auto` variables, and by using the following two functions:
+
+.. include:: inc/window

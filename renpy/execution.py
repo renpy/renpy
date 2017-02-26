@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,16 +22,80 @@
 # This file contains code responsible for managing the execution of a
 # renpy object, as well as the context object.
 
+from __future__ import print_function
 import sys
+import time
+
 import renpy.display
+import renpy.test
+
+pyast = __import__("ast", { })
+
+# The number of statements that have been run since the last infinite loop
+# check.
+il_statements = 0
+
+# The deadline for reporting we're not in an infinite loop.
+il_time = 0
+
+
+def check_infinite_loop():
+    global il_statements
+
+    il_statements += 1
+
+    if il_statements <= 1000:
+        return
+
+    il_statements = 0
+
+    global il_time
+
+    if time.time() > il_time:
+        il_time = time.time() + 60
+        raise Exception("Possible infinite loop.")
+
+    return
+
+
+def not_infinite_loop(delay):
+    """
+    :doc: other
+
+    Resets the infinite loop detection timer to `delay` seconds.
+    """
+
+    global il_time
+    il_time = time.time() + delay
+
 
 class Delete(object):
     pass
+
 
 class PredictInfo(renpy.object.Object):
     """
     Not used anymore, but needed for backwards compatibility.
     """
+
+
+class LineLogEntry(object):
+
+    def __init__(self, filename, line, node, abnormal):
+        self.filename = filename
+        self.line = line
+        self.node = node
+        self.abnormal = abnormal
+
+        for i in renpy.config.line_log_callbacks:
+            i(self)
+
+    def __eq__(self, other):
+        if not isinstance(other, LineLogEntry):
+            return False
+
+        return (self.filename == other.filename) and (self.line == other.line) and (self.node is other.node)
+
 
 class Context(renpy.object.Object):
     """
@@ -56,7 +120,13 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 11
+    __version__ = 13
+
+    nosave = [ 'next_node' ]
+
+    next_node = None
+
+    force_checkpoint = False
 
     def after_upgrade(self, version):
         if version < 1:
@@ -95,6 +165,12 @@ class Context(renpy.object.Object):
 
         if version < 11:
             self.say_attributes = None
+
+        if version < 12:
+            self.translate_block_language = None
+
+        if version < 13:
+            self.line_log = [ ]
 
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -151,6 +227,14 @@ class Context(renpy.object.Object):
         # The attributes that are used by the current say statement.
         self.say_attributes = None
 
+        # A list of lines that were run since the last time this log was
+        # cleared.
+        self.line_log = [ ]
+
+        # Do we want to force a checkpoint before the next statement
+        # executed?
+        self.force_checkpoint = False
+
         if context:
             oldsl = context.scene_lists
             self.runtime = context.runtime
@@ -179,9 +263,14 @@ class Context(renpy.object.Object):
         self.modes = renpy.python.RevertableList([ "start" ])
         self.use_modes = True
 
+        # The language we started with.
         self.translate_language = None
+
+        # The identifier of the current translate block.
         self.translate_identifier = None
 
+        # The language of the current translate block.
+        self.translate_block_language = None
 
     def make_dynamic(self, names, context=False):
         """
@@ -206,12 +295,14 @@ class Context(renpy.object.Object):
             else:
                 self.dynamic_stack[index][i] = Delete()
 
-
     def pop_dynamic(self):
         """
         Pops one level of the dynamic stack. Called when the return
         statement is run.
         """
+
+        if not self.dynamic_stack:
+            return
 
         store = renpy.store.__dict__
 
@@ -232,7 +323,6 @@ class Context(renpy.object.Object):
         while self.dynamic_stack:
             self.pop_dynamic()
 
-
     def goto_label(self, node_name):
         """
         Sets the name of the node that will be run when this context
@@ -241,7 +331,27 @@ class Context(renpy.object.Object):
 
         self.current = node_name
 
-    def report_tb(self, out):
+    def check_stacks(self):
+        """
+        Check and fix stack corruption.
+        """
+
+        if len(self.dynamic_stack) != len(self.return_stack) + 2:
+
+            e = Exception("Potential return stack corruption: dynamic={} return={}".format(len(self.dynamic_stack), len(self.return_stack)))
+
+            while len(self.dynamic_stack) < len(self.return_stack) + 2:
+                self.dynamic_stack.append({})
+
+            while len(self.dynamic_stack) > len(self.return_stack) + 2:
+                self.pop_dynamic()
+
+            raise e
+
+    def report_traceback(self, name, last):
+
+        if last:
+            return
 
         rv = [ ]
 
@@ -262,6 +372,18 @@ class Context(renpy.object.Object):
 
         return rv
 
+    def report_coverage(self, node):
+        """
+        Execs a python pass statement on the line of code corresponding to
+        `node`. This indicates to python coverage tools that this line has
+        been executed.
+        """
+
+        ps = pyast.Pass(lineno=node.linenumber, col_offset=0)
+        module = pyast.Module(lineno=node.linenumber, col_offset=0, body=[ ps ])
+        code = compile(module, node.filename, 'exec')
+        exec(code)
+
     def run(self, node=None):
         """
         Executes as many nodes as possible in the current context. If the
@@ -276,6 +398,9 @@ class Context(renpy.object.Object):
         if node is None:
             node = renpy.game.script.lookup(self.current)
 
+        developer = renpy.config.developer
+        tracing = sys.gettrace() is not None
+
         while node:
 
             self.current = node.name
@@ -283,46 +408,68 @@ class Context(renpy.object.Object):
             self.abnormal = False
             self.defer_rollback = None
 
+            if renpy.config.line_log:
+                ll_entry = LineLogEntry(node.filename, node.linenumber, node, self.last_abnormal)
+
+                if ll_entry not in self.line_log:
+                    self.line_log.append(ll_entry)
+
             if self.rollback and renpy.game.log:
                 renpy.game.log.begin()
 
+            if self.force_checkpoint:
+                renpy.game.log.checkpoint(hard=False)
+                self.force_checkpoint = False
+
             self.seen = False
+
+            renpy.test.testexecution.take_name(self.current)
 
             try:
                 try:
+                    check_infinite_loop()
+
+                    if tracing:
+                        self.report_coverage(node)
+
+                    renpy.game.exception_info = "While running game code:"
+
                     self.next_node = None
                     node.execute()
 
-                except renpy.game.CONTROL_EXCEPTIONS, e:
+                    if developer and self.next_node:
+                        self.check_stacks()
+
+                except renpy.game.CONTROL_EXCEPTIONS as e:
 
                     # An exception ends the current translation.
                     self.translate_interaction = None
 
                     raise
 
-                except Exception, e:
+                except Exception as e:
                     self.translate_interaction = None
 
                     exc_info = sys.exc_info()
-                    short, full, traceback_fn = renpy.bootstrap.report_exception(e, editor=False)
+                    short, full, traceback_fn = renpy.error.report_exception(e, editor=False)
 
                     try:
                         if self.exception_handler is not None:
                             self.exception_handler(short, full, traceback_fn)
                         elif renpy.display.error.report_exception(short, full, traceback_fn):
                             raise
-                    except renpy.game.CONTROL_EXCEPTIONS, ce:
+                    except renpy.game.CONTROL_EXCEPTIONS as ce:
                         raise ce
-                    except Exception, ce:
+                    except Exception as ce:
                         raise exc_info[0], exc_info[1], exc_info[2]
 
                 node = self.next_node
 
-            except renpy.game.JumpException, e:
+            except renpy.game.JumpException as e:
                 node = renpy.game.script.lookup(e.args[0])
                 self.abnormal = True
 
-            except renpy.game.CallException, e:
+            except renpy.game.CallException as e:
 
                 if self.next_node is None:
                     raise Exception("renpy.call can't be used when the next node is undefined.")
@@ -338,7 +485,6 @@ class Context(renpy.object.Object):
 
             if self.rollback and renpy.game.log:
                 renpy.game.log.complete()
-
 
     def mark_seen(self):
         """
@@ -370,22 +516,54 @@ class Context(renpy.object.Object):
 
         return renpy.game.script.lookup(label)
 
+    def pop_call(self):
+        """
+        Blindly pops the top call record from the stack.
+        """
+
+        if not self.return_stack:
+            if renpy.config.developer:
+                raise Exception("No call on call stack.")
+
+            return
+
+        self.return_stack.pop()
+        self.call_location_stack.pop()
+        self.pop_dynamic()
+
     def lookup_return(self, pop=True):
         """
         Returns the node to return to, or None if there is no
         such node.
         """
 
-        if len(self.return_stack) == 0:
-            return None
+        while self.return_stack:
 
-        if pop:
-            label = self.return_stack.pop()
-            self.call_location_stack.pop()
-        else:
-            label = self.return_stack[-1]
+            node = None
 
-        return renpy.game.script.lookup(label)
+            if renpy.game.script.has_label(self.return_stack[-1]):
+                node = renpy.game.script.lookup(self.return_stack[-1])
+            elif renpy.game.script.has_label(self.call_location_stack[-1]):
+                node = renpy.game.script.lookup(self.call_location_stack[-1]).next
+
+            if node is None:
+
+                if renpy.config.developer:
+                    raise Exception("Could not find return label {!r}.".format(self.return_stack[-1]))
+
+                self.return_stack.pop()
+                self.call_location_stack.pop()
+                self.pop_dynamic()
+
+                continue
+
+            if pop:
+                self.return_stack.pop()
+                self.call_location_stack.pop()
+
+            return node
+
+        return None
 
     def rollback_copy(self):
         """
@@ -406,6 +584,38 @@ class Context(renpy.object.Object):
 
         return rv
 
+    def predict_call(self, label, return_site):
+        """
+        This is called by the prediction code to indicate that a call to
+        `label` will occur.
+
+        `return_site`
+            The name of the return site to push on the predicted return
+            stack.
+
+        Returns the node corresponding to `label`
+        """
+
+        self.predict_return_stack = list(self.predict_return_stack)
+        self.predict_return_stack.append(return_site)
+
+        return renpy.game.script.lookup(label)
+
+    def predict_return(self):
+        """
+        This predicts that a return will occur.
+
+        It returns the node we predict will be returned to.
+        """
+
+        if not self.predict_return_stack:
+            return None
+
+        self.predict_return_stack = list(self.predict_return_stack)
+        label = self.predict_return_stack.pop()
+
+        return renpy.game.script.lookup(label)
+
     def predict(self):
         """
         Performs image prediction, calling the given callback with each
@@ -416,48 +626,67 @@ class Context(renpy.object.Object):
         if not self.current:
             return
 
+        if renpy.config.predict_statements_callback is None:
+            return
+
         old_images = self.images
 
-        nodes = [ (renpy.game.script.lookup(self.current), self.images) ]
-        node_set = set()
+        # A worklist of (node, images, return_stack) tuples.
+        nodes = [ ]
 
+        # The set of nodes we've seen. (We only consider each node once.)
+        seen = set()
+
+        # Find the roots.
+        for label in renpy.config.predict_statements_callback(self.current):
+
+            if not renpy.game.script.has_label(label):
+                return
+
+            node = renpy.game.script.lookup(label)
+
+            if node in seen:
+                continue
+
+            nodes.append((node, self.images, self.return_stack))
+            seen.add(node)
+
+        # Predict statements.
         for i in range(0, renpy.config.predict_statements):
 
             if i >= len(nodes):
                 break
 
-            node, images = nodes[i]
+            node, images, return_stack = nodes[i]
 
             self.images = renpy.display.image.ShownImageInfo(images)
-
-            # Ignore exceptions in prediction, so long as
-            # prediction is not needed.
+            self.predict_return_stack = return_stack
 
             try:
+
                 for n in node.predict():
                     if n is None:
                         continue
 
-                    if n not in node_set:
-                        nodes.append((n, self.images))
-                        node_set.add(n)
+                    if n not in seen:
+                        nodes.append((n, self.images, self.predict_return_stack))
+                        seen.add(n)
+
             except:
 
                 if renpy.config.debug_image_cache:
                     import traceback
 
-                    print
+                    print()
                     traceback.print_exc()
-                    print "While predicting images."
-
-                # We accept that sometimes prediction won't work.
+                    print("While predicting images.")
 
             self.images = old_images
+            self.predict_return_stack = None
 
             yield True
 
         yield False
-
 
     def seen_current(self, ever):
         """
@@ -493,6 +722,23 @@ class Context(renpy.object.Object):
 
         renpy.exports.rollback(force, checkpoints)
 
+    def get_return_stack(self):
+        return list(self.return_stack)
+
+    def set_return_stack(self, return_stack):
+        self.return_stack = list(return_stack)
+
+        while len(self.call_location_stack) > len(self.return_stack):
+            self.call_location_stack.pop()
+
+            d = self.dynamic_stack.pop()
+            d.update(self.dynamic_stack[-1])
+            self.dynamic_stack[-1] = d
+
+        while len(self.call_location_stack) < len(self.return_stack):
+            self.call_location_stack.append("unknown location")
+            self.dynamic_stack.append({})
+
 
 def run_context(top):
     """
@@ -522,6 +768,9 @@ def run_context(top):
 
         except renpy.game.RestartContext as e:
 
+            # Apply defaults.
+            renpy.exports.execute_default_statement(False)
+
             if e.label:
                 label = e.label
 
@@ -529,6 +778,9 @@ def run_context(top):
 
         except renpy.game.RestartTopContext as e:
             if top:
+
+                # Apply defaults.
+                renpy.exports.execute_default_statement(False)
 
                 if e.label:
                     label = e.label

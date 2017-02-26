@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -197,15 +197,18 @@ screen common:
         label title text_color title_color style "l_info_label"
 
     if back:
-        textbutton _("Back") action back style "l_left_button"
+        textbutton _("Return") action back style "l_left_button"
     elif cancel:
         textbutton _("Cancel") action cancel style "l_left_button"
 
     if continue_:
         textbutton _("Continue") action continue_ style "l_right_button"
+        key "input_enter" action continue_
 
 
 screen launcher_input:
+
+    default value = default
 
     frame:
         style "l_root"
@@ -222,7 +225,7 @@ screen launcher_input:
 
             add SPACER
 
-            input style "l_default" size 24 xalign 0.5 default default color INPUT_COLOR
+            input style "l_default" value ScreenVariableInputValue("value", returnable=True) size 24 xalign 0.5 color INPUT_COLOR
 
             if filename:
                 add SPACER
@@ -232,6 +235,9 @@ screen launcher_input:
 
     if cancel:
         textbutton _("Cancel") action cancel style "l_left_button"
+
+    textbutton _("Continue") action Return(value) style "l_right_button"
+
 
 init python in interface:
 

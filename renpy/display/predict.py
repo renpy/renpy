@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -38,6 +38,7 @@ predicting = False
 # like to predict.
 screens = [ ]
 
+
 def displayable(d):
     """
     Called to predict that the displayable `d` will be shown.
@@ -49,6 +50,7 @@ def displayable(d):
     if d not in predicted:
         predicted.add(d)
         d.visit_all(lambda i : i.predict_one())
+
 
 def screen(_screen_name, *args, **kwargs):
     """
@@ -92,9 +94,18 @@ def prediction_coroutine(root_widget):
     global image
     image = renpy.display.im.cache.preload_image
 
+    predicting = True
+
+    # Predict displayables given to renpy.start_predict.
+    for d in renpy.store._predict_set:
+        displayable(d)
+
+        predicting = False
+        yield True
+        predicting = True
+
     # Predict images that are going to be reached in the next few
     # clicks.
-    predicting = True
 
     for _i in renpy.game.context().predict():
 
@@ -125,6 +136,16 @@ def prediction_coroutine(root_widget):
     while not (yield True):
         continue
 
+    # Predict screens given with renpy.start_predict_screen.
+    for name, value in renpy.store._predict_screen.items():
+        args, kwargs = value
+
+        renpy.display.screen.predict_screen(name, *args, **kwargs)
+
+        predicting = False
+        yield True
+        predicting = True
+
     # Predict things (especially screens) that are reachable through
     # an action.
     predicting = True
@@ -136,10 +157,20 @@ def prediction_coroutine(root_widget):
 
     predicting = False
 
+    predicted_screens = [ ]
+
     # Predict the screens themselves.
-    for name, args, kwargs in screens:
+    for t in screens:
+
         while not (yield True):
             continue
+
+        if t in predicted_screens:
+            continue
+
+        predicted_screens.append(t)
+
+        name, args, kwargs = t
 
         predicting = True
 
@@ -153,4 +184,3 @@ def prediction_coroutine(root_widget):
         predicting = False
 
     yield False
-

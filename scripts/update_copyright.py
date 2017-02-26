@@ -35,6 +35,7 @@ full_copyright="""\
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."""
 
+
 def process_file(fn):
 
     for i in ENDINGS:
@@ -54,7 +55,7 @@ def process_file(fn):
         for l in f:
             l = re.sub(
                 r"Copyright (\d{4})-\d{4} Tom Rothamel",
-                r"Copyright \1-2014 Tom Rothamel",
+                r"Copyright \1-2017 Tom Rothamel",
                 l)
 
             if re.search(r"Copyright .* Tom Rothamel", l):

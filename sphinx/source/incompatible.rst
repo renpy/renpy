@@ -9,6 +9,89 @@ Note that setting :var:`config.script_version` will cause many of
 these changes to be reverted, at the cost of losing access to recent
 features.
 
+Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
+such changes only take effect when the gui is regenerated.
+
+.. _incompatible-6.99:
+
+6.99.12.3
+---------
+
+Ren'Py will no longer search for system-installed fonts when in developer
+mode. If you game was using a system installed font, the font file should
+be copied into the game/ directory. (But please make sure that this is
+compatible with the font file's license.)
+
+
+6.99.11
+-------
+
+The order of exection of ``style`` and ``translate`` statements has
+changed, as documented in :ref:`the changelog <renpy-6.99.11>`. To
+revent this change, add the code::
+
+    define config.new_translate_order = False
+
+Note that reverting this change may prevent the new GUI from working.
+
+
+The :var:`config.quit_action` variable has changed it's default to one
+that cause the quit prompt to be displayed of the in-game context. To
+revert to the old behavior, add the code::
+
+    define config.quit_action = ui.gamemenus("_quit_prompt")
+
+
+Ren'Py now enforces maximum sizes given to buttons and windows. To disable
+this behavior, add the code::
+
+    define config.enforce_window_max_size = False
+
+
+
+6.99.9
+------
+
+Ren'Py now plays interface sounds on a channel named "audio", that
+supports multiple sound playback at once. This channel might not have
+the same settings as a customized sound channel. The audio channel
+settings can be changed by adjusting :var:`config.auto_channels`,
+or the sound channel can be used by adding the code::
+
+    define config.play_channel = "sound"
+
+
+6.99.2
+------
+
+Ren'Py will now scan the an image directory (the directory named images
+underneath the game directory) for images, and define them based on their
+filename. To disable this behavior, use the code::
+
+    init python:
+        config.image_directory = None
+
+
+.. _incompatible-6.18:
+
+6.18
+----
+
+The ``show screen`` and ``call screen`` statements may now evaluate their
+arguments as part of the screen prediction process. If evaluating the
+arguments to a screen causes side effects to occur, the ``show screen``
+or ``call screen`` statements should be given the new ``nopredict``
+clause, which prevents prediction.
+
+Screens now participate in transitions - transitions now go from the old
+state of the screen to the new state. To disable this, set
+:var:`config.transition_screens` to false.
+
+Ren'Py no longer uses structural equality to transfer state (for example,
+the state of a transform) when a screen replaces a screen with the same
+tag. Instead, the :ref:`use statement <sl-use>` now supports an ``id``
+property, which can be used to explicitly transfer state.
+
 .. _incompatible-6.16:
 
 6.16
@@ -17,6 +100,15 @@ features.
 The meaning of the `loop` parameter to :func:`MusicRoom` has changed. To
 get the old behavior, set both `loop` and `single_track` to true.
 
+
+.. _incompatible-6.15.7:
+
+6.15.7
+------
+
+Ren'Py now expects auto-forward mode to be controlled by the "auto-forward" :func:`Preference`.
+To have it controlled by the auto-forward mode slider, set :var:`config.default_afm_enable` to
+None.
 
 .. _incompatible-6.14:
 

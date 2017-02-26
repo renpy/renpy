@@ -66,7 +66,7 @@ This is done by creating voice files that match the identifier for each line
 of dialogue. To determine the identifiers to use , first export the dialogue
 to a spreadsheet by choosing from the launcher "Extract Dialogue", "Tab-delimited
 Spreadsheet (dialogue.tab)", and "Continue". This will produce a file, dialogue.tab,
-that can be loaded in a spreasheet program.
+that can be loaded in a spreadsheet program.
 
 The first column of the spreadsheet is the identifier to use, with other
 columns giving more information about the dialogue.

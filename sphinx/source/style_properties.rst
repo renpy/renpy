@@ -55,9 +55,6 @@ The implications are:
  * - (no prefix)
    - insensitive, idle, hover, selected_idle, selected_hover
 
- * - ``insensitive_``
-   - insensitive
-
  * - ``idle_``
    - idle, selected_idle
 
@@ -67,19 +64,23 @@ The implications are:
  * - ``selected_``
    - selected_idle, selected_hover
 
+ * - ``insensitive_``
+   - insensitive
+
  * - ``selected_idle_``
    - selected_idle
 
  * - ``selected_hover_``
    - selected_hover
 
+ * - ``selected_insensitive_``
+   - selected_insensitive
+
 Using a text button, we can show this in action. Text buttons use two styles
 by default: ``button`` for the button itself, and ``button_text`` for the
 text inside the button. The :propref:`background` style property sets the
 background of a button, while the :propref:`color` property sets the color of
 text.::
-
-    init python:
 
      # The button background is gray when insensitive, light
      # blue when hovered, and dark blue otherwise.
@@ -91,8 +92,8 @@ text.::
      # The button text is yellow when selected, and white
      # otherwise.
      style button_text:
-         color = "#fff"
-         selected_color = "#ff0"
+         color "#fff"
+         selected_color "#ff0"
 
 Style Property Values
 =====================
@@ -112,25 +113,26 @@ novel kinds of value a style property can expect.
     value:
 
     int (like 0, 1, 37, or 42)
-        An integer is intepreted as the number of pixels from the left
+        An integer is interpreted as the number of pixels from the left
         or top side of the containing area.
     float (like 0.0, 0.5, or 1.0)
-        A floating-point number is intepreted as a fraction of the
+        A floating-point number is interpreted as a fraction of the
         containing area. For example, 0.5 is a point halfway between the
         sides of the containing area, while 1.0 is on the right or bottom
         side.
     renpy.absolute (like renpy.absolute(100.25))
-        A renpy.absolute number is intepreted as the number of pixels
+        A renpy.absolute number is interpreted as the number of pixels
         from the left or top side of the screen, when using subpixel-precise
         rendering.
 
 `displayable`
-    Any displayable.
+    Any displayable. If a displayable contains a "[prefix_]" substitution,
+    a prefix search is performed as described below.
 
 `color`
     Colors in Ren'Py can be expressed as strings beginning with the hash
     mark (#), followed by a hex triple or hex quadruple, with each of the
-    three or four elements consisting of a one or two hexidecimal character
+    three or four elements consisting of a one or two hexadecimal character
     color code.
 
     In a triple, the components represent red, green, and blue. In a
@@ -149,6 +151,79 @@ novel kinds of value a style property can expect.
 
     * ``(0, 0, 255, 255)`` represents an opaque blue color.
 
+    Finally, colors can be an instance of :class:`Color`.
+
+
+.. _style-prefix-search:
+
+Style Prefix Search
+-------------------
+
+When a style property contains the "[prefix_]" substitution, a prefix
+search is performed. The prefix search is performed separately for
+each state, including states that are implied by the original property
+assigned.
+
+For example, if we have::
+
+    style button:
+        hover_background "[prefix_]background.png"
+
+separate searches are performed for the hover and selected_hover states. The
+prefixes searched vary based on the state.
+
+.. list-table::
+ :header-rows: 1
+
+ * - state
+   - search order
+
+ * - idle
+   - "idle_", ""
+
+ * - hover
+   - "hover_", "",
+
+ * - insensitive
+   - "insensitive_", "", "idle_"
+
+ * - selected_idle
+   - "selected_idle_", "idle_", "selected_", ""
+
+ * - selected_hover
+   - "selected_hover_", "hover_", "selected_", ""
+
+ * - selected_insensitive
+   - "selected_insensitive_", "hover_", "selected_", "", "selected_idle_", "idle_"
+
+When a search is performed, each prefix is tried in the order given. The string
+has "[prefix_]" replaced with the prefix, and then Ren'Py checks to see if
+a loadable file or image with that name exists. If the file or image exists,
+the search stops and the displayable found is used. Otherwise, it proceeds to
+the next prefix.
+
+The style prefix is passed through displayables that do not take user input,
+including containers, transforms, and frames.
+
+As an example of how this can be used, if the files "idle_button.png" and
+"hover_button.png" exist (and no other files ending in "button.png" do),
+the following code::
+
+    style button:
+        background "[prefix_]button.png"
+
+is equivalent to::
+
+    style button:
+        idle_background "idle_button.png"
+        hover_background "hover_button.png"
+        insensitive_background "idle_button.png"
+
+        selected_idle_background "idle_button.png"
+        selected_hover_background "hover_button.png"
+        selected_insensitive_background "idle_button.png"
+
+
 List of All Style Properties
 ============================
 
@@ -161,8 +236,15 @@ groups.
 Position Style Properties
 -------------------------
 
-These are used to control the position of a displayable inside the area
-allocated to it by a layout, or on the screen when not inside a layout.
+These properties apply to all displayables, and mostly control the
+position of a displayable inside the area allocated to it by a layout,
+or on the screen when not inside a layout.
+
+.. style-property:: alt string or None
+
+    Alternative text used for the displayable when self-voicing is
+    enabled. See the :ref:`self voicing <self-voicing>` section for
+    more information.
 
 .. style-property:: xpos position
 
@@ -232,6 +314,11 @@ allocated to it by a layout, or on the screen when not inside a layout.
 
     Gives a number of pixels that are added to the vertical position
     computed using ypos and yalign.
+
+.. style-property:: offset tuple of (position, position)
+
+    Equivalent to setting xpos to the first component of the tuple,
+    and ypos to the second component of the tuple.
 
 .. style-property:: xmaximum int
 
@@ -316,6 +403,19 @@ Text Style Properties
 
     If True, the default, truetype font text will be rendered
     anti-aliased.
+
+.. style-property:: adjust_spacing boolean
+
+    If True, Ren'Py will adjust the spacing of drawable-resolution text
+    to match the spacing of the text rendered at virtual resolution, to
+    ensure the size of frames and other containers holding text does not
+    change.
+
+    When set to False, text will not change in size, but it is the creator's
+    responsibility to ensure there is enough space to layout text at any
+    window size.
+
+    Defaults to True for most text, but False for text in an ``input``.
 
 .. style-property:: black_color color
 
@@ -431,7 +531,7 @@ Text Style Properties
     ``"greedy"``
         A word is placed on the first line that has room for it.
 
-    ``"nowrap"``
+    ``"nobreak"``
         Do not line-break.
 
 .. style-property:: line_leading int
@@ -472,7 +572,15 @@ Text Style Properties
     `yoffset` are the amount the outline is shifted by, in pixels.
 
     The outline functionality can also be used to give drop-shadows to
-    fonts, by specifiying a size of 0 and non-zero offsets.
+    fonts, by specifying a size of 0 and non-zero offsets.
+
+    By default, `size`, `xoffset` and `yoffset` are scaled with the text.
+    When given as the absolute type, they are not scaled. Code like::
+
+        style default:
+            outlines [ (absolute(1), "#000", absolute(0), absolute(0)) ]
+
+    will always produce a 1 pixel-wide border.
 
     Outlines only work with truetype fonts.
 
@@ -495,7 +603,7 @@ Text Style Properties
 .. style-property:: slow_cps_multiplier float
 
     The speed of the text is multiplied by this number. This can be
-    used to have a character that speeks at a faster-than-normal rate
+    used to have a character that speaks at a faster-than-normal rate
     of speed.
 
 .. style-property:: strikethrough boolean
@@ -536,6 +644,18 @@ Text Style Properties
 .. style-property:: vertical boolean
 
     If true, the text will be rendered vertically.
+
+.. style-property:: hinting str
+
+    Controls how the font will be hinted. This should be one of the following
+    strings:
+
+    "auto"
+        The default, forces use of the Freetype auto hinter.
+    "bytecode"
+        Uses bytecode hinting information found in the font.
+    "none"
+        Does not hint the font.
 
 .. _window-style-properties:
 
@@ -586,6 +706,13 @@ Window properties are used to specify the look of windows, frames, and buttons.
     Equivalent to setting top_margin and bottom_margin to the same
     value.
 
+.. style-property:: margin tuple
+
+    When given a two-item tuple, equivalent to setting xmargin and
+    ymargin to the two items. When given a four-item tuple, equivalent
+    to setting left_margin, top_margin, right_margin, and bottom_margin
+    to the four items.
+
 .. style-property:: left_padding int
 
     The amount of space between the background and the left side of
@@ -615,6 +742,13 @@ Window properties are used to specify the look of windows, frames, and buttons.
 
     Equivalent to setting top_padding and bottom_padding to the same
     value.
+
+.. style-property:: padding tuple
+
+    When given a two-item tuple, equivalent to setting xpadding and
+    ypadding to the two items. When given a four-item tuple, equivalent
+    to setting left_padding, top_padding, right_padding, and bottom_padding
+    to the four items.
 
 .. style-property:: size_group string or None
 
@@ -650,7 +784,7 @@ Button Style Properties
 .. style-property:: focus_mask multiple
 
     A mask that's used to control what portions of the button can be
-    focused, and hence clicked on. The type of this propertie determines
+    focused, and hence clicked on. The type of this property determines
     how it is interpreted.
 
     Displayable
@@ -668,6 +802,22 @@ Button Style Properties
         focused.
     None
         If none is given, the entire button can be focused.
+
+.. style-property:: keyboard_focus
+
+   If true, the default, this button can be focused using the keyboard focus
+   mechanism, if it can be focused at all. If false, the keyboard focus
+   mechanism will skip this button. (The keyboard focus mechanism is used
+   by keyboards and keyboard-like devices, such as joypads.)
+
+.. style-property:: key_events
+
+    If true, keyboard-generated events are passed to the children of this
+    button. If false, those events are not propagated. In this default style,
+    this is set to true while the button is hovered, and false otherwise.
+
+    Setting this to true can be used to propagate keyboard events to an input
+    inside a button, even when the button isn't focused.
 
 
 .. _bar-style-properties:
@@ -736,6 +886,12 @@ left and right sides are used.
 
     The displayable uses for the bottom side of the bar.
 
+.. style-property:: base_bar displayable
+
+    A single displayable that is used for left_bar/right_bar or
+    top_bar/bottom_bar, as appropriate. (This can be used
+    with thumb to make a slider or scrollbar.)
+
 .. style-property:: thumb displayable or None
 
     If not None, this is a displayable that is drawn over the break
@@ -773,6 +929,13 @@ left and right sides are used.
     ``"hide"``
        Prevents the bar from rendering at all. Space will be allocated
        for the bar, but nothing will be drawn in that space.
+
+.. style-property:: keyboard_focus
+
+   If true, the default, this button can be focused using the keyboard focus
+   mechanism, if it can be focused at all. If false, the keyboard focus
+   mechanism will skip this button. (The keyboard focus mechanism is used
+   by keyboards and keyboard-like devices, such as joypads.)
 
 
 .. _box-style-properties:
@@ -817,7 +980,19 @@ Fixed Style Properties
 
 These are used with the fixed layout.
 
-.. style-property:: fit_first bool
+.. style-property:: fit_first bool or "width" or "height"
 
-   If true, then the size of the fixed layout is shrunk to be equal with
-   the size of the first item in the layout.
+    If true, then the size of the fixed layout is shrunk to be equal with
+    the size of the first item in the layout. If "width", only the width is changed
+    (the fixed will fill the screen vertically). Similarly, "height" only changes
+    the height.
+
+.. style-property:: xfit bool
+
+    If true, the size of the fixed layout is shrunk horizontally to match the
+    right side of the rightmost child of the fixed.
+
+.. style-property:: yfit bool
+
+    If true, the size of the fixed layout is shrunk vertically to match the
+    bottom side of the bottommost child of the fixed.

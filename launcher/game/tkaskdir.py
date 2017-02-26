@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -34,6 +34,12 @@ except ImportError:
     from Tkinter import Tk
     from tkFileDialog import askdirectory
 
+# Binary mode stdout for python3.
+try:
+    sys.stdout = sys.stdout.buffer
+except:
+    pass
+
 # Create the TK canvas.
 
 if __name__ == "__main__":
@@ -41,4 +47,4 @@ if __name__ == "__main__":
     root.withdraw()
 
     result = askdirectory(initialdir=sys.argv[1], parent=root, title="Select Ren'Py Projects Directory")
-    sys.stdout.write(result)
+    sys.stdout.write(result.encode("utf8"))

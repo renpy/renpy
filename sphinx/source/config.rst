@@ -24,28 +24,6 @@ Configuration variables are often changed in init python blocks::
 Commonly Used
 -------------
 
-.. var:: config.developer = False
-
-    If set to True, developer mode is enabled. Developer mode gives
-    access to the shift+D developer menu, shift+R reloading, and
-    various other features that are not intended for end users.
-
-    The default game template sets this to True. We suggest setting it
-    to False before releasing a game.
-
-.. var:: config.help = "README.html"
-
-    This controls the functionality of the help system invoked by the
-    help button on the main and game menus, or by pressing f1 or
-    command-?.
-
-    If None, the help system is disabled and does not show up on
-    menus.  If a string corresponding to a label found in the script,
-    that label is invoked in a new context. This allows you to define
-    an in-game help-screen.  Otherwise, this is interpreted as a
-    filename relative to the base directory, that is opened in a web
-    browser.
-
 .. var:: config.name = ""
 
     This should be a string giving the name of the game. This is included
@@ -54,73 +32,56 @@ Commonly Used
 
 .. var:: config.save_directory = "..."
 
-   This is used to generate the directory in which games and
-   persistent information are saved. The name generated depends on
-   the platform:
+    This is used to generate the directory in which games and
+    persistent information are saved. The name generated depends on
+    the platform:
 
-   Windows
-       %APPDATA%/RenPy/`save_directory`
+    Windows
+        %APPDATA%/RenPy/`save_directory`
 
-   Mac OS X
-       ~/Library/RenPy/`save_directory`
+    Mac OS X
+        ~/Library/RenPy/`save_directory`
 
-   Linux/Other
-       ~/.renpy/`save_directory`
+    Linux/Other
+        ~/.renpy/`save_directory`
 
-   Setting this to None creates a "saves" directory underneath the
-   game directory. This is not recommended, as it prevents the game
-   from being shared between multiple users on a system. It can also
-   lead to problems when a game is installed as Administrator, but run
-   as a user.
+    Setting this to None creates a "saves" directory underneath the
+    game directory. This is not recommended, as it prevents the game
+    from being shared between multiple users on a system. It can also
+    lead to problems when a game is installed as Administrator, but run
+    as a user.
 
-   This must be set in a python early block, so that persistent
-   information can be loaded before init code is run.
+    This must be set with either the define statement, or in a python
+    early block. In either case, this will be run before any other
+    code, and so it should be set to a string, not an expression.
 
-   The user may change the directory. Code that needs to know the save
-   directory should read :var:`config.savedir` instead of this
-   variable.
+    This must be set in a python early block, so that persistent
+    information can be loaded before init code is run.
 
-.. var:: config.screen_height = 600
-
-    The height of the screen.
-
-.. var:: config.screen_width = 800
-
-    The width of the screen.
-
-.. var:: config.translations = dict(...)
-
-    This is a map used to translate text in the game menu into your
-    language. See Localizing Ren'Py for how to use it, and here for a
-    list of available translations.
-
-.. var:: config.window_icon = None
-
-    If not None, this is expected to be the filename of an image
-    giving an icon that is used for the window on Linux and Mac OS
-    X. This should be a large image, with 8-bit alpha.
-
-    This should generally be a PNG format file.
-
-.. var:: config.windows_icon = None
-
-    If not None, this is expected to be the filename of an image
-    giving an icon that is used for the window on Windows. This should
-    be a 32x32 image with 1-bit alpha. (Opaque images work the best.)
-
-    This should be a PNG format file.
-
-.. var:: config.window_title = "A Ren'Py Game"
-
-    The static portion of the title of the window containing the
-    Ren'Py game. :var:`_window_subtitle` is appended to this to get
-    the full title of the window.
+    Code that needs to know the save directory should read
+    :var:`config.savedir` instead of this variable.
 
 .. var:: config.version = ""
 
     This should be a string giving the version of the game. This is included
     as part of tracebacks and other log files, helping to identify the
     version of the game being used.
+
+.. var:: config.window = None
+
+    This controls the default method of dialogue window management. If
+    not None, this should be one of "show", "hide", or "auto".
+
+    When set to "show", the dialogue window is shown at all times.
+    When set to "hide", the dialogue window is hidden when not in a
+    say statement or other statement that displays dialogue. When set
+    to "auto", the dialogue window is hidden before scene statements,
+    and shown again when dialogue is shown.
+
+    This sets the default. Once set, the default can be changed using the
+    ``window show``, ``window hide`` and ``window auto`` statements. See
+    :ref:`dialogue-window-management` for more information.
+
 
 Transitions
 -----------
@@ -230,6 +191,10 @@ cleared.
     default. If None, the afm_enable preferences is ignored. (Auto-forward
     will occur when the auto-forward speed is non-zero.)
 
+.. var:: config.default_emphasize_audio = False
+
+    Controls the default state of the "emphasize audio" preference.
+
 .. var:: config.default_fullscreen = None
 
     This sets the default value of the fullscreen preference. This
@@ -267,9 +232,45 @@ cleared.
     determines if Ren'Py should wait for voice to finish before
     auto-forward takes place.
 
+.. var:: config.default_music_volume = 1.0
+
+    The default volume of the music mixer, which is used for the music and
+    movie audio channels. This should be a number between 0.0 and 1.0,
+    with 1.0 being full volume.
+
+.. var:: config.default_sfx_volume = 1.0
+
+    The default volume of the sfx mixer, which is used for the sound
+    audio channel. This should be a number between 0.0 and 1.0,
+    with 1.0 being full volume.
+
+.. var:: config.default_voice_volume = 1.0
+
+    The default volume of the voice mixer, which is used for the voice
+    audio channel (And hence the voice statement, auto-voice, etc.).
+    This should be a number between 0.0 and 1.0, with 1.0 being full volume.
 
 Occasionally Used
 -----------------
+
+.. var:: config.after_load_callbacks = [ ... ]
+
+    A list of functions that are called (with no arguments) when a load
+    occurs.
+
+.. var:: config.after_replay_callback = None
+
+    If not None, a function that is called with no arguments after a
+    replay completes.
+
+.. var:: config.auto_channels = { "audio" : ( "sfx", "", ""  ) }
+
+    This is used to define automatic audio channels. It's a map the
+    channel name to a tuple containing 3 components:
+
+    * The mixer the channel uses.
+    * A prefix that is given to files played on the channel.
+    * A suffix that is given to files played on the channel.
 
 .. var:: config.auto_load = None
 
@@ -304,7 +305,7 @@ Occasionally Used
 
     Ren'Py will scan through the list of files on disk and in
     archives. When it finds a file ending with .png or .jpg, it will
-    strip the extension, then break the name at separators, to creatge
+    strip the extension, then break the name at separators, to create
     an image name. If the name consists of at least two components,
     and no image with that name already is defined, Ren'Py will define
     that image to refer to a filename.
@@ -316,11 +317,15 @@ Occasionally Used
     * lucy/mad.png, Ren'Py will define the image "lucy mad".
     * mary.png, Ren'Py will do nothing. (As the image does not have two components.)
 
-.. var:: config.automatic_images_strip = []
+.. var:: config.automatic_images_strip = [ ]
 
     A list of strings giving prefixes that are stripped out when
     defining automatic images. This can be used to remove directory
     names, when directories contain images.
+
+.. var:: config.autosave_slots = 10
+
+    The number of slots used by autosaves.
 
 .. var:: config.debug = False
 
@@ -336,7 +341,7 @@ Occasionally Used
 .. var:: config.debug_sound = False
 
     Enables debugging of sound functionality. This disables the
-    supression of errors when generating sound. However, if a sound
+    suppression of errors when generating sound. However, if a sound
     card is missing or flawed, then such errors are normal, and
     enabling this may prevent Ren'Py from functioning normally. This
     should always be False in a released game.
@@ -350,6 +355,10 @@ Occasionally Used
     window to the window size, this can be used to report cases where the
     dialogue is too large for its window.
 
+.. var:: config.default_tag_layer = "master"
+
+    The layer an image is show on if its tag is not found in config.tag_layer.
+
 .. var:: config.default_transform = ...
 
     When a displayable is shown using the show or scene statements,
@@ -357,6 +366,51 @@ Occasionally Used
     initialize the values of the displayable's transform.
 
     The default default transform is :var:`center`.
+
+.. var:: config.defer_styles = False
+
+    When true, the execution of style statements is deferred until after
+    all "translate python" blocks have executed. This lets a translate
+    python block update variables that are then used in style (not
+    translate style) statements.
+
+    While this defaults to False, it's set to True when :func:`gui.init`
+    is called.
+
+.. var:: config.developer = "auto"
+
+    If set to True, developer mode is enabled. Developer mode gives
+    access to the shift+D developer menu, shift+R reloading, and
+    various other features that are not intended for end users.
+
+    This can be True, False, or "auto". If "auto", Ren'Py will
+    detect if the game has been packaged into a distribution, and
+    set config.developer as appropriate.
+
+.. var:: config.emphasize_audio_channels = [ 'voice' ]
+
+    A list of strings giving audio channel names.
+
+    If the "emphasize audio" preference is enabled, when one of the audio
+    channels listed starts playing a sound, all channels that are not
+    listed in this variable have their secondary audio volume reduced
+    to :var:`config.emphasize_audio_volume` over :var:`config.emphasize_audio_time`
+    seconds.
+
+    When no channels listed in this variable are playing audio, all channels
+    that are not listed have their secondary audio volume raised to 1.0 over
+    :var:`config.emphasize_audio_time` seconds.
+
+    For example, setting this to ``[ 'voice' ]]`` will lower the volume of all
+    non-voice channels when a voice is played.
+
+.. var:: config.emphasize_audio_time = 0.5
+
+    See above.
+
+.. var:: config.emphasize_audio_volume = 0.5
+
+    See above.
 
 .. var:: config.empty_window = ...
 
@@ -433,6 +487,28 @@ Occasionally Used
     If true, the game will autosave. If false, no autosaving will
     occur.
 
+.. var:: config.history_callbacks = [ ... ]
+
+    This contains a list of callbacks that are called before Ren'Py adds
+    a new object to _history_list. The callbacks are called with the
+    new HistoryEntry object as the first argument, and can add new fields
+    to that object.
+
+    Ren'Py uses history callbacks internally, so creators should append
+    their own callbacks to this list, rather than replacing it entirely.
+
+.. var:: config.history_length = None
+
+    The number of entries of dialogue history Ren'Py keeps. This is
+    set to 250 by the default gui.
+
+.. var:: config.hw_video = False
+
+    If true, hardware video playback will be used on mobile platforms. This
+    is faster, but only some formats are supported and only fullscreen video
+    is available. If false, software playback will be used, but it may be
+    too slow to be useful.
+
 .. var:: config.image_cache_size = 8
 
     This is used to set the size of the :ref:`image cache <images>`, as a
@@ -473,6 +549,14 @@ Occasionally Used
     The :var:`_window_subtitle` variable is set to this value when entering
     the main or game menus.
 
+.. var:: config.minimum_presplash_time = 0.0
+
+    The minimum amount of time, in seconds, a presplash, Android presplash,
+    or iOS LaunchImage is displayed for. If Ren'Py initializes before this
+    amount of time has been reached, it will sleep to ensure the image is
+    shown for at least this amount of time. The image may be shown longer
+    if Ren'Py takes longer to start up.
+
 .. var:: config.missing_background = "black"
 
     This is the background that is used when :var:`config.developer` is True
@@ -502,7 +586,7 @@ Occasionally Used
     is absent.
 
     Each value in the dictionary should be a list of (`image`,
-    `xoffset`, `offset`) tuples, representing frames.
+    `xoffset`, `yoffset`) tuples, representing frames.
 
     `image`
         The mouse cursor image.
@@ -514,7 +598,7 @@ Occasionally Used
     `yoffset`
         The offset of the hotspot pixel from the top of the cursor.
 
-    The frames are played back at 20hz, and the animation loops after
+    The frames are played back at 20Hz, and the animation loops after
     all frames have been shown.
 
 .. var:: config.narrator_menu = False
@@ -524,10 +608,21 @@ Occasionally Used
     character. Otherwise, narration is displayed as captions
     within the menu itself.
 
+.. var:: config.nearest_neighbor = False
+
+    Uses nearest-neighbor filtering by default, to support pixel art or
+    melting players' eyes.
+
 .. var:: config.overlay_functions = [ ]
 
     A list of functions. When called, each function is expected to
     use ui functions to add displayables to the overlay layer.
+
+.. var:: config.overlay_screens = [ ... ]
+
+    A list of screens that are displayed when the overlay is enabled,
+    and hidden when the overlay is suppressed. (The screens are shown
+    on the screens layer, not the overlay layer.)
 
 .. var:: config.python_callbacks = [ ]
 
@@ -540,9 +635,13 @@ Occasionally Used
 
     The functions may be called during internal Ren'Py code, before the
     start of the game proper, and potentially before the variables the
-    function depends on are intialized. The functions are required to deal
+    function depends on are initialized. The functions are required to deal
     with this, perhaps by using ``hasattr(store, 'varname')`` to check if
     a variable is defined.
+
+.. var:: config.quicksave_slots = 10
+
+    The number of slots used by quicksaves.
 
 .. var:: config.quit_action = ...
 
@@ -550,10 +649,36 @@ Occasionally Used
     a window. The default action prompts the user to see if he wants
     to quit the game.
 
+.. var:: config.replace_text = None
+
+    If not None, a function that is called with a single argument, a text to
+    be displayed to the user. The function can return the same text it was
+    passed, or a replacement text that will be displayed instead.
+
+    The function is called after substitutions have been performed and after
+    the text has been split on tags, so its argument contains nothing but
+    actual text. All displayed text passes through the function: not only
+    dialogue text, but also user interface text.
+
+    This can be used to replace specific ASCII sequences with corresponding
+    Unicode characters, as demonstrated by the following code::
+
+        def replace_text(s):
+            s = s.replace("'", u'\u2019') # apostrophe
+            s = s.replace('--', u'\u2014') # em dash
+            s = s.replace('...', u'\u2026') # ellipsis
+            return s
+        config.replace_text = replace_text
+
+.. var:: config.replay_scope = { "_game_menu_screen" : "preferences" }
+
+    A dictionary mapping variables in the default store to the values
+    the variables will be given when entering a replay.
+
 .. var:: config.save_json_callbacks = [ ]
 
     A list of callback functions that are used to create the json object
-    that is stored with each save and maked accessible through :func:`FileJson`
+    that is stored with each save and marked accessible through :func:`FileJson`
     and :func:`renpy.slot_json`.
 
     Each callback is called with a python dictionary that will eventually be
@@ -565,6 +690,41 @@ Occasionally Used
     beginning with an underscore (_). These keys are used by Ren'Py,
     and should not be changed.
 
+.. var:: config.screen_height = 600
+
+    The height of the screen. Usually set by :func:`gui.init`.
+
+.. var:: config.screen_width = 800
+
+    The width of the screen. Usually set by :func:`gui.init`.
+
+.. var:: config.speaking_attribute = None
+
+    If not None, this should be a string giving the name of an image
+    attribute. The image attribute is added to the image when the
+    character is speaking, and removed when the character stops.
+
+.. var:: config.tag_layer = { }
+
+    A dictionary mapping image tag strings to layer name strings. When
+    an image is shown without a specific layer name, the image's tag is
+    looked up in this dictionary to get the layer to show it on. If the
+    tag is not found here, :var:`config.default_tag_name` is used.
+
+.. var:: config.tag_transform = { }
+
+    A dictionary mapping image tag strings to transforms or lists of
+    transforms. When an image is newly-shown without an at clause,
+    the image's tag is looked up in this dictionary to find a transform
+    or list of transforms to use.
+
+.. var:: config.tag_zorder = { }
+
+    A dictionary mapping image tag strings to zorders. When an image is
+    newly-shown without a zorder clause, the image's tag is looked up
+    in this dictionary to find a zorder to use. If no zorder is found,
+    0 is used.
+
 .. var:: config.thumbnail_height = 75
 
     The height of the thumbnails that are taken when the game is
@@ -573,7 +733,7 @@ Occasionally Used
     rather than the value of this setting when the thumbnail is shown
     to the user.
 
-    When using a load_save layout, a different default may be used.
+    This is changed by the default GUI.
 
 .. var:: config.thumbnail_width = 100
 
@@ -583,9 +743,16 @@ Occasionally Used
     rather than the value of this setting when the thumbnail is shown
     to the user.
 
-    When using a load_save layout, a different default may be used.
+    This is changed by the default GUI.
 
-.. var:: config.window_auto_hide = [ 'scene' ]
+.. var:: config.tts_voice = None
+
+    If not None, a string giving a non-default voice that is used to
+    play back text-to-speech for self voicing. The possible choices are
+    platform specific, and so this should be set in a platform-specific
+    manner. (It may make sense to change this in translations, as well.)
+
+.. var:: config.window_auto_hide = [ 'scene', 'call screen' ]
 
     A list of statements that cause ``window auto`` to hide the empty
     dialogue window.
@@ -595,14 +762,50 @@ Occasionally Used
     A list of statements that cause ``window auto`` to show the empty
     dialogue window.
 
+.. var:: config.window_icon = None
+
+    If not None, this is expected to be the filename of an image
+    giving an icon that is used for the game's main window. This does
+    not set the icon used by windows executables and mac apps, as
+    those are controlled by :ref:`special-files`.
+
 .. var:: config.window_overlay_functions = []
 
     A list of overlay functions that are only called when the window
     is shown.
 
+.. var:: config.window_title = None
+
+    The static portion of the title of the window containing the
+    Ren'Py game. :var:`_window_subtitle` is appended to this to get
+    the full title of the window.
+
+    If None, the default, this defaults to the value of :var:`config.name`.
+
+
 
 Rarely or Internally Used
 -------------------------
+
+.. var:: config.adjust_view_size = None
+
+    If not None, this should be a function taking two arguments, the width
+    and height of the physical window. It is expected to return a tuple
+    giving the width and height of the OpenGL viewport, the portion of the
+    screen that Ren'Py will draw pictures to.
+
+    This can be used to configure Ren'Py to only allow certain sizes of
+    screen. For example, the following code allows only integer multiples
+    of the original screen size::
+
+        init python:
+
+            def force_integer_multiplier(width, height):
+                multiplier = min(width / config.screen_width, height / config.screen_height)
+                multiplier = max(int(multiplier), 1)
+                return (multiplier * config.screen_width, multiplier * config.screen_height)
+
+            config.adjust_view_size = force_integer_multiplier
 
 .. var:: config.afm_bonus = 25
 
@@ -620,6 +823,11 @@ Rarely or Internally Used
     The number of characters in a string it takes to cause the amount
     of time specified in the auto forward mode preference to be
     delayed before auto-forward mode takes effect.
+
+.. var:: config.afm_voice_delay = .5
+
+    The number of seconds after a voice file finishes playing
+    before AFM can advance text.
 
 .. var:: config.all_character_callbacks = [ ]
 
@@ -654,11 +862,31 @@ Rarely or Internally Used
     released games, but setting it to a number will allow for
     automated demonstrations of games without much human interaction.
 
+.. var:: config.autoreload = True
+
+    If true, shift+R will toggle automatic reloading. When automatic
+    reloading is enabled, Ren'Py will reload the game whenever a used
+    file is modified.
+
+    If false, Ren'Py will reload the game once per press of shift+R.
+
 .. var:: config.autosave_frequency = 200
 
     Roughly, the number of interactions that will occur before an
     autosave occurs. To disable autosaving, set :var:`config.has_autosave` to
     False, don't change this variable.
+
+.. var:: config.autosave_on_choice = True
+
+    If true, Ren'Py will autosave upon encountering an in-game choice.
+    (When :func:`renpy.choice_for_skipping` is called.)
+
+.. var:: config.autosave_on_quit = True
+
+    If true, Ren'Py will attempt to autosave when the user attempts to quit,
+    return to the main menu, or load a game over the existing game. (To
+    save time, the autosave occurs while the user is being prompted to confirm
+    his or her decision.)
 
 .. var:: config.character_callback = None
 
@@ -720,6 +948,19 @@ Rarely or Internally Used
     entirely, although we don't recommend that, as rollback is useful
     to let the user see text he skipped by mistake.
 
+.. var:: config.help = "README.html"
+
+    This controls the functionality of the help system invoked by the
+    help button on the main and game menus, or by pressing f1 or
+    command-?.
+
+    If None, the help system is disabled and does not show up on
+    menus.  If a string corresponding to a label found in the script,
+    that label is invoked in a new context. This allows you to define
+    an in-game help-screen.  Otherwise, this is interpreted as a
+    filename relative to the base directory, that is opened in a web
+    browser.
+
 .. var:: config.hide = renpy.hide
 
     A function that is called when the :ref:`hide statement <hide-statement>`
@@ -754,10 +995,6 @@ Rarely or Internally Used
 
     A list of functions that are called (without any arguments) when
     an interaction is started or restarted.
-
-.. var:: config.joystick = True
-
-    If True, joystick support is enabled.
 
 .. var:: config.keep_running_transform = True
 
@@ -818,6 +1055,10 @@ Rarely or Internally Used
     images used by that interaction have loaded. (Yeah, it's a lousy
     name.)
 
+.. var:: config.log_width = 78
+
+    The width of lines logged when :var:`config.log` is used.
+
 .. var:: config.longpress_duration = 0.5
 
     The amount of time the player must press the screen for for a longpress
@@ -845,6 +1086,13 @@ Rarely or Internally Used
     manipulator. If an image manipulator is returned, that image
     manipulator is loaded in the place of the missing image.
 
+.. var:: config.missing_label_callback = None
+
+    If not None, this function is called when Ren'Py attempts to access
+    a label that does not exist in the game. It should return the name of
+    a label to use as a replacement for the missing label, or None to cause
+    Ren'Py to raise an exception.
+
 .. var:: config.mouse_hide_time = 30
 
     The mouse is hidden after this number of seconds has elapsed
@@ -852,6 +1100,18 @@ Rarely or Internally Used
     expected time it will take to read a single screen, so mouse users
     will not experience the mouse appearing then disappearing between
     clicks.
+
+    If None, the mouse will never be hidden.
+
+.. var:: config.movie_mixer = "music"
+
+    The mixer that is used when a :func:`Movie` automatically defines
+    a channel for video playback.
+
+.. var:: config.new_translate_order = True
+
+    Enables the new order of style and translate statements introduced in
+    :ref:`Ren'Py 6.99.11 <renpy-6.99.11>`.
 
 .. var:: config.new_substitutions = True
 
@@ -879,7 +1139,12 @@ Rarely or Internally Used
 .. var:: config.periodic_callback = None
 
     If not None, this should be a function. The function is called,
-    with no arguments, at around 20hz.
+    with no arguments, at around 20Hz.
+
+.. var:: config.play_channel = "audio"
+
+    The name of the audio channel used by :func:`renpy.play`,
+    :propref:`hover_sound`, and :propref:`activate_sound`.
 
 .. var:: config.predict_statements = 10
 
@@ -895,6 +1160,10 @@ Rarely or Internally Used
     If set to True, some profiling information will be output to
     stdout.
 
+.. var:: config.quit_on_mobile_background = False
+
+    If true, the mobile app will quit when it loses focus.
+
 .. var:: config.rollback_enabled = True
 
     Should the user be allowed to rollback the game? If set to False,
@@ -904,6 +1173,12 @@ Rarely or Internally Used
 
     When there are more than this many statements in the rollback log,
     Ren'Py will consider trimming the log.
+
+.. var:: config.rollback_side_size = .2
+
+	If the rollback side is enabled, the fraction of of the screen on the
+	rollback side that, when clicked or touched, causes a rollback to
+	occur.
 
 .. var:: config.say_allow_dismiss = None
 
@@ -936,6 +1211,12 @@ Rarely or Internally Used
    in the save file. Each line consists of a relative size estimate, the path
    to the object, information about if the object is an alias, and a
    representation of the object.
+
+.. var:: config.save_on_mobile_background = True
+
+    If true, the mobile app will save its state when it loses focus. The state
+    is saved in a way that allows it to be automatically loaded (and the game
+    to resume its place) when the app starts again.
 
 .. var:: config.save_physical_size = True
 
@@ -992,6 +1273,11 @@ Rarely or Internally Used
     archives, and other media, but not scripts. This is initialized to
     a list containing "common" and the name of the game directory.
 
+.. var:: config.search_prefixes = [ "", "images/" ]
+
+    A list of prefixes that are prepended to filenames that are searched
+    for.
+
 .. var:: config.show = renpy.show
 
     A function that is used in place of renpy.show by the :ref:`show
@@ -1014,11 +1300,11 @@ Rarely or Internally Used
     If True, sound works. If False, the sound/mixer subsystem is
     completely disabled.
 
-.. var:: config.sound_sample_rate = 44100
+.. var:: config.sound_sample_rate = 48000
 
     The sample rate that the sound card will be run at. If all of your
     wav files are of a lower rate, changing this to that rate may make
-    things more efficent.
+    things more efficient.
 
 .. var:: config.start_callbacks = [ ... ]
 
@@ -1055,6 +1341,17 @@ Rarely or Internally Used
 
     If True, transforms will inherit :ref:`position properties
     <position-style-properties>` from their child. If not, they won't.
+
+.. var:: config.transition_screens = True
+
+    If true, screens will participate in transitions, dissolving from the
+    old state of the screen to the new state of the screen. If False, only
+    the latest state of the screen will be shown.
+
+.. var:: config.translate_clean_stores = [ "gui" ]
+
+    A list of named stores that are cleaned to their state at the end of
+    the init phase when the translation language changes.
 
 .. var:: config.variants = [ ... ]
 

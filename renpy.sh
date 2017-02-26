@@ -52,9 +52,26 @@ fi
 
 for BASE in "$ROOT" "$ROOT1" "$ROOT2"; do
     LIB="$BASE/lib/$RENPY_PLATFORM"
-		if test -d "$LIB"; then
-		    break
-		fi
+    if test -d "$LIB"; then
+        break
+    fi
 done
+
+for BASE in "$ROOT" "$ROOT1" "$ROOT2"; do
+    if test -e "$BASE/$BASEFILE.py"; then
+        break
+    fi
+done
+
+if ! test -d "$LIB"; then
+    echo "Ren'Py platform files not found in any of $ROOT, $ROOT1 or $ROOT2!"
+    echo "Please compile the platform files using the instructions in README.md"
+    echo "or point them to an existing installation using ./after_checkout.sh <path>."
+    exit 1
+fi
+
+if test -n "$LD_LIBRARY_PATH"; then
+    export LD_LIBRARY_PATH="$LIB:$LD_LIBRARY_PATH"
+fi
 
 exec $RENPY_GDB "$LIB/$BASEFILE" $RENPY_PYARGS -EO "$BASE/$BASEFILE.py" "$@"

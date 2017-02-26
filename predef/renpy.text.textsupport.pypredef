@@ -1,0 +1,59 @@
+TAG = int
+TEXT = int
+PARAGRAPH = int
+DISPLAYABLE = int
+
+class Glyph:
+    pass
+
+def tokenize(s):
+    return list
+
+def kerning(glyphs, amount):
+    return
+
+def mark_ruby_bottom(glyphs):
+    return
+
+def mark_ruby_top(glyphs):
+    return
+
+def place_ruby(glyphs):
+    return
+
+def assign_times(t, gps, glyphs):
+    return float
+
+def annotate_unicode(glyphs, no_ideographs, cjk):
+    return
+
+def annotate_western(glyphs):
+    return
+
+def linebreak_greedy(glyphs, first, rest):
+    return
+
+def linebreak_nobreak(glyphs):
+    return
+
+def reverse_lines(glyphs):
+    return
+
+def place_horizontal(glyphs, start_x, first_indent, rest_indent):
+    return
+
+
+def place_vertical(glyphs, y, spacing, leading):
+    return
+
+def max_times(lines):
+    return
+
+def hyperlink_areas(lines):
+    return
+
+def align_and_justify(lines, width, text_align, justify):
+    return
+
+def language_tailor(chars, cls):
+    return

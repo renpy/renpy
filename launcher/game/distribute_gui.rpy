@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -191,8 +191,12 @@ screen build_distributions:
                             has vbox
 
                             textbutton _("Edit options.rpy") action editor.Edit("game/options.rpy", check=True)
+                            textbutton _("Add from clauses to calls, once") action Jump("add_from")
                             textbutton _("Refresh") action Jump("build_distributions")
 
+                            add HALF_SPACER
+
+                            textbutton _("Upload to itch.io") action Jump("itch")
 
                 # Right side.
                 frame:
@@ -219,14 +223,45 @@ screen build_distributions:
                                 $ description = pkg["description"]
                                 textbutton "[description!q]" action PackageToggle(pkg["name"]) style "l_checkbox"
 
-                        add SPACER
+                    add SPACER
+                    add HALF_SPACER
+                    add SEPARATOR2
+
+                    frame:
+                        style "l_indent"
+                        has vbox
+
+                        text _("Options:")
+
+                        add HALF_SPACER
 
                         if project.current.dump["build"]["include_update"]:
                             textbutton _("Build Updates") action DataToggle("build_update") style "l_checkbox"
 
+                        textbutton _("Add from clauses to calls") action DataToggle("add_from") style "l_checkbox"
+                        textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
-    textbutton _("Build") action Jump("distribute") style "l_right_button"
+
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
+    textbutton _("Build") action Jump("start_distribute") style "l_right_button"
+
+label add_from_common:
+    python:
+        interface.processing(_("Adding from clauses to call statements that do not have them."))
+        project.current.launch([ "add_from" ], wait=True)
+
+    return
+
+label add_from:
+    call add_from_common
+    jump build_distributions
+
+
+label start_distribute:
+    if project.current.data["add_from"]:
+        call add_from_common
+
+    jump distribute
 
 label build_update_dump:
     python:
@@ -252,7 +287,12 @@ label build_missing:
 
         interface.yesno(_("Your project does not contain build information. Would you like to add build information to the end of options.rpy?"), yes=Return(True), no=Jump("front_page"))
 
-        build_info = DEFAULT_BUILD_INFO.replace("PROJECTNAME", project.current.name)
+        project_name = project.current.name
+        project_name = project_name.replace(" ", "_")
+        project_name = project_name.replace(":", "")
+        project_name = project_name.replace(";", "")
+
+        build_info = DEFAULT_BUILD_INFO.replace("PROJECTNAME", project_name)
 
         with open(os.path.join(project.current.path, "game", "options.rpy"), "a") as f:
             f.write(build_info)

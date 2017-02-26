@@ -1,0 +1,33 @@
+﻿# Eclareday aracterschay useday ybay histay amegay. Hetay olorcay argumentay olorizescay hetay
+# amenay ofay hetay aracterchay.
+
+define e = Character("Ileeneay")
+
+
+# Hetay amegay artsstay erehay.
+
+label start:
+
+    # Howsay aay ackgroundbay. Histay usesay aay aceholderplay ybay efaultday, utbay ouyay ancay
+    # adday aay ilefay (amednay eitheray "bg oomray.png" oray "bg oomray.jpg") otay hetay
+    # imagesay irectoryday otay owshay itay.
+
+    scene bg oomray
+
+    # Histay owsshay aay aracterchay pritesay. Aay aceholderplay isay useday, utbay ouyay ancay
+    # eplaceray itay ybay addingay aay ilefay amednay "eileenay appyhay.png" otay hetay imagesay
+    # irectoryday.
+
+    show eileenay appyhay
+
+    # Hesetay isplayday ineslay ofay ialogueday.
+
+    "Ellohay, orldway."
+
+    e "Ouyay'evay reatedcay aay ewnay Enray'Ypay amegay."
+
+    e "Nceoay ouyay adday aay orystay, icturespay, anday usicmay, ouyay ancay eleaseray itay otay hetay orldway!"
+
+    # Histay endsay hetay amegay.
+
+    return

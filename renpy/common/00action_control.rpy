@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,7 +21,8 @@
 
 init -1500 python:
 
-    class NullAction(Action):
+    @renpy.pure
+    class NullAction(Action, DictEquality):
         """
         :doc: control_action
 
@@ -34,15 +35,19 @@ init -1500 python:
         def __call__(self):
             return
 
-    class Return(Action):
+    @renpy.pure
+    class Return(Action, DictEquality):
         """
          :doc: control_action
 
-         Causes the current interaction to return the supplied value. This is
-         often used with menus and imagemaps, to select what the return value
-         of the interaction is.
+         Causes the current interaction to return the supplied value, which
+         must not be None. This is often used with menus and imagemaps, to
+         select what the return value of the interaction is. If the screen
+         was called using the ``call screen`` statement, the return value
+         is placed in the `_return` variable.
 
-         When in a menu, this returns from the menu.
+         When in a menu, this returns from the menu. (The value should be
+         None in this case.)
          """
 
         def __init__(self, value=None):
@@ -59,8 +64,8 @@ init -1500 python:
             else:
                 return self.value
 
-
-    class Jump(Action):
+    @renpy.pure
+    class Jump(Action, DictEquality):
         """
          :doc: control_action
 
@@ -75,8 +80,8 @@ init -1500 python:
         def __call__(self):
             renpy.jump(self.label)
 
-
-    class Show(Action):
+    @renpy.pure
+    class Show(Action, DictEquality):
         """
          :doc: control_action
 
@@ -108,9 +113,9 @@ init -1500 python:
             renpy.restart_interaction()
 
         def get_selected(self):
-            return renpy.showing(self.screen)
+            return renpy.get_screen(self.screen) is not None
 
-
+    @renpy.pure
     def ShowTransient(screen, *args, **kwargs):
         """
          :doc: control_action
@@ -121,8 +126,8 @@ init -1500 python:
 
         return Show(screen, _transient=True, *args, **kwargs)
 
-
-    class Hide(Action):
+    @renpy.pure
+    class Hide(Action, DictEquality):
         """
          :doc: control_action
 

@@ -1,8 +1,10 @@
+from __future__ import print_function
+
 import inspect
 import re
 import collections
 import keyword
-import renpy
+import renpy.sl2
 import shutil
 import StringIO
 import os
@@ -103,7 +105,7 @@ def write_keywords():
 
     f.write("keywords = %r\n" % kwlist)
 
-    properties = list(i for i in renpy.screenlang.all_keyword_names if i not in kwlist)
+    properties = list(i for i in renpy.sl2.slparser.all_keyword_names if i not in kwlist)
     properties.sort()
 
     f.write("properties = %r\n" % properties)
@@ -189,7 +191,7 @@ def scan(name, o, prefix=""):
             args = inspect.getargspec(o)
 
         else:
-            print "Warning: %s has section but not args." % name
+            print("Warning: %s has section but not args." % name)
 
             return
 
@@ -200,7 +202,6 @@ def scan(name, o, prefix=""):
             args = args.replace("(self, ", "(")
         else:
             args = "()"
-
 
     # Put it into the line buffer.
     lb = line_buffer[section]
@@ -234,21 +235,21 @@ def write_line_buffer():
 
         f = StringIO.StringIO()
 
-        print >>f, ".. Automatically generated file - do not modify."
-        print >>f
+        print(".. Automatically generated file - do not modify.", file=f)
+        print(file=f)
 
         for l in v:
-            print >>f, l
+            print(l, file=f)
 
         s = f.getvalue()
 
         if os.path.exists("source/inc/" + k):
             with open("source/inc/" + k) as f:
                 if f.read() == s:
-                    print "Retaining", k
+                    print("Retaining", k)
                     continue
 
-        print "Generating", k
+        print("Generating", k)
 
         with open("source/inc/" + k, "w") as f:
             f.write(s)
@@ -256,11 +257,11 @@ def write_line_buffer():
 
 name_kind = collections.defaultdict(str)
 
+
 def scan_docs():
     """
     Scans the documentation for functions, classes, and variables.
     """
-
 
     def scan_file(fn):
         f = open(fn)
@@ -281,11 +282,21 @@ def scan_docs():
         scan_file(os.path.join("source", "inc", i))
 
 
+def format_name(name):
+
+    if name_kind[name] == 'function':
+        name = ":func:`{}`".format(name)
+    elif name_kind[name] == 'class':
+        name = ":class:`{}`".format(name)
+    elif name_kind[name] == 'var':
+        name = ":var:`{}`".format(name)
+
+    return name
 
 
 def write_reserved(module, dest, ignore_builtins):
 
-    print "Writing", dest
+    print("Writing", dest)
 
     with open(dest, "w") as f:
 
@@ -300,11 +311,40 @@ def write_reserved(module, dest, ignore_builtins):
             if ignore_builtins and hasattr(__builtin__, i):
                 continue
 
-            if name_kind[i] == 'function':
-                i = ":func:`{}`".format(i)
-            elif name_kind[i] == 'class':
-                i = ":class:`{}`".format(i)
-            elif name_kind[i] == 'var':
-                i = ":var:`{}`".format(i)
+            f.write("* " + format_name(i) + "\n")
 
-            f.write("* " + i + "\n")
+
+def write_pure_const():
+
+    def write_set(f, s):
+        l = list(s)
+        l.sort()
+
+        for i in l:
+            f.write("* " + format_name(i) + "\n")
+
+    pure = renpy.pyanalysis.pure_functions  # @UndefinedVariable
+    constants = renpy.pyanalysis.constants - pure  # @UndefinedVariable
+
+    with open("source/inc/pure_vars", "w") as f:
+        write_set(f, pure)
+
+    with open("source/inc/const_vars", "w") as f:
+        write_set(f, constants)
+
+
+def write_easings(ns):
+
+    with open("source/inc/easings", "w") as f:
+        f.write(".. csv-table::\n")
+        f.write('    :header: "Ren\'Py Name", "easings.net Name"\n')
+        f.write('\n')
+
+        for name in sorted(dir(ns)):
+            if not name.startswith("ease"):
+                continue
+            if not "_" in name:
+                continue
+
+            stdname = name.replace("ease_", "easeInOut_").replace("easein_", "easeOut_").replace("easeout_", "easeIn_")
+            f.write('    "{}", "{}"\n'.format(name, stdname))

@@ -1,6 +1,6 @@
 ﻿# console.rpy
 # Ren'Py console
-# Copyright (C) 2012 Shiz, C, delta, PyTom
+# Copyright (C) 2012-2017 Shiz, C, delta, PyTom
 #
 # This program is free software. It comes without any warranty, to the extent permitted by applicable law.
 # You can redistribute it and/or modify it under the terms of the Do What The Fuck You Want To Public License,
@@ -37,58 +37,69 @@
 init -1500:
 
     style _console is _default:
-        background None
+        xpadding gui._scale(20)
+        ypadding gui._scale(10)
+        xfill True
+        yfill True
+        background "#d0d0d0d0"
+
+    style _console_backdrop:
+        background "#d0d0d0"
+
+    style _console_vscrollbar is _vscrollbar
 
     style _console_text is _default:
-        size 14
-        color "#ffffff"
+        size gui._scale(16)
 
     style _console_input is _default:
-        background "#0000006f"
         xfill True
 
     style _console_prompt is _console_text:
-        minwidth 20
+        minwidth gui._scale(22)
         text_align 1.0
 
     style _console_input_text is _console_text:
-        color "#fafafa"
+        color "#000000"
+        adjust_spacing False
 
     style _console_history is _default:
-        background "#00000000"
         xfill True
-        yfill True
 
     style _console_history_item is _default:
-        background "#00000040"
-        top_margin 4
         xfill True
+        bottom_margin gui._scale(8)
 
     style _console_command is _default:
-        background "#00000040"
-        left_padding 24
+        left_padding gui._scale(26)
 
-    style _console_command_text is _console_text
+    style _console_command_text is _console_text:
+        color "#000000"
 
     style _console_result is _default:
-        background "#00000000"
-        left_padding 24
+        left_padding gui._scale(26)
 
     style _console_result_text is _console_text
 
     style _console_error_text is _console_text:
-        color "#ff8080"
+        color "#603030"
+        # color "#ff8080"
 
     style _console_trace is _default:
         background "#00000040"
         xalign 1.0
         top_margin 20
         right_margin 20
+        xpadding 2
+        ypadding 2
 
-    style _console_trace_var is _console_text:
+    style _console_trace_text is _default:
+        color "#fff"
+        size gui._scale(16)
+
+    style _console_trace_var is _console_trace_text:
         bold True
 
-    style _console_trace_value is _console_text
+    style _console_trace_value is _console_trace_text
 
 # Configuration and style initalization.
 init -1500 python:
@@ -105,12 +116,16 @@ init -1500 python:
     # be actually run.
     config.console_callback = None
 
-
 init -1500 python in _console:
-    from store import config
+    from store import config, persistent, NoRollback
     import sys
     import traceback
     import store
+
+
+    # The list of traced expressions.
+    class TracedExpressionsList(NoRollback, list):
+        pass
 
     class BoundedList(list):
         """
@@ -129,7 +144,7 @@ init -1500 python in _console:
         def clear(self):
             self[:] = [ ]
 
-    class HistoryEntry(object):
+    class ConsoleHistoryEntry(object):
         """
         Represents an entry in the history list.
         """
@@ -138,6 +153,8 @@ init -1500 python in _console:
             self.command = command
             self.result = result
             self.is_error = is_error
+
+    HistoryEntry = ConsoleHistoryEntry
 
     class ScriptErrorHandler(object):
         """
@@ -166,17 +183,28 @@ init -1500 python in _console:
             self.line_history = BoundedList(config.console_history_size)
             self.line_index = 0
 
+            if persistent._console_history is not None:
+                for i in persistent._console_history:
+                    self.history.append(ConsoleHistoryEntry(i[0], i[1], i[2]))
+
+            if persistent._console_line_history is not None:
+                self.line_history.extend(persistent._console_line_history)
+
             self.first_time = True
 
             self.reset()
 
+        def backup(self):
+
+            persistent._console_history = [ (i.command, i.result, i.is_error) for i in self.history ]
+            persistent._console_line_history = list(self.line_history)
+
         def start(self):
-            he = HistoryEntry(None)
+            he = ConsoleHistoryEntry(None)
 
             message = ""
 
             if self.first_time:
-                message += __("%(version)s console, originally by Shiz, C, and delta.\n") % {"version": renpy.version()}
                 message += __("Press <esc> to exit console. Type help for help.\n")
                 self.first_time = False
 
@@ -254,7 +282,6 @@ init -1500 python in _console:
                 self.lines.append(indent)
                 return
 
-
             lines = self.lines
             self.line_history.append(lines)
 
@@ -266,7 +293,10 @@ init -1500 python in _console:
                 if not lines:
                     return
 
-            self.run(lines)
+            try:
+                self.run(lines)
+            finally:
+                self.backup()
 
         def can_renpy(self):
             """
@@ -284,7 +314,7 @@ init -1500 python in _console:
             line_count = len(lines)
             code = "\n".join(lines)
 
-            he = HistoryEntry(code)
+            he = ConsoleHistoryEntry(code)
             self.history.append(he)
 
             try:
@@ -346,13 +376,14 @@ init -1500 python in _console:
                 raise
 
             except:
-                he.result = self.format_exception()
+                import traceback
+                traceback.print_exc()
+
+                he.result = self.format_exception().rstrip()
                 he.is_error = True
 
 
     console = None
-
-    traced_expressions = [ ]
 
     def enter():
         """
@@ -374,7 +405,8 @@ init -1500 python in _console:
 
         renpy.call_in_new_context("_console")
 
-init 1500 python in _console:
+# Has to run after 00library.
+init 1701 python in _console:
 
     if config.developer or config.console:
         console = DebugConsole()
@@ -467,6 +499,23 @@ init -1500 python in _console:
         traced_expressions.append(expr)
         renpy.show_screen("_trace_screen")
 
+    def renpy_watch(expr):
+        """
+        :name: renpy.watch
+        :doc: debug
+
+        This watches the given python expression, by displaying it in the
+        upper-right corner of the screen.
+        """
+
+        block = [ ( "<console>", 1, expr, [ ]) ]
+
+        l = renpy.parser.Lexer(block)
+        l.advance()
+        watch(l)
+
+    renpy.watch = renpy_watch
+
     @command(_("unwatch <expression>: stop watching an expression"))
     def unwatch(l):
         expr = l.rest()
@@ -475,11 +524,45 @@ init -1500 python in _console:
         if expr in traced_expressions:
             traced_expressions.remove(expr)
 
+    def watch_after_load():
+        if config.developer and traced_expressions:
+            renpy.show_screen("_trace_screen")
+
+    config.after_load_callbacks.append(watch_after_load)
+
+    def renpy_unwatch(expr):
+        """
+        :name: renpy.unwatch
+        :doc: debug
+
+        Stops watching the given python expression.
+        """
+
+        block = [ ( "<console>", 1, expr, [ ]) ]
+
+        l = renpy.parser.Lexer(block)
+        l.advance()
+        unwatch(l)
+
+    renpy.unwatch = renpy_unwatch
+
+
     @command(_("unwatchall: stop watching all expressions"))
     def unwatchall(l):
         traced_expressions[:] = [ ]
         renpy.hide_screen("_trace_screen")
 
+    def renpy_unwatchall():
+        """
+        :name: renpy.unwatch
+        :doc: debug
+
+        Stops watching all python expressions.
+        """
+
+        unwatchall(None)
+
+    renpy.unwatchall = renpy_unwatchall
 
     @command(_("jump <label>: jumps to label"))
     def jump(l):
@@ -507,10 +590,45 @@ screen _console:
     zorder 1500
     modal True
 
+    if not _console.console.can_renpy():
+        frame:
+            style "_console_backdrop"
+
     frame:
         style "_console"
 
+        has viewport:
+            style_prefix "_console"
+            mousewheel True
+            scrollbars "vertical"
+            yinitial 1.0
+
         has vbox
+
+        # Draw historical console input.
+
+        frame style "_console_history":
+
+            has vbox:
+                xfill True
+
+            for he in history:
+
+                frame style "_console_history_item":
+                    has vbox
+
+                    if he.command is not None:
+                        frame style "_console_command":
+                            xfill True
+                            text "[he.command!q]" style "_console_command_text"
+
+                    if he.result is not None:
+
+                        frame style "_console_result":
+                            if he.is_error:
+                                text "[he.result!q]" style "_console_error_text"
+                            else:
+                                text "[he.result!q]" style "_console_result_text"
 
         # Draw the current input.
         frame style "_console_input":
@@ -539,40 +657,11 @@ screen _console:
                 input default default style "_console_input_text" exclude ""
 
 
-        # Draw historical console input.
-        $ rev_history = list(history)
-        $ rev_history.reverse()
-
-        frame style "_console_history":
-
-            has viewport:
-                mousewheel True
-
-            has vbox:
-                xfill True
-
-            for he in rev_history:
-
-                frame style "_console_history_item":
-                    has vbox
-
-                    if he.command is not None:
-                        frame style "_console_command":
-                            xfill True
-                            text "[he.command!q]" style "_console_command_text"
-
-                    if he.result is not None:
-
-                        frame style "_console_result":
-                            if he.is_error:
-                                text "[he.result!q]" style "_console_error_text"
-                            else:
-                                text "[he.result!q]" style "_console_result_text"
-
     key "game_menu" action Jump("_console_return")
     key "console_older" action _console.console.older
     key "console_newer" action _console.console.newer
 
+default _console.traced_expressions = _console.TracedExpressionsList()
 
 screen _trace_screen:
 

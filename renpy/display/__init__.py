@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -38,11 +38,13 @@ touch = False
 # The pygame.display.Info object, which we want to survive a reload.
 info = None
 
+
 def get_info():
     global info
 
     if info is None:
-        import pygame
+        import pygame_sdl2 as pygame
+        pygame.display.init()
         info = pygame.display.Info()
 
     return info
@@ -51,4 +53,3 @@ def get_info():
 log = renpy.log.open("log", developer=False, append=False)
 ic_log = renpy.log.open("image_cache", developer=True, append=False)
 to_log = renpy.log.open("text_overflow", developer=True, append=True)
-

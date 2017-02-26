@@ -11,6 +11,16 @@ and rolled-back when rollback occurs.
     This is a template ADV-mode character, and the default character kind
     that is used when :func:`Character` is called.
 
+.. var:: _confirm_quit = True
+
+    This determines if quitting the game asks for confirmation. It is
+    set to False during the splashscreen, and is ignored when in the main
+    menu.
+
+.. var:: _dismiss_pause = True
+
+    If True, the player can dismiss pauses and transitions.
+
 .. var:: _game_menu_screen = "save"
 
     This is the screen that is displayed when entering the game menu with no
@@ -21,10 +31,26 @@ and rolled-back when rollback occurs.
     This is set to None at the start of the splashscreen, and restored to its
     original value when the splashscreen ends.
 
+.. var:: _history = True
+
+    If true, Ren'Py will record dialogue history when a line is shown. (Note
+    that :var:`config.history_list_length` must be set as well.)
+
+.. var:: _history_list = [ ]
+
+    This is a list of history objects, corresponding to each line of history
+    from oldest to newest. See the :ref:`History <history>` section for more
+    information.
+
 .. var:: main_menu = False
 
     Ren'Py sets this variable to True while in the main menu. This can be used
     to have screens display differently while in the main menu.
+
+.. var:: _menu = False
+
+    Ren'Py sets this variable to True when entering a main menu or game menu
+    context.
 
 .. var:: menu = renpy.display_menu
 
@@ -84,6 +110,10 @@ and rolled-back when rollback occurs.
 .. var:: save_name = ""
 
     A save name that is included with saves.
+
+.. var:: _skipping = True
+
+    Controls of if skipping is allowed.
 
 .. var:: _window = False
 

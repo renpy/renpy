@@ -1,16 +1,9 @@
 Welcome to Ren'Py's documentation!
 ==================================
 
-We're in the process of rewriting Ren'Py's documentation. While what we have
-here is the most up-to-date documentation, it's also very incomplete. To find
-out more about Ren'Py, please visit the Ren'Py home page:
+To find out more about Ren'Py, please visit the Ren'Py home page:
 
     http://www.renpy.org/
-
-Some of Ren'Py is only documented in the older documentation, which is stored
-in the Ren'Py Wiki:
-
-    http://www.renpy.org/wiki/
 
 .. only:: not language_ja and not gettext
 
@@ -22,9 +15,10 @@ in the Ren'Py Wiki:
 Getting Started
 ---------------
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 3
 
-   quickstart
+    quickstart
+    gui
 
 The Ren'Py Language
 -------------------
@@ -67,6 +61,7 @@ Customizing Ren'Py
    screens
    screen_actions
    screen_special
+   screen_optimization
    config
    store_variables
 
@@ -84,6 +79,8 @@ Other Functionality
    sprites
    keymap
    developer_tools
+   achievement
+   history
 
 Python and Ren'Py
 -----------------
@@ -99,8 +96,10 @@ Python and Ren'Py
    modes
    udd
    cds
+   custom_text_tags
    character_callbacks
    file_python
+   color_class
    other
 
 Building, Updating, and Other Platforms
@@ -112,6 +111,10 @@ Building, Updating, and Other Platforms
    build
    updater
    android
+   chromeos
+   ios
+   iap
+   gesture
 
 End-User Documentation
 ----------------------
@@ -121,6 +124,7 @@ End-User Documentation
 
    problems
    environment_variables
+   self_voicing
 
 Engine Developer Documentation
 ------------------------------
@@ -130,6 +134,7 @@ Engine Developer Documentation
 
    editor
    skins
+   translating_renpy
 
 Changes, License, and Documentation Credits
 -------------------------------------------

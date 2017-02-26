@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -56,50 +56,69 @@ init -1500:
         frame:
             style_group ""
 
-            xalign .5
-            yalign .33
-            xpadding 20
-            ypadding 20
-
-            xmaximum 400
-
-            has vbox
+            has side "t c b":
+                spacing gui._scale(10)
+                xfill True
+                yfill True
 
             label _("Graphics Acceleration")
 
-            null height 10
+            fixed:
 
-            textbutton _("Automatically Choose"):
-                action _SetRenderer("auto")
-                xfill True
+                vbox:
 
-            if renpy.renpy.windows:
-                textbutton _("Force Angle/DirectX Renderer"):
-                    action _SetRenderer("angle")
-                    xfill True
+                    textbutton _("Automatically Choose"):
+                        action _SetRenderer("auto")
+                        style_suffix "radio_button"
 
-            textbutton _("Force OpenGL Renderer"):
-                action _SetRenderer("gl")
-                xfill True
+                    if renpy.renpy.windows:
+                        textbutton _("Force Angle/DirectX Renderer"):
+                            action _SetRenderer("angle")
+                            style_suffix "radio_button"
 
-            textbutton _("Force Software Renderer"):
-                action _SetRenderer("sw")
-                xfill True
+                    textbutton _("Force OpenGL Renderer"):
+                        action _SetRenderer("gl")
+                        style_suffix "radio_button"
 
-            null height 10
+                    textbutton _("Force Software Renderer"):
+                        action _SetRenderer("sw")
+                        style_suffix "radio_button"
 
-            text _("Changes will take effect the next time this program is run.") substitute True
+                    null height 10
 
-            null height 10
+                    label _("Gamepad")
 
-            textbutton _(u"Quit"):
-                action Quit(confirm=False)
-                xfill True
+                    null height 10
 
-            if not renpy.display.interface.safe_mode:
-                textbutton _("Return"):
-                    action Return(0)
-                    xfill True
+                    textbutton _("Enable"):
+                        action SetField(_preferences, "pad_enabled", True)
+                        style_suffix "radio_button"
+
+                    textbutton _("Disable"):
+                        action SetField(_preferences, "pad_enabled", False)
+                        style_suffix "radio_button"
+
+                    null height 10
+
+                    textbutton _("Calibrate"):
+                        action ui.invokesinnewcontext(_gamepad.calibrate)
+                        xfill True
+
+                    null height 10
+
+                    text _("Changes will take effect the next time this program is run.") substitute True
+
+            hbox:
+                spacing gui._scale(25)
+
+                textbutton _(u"Quit"):
+                    action Quit(confirm=False)
+                    yalign 1.0
+
+                if not renpy.display.interface.safe_mode:
+                    textbutton _("Return"):
+                        action Return(0)
+                        yalign 1.0
 
 
     # This is displayed when a display performance problem occurs.
@@ -116,14 +135,6 @@ init -1500:
 
         frame:
             style_group ""
-
-            xalign .5
-            yalign .33
-
-            xpadding 20
-            ypadding 20
-
-            xmaximum 400
 
             has vbox
 
@@ -175,14 +186,6 @@ init -1500:
 
         frame:
             style_group ""
-
-            xalign .5
-            yalign .33
-
-            xpadding 20
-            ypadding 20
-
-            xmaximum 400
 
             has vbox
 
@@ -290,8 +293,8 @@ init -1500 python:
         if not _preferences.performance_test and "RENPY_PERFORMANCE_TEST" not in os.environ:
             return
 
-        # Don't bother on androuid - there's nothing the user can do.
-        if renpy.renpy.android:
+        # Don't bother on android or ios - there's nothing the user can do.
+        if renpy.mobile:
             return
 
         renpy.renpy.display.log.write("Performance test:")
@@ -375,6 +378,7 @@ label _directx_update_main:
 
         # Start dxsetup. We have to go through startfile to ensure that UAC
         # doesn't cause problems.
+        import os
         os.startfile(__dxwebsetup)
 
         renpy.show_screen("_directx_update")

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -47,9 +47,22 @@ init -1600 python hide:
     # choice of language, and defaults to the game's native language.
     config.language = None
 
+    # Should we attempt to return to the menu we were on after a reload?
+    config.reload_menu = True
+
+    # Callbacks to run after load.
+    config.after_load_callbacks = [ ]
+
+    # Should we suppress overlay during the splashscreen?
+    config.splashscreen_suppress_overlay = True
+
 init -1600 python:
 
     def _init_language():
+        """
+        Changes the default language. This is called automatically by
+        Ren'Py as it starts up.
+        """
 
         import os
 
@@ -65,20 +78,51 @@ init -1600 python:
 # This fixes up the context, if necessary, then calls the real
 # after_load.
 label _after_load:
-    $ renpy.context()._menu = False
-    $ renpy.context()._main_menu = False
-    $ main_menu = False
-    $ _in_replay = None
 
-    if config.after_load_transition:
-        $ renpy.transition(config.after_load_transition, force=True)
+    python:
+        renpy.context()._menu = False
+        renpy.context()._main_menu = False
+        main_menu = False
+        _in_replay = None
+
+        renpy.execute_default_statement(False)
+        _init_language()
+
+    python hide:
+
+        for i in config.after_load_callbacks:
+            i()
+
+        if config.after_load_transition:
+            renpy.transition(config.after_load_transition, force=True)
+
+        menu = renpy.session.pop("_reload_screen", None)
+
+        if config.reload_menu and (menu is not None):
+            renpy.run(ShowMenu(menu))
 
     if renpy.has_label("after_load"):
         jump expression "after_load"
     else:
         return
 
-# Common code for _start and _start_memory.
+# Ditto, for warp.
+label _after_warp:
+
+    python:
+        renpy.context()._menu = False
+        renpy.context()._main_menu = False
+        main_menu = False
+        _in_replay = None
+
+    if renpy.has_label("after_warp"):
+        jump expression "after_warp"
+    else:
+        return
+
+
+
+# Common code for _start and _start_replay.
 label _start_store:
 
     python hide:
@@ -92,20 +136,38 @@ label _start_store:
     return
 
 
-# Starts up a memory. This is called by renpy.game.call_memory, and
-# is expected to be called with _in_memory set.
+# Starts up a replay. This is called by renpy.game.call_replay, and
+# is expected to be called with _in_replay True and
+# renpy.execute_default_statement already called.
 label _start_replay:
 
     call _start_store
+
+    python:
+        renpy.execute_default_statement(False)
 
     if config.start_scene_black:
         scene black
     else:
         scene
 
+    $ _init_language()
     $ renpy.block_rollback()
 
     jump expression _in_replay
+
+
+label _splashscreen:
+
+    python:
+
+        if config.splashscreen_suppress_overlay:
+            renpy.dynamic("suppress_overlay", "_confirm_quit")
+            suppress_overlay = True
+            _confirm_quit = False
+
+    jump expression "splashscreen"
+
 
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
@@ -113,14 +175,23 @@ label _start:
 
     call _start_store
 
-    $ _init_language()
-    $ renpy.block_rollback()
+    python:
+        renpy.execute_default_statement(True)
+
+        # Predict the main menu. When a load occurs, the loaded data will
+        # overwrite the prediction requests.
+        if renpy.has_screen("main_menu"):
+            renpy.start_predict_screen("main_menu")
+
+        renpy.block_rollback()
 
     call _gl_test
     call _load_reload_game from _call__load_reload_game_1
 
-    if not _restart and config.auto_load and renpy.can_load(config.auto_load):
-        $ renpy.load(config.auto_load)
+    python hide:
+        auto_load = renpy.os.environ.get("RENPY_AUTO_LOAD", config.auto_load)
+        if not _restart and auto_load and renpy.can_load(auto_load):
+            renpy.load(auto_load)
 
     if config.start_scene_black:
         scene black
@@ -128,21 +199,22 @@ label _start:
         scene
 
     if not _restart:
-        $ ui.pausebehavior(0)
-        $ ui.interact(suppress_underlay=True, suppress_overlay=True)
+        $ renpy.display.interface.with_none(overlay=False)
 
     $ renpy.block_rollback()
 
     $ _old_game_menu_screen = _game_menu_screen
-    $ _old_predict_screens = _predict_screens
     $ _game_menu_screen = None
-    $ _predict_screens = [ 'main_menu' ]
+    $ _old_history = _history
+    $ _history = False
 
-    if renpy.has_label("splashscreen") and not _restart:
-        call expression "splashscreen" from _call_splashscreen_1
+    if renpy.has_label("splashscreen") and (not _restart) and (not renpy.os.environ.get("RENPY_SKIP_SPLASHSCREEN", None)):
+        call _splashscreen from _call_splashscreen_1
 
     $ _game_menu_screen = _old_game_menu_screen
     $ del _old_game_menu_screen
+    $ _history = _old_history
+    $ del _old_history
 
     $ renpy.block_rollback()
 
@@ -159,6 +231,13 @@ label _start:
     else:
         scene
 
+    python:
+        # Stop predicting the main menu, now that we're ready to show it.
+        if renpy.has_screen("main_menu"):
+            renpy.stop_predict_screen("main_menu")
+
+        # Implement config.window
+        _init_window()
 
     # This has to be python, to deal with a case where _restart may
     # change across a shift-reload.
@@ -167,6 +246,8 @@ label _start:
             renpy.transition(config.end_splash_transition)
         else:
             renpy.transition(_restart[0])
+
+            renpy.game.context().force_checkpoint = True
             renpy.jump(_restart[1])
 
 label _invoke_main_menu:
@@ -175,12 +256,15 @@ label _invoke_main_menu:
     python:
         if _restart:
             renpy.call_in_new_context(_restart[2])
-        else:
+        elif not renpy.os.environ.get("RENPY_SKIP_MAIN_MENU", False):
             renpy.call_in_new_context("_main_menu")
 
 
     # If the main menu returns, then start the game.
-    jump start
+
+    python:
+        renpy.game.context().force_checkpoint = True
+        renpy.jump("start")
 
 # At this point, we've been switched into a new context. So we
 # initialize it.

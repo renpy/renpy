@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,833 +21,15 @@
 
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
-import math
-import types #@UnresolvedImport
 
-import renpy.display #@UnusedImport
+from renpy.display.transform import *  # @UnusedWildImport
+
+import math
+
+import renpy.display
+
 from renpy.display.render import render
 from renpy.display.layout import Container
-
-import renpy.display.accelerator
-
-# The null object that's used if we don't have a defined child.
-null = None
-
-def get_null():
-    global null
-
-    if null is None:
-        null = renpy.display.layout.Null()
-
-    return null
-
-# Convert a position from cartesian to polar coordinates.
-def cartesian_to_polar(x, y, xaround, yaround):
-    """
-    Converts cartesian coordinates to polar coordinates.
-    """
-
-    dx = x - xaround
-    dy = y - yaround
-
-    radius = math.hypot(dx, dy)
-    angle = math.atan2(dx, -dy) / math.pi * 180
-
-    if angle < 0:
-        angle += 360
-
-    return angle, radius
-
-def polar_to_cartesian(angle, radius, xaround, yaround):
-    """
-    Converts polart coordinates to cartesian coordinates.
-    """
-
-    angle = angle * math.pi / 180
-
-    dx = radius * math.sin(angle)
-    dy = -radius * math.cos(angle)
-
-    x = type(xaround)(xaround + dx)
-    y = type(yaround)(yaround + dy)
-
-    return x, y
-
-def first_not_none(*args):
-    """
-    Returns the first argument that is not None.
-    """
-
-    for i in args:
-        if i is not None:
-            return i
-    return i
-
-
-class TransformState(renpy.object.Object):
-
-    xoffset = None
-    yoffset = None
-    default_xpos = None
-    default_ypos = None
-    default_xanchor = None
-    default_yanchor = None
-    default_xoffset = None
-    default_yoffset = None
-    transform_anchor = False
-    additive = 0.0
-
-    def __init__(self): # W0231
-        self.alpha = 1
-        self.additive = 0.0
-        self.rotate = None
-        self.rotate_pad = True
-        self.transform_anchor = False
-        self.zoom = 1
-        self.xzoom = 1
-        self.yzoom = 1
-
-        self.xpos = None
-        self.ypos = None
-        self.xanchor = None
-        self.yanchor = None
-        self.xoffset = 0
-        self.yoffset = 0
-
-        self.xaround = 0.0
-        self.yaround = 0.0
-        self.xanchoraround = 0.0
-        self.yanchoraround = 0.0
-
-        self.subpixel = False
-
-        self.crop = None
-        self.corner1 = None
-        self.corner2 = None
-        self.size = None
-
-        self.delay = 0
-
-        # Note: When adding a new property, we need to add it to:
-        # - take_state
-        # - diff
-        # - renpy.atl.PROPERTIES
-        # - Proxies in Transform
-
-        # Default values for various properties, taken from our
-        # parent.
-        self.default_xpos = None
-        self.default_ypos = None
-        self.default_xanchor = None
-        self.default_yanchor = None
-
-    def take_state(self, ts):
-
-        self.alpha = ts.alpha
-        self.additive = ts.additive
-        self.rotate = ts.rotate
-        self.rotate_pad = ts.rotate_pad
-        self.transform_anchor = ts.transform_anchor
-        self.zoom = ts.zoom
-        self.xzoom = ts.xzoom
-        self.yzoom = ts.yzoom
-
-        self.xaround = ts.xaround
-        self.yaround = ts.yaround
-        self.xanchoraround = ts.xanchoraround
-        self.yanchoraround = ts.yanchoraround
-
-        self.subpixel = ts.subpixel
-
-        self.crop = ts.crop
-        self.corner1 = ts.corner1
-        self.corner2 = ts.corner2
-        self.size = ts.size
-
-        # Take the computed position properties, not the
-        # raw ones.
-        (self.default_xpos,
-         self.default_ypos,
-         self.default_xanchor,
-         self.default_yanchor,
-         self.xoffset,
-         self.yoffset,
-         self.subpixel) = ts.get_placement()
-
-    # Returns a dict, with p -> (old, new) where p is a property that
-    # has changed between this object and the new object.
-    def diff(self, newts):
-
-        rv = { }
-
-        def diff2(prop, new, old):
-            if new != old:
-                rv[prop] = (old, new)
-
-        def diff4(prop, new, default_new, old, default_old):
-            if new is None:
-                new_value = default_new
-            else:
-                new_value = new
-
-            if old is None:
-                old_value = default_old
-            else:
-                old_value = old
-
-            if new_value != old_value:
-                rv[prop] = (old_value, new_value)
-
-        diff2("alpha", newts.alpha, self.alpha)
-        diff2("additive", newts.additive, self.additive)
-        diff2("rotate", newts.rotate, self.rotate)
-        diff2("rotate_pad", newts.rotate_pad, self.rotate_pad)
-        diff2("transform_anchor", newts.transform_anchor, self.transform_anchor)
-        diff2("zoom", newts.zoom, self.zoom)
-        diff2("xzoom", newts.xzoom, self.xzoom)
-        diff2("yzoom", newts.yzoom, self.yzoom)
-
-        diff2("xaround", newts.xaround, self.xaround)
-        diff2("yaround", newts.yaround, self.yaround)
-        diff2("xanchoraround", newts.xanchoraround, self.xanchoraround)
-        diff2("yanchoraround", newts.yanchoraround, self.yanchoraround)
-
-        diff2("subpixel", newts.subpixel, self.subpixel)
-
-        diff2("crop", newts.crop, self.crop)
-        diff2("corner1", newts.corner1, self.corner1)
-        diff2("corner2", newts.corner2, self.corner2)
-        diff2("size", newts.size, self.size)
-
-        diff4("xpos", newts.xpos, newts.default_xpos, self.xpos, self.default_xpos)
-
-        diff4("xanchor", newts.xanchor, newts.default_xanchor, self.xanchor, self.default_xanchor)
-        diff2("xoffset", newts.xoffset, self.xoffset)
-
-        diff4("ypos", newts.ypos, newts.default_ypos, self.ypos, self.default_ypos)
-        diff4("yanchor", newts.yanchor, newts.default_yanchor, self.yanchor, self.default_yanchor)
-        diff2("yoffset", newts.yoffset, self.yoffset)
-
-        return rv
-
-    def get_placement(self, cxoffset=0, cyoffset=0):
-
-        return (
-            first_not_none(self.xpos, self.default_xpos),
-            first_not_none(self.ypos, self.default_ypos),
-            first_not_none(self.xanchor, self.default_xanchor),
-            first_not_none(self.yanchor, self.default_yanchor),
-            self.xoffset + cxoffset,
-            self.yoffset + cyoffset,
-            self.subpixel,
-            )
-
-    # These update various properties.
-    def get_xalign(self):
-        return self.xpos
-
-    def set_xalign(self, v):
-        self.xpos = v
-        self.xanchor = v
-
-    xalign = property(get_xalign, set_xalign)
-
-    def get_yalign(self):
-        return self.ypos
-
-    def set_yalign(self, v):
-        self.ypos = v
-        self.yanchor = v
-
-    yalign = property(get_yalign, set_yalign)
-
-    def get_around(self):
-        return (self.xaround, self.yaround)
-
-    def set_around(self, value):
-        self.xaround, self.yaround = value
-        self.xanchoraround, self.yanchoraround = None, None
-
-    def set_alignaround(self, value):
-        self.xaround, self.yaround = value
-        self.xanchoraround, self.yanchoraround = value
-
-    around = property(get_around, set_around)
-    alignaround = property(get_around, set_alignaround)
-
-    def get_angle(self):
-        xpos = first_not_none(self.xpos, self.default_xpos, 0)
-        ypos = first_not_none(self.ypos, self.default_ypos, 0)
-        angle, _radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
-        return angle
-
-    def get_radius(self):
-        xpos = first_not_none(self.xpos, self.default_xpos, 0)
-        ypos = first_not_none(self.ypos, self.default_ypos, 0)
-        _angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
-        return radius
-
-    def set_angle(self, value):
-        xpos = first_not_none(self.xpos, self.default_xpos, 0)
-        ypos = first_not_none(self.ypos, self.default_ypos, 0)
-        _angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
-        angle = value
-        self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
-
-        if self.xanchoraround:
-            self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
-
-    def set_radius(self, value):
-        xpos = first_not_none(self.xpos, self.default_xpos, 0)
-        ypos = first_not_none(self.ypos, self.default_ypos, 0)
-        angle, _radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
-        radius = value
-        self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
-
-        if self.xanchoraround:
-            self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
-
-    angle = property(get_angle, set_angle)
-    radius = property(get_radius, set_radius)
-
-    def get_pos(self):
-        return self.xpos, self.ypos
-
-    def set_pos(self, value):
-        self.xpos, self.ypos = value
-
-    pos = property(get_pos, set_pos)
-
-    def get_anchor(self):
-        return self.xanchor, self.yanchor
-
-    def set_anchor(self, value):
-        self.xanchor, self.yanchor = value
-
-    anchor = property(get_anchor, set_anchor)
-
-    def get_align(self):
-        return self.xpos, self.ypos
-
-    def set_align(self, value):
-        self.xanchor, self.yanchor = value
-        self.xpos, self.ypos = value
-
-    align = property(get_align, set_align)
-
-    def get_offset(self):
-        return self.xoffset, self.yoffset
-
-    def set_offset(self, value):
-        self.xoffset, self.yoffset = value
-
-    offset = property(get_offset, set_offset)
-
-    def set_xcenter(self, value):
-        self.xpos = value
-        self.xanchor = 0.5
-
-    def get_xcenter(self):
-        return self.xpos
-
-    def set_ycenter(self, value):
-        self.ypos = value
-        self.yanchor = 0.5
-
-    def get_ycenter(self):
-        return self.ypos
-
-    xcenter = property(get_xcenter, set_xcenter)
-    ycenter = property(get_ycenter, set_ycenter)
-
-class Proxy(object):
-    """
-    This class proxies a field from the transform to its state.
-    """
-
-    def __init__(self, name):
-        self.name = name
-
-    def __get__(self, instance, owner):
-        return getattr(instance.state, self.name)
-
-    def __set__(self, instance, value):
-        return setattr(instance.state, self.name, value)
-
-class Transform(Container):
-    """
-    Documented in sphinx, because we can't scan this object.
-    """
-
-    __version__ = 5
-    transform_event_responder = True
-
-    # Proxying things over to our state.
-    alpha = Proxy("alpha")
-    additive = Proxy("additive")
-    rotate = Proxy("rotate")
-    rotate_pad = Proxy("rotate_pad")
-    transform_anchor = Proxy("rotate_pad")
-    zoom = Proxy("zoom")
-    xzoom = Proxy("xzoom")
-    yzoom = Proxy("yzoom")
-
-    xpos = Proxy("xpos")
-    ypos = Proxy("ypos")
-    xanchor = Proxy("xanchor")
-    yanchor = Proxy("yanchor")
-
-    xalign = Proxy("xalign")
-    yalign = Proxy("yalign")
-
-    around = Proxy("around")
-    alignaround = Proxy("alignaround")
-    angle = Proxy("angle")
-    radius = Proxy("radius")
-
-    xaround = Proxy("xaround")
-    yaround = Proxy("yaround")
-    xanchoraround = Proxy("xanchoraround")
-    yanchoraround = Proxy("yanchoraround")
-
-    pos = Proxy("pos")
-    anchor = Proxy("anchor")
-    align = Proxy("align")
-
-    crop = Proxy("crop")
-    corner1 = Proxy("corner1")
-    corner2 = Proxy("corner2")
-    size = Proxy("size")
-
-    delay = Proxy("delay")
-
-    xoffset = Proxy("xoffset")
-    yoffset = Proxy("yoffset")
-    offset = Proxy("offset")
-
-    subpixel = Proxy("subpixel")
-
-    xcenter = Proxy("xcenter")
-    ycenter = Proxy("ycenter")
-
-    def after_upgrade(self, version):
-
-        if version < 1:
-            self.active = False
-            self.state = TransformState()
-
-            self.state.xpos = self.xpos or 0
-            self.state.ypos = self.ypos or 0
-            self.state.xanchor = self.xanchor or 0
-            self.state.yanchor = self.yanchor or 0
-            self.state.alpha = self.alpha
-            self.state.rotate = self.rotate
-            self.state.zoom = self.zoom
-            self.state.xzoom = self.xzoom
-            self.state.yzoom = self.yzoom
-
-            self.hide_request = False
-            self.hide_response = True
-
-        if version < 2:
-            self.st = 0
-            self.at = 0
-
-        if version < 3:
-            self.st_offset = 0
-            self.at_offset = 0
-            self.child_st_base = 0
-
-        if version < 4:
-            self.style_arg = 'transform'
-
-        if version < 5:
-            self.replaced_request = False
-            self.replaced_response = True
-
-    DEFAULT_ARGUMENTS = {
-            "selected_activate" : { },
-            "selected_hover" : { },
-            "selected_idle" : { },
-            "selected_insensitive" : { },
-            "activate" : { },
-            "hover" : { },
-            "idle" : { },
-            "insensitive" : { },
-            "" : { },
-            }
-
-    # Compatibility with old versions of the class.
-    active = False
-    children = False
-    arguments = DEFAULT_ARGUMENTS
-
-    # Default before we set this.
-    child_size = (0, 0)
-
-    def __init__(self,
-                 child=None,
-                 function=None,
-
-                 style='transform',
-                 focus=None,
-                 default=False,
-
-                 **kwargs):
-
-        self.kwargs = kwargs
-        self.style_arg = style
-
-        super(Transform, self).__init__(style=style, focus=focus, default=default)
-
-        self.function = function
-
-        child = renpy.easy.displayable_or_none(child)
-        if child is not None:
-            self.add(child)
-
-        self.state = TransformState()
-
-        self.arguments = dict((k, {}) for k in self.DEFAULT_ARGUMENTS)
-
-        # Split up the keyword arguments.
-        for k, v in kwargs.iteritems():
-            if "_" in k:
-                prefix, prop = k.rsplit("_", 1)
-            else:
-                prefix = ""
-                prop = k
-
-            if prefix not in self.arguments:
-                raise Exception("Unknown transform property prefix: %r" % prefix)
-
-            if prop not in renpy.atl.PROPERTIES:
-                raise Exception("Unknown transform property: %r" % prop)
-
-            self.arguments[prefix][prop] = v
-
-
-        # Apply the keyword arguments.
-        for k, v in kwargs.iteritems():
-            setattr(self.state, k, v)
-
-        # This is the matrix transforming our coordinates into child coordinates.
-        self.forward = None
-
-        # Have we called the function at least once?
-        self.active = False
-
-        # Have we been requested to hide?
-        self.hide_request = False
-
-        # True if it's okay for us to hide.
-        self.hide_response = True
-
-        # Have we been requested to replaced?
-        self.replaced_request = False
-
-        # True if it's okay for us to replaced.
-        self.replaced_response = True
-
-        self.st = 0
-        self.at = 0
-        self.st_offset = 0
-        self.at_offset = 0
-
-        self.child_st_base = 0
-
-    def visit(self):
-        if self.child is None:
-            return [ ]
-        else:
-            return [ self.child ]
-
-    # The default function chooses entries from self.arguments that match
-    # the style prefix, and applies them to the state.
-    def default_function(self, state, st, at):
-
-        prefix = self.style.prefix.strip("_")
-        prefixes = [ ]
-
-        while prefix:
-            prefixes.insert(0, prefix)
-            _, _, prefix = prefix.partition("_")
-
-        prefixes.insert(0, "")
-
-        for i in prefixes:
-            for k, v in self.arguments[i].iteritems():
-                setattr(state, k, v)
-
-        return None
-
-    def set_transform_event(self, event):
-        if self.child is not None:
-            self.child.set_transform_event(event)
-
-        super(Transform, self).set_transform_event(event)
-
-
-    def take_state(self, t):
-        """
-        Takes the transformation state from object t into this object.
-        """
-
-        self.state.take_state(t.state)
-
-        # The arguments will be applied when the default function is
-        # called.
-
-
-    def take_execution_state(self, t):
-        """
-        Takes the execution state from object t into this object. This is
-        overridden by renpy.atl.TransformBase.
-        """
-
-        self.hide_request = t.hide_request
-        self.replaced_request = t.replaced_request
-
-        self.state.xpos = t.state.xpos
-        self.state.ypos = t.state.ypos
-        self.state.xanchor = t.state.xanchor
-        self.state.yanchor = t.state.yanchor
-
-        if isinstance(self.child, Transform) and isinstance(t.child, Transform):
-            self.child.take_execution_state(t.child)
-
-
-    def copy(self):
-        """
-        Makes a copy of this transform.
-        """
-
-        d = self()
-        d.kwargs = { }
-        d.take_state(self)
-        d.take_execution_state(self)
-        d.st = self.st
-        d.at = self.at
-
-        return d
-
-    def _change_transform_child(self, child):
-        rv = self.copy()
-
-        if self.child is not None:
-            rv.set_child(self.child._change_transform_child(child))
-
-        return rv
-
-    def _hide(self, st, at, kind):
-
-        if not self.child:
-            return None
-
-        if not (self.hide_request or self.replaced_request):
-            d = self.copy()
-        else:
-            d = self
-
-        d.st_offset = self.st_offset
-        d.at_offset = self.at_offset
-
-        if kind == "hide":
-            d.hide_request = True
-        else:
-            d.replaced_request = True
-
-        d.hide_response = True
-        d.replaced_response = True
-
-        if d.function is not None:
-            d.function(d, st + d.st_offset, at + d.at_offset)
-
-        new_child = d.child._hide(st, at, kind)
-
-        if new_child is not None:
-            d.child = new_child
-            d.hide_response = False
-            d.replaced_response = False
-
-        if (not d.hide_response) or (not d.replaced_response):
-            renpy.display.render.redraw(d, 0)
-            return d
-
-        return None
-
-    def set_child(self, child):
-
-        child = renpy.easy.displayable(child)
-
-        self.child = child
-        self.child_st_base = self.st
-
-        child.per_interact()
-
-        renpy.display.render.redraw(self, 0)
-
-    def update_state(self):
-        """
-        This updates the state to that at self.st, self.at.
-        """
-
-        # If we have to, call the function that updates this transform.
-        if self.function is not None:
-            fr = self.function(self, self.st, self.at)
-        else:
-            fr = self.default_function(self, self.st, self.at)
-
-        # Order a redraw, if necessary.
-        if fr is not None:
-            renpy.display.render.redraw(self, fr)
-
-        state = self.state
-
-        self.active = True
-
-        # Use non-None elements of the child placement as defaults.
-        child = self.child
-        if child is not None and renpy.config.transform_uses_child_position:
-
-            pos = child.get_placement()
-
-            if pos[0] is not None:
-                state.default_xpos = pos[0]
-            if pos[2] is not None:
-                state.default_xanchor = pos[2]
-            if pos[1] is not None:
-                state.default_ypos = pos[1]
-            if pos[3] is not None:
-                state.default_yanchor = pos[3]
-
-            state.subpixel |= pos[6]
-
-    # The render method is now defined in accelerator.pyx.
-
-    def event(self, ev, x, y, st):
-
-        if self.hide_request:
-            return None
-
-        children = self.children
-        offsets = self.offsets
-
-        if not offsets:
-            return None
-
-        for i in xrange(len(self.children)-1, -1, -1):
-
-            d = children[i]
-            xo, yo = offsets[i]
-
-            cx = x - xo
-            cy = y - yo
-
-            # Transform screen coordinates to child coordinates.
-            cx, cy = self.forward.transform(cx, cy)
-
-            rv = d.event(ev, cx, cy, st)
-            if rv is not None:
-                return rv
-
-        return None
-
-    def __call__(self, child=None, take_state=True):
-
-        if child is None:
-            child = self.child
-
-        # If we don't have a child for some reason, set it to null.
-        if child is None:
-            child = get_null()
-
-        rv = Transform(
-            child=child,
-            function=self.function,
-            style=self.style_arg,
-            **self.kwargs)
-
-        rv.take_state(self)
-
-        return rv
-
-    def get_placement(self):
-
-        if not self.active:
-            self.update_state()
-
-        if self.child is not None:
-            _cxpos, _cypos, _cxanchor, _cyanchor, cxoffset, cyoffset, _csubpixel = self.child.get_placement()
-        else:
-            cxoffset = 0
-            cyoffset = 0
-
-        cxoffset = cxoffset or 0
-        cyoffset = cyoffset or 0
-
-        rv = self.state.get_placement(cxoffset, cyoffset)
-
-        if self.state.transform_anchor:
-
-            xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = rv
-            if (xanchor is not None) and (yanchor is not None):
-
-                cw, ch = self.child_size
-                rw, rh = self.render_size
-
-                if isinstance(xanchor, float):
-                    xanchor *= cw
-                if isinstance(yanchor, float):
-                    yanchor *= ch
-
-                xanchor -= cw / 2.0
-                yanchor -= ch / 2.0
-
-                xanchor, yanchor = self.reverse.transform(xanchor, yanchor)
-
-                xanchor += rw / 2.0
-                yanchor += rh / 2.0
-
-                xanchor = renpy.display.core.absolute(xanchor)
-                yanchor = renpy.display.core.absolute(yanchor)
-
-                rv = (xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel)
-
-        return rv
-
-    def update(self):
-        """
-        This should be called when a transform property field is updated outside
-        of the callback method, to ensure that the change takes effect.
-        """
-
-        renpy.display.render.invalidate(self)
-
-    def parameterize(self, name, parameters):
-        if parameters:
-            raise Exception("Image '%s' can't take parameters '%s'. (Perhaps you got the name wrong?)" %
-                            (' '.join(name), ' '.join(parameters)))
-
-        # Note the call here.
-        return self()
-
-    def _show(self):
-        self.update_state()
-
-Transform.render = types.MethodType(renpy.display.accelerator.transform_render, None, Transform)
-
-class ATLTransform(renpy.atl.ATLTransformBase, Transform):
-
-    def __init__(self, atl, child=None, context={}, parameters=None, **properties):
-        renpy.atl.ATLTransformBase.__init__(self, atl, context, parameters)
-        Transform.__init__(self, child=child, function=self.execute, **properties)
-
-        self.raw_child = self.child
-
-    def _show(self):
-        super(ATLTransform, self)._show()
-        self.execute(self, self.st, self.at)
 
 
 class Motion(Container):
@@ -926,20 +108,7 @@ class Motion(Container):
 
         self.position = None
 
-
-    def get_placement(self):
-
-        if self.position is None:
-            return super(Motion, self).get_placement()
-        else:
-            return self.position + (self.style.xoffset, self.style.yoffset, self.style.subpixel)
-
-    def render(self, width, height, st, at):
-
-        if self.anim_timebase:
-            t = at
-        else:
-            t = st
+    def update_position(self, t, sizes):
 
         if renpy.game.less_updates:
             if self.delay:
@@ -974,11 +143,8 @@ class Motion(Container):
             if t > 1.0:
                 t = 2.0 - t
 
-        child = render(self.child, width, height, st, at)
-        cw, ch = child.get_size()
-
         if self.add_sizes:
-            res = self.function(t, (width, height, cw, ch))
+            res = self.function(t, sizes)
         else:
             res = self.function(t)
 
@@ -988,6 +154,30 @@ class Motion(Container):
             self.position = res + (self.style.xanchor, self.style.yanchor)
         else:
             self.position = res
+
+    def get_placement(self):
+
+        if self.position is None:
+            if self.add_sizes:
+                # Almost certainly gives the wrong placement, but there's nothing
+                # we can do.
+                return super(Motion, self).get_placement()
+            else:
+                self.update_position(0.0, None)
+
+        return self.position + (self.style.xoffset, self.style.yoffset, self.style.subpixel)
+
+    def render(self, width, height, st, at):
+
+        if self.anim_timebase:
+            t = at
+        else:
+            t = st
+
+        child = render(self.child, width, height, st, at)
+        cw, ch = child.get_size()
+
+        self.update_position(t, (width, height, cw, ch))
 
         rv = renpy.display.render.Render(cw, ch)
         rv.blit(child, (0, 0))
@@ -1017,19 +207,8 @@ class Interpolate(object):
 
     def __call__(self, t, sizes=(None, None, None, None)):
 
-        def interp(a, b, c):
-
-            if c is not None:
-                if type(a) is float:
-                    a = a * c
-                if type(b) is float:
-                    b = b * c
-
-            rv = a + t * (b - a)
-
-            return renpy.display.core.absolute(rv)
-
-        return [ interp(a, b, c) for a, b, c in zip(self.start, self.end, sizes) ]
+        types = (renpy.atl.position,) * len(self.start)
+        return renpy.atl.interpolate(t, tuple(self.start), tuple(self.end), types)
 
 
 def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
@@ -1078,8 +257,8 @@ def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   style=style,
                   anim_timebase=anim_timebase,
                   time_warp=time_warp,
-                  add_sizes=True,
                   **properties)
+
 
 def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
          anim_timebase=False, style='motion', time_warp=None, **properties):
@@ -1122,7 +301,6 @@ def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   anim_timebase=anim_timebase,
                   style=style,
                   time_warp=time_warp,
-                  add_sizes=True,
                   **properties)
 
 
@@ -1136,7 +314,9 @@ class Revolver(object):
         self.pos = pos
         self.child = child
 
-    def __call__(self, t, (w, h, cw, ch)):
+    def __call__(self, t, rect):
+
+        (w, h, cw, ch) = rect
 
         # Converts a float to an integer in the given range, passes
         # integers through unchanged.
@@ -1198,7 +378,6 @@ def Revolve(start, end, time, child, around=(0.5, 0.5), cor=(0.5, 0.5), pos=None
                   **properties)
 
 
-
 def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
     """
     This creates a render that zooms its child.
@@ -1214,7 +393,6 @@ def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
     if zw == 0 or zh == 0 or w == 0 or h == 0:
         return rv
 
-
     rv.forward = renpy.display.render.Matrix2D(w / zw, 0, 0, h / zh)
     rv.reverse = renpy.display.render.Matrix2D(zw / w, 0, 0, zh / h)
 
@@ -1226,6 +404,7 @@ def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
 
 
 class ZoomCommon(renpy.display.core.Displayable):
+
     def __init__(self,
                  time, child,
                  end_identity=False,
@@ -1274,7 +453,6 @@ class ZoomCommon(renpy.display.core.Displayable):
         self.bilinear = bilinear
         self.opaque = opaque
         self.anim_timebase = anim_timebase
-
 
     def visit(self):
         return [ self.child, self.after_child ]
@@ -1369,7 +547,6 @@ class FactorZoom(ZoomCommon):
         return 0, 0, width, height, factor * width, factor * height
 
 
-
 class SizeZoom(ZoomCommon):
 
     def __init__(self, start, end, time, child, **properties):
@@ -1442,10 +619,8 @@ class RotoZoom(renpy.display.core.Displayable):
 
         self.opaque = opaque
 
-
     def visit(self):
         return [ self.child ]
-
 
     def render(self, width, height, st, at):
 
@@ -1496,7 +671,6 @@ class RotoZoom(renpy.display.core.Displayable):
         if self.zoom_time_warp:
             zoom_time = self.zoom_time_warp(zoom_time)
 
-
         angle = self.rot_start + (1.0 * self.rot_end - self.rot_start) * rot_time
         zoom = self.zoom_start + (1.0 * self.zoom_end - self.zoom_start) * zoom_time
         # angle = -angle * math.pi / 180
@@ -1528,6 +702,6 @@ renpy.display.layout.Motion = Motion
 renpy.display.layout.Interpolate = Interpolate
 
 # Leave these functions around - they might have been pickled somewhere.
-renpy.display.layout.Revolve = Revolve # function
-renpy.display.layout.Move = Move # function
-renpy.display.layout.Pan = Pan # function
+renpy.display.layout.Revolve = Revolve  # function
+renpy.display.layout.Move = Move  # function
+renpy.display.layout.Pan = Pan  # function

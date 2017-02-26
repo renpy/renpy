@@ -22,18 +22,22 @@
     
         The default idle border used by make_button.
     
+    .. attribute:: unlocked_advance
+    
+        If true, the gallery will only advance through unlocked images.
+    
     .. attribute:: navigation
     
         If true, the gallery will display navigation and slideshow
         buttons on top of the images.
     
+        To customize the look of the navigation, you may override the
+        gallery_navigation screen. The default screen is defined in
+        common/00gallery.rpy
+    
     .. attribute:: span_buttons
     
         If true, the gallery will advance between buttons.
-    
-    .. attribute:: locked
-    
-        If true, the gallery will advance through locked images.
     
     .. attribute:: slideshow_delay
     
@@ -91,7 +95,7 @@
         Adds a new image to the current button, where an image consists
         of one or more displayables.
     
-    .. method:: get_fraction(name, format='{seen}/{total}')
+    .. method:: get_fraction(name, format=u'{seen}/{total}')
         
         Returns a text string giving the number of unlocked images and total number of images in the button
         named `name`.

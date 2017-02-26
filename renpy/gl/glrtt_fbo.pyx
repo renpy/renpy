@@ -1,6 +1,6 @@
 #@PydevCodeAnalysisIgnore
 #cython: profile=False
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -30,6 +30,9 @@ import renpy
 # The framebuffer object we use.
 cdef GLuint fbo
 
+# The root framebuffer.
+cdef GLint root_fbo
+
 class FboRtt(Rtt):
     """
     This class uses texture copying to implement Render-to-texture.
@@ -42,14 +45,17 @@ class FboRtt(Rtt):
 
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &i)
         self.size_limit = i
-
         renpy.display.log.write("FBO Maximum Texture Size: %d", i)
+
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &root_fbo);
+        renpy.display.log.write("Root FBO is: %d", root_fbo)
 
     def deinit(self):
         """
         Called before changing the GL context.
         """
 
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
         glDeleteFramebuffersEXT(1, &fbo)
 
     def begin(self):
@@ -81,7 +87,7 @@ class FboRtt(Rtt):
 
         draw_func(x, y, w, h)
 
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0)
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
 
 
     def get_size_limit(self, dimension):

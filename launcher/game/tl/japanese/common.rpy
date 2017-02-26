@@ -1,312 +1,335 @@
 ﻿
 translate japanese strings:
 
-    # renpy/common/00action_file.rpy:124
+    # 00action_file.rpy:26
+    old "{#weekday}Monday"
+    new "{#weekday}月曜日"
+
+    # 00action_file.rpy:26
+    old "{#weekday}Tuesday"
+    new "{#weekday}火曜日"
+
+    # 00action_file.rpy:26
+    old "{#weekday}Wednesday"
+    new "{#weekday}水曜日"
+
+    # 00action_file.rpy:26
+    old "{#weekday}Thursday"
+    new "{#weekday}木曜日"
+
+    # 00action_file.rpy:26
+    old "{#weekday}Friday"
+    new "{#weekday}金曜日"
+
+    # 00action_file.rpy:26
+    old "{#weekday}Saturday"
+    new "{#weekday}土曜日"
+
+    # 00action_file.rpy:26
+    old "{#weekday}Sunday"
+    new "{#weekday}日曜日"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Mon"
+    new "{#weekday_short}月"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Tue"
+    new "{#weekday_short}火"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Wed"
+    new "{#weekday_short}水"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Thu"
+    new "{#weekday_short}木"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Fri"
+    new "{#weekday_short}金"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Sat"
+    new "{#weekday_short}土"
+
+    # 00action_file.rpy:37
+    old "{#weekday_short}Sun"
+    new "{#weekday_short}日"
+
+    # 00action_file.rpy:47
+    old "{#month}January"
+    new "{#month}１月"
+
+    # 00action_file.rpy:47
+    old "{#month}February"
+    new "{#month}２月"
+
+    # 00action_file.rpy:47
+    old "{#month}March"
+    new "{#month}３月"
+
+    # 00action_file.rpy:47
+    old "{#month}April"
+    new "{#month}４月"
+
+    # 00action_file.rpy:47
+    old "{#month}May"
+    new "{#month}５月"
+
+    # 00action_file.rpy:47
+    old "{#month}June"
+    new "{#month}６月"
+
+    # 00action_file.rpy:47
+    old "{#month}July"
+    new "{#month}７月"
+
+    # 00action_file.rpy:47
+    old "{#month}August"
+    new "{#month}８月"
+
+    # 00action_file.rpy:47
+    old "{#month}September"
+    new "{#month}９月"
+
+    # 00action_file.rpy:47
+    old "{#month}October"
+    new "{#month}１０月"
+
+    # 00action_file.rpy:47
+    old "{#month}November"
+    new "{#month}１１月"
+
+    # 00action_file.rpy:47
+    old "{#month}December"
+    new "{#month}１２月"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Jan"
+    new "{#month_short}１月"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Feb"
+    new "{#month_short}２月"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Mar"
+    new "{#month_short}３月"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Apr"
+    new "{#month_short}４月"
+
+    # 00action_file.rpy:63
+    old "{#month_short}May"
+    new "{#month_short}５月"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Jun"
+    new "{#month_short}６月"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Jul"
+    new "{#month_short}７月"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Aug"
+    new "{#month_short}８月"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Sep"
+    new "{#month_short}９月"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Oct"
+    new "{#month_short}１０月"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Nov"
+    new "{#month_short}１１月"
+
+    # 00action_file.rpy:63
+    old "{#month_short}Dec"
+    new "{#month_short}１２月"
+
+    # 00action_file.rpy:235
     old "%b %d, %H:%M"
     new "%m月%d日, %H:%M"
 
-    # renpy/common/00action_file.rpy:587
+    # 00action_file.rpy:820
     old "Quick save complete."
     new "クイックセーブ完了。"
 
+    # 00gui.rpy:227
+    old "Are you sure?"
+    new "続けますか？"
 
-translate japanese strings:
+    # 00gui.rpy:228
+    old "Are you sure you want to delete this save?"
+    new "このセーブデータを消去しますか？"
 
-    # renpy/common/00gallery.rpy:521
-    old "Image [index] of [count] locked."
-    new "画像 [index] / [count] はロックされています。"
+    # 00gui.rpy:229
+    old "Are you sure you want to overwrite your save?"
+    new "このセーブデータに上書きしますか？"
 
-    # renpy/common/00gallery.rpy:539
-    old "prev"
-    new "前へ"
+    # 00gui.rpy:230
+    old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
+    new "ロードすると、セーブされていない進行状況は失われます。\nロードしますか？"
 
-    # renpy/common/00gallery.rpy:540
-    old "next"
-    new "次へ"
+    # 00gui.rpy:231
+    old "Are you sure you want to quit?"
+    new "終了しますか？"
 
-    # renpy/common/00gallery.rpy:541
-    old "slideshow"
-    new "スライドショー"
+    # 00gui.rpy:232
+    old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
+    new "メインメニューに戻りますか？\nセーブされていない進行状況は失われます。"
 
-    # renpy/common/00gallery.rpy:542
-    old "return"
-    new "戻る"
+    # 00gui.rpy:233
+    old "Are you sure you want to end the replay?"
+    new "リプレイを終了しますか？"
 
+    # 00gui.rpy:234
+    old "Are you sure you want to begin skipping?"
+    new "スキップを開始しますか？"
 
-translate japanese strings:
+    # 00gui.rpy:235
+    old "Are you sure you want to skip to the next choice?"
+    new "次の選択肢までスキップしますか？"
 
-    # renpy/common/00gltest.rpy:50
-    old "Graphics Acceleration"
-    new "グラフィック・アクセラレーション"
+    # 00gui.rpy:236
+    old "Are you sure you want to skip unseen dialogue to the next choice?"
+    new "次の選択肢まで、未読テキストをスキップしますか？"
 
-    # renpy/common/00gltest.rpy:54
-    old "Automatically Choose"
-    new "自動選択"
-
-    # renpy/common/00gltest.rpy:59
-    old "Force Angle/DirectX Renderer"
-    new "Angle/DirectX による描画を強制"
-
-    # renpy/common/00gltest.rpy:63
-    old "Force OpenGL Renderer"
-    new "OpenGL による描画を強制"
-
-    # renpy/common/00gltest.rpy:67
-    old "Force Software Renderer"
-    new "ソフトウェアによる描画を強制"
-
-    # renpy/common/00gltest.rpy:73
-    old "Changes will take effect the next time this program is run."
-    new "変更は、次にプログラムを起動した時に反映されます。"
-
-    # renpy/common/00gltest.rpy:77
-    old "Quit"
-    new "終了"
-
-    # renpy/common/00gltest.rpy:82
-    old "Return"
-    new "戻る"
-
-    # renpy/common/00gltest.rpy:112
-    old "Performance Warning"
-    new "パフォーマンスに関する注意"
-
-    # renpy/common/00gltest.rpy:117
-    old "This computer is using software rendering."
-    new "このコンピュータはソフトウェアレンダリングを使用しています。"
-
-    # renpy/common/00gltest.rpy:119
-    old "This computer is not using shaders."
-    new "このコンピューターはシェーダーを使用していません。"
-
-    # renpy/common/00gltest.rpy:121
-    old "This computer is displaying graphics slowly."
-    new "このコンピューターは描画速度が遅いです。"
-
-    # renpy/common/00gltest.rpy:123
-    old "This computer has a problem displaying graphics: [problem]."
-    new "このコンピューターはグラフィックスの表示に問題があります: [problem]。"
-
-    # renpy/common/00gltest.rpy:128
-    old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
-    new "グラフィックドライバーは古いか、あるいは正常に動作していません。これはグラフィックスの表示が遅くなったり、正常に表示されない原因となります。DirectXをアップデートするとこの問題を解決できます。"
-
-    # renpy/common/00gltest.rpy:130
-    old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
-    new "グラフィックドライバーは古いか、あるいは正常に動作していません。これはグラフィックスの表示が遅くなったり、正常に表示されない原因となります。"
-
-    # renpy/common/00gltest.rpy:135
-    old "Update DirectX"
-    new "DirectXのアップデート"
-
-    # renpy/common/00gltest.rpy:141
-    old "Continue, Show this warning again"
-    new "今後も、この注意を表示する"
-
-    # renpy/common/00gltest.rpy:145
-    old "Continue, Don't show warning again"
-    new "今後は、この注意を表示しない"
-
-    # renpy/common/00gltest.rpy:171
-    old "Updating DirectX."
-    new "DirectXのアップデート中"
-
-    # renpy/common/00gltest.rpy:175
-    old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
-    new "DirectXウェブセットアップが開始されました。タスクバーに最小化された状態で開始したので、画面に従ってDirectXをインストールして下さい。"
-
-    # renpy/common/00gltest.rpy:179
-    old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}メモ:{/b} MicrosoftのDirectXウェブセットアッププログラムは、デフォルトでBingツールバーをインストールします。このツールバーが不要な場合は、対応したチェックボックスを解除して下さい。"
-
-    # renpy/common/00gltest.rpy:183
-    old "When setup finishes, please click below to restart this program."
-    new "セットアップが完了したら、以下をクリックしてプログラムを再起動して下さい。"
-
-    # renpy/common/00gltest.rpy:185
-    old "Restart"
-    new "再起動"
-
-
-translate japanese strings:
-
-    # renpy/common/00keymap.rpy:168
+    # 00keymap.rpy:250
     old "Saved screenshot as %s."
     new "スクリーンショットを %s に保存しました。"
 
+    # 00library.rpy:142
+    old "Self-voicing disabled."
+    new "セルフボイシング無効化。"
 
-translate japanese strings:
+    # 00library.rpy:143
+    old "Clipboard voicing enabled. "
+    new "クリップボードボイシング有効化。"
 
-    # renpy/common/00layout.rpy:421
-    old "Are you sure?"
-    new "本当にいいですか？"
+    # 00library.rpy:144
+    old "Self-voicing enabled. "
+    new "セルフボイシング有効化。"
 
-    # renpy/common/00layout.rpy:422
-    old "Are you sure you want to delete this save?"
-    new "この保存データを本当に削除しますか？"
-
-    # renpy/common/00layout.rpy:423
-    old "Are you sure you want to overwrite your save?"
-    new "本当に保存データを上書きしますか？"
-
-    # renpy/common/00layout.rpy:424
-    old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "読み込みによって未保存のゲームが失われます。\n本当に読み込みますか？"
-
-    # renpy/common/00layout.rpy:425
-    old "Are you sure you want to quit?"
-    new "本当にゲームを終了しますか？"
-
-    # renpy/common/00layout.rpy:426
-    old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "本当にメインメニューに戻りますか？\nこれによって未保存のゲームが失われます。"
-
-    # renpy/common/00layout.rpy:427
-    old "Are you sure you want to begin skipping?"
-    new "本当にスキップモードを開始しますか？"
-
-    # renpy/common/00layout.rpy:428
-    old "Are you sure you want to skip to the next choice?"
-    new "本当に次の選択肢までスキップしますか？"
-
-    # renpy/common/00layout.rpy:429
-    old "Are you sure you want to skip to unseen dialogue or the next choice?"
-    new "本当に未読の会話、もしくは次の選択肢までスキップしますか？"
-
-
-translate japanese strings:
-
-    # renpy/common/00library.rpy:77
+    # 00library.rpy:179
     old "Skip Mode"
     new "スキップモード"
 
-    # renpy/common/00library.rpy:80
-    old "Fast Skip Mode"
-    new "高速スキップモード"
+    # 00library.rpy:262
+    old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
+    new "本プログラムは、MIT License や GNU Lesser General Public License など、様々なライセンスのフリーウェアを含んでいます。 フルソースコードへのリンクを含む、完全なソフトウェアのリストは、{a=https://www.renpy.org/l/license}ここ{/a}にあります。"
 
+    # 00preferences.rpy:422
+    old "Clipboard voicing enabled. Press 'shift+C' to disable."
+    new "クリップボードボイシングを有効化しました。 'shift+C'で無効化します。"
 
-translate japanese strings:
+    # 00preferences.rpy:424
+    old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
+    new "セルフボイシングは次のように話します。 \"[renpy.display.tts.last]\". 'alt+shift+V' で無効化します。"
 
-    # renpy/common/00updater.rpy:1258
+    # 00preferences.rpy:426
+    old "Self-voicing enabled. Press 'v' to disable."
+    new "セルフボイシングを有効化しました。 'v' で無効化します。"
+
+    # 00iap.rpy:217
+    old "Contacting App Store\nPlease Wait..."
+    new "App Store にコンタクトしています。\nしばらくお待ちください…"
+
+    # 00updater.rpy:367
+    old "The Ren'Py Updater is not supported on mobile devices."
+    new "モバイルデバイスでのアップデートはサポートしていません。"
+
+    # 00updater.rpy:486
+    old "An error is being simulated."
+    new "エラーがシミュレートされました。"
+
+    # 00updater.rpy:662
+    old "Either this project does not support updating, or the update status file was deleted."
+    new "このプロジェクトはアップデートをサポートしていないか、アップデート用のファイルが削除されています。"
+
+    # 00updater.rpy:676
+    old "This account does not have permission to perform an update."
+    new "このアカウントにはアップデート処理の権限がありません。"
+
+    # 00updater.rpy:679
+    old "This account does not have permission to write the update log."
+    new "このアカウントにはアップデートログを記録する権限がありません。"
+
+    # 00updater.rpy:704
+    old "Could not verify update signature."
+    new "アップデートシグネチャーを認証出来ません。"
+
+    # 00updater.rpy:975
+    old "The update file was not downloaded."
+    new "アップデートファイルをダウンロードできませんでした。"
+
+    # 00updater.rpy:993
+    old "The update file does not have the correct digest - it may have been corrupted."
+    new "アップデートファイルは正しい digest を持っていません - 破損の可能性がありまます。"
+
+    # 00updater.rpy:1049
+    old "While unpacking {}, unknown type {}."
+    new "{} を解凍中に、未知のタイプ {} を検出しました。"
+
+    # 00updater.rpy:1393
     old "Updater"
     new "アップデーター"
 
-    # renpy/common/00updater.rpy:1267
+    # 00updater.rpy:1404
     old "This program is up to date."
-    new "このプログラムは最新版です。"
+    new "このプログラムは最新の状態です。"
 
-    # renpy/common/00updater.rpy:1269
+    # 00updater.rpy:1406
     old "[u.version] is available. Do you want to install it?"
     new "[u.version] が利用可能です。インストールしますか？"
 
-    # renpy/common/00updater.rpy:1271
+    # 00updater.rpy:1408
     old "Preparing to download the updates."
-    new "アップデートをダウンロードする準備をしています。"
+    new "ダウンロードする準備をしています。"
 
-    # renpy/common/00updater.rpy:1273
+    # 00updater.rpy:1410
     old "Downloading the updates."
     new "アップデートをダウンロードしています。"
 
-    # renpy/common/00updater.rpy:1275
+    # 00updater.rpy:1412
     old "Unpacking the updates."
     new "アップデートを展開しています。"
 
-    # renpy/common/00updater.rpy:1279
+    # 00updater.rpy:1416
     old "The updates have been installed. The program will restart."
-    new "アップデートがインストールされました。プログラムを再起動します。"
+    new "アップデートをインストールしました。プログラムを再起動します。"
 
-    # renpy/common/00updater.rpy:1281
+    # 00updater.rpy:1418
     old "The updates have been installed."
-    new "アップデートがインストールされました。"
+    new "アップデートが完了しました。"
 
-    # renpy/common/00updater.rpy:1283
+    # 00updater.rpy:1420
     old "The updates were cancelled."
-    new "アップデートがキャンセルされました。"
+    new "アップデートをキャンセルしました。"
 
+    # 00gallery.rpy:563
+    old "Image [index] of [count] locked."
+    new "画像 [index] / [count] はロックされています。"
 
-translate japanese strings:
-
-    # renpy/common/_compat/gamemenu.rpym:180
-    old "Empty Slot."
-    new "空のスロット"
-
-    # renpy/common/_compat/gamemenu.rpym:337
-    old "Previous"
+    # 00gallery.rpy:583
+    old "prev"
     new "前へ"
 
-    # renpy/common/_compat/gamemenu.rpym:344
-    old "Next"
+    # 00gallery.rpy:584
+    old "next"
     new "次へ"
 
+    # 00gallery.rpy:585
+    old "slideshow"
+    new "スライドショー"
 
-translate japanese strings:
+    # 00gallery.rpy:586
+    old "return"
+    new "戻る"
 
-    # renpy/common/_compat/preferences.rpym:411
-    old "Joystick Mapping"
-    new "ジョイスティックのマッピング"
-
-
-translate japanese strings:
-
-    # renpy/common/_errorhandling.rpym:408
-    old "An exception has occurred."
-    new "例外が発生しました。"
-
-    # renpy/common/_errorhandling.rpym:434
-    old "Rollback"
-    new "ロールバック"
-
-    # renpy/common/_errorhandling.rpym:436
-    old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "一つ前へのロールバックを試み、セーブまたは他の選択肢を選ぶことを許可します。"
-
-    # renpy/common/_errorhandling.rpym:439
-    old "Ignore"
-    new "無視"
-
-    # renpy/common/_errorhandling.rpym:441
-    old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "例外を無視し、ゲームの継続を許可します。この場合、付加的なエラーが発生する原因となることがあります。"
-
-    # renpy/common/_errorhandling.rpym:444
-    old "Reload"
-    new "再読み込み"
-
-    # renpy/common/_errorhandling.rpym:446
-    old "Reloads the game from disk, saving and restoring game state if possible."
-    new "ディスクからゲームを再読み込みし、可能であればゲームの保存と復元をします。"
-
-    # renpy/common/_errorhandling.rpym:448
-    old "Open Traceback"
-    new "トレースバックを開く"
-
-    # renpy/common/_errorhandling.rpym:450
-    old "Opens the traceback.txt file in a text editor."
-    new "テキストエディターで traceback.txt を開きます。"
-
-    # renpy/common/_errorhandling.rpym:456
-    old "Quits the game."
-    new "ゲームを終了します。"
-
-    # renpy/common/_errorhandling.rpym:483
-    old "Parsing the script failed."
-    new "スクリプトの変換に失敗しました。"
-
-    # renpy/common/_errorhandling.rpym:510
-    old "Open Parse Errors"
-    new "変換エラーを開く"
-
-    # renpy/common/_errorhandling.rpym:512
-    old "Opens the errors.txt file in a text editor."
-    new "テキストエディターで errors.txt を開きます。"
-
-
-translate japanese strings:
-
-    # renpy/common/_layout/classic_load_save.rpym:152
-    old "a"
-    new "a"
-
-    # renpy/common/_layout/classic_load_save.rpym:161
-    old "q"
-    new "q"

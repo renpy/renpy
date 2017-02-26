@@ -1,16 +1,7 @@
 ﻿# This file contains the script for the Ren'Py demo game. Execution starts at
 # the start label.
 
-# Here we define the backgrounds that are used.
-image bg washington = "washington.jpg"
-image bg whitehouse = "whitehouse.jpg"
-
-# And this is the character art we use.
-image eileen happy = "eileen_happy.png"
-image eileen vhappy = "eileen_vhappy.png"
-image eileen concerned = "eileen_concerned.png"
-
-# Now, we declare the characters.
+# Declare the characters.
 define e = Character(_('Eileen'), color="#c8ffc8")
 
 init python:
@@ -19,7 +10,7 @@ init python:
         ("tutorial_playing", _("User Experience"), "6.10.0"),
         ("tutorial_dialogue", _("Writing Dialogue"), "6.10.0"),
         ("tutorial_images", _("Adding Images"), "6.10.0"),
-        ("tutorial_transitions", _("Transitions"), "6.10.0"),
+        ("tutorial_transitions", _("Transitions"), "6.99.8"),
         ("tutorial_music", _("Music and Sound Effects"), "6.10.0"),
         ("tutorial_menus", _("In-Game Menus and Python"), "6.10.0"),
         ("tutorial_positions", _("Screen Positions"), "6.10.0"),
@@ -91,27 +82,29 @@ label start:
     $ tutorials_adjustment = ui.adjustment()
     $ tutorials_first_time = True
 
-    while True:
-        show eileen happy at left
-        with move
+label tutorials:
 
-        if tutorials_first_time:
-            $ e(_("What would you like to see?"), interact=False)
-        else:
-            $ e(_("Is there anything else you'd like to see?"), interact=False)
+    show eileen happy at left
+    with move
 
-        $ tutorials_first_time = False
+    if tutorials_first_time:
+        $ e(_("What would you like to see?"), interact=False)
+    else:
+        $ e(_("Is there anything else you'd like to see?"), interact=False)
 
-        call screen tutorials(adj=tutorials_adjustment)
+    $ tutorials_first_time = False
 
-        show eileen happy at center
-        with move
+    call screen tutorials(adj=tutorials_adjustment)
 
-        if _return is False:
-            jump end
+    show eileen happy at center
+    with move
 
-        call expression _return
+    if _return is False:
+        jump end
 
+    call expression _return from _call_expression
+
+    jump tutorials
 
 label end:
 

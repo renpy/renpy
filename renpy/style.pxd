@@ -53,6 +53,32 @@ cdef inline void assign(int index, PyObject **cache, int *cache_priorities, int 
     cache[index] = value
     cache_priorities[index] = priority
 
+cdef inline void assign_prefixed(int index, PyObject **cache, int *cache_priorities, int priority, d, prefix):
+    """
+    Like assign, but if the value can be duplicated, duplicates it and assigns
+    the given prefix.
+    """
+
+    if priority < cache_priorities[index]:
+        return
+
+    if (d is not None) and d._duplicatable:
+
+        args = d._args.copy(prefix=prefix)
+        dd = d._duplicate(args)
+        dd._unique()
+    else:
+
+        dd = d
+
+    cdef PyObject *value = <PyObject *> dd
+
+    Py_XDECREF(cache[index])
+    Py_XINCREF(value)
+
+    cache[index] = value
+    cache_priorities[index] = priority
+
 cdef void register_property_function(name, property_function function)
 
 cdef class StyleCore:
@@ -80,6 +106,9 @@ cdef class StyleCore:
     # True if this style has been built, False otherwise.
     cdef bint built
 
+    # True if this style is in the process of building.
+    cdef bint building
+
     # References to the down and left parents, or None if we do nothave one.
     #
     # The down parent uses inheritance, while the left parent uses less style
@@ -99,7 +128,7 @@ cdef class StyleCore:
     cdef PyObject **cache
 
     # The offset in the cache corresponding to self.prefix.
-    cdef int offset
+    cdef int prefix_offset
 
     #################################################################### Methods
 

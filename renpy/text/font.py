@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2017 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import pygame
+import pygame_sdl2 as pygame
 
 try:
     import xml.etree.ElementTree as etree
@@ -30,10 +30,11 @@ import renpy.display
 import renpy.text.ftfont as ftfont
 import renpy.text.textsupport as textsupport
 
-ftfont.init() #@UndefinedVariable
+ftfont.init()  # @UndefinedVariable
 
 WHITE = (255, 255, 255, 255)
 BLACK = (0, 0, 0, 255)
+
 
 class ImageFont(object):
 
@@ -52,7 +53,6 @@ class ImageFont(object):
     # offsets - The x and y offsets of each character.
     # chars - A map from a character to the surface containing that character.
 
-
     def glyphs(self, s):
 
         rv = [ ]
@@ -61,7 +61,7 @@ class ImageFont(object):
             return rv
 
         for c in s:
-            g = textsupport.Glyph() #@UndefinedVariable
+            g = textsupport.Glyph()  # @UndefinedVariable
 
             g.character = ord(c)
             g.ascent = self.height
@@ -129,18 +129,18 @@ class SFont(ImageFont):
 
     def load(self):
 
-        self.chars = { } # W0201
-        self.width = { } # W0201
-        self.advance = { } # W0201
-        self.offsets = { } # W0201
+        self.chars = { }  # W0201
+        self.width = { }  # W0201
+        self.advance = { }  # W0201
+        self.offsets = { }  # W0201
 
         # Load in the image.
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
 
         sw, sh = surf.get_size()
         height = sh
-        self.height = height # W0201
-        self.baseline = height # W0201
+        self.height = height  # W0201
+        self.baseline = height  # W0201
 
         # Create space characters.
         self.chars[u' '] = renpy.display.pgrender.surface((self.spacewidth, height), True)
@@ -214,10 +214,10 @@ class MudgeFont(ImageFont):
 
     def load(self):
 
-        self.chars = { } # W0201
-        self.width = { } # W0201
-        self.advance = { } # W0201
-        self.offsets = { } # W0201
+        self.chars = { }  # W0201
+        self.width = { }  # W0201
+        self.advance = { }  # W0201
+        self.offsets = { }  # W0201
 
         # Load in the image.
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
@@ -250,8 +250,8 @@ class MudgeFont(ImageFont):
 
             height = max(height, h)
 
-        self.height = height # W0201
-        self.baseline = height # W0201
+        self.height = height  # W0201
+        self.baseline = height  # W0201
 
         # Create space characters.
         if u' ' not in self.chars:
@@ -270,7 +270,6 @@ class MudgeFont(ImageFont):
         self.width[u'\u200b'] = 0
         self.advance[u'\u200b'] = 0
         self.offsets[u'\u200b'] = (0, 0)
-
 
 
 def parse_bmfont_line(l):
@@ -298,8 +297,9 @@ def parse_bmfont_line(l):
     if w:
         line.append(w)
 
-    map = dict(i.split("=", 1) for i in line[1:]) #@ReservedAssignment
+    map = dict(i.split("=", 1) for i in line[1:])  # @ReservedAssignment
     return line[0], map
+
 
 class BMFont(ImageFont):
 
@@ -310,12 +310,12 @@ class BMFont(ImageFont):
 
     def load(self):
 
-        self.chars = { } # W0201
-        self.width = { } # W0201
-        self.advance = { } # W0201
-        self.offsets = { } # W0201
-        self.kerns = { } # W0201
-        self.default_kern = 0 # W0201
+        self.chars = { }  # W0201
+        self.width = { }  # W0201
+        self.advance = { }  # W0201
+        self.offsets = { }  # W0201
+        self.kerns = { }  # W0201
+        self.default_kern = 0  # W0201
 
         pages = { }
 
@@ -325,8 +325,8 @@ class BMFont(ImageFont):
             kind, args = parse_bmfont_line(l)
 
             if kind == "common":
-                self.height = int(args["lineHeight"]) # W0201
-                self.baseline = int(args["base"]) # W0201
+                self.height = int(args["lineHeight"])  # W0201
+                self.baseline = int(args["base"])  # W0201
             elif kind == "page":
                 pages[int(args["id"])] = renpy.display.im.Image(args["file"]).load(unscaled=True)
             elif kind == "char":
@@ -356,17 +356,43 @@ class BMFont(ImageFont):
             self.advance[u'\u00a0'] = self.advance[u' ']
             self.offsets[u'\u00a0'] = self.offsets[u' ']
 
-
         self.chars[u'\u200b'] = renpy.display.pgrender.surface((0, self.height), True)
         self.width[u'\u200b'] = 0
         self.advance[u'\u200b'] = 0
         self.offsets[u'\u200b'] = (0, 0)
 
 
+class ScaledImageFont(ImageFont):
+    """
+    Represents an imagefont scaled by a given factor.
+    """
+
+    def __init__(self, parent, factor):
+
+        def scale(n):
+            return int(round(n * factor))
+
+        self.height = scale(parent.height)
+        self.baseline = scale(parent.baseline)
+        self.default_kern = scale(parent.default_kern)
+
+        self.width = { k : scale(v) for k, v in parent.width.iteritems() }
+        self.advance = { k : scale(v) for k, v in parent.advance.iteritems() }
+        self.offsets = { k : (scale(v[0]), scale(v[1])) for k, v in parent.offsets.iteritems() }
+        self.kerns = { k : scale(v) for k, v in parent.kerns.iteritems() }
+
+        self.chars = { }
+
+        for k, v in parent.chars.iteritems():
+            w, h = v.get_size()
+            nw = scale(w)
+            nh = scale(h)
+            self.chars[k] = renpy.display.scale.smoothscale(v, (nw, nh))
+
+
 def register_sfont(name=None, size=None, bold=False, italics=False, underline=False,
                    filename=None, spacewidth=10, default_kern=0, kerns={},
                    charset=u"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"):
-
     """
     :doc: image_fonts
 
@@ -419,9 +445,9 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
     sf = SFont(filename, spacewidth, default_kern, kerns, charset)
     image_fonts[(name, size, bold, italics)] = sf
 
-def register_mudgefont(name=None, size=None, bold=False, italics=False, underline=False,
-                   filename=None, xml=None, spacewidth=10, default_kern=0, kerns={}):
 
+def register_mudgefont(name=None, size=None, bold=False, italics=False, underline=False,
+                       filename=None, xml=None, spacewidth=10, default_kern=0, kerns={}):
     """
     :doc: image_fonts
 
@@ -451,7 +477,7 @@ def register_mudgefont(name=None, size=None, bold=False, italics=False, underlin
 
     `filename`
         The file containing the MudgeFont image, a string. The image is usually
-        a TGA file, but could be a PNG or other format that Ren'PY supports.
+        a TGA file, but could be a PNG or other format that Ren'Py supports.
 
     `xml`
         The xml file containing information generated by the MudgeFont tool.
@@ -473,9 +499,9 @@ def register_mudgefont(name=None, size=None, bold=False, italics=False, underlin
     mf = MudgeFont(filename, xml, spacewidth, default_kern, kerns)
     image_fonts[(name, size, bold, italics)] = mf
 
+
 def register_bmfont(name=None, size=None, bold=False, italics=False, underline=False,
                     filename=None):
-
     """
     :doc: image_fonts
 
@@ -518,6 +544,7 @@ def register_bmfont(name=None, size=None, bold=False, italics=False, underline=F
 # A map from face name to ftfont.FTFace
 face_cache = { }
 
+
 def load_face(fn):
 
     if fn in face_cache:
@@ -538,30 +565,31 @@ def load_face(fn):
         font_file = renpy.loader.load(fn)
     except IOError:
 
-        # Let's try to find the font on our own.
-        fonts = [ i.strip().lower() for i in fn.split(",") ]
+        if (not renpy.config.developer) or renpy.config.allow_sysfonts:
 
-        pygame.sysfont.initsysfonts()
+            # Let's try to find the font on our own.
+            fonts = [ i.strip().lower() for i in fn.split(",") ]
 
-        for v in pygame.sysfont.Sysfonts.itervalues():
-            if v is not None:
-                for _flags, ffn in v.iteritems():
-                    for i in fonts:
-                        if ffn.lower().endswith(i):
-                            font_file = file(ffn, "rb")
+            pygame.sysfont.initsysfonts()
+
+            for v in pygame.sysfont.Sysfonts.itervalues():
+                if v is not None:
+                    for _flags, ffn in v.iteritems():
+                        for i in fonts:
+                            if ffn.lower().endswith(i):
+                                font_file = file(ffn, "rb")
+                                break
+
+                        if font_file:
                             break
 
-                    if font_file:
-                        break
-
-            if font_file:
-                break
-
+                if font_file:
+                    break
 
     if font_file is None:
         raise Exception("Could not find font {0!r}.".format(orig_fn))
 
-    rv = ftfont.FTFace(font_file, index) #@UndefinedVariable
+    rv = ftfont.FTFace(font_file, index)  # @UndefinedVariable
 
     face_cache[orig_fn] = rv
 
@@ -569,42 +597,71 @@ def load_face(fn):
 
 # Caches of fonts.
 image_fonts = { }
+
+# A cache of scaled image fonts.
+scaled_image_fonts = { }
+
+# A cache of scaled faces.
 font_cache = { }
 
-def get_font(fn, size, bold, italics, outline, antialias, vertical):
+# The last_scale we last accessed fonts at. (Used to clear caches.)
+last_scale = 1.0
 
+
+def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale):
+
+    # If the scale changed, invalidate caches of scaled fonts.
+    global last_scale
+
+    if (scale != 1.0) and (scale != last_scale):
+        scaled_image_fonts.clear()
+        font_cache.clear()
+        last_scale = scale
+
+    # Perform replacement.
     t = (fn, bold, italics)
     fn, bold, italics = renpy.config.font_replacement_map.get(t, t)
 
-    rv = image_fonts.get((fn, size, bold, italics), None)
+    # Image fonts.
+    key = (fn, size, bold, italics)
+
+    rv = image_fonts.get(key, None)
     if rv is not None:
+
+        if scale != 1.0:
+            if key in scaled_image_fonts:
+                rv = scaled_image_fonts[key]
+            else:
+                rv = ScaledImageFont(rv, scale)
+                scaled_image_fonts[key] = rv
+
         return rv
 
-    if vertical:
-        key = (fn, size, bold, italics, outline, antialias, True)
-    else:
-        key = (fn, size, bold, italics, outline, antialias)
+    # Check for a cached TTF.
+    key = (fn, size, bold, italics, outline, antialias, vertical, hinting, scale)
 
     rv = font_cache.get(key, None)
     if rv is not None:
         return rv
 
-    # If we made it here, we need to load a ttf.
+    # Load a TTF.
     face = load_face(fn)
-
-    rv = ftfont.FTFont(face, size, bold, italics, outline, antialias, vertical) #@UndefinedVariable
+    rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting)  # @UndefinedVariable
 
     font_cache[key] = rv
 
     return rv
+
 
 def free_memory():
     """
     Clears the font cache.
     """
 
+    scaled_image_fonts.clear()
     font_cache.clear()
     face_cache.clear()
+
 
 def load_image_fonts():
     for i in image_fonts.itervalues():
@@ -706,4 +763,3 @@ class FontGroup(object):
             pos += 1
 
         yield self.fonts[old_index], s[mark:]
-

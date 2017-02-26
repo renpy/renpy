@@ -9,12 +9,6 @@
 
 init -1 python hide:
 
-    ## Should we enable the use of developer tools? This should be
-    ## set to False before the game is released, so the user can't
-    ## cheat using developer tools.
-
-    config.developer = True
-
     ## These control the width and height of the screen.
 
     config.screen_width = 800
@@ -34,7 +28,7 @@ init -1 python hide:
     # Themes
 
     ## We then want to call a theme function. theme.roundrect is
-    ## a theme that features the use of rounded rectangles. 
+    ## a theme that features the use of rounded rectangles.
     ##
     ## The theme function takes a number of parameters that can
     ## customize the color scheme.
