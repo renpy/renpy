@@ -225,15 +225,15 @@ translate russian strings:
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Эта программа содержит свободное и открытое программное обеспечение под несколькими лицензиями, включая лицензию MIT и GNU Lesser General Public. Полный список лицензий, включая ссылки на полный исходный код, можно найти {a=https://www.renpy.org/l/license}здесь{/a}."
 
-    # 00preferences.rpy:422
+    # 00preferences.rpy:429
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "Озвучка буфера обмена включена. Нажмите 'shift+C', чтобы отключить."
 
-    # 00preferences.rpy:424
+    # 00preferences.rpy:431
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "Синтезатор речи должен сказать \"[renpy.display.tts.last]\". Нажмите 'alt+shift+V', чтобы отключить."
 
-    # 00preferences.rpy:426
+    # 00preferences.rpy:433
     old "Self-voicing enabled. Press 'v' to disable."
     new "Синтезатор речи включён. Нажмите 'v', чтобы отключить."
 

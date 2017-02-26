@@ -114,7 +114,7 @@ translate russian strings:
     new "Back (B)"
 
     # _errorhandling.rpym:519
-    old "Open Traceback"
+    old "Open"
     new "Журнал"
 
     # _errorhandling.rpym:521

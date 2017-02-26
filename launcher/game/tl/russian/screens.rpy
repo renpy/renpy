@@ -29,19 +29,19 @@ translate russian strings:
     old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
     new "## Если есть боковое изображение (\"голова\"), показывает его над текстом. Не показывается на варианте для мобильных устройств — места нет."
 
-    # screens.rpy:160
+    # screens.rpy:159
     old "## Input screen"
     new "## Экран ввода"
 
-    # screens.rpy:162
+    # screens.rpy:161
     old "## This screen is used to display renpy.input. The prompt parameter is used to pass a text prompt in."
     new "## Этот экран используется, чтобы показывать renpy.input. Параметр запроса, используемый, чтобы вводить в него текст."
 
-    # screens.rpy:165
+    # screens.rpy:164
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
     new "## Этот экран должен создать наложение ввода с id \"input\", чтобы принять различные вводимые параметры."
 
-    # screens.rpy:168
+    # screens.rpy:167
     old "## http://www.renpy.org/doc/html/screen_special.html#input"
     new "## http://www.renpy.org/doc/html/screen_special.html#input"
 
