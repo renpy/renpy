@@ -677,3 +677,10 @@ translate indonesian strings:
     # screens.rpy:1079
     old "Left Trigger\nLeft Shoulder"
     new "Trigger Kiri\nBahu Kiri"
+
+translate indonesian strings:
+
+    # screens.rpy:1233
+    old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
+    new "## Kami harus menggunakan font yang mempunyai glyph BLACK RIGHT-POINTING SMALL TRIANGLE."
+

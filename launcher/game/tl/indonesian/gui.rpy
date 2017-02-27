@@ -409,3 +409,33 @@ translate indonesian strings:
     old "## Quick buttons."
     new "## Quick buttons."
 
+translate indonesian strings:
+
+    # gui.rpy:17
+    old "## GUI Configuration Variables"
+    new "## Variabel konfigurasi GUI"
+
+    # gui.rpy:168
+    old "## The color of button text in various states."
+    new "## Warna tombol text di berbagai kondisi."
+
+    # gui.rpy:174
+    old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
+    new "## Alignment horisontal tombol text. (0.0 itu kiri, 0.5 tengah, 1.0 kanan)."
+
+    # gui.rpy:276
+    old "## The position of the main menu text."
+    new "## posisi text menu utama."
+
+    # gui.rpy:398
+    old "## Localization"
+    new "## Lokalisasi"
+
+    # gui.rpy:400
+    old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+    new "## Ini mengendalikan dimana line break di ijinkan. Pengaturan bawaan sudah cocok untuk kebanyakan bahasa. Daftar value yang tersedia dapat di lihat di https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+
+    # gui.rpy:408
+    old "## Mobile devices"
+    new "## Perangkat mobile"
+

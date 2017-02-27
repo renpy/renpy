@@ -177,3 +177,21 @@ translate indonesian strings:
     old "Copies the errors.txt file to the clipboard."
     new "Salin file errors.txt ke Papan Klip."
 
+translate indonesian strings:
+
+    # _errorhandling.rpym:519
+    old "Open"
+    new "Buka"
+
+    # _errorhandling.rpym:523
+    old "Copy"
+    new "Salin"
+
+    # _errorhandling.rpym:576
+    old "Console"
+    new "Konsol"
+
+    # _errorhandling.rpym:578
+    old "Opens a console to allow debugging the problem."
+    new "Buka konsol untuk mendebug masalah"
+
