@@ -95,15 +95,15 @@ translate arabic strings:
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "No Gamepads Available"
+    new "لا توجد يد تحكم"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
-    new "Calibrating [name] ([i]/[total])"
+    new "يتم تهيئة [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
     old "Press or move the [control!r] [kind]."
-    new "Press or move the [control!r] [kind]."
+    new "الرجاء ضغط الزر او تحريك [control!r] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
@@ -127,7 +127,7 @@ translate arabic strings:
 
     # _errorhandling.rpym:501
     old "Copies the traceback.txt file to the clipboard."
-    new "Copies the traceback.txt file to the clipboard."
+    new "ينسخ ملف trackback.txt إلى الحافظة."
 
     # _errorhandling.rpym:519
     old "An exception has occurred."
