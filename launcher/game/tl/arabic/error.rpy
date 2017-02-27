@@ -23,7 +23,7 @@ translate arabic strings:
 
     # 00gltest.rpy:93
     old "Enable"
-    new "Enable"
+    new "تفعيل"
 
     # 00gltest.rpy:109
     old "Changes will take effect the next time this program is run."
