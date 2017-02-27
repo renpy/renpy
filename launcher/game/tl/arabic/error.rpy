@@ -91,7 +91,7 @@ translate arabic strings:
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "Select Gamepad to Calibrate"
+    new "الرجاء اختيار يد التحكم التي ترغب في تهيئتها"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
@@ -107,11 +107,11 @@ translate arabic strings:
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    new "Skip (A)"
+    new "تخطي (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
-    new "Back (B)"
+    new "عودة (B)"
 
     # _errorhandling.rpym:495
     old "Open Traceback"
@@ -123,7 +123,7 @@ translate arabic strings:
 
     # _errorhandling.rpym:499
     old "Copy to Clipboard"
-    new "Copy to Clipboard"
+    new "نسخ إلى الحافظة"
 
     # _errorhandling.rpym:501
     old "Copies the traceback.txt file to the clipboard."
