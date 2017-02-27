@@ -49,6 +49,11 @@ to a stop at the end of an audio track.
 Right-to-left (Arabic and Hebrew) language support has been enabled on the iOS
 platform.
 
+A bug in render clipping has been fixed. This generally manifested as 1-pixel
+overlaps or open spaces when drawing frames and bars.
+
+The Arabic, Indonesian, and Russian language translations have been updated.
+
 
 .. _renpy-6.99.12.3:
 
