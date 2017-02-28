@@ -544,7 +544,10 @@ class DynamicImage(renpy.display.core.Displayable):
 
     def _in_current_store(self):
         rv = self._copy()
-        rv.target = rv.target._in_current_store()
+
+        if rv.target:
+            rv.target = rv.target._in_current_store()
+
         rv.locked = True
         return rv
 
