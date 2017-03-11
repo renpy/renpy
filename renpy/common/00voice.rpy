@@ -196,11 +196,20 @@ init -1500 python:
         `sample`
             The full path to a sound file. No voice-related handling
             of this file is done.
+
+         `selected`
+             If True, buttons using this action will be marked as selected
+             if the sample is playing.
         """
 
-        def __init__(self, voice_tag, sample):
+        can_be_selected = False
+
+        def __init__(self, voice_tag, sample, selected=False):
             self.voice_tag = voice_tag
             self.sample = sample
+
+            self.can_be_selected = selected
+            self.get_selected()
 
         def __call__(self):
             if self.voice_tag in persistent._voice_mute:
@@ -210,6 +219,24 @@ init -1500 python:
             renpy.music.get_channel("voice").set_volume(volume)
 
             renpy.sound.play(self.sample, channel="voice")
+            renpy.restart_interaction()
+
+        def get_selected(self):
+            if not self.can_be_selected:
+                self.selected = False
+                return False
+
+            self.selected = (renpy.sound.get_playing(channel="voice") == self.sample)
+            return self.selected
+
+        def periodic(self, st):
+            if not self.can_be_selected:
+                return None
+
+            if self.selected != (renpy.sound.get_playing(channel="voice") == self.sample):
+                renpy.restart_interaction()
+
+            return .1
 
     @renpy.pure
     class ToggleVoiceMute(Action, DictEquality):
