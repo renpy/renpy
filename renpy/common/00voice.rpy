@@ -186,7 +186,7 @@ init -1500 python:
             return SetDict(persistent._character_volume, voice_tag, volume)
 
     @renpy.pure
-    class PlayCharacterVoice(Action):
+    class PlayCharacterVoice(Action, FieldEquality):
         """
         :doc: voice_action
 
@@ -197,19 +197,21 @@ init -1500 python:
             The full path to a sound file. No voice-related handling
             of this file is done.
 
-         `selected`
-             If True, buttons using this action will be marked as selected
-             if the sample is playing.
+         selected`
+            If True, buttons using this action will be marked as selected
+            while the sample is playing.
         """
 
+        equality_fields = [ "voice_tag", "sample", "can_be_selected" ]
+
         can_be_selected = False
+        selected = False
 
         def __init__(self, voice_tag, sample, selected=False):
             self.voice_tag = voice_tag
             self.sample = sample
 
             self.can_be_selected = selected
-            self.get_selected()
 
         def __call__(self):
             if self.voice_tag in persistent._voice_mute:
@@ -220,21 +222,26 @@ init -1500 python:
 
             renpy.sound.play(self.sample, channel="voice")
             renpy.restart_interaction()
+            self.periodic(0)
 
         def get_selected(self):
+
             if not self.can_be_selected:
-                self.selected = False
                 return False
 
-            self.selected = (renpy.sound.get_playing(channel="voice") == self.sample)
-            return self.selected
+            return renpy.sound.get_playing(channel="voice") == self.sample
 
         def periodic(self, st):
+
             if not self.can_be_selected:
                 return None
 
-            if self.selected != (renpy.sound.get_playing(channel="voice") == self.sample):
+            old_selected = self.selected
+            new_selected = self.get_selected()
+
+            if old_selected != new_selected:
                 renpy.restart_interaction()
+                self.selected = new_selected
 
             return .1
 

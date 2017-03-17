@@ -718,7 +718,10 @@ class RevertableList(list):
 
     def wrapper(method):  # E0213 @NoSelf
         def newmethod(*args, **kwargs):
-            return RevertableList(method(*args, **kwargs))  # E1102
+            print("X", method, args)
+
+            l = method(*args, **kwargs)
+            return RevertableList(l)
 
         return newmethod
 
