@@ -718,8 +718,6 @@ class RevertableList(list):
 
     def wrapper(method):  # E0213 @NoSelf
         def newmethod(*args, **kwargs):
-            print("X", method, args)
-
             l = method(*args, **kwargs)
             return RevertableList(l)
 
@@ -727,10 +725,14 @@ class RevertableList(list):
 
     __add__ = wrapper(list.__add__)
     __getslice__ = wrapper(list.__getslice__)
-    __mul__ = wrapper(list.__mul__)
-    __rmul__ = wrapper(list.__rmul__)
 
-    del wrapper
+    def __mul__(self, other):
+        if not isinstance(other, int):
+            raise TypeError("can't multiply sequence by non-int of type '{}'.".format(type(other).__name__))
+
+        return RevertableList(list.__mul__(self, other))
+
+    __rmul__ = __mul__
 
     def _clean(self):
         """
