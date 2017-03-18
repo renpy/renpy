@@ -29,7 +29,15 @@ define config.version = _("Ren'Py 7 Edition")
 ## Text that is placed on the game's about screen. To insert a blank line
 ## between paragraphs, write \n\n.
 
-define gui.about = _("")
+define gui.about = _("""Character Art: Deji.
+Original Character Art: derik.
+
+Background Art: Mugenjohncel.
+Original Background Art: DaFool
+
+Music By: Alessio
+
+Written By: mikey""")
 
 
 ## A short name for the game used for executables and directories in the built
