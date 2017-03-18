@@ -551,7 +551,7 @@ translate italian strings:
 
     # screens.rpy:1130
     old "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
-    new "## Lo screen confirm è usato quando Ren'Py vuole porre una domanda 'si o no?' al giocatore."
+    new "## Lo screen confirm è usato quando Ren'Py vuole porre una domanda 'sì o no?' al giocatore."
 
     # screens.rpy:1133
     old "## http://www.renpy.org/doc/html/screen_special.html#confirm"
@@ -563,7 +563,7 @@ translate italian strings:
 
     # screens.rpy:1161
     old "Yes"
-    new "Si"
+    new "Sì"
 
     # screens.rpy:1162
     old "No"
