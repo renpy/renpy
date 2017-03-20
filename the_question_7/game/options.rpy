@@ -44,8 +44,10 @@ Written By: mikey""")
 ## distribution. This must be ASCII-only, and must not contain spaces, colons,
 ## or semicolons.
 
-define build.name = "the_question_7"
+define build.name = "the_question"
 
+## Change the version used by the build system.
+define build.version = "7.0"
 
 ## Sounds and music ############################################################
 
@@ -144,7 +146,7 @@ default preferences.afm_time = 15
 ## This generally should not be changed, and if it is, should always be a
 ## literal string, not an expression.
 
-define config.save_directory = "the_question_7-1489460498"
+define config.save_directory = "the_question-7"
 
 
 ## Icon ########################################################################
