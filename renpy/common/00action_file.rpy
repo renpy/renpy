@@ -339,6 +339,8 @@ init -1500 python:
             self.page = page
             self.cycle = cycle
 
+            self.alt = "Save slot %s: [text]" % (name,)
+
         def __call__(self):
 
             if not self.get_sensitive():
@@ -409,6 +411,9 @@ init -1500 python:
             self.confirm = confirm
             self.page = page
             self.newest = newest
+
+            self.alt = "Load slot %s: [text]" % (name,)
+
 
         def __call__(self):
 
