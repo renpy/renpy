@@ -1,18 +1,18 @@
 ﻿# Declare images used by this game.
-image bg lecturehall = "lecturehall.jpg"
-image bg uni = "uni.jpg"
-image bg meadow = "meadow.jpg"
-image bg club = "club.jpg"
-
-image sylvie normal = "sylvie_normal.png"
-image sylvie giggle = "sylvie_giggle.png"
-image sylvie smile = "sylvie_smile.png"
-image sylvie surprised = "sylvie_surprised.png"
-
-image sylvie2 normal = "sylvie2_normal.png"
-image sylvie2 giggle = "sylvie2_giggle.png"
-image sylvie2 smile = "sylvie2_smile.png"
-image sylvie2 surprised = "sylvie2_surprised.png"
+# image bg lecturehall = "lecturehall.jpg"
+# image bg uni = "uni.jpg"
+# image bg meadow = "meadow.jpg"
+# image bg club = "club.jpg"
+#
+# image sylvie normal = "sylvie_normal.png"
+# image sylvie giggle = "sylvie_giggle.png"
+# image sylvie smile = "sylvie_smile.png"
+# image sylvie surprised = "sylvie_surprised.png"
+#
+# image sylvie2 normal = "sylvie2_normal.png"
+# image sylvie2 giggle = "sylvie2_giggle.png"
+# image sylvie2 smile = "sylvie2_smile.png"
+# image sylvie2 surprised = "sylvie2_surprised.png"
 
 # Declare characters used by this game.
 define s = Character('Sylvie', color="#c8ffc8")
@@ -139,7 +139,7 @@ label marry:
     with dissolve
 
     "And so, we become a visual novel creating duo."
-    
+
 
     scene bg club
     with dissolve
@@ -204,7 +204,7 @@ label marry:
 label later:
 
     "I can't get up the nerve to ask right now. With a gulp, I decide to ask her later."
-    
+
     scene black
     with dissolve
 
