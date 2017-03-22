@@ -69,8 +69,40 @@ testcase default:
     # NVL Menu.
     "Choice B"
 
+    $ renpy.unlink_save("1-1")
+    "Save"
+
+    pause .6
+
+    "Save slot 1"
+
+    pause .6
+
+    "Save slot 1"
+    "Yes"
+
+    "Main Menu"
+    "Yes"
+
+    "Load"
+    "Load slot 1"
+
+    pause .5
+
+    "Save"
+
+    pause .5
+
+
+    "Load"
+    "Load slot 1"
+    "No"
+
+    "Return"
 
     # Done.
+    pause .5
+
     "Done."
     "Quit"
 
