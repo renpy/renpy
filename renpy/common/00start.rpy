@@ -143,9 +143,6 @@ label _start_replay:
 
     call _start_store
 
-    python:
-        renpy.execute_default_statement(False)
-
     if config.start_scene_black:
         scene black
     else:
