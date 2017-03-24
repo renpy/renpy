@@ -1,19 +1,3 @@
-﻿# Declare images used by this game.
-# image bg lecturehall = "lecturehall.jpg"
-# image bg uni = "uni.jpg"
-# image bg meadow = "meadow.jpg"
-# image bg club = "club.jpg"
-#
-# image sylvie green normal = "sylvie_normal.png"
-# image sylvie green giggle = "sylvie_giggle.png"
-# image sylvie green smile = "sylvie_smile.png"
-# image sylvie green surprised = "sylvie_surprised.png"
-#
-# image sylvie blue normal = "sylvie blue_normal.png"
-# image sylvie blue giggle = "sylvie blue_giggle.png"
-# image sylvie blue smile = "sylvie blue_smile.png"
-# image sylvie blue surprised = "sylvie blue_surprised.png"
-
 # Declare characters used by this game.
 define s = Character('Sylvie', color="#c8ffc8")
 define m = Character('Me', color="#c8c8ff")
@@ -22,7 +6,7 @@ define m = Character('Me', color="#c8c8ff")
 label start:
     $ book = False
 
-    play music "illurock.ogg"
+    play music "illurock.opus"
 
     scene bg lecturehall
     with fade
