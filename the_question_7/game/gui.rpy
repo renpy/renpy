@@ -91,6 +91,9 @@ define gui.game_menu_background = "gui/game_menu.png"
 ## Should we show the name and version of the game?
 define gui.show_name = True
 
+## The color of the main menu.
+define gui.main_menu_text_color = "#ffaa22"
+
 
 ## Dialogue ####################################################################
 ##
@@ -273,7 +276,7 @@ define gui.page_spacing = 0
 define gui.slot_spacing = 10
 
 ## The position of the main menu text.
-define gui.main_menu_text_xalign = 1.0
+define gui.main_menu_text_xalign = 0.0
 
 
 ## Frames ######################################################################
