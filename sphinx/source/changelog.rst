@@ -2,6 +2,15 @@
 Full Changelog
 ==============
 
+
+.. _renpy-6.99.13:
+
+Other
+-----
+
+The size of a hyperlink is now inherited from the size of the enclosing text.
+(This makes hyperlinks better with text of a non-default size.)
+
 .. _renpy-6.99.12.4:
 
 Ren'Py 6.99.12.4

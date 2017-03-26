@@ -14,6 +14,15 @@ such changes only take effect when the gui is regenerated.
 
 .. _incompatible-6.99:
 
+6.99.13
+-------
+
+The size of a hyperlink is now inherited from the size of the enclosing text.
+To disable this, add the code::
+
+    define config.hyperlink_inherit_size = False
+
+
 6.99.12.3
 ---------
 

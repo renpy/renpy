@@ -761,6 +761,9 @@ prefix_viewport_scrollbar_styles = True
 # These functions are called to determine if Ren'Py needs to redraw the screen.
 needs_redraw_callbacks = [ ]
 
+# Should a hyperlink inherit the size of the text its in?
+hyperlink_inherit_size = True
+
 del renpy
 del os
 

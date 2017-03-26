@@ -947,9 +947,15 @@ class Layout(object):
                 ts = push()
                 # inherit vertical style
                 vert_style = ts.vertical
+                size = ts.size
+
                 ts.take_style(hls, self)
+
                 ts.vertical = vert_style
                 ts.hyperlink = link
+
+                if renpy.config.hyperlink_inherit_size:
+                    ts.size = size
 
                 hls.set_prefix(old_prefix)
 
