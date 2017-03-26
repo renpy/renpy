@@ -546,13 +546,53 @@ screen about():
         vbox:
 
             label "[config.name!t]"
-            text _("Version [config.version!t]\n")
+            text _("[config.version!t]\n")
 
-            ## gui.about is usually set in options.rpy.
-            if gui.about:
-                text "[gui.about!t]\n"
+            hbox:
+                spacing 15
+                text "Updated Character Art" style "about_small"
+                text "Deji"
 
-            text _("Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]")
+            hbox:
+                spacing 15
+                text "Original Character Art" style "about_small"
+                text "Derik"
+
+            null height 15
+
+            hbox:
+                spacing 15
+                text "Updated Background Art" style "about_small"
+                text "Mugenjohncel"
+
+            hbox:
+                spacing 15
+                text "Original Background Art" style "about_small"
+                text "DaFool"
+
+            null height 15
+
+            hbox:
+                spacing 15
+                text "Music By" style "about_small"
+                text "Alessio"
+
+            null height 15
+
+            hbox:
+                spacing 15
+                text "Update Written By" style "about_small"
+                text "Lore"
+
+            hbox:
+                spacing 15
+                text "Originally Written By " style "about_small"
+                text "mikey (ATP Projects)"
+
+
+            text _("\nMade with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only]")
+            null height 15
+            text _("[renpy.license!t]") size 20
 
 
 ## This is redefined in options.rpy to add text to the about screen.
@@ -565,6 +605,12 @@ style about_text is gui_text
 
 style about_label_text:
     size gui.label_text_size
+
+style about_small:
+    size 20
+    minwidth 260
+    text_align 1.0
+    yalign 0.9
 
 
 ## Load and Save screens #######################################################
