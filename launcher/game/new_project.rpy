@@ -62,6 +62,9 @@ label new_project:
     if persistent.projects_directory is None:
         $ interface.error(_("The projects directory could not be set. Giving up."))
 
+    if not persistent.legacy:
+        jump new_gui_project
+
     python:
 
         check_language_support()
