@@ -105,6 +105,7 @@ label rightaway:
         "It's an interactive book.":
             jump book
 
+
 label game:
 
     m "It's a kind of videogame you can play on your computer or a console."
@@ -128,6 +129,7 @@ label game:
     m "You know you could never disappoint me, Sylvie."
 
     jump marry
+
 
 label book:
 
