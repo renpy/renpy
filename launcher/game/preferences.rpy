@@ -48,6 +48,8 @@ init python:
         return rv
 
 
+default persistent.legacy = False
+
 screen preferences:
 
     $ translations = scan_translations()
@@ -170,12 +172,17 @@ screen preferences:
                         add HALF_SPACER
 
                         textbutton _("Hardware rendering") style "l_checkbox" action ToggleField(persistent, "gl_enable")
-                        textbutton _("Show templates") style "l_checkbox" action ToggleField(persistent, "show_templates")
                         textbutton _("Show edit file section") style "l_checkbox" action ToggleField(persistent, "show_edit_funcs")
                         textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
 
                         if renpy.windows:
                             textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
+
+                        textbutton _("Legacy options") style "l_checkbox" action ToggleField(persistent, "legacy")
+
+                        if persistent.legacy:
+                            textbutton _("Show templates") style "l_checkbox" action ToggleField(persistent, "show_templates")
+
 
 
                 frame:
