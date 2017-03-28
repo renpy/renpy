@@ -925,10 +925,6 @@ translate russian strings:
     old "Hardware rendering"
     new "Аппаратный рендеринг"
 
-    # preferences.rpy:173
-    old "Show templates"
-    new "Показывать образцы"
-
     # preferences.rpy:174
     old "Show edit file section"
     new "Показать секцию редактирования"
@@ -941,11 +937,19 @@ translate russian strings:
     old "Console output"
     new "Вывод на консоль"
 
-    # preferences.rpy:199
+    # preferences.rpy:181
+    old "Legacy options"
+    new "Настройки старых тем"
+
+    # preferences.rpy:184
+    old "Show templates"
+    new "Показывать образцы"
+
+    # preferences.rpy:206
     old "Open launcher project"
     new "Открыть проект лаунчера"
 
-    # preferences.rpy:213
+    # preferences.rpy:220
     old "Language:"
     new "Язык:"
 
