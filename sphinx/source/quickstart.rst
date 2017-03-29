@@ -2,10 +2,9 @@ Quickstart
 ==========
 
 Welcome to the Ren'Py quickstart manual. The purpose of this manual is
-to demonstrate how you can make a Ren'Py game from scratch, in a few
-easy steps. We'll do this by showing how to make a simple game, *The
-Question*, from scratch. This manual contains a number of examples,
-which are included as part of the demo game.
+to demonstrate how you can make a Ren'Py game from scratch in a few
+easy steps. We'll do this by showing how to make a simple game,
+*The Question*.
 
 The Ren'Py Launcher
 -------------------
@@ -18,28 +17,27 @@ manage, edit, and run Ren'Py projects.
 **Getting Started.** To get started you'll want to
 `download Ren'Py <https://www.renpy.org/latest.html>`_.
 
-Once you've downloaded Ren'Py, you'll want to extract it. This can
-generally be done by right-clicking on the package file, and picking
-"Extract" if that's an option, or "Open" if it's not. Follow the
-prompts, and you'll have a working copy of Ren'Py.
+Once you've downloaded Ren'Py, you'll want to extract and run it.
 
-.. note::
+* On Windows, double click on the executable file you download. It will
+  extract Ren'Py into a folder named ``renpy-<version>``. You can change
+  into that folder and run ``renpy.exe``. (The renpy.exe file may be presented
+  as renpy if extensions are hidden.)
 
-    Please be sure you've extracted Ren'Py to its own directory or
-    folder on disk. If you try to run it from inside a ZIP file, it
-    won't work properly.
+* On Mac OS X, double-click on the downloaded drive image to mount it as a
+  drive. When the drive opens, copy the folder named ``renpy-<version>``
+  somewhere else. (Where does not matter, but it has to be moved out of
+  the read-only drive image.) Then change into it, and run the ``renpy``
+  application.
 
-Once you've extracted Ren'Py, you'll need to run it.
-
-* On Windows, run the ``renpy`` or ``renpy.exe`` program.
-* On Mac OS X, run the ``renpy`` application.
-* On Linux, run the ``renpy.sh`` script.
-
+* On Linux, unpack the tarball, change into the ``renpy-<version>``
+  directory, and then run ``renpy.sh``.
 
 After running this, the Ren'Py launcher should run.
 
 The Ren'Py launcher has been translated to multiple languages. To
-change the language, choose "preferences" and then select the language.
+change the language, choose "preferences" at the bottom right, and then
+select the language.
 
 .. image:: launcher.png
    :align: right
