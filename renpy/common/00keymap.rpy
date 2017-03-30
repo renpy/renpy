@@ -26,27 +26,27 @@ init -1600 python:
         # Bindings present almost everywhere, unless explicitly
         # disabled.
         rollback = [ 'K_PAGEUP', 'repeat_K_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
-        screenshot = [ 's' ],
+        screenshot = [ 's', 'alt_K_s', 'alt_shift_K_s' ],
         toggle_afm = [ ],
         toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
         game_menu = [ 'K_ESCAPE', 'K_MENU', 'mouseup_3' ],
         hide_windows = [ 'mouseup_2', 'h' ],
         launch_editor = [ 'E' ],
         dump_styles = [ ],
-        reload_game = [ 'R' ],
+        reload_game = [ 'R', 'alt_shift_K_r' ],
         inspector = [ 'I' ],
-        full_inspector = [ 'alt_I' ],
-        developer = [ 'D' ],
+        full_inspector = [ 'alt_shift_K_i' ],
+        developer = [ 'D', 'alt_shift_K_d' ],
         quit = [ ],
         iconify = [ ],
         help = [ 'K_F1', 'meta_shift_/' ],
-        choose_renderer = [ 'G' ],
+        choose_renderer = [ 'G', 'alt_shift_K_g' ],
         progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
 
         # Accessibility.
-        self_voicing = [ 'v', 'V' ],
-        clipboard_voicing = [ 'C' ],
-        debug_voicing = [ 'alt_V', 'meta_V' ],
+        self_voicing = [ 'v', 'V', 'alt_K_v'  ],
+        clipboard_voicing = [ 'C', 'alt_shift_K_c' ],
+        debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],
 
         # Say.
         rollforward = [ 'mousedown_5', 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
@@ -111,7 +111,7 @@ init -1600 python:
         drag_deactivate = [ 'mouseup_1' ],
 
         # Debug console.
-        console = [ 'shift_O' ],
+        console = [ 'shift_O', 'alt_shift_O' ],
         console_older = [ 'K_UP', 'repeat_K_UP' ],
         console_newer = [ 'K_DOWN', 'repeat_K_DOWN'],
 
@@ -172,7 +172,7 @@ init -1600 python:
     def _keymap_toggle_afm():
         if renpy.context()._menu:
             return
-        
+
         renpy.run(Preference("auto-forward", "toggle"))
 
     def _toggle_skipping():

@@ -316,6 +316,7 @@ init python:
 
 
 init python hide:
+
     import os
     launcher_language = os.environ.get("RENPY_LAUNCHER_LANGUAGE", "")
 
@@ -327,7 +328,6 @@ init python hide:
             launcher_language = None
 
         _preferences.language = launcher_language
-
 
 
 ## This section contains information about how to build your project into
