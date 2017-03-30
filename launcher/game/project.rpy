@@ -44,6 +44,8 @@ init python in project:
     if persistent.blurb is None:
         persistent.blurb = 0
 
+    project_filter = [ i.strip() for i in os.environ.get("RENPY_PROJECT_FILTER", "").split(":") ]
+
     LAUNCH_BLURBS = [
         _("After making changes to the script, press shift+R to reload your game."),
         _("Press shift+O (the letter) to access the console."),
@@ -465,6 +467,9 @@ init python in project:
 
                 # We have a project directory, so create a Project.
                 p = Project(ppath, pdir)
+
+                if project_filter and (p.name not in project_filter):
+                    continue
 
                 project_type = p.data.get("type", "normal")
 

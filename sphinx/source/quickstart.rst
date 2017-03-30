@@ -52,9 +52,15 @@ choosing "Tutorial" instead of "The Question".
 
 **Creating a new Project.**
 Create a new project by choosing "Create New Project" from the
-launcher. The launcher will then ask you for a project name. Since
+launcher.
+
+
+The launcher will then ask you for a project name. Since
 "The Question" is already taken, you should enter something different,
-like "My Question". The launcher will then ask you to choose a color
+like "My Question".
+
+
+The launcher will then ask you to choose a color
 theme for the project. It doesn't matter what you pick at this point,
 just choose something that appeals to you. You'll be returned to the
 top menu of the launcher with your new game chosen.
