@@ -44,7 +44,7 @@ init python in project:
     if persistent.blurb is None:
         persistent.blurb = 0
 
-    project_filter = [ i.strip() for i in os.environ.get("RENPY_PROJECT_FILTER", "").split(":") ]
+    project_filter = [ i.strip() for i in os.environ.get("RENPY_PROJECT_FILTER", "").split(":") if i.strip() ]
 
     LAUNCH_BLURBS = [
         _("After making changes to the script, press shift+R to reload your game."),
