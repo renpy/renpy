@@ -1213,6 +1213,9 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
         if not self.editable:
             return None
 
+        if pygame.key.get_mods() & pygame.KMOD_ALT:
+            return None
+
         l = len(self.content)
 
         raw_text = None
@@ -1286,6 +1289,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             raw_text = ev.text
 
         elif ev.type == pygame.KEYDOWN:
+
             if ev.unicode and ord(ev.unicode[0]) >= 32:
                 raw_text = ev.unicode
             elif renpy.display.interface.text_event_in_queue():
