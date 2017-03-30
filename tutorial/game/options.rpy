@@ -314,6 +314,22 @@ init python:
     style.mm_menu_frame.yalign = .98
     style.mm_menu_frame.xalign = .98
 
+
+init python hide:
+    import os
+    launcher_language = os.environ.get("RENPY_LAUNCHER_LANGUAGE", "")
+
+    if launcher_language and launcher_language != persistent.launcher_language:
+
+        persistent.launcher_language = launcher_language
+
+        if launcher_language == "english" or (launcher_language not in renpy.known_languages()):
+            launcher_language = None
+
+        _preferences.language = launcher_language
+
+
+
 ## This section contains information about how to build your project into
 ## distribution files.
 init python:

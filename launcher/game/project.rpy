@@ -30,7 +30,7 @@ init python:
     import os
 
 init python in project:
-    from store import persistent, config, Action, renpy
+    from store import persistent, config, Action, renpy, _preferences
     import store.util as util
     import store.interface as interface
 
@@ -225,6 +225,7 @@ init python in project:
                 cmd.append("--json-dump-common")
 
             environ = dict(os.environ)
+            environ["RENPY_LAUNCHER_LANGUAGE"] = _preferences.language or "english"
             environ.update(env)
 
             encoded_environ = { }
