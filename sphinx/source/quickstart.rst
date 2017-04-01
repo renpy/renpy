@@ -165,7 +165,7 @@ be preceded by a backslash. For example::
 ::
 
     ###
-    "Sylvie" "Did you ever hear Lincon's famous quote, \"The problem with Internet quotations is that many of them are not geunine.\""
+        "Sylvie" "Did you ever hear Lincon's famous saying, \"The problem with Internet quotations is that many of them are not genuine.\""
 
 While this simple game isn't much to look at, it's an example of how
 easy it is to get something working in Ren'Py. We'll add the pictures
