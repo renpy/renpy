@@ -171,31 +171,33 @@ While this simple game isn't much to look at, it's an example of how
 easy it is to get something working in Ren'Py. We'll add the pictures
 in a little bit, but first, let's see how to define characters.
 
-Init
-----
+..
 
-The init statement is used to execute blocks of Ren'Py statements before the
-script executes. Init blocks are used to define images and characters, to set
-up unchanging game data structures, and to customize Ren'Py. Code inside init
-blocks should not interact with the user or change any of the layers, and so
-should not contain say, menu, scene, show, or hide statements, as well as calls
-to any function that can do these things.
+    Init
+    ----
 
-An init statement is introduced with the keyword init, followed by an optional
-priority number, and a mandatory colon. If the priority is not given, it
-defaults to 0. Priority numbers should be in the range -999 to 999. Numbers
-outside of this range are reserved for Ren'Py code.
+    The init statement is used to execute blocks of Ren'Py statements before the
+    script executes. Init blocks are used to define images and characters, to set
+    up unchanging game data structures, and to customize Ren'Py. Code inside init
+    blocks should not interact with the user or change any of the layers, and so
+    should not contain say, menu, scene, show, or hide statements, as well as calls
+    to any function that can do these things.
 
-The priority number is used to determine when the code inside the init block
-executes. Init blocks are executed in priority order from low to high. Within a
-file, init blocks with the same priority are run in order from the top of the
-file to the bottom. The order of evaluation of priority blocks with the same
-priority between files is undefined.
+    An init statement is introduced with the keyword init, followed by an optional
+    priority number, and a mandatory colon. If the priority is not given, it
+    defaults to 0. Priority numbers should be in the range -999 to 999. Numbers
+    outside of this range are reserved for Ren'Py code.
 
-The init blocks are all run once, during a special init phase. When control
-reaches the end of an init block during normal execution, execution of that
-block ends. If an init statement is encountered during normal execution, the
-init block is not run. Instead, control passes to the next statement.
+    The priority number is used to determine when the code inside the init block
+    executes. Init blocks are executed in priority order from low to high. Within a
+    file, init blocks with the same priority are run in order from the top of the
+    file to the bottom. The order of evaluation of priority blocks with the same
+    priority between files is undefined.
+
+    The init blocks are all run once, during a special init phase. When control
+    reaches the end of an init block during normal execution, execution of that
+    block ends. If an init statement is encountered during normal execution, the
+    init block is not run. Instead, control passes to the next statement.
 
 Characters
 ----------
@@ -203,10 +205,10 @@ Characters
 One problem with the first example is that it requires you to
 repeatedly type the name of a character each time they speak. In a
 dialogue-heavy game, this might be a lot of typing. Also, both
-character names are displayed in the same way, in fairly boring white
-text. To fix this, Ren'Py lets you define characters in advance. This
-lets you associate a short name with a character, and to change the
-color of the character's name.
+character names are displayed in the same way, in the accent color
+selected when starting the game. To fix this, Ren'Py lets you define
+characters in advance. This lets you associate a short name with a
+character, and to change the color of the character's name.
 
 ::
 
@@ -214,15 +216,16 @@ color of the character's name.
     define m = Character('Me', color="#c8c8ff")
 
     label start:
-        "I'll ask her..."
 
-        m "Um... will you..."
-        m "Will you be my artist for a visual novel?"
+        s "Hi there! How was class?"
 
-        "Silence."
-        "She is shocked, and then..."
+        m "Good..."
 
-        s "Sure, but what is a \"visual novel?\""
+        "I can't bring myself to admit that it all went in one ear and out the other."
+
+        s "Are you going home now? Wanna walk back with me?"
+
+        m "Sure!"
 
 
 The first and and second lines define characters. The first line
@@ -236,8 +239,8 @@ defined by copying one of the character lines, and changing the short
 name, long name, and color.
 
 We've also changed the say statements to use character objects instead
-of a character name string. This tells Ren'Py to use the characters we
-defined in the init block.
+of a character name string. This tells Ren'Py to use the characters
+we defined.
 
 Images
 ------
