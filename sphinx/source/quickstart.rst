@@ -39,9 +39,6 @@ The Ren'Py launcher has been translated to multiple languages. To
 change the language, choose "preferences" at the bottom right, and then
 select the language.
 
-.. image:: launcher.png
-   :align: right
-
 **Choosing and Launching a Project.** You should first see what the
 completed *The Question* game looks like. To do this, start the Ren'Py
 launcher, and choose "The Question" from the first screen. Choose
@@ -50,20 +47,53 @@ launcher, and choose "The Question" from the first screen. Choose
 You can get back to the Ren'Py demo by doing the same thing, but
 choosing "Tutorial" instead of "The Question".
 
+.. ifconfig:: renpy_figures
+
+
+    .. figure:: quickstart/launcher.png
+        :width: 100%
+
+        The main screen of the Ren'Py launcher.
+
+    .. figure:: quickstart/project_name.png
+        :width: 100%
+
+        Naming a new project.
+
+    .. figure:: quickstart/resolution.png
+        :width: 100%
+
+        Selecting the project resolution.
+
+    .. figure:: quickstart/color.png
+        :width: 100%
+
+        Selecting the accent and background colors for the default theme.
+
+
 **Creating a new Project.**
 Create a new project by choosing "Create New Project" from the
 launcher.
 
-
 The launcher will then ask you for a project name. Since
 "The Question" is already taken, you should enter something different,
-like "My Question".
+like "My Question", and type enter.
 
+After that, the launcher will ask you to select the project resolution. The
+default of 1280x720 is a good compromise between game size and image quality.
+For the purpose of this tutorial, we will select 1280x720 to match
+"The Question" game art, then click "Continue".
 
-The launcher will then ask you to choose a color
-theme for the project. It doesn't matter what you pick at this point,
-just choose something that appeals to you. You'll be returned to the
-top menu of the launcher with your new game chosen.
+The launcher will then ask you to choose a color scheme - an accent and
+background color for the new GUI. It doesn't matter what you pick at
+this point, so just pick something you find appealing, and then click
+"Continue".
+
+At this point, Ren'Py will process for a bit, and spit out a simple game
+template. The template used placeholder art and text, but is runnable, and
+supports expected features like rollback, loading, and saving. Choose
+"Launch Project" to run it.
+
 
 A Simple Game
 -------------
