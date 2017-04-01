@@ -75,6 +75,12 @@ choosing "Tutorial" instead of "The Question".
 Create a new project by choosing "Create New Project" from the
 launcher.
 
+If this is your first time creating a project, Ren'Py may ask you to
+select the projects directory. This is a directory (also called a folder)
+where new projects are created, and is scanned for existing projects. The
+directory chooser might pop up below Ren'Py, so be sure to look for it
+there.
+
 The launcher will then ask you for a project name. Since
 "The Question" is already taken, you should enter something different,
 like "My Question", and type enter.
@@ -101,27 +107,30 @@ A Simple Game
 ::
 
     label start:
-        "I'll ask her..."
 
-        "Me" "Um... will you..."
-        "Me" "Will you be my artist for a visual novel?"
+        "Sylvie" "Hi there! How was class?"
 
-        "Silence."
-        "She is shocked, and then..."
+        "Me" "Good..."
 
-        "Sylvie" "Sure, but what is a \"visual novel?\""
+        "I can't bring myself to admit that it all went in one ear and out the other."
 
-This is perhaps one of the simplest Ren'Py games. It doesn't include
-any pictures or anything like that, but it does show a conversation
-between the two characters.
+        "Me" "Are you going home now? Wanna walk back with me?"
 
-To try this out, go into the launcher, select the "My Question
-Project", and choose "script.rpy" from under Edit File. Ren'Py may
-ask you to select a text editor, after which it will download the
-editor you select. When it finishes, script.rpy will open in an
-editor.  Erase everything in script.rpy, as we're starting from
-scratch, so you don't need what's there. Copy the example above into
-script.rpy, and save it.
+        "Sylvie" "Sure!"
+
+This is a very simple Ren'Py game. It doesn't include any pictures or
+music, but it does show a conversation between two characters, and a
+line of narration.
+
+To try this out, from the top screen of the launcher select "My Question"
+project, and then choose "script.rpy" from under Edit File. If this is
+your first time, Ren'Py will ask you to select an editor (we recommend
+Editra for first time creators), and will download the editor you choose.
+Then it will open the script file in the editor.
+
+Once the editor opens, erase everything in script.rpy. We're starting
+from scratch, so you don't need what's there. Copy the example above into
+script.ry, and save it.
 
 You're now ready to run this example. Go back to the launcher, and
 choose "Launch Project". Ren'Py will start up. Notice how, without any
@@ -151,12 +160,16 @@ blocks must be indented relative to the prior statement, and all of
 the statements in a block must be indented by the same amount.
 
 When strings contain double-quote characters, those characters need to
-be preceded by a backslash. This is done in the last line of our
-example.
+be preceded by a backslash. For example::
+
+::
+
+    ###
+    "Sylvie" "Did you ever hear Lincon's famous quote, \"The problem with Internet quotations is that many of them are not geunine.\""
 
 While this simple game isn't much to look at, it's an example of how
 easy it is to get something working in Ren'Py. We'll add the pictures
-in a little bit, but first, let's see how to declare characters.
+in a little bit, but first, let's see how to define characters.
 
 Init
 ----
