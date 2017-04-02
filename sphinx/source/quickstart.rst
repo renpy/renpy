@@ -245,58 +245,66 @@ we defined.
 Images
 ------
 
-A visual novel isn't much of a visual novel without pictures. Let's
-add some pictures to our game.
+A visual novel isn't much of a visual novel without pictures. Here's another
+scene from "The Question". This also includes statements that show images
+to the player. This can fully replace the previous section of script, if
+you want to try it out.
 
 ::
-
-    image bg meadow = "meadow.jpg"
-    image bg uni = "uni.jpg"
-
-    image sylvie smile = "sylvie_smile.png"
-    image sylvie surprised = "sylvie_surprised.png"
 
     define s = Character('Sylvie', color="#c8ffc8")
     define m = Character('Me', color="#c8c8ff")
 
     label start:
+
         scene bg meadow
-        show sylvie smile
 
-        "I'll ask her..."
+        "After a short while, we reach the meadows just outside the neighborhood where we both live."
 
-        m "Um... will you..."
+        "It's a scenic view I've grown used to. Autumn is especially beautiful here."
+
+        "When we were children, we played in these meadows a lot, so they're full of memories."
+
+        m "Hey... Umm..."
+
+        show sylvie green smile
+
+        "She turns to me and smiles. She looks so welcoming that I feel my nervousness melt away."
+
+        "I'll ask her...!"
+
+        m "Ummm... Will you..."
+
         m "Will you be my artist for a visual novel?"
 
-        show sylvie surprised
+        show sylvie green surprised
 
         "Silence."
-        "She is shocked, and then..."
 
-        show sylvie smile
+all images from the screen, and displays a single image.
+This segment of script introduces two new statements. The scene statement on
+line 6 clears all images and displays a background image. The show statements
+on lines 16 and 26 display a sprite on top of the background, and change the
+displaying sprite, respectively.
 
-        s "Sure, but what is a \"visual novel?\""
+In Ren'Py, each image has a name. The name consists of a tag, and optionally
+one or more attributes. Both the tag and attributes should begin with a
+letter, and contain letters, numbers, and underscores. For example:
+
+* In the scene statement on line 6, the tag is "bg", and the attribute is
+  "meadow."  By convention, background images should use the tag bg.
+
+* In the first show statement on line 16, the tag is "sylvie", and the
+  attributes are "green" and "smile".
+
+* In the second show statement on line 26, the tage is "sylvie", and the
+  attributes are "green" and "surprised".
+
+Only one image with a given tag can be shown at the same time. When a
+second image with the same tag is show, it replaces the first image, as
+happens on line 26.
 
 
-The first new thing we needed to do was to declare the images, using
-image statements on lines 2, 3, 5, and 6, inside the init block. These
-image statements give an image name, and the filename the image is
-found in.
-
-For example, line 5 declares an image named "sylvie smile", found in
-the filename "sylvie_smile.png", with the tag "sylvie".
-
-We have a scene statement on line 12. This statement clears out the
-screen, and shows the "bg meadow" image. The next line is a show
-statement, which shows the "sylvie smile" image on the screen.
-
-The first part of an image name is the image tag. If an image is being
-shown, and another image with the same tag is on the screen, then the
-image that's on the screen is replaced with the one being shown. This
-happens on line 19, the second show statement. Before line 19 is run,
-the image "sylvie smile" is on the screen. When line 19 is run, that
-image is replaces with "sylvie surprised", since they share the
-"sylvie" tag.
 
 For Ren'Py to find the image files, they need to be placed in the game
 directory of the current project. The game directory can be found at
