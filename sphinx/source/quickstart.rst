@@ -305,19 +305,24 @@ second image with the same tag is show, it replaces the first image, as
 happens on line 26.
 
 
+Ren'Py searches for image files in the images directory, which can be
+found by selecting "images" in the "Open Directory" section of the
+launcher. Ren'Py expects character art to be an PNG or WEBP file,
+while background art should be a JPEG, PNG, or WEBP file.
+The name of a file  is very important - the extension is removed, the file
+name is forced to lower-case, and that's used as the image name.
 
-For Ren'Py to find the image files, they need to be placed in the game
-directory of the current project. The game directory can be found at
-"`Project-Name`/game/", or by clicking the "Game Directory" button in
-the launcher. You'll probably want to copy the image files from the
-"the_question/game/" directory into the "my_question/game/" directory,
-so you can run this example.
+For example, the following filesm, placed in the images directory, define the
+following images.
 
-Ren'Py does not make any distinction between character and background
-art, as they're both treated as images. In general, character art
-needs to be transparent, which means it should be a PNG or WEBP
-file. Background art can be JPEG, PNG, or WEBP files. By convention,
-background images start with the "bg" tag.
+* "bg meadow.jpg" -> ``bg meadow``
+* "sylvie green smile.png" -> ``sylvie green smile``
+* "sylvie green surprised.png" -> ``sylvie green surprised``
+
+Since case doesn't matter, the following also holds.
+
+* "Sylvie Green Surprised.png" -> ``sylvie green surprised``
+
 
 **Hide Statement.**
 Ren'Py also supports a hide statement, which hides the given image.
