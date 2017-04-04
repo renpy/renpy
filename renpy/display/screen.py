@@ -751,6 +751,8 @@ def sort_screens():
     # For each screen, the set of screens that use it.
     reverse = collections.defaultdict(set)
 
+    names = { i[0] for i in screens }
+
     for k, v in screens.items():
 
         name = k[0]
@@ -762,6 +764,10 @@ def sort_screens():
             continue
 
         def callback(uses):
+
+            if uses not in names:
+                return
+
             depends[name].add(uses)
             reverse[uses].add(name)
 
