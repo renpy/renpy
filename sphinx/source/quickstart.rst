@@ -312,7 +312,7 @@ while background art should be a JPEG, PNG, or WEBP file.
 The name of a file  is very important - the extension is removed, the file
 name is forced to lower-case, and that's used as the image name.
 
-For example, the following filesm, placed in the images directory, define the
+For example, the following files, placed in the images directory, define the
 following images.
 
 * "bg meadow.jpg" -> ``bg meadow``
