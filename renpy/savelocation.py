@@ -36,6 +36,11 @@ import shutil
 
 disk_lock = threading.RLock()
 
+# A suffix used to disambguate temporary files being written by multiple
+# processes.
+import time
+tmp = "." + str(int(time.time())) + ".tmp"
+
 
 class FileLocation(object):
     """
@@ -321,7 +326,7 @@ class FileLocation(object):
                 return
 
             fn = self.persistent
-            fn_tmp = fn + ".tmp"
+            fn_tmp = fn + tmp
             fn_new = fn + ".new"
 
             with open(fn_tmp, "wb") as f:
