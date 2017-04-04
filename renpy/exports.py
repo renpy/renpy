@@ -3331,3 +3331,14 @@ def get_adjustment(bar_value):
     """
 
     return bar_value.get_adjustment()
+
+
+def get_skipping():
+    """
+    :doc: other
+
+    Returns true if the Ren'Py is skipping, "fast" if Ren'Py is fast skipping,
+    and false if it is not skipping.
+    """
+
+    return renpy.config.skipping
