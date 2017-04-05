@@ -319,10 +319,13 @@ following images.
 * "sylvie green smile.png" -> ``sylvie green smile``
 * "sylvie green surprised.png" -> ``sylvie green surprised``
 
-Since case doesn't matter, the following also holds.
+Since the filenames are lowercase, the following also holds.
 
 * "Sylvie Green Surprised.png" -> ``sylvie green surprised``
 
+Images can be placed in subdirectories (subfolders) under the images directory.
+The directory name is ignored and only the filename is used to define the
+image name.
 
 **Hide Statement.**
 Ren'Py also supports a hide statement, which hides the given image.
@@ -343,6 +346,22 @@ It's actually pretty rare that you'll need to use hide. Show can be
 used when a character is changing emotions, while scene is used when
 everyone leaves. You only need to use hide when a character leaves and
 the scene stays the same.
+
+**Image Statement.**
+Sometimes, a creator might not want to let Ren'Py define images
+automatically. This is what the image statement is for. It should
+be at the top level of the file (unindented, and before label start),
+and can be used to map an image name to an image file. For example::
+
+    image logo = "renpy logo.png"
+    image eileen happy = "eileen_happy_blue_dress.png"
+
+The image statement is run at init time, before label start and the rest
+of the game script that interacts with the player.
+
+The image statement can also be used for more complex tasks, but that's
+discussed :ref:`elsewhere <displaying-images>`.
+
 
 Transitions
 -----------

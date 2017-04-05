@@ -99,7 +99,7 @@ by the image directory.
 
 .. _image-directory:
 
-Image Directory
+Images Directory
 ---------------
 
 The image directory is named "images", and is placed under the game directory.
