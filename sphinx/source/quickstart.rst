@@ -366,36 +366,40 @@ discussed :ref:`elsewhere <displaying-images>`.
 Transitions
 -----------
 
-Simply having pictures pop in and out is boring, so Ren'Py implements
-transitions that can make changes to the screen more
-interesting. Transitions change the screen from what it looked like at
-the end of the last interaction (dialogue, menu, or transition), to
-what it looks like after any scene, show, and hide statements.
+In the code above, pictures pop in and out instantaneously. Since
+changing location or having a character enter or leave a scene is
+important, Ren'Py supports transitions that allow effects to be
+applied when what is being shown changes.
+
+Transitions change what is displayed from what it was at the end of
+the last interaction (dialogue, menu, or transition - among other
+statements) to what it looks like after scene, show, and hide statements
+have run.
 
 ::
 
     label start:
-        scene bg uni
-        show sylvie smile
-
-        s "Oh, hi, do we walk home together?"
-        m "Yes..."
-        "I said and my voice was already shaking."
 
         scene bg meadow
         with fade
 
-        "We reached the meadows just outside our hometown."
-        "Autumn was so beautiful here."
-        "When we were children, we often played here."
-        m "Hey... ummm..."
+        "After a short while, we reach the meadows just outside the neighborhood where we both live."
 
-        show sylvie smile
+        "It's a scenic view I've grown used to. Autumn is especially beautiful here."
+
+        "When we were children, we played in these meadows a lot, so they're full of memories."
+
+        m "Hey... Umm..."
+
+        show sylvie green smile
         with dissolve
 
-        "She turned to me and smiled."
-        "I'll ask her..."
-        m "Ummm... will you..."
+        "She turns to me and smiles. She looks so welcoming that I feel my nervousness melt away."
+
+        "I'll ask her...!"
+
+        m "Ummm... Will you..."
+
         m "Will you be my artist for a visual novel?"
 
 The with statement takes the name of a transition to use. The most
@@ -408,17 +412,17 @@ statements, it applies to them all at once. If you were to write::
 
     ###
         scene bg meadow
-        show sylvie smile
+        show sylvie green smile
         with dissolve
 
-Both the "bg meadow" and "sylvie smiles" would be dissolved in at the
-same time. To dissolve them in one at a time, you need to write two
+Both the "bg meadow" and "sylvie green smile" images would be dissolved in
+at the same time. To dissolve them in one at a time, you need to write two
 with statements::
 
     ###
         scene bg meadow
         with dissolve
-        show sylvie smile
+        show sylvie green smile
         with dissolve
 
 This first dissolves in the meadow, and then dissolves in sylvie. If
@@ -433,7 +437,7 @@ could write::
 
 Here, None is used to indicate a special transition that updates
 Ren'Py's idea of what the prior screen was, without actually showing
-anything to the user.
+anything to the player.
 
 Positions
 ---------
@@ -448,16 +452,16 @@ purposes.
 ::
 
    ###
-        show sylvie smile at right
+        show sylvie green smile at right
 
-To do this repositioning, add an at-clause to a show statement. The at
+To do this repositioning, add an at clause to a show statement. The at
 clause takes a position, and shows the image at that position. Ren'Py
-includes several pre-defined positions: ``left`` for the left side of
+includes several predefined positions: ``left`` for the left side of
 the screen, ``right`` for the right side, ``center`` for centered
 horizontally (the default), and ``truecenter`` for centered
 horizontally and vertically.
 
-A user can define their own positions, and event complicated moves,
+Creators can define their own positions, and event complicated moves,
 but that's outside of the scope of this quickstart.
 
 Music and Sound
