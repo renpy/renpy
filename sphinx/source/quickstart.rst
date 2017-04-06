@@ -366,7 +366,7 @@ discussed :ref:`elsewhere <displaying-images>`.
 Transitions
 -----------
 
-In the code above, pictures pop in and out instantaneously. Since
+In the script above, pictures pop in and out instantaneously. Since
 changing location or having a character enter or leave a scene is
 important, Ren'Py supports transitions that allow effects to be
 applied when what is being shown changes.
@@ -506,9 +506,17 @@ effects do not loop. ::
 Pause Statement
 ---------------
 
-The pause statement causes Ren'Py to pause until the mouse is clicked. If the
-optional expression is given, it will be evaluated to a number, and the pause
-will automatically terminate once that number of seconds has elapsed.
+The pause statement causes Ren'Py to pause until the mouse is clicked. ::
+
+    ###
+        pause
+
+If a number is given, the pause will end when that number of seconds
+have elapsed. ::
+
+    ###
+        pause 3.0
+
 
 Ending the Game
 ---------------
