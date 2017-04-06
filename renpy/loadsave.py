@@ -201,7 +201,21 @@ def safe_rename(old, new):
     if os.path.exists(new):
         os.unlink(new)
 
-    os.rename(old, new)
+    try:
+        os.rename(old, new)
+    except:
+
+        # If the rename failed, try again.
+        try:
+            os.unlink(new)
+            os.rename(old, new)
+        except:
+
+            # If it fails a second time, give up.
+            try:
+                os.unlink(old)
+            except:
+                pass
 
 
 class SaveRecord(object):
