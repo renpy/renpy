@@ -467,14 +467,16 @@ but that's outside of the scope of this quickstart.
 Music and Sound
 ---------------
 
-Most games play music in the background. Music is played with the play music
-statement. It can take either a string containing a filename, or a list of filenames
-to be played. When the list is given, the item of it is played in order. ::
+Most Ren'Py games play music in the background. Music is played with the
+play music statement. The play music statement takes a filename that
+is interpreted as an audio file to play.  Audio filenames are interpreted
+relative to the game directory. Audio files should be in opus, ogg vorbis,
+or mp3 format.
+
+For example::
 
     ###
         play music "illurock.ogg"
-        play music ["1.ogg", "2.ogg"]
-
 
 When changing music, one can supply a fadeout and a fadein clause, which
 are used to fade out the old music and fade in the new music. ::
@@ -482,13 +484,11 @@ are used to fade out the old music and fade in the new music. ::
     ###
         play music "illurock.ogg" fadeout 1.0 fadein 1.0
 
-And if you supply a loop clause, it loops. if you supply a noloop clause, it
-doesn't loop. In Ren'Py, music files automatically loop until they are stopped
-by the user. ::
+The queue music statement plays an audio file after the current file
+finishes playing. ::
 
     ###
-        play music "illurock.ogg" loop
-        play music "illurock.ogg" noloop
+        queue music "next_track.opus"
 
 Music can be stopped with the stop music statement, which can also
 optionally take a fadeout clause. ::
@@ -496,16 +496,12 @@ optionally take a fadeout clause. ::
     ###
         stop music
 
-Sound effects can be played with the play sound statement. It defaults to not looping. ::
+Sound effects can be played with the play sound statement. Unlike music, sound
+effects do not loop. ::
 
     ###
         play sound "effect.ogg"
 
-The play sound statement can have same clauses with the play music statement.
-
-Ren'Py support many formats for sound and music, but OGG Vorbis is
-preferred. Like image files, sound and music files must be placed in
-the game directory.
 
 Pause Statement
 ---------------
