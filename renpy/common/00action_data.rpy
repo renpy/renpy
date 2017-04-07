@@ -34,8 +34,8 @@ init -1600 python:
          field to set, and `value` is the value to set it to.
          """
 
-        identity_fields = [ "object", "value" ]
-        equality_fields = [ "value" ]
+        identity_fields = [ "object" ]
+        equality_fields = [ "field", "value" ]
 
         def __init__(self, object, field, value):
             self.object = object
