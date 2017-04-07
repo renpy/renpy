@@ -67,7 +67,8 @@ init -1600 python:
          Causes the value of `key` in `dict` to be set to `value`.
          """
 
-        identity_fields = [ "dict", "key", "value" ]
+        identity_fields = [ "dict" ]
+        equality_fields = [ "key", "value" ]
 
         def __init__(self, dict, key, value):
             self.dict = dict
@@ -138,8 +139,8 @@ init -1600 python:
              If not None, then this is the false value we use.
          """
 
-        identity_fields = [ "object", "true_value", "false_value" ]
-        equality_fields = [ "field" ]
+        identity_fields = [ "object"]
+        equality_fields = [ "field", "true_value", "false_value"  ]
 
         def __init__(self, object, field, true_value=None, false_value=None):
             self.object = object
@@ -172,6 +173,7 @@ init -1600 python:
 
             return rv
 
+
     @renpy.pure
     def ToggleVariable(variable, true_value=None, false_value=None):
         """
@@ -188,7 +190,6 @@ init -1600 python:
         return ToggleField(store, variable, true_value=true_value, false_value=false_value)
 
 
-
     @renpy.pure
     class ToggleDict(Action, FieldEquality):
         """
@@ -203,7 +204,8 @@ init -1600 python:
              If not None, then this is the false value we use.
          """
 
-        identity_fields = [ "dict", "key", "true_value", "false_value" ]
+        identity_fields = [ "dict", ]
+        equality_fields = [ "key", "true_value", "false_value" ]
 
         def __init__(self, dict, key, true_value=None, false_value=None):
             self.dict = dict
@@ -240,7 +242,6 @@ init -1600 python:
             return rv
 
 
-
     @renpy.pure
     class ToggleScreenVariable(Action, FieldEquality):
         """
@@ -254,8 +255,7 @@ init -1600 python:
              If not None, then this is the false value we use.
          """
 
-        identity_fields = [ "true_value", "false_value" ]
-        equality_fields = [ "name" ]
+        equality_fields = [ "name", "true_value", "false_value" ]
 
         def __init__(self, name, true_value=None, false_value=None):
             self.name = name
@@ -315,7 +315,8 @@ init -1600 python:
             The value to add or append.
         """
 
-        identity_fields = [ 'set', 'value' ]
+        identity_fields = [ 'set' ]
+        equality_fields = [ 'value' ]
 
         def __init__(self, set, value):
             self.set = set
@@ -345,7 +346,8 @@ init -1600 python:
             The value to add or append.
         """
 
-        identity_fields = [ 'set', 'value' ]
+        identity_fields = [ 'set' ]
+        equality_fields = [ 'value' ]
 
         def __init__(self, set, value):
             self.set = set
@@ -378,7 +380,8 @@ init -1600 python:
             The value to add or append.
         """
 
-        identity_fields = [ 'set', 'value' ]
+        identity_fields = [ 'set' ]
+        equality_fields = [ 'value' ]
 
         def __init__(self, set, value):
             self.set = set
