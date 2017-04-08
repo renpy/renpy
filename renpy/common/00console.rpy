@@ -320,8 +320,16 @@ init -1500 python in _console:
                 self.backup()
 
         def show_stdio(self):
+
+            old_entry = None
+
             for error, l in stdio_lines:
-                self.history.append(ConsoleHistoryEntry(None, l, error))
+                if (old_entry is not None) and (error == old_entry.is_error):
+                    old_entry.result += "\n" + l
+                else:
+                    e = ConsoleHistoryEntry(None, l, error)
+                    self.history.append(e)
+                    old_entry = e
 
             stdio_lines[:] = [ ]
 
