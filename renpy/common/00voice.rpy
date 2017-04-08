@@ -391,7 +391,7 @@ init -1500 python hide:
         if renpy.get_mode() == "with":
             return
 
-        if _menu:
+        if getattr(renpy.context(), "_menu", False):
             renpy.sound.stop(channel="voice")
             return
 
