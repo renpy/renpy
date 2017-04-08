@@ -61,6 +61,10 @@ _widget_properties = { }
 # The text rectangle, or None to use the automatic code.
 _text_rect = None
 
+# Are we in various menus?
+_menu = False
+main_menu = False
+
 
 class _Config(object):
 
