@@ -156,6 +156,25 @@ init -1500 python in _console:
 
     HistoryEntry = ConsoleHistoryEntry
 
+
+    stdio_lines = [ ]
+
+    def stdout_line(l):
+        if not config.developer:
+            return
+
+        stdio_lines.append((False, l))
+
+    def stderr_line(l):
+        if not config.developer:
+            return
+
+        stdio_lines.append((True, l))
+
+    config.stdout_callbacks.append(stdout_line)
+    config.stderr_callbacks.append(stderr_line)
+
+
     class ScriptErrorHandler(object):
         """
         Handles error in Ren'Py script.
@@ -248,6 +267,8 @@ init -1500 python in _console:
 
         def interact(self):
 
+            self.show_stdio()
+
             def get_indent(s):
                 """
                 Computes the indentation for the line following line s.
@@ -297,6 +318,12 @@ init -1500 python in _console:
                 self.run(lines)
             finally:
                 self.backup()
+
+        def show_stdio(self):
+            for error, l in stdio_lines:
+                self.history.append(ConsoleHistoryEntry(None, l, error))
+
+            stdio_lines[:] = [ ]
 
         def can_renpy(self):
             """
