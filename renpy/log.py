@@ -32,6 +32,10 @@ import tempfile
 import renpy
 import sys
 
+real_stdout = sys.stdout
+real_stderr = sys.stderr
+
+
 # The file events are logged to.
 log_file = None
 
@@ -68,7 +72,7 @@ class LogFile(object):
         self.raw_write = False
 
         if renpy.ios:
-            self.file = sys.stdout
+            self.file = real_stdout
 
     def open(self):  # @ReservedAssignment
 
@@ -99,7 +103,7 @@ class LogFile(object):
                 mode = "w"
 
             if renpy.config.log_to_stdout:
-                self.file = sys.stdout
+                self.file = real_stdout
 
             else:
 
@@ -166,3 +170,67 @@ def open(name, append=False, developer=False, flush=False):  # @ReservedAssignme
         log_cache[name] = rv
 
     return rv
+
+
+################################################################################
+# Stdout / Stderr Redirection
+
+class StdioRedirector(object):
+
+    def __init__(self):
+        self.buffer = ''
+        self.log = open("log", developer=False, append=False)
+
+    def write(self, s):
+        self.real_file.write(s)
+
+        s = self.buffer + s
+
+        lines = s.split("\n")
+
+        try:
+            callbacks = self.get_callbacks()
+        except:
+            callbacks = [ ]
+
+        for l in lines[:-1]:
+            self.log.write(l)
+
+            for i in callbacks:
+                try:
+                    i(l)
+                except:
+                    traceback.print_exc(None, real_stderr)
+                    pass
+
+        self.buffer = lines[-1]
+
+    def writelines(self, lines):
+        for i in lines:
+            self.write(i)
+
+    def flush(self):
+        self.real_file.flush()
+        pass
+
+    def close(self):
+        pass
+
+
+class StdoutRedirector(StdioRedirector):
+    real_file = real_stdout
+
+    def get_callbacks(self):
+        return renpy.config.stdout_callbacks
+
+sys.stdout = StdoutRedirector()
+
+
+class StderrRedirector(StdioRedirector):
+    real_file = real_stderr
+
+    def get_callbacks(self):
+        return renpy.config.stderr_callbacks
+
+
+sys.stderr = StderrRedirector()

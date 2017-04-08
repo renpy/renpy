@@ -764,6 +764,11 @@ needs_redraw_callbacks = [ ]
 # Should a hyperlink inherit the size of the text its in?
 hyperlink_inherit_size = True
 
+# A list of callbacks that are called when a line is printed to stdout or
+# stderr.
+stdout_callbacks = [ ]
+stderr_callbacks = [ ]
+
 del renpy
 del os
 
