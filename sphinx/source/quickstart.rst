@@ -538,53 +538,61 @@ presents menus to the user.
 Menus, Labels, and Jumps
 -------------------------
 
-The menu statement lets you present a choice to the user::
+The menu statement lets presents a choice to the player::
 
     ###
         s "Sure, but what's a \"visual novel?\""
 
     menu:
-        "It's a story with pictures.":
-             jump vn
 
-        "It's a hentai game.":
-             jump hentai
+        "It's a videogame.":
+            jump game
 
-    label vn:
-        m "It's a story with pictures and music."
+        "It's an interactive book.":
+            jump book
+
+    label game:
+
+        m "It's a kind of videogame you can play on your computer or a console."
+
         jump marry
 
-    label hentai:
-        m "Why it's a game with lots of sex."
+    label book:
+
+        m "It's like an interactive book that you can read on a computer or a console."
+
         jump marry
 
     label marry:
-        scene black
-        with dissolve
 
-        "--- years later ---"
+        "And so, we become a visual novel creating duo."
 
-This example shows how menus are used with Ren'Py. The menu statement
-introduces an in-game-menu. The menu statement takes a block of lines,
-each consisting of a string followed by a colon. These are the menu
-choices which are presented to the user. Each menu choice should be
-followed by a block of one or more Ren'Py statements. When a choice is
-chosen, the statements following it are run.
+This example shows how a menu can be used with Ren'Py. The menu statement
+introduces an in-game choice. It takes an indented block of lines, each
+consisting of a string followed by a colon. These are the menu choices that are
+presented to the player. Each menu choice takes its own indented block of lines,
+which is run when that menu choices is chosen.
 
-In our example, each menu choice runs a jump statement. The jump
-statement transfers control to a label defined using the label
-statement. The code following that label is run.
+In this example, each of the two menu choices runs a single jump statement.
+The jump statement transfers control to the a label defined using the label
+statement. After a jump, script statements following the label are run.
 
-In our example above, after Sylvie asks her question, the user is
-presented with a menu containing two choices. If the user picks "It's
-a story with pictures.", the first jump statement is run, and control
-is transferred to the ``vn`` label. This will cause the pov character to
-say "It's a story with pictures and music.", after which control is
-transferred to the ``marry`` label.
+In the example above, after Sylvie asks her question, the player is presented
+with a menu containing two choices. If the player picked "It's a videogame.",
+the first jump statement is run, and Ren'Py will jump to the ``game`` label.
+This will cause the POV character to say "It's a story with pictures and music.",
+after which Ren'Py will jump to the ``marry`` label.
 
-Labels may be defined in any file that is in the game directory, and
-ends with .rpy. The filename doesn't matter to Ren'Py, only the labels
-contained within it. A label may only appear in a single file.
+If there is no jump statement at the end of the block associated with the label,
+Ren'Py will continue on to the next statement. The last jump statement here is
+technically unnecessary, but is included since it makes the flow of the game
+clearer.
+
+Labels may be defined in any file that is in the game directory, and ends with
+.rpy. The filename doesn't matter to Ren'Py, only the labels contained inside
+it. You can think of all the .rpy files as being equivalent to a single big
+.rpy file, with jumps used to transfer control. This gives you flexibility
+in how you organize the script of a larger game.
 
 Python and If Statements
 ------------------------
