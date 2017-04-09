@@ -663,37 +663,46 @@ Once you've made a game, there are a number of things you should do
 before releasing it:
 
 **Check for a new version of Ren'Py.**
-   New versions of Ren'Py are released on a regular basis, to fix bugs
-   and add new features. Before releasing, click update in the launcher
-   to update Ren'Py to the latest version. You can also download new
-   versions and view a list of changes at
-   `http://www.renpy.org/latest.html <http://www.renpy.org/latest.html>`_.
+    New versions of Ren'Py are released on a regular basis to fix bugs
+    and add new features. Before releasing, you'll want to click update
+    in the launcher to update Ren'Py to the latest version. You can also download new
+    versions and view a list of changes at `https://www.renpy.org/latest.html <https://www.renpy.org/latest.html>`_.
+
+    Rarely, changes to Ren'Py will require you to make a change to your game's
+    script. `https://www.renpy.org/doc/html/incompatible.html <https://www.renpy.org/doc/html/incompatible.html>`_ has
+    a list of these changes.
 
 **Check the Script.**
-   From the front page of the launcher, choose "Check Script
-   (Lint)". This will check your games for errors that may affect some
-   users. These errors can affect users on the Mac and Linux
-   platforms, so it's important to fix them all, even if you don't see
-   them on your computer.
+    From the front page of the launcher, choose "Check Script
+    (Lint)". This will check your games for potential errors. Since some of
+    these errors will only affect users on other platforms, it's important
+    to understand and usually fix all errors, even if you don't see the problem
+    on your computer.
 
 **Build Distributions.**
-   From the front page of the launcher, choose "Build Distributions". Based
-   on the information contained in options.rpy, the launcher will build one
-   or more archive files containing your game.
+    From the front page of the launcher, choose "Build Distributions". Based
+    on the information contained in options.rpy, the launcher will build one
+    or more archive files containing your game.
 
 **Test.**
-   Lint is not a substitute for thorough testing. It's your
-   responsibility to check your game before it is released. Consider asking
-   friends to help beta-test your game, as often a tester can find problems
-   you can't.
+    Lint is not a substitute for thorough testing. It's your
+    responsibility to check your game before it is released. Consider asking
+    friends to help beta-test your game, as often a tester can find problems
+    you can't.
 
 **Release.**
-   You should post the generated files (for Windows, Mac, and Linux) up
-   on the web somewhere, and tell people where to download them
-   from. Congratulations, you've released a game!
+    Once the game has been finished and tested, you should post the generated
+    archice files on the web somewhere people can see them. (If you don't
+    have your own website, `https://itch.io <https://itch.io>`_ hosts a lot
+    of visual novels.) Congratulations, you've released your first visual novel!
 
-   Please also add your released game to our `games database <http://games.renpy.org>`_,
-   so we can keep track of the Ren'Py games being made.
+    There are a few places where a game can be announced:
+
+    * The `Ren'Py Games List <https://games.renpy.org>`_ helps us keep track of
+      Ren'Py games being made.
+
+    * The `Completed Games section of the Lemma Soft Forums <https://lemmasoft.renai.us/forums/viewforum.php?f=11>`_ is a
+      good place to tell fellow creators about your game.
 
 Script of The Question
 -----------------------
@@ -703,21 +712,20 @@ You can view the full script of ''The Question'' :ref:`here <thequestion>`.
 Where do we go from here?
 -------------------------
 
-This Quickstart has barely scratched the surface of what Ren'Py is
-capable of. For simplicity's sake, we've omitted many features Ren'Py
-supports. To get a feel for what Ren'Py is capable of, we suggest
-playing through the Tutorial, and having Eileen demonstrate these features
-to you.
 
-You may also want to read the rest of this (complex) manual, as it's
-the definitive guide to Ren'Py.
+This Quickstart barely scratches the surface of what Ren'Py is capable of.
+For brevity's sake, we've omitted many features Ren'Py supports, and
+simplified others - focusing on the minimum set of features used to make a
+visual novel.
 
-On the Ren'Py website, there's the a `FAQ <http://www.renpy.org/wiki/renpy/doc/FAQ>`_ giving answers to
-common questions, and a `Cookbook <http://www.renpy.org/wiki/renpy/doc/cookbook/Cookbook>`_ giving
-useful code snippets. If you have questions, we suggest asking them at
-the `Lemma Soft Forums <http://lemmasoft.renai.us/forums/>`_, the
-official forum of Ren'Py. This is the central hub of the Ren'Py
-community, where we welcome new users and the questions they bring.
+To get a feel for what Ren'Py is capable of, please play through the Tutorial,
+and perhaps some of the games featured on the `Ren'Py website <https://www.renpy.org>`_.
+You may also want to read the rest of this manual, starting with the GUI Customization
+Guide.
 
-Thank you for choosing the Ren'Py visual novel engine. We look forward
-to seeing what you create with it!
+Beyond that, we recommend checking out the Ren'Py section of the `Lemma Soft Forums <https://lemmasoft.renai.us/forums>`_, which
+has a section for asking questions, and a cookbook section with code and examples ment for reuse. The Lemma Soft Forums are the
+central hub of the Ren'Py community, where we welcome new creators and the questions they bring.
+
+Thank you for choosing the Ren'Py visual novel engine. We look forward to seeing
+what you creat with it!
