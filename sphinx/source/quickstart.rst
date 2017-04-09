@@ -594,52 +594,67 @@ it. You can think of all the .rpy files as being equivalent to a single big
 .rpy file, with jumps used to transfer control. This gives you flexibility
 in how you organize the script of a larger game.
 
-Python and If Statements
-------------------------
+Supporting Flags using the Default, Python and If Statements
+------------------------------------------------------------
 
-While simple (and even fairly complex) games can be made using only
-using menus and jump statements, after a point it becomes necessary to
-store the user's choices in variables, and access them again
-later. This is what Ren'Py's python support is for.
+While some games can be made by only using the statements given above,
+other games requires data to be stored and recalled later. For example,
+it might make sense for a game to remember a choice a player has made,
+return to common code, and act on the choice later. This is one of the reasons
+why Ren'Py has embedded Python support.
 
-Python support can be accessed in two ways. A line beginning with a
-dollar-sign is a single-line python statement, while the keyword
-"python:" is used to introduce a block of python statements.
+Here, we'll show how to store a flag containing information about a choice
+the player has made. To initialize the flag, use the default statement, before
+label start. ::
 
-Python makes it easy to store flags in response to user input. Just
-initialize the flag at the start of the game::
+    # True if the player has decided to compare a VN to a book.
+    default book = False
 
     label start:
-        $ bl_game = False
 
-You can then change the flag in code that is chosen by menus::
+        s "Hi there! How was class?"
 
-    label hentai:
+The book flag starts off initialized to the special value ``False``
+(as with the rest of Ren'Py, capitalization matters), meaning that
+it is not set. If the book path is chosen, we can set it to True
+using a Python assignment statement. ::
 
-        $ bl_game = True
 
-        m "Why it's a game with lots of sex."
-        s "You mean, like a boy's love game?"
-        s "I've always wanted to make one of those."
-        s "I'll get right on it!"
+    label book:
+
+        $ book = True
+
+        m "It's like an interactive book that you can read on a computer or a console."
 
         jump marry
 
-And check it later::
+Lines beginning with a dollar-sign are interpreted as Python statements. The
+assignment statement here assigns a value to a variable. Ren'Py has support
+for other ways of including Python, such as a multi-line Python statement,
+that are discussed in other sections of this manual.
 
-        "And so, we became a visual novel creating team."
-        "We made games and had a lot of fun making them."
+To check the flag, use the if statement::
 
-        if bl_game:
-            "Well, apart from that boy's love game she insisted on making."
+        if book:
 
-        "And one day..."
+            "Our first game is based on one of Sylvie's ideas, but afterwards I get to come up with stories of my own, too."
 
-Of course, python variables need not be simple True/False values. They
-can be arbitrary python values. They can be used to store the player's
-name, to store a points score, or for any other purpose. Since Ren'Py
-includes the ability to use the full Python programming language, many
-things are possible.
+If the condition is true, the block of script is run. If not, it is skipped.
+The if statement can also take an else clause, that introduced a block of
+script that is run if the condition is false. ::
+
+        if book:
+
+            "Our first game is based on one of Sylvie's ideas, but afterwards I get to come up with stories of my own, too."
+
+        else:
+
+            "Sylvie helped with the script on our first video game."
+
+Python variables need not be simple True/False values. Variables can be
+used to store the player's name, a points score, or for any other
+purpose. Since Ren'Py includes the ability to use the full Python
+programming language, many things are possible.
 
 Releasing Your Game
 -------------------
