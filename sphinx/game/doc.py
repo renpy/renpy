@@ -352,7 +352,7 @@ def write_easings(ns):
 
 def tq_script(name):
 
-    with open("../the_question_7/game/" + name, "r") as f:
+    with open("../the_question/game/" + name, "r") as f:
         lines = f.readlines()
         lines = [ ("    " + i).rstrip() for i in lines ]
         return "\n".join(lines)
