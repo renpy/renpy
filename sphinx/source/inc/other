@@ -225,6 +225,11 @@
     If `layer` is None, uses the default layer for the currently showing
     tag.
 
+.. function:: renpy.get_skipping()
+    
+    Returns true if the Ren'Py is skipping, "fast" if Ren'Py is fast skipping,
+    and false if it is not skipping.
+
 .. function:: renpy.get_transition(layer=None)
     
     Gets the transition for `layer`, or the entire scene if

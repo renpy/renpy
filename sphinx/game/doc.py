@@ -348,3 +348,22 @@ def write_easings(ns):
 
             stdname = name.replace("ease_", "easeInOut_").replace("easein_", "easeOut_").replace("easeout_", "easeIn_")
             f.write('    "{}", "{}"\n'.format(name, stdname))
+
+
+def tq_script(name):
+
+    with open("../the_question_7/game/" + name, "r") as f:
+        lines = f.readlines()
+        lines = [ ("    " + i).rstrip() for i in lines ]
+        return "\n".join(lines)
+
+
+def write_tq():
+    script = tq_script("script.rpy")
+    options = tq_script("options.rpy")
+
+    with open("source/thequestion.txt", "r") as f:
+        template = f.read()
+
+    with open("source/thequestion.rst", "w") as f:
+        f.write(template.format(script=script, options=options))

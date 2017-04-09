@@ -171,34 +171,6 @@ While this simple game isn't much to look at, it's an example of how
 easy it is to get something working in Ren'Py. We'll add the pictures
 in a little bit, but first, let's see how to define characters.
 
-..
-
-    Init
-    ----
-
-    The init statement is used to execute blocks of Ren'Py statements before the
-    script executes. Init blocks are used to define images and characters, to set
-    up unchanging game data structures, and to customize Ren'Py. Code inside init
-    blocks should not interact with the user or change any of the layers, and so
-    should not contain say, menu, scene, show, or hide statements, as well as calls
-    to any function that can do these things.
-
-    An init statement is introduced with the keyword init, followed by an optional
-    priority number, and a mandatory colon. If the priority is not given, it
-    defaults to 0. Priority numbers should be in the range -999 to 999. Numbers
-    outside of this range are reserved for Ren'Py code.
-
-    The priority number is used to determine when the code inside the init block
-    executes. Init blocks are executed in priority order from low to high. Within a
-    file, init blocks with the same priority are run in order from the top of the
-    file to the bottom. The order of evaluation of priority blocks with the same
-    priority between files is undefined.
-
-    The init blocks are all run once, during a special init phase. When control
-    reaches the end of an init block during normal execution, execution of that
-    block ends. If an init statement is encountered during normal execution, the
-    init block is not run. Instead, control passes to the next statement.
-
 Characters
 ----------
 
@@ -711,7 +683,6 @@ You can view the full script of ''The Question'' :ref:`here <thequestion>`.
 
 Where do we go from here?
 -------------------------
-
 
 This Quickstart barely scratches the surface of what Ren'Py is capable of.
 For brevity's sake, we've omitted many features Ren'Py supports, and

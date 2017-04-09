@@ -3,155 +3,168 @@
 Script of The Question
 ======================
 
-The script is divided over two files.
-
-* `script.rpy`_ contains the main body of the game.
-
-* `options.rpy`_ contains options which customize the display of parts
-  of the game.
-
-script.rpy
-----------
+This is the main script.rpy file of The Question. For the full code of
+The Question, open it in the Ren'Py lanucher, or visit
+`https://github.com/renpy/renpy/tree/master/the_question`_.
 
 ::
 
-    # Declare images used by this game.
-    image bg lecturehall = "lecturehall.jpg"
-    image bg uni = "uni.jpg"
-    image bg meadow = "meadow.jpg"
-    image bg club = "club.jpg"
-
-    image sylvie normal = "sylvie_normal.png"
-    image sylvie giggle = "sylvie_giggle.png"
-    image sylvie smile = "sylvie_smile.png"
-    image sylvie surprised = "sylvie_surprised.png"
-
-    image sylvie2 normal = "sylvie2_normal.png"
-    image sylvie2 giggle = "sylvie2_giggle.png"
-    image sylvie2 smile = "sylvie2_smile.png"
-    image sylvie2 surprised = "sylvie2_surprised.png"
-
-    # Define characters used by this game.
+    # Declare characters used by this game.
     define s = Character('Sylvie', color="#c8ffc8")
     define m = Character('Me', color="#c8c8ff")
+
+    # This is a variable that is True if you've compared a VN to a book, and False
+    # otherwise.
+    default book = False
 
 
     # The game starts here.
     label start:
 
-        $ bl_game = False
-
-        play music "illurock.ogg"
+        # Start by playing some music.
+        play music "illurock.opus"
 
         scene bg lecturehall
         with fade
 
-        "Well, professor Eileen's lecture was interesting."
-        "But to be honest, I couldn't concentrate on it very much."
-        "I had a lot of other thoughts on my mind."
-        "And they all ended up with a question."
-        "A question, I've been meaning to ask someone."
+        "It's only when I hear the sounds of shuffling feet and supplies being put away that I realize that the lecture's over."
+
+        "Professor Eileen's lectures are usually interesting, but today I just couldn't concentrate on it."
+
+        "I've had a lot of other thoughts on my mind...thoughts that culminate in a question."
+
+        "It's a question that I've been meaning to ask a certain someone."
 
         scene bg uni
         with fade
 
-        "When we came out of the university, I saw her."
+        "When we come out of the university, I spot her right away."
 
-        show sylvie normal
+        show sylvie green normal
         with dissolve
 
-        "She was a wonderful person."
-        "I've known her ever since we were children."
-        "And she's always been a good friend."
-        "But..."
-        "Recently..."
-        "I think..."
-        "... that I wanted more."
-        "More just talking... more than just walking home together when our classes ended."
-        "And I decided..."
+        "I've known Sylvie since we were kids. She's got a big heart and she's always been a good friend to me."
+
+        "But recently... I've felt that I want something more."
+
+        "More than just talking, more than just walking home together when our classes end."
+
+        "As soon as she catches my eye, I decide..."
 
         menu:
 
-            "... to ask her right away.":
+            "To ask her right away.":
 
                 jump rightaway
 
-            "... to ask her later.":
+            "To ask her later.":
 
                 jump later
 
 
     label rightaway:
 
-        show sylvie smile
+        show sylvie green smile
 
-        s "Oh, hi, do we walk home together?"
-        m "Yes..."
-        "I said and my voice was already shaking."
+        s "Hi there! How was class?"
+
+        m "Good..."
+
+        "I can't bring myself to admit that it all went in one ear and out the other."
+
+        m "Are you going home now? Wanna walk back with me?"
+
+        s "Sure!"
 
         scene bg meadow
         with fade
 
-        "We reached the meadows just outside our hometown."
-        "Autumn was so beautiful here."
-        "When we were children, we often played here."
-        m "Hey... ummm..."
+        "After a short while, we reach the meadows just outside the neighborhood where we both live."
 
-        show sylvie smile
+        "It's a scenic view I've grown used to. Autumn is especially beautiful here."
+
+        "When we were children, we played in these meadows a lot, so they're full of memories."
+
+        m "Hey... Umm..."
+
+        show sylvie green smile
         with dissolve
 
-        "She turned to me and smiled."
-        "I'll ask her..."
-        m "Ummm... will you..."
+        "She turns to me and smiles. She looks so welcoming that I feel my nervousness melt away."
+
+        "I'll ask her...!"
+
+        m "Ummm... Will you..."
+
         m "Will you be my artist for a visual novel?"
 
-        show sylvie surprised
+        show sylvie green surprised
 
         "Silence."
-        "She is shocked. And then..."
 
-        show sylvie smile
+        "She looks so shocked that I begin to fear the worst. But then..."
 
-        s "Sure, but what is a \"visual novel?\""
+        show sylvie green smile
+
+        s "Sure, but what's a \"visual novel?\""
 
         menu:
 
-            "It's a story with pictures.":
-                jump vn
+            "It's a videogame.":
+                jump game
 
-            "It's a hentai game.":
-                jump hentai
+            "It's an interactive book.":
+                jump book
 
-    label vn:
 
-        m "It's a story with pictures and music."
-        m "And you'll be able to make choices that influence the outcome of the story."
+    label game:
+
+        m "It's a kind of videogame you can play on your computer or a console."
+
+        m "Visual novels tell a story with pictures and music."
+
+        m "Sometimes, you also get to make choices that affect the outcome of the story."
+
         s "So it's like those choose-your-adventure books?"
-        m "Exactly! I plan on making a small romantic story."
-        m "And I figured you could help me... since I know how you like to draw."
 
-        show sylvie normal
+        m "Exactly! I've got lots of different ideas that I think would work."
 
-        s "Well, I can try. I hope I don't disappoint you."
-        m "You can't disappoint me, you know that."
+        m "And I thought maybe you could help me...since I know how you like to draw."
+
+        m "It'd be hard for me to make a visual novel alone."
+
+        show sylvie green normal
+
+        s "Well, sure! I can try. I just hope I don't disappoint you."
+
+        m "You know you could never disappoint me, Sylvie."
 
         jump marry
 
-    label hentai:
 
-        $ bl_game = True
+    label book:
 
-        m "Why it's a game with lots of sex."
-        s "You mean, like a boy's love game?"
-        s "I've always wanted to make one of those."
-        s "I'll get right on it!"
+        $ book = True
 
-        hide sylvie
-        with dissolve
+        m "It's like an interactive book that you can read on a computer or a console."
 
-        "..."
+        show sylvie green surprised
 
-        m "That wasn't what I meant!"
+        s "Interactive?"
+
+        m "You can make choices that lead to different events and endings in the story."
+
+        s "So where does the \"visual\" part come in?"
+
+        m "Visual novels have pictures and even music, sound effects, and sometimes voice acting to go along with the text."
+
+        show sylvie green smile
+
+        s "I see! That certainly sounds like fun. I actually used to make webcomics way back when, so I've got lots of story ideas."
+
+        m "That's great! So...would you be interested in working with me as an artist?"
+
+        s "I'd love to!"
 
         jump marry
 
@@ -160,278 +173,94 @@ script.rpy
         scene black
         with dissolve
 
-        "--- years later ---"
+        "And so, we become a visual novel creating duo."
 
         scene bg club
         with dissolve
 
-        "And so, we became a visual novel creating team."
-        "We made games and had a lot of fun making them."
+        "Over the years, we make lots of games and have a lot of fun making them."
 
-        if bl_game:
-            "Well, apart from that Boy's Love game she insisted on making."
+        if book:
+
+            "Our first game is based on one of Sylvie's ideas, but afterwards I get to come up with stories of my own, too."
+
+        "We take turns coming up with stories and characters and support each other to make some great games!"
 
         "And one day..."
 
-        show sylvie2 normal
+        show sylvie blue normal
         with dissolve
 
         s "Hey..."
+
         m "Yes?"
 
-        show sylvie2 giggle
+        show sylvie blue giggle
 
-        s "Marry me!"
-        m "What???"
+        s "Will you marry me?"
 
-        show sylvie2 surprised
+        m "What? Where did this come from?"
 
-        s "Well, don't you love me?"
-        m "I do, actually."
+        show sylvie blue surprised
 
-        show sylvie2 smile
+        s "Come on, how long have we been dating?"
 
-        s "See? We've been making romantic visual novels, spending time together, helping each other...."
-        s "... and when you give love to others, love will come to you."
-        m "Hmmm, that's a nice thought."
+        m "A while..."
 
-        show sylvie2 giggle
+        show sylvie blue smile
 
-        s "I just made that up."
-        m "But it's good."
+        s "These last few years we've been making visual novels together, spending time together, helping each other..."
 
-        show sylvie2 normal
+        s "I've gotten to know you and care about you better than anyone else. And I think the same goes for you, right?"
 
-        s "I know. So, will you marry me?"
-        m "Ummm, of course I will. I've actually been meaning to ask you, but since you brought it up..."
-        s "I know, but you are so indecisive, that I thought I'd take the initiative. "
-        m "I guess... It's all all about asking the right question... at the right time."
+        m "Sylvie..."
 
-        show sylvie2 giggle
+        show sylvie blue giggle
 
-        s "It is. But now, stop being theoretical, and give me a kiss!"
+        s "But I know you're the indecisive type. If I held back, who knows when you'd propose?"
+
+        show sylvie blue normal
+
+        s "So will you marry me?"
+
+        m "Of course I will! I've actually been meaning to propose, honest!"
+
+        s "I know, I know."
+
+        m "I guess... I was too worried about timing. I wanted to ask the right question at the right time."
+
+        show sylvie blue giggle
+
+        s "You worry too much. If only this were a visual novel and I could pick an option to give you more courage!"
 
         scene black
         with dissolve
 
-        "And we got married shortly after that."
-        "In fact, we made many more visual novels."
-        "And together, we lived happily ever after."
+        "We get married shortly after that."
 
-        ".:. Good Ending."
+        "Our visual novel duo lives on even after we're married...and I try my best to be more decisive."
+
+        "Together, we live happily ever after even now."
+
+        "{b}Good Ending{/b}."
 
         return
 
     label later:
 
+        "I can't get up the nerve to ask right now. With a gulp, I decide to ask her later."
+
         scene black
         with dissolve
 
-        "And so I decided to ask her later."
-        "But I was indecisive."
-        "I couldn't ask her that day, and I couldn't ask her later."
-        "I guess I will never know now."
+        "But I'm an indecisive person."
 
-        ".:. Bad Ending."
+        "I couldn't ask her that day and I end up never being able to ask her."
+
+        "I guess I'll never know the answer to my question now..."
+
+        "{b}Bad Ending{/b}."
 
         return
 
-
-options.rpy
------------
-
-::
-
-    ## This file contains some of the options that can be changed to customize
-    ## your Ren'Py game. It only contains the most common options... there
-    ## is quite a bit more customization you can do.
-    ##
-    ## Lines beginning with two '#' marks are comments, and you shouldn't
-    ## uncomment them. Lines beginning with a single '#' mark are
-    ## commented-out code, and you may want to uncomment them when
-    ## appropriate.
-
-    init -1:
-        python hide:
-
-            ## Should we enable the use of developer tools? This should be
-            ## set to False before the game is released, so the user can't
-            ## cheat using developer tools.
-
-            config.developer = True
-
-            ## These control the width and height of the screen.
-
-            config.screen_width = 800
-            config.screen_height = 600
-
-            ## This controls the title of the window, when Ren'Py is
-            ## running in a window.
-
-            config.window_title = u"The Question"
-
-            ## We then want to call a theme function. themes.roundrect is
-            ## a theme that features the use of rounded rectangles. It's
-            ## the only theme we currently support.
-            ##
-            ## The theme function takes a number of parameters that can
-            ## customize the color scheme.
-            theme.roundrect(
-
-                ## The color of an idle widget face.
-                widget = "#F8AD00",
-
-                ## The color of a focused widget face.
-                widget_hover = "#E97F00",
-
-                ## The color of the text in a widget.
-                widget_text = "#581A00",
-
-                ## The color of the text in a selected widget. (For
-                ## example, the current value of a preference.)
-                widget_selected = "#58A1FF",
-
-                ## The color of a disabled widget face.
-                disabled = "#404040",
-
-                ## The color of disabled widget text.
-                disabled_text = "#FFC89A",
-
-                ## The color of informational labels.
-                label = "#ffffff",
-
-                ## The color of a frame containing widgets.
-                frame = "#95850F",
-
-                ## If this is True, in-game menus are placed in the center
-                ## the screen. If False, they are placed inside a window
-                ## at the bottom of the screen.
-                button_menu = True,
-
-                ## The background of the main menu. This can be a color
-                ## beginning with '#', or an image filename. The latter
-                ## should take up the full height and width of the screen.
-                mm_root = "menu.jpg",
-
-                ## The background of the game menu. This can be a color
-                ## beginning with '#', or an image filename. The latter
-                ## should take up the full height and width of the screen.
-                gm_root = "menu2.jpg",
-
-                ## And we're done with the theme. The theme will customize
-                ## various styles, so if we want to change them, we should
-                ## do so below.
-                )
-
-
-            #########################################
-            ## These settings let you customize the window containing the
-            ## dialogue and narration, by replacing it with an image.
-
-            ## The background of the window. In a Frame, the two numbers
-            ## are the size of the left/right and top/bottom borders,
-            ## respectively.
-
-            # style.window.background = Frame("frame.png", 12, 12)
-
-            ## Margin is space surrounding the window, where the background
-            ## is not drawn.
-
-            # style.window.left_margin = 6
-            # style.window.right_margin = 6
-            # style.window.top_margin = 6
-            # style.window.bottom_margin = 6
-
-            ## Padding is space inside the window, where the background is
-            ## drawn.
-
-            # style.window.left_padding = 6
-            # style.window.right_padding = 6
-            # style.window.top_padding = 6
-            # style.window.bottom_padding = 6
-
-            ## This is the minimum height of the window, including the margins
-            ## and padding.
-
-            # style.window.yminimum = 250
-
-
-            #########################################
-            ## This lets you change the placement of the main menu.
-
-            ## The way placement works is that we find an anchor point
-            ## inside a displayable, and a position (pos) point on the
-            ## screen. We then place the displayable so the two points are
-            ## at the same place.
-
-            ## An anchor/pos can be given as an integer or a floating point
-            ## number. If an integer, the number is interpreted as a number
-            ## of pixels from the upper-left corner. If a floating point,
-            ## the number is interpreted as a fraction of the size of the
-            ## displayable or screen.
-
-            # style.mm_menu_frame.xpos = 0.5
-            # style.mm_menu_frame.xanchor = 0.5
-            # style.mm_menu_frame.ypos = 0.75
-            # style.mm_menu_frame.yanchor = 0.5
-
-
-            #########################################
-            ## These let you customize the default font used for text in Ren'Py.
-
-            ## The file containing the default font.
-
-            # style.default.font = "DejaVuSans.ttf"
-
-            ## The default size of text.
-
-            # style.default.size = 22
-
-            ## Note that these only change the size of some of the text. Other
-            ## buttons have their own styles.
-
-
-            #########################################
-            ## These settings let you change some of the sounds that are used by
-            ## Ren'Py.
-
-            ## Set this to False if the game does not have any sound effects.
-
-            config.has_sound = True
-
-            ## Set this to False if the game does not have any music.
-
-            config.has_music = True
-
-            ## Set this to False if the game does not have voicing.
-
-            config.has_voice = True
-
-            ## Sounds that are used when button and imagemaps are clicked.
-
-            # style.button.activate_sound = "click.wav"
-            # style.imagemap.activate_sound = "click.wav"
-
-            ## Sounds that are used when entering and exiting the game menu.
-
-            # config.enter_sound = "click.wav"
-            # config.exit_sound = "click.wav"
-
-            ## A sample sound that can be played to check the sound volume.
-
-            # config.sample_sound = "click.wav"
-
-            ## Music that is played while the user is at the main menu.
-
-            # config.main_menu_music = "main_menu_theme.ogg"
-
-
-            #########################################
-            ## Miscellaneous customizations
-
-            ## These let you change the transitions that are used when entering
-            ## and exiting the game menu.
-
-            config.enter_transition = dissolve
-            config.exit_transition = dissolve
 

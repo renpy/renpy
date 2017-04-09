@@ -28,5 +28,7 @@ init 1000000 python:
 
     doc.write_easings(_warper)
 
+    doc.write_tq()
+
     raise SystemExit
 
