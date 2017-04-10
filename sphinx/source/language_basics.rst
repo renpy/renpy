@@ -167,8 +167,8 @@ Elements of Statements
 Ren'Py statements are made of a few basic parts.
 
 :dfn:`Keyword`
-    A keyword is a word that must literally appear in the source
-    code. They're used to introduce statements and properties.
+    A keyword is a word that must literally appear in the script of the game.
+    Keywords are used to introduce statements and properties.
 
     Names beginning with a single underscore (_) are reserved for
     Ren'Py internal use, unless otherwise documented. When a name
@@ -328,7 +328,7 @@ Here's a synopsis of python expressions.
        trebuchet2_range
 
     Variables beginning with _ are reserved for Ren'Py's use, and
-    shouldn't be used by user code.
+    shouldn't be used by creators.
 
 :dfn:`Field Access`
     Python modules and objects have fields, which can be accessed

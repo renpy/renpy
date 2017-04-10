@@ -4,10 +4,10 @@ Python Statements
 =================
 
 Ren'Py is written in the Python programming language, and includes
-support for including python code inside Ren'Py scripts. Python
+support for including Python inside Ren'Py scripts. Python
 support can be used for many things, from setting a flag to creating
 new displayables. This chapter covers ways in which Ren'Py scripts can
-directly invoke Python code, through the various python statements.
+directly invoke Python, through the various python statements.
 
 
 .. _python-statement:
@@ -15,7 +15,7 @@ directly invoke Python code, through the various python statements.
 Python
 ------
 
-The python statement takes a block of python code, and runs that code
+The python statement takes a block of Python, and runs the block
 when control reaches the statement. A basic python statement can be
 very simple::
 
@@ -35,30 +35,30 @@ behavior:
 ``hide``
 
     If given the hide modifier, the python statement will run the
-    code in an anonymous scope. The scope will be lost when the python
-    block terminates.
+    block of Python in an anonymous scope. The scope will be lost when the
+    python block terminates.
 
-    This allows python code to use temporary variables that can't be
+    This allows Python to use temporary variables that can't be
     saved - but it means that the store needs to be accessed as fields
     on the store object, rather than directly.
 
 ``in``
 
    The ``in`` modifier takes a name. Instead of executing in the
-   default store, the python code will execute in the store that
+   default store, the Python will execute in the store with that
    name.
 
 
 One-line Python Statement
 -------------------------
 
-A common case is to have a single line of python that runs in the
-default store. For example, a python one-liner can be used to
-initialize or update a flag. To make writing python one-liners
+A common case is to have a single line of Oython that runs in the
+default store. For example, a Python one-liner can be used to
+initialize or update a flag. To make writing Python one-liners
 more convenient, there is the one-line python statement.
 
 The one-line python statement begins with the dollar-sign ($)
-character, and contains all of the code on that line. Here
+character, and contains everything else on that line. Here
 are some example of python one-liners::
 
     # Set a flag.
@@ -81,8 +81,8 @@ Python one-liners always run in the default store.
 Init Python Statement
 ---------------------
 
-The ``init python`` statement runs python code at initialization time,
-before the game loads. Among other things, this code can be used to define
+The ``init python`` statement runs Python at initialization time,
+before the game loads. Among other things, this can be used to define
 classes and functions, or to initialize styles, config variables, or
 persistent data. ::
 
@@ -108,7 +108,7 @@ unicode order by filename, and then from top to bottom within a file.
 
 To avoid conflict with Ren'Py, creators should use priorities in the
 range -999 to 999. Priorities of less than 0 are generally used for
-libraries and to set up themes. Normal init code should have a priority
+libraries and to set up themes. Normal init statements should have a priority
 of 0 or higher.
 
 Init python statements also take the ``hide`` or ``in`` clauses.
@@ -183,7 +183,7 @@ init priority statement. The statement::
 
     init offset = 42
 
-sets the priority offset to 42. In the code::
+sets the priority offset to 42. In::
 
     init offset = 2
     define foo = 2
@@ -208,7 +208,7 @@ The define statement assigns a value to a variable, even when it's
 used to define a character. This means that it's not possible to
 use the same name for a character and a flag.
 
-The following faulty code::
+The following faulty script::
 
     define e = Character("Eileen")
 
@@ -232,16 +232,16 @@ internal use. In addition, there is an :ref:`Index of Reserved Names <reserved-n
 Other Named Stores
 ------------------
 
-Named stores provide a way of organizing python code into modules. By
-placing code in modules, you can minimize the chance of name
+Named stores provide a way of organizing Python functions and variables
+into modules. By placing Python in modules, you can minimize the chance of name
 conflicts.
 
 Named stores can be accessed by supplying the ``in`` clause to
-``python`` or ``init python``, code can run accessed in a named
-store. Each store corresponds to a python module. The default store is
+``python`` or ``init python``, all of which run Python in a named
+store. Each store corresponds to a Python module. The default store is
 ``store``, while a named store is accessed as ``store``.`name`. These
-python modules can be imported using the python import statement,
-while names in the modules can be imported using the python from
+python modules can be imported using the Python import statement,
+while names in the modules can be imported using the Python from
 statement.
 
 For example::
@@ -274,7 +274,7 @@ First and Third Party Python Modules and Packages
 -------------------------------------------------
 
 Ren'Py can import pure-python modules and packages. First-party modules
-and packages - ones with code written for the game - can be placed directly
+and packages - ones  written for the game - can be placed directly
 into the game directory. Third party packages can be placed into the
 game/python-packages directory.
 
@@ -292,6 +292,6 @@ block::
 .. warning::
 
     Python code defined in .rpy files is transformed to allow rollback
-    to work. Python code imported from .py files is not. As a result,
-    objects created in python code will not work with rollback, and
+    to work. Python imported from .py files is not. As a result,
+    objects created in Python will not work with rollback, and
     probably should not be changed after creation.

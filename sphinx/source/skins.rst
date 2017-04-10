@@ -15,7 +15,7 @@ expected to be forward or backwards compatible.
 
 2. Create the skin.rpy script file.
 
-3. Copy the following code into skin.rpy::
+3. Copy the following into skin.rpy::
 
     init python:
 

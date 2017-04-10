@@ -41,11 +41,11 @@ in Python.
 Screens are updated at the start of each interaction, and each time an
 interaction is restarted.
 
-**Screen code must not cause side effects that are visible from
-outside the screen.** Ren'Py will run screen code multiple times, as
-it deems necessary. It runs screen code as part of the image
+**Screens must not cause side effects that are visible from
+outside the screen.** Ren'Py will run a screen multiple times, as
+it deems necessary. It runs a screen as part of the image
 prediction process, before the screen is first shown. As a result, if
-screen code has side effects, those side effects may occur at
+running a screen has side effects, those side effects may occur at
 unpredictable times.
 
 A screen has a scope associated with it, giving values to some
@@ -213,7 +213,7 @@ All user interface statements take the following common properties:
     this displayable and its children.
 
 `style_group`
-    An alias for `style_prefix`, used in older code.
+    An alias for `style_prefix`, used in older version of Ren'Py.
 
 `style_suffix`
     Specifies the suffix that is combined with the `style_prefix` to
@@ -1481,7 +1481,7 @@ Control Statements
 
 The screen language includes control statements for conditional
 execution, iteration, including other screens, executing actions when
-events occur, and executing arbitrary python code.
+events occur, and executing arbitrary Python.
 
 .. _sl-default:
 
@@ -1682,13 +1682,13 @@ Python
 ------
 
 The screen language also includes single-line and multiple-line python
-statements, which can execute python code. This code runs in the scope
+statements, which can execute Python. This code runs in the scope
 of the screen.
 
-**Python code must not cause side effects that are visible from
-outside the screen.** Ren'Py will run screen code multiple times, as it
-deems necessary. It runs screen code as part of the image prediction
-process, before the screen is first shown. As a result, if screen code
+**Python must not cause side effects that are visible from
+outside the screen.** Ren'Py will run a screen multiple times, as it
+deems necessary. It runs a screen as part of the image prediction
+process, before the screen is first shown. As a result, if a screen
 has side effects, those side effects may occur at unpredictable times.
 
 ::
@@ -1717,7 +1717,7 @@ the show and hide process.
 
 Multiple showif statements can be grouped together into a single
 showif/elif/else construct, similiar to an if statement.
-**Unlike the if statement, showif executes all of its blocks, including python code, even if the condition is false.**
+**Unlike the if statement, showif executes all of its blocks, including Python, even if the condition is false.**
 This is because the showif statement needs to create the children that it is
 hiding.
 

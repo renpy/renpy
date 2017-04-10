@@ -57,7 +57,7 @@ There are two ways Ren'Py automatically predicts screens:
 * Ren'Py will predict screen that will be shown by the :func:`Show` and :func:`ShowMenu`
   actions.
 
-If screens are shown from python code, it's a good idea to start predicting
+If screens are shown from Python, it's a good idea to start predicting
 the screen before it is shown. To start predicting a screen, use the
 :func:`renpy.start_predict_screen` function. To stop predicting a screen,
 use the :func:`renpy.stop_predict_screen` function.
@@ -182,7 +182,7 @@ also const, Ren'Py will reuse the entire tree without evaluating
 expressions or creating displayables. This can yield a significant
 performance boost.
 
-For example, the following screen does not execute any code or create
+For example, the following screen does not execute any Python or create
 any displayables after the first time it is predicted or shown::
 
     screen mood_picker():

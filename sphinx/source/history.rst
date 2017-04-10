@@ -66,8 +66,8 @@ their fields, as defined below.
     .. attribute:: rollback_identifier
 
         This is an identifier that can be passed to the :func:`RollbackToIdentifier`
-        action, to cause a rollback to the line of script code that generated
-        this history entry. The rollback only occurs if the code is still in
+        action, to cause a rollback to the line of script that generated
+        this history entry. The rollback only occurs if the location is still in
         the script log, otherwise the action is insensitive.
 
 

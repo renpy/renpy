@@ -58,7 +58,7 @@ while shift and alt are held down.
 
 
 To change a binding, update the appropriate list in :var:`config.keymap`. The
-following code adds the 't' key to the list of keys that dismiss a say
+following adds the 't' key to the list of keys that dismiss a say
 statement, and removes the space key from that list. ::
 
     init:

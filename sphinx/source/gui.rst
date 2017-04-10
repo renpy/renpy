@@ -60,7 +60,7 @@ Options.rpy
 -----------
 
 There are a couple of variables in options.rpy that are used by the
-GUI code.
+GUI.
 
 :var:`config.name`
     A string giving a human-readable name for the game. This is used as the
@@ -736,7 +736,7 @@ Sliders
 
 Sliders are a type of bar that is used in the preferences screen to
 allow the player to adjust preference with a large number of values.
-By default, the GUI only uses horizontal sliders, but in-game code
+By default, the GUI only uses horizontal sliders, but a game
 may also use vertical sliders.
 
 Sliders are customized with the following images:
@@ -1049,7 +1049,7 @@ To center dialogue text, use::
     define gui.dialogue_xpos = 0.5
     define gui.dialogue_xalign = 1.0
 
-Our example game uses this code to customize the centered namebox::
+Our example game uses these statements to customize the centered namebox::
 
     define gui.namebox_width = 300
     define gui.name_ypos = -22
@@ -1196,7 +1196,7 @@ characters, and by defining a few variables in script.rpy. ::
 
 .. ifconfig:: renpy_figures
 
-    Here's an example of the NVL screen customized with the code above.
+    Here's an example of the NVL screen as customized with the settings above.
 
     .. figure:: oshs/game/gui/nvl.png
 
@@ -1304,8 +1304,8 @@ Advanced Customization
 ======================
 
 More advanced customization is possible by customizing screens.rpy,
-up to and including deleting it entirely and replacing it with
-your own code. Here are a few places to get started.
+up to and including deleting the entire contents of the file and replacing
+it with something of your own. Here are a few places to get started.
 
 Styles
 ------
@@ -1449,7 +1449,7 @@ Total GUI Replacement
 ---------------------
 
 Advanced creators can replace some or all of screens.rpy in its entirely.
-When doing so, some or all of the code in gui.rpy may become redundant.
+When doing so, some or all of the contents of gui.rpy may become redundant.
 It's probably a good idea to call :func:`gui.init` to reset styles - but after
 that, a creator can do whatever they want. It usually makes sense to include
 some or all of the :ref:`special screens <screen-special>`, to make sure
@@ -1458,7 +1458,7 @@ players can have access to all the functionality Ren'Py provides.
 Python Functions
 ================
 
-There are some Python functions that support GUI code.
+There are some Python functions that support the GUI.
 
 .. include:: inc/gui
 

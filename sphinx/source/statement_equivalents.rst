@@ -5,8 +5,8 @@ Statement Equivalents
 =====================
 
 To allow Ren'Py to be scripted in python, each Ren'Py statement has
-equivalent Python code. This usually consists of a Python function,
-but may also consist of a code pattern that performs an action
+a Python equivalent. This usually consists of a Python function,
+but may also consist of a pattern of Python calls that perform an action
 equivalent to the statement.
 
 
@@ -14,7 +14,7 @@ Dialogue
 ========
 
 The Ren'Py say statement is equivalent to calling the character object
-as a function. The following code displays the same line twice::
+as a function. The following displays the same line twice::
 
     e "Hello, world."
 

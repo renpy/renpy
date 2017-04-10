@@ -55,7 +55,7 @@ Creating an image gallery consists of the following four steps.
    and should contain navigation that allows the user to show other
    image galleries, or to return to the main or extras menu.
 
-4. Add code to display the image gallery screen to the main or extras menu.
+4. Add a way to display the image gallery screen to the main or extras menu.
 
 Here's an example of the first three steps::
 
@@ -81,7 +81,7 @@ Here's an example of the first three steps::
         g.unlock_image("beach2")
         g.unlock_image("beach3")
 
-        # This button has a condition associated with it, allowing code
+        # This button has a condition associated with it, allowing the game
         # to choose which images unlock.
         g.button("end1")
         g.condition("persistent.unlock_1")
@@ -291,7 +291,7 @@ difference between the two modes are:
 To take advantage of the replay mode, a scene should begin with a
 label, and end with a call to renpy.end_replay. The scene should make
 no assumption as to the state of the layers or variables, which can be
-very different in normal and replay mode. (In replay code, the label
+very different in normal and replay mode. (When a replay begins, the label
 is invoked with a black screen.)
 
 For example::

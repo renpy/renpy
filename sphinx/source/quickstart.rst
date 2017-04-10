@@ -572,8 +572,8 @@ Supporting Flags using the Default, Python and If Statements
 While some games can be made by only using the statements given above,
 other games requires data to be stored and recalled later. For example,
 it might make sense for a game to remember a choice a player has made,
-return to common code, and act on the choice later. This is one of the reasons
-why Ren'Py has embedded Python support.
+return to a common section of the script, and act on the choice later. This
+is one of the reasons why Ren'Py has embedded Python support.
 
 Here, we'll show how to store a flag containing information about a choice
 the player has made. To initialize the flag, use the default statement, before
@@ -695,7 +695,7 @@ You may also want to read the rest of this manual, starting with the GUI Customi
 Guide.
 
 Beyond that, we recommend checking out the Ren'Py section of the `Lemma Soft Forums <https://lemmasoft.renai.us/forums>`_, which
-has a section for asking questions, and a cookbook section with code and examples ment for reuse. The Lemma Soft Forums are the
+has a section for asking questions, and a cookbook section with libraries and examples meant for reuse. The Lemma Soft Forums are the
 central hub of the Ren'Py community, where we welcome new creators and the questions they bring.
 
 Thank you for choosing the Ren'Py visual novel engine. We look forward to seeing

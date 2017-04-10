@@ -48,8 +48,8 @@ by an if-clause, which makes the choice conditional. The menu choice
 ends with a colon, and must be followed by a block of Ren'Py
 statements.
 
-When the choice is selected, the block of code is run. If execution
-reaches the end of this block of code, it continues with the statement
+When the choice is selected, the block of statements is run. If execution
+reaches the end of the block, it continues with the statement
 after the end of the menu statement.
 
 An if-clause consists of the keyword ``if``, followed by a python

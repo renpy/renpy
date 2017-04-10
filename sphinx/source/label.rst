@@ -5,8 +5,8 @@ Label Statement
 ---------------
 
 Label statements allow the given name to be assigned to a program point. They
-exist solely to be called or jumped to, whether by script code or the Ren'Py
-config. ::
+exist solely to be called or jumped to, either from Ren'Py script, Python
+functions, or from screens. ::
 
     label sample1:
         "Here is 'sample1' label."
@@ -150,7 +150,7 @@ The following labels are used by Ren'Py:
 ``main_menu``
     If it exists, this label is called instead of the main menu. If it returns,
     Ren'Py will start the game at the ``start`` label. For example, the
-    following code will immediately start the game without displaying the
+    following will immediately start the game without displaying the
     main menu. ::
 
         label main_menu:

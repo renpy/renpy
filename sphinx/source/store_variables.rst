@@ -66,7 +66,7 @@ and rolled-back when rollback occurs.
 .. var:: name_only = Character(...)
 
     This is a template character that is used when a string is given as the
-    character name in a say statement. The code::
+    character name in a say statement. This::
 
         "Eileen" "Hello, world."
 
@@ -80,7 +80,7 @@ and rolled-back when rollback occurs.
 .. var:: narrator = Character(...)
 
     This is the character that speaks narration (say statements that do not
-    give a character or character name). The code::
+    give a character or character name). This::
 
         "Hello, world."
 

@@ -133,7 +133,7 @@ arguments - old and new side image displayables - each time the side
 image is displayed. These can be used to move around side images, or
 use a transition to go between side images.
 
-This code causes the side image to slide in and out when the character
+This causes the side image to slide in and out when the character
 associated with that image changes::
 
     transform change_transform(old, new):
@@ -150,7 +150,7 @@ associated with that image changes::
 
     define config.side_image_change_transform = change_transform
 
-This code is used to dissolve between old and new side images when the
+This is used to dissolve between old and new side images when the
 character remains the same. (For example, when the character changes
 emotion.) For the Dissolve to work correctly, both side images must
 be the same size. ::
@@ -168,7 +168,7 @@ Leaving Room / Customization
 By default, the entire width of the screen is taken up by the text. If one
 tries to display a side image, it will be displayed on top of the text. To
 fix this, one should include margin or padding on the appropriate side of
-the text window, using code like::
+the text window::
 
     style window:
         left_padding 150

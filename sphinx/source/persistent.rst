@@ -32,7 +32,7 @@ must be set to True. ::
 
     $ persistent.gallery_unlocked = True
 
-As persistent data is loaded before the init code is run, persistent data
+As persistent data is loaded before init python blocks are run, persistent data
 should only contain types that are native to python or Ren'Py. Alternatively,
 classes that are defined in ``python early`` blocks can be used, provided
 those classes can be pickled and implement equality.

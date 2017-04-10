@@ -87,7 +87,7 @@ Showing and Hiding the NVL-mode Window
 --------------------------------------
 
 The NVL-mode window can be controlled with the standard ``window show``
-and ``window hide`` statements. To enable this, add the following code
+and ``window hide`` statements. To enable this, add the following
 to your game::
 
     init python:
@@ -129,7 +129,7 @@ An example of using the window commands to show and hide the window is::
 
 There are also explicit ``nvl show`` and ``nvl hide`` commands that show
 hide the NVL-mode window. These take an optional transition, and can be
-used in code that has a mix of NVL-mode and ADV-mode windows.
+used in games that use a mix of NVL-mode and ADV-mode windows.
 
 Customizing Characters
 ----------------------
@@ -211,7 +211,7 @@ Paged Rollback
 
 Paged rollback causes Ren'Py to rollback one NVL-mode page at a time,
 rather than one block of text at a time.  It can be enabled by
-including the following code in your script. ::
+including the following in your script. ::
 
     init python:
         config.nvl_paged_rollback = True

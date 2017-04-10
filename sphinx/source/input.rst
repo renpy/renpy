@@ -15,9 +15,9 @@ The renpy.input function is defined as:
 
 .. include:: inc/input
 
-Code that uses renpy.input will often want to process the result
+Games that use renpy.input will often want to process the result
 further, using standard python string manipulation functions. For
-example, the following code will ask the player for his or her
+example, the following will ask the player for his or her
 name and remove leading or trailing whitespace. If the name is
 empty, it will be replaced by a default name. Finally, it is
 displayed to the user. ::

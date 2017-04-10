@@ -77,8 +77,8 @@ There are several other kinds of state that isn't saved:
 
 control flow path
     Ren'Py only saves the current statement, and the statement it needs
-    to return to. It doesn't remember how it got there. Importantly, if
-    code (like variable assignments) is added to the game, it won't run.
+    to return to. It doesn't remember how it got there. Importantly, statements
+    (including variable assignments) that are added to the game won't run.
 
 mappings of image names to displayables
     Since this mapping is not saved, the image may change to a new image
@@ -102,27 +102,34 @@ statement. If a load or rollback occurs in the middle of a statement that
 interacts multiple times, the state will be the state that was active
 when the statement began.
 
-This can be a problem in python-defined statements. In code like::
+This can be a problem in python-defined statements. In::
 
     python:
+
          i = 0
+
          while i < 10:
+
               i += 1
+
               narrator("The count is now [i].")
 
 if the user saves and loads in the middle, the loop will begin anew. Using
-similar code in Ren'Py - rather than Python - avoids this problem.::
+Ren'Py script - rather than Python - to loop avoids this problem.::
 
    $ i = 0
+
    while i < 10:
+
         $ i += 1
+
         "The count is now [i]."
 
 
 What Ren'Py can Save
 ====================
 
-Ren'Py uses the python pickle system to save game state. This module can
+Ren'Py uses the Python pickle system to save game state. This module can
 save:
 
 * Basic types, such as True, False, None, int, str, float, complex, str, and unicode objects.
@@ -300,10 +307,10 @@ possible to make a different choice.
 There are some caveats to consider when designing a game for
 fix_rollback. Ren'Py will automatically take care of locking any data
 that is given to :func:`checkpoint`. However, due to the generic nature
-of Ren'Py, it is possible to write Python code that bypasses this and
+of Ren'Py, it is possible to write Python that bypasses this and
 changes things in ways that may have unpredictable results. It is up
 to the game designer to block rollback at problematic locations or
-write additional code to deal with it.
+write additional Python to deal with it.
 
 The internal user interaction options for menus, :func:`renpy.input`
 and :func:`renpy.imagemap` are designed to fully work with fix_rollback.
