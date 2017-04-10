@@ -134,9 +134,9 @@ displayable. For example::
         "eileen_happy.png",
         )
 
-The image statement must be run at init-time, before game code
-runs. When not contained inside an init block, image statements are
-run at init-time, as if they were placed inside an init block of
+The image statement is run at init-time, before the menus are shown
+or the start label runs. When not contained inside an init block,
+image statements are run as if they were placed inside an init block of
 priority 500.
 
 See also the :ref:`ATL variant of the image statement. <atl-image-statement>`
@@ -202,8 +202,8 @@ The show statement takes the following properties:
 ``zorder``
     Takes an integer. The integer specifies the relative ordering of
     images within a layer, with larger numbers being closer to the
-    user. This isn't generally used in Ren'Py code, but can be useful
-    when porting code from other engines.
+    user. This isn't generally used by Ren'Py games, but can be useful
+    when porting visual novels from other engines.
 
 Assuming we have the following images defined::
 
@@ -384,7 +384,7 @@ interaction to occur, without changing what the user sees. When the
 next transition occurs, it will start from the scene as it appears at
 the end of this abbreviated interaction.
 
-For example, in the code::
+For example, in::
 
     show bg washington
     with None

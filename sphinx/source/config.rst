@@ -53,13 +53,10 @@ Commonly Used
 
     This must be set with either the define statement, or in a python
     early block. In either case, this will be run before any other
-    code, and so it should be set to a string, not an expression.
+    statement, and so it should be set to a string, not an expression.
 
-    This must be set in a python early block, so that persistent
-    information can be loaded before init code is run.
-
-    Code that needs to know the save directory should read
-    :var:`config.savedir` instead of this variable.
+    To locate the save directory, read :var:`config.savedir` instead of
+    this variable.
 
 .. var:: config.version = ""
 
@@ -195,12 +192,10 @@ cleared.
 
     Controls the default state of the "emphasize audio" preference.
 
-.. var:: config.default_fullscreen = None
+.. var:: config.default_fullscreen = False
 
     This sets the default value of the fullscreen preference. This
-    should be True or False. If None, this is ignored, allowing other
-    code to set the default value. (It's usually set to False in
-    options.rpy.)
+    should be True or False.
 
 .. var:: config.default_language = None
 
@@ -633,8 +628,8 @@ Occasionally Used
     One possible use of this would be to have a function limit a variable
     to within a range each time it is adjusted.
 
-    The functions may be called during internal Ren'Py code, before the
-    start of the game proper, and potentially before the variables the
+    The functions may be called while Ren'Py is starting up, before the start
+    of the game proper, and  potentially before the variables the
     function depends on are initialized. The functions are required to deal
     with this, perhaps by using ``hasattr(store, 'varname')`` to check if
     a variable is defined.
@@ -661,7 +656,7 @@ Occasionally Used
     dialogue text, but also user interface text.
 
     This can be used to replace specific ASCII sequences with corresponding
-    Unicode characters, as demonstrated by the following code::
+    Unicode characters, as demonstrated by the following::
 
         def replace_text(s):
             s = s.replace("'", u'\u2019') # apostrophe
@@ -795,7 +790,7 @@ Rarely or Internally Used
     screen that Ren'Py will draw pictures to.
 
     This can be used to configure Ren'Py to only allow certain sizes of
-    screen. For example, the following code allows only integer multiples
+    screen. For example, the following allows only integer multiples
     of the original screen size::
 
         init python:
@@ -1020,7 +1015,7 @@ Rarely or Internally Used
 .. var:: config.label_overrides = { }
 
     This variable gives a way of causing jumps and calls of labels in
-    Ren'Py code to be redirected to other labels. For example, if you
+    Ren'Py script to be redirected to other labels. For example, if you
     add a mapping from "start" to "mystart", all jumps and calls to
     "start" will go to "mystart" instead.
 

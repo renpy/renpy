@@ -69,7 +69,7 @@ from.
 > Fast Skipping
 ---------------
 
-When :var:`config.developer` or :var:`config.fast_skipping`` is True, pressing
+When :var:`config.developer` or :var:`config.fast_skipping` is True, pressing
 the fast_skip key (by default, ">") causes the the game to immediately skip to
 the next important interaction.  For this purpose, an important interaction is
 one that is not caused by a say statement, transition, or pause command.
@@ -108,14 +108,14 @@ representative of some route of execution, it's possible that there may be a
 bug along some other route. In general, the path doesn't consider game logic,
 so it's also possible to have a path that isn't actually reachable. (This is
 only really a problem on control-heavy games, especially those that use a lot of
-python code.
+Python.
 
-The biggest problem, though, is that no python code is executed before the
+The biggest problem, though, is that Python is not executed before the
 statement that is warped to. This means that all variables will be
 uninitialized, which can lead to crashes when they are used. To overcome this,
 one can define a label ``after_warp``, which is called after a warp but before
-the warped-to statement executes. The code reached by this label can set up
-variables in the program, and then return to the preview.
+the warped-to statement executes. This label can set up variables in the
+program, and then return to the preview.
 
 The warp feature requires :var:`config.developer` to be True to operate.
 

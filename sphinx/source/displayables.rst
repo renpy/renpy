@@ -216,8 +216,7 @@ a matrix to control how the colors of an image are transformed. The
 matrix used can be an im.matrix object, which encodes a 5x5 matrix in
 an object that supports matrix multiplication, and is returned by a
 series of functions. im.matrix objects may be multiplied together to
-yield a second object that performs both operations. For example, the
-code::
+yield a second object that performs both operations. For example::
 
     image city blue = im.MatrixColor(
         "city.jpg",

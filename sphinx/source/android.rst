@@ -6,8 +6,8 @@ Android
 
 Ren'Py support devices running the Android operating system, such as
 smartphones and tablets. While these devices do not support 100% of
-Ren'Py's functionality, with minimal modification code can be packaged
-and ported to these devices.
+Ren'Py's functionality, with minimal modification visual novels can be
+packaged and ported to these devices.
 
 RAPT - the Ren'Py Android Packaging Tool - is a program, downloaded separately
 from Ren'Py, that creates an Android package for testing or release purposes.

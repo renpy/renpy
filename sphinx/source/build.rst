@@ -214,7 +214,7 @@ the file lists they will be included in. (It's rare to use anything
 but the all file list, however.) To use an archive, classify files
 into a list with its name.
 
-For example, the following code will archive images in images.rpa, and
+For example, the following will archive images in images.rpa, and
 game scripts into scripts.rpa::
 
     # Declare two archives.

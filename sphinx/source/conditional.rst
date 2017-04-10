@@ -7,15 +7,15 @@ expression values. (This is in addition to the :ref:`jump <jump-statement>`,
 which transfer control unconditionally.
 
 Note that is pages discusses statements that can be used inside Ren'Py
-script. Python code embedded in a Ren'Py game uses the Python while, if,
-and for statements, but can't embed Ren'Py script code.
+script. Python embedded in a Ren'Py game uses the Python while, if,
+and for statements, but can't embed Ren'Py script statements.
 
 .. _if-statement:
 
 If Statement
 ------------
 
-The if statement conditionally executes a block of code if a python
+The if statement conditionally executes a block of statements if a python
 expression is true. It consists of an ``if`` clause, zero or more ``elif``
 clauses, and an optional``else`` clause.
 
@@ -54,8 +54,8 @@ the ``else`` clause is executed, if the ``else`` clause is present.
 While Statement
 ---------------
 
-The while statement executes a block of code while an
-expression evaluates true. For example::
+The while statement executes a block of statements while an expression
+evaluates true. For example::
 
     $ count = 10
 

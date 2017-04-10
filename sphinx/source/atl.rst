@@ -304,7 +304,7 @@ The repeat statement must be the last statement in a block.::
 Block Statement
 ---------------
 
-The block statement is a complex statement that contains a block of ATL code.
+The block statement is a complex statement that contains a block of ATL statements.
 This can be used to group statements that will repeat.
 
 .. productionlist:: atl
@@ -574,9 +574,7 @@ http://www.easings.net/.
 
 New warpers can be defined using the renpy.atl_warper decorator, in a python
 early block. It should be placed in a file that is parsed before any file
-that uses the warper. The code looks like:
-
-::
+that uses the warper. This looks like::
 
     python early hide:
 

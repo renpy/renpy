@@ -105,7 +105,7 @@ attributes. If the image is not shown, Ren'Py will store the
 attributes for use by side images, but will not show an image.
 
 
-For example, the code::
+For example::
 
     define e = Character("Eileen", image="eileen")
 

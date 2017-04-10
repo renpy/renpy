@@ -36,7 +36,7 @@ The callback is called with at least one keyword argument:
     This is true if the dialogue causes an interaction to occur.
 
 Other values of the positional argument and additional keyword arguments may
-be supplied in the future. The callback should coded to ignore arguments it
+be supplied in the future. The callback should written to ignore arguments it
 does not understand.
 
 Example

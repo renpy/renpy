@@ -134,7 +134,7 @@ For example::
 
         play music "<from 5 to 15.5>waves.opus"
 
-Will play 10.5 seconds of waves.opus, starting at the 5 second mark. The code::
+Will play 10.5 seconds of waves.opus, starting at the 5 second mark. The statement::
 
         play music "<loop 6.333>song.opus"
 
