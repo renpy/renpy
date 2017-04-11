@@ -699,4 +699,4 @@ has a section for asking questions, and a cookbook section with libraries and ex
 central hub of the Ren'Py community, where we welcome new creators and the questions they bring.
 
 Thank you for choosing the Ren'Py visual novel engine. We look forward to seeing
-what you creat with it!
+what you create with it!
