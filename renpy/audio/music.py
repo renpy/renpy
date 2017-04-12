@@ -318,7 +318,7 @@ def get_pos(channel="music"):
     seconds. Returns None if no audio is playing on `channel`.
 
     As this may return None before a channel starts playing, or if the audio
-    channel involved has been muted, code that calls this function should
+    channel involved has been muted, callers of this function should
     always handle a None value.
     """
 

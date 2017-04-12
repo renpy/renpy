@@ -926,8 +926,7 @@ def get_screen(name, layer=None):
     This can also take a list of names, in which case the first screen
     that is showing is returned.
 
-    This function can be used to check if a screen is showing, using code
-    like::
+    This function can be used to check if a screen is showing::
 
         if renpy.get_screen("say"):
             text "The say screen is showing."
@@ -1209,12 +1208,11 @@ def get_widget_properties(id, screen=None, layer=None):  # @ReservedAssignment
 
     Returns the properties for the widget with `id` in the `screen`
     on `layer`. If `screen` is None, returns the properties for the
-    current screen.
-
-    This can be used inside screen code.
+    current screen. This can be used from Python or property code inside
+    a screen.
 
     Note that this returns a dictionary containing the widget properties,
-    and so to get an individual property
+    and so to get an individual property, the dictionary must be accessed.
     """
 
     if screen is None:

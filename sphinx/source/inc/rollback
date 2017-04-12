@@ -44,8 +44,8 @@
         will roll back as far as it can, subject to this condition.
     
     `defer`
-        If true, the call will be deferred until code from the main context is
-        executed.
+        If true, the call will be deferred until control returns to the main
+        context.
     
     `greedy`
         If true, rollback will finish just after the previous checkpoint.
@@ -55,9 +55,9 @@
         If not None, a label that is called when rollback completes.
     
     `abnormal`
-        If true, the default, the code executed after the transition is run in
+        If true, the default, script executed after the transition is run in
         an abnormal mode that skips transitions that would have otherwise
-        occured.
+        occured. Abnormal mode ends when an interaction begins.
 
 .. function:: renpy.suspend_rollback(flag)
     

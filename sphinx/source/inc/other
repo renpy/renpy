@@ -199,7 +199,7 @@
     
     Other, renderer-specific, keys may also exist. The dictionary should
     be treated as immutable. This should only be called once the display
-    has been started (that is, after the init code is finished).
+    has been started (that is, after the init phase has finished).
 
 .. function:: renpy.get_say_attributes()
     
@@ -266,13 +266,14 @@
 
 .. function:: renpy.load_module(name, **kwargs)
     
-    This loads the Ren'Py module named name. A Ren'Py module consists of Ren'Py code
+    This loads the Ren'Py module named name. A Ren'Py module consists of Ren'Py script
     that is loaded into the usual (store) namespace, contained in a file named
     name.rpym or name.rpymc. If a .rpym file exists, and is newer than the
     corresponding .rpymc file, it is loaded and a new .rpymc file is created.
     
-    All init code in the module is run before this function returns. An error is
-    raised if the module name cannot be found, or is ambiguous.
+    All of the init blocks (and other init-phase code) in the module are run
+    before this function returns. An error is raised if the module name cannot
+    be found, or is ambiguous.
     
     Module loading may only occur from inside an init block.
 
@@ -450,7 +451,7 @@
     If no prefix matches, an exception is thrown. (The empty string, "",
     can be used as the last prefix to create a catch-all dictionary.)
     
-    For example, this code splits properties beginning with text from
+    For example, this splits properties beginning with text from
     those that do not::
     
         text_properties, button_properties = renpy.split_properties("text_", "")

@@ -85,7 +85,7 @@
     
     `mixer`
         The name of the mixer to adjust. This is usually one of
-        "music", "sfx", or "voice", but user code can create new
+        "music", "sfx", or "voice", but creators can create new
         mixers.
 
 .. function:: ScreenVariableValue(variable, range, max_is_zero=False, style=u'bar', offset=0, step=None)

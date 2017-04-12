@@ -183,7 +183,7 @@ def split_properties(properties, *prefixes):
     If no prefix matches, an exception is thrown. (The empty string, "",
     can be used as the last prefix to create a catch-all dictionary.)
 
-    For example, this code splits properties beginning with text from
+    For example, this splits properties beginning with text from
     those that do not::
 
         text_properties, button_properties = renpy.split_properties("text_", "")

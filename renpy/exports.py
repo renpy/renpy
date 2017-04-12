@@ -1399,8 +1399,8 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, a
         will roll back as far as it can, subject to this condition.
 
     `defer`
-        If true, the call will be deferred until code from the main context is
-        executed.
+        If true, the call will be deferred until control returns to the main
+        context.
 
     `greedy`
         If true, rollback will finish just after the previous checkpoint.
@@ -1410,9 +1410,9 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, a
         If not None, a label that is called when rollback completes.
 
     `abnormal`
-        If true, the default, the code executed after the transition is run in
+        If true, the default, script executed after the transition is run in
         an abnormal mode that skips transitions that would have otherwise
-        occured.
+        occured. Abnormal mode ends when an interaction begins.
     """
 
     if defer and len(renpy.game.contexts) > 1:
@@ -2176,13 +2176,14 @@ def load_module(name, **kwargs):
     """
     :doc: other
 
-    This loads the Ren'Py module named name. A Ren'Py module consists of Ren'Py code
+    This loads the Ren'Py module named name. A Ren'Py module consists of Ren'Py script
     that is loaded into the usual (store) namespace, contained in a file named
     name.rpym or name.rpymc. If a .rpym file exists, and is newer than the
     corresponding .rpymc file, it is loaded and a new .rpymc file is created.
 
-    All init code in the module is run before this function returns. An error is
-    raised if the module name cannot be found, or is ambiguous.
+    All of the init blocks (and other init-phase code) in the module are run
+    before this function returns. An error is raised if the module name cannot
+    be found, or is ambiguous.
 
     Module loading may only occur from inside an init block.
     """
@@ -2586,7 +2587,7 @@ def get_renderer_info():
 
     Other, renderer-specific, keys may also exist. The dictionary should
     be treated as immutable. This should only be called once the display
-    has been started (that is, after the init code is finished).
+    has been started (that is, after the init phase has finished).
     """
 
     return renpy.display.draw.info

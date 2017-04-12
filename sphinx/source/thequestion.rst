@@ -3,8 +3,8 @@
 Script of The Question
 ======================
 
-This is the main script.rpy file of The Question. For the full script of
-The Question, open it in the Ren'Py launcher, or visit
+This is the main script.rpy file of The Question. For the full code of
+The Question, open it in the Ren'Py lanucher, or visit
 `https://github.com/renpy/renpy/tree/master/the_question`_.
 
 ::
