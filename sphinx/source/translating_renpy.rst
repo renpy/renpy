@@ -50,13 +50,13 @@ error.rpy
     when Ren'Py has a problem.
 
 gui.rpy
-    This file contains comments that are placed into the default GUI code.
+    This file contains comments that are placed into the default GUI.
 
 launcher.rpy
     This file contains strings that are displayed as part of the launcher.
 
 obsolete.rpy
-    The file contains strings that are not used by modern Ren'Py code.
+    The file contains strings that are not used by modern Ren'Py.
 
 options.rpy
     This file contains strings that are used to translate the comments in
@@ -81,7 +81,7 @@ Changing Fonts
 
 Ren'Py ships with a default font (DejaVuSans) that covers most western
 languages, but other fonts are often needed. A font can be configured by
-editing launcher/game/tl/language/style.rpy, and adding the code::
+editing launcher/game/tl/language/style.rpy, and adding::
 
     init python:
         translate_font("language", "myfont.ttf")
@@ -118,7 +118,7 @@ These variables are only available in the launcher.
     A scaling factor that is applied to all text in the launcher.
 
 A translate python block is used to set these variables. For example, the
-following code is used to change the fonts in the Arabic translation of
+following is used to change the fonts in the Arabic translation of
 Ren'Py::
 
     translate arabic python:
@@ -165,7 +165,7 @@ They should be called from the init python block.
         gui.rpy. There is no need to use "## ", as the comment will be
         added and wrapped automatically.
 
-    For example, the following code changes the size of dialogue text::
+    For example, the following changes the size of dialogue text::
 
         translate_define("martian", "gui.text_size", 12)
 

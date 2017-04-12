@@ -81,13 +81,12 @@ local variables. (This can be overridden by supplying an explicit
 scope argument to the Text displayable.)
 
 Ren'Py isn't limited to interpolating simple variables. It can also
-interpolate fields and components of tuples. So it's possible to have
-code like::
+interpolate fields and components of tuples. So it's possible to have::
 
     g "My first name is [player.names[0]]."
 
-It's possible to apply formatting codes when displaying numbers. This
-code will display a floating point number to two decimal places::
+It's possible to apply formatting when displaying numbers. This
+will display a floating point number to two decimal places::
 
     $ percent = 100.0 * points / max_points
     g "I like you [percent:.2] percent!"
@@ -393,32 +392,28 @@ The default font for Ren'Py contains characters for English and many
 other languages. For size reasons, it doesn't contain the characters
 required to render other languages, including Chinese, Japanese, and
 Korean. In order to support these language, a project must first
-change the default font, using code like::
-
-    init python:
-        style.default.font = "mikachan.ttf"
+change the fonts it uses.
 
 Ren'Py should then support most world languages without further
 configuration. However, Korean can be written with or without spacing
 between words. Ren'Py has a special mode to support Korean with
-spaces, which can be enabled with the code::
+spaces, which can be enabled by setting::
 
-    init python:
-         style.default.language = "korean-with-spaces"
+    define gui.language = "korean-with-spaces"
+
+This can be changed from the default of "unicode" in gui.rpy.
 
 Japanese has multiple rules for line breaking. We recommend starting with
 "japanese-normal", and moving to "japanese-loose" or "japanese-strict" for
 more or less break opportunities, respectively.::
 
-    init python:
-         style.default.language = "japanese-normal"
+    define gui.language = "japanese-loose"
 
 Ideographic languages provide a large number of opportunities
 for line breaking. To enable a faster but less-accurate line-breaking
-algorithm, use the code::
+algorithm, use::
 
-    init python:
-         style.default.layout = "greedy"
+    define gui.language = "greedy"
 
 The faster line-breaking algorithm is not be necessary unless the
 game is displaying huge amounts of text, such as in NVL-mode.

@@ -291,7 +291,7 @@ block::
 
 .. warning::
 
-    Python code defined in .rpy files is transformed to allow rollback
+    Python defined in .rpy files is transformed to allow rollback
     to work. Python imported from .py files is not. As a result,
     objects created in Python will not work with rollback, and
     probably should not be changed after creation.

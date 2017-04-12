@@ -15,7 +15,7 @@ displayable. There is no way to create an ATL transform programmatically.
 Ren'Py Script Statements
 ========================
 
-ATL Code can be included as part of three Ren'Py script statements.
+ATL can be included as part of three Ren'Py script statements.
 
 .. _transform-statement:
 

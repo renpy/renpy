@@ -1682,7 +1682,7 @@ Python
 ------
 
 The screen language also includes single-line and multiple-line python
-statements, which can execute Python. This code runs in the scope
+statements, which can execute Python. The Python runs in the scope
 of the screen.
 
 **Python must not cause side effects that are visible from

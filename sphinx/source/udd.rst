@@ -138,8 +138,8 @@ class, we'll present them with the `self` parameter.
 
         A subclass may override the constructor, perhaps adding new
         parameters. If it does, it should pass all unknown keyword
-        arguments to the renpy.Displayable constructor, using code
-        like::
+        arguments to the renpy.Displayable constructor, with the
+        call::
 
             super(MyDisplayable, self).__init__(**properties)
 

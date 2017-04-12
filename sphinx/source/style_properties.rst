@@ -206,8 +206,7 @@ The style prefix is passed through displayables that do not take user input,
 including containers, transforms, and frames.
 
 As an example of how this can be used, if the files "idle_button.png" and
-"hover_button.png" exist (and no other files ending in "button.png" do),
-the following code::
+"hover_button.png" exist (and no other files ending in "button.png" do)::
 
     style button:
         background "[prefix_]button.png"

@@ -24,7 +24,7 @@ as variables in the screen's scope.
 Some of the screens also have special ids associated with them. A
 special id should be assigned to a displayable of a given type. It can
 cause properties to be assigned to that displayable, and can make that
-displayable accessible to calling code.
+displayable accessible to the part of Ren'Py that displays the screen.
 
 In-Game Screens
 ===============

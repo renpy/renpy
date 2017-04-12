@@ -10,7 +10,7 @@ object is placed on the screen, while user-defined transforms
 can cause more complex effects, like motion, zoom, and rotation.
 
 Transforms can be applied by giving the at clause to the scene and
-show statements. The following code applies the "right" transform to
+show statements. The following applies the "right" transform to
 the eileen happy displayable.::
 
     show eileen happy at right

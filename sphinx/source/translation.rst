@@ -58,7 +58,7 @@ be placed under ``tutorial/game/tl/piglatin``.
 
 There will be one translation file created per game script file. The
 common.rpy file will also be created to contain translations of
-strings found in the common code.
+strings that are common to all games made using Ren'Py.
 
 Translating Dialogue
 ====================
@@ -86,7 +86,7 @@ take the following game::
 
 This is broken up into multiple translation units. Each unit has an
 identifier assigned to it, with the identifier being generated from
-the label preceding the unit, and the code inside the unit. (If
+the label preceding the unit, and the statements inside the unit. (If
 multiple units would be assigned the same translation number, a serial
 number to the second and later units to distinguish them.)
 
@@ -111,7 +111,7 @@ Translate Statement
 
 When you generate translations for a language, Ren'Py will generate a
 translate statement corresponding to each translation unit. When
-translating the code above, Ren'Py will generate::
+translating the script above, Ren'Py will generate::
 
     # game/script.rpy:95
     translate piglatin start_636ae3f5:
@@ -131,7 +131,7 @@ translating the code above, Ren'Py will generate::
         # e "Pretty much everything your game needs!"
         e ""
 
-This can be translated by editing the generated code. A finished
+This can be translated by editing the generated files. A finished
 translation might look like::
 
     # game/script.rpy:95
@@ -179,7 +179,7 @@ Or a statement can be removed, by replacing it with the pass statement::
          pass
 
 It's also possible to run non-dialogue statements, such as
-conditionals or python code. For example, we can translate::
+conditionals or Python. For example, we can translate::
 
   e "You scored [points] points!"
 
@@ -205,13 +205,13 @@ a translation identifier directly, using a statement like::
         "..."
 
 Adding labels can also confuse the translation process. To prevent
-this, labels that are given the hide clause are ignored by the
-translation code.::
+this, labels that are given the hide clause are ignored when generating
+translations.::
 
     label ignored_by_translation hide:
         "..."
 
-While translation blocks may include python code, this code should not
+While translation blocks may include Python, this Python should not
 have side effects visible outside of the block. That's because
 changing languages will restart the translation block, causing the
 side effects to occur multiple times.
@@ -243,7 +243,7 @@ have the following script::
        "Head East":
           # ...
 
-Ren'Py will generate the following code::
+Ren'Py will generate::
 
   translate piglatin strings:
 
@@ -272,7 +272,7 @@ Which can then be translated::
 String translations are also applied to dialogue strings that are not
 translated as dialogue.
 
-When the same string is used in multiple places in the code, the string can
+When the same string is used in multiple places, the string can
 be distinguished using the {#...} text tag. Even though they display the
 same, Ren'Py considers all of these distinct strings for the purpose
 of translation::
@@ -294,8 +294,8 @@ Translating substitutions
 -------------------------
 
 String substitutions can be translated using the !t conversion
-flag. So the following code will be translatable using the dialogue
-and code translation systems::
+flag. So the following will be translatable using a combination of
+the dialogue and string translation systems::
 
   if mood_points > 5:
       $ mood = _("great")
@@ -349,8 +349,8 @@ Style Translations
 
 It may be necessary to change styles - especially font-related
 styles - when translating a game. Ren'Py handles this with translate
-style blocks and translate python blocks. These blocks can contain code
-to change language-related variables and styles. For example::
+style blocks and translate python blocks. These blocks can
+change language-related variables and styles. For example::
 
   translate piglatin style default:
       font "stonecutter.ttf"
@@ -393,7 +393,7 @@ The main way to switch languages is with the Language action.
 .. include:: inc/language_action
 
 The Language action can be used to add a language preference to the
-preferences screen, using code like::
+preferences screen::
 
             frame:
                 style_prefix "pref"

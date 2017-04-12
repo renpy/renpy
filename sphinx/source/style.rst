@@ -73,7 +73,7 @@ it using the default parent.
 Style names beginning with an underscore are reserved for Ren'Py use.
 
 As Ren'Py builds styles on startup, named styles should not be changed
-outside of init code.
+outside of a style statement or init block.
 
 
 Style Inspector
@@ -265,7 +265,7 @@ choose between large, simple text and smaller outlined text.
         renpy.register_style_preference("text", "large", style.say_dialogue, "outlines", [ ])
         renpy.register_style_preference("text", "large", style.say_dialogue, "size", 24)
 
-The following code will allow the user to select these alternatives using
+The following will allow the user to select these alternatives using
 buttons::
 
     textbutton "Decorated" action StylePreference("text", "decorated")
@@ -277,7 +277,7 @@ Other Style Functions
 .. function:: style.rebuild()
 
    This causes named styles to be rebuilt, allowing styles to be
-   changed outside of init code.
+   changed after the init phase has finished.
 
    .. warning::
 
