@@ -574,7 +574,7 @@ Text Style Properties
     fonts, by specifying a size of 0 and non-zero offsets.
 
     By default, `size`, `xoffset` and `yoffset` are scaled with the text.
-    When given as the absolute type, they are not scaled. Code like::
+    When given as the absolute type, they are not scaled. For example::
 
         style default:
             outlines [ (absolute(1), "#000", absolute(0), absolute(0)) ]
