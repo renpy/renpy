@@ -388,7 +388,7 @@ init -1500 python in build:
     mac_codesign_dmg_command = [ "/usr/bin/codesign", "-s", "{identity}", "-f", "{dmg}" ]
 
     # Do we want to add the script_version file?
-    script_version = False
+    script_version = True
 
 
     # This function is called by the json_dump command to dump the build data
