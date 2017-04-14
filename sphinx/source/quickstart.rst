@@ -27,7 +27,8 @@ Once you've downloaded Ren'Py, you'll want to extract and run it.
 * On Mac OS X, double-click on the downloaded drive image to mount it as a
   drive. When the drive opens, copy the folder named ``renpy-<version>``
   somewhere else. (Where does not matter, but it has to be moved out of
-  the read-only drive image.) Then change into it, and run the ``renpy``
+  the read-only drive image. Do not move the renpy app out of the folder it's in
+  - it won't work elsewhere.) Then change into it, and run the ``renpy``
   application.
 
 * On Linux, unpack the tarball, change into the ``renpy-<version>``
