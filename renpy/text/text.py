@@ -1213,6 +1213,7 @@ class Layout(object):
 
         return 0
 
+
 # The maximum number of entries in the layout cache.
 LAYOUT_CACHE_SIZE = 50
 
@@ -1252,6 +1253,7 @@ def layout_cache_tick():
     virtual_layout_cache_old = layout_cache_new
     virtual_layout_cache_new = { }
 
+
 VERT_REVERSE = renpy.display.render.Matrix2D(0, -1, 1, 0)
 VERT_FORWARD = renpy.display.render.Matrix2D(0, 1, -1, 0)
 
@@ -1287,6 +1289,8 @@ class Text(renpy.display.core.Displayable):
     _uses_scope = True
     _duplicatable = False
     locked = False
+
+    language = None
 
     def after_upgrade(self, version):
 
@@ -1414,6 +1418,8 @@ class Text(renpy.display.core.Displayable):
         if self.locked:
             return
 
+        self.language = renpy.game.preferences.language
+
         old_text = self.text
 
         if not isinstance(text, list):
@@ -1455,6 +1461,10 @@ class Text(renpy.display.core.Displayable):
                     renpy.display.render.redraw(self, 0)
 
         return True
+
+    def per_interact(self):
+        if (self.language != renpy.game.preferences.language) and not self._uses_scope:
+            self.set_text(self.text_parameter, substitute=self.substitute, update=True)
 
     def set_ctc(self, ctc):
         self.ctc = ctc
