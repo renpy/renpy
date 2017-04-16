@@ -53,6 +53,7 @@ class StoreDeleted(object):
     def __reduce__(self):
         return "deleted"
 
+
 deleted = StoreDeleted()
 
 
@@ -451,6 +452,7 @@ class WrapNode(ast.NodeTransformer):
             keywords=[ ],
             starargs=None,
             kwargs=None)
+
 
 wrap_node = WrapNode()
 
@@ -967,6 +969,7 @@ class DetRandom(random.Random):
         new.seed(seed)
         return new
 
+
 rng = DetRandom()
 
 # This is the code that actually handles the logging and managing
@@ -1327,6 +1330,9 @@ class RollbackLog(renpy.object.Object):
                 else:
                     rv[store_name + "." + name] = deleted
 
+        for i in reversed(renpy.game.contexts[1:]):
+            i.pop_dynamic_roots(rv)
+
         return rv
 
     def purge_unreachable(self, roots, wait=None):
@@ -1414,8 +1420,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                            and data == fwd_data
-                            and (keep_rollback or self.rolled_forward)
+                        and data == fwd_data
+                        and (keep_rollback or self.rolled_forward)
                         ):
                     self.forward.pop(0)
                 else:
@@ -1800,6 +1806,7 @@ def method_pickle(method):
 
 def method_unpickle(obj, name):
     return getattr(obj, name)
+
 
 import copy_reg
 import types

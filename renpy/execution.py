@@ -323,6 +323,18 @@ class Context(renpy.object.Object):
         while self.dynamic_stack:
             self.pop_dynamic()
 
+    def pop_dynamic_roots(self, roots):
+
+        for dynamic in reversed(self.dynamic_stack):
+
+            for k, v in dynamic.iteritems():
+                name = "store." + k
+
+                if isinstance(v, Delete) and (name in roots):
+                    del roots[name]
+                else:
+                    roots[name] = v
+
     def goto_label(self, node_name):
         """
         Sets the name of the node that will be run when this context
