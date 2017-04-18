@@ -158,6 +158,7 @@ class LogFile(object):
         traceback.print_exc(None, self)
         self.raw_write = False
 
+
 # A map from the log name to a log object.
 log_cache = { }
 
@@ -194,7 +195,7 @@ class StdioRedirector(object):
             callbacks = [ ]
 
         for l in lines[:-1]:
-            self.log.write(l)
+            self.log.write("%s", l)
 
             for i in callbacks:
                 try:
@@ -222,6 +223,7 @@ class StdoutRedirector(StdioRedirector):
 
     def get_callbacks(self):
         return renpy.config.stdout_callbacks
+
 
 sys.stdout = StdoutRedirector()
 
