@@ -282,7 +282,7 @@ define gui.main_menu_text_xalign = 1.0
 ## components when an overlay or window is not present.
 
 ## Generic frames that are introduced by player code.
-define gui.frame_borders = Borders(4, 4, 4, 4)
+define gui.frame_borders = Borders(20, 8, 20, 8)
 
 ## The frame that is used as part of the confirm screen.
 define gui.confirm_frame_borders = Borders(40, 40, 40, 40)
