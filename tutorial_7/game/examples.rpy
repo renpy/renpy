@@ -9,18 +9,22 @@
 # We concatenate fragements foo and bar, higlight them, wrap them into a
 # viewport, button and transform, and display them to the user.
 
+
+define EXAMPLE_HEIGHT = 160
+
 transform example_transform:
-    ypos 450 yanchor 1.0 xpos 0 xanchor 0
+    ypos 540 yanchor 1.0
+    xalign 0.5
 
     on replace:
-        crop (0, 0, 800, 120)
+        crop (0, 0, 1280, EXAMPLE_HEIGHT)
 
     on show:
-        crop (0, 0, 800, 0)
-        linear .5 crop (0, 0, 800, 120)
+        crop (0, 0, 1280, 0)
+        linear .5 crop (0, 0, 1280, EXAMPLE_HEIGHT)
 
     on hide:
-        linear .5 crop (0, 0, 800, 0)
+        linear .5 crop (0, 0, 1280, 0)
 
 init python:
 
@@ -103,15 +107,21 @@ init python:
             vp = Viewport(ct, child_size=(2000, 2000), ymaximum=120, draggable=True, mousewheel=True)
             w = Window(vp,
                        background = "#fffc",
+                       left_padding=180,
                        top_padding=0,
                        right_padding=0,
                        bottom_padding=0,
                        yminimum=0,
+                       style="empty",
+                       xfill=True,
+                       yfill=True,
                        )
 
             return example_transform(w)
 
 image example = __Example()
+
+
 
 
 init python hide:
