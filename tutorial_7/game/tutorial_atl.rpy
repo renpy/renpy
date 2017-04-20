@@ -392,21 +392,21 @@ label tutorial_atl:
 
     e "There are currently three places where ATL can be used in Ren'Py."
 
-    show example atl_image
+    show screen example('atl_image')
 
     e "The first place ATL can be used is as part of an image statement. Instead of a displayable, an image may be defined as a block of ATL code."
 
     e "When used in this way, we have to be sure that ATL includes one or more displayables to actually show."
 
-    show example atl_transform
+    show screen example('atl_transform')
 
     e "The second way is through the use of the transform statement. This assigns the ATL block to a python variable, allowing it to be used in at clauses and inside other transforms."
 
-    show example atl_motion
+    show screen example('atl_motion')
 
     e "Finally, an ATL block can be used as part of a show statement, instead of the at clause."
 
-    hide example
+    hide screen example
 
     e "The key to ATL is what we call composeability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
 
@@ -447,7 +447,7 @@ label tutorial_atl:
     hide magic
     with dissolve
 
-    show example atl_image
+    show screen example('atl_image')
     show eileen animated
 
     e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
@@ -460,25 +460,25 @@ label tutorial_atl:
 
     e "The final line is a repeat statement. This causes the current block of ATL to be restarted. You can only have one repeat statement per block."
 
-    show example atl_image1
+    show screen example('atl_image1')
     show eileen animated twice
 
     e "If we were to write repeat 2 instead, the animation would loop twice, then stop."
 
-    show example atl_image2
+    show screen example('atl_image2')
     show eileen animated once
 
     e "Omitting the repeat statement means that the animation stops once we reach the end of the block of ATL code."
 
     show bg atl transitions
-    show example atl_with
+    show screen example('atl_with')
 
     e "By default, displayables are replaced instantaneously. We can also use a with clause to give a transition between displayables."
 
     show bg washington
     with dissolve
 
-    hide example
+    hide screen example
 
     e "Now, let's move on to see how we can use ATL to transform an image. We'll start off by seeing what we can do to position images on the screen."
 
@@ -487,11 +487,11 @@ label tutorial_atl:
     show logo base at topright
     with dissolve
 
-    show example atl_transform
+    show screen example('atl_transform')
 
     e "Perhaps the simplest thing we can do is to position the images on the screen. This can be done by simply giving the names of the transform properties, each followed by the value."
 
-    show example atl_transform1
+    show screen example('atl_transform1')
     show logo base at move_jump
 
     e "With a few more statements, we can move things around on the screen."
@@ -502,7 +502,7 @@ label tutorial_atl:
 
     e "The pause and repeat statements are the same statements we used in our animations. They work throughout ATL code."
 
-    show example atl_transform2
+    show screen example('atl_transform2')
     show logo base at move_slide
 
     e "Having the image jump around on the screen isn't all that useful. That's why ATL has the interpolation statement."
@@ -515,7 +515,7 @@ label tutorial_atl:
 
     e "The old value is the value of the transform property at the start of the statement. By interpolating the property over time, we can change things on the screen."
 
-    hide example
+    hide screen example
     show eileen happy at right
     with move
 
@@ -538,12 +538,12 @@ label tutorial_atl:
     #end atl_motion
     with dissolve
 
-    show example atl_motion
+    show screen example('atl_motion')
 
     e "We've already seen the position properties. Along with xalign and yalign, we support the xpos, ypos, xanchor, and yanchor properties."
 
     hide eileen
-    show example atl_pan
+    show screen example('atl_pan')
     hide logo base
     show bg band:
         xanchor 0 yanchor 0 xpos 0 ypos -222
@@ -562,7 +562,7 @@ label tutorial_atl:
     show bg washington at reset
     show eileen happy at right behind example
     show logo base at reset behind example
-    show example atl_zoom
+    show screen example('atl_zoom')
     with dissolve
 
     #begin atl_zoom
@@ -577,7 +577,7 @@ label tutorial_atl:
     e "The zoom property lets us scale the displayable by a factor, making it bigger and smaller. For best results, zoom should always be greater than 0.5."
 
     show logo base at reset
-    show example atl_xyzoom
+    show screen example('atl_xyzoom')
 
     #begin atl_xyzoom
     show logo base:
@@ -591,7 +591,7 @@ label tutorial_atl:
     e "The xzoom and yzoom properties allow the displayable to be scaled in the X and Y directions independently."
 
     show logo base at reset
-    show example atl_size
+    show screen example('atl_size')
 
     #begin atl_size
     show logo base:
@@ -603,7 +603,7 @@ label tutorial_atl:
 
 
     show logo base at reset
-    show example atl_alpha
+    show screen example('atl_alpha')
 
     #begin atl_alpha
     show logo base:
@@ -617,7 +617,7 @@ label tutorial_atl:
     e "The alpha property allows us to vary the opacity of a displayable. This can make it appear and disappear."
 
     show logo base at reset
-    show example atl_rotate
+    show screen example('atl_rotate')
 
     #begin atl_rotate
     show logo base:
@@ -633,7 +633,7 @@ label tutorial_atl:
     e "Since rotation can change the size, usually you'll want to set xanchor and yanchor to 0.5 when positioning a rotated displayable."
 
     show logo base at reset
-    show example atl_rotate
+    show screen example('atl_rotate')
 
     #begin atl_cropsize
     show logo base:
@@ -644,7 +644,7 @@ label tutorial_atl:
     e "The crop property crops a rectangle out of a displayable, showing only part of it."
 
     hide logo base
-    show example atl_cropsize2
+    show screen example('atl_cropsize2')
     with dissolve
 
     #begin atl_cropsize2
@@ -659,11 +659,11 @@ label tutorial_atl:
 
     show bg washington at reset
     with dissolve
-    hide example
+    hide screen example
 
     e "Apart from displayables, pause, interpolation, and repeat, there are a few other statements we can use as part of ATL."
 
-    show example atl_include
+    show screen example('atl_include')
 
     #begin atl_include
     show eileen happy:
@@ -682,7 +682,7 @@ label tutorial_atl:
     show eileen happy at center
     show logo base behind eileen
     with dissolve
-    show example atl_blocktime
+    show screen example('atl_blocktime')
 
     #begin atl_blocktime
     show logo base:
@@ -701,7 +701,7 @@ label tutorial_atl:
 
     e "So this code will bounce the image back and forth for eleven and a half seconds, and then move back to the right side of the screen."
 
-    show example atl_parallel
+    show screen example('atl_parallel')
 
     #begin atl_parallel
     show logo base:
@@ -723,7 +723,7 @@ label tutorial_atl:
         yalign 0.0
         xalign 0.0
 
-    show example atl_choice
+    show screen example('atl_choice')
 
     #begin atl_choice
     show logo base:
@@ -738,7 +738,7 @@ label tutorial_atl:
 
     hide logo base
     with dissolve
-    hide example
+    hide screen example
 
     e "This tutorial game has only scratched the surface of what you can do with ATL. For example, we haven't even covered the on and event statements. For more information, you might want to check out the ATL chapter in the reference manual."
 

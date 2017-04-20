@@ -54,7 +54,7 @@ label tutorial_dialogue:
     show eileen happy
     with dissolve
 
-    show example start dialogue1
+    show screen example(['start', 'dialogue1'])
 
     e "I'll show you the code for that example."
 
@@ -77,7 +77,7 @@ label tutorial_dialogue:
     show eileen happy
     with dissolve
 
-    show example start dialogue1
+    show screen example(['start', 'dialogue1'])
 
     e "When Ren'Py sees a single string on a line by itself, it uses the narrator to say that string. So a single string can be used to express a character's thoughts."
 
@@ -90,7 +90,7 @@ label tutorial_dialogue:
     show eileen happy
     with dissolve
 
-    show example start dialogue1
+    show screen example(['start', 'dialogue1'])
 
     e "When we have two strings separated by a space, the first is used as the character's name, and the second is what the character is saying."
 
@@ -100,7 +100,7 @@ label tutorial_dialogue:
 
     e "Be sure to preserve the spacing before lines. That's known as indentation, and it's used to help Ren'Py group lines of script into blocks."
 
-    hide example
+    hide screen example
 
 
     e "Using a string for a character's name is inconvenient, for two reasons."
@@ -111,7 +111,7 @@ label tutorial_dialogue:
 
     e "To solve these problems, Ren'Py lets you define Characters."
 
-    show example characters
+    show screen example('characters')
 
     e "Here's an example Character definition. It begins with the word \"define\". That tells Ren'Py that we are defining something."
 
@@ -123,7 +123,7 @@ label tutorial_dialogue:
 
     e "These short names are case-sensitive. Capital L is a different name from lower-case l, so you'll need to be careful about that."
 
-    hide example
+    hide screen example
 
     e "Now that we have a character defined, we can use it to say dialogue."
 
@@ -140,7 +140,7 @@ label tutorial_dialogue:
     show eileen happy
     with dissolve
 
-    show example characters start dialogue1 dialogue2
+    show screen example(['characters', 'start', 'dialogue1', 'dialogue2'])
 
     e "Here's the full game, including the two new lines of dialogue, both of which use the Character we defined to say dialogue."
 
@@ -150,7 +150,7 @@ label tutorial_dialogue:
 
     e "The Character object controls who is speaking, the color of their name, and many other properties of the dialogue."
 
-    hide example
+    hide screen example
 
     e "Since the bulk of a visual novel is dialogue, we've tried to make it as easy to write as possible."
 
@@ -168,7 +168,7 @@ label tutorial_images:
 
     e "All of the image files we'll be using here are in the game directory, under the tutorial directory, under the Ren'Py directory."
 
-    show example images
+    show screen example('images')
 
     e "Here are some sample image definitions. They should be placed at the start of the file, without any indentation."
 
@@ -180,7 +180,7 @@ label tutorial_images:
 
     e "A string giving an image name is only one of the dozens of kinds of displayable that Ren'Py supports."
 
-    hide example
+    hide screen example
 
     e "Let's see what those look like in the game."
 
@@ -200,7 +200,7 @@ label tutorial_images:
     show eileen happy
     with dissolve
 
-    show example start images1
+    show screen example(['start', 'images1'])
 
     e "Here's the script for that scene. Notice how it includes two new statements, the scene and show statement."
 
@@ -218,7 +218,7 @@ label tutorial_images:
     show logo base at logopos behind eileen
     #end showbehind
 
-    show example showbehind
+    show screen example('showbehind')
 
     e "In this example, we show an image named logo base, and we show it at a user-defined position, logopos."
 
@@ -228,7 +228,7 @@ label tutorial_images:
     hide logo
     #end hide1
 
-    show example hide1
+    show screen example('hide1')
 
     e "Finally, there's the hide statement, which hides the image with the given tag."
 
@@ -236,7 +236,7 @@ label tutorial_images:
 
     e "The main use is for when a character or prop leaves before the scene is over."
 
-    hide example
+    hide screen example
 
     return
 
@@ -263,7 +263,7 @@ label tutorial_transitions:
     with Dissolve(.5)
     #end trans1
 
-    show example trans1
+    show screen example('trans1')
 
     e "That's much smoother. Here's some example code showing how we include transitions in our game."
 
@@ -273,7 +273,7 @@ label tutorial_transitions:
 
     e "In this case, each transition takes half a second."
 
-    show example slowdissolve
+    show screen example('slowdissolve')
 
     e "We can define a short name for a transition, using the define statement. Here, we're defining slowdissolve to be a dissolve that takes a whole second."
 
@@ -286,12 +286,12 @@ label tutorial_transitions:
     with slowdissolve
     #end trans2
 
-    show example trans2
+    show screen example('trans2')
     with dissolve
 
     e "Once a transition has been given a short name, we can use it in our game."
 
-    hide example
+    hide screen example
 
     e "Ren'Py defines some transitions for you, like dissolve, fade, and move. For more complex or customized transitions, you'll have to define your own."
 
@@ -318,7 +318,7 @@ label tutorial_music:
     queue music "sunflower-slow-drag.ogg"
     #end sound1
 
-    show example sound1
+    show screen example('sound1')
     with dissolve
 
     e "The play music command replaces the currently playing music, and replaces it with the named filename."
@@ -333,12 +333,12 @@ label tutorial_music:
     stop music fadeout 1
     #end sound2
 
-    show example sound2
+    show screen example('sound2')
     with dissolve
 
     e "The third statement is the stop statement. It stops the music playing on a channel. It too takes the fadeout clause."
 
-    show example sound3
+    show screen example('sound3')
     with dissolve
 
     #begin sound3
@@ -347,7 +347,7 @@ label tutorial_music:
 
     e "Unlike the music channel, playing a sound on the sound channel causes it to play only once."
 
-    show example sound4
+    show screen example('sound4')
     with dissolve
 
     #begin sound4
@@ -360,7 +360,7 @@ label tutorial_music:
 
     play music "sunflower-slow-drag.ogg"
 
-    hide example
+    hide screen example
     with dissolve
 
     e "Ren'Py has separate mixers for sound, music, and voices, so the player can adjust them as he likes."
@@ -402,7 +402,7 @@ label choice1_done:
     # ... the game continues here.
 #end menu1
 
-    show example menu1
+    show screen example('menu1')
     with dissolve
 
     e "Here, you can see the code for that menu. If you scroll down, you can see the code we run after the menu."
@@ -423,7 +423,7 @@ label choice1_done:
 
     e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag, so the game can remember the user's choices."
 
-    hide example menu1
+    hide screen example menu1
     pause .25
 
 #begin menu2
@@ -436,11 +436,11 @@ label choice1_done:
         e "For example, I remember that you're planning to make a kinetic novel, without menus."
 #end menu2
 
-    show example menu2
+    show screen example('menu2')
 
     e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
 
-    hide example menu2
+    hide screen example menu2
 
     e "Although we won't demonstrate it here, Ren'Py supports making decisions based on a combinations of points, flags, and other factors."
 

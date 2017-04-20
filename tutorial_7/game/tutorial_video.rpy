@@ -12,12 +12,12 @@ label tutorial_video:
 
     e "The first way allows you to show a movie as an image, along with every other image that's displayed on the screen."
 
-    show example movie_image
+    show screen example('movie_image')
 
     e "To do this, we first have to define an image to be a Movie displayable. Movie displayables require a size argument, and also use properties to position themselves on the screen."
 
     stop music fadeout .25
-    show example movie_play
+    show screen example('movie_play')
     pause .25
 
     #begin movie_play
@@ -30,15 +30,15 @@ label tutorial_video:
     hide shuttle
     #end movie_stop
 
-    show example movie_stop
+    show screen example('movie_stop')
 
     e "When we no longer want to play the movie, we can hide it."
 
-    show example movie_cutscene
+    show screen example('movie_cutscene')
 
     e "The other way to show a movie is with the renpy.movie_cutscene python function. This shows the movie fullscreen, either until it ends or until the user clicks."
 
-    hide example
+    hide screen example
 
     #begin movie_cutscene
     $ renpy.movie_cutscene("shuttle.ogv")

@@ -4,7 +4,7 @@
 #
 # When we see:
 #
-# show example foo bar
+# show screen example(['foo', 'bar'])
 #
 # We concatenate fragements foo and bar, higlight them, wrap them into a
 # viewport, button and transform, and display them to the user.
