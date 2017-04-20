@@ -47,39 +47,34 @@ init python:
     # This maps from example name to the text of the fragment.
     examples = { }
 
-    class __Example(object):
-        """
-         When parameterized, this displays an example window, containing
-         example text from blocks with those parameters.
-         """
+    def colorize(m):
+        if m.group("string"):
+            return "{color=#060}" + m.group(0) + "{/color}"
 
-        def colorize(self, m):
-            if m.group("string"):
-                return "{color=#060}" + m.group(0) + "{/color}"
+        word = m.group("word")
+        if word:
+            if word in KEYWORDS:
+                return "{color=#840}" + m.group(0) + "{/color}"
+            elif word in PROPERTIES:
+                return "{color=#048}" + m.group(0) + "{/color}"
+            else:
+                return m.group(0)
 
-            word = m.group("word")
-            if word:
-                if word in KEYWORDS:
-                    return "{color=#840}" + m.group(0) + "{/color}"
-                elif word in PROPERTIES:
-                    return "{color=#048}" + m.group(0) + "{/color}"
-                else:
-                    return m.group(0)
+        if m.group("comment"):
+            return "{color=#600}" + m.group(0) + "{/color}"
 
-            if m.group("comment"):
-                return "{color=#600}" + m.group(0) + "{/color}"
+        return m.group(0)
 
-            return m.group(0)
+    def example_code(blocks):
 
-        def predict(self, callback):
-            return
+        if not isinstance(blocks, list):
+            blocks = [ blocks ]
 
-        def _duplicate(self, args):
 
             # Collect the examples we use.
             lines1 = [ ]
 
-            for i in args.args:
+            for i in blocks:
                 if i not in examples:
                     raise Exception("Unknown example %r." % i)
                 lines1.extend(examples[i])
@@ -96,31 +91,37 @@ init python:
 
                 last_blank = not i
 
-                i = regex.sub(self.colorize, i)
+                i = regex.sub(colorize, i)
 
                 lines.append(i)
 
             # Join them into a single string.
-            code = "\n".join(lines) + "\n "
+            return "\n".join(lines) + "\n "
 
-            ct = Text(code, size=16, color="#000")
-            vp = Viewport(ct, child_size=(2000, 2000), ymaximum=120, draggable=True, mousewheel=True)
-            w = Window(vp,
-                       background = "#fffc",
-                       left_padding=180,
-                       top_padding=0,
-                       right_padding=0,
-                       bottom_padding=0,
-                       yminimum=0,
-                       style="empty",
-                       xfill=True,
-                       yfill=True,
-                       )
 
-            return example_transform(w)
+screen example(blocks):
 
-image example = __Example()
+    default code = example_code(blocks)
 
+    window:
+        style "empty"
+        background "#fffc"
+        left_padding 180
+        xfill True
+        yfill True
+        ymaximum EXAMPLE_HEIGHT
+
+        at example_transform
+
+        viewport:
+            child_size (2000, 2000)
+            ymaximum EXAMPLE_HEIGHT
+            draggable True
+            mousewheel True
+
+            text code:
+                size 16
+                color "#000"
 
 
 

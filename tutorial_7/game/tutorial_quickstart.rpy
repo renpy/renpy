@@ -19,7 +19,7 @@ label tutorial_dialogue:
 
     e "Probably the best way to learn Ren'Py is to see it in action. In this tutorial, I'll be showing you some of the things Ren'Py can do, and also showing you how to do them."
 
-    show example example1
+    show screen example("example1")
 
 #begin example1
     e "Code examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
@@ -27,7 +27,7 @@ label tutorial_dialogue:
     e "When an example is bigger than the screen, you can scroll around in it using the mouse wheel or by simply dragging the mouse."
 #end example1
 
-    hide example
+    hide screen example
 
     e "To create a new project, you can click New Project in the Ren'Py launcher."
 
