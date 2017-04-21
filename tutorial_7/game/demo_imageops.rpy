@@ -1,8 +1,6 @@
 ﻿# This file demonstrates the use of image operators.
 
 init:
-    image logo base = "logo.png"
-
     image logo crop = im.Crop("logo.png", 0, 0, 100, 307)
 
     image logo scale = im.Scale("logo.png", 100, 150)
@@ -62,7 +60,10 @@ init:
     image logo grayscale = im.Grayscale("logo.png")
 
 
-    $ logopos = Position(xpos=.5, xanchor=0, ypos=50, yanchor=0)
+transform logopos:
+    xalign .5
+    xoffset 150
+    yalign .1
 
 label demo_imageops:
 
