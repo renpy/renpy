@@ -78,6 +78,7 @@ init python:
             if i not in examples:
                 raise Exception("Unknown example %r." % i)
             lines1.extend(examples[i])
+            lines1.append('')
 
 
         # Strip off doubled blank lines.
@@ -94,6 +95,9 @@ init python:
             i = regex.sub(colorize, i)
 
             lines.append(i)
+
+        while not lines[-1]:
+            lines.pop()
 
         # Join them into a single string.
         return "\n".join(lines) + "\n "
