@@ -1,15 +1,6 @@
-﻿# Get the data from the_question.
-
-
 #begin characters
 define l = Character(_("Lucy"), color="#ffcccc")
 #end characters
-
-#begin images
-image bg cave = "cave.jpg"
-image lucy happy = "lucy_happy.png"
-image lucy mad = "lucy_mad.png"
-#end images
 
 #begin slowdissolve
 define slowdissolve = Dissolve(1.0)
@@ -102,7 +93,6 @@ label tutorial_dialogue:
 
     hide screen example
 
-
     e "Using a string for a character's name is inconvenient, for two reasons."
 
     e "The first is that's it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
@@ -162,28 +152,23 @@ label tutorial_images:
 
     e "A visual novel isn't much without images. So let's add some images to our little game."
 
-    e "Before we can show images, we must first put the image files into the game directory."
+    e "Before we can show images, we must first choose image names, then place the image files into the images directory."
 
-    e "The easiest way to open the game directory is to click the Game Directory button in the Ren'Py launcher."
+    e "An image name is something like 'bg cave' or 'lucy happy', with one or more parts separated by spaces."
 
-    e "All of the image files we'll be using here are in the game directory, under the tutorial directory, under the Ren'Py directory."
+    e "Each part should start with a lower-case letter, and then contain lower-case letters, numbers, and underscores."
 
-    show screen example('images')
+    e "The first part of an image is called the tag. For 'bg cave' the tag is 'bg', while for 'lucy happy' the tag is 'lucy'."
 
-    e "Here are some sample image definitions. They should be placed at the start of the file, without any indentation."
+    e "You can open the images directory by clicking the appropriate button in the Ren'Py launcher."
 
-    e "The image statement begins with the keyword \"image\", which is followed by an image name, a space-separated list of words."
+    e "The files in the images directory should have the same name as the image, followed by an extension like .jpg, .png, or .webp."
 
-    e "The first word in the image name is the image tag. For the first image the tag is \"bg\", and for the others, it's \"lucy\"."
-
-    e "This is followed by an equals sign, and a string giving an image name."
-
-    e "A string giving an image name is only one of the dozens of kinds of displayable that Ren'Py supports."
+    e "Our example uses 'bg cave.jpg', 'lucy happy.png', and 'lucy mad.png'."
 
     hide screen example
 
     e "Let's see what those look like in the game."
-
 
     #begin images1
     scene bg cave
@@ -423,7 +408,7 @@ label choice1_done:
 
     e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag, so the game can remember the user's choices."
 
-    hide screen example menu1
+    hide screen example
     pause .25
 
 #begin menu2
@@ -440,7 +425,7 @@ label choice1_done:
 
     e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
 
-    hide screen example menu2
+    hide screen example
 
     e "Although we won't demonstrate it here, Ren'Py supports making decisions based on a combinations of points, flags, and other factors."
 
