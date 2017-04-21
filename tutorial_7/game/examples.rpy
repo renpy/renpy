@@ -71,32 +71,32 @@ init python:
             blocks = [ blocks ]
 
 
-            # Collect the examples we use.
-            lines1 = [ ]
+        # Collect the examples we use.
+        lines1 = [ ]
 
-            for i in blocks:
-                if i not in examples:
-                    raise Exception("Unknown example %r." % i)
-                lines1.extend(examples[i])
+        for i in blocks:
+            if i not in examples:
+                raise Exception("Unknown example %r." % i)
+            lines1.extend(examples[i])
 
 
-            # Strip off doubled blank lines.
-            last_blank = False
-            lines = [ ]
+        # Strip off doubled blank lines.
+        last_blank = False
+        lines = [ ]
 
-            for i in lines1:
+        for i in lines1:
 
-                if not i and last_blank:
-                    continue
+            if not i and last_blank:
+                continue
 
-                last_blank = not i
+            last_blank = not i
 
-                i = regex.sub(colorize, i)
+            i = regex.sub(colorize, i)
 
-                lines.append(i)
+            lines.append(i)
 
-            # Join them into a single string.
-            return "\n".join(lines) + "\n "
+        # Join them into a single string.
+        return "\n".join(lines) + "\n "
 
 
 screen example(blocks):
