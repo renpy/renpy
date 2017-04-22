@@ -11,11 +11,11 @@ translate french strings:
 
     # 00gltest.rpy:75
     old "Force Angle/DirectX Renderer"
-    new "Forcer le rendu 'Angle/DirectX'"
+    new "Forcer le rendu « Angle/DirectX »"
 
     # 00gltest.rpy:79
     old "Force OpenGL Renderer"
-    new "Forcer le rendu 'OpenGL'"
+    new "Forcer le rendu « OpenGL »"
 
     # 00gltest.rpy:83
     old "Force Software Renderer"
@@ -23,7 +23,7 @@ translate french strings:
 
     # 00gltest.rpy:93
     old "Enable"
-    new "Enable"
+    new "Active"
 
     # 00gltest.rpy:109
     old "Changes will take effect the next time this program is run."
@@ -31,7 +31,7 @@ translate french strings:
 
     # 00gltest.rpy:141
     old "Performance Warning"
-    new "Avertissement concernant les performances."
+    new "Alerte de performance."
 
     # 00gltest.rpy:146
     old "This computer is using software rendering."
@@ -39,23 +39,23 @@ translate french strings:
 
     # 00gltest.rpy:148
     old "This computer is not using shaders."
-    new "Cet ordinateur n'utilise pas les 'shaders'."
+    new "Cet ordinateur n’utilise pas les « shaders »."
 
     # 00gltest.rpy:150
     old "This computer is displaying graphics slowly."
-    new "Cet ordinateur affiche lentement les graphismes."
+    new "Cet ordinateur affiche les graphismes lentement."
 
     # 00gltest.rpy:152
     old "This computer has a problem displaying graphics: [problem]."
-    new "Cet ordinateur a un problème pour afficher les graphismes: [problem]."
+    new "Cet ordinateur rencontre un problème pour afficher les graphismes: [problem]."
 
     # 00gltest.rpy:157
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
-    new "Les pilotes graphiques sont peut être pas à jour ou n'oppèrent pas correctement. Cela peut entraîner des lenteurs ou des erreurs d'affichage. Mettre à jour DirectX pourrait résoudre ce problème."
+    new "Les pilotes graphiques ne sont peut-être pas à jour ou n’oppèrent pas correctement. Cela peut conduire à des lenteurs ou des erreurs d'affichage. La mise à jour de DirectX pourrait résoudre ce problème."
 
     # 00gltest.rpy:159
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
-    new "Les pilotes graphiques sont peut être pas à jour ou n'opèrent pas correctement. Cela peut entraîner des lenteurs ou des erreurs d'affichage."
+    new "Les pilotes graphiques ne sont peut-être pas à jour ou n’opèrent pas correctement. Cela peut conduire à des lenteurs ou des erreurs d'affichage."
 
     # 00gltest.rpy:164
     old "Update DirectX"
@@ -63,11 +63,11 @@ translate french strings:
 
     # 00gltest.rpy:170
     old "Continue, Show this warning again"
-    new "Continuer. Montrer cet avertissement à chaque fois."
+    new "Continuer et afficher cet avertissement à chaque fois."
 
     # 00gltest.rpy:174
     old "Continue, Don't show warning again"
-    new "Continuer. Ne plus montrer cet avertissement."
+    new "Continuer et ne plus afficher cet avertissement."
 
     # 00gltest.rpy:192
     old "Updating DirectX."
@@ -75,15 +75,15 @@ translate french strings:
 
     # 00gltest.rpy:196
     old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
-    new "La page Web d'installation de DirectX a été lancé. Il se peut que la page soit minimisée. Suivez les instructions pour installer DirectX."
+    new "L’installation de DirectX via le web a été lancée. Il se peut que l’application soit minimisée et uniquement présente dans la barre des tâches. Suivez les instructions pour installer DirectX."
 
     # 00gltest.rpy:200
     old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}Note:{/b} la page web d'installation de Microsoft DirectX va, par défaut, installer le barre d'outils Bing. Décochez la case appropriée si vous ne voulez pas de cette barre d'outils."
+    new "{b}Note :{/b} Par défaut, l’installation de Microsoft DirectX via le web va installer la barre d'outils « Bing ». Pensez à décocher la case appropriée si vous ne voulez pas de cette barre d'outils."
 
     # 00gltest.rpy:204
     old "When setup finishes, please click below to restart this program."
-    new "Quand l'installation est terminée, cliquez ci-dessous pour redémarrer ce programme."
+    new "Quand l’installation sera terminée, cliquez ci-dessous pour redémarrer ce programme."
 
     # 00gltest.rpy:206
     old "Restart"
@@ -91,27 +91,27 @@ translate french strings:
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "Select Gamepad to Calibrate"
+    new "Sélectionnez la manette à calibrer"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "No Gamepads Available"
+    new "Aucune manette disponible"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
-    new "Calibrating [name] ([i]/[total])"
+    new "Calibrage de [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
     old "Press or move the [control!r] [kind]."
-    new "Press or move the [control!r] [kind]."
+    new "Pressez ou déplacez le [kind] [control!r]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    new "Skip (A)"
+    new "Passer (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
-    new "Back (B)"
+    new "Retour (B)"
 
     # _errorhandling.rpym:495
     old "Open Traceback"
@@ -119,27 +119,27 @@ translate french strings:
 
     # _errorhandling.rpym:497
     old "Opens the traceback.txt file in a text editor."
-    new "Ouvrir le fichier 'traceback.txt' dans un éditeur de texte."
+    new "Ouvrir le fichier « traceback.txt » dans un éditeur de texte."
 
     # _errorhandling.rpym:499
     old "Copy to Clipboard"
-    new "Copy to Clipboard"
+    new "Copier dans le presse-papier"
 
     # _errorhandling.rpym:501
     old "Copies the traceback.txt file to the clipboard."
-    new "Copies the traceback.txt file to the clipboard."
+    new "Copie le fichier traceback.txt dans le presse-papier."
 
     # _errorhandling.rpym:519
     old "An exception has occurred."
-    new "Une exception est apparue."
+    new "Une exception est survenue."
 
     # _errorhandling.rpym:538
     old "Rollback"
-    new "Retour arrière"
+    new "Annuler"
 
     # _errorhandling.rpym:540
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "Essai de retour arrière, permettant de sauvegarder ou de faire un choix différent."
+    new "Tente une annulation jusqu’à l’état précédent, cela vous permettra de sauvegarder ou d’effectuer un choix différent."
 
     # _errorhandling.rpym:543
     old "Ignore"
@@ -147,7 +147,7 @@ translate french strings:
 
     # _errorhandling.rpym:545
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "Ignorer l'exception, et continuer. Cela amène souvent à de nouvelles erreurs."
+    new "Ignorer l’exception, et continuer. Cela conduit souvent à de nouvelles erreurs."
 
     # _errorhandling.rpym:548
     old "Reload"
@@ -163,17 +163,17 @@ translate french strings:
 
     # _errorhandling.rpym:582
     old "Parsing the script failed."
-    new "Échec dans l'interprétation du jeu."
+    new "L’analyse du script a échoué."
 
     # _errorhandling.rpym:606
     old "Open Parse Errors"
-    new "Ouvrir les erreurs d'interprétation"
+    new "Afficher les erreurs d’interprétation"
 
     # _errorhandling.rpym:608
     old "Opens the errors.txt file in a text editor."
-    new "Ouvrir le fihchier 'errors.txt' dans un éditeur de texte."
+    new "Ouvrir le fihchier « errors.txt » dans un éditeur de texte."
 
     # _errorhandling.rpym:612
     old "Copies the errors.txt file to the clipboard."
-    new "Copies the errors.txt file to the clipboard."
+    new "Copie le contenu du fichier « errors.txt » dans le presse-papier."
 

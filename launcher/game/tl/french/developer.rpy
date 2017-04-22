@@ -3,47 +3,47 @@ translate french strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"
-    new "Developer Menu"
+    new "Menu du développeur"
 
     # _developer/developer.rpym:43
     old "Reload Game (Shift+R)"
-    new "Reload Game (Shift+R)"
+    new "Recharger la partie (Maj+R)"
 
     # _developer/developer.rpym:45
     old "Console (Shift+O)"
-    new "Console (Shift+O)"
+    new "Console (Maj+O)"
 
     # _developer/developer.rpym:47
     old "Variable Viewer"
-    new "Variable Viewer"
+    new "Visualisateur de variable"
 
     # _developer/developer.rpym:49
     old "Theme Test"
-    new "Theme Test"
+    new "Test du thème"
 
     # _developer/developer.rpym:51
     old "Image Location Picker"
-    new "Image Location Picker"
+    new "Sélecteur d’emplacement d’images"
 
     # _developer/developer.rpym:53
     old "Filename List"
-    new "Filename List"
+    new "Liste des noms de fichiers"
 
     # _developer/developer.rpym:57
     old "Show Image Load Log"
-    new "Show Image Load Log"
+    new "Afficher le journal de chargement d’image"
 
     # _developer/developer.rpym:60
     old "Hide Image Load Log"
-    new "Hide Image Load Log"
+    new "Fermer le journal de chargement d’image"
 
     # _developer/developer.rpym:95
     old "Nothing to inspect."
-    new "Nothing to inspect."
+    new "Rien à inspecter."
 
     # _developer/developer.rpym:217
     old "Return to the developer menu"
-    new "Return to the developer menu"
+    new "Retourner au menu du développeur"
 
     # _developer/developer.rpym:373
     old "Rectangle: %r"
@@ -55,15 +55,15 @@ translate french strings:
 
     # _developer/developer.rpym:383
     old "Right-click or escape to quit."
-    new "Right-click or escape to quit."
+    new "Clic droit ou « Echap » pour quitter."
 
     # _developer/developer.rpym:412
     old "Rectangle copied to clipboard."
-    new "Rectangle copied to clipboard."
+    new "Rectangle copié dans le presse-papier."
 
     # _developer/developer.rpym:415
     old "Position copied to clipboard."
-    new "Position copied to clipboard."
+    new "Position copiée dans le presse-papier."
 
     # _developer/developer.rpym:524
     old "✔ "
@@ -75,15 +75,15 @@ translate french strings:
 
     # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    new "\n{color=#cfc}✔ image prédite (bon){/color}\n{color=#fcc}✘ image prédite (mauvais){/color}\n{color=#fff}Glissez pour bouger.{/color}"
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
-    new "Displayable Inspector"
+    new "Inspecteur affichable"
 
     # _developer/inspector.rpym:61
     old "Size"
-    new "Size"
+    new "Taille"
 
     # _developer/inspector.rpym:65
     old "Style"
@@ -91,89 +91,89 @@ translate french strings:
 
     # _developer/inspector.rpym:71
     old "Location"
-    new "Location"
+    new "Localisation"
 
     # _developer/inspector.rpym:122
     old "Inspecting Styles of [displayable_name!q]"
-    new "Inspecting Styles of [displayable_name!q]"
+    new "Inspection des styles de [displayable_name!q]"
 
     # _developer/inspector.rpym:139
     old "displayable:"
-    new "displayable:"
+    new "affichable:"
 
     # _developer/inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "        (no properties affect the displayable)"
+    new "        (Aucune propriété n’affecte l’affichage)"
 
     # _developer/inspector.rpym:147
     old "        (default properties omitted)"
-    new "        (default properties omitted)"
+    new "        (Propriétés par défaut omises)"
 
     # _developer/inspector.rpym:185
     old "<repr() failed>"
-    new "<repr() failed>"
+    new "<repr() échoué>"
 
     # 00console.rpy:182
     old "Press <esc> to exit console. Type help for help.\n"
-    new "Press <esc> to exit console. Type help for help.\n"
+    new "Pressez « Echap » pour quitter la console. Pressez « Aide » pour afficher l’aide.\n"
 
     # 00console.rpy:186
     old "Ren'Py script enabled."
-    new "Ren'Py script enabled."
+    new "Script Ren’Py activé."
 
     # 00console.rpy:188
     old "Ren'Py script disabled."
-    new "Ren'Py script disabled."
+    new "Script Ren'Py désactivé."
 
     # 00console.rpy:398
     old "help: show this help"
-    new "help: show this help"
+    new "aide: Afficher cette aide"
 
     # 00console.rpy:403
     old "commands:\n"
-    new "commands:\n"
+    new "commandes:\n"
 
     # 00console.rpy:413
     old " <renpy script statement>: run the statement\n"
-    new " <renpy script statement>: run the statement\n"
+    new " <renpy script statement>: Exécuter cette déclaration\n"
 
     # 00console.rpy:415
     old " <python expression or statement>: run the expression or statement"
-    new " <python expression or statement>: run the expression or statement"
+    new " <python expression or statement>: Exécuter cette expression ou cette déclaration"
 
     # 00console.rpy:423
     old "clear: clear the console history"
-    new "clear: clear the console history"
+    new "clear: Purger l’historique de la console"
 
     # 00console.rpy:427
     old "exit: exit the console"
-    new "exit: exit the console"
+    new "exit: quitter la console"
 
     # 00console.rpy:435
     old "load <slot>: loads the game from slot"
-    new "load <slot>: loads the game from slot"
+    new "load <slot>: charger la partie de cet emplacement"
 
     # 00console.rpy:448
     old "save <slot>: saves the game in slot"
-    new "save <slot>: saves the game in slot"
+    new "save <slot>: sauvegarder la partie dans cet emplacement "
 
     # 00console.rpy:459
     old "reload: reloads the game, refreshing the scripts"
-    new "reload: reloads the game, refreshing the scripts"
+    new "reload: Recharge le jeu, rafraîchit les scripts"
 
     # 00console.rpy:467
     old "watch <expression>: watch a python expression"
-    new "watch <expression>: watch a python expression"
+    new "watch <expression>: surveiller une expression Python"
 
     # 00console.rpy:493
     old "unwatch <expression>: stop watching an expression"
-    new "unwatch <expression>: stop watching an expression"
+    new "unwatch <expression>: Arrêter la surveillance d’une expression Python"
 
     # 00console.rpy:519
     old "unwatchall: stop watching all expressions"
-    new "unwatchall: stop watching all expressions"
+    new "unwatchall: Arrêter de surveiller toutes les expressions"
 
     # 00console.rpy:536
     old "jump <label>: jumps to label"
-    new "jump <label>: jumps to label"
+    new "jump <label>: Saute jusqu’au label"
 
