@@ -222,15 +222,15 @@ label tutorial_positions:
     e "Increasing xpos to 1.0 moves us to the right-hand border of the screen."
 
     show pos:
-        xpos 800
-        linear .5 xpos 400
+        xpos 1280
+        linear .5 xpos 640
 
-    e "We can also use an absolute xpos, which is given in an absolute number of pixels from the left side of the screen. For example, since this window is 800 pixels across, using an xpos of 400 will return the target to the center of the top row."
+    e "We can also use an absolute xpos, which is given in an absolute number of pixels from the left side of the screen. For example, since this window is 1280 pixels across, using an xpos of 640 will return the target to the center of the top row."
 
     e "The y-axis position, or ypos works the same way. Right now, we have a ypos of 0.0."
 
     show pos:
-        xpos 400
+        xpos 640
         linear .5 ypos .5
 
     e "Here's a ypos of 0.5."
@@ -268,12 +268,12 @@ label tutorial_positions:
 
     hide pos
 
-    show logo blue:
-        xpos 300 ypos 100
+    show logo solid:
+        xpos 523 ypos 100
 
     show anchor:
         xanchor 0.5 yanchor 0.5
-        xpos 300 ypos 100
+        xpos 523 ypos 100
 
     with dissolve
 
@@ -283,28 +283,27 @@ label tutorial_positions:
     e "For example, here we have an xanchor of 0.0 and a yanchor of 0.0. It's in the upper-left corner of the logo image."
 
     show anchor:
-        linear .5 xpos 500
+        linear .5 xpos 757
 
     e "When we increase the xanchor to 1.0, the anchor moves to the right corner of the image."
 
     show anchor:
-        linear .5 ypos 400
+        linear .5 ypos 460
 
     e "Similarly, when both xanchor and yanchor are 1.0, the anchor is the bottom-right corner."
 
-
     show pos:
         xanchor .5 yanchor .5
-        xpos 600 ypos 400
+        xpos 957 ypos 460
 
 
     e "To place an image on the screen, we need both the position and the anchor."
 
-    show logo blue:
-        linear .5 xpos 400 ypos 100
+    show logo solid:
+        linear .5 xpos 723 ypos 100
 
     show anchor:
-        linear .5 xpos 600 ypos 400
+        linear .5 xpos 957 ypos 460
 
     e "We then line them up, so that both the position and anchor are at the same point on the screen."
 
@@ -313,7 +312,7 @@ label tutorial_positions:
         linear .5 xpos 0 ypos 0
     show pos:
         linear .5 xpos 0 ypos 0
-    show logo blue:
+    show logo solid:
         linear .5 xpos 0 ypos 0
 
     e "When we place both in the upper-left corner, the image moves to the upper-left corner of the screen."
@@ -322,12 +321,12 @@ label tutorial_positions:
         linear .5 xpos 0.5 ypos 0.5
     show pos:
         linear .5 xpos 0.5 ypos 0.5
-    show logo blue:
+    show logo solid:
         linear .5 xalign 0.5 yalign 0.5
 
     e "With the right combination of position and anchor, any place on the screen can be specified, without even knowing the size of the image."
 
-    show logo blue:
+    show logo solid:
         linear .5 yalign .3
 
     with None
@@ -339,17 +338,17 @@ label tutorial_positions:
 
     e "It's often useful to set xpos and xanchor to the same value. We call that xalign, and it gives a fractional position on the screen."
 
-    show logo blue:
+    show logo solid:
         linear .5 xalign 0.0
 
     e "For example, when we set xalign to 0.0, things are aligned to the left side of the screen."
 
-    show logo blue:
+    show logo solid:
         linear .5 xalign 1.0
 
     e "When we set it to 1.0, then we're aligned to the right side of the screen."
 
-    show logo blue:
+    show logo solid:
         linear .5 xalign .5
 
     e "And when we set it to 0.5, we're back to the center of the screen."
