@@ -1,13 +1,8 @@
 ﻿# This file demonstrates the Ren'Py User Experience... the features you get
 # for free by choosing to use Ren'Py as a visual novel engine.
 
-init:
-    image popup prefs = "prefs.png"
-    image popup mjcprefs = "mjcprefs.jpg"
-    image popup save = "save.png"
 
-
-transform onscreenshot:
+transform popup_place:
     xpos 0.1 xanchor 0.0 ypos 0.1 yanchor 0.0
 
 
@@ -22,7 +17,7 @@ label tutorial_playing:
     e "While you're in the game, you can access the game menu by right clicking or hitting the escape key."
 
     show eileen happy at right
-    show popup save at onscreenshot
+    show popup save at popup_place
     with moveinleft
 
     e "When you first enter the game menu, you'll see the save screen. Clicking on a numbered slot will save the game."
@@ -33,7 +28,7 @@ label tutorial_playing:
 
     e "It also lets you load one of the auto-saves that Ren'Py makes for you."
 
-    show popup prefs at onscreenshot
+    show popup prefs at popup_place
     with dissolve
 
     e "The other screen of the game menu is the preferences screen."
@@ -42,7 +37,7 @@ label tutorial_playing:
 
     e "The game menu also lets you end the game and return to the main menu, or quit Ren'Py entirely."
 
-    show popup mjcprefs at onscreenshot
+    show popup hrpprefs at popup_place
     with dissolve
 
     e "While the default game menus look a bit generic, with a little work they can be customized or even entirely replaced, allowing you to create menus as unique as your game."
