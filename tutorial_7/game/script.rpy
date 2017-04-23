@@ -118,7 +118,7 @@ label end:
 
     e "If you'd like to see a full Ren'Py game, select \"The Question\" in the launcher."
 
-    e "You can download new versions of Ren'Py from {a=http://www.renpy.org/}http://www.renpy.org/{/a}. For help and discussion, check out the {a=http://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
+    e "You can download new versions of Ren'Py from {a=https://www.renpy.org/}https://www.renpy.org/{/a}. For help and discussion, check out the {a=https://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
 
     e "We'd like to thank Piroshki for contributing my sprites, Mugenjohncel for Lucy and the band, and Jake for the magic circle."
 
