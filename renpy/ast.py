@@ -659,6 +659,7 @@ class Say(Node):
 
         return rv
 
+
 # Copy the descriptor.
 setattr(Say, "with", Say.with_)  # E1101
 
@@ -695,6 +696,7 @@ class Init(Node):
 
     def execute(self):
         next_node(self.next)
+        renpy.execution.not_infinite_loop(60)
         statement_name("init")
 
     def restructure(self, callback):
@@ -856,6 +858,7 @@ class EarlyPython(Node):
 
     def execute(self):
         next_node(self.next)
+        renpy.execution.not_infinite_loop(60)
         statement_name("python early")
 
     def early_execute(self):
@@ -1490,6 +1493,7 @@ class Menu(Node):
             if block is not None:
                 callback(block)
 
+
 setattr(Menu, "with", Menu.with_)  # E1101
 
 
@@ -1772,6 +1776,7 @@ def get_namespace(store):
         return renpy.config.special_namespaces[store], True
 
     return StoreNamespace(store), False
+
 
 # Config variables that are set twice - once when the rpy is first loaded,
 # and then again at init time.

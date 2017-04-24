@@ -121,6 +121,7 @@ def unicode_filename(fn):
     # Insane systems, mojibake.
     return fn.decode("latin-1")
 
+
 # Matches either a word, or something else. Most magic is taken care of
 # before this.
 lllword = re.compile(r'__(\w+)|\w+| +|.', re.S)
@@ -168,6 +169,7 @@ def unelide_filename(fn):
         return fn2
 
     return fn
+
 
 # The filename that the start and end positions are relative to.
 original_filename = ""
@@ -423,6 +425,7 @@ def group_logical_lines(lines):
         return rv, i
 
     return gll_core(0, 0)[0]
+
 
 # A list of keywords which should not be parsed as names, because
 # there is a huge chance of confusion.
@@ -2114,6 +2117,7 @@ def screen2_statement(l, loc):
         rv = ast.Init(loc, [ rv ], -500 + l.init_offset)
 
     return rv
+
 
 # The version of screen language to use by default.
 default_screen_language = int(os.environ.get("RENPY_SCREEN_LANGUAGE", "2"))
