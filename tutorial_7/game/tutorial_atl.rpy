@@ -2,9 +2,10 @@
 image magic = "magic.png"
 image bg band = "band.jpg"
 
+
 image concert:
     subpixel True
-    size (800, 600)
+    size (1280, 720)
     xalign .5
     yalign .5
 
@@ -29,50 +30,50 @@ image concert:
 
 
         # Lucy Strums.
-        crop (128, 378, 252, 189)
+        crop (213, 778, 590, 332)
         pause 1.0
-        easeout .6 crop (160, 400, 200, 150)
+        easeout .6 crop (286, 818, 469, 264)
 
-        crop (65, 174, 252, 189)
-        easein .8 crop (36, 138, 337, 253)
+        crop (87, 370, 590, 332)
+        easein .8 crop (14, 306, 791, 445)
 
         # Mary cymbals.
         time 2.9
-        crop (532, 320, 179, 134)
+        crop (1035, 656, 417, 235)
         time 3.4
-        crop (302, 262, 236, 177)
+        crop (564, 545, 552, 311)
         time 3.9
-        crop (532, 320, 179, 134)
+        crop (1035, 656, 417, 235)
         time 4.4
-        crop (302, 262, 236, 177)
+        crop (564, 545, 552, 311)
 
         # Zoom out.
         time 5.0
-        linear 4.0 crop (18, 208, 741, 556)
-        easein 4.0 crop (179, 0, 1019, 764)
-        easeout 4.0 crop (0, 0, 1019, 764)
+        linear 4.0 crop (0, 482, 1738, 978)
+        easein 4.0 crop (267, 91, 2133, 1200)
+        easeout 4.0 crop (0, 91, 2133, 1200)
 
 
         # Pan up Eileen
         time 17.0
-        crop (565, 403, 483, 362)
+        crop (1047, 849, 1132, 637)
 
-        linear 4.0 crop (544, 0, 653, 490)
+        linear 4.0 crop (868, 58, 1532, 862)
 
         time 22.25
 
         # Mary's random crops.
         block:
             choice:
-                crop (397, 245, 309, 232)
+                crop (741, 517, 725, 408)
             choice:
-                crop (247, 275, 493, 370)
+                crop (409, 594, 1157, 651)
             choice:
-                crop (387, 249, 321, 241)
+                crop (719, 526, 753, 424)
             choice:
-                crop (362, 252, 192, 144)
+                crop (692, 521, 449, 253)
             choice:
-                crop (272, 432, 443, 332)
+                crop (468, 903, 1038, 584)
 
             pass
 
@@ -90,16 +91,18 @@ image concert:
         # Lucy and Mary
         time 26.97
         zoom 1
-        crop (30, 208, 741, 556)
+        crop (0, 482, 1738, 978)
         pause 1.0
 
         # Mary
-        crop (30, 369, 420, 315)
-        easein 5.5 crop (0, 121, 420, 315)
+        crop (0, 775, 984, 554)
+        easein 5.5 crop (0, 279, 984, 554)
 
         # Final shot.
-        easeout 4.0 crop (0, 0, 1019, 765)
-        easein 4.0 crop (180, 0, 1019, 765)
+        easeout 4.0 crop (0, 91, 2133, 1200)
+        easein 4.0 crop (267, 91, 2133, 1200)
+
+
 
 
 image pos:
