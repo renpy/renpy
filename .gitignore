@@ -63,10 +63,12 @@ renpy/vc_version.py
 /steam_appid.txt
 /.coverage
 /id
+/ai
 /interface_7
 /htmlcov
-/the_question/.android.json
+/the_question*/.android.json
 /WINDOWS.rst
+/old
 
 /*-all/
 /*-win/
