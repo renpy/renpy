@@ -222,14 +222,16 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
     else:
         lines = { }
 
+    len_data = len(data)
+
     # Looping over the lines in the file.
-    while pos < len(data):
+    while pos < len_data:
 
         # The line number of the start of this logical line.
         start_number = number
 
         # The line that we're building up.
-        line = ""
+        line = [ ]
 
         # The number of open parenthesis there are right now.
         parendepth = 0
@@ -239,14 +241,18 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
 
         endpos = None
 
-        while pos < len(data):
+        while pos < len_data:
 
+            startpos = pos
             c = data[pos]
 
             if c == '\t':
                 raise ParseError(filename, number, "Tab characters are not allowed in Ren'Py scripts.")
 
             if c == '\n' and not parendepth:
+
+                line = ''.join(line)
+
                 # If not blank...
                 if not re.match("^\s*$", line):
 
@@ -269,7 +275,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
                 number += 1
                 endpos = None
                 # This helps out error checking.
-                line = ""
+                line = [ ]
                 break
 
             if c == '\n':
@@ -284,7 +290,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
             if c == "\\" and data[pos+1] == "\n":
                 pos += 2
                 number += 1
-                line += "\\\n"
+                line.append("\\\n")
                 continue
 
             # Parenthesis.
@@ -306,12 +312,12 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
             # Strings.
             if c in ('"', "'", "`"):
                 delim = c
-                line += c
+                line.append(c)
                 pos += 1
 
                 escape = False
 
-                while pos < len(data):
+                while pos < len_data:
 
                     c = data[pos]
 
@@ -325,18 +331,18 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
                     if escape:
                         escape = False
                         pos += 1
-                        line += c
+                        line.append(c)
                         continue
 
                     if c == delim:
                         pos += 1
-                        line += c
+                        line.append(c)
                         break
 
                     if c == '\\':
                         escape = True
 
-                    line += c
+                    line.append(c)
                     pos += 1
 
                     continue
@@ -352,13 +358,13 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
                 if "__" not in rest:
                     word = prefix + rest
 
-            line += word
+            line.append(word)
             pos = end
 
-            if len(line) > 65536:
+            if (pos - startpos) > 65536:
                 raise ParseError(filename, start_number, "Overly long logical line. (Check strings and parenthesis.)", line=line, first=True)
 
-    if not line == "":
+    if line:
         raise ParseError(filename, start_number, "is not terminated with a newline. (Check strings and parenthesis.)", line=line, first=True)
 
     return rv
