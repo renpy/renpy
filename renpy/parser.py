@@ -194,8 +194,8 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
     if filedata:
         data = filedata
     else:
-        f = codecs.open(filename, "r", "utf-8")
-        data = f.read()
+        f = open(filename, "rb")
+        data = f.read().decode("utf-8")
         f.close()
 
     filename = elide_filename(filename)
@@ -246,15 +246,15 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
             startpos = pos
             c = data[pos]
 
-            if c == '\t':
+            if c == u'\t':
                 raise ParseError(filename, number, "Tab characters are not allowed in Ren'Py scripts.")
 
-            if c == '\n' and not parendepth:
+            if c == u'\n' and not parendepth:
 
                 line = ''.join(line)
 
                 # If not blank...
-                if not re.match("^\s*$", line):
+                if not re.match(u"^\s*$", line):
 
                     # Add to the results.
                     rv.append((filename, start_number, line))
@@ -264,7 +264,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
 
                 lines[loc].end_delim = endpos + 1
 
-                while data[endpos-1] in ' \r':
+                while data[endpos-1] in u' \r':
                     endpos -= 1
 
                 lines[loc].end = endpos
@@ -278,39 +278,39 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
                 line = [ ]
                 break
 
-            if c == '\n':
+            if c == u'\n':
                 number += 1
                 endpos = None
 
-            if c == "\r":
+            if c == u"\r":
                 pos += 1
                 continue
 
             # Backslash/newline.
-            if c == "\\" and data[pos+1] == "\n":
+            if c == u"\\" and data[pos+1] == u"\n":
                 pos += 2
                 number += 1
-                line.append("\\\n")
+                line.append(u"\\\n")
                 continue
 
             # Parenthesis.
-            if c in ('(', '[', '{'):
+            if c in u'([{':
                 parendepth += 1
 
-            if c in ('}', ']', ')') and parendepth:
+            if (c in u'}])') and parendepth:
                 parendepth -= 1
 
             # Comments.
-            if c == '#':
+            if c == u'#':
                 endpos = pos
 
-                while data[pos] != '\n':
+                while data[pos] != u'\n':
                     pos += 1
 
                 continue
 
             # Strings.
-            if c in ('"', "'", "`"):
+            if c in u'"\'`':
                 delim = c
                 line.append(c)
                 pos += 1
@@ -321,10 +321,10 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
 
                     c = data[pos]
 
-                    if c == '\n':
+                    if c == u'\n':
                         number += 1
 
-                    if c == '\r':
+                    if c == u'\r':
                         pos += 1
                         continue
 
@@ -339,7 +339,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
                         line.append(c)
                         break
 
-                    if c == '\\':
+                    if c == u'\\':
                         escape = True
 
                     line.append(c)
@@ -355,7 +355,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
 
                 rest = word[2:]
 
-                if "__" not in rest:
+                if u"__" not in rest:
                     word = prefix + rest
 
             line.append(word)
