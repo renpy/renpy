@@ -48,6 +48,7 @@ def setup_env(name):
     if (renpy_name in os.environ) and (name not in os.environ):
         os.environ[name] = os.environ[renpy_name]
 
+
 setup_env("CC")
 setup_env("LD")
 setup_env("CXX")
@@ -154,8 +155,8 @@ cython(
     define_macros=macros)
 
 # renpy
+cython("renpy.parsersupport")
 cython("renpy.style")
-# cython("renpy.styleclass")
 
 # renpy.styledata
 cython("renpy.styledata.styleclass")

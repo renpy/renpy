@@ -36,6 +36,8 @@ import renpy.sl2
 # A list of parse error messages.
 parse_errors = [ ]
 
+from renpy.parsersupport import match_logical_word
+
 
 class ParseError(Exception):
 
@@ -341,20 +343,20 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
 
                 continue
 
-            m = lllword.match(data, pos)
+            word, magic, end = match_logical_word(data, pos)
 
-            word = m.group(0)
-            rest = m.group(1)
+            if magic:
 
-            if rest and "__" not in rest:
-                word = prefix + rest
+                rest = word[2:]
+
+                if "__" not in rest:
+                    word = prefix + rest
 
             line += word
+            pos = end
 
             if len(line) > 65536:
                 raise ParseError(filename, start_number, "Overly long logical line. (Check strings and parenthesis.)", line=line, first=True)
-
-            pos = m.end(0)
 
     if not line == "":
         raise ParseError(filename, start_number, "is not terminated with a newline. (Check strings and parenthesis.)", line=line, first=True)
