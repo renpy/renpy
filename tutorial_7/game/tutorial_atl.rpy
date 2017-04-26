@@ -1,9 +1,4 @@
-﻿image logo blue = "logosolid.png"
-image magic = "magic.png"
-image bg band = "band.jpg"
-
-
-image concert:
+﻿image concert:
     subpixel True
     size (1280, 720)
     xalign .5
