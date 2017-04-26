@@ -7,19 +7,19 @@ translate french strings:
 
     # screens.rpy:87
     old "## In-game screens"
-    new "## In-game screens"
+    new "## Écrans de jeu"
 
     # screens.rpy:91
     old "## Say screen"
-    new "## Say screen"
+    new "## Écran des dialogues"
 
     # screens.rpy:93
     old "## The say screen is used to display dialogue to the player. It takes two parameters, who and what, which are the name of the speaking character and the text to be displayed, respectively. (The who parameter can be None if no name is given.)"
-    new "## The say screen is used to display dialogue to the player. It takes two parameters, who and what, which are the name of the speaking character and the text to be displayed, respectively. (The who parameter can be None if no name is given.)"
+    new "## L’écran des dialogues est utilisé pour afficher les dialogues du joueur. Il prend deux paramètres, who(qui) et what(quoi) qui sont respectivement le nom du personnage en train de parler et le texte à afficher. (Le paramètre who(qui) peut être None si aucun nom n’est donné.)"
 
     # screens.rpy:98
     old "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. It can also create displayables with id \"who\" and id \"window\" to apply style properties."
-    new "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. It can also create displayables with id \"who\" and id \"window\" to apply style properties."
+    new "## Cet écran affiche le texte correspondant à what. Il peut également créer un texte avec le paramètre who et l’identifiant « window » est utilisé pour déterminer les styles à appliquer."
 
     # screens.rpy:102
     old "## https://www.renpy.org/doc/html/screen_special.html#say"
@@ -27,11 +27,11 @@ translate french strings:
 
     # screens.rpy:169
     old "## Input screen"
-    new "## Input screen"
+    new "## Écran de saisie"
 
     # screens.rpy:171
     old "## This screen is used to display renpy.input. The prompt parameter is used to pass a text prompt in."
-    new "## This screen is used to display renpy.input. The prompt parameter is used to pass a text prompt in."
+    new "## Cet écran est utilisé pour afficher renpy.input. Le paramètre prompt est utilisé pour passer le texte par défaut."
 
     # screens.rpy:174
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
@@ -43,11 +43,11 @@ translate french strings:
 
     # screens.rpy:205
     old "## Choice screen"
-    new "## Choice screen"
+    new "## Écran des choix"
 
     # screens.rpy:207
     old "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
-    new "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
+    new "## Cet écran est utilisé pour afficher les choix qui seront fait par le joueur dans le jeu. Le premier paramètre, items, est une liste d'objets contenant chacun des champs de texte et d'action."
 
     # screens.rpy:211
     old "## http://www.renpy.org/doc/html/screen_special.html#choice"
@@ -59,11 +59,11 @@ translate french strings:
 
     # screens.rpy:244
     old "## Quick Menu screen"
-    new "## Quick Menu screen"
+    new "## Écran des menus rapides"
 
     # screens.rpy:246
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
-    new "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
+    new "## Les menus rapides sont affiché dans le jeu pour permettre un accès rapide à certaines fonctions."
 
     # screens.rpy:261
     old "Back"
@@ -71,11 +71,11 @@ translate french strings:
 
     # screens.rpy:262
     old "History"
-    new "History"
+    new "Historique"
 
     # screens.rpy:263
     old "Skip"
-    new "Saut"
+    new "Avance rapide"
 
     # screens.rpy:264
     old "Auto"
@@ -83,7 +83,7 @@ translate french strings:
 
     # screens.rpy:265
     old "Save"
-    new "Sauvegarder"
+    new "Sauvegarde"
 
     # screens.rpy:266
     old "Q.Save"
@@ -95,27 +95,27 @@ translate french strings:
 
     # screens.rpy:268
     old "Prefs"
-    new "Prefs."
+    new "Préf."
 
     # screens.rpy:271
     old "## This code ensures that the quick_menu screen is displayed in-game, whenever the player has not explicitly hidden the interface."
-    new "## This code ensures that the quick_menu screen is displayed in-game, whenever the player has not explicitly hidden the interface."
+    new "## Ce code garantit que le menu d’accès rapide sera affiché dans le jeu, tant que le joueur n’aura pas explicitement demandé à cacher l’interface."
 
     # screens.rpy:291
     old "## Navigation screen"
-    new "## Navigation screen"
+    new "## Écran de navigation"
 
     # screens.rpy:293
     old "## This screen is included in the main and game menus, and provides navigation to other menus, and to start the game."
-    new "## This screen is included in the main and game menus, and provides navigation to other menus, and to start the game."
+    new "## Cet écran est disponible dans le menu principal et dans le menu de jeu. Il fournit l’accès aux autres menus et permet le démarrage du jeu."
 
     # screens.rpy:308
     old "Start"
-    new "Start"
+    new "Nouvelle partie"
 
     # screens.rpy:316
     old "Load"
-    new "Load"
+    new "Charger"
 
     # screens.rpy:318
     old "Preferences"
@@ -123,7 +123,7 @@ translate french strings:
 
     # screens.rpy:322
     old "End Replay"
-    new "End Replay"
+    new "Fin de la rediffusion"
 
     # screens.rpy:326
     old "Main Menu"
@@ -135,7 +135,7 @@ translate french strings:
 
     # screens.rpy:332
     old "## Help isn't necessary or relevant to mobile devices."
-    new "## Help isn't necessary or relevant to mobile devices."
+    new "## L'aide n’est ni nécessaire ni pertinante sur les appareils mobiles."
 
     # screens.rpy:333
     old "Help"
@@ -143,7 +143,7 @@ translate french strings:
 
     # screens.rpy:335
     old "## The quit button is banned on iOS and unnecessary on Android."
-    new "## The quit button is banned on iOS and unnecessary on Android."
+    new "## Le bouton pour quitter est banni sur iOs et n'est pas nécessaire sur Android."
 
     # screens.rpy:336
     old "Quit"
@@ -151,11 +151,11 @@ translate french strings:
 
     # screens.rpy:350
     old "## Main Menu screen"
-    new "## Main Menu screen"
+    new "## Écran du menu principal"
 
     # screens.rpy:352
     old "## Used to display the main menu when Ren'Py starts."
-    new "## Used to display the main menu when Ren'Py starts."
+    new "## Utilisé pour afficher le menu principal quand Ren'Py démarre."
 
     # screens.rpy:354
     old "## http://www.renpy.org/doc/html/screen_special.html#main-menu"
@@ -167,7 +167,7 @@ translate french strings:
 
     # screens.rpy:413
     old "## Game Menu screen"
-    new "## Game Menu screen"
+    new "## Écran du menu de jeu"
 
     # screens.rpy:415
     old "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
@@ -183,19 +183,19 @@ translate french strings:
 
     # screens.rpy:539
     old "## About screen"
-    new "## About screen"
+    new "## Écran « À propos... »"
 
     # screens.rpy:541
     old "## This screen gives credit and copyright information about the game and Ren'Py."
-    new "## This screen gives credit and copyright information about the game and Ren'Py."
+    new "## Cet écran présente le générique, les crédits et les informations de copyright relatives au jeu et à Ren’Py."
 
     # screens.rpy:544
     old "## There's nothing special about this screen, and hence it also serves as an example of how to make a custom screen."
-    new "## There's nothing special about this screen, and hence it also serves as an example of how to make a custom screen."
+    new "## Il n’y a rien de spécial sur cet écran. Par conséquent, il sert aussi d’exemple pour créer un écran personnalisé."
 
     # screens.rpy:551
     old "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
-    new "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
+    new "## Cette déclaration concerne l’écran game_menu. L’élément vbox est ensuite inclus dans la fenêtre de l'écran game_menu."
 
     # screens.rpy:561
     old "Version [config.version!t]\n"
@@ -203,23 +203,23 @@ translate french strings:
 
     # screens.rpy:563
     old "## gui.about is usually set in options.rpy."
-    new "## gui.about is usually set in options.rpy."
+    new "## gui.about est généralement initialisé dans le fichier options.rpy."
 
     # screens.rpy:567
     old "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
-    new "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
+    new "Conçu avec {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
 
     # screens.rpy:570
     old "## This is redefined in options.rpy to add text to the about screen."
-    new "## This is redefined in options.rpy to add text to the about screen."
+    new "## Ceci est généralement redéfini dans le fichier options.rpy  pour ajouter le texte dans l’écran « À propos »."
 
     # screens.rpy:582
     old "## Load and Save screens"
-    new "## Load and Save screens"
+    new "## Écran de chargement et de sauvegarde"
 
     # screens.rpy:584
     old "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
-    new "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
+    new "## Ces écrans permettent au joueur d’enregistrer le jeu et de le charger à nouveau. Comme ils partagent beaucoup d’éléments communs, ils sont tous les deux implémentés dans un troisième écran, appelé fichiers_slots (emplacement_de_fichier)."
 
     # screens.rpy:588
     old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
@@ -231,31 +231,31 @@ translate french strings:
 
     # screens.rpy:607
     old "Automatic saves"
-    new "Automatic saves"
+    new "Sauvegardes automatiques"
 
     # screens.rpy:607
     old "Quick saves"
-    new "Quick saves"
+    new "Sauvegardes rapides"
 
     # screens.rpy:613
     old "## This ensures the input will get the enter event before any of the buttons do."
-    new "## This ensures the input will get the enter event before any of the buttons do."
+    new "## Cette instruction s’assure que l’évenement enter aura lieu avant que l’un des boutons ne fonctionne."
 
     # screens.rpy:629
     old "## The grid of file slots."
-    new "## The grid of file slots."
+    new "## La grille des emplacements de fichiers."
 
     # screens.rpy:649
     old "{#file_time}%A, %B %d %Y, %H:%M"
-    new "{#file_time}%A, %B %d %Y, %H:%M"
+    new "{#file_time}%A %d %B %Y, %H:%M"
 
     # screens.rpy:649
     old "empty slot"
-    new "empty slot"
+    new "emplacement vide"
 
     # screens.rpy:657
     old "## Buttons to access other pages."
-    new "## Buttons to access other pages."
+    new "## Boutons pour accéder aux autres pages."
 
     # screens.rpy:666
     old "<"
@@ -275,11 +275,11 @@ translate french strings:
 
     # screens.rpy:711
     old "## Preferences screen"
-    new "## Preferences screen"
+    new "## Écran des préférences"
 
     # screens.rpy:713
     old "## The preferences screen allows the player to configure the game to better suit themselves."
-    new "## The preferences screen allows the player to configure the game to better suit themselves."
+    new "## L’écran de préférence permet au joueur de configurer le jeu pour mieux correspondre à ses attentes."
 
     # screens.rpy:716
     old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
@@ -299,23 +299,23 @@ translate french strings:
 
     # screens.rpy:744
     old "Rollback Side"
-    new "Rollback Side"
+    new "Sens d’annulation"
 
     # screens.rpy:745
     old "Disable"
-    new "Disable"
+    new "Désactivé"
 
     # screens.rpy:746
     old "Left"
-    new "Left"
+    new "Gauche"
 
     # screens.rpy:747
     old "Right"
-    new "Right"
+    new "Droite"
 
     # screens.rpy:752
     old "Unseen Text"
-    new "Unseen Text"
+    new "Texte non lu"
 
     # screens.rpy:753
     old "After Choices"
@@ -327,7 +327,7 @@ translate french strings:
 
     # screens.rpy:756
     old "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
-    new "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
+    new "## Des boites vbox additionnelles de type \"radio_pref\" ou \"check_pref\" peuvent être ajoutées ici pour ajouter des préférences définies par le créateur du jeu."
 
     # screens.rpy:767
     old "Text Speed"
@@ -335,7 +335,7 @@ translate french strings:
 
     # screens.rpy:771
     old "Auto-Forward Time"
-    new "Avancement automatique"
+    new "Avance automatique"
 
     # screens.rpy:778
     old "Music Volume"
@@ -355,15 +355,15 @@ translate french strings:
 
     # screens.rpy:806
     old "Mute All"
-    new "Mute All"
+    new "Couper tous les sons"
 
     # screens.rpy:882
     old "## History screen"
-    new "## History screen"
+    new "## Écran de l'historique"
 
     # screens.rpy:884
     old "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
-    new "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
+    new "## Il s’agit d’un écran qui affiche l’historique des dialogues au joueur. Bien qu’il n'y ait rien de spécial sur cet écran, il doit accéder à l’historique de dialogue stocké dans _history_list."
 
     # screens.rpy:888
     old "## https://www.renpy.org/doc/html/history.html"
@@ -371,71 +371,71 @@ translate french strings:
 
     # screens.rpy:894
     old "## Avoid predicting this screen, as it can be very large."
-    new "## Avoid predicting this screen, as it can be very large."
+    new "## Cette instruction permet d’éviter de prédire cet écran, car il peut être très large"
 
     # screens.rpy:905
     old "## This lays things out properly if history_height is None."
-    new "## This lays things out properly if history_height is None."
+    new "## Cela positionne correctement l'écran si history_height est initialisé à None."
 
     # screens.rpy:914
     old "## Take the color of the who text from the Character, if set."
-    new "## Take the color of the who text from the Character, if set."
+    new "## Utilise pour la couleur du texte, la couleur par défaut des dialogues du personnage si elle a été initialisée."
 
     # screens.rpy:921
     old "The dialogue history is empty."
-    new "The dialogue history is empty."
+    new "L'historique des dialogues est vide."
 
     # screens.rpy:965
     old "## Help screen"
-    new "## Help screen"
+    new "## Écran d'aide"
 
     # screens.rpy:967
     old "## A screen that gives information about key and mouse bindings. It uses other screens (keyboard_help, mouse_help, and gamepad_help) to display the actual help."
-    new "## A screen that gives information about key and mouse bindings. It uses other screens (keyboard_help, mouse_help, and gamepad_help) to display the actual help."
+    new "## Cet écran fournit des informations sur les touches et les boutons de souris. En interne, il utilise d’autres écrans (keyboard_help, mouse_help et gamepad_help) pour afficher une aide dédiée."
 
     # screens.rpy:986
     old "Keyboard"
-    new "Keyboard"
+    new "Clavier"
 
     # screens.rpy:987
     old "Mouse"
-    new "Mouse"
+    new "Souris"
 
     # screens.rpy:990
     old "Gamepad"
-    new "Gamepad"
+    new "Manette"
 
     # screens.rpy:1003
     old "Enter"
-    new "Enter"
+    new "Entrée"
 
     # screens.rpy:1004
     old "Advances dialogue and activates the interface."
-    new "Advances dialogue and activates the interface."
+    new "Avance dans les dialogues et active l’interface (effectue un choix)."
 
     # screens.rpy:1007
     old "Space"
-    new "Space"
+    new "Espace"
 
     # screens.rpy:1008
     old "Advances dialogue without selecting choices."
-    new "Advances dialogue without selecting choices."
+    new "Avance dans les dialogues sans effectuer de choix."
 
     # screens.rpy:1011
     old "Arrow Keys"
-    new "Arrow Keys"
+    new "Flèches directionnelles"
 
     # screens.rpy:1012
     old "Navigate the interface."
-    new "Navigate the interface."
+    new "Permet de se déplacer dans l’interface."
 
     # screens.rpy:1015
     old "Escape"
-    new "Escape"
+    new "Echap."
 
     # screens.rpy:1016
     old "Accesses the game menu."
-    new "Accesses the game menu."
+    new "Ouvre le menu du jeu."
 
     # screens.rpy:1019
     old "Ctrl"
@@ -443,7 +443,7 @@ translate french strings:
 
     # screens.rpy:1020
     old "Skips dialogue while held down."
-    new "Skips dialogue while held down."
+    new "Fait défiler les dialogues tant que la touche est pressée."
 
     # screens.rpy:1023
     old "Tab"
@@ -451,79 +451,79 @@ translate french strings:
 
     # screens.rpy:1024
     old "Toggles dialogue skipping."
-    new "Toggles dialogue skipping."
+    new "Active ou désactives les «sauts des dialogues»."
 
     # screens.rpy:1027
     old "Page Up"
-    new "Page Up"
+    new "Page Haut"
 
     # screens.rpy:1028
     old "Rolls back to earlier dialogue."
-    new "Rolls back to earlier dialogue."
+    new "Retourne au précédent dialogue."
 
     # screens.rpy:1031
     old "Page Down"
-    new "Page Down"
+    new "Page Bas"
 
     # screens.rpy:1032
     old "Rolls forward to later dialogue."
-    new "Rolls forward to later dialogue."
+    new "Avance jusqu'au prochain dialogue."
 
     # screens.rpy:1036
     old "Hides the user interface."
-    new "Hides the user interface."
+    new "Cache l’interface utilisateur."
 
     # screens.rpy:1040
     old "Takes a screenshot."
-    new "Takes a screenshot."
+    new "Prend une capture d’écran."
 
     # screens.rpy:1044
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
-    new "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
+    new "Active la {a=https://www.renpy.org/l/voicing}{size=24}vocalisation automatique{/size}{/a}."
 
     # screens.rpy:1050
     old "Left Click"
-    new "Left Click"
+    new "Bouton gauche"
 
     # screens.rpy:1054
     old "Middle Click"
-    new "Middle Click"
+    new "Bouton central"
 
     # screens.rpy:1058
     old "Right Click"
-    new "Right Click"
+    new "Bouton droit"
 
     # screens.rpy:1062
-    old "Mouse Wheel Up\nClick Rollback Side"
+    old "Molette vers le haut\nBouton de retour en arrière"
     new "Mouse Wheel Up\nClick Rollback Side"
 
     # screens.rpy:1066
     old "Mouse Wheel Down"
-    new "Mouse Wheel Down"
+    new "Molette vers le bas"
 
     # screens.rpy:1073
     old "Right Trigger\nA/Bottom Button"
-    new "Right Trigger\nA/Bottom Button"
+    new "Bouton R1\nA/Bouton du bas"
 
     # screens.rpy:1074
     old "Advance dialogue and activates the interface."
-    new "Advance dialogue and activates the interface."
+    new "Avance dans les dialogues et active les choix dans l'interface."
 
     # screens.rpy:1078
     old "Roll back to earlier dialogue."
-    new "Roll back to earlier dialogue."
+    new "Retourne au précédent dialogue."
 
     # screens.rpy:1081
     old "Right Shoulder"
-    new "Right Shoulder"
+    new "Bouton R1"
 
     # screens.rpy:1082
     old "Roll forward to later dialogue."
-    new "Roll forward to later dialogue."
+    new "Avance jusqu'au prochain dialogue."
 
     # screens.rpy:1085
     old "D-Pad, Sticks"
-    new "D-Pad, Sticks"
+    new "Boutons directionnels, stick gauche"
 
     # screens.rpy:1089
     old "Start, Guide"
@@ -531,27 +531,27 @@ translate french strings:
 
     # screens.rpy:1090
     old "Access the game menu."
-    new "Access the game menu."
+    new "Ouvre le menu du jeu."
 
     # screens.rpy:1093
     old "Y/Top Button"
-    new "Y/Top Button"
+    new "Y/Bouton du haut"
 
     # screens.rpy:1096
     old "Calibrate"
-    new "Calibrate"
+    new "Calibrage"
 
     # screens.rpy:1124
     old "## Additional screens"
-    new "## Additional screens"
+    new "## Écrans additionnels"
 
     # screens.rpy:1128
     old "## Confirm screen"
-    new "## Confirm screen"
+    new "## Écran de confirmation"
 
     # screens.rpy:1130
     old "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
-    new "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
+    new "## Cet écran est appelé quand Ren'Py souhaite poser une question au joueur dont la réponse est oui ou non."
 
     # screens.rpy:1133
     old "## http://www.renpy.org/doc/html/screen_special.html#confirm"
@@ -559,7 +559,7 @@ translate french strings:
 
     # screens.rpy:1137
     old "## Ensure other screens do not get input while this screen is displayed."
-    new "## Ensure other screens do not get input while this screen is displayed."
+    new "## Cette instruction s’assure que les autres écrans resteront en arrière plan tant que cet écran sera affiché."
 
     # screens.rpy:1161
     old "Yes"
@@ -571,15 +571,15 @@ translate french strings:
 
     # screens.rpy:1164
     old "## Right-click and escape answer \"no\"."
-    new "## Right-click and escape answer \"no\"."
+    new "## Le clic bouton droit et la touche Echap. correspondent à la réponse \"non\"."
 
     # screens.rpy:1191
     old "## Skip indicator screen"
-    new "## Skip indicator screen"
+    new "## Écran de l’indicateur d'avance rapide"
 
     # screens.rpy:1193
     old "## The skip_indicator screen is displayed to indicate that skipping is in progress."
-    new "## The skip_indicator screen is displayed to indicate that skipping is in progress."
+    new "## L’écran skip_indicator est affiché pour indiquer qu’une avance rapide est en cours."
 
     # screens.rpy:1196
     old "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
@@ -587,19 +587,19 @@ translate french strings:
 
     # screens.rpy:1208
     old "Skipping"
-    new "Skipping"
+    new "Avance rapide"
 
     # screens.rpy:1215
     old "## This transform is used to blink the arrows one after another."
-    new "## This transform is used to blink the arrows one after another."
+    new "## Cette transformation est utilisé pour faire clignoter les flèches l’une après l’autre."
 
     # screens.rpy:1247
     old "## Notify screen"
-    new "## Notify screen"
+    new "## Écran de notification"
 
     # screens.rpy:1249
     old "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
-    new "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
+    new "## Cet écran est utilisé pour affiché un message au joueur. (Par exemple, quand une sauvegarde rapide a eu lieu ou quand une capture d’écran vient d’être réalisée.)"
 
     # screens.rpy:1252
     old "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
@@ -607,11 +607,11 @@ translate french strings:
 
     # screens.rpy:1286
     old "## NVL screen"
-    new "## NVL screen"
+    new "## Écran NVL"
 
     # screens.rpy:1288
     old "## This screen is used for NVL-mode dialogue and menus."
-    new "## This screen is used for NVL-mode dialogue and menus."
+    new "## Cet écran est utilisé pour les dialogues et les menus en mode NVL."
 
     # screens.rpy:1290
     old "## http://www.renpy.org/doc/html/screen_special.html#nvl"
@@ -619,23 +619,23 @@ translate french strings:
 
     # screens.rpy:1301
     old "## Displays dialogue in either a vpgrid or the vbox."
-    new "## Displays dialogue in either a vpgrid or the vbox."
+    new "## Les dialogues sont affichés soit dans une vpgrid soit dans une vbox."
 
     # screens.rpy:1314
     old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
-    new "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
+    new "## Si fourni, affiche le menu. Le menu peut s’afficher de manière incorrecte si config.narrator_menu est initialisé à True, comme c’est le cas au-dessus."
 
     # screens.rpy:1344
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
-    new "## This controls the maximum number of NVL-mode entries that can be displayed at once."
+    new "## Ce paramètre controle le maximum d’entrée dans le mode NVL qui peuvent être affichée simultanément."
 
     # screens.rpy:1406
     old "## Mobile Variants"
-    new "## Mobile Variants"
+    new "## Variantes pour les mobiles"
 
     # screens.rpy:1413
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
-    new "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
+    new "## Comme la souris peut ne pas être présente, nous remplaçons le menu rapide avec une version qui utilise des boutons plus gros et qui sont plus faciles à toucher du doigt."
 
     # screens.rpy:1429
     old "Menu"
