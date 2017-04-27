@@ -3,7 +3,7 @@
 # Ren'Py does support movies, and we'll add them sometime later.
 
 #begin movie_image
-image shuttle = Movie(play="shuttle.ogv", pos=(475, 50), anchor=(0, 0))
+image launch = Movie(play="oa4_launch.webm", pos=(10, 10), anchor=(0, 0))
 #end movie_image
 
 label tutorial_video:
@@ -14,20 +14,20 @@ label tutorial_video:
 
     show screen example('movie_image')
 
-    e "To do this, we first have to define an image to be a Movie displayable. Movie displayables require a size argument, and also use properties to position themselves on the screen."
+    e "To do this, we first have to define an image to be a Movie displayable. Movie displayables take a movie to play, and can be given position properties."
 
     stop music fadeout .25
     show screen example('movie_play')
     pause .25
 
     #begin movie_play
-    show shuttle behind eileen
+    show launch behind eileen
     #end movie_play
 
     e "Then, we can show the movie displayable, which starts the movie playing."
 
     #begin movie_stop
-    hide shuttle
+    hide launch
     #end movie_stop
 
     show screen example('movie_stop')
@@ -41,10 +41,10 @@ label tutorial_video:
     hide screen example
 
     #begin movie_cutscene
-    $ renpy.movie_cutscene("shuttle.ogv")
+    $ renpy.movie_cutscene("oa4_launch.webm")
     #end movie_cutscene
 
-    e "And that's all there is when it comes to movie playback in Ren'Py."
+    e "A Movie displayable can also take a mask with an alpha channel, which lets you make movie sprites. But that's more complicated, so I'll stop here for now."
 
     play music "sunflower-slow-drag.ogg"
 
