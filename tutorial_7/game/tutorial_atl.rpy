@@ -1,4 +1,6 @@
-﻿image concert:
+image bg band = Transform("concert1", zoom=.75)
+
+image concert:
     subpixel True
     size (1280, 720)
     xalign .5
@@ -174,7 +176,7 @@ transform move_slide:
 #end atl_transform2
 
 transform reset:
-    xalign 0.5 yalign 0.5
+    xalign 0.5 yalign 0.33
     zoom 1.0 xzoom 1.0 yzoom 1.0
     crop None size None
     alpha 1.0
@@ -543,13 +545,13 @@ label tutorial_atl:
     show screen example('atl_pan')
     hide logo base
     show bg band:
-        xanchor 0 yanchor 0 xpos 0 ypos -222
+        xanchor 0 yanchor 0 xpos 0 ypos -428
     with dissolve
 
     #begin atl_pan
     show bg band:
-        xpos 0 ypos -222 xanchor 0 yanchor 0
-        linear 5.0 xpos -435 ypos 0
+        xpos 0 ypos -428 xanchor 0 yanchor 0
+        linear 3.0 xpos -220 ypos -60
     #end atl_pan
 
     e "We can perform a pan by using xpos and ypos to position images off of the screen."
@@ -592,7 +594,7 @@ label tutorial_atl:
 
     #begin atl_size
     show logo base:
-        size (300, 450)
+        size (350, 540)
     #end atl_size
     with dissolve
 
@@ -618,7 +620,7 @@ label tutorial_atl:
 
     #begin atl_rotate
     show logo base:
-        xpos 0.5 ypos 0.5 xanchor 0.5 yanchor 0.5
+        xanchor 0.5 yanchor 0.5
         rotate 0
         linear 4.0 rotate 360
         repeat
@@ -634,7 +636,7 @@ label tutorial_atl:
 
     #begin atl_cropsize
     show logo base:
-        crop (0, 0, 100, 307)
+        crop (0, 0, 117, 360)
     #end atl_cropsize
     with dissolve
 
@@ -647,12 +649,12 @@ label tutorial_atl:
     #begin atl_cropsize2
     show bg washington:
         crop (0, 0, 800, 600)
-        size (800, 600)
+        size (1280, 720)
 
-        linear 4.0 crop (350, 300, 400, 300)
+        linear 4.0 crop (451, 437, 409, 230)
     #end atl_cropsize2
 
-    e "When used together, they can be used to focus in on specific parts of an image."
+    e "When used together, crop and size can be used to focus in on specific parts of an image."
 
     show bg washington at reset
     with dissolve
