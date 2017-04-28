@@ -361,14 +361,12 @@ screen main_menu():
     ## contents of the main menu are in the navigation screen.
     use navigation
 
-    if gui.show_name:
+    text "[renpy.version_string] \"[renpy.version_name]\"":
+        color "#333"
+        yalign .995
+        xalign 0.5
+        size 18
 
-        vbox:
-            text "[config.name!t]":
-                style "main_menu_title"
-
-            text "[config.version]":
-                style "main_menu_version"
 
 
 style main_menu_frame is empty
