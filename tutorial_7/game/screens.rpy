@@ -366,6 +366,7 @@ screen main_menu():
         yalign .995
         xalign 0.5
         size 18
+        kerning -1
 
 
 
