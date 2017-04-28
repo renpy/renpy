@@ -341,14 +341,14 @@ label tutorial_music:
     queue sound "tower_clock.ogg"
     #end sound4
 
-    e "You can queue up multiple sounds on the sound channel, but they will only play one at a time."
+    e "You can queue up multiple sounds on the sound channel, but the sounds will only play one at a time."
 
     play music "sunflower-slow-drag.ogg"
 
     hide screen example
     with dissolve
 
-    e "Ren'Py has separate mixers for sound, music, and voices, so the player can adjust them as he likes."
+    e "Ren'Py has separate mixers for sound, music, and voices, so the player can adjust them as they like."
 
     return
 
