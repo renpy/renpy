@@ -71,8 +71,6 @@ label demo_transitions:
 
             call demo_alphadissolve from _call_demo_alphadissolve
 
-        ""
-
         "How about something else?":
 
             return
@@ -123,14 +121,14 @@ label demo_simple_transitions:
 
     "......"
 
-    $ renpy.play('punch.wav')
+    play audio "punch.opus"
     with vpunch
 
     e "Hey! Pay attention."
 
     e "I was about to demonstrate 'vpunch'... well, I guess I just did."
 
-    $ renpy.play('punch.wav')
+    play audio "punch.opus"
     with hpunch
 
     e "We can also shake the screen horizontally, with 'hpunch'. These were defined using the 'Move' function."
@@ -257,10 +255,6 @@ label demo_imagedissolve_transitions:
     with teleport
 
     e "... which is how we apply the teleport effect to a single character."
-
-    e "For more examples of ImageDissolve, check out the {i}Utsukushii Effects{/i} demo."
-
-    e "It shows how a clever game-maker can use ImageDissolve to create all sorts of effects."
 
     return
 
@@ -427,7 +421,7 @@ label demo_movetransition:
 
     e "That's it for the moveins and moveouts."
 
-    e "Finally, there are the zoomin and zoomout transtions, which show and hide things using a zoom."
+    e "Finally, there are the zoomin and zoomout transitions, which show and hide things using a zoom."
 
     hide eileen happy
     with zoomout
