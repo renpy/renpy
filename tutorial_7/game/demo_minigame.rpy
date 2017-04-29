@@ -140,22 +140,6 @@
             r.blit(ball, (int(self.bx - self.BALL_WIDTH / 2),
                           int(self.by - self.BALL_HEIGHT / 2)))
 
-            # Show the player names.
-            player = renpy.render(self.player, width, height, st, at)
-            r.blit(player, (20, 25))
-
-            # Show Eileen's name.
-            eileen = renpy.render(self.eileen, width, height, st, at)
-            ew, eh = eileen.get_size()
-            r.blit(eileen, (790 - ew, 25))
-
-            # Show the "Click to Begin" label.
-            if self.stuck:
-                ctb = renpy.render(self.ctb, width, height, st, at)
-                cw, ch = ctb.get_size()
-                r.blit(ctb, (400 - cw / 2, 30))
-
-
             # Check for a winner.
             if self.bx < -50:
                 self.winner = "eileen"
@@ -197,6 +181,32 @@
             else:
                 raise renpy.IgnoreEvent()
 
+screen pong():
+
+    default pong = PongDisplayable()
+
+    add "bg pong field"
+
+    add pong
+
+    text _("Eileen"):
+        xpos 240
+        xanchor 0.5
+        ypos 25
+        size 40
+
+    text _("Player"):
+        xpos (1280 - 240)
+        xanchor 0.5
+        ypos 25
+        size 40
+
+    if pong.stuck:
+        text _("Click to Begin"):
+            xalign 0.5
+            ypos 50
+            size 40
+
 
 label demo_minigame:
 
@@ -224,23 +234,18 @@ label demo_minigame:
 
 label demo_minigame_pong:
 
-    window hide None
+    window hide
 
-    # Put up the pong background, in the usual fashion.
-    scene bg pong field
+    # Show the pong screen until the game has finished. The result of the game
+    # is put into the _return variable.
+    call screen pong
 
-    # Run the pong minigame, and determine the winner.
-    python:
-        ui.add(PongDisplayable())
-        winner = ui.interact(suppress_overlay=True, suppress_underlay=True)
-
-    scene bg washington
     show eileen vhappy
 
-    window show None
+    window show
 
 
-    if winner == "eileen":
+    if _return == "eileen":
 
         e "I win!"
 
