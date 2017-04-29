@@ -1,31 +1,37 @@
 ﻿# This file demonstrates the use of image operators.
 
+image logo blink:
+    "logo base"
+    pause 0.5
+    linear .5 alpha 0.0
+    pause 0.5
+    linear .5 alpha 1.0
+    repeat
+
 init:
-    image logo crop = im.Crop("logo.png", 0, 0, 100, 307)
+    image logo crop = im.Crop("logo base.png", 0, 0, 120, 360)
 
-    image logo scale = im.Scale("logo.png", 100, 150)
+    image logo scale = im.Scale("logo base.png", 120, 180)
 
-    image logo factorscale = im.FactorScale("logo.png", 1.5, 1.5)
+    image logo factorscale = im.FactorScale("logo base.png", 1.5, 1.5)
 
-    image logo composite = im.Composite((200, 407),
-                                        (0, 0), "logo.png",
-                                        (0, 50), "logo.png",
-                                        (0, 100), "logo.png")
+    image logo composite = im.Composite((240, 460),
+                                        (0, 0), "logo base.png",
+                                        (0, 50), "logo base.png",
+                                        (0, 100), "logo base.png")
 
-    image logo livecomposite = LiveComposite((200, 407),
-                                             (0, 0), anim.Blink(Image("logo.png")),
-                                             (0, 50), "logo.png",
-                                             (0, 100), "logo.png")
+    image logo livecomposite = LiveComposite((240, 460),
+                                             (0, 0), "logo blink",
+                                             (0, 50), "logo base.png",
+                                             (0, 100), "logo base.png")
 
-    image logo green = im.Map("logo.png", rmap=im.ramp(0, 0))
+    image logo green = im.Map("logo base.png", rmap=im.ramp(0, 0))
 
-    image logo green2 = im.Recolor("logo.png", 0, 255, 255, 255)
+    image logo green2 = im.Recolor("logo base.png", 0, 255, 255, 255)
 
-    image logo alpha = im.Alpha("logo.png", 0.5)
+    image logo alpha = im.Alpha("logo base.png", 0.5)
 
-    image logo blackwhite = "logobw.png"
-
-    image logo twocolor = im.Twocolor("logobw.png",
+    image logo twocolor = im.Twocolor("logo bw.png",
                                       (128, 255, 255, 255),
                                       (255, 0, 0, 255))
 
@@ -35,35 +41,34 @@ init:
     image eileen flip = im.Flip("images/eileen happy.png", vertical=True)
 
 
-    image logo halfsat = im.MatrixColor("logo.png",
+    image logo halfsat = im.MatrixColor("logo base.png",
                                         im.matrix.saturation(.5))
 
     # This could be better done with im.matrix.invert(), but I want to show
     # how to use a matrix.
-    image logo invert = im.MatrixColor("logo.png",
+    image logo invert = im.MatrixColor("logo base.png",
                                        [ -1,  0,  0, 0, 1,
                                           0, -1,  0, 0, 1,
                                           0,  0, -1, 0, 1,
                                           0,  0,  0, 1, 0, ])
 
-    image logo tintblue = im.MatrixColor("logo.png",
+    image logo tintblue = im.MatrixColor("logo base.png",
                                          im.matrix.saturation(.5) * im.matrix.tint(.75, .75, 1.0))
 
-    image logo hue = im.MatrixColor("logo.png",
+    image logo hue = im.MatrixColor("logo base.png",
                                     im.matrix.hue(90))
 
-    image logo bright = im.MatrixColor("logo.png",
+    image logo bright = im.MatrixColor("logo base.png",
                                        im.matrix.brightness(.5))
 
-    image logo sepia = im.Sepia("logo.png")
+    image logo sepia = im.Sepia("logo base.png")
 
-    image logo grayscale = im.Grayscale("logo.png")
+    image logo grayscale = im.Grayscale("logo base.png")
 
 
 transform logopos:
     xalign .5
-    xoffset 150
-    yalign .1
+    yalign 0.33
 
 label demo_imageops:
 
@@ -125,7 +130,7 @@ label demo_imageops:
 
     e "The im.Recolor operation can do the same thing, but is more efficient when we're linearly mapping colors."
 
-    show logo blackwhite at logopos
+    show logo bw at logopos
     with dissolve
 
     e "The im.Twocolor operation lets you take a black and white image, like this one..."
