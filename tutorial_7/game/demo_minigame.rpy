@@ -169,6 +169,9 @@
             if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
                 self.stuck = False
 
+                # Ensure the pong screen updates.
+                renpy.restart_interaction()
+
             # Set the position of the player's paddle.
             y = max(y, self.COURT_TOP)
             y = min(y, self.COURT_BOTTOM)
@@ -212,25 +215,13 @@ label demo_minigame:
 
     e "You may want to mix Ren'Py with other forms of gameplay. There are many ways to do this."
 
-    e "The first is with the UI functions, which can be used to create powerful button and menu based interfaces."
+    e "The first is with the screen system, which can be used to display data and create button and menu based interfaces."
 
-    e "These are often enough for many simulation-style games."
+    e "Screens will work for many simulation-style games and RPGs."
 
-    e "We also have two more ways in which Ren'Py can be extended. Both require experience with Python programming, and so aren't for the faint of heart."
+    e "When screens are not enough you can write a creator-defined displayable. Creator-defined displayables can process raw events and draw to the screen."
 
-    e "Renpygame is a library that allows pygame games to be run inside Ren'Py."
-
-    e "When using renpygame, Ren'Py steps out of the way and gives you total control over the user's experience."
-
-    e "You can get renpygame from the Frameworks page of the Ren'Py website."
-
-    e "If you want to integrate your code with Ren'Py, you can write a user-defined displayable."
-
-    e "User-defined displayables are somewhat more limited, but integrate better with the rest of Ren'Py."
-
-    e "For example, one could support loading and saving while a user-defined displayable is shown."
-
-    e "Now, why don't we play some pong?"
+    e "That makes it possible to create all kinds of minigames. Would you like to play some pong?"
 
 label demo_minigame_pong:
 
@@ -238,12 +229,14 @@ label demo_minigame_pong:
 
     # Show the pong screen until the game has finished. The result of the game
     # is put into the _return variable.
+
+    $ quick_menu = False
     call screen pong
+    $ quick_menu = True
 
     show eileen vhappy
 
     window show
-
 
     if _return == "eileen":
 
@@ -253,18 +246,19 @@ label demo_minigame_pong:
 
         e "You won! Congratulations."
 
-
     show eileen happy
 
     menu:
         e "Would you like to play again?"
 
         "Sure.":
+
             jump demo_minigame_pong
+
         "No thanks.":
+
             pass
 
-
-    e "Remember to be careful about putting minigames in a visual novel, since not every visual novel player wants to be good at arcade games."
+    e "Minigames can spice up your visual novel, but be careful – not every visual novel player wants to be good at arcade games."
 
     return
