@@ -1199,4 +1199,9 @@ translate indonesian strings:
     old "PROJECTS:"
     new "PROYEK:"
 
+translate indonesian strings:
+
+    # preferences.rpy:181
+    old "Legacy options"
+    new "Opsi Legasi"
 
