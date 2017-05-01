@@ -7,7 +7,7 @@ init:
     $ config.layers.insert(1, 'demo')
 
     # Make it so that it only takes up part of the screen.
-    $ config.layer_clipping['demo'] = (50, 50, 700, 500)
+    $ config.layer_clipping['demo'] = (100, 50, 1080, 620)
 
 
 label demo_layers:
