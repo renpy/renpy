@@ -495,6 +495,8 @@ class MultiBox(Container):
 
         super(MultiBox, self).__init__(style=style, **properties)
 
+        self._clipping = self.style.clipping
+
         self.default_layout = layout
 
         # The start and animation times for children of this
@@ -1244,6 +1246,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
     def event(self, ev, x, y, st):
         if self.child:
             return self.child.event(ev, x, y, st)
+
 
 # A cache of compiled conditions used by ConditionSwitch.
 cond_cache = { }
