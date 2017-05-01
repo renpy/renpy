@@ -41,7 +41,7 @@ Fullscreen Movies
 -----------------
 
 The easiest and most efficient way to display a movie fullscreen is
-to use the renpypy.movie_cutscene function. This function displays the
+to use the renpy.movie_cutscene function. This function displays the
 movie fullscreen until it either ends, or the player clicks to dismiss
 it. ::
 
