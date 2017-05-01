@@ -51,7 +51,7 @@ The default voice can be selected on a per-platform basis, using the
 
         if renpy.windows:
             config.tts_voice = "Mark"
-        elif renpy.mac:
+        elif renpy.macintosh:
             config.tts_voice = "Alex"
         elif renpy.linux:
             config.tts_voice = "english_rp"
