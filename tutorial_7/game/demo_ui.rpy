@@ -5,7 +5,7 @@ screen viewport_screen:
 
     viewport:
         scrollbars "both"
-        xmaximum 400
+        xmaximum 711
         ymaximum 400
 
         side_xpos 100
@@ -16,10 +16,10 @@ screen viewport_screen:
         mousewheel True
         arrowkeys True
 
-        add "concert2"
+        add "bg band"
 
     textbutton _("Dismiss"):
-        xpos 300
+        xpos 455
         xanchor 0.5
         ypos 550
         yanchor 0.5
@@ -41,146 +41,105 @@ screen demo_imagemap:
         hotspot (726, 106, 93, 93) action Return("art") alt "Art"
         hotspot (934, 461, 93, 93) action Return("go home") alt "Go Home"
 
-init:
-
-    # The variable we store the entered name of the character in.
-    $ povname = ""
-
-    # And this is a DynamicCharacter that has the same stored in
-    # povname.
-    $ pov = DynamicCharacter("povname", color=(192, 64, 64, 255))
+default povname = "Player"
+define pov = Character("[povname]", color="#c44")
 
 
-    # This is code for a day planner, or at least sort of. To be
-    # honest, the code in the dse game is a bit better. Take this
-    # as more of an example of what Ren'Py can do.
-    python:
-        def day_planner():
+define day_periods = [ _('Morning'), _('Afternoon'), _('Evening') ]
+define day_choices = [ _('Study'), _('Exercise'), _('Eat'), _('Drink'), _('Be Merry') ]
 
-            periods = [ _('Morning'), _('Afternoon'), _('Evening') ]
-            periods_small = {'Morning': _('morning'), 'Afternoon': _('afternoon'), 'Evening': _('evening') }
-            choices = [ _('Study'), _('Exercise'),
-                        _('Eat'), _('Drink'), _('Be Merry') ]
-
-            plan = { _('Morning') : _('Eat'),
+default day_plan = { _('Morning') : _('Eat'),
                      _('Afternoon') : _('Drink'),
                      _('Evening') : _('Be Merry') }
+default day = _('March 25th')
 
-            day = _('March 25th')
-
-            stats = [
-                (_('Strength'), 100, 10),
-                (_('Intelligence'), 100, 25),
-                (_('Moxie'), 100, 100),
-                (_('Chutzpah'), 100, 75),
-                ]
-
-            editing = None
-
-            def button(text, selected, returns, **properties):
-
-                if selected:
-                    role='selected_'
-                else:
-                    role=''
-
-                ui.button(clicked=ui.returns(returns),
-                          style='button', role=role, **properties)
-                ui.text(text, style='button_text')
+default stat_strength = 10
+default stat_intelligence = 25
+default stat_moxie = 100
+default stat_chutzpah = 75
 
 
-            while True:
-
-                # Stats Window
-                ui.frame(xpos=0,
-                         ypos=0,
-                         xanchor='left',
-                         yanchor='top',
-                         xfill=True,
-                         )
-
-                ui.vbox()
-
-                ui.text(_('Statistics'))
-                ui.null(height=20)
-
-                for name, range, value in stats:
-
-                    ui.hbox()
-                    ui.text(name, minwidth=150)
-                    ui.bar(range, value, ypos=0.5, yanchor='center')
-                    ui.close()
-
-                ui.close()
-
-                # Period Selection Window.
-                ui.frame(xpos=0,
-                         ypos=200,
-                         xanchor='left',
-                         yanchor='top',
-                         xfill=False,
-                         xminimum=300
-                         )
-
-                ui.vbox(xpos=0.5, xanchor='center')
-                ui.text(day, xpos=0.5, xanchor='center', textalign=0.5)
-                ui.null(height=20)
-
-                for i in periods:
-                    renpy.store.period_tmp = i
-                    renpy.store.plan_tmp = plan[i]
-                    button("[period_tmp!t]: [plan_tmp!t]", editing == i, ("edit", i), xminimum=250)
-
-                ui.null(height=20)
-                ui.textbutton(_("Continue"),
-                              clicked=ui.returns(("done", True)),
-                              xminimum=250)
-                ui.null(height=20)
-                ui.close()
+style stat_text is default:
+    min_width 150
+    text_align 1.0
+    yalign 0.5
 
 
-                # Choice window.
-                if editing:
-                    ui.frame(xpos=300,
-                             ypos=200,
-                             xanchor='left',
-                             yanchor='top',
-                             xfill=False,
-                             xminimum=500,
-                             xmargin = 10
-                             )
+style stat_hbox is hbox:
+    spacing 10
 
-                    ui.vbox()
-                    renpy.store.periods_small_selected = periods_small[editing]
-                    ui.text(_("What will you do in the [periods_small_selected!t]?"))
-                    ui.null(height=20)
+style stat_vbox:
+    spacing 5
 
-                    for i in choices:
-                        button(i,
-                               plan[editing] == i,
-                               ("set", i),
-                               xpos=0,
-                               xanchor='left',
-                               xminimum=250)
+screen day_planner():
 
-                    ui.close()
+    # This displays the stats at the top of the screen.
 
-                # Window at the bottom.
-                e(_("To get to the next screen, click the 'Continue' button."), interact=False)
+    vbox:
 
-                type, value = ui.interact()
+        spacing 5
 
-                if type == "done":
-                    break
+        frame:
+            style_prefix "stat"
 
-                if type == "edit":
-                    editing = value
+            xpadding 150
 
-                if type == "set":
-                    plan[editing] = value
-                    editing = None
 
-            return plan
+            xfill True
+
+            has vbox
+
+            hbox:
+                text _("Strength")
+                bar value StaticValue(stat_strength, 100)
+
+            hbox:
+                text _("Intelligence")
+                bar value StaticValue(stat_strength, 100)
+
+            hbox:
+                text _("Moxie")
+                bar value StaticValue(stat_strength, 100)
+
+            hbox:
+                text _("Chutzpah")
+                bar value StaticValue(stat_strength, 100)
+
+
+        grid 3 1:
+
+            spacing 5
+            xfill True
+
+            for p in day_periods:
+
+                frame:
+                    xfill True
+
+                    vbox:
+                        label p
+
+                        null height 5
+
+                        for i in day_choices:
+                            textbutton i action SetDict(day_plan, p, i)
+
+        grid 3 1:
+            xfill True
+            spacing 5
+
+            null
+
+            frame:
+                textbutton "Done":
+                    action Return(True)
+                    xfill True
+
+                    text_xalign 0.5
+
+            null
+
+
 
 init python:
 
@@ -313,7 +272,7 @@ label demo_ui:
     hide eileen
     with dissolve
 
-    $ day_planner()
+    call screen day_planner
 
     show eileen happy
     with dissolve
