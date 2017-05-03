@@ -1,7 +1,7 @@
 ﻿# This file contains a demonstration of the user interaction
 # functions.
 
-screen viewport_screen:
+screen viewport_screen():
 
     viewport:
         scrollbars "both"
@@ -26,7 +26,7 @@ screen viewport_screen:
 
         action Return(True)
 
-screen edgescroll_screen:
+screen edgescroll_screen():
 
     viewport:
         edgescroll (150, 500)
@@ -34,7 +34,7 @@ screen edgescroll_screen:
 
 screen demo_imagemap:
     imagemap:
-        auto "imagemap %s.png"
+        auto "imagemap %s"
 
         hotspot (44, 238, 93, 93) action Return("swimming") alt "Swimming"
         hotspot (360, 62, 93, 93) action Return("science") alt "Science"
