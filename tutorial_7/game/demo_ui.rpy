@@ -141,38 +141,44 @@ screen day_planner():
 
 
 
-init python:
+default player_hp = 37
+default player_hp_max = 42
+default eileen_hp = 100
+default eileen_hp_max = 100
 
-    def stats_frame(name, level, hp, maxhp, **properties):
+default player_lv = 4
+default eileen_lv = 99
 
-        ui.frame(xfill=False, yminimum=None, **properties)
+screen single_stat(name, hp, hp_max, lv, xalign):
 
-        ui.hbox() # (name, "HP", bar) from (level, hp, maxhp)
-        ui.vbox() # name from ("HP", bar)
+    frame:
+        xalign xalign
 
-        ui.text(name, size=20)
+        vbox:
+            spacing 5
 
-        ui.hbox() # "HP" from bar
-        ui.text("HP", size=20)
-        ui.bar(maxhp, hp,
-               xmaximum=150)
+            hbox:
+                text "[name]" min_width 220
+                text _(" Lv. [lv]")
 
-        ui.close()
-        ui.close()
+            hbox:
+                text "HP":
+                    min_width 40
+                    yalign 0.5
 
-        ui.vbox() # Level from (hp/maxhp)
+                bar:
+                    value StaticValue(hp, hp_max)
+                    xmaximum 180
+                    ysize 26
 
-        ui.text("Lv. %d" % level, xalign=0.5, size=20)
-        ui.text("%d/%d" % (hp, maxhp), xalign=0.5, size=20)
 
-        ui.close()
-        ui.close()
+                text " [hp]/[hp_max]":
+                    yalign 0.5
 
-label fight(ename, elevel, ehp, pname="Zanthier", plevel=4, php=40):
-    $ stats_frame(pname, plevel, int(php * .73), php, xalign=.02, yalign=.05)
-    $ stats_frame(ename, elevel, ehp, ehp, xalign=.98, yalign=.05)
 
-    return
+screen stats():
+    use single_stat(povname, player_hp, player_hp_max, player_lv, 0.0)
+    use single_stat(_("Eileen"), eileen_hp, eileen_hp_max, eileen_lv, 1.0)
 
 label demo_ui:
 
