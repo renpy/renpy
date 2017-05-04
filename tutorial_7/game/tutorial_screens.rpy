@@ -67,6 +67,69 @@ label screens:
 
     e "Generally, you use show screen to show overlays that are up all the time, and call screen to show screens the player interacts with for a little while."
 
+label imagemap_tutorial:
 
+    show screen example('imagemap')
 
-    return
+    e "Another type of screen is an imagemap. An imagemap uses images that display hotspots that act as buttons."
+
+    e "This imagemap uses two images - one when a button is idle, and one when a button is hovered. The idle image also doubles as a background."
+
+    e "When a player clicks on a hotspot, this imagemap runs a Jump action to take them to a label. Each hotspots also has alt text, for vision-impared players."
+
+    hide screen example
+
+    e "Let's take a look at an imagemap screen in action."
+
+    jump imagemap_example
+
+#begin imagemap
+screen imagemap_example:
+
+    imagemap:
+        ground "imagemap ground"
+        hover "imagemap hover"
+
+        hotspot (44, 238, 93, 93) action Jump("swimming") alt "Swimming"
+        hotspot (360, 62, 93, 93) action Jump("science") alt "Science"
+        hotspot (726, 106, 93, 93) action Jump("art") alt "Art"
+        hotspot (934, 461, 93, 93) action Jump("go home") alt "Go Home"
+
+label imagemap_example:
+
+    # Call the imagemap_example screen.
+    call screen imagemap_example
+
+label swimming:
+
+    e "You chose swimming."
+
+    e "Swimming seems like a lot of fun, but I didn't bring my bathing suit with me."
+
+    jump imagemap_done
+
+label science:
+
+    e "You chose science."
+
+    e "I've heard that some schools have a competitive science team, but to me research is something that can't be rushed."
+
+    jump imagemap_done
+
+label art:
+    e "You chose art."
+
+    e "Really good background art is hard to make, which is why so many games use filtered photographs. Maybe you can change that."
+
+    jump imagemap_done
+
+label home:
+
+    e "You chose to go home."
+
+    jump imagemap_done
+
+label imagemap_done:
+
+    e "Anyway..."
+#end imagemap
