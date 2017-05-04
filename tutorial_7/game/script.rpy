@@ -68,6 +68,10 @@ default tutorials_adjustment = ui.adjustment()
 # True if this is the first time through the tutorials.
 default tutorials_first_time = True
 
+label main_menu:
+    return
+
+
 # The game starts here.
 #begin start
 label start:
@@ -76,6 +80,8 @@ label start:
     scene bg washington
     show eileen vhappy
     with dissolve
+
+    call screens
 
     # Start the background music playing.
     play music "sunflower-slow-drag.ogg"

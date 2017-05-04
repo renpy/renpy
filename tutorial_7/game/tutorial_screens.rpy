@@ -11,6 +11,8 @@ screen simple_screen():
 
 label screens:
 
+    jump imagemap_done
+
     e "Screens are the most powerful part of Ren'Py. Screens let you customize the out-of-game interface, and create new in-game interface components."
 
     show screen example('simple_screen')
@@ -133,3 +135,22 @@ label imagemap_done:
 
     e "Anyway..."
 #end imagemap
+
+    show screen stats
+    with dissolve
+
+    e "Screens can do a lot. For example, if a game is an RPG - or even RPG-themed - we can display statistics to the player."
+
+    hide screen stats
+    with dissolve
+
+    window show
+
+    $ e("For a dating sim or life simulation game, we can display scheduling interfaces like this one.", interact=False)
+    call screen day_planner
+
+    e "Screens can also be used to customize all parts of the Ren'Py interface - for example, the say screen is what shows dialogue to the player."
+
+    e "Screens might look complicated, and more complex ones can have a lot of code in them. But every screen is made out of lots of small parts."
+
+    return
