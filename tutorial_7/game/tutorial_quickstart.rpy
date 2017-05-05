@@ -425,12 +425,27 @@ label choice1_done:
 
     e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
 
+    show screen example('menu3')
+
+#begin menu3
+menu:
+    e "Finally, this shows how you can show dialogue and menus at the same time. Understand?"
+
+    "Yes.":
+
+        e "Great."
+
+    "No.":
+
+        e "If you look at the example, before the first choice, there's an indented say statement."
+#end menu3
+
+label menu3_done:
+
     hide screen example
 
     e "Although we won't demonstrate it here, Ren'Py supports making decisions based on a combinations of points, flags, and other factors."
 
     e "One of Ren'Py's big advantages is the flexibility using a scripting language like Python provides us. It lets us easily scale from kinetic novels to complex simulation games."
-
-    e "We look forward to seeing what you make with it."
 
     return
