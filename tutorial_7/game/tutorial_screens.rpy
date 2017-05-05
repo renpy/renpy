@@ -1,3 +1,9 @@
+################################################################################
+# Simple screen
+#
+# A simple screen that displays some text and a button.
+################################################################################
+
 #begin simple_screen
 screen simple_screen():
     frame:
@@ -6,6 +12,166 @@ screen simple_screen():
             textbutton "Okay":
                 action Return(True)
 #end simple_screen
+
+
+################################################################################
+# Stats screen.
+#
+# This displays RPG-like statistics.
+################################################################################
+
+default player_hp = 37
+default player_hp_max = 42
+default eileen_hp = 100
+default eileen_hp_max = 100
+
+default player_lv = 4
+default eileen_lv = 99
+
+# This screen displays a single stat.
+screen single_stat(name, hp, hp_max, lv, xalign):
+
+    frame:
+        xalign xalign
+
+        vbox:
+            spacing 5
+
+            hbox:
+                text "[name]" min_width 220
+                text _(" Lv. [lv]")
+
+            hbox:
+                text "HP":
+                    min_width 40
+                    yalign 0.5
+
+                bar:
+                    value StaticValue(hp, hp_max)
+                    xmaximum 180
+                    ysize 26
+
+
+                text " [hp]/[hp_max]":
+                    yalign 0.5
+
+
+# This screen uses single_stat to display two stats at once.
+screen stats():
+    use single_stat(povname, player_hp, player_hp_max, player_lv, 0.0)
+    use single_stat(_("Eileen"), eileen_hp, eileen_hp_max, eileen_lv, 1.0)
+
+
+################################################################################
+# Day picker
+#
+# This code displays a day picker, including statistics and a way of choosing
+# an action for each period of the day.
+################################################################################
+
+
+# This constant defines the periods in the day.
+define day_periods = [ _('Morning'), _('Afternoon'), _('Evening') ]
+
+# This constant defines what to do in each period.
+define day_choices = [ _('Study'), _('Exercise'), _('Eat'), _('Drink'), _('Be Merry') ]
+
+# This is a dictionary mapping a period to a
+default day_plan = {
+    'Morning' : 'Eat',
+    'Afternoon' : 'Drink',
+    'Evening' : 'Be Merry'
+    }
+
+# These variables display statistics to the player.
+default stat_strength = 10
+default stat_intelligence = 25
+default stat_moxie = 100
+default stat_chutzpah = 75
+
+# These styles are used to style the various stats.
+style stat_text is default:
+    min_width 150
+    text_align 1.0
+    yalign 0.5
+
+style stat_hbox is hbox:
+    spacing 10
+
+style stat_vbox:
+    spacing 5
+
+
+# This is the day planner screen. It displays the
+
+screen day_planner():
+
+    # This vbox organizes everything.
+    vbox:
+
+        spacing 5
+
+        # A frame containing all the stats.
+        frame:
+            style_prefix "stat"
+            xpadding 150
+            xfill True
+
+            vbox:
+
+                hbox:
+                    text _("Strength")
+                    bar value StaticValue(stat_strength, 100)
+
+                hbox:
+                    text _("Intelligence")
+                    bar value StaticValue(stat_strength, 100)
+
+                hbox:
+                    text _("Moxie")
+                    bar value StaticValue(stat_strength, 100)
+
+                hbox:
+                    text _("Chutzpah")
+                    bar value StaticValue(stat_strength, 100)
+
+
+        # A grid of three frames, one for each of the periods in the day.
+        grid 3 1:
+
+            spacing 5
+            xfill True
+
+            for p in day_periods:
+
+                frame:
+                    xfill True
+
+                    vbox:
+                        label p
+
+                        null height 5
+
+                        for i in day_choices:
+                            textbutton i action SetDict(day_plan, p, i)
+
+        # This is a grid containing two empty space and the done button,
+        # so everything lines up.
+        grid 3 1:
+            xfill True
+            spacing 5
+
+            null
+
+            frame:
+                textbutton "Done":
+                    action Return(True)
+                    xfill True
+
+                    text_xalign 0.5
+
+            null
+
 
 
 
