@@ -175,9 +175,7 @@ screen day_planner():
 
 
 
-label screens:
-
-    jump imagemap_done
+label tutorial_screens:
 
     e "Screens are the most powerful part of Ren'Py. Screens let you customize the out-of-game interface, and create new in-game interface components."
 
