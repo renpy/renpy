@@ -80,7 +80,7 @@ init python:
 
         return m.group(0)
 
-    def example_code(blocks):
+    def example_code(blocks, raw=False):
 
         if not isinstance(blocks, list):
             blocks = [ blocks ]
@@ -107,7 +107,8 @@ init python:
 
             last_blank = not i
 
-            i = regex.sub(colorize, i)
+            if not raw:
+                i = regex.sub(colorize, i)
 
             lines.append(i)
 
@@ -117,11 +118,21 @@ init python:
         # Join them into a single string.
         return "\n".join(lines) + "\n "
 
+    class CopyCode(Action):
+        def __init__(self, s):
+            self.s = s
+
+        def __call__(self):
+            import pygame.scrap
+            pygame.scrap.put(pygame.SCRAP_TEXT, self.s.encode("utf-8"))
+            renpy.notify(_("Copied the example to the clipboard."))
+
 
 screen example(blocks, transform_=example_transform):
 
     zorder 10
 
+    default raw_code = example_code(blocks, raw=True)
     default code = example_code(blocks)
 
     window:
@@ -144,6 +155,14 @@ screen example(blocks, transform_=example_transform):
                 size 16
                 color "#000"
 
+        textbutton _("Copy"):
+            ypos 0
+            xalign 1.0
+            xoffset -5
+            yoffset -8
+            text_size 14
+
+            action CopyCode(raw_code)
 
 
 
