@@ -26,6 +26,21 @@ transform example_transform:
     on hide:
         linear .5 crop (0, 0, 1280, 0)
 
+
+transform example_bottom:
+    ypos 720 yanchor 1.0
+    xalign 0.5
+
+    on replace:
+        crop (0, 0, 1280, EXAMPLE_HEIGHT)
+
+    on show:
+        crop (0, 0, 1280, 0)
+        linear .5 crop (0, 0, 1280, EXAMPLE_HEIGHT)
+
+    on hide:
+        linear .5 crop (0, 0, 1280, 0)
+
 init python:
 
     import re
@@ -103,7 +118,9 @@ init python:
         return "\n".join(lines) + "\n "
 
 
-screen example(blocks):
+screen example(blocks, transform_=example_transform):
+
+    zorder 10
 
     default code = example_code(blocks)
 
@@ -115,7 +132,7 @@ screen example(blocks):
         yfill True
         ymaximum EXAMPLE_HEIGHT
 
-        at example_transform
+        at transform_
 
         viewport:
             child_size (2000, 2000)
@@ -126,6 +143,8 @@ screen example(blocks):
             text code:
                 size 16
                 color "#000"
+
+
 
 
 
