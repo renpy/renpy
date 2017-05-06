@@ -7,30 +7,30 @@ define e = Character(_('Eileen'), color="#c8ffc8")
 init python:
 
     tutorials = [
-        ("tutorial_playing", _("User Experience")),
-        ("tutorial_dialogue", _("Writing Dialogue")),
-        ("tutorial_images", _("Adding Images")),
-        ("tutorial_transitions", _("Transitions")),
-        ("tutorial_music", _("Music and Sound Effects")),
-        ("tutorial_menus", _("In-Game Menus and Python")),
-        ("tutorial_positions", _("Screen Positions")),
-        ("tutorial_atl", _("Animation and Transformation")),
-        ("tutorial_video", _("Video Playback")),
-        ("tutorial_screens", _("Screens")),
-        ("tutorial_nvlmode", _("NVL Mode")),
+        ("tutorial_playing", _("User Experience"), True),
+        ("tutorial_dialogue", _("Writing Dialogue"), True),
+        ("tutorial_images", _("Adding Images"), True),
+        ("tutorial_transitions", _("Transitions"), True),
+        ("tutorial_music", _("Music and Sound Effects"), True),
+        ("tutorial_menus", _("In-Game Menus and Python"), True),
+        ("tutorial_positions", _("Screen Positions"), True),
+        ("tutorial_atl", _("Animation and Transformation"), True),
+        ("tutorial_video", _("Video Playback"), True),
+        ("tutorial_screens", _("Screens"), True),
+        ("tutorial_nvlmode", _("NVL Mode"), False),
 
 
-        ("demo_transitions", _("Transition Gallery")),
-        ("demo_imageops", _("Image Operations")),
-        ("demo_ui", _("User Interaction")),
-        ("demo_text", _("Fonts and Text Tags")),
-        ("demo_character", _("Character Objects")),
-        ("demo_layers", _("Layers & Advanced Show")),
-        ("demo_dynamic", _("Dynamic Displayables")),
-        ("demo_minigame", _("Minigames")),
-        ("demo_persistent", _("Persistent Data")),
-        ("demo_transform", _("Transform")),
-        ("tutorial_sprite", _("Sprites")),
+        ("demo_transitions", _("Transition Gallery"), True),
+        ("demo_imageops", _("Image Operations"), True),
+        ("demo_ui", _("User Interaction"), True),
+        ("demo_text", _("Fonts and Text Tags"), True),
+        ("demo_character", _("Character Objects"), True),
+        ("demo_layers", _("Layers & Advanced Show"), True),
+        ("demo_dynamic", _("Dynamic Displayables"), True),
+        ("demo_minigame", _("Minigames"), True),
+        ("demo_persistent", _("Persistent Data"), True),
+        ("demo_transform", _("Transform"), True),
+        ("tutorial_sprite", _("Sprites"), True),
 
         ]
 
@@ -49,9 +49,9 @@ screen tutorials(adj):
             mousewheel True
 
             vbox:
-                for label, name in tutorials:
+                for label, name, should_move in tutorials:
                     textbutton name:
-                        action Return(label)
+                        action Return((label, should_move))
                         left_padding 20
                         xfill True
 
@@ -59,7 +59,7 @@ screen tutorials(adj):
 
         textbutton _("That's enough for now."):
             xfill True
-            action Return(False)
+            action Return((False, True))
             top_margin 10
 
 
@@ -105,13 +105,16 @@ label tutorials:
 
     call screen tutorials(adj=tutorials_adjustment)
 
-    show eileen happy at center
-    with move
+    $ target, should_move = _return
 
-    if _return is False:
+    if should_move:
+        show eileen happy at center
+        with move
+
+    if target is False:
         jump end
 
-    call expression _return from _call_expression
+    call expression target from _call_expression
 
     jump tutorials
 

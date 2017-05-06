@@ -52,7 +52,7 @@ label tutorial_nvlmode:
 #begin nvl3
 menu:
 
-    nvle "NVL-mode also supports showing menus the the player, providing it's the last thing on the screen. Understand?"
+    nvle "NVL-mode also supports showing menus to the player, providing it's the last thing on the screen. Understand?"
 
     "Yes.":
 
