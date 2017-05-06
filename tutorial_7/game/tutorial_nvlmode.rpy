@@ -1,26 +1,37 @@
-﻿# This demonstrates nvl_mode.rpy.
+# Declare an nvl-version of eileen.
 
-init:
+#begin nvl1
+define nvle = Character(_("Eileen"), color="#c8ffc8", kind=nvl)
+#end nvl1
 
-    # Declare an nvl-version of eileen.
-    $ nvle = Character(_("Eileen"), color="#c8ffc8", kind=nvl)
+define config.adv_nvl_transition = dissolve
+define config.nvl_adv_transition = dissolve
 
-    $ config.adv_nvl_transition = dissolve
-    $ config.nvl_adv_transition = dissolve
+#begin nvl3a
+define menu = nvl_menu
 
-label demo_nvlmode:
+#end nvl3a
+
+define menu = renpy.display_menu
+
+label tutorial_nvlmode:
 
     window hide
     nvl clear
     nvl show dissolve
 
-    nvle "NVL-style games are games that cover the full screen with text, rather then placing it in a file at the bottom of the screen."
+    nvle "NVL-style games are games that cover the full screen with text, rather then placing it in a window at the bottom of the screen. Like this."
 
-    nvle "Ren'Py ships with a file, nvl_mode.rpy, that implements NVL-style games. You're seeing an example of NVL-mode at work."
-
-    nvl clear
+    show screen example('nvl1', example_bottom)
 
     nvle "To use NVL-mode, you need to define Characters with a kind=nvl."
+
+    show screen example('nvl2', example_bottom)
+
+#begin nvl2
+    nvle "Then just use that character in a say statement."
+
+    nvl clear
 
     nvle "You use 'nvl clear' to clear the screen when that becomes necessary."
 
@@ -28,39 +39,41 @@ label demo_nvlmode:
     nvl show dissolve
 
     nvle "The 'nvl show' and 'nvl hide' statements use transitions to show and hide the NVL window."
+#end nvl2
 
-    nvle "The nvl_erase function removes a line from the screen."
-
-    $ nvl_erase()
-
-    nvle "Like that."
 
     # Doing this during the game isn't recommended, it's better to do
     # it in an init block. We have to do it here because we need to use
     # both kinds of menus.
     $ menu = nvl_menu
 
-    menu:
+    show screen example([ 'nvl3a', 'nvl3' ], example_bottom)
 
-        nvle "The nvl_mode also supports showing menus to the user, provided they are the last thing on the screen. Understand?"
+#begin nvl3
+menu:
 
-        "Yes.":
+    nvle "NVL-mode also supports showing menus the the player, providing it's the last thing on the screen. Understand?"
 
-            nvl clear
+    "Yes.":
 
-            nvle "Good!"
+        nvl clear
 
-            nvl clear
+        nvle "Good!"
 
-        "No.":
+    "No.":
 
-            nvl clear
+        nvl clear
 
-            nvle "Well, it might help if you take a look at the demo code."
+        nvle "Well, hopefully the code below makes it a little more clear."
+#end nvl3
 
-            nvl clear
+label after_nvl_menu:
 
-    eside "You can specify transitions that occur when going from NVL-mode to ADV-mode."
+    hide screen example
+
+    nvle "Games can mix NVL-mode and the normal ADV-mode by having some characters that have kind=nvl, and some that do not."
+
+    e "You can specify transitions that occur when going from NVL-mode to ADV-mode."
 
     nvle "As well as when going from ADV-mode to NVL-mode."
 

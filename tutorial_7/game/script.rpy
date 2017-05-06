@@ -17,6 +17,8 @@ init python:
         ("tutorial_atl", _("Animation and Transformation")),
         ("tutorial_video", _("Video Playback")),
         ("tutorial_screens", _("Screens")),
+        ("tutorial_nvlmode", _("NVL Mode")),
+
 
         ("demo_transitions", _("Transition Gallery")),
         ("demo_imageops", _("Image Operations")),
@@ -24,7 +26,6 @@ init python:
         ("demo_text", _("Fonts and Text Tags")),
         ("demo_character", _("Character Objects")),
         ("demo_layers", _("Layers & Advanced Show")),
-        ("demo_nvlmode", _("NVL Mode")),
         ("demo_dynamic", _("Dynamic Displayables")),
         ("demo_minigame", _("Minigames")),
         ("demo_persistent", _("Persistent Data")),
