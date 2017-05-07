@@ -14,7 +14,7 @@ init python:
         ("tutorial_music", _("Music and Sound Effects"), True),
         ("tutorial_menus", _("In-Game Menus and Python"), True),
         ("tutorial_positions", _("Screen Positions"), True),
-        ("tutorial_atl", _("Animation and Transformation"), True),
+        ("tutorial_atl", _("Transforms and Animation"), True),
         ("tutorial_video", _("Video Playback"), True),
         ("tutorial_screens", _("Screens"), True),
         ("tutorial_nvlmode", _("NVL Mode"), False),
