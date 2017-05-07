@@ -364,15 +364,32 @@ label tutorial_positions:
     e "Remember that xalign is just setting xpos and xanchor to the same value, and yalign is just setting ypos and yanchor to the same value."
 
     show logo solid:
+        linear .5 xcenter .75
+
+    e "The xcenter and ycenter properties position the center of the image.  Here, with xcenter set to .75, the center of the image is three-quarters of the way to the right side of the screen."
+
+    show logo solid:
+        linear 1.0 xcenter 1.0
+
+    e "The difference between xalign and xcenter is more obvious when xcenter is 1.0, and the image is halfway off the right side of the screen."
+
+    show logo solid:
+        linear .5 xalign 0.5 yalign 0.5
         linear .5 xoffset 50 yoffset 20
 
-    e "Lastly, there are the xoffset and yoffset properties, which are applied after everything else, and offset things to the right or bottom, respectively."
+    pause .5
 
+    e "There are the xoffset and yoffset properties, which are applied after everything else, and offset things to the right or bottom, respectively."
 
     show logo solid:
         linear .5 xoffset -50 yoffset -20
 
     e "Of course, you can use negative numbers to offset things to the left and top."
+
+    show logo solid:
+        linear .5 align (0.5, 0.5) offset (0, 0)
+
+    e "Lastly, I'll mention that there are combined properties like align, pos, anchor, and center. Align takes a pair of numbers, and sets xalign to the first and yalign to the second. The others are similar."
 
     hide logo
     with dissolve
@@ -640,11 +657,7 @@ label tutorial_atl:
 
     return
 
-label transform_properties:
-
-    e "Next, let's take a look at some of the transform properties that we can change using ATL."
-
-    show logo base at reset
+label transform_not_used:
 
     #begin atl_motion
     show logo base:
@@ -655,9 +668,25 @@ label transform_properties:
     #end atl_motion
     with dissolve
 
-    show screen example('atl_motion')
 
-    e "We've already seen the position properties. Along with xalign and yalign, we support the xpos, ypos, xanchor, and yanchor properties."
+
+label transform_properties:
+
+
+    e "Transforms have a lot of properties that can be used to apply different effects to images. Here, we'll show them off so you can see them in action."
+
+
+    show logo base at reset
+
+#begin transform_pos_1
+    show logo base:
+        xalign 0.3
+        yalign 0.3
+#end transform_pos_1
+
+    show screen example('transform_pos_1')
+
+    e "We've already seen the position properties, all of which are supported by the transform system."
 
     hide eileen
     show screen example('atl_pan')
