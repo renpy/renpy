@@ -357,6 +357,17 @@ label tutorial_positions:
 
     e "Remember that xalign is just setting xpos and xanchor to the same value, and yalign is just setting ypos and yanchor to the same value."
 
+    show logo solid:
+        linear .5 xoffset 50 yoffset 20
+
+    e "Lastly, there are the xoffset and yoffset properties, which are applied after everything else, and offset things to the right or bottom, respectively."
+
+
+    show logo solid:
+        linear .5 xoffset -50 yoffset -20
+
+    e "Of course, you can use negative numbers to offset things to the left and top."
+
     hide logo
     with dissolve
     show eileen happy
