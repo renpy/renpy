@@ -183,7 +183,9 @@ label tutorial_screens:
 
     e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen."
 
-    e "Inside the screen statement, every statement either introduces a displayable like frame, vbox, text, and textbutton; or a property like action."
+    e "Inside the screen statement, lines introduces displayable such as frame, vbox, text, and textbutton; or a property like action."
+
+    e "Screen language also includes for, if, and python statements, among others, but you'll have to read the documentation for them."
 
     show screen simple_screen
 
