@@ -1682,11 +1682,14 @@ class UserStatement(Node):
         'line',
         'parsed',
         'block',
-        'translatable' ]
+        'translatable',
+        'code_block',
+        ]
 
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.block = [ ]
+        self.code_block = None
         self.translatable = False
         return self
 
@@ -1695,10 +1698,36 @@ class UserStatement(Node):
         super(UserStatement, self).__init__(loc)
         self.line = line
         self.block = block
+        self.code_block = None
         self.parsed = None
 
         # Do not store the parse quite yet.
         _parse_info = renpy.statements.parse(self, self.line, self.block)
+
+    def get_children(self, f):
+        f(self)
+
+        if not self.code_block:
+            return
+
+        for i in self.code_block:
+            return i.get_children(f)
+
+    def chain(self, next):  # @ReservedAssignment
+        self.next = next
+
+        if self.code_block is not None:
+            chain_block(self.code_block, next)
+
+    def replace_next(self, old, new):
+        Node.replace_next(self, old, new)
+
+        if (self.code_block) and (self.code_blockblock[0] is old):
+            self.code_block.insert(0, new)
+
+    def restructure(self, callback):
+        if self.code_block:
+            callback(self.code_block)
 
     def diff_info(self):
         return (UserStatement, self.line)
@@ -1736,7 +1765,12 @@ class UserStatement(Node):
         return renpy.statements.get_name(parsed)
 
     def get_next(self):
-        rv = self.call("next")
+
+        if self.code_block and len(self.code_block):
+            rv = self.call("next", self.code_block[0].name)
+        else:
+            rv = self.call("next")
+
         if rv is not None:
             return renpy.game.script.lookup(rv)
         else:

@@ -42,34 +42,43 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
         empty string to define a new default statement (the default statement will
         replace the say statement).
 
+    `block`
+        When this is False, the statement does not expect a block. When True, it
+        expects a block, but leaves it up to the lexer to parse that block. If the
+        string "script", the block is interpreted as containing one or more
+        Ren'Py script language statements.
+
     `parse`
         This is a function that takes a Lexer object. This function should parse the
         statement, and return an object. This object is passed as an argument to all the
         other functions. The lexer argument has the following methods:
 
     `lint`
-        This is called to check the statement. It is passed a single object, the
-        argument returned from parse. It should call renpy.error to report errors.
+        This is called to check the statement. It is passed a single argument, the
+        object returned from parse. It should call renpy.error to report errors.
 
     `execute`
         This is a function that is called when the statement executes. It is passed a
-        single object, the argument returned from parse.
+        single argument, the object returned from parse.
 
     `predict`
         This is a function that is called to predict the images used by the statement.
-        It is passed a single object, the argument returned from parse. It should return
+        It is passed a single argument, the object returned from parse. It should return
         a list of displayables used by the statement.
 
     `next`
-        This is called to determine the next statement. It is passed a single object,
-        the argument returned from parse. It should either return a label, or return
-        None if execution should continue to the next statement.
+        This is a function that is called to determine the next statement.
+
+        If `block` is not "script", this is passed a single argument, the object
+        returned from the parse function. If `block` is "script", an additional
+        argument is passed, an object that names the first statement in the block.
+
+        The function should return either a string giving a lable to jump to,
+        the second argument to transfer control into the block, or None to
+        continue to the statement after this one.
 
     `scry`
         Used internally by Ren'Py.
-
-    `block`
-        True if this takes a block, false otherwise.
 
     `init`
         True if this statement should be run at init-time. (If the statement
@@ -95,6 +104,10 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
 
             if not block:
                 l.expect_noblock(" ".join(name) + " statement")
+                l.advance()
+            elif block == "script":
+                l.expect_block(" ".join(name) + " statement")
+                rv.code_block = renpy.parser.parse_block(l.subblock_lexer())
                 l.advance()
             else:
                 l.expect_block(" ".join(name) + " statement")
