@@ -193,6 +193,17 @@ init python:
 
         return m.group(0)
 
+    def clean_example(lines):
+        rv = list(lines)
+
+        while rv and not rv[0]:
+            rv.pop(0)
+
+        while rv and not rv[-1]:
+            rv.pop(-1)
+
+        return rv
+
     def example_code(blocks, raw=False):
 
         if not isinstance(blocks, list):
@@ -204,8 +215,10 @@ init python:
 
         for i in blocks:
             if i not in examples:
-                raise Exception("Unknown example %r." % i)
-            lines1.extend(examples[i])
+                lines1.append('Example {} not found.'.format(i))
+            else:
+                lines1.extend(clean_example(examples[i]))
+
             lines1.append('')
 
 
