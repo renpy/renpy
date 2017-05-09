@@ -80,7 +80,7 @@ label start:
     show eileen vhappy
     with dissolve
 
-    example:
+    example test:
 
         "Hello, world."
 
@@ -91,7 +91,11 @@ label start:
         else:
             "But this is not."
 
-        show screen blue
+    hide screen example
+
+    "The example is hidden."
+
+    show screen example("test")
 
 
     # Start the background music playing.
