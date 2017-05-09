@@ -1711,7 +1711,7 @@ class UserStatement(Node):
             return
 
         for i in self.code_block:
-            return i.get_children(f)
+            i.get_children(f)
 
     def chain(self, next):  # @ReservedAssignment
         self.next = next
@@ -1732,6 +1732,15 @@ class UserStatement(Node):
     def diff_info(self):
         return (UserStatement, self.line)
 
+    def call(self, method, *args, **kwargs):
+
+        parsed = self.parsed
+        if parsed is None:
+            parsed = renpy.statements.parse(self, self.line, self.block)
+            self.parsed = parsed
+
+        return renpy.statements.call(method, parsed, *args, **kwargs)
+
     def execute(self):
         next_node(self.get_next())
         statement_name(self.get_name())
@@ -1746,15 +1755,6 @@ class UserStatement(Node):
                 renpy.easy.predict(i)
 
         return [ self.get_next() ]
-
-    def call(self, method, *args, **kwargs):
-
-        parsed = self.parsed
-        if parsed is None:
-            parsed = renpy.statements.parse(self, self.line, self.block)
-            self.parsed = parsed
-
-        return renpy.statements.call(method, parsed, *args, **kwargs)
 
     def get_name(self):
         parsed = self.parsed
