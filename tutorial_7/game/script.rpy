@@ -80,6 +80,20 @@ label start:
     show eileen vhappy
     with dissolve
 
+    example:
+
+        "Hello, world."
+
+        "This is a test."
+
+        if True:
+            "So is this."
+        else:
+            "But this is not."
+
+        show screen blue
+
+
     # Start the background music playing.
     play music "sunflower-slow-drag.ogg"
 
