@@ -10,15 +10,12 @@ label tutorial_dialogue:
 
     e "Probably the best way to learn Ren'Py is to see it in action. In this tutorial, I'll be showing you some of the things Ren'Py can do, and also showing you how to do them."
 
-    show screen example("example1")
+    example:
+        e "Code examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
 
-#begin example1
-    e "Code examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
+        e "When an example is bigger than the screen, you can scroll around in it using the mouse wheel or by simply dragging the mouse."
 
-    e "When an example is bigger than the screen, you can scroll around in it using the mouse wheel or by simply dragging the mouse."
-#end example1
-
-    hide screen example
+    hide example
 
     e "To create a new project, you can click New Project in the Ren'Py launcher."
 
@@ -28,24 +25,24 @@ label tutorial_dialogue:
 
     e "Once that's done, Ren'Py will automatically create a directory and fill it with the files needed to make a project."
 
-    e "If you have Java installed, you'll be able to click Edit Script to open your project's script."
+    e "You can click 'script.rpy' to edit the file containing the main script file of the game."
 
     e "Let's see the simplest possible Ren'Py game."
 
     scene black
     with dissolve
 
-#begin dialogue1
-    "Wow, It's really really dark in here."
+    example dialogue1 hide:
 
-    "Lucy" "Better watch out. You don't want to be eaten by a Grue."
-#end dialogue1
+        "Wow, It's really really dark in here."
+
+        "Lucy" "Better watch out. You don't want to be eaten by a Grue."
 
     scene bg washington
     show eileen happy
     with dissolve
 
-    show screen example(['start', 'dialogue1'])
+    show example start dialogue1
 
     e "I'll show you the code for that example."
 
@@ -59,6 +56,8 @@ label tutorial_dialogue:
 
     e "Special characters in strings can be escaped with a backslash. To include \" in a string, we have to write \\\"."
 
+
+    hide example
     scene black
     with dissolve
 
@@ -68,10 +67,12 @@ label tutorial_dialogue:
     show eileen happy
     with dissolve
 
-    show screen example(['start', 'dialogue1'])
+
+    show example start dialogue1
 
     e "When Ren'Py sees a single string on a line by itself, it uses the narrator to say that string. So a single string can be used to express a character's thoughts."
 
+    hide example
     scene black
     with dissolve
 
@@ -81,7 +82,7 @@ label tutorial_dialogue:
     show eileen happy
     with dissolve
 
-    show screen example(['start', 'dialogue1'])
+    show example start dialogue1
 
     e "When we have two strings separated by a space, the first is used as the character's name, and the second is what the character is saying."
 
@@ -91,7 +92,7 @@ label tutorial_dialogue:
 
     e "Be sure to preserve the spacing before lines. That's known as indentation, and it's used to help Ren'Py group lines of script into blocks."
 
-    hide screen example
+    hide example
 
     e "Using a string for a character's name is inconvenient, for two reasons."
 
@@ -101,7 +102,7 @@ label tutorial_dialogue:
 
     e "To solve these problems, Ren'Py lets you define Characters."
 
-    show screen example('characters')
+    show example characters
 
     e "Here's an example Character definition. It begins with the word \"define\". That tells Ren'Py that we are defining something."
 
@@ -113,24 +114,24 @@ label tutorial_dialogue:
 
     e "These short names are case-sensitive. Capital L is a different name from lower-case l, so you'll need to be careful about that."
 
-    hide screen example
+    hide example
 
     e "Now that we have a character defined, we can use it to say dialogue."
 
     scene black
     with dissolve
 
-    #begin dialogue2
-    l "Why are you trying to put words into my mouth? And who are you calling \"it\"?"
+    example dialogue2 hide:
 
-    l "What's more, what are you going to do about the Grue problem? Are you just going to leave me here?"
-    #end dialogue2
+        l "Why are you trying to put words into my mouth? And who are you calling \"it\"?"
+
+        l "What's more, what are you going to do about the Grue problem? Are you just going to leave me here?"
 
     scene bg washington
     show eileen happy
     with dissolve
 
-    show screen example(['characters', 'start', 'dialogue1', 'dialogue2'])
+    show example characters start dialogue1 dialogue2
 
     e "Here's the full game, including the two new lines of dialogue, both of which use the Character we defined to say dialogue."
 
@@ -140,7 +141,7 @@ label tutorial_dialogue:
 
     e "The Character object controls who is speaking, the color of their name, and many other properties of the dialogue."
 
-    hide screen example
+    hide example
 
     e "Since the bulk of a visual novel is dialogue, we've tried to make it as easy to write as possible."
 
