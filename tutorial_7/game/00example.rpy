@@ -271,7 +271,7 @@ transform example_transform(height, ypos):
         linear .5 crop (0, 0, 1280, 0)
 
 
-screen example(blocks, small, bottom):
+screen example(blocks, small=False, bottom=False):
 
     zorder 10
 
