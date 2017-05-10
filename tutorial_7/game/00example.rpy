@@ -1,22 +1,21 @@
-
-
-# This defines the example statement.
-#
-# The example statement takes:
-# * An optional name for the example.
-# * An optional hide flag.
-# * An optional size/position flag, which can be either bottom or small.
-#
-# The statement defines an example with the name, or an anyonymous name if no
-# name is given. When run, the example is displayed if the hide flag is not
-# given. Bottom and small determine if the example is displayed at the bottom
-# of the screen or at half height.
-
 python early:
 
 
     # This maps from example name to the text of a fragment.
     examples = { }
+
+
+    # This defines the example statement.
+    #
+    # The example statement takes:
+    # * An optional name for the example.
+    # * An optional hide flag.
+    # * An optional size/position flag, which can be either bottom or small.
+    #
+    # The statement defines an example with the name, or an anyonymous name if no
+    # name is given. When run, the example is displayed if the hide flag is not
+    # given. Bottom and small determine if the example is displayed at the bottom
+    # of the screen or at half height.
 
 
     def read_example(name, fn, line):
@@ -72,7 +71,7 @@ python early:
         bottom = False
         small = False
 
-        while l:
+        while True:
 
             if l.match(':'):
                 break
@@ -99,13 +98,13 @@ python early:
             name = "example_{}_{}".format(l.filename, l.number)
 
         read_example(name, l.filename, l.number)
-        return { "name" : name, "hide" : hide, "bottom" : bottom, "small" : small }
+        return { "names" : [ name ], "hide" : hide, "bottom" : bottom, "small" : small }
 
     def next_example(data, first):
         return first
 
     def execute_example(data):
-        name = data.get("name", None)
+        names = data.get("names", [ ])
         hide = data.get("hide", False)
         bottom = data.get("bottom", False)
         small = data.get("small", False)
@@ -113,49 +112,51 @@ python early:
         if hide:
             return
 
-        if bottom:
-            tf = example_bottom
-        else:
-            tf = example_transform
-
-        renpy.show_screen("example", name, tf)
+        renpy.show_screen("example", names, small, bottom)
 
     renpy.register_statement("example", parse=parse_example, execute=execute_example, next=next_example, block="script")
 
 
-# These determine the height of the examples.
-define EXAMPLE_HEIGHT = 160
 
-# These transforms control the placement of the example on the screen, and
-#
-transform example_transform:
-    ypos 540 yanchor 1.0
-    xalign 0.5
+    # The show example statement.
 
-    on replace:
-        crop (0, 0, 1280, EXAMPLE_HEIGHT)
+    def parse_show_example(l):
 
-    on show:
-        crop (0, 0, 1280, 0)
-        linear .5 crop (0, 0, 1280, EXAMPLE_HEIGHT)
+        names = [ ]
+        bottom = False
+        small = False
 
-    on hide:
-        linear .5 crop (0, 0, 1280, 0)
+        while not l.eol():
+
+            if l.keyword('bottom'):
+                bottom = True
+
+            elif l.keyword('small'):
+                small = True
+
+            else:
+
+                names.append(l.require(l.name))
+
+        return { "names" : names, "hide" : False, "bottom" : bottom, "small" : small }
+
+    renpy.register_statement("show example", parse=parse_show_example, execute=execute_example)
 
 
-transform example_bottom:
-    ypos 720 yanchor 1.0
-    xalign 0.5
+    # The hide example statement.
 
-    on replace:
-        crop (0, 0, 1280, EXAMPLE_HEIGHT)
+    def parse_hide_example(l):
 
-    on show:
-        crop (0, 0, 1280, 0)
-        linear .5 crop (0, 0, 1280, EXAMPLE_HEIGHT)
+        l.expect_eol()
 
-    on hide:
-        linear .5 crop (0, 0, 1280, 0)
+        return { }
+
+    def execute_hide_example(data):
+        renpy.hide_screen("example")
+
+    renpy.register_statement("hide example", parse=parse_hide_example, execute=execute_hide_example)
+
+
 
 init python:
 
@@ -254,12 +255,39 @@ init python:
             renpy.notify(_("Copied the example to the clipboard."))
 
 
-screen example(blocks, transform_=example_transform):
+transform example_transform(height, ypos):
+    ypos ypos
+    yanchor 1.0
+    xalign 0.5
+
+    on replace:
+        crop (0, 0, 1280, height)
+
+    on show:
+        crop (0, 0, 1280, 0)
+        linear .5 crop (0, 0, 1280, height)
+
+    on hide:
+        linear .5 crop (0, 0, 1280, 0)
+
+
+screen example(blocks, small, bottom):
 
     zorder 10
 
     default raw_code = example_code(blocks, raw=True)
     default code = example_code(blocks)
+
+    if small:
+        $ height = 80
+    else:
+        $ height = 160
+
+    if bottom:
+        $ ypos = 720
+    else:
+        $ ypos = 540
+
 
     window:
         style "empty"
@@ -267,13 +295,13 @@ screen example(blocks, transform_=example_transform):
         left_padding 180
         xfill True
         yfill True
-        ymaximum EXAMPLE_HEIGHT
+        ymaximum height
 
-        at transform_
+        at example_transform(height, ypos)
 
         viewport:
             child_size (2000, 2000)
-            ymaximum EXAMPLE_HEIGHT
+            ymaximum height
             draggable True
             mousewheel True
 

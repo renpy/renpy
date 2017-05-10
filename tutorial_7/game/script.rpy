@@ -74,29 +74,11 @@ default tutorials_first_time = True
 # The game starts here.
 #begin start
 label start:
+#end start
 
-    #end start
     scene bg washington
     show eileen vhappy
     with dissolve
-
-    example test:
-
-        "Hello, world."
-
-        "This is a test."
-
-        if True:
-            "So is this."
-        else:
-            "But this is not."
-
-    hide screen example
-
-    "The example is hidden."
-
-    show screen example("test")
-
 
     # Start the background music playing.
     play music "sunflower-slow-drag.ogg"
