@@ -73,7 +73,7 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
         returned from the parse function. If `block` is "script", an additional
         argument is passed, an object that names the first statement in the block.
 
-        The function should return either a string giving a lable to jump to,
+        The function should return either a string giving a label to jump to,
         the second argument to transfer control into the block, or None to
         continue to the statement after this one.
 
