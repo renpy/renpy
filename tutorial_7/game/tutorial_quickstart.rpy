@@ -6,6 +6,10 @@ define l = Character(_("Lucy"), color="#ffcccc")
 define slowdissolve = Dissolve(1.0)
 #end slowdissolve
 
+transform rightish:
+    xcenter .6
+    ypos 50
+
 label tutorial_dialogue:
 
     e "Probably the best way to learn Ren'Py is to see it in action. In this tutorial, I'll be showing you some of the things Ren'Py can do, and also showing you how to do them."
@@ -171,22 +175,21 @@ label tutorial_images:
 
     e "Let's see what those look like in the game."
 
-    #begin images1
-    scene bg cave
-    show lucy happy
+    example images1 hide:
+        scene bg cave
+        show lucy happy
 
-    l "Now that the lights are on, we don't have to worry about Grues anymore."
+        l "Now that the lights are on, we don't have to worry about Grues anymore."
 
-    show lucy mad at right
+        show lucy mad at right
 
-    l "But what's the deal with me being in a cave? Eileen gets to be out in the sun, and I'm stuck here!"
-    #end images1
+        l "But what's the deal with me being in a cave? Eileen gets to be out in the sun, and I'm stuck here!"
 
     scene bg washington
     show eileen happy
     with dissolve
 
-    show screen example(['start', 'images1'])
+    show example start images1
 
     e "Here's the script for that scene. Notice how it includes two new statements, the scene and show statement."
 
@@ -200,21 +203,15 @@ label tutorial_images:
 
     e "The second show statement has an at clause, which gives a location on the screen. Common locations are left, right, and center, but you can define many more."
 
-    #begin showbehind
-    show logo base at logopos behind eileen
-    #end showbehind
+    example:
+        show logo base at rightish behind eileen
 
-    show screen example('showbehind')
-
-    e "In this example, we show an image named logo base, and we show it at a user-defined position, logopos."
+    e "In this example, we show an image named logo base, and we show it at a creator-defined position, rightish."
 
     e "We also specify that it should be shown behind another image, in this case eileen. That's me."
 
-    #begin hide1
-    hide logo
-    #end hide1
-
-    show screen example('hide1')
+    example:
+        hide logo
 
     e "Finally, there's the hide statement, which hides the image with the given tag."
 
@@ -222,7 +219,7 @@ label tutorial_images:
 
     e "The main use is for when a character or prop leaves before the scene is over."
 
-    hide screen example
+    hide example
 
     return
 
@@ -238,18 +235,17 @@ label tutorial_transitions:
 
     e "To help take some of edge off a change in scene, Ren'Py supports the use of transitions. Let's try that scene change again, but this time we'll use transitions."
 
-    #begin trans1
-    scene bg whitehouse
-    with Dissolve(.5)
+    example trans1 hide:
+        scene bg whitehouse
+        with Dissolve(.5)
 
-    pause .5
+        pause .5
 
-    scene bg washington
-    show eileen happy
-    with Dissolve(.5)
-    #end trans1
+        scene bg washington
+        show eileen happy
+        with Dissolve(.5)
 
-    show screen example('trans1')
+    show example trans1
 
     e "That's much smoother. Here's some example code showing how we include transitions in our game."
 
@@ -259,25 +255,26 @@ label tutorial_transitions:
 
     e "In this case, each transition takes half a second."
 
-    show screen example('slowdissolve')
+    show example slowdissolve
 
     e "We can define a short name for a transition, using the define statement. Here, we're defining slowdissolve to be a dissolve that takes a whole second."
 
-    #begin trans2
-    scene bg whitehouse
-    with slowdissolve
+    hide example
 
-    scene bg washington
-    show eileen happy
-    with slowdissolve
-    #end trans2
+    example trans2 hide:
 
-    show screen example('trans2')
-    with dissolve
+        scene bg whitehouse
+        with slowdissolve
+
+        scene bg washington
+        show eileen happy
+        with slowdissolve
+
+    show example trans2
 
     e "Once a transition has been given a short name, we can use it in our game."
 
-    hide screen example
+    hide example
 
     e "Ren'Py defines some transitions for you, like dissolve, fade, and move. For more complex or customized transitions, you'll have to define your own."
 
@@ -295,17 +292,12 @@ label tutorial_music:
 
     e "When the channel named sound is used, the sound is played once and then stopped. It isn't saved."
 
-    e "The sounds themselves are stored in audio files. Ren'Py supports the Ogg Vorbis, mp3, mp2, and wav file formats."
+    e "The sounds themselves are stored in audio files. Ren'Py supports the Opus, Ogg Vorbis, and mp3 formats."
 
     e "Let's check out some of the commands that can effect the music channel."
 
-    #begin sound1
-    play music "sunflower-slow-drag.ogg" fadeout 1
-    queue music "sunflower-slow-drag.ogg"
-    #end sound1
-
-    show screen example('sound1')
-    with dissolve
+    example:
+        play music "sunflower-slow-drag.ogg" fadeout 1
 
     e "The play music command replaces the currently playing music, and replaces it with the named filename."
 
@@ -313,41 +305,31 @@ label tutorial_music:
 
     e "If the optional fadeout clause is given, it will fade out the currently playing music before starting the new music."
 
+    example:
+        queue music "sunflower-slow-drag.ogg"
+
     e "The queue statement also adds music to the named channel, but it waits until the currently-playing song is finished before playing the new music."
 
-    #begin sound2
-    stop music fadeout 1
-    #end sound2
-
-    show screen example('sound2')
-    with dissolve
+    example:
+        stop music fadeout 1
 
     e "The third statement is the stop statement. It stops the music playing on a channel. It too takes the fadeout clause."
 
-    show screen example('sound3')
-    with dissolve
-
-    #begin sound3
-    play sound "tower_clock.ogg"
-    #end sound3
+    example:
+        play sound "tower_clock.ogg"
 
     e "Unlike the music channel, playing a sound on the sound channel causes it to play only once."
 
-    show screen example('sound4')
-    with dissolve
-
-    #begin sound4
-    queue sound "tower_clock.ogg"
-    queue sound "tower_clock.ogg"
-    queue sound "tower_clock.ogg"
-    #end sound4
+    example:
+        queue sound "tower_clock.ogg"
+        queue sound "tower_clock.ogg"
+        queue sound "tower_clock.ogg"
 
     e "You can queue up multiple sounds on the sound channel, but the sounds will only play one at a time."
 
     play music "sunflower-slow-drag.ogg"
 
-    hide screen example
-    with dissolve
+    hide example
 
     e "Ren'Py has separate mixers for sound, music, and voices, so the player can adjust them as they like."
 
@@ -359,37 +341,36 @@ label tutorial_menus:
 
     e "Do you think your game will use menus?"
 
-#begin menu1
-    menu:
-        "Yes, I do.":
-            jump choice1_yes
+    example menu1 hide:
+        menu:
+            "Yes, I do.":
+                jump choice1_yes
 
-        "No, I don't.":
-            jump choice1_no
+            "No, I don't.":
+                jump choice1_no
 
-label choice1_yes:
+        label choice1_yes:
 
-    $ menu_flag = True
+            $ menu_flag = True
 
-    e "While creating a multi-path visual novel can be a bit more work, it can yield a unique experience."
+            e "While creating a multi-path visual novel can be a bit more work, it can yield a unique experience."
 
-    jump choice1_done
+            jump choice1_done
 
-label choice1_no:
+        label choice1_no:
 
-    $ menu_flag = False
+            $ menu_flag = False
 
-    e "Games without menus are called kinetic novels, and there are dozens of them available to play."
+            e "Games without menus are called kinetic novels, and there are dozens of them available to play."
 
-    jump choice1_done
+            jump choice1_done
 
-label choice1_done:
+        label choice1_done:
 
-    # ... the game continues here.
-#end menu1
+            # ... the game continues here.
 
-    show screen example('menu1')
-    with dissolve
+
+    show example menu1
 
     e "Here, you can see the code for that menu. If you scroll down, you can see the code we run after the menu."
 
@@ -409,41 +390,35 @@ label choice1_done:
 
     e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag, so the game can remember the user's choices."
 
-    hide screen example
-    pause .25
+    example:
+        if menu_flag:
 
-#begin menu2
-    if menu_flag:
+            e "For example, I remember that you plan to use menus in your game."
 
-        e "For example, I remember that you plan to use menus in your game."
+        else:
 
-    else:
+            e "For example, I remember that you're planning to make a kinetic novel, without menus."
 
-        e "For example, I remember that you're planning to make a kinetic novel, without menus."
-#end menu2
-
-    show screen example('menu2')
+    show example menu2
 
     e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
 
-    show screen example('menu3')
 
-#begin menu3
-menu:
-    e "Finally, this shows how you can show dialogue and menus at the same time. Understand?"
+example:
+    menu:
+        e "Finally, this shows how you can show dialogue and menus at the same time. Understand?"
 
-    "Yes.":
+        "Yes.":
 
-        e "Great."
+            e "Great."
 
-    "No.":
+        "No.":
 
-        e "If you look at the example, before the first choice, there's an indented say statement."
-#end menu3
+            e "If you look at the example, before the first choice, there's an indented say statement."
 
 label menu3_done:
 
-    hide screen example
+    hide example
 
     e "Although we won't demonstrate it here, Ren'Py supports making decisions based on a combinations of points, flags, and other factors."
 
