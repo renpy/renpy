@@ -4,14 +4,13 @@
 # A simple screen that displays some text and a button.
 ################################################################################
 
-#begin simple_screen
-screen simple_screen():
-    frame:
-        vbox:
-            text "This is a screen."
-            textbutton "Okay":
-                action Return(True)
-#end simple_screen
+example simple_screen hide:
+    screen simple_screen():
+        frame:
+            vbox:
+                text "This is a screen."
+                textbutton "Okay":
+                    action Return(True)
 
 
 ################################################################################
@@ -179,7 +178,7 @@ label tutorial_screens:
 
     e "Screens are the most powerful part of Ren'Py. Screens let you customize the out-of-game interface, and create new in-game interface components."
 
-    show screen example('simple_screen')
+    show example simple_screen
 
     e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen."
 
@@ -205,31 +204,28 @@ label tutorial_screens:
 
     e "There are a trio of statements that are used to display screens."
 
-    show screen example('show_screen')
+    example:
+        show screen simple_screen
 
-#begin show_screen
-    show screen simple_screen
+        e "The first is the show screen statement, which displays a screen and lets Ren'Py keep going."
 
-    e "The first is the show screen statement, which displays a screen and lets Ren'Py keep going."
+        e "The screen will stay shown until it is hidden."
 
-    e "The screen will stay shown until it is hidden."
+        hide screen simple_screen
 
-    hide screen simple_screen
+        e "Hiding a screen is done with the hide screen statement."
 
-    e "Hiding a screen is done with the hide screen statement."
-#end show_screen
-
-    show screen example('call_screen')
+    show example call_screen
 
     e "The call screen statement stops Ren'Py from executing script until the screen either returns a value, or jumps the script somewhere else."
 
     e "Since we can't display dialogue at the same time, you'll have to click 'Return' to continue."
 
-    hide screen example
+    hide example
+    window hide
 
-#begin call_screen
-    call screen simple_screen
-#end call_screen
+    example call_screen hide:
+        call screen simple_screen
 
     e "When a call screen statement ends, the screen is automatically hidden."
 
@@ -237,7 +233,7 @@ label tutorial_screens:
 
 label imagemap_tutorial:
 
-    show screen example('imagemap')
+    show example imagemap
 
     e "Another type of screen is an imagemap. An imagemap uses images that display hotspots that act as buttons."
 
@@ -245,62 +241,63 @@ label imagemap_tutorial:
 
     e "When a player clicks on a hotspot, this imagemap runs a Jump action to take them to a label. Each hotspots also has alt text, for vision-impared players."
 
-    hide screen example
+    hide example
 
     e "Let's take a look at an imagemap screen in action."
 
     jump imagemap_example
 
-#begin imagemap
-screen imagemap_example:
+example imagemap hide:
+    screen imagemap_example:
 
-    imagemap:
-        ground "imagemap ground"
-        hover "imagemap hover"
+        imagemap:
+            ground "imagemap ground"
+            hover "imagemap hover"
 
-        hotspot (44, 238, 93, 93) action Jump("swimming") alt "Swimming"
-        hotspot (360, 62, 93, 93) action Jump("science") alt "Science"
-        hotspot (726, 106, 93, 93) action Jump("art") alt "Art"
-        hotspot (934, 461, 93, 93) action Jump("go home") alt "Go Home"
+            hotspot (44, 238, 93, 93) action Jump("swimming") alt "Swimming"
+            hotspot (360, 62, 93, 93) action Jump("science") alt "Science"
+            hotspot (726, 106, 93, 93) action Jump("art") alt "Art"
+            hotspot (934, 461, 93, 93) action Jump("go home") alt "Go Home"
 
-label imagemap_example:
+    label imagemap_example:
 
-    # Call the imagemap_example screen.
-    call screen imagemap_example
+        # Call the imagemap_example screen.
+        call screen imagemap_example
 
-label swimming:
+    label swimming:
 
-    e "You chose swimming."
+        e "You chose swimming."
 
-    e "Swimming seems like a lot of fun, but I didn't bring my bathing suit with me."
+        e "Swimming seems like a lot of fun, but I didn't bring my bathing suit with me."
 
-    jump imagemap_done
+        jump imagemap_done
 
-label science:
+    label science:
 
-    e "You chose science."
+        e "You chose science."
 
-    e "I've heard that some schools have a competitive science team, but to me research is something that can't be rushed."
+        e "I've heard that some schools have a competitive science team, but to me research is something that can't be rushed."
 
-    jump imagemap_done
+        jump imagemap_done
 
-label art:
-    e "You chose art."
+    label art:
+        e "You chose art."
 
-    e "Really good background art is hard to make, which is why so many games use filtered photographs. Maybe you can change that."
+        e "Really good background art is hard to make, which is why so many games use filtered photographs. Maybe you can change that."
 
-    jump imagemap_done
+        jump imagemap_done
 
-label home:
+    label home:
 
-    e "You chose to go home."
+        e "You chose to go home."
 
-    jump imagemap_done
+        jump imagemap_done
 
-label imagemap_done:
+    label imagemap_done:
 
-    e "Anyway..."
-#end imagemap
+        e "Anyway..."
+
+label after_imagemap_example:
 
     show screen stats
     with dissolve
