@@ -1,42 +1,56 @@
 ﻿# This file demonstrates the built-in transitions which are defined in
 # common/definitions.rpy, and also the new transitions given above.
 
-init:
-    # Define some new transitions here.
-    $ slow_dissolve = Dissolve(1.0)
-    $ flashbulb = Fade(0.2, 0.0, 0.8, color='#fff')
+example slow_dissolve:
+    define slow_dissolve = Dissolve(1.0)
 
-    # Imagedissolve Transitions.
-    $ circleirisout = ImageDissolve("id_circleiris.png", 1.0, 8)
-    $ circleirisin = ImageDissolve("id_circleiris.png", 1.0, 8, reverse=True)
-    $ circlewipe = ImageDissolve("id_circlewipe.png", 1.0, 8)
-    $ dream = ImageDissolve("id_dream.png", 2.0, 64)
-    $ teleport = ImageDissolve("id_teleport.png", 1.0, 0)
+example flashbulb:
+    define flashbulb = Fade(0.2, 0.0, 0.8, color='#fff')
 
-    image bg circleiris = "id_circleiris.png"
-    image bg teleport = "id_teleport.png"
 
-    image alpha_control:
-        "spotlight.png"
 
-        xanchor .5
-        yanchor .5
 
-        parallel:
-            zoom 0
-            linear .5 zoom .75
-            pause 2
-            linear 1.0 zoom 4.0
+# Imagedissolve Transitions.
 
-        parallel:
-            xpos 0.0 ypos .6
-            linear 1.5 xpos 1.0
-            linear 1.0 xpos .5 ypos .2
+example circleirisout:
+    define circleirisout = ImageDissolve("id_circleiris.png", 1.0, 8)
 
-        pause .5
-        repeat
+example circleirisin:
+    define circleirisin = ImageDissolve("id_circleiris.png", 1.0, 8, reverse=True)
 
-    define alpha_example = AlphaDissolve("alpha_control", delay=3.5)
+example circlewipe:
+    define circlewipe = ImageDissolve("id_circlewipe.png", 1.0, 8)
+
+example dream:
+    define dream = ImageDissolve("id_dream.png", 2.0, 64)
+
+example teleport:
+    define teleport = ImageDissolve("id_teleport.png", 1.0, 0)
+
+image bg circleiris = "id_circleiris.png"
+image bg teleport = "id_teleport.png"
+
+image alpha_control:
+    "spotlight.png"
+
+    xanchor .5
+    yanchor .5
+
+    parallel:
+        zoom 0
+        linear .5 zoom .75
+        pause 2
+        linear 1.0 zoom 4.0
+
+    parallel:
+        xpos 0.0 ypos .6
+        linear 1.5 xpos 1.0
+        linear 1.0 xpos .5 ypos .2
+
+    pause .5
+    repeat
+
+define alpha_example = AlphaDissolve("alpha_control", delay=3.5)
 
 
 label demo_transitions:
@@ -84,29 +98,35 @@ label demo_simple_transitions:
 
     e "But don't let that get you down, since they're the transitions you'll probably use the most in a game."
 
-    show bg whitehouse
-    with dissolve
+    example small:
+        show bg whitehouse
+        with dissolve
 
     e "The 'dissolve' transition is probably the most useful, blending one scene into another."
 
-    show bg washington
-    with slow_dissolve
+    example slow_dissolve small:
+        show bg washington
+        with slow_dissolve
 
     e "The 'Dissolve' function lets you create your own dissolves, taking a different amount of time."
 
-    show bg whitehouse
-    with fade
+
+    example small:
+        show bg whitehouse
+        with fade
 
     e "The 'fade' transition fades to black, and then fades back in to the new scene."
 
     e "If you're going to stay at a black screen, you'll probably want to use 'dissolve' rather than 'fade'."
 
-    with flashbulb
+    example flashbulb small:
+        with flashbulb
 
     e "You can use 'Fade' to define your own fades. By changing the timing and the color faded to, you can use this for special effects, like flashbulbs."
 
-    show bg washington
-    with pixellate
+    example small:
+        show bg washington
+        with pixellate
 
     e "The 'pixellate' transition pixellates out the old scene, switches to the new scene, and then unpixellates that."
 
@@ -121,44 +141,33 @@ label demo_simple_transitions:
 
     "......"
 
-    play audio "punch.opus"
-    with vpunch
+    example small:
+        play audio "punch.opus"
+        with vpunch
 
     e "Hey! Pay attention."
 
     e "I was about to demonstrate 'vpunch'... well, I guess I just did."
 
-    play audio "punch.opus"
-    with hpunch
+    example small:
+        play audio "punch.opus"
+        with hpunch
 
     e "We can also shake the screen horizontally, with 'hpunch'. These were defined using the 'Move' function."
 
     e "There's also the 'move' transition, which is confusingly enough defined using the 'MoveTransition' function."
 
-    show eileen happy at right
-    with move
-    show eileen happy at center
-    with move
+    example small:
+        show eileen happy at right
+        with move
+        show eileen happy at center
+        with move
 
     e "The 'move' transition finds images that have changed placement, and slides them to their new place. It's an easy way to get motion in your game."
 
-    e "Finally, there's 'Pause', which lets you define a transition that just waits for a given amount of time."
+    hide example
 
-    e "Why would you want to do that?"
-
-    e "It's because clicking during a sequence of transitions will skip all of the remaining transitions."
-
-    e "Try clicking during the following transitions:"
-
-    show bg whitehouse
-    with dissolve
-    with Pause(1)
-    show bg washington
-    with dissolve
-
-    e "Having 'Pause' makes it easy to implement skippable cut-scenes in terms of transitions."
-
-    e "Anyway, that's it for the simple transitions."
+    e "That's it for the simple transitions."
 
     return
 
@@ -172,57 +181,66 @@ label demo_imagedissolve_transitions:
     e "There are two ImageDissolve transitions built into Ren'Py."
 
 
-    scene black
-    with blinds
+    example small:
+        scene black
+        with blinds
 
-    scene bg washington
-    show eileen happy
-    with blinds
+        scene bg washington
+        show eileen happy
+        with blinds
 
 
     e "The 'blinds' transition opens and closes what looks like vertical blinds."
 
-    scene black
-    with squares
+    example small:
+        scene black
+        with squares
 
-    scene bg washington
-    show eileen happy
-    with squares
+        scene bg washington
+        show eileen happy
+        with squares
 
     e "The 'squares' transition uses these squares to show things."
 
     e "I'm not sure why anyone would want to use it, but it was used in some translated games, so we added it."
 
+    hide example
+
     e "The most interesting transitions aren't in the standard library."
 
     e "These ones require an image the size of the screen, and so we couldn't include them as the size of the screen can change from game to game."
 
-    e "You can click the button above to see how they are defined in the demo script."
-
-    scene black
-    with circleirisin
+    example circleirisin small:
+        scene black
+        with circleirisin
 
     e "We can hide things with a 'circleirisin'..."
 
-    scene bg washington
-    with circleirisout
+    example circleirisout small:
+        scene bg washington
+        with circleirisout
 
     e "... and show them again with a 'circleirisout'."
 
-    show bg whitehouse
-    with circlewipe
+    example circlewipe small:
+        show bg whitehouse
+        with circlewipe
 
     e "The 'circlewipe' transitions changes screens using a circular wipe effect."
 
-    scene bg washington
-    with dream
+    example dream small:
+        scene bg washington
+        with dream
 
     e "The 'dream' transition does this weird wavy dissolve, and does it relatively slowly."
 
-    show eileen happy
-    with teleport
+    example teleport small:
+        show eileen happy
+        with teleport
 
     e "The 'teleport' transition reveals the new scene one line at a time."
+
+    show example circleirisout small
 
     scene bg circleiris
     with dissolve
@@ -234,12 +252,16 @@ label demo_imagedissolve_transitions:
     show bg washington
     with circleirisout
 
+    show example circleirisout small
+
     e "If we give ImageDissolve the 'reverse' parameter, black areas will dissolve in first."
 
     show bg circleiris
     with circleirisin
 
     e "This lets circleirisin and circleirisout use the same image."
+
+    show example teleport small
 
     show bg teleport
     with dissolve
@@ -255,6 +277,8 @@ label demo_imagedissolve_transitions:
     with teleport
 
     e "... which is how we apply the teleport effect to a single character."
+
+    hide example
 
     return
 
