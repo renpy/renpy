@@ -1,6 +1,5 @@
 python early:
 
-
     # This maps from example name to the text of a fragment.
     examples = { }
 
@@ -17,15 +16,11 @@ python early:
     # given. Bottom and small determine if the example is displayed at the bottom
     # of the screen or at half height.
 
-
     def read_example(name, fn, line):
         """
         This reads an example from an example statement, and places it into
         the examples dictionary.
         """
-
-        if name in examples:
-            return
 
         fn = fn.replace("game/", "")
 
@@ -56,7 +51,11 @@ python early:
             else:
                 break
 
-        examples[name] = rv
+        if name in examples:
+            examples[name].append('')
+            examples[name].extend(rv)
+        else:
+            examples[name] = rv
 
     def parse_example(l):
         """
