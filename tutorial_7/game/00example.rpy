@@ -97,7 +97,7 @@ python early:
             name = "example_{}_{}".format(l.filename, l.number)
 
         read_example(name, l.filename, l.number)
-        return { "names" : [ name ], "hide" : hide, "bottom" : bottom, "small" : small }
+        return { "name" : name, "names" : [ name ], "hide" : hide, "bottom" : bottom, "small" : small, "filename" : l.filename, "number" : l.number }
 
     def next_example(data, first):
         return first
@@ -113,7 +113,10 @@ python early:
 
         renpy.show_screen("example", names, small, bottom)
 
-    renpy.register_statement("example", parse=parse_example, execute=execute_example, next=next_example, block="script")
+    def execute_init_example(data):
+        read_example(data["name"], data["filename"], data["number"])
+
+    renpy.register_statement("example", parse=parse_example, execute=execute_example, execute_init=execute_init_example, next=next_example, block="script")
 
 
 
