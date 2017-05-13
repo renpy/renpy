@@ -106,6 +106,7 @@ class TransformState(renpy.object.Object):
     ypan = None
     xtile = 1
     ytile = 1
+    last_angle = 0
 
     def __init__(self):
         self.alpha = 1
@@ -191,6 +192,8 @@ class TransformState(renpy.object.Object):
         self.ypan = ts.ypan
         self.xtile = ts.xtile
         self.ytile = ts.ytile
+
+        self.last_angle = ts.last_angle
 
         self.debug = ts.debug
         self.events = ts.events
@@ -979,6 +982,7 @@ class Transform(Container):
 
     def _show(self):
         self.update_state()
+
 
 Transform.render = types.MethodType(renpy.display.accelerator.transform_render, None, Transform)
 

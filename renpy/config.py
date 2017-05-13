@@ -769,6 +769,9 @@ hyperlink_inherit_size = True
 stdout_callbacks = [ ]
 stderr_callbacks = [ ]
 
+# Should ATL automatically cause polar motion when angle changes.
+automatic_polar_motion = True
+
 del renpy
 del os
 

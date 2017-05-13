@@ -57,6 +57,7 @@ def pause(t):
     else:
         return 1.0
 
+
 position = renpy.object.Sentinel("position")
 
 
@@ -74,6 +75,7 @@ def float_or_none(x):
     if x is None:
         return x
     return float(x)
+
 
 # A dictionary giving property names and the corresponding default
 # values.
@@ -202,6 +204,7 @@ def interpolate_spline(t, spline):
         raise Exception("ATL can't interpolate splines of length %d." % len(spline))
 
     return correct_type(rv, spline[-1], position)
+
 
 # A list of atl transforms that may need to be compile.
 compile_queue = [ ]
@@ -545,6 +548,7 @@ class ATLTransformBase(renpy.object.Object):
             block = self.compile()
 
         return self.children + block.visit()
+
 
 # This is used in mark_constant to analyze expressions for constness.
 is_constant_expr = renpy.pyanalysis.Analysis().is_constant_expr
@@ -1081,8 +1085,14 @@ class Interpolation(Statement):
             newts = renpy.display.motion.TransformState()
             newts.take_state(trans.state)
 
+            has_angle = False
+
             for k, v in self.properties:
                 setattr(newts, k, v)
+
+                if k == "angle":
+                    newts.last_angle = v
+                    has_angle = True
 
             # Now, the things we change linearly are in the difference
             # between the new and old states.
@@ -1091,8 +1101,21 @@ class Interpolation(Statement):
             revolution = None
             splines = [ ]
 
-            # Clockwise revolution.
-            if self.revolution is not None:
+            revdir = self.revolution
+            circles = self.circles
+
+            # If angle is present, atomatically engage circular motion.
+            if has_angle and (revdir is None) and renpy.config.automatic_polar_motion:
+                if newts.last_angle >= trans.state.last_angle:
+                    revdir = "clockwise"
+                else:
+                    revdir = "counterclockwise"
+
+                circles = abs(newts.last_angle - trans.state.last_angle) / 360.0
+
+            trans.state.last_angle = newts.last_angle
+
+            if revdir is not None:
 
                 # Remove various irrelevant motions.
                 for i in [ 'xpos', 'ypos',
@@ -1120,17 +1143,17 @@ class Interpolation(Statement):
                     # Make sure the revolution is in the appropriate direction,
                     # and contains an appropriate number of circles.
 
-                    if self.revolution == "clockwise":
+                    if revdir == "clockwise":
                         if endangle < startangle:
                             startangle -= 360
 
-                        startangle -= self.circles * 360
+                        startangle -= circles * 360
 
-                    elif self.revolution == "counterclockwise":
+                    elif revdir == "counterclockwise":
                         if endangle > startangle:
                             startangle += 360
 
-                        startangle += self.circles * 360
+                        startangle += circles * 360
 
                     # Store the revolution.
                     revolution = (startangle, endangle, startradius, endradius)
