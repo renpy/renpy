@@ -1,4 +1,5 @@
 image bg band = Transform("concert1", zoom=.75)
+image logo small = Transform("logo base", zoom=.66)
 
 image concert:
     subpixel True
@@ -174,11 +175,30 @@ example atl_transform2:
         repeat
 
 transform reset:
-    xalign 0.5 yalign 0.33
-    zoom 1.0 xzoom 1.0 yzoom 1.0
-    crop None size None
+    xpos 0.5
+    xanchor 0.5
+    ypos 0.3
+    yanchor 0.5
+
+    zoom 1.0
+    xzoom 1.0
+    yzoom 1.0
+
+    crop None
+    size None
+
     alpha 1.0
+
     rotate None
+    rotate_pad True
+    nearest False
+    additive 0.0
+
+    xtile 1
+    ytile 1
+
+    xpan None
+    ypan None
 
 label tutorial_positions:
 
@@ -656,41 +676,100 @@ label transform_not_used:
 
 label transform_properties:
 
+    e "Ren'Py has quite a few transform properties that can be used with ATL, the Transform displayable, and the add Screen Language statement."
+    e "Here, we'll show them off so you can see them in action and get used to what each does."
 
-    e "Transforms have a lot of properties that can be used to apply different effects to images. Here, we'll show them off so you can see them in action."
 
+    show eileen happy at right
+    with move
 
-    show logo base at reset
 
     example:
         show logo base:
-            xalign 0.3
-            yalign 0.3
-
-
-    e "We've already seen the position properties, all of which are supported by the transform system."
-
-    hide eileen
-
-    hide logo base
-
-    show bg band:
-        xanchor 0 yanchor 0 xpos 0 ypos -428
-
-    example:
-        show bg band:
-            xpos 0 ypos -428 xanchor 0 yanchor 0
-            linear 3.0 xpos -220 ypos -60
+            xpos 0.5
+            xanchor 0.5
+            ypos 0.3
+            yanchor 0.5
 
     with dissolve
 
-    e "We can perform a pan by using xpos and ypos to position images off of the screen."
+    e "First off, all of the position properties are also transform properties. These include the pos, anchor, align, center, and offset properties."
 
-    e "This usually means giving them negative positions."
 
-    show bg washington at reset
-    show eileen happy at right behind example
-    show logo base at reset behind example
+    hide eileen
+    hide logo base
+
+    show bg band:
+        xanchor 0 yanchor 0
+        xpos 0 ypos -428
+
+    with dissolve
+
+    example:
+        show bg band:
+            xanchor 0 yanchor 0
+            xpos 0 ypos -428
+            linear 3.0 xpos -220 ypos -60
+
+    e "The position properties can also be used to pan over a displayable larger than the screen, by giving xpos and ypos negative values."
+
+    # Let's not demo this until it's not terrible.
+    if False:
+
+        example:
+            show bg band:
+                subpixel False
+                linear 60.0 xpos 0
+
+        "The subpixel property controls how things are lined up with the screen. When False, images can be pixel-perfect, but there can be pixel jumping."
+
+        example:
+            show bg band:
+                subpixel True
+                linear 60.0 xpos 0
+
+        "When it's set to True, movement is smoother at the cost of blurring images a little."
+
+
+    hide bg
+    show bg washington
+
+    show eileen happy at right
+
+    hide logo
+
+    example:
+        show logo small:
+            anchor (0.5, 0.5)
+            around (640, 216)
+            angle 270
+            radius 200
+
+    with dissolve
+
+    e "Transforms also support polar coordinates. The around property sets the center of the coordinate system to coordinates given in pixels."
+
+    example:
+        show logo small:
+            linear 1.0 angle 315
+            linear 1.0 angle 270
+            repeat
+
+    e "The angle property gives the angle in degrees. Angles run clockwise, with the zero angle at the top of the screen."
+
+
+    example:
+        show logo small:
+            linear 1.0 radius 100
+            linear 1.0 radius 200
+            repeat
+
+    e "The radius property gives the distance in pixels from the anchor of the displayable to the center of the coordinate system."
+
+
+    hide logo small
+    show logo base at reset
+    with dissolve
 
     example:
         show logo base:
@@ -699,9 +778,7 @@ label transform_properties:
             linear 1.0 zoom 1.0
             repeat
 
-    with dissolve
-
-    e "The zoom property lets us scale the displayable by a factor, making it bigger and smaller. For best results, zoom should always be greater than 0.5."
+    e "There are several ways to resize a displayable. The zoom property lets us scale a displayable by a factor, making it bigger and smaller."
 
     show logo base at reset
 
@@ -720,12 +797,21 @@ label transform_properties:
 
     example:
         show logo base:
+            linear 1.0 xzoom -1.0 yzoom 1.0
+
+    with dissolve
+
+    e "By making xzoom or yzoom a negative number, we can flip the image horizontally or vertically."
+
+    show logo base at reset
+
+    example:
+        show logo base:
             size (350, 540)
 
     with dissolve
 
-    e "The size property can be used to set a size, in pixels, that the displayable is scaled to."
-
+    e "Instead of zooming by a scale factor, the size transform property can be used to scale a displayable to a size in pixels."
 
     show logo base at reset
 
@@ -733,12 +819,14 @@ label transform_properties:
         show logo base:
             alpha 1.0
             linear 1.0 alpha 0.0
+            pause .5
             linear 1.0 alpha 1.0
+            pause .5
             repeat
 
     with dissolve
 
-    e "The alpha property allows us to vary the opacity of a displayable. This can make it appear and disappear."
+    e "The alpha property is used to change the opacity of a displayable. This can make it appear and disappear."
 
     show logo base at reset
 
@@ -751,9 +839,41 @@ label transform_properties:
 
     with dissolve
 
-    e "The rotate property lets us rotate a displayable."
+    e "The rotate property rotates a displayable."
 
-    e "Since rotation can change the size, usually you'll want to set xanchor and yanchor to 0.5 when positioning a rotated displayable."
+    example:
+        show logo base:
+            xalign 0.0 yalign 0.0
+            rotate 0
+            linear 4.0 rotate 360
+            repeat
+
+    with dissolve
+
+    e "By default, when a displayable is rotated, Ren'Py will include extra space on all four sides, so the size doesn't change as it rotates. Here, you can see the extra space on the left and top, and it's also there on the right and bottom."
+
+    example:
+        show logo base:
+            rotate_pad False
+            xalign 0.0 yalign 0.0
+            rotate 0
+            linear 4.0 rotate 360
+            repeat
+
+    with dissolve
+
+    e "By setting rotate_pad to False, we can get rid of the space, at the cost of the size of the displayable changing as it rotates."
+
+    show logo base at reset
+
+    example:
+        show logo base:
+            xtile 3
+            ytile 2
+
+    with dissolve
+
+    e "The tile transform properties, xtile and ytile, repeat the displayable multiple times."
 
     show logo base at reset
 
@@ -779,14 +899,25 @@ label transform_properties:
 
     e "When used together, crop and size can be used to focus in on specific parts of an image."
 
-    show bg washington at reset
+    hide bg
+
+    example:
+        show bg panorama:
+            xpan 0
+            linear 10.0 xpan 360
+            repeat
+
     with dissolve
+
+    e "The xpan and ypan properties can be used to pan over a displayable, given an angle in degrees, with 0 being the center."
+
+    hide bg
+    show bg washington
+    with dissolve
+
     hide example
 
-
-    show eileen vhappy
-
-    e "But for now, just remember that when it comes to animating and transforming, ATL is the hot new thing."
+    e "Those are all the transform properties we have to work with. By putting them together in the right order, you can create complex things."
 
     show eileen happy
 

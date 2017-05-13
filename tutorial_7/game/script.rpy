@@ -19,6 +19,8 @@ init python:
         ("tutorial_screens", _("Screens"), True),
         ("tutorial_nvlmode", _("NVL Mode"), False),
 
+        ("transform_properties", _("Transform Properties"), True),
+
 
         ("demo_transitions", _("Transition Gallery"), True),
         ("demo_imageops", _("Image Operations"), True),
@@ -69,7 +71,6 @@ default tutorials_adjustment = ui.adjustment()
 
 # True if this is the first time through the tutorials.
 default tutorials_first_time = True
-
 
 # The game starts here.
 #begin start
