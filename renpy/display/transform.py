@@ -106,7 +106,7 @@ class TransformState(renpy.object.Object):
     ypan = None
     xtile = 1
     ytile = 1
-    last_angle = 0
+    last_angle = None
 
     def __init__(self):
         self.alpha = 1

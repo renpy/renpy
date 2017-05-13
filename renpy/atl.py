@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 import renpy.display
 import renpy.pyanalysis
 
@@ -1104,18 +1106,7 @@ class Interpolation(Statement):
             revdir = self.revolution
             circles = self.circles
 
-            # If angle is present, atomatically engage circular motion.
-            if has_angle and (revdir is None) and renpy.config.automatic_polar_motion:
-                if newts.last_angle >= trans.state.last_angle:
-                    revdir = "clockwise"
-                else:
-                    revdir = "counterclockwise"
-
-                circles = abs(newts.last_angle - trans.state.last_angle) / 360.0
-
-            trans.state.last_angle = newts.last_angle
-
-            if revdir is not None:
+            if (revdir or (has_angle and renpy.config.automatic_polar_motion)) and (newts.xaround is not None):
 
                 # Remove various irrelevant motions.
                 for i in [ 'xpos', 'ypos',
@@ -1126,7 +1117,7 @@ class Interpolation(Statement):
 
                     linear.pop(i, None)
 
-                if newts.xaround is not None:
+                if revdir is not None:
 
                     # Ensure we rotate around the new point.
                     trans.state.xaround = newts.xaround
@@ -1158,6 +1149,11 @@ class Interpolation(Statement):
                     # Store the revolution.
                     revolution = (startangle, endangle, startradius, endradius)
 
+                else:
+
+                    last_angle = trans.state.last_angle or trans.state.angle
+                    revolution = (last_angle, newts.last_angle, trans.state.radius, newts.radius)
+
             # Figure out the splines.
             for name, values in self.splines:
                 splines.append((name, [ getattr(trans.state, name) ] + values))
@@ -1182,7 +1178,11 @@ class Interpolation(Statement):
         # Handle the revolution.
         if revolution is not None:
             startangle, endangle, startradius, endradius = revolution
-            trans.state.angle = interpolate(complete, startangle, endangle, float)
+
+            angle = interpolate(complete, startangle, endangle, float)
+            trans.state.last_angle = angle
+            trans.state.angle = angle
+
             trans.state.radius = interpolate(complete, startradius, endradius, float)
 
         # Handle any splines we might have.
