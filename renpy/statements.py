@@ -30,7 +30,7 @@ registry = { }
 parsers = renpy.parser.ParseTrie()
 
 
-def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False):  # @ReservedAssignment
+def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False, execute_init=None):  # @ReservedAssignment
     """
     :doc: statement_register
     :name: renpy.register_statement
@@ -61,6 +61,9 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
         This is a function that is called when the statement executes. It is passed a
         single argument, the object returned from parse.
 
+    `execute_init`
+        This is a function that is called at init time, at priority 0.
+
     `predict`
         This is a function that is called to predict the images used by the statement.
         It is passed a single argument, the object returned from parse. It should return
@@ -83,13 +86,15 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
     `init`
         True if this statement should be run at init-time. (If the statement
         is not already inside an init block, it's automatically placed inside
-        an init 0 block.)
+        an init 0 block.) This calls the execute function, in addition to the
+        execute_init function.
     """
     name = tuple(name.split())
 
     registry[name] = dict(parse=parse,
                           lint=lint,
                           execute=execute,
+                          execute_init=execute_init,
                           predict=predict,
                           next=next,
                           scry=scry)

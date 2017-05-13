@@ -1741,9 +1741,11 @@ class UserStatement(Node):
 
         return renpy.statements.call(method, parsed, *args, **kwargs)
 
-    def execute_early(self):
-        if self.parsed is None:
-            self.parsed = renpy.statements.parse(self, self.line, self.block)
+    def execute_init(self):
+        self.call("execute_init")
+
+    def get_init(self):
+        return 0, self.execute_init
 
     def execute(self):
         next_node(self.get_next())

@@ -416,7 +416,12 @@ def main():
         renpy.game.exception_info = 'While executing init code:'
 
         for _prio, node in game.script.initcode:
-            game.context().run(node)
+
+            if isinstance(node, renpy.ast.Node):
+                renpy.game.context().run(node)
+            else:
+                # An init function.
+                node()
 
         renpy.game.exception_info = 'After initialization, but before game start.'
 
