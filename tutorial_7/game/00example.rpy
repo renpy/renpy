@@ -96,7 +96,6 @@ python early:
         if name is None:
             name = "example_{}_{}".format(l.filename, l.number)
 
-        read_example(name, l.filename, l.number)
         return { "name" : name, "names" : [ name ], "hide" : hide, "bottom" : bottom, "small" : small, "filename" : l.filename, "number" : l.number }
 
     def next_example(data, first):
