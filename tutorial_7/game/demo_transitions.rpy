@@ -7,9 +7,6 @@ example slow_dissolve:
 example flashbulb:
     define flashbulb = Fade(0.2, 0.0, 0.8, color='#fff')
 
-
-
-
 # Imagedissolve Transitions.
 
 example circleirisout:
@@ -30,27 +27,28 @@ example teleport:
 image bg circleiris = "id_circleiris.png"
 image bg teleport = "id_teleport.png"
 
-image alpha_control:
-    "spotlight.png"
+example alphadissolve:
 
-    xanchor .5
-    yanchor .5
+    image alpha_control:
+        "spotlight.png"
 
-    parallel:
-        zoom 0
-        linear .5 zoom .75
-        pause 2
-        linear 1.0 zoom 4.0
+        anchor (.5, .5)
 
-    parallel:
-        xpos 0.0 ypos .6
-        linear 1.5 xpos 1.0
-        linear 1.0 xpos .5 ypos .2
+        parallel:
+            zoom 0
+            linear .5 zoom .75
+            pause 2
+            linear 1.0 zoom 4.0
 
-    pause .5
-    repeat
+        parallel:
+            xpos 0.0 ypos .6
+            linear 1.5 xpos 1.0
+            linear 1.0 xpos .5 ypos .2
 
-define alpha_example = AlphaDissolve("alpha_control", delay=3.5)
+        pause .5
+        repeat
+
+    define alpha_example = AlphaDissolve("alpha_control", delay=3.5)
 
 
 label demo_transitions:
@@ -291,84 +289,100 @@ label demo_cropmove_transitions:
 
     e "I'll stand offscreen, so you can see some of its modes. I'll read out the mode name after each transition."
 
-    scene bg whitehouse
-    with wiperight
+    example small:
+        scene bg whitehouse
+        with wiperight
 
     e "We first have wiperight..."
 
-    scene bg washington
-    with wipeleft
+    example small:
+        scene bg washington
+        with wipeleft
 
     e "...followed by wipeleft... "
 
-    scene bg whitehouse
-    with wipeup
+    example small:
+        scene bg whitehouse
+        with wipeup
 
     e "...wipeup..."
 
-    scene bg washington
-    with wipedown
+    example small:
+        scene bg washington
+        with wipedown
 
     e "...and wipedown."
 
     e "Next, the slides."
 
-    scene bg whitehouse
-    with slideright
+    example small:
+        scene bg whitehouse
+        with slideright
 
     e "Slideright..."
 
-    scene bg washington
-    with slideleft
+    example small:
+        scene bg washington
+        with slideleft
 
     e "...slideleft..."
 
-    scene bg whitehouse
-    with slideup
+    example small:
+        scene bg whitehouse
+        with slideup
 
     e "...slideup..."
 
-    scene bg washington
-    with slidedown
+    example small:
+        scene bg washington
+        with slidedown
 
     e "and slidedown."
 
     e "While the slide transitions slide in the new scene, the
        slideaways slide out the old scene."
 
-    scene bg whitehouse
-    with slideawayright
+    example small:
+        scene bg whitehouse
+        with slideawayright
 
     e "Slideawayright..."
 
-    scene bg washington
-    with slideawayleft
+    example small:
+        scene bg washington
+        with slideawayleft
 
     e "...slideawayleft..."
 
-    scene bg whitehouse
-    with slideawayup
+    example small:
+        scene bg whitehouse
+        with slideawayup
 
     e "...slideawayup..."
 
-    scene bg washington
-    with slideawaydown
+    example small:
+        scene bg washington
+        with slideawaydown
 
     e "and slideawaydown."
 
     e "We also have a couple of transitions that use a
        rectangular iris."
 
-    scene bg whitehouse
-    with irisout
+    example small:
+        scene bg whitehouse
+        with irisout
 
     e "There's irisout..."
 
-    scene bg washington
-    show eileen happy
-    with irisin
+    example small:
+        scene bg washington
+        show eileen happy
+        with irisin
 
     e "... and irisin."
+
+    hide example
 
     e "It's enough to make you feel a bit dizzy."
 
@@ -378,38 +392,56 @@ label demo_pushmove_transitions:
 
     e "The PushMove transitions use the new scene to push the old one out. Let's take a look."
 
-    show bg whitehouse
-    hide eileen
-    with pushright
+    example small:
+
+        show bg whitehouse
+        hide eileen
+        with pushright
 
     "There's pushright..."
 
-    show bg washington
-    with pushleft
+    example small:
+
+        show bg washington
+        with pushleft
 
     "...pushleft..."
 
-    show bg whitehouse
-    with pushdown
+
+    example small:
+
+        show bg whitehouse
+        with pushdown
 
     "...pushdown..."
 
-    show bg washington
-    show eileen happy
-    with pushup
+    example small:
+
+        show bg washington
+        show eileen happy
+        with pushup
 
     "... and pushup. And that's it the for the PushMove-based transitions."
+
+    hide example
+    pause .5
 
     return
 
 label demo_movetransition:
 
+
     e "The most common MoveTransition is move, which slides around images that have changed position on the screen."
 
-    show eileen happy at left
-    with move
+    example move:
+
+        show eileen happy at left
+        with move
+
 
     e "Just like that."
+
+    show example moveinout
 
     e "There are also the moveout and movein transitions."
 
@@ -419,53 +451,66 @@ label demo_movetransition:
 
     e "Let's see them all in action."
 
-    hide eileen happy
-    with moveoutleft
+    hide example
+    pause .5
 
-    show eileen happy
-    with moveinbottom
+    example moveinout hide:
+        hide eileen happy
+        with moveoutleft
 
-    hide eileen happy
-    with moveoutbottom
+        show eileen happy
+        with moveinbottom
 
-    show eileen happy
-    with moveinright
+        hide eileen happy
+        with moveoutbottom
 
-    hide eileen happy
-    with moveoutright
+        show eileen happy
+        with moveinright
 
-    show eileen flip
-    with moveintop
+        hide eileen happy
+        with moveoutright
 
-    hide eileen flip
-    with moveouttop
+        show eileen flip
+        with moveintop
 
-    show eileen happy
-    with moveinleft
+        hide eileen flip
+        with moveouttop
+
+        show eileen happy
+        with moveinleft
 
     e "That's it for the moveins and moveouts."
 
     e "Finally, there are the zoomin and zoomout transitions, which show and hide things using a zoom."
 
-    hide eileen happy
-    with zoomout
+    example:
 
-    show eileen happy
-    with zoomin
+        hide eileen happy
+        with zoomout
+
+        show eileen happy
+        with zoomin
 
     e "And that's all there is."
+
+    hide example
+    pause .5
 
     return
 
 label demo_alphadissolve:
 
+    show example alphadissolve
+
     e "The AlphaDissolve transition lets you use one displayable to combine two others. For example..."
 
     scene black
     with dissolve
-    scene bg washington
-    show eileen happy at center
-    with alpha_example
+
+    example alphadissolve:
+        scene bg washington
+        show eileen happy at center
+        with alpha_example
 
     e "The AlphaDissolve displayable takes a control displayable, usually an ATL transform."
 
@@ -492,5 +537,8 @@ label demo_alphadissolve:
     with alpha_example
 
     e "By combining them using AlphaDissolve, we can build a complicated effect out of simpler parts."
+
+    hide example
+    pause .5
 
     return
