@@ -458,9 +458,27 @@ label tutorial_atl:
 
     e "The second way is through the use of the transform statement. This assigns the ATL block to a python variable, allowing it to be used in at clauses and inside other transforms."
 
-    show example atl_motion
+    example:
+
+        show logo base:
+            xalign .3 yalign .7
+            linear 1.0 xalign .7 yalign .3
+            linear 1.0 xalign .3 yalign .7
+            repeat
+
+    with dissolve
 
     e "Finally, an ATL block can be used as part of a show statement, instead of the at clause."
+
+
+    example:
+        show logo base:
+            yoffset 10
+
+    e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place."
+
+    hide logo
+    with dissolve
 
     hide screen example
 
@@ -659,18 +677,6 @@ label tutorial_atl:
 
 
     return
-
-label transform_not_used:
-
-    example atl_motion:
-
-        show logo base:
-            xalign .3 yalign .7
-            linear 1.0 xalign .7 yalign .3
-            linear 1.0 xalign .3 yalign .7
-            repeat
-
-    with dissolve
 
 
 

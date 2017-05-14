@@ -7,20 +7,26 @@ define e = Character(_('Eileen'), color="#c8ffc8")
 init python:
 
     tutorials = [
+
+        (None, _("Quickstart"), False),
+
+
         ("tutorial_playing", _("Player Experience"), True),
         ("tutorial_dialogue", _("Writing Dialogue"), True),
         ("tutorial_images", _("Adding Images"), True),
         ("tutorial_transitions", _("Transitions"), True),
         ("tutorial_music", _("Music and Sound Effects"), True),
-        ("tutorial_menus", _("In-Game Menus and Python"), True),
-        ("tutorial_positions", _("Screen Positions"), True),
-        ("tutorial_atl", _("Transforms and Animation"), True),
+        ("tutorial_menus", _("Choices and Python"), True),
         ("tutorial_video", _("Video Playback"), True),
-        ("tutorial_screens", _("Screens"), True),
         ("tutorial_nvlmode", _("NVL Mode"), False),
 
-        ("transform_properties", _("Transform Properties"), True),
+        (None, _("In Depth"), False),
 
+        ("tutorial_screens", _("Screens"), True),
+        ("tutorial_positions", _("Screen Positions"), True),
+        ("tutorial_atl", _("Transforms and Animation"), True),
+
+        ("transform_properties", _("Transform Properties"), True),
 
         ("demo_transitions", _("Transition Gallery"), True),
         ("demo_imageops", _("Image Operations"), True),
@@ -52,10 +58,22 @@ screen tutorials(adj):
 
             vbox:
                 for label, name, should_move in tutorials:
-                    textbutton name:
-                        action Return((label, should_move))
-                        left_padding 20
-                        xfill True
+
+                    if label is not None:
+
+                        textbutton name:
+                            action Return((label, should_move))
+                            left_padding 20
+                            xfill True
+
+                    else:
+
+                        null height 10
+                        text name
+                        null height 5
+
+
+
 
         bar adjustment adj style "vscrollbar"
 
