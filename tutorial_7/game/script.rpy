@@ -7,7 +7,7 @@ define e = Character(_('Eileen'), color="#c8ffc8")
 init python:
 
     tutorials = [
-        ("tutorial_playing", _("User Experience"), True),
+        ("tutorial_playing", _("Player Experience"), True),
         ("tutorial_dialogue", _("Writing Dialogue"), True),
         ("tutorial_images", _("Adding Images"), True),
         ("tutorial_transitions", _("Transitions"), True),
