@@ -407,14 +407,23 @@ python early hide:
         # Parse the list of arguments.
         arguments = renpy.parser.parse_arguments(l)
 
-        if l.keyword('nopredict'):
-            predict = False
-        else:
-            predict = True
+        predict = True
+        transition_expr = None
+
+        while True:
+
+            if l.keyword('nopredict'):
+                predict = False
+
+            elif l.keyword('with'):
+                transition_expr = l.require(l.simple_expression)
+
+            else:
+                break
 
         l.expect_eol()
 
-        return dict(name=name, arguments=arguments, predict=predict)
+        return dict(name=name, arguments=arguments, predict=predict, transition_expr=transition_expr)
 
     def parse_hide_screen(l):
         name = l.require(l.name)
@@ -461,6 +470,11 @@ python early hide:
 
         name = p["name"]
         a = p["arguments"]
+
+        transition_expr = p.get("transition_expr", None)
+
+        if transition_expr is not None:
+            renpy.transition(eval(transition_expr))
 
         if a is not None:
             args, kwargs = a.evaluate()
