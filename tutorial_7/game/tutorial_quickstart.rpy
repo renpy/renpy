@@ -64,7 +64,9 @@ label tutorial_create:
 
 label tutorial_dialogue:
 
-    e "Now that I'm about to show you how to write dialogue, let me show you how I'll present script examples."
+    e "Probably the most common thing a creator does with Ren'Py is to write dialogue for the player to read."
+
+    e "But before I can show you how to write dialogue, let me show you how we present script examples."
 
     example:
         "Eileen" "Examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
