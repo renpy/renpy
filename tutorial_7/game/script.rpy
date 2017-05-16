@@ -12,6 +12,7 @@ init python:
 
 
         ("tutorial_playing", _("Player Experience"), True),
+        ("tutorial_create", _("Creating a new Game"), True),
         ("tutorial_dialogue", _("Writing Dialogue"), True),
         ("tutorial_images", _("Adding Images"), True),
         ("tutorial_transitions", _("Transitions"), True),

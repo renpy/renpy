@@ -10,26 +10,69 @@ transform rightish:
     xcenter .6
     ypos 50
 
+transform launcher_place:
+    xpos 0.05
+    xanchor 0
+    ypos 0.1
+    yanchor 0
+
+
+
+label tutorial_create:
+
+    show launcher step1 at launcher_place
+    with dissolve
+
+    e "When you're ready to use Ren'Py to create your visual novel, the first step is to create a new project."
+
+    e "You can create a new project by clicking 'Create New Project' on the front screen of the launcher."
+
+    e "If this is your first time using Ren'Py, it'll ask you for the place you want to keep your projects. The best place is always somewhere that's frequently backed up."
+
+    show launcher step2
+
+    e "After that, Ren'Py will ask for a name for your project. You'll have to stick to English letters and numbers, as zip files can't handle anything more than that."
+
+    show launcher step3
+
+    e "The next thing Ren'Py will ask for is the resolution the visual novel will run at. This controls how large or small you'll have ot make your game's artwork."
+
+    show launcher step4
+
+    e "Finally, Ren'Py will ask you to select a color scheme. You can change this after the game has been created, so just pick a color that's pleasing."
+
+    show launcher step5
+
+    e "Once that's done, Ren'Py will work for a bit and return you to the main menu with the new project selected. Now, when you click Launch, Ren'Py will start your new game."
+
+    e "To get back here, you can choose 'Tutorial' to switch to this tutorial game."
+
+    e "You'll also need to edit the games script to make changes. To do that, click 'script.rpy' on the front page of the launcher."
+
+    e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Editra might be a safe choice, but read the descriptions to be sure."
+
+    e "After the text editor is downloaded, the script will up and you can start to change what characters are saying."
+
+    hide launcher
+    with dissolve
+
+    return
+
+
+
+
+
 label tutorial_dialogue:
 
-    e "Probably the best way to learn Ren'Py is to see it in action. In this tutorial, I'll be showing you some of the things Ren'Py can do, and also showing you how to do them."
+    e "Now that I'm about to show you how to write dialogue, let me show you how I'll present script examples."
 
     example:
-        e "Code examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
+        "Eileen" "Examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
 
-        e "When an example is bigger than the screen, you can scroll around in it using the mouse wheel or by simply dragging the mouse."
+        "Eileen" "When an example is bigger than the screen, you can scroll around in it using the mouse wheel or by simply dragging the mouse."
 
-    hide example
+        "Eileen" "Script might seem scary at first, but if you look you'll see it's easy to match it up to what I'm saying."
 
-    e "To create a new project, you can click New Project in the Ren'Py launcher."
-
-    e "If it's your first time making a Ren'Py game, you'll be asked to pick a directory to store your projects in."
-
-    e "You'll then be asked for the name of the project, and also to choose a theme for the interface."
-
-    e "Once that's done, Ren'Py will automatically create a directory and fill it with the files needed to make a project."
-
-    e "You can click 'script.rpy' to edit the file containing the main script file of the game."
 
     e "Let's see the simplest possible Ren'Py game."
 
