@@ -38,9 +38,9 @@ label start:
 
     "More than just talking, more than just walking home together when our classes end."
 
-    "As soon as she catches my eye, I decide..."
-
     menu:
+
+        "As soon as she catches my eye, I decide..."
 
         "To ask her right away.":
 
@@ -95,9 +95,9 @@ label rightaway:
 
     show sylvie green smile
 
-    s "Sure, but what's a \"visual novel?\""
-
     menu:
+
+        s "Sure, but what's a \"visual novel?\""
 
         "It's a videogame.":
             jump game
