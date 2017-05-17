@@ -1834,10 +1834,15 @@ This can be used to display an imagemap. The imagemap can place a
 value into the `_return` variable using the :func:`Return` action,
 or can jump to a label using the :func:`Jump` action.
 
-The call screen statement takes an optional nopredict keyword, that
+The call screen statement takes an optional ``nopredict`` keyword, that
 prevents screen prediction from occurring. During screen prediction,
 arguments to the screen are evaluated. Please ensure that evaluating
 the screen arguments does not cause unexpected side-effects to occur.
+
+The call screen statement takes an optional ``with`` keyword, followed
+by a transition. The transition takes place when the screen is first
+displayed. A with statement after the transition runs after the screen
+is hidden, provided control is not transferred.
 
 .. warning::
 
@@ -1849,6 +1854,10 @@ the screen arguments does not cause unexpected side-effects to occur.
     call screen my_imagemap
 
     call screen my_screen(side_effect_function()) nopredict
+
+    # Shows the screen with disolve and hides it with fade.
+    call screen my_other_screen with dissolve
+    with fade
 
 .. _screen-variants:
 
