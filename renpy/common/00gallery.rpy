@@ -444,6 +444,9 @@ init -1500 python:
                     else:
                         all_unlocked = False
 
+                        if self.unlocked_advance and (image == bi):
+                            image += 1
+
             self.slideshow = False
 
             # Loop, displaying the images.
