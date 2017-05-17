@@ -1,13 +1,5 @@
 ﻿# This file demonstrates the use of image operators.
 
-image logo blink:
-    "logo base"
-    pause 0.5
-    linear .5 alpha 0.0
-    pause 0.5
-    linear .5 alpha 1.0
-    repeat
-
 init:
     image logo crop = im.Crop("logo base.png", 0, 0, 120, 360)
 
@@ -64,11 +56,6 @@ init:
     image logo sepia = im.Sepia("logo base.png")
 
     image logo grayscale = im.Grayscale("logo base.png")
-
-
-transform logopos:
-    xalign .5
-    yalign 0.33
 
 label demo_imageops:
 

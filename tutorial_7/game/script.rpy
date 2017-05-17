@@ -23,8 +23,10 @@ init python:
 
         (None, _("In Depth"), False),
 
-        ("tutorial_screens", _("Screens"), True),
         ("tutorial_positions", _("Screen Positions"), True),
+        ("simple_displayables", _("Simple Displayables"), False),
+
+        ("tutorial_screens", _("Screens"), True),
         ("tutorial_atl", _("Transforms and Animation"), True),
 
         ("transform_properties", _("Transform Properties"), True),
@@ -90,6 +92,9 @@ default tutorials_adjustment = ui.adjustment()
 
 # True if this is the first time through the tutorials.
 default tutorials_first_time = True
+
+label main_menu:
+    return
 
 # The game starts here.
 #begin start
