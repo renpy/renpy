@@ -45,6 +45,9 @@ class ParseError(Exception):
         message = u"File \"%s\", line %d: %s" % (unicode_filename(filename), number, msg)
 
         if line:
+            if isinstance(line, list):
+                line = "".join(line)
+
             lines = line.split('\n')
 
             if len(lines) > 1:
