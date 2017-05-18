@@ -177,6 +177,12 @@ init python:
         r"|(?P<comment>#.*)"
     regex = re.compile(regex)
 
+    def quote(s):
+        s = s.replace("{", "{{")
+        s = s.replace("[", "[[")
+
+        return s
+
     def colorize(m):
         if m.group("string"):
             return "{color=#060}" + m.group(0) + "{/color}"
@@ -236,6 +242,7 @@ init python:
             last_blank = not i
 
             if not raw:
+                i = quote(i)
                 i = regex.sub(colorize, i)
 
             lines.append(i)
@@ -312,8 +319,8 @@ screen example(blocks, small=False, bottom=False):
 
         textbutton _("Copy"):
             ypos 0
-            xalign 1.0
-            xoffset -5
+            xalign 0.0
+            xoffset -175
             yoffset -8
             text_size 14
 
