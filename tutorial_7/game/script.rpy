@@ -21,7 +21,11 @@ init python:
         ("tutorial_video", _("Video Playback"), True),
         ("tutorial_nvlmode", _("NVL Mode"), False),
 
+
         (None, _("In Depth"), False),
+
+        ("text", _("Text Tags, Escapes, and Interpolation"), True),
+
 
         ("tutorial_positions", _("Screen Positions"), True),
         ("simple_displayables", _("Simple Displayables"), False),
