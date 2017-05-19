@@ -5,47 +5,16 @@
 init 1:
     define eslow = Character(kind=e, what_slow_cps=20)
 
-
-    # Outlined text.
-    $ eoutline = Character(_("Eileen"),
-                           color="#c8ffc8",
-                           what_outlines=[ (1, "#282") ])
-
-    # Use it in subtitle mode.
-    $ esubtitle = Character(None,
-                            what_size=28,
-                            what_outlines=[(3, "#0008", 2, 2), (3, "#282", 0, 0)],
-                            what_layout="subtitle",
-                            what_xalign=0.5,
-                            what_text_align=0.5,
-                            window_background=None,
-                            window_yminimum=0,
-                            window_xfill=False,
-                            window_xalign=0.5)
-
-
-    # This is used to show the defintion text, by the hyperlink demostration
-    # code.
-    $ definition = Character(None,
-                             window_yfill=True,
-                             window_xmargin=20,
-                             window_ymargin=30)
-
-
-    # The pink style, which we use as a custom text tag.
-    $ style.pink = Style(style.default)
-    $ style.pink.color = "#ffc0c0"
-
-init python:
-    style.ruby_style = Style(style.default)
-    style.ruby_style.yoffset = -20
-    style.ruby_style.size = 12
-
-define eruby = Character(
-    _("Eileen"),
-    color="#c8ffc8",
-    what_ruby_style=style.ruby_style,
-    what_line_leading=10)
+# init python:
+#     style.ruby_style = Style(style.default)
+#     style.ruby_style.yoffset = -20
+#     style.ruby_style.size = 12
+#
+# define eruby = Character(
+#     _("Eileen"),
+#     color="#c8ffc8",
+#     what_ruby_style=style.ruby_style,
+#     what_line_leading=10)
 
 
 label text:

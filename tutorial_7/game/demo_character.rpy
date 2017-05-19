@@ -1,99 +1,90 @@
 ﻿# This file demonstrates how Character objects can be used to customize the
 # display of text.
 
-init:
-    # With a nestled click-to-continue indicator.
-    $ ectc = Character(_('Eileen'),
-                       color="#c8ffc8",
-                       ctc=anim.Blink("arrow.png"))
-
-
-    # With a fixed-position ctc indicator.
-    $ ectcf = Character(_('Eileen'),
-                        color="#c8ffc8",
-                        ctc=anim.Filmstrip("sakura.png", (20, 20), (2, 1), .30, xpos=760, ypos=560, xanchor=0, yanchor=0),
-                        ctc_position="fixed")
-
-    # With quotes around text.
-    $ equote = Character(_('Eileen'),
-                         color="#c8ffc8",
-                         who_suffix = ':',
-                         what_prefix='"',
-                         what_suffix='"')
-
-    # Weird-looking.
-    $ eweird = Character(_('Eileen'),
-                         color="#c8ffc8",
-                         what_underline=True,
-                         window_left_margin=200,
-                         window_yminimum=300)
-
-    # Two-window mode.
-    $ etwo = Character(_('Eileen'),
-                       color="#c8ffc8",
-                       show_two_window=True)
-
-    # Image on the side.
-    $ eside = Character(_('Eileen'),
-                        color="#c8ffc8",
-                        window_left_padding=160,
-                        show_side_image=Image("eileen_side.png", xalign=0.0, yalign=1.0))
-
 label demo_character:
 
+    e "We saw before how a Character object can be used to assign a name to a character. But there are a lot of other ways character objects can customize dialogue and thoughts."
 
-    e "The Character object is used to declare characters, and it can also be used to customize the way in which a character speaks."
+    e "The main way is by setting style properties on a character-by-character basis."
 
-    e "By supplying it with the appropriate arguments, we can really change around the feel of the game."
+    example:
+        define ebluewhat = Character(_("Eileen"), what_color="#ccccff")
 
-    e "In this section, we'll demonstrate some of what can be accomplished by customizing character objects."
+        ebluewhat "When a style property is prefixed with 'what_', it's given to the text that's being spoken."
 
-    equote "By supplying what_prefix and what_suffix arguments to a Character object, we can automatically add things before each line of text."
 
-    equote "This is a lot easier than having to put those quotes in by hand."
+    example:
 
-    equote "We can also use who_prefix and who_suffix to add text to the name of the speaker."
+        define eredwho = Character(_("Eileen"), who_color="#cc8888")
+        define ered = Character(_("Eileen"), color="#cc8888")
 
-    e "We can also supply arguments to the Character object that customize the look of the character name, the text that is being said, and the window itself."
+        eredwho "A style property that is prefixed with 'who_' is applied to the name of the speaking character."
+        ered "Style properties that have no prefix are also given to the name of the speaking character."
 
-    eweird "These can really change the look of the game."
 
-    eside "A more practical use of that is in conjunction with show_side_image, which lets us position an image next to the text."
+    example:
+        define eblackwindow = Character(_("Eileen"), window_background="#000000f0")
 
-    etwo "There's also show_two_window, which puts the character's name in its own window."
+        eblackwindow "Finally, style properties prefixed with 'window_' apply to the dialogue window."
 
-    ectc "Finally, we demonstrate a click to continue indicator. In this example, it's nestled in with the text."
 
-    ectcf "A click to continue image can also be placed at a fixed location on the screen."
+    example:
+        define eoutline = Character(
+            None,
+            window_background="#0000",
+            what_outlines=[ (3, "#008000", 0, 0) ],
+            what_size=28,
+            what_text_align=0.5,
+            what_xalign=0.5,
+            what_layout="subtitle"
+            )
 
-    e "There's a lot more you can do with Character, as it lets you set style properties on all of the displayed text."
 
-    e "Finally, let me point out a couple of special characters we pre-define."
+        eoutline "While each single style property makes only a small change, multiple properties can massively change the look of the game."
 
-    show black
-    with dissolve
 
-    centered "The \"centered\" character shows text at the center of the screen, without a window."
+    example:
+        define equoted = Character(_("Eileen"), what_prefix='"', what_suffix='"')
 
-    centered "It's just a highly customized normal character, that's useful for dates and titles."
+        equoted "There are other arguments that can be given to Character. I'll show you a few of the most common ones here."
 
-    hide black
-    with dissolve
+        equoted "The what_prefix and what_suffix can be used to add text to the start and end of dialogue, respectively."
 
-    e "The \"extend\" character is very special."
+    example:
 
-    e "It lets you"
+        define eside = Character(_("Eileen"), image="eileen")
+        image side eileen happy = Transform("eileen happy", crop=(0, 0, 320, 400), zoom=.6)
+        image side eileen vhappy = Transform("eileen vhappy", crop=(0, 0, 320, 400), zoom=.6)
 
-    show eileen vhappy
+        eside "The image argument associates an image with a character."
+        eside vhappy "It lets dialogue take attributes, which can be used to change the image associated with the character."
+        eside happy "When the character speaks, Ren'Py will look for a side image assoicated with the character. It will apply image attributes, then show the side image."
 
-    extend " extend the previous dialogue"
 
-    show eileen happy
+    example:
+        define big = Character(None, what_size=26)
+        define ebig = Character(_("Eileen"), kind=big)
+        define lbig = Character(_("Lucy"), kind=big)
 
-    extend " with additional text."
+        ebig "The kind argument takes a Character to use as a template. This makes it possible to customize a single Charater, then copy it."
 
-    e "That lets you have things happen in the middle of text. If you didn't notice, I was changing my expression."
 
-    e "Hopefully, these characters, along with the ones you define, will lead to a very expressive game."
+    example:
+        e "Finally, there are a couple of special characters we want to mention."
+        extend " The extend character appends text to the last thing spoken."
+
+    example:
+        e "The narrator character is used to customize narration. Understand?"
+
+        narrator "I get it."
+        "I get that this line and the last line are both narration."
+
+
+
+
+
+    hide example
+    pause .5
 
     return
+
