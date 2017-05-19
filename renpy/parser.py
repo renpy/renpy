@@ -704,18 +704,30 @@ class Lexer(object):
         # Strip off delimiters.
         s = s[1:-1]
 
+        def dequote(m):
+            c = m.group(1)
+
+            if c == "{":
+                return "{{"
+            elif c == "[":
+                return "[["
+            elif c == "%":
+                return "%%"
+            elif c == "n":
+                return "\n"
+            elif c[0] == 'u':
+                group2 = m.group(2)
+
+                if group2:
+                    return unichr(int(m.group(2), 16))
+            else:
+                return c
+
         if not raw:
 
             # Collapse runs of whitespace into single spaces.
             s = re.sub(r'\s+', ' ', s)
-
-            s = s.replace("\\n", "\n")
-            s = s.replace("\\{", "{{")
-            s = s.replace("\\[", "[[")
-            s = s.replace("\\%", "%%")
-            s = re.sub(r'\\u([0-9a-fA-F]{1,4})',
-                       lambda m : unichr(int(m.group(1), 16)), s)
-            s = re.sub(r'\\(.)', r'\1', s)
+            s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)
 
         return s
 
