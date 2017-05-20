@@ -2543,6 +2543,7 @@ class Interface(object):
 
             self.restart_interaction = True
 
+            renpy.game.context().mark_seen()
             renpy.game.context().scene_lists.shown_window = False
 
     def interact_core(self,
