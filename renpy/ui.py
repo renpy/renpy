@@ -210,6 +210,7 @@ class ChildOrFixed(Addable):
         if d is not None:
             raise Exception("Did not expect to close %r." % d)
 
+
 # A stack of things we can add to.
 stack = [ ]
 
@@ -233,6 +234,7 @@ def reset():
     stack = [ Layer('transient') ]
     at_stack = [ ]
     imagemap_stack = [ ]
+
 
 renpy.game.post_init.append(reset)
 
@@ -283,7 +285,6 @@ def interact(type='misc', roll_forward=None, **kwargs):  # @ReservedAssignment
 
     renpy.game.context().info._current_interact_type = type
     rv = renpy.game.interface.interact(roll_forward=roll_forward, **kwargs)
-    renpy.game.context().mark_seen()
     renpy.game.context().info._last_interact_type = type
 
     if renpy.exports.in_fixed_rollback() and roll_forward is not None:
@@ -392,6 +393,7 @@ def context_enter(w):
 
 def context_exit(w):
     close(w)
+
 
 NoStylePrefixGiven = renpy.object.Sentinel("NoStylePrefixGiven")
 
@@ -585,6 +587,7 @@ def _add(d, **kwargs):
 
     return rv
 
+
 add = Wrapper(_add)
 
 
@@ -595,6 +598,7 @@ def _implicit_add(d):
     """
 
     return d
+
 
 implicit_add = Wrapper(_implicit_add)
 
@@ -607,6 +611,7 @@ def _image(im, **properties):
         d._unique()
 
     return d
+
 
 image = Wrapper(_image)
 
@@ -621,6 +626,7 @@ side = Wrapper(renpy.display.layout.Side, style="side", many=True)
 
 def _sizer(maxwidth=None, maxheight=None, **properties):
     return renpy.display.layout.Container(xmaximum=maxwidth, ymaximum=maxheight, **properties)
+
 
 sizer = Wrapper(_sizer, one=True)
 window = Wrapper(renpy.display.layout.Window, style="window", one=True, child=None)
@@ -638,6 +644,7 @@ def _key(key, action=None, activate_sound=None):
         raise Exception("Action is required in ui.key.")
 
     return renpy.display.behavior.Keymap(activate_sound=activate_sound, **{ key : action})
+
 
 key = Wrapper(_key)
 
@@ -828,6 +835,7 @@ def menu(menuitems,
 
     close()
 
+
 input = Wrapper(renpy.display.behavior.Input, exclude='{}', style="input", replaces=True)  # @ReservedAssignment
 
 
@@ -872,6 +880,7 @@ def imagemap_compat(ground,
                     )
 
     close()
+
 
 button = Wrapper(renpy.display.behavior.Button, style='button', one=True)
 
@@ -927,6 +936,7 @@ def _imagebutton(idle_image=None,
         selected_activate_image=selected_activate_image,
         **properties)
 
+
 imagebutton = Wrapper(_imagebutton, style="image_button")
 
 
@@ -954,6 +964,7 @@ def _textbutton(label, clicked=None, style=None, text_style=None, substitute=Tru
     rv._composite_parts = [ text ]
     return rv
 
+
 textbutton = Wrapper(_textbutton)
 
 
@@ -973,6 +984,7 @@ def _label(label, style=None, text_style=None, substitute=True, scope=None, **kw
     rv._main = text
     rv._composite_parts = [ text ]
     return rv
+
 
 label = Wrapper(_label)
 
@@ -1019,6 +1031,7 @@ def _bar(*args, **properties):
 
     return renpy.display.behavior.Bar(range, value, width, height, **properties)
 
+
 bar = Wrapper(_bar, vertical=False, replaces=True)
 vbar = Wrapper(_bar, vertical=True, replaces=True)
 slider = Wrapper(_bar, style='slider', replaces=True)
@@ -1039,11 +1052,13 @@ def _autobar_interpolate(range, start, end, time, st, at, **properties):  # @Res
     value = start + t * (end - start)
     return renpy.display.behavior.Bar(range, value, None, None, **properties), redraw
 
+
 autobar_interpolate = renpy.curry.curry(_autobar_interpolate)
 
 
 def _autobar(range, start, end, time, **properties):  # @ReservedAssignment
     return renpy.display.layout.DynamicDisplayable(autobar_interpolate(range, start, end, time, **properties))
+
 
 autobar = Wrapper(_autobar)
 transform = Wrapper(renpy.display.motion.Transform, one=True, style='transform')
@@ -1126,6 +1141,7 @@ def viewport(**properties):
 
 def vpgrid(**properties):
     return viewport_common(_vpgrid, **properties)
+
 
 conditional = Wrapper(renpy.display.behavior.Conditional, one=True)
 timer = Wrapper(renpy.display.behavior.Timer, replaces=True)
@@ -1215,6 +1231,7 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
 
     return rv
 
+
 imagemap = Wrapper(_imagemap, imagemap=True, style='imagemap')
 
 
@@ -1267,6 +1284,7 @@ def _hotspot(spot, style='hotspot', **properties):
         selected_insensitive_background=selected_insensitive,
         style=style,
         **properties)
+
 
 hotspot_with_child = Wrapper(_hotspot, style="hotspot", one=True)
 
@@ -1323,6 +1341,7 @@ def _hotbar(spot, adjustment=None, range=None, value=None, **properties):  # @Re
         ymaximum=h,
         **properties)
 
+
 hotbar = Wrapper(_hotbar, style="hotbar", replaces=True)
 
 
@@ -1332,6 +1351,7 @@ hotbar = Wrapper(_hotbar, style="hotbar", replaces=True)
 def _returns(v):
 
     return v
+
 
 returns = renpy.curry.curry(_returns)
 
@@ -1346,12 +1366,14 @@ def _jumps(label, transition=None):
 
     raise renpy.exports.jump(label)
 
+
 jumps = renpy.curry.curry(_jumps)
 
 
 def _jumpsoutofcontext(label):
 
     raise renpy.game.JumpOutException(label)
+
 
 jumpsoutofcontext = renpy.curry.curry(_jumpsoutofcontext)
 
@@ -1374,6 +1396,7 @@ def gamemenus(*args):
 ##############################################################################
 # The on statement.
 
+
 on = Wrapper(renpy.display.behavior.OnEvent)
 
 ##############################################################################
@@ -1395,6 +1418,7 @@ def screen_id(id_, d):
 
 ##############################################################################
 # Postamble
+
 
 # Update the wrappers to have names.
 k, v = None, None
