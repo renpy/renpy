@@ -34,13 +34,29 @@ screen style0():
                 action Return(True)
 
 
+label new_gui:
+
+    e "When you create a new project, Ren'Py will automatically create a GUI - a Graphical User Interface - for it."
+
+    e "It defines the look of both in-game interface, like this text box, and out-of-game interface like the main and game menus."
+
+    e "The default GUI is meant to be nice enough for a simple project. With a few small changes, it's what you're seeing in this game."
+
+    e "The GUI is also meant to be easy for an intermediate creator to customize. Customizing the GUI consists of changing the image files in the gui directory, and changing variables in gui.rpy."
+
+    e "At the same time, even when customized, the default GUI might be too recognizable for an extremely polished game. That's why we've made it easy to totally replace."
+
+    e "We've put an extensive guide to customizing the GUI on the Ren'Py website. So if you want to learn more, visit the {a=https://www.renpy.org/doc/html/gui.html}GUI customization guide{/a}."
+
+    return
+
 label styles:
 
     show eileen happy at left
 
-    e "Ren'Py has a powerful style system that lets you control what displayables look like. The GUI framework gives sensible default, but the style system allows total customization."
+    e "Ren'Py has a powerful style system that controls what displayables look like."
 
-    e "If you're creating your own GUI from scratch, or creating your own screens, you'll want to learn about styles to make your visual novel look great."
+    e "While the default GUI uses variables to provide styles with sensible defaults, if you're replacing the GUI or creating your own screens, you'll need to learn about styles yourself."
 
     menu styles_menu:
 

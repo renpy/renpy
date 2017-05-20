@@ -25,15 +25,19 @@ init python:
         (None, _("In Depth"), False),
 
         ("text", _("Text Tags, Escapes, and Interpolation"), True),
-
-
-        ("tutorial_positions", _("Screen Positions"), True),
         ("simple_displayables", _("Simple Displayables"), False),
 
-        ("tutorial_screens", _("Screens"), True),
-        ("tutorial_atl", _("Transforms and Animation"), True),
+        # Positions and Transforms?
+        ("tutorial_positions", _("Screen Positions"), True),
 
+        # Advanced Transforms?
+        ("tutorial_atl", _("Transforms and Animation"), True),
         ("transform_properties", _("Transform Properties"), True),
+
+        ("new_gui", _("GUI Customization"), True),
+        ("styles", _("Styles and Style Properties"), True),
+        ("tutorial_screens", _("Screens"), True),
+
 
         ("demo_transitions", _("Transition Gallery"), True),
         ("demo_imageops", _("Image Operations"), True),
@@ -96,9 +100,6 @@ default tutorials_adjustment = ui.adjustment()
 
 # True if this is the first time through the tutorials.
 default tutorials_first_time = True
-
-label main_menu:
-    return
 
 # The game starts here.
 #begin start
