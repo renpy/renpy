@@ -34,6 +34,7 @@ screen style0():
                 action Return(True)
 
 
+
 label new_gui:
 
     e "When you create a new project, Ren'Py will automatically create a GUI - a Graphical User Interface - for it."
@@ -65,6 +66,8 @@ label styles:
         "Style basics.":
             call style_basics
 
+        "General style properties.":
+            call style_general
 
         "That's all I want to know.":
             return
@@ -185,6 +188,94 @@ label style_basics:
     e "Those are the basics of styles. If GUI customization isn't enough for you, styles let you customize just about everything in Ren'Py."
 
     return
+
+
+screen general(style):
+    frame:
+        style style
+        text _("The road to the stars is steep and dangerous. But we are not afraid.\n–Yuri Gagarin")
+
+
+
+label style_general:
+
+    e "The first group of style properties that we'll go over are the general style properties. These work with every displayable, or at least many different ones."
+
+    example:
+
+        style general is frame:
+            xalign 0.5
+            yalign 0.2
+
+    show screen general("general")
+    with dissolve
+
+    e "Every displayable takes the positon properties, which control where it can be placed on screen. Since I've already mentioned them, I won't repeat them here."
+
+
+    example:
+        style minmax_general:
+            xmaximum 400
+            yminimum 200
+
+    show screen general("minmax_general")
+    with dissolve
+
+    e "The xmaximum and ymaximum properties set the maximum width and height of the displayable, respectively. This will cause Ren'Py to shrink things, if possible."
+
+    e "Sometimes, the shrunken size will be smaller than the size given by xmaximum and ymaximum."
+
+    e "Similarly, the xminimum and yminimum properties set the minimum width and height. If the displayable is smaller, Ren'Py will try to make it bigger."
+
+
+    example:
+        style xysize_general:
+            xsize 400
+            ysize 200
+
+    show screen general("xysize_general")
+
+    e "The xsize and ysize properties set the minimum and maximum size to the same value, fixing the size."
+
+    e "These only works for displayables than can be resized. Some displayables, like images, can't be made bigger or smaller."
+
+    example:
+        style area_general:
+            area (600, 20, 400, 200)
+
+    show screen general("area_general")
+
+    e "The area property takes a tuple - a parenthesis bounded list of four items. The first two give the position, and the second two the size."
+
+    example:
+        style fill_general:
+            xfill True
+
+    show screen general("fill_general")
+
+    e "The xfill and yfill properties make a displayable expand to fill available space in the horizontal and vertical directions."
+
+
+    example:
+        style alt_general:
+            alt _("\"The road to the stars is steep and dangerous. But we are not afraid.\" Said by Yuri Gagarin.")
+
+    show screen general("alt_general")
+
+
+    e "Finally, the alt property changes the text used by self-voicing for the hearing impaired."
+
+    hide screen general
+    hide example
+    with dissolve
+
+    return
+
+
+
+
+
+
 
 
 
