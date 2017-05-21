@@ -69,6 +69,9 @@ label styles:
         "General style properties.":
             call style_general
 
+        "Text style properties.":
+            call style_text
+
         "That's all I want to know.":
             return
 
@@ -196,7 +199,6 @@ screen general(style):
         text _("The road to the stars is steep and dangerous. But we are not afraid.\n–Yuri Gagarin")
 
 
-
 label style_general:
 
     e "The first group of style properties that we'll go over are the general style properties. These work with every displayable, or at least many different ones."
@@ -271,6 +273,179 @@ label style_general:
 
     return
 
+screen text(style):
+    frame:
+        xalign 0.5
+        yalign 0.2
+        xsize 400
+
+        text _("The road to the stars is steep and dangerous. But we are not afraid.\n–Yuri Gagarin"):
+            style style
+
+
+label style_text:
+
+    e "The text style properties apply to text and input displayables."
+
+    e "Text displayables can be create implicitly or explicitly. For example, a textbutton creates a text displayable with a style ending in button_text."
+
+    e "These can also be set in gui.rpy by changing or defining variables with names like gui.button_text_size."
+
+    example:
+        style bold_text:
+            bold True
+
+    show screen text("bold_text")
+
+    e "The bold style property makes the text bold. This can be done using an algorithm, rather than a different version of the font."
+
+    example:
+        style color_text:
+            color "#c0ffc0"
+
+    show screen text("color_text")
+
+    e "The color property changes the color of the text. It takes hex color codes, just like everything else in Ren'Py."
+
+    example:
+        style first_indent_text:
+            first_indent 40
+
+    show screen text("first_indent_text")
+
+    e "The first_indent style property determines how far the first line is indented."
+
+    example:
+        style font_text:
+            font "DejaVuSans-Bold.ttf"
+
+    show screen text("font_text")
+
+    e "The font style property changes the font the text uses. Ren'Py takes TrueType and OpenType fonts, and you'll have to include the font file as part of your visual novel."
+
+    example:
+        style size_text:
+            size 28
+
+    show screen text("size_text")
+
+    e "The size property changes the size of the text."
+
+
+    example:
+        style italic_text:
+            italic True
+
+    show screen text("italic_text")
+
+    e "The italic property makes the text italic. Again, this is better done with a font, but for short amounts of text Ren'Py can do it for you."
+
+
+    example:
+        style justify_text:
+            justify True
+
+    show screen text("justify_text")
+
+    e "The justify property makes the text justified, lining all but the last line up on the left and the right side."
+
+    example:
+        style kerning_text:
+            kerning -0.5
+
+    show screen text("kerning_text")
+
+    e "The kerning property kerns the text. When it's negative, characters are closer together. When positive, characters are farther apart."
+
+
+    example:
+        style leading_spacing_text:
+            line_leading 5
+            line_spacing 7
+
+    show screen text("leading_spacing_text")
+
+    e "The line_leading and line_spacing properties put spacing before each line, and between lines, respectively."
+
+
+    example:
+        style outlines_text:
+            outlines [ (1, "#408040", 0, 0) ]
+
+    show screen text("outlines_text")
+
+    e "The outlines property puts outlines around text. This takes a list of tuples, which is a bit complicated."
+
+    e "But if you ignore the brackets and parenthesis, you have the width of the outline, the color, and then horizontal and vertical offsets."
+
+    example:
+        style rest_indent_text:
+            rest_indent 40
+
+    show screen text("rest_indent_text")
+
+    e "The rest_indent property controls the indentation of lines after the first one."
+
+
+    example:
+        style strikethrough_text:
+            strikethrough True
+
+    show screen text("strikethrough_text")
+
+    e "The strikethrough property strikes through text. It seems pretty unlikely you'd want to use this one."
+
+
+    example:
+        style center_text:
+            text_align 0.5
+
+    show screen text("center_text")
+
+    e "The text align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
+
+    e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
+
+
+    example:
+        style right_text:
+            text_align 1.0
+            yalign 1.0
+
+    show screen text("right_text")
+
+    e "When both text_align and xalign are set to 1.0, the text is properly right-justified."
+
+
+    example:
+        style underline_text:
+            underline True
+
+    show screen text("underline_text")
+
+    e "The underline property underlines the text."
+
+#
+#     example:
+#         style vertical_text:
+#             vertical True
+#
+#     show screen text("vertical_text")
+#
+#     e "And the vertical style property places text in a vertical layout."
+
+
+
+
+
+`
+    example:
+        style _text:
+
+
+    show screen text("_text")
+
+`
 
 
 
