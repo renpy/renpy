@@ -178,7 +178,7 @@ label tutorial_screens:
 
     e "Screens are the most powerful part of Ren'Py. Screens let you customize the out-of-game interface, and create new in-game interface components."
 
-    show example simple_screen
+    show example simple_screen large
 
     e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen."
 

@@ -6,24 +6,22 @@ image logo blink:
     linear .5 alpha 1.0
     repeat
 
-
-
 transform logopos:
     xalign .5
-    ypos 100
+    ypos 50
 
 label simple_displayables:
 
     e "Ren'Py has the concept of a displayable, which is something like an image that can be shown and hidden."
 
-    example small:
+    example:
         image logo base = "logo base.png"
 
     show logo base at logopos
 
     e "The image statement is used to give an image name to a displayable. The easy way is to simply give an image filename."
 
-    example small:
+    example:
         image logo alias = "logo base"
 
     show logo alias at logopos
@@ -32,7 +30,7 @@ label simple_displayables:
 
     hide logo with dissolve
 
-    example small:
+    example:
         image bg red = "#c00"
         image bg blue = "#0000cc"
         image overlay red = "#c008"
@@ -46,7 +44,7 @@ label simple_displayables:
 
     show bg washington with dissolve
 
-    example small:
+    example:
         image logo rotated = Transform("logo base", rotate=45)
 
     show logo rotated at logopos
@@ -56,7 +54,7 @@ label simple_displayables:
 
     e "Notice how, since it takes a displayable, it can take another image. In face, it can take any displayable defined here."
 
-    example small:
+    example:
         image logo solid = Solid("#0000cc", xysize=(200, 200))
 
     show logo solid at logopos
@@ -65,7 +63,7 @@ label simple_displayables:
     e "There's a more complete form of Solid, that can take style properties. This lets us change the size of the Solid, where normally it fills the screen."
 
 
-    example small:
+    example:
         image logo text = Text(_("This is a text displayable."), size=30)
 
     show logo text at logopos
@@ -73,7 +71,7 @@ label simple_displayables:
 
     e "The Text displayable lets Ren'Py treat text as if if it was an image. "
 
-    example small:
+    example:
         image logo text rotate = Transform(Text(_("This is a text displayable."), size=30), rotate=45)
 
     show logo text rotate at logopos
@@ -81,7 +79,7 @@ label simple_displayables:
 
     e "This means that we can apply other displayables, like Transform, to Text in the same way we do to images."
 
-    example small:
+    example:
         image logo livecomposite = LiveComposite((240, 460),
             (0, 0), "logo blink",
             (0, 50), "logo base.png",
@@ -94,7 +92,7 @@ label simple_displayables:
 
     hide logo
 
-    example small:
+    example:
         image ninepatch frame = Frame("ninepatch", 40, 40, 40, 40)
 
     show ninepatch frame at logopos:
@@ -105,21 +103,21 @@ label simple_displayables:
     show ninepatch frame at logopos:
         size (120, 120)
         linear 3.0 size (360, 360)
-        pause .5
+        pause 1.0
         linear 3.0 size (120, 120)
-        pause .5
+        pause 1.0
         repeat
 
     e "The Frame displayable expands or shrinks to fit the area available to it. It does this by scaling the center in two dimensions and the sides in one, while keeping the corners the same size."
 
-    example small:
+    example:
         image ninepatch frame tiled = Frame("ninepatch", 40, 40, 40, 40, tile=True)
 
     show ninepatch frame tiled
 
     e "A Frame can also tile sections of the displayable supplied to it, rather than scaling."
 
-    example small:
+    example:
         image ninepatch paper tiled = Frame("ninepatch paper", 40, 40, 40, 40, tile=True)
 
     show ninepatch paper tiled

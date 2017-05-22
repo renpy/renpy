@@ -3,18 +3,35 @@ python early:
     # This maps from example name to the text of a fragment.
     examples = { }
 
+    # The size of the example - large or small.
+    example_size = "small"
+
+    # The location of the example - top or bottom.
+    example_location = "top"
+
+    def reset_example():
+        """
+        Called to reset the example code to the defaults.
+        """
+
+        global example_size
+        global example_location
+
+        example_size = "small"
+        example_location = "top"
+
 
     # This defines the example statement.
     #
     # The example statement takes:
     # * An optional name for the example.
     # * An optional hide flag.
-    # * An optional size/position flag, which can be either bottom or small.
+    # * Optional size flags, large or small.
+    # * Optional position flags, top or bottom.
     #
     # The statement defines an example with the name, or an anyonymous name if no
     # name is given. When run, the example is displayed if the hide flag is not
-    # given. Bottom and small determine if the example is displayed at the bottom
-    # of the screen or at half height.
+    # given.
 
     def read_example(name, fn, line):
         """
@@ -69,6 +86,8 @@ python early:
         hide = False
         bottom = False
         small = False
+        top = False
+        large = False
 
         while True:
 
@@ -84,6 +103,12 @@ python early:
             elif l.keyword('small'):
                 small = True
 
+            elif l.keyword('top'):
+                top = True
+
+            elif l.keyword('large'):
+                large = True
+
             else:
 
                 if name:
@@ -96,7 +121,7 @@ python early:
         if name is None:
             name = "example_{}_{}".format(l.filename, l.number)
 
-        return { "name" : name, "names" : [ name ], "hide" : hide, "bottom" : bottom, "small" : small, "filename" : l.filename, "number" : l.number }
+        return { "name" : name, "names" : [ name ], "hide" : hide, "bottom" : bottom, "small" : small, "filename" : l.filename, "number" : l.number, "top" : top, "large" : large }
 
     def next_example(data, first):
         return first
@@ -106,11 +131,27 @@ python early:
         hide = data.get("hide", False)
         bottom = data.get("bottom", False)
         small = data.get("small", False)
+        top = data.get("top", False)
+        large = data.get("large", False)
+
+        global example_location
+        global example_size
+
+
+        if bottom:
+            example_location = "bottom"
+        elif top:
+            example_location = "top"
+
+        if small:
+            example_size = "small"
+        elif large:
+            example_size = "large"
 
         if hide:
             return
 
-        renpy.show_screen("example", names, small, bottom)
+        renpy.show_screen("example", names, example_size == "small", example_location == "bottom")
 
     def execute_init_example(data):
         read_example(data["name"], data["filename"], data["number"])
@@ -124,8 +165,12 @@ python early:
     def parse_show_example(l):
 
         names = [ ]
+
+
         bottom = False
         small = False
+        top = False
+        large = False
 
         while not l.eol():
 
@@ -135,11 +180,17 @@ python early:
             elif l.keyword('small'):
                 small = True
 
+            elif l.keyword('top'):
+                top = True
+
+            elif l.keyword('large'):
+                large = True
+
             else:
 
                 names.append(l.require(l.name))
 
-        return { "names" : names, "hide" : False, "bottom" : bottom, "small" : small }
+        return { "names" : names, "hide" : False, "bottom" : bottom, "small" : small, "top" : top, "large" : large }
 
     renpy.register_statement("show example", parse=parse_show_example, execute=execute_example)
 

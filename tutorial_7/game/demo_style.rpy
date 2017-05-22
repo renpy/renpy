@@ -91,7 +91,7 @@ label style_basics:
 
     e "Styles are a combination of information from three different places."
 
-    example small:
+    example:
         screen style1:
             text _("This text is colored green."):
                 at example
@@ -102,7 +102,7 @@ label style_basics:
 
     e "The first is is as part of a screen. Each displayable defined in a screen takes style properties."
 
-    example small:
+    example:
         image style2 = Text(_("This text is colored red."), color="#ffc0c0")
 
 
@@ -112,7 +112,7 @@ label style_basics:
     e "The next is as part of a displayable created in an image statement. Style properties are just arguments to the displayable."
 
 
-    example small:
+    example:
         style blue_text:
             color "#c0c0ff"
 
@@ -133,7 +133,7 @@ label style_basics:
 
     e "For example, blue_text inherits from text, which in turn inherits from default. The default style defines all properties, so it doesn't inherit from anything."
 
-    example small:
+    example:
         style blue_text is text:
             color "#c0c0ff"
 
@@ -153,7 +153,7 @@ label style_basics:
 
     e "These can be preceded by selected_ to change how the button looks when it represents a selected value or screen."
 
-    example small:
+    example:
         style example_button_text:
             idle_color "#c0c0c0"
             hover_color "#ffffff"
@@ -203,7 +203,7 @@ label style_general:
 
     e "The first group of style properties that we'll go over are the general style properties. These work with every displayable, or at least many different ones."
 
-    example small:
+    example:
 
         style general is frame:
             xalign 0.5
@@ -215,7 +215,7 @@ label style_general:
     e "Every displayable takes the positon properties, which control where it can be placed on screen. Since I've already mentioned them, I won't repeat them here."
 
 
-    example small:
+    example:
         style minmax_general:
             xmaximum 400
             yminimum 200
@@ -230,7 +230,7 @@ label style_general:
     e "Similarly, the xminimum and yminimum properties set the minimum width and height. If the displayable is smaller, Ren'Py will try to make it bigger."
 
 
-    example small:
+    example:
         style xysize_general:
             xsize 400
             ysize 200
@@ -241,7 +241,7 @@ label style_general:
 
     e "These only works for displayables than can be resized. Some displayables, like images, can't be made bigger or smaller."
 
-    example small:
+    example:
         style area_general:
             area (600, 20, 400, 200)
 
@@ -249,7 +249,7 @@ label style_general:
 
     e "The area property takes a tuple - a parenthesis bounded list of four items. The first two give the position, and the second two the size."
 
-    example small:
+    example:
         style fill_general:
             xfill True
 
@@ -258,7 +258,7 @@ label style_general:
     e "The xfill and yfill properties make a displayable expand to fill available space in the horizontal and vertical directions."
 
 
-    example small:
+    example:
         style alt_general:
             alt _("\"The road to the stars is steep and dangerous. But we are not afraid.\" Said by Yuri Gagarin.")
 
@@ -297,7 +297,7 @@ label style_text:
 
     e "These can also be set in gui.rpy by changing or defining variables with names like gui.button_text_size."
 
-    example small:
+    example:
         style bold_text:
             bold True
 
@@ -305,7 +305,7 @@ label style_text:
 
     e "The bold style property makes the text bold. This can be done using an algorithm, rather than a different version of the font."
 
-    example small:
+    example:
         style color_text:
             color "#c0ffc0"
 
@@ -313,7 +313,7 @@ label style_text:
 
     e "The color property changes the color of the text. It takes hex color codes, just like everything else in Ren'Py."
 
-    example small:
+    example:
         style first_indent_text:
             first_indent 40
 
@@ -321,7 +321,7 @@ label style_text:
 
     e "The first_indent style property determines how far the first line is indented."
 
-    example small:
+    example:
         style font_text:
             font "DejaVuSans-Bold.ttf"
 
@@ -329,7 +329,7 @@ label style_text:
 
     e "The font style property changes the font the text uses. Ren'Py takes TrueType and OpenType fonts, and you'll have to include the font file as part of your visual novel."
 
-    example small:
+    example:
         style size_text:
             size 28
 
@@ -338,7 +338,7 @@ label style_text:
     e "The size property changes the size of the text."
 
 
-    example small:
+    example:
         style italic_text:
             italic True
 
@@ -347,7 +347,7 @@ label style_text:
     e "The italic property makes the text italic. Again, this is better done with a font, but for short amounts of text Ren'Py can do it for you."
 
 
-    example small:
+    example:
         style justify_text:
             justify True
 
@@ -355,7 +355,7 @@ label style_text:
 
     e "The justify property makes the text justified, lining all but the last line up on the left and the right side."
 
-    example small:
+    example:
         style kerning_text:
             kerning -0.5
 
@@ -364,7 +364,7 @@ label style_text:
     e "The kerning property kerns the text. When it's negative, characters are closer together. When positive, characters are farther apart."
 
 
-    example small:
+    example:
         style leading_spacing_text:
             line_leading 5
             line_spacing 7
@@ -374,7 +374,7 @@ label style_text:
     e "The line_leading and line_spacing properties put spacing before each line, and between lines, respectively."
 
 
-    example small:
+    example:
         style outlines_text:
             outlines [ (1, "#408040", 0, 0) ]
 
@@ -384,7 +384,7 @@ label style_text:
 
     e "But if you ignore the brackets and parenthesis, you have the width of the outline, the color, and then horizontal and vertical offsets."
 
-    example small:
+    example:
         style rest_indent_text:
             rest_indent 40
 
@@ -393,7 +393,7 @@ label style_text:
     e "The rest_indent property controls the indentation of lines after the first one."
 
 
-    example small:
+    example:
         style center_text:
             text_align 0.5
 
@@ -404,7 +404,7 @@ label style_text:
     e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
 
 
-    example small:
+    example:
         style right_text:
             text_align 1.0
             yalign 1.0
@@ -414,7 +414,7 @@ label style_text:
     e "When both text_align and xalign are set to 1.0, the text is properly right-justified."
 
 
-    example small:
+    example:
         style underline_text:
             underline True
 
@@ -429,7 +429,7 @@ label style_text:
 
     e "Those are the most common text style properties, but not the only ones. Here are a few more that you might need in special circumstances."
 
-    example small:
+    example:
         style antialias_text:
             antialias False
 
@@ -437,7 +437,7 @@ label style_text:
 
     e "By default, text in Ren'Py is antialiased, to smooth the edges. The antialias property can turn that off, and make the text a little more jagged."
 
-    example small:
+    example:
         style adjust_true_text:
             adjust_spacing True
 
@@ -446,7 +446,7 @@ label style_text:
     e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
 
 
-    example small:
+    example:
         style adjust_true_text:
             adjust_spacing False
 
@@ -455,7 +455,7 @@ label style_text:
     e "When False, the text won't jump around as much. But it can be a little wider or narrower based on screen size."
 
 
-    example small:
+    example:
         style layout_nobreak_text:
             layout "nobreak"
 
@@ -464,7 +464,7 @@ label style_text:
     e "The layout property has a few special values that control where lines are broken. The 'nobreak' value disables line breaks entirely, making the text wider."
 
 
-    example small:
+    example:
         style layout_subtitle_text:
             layout "subtitle"
             xalign 0.5
@@ -474,7 +474,7 @@ label style_text:
 
     e "When the layout property is set to 'subtitle', the line breaking algorithm is changed to try to make all lines even in length, as subtitles usually are."
 
-    example small:
+    example:
         style strikethrough_text:
             strikethrough True
 
@@ -483,7 +483,7 @@ label style_text:
     e "The strikethrough property draws a line through the text. It seems pretty unlikely you'd want to use this one."
 
 
-    example small:
+    example:
         style vertical_text:
             vertical True
             size 18

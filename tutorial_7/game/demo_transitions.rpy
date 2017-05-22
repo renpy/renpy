@@ -96,7 +96,7 @@ label demo_simple_transitions:
 
     e "But don't let that get you down, since they're the transitions you'll probably use the most in a game."
 
-    example small:
+    example:
         show bg whitehouse
         with dissolve
 
@@ -109,7 +109,7 @@ label demo_simple_transitions:
     e "The 'Dissolve' function lets you create your own dissolves, taking a different amount of time."
 
 
-    example small:
+    example:
         show bg whitehouse
         with fade
 
@@ -122,7 +122,7 @@ label demo_simple_transitions:
 
     e "You can use 'Fade' to define your own fades. By changing the timing and the color faded to, you can use this for special effects, like flashbulbs."
 
-    example small:
+    example:
         show bg washington
         with pixellate
 
@@ -139,7 +139,7 @@ label demo_simple_transitions:
 
     "......"
 
-    example small:
+    example:
         play audio "punch.opus"
         with vpunch
 
@@ -147,7 +147,7 @@ label demo_simple_transitions:
 
     e "I was about to demonstrate 'vpunch'... well, I guess I just did."
 
-    example small:
+    example:
         play audio "punch.opus"
         with hpunch
 
@@ -155,7 +155,7 @@ label demo_simple_transitions:
 
     e "There's also the 'move' transition, which is confusingly enough defined using the 'MoveTransition' function."
 
-    example small:
+    example:
         show eileen happy at right
         with move
         show eileen happy at center
@@ -179,7 +179,7 @@ label demo_imagedissolve_transitions:
     e "There are two ImageDissolve transitions built into Ren'Py."
 
 
-    example small:
+    example:
         scene black
         with blinds
 
@@ -190,7 +190,7 @@ label demo_imagedissolve_transitions:
 
     e "The 'blinds' transition opens and closes what looks like vertical blinds."
 
-    example small:
+    example:
         scene black
         with squares
 
@@ -289,25 +289,25 @@ label demo_cropmove_transitions:
 
     e "I'll stand offscreen, so you can see some of its modes. I'll read out the mode name after each transition."
 
-    example small:
+    example:
         scene bg whitehouse
         with wiperight
 
     e "We first have wiperight..."
 
-    example small:
+    example:
         scene bg washington
         with wipeleft
 
     e "...followed by wipeleft... "
 
-    example small:
+    example:
         scene bg whitehouse
         with wipeup
 
     e "...wipeup..."
 
-    example small:
+    example:
         scene bg washington
         with wipedown
 
@@ -315,25 +315,25 @@ label demo_cropmove_transitions:
 
     e "Next, the slides."
 
-    example small:
+    example:
         scene bg whitehouse
         with slideright
 
     e "Slideright..."
 
-    example small:
+    example:
         scene bg washington
         with slideleft
 
     e "...slideleft..."
 
-    example small:
+    example:
         scene bg whitehouse
         with slideup
 
     e "...slideup..."
 
-    example small:
+    example:
         scene bg washington
         with slidedown
 
@@ -342,25 +342,25 @@ label demo_cropmove_transitions:
     e "While the slide transitions slide in the new scene, the
        slideaways slide out the old scene."
 
-    example small:
+    example:
         scene bg whitehouse
         with slideawayright
 
     e "Slideawayright..."
 
-    example small:
+    example:
         scene bg washington
         with slideawayleft
 
     e "...slideawayleft..."
 
-    example small:
+    example:
         scene bg whitehouse
         with slideawayup
 
     e "...slideawayup..."
 
-    example small:
+    example:
         scene bg washington
         with slideawaydown
 
@@ -369,13 +369,13 @@ label demo_cropmove_transitions:
     e "We also have a couple of transitions that use a
        rectangular iris."
 
-    example small:
+    example:
         scene bg whitehouse
         with irisout
 
     e "There's irisout..."
 
-    example small:
+    example:
         scene bg washington
         show eileen happy
         with irisin
@@ -392,7 +392,7 @@ label demo_pushmove_transitions:
 
     e "The PushMove transitions use the new scene to push the old one out. Let's take a look."
 
-    example small:
+    example:
 
         show bg whitehouse
         hide eileen
@@ -400,7 +400,7 @@ label demo_pushmove_transitions:
 
     "There's pushright..."
 
-    example small:
+    example:
 
         show bg washington
         with pushleft
@@ -408,14 +408,14 @@ label demo_pushmove_transitions:
     "...pushleft..."
 
 
-    example small:
+    example:
 
         show bg whitehouse
         with pushdown
 
     "...pushdown..."
 
-    example small:
+    example:
 
         show bg washington
         show eileen happy

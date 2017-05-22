@@ -23,9 +23,7 @@ label tutorial_nvlmode:
 
     nvle "To use NVL-mode, you need to define Characters with a kind=nvl."
 
-
-
-    example bottom:
+    example large bottom:
 
         nvle "Then just use that character in a say statement."
 
@@ -43,7 +41,7 @@ label tutorial_nvlmode:
     # both kinds of menus.
     $ menu = nvl_menu
 
-    show example nvl3a nvl3 bottom
+    show example nvl3a nvl3 large bottom
 
 example nvl3 hide:
 

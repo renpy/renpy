@@ -68,7 +68,7 @@ label tutorial_dialogue:
 
     e "But before I can show you how to write dialogue, let me show you how we present script examples."
 
-    example:
+    example large:
         "Eileen" "Examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
 
         "Eileen" "When an example is bigger than the screen, you can scroll around in it using the mouse wheel or by simply dragging the mouse."
@@ -234,7 +234,7 @@ label tutorial_images:
     show eileen happy
     with dissolve
 
-    show example start images1
+    show example start images1 large
 
     e "Here's the script for that scene. Notice how it includes two new statements, the scene and show statement."
 
@@ -290,7 +290,7 @@ label tutorial_transitions:
         show eileen happy
         with Dissolve(.5)
 
-    show example trans1
+    show example trans1 large
 
     e "That's much smoother. Here's some example code showing how we include transitions in our game."
 
@@ -415,7 +415,7 @@ label tutorial_menus:
             # ... the game continues here.
 
 
-    show example menu1
+    show example menu1 large
 
     e "Here, you can see the code for that menu. If you scroll down, you can see the code we run after the menu."
 
