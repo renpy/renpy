@@ -1,57 +1,99 @@
-﻿# This file contains the script for the Ren'Py demo game. Execution starts at
-# the start label.
+﻿# Hi there! This is the Ren'Py tutorial game. It's actually a fairly bad
+# example of Ren'Py programming style - the examples we present in the game
+# itself are good, but to make them easy to present we wind up doing
+# some non-standard high-level things.
+#
+# So feel free to poke around, but if you're really looking for an example
+# of good Ren'Py programming style, consider checking out The Question
+# instead.
+
 
 # Declare the characters.
 define e = Character(_('Eileen'), color="#c8ffc8")
 
 init python:
 
-    tutorials = [
+    # A list of section and tutorial objects.
+    tutorials = [ ]
 
-        (None, _("Quickstart"), False),
+    class Section(object):
+        """
+        Represents a section of the tutorial menu.
 
+        `title`
+            The title of the section. This should be a translatable string.
+        """
 
-        ("tutorial_playing", _("Player Experience"), True),
-        ("tutorial_create", _("Creating a new Game"), True),
-        ("tutorial_dialogue", _("Writing Dialogue"), True),
-        ("tutorial_images", _("Adding Images"), True),
-        ("tutorial_transitions", _("Transitions"), True),
-        ("tutorial_music", _("Music and Sound Effects"), True),
-        ("tutorial_menus", _("Choices and Python"), True),
-        ("tutorial_video", _("Video Playback"), True),
-        ("tutorial_nvlmode", _("NVL Mode"), False),
+        def __init__(self, title):
+            self.kind = "section"
+            self.title = title
 
-
-        (None, _("In Depth"), False),
-
-        ("text", _("Text Tags, Escapes, and Interpolation"), True),
-        ("simple_displayables", _("Simple Displayables"), False),
-
-        # Positions and Transforms?
-        ("tutorial_positions", _("Screen Positions"), True),
-
-        # Advanced Transforms?
-        ("tutorial_atl", _("Transforms and Animation"), True),
-        ("transform_properties", _("Transform Properties"), True),
-
-        ("new_gui", _("GUI Customization"), True),
-        ("styles", _("Styles and Style Properties"), True),
-        ("tutorial_screens", _("Screens"), True),
+            tutorials.append(self)
 
 
-        ("demo_transitions", _("Transition Gallery"), True),
-        ("demo_imageops", _("Image Operations"), True),
-        ("demo_ui", _("User Interaction"), True),
-        ("demo_text", _("Fonts and Text Tags"), True),
-        ("demo_character", _("Character Objects"), True),
-        ("demo_layers", _("Layers & Advanced Show"), True),
-        ("demo_dynamic", _("Dynamic Displayables"), True),
-        ("demo_minigame", _("Minigames"), True),
-        ("demo_persistent", _("Persistent Data"), True),
-        ("demo_transform", _("Transform"), True),
-        ("tutorial_sprite", _("Sprites"), True),
+    class Tutorial(object):
+        """
+        Represents a label that we can jump to.
+        """
 
-        ]
+        def __init__(self, label, title, move=True):
+            self.kind = "tutorial"
+            self.label = label
+            self.title = title
+
+            if move and (move != "after"):
+                self.move_before = True
+            else:
+                self.move_before = False
+
+            if move and (move != "before"):
+                self.move_after = True
+            else:
+                self.move_after = False
+
+            tutorials.append(self)
+
+
+    Section(_("Quickstart"))
+
+    Tutorial("tutorial_playing", _("Player Experience"))
+    Tutorial("tutorial_create", _("Creating a new Game"))
+    Tutorial("tutorial_dialogue", _("Writing Dialogue"))
+    Tutorial("tutorial_images", _("Adding Images"))
+    Tutorial("tutorial_transitions", _("Transitions"))
+    Tutorial("tutorial_music", _("Music and Sound Effects"))
+    Tutorial("tutorial_menus", _("Choices and Python"))
+    Tutorial("tutorial_video", _("Video Playback"))
+    Tutorial("tutorial_nvlmode", _("NVL Mode"), move=None)
+
+    Section(_("In Depth"))
+
+    Tutorial("text", _("Text Tags, Escapes, and Interpolation"))
+    Tutorial("simple_displayables", _("Simple Displayables"), move=None)
+
+    # Positions and Transforms?
+    Tutorial("tutorial_positions", _("Screen Positions"))
+
+    # Advanced Transforms?
+    Tutorial("tutorial_atl", _("Transforms and Animation"))
+    Tutorial("transform_properties", _("Transform Properties"))
+
+    Tutorial("new_gui", _("GUI Customization"))
+    Tutorial("styles", _("Styles and Style Properties"), move=None)
+    Tutorial("tutorial_screens", _("Screens"))
+
+    Tutorial("demo_transitions", _("Transition Gallery"))
+    Tutorial("demo_ui", _("User Interaction"))
+    Tutorial("demo_character", _("Character Objects"))
+    Tutorial("demo_minigame", _("Minigames"))
+
+    # Label("demo_text", _("Fonts and Text Tags")),
+    # Label("demo_imageops", _("Image Operations")),
+    # Label("demo_layers", _("Layers & Advanced Show")),
+    # Label("demo_dynamic", _("Dynamic Displayables")),
+    # Label("demo_persistent", _("Persistent Data"), True),
+    # Label("demo_transform", _("Transform"), True),
+    # Label("tutorial_sprite", _("Sprites"), True),
 
 screen tutorials(adj):
 
@@ -68,19 +110,19 @@ screen tutorials(adj):
             mousewheel True
 
             vbox:
-                for label, name, should_move in tutorials:
+                for i in tutorials:
 
-                    if label is not None:
+                    if i.kind == "tutorial":
 
-                        textbutton name:
-                            action Return((label, should_move))
+                        textbutton i.title:
+                            action Return(i)
                             left_padding 20
                             xfill True
 
                     else:
 
                         null height 10
-                        text name
+                        text i.title
                         null height 5
 
 
@@ -90,7 +132,7 @@ screen tutorials(adj):
 
         textbutton _("That's enough for now."):
             xfill True
-            action Return((False, True))
+            action Return(False)
             top_margin 10
 
 
@@ -135,20 +177,30 @@ label tutorials:
 
     call screen tutorials(adj=tutorials_adjustment)
 
-    $ target, should_move = _return
+    $ tutorial = _return
 
-    if should_move:
+    if not tutorial:
+        jump end
+
+    if tutorial.move_before:
         show eileen happy at center
         with move
 
-    if target is False:
-        jump end
+    $ reset_example()
 
-    call expression target from _call_expression
+    call expression tutorial.label from _call_expression
+
+    if tutorial.move_after:
+        hide example
+        show eileen happy at left
+        with move
 
     jump tutorials
 
 label end:
+
+    show eileen happy at center
+    with move
 
     e "Thank you for viewing this tutorial."
 
