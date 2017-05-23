@@ -1,7 +1,7 @@
 
 transform example:
     xalign 0.5
-    yalign 0.25
+    ypos 50
 
 
 screen style0():
@@ -71,6 +71,9 @@ label styles:
 
         "Text style properties.":
             call style_text
+
+        "Window and Button style properties.":
+            call style_button
 
         "That's all I want to know.":
             return
@@ -276,7 +279,7 @@ label style_general:
 screen text(style, vertical=False):
     frame:
         xalign 0.5
-        yalign 0.2
+        ypos 50
 
         if vertical:
             right_padding 30
@@ -504,7 +507,78 @@ label style_text:
 
 
 
+screen button(style):
+
+    vbox:
+        xalign 0.5
+        ypos 50
+
+        textbutton _("Top Choice"):
+            style style
+            action Return(True)
+            text_style "example_button_text"
+
+        textbutton _("Bottom Choice"):
+            style style
+            action Return(True)
+            text_style "example_button_text"
+
+
+example example_button_text:
+    style example_button_text:
+        xalign 0.5
+        color "#404040"
+        hover_color "#4040c0"
+
+label style_button:
+
+    e "Next up, we have the window and button style properties. These apply to windows like the text window at the bottom of this screen, frames, and buttons."
+
+    e "They also apply to buttons, both in the game and main menus, and in choice menus. To Ren'Py, a button is a window you can click."
+
+    example example_button:
+        style example_button is default:
+            idle_background Frame("idle_background.png", 10, 10, tile=True)
+            hover_background Frame("hover_background.png", 10, 10, tile=True)
+            xalign 0.5
+
+    show screen button('example_button')
+    with dissolve
+
+    e "I'll start off with this style, which everything will inherit from. To make our lives easier, it inherits from the default style, rather than the customizes buttons in this game's GUI."
+
+    e "The first style property is the background property. It adds a background to the a button or window. Since this is a button, idle and hover variants choose different backgrounds when focused."
+
+    e "We also center the two buttons, using the xalign position property."
+
+    show example example_button_text
+
+    e "We've also customized the style of the button's text, using this style. It centers the text and makes it change color when hovered."
+
+    example:
+        style oddly_padded_button is example_button:
+            left_padding 10
+            right_padding 40
+            top_padding 10
+            bottom_padding 5
+
+    show screen button('oddly_padded_button')
+
+    e "Without any padding around the text, the button looks odd. Ren'Py has padding properties that add space inside the button's background."
+
+    example:
+        style padded_button is example_button:
+            xpadding 30
+            ypadding 10
+
+    show screen button('padded_button')
+
+    e "More commonly used are the xpadding and ypadding styles, which add the same padding to the left and right, or the top and bottom, respectively."
+
+    e "We'll keep this padding by inheriting from padded_button, as I kind of like it."
 
 
 
 
+
+    hide screen button
