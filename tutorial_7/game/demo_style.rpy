@@ -34,7 +34,6 @@ screen style0():
                 action Return(True)
 
 
-
 label new_gui:
 
     e "When you create a new project, Ren'Py will automatically create a GUI - a Graphical User Interface - for it."
@@ -283,8 +282,10 @@ screen text(style, vertical=False):
         ypos 50
 
         if vertical:
-            right_padding 30
-            bottom_padding 30
+            left_padding 20
+            right_padding 35
+            bottom_padding 35
+
             text _("Vertical") style style
         else:
             xsize 400
