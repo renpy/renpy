@@ -513,9 +513,12 @@ screen button(style):
 
     default selected = "top"
 
-    vbox:
+    frame:
         xalign 0.5
         ypos 50
+        background "#0004"
+
+        has vbox
 
         textbutton _("Top Choice"):
             style style
@@ -581,7 +584,7 @@ label style_button:
 
     example:
         style margin_button is padded_button:
-            bottom_margin 20
+            ymargin 10
 
     show screen button('margin_button')
 
