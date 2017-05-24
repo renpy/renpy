@@ -157,7 +157,7 @@ label style_basics:
     e "These can be preceded by selected_ to change how the button looks when it represents a selected value or screen."
 
     example:
-        style example_button_text:
+        style styled_button_text:
             idle_color "#c0c0c0"
             hover_color "#ffffff"
             insensitive_color "#303030"
@@ -169,11 +169,12 @@ label style_basics:
             default result = 1
 
             frame:
-                style_prefix "example"
+                style_prefix "styled"
                 xpadding 20
                 ypadding 20
 
                 at example
+
                 vbox:
                     textbutton "Button 1" action SetScreenVariable("result", 1)
                     textbutton "Button 2" action SetScreenVariable("result", 2)
@@ -509,18 +510,20 @@ label style_text:
 
 screen button(style):
 
+    default selected = "top"
+
     vbox:
         xalign 0.5
         ypos 50
 
         textbutton _("Top Choice"):
             style style
-            action Return(True)
+            action SetScreenVariable("selected", "top")
             text_style "example_button_text"
 
         textbutton _("Bottom Choice"):
             style style
-            action Return(True)
+            action SetScreenVariable("selected", "bottom")
             text_style "example_button_text"
 
 
@@ -568,17 +571,64 @@ label style_button:
 
     example:
         style padded_button is example_button:
-            xpadding 30
+            xpadding 40
             ypadding 10
 
     show screen button('padded_button')
 
-    e "More commonly used are the xpadding and ypadding styles, which add the same padding to the left and right, or the top and bottom, respectively."
+    e "More commonly used are the xpadding and ypadding style properties, which add the same padding to the left and right, or the top and bottom, respectively."
 
-    e "We'll keep this padding by inheriting from padded_button, as I kind of like it."
+    example:
+        style margin_button is padded_button:
+            bottom_margin 20
+
+    show screen button('margin_button')
+
+    e "The margin style properties work the same way, except they add space outside the background. The full set exists: left_margin, right_margin, top_margin, bottom_margin, xmargin, and ymargin."
 
 
+    example:
+        style sized_button is margin_button:
+            size_group "example"
+
+    show screen button('sized_button')
+
+    e "The size_group style property takes a string. Ren'Py will make sure that all the windows or buttons with the same size_group string are the same size."
 
 
+    example:
+        style foreground_button is sized_button:
+            foreground "check_foreground.png"
+            selected_foreground "check_selected_foreground.png"
 
+    show screen button('foreground_button')
+
+    e "The foreground property gives a displayable that is placed on top of the contents and background of the window or button."
+
+    e "One way to use it is to provide extra decorations to a button that's serving as a checkbox. Another would be to use it with a Frame to provide a glossy shine that overlays the button's contents."
+
+    example:
+        style beep_button is foreground_button:
+            hover_sound "pong_beep.opus"
+            activate_sound "pong_boop.opus"
+
+    show screen button('beep_button')
+
+    e "There are also a few style properties that only apply to buttons. The hover_sound and activate_sound properties play sound files when a button is focused and activated, respectively."
+
+
+    example:
+        style focus_mask_button is beep_button:
+            focus_mask True
+
+    show screen button('focus_mask_button')
+
+    e "Finally, the focus_mask property applies to partially transparent buttons. When it's set to True, only areas of the button that aren't transparent cause a button to focus."
+
+    e "Be careful with focus_mask, as it only works on desktop platforms. It doesn't yet work on Android or iOS."
+
+    hide example
     hide screen button
+    with dissolve
+
+    return
