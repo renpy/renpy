@@ -10,6 +10,7 @@ screen style0():
         at example
 
         xpadding 20
+
         ypadding 20
 
         vbox:
@@ -58,7 +59,11 @@ label styles:
 
     e "While the default GUI uses variables to provide styles with sensible defaults, if you're replacing the GUI or creating your own screens, you'll need to learn about styles yourself."
 
-    menu styles_menu:
+label styles_menu:
+
+    $ reset_example()
+
+    menu:
 
         e "What would you like to know about styles?"
 
@@ -254,15 +259,6 @@ label style_general:
     show screen general("area_general")
 
     e "The area property takes a tuple - a parenthesis bounded list of four items. The first two give the position, and the second two the size."
-
-    example:
-        style fill_general:
-            xfill True
-
-    show screen general("fill_general")
-
-    e "The xfill and yfill properties make a displayable expand to fill available space in the horizontal and vertical directions."
-
 
     example:
         style alt_general:
@@ -520,8 +516,10 @@ screen button(style):
         xalign 0.5
         ypos 50
         background "#0004"
+        xsize 350
 
-        has vbox
+        has vbox:
+            xalign 0.5
 
         textbutton _("Top Choice"):
             style style
@@ -604,7 +602,16 @@ label style_button:
 
 
     example:
-        style foreground_button is sized_button:
+        style xfill_button is margin_button:
+            xfill True
+
+    show screen button('xfill_button')
+
+    e "Alternatively, the xfill and yfill style properties make a button take up all available space in the horizontal or vertical directions."
+
+
+    example:
+        style foreground_button is xfill_button:
             foreground "check_foreground.png"
             selected_foreground "check_selected_foreground.png"
 
@@ -816,8 +823,6 @@ label style_bar:
     hide example
 
     e "That's it for the bar properties. By using them, a creator can customizes bars, scrollbars, and sliders."
-
-    $ reset_example()
 
     return
 
