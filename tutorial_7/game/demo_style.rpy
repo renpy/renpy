@@ -74,6 +74,9 @@ label styles:
         "Window and Button style properties.":
             call style_button
 
+        "Bar style properties.":
+            call style_bar
+
         "That's all I want to know.":
             return
 
@@ -636,3 +639,194 @@ label style_button:
     with dissolve
 
     return
+
+screen bar(style):
+
+    default measure = 42.0
+
+    frame:
+        xalign 0.5
+        ypos 50
+        ypadding 20
+
+        has vbox:
+            spacing 20
+
+        bar:
+            value ScreenVariableValue("measure", range=100.0)
+            style style
+            xsize 400
+
+
+        text "[measure:.0f]/100":
+            xalign 0.5
+
+
+screen vbar(style):
+
+    default measure = 42.0
+
+    frame:
+        xalign 0.5
+        ypos 20
+        ypadding 20
+        xsize 140
+
+        has vbox:
+            spacing 20
+            xfill True
+
+        bar:
+            value ScreenVariableValue("measure", range=100.0)
+            style style
+            ysize 250
+            xalign 0.5
+
+        text "[measure:.0f]/100":
+            xalign 0.5
+            text_align 0.5
+            min_width 100
+
+
+image bar empty idle vertical = Transform("bar empty idle", rotate=90, rotate_pad=False)
+image bar empty hover vertical  = Transform("bar empty hover", rotate=90, rotate_pad=False)
+image bar full idle vertical = Transform("bar full idle", rotate=90, rotate_pad=False)
+image bar full hover vertical = Transform("bar full hover", rotate=90, rotate_pad=False)
+
+style empty_only is default:
+    left_bar Frame("bar empty idle.png", 4, 0)
+    hover_left_bar Frame("bar empty hover.png", 4, 0)
+    right_bar Frame("bar empty idle.png", 4, 0)
+    hover_right_bar Frame("bar empty hover.png", 4, 0)
+    ysize 30
+
+style full_only is default:
+    left_bar Frame("bar full idle.png", 4, 0)
+    hover_left_bar Frame("bar full hover.png", 4, 0)
+    right_bar Frame("bar full idle.png", 4, 0)
+    hover_right_bar Frame("bar full hover.png", 4, 0)
+    ysize 30
+
+label style_bar:
+
+    show screen bar("empty_only")
+    with dissolve
+
+    e "To demonstrate styles, let me first show two of the images we'll be using. This is the image we're using for parts of the bar that are empty."
+
+    show screen bar("full_only")
+
+    e "And here's what we use for parts of the bar that are full."
+
+    example large:
+        style example_bar is default:
+            left_bar Frame("bar full idle.png", 4, 0)
+            hover_left_bar Frame("bar full hover.png", 4, 0)
+            right_bar Frame("bar empty idle.png", 4, 0)
+            hover_right_bar Frame("bar empty hover.png", 4, 0)
+            ysize 30
+
+    show screen bar('example_bar')
+
+    e "The left_bar and right_bar style properties, and their hover variants, give displayables for the left and right side of the bar. By default, the value is shown on the left."
+
+    e "Also by default, both the left and right displayables are rendered at the full width of the bar, and then cropped to the appropriate size."
+
+    e "We give the bar the ysize property to set how tall it is. We could also give it xside to choose how wide, but here it's limited by the width of the frame it's in."
+
+    example:
+        style invert_bar is default:
+            bar_invert True
+            left_bar Frame("bar empty idle.png", 4, 0)
+            hover_left_bar Frame("bar empty hover.png", 4, 0)
+            right_bar Frame("bar full idle.png", 4, 0)
+            hover_right_bar Frame("bar full hover.png", 4, 0)
+            ysize 30
+
+    show screen bar('invert_bar')
+
+    e "When the bar_invert style property, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
+
+    example:
+        style resizing_bar is default:
+            bar_resizing True
+            left_bar Frame("bar full idle.png", 4, 0)
+            hover_left_bar Frame("bar full hover.png", 4, 0)
+            right_bar Frame("bar empty idle.png", 4, 0)
+            hover_right_bar Frame("bar empty hover.png", 4, 0)
+            ysize 30
+
+
+    show screen bar('resizing_bar')
+
+    e "The bar_resizing style property causes the bar images to be resized to represent the value, rather than being rendered at full size and cropped."
+
+    example:
+
+        style thumb_bar is default:
+            thumb "bar thumb idle.png"
+            hover_thumb "bar thumb hover.png"
+            base_bar Frame("bar empty idle.png", 4, 0)
+            hover_base_bar Frame("bar empty hover.png", 4, 0)
+            ysize 30
+
+    show screen bar('thumb_bar')
+
+    e "The thumb style property gives a thumb image, that's placed based on the bars value. In the case of a scrollbar, it's resized if possible."
+
+    e "Here, we use it with the base_bar style property, which sets both bar images to the same displayable."
+
+    example:
+
+        style gutter_bar is default:
+            left_gutter 4
+            right_gutter 4
+            thumb "bar thumb idle.png"
+            hover_thumb "bar thumb hover.png"
+            base_bar Frame("bar empty idle.png", 4, 0)
+            hover_base_bar Frame("bar empty hover.png", 4, 0)
+            ysize 30
+
+    show screen bar('gutter_bar')
+
+    e "The left_gutter and right_gutter properties set a gutter on the left or right size of the bar. The gutter is space the bar can't be dragged into, that can be used for borders."
+
+    example:
+        style vertical_bar is default:
+            bar_vertical True
+            top_bar Frame("bar empty idle vertical", 4, 0)
+            hover_top_bar Frame("bar empty hover vertical", 4, 0)
+            bottom_bar Frame("bar full idle vertical", 4, 0)
+            hover_bottom_bar Frame("bar full hover vertical", 4, 0)
+            xsize 30
+
+    hide screen bar
+    show screen vbar('vertical_bar')
+    with dissolve
+
+    e "The bar_vertical style property displays a vertically oriented bar. All of the other properties change names - left_bar becomes top bar, while right_bar becomes bottom_bar."
+
+    hide screen vbar
+    with dissolve
+
+    e "Finally, there's one style we can't show here, and it's unscrollable. It controls what happens when a scrollbar can't be moved at all."
+
+    e "By default, it's shown. But if unscrollable is 'insensitive', the bar becomes insensitive. If it's 'hide', the bar is hidden, but still takes up space."
+
+    hide example
+
+    e "That's it for the bar properties. By using them, a creator can customizes bars, scrollbars, and sliders."
+
+    $ reset_example()
+
+    return
+
+
+
+
+
+
+
+
+
+
