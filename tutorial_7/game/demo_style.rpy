@@ -888,15 +888,16 @@ screen fixed(style):
             fixed:
                 style style
 
-                add "logo base":
-                    xpos 50
-                    ypos 200
+                add Transform("logo base", zoom=.9):
+                    xpos 10
+                    ypos 10
                     
                 text "Ren'Py":
+                    font "DejaVuSans.ttf"
                     xpos 150
-                    ypos 250
-                    size 40
-
+                    ypos 220
+                    size 80
+                    outlines [ (2, "#333", 0, 0) ]
 
 
 
@@ -981,8 +982,36 @@ label style_box:
 
     hide example    
     hide screen hbox
+    show screen fixed('fixed')
     with dissolve
 
+
+    e "Lastly, we have the fixed layout. The fixed layout usually expands to fill all space, and shows its children from back to front."
+    
+    e "But of course, we have some style properties that can change that."
+
+    example:
+        style fit_fixed:
+            xfit True
+            yfit True
+            
+    show screen fixed('fit_fixed')
+    
+    e "When the xfit style property is true, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
+
+    example:
+        style reverse_fixed:
+            order_reverse True
+
+    show screen fixed('reverse_fixed')
+
+    e "The order_reverse style property changes the order in which the children are shown. Instead of back-to-front, they're displayed front-to-back."
+
+
+    hide screen fixed
+    hide example
+    with dissolve
+    
     return
 
 
