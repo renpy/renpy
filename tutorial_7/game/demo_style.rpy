@@ -82,6 +82,9 @@ label styles_menu:
         "Bar style properties.":
             call style_bar
 
+        "Box and Fixed style properties":
+            call style_box
+
         "That's all I want to know.":
             return
 
@@ -826,7 +829,161 @@ label style_bar:
 
     return
 
+screen hbox(style, wide, highlight="#fff2"):
+    frame:
+        xalign 0.5
+        ypos 50
+        ypadding 20
+        xsize 500
 
+        frame:
+            style "empty"
+            background highlight
+
+            hbox:
+                style style
+                text _("First Child") color "#ffe0e0"
+                text _("Second Child") color "#e0ffe0"
+                text _("Third Child") color "#e0e0ff"
+
+                if wide:
+                    text _("Fourth Child") color "#ffffe0"
+                    text _("Fifth Child") color "#e0ffff"
+                    text _("Sixth Child") color "#ffe0ff"
+
+
+screen vbox(style, highlight="#fff2"):
+
+    frame:
+        xalign 0.5
+        ypos 50
+        ypadding 20
+        xsize 500
+
+        frame:
+            style "empty"
+            background highlight
+
+            vbox:
+                style style
+                text _("First Child") xalign 0.5 color "#ffe0e0"
+                text _("Second Child") xalign 0.5 color "#e0ffe0"
+                text _("Third Child") xalign 0.5 color "#e0e0ff"
+
+
+
+screen fixed(style):
+
+    frame:
+        xalign 0.5
+        ypos 50
+        ypadding 20
+        xsize 500
+        ysize 400
+
+        frame:
+            style "empty"
+            background "#fff2"
+
+            fixed:
+                style style
+
+                add "logo base":
+                    xpos 50
+                    ypos 200
+                    
+                text "Ren'Py":
+                    xpos 150
+                    ypos 250
+                    size 40
+
+
+
+
+label style_box:
+
+    show screen hbox('hbox', False, None)
+    with dissolve
+
+    e "The HBox displayable is used to lay its children out horizontally. By default, there's no spacing between children, so they run together."
+
+    hide screen hbox
+    show screen vbox('vbox', None)
+    with dissolve
+
+    e "Similarly, the vbox displayable is used to lay its children out vertically. Both support style properties that control placement."
+
+    show screen vbox('vbox')
+    with dissolve
+
+    e "To make the size of the box displayable obvious, I'll add a highlight to the box itself, and not the frame containing it."
+
+    example:
+        style fill_vbox:
+            xfill True
+
+    show screen vbox('fill_vbox')
+
+    e "Boxes support the xfill and yfill style properties. These properties make a box expand to fill the available space, rather than the space of the largest child."
+
+
+    example:
+        style spacing_vbox:
+            spacing 10
+            xfill True
+
+    show screen vbox('spacing_vbox')
+
+    e "The spacing style property takes a value in pixels, and adds that much spacing between each child of the box."
+    
+
+    example:
+        style first_spacing_vbox is vbox:
+            first_spacing 10
+            xfill True
+
+    show screen vbox('first_spacing_vbox')
+
+    e "The first_spacing style property is similar, but it only adds space between the first and second children. This is useful when the first child is a title that needs different spacing."
+
+
+    example:
+        style reverse_vbox:
+            box_reverse True
+            xfill True
+            
+    show screen vbox('reverse_vbox')
+    
+    e "The box_reverse style property reverses the order of entries in the box."
+    
+    
+    
+    example:
+        style spacing_hbox:
+            spacing 20
+            xfill True
+    
+    hide screen vbox
+    show screen hbox("spacing_hbox", False)
+    with dissolve
+
+    e "We'll switch back to a horizontal box for our next example."
+
+    example:
+        style wrap_hbox:
+            box_wrap True
+            spacing 5
+            xfill True
+
+    show screen hbox("wrap_hbox", True)
+    
+    e "The box_wrap style property fills the box with children until it's full, then starts again on the next line."
+
+    hide example    
+    hide screen hbox
+    with dissolve
+
+    return
 
 
 
