@@ -494,15 +494,22 @@ class DynamicImage(renpy.display.core.Displayable):
             prefix = self._args.prefix
 
         try:
-            target = renpy.easy.dynamic_image(self.name, scope, prefix=prefix)
+            search = [ ]
+            target = renpy.easy.dynamic_image(self.name, scope, prefix=prefix, search=search)
+        except KeyError as ke:
+            raise Exception("In DynamicImage %r: Could not find substitution '%s'." % (self.name, unicode(ke.args[0])))
         except Exception as e:
             raise Exception("In DynamicImage %r: %r" % (self.name, e))
 
         if target is None:
-            error = "DynamicImage %r: did not resolve to an image." % (self.name,)
+            error = "DynamicImage %r: could not find image." % (self.name,)
 
-            if self._args.prefix:
-                error += " prefix=" + self._args.prefix
+            if len(search) == 1:
+                error += " (%r)" % (search[0],)
+            elif len(search) == 2:
+                error += " (%r, %r)" % (search[0], search[1])
+            elif len(search) > 2:
+                error += " (%r, %r, and %d more.)" % (search[0], search[1], len(search) - 2)
 
             raise Exception(error)
 
@@ -807,6 +814,7 @@ class ShownImageInfo(renpy.object.Object):
             raise Exception("Showing '" + " ".join(exception_name) + "' is ambiguous, possible images include: " + ", ".join(" ".join(i) for i in matches))
         else:
             return None
+
 
 renpy.display.core.ImagePredictInfo = ShownImageInfo
 
