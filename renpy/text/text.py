@@ -848,7 +848,7 @@ class Layout(object):
                 if isinstance(i[0], (TextSegment, SpaceSegment, DisplayableSegment)):
                     return
 
-            line.extend(tss[-1].subsegment(u" "))
+            line.extend(tss[-1].subsegment(u"\u200B"))
 
         for type, text in tokens:  # @ReservedAssignment
 
