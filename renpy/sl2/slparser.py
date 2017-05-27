@@ -60,6 +60,7 @@ class Positional(object):
         if parser:
             parser.add(self)
 
+
 # Used to generate the documentation
 all_keyword_names = set()
 
@@ -373,6 +374,7 @@ class Parser(object):
 def add(thing):
     parser.add(thing)
 
+
 # A singleton value.
 many = renpy.object.Sentinel("many")
 
@@ -655,6 +657,7 @@ class IfParser(Parser):
 
         return rv
 
+
 if_statement = IfParser("if", slast.SLIf, True)
 IfParser("showif", slast.SLShowIf, False)
 
@@ -729,6 +732,7 @@ class ForParser(Parser):
 
         return rv
 
+
 ForParser("for")
 
 
@@ -744,6 +748,7 @@ class OneLinePythonParser(Parser):
 
         code = renpy.ast.PyCode(source, loc)
         return slast.SLPython(loc, code)
+
 
 OneLinePythonParser("$")
 
@@ -764,6 +769,7 @@ class MultiLinePythonParser(Parser):
         code = renpy.ast.PyCode(source, loc)
         return slast.SLPython(loc, code)
 
+
 MultiLinePythonParser("python")
 
 
@@ -774,6 +780,7 @@ class PassParser(Parser):
         l.expect_eol()
 
         return slast.SLPass(loc)
+
 
 PassParser("pass")
 
@@ -790,6 +797,7 @@ class DefaultParser(Parser):
         l.expect_noblock('default statement')
 
         return slast.SLDefault(loc, name, rest)
+
 
 DefaultParser("default")
 
@@ -825,6 +833,7 @@ class UseParser(Parser):
 
         return slast.SLUse(loc, target, args, id_expr, block)
 
+
 UseParser("use")
 Keyword("style_prefix")
 Keyword("style_group")
@@ -835,6 +844,7 @@ class TranscludeParser(Parser):
     def parse(self, loc, l, parent):
         l.expect_eol()
         return slast.SLTransclude(loc)
+
 
 TranscludeParser("transclude")
 
@@ -948,6 +958,7 @@ class ScreenParser(Parser):
 
         return screen
 
+
 screen_parser = ScreenParser()
 Keyword("modal")
 Keyword("zorder")
@@ -956,6 +967,7 @@ Keyword("predict")
 Keyword("style_group")
 Keyword("style_prefix")
 Keyword("layer")
+parser = None
 
 
 def init():
