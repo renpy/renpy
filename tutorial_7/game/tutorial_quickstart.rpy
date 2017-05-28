@@ -269,6 +269,110 @@ label tutorial_images:
     return
 
 
+example slightleft:
+    transform slightleft:
+        xalign 0.25
+        yalign 1.0
+
+label tutorial_simple_positions:
+    
+    e "When the standard positions that come with Ren'Py aren't enough for you, you can create you're own. Here, I'll show you the easy way to do it."
+    
+    example:
+        show eileen happy:
+            xalign 0.75
+            yalign 1.0
+    
+    with move
+    
+    e "The first way to do it is to show an image followed by a colon. Then indented on the next couple of lines are the xalign and yalign transform properties."
+
+    e "Each of the transform properties is a name followed by a value. For xalign and yalign, the values are numbers."
+ 
+    e "The xalign transform property is the important one, as it controls where the image is placed horizontally on the screen."
+
+
+    example:
+        show eileen happy:
+            xalign 0.0
+            yalign 1.0
+    
+    with move
+    
+    e "An xalign of 0.0 is the left side."
+
+
+    example:
+        show eileen happy:
+            xalign 0.5
+            yalign 1.0
+    
+    with move
+    
+    e "0.5 is the center."
+    
+    example:
+        show eileen happy:
+            xalign 1.0
+            yalign 1.0
+    
+    with move
+        
+    e "And 1.0 is the right. The decimal place is important and has to be there. Just 1 by itself won't work the same."
+    
+    example:
+        show eileen happy:
+            xalign 0.75
+            yalign 1.0
+
+    with move
+
+    e "Of course, you can pick any position in between."
+
+    e "The yalign property is the same way, with 0.0 being the top of the screen and 1.0 being the bottom. Since most sprites stick to the bottom, it's almost always 1.0."
+        
+    hide example 
+    show eileen happy at center
+    with move
+        
+    e "While being able to write positions like this is useful, having to repeatedly do so isn't. So Ren'Py lets you define a transform once, and reuse it."
+
+    show example slightleft
+    
+    e "Usually transforms are defined at the top of a file, right after the characters. But it doesn't matter to Ren'Py where you define them."
+
+    e "The transform is given a name, sightleft, and then the xalign and yalign properties."
+    
+    example:
+        show eileen vhappy at slightleft
+    
+    with move
+ 
+ 
+    e "Once a transform has been defined, you can use it in the at clause of the show statement."
+    
+    example:
+        show eileen happy
+        
+    e "Transforms are sticky. If you replace an image without using a transform, Ren'Py will keep the same transforms it had been using."
+
+    hide example
+
+    e "Of course, there's a lot more to transforms than this. If you want to learn more, you can read the sections on Position Properties, Transforms, and Transform Properties."
+    
+    e "But for many visual novels, xalign and yalign are the only properties that matter."
+    
+    return  
+
+    
+            
+    
+    
+        
+
+
+
+
 label tutorial_transitions:
 
     e "It can be somewhat jarring for the game to jump from place to place."

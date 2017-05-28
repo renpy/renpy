@@ -60,6 +60,7 @@ init python:
     Tutorial("tutorial_create", _("Creating a new Game"))
     Tutorial("tutorial_dialogue", _("Writing Dialogue"))
     Tutorial("tutorial_images", _("Adding Images"))
+    Tutorial("tutorial_simple_positions", _("Positioning Images"))
     Tutorial("tutorial_transitions", _("Transitions"))
     Tutorial("tutorial_music", _("Music and Sound Effects"))
     Tutorial("tutorial_menus", _("Choices and Python"))
@@ -72,7 +73,7 @@ init python:
     Tutorial("simple_displayables", _("Simple Displayables"), move=None)
 
     # Positions and Transforms?
-    Tutorial("tutorial_positions", _("Screen Positions"))
+    Tutorial("tutorial_positions", _("Position Properties"))
 
     # Advanced Transforms?
     Tutorial("tutorial_atl", _("Transforms and Animation"))
