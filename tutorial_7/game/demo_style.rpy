@@ -102,28 +102,63 @@ label style_basics:
     hide screen style0
     with dissolve
 
-    e "Styles are a combination of information from three different places."
+    e "Styles are a combination of information from four different places."
 
     example:
-        screen style1:
+        screen style1():
             text _("This text is colored green."):
-                at example
+                style "my_text"
                 color "#c0ffc0"
+
+                at example
 
     show screen style1
     with dissolve
 
-    e "The first is is as part of a screen. Each displayable defined in a screen takes style properties."
+    e "The first place Ren'Py can get style information from is part of a screen. Each displayable created by a screen can take a style name and style properties."
+    
+    example:
+        screen textstyle():
+            frame:
+                textbutton _("Danger"):
+                    text_color "#c04040"
+                    text_hover_color "#ff0000"
+                    action Return(True)
+
+                at example
+
+
+    hide screen style1
+    show screen textstyle
+    with dissolve
+
+    e "When a screen displayable contains text, style properties prefixed with text_ apply to that text."    
+
 
     example:
         image style2 = Text(_("This text is colored red."), color="#ffc0c0")
 
 
-    hide screen style1
     show style2 at example
+    with dissolve
+    hide screen textstyle
+    with dissolve
+    
 
     e "The next is as part of a displayable created in an image statement. Style properties are just arguments to the displayable."
 
+    hide style2
+    with dissolve
+
+    example:
+        define egreen = Character("Eileen", who_color="#c8ffc8", who_bold=True, what_color="#c8ffc8")
+        
+
+    egreen "Style properties can also be given as arguments when defining a character."
+    
+    egreen "Arguments beginning with who_ are style properties applied to the character's name, while those beginning with what_ are applied to the character's dialogue."
+
+    egreen "Style properties that don't have a prefix are also applied to the character's name."
 
     example:
         style blue_text:
@@ -131,7 +166,6 @@ label style_basics:
 
         image style3 = Text(_("This text is colored blue."), style="blue_text")
 
-    hide style2
     show style3 at example
 
     e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
