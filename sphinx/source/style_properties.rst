@@ -53,28 +53,28 @@ The implications are:
    - states implied by prefix
 
  * - (no prefix)
-   - insensitive, idle, hover, selected_idle, selected_hover
+   - insensitive, idle, hover, selected\_idle, selected\_hover
 
  * - ``idle_``
-   - idle, selected_idle
+   - idle, selected\_idle
 
  * - ``hover_``
-   - hover, selected_hover
+   - hover, selected\_hover
 
  * - ``selected_``
-   - selected_idle, selected_hover
+   - selected\_idle, selected\_hover
 
  * - ``insensitive_``
    - insensitive
 
  * - ``selected_idle_``
-   - selected_idle
+   - selected\_idle
 
  * - ``selected_hover_``
-   - selected_hover
+   - selected\_hover
 
  * - ``selected_insensitive_``
-   - selected_insensitive
+   - selected\_insensitive
 
 Using a text button, we can show this in action. Text buttons use two styles
 by default: ``button`` for the button itself, and ``button_text`` for the
@@ -126,7 +126,7 @@ novel kinds of value a style property can expect.
         rendering.
 
 `displayable`
-    Any displayable. If a displayable contains a "[prefix_]" substitution,
+    Any displayable. If a displayable contains a "[prefix\_]" substitution,
     a prefix search is performed as described below.
 
 `color`
@@ -159,7 +159,7 @@ novel kinds of value a style property can expect.
 Style Prefix Search
 -------------------
 
-When a style property contains the "[prefix_]" substitution, a prefix
+When a style property contains the "[prefix\_]" substitution, a prefix
 search is performed. The prefix search is performed separately for
 each state, including states that are implied by the original property
 assigned.
@@ -169,7 +169,7 @@ For example, if we have::
     style button:
         hover_background "[prefix_]background.png"
 
-separate searches are performed for the hover and selected_hover states. The
+separate searches are performed for the hover and selected\_hover states. The
 prefixes searched vary based on the state.
 
 .. list-table::
@@ -179,25 +179,25 @@ prefixes searched vary based on the state.
    - search order
 
  * - idle
-   - "idle_", ""
+   - "idle\_", ""
 
  * - hover
-   - "hover_", "",
+   - "hover\_", "",
 
  * - insensitive
-   - "insensitive_", "", "idle_"
+   - "insensitive\_", "", "idle\_"
 
- * - selected_idle
-   - "selected_idle_", "idle_", "selected_", ""
+ * - selected\_idle
+   - "selected\_idle\_", "idle\_", "selected\_", ""
 
  * - selected_hover
-   - "selected_hover_", "hover_", "selected_", ""
+   - "selected\_hover\_", "hover\_", "selected\_", ""
 
- * - selected_insensitive
-   - "selected_insensitive_", "hover_", "selected_", "", "selected_idle_", "idle_"
+ * - selected\_insensitive
+   - "selected\_insensitive\_", "hover\_", "selected\_", "", "selected\_idle\_", "idle\_"
 
 When a search is performed, each prefix is tried in the order given. The string
-has "[prefix_]" replaced with the prefix, and then Ren'Py checks to see if
+has "[prefix\_]" replaced with the prefix, and then Ren'Py checks to see if
 a loadable file or image with that name exists. If the file or image exists,
 the search stops and the displayable found is used. Otherwise, it proceeds to
 the next prefix.
@@ -205,8 +205,8 @@ the next prefix.
 The style prefix is passed through displayables that do not take user input,
 including containers, transforms, and frames.
 
-As an example of how this can be used, if the files "idle_button.png" and
-"hover_button.png" exist (and no other files ending in "button.png" do)::
+As an example of how this can be used, if the files "idle\_button.png" and
+"hover\_button.png" exist (and no other files ending in "button.png" do)::
 
     style button:
         background "[prefix_]button.png"
@@ -802,14 +802,14 @@ Button Style Properties
     None
         If none is given, the entire button can be focused.
 
-.. style-property:: keyboard_focus
+.. style-property:: keyboard_focus boolean
 
    If true, the default, this button can be focused using the keyboard focus
    mechanism, if it can be focused at all. If false, the keyboard focus
    mechanism will skip this button. (The keyboard focus mechanism is used
    by keyboards and keyboard-like devices, such as joypads.)
 
-.. style-property:: key_events
+.. style-property:: key_events boolean
 
     If true, keyboard-generated events are passed to the children of this
     button. If false, those events are not propagated. In this default style,
@@ -929,7 +929,7 @@ left and right sides are used.
        Prevents the bar from rendering at all. Space will be allocated
        for the bar, but nothing will be drawn in that space.
 
-.. style-property:: keyboard_focus
+.. style-property:: keyboard_focus boolean
 
    If true, the default, this button can be focused using the keyboard focus
    mechanism, if it can be focused at all. If false, the keyboard focus
@@ -964,12 +964,6 @@ These are used for the horizontal and vertical box layouts.
     If true, then boxes will wrap when they reach the end of a line or column.
     If false (the default), they will extend past the end of the line.
 
-.. style-property:: order_reverse boolean
-
-    If false, the default, the items in the box will be draw first-to-last,
-    with the first item in the box being below the second, and so on. If true,
-    this order will be reversed, and the first item in the box will be above
-    all other items in the box.
 
 
 .. _fixed-style-properties:
@@ -979,19 +973,26 @@ Fixed Style Properties
 
 These are used with the fixed layout.
 
-.. style-property:: fit_first bool or "width" or "height"
+.. style-property:: fit_first boolean or "width" or "height"
 
     If true, then the size of the fixed layout is shrunk to be equal with
     the size of the first item in the layout. If "width", only the width is changed
     (the fixed will fill the screen vertically). Similarly, "height" only changes
     the height.
 
-.. style-property:: xfit bool
+.. style-property:: xfit boolean
 
     If true, the size of the fixed layout is shrunk horizontally to match the
     right side of the rightmost child of the fixed.
 
-.. style-property:: yfit bool
+.. style-property:: yfit boolean
 
     If true, the size of the fixed layout is shrunk vertically to match the
     bottom side of the bottommost child of the fixed.
+
+.. style-property:: order_reverse boolean
+
+    If false, the default, the items in the box will be draw first-to-last,
+    with the first item in the box being below the second, and so on. If true,
+    this order will be reversed, and the first item in the box will be above
+    all other items in the box.
