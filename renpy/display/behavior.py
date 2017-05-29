@@ -1329,6 +1329,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
 
         return rv
 
+
 # A map from adjustment to lists of displayables that want to be redrawn
 # if the adjustment changes.
 adj_registered = { }
