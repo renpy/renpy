@@ -79,10 +79,6 @@ label demo_character:
         narrator "I get it."
         "I get that this line and the last line are both narration."
 
-
-
-
-
     hide example
     pause .5
 
