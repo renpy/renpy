@@ -352,6 +352,8 @@ screen example(blocks, small=False, bottom=False):
         style "empty"
         background "#fffc"
         left_padding 180
+        right_padding 2
+
         xfill True
         yfill True
         ymaximum height
@@ -363,6 +365,11 @@ screen example(blocks, small=False, bottom=False):
             ymaximum height
             draggable True
             mousewheel True
+            scrollbars "vertical"
+
+            vscrollbar_xsize 5
+            vscrollbar_base_bar "#aaac"
+            vscrollbar_unscrollable "hide"
 
             text code:
                 size 16
