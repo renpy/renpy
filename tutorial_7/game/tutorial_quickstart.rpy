@@ -576,3 +576,48 @@ label menu3_done:
     e "One of Ren'Py's big advantages is the flexibility using a scripting language like Python provides us. It lets us easily scale from kinetic novels to complex simulation games."
 
     return
+
+
+example guy:
+    define g = Character("[name]")
+
+label tutorial_input:
+
+    e "Some games might prompt the player for input."
+
+    example input hide:
+        python:
+            name = renpy.input("What's your name?")
+
+            name = name.strip() or "Guy Shy"
+
+    show example input
+
+    e "That's done with Python, and especially the renpy.input function. The first line of this example prompts the player for some texts, and sticks it in the name variable."
+
+    e "Often times, you'll want to clean the name up before you use it. The last line does that, by calling the strip method to remove whitespace, and replacing the name with a default if it's missing."
+
+    example:
+
+        e "To interpolate a variable, write it in square brackets. Isn't that right, [name]?"
+
+    show example guy
+
+    e "Variable names can also be shown in character names. To do that, just include the variable in square brackets in the character's name. Got it?"
+
+    example:
+        g "I think I do."
+
+
+    example:
+        $ answer = 42
+        $ flag = True
+
+        e "Variable interpolation also works with other variables. Here, the answer is [answer] and the flag is [flag]."
+
+    return
+
+
+
+
+

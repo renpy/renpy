@@ -64,6 +64,7 @@ init python:
     Tutorial("tutorial_transitions", _("Transitions"))
     Tutorial("tutorial_music", _("Music and Sound Effects"))
     Tutorial("tutorial_menus", _("Choices and Python"))
+    Tutorial("tutorial_input", _("Input and Interpolation"))
     Tutorial("tutorial_video", _("Video Playback"))
     Tutorial("tutorial_nvlmode", _("NVL Mode"), move=None)
 
