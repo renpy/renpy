@@ -490,7 +490,6 @@ label tutorial_menus:
 
     example menu1 hide:
         menu:
-            e "Do you think your game will use menus?"
 
             "Yes, I do.":
                 jump choice1_yes
@@ -525,9 +524,7 @@ label tutorial_menus:
 
     e "Menus are introduced by the menu statement. The menu statement takes an indented block, in which there can be one line of dialogue and multiple choices."
 
-    e "The line of dialogue is just like any other in Ren'Py. There can be a character speaking, or narration. The line of dialogue can also be left out, if you don't want one."
-
-    e "The choices must end with a colon, as each choice has its own block of Ren'Py code, that is run when that choice is selected."
+    e "Each choice must end with a colon, as each choice has its own block of Ren'Py code, that is run when that choice is selected."
 
     e "Here, each block jumps to a label. While you could put small amounts of Ren'Py code inside a menu label, it's probably good practice to usually jump to a bigger block of code."
 
@@ -549,8 +546,6 @@ label tutorial_menus:
         else:
 
             e "For example, I remember that you're planning to make a kinetic novel, without menus."
-
-    show example menu2
 
     e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
 
