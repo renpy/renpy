@@ -351,6 +351,7 @@ screen example(blocks, small=False, bottom=False):
     window:
         style "empty"
         background "#fffc"
+        foreground Solid("#aaac", xsize=1, xpos=178)
         left_padding 180
         right_padding 2
 
@@ -378,7 +379,10 @@ screen example(blocks, small=False, bottom=False):
         textbutton _("Copy"):
             ypos 0
             xalign 0.0
-            xoffset -175
+
+            xpos 0
+            xanchor 0.5
+            xoffset -90
             yoffset -8
             text_size 14
 
