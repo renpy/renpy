@@ -295,7 +295,6 @@ label screens_showing:
     e "Since we can't display dialogue at the same time, you'll have to click 'Okay' to continue."
 
     hide example
-    window hide
 
     example call_screen hide:
         call screen simple_screen
@@ -307,13 +306,54 @@ label screens_showing:
     return
 
 
-label screens_parameters():
+label screens_parameters:
 
+    example large:
+        screen parameter_screen(message, okay=Return(True), cancel=Return(False)):
+            frame:
+                xalign 0.5 ypos 50
+                vbox:
+                    text "[message]"
+                    textbutton "Okay":
+                        action okay
+                    textbutton "Cancel":
+                        action cancel
 
+    example hide show_parameter_screen:
+        show screen parameter_screen(_("Hello, world."), cancel=Notify(_("You can't cancel this.")))
 
+    with dissolve
 
+    e "Here's an example of a screen that takes three parameters. The message parameter is a message to show, while the okay and cancel actions are run when the appropriate button is chosen."
 
+    e "While the message parameter always has to be supplied, the okay and cancel parameters have default values that are used if no argument is given."
 
+    e "Each parameter is a variable that is defined inside the screen. Inside the screen, these variables take priority over those used in the rest of Ren'Py."
+
+    show example show_parameter_screen
+
+    e "When a screen is shown, arguments can be supplied for each of the parameters. Arguments can be given by position or by name."
+
+    example:
+        show screen parameter_screen(_("Shiro was here."))
+
+    with dissolve
+
+    e "Parameters let us change what a screen displays, simply by re-showing it with different arguments."
+
+    hide screen parameter_screen
+    with dissolve
+
+    show example call_parameter_screen
+
+    e "The call screen statement can also take arguments, much like show screen does."
+
+    hide example
+
+    example hide call_parameter_screen:
+        call screen parameter_screen(_("Click either button to continue."))
+
+    return
 
 
 
