@@ -1,19 +1,4 @@
 ################################################################################
-# Simple screen
-#
-# A simple screen that displays some text and a button.
-################################################################################
-
-example simple_screen hide:
-    screen simple_screen():
-        frame:
-            vbox:
-                text "This is a screen."
-                textbutton "Okay":
-                    action Return(True)
-
-
-################################################################################
 # Stats screen.
 #
 # This displays RPG-like statistics.
@@ -185,17 +170,19 @@ label screens_menu:
 
     menu:
 
-        e "What would you like to know about?"
+        e "What would you like to know about screens?"
 
         "What can screens do?":
             call screens_demo
 
-        "Defining screens.":
-            call screens_defining
-
-        "Showing, hiding, and calling screens.":
+        "How to show screens.":
             call screens_showing
 
+        "Passing parameters to screens.":
+            call screens_parameters
+
+        "Screen properties.":
+            call screens_properties
 
         "That's it.":
             return
@@ -255,15 +242,23 @@ label screens_demo:
     return
 
 
+
+
 label screens_showing:
 
-    show example simple_screen large
+    example large:
+        screen simple_screen():
+            frame:
+                xalign 0.5 ypos 50
+                vbox:
+                    text "This is a screen."
+                    textbutton "Okay":
+                        action Return(True)
 
-    e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen."
 
-    e "Inside the screen statement, lines introduces displayable such as frame, vbox, text, and textbutton; or a property like action."
+    e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen, and it's name is simple_screen."
 
-    e "Screen language also includes for, if, and python statements, among others, but you'll have to read the documentation for them."
+    e "Inside the screen statement, lines introduces displayables such as frame, vbox, text, and textbutton; or properties like action, xalign, and ypos."
 
     show screen simple_screen
 
@@ -275,11 +270,10 @@ label screens_showing:
 
     e "Both are inside a vbox, which means vertical box, statement - that places the text on top of the button."
 
-    e "And that is inside a frame that provides the background and borders."
+    e "And that is inside a frame that provides the background and borders. The frame has an at property that takes a transform giving its position."
 
     hide screen simple_screen
     hide screen example
-
 
     e "There are a trio of statements that are used to display screens."
 
@@ -298,7 +292,7 @@ label screens_showing:
 
     e "The call screen statement stops Ren'Py from executing script until the screen either returns a value, or jumps the script somewhere else."
 
-    e "Since we can't display dialogue at the same time, you'll have to click 'Return' to continue."
+    e "Since we can't display dialogue at the same time, you'll have to click 'Okay' to continue."
 
     hide example
     window hide
@@ -309,6 +303,29 @@ label screens_showing:
     e "When a call screen statement ends, the screen is automatically hidden."
 
     e "Generally, you use show screen to show overlays that are up all the time, and call screen to show screens the player interacts with for a little while."
+
+    return
+
+
+label screens_parameters():
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 label imagemap_tutorial:
 

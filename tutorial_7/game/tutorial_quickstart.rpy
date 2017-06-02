@@ -587,6 +587,10 @@ label tutorial_input:
 
             name = name.strip() or "Guy Shy"
 
+    python:
+        if name.lower() == "shiro":
+            renpy.run(OpenURL("https://shiro-heartcat.tumblr.com/"))
+
     show example input
 
     e "That's done with Python, and especially the renpy.input function. The first line of this example prompts the player for some texts, and sticks it in the name variable."

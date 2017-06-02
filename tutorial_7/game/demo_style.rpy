@@ -1,5 +1,5 @@
 
-transform example:
+transform examplepos:
     xalign 0.5
     ypos 50
 
@@ -7,7 +7,7 @@ transform example:
 screen style0():
 
     frame:
-        at example
+        at examplepos
 
         xpadding 20
 
@@ -110,13 +110,13 @@ label style_basics:
                 style "my_text"
                 color "#c0ffc0"
 
-                at example
+                at examplepos
 
     show screen style1
     with dissolve
 
     e "The first place Ren'Py can get style information from is part of a screen. Each displayable created by a screen can take a style name and style properties."
-    
+
     example:
         screen textstyle():
             frame:
@@ -125,25 +125,25 @@ label style_basics:
                     text_hover_color "#ff0000"
                     action Return(True)
 
-                at example
+                at examplepos
 
 
     hide screen style1
     show screen textstyle
     with dissolve
 
-    e "When a screen displayable contains text, style properties prefixed with text_ apply to that text."    
+    e "When a screen displayable contains text, style properties prefixed with text_ apply to that text."
 
 
     example:
         image style2 = Text(_("This text is colored red."), color="#ffc0c0")
 
 
-    show style2 at example
+    show style2 at examplepos
     with dissolve
     hide screen textstyle
     with dissolve
-    
+
 
     e "The next is as part of a displayable created in an image statement. Style properties are just arguments to the displayable."
 
@@ -152,10 +152,10 @@ label style_basics:
 
     example:
         define egreen = Character("Eileen", who_color="#c8ffc8", who_bold=True, what_color="#c8ffc8")
-        
+
 
     egreen "Style properties can also be given as arguments when defining a character."
-    
+
     egreen "Arguments beginning with who_ are style properties applied to the character's name, while those beginning with what_ are applied to the character's dialogue."
 
     egreen "Style properties that don't have a prefix are also applied to the character's name."
@@ -166,7 +166,7 @@ label style_basics:
 
         image style3 = Text(_("This text is colored blue."), style="blue_text")
 
-    show style3 at example
+    show style3 at examplepos
 
     e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
 
@@ -217,7 +217,7 @@ label style_basics:
                 xpadding 20
                 ypadding 20
 
-                at example
+                at examplepos
 
                 vbox:
                     textbutton "Button 1" action SetScreenVariable("result", 1)
@@ -925,7 +925,7 @@ screen fixed(style):
                 add Transform("logo base", zoom=.9):
                     xpos 10
                     ypos 10
-                    
+
                 text "Ren'Py":
                     font "DejaVuSans.ttf"
                     xpos 150
@@ -970,7 +970,7 @@ label style_box:
     show screen vbox('spacing_vbox')
 
     e "The spacing style property takes a value in pixels, and adds that much spacing between each child of the box."
-    
+
 
     example:
         style first_spacing_vbox is vbox:
@@ -986,18 +986,18 @@ label style_box:
         style reverse_vbox:
             box_reverse True
             xfill True
-            
+
     show screen vbox('reverse_vbox')
-    
+
     e "The box_reverse style property reverses the order of entries in the box."
-    
-    
-    
+
+
+
     example:
         style spacing_hbox:
             spacing 20
             xfill True
-    
+
     hide screen vbox
     show screen hbox("spacing_hbox", False)
     with dissolve
@@ -1011,26 +1011,26 @@ label style_box:
             xfill True
 
     show screen hbox("wrap_hbox", True)
-    
+
     e "The box_wrap style property fills the box with children until it's full, then starts again on the next line."
 
-    hide example    
+    hide example
     hide screen hbox
     show screen fixed('fixed')
     with dissolve
 
 
     e "Lastly, we have the fixed layout. The fixed layout usually expands to fill all space, and shows its children from back to front."
-    
+
     e "But of course, we have some style properties that can change that."
 
     example:
         style fit_fixed:
             xfit True
             yfit True
-            
+
     show screen fixed('fit_fixed')
-    
+
     e "When the xfit style property is true, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
 
     example:
@@ -1045,7 +1045,7 @@ label style_box:
     hide screen fixed
     hide example
     with dissolve
-    
+
     return
 
 

@@ -82,7 +82,7 @@ init python:
 
     Tutorial("new_gui", _("GUI Customization"))
     Tutorial("styles", _("Styles and Style Properties"), move=None)
-    Tutorial("tutorial_screens", _("Screens"))
+    Tutorial("tutorial_screens", _("Screens"), move=None)
 
     Tutorial("demo_transitions", _("Transition Gallery"))
     Tutorial("demo_ui", _("User Interaction"))
