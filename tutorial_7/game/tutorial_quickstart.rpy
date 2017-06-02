@@ -6,6 +6,8 @@ define l = Character(_("Lucy"), color="#ffcccc")
 define slowdissolve = Dissolve(1.0)
 #end slowdissolve
 
+default name = "Player"
+
 transform rightish:
     xcenter .6
     ypos 50
@@ -571,7 +573,6 @@ label menu3_done:
     e "One of Ren'Py's big advantages is the flexibility using a scripting language like Python provides us. It lets us easily scale from kinetic novels to complex simulation games."
 
     return
-
 
 example guy:
     define g = Character("[name]")

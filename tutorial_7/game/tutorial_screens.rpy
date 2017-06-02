@@ -19,7 +19,7 @@ example simple_screen hide:
 # This displays RPG-like statistics.
 ################################################################################
 
-default player_hp = 37
+default player_hp = 15
 default player_hp_max = 42
 default eileen_hp = 100
 default eileen_hp_max = 100
@@ -46,7 +46,7 @@ screen single_stat(name, hp, hp_max, lv, xalign):
                     yalign 0.5
 
                 bar:
-                    value StaticValue(hp, hp_max)
+                    value AnimatedValue(hp, hp_max, 1.0)
                     xmaximum 180
                     ysize 26
 
@@ -57,7 +57,7 @@ screen single_stat(name, hp, hp_max, lv, xalign):
 
 # This screen uses single_stat to display two stats at once.
 screen stats():
-    use single_stat(povname, player_hp, player_hp_max, player_lv, 0.0)
+    use single_stat(_("Player"), player_hp, player_hp_max, player_lv, 0.0)
     use single_stat(_("Eileen"), eileen_hp, eileen_hp_max, eileen_lv, 1.0)
 
 
@@ -174,9 +174,88 @@ screen day_planner():
 
 
 
+
 label tutorial_screens:
 
     e "Screens are the most powerful part of Ren'Py. Screens let you customize the out-of-game interface, and create new in-game interface components."
+
+label screens_menu:
+
+    $ reset_example()
+
+    menu:
+
+        e "What would you like to know about?"
+
+        "What can screens do?":
+            call screens_demo
+
+        "Defining screens.":
+            call screens_defining
+
+        "Showing, hiding, and calling screens.":
+            call screens_showing
+
+
+        "That's it.":
+            return
+
+    jump screens_menu
+
+
+label screens_demo:
+
+    e "Screens are how we create the user interface in Ren'Py. With the exception of images and transitions, everything you see comes from a screen."
+
+    e "When I'm speaking to you, I'm using the 'say' screen. It's responsible for taking dialogue and presenting it to the player."
+
+    menu:
+
+        e "And when the menu statement displays an in-game choice, the 'choice' screen is used. Got it?"
+
+        "Yes.":
+            pass
+
+        "I do.":
+            pass
+
+    e "Text input uses the 'input' screen, NVL mode uses the 'nvl' screen, and so on."
+
+    e "More than one screen can be displayed at once. For example, the buttons at the bottom - Back, History, Skip, and so on - are all displayed by a quick_menu screen that's shown all of the time."
+
+    e "There are a lot of special screens, like 'main_menu', 'load', 'save', and 'preferences'. Rather than list them all here, I'll {a=https://www.renpy.org/doc/html/screen_special.html}send you to the documentation{/a}."
+
+    e "In a newly created project, all these screens live in screens.rpy. You can edit that file in order to change them."
+
+    e "You aren't limited to these screens either. In Ren'Py, you can make your own screens, and use them for your game's interface."
+
+    $ player_hp = 15
+
+    show screen stats
+    with dissolve
+
+    e "For example, in an RPG like visual novel, a screen can display the player's statistics."
+
+    $ player_hp = 42
+
+    e "Which reminds me, I should probably heal you."
+
+    hide screen stats
+    show screen day_planner
+
+    with dissolve
+
+    e "Complex screens can be the basis of whole game mechanics. A stats screen like this can be the basis of dating and life-sims."
+
+    hide screen day_planner
+    with dissolve
+
+    e "While screens might be complex, they're really just the result of a lot of simple parts working together to make something larger than all of them."
+
+    return
+
+
+label screens_showing:
 
     show example simple_screen large
 
