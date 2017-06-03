@@ -20,6 +20,10 @@ python early:
         example_size = "small"
         example_location = "top"
 
+    # Keywords that, at the start of an example block, cause it to be
+    # outdented
+    OUTDENT_KEYWORDS = { "define", "default", "image", "screen", "init", "transform", "label", "style" }
+
 
     # This defines the example statement.
     #
@@ -33,7 +37,8 @@ python early:
     # name is given. When run, the example is displayed if the hide flag is not
     # given.
 
-    def read_example(name, fn, line):
+
+    def read_example(name, fn, line, outdent):
         """
         This reads an example from an example statement, and places it into
         the examples dictionary.
@@ -44,35 +49,54 @@ python early:
         with renpy.file(fn) as f:
             data = f.read()
 
-        lines = [ i.rstrip() for i in data.split("\n") ]
+        rawlines = [ i.rstrip() for i in data.split("\n") ]
 
-        rv = [ ]
+        lines = [ ]
 
         base_indent = 0
 
         while True:
-            l = lines[line]
+            l = rawlines[line]
             line += 1
 
             if not l:
-                rv.append(l)
+                lines.append(l)
                 continue
 
             indent = len(l) - len(l.lstrip())
 
             if base_indent == 0:
                 base_indent = indent
-                rv.append(l[4:])
+                lines.append(l[4:])
             elif indent >= base_indent:
-                rv.append(l[4:])
+                lines.append(l[4:])
             else:
                 break
 
+        # Determine if the line should be indented.
+        if outdent == "auto":
+
+            for i in lines:
+                l = i.strip().split()
+                if not l:
+                    continue
+
+                if l[0] in OUTDENT_KEYWORDS:
+                    outdent = True
+                else:
+                    outdent = False
+
+                break
+
+        # Strip indentation.
+        if outdent:
+            lines = [ i[base_indent - 4:] for i in lines ]
+
         if name in examples:
             examples[name].append('')
-            examples[name].extend(rv)
+            examples[name].extend(lines)
         else:
-            examples[name] = rv
+            examples[name] = lines
 
     def parse_example(l):
         """
@@ -88,6 +112,7 @@ python early:
         small = False
         top = False
         large = False
+        outdent = "auto"
 
         while True:
 
@@ -109,6 +134,12 @@ python early:
             elif l.keyword('large'):
                 large = True
 
+            elif l.keyword('outdent'):
+                outdent = True
+
+            elif l.keyword('nooutindent'):
+                outdent = False
+
             else:
 
                 if name:
@@ -121,7 +152,7 @@ python early:
         if name is None:
             name = "example_{}_{}".format(l.filename, l.number)
 
-        return { "name" : name, "names" : [ name ], "hide" : hide, "bottom" : bottom, "small" : small, "filename" : l.filename, "number" : l.number, "top" : top, "large" : large }
+        return { "name" : name, "names" : [ name ], "hide" : hide, "bottom" : bottom, "small" : small, "filename" : l.filename, "number" : l.number, "top" : top, "large" : large, "outdent" : outdent }
 
     def next_example(data, first):
         return first
@@ -154,7 +185,7 @@ python early:
         renpy.show_screen("example", names, example_size == "small", example_location == "bottom")
 
     def execute_init_example(data):
-        read_example(data["name"], data["filename"], data["number"])
+        read_example(data["name"], data["filename"], data["number"], data.get("outdent", "auto"))
 
     renpy.register_statement("example", parse=parse_example, execute=execute_example, execute_init=execute_init_example, next=next_example, block="script")
 
