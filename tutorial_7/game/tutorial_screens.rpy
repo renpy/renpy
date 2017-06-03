@@ -356,10 +356,134 @@ label screens_parameters:
     return
 
 
+label screens_properties:
+
+    e "There are a few properties that can be applied to a screen itself."
+
+    example large:
+        screen modal_example():
+            modal True
+
+            frame:
+                xalign 0.5 ypos 50
+                textbutton _("Close This Screen"):
+                     action Hide("modal_example")
+
+    show screen modal_example
+    with dissolve
+
+    e "When the modal property is true, you can't interact with things beneath the screen. You'll have to click 'Close This Screen' before you can continue."
+
+    example:
+        screen a_tag_screen():
+            tag tag_screen
+
+            frame:
+                xalign 0.33 ypos 50
+                text _("A Tag Screen")
+
+        screen b_tag_screen():
+            tag tag_screen
+
+            frame:
+                xalign 0.66 ypos 50
+                text _("B Tag Screen")
 
 
+    show screen a_tag_screen
+    with dissolve
+
+    e "When a screen has the tag property, it's treated like the tag part of an image name. Here, I'm showing a_tag_screen."
+
+    show screen b_tag_screen
+
+    e "When I show b_tag_screen, it replaces a_tag_screen."
+
+    e "This is useful in the game and menus, where you'd want the load screen to replace the preferences screen. All those screens have tag menu."
+
+    show eileen concerned
+
+    e "For some reason, tag takes a name, and not an expression. It's too late to change it."
+
+    show eileen happy
+    with None
+
+    hide screen b_tag_screen
+
+    example:
+        screen zorder_100_screen():
+            zorder 100
+            frame:
+                xalign 0.5 xoffset 50 ypos 70
+                text "Zorder 100"
+
+        screen zorder_0_screen():
+            frame:
+                xalign 0.5 ypos 50
+                text "Zorder 0"
+
+        show screen zorder_100_screen
+        show screen zorder_0_screen
+
+    with dissolve
+
+    e "The zorder property controls the order in which screens overlap each other. The larger the zorder number, the closer the screen is to the player."
+
+    e "By default, a screen has a zorder of 0. When two screens have the same zorder number, the screen that is shown second is closer to the player."
+
+    example:
+
+        screen variant_screen():
+            variant "small"
+            frame:
+                xalign 0.5 ypos 50
+                text _("You're on a small device.")
+
+        screen variant_screen():
+            frame:
+                xalign 0.5 ypos 50
+                text _("You're not on a small device.")
+
+    hide screen zorder_100_screen
+    hide screen zorder_0_screen
+    show screen variant_screen
+    with dissolve
+
+    e "The variant property selects a screen based on the properties of the device it's running on."
+
+    e "In this example, the first screen will be used for small devices like telephones, and the other screen will be used for tablets and computers."
 
 
+    example:
+
+        screen style_prefix_screen():
+            style_prefix "red"
+
+            frame:
+                xalign 0.5 ypos 50
+                text _("This text is red.")
+
+        style red_frame:
+            background "#440000d9"
+
+        style red_text:
+            color "#ffc0c0"
+
+    hide screen variant_screen
+    show screen style_prefix_screen
+    with dissolve
+
+    e "Finally, the style_prefix property specifies a prefix that's applied to the styles in the screen."
+
+    e "When the 'red' prefix is given, the frame gets the 'red_frame' style, and the text gets the 'red_text' style."
+
+    e "This can save a lot of typing when styling screens with many displayables in them."
+
+    hide example
+    hide screen style_prefix_screen
+    with dissolve
+
+    return
 
 
 
