@@ -95,6 +95,14 @@ style frame:
 ##
 ## https://www.renpy.org/doc/html/screen_special.html#say
 
+example say_screen:
+    screen say(who, what):
+        window:
+            if who is not None:
+                text who id "who"
+
+            text what id "what"
+
 screen say(who, what):
     style_prefix "say"
 
