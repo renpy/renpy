@@ -20,7 +20,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 screen about:
-
     $ version = renpy.version()
 
     frame:
@@ -28,11 +27,9 @@ screen about:
         style "l_root"
 
         window:
-            xfill True
-
             has vbox xfill True
 
-            add "images/logo.png" xalign 0.5 yoffset -5
+            imagebutton idle "images/logo.png" hover "images/logo_hover.png" xalign 0.5 yoffset -5 action Return('info')
 
             null height 15
 
@@ -44,6 +41,62 @@ screen about:
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
 
+screen info:
+    python:
+        import sys
+        import pygame
+        platform = sys.platform
+
+        major = str(sys.version_info[0])
+        minor = str(sys.version_info[1])
+        micro = str(sys.version_info[2])
+        release = str(sys.version_info[3])
+        serial = str(sys.version_info[4])
+
+        SDLmajor = str(pygame.get_sdl_version()[0])
+        SDLminor = str(pygame.get_sdl_version()[1])
+        SDLmicro = str(pygame.get_sdl_version()[2])
+
+        driver = str(pygame.display.get_driver())
+        info = pygame.display.Info()
+        accel = str(info.hw)
+
+    frame:
+        style_group "l"
+        style "l_root"
+
+        window:
+            has vbox xfill True
+
+            imagebutton idle "images/logo.png" hover "images/logo_hover.png" xalign 0.5 yoffset -5 action Return('about')
+
+            null height 15
+
+            text _("{b}{size=-1}{color=#e8c764}Python {/color}{/size}[major!q].[minor!q].[micro!q] {size=-5}[release!q] [serial!q] {color=#d86e6e}[platform!q]{/color}{/size}{/b}") xalign 0.5
+
+            null height 10
+
+            text _("{b}{size=-3}Display driver:  [driver!q]   HW accelerated? [accel!q]{/size}{/b}") xalign 0.5
+
+            null height 10
+
+            text _("{b}{size=-3}SDL version: [SDLmajor!q].[SDLminor!q].[SDLmicro!q]{/size}{/b}") xalign 0.5
+
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
+
 label about:
+
     call screen about
+    
+    while True:
+
+        $ result = _return
+
+        if result == "info":
+
+            call screen info
+
+        elif result == "about":
+
+            call screen about
 
