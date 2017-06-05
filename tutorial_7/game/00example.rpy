@@ -9,6 +9,9 @@ python early:
     # The location of the example - top or bottom.
     example_location = "top"
 
+    # The screen in the last example.
+    example_screen = None
+
     def reset_example():
         """
         Called to reset the example code to the defaults.
@@ -16,9 +19,25 @@ python early:
 
         global example_size
         global example_location
+        global example_screen
 
         example_size = "small"
         example_location = "top"
+        example_screen = None
+
+    def show_example_screen(name):
+        global example_screen
+        example_screen = name
+        renpy.show_screen(name)
+
+    def hide_example_screen():
+        global example_screen
+
+        if example_screen is not None:
+            renpy.hide_screen(example_screen)
+
+        example_screen = None
+
 
     # Keywords that, at the start of an example block, cause it to be
     # outdented
@@ -113,6 +132,8 @@ python early:
         top = False
         large = False
         outdent = "auto"
+        show_screen = True
+        hide_screen = True
 
         while True:
 
@@ -140,6 +161,12 @@ python early:
             elif l.keyword('nooutindent'):
                 outdent = False
 
+            elif l.keyword("noshow"):
+                show_screen = False
+
+            elif l.keyword("nohide"):
+                hide_screen = False
+
             else:
 
                 if name:
@@ -152,7 +179,29 @@ python early:
         if name is None:
             name = "example_{}_{}".format(l.filename, l.number)
 
-        return { "name" : name, "names" : [ name ], "hide" : hide, "bottom" : bottom, "small" : small, "filename" : l.filename, "number" : l.number, "top" : top, "large" : large, "outdent" : outdent }
+        ll = l.subblock_lexer()
+        ll.advance()
+
+        if ll.keyword('screen'):
+            screen_name = ll.name()
+        else:
+            screen_name = None
+
+        return {
+            "name" : name,
+            "names" : [ name ],
+            "hide" : hide,
+            "bottom" : bottom,
+            "small" : small,
+            "filename" : l.filename,
+            "number" : l.number,
+            "top" : top,
+            "large" : large,
+            "outdent" : outdent,
+            "screen_name" : screen_name,
+            "show_screen" : show_screen,
+            "hide_screen" : hide_screen,
+            }
 
     def next_example(data, first):
         return first
@@ -179,10 +228,18 @@ python early:
         elif large:
             example_size = "large"
 
-        if hide:
-            return
+        if not hide:
+            renpy.show_screen("example", names, example_size == "small", example_location == "bottom")
 
-        renpy.show_screen("example", names, example_size == "small", example_location == "bottom")
+        screen_name = data.get("screen_name", None)
+
+        if screen_name is not None:
+            if data.get("hide_screen", True):
+                hide_example_screen()
+
+            if data.get("show_screen", True):
+                show_example_screen(screen_name)
+
 
     def execute_init_example(data):
         read_example(data["name"], data["filename"], data["number"], data.get("outdent", "auto"))
@@ -221,7 +278,14 @@ python early:
 
                 names.append(l.require(l.name))
 
-        return { "names" : names, "hide" : False, "bottom" : bottom, "small" : small, "top" : top, "large" : large }
+        return {
+            "names" : names,
+            "hide" : False,
+            "bottom" : bottom,
+            "small" : small,
+            "top" : top,
+            "large" : large
+            }
 
     renpy.register_statement("show example", parse=parse_show_example, execute=execute_example)
 
@@ -230,12 +294,25 @@ python early:
 
     def parse_hide_example(l):
 
+        hide_screen = True
+
+        while not l.eol():
+            if l.keyword('nohide'):
+                hide_screen = False
+            else:
+                break
+
         l.expect_eol()
 
-        return { }
+        return {
+            "hide_screen" : hide_screen,
+        }
 
     def execute_hide_example(data):
         renpy.hide_screen("example")
+
+        if data.get("hide_screen", True):
+            hide_example_screen()
 
     renpy.register_statement("hide example", parse=parse_hide_example, execute=execute_hide_example)
 

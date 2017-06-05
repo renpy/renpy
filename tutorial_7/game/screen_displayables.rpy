@@ -161,8 +161,8 @@ label add_displayable:
                 xalign 0.5 ypos 50
                 add "logo base"
 
-    show screen add_image_example
-    with dissolve
+#     show screen add_image_example
+#     with dissolve
 
     e "This can be done using the add statement, which adds an image or other displayable to the screen."
 
@@ -175,8 +175,8 @@ label add_displayable:
                 xalign 0.5 ypos 50
                 add "images/logo base.png"
 
-    hide screen add_image_example
-    show screen add_filename_example
+#     hide screen add_image_example
+#     show screen add_filename_example
 
     e "An image can also be referred to by it's filename, relative to the game directory."
 
@@ -187,9 +187,9 @@ label add_displayable:
                 xalign 0.5 ypos 50
                 add Solid("#0000ff", xsize=234, ysize=360)
 
-    hide screen add_filename_example
-    show screen add_displayable_example
-    with dissolve
+#     hide screen add_filename_example
+#     show screen add_displayable_example
+#     with dissolve
 
     e "Other displayables can also be added using the add statement. Here, we add the Solid displayable, showing a solid block of color."
 
@@ -201,9 +201,9 @@ label add_displayable:
                 xalign 0.5 ypos 50
                 add "logo base" zoom 0.7 rotate 43.21
 
-    hide screen add_displayable_example
-    show screen add_transform_example
-    with dissolve
+#     hide screen add_displayable_example
+#     show screen add_transform_example
+#     with dissolve
 
     e "In addition ot the displayable, the add statement can be given transform properties. These can place or otherwise transform the displayable being added."
 
@@ -218,14 +218,14 @@ label add_displayable:
             zoom 0.7 rotate 43.21
             linear 1.0 rotate 0
 
-    hide screen add_transform_example
-    show screen add_at_transform_example
+    # hide screen add_transform_example
+    # show screen add_at_transform_example
 
     e "Of course, the add statment can also take the at property, letting you give it a more complex transform."
 
     hide example
-    hide screen add_at_transform_example
-    with dissolve
+#     hide screen add_at_transform_example
+#     with dissolve
 
     return
 
