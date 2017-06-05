@@ -710,11 +710,6 @@ screen preferences():
 
     tag menu
 
-    if renpy.mobile:
-        $ cols = 2
-    else:
-        $ cols = 4
-
     use game_menu(_("Preferences"), scroll="viewport"):
 
         vbox:
