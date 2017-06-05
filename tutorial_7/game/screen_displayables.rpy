@@ -147,3 +147,5 @@ label screen_displayable_properties:
 
     return
 
+label simple_screen_displayables:
+
