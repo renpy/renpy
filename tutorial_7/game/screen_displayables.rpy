@@ -13,8 +13,11 @@ label screen_displayables_menu:
         "Properties all displayables share.":
             call screen_displayable_properties
 
-        "Simple displayables.":
-            call simple_screen_displayables
+        "Adding images and other displayables.":
+            call add_displayable
+
+        "Showing text.":
+            call text_displayable
 
         "That's all for now.":
             return
@@ -147,5 +150,67 @@ label screen_displayable_properties:
 
     return
 
-label simple_screen_displayables:
+label add_displayable:
+
+    e "Sometimes you'll have a displayable, like an image, that you want to add to a screen."
+
+    example large:
+
+        screen add_image_example():
+            frame:
+                xalign 0.5 ypos 50
+                add "logo base"
+
+    show screen add_image_example
+    with dissolve
+
+    e "This can be done using the add statement, which adds an image or other displayable to the screen."
+
+    e "There are a few ways to refer to the image. If it's in the images directory or defined with the image statement, you can just put the name inside a quoted string."
+
+    example large:
+
+        screen add_filename_example():
+            frame:
+                xalign 0.5 ypos 50
+                add "images/logo base.png"
+
+    hide screen add_image_example
+    show screen add_filename_example
+
+    e "An image can also be referred to by it's filename, relative to the game directory."
+
+    example large:
+
+        screen add_displayable_example():
+            frame:
+                xalign 0.5 ypos 50
+                add Solid("#0000ff", xsize=200, ysize=150)
+
+    hide screen add_filename_example
+    show screen add_displayable_example
+    with dissolve
+
+    e "Other displayables can also be added using the add statement. Here, we add the Solid displayable, showing a solid block of color."
+
+
+    example large:
+
+        screen add_transform_example():
+            frame:
+                xalign 0.5 ypos 50
+                add "logo base" zoom .7 rotate 43.21
+
+    hide screen add_displayable_example
+    show screen add_transform_example
+    with dissolve
+
+    e "When a displayable is added, it can be given transform properties. These can place and otherwise transform it."
+
+    hide example
+    hide screen add_transform_example
+    with dissolve
+
+    return
+
 
