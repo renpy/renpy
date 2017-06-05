@@ -185,7 +185,7 @@ label add_displayable:
         screen add_displayable_example():
             frame:
                 xalign 0.5 ypos 50
-                add Solid("#0000ff", xsize=200, ysize=150)
+                add Solid("#0000ff", xsize=234, ysize=360)
 
     hide screen add_filename_example
     show screen add_displayable_example
@@ -199,16 +199,32 @@ label add_displayable:
         screen add_transform_example():
             frame:
                 xalign 0.5 ypos 50
-                add "logo base" zoom .7 rotate 43.21
+                add "logo base" zoom 0.7 rotate 43.21
 
     hide screen add_displayable_example
     show screen add_transform_example
     with dissolve
 
-    e "When a displayable is added, it can be given transform properties. These can place and otherwise transform it."
+    e "In addition ot the displayable, the add statement can be given transform properties. These can place or otherwise transform the displayable being added."
+
+    example:
+
+        screen add_at_transform_example():
+            frame:
+                xalign 0.5 ypos 50
+                add "logo base" at unrotate
+
+        transform unrotate:
+            zoom 0.7 rotate 43.21
+            linear 1.0 rotate 0
+
+    hide screen add_transform_example
+    show screen add_at_transform_example
+
+    e "Of course, the add statment can also take the at property, letting you give it a more complex transform."
 
     hide example
-    hide screen add_transform_example
+    hide screen add_at_transform_example
     with dissolve
 
     return
