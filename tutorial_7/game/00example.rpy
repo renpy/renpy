@@ -240,8 +240,6 @@ python early:
             if data.get("hide_screen", True):
                 hide_example_screen()
 
-            print(screen_name, data)
-
             if data.get("show_screen", True):
                 show_example_screen(screen_name)
                 renpy.with_statement(example_transition)

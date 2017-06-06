@@ -10,7 +10,7 @@ label screen_displayables_menu:
 
         e "What would you like to know about?"
 
-        "Properties all displayables share.":
+        "Common properties all displayables share.":
             call screen_displayable_properties
 
         "Adding images and other displayables.":
@@ -192,6 +192,43 @@ label add_displayable:
 
     hide example
 
+    return
+
+label text_displayable:
+
+    example large:
+        screen text_example():
+            frame:
+                xalign 0.5 ypos 50
+                text _("This is a text displayable."):
+                    size 30
+
+    e "The screen language text statement adds a text displayable to the screen. It takes one argument, the text to be displayed."
+
+    e "Text also takes the common properties that position and transform displayables, and the text style properties that control how the text itself is styled."
+
+    example large:
+        screen text_interpolation_example():
+            $ answer = 42
+
+            frame:
+                xalign 0.5 ypos 50
+                text _("The answer is [answer].")
+
+    e "The text displayable can also interpolate values enclosed in square brackets"
+
+    e "When text is displayed in a screen using the text statement variables defined in the screen take precedence over those defined outside it. Those variables may be parameters, defined with the default or python statements, or set using the SetScreenVariable action."
+
+    example large:
+        screen text_tax_example():
+            frame:
+                xalign 0.5 ypos 50
+                text _("Text tags {color=#c8ffc8}work{/color} in screens.")
+
+
+    e "There's not much more to say about text in screens, as it works the same way as all other text in Ren'Py."
+
+    hide example
     return
 
 
