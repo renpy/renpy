@@ -246,7 +246,7 @@ label screens_demo:
 
 label screens_showing:
 
-    example large:
+    example large noshow:
         screen simple_screen():
             frame:
                 xalign 0.5 ypos 50
@@ -261,6 +261,7 @@ label screens_showing:
     e "Inside the screen statement, lines introduces displayables such as frame, vbox, text, and textbutton; or properties like action, xalign, and ypos."
 
     show screen simple_screen
+    with dissolve
 
     e "I'll work from the inside out to describe the statements. But first, I'll show the screen so you can see it in action."
 
@@ -273,7 +274,8 @@ label screens_showing:
     e "And that is inside a frame that provides the background and borders. The frame has an at property that takes a transform giving its position."
 
     hide screen simple_screen
-    hide screen example
+    hide example
+    with dissolve
 
     e "There are a trio of statements that are used to display screens."
 
@@ -308,7 +310,7 @@ label screens_showing:
 
 label screens_parameters:
 
-    example large:
+    example large noshow:
         screen parameter_screen(message, okay=Return(True), cancel=Return(False)):
             frame:
                 xalign 0.5 ypos 50
@@ -369,9 +371,6 @@ label screens_properties:
                 textbutton _("Close This Screen"):
                      action Hide("modal_example")
 
-    show screen modal_example
-    with dissolve
-
     e "When the modal property is true, you can't interact with things beneath the screen. You'll have to click 'Close This Screen' before you can continue."
 
     example:
@@ -390,9 +389,6 @@ label screens_properties:
                 text _("B Tag Screen")
 
 
-    show screen a_tag_screen
-    with dissolve
-
     e "When a screen has the tag property, it's treated like the tag part of an image name. Here, I'm showing a_tag_screen."
 
     show screen b_tag_screen
@@ -410,7 +406,7 @@ label screens_properties:
 
     hide screen b_tag_screen
 
-    example:
+    example noshow:
         screen zorder_100_screen():
             zorder 100
             frame:
@@ -431,7 +427,12 @@ label screens_properties:
 
     e "By default, a screen has a zorder of 0. When two screens have the same zorder number, the screen that is shown second is closer to the player."
 
-    example:
+
+
+    hide screen zorder_100_screen
+    hide screen zorder_0_screen
+
+    example nohide:
 
         screen variant_screen():
             variant "small"
@@ -443,11 +444,6 @@ label screens_properties:
             frame:
                 xalign 0.5 ypos 50
                 text _("You're not on a small device.")
-
-    hide screen zorder_100_screen
-    hide screen zorder_0_screen
-    show screen variant_screen
-    with dissolve
 
     e "The variant property selects a screen based on the properties of the device it's running on."
 
@@ -469,9 +465,6 @@ label screens_properties:
         style red_text:
             color "#ffc0c0"
 
-    hide screen variant_screen
-    show screen style_prefix_screen
-    with dissolve
 
     e "Finally, the style_prefix property specifies a prefix that's applied to the styles in the screen."
 
@@ -480,8 +473,6 @@ label screens_properties:
     e "This can save a lot of typing when styling screens with many displayables in them."
 
     hide example
-    hide screen style_prefix_screen
-    with dissolve
 
     return
 
@@ -507,7 +498,7 @@ label imagemap_tutorial:
 
     jump imagemap_example
 
-example imagemap hide:
+example imagemap hide noshow:
     screen imagemap_example:
 
         imagemap:

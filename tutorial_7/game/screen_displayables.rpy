@@ -36,9 +36,6 @@ label screen_displayable_properties:
                 xalign 0.5 ypos 50
                 text _("This uses position properties.")
 
-    show screen pos_example
-    with dissolve
-
     e "First off, every screen language displayable supports the position properties. When the container a displayable is in supports it, you can use properties like align, anchor, pos, and so so on."
 
     example:
@@ -50,10 +47,6 @@ label screen_displayable_properties:
 
         transform rotated:
             rotate 180 rotate_pad False
-
-    hide screen pos_example
-    show screen at_example
-    with dissolve
 
     e "The at transform applies a transform to the displayable, the same way the at clause in the show statement does."
 
@@ -111,9 +104,6 @@ label screen_displayable_properties:
     style green_text:
         color "#c8ffc8"
 
-    show screen style_example
-    with dissolve
-
     e "The style property lets you specify the style of a single displayable."
 
     example:
@@ -135,16 +125,11 @@ label screen_displayable_properties:
         color "#ffffc8"
 
 
-    hide screen style_example
-    show screen style_prefix_example
-
     e "The style_prefix property sets the prefix of the style that's used for a displayable and its children."
 
     e "For example, when the style_prefix property is 'green', the vbox has the 'green_vbox' style, and the text in it has the 'green_text' style."
 
-    hide screen style_prefix_example
     hide example
-    with dissolve
 
     e "There are a few more properties than these, and you can find the rest in the documentation. But these are the ones you can expect to see in your game, in the default screens."
 
@@ -161,9 +146,6 @@ label add_displayable:
                 xalign 0.5 ypos 50
                 add "logo base"
 
-#     show screen add_image_example
-#     with dissolve
-
     e "This can be done using the add statement, which adds an image or other displayable to the screen."
 
     e "There are a few ways to refer to the image. If it's in the images directory or defined with the image statement, you can just put the name inside a quoted string."
@@ -175,9 +157,6 @@ label add_displayable:
                 xalign 0.5 ypos 50
                 add "images/logo base.png"
 
-#     hide screen add_image_example
-#     show screen add_filename_example
-
     e "An image can also be referred to by it's filename, relative to the game directory."
 
     example large:
@@ -186,10 +165,6 @@ label add_displayable:
             frame:
                 xalign 0.5 ypos 50
                 add Solid("#0000ff", xsize=234, ysize=360)
-
-#     hide screen add_filename_example
-#     show screen add_displayable_example
-#     with dissolve
 
     e "Other displayables can also be added using the add statement. Here, we add the Solid displayable, showing a solid block of color."
 
@@ -200,10 +175,6 @@ label add_displayable:
             frame:
                 xalign 0.5 ypos 50
                 add "logo base" zoom 0.7 rotate 43.21
-
-#     hide screen add_displayable_example
-#     show screen add_transform_example
-#     with dissolve
 
     e "In addition ot the displayable, the add statement can be given transform properties. These can place or otherwise transform the displayable being added."
 
@@ -217,15 +188,9 @@ label add_displayable:
         transform unrotate:
             zoom 0.7 rotate 43.21
             linear 1.0 rotate 0
-
-    # hide screen add_transform_example
-    # show screen add_at_transform_example
-
     e "Of course, the add statment can also take the at property, letting you give it a more complex transform."
 
     hide example
-#     hide screen add_at_transform_example
-#     with dissolve
 
     return
 
