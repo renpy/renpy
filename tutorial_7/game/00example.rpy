@@ -12,6 +12,9 @@ python early:
     # The screen in the last example.
     example_screen = None
 
+    # A transition used with examples
+    example_transition = None
+
     def reset_example():
         """
         Called to reset the example code to the defaults.
@@ -238,8 +241,9 @@ python early:
                 hide_example_screen()
 
             if data.get("show_screen", True):
+                print("show", screen_name, example_transition)
                 show_example_screen(screen_name)
-
+                renpy.with_statement(example_transition)
 
     def execute_init_example(data):
         read_example(data["name"], data["filename"], data["number"], data.get("outdent", "auto"))
@@ -247,13 +251,11 @@ python early:
     renpy.register_statement("example", parse=parse_example, execute=execute_example, execute_init=execute_init_example, next=next_example, block="script")
 
 
-
     # The show example statement.
 
     def parse_show_example(l):
 
         names = [ ]
-
 
         bottom = False
         small = False
@@ -311,8 +313,9 @@ python early:
     def execute_hide_example(data):
         renpy.hide_screen("example")
 
-        if data.get("hide_screen", True):
+        if data.get("hide_screen", True) and renpy.get_screen(example_screen):
             hide_example_screen()
+            renpy.with_statement(example_transition)
 
     renpy.register_statement("hide example", parse=parse_hide_example, execute=execute_hide_example)
 
@@ -420,6 +423,8 @@ init python:
             import pygame.scrap
             pygame.scrap.put(pygame.SCRAP_TEXT, self.s.encode("utf-8"))
             renpy.notify(_("Copied the example to the clipboard."))
+
+    example_transition = dissolve
 
 
 transform example_transform(height, ypos):
