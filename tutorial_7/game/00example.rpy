@@ -328,14 +328,10 @@ init python:
     KEYWORDS = set(keywords.keywords)
     PROPERTIES = set(keywords.properties)
 
-    KEYWORDS = [ re.escape(i) for i in keywords.keywords ]
-    PROPERTIES = [ re.escape(i) for i in keywords.properties ]
-    KWREGEX = r"|".join(KEYWORDS)
-    PRREGEX = r"|".join(PROPERTIES)
-
-    regex = r"(?P<word>\b(\$|\w+)\b)" + \
+    regex = r"(?P<word>\b(\$|[_a-zA-Z0-9]+)\b)" + \
         r"|(?P<string>\"([^\"]|\\.)*\")" + \
         r"|(?P<comment>#.*)"
+
     regex = re.compile(regex)
 
     def quote(s):
