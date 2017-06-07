@@ -16,8 +16,11 @@ label screen_displayables_menu:
         "Adding images and other displayables.":
             call add_displayable
 
-        "Showing text.":
+        "Text.":
             call text_displayable
+
+        "Boxes and other layouts.":
+            call layout_displayables
 
         "That's all for now.":
             return
@@ -205,7 +208,7 @@ label text_displayable:
 
     e "The screen language text statement adds a text displayable to the screen. It takes one argument, the text to be displayed."
 
-    e "Text also takes the common properties that position and transform displayables, and the text style properties that control how the text itself is styled."
+    e "In addition to the common properties that all displayables take, text takes the text style properties. For example, size sets the size of the text."
 
     example large:
         screen text_interpolation_example():
@@ -232,3 +235,141 @@ label text_displayable:
     return
 
 
+label layout_displayables:
+
+    e "The layout displayables take other displayables and lay them out on the screen."
+
+    example large:
+        screen hbox_example():
+            frame:
+                xalign 0.5 ypos 50
+                hbox:
+                    spacing 10
+                    text "1"
+                    text "2"
+                    text "3"
+                    text "4"
+                    text "5"
+
+    e "For example, the hbox displayable takes its children and lays them out horizontally."
+
+    example:
+        screen vbox_example():
+            frame:
+                xalign 0.5 ypos 50
+                vbox:
+                    spacing 10
+                    text "1"
+                    text "2"
+                    text "3"
+                    text "4"
+                    text "5"
+
+
+    e "The vbox displayable is similar, except it takes its children and arranges them vertically."
+
+    e "Both of the boxes take the box style properties, the most useful of which is spacing, the amount of space to leave between children."
+
+    example:
+        screen grid_example():
+            frame:
+                xalign 0.5 ypos 50
+                grid 3 2:
+                    spacing 10
+                    text "1"
+                    text "2"
+                    text "3"
+                    text "4"
+                    text "5"
+                    null
+
+    e "The grid displayable displays its children in a grid of equally-sized cells. It takes two arguments, the number of columns and the number of rows."
+
+    e "The grid has to be full, or Ren'Py will produce an error. Notice how in this example, the empty cell is filled with a null."
+
+    e "Like the boxes, grid uses the spacing property to specify the space between cells."
+
+    example:
+        screen grid_transpose_example():
+            frame:
+                xalign 0.5 ypos 50
+                grid 3 2:
+                    spacing 10
+                    transpose True
+                    text "1"
+                    text "2"
+                    text "3"
+                    text "4"
+                    text "5"
+                    null
+
+    e "Grid also takes the transpose property, to make it fill top-to-bottom before it fills left-to-right."
+
+
+    example:
+        screen grid_bigger_example():
+            frame:
+                xalign 0.5 ypos 50
+                grid 3 2:
+                    spacing 10
+                    transpose True
+                    text "1"
+                    text "2"
+                    text "3"
+                    text "4"
+                    text "5"
+                    text _("Bigger")
+
+    e "And just to demonstrate that all cells are equally-sized, here's what happens when once child is bigger than the others."
+
+
+    example:
+        screen fixed_example():
+            frame:
+                xalign 0.5 ypos 50
+                fixed:
+                    xsize 400 ysize 300
+                    text "1" xpos 41 ypos 184
+                    text "2" xpos 135 ypos 177
+                    text "3" xpos 92 ypos 3
+                    text "4" xpos 359 ypos 184
+                    text "5" xpos 151 ypos 25
+
+    e "The fixed displayable displays the children using Ren'Py's normal placement algorithm. This lets you place displayables anywhere in the screen."
+
+    e "By default, the layout expands to fill all the space available to it. To prevent that, we use the xsize and ysize properties to set its size in advance."
+
+    example:
+        screen implicit_fixed_example():
+            frame:
+                xalign 0.5 ypos 50
+                xsize 440 ysize 316
+
+                text "1" xpos 41 ypos 184
+                text "2" xpos 135 ypos 177
+                text "3" xpos 92 ypos 3
+                text "4" xpos 359 ypos 184
+                text "5" xpos 151 ypos 25
+
+    e "When a non-layout displayable is given two or more children, it's not necessary to create a fixed. A fixed is automatically added, and the children are added to it."
+
+    example large:
+        screen hbox_example():
+            frame:
+                xalign 0.5 ypos 50
+
+                has hbox spacing 10
+
+                text "1"
+                text "2"
+                text "3"
+                text "4"
+                text "5"
+
+    e "Finally, there's one convenience to save space. When many displayables are nested, adding a layout to each could cause crazy indent levels."
+
+    e "The has statement creates a layout, and then adds all further children of its parent to that layout. It's just a convenience to make screens more readable."
+
+    hide example
+
+    return
