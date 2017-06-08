@@ -22,6 +22,9 @@ label screen_displayables_menu:
         "Boxes and other layouts.":
             call layout_displayables
 
+        "Windows and frames.":
+            call window_displayables
+
         "That's all for now.":
             return
 
@@ -86,7 +89,7 @@ label screen_displayable_properties:
 
 
     hide screen at_example
-    with dissolve
+    with dissolve    e "There is one style that's "
 
     show example say_screen
 
@@ -372,4 +375,42 @@ label layout_displayables:
 
     hide example
 
+    return
+
+
+label window_displayables:
+
+    e "In the default GUI that Ren'Py creates for a game, most user interface elements expect some sort of background."
+
+    example large:
+        screen noframe_example():
+            vbox:
+                xalign 0.5 ypos 50
+                text "This is a screen."
+                textbutton "Okay":
+                    action Return(True)
+
+    e "Without the background, text can be hard to read. While a frame isn't strictly required, many screens have one or more of them."
+
+    example large:
+        screen frame_example():
+            frame:
+                xalign 0.5 ypos 50
+                vbox:
+                    text "This is a screen."
+                    textbutton "Okay":
+                        action Return(True)
+
+
+    e "But when I add a background, it's much easier. That's why there are two displayables that are intended to give backgrounds to user interface elements."
+
+    e "The two displayables are frame and window. Frame is the one we use above, and it's designed to provide a background for arbitrary parts of the user interface."
+
+    show example say_screen
+
+    e "On the other hand, the window displayable is very specific. It's used to provide the text window. If you're reading what I'm saying, you're looking at the text window right now."
+
+    e "Both frames and windows can be given window style properties, allowing you to change things like the background, margins, and padding around the window."
+
+    hide example
     return
