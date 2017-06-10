@@ -25,6 +25,9 @@ label screen_displayables_menu:
         "Windows and frames.":
             call window_displayables
 
+        "Buttons":
+            call button_displayables
+
         "That's all for now.":
             return
 
@@ -89,7 +92,7 @@ label screen_displayable_properties:
 
 
     hide screen at_example
-    with dissolve    e "There is one style that's "
+    with dissolve
 
     show example say_screen
 
@@ -182,7 +185,7 @@ label add_displayable:
                 xalign 0.5 ypos 50
                 add "logo base" zoom 0.7 rotate 43.21
 
-    e "In addition ot the displayable, the add statement can be given transform properties. These can place or otherwise transform the displayable being added."
+    e "In addition to the displayable, the add statement can be given transform properties. These can place or otherwise transform the displayable being added."
 
     example:
 
@@ -194,7 +197,7 @@ label add_displayable:
         transform unrotate:
             zoom 0.7 rotate 43.21
             linear 1.0 rotate 0
-    e "Of course, the add statment can also take the at property, letting you give it a more complex transform."
+    e "Of course, the add statement can also take the at property, letting you give it a more complex transform."
 
     hide example
 
@@ -414,3 +417,139 @@ label window_displayables:
 
     hide example
     return
+
+
+label button_displayables:
+
+    e "One of the most flexible displayables is the button displayable, and its textbutton and imagebutton variants."
+
+    example large:
+        screen button_example():
+            frame:
+                xalign 0.5 ypos 50
+                button:
+                    action Notify(_("You clicked the button."))
+                    text _("Click me.") style "button_text"
+
+    e "A button is a displayable that when selected runs an action. Buttons can be selected by clicking with the mouse, by touch, or with the keyboard and controller."
+
+    e "Actions can do many things, like setting variables, showing screens, jumping to a label, or returning a value. There are many {a=https://www.renpy.org/doc/html/screen_actions.html}actions in the Ren'Py documentation{/a}, and you can also write your own."
+
+    example large:
+        screen button_hover_example():
+            frame:
+                xalign 0.5 ypos 50
+                button:
+                    action Notify(_("You clicked the button."))
+                    hovered Notify(_("You hovered the button."))
+                    unhovered Notify(_("You unhovered the button."))
+                    text _("Click me.") style "button_text"
+
+
+    e "It's also possible to run actions when a button gains and loses focus."
+
+    example large:
+        screen button_heal_example():
+            default health = 42
+
+            frame:
+                xalign 0.5 ypos 50
+                button:
+                    action SetScreenVariable("health", 100)
+                    hbox:
+                        spacing 10
+                        text _("Heal") style "button_text" yalign 0.5
+                        bar value AnimatedValue(health, 100, 1.0) yalign 0.5 xsize 200
+
+    e "A button takes another displayable as children. Since that child can be a layout, it can takes as many children as you want."
+
+    example large:
+        screen textbutton_example():
+            frame:
+                xalign 0.5 ypos 50
+                textbutton _("This is a textbutton."):
+                    action Notify(_("You clicked the button."))
+
+
+    e "In many cases, buttons will be given text. To make that easier, there's the textbutton displayable that takes the text as an argument."
+
+    e "Since the textbutton displayable manages the style of the button text for you, it's the kind of button that's used most often in the default GUI."
+
+
+    example large:
+        screen imagebutton_example():
+            frame:
+                xalign 0.5 ypos 50
+                imagebutton:
+                    idle "logo bw"
+                    hover "logo base"
+
+                    action Notify(_("You clicked the button."))
+
+    e "There's also the imagebutton, which takes displayables, one for each state the button can be in, and displays them as the button."
+
+    e "An imagebutton gives you the most control over what a button looks like, but is harder to translate and won't look as good if the game window is resized."
+
+
+    example large:
+        screen button_inline_style_example():
+            frame:
+                xalign 0.5 ypos 50
+                textbutton _("Click me."):
+                    idle_background Frame("button glossy idle", 12, 12)
+                    hover_background Frame("button glossy hover", 12, 12)
+                    xpadding 20
+                    ypadding 10
+                    xmargin 5
+                    ymargin 5
+
+                    hover_sound "pong_beep.opus"
+
+                    text_idle_color "#c0c0c0"
+                    text_hover_color "#ffffff"
+
+                    action Notify(_("You clicked the button."))
+
+    e "Buttons take Window window properties, that are used to specify the background, margins, and padding. They also take Button-specific properties, like a sound to play on hover."
+
+    e "When used with a button, style properties can be given prefixes like idle and hover to make the property change with the button state."
+
+    e "A text button also takes Text style properties, prefixed with text. These are applied to the text displayable it creates internally."
+
+    example large:
+        screen button_style_example():
+            frame:
+                xalign 0.5 ypos 50
+
+                has vbox
+
+                textbutton _("Click me."):
+                    style "custom_button"
+                    action Notify(_("You clicked the button."))
+
+                textbutton _("Or me."):
+                    style "custom_button"
+                    action Notify(_("You clicked the other button."))
+
+        style custom_button:
+            idle_background Frame("button glossy idle", 12, 12)
+            hover_background Frame("button glossy hover", 12, 12)
+            xpadding 20
+            ypadding 10
+            xmargin 5
+            ymargin 5
+            size_group "custom_button"
+
+            hover_sound "pong_beep.opus"
+
+        style custom_button_text:
+            idle_color "#c0c0c0"
+            hover_color "#ffffff"
+
+    e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
+
+    hide example
+    return
+
+    return
+
