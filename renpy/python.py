@@ -798,6 +798,7 @@ class RevertableDict(dict):
     pop = mutator(dict.pop)
     popitem = mutator(dict.popitem)
     setdefault = mutator(dict.setdefault)
+    update = mutator(dict.update)
 
     def list_wrapper(method):  # E0213 @NoSelf
         def newmethod(*args, **kwargs):
