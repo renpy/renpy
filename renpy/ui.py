@@ -1181,22 +1181,23 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
             return variable
 
         if auto:
-            fn = renpy.config.imagemap_auto_function(auto, name)
-            if fn is not None:
-                return fn
+            for i in name:
+                fn = renpy.config.imagemap_auto_function(auto, i)
+                if fn is not None:
+                    return fn
 
         if other is not None:
             return other
 
         raise Exception("Could not find a %s image for imagemap." % name)
 
-    ground = pick(ground, "ground", None)
-    idle = pick(idle, "idle", ground)
-    selected_idle = pick(selected_idle, "selected_idle", idle)
-    hover = pick(hover, "hover", ground)
-    selected_hover = pick(selected_hover, "selected_hover", hover)
-    insensitive = pick(insensitive, "insensitive", ground)
-    selected_insensitive = pick(selected_insensitive, "selected_insensitive", hover)
+    ground = pick(ground, ( "ground", "idle" ), idle)
+    idle = pick(idle, ( "idle", ), ground)
+    selected_idle = pick(selected_idle, ( "selected_idle", ), idle)
+    hover = pick(hover, ( "hover", ), ground)
+    selected_hover = pick(selected_hover, ( "selected_hover", ), hover)
+    insensitive = pick(insensitive, ("insensitive", ), ground)
+    selected_insensitive = pick(selected_insensitive, ("selected_insensitive", ), hover)
 
     imagemap_stack.append(
         Imagemap(

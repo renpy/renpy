@@ -636,7 +636,7 @@ label imagemap_displayables:
     example imagemap hide noshow:
         screen imagemap_example():
             imagemap:
-                ground "imagemap ground"
+                idle "imagemap ground"
                 hover "imagemap hover"
 
                 hotspot (44, 238, 93, 93) action Jump("swimming") alt "Swimming"
@@ -737,7 +737,7 @@ label imagemap_displayables:
                 hotspot (237, 171, 126, 50) action Return(True)
                 hotbar (51, 96, 498, 52) value Preference("music volume")
 
-    e "Here's an imagemap built using those four images. Now that it's an imagemap, you can interact with it if you want to."
+    e "Here's an imagemap built using those five images. Now that it's an imagemap, you can interact with it if you want to."
 
     example large:
         screen volume_imagemap_auto_example():
