@@ -78,6 +78,10 @@ python early:
         base_indent = 0
 
         while True:
+
+            if line >= len(rawlines):
+                raise Exception("Example open at end of {}.".format(fn))
+
             l = rawlines[line]
             line += 1
 
