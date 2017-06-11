@@ -1351,7 +1351,7 @@ class Adjustment(renpy.object.Object):
 
     """
 
-    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=None, ranged=None):  # @ReservedAssignment
+    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None):  # @ReservedAssignment
         """
         The following parameters correspond to fields or properties on
         the adjustment object:
