@@ -28,6 +28,9 @@ label screen_displayables_menu:
         "Buttons":
             call button_displayables
 
+        "Bars":
+            call bar_displayables
+
         "That's all for now.":
             return
 
@@ -552,4 +555,74 @@ label button_displayables:
     return
 
     return
+
+
+label bar_displayables:
+
+    example large:
+        screen bar_example():
+            frame:
+                xalign 0.5 ypos 50
+                xsize 500
+                bar:
+                    value StaticValue(66, 100)
+
+
+    e "The bar and vbar displayables are flexible displayables that show bars representing a value. The value can be static, animated, or adjustable by the player."
+
+    e "The value property gives a BarValue, which is an object that determines the bar's value and range. Here, a StaticValue sets the range to 100 and the value to 66, making a bar that's two thirds full."
+
+    e "A list of all the BarValues that can be used is found {a=https://www.renpy.org/doc/html/screen_actions.html#bar-values}in the Ren'Py documentation{/a}."
+
+    e "In this example, we give the frame the xsize property. If we didn't do that, the bar would expand to fill all available horizontal space."
+
+    example large:
+        screen bars_example():
+            default n = 66
+
+            frame:
+                xalign 0.5 ypos 50
+                xsize 500
+
+                vbox:
+                    spacing 10
+
+                    bar value AnimatedValue(n, 100, 0.5) style "bar"
+                    bar value ScreenVariableValue("n", 100) style "slider"
+                    bar value ScreenVariableValue("n", 100) style "scrollbar"
+
+    e "There are a few different bar styles that are defined in the default GUI. The styles are selected by the style property, with the default selected by the value."
+
+    e "The top style is the 'bar' style. It's used to display values that the player can't adjust, like a life or progress bar."
+
+    e "The middle stye is the 'slider' value. It's used for values the player is expected to adjust, like a volume preference."
+
+    e "Finally, the bottom style is the 'scrollbar' style, which is used for horizontal scrollbars. When used as a scrollbar, the thumb in the center changes size to reflect the visible area of a viewport."
+
+    example large:
+        screen vbars_example():
+            default n = 66
+
+            frame:
+                xalign 0.5 ypos 50
+                ysize 300
+
+                hbox:
+                    spacing 10
+
+                    vbar value AnimatedValue(n, 100, 0.5)
+                    vbar value ScreenVariableValue("n", 100) style "vslider"
+                    vbar value ScreenVariableValue("n", 100) style "vscrollbar"
+
+    e "The vbar displayable is similar to the bar displayable, except it uses vertical styles - 'vbar', 'vslider', and 'vscrollbar' - by default."
+
+
+    e "Bars take the Bar style properties, which can customize the look and feel greatly. Just look at the difference between the bar, slider, and scrollbar styles."
+
+    hide example
+    return
+
+
+
+
 
