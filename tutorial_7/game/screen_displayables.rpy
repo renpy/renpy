@@ -25,11 +25,14 @@ label screen_displayables_menu:
         "Windows and frames.":
             call window_displayables
 
-        "Buttons":
+        "Buttons.":
             call button_displayables
 
-        "Bars":
+        "Bars.":
             call bar_displayables
+
+        "Imagemaps.":
+            call imagemap_displayables
 
         "That's all for now.":
             return
@@ -624,5 +627,153 @@ label bar_displayables:
 
 
 
+label imagemap_displayables:
+
+    e "Imagemaps use two or more images to show buttons and bars. Let me start by showing you an example of an imagemap in action."
+
+    window hide None
+
+    example imagemap hide noshow:
+        screen imagemap_example():
+            imagemap:
+                ground "imagemap ground"
+                hover "imagemap hover"
+
+                hotspot (44, 238, 93, 93) action Jump("swimming") alt "Swimming"
+                hotspot (360, 62, 93, 93) action Jump("science") alt "Science"
+                hotspot (726, 106, 93, 93) action Jump("art") alt "Art"
+                hotspot (934, 461, 93, 93) action Jump("go home") alt "Go Home"
+
+        label imagemap_example:
+
+            # Call the imagemap_example screen.
+            call screen imagemap_example
+
+        label swimming:
+
+            e "You chose swimming."
+
+            e "Swimming seems like a lot of fun, but I didn't bring my bathing suit with me."
+
+            jump imagemap_done
+
+        label science:
+
+            e "You chose science."
+
+            e "I've heard that some schools have a competitive science team, but to me research is something that can't be rushed."
+
+            jump imagemap_done
+
+        label art:
+            e "You chose art."
+
+            e "Really good background art is hard to make, which is why so many games use filtered photographs. Maybe you can change that."
+
+            jump imagemap_done
+
+        label home:
+
+            e "You chose to go home."
+
+            jump imagemap_done
+
+        label imagemap_done:
+
+            e "Anyway..."
+
+    window show None
+    window auto
+
+    e "To demonstrate how imagemaps are put together, I'll show you the five images that make up a smaller imagemap."
+
+    show imagemap volume idle:
+        xalign 0.5 ypos 50
+    with dissolve
+
+    e "The idle image is used for the background of the imagemap, for hotspot buttons that aren't focused or selected, and for the empty part of an unfocused bar."
+
+    show imagemap volume hover:
+        xalign 0.5 ypos 50
+    with dissolve
+
+    e "The hover image is used for hotspots that are focused but not selected, and for the empty part of a focused bar."
+
+    e "Notice how both the bar and button are highlighted in this image. When we display them as part of a screen, only one of them will show up as focused."
+
+    show imagemap volume selected_idle:
+        xalign 0.5 ypos 50
+    with dissolve
+
+    e "Selected images like this selected_idle image are used for parts of the bar that are filled, and for selected buttons, like the current screen and a checked checkbox."
+
+    show imagemap volume selected_hover:
+        xalign 0.5 ypos 50
+    with dissolve
+
+    e "Here's the selected_hover image. The button here will never be show, since it will never be marked as selected."
+
+    show imagemap volume insensitive:
+        xalign 0.5 ypos 50
+    with dissolve
+
+    e "Finally, an insensitive image can be given, which us used when a hotspot can't be interacted with."
+
+    hide imagemap
+    with dissolve
+
+    e "Imagemaps aren't limited to just images. Any displayable can be used where an image is expected."
+
+    example large:
+        screen volume_imagemap_example():
+            imagemap:
+                xalign 0.5 ypos 50
+                idle "imagemap volume idle"
+                hover "imagemap volume hover"
+                selected_idle "imagemap volume selected_idle"
+                selected_hover "imagemap volume selected_hover"
+                insensitive "imagemap volume insensitive"
+
+                hotspot (237, 171, 126, 50) action Return(True)
+                hotbar (51, 96, 498, 52) value Preference("music volume")
+
+    e "Here's an imagemap built using those four images. Now that it's an imagemap, you can interact with it if you want to."
+
+    example large:
+        screen volume_imagemap_auto_example():
+            imagemap:
+                xalign 0.5 ypos 50
+                auto "imagemap volume %s"
+
+                hotspot (237, 171, 126, 50) action Return(True)
+                hotbar (51, 96, 498, 52) value Preference("music volume")
 
 
+    e "To make this a little more concise, we can replace the five images with the auto property, which replaces '%%s' with 'idle', 'hover', 'selected_idle', 'selected_hover', or 'insensitive' as appropriate."
+
+    e "Feel free to omit the selected and insensitive images if your game doesn't need them. Ren'Py will use the idle or hover images to replace them."
+
+    e "The hotspot and hotbar statements describe areas of the imagemap that should act as buttons or bars, respectively."
+
+    e "Both take the coordinates of the area, in (x, y, width, height) format."
+
+    e "A hotspot takes an action that is run when the hotspot is activated. It can also take actions that are run when it's hovered and unhovered, just like a button can."
+
+    e "A hotbar takes a BarValue object that describes how full the bar is, and the range of values the bar should display, just like a bar and vbar does."
+
+
+    hide screen volume_imagemap_auto_example
+    show example imagemap
+    with dissolve
+
+    e "A useful pattern is to define a screen with an imagemap that has hotspots that jump to labels, and call that using the call screen statement."
+
+    e "That's what we did in the school example I showed before. Here's the script for it. It's long, but the imagemap itself is fairly simple."
+
+    hide example
+
+    e "Imagemaps have pluses and minuses. On one hand, they are easy for a designer to create, and can look very good. At the same time, they can be hard to translate, and text baked into images may be blurry when the window is scaled."
+
+    e "It's up to you and your team to decide if imagemaps are right for your project."
+
+    return
