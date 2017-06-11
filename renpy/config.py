@@ -769,6 +769,10 @@ stderr_callbacks = [ ]
 # Should ATL automatically cause polar motion when angle changes.
 automatic_polar_motion = True
 
+# Functions that are called to generate lint stats.
+lint_stats_callbacks = [ ]
+
+
 del os
 del collections
 

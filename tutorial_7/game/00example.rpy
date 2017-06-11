@@ -551,3 +551,12 @@ init python hide:
             raise Exception("Examples %r remain open at the end of %r" % (open_examples, fn))
 
         f.close()
+
+
+
+init python:
+
+    def lint_stats_callback():
+        print("The game contains {} examples.".format(len(examples)))
+
+    config.lint_stats_callbacks.append(lint_stats_callback)

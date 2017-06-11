@@ -64,6 +64,7 @@ def report(msg, *args):
     print()
     print(out.encode('utf-8'))
 
+
 added = { }
 
 # Reports additional information about a message, the first time it
@@ -221,6 +222,7 @@ def image_exists(name, expression, tag, precise=True):
             return
 
     report("The image named '%s' was not declared.", names)
+
 
 # Only check each file once.
 check_file_cache = { }
@@ -797,6 +799,9 @@ characters per block. """.format(
             print(ll.encode("utf-8"))
 
         print()
+
+    for i in renpy.config.lint_stats_callbacks:
+        i()
 
     print()
     if renpy.config.developer and (renpy.config.original_developer != "auto"):
