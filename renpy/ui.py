@@ -911,10 +911,15 @@ def _imagebutton(idle_image=None,
             return b
 
         if auto is not None:
-            return renpy.config.imagemap_auto_function(auto, name)
+            rv = renpy.config.imagemap_auto_function(auto, name)
+            if rv is not None:
+                return rv
 
         if required:
-            raise Exception("Could not find a %s image for imagemap." % name)
+            if auto:
+                raise Exception("Imagebutton does not have a %s image. (auto=%r)." % (name, auto))
+            else:
+                raise Exception("Imagebutton does not have a %s image." % (name, ))
 
         return None
 
