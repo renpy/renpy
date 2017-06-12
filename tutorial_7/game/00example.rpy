@@ -460,12 +460,10 @@ screen example(blocks, small=False, bottom=False):
         $ ypos = 540
 
 
-    window:
+    frame:
         style "empty"
         background "#fffc"
         foreground Solid("#aaac", xsize=1, xpos=178)
-        left_padding 180
-        right_padding 2
 
         xfill True
         yfill True
@@ -474,6 +472,8 @@ screen example(blocks, small=False, bottom=False):
         at example_transform(height, ypos)
 
         viewport:
+            side_xmaximum 1098
+            side_xpos 180
             child_size (2000, 2000)
             ymaximum height
             draggable True
@@ -485,18 +485,17 @@ screen example(blocks, small=False, bottom=False):
             vscrollbar_unscrollable "hide"
 
             text code:
+                alt ""
                 size 16
                 color "#000"
 
-        textbutton _("Copy"):
-            ypos 0
-            xalign 0.0
+        textbutton _("copy"):
+            style "empty"
+            text_style "quick_button_text"
+            text_text_align 0.5
+            text_minwidth 180
 
-            xpos 0
-            xanchor 0.5
-            xoffset -90
-            yoffset -8
-            text_size 14
+            text_size 16
 
             action CopyCode(raw_code)
 
