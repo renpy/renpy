@@ -54,6 +54,7 @@ position_property_names = [
 position_properties = [ Style(i) for i in position_property_names ]
 text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ]
 side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ]
+viewport_position_properties = [ PrefixStyle("viewport_", i) for i in position_property_names ]
 scrollbar_position_properties = [ PrefixStyle("scrollbar_", i) for i in position_property_names ]
 vscrollbar_position_properties = [ PrefixStyle("vscrollbar_", i) for i in position_property_names ]
 

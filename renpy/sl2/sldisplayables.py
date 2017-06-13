@@ -35,6 +35,7 @@ from renpy.sl2.slproperties import text_position_properties, text_text_propertie
 from renpy.sl2.slproperties import side_position_properties
 from renpy.sl2.slproperties import scrollbar_bar_properties, scrollbar_position_properties
 from renpy.sl2.slproperties import vscrollbar_bar_properties, vscrollbar_position_properties
+from renpy.sl2.slproperties import viewport_position_properties
 
 
 class ShowIf(renpy.display.layout.Container):
@@ -336,6 +337,7 @@ Keyword("yadjustment")
 Keyword("xinitial")
 Keyword("yinitial")
 Keyword("scrollbars")
+Keyword("spacing")
 Style("xminimum")
 Style("yminimum")
 PrefixStyle("side_", "spacing")
@@ -344,6 +346,8 @@ add(scrollbar_position_properties)
 add(vscrollbar_position_properties)
 add(scrollbar_bar_properties)
 add(vscrollbar_bar_properties)
+add(viewport_position_properties)
+
 
 DisplayableParser("vpgrid", sl2vpgrid, "vpgrid", many, replaces=True, pass_context=True)
 Keyword("rows")
@@ -357,11 +361,17 @@ Keyword("yadjustment")
 Keyword("xinitial")
 Keyword("yinitial")
 Keyword("scrollbars")
+Keyword("spacing")
 Style("spacing")
 Style("xminimum")
 Style("yminimum")
 PrefixStyle("side_", "spacing")
 add(side_position_properties)
+add(scrollbar_position_properties)
+add(vscrollbar_position_properties)
+add(scrollbar_bar_properties)
+add(vscrollbar_bar_properties)
+add(viewport_position_properties)
 
 DisplayableParser("imagemap", renpy.ui._imagemap, "imagemap", many, imagemap=True)
 Keyword("ground")

@@ -1077,8 +1077,22 @@ def viewport_common(vpfunc, scrollbars=None, **properties):
     if scrollbars is None:
         return vpfunc(**properties)
 
-    (vscrollbar_properties, scrollbar_properties, side_properties, viewport_properties) = \
-        renpy.easy.split_properties(properties, "vscrollbar_", "scrollbar_", "side_", "")
+    (vscrollbar_properties, scrollbar_properties, side_properties, viewport_properties, core_properties) = \
+        renpy.easy.split_properties(properties, "vscrollbar_", "scrollbar_", "side_", "viewport_", "")
+
+    if renpy.config.position_viewport_side:
+        from renpy.sl2.slproperties import position_property_names
+
+        for k, v in core_properties.items():
+            if k in position_property_names:
+                side_properties[k] = v
+            elif k == "spacing":
+                side_properties[k] = v
+            else:
+                viewport_properties[k] = v
+
+    else:
+        viewport_properties.update(core_properties)
 
     if renpy.config.prefix_viewport_scrollbar_styles and (scrollbars != "vertical"):
         scrollbar_properties.setdefault("style", prefixed_style("scrollbar"))

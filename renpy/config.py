@@ -772,6 +772,8 @@ automatic_polar_motion = True
 # Functions that are called to generate lint stats.
 lint_stats_callbacks = [ ]
 
+# Should we apply position properties to the side of a viewport?
+position_viewport_side = True
 
 del os
 del collections

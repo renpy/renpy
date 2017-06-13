@@ -142,6 +142,8 @@ init -1900 python:
         if version <= (6, 99, 12, 4):
             config.hyperlink_inherit_size = False
             config.automatic_polar_motion = False
+            config.position_viewport_side = False
+
 
 
     # The version of Ren'Py this script is intended for, or
