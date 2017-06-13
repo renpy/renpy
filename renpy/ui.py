@@ -1072,7 +1072,7 @@ _viewport = Wrapper(renpy.display.viewport.Viewport, one=True, replaces=True, st
 _vpgrid = Wrapper(renpy.display.viewport.VPGrid, many=True, replaces=True, style='vpgrid')
 
 
-def viewport_common(vpfunc, scrollbars=None, **properties):
+def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
 
     if scrollbars is None:
         return vpfunc(**properties)
@@ -1086,7 +1086,7 @@ def viewport_common(vpfunc, scrollbars=None, **properties):
         for k, v in core_properties.items():
             if k in position_property_names:
                 side_properties[k] = v
-            elif k == "spacing":
+            elif _spacing_to_side and (k == "spacing"):
                 side_properties[k] = v
             else:
                 viewport_properties[k] = v
@@ -1151,11 +1151,11 @@ def viewport_common(vpfunc, scrollbars=None, **properties):
 
 
 def viewport(**properties):
-    return viewport_common(_viewport, **properties)
+    return viewport_common(_viewport, True, **properties)
 
 
 def vpgrid(**properties):
-    return viewport_common(_vpgrid, **properties)
+    return viewport_common(_vpgrid, False, **properties)
 
 
 conditional = Wrapper(renpy.display.behavior.Conditional, one=True)
