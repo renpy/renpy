@@ -31,6 +31,9 @@ label screen_displayables_menu:
         "Bars.":
             call bar_displayables
 
+        "Viewports.":
+            call viewport_displayables
+
         "Imagemaps.":
             call imagemap_displayables
 
@@ -775,5 +778,168 @@ label imagemap_displayables:
     e "Imagemaps have pluses and minuses. On one hand, they are easy for a designer to create, and can look very good. At the same time, they can be hard to translate, and text baked into images may be blurry when the window is scaled."
 
     e "It's up to you and your team to decide if imagemaps are right for your project."
+
+    return
+
+
+label viewport_displayables:
+
+    e "Sometimes, you'll want to display something bigger than the screen. That's what the viewport displayable is for."
+
+    example large:
+        screen viewport_screen():
+
+            viewport:
+                xalign 0.5 ypos 50 xysize (700, 300)
+
+                draggable True
+                mousewheel True
+                arrowkeys True
+
+                add "bg band"
+
+    with dissolve
+
+    e "Here's an example of a simple viewport, used to display a single image that's far bigger than the screen. Since the viewport will expand to the size of the screen, we use the xysize property to make it smaller."
+
+    e "By default the viewport can't be moved, so we give the draggable, mousewheel, and arrowkeys properties to allow it to be moved in multiple ways."
+
+    example large:
+        screen edgescroll_viewport_screen():
+
+            viewport:
+                xalign 0.5 ypos 50 xysize (700, 300)
+
+                edgescroll (150, 500)
+                mousewheel True
+                arrowkeys True
+
+                add "bg band"
+
+
+    e "When I give the viewport the edgescroll property, the viewport automatically scrolls when the mouse is near its edges. The two numbers are the size of the edges, and the speed in pixels per second."
+
+    example large:
+        screen scrollbar_viewport_screen():
+
+            viewport:
+                xalign 0.5 ypos 50 xysize (700, 300)
+
+                scrollbars "both"
+                spacing 5
+
+                draggable True
+                mousewheel True
+                arrowkeys True
+
+                add "bg band"
+
+    with dissolve
+
+    e "Giving the viewport the scrollbars property surrounds it with scrollbars. The scrollbars property can take 'both', 'horizontal', and 'vertical' as values."
+
+    e "The spacing property controls the space between the viewport and its scrollbars, in pixels."
+
+
+    example large:
+        screen initial_viewport_screen():
+
+            viewport:
+                xalign 0.5 ypos 50 xysize (700, 300)
+
+                xinitial 0.5
+                yinitial 1.0
+
+                scrollbars "both"
+                spacing 5
+
+                draggable True
+                mousewheel True
+                arrowkeys True
+
+                add "bg band"
+
+    with dissolve
+
+    e "The xinitial and yinitial properties set the initial amount of scrolling, as a fraction of the amount that can be scrolled."
+
+    example large:
+        screen nochild_size_viewport_screen():
+
+            viewport:
+                xalign 0.5 ypos 50 xysize (700, 300)
+
+                scrollbars "horizontal"
+                spacing 5
+
+                draggable True
+                mousewheel True
+                arrowkeys True
+
+                add "#000c"
+                text _("This text is wider than the viewport.") size 40
+
+
+    with dissolve
+
+    e "Finally, there's the child_size property. To explain what it does, I first have to show you what happens when we don't have it."
+
+    e "As you can see, the text wraps. That's because Ren'Py is offering it space that isn't big enough."
+
+    example large:
+        screen child_size_viewport_screen():
+
+            viewport:
+                xalign 0.5 ypos 50 xysize (700, 300)
+
+                child_size (1000, None)
+
+                scrollbars "horizontal"
+                spacing 5
+
+                draggable True
+                mousewheel True
+                arrowkeys True
+
+                add "#000c"
+                text _("This text is wider than the viewport.") size 40
+
+    with dissolve
+
+    e "When we give the screen a child_size, it offers more space to its children, allowing scrolling. It takes a horizontal and vertical size. If one component is None, it takes the size of the viewport."
+
+
+    example large:
+        screen vpgrid_screen():
+
+            vpgrid:
+                cols 6
+                rows 4
+
+                xalign 0.5 ypos 50 xysize (700, 300)
+
+                child_size (1000, None)
+
+                scrollbars "both"
+                side_spacing 5
+
+                draggable True
+                mousewheel True
+                arrowkeys True
+
+                for i in range(6 * 4):
+                    add "logo base"
+
+
+    with dissolve
+
+    e "Finally, there's the vpgrid displayable. It combines a viewport and a grid into a single displayable, except it's more efficient than either, since it doesn't have to draw every child."
+
+    e "It takes the cols and rows properties, which give the number of rows and columns of children. If one is omitted, Ren'Py figures it out from the other and the number of children."
+
+
+
+
+    hide example
 
     return
