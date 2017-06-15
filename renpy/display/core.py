@@ -2798,6 +2798,11 @@ class Interface(object):
         # so we are ready for a new interaction or a restart.
         self.old_scene = scene
 
+        # Something updated the screens. Deal with it now, so the player doesn't
+        # see it.
+        if self.restart_interaction:
+            return True, None
+
         # Okay, from here on we now have a single root widget (root_widget),
         # which we will try to show to the user.
 
