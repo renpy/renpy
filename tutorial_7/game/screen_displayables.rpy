@@ -938,8 +938,6 @@ label viewport_displayables:
     e "It takes the cols and rows properties, which give the number of rows and columns of children. If one is omitted, Ren'Py figures it out from the other and the number of children."
 
 
-
-
     hide example
 
     return

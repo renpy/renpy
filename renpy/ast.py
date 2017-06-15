@@ -1925,13 +1925,19 @@ class Default(Node):
         d = renpy.python.store_dicts[self.store]
 
         defaults_set = d.get("_defaults_set", None)
+
         if defaults_set is None:
             d["_defaults_set"] = defaults_set = renpy.python.RevertableSet()
+            d.ever_been_changed.add("_defaults_set")
 
         if self.varname not in defaults_set:
             d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
+            d.ever_been_changed.add(self.varname)
+
             defaults_set.add(self.varname)
+
         else:
+
             if start and renpy.config.developer:
                 raise Exception("{}.{} is being given a default a second time.".format(self.store, self.varname))
 
