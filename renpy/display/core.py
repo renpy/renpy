@@ -2264,7 +2264,7 @@ class Interface(object):
         else:
             visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
 
-        visible = visible and self.show_mouse
+        visible = visible and self.show_mouse and not (renpy.display.video.fullscreen)
 
         # If not visible, hide the mouse.
         if not visible:

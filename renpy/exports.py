@@ -51,6 +51,7 @@ def renpy_pure(fn):
 
     return fn
 
+
 from renpy.text.extras import ParameterizedText
 from renpy.text.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.text.text import language_tailor
@@ -168,6 +169,7 @@ def public_api():
     register_sl_statement, register_sl_displayable
     eval_who
     is_selected, is_sensitive
+
 
 del public_api
 
@@ -1072,6 +1074,7 @@ class TagQuotingDict(object):
                 raise Exception("During an interpolation, '%s' was not found as a variable." % key)
             return "<" + key + " unbound>"
 
+
 tag_quoting_dict = TagQuotingDict()
 
 
@@ -1333,7 +1336,6 @@ def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
         roll_forward = None
 
     rv = renpy.ui.interact(suppress_overlay=True,
-                           show_mouse=False,
                            roll_forward=roll_forward)
 
     # We don't want to put a checkpoint here, as we can't roll back while
@@ -1379,6 +1381,7 @@ def with_statement(trans, always=False, paired=None, clear=True):
     renpy.exports.mode('with')
 
     return renpy.game.interface.do_with(trans, paired, clear=clear)
+
 
 globals()["with"] = with_statement
 
@@ -1636,6 +1639,7 @@ def version(tuple=False):  # @ReservedAssignment
 
     return renpy.version
 
+
 version_string = renpy.version
 version_only = renpy.version_only
 version_name = renpy.version_name
@@ -1871,6 +1875,7 @@ def do_reshow_say(who, what, interact=False):
 
     say(who, what, interact=interact)
 
+
 curried_do_reshow_say = curry(do_reshow_say)
 
 
@@ -2037,6 +2042,7 @@ def show_layer_at(at_list, layer='master'):
 
     renpy.game.context().scene_lists.set_layer_at_list(layer, at_list)
 
+
 layer_at_list = show_layer_at
 
 
@@ -2083,6 +2089,7 @@ def iconify():
 
     renpy.game.interface.iconify()
 
+
 # New context stuff.
 call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
@@ -2097,6 +2104,7 @@ renpy_pure("curried_invoke_in_new_context")
 # Error handling stuff.
 def _error(msg):
     raise Exception(msg)
+
 
 _error_handlers = [ _error ]
 
@@ -2276,6 +2284,7 @@ def pop_call():
 
     renpy.game.context().pop_call()
 
+
 pop_return = pop_call
 
 
@@ -2382,6 +2391,7 @@ def get_image_bounds(tag, width=None, height=None, layer='master'):
     return scene_lists().get_image_bounds(layer, tag, width, height)
 
 # User-Defined Displayable stuff.
+
 
 Render = renpy.display.render.Render
 render = renpy.display.render.render
