@@ -323,6 +323,8 @@ python early:
     renpy.register_statement("hide example", parse=parse_hide_example, execute=execute_hide_example)
 
 
+# A preference that controls if translations are shown.
+define persistent.show_translation_marker = False
 
 init python:
 
