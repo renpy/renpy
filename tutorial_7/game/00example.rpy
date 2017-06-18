@@ -328,6 +328,9 @@ define persistent.show_translation_marker = False
 
 init python:
 
+    renpy.translation.dialogue.create_dialogue_map("piglatin")
+
+
     import re
     import keywords
 
