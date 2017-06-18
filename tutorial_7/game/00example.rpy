@@ -405,6 +405,10 @@ init python:
             last_blank = not i
 
             if not raw:
+                if not persistent.show_translation_marker:
+                    i = re.sub(r'_\((".*?")\)', r'\1', i)
+                    i = re.sub(r"_\(('.*?')\)", r'\1', i)
+
                 i = quote(i)
                 i = regex.sub(colorize, i)
 
