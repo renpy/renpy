@@ -58,6 +58,7 @@ def get_path(fn):
 
 # Asset Loading
 
+
 try:
     import android.apk
 
@@ -430,6 +431,7 @@ class SubFile(object):
     def write(self, s):
         raise Exception("Write not supported by SubFile")
 
+
 open_file = open
 
 if "RENPY_FORCE_SUBFILE" in os.environ:
@@ -509,14 +511,17 @@ def load_core(name):
     return None
 
 
-def get_prefixes():
+def get_prefixes(tl=True):
     """
     Returns a list of prefixes to search for files.
     """
 
     rv = [ ]
 
-    language = renpy.game.preferences.language
+    if tl:
+        language = renpy.game.preferences.language
+    else:
+        language = None
 
     for prefix in renpy.config.search_prefixes:
 
@@ -528,14 +533,14 @@ def get_prefixes():
     return rv
 
 
-def load(name):
+def load(name, tl=True):
 
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
     name = re.sub(r'/+', '/', name).lstrip('/')
 
-    for p in get_prefixes():
+    for p in get_prefixes(tl):
         rv = load_core(p + name)
         if rv is not None:
             return rv
@@ -726,6 +731,7 @@ def quit_importer():
     sys.meta_path.pop(0)
 
 # Auto-Reload
+
 
 # This is set to True if autoreload hads detected an autoreload is needed.
 needs_autoreload = False

@@ -1985,6 +1985,15 @@ def file(fn):  # @ReservedAssignment
     return renpy.loader.load(fn)
 
 
+def notl_file(fn):  # @ReservedAssignment
+    """
+    :undocumented:
+
+    Like file, but doesn't search the translation prefix.
+    """
+    return renpy.loader.load(fn, tl=False)
+
+
 @renpy_pure
 def image_size(im):
     """
