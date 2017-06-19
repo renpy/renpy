@@ -68,7 +68,7 @@ python early:
 
         fn = fn.replace("game/", "")
 
-        with renpy.file(fn) as f:
+        with renpy.notl_file(fn) as f:
             data = f.read()
 
         rawlines = [ i.rstrip() for i in data.split("\n") ]
@@ -328,7 +328,10 @@ define persistent.show_translation_marker = False
 
 init python:
 
-    renpy.translation.dialogue.create_dialogue_map("piglatin")
+    dialogue_map = { }
+
+    for i in renpy.known_languages():
+        dialogue_map[i] = renpy.translation.dialogue.create_dialogue_map(i)
 
 
     import re
@@ -351,7 +354,23 @@ init python:
 
     def colorize(m):
         if m.group("string"):
-            return "{color=#060}" + m.group(0) + "{/color}"
+            s = eval(m.group(0))
+
+            if __(s) != s:
+                s = __(s)
+            elif _preferences.language is not None:
+
+                dm = dialogue_map[_preferences.language]
+
+                if s in dm:
+                    s = dm[s]
+
+            quote = m.group(0)[0]
+            s = s.replace("\\", "\\\\")
+            s = s.replace(quote, "\\" + quote)
+            s = quote + s + quote
+
+            return "{color=#060}" + s + "{/color}"
 
         word = m.group("word")
         if word:
