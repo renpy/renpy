@@ -1078,13 +1078,14 @@ cdef class GLDraw:
         # has overwritten the buffer we're drawing to.
         for _i in range(2):
             self.environ.viewport(0, 0, 1, 1)
-            glClearColor(0.0, 0.0, 0.0, 0.0)
-
-            glClear(GL_COLOR_BUFFER_BIT)
 
             self.environ.ortho(0, 1, 0, 1, -1, 1)
+
             self.clip_mode_rtt(0, 0, 1, 1)
             clip = (0, 0, 1, 1)
+
+            glClearColor(0.0, 0.0, 0.0, 0.0)
+            glClear(GL_COLOR_BUFFER_BIT)
 
             self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
