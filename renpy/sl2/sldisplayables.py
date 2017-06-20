@@ -22,6 +22,8 @@
 ##############################################################################
 # Definitions of screen language statements.
 
+from __future__ import print_function
+
 import renpy.display
 import renpy.text.text
 import renpy.sl2
@@ -424,7 +426,7 @@ def sl2add(d, replaces=None, scope=None, **kwargs):
     if kwargs:
         rv = Transform(child=d, **kwargs)
 
-    if isinstance(rv, Transform):
+    if (replaces is not None) and isinstance(rv, Transform):
         rv.take_state(replaces)
         rv.take_execution_state(replaces)
 

@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
 import math
@@ -684,6 +686,10 @@ class Transform(Container):
 
         self.state.take_state(t.state)
 
+        if (self.child is None) and (t.child is not None):
+            self.add(t.child)
+            self.child_st_base = t.child_st_base
+
         # The arguments will be applied when the default function is
         # called.
 
@@ -859,12 +865,8 @@ class Transform(Container):
         if child is None:
             child = self.child
 
-        # If we don't have a child for some reason, set it to null.
-        if child is None:
-            child = get_null()
-        else:
-            if child._duplicatable:
-                child = child._duplicate(_args)
+        if (child is not None) and (child._duplicatable):
+            child = child._duplicate(_args)
 
         rv = Transform(
             child=child,

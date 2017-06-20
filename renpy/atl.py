@@ -420,9 +420,6 @@ class ATLTransformBase(renpy.object.Object):
         if child is None:
             child = self.child
 
-        if child is None:
-            child = renpy.display.motion.get_null()
-
         # Create a new ATL Transform.
         parameters = renpy.ast.ParameterInfo({ }, positional, None, None)
 
