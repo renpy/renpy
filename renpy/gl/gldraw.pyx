@@ -54,7 +54,7 @@ cdef extern from "glcompat.h":
 
 cdef extern from "eglsupport.h":
     int egl_available()
-    char *egl_init(int)
+    char *egl_init(SDL_Window *, int)
     void egl_swap()
     void egl_quit()
 
@@ -314,7 +314,7 @@ cdef class GLDraw:
             # This ensures the display is shown.
             pygame.display.flip()
 
-            egl_error = egl_init(vsync)
+            egl_error = egl_init(PyWindow_AsWindow(None), vsync)
 
             if egl_error is not NULL:
                 renpy.display.log.write("Initializing EGL: %s" % egl_error)
