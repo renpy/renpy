@@ -901,6 +901,10 @@ class RevertableObject(object):
 
         return self
 
+    def __init__(self, *args, **kwargs):
+        if (args or kwargs) and renpy.config.developer:
+            raise TypeError("object() takes no parameters.")
+
     def __setattr__(self, attr, value):
         object.__setattr__(self, attr, value)
 
