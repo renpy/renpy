@@ -750,7 +750,7 @@ class Script(object):
         elif self.key != data['key']:
             raise Exception( fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
 
-        self.finish_load(stmts, initcode, filename=fn + source)
+        self.finish_load(stmts, initcode, filename=lastfn)
 
         self.digest.update(digest)
 
