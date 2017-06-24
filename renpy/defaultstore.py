@@ -95,6 +95,12 @@ class _Config(object):
         if name == "script_version":
             renpy.store._set_script_version(value)  # E1101 @UndefinedVariable
 
+        if name == "developer":
+            if value == "auto":
+                renpy.config.original_developer = value
+                renpy.config.developer = renpy.config.default_developer
+                return
+
         cvars[name] = value
 
     def __delattr__(self, name):
@@ -102,6 +108,7 @@ class _Config(object):
             raise Exception('Deleting configuration variables is not supported.')
         else:
             delattr(renpy.config, name)
+
 
 # The styles object.
 style = None
@@ -233,6 +240,7 @@ class _layout_class(__builtins__["object"]):
             rv.add(renpy.easy.displayable(i))
 
         return rv
+
 
 Fixed = _layout_class(renpy.display.layout.MultiBox, """
 :doc: disp_box
@@ -386,6 +394,7 @@ def say(who, what, interact=True):
     who = Character(who, kind=adv)
     who(what, interact=interact)
 
+
 # Used by renpy.reshow_say.
 _last_say_who = None
 _last_say_what = None
@@ -426,5 +435,6 @@ def public_api():
     sorted
     os
     sys
+
 
 del public_api

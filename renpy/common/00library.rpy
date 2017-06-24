@@ -263,7 +263,14 @@ init -1700 python:
 
 init -1000 python:
     # Set developer to the auto default.
-    config.developer = "auto"
+    config.original_developer = "auto"
+
+    if config.script_version:
+        config.developer = False
+        config.default_developer = False
+    else:
+        config.developer = True
+        config.default_developer = True
 
     # Lock the library object.
     config.locked = True
@@ -273,14 +280,6 @@ init -1000 python:
 
 # After init, make some changes based on if config.developer is True.
 init 1700 python hide:
-
-    config.original_developer = config.developer
-
-    if config.developer == "auto":
-        if config.script_version:
-            config.developer = False
-        else:
-            config.developer = True
 
     if config.developer:
 

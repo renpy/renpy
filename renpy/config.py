@@ -243,8 +243,11 @@ editor_file_separator = None  # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '"
 # Enable developer mode?
 developer = False  # Changed to True or False in the init code.
 
-# The original value of config.developer.
+# The value of developer requested by the creator (True, False, or "auto")
 original_developer = False
+
+# The default value of developer that's used when it's set to auto.
+default_developer = False
 
 # A logfile that logging messages are sent to.
 log = None
