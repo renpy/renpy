@@ -214,7 +214,7 @@ class Parser(object):
             screens.
 
         `block_only`
-            If true, only parse the
+            If true, only parse the block and not the initial properties.
         """
 
         seen_keywords = set()
@@ -292,7 +292,7 @@ class Parser(object):
                 loc = l.get_location()
 
                 if l.keyword(r'has'):
-                    if self.nchildren != 1:
+                    if not can_has:
                         l.error("The %s statement does not take a layout." % self.name)
 
                     if child_index != 0:
@@ -823,7 +823,7 @@ class UseParser(Parser):
             l.expect_block("use statement")
 
             block = slast.SLBlock(loc)
-            self.parse_contents(l, block, block_only=True)
+            self.parse_contents(l, block, can_has=True, block_only=True)
 
         else:
             l.expect_eol()
