@@ -41,8 +41,6 @@ init python in project:
     import re
     import tempfile
 
-    temp_directory = os.path.join(config.renpy_base, "tmp")
-
     if persistent.blurb is None:
         persistent.blurb = 0
 
@@ -150,7 +148,7 @@ init python in project:
             if self.tmp and os.path.isdir(self.tmp):
                 return
 
-            tmp = os.path.join(temp_directory, self.name)
+            tmp = os.path.join(config.renpy_base, "tmp", self.name)
 
             try:
                 os.makedirs(tmp)
