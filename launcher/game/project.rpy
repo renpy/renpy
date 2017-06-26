@@ -156,8 +156,23 @@ init python in project:
                 pass
 
             if os.path.isdir(tmp):
-                self.tmp = tmp
-                return
+                try:
+
+                    fn = os.path.join(tmp, "write_test.txt", "w")
+
+                    if os.path.exists(fn):
+                        os.unlink(fn)
+
+                    with open(fn, "w") as f:
+                        f.write("Test")
+
+                    os.unlink(fn)
+
+                    self.tmp = tmp
+                    return
+
+                except:
+                    pass
 
             self.tmp = tempfile.mkdtemp()
 
