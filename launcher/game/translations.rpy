@@ -22,6 +22,7 @@
 init python:
 
     import re
+    import tempfile
 
     if persistent.translate_language is None:
         persistent.translate_language = "english"
@@ -38,13 +39,41 @@ init python:
     def CheckLanguage():
         return SensitiveIf(re.match(r'^\w+$', persistent.translate_language))
 
-    try:
-        os.makedirs(os.path.join(config.basedir, "tmp"))
-    except:
-        pass
 
+    strings_json = None
 
-    STRINGS_JSON = os.path.join(config.basedir, "tmp", "strings.json")
+    def get_strings_json():
+
+        global strings_json
+
+        if strings_json is not None:
+            return strings_json
+
+        try:
+            tempdir = os.path.join(config.basedir, "tmp")
+
+            try:
+                os.makedirs(os.path.join(config.basedir, "tmp"))
+            except:
+                pass
+
+            write_test = os.path.join(tempdir, "writetest.txt")
+
+            if os.path.exists(write_test):
+                os.unlink(write_test)
+
+            with open(write_test, "w"):
+                pass
+
+            os.unlink(write_test)
+
+        except:
+            raise
+            tempdir = tempfile.mkdtemp()
+
+        strings_json = os.path.join(tempdir, "strings.json")
+        return strings_json
+
 
 
 screen translate:
@@ -243,7 +272,7 @@ label extract_strings:
 
         language = persistent.translate_language
 
-        args = [ "extract_strings", language,  STRINGS_JSON ]
+        args = [ "extract_strings", language,  get_strings_json() ]
 
         interface.processing(_("Ren'Py is extracting string translations..."))
         project.current.launch(args, wait=True)
@@ -260,7 +289,7 @@ label merge_strings:
 
         language = persistent.translate_language
 
-        args = [ "merge_strings", language,  STRINGS_JSON ]
+        args = [ "merge_strings", language,  get_strings_json() ]
 
         if persistent.replace_translations:
             args.append("--replace")
@@ -283,12 +312,12 @@ label update_renpy_strings:
 
         interface.processing(_("Updating default interface translations..."))
 
-        renpy.translation.extract.extract_strings_core(language, STRINGS_JSON)
+        renpy.translation.extract.extract_strings_core(language, get_strings_json())
 
         args = [ "translate", "None", "--common-only", "--strings-only", "--max-priority", "399", "--no-todo" ]
         project.current.launch(args, wait=True)
 
-        args = [ "merge_strings", "None",  STRINGS_JSON ]
+        args = [ "merge_strings", "None",  get_strings_json() ]
         project.current.launch(args, wait=True)
 
     return
