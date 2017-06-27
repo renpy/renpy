@@ -592,3 +592,72 @@ label screens_control:
 
     return
 
+label screen_use:
+
+    e "The screen language use statement lets you include a screen inside another. This can be useful to prevent duplication inside screens."
+
+    example large:
+
+        screen duplicate_stats():
+
+            frame:
+                xalign 0.5 ypos 50
+
+                vbox:
+                    text _("Health") xalign 0.5
+                    bar value StaticValue(90, 100) xalign 0.5 xsize 250
+
+                    null height 15
+
+                    text _("Magic") xalign 0.5
+                    bar value StaticValue(42, 100) xalign 0.5 xsize 250
+
+    e "Take for example this screen, which shows two stat entries. There's already a lot of duplication there, and if we had more stats, there would be more."
+
+    example large:
+
+        screen using_stats():
+
+            frame:
+                xalign 0.5 ypos 50
+
+                vbox:
+                    use stat(_("Health"), 90)
+                    null height 15
+                    use stat(_("Magic"), 42)
+
+        screen stat(name, amount):
+
+            text name xalign 0.5
+            bar value StaticValue(amount, 100) xalign 0.5 xsize 250
+
+    e "Here, we moved the statements that show the text and bar into a second screen, and the use statement includes that screen in the first one."
+
+    e "The name and amount of the stat are passed in as arguments to the screen, just as is done in the call screen statement."
+
+    e "By doing it this way, we control the amount of duplication, and can change the stat in one place."
+
+    example large:
+
+        screen transclusion_example():
+
+            use boilerplate():
+                text _("There's not much left to see.")
+
+        screen boilerplate():
+            frame:
+                xalign 0.5 ypos 50
+
+                vbox:
+                    transclude
+
+    e "The transclude statement goes one step further, by letting the use statement take a block of screen language statements."
+
+    e "When the included screen reaches the transclude statement it is replaced with the block from the use statement."
+
+    e "The boilerplate screen is included in the first one, and the text from the first screen is transcluded into the boilerplate screen."
+
+    e "Use and transclude are complex, but very powerful. If you think about it, 'use boilerplate' is only one step removed from writing your own Screen Language statement."
+
+    hide example
+    return
