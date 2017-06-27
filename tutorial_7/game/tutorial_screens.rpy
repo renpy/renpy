@@ -184,6 +184,12 @@ label screens_menu:
         "Screen properties.":
             call screens_properties
 
+        "Special screen statements.":
+            call screens_control
+
+        "Using other screens.":
+            call screen_use
+
         "That's it.":
             return
 
@@ -477,30 +483,112 @@ label screens_properties:
     return
 
 
+label screens_control:
+
+    e "The screen language has a few statements that do things other than show displayables. If you haven't seen the displayable statements yet, you might want to check them out and come back here."
+
+    example large:
+        screen single_python_screen():
+
+            $ message = _("Hello, World.")
+
+            frame:
+                xalign 0.5 ypos 50
+                vbox:
+                    text "[message]"
+
+    e "The python statement works just about the same way it does in the script. A single line of Python is introduced with a dollar sign. This line is run each time the screen updates."
+
+    example large:
+        screen block_python_screen():
+
+            python:
+                message1 = _("Hello, World.")
+                message2 = _("It's good to meet you.")
+
+            frame:
+                xalign 0.5 ypos 50
+                vbox:
+                    text "[message1]"
+                    text "[message2]"
+
+    e "Similarly, the python statement introduces an indented block of python statements. But there is one big difference in Python in screens and Python in scripts."
+
+    e "The Python you use in screens isn't allowed to have side effects. That means that it can't do things like change the value of a variable."
+
+    e "The reason for this is that Ren'Py will run a screen, and the Python in it, during screen prediction."
+
+    example large:
+
+        screen default_screen():
+
+            default n = 0
+
+            frame:
+                xalign 0.5 ypos 50
+                vbox:
+                    text "n = [n]"
+                    textbutton _("Increase") action SetScreenVariable("n", n + 1)
+
+    e "The default statement lets you set the value of a screen variable the first time the screen runs. This value can be changes with the SetScreenVariable and ToggleScreenVariable actions."
+
+    e "The default statement differs from the Python statement in that it is only run once. Python runs each time the screen updates, and hence the variable would never change value."
 
 
+    example large:
 
-#
-#
-#
-#
-# label after_imagemap_example:
-#
-#     show screen stats
-#     with dissolve
-#
-#     e "Screens can do a lot. For example, if a game is an RPG - or even RPG-themed - we can display statistics to the player."
-#
-#     hide screen stats
-#     with dissolve
-#
-#     window show
-#
-#     $ e("For a dating sim or life simulation game, we can display scheduling interfaces like this one.", interact=False)
-#     call screen day_planner
-#
-#     e "Screens can also be used to customize all parts of the Ren'Py interface - for example, the say screen is what shows dialogue to the player."
-#
-#     e "Screens might look complicated, and more complex ones can have a lot of code in them. But every screen is made out of lots of small parts."
-#
-#     return
+        screen if_screen():
+
+            default n = 0
+
+            frame:
+                xalign 0.5 ypos 50
+                vbox:
+                    if n > 2:
+                        text "n = [n]" color "#cfc"
+                    else:
+                        text "n = [n]" color "#fcc"
+
+                    textbutton _("Increase") action SetScreenVariable("n", n + 1)
+
+    e "The if statement works like it does in script, running one block if the condition is true and another if the condition is false."
+
+    example large:
+
+        screen for_screen():
+
+            $ landings = [ _("Earth"), _("Moon"), _("Mars") ]
+
+            frame:
+                xalign 0.5 ypos 50
+
+                vbox:
+                    for i in landings:
+                        textbutton "[i]" action Return(i)
+
+    e "The for statement takes a list of values, and iterates through them, running the block inside the for loop with the variable bound to each list item."
+
+    example large:
+
+        screen on_key_screen():
+
+            frame:
+                xalign 0.5 ypos 50
+
+                text _("Now press 'a'.")
+
+            on "show" action Notify(_("The screen was just shown."))
+
+            key "a" action Notify(_("You pressed the 'a' key."))
+
+
+    e "The on and key statements probably only make sense at the top level of the screen."
+
+    e "The on statement makes the screen run an action when an event occurs. The 'show' event happens when the screen is first shown, and the 'hide' event happens when it is hidden."
+
+    e "The key event runs an event when a key is pressed."
+
+    hide example
+
+    return
+

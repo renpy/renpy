@@ -358,7 +358,7 @@ init python:
 
             if __(s) != s:
                 s = __(s)
-            elif _preferences.language is not None:
+            elif _preferences.language:
 
                 dm = dialogue_map[_preferences.language]
 
