@@ -72,6 +72,7 @@ init python:
 
     Tutorial("text", _("Text Tags, Escapes, and Interpolation"))
     Tutorial("simple_displayables", _("Simple Displayables"), move=None)
+    Tutorial("demo_transitions", _("Transition Gallery"))
 
     # Positions and Transforms?
     Tutorial("tutorial_positions", _("Position Properties"))
@@ -82,12 +83,9 @@ init python:
 
     Tutorial("new_gui", _("GUI Customization"))
     Tutorial("styles", _("Styles and Style Properties"), move=None)
-
     Tutorial("tutorial_screens", _("Screen Basics"), move=None)
     Tutorial("screen_displayables", _("Screen Displayables"), move=None)
 
-    Tutorial("demo_transitions", _("Transition Gallery"))
-    Tutorial("demo_ui", _("User Interaction"))
     Tutorial("demo_character", _("Character Objects"))
     Tutorial("demo_minigame", _("Minigames"))
 
