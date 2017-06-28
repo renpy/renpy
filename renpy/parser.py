@@ -1103,7 +1103,7 @@ class Lexer(object):
         object, which is called directly.
         """
 
-        if isinstance(thing, str):
+        if isinstance(thing, basestring):
             name = name or thing
             rv = self.match(thing)
         else:
