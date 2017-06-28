@@ -102,8 +102,8 @@ screen tutorials(adj):
     frame:
         xsize 640
         xalign .5
-        ysize 495
-        ypos 20
+        ysize 485
+        ypos 30
 
         has side "c r b"
 
