@@ -71,6 +71,7 @@ init python:
     Section(_("In Depth"))
 
     Tutorial("text", _("Text Tags, Escapes, and Interpolation"))
+    Tutorial("demo_character", _("Character Objects"))
     Tutorial("simple_displayables", _("Simple Displayables"), move=None)
     Tutorial("demo_transitions", _("Transition Gallery"))
 
@@ -86,16 +87,8 @@ init python:
     Tutorial("tutorial_screens", _("Screen Basics"), move=None)
     Tutorial("screen_displayables", _("Screen Displayables"), move=None)
 
-    Tutorial("demo_character", _("Character Objects"))
     Tutorial("demo_minigame", _("Minigames"))
 
-    # Label("demo_text", _("Fonts and Text Tags")),
-    # Label("demo_imageops", _("Image Operations")),
-    # Label("demo_layers", _("Layers & Advanced Show")),
-    # Label("demo_dynamic", _("Dynamic Displayables")),
-    # Label("demo_persistent", _("Persistent Data"), True),
-    # Label("demo_transform", _("Transform"), True),
-    # Label("tutorial_sprite", _("Sprites"), True),
 
 screen tutorials(adj):
 
