@@ -1427,7 +1427,7 @@ class RollbackLog(renpy.object.Object):
                 if (self.current.context.current == fwd_name
                         and data == fwd_data
                         and (keep_rollback or self.rolled_forward)
-                        ):
+                    ):
                     self.forward.pop(0)
                 else:
                     self.forward = [ ]
@@ -1611,13 +1611,19 @@ class RollbackLog(renpy.object.Object):
 
         renpy.game.contexts.extend(other_contexts)
 
-        if force_checkpoint:
-            renpy.game.context().force_checkpoint = True
-
         # Restart the context or the top context.
         if replace_context:
+
+            if force_checkpoint:
+                renpy.game.contexts[0].force_checkpoint = True
+
             raise renpy.game.RestartTopContext(label)
+
         else:
+
+            if force_checkpoint:
+                renpy.game.context().force_checkpoint = True
+
             raise renpy.game.RestartContext(label)
 
     def freeze(self, wait=None):
