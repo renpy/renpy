@@ -1,9 +1,9 @@
-﻿# You can place the script of your game in this file.
+﻿# هذا الملف يحتوي على كل نصوص اللعبه
 
-# Declare images below this line, using the image statement.
-# eg. image eileen happy = "eileen_happy.png"
+# استعمل السطر التالي لإظهار الصور في شاشة اللعب
+# image eileen happy = "eileen_happy.png"
 
-# Declare characters used by this game.
+# من هي شخصيات هذه اللعبه؟ 
 define e = Character('إيلين', color="#c8ffc8")
 
 init python:
@@ -11,7 +11,7 @@ init python:
         persistent.default_language_set = True
         _preferences.language = "arabic"
 
-# The game starts here.
+# اللعبه تبدأ هنا
 label start:
 
     e "لقد بدأت حكاية رينباي جديدة."
