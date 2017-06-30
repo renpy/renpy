@@ -1,86 +1,72 @@
 ﻿# This file demonstrates how Character objects can be used to customize the
 # display of text.
 
+init python:
+    config.searchpath.append("../launcher/game/fonts")
+
 label demo_character:
 
-    e "We saw before how a Character object can be used to assign a name to a character. But there are a lot of other ways character objects can customize dialogue and thoughts."
-
-    e "The main way is by setting style properties on a character-by-character basis."
+    "There are quite a few properties that apply. Here, ill'll show you some of the most useful."
 
     example:
-        define ebluewhat = Character(_("Eileen"), what_color="#ccccff")
+        define e1 = Character("Eileen", window_background="gui/startextbox.png")
 
-        ebluewhat "When a style property is prefixed with 'what_', it's given to the text that's being spoken."
-
+        e1 "The window_background property sets the image thay's used for the background of the textbox, which should be the same size as the default in gui/textbox.png."
 
     example:
 
-        define eredwho = Character(_("Eileen"), who_color="#cc8888")
-        define ered = Character(_("Eileen"), color="#cc8888")
+        define e1a = Character("Eileen", window_background=None)
 
-        eredwho "A style property that is prefixed with 'who_' is applied to the name of the speaking character."
-        ered "Style properties that have no prefix are also given to the name of the speaking character."
-
+        e1a "If it's set to None, the textbox has no background window."
 
     example:
-        define eblackwindow = Character(_("Eileen"), window_background="#000000f0")
+        define e2 = Character("Eileen", who_color="#c8ffc8", what_color="#ffc8c8")
 
-        eblackwindow "Finally, style properties prefixed with 'window_' apply to the dialogue window."
+        e2 "The who_color and what_color properties set the color of the character's name and dialogue text, respectively."
 
-
-    example:
-        define eoutline = Character(
-            None,
-            window_background="#0000",
-            what_outlines=[ (3, "#008000", 0, 0) ],
-            what_size=28,
-            what_text_align=0.5,
-            what_xalign=0.5,
-            what_layout="subtitle"
-            )
-
-
-        eoutline "While each single style property makes only a small change, multiple properties can massively change the look of the game."
-
-
-    example:
-        define equoted = Character(_("Eileen"), what_prefix='"', what_suffix='"')
-
-        equoted "There are other arguments that can be given to Character. I'll show you a few of the most common ones here."
-
-        equoted "The what_prefix and what_suffix can be used to add text to the start and end of dialogue, respectively."
+        e2 "The colors are strings containing rgb hex codes, the same sort of colors understood by a web browser."
 
     example:
 
-        define eside = Character(_("Eileen"), image="eileen")
-        image side eileen happy = Transform("eileen happy", crop=(0, 0, 320, 400), zoom=.6)
-        image side eileen vhappy = Transform("eileen vhappy", crop=(0, 0, 320, 400), zoom=.6)
+        define e3 = Character("Eileen", who_font="Roboto-Regular.ttf", what_font="Roboto-Light.ttf")
 
-        eside "The image argument associates an image with a character."
-        eside vhappy "It lets dialogue take attributes, which can be used to change the image associated with the character."
-        eside happy "When the character speaks, Ren'Py will look for a side image assoicated with the character. It will apply image attributes, then show the side image."
+        e3 "Similarly, the ``who_font`` and ``what_font`` properties set the font used by the different kinds of text."
 
 
     example:
-        define big = Character(None, what_size=26)
-        define ebig = Character(_("Eileen"), kind=big)
-        define lbig = Character(_("Lucy"), kind=big)
 
-        ebig "The kind argument takes a Character to use as a template. This makes it possible to customize a single Charater, then copy it."
+        define e4 = Character("Eileen", who_bold=True, what_italic=True, what_size=20)
+
+        e4 "Setting the who_bold, what_italic, and what_size properties makes the name bold, and the dialogue text italic at a size of 20 pixels."
+
+        e4 "Of course, the what_bold, who_italic and who_size properties also exist, even if they're not used here."
+
+
+    example:
+
+        define e5 = Character("Eileen", what_outlines=[( 1, "#008000", 0, 0 )] )
+
+        e5 "The ``what_outlines`` property puts an outline around the text."
+
+        e5 "It's a little complicated since it takes a list with a tuple in it, with the tuple being four things in parenthesis, and the list the square brakets around them."
+
+        e5 "The first number is the size of the outline, in pixels. That's followed by a string giving the hex-code of the color of the outline, and the x and y offsets."
+
+    example:
+
+        define e6 = Character("Eileen", what_outlines=[( 0, "#808080", 2, 2 )] )
+
+        e6 "When the outline size is 0 and the offsets are given, ``what_outlines`` can also act as a drop-shadow behind the text."
 
 
     example:
-        e "Finally, there are a couple of special characters we want to mention."
-        extend " The extend character appends text to the last thing spoken."
+        define e7 = Character("Eileen", what_xalign=0.5, what_textalign=0.5, what_layout='subtitle')
 
-    example:
-        e "The narrator character is used to customize narration. Understand?"
 
-        narrator "I get it."
-        "I get that this line and the last line are both narration."
+        e7 "Something here."
+
 
     hide example
-    pause .5
 
     return
 
