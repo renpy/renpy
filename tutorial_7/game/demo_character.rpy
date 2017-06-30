@@ -48,7 +48,7 @@ label demo_character:
 
         e5 "The ``what_outlines`` property puts an outline around the text."
 
-        e5 "It's a little complicated since it takes a list with a tuple in it, with the tuple being four things in parenthesis, and the list the square brakets around them."
+        e5 "It's a little complicated since it takes a list with a tuple in it, with the tuple being four things in parenthesis, and the list the square brackets around them."
 
         e5 "The first number is the size of the outline, in pixels. That's followed by a string giving the hex-code of the color of the outline, and the x and y offsets."
 
@@ -62,8 +62,29 @@ label demo_character:
     example:
         define e7 = Character("Eileen", what_xalign=0.5, what_textalign=0.5, what_layout='subtitle')
 
+        e7 "The what_xalign and what_textalign properties control the alignment of text, with 0.0 being left, 0.5 being center, and 1.0 being right."
 
-        e7 "Something here."
+        e7 "The what_xalign property controls where all the text text itself is placed within the textbox, while what_textalign controls where rows of text are placed relative to each other."
+
+        e7 "Generally you'll want to to set them both what_xalign and what_textalign to the same value."
+
+        e7 "Setting what_layout to 'subtitle' puts Ren'Py in subtitle mode, which tries to even out the length of every line of text in a block."
+
+    example large:
+
+        define e8 = Character(
+            None,
+            window_background = None,
+
+            what_size=28,
+            what_outlines=[( 1, "#008000", 0, 0 )],
+            what_xalign=0.5,
+            what_textalign=0.5,
+            what_layout='subtitle')
+
+    e8 "These properties can be combined to achieve many different effects."
+
+    e8 "This example hides the background and shows dialogue centered and outlined, as if the game is being subtitled."
 
 
     hide example
