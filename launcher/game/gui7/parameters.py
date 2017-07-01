@@ -26,6 +26,7 @@ import time
 WIDTH = 1280
 HEIGHT = 720
 
+
 class GuiParameters(object):
     """
     This represents the parameters to the gui. This is used to initialize
@@ -52,7 +53,7 @@ class GuiParameters(object):
         self.light = light
 
         if light:
-            self.hover_color = self.accent_color # .tint(.95)
+            self.hover_color = self.accent_color  # .tint(.95)
             self.muted_color = self.accent_color.tint(.6)
             self.hover_muted_color = self.accent_color.tint(.4)
         else:
@@ -74,11 +75,10 @@ class GuiParameters(object):
         else:
 
             self.selected_color = Color("#ffffff")
-            self.idle_color = Color("#555555")
+            self.idle_color = Color("#888888")
             self.idle_small_color = Color("#aaaaaa")
             self.text_color = Color("#ffffff")
             self.choice_color = Color("#cccccc")
-
 
         self.insensitive_color = self.idle_color.replace_opacity(.5)
 
@@ -107,4 +107,3 @@ class GuiParameters(object):
         self.simple_name = simple_name
 
         self.savedir = self.simple_name + "-" + str(int(time.time()))
-
