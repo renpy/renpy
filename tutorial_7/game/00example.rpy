@@ -453,6 +453,9 @@ init python:
 
     example_transition = dissolve
 
+    import os
+    SHOW_EXAMPLES = ("RENPY_LESS_EXAMPLES" not in os.environ)
+
 
 transform example_transform(height, ypos):
     ypos ypos
@@ -488,44 +491,46 @@ screen example(blocks, small=False, bottom=False):
         $ ypos = 540
 
 
-    frame:
-        style "empty"
-        background "#fffc"
-        foreground Solid("#aaac", xsize=1, xpos=178)
+    if SHOW_EXAMPLES:
 
-        xfill True
-        yfill True
-        ymaximum height
-
-        at example_transform(height, ypos)
-
-        viewport:
-            side_xmaximum 1098
-            side_xpos 180
-            child_size (2000, 2000)
-            ymaximum height
-            draggable True
-            mousewheel True
-            scrollbars "vertical"
-
-            vscrollbar_xsize 5
-            vscrollbar_base_bar "#aaac"
-            vscrollbar_unscrollable "hide"
-
-            text code:
-                alt ""
-                size 16
-                color "#000"
-
-        textbutton _("copy"):
+        frame:
             style "empty"
-            text_style "quick_button_text"
-            text_text_align 0.5
-            text_minwidth 180
+            background "#fffc"
+            foreground Solid("#aaac", xsize=1, xpos=178)
 
-            text_size 16
+            xfill True
+            yfill True
+            ymaximum height
 
-            action CopyCode(raw_code)
+            at example_transform(height, ypos)
+
+            viewport:
+                side_xmaximum 1098
+                side_xpos 180
+                child_size (2000, 2000)
+                ymaximum height
+                draggable True
+                mousewheel True
+                scrollbars "vertical"
+
+                vscrollbar_xsize 5
+                vscrollbar_base_bar "#aaac"
+                vscrollbar_unscrollable "hide"
+
+                text code:
+                    alt ""
+                    size 16
+                    color "#000"
+
+            textbutton _("copy"):
+                style "empty"
+                text_style "quick_button_text"
+                text_text_align 0.5
+                text_minwidth 180
+
+                text_size 16
+
+                action CopyCode(raw_code)
 
 
 

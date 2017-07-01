@@ -6,7 +6,41 @@ init python:
 
 label demo_character:
 
-    "There are quite a few properties that apply. Here, ill'll show you some of the most useful."
+    show example characters
+
+    e "We've already seen how to define a Character in Ren'Py. But I want to go into a bit more detail as to what a Character is."
+
+    example:
+        define e_shout = Character("Eileen", who_color="#c8ffc8", what_size=34)
+        define e_whisper = Character("Eileen", who_color="#c8ffc8", what_size=18)
+
+    e "Here are couple of additional characters."
+
+    e "Each statement creates a Character object, and gives it a single argument, a name. If the name is None, no name is displayed."
+
+    e "This can be followed by named arguments that set properties of the character. A named argument is a property name, an equals sign, and a value."
+
+    e "Multiple arguments should be separated with commas, like they are here. Let's see those characters in action."
+
+    example:
+
+        e_shout "I can shout!"
+
+        e_whisper "And I can speak in a whisper."
+
+    e "This example shows how the name Character is a bit of a misnomer. Here, we have multiple Characters in use, but you see it as me speaking."
+
+    e "It's best to think of a Character as repesenting a name and style, rather than a single person."
+
+    hide example
+
+    e "There are a lot of properties that can be given to Characters, most of them prefixed styles."
+
+    e "Properties beginning with window apply to the textbox, those with what apply to the the dialogue, and those with who to the name of Character speaking."
+
+    e "If you leave a prefix out, the style customizes the name of the speaker."
+
+    e "There are quite a few different properties that can be set this way. Here are some of the most useful."
 
     example:
         define e1 = Character("Eileen", window_background="gui/startextbox.png")
@@ -70,6 +104,11 @@ label demo_character:
 
         e7 "Setting what_layout to 'subtitle' puts Ren'Py in subtitle mode, which tries to even out the length of every line of text in a block."
 
+    hide example
+
+
+    e8 "These properties can be combined to achieve many different effects."
+
     example large:
 
         define e8 = Character(
@@ -82,12 +121,43 @@ label demo_character:
             what_textalign=0.5,
             what_layout='subtitle')
 
-    e8 "These properties can be combined to achieve many different effects."
-
     e8 "This example hides the background and shows dialogue centered and outlined, as if the game is being subtitled."
 
+    hide example
+    with dissolve
+
+    example small:
+
+        define e9 = Character("Eileen", what_prefix='"', what_suffix='"')
+
+        e9 "There are two interesting non-style properties, what_prefix and what_suffix. These can put text at the start and end of a line of dialouge."
+
+    example:
+
+        define l8 = Character(kind=e8, what_outlines=[( 1, "#c00000", 0, 0 )] )
+
+    e "By using kind, you can copy properties from one character to another, changing only what you need to."
+
+    hide example
+    with dissolve
+
+    scene bg cave
+    show lucy happy
+    with slideleft
+
+    l8 "Like this! Finally I get some more dialogue around here."
+
+    scene bg washington
+    show eileen happy
+    with slideawayleft
+
+    example:
+        define narrator = Character(what_italic=True)
+
+    e "The last thing you have to know is that there's a special character, narrator, that speaks narration. Got it?"
+
+    "I think I do."
 
     hide example
 
     return
-
