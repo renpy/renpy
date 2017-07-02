@@ -1067,6 +1067,7 @@ screen gamepad_help():
         label _("Right Shoulder")
         text _("Rolls forward to later dialogue.")
 
+
     hbox:
         label _("D-Pad, Sticks")
         text _("Navigate the interface.")
@@ -1419,6 +1420,14 @@ style window:
     variant "small"
     background "gui/phone/textbox.png"
 
+style radio_button:
+    variant "small"
+    foreground "gui/phone/button/check_[prefix_]foreground.png"
+
+style check_button:
+    variant "small"
+    foreground "gui/phone/button/check_[prefix_]foreground.png"
+
 style nvl_window:
     variant "small"
     background "gui/phone/nvl.png"
@@ -1443,6 +1452,42 @@ style pref_vbox:
     variant "small"
     xsize gui.scale(400)
 
+style bar:
+    variant "small"
+    ysize gui.bar_size
+    left_bar Frame("gui/phone/bar/left.png", gui.bar_borders, tile=gui.bar_tile)
+    right_bar Frame("gui/phone/bar/right.png", gui.bar_borders, tile=gui.bar_tile)
+
+style vbar:
+    variant "small"
+    xsize gui.bar_size
+    top_bar Frame("gui/phone/bar/top.png", gui.vbar_borders, tile=gui.bar_tile)
+    bottom_bar Frame("gui/phone/bar/bottom.png", gui.vbar_borders, tile=gui.bar_tile)
+
+style scrollbar:
+    variant "small"
+    ysize gui.scrollbar_size
+    base_bar Frame("gui/phone/scrollbar/horizontal_[prefix_]bar.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
+    thumb Frame("gui/phone/scrollbar/horizontal_[prefix_]thumb.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
+
+style vscrollbar:
+    variant "small"
+    xsize gui.scrollbar_size
+    base_bar Frame("gui/phone/scrollbar/vertical_[prefix_]bar.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
+    thumb Frame("gui/phone/scrollbar/vertical_[prefix_]thumb.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
+
+style slider:
+    variant "small"
+    ysize gui.slider_size
+    base_bar Frame("gui/phone/slider/horizontal_[prefix_]bar.png", gui.slider_borders, tile=gui.slider_tile)
+    thumb "gui/phone/slider/horizontal_[prefix_]thumb.png"
+
+style vslider:
+    variant "small"
+    xsize gui.slider_size
+    base_bar Frame("gui/phone/slider/vertical_[prefix_]bar.png", gui.vslider_borders, tile=gui.slider_tile)
+    thumb "gui/phone/slider/vertical_[prefix_]thumb.png"
+
 style slider_pref_vbox:
     variant "small"
     xsize None
@@ -1450,6 +1495,7 @@ style slider_pref_vbox:
 style slider_pref_slider:
     variant "small"
     xsize gui.scale(600)
+
 
 
 

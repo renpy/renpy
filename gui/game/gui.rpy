@@ -421,9 +421,9 @@ init python:
         gui.text_size = gui.scale(30)
         gui.name_text_size = gui.scale(36)
         gui.notify_text_size = gui.scale(25)
-        gui.interface_text_size = gui.scale(36)
-        gui.button_text_size = gui.scale(34)
-        gui.label_text_size = gui.scale(36)
+        gui.interface_text_size = gui.scale(30)
+        gui.button_text_size = gui.scale(30)
+        gui.label_text_size = gui.scale(34)
 
         ## Adjust the location of the textbox.
         gui.textbox_height = gui.scale(240)
@@ -431,7 +431,9 @@ init python:
         gui.text_xpos = gui.scale(90)
         gui.text_width = gui.scale(1100)
 
-        ## Change the size and spacing of items in the game menu.
+        ## Change the size and spacing of various things..
+        gui.slider_size = gui.scale(36)
+
         gui.choice_button_width = gui.scale(1240)
 
         gui.navigation_spacing = gui.scale(20)
@@ -439,6 +441,8 @@ init python:
 
         gui.history_height = gui.scale(190)
         gui.history_text_width = gui.scale(690)
+
+        gui.quick_button_text_size = gui.scale(20)
 
         ## File button layout.
         gui.file_slot_cols = 2
@@ -459,9 +463,6 @@ init python:
 
         gui.nvl_button_width = gui.scale(1240)
         gui.nvl_button_xpos = gui.scale(20)
-
-        ## Quick buttons.
-        gui.quick_button_text_size = gui.scale(20)
 
 
 
