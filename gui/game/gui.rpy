@@ -71,10 +71,10 @@ define gui.text_size = gui.scale(22)
 define gui.name_text_size = gui.scale(30)
 
 ## The size of text in the game's user interface.
-define gui.interface_text_size = gui.scale(24)
+define gui.interface_text_size = gui.scale(22)
 
 ## The size of labels in the game's user interface.
-define gui.label_text_size = gui.scale(28)
+define gui.label_text_size = gui.scale(24)
 
 ## The size of text on the notify screen.
 define gui.notify_text_size = gui.scale(16)
@@ -179,9 +179,9 @@ define gui.button_text_xalign = 0.0
 ##
 ## These customizations are used by the default interface:
 
-define gui.radio_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.radio_button_borders = Borders(gui.scale(18), gui.scale(4), gui.scale(4), gui.scale(4))
 
-define gui.check_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.check_button_borders = Borders(gui.scale(18), gui.scale(4), gui.scale(4), gui.scale(4))
 
 define gui.confirm_button_text_xalign = 0.5
 
@@ -304,9 +304,9 @@ define gui.frame_tile = False
 
 ## The height of horizontal bars, scrollbars, and sliders. The width of
 ## vertical bars, scrollbars, and sliders.
-define gui.bar_size = gui.scale(36)
+define gui.bar_size = gui.scale(25)
 define gui.scrollbar_size = gui.scale(12)
-define gui.slider_size = gui.scale(30)
+define gui.slider_size = gui.scale(25)
 
 ## True if bar images should be tiled. False if they should be linearly scaled.
 define gui.bar_tile = False
