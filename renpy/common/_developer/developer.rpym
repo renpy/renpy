@@ -40,14 +40,16 @@ screen _developer:
         fixed:
             vbox:
 
+                textbutton _("Interactive Director (D)"):
+                    action [ director.Start(), Hide("_developer") ]
                 textbutton _("Reload Game (Shift+R)"):
                     action ui.callsinnewcontext("_save_reload_game")
                 textbutton _("Console (Shift+O)"):
                     action [ Hide("_developer"), _console.enter ]
                 textbutton _("Variable Viewer"):
                     action ui.callsinnewcontext("_debugger_screen")
-                textbutton _("Theme Test"):
-                    action ui.callsinnewcontext("_theme_test")
+                # textbutton _("Theme Test"):
+                #     action ui.callsinnewcontext("_theme_test")
                 textbutton _("Image Location Picker"):
                     action ui.callsinnewcontext("_image_location_picker")
                 textbutton _("Filename List"):

@@ -23,14 +23,11 @@
 # - Allow the creator to specify a list of tags they are interested in,
 #   disabling the auto-detection.
 
-init offset = -100
+init offset = -1001
 
 init python in director:
     from store import Action, config
     import store
-
-    # The version of the director.
-    version = "4.0"
 
     # A set of tags that will not be show to the user.
     tag_blacklist = { "black", "text", "vtext", "side" }
@@ -62,9 +59,6 @@ init python in director:
 
     # A map from channel name to the audio files available on that channel.
     audio_files = { }
-
-    # Should we offer a button to access the director?
-    button = True
 
     # The spacing between a non-display line and a display line, or vice
     # versa.
@@ -1303,10 +1297,7 @@ init python in director:
 
         return tuple(rv)
 
-init 100 python hide in director:
-
-    if button:
-        config.overlay_screens.append("director_button")
+init 1001 python hide in director:
 
     for name, file, _line in renpy.dump.transforms:
         if file.startswith("renpy/common/"):
@@ -1351,7 +1342,7 @@ style director_frame is _frame:
     yalign 0.0
 
 style director_text is _text:
-    size 20
+    size gui._scale(20)
 
 style director_label
 
@@ -1368,8 +1359,8 @@ style director_button_text is director_text:
 
 
 style director_edit_button is director_button:
-    xsize 40
-    xpadding 10
+    xsize gui._scale(40)
+    xpadding gui._scale(10)
 
 style director_edit_button_text is director_button_text:
     font "DejaVuSans.ttf"
@@ -1378,14 +1369,15 @@ style director_edit_button_text is director_button_text:
 style director_action_button is director_button
 
 style director_action_button_text is director_button_text:
-    size 24
+    size gui._scale(26)
 
-style director_statement_text is director_text
+style director_statement_text is director_text:
+    size gui._scale(22)
 
 style director_statement_button is director_button
 
 style director_statement_button_text is director_button_text:
-    size 22
+    size gui._scale(22)
 
 style director_vscrollbar is _vscrollbar
 
@@ -1404,7 +1396,7 @@ screen director_lines(state):
             ymaximum director.viewport_height
             mousewheel True
             yinitial 1.0
-            yfill False
+            viewport_yfill False
 
             has vbox:
                 xfill True
@@ -1545,7 +1537,7 @@ screen director_choices(title):
             ymaximum director.viewport_height
             mousewheel True
             yinitial 0.0
-            yfill False
+            viewport_yfill False
 
             hbox:
                 box_wrap True
@@ -1737,35 +1729,4 @@ screen director():
             use director_channel(state)
         elif state.mode == "audio":
             use director_audio(state)
-
-
-        hbox:
-            xalign 1.0
-            yalign 1.0
-            spacing 10
-
-            text "v[director.version]":
-                size 10
-
-
-screen director_button():
-
-    # Ensure this appears on top of other screens.
-    zorder 100
-
-    if not (director.state.active and director.state.show_director):
-        textbutton _("Interactive Director"):
-            style "director_launch_button"
-            action director.Start()
-
-style director_launch_button is _button:
-    xalign 0.5
-    yalign 0.0
-    xpadding 50
-    top_margin 20
-    top_padding 5
-    bottom_padding 5
-
-style director_launch_button_text is _button_text:
-    size gui._scale(16)
 
