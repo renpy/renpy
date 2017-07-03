@@ -23,7 +23,7 @@
 # - Allow the creator to specify a list of tags they are interested in,
 #   disabling the auto-detection.
 
-init offset = -1001
+init offset = -1101
 
 init python in director:
     from store import Action, config
@@ -72,6 +72,9 @@ init python in director:
 
     # The maximum height of viewports containing scrolling information.
     viewport_height = 280
+
+    # Is the director enabled? Used by the tutorial to protect itself.
+    enable = True
 
     state = renpy.session.get("director", None)
 
@@ -674,14 +677,28 @@ init python in director:
 
         def __call__(self):
 
+            if not state.show_director:
+
+                if store._menu:
+                    return None
+
+                if not config.developer:
+                    return None
+
+                if not enable:
+                    renpy.notify(_("The interactive director is not enabled here."))
+
+            if state.show_director:
+                return None
+
             state.show_director = True
             state.mode = "lines"
 
             if state.active:
 
                 renpy.show_screen("director")
-
                 renpy.restart_interaction()
+
                 return
 
             renpy.session["compile"] = True
@@ -1297,38 +1314,40 @@ init python in director:
 
         return tuple(rv)
 
-init 1001 python hide in director:
+init 1101 python hide in director:
 
-    for name, file, _line in renpy.dump.transforms:
-        if file.startswith("renpy/common/"):
-            continue
+    if state.active:
 
-        if file == "game/screens.rpy":
-            continue
-
-        transforms.append(name)
-        transforms.sort(key=component_key)
-
-    import fnmatch
-
-    for c in audio_channels + [ voice_channel ]:
-
-        patterns = audio_channel_patterns.get(c, audio_patterns)
-
-        if c not in audio_files:
-            audio_files[c] = [ ]
-
-        for fn in renpy.list_files():
-
-            for p in patterns:
-                if fnmatch.fnmatch(fn, p):
-                    break
-            else:
+        for name, file, _line in renpy.dump.transforms:
+            if file.startswith("renpy/common/"):
                 continue
 
-            audio_files[c].append(fn)
+            if file == "game/screens.rpy":
+                continue
 
-        audio_files[c].sort()
+            transforms.append(name)
+            transforms.sort(key=component_key)
+
+        import fnmatch
+
+        for c in audio_channels + [ voice_channel ]:
+
+            patterns = audio_channel_patterns.get(c, audio_patterns)
+
+            if c not in audio_files:
+                audio_files[c] = [ ]
+
+            for fn in renpy.list_files():
+
+                for p in patterns:
+                    if fnmatch.fnmatch(fn, p):
+                        break
+                else:
+                    continue
+
+                audio_files[c].append(fn)
+
+            audio_files[c].sort()
 
 
 
@@ -1730,3 +1749,5 @@ screen director():
         elif state.mode == "audio":
             use director_audio(state)
 
+    if state.mode == "lines":
+        key "director" action director.Stop()
