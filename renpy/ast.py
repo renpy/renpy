@@ -1722,7 +1722,7 @@ class UserStatement(Node):
     def replace_next(self, old, new):
         Node.replace_next(self, old, new)
 
-        if (self.code_block) and (self.code_blockblock[0] is old):
+        if (self.code_block) and (self.code_block[0] is old):
             self.code_block.insert(0, new)
 
     def restructure(self, callback):
