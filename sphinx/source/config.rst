@@ -141,6 +141,10 @@ These control transitions between various screens.
     are invoked from the main menu, and it's also used when the user
     picks "Main Menu" from the game menu.
 
+.. var:: config.intra_transition = None
+
+    The transition that is used between screens of the game menu.
+
 .. var:: config.main_game_transition = None
 
     The transition used when entering the game menu from the main
