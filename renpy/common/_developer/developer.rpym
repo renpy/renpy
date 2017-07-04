@@ -119,6 +119,10 @@ label _debugger_screen:
         entries = [ ]
 
         for sn, d in renpy.python.store_dicts.items():
+
+            if sn.startswith("store._"):
+                continue
+
             for vn in d.ever_been_changed:
 
                 if vn.startswith("__00"):
@@ -138,6 +142,8 @@ label _debugger_screen:
                 name = (sn + "." + vn)[6:]
 
                 entries.append((name, value))
+
+        entries.sort(key=lambda e : e[0])
 
         renpy.call_screen("_variable_viewer", entries=entries)
 
