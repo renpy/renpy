@@ -7,7 +7,6 @@
 # of good Ren'Py programming style, consider checking out The Question
 # instead.
 
-
 # Declare the characters.
 define e = Character(_('Eileen'), color="#c8ffc8")
 
@@ -67,6 +66,7 @@ init python:
     Tutorial("tutorial_input", _("Input and Interpolation"))
     Tutorial("tutorial_video", _("Video Playback"))
     Tutorial("tutorial_nvlmode", _("NVL Mode"), move=None)
+    Tutorial("director", _("Tools and the Interactive Director"))
 
     Section(_("In Depth"))
 

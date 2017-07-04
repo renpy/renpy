@@ -687,6 +687,7 @@ init python in director:
 
                 if not enable:
                     renpy.notify(_("The interactive director is not enabled here."))
+                    return None
 
             if state.show_director:
                 return None
