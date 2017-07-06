@@ -42,7 +42,7 @@ label text:
 
     example:
 
-        e "The color text tag changes the {color=#0080c0}color{/a} of the text."
+        e "The color text tag changes the {color=#0080c0}color{/color} of the text."
 
     example:
 
