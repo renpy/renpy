@@ -37,7 +37,7 @@ label tutorial_create:
 
     show launcher step3
 
-    e "The next thing Ren'Py will ask for is the resolution the visual novel will run at. This controls how large or small you'll have ot make your game's artwork."
+    e "The next thing Ren'Py will ask for is the resolution the visual novel will run at. This controls how large or small you'll have to make your game's artwork."
 
     show launcher step4
 
@@ -53,7 +53,7 @@ label tutorial_create:
 
     e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Editra might be a safe choice, but read the descriptions to be sure."
 
-    e "After the text editor is downloaded, the script will up and you can start to change what characters are saying."
+    e "After the text editor is downloaded, the script will open up and you can start to change what characters are saying."
 
     hide launcher
     with dissolve
