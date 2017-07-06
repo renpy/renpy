@@ -277,6 +277,7 @@ init -1000 python:
 
     # Record the builtins.
     renpy.lint.renpy_builtins = set(globals())
+    renpy.lint.renpy_builtins.remove('menu')
 
 # After init, make some changes based on if config.developer is True.
 init 1700 python hide:
