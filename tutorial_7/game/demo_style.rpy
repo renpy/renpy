@@ -85,6 +85,9 @@ label styles_menu:
         "Box and Fixed style properties":
             call style_box
 
+        "The Displayable Inspector":
+            call style_inspector
+
         "That's all I want to know.":
             return
 
@@ -1049,9 +1052,20 @@ label style_box:
     return
 
 
+label style_inspector:
 
+    e "Sometimes it's hard to figure out what style is being used for a particular displayable. The displayable inspector can help with that."
 
+    e "To use it, place the mouse over a portion of the Ren'Py user interface, and hit shift+I. That's I for inspector."
 
+    e "Ren'Py will pop up a list of displayables the mouse is over. Next to each is the name of the style that displayable uses."
 
+    e "You can click on the name of the style to see where it gets its properties from."
+
+    e "By default, the inspector only shows interface elements like screens, and not images. Type shift+alt+I if you'd like to see images as well."
+
+    e "You can try the inspector right now, by hovering this text and hitting shift+I."
+
+    return
 
 
