@@ -95,9 +95,9 @@ label tutorial_dialogue:
 
     show example start dialogue1
 
-    e "I'll show you the code for that example."
+    e "I'll show you the script of that example."
 
-    e "This code demonstrates two kinds of Ren'Py statements, labels and say statements."
+    e "This script demonstrates two kinds of Ren'Py statements, labels and say statements."
 
     e "The first line is a label statement. The label statement is used to give a name to a place in the program."
 
