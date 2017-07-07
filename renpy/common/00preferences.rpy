@@ -401,7 +401,6 @@ init -1500 python:
 
         return rv
 
-    config.self_voicing_stops_afm = True
 
     def __show_self_voicing():
         has_screen = renpy.get_screen("_self_voicing")
@@ -418,6 +417,12 @@ init -1500 python:
                 _preferences.afm_time = 0
 
     config.interact_callbacks.append(__show_self_voicing)
+
+init -1500 python:
+
+    import os
+    config.self_voicing_stops_afm = not ("RENPY_SELF_VOICING_AFM" in os.environ)
+
 
 init -1500:
 

@@ -548,7 +548,7 @@ class SayBehavior(renpy.display.layout.Null):
 
             if st > afm_delay:
                 if renpy.config.afm_callback:
-                    if renpy.config.afm_callback():
+                    if renpy.config.afm_callback() and not renpy.display.tts.is_active():
                         return True
                     else:
                         renpy.game.interface.timeout(0.1)

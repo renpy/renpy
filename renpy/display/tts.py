@@ -52,6 +52,11 @@ def periodic():
             process = None
 
 
+def is_active():
+
+    return process is not None
+
+
 def default_tts_function(s):
     """
     Default function which speaks messages using an os-specific method.
