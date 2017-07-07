@@ -77,6 +77,7 @@ label tutorial_dialogue:
 
         "Eileen" "Script might seem scary at first, but if you look you'll see it's easy to match it up to what I'm saying."
 
+    hide example
 
     e "Let's see the simplest possible Ren'Py game."
 

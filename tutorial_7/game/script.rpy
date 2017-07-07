@@ -117,7 +117,7 @@ screen tutorials(adj):
                     else:
 
                         null height 10
-                        text i.title
+                        text i.title alt ""
                         null height 5
 
 
