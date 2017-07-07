@@ -341,7 +341,7 @@ init python:
     PROPERTIES = set(keywords.properties)
 
     regex = r"(?P<word>\b(\$|[_a-zA-Z0-9]+)\b)" + \
-        r"|(?P<string>\"([^\"]|\\.)*\")" + \
+        r"|(?P<string>\"([^\"]|\\.)*(?<!\\)\")" + \
         r"|(?P<comment>#.*)"
 
     regex = re.compile(regex)
