@@ -279,7 +279,7 @@ example slightleft:
 
 label tutorial_simple_positions:
 
-    e "When the standard positions that come with Ren'Py aren't enough for you, you can create you're own. Here, I'll show you the easy way to do it."
+    e "When the standard positions that come with Ren'Py aren't enough for you, you can create your own. Here, I'll show you the easy way to do it."
 
     example:
         show eileen happy:
@@ -430,7 +430,7 @@ label tutorial_transitions:
 
     e "Ren'Py defines some transitions for you, like dissolve, fade, and move. For more complex or customized transitions, you'll have to define your own."
 
-    e "If you're interested, check out the Transitions Gallery section of the tutorial."
+    e "If you're interested, check out the Transitions Gallery section of this tutorial."
 
     return
 
@@ -490,6 +490,8 @@ label tutorial_music:
 label tutorial_menus:
 
     e "Many visual novels require the player to make choices from in-game menus. These choices can add some challenge to the game, or adjust it to the player's preferences."
+
+    e "Do you like to play visual novels with choices in them?"
 
     example menu1 hide:
         menu:

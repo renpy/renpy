@@ -48,7 +48,7 @@ label text:
 
         e "The cps text tag {cps=25}makes text type itself out slowly{/cps}, even if slow text is off."
 
-        e "The cps tag can also be relative to the defualt speed, {cps=*2}doubling{/cps} or {cps=*0.5}halving{/cps} it."
+        e "The cps tag can also be relative to the default speed, {cps=*2}doubling{/cps} or {cps=*0.5}halving{/cps} it."
 
 
     example:
@@ -89,7 +89,7 @@ label text:
 
     example:
 
-        eslow "The {nw} tag causes Ren'Py to continue past slow text,{nw}"
+        eslow "The nw tag causes Ren'Py to continue past slow text,{nw}"
         with flashbulb
         extend " to the next statement."
 
@@ -100,7 +100,7 @@ label text:
 
     hide example
 
-    e "The interpolation feature take a variable name in square brackets, and insert it into text."
+    e "The interpolation feature takes a variable name in square brackets, and inserts it into text."
 
 
     example:

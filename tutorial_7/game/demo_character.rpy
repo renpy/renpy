@@ -130,7 +130,7 @@ label demo_character:
 
         define e9 = Character("Eileen", what_prefix='"', what_suffix='"')
 
-        e9 "There are two interesting non-style properties, what_prefix and what_suffix. These can put text at the start and end of a line of dialouge."
+        e9 "There are two interesting non-style properties, what_prefix and what_suffix. These can put text at the start and end of a line of dialogue."
 
     example:
 

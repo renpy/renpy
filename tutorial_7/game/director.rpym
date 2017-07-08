@@ -10,7 +10,7 @@ label director:
 
     e "Shift+D pops up a developer menu with access to these and other functions."
 
-    e "The most powerful took is the interactive director that lets you add images, music, and voice lines to your game from inside Ren'Py."
+    e "The most powerful tool is the interactive director that lets you add images, music, and voice lines to your game from inside Ren'Py."
 
     e "The idea is that you can use an editor to write the script and logic of your visual novel, and then interactively add images in the right places."
 
@@ -68,7 +68,7 @@ label director:
 
     e "The changes you make with the director are permanent. They're saved to the script, and you can rollback or repeat this section to see them."
 
-    e "However, we we reset this tutorial when the game restarts, so you can try again from a clean slate. That won't happen with your own visual novel."
+    e "However, we reset this tutorial when the game restarts, so you can try again from a clean slate. That won't happen with your own visual novel."
 
     e "I hope these tools make developing your visual novel that much easier."
 
