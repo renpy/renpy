@@ -368,6 +368,7 @@ init python:
             quote = m.group(0)[0]
             s = s.replace("\\", "\\\\")
             s = s.replace(quote, "\\" + quote)
+            s = s.replace("\n", "\\n")
             s = quote + s + quote
 
             return "{color=#060}" + s + "{/color}"
