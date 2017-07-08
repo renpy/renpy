@@ -449,12 +449,14 @@ label tutorial_atl:
     e "There are currently three places where ATL can be used in Ren'Py."
 
     show example atl_image
+    show eileen animated
 
     e "The first place ATL can be used is as part of an image statement. Instead of a displayable, an image may be defined as a block of ATL code."
 
     e "When used in this way, we have to be sure that ATL includes one or more displayables to actually show."
 
     show example atl_transform
+    show eileen happy at right
 
     e "The second way is through the use of the transform statement. This assigns the ATL block to a python variable, allowing it to be used in at clauses and inside other transforms."
 
@@ -478,7 +480,8 @@ label tutorial_atl:
     e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place."
 
     hide logo
-    with dissolve
+    show eileen happy at center
+    with moveoutleft
 
     hide screen example
 
@@ -526,11 +529,11 @@ label tutorial_atl:
 
     e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
 
-    e "In ATL, to change a displayable, simply mention it on a line of ATL code. Here, we're switching back and forth between two images."
+    e "To change a displayable, simply mention it on a line of ATL. Here, we're switching back and forth between two images."
 
-    e "Since we're defining an image, the first line of ATL has to name a displayable. Otherwise, there would be nothing to show."
+    e "Since we're defining an image, the first line of ATL must give a displayable. Otherwise, there would be nothing to show."
 
-    e "The second and fourth lines are pause statements, which cause ATL to wait half of a second each before continuing. That's how we give the delay between images."
+    e "The second and fourth lines are pause statements, which cause ATL to wait half a second each before continuing. That's how we give the delay between images."
 
     e "The final line is a repeat statement. This causes the current block of ATL to be restarted. You can only have one repeat statement per block."
 
@@ -555,7 +558,7 @@ label tutorial_atl:
 
     hide screen example
 
-    e "Now, let's move on to see how we can use ATL to transform an image. We'll start off by seeing what we can do to position images on the screen."
+    e "With animation done, we'll see how we can use ATL to transform images, starting with positioning an image on the screen."
 
     show logo base behind eileen
 
@@ -564,16 +567,14 @@ label tutorial_atl:
 
     show example atl_transform
 
-    e "Perhaps the simplest thing we can do is to position the images on the screen. This can be done by simply giving the names of the transform properties, each followed by the value."
+    e "The simplest thing we can to is to statically position an image. This is done by giving the names of the position properties, followed by the property values."
 
     show example atl_transform1
     show logo base at move_jump
 
     e "With a few more statements, we can move things around on the screen."
 
-    e "This code starts the image off at the top-right of the screen, and waits a second."
-
-    e "It then moves it to the left side, waits another second, and repeats."
+    e "This example starts the image off at the top-right of the screen, and waits a second. It then moves it to the left side, waits another second, and repeats."
 
     e "The pause and repeat statements are the same statements we used in our animations. They work throughout ATL code."
 
@@ -588,7 +589,7 @@ label tutorial_atl:
 
     e "That's followed by an amount of time, in this case three seconds. It ends with a list of properties, each followed by its new value."
 
-    e "The old value is the value of the transform property at the start of the statement. By interpolating the property over time, we can change things on the screen."
+    e "The value of each property is interpolated from its value when the statement starts to the value at the end of the statement. This is done once per frame, allowing smooth animation."
 
     hide example
 
@@ -605,7 +606,7 @@ label tutorial_atl:
 
     e "Apart from displayables, pause, interpolation, and repeat, there are a few other statements we can use as part of ATL."
 
-    example:
+    example large:
         show eileen happy:
             right
             pause 1.25
@@ -615,9 +616,7 @@ label tutorial_atl:
 
     with dissolve
 
-    e "When we create an ATL transform using the transform statement, we can use that transform as an ATL statement."
-
-    e "Since the default positions are also transforms, this means that we can use left, right, and center inside of an ATL block."
+    e "ATL transforms created using the statement become ATL statements themselves. Since the default positions are also transforms, this means that we can use left, right, and center inside of an ATL block."
 
     show eileen happy at center
     show logo base behind eileen
@@ -637,7 +636,7 @@ label tutorial_atl:
 
     e "We also have the time statement, which runs after the given number of seconds have elapsed from the start of the block. It will run even if another statement is running, stopping the other statement."
 
-    e "So this code will bounce the image back and forth for eleven and a half seconds, and then move back to the right side of the screen."
+    e "So this example bounces the image back and forth for eleven and a half seconds, and then moves it to the right side of the screen."
 
 
     example:
@@ -917,11 +916,10 @@ label transform_properties:
 
     e "The xpan and ypan properties can be used to pan over a displayable, given an angle in degrees, with 0 being the center."
 
-    hide bg
-    show bg washington
-    with dissolve
-
     hide example
+    scene bg washington
+    show eileen happy
+    with dissolve
 
     e "Those are all the transform properties we have to work with. By putting them together in the right order, you can create complex things."
 

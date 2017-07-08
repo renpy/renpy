@@ -100,7 +100,7 @@ label style_basics:
     show screen style0
     with dissolve
 
-    e "For example, both of these are Buttons that use the style displayable. And yet, they look quite different from each other."
+    e "Both of these buttons use the same displayables. But since different styles have been applied, the buttons look different from each other."
 
     hide screen style0
     with dissolve
@@ -237,8 +237,6 @@ label style_basics:
 
     hide example
 
-    e "If you ever need to know what style a displayable uses, you can hover the mouse over it and hit shift+I, as in India."
-
     e "Those are the basics of styles. If GUI customization isn't enough for you, styles let you customize just about everything in Ren'Py."
 
     return
@@ -263,7 +261,7 @@ label style_general:
     show screen general("general")
     with dissolve
 
-    e "Every displayable takes the positon properties, which control where it can be placed on screen. Since I've already mentioned them, I won't repeat them here."
+    e "Every displayable takes the position properties, which control where it can be placed on screen. Since I've already mentioned them, I won't repeat them here."
 
 
     example:
@@ -337,7 +335,7 @@ label style_text:
 
     e "The text style properties apply to text and input displayables."
 
-    e "Text displayables can be create implicitly or explicitly. For example, a textbutton creates a text displayable with a style ending in button_text."
+    e "Text displayables can be created implicitly or explicitly. For example, a textbutton creates a text displayable with a style ending in button_text."
 
     e "These can also be set in gui.rpy by changing or defining variables with names like gui.button_text_size."
 
@@ -443,7 +441,7 @@ label style_text:
 
     show screen text("center_text")
 
-    e "The text align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
+    e "The text_align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
 
     e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
 
@@ -580,11 +578,11 @@ example example_button_text:
 
 label style_button:
 
-    e "Next up, we have the window and button style properties. These apply to windows like the text window at the bottom of this screen, frames, and buttons."
+    e "Next up, we have the window and button style properties. These apply to windows like the text window at the bottom of this screen and frames like the ones we show examples in."
 
-    e "They also apply to buttons, both in the game and main menus, and in choice menus. To Ren'Py, a button is a window you can click."
+    e "These properties also apply to buttons, in-game and out-of-game. To Ren'Py, a button is a window you can click."
 
-    example example_button:
+    example example_button large:
         style example_button is default:
             idle_background Frame("idle_background.png", 10, 10, tile=True)
             hover_background Frame("hover_background.png", 10, 10, tile=True)
@@ -779,7 +777,7 @@ label style_bar:
 
     e "Also by default, both the left and right displayables are rendered at the full width of the bar, and then cropped to the appropriate size."
 
-    e "We give the bar the ysize property to set how tall it is. We could also give it xside to choose how wide, but here it's limited by the width of the frame it's in."
+    e "We give the bar the ysize property to set how tall it is. We could also give it xsize to choose how wide, but here it's limited by the width of the frame it's in."
 
     example:
         style invert_bar is default:
@@ -792,7 +790,7 @@ label style_bar:
 
     show screen bar('invert_bar')
 
-    e "When the bar_invert style property, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
+    e "When the bar_invert style property is true, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
 
     example:
         style resizing_bar is default:
@@ -851,7 +849,7 @@ label style_bar:
     show screen vbar('vertical_bar')
     with dissolve
 
-    e "The bar_vertical style property displays a vertically oriented bar. All of the other properties change names - left_bar becomes top bar, while right_bar becomes bottom_bar."
+    e "The bar_vertical style property displays a vertically oriented bar. All of the other properties change names - left_bar becomes top_bar, while right_bar becomes bottom_bar."
 
     hide screen vbar
     with dissolve
@@ -862,7 +860,7 @@ label style_bar:
 
     hide example
 
-    e "That's it for the bar properties. By using them, a creator can customizes bars, scrollbars, and sliders."
+    e "That's it for the bar properties. By using them, a creator can customize bars, scrollbars, and sliders."
 
     return
 

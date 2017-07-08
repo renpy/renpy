@@ -98,6 +98,8 @@ style frame:
 example say_screen:
     screen say(who, what):
         window:
+            id "window"
+
             if who is not None:
                 text who id "who"
 

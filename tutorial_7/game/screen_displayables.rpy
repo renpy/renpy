@@ -66,9 +66,7 @@ label screen_displayable_properties:
         transform rotated:
             rotate 180 rotate_pad False
 
-    e "The at transform applies a transform to the displayable, the same way the at clause in the show statement does."
-
-    e "The at clause can be used for all sorts of purposes. It can animate and transform the displayable. Here, we're rotating the text upside down."
+    e "The at property applies a transform to the displayable, the same way the at clause in the show statement does."
 
 
 #     example large:
@@ -235,7 +233,9 @@ label text_displayable:
 
     e "The text displayable can also interpolate values enclosed in square brackets"
 
-    e "When text is displayed in a screen using the text statement variables defined in the screen take precedence over those defined outside it. Those variables may be parameters, defined with the default or python statements, or set using the SetScreenVariable action."
+    e "When text is displayed in a screen using the text statement variables defined in the screen take precedence over those defined outside it."
+
+    e "Those variables may be parameters given to the screen, defined with the default or python statements, or set using the SetScreenVariable action."
 
     example large:
         screen text_tax_example():
@@ -714,13 +714,13 @@ label imagemap_displayables:
         xalign 0.5 ypos 50
     with dissolve
 
-    e "Here's the selected_hover image. The button here will never be show, since it will never be marked as selected."
+    e "Here's the selected_hover image. The button here will never be shown, since it will never be marked as selected."
 
     show imagemap volume insensitive:
         xalign 0.5 ypos 50
     with dissolve
 
-    e "Finally, an insensitive image can be given, which us used when a hotspot can't be interacted with."
+    e "Finally, an insensitive image can be given, which is used when a hotspot can't be interacted with."
 
     hide imagemap
     with dissolve

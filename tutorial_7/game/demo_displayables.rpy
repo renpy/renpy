@@ -55,9 +55,9 @@ label simple_displayables:
     e "Notice how, since it takes a displayable, it can take another image. In face, it can take any displayable defined here."
 
     example:
-        image logo solid = Solid("#0000cc", xysize=(200, 200))
+        image logo solidexample = Solid("#0000cc", xysize=(200, 200))
 
-    show logo solid at logopos
+    show logo solidexample at logopos
     with dissolve
 
     e "There's a more complete form of Solid, that can take style properties. This lets us change the size of the Solid, where normally it fills the screen."

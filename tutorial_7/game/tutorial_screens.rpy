@@ -401,7 +401,7 @@ label screens_properties:
 
     e "When I show b_tag_screen, it replaces a_tag_screen."
 
-    e "This is useful in the game and menus, where you'd want the load screen to replace the preferences screen. All those screens have tag menu."
+    e "This is useful in the game and main menus, where you want the load screen to replace the preferences screen. By default, all those screens have tag menu."
 
     show eileen concerned
 
@@ -530,7 +530,7 @@ label screens_control:
                     text "n = [n]"
                     textbutton _("Increase") action SetScreenVariable("n", n + 1)
 
-    e "The default statement lets you set the value of a screen variable the first time the screen runs. This value can be changes with the SetScreenVariable and ToggleScreenVariable actions."
+    e "The default statement lets you set the value of a screen variable the first time the screen runs. This value can be changed with the SetScreenVariable and ToggleScreenVariable actions."
 
     e "The default statement differs from the Python statement in that it is only run once. Python runs each time the screen updates, and hence the variable would never change value."
 
@@ -599,10 +599,8 @@ label screen_use:
     example large:
 
         screen duplicate_stats():
-
             frame:
                 xalign 0.5 ypos 50
-
                 vbox:
                     text _("Health") xalign 0.5
                     bar value StaticValue(90, 100) xalign 0.5 xsize 250
@@ -617,10 +615,8 @@ label screen_use:
     example large:
 
         screen using_stats():
-
             frame:
                 xalign 0.5 ypos 50
-
                 vbox:
                     use stat(_("Health"), 90)
                     null height 15
