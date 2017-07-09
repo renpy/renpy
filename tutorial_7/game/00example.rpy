@@ -141,6 +141,7 @@ python early:
         outdent = "auto"
         show_screen = True
         hide_screen = True
+        showtrans = False
 
         while True:
 
@@ -173,6 +174,9 @@ python early:
 
             elif l.keyword("nohide"):
                 hide_screen = False
+
+            elif l.keyword("showtrans"):
+                showtrans = True
 
             else:
 
@@ -208,6 +212,7 @@ python early:
             "screen_name" : screen_name,
             "show_screen" : show_screen,
             "hide_screen" : hide_screen,
+            "showtrans" : showtrans,
             }
 
     def next_example(data, first):
@@ -220,6 +225,7 @@ python early:
         small = data.get("small", False)
         top = data.get("top", False)
         large = data.get("large", False)
+        showtrans = data.get("showtrans", False)
 
         global example_location
         global example_size
@@ -236,7 +242,7 @@ python early:
             example_size = "large"
 
         if not hide:
-            renpy.show_screen("example", names, example_size == "small", example_location == "bottom")
+            renpy.show_screen("example", names, example_size == "small", example_location == "bottom", showtrans=showtrans)
 
         screen_name = data.get("screen_name", None)
 
@@ -264,6 +270,7 @@ python early:
         small = False
         top = False
         large = False
+        showtrans = False
 
         while not l.eol():
 
@@ -279,6 +286,9 @@ python early:
             elif l.keyword('large'):
                 large = True
 
+            elif l.keyword('showtrans'):
+                showtrans = True
+
             else:
 
                 names.append(l.require(l.name))
@@ -289,7 +299,8 @@ python early:
             "bottom" : bottom,
             "small" : small,
             "top" : top,
-            "large" : large
+            "large" : large,
+            "showtrans" : showtrans,
             }
 
     renpy.register_statement("show example", parse=parse_show_example, execute=execute_example)
@@ -398,7 +409,7 @@ init python:
 
         return rv
 
-    def example_code(blocks, raw=False):
+    def example_code(blocks, raw=False, showtrans=False):
 
         if not isinstance(blocks, list):
             blocks = [ blocks ]
@@ -428,7 +439,7 @@ init python:
             last_blank = not i
 
             if not raw:
-                if not persistent.show_translation_marker:
+                if not (persistent.show_translation_marker or showtrans):
                     i = re.sub(r'_\((".*?")\)', r'\1', i)
                     i = re.sub(r"_\(('.*?')\)", r'\1', i)
 
@@ -474,12 +485,12 @@ transform example_transform(height, ypos):
         linear .5 crop (0, 0, 1280, 0)
 
 
-screen example(blocks, small=False, bottom=False):
+screen example(blocks, small=False, bottom=False, showtrans=False):
 
     zorder 10
 
-    default raw_code = example_code(blocks, raw=True)
-    default code = example_code(blocks)
+    default raw_code = example_code(blocks, raw=True, showtrans=showtrans)
+    default code = example_code(blocks, showtrans=showtrans)
 
     if small:
         $ height = 80
