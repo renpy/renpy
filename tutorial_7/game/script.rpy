@@ -87,7 +87,7 @@ init python:
     Tutorial("tutorial_screens", _("Screen Basics"), move=None)
     Tutorial("screen_displayables", _("Screen Displayables"), move=None)
 
-    Tutorial("demo_minigame", _("Minigames"))
+    Tutorial("demo_minigame", _("Minigames and CDDs"))
 
 
 screen tutorials(adj):
