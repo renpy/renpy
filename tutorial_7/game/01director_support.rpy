@@ -7,8 +7,8 @@ python early hide:
 
 
     import shutil
-    fn1 = os.path.join(renpy.config.gamedir, "director.rpym")
-    fn2 = os.path.join(renpy.config.gamedir, "director.rpy")
+    fn1 = os.path.join(renpy.config.gamedir, "tutorial_director.rpym")
+    fn2 = os.path.join(renpy.config.gamedir, "tutorial_director.rpy")
 
     try:
 
