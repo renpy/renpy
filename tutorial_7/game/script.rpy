@@ -67,6 +67,7 @@ init python:
     Tutorial("tutorial_video", _("Video Playback"))
     Tutorial("tutorial_nvlmode", _("NVL Mode"), move=None)
     Tutorial("director", _("Tools and the Interactive Director"))
+    Tutorial("distribute", _("Building Distributions"))
 
     Section(_("In Depth"))
 
@@ -88,7 +89,7 @@ init python:
     Tutorial("screen_displayables", _("Screen Displayables"), move=None)
 
     Tutorial("demo_minigame", _("Minigames and CDDs"))
-
+    Tutorial("translations", _("Translations"))
 
 screen tutorials(adj):
 

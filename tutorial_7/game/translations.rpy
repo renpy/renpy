@@ -62,7 +62,3 @@ label translations:
     e "The None language is special, as it's the default language that the visual novel was written in. Since this tutorial was written in English, Language(None) selects English."
 
     return
-
-
-
-
