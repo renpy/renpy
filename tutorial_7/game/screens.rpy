@@ -372,11 +372,11 @@ screen main_menu():
     use navigation
 
     text "[renpy.version_string] \"[renpy.version_name]\"":
-        color "#333"
+        color "#fff"
         yalign .995
-        xalign 0.5
         size 18
         kerning -1
+        xoffset 290
 
 
 
