@@ -10,22 +10,22 @@ example flashbulb:
 # Imagedissolve Transitions.
 
 example circleirisout:
-    define circleirisout = ImageDissolve("id_circleiris.png", 1.0, 8)
+    define circleirisout = ImageDissolve("imagedissolve circleiris.png", 1.0, 8)
 
 example circleirisin:
-    define circleirisin = ImageDissolve("id_circleiris.png", 1.0, 8, reverse=True)
+    define circleirisin = ImageDissolve("imagedissolve circleiris.png", 1.0, 8 , reverse=True)
 
 example circlewipe:
-    define circlewipe = ImageDissolve("id_circlewipe.png", 1.0, 8)
+    define circlewipe = ImageDissolve("imagedissolve circlewipe.png", 1.0, 8)
 
 example dream:
-    define dream = ImageDissolve("id_dream.png", 2.0, 64)
+    define dream = ImageDissolve("imagedissolve dream.png", 2.0, 64)
 
 example teleport:
-    define teleport = ImageDissolve("id_teleport.png", 1.0, 0)
+    define teleport = ImageDissolve("imagedissolve teleport.png", 1.0, 0)
 
-image bg circleiris = "id_circleiris.png"
-image bg teleport = "id_teleport.png"
+image bg circleiris = "imagedissolve circleiris"
+image bg teleport = "imagedissolve teleport"
 
 example alphadissolve:
 

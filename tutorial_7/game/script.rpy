@@ -204,13 +204,13 @@ label end:
 
     e "You can download new versions of Ren'Py from {a=https://www.renpy.org/}https://www.renpy.org/{/a}. For help and discussion, check out the {a=https://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
 
-    e "We'd like to thank Piroshki for contributing my sprites, Mugenjohncel for Lucy and the band, and Jake for the magic circle."
+    e "We'd like to thank Piroshki for contributing my sprites; Mugenjohncel for Lucy, the band, and drawn backgrounds; and Jake for the magic circle."
 
     e "The background music is \"Sunflower Slow Drag\", by Scott Joplin and Scott Hayden, performed by the United States Marine Band. The concert music is by Alessio."
 
     show eileen vhappy
 
-    e "We look forward to seeing what you can make with Ren'Py. Have fun!"
+    e "We look forward to seeing what you create with Ren'Py. Have fun!"
 
     window hide
 
