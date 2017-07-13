@@ -10,7 +10,7 @@ translate russian start_2097831e:
 translate russian start_60f13a98:
 
     # "But to be honest, I couldn't concentrate on it very much."
-    "Но если честно, я не мог особо вслушиваться." #"Но если честно, я не особо вслушивался."
+    "Но если честно, я не особо вслушивался." #"Но если честно, я не мог особо вслушиваться."
 
 # game/script.rpy:32
 translate russian start_d4b3ffb7:
