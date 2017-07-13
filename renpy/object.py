@@ -20,6 +20,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+# Allow pickling NoneType.
+import __builtin__
+__builtin__.NoneType = type(None)
+
+
 class Object(object):
     """
     Our own base class. Contains methods to simplify serialization.
@@ -57,6 +62,7 @@ class Object(object):
 
 # We don't handle slots with this mechanism, since the call to vars should
 # throw an error.
+
 
 sentinels = { }
 
