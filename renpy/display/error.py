@@ -55,6 +55,9 @@ def init_display():
     The minimum amount of code required to init the display.
     """
 
+    # Ensure we have correctly-typed preferences.
+    renpy.game.preferences.check()
+
     if renpy.config.init_system_styles is not None:
         renpy.config.init_system_styles()
 

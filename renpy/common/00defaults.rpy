@@ -62,7 +62,7 @@ init -1500 python:
     # If not None, the default value of set_volume (voice)
     config.default_voice_volume = 1.0
 
-init 1500 python:
+init 1500 python hide:
 
     if not persistent._set_preferences:
         persistent._set_preferences = True
@@ -109,6 +109,10 @@ init 1500 python:
         _preferences.afm_enable = True
         _preferences.using_afm_enable = False
 
+    error = _preferences.check()
+
+    if error:
+        raise Exception(error)
 
 init -1500 python:
     def _imagemap_auto_function(auto_param, variant):
