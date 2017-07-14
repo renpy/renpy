@@ -364,7 +364,7 @@ translate russian marry_4c92fcf4:
 translate russian marry_6b75b531:
 
     # s "I know, but you are so indecisive, that I thought I'd take the initiative. "
-    s "Я знаю. Но ты настолько нерешительный, что я подумала взять инициативу в свои руки." #"Я знаю, но ты такой нерешительный, потому я подумала, что мне придёться брать инициативу в свои руки. " #"Я знаю, но ты такой нерешительный, что я подумала, что мне придёться брать инициативу в свои руки. "
+    s "Я знаю. Но ты настолько нерешительный, что я подумала взять инициативу в свои руки." #"Я знаю, но ты такой нерешительный, потому я подумала, что мне придётся брать инициативу в свои руки. " #"Я знаю, но ты такой нерешительный, что я подумала, что мне придётся брать инициативу в свои руки. "
 
 # game/script.rpy:189
 translate russian marry_4e15bb8c:
@@ -400,7 +400,7 @@ translate russian marry_25a8efa1:
 translate russian marry_c93dac48:
 
     # ".:. Good Ending."
-    ".:.Хорошая концовка."
+    ".:. Хорошая концовка."
 
 # game/script.rpy:211
 translate russian later_7da3a85d:
@@ -430,7 +430,7 @@ translate russian later_f952d872:
 translate russian later_f02d21f0:
 
     # ".:. Bad Ending."
-    ".:.Плохая концовка."
+    ".:. Плохая концовка."
 
 translate russian strings:
 
