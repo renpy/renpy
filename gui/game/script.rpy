@@ -24,8 +24,6 @@ label start:
 
     # These display lines of dialogue.
 
-    call screen test
-
     e "You've created a new Ren'Py game."
 
     e "Once you add a story, pictures, and music, you can release it to the world!"
@@ -33,22 +31,3 @@ label start:
     # This ends the game.
 
     return
-
-
-screen test():
-
-    frame:
-        xpadding 10
-        ypadding 10
-
-
-        has vbox:
-            spacing 10
-
-        hbox:
-            text "Test 1"
-            bar value StaticValue(33, 100) xsize 300
-        hbox:
-            text "Test 2"
-            bar value StaticValue(66, 100) xsize 300
-
