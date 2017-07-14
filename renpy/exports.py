@@ -52,7 +52,7 @@ def renpy_pure(fn):
     return fn
 
 
-from renpy.text.extras import ParameterizedText
+from renpy.text.extras import ParameterizedText, filter_text_tags
 from renpy.text.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.text.text import language_tailor
 from renpy.display.behavior import Keymap
@@ -127,7 +127,7 @@ def public_api():
 
     This does nothing, except to make warnings about unused imports go away.
     """
-    ParameterizedText
+    ParameterizedText, filter_text_tags
     register_sfont, register_mudgefont, register_bmfont
     Keymap
     run, run_action, run_unhovered, run_periodic, map_event

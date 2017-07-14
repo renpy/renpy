@@ -25,7 +25,7 @@ from __future__ import print_function
 
 import renpy.text
 
-from renpy.text.textsupport import TAG
+from renpy.text.textsupport import TAG, PARAGRAPH
 import renpy.text.textsupport as textsupport
 
 
@@ -112,6 +112,52 @@ def check_text_tags(s):
         return "One or more text tags were left open at the end of the string: " + ", ".join([ "'" + i + "'" for i in tag_stack])
 
     return None
+
+
+def filter_text_tags(s, allow=None, deny=None):
+    """
+    :doc: text_utility
+
+    Returns a copy of `s` with the text tags filtered. Exactly one of the `allow` and `deny` keyword
+    arguments must be given.
+
+    `allow`
+        A set of tags that are allowed. If a tag is not in this list, it is removed.
+
+    `deny`
+        A set of tags that are denied. If a tage is not in this list, it is kept in the string.
+    """
+
+    if (allow is None) and (deny is None):
+        raise Exception("Only one of the allow and deny keyword arguments should be given to filter_text_tags.")
+
+    if (allow is not None) and (deny is not None):
+        raise Exception("Only one of the allow and deny keyword arguments should be given to filter_text_tags.")
+
+    tokens = textsupport.tokenize(unicode(s))
+
+    rv = [ ]
+
+    for tokentype, text in tokens:
+
+        if tokentype == PARAGRAPH:
+            rv.append("\n")
+        elif tokentype == TAG:
+            kind = text.partition("=")[0]
+
+            if kind and (kind[0] == "/"):
+                kind = kind[1:]
+
+            if allow is not None:
+                if kind in allow:
+                    rv.append("{" + text + "}")
+            else:
+                if kind not in deny:
+                    rv.append("{" + text + "}")
+        else:
+            rv.append(text)
+
+    return "".join(rv)
 
 
 class ParameterizedText(object):
