@@ -901,10 +901,17 @@ screen history():
                         if "color" in h.who_args:
                             text_color h.who_args["color"]
 
-                text h.what
+                $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
+                text what
 
         if not _history_list:
             label _("The dialogue history is empty.")
+
+
+## This determines what tags are allowed to be displayed on the history
+## screen.
+
+define gui.history_allow_tags = set()
 
 
 style history_window is empty

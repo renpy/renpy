@@ -115,6 +115,7 @@ renpy_pure("partial")
 renpy_pure("unelide_filename")
 renpy_pure("known_languages")
 renpy_pure("check_text_tags")
+renpy_pure("filter_text_tags")
 
 import time
 import sys
