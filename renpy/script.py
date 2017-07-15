@@ -392,7 +392,10 @@ class Script(object):
             filename = renpy.parser.elide_filename(filename)
 
             if not all_stmts[0].filename.lower().endswith(filename.lower()):
-                filename += "c"
+
+                if filename[-1] != "c":
+                    filename += "c"
+
                 for i in all_stmts:
                     i.filename = filename
 
