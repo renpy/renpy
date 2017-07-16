@@ -131,7 +131,8 @@ init -1900 python:
         if version <= (6, 99, 10):
             config.new_translate_order = False
             config.old_say_args = True
-            config.window_auto_hide.remove("call screen")
+            if "call screen" in config.window_auto_hide:
+                config.window_auto_hide.remove("call screen")
             config.quit_action = ui.gamemenus("_quit_prompt")
             config.enforce_window_max_size = False
             config.splashscreen_suppress_overlay = False
