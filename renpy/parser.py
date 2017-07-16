@@ -216,6 +216,8 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
     # The current position we're looking at in the buffer.
     pos = 0
 
+    # Are we looking at a triple-quoted string?
+
     # Skip the BOM, if any.
     if len(data) and data[0] == u'\ufeff':
         pos += 1
@@ -319,6 +321,13 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
                 pos += 1
 
                 escape = False
+                triplequote = False
+
+                if (pos < len_data - 1) and (data[pos] == delim) and (data[pos+1] == delim):
+                    line.append(delim)
+                    line.append(delim)
+                    pos += 2
+                    triplequote = True
 
                 while pos < len_data:
 
@@ -338,9 +347,18 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
                         continue
 
                     if c == delim:
-                        pos += 1
-                        line.append(c)
-                        break
+
+                        if not triplequote:
+                            pos += 1
+                            line.append(c)
+                            break
+
+                        if (pos < len_data - 2) and (data[pos+1] == delim) and (data[pos+2] == delim):
+                            pos += 3
+                            line.append(delim)
+                            line.append(delim)
+                            line.append(delim)
+                            break
 
                     if c == u'\\':
                         escape = True
