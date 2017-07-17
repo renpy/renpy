@@ -178,7 +178,7 @@ screen front_page_project:
 
         frame style "l_label":
             has hbox xfill True
-            text "[p.name!q]" style "l_label_text"
+            text "[p.display_name!q]" style "l_label_text"
             label _("Active Project") style "l_alternate"
 
         grid 2 1:

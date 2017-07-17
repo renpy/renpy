@@ -154,7 +154,7 @@ screen build_distributions:
 
             has vbox
 
-            label _("Build Distributions: [project.current.name!q]")
+            label _("Build Distributions: [project.current.display_name!q]")
 
             add HALF_SPACER
 

@@ -165,7 +165,7 @@ screen navigation:
 
             frame style "l_label":
                 has hbox xfill True
-                text _("Navigate: [project.current.name]") style "l_label_text"
+                text _("Navigate: [project.current.display_name!q]") style "l_label_text"
 
                 frame:
                     style "l_alternate"

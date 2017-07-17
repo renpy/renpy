@@ -81,6 +81,9 @@ init python in project:
             # Load the data.
             self.load_data()
 
+            # A name to display the project.
+            self.display_name = self.data.get("display_name", self.name)
+
             # The project's temporary directory.
             self.tmp = None
 

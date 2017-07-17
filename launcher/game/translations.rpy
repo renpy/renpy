@@ -89,7 +89,7 @@ screen translate:
 
             has vbox
 
-            label _("Translations: [project.current.name!q]")
+            label _("Translations: [project.current.display_name!q]")
 
             add HALF_SPACER
 
@@ -334,7 +334,7 @@ screen extract_dialogue:
 
             has vbox
 
-            label _("Extract Dialogue: [project.current.name!q]")
+            label _("Extract Dialogue: [project.current.display_name!q]")
 
             add HALF_SPACER
 
