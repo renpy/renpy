@@ -398,6 +398,10 @@ init python in project:
            # Directories that have been scanned.
            self.scanned = set()
 
+           # The tutorial game, and the language it's for.
+           self.tutoral = None
+           self.tutorial_language = "the meowing of a cat"
+
            self.scan()
 
         def scan(self):
@@ -505,11 +509,11 @@ init python in project:
             if persistent.active_project is not None:
                 p = self.get(persistent.active_project)
 
-                if p is not None:
+                if (p is not None) and (p.name not in [ "tutorial", "tutorial_7" ]):
                     current = p
                     return
 
-            current = p.get_tutorial()
+            current = self.get_tutorial()
 
         def get(self, name):
             """
@@ -524,20 +528,30 @@ init python in project:
 
             return None
 
-        def get_tutorial():
+        def get_tutorial(self):
+
+            language = _preferences.language
+            if persistent.force_new_tutorial:
+                language = None
+
+            if language == self.tutorial_language:
+                return self.tutorial
+
+            rv = self.get("oldtutorial")
 
             p = self.get("tutorial")
             if p is not None:
-                if persistent.force_new_tutorial:
-                    return p
 
-                if _preferences.language is None:
-                    return p
+                if language is None:
+                    rv = p
 
-                if os.path.exists(os.path.join(p.directory, "game", "tl", p.directory)):
-                    return p
+                elif os.path.exists(os.path.join(p.path, "game", "tl", _preferences.language)):
+                    rv = p
 
-            return self.get("oldtutorial")
+            self.tutorial_language = language
+            self.tutorial = rv
+
+            return rv
 
     manager = ProjectManager()
 
@@ -590,13 +604,43 @@ init python in project:
             if self.label is not None:
                 renpy.jump(self.label)
 
-    def SelectTutorial(if_tutorial=False):
+    class SelectTutorial(Action):
+        """
+        Selects the tutorial.
+        """
 
-        if if_tutorial:
-            if project and project.name not in [ "tutorial", "oldtutorial" ]:
-                return None
+        def __init__(self, if_tutorial=False):
+            """
+            Only selects if we're already in a tutorial.
+            """
 
-        return Select(manager.get_tutorial())
+            self.if_tutorial = if_tutorial
+
+        def __call__(self):
+
+            p = manager.get_tutorial()
+
+            if p is None:
+                return
+
+            global current
+
+            if self.if_tutorial:
+                if (current is not None) and current.name not in [ "tutorial", "oldtutorial" ]:
+                    return None
+
+            current = p
+            persistent.active_project = p.name
+
+        def get_sensitive(self):
+            return (manager.get_tutorial() is not None)
+
+        def get_selected(self):
+            if self.if_tutorial:
+                return False
+
+            p = manager.get_tutorial()
+            return current.path == p.path
 
     class Launch(Action):
         """
