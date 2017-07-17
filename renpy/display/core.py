@@ -2845,7 +2845,7 @@ class Interface(object):
 
             while rv is None:
 
-                renpy.execution.not_infinite_loop(10)
+                renpy.execution.not_infinite_loop(50)
 
                 # Check for a change in fullscreen preference.
                 if ((self.fullscreen != renpy.game.preferences.fullscreen) or
