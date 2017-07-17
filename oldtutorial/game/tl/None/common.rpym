@@ -157,63 +157,63 @@ translate None strings:
     old "%b %d, %H:%M"
     new "%b %d, %H:%M"
 
-    # 00action_file.rpy:574
+    # 00action_file.rpy:569
     old "Page {}"
     new "Page {}"
 
-    # 00action_file.rpy:574
+    # 00action_file.rpy:569
     old "Automatic saves"
     new "Automatic saves"
 
-    # 00action_file.rpy:574
+    # 00action_file.rpy:569
     old "Quick saves"
     new "Quick saves"
 
-    # 00action_file.rpy:825
+    # 00action_file.rpy:820
     old "Quick save complete."
     new "Quick save complete."
 
-    # 00gui.rpy:234
+    # 00gui.rpy:227
     old "Are you sure?"
     new "Are you sure?"
 
-    # 00gui.rpy:235
+    # 00gui.rpy:228
     old "Are you sure you want to delete this save?"
     new "Are you sure you want to delete this save?"
 
-    # 00gui.rpy:236
+    # 00gui.rpy:229
     old "Are you sure you want to overwrite your save?"
     new "Are you sure you want to overwrite your save?"
 
-    # 00gui.rpy:237
+    # 00gui.rpy:230
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Loading will lose unsaved progress.\nAre you sure you want to do this?"
 
-    # 00gui.rpy:238
+    # 00gui.rpy:231
     old "Are you sure you want to quit?"
     new "Are you sure you want to quit?"
 
-    # 00gui.rpy:239
+    # 00gui.rpy:232
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
 
-    # 00gui.rpy:240
+    # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
     new "Are you sure you want to end the replay?"
 
-    # 00gui.rpy:241
+    # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
     new "Are you sure you want to begin skipping?"
 
-    # 00gui.rpy:242
+    # 00gui.rpy:235
     old "Are you sure you want to skip to the next choice?"
     new "Are you sure you want to skip to the next choice?"
 
-    # 00gui.rpy:243
+    # 00gui.rpy:236
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Are you sure you want to skip unseen dialogue to the next choice?"
 
-    # 00keymap.rpy:259
+    # 00keymap.rpy:251
     old "Saved screenshot as %s."
     new "Saved screenshot as %s."
 
@@ -237,15 +237,15 @@ translate None strings:
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
 
-    # 00preferences.rpy:429
+    # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "Clipboard voicing enabled. Press 'shift+C' to disable."
 
-    # 00preferences.rpy:431
+    # 00preferences.rpy:424
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
 
-    # 00preferences.rpy:433
+    # 00preferences.rpy:426
     old "Self-voicing enabled. Press 'v' to disable."
     new "Self-voicing enabled. Press 'v' to disable."
 
@@ -345,7 +345,7 @@ translate None strings:
     old "Cancel"
     new "Cancel"
 
-    # 00compat.rpy:208
+    # 00compat.rpy:202
     old "Fullscreen"
     new "Fullscreen"
 
@@ -501,71 +501,67 @@ translate None strings:
     old "Back (B)"
     new "Back (B)"
 
-    # _errorhandling.rpym:519
-    old "Open"
-    new "Open"
+    # _errorhandling.rpym:504
+    old "Open Traceback"
+    new "Open Traceback"
 
-    # _errorhandling.rpym:521
+    # _errorhandling.rpym:506
     old "Opens the traceback.txt file in a text editor."
     new "Opens the traceback.txt file in a text editor."
 
-    # _errorhandling.rpym:523
-    old "Copy"
-    new "Copy"
+    # _errorhandling.rpym:508
+    old "Copy to Clipboard"
+    new "Copy to Clipboard"
 
-    # _errorhandling.rpym:525
+    # _errorhandling.rpym:510
     old "Copies the traceback.txt file to the clipboard."
     new "Copies the traceback.txt file to the clipboard."
 
-    # _errorhandling.rpym:543
+    # _errorhandling.rpym:528
     old "An exception has occurred."
     new "An exception has occurred."
 
-    # _errorhandling.rpym:562
+    # _errorhandling.rpym:547
     old "Rollback"
     new "Rollback"
 
-    # _errorhandling.rpym:564
+    # _errorhandling.rpym:549
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
 
-    # _errorhandling.rpym:567
+    # _errorhandling.rpym:552
     old "Ignore"
     new "Ignore"
 
-    # _errorhandling.rpym:569
+    # _errorhandling.rpym:554
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "Ignores the exception, allowing you to continue. This often leads to additional errors."
 
-    # _errorhandling.rpym:572
+    # _errorhandling.rpym:557
     old "Reload"
     new "Reload"
 
-    # _errorhandling.rpym:574
+    # _errorhandling.rpym:559
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "Reloads the game from disk, saving and restoring game state if possible."
 
-    # _errorhandling.rpym:576
-    old "Console"
-    new "Console"
-
-    # _errorhandling.rpym:578
-    old "Opens a console to allow debugging the problem."
-    new "Opens a console to allow debugging the problem."
-
-    # _errorhandling.rpym:590
+    # _errorhandling.rpym:569
     old "Quits the game."
     new "Quits the game."
 
-    # _errorhandling.rpym:614
+    # _errorhandling.rpym:591
     old "Parsing the script failed."
     new "Parsing the script failed."
 
-    # _errorhandling.rpym:640
+    # _errorhandling.rpym:615
+    old "Open Parse Errors"
+    new "Open Parse Errors"
+
+    # _errorhandling.rpym:617
     old "Opens the errors.txt file in a text editor."
     new "Opens the errors.txt file in a text editor."
 
-    # _errorhandling.rpym:644
+    # _errorhandling.rpym:621
     old "Copies the errors.txt file to the clipboard."
     new "Copies the errors.txt file to the clipboard."
 
@@ -613,35 +609,35 @@ translate None strings:
     old "Return to the developer menu"
     new "Return to the developer menu"
 
-    # _developer/developer.rpym:377
+    # _developer/developer.rpym:373
     old "Rectangle: %r"
     new "Rectangle: %r"
 
-    # _developer/developer.rpym:382
+    # _developer/developer.rpym:378
     old "Mouse position: %r"
     new "Mouse position: %r"
 
-    # _developer/developer.rpym:387
+    # _developer/developer.rpym:383
     old "Right-click or escape to quit."
     new "Right-click or escape to quit."
 
-    # _developer/developer.rpym:419
+    # _developer/developer.rpym:412
     old "Rectangle copied to clipboard."
     new "Rectangle copied to clipboard."
 
-    # _developer/developer.rpym:422
+    # _developer/developer.rpym:415
     old "Position copied to clipboard."
     new "Position copied to clipboard."
 
-    # _developer/developer.rpym:531
+    # _developer/developer.rpym:524
     old "✔ "
     new "✔ "
 
-    # _developer/developer.rpym:534
+    # _developer/developer.rpym:527
     old "✘ "
     new "✘ "
 
-    # _developer/developer.rpym:539
+    # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
     new "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
 
@@ -681,67 +677,67 @@ translate None strings:
     old "<repr() failed>"
     new "<repr() failed>"
 
-    # 00console.rpy:227
+    # 00console.rpy:182
     old "Press <esc> to exit console. Type help for help.\n"
     new "Press <esc> to exit console. Type help for help.\n"
 
-    # 00console.rpy:231
+    # 00console.rpy:186
     old "Ren'Py script enabled."
     new "Ren'Py script enabled."
 
-    # 00console.rpy:233
+    # 00console.rpy:188
     old "Ren'Py script disabled."
     new "Ren'Py script disabled."
 
-    # 00console.rpy:459
+    # 00console.rpy:398
     old "help: show this help"
     new "help: show this help"
 
-    # 00console.rpy:464
+    # 00console.rpy:403
     old "commands:\n"
     new "commands:\n"
 
-    # 00console.rpy:474
+    # 00console.rpy:413
     old " <renpy script statement>: run the statement\n"
     new " <renpy script statement>: run the statement\n"
 
-    # 00console.rpy:476
+    # 00console.rpy:415
     old " <python expression or statement>: run the expression or statement"
     new " <python expression or statement>: run the expression or statement"
 
-    # 00console.rpy:484
+    # 00console.rpy:423
     old "clear: clear the console history"
     new "clear: clear the console history"
 
-    # 00console.rpy:488
+    # 00console.rpy:427
     old "exit: exit the console"
     new "exit: exit the console"
 
-    # 00console.rpy:496
+    # 00console.rpy:435
     old "load <slot>: loads the game from slot"
     new "load <slot>: loads the game from slot"
 
-    # 00console.rpy:509
+    # 00console.rpy:448
     old "save <slot>: saves the game in slot"
     new "save <slot>: saves the game in slot"
 
-    # 00console.rpy:520
+    # 00console.rpy:459
     old "reload: reloads the game, refreshing the scripts"
     new "reload: reloads the game, refreshing the scripts"
 
-    # 00console.rpy:528
+    # 00console.rpy:467
     old "watch <expression>: watch a python expression"
     new "watch <expression>: watch a python expression"
 
-    # 00console.rpy:554
+    # 00console.rpy:493
     old "unwatch <expression>: stop watching an expression"
     new "unwatch <expression>: stop watching an expression"
 
-    # 00console.rpy:585
+    # 00console.rpy:519
     old "unwatchall: stop watching all expressions"
     new "unwatchall: stop watching all expressions"
 
-    # 00console.rpy:602
+    # 00console.rpy:536
     old "jump <label>: jumps to label"
     new "jump <label>: jumps to label"
 

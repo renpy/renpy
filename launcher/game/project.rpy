@@ -509,13 +509,7 @@ init python in project:
                     current = p
                     return
 
-            p = self.get("tutorial")
-            if p is not None:
-                current = p
-                return
-
-            current = None
-
+            current = p.get_tutorial()
 
         def get(self, name):
             """
@@ -529,6 +523,21 @@ init python in project:
                     return p
 
             return None
+
+        def get_tutorial():
+
+            p = self.get("tutorial")
+            if p is not None:
+                if persistent.force_new_tutorial:
+                    return p
+
+                if _preferences.language is None:
+                    return p
+
+                if os.path.exists(os.path.join(p.directory, "game", "tl", p.directory)):
+                    return p
+
+            return self.get("oldtutorial")
 
     manager = ProjectManager()
 
@@ -581,6 +590,13 @@ init python in project:
             if self.label is not None:
                 renpy.jump(self.label)
 
+    def SelectTutorial(if_tutorial=False):
+
+        if if_tutorial:
+            if project and project.name not in [ "tutorial", "oldtutorial" ]:
+                return None
+
+        return Select(manager.get_tutorial())
 
     class Launch(Action):
         """

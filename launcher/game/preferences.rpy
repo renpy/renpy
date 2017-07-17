@@ -49,6 +49,7 @@ init python:
 
 
 default persistent.legacy = False
+default persistent.force_new_tutorial = False
 
 screen preferences:
 
@@ -177,6 +178,8 @@ screen preferences:
 
                         if renpy.windows:
                             textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
+
+                        textbutton _("Force new tutorial") style "l_checkbox" action ToggleField(persistent, "force_new_tutorial")
 
                         textbutton _("Legacy options") style "l_checkbox" action ToggleField(persistent, "legacy")
 

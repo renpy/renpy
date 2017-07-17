@@ -321,7 +321,7 @@ init python:
 
     source_and_binary("the_question")
     source_and_binary("tutorial")
-    source_and_binary("tutorial_7")
+    source_and_binary("oldtutorial")
 
     # docs.
     build.classify_renpy("doc/", "source")
