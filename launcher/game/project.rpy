@@ -548,6 +548,9 @@ init python in project:
                 elif os.path.exists(os.path.join(p.path, "game", "tl", _preferences.language)):
                     rv = p
 
+                elif not os.path.exists(os.path.join(rv.path, "game", "tl", _preferences.language)):
+                    rv = p
+
             self.tutorial_language = language
             self.tutorial = rv
 
