@@ -1,6 +1,6 @@
 .. Automatically generated file - do not modify.
 
-.. function:: ui.adjustment(range=1, value=0, step=None, page=0, changed=None, adjustable=None, ranged=None)
+.. function:: ui.adjustment(range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None)
     
     Adjustment objects represent a value that can be adjusted by a bar
     or viewport. They contain information about the value, the range

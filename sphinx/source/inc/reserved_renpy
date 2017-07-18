@@ -199,6 +199,7 @@
 * default
 * default_transition
 * define
+* director
 * :var:`dissolve`
 * :var:`ease`
 * easeinbottom
@@ -251,6 +252,7 @@
 * nvl_window
 * :var:`offscreenleft`
 * :var:`offscreenright`
+* os
 * persistent
 * :var:`pixellate`
 * predict_menu

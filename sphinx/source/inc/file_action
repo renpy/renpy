@@ -98,7 +98,7 @@
         being shown to the user. :var:`config.quicksave_slots` slots are
         used in the cycle.
 
-.. function:: FileTakeScreenshot()
+.. function:: FileTakeScreenshot(*args, **kwargs)
     
     Take a screenshot to be used when the game is saved. This can
     be used to ensure that the screenshot is accurate, by taking
