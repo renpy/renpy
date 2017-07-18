@@ -48,7 +48,7 @@ init -1500 python:
     config.always_has_joystick = False
 
     @renpy.pure
-    def Preference(name, value=None):
+    def Preference(name, value=None, range=None):
         """
          :doc: preference_action
 
@@ -169,6 +169,11 @@ init -1500 python:
          * Preference("sound volume")
          * Preference("voice volume")
          * Preference("mixer <mixer> volume")
+
+         The `range` parameter can be given to give the range of certain bars.
+         For "text speed", it defaults to 200 cps. For "auto-forward time", it
+         defaults to 30.0 seconds per chunk of text. (These are maximums, not
+         defaults.)
          """
 
         name = name.lower()
@@ -222,7 +227,8 @@ init -1500 python:
             elif name == "text speed":
 
                 if value is None:
-                    return FieldValue(_preferences, "text_cps", range=200, max_is_zero=True, style="slider")
+                    bar_range = range or 200
+                    return FieldValue(_preferences, "text_cps", range=bar_range * 1.0, max_is_zero=True, style="slider")
                 elif isinstance(value, int):
                     return SetField(_preferences, "text_cps", value)
 
@@ -259,10 +265,12 @@ init -1500 python:
 
                 if value is None:
 
+                    bar_range = range or 30.0
+
                     if config.default_afm_enable is None:
-                        return FieldValue(_preferences, "afm_time", range=30.0, max_is_zero=True, style="slider")
+                        return FieldValue(_preferences, "afm_time", range=bar_range, max_is_zero=True, style="slider")
                     else:
-                        return FieldValue(_preferences, "afm_time", range=29.9, style="slider", offset=.1)
+                        return FieldValue(_preferences, "afm_time", range=bar_range - .1, style="slider", offset=.1)
 
                 elif isinstance(value, int):
                     return SetField(_preferences, "afm_time", value)
