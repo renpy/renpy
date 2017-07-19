@@ -221,6 +221,8 @@ def invalidate(d):
     a redraw to start.
     """
 
+    render_cache.pop(id(d), None)
+
     if not rendering:
         redraw(d, 0)
 
