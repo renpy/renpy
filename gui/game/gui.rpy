@@ -27,7 +27,7 @@ init python:
 define gui.accent_color = "#00b8c3"
 
 ## The color used for a text button when it is neither selected nor hovered.
-define gui.idle_color = "#555555"
+define gui.idle_color = "#888888"
 
 ## The small color is used for small text, which needs to be
 ## brighter/darker to achieve the same effect.
@@ -71,10 +71,10 @@ define gui.text_size = gui.scale(22)
 define gui.name_text_size = gui.scale(30)
 
 ## The size of text in the game's user interface.
-define gui.interface_text_size = gui.scale(24)
+define gui.interface_text_size = gui.scale(22)
 
 ## The size of labels in the game's user interface.
-define gui.label_text_size = gui.scale(28)
+define gui.label_text_size = gui.scale(24)
 
 ## The size of text on the notify screen.
 define gui.notify_text_size = gui.scale(16)
@@ -147,7 +147,7 @@ define gui.dialogue_text_xalign = 0.0
 
 ## The width and height of a button, in pixels. If None, Ren'Py computes a size.
 define gui.button_width = None
-define gui.button_height = gui.scale(36)
+define gui.button_height = None
 
 ## The borders on each side of the button, in left, top, right, bottom order.
 define gui.button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
@@ -179,9 +179,9 @@ define gui.button_text_xalign = 0.0
 ##
 ## These customizations are used by the default interface:
 
-define gui.radio_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.radio_button_borders = Borders(gui.scale(18), gui.scale(4), gui.scale(4), gui.scale(4))
 
-define gui.check_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.check_button_borders = Borders(gui.scale(18), gui.scale(4), gui.scale(4), gui.scale(4))
 
 define gui.confirm_button_text_xalign = 0.5
 
@@ -304,9 +304,9 @@ define gui.frame_tile = False
 
 ## The height of horizontal bars, scrollbars, and sliders. The width of
 ## vertical bars, scrollbars, and sliders.
-define gui.bar_size = gui.scale(36)
+define gui.bar_size = gui.scale(25)
 define gui.scrollbar_size = gui.scale(12)
-define gui.slider_size = gui.scale(30)
+define gui.slider_size = gui.scale(25)
 
 ## True if bar images should be tiled. False if they should be linearly scaled.
 define gui.bar_tile = False
@@ -341,14 +341,14 @@ define gui.history_height = gui.scale(140)
 
 ## The position, width, and alignment of the label giving the name of the
 ## speaking character.
-define gui.history_name_xpos = 150
+define gui.history_name_xpos = gui.scale(155)
 define gui.history_name_ypos = 0
-define gui.history_name_width = gui.scale(150)
+define gui.history_name_width = gui.scale(155)
 define gui.history_name_xalign = 1.0
 
 ## The position, width, and alignment of the dialogue text.
 define gui.history_text_xpos = gui.scale(170)
-define gui.history_text_ypos = gui.scale(5)
+define gui.history_text_ypos = gui.scale(2)
 define gui.history_text_width = gui.scale(740)
 define gui.history_text_xalign = 0.0
 
@@ -421,9 +421,9 @@ init python:
         gui.text_size = gui.scale(30)
         gui.name_text_size = gui.scale(36)
         gui.notify_text_size = gui.scale(25)
-        gui.interface_text_size = gui.scale(36)
-        gui.button_text_size = gui.scale(34)
-        gui.label_text_size = gui.scale(36)
+        gui.interface_text_size = gui.scale(30)
+        gui.button_text_size = gui.scale(30)
+        gui.label_text_size = gui.scale(34)
 
         ## Adjust the location of the textbox.
         gui.textbox_height = gui.scale(240)
@@ -431,7 +431,9 @@ init python:
         gui.text_xpos = gui.scale(90)
         gui.text_width = gui.scale(1100)
 
-        ## Change the size and spacing of items in the game menu.
+        ## Change the size and spacing of various things.
+        gui.slider_size = gui.scale(36)
+
         gui.choice_button_width = gui.scale(1240)
 
         gui.navigation_spacing = gui.scale(20)
@@ -439,6 +441,8 @@ init python:
 
         gui.history_height = gui.scale(190)
         gui.history_text_width = gui.scale(690)
+
+        gui.quick_button_text_size = gui.scale(20)
 
         ## File button layout.
         gui.file_slot_cols = 2
@@ -459,9 +463,6 @@ init python:
 
         gui.nvl_button_width = gui.scale(1240)
         gui.nvl_button_xpos = gui.scale(20)
-
-        ## Quick buttons.
-        gui.quick_button_text_size = gui.scale(20)
 
 
 

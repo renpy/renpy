@@ -164,7 +164,7 @@ style say_dialogue:
 ## This screen must create an input displayable with id "input" to accept
 ## the various input parameters.
 ##
-## http://www.renpy.org/doc/html/screen_special.html#input
+## https://www.renpy.org/doc/html/screen_special.html#input
 
 screen input(prompt):
     style_prefix "input"
@@ -197,7 +197,7 @@ style input:
 ## menu statement. The one parameter, items, is a list of objects, each
 ## with caption and action fields.
 ##
-## http://www.renpy.org/doc/html/screen_special.html#choice
+## https://www.renpy.org/doc/html/screen_special.html#choice
 
 screen choice(items):
     style_prefix "choice"
@@ -342,7 +342,7 @@ style navigation_button_text:
 ##
 ## Used to display the main menu when Ren'Py starts.
 ##
-## http://www.renpy.org/doc/html/screen_special.html#main-menu
+## https://www.renpy.org/doc/html/screen_special.html#main-menu
 
 screen main_menu():
 
@@ -710,11 +710,6 @@ screen preferences():
 
     tag menu
 
-    if renpy.mobile:
-        $ cols = 2
-    else:
-        $ cols = 4
-
     use game_menu(_("Preferences"), scroll="viewport"):
 
         vbox:
@@ -906,10 +901,17 @@ screen history():
                         if "color" in h.who_args:
                             text_color h.who_args["color"]
 
-                text h.what
+                $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
+                text what
 
         if not _history_list:
             label _("The dialogue history is empty.")
+
+
+## This determines what tags are allowed to be displayed on the history
+## screen.
+
+define gui.history_allow_tags = set()
 
 
 style history_window is empty
@@ -1072,6 +1074,7 @@ screen gamepad_help():
         label _("Right Shoulder")
         text _("Rolls forward to later dialogue.")
 
+
     hbox:
         label _("D-Pad, Sticks")
         text _("Navigate the interface.")
@@ -1121,7 +1124,7 @@ style help_label_text:
 ## The confirm screen is called when Ren'Py wants to ask the player a yes or
 ## no question.
 ##
-## http://www.renpy.org/doc/html/screen_special.html#confirm
+## https://www.renpy.org/doc/html/screen_special.html#confirm
 
 screen confirm(message, yes_action, no_action):
 
@@ -1278,7 +1281,7 @@ style notify_text:
 ##
 ## This screen is used for NVL-mode dialogue and menus.
 ##
-## http://www.renpy.org/doc/html/screen_special.html#nvl
+## https://www.renpy.org/doc/html/screen_special.html#nvl
 
 
 screen nvl(dialogue, items=None):
@@ -1424,6 +1427,14 @@ style window:
     variant "small"
     background "gui/phone/textbox.png"
 
+style radio_button:
+    variant "small"
+    foreground "gui/phone/button/check_[prefix_]foreground.png"
+
+style check_button:
+    variant "small"
+    foreground "gui/phone/button/check_[prefix_]foreground.png"
+
 style nvl_window:
     variant "small"
     background "gui/phone/nvl.png"
@@ -1448,6 +1459,42 @@ style pref_vbox:
     variant "small"
     xsize gui.scale(400)
 
+style bar:
+    variant "small"
+    ysize gui.bar_size
+    left_bar Frame("gui/phone/bar/left.png", gui.bar_borders, tile=gui.bar_tile)
+    right_bar Frame("gui/phone/bar/right.png", gui.bar_borders, tile=gui.bar_tile)
+
+style vbar:
+    variant "small"
+    xsize gui.bar_size
+    top_bar Frame("gui/phone/bar/top.png", gui.vbar_borders, tile=gui.bar_tile)
+    bottom_bar Frame("gui/phone/bar/bottom.png", gui.vbar_borders, tile=gui.bar_tile)
+
+style scrollbar:
+    variant "small"
+    ysize gui.scrollbar_size
+    base_bar Frame("gui/phone/scrollbar/horizontal_[prefix_]bar.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
+    thumb Frame("gui/phone/scrollbar/horizontal_[prefix_]thumb.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
+
+style vscrollbar:
+    variant "small"
+    xsize gui.scrollbar_size
+    base_bar Frame("gui/phone/scrollbar/vertical_[prefix_]bar.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
+    thumb Frame("gui/phone/scrollbar/vertical_[prefix_]thumb.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
+
+style slider:
+    variant "small"
+    ysize gui.slider_size
+    base_bar Frame("gui/phone/slider/horizontal_[prefix_]bar.png", gui.slider_borders, tile=gui.slider_tile)
+    thumb "gui/phone/slider/horizontal_[prefix_]thumb.png"
+
+style vslider:
+    variant "small"
+    xsize gui.slider_size
+    base_bar Frame("gui/phone/slider/vertical_[prefix_]bar.png", gui.vslider_borders, tile=gui.slider_tile)
+    thumb "gui/phone/slider/vertical_[prefix_]thumb.png"
+
 style slider_pref_vbox:
     variant "small"
     xsize None
@@ -1455,6 +1502,7 @@ style slider_pref_vbox:
 style slider_pref_slider:
     variant "small"
     xsize gui.scale(600)
+
 
 
 
