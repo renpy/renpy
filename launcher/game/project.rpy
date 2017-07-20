@@ -643,6 +643,10 @@ init python in project:
                 return False
 
             p = manager.get_tutorial()
+
+            if current is None:
+                return False
+
             return current.path == p.path
 
     class Launch(Action):
