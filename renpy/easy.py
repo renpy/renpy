@@ -108,7 +108,7 @@ def displayable(d, scope=None):
     raise Exception("Not a displayable: %r" % (d,))
 
 
-def dynamic_image(d, scope=None, prefix=None):
+def dynamic_image(d, scope=None, prefix=None, search=None):
     """
     Substitutes a scope into `d`, then returns a displayable.
 
@@ -142,6 +142,9 @@ def dynamic_image(d, scope=None, prefix=None):
                 if renpy.exports.image_exists(rv):
                     return displayable_or_none(rv)
 
+                if search is not None:
+                    search.append(rv)
+
         else:
 
             rv = renpy.substitutions.substitute(i, scope=scope, force=True, translate=False)[0]
@@ -152,9 +155,20 @@ def dynamic_image(d, scope=None, prefix=None):
             if renpy.exports.image_exists(rv):
                 return displayable_or_none(rv)
 
+            if search is not None:
+                search.append(rv)
+
     else:
 
-        return displayable_or_none(d[-1], dynamic=False)
+        rv = d[-1]
+
+        if renpy.loader.loadable(rv):
+            return displayable_or_none(rv, dynamic=False)
+
+        if renpy.exports.image_exists(rv):
+            return displayable_or_none(rv, dynamic=False)
+
+        return None
 
 
 def predict(d):

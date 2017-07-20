@@ -40,10 +40,10 @@ char *egl_error(char *where) {
 
 #define egl_check(where) { char *rv = egl_error(where); if (rv) return rv; }
 
-/* Sets up an OpenGL ES 2 context. Returnes NULL if it succeeds, or
+/* Sets up an OpenGL ES 2 context. Returns NULL if it succeeds, or
  * an error message on failure.
  */
-char *egl_init(int interval) {
+char *egl_init(SDL_Window *sdl_window, int interval) {
     SDL_SysWMinfo wminfo;
     EGLint major, minor;
     EGLint num_config;
@@ -64,8 +64,6 @@ char *egl_init(int interval) {
     	import_pygame_sdl2();
     	imported_pygame = 1;
     }
-
-    SDL_Window *sdl_window = PyWindow_AsWindow(Py_None);
 
     SDL_VERSION(&wminfo.version);
     SDL_GetWindowWMInfo(sdl_window, &wminfo);

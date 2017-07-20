@@ -388,7 +388,9 @@ init -1500 python hide:
         if _voice.ignore_interaction:
             return
 
-        if renpy.get_mode() == "with":
+        mode = renpy.get_mode()
+
+        if (mode is None) or (mode == "with"):
             return
 
         if getattr(renpy.context(), "_menu", False):

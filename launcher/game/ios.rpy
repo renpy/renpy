@@ -208,7 +208,7 @@ screen ios:
 
             has vbox
 
-            label _("iOS: [project.current.name!q]")
+            label _("iOS: [project.current.display_name!q]")
 
             add HALF_SPACER
 

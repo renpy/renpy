@@ -19,6 +19,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE
 
+from __future__ import unicode_literals
+
+import copy
 import renpy.audio
 
 pad_bindings = {
@@ -55,114 +58,127 @@ pad_bindings = {
 }
 
 
+all_preferences = [ ]
+
+
+class Preference(object):
+    """
+    Represents information about a preference.
+    """
+
+    def __init__(self, name, default, types=None):
+        self.name = name
+        self.default = default
+        self.types = types if types else type(default)
+
+        if self.types is unicode:
+            self.types = basestring
+
+        all_preferences.append(self)
+
+
+Preference("fullscreen", False)
+Preference("skip_unseen", False)
+Preference("text_cps", 0, (int, float))
+Preference("afm_time", 0, (int, float))
+Preference("afm_enable", True)
+Preference("using_afm_enable", False)
+Preference("voice_sustain", False)
+Preference("mouse_move", False)
+Preference("show_empty_window", True)
+
+# Should we wait for the voice to stop?
+Preference("wait_voice", True)
+
+# Should we disengage auto-forward mode after a click?
+Preference("afm_after_click", False)
+
+
+# 2 - All transitions.
+# 1 - Only non-default transitions.
+# 0 - No transitions.
+Preference("transitions", 2)
+
+# Should video sprites always default to provided displayables if possible?
+Preference("video_image_fallback", False)
+
+Preference("skip_after_choices", False)
+
+# A map from channel name to the current volume (between 0 and 1).
+Preference("volumes", { } )
+
+# Not used anymore.
+Preference("mute", { } )
+
+# Joystick mappings.
+Preference("joymap", { } )
+
+# The size of the window, or None if we don't know it yet.
+Preference("physical_size", None, (tuple, type(None)) )
+
+# The virtual size at the time self.physical_size was set.
+Preference("virtual_size", None, (tuple, type(None)) )
+
+# The graphics renderer we use.
+Preference("renderer", "auto")
+
+# Should we do a performance test on startup?
+Preference("performance_test", True)
+
+# The language we use for translations.
+Preference("language", None, (basestring, type(None)) )
+
+# Should we self-voice?
+Preference("self_voicing", False, (bool, basestring) )
+
+# Should we emphasize audio?
+Preference("emphasize_audio", False)
+
+# Is the gamepad enabled?
+Preference("pad_enabled", True)
+
+# The side of the screen used for rollback. ("left", "right", or "disable")
+Preference("mobile_rollback_side", "disable")
+Preference("desktop_rollback_side", "disable")
+
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = 18
+    __version__ = len(all_preferences)
+
+    def init(self):
+        """
+        Initializes the preference that have not been set.
+        """
+
+        for p in all_preferences:
+            if not hasattr(self, p.name):
+                setattr(self, p.name, copy.copy(p.default))
+
+    def check(self):
+        """
+        Checks that preferences have the right types.
+        """
+
+        error = None
+
+        for p in all_preferences:
+
+            v = getattr(self, p.name, None)
+
+            if not isinstance(v, p.types):
+                error = "Preference {} has wrong type. {!r} is not of type {!r}.".format(p.name, v, p.types)
+                setattr(self, p.name, copy.copy(p.default))
+
+        return error
 
     def after_upgrade(self, version):
-        if version < 1:
-            self.mute_volumes = 0
-        if version < 2:
-            self.using_afm_enable = False
-        if version < 3:
-            self.physical_size = None
-        if version < 4:
-            self.renderer = "auto"
-            self.performance_test = True
-        if version < 5:
-            self.language = None
-        if version < 6:
-            self.wait_voice = True
-        if version < 7:
-            self.voice_sustain = False
-        if version < 8:
-            self.mouse_move = False
-        if version < 9:
-            self.afm_after_click = False
-        if version < 11:
-            self.show_empty_window = True
-        if version < 13:
-            self.self_voicing = False
-        if version < 14:
-            self.emphasize_audio = False
-        if version < 15:
-            self.pad_enabled = True
-        if version < 17:
-            self.init_rollback_side()
-        if version < 18:
-            self.virtual_size = None
-            self.video_image_fallback = False
+        self.init()
 
     def __init__(self):
-        self.fullscreen = False
-        self.skip_unseen = False
-        self.text_cps = 0
-        self.afm_time = 0
-        self.afm_enable = True
-        self.using_afm_enable = False
-        self.voice_sustain = False
-        self.mouse_move = False
-        self.show_empty_window = True
-
-        # Should we wait for the voice to stop?
-        self.wait_voice = True
-
-        # Should we disengage auto-forward mode after a click?
-        self.afm_after_click = False
-
-        # 2 - All transitions.
-        # 1 - Only non-default transitions.
-        # 0 - No transitions.
-        self.transitions = 2
-
-        # Should video sprites always default to provided displayables if possible?
-        self.video_image_fallback = False
-
-        self.skip_after_choices = False
-
-        # Mixer channel info.
-
-        # A map from channel name to the current volume (between 0 and 1).
-        self.volumes = { }
-
-        # True if the channel should not play music. False
-        # otherwise. (Not used anymore.)
-        self.mute = { }
-
-        # Joystick mappings.
-        self.joymap = dict()
-
-        # The size of the window, or None if we don't know it yet.
-        self.physical_size = None
-
-        # The virtual size at the time self.physical_size was set.
-        self.virtual_size = None
-
-        # The graphics renderer we use.
-        self.renderer = "auto"
-
-        # Should we do a performance test on startup?
-        self.performance_test = True
-
-        # The language we use for translations.
-        self.language = None
-
-        # Should we self-voice?
-        self.self_voicing = False
-
-        # Should we emphasize audio?
-        self.emphasize_audio = False
-
-        # Is the gamepad enabled?
-        self.pad_enabled = True
-
-        self.init_rollback_side()
-
-    def init_rollback_side(self):
-        self.mobile_rollback_side = "disable"
-        self.desktop_rollback_side = "disable"
+        self.init()
 
     def set_volume(self, mixer, volume):
         if volume != 0:
@@ -201,6 +217,7 @@ class Preferences(renpy.object.Object):
 
     def __eq__(self, other):
         return vars(self) == vars(other)
+
 
 renpy.game.Preferences = Preferences
 renpy.game.preferences = Preferences()

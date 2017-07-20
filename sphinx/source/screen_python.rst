@@ -51,7 +51,11 @@ screens.
 UI Functions
 ============
 
-With the advent of SL2, UI Functions are deprecated and not recommended.
+.. note::
+
+    The implementation of Ren'Py has changed, and UI functions that
+    create displayables can now be far slower than their screen language
+    equivalents.
 
 The UI functions are python equivalents of the screen language
 statements. For each screen language statement, there is a ui function

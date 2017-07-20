@@ -115,6 +115,9 @@ init -1600 python:
         console_older = [ 'K_UP', 'repeat_K_UP' ],
         console_newer = [ 'K_DOWN', 'repeat_K_DOWN'],
 
+        # Director
+        director = [ 'd' ],
+
         # Ignored (kept for backwards compatibility).
         toggle_music = [ 'm' ],
         viewport_up = [ 'mousedown_4' ],
@@ -361,6 +364,7 @@ init -1100 python:
         clipboard_voicing = Preference("clipboard voicing", "toggle"),
         debug_voicing = Preference("debug voicing", "toggle"),
         progress_screen = _progress_screen,
+        director = director.Start(),
         )
 
     config.underlay = [ _default_keymap ]

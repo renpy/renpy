@@ -11,7 +11,8 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import sys
+import os
 import sphinx_bootstrap_theme
 import datetime
 
@@ -27,7 +28,7 @@ sys.path.append(os.path.abspath('.'))
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.todo', 'sphinx.ext.extlinks', 'sphinx.ext.ifconfig', 'renpydoc']
+extensions = ['sphinx.ext.todo', 'sphinx.ext.extlinks', 'sphinx.ext.ifconfig', 'renpydoc', 'sphinx.ext.intersphinx' ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -43,7 +44,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Ren\'Py Visual Novel Engine'
-copyright = u'2012-{}, Tom Rothamel'.format(datetime.date.today().year) #@ReservedAssignment
+copyright = u'2012-{}, Tom Rothamel'.format(datetime.date.today().year)  # @ReservedAssignment
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -199,8 +200,8 @@ locale_dirs = ["locale/"]
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'all.tex', u'Ren\'Py Visual Novel Engine Reference Manual',
-   u'PyTom', 'manual'),
+    ('index', 'all.tex', u'Ren\'Py Visual Novel Engine Reference Manual',
+     u'PyTom', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -232,8 +233,8 @@ latex_logo = "logo.png"
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-     # ('index', 'therenpyvisualnovelengine', u'The Ren'Py Visual Novel Engine Documentation',
-     # [u'PyTom'], 1)
+    # ('index', 'therenpyvisualnovelengine', u'The Ren'Py Visual Novel Engine Documentation',
+    # [u'PyTom'], 1)
 ]
 
 
@@ -286,10 +287,11 @@ rst_prolog = """\
 .. |PGS4A_URL| replace:: http://www.renpy.org/dl/android/
 """
 
+
 def setup(app):
     app.add_config_value('is_renpy', '', True)
     app.add_config_value('renpy_figures', '', True)
 
+
 is_renpy = "renpy"
 renpy_figures = ("figures" if ("RENPY_NO_FIGURES" not in os.environ) else '')
-

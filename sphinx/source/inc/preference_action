@@ -1,6 +1,6 @@
 .. Automatically generated file - do not modify.
 
-.. function:: Preference(name, value=None)
+.. function:: Preference(name, value=None, range=None)
     
     This constructs the appropriate action or value from a preference.
     The preference name should be the name given in the standard
@@ -119,4 +119,9 @@
     * Preference("sound volume")
     * Preference("voice volume")
     * Preference("mixer <mixer> volume")
+    
+    The `range` parameter can be given to give the range of certain bars.
+    For "text speed", it defaults to 200 cps. For "auto-forward time", it
+    defaults to 30.0 seconds per chunk of text. (These are maximums, not
+    defaults.)
 

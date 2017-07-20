@@ -1,69 +1,149 @@
-﻿# This file contains the script for the Ren'Py demo game. Execution starts at
-# the start label.
+﻿# Hi there! This is the Ren'Py tutorial game. It's actually a fairly bad
+# example of Ren'Py programming style - the examples we present in the game
+# itself are good, but to make them easy to present we wind up doing
+# some non-standard high-level things.
+#
+# So feel free to poke around, but if you're really looking for an example
+# of good Ren'Py programming style, consider checking out The Question
+# instead.
 
 # Declare the characters.
 define e = Character(_('Eileen'), color="#c8ffc8")
 
 init python:
 
-    tutorials = [
-        ("tutorial_playing", _("User Experience"), "6.10.0"),
-        ("tutorial_dialogue", _("Writing Dialogue"), "6.10.0"),
-        ("tutorial_images", _("Adding Images"), "6.10.0"),
-        ("tutorial_transitions", _("Transitions"), "6.99.8"),
-        ("tutorial_music", _("Music and Sound Effects"), "6.10.0"),
-        ("tutorial_menus", _("In-Game Menus and Python"), "6.10.0"),
-        ("tutorial_positions", _("Screen Positions"), "6.10.0"),
-        ("tutorial_atl", _("Animation and Transformation"), "6.10.0"),
-        ("tutorial_video", _("Video Playback"), "6.10.0"),
-        ("demo_transitions", _("Transition Gallery"), "6.11.1"),
-        ("demo_imageops", _("Image Operations"), "6.5.0"),
-        ("demo_ui", _("User Interaction"), "6.15.0"),
-        ("demo_text", _("Fonts and Text Tags"), "6.13.0"),
-        ("demo_character", _("Character Objects"), "6.2.0"),
-        ("demo_layers", _("Layers & Advanced Show"), "6.17.0"),
-        ("demo_nvlmode", _("NVL Mode"), "6.4.0"),
-        ("demo_dynamic", _("Dynamic Displayables"), "5.6.3"),
-        ("demo_minigame", _("Minigames"), "6.3.2"),
-        ("demo_persistent", _("Persistent Data"), "6.7.0"),
-        ("demo_transform", _("Transform"), "6.9.0"),
-        ("tutorial_sprite", _("Sprites"), "6.12.0"),
-        ]
+    # A list of section and tutorial objects.
+    tutorials = [ ]
 
-screen tutorials:
+    class Section(object):
+        """
+        Represents a section of the tutorial menu.
 
-    side "c r":
-        area (250, 40, 548, 400)
+        `title`
+            The title of the section. This should be a translatable string.
+        """
+
+        def __init__(self, title):
+            self.kind = "section"
+            self.title = title
+
+            tutorials.append(self)
+
+
+    class Tutorial(object):
+        """
+        Represents a label that we can jump to.
+        """
+
+        def __init__(self, label, title, move=True):
+            self.kind = "tutorial"
+            self.label = label
+            self.title = title
+
+            if move and (move != "after"):
+                self.move_before = True
+            else:
+                self.move_before = False
+
+            if move and (move != "before"):
+                self.move_after = True
+            else:
+                self.move_after = False
+
+            tutorials.append(self)
+
+
+    Section(_("Quickstart"))
+
+    Tutorial("tutorial_playing", _("Player Experience"))
+    Tutorial("tutorial_create", _("Creating a new Game"))
+    Tutorial("tutorial_dialogue", _("Writing Dialogue"))
+    Tutorial("tutorial_images", _("Adding Images"))
+    Tutorial("tutorial_simple_positions", _("Positioning Images"))
+    Tutorial("tutorial_transitions", _("Transitions"))
+    Tutorial("tutorial_music", _("Music and Sound Effects"))
+    Tutorial("tutorial_menus", _("Choices and Python"))
+    Tutorial("tutorial_input", _("Input and Interpolation"))
+    Tutorial("tutorial_video", _("Video Playback"))
+    Tutorial("tutorial_nvlmode", _("NVL Mode"), move=None)
+    Tutorial("director", _("Tools and the Interactive Director"))
+    Tutorial("distribute", _("Building Distributions"))
+
+    Section(_("In Depth"))
+
+    Tutorial("text", _("Text Tags, Escapes, and Interpolation"))
+    Tutorial("demo_character", _("Character Objects"))
+    Tutorial("simple_displayables", _("Simple Displayables"), move=None)
+    Tutorial("demo_transitions", _("Transition Gallery"))
+
+    # Positions and Transforms?
+    Tutorial("tutorial_positions", _("Position Properties"))
+
+    # Advanced Transforms?
+    Tutorial("tutorial_atl", _("Transforms and Animation"))
+    Tutorial("transform_properties", _("Transform Properties"))
+
+    Tutorial("new_gui", _("GUI Customization"))
+    Tutorial("styles", _("Styles and Style Properties"), move=None)
+    Tutorial("tutorial_screens", _("Screen Basics"), move=None)
+    Tutorial("screen_displayables", _("Screen Displayables"), move=None)
+
+    Tutorial("demo_minigame", _("Minigames and CDDs"))
+    Tutorial("translations", _("Translations"))
+
+screen tutorials(adj):
+
+    frame:
+        xsize 640
+        xalign .5
+        ysize 485
+        ypos 30
+
+        has side "c r b"
 
         viewport:
             yadjustment adj
             mousewheel True
 
             vbox:
-                for label, name, ver in tutorials:
-                    button:
-                        action Return(label)
-                        left_padding 20
-                        xfill True
+                for i in tutorials:
 
-                        hbox:
-                            text name style "button_text" min_width 420
-                            text ver style "button_text"
+                    if i.kind == "tutorial":
 
-                null height 20
+                        textbutton i.title:
+                            action Return(i)
+                            left_padding 20
+                            xfill True
 
-                textbutton _("That's enough for now."):
-                    xfill True
-                    action Return(False)
+                    else:
+
+                        null height 10
+                        text i.title alt ""
+                        null height 5
+
+
+
 
         bar adjustment adj style "vscrollbar"
 
+        textbutton _("That's enough for now."):
+            xfill True
+            action Return(False)
+            top_margin 10
+
+
+# This is used to preserve the state of the scrollbar on the selection
+# screen.
+default tutorials_adjustment = ui.adjustment()
+
+# True if this is the first time through the tutorials.
+default tutorials_first_time = True
 
 # The game starts here.
 #begin start
 label start:
+#end start
 
-    #end start
     scene bg washington
     show eileen vhappy
     with dissolve
@@ -79,9 +159,6 @@ label start:
 
     e "In this tutorial, we'll teach you the basics of Ren'Py, so you can make games of your own. We'll also demonstrate many features, so you can see what Ren'Py is capable of."
 
-    $ tutorials_adjustment = ui.adjustment()
-    $ tutorials_first_time = True
-
 label tutorials:
 
     show eileen happy at left
@@ -96,31 +173,44 @@ label tutorials:
 
     call screen tutorials(adj=tutorials_adjustment)
 
-    show eileen happy at center
-    with move
+    $ tutorial = _return
 
-    if _return is False:
+    if not tutorial:
         jump end
 
-    call expression _return from _call_expression
+    if tutorial.move_before:
+        show eileen happy at center
+        with move
+
+    $ reset_example()
+
+    call expression tutorial.label from _call_expression
+
+    if tutorial.move_after:
+        hide example
+        show eileen happy at left
+        with move
 
     jump tutorials
 
 label end:
 
+    show eileen happy at center
+    with move
+
     e "Thank you for viewing this tutorial."
 
     e "If you'd like to see a full Ren'Py game, select \"The Question\" in the launcher."
 
-    e "You can download new versions of Ren'Py from {a=http://www.renpy.org/}http://www.renpy.org/{/a}. For help and discussion, check out the {a=http://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
+    e "You can download new versions of Ren'Py from {a=https://www.renpy.org/}https://www.renpy.org/{/a}. For help and discussion, check out the {a=https://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
 
-    e "We'd like to thank Piroshki for contributing my sprites, Mugenjohncel for Lucy and the band, and Jake for the magic circle."
+    e "We'd like to thank Piroshki for contributing my sprites; Mugenjohncel for Lucy, the band, and drawn backgrounds; and Jake for the magic circle."
 
     e "The background music is \"Sunflower Slow Drag\", by Scott Joplin and Scott Hayden, performed by the United States Marine Band. The concert music is by Alessio."
 
     show eileen vhappy
 
-    e "We look forward to seeing what you can make with Ren'Py. Have fun!"
+    e "We look forward to seeing what you create with Ren'Py. Have fun!"
 
     window hide
 

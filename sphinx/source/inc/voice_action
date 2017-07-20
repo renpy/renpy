@@ -34,7 +34,7 @@
     the given voice tag is muted, unless `invert` is true,
     in which case it's selected if the voice is unmuted.
 
-.. function:: VoiceReplay()
+.. function:: VoiceReplay(*args, **kwargs)
     
     Replays the most recently played voice.
 

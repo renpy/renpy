@@ -3,55 +3,55 @@ translate arabic strings:
 
     # options.rpy:1
     old "## This file contains options that can be changed to customize your game."
-    new "## This file contains options that can be changed to customize your game."
+    new "## هذا الملف يحتوي على الخيارات التي تستطيع تعديلها لتغيير محتويات لعبتك."
 
     # options.rpy:4
     old "## Lines beginning with two '#' marks are comments, and you shouldn't uncomment them. Lines beginning with a single '#' mark are commented-out code, and you may want to uncomment them when appropriate."
-    new "## Lines beginning with two '#' marks are comments, and you shouldn't uncomment them. Lines beginning with a single '#' mark are commented-out code, and you may want to uncomment them when appropriate."
+    new "## الأسطر التي تبدأ بهذا الشعار مرتين'#' هي أسطر مقتبسه و لا يفترض عليك تغييرها. الأسطر التي تحتوي على '#' واحده هي أسطر برمجة يمكنك الغاء الاقتباس عندها لتفعيلها."
 
     # options.rpy:10
     old "## Basics"
-    new "## Basics"
+    new "## الأساسيات"
 
     # options.rpy:12
     old "## A human-readable name of the game. This is used to set the default window title, and shows up in the interface and error reports."
-    new "## A human-readable name of the game. This is used to set the default window title, and shows up in the interface and error reports."
+    new "## الإسم الرسمي للعبه. يتم استعمال هذا السطر كإسم النافذة و يظهرفي واجهة النظام التشغيلية و ملفات حصر الأخطاء."
 
     # options.rpy:15
     old "## The _() surrounding the string marks it as eligible for translation."
-    new "## The _() surrounding the string marks it as eligible for translation."
+    new "## رمز _() حول النصوص يجعلها قابلة للترجمة."
 
     # options.rpy:17
     old "Ren'Py 7 Default GUI"
-    new "Ren'Py 7 Default GUI"
+    new "الواجهة التشغيلية القياسية لـ رينباي7"
 
     # options.rpy:20
     old "## Determines if the title given above is shown on the main menu screen. Set this to False to hide the title."
-    new "## Determines if the title given above is shown on the main menu screen. Set this to False to hide the title."
+    new "## يحدد إذا ما تم إظهار العنوان في القائمة الرئيسية. لإخفاء العنوان اجعله False."
 
     # options.rpy:26
     old "## The version of the game."
-    new "## The version of the game."
+    new "## نسخه اللعبة."
 
     # options.rpy:31
     old "## Text that is placed on the game's about screen. To insert a blank line between paragraphs, write \\n\\n."
-    new "## Text that is placed on the game's about screen. To insert a blank line between paragraphs, write \\n\\n."
+    new "## النص الظاهر على شاشة اللعبه. لإظهار سطر فارغ بين اجزاء النص اكتب \\n\\n."
 
     # options.rpy:37
     old "## A short name for the game used for executables and directories in the built distribution. This must be ASCII-only, and must not contain spaces, colons, or semicolons."
-    new "## A short name for the game used for executables and directories in the built distribution. This must be ASCII-only, and must not contain spaces, colons, or semicolons."
+    new "## اسم مختصر للعبه يتم استعماله في ملفات التشغيل و نسخ النشر. يجب ان يحتوي على احرف انجليزية فقط, دون فراغات ولا فواصل ولا فواصل منقوطة."
 
     # options.rpy:44
     old "## Sounds and music"
-    new "## Sounds and music"
+    new "## الصوت و الموسيقى"
 
     # options.rpy:46
     old "## These three variables control which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
-    new "## These three variables control which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
+    new "## هذه المتغيرات الثلاثة تحدد معالجات الأصوات الظاهره بشكل قياسي للاعب. إلغاء أحدها يجعله يختفي من الواجهة عن طريق اختيار False."
 
     # options.rpy:55
     old "## To allow the user to play a test sound on the sound or voice channel, uncomment a line below and use it to set a sample sound to play."
-    new "## To allow the user to play a test sound on the sound or voice channel, uncomment a line below and use it to set a sample sound to play."
+    new "## يسمح للاعب ان يسمع صوتا لاختبار ارتفاع الصوت او النطق, إمسح الاقتباس عن السطر التالي ليتم تفعيل زر العينة الصوتية."
 
     # options.rpy:62
     old "## Uncomment the following line to set an audio file that will be played while the player is at the main menu. This file will continue playing into the game, until it is stopped or another file is played."
@@ -59,7 +59,7 @@ translate arabic strings:
 
     # options.rpy:69
     old "## Transitions"
-    new "## Transitions"
+    new "## الإنتقال"
 
     # options.rpy:71
     old "## These variables set transitions that are used when certain events occur. Each variable should be set to a transition, or None to indicate that no transition should be used."
@@ -67,15 +67,15 @@ translate arabic strings:
 
     # options.rpy:75
     old "## Entering or exiting the game menu."
-    new "## Entering or exiting the game menu."
+    new "## الدخول او الخروج من قائمة اللعبة."
 
     # options.rpy:81
     old "## A transition that is used after a game has been loaded."
-    new "## A transition that is used after a game has been loaded."
+    new "## الإنتقال الذي يحصل بعد ان تنتهي اللعبة من الإقلاع."
 
     # options.rpy:86
     old "## Used when entering the main menu after the game has ended."
-    new "## Used when entering the main menu after the game has ended."
+    new "## يظهر عند الدخول إلى القائمة الرئيسية بعد انتهاء اللعبة."
 
     # options.rpy:91
     old "## A variable to set the transition used when the game starts does not exist. Instead, use a with statement after showing the initial scene."
@@ -83,7 +83,7 @@ translate arabic strings:
 
     # options.rpy:96
     old "## Window management"
-    new "## Window management"
+    new "## خيارات النافذة"
 
     # options.rpy:98
     old "## This controls when the dialogue window is displayed. If \"show\", it is always displayed. If \"hide\", it is only displayed when dialogue is present. If \"auto\", the window is hidden before scene statements and shown again once dialogue is displayed."
@@ -95,11 +95,11 @@ translate arabic strings:
 
     # options.rpy:109
     old "## Transitions used to show and hide the dialogue window"
-    new "## Transitions used to show and hide the dialogue window"
+    new "## الإنتقالات البصرية المستخدمه عند إظهار و إخفاء مربع الحوار"
 
     # options.rpy:115
     old "## Preference defaults"
-    new "## Preference defaults"
+    new "## الخيارات القياسية"
 
     # options.rpy:117
     old "## Controls the default text speed. The default, 0, is infinite, while any other number is the number of characters per second to type out."
@@ -111,7 +111,7 @@ translate arabic strings:
 
     # options.rpy:129
     old "## Save directory"
-    new "## Save directory"
+    new "## مجلد الحفظ"
 
     # options.rpy:131
     old "## Controls the platform-specific place Ren'Py will place the save files for this game. The save files will be placed in:"
@@ -135,19 +135,19 @@ translate arabic strings:
 
     # options.rpy:146
     old "## Icon ########################################################################'"
-    new "## Icon ########################################################################'"
+    new "## أيقونة ########################################################################'"
 
     # options.rpy:148
     old "## The icon displayed on the taskbar or dock."
-    new "## The icon displayed on the taskbar or dock."
+    new "## الأيقونة الظاهرة في شريط البرامج."
 
     # options.rpy:153
     old "## Build configuration"
-    new "## Build configuration"
+    new "## معلومات ملف النشر"
 
     # options.rpy:155
     old "## This section controls how Ren'Py turns your project into distribution files."
-    new "## This section controls how Ren'Py turns your project into distribution files."
+    new "## هذا الجزء يتحكم بالمعلومات التي يستعملها رينباي لتحويل مشروعك إلى ملفات يمكن نشرها."
 
     # options.rpy:160
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."

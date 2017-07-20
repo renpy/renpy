@@ -285,6 +285,7 @@ class SLNode(object):
 
         return False
 
+
 # A sentinel used to indicate a keyword argument was not given.
 NotGiven = renpy.object.Sentinel("NotGiven")
 
@@ -475,6 +476,7 @@ class SLCache(object):
 
         # The style prefix used when this statement was first created.
         self.style_prefix = None
+
 
 # A magic value that, if returned by a displayable function, is not added to
 # the parent.
@@ -1575,7 +1577,12 @@ class SLUse(SLNode):
         target = renpy.display.screen.get_screen_variant(self.target)
 
         if target is None:
-            raise Exception("A screen named {} does not exist.".format(self.target))
+            self.constant = NOT_CONST
+
+            if renpy.config.developer:
+                raise Exception("A screen named {} does not exist.".format(self.target))
+            else:
+                return
 
         if target.ast is None:
             self.constant = NOT_CONST
@@ -2003,6 +2010,7 @@ class ScreenCache(object):
         self.not_const_analyzed = { }
 
         self.updated = False
+
 
 scache = ScreenCache()
 

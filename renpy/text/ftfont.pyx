@@ -487,7 +487,11 @@ cdef class FTFont:
 
             gl.character = c
             gl.ascent = self.ascent
-            gl.width = cache.width
+            
+            if c == 0x200B:
+                gl.width = 0
+            else:
+                gl.width = cache.width
 
             gl.line_spacing = self.lineskip
 

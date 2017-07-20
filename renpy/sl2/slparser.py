@@ -60,6 +60,7 @@ class Positional(object):
         if parser:
             parser.add(self)
 
+
 # Used to generate the documentation
 all_keyword_names = set()
 
@@ -213,7 +214,7 @@ class Parser(object):
             screens.
 
         `block_only`
-            If true, only parse the
+            If true, only parse the block and not the initial properties.
         """
 
         seen_keywords = set()
@@ -291,7 +292,7 @@ class Parser(object):
                 loc = l.get_location()
 
                 if l.keyword(r'has'):
-                    if self.nchildren != 1:
+                    if not can_has:
                         l.error("The %s statement does not take a layout." % self.name)
 
                     if child_index != 0:
@@ -372,6 +373,7 @@ class Parser(object):
 
 def add(thing):
     parser.add(thing)
+
 
 # A singleton value.
 many = renpy.object.Sentinel("many")
@@ -655,6 +657,7 @@ class IfParser(Parser):
 
         return rv
 
+
 if_statement = IfParser("if", slast.SLIf, True)
 IfParser("showif", slast.SLShowIf, False)
 
@@ -729,6 +732,7 @@ class ForParser(Parser):
 
         return rv
 
+
 ForParser("for")
 
 
@@ -744,6 +748,7 @@ class OneLinePythonParser(Parser):
 
         code = renpy.ast.PyCode(source, loc)
         return slast.SLPython(loc, code)
+
 
 OneLinePythonParser("$")
 
@@ -764,6 +769,7 @@ class MultiLinePythonParser(Parser):
         code = renpy.ast.PyCode(source, loc)
         return slast.SLPython(loc, code)
 
+
 MultiLinePythonParser("python")
 
 
@@ -774,6 +780,7 @@ class PassParser(Parser):
         l.expect_eol()
 
         return slast.SLPass(loc)
+
 
 PassParser("pass")
 
@@ -790,6 +797,7 @@ class DefaultParser(Parser):
         l.expect_noblock('default statement')
 
         return slast.SLDefault(loc, name, rest)
+
 
 DefaultParser("default")
 
@@ -815,7 +823,7 @@ class UseParser(Parser):
             l.expect_block("use statement")
 
             block = slast.SLBlock(loc)
-            self.parse_contents(l, block, block_only=True)
+            self.parse_contents(l, block, can_has=True, block_only=True)
 
         else:
             l.expect_eol()
@@ -824,6 +832,7 @@ class UseParser(Parser):
             block = None
 
         return slast.SLUse(loc, target, args, id_expr, block)
+
 
 UseParser("use")
 Keyword("style_prefix")
@@ -835,6 +844,7 @@ class TranscludeParser(Parser):
     def parse(self, loc, l, parent):
         l.expect_eol()
         return slast.SLTransclude(loc)
+
 
 TranscludeParser("transclude")
 
@@ -948,6 +958,7 @@ class ScreenParser(Parser):
 
         return screen
 
+
 screen_parser = ScreenParser()
 Keyword("modal")
 Keyword("zorder")
@@ -956,6 +967,7 @@ Keyword("predict")
 Keyword("style_group")
 Keyword("style_prefix")
 Keyword("layer")
+parser = None
 
 
 def init():

@@ -312,11 +312,16 @@ CTC (Click-To-Continue)
 -----------------------
 
 If present, the ``ctc`` screen is displayed when dialogue has finished
-showing, to prompt the player to click to display more text.
+showing, to prompt the player to click to display more text. It may be
+given a single parameter.
+
+`arg`
+    If the :func:`Character` object is given a `ctc` argument, it is passed
+    as the first positional argument to this screen.
 
 Here's a very simple ctc screen::
 
-    screen ctc():
+    screen ctc(arg=None):
 
         zorder 100
 

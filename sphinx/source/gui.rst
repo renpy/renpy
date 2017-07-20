@@ -1047,7 +1047,7 @@ To center the character's name, use::
 To center dialogue text, use::
 
     define gui.dialogue_xpos = 0.5
-    define gui.dialogue_xalign = 1.0
+    define gui.dialogue_text_xalign = 1.0
 
 Our example game uses these statements to customize the centered namebox::
 

@@ -54,7 +54,7 @@ cdef extern from "glcompat.h":
 
 cdef extern from "eglsupport.h":
     int egl_available()
-    char *egl_init(int)
+    char *egl_init(SDL_Window *, int)
     void egl_swap()
     void egl_quit()
 
@@ -314,7 +314,7 @@ cdef class GLDraw:
             # This ensures the display is shown.
             pygame.display.flip()
 
-            egl_error = egl_init(vsync)
+            egl_error = egl_init(PyWindow_AsWindow(None), vsync)
 
             if egl_error is not NULL:
                 renpy.display.log.write("Initializing EGL: %s" % egl_error)
@@ -1078,13 +1078,14 @@ cdef class GLDraw:
         # has overwritten the buffer we're drawing to.
         for _i in range(2):
             self.environ.viewport(0, 0, 1, 1)
-            glClearColor(0.0, 0.0, 0.0, 0.0)
-
-            glClear(GL_COLOR_BUFFER_BIT)
 
             self.environ.ortho(0, 1, 0, 1, -1, 1)
+
             self.clip_mode_rtt(0, 0, 1, 1)
             clip = (0, 0, 1, 1)
+
+            glClearColor(0.0, 0.0, 0.0, 0.0)
+            glClear(GL_COLOR_BUFFER_BIT)
 
             self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 

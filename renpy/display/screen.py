@@ -129,6 +129,7 @@ def get_profile(name):
 
 # Cache ########################################################################
 
+
 # A map from screen name to a list of ScreenCache objects. We ensure the cache
 # does not exceed config.screen_cache_size for each screen.
 predict_cache = collections.defaultdict(list)
@@ -155,6 +156,7 @@ class ScreenCache(object):
 
         if len(pc) > renpy.config.screen_cache_size:
             pc.pop(0)
+
 
 cache_put = ScreenCache
 
@@ -661,6 +663,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
     def get_phase_name(self):
         return phase_name[self.phase]
 
+
 # The name of the screen that is currently being displayed, or
 # None if no screen is being currently displayed.
 _current_screen = None
@@ -677,6 +680,7 @@ def push_current_screen(screen):
 
 def pop_current_screen():
     _current_screen = current_screen_stack.pop()
+
 
 # A map from (screen_name, variant) tuples to screen.
 screens = { }
@@ -722,6 +726,7 @@ def get_all_screen_variants(name):
             rv.append((k[1], v))
 
     return rv
+
 
 # Have all screens been analyzed?
 analyzed = False

@@ -114,8 +114,13 @@ def init():
     if path is None:
         return
 
+    with open(path, "r") as f:
+        source = f.read()
+
+    code = compile(source, path, "exec")
+
     scope = { "__file__" : path }
-    execfile(path, scope, scope)
+    exec code in scope, scope
 
     if "Editor" in scope:
         editor = scope["Editor"]()

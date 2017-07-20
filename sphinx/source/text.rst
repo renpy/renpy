@@ -589,6 +589,12 @@ image and moving it around the screen.
 
 .. include:: inc/text
 
+
+Text Utility Functions
+======================
+
+.. include:: inc/text_utility
+
 Slow Text Concerns
 ==================
 

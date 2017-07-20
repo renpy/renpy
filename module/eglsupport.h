@@ -1,5 +1,6 @@
 #ifndef EGLSUPPORT_H
 #define EGLSUPPORT_H
+#include <SDL.h>
 
 /*
  * Returns 1 if this is an EGL platform, or 0 if we are not an EGL platform.
@@ -17,7 +18,7 @@ char *egl_error(char *where);
  * usually either 1 or 0. Returns NULL on success, or a string if
  * initialization has failed.
  */
-char *egl_init(int interval);
+char *egl_init(SDL_Window *, int interval);
 
 
 /*

@@ -7,6 +7,7 @@ import keywords
 KEYWORDS = set(keywords.keywords)
 PROPERTIES = set(keywords.properties)
 
+
 class RenPyLexer(PythonLexer):
     name = "Ren'Py"
     aliases = [ "renpy", "rpy" ]
@@ -30,10 +31,12 @@ class RenPyLexer(PythonLexer):
             else:
                 yield index, token, value
 
+
 import re
 import sphinx.addnodes
 import docutils.nodes
 import sphinx.domains
+
 
 def parse_var_node(env, sig, signode):
     m = re.match(r'(\S+)(.*)', sig)
@@ -47,7 +50,9 @@ def parse_var_node(env, sig, signode):
     ref = m.group(1)
     return ref
 
+
 style_seen_ids = set()
+
 
 def parse_style_node(env, sig, signode):
     m = re.match(r'(\S+)(.*)', sig)
@@ -105,8 +110,6 @@ class PythonIndex(sphinx.domains.Index):
         return sorted(content.items()), False
 
 
-
-
 class CustomIndex(sphinx.domains.Index):
 
     name = ""
@@ -148,6 +151,7 @@ class CustomIndex(sphinx.domains.Index):
 
         return sorted(content.items()), False
 
+
 def add_index(app, domain, object_type, title):
 
     class MyIndex(CustomIndex):
@@ -155,12 +159,14 @@ def add_index(app, domain, object_type, title):
         localname = title
         kind = object_type
 
-    app.domains[domain].indices.append(MyIndex)
+    app.add_index_to_domain(domain, MyIndex)
+    # app.domains[domain].indices.append(MyIndex)
+
 
 def setup(app):
     # app.add_description_unit('property', 'propref')
     app.add_lexer('renpy', RenPyLexer())
-    app.add_object_type("var", "var", "single: %s (variable)",  parse_node=parse_var_node)
+    app.add_object_type("var", "var", "single: %s (variable)", parse_node=parse_var_node)
     app.add_object_type("style-property", "propref", "single: %s (style property)", parse_node=parse_style_node)
     app.add_object_type("transform-property", "tpref", "single: %s (transform property)")
     app.add_object_type("text-tag", "tt", "single: %s (text tag)")
@@ -169,5 +175,7 @@ def setup(app):
     add_index(app, "std", "transform-property", "Transform Property Index")
     add_index(app, "std", "var", "Variable Index")
 
-    app.domains['py'].indices.append(PythonIndex)
+    app.add_index_to_domain('py', PythonIndex)
+
+    # app.domains['py'].indices.append(PythonIndex)
     # app.domains['std'].data['labels']['py-function-class-index'] = ('py-function-class-index', '', 'Function and Class Index')

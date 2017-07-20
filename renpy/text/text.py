@@ -848,7 +848,7 @@ class Layout(object):
                 if isinstance(i[0], (TextSegment, SpaceSegment, DisplayableSegment)):
                     return
 
-            line.extend(tss[-1].subsegment(u" "))
+            line.extend(tss[-1].subsegment(u"\u200B"))
 
         for type, text in tokens:  # @ReservedAssignment
 
@@ -1618,6 +1618,9 @@ class Text(renpy.display.core.Displayable):
         if layout is None:
             return
 
+        if not default:
+            renpy.exports.play(self.style.hover_sound)
+
         hyperlink_focus = self.style.hyperlink_functions[2]
         target = layout.hyperlink_targets.get(renpy.display.focus.argument, None)
 
@@ -1675,6 +1678,8 @@ class Text(renpy.display.core.Displayable):
 
         if (self.is_focused() and
                 renpy.display.behavior.map_event(ev, "button_select")):
+
+            renpy.exports.play(self.style.activate_sound)
 
             clicked = self.style.hyperlink_functions[1]
 

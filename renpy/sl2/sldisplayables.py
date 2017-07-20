@@ -22,6 +22,8 @@
 ##############################################################################
 # Definitions of screen language statements.
 
+from __future__ import print_function
+
 import renpy.display
 import renpy.text.text
 import renpy.sl2
@@ -33,6 +35,9 @@ from renpy.sl2.slproperties import text_properties, box_properties, window_prope
 from renpy.sl2.slproperties import bar_properties, button_properties
 from renpy.sl2.slproperties import text_position_properties, text_text_properties
 from renpy.sl2.slproperties import side_position_properties
+from renpy.sl2.slproperties import scrollbar_bar_properties, scrollbar_position_properties
+from renpy.sl2.slproperties import vscrollbar_bar_properties, vscrollbar_position_properties
+from renpy.sl2.slproperties import viewport_position_properties
 
 
 class ShowIf(renpy.display.layout.Container):
@@ -233,6 +238,7 @@ def sl2bar(context=None, **properties):
 
     return renpy.display.behavior.Bar(range, value, width, height, vertical=False, **properties)
 
+
 DisplayableParser("bar", sl2bar, None, 0, replaces=True, pass_context=True)
 Keyword("adjustment")
 Keyword("range")
@@ -264,6 +270,7 @@ def sl2vbar(context=None, **properties):
             properties["style"] = style
 
     return renpy.display.behavior.Bar(range, value, width, height, vertical=True, **properties)
+
 
 DisplayableParser("vbar", sl2vbar, None, 0, replaces=True, pass_context=True)
 Keyword("adjustment")
@@ -320,6 +327,7 @@ def sl2vpgrid(context=None, **kwargs):
 
     return rv
 
+
 DisplayableParser("viewport", sl2viewport, "viewport", 1, replaces=True, pass_context=True)
 Keyword("child_size")
 Keyword("mousewheel")
@@ -331,16 +339,24 @@ Keyword("yadjustment")
 Keyword("xinitial")
 Keyword("yinitial")
 Keyword("scrollbars")
+Keyword("spacing")
 Style("xminimum")
 Style("yminimum")
 PrefixStyle("side_", "spacing")
 add(side_position_properties)
+add(scrollbar_position_properties)
+add(vscrollbar_position_properties)
+add(scrollbar_bar_properties)
+add(vscrollbar_bar_properties)
+add(viewport_position_properties)
+
 
 DisplayableParser("vpgrid", sl2vpgrid, "vpgrid", many, replaces=True, pass_context=True)
 Keyword("rows")
 Keyword("cols")
 Keyword("child_size")
 Keyword("mousewheel")
+Keyword("arrowkeys")
 Keyword("draggable")
 Keyword("edgescroll")
 Keyword("xadjustment")
@@ -348,11 +364,17 @@ Keyword("yadjustment")
 Keyword("xinitial")
 Keyword("yinitial")
 Keyword("scrollbars")
+Keyword("spacing")
 Style("spacing")
 Style("xminimum")
 Style("yminimum")
 PrefixStyle("side_", "spacing")
 add(side_position_properties)
+add(scrollbar_position_properties)
+add(vscrollbar_position_properties)
+add(scrollbar_bar_properties)
+add(vscrollbar_bar_properties)
+add(viewport_position_properties)
 
 DisplayableParser("imagemap", renpy.ui._imagemap, "imagemap", many, imagemap=True)
 Keyword("ground")
@@ -404,11 +426,12 @@ def sl2add(d, replaces=None, scope=None, **kwargs):
     if kwargs:
         rv = Transform(child=d, **kwargs)
 
-    if isinstance(rv, Transform):
+    if (replaces is not None) and isinstance(rv, Transform):
         rv.take_state(replaces)
         rv.take_execution_state(replaces)
 
     return rv
+
 
 for name in [ "add", "image" ]:
     DisplayableParser(name, sl2add, None, 0, replaces=True, default_properties=False, scope=True)

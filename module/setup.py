@@ -54,7 +54,7 @@ setup_env("LD")
 setup_env("CXX")
 
 import setuplib
-from setuplib import android, ios, include, library, cython, copyfile, find_unnecessary_gen
+from setuplib import android, ios, raspi, include, library, cython, copyfile, find_unnecessary_gen
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
@@ -66,6 +66,9 @@ if platform.win32_ver()[0]:
     setuplib.extra_compile_args.append("-fno-strict-aliasing")
 else:
     windows = False
+
+if raspi:
+    setuplib.extra_compile_args.append("-DRASPBERRY_PI")
 
 include("zlib.h")
 include("png.h")
@@ -174,6 +177,10 @@ if (android or ios):
     glew_libs = [ 'GLESv2', 'z', 'm' ]
     gl2_only = True
     egl = "egl_none.c"
+elif raspi:
+    glew_libs = [ 'SDL2', 'GLESv2', 'EGL', 'z', 'm' ]
+    gl2_only = True
+    egl = "egl_x11.c"
 elif has_libglew:
     glew_libs = [ 'GLEW' ]
     gl2_only = False

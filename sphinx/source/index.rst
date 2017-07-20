@@ -65,6 +65,15 @@ Customizing Ren'Py
    config
    store_variables
 
+Tools
+-----
+
+.. toctree::
+    :maxdepth: 1
+
+    developer_tools
+    director
+
 Other Functionality
 -------------------
 
@@ -78,7 +87,6 @@ Other Functionality
    drag_drop
    sprites
    keymap
-   developer_tools
    achievement
    history
 

@@ -62,7 +62,7 @@
         value.
      
 
-.. function:: HideInterface()
+.. function:: HideInterface(*args, **kwargs)
     
     Causes the interface to be hidden until the user clicks.
 
@@ -99,7 +99,7 @@
     
     Queues the given event using :func:`renpy.queue_event`.
 
-.. function:: RestartStatement()
+.. function:: RestartStatement(*args, **kwargs)
     
     This action causes Ren'Py to rollback to before the current
     statement, and then re-run the current statement. This may be used
@@ -109,12 +109,12 @@
     If run in a menu context, this waits until the player exits to a
     top-level context before performing the rollback.
 
-.. function:: RollForward()
+.. function:: RollForward(*args, **kwargs)
     
     This action causes a rollforward to occur, if a roll forward is
     possible. Otherwise, it is insensitive.
 
-.. function:: Rollback()
+.. function:: Rollback(*args, **kwargs)
     
     This action causes a rollback to occur, when a rollback is possible.
     Otherwise, nothing happens.
@@ -124,7 +124,7 @@
     This causes a rollback to an identifier to occur. Rollback
     identifiers are returned as part of HistoryEntry objects.
 
-.. function:: Screenshot()
+.. function:: Screenshot(*args, **kwargs)
     
     Takes a screenshot.
 

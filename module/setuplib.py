@@ -36,6 +36,9 @@ android = "RENPY_ANDROID" in os.environ
 # True if we're building on ios.
 ios = "RENPY_IOS" in os.environ
 
+# True of we're building on raspberry pi.
+raspi = "RENPY_RASPBERRY_PI" in os.environ
+
 # Is coverage enabled?
 coverage = "RENPY_COVERAGE" in os.environ
 
@@ -146,6 +149,7 @@ def library(name, optional=False):
 
     print("Could not find required library {0}.".format(name))
     sys.exit(-1)
+
 
 # A list of extension objects that we use.
 extensions = [ ]
@@ -386,6 +390,7 @@ def setup(name, version):
         ext_modules=extensions,
         py_modules=py_modules,
         )
+
 
 # Ensure the gen directory exists.
 if not os.path.exists(gen):

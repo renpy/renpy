@@ -45,6 +45,9 @@ class ParseError(Exception):
         message = u"File \"%s\", line %d: %s" % (unicode_filename(filename), number, msg)
 
         if line:
+            if isinstance(line, list):
+                line = "".join(line)
+
             lines = line.split('\n')
 
             if len(lines) > 1:
@@ -213,6 +216,8 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
     # The current position we're looking at in the buffer.
     pos = 0
 
+    # Are we looking at a triple-quoted string?
+
     # Skip the BOM, if any.
     if len(data) and data[0] == u'\ufeff':
         pos += 1
@@ -316,6 +321,13 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
                 pos += 1
 
                 escape = False
+                triplequote = False
+
+                if (pos < len_data - 1) and (data[pos] == delim) and (data[pos+1] == delim):
+                    line.append(delim)
+                    line.append(delim)
+                    pos += 2
+                    triplequote = True
 
                 while pos < len_data:
 
@@ -335,9 +347,18 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
                         continue
 
                     if c == delim:
-                        pos += 1
-                        line.append(c)
-                        break
+
+                        if not triplequote:
+                            pos += 1
+                            line.append(c)
+                            break
+
+                        if (pos < len_data - 2) and (data[pos+1] == delim) and (data[pos+2] == delim):
+                            pos += 3
+                            line.append(delim)
+                            line.append(delim)
+                            line.append(delim)
+                            break
 
                     if c == u'\\':
                         escape = True
@@ -701,18 +722,30 @@ class Lexer(object):
         # Strip off delimiters.
         s = s[1:-1]
 
+        def dequote(m):
+            c = m.group(1)
+
+            if c == "{":
+                return "{{"
+            elif c == "[":
+                return "[["
+            elif c == "%":
+                return "%%"
+            elif c == "n":
+                return "\n"
+            elif c[0] == 'u':
+                group2 = m.group(2)
+
+                if group2:
+                    return unichr(int(m.group(2), 16))
+            else:
+                return c
+
         if not raw:
 
             # Collapse runs of whitespace into single spaces.
             s = re.sub(r'\s+', ' ', s)
-
-            s = s.replace("\\n", "\n")
-            s = s.replace("\\{", "{{")
-            s = s.replace("\\[", "[[")
-            s = s.replace("\\%", "%%")
-            s = re.sub(r'\\u([0-9a-fA-F]{1,4})',
-                       lambda m : unichr(int(m.group(1), 16)), s)
-            s = re.sub(r'\\(.)', r'\1', s)
+            s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)
 
         return s
 
@@ -1088,7 +1121,7 @@ class Lexer(object):
         object, which is called directly.
         """
 
-        if isinstance(thing, str):
+        if isinstance(thing, basestring):
             name = name or thing
             rv = self.match(thing)
         else:

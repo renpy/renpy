@@ -162,7 +162,7 @@ screen front_page_project_list:
 
             null height 12
 
-        textbutton _("Tutorial") action project.Select("tutorial") style "l_list" alt _("Select project [text].")
+        textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
         textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
 
 
@@ -178,7 +178,7 @@ screen front_page_project:
 
         frame style "l_label":
             has hbox xfill True
-            text "[p.name!q]" style "l_label_text"
+            text "[p.display_name!q]" style "l_label_text"
             label _("Active Project") style "l_alternate"
 
         grid 2 1:

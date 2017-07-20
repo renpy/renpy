@@ -23,7 +23,7 @@ translate arabic strings:
 
     # 00gltest.rpy:93
     old "Enable"
-    new "Enable"
+    new "تفعيل"
 
     # 00gltest.rpy:109
     old "Changes will take effect the next time this program is run."
@@ -91,27 +91,27 @@ translate arabic strings:
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "Select Gamepad to Calibrate"
+    new "الرجاء اختيار يد التحكم التي ترغب في تهيئتها"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "No Gamepads Available"
+    new "لا توجد يد تحكم"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
-    new "Calibrating [name] ([i]/[total])"
+    new "يتم تهيئة [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
     old "Press or move the [control!r] [kind]."
-    new "Press or move the [control!r] [kind]."
+    new "الرجاء ضغط الزر او تحريك [control!r] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    new "Skip (A)"
+    new "تخطي (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
-    new "Back (B)"
+    new "عودة (B)"
 
     # _errorhandling.rpym:495
     old "Open Traceback"
@@ -123,11 +123,11 @@ translate arabic strings:
 
     # _errorhandling.rpym:499
     old "Copy to Clipboard"
-    new "Copy to Clipboard"
+    new "نسخ إلى الحافظة"
 
     # _errorhandling.rpym:501
     old "Copies the traceback.txt file to the clipboard."
-    new "Copies the traceback.txt file to the clipboard."
+    new "ينسخ ملف trackback.txt إلى الحافظة."
 
     # _errorhandling.rpym:519
     old "An exception has occurred."

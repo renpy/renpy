@@ -343,15 +343,16 @@ def main():
     # labels as in other scripts (usually happens on script rename).
     if (renpy.game.args.command == 'compile') and not (renpy.game.args.keep_orphan_rpyc):  # @UndefinedVariable
 
-        for (fn, _dir) in renpy.game.script.script_files:
+        for (fn, dn) in renpy.game.script.script_files:
 
-            if dir is None:
+            if dn is None:
                 continue
 
-            if not os.path.isfile(os.path.join(dir, fn+".rpy")):
+            if not os.path.isfile(os.path.join(dn, fn + ".rpy")):
+
                 try:
-                    name = os.path.join(dir, fn+".rpyc")
-                    os.rename(name, name+".bak")
+                    name = os.path.join(dn, fn + ".rpyc")
+                    os.rename(name, name + ".bak")
                 except OSError:
                     # This perhaps shouldn't happen since either .rpy or .rpyc should exist
                     pass

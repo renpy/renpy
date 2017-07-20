@@ -301,7 +301,7 @@ screen android:
 
             has vbox
 
-            label _("Android: [project.current.name!q]")
+            label _("Android: [project.current.display_name!q]")
 
             add HALF_SPACER
 

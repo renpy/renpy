@@ -49,6 +49,7 @@ init python:
 
 
 default persistent.legacy = False
+default persistent.force_new_tutorial = False
 
 screen preferences:
 
@@ -178,6 +179,8 @@ screen preferences:
                         if renpy.windows:
                             textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
 
+                        textbutton _("Force new tutorial") style "l_checkbox" action [ ToggleField(persistent, "force_new_tutorial"), project.SelectTutorial(True) ]
+
                         textbutton _("Legacy options") style "l_checkbox" action ToggleField(persistent, "legacy")
 
                         if persistent.legacy:
@@ -230,7 +233,7 @@ screen preferences:
                                 # frame style "l_indent":
 
                                 for tlname, tlvalue in translations:
-                                    textbutton tlname action Language(tlvalue) style "l_list"
+                                    textbutton tlname action [ Language(tlvalue), project.SelectTutorial(True) ] style "l_list"
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"

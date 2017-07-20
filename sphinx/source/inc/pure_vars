@@ -208,6 +208,7 @@
 * renpy.curry
 * renpy.easy_displayable
 * :func:`renpy.exists`
+* :func:`renpy.filter_text_tags`
 * :func:`renpy.fsdecode`
 * :func:`renpy.fsencode`
 * :func:`renpy.get_all_labels`

@@ -98,7 +98,7 @@ def transform_render(self, widtho, heighto, st, at):
     child = self.child
 
     if child is None:
-        raise Exception("Transform does not have a child.")
+        child = renpy.display.transform.get_null()
 
     state = self.state
 

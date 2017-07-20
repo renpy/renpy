@@ -33,6 +33,7 @@ class TTSRoot(Exception):
     displayable.
     """
 
+
 # The root of the scene.
 root = None
 
@@ -49,6 +50,11 @@ def periodic():
     if process is not None:
         if process.poll() is not None:
             process = None
+
+
+def is_active():
+
+    return process is not None
 
 
 def default_tts_function(s):
@@ -87,7 +93,12 @@ def default_tts_function(s):
 
     fsencode = renpy.exports.fsencode
 
-    if renpy.linux:
+    if "RENPY_TTS_COMMAND" in os.environ:
+
+        process = subprocess.Popen([ os.environ["RENPY_TTS_COMMAND"], fsencode(s) ])
+
+    elif renpy.linux:
+
         if renpy.config.tts_voice is None:
             process = subprocess.Popen([ "espeak", fsencode(s) ])
         else:
@@ -144,6 +155,7 @@ def speak(s, translate=True, force=False):
 def set_root(d):
     global root
     root = d
+
 
 # The old value of the self_voicing preference.
 old_self_voicing = False

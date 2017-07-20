@@ -13,7 +13,7 @@
     conjunction with renpy.run_screen to define an imagemap that jumps
     to a label when run.
 
-.. function:: NullAction()
+.. function:: NullAction(*args, **kwargs)
     
     Does nothing.
     

@@ -392,7 +392,10 @@ class Script(object):
             filename = renpy.parser.elide_filename(filename)
 
             if not all_stmts[0].filename.lower().endswith(filename.lower()):
-                filename += "c"
+
+                if filename[-1] != "c":
+                    filename += "c"
+
                 for i in all_stmts:
                     i.filename = filename
 
@@ -750,7 +753,7 @@ class Script(object):
         elif self.key != data['key']:
             raise Exception( fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
 
-        self.finish_load(stmts, initcode, filename=fn + source)
+        self.finish_load(stmts, initcode, filename=lastfn)
 
         self.digest.update(digest)
 

@@ -117,6 +117,9 @@ init -1100 python in gui:
 
         backgrounds.append("gui/button/[prefix_]background.png")
 
+        if renpy.variant("small"):
+            backgrounds = [ i.replace("gui/button", "gui/phone/button") for i in backgrounds ] + backgrounds
+
         rv = {
             "background" : Frame(backgrounds, borders or button_borders, tile=tile),
         }
@@ -260,11 +263,19 @@ init -1100 python in gui:
         if not config.developer:
             return
 
+        phone = renpy.variant("small")
+
         class Image(object):
 
             def __init__(self, dn, fn, width, height):
                 self.s = pygame_sdl2.Surface((width, height), pygame_sdl2.SRCALPHA)
-                self.fn = os.path.join(config.gamedir, "gui", dn, fn + ".png")
+
+
+                if phone:
+                    self.fn = os.path.join(config.gamedir, "gui", "phone", dn, fn + ".png")
+                else:
+                    self.fn = os.path.join(config.gamedir, "gui", dn, fn + ".png")
+
                 self.width = width
                 self.height = height
 
@@ -336,7 +347,11 @@ init -1100 python in gui:
 
         # Buttons
         width = scale(gui.button_width, 300)
-        height = scale(gui.button_height, 40)
+
+        if phone:
+            height = scale(gui.button_height, 43)
+        else:
+            height = scale(gui.button_height, 33)
 
         check_width = gui.check_button_borders.padding[0]
         check_rect = (
@@ -372,8 +387,10 @@ init -1100 python in gui:
         Image("bar", "bottom", gui.bar_size, long_size).fill(gui.hover_color).save()
         Image("bar", "top", gui.bar_size, long_size).fill(gui.muted_color).save()
 
-        thumb_size = scale(None, 15)
-
+        if phone:
+            thumb_size = scale(None, 15)
+        else:
+            thumb_size = scale(None, 10)
 
         Image("slider", "horizontal_idle_bar", long_size, gui.slider_size).fill(gui.muted_color).save()
         Image("slider", "horizontal_idle_thumb", thumb_size, gui.slider_size).fill(gui.accent_color).save()

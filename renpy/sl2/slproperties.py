@@ -54,6 +54,9 @@ position_property_names = [
 position_properties = [ Style(i) for i in position_property_names ]
 text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ]
 side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ]
+viewport_position_properties = [ PrefixStyle("viewport_", i) for i in position_property_names ]
+scrollbar_position_properties = [ PrefixStyle("scrollbar_", i) for i in position_property_names ]
+vscrollbar_position_properties = [ PrefixStyle("vscrollbar_", i) for i in position_property_names ]
 
 text_property_names = [
     "antialias",
@@ -139,7 +142,8 @@ button_properties = [ Style(i) for i in [
         Keyword("alternate_keysym"),
     ]
 
-bar_properties = [ Style(i) for i in [
+
+bar_property_names =  [
     "bar_vertical",
     "bar_invert",
     "bar_resizing",
@@ -158,7 +162,12 @@ bar_properties = [ Style(i) for i in [
     "mouse",
     "unscrollable",
     "keyboard_focus",
-    ] ]
+    ]
+
+bar_properties = [ Style(i) for i in bar_property_names ]
+scrollbar_bar_properties = [ PrefixStyle("scrollbar_", i) for i in bar_property_names ]
+vscrollbar_bar_properties = [ PrefixStyle("vscrollbar_", i) for i in bar_property_names ]
+
 
 box_properties = [ Style(i) for i in [
     "box_layout",

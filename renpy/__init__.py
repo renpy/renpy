@@ -291,6 +291,7 @@ class Backup():
             mod, field = k
             setattr(mod, field, objects[v])
 
+
 # A backup of the Ren'Py modules after initial import.
 backup = None
 
@@ -328,6 +329,7 @@ def import_all():
 
     import renpy.arguments  # @UnresolvedImport
 
+    import renpy.config
     import renpy.log
 
     import renpy.display
@@ -465,7 +467,6 @@ def import_all():
     import renpy.add_from
     import renpy.dump
 
-    import renpy.config  # depends on lots. @UnresolvedImport
     import renpy.minstore  # depends on lots. @UnresolvedImport
     import renpy.defaultstore  # depends on everything. @UnresolvedImport
 

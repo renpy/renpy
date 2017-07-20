@@ -2264,7 +2264,7 @@ class Interface(object):
         else:
             visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
 
-        visible = visible and self.show_mouse
+        visible = visible and self.show_mouse and not (renpy.display.video.fullscreen)
 
         # If not visible, hide the mouse.
         if not visible:
@@ -2543,6 +2543,7 @@ class Interface(object):
 
             self.restart_interaction = True
 
+            renpy.game.context().mark_seen()
             renpy.game.context().scene_lists.shown_window = False
 
     def interact_core(self,
@@ -2796,6 +2797,11 @@ class Interface(object):
         # Now, update various things regarding scenes and transitions,
         # so we are ready for a new interaction or a restart.
         self.old_scene = scene
+
+        # Something updated the screens. Deal with it now, so the player doesn't
+        # see it.
+        if self.restart_interaction:
+            return True, None
 
         # Okay, from here on we now have a single root widget (root_widget),
         # which we will try to show to the user.

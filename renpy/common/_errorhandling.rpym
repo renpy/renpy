@@ -540,7 +540,10 @@ screen _exception:
         has side "t c b":
             spacing gui._scale(10)
 
-        label _("An exception has occurred.")
+        side "c r":
+            xfill True
+            label _("An exception has occurred.")
+            text "{size=-3}[config.version!q]\n[renpy.version_only!q]\n[renpy.platform!q]{/size}" text_align 1.0 yalign 0.5
 
         viewport:
             id "viewport"

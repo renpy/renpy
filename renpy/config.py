@@ -23,9 +23,6 @@
 # This includes both simple settings (like the screen dimensions) and
 # methods that perform standard tasks, like the say and menu methods.
 
-# This will be deleted by the end of this file.
-import renpy.display
-
 import collections
 import os
 
@@ -246,8 +243,11 @@ editor_file_separator = None  # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '"
 # Enable developer mode?
 developer = False  # Changed to True or False in the init code.
 
-# The original value of config.developer.
+# The value of developer requested by the creator (True, False, or "auto")
 original_developer = False
+
+# The default value of developer that's used when it's set to auto.
+default_developer = False
 
 # A logfile that logging messages are sent to.
 log = None
@@ -302,13 +302,13 @@ autosave_slots = 10
 autosave_frequency = int(os.environ.get("RENPY_AUTOSAVE_FREQUENCY", "200"))
 
 # The callback that is used by the scene statement.
-scene = renpy.exports.scene
+scene = None
 
 # The callback that is used by the show statement.
-show = renpy.exports.show
+show = None
 
 # The callback that is used by the hide statement.
-hide = renpy.exports.hide
+hide = None
 
 # Should we use cPickle or pickle for load/save?
 use_cpickle = True
@@ -516,7 +516,7 @@ choice_layer = "screens"
 raw_tracebacks = ("RENPY_RAW_TRACEBACKS" in os.environ)
 
 # A function to process texts which should be spoken
-tts_function = renpy.display.tts.default_tts_function
+tts_function = None
 
 # Channels that stop voice playback.
 tts_voice_channels = [ "voice" ]
@@ -772,9 +772,27 @@ stderr_callbacks = [ ]
 # Should ATL automatically cause polar motion when angle changes.
 automatic_polar_motion = True
 
-del renpy
+# Functions that are called to generate lint stats.
+lint_stats_callbacks = [ ]
+
+# Should we apply position properties to the side of a viewport?
+position_viewport_side = True
+
 del os
+del collections
 
 
 def init():
-    pass
+    import renpy.display
+
+    global scene
+    scene = renpy.exports.scene
+
+    global show
+    show = renpy.exports.show
+
+    global hide
+    hide = renpy.exports.hide
+
+    global tts_function
+    tts_function = renpy.display.tts.default_tts_function
