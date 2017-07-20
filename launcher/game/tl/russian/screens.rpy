@@ -42,8 +42,8 @@ translate russian strings:
     new "## Этот экран должен создать наложение ввода с id \"input\", чтобы принять различные вводимые параметры."
 
     # screens.rpy:167
-    old "## http://www.renpy.org/doc/html/screen_special.html#input"
-    new "## http://www.renpy.org/doc/html/screen_special.html#input"
+    old "## https://www.renpy.org/doc/html/screen_special.html#input"
+    new "## https://www.renpy.org/doc/html/screen_special.html#input"
 
     # screens.rpy:194
     old "## Choice screen"
@@ -54,8 +54,8 @@ translate russian strings:
     new "## Этот экран используется, чтобы показывать внутриигровые выборы, представленные оператором menu. Один параметр, вложения, список объектов, каждый с заголовком и полями действия."
 
     # screens.rpy:200
-    old "## http://www.renpy.org/doc/html/screen_special.html#choice"
-    new "## http://www.renpy.org/doc/html/screen_special.html#choice"
+    old "## https://www.renpy.org/doc/html/screen_special.html#choice"
+    new "## https://www.renpy.org/doc/html/screen_special.html#choice"
 
     # screens.rpy:210
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
@@ -170,8 +170,8 @@ translate russian strings:
     new "## Используется, чтобы показывать главное меню, когда Ren'Py запустилась."
 
     # screens.rpy:345
-    old "## http://www.renpy.org/doc/html/screen_special.html#main-menu"
-    new "## http://www.renpy.org/doc/html/screen_special.html#main-menu"
+    old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+    new "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
 
     # screens.rpy:349
     old "## This ensures that any other menu screen is replaced."
@@ -578,7 +578,7 @@ translate russian strings:
     new "## Экран подтверждения вызывается, когда Ren'Py хочет спросить у пользователя вопрос да или нет."
 
     # screens.rpy:1127
-    old "## http://www.renpy.org/doc/html/screen_special.html#confirm"
+    old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
     new "## https://www.renpy.org/doc/html/screen_special.html#confirm"
 
     # screens.rpy:1131
@@ -642,7 +642,7 @@ translate russian strings:
     new "## Этот экран используется в диалогах и меню режима NVL."
 
     # screens.rpy:1284
-    old "## http://www.renpy.org/doc/html/screen_special.html#nvl"
+    old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
     new "## https://www.renpy.org/doc/html/screen_special.html#nvl"
 
     # screens.rpy:1295
