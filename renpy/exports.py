@@ -1646,6 +1646,8 @@ version_only = renpy.version_only
 version_name = renpy.version_name
 version_tuple = renpy.version_tuple
 license = ""  # @ReservedAssignment
+import platform as _platform
+platform = "-".join(_platform.platform().split("-")[:2])
 
 
 def transition(trans, layer=None, always=False, force=False):
