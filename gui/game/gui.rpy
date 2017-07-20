@@ -431,7 +431,6 @@ init python:
         gui.text_xpos = gui.scale(90)
         gui.text_width = gui.scale(1100)
 
-
         ## Change the size and spacing of various things.
         gui.slider_size = gui.scale(36)
 
