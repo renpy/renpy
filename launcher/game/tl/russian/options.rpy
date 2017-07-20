@@ -186,10 +186,14 @@ translate russian strings:
     new "## Файлы, соответствующие образцам документации, дублируются в приложениях Mac так, чтобы они появлялись и в приложении, и в zip архиве."
 
     # options.rpy:196
+    old "## Set this to a string containing your Apple Developer ID Application to enable codesigning on the Mac. Be sure to change it to your own Apple-issued ID."
+    new "## Эта строка отвечает за подписывание игры на Mac с помощью вашего Apple ID. Подписывайте только со своего Apple Developer ID."
+
+    # options.rpy:203
     old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
     new "## Лицензионный ключ Google Play требуется для загрузки файлов расширений и поддержки внутриигровых покупок. Он может быть найден на странице \"Services & APIs\" консоли разработчика Google Play."
 
-    # options.rpy:203
+    # options.rpy:210
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Имя пользователя и название проекта, ассоциированные с проектом на itch.io, разделённые дробью."
 

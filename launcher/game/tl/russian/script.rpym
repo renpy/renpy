@@ -6,15 +6,15 @@ define e = Character('Эйлин', color="#c8ffc8")
 # Вместо использования оператора image, можете просто
 # складывать все ваши файлы изображений в папку images.
 # Например, bg room ниже можно проименовать "bg room.png",
-# а eileen happy "eileen happy.webp", и тогда они появятся в игре.
+# а eileen happy — "eileen happy.webp", и тогда они появятся в игре.
 
-# Игра начинается здесь.
+# Игра начинается здесь:
 label start:
-    
+
     scene bg room
-    
+
     show eileen happy
-    
+
     e "Вы создали новую игру Ren'Py."
 
     e "Добавьте сюжет, изображения и музыку и отправьте её в мир!"
