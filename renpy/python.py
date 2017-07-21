@@ -35,7 +35,6 @@ import marshal
 import random
 import weakref
 import re
-import sets
 import sys
 import time
 
@@ -842,7 +841,13 @@ class RevertableDict(dict):
             self[k] = v
 
 
-class RevertableSet(sets.Set):
+class RevertableSet(set):
+
+    def __setstate__(self, state):
+        if isinstance(state, tuple):
+            self.update(state[0].keys())
+        else:
+            self.update(state)
 
     def __init__(self, *args):
         log = renpy.game.log
@@ -850,44 +855,42 @@ class RevertableSet(sets.Set):
         if log is not None:
             log.mutated[id(self)] = None
 
-        sets.Set.__init__(self, *args)
+        set.__init__(self, *args)
 
-    __iand__ = mutator(sets.Set.__iand__)
-    __ior__ = mutator(sets.Set.__ior__)
-    __isub__ = mutator(sets.Set.__isub__)
-    __ixor__ = mutator(sets.Set.__ixor__)
-    add = mutator(sets.Set.add)
-    clear = mutator(sets.Set.clear)
-    difference_update = mutator(sets.Set.difference_update)
-    discard = mutator(sets.Set.discard)
-    intersection_update = mutator(sets.Set.intersection_update)
-    pop = mutator(sets.Set.pop)
-    remove = mutator(sets.Set.remove)
-    symmetric_difference_update = mutator(sets.Set.symmetric_difference_update)
-    union_update = mutator(sets.Set.union_update)
-    update = mutator(sets.Set.update)
+    __iand__ = mutator(set.__iand__)
+    __ior__ = mutator(set.__ior__)
+    __isub__ = mutator(set.__isub__)
+    __ixor__ = mutator(set.__ixor__)
+    add = mutator(set.add)
+    clear = mutator(set.clear)
+    difference_update = mutator(set.difference_update)
+    discard = mutator(set.discard)
+    intersection_update = mutator(set.intersection_update)
+    pop = mutator(set.pop)
+    remove = mutator(set.remove)
+    symmetric_difference_update = mutator(set.symmetric_difference_update)
+    union_update = mutator(set.update)
+    update = mutator(set.update)
 
-    def wrapper(method):  # E0213 @NoSelf
+    def wrapper(method):  # @NoSelf
         def newmethod(*args, **kwargs):
-            rv = method(*args, **kwargs)  # E1102
-            if isinstance(rv, sets.Set):
+            rv = method(*args, **kwargs)
+            if isinstance(rv, (set, frozenset)):
                 return RevertableSet(rv)
             else:
                 return rv
 
         return newmethod
 
-    __and__ = wrapper(sets.Set.__and__)
-    __copy__ = wrapper(sets.Set.__copy__)
-    __deepcopy__ = wrapper(sets.Set.__deepcopy__)
-    __sub__ = wrapper(sets.Set.__sub__)
-    __xor__ = wrapper(sets.Set.__xor__)
-    __or__ = wrapper(sets.Set.__or__)
-    copy = wrapper(sets.Set.copy)
-    difference = wrapper(sets.Set.difference)
-    intersection = wrapper(sets.Set.intersection)
-    symmetric_difference = wrapper(sets.Set.symmetric_difference)
-    union = wrapper(sets.Set.union)
+    __and__ = wrapper(set.__and__)
+    __sub__ = wrapper(set.__sub__)
+    __xor__ = wrapper(set.__xor__)
+    __or__ = wrapper(set.__or__)
+    copy = wrapper(set.copy)
+    difference = wrapper(set.difference)
+    intersection = wrapper(set.intersection)
+    symmetric_difference = wrapper(set.symmetric_difference)
+    union = wrapper(set.union)
 
     del wrapper
 
@@ -898,8 +901,8 @@ class RevertableSet(sets.Set):
         return clean
 
     def _rollback(self, compressed):
-        sets.Set.clear(self)
-        sets.Set.update(self, compressed)
+        set.clear(self)
+        set.update(self, compressed)
 
 
 class RevertableObject(object):
