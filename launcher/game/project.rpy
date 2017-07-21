@@ -636,6 +636,9 @@ init python in project:
             persistent.active_project = p.name
 
         def get_sensitive(self):
+            if self.if_tutorial:
+                return True
+
             return (manager.get_tutorial() is not None)
 
         def get_selected(self):
