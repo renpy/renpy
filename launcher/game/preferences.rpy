@@ -50,6 +50,7 @@ init python:
 
 default persistent.legacy = False
 default persistent.force_new_tutorial = False
+default persistent.sponsor_message = True
 
 screen preferences:
 
@@ -186,7 +187,7 @@ screen preferences:
                         if persistent.legacy:
                             textbutton _("Show templates") style "l_checkbox" action ToggleField(persistent, "show_templates")
 
-
+                        textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 
                 frame:
                     style "l_indent"

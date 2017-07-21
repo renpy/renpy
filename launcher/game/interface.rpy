@@ -22,7 +22,7 @@
 ################################################################################
 # Interface actions.
 init python in interface:
-    from store import OpenURL, config, Return
+    from store import OpenURL, config, Return, _preferences
     import store
 
     import os.path
@@ -66,6 +66,15 @@ init python in interface:
         else:
             return OpenURL(LICENSE_URL)
 
+    def get_sponsor_url():
+        """
+        Returns the URL to the sponsors page.
+        """
+
+        return "https://www.renpy.org/sponsors.html?version={}&language={}".format(
+            renpy.version_only,
+            _preferences.language or "english"
+        )
 
     # Should we display the bottom links?
     links = True
@@ -99,6 +108,9 @@ screen bottom_info:
             ypos 536
             yanchor 0.0
 
+            has vbox:
+                spacing 20
+
             hbox:
                 xfill True
 
@@ -118,6 +130,20 @@ screen bottom_info:
 
                     textbutton _("preferences") style "l_link" action Jump("preferences")
                     textbutton _("quit") style "l_link" action Quit(confirm=False)
+
+            if persistent.sponsor_message:
+
+                textbutton _("Ren'Py Sponsor Information"):
+                    style "l_link"
+                    text_color "#F96854"
+                    text_hover_color Color("#F96854").tint(.8)
+
+                    xalign 0.0
+                    yalign 1.0
+                    yoffset -10
+
+                    action OpenURL(interface.get_sponsor_url())
+
 
 
 screen common:

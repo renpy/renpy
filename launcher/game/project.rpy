@@ -647,6 +647,9 @@ init python in project:
 
             p = manager.get_tutorial()
 
+            if p is None:
+                return False
+
             if current is None:
                 return False
 
