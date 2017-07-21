@@ -352,13 +352,6 @@ init python:
             self.__dict__ = { "target" : self.target }
 
 
-    style.selected_button = _SelectedCompat('button')
-    style.selected_button_text = _SelectedCompat('button_text')
-    style.gm_nav_selected_button = _SelectedCompat('gm_nav_button')
-    style.gm_nav_selected_button_text = _SelectedCompat('gm_nav_button_text')
-    style.prefs_selected_button = _SelectedCompat('prefs_button')
-    style.prefs_selected_button_text = _SelectedCompat('prefs_button_text')
-
     def _apply_selected_compat():
         for scs in _selected_compat:
             target = getattr(style, scs.target)

@@ -696,7 +696,7 @@ class Init(Node):
 
     def execute(self):
         next_node(self.next)
-        renpy.execution.not_infinite_loop(60)
+        renpy.execution.not_infinite_loop(300)
         statement_name("init")
 
     def restructure(self, callback):
@@ -858,7 +858,7 @@ class EarlyPython(Node):
 
     def execute(self):
         next_node(self.next)
-        renpy.execution.not_infinite_loop(60)
+        renpy.execution.not_infinite_loop(300)
         statement_name("python early")
 
     def early_execute(self):
