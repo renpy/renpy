@@ -24,7 +24,6 @@
 # location.
 
 import renpy
-import sets
 
 warp_spec = None
 
@@ -57,8 +56,8 @@ def warp():
 
     prev = { }
 
-    workset = sets.Set([ n for n in renpy.game.script.namemap.itervalues() if isinstance(n, renpy.ast.Scene) ])
-    seenset = sets.Set(workset)
+    workset = { n for n in renpy.game.script.namemap.itervalues() if isinstance(n, renpy.ast.Scene) }
+    seenset = set(workset)
 
     # This is called to indicate that next can be executed following node.
     def add(node, next):  # @ReservedAssignment
