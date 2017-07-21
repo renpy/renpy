@@ -405,6 +405,18 @@ class WrapNode(ast.NodeTransformer):
             starargs=None,
             kwargs=None)
 
+    def visit_Set(self, n):
+
+        return ast.Call(
+            func=ast.Name(
+                id="__renpy__set__",
+                ctx=ast.Load()
+                ),
+            args=[ self.generic_visit(n) ],
+            keywords=[ ],
+            starargs=None,
+            kwargs=None)
+
     def visit_ListComp(self, n):
         return ast.Call(
             func=ast.Name(
@@ -1425,9 +1437,9 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                        and data == fwd_data
-                        and (keep_rollback or self.rolled_forward)
-                    ):
+                            and data == fwd_data
+                            and (keep_rollback or self.rolled_forward)
+                        ):
                     self.forward.pop(0)
                 else:
                     self.forward = [ ]
