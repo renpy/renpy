@@ -27,7 +27,7 @@ translate russian strings:
 
     # 00console.rpy:476
     old " <python expression or statement>: run the expression or statement"
-    new " <python expression или statement>: запустить выражение или оператора"
+    new " <python expression или statement>: запустить выражение или оператор"
 
     # 00console.rpy:484
     old "clear: clear the console history"

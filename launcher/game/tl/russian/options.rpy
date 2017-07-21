@@ -87,7 +87,7 @@ translate russian strings:
 
     # options.rpy:98
     old "## This controls when the dialogue window is displayed. If \"show\", it is always displayed. If \"hide\", it is only displayed when dialogue is present. If \"auto\", the window is hidden before scene statements and shown again once dialogue is displayed."
-    new "## Эта строка контролирует, когда появляется диалоговое окно. Если \"show\", оно всегда показано. Если \"hide\", оно показывается, только когда представлен диалог. Если \"auto\", окно скрыто до оператора scene и показывается, когда появляется диалог."
+    new "## Эта строка контролирует, когда появляется диалоговое окно. Если \"show\", оно всегда показано. Если \"hide\", оно показывается, только когда представлен диалог. Если \"auto\", окно скрыто до появления оператора scene и показывается при появлении диалога."
 
     # options.rpy:103
     old "## After the game has started, this can be changed with the \"window show\", \"window hide\", and \"window auto\" statements."
