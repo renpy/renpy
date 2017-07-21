@@ -21,7 +21,7 @@ translate russian end_b2482727:
 translate russian end_38362e36:
 
     # e "If you'd like to see a full Ren'Py game, select \"The Question\" in the launcher."
-    e "Если вы хотите увидеть полную Ren'Py-игру, выберите \"Вопрос\" в Launcher."
+    e "Если вы хотите увидеть полноценную Ren'Py-игру, выберите \"Вопрос\" в Launcher."
 
 # game/script.rpy:205
 translate russian end_02527d05:
@@ -45,7 +45,7 @@ translate russian end_762dc07a:
 translate russian end_a634d396:
 
     # e "We look forward to seeing what you create with Ren'Py. Have fun!"
-    e "Мы хотим увидеть, что вы сделаете с Ren'Py. Веселитесь!"
+    e "Мы хотим увидеть, что вы создадите вместе Ren'Py. Веселитесь!"
 
 translate russian strings:
 
