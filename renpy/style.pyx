@@ -192,6 +192,11 @@ class StyleManager(object):
     def __setattr__(self, name, value):
 
         if not isinstance(value, StyleCore):
+
+            if getattr(value, "_is_style_compat", False):
+                self.__dict__[name] = value
+                return
+
             raise Exception("Value is not a style.")
 
         cdef StyleCore style = value

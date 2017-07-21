@@ -340,35 +340,16 @@ init python:
 
     store._selected_compat = [ ]
 
-    class _SelectedCompat(renpy.style.Style):
+    class _SelectedCompat(object):
+
+        _is_style_compat = True
 
         def __init__(self, target):
-
             self.target = target
-            self.property_updates = [ ]
-
-            super(_SelectedCompat, self).__init__(target)
-
-            store._selected_compat.append(self)
-
-        def setattr(self, k, v):
-            super(_SelectedCompat, self).setattr(k, v)
-
-            try:
-                super(_SelectedCompat, self).setattr("selected_" + k, v)
-            except:
-                pass
-
-            self.property_updates.append((k, v))
-
-        def apply(self):
-            target = getattr(style, self.target)
-            for k, v in self.property_updates:
-                setattr(target, "selected_" + k, v)
+            _selected_compat.append(self)
 
         def clear(self):
-            super(_SelectedCompat, self).clear()
-            self.property_updates = [ ]
+            self.__dict__ = { "target" : self.target }
 
 
     style.selected_button = _SelectedCompat('button')
@@ -380,6 +361,12 @@ init python:
 
     def _apply_selected_compat():
         for scs in _selected_compat:
-            scs.apply()
+            target = getattr(style, scs.target)
+
+            for k, v in scs.__dict__.items():
+                if k == "target":
+                    continue
+
+                setattr(target, k, v)
 
     layout.compat_funcs.append(_apply_selected_compat)
