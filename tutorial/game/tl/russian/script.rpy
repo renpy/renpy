@@ -45,7 +45,7 @@ translate russian end_762dc07a:
 translate russian end_a634d396:
 
     # e "We look forward to seeing what you create with Ren'Py. Have fun!"
-    e "Мы хотим увидеть, что вы создадите вместе Ren'Py. Веселитесь!"
+    e "Мы хотим увидеть, что вы создадите вместе с Ren'Py. Веселитесь!"
 
 translate russian strings:
 
@@ -155,7 +155,7 @@ translate russian strings:
 
     # script.rpy:89
     old "Screen Displayables"
-    new "Объекты-экраны"
+    new "Экранные объекты"
 
     # script.rpy:91
     old "Minigames and CDDs"
