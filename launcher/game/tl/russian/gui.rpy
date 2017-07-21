@@ -418,7 +418,7 @@ translate russian strings:
     new "## Регулирует местоположение текстового окна."
 
     # gui.rpy:434
-    old "## Change the size and spacing of various things.."
+    old "## Change the size and spacing of various things."
     new "## Изменяет размеры и интервалы различных объектов."
 
     # gui.rpy:447
