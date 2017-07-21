@@ -51,9 +51,14 @@ def check_infinite_loop():
 
     global il_time
 
-    if time.time() > il_time:
-        il_time = time.time() + 60
+    now = time.time()
+
+    if now > il_time:
+        il_time = now + 60
         raise Exception("Possible infinite loop.")
+
+    if renpy.config.developer and (il_time > now + 60):
+        il_time = now + 60
 
     return
 
@@ -64,6 +69,11 @@ def not_infinite_loop(delay):
 
     Resets the infinite loop detection timer to `delay` seconds.
     """
+
+    # Give more time in non-developer mode, since computers can be crazy slow
+    # and the player can't do much about it.
+    if not renpy.config.developer:
+        delay *= 5
 
     global il_time
     il_time = time.time() + delay
