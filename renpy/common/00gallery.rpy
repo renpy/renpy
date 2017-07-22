@@ -444,7 +444,7 @@ init -1500 python:
                     else:
                         all_unlocked = False
 
-                        if self.unlocked_advance and (image == ii):
+                        if self.unlocked_advance and (button == bi) and (image == ii):
                             image += 1
 
             self.slideshow = False
@@ -452,7 +452,14 @@ init -1500 python:
             # Loop, displaying the images.
             while True:
 
+                if button >= len(self.button_list):
+                    break
+
                 b = self.button_list[button]
+
+                if image >= len(b.images):
+                    break
+
                 i = b.images[image]
 
                 result = i.show((button, image) not in unlocked_images, image, len(b.images))
