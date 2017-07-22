@@ -98,7 +98,7 @@ label demo_character:
 
         e7 "The what_xalign and what_textalign properties control the alignment of text, with 0.0 being left, 0.5 being center, and 1.0 being right."
 
-        e7 "The what_xalign property controls where all the text text itself is placed within the textbox, while what_textalign controls where rows of text are placed relative to each other."
+        e7 "The what_xalign property controls where all the text itself is placed within the textbox, while what_textalign controls where rows of text are placed relative to each other."
 
         e7 "Generally you'll want to to set them both what_xalign and what_textalign to the same value."
 
