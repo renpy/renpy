@@ -199,7 +199,7 @@ translate russian strings:
 
     # 00gui.rpy:245
     old "Are you sure you want to skip to the next choice?"
-    new "Вы хотите пропустить всё до следующего выбора?"
+    new "Вы точно хотите пропустить всё до следующего выбора?"
 
     # 00gui.rpy:246
     old "Are you sure you want to skip unseen dialogue to the next choice?"
@@ -231,15 +231,15 @@ translate russian strings:
 
     # 00preferences.rpy:442
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "Озвучка буфера обмена включена. Нажмите 'shift+C', чтобы отключить."
+    new "Озвучка буфера обмена включена. Нажмите 'shift+C', чтобы отключить её."
 
     # 00preferences.rpy:444
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Синтезатор речи должен сказать \"[renpy.display.tts.last]\". Нажмите 'alt+shift+V', чтобы отключить."
+    new "Синтезатор речи должен сказать \"[renpy.display.tts.last]\". Нажмите 'alt+shift+V', чтобы отключить его."
 
     # 00preferences.rpy:446
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Синтезатор речи включён. Нажмите 'v', чтобы отключить."
+    new "Синтезатор речи включён. Нажмите 'v', чтобы отключить его."
 
     # _compat\gamemenu.rpym:198
     old "Empty Slot."
@@ -335,7 +335,7 @@ translate russian strings:
 
     # _developer\inspector.rpym:38
     old "Displayable Inspector"
-    new "Инспектор отображений"
+    new "Диспетчер объектов"
 
     # _developer\inspector.rpym:61
     old "Size"
@@ -351,15 +351,15 @@ translate russian strings:
 
     # _developer\inspector.rpym:122
     old "Inspecting Styles of [displayable_name!q]"
-    new "Инспектировать стили [displayable_name!q]"
+    new "Инспектирую стили [displayable_name!q]"
 
     # _developer\inspector.rpym:139
     old "displayable:"
-    new "отображение:"
+    new "объект:"
 
     # _developer\inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "        (ни одна из настроек не влияет на отображение)"
+    new "        (на объект не влияют никакие параметры)"
 
     # _developer\inspector.rpym:147
     old "        (default properties omitted)"
@@ -431,7 +431,7 @@ translate russian strings:
 
     # 00updater.rpy:1410
     old "This program is up to date."
-    new "Это программа обновлена."
+    new "Эта программа обновлена."
 
     # 00updater.rpy:1412
     old "[u.version] is available. Do you want to install it?"
@@ -475,7 +475,7 @@ translate russian strings:
 
     # 00gallery.rpy:566
     old "Image [index] of [count] locked."
-    new "Изображение [index] из [count] заблокированных."
+    new "Изображение [index] из [count] закрыто."
 
     # 00gallery.rpy:586
     old "prev"

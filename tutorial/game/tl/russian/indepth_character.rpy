@@ -150,9 +150,9 @@ translate russian demo_character_8d35ebcd:
     e7 "Параметры what_xalign и what_textalign вместе контролируют выравнивание текста: 0.0 слева, 0.5 по центру, 1.0 справа."
 
 # game/indepth_character.rpy:101
-translate russian demo_character_6d9716f9:
+translate russian demo_character_7c75906c:
 
-    # e7 "The what_xalign property controls where all the text itself is placed within the textbox, while what_textalign controls where rows of text are placed relative to each other." ### text text
+    # e7 "The what_xalign property controls where all the text itself is placed within the textbox, while what_textalign controls where rows of text are placed relative to each other."
     e7 "Параметр what_xalign контролирует, где размещается текст по отношению к текстовой коробке, а what_textalign контролирует, как размещаются строки текста по отношению друг к другу."
 
 # game/indepth_character.rpy:103

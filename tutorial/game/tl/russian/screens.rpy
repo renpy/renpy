@@ -247,7 +247,7 @@ translate russian strings:
 
     # screens.rpy:1042
     old "Rolls back to earlier dialogue."
-    new "Возврат назад по сюжету игры."
+    new "Откат назад по сюжету игры."
 
     # screens.rpy:1045
     old "Page Down"
@@ -275,7 +275,7 @@ translate russian strings:
 
     # screens.rpy:1068
     old "Middle Click"
-    new "Средний клик"
+    new "Клик колёсиком"
 
     # screens.rpy:1072
     old "Right Click"

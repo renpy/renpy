@@ -318,9 +318,9 @@ translate russian button_displayables_49720fa6:
     e "Кнопка-изображение даёт вам наибольший контроль над видом кнопки, но её в разы труднее переводить, и она может потерять свой вид при изменении размеров экрана."
 
 # game/tutorial_screen_displayables.rpy:522
-translate russian button_displayables_eda4c43b:
+translate russian button_displayables_e8d40fc8:
 
-    # e "Buttons take Window window properties, that are used to specify the background, margins, and padding. They also take Button-specific properties, like a sound to play on hover." ### "Window window" is "Window style"
+    # e "Buttons take Window style properties, that are used to specify the background, margins, and padding. They also take Button-specific properties, like a sound to play on hover."
     e "Кнопки следуют стилевым параметрам окон, контролирующим фон, поля и окружающее их пространство. Есть также специфичные параметры для кнопок, например, которые проигрывают звук при наведении."
 
 # game/tutorial_screen_displayables.rpy:524
