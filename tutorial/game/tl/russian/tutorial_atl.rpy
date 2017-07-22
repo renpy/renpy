@@ -240,9 +240,9 @@ translate russian tutorial_positions_0f4ca2b6:
     e "Как только вы разберётесь с позициями, вы сможете воспользоваться трансформациями для перемещения объектов на экранэ."
 
 # game/tutorial_atl.rpy:418
-translate russian tutorial_atl_7051edf6:
+translate russian tutorial_atl_d5d6b62a:
 
-    # e "Ren'Py uses transforms to animate, manipulate, andplace images. We've already seen the very simplest of transforms in use:" ### пробел и конец
+    # e "Ren'Py uses transforms to animate, manipulate, and place images. We've already seen the very simplest of transforms in use:"
     e "Ren'Py использует трансформации для анимирования, манипулирования и отображения изображений. Мы уже видели одну из простейших трансформаций, я сейчас снова вам её покажу…"
 
 # game/tutorial_atl.rpy:425
@@ -498,10 +498,10 @@ translate russian tutorial_atl_28a7d27e:
     e "И наконец, оператор choice позволяет Ren'Py выбрать, использовать ли блок ATL. Это позволяет вам добавить несколько вариантов того, что может быть показано игрокy."
 
 # game/tutorial_atl.rpy:675
-translate russian tutorial_atl_5fc8c0df:
+translate russian tutorial_atl_2265254b:
 
-    # e "This tutorial game has only scratched the surface of what you can do with ATL. For example, we haven't even covered the on and event statements. For more information, you might want to check out the ATL chapter in the reference manual." ### link to chapter?
-    e "Эта обучающая игра учит только самым основам ATL. Например, мы даже ещё не притронулись к операторам on и event. Чтобы узнать об ATL побольше, вы можете почитать в документации главу про ATL."
+    # e "This tutorial game has only scratched the surface of what you can do with ATL. For example, we haven't even covered the on and event statements. For more information, you might want to check out {a=https://renpy.org/doc/html/atl.html}the ATL chapter in the reference manual{/a}."
+    e "Эта обучающая игра учит только самым основам ATL. Например, мы даже ещё не притронулись к операторам on и event. Чтобы узнать об ATL побольше, вы можете почитать {a=https://renpy.org/doc/html/atl.html}в документации главу про ATL{/a}."
 
 # game/tutorial_atl.rpy:684
 translate russian transform_properties_391169cf:

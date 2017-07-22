@@ -49,9 +49,9 @@ translate russian simple_displayables_c6e39078:
     e "Существует более сложная форма функции Solid, которая будет брать параметры стиля. Эта форма позволяет нам изменить размер функции, так как иначе уже весь экран был бы синим."
 
 # game/indepth_displayables.rpy:72
-translate russian simple_displayables_cd498d26:
+translate russian simple_displayables_b102a029:
 
-    # e "The Text displayable lets Ren'Py treat text as if if it was an image." ### "as if if" and double space in original
+    # e "The Text displayable lets Ren'Py treat text as if it was an image."
     e "Объект Текст (Text) позволяет Ren'Py показывать текст, как изображение."
 
 # game/indepth_displayables.rpy:80

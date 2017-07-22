@@ -152,7 +152,7 @@ translate russian demo_character_8d35ebcd:
 # game/indepth_character.rpy:101
 translate russian demo_character_6d9716f9:
 
-    # e7 "The what_xalign property controls where all the text text itself is placed within the textbox, while what_textalign controls where rows of text are placed relative to each other." ### text text
+    # e7 "The what_xalign property controls where all the text itself is placed within the textbox, while what_textalign controls where rows of text are placed relative to each other." ### text text
     e7 "Параметр what_xalign контролирует, где размещается текст по отношению к текстовой коробке, а what_textalign контролирует, как размещаются строки текста по отношению друг к другу."
 
 # game/indepth_character.rpy:103

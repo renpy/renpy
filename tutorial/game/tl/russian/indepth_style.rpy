@@ -589,9 +589,9 @@ translate russian style_bar_f1292000:
     e "На этом с полосками мы закончили. Используя их, разработчик может изменять полоски, полосы прокрутки и слайдеры."
 
 # game/indepth_style.rpy:944
-translate russian style_box_56f882ac:
+translate russian style_box_5fd535f4:
 
-    # e "The HBox displayable is used to lay its children out horizontally. By default, there's no spacing between children, so they run together." ### HBox? HB?
+    # e "The hbox displayable is used to lay its children out horizontally. By default, there's no spacing between children, so they run together."
     e "Объект hbox используется, чтобы показать свои дочерние объекты горизонтально. По стандарту, между \'детьми\' нет пропусков, так что они сливаются."
 
 # game/indepth_style.rpy:950

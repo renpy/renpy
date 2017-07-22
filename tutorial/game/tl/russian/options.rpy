@@ -1,4 +1,4 @@
-
+﻿
 translate russian strings:
 
     # options.rpy:15

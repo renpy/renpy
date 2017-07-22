@@ -516,9 +516,9 @@ translate russian tutorial_simple_positions_16b66785:
     e "Трансформации очень липкие. Если вы замените изображение без новой трансформации, Ren'Py применит на неё прошлую трансформацию."
 
 # game/tutorial_quickstart.rpy:364
-translate russian tutorial_simple_positions_dccca9ce:
+translate russian tutorial_simple_positions_5d5e0cfd:
 
-    # e "Of course, there's a lot more to transforms than this. If you want to learn more, you can read the sections on Position Properties, Transforms, and Transform Properties." ### Анимация и Трансформация
+    # e "Of course, there's a lot more to transforms than this. If you want to learn more, you can read the sections on Position Properties, Transforms and Animation, and Transform Properties."
     e "Разумеется, существует намного больше трансформаций. Если вы хотите узнать о них побольше, можете почитать о них в секциях 'Позиционные параметры', 'Анимация и Трансформация' и 'Параметры трансформаций'."
 
 # game/tutorial_quickstart.rpy:366

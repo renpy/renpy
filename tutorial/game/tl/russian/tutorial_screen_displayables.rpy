@@ -120,9 +120,9 @@ translate russian text_displayable_1ed1a8c2:
     e "В дополнение к общим для всех объектов параметрам, тексту доступны стилевые параметры. Например, size устанавливает размер текста."
 
 # game/tutorial_screen_displayables.rpy:234
-translate russian text_displayable_6b5dda29:
+translate russian text_displayable_9351d9dd:
 
-    # e "The text displayable can also interpolate values enclosed in square brackets" ### dot
+    # e "The text displayable can also interpolate values enclosed in square brackets."
     e "Текстовый объект также способен воспринимать выражения, заключённые в квадратные скобки."
 
 # game/tutorial_screen_displayables.rpy:236
@@ -446,7 +446,7 @@ translate russian art_e6af6f1d:
 # game/tutorial_screen_displayables.rpy:680
 translate russian home_373ea9a5:
 
-    # e "You chose to go home." ### error and Ren'Py crashes…
+    # e "You chose to go home."
     e "Вы решили пойти домой."
 
 # game/tutorial_screen_displayables.rpy:686

@@ -126,10 +126,10 @@ translate russian text_1f2697ba:
     extend " немедленно перейти к следующей строке кода."
 
 # game/indepth_text.rpy:98
-translate russian text_dbfca166:
+translate russian text_805fddbb:
 
-    # e "To break a line without pausing,\none can write \\n. \\' and \\\" include quotes in the text." ### comma, not dot
-    e "Чтобы перенести строку без пауз,\n вы можете написать \\n,  \\' и \\\", включая скобки в тексте." ### доперевод
+    # e "To break a line without pausing,\none can write \\n, \\' and \\\" include quotes in the text."
+    e "Чтобы перенести строку без пауз,\n вы можете написать \\n, \\' и \\\", включая скобки в тексте." ### доперевод
 
 # game/indepth_text.rpy:103
 translate russian text_ffdf7e76:
