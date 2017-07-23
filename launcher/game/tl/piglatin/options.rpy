@@ -1,4 +1,5 @@
-﻿translate piglatin strings:
+﻿
+translate piglatin strings:
 
     # options.rpy:1
     old "## This file contains options that can be changed to customize your game."
@@ -133,8 +134,8 @@
     new "## Histay enerallygay ouldshay otnay ebay angedchay, anday ifay itay isay, ouldshay alwaysay ebay aay iterallay ringstay, otnay anay expressionay."
 
     # options.rpy:146
-    old "## Icon ########################################################################'"
-    new "## Coniay ########################################################################'"
+    old "## Icon"
+    new "## Coniay"
 
     # options.rpy:148
     old "## The icon displayed on the taskbar or dock."
@@ -185,10 +186,14 @@
     new "## Ilesfay atchingmay ocumentationday atternspay areay uplicatedday inay aay acmay appay uildbay, osay heytay appearay inay othbay hetay appay anday hetay ipzay ilefay."
 
     # options.rpy:196
+    old "## Set this to a string containing your Apple Developer ID Application to enable codesigning on the Mac. Be sure to change it to your own Apple-issued ID."
+    new "## Etsay histay otay aay ringstay ontainingcay ouryay Ppleaay Eveloperday Diay Pplicationaay otay enableay odesigningcay onay hetay Acmay. Ebay uresay otay angechay itay otay ouryay ownay Ppleaay-issueday Diay."
+
+    # options.rpy:203
     old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
     new "## Aay Ooglegay Laypay icenselay eykay isay equiredray otay ownloadday expansionay ilesfay anday erformpay inay-appay urchasespay. Tiay ancay ebay oundfay onay hetay \"Ervicessay & Pisaay\" agepay ofay hetay Ooglegay Laypay eveloperday onsolecay."
 
-    # options.rpy:203
+    # options.rpy:210
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Hetay usernameay anday rojectpay amenay associateday ithway anay itchay.ioay rojectpay, eparatedsay ybay aay ashslay."
 

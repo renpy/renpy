@@ -1,78 +1,79 @@
-﻿translate piglatin strings:
+﻿
+translate piglatin strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"
     new "Eveloperday Enumay"
 
     # _developer/developer.rpym:43
+    old "Interactive Director (D)"
+    new "Nteractiveiay Irectorday (Day)"
+
+    # _developer/developer.rpym:45
     old "Reload Game (Shift+R)"
     new "Eloadray Amegay (Hiftsay+Ray)"
 
-    # _developer/developer.rpym:45
+    # _developer/developer.rpym:47
     old "Console (Shift+O)"
     new "Onsolecay (Hiftsay+Oay)"
 
-    # _developer/developer.rpym:47
+    # _developer/developer.rpym:49
     old "Variable Viewer"
     new "Ariablevay Iewervay"
 
-    # _developer/developer.rpym:49
-    old "Theme Test"
-    new "Hemetay Esttay"
-
-    # _developer/developer.rpym:51
+    # _developer/developer.rpym:53
     old "Image Location Picker"
     new "Mageiay Ocationlay Ickerpay"
 
-    # _developer/developer.rpym:53
+    # _developer/developer.rpym:55
     old "Filename List"
     new "Ilenamefay Istlay"
 
-    # _developer/developer.rpym:57
+    # _developer/developer.rpym:59
     old "Show Image Load Log"
     new "Howsay Mageiay Oadlay Oglay"
 
-    # _developer/developer.rpym:60
+    # _developer/developer.rpym:62
     old "Hide Image Load Log"
     new "Idehay Mageiay Oadlay Oglay"
 
-    # _developer/developer.rpym:95
+    # _developer/developer.rpym:97
     old "Nothing to inspect."
     new "Othingnay otay inspectay."
 
-    # _developer/developer.rpym:217
+    # _developer/developer.rpym:225
     old "Return to the developer menu"
     new "Eturnray otay hetay eveloperday enumay"
 
-    # _developer/developer.rpym:373
+    # _developer/developer.rpym:385
     old "Rectangle: %r"
     new "Ectangleray: %ray"
 
-    # _developer/developer.rpym:378
+    # _developer/developer.rpym:390
     old "Mouse position: %r"
     new "Ousemay ositionpay: %ray"
 
-    # _developer/developer.rpym:383
+    # _developer/developer.rpym:395
     old "Right-click or escape to quit."
     new "Ightray-ickclay oray escapeay otay uitqay."
 
-    # _developer/developer.rpym:412
+    # _developer/developer.rpym:427
     old "Rectangle copied to clipboard."
     new "Ectangleray opiedcay otay ipboardclay."
 
-    # _developer/developer.rpym:415
+    # _developer/developer.rpym:430
     old "Position copied to clipboard."
     new "Ositionpay opiedcay otay ipboardclay."
 
-    # _developer/developer.rpym:524
+    # _developer/developer.rpym:539
     old "✔ "
     new "✔ "
 
-    # _developer/developer.rpym:527
+    # _developer/developer.rpym:542
     old "✘ "
     new "✘ "
 
-    # _developer/developer.rpym:532
+    # _developer/developer.rpym:547
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
     new "\n{color=#cfc}✔ redictedpay imageay (oodgay){/color}\n{color=#fcc}✘ unpredicteday imageay (adbay){/color}\n{color=#fff}Ragday otay ovemay.{/color}"
 
@@ -112,67 +113,67 @@
     old "<repr() failed>"
     new "<eprray() ailedfay>"
 
-    # 00console.rpy:182
+    # 00console.rpy:227
     old "Press <esc> to exit console. Type help for help.\n"
     new "Resspay <escay> otay exitay onsolecay. Ypetay elphay orfay elphay.\n"
 
-    # 00console.rpy:186
+    # 00console.rpy:231
     old "Ren'Py script enabled."
     new "Enray'Ypay criptsay enableday."
 
-    # 00console.rpy:188
+    # 00console.rpy:233
     old "Ren'Py script disabled."
     new "Enray'Ypay criptsay isabledday."
 
-    # 00console.rpy:398
+    # 00console.rpy:459
     old "help: show this help"
     new "elphay: owshay histay elphay"
 
-    # 00console.rpy:403
+    # 00console.rpy:464
     old "commands:\n"
     new "ommandscay:\n"
 
-    # 00console.rpy:413
+    # 00console.rpy:474
     old " <renpy script statement>: run the statement\n"
     new " <enpyray criptsay atementstay>: unray hetay atementstay\n"
 
-    # 00console.rpy:415
+    # 00console.rpy:476
     old " <python expression or statement>: run the expression or statement"
     new " <ythonpay expressionay oray atementstay>: unray hetay expressionay oray atementstay"
 
-    # 00console.rpy:423
+    # 00console.rpy:484
     old "clear: clear the console history"
     new "earclay: earclay hetay onsolecay istoryhay"
 
-    # 00console.rpy:427
+    # 00console.rpy:488
     old "exit: exit the console"
     new "exitay: exitay hetay onsolecay"
 
-    # 00console.rpy:435
+    # 00console.rpy:496
     old "load <slot>: loads the game from slot"
     new "oadlay <otslay>: oadslay hetay amegay omfray otslay"
 
-    # 00console.rpy:448
+    # 00console.rpy:509
     old "save <slot>: saves the game in slot"
     new "avesay <otslay>: avessay hetay amegay inay otslay"
 
-    # 00console.rpy:459
+    # 00console.rpy:520
     old "reload: reloads the game, refreshing the scripts"
     new "eloadray: eloadsray hetay amegay, efreshingray hetay criptssay"
 
-    # 00console.rpy:467
+    # 00console.rpy:528
     old "watch <expression>: watch a python expression"
     new "atchway <expressionay>: atchway aay ythonpay expressionay"
 
-    # 00console.rpy:493
+    # 00console.rpy:554
     old "unwatch <expression>: stop watching an expression"
     new "unwatchay <expressionay>: opstay atchingway anay expressionay"
 
-    # 00console.rpy:519
+    # 00console.rpy:585
     old "unwatchall: stop watching all expressions"
     new "unwatchallay: opstay atchingway allay expressionsay"
 
-    # 00console.rpy:536
+    # 00console.rpy:602
     old "jump <label>: jumps to label"
     new "umpjay <abellay>: umpsjay otay abellay"
 

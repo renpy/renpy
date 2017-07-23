@@ -1,4 +1,5 @@
-﻿translate piglatin strings:
+﻿
+translate piglatin strings:
 
     # gui.rpy:2
     old "## Initialization"
@@ -11,6 +12,10 @@
     # gui.rpy:9
     old "## Calling gui.init resets the styles to sensible default values, and sets the width and height of the game."
     new "## Allingcay uigay.initay esetsray hetay ylesstay otay ensiblesay efaultday aluesvay, anday etssay hetay idthway anday eighthay ofay hetay amegay."
+
+    # gui.rpy:17
+    old "## GUI Configuration Variables"
+    new "## Uigay Onfigurationcay Ariablesvay"
 
     # gui.rpy:21
     old "## Colors"
@@ -100,169 +105,177 @@
     old "## The images used for the main and game menus."
     new "## Hetay imagesay useday orfay hetay ainmay anday amegay enusmay."
 
-    # gui.rpy:92
-    old "## Should we show the name and version of the game?"
-    new "## Houldsay eway owshay hetay amenay anday ersionvay ofay hetay amegay?"
-
-    # gui.rpy:96
+    # gui.rpy:93
     old "## Dialogue"
     new "## Ialogueday"
 
-    # gui.rpy:98
+    # gui.rpy:95
     old "## These variables control how dialogue is displayed on the screen one line at a time."
     new "## Hesetay ariablesvay ontrolcay owhay ialogueday isay isplayedday onay hetay creensay oneay inelay atay aay imetay."
 
-    # gui.rpy:101
+    # gui.rpy:98
     old "## The height of the textbox containing dialogue."
     new "## Hetay eighthay ofay hetay extboxtay ontainingcay ialogueday."
 
-    # gui.rpy:104
+    # gui.rpy:101
     old "## The placement of the textbox vertically on the screen. 0.0 is the top, 0.5 is center, and 1.0 is the bottom."
     new "## Hetay acementplay ofay hetay extboxtay erticallyvay onay hetay creensay. 0ay.0ay isay hetay optay, 0ay.5ay isay entercay, anday 1ay.0ay isay hetay ottombay."
 
-    # gui.rpy:109
+    # gui.rpy:106
     old "## The placement of the speaking character's name, relative to the textbox. These can be a whole number of pixels from the left or top, or 0.5 to center."
     new "## Hetay acementplay ofay hetay peakingsay aracterchay'say amenay, elativeray otay hetay extboxtay. Hesetay ancay ebay aay holeway umbernay ofay ixelspay omfray hetay eftlay oray optay, oray 0ay.5ay otay entercay."
 
-    # gui.rpy:114
+    # gui.rpy:111
     old "## The horizontal alignment of the character's name. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
     new "## Hetay orizontalhay alignmentay ofay hetay aracterchay'say amenay. Histay ancay ebay 0ay.0ay orfay eftlay-aligneday, 0ay.5ay orfay enteredcay, anday 1ay.0ay orfay ightray-aligneday."
 
-    # gui.rpy:118
+    # gui.rpy:115
     old "## The width, height, and borders of the box containing the character's name, or None to automatically size it."
     new "## Hetay idthway, eighthay, anday ordersbay ofay hetay oxbay ontainingcay hetay aracterchay'say amenay, oray Onenay otay automaticallyay izesay itay."
 
-    # gui.rpy:123
+    # gui.rpy:120
     old "## The borders of the box containing the character's name, in left, top, right, bottom order."
     new "## Hetay ordersbay ofay hetay oxbay ontainingcay hetay aracterchay'say amenay, inay eftlay, optay, ightray, ottombay orderay."
 
-    # gui.rpy:127
+    # gui.rpy:124
     old "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
     new "## Fiay Ruetay, hetay ackgroundbay ofay hetay ameboxnay illway ebay iledtay, ifay Alsefay, hetay ackgroundbay ifay hetay ameboxnay illway ebay caledsay."
 
-    # gui.rpy:132
+    # gui.rpy:129
     old "## The placement of dialogue relative to the textbox. These can be a whole number of pixels relative to the left or top side of the textbox, or 0.5 to center."
     new "## Hetay acementplay ofay ialogueday elativeray otay hetay extboxtay. Hesetay ancay ebay aay holeway umbernay ofay ixelspay elativeray otay hetay eftlay oray optay idesay ofay hetay extboxtay, oray 0ay.5ay otay entercay."
 
-    # gui.rpy:138
+    # gui.rpy:135
     old "## The maximum width of dialogue text, in pixels."
     new "## Hetay aximummay idthway ofay ialogueday exttay, inay ixelspay."
 
-    # gui.rpy:141
+    # gui.rpy:138
     old "## The horizontal alignment of the dialogue text. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
     new "## Hetay orizontalhay alignmentay ofay hetay ialogueday exttay. Histay ancay ebay 0ay.0ay orfay eftlay-aligneday, 0ay.5ay orfay enteredcay, anday 1ay.0ay orfay ightray-aligneday."
 
-    # gui.rpy:146
+    # gui.rpy:143
     old "## Buttons"
     new "## Uttonsbay"
 
-    # gui.rpy:148
+    # gui.rpy:145
     old "## These variables, along with the image files in gui/button, control aspects of how buttons are displayed."
     new "## Hesetay ariablesvay, alongay ithway hetay imageay ilesfay inay uigay/uttonbay, ontrolcay aspectsay ofay owhay uttonsbay areay isplayedday."
 
-    # gui.rpy:151
+    # gui.rpy:148
     old "## The width and height of a button, in pixels. If None, Ren'Py computes a size."
     new "## Hetay idthway anday eighthay ofay aay uttonbay, inay ixelspay. Fiay Onenay, Enray'Ypay omputescay aay izesay."
 
-    # gui.rpy:155
+    # gui.rpy:152
     old "## The borders on each side of the button, in left, top, right, bottom order."
     new "## Hetay ordersbay onay eachay idesay ofay hetay uttonbay, inay eftlay, optay, ightray, ottombay orderay."
 
-    # gui.rpy:158
+    # gui.rpy:155
     old "## If True, the background image will be tiled. If False, the background image will be linearly scaled."
     new "## Fiay Ruetay, hetay ackgroundbay imageay illway ebay iledtay. Fiay Alsefay, hetay ackgroundbay imageay illway ebay inearlylay caledsay."
 
-    # gui.rpy:162
+    # gui.rpy:159
     old "## The font used by the button."
     new "## Hetay ontfay useday ybay hetay uttonbay."
 
-    # gui.rpy:165
+    # gui.rpy:162
     old "## The size of the text used by the button."
     new "## Hetay izesay ofay hetay exttay useday ybay hetay uttonbay."
 
-    # gui.rpy:179
+    # gui.rpy:165
+    old "## The color of button text in various states."
+    new "## Hetay olorcay ofay uttonbay exttay inay ariousvay atesstay."
+
+    # gui.rpy:171
+    old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
+    new "## Hetay orizontalhay alignmentay ofay hetay uttonbay exttay. (0ay.0ay isay eftlay, 0ay.5ay isay entercay, 1ay.0ay isay ightray)."
+
+    # gui.rpy:176
     old "## These variables override settings for different kinds of buttons. Please see the gui documentation for the kinds of buttons available, and what each is used for."
     new "## Hesetay ariablesvay overrideay ettingssay orfay ifferentday indskay ofay uttonsbay. Leasepay eesay hetay uigay ocumentationday orfay hetay indskay ofay uttonsbay availableay, anday hatway eachay isay useday orfay."
 
-    # gui.rpy:183
+    # gui.rpy:180
     old "## These customizations are used by the default interface:"
     new "## Hesetay ustomizationscay areay useday ybay hetay efaultday interfaceay:"
 
-    # gui.rpy:198
+    # gui.rpy:195
     old "## You can also add your own customizations, by adding properly-named variables. For example, you can uncomment the following line to set the width of a navigation button."
     new "## Ouyay ancay alsoay adday ouryay ownay ustomizationscay, ybay addingay roperlypay-amednay ariablesvay. Orfay exampleay, ouyay ancay uncommentay hetay ollowingfay inelay otay etsay hetay idthway ofay aay avigationnay uttonbay."
 
-    # gui.rpy:205
+    # gui.rpy:202
     old "## Choice Buttons"
     new "## Hoicecay Uttonsbay"
 
-    # gui.rpy:207
+    # gui.rpy:204
     old "## Choice buttons are used in the in-game menus."
     new "## Hoicecay uttonsbay areay useday inay hetay inay-amegay enusmay."
 
-    # gui.rpy:220
+    # gui.rpy:217
     old "## File Slot Buttons"
     new "## Ilefay Lotsay Uttonsbay"
 
-    # gui.rpy:222
+    # gui.rpy:219
     old "## A file slot button is a special kind of button. It contains a thumbnail image, and text describing the contents of the save slot. A save slot uses image files in gui/button, like the other kinds of buttons."
     new "## Aay ilefay otslay uttonbay isay aay pecialsay indkay ofay uttonbay. Tiay ontainscay aay humbnailtay imageay, anday exttay escribingday hetay ontentscay ofay hetay avesay otslay. Aay avesay otslay usesay imageay ilesfay inay uigay/uttonbay, ikelay hetay otheray indskay ofay uttonsbay."
 
-    # gui.rpy:226
+    # gui.rpy:223
     old "## The save slot button."
     new "## Hetay avesay otslay uttonbay."
 
-    # gui.rpy:234
+    # gui.rpy:231
     old "## The width and height of thumbnails used by the save slots."
     new "## Hetay idthway anday eighthay ofay humbnailstay useday ybay hetay avesay otsslay."
 
-    # gui.rpy:238
+    # gui.rpy:235
     old "## The number of columns and rows in the grid of save slots."
     new "## Hetay umbernay ofay olumnscay anday owsray inay hetay idgray ofay avesay otsslay."
 
-    # gui.rpy:243
+    # gui.rpy:240
     old "## Positioning and Spacing"
     new "## Ositioningpay anday Pacingsay"
 
-    # gui.rpy:245
+    # gui.rpy:242
     old "## These variables control the positioning and spacing of various user interface elements."
     new "## Hesetay ariablesvay ontrolcay hetay ositioningpay anday pacingsay ofay ariousvay useray interfaceay elementsay."
 
-    # gui.rpy:248
+    # gui.rpy:245
     old "## The position of the left side of the navigation buttons, relative to the left side of the screen."
     new "## Hetay ositionpay ofay hetay eftlay idesay ofay hetay avigationnay uttonsbay, elativeray otay hetay eftlay idesay ofay hetay creensay."
 
-    # gui.rpy:252
+    # gui.rpy:249
     old "## The vertical position of the skip indicator."
     new "## Hetay erticalvay ositionpay ofay hetay kipsay indicatoray."
 
-    # gui.rpy:255
+    # gui.rpy:252
     old "## The vertical position of the notify screen."
     new "## Hetay erticalvay ositionpay ofay hetay otifynay creensay."
 
-    # gui.rpy:258
+    # gui.rpy:255
     old "## The spacing between menu choices."
     new "## Hetay pacingsay etweenbay enumay oiceschay."
 
-    # gui.rpy:261
+    # gui.rpy:258
     old "## Buttons in the navigation section of the main and game menus."
     new "## Uttonsbay inay hetay avigationnay ectionsay ofay hetay ainmay anday amegay enusmay."
 
-    # gui.rpy:264
+    # gui.rpy:261
     old "## Controls the amount of spacing between preferences."
     new "## Ontrolscay hetay amountay ofay pacingsay etweenbay referencespay."
 
-    # gui.rpy:267
+    # gui.rpy:264
     old "## Controls the amount of spacing between preference buttons."
     new "## Ontrolscay hetay amountay ofay pacingsay etweenbay referencepay uttonsbay."
 
-    # gui.rpy:270
+    # gui.rpy:267
     old "## The spacing between file page buttons."
     new "## Hetay pacingsay etweenbay ilefay agepay uttonsbay."
 
-    # gui.rpy:273
+    # gui.rpy:270
     old "## The spacing between file slots."
     new "## Hetay pacingsay etweenbay ilefay otsslay."
+
+    # gui.rpy:273
+    old "## The position of the main menu text."
+    new "## Hetay ositionpay ofay hetay ainmay enumay exttay."
 
     # gui.rpy:277
     old "## Frames"
@@ -376,54 +389,43 @@
     old "## The position of nvl menu_buttons."
     new "## Hetay ositionpay ofay vlnay enu_buttonsmay."
 
-    # gui.rpy:403
+    # gui.rpy:395
+    old "## Localization"
+    new "## Ocalizationlay"
+
+    # gui.rpy:397
+    old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+    new "## Histay ontrolscay hereway aay inelay eakbray isay ermittedpay. Hetay efaultday isay uitablesay orfay ostmay anguageslay. Aay istlay ofay availableay aluesvay ancay ebay oundfay atay ttpshay://wwway.enpyray.orgay/ocday/tmlhay/yle_propertiesstay.tmlhay#ylestay-ropertypay-anguagelay"
+
+    # gui.rpy:405
+    old "## Mobile devices"
+    new "## Obilemay evicesday"
+
+    # gui.rpy:410
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
     new "## Histay increasesay hetay izesay ofay hetay uickqay uttonsbay otay akemay hemtay easieray otay ouchtay onay abletstay anday onesphay."
 
-    # gui.rpy:409
+    # gui.rpy:416
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
     new "## Histay angeschay hetay izesay anday pacingsay ofay ariousvay Uigay elementsay otay ensureay heytay areay easilyay isiblevay onay onesphay."
 
-    # gui.rpy:413
+    # gui.rpy:420
     old "## Font sizes."
     new "## Ontfay izessay."
 
-    # gui.rpy:421
+    # gui.rpy:428
     old "## Adjust the location of the textbox."
     new "## Djustaay hetay ocationlay ofay hetay extboxtay."
 
-    # gui.rpy:427
-    old "## Change the size and spacing of items in the game menu."
-    new "## Hangecay hetay izesay anday pacingsay ofay itemsay inay hetay amegay enumay."
+    # gui.rpy:434
+    old "## Change the size and spacing of various things.."
+    new "## Hangecay hetay izesay anday pacingsay ofay ariousvay hingstay.."
 
-    # gui.rpy:436
+    # gui.rpy:447
     old "## File button layout."
     new "## Ilefay uttonbay ayoutlay."
 
-    # gui.rpy:440
+    # gui.rpy:451
     old "## NVL-mode."
     new "## Vlnay-odemay."
-
-    # gui.rpy:456
-    old "## Quick buttons."
-    new "## Uickqay uttonsbay."
-
-
-translate piglatin strings:
-
-    # gui.rpy:17
-    old "## GUI Configuration Variables"
-    new "## Uigay Onfigurationcay Ariablesvay"
-
-    # gui.rpy:168
-    old "## The color of button text in various states."
-    new "## Hetay olorcay ofay uttonbay exttay inay ariousvay atesstay."
-
-    # gui.rpy:174
-    old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
-    new "## Hetay orizontalhay alignmentay ofay hetay uttonbay exttay. (0ay.0ay isay eftlay, 0ay.5ay isay entercay, 1ay.0ay isay ightray)."
-
-    # gui.rpy:398
-    old "## Mobile devices"
-    new "## Obilemay evicesday"
 

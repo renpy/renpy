@@ -1,4 +1,5 @@
-﻿translate piglatin strings:
+﻿
+translate piglatin strings:
 
     # about.rpy:39
     old "[version!q]"
@@ -105,8 +106,8 @@
     new "Opyingcay Ndroidaay ilesfay otay istributionsday irectoryday."
 
     # android.rpy:304
-    old "Android: [project.current.name!q]"
-    new "Ndroidaay: [project.current.name!q]"
+    old "Android: [project.current.display_name!q]"
+    new "Ndroidaay: [project.current.display_name!q]"
 
     # android.rpy:324
     old "Emulation:"
@@ -196,9 +197,13 @@
     old "Retrieving logcat information from device."
     new "Etrievingray ogcatlay informationay omfray eviceday."
 
-    # choose_directory.rpy:73
+    # choose_directory.rpy:87
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
     new "Enray'Ypay asway unableay otay unray ythonpay ithway kintertay otay oosechay hetay irectoryday. Leasepay installay hetay ythonpay-ktay oray kintertay ackagepay."
+
+    # choose_directory.rpy:104
+    old "The selected projects directory is not writable."
+    new "Hetay electedsay rojectspay irectoryday isay otnay ritableway."
 
     # choose_theme.rpy:303
     old "Could not change the theme. Perhaps options.rpy was changed too much."
@@ -232,61 +237,61 @@
     old "The command is being run in a new operating system console window."
     new "Hetay ommandcay isay eingbay unray inay aay ewnay operatingay ystemsay onsolecay indowway."
 
-    # distribute.rpy:443
+    # distribute.rpy:444
     old "Scanning project files..."
     new "Canningsay rojectpay ilesfay..."
 
-    # distribute.rpy:459
+    # distribute.rpy:460
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
     new "Uildingbay istributionsday ailedfay:\n\nHetay uildbay.irectory_nameday ariablevay aymay otnay includeay hetay pacesay, oloncay, oray emicolonsay aracterschay."
 
-    # distribute.rpy:504
+    # distribute.rpy:505
     old "No packages are selected, so there's nothing to do."
     new "Onay ackagespay areay electedsay, osay heretay'say othingnay otay oday."
 
-    # distribute.rpy:516
+    # distribute.rpy:517
     old "Scanning Ren'Py files..."
     new "Canningsay Enray'Ypay ilesfay..."
 
-    # distribute.rpy:569
+    # distribute.rpy:570
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
     new "Llaay ackagespay avehay eenbay uiltbay.\n\nUeday otay hetay resencepay ofay ermissionpay informationay, unpackingay anday epackingray hetay Inuxlay anday Acintoshmay istributionsday onay Indowsway isay otnay upportedsay."
 
-    # distribute.rpy:752
+    # distribute.rpy:753
     old "Archiving files..."
     new "Rchivingaay ilesfay..."
 
-    # distribute.rpy:1050
+    # distribute.rpy:1053
     old "Unpacking the Macintosh application for signing..."
     new "Npackinguay hetay Acintoshmay applicationay orfay igningsay..."
 
-    # distribute.rpy:1060
-    old "Signing the Macintosh application..."
-    new "Igningsay hetay Acintoshmay applicationay..."
+    # distribute.rpy:1063
+    old "Signing the Macintosh application...\n(This may take a long time.)"
+    new "Igningsay hetay Acintoshmay applicationay...\n(Histay aymay aketay aay onglay imetay.)"
 
-    # distribute.rpy:1082
+    # distribute.rpy:1085
     old "Creating the Macintosh DMG..."
     new "Reatingcay hetay Acintoshmay Mgday..."
 
-    # distribute.rpy:1091
+    # distribute.rpy:1094
     old "Signing the Macintosh DMG..."
     new "Igningsay hetay Acintoshmay Mgday..."
 
-    # distribute.rpy:1248
+    # distribute.rpy:1251
     old "Writing the [variant] [format] package."
     new "Ritingway hetay [variant] [format] ackagepay."
 
-    # distribute.rpy:1261
+    # distribute.rpy:1264
     old "Making the [variant] update zsync file."
     new "Akingmay hetay [variant] updateay synczay ilefay."
 
-    # distribute.rpy:1404
+    # distribute.rpy:1408
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
     new "Rocessedpay {b}[complete]{/b} ofay {b}[total]{/b} ilesfay."
 
     # distribute_gui.rpy:157
-    old "Build Distributions: [project.current.name!q]"
-    new "Uildbay Istributionsday: [project.current.name!q]"
+    old "Build Distributions: [project.current.display_name!q]"
+    new "Uildbay Istributionsday: [project.current.display_name!q]"
 
     # distribute_gui.rpy:171
     old "Directory Name:"
@@ -400,13 +405,13 @@
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
     new "Aay exttay editoray isay hetay rogrampay ouyay'llay useay otay editay Enray'Ypay criptsay ilesfay. Erehay, ouyay ancay electsay hetay editoray Enray'Ypay illway useay. Fiay otnay alreadyay resentpay, hetay editoray illway ebay automaticallyay ownloadedday anday installeday."
 
-    # editor.rpy:494
-    old "Cancel"
-    new "Ancelcay"
-
     # front_page.rpy:35
     old "Open [text] directory."
     new "Penoay [text] irectoryday."
+
+    # front_page.rpy:91
+    old "PROJECTS:"
+    new "Rojectspay:"
 
     # front_page.rpy:93
     old "refresh"
@@ -520,119 +525,123 @@
     old "Recompiling all rpy files into rpyc files..."
     new "Ecompilingray allay pyray ilesfay intoay pycray ilesfay..."
 
-    # gui7.rpy:202
+    # gui7.rpy:252
     old "Select Accent and Background Colors"
     new "Electsay Ccentaay anday Ackgroundbay Olorscay"
 
-    # gui7.rpy:216
+    # gui7.rpy:266
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
     new "Leasepay ickclay onay hetay olorcay chemesay ouyay ishway otay useay, hentay ickclay Ontinuecay. Hesetay olorscay ancay ebay angedchay anday ustomizedcay aterlay."
 
-    # gui7.rpy:260
+    # gui7.rpy:310
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
     new "{b}Arningway{/b}\nOntinuingcay illway overwriteay ustomizedcay arbay, uttonbay, avesay otslay, crollbarsay, anday iderslay imagesay.\n\nHatway ouldway ouyay ikelay otay oday?"
 
-    # gui7.rpy:260
+    # gui7.rpy:310
     old "Choose new colors, then regenerate image files."
     new "Hoosecay ewnay olorscay, hentay egenerateray imageay ilesfay."
 
-    # gui7.rpy:260
+    # gui7.rpy:310
     old "Regenerate the image files using the colors in gui.rpy."
     new "Egenerateray hetay imageay ilesfay usingay hetay olorscay inay uigay.pyray."
 
-    # gui7.rpy:280
+    # gui7.rpy:330
     old "PROJECT NAME"
     new "Rojectpay Amenay"
 
-    # gui7.rpy:280
+    # gui7.rpy:330
     old "Please enter the name of your project:"
     new "Leasepay enteray hetay amenay ofay ouryay rojectpay:"
 
-    # gui7.rpy:288
+    # gui7.rpy:338
     old "The project name may not be empty."
     new "Hetay rojectpay amenay aymay otnay ebay emptyay."
 
-    # gui7.rpy:293
+    # gui7.rpy:343
     old "[project_name!q] already exists. Please choose a different project name."
     new "[project_name!q] alreadyay existsay. Leasepay oosechay aay ifferentday rojectpay amenay."
 
-    # gui7.rpy:296
+    # gui7.rpy:346
     old "[project_dir!q] already exists. Please choose a different project name."
     new "[project_dir!q] alreadyay existsay. Leasepay oosechay aay ifferentday rojectpay amenay."
 
-    # gui7.rpy:307
+    # gui7.rpy:357
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
     new "Hatway esolutionray ouldshay hetay rojectpay useay? Lthoughaay Enray'Ypay ancay calesay hetay indowway upay anday ownday, histay isay hetay initialay izesay ofay hetay indowway, hetay izesay atay hichway assetsay ouldshay ebay rawnday, anday hetay izesay atay hichway hetay assetsay illway ebay atay heirtay arpestshay.\n\nHetay efaultday ofay 280x7201ay isay aay easonableray ompromisecay."
 
-    # gui7.rpy:355
+    # gui7.rpy:405
     old "Creating the new project..."
     new "Reatingcay hetay ewnay rojectpay..."
 
-    # gui7.rpy:357
+    # gui7.rpy:407
     old "Updating the project..."
     new "Pdatinguay hetay rojectpay..."
 
-    # interface.rpy:107
+    # interface.rpy:119
     old "Documentation"
     new "Ocumentationday"
 
-    # interface.rpy:108
+    # interface.rpy:120
     old "Ren'Py Website"
     new "Enray'Ypay Ebsiteway"
 
-    # interface.rpy:109
+    # interface.rpy:121
     old "Ren'Py Games List"
     new "Enray'Ypay Amesgay Istlay"
 
-    # interface.rpy:117
+    # interface.rpy:129
     old "update"
     new "updateay"
 
-    # interface.rpy:119
+    # interface.rpy:131
     old "preferences"
     new "referencespay"
 
-    # interface.rpy:120
+    # interface.rpy:132
     old "quit"
     new "uitqay"
 
-    # interface.rpy:232
+    # interface.rpy:136
+    old "Ren'Py Sponsor Information"
+    new "Enray'Ypay Ponsorsay Nformationiay"
+
+    # interface.rpy:258
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
     new "Ueday otay ackagepay ormatfay imitationslay, onnay-Sciiaay ilefay anday irectoryday amesnay areay otnay alloweday."
 
-    # interface.rpy:327
+    # interface.rpy:353
     old "ERROR"
     new "Rroreay"
 
-    # interface.rpy:356
+    # interface.rpy:382
     old "While [what!q], an error occured:"
     new "Hileway [what!q], anay erroray occureday:"
 
-    # interface.rpy:356
+    # interface.rpy:382
     old "[exception!q]"
     new "[exception!q]"
 
-    # interface.rpy:375
+    # interface.rpy:401
     old "Text input may not contain the {{ or [[ characters."
     new "Exttay inputay aymay otnay ontaincay hetay {{ oray [[ aracterschay."
 
-    # interface.rpy:380
+    # interface.rpy:406
     old "File and directory names may not contain / or \\."
     new "Ilefay anday irectoryday amesnay aymay otnay ontaincay / oray \\."
 
-    # interface.rpy:386
+    # interface.rpy:412
     old "File and directory names must consist of ASCII characters."
     new "Ilefay anday irectoryday amesnay ustmay onsistcay ofay Sciiaay aracterschay."
 
-    # interface.rpy:454
+    # interface.rpy:480
     old "PROCESSING"
     new "Rocessingpay"
 
-    # interface.rpy:471
+    # interface.rpy:497
     old "QUESTION"
     new "Uestionqay"
 
-    # interface.rpy:484
+    # interface.rpy:510
     old "CHOICE"
     new "Hoicecay"
 
@@ -685,8 +694,8 @@
     new "Hetay Codexay rojectpay alreadyay existsay. Ouldway ouyay ikelay otay enameray hetay olday rojectpay, anday eplaceray itay ithway aay ewnay oneay?"
 
     # ios.rpy:211
-    old "iOS: [project.current.name!q]"
-    new "iOSay: [project.current.name!q]"
+    old "iOS: [project.current.display_name!q]"
+    new "iOSay: [project.current.display_name!q]"
 
     # ios.rpy:240
     old "iPhone"
@@ -761,8 +770,8 @@
     new "{a=%s}%say{/a}"
 
     # navigation.rpy:168
-    old "Navigate: [project.current.name]"
-    new "Avigatenay: [project.current.name]"
+    old "Navigate: [project.current.display_name!q]"
+    new "Avigatenay: [project.current.display_name!q]"
 
     # navigation.rpy:177
     old "Order: "
@@ -848,247 +857,259 @@
     old "The projects directory could not be set. Giving up."
     new "Hetay rojectspay irectoryday ouldcay otnay ebay etsay. Ivinggay upay."
 
-    # new_project.rpy:69
+    # new_project.rpy:72
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
     new "Hichway interfaceay ouldway ouyay ikelay otay useay? Hetay ewnay Uigay ashay aay odernmay ooklay, upportssay ideway creenssay anday obilemay evicesday, anday isay easieray otay ustomizecay. Egacylay hemestay ightmay ebay ecessarynay otay orkway ithway olderay exampleay odecay.\n\n[language_support!t]\n\nFiay inay oubtday, oosechay hetay ewnay Uigay, hentay ickclay Ontinuecay onay hetay ottombay-ightray."
 
-    # new_project.rpy:69
+    # new_project.rpy:72
     old "Legacy Theme Interface"
     new "Egacylay Hemetay Nterfaceiay"
 
-    # new_project.rpy:90
+    # new_project.rpy:93
     old "Choose Project Template"
     new "Hoosecay Rojectpay Emplatetay"
 
-    # new_project.rpy:108
+    # new_project.rpy:111
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
     new "Leasepay electsay aay emplatetay otay useay orfay ouryay ewnay rojectpay. Hetay emplatetay etssay hetay efaultday ontfay anday hetay useray interfaceay anguagelay. Fiay ouryay anguagelay isay otnay upportedsay, oosechay 'englishay'."
 
-    # preferences.rpy:64
+    # preferences.rpy:68
     old "Launcher Preferences"
     new "Auncherlay Referencespay"
 
-    # preferences.rpy:85
+    # preferences.rpy:89
     old "Projects Directory:"
     new "Rojectspay Irectoryday:"
 
-    # preferences.rpy:92
+    # preferences.rpy:96
     old "[persistent.projects_directory!q]"
     new "[persistent.projects_directory!q]"
 
-    # preferences.rpy:94
+    # preferences.rpy:98
     old "Projects directory: [text]"
     new "Rojectspay irectoryday: [text]"
 
-    # preferences.rpy:96
+    # preferences.rpy:100
     old "Not Set"
     new "Otnay Etsay"
 
-    # preferences.rpy:111
+    # preferences.rpy:115
     old "Text Editor:"
     new "Exttay Ditoreay:"
 
-    # preferences.rpy:117
+    # preferences.rpy:121
     old "Text editor: [text]"
     new "Exttay editoray: [text]"
 
-    # preferences.rpy:133
+    # preferences.rpy:137
     old "Update Channel:"
     new "Pdateuay Hannelcay:"
 
-    # preferences.rpy:153
+    # preferences.rpy:157
     old "Navigation Options:"
     new "Avigationnay Ptionsoay:"
 
-    # preferences.rpy:157
+    # preferences.rpy:161
     old "Include private names"
     new "Ncludeiay rivatepay amesnay"
 
-    # preferences.rpy:158
+    # preferences.rpy:162
     old "Include library names"
     new "Ncludeiay ibrarylay amesnay"
 
-    # preferences.rpy:168
+    # preferences.rpy:172
     old "Launcher Options:"
     new "Auncherlay Ptionsoay:"
 
-    # preferences.rpy:172
+    # preferences.rpy:176
     old "Hardware rendering"
     new "Ardwarehay enderingray"
 
-    # preferences.rpy:173
-    old "Show templates"
-    new "Howsay emplatestay"
-
-    # preferences.rpy:174
+    # preferences.rpy:177
     old "Show edit file section"
     new "Howsay editay ilefay ectionsay"
 
-    # preferences.rpy:175
+    # preferences.rpy:178
     old "Large fonts"
     new "Argelay ontsfay"
 
-    # preferences.rpy:178
+    # preferences.rpy:181
     old "Console output"
     new "Onsolecay outputay"
 
-    # preferences.rpy:199
+    # preferences.rpy:183
+    old "Force new tutorial"
+    new "Orcefay ewnay utorialtay"
+
+    # preferences.rpy:185
+    old "Legacy options"
+    new "Egacylay optionsay"
+
+    # preferences.rpy:188
+    old "Show templates"
+    new "Howsay emplatestay"
+
+    # preferences.rpy:190
+    old "Sponsor message"
+    new "Ponsorsay essagemay"
+
+    # preferences.rpy:210
     old "Open launcher project"
     new "Penoay auncherlay rojectpay"
 
-    # preferences.rpy:213
+    # preferences.rpy:224
     old "Language:"
     new "Anguagelay:"
 
-    # project.rpy:47
+    # project.rpy:49
     old "After making changes to the script, press shift+R to reload your game."
     new "Fteraay akingmay angeschay otay hetay criptsay, resspay iftshay+Ray otay eloadray ouryay amegay."
 
-    # project.rpy:47
+    # project.rpy:49
     old "Press shift+O (the letter) to access the console."
     new "Resspay iftshay+Oay (hetay etterlay) otay accessay hetay onsolecay."
 
-    # project.rpy:47
+    # project.rpy:49
     old "Press shift+D to access the developer menu."
     new "Resspay iftshay+Day otay accessay hetay eveloperday enumay."
 
-    # project.rpy:47
+    # project.rpy:49
     old "Have you backed up your projects recently?"
     new "Avehay ouyay ackedbay upay ouryay rojectspay ecentlyray?"
 
-    # project.rpy:229
+    # project.rpy:264
     old "Launching the project failed."
     new "Aunchinglay hetay rojectpay ailedfay."
 
-    # project.rpy:229
+    # project.rpy:264
     old "Please ensure that your project launches normally before running this command."
     new "Leasepay ensureay hattay ouryay rojectpay auncheslay ormallynay eforebay unningray histay ommandcay."
 
-    # project.rpy:242
+    # project.rpy:277
     old "Ren'Py is scanning the project..."
     new "Enray'Ypay isay canningsay hetay rojectpay..."
 
-    # project.rpy:568
+    # project.rpy:679
     old "Launching"
     new "Aunchinglay"
 
-    # project.rpy:597
+    # project.rpy:713
     old "PROJECTS DIRECTORY"
     new "Rojectspay Irectoryday"
 
-    # project.rpy:597
+    # project.rpy:713
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Leasepay oosechay hetay rojectspay irectoryday usingay hetay irectoryday ooserchay.\n{b}Hetay irectoryday ooserchay aymay avehay openeday ehindbay histay indowway.{/b}"
 
-    # project.rpy:597
+    # project.rpy:713
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Histay auncherlay illway cansay orfay rojectspay inay histay irectoryday, illway reatecay ewnay rojectspay inay histay irectoryday, anday illway aceplay uiltbay rojectspay intoay histay irectoryday."
 
-    # project.rpy:602
+    # project.rpy:718
     old "Ren'Py has set the projects directory to:"
     new "Enray'Ypay ashay etsay hetay rojectspay irectoryday otay:"
 
-    # translations.rpy:63
-    old "Translations: [project.current.name!q]"
-    new "Ranslationstay: [project.current.name!q]"
+    # translations.rpy:92
+    old "Translations: [project.current.display_name!q]"
+    new "Ranslationstay: [project.current.display_name!q]"
 
-    # translations.rpy:104
+    # translations.rpy:133
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
     new "Hetay anguagelay otay orkway ithway. Histay ouldshay onlyay ontaincay owerlay-asecay Sciiaay aracterschay anday underscoresay."
 
-    # translations.rpy:130
+    # translations.rpy:159
     old "Generate empty strings for translations"
     new "Enerategay emptyay ringsstay orfay anslationstray"
 
-    # translations.rpy:148
+    # translations.rpy:177
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
     new "Eneratesgay oray updatesay anslationtray ilesfay. Hetay ilesfay illway ebay acedplay inay amegay/ltay/[persistent.translate_language!q]."
 
-    # translations.rpy:168
+    # translations.rpy:197
     old "Extract String Translations"
     new "Xtracteay Tringsay Ranslationstay"
 
-    # translations.rpy:170
+    # translations.rpy:199
     old "Merge String Translations"
     new "Ergemay Tringsay Ranslationstay"
 
-    # translations.rpy:175
+    # translations.rpy:204
     old "Replace existing translations"
     new "Eplaceray existingay anslationstray"
 
-    # translations.rpy:176
+    # translations.rpy:205
     old "Reverse languages"
     new "Everseray anguageslay"
 
-    # translations.rpy:180
+    # translations.rpy:209
     old "Update Default Interface Translations"
     new "Pdateuay Efaultday Nterfaceiay Ranslationstay"
 
-    # translations.rpy:200
+    # translations.rpy:229
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
     new "Hetay extractay ommandcay allowsay ouyay otay extractay ringstay anslationstray omfray anay existingay rojectpay intoay aay emporarytay ilefay.\n\nHetay ergemay ommandcay ergesmay extracteday anslationstray intoay anotheray rojectpay."
 
-    # translations.rpy:224
+    # translations.rpy:253
     old "Ren'Py is generating translations...."
     new "Enray'Ypay isay eneratinggay anslationstray...."
 
-    # translations.rpy:235
+    # translations.rpy:264
     old "Ren'Py has finished generating [language] translations."
     new "Enray'Ypay ashay inishedfay eneratinggay [language] anslationstray."
 
-    # translations.rpy:248
+    # translations.rpy:277
     old "Ren'Py is extracting string translations..."
     new "Enray'Ypay isay extractingay ringstay anslationstray..."
 
-    # translations.rpy:251
+    # translations.rpy:280
     old "Ren'Py has finished extracting [language] string translations."
     new "Enray'Ypay ashay inishedfay extractingay [language] ringstay anslationstray."
 
-    # translations.rpy:271
+    # translations.rpy:300
     old "Ren'Py is merging string translations..."
     new "Enray'Ypay isay ergingmay ringstay anslationstray..."
 
-    # translations.rpy:274
+    # translations.rpy:303
     old "Ren'Py has finished merging [language] string translations."
     new "Enray'Ypay ashay inishedfay ergingmay [language] ringstay anslationstray."
 
-    # translations.rpy:282
+    # translations.rpy:313
     old "Updating default interface translations..."
     new "Pdatinguay efaultday interfaceay anslationstray..."
 
-    # translations.rpy:306
-    old "Extract Dialogue: [project.current.name!q]"
-    new "Xtracteay Ialogueday: [project.current.name!q]"
+    # translations.rpy:337
+    old "Extract Dialogue: [project.current.display_name!q]"
+    new "Xtracteay Ialogueday: [project.current.display_name!q]"
 
-    # translations.rpy:322
+    # translations.rpy:353
     old "Format:"
     new "Ormatfay:"
 
-    # translations.rpy:330
+    # translations.rpy:361
     old "Tab-delimited Spreadsheet (dialogue.tab)"
     new "Abtay-elimitedday Preadsheetsay (ialogueday.abtay)"
 
-    # translations.rpy:331
+    # translations.rpy:362
     old "Dialogue Text Only (dialogue.txt)"
     new "Ialogueday Exttay Nlyoay (ialogueday.xttay)"
 
-    # translations.rpy:344
+    # translations.rpy:375
     old "Strip text tags from the dialogue."
     new "Tripsay exttay agstay omfray hetay ialogueday."
 
-    # translations.rpy:345
+    # translations.rpy:376
     old "Escape quotes and other special characters."
     new "Scapeeay uotesqay anday otheray pecialsay aracterschay."
 
-    # translations.rpy:346
+    # translations.rpy:377
     old "Extract all translatable strings, not just dialogue."
     new "Xtracteay allay anslatabletray ringsstay, otnay ustjay ialogueday."
 
-    # translations.rpy:374
+    # translations.rpy:405
     old "Ren'Py is extracting dialogue...."
     new "Enray'Ypay isay extractingay ialogueday...."
 
-    # translations.rpy:378
+    # translations.rpy:409
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
     new "Enray'Ypay ashay inishedfay extractingay ialogueday. Hetay extracteday ialogueday ancay ebay oundfay inay ialogueday.[persistent.dialogue_format] inay hetay asebay irectoryday."
 
@@ -1183,19 +1204,4 @@
     # updater.rpy:195
     old "Proceed"
     new "Roceedpay"
-
-
-translate piglatin strings:
-
-    # choose_directory.rpy:104
-    old "The selected projects directory is not writable."
-    new "Hetay electedsay rojectspay irectoryday isay otnay ritableway."
-
-    # distribute.rpy:1061
-    old "Signing the Macintosh application...\n(This may take a long time.)"
-    new "Igningsay hetay Acintoshmay applicationay...\n(Histay aymay aketay aay onglay imetay.)"
-
-    # front_page.rpy:91
-    old "PROJECTS:"
-    new "Rojectspay:"
 

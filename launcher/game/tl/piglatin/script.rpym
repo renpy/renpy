@@ -1,33 +1,33 @@
-﻿# Eclareday aracterschay useday ybay histay amegay. Hetay olorcay argumentay olorizescay hetay
-# amenay ofay hetay aracterchay.
+# The script of the game goes in this file.
 
-define e = Character("Ileeneay")
+# Declare characters used by this game. The color argument colorizes the
+# name of the character.
+
+define e = Character("Eileen")
 
 
-# Hetay amegay artsstay erehay.
+# The game starts here.
 
 label start:
 
-    # Howsay aay ackgroundbay. Histay usesay aay aceholderplay ybay efaultday, utbay ouyay ancay
-    # adday aay ilefay (amednay eitheray "bg oomray.png" oray "bg oomray.jpg") otay hetay
-    # imagesay irectoryday otay owshay itay.
+    # Show a background. This uses a placeholder by default, but you can
+    # add a file (named either "bg room.png" or "bg room.jpg") to the
+    # images directory to show it.
 
-    scene bg oomray
+    scene bg room
 
-    # Histay owsshay aay aracterchay pritesay. Aay aceholderplay isay useday, utbay ouyay ancay
-    # eplaceray itay ybay addingay aay ilefay amednay "eileenay appyhay.png" otay hetay imagesay
-    # irectoryday.
+    # This shows a character sprite. A placeholder is used, but you can
+    # replace it by adding a file named "eileen happy.png" to the images
+    # directory.
 
-    show eileenay appyhay
+    show eileen happy
 
-    # Hesetay isplayday ineslay ofay ialogueday.
+    # These display lines of dialogue.
 
-    "Ellohay, orldway."
+    e "You've created a new Ren'Py game."
 
-    e "Ouyay'evay reatedcay aay ewnay Enray'Ypay amegay."
+    e "Once you add a story, pictures, and music, you can release it to the world!"
 
-    e "Nceoay ouyay adday aay orystay, icturespay, anday usicmay, ouyay ancay eleaseray itay otay hetay orldway!"
-
-    # Histay endsay hetay amegay.
+    # This ends the game.
 
     return
