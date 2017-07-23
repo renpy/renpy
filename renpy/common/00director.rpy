@@ -1458,7 +1458,7 @@ screen director_lines(state):
             hbox:
                 yalign 1.0
 
-                textbutton "Done":
+                textbutton _("Done"):
                     action director.Stop()
                     style "director_action_button"
 
@@ -1466,11 +1466,11 @@ screen director_lines(state):
 
 screen director_statement(state):
 
-    $ kind = state.kind or "(statement)"
-    $ tag = state.tag or "(tag)"
-    $ attributes =  " ".join(director.get_ordered_attributes()) or "(attributes)"
-    $ transforms = ", ".join(state.transforms) or "(transform)"
-    $ behind = ", ".join(state.behind) or "(tag)"
+    $ kind = state.kind or __("(statement)")
+    $ tag = state.tag or __("(tag)")
+    $ attributes =  " ".join(director.get_ordered_attributes()) or __("(attributes)")
+    $ transforms = ", ".join(state.transforms) or __("(transform)")
+    $ behind = ", ".join(state.behind) or __("(tag)")
     $ behind_tags = director.get_behind_tags(state.tag)
 
     hbox:
@@ -1494,7 +1494,7 @@ screen director_statement(state):
 
 screen director_with_statement(state):
 
-    $ transition = state.transition or "(transition)"
+    $ transition = state.transition or __("(transition)")
 
     hbox:
         style_prefix "director_statement"
@@ -1506,8 +1506,8 @@ screen director_with_statement(state):
 
 screen director_audio_statement(state):
 
-    $ channel = state.channel or "(channel)"
-    $ audio = director.quote_audio() or "(filename)"
+    $ channel = state.channel or __("(channel)")
+    $ audio = director.quote_audio() or __("(filename)")
 
     hbox:
         style_prefix "director_statement"
@@ -1532,15 +1532,15 @@ screen director_footer(state):
         spacing 26
 
         if state.change:
-            textbutton "Change" action director.Commit()
+            textbutton _("Change") action director.Commit()
         else:
-            textbutton "Add" action director.Commit()
+            textbutton _("Add") action director.Commit()
 
 
-        textbutton "Cancel" action director.Cancel()
+        textbutton _("Cancel") action director.Cancel()
 
         if state.change:
-            textbutton "Remove" action director.Remove()
+            textbutton _("Remove") action director.Remove()
 
 
 # Formats the choices.
@@ -1573,7 +1573,7 @@ screen director_kind(state):
 
         use director_statement(state)
 
-        use director_choices("Statement:"):
+        use director_choices(_("Statement:")):
 
             textbutton "scene" action director.SetKind("scene")
             textbutton "show" action director.SetKind("show")
@@ -1594,7 +1594,7 @@ screen director_tag(state):
 
         use director_statement(state)
 
-        use director_choices("Tag:"):
+        use director_choices(_("Tag:")):
 
             for t in director.get_tags():
                 textbutton "[t]":
@@ -1610,7 +1610,7 @@ screen director_attributes(state):
 
         use director_statement(state)
 
-        use director_choices("Attributes:"):
+        use director_choices(_("Attributes:")):
 
             for t in director.get_attributes():
                 textbutton "[t]":
@@ -1628,7 +1628,7 @@ screen director_transform(state):
 
         use director_statement(state)
 
-        use director_choices("Transforms:"):
+        use director_choices(_("Transforms:")):
 
             for t in director.get_transforms():
                 textbutton "[t]":
@@ -1647,7 +1647,7 @@ screen director_behind(state):
 
         use director_statement(state)
 
-        use director_choices("Behind:"):
+        use director_choices(_("Behind:")):
 
             for t in director.get_behind_tags(state.tag):
                 textbutton "[t]":
@@ -1666,7 +1666,7 @@ screen director_with(state):
 
         use director_with_statement(state)
 
-        use director_choices("Transition:"):
+        use director_choices(_("Transition:")):
 
             for t in director.transitions:
                 textbutton "[t]":
@@ -1684,7 +1684,7 @@ screen director_channel(state):
 
         use director_audio_statement(state)
 
-        use director_choices("Channel:"):
+        use director_choices(_("Channel:")):
 
             for c in director.audio_channels:
                 textbutton "[c]":
@@ -1702,7 +1702,7 @@ screen director_audio(state):
 
         use director_audio_statement(state)
 
-        use director_choices("Audio Filename:"):
+        use director_choices(_("Audio Filename:")):
 
             for fn in director.audio_files.get(state.channel, [ ]):
                 $ elided_fn = director.audio_filename_to_display(state.channel, fn)
