@@ -25,6 +25,7 @@ import renpy.display
 
 import re
 import os
+import collections
 
 # This matches the dialogue-relevant text tags.
 TAG_RE = re.compile(r'(\{\{)|(\{(p|w|nw|fast)(?:\=([^}]*))?\})', re.S)
@@ -102,7 +103,7 @@ class DialogueTextTags(object):
             self.pause_delay.append(None)
 
 
-def predict_show_display_say(who, what, who_args, what_args, window_args, image=False, two_window=False, side_image=None, screen=None, **kwargs):
+def predict_show_display_say(who, what, who_args, what_args, window_args, image=False, two_window=False, side_image=None, screen=None, properties=None, **kwargs):
     """
     This is the default function used by Character to predict images that
     will be used by show_display_say. It's called with more-or-less the
@@ -123,7 +124,7 @@ def predict_show_display_say(who, what, who_args, what_args, window_args, image=
         kwargs["image"] = image
 
     if screen:
-        props = compute_widget_properties(who_args, what_args, window_args)
+        props = compute_widget_properties(who_args, what_args, window_args, properties)
 
         renpy.display.predict.screen(
             screen,
@@ -137,7 +138,7 @@ def predict_show_display_say(who, what, who_args, what_args, window_args, image=
         return
 
 
-def compute_widget_properties(who_args, what_args, window_args, variant=None):
+def compute_widget_properties(who_args, what_args, window_args, properties, variant=None):
     """
     Computes and returns the widget properties.
     """
@@ -173,11 +174,12 @@ def compute_widget_properties(who_args, what_args, window_args, variant=None):
     what_args = style_args(what_args)
     window_args = style_args(window_args)
 
-    return {
-        "window" : window_args,
-        "what" : what_args,
-        "who" : who_args,
-        }
+    rv = dict(properties)
+    rv["window"] = window_args
+    rv["what"] = what_args
+    rv["who"] = who_args
+
+    return rv
 
 
 def show_display_say(who, what, who_args={}, what_args={}, window_args={},
@@ -189,6 +191,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
                      variant=None,
                      screen=None,
                      layer=None,
+                     properties={},
                      **kwargs):
     """
     This is called (by default) by renpy.display_say to add the
@@ -223,7 +226,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     displaying the what text.
     """
 
-    props = compute_widget_properties(who_args, what_args, window_args, variant=variant)
+    props = compute_widget_properties(who_args, what_args, window_args, properties, variant=variant)
 
     def handle_who():
         if who:
@@ -546,6 +549,7 @@ class HistoryEntry(renpy.object.Object):
     def __repr__(self):
         return "<History {!r} {!r}>".format(self.who, self.what)
 
+
 # This is used to flag values that haven't been set by the user.
 NotSet = renpy.object.Sentinel("NotSet")
 
@@ -570,6 +574,7 @@ class ADVCharacter(object):
         ]
 
     voice_tag = None
+    properties = { }
 
     # When adding a new argument here, remember to add it to copy below.
     def __init__(
@@ -637,12 +642,17 @@ class ADVCharacter(object):
             type=d('type'),
             )
 
+        self.properties = collections.defaultdict(dict)
+
         if kind:
             self.who_args = kind.who_args.copy()
             self.what_args = kind.what_args.copy()
             self.window_args = kind.window_args.copy()
             self.show_args = kind.show_args.copy()
             self.cb_args = kind.cb_args.copy()
+
+            for k, v in kind.properties.items():
+                self.properties[k] = dict(v)
 
         else:
             self.who_args = { "substitute" : False }
@@ -658,28 +668,21 @@ class ADVCharacter(object):
         if "slow_abortable" in properties:
             self.what_args["slow_abortable"] = properties.pop("slow_abortable")
 
-        for k in list(properties):
+        prefixes = [ "show", "cb", "what", "window", "who"] + renpy.config.character_id_prefixes
+        split_args = [ i + "_" for i in prefixes ] + [ "" ]
 
-            if "_" in k:
-                prefix, suffix = k.split("_", 1)
+        split = renpy.easy.split_properties(properties, *split_args)
 
-                if prefix == "show":
-                    self.show_args[suffix] = properties[k]
-                    continue
-                elif prefix == "cb":
-                    self.cb_args[suffix] = properties[k]
-                    continue
-                elif prefix == "what":
-                    self.what_args[suffix] = properties[k]
-                    continue
-                elif prefix == "window":
-                    self.window_args[suffix] = properties[k]
-                    continue
-                elif prefix == "who":
-                    self.who_args[suffix] = properties[k]
-                    continue
+        for prefix, d in zip(prefixes, split):
+            self.properties[prefix].update(d)
 
-            self.who_args[k] = properties[k]
+        self.properties["who"].update(split[-1])
+
+        self.show_args.update(self.properties.pop("show"))
+        self.cb_args.update(self.properties.pop("cb"))
+        self.what_args.update(self.properties.pop("what"))
+        self.window_args.update(self.properties.pop("window"))
+        self.who_args.update(self.properties.pop("who"))
 
     def copy(self, name=NotSet, **properties):
         return type(self)(name, kind=self, **properties)
@@ -697,6 +700,7 @@ class ADVCharacter(object):
             what_args=self.what_args,
             window_args=self.window_args,
             screen=self.screen,
+            properties=self.properties,
             **self.show_args)
 
     # This is called after the last interaction is done.
@@ -725,6 +729,7 @@ class ADVCharacter(object):
             what_args=self.what_args,
             window_args=self.window_args,
             screen=self.screen,
+            properties=self.properties,
             **self.show_args)
 
     def resolve_say_attributes(self, predict, wanted=[], remove=[]):

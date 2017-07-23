@@ -778,6 +778,9 @@ lint_stats_callbacks = [ ]
 # Should we apply position properties to the side of a viewport?
 position_viewport_side = True
 
+# Things that be given properties via Character.
+character_id_prefixes = [ "namebox" ]
+
 del os
 del collections
 
