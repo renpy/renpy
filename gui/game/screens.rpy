@@ -104,6 +104,7 @@ screen say(who, what):
         if who is not None:
 
             window:
+                id "namebox"
                 style "namebox"
                 text who id "who"
 
@@ -115,6 +116,10 @@ screen say(who, what):
     if not renpy.variant("small"):
         add SideImage() xalign 0.0 yalign 1.0
 
+
+## Make the namebox available for styling through the Character object.
+init python:
+    config.character_id_prefixes.append('namebox')
 
 style window is default
 style say_label is default

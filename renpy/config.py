@@ -779,7 +779,7 @@ lint_stats_callbacks = [ ]
 position_viewport_side = True
 
 # Things that be given properties via Character.
-character_id_prefixes = [ "namebox" ]
+character_id_prefixes = [ ]
 
 del os
 del collections

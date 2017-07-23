@@ -322,6 +322,17 @@ Occasionally Used
 
     The number of slots used by autosaves.
 
+.. var:: config.character_id_prefixes = [ ]
+
+    This specifies a list of style property prefixes that can be given
+    to a :func:`Character`. When a style prefixed with one of the given
+    prefix is given, it is applied to the displayable with that prefix
+    as its ID.
+
+    For example, the default GUI adds "namebox" to this. When a Character
+    is given the `namebox_background` property, it sets :propref:`background`
+    on the displayable in the say screen with the id "namebox".
+
 .. var:: config.debug = False
 
     Enables debugging functionality (mostly by turning some missing

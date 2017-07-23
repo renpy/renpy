@@ -1148,7 +1148,12 @@ def Character(name=NotSet, kind=None, **properties):
     The style applied to the character name, spoken text, and window
     can also be set this way, using the `who_style`, `what_style`, and
     `window_style` arguments, respectively.
-     """
+
+    Setting :var:`config.character_id_prefixes` makes it possible to style
+    other displayables as well. For example, when the default GUI is used,
+    styles prefixed with ``namebox_`` are used to style the name of the
+    speaking character.
+    """
 
     if kind is None:
         kind = renpy.store.adv
