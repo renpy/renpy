@@ -39,6 +39,11 @@
 ##############################################################################
 # The implementation of NVL mode lives below this line.
 
+
+# The language of the entries in nvl_list. If the language changes, this
+# is updated and the list is reset.
+default _nvl_language = None
+
 init -1500 python:
 
     # Styles that are used by nvl mode.
@@ -97,7 +102,6 @@ init -1500 python:
 
     # If set, then all of the nvl-specific style get indexed with this.
     nvl_variant = None
-
 
     # Returns the appropriate variant style.
     def __s(s):
@@ -299,6 +303,10 @@ init -1500 python:
 
             if store.nvl_list is None:
                 store.nvl_list = [ ]
+
+            if store._nvl_language != _preferences.language:
+                store.nvl_list = [ ]
+                store._nvl_language = _preferences.language
 
             while config.nvl_list_length and (len(nvl_list) + 1 > config.nvl_list_length):
                 nvl_list.pop(0)
