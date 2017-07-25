@@ -282,19 +282,25 @@ init -1500 python:
                 kind=kind,
                 **properties)
 
-        def do_add(self, who, what):
-
-            if store.nvl_list is None:
-                store.nvl_list = [ ]
+        def push_nvl_list(self, who, what):
 
             kwargs = self.show_args.copy()
+            kwargs["properties"] = dict(self.properties)
             kwargs["what_args"] = dict(self.what_args)
             kwargs["who_args"] = dict(self.who_args)
             kwargs["window_args"] = dict(self.window_args)
 
             store.nvl_list.append((who, what, kwargs))
 
-            while config.nvl_list_length and (len(nvl_list) > config.nvl_list_length):
+        def pop_nvl_list(self):
+            store.nvl_list.pop()
+
+        def do_add(self, who, what):
+
+            if store.nvl_list is None:
+                store.nvl_list = [ ]
+
+            while config.nvl_list_length and (len(nvl_list) + 1 > config.nvl_list_length):
                 nvl_list.pop(0)
 
         def do_display(self, who, what, **display_args):
@@ -315,14 +321,25 @@ init -1500 python:
             else:
                 checkpoint = True
 
-            renpy.display_say(
-                who,
-                what,
-                nvl_show_core,
-                checkpoint=checkpoint,
-                **display_args)
+            self.push_nvl_list(who, what)
+
+            try:
+
+                renpy.display_say(
+                    who,
+                    what,
+                    nvl_show_core,
+                    checkpoint=checkpoint,
+                    **display_args)
+
+            finally:
+
+                self.pop_nvl_list()
 
         def do_done(self, who, what):
+
+            self.push_nvl_list(who, what)
+
             nvl_list[-1][2]["what_args"]["alt"] = ""
             nvl_list[-1][2]["who_args"]["alt"] = ""
 
