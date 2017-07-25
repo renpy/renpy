@@ -118,9 +118,9 @@ init -1500 python:
          mode screen.
          """
 
-        widget_properties = { }
         dialogue = [ ]
         kwargs = { }
+        widget_properties = { }
 
         for i, entry in enumerate(nvl_list):
             if not entry:
@@ -133,10 +133,17 @@ init -1500 python:
                 what_id = "what"
                 window_id = "window"
 
+                for k, v in kwargs["properties"].items():
+                    widget_properties[k + str(i)] =  v
+
             else:
+
                 who_id = "who%d" % i
                 what_id = "what%d" % i
                 window_id = "window%d" % i
+
+                for k, v in kwargs["properties"].items():
+                    widget_properties[k] =  v
 
             widget_properties[who_id] = kwargs["who_args"]
             widget_properties[what_id] = kwargs["what_args"]
@@ -156,11 +163,13 @@ init -1500 python:
             e.who_args = kwargs["who_args"]
             e.what_args = kwargs["what_args"]
             e.window_args = kwargs["window_args"]
+            e.properties = kwargs["properties"]
 
             dialogue.append(e)
 
         show_args = dict(kwargs)
         if show_args:
+            del show_args["properties"]
             del show_args["who_args"]
             del show_args["what_args"]
             del show_args["window_args"]
