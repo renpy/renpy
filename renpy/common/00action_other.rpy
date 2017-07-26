@@ -547,7 +547,7 @@ init -1500:
     screen notify:
         zorder 100
 
-        text message at _notify_transform
+        text "[message!tq]" at _notify_transform
 
         # This controls how long it takes between when the screen is
         # first shown, and when it begins hiding.
