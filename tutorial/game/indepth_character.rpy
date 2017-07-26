@@ -64,7 +64,7 @@ label demo_character:
 
         define e3 = Character("Eileen", who_font="Roboto-Regular.ttf", what_font="Roboto-Light.ttf")
 
-        e3 "Similarly, the ``who_font`` and ``what_font`` properties set the font used by the different kinds of text."
+        e3 "Similarly, the who_font and what_font properties set the font used by the different kinds of text."
 
 
     example:
@@ -80,7 +80,7 @@ label demo_character:
 
         define e5 = Character("Eileen", what_outlines=[( 1, "#008000", 0, 0 )] )
 
-        e5 "The ``what_outlines`` property puts an outline around the text."
+        e5 "The what_outlines property puts an outline around the text."
 
         e5 "It's a little complicated since it takes a list with a tuple in it, with the tuple being four things in parenthesis, and the list the square brackets around them."
 
@@ -90,7 +90,7 @@ label demo_character:
 
         define e6 = Character("Eileen", what_outlines=[( 0, "#808080", 2, 2 )] )
 
-        e6 "When the outline size is 0 and the offsets are given, ``what_outlines`` can also act as a drop-shadow behind the text."
+        e6 "When the outline size is 0 and the offsets are given, what_outlines can also act as a drop-shadow behind the text."
 
 
     example:
