@@ -586,9 +586,9 @@ label tutorial_input:
 
     example input hide:
         python:
-            name = renpy.input("What's your name?")
+            name = renpy.input(_("What's your name?"))
 
-            name = name.strip() or "Guy Shy"
+            name = name.strip() or __("Guy Shy")
 
     python:
         if name.lower() == "shiro":
