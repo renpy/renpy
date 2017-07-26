@@ -184,6 +184,7 @@ class StdioRedirector(object):
 
     def write(self, s):
         self.real_file.write(s)
+        self.real_file.flush()
 
         s = self.buffer + s
 
