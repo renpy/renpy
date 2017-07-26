@@ -42,8 +42,8 @@ translate russian strings:
     new "## Этот экран должен создать наложение ввода с id \"input\", чтобы принять различные вводимые параметры."
 
     # screens.rpy:167
-    old "## http://www.renpy.org/doc/html/screen_special.html#input"
-    new "## http://www.renpy.org/doc/html/screen_special.html#input"
+    old "## https://www.renpy.org/doc/html/screen_special.html#input"
+    new "## https://www.renpy.org/doc/html/screen_special.html#input"
 
     # screens.rpy:194
     old "## Choice screen"
@@ -54,8 +54,8 @@ translate russian strings:
     new "## Этот экран используется, чтобы показывать внутриигровые выборы, представленные оператором menu. Один параметр, вложения, список объектов, каждый с заголовком и полями действия."
 
     # screens.rpy:200
-    old "## http://www.renpy.org/doc/html/screen_special.html#choice"
-    new "## http://www.renpy.org/doc/html/screen_special.html#choice"
+    old "## https://www.renpy.org/doc/html/screen_special.html#choice"
+    new "## https://www.renpy.org/doc/html/screen_special.html#choice"
 
     # screens.rpy:210
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
@@ -170,8 +170,8 @@ translate russian strings:
     new "## Используется, чтобы показывать главное меню, когда Ren'Py запустилась."
 
     # screens.rpy:345
-    old "## http://www.renpy.org/doc/html/screen_special.html#main-menu"
-    new "## http://www.renpy.org/doc/html/screen_special.html#main-menu"
+    old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+    new "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
 
     # screens.rpy:349
     old "## This ensures that any other menu screen is replaced."
@@ -317,351 +317,355 @@ translate russian strings:
     old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
     new "## https://www.renpy.org/doc/html/screen_special.html#preferences"
 
-    # screens.rpy:729
+    # screens.rpy:724
     old "Display"
     new "Режим экрана"
 
-    # screens.rpy:730
+    # screens.rpy:725
     old "Window"
     new "Оконный"
 
-    # screens.rpy:731
+    # screens.rpy:726
     old "Fullscreen"
     new "Полный"
 
-    # screens.rpy:735
+    # screens.rpy:730
     old "Rollback Side"
     new "Сторона отката"
 
-    # screens.rpy:736
+    # screens.rpy:731
     old "Disable"
     new "Отключено"
 
-    # screens.rpy:737
+    # screens.rpy:732
     old "Left"
     new "Левая"
 
-    # screens.rpy:738
+    # screens.rpy:733
     old "Right"
     new "Правая"
 
-    # screens.rpy:743
+    # screens.rpy:738
     old "Unseen Text"
     new "Всего текста"
 
-    # screens.rpy:744
+    # screens.rpy:739
     old "After Choices"
     new "После выборов"
 
-    # screens.rpy:745
+    # screens.rpy:740
     old "Transitions"
     new "Переходов"
 
-    # screens.rpy:747
+    # screens.rpy:742
     old "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
     new "## Дополнительные vbox'ы типа \"radio_pref\" или \"check_pref\" могут быть добавлены сюда, для добавления новых настроек."
 
-    # screens.rpy:758
+    # screens.rpy:753
     old "Text Speed"
     new "Скорость текста"
 
-    # screens.rpy:762
+    # screens.rpy:757
     old "Auto-Forward Time"
     new "Скорость авто-чтения"
 
-    # screens.rpy:769
+    # screens.rpy:764
     old "Music Volume"
     new "Громкость музыки"
 
-    # screens.rpy:776
+    # screens.rpy:771
     old "Sound Volume"
     new "Громкость звука"
 
-    # screens.rpy:782
+    # screens.rpy:777
     old "Test"
     new "Тест"
 
-    # screens.rpy:786
+    # screens.rpy:781
     old "Voice Volume"
     new "Громкость голоса"
 
-    # screens.rpy:797
+    # screens.rpy:792
     old "Mute All"
     new "Без звука"
 
-    # screens.rpy:873
+    # screens.rpy:868
     old "## History screen"
     new "## Экран истории"
 
-    # screens.rpy:875
+    # screens.rpy:870
     old "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
     new "## Этот экран показывает игроку историю диалогов. Хотя в этом экране нет ничего особенного, он имеет доступ к истории диалогов, хранённом в _history_list."
 
-    # screens.rpy:879
+    # screens.rpy:874
     old "## https://www.renpy.org/doc/html/history.html"
     new "## https://www.renpy.org/doc/html/history.html"
 
-    # screens.rpy:885
+    # screens.rpy:880
     old "## Avoid predicting this screen, as it can be very large."
     new "## Избегайте предсказывания этого экрана, так как он может быть очень массивным."
 
-    # screens.rpy:896
+    # screens.rpy:891
     old "## This lays things out properly if history_height is None."
     new "## Это всё правильно уравнивает, если history_height установлен на None."
 
-    # screens.rpy:905
+    # screens.rpy:900
     old "## Take the color of the who text from the Character, if set."
     new "## Берёт цвет из who параметра персонажа, если он установлен."
 
-    # screens.rpy:912
+    # screens.rpy:908
     old "The dialogue history is empty."
     new "История диалогов пуста."
 
-    # screens.rpy:956
+    # screens.rpy:911
+    old "## This determines what tags are allowed to be displayed on the history screen."
+    new "## Это определяет, какие теги могут отображаться на экране истории."
+
+    # screens.rpy:958
     old "## Help screen"
     new "## Экран помощи"
 
-    # screens.rpy:958
+    # screens.rpy:960
     old "## A screen that gives information about key and mouse bindings. It uses other screens (keyboard_help, mouse_help, and gamepad_help) to display the actual help."
     new "## Экран, дающий информацию о кнопках управления. Он используется другие экраны (keyboard_help, mouse_help, и gamepad_help), чтобы показывать актуальную помощь."
 
-    # screens.rpy:977
+    # screens.rpy:979
     old "Keyboard"
     new "Клавиатура"
 
-    # screens.rpy:978
+    # screens.rpy:980
     old "Mouse"
     new "Мышь"
 
-    # screens.rpy:981
+    # screens.rpy:983
     old "Gamepad"
     new "Геймпад"
 
-    # screens.rpy:994
+    # screens.rpy:996
     old "Enter"
     new "Enter"
 
-    # screens.rpy:995
+    # screens.rpy:997
     old "Advances dialogue and activates the interface."
     new "Прохождение диалогов и активация интерфейса."
 
-    # screens.rpy:998
+    # screens.rpy:1000
     old "Space"
     new "Пробел"
 
-    # screens.rpy:999
+    # screens.rpy:1001
     old "Advances dialogue without selecting choices."
     new "Прохождение диалогов, но не позволяет делать выбор."
 
-    # screens.rpy:1002
+    # screens.rpy:1004
     old "Arrow Keys"
     new "Стрелки"
 
-    # screens.rpy:1003
+    # screens.rpy:1005
     old "Navigate the interface."
     new "Навигация по интерфейсу."
 
-    # screens.rpy:1006
+    # screens.rpy:1008
     old "Escape"
     new "Esc"
 
-    # screens.rpy:1007
+    # screens.rpy:1009
     old "Accesses the game menu."
     new "Вход в игровое меню."
 
-    # screens.rpy:1010
+    # screens.rpy:1012
     old "Ctrl"
     new "Ctrl"
 
-    # screens.rpy:1011
+    # screens.rpy:1013
     old "Skips dialogue while held down."
     new "Пропускает диалоги, пока зажат."
 
-    # screens.rpy:1014
+    # screens.rpy:1016
     old "Tab"
     new "Tab"
 
-    # screens.rpy:1015
+    # screens.rpy:1017
     old "Toggles dialogue skipping."
     new "Включает режим пропуска."
 
-    # screens.rpy:1018
+    # screens.rpy:1020
     old "Page Up"
     new "Page Up"
 
-    # screens.rpy:1019
+    # screens.rpy:1021
     old "Rolls back to earlier dialogue."
-    new "Возврат назад по сюжету игры."
+    new "Откат назад по сюжету игры."
 
-    # screens.rpy:1022
+    # screens.rpy:1024
     old "Page Down"
     new "Page Down"
 
-    # screens.rpy:1023
+    # screens.rpy:1025
     old "Rolls forward to later dialogue."
     new "Откатывает предыдущее действие вперёд."
 
-    # screens.rpy:1027
+    # screens.rpy:1029
     old "Hides the user interface."
     new "Скрывает интерфейс пользователя."
 
-    # screens.rpy:1031
+    # screens.rpy:1033
     old "Takes a screenshot."
     new "Делает снимок экрана."
 
-    # screens.rpy:1035
+    # screens.rpy:1037
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
     new "Включает поддерживаемый {a=https://www.renpy.org/l/voicing}синтезатор речи{/a}."
 
-    # screens.rpy:1041
+    # screens.rpy:1043
     old "Left Click"
     new "Левый клик"
 
-    # screens.rpy:1045
+    # screens.rpy:1047
     old "Middle Click"
-    new "Средний клик"
+    new "Клик колёсиком"
 
-    # screens.rpy:1049
+    # screens.rpy:1051
     old "Right Click"
     new "Правый клик"
 
-    # screens.rpy:1053
+    # screens.rpy:1055
     old "Mouse Wheel Up\nClick Rollback Side"
     new "Колёсико вверх\nКлик на сторону отката"
 
-    # screens.rpy:1057
+    # screens.rpy:1059
     old "Mouse Wheel Down"
     new "Колёсико вниз"
 
-    # screens.rpy:1064
+    # screens.rpy:1066
     old "Right Trigger\nA/Bottom Button"
     new "Правый триггер\nA/Нижняя кнопка"
 
-    # screens.rpy:1068
+    # screens.rpy:1070
     old "Left Trigger\nLeft Shoulder"
     new "Левый Триггер\nЛевый Бампер"
 
-    # screens.rpy:1072
+    # screens.rpy:1074
     old "Right Shoulder"
     new "Правый бампер"
 
-    # screens.rpy:1076
+    # screens.rpy:1079
     old "D-Pad, Sticks"
     new "Крестовина, Стики"
 
-    # screens.rpy:1080
+    # screens.rpy:1083
     old "Start, Guide"
     new "Start, Guide"
 
-    # screens.rpy:1084
+    # screens.rpy:1087
     old "Y/Top Button"
     new "Y/Верхняя кнопка"
 
-    # screens.rpy:1087
+    # screens.rpy:1090
     old "Calibrate"
     new "Калибровка"
 
-    # screens.rpy:1115
+    # screens.rpy:1118
     old "## Additional screens"
     new "## Дополнительные экраны"
 
-    # screens.rpy:1119
+    # screens.rpy:1122
     old "## Confirm screen"
     new "## Экран подтверждения"
 
-    # screens.rpy:1121
+    # screens.rpy:1124
     old "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
     new "## Экран подтверждения вызывается, когда Ren'Py хочет спросить у пользователя вопрос да или нет."
 
-    # screens.rpy:1124
-    old "## http://www.renpy.org/doc/html/screen_special.html#confirm"
-    new "## http://www.renpy.org/doc/html/screen_special.html#confirm"
+    # screens.rpy:1127
+    old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+    new "## https://www.renpy.org/doc/html/screen_special.html#confirm"
 
-    # screens.rpy:1128
+    # screens.rpy:1131
     old "## Ensure other screens do not get input while this screen is displayed."
     new "## Гарантирует, чтобы другие экраны не были доступны, пока этот экран показан."
 
-    # screens.rpy:1152
+    # screens.rpy:1155
     old "Yes"
     new "Да"
 
-    # screens.rpy:1153
+    # screens.rpy:1156
     old "No"
     new "Нет"
 
-    # screens.rpy:1155
+    # screens.rpy:1158
     old "## Right-click and escape answer \"no\"."
     new "## Правый клик и esc как ответ \"нет\"."
 
-    # screens.rpy:1182
+    # screens.rpy:1185
     old "## Skip indicator screen"
     new "## Экран индикатора пропуска"
 
-    # screens.rpy:1184
+    # screens.rpy:1187
     old "## The skip_indicator screen is displayed to indicate that skipping is in progress."
     new "## Экран индикатора пропуска показывается, чтобы показать, что идёт пропуск."
 
-    # screens.rpy:1187
+    # screens.rpy:1190
     old "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
     new "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
 
-    # screens.rpy:1199
+    # screens.rpy:1202
     old "Skipping"
     new "Пропускаю"
 
-    # screens.rpy:1206
+    # screens.rpy:1209
     old "## This transform is used to blink the arrows one after another."
     new "## Эта трансформация используется, чтобы мигать стрелками одной за другой."
 
-    # screens.rpy:1233
+    # screens.rpy:1236
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
     new "## Нам надо использовать шрифт, имеющий в себе символ U+25B8 (стрелку выше)."
 
-    # screens.rpy:1238
+    # screens.rpy:1241
     old "## Notify screen"
     new "## Экран уведомлений"
 
-    # screens.rpy:1240
+    # screens.rpy:1243
     old "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
     new "## Экран уведомлений используется, чтобы показать пользователю извещение. (Например, когда игра автосохранилась, или был сделан скриншот.)"
 
-    # screens.rpy:1243
+    # screens.rpy:1246
     old "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
     new "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
 
-    # screens.rpy:1277
+    # screens.rpy:1280
     old "## NVL screen"
     new "## Экран NVL"
 
-    # screens.rpy:1279
+    # screens.rpy:1282
     old "## This screen is used for NVL-mode dialogue and menus."
     new "## Этот экран используется в диалогах и меню режима NVL."
 
-    # screens.rpy:1281
-    old "## http://www.renpy.org/doc/html/screen_special.html#nvl"
-    new "## http://www.renpy.org/doc/html/screen_special.html#nvl"
+    # screens.rpy:1284
+    old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+    new "## https://www.renpy.org/doc/html/screen_special.html#nvl"
 
-    # screens.rpy:1292
+    # screens.rpy:1295
     old "## Displays dialogue in either a vpgrid or the vbox."
     new "## Показывает диалог или в vpgrid, или в vbox."
 
-    # screens.rpy:1305
+    # screens.rpy:1308
     old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
     new "## Показывает меню, если есть. Меню может показываться некорректно, если config.narrator_menu установлено на True."
 
-    # screens.rpy:1335
+    # screens.rpy:1338
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
     new "## Это контролирует максимальное число строк NVL, могущих показываться за раз."
 
-    # screens.rpy:1397
+    # screens.rpy:1400
     old "## Mobile Variants"
     new "## Мобильные варианты"
 
-    # screens.rpy:1404
+    # screens.rpy:1407
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
-    new "## Раз мышь может не использоваться, мы заменили быстрое меню версией, использующей меньше кнопок и больше по размеру, чтобы легче их коснуться."
+    new "## Раз мышь может не использоваться, мы заменили быстрое меню версией, использующей меньше кнопок, но больших по размеру, чтобы их было легче касаться."
 
-    # screens.rpy:1420
+    # screens.rpy:1423
     old "Menu"
     new "Меню"
 

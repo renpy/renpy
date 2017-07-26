@@ -415,7 +415,7 @@ label tutorial_positions:
 
 label tutorial_atl:
 
-    e "Ren'Py uses transforms to animate, manipulate, andplace images. We've already seen the very simplest of transforms in use:"
+    e "Ren'Py uses transforms to animate, manipulate, and place images. We've already seen the very simplest of transforms in use:"
 
     example simple_transform:
         show eileen happy at right
@@ -672,7 +672,7 @@ label tutorial_atl:
     with dissolve
     hide example
 
-    e "This tutorial game has only scratched the surface of what you can do with ATL. For example, we haven't even covered the on and event statements. For more information, you might want to check out the ATL chapter in the reference manual."
+    e "This tutorial game has only scratched the surface of what you can do with ATL. For example, we haven't even covered the on and event statements. For more information, you might want to check out {a=https://renpy.org/doc/html/atl.html}the ATL chapter in the reference manual{/a}."
 
 
     return

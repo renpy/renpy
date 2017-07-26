@@ -169,7 +169,7 @@ style say_dialogue:
 ## This screen must create an input displayable with id "input" to accept
 ## the various input parameters.
 ##
-## http://www.renpy.org/doc/html/screen_special.html#input
+## https://www.renpy.org/doc/html/screen_special.html#input
 
 screen input(prompt):
     style_prefix "input"
@@ -202,7 +202,7 @@ style input:
 ## menu statement. The one parameter, items, is a list of objects, each
 ## with caption and action fields.
 ##
-## http://www.renpy.org/doc/html/screen_special.html#choice
+## https://www.renpy.org/doc/html/screen_special.html#choice
 
 screen choice(items):
     style_prefix "choice"
@@ -347,7 +347,7 @@ style navigation_button_text:
 ##
 ## Used to display the main menu when Ren'Py starts.
 ##
-## http://www.renpy.org/doc/html/screen_special.html#main-menu
+## https://www.renpy.org/doc/html/screen_special.html#main-menu
 
 screen main_menu():
 
@@ -1129,7 +1129,7 @@ style help_label_text:
 ## The confirm screen is called when Ren'Py wants to ask the player a yes or
 ## no question.
 ##
-## http://www.renpy.org/doc/html/screen_special.html#confirm
+## https://www.renpy.org/doc/html/screen_special.html#confirm
 
 screen confirm(message, yes_action, no_action):
 
@@ -1286,7 +1286,7 @@ style notify_text:
 ##
 ## This screen is used for NVL-mode dialogue and menus.
 ##
-## http://www.renpy.org/doc/html/screen_special.html#nvl
+## https://www.renpy.org/doc/html/screen_special.html#nvl
 
 
 screen nvl(dialogue, items=None):

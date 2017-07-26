@@ -941,7 +941,7 @@ label style_box:
     show screen hbox('hbox', False, None)
     with dissolve
 
-    e "The HBox displayable is used to lay its children out horizontally. By default, there's no spacing between children, so they run together."
+    e "The hbox displayable is used to lay its children out horizontally. By default, there's no spacing between children, so they run together."
 
     hide screen hbox
     show screen vbox('vbox', None)

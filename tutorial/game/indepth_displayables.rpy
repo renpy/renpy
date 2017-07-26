@@ -69,7 +69,7 @@ label simple_displayables:
     show logo text at logopos
     with dissolve
 
-    e "The Text displayable lets Ren'Py treat text as if if it was an image. "
+    e "The Text displayable lets Ren'Py treat text as if it was an image."
 
     example:
         image logo text rotate = Transform(Text(_("This is a text displayable."), size=30), rotate=45)

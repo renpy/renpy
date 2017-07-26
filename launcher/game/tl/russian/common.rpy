@@ -157,51 +157,55 @@ translate russian strings:
     old "%b %d, %H:%M"
     new "%d %b, %H:%M"
 
-    # 00action_file.rpy:820
+    # 00action_file.rpy:825
     old "Quick save complete."
     new "Быстрое сохранение завершено."
 
-    # 00gui.rpy:234
+    # 00director.rpy:689
+    old "The interactive director is not enabled here."
+    new "Интерактивный директор недоступен."
+
+    # 00gui.rpy:237
     old "Are you sure?"
     new "Вы уверены?"
 
-    # 00gui.rpy:235
+    # 00gui.rpy:238
     old "Are you sure you want to delete this save?"
     new "Вы уверены, что хотите удалить это сохранение?"
 
-    # 00gui.rpy:236
+    # 00gui.rpy:239
     old "Are you sure you want to overwrite your save?"
     new "Вы уверены, что хотите перезаписать ваше сохранение?"
 
-    # 00gui.rpy:237
+    # 00gui.rpy:240
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Загрузка игры приведёт к потере несохранённого прогресса.\nВы уверены, что хотите это сделать?"
 
-    # 00gui.rpy:238
+    # 00gui.rpy:241
     old "Are you sure you want to quit?"
     new "Вы уверены, что хотите выйти?"
 
-    # 00gui.rpy:239
+    # 00gui.rpy:242
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Вы уверены, что хотите вернуться в главное меню?\nЭто приведёт к потере несохранённого прогресса."
 
-    # 00gui.rpy:240
+    # 00gui.rpy:243
     old "Are you sure you want to end the replay?"
     new "Вы уверены, что хотите завершить повтор?"
 
-    # 00gui.rpy:241
+    # 00gui.rpy:244
     old "Are you sure you want to begin skipping?"
     new "Вы уверены, что хотите начать пропуск?"
 
-    # 00gui.rpy:242
+    # 00gui.rpy:245
     old "Are you sure you want to skip to the next choice?"
-    new "Вы хотите пропустить всё до следующего выбора?"
+    new "Вы точно хотите пропустить всё до следующего выбора?"
 
-    # 00gui.rpy:243
+    # 00gui.rpy:246
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Вы уверены, что хотите пропустить непрочитанные диалоги до следующего выбора?"
 
-    # 00keymap.rpy:259
+    # 00keymap.rpy:262
     old "Saved screenshot as %s."
     new "Скриншот сохранён как %s."
 
@@ -225,17 +229,17 @@ translate russian strings:
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Эта программа содержит свободное и открытое программное обеспечение под несколькими лицензиями, включая лицензию MIT и GNU Lesser General Public. Полный список лицензий, включая ссылки на полный исходный код, можно найти {a=https://www.renpy.org/l/license}здесь{/a}."
 
-    # 00preferences.rpy:429
+    # 00preferences.rpy:442
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "Озвучка буфера обмена включена. Нажмите 'shift+C', чтобы отключить."
+    new "Озвучка буфера обмена включена. Нажмите 'shift+C', чтобы отключить её."
 
-    # 00preferences.rpy:431
+    # 00preferences.rpy:444
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Синтезатор речи должен сказать \"[renpy.display.tts.last]\". Нажмите 'alt+shift+V', чтобы отключить."
+    new "Синтезатор речи должен сказать \"[renpy.display.tts.last]\". Нажмите 'alt+shift+V', чтобы отключить его."
 
-    # 00preferences.rpy:433
+    # 00preferences.rpy:446
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Синтезатор речи включён. Нажмите 'v', чтобы отключить."
+    new "Синтезатор речи включён. Нажмите 'v', чтобы отключить его."
 
     # _compat\gamemenu.rpym:198
     old "Empty Slot."
@@ -258,80 +262,80 @@ translate russian strings:
     new "Меню разработчика"
 
     # _developer\developer.rpym:43
+    old "Interactive Director (D)"
+    new "Интерактивный Директор (D)"
+
+    # _developer\developer.rpym:45
     old "Reload Game (Shift+R)"
     new "Перезагрузить игру (Shift+R)"
 
-    # _developer\developer.rpym:45
+    # _developer\developer.rpym:47
     old "Console (Shift+O)"
     new "Консоль (Shift+O)"
 
-    # _developer\developer.rpym:47
+    # _developer\developer.rpym:49
     old "Variable Viewer"
     new "Просмотр переменных"
 
-    # _developer\developer.rpym:49
-    old "Theme Test"
-    new "Тест темы"
-
-    # _developer\developer.rpym:51
+    # _developer\developer.rpym:53
     old "Image Location Picker"
     new "Инструмент позиционирования на изображениях"
 
-    # _developer\developer.rpym:53
+    # _developer\developer.rpym:55
     old "Filename List"
     new "Список файлов"
 
-    # _developer\developer.rpym:57
+    # _developer\developer.rpym:59
     old "Show Image Load Log"
     new "Показать лог загрузки изображений"
 
-    # _developer\developer.rpym:60
+    # _developer\developer.rpym:62
     old "Hide Image Load Log"
     new "Скрыть лог загрузки изображений"
 
-    # _developer\developer.rpym:95
+    # _developer\developer.rpym:97
     old "Nothing to inspect."
     new "Переменные не заданы."
 
-    # _developer\developer.rpym:217
+    # _developer\developer.rpym:225
     old "Return to the developer menu"
     new "Вернуться в меню разработчика"
 
-    # _developer\developer.rpym:377
+    # _developer\developer.rpym:385
     old "Rectangle: %r"
     new "Прямоугольник: %r"
 
-    # _developer\developer.rpym:382
+    # _developer\developer.rpym:390
     old "Mouse position: %r"
     new "Позиция мыши: %r"
 
-    # _developer\developer.rpym:387
+    # _developer\developer.rpym:395
     old "Right-click or escape to quit."
     new "Нажмите правую кнопку мыши или ESC чтобы выйти."
 
-    # _developer\developer.rpym:419
+    # _developer\developer.rpym:427
     old "Rectangle copied to clipboard."
     new "Координаты прямоугольника скопированы в буфер обмена."
 
-    # _developer\developer.rpym:422
+    # _developer\developer.rpym:430
     old "Position copied to clipboard."
     new "Координаты позиции скопированы в буфер обмена."
 
-    # _developer\developer.rpym:531
+    # _developer\developer.rpym:539
     old "✔ "
     new "✔ "
 
-    # _developer\developer.rpym:534
+    # _developer\developer.rpym:542
     old "✘ "
     new "✘ "
 
-    # _developer\developer.rpym:539
+    # _developer\developer.rpym:547
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
     new "\n{color=#cfc}✔ предсказанное изображение (хорошо){/color}\n{color=#fcc}✘ внезапное изображение (плохо){/color}\n{color=#fff}Нажмите, чтобы передвинуть.{/color}"
 
     # _developer\inspector.rpym:38
     old "Displayable Inspector"
-    new "Инспектор отображений"
+    new "Диспетчер объектов"
 
     # _developer\inspector.rpym:61
     old "Size"
@@ -347,15 +351,15 @@ translate russian strings:
 
     # _developer\inspector.rpym:122
     old "Inspecting Styles of [displayable_name!q]"
-    new "Инспектировать стили [displayable_name!q]"
+    new "Инспектирую стили [displayable_name!q]"
 
     # _developer\inspector.rpym:139
     old "displayable:"
-    new "отображение:"
+    new "объект:"
 
     # _developer\inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "        (ни одна из настроек не влияет на отображение)"
+    new "        (на объект не влияют никакие параметры)"
 
     # _developer\inspector.rpym:147
     old "        (default properties omitted)"
@@ -419,7 +423,7 @@ translate russian strings:
 
     # 00updater.rpy:1410
     old "This program is up to date."
-    new "Это программа обновлена."
+    new "Эта программа обновлена."
 
     # 00updater.rpy:1412
     old "[u.version] is available. Do you want to install it?"
@@ -449,23 +453,23 @@ translate russian strings:
     old "The updates were cancelled."
     new "Обновления были отменены."
 
-    # 00gallery.rpy:563
+    # 00gallery.rpy:566
     old "Image [index] of [count] locked."
-    new "Изображение [index] из [count] заблокированных."
+    new "Изображение [index] из [count] закрыто."
 
-    # 00gallery.rpy:583
+    # 00gallery.rpy:586
     old "prev"
     new "пред"
 
-    # 00gallery.rpy:584
+    # 00gallery.rpy:587
     old "next"
     new "след"
 
-    # 00gallery.rpy:585
+    # 00gallery.rpy:588
     old "slideshow"
     new "слайд-шоу"
 
-    # 00gallery.rpy:586
+    # 00gallery.rpy:589
     old "return"
     new "вернуться"
 

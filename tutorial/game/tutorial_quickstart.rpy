@@ -361,7 +361,7 @@ label tutorial_simple_positions:
 
     hide example
 
-    e "Of course, there's a lot more to transforms than this. If you want to learn more, you can read the sections on Position Properties, Transforms, and Transform Properties."
+    e "Of course, there's a lot more to transforms than this. If you want to learn more, you can read the sections on Position Properties, Transforms and Animation, and Transform Properties."
 
     e "But for many visual novels, xalign and yalign are the only properties that matter."
 

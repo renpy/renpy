@@ -231,7 +231,7 @@ label text_displayable:
                 xalign 0.5 ypos 50
                 text _("The answer is [answer].")
 
-    e "The text displayable can also interpolate values enclosed in square brackets"
+    e "The text displayable can also interpolate values enclosed in square brackets."
 
     e "When text is displayed in a screen using the text statement variables defined in the screen take precedence over those defined outside it."
 
@@ -519,7 +519,7 @@ label button_displayables:
 
                     action Notify(_("You clicked the button."))
 
-    e "Buttons take Window window properties, that are used to specify the background, margins, and padding. They also take Button-specific properties, like a sound to play on hover."
+    e "Buttons take Window style properties, that are used to specify the background, margins, and padding. They also take Button-specific properties, like a sound to play on hover."
 
     e "When used with a button, style properties can be given prefixes like idle and hover to make the property change with the button state."
 
@@ -645,7 +645,7 @@ label imagemap_displayables:
                 hotspot (44, 238, 93, 93) action Jump("swimming") alt "Swimming"
                 hotspot (360, 62, 93, 93) action Jump("science") alt "Science"
                 hotspot (726, 106, 93, 93) action Jump("art") alt "Art"
-                hotspot (934, 461, 93, 93) action Jump("go home") alt "Go Home"
+                hotspot (934, 461, 93, 93) action Jump("home") alt "Home"
 
         label imagemap_example:
 

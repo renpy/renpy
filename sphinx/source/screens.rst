@@ -1855,7 +1855,7 @@ is hidden, provided control is not transferred.
 
     call screen my_screen(side_effect_function()) nopredict
 
-    # Shows the screen with disolve and hides it with fade.
+    # Shows the screen with dissolve and hides it with fade.
     call screen my_other_screen with dissolve
     with fade
 
