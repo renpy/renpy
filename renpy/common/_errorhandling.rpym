@@ -524,6 +524,13 @@ screen _exception_actions(traceback_fn, tt, *args):
         action _CopyFile(traceback_fn)
         hovered tt.action(_("Copies the traceback.txt file to the clipboard."))
 
+python early in _errorhandling:
+
+    # These enable various error handling modes.
+    rollback = True
+    ignore = True
+    reload = True
+    console = True
 
 # The screen that is used for error handling.
 screen _exception:
@@ -561,26 +568,30 @@ screen _exception:
             hbox:
                 spacing gui._scale(25)
 
-                if rollback_action:
+                if rollback_action and _errorhandling.rollback:
                     textbutton _("Rollback"):
                         action rollback_action
                         hovered tt.action(_("Attempts a roll back to a prior time, allowing you to save or choose a different choice."))
 
-                if ignore_action:
+                if ignore_action and _errorhandling.ignore:
                     textbutton _("Ignore"):
                         action ignore_action
-                        hovered tt.action(_("Ignores the exception, allowing you to continue. This often leads to additional errors."))
+
+                        if _ignore_action:
+                            hovered tt.action(_("Ignores the exception, allowing you to continue."))
+                        else:
+                            hovered tt.action(_("Ignores the exception, allowing you to continue. This often leads to additional errors."))
 
                 if config.developer and not renpy.mobile:
-                    textbutton _("Reload"):
-                        action reload_action
-                        hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
+                    if _errorhandling.reload:
+                        textbutton _("Reload"):
+                            action reload_action
+                            hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
 
-                    textbutton _("Console"):
-                        action __EnterConsole()
-                        hovered tt.action(_("Opens a console to allow debugging the problem."))
-
-
+                    if _errorhandling.console:
+                        textbutton _("Console") :
+                            action __EnterConsole()
+                            hovered tt.action(_("Opens a console to allow debugging the problem."))
 
                 use _exception_actions(traceback_fn, tt)
 
