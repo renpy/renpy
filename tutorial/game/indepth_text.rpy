@@ -104,15 +104,15 @@ label text:
 
 
     example:
-        $ variable = "{i}variable value{/i}"
+        $ variable = _("{i}variable value{/i}")
 
-        e "For example, this displays the [variable]."
+        e "For example, this displays the [variable!t]."
 
 
     example:
         e "When the variable name is followed by !q, special characters are quoted. This displays the raw [variable!q], including the italics tags."
 
-    example:
+    example showtrans:
         $ translatable = _("translatable text")
 
         e "When the variable name is followed by !t, it is translated to [variable!t]. It could be something else in a different language."
