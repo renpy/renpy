@@ -1540,14 +1540,20 @@ def reload_script():
     s = get_screen("menu")
 
     if not renpy.store.main_menu:
+
         if s is not None:
             session["_reload_screen"] = s.screen_name[0]
+            session["_reload_screen_args"] = s.scope.get("_args", ())
+            session["_reload_screen_kwargs"] = s.scope.get("_kwargs", { })
 
         renpy.game.call_in_new_context("_save_reload_game")
 
     else:
+
         if s is not None:
             session["_main_menu_screen"] = s.screen_name[0]
+            session["_main_menu_screen_args"] = s.scope.get("_args", ())
+            session["_main_menu_screen_kwargs"] = s.scope.get("_kwargs", { })
 
         utter_restart()
 
