@@ -37,6 +37,7 @@ rmcp renpy.py
 rmcp launcher
 rmcp tutorial
 rmcp the_question
+rmcp gui
 
 if [ -e "$S/testing" ]; then
     rmcp testing
