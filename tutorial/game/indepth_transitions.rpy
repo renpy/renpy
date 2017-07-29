@@ -500,12 +500,12 @@ label demo_movetransition:
 
 label demo_alphadissolve:
 
-    e "The AlphaDissolve transition lets you use one displayable to combine two others. For example..."
+    e "The AlphaDissolve transition lets you use one displayable to combine two others. Click, and I'll show you an example."
 
     scene black
     with dissolve
 
-    example alphadissolve:
+    example alphadissolve large:
         scene bg washington
         show eileen happy at center
         with alpha_example
