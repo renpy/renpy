@@ -16,28 +16,33 @@ rmln () {
 }
 
 rmcp () {
-    if [ -L "$T/$1" ]; then
-        rm "$T/$1"
+    if [ -e "$T/$1" ]; then
+        chmod -R 0755 "$T/$1"
+        rm -Rf "$T/$1"
     fi
 
-    cp "$S/$1" "$T/$1"
-
+    cp -a "$S/$1" "$T/$1"
+    chmod -R 0555 "$T/$1"
 }
 
 mkdir -p "$T"
 mkdir -p "$T/../Ren'Py Data"
 
+chmod 0755 "$T"
+
 rmln module
 rmln renpy
 rmcp run.sh
 rmcp renpy.py
-rmln launcher
-rmln tutorial
-rmln the_question
+rmcp launcher
+rmcp tutorial
+rmcp the_question
 
 if [ -e "$S/testing" ]; then
-    rmln testing
+    rmcp testing
 fi
+
+chmod 0555 "$T"
 
 export RENPY_MULTIPERSISTENT="$T/persistent"
 
