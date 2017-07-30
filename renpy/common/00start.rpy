@@ -99,7 +99,10 @@ label _after_load:
         menu = renpy.session.pop("_reload_screen", None)
 
         if config.reload_menu and (menu is not None):
-            renpy.run(ShowMenu(menu))
+            renpy.run(ShowMenu(menu,
+                *renpy.session.pop("_reload_screen_args", tuple()),
+                **renpy.session.pop("_reload_screen_kwargs", { })
+                ))
 
     if renpy.has_label("after_load"):
         jump expression "after_load"

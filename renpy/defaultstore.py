@@ -422,6 +422,10 @@ _side_image_attributes = None
 # among other things.
 main_menu = False
 
+# The action that's used when the player clicks the ignore button on the
+# error handling screen.
+_ignore_action = None
+
 # Make these available to user code.
 import sys
 import os

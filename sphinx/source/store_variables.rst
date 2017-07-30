@@ -42,6 +42,13 @@ and rolled-back when rollback occurs.
     from oldest to newest. See the :ref:`History <history>` section for more
     information.
 
+.. var:: _ignore_action = None
+
+    When this is not None, it's an action that is run after clicking Ignore
+    on the error handling screen. The action is usually :func:`Jump`, to jump
+    the game to a place that can recover from an error. If None, control
+    continues with the next Ren'Py statement.
+
 .. var:: main_menu = False
 
     Ren'Py sets this variable to True while in the main menu. This can be used

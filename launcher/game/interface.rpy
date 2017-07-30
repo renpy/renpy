@@ -269,6 +269,7 @@ init python in interface:
 
     import traceback
     from store import Jump
+    import store._errorhandling as _errorhandling
 
     def common(title, title_color, message, submessage=None, back=None, continue_=None, pause0=False, show_screen=False, **kwargs):
         """
@@ -353,6 +354,13 @@ init python in interface:
         common(_("ERROR"), store.ERROR_COLOR, message=message, submessage=submessage, back=action, **kwargs)
 
 
+    store._ignore_action = Jump("front_page")
+
+    _errorhandling.rollback = False
+    _errorhandling.ignore = True
+    _errorhandling.reload = False
+    _errorhandling.console = False
+
     @contextlib.contextmanager
     def error_handling(what, label="front_page"):
         """
@@ -372,18 +380,9 @@ init python in interface:
                 f = open("log.txt", "w")
         """
 
-
-        try:
-            yield
-        except Exception, e:
-            import traceback
-            traceback.print_exc()
-
-            error(_("While [what!q], an error occured:"),
-                _("[exception!q]"),
-                what=what,
-                label=label,
-                exception=traceback.format_exception_only(type(e), e)[-1][:-1])
+        store._ignore_action = Jump(label)
+        yield
+        store._ignore_action = Jump("front_page")
 
     def input(title, message, filename=False, sanitize=True, cancel=None, default=""):
         """

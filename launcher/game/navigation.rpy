@@ -265,6 +265,9 @@ label navigation_loop:
 
     python in navigation:
 
+        with interface.error_handling("navigation"):
+            raise Exception("Epic fail.")
+
         kind = persistent.navigation
 
         if kind == "file":

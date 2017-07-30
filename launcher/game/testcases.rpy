@@ -30,8 +30,8 @@ testcase new_project:
     "Create New Project"
 
     # Kind of interface
-    "New GUI Interface"
-    "Continue"
+    # "New GUI Interface"
+    # "Continue"
 
     # Name
     type "Test Project"

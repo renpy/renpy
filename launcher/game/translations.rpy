@@ -279,7 +279,7 @@ label extract_strings:
 
         interface.info(_("Ren'Py has finished extracting [language] string translations."))
 
-    return
+    jump front_page
 
 label merge_strings:
 
@@ -302,7 +302,7 @@ label merge_strings:
 
         interface.info(_("Ren'Py has finished merging [language] string translations."))
 
-    return
+    jump front_page
 
 label update_renpy_strings:
 
@@ -320,7 +320,7 @@ label update_renpy_strings:
         args = [ "merge_strings", "None",  get_strings_json() ]
         project.current.launch(args, wait=True)
 
-    return
+    jump front_page
 
 
 
