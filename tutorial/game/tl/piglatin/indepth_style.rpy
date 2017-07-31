@@ -588,10 +588,10 @@ translate piglatin style_bar_f1292000:
     e "Hattay'say itay orfay hetay arbay ropertiespay. Ybay usingay hemtay, aay reatorcay ancay ustomizecay arsbay, crollbarssay, anday idersslay."
 
 # game/indepth_style.rpy:944
-translate piglatin style_box_56f882ac:
+translate piglatin style_box_5fd535f4:
 
-    # e "The HBox displayable is used to lay its children out horizontally. By default, there's no spacing between children, so they run together."
-    e "Hetay Boxhay isplayableday isay useday otay aylay itsay ildrenchay outay orizontallyhay. Ybay efaultday, heretay'say onay pacingsay etweenbay ildrenchay, osay heytay unray ogethertay."
+    # e "The hbox displayable is used to lay its children out horizontally. By default, there's no spacing between children, so they run together."
+    e "Hetay boxhay isplayableday isay useday otay aylay itsay ildrenchay outay orizontallyhay. Ybay efaultday, heretay'say onay pacingsay etweenbay ildrenchay, osay heytay unray ogethertay."
 
 # game/indepth_style.rpy:950
 translate piglatin style_box_0111e5dc:

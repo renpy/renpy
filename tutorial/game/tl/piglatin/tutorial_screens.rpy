@@ -419,6 +419,10 @@ translate piglatin strings:
     old " Lv. [lv]"
     new " Vlay. [lv]"
 
+    # tutorial_screens.rpy:29
+    old "HP"
+    new "Phay"
+
     # tutorial_screens.rpy:58
     old "Morning"
     new "Orningmay"
@@ -468,8 +472,8 @@ translate piglatin strings:
     new "Hutzpahcay"
 
     # tutorial_screens.rpy:171
-    old "What can screens do?"
-    new "Hatway ancay creenssay oday?"
+    old "What screens can do."
+    new "Hatway creenssay ancay oday."
 
     # tutorial_screens.rpy:171
     old "How to show screens."
@@ -498,6 +502,14 @@ translate piglatin strings:
     # tutorial_screens.rpy:205
     old "I do."
     new "Iay oday."
+
+    # tutorial_screens.rpy:260
+    old "This is a screen."
+    new "Histay isay aay creensay."
+
+    # tutorial_screens.rpy:261
+    old "Okay"
+    new "Kayoay"
 
     # tutorial_screens.rpy:331
     old "Hello, world."

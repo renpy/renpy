@@ -450,10 +450,10 @@ translate piglatin demo_movetransition_dc5ccd54:
     e "Ndaay hattay'say allay heretay isay."
 
 # game/indepth_transitions.rpy:503
-translate piglatin demo_alphadissolve_3efbde9f:
+translate piglatin demo_alphadissolve_51613c02:
 
-    # e "The AlphaDissolve transition lets you use one displayable to combine two others. For example..."
-    e "Hetay Lphadissolveaay ansitiontray etslay ouyay useay oneay isplayableday otay ombinecay wotay othersay. Orfay exampleay..."
+    # e "The AlphaDissolve transition lets you use one displayable to combine two others. Click, and I'll show you an example."
+    e "Hetay Lphadissolveaay ansitiontray etslay ouyay useay oneay isplayableday otay ombinecay wotay othersay. Lickcay, anday Iay'llay owshay ouyay anay exampleay."
 
 # game/indepth_transitions.rpy:513
 translate piglatin demo_alphadissolve_7c08cf8b:

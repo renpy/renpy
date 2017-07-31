@@ -46,8 +46,8 @@ translate piglatin strings:
     new "## Histay creensay ustmay reatecay anay inputay isplayableday ithway iday \"inputay\" otay acceptay hetay ariousvay inputay arameterspay."
 
     # screens.rpy:172
-    old "## http://www.renpy.org/doc/html/screen_special.html#input"
-    new "## ttphay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#inputay"
+    old "## https://www.renpy.org/doc/html/screen_special.html#input"
+    new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#inputay"
 
     # screens.rpy:199
     old "## Choice screen"
@@ -58,8 +58,8 @@ translate piglatin strings:
     new "## Histay creensay isay useday otay isplayday hetay inay-amegay oiceschay resentedpay ybay hetay enumay atementstay. Hetay oneay arameterpay, itemsay, isay aay istlay ofay objectsay, eachay ithway aptioncay anday actionay ieldsfay."
 
     # screens.rpy:205
-    old "## http://www.renpy.org/doc/html/screen_special.html#choice"
-    new "## ttphay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#oicechay"
+    old "## https://www.renpy.org/doc/html/screen_special.html#choice"
+    new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#oicechay"
 
     # screens.rpy:215
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
@@ -174,8 +174,8 @@ translate piglatin strings:
     new "## Seduay otay isplayday hetay ainmay enumay henway Enray'Ypay artsstay."
 
     # screens.rpy:350
-    old "## http://www.renpy.org/doc/html/screen_special.html#main-menu"
-    new "## ttphay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#ainmay-enumay"
+    old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+    new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#ainmay-enumay"
 
     # screens.rpy:354
     old "## This ensures that any other menu screen is replaced."
@@ -582,8 +582,8 @@ translate piglatin strings:
     new "## Hetay onfirmcay creensay isay alledcay henway Enray'Ypay antsway otay askay hetay ayerplay aay esyay oray onay uestionqay."
 
     # screens.rpy:1132
-    old "## http://www.renpy.org/doc/html/screen_special.html#confirm"
-    new "## ttphay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#onfirmcay"
+    old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+    new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#onfirmcay"
 
     # screens.rpy:1136
     old "## Ensure other screens do not get input while this screen is displayed."
@@ -646,8 +646,8 @@ translate piglatin strings:
     new "## Histay creensay isay useday orfay Vlnay-odemay ialogueday anday enusmay."
 
     # screens.rpy:1289
-    old "## http://www.renpy.org/doc/html/screen_special.html#nvl"
-    new "## ttphay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#vlnay"
+    old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+    new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#vlnay"
 
     # screens.rpy:1300
     old "## Displays dialogue in either a vpgrid or the vbox."

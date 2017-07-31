@@ -516,10 +516,10 @@ translate piglatin tutorial_simple_positions_16b66785:
     e "Ransformstay areay ickystay. Fiay ouyay eplaceray anay imageay ithoutway usingay aay ansformtray, Enray'Ypay illway eepkay hetay amesay ansformstray itay adhay eenbay usingay."
 
 # game/tutorial_quickstart.rpy:364
-translate piglatin tutorial_simple_positions_dccca9ce:
+translate piglatin tutorial_simple_positions_5d5e0cfd:
 
-    # e "Of course, there's a lot more to transforms than this. If you want to learn more, you can read the sections on Position Properties, Transforms, and Transform Properties."
-    e "Foay oursecay, heretay'say aay otlay oremay otay ansformstray hantay histay. Fiay ouyay antway otay earnlay oremay, ouyay ancay eadray hetay ectionssay onay Ositionpay Ropertiespay, Ransformstay, anday Ransformtay Ropertiespay."
+    # e "Of course, there's a lot more to transforms than this. If you want to learn more, you can read the sections on Position Properties, Transforms and Animation, and Transform Properties."
+    e "Foay oursecay, heretay'say aay otlay oremay otay ansformstray hantay histay. Fiay ouyay antway otay earnlay oremay, ouyay ancay eadray hetay ectionssay onay Ositionpay Ropertiespay, Ransformstay anday Nimationaay, anday Ransformtay Ropertiespay."
 
 # game/tutorial_quickstart.rpy:366
 translate piglatin tutorial_simple_positions_e65da9bf:
@@ -852,4 +852,12 @@ translate piglatin strings:
     # tutorial_quickstart.rpy:497
     old "No, I don't."
     new "Onay, Iay onday'tay."
+
+    # tutorial_quickstart.rpy:589
+    old "What's your name?"
+    new "Hatway'say ouryay amenay?"
+
+    # tutorial_quickstart.rpy:591
+    old "Guy Shy"
+    new "Uygay Hysay"
 

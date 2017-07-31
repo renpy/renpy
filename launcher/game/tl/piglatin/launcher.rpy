@@ -609,39 +609,31 @@ translate piglatin strings:
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
     new "Ueday otay ackagepay ormatfay imitationslay, onnay-Sciiaay ilefay anday irectoryday amesnay areay otnay alloweday."
 
-    # interface.rpy:353
+    # interface.rpy:354
     old "ERROR"
     new "Rroreay"
 
-    # interface.rpy:382
-    old "While [what!q], an error occured:"
-    new "Hileway [what!q], anay erroray occureday:"
-
-    # interface.rpy:382
-    old "[exception!q]"
-    new "[exception!q]"
-
-    # interface.rpy:401
+    # interface.rpy:400
     old "Text input may not contain the {{ or [[ characters."
     new "Exttay inputay aymay otnay ontaincay hetay {{ oray [[ aracterschay."
 
-    # interface.rpy:406
+    # interface.rpy:405
     old "File and directory names may not contain / or \\."
     new "Ilefay anday irectoryday amesnay aymay otnay ontaincay / oray \\."
 
-    # interface.rpy:412
+    # interface.rpy:411
     old "File and directory names must consist of ASCII characters."
     new "Ilefay anday irectoryday amesnay ustmay onsistcay ofay Sciiaay aracterschay."
 
-    # interface.rpy:480
+    # interface.rpy:479
     old "PROCESSING"
     new "Rocessingpay"
 
-    # interface.rpy:497
+    # interface.rpy:496
     old "QUESTION"
     new "Uestionqay"
 
-    # interface.rpy:510
+    # interface.rpy:509
     old "CHOICE"
     new "Hoicecay"
 

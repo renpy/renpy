@@ -48,10 +48,10 @@ translate piglatin simple_displayables_c6e39078:
     e "Heretay'say aay oremay ompletecay ormfay ofay Olidsay, hattay ancay aketay ylestay ropertiespay. Histay etslay usay angechay hetay izesay ofay hetay Olidsay, hereway ormallynay itay illsfay hetay creensay."
 
 # game/indepth_displayables.rpy:72
-translate piglatin simple_displayables_cd498d26:
+translate piglatin simple_displayables_b102a029:
 
-    # e "The Text displayable lets Ren'Py treat text as if if it was an image. "
-    e "Hetay Exttay isplayableday etslay Enray'Ypay eattray exttay asay ifay ifay itay asway anay imageay. "
+    # e "The Text displayable lets Ren'Py treat text as if it was an image."
+    e "Hetay Exttay isplayableday etslay Enray'Ypay eattray exttay asay ifay itay asway anay imageay."
 
 # game/indepth_displayables.rpy:80
 translate piglatin simple_displayables_0befbee0:

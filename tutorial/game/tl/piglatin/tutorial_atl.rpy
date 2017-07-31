@@ -240,10 +240,10 @@ translate piglatin tutorial_positions_0f4ca2b6:
     e "Nceoay ouyay understanday ositionspay, ouyay ancay useay ansformationstray otay ovemay hingstay arounday hetay Enray'Ypay creensay."
 
 # game/tutorial_atl.rpy:418
-translate piglatin tutorial_atl_7051edf6:
+translate piglatin tutorial_atl_d5d6b62a:
 
-    # e "Ren'Py uses transforms to animate, manipulate, andplace images. We've already seen the very simplest of transforms in use:"
-    e "Enray'Ypay usesay ansformstray otay animateay, anipulatemay, andplaceay imagesay. Eway'evay alreadyay eensay hetay eryvay implestsay ofay ansformstray inay useay:"
+    # e "Ren'Py uses transforms to animate, manipulate, and place images. We've already seen the very simplest of transforms in use:"
+    e "Enray'Ypay usesay ansformstray otay animateay, anipulatemay, anday aceplay imagesay. Eway'evay alreadyay eensay hetay eryvay implestsay ofay ansformstray inay useay:"
 
 # game/tutorial_atl.rpy:425
 translate piglatin tutorial_atl_7e853c9d:
@@ -498,10 +498,10 @@ translate piglatin tutorial_atl_28a7d27e:
     e "Inallyfay, hetay oicechay atementstay akesmay Enray'Ypay andomlyray ickpay aay ockblay ofay Tlaay odecay. Histay allowsay ouyay otay adday omesay ariationvay asay otay hatway Enray'Ypay owsshay."
 
 # game/tutorial_atl.rpy:675
-translate piglatin tutorial_atl_5fc8c0df:
+translate piglatin tutorial_atl_2265254b:
 
-    # e "This tutorial game has only scratched the surface of what you can do with ATL. For example, we haven't even covered the on and event statements. For more information, you might want to check out the ATL chapter in the reference manual."
-    e "Histay utorialtay amegay ashay onlyay cratchedsay hetay urfacesay ofay hatway ouyay ancay oday ithway Tlaay. Orfay exampleay, eway avenhay'tay evenay overedcay hetay onay anday eventay atementsstay. Orfay oremay informationay, ouyay ightmay antway otay eckchay outay hetay Tlaay apterchay inay hetay eferenceray anualmay."
+    # e "This tutorial game has only scratched the surface of what you can do with ATL. For example, we haven't even covered the on and event statements. For more information, you might want to check out {a=https://renpy.org/doc/html/atl.html}the ATL chapter in the reference manual{/a}."
+    e "Histay utorialtay amegay ashay onlyay cratchedsay hetay urfacesay ofay hatway ouyay ancay oday ithway Tlaay. Orfay exampleay, eway avenhay'tay evenay overedcay hetay onay anday eventay atementsstay. Orfay oremay informationay, ouyay ightmay antway otay eckchay outay {a=https://renpy.org/doc/html/atl.html}hetay Tlaay apterchay inay hetay eferenceray anualmay{/a}."
 
 # game/tutorial_atl.rpy:684
 translate piglatin transform_properties_391169cf:

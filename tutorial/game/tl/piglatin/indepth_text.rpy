@@ -126,10 +126,10 @@ translate piglatin text_1f2697ba:
     extend " otay hetay extnay atementstay."
 
 # game/indepth_text.rpy:98
-translate piglatin text_dbfca166:
+translate piglatin text_805fddbb:
 
-    # e "To break a line without pausing,\none can write \\n. \\' and \\\" include quotes in the text."
-    e "Otay eakbray aay inelay ithoutway ausingpay,\noneay ancay riteway \\nay. \\' anday \\\" includeay uotesqay inay hetay exttay."
+    # e "To break a line without pausing,\none can write \\n, \\' and \\\" include quotes in the text."
+    e "Otay eakbray aay inelay ithoutway ausingpay,\noneay ancay riteway \\nay, \\' anday \\\" includeay uotesqay inay hetay exttay."
 
 # game/indepth_text.rpy:103
 translate piglatin text_ffdf7e76:
@@ -138,10 +138,10 @@ translate piglatin text_ffdf7e76:
     e "Hetay interpolationay eaturefay akestay aay ariablevay amenay inay quaresay acketsbray, anday insertsay itay intoay exttay."
 
 # game/indepth_text.rpy:109
-translate piglatin text_72fb5a9a:
+translate piglatin text_fc99fcbf:
 
-    # e "For example, this displays the [variable]."
-    e "Orfay exampleay, histay isplaysday hetay [variable]."
+    # e "For example, this displays the [variable!t]."
+    e "Orfay exampleay, histay isplaysday hetay [variable!t]."
 
 # game/indepth_text.rpy:113
 translate piglatin text_15bfae8e:
@@ -162,6 +162,10 @@ translate piglatin text_fb106a95:
     e "Inallyfay, ertaincay aracterschay areay pecialsay. [[, {{, anday \\ eednay otay ebay oubledday ifay includeday inay exttay. Hetay %% aracterchay ouldshay ebay oubledday ifay useday inay ialogueday."
 
 translate piglatin strings:
+
+    # indepth_text.rpy:107
+    old "{i}variable value{/i}"
+    new "{i}ariablevay aluevay{/i}"
 
     # indepth_text.rpy:116
     old "translatable text"

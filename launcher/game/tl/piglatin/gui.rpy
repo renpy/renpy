@@ -418,8 +418,8 @@ translate piglatin strings:
     new "## Djustaay hetay ocationlay ofay hetay extboxtay."
 
     # gui.rpy:434
-    old "## Change the size and spacing of various things.."
-    new "## Hangecay hetay izesay anday pacingsay ofay ariousvay hingstay.."
+    old "## Change the size and spacing of various things."
+    new "## Hangecay hetay izesay anday pacingsay ofay ariousvay hingstay."
 
     # gui.rpy:447
     old "## File button layout."

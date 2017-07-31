@@ -102,10 +102,10 @@ translate piglatin demo_character_88a18c32:
     e2 "Hetay olorscay areay ringsstay ontainingcay gbray exhay odescay, hetay amesay ortsay ofay olorscay understooday ybay aay ebway owserbray."
 
 # game/indepth_character.rpy:67
-translate piglatin demo_character_a4bb24c4:
+translate piglatin demo_character_ed690751:
 
-    # e3 "Similarly, the ``who_font`` and ``what_font`` properties set the font used by the different kinds of text."
-    e3 "Imilarlysay, hetay ``ho_fontway`` anday ``hat_fontway`` ropertiespay etsay hetay ontfay useday ybay hetay ifferentday indskay ofay exttay."
+    # e3 "Similarly, the who_font and what_font properties set the font used by the different kinds of text."
+    e3 "Imilarlysay, hetay ho_fontway anday hat_fontway ropertiespay etsay hetay ontfay useday ybay hetay ifferentday indskay ofay exttay."
 
 # game/indepth_character.rpy:74
 translate piglatin demo_character_8dfa6426:
@@ -120,10 +120,10 @@ translate piglatin demo_character_20e83c32:
     e4 "Foay oursecay, hetay hat_boldway, ho_italicway anday ho_sizeway ropertiespay alsoay existay, evenay ifay heytay'eray otnay useday erehay."
 
 # game/indepth_character.rpy:83
-translate piglatin demo_character_9ffb06bf:
+translate piglatin demo_character_e4cbb1f2:
 
-    # e5 "The ``what_outlines`` property puts an outline around the text."
-    e5 "Hetay ``hat_outlinesway`` ropertypay utspay anay outlineay arounday hetay exttay."
+    # e5 "The what_outlines property puts an outline around the text."
+    e5 "Hetay hat_outlinesway ropertypay utspay anay outlineay arounday hetay exttay."
 
 # game/indepth_character.rpy:85
 translate piglatin demo_character_71535ecf:
@@ -138,10 +138,10 @@ translate piglatin demo_character_e9ac7482:
     e5 "Hetay irstfay umbernay isay hetay izesay ofay hetay outlineay, inay ixelspay. Hattay'say ollowedfay ybay aay ringstay ivinggay hetay exhay-odecay ofay hetay olorcay ofay hetay outlineay, anday hetay xay anday yay offsetsay."
 
 # game/indepth_character.rpy:93
-translate piglatin demo_character_da897ebd:
+translate piglatin demo_character_ea72d988:
 
-    # e6 "When the outline size is 0 and the offsets are given, ``what_outlines`` can also act as a drop-shadow behind the text."
-    e6 "Henway hetay outlineay izesay isay 0ay anday hetay offsetsay areay ivengay, ``hat_outlinesway`` ancay alsoay actay asay aay ropday-adowshay ehindbay hetay exttay."
+    # e6 "When the outline size is 0 and the offsets are given, what_outlines can also act as a drop-shadow behind the text."
+    e6 "Henway hetay outlineay izesay isay 0ay anday hetay offsetsay areay ivengay, hat_outlinesway ancay alsoay actay asay aay ropday-adowshay ehindbay hetay exttay."
 
 # game/indepth_character.rpy:99
 translate piglatin demo_character_8d35ebcd:
@@ -150,10 +150,10 @@ translate piglatin demo_character_8d35ebcd:
     e7 "Hetay hat_xalignway anday hat_textalignway ropertiespay ontrolcay hetay alignmentay ofay exttay, ithway 0ay.0ay eingbay eftlay, 0ay.5ay eingbay entercay, anday 1ay.0ay eingbay ightray."
 
 # game/indepth_character.rpy:101
-translate piglatin demo_character_6d9716f9:
+translate piglatin demo_character_7c75906c:
 
-    # e7 "The what_xalign property controls where all the text text itself is placed within the textbox, while what_textalign controls where rows of text are placed relative to each other."
-    e7 "Hetay hat_xalignway ropertypay ontrolscay hereway allay hetay exttay exttay itselfay isay acedplay ithinway hetay extboxtay, hileway hat_textalignway ontrolscay hereway owsray ofay exttay areay acedplay elativeray otay eachay otheray."
+    # e7 "The what_xalign property controls where all the text itself is placed within the textbox, while what_textalign controls where rows of text are placed relative to each other."
+    e7 "Hetay hat_xalignway ropertypay ontrolscay hereway allay hetay exttay itselfay isay acedplay ithinway hetay extboxtay, hileway hat_textalignway ontrolscay hereway owsray ofay exttay areay acedplay elativeray otay eachay otheray."
 
 # game/indepth_character.rpy:103
 translate piglatin demo_character_e2811c1c:

@@ -22,11 +22,11 @@ screen single_stat(name, hp, hp_max, lv, xalign):
             spacing 5
 
             hbox:
-                text "[name]" min_width 220
+                text "[name!t]" min_width 220
                 text _(" Lv. [lv]")
 
             hbox:
-                text "HP":
+                text _("HP"):
                     min_width 40
                     yalign 0.5
 
@@ -75,7 +75,7 @@ default stat_chutzpah = 75
 
 # These styles are used to style the various stats.
 style stat_text is default:
-    min_width 150
+    min_width 200
     text_align 1.0
     yalign 0.5
 
@@ -148,7 +148,7 @@ screen day_planner():
             null
 
             frame:
-                textbutton "Done":
+                textbutton _("Done"):
                     action Return(True)
                     xfill True
 
@@ -172,7 +172,7 @@ label screens_menu:
 
         e "What would you like to know about screens?"
 
-        "What can screens do?":
+        "What screens can do.":
             call screens_demo
 
         "How to show screens.":
@@ -257,8 +257,8 @@ label screens_showing:
             frame:
                 xalign 0.5 ypos 50
                 vbox:
-                    text "This is a screen."
-                    textbutton "Okay":
+                    text _("This is a screen.")
+                    textbutton _("Okay"):
                         action Return(True)
 
 
@@ -321,10 +321,10 @@ label screens_parameters:
             frame:
                 xalign 0.5 ypos 50
                 vbox:
-                    text "[message]"
-                    textbutton "Okay":
+                    text "[message!t]"
+                    textbutton _("Okay"):
                         action okay
-                    textbutton "Cancel":
+                    textbutton _("Cancel"):
                         action cancel
 
     example hide show_parameter_screen:
@@ -495,7 +495,7 @@ label screens_control:
             frame:
                 xalign 0.5 ypos 50
                 vbox:
-                    text "[message]"
+                    text "[message!t]"
 
     e "The python statement works just about the same way it does in the script. A single line of Python is introduced with a dollar sign. This line is run each time the screen updates."
 
@@ -509,8 +509,8 @@ label screens_control:
             frame:
                 xalign 0.5 ypos 50
                 vbox:
-                    text "[message1]"
-                    text "[message2]"
+                    text "[message1!t]"
+                    text "[message2!t]"
 
     e "Similarly, the python statement introduces an indented block of python statements. But there is one big difference in Python in screens and Python in scripts."
 
@@ -564,7 +564,7 @@ label screens_control:
 
                 vbox:
                     for i in landings:
-                        textbutton "[i]" action Return(i)
+                        textbutton "[i!t]" action Return(i)
 
     e "The for statement takes a list of values, and iterates through them, running the block inside the for loop with the variable bound to each list item."
 

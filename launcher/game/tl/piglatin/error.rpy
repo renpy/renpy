@@ -129,55 +129,59 @@ translate piglatin strings:
     old "Copies the traceback.txt file to the clipboard."
     new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay."
 
-    # _errorhandling.rpym:545
+    # _errorhandling.rpym:552
     old "An exception has occurred."
     new "Naay exceptionay ashay occurreday."
 
-    # _errorhandling.rpym:565
+    # _errorhandling.rpym:572
     old "Rollback"
     new "Ollbackray"
 
-    # _errorhandling.rpym:567
+    # _errorhandling.rpym:574
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "Ttemptsaay aay ollray ackbay otay aay riorpay imetay, allowingay ouyay otay avesay oray oosechay aay ifferentday oicechay."
 
-    # _errorhandling.rpym:570
+    # _errorhandling.rpym:577
     old "Ignore"
     new "Gnoreiay"
 
-    # _errorhandling.rpym:572
+    # _errorhandling.rpym:581
+    old "Ignores the exception, allowing you to continue."
+    new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay."
+
+    # _errorhandling.rpym:583
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay. Histay oftenay eadslay otay additionalay errorsay."
 
-    # _errorhandling.rpym:575
+    # _errorhandling.rpym:587
     old "Reload"
     new "Eloadray"
 
-    # _errorhandling.rpym:577
+    # _errorhandling.rpym:589
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "Eloadsray hetay amegay omfray iskday, avingsay anday estoringray amegay atestay ifay ossiblepay."
 
-    # _errorhandling.rpym:579
+    # _errorhandling.rpym:592
     old "Console"
     new "Onsolecay"
 
-    # _errorhandling.rpym:581
+    # _errorhandling.rpym:594
     old "Opens a console to allow debugging the problem."
     new "Pensoay aay onsolecay otay alloway ebuggingday hetay roblempay."
 
-    # _errorhandling.rpym:593
+    # _errorhandling.rpym:604
     old "Quits the game."
     new "Uitsqay hetay amegay."
 
-    # _errorhandling.rpym:617
+    # _errorhandling.rpym:628
     old "Parsing the script failed."
     new "Arsingpay hetay criptsay ailedfay."
 
-    # _errorhandling.rpym:643
+    # _errorhandling.rpym:654
     old "Opens the errors.txt file in a text editor."
     new "Pensoay hetay errorsay.xttay ilefay inay aay exttay editoray."
 
-    # _errorhandling.rpym:647
+    # _errorhandling.rpym:658
     old "Copies the errors.txt file to the clipboard."
     new "Opiescay hetay errorsay.xttay ilefay otay hetay ipboardclay."
 

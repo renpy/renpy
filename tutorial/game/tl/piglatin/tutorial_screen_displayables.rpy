@@ -120,10 +120,10 @@ translate piglatin text_displayable_1ed1a8c2:
     e "Niay additionay otay hetay ommoncay ropertiespay hattay allay isplayablesday aketay, exttay akestay hetay exttay ylestay ropertiespay. Orfay exampleay, izesay etssay hetay izesay ofay hetay exttay."
 
 # game/tutorial_screen_displayables.rpy:234
-translate piglatin text_displayable_6b5dda29:
+translate piglatin text_displayable_9351d9dd:
 
-    # e "The text displayable can also interpolate values enclosed in square brackets"
-    e "Hetay exttay isplayableday ancay alsoay interpolateay aluesvay encloseday inay quaresay acketsbray"
+    # e "The text displayable can also interpolate values enclosed in square brackets."
+    e "Hetay exttay isplayableday ancay alsoay interpolateay aluesvay encloseday inay quaresay acketsbray."
 
 # game/tutorial_screen_displayables.rpy:236
 translate piglatin text_displayable_32d76ccb:
@@ -318,10 +318,10 @@ translate piglatin button_displayables_49720fa6:
     e "Naay imagebuttonay ivesgay ouyay hetay ostmay ontrolcay overay hatway aay uttonbay ookslay ikelay, utbay isay arderhay otay anslatetray anday onway'tay ooklay asay oodgay ifay hetay amegay indowway isay esizedray."
 
 # game/tutorial_screen_displayables.rpy:522
-translate piglatin button_displayables_eda4c43b:
+translate piglatin button_displayables_e8d40fc8:
 
-    # e "Buttons take Window window properties, that are used to specify the background, margins, and padding. They also take Button-specific properties, like a sound to play on hover."
-    e "Uttonsbay aketay Indowway indowway ropertiespay, hattay areay useday otay pecifysay hetay ackgroundbay, arginsmay, anday addingpay. Heytay alsoay aketay Uttonbay-pecificsay ropertiespay, ikelay aay oundsay otay ayplay onay overhay."
+    # e "Buttons take Window style properties, that are used to specify the background, margins, and padding. They also take Button-specific properties, like a sound to play on hover."
+    e "Uttonsbay aketay Indowway ylestay ropertiespay, hattay areay useday otay pecifysay hetay ackgroundbay, arginsmay, anday addingpay. Heytay alsoay aketay Uttonbay-pecificsay ropertiespay, ikelay aay oundsay otay ayplay onay overhay."
 
 # game/tutorial_screen_displayables.rpy:524
 translate piglatin button_displayables_1e40e311:
