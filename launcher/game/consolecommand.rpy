@@ -75,7 +75,7 @@ init python:
             os.chmod(self.fn, 0o755)
 
             if renpy.windows:
-                subprocess.Popen([ renpy.fsencode(self.fn) ], console=True)
+                subprocess.Popen([ renpy.fsencode(self.fn) ], shell=True)
             elif renpy.macintosh:
                 subprocess.Popen([ "open", "-a", "Terminal", renpy.fsencode(self.fn) ])
             else:
