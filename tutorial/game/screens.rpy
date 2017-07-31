@@ -765,8 +765,15 @@ screen preferences():
                 vbox:
                     style_prefix "radio"
                     label _("Language")
-                    textbutton _("English") action Language(None)
-                    textbutton _("Pig Latin") action Language("piglatin")
+
+                    # Real languages should go alphabetical order by English name.
+                    textbutton "English" text_font "DejaVuSans.ttf"action Language(None)
+                    textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
+
+                    # This should be last.
+                    textbutton "Pig Latin" text_font "DejaVuSans.ttf" action Language("piglatin")
+
+
 #end language_picker
 
             null height (4 * gui.pref_spacing)
