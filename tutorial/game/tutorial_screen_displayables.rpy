@@ -398,8 +398,8 @@ label window_displayables:
         screen noframe_example():
             vbox:
                 xalign 0.5 ypos 50
-                text "This is a screen."
-                textbutton "Okay":
+                text _("This is a screen.")
+                textbutton _("Okay"):
                     action Return(True)
 
     e "Without the background, text can be hard to read. While a frame isn't strictly required, many screens have one or more of them."
@@ -409,8 +409,8 @@ label window_displayables:
             frame:
                 xalign 0.5 ypos 50
                 vbox:
-                    text "This is a screen."
-                    textbutton "Okay":
+                    text _("This is a screen.")
+                    textbutton _("Okay"):
                         action Return(True)
 
 
