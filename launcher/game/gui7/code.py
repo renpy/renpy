@@ -39,6 +39,7 @@ class Define(object):
         self.value = value
         self.comment = comment
 
+
 # A map from language name to a list of defines.
 language_defines = collections.defaultdict(list)
 
@@ -319,7 +320,8 @@ class CodeGenerator(object):
                         hashpad = False
 
                     s = renpy.translation.translate_string(s, language=self.p.language)
-                    m = re.match(r'## ([ *]*)(.*)', s)
+
+                    m = re.match(r'## ?([ *]*)(.*)', s)
 
                     prefix = m.group(1)
                     empty = ' ' * len(prefix)
@@ -338,7 +340,7 @@ class CodeGenerator(object):
                             s = indent + empty + s
 
                         if hashpad and len(s) < 79:
-                            s = s + " " + "#" * (79 - len(s))
+                            s = s + ' ' + "#" * (79 - len(s))
 
                         lines.append(s)
 
