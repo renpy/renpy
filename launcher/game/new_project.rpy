@@ -63,7 +63,12 @@ label new_project:
         $ interface.error(_("The projects directory could not be set. Giving up."))
 
     if not persistent.legacy:
-        $ interface.info(_("You will be creating an {#change this to your language}English-language project. Change the launcher language in preferences to create a project in another language."))
+
+        python:
+            new_project_language = (_preferences.language or "english").title()
+
+        # When translating this, feel free to replace [new_project_language] with the translation of your language.
+        $ interface.info(_("You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."))
 
         jump new_gui_project
 
