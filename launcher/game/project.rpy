@@ -409,6 +409,8 @@ init python in project:
             Scans for projects.
             """
 
+            global current
+
             if (persistent.projects_directory is not None) and not os.path.isdir(persistent.projects_directory):
                 persistent.projects_directory = None
 
@@ -427,6 +429,17 @@ init python in project:
 
             self.projects.sort(key=lambda p : p.name.lower())
             self.templates.sort(key=lambda p : p.name.lower())
+
+
+            # Select the default project.
+            if persistent.active_project is not None:
+                p = self.get(persistent.active_project)
+
+                if (p is not None) and (p.name not in [ "tutorial", "tutorial_7" ]):
+                    current = p
+                    return
+
+            current = self.get_tutorial()
 
 
         def find_basedir(self, d):
@@ -505,16 +518,6 @@ init python in project:
 
                 self.all_projects.append(p)
 
-            # Select the default project.
-            if persistent.active_project is not None:
-                p = self.get(persistent.active_project)
-
-                if (p is not None) and (p.name not in [ "tutorial", "tutorial_7" ]):
-                    current = p
-                    return
-
-            current = self.get_tutorial()
-
         def get(self, name):
             """
             Gets the project with the given name.
@@ -538,8 +541,8 @@ init python in project:
                 return self.tutorial
 
             rv = self.get("oldtutorial")
-
             p = self.get("tutorial")
+
             if p is not None:
 
                 if language is None:
@@ -634,6 +637,8 @@ init python in project:
 
             current = p
             persistent.active_project = p.name
+
+            renpy.restart_interaction()
 
         def get_sensitive(self):
             if self.if_tutorial:
