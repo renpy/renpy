@@ -45,6 +45,10 @@ init python:
 
         rv.sort()
 
+        if ("Piglatin", "piglatin") in rv:
+            rv.remove(("Piglatin", "piglatin"))
+            rv.append(("Pig Latin", "piglatin"))
+
         return rv
 
 
