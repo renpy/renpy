@@ -5,11 +5,70 @@ Full Changelog
 
 .. _renpy-6.99.13:
 
+Tutorial and The Question
+-------------------------
+
+This release includes updated versions of the Tutorial game and
+"The Question", the example game that's bundled with Ren'Py.
+
+The Tutorial game has been largely rewritten, and is now structured as a pair
+lectures, the first covering the creation of a basic visual novel in Ren'Py,
+and the second covering in-depth topics needed to create more advanced games.
+The Tutorial has also lost content that is less relevant to modern Ren'Py,
+focusing in on the features that are the best practice to use in new games.
+
+The Tutorial now has over 250 examples, that can now be copied out of the
+tutorial and into your own projects.
+
+"The Question" has been rewritten with a new script by Lore, one that is more
+appropriate for educational use than the original. It's also been updated
+with new background, and to demonstrate best practices when writing Ren'Py
+scripts.
+
+Both games have been modernized with high-definition widescreen graphics
+and use of the new default Ren'Py GUI.
+
+Right now, the old tutorial is still distributed with Ren'Py, and is used
+if when a translation is present for the old tutorial but not the new
+tutorial.
+
+Interactive Director
+--------------------
+
+Ren'Py now ships with an built in interactive director tool. This tool
+makes it possible to add the scene, show, hide, with, play, queue, stop,
+and voice statements to Ren'Py from inside an under-development visual
+novel, without having to change to a text editor and reload the project.
+The interactive director can be accessed by pressing the D key (without
+shift) inside an unreleased game.
+
+The interactive director had been distributed outside of Ren'Py, with
+a license that made it free for noncommercial use. It's now part of Ren'Py,
+and has the same license as the rest of Ren'Py, which allows for both
+commercial and noncommercial use.
+
+New GUI
+-------
+
+namebox_ and prefixes.
+
+
+
 Other
 -----
 
+Ren'Py now supports the Python print function. Output printed with the print
+function will go to the log.txt file and the Ren'Py console, which can be
+accessed by typing shift+O.
+
+The list of NVL-mode text blocks is cleared when the language is changed. This
+prevents
+
 The size of a hyperlink is now inherited from the size of the enclosing text.
 (This makes hyperlinks better with text of a non-default size.)
+
+Fixed a problem that prevented uploading to itch.io from Windows from
+working.
 
 .. _renpy-6.99.12.4:
 
