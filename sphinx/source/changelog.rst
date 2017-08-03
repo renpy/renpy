@@ -52,23 +52,86 @@ New GUI
 
 namebox_ and prefixes.
 
+Raspberry Pi
+------------
+
+
+Translations
+------------
+
+The launcher and default project have been translated into French, courtesy of
+Alexandre Tranchant.
+
+The launcher and default project have been translated into Brazilian Portugese,
+courtesy of MrStalker.
+
+The Indonesian translation has been updated.
+
 
 
 Other
 -----
 
+The Ren'Py documentation has been edited to remove the use of the word "code",
+and replace it with less cryptic terminology.
+
 Ren'Py now supports the Python print function. Output printed with the print
 function will go to the log.txt file and the Ren'Py console, which can be
 accessed by typing shift+O.
 
+It is now possible to customize what happens when the Ignore button is
+clicked on the exception reporting screen. This is done using the :var:`_ignore_action`
+variable, which can be set to a Jump action that might clean up after the player
+and start a turn again.
+
+The Ren'Py set type now inherits from the Python set type, rather than the
+obsolete sets.Set type. Set literals are now properly wrapped so that they
+may be
+
 The list of NVL-mode text blocks is cleared when the language is changed. This
-prevents
+prevents Ren'Py from showing a mix of text languages, so of which may be
+nonsense in the current font.
+
+The "text speed" and "auto-forward time" :func:`Preference` values now take
+a range argument, allowing the creator to specify a range.
+
+The new :func:`renpy.filter_text_tags` function can be used to filter text
+tags in a string. It's used to remove text tags in the history screen of the
+default GUI.
+
+In screen language, a block given to a use statement can now contain a
+has statement.
+
+When set to "auto", the :var:`config.developer` variable is set to True or
+False during the init phase. Previously, it was always true during the init
+phase, and would only change once init is over.
+
+When a position property is supplied to a viewport or vpgrid with vertical, horizontal,
+or both kinds of scrollbars, the position property is passed to the side
+container that holds the viewport and scrollbars. This makes it possible to
+position viewports and vpgrids using the same syntax as other displayables.
 
 The size of a hyperlink is now inherited from the size of the enclosing text.
-(This makes hyperlinks better with text of a non-default size.)
+This makes hyperlinks work within text of a non-default size.
 
 Fixed a problem that prevented uploading to itch.io from Windows from
 working.
+
+Creator-defined statements can run a function at init time, in addition
+to the function run when the statement executes normally. Creator-defined
+statements can take a block of Ren'Py script that is parsed and can be
+jumped to.
+
+A missing _menu variable could cause Ren'Py's init phase error handling to
+not report a relevant error. This has been fixed.
+
+The PlayCharacterVoice action can now mark a button as selected while the
+character voice is playing.
+
+It is now possible to support Ren'Py via Patreon. A link to a page with
+sponsor information is in the launcher by default. It can be hidden in the
+launcher preferences.
+
 
 .. _renpy-6.99.12.4:
 
