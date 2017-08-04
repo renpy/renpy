@@ -110,9 +110,6 @@ def main():
         print("Autobuild...")
         subprocess.check_call(["scripts/autobuild.sh"])
 
-    # Copy over the screens, to keep them up to date.
-    copy_tutorial_file("tutorial/game/screens.rpy", "templates/english/game/screens.rpy")
-
     # Compile all the python files.
     compileall.compile_dir("renpy/", ddir="renpy/", force=1, quiet=1)
 
