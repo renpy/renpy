@@ -429,7 +429,3 @@ translate russian strings:
     old "## NVL-mode."
     new "## Режим NVL."
 
-    # gui.rpy:466
-    old "## Quick buttons."
-    new "## Быстрые кнопки."
-
