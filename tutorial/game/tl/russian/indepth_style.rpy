@@ -370,7 +370,7 @@ translate russian style_text_e7204a95:
 translate russian style_text_b4563984:
 
     # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
-    e "Параметр adjust_spacing сперва трудно увидеть, так как он имеет значение, только когда игрок изменяет размеры окна. При включении, символы немного сдвигаются, так что символы текста примерно сохраняют свой относительный отступ."
+    e "Параметр adjust_spacing сперва кажется незаметным, так как он виден только только, когда игрок изменяет размеры окна. При включении, символы немного сдвигаются, так что они примерно сохраняют свой относительный отступ."
 
 # game/indepth_style.rpy:497
 translate russian style_text_605d4e4a:
@@ -761,7 +761,7 @@ translate russian strings:
     new "Этот текст окрашен в синий."
 
     # indepth_style.rpy:248
-    old "The road to the stars is steep and dangerous. But we are not afraid.\n–Yuri Gagarin" ### You'll be laughing, but there is no quote for this in russian lang. Only second part was founded in original russian =D
+    old "The road to the stars is steep and dangerous. But we are not afraid.\n–Yuri Gagarin"
     new "Путь к звёздам труден и тернист. Но мы его не боимся.\n–Юрий Гагарин"
 
     # indepth_style.rpy:303

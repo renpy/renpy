@@ -177,7 +177,7 @@ translate russian demo_imagedissolve_transitions_54aa9bf9:
 translate russian demo_imagedissolve_transitions_ca316184:
 
     # e "We can hide things with a 'circleirisin'..."
-    e "Вещи можно прятать с 'circleirisin'..."
+    e "Объекты можно прятать с 'circleirisin'..."
 
 # game/indepth_transitions.rpy:221
 translate russian demo_imagedissolve_transitions_b8fdf2b6:
@@ -428,7 +428,7 @@ translate russian demo_movetransition_5edf6007:
 # game/indepth_transitions.rpy:452
 translate russian demo_movetransition_20946d36:
 
-    # e "Let's see them all in action." ### eileen up sprite error
+    # e "Let's see them all in action."
     e "Давайте посмотрим на них в действии."
 
 # game/indepth_transitions.rpy:482
@@ -450,10 +450,10 @@ translate russian demo_movetransition_dc5ccd54:
     e "Вот и всё."
 
 # game/indepth_transitions.rpy:503
-translate russian demo_alphadissolve_3efbde9f:
+translate russian demo_alphadissolve_51613c02:
 
-    # e "The AlphaDissolve transition lets you use one displayable to combine two others. For example..." ### example?
-    e "Переход AlphaDissolve позволяет использовать один объект для сочетания двух других. Например..."
+    # e "The AlphaDissolve transition lets you use one displayable to combine two others. Click, and I'll show you an example."
+    e "Переход AlphaDissolve позволяет использовать один объект для комбинирования двух других. Кликните, и я покажу вам, как это..."
 
 # game/indepth_transitions.rpy:513
 translate russian demo_alphadissolve_7c08cf8b:
@@ -482,7 +482,7 @@ translate russian demo_alphadissolve_80a728b6:
 # game/indepth_transitions.rpy:529
 translate russian demo_alphadissolve_ce4380eb:
 
-    # e "The new screen is me just standing here." ### no alphadissolve
+    # e "The new screen is me just standing here."
     e "В качестве нового — возьмём меня."
 
 # game/indepth_transitions.rpy:537

@@ -102,10 +102,10 @@ translate russian demo_character_88a18c32:
     e2 "Цвета — это строки, содержащие RGB-код в шестнадцатиричном формате (hex), используемом в веб-браузерах."
 
 # game/indepth_character.rpy:67
-translate russian demo_character_a4bb24c4:
+translate russian demo_character_ed690751:
 
-    # e3 "Similarly, the ``who_font`` and ``what_font`` properties set the font used by the different kinds of text."
-    e3 "Похожим образом работают параметры ``who_font`` и ``what_font``, устанавливающие шрифты различного текста."
+    # e3 "Similarly, the who_font and what_font properties set the font used by the different kinds of text."
+    e3 "Похожим образом работают параметры who_font и what_font, устанавливающие шрифты различного текста."
 
 # game/indepth_character.rpy:74
 translate russian demo_character_8dfa6426:
@@ -120,10 +120,10 @@ translate russian demo_character_20e83c32:
     e4 "Само собой, параметры what_bold, who_italic и who_size тоже существуют, даже если они здесь не используются."
 
 # game/indepth_character.rpy:83
-translate russian demo_character_9ffb06bf:
+translate russian demo_character_e4cbb1f2:
 
-    # e5 "The ``what_outlines`` property puts an outline around the text." ### is this neccesary ``?
-    e5 "Параметр ``what_outlines`` обводит наш текст."
+    # e5 "The what_outlines property puts an outline around the text."
+    e5 "Параметр what_outlines обводит наш текст."
 
 # game/indepth_character.rpy:85
 translate russian demo_character_71535ecf:
@@ -138,10 +138,10 @@ translate russian demo_character_e9ac7482:
     e5 "Первая цифра обозначает размер обводки в пикселях. Дальше следует hex-код цвета для обводки, и дальше смещение по x и y."
 
 # game/indepth_character.rpy:93
-translate russian demo_character_da897ebd:
+translate russian demo_character_ea72d988:
 
-    # e6 "When the outline size is 0 and the offsets are given, ``what_outlines`` can also act as a drop-shadow behind the text."
-    e6 "Если размер обводки равен 0, а смещение всё же дано, ``what_outlines`` может послужить заменой тени текста."
+    # e6 "When the outline size is 0 and the offsets are given, what_outlines can also act as a drop-shadow behind the text."
+    e6 "Если размер обводки равен 0, а смещение всё же дано, what_outlines может послужить заменой тени текста."
 
 # game/indepth_character.rpy:99
 translate russian demo_character_8d35ebcd:

@@ -92,13 +92,13 @@ translate russian tutorial_positions_bc7a809a:
 # game/tutorial_atl.rpy:273
 translate russian tutorial_positions_6f926e18:
 
-    # e "Sorry, that's wrong. The xpos is .75, and the ypos is .25." ### double 1
+    # e "Sorry, that's wrong. The xpos is .75, and the ypos is .25."
     e "Простите, но это неверно. Здесь xpos = 0.75, ypos = 0.25."
 
 # game/tutorial_atl.rpy:275
 translate russian tutorial_positions_5d5feb98:
 
-    # e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top." ### double 1
+    # e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top."
     e "Другими словами, 75%% пути слева и 25%% пути сверху."
 
 # game/tutorial_atl.rpy:279
@@ -108,7 +108,7 @@ translate russian tutorial_positions_77b45218:
     e "Хорошая работа! Вы угадали позицию."
 
 # game/tutorial_atl.rpy:283
-translate russian tutorial_positions_6f926e18_1: ### double 2
+translate russian tutorial_positions_6f926e18_1:
 
     # e "Sorry, that's wrong. The xpos is .75, and the ypos is .25."
     e "Простите, но это неверно. Здесь xpos = 0.75, ypos = 0.25."
@@ -116,7 +116,7 @@ translate russian tutorial_positions_6f926e18_1: ### double 2
 # game/tutorial_atl.rpy:285
 translate russian tutorial_positions_5d5feb98_1:
 
-    # e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top." ### double 2
+    # e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top."
     e "Другими словами, 75%% пути слева и 25%% пути сверху."
 
 # game/tutorial_atl.rpy:299
@@ -261,7 +261,7 @@ translate russian tutorial_atl_87a6ecbd:
 translate russian tutorial_atl_65badef3:
 
     # e "But first, let's have... a Gratuitous Rock Concert!"
-    e "Сперва, устроим... бесплатный рок-концерт!"
+    e "Сперва устроим... бесплатный рок-концерт!"
 
 # game/tutorial_atl.rpy:445
 translate russian tutorial_atl_e0d3c5ec:
@@ -326,7 +326,7 @@ translate russian tutorial_atl_ed82983f:
 # game/tutorial_atl.rpy:495
 translate russian tutorial_atl_2807adff:
 
-    # e "Animation is when the displayable being shown changes. For example, right now I am changing my expression." ### no animation, lol
+    # e "Animation is when the displayable being shown changes. For example, right now I am changing my expression."
     e "Анимация — изменение показываемого объекта. Например, прямо сейчас я изменяю своё выражение лица."
 
 # game/tutorial_atl.rpy:522
@@ -531,13 +531,13 @@ translate russian transform_properties_d7a487f1:
 translate russian transform_properties_89e0d7c2:
 
     # "The subpixel property controls how things are lined up with the screen. When False, images can be pixel-perfect, but there can be pixel jumping." ### no original
-    "Параметр subpixel контролирует то, как things are lined up with the screen. When False, images can be pixel-perfect, but there can be pixel jumping." ### перевод
+    "Параметр subpixel контролирует то, как объекты выравниваются на экране. При False, изображения будут использовать подпиксельный рендеринг, при котором возможно небольшое изменение пикселей." ### проверить
 
 # game/tutorial_atl.rpy:736
 translate russian transform_properties_4194527e:
 
     # "When it's set to True, movement is smoother at the cost of blurring images a little." ### no original
-    "When it's set to True, movement is smoother at the cost of blurring images a little." ### перевод
+    "При True движения становятся сглаженней, ценой небольшого размытия изображений."
 
 # game/tutorial_atl.rpy:755
 translate russian transform_properties_35934e77:

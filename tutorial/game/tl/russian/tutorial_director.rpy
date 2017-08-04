@@ -69,7 +69,7 @@ translate russian director_e253e03b:
 translate russian director_1cd735bc:
 
     # e "To get started, let's go back to a blank slate, with no images on the screen."
-    e "Для начала, давайте вернёмся к пустому экрану, на котором нет изображений."
+    e "Для начала, давайте очистим экран ото всех изображений."
 
 # game/tutorial_director.rpy:44
 translate russian director_c7a18979:
@@ -80,20 +80,20 @@ translate russian director_c7a18979:
 # game/tutorial_director.rpy:46
 translate russian director_3dcc4362:
 
-    # e "Let's add a background. Click the '+' to pick where to add it, then the 'scene' statement and 'washington' for the image. Finally, click 'Add' to add it." ### interactive director needs translation!!!
-    e "Давайте добавим фон. Кликните на '+', чтобы выбрать, куда его добавить, а затем на оператора 'scene' и имя картинки 'washington'. И последнее, нажмите 'Add', чтобы добавить его."
+    # e "Let's add a background. Click the '+' to pick where to add it, then the 'scene' statement and 'washington' for the image. Finally, click 'Add' to add it." ### string ID take too much space ()
+    e "Давайте добавим фон. Кликните на '+', чтобы выбрать, куда его добавить, а затем на оператора 'scene' и имя картинки 'washington'. И последнее, нажмите 'Добавить'."
 
 # game/tutorial_director.rpy:48
 translate russian director_292d58b5:
 
     # e "Next, add a sprite. Click '+', then 'show', 'eileen', 'happy', and 'Add'. Once you've added it, dissolve it in by clicking the second '+', then 'with', 'dissolve', and 'Add'."
-    e "Далее добавим спрайт. Снова нажмём на '+', затем на 'show', 'eileen', 'happy' и снова 'Add'. Как только вы меня добавили, установите мой переход, кликнув на второй '+', затем на 'with', 'dissolve' и 'Add'."
+    e "Далее добавим спрайт. Снова нажмём на '+', затем на 'show', 'eileen', 'happy' и снова 'Добавить'. Как только вы меня добавили, установите мой переход, кликнув на второй '+', затем на 'with', 'dissolve' и 'Добавить'."
 
 # game/tutorial_director.rpy:52
 translate russian director_c875c1a7:
 
     # e "You can edit or remove statements with the pencil icon. You can move me to the right by editing the show statement, then clicking '(transform)', 'right', and 'Change'."
-    e "Вы можете редактировать или удалять выражения при помощи значка карандаша. Вы можете переместить меня вправо, отредактировав оператора show, а затем кликнув на '(transform)', 'right' и 'Change'."
+    e "Вы можете редактировать или удалять выражения при помощи значка карандаша. Вы можете переместить меня вправо, отредактировав оператора show, а затем кликнув на '(трансформация)', 'right' и 'Изменить'."
 
 # game/tutorial_director.rpy:54
 translate russian director_4e04a74e:

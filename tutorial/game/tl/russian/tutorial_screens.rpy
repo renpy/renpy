@@ -62,7 +62,7 @@ translate russian screens_demo_a699b1cb:
 # game/tutorial_screens.rpy:230
 translate russian screens_demo_a136e191:
 
-    # e "For example, in an RPG like visual novel, a screen can display the player's statistics." ### no translation in display for Player, Eileen, HP?
+    # e "For example, in an RPG like visual novel, a screen can display the player's statistics."
     e "Например, для RPG-новеллы экран может показать основные параметры игрока."
 
 # game/tutorial_screens.rpy:234
@@ -74,7 +74,7 @@ translate russian screens_demo_1f50f3d3:
 # game/tutorial_screens.rpy:241
 translate russian screens_demo_8a54de7a:
 
-    # e "Complex screens can be the basis of whole game mechanics. A stats screen like this can be the basis of dating and life-sims." ### strange line in third bar. Done needs to be translated|
+    # e "Complex screens can be the basis of whole game mechanics. A stats screen like this can be the basis of dating and life-sims."
     e "Сложные экраны могут стать основой целой игровой механики. Например, такой экран может стать основой симулятора свидания или симулятора жизни."
 
 # game/tutorial_screens.rpy:246
@@ -98,7 +98,7 @@ translate russian screens_showing_5a6bbad0:
 # game/tutorial_screens.rpy:272
 translate russian screens_showing_ae40755c:
 
-    # e "I'll work from the inside out to describe the statements. But first, I'll show the screen so you can see it in action." ### "This is a screen" and "Okay" needs translation
+    # e "I'll work from the inside out to describe the statements. But first, I'll show the screen so you can see it in action."
     e "Я начну с составляющих частей оператора и опишу его, но прежде всего я покажу вам экран в действии."
 
 # game/tutorial_screens.rpy:274
@@ -159,7 +159,7 @@ translate russian screens_showing_8f78a97d:
 translate russian screens_showing_b52e420c:
 
     # e "Since we can't display dialogue at the same time, you'll have to click 'Okay' to continue."
-    e "Так как мы не сможем показать диалог вместе с этим оператором, вам придётся нажать 'Okay', чтобы продолжить обучение." ### пока не переводится
+    e "Так как мы не сможем показать диалог вместе с этим оператором, вам придётся нажать 'Ок', чтобы продолжить обучение."
 
 # game/tutorial_screens.rpy:310
 translate russian screens_showing_c5ca730f:
@@ -176,7 +176,7 @@ translate russian screens_showing_a38d1702:
 # game/tutorial_screens.rpy:335
 translate russian screens_parameters_0666043d:
 
-    # e "Here's an example of a screen that takes three parameters. The message parameter is a message to show, while the okay and cancel actions are run when the appropriate button is chosen." ### "Hello, world" and "Okay" not translatable, but not cancel =D
+    # e "Here's an example of a screen that takes three parameters. The message parameter is a message to show, while the okay and cancel actions are run when the appropriate button is chosen."
     e "Вот пример экрана, берущего три параметра. Параметр message — это показываемое сообщение, а действия okay и cancel запускаются при нажатии соответствующих им кнопок."
 
 # game/tutorial_screens.rpy:337
@@ -195,18 +195,18 @@ translate russian screens_parameters_4ce03111:
 translate russian screens_parameters_106c2a04:
 
     # e "When a screen is shown, arguments can be supplied for each of the parameters. Arguments can be given by position or by name."
-    e "При показе экрана для каждого параметра могут быть проставлены аргументы. Аргументы могут даваться по позиции или при имени параметра." ###
+    e "При показе экрана для каждого параметра могут быть проставлены аргументы. Аргументы могут даваться по позиции или по имени параметра."
 
 # game/tutorial_screens.rpy:350
 translate russian screens_parameters_12ac92d4:
 
-    # e "Parameters let us change what a screen displays, simply by re-showing it with different arguments." ### "Shiro was here." not translatable
+    # e "Parameters let us change what a screen displays, simply by re-showing it with different arguments."
     e "Параметры позволяют нам изменять внешний вид экрана, попросту показав его с другими аргументами."
 
 # game/tutorial_screens.rpy:357
 translate russian screens_parameters_d143a994:
 
-    # e "The call screen statement can also take arguments, much like show screen does." ### "click either button to continue" not translatable
+    # e "The call screen statement can also take arguments, much like show screen does."
     e "При вызове экрана тоже можно применять аргументы, прямо как и при показе."
 
 # game/tutorial_screens.rpy:369
@@ -296,7 +296,7 @@ translate russian screens_control_5566d948:
 # game/tutorial_screens.rpy:500
 translate russian screens_control_0e939050:
 
-    # e "The python statement works just about the same way it does in the script. A single line of Python is introduced with a dollar sign. This line is run each time the screen updates." ### again with no translation "Hello, World."
+    # e "The python statement works just about the same way it does in the script. A single line of Python is introduced with a dollar sign. This line is run each time the screen updates."
     e "Операторы python работают здесь также, как и в обычном скрипте. Строка с Python-кодом начинается со знака доллара, плюс эта строка запускается каждый раз, как обновляется экран."
 
 # game/tutorial_screens.rpy:515
@@ -338,7 +338,7 @@ translate russian screens_control_87a75fe7:
 # game/tutorial_screens.rpy:569
 translate russian screens_control_6a8c07f6:
 
-    # e "The for statement takes a list of values, and iterates through them, running the block inside the for loop with the variable bound to each list item." ### no translation for "Earth", "Moon", "Mars".
+    # e "The for statement takes a list of values, and iterates through them, running the block inside the for loop with the variable bound to each list item."
     e "Оператор for берёт список значений и проходит через них, запуская блок, в котором одна переменная привязывается к каждому значению в списке."
 
 # game/tutorial_screens.rpy:585
@@ -419,6 +419,10 @@ translate russian strings:
     old " Lv. [lv]"
     new " Уровень [lv]"
 
+    # tutorial_screens.rpy:29
+    old "HP"
+    new "ОЗ"
+
     # tutorial_screens.rpy:58
     old "Morning"
     new "Утро"
@@ -468,11 +472,11 @@ translate russian strings:
     new "Наглость"
 
     # tutorial_screens.rpy:171
-    old "What can screens do?"
+    old "What screens can do."
     new "Что умеют экраны?"
 
     # tutorial_screens.rpy:171
-    old "How to show screens." ### вопрос
+    old "How to show screens."
     new "Как показать экран?"
 
     # tutorial_screens.rpy:171
