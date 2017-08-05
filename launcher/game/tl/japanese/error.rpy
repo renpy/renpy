@@ -177,3 +177,27 @@ translate japanese strings:
     old "Copies the errors.txt file to the clipboard."
     new "errors.txt をクリップボードにコピーします。"
 
+# TODO: Translation updated at 2017-08-04 17:26
+
+translate japanese strings:
+
+    # _errorhandling.rpym:519
+    old "Open"
+    new "開く"
+
+    # _errorhandling.rpym:523
+    old "Copy"
+    new "コピー"
+
+    # _errorhandling.rpym:581
+    old "Ignores the exception, allowing you to continue."
+    new "例外を無視し、プログラムの続行を許可します。"
+
+    # _errorhandling.rpym:592
+    old "Console"
+    new "コンソール"
+
+    # _errorhandling.rpym:594
+    old "Opens a console to allow debugging the problem."
+    new "コンソールを開き、問題をデバッグします。"
+

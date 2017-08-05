@@ -438,3 +438,11 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
     old "## The position of the main menu text."
     new "## メインメニューのテキストの文字揃え。"
 
+# TODO: Translation updated at 2017-08-04 17:26
+
+translate japanese strings:
+
+    # gui.rpy:434
+    old "## Change the size and spacing of various things."
+    new "## 様々なサイズとスペーシングを変更。"
+

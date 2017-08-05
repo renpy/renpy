@@ -471,7 +471,7 @@ translate japanese strings:
 
     # front_page.rpy:223
     old "Navigate Script"
-    new "スクリプトのナビゲート"
+    new "スクリプトナビゲーション"
 
     # front_page.rpy:234
     old "Check Script (Lint)"
@@ -899,7 +899,7 @@ translate japanese strings:
 
     # preferences.rpy:153
     old "Navigation Options:"
-    new "ナビゲートオプション:"
+    new "ナビゲーション設定:"
 
     # preferences.rpy:157
     old "Include private names"
@@ -907,7 +907,7 @@ translate japanese strings:
 
     # preferences.rpy:158
     old "Include library names"
-    new "本体の名前を含める"
+    new "ライブラリの名前を含める"
 
     # preferences.rpy:168
     old "Launcher Options:"
@@ -1196,4 +1196,52 @@ translate japanese strings:
     # front_page.rpy:91
     old "PROJECTS:"
     new "プロジェクト:"
+
+# TODO: Translation updated at 2017-08-04 17:26
+
+translate japanese strings:
+
+    # android.rpy:304
+    old "Android: [project.current.display_name!q]"
+    new "Android: [project.current.display_name!q]"
+
+    # distribute_gui.rpy:157
+    old "Build Distributions: [project.current.display_name!q]"
+    new "配布物のビルド: [project.current.display_name!q]"
+
+    # interface.rpy:136
+    old "Ren'Py Sponsor Information"
+    new "Ren'Pyスポンサー情報"
+
+    # ios.rpy:211
+    old "iOS: [project.current.display_name!q]"
+    new "iOS: [project.current.display_name!q]"
+
+    # navigation.rpy:168
+    old "Navigate: [project.current.display_name!q]"
+    new "ナビゲーション: [project.current.display_name!q]"
+
+    # new_project.rpy:71
+    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
+    new "日本語のプロジェクトを作成します。別の言語のプロジェクトを作成するには、設定でランチャーの言語を変更してください。"
+
+    # preferences.rpy:187
+    old "Force new tutorial"
+    new "新チュートリアルを使用"
+
+    # preferences.rpy:189
+    old "Legacy options"
+    new "古いオプションを表示"
+
+    # preferences.rpy:194
+    old "Sponsor message"
+    new "スポンサーメッセージ表示"
+
+    # translations.rpy:92
+    old "Translations: [project.current.display_name!q]"
+    new "翻訳の生成: [project.current.display_name!q]"
+
+    # translations.rpy:337
+    old "Extract Dialogue: [project.current.display_name!q]"
+    new "台詞の抽出: [project.current.display_name!q]"
 
