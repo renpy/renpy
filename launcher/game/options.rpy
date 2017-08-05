@@ -349,8 +349,8 @@ init python:
     build.classify_renpy("lib/**/*steam_api*", None)
     build.classify_renpy("lib/*/renpy", None)
     build.classify_renpy("lib/*/renpy.exe", None)
-    build.classify_renpy("lib/linux-armv7l/", "rpi")
-    build.classify_renpy("lib/linux-armv7l/**", "rpi")
+    build.classify_renpy("lib/linux-armv7l/", "raspi")
+    build.classify_renpy("lib/linux-armv7l/**", "raspi")
     build.classify_renpy("lib/**", "binary")
     build.classify_renpy("renpy.sh", "binary")
     # renpy.app is now built from scratch from distribute.rpy.
@@ -375,7 +375,7 @@ init python:
 
     build.package("sdk", "zip tar.bz2 dmg", "source binary")
     build.package("source", "tar.bz2", "source source_only", update=False)
-    build.package("rpi", "tar.bz2", "rpi", update=False)
+    build.package("raspi", "tar.bz2", "raspi", dlc=True, update=False)
 
     build.package("jedit", "zip", "jedit", dlc=True)
     build.package("editra-linux", "tar.bz2", "editra-all editra-linux", dlc=True)

@@ -55,6 +55,16 @@ namebox_ and prefixes.
 Raspberry Pi
 ------------
 
+Ren'Py now comes with experimental support for the Raspberry Pi platform.
+
+The Raspberry Pi port is similar to the Android and iOS ports, both in its
+limitations and how it's meant to run games rather than develop them. As with
+all platforms, creators developing for the Raspberry Pi need to account for
+the resources available to them and design their games accordingly.
+
+That being said, The Question and the new Tutorial both run on a Raspberry Pi 3
+computer costing $35.
+
 
 Translations
 ------------

@@ -123,6 +123,7 @@ Building, Updating, and Other Platforms
    ios
    iap
    gesture
+   raspi
 
 End-User Documentation
 ----------------------
