@@ -77,6 +77,8 @@ def extra_imports():
     import plistlib; plistlib
     import _renpysteam; _renpysteam
     import compileall; compileall
+    import cProfile; cProfile
+    import pstats; pstats
 
 
 class NullFile(io.IOBase):
@@ -100,6 +102,7 @@ def null_files():
             sys.stdout = NullFile()
     except:
         pass
+
 
 null_files()
 
