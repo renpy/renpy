@@ -28,6 +28,7 @@ init python in distribute:
     import struct
     import stat
     import shutil
+    import threading
 
     from zipfile import crc32
 
@@ -210,6 +211,44 @@ init python in distribute:
         def close(self):
             self.tarfile.close()
 
+    class UpdatePackage(TarPackage):
+
+        def __init__(self, filename, basename, destination):
+            self.path = filename
+            self.basename = basename
+            self.destination = destination
+
+            TarPackage.__init__(self, filename, "w", notime=True)
+
+        def close(self):
+            TarPackage.close(self)
+
+            cmd = [
+                updater.zsync_path("zsyncmake"),
+                "-z",
+                # -u url to gzipped data - not a local filename!
+                "-u", self.basename + ".update.gz",
+                "-o", os.path.join(self.destination, self.basename + ".zsync"),
+                os.path.abspath(self.path),
+                ]
+
+            subprocess.check_call([ renpy.fsencode(i) for i in cmd ])
+
+            # Build the sums file. This is a file with an adler32 hash of each 64k block
+            # of the zsync file. It's used to help us determine how much of the file is
+            # downloaded.
+            with open(self.path, "rb") as src:
+                with open(renpy.fsencode(os.path.join(self.destination, self.basename + ".sums")), "wb") as sums:
+                    while True:
+                        data = src.read(65536)
+
+                        if not data:
+                            break
+
+                        sums.write(struct.pack("<I", zlib.adler32(data) & 0xffffffff))
+
+
+
     class DirectoryPackage(object):
 
         def mkdir(self, path):
@@ -236,5 +275,78 @@ init python in distribute:
 
         def close(self):
             return
+
+    class DmgPackage(DirectoryPackage):
+        def __init__(self, path, make_dmg):
+            self.make_dmg = make_dmg
+            DirectoryPackage.__init__(self, path)
+
+        def close(self):
+            DirectoryPackage.close(self)
+            self.make_dmg()
+
+
+    parallel_threads = [ ]
+
+    class ParallelPackage(object):
+
+        def __init__(self, package, done, what):
+            self.package = package
+            self.done = done
+            self.what = what
+
+            self.worklist = [ ]
+
+        def add_file(self, name, path, xbit):
+            self.worklist.append((False, name, path, xbit))
+
+        def add_directory(self, name, path):
+            self.worklist.append((True, name, path, True))
+
+        def close(self):
+            t = threading.Thread(target=self.run)
+            t.start()
+
+            self.thread = t
+            parallel_threads.append(self)
+
+        def run(self):
+
+            for i in self.worklist:
+                directory, name, path, xbit = i
+                if directory:
+                    self.package.add_directory(name, path)
+                else:
+                    self.package.add_file(name, path, xbit)
+
+            self.package.close()
+
+
+    def wait_parallel_threads():
+
+        t = 0
+
+        while parallel_threads:
+
+            alive = [ ]
+
+            for i in parallel_threads:
+                i.thread.join(0)
+                if i.thread.is_alive():
+                    alive.append(i)
+
+            if not alive:
+                break
+
+            t += 1
+            print(t, [ i.what for i in alive ])
+
+            time.sleep(1)
+
+        for i in parallel_threads:
+            if i.done:
+                i.done()
+
+
 
 

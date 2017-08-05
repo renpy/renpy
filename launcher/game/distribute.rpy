@@ -557,6 +557,8 @@ init python in distribute:
                         p["file_lists"],
                         dlc=p["dlc"])
 
+            wait_parallel_threads()
+
             if self.build_update:
                 self.finish_updates(build_packages)
 
@@ -1236,56 +1238,18 @@ init python in distribute:
 
             file_hash, old_fl_hash = self.build_cache.get(full_filename, ("", ""))
 
-            if directory or old_fl_hash != fl_hash:
+            if (not directory) and old_fl_hash == fl_hash:
 
-                if format == "tar.bz2":
-                    pkg = TarPackage(path, "w:bz2")
-                elif format == "update":
-                    pkg = TarPackage(path, "w", notime=True)
-                elif format == "zip" or format == "app-zip":
-                    pkg = ZipPackage(path)
-                elif directory:
-                    pkg = DirectoryPackage(path)
+                if file_hash:
+                    self.build_cache[full_filename] = (file_hash, fl_hash)
 
-                for i, f in enumerate(fl):
-                    self.reporter.progress(_("Writing the [variant] [format] package."), i, len(fl), variant=variant, format=format)
+                return
 
-                    if f.directory:
-                        pkg.add_directory(f.name, f.path)
-                    else:
-                        pkg.add_file(f.name, f.path, f.executable)
-
-                self.reporter.progress_done()
-                pkg.close()
-
-                if format == "update":
-                    # Build the zsync file.
-
-                    self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
-
-                    cmd = [
-                        updater.zsync_path("zsyncmake"),
-                        "-z",
-                        # -u url to gzipped data - not a local filename!
-                        "-u", filename + ".update.gz",
-                        "-o", os.path.join(self.destination, filename + ".zsync"),
-                        os.path.abspath(path),
-                        ]
-
-                    subprocess.check_call([ renpy.fsencode(i) for i in cmd ])
-
-                    # Build the sums file. This is a file with an adler32 hash of each 64k block
-                    # of the zsync file. It's used to help us determine how much of the file is
-                    # downloaded.
-                    with open(path, "rb") as src:
-                        with open(renpy.fsencode(os.path.join(self.destination, filename + ".sums")), "wb") as sums:
-                            while True:
-                                data = src.read(65536)
-
-                                if not data:
-                                    break
-
-                                sums.write(struct.pack("<I", zlib.adler32(data) & 0xffffffff))
+            def done():
+                """
+                This is called when the build of the package is done, either
+                in this thread or a background thread.
+                """
 
                 if self.include_update and not self.build_update and not dlc:
                     if os.path.exists(update_fn):
@@ -1296,12 +1260,51 @@ init python in distribute:
                 else:
                     file_hash = ""
 
-            if dmg:
-                self.make_dmg(filename, path, dmg_path)
-                shutil.rmtree(path)
+                if file_hash:
+                    self.build_cache[full_filename] = (file_hash, fl_hash)
 
-            if file_hash:
-                self.build_cache[full_filename] = (file_hash, fl_hash)
+            if format == "tar.bz2":
+                pkg = TarPackage(path, "w:bz2")
+            elif format == "update":
+                pkg = UpdatePackage(path, filename, self.destination)
+            elif format == "zip" or format == "app-zip":
+                pkg = ZipPackage(path)
+            elif dmg:
+
+                def make_dmg():
+                    self.make_dmg(filename, path, dmg_path)
+                    shutil.rmtree(path)
+
+                pkg = DMGPackage(path, make_dmg)
+            elif directory:
+                pkg = DirectoryPackage(path)
+
+            # If we want to build in parallel.
+            if self.build['renpy']:
+                pkg = ParallelPackage(pkg, done, variant + "." + format)
+                done = None
+
+            for i, f in enumerate(fl):
+                self.reporter.progress(_("Writing the [variant] [format] package."), i, len(fl), variant=variant, format=format)
+
+                if f.directory:
+                    pkg.add_directory(f.name, f.path)
+                else:
+                    pkg.add_file(f.name, f.path, f.executable)
+
+            self.reporter.progress_done()
+
+
+            if format == "update":
+                # Build the zsync file.
+
+                self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
+
+            pkg.close()
+
+            if done is not None:
+                done()
+
 
         def finish_updates(self, packages):
             """
