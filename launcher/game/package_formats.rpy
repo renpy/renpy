@@ -276,6 +276,39 @@ init python in distribute:
         def close(self):
             return
 
+    class ExternalZipPackage(object):
+
+        def __init__(self, path):
+            self.path = path
+            self.directory = path + ".zd"
+            self.dp = DirectoryPackage(self.directory)
+
+        def add_file(self, name, path, xbit):
+            self.dp.add_file(name, path, xbit)
+
+        def add_directory(self, name, path):
+            self.dp.add_directory(name, path)
+
+        def close(self):
+            self.dp.close()
+
+            if os.path.exists(self.path):
+                os.unlink(self.path)
+
+            p = subprocess.Popen([
+                "zip",
+                "-9rq",
+                os.path.abspath(self.path),
+            ] + os.listdir(self.directory),
+            cwd=os.path.abspath(self.directory)
+            )
+
+            p.wait()
+
+            shutil.rmtree(self.directory)
+
+
+
     class DmgPackage(DirectoryPackage):
         def __init__(self, path, make_dmg):
             self.make_dmg = make_dmg
@@ -339,7 +372,7 @@ init python in distribute:
                 break
 
             t += 1
-            print(t, [ i.what for i in alive ])
+            print(t, " ".join(sorted([ i.what for i in alive ])))
 
             time.sleep(1)
 

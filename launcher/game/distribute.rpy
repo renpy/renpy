@@ -1268,7 +1268,10 @@ init python in distribute:
             elif format == "update":
                 pkg = UpdatePackage(path, filename, self.destination)
             elif format == "zip" or format == "app-zip":
-                pkg = ZipPackage(path)
+                if self.build['renpy']:
+                    pkg = ExternalZipPackage(path)
+                else:
+                    pkg = ZipPackage(path)
             elif dmg:
 
                 def make_dmg():

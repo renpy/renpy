@@ -1,1 +1,1 @@
-{"type": "hidden", "renamed_all": true, "force_recompile": true, "build_update": true, "packages": ["mac", "linux", "pc", "win"], "add_from": true, "display_name" : "The Question"}
+{"display_name": "The Question", "type": "hidden", "renamed_all": true, "force_recompile": true, "build_update": true, "packages": ["mac", "pc"], "add_from": true}
