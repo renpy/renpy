@@ -161,7 +161,7 @@ init python in project:
             if os.path.isdir(tmp):
                 try:
 
-                    fn = os.path.join(tmp, "write_test.txt", "w")
+                    fn = os.path.join(tmp, "write_test.txt")
 
                     if os.path.exists(fn):
                         os.unlink(fn)
