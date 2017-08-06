@@ -174,7 +174,7 @@ init python in distribute:
             Update hash with information about this entry.
             """
 
-            key = (self.name, self.path, self.directory, self.executable)
+            key = (self.name, self.directory, self.executable)
 
             hash.update(repr(key))
 
