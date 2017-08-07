@@ -82,7 +82,7 @@ label styles_menu:
         "Bar style properties.":
             call style_bar
 
-        "Box and Fixed style properties":
+        "Box, Grid, and Fixed style properties":
             call style_box
 
         "The Displayable Inspector":
@@ -906,6 +906,24 @@ screen vbox(style, highlight="#fff2"):
                 text _("Third Child") xalign 0.5 color "#e0e0ff"
 
 
+screen grid(style):
+
+    frame:
+        xalign 0.5
+        ypos 50
+        ypadding 20
+
+        grid 3 2:
+            style style
+
+            text _("First Child") color "#ffe0e0"
+            text _("Second Child") color "#e0ffe0"
+            text _("Third Child") color "#e0e0ff"
+
+            text _("Fourth Child") color "#ffffe0"
+            text _("Fifth Child") color "#e0ffff"
+            text _("Sixth Child") color "#ffe0ff"
+
 
 screen fixed(style):
 
@@ -1015,11 +1033,23 @@ label style_box:
 
     e "The box_wrap style property fills the box with children until it's full, then starts again on the next line."
 
-    hide example
     hide screen hbox
-    show screen fixed('fixed')
+    show screen grid('spacing_grid')
     with dissolve
 
+
+    example:
+        style spacing_grid:
+            xspacing 20
+            yspacing 50
+
+
+    e "Grids bring with them two more style properties. The xspacing and yspacing properties control spacing in the horizontal and vertical directions, respectively."
+
+    hide example
+    hide screen grid
+    show screen fixed('fixed')
+    with dissolve
 
     e "Lastly, we have the fixed layout. The fixed layout usually expands to fill all space, and shows its children from back to front."
 

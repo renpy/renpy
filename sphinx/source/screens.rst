@@ -447,13 +447,11 @@ following property:
     If False (the default), rows are filled before columns. If True,
     then columns are filled before rows.
 
-`spacing`
-    The spacing between the rows and columns of the grid.
-
 It also takes:
 
 * :ref:`Common Properties <common-properties>`
 * :ref:`position-style-properties`
+* :ref:`grid-style-properties`
 
 This must be given columns * rows children. Giving it a different
 number of children is an error.
@@ -1164,10 +1162,12 @@ Vpgrids take the the following properties:
     on the `cols` and `rows` properties. If `cols` is given, columns
     are filled before rows, otherwise rows are filled before columns.
 
-`spacing`
-    The spacing between cells, measured in pixels.
+In addition, a vpgrid takes all properties a :ref:`viewport <sl-viewport>` can,
+and the following groups of style properties:
 
-In addition, a vpgrid takes all properties a :ref:`viewport <sl-viewport>` can.
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`00
+* :ref:`grid-style-properties`
 
 ::
 

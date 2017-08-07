@@ -82,8 +82,9 @@ The Indonesian translation has been updated.
 Other
 -----
 
-The Ren'Py documentation has been edited to remove the use of the word "code",
-and replace it with less cryptic terminology.
+The grid and vpgrid displayables now support the :propref:`xspacing` and
+:propref:`yspacing` style properties, which set the spacing in the horizontal
+and vertical directions independently.
 
 Ren'Py now supports the Python print function. Output printed with the print
 function will go to the log.txt file and the Ren'Py console, which can be
@@ -137,6 +138,9 @@ not report a relevant error. This has been fixed.
 
 The PlayCharacterVoice action can now mark a button as selected while the
 character voice is playing.
+
+The Ren'Py documentation has been edited to remove the use of the word "code",
+and replace it with less cryptic terminology.
 
 It is now possible to support Ren'Py via Patreon. A link to a page with
 sponsor information is in the launcher by default. It can be hidden in the

@@ -966,6 +966,28 @@ These are used for the horizontal and vertical box layouts.
 
 
 
+.. _grid-style-properties:
+
+Grid Style Properties
+---------------------
+
+These are the use by the grid and vpgrid displayables.
+
+.. style-property:: spacing int
+
+    The spacing between cells of the grid, in pixels.
+
+.. style-properties:: xspacing int or None
+
+    The spacing between cells of the grid in the horizontal direction, in pixels.
+    This takes precedence over the spacing property when it is not None.
+
+.. style-properties:: yspacing int or None
+
+    The spacing between cells of the grid in the vertical direction, in pixels.
+    This takes precedence over the spacing property when it is not None.
+
+
 .. _fixed-style-properties:
 
 Fixed Style Properties
