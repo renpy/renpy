@@ -518,20 +518,27 @@ class VPGrid(Viewport):
                 rows += 1
 
         # Determine the total size.
-        spacing = self.style.spacing
+        xspacing = self.style.xspacing
+        yspacing = self.style.yspacing
+
+        if xspacing is None:
+            xspacing = self.style.spacing
+        if yspacing is None:
+            yspacing = self.style.spacing
+
         rend = renpy.display.render.render(self.children[0], child_width, child_height, st, at)
         cw, ch = rend.get_size()
 
-        tw = (cw + spacing) * cols - spacing
-        th = (ch + spacing) * rows - spacing
+        tw = (cw + xspacing) * cols - xspacing
+        th = (ch + yspacing) * rows - yspacing
 
         if self.style.xfill:
             tw = child_width
-            cw = (tw - (cols - 1) * spacing) / cols
+            cw = (tw - (cols - 1) * xspacing) / cols
 
         if self.style.yfill:
             th = child_height
-            ch = (th - (rows - 1) * spacing) / rows
+            ch = (th - (rows - 1) * yspacing) / rows
 
         cxo, cyo, width, height = self.update_offsets(tw, th, st)
 
@@ -549,8 +556,8 @@ class VPGrid(Viewport):
                 x = index % cols
                 y = index // cols
 
-            x = x * (cw + spacing) + cxo
-            y = y * (ch + spacing) + cyo
+            x = x * (cw + xspacing) + cxo
+            y = y * (ch + yspacing) + cyo
 
             if x + cw < 0:
                 self.offsets.append((x, y))
