@@ -51,6 +51,7 @@ def sorted_dict(**kwargs):
 # Prefixes
 ################################################################################
 
+
 # A map from prefix name to Prefix object.
 prefixes = collections.OrderedDict()
 
@@ -84,6 +85,7 @@ class Prefix(object):
             self.alt_names.append(i)
 
         prefixes[name] = self
+
 
 # The number of priority levels we have.
 PRIORITY_LEVELS = 4
@@ -208,6 +210,7 @@ style_properties = sorted_dict(
     xminimum=None,
     xoffset=None,
     xpos=None,
+    xspacing=None,
     yanchor='expand_anchor',
     yfill=None,
     yfit=None,
@@ -215,6 +218,7 @@ style_properties = sorted_dict(
     yminimum=None,
     yoffset=None,
     ypos=None,
+    yspacing=None,
     )
 
 # Properties that take displayables that should be given the right set
@@ -617,6 +621,7 @@ def generate():
     generate_property_functions()
     generate_properties()
     generate_sets()
+
 
 if __name__ == "__main__":
     generate()

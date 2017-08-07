@@ -143,6 +143,10 @@ init label _errorhandling:
         # Viewport properties
         clipping False
 
+        # Grid properties
+        xspacing None
+        yspacing None
+
     init python:
         # Temporarily, until the real styles can be defined.
         style.default = style._default

@@ -230,6 +230,10 @@ init -1800:
         # Viewport properties
         clipping False
 
+        # Grid properties
+        xspacing None
+        yspacing None
+
     style empty:
         take default
 

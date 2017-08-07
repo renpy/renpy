@@ -184,6 +184,13 @@ box_properties = [ Style(i) for i in [
     "yminimum",
     ] ]
 
+grid_properties = [ Style(i) for i in [
+    "spacing",
+    "xspacing",
+    "yspacing",
+    ] ]
+
+
 ui_properties = [
     Keyword("at"),
     Keyword("id"),
@@ -203,4 +210,5 @@ property_groups = {
     "text" : text_properties,
     "window" : window_properties,
     "ui" : ui_properties,
+    "grid" : grid_properties,
     }
