@@ -50,6 +50,11 @@ commercial and noncommercial use.
 New GUI
 -------
 
+A few changes have been made to the new GUI. Buttons have been brightened and
+their text shrunk. Bars have been reduced in height somewhat. The intent is
+to provide more room in menus, especially for game-specific preferences
+on the preferences screen.
+
 For newly-generated games, it is now possible to customize the location and
 look of the namebox (the frame containing a character's name) on a character
 by character basis. This is done by giving properties prefixed with namebox
