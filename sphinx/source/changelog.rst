@@ -50,7 +50,11 @@ commercial and noncommercial use.
 New GUI
 -------
 
-namebox_ and prefixes.
+For newly-generated games, it is now possible to customize the location and
+look of the namebox (the frame containing a character's name) on a character
+by character basis. This is done by giving properties prefixed with namebox
+to the Character. For example, the namebox_background property changes the
+background of a namebox.
 
 Raspberry Pi
 ------------
@@ -85,6 +89,12 @@ Other
 The grid and vpgrid displayables now support the :propref:`xspacing` and
 :propref:`yspacing` style properties, which set the spacing in the horizontal
 and vertical directions independently.
+
+The :var:`config.character_id_prefixes` variables contains a list of prefixes
+that are used by a Character to style displayables. Similar to what, who, and
+window, if "logo" is in this variable, properties like logo_xpos and logo_background
+will cause the logo and background properties to be set on the displayable with
+id "logo".
 
 Ren'Py now supports the Python print function. Output printed with the print
 function will go to the log.txt file and the Ren'Py console, which can be
