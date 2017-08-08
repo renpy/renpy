@@ -216,6 +216,11 @@ dialogue.
 
     Sets the size of character names.
 
+.. var:: gui.textbox_height = 278
+
+    The height of the textbox. This should be the same height as the height
+    of gui/textbox.png.
+
 By default, the character name label uses the accent color. The color can
 be easily changed when defining a character::
 
