@@ -781,6 +781,9 @@ position_viewport_side = True
 # Things that be given properties via Character.
 character_id_prefixes = [ ]
 
+# Should surfaces be cached?
+cache_surfaces = True
+
 del os
 del collections
 

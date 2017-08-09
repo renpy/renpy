@@ -63,7 +63,7 @@ def screen(_screen_name, *args, **kwargs):
 
 def reset():
     global image
-    image = renpy.display.im.cache.get
+    image = renpy.display.im.cache.get_texture
     predicted.clear()
     del screens[:]
 

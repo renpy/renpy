@@ -192,8 +192,13 @@ class Cache(object):
         # First try to grab the image out of the cache without locking it.
         ce = self.cache.get(image, None)
 
-        if texture and (ce is not None) and (ce.texture is not None):
-            return ce.texture
+        if ce is not None:
+
+            if texture and (ce.texture is not None):
+                return ce.texture
+
+            if ce.surf is None:
+                ce = None
 
         # Otherwise, we load the image ourselves.
         if ce is None:
@@ -247,8 +252,11 @@ class Cache(object):
         else:
             rv = ce.surf
 
+        if not renpy.config.cache_surfaces:
+            ce.surf = None
+
         # Done... return the surface.
-        return ce.surf
+        return rv
 
     # This kills off a given cache entry.
     def kill(self, ce):
@@ -302,8 +310,14 @@ class Cache(object):
         into the GPU.
         """
 
-        surf = self.get(im, predict=True)
-        renpy.display.draw.load_texture(surf)
+        self.get(im, predict=True, texture=True)
+
+    def get_texture(self, im):
+        """
+        Gets `im` as a texture.
+        """
+
+        self.get(im, texture=True)
 
     # Called to report that a given image would like to be preloaded.
     def preload_image(self, im):
