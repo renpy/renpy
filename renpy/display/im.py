@@ -42,8 +42,12 @@ class CacheEntry(object):
         # hashable and comparable).
         self.what = what
 
-        # The pygame surface corresponding to the cached object.
+        # The pygame surface corresponding to the cached object. This may be
+        # None if we've tossed the surface.
         self.surf = surf
+
+        # The texture corresponding to the cached object.
+        self.texture = None
 
         # The size of this image.
         w, h = surf.get_size()
@@ -188,6 +192,9 @@ class Cache(object):
         # First try to grab the image out of the cache without locking it.
         ce = self.cache.get(image, None)
 
+        if texture and (ce is not None) and (ce.texture is not None):
+            return ce.texture
+
         # Otherwise, we load the image ourselves.
         if ce is None:
 
@@ -230,6 +237,15 @@ class Cache(object):
         if ce.time != self.time:
             ce.time = self.time
             self.size_of_current_generation += ce.size
+
+        if texture:
+            if ce.texture is None:
+                ce.texture = renpy.display.draw.load_texture(ce.surf)
+
+            rv = ce.texture
+
+        else:
+            rv = ce.surf
 
         # Done... return the surface.
         return ce.surf
@@ -470,10 +486,9 @@ class ImageBase(renpy.display.core.Displayable):
 
     def render(self, w, h, st, at):
 
-        im = cache.get(self)
-        texture = renpy.display.draw.load_texture(im)
+        texture = cache.get(self, texture=True)
 
-        w, h = im.get_size()
+        w, h = texture.get_size()
         rv = renpy.display.render.Render(w, h)
         rv.blit(texture, (0, 0))
         return rv
@@ -901,6 +916,7 @@ def ramp(start, end):
         ramp_cache[start, end] = rv
 
     return rv
+
 
 identity = ramp(0, 255)
 
@@ -1587,8 +1603,7 @@ def load_image(im):
     Loads the image manipulator `im` using the image cache, and returns a texture.
     """
 
-    surf = cache.get(image(im))
-    return renpy.display.draw.load_texture(surf)
+    return cache.get(image(im), texture=True)
 
 
 def load_surface(im):
