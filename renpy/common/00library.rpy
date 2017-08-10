@@ -293,6 +293,14 @@ init 1700 python hide:
     if config.window_title is None:
         config.window_title = config.name or "A Ren'Py Game"
 
+    import os
+    if "RENPY_GL_MODERN" in os.environ:
+        config.gl_npot = True
+        config.cache_surfaces = False
+
+        print("Modern GL Enabled.")
+
+
 
 # Used by renpy.return() to return.
 label _renpy_return:
