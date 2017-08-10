@@ -784,6 +784,9 @@ character_id_prefixes = [ ]
 # Should surfaces be cached?
 cache_surfaces = True
 
+# Should Ren'Py allow and use non power-of-two textures.
+gl_npot = False
+
 del os
 del collections
 

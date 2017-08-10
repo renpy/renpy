@@ -522,6 +522,11 @@ def alloc_texture(width, height):
 
     global total_texture_size
 
+    if renpy.config.gl_npot:
+        rv = Texture(width, height)
+        rv.free_list = None
+        return rv
+
     l = free_textures[width, height]
 
     if l:
