@@ -141,6 +141,9 @@ Preference("pad_enabled", True)
 Preference("mobile_rollback_side", "disable")
 Preference("desktop_rollback_side", "disable")
 
+# Should OpenGL do npot?
+Preference("gl_npot", True)
+
 
 class Preferences(renpy.object.Object):
     """

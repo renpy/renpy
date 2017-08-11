@@ -86,6 +86,21 @@ init -1500:
 
                     null height 10
 
+                    label _("NPOT")
+
+                    null height 10
+
+                    textbutton _("Enable"):
+                        action SetField(_preferences, "gl_npot", True)
+                        style_suffix "radio_button"
+
+                    textbutton _("Disable"):
+                        action SetField(_preferences, "gl_npot", False)
+                        style_suffix "radio_button"
+
+
+                    null height 10
+
                     label _("Gamepad")
 
                     null height 10
