@@ -733,6 +733,11 @@ def compute_tiling(width, max_size, min_fill_factor):
     (x, width, etc), it
     """
 
+    if renpy.config.gl_npot:
+        max_size = max(MAX_SIZE, max_size)
+
+    orig_width = width
+
     # Check the cache.
     key = (width, max_size)
     if key in tiling_cache:
@@ -760,14 +765,21 @@ def compute_tiling(width, max_size, min_fill_factor):
         # The size of the right border of this tile.
         right_border = 1
 
-        # Figure out the texture size to use.
-        for size in SIZES:
-            if size > max_size:
-                continue
 
-            # Ensure each texture is full enough.
-            if size * min_fill_factor <= width + left_border + right_border:
-                break
+        if renpy.config.gl_npot:
+
+            size = min(width + left_border + right_border, max_size)
+
+        else:
+
+            # Figure out the texture size to use.
+            for size in SIZES:
+                if size > max_size:
+                    continue
+
+                # Ensure each texture is full enough.
+                if size * min_fill_factor <= width + left_border + right_border:
+                    break
 
         # The number of pixels to display to the user from this tile.
         row_size = min(width, size - left_border - right_border)
