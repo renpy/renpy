@@ -39,7 +39,7 @@ import collections
 import renpy
 
 # The maximum size of a texture.
-MAX_SIZE = 1024
+MAX_SIZE = 2048
 
 # Possible sizes for a texture, ordered from largest to smallest.
 # (Now set in test_texture_sizes.)
@@ -235,8 +235,8 @@ def test_texture_sizes(Environ environ, draw):
     # Clean up.
     environ.set_texture(0, NULL)
 
-    if MAX_SIZE > 1024:
-        MAX_SIZE = 1024
+    if MAX_SIZE > 2048:
+        MAX_SIZE = 2048
 
     if not SIZES:
         renpy.display.log.write("Textures are not rendering properly.")
