@@ -309,7 +309,7 @@ init python in distribute:
 
 
 
-    class DmgPackage(DirectoryPackage):
+    class DMGPackage(DirectoryPackage):
         def __init__(self, path, make_dmg):
             self.make_dmg = make_dmg
             DirectoryPackage.__init__(self, path)
