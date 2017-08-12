@@ -522,7 +522,7 @@ def alloc_texture(width, height):
 
     global total_texture_size
 
-    if renpy.config.gl_npot:
+    if renpy.game.preferences.gl_npot:
         rv = Texture(width, height)
         rv.free_list = None
         return rv
@@ -715,6 +715,9 @@ cdef class TextureGrid(object):
 
 
 
+# The old value of the gl_npot preference.
+old_gl_npot = None
+
 # This is a cache from (width, size) to the results of compute_tiling.
 tiling_cache = { }
 
@@ -733,7 +736,16 @@ def compute_tiling(width, max_size, min_fill_factor):
     (x, width, etc), it
     """
 
-    if renpy.config.gl_npot:
+    global old_gl_npot
+
+    gl_npot = renpy.game.preferences.gl_npot
+
+    if old_gl_npot != gl_npot:
+        gl_npot = old_gl_npot
+        tiling_cache.clear()
+
+
+    if gl_npot:
         max_size = max(MAX_SIZE, max_size)
 
     orig_width = width
@@ -766,7 +778,7 @@ def compute_tiling(width, max_size, min_fill_factor):
         right_border = 1
 
 
-        if renpy.config.gl_npot:
+        if gl_npot:
 
             size = min(width + left_border + right_border, max_size)
 
