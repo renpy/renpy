@@ -30,7 +30,7 @@ translate russian end_02527d05:
     e "Вы можете скачать новые версии Ren'Py с {a=https://www.renpy.org/}https://www.renpy.org/{/a}. Для помощи и обсуждения, смотрите {a=https://lemmasoft.renai.us/forums/}форумы Lemma Soft{/a}."
 
 # game/script.rpy:207
-translate russian end_a898b369:
+translate russian end_c9d03136:
 
     # e "We'd like to thank Piroshki for contributing my sprites; Mugenjohncel for Lucy, the band, and drawn backgrounds; and Jake for the magic circle."
     e "Мы хотели бы поблагодарить Piroshki за мои изображения, Mugenjohncel за Люси, рок-группу и фоны, и Jake — за волшебный круг."

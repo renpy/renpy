@@ -34,8 +34,8 @@ translate russian strings:
     new "Чтобы построить Android-пакет, пожалуйста, загрузите RAPT, разархивируйте его и поместить в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
 
     # android.rpy:31
-    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Чтобы построить Android-пакеты на Windows требуется 32-разрядный инструментарий разработки Java. JDK отличен от JRE, и возможно, у вас есть Java без JDK.\n\nПожалуйста, {a=https://www.oracle.com/technetwork/java/javase/downloads/index.html}загрузите и установите JDK{/a}, и перезапустите лаунчер Ren'Py."
+    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Чтобы построить Android-пакеты на Windows требуется 32-разрядный инструментарий разработки Java. JDK отличен от JRE, и возможно, у вас есть Java без JDK.\n\nПожалуйста, {a=httpу://www.oracle.com/technetwork/java/javase/downloads/index.html}загрузите и установите JDK{/a}, и перезапустите лаунчер Ren'Py."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -405,10 +405,6 @@ translate russian strings:
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
     new "Текстовый редактор — программа, необходимая для редактирования сценариев Ren'Py. Здесь, вы можете выбрать редактор, который будет использовать Ren'Py. Если такового нет, редактор будет автоматически загружен и установлен."
 
-    # editor.rpy:494
-    old "Cancel"
-    new "Отмена"
-
     # front_page.rpy:35
     old "Open [text] directory."
     new "Открыть папку [text]."
@@ -607,45 +603,37 @@ translate russian strings:
 
     # interface.rpy:136
     old "Ren'Py Sponsor Information"
-    new "Информация о спонсорах Ren'Py"
+    new "Спонсоры Ren'Py"
 
     # interface.rpy:258
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
     new "В связи с ограничениями на форматы пакетов, не-ASCII имена файлов и папок недопустимы."
 
-    # interface.rpy:353
+    # interface.rpy:354
     old "ERROR"
     new "ОШИБКА"
 
-    # interface.rpy:382
-    old "While [what!q], an error occured:"
-    new "Пока [what!q], возникла ошибка:"
-
-    # interface.rpy:382
-    old "[exception!q]"
-    new "[exception!q]"
-
-    # interface.rpy:401
+    # interface.rpy:400
     old "Text input may not contain the {{ or [[ characters."
     new "Текст не должен содержать знаки {{ или [[."
 
-    # interface.rpy:406
+    # interface.rpy:405
     old "File and directory names may not contain / or \\."
     new "Имена файлов и папок не должны содержать / или \\."
 
-    # interface.rpy:412
+    # interface.rpy:411
     old "File and directory names must consist of ASCII characters."
     new "Имена файлов и папок должны состоять из знаков ASCII."
 
-    # interface.rpy:480
+    # interface.rpy:479
     old "PROCESSING"
     new "ОБРАБОТКА"
 
-    # interface.rpy:497
+    # interface.rpy:496
     old "QUESTION"
     new "ВОПРОС"
 
-    # interface.rpy:510
+    # interface.rpy:509
     old "CHOICE"
     new "ВЫБОР"
 
@@ -861,107 +849,111 @@ translate russian strings:
     old "The projects directory could not be set. Giving up."
     new "Директория проектов не может быть установлена. Сдаюсь."
 
-    # new_project.rpy:72
+    # new_project.rpy:71
+    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
+    new "Вы создаёте проект на языке [new_project_language]. Измените язык лаунчера, чтобы создать проект на другом языке."
+
+    # new_project.rpy:79
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
     new "Какой интерфейс вы хотите использовать? У нового GUI современный вид, поддержка широких экранов и мобильных устройств, и его легче изменять. Старые темы могут быть необходимы для работы со старым кодом.\n\n[language_support!t]\n\nЕсли сомневаетесь, выберите новый GUI, затем кликните на кнопку Продолжить."
 
-    # new_project.rpy:72
+    # new_project.rpy:79
     old "Legacy Theme Interface"
     new "Старые Темы Интерфейса"
 
-    # new_project.rpy:93
+    # new_project.rpy:100
     old "Choose Project Template"
     new "Выберите Образец Проекта"
 
-    # new_project.rpy:111
+    # new_project.rpy:118
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
     new "Пожалуйста, выберите образец, на котором основывать ваш проект. Образец задаёт шрифт и язык по умолчанию для интерфейса. Если ваш язык не поддерживается, выберите 'english'."
 
-    # preferences.rpy:68
+    # preferences.rpy:72
     old "Launcher Preferences"
     new "Настройки лаунчера"
 
-    # preferences.rpy:89
+    # preferences.rpy:93
     old "Projects Directory:"
     new "Папка проектов:"
 
-    # preferences.rpy:96
+    # preferences.rpy:100
     old "[persistent.projects_directory!q]"
     new "[persistent.projects_directory!q]"
 
-    # preferences.rpy:98
+    # preferences.rpy:102
     old "Projects directory: [text]"
     new "Папка проектов: [text]"
 
-    # preferences.rpy:100
+    # preferences.rpy:104
     old "Not Set"
     new "Не задано"
 
-    # preferences.rpy:115
+    # preferences.rpy:119
     old "Text Editor:"
     new "Текстовый редактор:"
 
-    # preferences.rpy:121
+    # preferences.rpy:125
     old "Text editor: [text]"
     new "Текстовый редактор: [text]"
 
-    # preferences.rpy:137
+    # preferences.rpy:141
     old "Update Channel:"
     new "Канал обновлений:"
 
-    # preferences.rpy:157
+    # preferences.rpy:161
     old "Navigation Options:"
     new "Опции навигации:"
 
-    # preferences.rpy:161
+    # preferences.rpy:165
     old "Include private names"
     new "Включать приватные имена"
 
-    # preferences.rpy:162
+    # preferences.rpy:166
     old "Include library names"
     new "Включать имена библиотек"
 
-    # preferences.rpy:172
+    # preferences.rpy:176
     old "Launcher Options:"
     new "Опции лаунчера:"
 
-    # preferences.rpy:176
+    # preferences.rpy:180
     old "Hardware rendering"
     new "Аппаратный рендеринг"
 
-    # preferences.rpy:177
+    # preferences.rpy:181
     old "Show edit file section"
     new "Показать секцию редактирования"
 
-    # preferences.rpy:178
+    # preferences.rpy:182
     old "Large fonts"
     new "Большие шрифты"
 
-    # preferences.rpy:181
+    # preferences.rpy:185
     old "Console output"
     new "Вывод на консоль"
 
-    # preferences.rpy:183
+    # preferences.rpy:187
     old "Force new tutorial"
     new "Принудительное новое обучение"
 
-    # preferences.rpy:185
+    # preferences.rpy:189
     old "Legacy options"
     new "Включить старые темы"
 
-    # preferences.rpy:188
+    # preferences.rpy:192
     old "Show templates"
     new "Показывать образцы"
 
-    # preferences.rpy:190
+    # preferences.rpy:194
     old "Sponsor message"
     new "Сообщение спонсорам"
 
-    # preferences.rpy:210
+    # preferences.rpy:214
     old "Open launcher project"
     new "Открыть проект лаунчера"
 
-    # preferences.rpy:224
+    # preferences.rpy:228
     old "Language:"
     new "Язык:"
 
@@ -993,23 +985,23 @@ translate russian strings:
     old "Ren'Py is scanning the project..."
     new "Ren'Py сканирует проект..."
 
-    # project.rpy:679
+    # project.rpy:684
     old "Launching"
     new "Запускаю"
 
-    # project.rpy:713
+    # project.rpy:718
     old "PROJECTS DIRECTORY"
     new "ДИРЕКТОРИЯ ПРОЕКТОВ"
 
-    # project.rpy:713
+    # project.rpy:718
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Пожалуйста, выберите директорию проектов, используя выборщик директорий.\n{b}Он мог появиться позади этого окна.{/b}"
 
-    # project.rpy:713
+    # project.rpy:718
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Лаунчер будет искать проекты в этой директории, создавать новые проекты в этой директории, и размещать построенные проекты в этой директории."
 
-    # project.rpy:718
+    # project.rpy:723
     old "Ren'Py has set the projects directory to:"
     new "Ren'Py установила директорию проектов на:"
 

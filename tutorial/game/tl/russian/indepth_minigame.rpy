@@ -75,7 +75,7 @@ translate russian pong_done_849cf6db:
 translate russian pong_done_61d60761:
 
     # e "The further afield you get from those games, the more you'll find yourself fighting Ren'Py. At some point, it makes sense to consider other engines."
-    e "Чем дальше вы отходите от этих игр, тем сильнее будете чувствовать, что сражаетесь с самим Ren'py. Возможно, имеет смысл подумать над использованием другого движка или же изменить сам Ren'py."
+    e "Чем дальше вы отходите от этих игр, тем сильнее будете чувствовать, что сражаетесь с движком Ren'py. Возможно, имеет смысл подумать над использованием другого движка."
 
 # game/indepth_minigame.rpy:281
 translate russian pong_done_715c7b12:

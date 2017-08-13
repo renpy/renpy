@@ -123,7 +123,7 @@ translate russian tutorial_playing_14e1c854:
 translate russian tutorial_playing_5d6e4c0f:
 
     # e "Pressing the 's' key saves a screenshot to disk, so I can upload pictures of the game to websites like {a=https://www.renpy.org}renpy.org{/a}."
-    e "Нажатие клавиши 's' делает скриншот, что позволяет мне загружать картинки из игры на сайты вроде {a=https://www.renpy.org}renpy.org{/a}."
+    e "Нажав на клавишу 'S', будет сделан скриншот, благодаря чему я могу загружать картинки из игры на сайты вроде {a=https://www.renpy.org}renpy.org{/a}."
 
 # game/tutorial_playing.rpy:67
 translate russian tutorial_playing_73f3cfec:

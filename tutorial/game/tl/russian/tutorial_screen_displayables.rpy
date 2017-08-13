@@ -236,13 +236,13 @@ translate russian window_displayables_14beb786:
 # game/tutorial_screen_displayables.rpy:405
 translate russian window_displayables_495d332b:
 
-    # e "Without the background, text can be hard to read. While a frame isn't strictly required, many screens have one or more of them." ### "this is a screen" no translation
+    # e "Without the background, text can be hard to read. While a frame isn't strictly required, many screens have one or more of them."
     e "Без фона текст бывает трудно читать. И хотя рамка не строго обязательна, у большинства экранов есть хотя бы одна такая, если не больше."
 
 # game/tutorial_screen_displayables.rpy:417
 translate russian window_displayables_2c0565ab:
 
-    # e "But when I add a background, it's much easier. That's why there are two displayables that are intended to give backgrounds to user interface elements." ### "this is a screen" + "Okay" no translation
+    # e "But when I add a background, it's much easier. That's why there are two displayables that are intended to give backgrounds to user interface elements."
     e "Но когда я добавляю фон, всё становится гораздо проще. Именно поэтому мы используем два объекта для отображения фона игрового интерфейса."
 
 # game/tutorial_screen_displayables.rpy:419
@@ -290,7 +290,7 @@ translate russian button_displayables_4c600d20:
 # game/tutorial_screen_displayables.rpy:473
 translate russian button_displayables_47af4bb9:
 
-    # e "A button takes another displayable as children. Since that child can be a layout, it can takes as many children as you want." ### again this strange line on bar
+    # e "A button takes another displayable as children. Since that child can be a layout, it can takes as many children as you want."
     e "Кнопка может вбирать в себя другие объекты. Учитывая, что таким объектом может быть слой, внутри кнопок может содержаться столько дочерних объектов, сколько вы захотите."
 
 # game/tutorial_screen_displayables.rpy:483
@@ -710,16 +710,24 @@ translate russian strings:
     new "Есть контакт!"
 
     # tutorial_screen_displayables.rpy:232
-    old "The answer is [answer]."
+    old "The answer is [answer]." ### english example
     new "Ответ: [answer]."
 
     # tutorial_screen_displayables.rpy:244
-    old "Text tags {color=#c8ffc8}work{/color} in screens."
+    old "Text tags {color=#c8ffc8}work{/color} in screens." ### english example
     new "Текстовые теги в экранах {color=#c8ffc8}работают{/color}."
 
     # tutorial_screen_displayables.rpy:336
     old "Bigger"
     new "Больше"
+
+    # tutorial_screen_displayables.rpy:401
+    old "This is a screen."
+    new "Это экран."
+
+    # tutorial_screen_displayables.rpy:402
+    old "Okay"
+    new "Ок"
 
     # tutorial_screen_displayables.rpy:440
     old "You clicked the button."

@@ -165,6 +165,86 @@ translate russian strings:
     old "The interactive director is not enabled here."
     new "Интерактивный директор недоступен."
 
+    # 00director.rpy:1461
+    old "Done"
+    new "Принять"
+
+    # 00director.rpy:1469
+    old "(statement)"
+    new "(функция)"
+
+    # 00director.rpy:1470
+    old "(tag)"
+    new "(тег)"
+
+    # 00director.rpy:1471
+    old "(attributes)"
+    new "(аттрибут)"
+
+    # 00director.rpy:1472
+    old "(transform)"
+    new "(трансформация)"
+
+    # 00director.rpy:1497
+    old "(transition)"
+    new "(переход)"
+
+    # 00director.rpy:1509
+    old "(channel)"
+    new "(канал)"
+
+    # 00director.rpy:1510
+    old "(filename)"
+    new "(имя файла)"
+
+    # 00director.rpy:1535
+    old "Change"
+    new "Изменить"
+
+    # 00director.rpy:1537
+    old "Add"
+    new "Добавить"
+
+    # 00director.rpy:1540
+    old "Cancel"
+    new "Отмена"
+
+    # 00director.rpy:1543
+    old "Remove"
+    new "Убрать"
+
+    # 00director.rpy:1576
+    old "Statement:"
+    new "Функции:"
+
+    # 00director.rpy:1597
+    old "Tag:"
+    new "Теги:"
+
+    # 00director.rpy:1613
+    old "Attributes:"
+    new "Аттрибут:"
+
+    # 00director.rpy:1631
+    old "Transforms:"
+    new "Трансформации:"
+
+    # 00director.rpy:1650
+    old "Behind:"
+    new "Позади:"
+
+    # 00director.rpy:1669
+    old "Transition:"
+    new "Переходы:"
+
+    # 00director.rpy:1687
+    old "Channel:"
+    new "Каналы:"
+
+    # 00director.rpy:1705
+    old "Audio Filename:"
+    new "Имя файла:"
+
     # 00gui.rpy:237
     old "Are you sure?"
     new "Вы уверены?"
@@ -453,23 +533,23 @@ translate russian strings:
     old "The updates were cancelled."
     new "Обновления были отменены."
 
-    # 00gallery.rpy:566
+    # 00gallery.rpy:573
     old "Image [index] of [count] locked."
     new "Изображение [index] из [count] закрыто."
 
-    # 00gallery.rpy:586
+    # 00gallery.rpy:593
     old "prev"
     new "пред"
 
-    # 00gallery.rpy:587
+    # 00gallery.rpy:594
     old "next"
     new "след"
 
-    # 00gallery.rpy:588
+    # 00gallery.rpy:595
     old "slideshow"
     new "слайд-шоу"
 
-    # 00gallery.rpy:589
+    # 00gallery.rpy:596
     old "return"
     new "вернуться"
 

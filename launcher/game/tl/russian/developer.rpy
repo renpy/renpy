@@ -63,5 +63,5 @@ translate russian strings:
 
     # 00console.rpy:602
     old "jump <label>: jumps to label"
-    new "jump <label>: переход к label"
+    new "jump <label>: прыжок на метку"
 

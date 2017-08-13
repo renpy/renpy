@@ -165,6 +165,86 @@ translate russian strings:
     old "The interactive director is not enabled here."
     new "Интерактивный директор недоступен."
 
+    # 00director.rpy:1461
+    old "Done"
+    new "Принять"
+
+    # 00director.rpy:1469
+    old "(statement)"
+    new "(функция)"
+
+    # 00director.rpy:1470
+    old "(tag)"
+    new "(тег)"
+
+    # 00director.rpy:1471
+    old "(attributes)"
+    new "(аттрибут)"
+
+    # 00director.rpy:1472
+    old "(transform)"
+    new "(трансформация)"
+
+    # 00director.rpy:1497
+    old "(transition)"
+    new "(переход)"
+
+    # 00director.rpy:1509
+    old "(channel)"
+    new "(канал)"
+
+    # 00director.rpy:1510
+    old "(filename)"
+    new "(имя файла)"
+
+    # 00director.rpy:1535
+    old "Change"
+    new "Изменить"
+
+    # 00director.rpy:1537
+    old "Add"
+    new "Добавить"
+
+    # 00director.rpy:1540
+    old "Cancel"
+    new "Отмена"
+
+    # 00director.rpy:1543
+    old "Remove"
+    new "Убрать"
+
+    # 00director.rpy:1576
+    old "Statement:"
+    new "Функции:"
+
+    # 00director.rpy:1597
+    old "Tag:"
+    new "Теги:"
+
+    # 00director.rpy:1613
+    old "Attributes:"
+    new "Аттрибут:"
+
+    # 00director.rpy:1631
+    old "Transforms:"
+    new "Трансформации:"
+
+    # 00director.rpy:1650
+    old "Behind:"
+    new "Позади:"
+
+    # 00director.rpy:1669
+    old "Transition:"
+    new "Переходы:"
+
+    # 00director.rpy:1687
+    old "Channel:"
+    new "Каналы:"
+
+    # 00director.rpy:1705
+    old "Audio Filename:"
+    new "Имя файла:"
+
     # 00gui.rpy:237
     old "Are you sure?"
     new "Вы уверены?"
@@ -469,27 +549,23 @@ translate russian strings:
     old "Proceed"
     new "Продолжить"
 
-    # 00updater.rpy:1444
-    old "Cancel"
-    new "Отмена"
-
-    # 00gallery.rpy:566
+    # 00gallery.rpy:573
     old "Image [index] of [count] locked."
     new "Изображение [index] из [count] закрыто."
 
-    # 00gallery.rpy:586
+    # 00gallery.rpy:593
     old "prev"
     new "пред"
 
-    # 00gallery.rpy:587
+    # 00gallery.rpy:594
     old "next"
     new "след"
 
-    # 00gallery.rpy:588
+    # 00gallery.rpy:595
     old "slideshow"
     new "слайд-шоу"
 
-    # 00gallery.rpy:589
+    # 00gallery.rpy:596
     old "return"
     new "вернуться"
 
@@ -625,55 +701,59 @@ translate russian strings:
     old "Copies the traceback.txt file to the clipboard."
     new "Копирует файл traceback.txt в буфер обмена."
 
-    # _errorhandling.rpym:545
+    # _errorhandling.rpym:552
     old "An exception has occurred."
     new "Возникло исключение."
 
-    # _errorhandling.rpym:565
+    # _errorhandling.rpym:572
     old "Rollback"
     new "Назад"
 
-    # _errorhandling.rpym:567
+    # _errorhandling.rpym:574
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "Пытается вернуться назад, позволяя вам сохраниться или принять другой выбор."
 
-    # _errorhandling.rpym:570
+    # _errorhandling.rpym:577
     old "Ignore"
     new "Игнорировать"
 
-    # _errorhandling.rpym:572
+    # _errorhandling.rpym:581
+    old "Ignores the exception, allowing you to continue."
+    new "Игнорирует исключение, позволяя вам продолжить."
+
+    # _errorhandling.rpym:583
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "Игнорирует это исключение, позволяя вам продолжить. Зачастую это ведёт к дополнительным ошибкам."
 
-    # _errorhandling.rpym:575
+    # _errorhandling.rpym:587
     old "Reload"
     new "Перезагрузить"
 
-    # _errorhandling.rpym:577
+    # _errorhandling.rpym:589
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "Перезагружает игру с диска, сохраняя и восстанавливая её состояние, если это возможно."
 
-    # _errorhandling.rpym:579
+    # _errorhandling.rpym:592
     old "Console"
     new "Консоль"
 
-    # _errorhandling.rpym:581
+    # _errorhandling.rpym:594
     old "Opens a console to allow debugging the problem."
     new "Открывает консоль, позволяющую отладить проблему."
 
-    # _errorhandling.rpym:593
+    # _errorhandling.rpym:604
     old "Quits the game."
     new "Выходит из игры."
 
-    # _errorhandling.rpym:617
+    # _errorhandling.rpym:628
     old "Parsing the script failed."
     new "Обработка сценария завершилась неудачно."
 
-    # _errorhandling.rpym:643
+    # _errorhandling.rpym:654
     old "Opens the errors.txt file in a text editor."
     new "Открывает файл errors.txt в текстовом редакторе."
 
-    # _errorhandling.rpym:647
+    # _errorhandling.rpym:658
     old "Copies the errors.txt file to the clipboard."
     new "Копирует файл errors.txt в буфер обмена."
 

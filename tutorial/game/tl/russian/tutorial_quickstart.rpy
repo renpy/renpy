@@ -687,7 +687,7 @@ translate russian tutorial_menus_431eeff0:
 translate russian choice1_yes_f6d95df8:
 
     # e "While creating a multi-path visual novel can be a bit more work, it can yield a unique experience."
-    e "Хотя создание разветвлённого сюжета требует много логической работы, он позволяет создать для игрока уникальный игровой опыт."
+    e "Хотя создание разветвлённого сюжета требует большой логической работы, он позволяет создать для игрока уникальный игровой опыт."
 
 # game/tutorial_quickstart.rpy:517
 translate russian choice1_no_72958b50:
@@ -801,7 +801,7 @@ translate russian menu3_done_826a600b:
 # game/tutorial_quickstart.rpy:585
 translate russian tutorial_input_066611c5:
 
-    # e "Some games might prompt the player for input." ### "What's your name?" must be translated!!!
+    # e "Some games might prompt the player for input."
     e "Некоторые игры могут потребовать ввода данных от игрока."
 
 # game/tutorial_quickstart.rpy:599
@@ -819,7 +819,7 @@ translate russian tutorial_input_c88b3f4e:
 # game/tutorial_quickstart.rpy:605
 translate russian tutorial_input_1236e9da:
 
-    # e "To interpolate a variable, write it in square brackets. Isn't that right, [name]?"
+    # e "To interpolate a variable, write it in square brackets. Isn't that right, [name]?" ### translation of example, plz
     e "Чтобы вставить (интерполировать) переменную, напишите её в квадратных скобках. Не так ли, [name]?"
 
 # game/tutorial_quickstart.rpy:609
@@ -837,7 +837,7 @@ translate russian tutorial_input_f7757a8e:
 # game/tutorial_quickstart.rpy:619
 translate russian tutorial_input_0548d3e2:
 
-    # e "Variable interpolation also works with other variables. Here, the answer is [answer] and the flag is [flag]."
+    # e "Variable interpolation also works with other variables. Here, the answer is [answer] and the flag is [flag]." ### example no translation
     e "Интерполяция также работает и с другими переменными. Здесь answer равен [answer], а flag — [flag]."
 
 translate russian strings:
@@ -853,4 +853,12 @@ translate russian strings:
     # tutorial_quickstart.rpy:497
     old "No, I don't."
     new "Нет."
+
+    # tutorial_quickstart.rpy:589
+    old "What's your name?"
+    new "Как вас зовут?"
+
+    # tutorial_quickstart.rpy:591
+    old "Guy Shy"
+    new "Товарищ"
 
