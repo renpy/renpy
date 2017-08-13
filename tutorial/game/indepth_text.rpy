@@ -110,7 +110,7 @@ label text:
 
 
     example:
-        e "When the variable name is followed by !q, special characters are quoted. This displays the raw [variable!q], including the italics tags."
+        e "When the variable name is followed by !q, special characters are quoted. This displays the raw [variable!q!t], including the italics tags."
 
     example showtrans:
         $ translatable = _("translatable text")

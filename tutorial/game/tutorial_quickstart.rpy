@@ -616,7 +616,7 @@ label tutorial_input:
         $ answer = 42
         $ flag = True
 
-        e "Variable interpolation also works with other variables. Here, the answer is [answer] and the flag is [flag]."
+        e "Variable interpolation also works with other variables. Here, the answer is [answer!t] and the flag is [flag]."
 
     return
 
