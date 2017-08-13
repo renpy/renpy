@@ -363,7 +363,7 @@ init python:
 
         return s
 
-    def colorize(m):
+    def translate(m):
         if m.group("string"):
             s = eval(m.group(0))
 
@@ -382,7 +382,13 @@ init python:
             s = s.replace("\n", "\\n")
             s = quote + s + quote
 
-            return "{color=#060}" + s + "{/color}"
+            return s
+
+        return m.group(0)
+
+    def colorize(m):
+        if m.group("string"):
+            return "{color=#060}" + m.group(0) + "{/color}"
 
         word = m.group("word")
         if word:
@@ -444,6 +450,7 @@ init python:
                     i = re.sub(r"_\(('.*?')\)", r'\1', i)
                     i = i.replace("!t]", "]")
 
+                i = regex.sub(translate, i)
                 i = quote(i)
                 i = regex.sub(colorize, i)
 
