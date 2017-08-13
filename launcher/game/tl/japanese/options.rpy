@@ -194,3 +194,11 @@ translate japanese strings:
     new "## itch.io project に関連付けられたユーザー名とプロジェクト名。二つの名前はスラッシュで分けてください。"
 
 
+# TODO: Translation updated at 2017-08-04 17:26
+
+translate japanese strings:
+
+    # options.rpy:196
+    old "## Set this to a string containing your Apple Developer ID Application to enable codesigning on the Mac. Be sure to change it to your own Apple-issued ID."
+    new "## Mac のコード署名を有効にするため Apple Developer ID アプリケーション を含む文字列を設定します。必ず Apple が発行したあなたの ID に変更してください。"
+

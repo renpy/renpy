@@ -663,3 +663,35 @@ translate japanese strings:
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
     new "## 小さな黒い矢印型のグリフが入ったフォントが必要になります。"
 
+# TODO: Translation updated at 2017-08-04 17:26
+
+translate japanese strings:
+
+    # screens.rpy:120
+    old "## Make the namebox available for styling through the Character object."
+    new "## namebox を Character オブジェクトから使えるスタイルの接頭辞として追加します。（例：namebox_background)"
+
+    # screens.rpy:172
+    old "## https://www.renpy.org/doc/html/screen_special.html#input"
+    new "## https://www.renpy.org/doc/html/screen_special.html#input"
+
+    # screens.rpy:205
+    old "## https://www.renpy.org/doc/html/screen_special.html#choice"
+    new "## https://www.renpy.org/doc/html/screen_special.html#choice"
+
+    # screens.rpy:350
+    old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+    new "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+
+    # screens.rpy:916
+    old "## This determines what tags are allowed to be displayed on the history screen."
+    new "## This determines what tags are allowed to be displayed on the history screen."
+
+    # screens.rpy:1132
+    old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+    new "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+
+    # screens.rpy:1289
+    old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+    new "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+

@@ -333,3 +333,91 @@ translate japanese strings:
     old "return"
     new "戻る"
 
+# TODO: Translation updated at 2017-08-04 17:26
+
+translate japanese strings:
+
+    # 00director.rpy:689
+    old "The interactive director is not enabled here."
+    new "ここではインタラクティブディレクターは使えません"
+
+    # 00director.rpy:1461
+    old "Done"
+    new "終了"
+
+    # 00director.rpy:1469
+    old "(statement)"
+    new "(statement)"
+
+    # 00director.rpy:1470
+    old "(tag)"
+    new "(tag)"
+
+    # 00director.rpy:1471
+    old "(attributes)"
+    new "(attributes)"
+
+    # 00director.rpy:1472
+    old "(transform)"
+    new "(transform)"
+
+    # 00director.rpy:1497
+    old "(transition)"
+    new "(transition)"
+
+    # 00director.rpy:1509
+    old "(channel)"
+    new "(channel)"
+
+    # 00director.rpy:1510
+    old "(filename)"
+    new "(filename)"
+
+    # 00director.rpy:1535
+    old "Change"
+    new "変更"
+
+    # 00director.rpy:1537
+    old "Add"
+    new "追加"
+
+    # 00director.rpy:1543
+    old "Remove"
+    new "削除"
+
+    # 00director.rpy:1576
+    old "Statement:"
+    new "Statement（命令）:"
+
+    # 00director.rpy:1597
+    old "Tag:"
+    new "Tag（タグ）:"
+
+    # 00director.rpy:1613
+    old "Attributes:"
+    new "Attributes（属性）:"
+
+    # 00director.rpy:1631
+    old "Transforms:"
+    new "Transforms（画像変形）:"
+
+    # 00director.rpy:1650
+    old "Behind:"
+    new "Behind（裏に表示）:"
+
+    # 00director.rpy:1669
+    old "Transition:"
+    new "Transition（遷移演出）:"
+
+    # 00director.rpy:1687
+    old "Channel:"
+    new "キャンセル"
+
+    # 00director.rpy:1705
+    old "Audio Filename:"
+    new "オーディオファイルネーム:"
+
+    # _developer\developer.rpym:43
+    old "Interactive Director (D)"
+    new "インタラクティブディレクター(D)"
+
