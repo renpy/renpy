@@ -134,7 +134,11 @@ init -1500 python:
         return style.hyperlink_text
 
     def hyperlink_function(target):
-        if ":" in target:
+        if target.startswith("jump:"):
+            renpy.jump(target[5:])
+        elif target.startswith("call:"):
+            renpy.call(target[5:])
+        elif ":" in target:
             try:
                 import webbrowser
                 webbrowser.open(target)

@@ -17,6 +17,12 @@ init 1:
 #     what_line_leading=10)
 
 
+label a_label:
+
+    e "You just clicked to jump to a label."
+
+    jump after_a_label
+
 label text:
 
     e "Sometimes, when showing text, we'll want to change the way some of the text is displayed."
@@ -34,7 +40,9 @@ label text:
 
     example:
 
-        e "The a text tag {a=https://www.renpy.org}links to a website{/a}."
+        e "The a text tag can {a=https://www.renpy.org}link to a website{/a} or {a=jump:a_label}jump to a label{/a}."
+
+label after_a_label:
 
     example:
 

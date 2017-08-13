@@ -156,10 +156,16 @@ Tags that apply to all text are:
 
     * Hyperlinks are rendered using the ``style.hyperlink_text`` style.
 
-    * If the argument begins with the text ``"http://"``, clicking on
-      it opens the url in a web browser. Otherwise, the argument is
-      interpreted as a label, which is called in a new context. This
-      allows hyperlinks to be used to define terms.
+    * If the argument begins with ``jump:``, the rest of the link is interpreted
+      as a label to jump to.
+
+    * If the argument begins with ``call:``, the rest of the link is interpreted
+      as a label to call. Calling a label ends the current statement.
+
+    * Otherwise, the argument is interpreted as a URL and passed to the system web
+      browser.
+
+    (Use of a without a jump: prefix or URL has been deprecated.)
 
     * Apart from the change in style, there is no specific behavior
       when a hyperlink is hovered.
@@ -168,17 +174,17 @@ Tags that apply to all text are:
 
         label test:
 
-            e "Why don't you visit {a=http://renpy.org}Ren'Py's home page{/a}?"
+            e "Why don't you visit {a=https://renpy.org}Ren'Py's home page{/a}?"
 
-            e "The {a=define_trebuchet}trebuchet{/a} is at the gates."
+            e "Or {a=jump:more_text}here for more info{/a}."
 
             return
 
-        label define_trebuchet:
+        label more_text:
 
-            e "A trebuchet is a kind of siege engine."
-            e "It uses a lever to fling things at targets."
-            e "Like us!"
+            e "In Hot Springs, Arkansas, there's a statue of Al Capone you can take a picture with."
+
+            e "That's more info, but not the kind you wanted, is it?"
 
             return
 

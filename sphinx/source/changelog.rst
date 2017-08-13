@@ -91,6 +91,9 @@ The Indonesian translation has been updated.
 Other
 -----
 
+The {a} text tag now supports jumping to and calling labels. {a=jump:label} jumps
+to the label, while {a=call:label} calls the label.
+
 The grid and vpgrid displayables now support the :propref:`xspacing` and
 :propref:`yspacing` style properties, which set the spacing in the horizontal
 and vertical directions independently.
