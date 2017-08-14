@@ -482,10 +482,13 @@ label screens_properties:
 
     return
 
+label warp_screen_displayables:
+    $ renpy.pop_call()
+    jump screen_displayables
 
 label screens_control:
 
-    e "The screen language has a few statements that do things other than show displayables. If you haven't seen the displayable statements yet, you might want to check them out and come back here."
+    e "The screen language has a few statements that do things other than show displayables. If you haven't seen the section on {a=jump:warp_screen_displayables}Screen Displayables{/a} yet, you might want to check it out, then come back here."
 
     example large:
         screen single_python_screen():
