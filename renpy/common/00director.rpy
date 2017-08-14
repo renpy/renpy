@@ -1362,7 +1362,7 @@ style director_frame is _frame:
     yalign 0.0
 
 style director_text is _text:
-    size gui._scale(20)
+    size 18
 
 style director_label
 
@@ -1379,7 +1379,7 @@ style director_button_text is director_text:
 
 
 style director_edit_button is director_button:
-    xsize gui._scale(20)
+    xsize 18
 
 style director_edit_button_text is director_button_text:
     font "DejaVuSans.ttf"
@@ -1388,15 +1388,15 @@ style director_edit_button_text is director_button_text:
 style director_action_button is director_button
 
 style director_action_button_text is director_button_text:
-    size gui._scale(26)
+    size 26
 
 style director_statement_text is director_text:
-    size gui._scale(22)
+    size 20
 
 style director_statement_button is director_button
 
 style director_statement_button_text is director_button_text:
-    size gui._scale(22)
+    size 20
 
 style director_vscrollbar is _vscrollbar
 
@@ -1405,7 +1405,7 @@ screen director_lines(state):
 
     frame:
         style "empty"
-        background Solid("#fff8", xsize=gui._scale(20), xpos=gui._scale(300))
+        background Solid("#fff8", xsize=20, xpos=gui._scale(300))
 
         has vbox:
             xfill True
@@ -1434,7 +1434,7 @@ screen director_lines(state):
                     yfit True
 
                     text "[line_pos]":
-                        xpos gui._scale(290)
+                        xpos (gui._scale(300) - 10)
                         xalign 1.0
                         text_align 1.0
                         style "director_text"
@@ -1448,14 +1448,14 @@ screen director_lines(state):
 
                     frame:
                         style "empty"
-                        left_padding gui._scale(330)
+                        left_padding (gui._scale(300) + 30)
 
                         text "[line_text]"style "director_text"
 
-        null height gui._scale(14)
+        null height 14
 
         hbox:
-            xpos gui._scale(330)
+            xpos (gui._scale(300) + 30)
             yalign 1.0
 
             textbutton _("Done"):
