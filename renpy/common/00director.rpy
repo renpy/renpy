@@ -1379,8 +1379,7 @@ style director_button_text is director_text:
 
 
 style director_edit_button is director_button:
-    xsize gui._scale(40)
-    xpadding gui._scale(10)
+    xsize gui._scale(20)
 
 style director_edit_button_text is director_button_text:
     font "DejaVuSans.ttf"
@@ -1406,7 +1405,7 @@ screen director_lines(state):
 
     frame:
         style "empty"
-        background Solid("#fff8", xsize=20, xpos=189)
+        background Solid("#fff8", xsize=gui._scale(20), xpos=gui._scale(300))
 
         has vbox:
             xfill True
@@ -1423,44 +1422,45 @@ screen director_lines(state):
 
             for line_pos, line_text, add_action, change_action in state.lines:
 
-                hbox:
-                    text " ":
-                        min_width 179
-                        style "director_text"
+                fixed:
+                    yfit True
+                    textbutton "+":
+                        xpos gui._scale(300)
+                        action add_action
+                        style "director_edit_button"
+                        alt ("add before " + line_text)
 
-                    textbutton "+" action add_action style "director_edit_button" alt ("add before " + line_text)
-
-                hbox:
+                fixed:
+                    yfit True
 
                     text "[line_pos]":
-                        min_width 179
+                        xpos gui._scale(290)
+                        xalign 1.0
                         text_align 1.0
                         style "director_text"
 
                     if change_action:
-                        textbutton "✎" action change_action style "director_edit_button" alt ("change " + line_text)
-                    else:
-                        textbutton " " action change_action style "director_edit_button" alt ("change " + line_text)
+                        textbutton "✎":
+                            action change_action
+                            xpos gui._scale(300)
+                            style "director_edit_button"
+                            alt ("change " + line_text)
 
-                    text "[line_text]":
-                        style "director_text"
+                    frame:
+                        style "empty"
+                        left_padding gui._scale(330)
+
+                        text "[line_text]"style "director_text"
+
+        null height gui._scale(14)
 
         hbox:
-            text " ":
-                min_width 179
-                style "director_text"
+            xpos gui._scale(330)
+            yalign 1.0
 
-            textbutton " ":
-                action None
-                style "director_edit_button"
-                ysize 40
-
-            hbox:
-                yalign 1.0
-
-                textbutton _("Done"):
-                    action director.Stop()
-                    style "director_action_button"
+            textbutton _("Done"):
+                action director.Stop()
+                style "director_action_button"
 
 
 
@@ -1726,6 +1726,8 @@ screen director():
 
     frame:
         style_prefix "director"
+        xpadding ( 0 if state.mode == "lines" else gui._scale(20) )
+
         at director.SemiModal
 
         has fixed:
