@@ -501,7 +501,7 @@ Occasionally Used
     to that object.
 
     Ren'Py uses history callbacks internally, so creators should append
-    their own callbacks to this list, rather than replacing it entirely.
+    their own callbacks to this  list, rather than replacing it entirely.
 
 .. var:: config.history_length = None
 
@@ -514,6 +514,12 @@ Occasionally Used
     is faster, but only some formats are supported and only fullscreen video
     is available. If false, software playback will be used, but it may be
     too slow to be useful.
+
+.. var:: config.hyperlink_protocol = "call_in_new_context"
+
+    The protocol that is used for hyperlinks that do not have a protocol
+    assigned to them. See :ref:`the a text tag <a-tag>` for a description
+    as to what the possible protocols mean.
 
 .. var:: config.image_cache_size = 8
 

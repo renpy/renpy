@@ -147,6 +147,7 @@ General Text Tags
 
 Tags that apply to all text are:
 
+.. _a-tag:
 .. text-tag:: a
 
     The anchor tag creates a hyperlink between itself and its closing
@@ -154,21 +155,19 @@ Tags that apply to all text are:
     :propref:`hyperlink_functions` style property, the default handler
     has the following behavior.
 
-    * Hyperlinks are rendered using the ``style.hyperlink_text`` style.
+    * When the argument begins with jump:, the rest of the argument is a label to jump to.
 
-    * If the argument begins with ``jump:``, the rest of the link is interpreted
-      as a label to jump to.
+    * When the argument begins with call:, the rest of the argument is a label
+      to call. As usual, a call ends the current Ren'Py statement.
 
-    * If the argument begins with ``call:``, the rest of the link is interpreted
-      as a label to call. Calling a label ends the current statement.
+    * When the argument begins with call_in_new_context:, the rest of the argument
+      is a label to call in a new context (using :func:`renpy.call_in_new_context`).
 
-    * Otherwise, the argument is interpreted as a URL and passed to the system web
-      browser.
+    * Otherwise, the argument is a URL that is opened by the system web browser.
 
-    (Use of a without a jump: prefix or URL has been deprecated.)
-
-    * Apart from the change in style, there is no specific behavior
-      when a hyperlink is hovered.
+    If there is no protocol section in the argument, :var:`config.hyperlink_protocol`
+    is prepended to it. If config.hyperlink_protocol has been set to "jump",
+    {a=label} and {a=jump:label} become equivalent.
 
     ::
 

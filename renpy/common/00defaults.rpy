@@ -129,23 +129,29 @@ init -1500 python:
 
 init -1500 python:
 
+    config.hyperlink_protocol = "call_in_new_context"
+
     # Hyperlink functions. Duplicated in _errorhandling.rpym.
     def hyperlink_styler(target):
         return style.hyperlink_text
 
     def hyperlink_function(target):
+
+        if ":" not in target:
+            target = config.hyperlink_protocol + ":" + target
+
         if target.startswith("jump:"):
             renpy.jump(target[5:])
         elif target.startswith("call:"):
             renpy.call(target[5:])
-        elif ":" in target:
+        elif target.startwith("call_in_new_context:"):
+            renpy.call_in_new_context[20:]
+        else:
             try:
                 import webbrowser
                 webbrowser.open(target)
             except:
                 pass
-        else:
-            renpy.call_in_new_context(target)
 
     style.default.hyperlink_functions = (hyperlink_styler, hyperlink_function, None)
 

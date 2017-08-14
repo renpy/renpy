@@ -75,6 +75,21 @@ That being said, The Question and the new Tutorial both run on a Raspberry Pi 3
 computer costing $35.
 
 
+Hyperlinks
+----------
+
+Hyperlinks created with the {a} text tag now support jumping and calling
+labels. A tag of the form {a=jump:label} jumps to the label, while one of
+the form {a=call:label} ends the currenty statement and calls a label.
+
+The new :var:`config.hyperlink_protocol` variable determines the default
+protocol for a hyperlink that has none. This can be "jump" or "call" if
+desired.
+
+The size of a hyperlink is now inherited from the size of the enclosing text.
+This makes hyperlinks work within text of a non-default size.
+
+
 Translations
 ------------
 
@@ -90,9 +105,6 @@ The Indonesian translation has been updated.
 
 Other
 -----
-
-The {a} text tag now supports jumping to and calling labels. {a=jump:label} jumps
-to the label, while {a=call:label} calls the label.
 
 The grid and vpgrid displayables now support the :propref:`xspacing` and
 :propref:`yspacing` style properties, which set the spacing in the horizontal
@@ -139,9 +151,6 @@ When a position property is supplied to a viewport or vpgrid with vertical, hori
 or both kinds of scrollbars, the position property is passed to the side
 container that holds the viewport and scrollbars. This makes it possible to
 position viewports and vpgrids using the same syntax as other displayables.
-
-The size of a hyperlink is now inherited from the size of the enclosing text.
-This makes hyperlinks work within text of a non-default size.
 
 Fixed a problem that prevented uploading to itch.io from Windows from
 working.
