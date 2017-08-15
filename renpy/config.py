@@ -784,6 +784,9 @@ character_id_prefixes = [ ]
 # Should surfaces be cached?
 cache_surfaces = True
 
+# Should {nw} wait for voice.
+nw_voice = True
+
 del os
 del collections
 

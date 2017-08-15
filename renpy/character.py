@@ -350,7 +350,7 @@ class SlowDone(object):
             renpy.exports.restart_interaction()
 
         if self.delay is not None:
-            renpy.ui.pausebehavior(self.delay, True)
+            renpy.ui.pausebehavior(self.delay, True, voice=True)
             renpy.exports.restart_interaction()
 
         for c in self.callback:

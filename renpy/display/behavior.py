@@ -459,15 +459,23 @@ class PauseBehavior(renpy.display.layout.Null):
     return a value after a certain amount of time has elapsed.
     """
 
-    def __init__(self, delay, result=False, **properties):
+    voice = False
+
+    def __init__(self, delay, result=False, voice=False, **properties):
         super(PauseBehavior, self).__init__(**properties)
 
         self.delay = delay
         self.result = result
+        self.voice = voice
 
     def event(self, ev, x, y, st):
 
         if st >= self.delay:
+
+            if self.voice and renpy.config.nw_voice:
+                if (not renpy.config.afm_callback()) or renpy.display.tts.is_active():
+                    renpy.game.interface.timeout(0.05)
+                    return
 
             # If we have been drawn since the timeout, simply return
             # true. Otherwise, force a redraw, and return true when
