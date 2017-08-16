@@ -161,6 +161,8 @@ to the function run when the statement executes normally. Creator-defined
 statements can take a block of Ren'Py script that is parsed and can be
 jumped to.
 
+The time it takes to parse Ren'Py scripts has been dramatically reduced.
+
 A missing _menu variable could cause Ren'Py's init phase error handling to
 not report a relevant error. This has been fixed.
 
