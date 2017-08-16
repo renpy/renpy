@@ -18,9 +18,14 @@ such changes only take effect when the gui is regenerated.
 -------
 
 The size of a hyperlink is now inherited from the size of the enclosing text.
-To disable this, add the code::
+To disable this, add::
 
     define config.hyperlink_inherit_size = False
+
+The {nw} test tag now waits until voice and self-voicing are finished before
+it continues.  To disable this behavior, add::
+
+    define config.nw_voice = False
 
 
 6.99.12.3

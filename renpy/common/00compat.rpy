@@ -144,6 +144,7 @@ init -1900 python:
             config.hyperlink_inherit_size = False
             config.automatic_polar_motion = False
             config.position_viewport_side = False
+            config.nw_voice = False
 
 
 

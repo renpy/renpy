@@ -101,10 +101,11 @@ courtesy of MrStalker.
 
 The Indonesian translation has been updated.
 
-
-
 Other
 -----
+
+The {nw} text tag now waits for voice and self-voicing to complete before
+allowing text to advance.
 
 The grid and vpgrid displayables now support the :propref:`xspacing` and
 :propref:`yspacing` style properties, which set the spacing in the horizontal

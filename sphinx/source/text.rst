@@ -345,6 +345,9 @@ Text tags that only apply to dialogue are:
         show trebuchet
         g "Looks like they're{fast} playing with their trebuchet again."
 
+    The no-wait tag will wait for voice and self-voicing to complete before
+    advancing.
+
 .. text-tag:: p
 
     The paragraph pause tag is a self-closing tag that terminates the
