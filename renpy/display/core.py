@@ -1878,13 +1878,13 @@ class Interface(object):
                 # minimized state on windows.
                 pygame.display.quit()
 
-            renpy.display.render.free_memory()
-            renpy.display.im.cache.clear()
-            renpy.text.text.layout_cache_clear()
+        renpy.display.render.free_memory()
+        renpy.display.im.cache.clear()
+        renpy.text.text.layout_cache_clear()
 
-            renpy.display.module.bo_cache = None
+        renpy.display.module.bo_cache = None
 
-            self.kill_textures_and_surfaces()
+        self.kill_textures_and_surfaces()
 
         self.old_text_rect = None
         self.display_reset = False
