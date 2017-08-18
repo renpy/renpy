@@ -62,6 +62,17 @@ screen _developer:
                     textbutton _("Hide Image Load Log"):
                         action Hide("_image_load_log")
 
+
+                if not renpy.get_screen("_texture_size"):
+                    textbutton _("Show Texture Size"):
+                        action Show("_texture_size")
+                else:
+                    textbutton _("Hide Texture size"):
+                        action Hide("_texture_size")
+
+
+
+
         hbox:
             spacing gui._scale(25)
 
