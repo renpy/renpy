@@ -3371,3 +3371,14 @@ def get_skipping():
     """
 
     return renpy.config.skipping
+
+
+def get_texture_size():
+    """
+    :undocumented:
+
+    Returns the number of bytes of memory locked up in OpenGL textures and the
+    number of textures that are defined.
+    """
+
+    return renpy.display.draw.get_texture_size()

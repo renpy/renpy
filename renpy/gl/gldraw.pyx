@@ -154,6 +154,14 @@ cdef class GLDraw:
         self.dpi_scale = renpy.display.interface.dpi_scale
 
 
+    def get_texture_size(self):
+        """
+        Returns the amount of memory locked up in textures.
+        """
+
+        return gltexture.total_texture_size, gltexture.texture_count
+
+
     def set_mode(self, virtual_size, physical_size, fullscreen):
         """
         This changes the video mode. It also initializes OpenGL, if it

@@ -550,6 +550,16 @@ init python:
 
         return vbox, .25
 
+    def _texture_size_function(st, at):
+
+        size, count = renpy.get_texture_size()
+        size_mb = size / 1024.0 / 1024.0
+
+        message =  __("{size_mb:,.1f} MB in {count} textures.").format(count=count, size_mb=size_mb)
+
+        return Text(message, substitute=False, size=14, style="_default", color="#ffffff"), .25
+
+
 screen _image_load_log:
 
     zorder 1000
@@ -568,6 +578,25 @@ screen _image_load_log:
             xminimum 200
 
             add DynamicDisplayable(_image_load_log_function)
+
+screen _texture_size():
+    zorder 1000
+
+
+    drag:
+        draggable True
+        focus_mask None
+        xpos 0
+        ypos 0
+
+        frame:
+            style "empty"
+            background "#0004"
+            xpadding 5
+            ypadding 5
+            xminimum 200
+
+            add DynamicDisplayable(_texture_size_function)
 
 
 

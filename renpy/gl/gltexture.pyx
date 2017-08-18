@@ -448,6 +448,7 @@ cdef class TextureCore:
         """
 
         global total_texture_size
+        global texture_count
 
         cdef unsigned int texnums[1]
 
@@ -460,7 +461,9 @@ cdef class TextureCore:
         self.format = 0
 
         texture_numbers.add(texnums[0])
+
         total_texture_size += self.width * self.height * 4
+        texture_count += 1
 
         return 0
 
@@ -471,6 +474,7 @@ cdef class TextureCore:
         """
 
         global total_texture_size
+        global texture_count
 
         if self.number == 0:
             return
@@ -483,6 +487,7 @@ cdef class TextureCore:
 
         texture_numbers.discard(self.number)
         total_texture_size -= self.width * self.height * 4
+        texture_count -= 1
 
 
 class Texture(TextureCore):
@@ -509,7 +514,11 @@ class Texture(TextureCore):
 free_textures = collections.defaultdict(list)
 
 
-# The total size (in bytes) of all the textures that have been allocated.
+# The number of textues that have been allocated but not deallocated.
+texture_count = 0
+
+# The total size (in bytes) of all the textures that have been allocated
+# but not deallocated.
 total_texture_size = 0
 
 # This allocates a texture, either from the free list, or by asking
@@ -519,8 +528,6 @@ def alloc_texture(width, height):
     Allocate a texture, either from the freelist or by asking GL. The
     returned texture has a reference count of 1.
     """
-
-    global total_texture_size
 
     if renpy.game.preferences.gl_npot:
         rv = Texture(width, height)
@@ -542,6 +549,7 @@ def alloc_texture(width, height):
 def dealloc_textures():
     global texture_numbers
     global total_texture_size
+    global texture_count
 
     cdef GLuint texnums[1]
 
@@ -554,6 +562,7 @@ def dealloc_textures():
     free_textures.clear()
 
     total_texture_size = 0
+    texture_count = 0
 
 def cleanup():
     """

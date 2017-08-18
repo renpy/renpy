@@ -232,6 +232,7 @@ class Clipper(object):
 
         return (x0, y0, x1 - x0, y1 - y0), updates
 
+
 clippers = [ Clipper() ]
 
 
@@ -722,6 +723,9 @@ class SWDraw(object):
 
         # Did we show fullscreen video in the last frame?
         self.showing_video = False
+
+    def get_texture_size(self):
+        return 0, 0
 
     def set_mode(self, virtual_size, physical_size, fullscreen):
 
