@@ -513,6 +513,8 @@ class Texture(TextureCore):
 # size.
 free_textures = collections.defaultdict(list)
 
+# A list of NPOT textures that need to be freed.
+npot_free_textures = [ ]
 
 # The number of textues that have been allocated but not deallocated.
 texture_count = 0
@@ -531,7 +533,7 @@ def alloc_texture(width, height):
 
     if renpy.game.preferences.gl_npot:
         rv = Texture(width, height)
-        rv.free_list = None
+        rv.free_list = npot_free_textures
         return rv
 
     l = free_textures[width, height]
@@ -560,6 +562,7 @@ def dealloc_textures():
 
     texture_numbers = set()
     free_textures.clear()
+    npot_free_textures[:] = [ ]
 
     total_texture_size = 0
     texture_count = 0
@@ -578,7 +581,10 @@ def cleanup():
             t = l.pop()
             t.deallocate()
 
+    for i in npot_free_textures:
+        i.deallocate()
 
+    npot_free_textures[:] = [ ]
 
 def compute_subrow(row, offset, width):
     """
