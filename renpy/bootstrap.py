@@ -25,13 +25,19 @@ import sys
 import subprocess
 import io
 
-import renpy.error
-
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
 # Sets the default encoding to the filesystem encoding.
+old_stdout = sys.stdout
+old_stderr = sys.stderr
+
 reload(sys)
 sys.setdefaultencoding(FSENCODING)  # @UndefinedVariable
+
+sys.stdout = old_stdout
+sys.stderr = old_stderr
+
+import renpy.error
 
 
 # Extra things used for distribution.
