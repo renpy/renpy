@@ -144,7 +144,7 @@ init -1500 python:
             renpy.jump(target[5:])
         elif target.startswith("call:"):
             renpy.call(target[5:])
-        elif target.startwith("call_in_new_context:"):
+        elif target.startswith("call_in_new_context:"):
             renpy.call_in_new_context[20:]
         else:
             try:
