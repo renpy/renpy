@@ -304,8 +304,9 @@ label merge_strings:
 
     jump front_page
 
-label update_renpy_strings:
 
+
+label update_renpy_strings_common:
     python:
 
         language = _preferences.language
@@ -320,6 +321,11 @@ label update_renpy_strings:
         args = [ "merge_strings", "None",  get_strings_json() ]
         project.current.launch(args, wait=True)
 
+    return
+
+
+label update_renpy_strings:
+    call update_renpy_strings_common
     jump front_page
 
 

@@ -415,7 +415,8 @@ label gui_project_common:
             project.Select(project.manager.get(project_name))()
 
     if gui_new:
-        call update_renpy_strings
+
+        call update_renpy_strings_common
 
         python hide:
             if gui.project_system_font:
