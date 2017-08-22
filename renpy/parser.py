@@ -1018,7 +1018,7 @@ class Lexer(object):
 
         return False
 
-    def simple_expression(self, comma=False):
+    def simple_expression(self, comma=False, operator=True):
         """
         Tries to parse a simple_expression. Returns the text if it can, or
         None if it cannot.
@@ -1064,7 +1064,7 @@ class Lexer(object):
 
                 break
 
-            if self.match(operator_regexp):
+            if operator and self.match(operator_regexp):
                 continue
 
             if comma and self.match(r','):
@@ -1086,6 +1086,12 @@ class Lexer(object):
         """
 
         return self.simple_expression(comma=True)
+
+    def say_expression(self):
+        """
+        Parses the name portion of a say statement.
+        """
+        return self.simple_expression(operator=False)
 
     def checkpoint(self):
         """
@@ -2417,7 +2423,7 @@ def say_statement(l, loc):
     l.revert(state)
 
     # Try for a two-argument say statement.
-    who = l.simple_expression()
+    who = l.say_expression()
 
     attributes = [ ]
     while True:
