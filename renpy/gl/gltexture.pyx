@@ -549,23 +549,29 @@ def alloc_texture(width, height):
 
 
 def dealloc_textures():
-    global texture_numbers
-    global total_texture_size
-    global texture_count
-
     cdef GLuint texnums[1]
 
-    for t in texture_numbers:
-        texnums[0] = t
+    for l in free_textures.values():
+        for t in l:
+            t.deallocate()
 
-        glDeleteTextures(1, texnums)
+    for i in npot_free_textures:
+        i.deallocate()
 
-    texture_numbers = set()
-    free_textures.clear()
     npot_free_textures[:] = [ ]
 
-    total_texture_size = 0
-    texture_count = 0
+    if not renpy.game.preferences.gl_npot:
+
+        for t in texture_numbers:
+            texnums[0] = t
+            glDeleteTextures(1, texnums)
+
+    free_textures.clear()
+
+    # Do not reset texture numbers - we don't want to reuse a number that's
+    # in use, only to have it deallocated later.
+
+
 
 def cleanup():
     """
