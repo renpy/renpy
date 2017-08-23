@@ -412,6 +412,9 @@ def translate_list_files():
         if dirname is None:
             continue
 
+        if filename.startswith("tl/"):
+            continue
+
         filename = os.path.join(dirname, filename)
 
         if not (filename.endswith(".rpy") or filename.endswith(".rpym")):
@@ -523,5 +526,6 @@ def translate_command():
             shutil.copy(src, dst)
 
     return False
+
 
 renpy.arguments.register_command("translate", translate_command)
