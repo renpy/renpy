@@ -127,6 +127,31 @@ init -1500 python:
 
     config.imagemap_auto_function = _imagemap_auto_function
 
+init -1500 python hide:
+
+    def jump_handler(value):
+        renpy.jump(value)
+
+    def call_handler(value):
+        renpy.call(value)
+
+    def call_in_new_context_handler(value):
+        renpy.call_in_new_context(value)
+
+    def show_handler(value):
+        renpy.run(Show(value))
+
+    def showmenu_handler(value):
+        renpy.run(ShowMenu(value))
+
+    config.hyperlink_handlers = {
+        "jump" : jump_handler,
+        "call" : call_handler,
+        "call_in_new_context" : call_in_new_context_handler,
+        "show" : show_handler,
+        "showmenu" : showmenu_handler,
+    }
+
 init -1500 python:
 
     config.hyperlink_protocol = "call_in_new_context"
@@ -140,12 +165,10 @@ init -1500 python:
         if ":" not in target:
             target = config.hyperlink_protocol + ":" + target
 
-        if target.startswith("jump:"):
-            renpy.jump(target[5:])
-        elif target.startswith("call:"):
-            renpy.call(target[5:])
-        elif target.startswith("call_in_new_context:"):
-            renpy.call_in_new_context[20:]
+        protocol, _, value = target.partition(":")
+
+        if protocol in config.hyperlink_handlers:
+            config.hyperlink_handlers[protocol](value)
         else:
             try:
                 import webbrowser
