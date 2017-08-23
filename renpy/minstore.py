@@ -51,7 +51,58 @@ def _(s):
     :undocumented: Documented directly in the .rst.
 
     Flags a string as translatable, and returns it immediately. The string
-    will be translated when text displays it.
+    will be translated when displayed by the text displayable.
     """
 
     return s
+
+
+def _p(s):
+    '''
+    :undocumented: Documented directly in the .rst.
+
+    Reformats a string and flags it as translatable. The string will be
+    translated when displayed by the text displayable. This is intended
+    to define multi-line for use in strings, of the form::
+
+    define config.about = _p("""
+        Line 1.
+
+        Line 2.
+        """)
+
+    The reformatting is done by breaking the paragraph up into lines,
+    removing whitespace from the start and end of each line, and removing
+    any lines
+
+
+    This can be used in a string translation of the form::
+
+        old "Line1.\n\nLine2."
+        new _p("""
+            Inelay 1.
+
+            Inelay 2.
+            """)
+    '''
+
+    lines = [ i.strip() for i in s.split("\n") ]
+
+    if lines and not lines[0]:
+        lines.pop(0)
+
+    if lines and not lines[-1]:
+        lines.pop()
+
+    rv = ""
+    para = [ ]
+
+    for l in lines:
+        if not l:
+            rv += " ".join(para) + "\n\n"
+            para = [ ]
+        else:
+            para.append(l)
+
+    rv += " ".join(para)
+    return rv

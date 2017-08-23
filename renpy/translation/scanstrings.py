@@ -30,7 +30,7 @@ import renpy.translation
 ################################################################################
 
 STRING_RE = r"""(?x)
-\b__?\s*\(\s*[uU]?(
+\b_[_p]?\s*\(\s*[uU]?(
 \"\"\"(?:\\.|\"{1,2}|[^\\"])*?\"\"\"
 |'''(?:\\.|\'{1,2}|[^\\'])*?'''
 |"(?:\\.|[^\\"])*"
@@ -131,6 +131,9 @@ def scan_strings(filename):
                 s = s.strip()
                 s = "u" + s
                 s = eval(s)
+
+                if m.group(0).startswith("_p"):
+                    s = renpy.minstore._p(s)
 
                 if s:
                     rv.append(String(filename, lineno, s, False))
