@@ -152,6 +152,7 @@
 * _movetop
 * _narrator
 * _notify_transform
+* :func:`_p`
 * abs
 * all
 * any

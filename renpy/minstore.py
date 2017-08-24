@@ -59,7 +59,7 @@ def _(s):
 
 def _p(s):
     '''
-    :undocumented: Documented directly in the .rst.
+    :doc: underscore_p
 
     Reformats a string and flags it as translatable. The string will be
     translated when displayed by the text displayable. This is intended
@@ -80,7 +80,7 @@ def _p(s):
 
     This can be used in a string translation, using the construct:
 
-        old "These two lines will be combined together to form a long line.\n\nThis line will be separate."
+        old "These two lines will be combined together to form a long line.\\n\\nThis line will be separate."
         new _p("""
             These two lines will be combined together
             to form a long line. Bork bork bork.

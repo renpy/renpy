@@ -140,6 +140,7 @@ def scan(name, o, prefix=""):
     lines = [ ]
 
     for l in doc.split("\n"):
+
         m = re.match(r':doc: *(\w+) *(\w+)?', l)
         if m:
             section = m.group(1)
