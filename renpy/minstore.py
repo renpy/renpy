@@ -66,25 +66,30 @@ def _p(s):
     to define multi-line for use in strings, of the form::
 
     define config.about = _p("""
-        Line 1.
+        These two lines will be combined together
+        to form a long line.
 
-        Line 2.
+        This line will be separate.
         """)
 
-    The reformatting is done by breaking the paragraph up into lines,
-    removing whitespace from the start and end of each line, and removing
-    any lines
+    The reformatting is done by breaking the text up into lines,
+    removing whitespace from the start and end of each line. Blank lines
+    are removed at the end. When there is a blank line, a blank line is
+    inserted to separate paragraphs. The {p} tag breaks a line, but
+    doesn't add a blank one.
 
+    This can be used in a string translation, using the construct:
 
-    This can be used in a string translation of the form::
-
-        old "Line1.\n\nLine2."
+        old "These two lines will be combined together to form a long line.\n\nThis line will be separate."
         new _p("""
-            Inelay 1.
+            These two lines will be combined together
+            to form a long line. Bork bork bork.
 
-            Inelay 2.
+            This line will be separate. Bork bork bork.
             """)
     '''
+
+    import re
 
     lines = [ i.strip() for i in s.split("\n") ]
 
@@ -100,6 +105,10 @@ def _p(s):
     for l in lines:
         if not l:
             rv += " ".join(para) + "\n\n"
+            para = [ ]
+        elif re.search(r'\{p[^}]*\}$', l):
+            para.append(l)
+            rv += " ".join(para)
             para = [ ]
         else:
             para.append(l)

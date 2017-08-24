@@ -51,6 +51,7 @@ pure_functions = {
 
     # minstore.py
     "_",
+    "_p",
 
     # defaultstore.py
     "ImageReference", "Image", "Frame", "Solid", "LiveComposite", "LiveCrop",
@@ -174,6 +175,7 @@ class Control(object):
         self.const = const
         self.loop = loop
         self.imagemap = imagemap
+
 
 # Three levels of constness.
 GLOBAL_CONST = 2  # Expressions that are const everywhere.
@@ -714,6 +716,7 @@ class CompilerCache(object):
             self.updated = True
 
         return rv
+
 
 ccache = CompilerCache()
 
