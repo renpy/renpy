@@ -60,6 +60,11 @@ def pause(t):
         return 1.0
 
 
+@atl_warper
+def instant(t):
+    return 1.0
+
+
 position = renpy.object.Sentinel("position")
 
 
@@ -871,7 +876,7 @@ class RawMultipurpose(RawStatement):
         if self.warp_function:
             warper = ctx.eval(self.warp_function)
         else:
-            warper = self.warper or "pause"
+            warper = self.warper or "instant"
 
             if warper not in warpers:
                 raise Exception("ATL Warper %s is unknown at runtime." % warper)
@@ -1070,6 +1075,11 @@ class Interpolation(Statement):
 
         warper = warpers.get(self.warper, self.warper)
 
+        if (self.warper != "instant") and (state is None):
+            first = True
+        else:
+            first = False
+
         if self.duration:
             complete = min(1.0, st / self.duration)
         else:
@@ -1187,11 +1197,11 @@ class Interpolation(Statement):
             value = interpolate_spline(complete, values)
             setattr(trans.state, name, value)
 
-        if st >= self.duration:
+        if (not first) and (st >= self.duration):
             return "next", st - self.duration, None
         else:
             if not self.properties and not self.revolution and not self.splines:
-                return "continue", state, self.duration - st
+                return "continue", state, max(0, self.duration - st)
             else:
                 return "continue", state, 0
 

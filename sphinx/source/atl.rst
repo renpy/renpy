@@ -138,8 +138,8 @@ registered with ATL, or by giving the keyword "warp" followed by an
 expression giving a function. Either case is followed by a number, giving the
 number of seconds the interpolation should take.
 
-If no warp function is given, the interpolation is run for 0 seconds, using
-the pause function.
+If no warp function is given, the interpolation is instantaneous. Otherwise,
+it persists for the amount of time given, and at least one frame.
 
 The warper and duration are used to compute a completion fraction. This is
 done by dividing the time taken by the interpolation by the duration of the

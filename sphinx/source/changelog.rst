@@ -104,6 +104,11 @@ The Indonesian translation has been updated.
 Other
 -----
 
+In ATL, interpolation statement with a warper now last one frame. This means
+that the ``pause 0`` statement now completes after one frame, rather than
+instantaneously, allowing for single-frame animations. Please do not use this
+to include subliminal messages in your game.
+
 The {nw} text tag now waits for voice and self-voicing to complete before
 allowing text to advance.
 
