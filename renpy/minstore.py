@@ -60,17 +60,18 @@ def _(s):
 def _p(s):
     '''
     :doc: underscore_p
+    :name: _p
 
     Reformats a string and flags it as translatable. The string will be
     translated when displayed by the text displayable. This is intended
     to define multi-line for use in strings, of the form::
 
-    define config.about = _p("""
-        These two lines will be combined together
-        to form a long line.
+        define config.about = _p("""
+            These two lines will be combined together
+            to form a long line.
 
-        This line will be separate.
-        """)
+            This line will be separate.
+            """)
 
     The reformatting is done by breaking the text up into lines,
     removing whitespace from the start and end of each line. Blank lines
@@ -78,7 +79,7 @@ def _p(s):
     inserted to separate paragraphs. The {p} tag breaks a line, but
     doesn't add a blank one.
 
-    This can be used in a string translation, using the construct:
+    This can be used in a string translation, using the construct::
 
         old "These two lines will be combined together to form a long line.\\n\\nThis line will be separate."
         new _p("""

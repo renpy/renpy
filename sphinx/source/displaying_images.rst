@@ -100,7 +100,7 @@ by the image directory.
 .. _image-directory:
 
 Images Directory
----------------
+----------------
 
 The image directory is named "images", and is placed under the game directory.
 When a file with the .jpg or .png extension is placed underneath this directory,

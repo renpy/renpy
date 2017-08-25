@@ -46,18 +46,22 @@ Scene, Show, and Hide
 ^^^^^^^^^^^^^^^^^^^^^
 
 .. var:: director.tag_blacklist = { "black", "text", "vtext" }
+
     A blacklist of tags that will not be shown for the show, scene, or hide
     statements.
 
 .. var:: director.scene_tags = { "bg" }
+
     The set of tags that will be presented for the scene statement, and hidden
     from the show statement.
 
 .. var:: director.show_tags = set()
+
     If not empty, only the tags present in this set will be presented for the
     show statement.
 
 .. var:: director.transforms = [ "left", "center", "right" ]
+
     A list of transforms that will be presented as part of the editor.
     In addition to these, any transform defined using the transform
     statement outside of Ren'Py itself will be added to the list of
@@ -67,6 +71,7 @@ With
 ^^^^
 
 .. var:: director.transitions = [ "dissolve", "pixellate" ]
+
     A list of transitions that are available to the with statement. Since
     transitions can't be auto-detected, these must be added manually.
 
@@ -74,17 +79,21 @@ Play, Queue, Stop, and Voice
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. var:: director.audio_channels = [ "music", "sound", "audio" ]
+
     The name of the audio channels that can be used with the play, show
     and stop statements.
 
 .. var:: director.voice_channel = "voice"
+
     The name of the audio channel used by voice.
 
 .. var:: director.audio_patterns = [ "*.opus", "*.ogg", "*.mp3" ]
+
     The default list of audio patterns that are used to match the files
     available in an audio channel.
 
 .. var:: director.audio_channel_patterns = { }
+
     A map from a channel name to the list of audio patterns that are
     available in that audio channel. For example, if this is set to
     ``{ 'sound' : [ 'sound/*.opus' ], 'music' : [ 'music/*.opus' ] }`` the
@@ -94,6 +103,7 @@ Access
 ^^^^^^
 
 .. var:: director.button = True
+
     If True, the director displays a screen with a button to access the
     director window. If False, the game can provide it's own access, by
     making available the director.Start action.
@@ -102,20 +112,24 @@ Line Spacing
 ^^^^^^^^^^^^
 
 .. var:: director.spacing = 1
+
     The spacing between a director (scene, show, hide, with, play, queue, and voice) line
     and a non-director line, or vice versa. These spacings should be 0 or 1 lines, a higher spacing
     may not work.
 
 .. var:: director.director_spacing = 0
+
     The spacing between two consecutive director lines.
 
 .. var:: director.other_spacing = 0
+
     The spacing between two consecutive non-director lines.
 
 Viewport
 ^^^^^^^^
 
 .. var:: director.viewport_height = 280
+
     The maximum height of scrolling viewports used by the director.
 
 Audio Filename Functions

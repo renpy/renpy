@@ -977,12 +977,12 @@ These are the use by the grid and vpgrid displayables.
 
     The spacing between cells of the grid, in pixels.
 
-.. style-properties:: xspacing int or None
+.. style-property:: xspacing int or None
 
     The spacing between cells of the grid in the horizontal direction, in pixels.
     This takes precedence over the spacing property when it is not None.
 
-.. style-properties:: yspacing int or None
+.. style-property:: yspacing int or None
 
     The spacing between cells of the grid in the vertical direction, in pixels.
     This takes precedence over the spacing property when it is not None.
