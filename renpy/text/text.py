@@ -939,7 +939,9 @@ class Layout(object):
                 link = len(self.hyperlink_targets) + 1
                 self.hyperlink_targets[link] = value
 
-                if (renpy.display.focus.get_focused() is text_displayable) and (renpy.display.focus.argument == link):
+                if not text_displayable.hyperlink_sensitive(value):
+                    hls.set_prefix("insensitive_")
+                elif (renpy.display.focus.get_focused() is text_displayable) and (renpy.display.focus.argument == link):
                     hls.set_prefix("hover_")
                 else:
                     hls.set_prefix("idle_")
@@ -1657,6 +1659,18 @@ class Text(renpy.display.core.Displayable):
             self.slow_done()
             self.slow_done = None
 
+    def hyperlink_sensitive(self, target):
+        """
+        Returns true of the hyperlink is sensitive, False otherwise.
+        """
+
+        funcs = self.style.hyperlink_functions
+
+        if len(funcs) < 4:
+            return True
+
+        return funcs[3](target)
+
     def event(self, ev, x, y, st):
         """
         Space, Enter, or Click ends slow, if it's enabled.
@@ -1685,6 +1699,9 @@ class Text(renpy.display.core.Displayable):
 
             if clicked is not None:
                 target = layout.hyperlink_targets.get(renpy.display.focus.argument, None)
+
+                if not self.hyperlink_sensitive(target):
+                    return None
 
                 rv = self.style.hyperlink_functions[1](target)
 

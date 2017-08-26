@@ -152,6 +152,10 @@ init -1500 python hide:
         "showmenu" : showmenu_handler,
     }
 
+
+    config.hyperlink_sensitive = { }
+
+
 init -1500 python:
 
     config.hyperlink_protocol = "call_in_new_context"
@@ -176,7 +180,21 @@ init -1500 python:
             except:
                 pass
 
-    style.default.hyperlink_functions = (hyperlink_styler, hyperlink_function, None)
+    def hyperlink_sensitive(target):
+
+        if ":" not in target:
+            target = config.hyperlink_protocol + ":" + target
+
+        protocol, _, value = target.partition(":")
+
+
+        if protocol not in config.hyperlink_sensitive:
+            return True
+
+        return config.hyperlink_sensitive[protocol](value)
+
+
+    style.default.hyperlink_functions = (hyperlink_styler, hyperlink_function, None, hyperlink_sensitive)
 
 init -1500:
     image text = renpy.ParameterizedText(style="centered_text")
