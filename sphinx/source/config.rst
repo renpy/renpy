@@ -519,6 +519,13 @@ Occasionally Used
     is available. If false, software playback will be used, but it may be
     too slow to be useful.
 
+.. var:: config.hyperlink_handlers = { ... }
+
+    A dictionary mapping a hyperlink protocol to the handler for that
+    protocol. A handler is a function that takes the value (everything after
+    the :) and performs some action. If a value is returned, the interaction
+    ends. Otherwise, the click is ignored and the interaction continues.
+
 .. var:: config.hyperlink_protocol = "call_in_new_context"
 
     The protocol that is used for hyperlinks that do not have a protocol

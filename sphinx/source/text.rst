@@ -167,7 +167,8 @@ Tags that apply to all text are:
 
     If there is no protocol section in the argument, :var:`config.hyperlink_protocol`
     is prepended to it. If config.hyperlink_protocol has been set to "jump",
-    {a=label} and {a=jump:label} become equivalent.
+    {a=label} and {a=jump:label} become equivalent. Creators can define new
+    protocols using :var:`config.hyperlink_handlers`.
 
     ::
 

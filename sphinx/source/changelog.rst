@@ -78,13 +78,19 @@ computer costing $35.
 Hyperlinks
 ----------
 
-Hyperlinks created with the {a} text tag now support jumping and calling
-labels. A tag of the form {a=jump:label} jumps to the label, while one of
-the form {a=call:label} ends the currenty statement and calls a label.
+Hyperlinks created with the ``{a}`` text tag now support jumping and calling
+labels. A tag of the form ``{a=jump:label}`` jumps to the label, while one of
+the form ``{a=call:label}`` ends the current statement and calls a label. There
+are also ``{a=show:screen}`` and ``{a=showmenu:screen}``, which show screens
+in-game and in a menu context, respectively.
 
 The new :var:`config.hyperlink_protocol` variable determines the default
-protocol for a hyperlink that has none. This can be "jump" or "call" if
-desired.
+protocol for a hyperlink that has none. For example, if it's "jump", then
+``{a=mylabel}`` is equivalent to ``{a=jump:mylabel}``.
+
+The new :var:`config.hyperlink_handlers` variable is a dictionary mapping
+protocols to functions, which can be used to add creator-defined protocol
+handlers.
 
 The size of a hyperlink is now inherited from the size of the enclosing text.
 This makes hyperlinks work within text of a non-default size.
