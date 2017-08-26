@@ -168,7 +168,7 @@ init -1500 python:
         protocol, _, value = target.partition(":")
 
         if protocol in config.hyperlink_handlers:
-            config.hyperlink_handlers[protocol](value)
+            return config.hyperlink_handlers[protocol](value)
         else:
             try:
                 import webbrowser

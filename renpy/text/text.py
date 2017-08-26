@@ -1687,6 +1687,10 @@ class Text(renpy.display.core.Displayable):
                 target = layout.hyperlink_targets.get(renpy.display.focus.argument, None)
 
                 rv = self.style.hyperlink_functions[1](target)
+
+                if rv is None:
+                    raise renpy.display.core.IgnoreEvent()
+
                 return rv
 
     def size(self, width=4096, height=4096, st=0, at=0):
