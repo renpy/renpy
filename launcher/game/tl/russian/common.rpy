@@ -373,45 +373,57 @@ translate russian strings:
     old "Hide Image Load Log"
     new "Скрыть лог загрузки изображений"
 
-    # _developer\developer.rpym:97
+    # _developer\developer.rpym:67
+    old "Show Texture Size"
+    new "Показать размер текстур"
+
+    # _developer\developer.rpym:70
+    old "Hide Texture size"
+    new "Скрыть размер текстур"
+
+    # _developer\developer.rpym:108
     old "Nothing to inspect."
     new "Переменные не заданы."
 
-    # _developer\developer.rpym:225
+    # _developer\developer.rpym:236
     old "Return to the developer menu"
     new "Вернуться в меню разработчика"
 
-    # _developer\developer.rpym:385
+    # _developer\developer.rpym:396
     old "Rectangle: %r"
     new "Прямоугольник: %r"
 
-    # _developer\developer.rpym:390
+    # _developer\developer.rpym:401
     old "Mouse position: %r"
     new "Позиция мыши: %r"
 
-    # _developer\developer.rpym:395
+    # _developer\developer.rpym:406
     old "Right-click or escape to quit."
     new "Нажмите правую кнопку мыши или ESC чтобы выйти."
 
-    # _developer\developer.rpym:427
+    # _developer\developer.rpym:438
     old "Rectangle copied to clipboard."
     new "Координаты прямоугольника скопированы в буфер обмена."
 
-    # _developer\developer.rpym:430
+    # _developer\developer.rpym:441
     old "Position copied to clipboard."
     new "Координаты позиции скопированы в буфер обмена."
 
-    # _developer\developer.rpym:539
+    # _developer\developer.rpym:550
     old "✔ "
     new "✔ "
 
-    # _developer\developer.rpym:542
+    # _developer\developer.rpym:553
     old "✘ "
     new "✘ "
 
-    # _developer\developer.rpym:547
+    # _developer\developer.rpym:558
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
     new "\n{color=#cfc}✔ предсказанное изображение (хорошо){/color}\n{color=#fcc}✘ внезапное изображение (плохо){/color}\n{color=#fff}Нажмите, чтобы передвинуть.{/color}"
+
+    # _developer\developer.rpym:569
+    old "{size_mb:,.1f} MB in {count} textures."
+    new "{size_mb:,.1f} МБ при количестве текстур: {count}."
 
     # _developer\inspector.rpym:38
     old "Displayable Inspector"

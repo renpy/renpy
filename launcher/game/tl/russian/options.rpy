@@ -70,130 +70,134 @@ translate russian strings:
     new "## Вход и выход в игровое меню."
 
     # options.rpy:81
+    old "## Between screens of the game menu."
+    new "## Переход между экранами игрового меню."
+
+    # options.rpy:86
     old "## A transition that is used after a game has been loaded."
     new "## Переход, используемый после того, как игра загрузилась."
 
-    # options.rpy:86
+    # options.rpy:91
     old "## Used when entering the main menu after the game has ended."
     new "## Используется при входе в главное меню после того, как игра закончится."
 
-    # options.rpy:91
+    # options.rpy:96
     old "## A variable to set the transition used when the game starts does not exist. Instead, use a with statement after showing the initial scene."
     new "## Переменная, устанавливающая переход, используемый, когда старт игры не существует. Вместо неё используйте функцию with после показа начальной сценки."
 
-    # options.rpy:96
+    # options.rpy:101
     old "## Window management"
     new "## Управление окнами"
 
-    # options.rpy:98
+    # options.rpy:103
     old "## This controls when the dialogue window is displayed. If \"show\", it is always displayed. If \"hide\", it is only displayed when dialogue is present. If \"auto\", the window is hidden before scene statements and shown again once dialogue is displayed."
     new "## Эта строка контролирует, когда появляется диалоговое окно. Если \"show\", оно всегда показано. Если \"hide\", оно показывается, только когда представлен диалог. Если \"auto\", окно скрыто до появления оператора scene и показывается при появлении диалога."
 
-    # options.rpy:103
+    # options.rpy:108
     old "## After the game has started, this can be changed with the \"window show\", \"window hide\", and \"window auto\" statements."
     new "## После того как игра началась, это может быть изменено с помощью \"window show\", \"window hide\", и \"window auto\"."
 
-    # options.rpy:109
+    # options.rpy:114
     old "## Transitions used to show and hide the dialogue window"
     new "## Переходы, используемые при показе и скрытии диалогового окна"
 
-    # options.rpy:115
+    # options.rpy:120
     old "## Preference defaults"
     new "## Стандартные настройки"
 
-    # options.rpy:117
+    # options.rpy:122
     old "## Controls the default text speed. The default, 0, is infinite, while any other number is the number of characters per second to type out."
     new "## Контролирует стандартную скорость текста. По умолчанию это 0 — мгновенно, в то время как любая другая цифра, это количество символов, печатаемых в секунду."
 
-    # options.rpy:123
+    # options.rpy:128
     old "## The default auto-forward delay. Larger numbers lead to longer waits, with 0 to 30 being the valid range."
     new "## Стандартная задержка авто-чтения. Большие значения означают долгие ожидания, а от 0 до 30 — вполне допустимый диапазон."
 
-    # options.rpy:129
+    # options.rpy:134
     old "## Save directory"
     new "## Директория сохранений"
 
-    # options.rpy:131
+    # options.rpy:136
     old "## Controls the platform-specific place Ren'Py will place the save files for this game. The save files will be placed in:"
     new "## Контролирует зависимое от платформы место, куда Ren'Py будет складывать файлы сохранения этой игры. Файлы сохранений будут храниться в:"
 
-    # options.rpy:134
+    # options.rpy:139
     old "## Windows: %APPDATA\\RenPy\\<config.save_directory>"
     new "## Windows: %APPDATA\\RenPy\\<config.save_directory>"
 
-    # options.rpy:136
+    # options.rpy:141
     old "## Macintosh: $HOME/Library/RenPy/<config.save_directory>"
     new "## Macintosh: $HOME/Library/RenPy/<config.save_directory>"
 
-    # options.rpy:138
+    # options.rpy:143
     old "## Linux: $HOME/.renpy/<config.save_directory>"
     new "## Linux: $HOME/.renpy/<config.save_directory>"
 
-    # options.rpy:140
+    # options.rpy:145
     old "## This generally should not be changed, and if it is, should always be a literal string, not an expression."
     new "## Оно обычно не должно изменяться, а если и изменилось, должно быть текстовой строчкой, а не выражением."
 
-    # options.rpy:146
+    # options.rpy:151
     old "## Icon"
     new "## Иконка"
 
-    # options.rpy:148
+    # options.rpy:153
     old "## The icon displayed on the taskbar or dock."
     new "## Иконка, показываемая на панели задач или на dock."
 
-    # options.rpy:153
+    # options.rpy:158
     old "## Build configuration"
     new "## Настройка Дистрибутива"
 
-    # options.rpy:155
+    # options.rpy:160
     old "## This section controls how Ren'Py turns your project into distribution files."
     new "## Эта секция контролирует, как Ren'Py строит дистрибутивные файлы из вашего проекта."
 
-    # options.rpy:160
+    # options.rpy:165
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
     new "## Следующие функции избирают образцы файлов. Образцы файлов не учитывают регистр и соответствующе зависят от директории base, с или без учёта /, задающей директорию. Если обнаруживается множество одноимённых файлы, используется только первый."
 
-    # options.rpy:165
+    # options.rpy:170
     old "## In a pattern:"
     new "## Инструкция:"
 
-    # options.rpy:167
+    # options.rpy:172
     old "## / is the directory separator."
     new "## / — разделитель директорий."
 
-    # options.rpy:169
+    # options.rpy:174
     old "## * matches all characters, except the directory separator."
     new "## * включает в себя все символы, исключая разделитель директорий."
 
-    # options.rpy:171
+    # options.rpy:176
     old "## ** matches all characters, including the directory separator."
     new "## ** включает в себя все символы, включая разделитель директорий."
 
-    # options.rpy:173
+    # options.rpy:178
     old "## For example, \"*.txt\" matches txt files in the base directory, \"game/**.ogg\" matches ogg files in the game directory or any of its subdirectories, and \"**.psd\" matches psd files anywhere in the project."
     new "## Например, \"*.txt\" берёт все файлы в формате txt из директории base, \"game/**.ogg\" берёт все файлы ogg из директории game и всех поддиректорий, а \"**.psd\" берёт все файлы psd из любого места проекта."
 
-    # options.rpy:177
+    # options.rpy:182
     old "## Classify files as None to exclude them from the built distributions."
     new "## Классифицируйте файлы как None, чтобы исключить их из дистрибутивов."
 
-    # options.rpy:185
+    # options.rpy:190
     old "## To archive files, classify them as 'archive'."
     new "## Чтобы архивировать файлы, классифицируйте их, например, как 'archive'."
 
-    # options.rpy:190
+    # options.rpy:195
     old "## Files matching documentation patterns are duplicated in a mac app build, so they appear in both the app and the zip file."
     new "## Файлы, соответствующие образцам документации, дублируются в приложениях Mac так, чтобы они появлялись и в приложении, и в zip архиве."
 
-    # options.rpy:196
+    # options.rpy:201
     old "## Set this to a string containing your Apple Developer ID Application to enable codesigning on the Mac. Be sure to change it to your own Apple-issued ID."
     new "## Эта строка отвечает за подписывание игры на Mac с помощью вашего Apple ID. Подписывайте только со своего Apple Developer ID."
 
-    # options.rpy:203
+    # options.rpy:208
     old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
     new "## Лицензионный ключ Google Play требуется для загрузки файлов расширений и поддержки внутриигровых покупок. Он может быть найден на странице \"Services & APIs\" консоли разработчика Google Play."
 
-    # options.rpy:210
+    # options.rpy:215
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Имя пользователя и название проекта, ассоциированные с проектом на itch.io, разделённые дробью."
 
