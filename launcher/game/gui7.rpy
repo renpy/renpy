@@ -360,10 +360,31 @@ label gui_project_size:
                 ((1066, 600), "1066x600"),
                 ((1280, 720), "1280x720"),
                 ((1920, 1080), "1920x1080"),
+                ("custom", "Custom. The GUI is optimized for a 16:9 aspect ratio."),
             ],
             (1280, 720),
             cancel=Jump("front_page"),
         )
+
+        if gui_size == "custom":
+
+
+            gui_width = interface.input(_("WIDTH"), _("Please enter the width of your game, in pixels."), cancel=Jump("front_page"))
+
+            try:
+                gui_width = int(gui_width)
+            except:
+                interface.error(_("The width must be a number."))
+
+            gui_height = interface.input(_("HEIGHT"), _("Please enter the height of your game, in pixels."), cancel=Jump("front_page"))
+
+            try:
+                gui_height = int(gui_height)
+            except:
+                interface.error(_("The height must be a number."))
+
+            gui_size = (gui_width, gui_height)
+
 
 label gui_project_common:
 
