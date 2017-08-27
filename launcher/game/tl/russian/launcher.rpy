@@ -1131,7 +1131,7 @@ translate russian strings:
 
     # updater.rpy:108
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
-    new "Взгляд на следующую версию Ren'Py, которую можно использовать для тестирования и использования новых возможностей, но не для финальных релизов игр."
+    new "Публичный анонс следующей версии Ren'Py, который можно использовать для тестирования, в том числе новых возможностей Ren'Py, но не для финальных релизов игр."
 
     # updater.rpy:114
     old "Experimental"
@@ -1147,7 +1147,7 @@ translate russian strings:
 
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
-    new "Развитие Ren'Py на краю горизонта событий. Здесь можно найти самые последние возможности, или всё может просто не запуститься."
+    new "Развитие Ren'Py на краю горизонта событий. Здесь можно найти новейшие возможности или всё может просто не запуститься."
 
     # updater.rpy:152
     old "An error has occured:"
