@@ -11,3 +11,11 @@ This is an automatically-generated translation that lets me test various
 translation mechanisms.
 
 * Tom Rothamel <pytom@bishoujo.us>
+
+Russian
+---------
+
+Translation to "great, mighty, true and free Russian language". ("The Russian Language", Ivan Sergeyevich Turgenev)
+Most of translation provided by Project Gardares, especially Ria-kon.
+
+* Project Gardares <guardares@gmail.com>
