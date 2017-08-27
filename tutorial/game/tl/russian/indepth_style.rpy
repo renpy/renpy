@@ -370,7 +370,7 @@ translate russian style_text_e7204a95:
 translate russian style_text_b4563984:
 
     # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
-    e "Параметр adjust_spacing сперва кажется незаметным, так как он виден только только, когда игрок изменяет размеры окна. При включении, символы немного сдвигаются, так что они примерно сохраняют свой относительный отступ."
+    e "Параметр adjust_spacing сперва кажется незаметным, так как он виден только тогда, когда игрок изменяет размеры окна. При включении, символы немного сдвигаются, так что они примерно сохраняют свой относительный отступ."
 
 # game/indepth_style.rpy:497
 translate russian style_text_605d4e4a:
@@ -588,115 +588,121 @@ translate russian style_bar_f1292000:
     # e "That's it for the bar properties. By using them, a creator can customize bars, scrollbars, and sliders."
     e "На этом с полосками мы закончили. Используя их, разработчик может изменять полоски, полосы прокрутки и слайдеры."
 
-# game/indepth_style.rpy:944
+# game/indepth_style.rpy:962
 translate russian style_box_5fd535f4:
 
     # e "The hbox displayable is used to lay its children out horizontally. By default, there's no spacing between children, so they run together."
     e "Объект hbox используется, чтобы показать свои дочерние объекты горизонтально. По стандарту, между \'детьми\' нет пропусков, так что они сливаются."
 
-# game/indepth_style.rpy:950
+# game/indepth_style.rpy:968
 translate russian style_box_0111e5dc:
 
     # e "Similarly, the vbox displayable is used to lay its children out vertically. Both support style properties that control placement."
     e "Похожим образом действует vbox, показывая свои дочерние объекты вертикально. Оба стиля поддерживают параметры, контролирующие местоположение объектов."
 
-# game/indepth_style.rpy:955
+# game/indepth_style.rpy:973
 translate russian style_box_5a44717b:
 
     # e "To make the size of the box displayable obvious, I'll add a highlight to the box itself, and not the frame containing it."
     e "Чтобы сделать размер коробки видимым, я подсвечу именно её, а не общую рамку."
 
-# game/indepth_style.rpy:963
+# game/indepth_style.rpy:981
 translate russian style_box_239e7a8f:
 
     # e "Boxes support the xfill and yfill style properties. These properties make a box expand to fill the available space, rather than the space of the largest child."
     e "Коробки поддерживают параметры xfill и yfill. Эти параметры заставляют коробку расширяться на всё возможное пространство, а не только по размеру наибольшего \'ребёнка\'."
 
-# game/indepth_style.rpy:973
+# game/indepth_style.rpy:991
 translate russian style_box_e513c946:
 
     # e "The spacing style property takes a value in pixels, and adds that much spacing between each child of the box."
     e "Параметр spacing берёт значение в пикселях и добавляет равное им свободное пространство между каждым \'ребёнком\' коробки."
 
-# game/indepth_style.rpy:983
+# game/indepth_style.rpy:1001
 translate russian style_box_6ae4f94d:
 
     # e "The first_spacing style property is similar, but it only adds space between the first and second children. This is useful when the first child is a title that needs different spacing."
     e "Параметр first_spacing действует похожим образом, но он добавляет пространство только между первым и вторым ребёнком. Это полезно, когда первая строчка — заголовок, которому требуются другие размеры."
 
-# game/indepth_style.rpy:993
+# game/indepth_style.rpy:1011
 translate russian style_box_0c518d9f:
 
     # e "The box_reverse style property reverses the order of entries in the box."
     e "Параметр box_reverse переворачивает порядок показа детей в коробке."
 
-# game/indepth_style.rpy:1006
+# game/indepth_style.rpy:1024
 translate russian style_box_f73c1422:
 
     # e "We'll switch back to a horizontal box for our next example."
     e "Для следующего примера мы вернёмся к горизонтальной коробке."
 
-# game/indepth_style.rpy:1016
+# game/indepth_style.rpy:1034
 translate russian style_box_285592bb:
 
     # e "The box_wrap style property fills the box with children until it's full, then starts again on the next line."
     e "Параметр box_wrap заполняет коробку детьми, пока она не переполнится, а затем переносит оставшихся детей на следущие строки."
 
-# game/indepth_style.rpy:1024
+# game/indepth_style.rpy:1047
+translate russian style_box_a7637552:
+
+    # e "Grids bring with them two more style properties. The xspacing and yspacing properties control spacing in the horizontal and vertical directions, respectively."
+    e "У таблиц есть ещё два стилевых параметра. Это xspacing и yspacing, контролирующие отступы по горизонтали и вертикали."
+
+# game/indepth_style.rpy:1054
 translate russian style_box_4006f74b:
 
     # e "Lastly, we have the fixed layout. The fixed layout usually expands to fill all space, and shows its children from back to front."
     e "И последнее, у нас есть фиксированный слой (fixed). Фиксированный слой обычно расширяется на всё пространство и показывает своих детей друг над другом."
 
-# game/indepth_style.rpy:1026
+# game/indepth_style.rpy:1056
 translate russian style_box_4a2866f0:
 
     # e "But of course, we have some style properties that can change that."
     e "Но само собой, у нас есть для него пара параметров."
 
-# game/indepth_style.rpy:1035
+# game/indepth_style.rpy:1065
 translate russian style_box_a3b47b6e:
 
     # e "When the xfit style property is true, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
     e "Если параметр xfit равен true, фиксация покрывает всех своих детей, а затем сжимается до их размера по ширине. Параметр yfit работает уже по высоте."
 
-# game/indepth_style.rpy:1043
+# game/indepth_style.rpy:1073
 translate russian style_box_6a593b10:
 
     # e "The order_reverse style property changes the order in which the children are shown. Instead of back-to-front, they're displayed front-to-back."
     e "Параметр order_reverse изменяет порядок показа детей. Вместо того, чтобы показывать их наружу, они начинают показываться в порядке внутрь."
 
-# game/indepth_style.rpy:1055
+# game/indepth_style.rpy:1085
 translate russian style_inspector_21bc0709:
 
     # e "Sometimes it's hard to figure out what style is being used for a particular displayable. The displayable inspector can help with that."
     e "Иногда трудно понять, какой стиль использует тот или иной объект. Диспетчер объектов может с этим помочь."
 
-# game/indepth_style.rpy:1057
+# game/indepth_style.rpy:1087
 translate russian style_inspector_243c50f0:
 
     # e "To use it, place the mouse over a portion of the Ren'Py user interface, and hit shift+I. That's I for inspector."
     e "Чтобы использовать его, наведите мышь на какую-либо часть игрового интерфейса Ren'Py и нажмите shift+i."
 
-# game/indepth_style.rpy:1059
+# game/indepth_style.rpy:1089
 translate russian style_inspector_bcbdc396:
 
     # e "Ren'Py will pop up a list of displayables the mouse is over. Next to each is the name of the style that displayable uses."
     e "Ren'Py выдаст список объектов, на которые навелась мышка. После каждого объекта идёт имя его стиля."
 
-# game/indepth_style.rpy:1061
+# game/indepth_style.rpy:1091
 translate russian style_inspector_d981e5c8:
 
     # e "You can click on the name of the style to see where it gets its properties from."
     e "Вы можете кликнуть на имя стиля, чтобы увидеть его параметры или их принадлежность."
 
-# game/indepth_style.rpy:1063
+# game/indepth_style.rpy:1093
 translate russian style_inspector_ef46b86d:
 
     # e "By default, the inspector only shows interface elements like screens, and not images. Type shift+alt+I if you'd like to see images as well."
     e "По стандарту, диспетчер показывает только элементы интерфейса, не изображения. Если вы хотите увидеть в диспетчере и изображения, нажмите shift+alt+i."
 
-# game/indepth_style.rpy:1065
+# game/indepth_style.rpy:1095
 translate russian style_inspector_b59c6b69:
 
     # e "You can try the inspector right now, by hovering this text and hitting shift+I."
@@ -733,8 +739,8 @@ translate russian strings:
     new "Полоски горизонтальные и вертикальные."
 
     # indepth_style.rpy:66
-    old "Box and Fixed style properties"
-    new "Стилевые параметры Коробок и Фиксаций"
+    old "Box, Grid, and Fixed style properties"
+    new "Стили для Коробок, Фиксаций и Таблиц"
 
     # indepth_style.rpy:66
     old "The Displayable Inspector"

@@ -530,14 +530,14 @@ translate russian transform_properties_d7a487f1:
 # game/tutorial_atl.rpy:729
 translate russian transform_properties_89e0d7c2:
 
-    # "The subpixel property controls how things are lined up with the screen. When False, images can be pixel-perfect, but there can be pixel jumping." ### no original
-    "Параметр subpixel контролирует то, как объекты выравниваются на экране. При False, изображения будут использовать подпиксельный рендеринг, при котором возможно небольшое изменение пикселей." ### проверить
+    # "The subpixel property controls how things are lined up with the screen. When False, images can be pixel-perfect, but there can be pixel jumping."
+    "Параметр subpixel контролирует метод обработки масштабирования на экране. При False изображения будут писксель-идеальными, то есть не будут сглаживаться." ### неточно
 
 # game/tutorial_atl.rpy:736
 translate russian transform_properties_4194527e:
 
-    # "When it's set to True, movement is smoother at the cost of blurring images a little." ### no original
-    "При True движения становятся сглаженней, ценой небольшого размытия изображений."
+    # "When it's set to True, movement is smoother at the cost of blurring images a little."
+    "При True объект становится сглаженней, но ценой небольшого размытия изображения."
 
 # game/tutorial_atl.rpy:755
 translate russian transform_properties_35934e77:

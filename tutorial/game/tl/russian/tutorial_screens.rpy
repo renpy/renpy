@@ -287,127 +287,127 @@ translate russian screens_properties_c7ad3a8e:
     # e "This can save a lot of typing when styling screens with many displayables in them."
     e "Это может сохранить вам много времени, если вы собираетесь стилизовать экраны со множеством объектов."
 
-# game/tutorial_screens.rpy:488
-translate russian screens_control_5566d948:
+# game/tutorial_screens.rpy:491
+translate russian screens_control_4a1d8d7c:
 
-    # e "The screen language has a few statements that do things other than show displayables. If you haven't seen the displayable statements yet, you might want to check them out and come back here."
-    e "Язык экранов имеет несколько операторов, которые делают вещи несколько иначе, чем при обычном показе объектов. Если вы ещё не видели тему \"Операторы объектов\", вы можете посмотреть сначала на них, а затем вернуться сюда." ### потом посмотреть, какая это тема
+    # e "The screen language has a few statements that do things other than show displayables. If you haven't seen the section on {a=jump:warp_screen_displayables}Screen Displayables{/a} yet, you might want to check it out, then come back here."
+    e "Язык экранов имеет несколько операторов, которые делают всё несколько иначе, чем при обычном показе объектов. Если вы ещё не видели тему {a=jump:warp_screen_displayables}Экранные Объекты{/a}, вы можете посмотреть сначала на них, а затем вернуться сюда."
 
-# game/tutorial_screens.rpy:500
+# game/tutorial_screens.rpy:503
 translate russian screens_control_0e939050:
 
     # e "The python statement works just about the same way it does in the script. A single line of Python is introduced with a dollar sign. This line is run each time the screen updates."
     e "Операторы python работают здесь также, как и в обычном скрипте. Строка с Python-кодом начинается со знака доллара, плюс эта строка запускается каждый раз, как обновляется экран."
 
-# game/tutorial_screens.rpy:515
+# game/tutorial_screens.rpy:518
 translate russian screens_control_6334650a:
 
     # e "Similarly, the python statement introduces an indented block of python statements. But there is one big difference in Python in screens and Python in scripts."
     e "Похожим образом оператор python начинает блок остальных операторов python. Но здесь есть одна большая разница между Python в экранах и Python в скрипте."
 
-# game/tutorial_screens.rpy:517
+# game/tutorial_screens.rpy:520
 translate russian screens_control_ba8f5f13:
 
     # e "The Python you use in screens isn't allowed to have side effects. That means that it can't do things like change the value of a variable."
     e "В Python-экранах не разрешается иметь сторонние функции. Это значит, что в экране вы не сможете изменить значение переменной."
 
-# game/tutorial_screens.rpy:519
+# game/tutorial_screens.rpy:522
 translate russian screens_control_f75fa254:
 
     # e "The reason for this is that Ren'Py will run a screen, and the Python in it, during screen prediction."
     e "Причина этому в том, что Ren'Py запускает экран, а в нём и Python, только во время алгоритма предсказания экрана."
 
-# game/tutorial_screens.rpy:533
+# game/tutorial_screens.rpy:536
 translate russian screens_control_40c12afa:
 
     # e "The default statement lets you set the value of a screen variable the first time the screen runs. This value can be changed with the SetScreenVariable and ToggleScreenVariable actions."
     e "Оператор default позволяет вам установить первоначальное значение переменной экрана при его запуске. Это значение может быть изменено через действия SetScreenVariable и ToggleScreenVariable."
 
-# game/tutorial_screens.rpy:535
+# game/tutorial_screens.rpy:538
 translate russian screens_control_39e0f7e6:
 
     # e "The default statement differs from the Python statement in that it is only run once. Python runs each time the screen updates, and hence the variable would never change value."
     e "Здешний default отличается от обычного в Python тем, что он запускается лишь единожды. Python запускается каждый раз при обновлении экрана, следовательно переменная не должна больше изменять своё значение."
 
-# game/tutorial_screens.rpy:554
+# game/tutorial_screens.rpy:557
 translate russian screens_control_87a75fe7:
 
     # e "The if statement works like it does in script, running one block if the condition is true and another if the condition is false."
     e "Оператор if работает как и в скрипте: запускаем один блок Если условие = Верно и второй Если условие = Неверно."
 
-# game/tutorial_screens.rpy:569
+# game/tutorial_screens.rpy:572
 translate russian screens_control_6a8c07f6:
 
     # e "The for statement takes a list of values, and iterates through them, running the block inside the for loop with the variable bound to each list item."
     e "Оператор for берёт список значений и проходит через них, запуская блок, в котором одна переменная привязывается к каждому значению в списке."
 
-# game/tutorial_screens.rpy:585
+# game/tutorial_screens.rpy:588
 translate russian screens_control_f7b755fa:
 
     # e "The on and key statements probably only make sense at the top level of the screen."
     e "Операторы on и key, вероятно, имеют смысл только при отображении над другими экранами."
 
-# game/tutorial_screens.rpy:587
+# game/tutorial_screens.rpy:590
 translate russian screens_control_328b0676:
 
     # e "The on statement makes the screen run an action when an event occurs. The 'show' event happens when the screen is first shown, and the 'hide' event happens when it is hidden."
     e "Оператор on создаёт экран, запускающийся при наступлении события. Событие 'show' происходит, когда экран впервые показывается, а событие 'hide' — когда он скрывается."
 
-# game/tutorial_screens.rpy:589
+# game/tutorial_screens.rpy:592
 translate russian screens_control_6768768b:
 
     # e "The key event runs an event when a key is pressed."
     e "Оператор key запускает событие, как только будет нажата клавиша 'a'."
 
-# game/tutorial_screens.rpy:597
+# game/tutorial_screens.rpy:600
 translate russian screen_use_c6a20a16:
 
     # e "The screen language use statement lets you include a screen inside another. This can be useful to prevent duplication inside screens."
     e "Язык экранов использует оператор, позволяющий вам включить один экран в другой (эффект экран-в-экране). Это может быть полезно, если вы хотите избавить от разных дубликатов экранов."
 
-# game/tutorial_screens.rpy:613
+# game/tutorial_screens.rpy:616
 translate russian screen_use_95a34d3a:
 
     # e "Take for example this screen, which shows two stat entries. There's already a lot of duplication there, and if we had more stats, there would be more."
     e "Возьмём, например, этот экран, показывающий два основных RPG параметра. В коде и так много дубликатов, а если мы возьмём ещё больше параметров, наш код будет просто чрезмерным."
 
-# game/tutorial_screens.rpy:630
+# game/tutorial_screens.rpy:633
 translate russian screen_use_e2c673d9:
 
     # e "Here, we moved the statements that show the text and bar into a second screen, and the use statement includes that screen in the first one."
     e "Держите, мы сместили операторы, показывающие текст и полоски, на второй экран и использовали оператор, включающий один экран в другой."
 
-# game/tutorial_screens.rpy:632
+# game/tutorial_screens.rpy:635
 translate russian screen_use_2efdd2ff:
 
     # e "The name and amount of the stat are passed in as arguments to the screen, just as is done in the call screen statement."
     e "Имена и значения параметров прописаны как аргументы второго экрана, прямо как если бы мы вызывали этот экран."
 
-# game/tutorial_screens.rpy:634
+# game/tutorial_screens.rpy:637
 translate russian screen_use_f8d1bf9d:
 
     # e "By doing it this way, we control the amount of duplication, and can change the stat in one place."
     e "Сделав всё таким образом, мы проконтролировали количество дубликатов и теперь можем изменять значения параметров из одного места."
 
-# game/tutorial_screens.rpy:650
+# game/tutorial_screens.rpy:653
 translate russian screen_use_4e22c25e:
 
     # e "The transclude statement goes one step further, by letting the use statement take a block of screen language statements."
     e "Оператор transclude заходит ещё дальше, позволяя оператору use брать целый блок операторов Языка Экранов."
 
-# game/tutorial_screens.rpy:652
+# game/tutorial_screens.rpy:655
 translate russian screen_use_c83b97e3:
 
     # e "When the included screen reaches the transclude statement it is replaced with the block from the use statement."
     e "Когда экран доходит до оператора transclude, экран заменяется блоком, используемым оператором use."
 
-# game/tutorial_screens.rpy:654
+# game/tutorial_screens.rpy:657
 translate russian screen_use_1ad1f358:
 
     # e "The boilerplate screen is included in the first one, and the text from the first screen is transcluded into the boilerplate screen."
     e "Экран boilerplate находится экран-в-экране, и текст из первого экрана переносится (трансклюкируется) на экран boilerplate."
 
-# game/tutorial_screens.rpy:656
+# game/tutorial_screens.rpy:659
 translate russian screen_use_f74fab6e:
 
     # e "Use and transclude are complex, but very powerful. If you think about it, 'use boilerplate' is only one step removed from writing your own Screen Language statement."
@@ -543,51 +543,51 @@ translate russian strings:
     old "This text is red."
     new "Этот текст — красный."
 
-    # tutorial_screens.rpy:493
+    # tutorial_screens.rpy:496
     old "Hello, World."
     new "Привет, Мир."
 
-    # tutorial_screens.rpy:507
+    # tutorial_screens.rpy:510
     old "It's good to meet you."
     new "Приятно с тобой познакомиться."
 
-    # tutorial_screens.rpy:531
+    # tutorial_screens.rpy:534
     old "Increase"
     new "Увеличить"
 
-    # tutorial_screens.rpy:560
+    # tutorial_screens.rpy:563
     old "Earth"
     new "Земля"
 
-    # tutorial_screens.rpy:560
+    # tutorial_screens.rpy:563
     old "Moon"
     new "Луна"
 
-    # tutorial_screens.rpy:560
+    # tutorial_screens.rpy:563
     old "Mars"
     new "Марс"
 
-    # tutorial_screens.rpy:578
+    # tutorial_screens.rpy:581
     old "Now press 'a'."
     new "Теперь нажмите на английскую 'a'."
 
-    # tutorial_screens.rpy:580
+    # tutorial_screens.rpy:583
     old "The screen was just shown."
     new "Только что появился экран!"
 
-    # tutorial_screens.rpy:582
+    # tutorial_screens.rpy:585
     old "You pressed the 'a' key."
     new "Вы нажали на клавишу 'a'."
 
-    # tutorial_screens.rpy:605
+    # tutorial_screens.rpy:608
     old "Health"
     new "Здоровье"
 
-    # tutorial_screens.rpy:610
+    # tutorial_screens.rpy:613
     old "Magic"
     new "Магия"
 
-    # tutorial_screens.rpy:641
+    # tutorial_screens.rpy:644
     old "There's not much left to see."
     new "Не на что смотреть."
 

@@ -69,7 +69,7 @@ translate russian director_e253e03b:
 translate russian director_1cd735bc:
 
     # e "To get started, let's go back to a blank slate, with no images on the screen."
-    e "Для начала, давайте очистим экран ото всех изображений."
+    e "Для начала, давайте очистим экран от всех изображений."
 
 # game/tutorial_director.rpy:44
 translate russian director_c7a18979:
@@ -80,7 +80,7 @@ translate russian director_c7a18979:
 # game/tutorial_director.rpy:46
 translate russian director_3dcc4362:
 
-    # e "Let's add a background. Click the '+' to pick where to add it, then the 'scene' statement and 'washington' for the image. Finally, click 'Add' to add it." ### string ID take too much space ()
+    # e "Let's add a background. Click the '+' to pick where to add it, then the 'scene' statement and 'washington' for the image. Finally, click 'Add' to add it."
     e "Давайте добавим фон. Кликните на '+', чтобы выбрать, куда его добавить, а затем на оператора 'scene' и имя картинки 'washington'. И последнее, нажмите 'Добавить'."
 
 # game/tutorial_director.rpy:48
