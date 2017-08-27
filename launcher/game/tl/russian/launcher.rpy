@@ -1147,7 +1147,7 @@ translate russian strings:
 
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
-    new "Развитие Ren'Py на краю горизонта событий. Здесь можно найти новейшие возможности или всё может просто не запуститься."
+    new "Развитие Ren'Py на краю горизонта событий. Здесь можно найти новейшие возможности Ren'Py или всё может просто не запуститься."
 
     # updater.rpy:152
     old "An error has occured:"
