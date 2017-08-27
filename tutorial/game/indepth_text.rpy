@@ -103,7 +103,7 @@ label after_a_label:
 
 
     example:
-        e "To break a line without pausing,\none can write \\n, \\' and \\\" include quotes in the text."
+        e "To break a line without pausing,\none can write \\n. \\' and \\\" include quotes in the text."
 
 
     hide example

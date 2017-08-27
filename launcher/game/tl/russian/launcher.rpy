@@ -253,39 +253,39 @@ translate russian strings:
     old "Scanning Ren'Py files..."
     new "Сканирую файлы Ren'Py..."
 
-    # distribute.rpy:570
+    # distribute.rpy:572
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
     new "Все пакеты были построены.\n\nВ связи с наличием информации о правах доступа, не распаковывайте дистрибутивы для Linux и Macintosh на Windows."
 
-    # distribute.rpy:753
+    # distribute.rpy:755
     old "Archiving files..."
     new "Архивирую файлы..."
 
-    # distribute.rpy:1053
+    # distribute.rpy:1055
     old "Unpacking the Macintosh application for signing..."
     new "Распаковываю приложение Macintosh для подписи..."
 
-    # distribute.rpy:1063
+    # distribute.rpy:1065
     old "Signing the Macintosh application...\n(This may take a long time.)"
     new "Подписываю приложение Macintosh...\n(Это может занять время.)"
 
-    # distribute.rpy:1085
+    # distribute.rpy:1087
     old "Creating the Macintosh DMG..."
     new "Создаю Macintosh DMG..."
 
-    # distribute.rpy:1094
+    # distribute.rpy:1096
     old "Signing the Macintosh DMG..."
     new "Подписываю Macintosh DMG..."
 
-    # distribute.rpy:1251
+    # distribute.rpy:1291
     old "Writing the [variant] [format] package."
     new "Пишу пакет [variant] [format]"
 
-    # distribute.rpy:1264
+    # distribute.rpy:1304
     old "Making the [variant] update zsync file."
     new "Создаю файл zsync для обновления [variant]"
 
-    # distribute.rpy:1408
+    # distribute.rpy:1414
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
     new "Обработано {b}[complete]{/b} из {b}[total]{/b} файлов."
 
@@ -851,7 +851,7 @@ translate russian strings:
 
     # new_project.rpy:71
     old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
-    new "Вы создаёте проект на языке [new_project_language]. Измените язык лаунчера, чтобы создать проект на другом языке."
+    new "Вы создаёте проект на языке [new_project_language]. Измените язык лаунчера, чтобы создать проект на другом языке." ###
 
     # new_project.rpy:79
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
@@ -935,7 +935,7 @@ translate russian strings:
 
     # preferences.rpy:187
     old "Force new tutorial"
-    new "Принудительное новое обучение"
+    new "Новое обучение"
 
     # preferences.rpy:189
     old "Legacy options"
@@ -1051,7 +1051,7 @@ translate russian strings:
 
     # translations.rpy:264
     old "Ren'Py has finished generating [language] translations."
-    new "Ren'Py закончила создавать переводы для [language]."
+    new "Ren'Py закончила создавать перевод для [language]."
 
     # translations.rpy:277
     old "Ren'Py is extracting string translations..."
@@ -1059,7 +1059,7 @@ translate russian strings:
 
     # translations.rpy:280
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py закончила извлекать [language] строки перевода."
+    new "Ren'Py завершила извлечение [language] строк перевода."
 
     # translations.rpy:300
     old "Ren'Py is merging string translations..."
@@ -1067,45 +1067,45 @@ translate russian strings:
 
     # translations.rpy:303
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py закончила объединять [language] строки перевода."
+    new "Ren'Py завершила объединение [language] строк перевода."
 
-    # translations.rpy:313
+    # translations.rpy:314
     old "Updating default interface translations..."
     new "Обновляю базовый перевод интерфейса..."
 
-    # translations.rpy:337
+    # translations.rpy:343
     old "Extract Dialogue: [project.current.display_name!q]"
     new "Извлечь диалог: [project.current.display_name!q]"
 
-    # translations.rpy:353
+    # translations.rpy:359
     old "Format:"
     new "Формат:"
 
-    # translations.rpy:361
+    # translations.rpy:367
     old "Tab-delimited Spreadsheet (dialogue.tab)"
     new "Табулированная таблица (dialogue.tab)"
 
-    # translations.rpy:362
+    # translations.rpy:368
     old "Dialogue Text Only (dialogue.txt)"
     new "Только текст диалога (dialogue.txt)"
 
-    # translations.rpy:375
+    # translations.rpy:381
     old "Strip text tags from the dialogue."
     new "Убрать текстовые теги из диалога."
 
-    # translations.rpy:376
+    # translations.rpy:382
     old "Escape quotes and other special characters."
     new "Включать кавычки и регулярные выражения."
 
-    # translations.rpy:377
+    # translations.rpy:383
     old "Extract all translatable strings, not just dialogue."
     new "Извлечь все переводимые строки, не только диалог."
 
-    # translations.rpy:405
+    # translations.rpy:411
     old "Ren'Py is extracting dialogue...."
     new "Ren'Py извлекает диалог..."
 
-    # translations.rpy:409
+    # translations.rpy:415
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
     new "Ren'Py завершила извлечение диалога. Извлечённый диалог можно найти в файле dialogue.[persistent.dialogue_format] в директории base."
 
@@ -1131,7 +1131,7 @@ translate russian strings:
 
     # updater.rpy:108
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
-    new "Взгляд на следующую версию Ren'Py, которую можно использовать для тестирования и использования новых возможностей, но не для финальных релизов игр."
+    new "Публичный анонс следующей версии Ren'Py, который можно использовать для тестирования, в том числе новых возможностей Ren'Py, но не для финальных релизов игр."
 
     # updater.rpy:114
     old "Experimental"
@@ -1147,7 +1147,7 @@ translate russian strings:
 
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
-    new "Развитие Ren'Py на краю горизонта событий. Здесь можно найти самые последние возможности или всё может просто не запуститься."
+    new "Развитие Ren'Py на краю горизонта событий. Здесь можно найти новейшие возможности Ren'Py или всё может просто не запуститься."
 
     # updater.rpy:152
     old "An error has occured:"

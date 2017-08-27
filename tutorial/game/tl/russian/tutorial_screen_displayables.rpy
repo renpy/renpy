@@ -710,11 +710,11 @@ translate russian strings:
     new "Есть контакт!"
 
     # tutorial_screen_displayables.rpy:232
-    old "The answer is [answer]." ### english example
+    old "The answer is [answer]."
     new "Ответ: [answer]."
 
     # tutorial_screen_displayables.rpy:244
-    old "Text tags {color=#c8ffc8}work{/color} in screens." ### english example
+    old "Text tags {color=#c8ffc8}work{/color} in screens."
     new "Текстовые теги в экранах {color=#c8ffc8}работают{/color}."
 
     # tutorial_screen_displayables.rpy:336
