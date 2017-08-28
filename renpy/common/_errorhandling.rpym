@@ -47,7 +47,7 @@ init label _errorhandling:
         from store import config
 
         def _scale(n):
-            return int(n * config.screen_height / 720)
+            return int(n * min(config.screen_width / 1280, config.screen_height / 720))
 
         _wide = (config.screen_width >  (config.screen_height * 1.5))
 
