@@ -2402,6 +2402,40 @@ def style_statement(l, loc):
     return rv
 
 
+def finish_say(l, loc, who, what, attributes=None):
+
+    if what is None:
+        return None
+
+    interact = True
+    with_ = None
+    arguments = None
+
+    while True:
+
+        if l.keyword('nointeract'):
+            interact = False
+
+        elif l.keyword('with'):
+            if with_ is not None:
+                l.error('say can only take a single with clause')
+
+            with_ = l.require(l.simple_expression)
+
+        else:
+            args = parse_arguments(l)
+
+            if args is None:
+                break
+
+            if arguments is not None:
+                l.error('say can only take a single set of arguments')
+
+            arguments = args
+
+    return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact, arguments=arguments)
+
+
 @statement("")
 def say_statement(l, loc):
 
@@ -2410,16 +2444,15 @@ def say_statement(l, loc):
     # Try for a single-argument say statement.
     what = l.string()
 
-    if l.keyword('with'):
-        with_ = l.require(l.simple_expression)
-    else:
-        with_ = None
+    rv = finish_say(l, loc, None, what)
 
-    if what is not None and l.eol():
+    if (rv is not None) and l.eol():
+
         # We have a one-argument say statement.
         l.expect_noblock('say statement')
         l.advance()
-        return ast.Say(loc, None, what, with_)
+
+        return rv
 
     l.revert(state)
 
@@ -2446,21 +2479,15 @@ def say_statement(l, loc):
 
     what = l.string()
 
-    if l.keyword('nointeract'):
-        interact = False
-    else:
-        interact = True
+    if (who is not None) and (what is not None):
 
-    if l.keyword('with'):
-        with_ = l.require(l.simple_expression)
-    else:
-        with_ = None
+        rv = finish_say(l, loc, who, what, attributes)
 
-    if who and what is not None:
         l.expect_eol()
         l.expect_noblock('say statement')
         l.advance()
-        return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact)
+
+        return rv
 
     # This reports a parse error for any bad statement.
     l.error('expected statement.')

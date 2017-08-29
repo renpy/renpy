@@ -522,6 +522,7 @@ class Say(Node):
         'with_',
         'interact',
         'attributes',
+        'arguments',
         ]
 
     def diff_info(self):
@@ -531,9 +532,10 @@ class Say(Node):
         self = Node.__new__(cls)
         self.attributes = None
         self.interact = True
+        self.arguments = None
         return self
 
-    def __init__(self, loc, who, what, with_, interact=True, attributes=None):
+    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None):
 
         super(Say, self).__init__(loc)
 
@@ -552,6 +554,7 @@ class Say(Node):
         self.what = what
         self.with_ = with_
         self.interact = interact
+        self.arguments = arguments
 
         # A tuple of attributes that are applied to the character that's
         # speaking, or None to disable this behavior.
