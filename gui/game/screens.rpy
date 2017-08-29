@@ -414,7 +414,7 @@ style main_menu_version:
 ## this screen is intended to be used with one or more children, which are
 ## transcluded (placed) inside it.
 
-screen game_menu(title, scroll=None):
+screen game_menu(title, scroll=None, yinitial=0.0):
 
     style_prefix "game_menu"
 
@@ -438,6 +438,7 @@ screen game_menu(title, scroll=None):
                 if scroll == "viewport":
 
                     viewport:
+                        yinitial yinitial
                         scrollbars "vertical"
                         mousewheel True
                         draggable True
@@ -451,7 +452,7 @@ screen game_menu(title, scroll=None):
 
                     vpgrid:
                         cols 1
-                        yinitial 1.0
+                        yinitial yinitial
 
                         scrollbars "vertical"
                         mousewheel True
@@ -885,7 +886,7 @@ screen history():
     ## Avoid predicting this screen, as it can be very large.
     predict False
 
-    use game_menu(_("History"), scroll=("vpgrid" if gui.history_height else "viewport")):
+    use game_menu(_("History"), scroll=("vpgrid" if gui.history_height else "viewport"), yinitial=1.0):
 
         style_prefix "history"
 
