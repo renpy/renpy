@@ -376,14 +376,18 @@ def display_say(
         type,  # @ReservedAssignment
         checkpoint=True,
         ctc_timedpause=None,
-        ctc_force=False):
+        ctc_force=False,
+        advance=True):
+
+    if not interact:
+        advance = False
 
     if interact and (not renpy.game.preferences.skip_unseen) and (not renpy.game.context().seen_current(True)) and renpy.config.skipping == "fast":
         renpy.config.skipping = None
 
     # If we're in fast skipping mode, don't bother with say
     # statements at all.
-    if interact and renpy.config.skipping == "fast":
+    if advance and renpy.config.skipping == "fast":
 
         # Clears out transients.
         renpy.exports.with_statement(None)
@@ -418,6 +422,7 @@ def display_say(
 
     # If we're committed to skipping this statement, disable slow.
     elif (renpy.config.skipping and
+          advance and
           (renpy.game.preferences.skip_unseen or
            renpy.game.context().seen_current(True))):
         slow = False
@@ -439,103 +444,107 @@ def display_say(
         pause_end = dtt.pause_end
         pause_delay = dtt.pause_delay
 
-    for i, (start, end, delay) in enumerate(zip(pause_start, pause_end, pause_delay)):
+    try:
 
-        last_pause = (i == len(pause_start) - 1)
+        for i, (start, end, delay) in enumerate(zip(pause_start, pause_end, pause_delay)):
 
-        # If we're going to do an interaction, then saybehavior needs
-        # to be here.
-        if interact:
-            behavior = renpy.ui.saybehavior(allow_dismiss=renpy.config.say_allow_dismiss)
-        else:
-            behavior = None
+            last_pause = (i == len(pause_start) - 1)
 
-        # The string to show.
-        what_string = dtt.text
-
-        # Figure out the CTC to use, if any.
-        if last_pause:
-            what_ctc = ctc
-        else:
-            if delay is not None:
-                what_ctc = ctc_timedpause or ctc_pause
+            # If we're going to do an interaction, then saybehavior needs
+            # to be here.
+            if advance:
+                behavior = renpy.ui.saybehavior(allow_dismiss=renpy.config.say_allow_dismiss)
             else:
-                what_ctc = ctc_pause
+                behavior = None
 
-        if not (interact or ctc_force):
-            what_ctc = None
+            # The string to show.
+            what_string = dtt.text
 
-        what_ctc = renpy.easy.displayable_or_none(what_ctc)
+            # Figure out the CTC to use, if any.
+            if last_pause:
+                what_ctc = ctc
+            else:
+                if delay is not None:
+                    what_ctc = ctc_timedpause or ctc_pause
+                else:
+                    what_ctc = ctc_pause
 
-        if (what_ctc is not None) and what_ctc._duplicatable:
-            what_ctc = what_ctc._duplicate(None)
-            what_ctc._unique()
+            if not (interact or ctc_force):
+                what_ctc = None
 
-        if delay == 0:
-            what_ctc = None
+            what_ctc = renpy.easy.displayable_or_none(what_ctc)
 
-        # Create the callback that is called when the slow text is done.
-        slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay)
+            if (what_ctc is not None) and what_ctc._duplicatable:
+                what_ctc = what_ctc._duplicate(None)
+                what_ctc._unique()
 
-        # Run the show callback.
-        for c in callback:
-            c("show", interact=interact, type=type, **cb_args)
+            if delay == 0:
+                what_ctc = None
 
-        # Show the text.
-        what_text = show_function(who, what_string)
+            # Create the callback that is called when the slow text is done.
+            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay)
 
-        if not isinstance(what_text, renpy.text.text.Text):  # @UndefinedVariable
-            raise Exception("The say screen (or show_function) must return a Text object.")
+            # Run the show callback.
+            for c in callback:
+                c("show", interact=interact, type=type, **cb_args)
 
-        if what_ctc and ctc_position == "nestled":
-            what_text.set_ctc(what_ctc)
+            # Show the text.
+            what_text = show_function(who, what_string)
 
-        # Update the properties of the what_text widget.
-        what_text.start = start
-        what_text.end = end
-        what_text.slow = slow
-        what_text.slow_done = slow_done
+            if not isinstance(what_text, renpy.text.text.Text):  # @UndefinedVariable
+                raise Exception("The say screen (or show_function) must return a Text object.")
 
-        what_text.update()
+            if what_ctc and ctc_position == "nestled":
+                what_text.set_ctc(what_ctc)
 
-        for c in callback:
-            c("show_done", interact=interact, type=type, **cb_args)
+            # Update the properties of the what_text widget.
+            what_text.start = start
+            what_text.end = end
+            what_text.slow = slow
+            what_text.slow_done = slow_done
 
-        if behavior and afm:
-            behavior.set_text(what_text)
+            what_text.update()
 
-        if not slow:
-            slow_done()
+            for c in callback:
+                c("show_done", interact=interact, type=type, **cb_args)
 
+            if behavior and afm:
+                behavior.set_text(what_text)
+
+            if not slow:
+                slow_done()
+
+            if interact:
+                rv = renpy.ui.interact(mouse='say', type=type, roll_forward=roll_forward)
+
+                # This is only the case if the user has rolled forward, {nw} happens, or
+                # maybe in some other obscure cases.
+                if rv is False:
+                    break
+
+                if not last_pause:
+                    for i in renpy.config.say_sustain_callbacks:
+                        i()
+
+    finally:
+
+        # Do the checkpoint and with None.
         if interact:
-            rv = renpy.ui.interact(mouse='say', type=type, roll_forward=roll_forward)
 
-            # This is only the case if the user has rolled forward, {nw} happens, or
-            # maybe in some other obscure cases.
-            if rv is False:
-                break
+            if not dtt.no_wait:
+                if checkpoint:
+                    renpy.exports.checkpoint(True)
+            else:
+                renpy.game.after_rollback = after_rollback
 
-            if not last_pause:
-                for i in renpy.config.say_sustain_callbacks:
-                    i()
+            if with_none is None:
+                with_none = renpy.config.implicit_with_none
 
-    # Do the checkpoint and with None.
-    if interact:
+            if with_none:
+                renpy.game.interface.do_with(None, None)
 
-        if not dtt.no_wait:
-            if checkpoint:
-                renpy.exports.checkpoint(True)
-        else:
-            renpy.game.after_rollback = after_rollback
-
-        if with_none is None:
-            with_none = renpy.config.implicit_with_none
-
-        if with_none:
-            renpy.game.interface.do_with(None, None)
-
-    for c in callback:
-        c("end", interact=interact, type=type, **cb_args)
+        for c in callback:
+            c("end", interact=interact, type=type, **cb_args)
 
 
 class HistoryEntry(renpy.object.Object):
@@ -640,6 +649,7 @@ class ADVCharacter(object):
             with_none=d('with_none'),
             callback=d('callback'),
             type=d('type'),
+            advance=d('advance'),
             )
 
         self.properties = collections.defaultdict(dict)
