@@ -129,7 +129,7 @@ Preference("performance_test", True)
 Preference("language", None, (basestring, type(None)) )
 
 # Should we self-voice?
-Preference("self_voicing", False, (bool, basestring) )
+Preference("self_voicing", False, (bool, basestring, type(None)))
 
 # Should we emphasize audio?
 Preference("emphasize_audio", False)
