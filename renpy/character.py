@@ -809,6 +809,9 @@ class ADVCharacter(object):
 
     def __call__(self, what, interact=True, _call_done=True, **kwargs):
 
+        if kwargs:
+            return Character(kind=self, **kwargs)(what, interact=interact, _call_done=_call_done)
+
         # Check self.condition to see if we should show this line at all.
         if not (self.condition is None or renpy.python.py_eval(self.condition)):
             return True
@@ -842,7 +845,6 @@ class ADVCharacter(object):
 
             # Figure out the arguments to display.
             display_args = self.display_args.copy()
-            display_args.update(kwargs)
             display_args["interact"] = display_args["interact"] and interact
 
             who = self.name

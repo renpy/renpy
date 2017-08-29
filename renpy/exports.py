@@ -1111,7 +1111,7 @@ def scry_say(who, scry):
         scry.interacts = True
 
 
-def say(who, what, interact=True):
+def say(who, what, interact=True, *args, **kwargs):
     """
     :doc: se_say
 
@@ -1146,9 +1146,9 @@ def say(who, what, interact=True):
         who = renpy.store.narrator  # E1101 @UndefinedVariable
 
     if isinstance(who, (str, unicode)):
-        renpy.store.say(who, what, interact=interact)
+        renpy.store.say(who, what, interact=interact, *args, **kwargs)
     else:
-        who(what, interact=interact)
+        who(what, interact=interact, *args, **kwargs)
 
 
 def imagemap(ground, selected, hotspots, unselected=None, overlays=False,

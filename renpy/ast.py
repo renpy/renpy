@@ -608,12 +608,20 @@ class Say(Node):
 
             renpy.store._last_raw_what = what
 
+            if self.arguments is not None:
+                args, kwargs = self.arguments.evaluate()
+            else:
+                args = tuple()
+                kwargs = dict()
+
             if getattr(who, "record_say", True):
                 renpy.store._last_say_who = self.who
                 renpy.store._last_say_what = what
+                renpy.store._last_say_args = args
+                renpy.store._last_say_kwargs = kwargs
 
             say_menu_with(self.with_, renpy.game.interface.set_transition)
-            renpy.exports.say(who, what, interact=self.interact)
+            renpy.exports.say(who, what, interact=self.interact, *args, **kwargs)
 
         finally:
             renpy.game.context().say_attributes = None
