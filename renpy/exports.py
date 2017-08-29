@@ -1886,22 +1886,26 @@ def force_full_redraw():
     renpy.game.interface.full_redraw = True
 
 
-def do_reshow_say(who, what, interact=False):
+def do_reshow_say(who, what, interact=False, *args, **kwargs):
 
     if who is not None:
         who = renpy.python.py_eval(who)
 
-    say(who, what, interact=interact)
+    say(who, what, interact=interact, *args, **kwargs)
 
 
 curried_do_reshow_say = curry(do_reshow_say)
 
 
 def get_reshow_say(**kwargs):
+    kw = dict(renpy.store._last_say_kwargs)
+    kw.update(kwargs)
+
     return curried_do_reshow_say(
         renpy.store._last_say_who,
         renpy.store._last_say_what,
-        **kwargs)
+        renpy.store._last_say_args,
+        **kw)
 
 
 def reshow_say(**kwargs):

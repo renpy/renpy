@@ -115,7 +115,7 @@ init -1700 python:
 
     config.extend_interjection = "{fast}"
 
-    def extend(what, interact=True):
+    def extend(what, interact=True, *args, **kwargs):
         who = _last_say_who
         who = renpy.eval_who(who)
 
@@ -129,7 +129,11 @@ init -1700 python:
 
         what = _last_say_what + config.extend_interjection + _last_raw_what
 
-        renpy.exports.say(who, what, interact=interact)
+        args = args + _last_say_args
+        kw = dict(kwargs)
+        kw.update(_last_say_kwargs)
+
+        renpy.exports.say(who, what, interact=interact, *args, **kw)
         store._last_say_what = what
 
     extend.record_say = False

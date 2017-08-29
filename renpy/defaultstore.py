@@ -395,9 +395,11 @@ def say(who, what, interact=True):
     who(what, interact=interact)
 
 
-# Used by renpy.reshow_say.
+# Used by renpy.reshow_say and extend.
 _last_say_who = None
 _last_say_what = None
+_last_say_args = ()
+_last_say_kwargs = { }
 
 # Used to store the things pinned into the cache.
 _cache_pin_set = set()
