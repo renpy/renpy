@@ -248,9 +248,9 @@ init -1700 python:
         except:
             pass
 
-    def say(who, what, interact=True):
+    def say(who, what, interact=True, *args, **kwargs):
         who = Character(who, kind=name_only)
-        who(what, interact=interact)
+        who(what, interact=interact, *args, **kwargs)
 
     ##########################################################################
     # Misc.
