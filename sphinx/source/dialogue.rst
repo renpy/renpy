@@ -131,6 +131,7 @@ is equivalent to::
 To cause a transition to occur whenever the images are changed in this way, set
 :var:`config.say_attribute_transition` to a transition.
 
+
 Example Characters
 ------------------
 
@@ -268,6 +269,21 @@ Dialogue window management is subject to the "show empty window"
 :func:`Preference`. If the preference is disabled, the statements above
 have no effect.
 
+
+Say with Arguments
+------------------
+
+Additional arguments can be passed to the say statement by including them
+in parenthesis after the say statement. For example, one can write::
+
+    e "Hello, world." (what_color="#8c8")
+
+Arguments to the Say statement are first processed by var:`config.say_arguments_callback`,
+if it is not None. If any remain, they are then passed to the character,
+which treats them as if they were present when the character was defined.
+So, the example above displays the dialogue in green.
+
+
 Python Equivalents
 ------------------
 
@@ -299,6 +315,25 @@ This character can then be used alongside a variable in the default store::
         e = 100
 
         e "Our starting energy is [e] units."
+
+A say with arguments sees the arguments passed to the function. For example::
+
+    e "Hello, world." (what_size=32)
+
+is equivalent to::
+
+    e("Hello, world.", interact=True, what_size=32)
+
+When e is a Character, this is further equivalent to::
+
+    Character(kind=e, what_size=32)("Hello, world.", interact=True)
+
+But it's possible to use var:`config.say_arguments_callback` or
+have `e` wrap a character to do things differently.
+
+
+
+
 
 Window management is performed by setting the :var:`_window` and
 :var:`_window_auto` variables, and by using the following two functions:

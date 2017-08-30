@@ -713,6 +713,25 @@ Occasionally Used
     beginning with an underscore (_). These keys are used by Ren'Py,
     and should not be changed.
 
+.. var:: config.say_arguments_callback = None
+
+    If not None, this should be a function that takes the speaking character,
+    followed by positional and keyword arguments. It's called whenever a
+    say statement occurs with the arguments to that say statment. This
+    always includes an interact argument, and can include others provided
+    in the say statement.
+
+    This should return a pair, containing a tuple of positional arguments
+    (almost always empty), and a dictionary of keyword arguments (almost
+    always with at least interact in it.
+
+    For example::
+
+        def say_arguments_callback(who, interact=True, color="#fff"):
+            return (), { "interact" : interact, "what_color" : color" }
+
+        config.say_arguments_callback = say_arguments_callback
+
 .. var:: config.screen_height = 600
 
     The height of the screen. Usually set by :func:`gui.init`.
