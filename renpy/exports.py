@@ -1111,7 +1111,7 @@ def scry_say(who, scry):
         scry.interacts = True
 
 
-def say(who, what, interact=True, *args, **kwargs):
+def say(who, what, *args, **kwargs):
     """
     :doc: se_say
 
@@ -1129,6 +1129,7 @@ def say(who, what, interact=True, *args, **kwargs):
     `interact`
         If true, Ren'Py waits for player input when displaying the dialogue. If
         false, Ren'Py shows the dialogue, but does not perform an interaction.
+        (This is passed in as a keyword argument.)
 
     This function is rarely necessary, as the following three lines are
     equivalent. ::
@@ -1145,10 +1146,13 @@ def say(who, what, interact=True, *args, **kwargs):
     if who is None:
         who = renpy.store.narrator  # E1101 @UndefinedVariable
 
+    if renpy.config.say_arguments_callback:
+        args, kwargs = renpy.config.say_arguments_callback(who, *args, **kwargs)
+
     if isinstance(who, (str, unicode)):
-        renpy.store.say(who, what, interact=interact, *args, **kwargs)
+        renpy.store.say(who, what, *args, **kwargs)
     else:
-        who(what, interact=interact, *args, **kwargs)
+        who(what, *args, **kwargs)
 
 
 def imagemap(ground, selected, hotspots, unselected=None, overlays=False,

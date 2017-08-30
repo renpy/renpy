@@ -787,6 +787,9 @@ cache_surfaces = True
 # Should {nw} wait for voice.
 nw_voice = True
 
+# If not None, a function that's used to process say arguments.
+say_arguments_callback = None
+
 del os
 del collections
 
