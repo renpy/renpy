@@ -41,7 +41,7 @@ init 1900 python hide:
             basename = os.path.basename(fn)
             base, ext = os.path.splitext(basename)
 
-            if not ext.lower() in [ ".jpg", ".png", ".webp" ]:
+            if not ext.lower() in [ ".jpg", ".jpeg", ".png", ".webp" ]:
                 continue
 
             base = base.lower()

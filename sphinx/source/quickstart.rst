@@ -281,7 +281,7 @@ happens on line 26.
 Ren'Py searches for image files in the images directory, which can be
 found by selecting "images" in the "Open Directory" section of the
 launcher. Ren'Py expects character art to be an PNG or WEBP file,
-while background art should be a JPEG, PNG, or WEBP file.
+while background art should be a JPG, JPEG, PNG, or WEBP file.
 The name of a file  is very important - the extension is removed, the file
 name is forced to lower-case, and that's used as the image name.
 
