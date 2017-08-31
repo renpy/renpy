@@ -304,6 +304,12 @@ init -1500 python:
             self.sustain = _voice.sustain
             self.tag = _voice.tag
 
+            if self.sustain:
+                try:
+                    self.filename = _last_voice_play
+                except:
+                    pass
+
             if not self.filename and config.auto_voice:
                 tlid = renpy.game.context().translate_identifier
 
@@ -348,6 +354,12 @@ init -1500 python:
         .. attribute:: VoiceInfo.tag
 
             The voice_tag parameter supplied to the speaking Character.
+
+        .. attribute:: VoiceInfo.sustain
+
+            False if the file was played as part of this interaction. True if
+            it was sustained from a previous interaction.
+
         """
 
         vi = VoiceInfo()
