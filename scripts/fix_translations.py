@@ -7,7 +7,9 @@ import codecs
 
 ENDINGS = [
     ".rpy",
+    ".rpym",
     ]
+
 
 def process_file(fn):
 
@@ -36,6 +38,7 @@ def process_file(fn):
     with open(fn, "wb") as f:
         f.write(codecs.BOM_UTF8 + "".join(lines))
 
+
 def process(root):
 
     for dirname, _dirs, files in os.walk(root):
@@ -43,9 +46,12 @@ def process(root):
             fn = os.path.join(dirname, fn)
             process_file(fn)
 
+
 os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 process("launcher/game/tl")
 process("templates")
 process("tutorial/game/tl")
+process("the_question/game/tl")
+process("gui")
