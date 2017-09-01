@@ -1,4 +1,4 @@
-
+﻿
 # game/indepth_text.rpy:22
 translate russian a_label_8d79d234:
 

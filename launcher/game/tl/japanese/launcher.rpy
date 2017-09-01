@@ -1197,7 +1197,6 @@ translate japanese strings:
     old "PROJECTS:"
     new "プロジェクト:"
 
-# TODO: Translation updated at 2017-08-04 17:26
 
 translate japanese strings:
 

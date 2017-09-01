@@ -3,7 +3,7 @@
 # استعمل السطر التالي لإظهار الصور في شاشة اللعب
 # image eileen happy = "eileen_happy.png"
 
-# من هي شخصيات هذه اللعبه؟ 
+# من هي شخصيات هذه اللعبه؟
 define e = Character('إيلين', color="#c8ffc8")
 
 init python:

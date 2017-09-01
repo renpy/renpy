@@ -1,4 +1,4 @@
-
+﻿
 translate russian strings:
 
     # screens.rpy:261

@@ -27,7 +27,7 @@ label start:
     # スプライト（立ち絵）を表示します。ここではプレースホルダーを使用していますが、
     # images ディレクトリーに "eileen happy.png" と命名したファイルを追加すると
     # 表示することができます。
-    
+
     # at ステートメントは画像の表示する位置を調整します。
     # at center は中央に下揃えで表示します。これは省略しても同じ結果になります。
     # その他に at right、at left などがデフォルトで定義されています。
@@ -36,18 +36,18 @@ label start:
 
     # トランジション（画面遷移効果）を使って表示を画面に反映させます。
     # 台詞を表示するか with None を使うと、トランジション無しで直ちに表示します。
-    
+
     with dissolve
-    
+
     # 音楽を再生します。ここではタグを利用して無音を再生していますが、
     # game ディレクトリーに "music.ogg" と命名したファイルを追加すると
     # play music "music.ogg" の形で再生することができます。
-    
+
     # 効果音を再生する時は play audio "filename" を使用します。
     # play music とは違って複数の効果音を同時に再生することができます。
-    
-    play music "<silence .5>" 
-    
+
+    play music "<silence .5>"
+
     # 以下は台詞を表示します。
 
     "Hello, world."
@@ -59,4 +59,4 @@ label start:
     # return でゲームを終了します。
 
     return
-    
+

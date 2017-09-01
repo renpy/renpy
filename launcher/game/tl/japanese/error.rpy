@@ -177,7 +177,6 @@ translate japanese strings:
     old "Copies the errors.txt file to the clipboard."
     new "errors.txt をクリップボードにコピーします。"
 
-# TODO: Translation updated at 2017-08-04 17:26
 
 translate japanese strings:
 

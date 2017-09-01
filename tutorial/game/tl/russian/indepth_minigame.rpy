@@ -1,4 +1,4 @@
-
+﻿
 # game/indepth_minigame.rpy:219
 translate russian demo_minigame_8f14835c:
 

@@ -333,7 +333,6 @@ translate japanese strings:
     old "return"
     new "戻る"
 
-# TODO: Translation updated at 2017-08-04 17:26
 
 translate japanese strings:
 

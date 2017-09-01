@@ -1,4 +1,4 @@
-
+﻿
 # game/tutorial_quickstart.rpy:28
 translate russian tutorial_create_27048c11:
 

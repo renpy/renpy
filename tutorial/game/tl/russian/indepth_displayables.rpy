@@ -1,4 +1,4 @@
-
+﻿
 # game/indepth_displayables.rpy:15
 translate russian simple_displayables_db46fd25:
 

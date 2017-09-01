@@ -663,7 +663,6 @@ translate japanese strings:
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
     new "## 小さな黒い矢印型のグリフが入ったフォントが必要になります。"
 
-# TODO: Translation updated at 2017-08-04 17:26
 
 translate japanese strings:
 

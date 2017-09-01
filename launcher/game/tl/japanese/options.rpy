@@ -194,7 +194,6 @@ translate japanese strings:
     new "## itch.io project に関連付けられたユーザー名とプロジェクト名。二つの名前はスラッシュで分けてください。"
 
 
-# TODO: Translation updated at 2017-08-04 17:26
 
 translate japanese strings:
 

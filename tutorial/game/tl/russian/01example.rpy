@@ -1,4 +1,4 @@
-
+﻿
 translate russian strings:
 
     # 01example.rpy:472

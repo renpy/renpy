@@ -1,4 +1,4 @@
-
+﻿
 # game/script.rpy:156
 translate russian start_0e6a5bb4:
 
