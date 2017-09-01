@@ -709,10 +709,6 @@ class Transform(Container):
         self.hide_request = t.hide_request
         self.replaced_request = t.replaced_request
 
-        self.tranform_event = t.transform_event
-        self.last_transform_event = t.last_transform_event
-        self.last_child_transform_event = t.last_child_transform_event
-
         self.state.xpos = t.state.xpos
         self.state.ypos = t.state.ypos
         self.state.xanchor = t.state.xanchor
