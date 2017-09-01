@@ -502,9 +502,10 @@ class ATLTransformBase(renpy.object.Object):
             block = self.compile()
 
         # Propagate transform_events from children.
-        if self.child:
-            if self.child.transform_event != self.last_child_transform_event:
-                self.last_child_transform_event = self.child.transform_event
+        if (self.child is not None) and self.child.transform_event != self.last_child_transform_event:
+            self.last_child_transform_event = self.child.transform_event
+
+            if self.child.transform_event is not None:
                 self.transform_event = self.child.transform_event
 
         # Hide request.
