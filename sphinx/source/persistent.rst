@@ -59,6 +59,7 @@ union of that set when merging data. ::
         def merge_endings(old, new, current):
             current.update(old)
             current.update(new)
+            return current
 
         renpy.register_persistent('endings', merge_endings)
 
