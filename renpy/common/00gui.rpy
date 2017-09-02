@@ -203,17 +203,20 @@ init -1100 python in gui:
 
         rv = { }
 
-        xalign = get("text_xalign")
-
         if accent and (accent_color is not None):
             rv["color"] = accent_color
 
-        if xalign is not None:
-            rv["xalign"] = xalign
-            rv["text_align"] = xalign
 
-            if (xalign > 0) and (xalign < 1):
-                rv["layout"] = "subtitle"
+        if kind is not None:
+
+            xalign = get("text_xalign")
+
+            if xalign is not None:
+                rv["xalign"] = xalign
+                rv["text_align"] = xalign
+
+                if (xalign > 0) and (xalign < 1):
+                    rv["layout"] = "subtitle"
 
         for prefix in renpy.sl2.slparser.STYLE_PREFIXES:
             for property in renpy.sl2.slproperties.text_property_names:
