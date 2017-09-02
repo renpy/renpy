@@ -372,8 +372,6 @@ class ATLTransformBase(renpy.object.Object):
         self.st_offset = t.st_offset
         self.at_offset = t.at_offset
 
-        self.atl_st_offset = t.atl_st_offset
-
         if self.child is renpy.display.motion.null:
             self.child = t.child
             self.raw_child = t.raw_child
