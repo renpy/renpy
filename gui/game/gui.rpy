@@ -2,8 +2,8 @@
 ## Initialization
 ################################################################################
 
-## The init offset statement causes the init code in this file to run before
-## init code in any other file.
+## The init offset statement causes the initialization statements in this file
+## to run before init statements in any other file.
 init offset = -2
 
 ## Calling gui.init resets the styles to sensible default values, and sets the
@@ -279,7 +279,7 @@ define gui.main_menu_text_xalign = 1.0
 ## These variables control the look of frames that can contain user interface
 ## components when an overlay or window is not present.
 
-## Generic frames that are introduced by player code.
+## Generic frames.
 define gui.frame_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
 ## The frame that is used as part of the confirm screen.
@@ -300,7 +300,7 @@ define gui.frame_tile = False
 ## These control the look and size of bars, scrollbars, and sliders.
 ##
 ## The default GUI only uses sliders and vertical scrollbars.
-## All of the other bars are only used in creator-written code.
+## All of the other bars are only used in creator-written screens.
 
 ## The height of horizontal bars, scrollbars, and sliders. The width of
 ## vertical bars, scrollbars, and sliders.
