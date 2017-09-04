@@ -142,6 +142,18 @@ init python in project:
 
                 data["renamed_all"] = True
 
+            if "renamed_steam" not in data:
+                dp = data["packages"]
+
+                if "steam" in dp:
+                    dp.remove("steam")
+
+                    if "market" not in dp:
+                        dp.append("market")
+
+                data["renamed_steam"] = True
+
+
         def make_tmp(self):
             """
             Makes the project's temporary directory, if it doesn't exist
