@@ -396,7 +396,8 @@ def zoom_render(crend, x, y, w, h, zw, zh, bilinear):
     rv.forward = renpy.display.render.Matrix2D(w / zw, 0, 0, h / zh)
     rv.reverse = renpy.display.render.Matrix2D(zw / w, 0, 0, zh / h)
 
-    rv.clipping = True
+    rv.xclipping = True
+    rv.yclipping = True
 
     rv.blit(crend, rv.reverse.transform(-x, -y))
 

@@ -189,7 +189,8 @@ def transform_render(self, widtho, heighto, st, at):
         if state.rotate:
             clipcr = Render(width, height)
             clipcr.subpixel_blit(cr, (-negative_xo, -negative_yo))
-            clipcr.clipping = True
+            clipcr.xclipping = True
+            clipcr.yclipping = True
             cr = clipcr
         else:
             xo = -negative_xo
@@ -344,7 +345,8 @@ def transform_render(self, widtho, heighto, st, at):
     rv.alpha = alpha
 
     rv.over = 1.0 - state.additive
-    rv.clipping = clipping
+    rv.xclipping = clipping
+    rv.yclipping = clipping
 
     pos = (xo, yo)
 

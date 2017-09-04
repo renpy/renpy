@@ -435,7 +435,7 @@ def draw(dest, clip, what, xo, yo, screen):
         return
 
     # Deal with clipping, if necessary.
-    if what.clipping:
+    if what.xclipping or what.yclipping:
 
         if clip:
             cx0, cy0, cx1, cy1 = clip
@@ -568,7 +568,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
     if what.text_input:
         renpy.display.interface.text_rect = what.screen_rect(xo, yo, reverse)
 
-    if what.clipping:
+    if what.xclipping or what.yclipping:
 
         if reverse.xdy or reverse.ydx:
             draw_transformed(dest, clip, what.pygame_surface(True), xo, yo, alpha, forward, reverse)

@@ -818,7 +818,7 @@ cdef class GLDraw:
 
         render_what = False
 
-        if rend.clipping and non_aligned:
+        if (rend.xclipping or rend.yclipping) and non_aligned:
             if rend.forward.xdy != 0 or rend.forward.ydx != 0:
                 render_what = True
                 non_aligned = False
@@ -982,7 +982,7 @@ cdef class GLDraw:
 
 
         # Compute clipping.
-        if rend.clipping:
+        if rend.xclipping or rend.yclipping:
 
             # Non-aligned clipping uses RTT.
             if reverse.ydx != 0 or reverse.xdy != 0:
@@ -996,10 +996,13 @@ cdef class GLDraw:
             # surface.
             tw, th = reverse.transform(what.width, what.height)
 
-            minx = max(minx, min(xo, xo + tw))
-            maxx = min(maxx, max(xo, xo + tw))
-            miny = max(miny, min(yo, yo + th))
-            maxy = min(maxy, max(yo, yo + th))
+            if rend.xclipping:
+                minx = max(minx, min(xo, xo + tw))
+                maxx = min(maxx, max(xo, xo + tw))
+
+            if rend.yclipping:
+                miny = max(miny, min(yo, yo + th))
+                maxy = min(maxy, max(yo, yo + th))
 
             clip = (minx, miny, maxx, maxy)
 

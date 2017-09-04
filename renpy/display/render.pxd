@@ -59,7 +59,8 @@ cdef class Render:
     cdef public bint opaque
     cdef public list visible_children
 
-    cdef public bint clipping
+    cdef public bint xclipping
+    cdef public bint yclipping
 
     cdef public object surface, alpha_surface, half_cache
 

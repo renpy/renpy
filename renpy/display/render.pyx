@@ -608,7 +608,8 @@ cdef class Render:
         self.visible_children = self.children
 
         # Should children be clipped to a rectangle?
-        self.clipping = False
+        self.xclipping = False
+        self.yclipping = False
 
         # Caches of the texture created by rendering this surface.
         self.surface = None
@@ -818,7 +819,26 @@ cdef class Render:
             # This doesn't actually make a subsurface, as we can't easily do
             # so for non-rectangle-aligned renders.
 
-            rv.clipping = True
+            rv.xclipping = True
+            rv.yclipping = True
+
+            # Try to avoid clipping if a surface fits entirely inside the
+            # rectangle.
+
+            if (reverse.xdx > 0.0 and
+                reverse.xdy == 0.0 and
+                reverse.ydx == 0.0 and
+                reverse.ydy > 0.0):
+
+                tx, ty = self.forward.transform(x, y)
+                tw, th = self.forward.transform(w + x, h + y)
+
+                if (tx <= 0) and (tw >= self.width):
+                    rv.xclipping = False
+
+                if (ty <= 0) and (th >= self.height):
+                    rv.yclipping = False
+
             rv.blit(self, (-x, -y), focus=focus, main=True)
             return rv
 
@@ -841,22 +861,30 @@ cdef class Render:
             crop = None
 
             try:
-                if isinstance(child, Render) and not child.clipping:
-                    crop = (cx, cy, w - xo, h - yo)
+                if isinstance(child, Render):
+
+                    if child.xclipping:
+                        cropw = cw
+                    else:
+                        cropw = w - xo
+
+                    if child.yclipping:
+                        croph = ch
+                    else:
+                        croph = h - yo
+
+                    crop = (cx, cy, cropw, croph)
                     newchild = child.subsurface(crop, focus=focus)
                     newchild.width = cw
                     newchild.height = ch
                     newchild.render_of = child.render_of[:]
 
-                elif isinstance(child, Render):
-                    crop = (cx, cy, cw, ch)
-                    newchild = child.subsurface(crop, focus=focus)
-                    renpy.display.draw.mutated_surface(newchild)
-
                 else:
+
                     crop = (cx, cy, cw, ch)
                     newchild = child.subsurface(crop)
                     renpy.display.draw.mutated_surface(newchild)
+
             except:
                 raise Exception("Creating subsurface failed. child size = ({}, {}), crop = {!r}".format(childw, childh, crop))
 
@@ -1039,10 +1067,12 @@ cdef class Render:
 
                 focuses.append(renpy.display.focus.Focus(d, arg, minx, miny, maxx - minx, maxy - miny, screen))
 
-        if self.clipping:
+        if self.xclipping:
             cminx = max(cminx, x)
-            cminy = max(cminy, y)
             cmaxx = min(cmaxx, x + self.width)
+
+        if self.yclipping:
+            cminy = max(cminy, y)
             cmaxy = min(cmaxx, x + self.height)
 
         for child, xo, yo, focus, main in self.children:
@@ -1064,8 +1094,12 @@ cdef class Render:
         if self.focus_screen is not None:
             screen = self.focus_screen
 
-        if self.clipping:
-            if x < 0 or x >= self.width or y < 0 or y >= self.height:
+        if self.xclipping:
+            if x < 0 or x >= self.width:
+                return None
+
+        if self.yclipping:
+            if y < 0 or y >= self.height:
                 return None
 
         if self.operation == IMAGEDISSOLVE:
