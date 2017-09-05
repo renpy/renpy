@@ -88,8 +88,7 @@ init -1500 python in build:
         ( "lib/windows-i686/**", "windows"),
 
         # Linux patterns.
-        ( "lib/linux-x86_64/**", "linux"),
-        ( "lib/linux-i686/**", "linux"),
+        ( "lib/linux-*/**", "linux"),
 
         # Mac patterns
         ( "lib/darwin-x86_64/**", "mac"),
