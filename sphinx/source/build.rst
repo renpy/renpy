@@ -7,27 +7,33 @@ project to determine the files to include in the distribution, will
 create any archives that are necessary, and will build package and
 update files.
 
-With no configuration, Ren'Py will build the following four kinds of
+With no configuration, Ren'Py is able to build the following kinds of
 packages:
 
-All Desktop Platforms
+PC: Windows and Linux
 
-   A zip file targeting Windows x86, Macintosh x86, Linux x86, and
-   Linux x86_64.
+    A zip file targeting Windows x86, Linux x86, and Linux x86_64.
 
 Linux x86/x86_64
 
-   A tar.bz2 file targeting Linux x86 and Linux x86_64.
+    A tar.bz2 file targeting Linux x86 and Linux x86_64.
 
-Macintosh x86
+Macintosh x86_64
 
-   A zip file containing a Macintosh application targeting Macintosh
-   OS X on Intel processors. Game data will be included inside the
-   application, which appears to the user as a single file.
+    A zip file containing a Macintosh application targeting Macintosh
+    OS X on Intel processors. Game data will be included inside the
+    application, which appears to the user as a single file.
 
 Windows x86
 
    A zip file targeting Windows x86.
+
+Windows, Mac, and Linux for Markets
+
+   A distribution that contains the information required to run on
+   software markets like itch.io and Steam. This isn't meant to be
+   run directly (and probably won't work on the Mac), but should be
+   fed to the app store upload process.
 
 .. warning::
 
@@ -282,4 +288,12 @@ The following variables provide further control of the build process:
 
     This is set to False when :func:`gui.init` is called.
 
+.. var:: build.itch_project = None
 
+    Setting this allows the Ren'Py launcher to upload your project to
+    itch.io. This should be set to the name of a project registered
+    with itch. (For example, "renpytom/the-question").
+
+    Once this is set, after the distributions have been built, you can
+    click "Build distributions", "Upload to itch.io" to cause an upload
+    to occur.

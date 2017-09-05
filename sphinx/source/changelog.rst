@@ -110,6 +110,9 @@ The Indonesian translation has been updated.
 Other
 -----
 
+The "steam" package has been renamed to "market", reflecting that it will
+work just as well with other markets.
+
 In ATL, interpolation statement with a warper now last one frame. This means
 that the ``pause 0`` statement now completes after one frame, rather than
 instantaneously, allowing for single-frame animations. Please do not use this
@@ -164,8 +167,10 @@ or both kinds of scrollbars, the position property is passed to the side
 container that holds the viewport and scrollbars. This makes it possible to
 position viewports and vpgrids using the same syntax as other displayables.
 
-Fixed a problem that prevented uploading to itch.io from Windows from
-working.
+Itch.io support has been improved. A problem that prevented uploading to
+itch.io from Windows has been fixed. The table of channels to upload to
+has been updated, and now takes advantage of butlers's new support for
+uploading Linux bz2 and Android apk files.
 
 Creator-defined statements can run a function at init time, in addition
 to the function run when the statement executes normally. Creator-defined
