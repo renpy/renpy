@@ -69,18 +69,25 @@ label itch:
             fn = os.path.join(destination, fn)
 
             if fn.endswith("-all.zip"):
-                channel = "all"
+                channel = "win-osx-linux"
+
+            elif fn.endswith("-market.zip"):
+                channel = "win-osx-linux"
+
+            elif fn.endswith("-pc.zip"):
+                channel = "win-linux"
 
             elif fn.endswith("-win.zip"):
                 channel = "win"
 
             elif fn.endswith("-mac.zip"):
-                channel = "mac"
+                channel = "osx"
 
-# Butler doesn't seem to support .bz2s yet.
+            elif fn.endswith("-linux.tar.bz2"):
+                channel = "linux"
 
-#             elif fn.endswith("-linux.tar.bz2"):
-#                 channel = "linux"
+            elif fn.endswith("-release.apk"):
+                channel = "android"
 
             else:
                 continue
