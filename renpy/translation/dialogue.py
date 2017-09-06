@@ -218,6 +218,10 @@ class DialogueFile(object):
 
                     if self.escape:
                         what = quote_unicode(what)
+                    elif self.tdf:
+                        what = what.replace("\\", "\\\\")
+                        what = what.replace("\t", "\\t")
+                        what = what.replace("\n", "\\n")
 
                     if self.tdf:
 
@@ -266,6 +270,11 @@ class DialogueFile(object):
 
             if self.escape:
                 s = quote_unicode(s)
+
+            elif self.tdf:
+                s = s.replace("\\", "\\\\")
+                s = s.replace("\t", "\\t")
+                s = s.replace("\n", "\\n")
 
             if self.tdf:
                 lines.append(["", "", s, filename, str(line)])
