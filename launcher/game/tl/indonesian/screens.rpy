@@ -1,4 +1,4 @@
-﻿
+
 translate indonesian strings:
 
     # screens.rpy:9
@@ -682,5 +682,36 @@ translate indonesian strings:
 
     # screens.rpy:1233
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
-    new "## Kami harus menggunakan font yang mempunyai glyph BLACK RIGHT-POINTING SMALL TRIANGLE."
+    new "## Kami harus menggunakan font yang mempunyai glyph BLACK RIGHT-POINTING SMALL TRIANGLE di dalam nya."
+
+
+translate indonesian strings:
+
+    # screens.rpy:120
+    old "## Make the namebox available for styling through the Character object."
+    new "## Buat namebox tersedia untuk gaya melalui objek karakter."
+
+    # screens.rpy:172
+    old "## https://www.renpy.org/doc/html/screen_special.html#input"
+    new "## https://www.renpy.org/doc/html/screen_special.html#input"
+
+    # screens.rpy:205
+    old "## https://www.renpy.org/doc/html/screen_special.html#choice"
+    new "## https://www.renpy.org/doc/html/screen_special.html#choice"
+
+    # screens.rpy:350
+    old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+    new "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+
+    # screens.rpy:917
+    old "## This determines what tags are allowed to be displayed on the history screen."
+    new "## Ini menentukan tag apa yang diizinkan ditampilkan di layar sejarah/catatan."
+
+    # screens.rpy:1133
+    old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+    new "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+
+    # screens.rpy:1290
+    old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+    new "## https://www.renpy.org/doc/html/screen_special.html#nvl"
 
