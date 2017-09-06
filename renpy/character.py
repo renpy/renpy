@@ -409,10 +409,10 @@ def display_say(
     for c in callback:
         c("begin", interact=interact, type=type, **cb_args)
 
-    if renpy.exports.roll_forward_info():
+    roll_forward = renpy.exports.roll_forward_info()
+
+    if roll_forward is True:
         roll_forward = False
-    else:
-        roll_forward = None
 
     # If we're just after a rollback or roll_forward, disable slow.
     after_rollback = renpy.game.after_rollback
@@ -443,6 +443,8 @@ def display_say(
         pause_start = dtt.pause_start
         pause_end = dtt.pause_end
         pause_delay = dtt.pause_delay
+
+    exception = None
 
     try:
 
@@ -522,29 +524,41 @@ def display_say(
                 if rv is False:
                     break
 
+                if isinstance(rv, (renpy.game.JumpException, renpy.game.CallException)):
+                    raise rv
+
                 if not last_pause:
                     for i in renpy.config.say_sustain_callbacks:
                         i()
 
-    finally:
+    except (renpy.game.JumpException, renpy.game.CallException) as e:
 
-        # Do the checkpoint and with None.
-        if interact:
+        exception = e
 
-            if not dtt.no_wait:
-                if checkpoint:
+    # Do the checkpoint and with None.
+    if interact:
+
+        if not dtt.no_wait:
+            if checkpoint:
+                if exception is None:
                     renpy.exports.checkpoint(True)
-            else:
-                renpy.game.after_rollback = after_rollback
+                else:
+                    renpy.exports.checkpoint(exception)
 
-            if with_none is None:
-                with_none = renpy.config.implicit_with_none
+        else:
+            renpy.game.after_rollback = after_rollback
 
-            if with_none:
-                renpy.game.interface.do_with(None, None)
+        if with_none is None:
+            with_none = renpy.config.implicit_with_none
 
-        for c in callback:
-            c("end", interact=interact, type=type, **cb_args)
+        if with_none:
+            renpy.game.interface.do_with(None, None)
+
+    for c in callback:
+        c("end", interact=interact, type=type, **cb_args)
+
+    if exception is not None:
+        raise
 
 
 class HistoryEntry(renpy.object.Object):
