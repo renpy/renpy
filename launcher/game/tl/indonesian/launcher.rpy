@@ -1,4 +1,4 @@
-﻿
+
 translate indonesian strings:
 
     # about.rpy:39
@@ -1204,4 +1204,71 @@ translate indonesian strings:
     # preferences.rpy:181
     old "Legacy options"
     new "Opsi Legasi"
+
+
+translate indonesian strings:
+
+    # android.rpy:304
+    old "Android: [project.current.display_name!q]"
+    new "Android: [project.current.display_name!q]"
+
+    # distribute_gui.rpy:157
+    old "Build Distributions: [project.current.display_name!q]"
+    new "Distribusi Build: [project.current.display_name!q]"
+
+    # gui7.rpy:372
+    old "WIDTH"
+    new "LEBAR"
+
+    # gui7.rpy:372
+    old "Please enter the width of your game, in pixels."
+    new "Tolong masukkan lebar dari game mu, dalam pixel."
+
+    # gui7.rpy:377
+    old "The width must be a number."
+    new "Ukuran lebar harus dalam angka."
+
+    # gui7.rpy:379
+    old "HEIGHT"
+    new "TINGGI"
+
+    # gui7.rpy:379
+    old "Please enter the height of your game, in pixels."
+    new "Tolong masukkan tinggi dari game mu, dalam pixel."
+
+    # gui7.rpy:384
+    old "The height must be a number."
+    new "Ukuran tinggi harus dalam angka."
+
+    # interface.rpy:136
+    old "Ren'Py Sponsor Information"
+    new "Informasi Sponsor Ren'Py"
+
+    # ios.rpy:211
+    old "iOS: [project.current.display_name!q]"
+    new "iOS: [project.current.display_name!q]"
+
+    # navigation.rpy:168
+    old "Navigate: [project.current.display_name!q]"
+    new "Navigasi: [project.current.display_name!q]"
+
+    # new_project.rpy:71
+    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
+    new "Kamu akan membuat bahasa proyek : [new_project_language]. Ganti bahasa launcher di pengaturan untuk membuat proyek dalam bahasa lain."
+
+    # preferences.rpy:187
+    old "Force new tutorial"
+    new "Paksa tutorial baru"
+
+    # preferences.rpy:194
+    old "Sponsor message"
+    new "Pesan sponsor"
+
+    # translations.rpy:92
+    old "Translations: [project.current.display_name!q]"
+    new "Penerjemah : [project.current.display_name!q]"
+
+    # translations.rpy:343
+    old "Extract Dialogue: [project.current.display_name!q]"
+    new "Extrak Dialog: [project.current.display_name!q]"
 
