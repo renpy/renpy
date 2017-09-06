@@ -3,23 +3,23 @@ translate indonesian strings:
 
     # screens.rpy:9
     old "## Styles"
-    new "## Styles"
+    new "## Gaya"
 
     # screens.rpy:87
     old "## In-game screens"
-    new "## In-game screens"
+    new "## Layar In-game"
 
     # screens.rpy:91
     old "## Say screen"
-    new "## Say screen"
+    new "## Layar Say"
 
     # screens.rpy:93
     old "## The say screen is used to display dialogue to the player. It takes two parameters, who and what, which are the name of the speaking character and the text to be displayed, respectively. (The who parameter can be None if no name is given.)"
-    new "## The say screen is used to display dialogue to the player. It takes two parameters, who and what, which are the name of the speaking character and the text to be displayed, respectively. (The who parameter can be None if no name is given.)"
+    new "## Layar say di gunakan untuk menampilkan dialog kepada pemain. Ini menggunakan dua parameter, who dan what, yang merupakan nama karakter yang berbicara dan text yang akan di tampilkan, masing-masing. (Kedua parameter dapat berisi None jika tidak ada nama yang di berikan."
 
     # screens.rpy:98
     old "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. It can also create displayables with id \"who\" and id \"window\" to apply style properties."
-    new "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. It can also create displayables with id \"who\" and id \"window\" to apply style properties."
+    new "## Layar ini harus membuat text yang dapat di tampilkan dengan id \"what\", yang di mana Ren'Py menggunakan ini untuk mengatur tampilan text. Ini juga dapat membuat sesuatu yang dapat di tampilkan dengan id \"who\" dan id \"window\" untuk mengaplikasikan properti gaya."
 
     # screens.rpy:102
     old "## https://www.renpy.org/doc/html/screen_special.html#say"
@@ -27,15 +27,15 @@ translate indonesian strings:
 
     # screens.rpy:169
     old "## Input screen"
-    new "## Input screen"
+    new "## Layar masukkan/input"
 
     # screens.rpy:171
     old "## This screen is used to display renpy.input. The prompt parameter is used to pass a text prompt in."
-    new "## This screen is used to display renpy.input. The prompt parameter is used to pass a text prompt in."
+    new "## Layar ini di gunakan untuk menampilkan renpy.input. Parameter prompt digunakan untuk meneruskan text yang di prompt/minta."
 
     # screens.rpy:174
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
-    new "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
+    new "## Layar ini harus membuat input yang dapat di tampilkan dengan id \"input\" untuk menerima berbagai parameter masukan."
 
     # screens.rpy:177
     old "## http://www.renpy.org/doc/html/screen_special.html#input"
@@ -43,11 +43,11 @@ translate indonesian strings:
 
     # screens.rpy:205
     old "## Choice screen"
-    new "## Choice screen"
+    new "## Layar Pilihan"
 
     # screens.rpy:207
     old "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
-    new "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
+    new "## Layar ini digunakan untuk menampilkan pilihan dalam game yang disajikan oleh menu statement. Satu parameter, item, adalah daftar objek, masing-masing dengan bidang keterangan dan tindakan."
 
     # screens.rpy:211
     old "## http://www.renpy.org/doc/html/screen_special.html#choice"
@@ -55,15 +55,15 @@ translate indonesian strings:
 
     # screens.rpy:221
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
-    new "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
+    new "## Bila ini benar, caption menu akan diucapkan oleh narator. Bila salah, caption menu akan ditampilkan sebagai tombol kosong."
 
     # screens.rpy:244
     old "## Quick Menu screen"
-    new "## Quick Menu screen"
+    new "## Layar Menu Cepat/Quick Menu"
 
     # screens.rpy:246
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
-    new "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
+    new "## Menu cepat ditampilkan dalam game untuk memudahkan akses ke menu di luar game."
 
     # screens.rpy:261
     old "Back"
