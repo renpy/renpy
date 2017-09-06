@@ -689,7 +689,7 @@ translate indonesian strings:
 
     # screens.rpy:120
     old "## Make the namebox available for styling through the Character object."
-    new "## Buat namebox tersedia untuk gaya melalui objek karakter."
+    new "## Buat namebox tersedia untuk mengatur gaya melalui objek karakter."
 
     # screens.rpy:172
     old "## https://www.renpy.org/doc/html/screen_special.html#input"
