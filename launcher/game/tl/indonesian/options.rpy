@@ -1,4 +1,4 @@
-﻿
+
 translate indonesian strings:
 
     # options.rpy:1
@@ -198,3 +198,15 @@ translate indonesian strings:
     # options.rpy:146
     old "## Icon"
     new "## Ikon"
+
+
+translate indonesian strings:
+
+    # options.rpy:81
+    old "## Between screens of the game menu."
+    new "## Antara layar dari menu permainan"
+
+    # options.rpy:201
+    old "## Set this to a string containing your Apple Developer ID Application to enable codesigning on the Mac. Be sure to change it to your own Apple-issued ID."
+    new "## Atur ini ke string yang berisi ID Developer Aplikasi Apple mu untuk mengaktifkan codesigning di Mac. Pastikan untuk mengganti nya ke ID mu sendiri yang sudah di berikan oleh Apple."
+
