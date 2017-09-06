@@ -95,6 +95,27 @@ handlers.
 The size of a hyperlink is now inherited from the size of the enclosing text.
 This makes hyperlinks work within text of a non-default size.
 
+Say with Arguments
+------------------
+
+The Ren'Py say statement now supports being passed arguments, which are
+placed in parenthesis after the text to be spoken. For example::
+
+    e "Hey!" (what_size=36, what_color="#ffeeee")
+
+These arguments are first passed to config.say_argument_callback, and then
+are passed to the character. The default implemention (in :func:`Character`)
+creates a new character with the passed arguments, and uses that to display
+the text.
+
+One place this is handy is with jump hyperlinks and the new advance
+argument to Character, which prevents text from being advanced directly.
+It's now possible to write::
+
+    e "Would you like to go {a=jump:living_room}west{/a} or {a=jump:kitchen}north{/a}?" (advance=False)
+
+Which pauses execution until the player clicks on a hyperlink.
+
 
 Translations
 ------------
