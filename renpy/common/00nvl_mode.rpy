@@ -331,18 +331,14 @@ init -1500 python:
 
             self.push_nvl_list(who, what)
 
-            try:
+            renpy.display_say(
+                who,
+                what,
+                nvl_show_core,
+                checkpoint=checkpoint,
+                **display_args)
 
-                renpy.display_say(
-                    who,
-                    what,
-                    nvl_show_core,
-                    checkpoint=checkpoint,
-                    **display_args)
-
-            finally:
-
-                self.pop_nvl_list()
+            self.pop_nvl_list()
 
         def do_done(self, who, what):
 
