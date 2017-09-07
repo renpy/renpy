@@ -1,4 +1,4 @@
-﻿
+
 translate indonesian strings:
 
     # gui.rpy:2
@@ -438,4 +438,23 @@ translate indonesian strings:
     # gui.rpy:408
     old "## Mobile devices"
     new "## Perangkat mobile"
+
+
+translate indonesian strings:
+
+    # gui.rpy:5
+    old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
+    new "## pernyataan offset init menyebabkan pernyataan inisialisasi di file ini untuk berjalan lebih dahulu daripada pernyataan init di file lain nya."
+
+    # gui.rpy:282
+    old "## Generic frames."
+    new "## Frame generic"
+
+    # gui.rpy:302
+    old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
+    new "## GUI Bawaan hanya menggunakan slider dan scrollbars vertikal. Bar lainnya hanya di gunakan pada layar GUI yang di tulis sendiri oleh pembuat/creator."
+
+    # gui.rpy:434
+    old "## Change the size and spacing of various things."
+    new "## Ubah ukuran dan jarak dari berbagai hal."
 
