@@ -1,4 +1,3 @@
-﻿
 translate indonesian strings:
 
     # 00gltest.rpy:64
@@ -195,3 +194,13 @@ translate indonesian strings:
     old "Opens a console to allow debugging the problem."
     new "Buka konsol untuk mendebug masalah"
 
+
+translate indonesian strings:
+
+    # 00gltest.rpy:89
+    old "NPOT"
+    new "NPOT"
+
+    # _errorhandling.rpym:585
+    old "Ignores the exception, allowing you to continue."
+    new "Hiraukan Kesalahan, memperbolehkan kamu untuk melanjutkan."
