@@ -360,7 +360,7 @@ label gui_project_size:
                 ((1066, 600), "1066x600"),
                 ((1280, 720), "1280x720"),
                 ((1920, 1080), "1920x1080"),
-                ("custom", "Custom. The GUI is optimized for a 16:9 aspect ratio."),
+                ("custom", _("Custom. The GUI is optimized for a 16:9 aspect ratio.")),
             ],
             (1280, 720),
             cancel=Jump("front_page"),
