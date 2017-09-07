@@ -114,8 +114,8 @@ of 0 or higher.
 Init python statements also take the ``hide`` or ``in`` clauses.
 
 Variables that have their value set in an init python block are not
-saved, loaded, and do not participate in rollback, unless the object
-the variable refers to is changed.
+saved, loaded, and do not participate in rollback. Therefore, these
+variables should not be changed after init is over.
 
 .. _define-statement:
 
@@ -141,6 +141,10 @@ One advantage of using the define statement is that it records the
 filename and line number at which the assignment occurred, and
 makes that available to the navigation feature of the launcher.
 
+Variables that are defined using the define statement are treated
+as constant, are not saved or loaded, and should not be changed.
+(Ren'Py does not enforce this, but will produce undefined behavior
+when this is not the case.)
 
 .. _default-statement:
 
@@ -164,7 +168,7 @@ When the variable ``points`` is not defined at game load, it's equivalent to::
     label after_load:
         $ points = 0
 
-The define statement can take an optional named store (see below), by
+The default statement can take an optional named store (see below), by
 prepending it to the variable name with a dot. For example::
 
     default schedule.day = 0

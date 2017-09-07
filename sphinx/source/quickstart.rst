@@ -161,7 +161,7 @@ blocks must be indented relative to the prior statement, and all of
 the statements in a block must be indented by the same amount.
 
 When strings contain double-quote characters, those characters need to
-be preceded by a backslash. For example::
+be preceded by a backslash. For example
 
 ::
 
