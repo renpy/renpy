@@ -567,13 +567,41 @@ translate russian strings:
 
     # gui7.rpy:357
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "Какое разрешение должен использовать ваш проект? Хотя Ren'Py может масштабировать окно, это целевой размер окна, по размеру которого должны рисоваться ресурсы, и размер, на котором они будут наиболее чёткие.\n\nСтандартный 1280x720 — резонный компромисс."
+    new "Какое разрешение будет использовать ваш проект? Хотя Ren'Py может масштабировать окно, это будет целевой размер окна, по отношению к которому будут вырисовываться ресурсы, и на котором они будут наиболее чёткие.\n\nСтандартный 1280x720 — резонный компромисс."
 
-    # gui7.rpy:405
+    # gui7.rpy:357
+    old "Custom. The GUI is optimized for a 16:9 aspect ratio."
+    new "Своё. GUI оптимизирован под соотношение сторон 16:9."
+
+    # gui7.rpy:372
+    old "WIDTH"
+    new "ШИРИНА"
+
+    # gui7.rpy:372
+    old "Please enter the width of your game, in pixels."
+    new "Пожалуйста, введите ширину вашей игры в пикселях."
+
+    # gui7.rpy:377
+    old "The width must be a number."
+    new "Ширина должна быть цифрой."
+
+    # gui7.rpy:379
+    old "HEIGHT"
+    new "ВЫСОТА"
+
+    # gui7.rpy:379
+    old "Please enter the height of your game, in pixels."
+    new "Пожалуйста, введите высоту вашей игры в пикселях."
+
+    # gui7.rpy:384
+    old "The height must be a number."
+    new "Высота должна быть цифрой."
+
+    # gui7.rpy:426
     old "Creating the new project..."
     new "Создаю новый проект..."
 
-    # gui7.rpy:407
+    # gui7.rpy:428
     old "Updating the project..."
     new "Обновляю проект..."
 
@@ -737,23 +765,23 @@ translate russian strings:
     old "The built distributions could not be found. Please choose 'Build' and try again."
     new "Собранный дистрибутив не найден. Пожалуйста, выберите 'Построить' и попытайтесь снова."
 
-    # itch.rpy:91
+    # itch.rpy:98
     old "No uploadable files were found. Please choose 'Build' and try again."
     new "Загружаемые файлы не были найдены. Пожалуйста, выберите 'Построить' и попытайтесь снова."
 
-    # itch.rpy:99
+    # itch.rpy:106
     old "The butler program was not found."
     new "Программа butler не найдена."
 
-    # itch.rpy:99
+    # itch.rpy:106
     old "Please install the itch.io app, which includes butler, and try again."
     new "Пожалуйста, установите приложение itch.io, которое содержит butler, и попытайтесь снова."
 
-    # itch.rpy:108
+    # itch.rpy:115
     old "The name of the itch project has not been set."
     new "Имя itch.io проекта не установлено."
 
-    # itch.rpy:108
+    # itch.rpy:115
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
     new "Пожалуйста, {a=https://itch.io/game/new}создайте ваш проект{/a}, затем добавьте строку типа\n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} в options.rpy."
 
@@ -973,35 +1001,35 @@ translate russian strings:
     old "Have you backed up your projects recently?"
     new "Давно сохраняли свои проекты?"
 
-    # project.rpy:264
+    # project.rpy:276
     old "Launching the project failed."
     new "Запуск проекта провален."
 
-    # project.rpy:264
+    # project.rpy:276
     old "Please ensure that your project launches normally before running this command."
     new "Пожалуйста, убедитесь, что ваш проект нормально запускается перед использованием этой команды."
 
-    # project.rpy:277
+    # project.rpy:289
     old "Ren'Py is scanning the project..."
     new "Ren'Py сканирует проект..."
 
-    # project.rpy:684
+    # project.rpy:696
     old "Launching"
     new "Запускаю"
 
-    # project.rpy:718
+    # project.rpy:730
     old "PROJECTS DIRECTORY"
     new "ДИРЕКТОРИЯ ПРОЕКТОВ"
 
-    # project.rpy:718
+    # project.rpy:730
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Пожалуйста, выберите директорию проектов, используя выборщик директорий.\n{b}Он мог появиться позади этого окна.{/b}"
 
-    # project.rpy:718
+    # project.rpy:730
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Лаунчер будет искать проекты в этой директории, создавать новые проекты в этой директории, и размещать построенные проекты в этой директории."
 
-    # project.rpy:723
+    # project.rpy:735
     old "Ren'Py has set the projects directory to:"
     new "Ren'Py установила директорию проектов на:"
 

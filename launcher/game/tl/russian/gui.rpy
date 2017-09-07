@@ -6,8 +6,8 @@ translate russian strings:
     new "## Инициализация"
 
     # gui.rpy:5
-    old "## The init offset statement causes the init code in this file to run before init code in any other file."
-    new "## Значение инициализации позволяет init коду в этом файле запускаться перед init кодом других файлов."
+    old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
+    new "## Оператор init offset повышает приоритет инициализации в этом файле над другими файлами, из-за чего инициализация здесь запускается первее."
 
     # gui.rpy:9
     old "## Calling gui.init resets the styles to sensible default values, and sets the width and height of the game."
@@ -286,8 +286,8 @@ translate russian strings:
     new "## Эти переменные контролируют вид рамок, содержащих компоненты пользовательского интерфейса, когда наложения или окна не представлены."
 
     # gui.rpy:282
-    old "## Generic frames that are introduced by player code."
-    new "## Генерирует рамки, представленные кодом игрока."
+    old "## Generic frames."
+    new "## Генерируем рамки."
 
     # gui.rpy:285
     old "## The frame that is used as part of the confirm screen."
@@ -314,8 +314,8 @@ translate russian strings:
     new "## Эти настройки контролируют вид и размер панелей, полос прокрутки и ползунков."
 
     # gui.rpy:302
-    old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written code."
-    new "## Стандартный GUI использует только ползунки и вертикальные полосы прокрутки. Все остальные панели используются только через программируемый код."
+    old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
+    new "## Стандартный GUI использует только ползунки и вертикальные полосы прокрутки. Все остальные полосы используются только в новосозданных экранах."
 
     # gui.rpy:305
     old "## The height of horizontal bars, scrollbars, and sliders. The width of vertical bars, scrollbars, and sliders."
