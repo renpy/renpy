@@ -1,4 +1,3 @@
-﻿
 translate indonesian strings:
 
     # 00action_file.rpy:26
@@ -332,4 +331,103 @@ translate indonesian strings:
     # 00gallery.rpy:586
     old "return"
     new "Kembali"
+
+
+translate indonesian strings:
+
+    # 00director.rpy:689
+    old "The interactive director is not enabled here."
+    new "Direktor interaktif tidak di aktifkan di sini."
+
+    # 00director.rpy:1461
+    old "Done"
+    new "Selesai"
+
+    # 00director.rpy:1469
+    old "(statement)"
+    new "(statement)"
+
+    # 00director.rpy:1470
+    old "(tag)"
+    new "(tag)"
+
+    # 00director.rpy:1471
+    old "(attributes)"
+    new "(attributes)"
+
+    # 00director.rpy:1472
+    old "(transform)"
+    new "(tramsform)"
+
+    # 00director.rpy:1497
+    old "(transition)"
+    new "(transition)"
+
+    # 00director.rpy:1509
+    old "(channel)"
+    new "(channel)"
+
+    # 00director.rpy:1510
+    old "(filename)"
+    new "(filename)"
+
+    # 00director.rpy:1535
+    old "Change"
+    new "Rubah"
+
+    # 00director.rpy:1537
+    old "Add"
+    new "Tambah"
+
+    # 00director.rpy:1543
+    old "Remove"
+    new "Hapus"
+
+    # 00director.rpy:1576
+    old "Statement:"
+    new "Pernyataan:"
+
+    # 00director.rpy:1597
+    old "Tag:"
+    new "Tag:"
+
+    # 00director.rpy:1613
+    old "Attributes:"
+    new "Atribut:"
+
+    # 00director.rpy:1631
+    old "Transforms:"
+    new "Transforms:"
+
+    # 00director.rpy:1650
+    old "Behind:"
+    new "Di Belakang:"
+
+    # 00director.rpy:1669
+    old "Transition:"
+    new "Transisi:"
+
+    # 00director.rpy:1687
+    old "Channel:"
+    new "Channel:"
+
+    # 00director.rpy:1705
+    old "Audio Filename:"
+    new "Nama File Audio:"
+
+    # _developer\developer.rpym:43
+    old "Interactive Director (D)"
+    new "Direktor Interaktif (D)"
+
+    # _developer\developer.rpym:67
+    old "Show Texture Size"
+    new "Tampilkan Ukuran Textur"
+
+    # _developer\developer.rpym:70
+    old "Hide Texture size"
+    new "Sembunyikan Ukuran Textur"
+
+    # _developer\developer.rpym:569
+    old "{size_mb:,.1f} MB in {count} textures."
+    new "{size_mb:,.1f} MB pada {count} textur."
 
