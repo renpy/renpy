@@ -764,6 +764,9 @@ class Transform(Container):
         d.st_offset = self.st_offset
         d.at_offset = self.at_offset
 
+        if not (self.hide_request or self.replaced_request):
+            d.atl_st_offset = None
+
         if kind == "hide":
             d.hide_request = True
         else:
@@ -771,7 +774,6 @@ class Transform(Container):
 
         d.hide_response = True
         d.replaced_response = True
-        d.atl_st_offset = None
 
         if d.function is not None:
             d.function(d, st + d.st_offset, at + d.at_offset)
