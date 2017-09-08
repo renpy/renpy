@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 ## Initialization
 ################################################################################
 
@@ -772,6 +772,9 @@ screen preferences():
 
                     # This should be last.
                     textbutton "Pig Latin" text_font "DejaVuSans.ttf" action Language("piglatin")
+                    
+                    # Implemented Indonesian Translations To V7 Tutorial
+                    textbutton "Indonesian" text_font "DejaVuSans.ttf" action Language("indonesian")
 
 
 #end language_picker
