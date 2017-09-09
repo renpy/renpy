@@ -446,8 +446,8 @@ init python:
 
             if not raw:
                 if not (persistent.show_translation_marker or showtrans):
-                    i = re.sub(r'_\((".*?")\)', r'\1', i)
-                    i = re.sub(r"_\(('.*?')\)", r'\1', i)
+                    i = re.sub(r'__?\((".*?")\)', r'\1', i)
+                    i = re.sub(r"__?\(('.*?')\)", r'\1', i)
                     i = i.replace("!t]", "]")
 
                 i = regex.sub(translate, i)
