@@ -167,15 +167,22 @@ class Formatter(string.Formatter):
         if "r" in conversion:
             value = repr(value)
         elif "s" in conversion:
-            value = str(value)
+            value = unicode(value)
 
         if "t" in conversion:
+            if not isinstance(value, basestring):
+                value = unicode(value)
+
             value = renpy.translation.translate_string(value)
 
         if "q" in conversion:
+            if not isinstance(value, basestring):
+                value = unicode(value)
+
             value = value.replace("{", "{{")
 
         return value
+
 
 # The instance of Formatter we use.
 formatter = Formatter()
@@ -211,6 +218,9 @@ def substitute(s, scope=None, force=False, translate=True):
     Returns the substituted string, and a flag that is True if substitution
     occurred, or False if no substitution occurred.
     """
+
+    if not isinstance(s, basestring):
+        s = unicode(s)
 
     if translate:
         s = renpy.translation.translate_string(s)
