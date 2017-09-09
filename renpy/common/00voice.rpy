@@ -413,7 +413,11 @@ init -1500 python hide:
         if not _voice.sustain:
             _voice.info = vi
 
-        _voice.play = vi.filename
+        if not vi.sustain:
+            _voice.play = vi.filename
+        else:
+            _voice.play = None
+
         _voice.auto_file = vi.auto_filename
         _voice.sustain = vi.sustain
         _voice.tlid = vi.tlid
