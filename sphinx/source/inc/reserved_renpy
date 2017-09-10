@@ -215,6 +215,7 @@
 * gui
 * :var:`hpunch`
 * hyperlink_function
+* hyperlink_sensitive
 * hyperlink_styler
 * iap
 * icon

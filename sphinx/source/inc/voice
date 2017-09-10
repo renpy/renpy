@@ -21,6 +21,11 @@
     .. attribute:: VoiceInfo.tag
     
         The voice_tag parameter supplied to the speaking Character.
+    
+    .. attribute:: VoiceInfo.sustain
+    
+        False if the file was played as part of this interaction. True if
+        it was sustained from a previous interaction.
 
 .. function:: voice(filename, tag=None)
     
