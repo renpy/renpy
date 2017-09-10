@@ -145,8 +145,8 @@ Engine Developer Documentation
    skins
    translating_renpy
 
-Changes, License, and Documentation Credits
--------------------------------------------
+Changes, License, and Credits
+-----------------------------
 
 .. toctree::
    :maxdepth: 1
@@ -156,6 +156,7 @@ Changes, License, and Documentation Credits
    distributor
    license
    credits
+   sponsors
 
 Indices
 -------
