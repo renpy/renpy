@@ -48,6 +48,12 @@ SIZES = [ 64 ]
 # A list of texture number allocated.
 texture_numbers = set()
 
+# The texture generation.
+generation = 1
+
+# A map from texture number to generation
+texture_generation = { }
+
 cdef GLenum tex_format = GL_RGBA
 cdef GLenum tex_internalformat = GL_RGBA
 cdef GLenum tex_type = GL_UNSIGNED_BYTE
@@ -288,7 +294,6 @@ cdef class TextureCore:
         # a free list.
         self.free_list = None
 
-
     def __del__(self):
 
         cdef unsigned int num
@@ -460,6 +465,8 @@ cdef class TextureCore:
         self.number = texnums[0]
         self.format = 0
 
+        texture_generation[self.number] = generation
+
         texture_numbers.add(texnums[0])
 
         total_texture_size += self.width * self.height * 4
@@ -482,7 +489,10 @@ cdef class TextureCore:
         cdef GLuint texnums[1]
 
         texnums[0] = self.number
-        glDeleteTextures(1, texnums)
+
+        if texture_generation[self.number] == self.generation:
+            glDeleteTextures(1, texnums)
+
         self.number = 0
 
         texture_numbers.discard(self.number)
@@ -534,6 +544,7 @@ def alloc_texture(width, height):
     if renpy.game.preferences.gl_npot:
         rv = Texture(width, height)
         rv.free_list = npot_free_textures
+        rv.generation = generation
         return rv
 
     l = free_textures[width, height]
@@ -570,6 +581,9 @@ def dealloc_textures():
 
     # Do not reset texture numbers - we don't want to reuse a number that's
     # in use, only to have it deallocated later.
+
+    global generation
+    generation += 1
 
 
 

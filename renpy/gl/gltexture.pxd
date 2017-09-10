@@ -46,6 +46,8 @@ cdef class TextureCore:
     cdef void make_linear(TextureCore)
     cpdef int allocate(TextureCore)
 
+    cdef public object debug
+
 cdef class TextureGrid:
 
     cdef public int width
@@ -56,6 +58,9 @@ cdef class TextureGrid:
     cdef public TextureGrid half_cache
 
     cdef void make_ready(self, bint nearest)
+
+    cdef public object debug
+
 
 cpdef blit(
     TextureGrid tg,
