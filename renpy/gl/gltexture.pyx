@@ -776,9 +776,8 @@ def compute_tiling(width, max_size, min_fill_factor):
     gl_npot = renpy.game.preferences.gl_npot
 
     if old_gl_npot != gl_npot:
-        gl_npot = old_gl_npot
+        old_gl_npot = gl_npot
         tiling_cache.clear()
-
 
     if gl_npot:
         max_size = max(MAX_SIZE, max_size)
@@ -811,7 +810,6 @@ def compute_tiling(width, max_size, min_fill_factor):
         left_border = 1
         # The size of the right border of this tile.
         right_border = 1
-
 
         if gl_npot:
 
