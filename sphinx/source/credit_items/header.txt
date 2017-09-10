@@ -1,5 +1,111 @@
-=====================================
-Documentation and Translation Credits
-=====================================
+=======
+Credits
+=======
 
+This credits file is, of necessity, incomplete. It doesn't include the
+many people who have tested Ren'Py and contributed bug reports, or
+those who have suggested improvements.
 
+Even among those who have contributed code, documentation, or
+translations, it only goes back for a few years, and might be
+missing some names in my logs. If this applies to you, please
+accept my apologies and email pytom at bishoujo.us so I can fix
+the omission in future versions.
+
+* Alessio
+* Alexandre Tranchant
+* Apricotorange
+* Arowana-vx
+* Asfdfdfd
+* Auro-Cyanide
+* Baekansi
+* Bbs3223474
+* Beuc
+* BlackDragonHunt/Mangagamer
+* Bryan Tsang
+* Carl
+* Caryoscelus
+* CensoredUsername (C)
+* Chris Mear
+* Christian Koepp
+* Civalin
+* DaFool
+* Daniel Luque
+* Deji
+* Delta
+* Denzil
+* Derik
+* Diapolo10
+* Doomfest
+* DragoonHP
+* Duanemoody
+* Edward Betts
+* Edwin
+* Emmannuel Marty
+* Emmeken
+* Eniko
+* Evilantishad0w
+* Gas
+* George Economidis
+* Giuseppe Bertone
+* Gustavo Carvalho
+* Helloise
+* HikkeKun
+* Huang Junjie
+* Huanxuantian
+* Jackmcbarn
+* JaHIY
+* Jake Staines
+* James Pearson Hughes
+* Javimat
+* Joshua Fehler
+* Kalawore
+* Kevin Turner
+* Koichi "vbkaisetsu" Akabe
+* Konstantin Nikolayev
+* Kuroonehalf
+* Kyouryuukunn
+* Lapalissiano
+* Lore
+* Marcel
+* Markus Koschany
+* Maxwell Paul Brickner
+* Merumelu
+* mikey (ATP Projects)
+* Morgan Willcock
+* MrStalker
+* Mugenjohncel
+* NoJoker
+* Nolanlemahn
+* Nxcrft
+* Nyaatrap
+* Oshi-Shinobu
+* Patrick Dawson
+* Paul Morio
+* Pavel Langwell
+* Piroshki
+* Pratomo Asta Nugraha
+* Project Gardares
+* RangHo Lee
+* Ren
+* Renoa
+* Ria-kon/Project Gardares
+* Ricardo Pérez
+* Rikxz
+* rivvil
+* Sapphi
+* Shiz
+* SleepKirby
+* Spiky Caterpillar
+* Susnux
+* Thuong Nguyen Huu
+* Tlm-2501
+* Vollschauer
+* Winter Wolves
+* Xavi-Mat
+* Xela
+* Zigmut
+
+And your lead developer,
+
+* Tom "PyTom" Rothamel
