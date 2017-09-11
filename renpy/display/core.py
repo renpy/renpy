@@ -805,6 +805,8 @@ class SceneLists(renpy.object.Object):
 
             self.drag_group = oldsl.drag_group
 
+            self.layer_transform.update(oldsl.layer_transform)
+
         else:
             for i in renpy.config.layers + renpy.config.top_layers:
                 self.layers[i] = [ ]
