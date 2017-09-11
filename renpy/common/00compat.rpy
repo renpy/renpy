@@ -161,6 +161,22 @@ init -1000 python hide:
     except:
         pass
 
+
+    # 6.99.12.4 didn't add script_version.txt, so we read it from renpy/__init__.py
+    # if that exists.
+    try:
+        if config.script_version is None:
+            init_py = os.path.join(renpy.config.basedir, "renpy", "__init__.py")
+            with open(init_py, "r") as f:
+                data = f.read()
+
+            if "version_tuple = (6, 99, 12, 4, vc_version)" in data:
+                config.script_version = (6, 99, 12, 4)
+
+            renpy.write_log("Set script version to: %r (alternate path)", config.script_version)
+    except:
+        pass
+
 init 1900 python hide::
 
     # This returns true if the script_version is <= the
