@@ -790,6 +790,13 @@ nw_voice = True
 # If not None, a function that's used to process say arguments.
 say_arguments_callback = None
 
+# Should we show an atl interpolation for one frame?
+atl_one_frame = True
+
+# Should we keep the show layer state?
+keep_show_layer_state = True
+
+
 del os
 del collections
 

@@ -145,6 +145,8 @@ init -1900 python:
             config.automatic_polar_motion = False
             config.position_viewport_side = False
             config.nw_voice = False
+            config.atl_one_frame = False
+            config.keep_show_layer_state = False
 
 
 

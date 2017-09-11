@@ -1195,7 +1195,7 @@ class SceneLists(renpy.object.Object):
                 else:
                     rv = a(rv)
 
-            if new_transform is not None:
+            if (new_transform is not None) and (renpy.config.keep_show_layer_state):
                 self.transform_state(old_transform, new_transform, execution=True)
 
             f = renpy.display.layout.MultiBox(layout='fixed')

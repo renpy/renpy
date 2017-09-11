@@ -1198,7 +1198,7 @@ class Interpolation(Statement):
             value = interpolate_spline(complete, values)
             setattr(trans.state, name, value)
 
-        if (not first) and (st >= self.duration):
+        if ((not first) or (not renpy.config.atl_one_frame)) and (st >= self.duration):
             return "next", st - self.duration, None
         else:
             if not self.properties and not self.revolution and not self.splines:
