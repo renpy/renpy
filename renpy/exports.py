@@ -2067,6 +2067,7 @@ def get_at_list(name, layer=None):
 def show_layer_at(at_list, layer='master'):
     """
     :doc: se_images
+    :name: renpy.show_layer_at
 
     The python equivalent of the ``show layer`` `layer` ``at`` `at_list`
     statement.
