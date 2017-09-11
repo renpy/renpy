@@ -710,7 +710,7 @@ class SceneLists(renpy.object.Object):
     things to the user.
     """
 
-    __version__ = 6
+    __version__ = 7
 
     def after_setstate(self):
         for i in renpy.config.layers + renpy.config.top_layers:
@@ -745,6 +745,9 @@ class SceneLists(renpy.object.Object):
         if version < 6:
             self.shown = self.image_predict_info
 
+        if version < 7:
+            self.layer_transform = { }
+
     def __init__(self, oldsl, shown):
 
         super(SceneLists, self).__init__()
@@ -772,6 +775,10 @@ class SceneLists(renpy.object.Object):
         # Either None, or a DragGroup that's used as the default for
         # drags with names.
         self.drag_group = None
+
+        # A map from a layer to the transform that applies to that
+        # layer.
+        self.layer_transform = { }
 
         if oldsl:
 
@@ -838,7 +845,7 @@ class SceneLists(renpy.object.Object):
 
         return True
 
-    def transform_state(self, old_thing, new_thing):
+    def transform_state(self, old_thing, new_thing, execution=False):
         """
         If the old thing is a transform, then move the state of that transform
         to the new thing.
@@ -860,6 +867,10 @@ class SceneLists(renpy.object.Object):
             new_thing = new_transform = renpy.display.motion.Transform(child=new_thing)
 
         new_transform.take_state(old_transform)
+
+        if execution:
+            new_transform.take_execution_state(old_transform)
+
         return new_thing
 
     def find_index(self, layer, tag, zorder, behind):
@@ -1169,20 +1180,29 @@ class SceneLists(renpy.object.Object):
 
         time, at_list = self.layer_at_list[layer]
 
+        old_transform = self.layer_transform.get(layer, None)
+        new_transform = None
+
         if at_list:
 
             for a in at_list:
 
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
+                    new_transform = rv
                 else:
                     rv = a(rv)
+
+            if new_transform is not None:
+                self.transform_state(old_transform, new_transform, execution=True)
 
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
 
             rv = f
+
+        self.layer_transform[layer] = new_transform
 
         return rv
 
