@@ -139,6 +139,10 @@ that the ``pause 0`` statement now completes after one frame, rather than
 instantaneously, allowing for single-frame animations. Please do not use this
 to include subliminal messages in your game.
 
+The show later at statement now persists transform state, much like other
+statements that involve a transform. This shouldn't change much, but opens
+the possibility of layer transforms that involve randomness.
+
 The {nw} text tag now waits for voice and self-voicing to complete before
 allowing text to advance.
 

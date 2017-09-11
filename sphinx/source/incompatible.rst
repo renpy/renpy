@@ -27,6 +27,19 @@ it continues.  To disable this behavior, add::
 
     define config.nw_voice = False
 
+ATL Transforms now show at least one frame whenever a pause or interpolation
+occurs. When a game doesn't expect this, it can show up as a series of
+rapidly displayed singe fames. This can be disabled with::
+
+    define config.atl_one_frame = False
+
+The show layer at statement now persists the state of a transform like
+any other ATL transform. This can lead to a behavior change in which,
+for example, an offset persists between multiple show layer at
+statements. To disable this, write::
+
+    define config.keep_show_layer_state = False
+
 
 6.99.12.3
 ---------

@@ -259,9 +259,6 @@ To stop applying transforms to the layer, use::
 
     show layer master
 
-Transforms used with show should not may any assumptions about their starting
-state. Currently, transforms used with show layer do not take their state from
-prior layer transforms, but we plan to change this in the future.
 
 .. _scene-statement:
 
