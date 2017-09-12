@@ -63,6 +63,7 @@ Customizing Ren'Py
    screen_special
    screen_optimization
    config
+   preferences
    store_variables
 
 Tools

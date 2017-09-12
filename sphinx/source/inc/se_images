@@ -34,11 +34,6 @@
     This function may only be run from inside an init block. It is an
     error to run this function once the game has started.
 
-.. function:: renpy.layer_at_list(at_list, layer='master')
-    
-    The python equivalent of the ``show layer`` `layer` ``at`` `at_list`
-    statement.
-
 .. function:: renpy.scene(layer='master')
     
     Removes all displayables from `layer`. This is equivalent to the scene
