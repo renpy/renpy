@@ -304,12 +304,6 @@ init -1500 python:
             self.sustain = _voice.sustain
             self.tag = _voice.tag
 
-            if self.sustain:
-                try:
-                    self.filename = _last_voice_play
-                except:
-                    pass
-
             if not self.filename and config.auto_voice:
                 tlid = renpy.game.context().translate_identifier
 
@@ -330,6 +324,16 @@ init -1500 python:
                             self.filename = fn
 
                 self.tlid = tlid
+
+            if self.filename:
+                self.sustain = False
+            elif self.sustain:
+                try:
+                    self.filename = _last_voice_play
+                except:
+                    pass
+
+
 
     def _get_voice_info():
         """
