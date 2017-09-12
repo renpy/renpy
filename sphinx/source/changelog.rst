@@ -131,6 +131,11 @@ The Indonesian translation has been updated.
 Other
 -----
 
+The preference variables have been given their own page in the
+documentation, one that clarifies it's better to use the default
+statement to directly set the default value of a preference
+variable.
+
 The "steam" package has been renamed to "market", reflecting that it will
 work just as well with other markets.
 
