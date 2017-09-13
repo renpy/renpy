@@ -378,6 +378,8 @@ cdef class TextureCore:
             glBindTexture(GL_TEXTURE_2D, self.number)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
             self.nearest = False
 
@@ -773,6 +775,7 @@ def compute_tiling(width, max_size, min_fill_factor):
 
     global old_gl_npot
 
+
     gl_npot = renpy.game.preferences.gl_npot
 
     if old_gl_npot != gl_npot:
@@ -780,7 +783,7 @@ def compute_tiling(width, max_size, min_fill_factor):
         tiling_cache.clear()
 
     if gl_npot:
-        max_size = max(MAX_SIZE, max_size)
+        max_size = min(SIZES[0], max_size)
 
     orig_width = width
 
@@ -804,12 +807,14 @@ def compute_tiling(width, max_size, min_fill_factor):
     # The index into the row.
     row_index = 0
 
-    while width:
-
-        # The size of the left border of this tile.
+    if gl_npot and width <= max_size:
+        left_border = 0
+        right_border = 0
+    else:
         left_border = 1
-        # The size of the right border of this tile.
         right_border = 1
+
+    while width:
 
         if gl_npot:
 
@@ -848,7 +853,11 @@ def texture_grid_from_surface(surf, transient):
     This takes a Surface and turns it into a TextureGrid.
     """
 
-    if transient:
+    if renpy.game.preferences.gl_npot:
+        max_size = SIZES[0]
+        fill_factor = 0.5
+
+    elif transient:
         max_size = SIZES[0]
         fill_factor = 0.5
     else:
@@ -862,25 +871,17 @@ def texture_grid_from_surface(surf, transient):
     rv.columns, texcolumns = compute_tiling(width, max_size, fill_factor)
     rv.rows, texrows = compute_tiling(height, max_size, fill_factor)
 
-    rownum = 0
-    lastrow = len(texrows) - 1
-    lastcol = len(texcolumns) - 1
-
-    for y, height, texheight in texrows:
-
-        border_top = (rownum == 0)
-        border_bottom = (rownum == lastrow)
-        rownum += 1
+    for rv_row, texrow in zip(rv.rows, texrows):
+        border_top, _, border_bottom = rv_row
+        y, height, texheight = texrow
 
         row = [ ]
 
         colnum = 0
 
-        for x, width, texwidth in texcolumns:
-
-            border_left = (colnum == 0)
-            border_right = (colnum == lastcol)
-            colnum += 1
+        for rv_col, texcol in zip(rv.columns, texcolumns):
+            border_left, _, border_right = rv_col
+            x, width, texwidth = texcol
 
             tex = alloc_texture(texwidth, texheight)
             tex.load_surface(surf, x, y, width, height,
