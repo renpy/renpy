@@ -832,11 +832,12 @@ cdef class Render:
 
                 tx, ty = self.forward.transform(x, y)
                 tw, th = self.forward.transform(w + x, h + y)
+                rw, rh = self.forward.transform(self.width, self.height)
 
-                if (tx <= 0) and (tw >= self.width):
+                if (tx <= 0) and (tw >= rw):
                     rv.xclipping = False
 
-                if (ty <= 0) and (th >= self.height):
+                if (ty <= 0) and (th >= rh):
                     rv.yclipping = False
 
             rv.blit(self, (-x, -y), focus=focus, main=True)
