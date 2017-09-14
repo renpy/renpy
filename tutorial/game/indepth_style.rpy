@@ -245,7 +245,7 @@ label style_basics:
 screen general(style):
     frame:
         style style
-        text _("The road to the stars is steep and dangerous. But we are not afraid.\n–Yuri Gagarin")
+        text _("Orbiting Earth in the spaceship, I saw how beautiful our planet is.\n–Yuri Gagarin")
 
 
 label style_general:
@@ -300,7 +300,7 @@ label style_general:
 
     example:
         style alt_general:
-            alt _("\"The road to the stars is steep and dangerous. But we are not afraid.\" Said by Yuri Gagarin.")
+            alt _("\"Orbiting Earth in the spaceship, I saw how beautiful our planet is.\" Said by Yuri Gagarin.")
 
     show screen general("alt_general")
 
@@ -326,9 +326,8 @@ screen text(style, vertical=False):
             text _("Vertical") style style
         else:
             xsize 400
-            text _("The road to the stars is steep and dangerous. But we are not afraid.\n\nYuri Gagarin"):
+            text _("Far better it is to dare mighty things, to win glorious triumphs, even though checkered by failure, than to rank with those poor spirits who neither enjoy nor suffer much, because they live in the gray twilight that knows not victory nor defeat.\n\n–Theodore Roosevelt"):
                 style style
-
 
 
 label style_text:
@@ -373,7 +372,7 @@ label style_text:
 
     example:
         style size_text:
-            size 28
+            size 14
 
     show screen text("size_text")
 
