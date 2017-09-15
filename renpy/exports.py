@@ -2064,19 +2064,24 @@ def get_at_list(name, layer=None):
     return renpy.game.context().scene_lists.at_list[layer].get(tag, None)
 
 
-def show_layer_at(at_list, layer='master'):
+def show_layer_at(at_list, layer='master', reset=True):
     """
     :doc: se_images
     :name: renpy.show_layer_at
 
     The python equivalent of the ``show layer`` `layer` ``at`` `at_list`
     statement.
+
+    `reset`
+        If true, the transform state is reset to the start when it is shown.
+        If false, the transform state is persisted, allowing the new transform
+        to update that state.
     """
 
     if not isinstance(at_list, list):
         at_list = [ at_list ]
 
-    renpy.game.context().scene_lists.set_layer_at_list(layer, at_list)
+    renpy.game.context().scene_lists.set_layer_at_list(layer, at_list, reset=reset)
 
 
 layer_at_list = show_layer_at
