@@ -135,7 +135,7 @@ cdef class WordWrapper(object):
                 # The width of the current line.
                 width = j_x - words[i].start_x
 
-                if i:
+                if i == 0:
                     line_width = first_width
                 else:
                     line_width = rest_width
