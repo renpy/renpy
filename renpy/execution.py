@@ -493,10 +493,16 @@ class Context(renpy.object.Object):
 
             except renpy.game.CallException as e:
 
-                if self.next_node is None:
-                    raise Exception("renpy.call can't be used when the next node is undefined.")
+                print(e.from_current)
 
-                node = self.call(e.label, return_site=self.next_node.name)
+                if e.from_current:
+                    return_site = node.name
+                else:
+                    if self.next_node is None:
+                        raise Exception("renpy.call can't be used when the next node is undefined.")
+                    return_site = self.next_node.name
+
+                node = self.call(e.label, return_site=return_site)
                 self.abnormal = True
                 renpy.store._args = e.args
                 renpy.store._kwargs = e.kwargs

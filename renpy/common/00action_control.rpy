@@ -84,13 +84,20 @@ init -1500 python:
         :doc: control_action
 
         Ends the current statement, and calls `label`.
+
+        `from_current`
+            If True, returns to the current statement rather than the statement
+            following the current statement. (This will lead to
+            the current statement being run twice for the purposes of history,
+            rollback, and nvl-mode, among other things.)
         """
 
-        def __init__(self, label):
+        def __init__(self, label, from_current=False):
             self.label = label
+            self.from_current = from_current
 
         def __call__(self):
-            renpy.call(self.label)
+            renpy.call(self.label, from_current=self.from_current)
 
     @renpy.pure
     class Show(Action, DictEquality):

@@ -195,15 +195,18 @@ class CallException(Exception):
     and control to be transferred to the named label.
     """
 
-    def __init__(self, label, args, kwargs):
+    from_current = False
+
+    def __init__(self, label, args, kwargs, from_current=False):
         Exception.__init__(self)
 
         self.label = label
         self.args = args
         self.kwargs = kwargs
+        self.from_current = from_current
 
     def __reduce__(self):
-        return (CallException, (self.label, self.args, self.kwargs))
+        return (CallException, (self.label, self.args, self.kwargs, self.from_current))
 
 
 class EndReplay(Exception):
@@ -218,6 +221,7 @@ class ParseErrorException(Exception):
     This is raised when a parse error occurs, after it has been
     reported to the user.
     """
+
 
 # A tuple of exceptions that should not be caught by the
 # exception reporting mechanism.
@@ -402,6 +406,7 @@ def call_replay(label, scope={}):
 
     if renpy.config.after_replay_callback:
         renpy.config.after_replay_callback()
+
 
 # Type information.
 if False:

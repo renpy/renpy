@@ -1601,16 +1601,21 @@ def jump_out_of_context(label):
     raise renpy.game.JumpOutException(label)
 
 
-def call(label, *args, **kwargs):
+def call(label, from_current=False, *args, **kwargs):
     """
     :doc: se_call
 
     Causes the current Ren'Py statement to terminate, and a jump to a
     `label` to occur. When the jump returns, control will be passed
     to the statement following the current statement.
+
+    `from_current`
+        If true, control will return to the current statement, rather than
+        the statement following the current statement. (This will lead to
+        the current statement being run twice.)
     """
 
-    raise renpy.game.CallException(label, args, kwargs)
+    raise renpy.game.CallException(label, args, kwargs, from_current=from_current)
 
 
 def return_statement():

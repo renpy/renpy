@@ -131,6 +131,12 @@ The Indonesian translation has been updated.
 Other
 -----
 
+There is a new :func:`Call` action, that terminates the current statement
+and calls a label. The Call action and the :func:`renpy.call` function take
+a new `from_current` parameter, which causes them to return to the start
+of the current statement, which could be used (very carefully) to call
+an aside before returning to the main story.
+
 The preference variables have been given their own page in the
 documentation, one that clarifies it's better to use the default
 statement to directly set the default value of a preference
