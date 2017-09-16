@@ -1076,7 +1076,7 @@ cdef class GLDraw:
         if x < 0 or y < 0 or x >= what.width or y >= what.height:
             return 0
 
-        if self.always_opaque:
+        if self.always_opaque or renpy.display.emulator.always_opaque:
             return 255
 
         what = what.subsurface((x, y, 1, 1))

@@ -36,12 +36,16 @@ overlay = [ ]
 # True if we're in ios mode, where we don't allow keys.
 ios = False
 
+# True if the framebuffer doesn't support alpha.
+always_opaque = False
+
 
 def null_emulator(ev, x, y):
     """
     This is used when emulation is not desired.
     """
     return ev, x, y
+
 
 TOUCH_KEYS = [ pygame.K_ESCAPE, pygame.K_PAGEUP ]
 
@@ -104,6 +108,7 @@ def tv_emulator(ev, x, y):
 
     return ev, x, y
 
+
 keyboard = None
 null = None
 
@@ -135,16 +140,19 @@ def init_emulator():
     global emulator
     global overlay
     global ios
+    global always_opaque
 
     name = os.environ.get("RENPY_EMULATOR", "")
 
     if name == "touch":
         emulator = touch_emulator
         overlay = [ renpy.store.DynamicDisplayable(dynamic_keyboard) ]
+        always_opaque = True
     elif name == "ios-touch":
         emulator = touch_emulator
         overlay = [ renpy.store.DynamicDisplayable(dynamic_keyboard) ]
         ios = True
+        always_opaque = True
     elif name == "tv":
         emulator = tv_emulator
         overlay = [ renpy.display.motion.Transform(
@@ -153,6 +161,8 @@ def init_emulator():
             yalign=0.5,
             size=(int(renpy.config.screen_height * 16.0 / 9.0), renpy.config.screen_height),
             ) ]
+        always_opaque = True
     else:
         emulator = null_emulator
         overlay = [ ]
+        always_opaque = False
