@@ -1177,18 +1177,18 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
     ::
 
-        # If tooltip is not empty, shows it in a text. Otherwise,
-        # show Null. Checks every tenth of a second to see if the
-        # tooltip has been updated.
+        # Shows a countdown from 5 to 0, updating it every tenth of
+        # a second until the time expires.
         init python:
-             def show_tooltip(st, at):
-                 if tooltip:
-                     return tooltip, .1
-                 else:
-                     return Null(), .1
 
-        image tooltipper = DynamicDisplayable(show_tooltip)
+            def show_countdown(st, at):
+                if st > 5.0:
+                    return Text("0.0"), None
+                else:
+                    d = Text("{:.1f}".format(5.0 - st))
+                    return d, 0.1
 
+        image countdown = DynamicDisplayable(show_countdown)
     """
 
     nosave = [ 'child' ]
