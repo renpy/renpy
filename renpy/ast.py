@@ -1387,6 +1387,16 @@ class Return(Node):
         else:
             renpy.store._return = None
 
+        ctx = renpy.game.context()
+
+        if renpy.game.context().init_phase:
+            if len(ctx.return_stack) == 0:
+
+                if renpy.config.developer:
+                    raise Exception("Unexpected return during the init phase.")
+
+                return
+
         next_node(renpy.game.context().lookup_return(pop=True))
         renpy.game.context().pop_dynamic()
 
