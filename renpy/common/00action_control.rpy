@@ -67,18 +67,30 @@ init -1500 python:
     @renpy.pure
     class Jump(Action, DictEquality):
         """
-         :doc: control_action
+        :doc: control_action
 
-         Causes control to transfer to the given label. This can be used in
-         conjunction with renpy.run_screen to define an imagemap that jumps
-         to a label when run.
-         """
+        Causes control to transfer to `label`.
+        """
 
         def __init__(self, label):
             self.label = label
 
         def __call__(self):
             renpy.jump(self.label)
+
+    @renpy.pure
+    class Call(Action, DictEquality):
+        """
+        :doc: control_action
+
+        Ends the current statement, and calls `label`.
+        """
+
+        def __init__(self, label):
+            self.label = label
+
+        def __call__(self):
+            renpy.call(self.label)
 
     @renpy.pure
     class Show(Action, DictEquality):
