@@ -389,6 +389,9 @@ def display_say(
     # statements at all.
     if advance and renpy.config.skipping == "fast":
 
+        for i in renpy.config.fast_skipping_callbacks:
+            i()
+
         # Clears out transients.
         renpy.exports.with_statement(None)
         return

@@ -446,6 +446,7 @@ init -1500 python hide:
             _voice.sustain = True
 
     config.start_interact_callbacks.append(voice_interact)
+    config.fast_skipping_callbacks.append(voice_interact)
     config.say_sustain_callbacks.append(voice_sustain)
     config.afm_voice_delay = .5
 
