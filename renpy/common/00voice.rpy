@@ -327,13 +327,6 @@ init -1500 python:
 
             if self.filename:
                 self.sustain = False
-            elif self.sustain:
-                try:
-                    self.filename = _last_voice_play
-                except:
-                    pass
-
-
 
     def _get_voice_info():
         """
