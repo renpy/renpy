@@ -773,6 +773,9 @@ class DragGroup(renpy.display.layout.MultiBox):
                 if not c.droppable:
                     continue
 
+                if c.x is None:
+                    continue
+
                 r2 = (c.x, c.y, c.w, c.h)
 
                 overlap = rect_overlap_area(r1, r2)
