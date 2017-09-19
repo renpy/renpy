@@ -29,9 +29,7 @@ testcase new_project:
     "refresh"
     "Create New Project"
 
-    # Kind of interface
-    # "New GUI Interface"
-    # "Continue"
+    "Continue"
 
     # Name
     type "Test Project"
