@@ -118,7 +118,10 @@ class LogFile(object):
                 self.write('')
 
             self.write("%s", time.ctime())
-            self.write("%s", platform.platform())
+            try:
+                self.write("%s", platform.platform())
+            except:
+                self.write("Unknown platform.")
             self.write("%s", renpy.version)
             self.write("%s %s", renpy.config.name, renpy.config.version)
             self.write("")
