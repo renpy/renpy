@@ -79,6 +79,9 @@ class LogFile(object):
         if self.file:
             return True
 
+        if self.file is False:
+            return False
+
         if renpy.macapp:
             return False
 
@@ -129,6 +132,8 @@ class LogFile(object):
             return True
 
         except:
+            self.file = False
+            traceback.print_exc(file=real_stderr)
             return False
 
     def write(self, s, *args):
@@ -189,6 +194,9 @@ class StdioRedirector(object):
         self.real_file.write(s)
         self.real_file.flush()
 
+        if renpy.ios:
+            return
+
         s = self.buffer + s
 
         lines = s.split("\n")
@@ -229,7 +237,7 @@ class StdoutRedirector(StdioRedirector):
         return renpy.config.stdout_callbacks
 
 
-sys.stdout = StdoutRedirector()
+sys.stdout = sys_stdout = StdoutRedirector()
 
 
 class StderrRedirector(StdioRedirector):
@@ -239,4 +247,9 @@ class StderrRedirector(StdioRedirector):
         return renpy.config.stderr_callbacks
 
 
-sys.stderr = StderrRedirector()
+sys.stderr = sys_stderr = StderrRedirector()
+
+
+def post_init():
+    sys.stdout = sys_stdout
+    sys.stderr = sys_stderr

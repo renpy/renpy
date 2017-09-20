@@ -429,6 +429,9 @@ def main():
         # Check if we should simulate android.
         renpy.android = renpy.android or renpy.config.simulate_android  # @UndefinedVariable
 
+        # Re-set up the logging.
+        renpy.log.post_init()
+
         # Run the post init code, if any.
         for i in renpy.game.post_init:
             i()
