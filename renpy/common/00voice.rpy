@@ -327,6 +327,9 @@ init -1500 python:
 
             if self.filename:
                 self.sustain = False
+            elif self.sustain and (self.sustain != "preference"):
+                self.filename = _last_voice_play
+
 
     def _get_voice_info():
         """
@@ -442,8 +445,8 @@ init -1500 python hide:
         _voice.sustain = False
         _voice.tag = None
 
-        if _preferences.voice_sustain:
-            _voice.sustain = True
+        if _preferences.voice_sustain and not _voice.sustain:
+            _voice.sustain = "preference"
 
     config.start_interact_callbacks.append(voice_interact)
     config.fast_skipping_callbacks.append(voice_interact)
