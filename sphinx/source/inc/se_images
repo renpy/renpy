@@ -84,8 +84,13 @@
         A list of strings, giving image tags that this image is shown behind.
         The equivalent of the ``behind`` property.
 
-.. function:: renpy.show_layer_at(at_list, layer='master')
+.. function:: renpy.show_layer_at(at_list, layer='master', reset=True)
     
     The python equivalent of the ``show layer`` `layer` ``at`` `at_list`
     statement.
+    
+    `reset`
+        If true, the transform state is reset to the start when it is shown.
+        If false, the transform state is persisted, allowing the new transform
+        to update that state.
 

@@ -9,6 +9,7 @@
 * Animation
 * :func:`At`
 * :func:`AudioPositionValue`
+* :func:`Call`
 * :func:`Character`
 * :class:`Color`
 * :func:`ComposeTransition`

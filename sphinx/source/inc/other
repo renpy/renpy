@@ -22,6 +22,12 @@
         If true, this layer will be cleared when entering the game menu
         context, and restored when leaving the
 
+.. function:: renpy.add_python_directory(path)
+    
+    Adds `path` to the list of paths searched for Python modules and packages.
+    The path should be a string relative to the game directory. This must be
+    called before an import statement.
+
 .. function:: renpy.call_stack_depth()
     
     Returns the depth of the call stack of the current context - the number
