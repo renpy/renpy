@@ -721,14 +721,34 @@ class RenpyImporter(object):
         return load(filename).read()
 
 
+meta_backup = [ ]
+
+
+def add_python_directory(path):
+    """
+    :doc: other
+
+    Adds `path` to the list of paths searched for Python modules and packages.
+    The path should be a string relative to the game directory. This must be
+    called before an import statement.
+    """
+
+    if path and not path.endswith("/"):
+        path = path + "/"
+
+    sys.meta_path.insert(0, RenpyImporter(path))
+
+
 def init_importer():
-    sys.meta_path.insert(0, RenpyImporter("python-packages/"))
-    sys.meta_path.insert(0, RenpyImporter())
+    meta_backup[:] = sys.meta_path
+
+    add_python_directory("python-packages/")
+    add_python_directory("")
 
 
 def quit_importer():
-    sys.meta_path.pop(0)
-    sys.meta_path.pop(0)
+    sys.meta_path[:] = meta_backup
+
 
 # Auto-Reload
 

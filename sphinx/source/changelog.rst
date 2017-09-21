@@ -221,6 +221,9 @@ not report a relevant error. This has been fixed.
 The PlayCharacterVoice action can now mark a button as selected while the
 character voice is playing.
 
+The new :func:`renpy.add_python_directory` function provides a way to add
+subdirectories of the game directory to the python path.
+
 The Ren'Py documentation has been edited to remove the use of the word "code",
 and replace it with less cryptic terminology.
 

@@ -106,6 +106,8 @@ from renpy.sl2.slparser import CustomParser as register_sl_statement, register_s
 
 from renpy.ast import eval_who
 
+from renpy.loader import add_python_directory
+
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
 renpy_pure("has_screen")
@@ -170,6 +172,7 @@ def public_api():
     register_sl_statement, register_sl_displayable
     eval_who
     is_selected, is_sensitive
+    add_python_directory
 
 
 del public_api
