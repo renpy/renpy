@@ -1076,7 +1076,9 @@ class Interpolation(Statement):
 
         warper = warpers.get(self.warper, self.warper)
 
-        if (self.warper != "instant") and (state is None):
+        if (self.warper != "instant") and (state is None) and (
+                (trans.atl_state is not None) or (trans.st == 0)
+                ):
             first = True
         else:
             first = False
