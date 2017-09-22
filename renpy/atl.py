@@ -1086,6 +1086,11 @@ class Interpolation(Statement):
         else:
             complete = 1.0
 
+        if complete < 0.0:
+            complete = 0.0
+        elif complete > 1.0:
+            complete = 1.0
+
         complete = warper(complete)
 
         if state is None:
