@@ -262,6 +262,10 @@ init python in distribute:
         def add_file(self, name, path, xbit):
             fn = os.path.join(self.path, name)
 
+            # If this is not a directory, ensure all parent directories
+            # have been created
+            if not os.path.isdir(os.path.dirname(fn)):
+                os.makedirs(os.path.dirname(fn), 0755)
             shutil.copy2(path, fn)
 
             if xbit:
