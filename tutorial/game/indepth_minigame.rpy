@@ -22,9 +22,6 @@ example minigame:
                 # Some displayables we use.
                 self.paddle = Solid("#ffffff", xsize=self.PADDLE_WIDTH, ysize=self.PADDLE_HEIGHT)
                 self.ball = Solid("#ffffff", xsize=self.BALL_WIDTH, ysize=self.BALL_HEIGHT)
-                self.player = Text(_("Player"), size=36)
-                self.eileen = Text(_("Eileen"), size=36)
-                self.ctb = Text(_("Click to Begin"), size=36)
 
                 # If the ball is stuck to the paddle.
                 self.stuck = True
@@ -51,7 +48,7 @@ example minigame:
                 self.winner = None
 
             def visit(self):
-                return [ self.paddle, self.ball, self.player, self.eileen, self.ctb ]
+                return [ self.paddle, self.ball ]
 
             # Recomputes the position of the ball, handles bounces, and
             # draws the screen.
