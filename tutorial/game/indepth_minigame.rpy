@@ -89,14 +89,18 @@ example minigame:
                 if self.by < ball_top:
                     self.by = ball_top + (ball_top - self.by)
                     self.bdy = -self.bdy
-                    renpy.sound.play("pong_beep.opus", channel=0)
+
+                    if not self.stuck:
+                        renpy.sound.play("pong_beep.opus", channel=0)
 
                 # Bounce off bottom.
                 ball_bot = self.COURT_BOTTOM - self.BALL_HEIGHT / 2
                 if self.by > ball_bot:
                     self.by = ball_bot - (self.by - ball_bot)
                     self.bdy = -self.bdy
-                    renpy.sound.play("pong_beep.opus", channel=0)
+
+                    if not self.stuck:
+                        renpy.sound.play("pong_beep.opus", channel=0)
 
                 # This draws a paddle, and checks for bounces.
                 def paddle(px, py, hotside):
