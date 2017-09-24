@@ -293,7 +293,7 @@ class Parser(object):
 
                 if l.keyword(r'has'):
                     if not can_has:
-                        l.error("The %s statement does not take a layout." % self.name)
+                        l.error("The has statement is not allowed here.")
 
                     if child_index != 0:
                         l.error("The has statement may not be given after a child has been supplied.")

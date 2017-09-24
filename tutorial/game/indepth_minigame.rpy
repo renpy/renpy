@@ -194,13 +194,13 @@ example minigame:
 
         add pong
 
-        text _("Eileen"):
+        text _("Player"):
             xpos 240
             xanchor 0.5
             ypos 25
             size 40
 
-        text _("Player"):
+        text _("Eileen"):
             xpos (1280 - 240)
             xanchor 0.5
             ypos 25

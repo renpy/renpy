@@ -1450,7 +1450,7 @@ screen director_lines(state):
                         style "empty"
                         left_padding (gui._scale(300) + 30)
 
-                        text "[line_text]"style "director_text"
+                        text "[line_text!q]" style "director_text"
 
         null height 14
 
