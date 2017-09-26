@@ -311,6 +311,8 @@ cdef class FTFont:
             if self.underline_height < 1:
                 self.underline_height = 1
 
+            self.underline_height += self.expand
+
         return
 
     cdef glyph_cache *get_glyph(self, int index):
@@ -487,7 +489,7 @@ cdef class FTFont:
 
             gl.character = c
             gl.ascent = self.ascent
-            
+
             if c == 0x200B:
                 gl.width = 0
             else:
@@ -589,7 +591,7 @@ cdef class FTFont:
         cdef int error
         cdef int bmx, bmy, px, py, pxstart
         cdef int ly, lh, rows, width
-        cdef int underline_x
+        cdef int underline_x, underline_end, expand
         cdef int x, y
 
         cdef unsigned char *pixels
@@ -612,6 +614,8 @@ cdef class FTFont:
         face = self.face
         g = face.glyph
 
+        expand = self.expand
+
         for glyph in glyphs:
 
             if glyph.split == SPLIT_INSTEAD:
@@ -624,6 +628,7 @@ cdef class FTFont:
             y = <int> (glyph.y + yo)
 
             underline_x = x - glyph.delta_x_offset
+            underline_end = x + <int> glyph.advance + expand
 
             index = FT_Get_Char_Index(face, <Py_UNICODE> glyph.character)
             cache = self.get_glyph(index)
@@ -641,6 +646,8 @@ cdef class FTFont:
 
                 rows = min(cache.bitmap.rows, surf.h - bmy)
                 width = min(cache.bitmap.width, surf.w - bmx)
+
+                underline_end = min(underline_end, surf.w - 1)
 
                 for py from 0 <= py < rows:
 
@@ -681,7 +688,7 @@ cdef class FTFont:
                     lh = self.underline_height * underline
 
                     for py from ly <= py < min(ly + lh, surf.h):
-                        for px from underline_x <= px < (x + <int> glyph.advance):
+                        for px from underline_x <= px < underline_end:
                             line = pixels + py * pitch + px * 4
 
                             line[0] = Sr
@@ -697,7 +704,7 @@ cdef class FTFont:
                         lh = 1
 
                     for py from ly <= py < (ly + lh):
-                        for px from underline_x <= px < (x + <int> glyph.advance):
+                        for px from underline_x <= px < underline_end:
                             line = pixels + py * pitch + px * 4
 
                             line[0] = Sr
