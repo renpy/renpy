@@ -37,6 +37,9 @@ _test.timeout = 5.0
 # Should we force the test to proceed despite suppress_underlay?
 _test.force = False
 
+# How long should we wait for a transition before we proceed?
+_test.transition_timeout = 5.0
+
 
 class Node(object):
     """
@@ -99,7 +102,7 @@ class Pattern(Node):
 
         self.report()
 
-        if renpy.display.interface.trans_pause:
+        if renpy.display.interface.trans_pause and (t < _test.transition_timeout):
             return state
 
         if self.position is not None:

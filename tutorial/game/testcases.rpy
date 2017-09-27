@@ -1,5 +1,7 @@
 testcase default:
 
+    $ _test.transition_timeout = 0.05
+
     "Start"
     click until label tutorials
 
