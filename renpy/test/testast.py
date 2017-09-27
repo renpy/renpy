@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 import renpy.display
 import renpy.test
 from renpy.test.testmouse import click_mouse, move_mouse
@@ -459,6 +461,7 @@ class Call(Node):
         self.target = target
 
     def start(self):
+        print("Call test", self.target)
         node = renpy.test.testexecution.lookup(self.target, self)
         return (node, None, 0)
 
