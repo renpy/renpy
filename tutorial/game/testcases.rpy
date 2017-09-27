@@ -1,24 +1,3 @@
-testcase default:
-
-    $ _test.transition_timeout = 0.05
-
-    "Start"
-    click until label tutorials
-
-    call player_experience
-    call new_game
-    call dialogue
-    call images
-    call positioning_images
-    call transitions
-    call music
-    call choices
-    call input
-    call video
-    call nvl_mode
-    call tools
-    call building
-
 
 testcase player_experience:
     scroll "Bar" until "Player Experience"
@@ -118,7 +97,23 @@ testcase building:
     click until label tutorials
 
 
+testcase text_tags:
+    scroll "Bar" until "Text Tags, Escapes, and Interpolation"
+    click until label tutorials
+
+testcase character_objects:
+    scroll "Bar" until "Character Objects"
+    click until label tutorials
+
+testcase simple_displayables:
+    scroll "Bar" until "Simple Displayables"
+    click until label tutorials
+
+
+
 testcase transition_gallery:
+    $ _test.transition_timeout = 60.0
+
     scroll "Bar" until "Transition Gallery"
     click until "Simple"
     click until "ImageDissolve"
@@ -128,3 +123,115 @@ testcase transition_gallery:
     click until "AlphaDissolve"
     click until "something else"
     click until label tutorials
+
+    $ _test.transition_timeout = 0.05
+
+testcase position_properties:
+    scroll "Bar" until "Position Properties"
+    click until "xpos .75 ypos .25"
+    click until label tutorials
+
+testcase transforms:
+
+    scroll "Bar" until "Transforms and Animation"
+    click until label tutorials
+
+    scroll "Bar" until "Transform Properties"
+    click until label tutorials
+
+testcase gui_customization:
+
+    scroll "Bar" until "GUI Customization"
+    click until label tutorials
+
+
+testcase styles:
+
+    scroll "Bar" until "Styles and Style Properties"
+    click until "Style basics."
+    click until "General style properties."
+    click until "Text style properties."
+    click until "Window and Button style properties."
+    click until "Bar style properties."
+    click until "Box, Grid, and Fixed style properties."
+    click until "The Displayable Inspector."
+    click until "That's all I want to know."
+    click until label tutorials
+
+
+testcase screens:
+
+    scroll "Bar" until "Screen Basics"
+    click until "What screens can do."
+    click until "Yes."
+    click until "How to show screens."
+    click until "you'll have to click"
+    "Okay"
+    click until "Passing parameters to screens."
+    click until "the call screen statement"
+    "Okay"
+    click until "Screen properties."
+    click until "Close This Screen"
+    pause .5
+    "Close This Screen"
+    click until "Special screen statements."
+    click until "Using other screens."
+    click until "That's it."
+
+    scroll "Bar" until "Screen Displayables"
+    click until "Common properties"
+    click until "Adding images"
+    click until "Text"
+    click until "Buttons"
+    click until "Bars"
+    click until "Viewports"
+    click until "Imagemaps"
+    click until "That's all"
+
+
+    click until label tutorials
+
+
+
+testcase template:
+
+    scroll "Bar" until "-"
+    click until label tutorials
+
+
+testcase default:
+
+    $ _test.transition_timeout = 0.05
+
+    "Start"
+    click until label tutorials
+
+    call screens
+
+
+
+testcase rest:
+
+    call player_experience
+    call new_game
+    call dialogue
+    call images
+    call positioning_images
+    call transitions
+    call music
+    call choices
+    call input
+    call video
+    call nvl_mode
+    call tools
+    call building
+
+    call text_tags
+    call character_objects
+    call simple_displayables
+    call transition_gallery
+    call position_properties
+    call transforms
+    call gui_customization
+    call styles
+

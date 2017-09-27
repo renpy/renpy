@@ -62,8 +62,7 @@ def find_focus(pattern):
         alt = match(f)
 
         if alt is not None:
-
-            matching.append((len(alt), f))
+            matching.append((len(alt), f, alt))
 
     if not matching:
         return None

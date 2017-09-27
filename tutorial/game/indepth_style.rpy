@@ -82,10 +82,10 @@ label styles_menu:
         "Bar style properties.":
             call style_bar
 
-        "Box, Grid, and Fixed style properties":
+        "Box, Grid, and Fixed style properties.":
             call style_box
 
-        "The Displayable Inspector":
+        "The Displayable Inspector.":
             call style_inspector
 
         "That's all I want to know.":
