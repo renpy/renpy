@@ -338,7 +338,8 @@ class Until(Node):
     once before quitting.
     """
 
-    def __init__(self, left, right):
+    def __init__(self, loc, left, right):
+        Node.__init__(self, loc)
         self.left = left
         self.right = right
 
@@ -374,7 +375,9 @@ class If(Node):
     statement.
     """
 
-    def __init__(self, condition, block):
+    def __init__(self, loc, condition, block):
+        Node.__init__(self, loc)
+
         self.condition = condition
         self.block = block
 
@@ -447,7 +450,9 @@ class Assert(Node):
 
 class Jump(Node):
 
-    def __init__(self, target):
+    def __init__(self, loc, target):
+        Node.__init__(self, loc)
+
         self.target = target
 
     def start(self):
@@ -457,7 +462,9 @@ class Jump(Node):
 
 class Call(Node):
 
-    def __init__(self, target):
+    def __init__(self, loc, target):
+        Node.__init__(self, loc)
+
         self.target = target
 
     def start(self):

@@ -182,17 +182,17 @@ def parse_statement(l, loc):
 
     elif l.keyword('jump'):
         target = l.require(l.name)
-        return testast.Jump(target)
+        return testast.Jump(loc, target)
 
     elif l.keyword('call'):
         target = l.require(l.name)
-        return testast.Call(target)
+        return testast.Call(loc, target)
 
     rv = parse_clause(l, loc)
 
     if l.keyword("until"):
         right = parse_clause(l, loc)
-        rv = testast.Until(rv, right)
+        rv = testast.Until(loc, rv, right)
 
     return rv
 
