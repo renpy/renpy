@@ -178,9 +178,13 @@ class Scroll(Node):
 
         adj = f.widget.adjustment
 
-        new = adj.value + adj.page
-        if new > adj.range:
+        if adj.value == adj.range:
             new = 0
+        else:
+            new = adj.value + adj.page
+
+            if new > adj.range:
+                new = adj.range
 
         adj.change(new)
 
