@@ -470,10 +470,15 @@ label demo_movetransition:
         hide eileen happy
         with moveoutright
 
-        show eileen flip
+        show eileen happy:
+            yzoom -1
+            xalign 0.5
+            yalign 0.0
+
+
         with moveintop
 
-        hide eileen flip
+        hide eileen happy
         with moveouttop
 
         show eileen happy
