@@ -13,14 +13,10 @@ testcase default:
     call transitions
     call music
     call choices
-
-    # Input
-
+    call input
     call video
     call nvl_mode
-
-    # Tools
-
+    call tools
     call building
 
 
@@ -85,6 +81,18 @@ testcase choices:
     click until "Yes."
     click until label tutorials
 
+
+testcase input:
+    scroll "Bar" until "Input and Interpolation"
+    click until "Some games might prompt the player for input."
+    type "Tom"
+    type BACKSPACE
+    type "m"
+    type LEFT
+    type RIGHT
+    type "\n"
+    click until label tutorials
+
 testcase positioning_images:
     scroll "Bar" until "Positioning Images"
     click until label tutorials
@@ -96,6 +104,13 @@ testcase video:
 testcase nvl_mode:
     scroll "Bar" until "NVL Mode"
     click until "Yes."
+    click until label tutorials
+
+testcase tools:
+    scroll "Bar" until "Tools and the Interactive Director"
+
+    # Not actually testing the various tools yet.
+
     click until label tutorials
 
 testcase building:
