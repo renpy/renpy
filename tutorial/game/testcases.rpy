@@ -19,13 +19,11 @@ testcase default:
 
     # Tools
 
-#     call building
-
-
+    call building
 
 
 testcase player_experience:
-    "Player Experience"
+    scroll "Bar" until "Player Experience"
     click until "Yes."
 
     # Dialogue after menu.
@@ -60,52 +58,51 @@ testcase player_experience:
     click until label tutorials
 
 testcase new_game:
-    "Creating a New Game"
+    scroll "Bar" until "Creating a New Game"
     click until label tutorials
 
 testcase dialogue:
-    "Writing Dialogue"
+    scroll "Bar" until "Writing Dialogue"
     click until label tutorials
 
 testcase images:
-    "Adding Images"
+    scroll "Bar" until "Adding Images"
     click until label tutorials
 
 testcase transitions:
-    "Transitions"
+    scroll "Bar" until "Transitions"
     click until label tutorials
 
 testcase music:
-    "Music and Sound Effects"
+    scroll "Bar" until "Music and Sound Effects"
     click until label tutorials
 
 testcase choices:
-    "Choices and Python"
+    scroll "Bar" until "Choices and Python"
     click until "Yes, I do."
     click until "Yes."
     click until label tutorials
 
 testcase positioning_images:
+    scroll "Bar" until "Positioning Images"
     click until label tutorials
 
-
-
 testcase video:
-    "Video Playback"
+    scroll "Bar" until "Video Playback"
     click until label tutorials
 
 testcase nvl_mode:
-    "NVL Mode"
+    scroll "Bar" until "NVL Mode"
     click until "Yes."
     click until label tutorials
 
 testcase building:
-    "Building Distributions"
+    scroll "Bar" until "Building Distributions"
     click until label tutorials
 
 
 testcase transition_gallery:
-    "Transition Gallery"
+    scroll "Bar" until "Transition Gallery"
     click until "Simple"
     click until "ImageDissolve"
     click until "MoveTransition"

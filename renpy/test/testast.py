@@ -152,6 +152,47 @@ class Move(Pattern):
         return None
 
 
+class Scroll(Node):
+
+    def __init__(self, loc, pattern=None):
+        Node.__init__(self, loc)
+        self.pattern = pattern
+
+    def start(self):
+        return True
+
+    def execute(self, state, t):
+
+        self.report()
+
+        f = renpy.test.testfocus.find_focus(self.pattern)
+
+        if f is None:
+            return True
+
+        if not isinstance(f.widget, renpy.display.behavior.Bar):
+            return True
+
+        adj = f.widget.adjustment
+
+        new = adj.value + adj.page
+        if new > adj.range:
+            new = 0
+
+        adj.change(new)
+
+        return None
+
+    def ready(self):
+
+        f = renpy.test.testfocus.find_focus(self.pattern)
+
+        if f is not None:
+            return True
+        else:
+            return False
+
+
 class Drag(Node):
 
     def __init__(self, loc, points):
@@ -367,6 +408,9 @@ class Until(Node):
             return None
 
         return child, child_state, start
+
+    def ready(self):
+        return self.left.ready() or self.right.ready()
 
 
 class If(Node):
