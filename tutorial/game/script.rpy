@@ -56,7 +56,7 @@ init python:
     Section(_("Quickstart"))
 
     Tutorial("tutorial_playing", _("Player Experience"))
-    Tutorial("tutorial_create", _("Creating a new Game"))
+    Tutorial("tutorial_create", _("Creating a New Game"))
     Tutorial("tutorial_dialogue", _("Writing Dialogue"))
     Tutorial("tutorial_images", _("Adding Images"))
     Tutorial("tutorial_simple_positions", _("Positioning Images"))
