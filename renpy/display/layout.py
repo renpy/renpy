@@ -1058,6 +1058,9 @@ class Window(Container):
         xminimum = scale(style.xminimum, width)
         yminimum = scale(style.yminimum, height)
 
+        xmaximum = scale(style.xmaximum, width)
+        ymaximum = scale(style.ymaximum, height)
+
         size_group = self.style.size_group
         if size_group and size_group in size_groups:
             xminimum = max(xminimum, size_groups[size_group].width(width, height, st, at))
@@ -1101,11 +1104,11 @@ class Window(Container):
 
         if renpy.config.enforce_window_max_size:
 
-            if style.xmaximum is not None:
-                width = min(width, style.xmaximum)
+            if xmaximum is not None:
+                width = min(width, xmaximum)
 
-            if style.ymaximum is not None:
-                height = min(height, style.ymaximum)
+            if ymaximum is not None:
+                height = min(height, ymaximum)
 
         rv = renpy.display.render.Render(width, height)
 
