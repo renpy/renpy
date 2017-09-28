@@ -167,7 +167,7 @@ def parse_statement(l, loc):
         l.require(':')
         block = parse_block(l.subblock_lexer(False), loc)
 
-        return testast.If(condition, block)
+        return testast.If(loc, condition, block)
 
     # Single-line statements only below here.
 
