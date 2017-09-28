@@ -186,9 +186,65 @@ testcase screens:
     click until "Bars"
     click until "Viewports"
     click until "Imagemaps"
+    click until "Science"
     click until "That's all"
 
+    click until label tutorials
 
+
+testcase translations:
+
+    scroll "Bar" until "Translations"
+    click until label tutorials
+
+
+testcase out_of_game:
+    "Back"
+    "Back"
+
+    "Skip"
+
+    "Back"
+
+    $ _preferences.self_voicing = False
+    $ _preferences.afm_time = 1
+
+
+    "Auto"
+    scroll "Bar" until "Player Experience"
+    "Auto"
+    "History"
+
+    pause .5
+
+    "Save"
+    "Save Slot 1"
+    "Yes"
+
+    "Load"
+    pause .5
+
+    "Load Slot 1"
+    "Yes"
+
+    "Prefs"
+    pause .5
+
+    "About"
+    pause .5
+
+    "Help"
+    pause .5
+
+    "Main Menu"
+    "Yes"
+
+    "Load"
+    pause .5
+
+    "Load Slot 1"
+
+    click until "Yes."
     click until label tutorials
 
 
@@ -205,12 +261,6 @@ testcase default:
 
     "Start"
     click until label tutorials
-
-    call screens
-
-
-
-testcase rest:
 
     call player_experience
     call new_game
@@ -234,4 +284,16 @@ testcase rest:
     call transforms
     call gui_customization
     call styles
+    call screens
+
+    # Skip Minigames and CDDs.
+
+    call translations
+    call out_of_game
+
+    "That's enough for now."
+    click until "Quit"
+    pause .5
+
+
 

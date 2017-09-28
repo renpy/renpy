@@ -170,6 +170,7 @@ label tutorials:
         $ e(_("Is there anything else you'd like to see?"), interact=False)
 
     $ tutorials_first_time = False
+    $ renpy.choice_for_skipping()
 
     call screen tutorials(adj=tutorials_adjustment)
 

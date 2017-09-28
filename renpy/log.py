@@ -213,7 +213,7 @@ class StdioRedirector(object):
                 try:
                     i(l)
                 except:
-                    traceback.print_exc(None, real_stderr)
+                    # traceback.print_exc(None, real_stderr)
                     pass
 
         self.buffer = lines[-1]
