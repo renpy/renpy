@@ -245,43 +245,43 @@ translate russian strings:
     old "Audio Filename:"
     new "Имя файла:"
 
-    # 00gui.rpy:237
+    # 00gui.rpy:240
     old "Are you sure?"
     new "Вы уверены?"
 
-    # 00gui.rpy:238
+    # 00gui.rpy:241
     old "Are you sure you want to delete this save?"
     new "Вы уверены, что хотите удалить это сохранение?"
 
-    # 00gui.rpy:239
+    # 00gui.rpy:242
     old "Are you sure you want to overwrite your save?"
     new "Вы уверены, что хотите перезаписать ваше сохранение?"
 
-    # 00gui.rpy:240
+    # 00gui.rpy:243
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Загрузка игры приведёт к потере несохранённого прогресса.\nВы уверены, что хотите это сделать?"
 
-    # 00gui.rpy:241
+    # 00gui.rpy:244
     old "Are you sure you want to quit?"
     new "Вы уверены, что хотите выйти?"
 
-    # 00gui.rpy:242
+    # 00gui.rpy:245
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Вы уверены, что хотите вернуться в главное меню?\nЭто приведёт к потере несохранённого прогресса."
 
-    # 00gui.rpy:243
+    # 00gui.rpy:246
     old "Are you sure you want to end the replay?"
     new "Вы уверены, что хотите завершить повтор?"
 
-    # 00gui.rpy:244
+    # 00gui.rpy:247
     old "Are you sure you want to begin skipping?"
     new "Вы уверены, что хотите начать пропуск?"
 
-    # 00gui.rpy:245
+    # 00gui.rpy:248
     old "Are you sure you want to skip to the next choice?"
     new "Вы точно хотите пропустить всё до следующего выбора?"
 
-    # 00gui.rpy:246
+    # 00gui.rpy:249
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Вы уверены, что хотите пропустить непрочитанные диалоги до следующего выбора?"
 
@@ -289,23 +289,23 @@ translate russian strings:
     old "Saved screenshot as %s."
     new "Скриншот сохранён как %s."
 
-    # 00library.rpy:142
+    # 00library.rpy:146
     old "Self-voicing disabled."
     new "Синтезатор речи отключён."
 
-    # 00library.rpy:143
+    # 00library.rpy:147
     old "Clipboard voicing enabled. "
     new "Озвучка буфера обмена включена. "
 
-    # 00library.rpy:144
+    # 00library.rpy:148
     old "Self-voicing enabled. "
     new "Синтезатор речи включён. "
 
-    # 00library.rpy:179
+    # 00library.rpy:183
     old "Skip Mode"
     new "Режим Пропуска"
 
-    # 00library.rpy:262
+    # 00library.rpy:266
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Эта программа содержит свободное и открытое программное обеспечение под несколькими лицензиями, включая лицензию MIT и GNU Lesser General Public. Полный список лицензий, включая ссылки на полный исходный код, можно найти {a=https://www.renpy.org/l/license}здесь{/a}."
 

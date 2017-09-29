@@ -11,37 +11,37 @@ translate russian start_d3abb53c:
     # e "In this tutorial, we'll teach you the basics of Ren'Py, so you can make games of your own. We'll also demonstrate many features, so you can see what Ren'Py is capable of."
     e "Здесь мы обучим вас основам Ren'Py, чтобы вы сами могли создавать свои игры. Мы также продемонстрируем множество разнообразных возможностей, чтобы вы увидели, на что способен Ren'Py."
 
-# game/script.rpy:201
+# game/script.rpy:202
 translate russian end_b2482727:
 
     # e "Thank you for viewing this tutorial."
     e "Спасибо за просмотр этого обучения."
 
-# game/script.rpy:203
+# game/script.rpy:204
 translate russian end_38362e36:
 
     # e "If you'd like to see a full Ren'Py game, select \"The Question\" in the launcher."
     e "Если вы хотите увидеть полноценную Ren'Py-игру, выберите \"Вопрос\" в Launcher."
 
-# game/script.rpy:205
+# game/script.rpy:206
 translate russian end_02527d05:
 
     # e "You can download new versions of Ren'Py from {a=https://www.renpy.org/}https://www.renpy.org/{/a}. For help and discussion, check out the {a=https://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
     e "Вы можете скачать новые версии Ren'Py с {a=https://www.renpy.org/}https://www.renpy.org/{/a}. Для помощи и обсуждения, смотрите {a=https://lemmasoft.renai.us/forums/}форумы Lemma Soft{/a}."
 
-# game/script.rpy:207
+# game/script.rpy:208
 translate russian end_c9d03136:
 
     # e "We'd like to thank Piroshki for contributing my sprites; Mugenjohncel for Lucy, the band, and drawn backgrounds; and Jake for the magic circle."
     e "Мы хотели бы поблагодарить Piroshki за мои изображения, Mugenjohncel за Люси, рок-группу и фоны, и Jake — за волшебный круг."
 
-# game/script.rpy:209
+# game/script.rpy:210
 translate russian end_762dc07a:
 
     # e "The background music is \"Sunflower Slow Drag\", by Scott Joplin and Scott Hayden, performed by the United States Marine Band. The concert music is by Alessio."
     e "Музыка, играющая на заднем фоне — \"Sunflower Slow Drag\", написанная Scott Joplin и Scott Hayden, и исполненная United States Marine Band. Музыка концерта написана Alessio."
 
-# game/script.rpy:213
+# game/script.rpy:214
 translate russian end_a634d396:
 
     # e "We look forward to seeing what you create with Ren'Py. Have fun!"
@@ -62,7 +62,7 @@ translate russian strings:
     new "Опыт пользователя"
 
     # script.rpy:59
-    old "Creating a new Game"
+    old "Creating a New Game"
     new "Создаём новую игру"
 
     # script.rpy:60
