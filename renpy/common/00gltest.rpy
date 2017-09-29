@@ -404,5 +404,7 @@ label _directx_update_main:
 label _choose_renderer:
     scene expression "#000"
 
-    $ renpy.call_screen("_choose_renderer")
+    $ renpy.shown_window()
+    $ renpy.show_screen("_choose_renderer",  _transient=True)
+    $ ui.interact(suppress_overlay=True, suppress_underlay=True)
     return
