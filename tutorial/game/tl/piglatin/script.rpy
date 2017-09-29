@@ -11,37 +11,37 @@ translate piglatin start_d3abb53c:
     # e "In this tutorial, we'll teach you the basics of Ren'Py, so you can make games of your own. We'll also demonstrate many features, so you can see what Ren'Py is capable of."
     e "Niay histay utorialtay, eway'llay eachtay ouyay hetay asicsbay ofay Enray'Ypay, osay ouyay ancay akemay amesgay ofay ouryay ownay. Eway'llay alsoay emonstrateday anymay eaturesfay, osay ouyay ancay eesay hatway Enray'Ypay isay apablecay ofay."
 
-# game/script.rpy:201
+# game/script.rpy:202
 translate piglatin end_b2482727:
 
     # e "Thank you for viewing this tutorial."
     e "Hanktay ouyay orfay iewingvay histay utorialtay."
 
-# game/script.rpy:203
+# game/script.rpy:204
 translate piglatin end_38362e36:
 
     # e "If you'd like to see a full Ren'Py game, select \"The Question\" in the launcher."
     e "Fiay ouyay'day ikelay otay eesay aay ullfay Enray'Ypay amegay, electsay \"Hetay Uestionqay\" inay hetay auncherlay."
 
-# game/script.rpy:205
+# game/script.rpy:206
 translate piglatin end_02527d05:
 
     # e "You can download new versions of Ren'Py from {a=https://www.renpy.org/}https://www.renpy.org/{/a}. For help and discussion, check out the {a=https://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
     e "Ouyay ancay ownloadday ewnay ersionsvay ofay Enray'Ypay omfray {a=https://www.renpy.org/}ttpshay://wwway.enpyray.orgay/{/a}. Orfay elphay anday iscussionday, eckchay outay hetay {a=https://lemmasoft.renai.us/forums/}Emmalay Oftsay Orumsfay{/a}."
 
-# game/script.rpy:207
+# game/script.rpy:208
 translate piglatin end_c9d03136:
 
     # e "We'd like to thank Piroshki for contributing my sprites; Mugenjohncel for Lucy, the band, and drawn backgrounds; and Jake for the magic circle."
     e "Eway'day ikelay otay hanktay Iroshkipay orfay ontributingcay ymay pritessay; Ugenjohncelmay orfay Ucylay, hetay andbay, anday rawnday ackgroundsbay; anday Akejay orfay hetay agicmay irclecay."
 
-# game/script.rpy:209
+# game/script.rpy:210
 translate piglatin end_762dc07a:
 
     # e "The background music is \"Sunflower Slow Drag\", by Scott Joplin and Scott Hayden, performed by the United States Marine Band. The concert music is by Alessio."
     e "Hetay ackgroundbay usicmay isay \"Unflowersay Lowsay Ragday\", ybay Cottsay Oplinjay anday Cottsay Aydenhay, erformedpay ybay hetay Niteduay Tatessay Arinemay Andbay. Hetay oncertcay usicmay isay ybay Lessioaay."
 
-# game/script.rpy:213
+# game/script.rpy:214
 translate piglatin end_a634d396:
 
     # e "We look forward to seeing what you create with Ren'Py. Have fun!"
@@ -62,8 +62,8 @@ translate piglatin strings:
     new "Layerpay Xperienceeay"
 
     # script.rpy:59
-    old "Creating a new Game"
-    new "Reatingcay aay ewnay Amegay"
+    old "Creating a New Game"
+    new "Reatingcay aay Ewnay Amegay"
 
     # script.rpy:60
     old "Writing Dialogue"

@@ -245,43 +245,43 @@ translate piglatin strings:
     old "Audio Filename:"
     new "Udioaay Ilenamefay:"
 
-    # 00gui.rpy:237
+    # 00gui.rpy:240
     old "Are you sure?"
     new "Reaay ouyay uresay?"
 
-    # 00gui.rpy:238
+    # 00gui.rpy:241
     old "Are you sure you want to delete this save?"
     new "Reaay ouyay uresay ouyay antway otay eleteday histay avesay?"
 
-    # 00gui.rpy:239
+    # 00gui.rpy:242
     old "Are you sure you want to overwrite your save?"
     new "Reaay ouyay uresay ouyay antway otay overwriteay ouryay avesay?"
 
-    # 00gui.rpy:240
+    # 00gui.rpy:243
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Oadinglay illway oselay unsaveday rogresspay.\nReaay ouyay uresay ouyay antway otay oday histay?"
 
-    # 00gui.rpy:241
+    # 00gui.rpy:244
     old "Are you sure you want to quit?"
     new "Reaay ouyay uresay ouyay antway otay uitqay?"
 
-    # 00gui.rpy:242
+    # 00gui.rpy:245
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Reaay ouyay uresay ouyay antway otay eturnray otay hetay ainmay enumay?\nHistay illway oselay unsaveday rogresspay."
 
-    # 00gui.rpy:243
+    # 00gui.rpy:246
     old "Are you sure you want to end the replay?"
     new "Reaay ouyay uresay ouyay antway otay enday hetay eplayray?"
 
-    # 00gui.rpy:244
+    # 00gui.rpy:247
     old "Are you sure you want to begin skipping?"
     new "Reaay ouyay uresay ouyay antway otay eginbay kippingsay?"
 
-    # 00gui.rpy:245
+    # 00gui.rpy:248
     old "Are you sure you want to skip to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay otay hetay extnay oicechay?"
 
-    # 00gui.rpy:246
+    # 00gui.rpy:249
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay unseenay ialogueday otay hetay extnay oicechay?"
 
@@ -289,23 +289,23 @@ translate piglatin strings:
     old "Saved screenshot as %s."
     new "Avedsay creenshotsay asay %say."
 
-    # 00library.rpy:142
+    # 00library.rpy:146
     old "Self-voicing disabled."
     new "Elfsay-oicingvay isabledday."
 
-    # 00library.rpy:143
+    # 00library.rpy:147
     old "Clipboard voicing enabled. "
     new "Lipboardcay oicingvay enableday. "
 
-    # 00library.rpy:144
+    # 00library.rpy:148
     old "Self-voicing enabled. "
     new "Elfsay-oicingvay enableday. "
 
-    # 00library.rpy:179
+    # 00library.rpy:183
     old "Skip Mode"
     new "Kipsay Odemay"
 
-    # 00library.rpy:262
+    # 00library.rpy:266
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Histay rogrampay ontainscay eefray oftwaresay underay aay umbernay ofay icenseslay, includingay hetay Itmay Icenselay anday Nugay Esserlay Eneralgay Ublicpay Icenselay. Aay ompletecay istlay ofay oftwaresay, includingay inkslay otay ullfay ourcesay odecay, ancay ebay oundfay {a=https://www.renpy.org/l/license}erehay{/a}."
 

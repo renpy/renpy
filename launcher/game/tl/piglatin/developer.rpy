@@ -37,45 +37,57 @@ translate piglatin strings:
     old "Hide Image Load Log"
     new "Idehay Mageiay Oadlay Oglay"
 
-    # _developer/developer.rpym:97
+    # _developer/developer.rpym:67
+    old "Show Texture Size"
+    new "Howsay Exturetay Izesay"
+
+    # _developer/developer.rpym:70
+    old "Hide Texture size"
+    new "Idehay Exturetay izesay"
+
+    # _developer/developer.rpym:108
     old "Nothing to inspect."
     new "Othingnay otay inspectay."
 
-    # _developer/developer.rpym:225
+    # _developer/developer.rpym:236
     old "Return to the developer menu"
     new "Eturnray otay hetay eveloperday enumay"
 
-    # _developer/developer.rpym:385
+    # _developer/developer.rpym:396
     old "Rectangle: %r"
     new "Ectangleray: %ray"
 
-    # _developer/developer.rpym:390
+    # _developer/developer.rpym:401
     old "Mouse position: %r"
     new "Ousemay ositionpay: %ray"
 
-    # _developer/developer.rpym:395
+    # _developer/developer.rpym:406
     old "Right-click or escape to quit."
     new "Ightray-ickclay oray escapeay otay uitqay."
 
-    # _developer/developer.rpym:427
+    # _developer/developer.rpym:438
     old "Rectangle copied to clipboard."
     new "Ectangleray opiedcay otay ipboardclay."
 
-    # _developer/developer.rpym:430
+    # _developer/developer.rpym:441
     old "Position copied to clipboard."
     new "Ositionpay opiedcay otay ipboardclay."
 
-    # _developer/developer.rpym:539
+    # _developer/developer.rpym:550
     old "✔ "
     new "✔ "
 
-    # _developer/developer.rpym:542
+    # _developer/developer.rpym:553
     old "✘ "
     new "✘ "
 
-    # _developer/developer.rpym:547
+    # _developer/developer.rpym:558
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
     new "\n{color=#cfc}✔ redictedpay imageay (oodgay){/color}\n{color=#fcc}✘ unpredicteday imageay (adbay){/color}\n{color=#fff}Ragday otay ovemay.{/color}"
+
+    # _developer/developer.rpym:569
+    old "{size_mb:,.1f} MB in {count} textures."
+    new "{size_mb:,.1f} Bmay inay {count} exturestay."
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"

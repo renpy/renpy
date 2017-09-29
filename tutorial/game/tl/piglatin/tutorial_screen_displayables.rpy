@@ -719,6 +719,14 @@ translate piglatin strings:
     old "Bigger"
     new "Iggerbay"
 
+    # tutorial_screen_displayables.rpy:401
+    old "This is a screen."
+    new "Histay isay aay creensay."
+
+    # tutorial_screen_displayables.rpy:402
+    old "Okay"
+    new "Kayoay"
+
     # tutorial_screen_displayables.rpy:440
     old "You clicked the button."
     new "Ouyay ickedclay hetay uttonbay."

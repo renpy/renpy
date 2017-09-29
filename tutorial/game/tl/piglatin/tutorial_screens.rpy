@@ -287,127 +287,127 @@ translate piglatin screens_properties_c7ad3a8e:
     # e "This can save a lot of typing when styling screens with many displayables in them."
     e "Histay ancay avesay aay otlay ofay ypingtay henway ylingstay creenssay ithway anymay isplayablesday inay hemtay."
 
-# game/tutorial_screens.rpy:488
-translate piglatin screens_control_5566d948:
+# game/tutorial_screens.rpy:491
+translate piglatin screens_control_4a1d8d7c:
 
-    # e "The screen language has a few statements that do things other than show displayables. If you haven't seen the displayable statements yet, you might want to check them out and come back here."
-    e "Hetay creensay anguagelay ashay aay ewfay atementsstay hattay oday hingstay otheray hantay owshay isplayablesday. Fiay ouyay avenhay'tay eensay hetay isplayableday atementsstay etyay, ouyay ightmay antway otay eckchay hemtay outay anday omecay ackbay erehay."
+    # e "The screen language has a few statements that do things other than show displayables. If you haven't seen the section on {a=jump:warp_screen_displayables}Screen Displayables{/a} yet, you might want to check it out, then come back here."
+    e "Hetay creensay anguagelay ashay aay ewfay atementsstay hattay oday hingstay otheray hantay owshay isplayablesday. Fiay ouyay avenhay'tay eensay hetay ectionsay onay {a=jump:warp_screen_displayables}Creensay Isplayablesday{/a} etyay, ouyay ightmay antway otay eckchay itay outay, hentay omecay ackbay erehay."
 
-# game/tutorial_screens.rpy:500
+# game/tutorial_screens.rpy:503
 translate piglatin screens_control_0e939050:
 
     # e "The python statement works just about the same way it does in the script. A single line of Python is introduced with a dollar sign. This line is run each time the screen updates."
     e "Hetay ythonpay atementstay orksway ustjay aboutay hetay amesay ayway itay oesday inay hetay criptsay. Aay inglesay inelay ofay Ythonpay isay introduceday ithway aay ollarday ignsay. Histay inelay isay unray eachay imetay hetay creensay updatesay."
 
-# game/tutorial_screens.rpy:515
+# game/tutorial_screens.rpy:518
 translate piglatin screens_control_6334650a:
 
     # e "Similarly, the python statement introduces an indented block of python statements. But there is one big difference in Python in screens and Python in scripts."
     e "Imilarlysay, hetay ythonpay atementstay introducesay anay indenteday ockblay ofay ythonpay atementsstay. Utbay heretay isay oneay igbay ifferenceday inay Ythonpay inay creenssay anday Ythonpay inay criptssay."
 
-# game/tutorial_screens.rpy:517
+# game/tutorial_screens.rpy:520
 translate piglatin screens_control_ba8f5f13:
 
     # e "The Python you use in screens isn't allowed to have side effects. That means that it can't do things like change the value of a variable."
     e "Hetay Ythonpay ouyay useay inay creenssay isnay'tay alloweday otay avehay idesay effectsay. Hattay eansmay hattay itay ancay'tay oday hingstay ikelay angechay hetay aluevay ofay aay ariablevay."
 
-# game/tutorial_screens.rpy:519
+# game/tutorial_screens.rpy:522
 translate piglatin screens_control_f75fa254:
 
     # e "The reason for this is that Ren'Py will run a screen, and the Python in it, during screen prediction."
     e "Hetay easonray orfay histay isay hattay Enray'Ypay illway unray aay creensay, anday hetay Ythonpay inay itay, uringday creensay redictionpay."
 
-# game/tutorial_screens.rpy:533
+# game/tutorial_screens.rpy:536
 translate piglatin screens_control_40c12afa:
 
     # e "The default statement lets you set the value of a screen variable the first time the screen runs. This value can be changed with the SetScreenVariable and ToggleScreenVariable actions."
     e "Hetay efaultday atementstay etslay ouyay etsay hetay aluevay ofay aay creensay ariablevay hetay irstfay imetay hetay creensay unsray. Histay aluevay ancay ebay angedchay ithway hetay Etscreenvariablesay anday Ogglescreenvariabletay actionsay."
 
-# game/tutorial_screens.rpy:535
+# game/tutorial_screens.rpy:538
 translate piglatin screens_control_39e0f7e6:
 
     # e "The default statement differs from the Python statement in that it is only run once. Python runs each time the screen updates, and hence the variable would never change value."
     e "Hetay efaultday atementstay iffersday omfray hetay Ythonpay atementstay inay hattay itay isay onlyay unray onceay. Ythonpay unsray eachay imetay hetay creensay updatesay, anday encehay hetay ariablevay ouldway evernay angechay aluevay."
 
-# game/tutorial_screens.rpy:554
+# game/tutorial_screens.rpy:557
 translate piglatin screens_control_87a75fe7:
 
     # e "The if statement works like it does in script, running one block if the condition is true and another if the condition is false."
     e "Hetay ifay atementstay orksway ikelay itay oesday inay criptsay, unningray oneay ockblay ifay hetay onditioncay isay uetray anday anotheray ifay hetay onditioncay isay alsefay."
 
-# game/tutorial_screens.rpy:569
+# game/tutorial_screens.rpy:572
 translate piglatin screens_control_6a8c07f6:
 
     # e "The for statement takes a list of values, and iterates through them, running the block inside the for loop with the variable bound to each list item."
     e "Hetay orfay atementstay akestay aay istlay ofay aluesvay, anday iteratesay hroughtay hemtay, unningray hetay ockblay insideay hetay orfay ooplay ithway hetay ariablevay oundbay otay eachay istlay itemay."
 
-# game/tutorial_screens.rpy:585
+# game/tutorial_screens.rpy:588
 translate piglatin screens_control_f7b755fa:
 
     # e "The on and key statements probably only make sense at the top level of the screen."
     e "Hetay onay anday eykay atementsstay robablypay onlyay akemay ensesay atay hetay optay evellay ofay hetay creensay."
 
-# game/tutorial_screens.rpy:587
+# game/tutorial_screens.rpy:590
 translate piglatin screens_control_328b0676:
 
     # e "The on statement makes the screen run an action when an event occurs. The 'show' event happens when the screen is first shown, and the 'hide' event happens when it is hidden."
     e "Hetay onay atementstay akesmay hetay creensay unray anay actionay henway anay eventay occursay. Hetay 'owshay' eventay appenshay henway hetay creensay isay irstfay ownshay, anday hetay 'idehay' eventay appenshay henway itay isay iddenhay."
 
-# game/tutorial_screens.rpy:589
+# game/tutorial_screens.rpy:592
 translate piglatin screens_control_6768768b:
 
     # e "The key event runs an event when a key is pressed."
     e "Hetay eykay eventay unsray anay eventay henway aay eykay isay ressedpay."
 
-# game/tutorial_screens.rpy:597
+# game/tutorial_screens.rpy:600
 translate piglatin screen_use_c6a20a16:
 
     # e "The screen language use statement lets you include a screen inside another. This can be useful to prevent duplication inside screens."
     e "Hetay creensay anguagelay useay atementstay etslay ouyay includeay aay creensay insideay anotheray. Histay ancay ebay usefulay otay reventpay uplicationday insideay creenssay."
 
-# game/tutorial_screens.rpy:613
+# game/tutorial_screens.rpy:616
 translate piglatin screen_use_95a34d3a:
 
     # e "Take for example this screen, which shows two stat entries. There's already a lot of duplication there, and if we had more stats, there would be more."
     e "Aketay orfay exampleay histay creensay, hichway owsshay wotay atstay entriesay. Heretay'say alreadyay aay otlay ofay uplicationday heretay, anday ifay eway adhay oremay atsstay, heretay ouldway ebay oremay."
 
-# game/tutorial_screens.rpy:630
+# game/tutorial_screens.rpy:633
 translate piglatin screen_use_e2c673d9:
 
     # e "Here, we moved the statements that show the text and bar into a second screen, and the use statement includes that screen in the first one."
     e "Erehay, eway ovedmay hetay atementsstay hattay owshay hetay exttay anday arbay intoay aay econdsay creensay, anday hetay useay atementstay includesay hattay creensay inay hetay irstfay oneay."
 
-# game/tutorial_screens.rpy:632
+# game/tutorial_screens.rpy:635
 translate piglatin screen_use_2efdd2ff:
 
     # e "The name and amount of the stat are passed in as arguments to the screen, just as is done in the call screen statement."
     e "Hetay amenay anday amountay ofay hetay atstay areay assedpay inay asay argumentsay otay hetay creensay, ustjay asay isay oneday inay hetay allcay creensay atementstay."
 
-# game/tutorial_screens.rpy:634
+# game/tutorial_screens.rpy:637
 translate piglatin screen_use_f8d1bf9d:
 
     # e "By doing it this way, we control the amount of duplication, and can change the stat in one place."
     e "Ybay oingday itay histay ayway, eway ontrolcay hetay amountay ofay uplicationday, anday ancay angechay hetay atstay inay oneay aceplay."
 
-# game/tutorial_screens.rpy:650
+# game/tutorial_screens.rpy:653
 translate piglatin screen_use_4e22c25e:
 
     # e "The transclude statement goes one step further, by letting the use statement take a block of screen language statements."
     e "Hetay anscludetray atementstay oesgay oneay epstay urtherfay, ybay ettinglay hetay useay atementstay aketay aay ockblay ofay creensay anguagelay atementsstay."
 
-# game/tutorial_screens.rpy:652
+# game/tutorial_screens.rpy:655
 translate piglatin screen_use_c83b97e3:
 
     # e "When the included screen reaches the transclude statement it is replaced with the block from the use statement."
     e "Henway hetay includeday creensay eachesray hetay anscludetray atementstay itay isay eplacedray ithway hetay ockblay omfray hetay useay atementstay."
 
-# game/tutorial_screens.rpy:654
+# game/tutorial_screens.rpy:657
 translate piglatin screen_use_1ad1f358:
 
     # e "The boilerplate screen is included in the first one, and the text from the first screen is transcluded into the boilerplate screen."
     e "Hetay oilerplatebay creensay isay includeday inay hetay irstfay oneay, anday hetay exttay omfray hetay irstfay creensay isay anscludedtray intoay hetay oilerplatebay creensay."
 
-# game/tutorial_screens.rpy:656
+# game/tutorial_screens.rpy:659
 translate piglatin screen_use_f74fab6e:
 
     # e "Use and transclude are complex, but very powerful. If you think about it, 'use boilerplate' is only one step removed from writing your own Screen Language statement."
@@ -503,14 +503,6 @@ translate piglatin strings:
     old "I do."
     new "Iay oday."
 
-    # tutorial_screens.rpy:260
-    old "This is a screen."
-    new "Histay isay aay creensay."
-
-    # tutorial_screens.rpy:261
-    old "Okay"
-    new "Kayoay"
-
     # tutorial_screens.rpy:331
     old "Hello, world."
     new "Ellohay, orldway."
@@ -551,51 +543,51 @@ translate piglatin strings:
     old "This text is red."
     new "Histay exttay isay edray."
 
-    # tutorial_screens.rpy:493
+    # tutorial_screens.rpy:496
     old "Hello, World."
     new "Ellohay, Orldway."
 
-    # tutorial_screens.rpy:507
+    # tutorial_screens.rpy:510
     old "It's good to meet you."
     new "Tiay'say oodgay otay eetmay ouyay."
 
-    # tutorial_screens.rpy:531
+    # tutorial_screens.rpy:534
     old "Increase"
     new "Ncreaseiay"
 
-    # tutorial_screens.rpy:560
+    # tutorial_screens.rpy:563
     old "Earth"
     new "Artheay"
 
-    # tutorial_screens.rpy:560
+    # tutorial_screens.rpy:563
     old "Moon"
     new "Oonmay"
 
-    # tutorial_screens.rpy:560
+    # tutorial_screens.rpy:563
     old "Mars"
     new "Arsmay"
 
-    # tutorial_screens.rpy:578
+    # tutorial_screens.rpy:581
     old "Now press 'a'."
     new "Ownay resspay 'aay'."
 
-    # tutorial_screens.rpy:580
+    # tutorial_screens.rpy:583
     old "The screen was just shown."
     new "Hetay creensay asway ustjay ownshay."
 
-    # tutorial_screens.rpy:582
+    # tutorial_screens.rpy:585
     old "You pressed the 'a' key."
     new "Ouyay ressedpay hetay 'aay' eykay."
 
-    # tutorial_screens.rpy:605
+    # tutorial_screens.rpy:608
     old "Health"
     new "Ealthhay"
 
-    # tutorial_screens.rpy:610
+    # tutorial_screens.rpy:613
     old "Magic"
     new "Agicmay"
 
-    # tutorial_screens.rpy:641
+    # tutorial_screens.rpy:644
     old "There's not much left to see."
     new "Heretay'say otnay uchmay eftlay otay eesay."
 

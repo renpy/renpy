@@ -6,8 +6,8 @@ translate piglatin strings:
     new "## Nitializationiay"
 
     # gui.rpy:5
-    old "## The init offset statement causes the init code in this file to run before init code in any other file."
-    new "## Hetay initay offsetay atementstay ausescay hetay initay odecay inay histay ilefay otay unray eforebay initay odecay inay anyay otheray ilefay."
+    old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
+    new "## Hetay initay offsetay atementstay ausescay hetay initializationay atementsstay inay histay ilefay otay unray eforebay initay atementsstay inay anyay otheray ilefay."
 
     # gui.rpy:9
     old "## Calling gui.init resets the styles to sensible default values, and sets the width and height of the game."
@@ -286,8 +286,8 @@ translate piglatin strings:
     new "## Hesetay ariablesvay ontrolcay hetay ooklay ofay amesfray hattay ancay ontaincay useray interfaceay omponentscay henway anay overlayay oray indowway isay otnay resentpay."
 
     # gui.rpy:282
-    old "## Generic frames that are introduced by player code."
-    new "## Enericgay amesfray hattay areay introduceday ybay ayerplay odecay."
+    old "## Generic frames."
+    new "## Enericgay amesfray."
 
     # gui.rpy:285
     old "## The frame that is used as part of the confirm screen."
@@ -314,8 +314,8 @@ translate piglatin strings:
     new "## Hesetay ontrolcay hetay ooklay anday izesay ofay arsbay, crollbarssay, anday idersslay."
 
     # gui.rpy:302
-    old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written code."
-    new "## Hetay efaultday Uigay onlyay usesay idersslay anday erticalvay crollbarssay. Llaay ofay hetay otheray arsbay areay onlyay useday inay reatorcay-rittenway odecay."
+    old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
+    new "## Hetay efaultday Uigay onlyay usesay idersslay anday erticalvay crollbarssay. Llaay ofay hetay otheray arsbay areay onlyay useday inay reatorcay-rittenway creenssay."
 
     # gui.rpy:305
     old "## The height of horizontal bars, scrollbars, and sliders. The width of vertical bars, scrollbars, and sliders."

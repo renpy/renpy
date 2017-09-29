@@ -70,130 +70,134 @@ translate piglatin strings:
     new "## Nteringeay oray exitingay hetay amegay enumay."
 
     # options.rpy:81
+    old "## Between screens of the game menu."
+    new "## Etweenbay creenssay ofay hetay amegay enumay."
+
+    # options.rpy:86
     old "## A transition that is used after a game has been loaded."
     new "## Aay ansitiontray hattay isay useday afteray aay amegay ashay eenbay oadedlay."
 
-    # options.rpy:86
+    # options.rpy:91
     old "## Used when entering the main menu after the game has ended."
     new "## Seduay henway enteringay hetay ainmay enumay afteray hetay amegay ashay endeday."
 
-    # options.rpy:91
+    # options.rpy:96
     old "## A variable to set the transition used when the game starts does not exist. Instead, use a with statement after showing the initial scene."
     new "## Aay ariablevay otay etsay hetay ansitiontray useday henway hetay amegay artsstay oesday otnay existay. Nsteadiay, useay aay ithway atementstay afteray owingshay hetay initialay cenesay."
 
-    # options.rpy:96
+    # options.rpy:101
     old "## Window management"
     new "## Indowway anagementmay"
 
-    # options.rpy:98
+    # options.rpy:103
     old "## This controls when the dialogue window is displayed. If \"show\", it is always displayed. If \"hide\", it is only displayed when dialogue is present. If \"auto\", the window is hidden before scene statements and shown again once dialogue is displayed."
     new "## Histay ontrolscay henway hetay ialogueday indowway isay isplayedday. Fiay \"owshay\", itay isay alwaysay isplayedday. Fiay \"idehay\", itay isay onlyay isplayedday henway ialogueday isay resentpay. Fiay \"autoay\", hetay indowway isay iddenhay eforebay cenesay atementsstay anday ownshay againay onceay ialogueday isay isplayedday."
 
-    # options.rpy:103
+    # options.rpy:108
     old "## After the game has started, this can be changed with the \"window show\", \"window hide\", and \"window auto\" statements."
     new "## Fteraay hetay amegay ashay artedstay, histay ancay ebay angedchay ithway hetay \"indowway owshay\", \"indowway idehay\", anday \"indowway autoay\" atementsstay."
 
-    # options.rpy:109
+    # options.rpy:114
     old "## Transitions used to show and hide the dialogue window"
     new "## Ransitionstay useday otay owshay anday idehay hetay ialogueday indowway"
 
-    # options.rpy:115
+    # options.rpy:120
     old "## Preference defaults"
     new "## Referencepay efaultsday"
 
-    # options.rpy:117
+    # options.rpy:122
     old "## Controls the default text speed. The default, 0, is infinite, while any other number is the number of characters per second to type out."
     new "## Ontrolscay hetay efaultday exttay peedsay. Hetay efaultday, 0ay, isay infiniteay, hileway anyay otheray umbernay isay hetay umbernay ofay aracterschay erpay econdsay otay ypetay outay."
 
-    # options.rpy:123
+    # options.rpy:128
     old "## The default auto-forward delay. Larger numbers lead to longer waits, with 0 to 30 being the valid range."
     new "## Hetay efaultday autoay-orwardfay elayday. Argerlay umbersnay eadlay otay ongerlay aitsway, ithway 0ay otay 03ay eingbay hetay alidvay angeray."
 
-    # options.rpy:129
+    # options.rpy:134
     old "## Save directory"
     new "## Avesay irectoryday"
 
-    # options.rpy:131
+    # options.rpy:136
     old "## Controls the platform-specific place Ren'Py will place the save files for this game. The save files will be placed in:"
     new "## Ontrolscay hetay atformplay-pecificsay aceplay Enray'Ypay illway aceplay hetay avesay ilesfay orfay histay amegay. Hetay avesay ilesfay illway ebay acedplay inay:"
 
-    # options.rpy:134
+    # options.rpy:139
     old "## Windows: %APPDATA\\RenPy\\<config.save_directory>"
     new "## Indowsway: %Ppdataaay\\Enpyray\\<onfigcay.ave_directorysay>"
 
-    # options.rpy:136
+    # options.rpy:141
     old "## Macintosh: $HOME/Library/RenPy/<config.save_directory>"
     new "## Acintoshmay: $Omehay/Ibrarylay/Enpyray/<onfigcay.ave_directorysay>"
 
-    # options.rpy:138
+    # options.rpy:143
     old "## Linux: $HOME/.renpy/<config.save_directory>"
     new "## Inuxlay: $Omehay/.enpyray/<onfigcay.ave_directorysay>"
 
-    # options.rpy:140
+    # options.rpy:145
     old "## This generally should not be changed, and if it is, should always be a literal string, not an expression."
     new "## Histay enerallygay ouldshay otnay ebay angedchay, anday ifay itay isay, ouldshay alwaysay ebay aay iterallay ringstay, otnay anay expressionay."
 
-    # options.rpy:146
+    # options.rpy:151
     old "## Icon"
     new "## Coniay"
 
-    # options.rpy:148
+    # options.rpy:153
     old "## The icon displayed on the taskbar or dock."
     new "## Hetay iconay isplayedday onay hetay askbartay oray ockday."
 
-    # options.rpy:153
+    # options.rpy:158
     old "## Build configuration"
     new "## Uildbay onfigurationcay"
 
-    # options.rpy:155
+    # options.rpy:160
     old "## This section controls how Ren'Py turns your project into distribution files."
     new "## Histay ectionsay ontrolscay owhay Enray'Ypay urnstay ouryay rojectpay intoay istributionday ilesfay."
 
-    # options.rpy:160
+    # options.rpy:165
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
     new "## Hetay ollowingfay unctionsfay aketay ilefay atternspay. Ilefay atternspay areay asecay- insensitiveay, anday atchedmay againstay hetay athpay elativeray otay hetay asebay irectoryday, ithway anday ithoutway aay eadinglay /. Fiay ultiplemay atternspay atchmay, hetay irstfay isay useday."
 
-    # options.rpy:165
+    # options.rpy:170
     old "## In a pattern:"
     new "## Niay aay atternpay:"
 
-    # options.rpy:167
+    # options.rpy:172
     old "## / is the directory separator."
     new "## / isay hetay irectoryday eparatorsay."
 
-    # options.rpy:169
+    # options.rpy:174
     old "## * matches all characters, except the directory separator."
     new "## * atchesmay allay aracterschay, exceptay hetay irectoryday eparatorsay."
 
-    # options.rpy:171
+    # options.rpy:176
     old "## ** matches all characters, including the directory separator."
     new "## ** atchesmay allay aracterschay, includingay hetay irectoryday eparatorsay."
 
-    # options.rpy:173
+    # options.rpy:178
     old "## For example, \"*.txt\" matches txt files in the base directory, \"game/**.ogg\" matches ogg files in the game directory or any of its subdirectories, and \"**.psd\" matches psd files anywhere in the project."
     new "## Orfay exampleay, \"*.xttay\" atchesmay xttay ilesfay inay hetay asebay irectoryday, \"amegay/**.oggay\" atchesmay oggay ilesfay inay hetay amegay irectoryday oray anyay ofay itsay ubdirectoriessay, anday \"**.sdpay\" atchesmay sdpay ilesfay anywhereay inay hetay rojectpay."
 
-    # options.rpy:177
+    # options.rpy:182
     old "## Classify files as None to exclude them from the built distributions."
     new "## Lassifycay ilesfay asay Onenay otay excludeay hemtay omfray hetay uiltbay istributionsday."
 
-    # options.rpy:185
+    # options.rpy:190
     old "## To archive files, classify them as 'archive'."
     new "## Otay archiveay ilesfay, assifyclay hemtay asay 'archiveay'."
 
-    # options.rpy:190
+    # options.rpy:195
     old "## Files matching documentation patterns are duplicated in a mac app build, so they appear in both the app and the zip file."
     new "## Ilesfay atchingmay ocumentationday atternspay areay uplicatedday inay aay acmay appay uildbay, osay heytay appearay inay othbay hetay appay anday hetay ipzay ilefay."
 
-    # options.rpy:196
+    # options.rpy:201
     old "## Set this to a string containing your Apple Developer ID Application to enable codesigning on the Mac. Be sure to change it to your own Apple-issued ID."
     new "## Etsay histay otay aay ringstay ontainingcay ouryay Ppleaay Eveloperday Diay Pplicationaay otay enableay odesigningcay onay hetay Acmay. Ebay uresay otay angechay itay otay ouryay ownay Ppleaay-issueday Diay."
 
-    # options.rpy:203
+    # options.rpy:208
     old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
     new "## Aay Ooglegay Laypay icenselay eykay isay equiredray otay ownloadday expansionay ilesfay anday erformpay inay-appay urchasespay. Tiay ancay ebay oundfay onay hetay \"Ervicessay & Pisaay\" agepay ofay hetay Ooglegay Laypay eveloperday onsolecay."
 
-    # options.rpy:210
+    # options.rpy:215
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Hetay usernameay anday rojectpay amenay associateday ithway anay itchay.ioay rojectpay, eparatedsay ybay aay ashslay."
 
