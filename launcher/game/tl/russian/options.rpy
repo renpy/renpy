@@ -3,7 +3,7 @@ translate russian strings:
 
     # options.rpy:1
     old "## This file contains options that can be changed to customize your game."
-    new "## Данный файл содержит опции, способные изменить вашу игру."
+    new "## Данный файл содержит настройки, способные изменить вашу игру."
 
     # options.rpy:4
     old "## Lines beginning with two '#' marks are comments, and you shouldn't uncomment them. Lines beginning with a single '#' mark are commented-out code, and you may want to uncomment them when appropriate."
@@ -63,7 +63,7 @@ translate russian strings:
 
     # options.rpy:71
     old "## These variables set transitions that are used when certain events occur. Each variable should be set to a transition, or None to indicate that no transition should be used."
-    new "## Эти переменные задают переходы, используемые в различных событиях. Каждая переменная должна задавать переход или None, чтобы указать то, что переход не должен использоваться."
+    new "## Эти переменные задают переходы, используемые в различных событиях. Каждая переменная должна задавать переход или None, чтобы указать на то, что переход не должен использоваться."
 
     # options.rpy:75
     old "## Entering or exiting the game menu."
@@ -83,7 +83,7 @@ translate russian strings:
 
     # options.rpy:96
     old "## A variable to set the transition used when the game starts does not exist. Instead, use a with statement after showing the initial scene."
-    new "## Переменная, устанавливающая переход, используемый, когда старт игры не существует. Вместо неё используйте функцию with после показа начальной сценки."
+    new "## Переменная, устанавливающая переход, когда старт игры не существует. Вместо неё используйте функцию with после показа начальной сценки."
 
     # options.rpy:101
     old "## Window management"
@@ -95,7 +95,7 @@ translate russian strings:
 
     # options.rpy:108
     old "## After the game has started, this can be changed with the \"window show\", \"window hide\", and \"window auto\" statements."
-    new "## После того как игра началась, это может быть изменено с помощью \"window show\", \"window hide\", и \"window auto\"."
+    new "## После того как игра началась, этот параметр можно изменить с помощью \"window show\", \"window hide\", и \"window auto\"."
 
     # options.rpy:114
     old "## Transitions used to show and hide the dialogue window"
@@ -111,7 +111,7 @@ translate russian strings:
 
     # options.rpy:128
     old "## The default auto-forward delay. Larger numbers lead to longer waits, with 0 to 30 being the valid range."
-    new "## Стандартная задержка авто-чтения. Большие значения означают долгие ожидания, а от 0 до 30 — вполне допустимый диапазон."
+    new "## Стандартная задержка авточтения. Большие значения означают долгие ожидания, а от 0 до 30 — вполне допустимый диапазон."
 
     # options.rpy:134
     old "## Save directory"
@@ -135,7 +135,7 @@ translate russian strings:
 
     # options.rpy:145
     old "## This generally should not be changed, and if it is, should always be a literal string, not an expression."
-    new "## Оно обычно не должно изменяться, а если и изменилось, должно быть текстовой строчкой, а не выражением."
+    new "## Этот параметр обычно не должен изменяться, а если и изменился, должен быть текстовой строчкой, а не выражением."
 
     # options.rpy:151
     old "## Icon"
@@ -155,7 +155,7 @@ translate russian strings:
 
     # options.rpy:165
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
-    new "## Следующие функции избирают образцы файлов. Образцы файлов не учитывают регистр и соответствующе зависят от директории base, с или без учёта /, задающей директорию. Если обнаруживается множество одноимённых файлы, используется только первый."
+    new "## Следующие функции берут образцы файлов. Образцы файлов не учитывают регистр и соответствующе зависят от директории base, с или без учёта /, задающей директорию. Если обнаруживается множество одноимённых файлов, то используется только первый."
 
     # options.rpy:170
     old "## In a pattern:"

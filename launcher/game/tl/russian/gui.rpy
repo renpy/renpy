@@ -35,7 +35,7 @@ translate russian strings:
 
     # gui.rpy:32
     old "## The small color is used for small text, which needs to be brighter/darker to achieve the same effect."
-    new "## Small_color используется в маленьком тексте, который должен быть ярче/темнее, для достижения вышеуказанного эффекта."
+    new "## Small_color используется в маленьком тексте, который должен быть ярче/темнее, для того, чтобы выделяться."
 
     # gui.rpy:36
     old "## The color that is used for buttons and bars that are hovered."
@@ -79,7 +79,7 @@ translate russian strings:
 
     # gui.rpy:70
     old "## The size of character names."
-    new "## Размер для имён персонажей."
+    new "## Размер имён персонажей."
 
     # gui.rpy:73
     old "## The size of text in the game's user interface."
@@ -123,7 +123,7 @@ translate russian strings:
 
     # gui.rpy:106
     old "## The placement of the speaking character's name, relative to the textbox. These can be a whole number of pixels from the left or top, or 0.5 to center."
-    new "## Местоположение имени говорящего персонажа в отношении текстового окна. Это могут быть целые значения в пикселях слева и сверху от начала окна или процентное отношение, например, 0.5 для центрирования."
+    new "## Местоположение имени говорящего персонажа по отношению к текстовому окну. Это могут быть целые значения в пикселях слева и сверху от начала окна или процентное отношение, например, 0.5 для центрирования."
 
     # gui.rpy:111
     old "## The horizontal alignment of the character's name. This can be 0.0 for left-aligned, 0.5 for centered, and 1.0 for right-aligned."
@@ -159,7 +159,7 @@ translate russian strings:
 
     # gui.rpy:145
     old "## These variables, along with the image files in gui/button, control aspects of how buttons are displayed."
-    new "## Эти переменные, вместе с файлами изображений в gui/button, контролируют аспекты того, как кнопки отображаются."
+    new "## Эти переменные, вместе с файлами изображений в gui/button, контролируют аспекты того, как отображаются кнопки."
 
     # gui.rpy:148
     old "## The width and height of a button, in pixels. If None, Ren'Py computes a size."
@@ -191,7 +191,7 @@ translate russian strings:
 
     # gui.rpy:176
     old "## These variables override settings for different kinds of buttons. Please see the gui documentation for the kinds of buttons available, and what each is used for."
-    new "## Эти переменные переписывают настройки различных видов кнопок. Пожалуйста, посмотрите документацию по gui, для просмотра всех вариаций кнопок, и для чего каждая из них нужна."
+    new "## Эти переменные переписывают настройки различных видов кнопок. Пожалуйста, посмотрите документацию по gui для просмотра всех вариаций кнопок и для чего каждая из них нужна."
 
     # gui.rpy:180
     old "## These customizations are used by the default interface:"
@@ -199,7 +199,7 @@ translate russian strings:
 
     # gui.rpy:195
     old "## You can also add your own customizations, by adding properly-named variables. For example, you can uncomment the following line to set the width of a navigation button."
-    new "## Вы также можете добавить собственные настройки, добавляя правильно-именованные переменные. Например, вы можете раскомментировать следующую строчку, чтобы установить ширину кнопок навигации."
+    new "## Вы также можете добавить собственные настройки, добавляя правильно именованные переменные. Например, вы можете раскомментировать следующую строчку, чтобы установить ширину кнопок навигации."
 
     # gui.rpy:202
     old "## Choice Buttons"
@@ -347,11 +347,11 @@ translate russian strings:
 
     # gui.rpy:335
     old "## The number of blocks of dialogue history Ren'Py will keep."
-    new "## Количество диалоговых блоков истории, которых Ren'Py будет хранить."
+    new "## Количество диалоговых блоков истории, которые Ren'Py будет хранить."
 
     # gui.rpy:338
     old "## The height of a history screen entry, or None to make the height variable at the cost of performance."
-    new "## Высота доступных записей на экране истории, или None, чтобы задать высоту в зависимость от производительности."
+    new "## Высота доступных записей на экране истории, или None, чтобы задать высоту в зависимости от производительности."
 
     # gui.rpy:342
     old "## The position, width, and alignment of the label giving the name of the speaking character."
@@ -375,11 +375,11 @@ translate russian strings:
 
     # gui.rpy:363
     old "## The height of an NVL-mode entry. Set this to None to have the entries dynamically adjust height."
-    new "## Высота доступных строчек в режиме NVL. Установите это на None, чтобы строчки динамически регулировали высоту."
+    new "## Высота доступных строчек в режиме NVL. Установите это на None, чтобы строчки динамически регулировали свою высоту."
 
     # gui.rpy:367
     old "## The spacing between NVL-mode entries when gui.nvl_height is None, and between NVL-mode entries and an NVL-mode menu."
-    new "## Интервал между строчками в режиме NVL, если gui.nvl_height имеет значение None, и между строчками режима NVL и его меню."
+    new "## Интервал между строчками в режиме NVL, если gui.nvl_height имеет значение None, а также между строчками и меню режима NVL."
 
     # gui.rpy:384
     old "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"

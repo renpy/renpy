@@ -431,61 +431,61 @@ translate russian demo_movetransition_20946d36:
     # e "Let's see them all in action."
     e "Давайте посмотрим на них в действии."
 
-# game/indepth_transitions.rpy:482
+# game/indepth_transitions.rpy:487
 translate russian demo_movetransition_569952e3:
 
     # e "That's it for the moveins and moveouts."
     e "Это всё, что касается переходов movein и moveout."
 
-# game/indepth_transitions.rpy:484
+# game/indepth_transitions.rpy:489
 translate russian demo_movetransition_bbb75540:
 
     # e "Finally, there are the zoomin and zoomout transitions, which show and hide things using a zoom."
     e "Ну и последнее, есть переходы zoomin и zoomout, которые показывают и прячут изображения, используя масштабирование."
 
-# game/indepth_transitions.rpy:494
+# game/indepth_transitions.rpy:499
 translate russian demo_movetransition_dc5ccd54:
 
     # e "And that's all there is."
     e "Вот и всё."
 
-# game/indepth_transitions.rpy:503
+# game/indepth_transitions.rpy:508
 translate russian demo_alphadissolve_51613c02:
 
     # e "The AlphaDissolve transition lets you use one displayable to combine two others. Click, and I'll show you an example."
     e "Переход AlphaDissolve позволяет использовать один объект для комбинирования двух других. Кликните, и я покажу вам, как это..."
 
-# game/indepth_transitions.rpy:513
+# game/indepth_transitions.rpy:518
 translate russian demo_alphadissolve_7c08cf8b:
 
     # e "The AlphaDissolve displayable takes a control displayable, usually an ATL transform."
     e "AlphaDissolve принимает управляющее изображение. Как правило, трансформацию ATL."
 
-# game/indepth_transitions.rpy:518
+# game/indepth_transitions.rpy:523
 translate russian demo_alphadissolve_068e3e98:
 
     # e "To be useful, the control displayable should be partially transparent."
     e "Оно должно быть частично прозрачным."
 
-# game/indepth_transitions.rpy:520
+# game/indepth_transitions.rpy:525
 translate russian demo_alphadissolve_6a1b6203:
 
     # e "During an AlphaDissolve, the old screen is used to fill the transparent areas of the image, while the new screen fills the opaque areas."
     e "Во время AlphaDissolve старый экран заполняет прозрачную область изображения, а новый — непрозрачную."
 
-# game/indepth_transitions.rpy:524
+# game/indepth_transitions.rpy:529
 translate russian demo_alphadissolve_80a728b6:
 
     # e "For our spotlight example, the old screen is this all-black image."
     e "Для примера, возьмём в качестве старого экрана вот это чёрное изображение."
 
-# game/indepth_transitions.rpy:529
+# game/indepth_transitions.rpy:534
 translate russian demo_alphadissolve_ce4380eb:
 
     # e "The new screen is me just standing here."
     e "В качестве нового — возьмём меня."
 
-# game/indepth_transitions.rpy:537
+# game/indepth_transitions.rpy:542
 translate russian demo_alphadissolve_2e95917b:
 
     # e "By combining them using AlphaDissolve, we can build a complicated effect out of simpler parts."

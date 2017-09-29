@@ -359,11 +359,11 @@ translate russian strings:
 
     # editor.rpy:150
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
-    new "{b}Рекомендуется.{/b} Бета-редактор с простым интерфейсом и возможностями, помогающими в разработке, такими, как проверка орфографии. Editra сейчас не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов."
+    new "{b}Рекомендуется.{/b} Бета-редактор с простым интерфейсом и возможностями, помогающими в разработке, такими, как проверка орфографии. Editra на данный момент не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов."
 
     # editor.rpy:151
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
-    new "{b}Рекомендуется.{/b} Бета-редактор с простым интерфейсом и возможностями, помогающими в разработке, такими, как проверка орфографии. Editra сейчас не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов. На Linux, Editra требует wxPython."
+    new "{b}Рекомендуется.{/b} Бета-редактор с простым интерфейсом и возможностями, помогающими в разработке, такими, как проверка орфографии. Editra на данный момент не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов. На Linux, Editra требует wxPython."
 
     # editor.rpy:167
     old "This may have occured because wxPython is not installed on this system."
@@ -383,11 +383,11 @@ translate russian strings:
 
     # editor.rpy:182
     old "This may have occured because Java is not installed on this system."
-    new "Это могло случиться из-за того, что Java не установлена на данной системе."
+    new "Это могло случиться из-за того, что Java не установлена в данной системе."
 
     # editor.rpy:191
     old "Invokes the editor your operating system has associated with .rpy files."
-    new "Включает текстовый редактор, ассоциированный на вашей системе с файлами .rpy."
+    new "Включает текстовый редактор, ассоциированный в вашей системе с файлами .rpy."
 
     # editor.rpy:207
     old "Prevents Ren'Py from opening a text editor."
@@ -847,7 +847,7 @@ translate russian strings:
 
     # navigation.rpy:249
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
-    new "Не найдено комментариев TODO.\n\nЧтобы создать такой, включите \"#TODO\" в вашем сценарии"
+    new "Не найдено комментариев TODO.\n\nЧтобы создать такой, включите \"#TODO\" в ваш сценарий"
 
     # navigation.rpy:256
     old "The list of names is empty."
@@ -879,7 +879,7 @@ translate russian strings:
 
     # new_project.rpy:71
     old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
-    new "Вы создаёте проект на языке [new_project_language]. Измените язык лаунчера, чтобы создать проект на другом языке." ###
+    new "Вы создаёте проект на языке [new_project_language]. Чтобы создать проект на другом языке, измените язык лаунчера."
 
     # new_project.rpy:79
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."

@@ -835,9 +835,9 @@ translate russian tutorial_input_f7757a8e:
     g "Наверное."
 
 # game/tutorial_quickstart.rpy:619
-translate russian tutorial_input_5ea8d604:
+translate russian tutorial_input_0548d3e2:
 
-    # e "Variable interpolation also works with other variables. Here, the answer is [answer!t] and the flag is [flag]."
+    # e "Variable interpolation also works with other variables. Here, the answer is [answer] and the flag is [flag]."
     e "Интерполяция также работает и с другими переменными. Здесь answer равен [answer], а flag — [flag]."
 
 translate russian strings:

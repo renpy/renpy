@@ -57,7 +57,7 @@ translate russian tutorial_playing_fea05c6b:
 translate russian tutorial_playing_8e7e83a8:
 
     # e "It also lets you load one of the auto-saves that Ren'Py makes for you."
-    e "Он также позволяет загрузить авто-сохранения, автоматически записываемые для вас Ren'Py."
+    e "Он также позволяет загрузить автосохранения, автоматически записываемые для вас Ren'Py."
 
 # game/tutorial_playing.rpy:38
 translate russian tutorial_playing_4b21f071:

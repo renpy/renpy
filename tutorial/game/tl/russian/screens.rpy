@@ -147,7 +147,7 @@ translate russian strings:
 
     # screens.rpy:791
     old "Auto-Forward Time"
-    new "Скорость авто-чтения"
+    new "Скорость авточтения"
 
     # screens.rpy:798
     old "Music Volume"
