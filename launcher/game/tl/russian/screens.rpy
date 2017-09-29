@@ -27,7 +27,7 @@ translate russian strings:
 
     # screens.rpy:114
     old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
-    new "## Если есть боковое изображение (\"голова\"), показывает его над текстом. Не показывается на варианте для мобильных устройств — места нет."
+    new "## Если есть боковое изображение (\"голова\"), показывает её над текстом. По стандарту не показывается на варианте для мобильных устройств — мало места."
 
     # screens.rpy:120
     old "## Make the namebox available for styling through the Character object."
@@ -39,7 +39,7 @@ translate russian strings:
 
     # screens.rpy:166
     old "## This screen is used to display renpy.input. The prompt parameter is used to pass a text prompt in."
-    new "## Этот экран используется, чтобы показывать renpy.input. Параметр запроса, используемый, чтобы вводить в него текст."
+    new "## Этот экран используется, чтобы показывать renpy.input. Это параметр запроса, используемый, чтобы дать игроку ввести в него текст."
 
     # screens.rpy:169
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
@@ -63,7 +63,7 @@ translate russian strings:
 
     # screens.rpy:215
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
-    new "## Когда это true, заголовки меню будут проговариваться рассказчиком. Когда false, заголовки меню будут показаны как пустые кнопки."
+    new "## Когда этот параметр true, заголовки меню будут проговариваться рассказчиком. Когда false, заголовки меню будут показаны как пустые кнопки."
 
     # screens.rpy:238
     old "## Quick Menu screen"
@@ -71,7 +71,7 @@ translate russian strings:
 
     # screens.rpy:240
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
-    new "## Быстрое меню показывается внутри игры, чтобы обеспечить лёгкий доступ ко внеигровым меню."
+    new "## Быстрое меню показывается внутри игры, чтобы обеспечить лёгкий доступ к внеигровым меню."
 
     # screens.rpy:245
     old "## Ensure this appears on top of other screens."
@@ -139,7 +139,7 @@ translate russian strings:
 
     # screens.rpy:318
     old "End Replay"
-    new "Закончить Реплей"
+    new "Закончить повтор"
 
     # screens.rpy:322
     old "Main Menu"
@@ -171,7 +171,7 @@ translate russian strings:
 
     # screens.rpy:348
     old "## Used to display the main menu when Ren'Py starts."
-    new "## Используется, чтобы показывать главное меню, когда Ren'Py запустилась."
+    new "## Используется, чтобы показать главное меню после запуска игры."
 
     # screens.rpy:350
     old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
@@ -179,7 +179,7 @@ translate russian strings:
 
     # screens.rpy:354
     old "## This ensures that any other menu screen is replaced."
-    new "## Этот тег гарантирует, что любой другой экран в меню будет заменён."
+    new "## Этот тег гарантирует, что любой другой экран с тем же тегом будет заменять этот."
 
     # screens.rpy:361
     old "## This empty frame darkens the main menu."
@@ -195,11 +195,11 @@ translate russian strings:
 
     # screens.rpy:410
     old "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
-    new "## Этот показывает основную и общую структуру экрана игрового меню. Он вызывается с экраном заголовка, и показывает фон, заголовок и навигацию."
+    new "## Всё это показывает основную, обобщённую структуру экрана игрового меню. Он вызывается с экраном заголовка и показывает фон, заголовок и навигацию."
 
     # screens.rpy:413
     old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## Параметр scroll может быть None, или одним из \"viewport\" или \"vpgrid\", когда этот экран предназначается для использования с одним или больше дочерними экранами, которые включены в него."
+    new "## Параметр scroll может быть None, или \"viewport\", или \"vpgrid\", когда этот экран предназначается для использования с более чем одним дочерним экраном, включённым в него."
 
     # screens.rpy:431
     old "## Reserve space for the navigation section."
@@ -219,11 +219,11 @@ translate russian strings:
 
     # screens.rpy:539
     old "## There's nothing special about this screen, and hence it also serves as an example of how to make a custom screen."
-    new "## В этом экране нет ничего особенного, и он служит только для примера того, каким можно сделать свой экран."
+    new "## В этом экране нет ничего особенного, и он служит только примером того, каким можно сделать свой экран."
 
     # screens.rpy:546
     old "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
-    new "## Это использует значение, включённое в экран игрового меню. Дочерний vbox включён в видимость внутри экрана игрового меню."
+    new "## Это выражение, включённое в экран игрового меню. Дочерний vbox включён в порт просмотра внутри экрана игрового меню."
 
     # screens.rpy:556
     old "Version [config.version!t]\n"
@@ -371,7 +371,7 @@ translate russian strings:
 
     # screens.rpy:763
     old "Auto-Forward Time"
-    new "Скорость авто-чтения"
+    new "Скорость авточтения"
 
     # screens.rpy:770
     old "Music Volume"
@@ -379,7 +379,7 @@ translate russian strings:
 
     # screens.rpy:777
     old "Sound Volume"
-    new "Громкость звука"
+    new "Громкость звуков"
 
     # screens.rpy:783
     old "Test"
@@ -399,7 +399,7 @@ translate russian strings:
 
     # screens.rpy:876
     old "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
-    new "## Этот экран показывает игроку историю диалогов. Хотя в этом экране нет ничего особенного, он имеет доступ к истории диалогов, хранённом в _history_list."
+    new "## Этот экран показывает игроку историю диалогов. Хотя в этом экране нет ничего особенного, он имеет доступ к истории диалогов, хранимом в _history_list."
 
     # screens.rpy:880
     old "## https://www.renpy.org/doc/html/history.html"
@@ -411,7 +411,7 @@ translate russian strings:
 
     # screens.rpy:897
     old "## This lays things out properly if history_height is None."
-    new "## Это всё правильно уравнивает, если history_height установлен на None."
+    new "## Это всё правильно уравняет, если history_height будет установлен на None."
 
     # screens.rpy:906
     old "## Take the color of the who text from the Character, if set."
@@ -431,7 +431,7 @@ translate russian strings:
 
     # screens.rpy:966
     old "## A screen that gives information about key and mouse bindings. It uses other screens (keyboard_help, mouse_help, and gamepad_help) to display the actual help."
-    new "## Экран, дающий информацию о кнопках управления. Он используется другие экраны (keyboard_help, mouse_help, и gamepad_help), чтобы показывать актуальную помощь."
+    new "## Экран, дающий информацию о клавишах управления. Он использует другие экраны (keyboard_help, mouse_help, и gamepad_help), чтобы показывать актуальную помощь."
 
     # screens.rpy:985
     old "Keyboard"
@@ -451,7 +451,7 @@ translate russian strings:
 
     # screens.rpy:1003
     old "Advances dialogue and activates the interface."
-    new "Прохождение диалогов и активация интерфейса."
+    new "Прохождение диалогов, активация интерфейса."
 
     # screens.rpy:1006
     old "Space"
@@ -459,7 +459,7 @@ translate russian strings:
 
     # screens.rpy:1007
     old "Advances dialogue without selecting choices."
-    new "Прохождение диалогов, но не позволяет делать выбор."
+    new "Прохождение диалогов без возможности делать выбор."
 
     # screens.rpy:1010
     old "Arrow Keys"
@@ -579,7 +579,7 @@ translate russian strings:
 
     # screens.rpy:1130
     old "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
-    new "## Экран подтверждения вызывается, когда Ren'Py хочет спросить у пользователя вопрос да или нет."
+    new "## Экран подтверждения вызывается, когда Ren'Py хочет спросить у пользователя вопрос Да или Нет."
 
     # screens.rpy:1133
     old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
@@ -587,7 +587,7 @@ translate russian strings:
 
     # screens.rpy:1137
     old "## Ensure other screens do not get input while this screen is displayed."
-    new "## Гарантирует, чтобы другие экраны не были доступны, пока этот экран показан."
+    new "## Гарантирует, чтобы другие экраны были недоступны, пока этот экран показан."
 
     # screens.rpy:1161
     old "Yes"
@@ -599,7 +599,7 @@ translate russian strings:
 
     # screens.rpy:1164
     old "## Right-click and escape answer \"no\"."
-    new "## Правый клик и esc как ответ \"нет\"."
+    new "## Правый клик и esc как ответ \"Нет\"."
 
     # screens.rpy:1191
     old "## Skip indicator screen"
@@ -607,7 +607,7 @@ translate russian strings:
 
     # screens.rpy:1193
     old "## The skip_indicator screen is displayed to indicate that skipping is in progress."
-    new "## Экран индикатора пропуска показывается, чтобы показать, что идёт пропуск."
+    new "## Экран индикатора пропуска появляется для того, чтобы показать, что идёт пропуск."
 
     # screens.rpy:1196
     old "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
@@ -631,7 +631,7 @@ translate russian strings:
 
     # screens.rpy:1249
     old "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
-    new "## Экран уведомлений используется, чтобы показать пользователю извещение. (Например, когда игра автосохранилась, или был сделан скриншот.)"
+    new "## Экран уведомлений используется, чтобы показать пользователю оповещение. (Например, когда игра автосохранилась, или был сделан скриншот.)"
 
     # screens.rpy:1252
     old "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"

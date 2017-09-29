@@ -23,11 +23,11 @@ translate russian strings:
 
     # 00console.rpy:474
     old " <renpy script statement>: run the statement\n"
-    new " <renpy script statement>: запуск оператора\n"
+    new " <оператор renpy script>: запуск оператора\n"
 
     # 00console.rpy:476
     old " <python expression or statement>: run the expression or statement"
-    new " <python expression или statement>: запустить выражение или оператор"
+    new " <выражение или оператор python>: запустить выражение или оператор"
 
     # 00console.rpy:484
     old "clear: clear the console history"
@@ -39,11 +39,11 @@ translate russian strings:
 
     # 00console.rpy:496
     old "load <slot>: loads the game from slot"
-    new "load <slot>: загружает игру из выбранного slot"
+    new "load <слот>: загружает игру из выбранного слота"
 
     # 00console.rpy:509
     old "save <slot>: saves the game in slot"
-    new "save <slot>: сохраняет игру в выбранный slot"
+    new "save <слот>: сохраняет игру в выбранный слот"
 
     # 00console.rpy:520
     old "reload: reloads the game, refreshing the scripts"
@@ -51,11 +51,11 @@ translate russian strings:
 
     # 00console.rpy:528
     old "watch <expression>: watch a python expression"
-    new "watch <expression>: наблюдать за выражением python"
+    new "watch <выражение>: наблюдать за выражением python"
 
     # 00console.rpy:554
     old "unwatch <expression>: stop watching an expression"
-    new "unwatch <expression>: прекратить наблюдать за выражением"
+    new "unwatch <выражение>: прекратить наблюдать за выражением"
 
     # 00console.rpy:585
     old "unwatchall: stop watching all expressions"
