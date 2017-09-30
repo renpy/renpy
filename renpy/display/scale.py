@@ -66,13 +66,14 @@ def image_load_unscaled(f, hint, convert=True):
 
 
 def image_save_unscaled(surf, filename):
-    pygame.image.save(surf, renpy.exports.fsencode(filename))
+    pygame.image.save(surf, filename)  # pygame_sdl2 does the filename encoding.
 
 # Scales down a surface.
 
 
 def surface_scale(full):
     return full
+
 
 real_renpy_pixellate = _renpy.pixellate
 real_renpy_transform = _renpy.transform
@@ -118,5 +119,6 @@ def real_smoothscale(src, size, dest=None):
                          )
 
     return dest
+
 
 smoothscale = real_smoothscale

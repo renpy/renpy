@@ -4,7 +4,7 @@ set -e
 
 
 S=$(realpath $(dirname $0))
-T="/tmp/rénpy/rénpy"
+T="/tmp/test-rénpy/rénpy"
 
 
 rmln () {

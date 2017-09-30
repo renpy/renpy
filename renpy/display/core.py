@@ -2082,6 +2082,7 @@ class Interface(object):
         except:
             if renpy.config.debug:
                 raise
+
             pass
 
     def show_window(self):
