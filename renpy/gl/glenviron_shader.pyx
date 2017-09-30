@@ -486,8 +486,8 @@ cdef class ShaderEnviron(Environ):
         glUniformMatrix4fvARB(program.Projection, 1, GL_FALSE, self.projection)
 
         if self.clipping:
-            glUniform2fARB(program.clip0, self.clip_x0, self.clip_y0)
-            glUniform2fARB(program.clip1, self.clip_x1, self.clip_y1)
+            glUniform2fARB(program.clip0, self.clip_x0 - .01, self.clip_y0 - .01)
+            glUniform2fARB(program.clip1, self.clip_x1 + .01, self.clip_y1 + .01)
 
     cdef void blit(self):
 

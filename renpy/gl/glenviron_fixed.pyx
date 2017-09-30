@@ -333,10 +333,10 @@ cdef class FixedFunctionEnviron(Environ):
 
         minx, miny, maxx, maxy = clip_box
 
-        gl_clip(GL_CLIP_PLANE0, 1.0, 0.0, 0.0, -minx)
-        gl_clip(GL_CLIP_PLANE1, 0.0, 1.0, 0.0, -miny)
-        gl_clip(GL_CLIP_PLANE2, -1.0, 0.0, 0.0, maxx)
-        gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy)
+        gl_clip(GL_CLIP_PLANE0, 1.0, 0.0, 0.0, -minx - .01)
+        gl_clip(GL_CLIP_PLANE1, 0.0, 1.0, 0.0, -miny - .01)
+        gl_clip(GL_CLIP_PLANE2, -1.0, 0.0, 0.0, maxx + .01)
+        gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy + .01)
 
     cdef void unset_clip(self, GLDraw draw):
         glDisable(GL_CLIP_PLANE0)
