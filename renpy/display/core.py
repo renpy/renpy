@@ -2079,11 +2079,12 @@ class Interface(object):
 
         try:
             renpy.display.scale.image_save_unscaled(window, filename)
+            return True
         except:
             if renpy.config.debug:
                 raise
 
-            pass
+            return False
 
     def show_window(self):
 

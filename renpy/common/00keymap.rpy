@@ -250,10 +250,14 @@ init -1600 python:
             i += 1
 
         try:
-            renpy.screenshot(fn)
+            if not renpy.screenshot(fn):
+                renpy.notify(__("Failed to save screenshot as %s.") % fn)
+                return
         except:
             import traceback
             traceback.print_exc()
+            renpy.notify(__("Failed to save screenshot as %s.") % fn)
+            return
 
         if config.screenshot_callback is not None:
             config.screenshot_callback(fn)

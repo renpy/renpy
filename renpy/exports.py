@@ -1636,9 +1636,12 @@ def screenshot(filename):
     :doc: other
 
     Saves a screenshot in `filename`.
+
+    Returns True if the screenshot was saved successfully, False if saving
+    failed for some reason.
     """
 
-    renpy.game.interface.save_screenshot(filename)
+    return renpy.game.interface.save_screenshot(filename)
 
 
 @renpy_pure
