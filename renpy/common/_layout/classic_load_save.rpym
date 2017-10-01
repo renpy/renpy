@@ -289,7 +289,7 @@ init python:
                     tb(True, name, ui.returns(("fppset", i)), fpp == i)
 
                 # Next
-                tb(True, u'Next', ui.returns(("fppdelta", +1)), False)
+                tb(fpp < config.file_quick_access_pages, u'Next', ui.returns(("fppdelta", +1)), False)
 
                 ui.close()
 
