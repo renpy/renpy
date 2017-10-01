@@ -106,20 +106,21 @@ init -1500 python:
             if tag in persistent._placeholder_gender:
                 return persistent._placeholder_gender[tag]
 
-            try:
-                import urllib2
-                import json
+#             try:
+#                 import urllib2
+#                 import json
+#
+#                 u = urllib2.urlopen("http://api.genderize.io/?name=" + tag.encode("utf-8"), timeout=3)
+#                 data = json.loads(u.read())
+#
+#                 if data.get("gender", "") == "male":
+#                     rv = "boy"
+#                 else:
+#                     rv = "girl"
+#             except:
+#                 rv = "girl"
 
-                u = urllib2.urlopen("http://api.genderize.io/?name=" + tag.encode("utf-8"), timeout=3)
-                data = json.loads(u.read())
-
-                if data.get("gender", "") == "male":
-                    rv = "boy"
-                else:
-                    rv = "girl"
-            except:
-                rv = "girl"
-
+            rv = "girl"
             persistent._placeholder_gender[tag] = rv
 
             return rv
