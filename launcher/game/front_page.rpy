@@ -260,6 +260,7 @@ label main_menu:
 
 label start:
     show screen bottom_info
+    $ dmgcheck()
 
 label front_page:
     call screen front_page
