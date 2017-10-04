@@ -243,7 +243,7 @@ translate simplified_chinese strings:
 
     # 00updater.rpy:367
     old "The Ren'Py Updater is not supported on mobile devices."
-    new "Ren'Py 更新器在移动设备上尚不支持。"
+    new "Ren'Py 更新器尚不支持移动设备。"
 
     # 00updater.rpy:486
     old "An error is being simulated."
