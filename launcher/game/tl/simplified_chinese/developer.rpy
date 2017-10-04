@@ -39,7 +39,7 @@ translate simplified_chinese strings:
 
     # _developer/developer.rpym:95
     old "Nothing to inspect."
-    new "无对象可查看。"
+    new "无对象可查验。"
 
     # _developer/developer.rpym:217
     old "Return to the developer menu"
@@ -79,7 +79,7 @@ translate simplified_chinese strings:
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
-    new "可显示对象查看器"
+    new "可显示对象查验器"
 
     # _developer/inspector.rpym:61
     old "Size"
