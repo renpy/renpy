@@ -27,7 +27,7 @@ translate simplified_chinese strings:
 
     # add_file.rpy:42
     old "# Ren'Py automatically loads all script files ending with .rpy. To use this\n# file, define a label and jump to it from another file.\n"
-    new "# Ren'Py 自动加载所有以 .rpy 为后缀的脚本。要使用此 \n# 文件，请先从其他文件中定义一个标签并跳转过来。\n"
+    new "# Ren'Py 自动加载所有扩展名为 .rpy 的脚本。要使用此\n# 文件，请先从其他文件中定义一个标签并跳转过来。\n"
 
     # android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
@@ -39,11 +39,11 @@ translate simplified_chinese strings:
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
-    new "RAPT 已安装，但您还需要安装安卓 SDK 才可以生成安卓应用包。点击安装 SDK 来继续。"
+    new "RAPT 已安装，但您还需要安装安卓 SDK 才可以生成安卓应用包。请继续安装 SDK。"
 
     # android.rpy:33
     old "RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore."
-    new "RAPT 已完成安装，但密钥尚未进行过配置。请创建一个新密钥，或将参数 android.keystore 恢复。"
+    new "RAPT 已完成安装，但密钥尚未进行过配置。请创建一个新密钥，或恢复 android.keystore 文件。"
 
     # android.rpy:34
     old "The current project has not been configured. Use \"Configure\" to configure it before building."
@@ -67,7 +67,7 @@ translate simplified_chinese strings:
 
     # android.rpy:41
     old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
-    new "下载并安装安卓 SDK 以及支持包。另外，对应用包签名需要生成密钥。"
+    new "下载并安装安卓 SDK 以及支持包。另外，生成密钥后才能对应用包进行签名。"
 
     # android.rpy:42
     old "Configures the package name, version, and other information about this project."
@@ -75,7 +75,7 @@ translate simplified_chinese strings:
 
     # android.rpy:43
     old "Opens the file containing the Google Play keys in the editor.\n\nThis is only needed if the application is using an expansion APK. Read the documentation for more details."
-    new "在编辑器中打开包含有 Google Play 密钥的文件。\n\n仅当您的应用使用了扩展 APK 时才需要进行此操作。更多详情请查阅说明文档。"
+    new "在编辑器中打开包含有 Google Play 密钥的文件。\n\n仅当您的应用使用了扩展 APK 时才需要进行此操作。更多详情请参阅说明文档。"
 
     # android.rpy:44
     old "Builds the Android package."
@@ -99,11 +99,11 @@ translate simplified_chinese strings:
 
     # android.rpy:50
     old "Retrieves the log from the Android device and writes it to a file."
-    new "Retrieves the log from the Android device and writes it to a file."
+    new "从安卓设备接收日志并将其写入至文件。"
 
     # android.rpy:240
     old "Copying Android files to distributions directory."
-    new "Copying Android files to distributions directory."
+    new "正在复制安卓文件到分发版目录。"
 
     # android.rpy:304
     old "Android: [project.current.name!q]"
@@ -195,7 +195,7 @@ translate simplified_chinese strings:
 
     # android.rpy:544
     old "Retrieving logcat information from device."
-    new "Retrieving logcat information from device."
+    new "正在从设备接收 logcat 信息。"
 
     # choose_directory.rpy:73
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
@@ -231,7 +231,7 @@ translate simplified_chinese strings:
 
     # consolecommand.rpy:84
     old "The command is being run in a new operating system console window."
-    new "The command is being run in a new operating system console window."
+    new "此命令正在一个新操作系统控制台窗口中运行。"
 
     # distribute.rpy:443
     old "Scanning project files..."
@@ -251,7 +251,7 @@ translate simplified_chinese strings:
 
     # distribute.rpy:569
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
-    new "所有的分发包已生成。\n\n由于包内写入了权限信息，因此在 Windows 上解包并重新打包 Linux 和 Macintosh 分发版是不可行的。"
+    new "所有的分发包已生成。\n\n由于包内写入了权限信息，因此不支持在 Windows 上解包并重新打包 Linux 和 Macintosh 分发版。"
 
     # distribute.rpy:752
     old "Archiving files..."
@@ -259,19 +259,19 @@ translate simplified_chinese strings:
 
     # distribute.rpy:1050
     old "Unpacking the Macintosh application for signing..."
-    new "Unpacking the Macintosh application for signing..."
+    new "正在解包 Macintosh 应用并签名……"
 
     # distribute.rpy:1060
     old "Signing the Macintosh application..."
-    new "Signing the Macintosh application..."
+    new "正在签名 Macintosh 应用……"
 
     # distribute.rpy:1082
     old "Creating the Macintosh DMG..."
-    new "Creating the Macintosh DMG..."
+    new "正在创建 Macintosh DMG……"
 
     # distribute.rpy:1091
     old "Signing the Macintosh DMG..."
-    new "Signing the Macintosh DMG..."
+    new "正在签名 Macintosh DMG……"
 
     # distribute.rpy:1248
     old "Writing the [variant] [format] package."
@@ -315,7 +315,7 @@ translate simplified_chinese strings:
 
     # distribute_gui.rpy:199
     old "Upload to itch.io"
-    new "Upload to itch.io"
+    new "上传到 itch.io"
 
     # distribute_gui.rpy:215
     old "Build Packages:"
@@ -399,7 +399,7 @@ translate simplified_chinese strings:
 
     # editor.rpy:472
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
-    new "文本编辑器是指您用来编辑 Ren'Py 脚本的程序。在这里您可以选择 Ren'Py 要使用的编辑器。若您选择的编辑器并不存在，Ren'Py 将会自动下载并安装此编辑器。"
+    new "文本编辑器是指您用来编辑 Ren'Py 脚本的程序。在这里您可以选择 Ren'Py 要使用的编辑器。若您选择的编辑器不存在，Ren'Py 将会自动下载并安装此编辑器。"
 
     # editor.rpy:494
     old "Cancel"
@@ -423,7 +423,7 @@ translate simplified_chinese strings:
 
     # front_page.rpy:147
     old "[p.name!q] (template)"
-    new "[p.name!q] (template)"
+    new "[p.name!q]（模板）"
 
     # front_page.rpy:149
     old "Select project [text]."
@@ -479,7 +479,7 @@ translate simplified_chinese strings:
 
     # front_page.rpy:237
     old "Change/Update GUI"
-    new "Change/Update GUI"
+    new "更改/更新 GUI"
 
     # front_page.rpy:239
     old "Change Theme"
@@ -519,7 +519,7 @@ translate simplified_chinese strings:
 
     # front_page.rpy:295
     old "Recompiling all rpy files into rpyc files..."
-    new "正在将全部的 rpy 文件重新编译至 rpyc 文件……"
+    new "正在将全部的 rpy 文件重新编译为 rpyc 文件……"
 
     # gui7.rpy:236
     old "Select Accent and Background Colors"
@@ -563,15 +563,15 @@ translate simplified_chinese strings:
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
+    new "该工程应使用哪种基础分辨率？虽然 Ren'Py 可以向上或向下缩放窗口，此分辨率将是窗口的初始化尺寸、资源绘制的基础分辨率以及资源显示最清晰的分辨率。\n\n默认的 1280x720 是折中方案。"
 
     # gui7.rpy:389
     old "Creating the new project..."
-    new "Creating the new project..."
+    new "正在创建新工程……"
 
     # gui7.rpy:391
     old "Updating the project..."
-    new "Updating the project..."
+    new "正在更新工程……"
 
     # interface.rpy:107
     old "Documentation"
@@ -639,11 +639,11 @@ translate simplified_chinese strings:
 
     # ios.rpy:28
     old "To build iOS packages, please download renios, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "要生成 iOS 应用包，请下载 renios，并解压到 Ren'Py 目录中。之后重启 Ren'Py。"
+    new "要生成 iOS 应用包，请下载 renios，放置到 Ren'Py 目录中并重启 Ren'Py。"
 
     # ios.rpy:29
     old "The directory in where Xcode projects will be placed has not been selected. Choose 'Select Directory' to select it."
-    new "Xcode 工程所存放的目录尚未被指定。选择“指定目录”来指定。"
+    new "Xcode 工程的存放目录尚未被指定。选择“指定目录”来指定。"
 
     # ios.rpy:30
     old "There is no Xcode project corresponding to the current Ren'Py project. Choose 'Create Xcode Project' to create one."
@@ -651,11 +651,11 @@ translate simplified_chinese strings:
 
     # ios.rpy:31
     old "An Xcode project exists. Choose 'Update Xcode Project' to update it with the latest game files, or use Xcode to build and install it."
-    new "一个 Xcode 工程已经存在。选择“更新 Xcode 工程”来以最新的游戏文件更新，或使用 Xcode 来生成并安装。"
+    new "该 Xcode 工程已经存在。选择“更新 Xcode 工程”更新为最新的游戏文件，或使用 Xcode 来生成并安装。"
 
     # ios.rpy:33
     old "Attempts to emulate an iPhone.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "尝试模拟为 iPad。\n\n鼠标将仅在按键按下时模拟为触屏输入。"
+    new "尝试模拟为 iPhone。\n\n鼠标将仅在按键按下时模拟为触屏输入。"
 
     # ios.rpy:34
     old "Attempts to emulate an iPad.\n\nTouch input is emulated through the mouse, but only when the button is held down."
@@ -663,7 +663,7 @@ translate simplified_chinese strings:
 
     # ios.rpy:36
     old "Selects the directory where Xcode projects will be placed."
-    new "请指定即将放置 Xcode 工程的目录。"
+    new "请指定放置 Xcode 工程的目录。"
 
     # ios.rpy:37
     old "Creates an Xcode project corresponding to the current Ren'Py project."
@@ -671,7 +671,7 @@ translate simplified_chinese strings:
 
     # ios.rpy:38
     old "Updates the Xcode project with the latest game files. This must be done each time the Ren'Py project changes."
-    new "以最新的游戏文件更新 Xcode 工程。此操作应该在每次 Ren'Py 工程出现更改时执行一次。"
+    new "以最新的游戏文件更新 Xcode 工程。此操作应在每次 Ren'Py 工程出现更改时执行一次。"
 
     # ios.rpy:39
     old "Opens the Xcode project in Xcode."
@@ -683,7 +683,7 @@ translate simplified_chinese strings:
 
     # ios.rpy:126
     old "The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"
-    new "Xcode 工程已经存在。您希望重命名旧工程，并用新工程取代之吗？"
+    new "Xcode 工程已经存在。您希望重命名旧工程，并用新工程将其替换吗？"
 
     # ios.rpy:211
     old "iOS: [project.current.name!q]"
@@ -727,7 +727,7 @@ translate simplified_chinese strings:
 
     # ios.rpy:354
     old "Please choose the Xcode Projects Directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new "请使用弹出的目录选择窗口来指定 Xcode 工程目录。\n{b}目录选择窗口可能因未取得焦点而被本窗口覆盖。{/b}"
+    new "请使用弹出的目录选择窗口来指定 Xcode 工程目录。\n{b}目录选择窗口可能会被本窗口覆盖。{/b}"
 
     # ios.rpy:359
     old "Ren'Py has set the Xcode Projects Directory to:"
@@ -735,27 +735,27 @@ translate simplified_chinese strings:
 
     # itch.rpy:60
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "The built distributions could not be found. Please choose 'Build' and try again."
+    new "未找到已生成的分发版。请使用“生成”重试。"
 
     # itch.rpy:91
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "No uploadable files were found. Please choose 'Build' and try again."
+    new "未找到可上传的文件。请使用“生成”重试。"
 
     # itch.rpy:99
     old "The butler program was not found."
-    new "The butler program was not found."
+    new "未找到管理程序。"
 
     # itch.rpy:99
     old "Please install the itch.io app, which includes butler, and try again."
-    new "Please install the itch.io app, which includes butler, and try again."
+    new "itch.io 应用中包含管理程序。请安装 itch.io 应用并重试。"
 
     # itch.rpy:108
     old "The name of the itch project has not been set."
-    new "The name of the itch project has not been set."
+    new "Itch 工程名尚未设置。"
 
     # itch.rpy:108
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
-    new "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
+    new "请{a=https://itch.io/game/new}创建您的工程{/a}，并在 options.rpy 里新增诸如\n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} 的内容。"
 
     # mobilebuild.rpy:109
     old "{a=%s}%s{/a}"
@@ -827,23 +827,23 @@ translate simplified_chinese strings:
 
     # new_project.rpy:38
     old "New GUI Interface"
-    new "New GUI Interface"
+    new "新 GUI 界面"
 
     # new_project.rpy:48
     old "Both interfaces have been translated to your language."
-    new "Both interfaces have been translated to your language."
+    new "所有界面均已翻译至您的语言。"
 
     # new_project.rpy:50
     old "Only the new GUI has been translated to your language."
-    new "Only the new GUI has been translated to your language."
+    new "仅有新 GUI 已翻译至您的语言。"
 
     # new_project.rpy:52
     old "Only the legacy theme interface has been translated to your language."
-    new "Only the legacy theme interface has been translated to your language."
+    new "仅有传统主题界面已翻译至您的语言。"
 
     # new_project.rpy:54
     old "Neither interface has been translated to your language."
-    new "Neither interface has been translated to your language."
+    new "尚无界面翻译至您的语言。"
 
     # new_project.rpy:63
     old "The projects directory could not be set. Giving up."
@@ -851,11 +851,11 @@ translate simplified_chinese strings:
 
     # new_project.rpy:69
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
-    new "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
+    new "您希望使用哪种界面？新 GUI 具有更现代的设计，可支持宽屏和移动设备，定制起来也更容易。对于较早的示范代码，传统主题可能是必须的。\n\n[language_support!t]\n\n如有疑问，请选择新 GUI，并点击右下角的“继续”。"
 
     # new_project.rpy:69
     old "Legacy Theme Interface"
-    new "Legacy Theme Interface"
+    new "传统主题界面"
 
     # new_project.rpy:90
     old "Choose Project Template"
@@ -979,7 +979,7 @@ translate simplified_chinese strings:
 
     # project.rpy:597
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new "请使用弹出的目录选择窗口来指定工程目录。\n{b}目录选择窗口可能因未取得焦点而被本窗口覆盖。{/b}"
+    new "请使用弹出的目录选择窗口来指定工程目录。\n{b}目录选择窗口可能会被本窗口覆盖。{/b}"
 
     # project.rpy:597
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
@@ -991,11 +991,11 @@ translate simplified_chinese strings:
 
     # translations.rpy:63
     old "Translations: [project.current.name!q]"
-    new "Translations: [project.current.name!q]"
+    new "翻译：[project.current.name!q]"
 
     # translations.rpy:104
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
-    new "The language to work with. This should only contain lower-case ASCII characters and underscores."
+    new "生效的语言。该字段应仅包含小写 ASCII 字符和下划线。"
 
     # translations.rpy:130
     old "Generate empty strings for translations"
@@ -1003,31 +1003,31 @@ translate simplified_chinese strings:
 
     # translations.rpy:148
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
+    new "生成或更新翻译文件。文件将放置在 game/tl/[persistent.translate_language!q]。"
 
     # translations.rpy:168
     old "Extract String Translations"
-    new "Extract String Translations"
+    new "导出字串翻译"
 
     # translations.rpy:170
     old "Merge String Translations"
-    new "Merge String Translations"
+    new "合并字串翻译"
 
     # translations.rpy:175
     old "Replace existing translations"
-    new "Replace existing translations"
+    new "替换已存在的翻译"
 
     # translations.rpy:176
     old "Reverse languages"
-    new "Reverse languages"
+    new "反转语言"
 
     # translations.rpy:180
     old "Update Default Interface Translations"
-    new "Update Default Interface Translations"
+    new "更新默认界面翻译"
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
+    new "导出命令可使您从现有的工程中导出字串翻译至临时文件。\n\n合并命令将合并导出的翻译至其他工程。"
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
@@ -1039,51 +1039,51 @@ translate simplified_chinese strings:
 
     # translations.rpy:248
     old "Ren'Py is extracting string translations..."
-    new "Ren'Py is extracting string translations..."
+    new "Ren'Py 正在导出字串翻译……"
 
     # translations.rpy:251
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py has finished extracting [language] string translations."
+    new "Ren'Py 已完成 [language] 字串翻译的导出。"
 
     # translations.rpy:271
     old "Ren'Py is merging string translations..."
-    new "Ren'Py is merging string translations..."
+    new "Ren'Py 正在合并字串翻译……"
 
     # translations.rpy:274
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py has finished merging [language] string translations."
+    new "Ren'Py 已完成 [language] 字串翻译的合并。"
 
     # translations.rpy:282
     old "Updating default interface translations..."
-    new "Updating default interface translations..."
+    new "正在更新默认界面翻译……"
 
     # translations.rpy:306
     old "Extract Dialogue: [project.current.name!q]"
-    new "Extract Dialogue: [project.current.name!q]"
+    new "导出对话：[project.current.name!q]"
 
     # translations.rpy:322
     old "Format:"
-    new "Format:"
+    new "格式："
 
     # translations.rpy:330
     old "Tab-delimited Spreadsheet (dialogue.tab)"
-    new "Tab-delimited Spreadsheet (dialogue.tab)"
+    new "以制表符分隔的电子表（dialogue.tab）"
 
     # translations.rpy:331
     old "Dialogue Text Only (dialogue.txt)"
-    new "Dialogue Text Only (dialogue.txt)"
+    new "仅对话文本（dialogue.txt）"
 
     # translations.rpy:344
     old "Strip text tags from the dialogue."
-    new "Strip text tags from the dialogue."
+    new "在对话中忽略文本标签。"
 
     # translations.rpy:345
     old "Escape quotes and other special characters."
-    new "Escape quotes and other special characters."
+    new "避开引号和其他特殊符号。"
 
     # translations.rpy:346
     old "Extract all translatable strings, not just dialogue."
-    new "Extract all translatable strings, not just dialogue."
+    new "导出所有的可翻译字串，而非仅对话。"
 
     # translations.rpy:374
     old "Ren'Py is extracting dialogue...."
@@ -1091,7 +1091,7 @@ translate simplified_chinese strings:
 
     # translations.rpy:378
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
+    new "Ren'Py 已完成导出对话。导出的对话可在基础目录下的 dialogue.[persistent.dialogue_format] 文件中找到。"
 
     # updater.rpy:75
     old "Select Update Channel"
