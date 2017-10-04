@@ -7,7 +7,7 @@ translate simplified_chinese strings:
 
     # _layout/classic_load_save.rpym:138
     old "Empty Slot."
-    new "空存档位"
+    new "空存档位。"
 
     # _layout/classic_load_save.rpym:170
     old "a"
