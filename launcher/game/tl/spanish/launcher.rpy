@@ -287,7 +287,7 @@ translate spanish strings:
 
     # distribute_gui.rpy:157
     old "Build Distributions: [project.current.name!q]"
-    new "Construir Distibuciones: [project.current.name!q]"
+    new "Construir Distribuciones: [project.current.name!q]"
 
     # distribute_gui.rpy:171
     old "Directory Name:"
@@ -491,7 +491,7 @@ translate spanish strings:
 
     # front_page.rpy:251
     old "Build Distributions"
-    new "Construir Distibuciones"
+    new "Construir Distribuciones"
 
     # front_page.rpy:253
     old "Android"
