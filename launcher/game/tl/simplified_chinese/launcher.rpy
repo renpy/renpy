@@ -106,8 +106,8 @@ translate simplified_chinese strings:
     new "正在复制安卓文件到分发版目录。"
 
     # android.rpy:304
-    old "Android: [project.current.name!q]"
-    new "安卓：[project.current.name!q]"
+    old "Android: [project.current.display_name!q]"
+    new "安卓：[project.current.display_name!q]"
 
     # android.rpy:324
     old "Emulation:"
@@ -201,6 +201,10 @@ translate simplified_chinese strings:
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
     new "Ren'Py 无法使用 Python 的 Tkinter 来选择目录。请安装 Python-tk 或 Tkinter 支持包。"
 
+    # choose_directory.rpy:104
+    old "The selected projects directory is not writable."
+    new "所选的工程目录无法执行写操作。"
+    
     # choose_theme.rpy:303
     old "Could not change the theme. Perhaps options.rpy was changed too much."
     new "无法更改主题。可能 options.rpy 已被过度修改。"
@@ -262,8 +266,8 @@ translate simplified_chinese strings:
     new "正在解包 Macintosh 应用并签名……"
 
     # distribute.rpy:1060
-    old "Signing the Macintosh application..."
-    new "正在签名 Macintosh 应用……"
+    old "Signing the Macintosh application...\n(This may take a long time.)"
+    new "正在签名 Macintosh 应用……\n（可能需要很长时间。）"
 
     # distribute.rpy:1082
     old "Creating the Macintosh DMG..."
@@ -286,8 +290,8 @@ translate simplified_chinese strings:
     new "已处理 {b}[complete]{/b} / {b}[total]{/b} 个文件。"
 
     # distribute_gui.rpy:157
-    old "Build Distributions: [project.current.name!q]"
-    new "生成分发版：[project.current.name!q]"
+    old "Build Distributions: [project.current.display_name!q]"
+    new "生成分发版：[project.current.display_name!q]"
 
     # distribute_gui.rpy:171
     old "Directory Name:"
@@ -408,6 +412,10 @@ translate simplified_chinese strings:
     # front_page.rpy:35
     old "Open [text] directory."
     new "打开 [text] 目录。"
+    
+    # front_page.rpy:91
+    old "PROJECTS:"
+    new "工程："
 
     # front_page.rpy:93
     old "refresh"
@@ -565,6 +573,34 @@ translate simplified_chinese strings:
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
     new "该工程应使用哪种基础分辨率？虽然 Ren'Py 可以向上或向下缩放窗口，此分辨率将是窗口的初始化尺寸、资源绘制的基础分辨率以及资源显示最清晰的分辨率。\n\n默认的 1280x720 是折中方案。"
 
+    # gui7.rpy:357
+    old "Custom. The GUI is optimized for a 16:9 aspect ratio."
+    new "自定义。GUI 在 16:9 的情况下是最优的。"
+
+    # gui7.rpy:372
+    old "WIDTH"
+    new "宽度"
+
+    # gui7.rpy:372
+    old "Please enter the width of your game, in pixels."
+    new "请输入游戏宽度的像素数。"
+
+    # gui7.rpy:377
+    old "The width must be a number."
+    new "宽度必须是数字。"
+
+    # gui7.rpy:379
+    old "HEIGHT"
+    new "高度"
+
+    # gui7.rpy:379
+    old "Please enter the height of your game, in pixels."
+    new "请输入游戏高度的像素数。"
+
+    # gui7.rpy:384
+    old "The height must be a number."
+    new "高度必须是数字。"
+
     # gui7.rpy:389
     old "Creating the new project..."
     new "正在创建新工程……"
@@ -596,6 +632,10 @@ translate simplified_chinese strings:
     # interface.rpy:120
     old "quit"
     new "退出"
+    
+    # interface.rpy:136
+    old "Ren'Py Sponsor Information"
+    new "Ren'Py 赞助者信息"
 
     # interface.rpy:232
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
@@ -686,8 +726,8 @@ translate simplified_chinese strings:
     new "Xcode 工程已经存在。您希望重命名旧工程，并用新工程将其替换吗？"
 
     # ios.rpy:211
-    old "iOS: [project.current.name!q]"
-    new "iOS：[project.current.name!q]"
+    old "iOS: [project.current.display_name!q]"
+    new "iOS：[project.current.display_name!q]"
 
     # ios.rpy:240
     old "iPhone"
@@ -762,8 +802,8 @@ translate simplified_chinese strings:
     new "{a=%s}%s{/a}"
 
     # navigation.rpy:168
-    old "Navigate: [project.current.name]"
-    new "定位：[project.current.name]"
+    old "Navigate: [project.current.display_name!q]"
+    new "定位：[project.current.display_name!q]"
 
     # navigation.rpy:177
     old "Order: "
@@ -856,6 +896,10 @@ translate simplified_chinese strings:
     # new_project.rpy:69
     old "Legacy Theme Interface"
     new "传统主题界面"
+    
+    # new_project.rpy:71
+    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
+    new "您将创建一个 [new_project_language] 语言的工程。要创建其他语言的工程，请在设置里更改启动器语言。"
 
     # new_project.rpy:90
     old "Choose Project Template"
@@ -932,6 +976,18 @@ translate simplified_chinese strings:
     # preferences.rpy:178
     old "Console output"
     new "控制台输出"
+    
+    # preferences.rpy:187
+    old "Force new tutorial"
+    new "强制新手教程"
+
+    # preferences.rpy:189
+    old "Legacy options"
+    new "传统选项"
+
+    # preferences.rpy:194
+    old "Sponsor message"
+    new "赞助者信息"
 
     # preferences.rpy:199
     old "Open launcher project"
@@ -990,8 +1046,8 @@ translate simplified_chinese strings:
     new "Ren'Py 已将工程目录设置为："
 
     # translations.rpy:63
-    old "Translations: [project.current.name!q]"
-    new "翻译：[project.current.name!q]"
+    old "Translations: [project.current.display_name!q]"
+    new "翻译：[project.current.display_name!q]"
 
     # translations.rpy:104
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
@@ -1058,8 +1114,8 @@ translate simplified_chinese strings:
     new "正在更新默认界面翻译……"
 
     # translations.rpy:306
-    old "Extract Dialogue: [project.current.name!q]"
-    new "导出对话：[project.current.name!q]"
+    old "Extract Dialogue: [project.current.display_name!q]"
+    new "导出对话：[project.current.display_name!q]"
 
     # translations.rpy:322
     old "Format:"
