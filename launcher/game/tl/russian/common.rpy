@@ -1,4 +1,4 @@
-﻿
+
 translate russian strings:
 
     # 00action_file.rpy:26
@@ -165,83 +165,83 @@ translate russian strings:
     old "The interactive director is not enabled here."
     new "Интерактивный директор недоступен."
 
-    # 00director.rpy:1461
+    # 00director.rpy:1466
     old "Done"
     new "Принять"
 
-    # 00director.rpy:1469
+    # 00director.rpy:1474
     old "(statement)"
     new "(функция)"
 
-    # 00director.rpy:1470
+    # 00director.rpy:1475
     old "(tag)"
     new "(тег)"
 
-    # 00director.rpy:1471
+    # 00director.rpy:1476
     old "(attributes)"
     new "(аттрибут)"
 
-    # 00director.rpy:1472
+    # 00director.rpy:1477
     old "(transform)"
     new "(трансформация)"
 
-    # 00director.rpy:1497
+    # 00director.rpy:1502
     old "(transition)"
     new "(переход)"
 
-    # 00director.rpy:1509
+    # 00director.rpy:1514
     old "(channel)"
     new "(канал)"
 
-    # 00director.rpy:1510
+    # 00director.rpy:1515
     old "(filename)"
     new "(имя файла)"
 
-    # 00director.rpy:1535
+    # 00director.rpy:1540
     old "Change"
     new "Изменить"
 
-    # 00director.rpy:1537
+    # 00director.rpy:1542
     old "Add"
     new "Добавить"
 
-    # 00director.rpy:1540
+    # 00director.rpy:1545
     old "Cancel"
     new "Отмена"
 
-    # 00director.rpy:1543
+    # 00director.rpy:1548
     old "Remove"
     new "Убрать"
 
-    # 00director.rpy:1576
+    # 00director.rpy:1581
     old "Statement:"
     new "Функции:"
 
-    # 00director.rpy:1597
+    # 00director.rpy:1602
     old "Tag:"
     new "Теги:"
 
-    # 00director.rpy:1613
+    # 00director.rpy:1618
     old "Attributes:"
     new "Аттрибут:"
 
-    # 00director.rpy:1631
+    # 00director.rpy:1636
     old "Transforms:"
     new "Трансформации:"
 
-    # 00director.rpy:1650
+    # 00director.rpy:1655
     old "Behind:"
     new "Позади:"
 
-    # 00director.rpy:1669
+    # 00director.rpy:1674
     old "Transition:"
     new "Переходы:"
 
-    # 00director.rpy:1687
+    # 00director.rpy:1692
     old "Channel:"
     new "Каналы:"
 
-    # 00director.rpy:1705
+    # 00director.rpy:1710
     old "Audio Filename:"
     new "Имя файла:"
 
@@ -285,7 +285,11 @@ translate russian strings:
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Вы уверены, что хотите пропустить непрочитанные диалоги до следующего выбора?"
 
-    # 00keymap.rpy:262
+    # 00keymap.rpy:254
+    old "Failed to save screenshot as %s."
+    new "Провалена попытка сохранить скриншот как %s."
+
+    # 00keymap.rpy:266
     old "Saved screenshot as %s."
     new "Скриншот сохранён как %s."
 

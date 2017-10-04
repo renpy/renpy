@@ -357,6 +357,14 @@ translate russian strings:
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
     new "Ваш проект не содержит информации, необходимой для сборки. Добавить её к концу options.rpy?"
 
+    # dmgcheck.rpy:50
+    old "Ren'Py is running from a read only folder. Some functionality will not work."
+    new "Ren'Py запущена из директории только для чтения. Часть функционала может не работать."
+
+    # dmgcheck.rpy:50
+    old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
+    new "Вероятно, это из-за того, что Ren'Py запущена напрямую из образа диска Mac. Чтобы исправить это, выйдите из лаунчера и скопируйте всю папку %s куда-нибудь ещё на компьютер и снова запустите Ren'Py."
+
     # editor.rpy:150
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
     new "{b}Рекомендуется.{/b} Бета-редактор с простым интерфейсом и возможностями, помогающими в разработке, такими, как проверка орфографии. Editra на данный момент не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов."
@@ -513,15 +521,15 @@ translate russian strings:
     old "Extract Dialogue"
     new "Извлечь диалог"
 
-    # front_page.rpy:272
+    # front_page.rpy:273
     old "Checking script for potential problems..."
     new "Проверка потенциальных проблем сценария..."
 
-    # front_page.rpy:287
+    # front_page.rpy:288
     old "Deleting persistent data..."
     new "Удаление постоянных данных..."
 
-    # front_page.rpy:295
+    # front_page.rpy:296
     old "Recompiling all rpy files into rpyc files..."
     new "Перекомпиляция всех файлов rpy в файлы rpyc..."
 
