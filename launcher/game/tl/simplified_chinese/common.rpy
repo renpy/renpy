@@ -27,131 +27,131 @@ translate simplified_chinese strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Sunday"
-    new "{#weekday}Sunday"
+    new "{#weekday}星期日"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Mon"
-    new "{#weekday_short}Mon"
+    new "{#weekday_short}周一"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Tue"
-    new "{#weekday_short}Tue"
+    new "{#weekday_short}周二"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Wed"
-    new "{#weekday_short}Wed"
+    new "{#weekday_short}周三"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Thu"
-    new "{#weekday_short}Thu"
+    new "{#weekday_short}周四"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Fri"
-    new "{#weekday_short}Fri"
+    new "{#weekday_short}周五"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Sat"
-    new "{#weekday_short}Sat"
+    new "{#weekday_short}周六"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Sun"
-    new "{#weekday_short}Sun"
+    new "{#weekday_short}周日"
 
     # 00action_file.rpy:47
     old "{#month}January"
-    new "{#month}January"
+    new "{#month}1月"
 
     # 00action_file.rpy:47
     old "{#month}February"
-    new "{#month}February"
+    new "{#month}2月"
 
     # 00action_file.rpy:47
     old "{#month}March"
-    new "{#month}March"
+    new "{#month}3月"
 
     # 00action_file.rpy:47
     old "{#month}April"
-    new "{#month}April"
+    new "{#month}4月"
 
     # 00action_file.rpy:47
     old "{#month}May"
-    new "{#month}May"
+    new "{#month}5月"
 
     # 00action_file.rpy:47
     old "{#month}June"
-    new "{#month}June"
+    new "{#month}6月"
 
     # 00action_file.rpy:47
     old "{#month}July"
-    new "{#month}July"
+    new "{#month}7月"
 
     # 00action_file.rpy:47
     old "{#month}August"
-    new "{#month}August"
+    new "{#month}8月"
 
     # 00action_file.rpy:47
     old "{#month}September"
-    new "{#month}September"
+    new "{#month}9月"
 
     # 00action_file.rpy:47
     old "{#month}October"
-    new "{#month}October"
+    new "{#month}10月"
 
     # 00action_file.rpy:47
     old "{#month}November"
-    new "{#month}November"
+    new "{#month}11月"
 
     # 00action_file.rpy:47
     old "{#month}December"
-    new "{#month}December"
+    new "{#month}12月"
 
     # 00action_file.rpy:63
     old "{#month_short}Jan"
-    new "{#month_short}Jan"
+    new "{#month_short}1月"
 
     # 00action_file.rpy:63
     old "{#month_short}Feb"
-    new "{#month_short}Feb"
+    new "{#month_short}2月"
 
     # 00action_file.rpy:63
     old "{#month_short}Mar"
-    new "{#month_short}Mar"
+    new "{#month_short}3月"
 
     # 00action_file.rpy:63
     old "{#month_short}Apr"
-    new "{#month_short}Apr"
+    new "{#month_short}4月"
 
     # 00action_file.rpy:63
     old "{#month_short}May"
-    new "{#month_short}May"
+    new "{#month_short}5月"
 
     # 00action_file.rpy:63
     old "{#month_short}Jun"
-    new "{#month_short}Jun"
+    new "{#month_short}6月"
 
     # 00action_file.rpy:63
     old "{#month_short}Jul"
-    new "{#month_short}Jul"
+    new "{#month_short}7月"
 
     # 00action_file.rpy:63
     old "{#month_short}Aug"
-    new "{#month_short}Aug"
+    new "{#month_short}8月"
 
     # 00action_file.rpy:63
     old "{#month_short}Sep"
-    new "{#month_short}Sep"
+    new "{#month_short}9月"
 
     # 00action_file.rpy:63
     old "{#month_short}Oct"
-    new "{#month_short}Oct"
+    new "{#month_short}10月"
 
     # 00action_file.rpy:63
     old "{#month_short}Nov"
-    new "{#month_short}Nov"
+    new "{#month_short}11月"
 
     # 00action_file.rpy:63
     old "{#month_short}Dec"
-    new "{#month_short}Dec"
+    new "{#month_short}12月"
 
     # 00action_file.rpy:235
     old "%b %d, %H:%M"
@@ -167,55 +167,55 @@ translate simplified_chinese strings:
 
     # 00gui.rpy:228
     old "Are you sure you want to delete this save?"
-    new "您确定您要删掉这份存档吗？"
+    new "您确定要删除此存档吗？"
 
     # 00gui.rpy:229
     old "Are you sure you want to overwrite your save?"
-    new "您确定您要覆盖存档？"
+    new "您确定要覆盖此存档吗？"
 
     # 00gui.rpy:230
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "载入将会失去所有未储存的进度。\n您确定您要这么做吗？"
+    new "读取存档将会使未保存的进度丢失。\n您确定要继续吗？"
 
     # 00gui.rpy:231
     old "Are you sure you want to quit?"
-    new "您确定您要退出吗？"
+    new "您确定要退出吗？"
 
     # 00gui.rpy:232
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "您确定您想回到标题画面吗？\n未保存的进度将会丢失。"
+    new "您确定要返回到标题画面吗？\n此操作将会使未保存的进度丢失。"
 
     # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
-    new "Are you sure you want to end the replay?"
+    new "您确定要结束回放吗？"
 
     # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
-    new "是否确定开始快进？"
+    new "您确定要开始快进吗？"
 
     # 00gui.rpy:235
     old "Are you sure you want to skip to the next choice?"
-    new "是否确定跳到下一个选项？"
+    new "您确定要直接快进到下个选项吗？"
 
     # 00gui.rpy:236
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "Are you sure you want to skip unseen dialogue to the next choice?"
+    new "您确定要跳过未读对话，直接快进到下个选项吗？"
 
     # 00keymap.rpy:250
     old "Saved screenshot as %s."
-    new "储存屏幕截图为 %s。"
+    new "截图已保存为 %s。"
 
     # 00library.rpy:142
     old "Self-voicing disabled."
-    new "Self-voicing disabled."
+    new "自动朗读已关闭。"
 
     # 00library.rpy:143
     old "Clipboard voicing enabled. "
-    new "Clipboard voicing enabled. "
+    new "剪贴板朗读已开启。"
 
     # 00library.rpy:144
     old "Self-voicing enabled. "
-    new "Self-voicing enabled. "
+    new "自动朗读已开启。"
 
     # 00library.rpy:179
     old "Skip Mode"
@@ -279,15 +279,15 @@ translate simplified_chinese strings:
 
     # 00updater.rpy:1393
     old "Updater"
-    new "更新"
+    new "更新器"
 
     # 00updater.rpy:1404
     old "This program is up to date."
-    new "该程序已是最新版本。"
+    new "此程序已是最新版本。"
 
     # 00updater.rpy:1406
     old "[u.version] is available. Do you want to install it?"
-    new "[u.version] 已放出。是否确认安装？"
+    new "[u.version] 现已可用。您希望现在安装吗？"
 
     # 00updater.rpy:1408
     old "Preparing to download the updates."
@@ -299,11 +299,11 @@ translate simplified_chinese strings:
 
     # 00updater.rpy:1412
     old "Unpacking the updates."
-    new "解压缩更新包。"
+    new "正在解压更新。"
 
     # 00updater.rpy:1416
     old "The updates have been installed. The program will restart."
-    new "该更新包已安装，程序将会重新启动。"
+    new "此更新已安装。程序将重新启动。"
 
     # 00updater.rpy:1418
     old "The updates have been installed."
@@ -315,7 +315,7 @@ translate simplified_chinese strings:
 
     # 00gallery.rpy:563
     old "Image [index] of [count] locked."
-    new "[count]个图片中的第[index]个图片被锁定。"
+    new "图片 [count] / [index] 尚未解锁。"
 
     # 00gallery.rpy:583
     old "prev"
