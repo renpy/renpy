@@ -3,27 +3,27 @@ translate simplified_chinese strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
-    new "{#weekday}Monday"
+    new "{#weekday}星期一"
 
     # 00action_file.rpy:26
     old "{#weekday}Tuesday"
-    new "{#weekday}Tuesday"
+    new "{#weekday}星期二"
 
     # 00action_file.rpy:26
     old "{#weekday}Wednesday"
-    new "{#weekday}Wednesday"
+    new "{#weekday}星期三"
 
     # 00action_file.rpy:26
     old "{#weekday}Thursday"
-    new "{#weekday}Thursday"
+    new "{#weekday}星期四"
 
     # 00action_file.rpy:26
     old "{#weekday}Friday"
-    new "{#weekday}Friday"
+    new "{#weekday}星期五"
 
     # 00action_file.rpy:26
     old "{#weekday}Saturday"
-    new "{#weekday}Saturday"
+    new "{#weekday}星期六"
 
     # 00action_file.rpy:26
     old "{#weekday}Sunday"
@@ -159,11 +159,11 @@ translate simplified_chinese strings:
 
     # 00action_file.rpy:820
     old "Quick save complete."
-    new "快速存档。"
+    new "快速保存完成。"
 
     # 00gui.rpy:227
     old "Are you sure?"
-    new "是否确认？"
+    new "您确定吗？"
 
     # 00gui.rpy:228
     old "Are you sure you want to delete this save?"
