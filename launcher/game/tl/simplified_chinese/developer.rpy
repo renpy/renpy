@@ -103,7 +103,7 @@ translate simplified_chinese strings:
 
     # _developer/inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "        （尚无属性关联可显示对象）"
+    new "        （可显示对象尚无属性关联）"
 
     # _developer/inspector.rpym:147
     old "        (default properties omitted)"
