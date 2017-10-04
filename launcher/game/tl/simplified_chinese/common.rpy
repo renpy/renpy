@@ -333,3 +333,102 @@ translate simplified_chinese strings:
     old "return"
     new "返回"
 
+    # 00director.rpy:689
+    old "The interactive director is not enabled here."
+    new "互动导演模式未启动。"
+
+    # 00director.rpy:1461
+    old "Done"
+    new "完成"
+
+    # 00director.rpy:1469
+    old "(statement)"
+    new "（声明）"
+
+    # 00director.rpy:1470
+    old "(tag)"
+    new "（标签）"
+
+    # 00director.rpy:1471
+    old "(attributes)"
+    new "（属性）"
+
+    # 00director.rpy:1472
+    old "(transform)"
+    new "（变换）"
+
+    # 00director.rpy:1497
+    old "(transition)"
+    new "（转场）"
+
+    # 00director.rpy:1509
+    old "(channel)"
+    new "（轨道）"
+
+    # 00director.rpy:1510
+    old "(filename)"
+    new "（文件名）"
+
+    # 00director.rpy:1535
+    old "Change"
+    new "更改"
+
+    # 00director.rpy:1537
+    old "Add"
+    new "添加"
+
+    # 00director.rpy:1543
+    old "Remove"
+    new "移除"
+
+    # 00director.rpy:1576
+    old "Statement:"
+    new "声明："
+
+    # 00director.rpy:1597
+    old "Tag:"
+    new "标签："
+
+    # 00director.rpy:1613
+    old "Attributes:"
+    new "属性："
+
+    # 00director.rpy:1631
+    old "Transforms:"
+    new "变换："
+
+    # 00director.rpy:1650
+    old "Behind:"
+    new "置后于："
+
+    # 00director.rpy:1669
+    old "Transition:"
+    new "转场："
+
+    # 00director.rpy:1687
+    old "Channel:"
+    new "轨道："
+
+    # 00director.rpy:1705
+    old "Audio Filename:"
+    new "音频文件："
+
+    # 00keymap.rpy:254
+    old "Failed to save screenshot as %s."
+    new "未能保存截图为 %s。"
+
+    # _developer\developer.rpym:43
+    old "Interactive Director (D)"
+    new "互动导演（D）"
+
+    # _developer\developer.rpym:67
+    old "Show Texture Size"
+    new "显示贴图大小"
+
+    # _developer\developer.rpym:70
+    old "Hide Texture size"
+    new "隐藏贴图大小"
+
+    # _developer\developer.rpym:569
+    old "{size_mb:,.1f} MB in {count} textures."
+    new "{size_mb:,.1f} MB，{count} 贴图。"
