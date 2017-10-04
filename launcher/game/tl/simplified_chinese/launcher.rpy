@@ -523,23 +523,23 @@ translate simplified_chinese strings:
 
     # gui7.rpy:236
     old "Select Accent and Background Colors"
-    new "Select Accent and Background Colors"
+    new "选择主要部件和背景颜色"
 
     # gui7.rpy:250
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
-    new "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
+    new "请点击您希望使用的配色方案，然后点击“继续”。这些颜色稍后也可更改及自定义。"
 
     # gui7.rpy:294
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
+    new "{b}警告{/b}\n继续将会覆盖自定义的状态条、按钮、存档位、滑条和滑块图。\n\n您希望执行哪种操作？"
 
     # gui7.rpy:294
     old "Choose new colors, then regenerate image files."
-    new "Choose new colors, then regenerate image files."
+    new "选择新配色，然后重新生成图片文件。"
 
     # gui7.rpy:294
     old "Regenerate the image files using the colors in gui.rpy."
-    new "Regenerate the image files using the colors in gui.rpy."
+    new "使用 gui.rpy 中的配色重新生成图片文件。"
 
     # gui7.rpy:314
     old "PROJECT NAME"
