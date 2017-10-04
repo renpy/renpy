@@ -146,8 +146,8 @@ translate simplified_chinese strings:
     new "忽略"
 
     # _errorhandling.rpym:545
-    old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "忽略异常，让您可以继续。但这通常会引起更多错误。"
+    old "Ignores the exception, allowing you to continue."
+    new "忽略异常，让您可以继续。"
 
     # _errorhandling.rpym:548
     old "Reload"
@@ -177,3 +177,22 @@ translate simplified_chinese strings:
     old "Copies the errors.txt file to the clipboard."
     new "复制解析错误文件（errors.txt）到剪贴板。"
 
+    # 00gltest.rpy:89
+    old "NPOT"
+    new "NPOT"
+
+    # _errorhandling.rpym:523
+    old "Open"
+    new "打开"
+
+    # _errorhandling.rpym:527
+    old "Copy"
+    new "复制"
+
+    # _errorhandling.rpym:596
+    old "Console"
+    new "控制台"
+
+    # _errorhandling.rpym:598
+    old "Opens a console to allow debugging the problem."
+    new "打开控制台，允许您调试程序。"
