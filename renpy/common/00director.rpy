@@ -734,6 +734,11 @@ init python in director:
         def __init__(self, lle):
             self.lle = lle
 
+            self.sensitive = renpy.scriptedit.can_add_before(self.lle.filename, self.lle.line)
+
+        def get_sensitive(self):
+            return self.sensitive
+
         def __call__(self):
 
             state.filename = self.lle.filename

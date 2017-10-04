@@ -289,6 +289,21 @@ def add_to_ast_before(code, filename, linenumber):
     renpy.ast.chain_block(block, old)
 
 
+def can_add_before(filename, linenumber):
+    """
+    Returns True if it's possible to add a line before the given filename
+    and linenumber, and False if it's not possible.
+    """
+
+    try:
+        nodes = nodes_on_line(filename, linenumber)
+        first_and_last_nodes(nodes)
+
+        return True
+    except:
+        return False
+
+
 def remove_from_ast(filename, linenumber):
     """
     Removes from the AST all statements that happen to be at `filename`
