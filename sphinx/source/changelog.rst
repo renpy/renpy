@@ -126,7 +126,7 @@ Alexandre Tranchant.
 The launcher and default project have been translated into Brazilian Portugese,
 courtesy of MrStalker.
 
-The Indonesian translation has been updated.
+The Indonesian and Simplified Chinese translations have been updated.
 
 Other
 -----
@@ -177,8 +177,8 @@ variable, which can be set to a Jump action that might clean up after the player
 and start a turn again.
 
 The Ren'Py set type now inherits from the Python set type, rather than the
-obsolete sets.Set type. Set literals are now properly wrapped so that they
-may be
+obsolete sets.Set type. Set literals are now properly wrapped so that the
+set participates in rollback.
 
 The list of NVL-mode text blocks is cleared when the language is changed. This
 prevents Ren'Py from showing a mix of text languages, so of which may be
