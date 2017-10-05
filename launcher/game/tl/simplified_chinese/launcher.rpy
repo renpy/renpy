@@ -1241,3 +1241,11 @@ translate simplified_chinese strings:
     old "Proceed"
     new "继续"
 
+    # dmgcheck.rpy:50
+    old "Ren'Py is running from a read only folder. Some functionality will not work."
+    new "Ren'Py 目前正从只读文件夹中运行。某些功能将无法工作。"
+
+    # dmgcheck.rpy:50
+    old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
+    new "这可能是由于 Ren'Py 直接从 Macintosh 磁盘镜像中运行导致的。要修复此问题，退出启动器，复制整个 %s 文件夹到您计算机的其他任意位置，并重新运行 Ren'Py。"
+
