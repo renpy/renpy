@@ -163,6 +163,8 @@ init -1 python:
 
         def call(self, cmd, cancel=False, use_path=False, yes=False):
 
+            renpy.not_infinite_loop(30)
+
             cmd = [ renpy.fsencode(i) for i in cmd ]
 
             self.cmd = cmd
@@ -220,6 +222,8 @@ init -1 python:
             rv = self.process.poll()
 
             if rv is not None:
+                renpy.not_infinite_loop(30)
+
                 if rv:
                     raise subprocess.CalledProcessError(rv, self.cmd)
                 else:

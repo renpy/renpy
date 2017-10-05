@@ -275,6 +275,9 @@ init python in project:
                 if p.wait():
                     interface.error(_("Launching the project failed."), _("Please ensure that your project launches normally before running this command."))
 
+            renpy.not_infinite_loop(30)
+
+
         def update_dump(self, force=False, gui=True, compile=False):
             """
             If the dumpfile does not exist, runs Ren'Py to create it. Otherwise,
