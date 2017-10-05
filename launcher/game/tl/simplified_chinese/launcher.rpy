@@ -235,7 +235,7 @@ translate simplified_chinese strings:
 
     # consolecommand.rpy:84
     old "The command is being run in a new operating system console window."
-    new "此命令正在一个新操作系统控制台窗口中运行。"
+    new "此命令正在一个新打开的系统控制台中运行。"
 
     # distribute.rpy:443
     old "Scanning project files..."
@@ -563,15 +563,15 @@ translate simplified_chinese strings:
 
     # gui7.rpy:327
     old "[project_name!q] already exists. Please choose a different project name."
-    new "[project_name!q] 已存在。请指定一个不同的工程名。"
+    new "[project_name!q] 已存在。请指定一个不同的工程名称。"
 
     # gui7.rpy:330
     old "[project_dir!q] already exists. Please choose a different project name."
-    new "[project_dir!q] 已存在。请指定一个不同的工程名。"
+    new "[project_dir!q] 已存在。请指定一个不同的工程名称。"
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "该工程应使用哪种基础分辨率？虽然 Ren'Py 可以向上或向下缩放窗口，此分辨率将是窗口的初始化尺寸、资源绘制的基础分辨率以及资源显示最清晰的分辨率。\n\n默认的 1280x720 是折中方案。"
+    new "您希望该工程使用哪种基础分辨率？虽然 Ren'Py 可以向上或向下缩放窗口，此分辨率将是窗口的初始化尺寸、资源绘制的基础分辨率以及资源显示最清晰的分辨率。\n\n默认的 1280x720 是折中方案。"
 
     # gui7.rpy:357
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
@@ -639,7 +639,7 @@ translate simplified_chinese strings:
 
     # interface.rpy:232
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
-    new "由于包格式限制，非 ASCII 文件名和目录名将不被允许。"
+    new "由于包格式限制，无法使用非 ASCII 文件名和目录名。"
 
     # interface.rpy:327
     old "ERROR"
@@ -655,11 +655,11 @@ translate simplified_chinese strings:
 
     # interface.rpy:375
     old "Text input may not contain the {{ or [[ characters."
-    new "文本输入不得包含 {{ 或 [[ 字符。"
+    new "文本输入不能包含 {{ 或 [[ 字符。"
 
     # interface.rpy:380
     old "File and directory names may not contain / or \\."
-    new "文件名或目录名不得包含 / 或 \\。"
+    new "文件名或目录名不能包含 / 或 \\。"
 
     # interface.rpy:386
     old "File and directory names must consist of ASCII characters."
@@ -887,7 +887,7 @@ translate simplified_chinese strings:
 
     # new_project.rpy:63
     old "The projects directory could not be set. Giving up."
-    new "工程目录尚未被设定。取消操作。"
+    new "工程目录无法设定。操作取消。"
 
     # new_project.rpy:69
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
