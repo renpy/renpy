@@ -56,6 +56,9 @@ init -1600 python hide:
     # Should we suppress overlay during the splashscreen?
     config.splashscreen_suppress_overlay = True
 
+    # Should we profile reloading?
+    config.profile_reload = False
+
 init -1600 python:
 
     def _init_language():
@@ -95,6 +98,13 @@ label _after_load:
 
         if config.after_load_transition:
             renpy.transition(config.after_load_transition, force=True)
+
+        if "_reload_time" in renpy.session:
+            start = renpy.session.pop("_reload_time")
+            import time
+
+            if config.profile_reload:
+                print("Reloading took:", time.time() - start, "seconds" )
 
         menu = renpy.session.pop("_reload_screen", None)
 

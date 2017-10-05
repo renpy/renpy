@@ -407,6 +407,9 @@ label _save_reload_game:
         if renpy.can_load("_reload-1"):
             renpy.utter_restart()
 
+        import time
+        renpy.session["_reload_time"] = time.time()
+
         renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
 
         ui.add(Solid((0, 0, 0, 255)))
