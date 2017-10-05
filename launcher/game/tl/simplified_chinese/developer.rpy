@@ -95,7 +95,7 @@ translate simplified_chinese strings:
 
     # _developer/inspector.rpym:122
     old "Inspecting Styles of [displayable_name!q]"
-    new "查看 [displayable_name!q] 的样式"
+    new "查验 [displayable_name!q] 的样式"
 
     # _developer/inspector.rpym:139
     old "displayable:"
