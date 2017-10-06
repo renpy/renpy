@@ -1604,7 +1604,7 @@ def jump_out_of_context(label):
     raise renpy.game.JumpOutException(label)
 
 
-def call(label, from_current=False, *args, **kwargs):
+def call(label, *args, **kwargs):
     """
     :doc: se_call
 
@@ -1615,9 +1615,11 @@ def call(label, from_current=False, *args, **kwargs):
     `from_current`
         If true, control will return to the current statement, rather than
         the statement following the current statement. (This will lead to
-        the current statement being run twice.)
+        the current statement being run twice. This must be passed as a
+        keyword argument.)
     """
 
+    from_current = kwargs.pop("from_current", False)
     raise renpy.game.CallException(label, args, kwargs, from_current=from_current)
 
 
