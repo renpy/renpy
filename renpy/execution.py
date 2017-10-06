@@ -493,8 +493,6 @@ class Context(renpy.object.Object):
 
             except renpy.game.CallException as e:
 
-                print(e.from_current)
-
                 if e.from_current:
                     return_site = node.name
                 else:
