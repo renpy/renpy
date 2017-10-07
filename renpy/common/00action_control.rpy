@@ -105,7 +105,7 @@ init -1500 python:
          :doc: control_action
 
          This causes another screen to be shown. `screen` is a string
-         giving the name of the screen. The keyword arguments are
+         giving the name of the screen. The arguments are
          passed to the screen being shown.
 
          If not None, `transition` is use to show the new screen.
@@ -135,15 +135,18 @@ init -1500 python:
             return renpy.get_screen(self.screen) is not None
 
     @renpy.pure
-    def ShowTransient(screen, *args, **kwargs):
+    def ShowTransient(screen, transition=None, *args, **kwargs):
         """
          :doc: control_action
 
          Shows a transient screen. A transient screen will be hidden when
-         the current interaction completes.
+         the current interaction completes. The arguments are
+         passed to the screen being shown.
+
+         If not None, `transition` is use to show the new screen.
          """
 
-        return Show(screen, _transient=True, *args, **kwargs)
+        return Show(screen, transition=transition, _transient=True, *args, **kwargs)
 
     @renpy.pure
     class Hide(Action, DictEquality):
