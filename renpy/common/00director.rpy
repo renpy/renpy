@@ -1722,7 +1722,7 @@ screen director_audio(state):
 
 
 screen director():
-    zorder 99
+    zorder 1400
 
     $ state = director.state
 
