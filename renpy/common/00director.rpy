@@ -702,7 +702,7 @@ init python in director:
 
                 return
 
-            renpy.session["compile"] = True
+            # renpy.session["compile"] = True
             renpy.session["_greedy_rollback"] = True
 
             state.active = True

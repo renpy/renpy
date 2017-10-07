@@ -31,6 +31,9 @@ import codecs
 # that line.
 lines = { }
 
+# The set of files that have been loaded.
+files = set()
+
 
 class Line(object):
     """
@@ -61,11 +64,35 @@ class Line(object):
         return "<Line {}:{} {!r}>".format(self.filename, self.number, self.text)
 
 
+def ensure_loaded(filename):
+    """
+    Ensures that the given filename and linenumber are loaded. Doesn't do
+    anything if the filename can't be loaded.
+    """
+
+    if not (filename.endswith(".rpy") or filename.endswith(".rpyc")):
+        return
+
+    if filename in files:
+        return
+
+    files.add(filename)
+
+    fn = renpy.parser.unelide_filename(filename)
+
+    if fn is None:
+        return
+
+    renpy.parser.list_logical_lines(fn, add_lines=True)
+
+
 def get_line_text(filename, linenumber):
     """
     Gets the text of the line with `filename` and `linenumber`, or the None if
     the line does not exist.
     """
+
+    ensure_loaded(filename)
 
     if (filename, linenumber) in lines:
         return lines[filename, linenumber].text
@@ -86,6 +113,8 @@ def adjust_line_locations(filename, linenumber, char_offset, line_offset):
     `line_offset`
         The number of line in the file to offset the code by.
     """
+
+    ensure_loaded(filename)
 
     global lines
 
@@ -119,6 +148,8 @@ def insert_line_before(code, filename, linenumber):
 
     if not renpy.game.args.compile:  # @UndefinedVariable
         raise Exception("The compile flag must have been given for script editing to work.")
+
+    ensure_loaded(filename)
 
     old_line = lines[filename, linenumber]
 
@@ -166,6 +197,8 @@ def remove_line(filename, linenumber):
     if not renpy.game.args.compile:  # @UndefinedVariable
         raise Exception("The compile flag must have been given for script editing to work.")
 
+    ensure_loaded(filename)
+
     line = lines[filename, linenumber]
 
     with codecs.open(line.filename, "r", "utf-8") as f:
@@ -190,6 +223,8 @@ def get_full_text(filename, linenumber):
     Returns the full text of `linenumber` from `filename`, including
     any comment or delimiter characters that exist.
     """
+
+    ensure_loaded(filename)
 
     if (filename, linenumber) not in lines:
         return None
