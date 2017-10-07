@@ -93,7 +93,7 @@ def check_image_attributes(tag, attributes):
     :doc: image_func
 
     Checks to see if there is a unique image with the given tag and
-    attributes. If there is, returns the tag and attributes in order.
+    attributes. If there is, returns the attributes in order.
     Otherwise, returns None.
     """
 
@@ -103,6 +103,11 @@ def check_image_attributes(tag, attributes):
         return ca(tag, attributes, None)
 
     l = get_available_image_attributes(tag, attributes)
+
+    # Check to see if there's an image that is exactly the one we want.
+    for i in l:
+        if len(i) == len(attributes):
+            return tuple(i)
 
     if len(l) != 1:
         return None
