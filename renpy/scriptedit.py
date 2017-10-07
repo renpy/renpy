@@ -79,10 +79,6 @@ def ensure_loaded(filename):
     files.add(filename)
 
     fn = renpy.parser.unelide_filename(filename)
-
-    if fn is None:
-        return
-
     renpy.parser.list_logical_lines(fn, add_lines=True)
 
 
@@ -146,9 +142,6 @@ def insert_line_before(code, filename, linenumber):
     if renpy.config.clear_lines:
         raise Exception("config.clear_lines must be False for script editing to work.")
 
-    if not renpy.game.args.compile:  # @UndefinedVariable
-        raise Exception("The compile flag must have been given for script editing to work.")
-
     ensure_loaded(filename)
 
     old_line = lines[filename, linenumber]
@@ -193,9 +186,6 @@ def remove_line(filename, linenumber):
 
     if renpy.config.clear_lines:
         raise Exception("config.clear_lines must be False for script editing to work.")
-
-    if not renpy.game.args.compile:  # @UndefinedVariable
-        raise Exception("The compile flag must have been given for script editing to work.")
 
     ensure_loaded(filename)
 
