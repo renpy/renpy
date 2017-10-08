@@ -435,6 +435,17 @@ init python in project:
 
             if self.projects_directory is not None:
                 self.scan_directory(self.projects_directory)
+                
+                # If a file called "projectPaths.txt" exists in the main project directory,
+                # also scan any directories listed there
+                extraPathsFName = os.path.join(self.projects_directory,"projectPaths.txt")
+                if os.path.isfile(extraPathsFName):
+                    extraPathsF = open(extraPathsFName,"r")
+                    for path in extraPathsF:
+                        path = path.strip()
+                        if len(path) > 0 and os.path.isdir(path):
+                            self.scan_directory(path)
+                    extraPathsF.close()
 
             self.scan_directory(config.renpy_base)
             self.scan_directory(os.path.join(config.renpy_base, "templates"))
