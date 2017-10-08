@@ -439,14 +439,6 @@ init python in project:
             if self.projects_directory is not None:
                 self.scan_directory(self.projects_directory)
 
-                # If a file called "projects.txt" exists in the main project directory,
-                # include any projects listed in it.
-                extra_projects_fn = os.path.join(self.projects_directory,"projects.txt")
-                with open(extra_projects_fn,"r") as f:
-                    for path in f:
-                        path = path.strip()
-                        if len(path) > 0:
-                            self.scan_directory_direct(path)
 
             self.scan_directory(config.renpy_base)
             self.scan_directory(os.path.join(config.renpy_base, "templates"))
@@ -507,48 +499,61 @@ init python in project:
             for pdir in util.listdir(d):
 
                 ppath = os.path.join(d, pdir)
-                self.scan_directory_direct(ppath,pdir)
+                self.scan_directory_direct(ppath, pdir)
+
+            # If a file called "projects.txt" exists, include any projects listed in it.
+            extra_projects_fn = os.path.join(d, "projects.txt")
+
+            if os.path.exists(extra_projects_fn):
+
+                with open(extra_projects_fn, "r") as f:
+
+                    for path in f:
+                        path = path.strip()
+                        if len(path) > 0:
+                            self.scan_directory_direct(path)
+
 
         def scan_directory_direct(self, ppath, name=None):
             """
             Checks if there is a project in `ppath` and creates a project
             object with the name `name` if so.
             """
-            
+
             # A project must be a directory.
             if not os.path.isdir(ppath):
                 return
-            
+
             try:
                 ppath = self.find_basedir(ppath)
             except:
                 return
-            
+
             if ppath is None:
                 return
-            
+
             if ppath in self.scanned:
                 return
-            
+
             self.scanned.add(ppath)
-            
+
             # We have a project directory, so create a Project.
             p = Project(ppath, name)
-            
+
             if project_filter and (p.name not in project_filter):
                 return
-            
+
             project_type = p.data.get("type", "normal")
-            
+
             if project_type == "hidden":
                 pass
             elif project_type == "template":
                 self.templates.append(p)
             else:
                 self.projects.append(p)
-            
+
             self.all_projects.append(p)
-            
+
 
         def get(self, name):
             """
