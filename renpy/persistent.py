@@ -193,6 +193,14 @@ def load(filename):
         f.close()
         persistent = loads(s)
     except:
+        import renpy.display
+
+        try:
+            renpy.display.log.write("Loading persistent.")
+            renpy.display.log.exception()
+        except:
+            pass
+
         return None
 
     persistent._update()
@@ -272,6 +280,7 @@ def dictset_merge(old, new, current):
     current.update(new)
     return current
 
+
 register_persistent("_seen_ever", dictset_merge)
 register_persistent("_seen_images", dictset_merge)
 register_persistent("_seen_audio", dictset_merge)
@@ -321,6 +330,7 @@ def merge(other):
         pvars[f] = val
         backup[f] = safe_deepcopy(val)
         persistent._changed[f] = t
+
 
 # The mtime of the most recently processed savefile.
 persistent_mtime = None
@@ -376,6 +386,7 @@ def update(force_save=False):
 
     if need_save:
         save()
+
 
 should_save_persistent = True
 
@@ -482,6 +493,7 @@ def MultiPersistent(name):
 
     rv._filename = fn  # W0201
     return rv
+
 
 renpy.loadsave._MultiPersistent = _MultiPersistent
 renpy.loadsave.MultiPersistent = MultiPersistent
