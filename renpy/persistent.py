@@ -186,6 +186,9 @@ def load(filename):
     loaded.
     """
 
+    if not os.path.exists(filename):
+        return None
+
     # Unserialize the persistent data.
     try:
         f = file(filename, "rb")
