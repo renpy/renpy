@@ -753,7 +753,7 @@ def quit_importer():
 # Auto-Reload
 
 
-# This is set to True if autoreload hads detected an autoreload is needed.
+# This is set to True if autoreload has detected an autoreload is needed.
 needs_autoreload = False
 
 # A map from filename to mtime, or None if the file doesn't exist.

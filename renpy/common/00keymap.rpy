@@ -402,6 +402,7 @@ label _hide_windows:
 
 label _save_reload_game:
     python hide:
+
         renpy.music.stop()
 
         if renpy.can_load("_reload-1"):
