@@ -849,6 +849,14 @@ class RevertableSet(set):
         else:
             self.update(state)
 
+    def __getstate__(self):
+        rv = ({ i : True for i in self}, )
+        return rv
+
+    # Required to ensure that getstate and setstate are called.
+    __reduce__ = object.__reduce__
+    __reduce_ex__ = object.__reduce_ex__
+
     def __init__(self, *args):
         log = renpy.game.log
 
@@ -1440,8 +1448,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                            and data == fwd_data
-                            and (keep_rollback or self.rolled_forward)
+                        and data == fwd_data
+                        and (keep_rollback or self.rolled_forward)
                         ):
                     self.forward.pop(0)
                 else:
