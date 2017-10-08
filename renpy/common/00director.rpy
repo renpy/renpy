@@ -335,10 +335,14 @@ init python in director:
 
         else:
 
-            attributes = get_image_attributes()
+            if state.attributes == state.original_attributes:
+                attributes = state.attributes
+            else:
 
-            if attributes is None:
-                return None
+                attributes = get_image_attributes()
+
+                if attributes is None:
+                    return None
 
         rv = [ state.kind ]
 
