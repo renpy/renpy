@@ -74,6 +74,7 @@ def movie_start(filename, size=None, loops=0):
 
     renpy.audio.music.play(filename, channel='movie', loop=loop)
 
+
 movie_start_fullscreen = movie_start
 movie_start_displayable = movie_start
 
@@ -88,9 +89,6 @@ displayable_channels = collections.defaultdict(list)
 # A map from a channel to the topmost Movie being displayed on
 # that channel. (Or None if no such movie exists.)
 channel_movie = { }
-
-# Same thing, but for the last time the screen was rendered.
-old_channel_movie = { }
 
 # Is there a video being displayed fullscreen?
 fullscreen = False
@@ -383,9 +381,10 @@ def update_playing():
     Calls play/stop on Movie displayables.
     """
 
-    global old_channel_movie
+    old_channel_movie = renpy.game.context().movie
 
     for c, m in channel_movie.items():
+
         old = old_channel_movie.get(c, None)
 
         if old is not m:
@@ -395,7 +394,7 @@ def update_playing():
         if c not in channel_movie:
             m.stop()
 
-    old_channel_movie = dict(channel_movie)
+    renpy.game.context().movie = dict(channel_movie)
 
 
 def frequent():

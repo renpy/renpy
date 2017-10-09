@@ -182,6 +182,9 @@ class Context(renpy.object.Object):
         if version < 13:
             self.line_log = [ ]
 
+        if version < 14:
+            self.movie = { }
+
     def __init__(self, rollback, context=None, clear=False):
         """
         `clear`
@@ -245,6 +248,9 @@ class Context(renpy.object.Object):
         # executed?
         self.force_checkpoint = False
 
+        # A mapt from a channel to the Movie playing on that channel.
+        self.movie = { }
+
         if context:
             oldsl = context.scene_lists
             self.runtime = context.runtime
@@ -253,6 +259,8 @@ class Context(renpy.object.Object):
 
             for k, v in context.music.iteritems():
                 self.music[k] = v.copy()
+
+            self.movie = dict(context.movie)
 
             self.images = renpy.display.image.ShownImageInfo(context.images)
 
