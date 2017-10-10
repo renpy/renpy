@@ -864,10 +864,12 @@ init python in distribute:
                 windows = 'binary'
                 linux = 'binary'
                 mac = 'binary'
+                raspi = 'raspi'
             else:
                 windows = 'windows'
                 linux = 'linux'
                 mac = 'mac'
+                raspi = 'linux'
 
             self.add_file(
                 linux,
@@ -880,6 +882,17 @@ init python in distribute:
                 "lib/linux-x86_64/" + self.executable_name,
                 os.path.join(config.renpy_base, "lib/linux-x86_64/pythonw"),
                 True)
+
+            armfn = os.path.join(config.renpy_base, "lib/linux-armv7l/pythonw")
+
+            if os.path.exists(armfn):
+
+                self.add_file(
+                    raspi,
+                    "lib/linux-armv7l/" + self.executable_name,
+                    armfn,
+                    True)
+
 
             self.add_file(
                 mac,
