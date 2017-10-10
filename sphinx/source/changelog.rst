@@ -131,6 +131,10 @@ The Indonesian and Simplified Chinese translations have been updated.
 Other
 -----
 
+When a file names projects.txt is present in the projects directory, it
+is expected to contain a list of full paths to directories, one per line.
+Those paths are treated as projects and displayed in the launcher.
+
 There is a new :func:`Call` action, that terminates the current statement
 and calls a label. The Call action and the :func:`renpy.call` function take
 a new `from_current` parameter, which causes them to return to the start
