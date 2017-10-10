@@ -130,7 +130,7 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 13
+    __version__ = 14
 
     nosave = [ 'next_node' ]
 
