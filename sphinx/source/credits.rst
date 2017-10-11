@@ -63,6 +63,7 @@ the omission in future versions.
 * Hixbooks
 * Huang Junjie
 * Huanxuantian
+* Ian Leslie
 * Jackmcbarn
 * JaHIY
 * Jake Staines
