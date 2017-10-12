@@ -1208,7 +1208,7 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
         if other is not None:
             return other
 
-        raise Exception("Could not find a %s image for imagemap." % name)
+        raise Exception("Could not find a %s image for imagemap." % name[0])
 
     ground = pick(ground, ( "ground", "idle" ), idle)
     idle = pick(idle, ( "idle", ), ground)
