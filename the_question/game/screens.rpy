@@ -1502,6 +1502,8 @@ style slider_pref_slider:
     variant "small"
     xsize 600
 
-
-
+# Shrink the title.
+style main_menu_vbox:
+    variant "small"
+    xsize 900
 
