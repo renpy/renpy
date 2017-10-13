@@ -76,7 +76,10 @@ def check_text_tags(s):
     else:
         all_tags = text_tags
 
-    tokens = textsupport.tokenize(unicode(s))
+    try:
+        tokens = textsupport.tokenize(unicode(s))
+    except Exception as e:
+        return e.args[0]
 
     tag_stack = [ ]
 
