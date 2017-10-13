@@ -371,12 +371,7 @@ screen main_menu():
     ## contents of the main menu are in the navigation screen.
     use navigation
 
-    text "[renpy.version_string] \"[renpy.version_name]\"":
-        color "#fff"
-        yalign .995
-        size 18
-        kerning -1
-        xoffset 290
+    text "[renpy.version_string] \"[renpy.version_name]\"" style "main_menu_version"
 
 
 
@@ -406,7 +401,15 @@ style main_menu_title:
     properties gui.text_properties("title")
 
 style main_menu_version:
-    properties gui.text_properties("version")
+    color "#fff"
+    yalign .995
+    size 18
+    kerning -1
+    xoffset 290
+
+style main_menu_version:
+    variant "small"
+    xoffset 365
 
 
 ## Game Menu screen ############################################################
