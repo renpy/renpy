@@ -483,6 +483,21 @@ def get_showing_tags(layer='master'):
     return renpy.game.context().images.get_showing_tags(layer)
 
 
+def get_attributes(tag, layer=None):
+    """
+    :doc: image_func
+
+    Return a tuple giving the image attributes for the image with `tag`. If
+    the image is now showing, returns None.
+
+    `layer`
+        The layer to check. If None, uses the default layer for `tag`.
+    """
+
+    layer = default_layer(layer, tag)
+    return renpy.game.context().images.get_attributes(layer, tag, None)
+
+
 def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
     """
     :undocumented:

@@ -652,13 +652,13 @@ class ShownImageInfo(renpy.object.Object):
                     self.attributes[layer, tag] = self.images[layer][tag][1:]
                     self.shown.add((layer, tag))
 
-    def get_attributes(self, layer, tag):
+    def get_attributes(self, layer, tag, default=()):
         """
         Get the attributes associated the image with tag on the given
         layer.
         """
 
-        return self.attributes.get((layer, tag), ())
+        return self.attributes.get((layer, tag), default)
 
     def showing(self, layer, name, exact=False):
         """
