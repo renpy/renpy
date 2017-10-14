@@ -131,7 +131,10 @@ The Indonesian and Simplified Chinese translations have been updated.
 Other
 -----
 
-When a file names projects.txt is present in the projects directory, it
+The new renpy.get_attributes function can be called to retrive the
+attributes associated with an image tag on a layer.
+
+When a file named projects.txt is present in the projects directory, it
 is expected to contain a list of full paths to directories, one per line.
 Those paths are treated as projects and displayed in the launcher.
 
