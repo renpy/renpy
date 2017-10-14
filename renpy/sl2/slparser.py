@@ -682,6 +682,7 @@ class ForParser(Parser):
             if l.match(r"\("):
                 name = self.name_or_tuple_pattern(l)
                 l.require(r'\)')
+                pattern = True
             else:
                 name = l.name()
 
