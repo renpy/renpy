@@ -145,7 +145,7 @@ init -1500 python in _console:
                 self.pop(0)
 
             if self.lines is not None:
-                while (len(self) > 1) and (sum(i.lines for i in self) > (self.lines + config.console_history_size)):
+                while (len(self) > 1) and (sum(i.lines for i in self) > self.lines):
                     self.pop(0)
 
         def clear(self):
@@ -184,11 +184,18 @@ init -1500 python in _console:
 
         stdio_lines.append((False, l))
 
+        while len(stdio_lines) > config.console_history_lines:
+            stdio_lines.pop(0)
+
     def stderr_line(l):
         if not config.developer:
             return
 
         stdio_lines.append((True, l))
+
+        while len(stdio_lines) > config.console_history_lines:
+            stdio_lines.pop(0)
+
 
     config.stdout_callbacks.append(stdout_line)
     config.stderr_callbacks.append(stderr_line)
@@ -217,7 +224,7 @@ init -1500 python in _console:
 
         def __init__(self):
 
-            self.history = BoundedList(config.console_history_size, config.console_history_lines)
+            self.history = BoundedList(config.console_history_size, config.console_history_lines + config.console_history_size)
             self.line_history = BoundedList(config.console_history_size)
             self.line_index = 0
 
