@@ -108,6 +108,8 @@ init -1500 python:
     config.console = False
 
     config.console_history_size = 100
+    config.console_history_lines = 1000
+
     config.console_commands = { }
 
     # If not None, this is called with the command that's about to be run
@@ -132,14 +134,19 @@ init -1500 python in _console:
         A list that's bounded at a certain size.
         """
 
-        def __init__(self, size):
+        def __init__(self, size, lines=None):
             self.size = size
+            self.lines = lines
 
         def append(self, value):
             super(BoundedList, self).append(value)
 
             while len(self) >= self.size:
                 self.pop(0)
+
+            if self.lines is not None:
+                while (len(self) > 1) and (sum(i.lines for i in self) > (self.lines + config.console_history_size)):
+                    self.pop(0)
 
         def clear(self):
             self[:] = [ ]
@@ -149,10 +156,22 @@ init -1500 python in _console:
         Represents an entry in the history list.
         """
 
+        lines = 0
+
         def __init__(self, command, result=None, is_error=False):
             self.command = command
             self.result = result
             self.is_error = is_error
+
+        def update_lines(self):
+
+            if self.result is None:
+                return
+
+            lines = self.result.split("\n")
+            lines = lines[-config.console_history_lines:]
+            self.result = "\n".join(lines)
+            self.lines = len(lines)
 
     HistoryEntry = ConsoleHistoryEntry
 
@@ -198,13 +217,15 @@ init -1500 python in _console:
 
         def __init__(self):
 
-            self.history = BoundedList(config.console_history_size)
+            self.history = BoundedList(config.console_history_size, config.console_history_lines)
             self.line_history = BoundedList(config.console_history_size)
             self.line_index = 0
 
             if persistent._console_history is not None:
                 for i in persistent._console_history:
-                    self.history.append(ConsoleHistoryEntry(i[0], i[1], i[2]))
+                    he = ConsoleHistoryEntry(i[0], i[1], i[2])
+                    he.update_lines()
+                    self.history.append(he)
 
             if persistent._console_line_history is not None:
                 self.line_history.extend(persistent._console_line_history)
@@ -233,6 +254,7 @@ init -1500 python in _console:
                 message += __("Ren'Py script disabled.")
 
             he.result = message
+            he.update_lines()
             self.history.append(he)
 
         def reset(self):
@@ -328,8 +350,12 @@ init -1500 python in _console:
                     old_entry.result += "\n" + l
                 else:
                     e = ConsoleHistoryEntry(None, l, error)
+                    e.update_lines()
                     self.history.append(e)
                     old_entry = e
+
+            if old_entry is not None:
+                old_entry.update_lines()
 
             stdio_lines[:] = [ ]
 
@@ -367,6 +393,7 @@ init -1500 python in _console:
 
                     if command_fn is not None:
                         he.result = command_fn(l)
+                        he.update_lines()
                         return
 
                 error = None
@@ -391,6 +418,7 @@ init -1500 python in _console:
                 else:
                     result = renpy.python.py_eval(code)
                     he.result = repr(result)
+                    he.update_lines()
                     return
 
                 # Try to exec it.
@@ -405,6 +433,7 @@ init -1500 python in _console:
 
                 if error is not None:
                     he.result = error
+                    he.update_lines()
                     he.is_error = True
 
             except renpy.game.CONTROL_EXCEPTIONS:
@@ -415,6 +444,7 @@ init -1500 python in _console:
                 traceback.print_exc()
 
                 he.result = self.format_exception().rstrip()
+                he.update_lines()
                 he.is_error = True
 
 
