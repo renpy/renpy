@@ -2286,7 +2286,10 @@ def load_module(name, **kwargs):
     renpy.store.__dict__.update(kwargs)  # @UndefinedVariable
 
     for prio, node in initcode:  # @UnusedVariable
-        renpy.game.context().run(node)
+        if isinstance(node, renpy.ast.Node):
+            renpy.game.context().run(node)
+        else:
+            node()
 
     context.pop_all_dynamic()
 
@@ -2324,7 +2327,10 @@ def load_string(s, filename="<string>"):
         renpy.game.contexts.append(context)
 
         for prio, node in initcode:  # @UnusedVariable
-            renpy.game.context().run(node)
+            if isinstance(node, renpy.ast.Node):
+                renpy.game.context().run(node)
+            else:
+                node()
 
         context.pop_all_dynamic()
         renpy.game.contexts.pop()
