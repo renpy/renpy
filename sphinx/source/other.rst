@@ -34,6 +34,30 @@ Ren'Py Version
 
     A string giving license text that should be included in a game's
     about screen.
+    
+Operating System
+-----------------
+Ren'Py includes functions that return which operating system is currently running the game. While most built-in Ren'Py functions that need OS-specific functionality (like :func:`CommandConsole`) already handle OS-specific behavior for you, these functions can be used to help create your own OS-specific functionality, especially for things like unusual file handling.
+
+.. var:: renpy.windows
+
+    Returns "True" if running on Windows, "False" otherwise.
+    
+.. var:: renpy.macintosh
+
+    Returns "True" if running on macOS, "False" otherwise.
+    
+.. var:: renpy.linux
+
+    Returns "True" if running on any Linux distribution, "False" otherwise.
+    
+.. var:: renpy.android
+
+    Returns "True" if running on an Android platform, "False" otherwise. Be careful not to equate this as a shorthand for mobile devices; not all Android devices will neccesarily use a portable touch-screen interface.
+    
+.. var:: renpy.ios
+
+    Returns "True" if running on an iOS platform, "False" otherwise. While all current supported iOS devices are mobile touchscreen platforms, be careful not to assume that will be the case in the future.
 
 Memory Profiling
 -----------------
