@@ -1826,12 +1826,6 @@ class StoreNamespace(object):
     def set(self, name, value):
         renpy.python.store_dicts[self.store][name] = value
 
-    def get(self, name, default):
-        return renpy.python.store_dicts[self.store].get(name)
-
-    def delete(self, name):
-        return renpy.python.store_dicts[self.store].pop(name, None)
-
 
 def get_namespace(store):
     """
@@ -1843,52 +1837,6 @@ def get_namespace(store):
         return renpy.config.special_namespaces[store], True
 
     return StoreNamespace(store), False
-
-
-def ns_get(name, default):
-    """
-    Gets a name in a namespace.
-    """
-
-    store, _, name = name.rpartition(".")
-
-    if not store:
-        store = "store"
-    else:
-        store = "store." + store
-
-    return get_namespace(store)[0].get(name, default)
-
-
-def ns_set(name, value):
-    """
-    Sets a name in a namespace.
-    """
-
-    store, _, name = name.rpartition(".")
-
-    if not store:
-        store = "store"
-    else:
-        store = "store." + store
-
-    return get_namespace(store)[0].set(name, value)
-
-
-def ns_delete(name, value):
-    """
-    Sets a name in a namespace.
-    """
-
-    store, _, name = name.rpartition(".")
-
-    if not store:
-        store = "store"
-    else:
-        store = "store." + store
-
-    return get_namespace(store)[0].delete(name)
-
 
 
 # Config variables that are set twice - once when the rpy is first loaded,

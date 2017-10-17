@@ -11,13 +11,6 @@
         def set_default(self, name, value):
             raise Exception("The default statement can not be used with the {} namespace.".format(self.name))
 
-        def get(self, name, default):
-            return getattr(self.nso, name, default)
-
-        def delete(self, name):
-            return delattr(self.nso, name)
-
-
     class _PersistentNamespace(object):
         def set(self, name, value):
             if getattr(persistent, name) is None:
@@ -27,23 +20,10 @@
             if getattr(persistent, name) is None:
                 setattr(persistent, name, value)
 
-        def get(self, name, default):
-            return getattr(self.nso, name, default)
-
-        def delete(self, name):
-            return delattr(self.nso, name)
-
-
     class _PreferencesNamespace(object):
 
         def set(self, name, value):
             raise Exception("The define statement can not be used with the preferences namespace.")
-
-        def get(self, name, default):
-            raise Exception("Can't do this with the preferences namespace.")
-
-        def delete(self, name):
-            raise Exception("Can't do this with the preferences namespace.")
 
         def set_default(self, name, value):
 

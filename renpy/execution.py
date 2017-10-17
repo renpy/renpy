@@ -308,7 +308,10 @@ class Context(renpy.object.Object):
             if i in self.dynamic_stack[index]:
                 continue
 
-            self.dynamic_stack[index][i] = renpy.ast.ns_get(i, Delete())
+            if i in store:
+                self.dynamic_stack[index][i] = store[i]
+            else:
+                self.dynamic_stack[index][i] = Delete()
 
     def pop_dynamic(self):
         """
@@ -319,13 +322,15 @@ class Context(renpy.object.Object):
         if not self.dynamic_stack:
             return
 
+        store = renpy.store.__dict__
+
         dynamic = self.dynamic_stack.pop()
 
         for k, v in dynamic.iteritems():
             if isinstance(v, Delete):
-                renpy.ast.ns_delete(k)
+                del store[k]
             else:
-                renpy.ast.ns_set(k, v)
+                store[k] = v
 
     def pop_all_dynamic(self):
         """
