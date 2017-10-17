@@ -1266,7 +1266,14 @@ init python in director:
             self.w = 0
             self.h = 0
 
+        def per_interact(self):
+            renpy.display.render.redraw(self, 0)
+
         def render(self, width, height, st, at):
+
+            if renpy.get_screen("confirm"):
+                return renpy.Render(0, 0)
+
             surf = renpy.render(self.child, width, height, st, at)
             w, h = surf.get_size()
 
@@ -1279,6 +1286,9 @@ init python in director:
             return rv
 
         def event(self, ev, x, y, st):
+
+            if renpy.get_screen("confirm"):
+                return
 
             rv = self.child.event(ev, x, y, st)
             if rv is not None:
