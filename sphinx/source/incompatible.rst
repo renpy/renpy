@@ -40,6 +40,14 @@ statements. To disable this, write::
 
     define config.keep_show_layer_state = False
 
+While not an incompatible change, :func:`renpy.list_files` has been
+changed to sort its output in a  standard order. The causes Ren'Py
+to commit to behavior that had been ambiguous. For example, when
+multiple files in the images directory had the same name, Ren'Py
+would pick one at random. (The file picked could change from
+system to system.) Now, the same file  is chosen wherever Ren'Py
+is run.
+
 
 6.99.12.3
 ---------

@@ -131,7 +131,7 @@ The Indonesian and Simplified Chinese translations have been updated.
 Other
 -----
 
-The new renpy.get_attributes function can be called to retrive the
+The new :func:`renpy.get_attributes` function can be called to retrive the
 attributes associated with an image tag on a layer.
 
 When a file named projects.txt is present in the projects directory, it

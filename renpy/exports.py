@@ -2650,6 +2650,8 @@ def list_files(common=False):
 
         rv.append(fn)
 
+    rv.sort()
+
     return rv
 
 
