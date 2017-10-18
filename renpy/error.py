@@ -159,11 +159,12 @@ def report_exception(e, editor=True):
     a simple message, and the second being a full traceback.
     """
 
+    # Note: Doki Doki Literature club calls this as ("Words...", False).
+    # For what it's worth.
+
     import codecs
 
     type, _value, tb = sys.exc_info()  # @ReservedAssignment
-
-    print((repr(e)))
 
     def safe_utf8(e):
         try:
