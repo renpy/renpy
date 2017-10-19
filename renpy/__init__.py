@@ -41,7 +41,7 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (6, 99, 13, vc_version)
+version_tuple = (7, 1, 0, vc_version)
 
 # The name of this version.
 version_name = "We came in peace."
