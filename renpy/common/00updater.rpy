@@ -1097,7 +1097,10 @@ init -1500 python in updater:
 
                     continue
 
-                os.rename(path + ".new", path)
+                try:
+                    os.rename(path + ".new", path)
+                except:
+                    pass
 
         def delete_obsolete(self):
             """
