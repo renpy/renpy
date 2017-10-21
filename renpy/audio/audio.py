@@ -959,11 +959,15 @@ def periodic_thread_main():
             try:
                 periodic_pass()
             except Exception:
-                periodic_exc = sys.exc_info
+                periodic_exc = sys.exc_info()
 
 
 def periodic():
     global periodic_exc
+
+    if not renpy.config.audio_periodic_thread:
+        periodic_pass()
+        return
 
     with lock:
 
