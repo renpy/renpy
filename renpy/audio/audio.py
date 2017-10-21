@@ -971,6 +971,9 @@ def periodic():
 
     with lock:
 
+        for c in all_channels:
+            c.get_context()
+
         if periodic_exc is not None:
             exc = periodic_exc
             periodic_exc = None
