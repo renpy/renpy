@@ -799,6 +799,8 @@ keep_show_layer_state = True
 # A list of callbacks that are called when fast skipping happens.
 fast_skipping_callbacks = [ ]
 
+# Should the audio periodic callback run in its own thread.
+audio_periodic_thread = True
 
 del os
 del collections
