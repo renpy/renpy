@@ -186,6 +186,7 @@ name_blacklist = {
     "renpy.display.render.IDENTITY",
     "renpy.loader.auto_lock",
     "renpy.display.screen.cprof",
+    "renpy.audio.audio.lock",
     }
 
 

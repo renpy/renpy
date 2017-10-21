@@ -31,6 +31,8 @@ import time
 import pygame_sdl2  # @UnusedImport
 import os
 import re
+import threading
+import sys
 
 # Import the appropriate modules, or set them to None if we cannot.
 
@@ -132,8 +134,12 @@ class MusicContext(renpy.python.RevertableObject):
 
         return rv
 
+
 # The next channel number to be assigned.
 next_channel_number = 0
+
+# the lock that mediates between the periodic and main threads.
+lock = threading.Condition()
 
 
 class Channel(object):
@@ -459,14 +465,16 @@ class Channel(object):
         left in the queue unless all is given.
         """
 
-        self.queue = self.queue[:self.keep_queue]
-        self.loop = [ ]
+        with lock:
 
-        if not pcm_ok:
-            return
+            self.queue = self.queue[:self.keep_queue]
+            self.loop = [ ]
 
-        if self.keep_queue == 0:
-            renpysound.dequeue(self.number, even_tight)
+            if not pcm_ok:
+                return
+
+            if self.keep_queue == 0:
+                renpysound.dequeue(self.number, even_tight)
 
     def interact(self):
         """
@@ -498,47 +506,51 @@ class Channel(object):
         of seconds. Also clears any queued music.
         """
 
-        self.keep_queue = 0
-        self.dequeue()
+        with lock:
 
-        if not pcm_ok:
-            return
+            self.keep_queue = 0
+            self.dequeue()
 
-        if secs == 0:
-            renpysound.stop(self.number)
-        else:
-            renpysound.fadeout(self.number, int(secs * 1000))
+            if not pcm_ok:
+                return
+
+            if secs == 0:
+                renpysound.stop(self.number)
+            else:
+                renpysound.fadeout(self.number, int(secs * 1000))
 
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False):
 
-        for filename in filenames:
-            filename, _, _ = self.split_filename(filename, False)
-            renpy.game.persistent._seen_audio[filename] = True  # @UndefinedVariable
-
-        if not pcm_ok:
-            return
-
-        if not loop_only:
-
-            if tight is None:
-                tight = self.tight
-
-            self.keep_queue += 1
+        with lock:
 
             for filename in filenames:
-                qe = QueueEntry(filename, int(fadein * 1000), tight, False)
-                self.queue.append(qe)
+                filename, _, _ = self.split_filename(filename, False)
+                renpy.game.persistent._seen_audio[filename] = True  # @UndefinedVariable
 
-                # Only fade the first thing in.
-                fadein = 0
+            if not pcm_ok:
+                return
 
-            self.wait_stop = synchro_start
-            self.synchro_start = synchro_start
+            if not loop_only:
 
-        if loop:
-            self.loop = list(filenames)
-        else:
-            self.loop = [ ]
+                if tight is None:
+                    tight = self.tight
+
+                self.keep_queue += 1
+
+                for filename in filenames:
+                    qe = QueueEntry(filename, int(fadein * 1000), tight, False)
+                    self.queue.append(qe)
+
+                    # Only fade the first thing in.
+                    fadein = 0
+
+                self.wait_stop = synchro_start
+                self.synchro_start = synchro_start
+
+            if loop:
+                self.loop = list(filenames)
+            else:
+                self.loop = [ ]
 
     def get_playing(self):
 
@@ -547,11 +559,13 @@ class Channel(object):
 
         rv = renpysound.playing_name(self.number)
 
-        if rv is None and self.queue:
-            rv = self.queue[0].filename
+        with lock:
 
-        if rv is None and self.loop:
-            rv = self.loop[0]
+            if rv is None and self.queue:
+                rv = self.queue[0].filename
+
+            if rv is None and self.loop:
+                rv = self.loop[0]
 
         return rv
 
@@ -573,35 +587,45 @@ class Channel(object):
         return renpysound.get_duration(self.number)
 
     def set_pan(self, pan, delay):
-        now = get_serial()
-        self.context.pan_time = now
-        self.context.pan = pan
 
-        if pcm_ok:
-            self.pan_time = self.context.pan_time
-            renpysound.set_pan(self.number, self.context.pan, delay)
+        with lock:
+
+            now = get_serial()
+            self.context.pan_time = now
+            self.context.pan = pan
+
+            if pcm_ok:
+                self.pan_time = self.context.pan_time
+                renpysound.set_pan(self.number, self.context.pan, delay)
 
     def set_secondary_volume(self, volume, delay):
-        now = get_serial()
-        self.context.secondary_volume_time = now
-        self.context.secondary_volume = volume
 
-        if pcm_ok:
-            self.secondary_volume_time = self.context.secondary_volume_time
-            renpysound.set_secondary_volume(self.number, self.context.secondary_volume, delay)
+        with lock:
+
+            now = get_serial()
+            self.context.secondary_volume_time = now
+            self.context.secondary_volume = volume
+
+            if pcm_ok:
+                self.secondary_volume_time = self.context.secondary_volume_time
+                renpysound.set_secondary_volume(self.number, self.context.secondary_volume, delay)
 
     def pause(self):
-        renpysound.pause(self.number)
+        with lock:
+            renpysound.pause(self.number)
 
     def unpause(self):
-        renpysound.unpause(self.number)
+        with lock:
+            renpysound.unpause(self.number)
 
     def read_video(self):
         if pcm_ok:
             return renpysound.read_video(self.number)
+
         return None
 
     def video_ready(self):
+
         if not pcm_ok:
             return 1
 
@@ -746,7 +770,16 @@ def set_force_stop(name, value):
     get_channel(name).context.force_stop = value
 
 
+# The thread that call periodic.
+periodic_thread = None
+
+# True if we need it to quit.
+periodic_thread_quit = True
+
+
 def init():
+    global periodic_thread
+    global periodic_thread_quit
 
     global pcm_ok
     global mix_ok
@@ -783,11 +816,29 @@ def init():
         renpy.game.preferences.volumes.setdefault(m, default_volume)
         renpy.game.preferences.mute.setdefault(m, False)
 
+    with lock:
+
+        periodic_thread_quit = False
+
+        periodic_thread = threading.Thread(target=periodic_thread_main)
+        periodic_thread.daemon = True
+        periodic_thread.start()
+
 
 def quit():  # @ReservedAssignment
 
+    global periodic_thread
+    global periodic_thread_quit
+
     global pcm_ok
     global mix_ok
+
+    with lock:
+        if periodic_thread is not None:
+            periodic_thread_quit = True
+            lock.notify()
+
+            periodic_thread.join()
 
     if not pcm_ok:
         return
@@ -808,13 +859,15 @@ def quit():  # @ReservedAssignment
     pcm_ok = None
     mix_ok = None
 
+
+
 # The last-set pcm volume.
 pcm_volume = None
 
 old_emphasized = False
 
 
-def periodic():
+def periodic_pass():
     """
     The periodic sound callback. This is called at around 20hz, and is
     responsible for adjusting the volume of the playing music if
@@ -888,6 +941,41 @@ def periodic():
             raise
 
 
+periodic_exc = None
+
+
+def periodic_thread_main():
+
+    global periodic_exc
+
+    with lock:
+        while True:
+
+            lock.wait()
+
+            if periodic_thread_quit:
+                return
+
+            try:
+                periodic_pass()
+            except Exception:
+                periodic_exc = sys.exc_info
+
+
+def periodic():
+    global periodic_exc
+
+    with lock:
+
+        if periodic_exc is not None:
+            exc = periodic_exc
+            periodic_exc = None
+
+            raise exc[0], exc[1], exc[2]
+
+        lock.notify()
+
+
 def interact():
     """
     Called at least once per interaction.
@@ -896,36 +984,38 @@ def interact():
     if not pcm_ok:
         return
 
-    try:
-        for c in all_channels:
+    with lock:
 
-            c.interact()
+        try:
+            for c in all_channels:
 
-            # if _music_volumes.get(i, 1.0) != c.chan_volume:
-            #    c.set_volume(_music_volumes.get(i, 1.0))
+                c.interact()
 
-            ctx = c.context
+                # if _music_volumes.get(i, 1.0) != c.chan_volume:
+                #    c.set_volume(_music_volumes.get(i, 1.0))
 
-            # If we're in the same music change, then do nothing with the
-            # music.
-            if c.last_changed == ctx.last_changed:
-                continue
+                ctx = c.context
 
-            filenames = ctx.last_filenames
-            tight = ctx.last_tight
+                # If we're in the same music change, then do nothing with the
+                # music.
+                if c.last_changed == ctx.last_changed:
+                    continue
 
-            if c.loop:
-                if not filenames or c.get_playing() not in filenames:
-                    c.fadeout(renpy.config.fade_music)
+                filenames = ctx.last_filenames
+                tight = ctx.last_tight
 
-            if filenames:
-                c.enqueue(filenames, loop=True, synchro_start=True, tight=tight)
+                if c.loop:
+                    if not filenames or c.get_playing() not in filenames:
+                        c.fadeout(renpy.config.fade_music)
 
-            c.last_changed = ctx.last_changed
+                if filenames:
+                    c.enqueue(filenames, loop=True, synchro_start=True, tight=tight)
 
-    except:
-        if renpy.config.debug_sound:
-            raise
+                c.last_changed = ctx.last_changed
+
+        except:
+            if renpy.config.debug_sound:
+                raise
 
     periodic()
 
@@ -935,9 +1025,12 @@ def rollback():
     On rollback, we want to stop all the channels with non-empty sounds.
     """
 
-    for c in all_channels:
-        if not c.loop:
-            c.fadeout(0)
+    with lock:
+
+        for c in all_channels:
+            if not c.loop:
+                c.fadeout(0)
+
 
 global_pause = False
 
