@@ -151,6 +151,7 @@ backup_blacklist = {
     "renpy.object",
     "renpy.log",
     "renpy.bootstrap",
+    "renpy.debug",
     "renpy.display",
     "renpy.display.pgrender",
     "renpy.display.scale",
@@ -334,6 +335,8 @@ def import_all():
     import renpy.log
 
     import renpy.display
+
+    import renpy.debug
 
     # Should probably be early, as we will add it as a base to serialized things.
     import renpy.object
