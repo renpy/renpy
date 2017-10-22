@@ -55,3 +55,4 @@ def init_main_thread_open():
         return
 
     __builtin__.open = replacement_open
+    __builtin__.file = replacement_open
