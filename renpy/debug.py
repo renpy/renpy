@@ -31,6 +31,7 @@ import datetime
 import os
 
 real_open = __builtin__.open
+__builtin__.real_file = __builtin__.file
 
 
 def replacement_open(*args, **kwargs):
