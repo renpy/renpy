@@ -576,6 +576,12 @@ Occasionally Used
     and hidden when the overlay is suppressed. (The screens are shown
     on the screens layer, not the overlay layer.)
 
+.. var:: config.preload_fonts = [ ]
+
+    A list of the names of TrueType and OpenType fonts that Ren'Py should
+    load when starting up. Including the name of a font here can prevent
+    Ren'Py from pausing when introducing a new typeface.
+
 .. var:: config.python_callbacks = [ ]
 
     A list of functions. The functions in this list are called, without

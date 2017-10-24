@@ -668,6 +668,9 @@ def load_fonts():
     for i in image_fonts.itervalues():
         i.load()
 
+    for i in renpy.config.preload_fonts:
+        load_face(i)
+
 
 class FontGroup(object):
     """
