@@ -541,6 +541,7 @@ def register_bmfont(name=None, size=None, bold=False, italics=False, underline=F
     bmf = BMFont(filename)
     image_fonts[(name, size, bold, italics)] = bmf
 
+
 # A map from face name to ftfont.FTFace
 face_cache = { }
 
@@ -594,6 +595,7 @@ def load_face(fn):
     face_cache[orig_fn] = rv
 
     return rv
+
 
 # Caches of fonts.
 image_fonts = { }
@@ -660,10 +662,9 @@ def free_memory():
 
     scaled_image_fonts.clear()
     font_cache.clear()
-    face_cache.clear()
 
 
-def load_image_fonts():
+def load_fonts():
     for i in image_fonts.itervalues():
         i.load()
 
