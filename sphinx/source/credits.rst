@@ -55,6 +55,7 @@ the omission in future versions.
 * Gas
 * George Economidis
 * Giuseppe Bertone
+* Gregory Pease
 * Grey
 * Gustavo Carvalho
 * Helloise
