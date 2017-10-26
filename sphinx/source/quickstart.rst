@@ -665,7 +665,7 @@ before releasing it:
 
 **Release.**
     Once the game has been finished and tested, you should post the generated
-    archice files on the web somewhere people can see them. (If you don't
+    archive files on the web somewhere people can see them. (If you don't
     have your own website, `https://itch.io <https://itch.io>`_ hosts a lot
     of visual novels.) Congratulations, you've released your first visual novel!
 

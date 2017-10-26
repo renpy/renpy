@@ -41,7 +41,7 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (6, 99, 13, vc_version)
+version_tuple = (7, 1, 0, vc_version)
 
 # The name of this version.
 version_name = "We came in peace."
@@ -151,6 +151,7 @@ backup_blacklist = {
     "renpy.object",
     "renpy.log",
     "renpy.bootstrap",
+    "renpy.debug",
     "renpy.display",
     "renpy.display.pgrender",
     "renpy.display.scale",
@@ -334,6 +335,8 @@ def import_all():
     import renpy.log
 
     import renpy.display
+
+    import renpy.debug
 
     # Should probably be early, as we will add it as a base to serialized things.
     import renpy.object

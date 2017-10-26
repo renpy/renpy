@@ -7,7 +7,7 @@ translate russian strings:
 
     # options.rpy:4
     old "## Lines beginning with two '#' marks are comments, and you shouldn't uncomment them. Lines beginning with a single '#' mark are commented-out code, and you may want to uncomment them when appropriate."
-    new "## Строки, начинающиеся  с двух '#' — комментарии, и вы не должны их раскомментировать. Строки, начинающиеся с одной '#' — комментированный код, который вы можете раскомментировать, если вы считаете это нужным."
+    new "## Строки, начинающиеся  с двух '#' — комментарии, и вы не должны их раскомментировать. Строки, начинающиеся с одной '#' — комментированный код, который вы можете раскомментировать, если посчитаете это нужным."
 
     # options.rpy:10
     old "## Basics"
@@ -47,11 +47,11 @@ translate russian strings:
 
     # options.rpy:46
     old "## These three variables control which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
-    new "## Эти три переменные контролируют соответствующие микшеры громкости в настройках, которые пользователь может настраивать по умолчанию. Изменив один из параметров на False, скроется соответствующий микшер."
+    new "## Эти три переменные контролируют соответствующие микшеры громкости в настройках, которые игрок может настраивать по умолчанию. Изменив один из параметров на False, скроется соответствующий микшер."
 
     # options.rpy:55
     old "## To allow the user to play a test sound on the sound or voice channel, uncomment a line below and use it to set a sample sound to play."
-    new "## Чтобы разрешить пользователю тестировать громкость на звуковом или голосовом каналах, раскомментируйте строчку и настройте пример звука для прослушивания."
+    new "## Чтобы разрешить игроку тестировать громкость на звуковом или голосовом каналах, раскомментируйте строчку и настройте пример звука для прослушивания."
 
     # options.rpy:62
     old "## Uncomment the following line to set an audio file that will be played while the player is at the main menu. This file will continue playing into the game, until it is stopped or another file is played."
@@ -75,7 +75,7 @@ translate russian strings:
 
     # options.rpy:86
     old "## A transition that is used after a game has been loaded."
-    new "## Переход, используемый после того, как игра загрузилась."
+    new "## Переход, используемый после загрузки слота сохранения."
 
     # options.rpy:91
     old "## Used when entering the main menu after the game has ended."
@@ -91,11 +91,11 @@ translate russian strings:
 
     # options.rpy:103
     old "## This controls when the dialogue window is displayed. If \"show\", it is always displayed. If \"hide\", it is only displayed when dialogue is present. If \"auto\", the window is hidden before scene statements and shown again once dialogue is displayed."
-    new "## Эта строка контролирует, когда появляется диалоговое окно. Если \"show\", оно всегда показано. Если \"hide\", оно показывается, только когда представлен диалог. Если \"auto\", окно скрыто до появления оператора scene и показывается при появлении диалога."
+    new "## Эта строка контролирует, когда появляется диалоговое окно. Если \"show\" — оно всегда показано. Если \"hide\" — оно показывается, только когда представлен диалог. Если \"auto\" — окно скрыто до появления оператора scene и показывается при появлении диалога."
 
     # options.rpy:108
     old "## After the game has started, this can be changed with the \"window show\", \"window hide\", and \"window auto\" statements."
-    new "## После того как игра началась, этот параметр можно изменить с помощью \"window show\", \"window hide\", и \"window auto\"."
+    new "## После начала игры этот параметр можно изменить с помощью \"window show\", \"window hide\" и \"window auto\"."
 
     # options.rpy:114
     old "## Transitions used to show and hide the dialogue window"
@@ -107,7 +107,7 @@ translate russian strings:
 
     # options.rpy:122
     old "## Controls the default text speed. The default, 0, is infinite, while any other number is the number of characters per second to type out."
-    new "## Контролирует стандартную скорость текста. По умолчанию это 0 — мгновенно, в то время как любая другая цифра, это количество символов, печатаемых в секунду."
+    new "## Контролирует стандартную скорость текста. По умолчанию, это 0 — мгновенно, в то время как любая другая цифра — это количество символов, печатаемых в секунду."
 
     # options.rpy:128
     old "## The default auto-forward delay. Larger numbers lead to longer waits, with 0 to 30 being the valid range."
@@ -187,7 +187,7 @@ translate russian strings:
 
     # options.rpy:195
     old "## Files matching documentation patterns are duplicated in a mac app build, so they appear in both the app and the zip file."
-    new "## Файлы, соответствующие образцам документации, дублируются в приложениях Mac так, чтобы они появлялись и в приложении, и в zip архиве."
+    new "## Файлы, соответствующие образцам документации, дублируются в приложениях Mac, чтобы они появлялись и в приложении, и в zip архиве."
 
     # options.rpy:201
     old "## Set this to a string containing your Apple Developer ID Application to enable codesigning on the Mac. Be sure to change it to your own Apple-issued ID."

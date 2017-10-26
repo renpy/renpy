@@ -478,6 +478,9 @@ def main():
         renpy.python.make_clean_stores()
         log_clock("Making clean stores")
 
+        # Start debugging file opens.
+        renpy.debug.init_main_thread_open()
+
         # (Perhaps) Initialize graphics.
         if not game.interface:
             renpy.display.core.Interface()

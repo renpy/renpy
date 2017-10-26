@@ -802,6 +802,9 @@ fast_skipping_callbacks = [ ]
 # Should the audio periodic callback run in its own thread.
 audio_periodic_thread = True
 
+# A list of fonts to preload on Ren'Py startup.
+preload_fonts = [ ]
+
 del os
 del collections
 

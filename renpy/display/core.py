@@ -1711,7 +1711,7 @@ class Interface(object):
         self.set_mode()
 
         # Load the image fonts.
-        renpy.text.font.load_image_fonts()
+        renpy.text.font.load_fonts()
 
         # Setup periodic event.
         pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
