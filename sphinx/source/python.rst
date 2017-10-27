@@ -52,7 +52,7 @@ behavior:
 One-line Python Statement
 -------------------------
 
-A common case is to have a single line of Oython that runs in the
+A common case is to have a single line of Python that runs in the
 default store. For example, a Python one-liner can be used to
 initialize or update a flag. To make writing Python one-liners
 more convenient, there is the one-line python statement.

@@ -131,7 +131,15 @@ The Indonesian and Simplified Chinese translations have been updated.
 Other
 -----
 
-The new :func:`renpy.get_attributes` function can be called to retrive the
+The new :var:`config.preload_fonts` variable can take a list of truetype or
+opentype font files to preload at Ren'Py stop. This prevents Ren'Py from
+pausing animations when opening a new font.
+
+Ren'Py now opens audio files in a second thread of execution. This prevents
+animations from pausing when an audio file is played or loops from slow or
+busy disks.
+
+The new :func:`renpy.get_attributes` function can be called to retrieve the
 attributes associated with an image tag on a layer.
 
 When a file named projects.txt is present in the projects directory, it
