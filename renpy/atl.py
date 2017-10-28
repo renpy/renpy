@@ -501,12 +501,7 @@ class ATLTransformBase(renpy.object.Object):
         if block is None:
             block = self.compile()
 
-        # Propagate transform_events from children.
-        if (self.child is not None) and self.child.transform_event != self.last_child_transform_event:
-            self.last_child_transform_event = self.child.transform_event
-
-            if self.child.transform_event is not None:
-                self.transform_event = self.child.transform_event
+        events = [ ]
 
         # Hide request.
         if trans.hide_request:
@@ -517,10 +512,20 @@ class ATLTransformBase(renpy.object.Object):
 
         # Notice transform events.
         if self.transform_event != self.last_transform_event:
-            event = self.transform_event
+            events.append(self.transform_event)
             self.last_transform_event = self.transform_event
-        else:
-            event = None
+
+        # Propagate transform_events from children.
+        if (self.child is not None) and self.child.transform_event != self.last_child_transform_event:
+            self.last_child_transform_event = self.child.transform_event
+
+            if self.child.transform_event is not None:
+                self.transform_event = self.child.transform_event
+
+        # Notice transform events, again.
+        if self.transform_event != self.last_transform_event:
+            events.append(self.transform_event)
+            self.last_transform_event = self.transform_event
 
         old_exception_info = renpy.game.exception_info
 
@@ -532,7 +537,7 @@ class ATLTransformBase(renpy.object.Object):
         else:
             timebase = st - self.atl_st_offset
 
-        action, arg, pause = block.execute(trans, timebase, self.atl_state, event)
+        action, arg, pause = block.execute(trans, timebase, self.atl_state, events)
 
         renpy.game.exception_info = old_exception_info
 
@@ -621,7 +626,7 @@ class Statement(renpy.object.Object):
     #
     # Pause is the amount of time until execute should be called again,
     # or None if there's no need to call execute ever again.
-    def execute(self, trans, st, state, event):
+    def execute(self, trans, st, state, events):
         raise Exception("Not implemented.")
 
     # Return a list of displayable children.
@@ -686,7 +691,7 @@ class Block(Statement):
 
         self.times.sort()
 
-    def execute(self, trans, st, state, event):
+    def execute(self, trans, st, state, events):
 
         executing(self.loc)
 
@@ -727,7 +732,7 @@ class Block(Statement):
 
                 # Find the statement and try to run it.
                 stmt = self.statements[index]
-                action, arg, pause = stmt.execute(trans, target - start, child_state, event)
+                action, arg, pause = stmt.execute(trans, target - start, child_state, events)
 
                 # On continue, persist our state.
                 if action == "continue":
@@ -1024,7 +1029,7 @@ class Child(Statement):
         self.child = child
         self.transition = transition
 
-    def execute(self, trans, st, state, event):
+    def execute(self, trans, st, state, events):
 
         executing(self.loc)
 
@@ -1070,7 +1075,7 @@ class Interpolation(Statement):
         # The number of complete circles we make.
         self.circles = circles
 
-    def execute(self, trans, st, state, event):
+    def execute(self, trans, st, state, events):
 
         executing(self.loc)
 
@@ -1246,7 +1251,7 @@ class Repeat(Statement):
 
         self.repeats = repeats
 
-    def execute(self, trans, st, state, event):
+    def execute(self, trans, st, state, events):
         return "repeat", (self.repeats, st), 0
 
 
@@ -1282,7 +1287,7 @@ class Parallel(Statement):
         super(Parallel, self).__init__(loc)
         self.blocks = blocks
 
-    def execute(self, trans, st, state, event):
+    def execute(self, trans, st, state, events):
 
         executing(self.loc)
 
@@ -1300,7 +1305,7 @@ class Parallel(Statement):
 
         for i, istate in state:
 
-            action, arg, pause = i.execute(trans, st, istate, event)
+            action, arg, pause = i.execute(trans, st, istate, events)
 
             if pause is not None:
                 pauses.append(pause)
@@ -1356,7 +1361,7 @@ class Choice(Statement):
 
         self.choices = choices
 
-    def execute(self, trans, st, state, event):
+    def execute(self, trans, st, state, events):
 
         executing(self.loc)
 
@@ -1378,7 +1383,7 @@ class Choice(Statement):
         else:
             choice, cstate = state
 
-        action, arg, pause = choice.execute(trans, st, cstate, event)
+        action, arg, pause = choice.execute(trans, st, cstate, events)
 
         if action == "continue":
             return "continue", (choice, arg), pause
@@ -1413,7 +1418,7 @@ class Time(Statement):
 
         self.time = time
 
-    def execute(self, trans, st, state, event):
+    def execute(self, trans, st, state, events):
         return "continue", None, None
 
 
@@ -1461,7 +1466,7 @@ class On(Statement):
 
         self.handlers = handlers
 
-    def execute(self, trans, st, state, event):
+    def execute(self, trans, st, state, events):
 
         executing(self.loc)
 
@@ -1473,15 +1478,17 @@ class On(Statement):
 
         # If we have an external event, and we have a handler for it,
         # handle it.
-        if event in self.handlers:
+        for event in events:
 
-            # Do not allow people to abort the hide or replaced event.
-            lock_event = (name == "hide" and trans.hide_request) or (name == "replaced" and trans.replaced_request)
+            if event in self.handlers:
 
-            if not lock_event:
-                name = event
-                start = st
-                cstate = None
+                # Do not allow people to abort the hide or replaced event.
+                lock_event = (name == "hide" and trans.hide_request) or (name == "replaced" and trans.replaced_request)
+
+                if not lock_event:
+                    name = event
+                    start = st
+                    cstate = None
 
         while True:
 
@@ -1489,7 +1496,7 @@ class On(Statement):
             if name not in self.handlers:
                 return "continue", (name, start, cstate), None
 
-            action, arg, pause = self.handlers[name].execute(trans, st - start, cstate, event)
+            action, arg, pause = self.handlers[name].execute(trans, st - start, cstate, events)
 
             # If we get a continue, save our state.
             if action == "continue":
@@ -1555,7 +1562,7 @@ class Event(Statement):
 
         self.name = name
 
-    def execute(self, trans, st, state, event):
+    def execute(self, trans, st, state, events):
         return "event", (self.name, st), None
 
 
@@ -1581,7 +1588,7 @@ class Function(Statement):
 
         self.function = function
 
-    def execute(self, trans, st, state, event):
+    def execute(self, trans, st, state, events):
         fr = self.function(trans, st, trans.at)
 
         if fr is not None:
