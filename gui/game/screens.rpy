@@ -1343,7 +1343,7 @@ screen nvl_dialogue(dialogue):
 
 ## This controls the maximum number of NVL-mode entries that can be displayed
 ## at once.
-define config.nvl_list_length = 6
+define config.nvl_list_length = gui.nvl_list_length
 
 style nvl_window is default
 style nvl_entry is default
