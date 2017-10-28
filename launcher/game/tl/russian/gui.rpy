@@ -374,58 +374,62 @@ translate russian strings:
     new "## Границы фона окна NVL."
 
     # gui.rpy:363
+    old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
+    new "## Максимальное число показываемых строк в режиме NVL. Когда количество строчек начинает превышать это значение, старые строчки очищаются."
+
+    # gui.rpy:367
     old "## The height of an NVL-mode entry. Set this to None to have the entries dynamically adjust height."
     new "## Высота доступных строчек в режиме NVL. Установите на None, чтобы строчки динамически регулировали свою высоту."
 
-    # gui.rpy:367
+    # gui.rpy:371
     old "## The spacing between NVL-mode entries when gui.nvl_height is None, and between NVL-mode entries and an NVL-mode menu."
     new "## Интервал между строчками в режиме NVL, если gui.nvl_height имеет значение None, а также между строчками и меню режима NVL."
 
-    # gui.rpy:384
+    # gui.rpy:388
     old "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"
     new "## Местоположение, ширина и выравнивание текста nvl_thought (текст от лица персонажа nvl_narrator)."
 
-    # gui.rpy:391
+    # gui.rpy:395
     old "## The position of nvl menu_buttons."
     new "## Местоположение кнопок меню NVL."
 
-    # gui.rpy:395
+    # gui.rpy:399
     old "## Localization"
     new "## Локализация"
 
-    # gui.rpy:397
+    # gui.rpy:401
     old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
     new "## Эта настройка контролирует доступ к разрыву линий. Стандартная настройка подходит для большинства языков. Список доступных значений можно найти на https://www.renpy.org/doc/html/style_properties.html#style-property-language"
 
-    # gui.rpy:405
+    # gui.rpy:409
     old "## Mobile devices"
     new "## Мобильные устройства"
 
-    # gui.rpy:410
+    # gui.rpy:414
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
     new "## Этот параметр увеличивает размер быстрых кнопок, чтобы сделать их доступнее для нажатия на планшетах и телефонах."
 
-    # gui.rpy:416
+    # gui.rpy:420
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
     new "## Это изменяет размеры и интервалы различных элементов GUI, чтобы убедиться, что они будут лучше видны на телефонах."
 
-    # gui.rpy:420
+    # gui.rpy:424
     old "## Font sizes."
     new "## Размеры шрифтов."
 
-    # gui.rpy:428
+    # gui.rpy:432
     old "## Adjust the location of the textbox."
     new "## Регулирует местоположение текстового окна."
 
-    # gui.rpy:434
+    # gui.rpy:438
     old "## Change the size and spacing of various things."
     new "## Изменяет размеры и интервалы различных объектов."
 
-    # gui.rpy:447
+    # gui.rpy:451
     old "## File button layout."
     new "## Местоположение кнопок слотов."
 
-    # gui.rpy:451
+    # gui.rpy:455
     old "## NVL-mode."
     new "## Режим NVL."
 
