@@ -2936,7 +2936,7 @@ class PE:
         imported_symbols = []
         imports_section = self.get_section_by_rva(first_thunk)
         if not imports_section:
-            raise PEFormatError, 'Invalid/corrupt imports.'
+            raise PEFormatError('Invalid/corrupt imports.')
 
 
         # Import Lookup Table. Contains ordinals or pointers to strings.
@@ -3137,7 +3137,7 @@ class PE:
                     end = None
                 return self.header[rva:end]
 
-            raise PEFormatError, 'data at RVA can\'t be fetched. Corrupt header?'
+            raise PEFormatError('data at RVA can\'t be fetched. Corrupt header?')
 
         return s.get_data(rva, length)
 
@@ -3160,7 +3160,7 @@ class PE:
         s = self.get_section_by_rva(rva)
         if not s:
 
-            raise PEFormatError, 'data at RVA can\'t be fetched. Corrupt header?'
+            raise PEFormatError('data at RVA can\'t be fetched. Corrupt header?')
 
         return s.get_offset_from_rva(rva)
 
