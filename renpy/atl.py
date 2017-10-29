@@ -511,9 +511,10 @@ class ATLTransformBase(renpy.object.Object):
             self.transform_event = "replaced"
 
         # Notice transform events.
-        if self.transform_event != self.last_transform_event:
-            events.append(self.transform_event)
-            self.last_transform_event = self.transform_event
+        if renpy.config.atl_multiple_events:
+            if self.transform_event != self.last_transform_event:
+                events.append(self.transform_event)
+                self.last_transform_event = self.transform_event
 
         # Propagate transform_events from children.
         if (self.child is not None) and self.child.transform_event != self.last_child_transform_event:
