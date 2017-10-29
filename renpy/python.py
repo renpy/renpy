@@ -589,7 +589,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
 
         return compile(tree, filename, mode, flags, 1)
 
-    except SyntaxError, e:
+    except SyntaxError as e:
 
         if e.lineno is not None:
             e.lineno += line_offset

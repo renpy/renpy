@@ -309,7 +309,7 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
                 "-o",
                 c_fn])
 
-        except subprocess.CalledProcessError, e:
+        except subprocess.CalledProcessError as e:
             print()
             print(str(e))
             print()
