@@ -5,6 +5,9 @@ Full Changelog
 
 .. _renpy-6.99.13:
 
+Ren'Py 6.99.13
+==============
+
 Tutorial and The Question
 -------------------------
 

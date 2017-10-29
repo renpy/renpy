@@ -1,6 +1,6 @@
 .. Automatically generated file - do not modify.
 
-.. function:: renpy.call(label, from_current=False, *args, **kwargs)
+.. function:: renpy.call(label, *args, **kwargs)
     
     Causes the current Ren'Py statement to terminate, and a jump to a
     `label` to occur. When the jump returns, control will be passed
@@ -9,7 +9,8 @@
     `from_current`
         If true, control will return to the current statement, rather than
         the statement following the current statement. (This will lead to
-        the current statement being run twice.)
+        the current statement being run twice. This must be passed as a
+        keyword argument.)
 
 .. function:: renpy.return_statement()
     

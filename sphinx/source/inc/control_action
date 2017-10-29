@@ -1,14 +1,9 @@
 .. Automatically generated file - do not modify.
 
-.. function:: Call(label, from_current=False)
+.. function:: Call(label, *args, **kwargs)
     
-    Ends the current statement, and calls `label`.
-    
-    `from_current`
-        If True, returns to the current statement rather than the statement
-        following the current statement. (This will lead to
-        the current statement being run twice for the purposes of history,
-        rollback, and nvl-mode, among other things.)
+    Ends the current statement, and calls `label`. Arguments and
+    keyword arguments are passed to :func:`renpy.call`.
 
 .. function:: Hide(screen, transition=None)
     
@@ -42,13 +37,16 @@
 .. function:: Show(screen, transition=None, *args, **kwargs)
     
     This causes another screen to be shown. `screen` is a string
-    giving the name of the screen. The keyword arguments are
+    giving the name of the screen. The arguments are
     passed to the screen being shown.
     
     If not None, `transition` is use to show the new screen.
 
-.. function:: ShowTransient(screen, *args, **kwargs)
+.. function:: ShowTransient(screen, transition=None, *args, **kwargs)
     
     Shows a transient screen. A transient screen will be hidden when
-    the current interaction completes.
+    the current interaction completes. The arguments are
+    passed to the screen being shown.
+    
+    If not None, `transition` is use to show the new screen.
 

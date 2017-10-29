@@ -408,6 +408,9 @@
 .. function:: renpy.screenshot(filename)
     
     Saves a screenshot in `filename`.
+    
+    Returns True if the screenshot was saved successfully, False if saving
+    failed for some reason.
 
 .. function:: renpy.scry()
     
