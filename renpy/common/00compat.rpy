@@ -147,7 +147,7 @@ init -1900 python:
             config.nw_voice = False
             config.atl_one_frame = False
             config.keep_show_layer_state = False
-
+            config.atl_multiple_events = False
 
 
     # The version of Ren'Py this script is intended for, or

@@ -805,6 +805,9 @@ audio_periodic_thread = True
 # A list of fonts to preload on Ren'Py startup.
 preload_fonts = [ ]
 
+# Should Ren'Py process multiple ATL events in a single update?
+atl_multiple_events = True
+
 del os
 del collections
 
