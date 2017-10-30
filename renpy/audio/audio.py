@@ -561,6 +561,8 @@ class Channel(object):
 
         with lock:
 
+            rv = renpysound.playing_name(self.number)
+
             if rv is None and self.queue:
                 rv = self.queue[0].filename
 
