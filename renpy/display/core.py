@@ -3060,6 +3060,16 @@ class Interface(object):
                 else:
                     ev = self.event_wait()
 
+                # Recognize and ignore AltGr on Windows.
+                if ev.type == pygame.KEYDOWN:
+                    if ev.key == pygame.K_LCTRL:
+
+                        ev2 = self.event_peek()
+
+                        if (ev2 is not None) and (ev2.type == pygame.KEYDOWN):
+                            if ev2.key == pygame.K_RALT:
+                                continue
+
                 if ev.type == pygame.NOEVENT:
 
                     if not needs_redraw or self.mouse_move:
