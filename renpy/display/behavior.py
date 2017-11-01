@@ -1221,7 +1221,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
         if not self.editable:
             return None
 
-        if pygame.key.get_mods() & pygame.KMOD_ALT:
+        if pygame.key.get_mods() & pygame.KMOD_LALT:
             return None
 
         l = len(self.content)
