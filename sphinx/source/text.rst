@@ -243,6 +243,15 @@ Tags that apply to all text are:
 
        "Visit the {i}leaning tower of Pisa{/i}."
 
+.. text-tag:: image
+
+   The image tag is a self-closing tag that inserts an image into the
+   text. The image should be the height of a single line of text. The
+   argument should be either the image filename, or the name of an
+   image defined with the image statement. ::
+
+       g "Good to see you! {image=heart.png}"
+
 .. text-tag:: k
 
    The kerning tag is a tag that adjust the kerning of characters
@@ -253,21 +262,13 @@ Tags that apply to all text are:
 
        "{k=-.5}Negative{/k} Normal {k=.5}Positive{/k}"
 
-.. text-tag:: image
 
-   The image tag is a self-closing tag that inserts an image into the
-   text. The image should be the height of a single line of text. The
-   argument should be either the image filename, or the name of an
-   image defined with the image statement. ::
+.. text-tag:: plain
 
-       g "Good to see you! {image=heart.png}"
+   The plain tag ensures the text does not have, bold, italics, underline,
+   or strikethrough applied. ::
 
-.. text-tag:: s
-
-   The strikethrough tag draws a line through text between itself and
-   its closing tag. ::
-
-       g "It's good {s}to see you{/s}."
+       "{b}This is bold. {plain}This is not.{/plain} This is bold.{/b}"
 
 .. text-tag:: rb
 
@@ -280,6 +281,13 @@ Tags that apply to all text are:
    The ruby top tag marks text between itself and its closing tag as
    ruby top text. See the section on :ref:`Ruby Text <ruby-text>` for
    more information.
+
+.. text-tag:: s
+
+   The strikethrough tag draws a line through text between itself and
+   its closing tag. ::
+
+       g "It's good {s}to see you{/s}."
 
 .. text-tag:: size
 
