@@ -29,7 +29,6 @@ init -1500 python in updater:
     import traceback
     import os
     import urlparse
-    import urllib
     import json
     import subprocess
     import hashlib
@@ -690,6 +689,8 @@ init -1500 python in updater:
             self.updates.
             """
 
+            import urllib
+
             fn = os.path.join(self.updatedir, "updates.json")
             urllib.urlretrieve(self.url, fn)
 
@@ -713,6 +714,8 @@ init -1500 python in updater:
                     exec self.updates["monkeypatch"] in globals(), globals()
 
         def add_dlc_state(self, name):
+            import urllib
+
             url = urlparse.urljoin(self.url, self.updates[name]["json_url"])
             f = urllib.urlopen(url)
             d = json.load(f)
@@ -844,6 +847,8 @@ init -1500 python in updater:
 
             # Download the sums file.
             sums = [ ]
+
+            import urllib
 
             f = urllib.urlopen(urlparse.urljoin(self.url, self.updates[module]["sums_url"]))
             data = f.read()
