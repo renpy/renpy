@@ -607,7 +607,7 @@ def AskFileForOpen(
     ofn.lpstrTitle = windowTitle
     ofn.lpstrInitialDir = defaultLocation
 
-    if typeList and filter(None, typeList):
+    if typeList and any(typeList):
         lpstrFilter = ''
         for typeSpec in typeList:
             try:
@@ -673,10 +673,10 @@ def AskFileForOpen(
     ofn.lpfnHook = LPOFNHOOKPROC(hookProc)
 
     if fn(ctypes.byref(ofn)):
-        filenames = filter(None, filename.split('\0'))
+        filenames = [fn for fn in filename.split('\0') if fn]
         if len(filenames) > 1:
             dir, filenames = filenames[0], filenames[1:]
-            return map(lambda fn: os.path.join(dir, fn), filenames)
+            return [os.path.join(dir, fn) for fn in filenames]
         elif multiple:
             return filenames
         else:
