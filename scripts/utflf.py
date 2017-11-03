@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Fixes line endings and adds UTF-8 BOM to all rpy files in a
 # directory.
 
@@ -25,5 +26,5 @@ for directory, dirs, files in os.walk(sys.argv[1]):
         if not fn.endswith(".rpy"):
             continue
 
-        print fn
+        print(fn)
         process(fn)

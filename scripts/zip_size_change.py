@@ -3,6 +3,7 @@
 # Given two zip files, shows how files have changed in size between
 # them.
 
+from __future__ import print_function
 import argparse
 import zipfile
 
@@ -37,7 +38,7 @@ def main():
         if old_size == new_size:
             continue
 
-        print "{: 6d} {}".format((new_size - old_size), fn)
+        print("{: 6d} {}".format((new_size - old_size), fn))
 
 if __name__ == "__main__":
     main()
