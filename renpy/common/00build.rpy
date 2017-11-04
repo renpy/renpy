@@ -407,6 +407,8 @@ init -1500 python in build:
                 ( "renpy/common/_theme**", None),
             ])
 
+        import sys
+
         if "_ssl" not in sys.modules:
             excludes.extend([
                 ( "lib/**/_ssl.*", None),
