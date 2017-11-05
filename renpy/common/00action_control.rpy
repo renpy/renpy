@@ -92,7 +92,6 @@ init -1500 python:
 
         def __init__(self, label, *args, **kwargs):
             self.label = label
-            self.from_current = from_current
             self.args = args
             self.kwargs = kwargs
 
