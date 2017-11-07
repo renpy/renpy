@@ -900,6 +900,9 @@ Rarely or Internally Used
     mechanisms. Your file-like object must implement at least the
     read, seek, tell, and close methods.
 
+    One may want to also define a :var:`config.loadable_callback` that
+    matches this.
+
 .. var:: config.focus_crossrange_penalty = 1024
 
     This is the amount of penalty to apply to moves perpendicular to
@@ -1032,6 +1035,12 @@ Rarely or Internally Used
     images used by that interaction have loaded. (Yeah, it's a lousy
     name.)
 
+.. var:: config.loadable_callback = None
+
+    When not None, a function that's called with a filename. It should return
+    True if the file is loadable, and False if not. This can be used with
+    :var:`config.file_open_callback` or :var:`config.missing_image_callback`.
+
 .. var:: config.log_width = 78
 
     The width of lines logged when :var:`config.log` is used.
@@ -1062,6 +1071,9 @@ Rarely or Internally Used
     image fails. It may return None, or it may return an image
     manipulator. If an image manipulator is returned, that image
     manipulator is loaded in the place of the missing image.
+
+    One may want to also define a :var:`config.loadable_callback`,
+    especially if this is used with a :func:`DynamicImage`.
 
 .. var:: config.missing_label_callback = None
 

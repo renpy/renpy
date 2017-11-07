@@ -586,6 +586,9 @@ def loadable(name):
 
     name = name.lstrip('/')
 
+    if (renpy.config.loadable_callback is not None) and renpy.config.loadable_callback(name):
+        return True
+
     for p in get_prefixes():
         if loadable_core(p + name):
             return True

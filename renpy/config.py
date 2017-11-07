@@ -808,6 +808,9 @@ preload_fonts = [ ]
 # Should Ren'Py process multiple ATL events in a single update?
 atl_multiple_events = True
 
+# A callback that's called when checking to see if a file is loadable.
+loadable_callback = None
+
 del os
 del collections
 
