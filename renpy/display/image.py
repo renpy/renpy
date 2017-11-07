@@ -442,6 +442,9 @@ class DynamicImage(renpy.display.core.Displayable):
     # Have we been locked, so we never change?
     locked = False
 
+    # The name used for hashing.
+    hash_name = None
+
     def __init__(self, name, scope=None, **properties):
         super(DynamicImage, self).__init__(**properties)
 
@@ -468,7 +471,14 @@ class DynamicImage(renpy.display.core.Displayable):
         return u"DynamicImage {!r}".format(self.name)
 
     def __hash__(self):
-        return hash(self.name)
+
+        if self.hash_name is None:
+            if isinstance(self.name, list):
+                self.hash_name = tuple(self.name)
+            else:
+                self.hash_name = self.name
+
+        return hash(self.hash_name)
 
     def __eq__(self, o):
         if self is o:
