@@ -2,6 +2,33 @@
 Full Changelog
 ==============
 
+.. _renpy-6.99.13.1:
+
+Ren'Py 6.99.13.1
+================
+
+Changes
+-------
+
+SSL and TLS support has been added to all platforms. This allows Ren'Py
+games to make requests to secure web servers, perhaps in conjunction
+with a Python library such as requests. This support is only included
+in built distributions if imported at init time.
+
+The new :func:`im.Data` image manipulator creates an image from compressed
+binary data, as might be downloaded from a web server.
+
+The :var:`config.loadable` callback lets scripts inform Ren'Py about
+additional loadable files.
+
+Fixes
+-----
+
+In 6.99.13, a race condition caused Ren'Py to infrequently skip movie
+playback entirely.
+
+Ren'Py now supports the AltGr key.
+
 
 .. _renpy-6.99.13:
 
