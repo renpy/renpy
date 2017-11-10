@@ -227,6 +227,8 @@ def nodes_on_line(filename, linenumber):
     Returns a list of nodes that are found on the given line.
     """
 
+    ensure_loaded(filename)
+
     rv = [ ]
 
     for i in renpy.game.script.all_stmts:
