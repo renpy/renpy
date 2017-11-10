@@ -130,7 +130,7 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 14
+    __version__ = 15
 
     nosave = [ 'next_node' ]
 
@@ -185,6 +185,9 @@ class Context(renpy.object.Object):
         if version < 14:
             self.movie = { }
 
+        if version < 15:
+            self.abnormal_stack = [ False ] * len(self.return_stack)
+
     def __init__(self, rollback, context=None, clear=False):
         """
         `clear`
@@ -196,6 +199,9 @@ class Context(renpy.object.Object):
         self.current = None
         self.call_location_stack = [ ]
         self.return_stack = [ ]
+
+        # The value of abnormal at the time of the call.
+        self.abnormal_stack = [ ]
 
         # Two deeper then the return stack and call location stack.
         # 1 deeper is for the context top-level, 2 deeper is for
@@ -542,6 +548,7 @@ class Context(renpy.object.Object):
 
         self.return_stack.append(return_site)
         self.dynamic_stack.append({ })
+        self.abnormal_stack.append(self.last_abnormal)
         self.current = label
 
         self.make_dynamic([ "_args", "_kwargs" ])
@@ -564,6 +571,7 @@ class Context(renpy.object.Object):
         self.return_stack.pop()
         self.call_location_stack.pop()
         self.pop_dynamic()
+        self.abnormal_stack.pop()
 
     def lookup_return(self, pop=True):
         """
@@ -588,12 +596,14 @@ class Context(renpy.object.Object):
                 self.return_stack.pop()
                 self.call_location_stack.pop()
                 self.pop_dynamic()
+                self.abnormal = self.abnormal_stack.pop()
 
                 continue
 
             if pop:
                 self.return_stack.pop()
                 self.call_location_stack.pop()
+                self.abnormal = self.abnormal_stack.pop()
 
             return node
 
@@ -615,6 +625,10 @@ class Context(renpy.object.Object):
 
         rv.translate_language = self.translate_language
         rv.translate_identifier = self.translate_identifier
+
+        rv.abnormal = self.abnormal
+        rv.last_abnormal = self.last_abnormal
+        rv.abnormal_stack = list(self.abnormal_stack)
 
         return rv
 
@@ -790,6 +804,7 @@ def run_context(top):
 
             if label and renpy.game.script.has_label(label):
                 context.call(label)
+
             label = None
 
             context.run()

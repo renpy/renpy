@@ -1045,6 +1045,7 @@ class Rollback(renpy.object.Object):
         super(Rollback, self).__init__()
 
         self.context = renpy.game.context().rollback_copy()
+
         self.objects = [ ]
         self.purged = False
         self.random = [ ]
@@ -1448,8 +1449,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                        and data == fwd_data
-                        and (keep_rollback or self.rolled_forward)
+                            and data == fwd_data
+                            and (keep_rollback or self.rolled_forward)
                         ):
                     self.forward.pop(0)
                 else:
