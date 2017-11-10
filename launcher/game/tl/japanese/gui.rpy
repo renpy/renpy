@@ -107,7 +107,7 @@ translate japanese strings:
 
     # gui.rpy:92
     old "## Should we show the name and version of the game?"
-    new "## メインメニューにゲームタイトルとそのバージョンを表示するかどうか。True なら表示します。（この変数は options.rpy で再定義されるため、options.rpy の同じコードを消去しないと反映されません）"
+    new "## メインメニューにゲームタイトルとそのバージョンを表示するかどうか。True なら表示します。（この変数は options.rpy で再定義されるため、options.rpy の同じ文を消去しないと反映されません）"
 
     # gui.rpy:96
     old "## Dialogue"
@@ -444,4 +444,24 @@ translate japanese strings:
     # gui.rpy:434
     old "## Change the size and spacing of various things."
     new "## 様々なサイズとスペーシングを変更。"
+
+# TODO: Translation updated at 2017-11-10 15:02
+
+translate japanese strings:
+
+    # gui.rpy:5
+    old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
+    new "## このファイルは GUI をカスタマイズする基本的なオプションを記載しています。次の init offset 文により、このファイルの init 文は他のファイルの init 文よりも先に実行されます。"
+
+    # gui.rpy:282
+    old "## Generic frames."
+    new "## 一般的なフレーム。デフォルトのインターフェースでは未使用です。画像は gui/frame.png。"
+
+    # gui.rpy:302
+    old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
+    new "## デフォルトの GUI はスライダーと垂直スクロールバーだけを使用します。他のバーは開発者が追加したスクリーンでのみ使われます。"
+
+    # gui.rpy:363
+    old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
+    new "## NVL モードにおける、一度に表示されるエントリー（１台詞）の最大数。この値以上のエントリーを表示しようとすると、一番古いエントリーが取り除かれます。"
 

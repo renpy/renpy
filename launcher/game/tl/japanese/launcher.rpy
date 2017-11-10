@@ -563,7 +563,7 @@ translate japanese strings:
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "どの解像度をこのプロジェクトに使用しますか？ Ren'py はウィンドウを拡大縮小することができますが、この設定は初期のウィンドウサイズ、描画される各アセットのサイズ、アセットが最もシャープに見えるサイズを決定します。\n\nデフォルトの 1280x720 が合理的な妥協サイズです。"
+    new "どの解像度をこのプロジェクトに使用しますか？ Ren'py はウィンドウを拡大縮小することができますが、この設定は最初のウィンドウサイズ、描画される各アセットのサイズ、アセットが最もシャープに見えるサイズを決定します。\n\nデフォルトの 1280x720 が理にかなった推奨サイズです。"
 
     # gui7.rpy:389
     old "Creating the new project..."
@@ -1243,4 +1243,44 @@ translate japanese strings:
     # translations.rpy:337
     old "Extract Dialogue: [project.current.display_name!q]"
     new "台詞の抽出: [project.current.display_name!q]"
+
+# TODO: Translation updated at 2017-11-10 15:02
+
+translate japanese strings:
+
+    # dmgcheck.rpy:50
+    old "Ren'Py is running from a read only folder. Some functionality will not work."
+    new "Ren'Py が読み取り専用フォルダーで起動しています。使えない機能があります。"
+
+    # dmgcheck.rpy:50
+    old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
+    new "原因は Ren'Py が Macintosh drive image から直接起動しているためだと思われます.。この問題を解決するには、ランチャーを閉じて %s フォルダー全体をコンピューターのどこか別の場所へ移動してから、もう一度 Ren'Py を起動してみてください。"
+
+    # gui7.rpy:357
+    old "Custom. The GUI is optimized for a 16:9 aspect ratio."
+    new "カスタム。GUI は 16:9 のアスペクト比に最適化されています。"
+
+    # gui7.rpy:372
+    old "WIDTH"
+    new "画面の幅"
+
+    # gui7.rpy:372
+    old "Please enter the width of your game, in pixels."
+    new "ピクセルでゲーム画面の幅を入力してください。"
+
+    # gui7.rpy:377
+    old "The width must be a number."
+    new "画面の幅は数字でなければなりません。"
+
+    # gui7.rpy:379
+    old "HEIGHT"
+    new "画面の高さ"
+
+    # gui7.rpy:379
+    old "Please enter the height of your game, in pixels."
+    new "ピクセルでゲーム画面の高さを入力してください。"
+
+    # gui7.rpy:384
+    old "The height must be a number."
+    new "画面の高さは数字でなければなりません。"
 

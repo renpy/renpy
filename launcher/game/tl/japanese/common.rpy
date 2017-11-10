@@ -420,3 +420,23 @@ translate japanese strings:
     old "Interactive Director (D)"
     new "インタラクティブディレクター(D)"
 
+# TODO: Translation updated at 2017-11-10 15:02
+
+translate japanese strings:
+
+    # 00keymap.rpy:254
+    old "Failed to save screenshot as %s."
+    new "ファイル名 %s のスクリーンショットの保存に失敗しました。"
+
+    # _developer\developer.rpym:67
+    old "Show Texture Size"
+    new "テクスチャーサイズの表示"
+
+    # _developer\developer.rpym:70
+    old "Hide Texture size"
+    new "テクスチャーサイズの非表示"
+
+    # _developer\developer.rpym:569
+    old "{size_mb:,.1f} MB in {count} textures."
+    new "{size_mb:,.1f} MB in {count} textures."
+
