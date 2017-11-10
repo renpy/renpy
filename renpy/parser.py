@@ -152,6 +152,7 @@ def elide_filename(fn):
     or relative to the Ren'Py directory.
     """
 
+    ofn = fn
     fn = os.path.abspath(fn)
     basedir = os.path.abspath(renpy.config.basedir)
     renpy_base = os.path.abspath(renpy.config.renpy_base)
@@ -161,7 +162,7 @@ def elide_filename(fn):
     elif fn.startswith(renpy_base):
         return os.path.relpath(fn, renpy_base).replace("\\", "/")
     else:
-        return fn.replace("\\", "/")
+        return ofn.replace("\\", "/")
 
 
 def unelide_filename(fn):
@@ -169,7 +170,7 @@ def unelide_filename(fn):
     if os.path.exists(fn1):
         return fn1
 
-    fn2 = os.path.join(renpy.config.basedir, fn)
+    fn2 = os.path.join(renpy.config.renpy_base, fn)
     if os.path.exists(fn2):
         return fn2
 
