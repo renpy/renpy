@@ -335,7 +335,7 @@ init python in director:
 
         else:
 
-            if state.attributes == state.original_attributes:
+            if state.change and (state.attributes == state.original_attributes):
                 attributes = state.attributes
             else:
 
