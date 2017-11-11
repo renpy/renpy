@@ -200,3 +200,10 @@ translate japanese strings:
     old "Opens a console to allow debugging the problem."
     new "コンソールを開き、問題をデバッグします。"
 
+
+translate japanese strings:
+
+    # 00gltest.rpy:89
+    old "NPOT"
+    new "NPOT"
+
