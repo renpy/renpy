@@ -811,6 +811,10 @@ atl_multiple_events = True
 # A callback that's called when checking to see if a file is loadable.
 loadable_callback = None
 
+# How many frames should be drawn fast each time the screen needs to be
+# updated?
+fast_redraw_frames = 4
+
 del os
 del collections
 

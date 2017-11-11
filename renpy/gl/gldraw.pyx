@@ -153,6 +153,10 @@ cdef class GLDraw:
         # The DPI scale factor.
         self.dpi_scale = renpy.display.interface.dpi_scale
 
+        # The number of frames to draw fast if the screen needs to be
+        # updated.
+        self.fast_redraw_frames = 0
+
 
     def get_texture_size(self):
         """
@@ -652,13 +656,21 @@ cdef class GLDraw:
             rv = True
         elif first_pass:
             rv = True
-        elif time.time() > self.last_redraw_time + self.redraw_period:
-            rv = True
         else:
             # Redraw if the mouse moves.
             mx, my, tex = self.mouse_info
             if tex and (mx, my) != pygame.mouse.get_pos():
                 rv = True
+
+        # Handle fast redraw.
+        if rv:
+            self.fast_redraw_frames = renpy.config.fast_redraw_frames
+        elif self.fast_redraw_frames > 0:
+            self.fast_redraw_frames -= 1
+            rv = True
+
+        if time.time() > self.last_redraw_time + self.redraw_period:
+            rv = True
 
         # Store the redraw time.
         if rv:

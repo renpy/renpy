@@ -61,6 +61,8 @@ cdef class GLDraw:
     cdef public render.Matrix2D virt_to_draw
     cdef public render.Matrix2D draw_to_virt
 
+    cdef public int fast_redraw_frames
+
     cpdef set_clip(GLDraw self, tuple clip)
 
     cpdef int draw_render_textures(
