@@ -52,6 +52,8 @@ def renpy_pure(fn):
     return fn
 
 
+import pygame_sdl2
+
 from renpy.text.extras import ParameterizedText, filter_text_tags
 from renpy.text.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.text.text import language_tailor
@@ -3441,3 +3443,28 @@ def get_texture_size():
     """
 
     return renpy.display.draw.get_texture_size()
+
+
+old_battery = False
+
+
+def get_on_battery():
+    """
+    :other:
+
+    Returns True if Ren'Py is running on a device that is powered by an internal
+    battery, or False if the device is being charged by some external source.
+    """
+
+    global old_battery
+
+    pi = pygame_sdl2.power.get_power_info()  # @UndefinedVariable
+
+    if pi.state == pygame_sdl2.POWERSTATE_UNKNOWN:  # @UndefinedVariable
+        return old_battery
+    elif pi.state == pygame_sdl2.POWERSTATE_ON_BATTERY:  # @UndefinedVariable
+        old_battery = True
+        return True
+    else:
+        old_battery = False
+        return False
