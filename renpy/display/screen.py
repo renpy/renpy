@@ -1280,3 +1280,20 @@ def show_overlay_screens(suppress_overlay):
         for i in renpy.config.overlay_screens:
             if get_screen(i) is not None:
                 hide_screen(i)
+
+
+def per_frame():
+    """
+    Called from interact once per frame to invalidate screens we want to
+    update once per frame.
+    """
+
+    for i in renpy.config.per_frame_screens:
+        s = get_screen(i)
+
+        if s is None:
+            continue
+
+        updated_screens.discard(s)
+        renpy.display.render.invalidate(s)
+        s.update()

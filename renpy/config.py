@@ -818,6 +818,8 @@ fast_redraw_frames = 4
 # The color passed to glClearColor when clearing the screen.
 gl_clear_color = "#000"
 
+# Screens that are updated once per frame rather than once per interaction.
+per_frame_screens = [ ]
 
 del os
 del collections

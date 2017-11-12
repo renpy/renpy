@@ -1974,6 +1974,8 @@ class Interface(object):
 
     def draw_screen(self, root_widget, fullscreen_video, draw):
 
+        renpy.display.screen.per_frame()
+
         surftree = renpy.display.render.render_screen(
             root_widget,
             renpy.config.screen_width,

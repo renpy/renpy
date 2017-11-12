@@ -1132,6 +1132,13 @@ Rarely or Internally Used
     cleared before the overlay functions are called. "overlay" should
     always be in this list.
 
+.. var:: config.per_frame_screens = [ ... ]
+
+    This is a list of strings giving the name of screens that are updated
+    once per frame, rather than once per interaction. Ren'Py uses this internally,
+    so if you add a screen, append the name rather than replacing the list in
+    its entirety.
+
 .. var:: config.periodic_callback = None
 
     If not None, this should be a function. The function is called,
