@@ -643,6 +643,14 @@ cdef class GLDraw:
         return True
 
 
+    def can_block(self):
+        """
+        Returns True if we can block to wait for input, False if the screen
+        needs to be immediately redrawn.
+        """
+
+        return not renpy.config.fast_redraw_frames
+
     def should_redraw(self, needs_redraw, first_pass):
         """
         Redraw whenever the screen needs it, but at least once every

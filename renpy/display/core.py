@@ -3055,7 +3055,7 @@ class Interface(object):
 
                 renpy.persistent.check_update()
 
-                if needs_redraw or self.mouse_move or renpy.display.video.playing():
+                if needs_redraw or self.mouse_move or renpy.display.video.playing() or (not renpy.display.draw.can_block()):
                     ev = self.event_poll()
                 else:
                     ev = self.event_wait()

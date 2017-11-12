@@ -918,6 +918,9 @@ class SWDraw(object):
 
         return self.window
 
+    def can_block(self):
+        return True
+
     def should_redraw(self, needs_redraw, first_pass):
         """
         Uses the framerate to determine if we can and should redraw.
