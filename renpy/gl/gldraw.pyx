@@ -778,7 +778,8 @@ cdef class GLDraw:
 
         self.clip_mode_screen()
 
-        glClearColor(0.0, 0.0, 0.0, 1.0)
+        clear_r, clear_g, clear_b = renpy.color.Color(renpy.config.gl_clear_color).rgb
+        glClearColor(clear_r, clear_g, clear_b, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
         self.default_clip = (0, 0, xsize, ysize)

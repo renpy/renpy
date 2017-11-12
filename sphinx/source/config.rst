@@ -415,6 +415,13 @@ Occasionally Used
 
     If not None, a music file to play when at the game menu.
 
+.. var:: config.gl_clear_color = "#000"
+
+    The color that the window is cleared to before images are drawn.
+    This is mainly seen as the color of the letterbox or pillarbox
+    edges drawn when aspect ratio of the window or monitor in fullscreen
+    mode) does not match the aspect ratio of the game.
+
 .. var:: config.gl_test_image = "black"
 
     The name of the image that is used when running the OpenGL

@@ -2984,6 +2984,10 @@ class Interface(object):
                 if self.maximum_framerate_time > get_time():
                     needs_redraw = True
 
+#                 if not renpy.exports.get_on_battery():
+#                     print("HIGH FRAMERATE")
+#                     needs_redraw = True
+
                 # How many seconds until we timeout.
                 _timeout_in = 3600
 
