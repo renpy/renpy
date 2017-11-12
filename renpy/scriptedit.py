@@ -238,6 +238,24 @@ def nodes_on_line(filename, linenumber):
     return rv
 
 
+def nodes_on_line_at_or_after(filename, linenumber):
+    """
+    Returns a list of nodes that are found at or after the given line.
+    """
+
+    ensure_loaded(filename)
+
+    lines = [ i.linenumber
+              for i in renpy.game.script.all_stmts
+              if (i.filename == filename)
+              if (i.linenumber >= linenumber) ]
+
+    if not lines:
+        return [ ]
+
+    return nodes_on_line(filename, min(lines))
+
+
 def first_and_last_nodes(nodes):
     """
     Finds the first and last nodes in `nodes`, a list of nodes. This assumes
@@ -292,11 +310,11 @@ def adjust_ast_linenumbers(filename, linenumber, offset):
 
 def add_to_ast_before(code, filename, linenumber):
     """
-    Adds `code`, which must be a textual line of Ren'Py code, to the AST
-    immediately before `statement`, which should be an AST node.
+    Adds `code`, which must be a textual line of Ren'Py code,
+    before the given filename and line number.
     """
 
-    nodes = nodes_on_line(filename, linenumber)
+    nodes = nodes_on_line_at_or_after(filename, linenumber)
     old, _ = first_and_last_nodes(nodes)
 
     adjust_ast_linenumbers(old.filename, linenumber, 1)
