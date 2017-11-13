@@ -23,6 +23,33 @@
 
 screen _performance:
 
+    python:
+        frame_times = renpy.display.interface.frame_times
+
+        if len(frame_times) < 2:
+            cur_fps = 0.0
+            cur_time = 0
+
+            min_fps = 0.0
+            min_time = 0.0
+
+        else:
+
+            ift = [ (j - i) for i, j in zip(frame_times, frame_times[1:]) ]
+
+            cur_time = ift[-1]
+            cur_fps = 1.0 / cur_time
+            cur_time *= 1000
+
+
+            min_time = max(ift)
+            min_fps = 1.0 / min_time
+            min_time *= 1000
+
+
+
+
+
     zorder 1000
 
     drag:
@@ -40,9 +67,12 @@ screen _performance:
             xminimum 200
 
             vbox:
-                text "Performance"
+                text "[cur_fps:.0f]fps [cur_time:.3f]ms current\n[min_fps:.0f]fps [min_time:.3f]ms minimum"
 
 
 style _performance_text is _default:
     color "#fff"
     size gui._scale(14)
+
+init -1010 python:
+    config.per_frame_screens.append("_performance")

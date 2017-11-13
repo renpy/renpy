@@ -1649,6 +1649,9 @@ class Interface(object):
         # True if this is the first interact.
         self.start_interact = True
 
+        # The time of each frame.
+        self.frame_times = [ ]
+
     def setup_dpi_scaling(self):
 
         if "RENPY_HIGHDPI" in os.environ:
@@ -1972,6 +1975,9 @@ class Interface(object):
         # True if we're doing a one-time profile.
         self.profile_once = False
 
+        # Clear the frame times.
+        self.frame_times = [ ]
+
     def draw_screen(self, root_widget, fullscreen_video, draw):
 
         renpy.display.screen.per_frame()
@@ -1984,6 +1990,13 @@ class Interface(object):
 
         if draw:
             renpy.display.draw.draw_screen(surftree, fullscreen_video)
+
+        now = time.time()
+
+        self.frame_times.append(now)
+
+        while (now - self.frame_times[0]) > renpy.config.performance_window:
+            self.frame_times.pop(0)
 
         renpy.display.render.mark_sweep()
         renpy.display.focus.take_focuses()

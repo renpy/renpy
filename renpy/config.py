@@ -821,6 +821,9 @@ gl_clear_color = "#000"
 # Screens that are updated once per frame rather than once per interaction.
 per_frame_screens = [ ]
 
+# How long we store performance data for.
+performance_window = 5.0
+
 del os
 del collections
 
