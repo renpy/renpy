@@ -124,6 +124,7 @@ init -1600 python:
         viewport_down = [ 'mousedown_5' ],
 
         # Profile commands.
+        performance = [ 'K_F3' ],
         profile_once = [ 'K_F8' ],
         memory_profile = [ 'K_F7' ],
 
@@ -369,6 +370,7 @@ init -1100 python:
         debug_voicing = Preference("debug voicing", "toggle"),
         progress_screen = _progress_screen,
         director = director.Start(),
+        performance = ToggleScreen("_performance"),
         )
 
     config.underlay = [ _default_keymap ]
