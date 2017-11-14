@@ -180,6 +180,32 @@ def open(name, append=False, developer=False, flush=False):  # @ReservedAssignme
 
     return rv
 
+################################################################################
+# Timed event log.
+
+
+class TimeLog(list):
+    """
+    This represents a log that is limited to the last `duration` seconds.
+    """
+
+    def __init__(self, duration):
+        self.duration = duration
+
+    def append(self, v):
+        now = time.time()
+
+        list.append(self, (now, v))
+        self.prune(now)
+
+    def prune(self, now=None):
+
+        if now is None:
+            now = time.time()
+
+        while self[0][0] < (now - self.duration):
+            self.pop(0)
+
 
 ################################################################################
 # Stdout / Stderr Redirection
