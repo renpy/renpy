@@ -21,34 +21,38 @@
 
 # This contains the performance monitoring screen.
 
+init python:
+
+    def _clear_performance():
+        renpy.display.interface.frame_times[:] = [ ]
+#
+#     import gc
+#     print(gc.get_threshold())
+#     gc.set_debug(gc.DEBUG_STATS)
+
 screen _performance:
 
+    on "show" action Function(_clear_performance)
+
     python:
+
         frame_times = renpy.display.interface.frame_times
 
-        if len(frame_times) < 2:
-            cur_fps = 0.0
-            cur_time = 0
 
-            min_fps = 0.0
-            min_time = 0.0
+        if len(frame_times) < 11:
+
+            fps = 0.0
+            cur_time = 0
+            max_time = 0
 
         else:
 
             ift = [ (j - i) for i, j in zip(frame_times, frame_times[1:]) ]
 
-            cur_time = ift[-1]
-            cur_fps = 1.0 / cur_time
-            cur_time *= 1000
+            fps = 1.0 / (sum(ift[-10:]) / 10.0)
 
-
-            min_time = max(ift)
-            min_fps = 1.0 / min_time
-            min_time *= 1000
-
-
-
-
+            cur_time = ift[-1] * 1000
+            max_time = max(ift) * 1000
 
     zorder 1000
 
@@ -67,7 +71,7 @@ screen _performance:
             xminimum 200
 
             vbox:
-                text "[cur_fps:.0f]fps [cur_time:.3f]ms current\n[min_fps:.0f]fps [min_time:.3f]ms minimum"
+                text "[fps:.0f] fps\n[cur_time:.3f] ms\n[max_time:.3f] ms max"
 
 
 style _performance_text is _default:
