@@ -360,6 +360,7 @@ def import_all():
     import renpy.persistent
     import renpy.scriptedit
     import renpy.parser
+    import renpy.performance
     import renpy.python
     import renpy.script
     import renpy.statements
