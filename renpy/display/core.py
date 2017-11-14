@@ -2942,7 +2942,7 @@ class Interface(object):
                     if renpy.config.profile or self.profile_once:
                         new_time = get_time()
 
-                        if self.profile_once or (new_time - self.profile_time > .015):
+                        if self.profile_once or (new_time - self.profile_time > .018):
                             print("Profile: Redraw took %.3f ms." % (1000 * (new_time - self.frame_time)))
                             print("Profile: %.3f ms to complete event." % (1000 * (new_time - self.profile_time)))
 
