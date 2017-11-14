@@ -754,6 +754,9 @@ cdef class GLDraw:
         Draws the screen.
         """
 
+        if renpy.config.profile:
+            renpy.performance.log(1, "start draw_screen")
+
         if renpy.config.use_drawable_resolution:
             reverse = self.virt_to_draw
         else:
@@ -799,10 +802,17 @@ cdef class GLDraw:
 
             start = time.time()
 
+
+            if renpy.config.profile:
+                renpy.performance.log(1, "before gl flip")
+
             if EGL:
                 egl_swap()
             else:
                 pygame.display.flip()
+
+            if renpy.config.profile:
+                renpy.performance.log(1, "after gl flip")
 
             end = time.time()
 
@@ -819,7 +829,11 @@ cdef class GLDraw:
 
                     # If we're running at over 1000 fps, vsync is broken.
                     if (frame_times[-1] - frame_times[0] < .06 * 10) and (sum(flip_times) / len(flip_times) < .001):
-                        time.sleep(1.0 / 60.0)
+                        time.sleep(1.0 / 120.0)
+
+                        if renpy.config.profile:
+                            renpy.performance.log(1, "after broken vsync sleep")
+
 
         gltexture.cleanup()
 

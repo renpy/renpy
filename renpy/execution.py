@@ -439,6 +439,9 @@ class Context(renpy.object.Object):
 
         while node:
 
+            if renpy.config.profile:
+                renpy.performance.log(1, "start {!r} ({}:{})".format(node, node.filename, node.linenumber))
+
             self.current = node.name
             self.last_abnormal = self.abnormal
             self.abnormal = False

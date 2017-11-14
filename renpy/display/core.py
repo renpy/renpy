@@ -2611,6 +2611,9 @@ class Interface(object):
         @param suppress_underlay: This suppresses the display of the underlay.
         """
 
+        if renpy.config.profile:
+            renpy.performance.log(1, "start interact_core")
+
         suppress_overlay = suppress_overlay or renpy.store.suppress_overlay
 
         # Store the various parameters.
@@ -2942,9 +2945,15 @@ class Interface(object):
                     if renpy.config.profile or self.profile_once:
                         new_time = get_time()
 
-                        if self.profile_once or (new_time - self.profile_time > .018):
+                        renpy.performance.log(0, "end frame")
+                        renpy.performance.analyze()
+
+                        if self.profile_once or (new_time - self.profile_time > .025):
                             print("Profile: Redraw took %.3f ms." % (1000 * (new_time - self.frame_time)))
                             print("Profile: %.3f ms to complete event." % (1000 * (new_time - self.profile_time)))
+
+                        renpy.performance.clear()
+                        renpy.performance.log(0, "end frame")
 
                         self.profile_once = False
 
@@ -3328,6 +3337,9 @@ class Interface(object):
             # Restart the old interaction, which also causes a
             # redraw if needed.
             self.restart_interaction = True
+
+            if renpy.config.profile:
+                renpy.performance.log(1, "end interact_core")
 
             # print "It took", frames, "frames."
 
