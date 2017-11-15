@@ -152,8 +152,13 @@ def insert_line_before(code, filename, linenumber):
     if not code:
         indent = ''
 
+    if old_line.text.endswith("\r\n") or not old_line.text.endswith("\n"):
+        line_ending = "\r\n"
+    else:
+        line_ending = "\n"
+
     raw_code = indent + code
-    code = indent + code + "\r\n"
+    code = indent + code + line_ending
 
     new_line = Line(old_line.filename, old_line.number, old_line.start)
     new_line.text = raw_code
