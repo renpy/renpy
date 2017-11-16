@@ -1725,6 +1725,9 @@ class UserStatement(Node):
         # Do not store the parse quite yet.
         _parse_info = renpy.statements.parse(self, self.line, self.block)
 
+    def __repr__(self):
+        return "<UserStatement {!r}>".format(self.line)
+
     def get_children(self, f):
         f(self)
 
