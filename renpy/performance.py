@@ -30,7 +30,7 @@ import renpy
 fpl = [ ]
 
 # The number of levels of depth we use.
-DEPTH_LEVELS = 3
+DEPTH_LEVELS = 4
 
 # Are we running? Only log stuff if the FPL has been cleared at least
 # once.
@@ -61,10 +61,13 @@ def analyze():
     if not fpl:
         return
 
+    if renpy.config.frames < 30:
+        return
+
     start = fpl[0][0]
     end = fpl[-1][0]
 
-    if (end - start) < .25:
+    if (end - start) < .025:
         return
 
     renpy.log.real_stderr.write("\n")
@@ -72,12 +75,13 @@ def analyze():
     times = [ fpl[0][0] ] * DEPTH_LEVELS
 
     for t, depth, message in fpl:
-        dt = [ (1000000 * (t - i)) for i in times ]
+        dt = [ (1000000 * (t - it)) if i <= depth else 0 for i, it in enumerate(times) ]
 
-        renpy.log.real_stderr.write("{: 7.0f} {: 7.0f} {: 7.0f} {}\n".format(
+        renpy.log.real_stderr.write("{: 7.0f} {: 7.0f} {: 7.0f} {: 7.0f} {}\n".format(
             dt[0],
             dt[1],
             dt[2],
+            dt[3],
             message,
             ))
 

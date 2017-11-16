@@ -187,6 +187,9 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     else:
         wh = orig_wh
 
+    if renpy.config.profile:
+        renpy.performance.log(2, "start render {!r}".format(d))
+
     try:
         rendering += 1
         old_st = render_st
@@ -212,6 +215,9 @@ cpdef render(d, object widtho, object heighto, double st, double at):
 
     if wh is not orig_wh:
         render_cache_d[orig_wh] = rv
+
+    if renpy.config.profile:
+        renpy.performance.log(2, "end render {!r}".format(d))
 
     return rv
 
