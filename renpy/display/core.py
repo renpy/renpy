@@ -2948,9 +2948,10 @@ class Interface(object):
                         renpy.performance.log(0, "end frame")
                         renpy.performance.analyze()
 
-                        if self.profile_once or (new_time - self.profile_time > .025):
-                            print("Profile: Redraw took %.3f ms." % (1000 * (new_time - self.frame_time)))
-                            print("Profile: %.3f ms to complete event." % (1000 * (new_time - self.profile_time)))
+
+#                         if self.profile_once or (new_time - self.profile_time > .025):
+#                             print("Profile: Redraw took %.3f ms." % (1000 * (new_time - self.frame_time)))
+#                             print("Profile: %.3f ms to complete event." % (1000 * (new_time - self.profile_time)))
 
                         renpy.performance.clear()
                         renpy.performance.log(0, "end frame")
@@ -3018,7 +3019,10 @@ class Interface(object):
                 # Handle the redraw timer.
                 redraw_time = renpy.display.render.redraw_time()
 
-                if (redraw_time is not None) and not needs_redraw:
+                # We only need to set the REDRAW timer if we can block.
+                can_block = renpy.display.draw.can_block()
+
+                if (redraw_time is not None) and (not needs_redraw) and can_block:
                     if redraw_time != old_redraw_time:
                         time_left = redraw_time - get_time()
                         time_left = min(time_left, 3600)
@@ -3083,7 +3087,9 @@ class Interface(object):
 
                 renpy.persistent.check_update()
 
-                if not renpy.display.draw.can_block():
+                # Set this down here so expensive prediction does get triggered once
+                # in a while.
+                if not can_block:
                     needs_redraw = True
 
                 if needs_redraw or self.mouse_move or renpy.display.video.playing():

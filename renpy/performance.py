@@ -37,6 +37,12 @@ DEPTH_LEVELS = 4
 running = False
 
 
+# import gc
+# gc.set_debug(gc.DEBUG_STATS)
+# print(gc.get_threshold())
+# gc.set_threshold(7000, 10, 10)
+
+
 def clear():
     global fpl
     fpl = [ ]

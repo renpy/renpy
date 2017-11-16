@@ -207,9 +207,13 @@ cpdef render(d, object widtho, object heighto, double st, double at):
 
     rv.render_of.append(d)
 
+
     if d._clipping:
+        renpy.performance.log(4, "before clipping")
         rv = rv.subsurface((0, 0, rv.width, rv.height), focus=True)
         rv.render_of.append(d)
+        renpy.performance.log(4, "after clipping")
+
 
     render_cache_d[wh] = rv
 
@@ -784,7 +788,6 @@ cdef class Render:
 
         reverse = self.reverse
 
-
         # This code doesn't work. We need to do the clipping in the screen
         # space, or it's too easy to get overlaps or lines. (At some point,
         # we should optimize things and only clip when necessary.)
@@ -853,6 +856,7 @@ cdef class Render:
         # making an actual subsurface.
 
         for child, cx, cy, cfocus, cmain in self.children:
+
 
             childw, childh = child.get_size()
             xo, cx, cw = compute_subline(cx, childw, x, w)
