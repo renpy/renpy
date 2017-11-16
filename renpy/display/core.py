@@ -1702,6 +1702,9 @@ class Interface(object):
         if self.started:
             return
 
+        import gc
+        gc.collect()
+
         renpy.display.render.render_ready()
 
         # Kill off the presplash.
