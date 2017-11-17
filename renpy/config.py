@@ -825,7 +825,7 @@ per_frame_screens = [ ]
 performance_window = 5.0
 
 # How long does a frame have to take (to the event) to trigger profiling.
-profile_time = 1.0 / 60.0
+profile_time = 1.0 / 100.0
 
 # What event do we check to see if the profile needs to be printed?
 profile_to_event = "flip"

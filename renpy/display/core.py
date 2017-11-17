@@ -2534,6 +2534,9 @@ class Interface(object):
         keyword arguments are passed off to interact_core.
         """
 
+        if renpy.config.profile:
+            renpy.performance.log(1, "start of new interaction")
+
         if not self.started:
             self.start()
 
@@ -2892,6 +2895,9 @@ class Interface(object):
 
             while rv is None:
 
+                if renpy.config.profile:
+                    renpy.performance.log(1, "start of interact while loop")
+
                 renpy.execution.not_infinite_loop(10)
 
                 # Check for a change in fullscreen preference.
@@ -3054,6 +3060,8 @@ class Interface(object):
                         pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
                         old_timeout_time = self.timeout_time
 
+                prediction_start = get_time()
+
                 # Predict images, if we haven't done so already.
                 while prediction_coroutine is not None:
 
@@ -3067,6 +3075,9 @@ class Interface(object):
                         break
 
                     if not expensive_predict:
+                        break
+
+                    if get_time() > (prediction_start + .001):
                         break
 
                 # If we need to redraw again, do it if we don't have an
@@ -3090,6 +3101,9 @@ class Interface(object):
                     ev = self.event_poll()
                 else:
                     ev = self.event_wait()
+
+                if renpy.config.profile:
+                    renpy.performance.log(1, "post peek")
 
                 # Recognize and ignore AltGr on Windows.
                 if ev.type == pygame.KEYDOWN:
