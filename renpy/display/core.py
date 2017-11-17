@@ -1582,7 +1582,6 @@ class Interface(object):
 
         # Init timing.
         init_time()
-        self.profile_time = get_time()
         self.mouse_event_time = get_time()
 
         # The current window caption.
@@ -2946,18 +2945,11 @@ class Interface(object):
 
                     # If profiling is enabled, report the profile time.
                     if renpy.config.profile or self.profile_once:
-                        new_time = get_time()
 
                         renpy.performance.log(0, "end frame")
                         renpy.performance.analyze()
-
-
-#                         if self.profile_once or (new_time - self.profile_time > .025):
-#                             print("Profile: Redraw took %.3f ms." % (1000 * (new_time - self.frame_time)))
-#                             print("Profile: %.3f ms to complete event." % (1000 * (new_time - self.profile_time)))
-
                         renpy.performance.clear()
-                        renpy.performance.log(0, "end frame")
+                        renpy.performance.log(0, "start frame")
 
                         self.profile_once = False
 
@@ -3080,7 +3072,6 @@ class Interface(object):
                 # If we need to redraw again, do it if we don't have an
                 # event going on.
                 if (prediction_coroutine or needs_redraw) and not self.event_peek():
-                    self.profile_time = get_time()
                     continue
 
                 # Handle autosaving and persistent checking, as necessary.
@@ -3116,8 +3107,6 @@ class Interface(object):
                         pygame.time.wait(1)
 
                     continue
-
-                self.profile_time = get_time()
 
                 # Check to see if the OS is asking us to suspend (on Android
                 # and iOS.)

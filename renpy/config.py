@@ -824,6 +824,12 @@ per_frame_screens = [ ]
 # How long we store performance data for.
 performance_window = 5.0
 
+# How long does a frame have to take (to the event) to trigger profiling.
+profile_time = 1.0 / 60.0
+
+# What event do we check to see if the profile needs to be printed?
+profile_to_event = "flip"
+
 del os
 del collections
 

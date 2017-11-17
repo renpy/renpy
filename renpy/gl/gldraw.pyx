@@ -804,15 +804,12 @@ cdef class GLDraw:
 
 
             if renpy.config.profile:
-                renpy.performance.log(1, "before gl flip")
+                renpy.performance.log(1, "flip")
 
             if EGL:
                 egl_swap()
             else:
                 pygame.display.flip()
-
-            if renpy.config.profile:
-                renpy.performance.log(1, "after gl flip")
 
             end = time.time()
 

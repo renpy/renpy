@@ -37,12 +37,6 @@ DEPTH_LEVELS = 4
 running = False
 
 
-# import gc
-# gc.set_debug(gc.DEBUG_STATS)
-# print(gc.get_threshold())
-# gc.set_threshold(7000, 10, 10)
-
-
 def clear():
     global fpl
     fpl = [ ]
@@ -51,12 +45,12 @@ def clear():
     running = True
 
 
-def log(depth, message):
+def log(depth, event):
 
     if not running:
         return
 
-    fpl.append((time.time(), depth, message))
+    fpl.append((time.time(), depth, event))
 
 
 def analyze():
@@ -71,24 +65,30 @@ def analyze():
         return
 
     start = fpl[0][0]
-    end = fpl[-1][0]
 
-    if (end - start) < .025:
+    for t, _, event in fpl:
+        if event == renpy.config.profile_to_event:
+            end = t
+            break
+    else:
         return
 
-    renpy.log.real_stderr.write("\n")
+    if (end - start) < renpy.config.profile_time:
+        return
+
+    print("\n")
 
     times = [ fpl[0][0] ] * DEPTH_LEVELS
 
-    for t, depth, message in fpl:
+    for t, depth, event in fpl:
         dt = [ (1000000 * (t - it)) if i <= depth else 0 for i, it in enumerate(times) ]
 
-        renpy.log.real_stderr.write("{: 7.0f} {: 7.0f} {: 7.0f} {: 7.0f} {}\n".format(
+        print("{: 7.0f} {: 7.0f} {: 7.0f} {: 7.0f} {}".format(
             dt[0],
             dt[1],
             dt[2],
             dt[3],
-            message,
+            event,
             ))
 
         for i in range(depth, DEPTH_LEVELS):
