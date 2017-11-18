@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from libc.stdlib cimport calloc, free, qsort
+from libc.stdlib cimport calloc, free
 from cpython.object cimport PyObject
 from cpython.dict cimport PyDict_Next, PyDict_Size
 from cpython.ref cimport Py_XINCREF, Py_XDECREF
@@ -10,16 +10,75 @@ cdef struct Item:
     PyObject *key
     PyObject *value
 
-cdef inline int compare(const void *ap, const void *bp) nogil:
-    cdef Item *a = <Item *> ap
-    cdef Item *b = <Item *> bp
+cdef inline void swap(Item *a, int i, int j):
+    cdef Item tmp
 
-    if a.key < b.key:
-        return -1
-    elif a.key > b.key:
-        return 1
-    else:
-        return 0
+    tmp = a[i]
+    a[i] = a[j]
+    a[j] = tmp
+
+cdef inline void selection_sort(Item *array, int size):
+
+    cdef int i
+    cdef int j
+    cdef int min
+    cdef PyObject *minkey
+    cdef Item tmp
+
+    for 0 <= i < size - 1:
+
+        min = i
+
+        for i < j < size:
+            if array[j].key < array[min].key:
+                min = j
+
+        if i != min:
+            swap(array, i, min)
+
+
+cdef inline int partition(Item *a, int size):
+
+    cdef int i = 0
+    cdef int j = size - 1
+
+    # Use the last key as the pivot.
+    cdef PyObject *pivot = a[j].key
+
+    while True:
+
+        while a[i].key < pivot:
+            i += 1
+
+        while (i < j) and (a[j].key >= pivot):
+            j -= 1
+
+        if i >= j:
+            break
+
+        swap(a, i, j)
+
+    # Swap the pivot into place.
+    swap(a, size - 1, i)
+
+    return i
+
+cdef void quicksort_items(Item *array, int size):
+
+    if size < 6:
+        selection_sort(array, size)
+        return
+
+    cdef int split = partition(array, size)
+    cdef int left_size = split
+    cdef int right_size = size - split - 1
+
+
+    if left_size >= 2:
+        quicksort_items(array, split)
+
+    if right_size >= 2:
+        quicksort_items(array + split + 1, size - split - 1)
 
 
 cdef class DictItems(object):
@@ -51,8 +110,16 @@ cdef class DictItems(object):
             Py_XINCREF(p.value)
             p += 1
 
-        qsort(self.items, self.size, sizeof(Item), compare)
+        quicksort_items(self.items, self.size)
 
+        # Set this to True to check quicksort for correctness.
+        IF False:
+
+            cdef int i
+
+            for 0 <= i < (self.size - 1):
+                if self.items[i].key > self.items[i+1].key:
+                    print("PROBLEM!")
 
 
 
@@ -110,26 +177,34 @@ def find_changes(DictItems old, DictItems new, object deleted):
             op += 1
 
     return rv
-
-
-
-
-foo = DictItems({
-    "a" : "b",
-    "c" : 42,
-    "d" : "india",
-})
-
-
-bar = DictItems({
-    "c" : 37,
-    "d" : "india",
-    "e" : True
-    })
-
-
-print(find_changes(foo, bar, "deleted"))
-
-del foo
-del bar
-
+#
+# import random
+# import time
+# import gc
+# gc.disable()
+#
+# d = { }
+#
+# for i in range(600):
+#     d[random.random()] = random.random()
+#
+# N = 50000
+#
+# def test():
+#
+#     start = time.time()
+#
+#     for i in xrange(N):
+#         DictItems(d)
+#
+#     dur = time.time() - start
+#
+#     print(1000000.0 * dur / N)
+#
+# for i in range(2, 15):
+#     print(i)
+#     ss_cutin = i
+#     test()
+#
+# import sys
+# sys.exit(0)

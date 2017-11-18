@@ -85,7 +85,7 @@ def get_store_module(name):
 
 from renpy.pydict import DictItems, find_changes
 
-ED = { }
+EMPTY_DICT = { }
 
 
 class StoreDict(dict):
@@ -152,7 +152,7 @@ class StoreDict(dict):
 #
 
         if rv is None:
-            return ED
+            return EMPTY_DICT
 
         for k in rv:
             self.ever_been_changed.add(k)
