@@ -496,7 +496,7 @@ def display_say(
             # Show the text.
             what_text = show_function(who, what_string)
 
-            if interact or what_string or (what_ctc is not None):
+            if interact or what_string or (what_ctc is not None) or (behavior and afm):
 
                 if isinstance(what_text, tuple):
                     what_text = renpy.display.screen.get_widget(what_text[0], what_text[1], what_text[2])
@@ -522,9 +522,6 @@ def display_say(
             else:
 
                 slow = False
-
-                if behavior and afm:
-                    behavior.set_text("")
 
             for c in callback:
                 c("show_done", interact=interact, type=type, **cb_args)
