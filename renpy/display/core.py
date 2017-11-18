@@ -3116,9 +3116,11 @@ class Interface(object):
                     needs_redraw = True
 
                 if needs_redraw or self.mouse_move or renpy.display.video.playing():
+                    renpy.plog(1, "pre peek")
                     ev = self.event_poll()
                     renpy.plog(1, "post peek {!r}", ev)
                 else:
+                    renpy.plog(1, "pre wait")
                     ev = self.event_wait()
                     renpy.plog(1, "post wait {!r}", ev)
 
