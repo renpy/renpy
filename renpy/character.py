@@ -283,7 +283,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 
         renpy.exports.shown_window()
 
-        return renpy.display.screen.get_widget(screen, "what", layer)
+        return (screen, "what", layer)
 
     # Apply the transform.
     if transform:
@@ -486,35 +486,48 @@ def display_say(
             if delay == 0:
                 what_ctc = None
 
-            # Create the callback that is called when the slow text is done.
-            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay)
-
             # Run the show callback.
             for c in callback:
                 c("show", interact=interact, type=type, **cb_args)
 
+            # Create the callback that is called when the slow text is done.
+            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay)
+
             # Show the text.
             what_text = show_function(who, what_string)
 
-            if not isinstance(what_text, renpy.text.text.Text):  # @UndefinedVariable
-                raise Exception("The say screen (or show_function) must return a Text object.")
+            if interact or what_string or (what_ctc is not None):
 
-            if what_ctc and ctc_position == "nestled":
-                what_text.set_ctc(what_ctc)
+                if isinstance(what_text, tuple):
+                    what_text = renpy.display.screen.get_widget(what_text[0], what_text[1], what_text[2])
+                    renpy.plog(3, "got text")
 
-            # Update the properties of the what_text widget.
-            what_text.start = start
-            what_text.end = end
-            what_text.slow = slow
-            what_text.slow_done = slow_done
+                if not isinstance(what_text, renpy.text.text.Text):  # @UndefinedVariable
+                    raise Exception("The say screen (or show_function) must return a Text object.")
 
-            what_text.update()
+                if what_ctc and ctc_position == "nestled":
+                    what_text.set_ctc(what_ctc)
+
+                # Update the properties of the what_text widget.
+                what_text.start = start
+                what_text.end = end
+                what_text.slow = slow
+                what_text.slow_done = slow_done
+
+                what_text.update()
+
+                if behavior and afm:
+                    behavior.set_text(what_text)
+
+            else:
+
+                slow = False
+
+                if behavior and afm:
+                    behavior.set_text("")
 
             for c in callback:
                 c("show_done", interact=interact, type=type, **cb_args)
-
-            if behavior and afm:
-                behavior.set_text(what_text)
 
             if not slow:
                 slow_done()
