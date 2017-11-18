@@ -1804,8 +1804,6 @@ def py_eval_bytecode(bytecode, globals=None, locals=None):  # @ReservedAssignmen
 
 
 def py_eval(code, globals=None, locals=None):  # @ReservedAssignment
-    renpy.plog(4, "py_eval {!r}", code)
-
     if isinstance(code, basestring):
         code = py_compile(code, 'eval')
     return py_eval_bytecode(code, globals, locals)
