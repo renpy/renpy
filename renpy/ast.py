@@ -210,6 +210,13 @@ class PyExpr(unicode):
         self.filename = filename
         self.linenumber = linenumber
 
+        # Try to precompile the string.
+        if self:
+            try:
+                renpy.python.py_compile(self, 'eval')
+            except:
+                pass
+
         return self
 
     def __getnewargs__(self):

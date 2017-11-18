@@ -563,6 +563,18 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
         filename = source.filename
         lineno = source.linenumber
 
+    if not ast_node:
+        key = (lineno, filename, source, mode, renpy.script.MAGIC)
+
+        rv = renpy.game.script.bytecode_newcache.get(key, None)
+        if rv is not None:
+            return rv
+
+        rv = renpy.game.script.bytecode_oldcache.get(key, None)
+        if rv is not None:
+            renpy.game.script.bytecode_newcache[key] = None
+            return rv
+
     source = unicode(source)
     source = source.replace("\r", "")
     source = escape_unicode(source)
@@ -587,7 +599,9 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
         if ast_node:
             return tree.body
 
-        return compile(tree, filename, mode, flags, 1)
+        rv = compile(tree, filename, mode, flags, 1)
+        renpy.game.script.bytecode_newcache[key] = rv
+        return rv
 
     except SyntaxError, e:
 
@@ -1449,8 +1463,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                            and data == fwd_data
-                            and (keep_rollback or self.rolled_forward)
+                        and data == fwd_data
+                        and (keep_rollback or self.rolled_forward)
                         ):
                     self.forward.pop(0)
                 else:
@@ -1790,6 +1804,8 @@ def py_eval_bytecode(bytecode, globals=None, locals=None):  # @ReservedAssignmen
 
 
 def py_eval(code, globals=None, locals=None):  # @ReservedAssignment
+    renpy.plog(4, "py_eval {!r}", code)
+
     if isinstance(code, basestring):
         code = py_compile(code, 'eval')
     return py_eval_bytecode(code, globals, locals)

@@ -742,7 +742,7 @@ class OneLinePythonParser(Parser):
     def parse(self, loc, l, parent):
 
         loc = l.get_location()
-        source = l.require(l.rest)
+        source = l.require(l.rest_statement)
 
         l.expect_eol()
         l.expect_noblock("one-line python")

@@ -949,7 +949,13 @@ class Lexer(object):
 
         return rv
 
-    def delimited_python(self, delim):
+    def expr(self, s, expr):
+        if not expr:
+            return s
+
+        return renpy.ast.PyExpr(s, self.filename, self.number)
+
+    def delimited_python(self, delim, expr=True):
         """
         This matches python code up to, but not including, the non-whitespace
         delimiter characters. Returns a string containing the matched code,
@@ -964,7 +970,7 @@ class Lexer(object):
             c = self.text[self.pos]
 
             if c in delim:
-                return renpy.ast.PyExpr(self.text[start:self.pos], self.filename, self.number)
+                return self.expr(self.text[start:self.pos], expr)
 
             if c in "'\"":
                 self.python_string()
@@ -977,18 +983,18 @@ class Lexer(object):
 
         self.error("reached end of line when expecting '%s'." % delim)
 
-    def python_expression(self):
+    def python_expression(self, expr=True):
         """
         Returns a python expression, which is arbitrary python code
         extending to a colon.
         """
 
-        pe = self.delimited_python(':')
+        pe = self.delimited_python(':', False)
 
         if not pe:
             self.error("expected python_expression")
 
-        rv = renpy.ast.PyExpr(pe.strip(), pe.filename, pe.linenumber)  # E1101
+        rv = self.expr(pe.strip(), expr)  # E1101
 
         return rv
 
@@ -1003,19 +1009,19 @@ class Lexer(object):
 
         if c == '(':
             self.pos += 1
-            self.delimited_python(')')
+            self.delimited_python(')', False)
             self.pos += 1
             return True
 
         if c == '[':
             self.pos += 1
-            self.delimited_python(']')
+            self.delimited_python(']', False)
             self.pos += 1
             return True
 
         if c == '{':
             self.pos += 1
-            self.delimited_python('}')
+            self.delimited_python('}', False)
             self.pos += 1
             return True
 
@@ -1154,6 +1160,15 @@ class Lexer(object):
         pos = self.pos
         self.pos = len(self.text)
         return renpy.ast.PyExpr(self.text[pos:].strip(), self.filename, self.number)
+
+    def rest_statement(self):
+        """
+        Like rest, but returns a string rather than a PyExpr.
+        """
+
+        pos = self.pos
+        self.pos = len(self.text)
+        return self.text[pos:].strip()
 
     def python_block(self):
         """
@@ -2020,7 +2035,7 @@ def transform_statement(l, loc):
 
 @statement("$")
 def one_line_python(l, loc):
-    python_code = l.rest()
+    python_code = l.rest_statement()
 
     if not python_code:
         l.error('expected python code')
