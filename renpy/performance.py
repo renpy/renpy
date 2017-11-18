@@ -22,8 +22,9 @@
 # This file manages the frame performance log.
 
 from __future__ import print_function, unicode_literals
-import time
 
+
+import time
 import renpy
 
 # A list of (time, depth, message) tuples.
@@ -54,6 +55,13 @@ def log(depth, event, *args):
         fpl.append((time.time(), depth, event.format(*args)))
     except:
         raise
+
+
+def PPP(event, *args):
+    log(3, event, *args)
+
+
+__builtins__['PPP'] = PPP
 
 
 def analyze():
