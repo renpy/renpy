@@ -159,6 +159,7 @@ cython(
 
 # renpy
 cython("renpy.parsersupport")
+cython("renpy.pydict")
 cython("renpy.style")
 
 # renpy.styledata

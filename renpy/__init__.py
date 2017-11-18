@@ -367,6 +367,7 @@ def import_all():
     import renpy.scriptedit
     import renpy.parser
     import renpy.performance
+    import renpy.pydict
     import renpy.python
     import renpy.script
     import renpy.statements
