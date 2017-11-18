@@ -620,6 +620,7 @@ text = Wrapper(renpy.text.text.Text, style="text", replaces=True)
 hbox = Wrapper(renpy.display.layout.MultiBox, layout="horizontal", style="hbox", many=True)
 vbox = Wrapper(renpy.display.layout.MultiBox, layout="vertical", style="vbox", many=True)
 fixed = Wrapper(renpy.display.layout.MultiBox, layout="fixed", style="fixed", many=True)
+default_fixed = Wrapper(renpy.display.layout.MultiBox, layout="fixed", many=True)
 grid = Wrapper(renpy.display.layout.Grid, style="grid", many=True)
 side = Wrapper(renpy.display.layout.Side, style="side", many=True)
 

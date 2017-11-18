@@ -468,7 +468,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             return None
 
         renpy.ui.detached()
-        hid.child = renpy.ui.fixed(focus="_screen_" + "_".join(self.screen_name))
+        hid.child = renpy.ui.default_fixed(focus="_screen_" + "_".join(self.screen_name))
         hid.children = [ hid.child ]
         renpy.ui.close()
 
@@ -570,7 +570,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         try:
 
             renpy.ui.detached()
-            self.child = renpy.ui.fixed(focus="_screen_" + "_".join(self.screen_name))
+            self.child = renpy.ui.default_fixed(focus="_screen_" + "_".join(self.screen_name))
             self.children = [ self.child ]
 
             self.scope["_scope"] = self.scope

@@ -239,6 +239,9 @@ class DisplayableArguments(renpy.object.Object):
         return rv
 
 
+default_style = renpy.style.Style("default")
+
+
 class Displayable(renpy.object.Object):
     """
     The base class for every object in Ren'Py that can be
@@ -299,7 +302,14 @@ class Displayable(renpy.object.Object):
     _clipping = False
 
     def __init__(self, focus=None, default=False, style='default', _args=None, **properties):
-        self.style = renpy.style.Style(style, properties)  # @UndefinedVariable
+
+        global default_style
+
+        if (style == "default") and (not properties):
+            self.style = default_style
+        else:
+            self.style = renpy.style.Style(style, properties)  # @UndefinedVariable
+
         self.focus_name = focus
         self.default = default
 

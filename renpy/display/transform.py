@@ -550,8 +550,7 @@ class Transform(Container):
     def __init__(self,
                  child=None,
                  function=None,
-
-                 style='transform',
+                 style="default",
                  focus=None,
                  default=False,
                  _args=None,
