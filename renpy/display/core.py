@@ -799,7 +799,7 @@ class SceneLists(renpy.object.Object):
             for i in renpy.config.overlay_layers:
                 self.clear(i)
 
-            self.replace_transient()
+            self.replace_transient(prefix=None)
 
             self.focused = None
 
@@ -816,19 +816,26 @@ class SceneLists(renpy.object.Object):
             self.music = None
             self.focused = None
 
-    def replace_transient(self):
+    def replace_transient(self, prefix="hide"):
         """
         Replaces the contents of the transient display list with
         a copy of the master display list. This is used after a
         scene is displayed to get rid of transitions and interface
         elements.
+
+        `prefix`
+            The prefix/event to use. Set this to None to prevent the hide
+            from happening.
         """
+
+        if renpy.config.zap_transient:
+            prefix = None
 
         for i in renpy.config.transient_layers:
             self.clear(i, True)
 
         for layer, tag in self.additional_transient:
-            self.remove(layer, tag)
+            self.remove(layer, tag, prefix=prefix)
 
         self.additional_transient = [ ]
 
@@ -1039,7 +1046,7 @@ class SceneLists(renpy.object.Object):
         st = oldsle.show_time or now
         at = oldsle.animation_time or now
 
-        if oldsle.tag:
+        if (prefix is not None) and oldsle.tag:
 
             d = oldsle.displayable._hide(now - st, now - at, prefix)
 
@@ -1095,7 +1102,7 @@ class SceneLists(renpy.object.Object):
 
             self.hide_or_replace(layer, i, "hide")
 
-    def remove(self, layer, thing):
+    def remove(self, layer, thing, prefix="hide"):
         """
         Thing is either a key or a displayable. This iterates through the
         named layer, searching for entries matching the thing.
@@ -1117,7 +1124,7 @@ class SceneLists(renpy.object.Object):
                 self.shown.predict_hide(layer, (tag,))
                 self.at_list[layer].pop(tag, None)
 
-            self.hide_or_replace(layer, remove_index, "hide")
+            self.hide_or_replace(layer, remove_index, prefix)
 
     def clear(self, layer, hide=False):
         """
@@ -2832,8 +2839,6 @@ class Interface(object):
 
         del add_layer
 
-        renpy.plog(1, "made layers")
-
         prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
         prediction_coroutine.send(None)
 
@@ -3102,10 +3107,10 @@ class Interface(object):
 
                 if needs_redraw or self.mouse_move or renpy.display.video.playing():
                     ev = self.event_poll()
+                    renpy.plog(1, "post peek {!r}", ev)
                 else:
                     ev = self.event_wait()
-
-                renpy.plog(1, "post peek {!r}", ev)
+                    renpy.plog(1, "post wait {!r}", ev)
 
                 # Recognize and ignore AltGr on Windows.
                 if ev.type == pygame.KEYDOWN:

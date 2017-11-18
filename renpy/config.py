@@ -830,6 +830,9 @@ profile_time = 1.0 / 100.0
 # What event do we check to see if the profile needs to be printed?
 profile_to_event = "flip"
 
+# Should we instantly zap transient displayables, or properly hide them?
+zap_transient = True
+
 del os
 del collections
 
