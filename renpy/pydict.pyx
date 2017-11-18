@@ -177,34 +177,3 @@ def find_changes(DictItems old, DictItems new, object deleted):
             op += 1
 
     return rv
-#
-# import random
-# import time
-# import gc
-# gc.disable()
-#
-# d = { }
-#
-# for i in range(600):
-#     d[random.random()] = random.random()
-#
-# N = 50000
-#
-# def test():
-#
-#     start = time.time()
-#
-#     for i in xrange(N):
-#         DictItems(d)
-#
-#     dur = time.time() - start
-#
-#     print(1000000.0 * dur / N)
-#
-# for i in range(2, 15):
-#     print(i)
-#     ss_cutin = i
-#     test()
-#
-# import sys
-# sys.exit(0)

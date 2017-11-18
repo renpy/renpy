@@ -137,20 +137,6 @@ class StoreDict(dict):
 
         rv = find_changes(old, new, deleted)
 
-#         rv = { }
-#
-#         for k in self:
-#             if k not in self.old:
-#                 rv[k] = deleted
-#
-#         for k, v in self.old.iteritems():
-#
-#             new_v = self.get(k, deleted)
-#
-#             if new_v is not v:
-#                 rv[k] = v
-#
-
         if rv is None:
             return EMPTY_DICT
 
