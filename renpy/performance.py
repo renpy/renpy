@@ -45,12 +45,15 @@ def clear():
     running = True
 
 
-def log(depth, event):
+def log(depth, event, *args):
 
-    if not running:
+    if (not renpy.config.profile) or (not running):
         return
 
-    fpl.append((time.time(), depth, event))
+    try:
+        fpl.append((time.time(), depth, event.format(*args)))
+    except:
+        raise
 
 
 def analyze():

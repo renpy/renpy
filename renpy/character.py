@@ -538,6 +538,11 @@ def display_say(
 
         exception = e
 
+        import traceback
+        print("---")
+        traceback.print_stack()
+        print("---")
+
     # Do the checkpoint and with None.
     if interact:
 
@@ -554,8 +559,12 @@ def display_say(
         if with_none is None:
             with_none = renpy.config.implicit_with_none
 
+        renpy.plog(1, "before with none")
+
         if with_none:
             renpy.game.interface.do_with(None, None)
+
+        renpy.plog(1, "after with none")
 
     for c in callback:
         c("end", interact=interact, type=type, **cb_args)

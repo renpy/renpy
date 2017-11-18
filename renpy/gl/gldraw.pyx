@@ -754,8 +754,7 @@ cdef class GLDraw:
         Draws the screen.
         """
 
-        if renpy.config.profile:
-            renpy.performance.log(1, "start draw_screen")
+        renpy.plog(1, "start draw_screen")
 
         if renpy.config.use_drawable_resolution:
             reverse = self.virt_to_draw
@@ -802,9 +801,7 @@ cdef class GLDraw:
 
             start = time.time()
 
-
-            if renpy.config.profile:
-                renpy.performance.log(1, "flip")
+            renpy.plog(1, "flip")
 
             if EGL:
                 egl_swap()
@@ -828,8 +825,7 @@ cdef class GLDraw:
                     if (frame_times[-1] - frame_times[0] < .06 * 10) and (sum(flip_times) / len(flip_times) < .001):
                         time.sleep(1.0 / 120.0)
 
-                        if renpy.config.profile:
-                            renpy.performance.log(1, "after broken vsync sleep")
+                        renpy.plog(1, "after broken vsync sleep")
 
 
         gltexture.cleanup()

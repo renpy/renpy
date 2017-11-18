@@ -2534,8 +2534,7 @@ class Interface(object):
         keyword arguments are passed off to interact_core.
         """
 
-        if renpy.config.profile:
-            renpy.performance.log(1, "start of new interaction")
+        renpy.plog(1, "start of new interaction")
 
         if not self.started:
             self.start()
@@ -2616,8 +2615,7 @@ class Interface(object):
         @param suppress_underlay: This suppresses the display of the underlay.
         """
 
-        if renpy.config.profile:
-            renpy.performance.log(1, "start interact_core")
+        renpy.plog(1, "start interact_core")
 
         suppress_overlay = suppress_overlay or renpy.store.suppress_overlay
 
@@ -2741,12 +2739,16 @@ class Interface(object):
         scene = self.compute_scene(scene_lists)
         renpy.display.tts.set_root(scene[None])
 
+        renpy.plog(1, "computed scene")
+
         # If necessary, load all images here.
         for w in scene.itervalues():
             try:
                 renpy.display.predict.displayable(w)
             except:
                 pass
+
+        renpy.plog(1, "final predict")
 
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.MultiBox(layout='fixed')
@@ -2830,6 +2832,8 @@ class Interface(object):
 
         del add_layer
 
+        renpy.plog(1, "made layers")
+
         prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
         prediction_coroutine.send(None)
 
@@ -2895,8 +2899,7 @@ class Interface(object):
 
             while rv is None:
 
-                if renpy.config.profile:
-                    renpy.performance.log(1, "start of interact while loop")
+                renpy.plog(1, "start of interact while loop")
 
                 renpy.execution.not_infinite_loop(10)
 
@@ -2952,10 +2955,10 @@ class Interface(object):
                     # If profiling is enabled, report the profile time.
                     if renpy.config.profile or self.profile_once:
 
-                        renpy.performance.log(0, "end frame")
+                        renpy.plog(0, "end frame")
                         renpy.performance.analyze()
                         renpy.performance.clear()
-                        renpy.performance.log(0, "start frame")
+                        renpy.plog(0, "start frame")
 
                         self.profile_once = False
 
@@ -3102,8 +3105,7 @@ class Interface(object):
                 else:
                     ev = self.event_wait()
 
-                if renpy.config.profile:
-                    renpy.performance.log(1, "post peek")
+                renpy.plog(1, "post peek {!r}", ev)
 
                 # Recognize and ignore AltGr on Windows.
                 if ev.type == pygame.KEYDOWN:
@@ -3353,8 +3355,7 @@ class Interface(object):
             # redraw if needed.
             self.restart_interaction = True
 
-            if renpy.config.profile:
-                renpy.performance.log(1, "end interact_core")
+            renpy.plog(1, "end interact_core")
 
             # print "It took", frames, "frames."
 

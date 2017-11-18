@@ -187,8 +187,7 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     else:
         wh = orig_wh
 
-    if renpy.config.profile:
-        renpy.performance.log(2, "start render {!r}".format(d))
+    renpy.plog(2, "start render {!r}", d)
 
     try:
         rendering += 1
@@ -209,10 +208,10 @@ cpdef render(d, object widtho, object heighto, double st, double at):
 
 
     if d._clipping:
-        renpy.performance.log(4, "before clipping")
+        renpy.plog(4, "before clipping")
         rv = rv.subsurface((0, 0, rv.width, rv.height), focus=True)
         rv.render_of.append(d)
-        renpy.performance.log(4, "after clipping")
+        renpy.plog(4, "after clipping")
 
 
     render_cache_d[wh] = rv
@@ -220,8 +219,7 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     if wh is not orig_wh:
         render_cache_d[orig_wh] = rv
 
-    if renpy.config.profile:
-        renpy.performance.log(2, "end render {!r}".format(d))
+    renpy.plog(2, "end render {!r}", d)
 
     return rv
 

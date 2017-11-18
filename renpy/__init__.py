@@ -319,6 +319,12 @@ def update_path(package):
     libexec = os.path.dirname(encodings.__path__[0])
     package.__path__.append(os.path.join(libexec, *name))
 
+# Replaced below.
+
+
+def plog(level, even, *args):
+    return
+
 
 def import_all():
 
@@ -364,6 +370,9 @@ def import_all():
     import renpy.python
     import renpy.script
     import renpy.statements
+
+    global plog
+    plog = renpy.performance.log
 
     import renpy.styledata  # @UnresolvedImport
     update_path(renpy.styledata)

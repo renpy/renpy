@@ -439,8 +439,7 @@ class Context(renpy.object.Object):
 
         while node:
 
-            if renpy.config.profile:
-                renpy.performance.log(1, "start {!r} ({}:{})".format(node, node.filename, node.linenumber))
+            renpy.plog(1, "start {!r} ({}:{})", node, node.filename, node.linenumber)
 
             self.current = node.name
             self.last_abnormal = self.abnormal
@@ -501,6 +500,8 @@ class Context(renpy.object.Object):
                         raise ce
                     except Exception as ce:
                         raise exc_info[0], exc_info[1], exc_info[2]
+
+                renpy.plog(1, "end {!r} ({}:{})", node, node.filename, node.linenumber)
 
                 node = self.next_node
 
