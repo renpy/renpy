@@ -93,6 +93,10 @@ class LogFile(object):
 
         try:
             base = os.environ.get("RENPY_LOG_BASE", renpy.config.logdir or renpy.config.basedir)
+
+            if base is None:
+                return False
+
             fn = os.path.join(base, self.name + ".txt")
 
             altfn = os.path.join(tempfile.gettempdir(), "renpy-" + self.name + ".txt")
