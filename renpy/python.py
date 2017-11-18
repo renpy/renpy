@@ -83,6 +83,11 @@ def get_store_module(name):
     return sys.modules[name]
 
 
+from renpy.pydict import DictItems, find_changes
+
+ED = { }
+
+
 class StoreDict(dict):
     """
     This class represents the dictionary of a store module. It logs
@@ -127,18 +132,27 @@ class StoreDict(dict):
         As a side-effect, updates self.ever_been_changed.
         """
 
-        rv = { }
+        old = DictItems(self.old)
+        new = DictItems(self)
 
-        for k in self:
-            if k not in self.old:
-                rv[k] = deleted
+        rv = find_changes(old, new, deleted)
 
-        for k, v in self.old.iteritems():
+#         rv = { }
+#
+#         for k in self:
+#             if k not in self.old:
+#                 rv[k] = deleted
+#
+#         for k, v in self.old.iteritems():
+#
+#             new_v = self.get(k, deleted)
+#
+#             if new_v is not v:
+#                 rv[k] = v
+#
 
-            new_v = self.get(k, deleted)
-
-            if new_v is not v:
-                rv[k] = v
+        if rv is None:
+            return ED
 
         for k in rv:
             self.ever_been_changed.add(k)
