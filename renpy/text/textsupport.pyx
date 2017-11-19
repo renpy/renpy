@@ -23,7 +23,7 @@ include "linebreak.pxi"
 
 cdef class Glyph:
 
-    def __init__(self):
+    def __cinit__(self):
         self.delta_x_offset = 0
 
     def __repr__(self):

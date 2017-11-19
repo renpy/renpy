@@ -485,7 +485,7 @@ cdef class FTFont:
 
             cache = self.get_glyph(index)
 
-            gl = Glyph()
+            gl = Glyph.__new__(Glyph)
 
             gl.character = c
             gl.ascent = self.ascent
