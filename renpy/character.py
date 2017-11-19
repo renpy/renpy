@@ -851,6 +851,10 @@ class ADVCharacter(object):
         return "<Character: {!r}>".format(self.name)
 
     def empty_window(self):
+        if config.fast_empty_window and (self.name is None) and not (self.what_prefix or self.what_suffix):
+            self.do_show(None, "")
+            return
+
         self("", interact=False, _call_done=False)
 
     def __call__(self, what, interact=True, _call_done=True, **kwargs):

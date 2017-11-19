@@ -833,6 +833,9 @@ profile_to_event = "flip"
 # Should we instantly zap transient displayables, or properly hide them?
 zap_transient = True
 
+# Should a fast path be used when displaying empty windows.
+fast_empty_window = True
+
 del os
 del collections
 
