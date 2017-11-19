@@ -704,10 +704,10 @@ class CompressedList(object):
             old_end += 1
 
         # Now that we have this, we can put together the object.
-        self.pre = old[0:old_start]
+        self.pre = list.__getslice__(old, 0, old_start)
         self.start = new_start
         self.end = new_end
-        self.post = old[old_end:]
+        self.post = list.__getslice__(old, old_end, len_old)
 
     def decompress(self, new):
         return self.pre + new[self.start:self.end] + self.post
