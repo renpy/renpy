@@ -263,6 +263,14 @@ Tags that apply to all text are:
        "{k=-.5}Negative{/k} Normal {k=.5}Positive{/k}"
 
 
+.. text-tag:: outlinecolor
+
+    The outline text tag changes all the outlines (including drop
+    shadows) to the given color. The color should be in #rgb, #rgba,
+    #rrggbb, or #rrggbbaa format. ::
+
+        "Let's have a {color=#00ff00}Green{/color} outline."
+
 .. text-tag:: plain
 
    The plain tag ensures the text does not have, bold, italics, underline,

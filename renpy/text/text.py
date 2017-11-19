@@ -183,6 +183,7 @@ class TextSegment(object):
             self.ruby_top = source.ruby_top
             self.ruby_bottom = source.ruby_bottom
             self.hinting = source.hinting
+            self.outline_color = source.outline_color
 
         else:
             self.hyperlink = 0
@@ -220,6 +221,7 @@ class TextSegment(object):
         self.black_color = style.black_color
         self.hyperlink = None
         self.kerning = layout.scale(style.kerning)
+        self.outline_color = None
 
         if style.slow_cps is True:
             self.cps = renpy.game.preferences.text_cps
@@ -257,7 +259,7 @@ class TextSegment(object):
         """
 
         if di.override_color:
-            color = di.override_color
+            color = self.outline_color or di.override_color
             black_color = None
         else:
             color = self.color
@@ -1002,6 +1004,9 @@ class Layout(object):
 
             elif tag == "color":
                 push().color = renpy.easy.color(value)
+
+            elif tag == "outlinecolor":
+                push().outline_color = renpy.easy.color(value)
 
             elif tag == "alpha":
                 ts = push()

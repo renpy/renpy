@@ -44,6 +44,7 @@ text_tags = dict(
     plain=True,
     font=True,
     color=True,
+    outlinecolor=True,
     size=True,
     nw=False,
     s=True,
