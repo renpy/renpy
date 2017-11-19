@@ -51,14 +51,19 @@ def log(depth, event, *args):
     if (not renpy.config.profile) or (not running):
         return
 
-    try:
-        fpl.append((time.time(), depth, event.format(*args)))
-    except:
-        raise
+    fpl.append((time.time(), depth, event, args))
 
 
 def PPP(event, *args):
-    log(3, event, *args)
+
+    if type(event) == int:
+        level = event
+        event = args[0]
+        args = args[1:]
+
+    level = 3
+
+    log(level, event, *args)
 
 
 __builtins__['PPP'] = PPP
@@ -77,7 +82,7 @@ def analyze():
 
     start = fpl[0][0]
 
-    for t, _, event in fpl:
+    for t, _, event, _ in fpl:
         if event == renpy.config.profile_to_event:
             end = t
             break
@@ -91,7 +96,7 @@ def analyze():
 
     times = [ fpl[0][0] ] * DEPTH_LEVELS
 
-    for t, depth, event in fpl:
+    for t, depth, event, args in fpl:
         dt = [ (1000000 * (t - it)) if i <= depth else 0 for i, it in enumerate(times) ]
 
         print("{: 7.0f} {: 7.0f} {: 7.0f} {: 7.0f} {}".format(
@@ -99,7 +104,7 @@ def analyze():
             dt[1],
             dt[2],
             dt[3],
-            event,
+            event.format(*args),
             ))
 
         for i in range(depth, DEPTH_LEVELS):

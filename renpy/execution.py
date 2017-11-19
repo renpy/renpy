@@ -439,7 +439,10 @@ class Context(renpy.object.Object):
 
         while node:
 
-            renpy.plog(1, "start {!r} ({}:{})", node, node.filename, node.linenumber)
+            this_node = node
+            type_node_name = type(node).__name__
+
+            renpy.plog(1, "--- start {} ({}:{})", type_node_name, node.filename, node.linenumber)
 
             self.current = node.name
             self.last_abnormal = self.abnormal
@@ -474,9 +477,11 @@ class Context(renpy.object.Object):
 
                     self.next_node = None
 
-                    renpy.plog(1, "before execute {!r} ({}:{})", node, node.filename, node.linenumber)
+                    renpy.plog(2, "    before execute {} ({}:{})", type_node_name, node.filename, node.linenumber)
 
                     node.execute()
+
+                    renpy.plog(2, "    after execute {} ({}:{})", type_node_name, node.filename, node.linenumber)
 
                     if developer and self.next_node:
                         self.check_stacks()
@@ -504,8 +509,6 @@ class Context(renpy.object.Object):
                     except Exception as ce:
                         raise exc_info[0], exc_info[1], exc_info[2]
 
-                renpy.plog(1, "end {!r} ({}:{})", node, node.filename, node.linenumber)
-
                 node = self.next_node
 
             except renpy.game.JumpException as e:
@@ -532,6 +535,8 @@ class Context(renpy.object.Object):
 
             if self.rollback and renpy.game.log:
                 renpy.game.log.complete()
+
+            renpy.plog(2, "    end {} ({}:{})", type_node_name, this_node.filename, this_node.linenumber)
 
     def mark_seen(self):
         """
