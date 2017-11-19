@@ -491,6 +491,9 @@ def say_menu_with(expression, callback):
         callback(what)
 
 
+fast_who_pattern = re.compile(r'[a-zA-Z_][a-zA-Z_0-9]*$')
+
+
 def eval_who(who, fast=None):
     """
     Evaluates the `who` parameter to a say statement.
@@ -500,7 +503,7 @@ def eval_who(who, fast=None):
         return None
 
     if fast is None:
-        fast = bool(re.match(renpy.parser.word_regexp + "$", who))
+        fast = bool(fast_who_pattern.match(who))
 
     if fast:
 

@@ -2136,6 +2136,8 @@ class Interface(object):
             old_history = renpy.store._history  # @UndefinedVariable
             renpy.store._history = False
 
+            PPP("empty window")
+
             try:
                 renpy.config.empty_window()
             finally:
@@ -2161,6 +2163,8 @@ class Interface(object):
         Implements the with None command, which sets the scene we will
         be transitioning from.
         """
+
+        PPP("start of with none")
 
         renpy.game.context().say_attributes = None
 
