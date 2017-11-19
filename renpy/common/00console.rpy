@@ -176,7 +176,7 @@ init -1500 python in _console:
     HistoryEntry = ConsoleHistoryEntry
 
 
-    stdio_lines = [ ]
+    stdio_lines = _list()
 
     def stdout_line(l):
         if not config.developer:
@@ -364,7 +364,7 @@ init -1500 python in _console:
             if old_entry is not None:
                 old_entry.update_lines()
 
-            stdio_lines[:] = [ ]
+            stdio_lines[:] = _list()
 
         def can_renpy(self):
             """
