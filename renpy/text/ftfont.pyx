@@ -633,82 +633,82 @@ cdef class FTFont:
             index = FT_Get_Char_Index(face, <Py_UNICODE> glyph.character)
             cache = self.get_glyph(index)
 
-            with nogil:
+            # with nogil used to be here, but it slowed things down.
 
-                bmx = <int> (x + .5) + cache.bitmap_left
-                bmy = y - cache.bitmap_top
+            bmx = <int> (x + .5) + cache.bitmap_left
+            bmy = y - cache.bitmap_top
 
-                if bmx < 0:
-                    pxstart = -bmx
-                    bmx = 0
-                else:
-                    pxstart = 0
+            if bmx < 0:
+                pxstart = -bmx
+                bmx = 0
+            else:
+                pxstart = 0
 
-                rows = min(cache.bitmap.rows, surf.h - bmy)
-                width = min(cache.bitmap.width, surf.w - bmx)
+            rows = min(cache.bitmap.rows, surf.h - bmy)
+            width = min(cache.bitmap.width, surf.w - bmx)
 
-                underline_end = min(underline_end, surf.w - 1)
+            underline_end = min(underline_end, surf.w - 1)
 
-                for py from 0 <= py < rows:
+            for py from 0 <= py < rows:
 
-                    if bmy < 0:
-                        bmy += 1
-                        continue
-
-                    line = pixels + bmy * pitch + bmx * 4
-                    gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
-
-                    for px from 0 <= px < width:
-
-                        alpha = gline[0]
-
-                        # Modulate Sa by the glyph's alpha.
-
-                        alpha = (alpha * Sa + Sa) >> 8
-
-                        # Only draw if we increase the alpha - a cheap way to
-                        # allow overlapping characters.
-                        if line[3] < alpha:
-
-                            line[0] = Sr
-                            line[1] = Sg
-                            line[2] = Sb
-                            line[3] = alpha
-
-                        gline += 1
-                        line += 4
-
+                if bmy < 0:
                     bmy += 1
+                    continue
+
+                line = pixels + bmy * pitch + bmx * 4
+                gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
+
+                for px from 0 <= px < width:
+
+                    alpha = gline[0]
+
+                    # Modulate Sa by the glyph's alpha.
+
+                    alpha = (alpha * Sa + Sa) >> 8
+
+                    # Only draw if we increase the alpha - a cheap way to
+                    # allow overlapping characters.
+                    if line[3] < alpha:
+
+                        line[0] = Sr
+                        line[1] = Sg
+                        line[2] = Sb
+                        line[3] = alpha
+
+                    gline += 1
+                    line += 4
+
+                bmy += 1
 
 
-                # Underlining.
-                if underline:
+            # Underlining.
+            if underline:
 
-                    ly = y - self.underline_offset - 1
-                    lh = self.underline_height * underline
+                ly = y - self.underline_offset - 1
+                lh = self.underline_height * underline
 
-                    for py from ly <= py < min(ly + lh, surf.h):
-                        for px from underline_x <= px < underline_end:
-                            line = pixels + py * pitch + px * 4
+                for py from ly <= py < min(ly + lh, surf.h):
+                    for px from underline_x <= px < underline_end:
+                        line = pixels + py * pitch + px * 4
 
-                            line[0] = Sr
-                            line[1] = Sg
-                            line[2] = Sb
-                            line[3] = Sa
+                        line[0] = Sr
+                        line[1] = Sg
+                        line[2] = Sb
+                        line[3] = Sa
 
-                # Strikethrough.
-                if strikethrough:
-                    ly = y - self.ascent + self.height / 2
-                    lh = self.height / 10
-                    if lh < 1:
-                        lh = 1
+            # Strikethrough.
+            if strikethrough:
+                ly = y - self.ascent + self.height / 2
+                lh = self.height / 10
+                if lh < 1:
+                    lh = 1
 
-                    for py from ly <= py < (ly + lh):
-                        for px from underline_x <= px < underline_end:
-                            line = pixels + py * pitch + px * 4
+                for py from ly <= py < (ly + lh):
+                    for px from underline_x <= px < underline_end:
+                        line = pixels + py * pitch + px * 4
 
-                            line[0] = Sr
-                            line[1] = Sg
-                            line[2] = Sb
-                            line[3] = Sa
+                        line[0] = Sr
+                        line[1] = Sg
+                        line[2] = Sb
+                        line[3] = Sa
 
