@@ -473,6 +473,9 @@ class Context(renpy.object.Object):
                     renpy.game.exception_info = "While running game code:"
 
                     self.next_node = None
+
+                    renpy.plog(1, "before execute {!r} ({}:{})", node, node.filename, node.linenumber)
+
                     node.execute()
 
                     if developer and self.next_node:
