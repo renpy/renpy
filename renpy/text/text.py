@@ -547,7 +547,11 @@ class Layout(object):
         #
         # This takes information from the various styles that apply to the text,
         # and so needs to be redone when the style of the text changes.
-        self.paragraphs = self.segment(text.tokens, style, renders, text)
+
+        if splits_from:
+            self.paragraphs = splits_from.paragraphs
+        else:
+            self.paragraphs = self.segment(text.tokens, style, renders, text)
 
         first_indent = self.scale_int(style.first_indent)
         rest_indent = self.scale_int(style.rest_indent)
