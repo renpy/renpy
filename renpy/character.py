@@ -851,7 +851,7 @@ class ADVCharacter(object):
         return "<Character: {!r}>".format(self.name)
 
     def empty_window(self):
-        if config.fast_empty_window and (self.name is None) and not (self.what_prefix or self.what_suffix):
+        if renpy.config.fast_empty_window and (self.name is None) and not (self.what_prefix or self.what_suffix):
             self.do_show(None, "")
             return
 
