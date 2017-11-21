@@ -500,7 +500,6 @@ def display_say(
 
                 if isinstance(what_text, tuple):
                     what_text = renpy.display.screen.get_widget(what_text[0], what_text[1], what_text[2])
-                    renpy.plog(3, "got text")
 
                 if not isinstance(what_text, renpy.text.text.Text):  # @UndefinedVariable
                     raise Exception("The say screen (or show_function) must return a Text object.")
