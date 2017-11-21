@@ -112,6 +112,7 @@ init 1500 python hide:
     error = _preferences.check()
 
     if error:
+        renpy.persistent.save()
         raise Exception(error)
 
 init -1500 python:
