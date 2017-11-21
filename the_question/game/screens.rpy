@@ -550,44 +550,44 @@ screen about():
 
             hbox:
                 spacing 15
-                text "Updated Character Art" style "about_small"
-                text "Deji"
+                text _("Updated Character Art") style "about_small"
+                text _("Deji")
 
             hbox:
                 spacing 15
-                text "Original Character Art" style "about_small"
-                text "Derik"
+                text _("Original Character Art") style "about_small"
+                text _("Derik")
 
             null height 15
 
             hbox:
                 spacing 15
-                text "Updated Background Art" style "about_small"
-                text "Mugenjohncel"
+                text _("Updated Background Art") style "about_small"
+                text _("Mugenjohncel")
 
             hbox:
                 spacing 15
-                text "Original Background Art" style "about_small"
-                text "DaFool"
+                text _("Original Background Art") style "about_small"
+                text _("DaFool")
 
             null height 15
 
             hbox:
                 spacing 15
-                text "Music By" style "about_small"
-                text "Alessio"
+                text _("Music By") style "about_small"
+                text _("Alessio")
 
             null height 15
 
             hbox:
                 spacing 15
-                text "Update Written By" style "about_small"
-                text "Lore"
+                text _("Update Written By") style "about_small"
+                text _("Lore")
 
             hbox:
                 spacing 15
-                text "Originally Written By " style "about_small"
-                text "mikey (ATP Projects)"
+                text _("Originally Written By ") style "about_small"
+                text _("mikey (ATP Projects)")
 
 
             text _("\nMade with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only]")
@@ -789,8 +789,23 @@ screen preferences():
                     textbutton _("After Choices") action Preference("after choices", "toggle")
                     textbutton _("Transitions") action InvertSelected(Preference("transitions", "toggle"))
 
+#                vbox:
+#                    style_prefix "check"
+#                    label _("Examples")
+#                    textbutton _("Translations") action ToggleField(persistent, "show_translation_marker")
+
+#begin language_picker
                 ## Additional vboxes of type "radio_pref" or "check_pref" can be
                 ## added here, to add additional creator-defined preferences.
+
+                vbox:
+                    style_prefix "radio"
+                    label _("Language")
+
+                    textbutton "English" text_font "DejaVuSans.ttf"action Language(None)
+                    textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
+
+#end language_picker
 
             null height (4 * gui.pref_spacing)
 
