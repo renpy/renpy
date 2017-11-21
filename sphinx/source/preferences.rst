@@ -40,7 +40,7 @@ can then change it again.)
     the equivalend of the "rollback side" preference when on a desktop
     platform.
 
-.. var:: preferences.desktop_rollback_side = "mobile"
+.. var:: preferences.desktop_rollback_side = "disable"
 
     When on a desktop platform, touches or clicks to this side of the window
     cause rollback to occur. One of "left", "right", or "disable". This is
@@ -57,6 +57,27 @@ can then change it again.)
 
     This is True when Ren'Py is in fullscreen mode, and False when it
     is running in a window. The equivalent of the "display" preference.
+
+.. var:: preferences.gl_framerate = None
+
+    This is either an integer, or None. If not None, it's a target framerate
+    that Ren'Py will attempt to achieve. If this is set low (for example, to
+    30), on a monitor with a high framerate (say, 60 frames per second),
+    Ren'Py will only draw on every other frame.
+
+    If None, Ren'Py will attempt to draw at the monitor's full framerate.
+
+.. var:: preferences.gl_powersave = "auto"
+
+    This determines how often Ren'Py will redraw an unchanging screen. If True,
+    Ren'Py will only draw the screen 5 times a second. If False, it will always
+    draw at the full framerate possible. If "auto", it will draw at full speed
+    when the device is powered, and 5hz when it is running on battery.
+
+.. var:: preferences.gl_tearing = False
+
+    This determines if tearing (True) or frameskip (False) is the preferred
+    behavior when the game can't keep up with its intended framerate.
 
 .. var:: preferences.mouse_move = False
 
