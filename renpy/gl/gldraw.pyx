@@ -224,8 +224,9 @@ cdef class GLDraw:
 
         window_args = { }
 
+        info = renpy.display.get_info()
+
         if not renpy.mobile:
-            info = renpy.display.get_info()
 
             visible_w = info.current_w
             visible_h = info.current_h
@@ -258,7 +259,22 @@ cdef class GLDraw:
         pheight = max(pheight, 256)
 
         # Handle swap control.
-        vsync = int(os.environ.get("RENPY_GL_VSYNC", "1"))
+        target_framerate = renpy.game.preferences.gl_framerate
+
+        if target_framerate is None:
+            sync_frames = 1
+        else:
+            sync_frames = int(round(1.0 * info.refresh_rate) / target_framerate)
+            if sync_frames < 1:
+                sync_frames = 1
+
+        if renpy.game.preferences.gl_tearing:
+            sync_frames = -sync_frames
+
+
+        vsync = int(os.environ.get("RENPY_GL_VSYNC", sync_frames))
+        renpy.display.log.write("swap interval: %r frames", vsync)
+
 
         if ANGLE:
             opengl = 0

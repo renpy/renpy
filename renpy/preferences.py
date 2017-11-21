@@ -147,8 +147,11 @@ Preference("gl_npot", True)
 # Should we try to save power by limiting how often we draw frames?
 Preference("gl_powersave", "auto", (basestring, bool))
 
-# The max for the framerate.
-Preference("gl_framerate_max", "vsync", (int, basestring))
+# The target framerate, used to set the swap interval.
+Preference("gl_framerate", None, (int, type(None)))
+
+# Do we allow tearing?
+Preference("gl_tearing", False)
 
 
 class Preferences(renpy.object.Object):
