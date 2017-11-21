@@ -649,7 +649,18 @@ cdef class GLDraw:
         needs to be immediately redrawn.
         """
 
-        return not renpy.config.fast_redraw_frames
+        powersave = renpy.game.preferences.gl_powersave
+
+        if powersave == "auto":
+            if renpy.exports.get_on_battery():
+                powersave = True
+            else:
+                powersave = False
+
+        if not powersave:
+            return False
+
+        return not self.fast_redraw_frames
 
     def should_redraw(self, needs_redraw, first_pass):
         """

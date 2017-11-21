@@ -144,6 +144,12 @@ Preference("desktop_rollback_side", "disable")
 # Should OpenGL do npot?
 Preference("gl_npot", True)
 
+# Should we try to save power by limiting how often we draw frames?
+Preference("gl_powersave", "auto", (basestring, bool))
+
+# The max for the framerate.
+Preference("gl_framerate_max", "vsync", (int, basestring))
+
 
 class Preferences(renpy.object.Object):
     """

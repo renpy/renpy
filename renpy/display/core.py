@@ -3032,11 +3032,7 @@ class Interface(object):
                 if renpy.display.render.process_redraws():
                     needs_redraw = True
 
-                if self.maximum_framerate_time > get_time():
-                    needs_redraw = True
-
-#                 if not renpy.exports.get_on_battery():
-#                     print("HIGH FRAMERATE")
+#                 if self.maximum_framerate_time > get_time():
 #                     needs_redraw = True
 
                 # How many seconds until we timeout.
@@ -3047,6 +3043,7 @@ class Interface(object):
 
                 # We only need to set the REDRAW timer if we can block.
                 can_block = renpy.display.draw.can_block()
+                # print(can_block)
 
                 if (redraw_time is not None) and (not needs_redraw) and can_block:
                     if redraw_time != old_redraw_time:
@@ -3117,12 +3114,7 @@ class Interface(object):
 
                 renpy.persistent.check_update()
 
-                # Set this down here so expensive prediction does get triggered once
-                # in a while.
-                if not can_block:
-                    needs_redraw = True
-
-                if needs_redraw or self.mouse_move or renpy.display.video.playing():
+                if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
                     renpy.plog(1, "pre peek")
                     ev = self.event_poll()
                     renpy.plog(1, "post peek {!r}", ev)
