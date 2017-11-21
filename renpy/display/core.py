@@ -3032,9 +3032,6 @@ class Interface(object):
                 if renpy.display.render.process_redraws():
                     needs_redraw = True
 
-#                 if self.maximum_framerate_time > get_time():
-#                     needs_redraw = True
-
                 # How many seconds until we timeout.
                 _timeout_in = 3600
 
@@ -3043,7 +3040,9 @@ class Interface(object):
 
                 # We only need to set the REDRAW timer if we can block.
                 can_block = renpy.display.draw.can_block()
-                # print(can_block)
+
+                if self.maximum_framerate_time > get_time():
+                    can_block = False
 
                 if (redraw_time is not None) and (not needs_redraw) and can_block:
                     if redraw_time != old_redraw_time:
