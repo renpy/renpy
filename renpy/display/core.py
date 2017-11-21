@@ -2613,6 +2613,9 @@ class Interface(object):
             renpy.game.context().mark_seen()
             renpy.game.context().scene_lists.shown_window = False
 
+            if renpy.game.log is not None:
+                renpy.game.log.did_interaction = True
+
     def interact_core(self,
                       show_mouse=True,
                       trans_pause=False,

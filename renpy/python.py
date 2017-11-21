@@ -1235,6 +1235,10 @@ class RollbackLog(renpy.object.Object):
         # on load.
         self.retain_after_load_flag = False
 
+        # Has there been an interaction since the last time this log was
+        # reset?
+        self.did_interaction = True
+
     def after_setstate(self):
         self.mutated = { }
         self.rolled_forward = False
@@ -1261,7 +1265,7 @@ class RollbackLog(renpy.object.Object):
 
                 self.rollback_limit = nrbl
 
-    def begin(self):
+    def begin(self, force=False):
         """
         Called before a node begins executing, to indicate that the
         state needs to be saved for rollbacking.
@@ -1274,11 +1278,15 @@ class RollbackLog(renpy.object.Object):
         if not context.rollback:
             return
 
-        # If the transient scene list is not empty, then we do
-        # not begin a new rollback, as the TSL will be purged
-        # after a rollback is complete.
-        if not context.scene_lists.transient_is_empty():
+        # We only begin a checkpoint if the previous statement reached a checkpoint,
+        # or an interaction took place. (Or we're forced.)
+        if (not force) and (self.current and not self.current.checkpoint) and (not self.did_interaction):
             return
+
+        self.did_interaction = False
+
+        if self.current is not None:
+            self.complete()
 
         # If the log is too long, prune it.
         if len(self.log) > renpy.config.rollback_length:
@@ -1463,8 +1471,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                        and data == fwd_data
-                        and (keep_rollback or self.rolled_forward)
+                            and data == fwd_data
+                            and (keep_rollback or self.rolled_forward)
                         ):
                     self.forward.pop(0)
                 else:

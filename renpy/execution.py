@@ -455,12 +455,24 @@ class Context(renpy.object.Object):
                 if ll_entry not in self.line_log:
                     self.line_log.append(ll_entry)
 
-            if self.rollback and renpy.game.log:
-                renpy.game.log.begin()
+            if self.force_checkpoint or (node.rollback == "force"):
+                update_rollback = True
+                force_rollback = True
+            elif not renpy.config.all_nodes_rollback and (node.rollback == "never"):
+                update_rollback = False
+                force_rollback = False
+            else:
+                update_rollback = True
+                force_rollback = False
 
-            if self.force_checkpoint:
-                renpy.game.log.checkpoint(hard=False)
-                self.force_checkpoint = False
+            if update_rollback:
+
+                if self.rollback and renpy.game.log:
+                    renpy.game.log.begin(force=force_rollback)
+
+                if self.force_checkpoint:
+                    renpy.game.log.checkpoint(hard=False)
+                    self.force_checkpoint = False
 
             self.seen = False
 
@@ -533,10 +545,10 @@ class Context(renpy.object.Object):
                 renpy.game.persistent._seen_ever[self.current] = True  # @UndefinedVariable
                 renpy.game.seen_session[self.current] = True
 
-            if self.rollback and renpy.game.log:
-                renpy.game.log.complete()
-
             renpy.plog(2, "    end {} ({}:{})", type_node_name, this_node.filename, this_node.linenumber)
+
+        if self.rollback and renpy.game.log:
+            renpy.game.log.complete()
 
     def mark_seen(self):
         """

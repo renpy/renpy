@@ -836,6 +836,9 @@ zap_transient = True
 # Should a fast path be used when displaying empty windows.
 fast_empty_window = True
 
+# Should all nodes participate in rollback?
+all_nodes_rollback = False
+
 del os
 del collections
 

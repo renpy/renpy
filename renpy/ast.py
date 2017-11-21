@@ -337,6 +337,13 @@ class Node(object):
     # take_translations.
     translation_relevant = False
 
+    # How does the node participate in rollback?
+    #
+    # * "normal" in normal mode.
+    # * "never" generally never.
+    # * "force" force it to start.
+    rollback = "normal"
+
     def __init__(self, loc):
         """
         Initializes this Node object.
@@ -725,6 +732,8 @@ class Init(Node):
 
 
 class Label(Node):
+
+    rollback = "force"
 
     translation_relevant = True
 
@@ -2026,6 +2035,8 @@ class Translate(Node):
     goes to the end of the translate statement in the None language.
     """
 
+    rollback = "never"
+
     translation_relevant = True
 
     __slots__ = [
@@ -2105,6 +2116,8 @@ class EndTranslate(Node):
     A node added implicitly after each translate block. It's responsible for
     resetting the translation identifier.
     """
+
+    rollback = "never"
 
     def __init__(self, loc):
         super(EndTranslate, self).__init__(loc)
