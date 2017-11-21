@@ -48,6 +48,17 @@ init -1500 python:
     config.always_has_joystick = False
 
     @renpy.pure
+    class _DisplayReset(Action, DictEquality):
+        """
+        Causes the display to restart after a preference that needs it has been
+        changed.
+        """
+
+        def __call__(self):
+            renpy.display.interface.display_reset = True
+
+
+    @renpy.pure
     def Preference(name, value=None, range=None):
         """
          :doc: preference_action
@@ -160,6 +171,16 @@ init -1500 python:
          * Preference("rollback side", "left") - Touching the left side of the screen causes rollback.
          * Preference("rollback side", "right") - Touching the right side of the screen causes rollback.
          * Preference("rollback side", "disable") - Touching the screen will not cause rollback.
+
+         * Preference("gl powersave", True) - Drop framerate to allow for power savings.
+         * Preference("gl powersave", False) - Do not drop framerate to allow for power savings.
+         * Preference("gl powersave", "auto") - Enable powersave when running on battery.
+
+         * Preference("gl framerate", None) - Runs at the display framerate.
+         * Preference("gl framerate", 60) - Runs at the given framerate.
+
+         * Preference("gl tearing", True) - Tears rather than skipping frames.
+         * Preference("gl tearing", False) - Skips frames rather than tearing.
 
          Values that can be used with bars are:
 
@@ -365,6 +386,15 @@ init -1500 python:
                         field = "desktop_rollback_side"
 
                     return SetField(_preferences, field, value)
+
+            elif name == "gl powersave":
+                return [ SetField(_preferences, "gl_powersave", value), _DisplayReset() ]
+
+            elif name == "gl framerate":
+                return [ SetField(_preferences, "gl_framerate", value), _DisplayReset() ]
+
+            elif name == "gl tearing":
+                return [ SetField(_preferences, "gl_tearing", value), _DisplayReset() ]
 
             mixer_names = {
                 "music" : "music",
