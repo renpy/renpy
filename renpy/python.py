@@ -101,7 +101,7 @@ class StoreDict(dict):
 
         # The value of this dictionary at the start of the current
         # rollback period (when begin() was last called).
-        self.old = { }
+        self.old = DictItems(self)
 
         # The set of variables in this StoreDict that changed since the
         # end of the init phase.
@@ -112,16 +112,16 @@ class StoreDict(dict):
         Called to reset this to its initial conditions.
         """
 
-        self.old = { }
         self.ever_been_changed = set()
         self.clear()
+        self.old = DictItems(self)
 
     def begin(self):
         """
         Called to mark the start of a rollback period.
         """
 
-        self.old = dict(self)
+        self.old = DictItems(self)
 
     def get_changes(self):
         """
@@ -132,10 +132,9 @@ class StoreDict(dict):
         As a side-effect, updates self.ever_been_changed.
         """
 
-        old = DictItems(self.old)
         new = DictItems(self)
-
-        rv = find_changes(old, new, deleted)
+        rv = find_changes(self.old, new, deleted)
+        self.old = new
 
         if rv is None:
             return EMPTY_DICT
@@ -219,7 +218,7 @@ class StoreBackup():
 
         for k, v in store_dicts.iteritems():
             self.store[k] = dict(v)
-            self.old[k] = dict(v.old)
+            self.old[k] = v.old.as_dict()
             self.ever_been_changed[k] = set(v.ever_been_changed)
 
     def restore_one(self, name):
@@ -228,8 +227,7 @@ class StoreBackup():
         sd.clear()
         sd.update(self.store[name])
 
-        sd.old.clear()
-        sd.old.update(self.old[name])
+        sd.old = DictItems(self.old[name])
 
         sd.ever_been_changed.clear()
         sd.ever_been_changed.update(self.ever_been_changed[name])
@@ -252,8 +250,8 @@ def make_clean_stores():
 
     for _k, v in store_dicts.iteritems():
 
-        v.old.clear()
         v.ever_been_changed.clear()
+        v.begin()
 
     clean_store_backup = StoreBackup()
 
@@ -1287,6 +1285,9 @@ class RollbackLog(renpy.object.Object):
 
         if self.current is not None:
             self.complete()
+        else:
+            for sd in store_dicts.itervalues():
+                sd.begin()
 
         # If the log is too long, prune it.
         if len(self.log) > renpy.config.rollback_length:
@@ -1316,10 +1317,6 @@ class RollbackLog(renpy.object.Object):
         mutate_flag = True
 
         self.rolled_forward = False
-
-        # Reset the point that changes are relative to.
-        for sd in store_dicts.itervalues():
-            sd.begin()
 
     def complete(self):
         """
@@ -1471,9 +1468,9 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                            and data == fwd_data
-                            and (keep_rollback or self.rolled_forward)
-                        ):
+                    and data == fwd_data
+                    and (keep_rollback or self.rolled_forward)
+                    ):
                     self.forward.pop(0)
                 else:
                     self.forward = [ ]

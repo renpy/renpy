@@ -121,6 +121,16 @@ cdef class DictItems(object):
                 if self.items[i].key > self.items[i+1].key:
                     print("PROBLEM!")
 
+    def as_dict(self):
+
+        cdef int i
+
+        rv = { }
+
+        for 0 <= i < (self.size - 1):
+            rv[<object> self.items[i].key] = <object> self.items[i].value
+
+        return rv
 
 
 def find_changes(DictItems old, DictItems new, object deleted):
