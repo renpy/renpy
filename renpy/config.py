@@ -435,6 +435,9 @@ new_character_image_argument = True
 # corresponding to a shown image.
 say_attribute_transition = None
 
+# The layer the say_attribute_transition runs on.
+say_attribute_transition_layer = None
+
 # What is the name and version of this game?
 name = ""
 version = ""

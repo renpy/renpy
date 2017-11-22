@@ -160,6 +160,13 @@ These control transitions between various screens.
     If not None, a transition to use when the image is changed by a
     say statement with image attributes.
 
+.. var:: config.say_attribute_transition_layer = None
+
+    If not None, this must be a string giving the name of a layer. (Almost always
+    "master".) The say attribute is applied to the named layer, and Ren'Py
+    will not pause to wait for the transition to occur. This will have the
+    effect of transitioning in the attribute as dialogue is shown.
+
 .. var:: config.window_hide_transition = None
 
     The transition used by the window hide statement when no
