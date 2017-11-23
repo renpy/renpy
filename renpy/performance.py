@@ -92,7 +92,9 @@ def analyze():
     if (end - start) < renpy.config.profile_time:
         return
 
-    print("\n")
+    s = "\n"
+    renpy.log.real_stdout.write(s)
+    renpy.display.log.write(s)
 
     times = [ fpl[0][0] ] * DEPTH_LEVELS
 
