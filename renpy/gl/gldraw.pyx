@@ -74,9 +74,6 @@ IDENTITY = renpy.display.render.IDENTITY
 # Should we try to vsync?
 vsync = True
 
-# A list of flip times, which we used to detect if vsync is failing.
-flip_times = [ ]
-
 # A list of frame end times, used for the same purpose.
 frame_times = [ ]
 
@@ -839,19 +836,18 @@ cdef class GLDraw:
 
             if vsync:
 
-                # When the window is covered or
+                # When the window is covered, we can get into a state where no
+                # drawing occurs and everything goes fast. Detect that and
+                # sleep.
 
-                flip_times.append(end - start)
                 frame_times.append(end)
 
-                if len(flip_times) > 10:
-                    flip_times.pop(0)
+                if len(frame_times) > 10:
                     frame_times.pop(0)
 
                     # If we're running at over 1000 fps, vsync is broken.
-                    if (frame_times[-1] - frame_times[0] < .06 * 10) and (sum(flip_times) / len(flip_times) < .001):
+                    if (frame_times[-1] - frame_times[0] < .001 * 10):
                         time.sleep(1.0 / 120.0)
-
                         renpy.plog(1, "after broken vsync sleep")
 
 
