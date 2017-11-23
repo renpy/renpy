@@ -99,13 +99,16 @@ def analyze():
     for t, depth, event, args in fpl:
         dt = [ (1000000 * (t - it)) if i <= depth else 0 for i, it in enumerate(times) ]
 
-        print("{: 7.0f} {: 7.0f} {: 7.0f} {: 7.0f} {}".format(
+        s = "{: 7.0f} {: 7.0f} {: 7.0f} {: 7.0f} {}\n".format(
             dt[0],
             dt[1],
             dt[2],
             dt[3],
             event.format(*args),
-            ))
+            )
+
+        renpy.log.real_stdout.write(s)
+        renpy.display.log.write(s)
 
         for i in range(depth, DEPTH_LEVELS):
             times[i] = t
