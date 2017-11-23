@@ -828,10 +828,10 @@ per_frame_screens = [ ]
 performance_window = 5.0
 
 # How long does a frame have to take (to the event) to trigger profiling.
-profile_time = 1.0 / 100.0
+profile_time = 1.0 / 50.0
 
 # What event do we check to see if the profile needs to be printed?
-profile_to_event = "flip"
+profile_to_event = "end frame"
 
 # Should we instantly zap transient displayables, or properly hide them?
 zap_transient = True

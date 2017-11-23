@@ -3086,8 +3086,11 @@ class Interface(object):
                 # Predict images, if we haven't done so already.
                 while prediction_coroutine is not None:
 
+                    if self.event_peek():
+                        break
+
                     # Can we do expensive prediction?
-                    expensive_predict = not (needs_redraw or self.event_peek() or renpy.audio.music.is_playing("movie"))
+                    expensive_predict = not (needs_redraw or renpy.audio.music.is_playing("movie"))
 
                     result = prediction_coroutine.send(expensive_predict)
 
@@ -3095,23 +3098,17 @@ class Interface(object):
                         prediction_coroutine = None
                         break
 
-                    if not expensive_predict:
-                        break
+                    if not can_block:
+                        if get_time() > (prediction_start + .001):
+                            break
 
-                    if get_time() > (prediction_start + .001):
-                        break
+                if not self.event_peek():
 
-                # If we need to redraw again, do it if we don't have an
-                # event going on.
-                if (prediction_coroutine or needs_redraw) and not self.event_peek():
-                    continue
-
-                # Handle autosaving and persistent checking, as necessary.
-                if not did_autosave:
-                    renpy.loadsave.autosave()
-                    did_autosave = True
-
-                renpy.persistent.check_update()
+                    # Handle autosaving and persistent checking, as necessary.
+                    if not did_autosave:
+                        renpy.loadsave.autosave()
+                        renpy.persistent.check_update()
+                        did_autosave = True
 
                 if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
                     renpy.plog(1, "pre peek")
@@ -3122,6 +3119,15 @@ class Interface(object):
                     ev = self.event_wait()
                     renpy.plog(1, "post wait {!r}", ev)
 
+                if ev.type == pygame.NOEVENT:
+                    if not can_block:
+                        needs_redraw = True
+
+                    if (not needs_redraw) and (not prediction_coroutine) and (not self.mouse_move):
+                        pygame.time.wait(1)
+
+                    continue
+
                 # Recognize and ignore AltGr on Windows.
                 if ev.type == pygame.KEYDOWN:
                     if ev.key == pygame.K_LCTRL:
@@ -3131,13 +3137,6 @@ class Interface(object):
                         if (ev2 is not None) and (ev2.type == pygame.KEYDOWN):
                             if ev2.key == pygame.K_RALT:
                                 continue
-
-                if ev.type == pygame.NOEVENT:
-
-                    if not needs_redraw or self.mouse_move:
-                        pygame.time.wait(1)
-
-                    continue
 
                 # Check to see if the OS is asking us to suspend (on Android
                 # and iOS.)
