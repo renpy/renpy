@@ -547,11 +547,6 @@ def display_say(
 
         exception = e
 
-        import traceback
-        print("---")
-        traceback.print_stack()
-        print("---")
-
     # Do the checkpoint and with None.
     if interact:
 
