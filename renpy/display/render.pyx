@@ -433,9 +433,15 @@ def render_screen(root, width, height):
     global invalidated
     global frame_time
 
+    interact_time = renpy.display.interface.interact_time
     frame_time = renpy.display.interface.frame_time
 
-    rv = render(root, width, height, 0, 0)
+    if interact_time is None:
+        st = 0
+    else:
+        st = frame_time  - interact_time
+
+    rv = render(root, width, height, st, st)
     screen_render = rv
 
     invalidated = False
@@ -472,6 +478,9 @@ def mark_sweep():
                 worklist.append(j)
 
         i += 1
+
+    if screen_render is not None:
+        screen_render.mark = True
 
     for r in live_renders:
         if not r.mark:

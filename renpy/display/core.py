@@ -1668,6 +1668,9 @@ class Interface(object):
         # The time of each frame.
         self.frame_times = [ ]
 
+        # The duration of each frame, in seconds.
+        self.frame_duration = 1.0 / 60.0
+
     def setup_dpi_scaling(self):
 
         if "RENPY_HIGHDPI" in os.environ:
@@ -2959,15 +2962,16 @@ class Interface(object):
                     # Draw the screen.
                     self.frame_time = get_time()
 
-                    if not self.interact_time:
-                        self.interact_time = self.frame_time
-
                     renpy.audio.audio.advance_time()  # Sets the time of all video frames.
 
                     self.draw_screen(root_widget, fullscreen_video, (not fullscreen_video) or video_frame_drawn)
 
                     if first_pass:
+                        if not self.interact_time:
+                            self.interact_time = max(self.frame_time, get_time() - self.frame_duration)
+
                         scene_lists.set_times(self.interact_time)
+
                         for k, v in self.transition_time.iteritems():
                             if v is None:
                                 self.transition_time[k] = self.interact_time

@@ -494,6 +494,7 @@ class MultiBox(Container):
     layer_name = None
     first = True
     order_reverse = False
+    layout = None
 
     def __init__(self, spacing=None, layout=None, style='default', **properties):
 
@@ -616,6 +617,16 @@ class MultiBox(Container):
 
         self.scene_list.extend(l)
 
+    def update_times(self):
+
+        it = renpy.game.interface.interact_time
+
+        self.start_times = [ i or it for i in self.start_times ]
+        self.anim_times = [ i or it for i in self.anim_times ]
+
+        if it is None:
+            self.first = True
+
     def render(self, width, height, st, at):
 
         # Do we need to adjust the child times due to our being a layer?
@@ -637,28 +648,19 @@ class MultiBox(Container):
             self.first = False
 
             if adjust_times:
+                self.update_times()
 
-                it = renpy.game.interface.interact_time
+        layout = self.style.box_layout
 
-                self.start_times = [ i or it for i in self.start_times ]
-                self.anim_times = [ i or it for i in self.anim_times ]
-
-            layout = self.style.box_layout
-
-            if layout is None:
-                layout = self.default_layout
-
-            self.layout = layout  # W0201
-
-        else:
-            layout = self.layout
+        if layout is None:
+            layout = self.default_layout
 
         # Handle time adjustment, store the results in csts and cats.
         if adjust_times:
             t = renpy.game.interface.frame_time
 
-            csts = [ t - start for start in self.start_times ]
-            cats = [ t - anim for anim in self.anim_times ]
+            csts = [ 0 if (start is None) else (t - start) for start in self.start_times ]
+            cats = [ 0 if (anim is None) else (t - anim) for anim in self.anim_times ]
 
         else:
             csts = [ st ] * len(self.children)
@@ -951,6 +953,14 @@ class MultiBox(Container):
         return rv
 
     def event(self, ev, x, y, st):
+
+        # Do we need to adjust the child times due to our being a layer?
+        if self.first:
+
+            self.first = False
+
+            if self.layer_name or (self.layers is not None):
+                self.update_times()
 
         children_offsets = zip(self.children, self.offsets, self.start_times)
 
@@ -1653,16 +1663,32 @@ class AdjustTimes(Container):
 
         self.add(child)
 
+    def adjusted_times(self):
+
+        interact_time = renpy.game.interface.interact_time
+
+        if (self.start_time is None) and (interact_time is not None):
+            self.start_time = interact_time
+
+        if self.start_time is not None:
+            st = renpy.game.interface.frame_time - self.start_time
+        else:
+            st = 0
+
+        if (self.anim_time is None) and (interact_time is not None):
+            self.anim_time = interact_time
+
+        if self.anim_time is not None:
+            at = renpy.game.interface.frame_time - self.anim_time
+        else:
+            at = 0
+
+        return st, at
+
+
     def render(self, w, h, st, at):
 
-        if self.start_time is None:
-            self.start_time = renpy.game.interface.frame_time
-
-        if self.anim_time is None:
-            self.anim_time = renpy.game.interface.frame_time
-
-        st = renpy.game.interface.frame_time - self.start_time
-        at = renpy.game.interface.frame_time - self.anim_time
+        st, at = self.adjusted_times()
 
         cr = renpy.display.render.render(self.child, w, h, st, at)
         cw, ch = cr.get_size()
@@ -1672,6 +1698,10 @@ class AdjustTimes(Container):
         self.offsets = [ (0, 0) ]
 
         return rv
+
+    def event(self, ev, x, y, st):
+        st, _ = self.adjusted_times()
+        Container.event(self, ev, x, y, st)
 
     def get_placement(self):
         return self.child.get_placement()

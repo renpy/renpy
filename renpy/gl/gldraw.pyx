@@ -270,6 +270,9 @@ cdef class GLDraw:
 
 
         vsync = int(os.environ.get("RENPY_GL_VSYNC", sync_frames))
+
+        renpy.display.interface.frame_duration = 1.0 * abs(vsync) / info.refresh_rate
+
         renpy.display.log.write("swap interval: %r frames", vsync)
 
 
