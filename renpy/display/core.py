@@ -2976,6 +2976,8 @@ class Interface(object):
                             if v is None:
                                 self.transition_time[k] = self.interact_time
 
+                        renpy.display.render.adjust_render_cache_times(self.frame_time, self.interact_time)
+
                     renpy.config.frames += 1
 
                     # If profiling is enabled, report the profile time.
