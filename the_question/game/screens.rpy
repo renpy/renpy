@@ -367,7 +367,7 @@ screen main_menu():
             text "[config.name!t]":
                 style "main_menu_title"
 
-            text "[config.version]":
+            text "[config.version!t]":
                 style "main_menu_version"
 
 
