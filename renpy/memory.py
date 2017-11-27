@@ -40,6 +40,126 @@ def write(s):
     memory_log.write("%s", s)
 
 
+def cycle_finder(o, name):
+    o_repr_cache = { }
+    paths = { }
+
+    edges = set()
+
+    def visit(old_ido, o, path):
+        ido = id(o)
+
+        if old_ido is not None:
+            edges.add((old_ido, ido, path))
+
+        if ido in o_repr_cache:
+            return
+
+        paths[ido] = path
+
+        if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType)):
+            o_repr = repr(o)
+
+        elif isinstance(o, (str, unicode)):
+            if len(o) <= 80:
+                o_repr = repr(o).encode("utf-8")
+            else:
+                o_repr = repr(o[:80] + "...").encode("utf-8")
+
+        elif isinstance(o, (tuple, list)):
+            o_repr = "<" + o.__class__.__name__ + ">"
+
+        elif isinstance(o, dict):
+            o_repr = "<" + o.__class__.__name__ + ">"
+
+        elif isinstance(o, types.MethodType):
+            o_repr = "<method {0}.{1}>".format(o.im_class.__name__, o.im_func.__name__)
+
+        elif isinstance(o, object):
+            o_repr = "<{0}>".format(type(o).__name__)
+
+        else:
+            o_repr = "BAD TYPE <{0}>".format(type(o).__name__)
+
+        o_repr_cache[ido] = o_repr
+
+        if isinstance(o, (tuple, list)):
+            for i, oo in enumerate(o):
+                visit(ido, oo, "{0}[{1!r}]".format(path, i))
+
+        if isinstance(o, dict):
+            for k, v in o.iteritems():
+                visit(ido, v, "{0}[{1!r}]".format(path, k))
+
+        elif isinstance(o, types.MethodType):
+            visit(ido, o.im_self, path + ".im_self")
+
+        else:
+
+            try:
+                reduction = o.__reduce_ex__(2)
+            except:
+                reduction = [ ]
+
+            # Gets an element from the reduction, or o if we don't have
+            # such an element.
+            def get(idx, default):
+                if idx < len(reduction) and reduction[idx] is not None:
+                    return reduction[idx]
+                else:
+                    return default
+
+            state = get(2, { })
+            if isinstance(state, dict):
+                for k, v in state.iteritems():
+                    visit(ido, v, path + "." + k)
+            else:
+                visit(ido, state, path + ".__getstate__()")
+
+            for i, oo in enumerate(get(3, [])):
+                visit(ido, oo, "{0}[{1}]".format(path, i))
+
+            for i in get(4, []):
+
+                if len(i) != 2:
+                    continue
+
+                k, v = i
+
+                visit(ido, v, "{0}[{1!r}]".format(path, k))
+
+    visit(None, o, name)
+
+    while True:
+        left = set(i[0] for i in edges)
+        right = set(i[1] for i in edges)
+
+        leaves = right - left
+        roots = left - right
+
+        if (not leaves) and (not roots):
+            break
+
+        edges = set(i for i in edges if (i[1] not in leaves) if (i[0] not in roots))
+
+    while edges:
+        print()
+        print("Cycle:")
+
+        edge = list(edges)[0]
+
+        while edge in edges:
+            edges.remove(edge)
+            print("  ", edge)
+            print(" -", edge[2], "=", o_repr_cache[edge[1]])
+
+            relevant = [ i for i in edges if i[0] == edge[1] ]
+            if not relevant:
+                break
+
+            edge = relevant[0]
+
+
 def walk_memory(roots, seen=None):
     """
     Walks over memory, trying to account it to the objects in `roots`. Each
@@ -191,6 +311,7 @@ def profile_memory(fraction=1.0, minimum=0):
     write("-" * 13)
     write("{:13,d} Total object, surface, and texture memory usage (in bytes).".format(total))
     write("")
+
 
 old_usage = { }
 old_total = 0
