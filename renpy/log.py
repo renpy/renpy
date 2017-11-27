@@ -260,24 +260,28 @@ class StdioRedirector(object):
         pass
 
 
-class StdoutRedirector(StdioRedirector):
-    real_file = real_stdout
+if not "RENPY_NO_REDIRECT_STDIO" in os.environ:
 
-    def get_callbacks(self):
-        return renpy.config.stdout_callbacks
+    class StdoutRedirector(StdioRedirector):
+        real_file = real_stdout
 
+        def get_callbacks(self):
+            return renpy.config.stdout_callbacks
 
-sys.stdout = sys_stdout = StdoutRedirector()
+    sys.stdout = sys_stdout = StdoutRedirector()
 
+    class StderrRedirector(StdioRedirector):
+        real_file = real_stderr
 
-class StderrRedirector(StdioRedirector):
-    real_file = real_stderr
+        def get_callbacks(self):
+            return renpy.config.stderr_callbacks
 
-    def get_callbacks(self):
-        return renpy.config.stderr_callbacks
+    sys.stderr = sys_stderr = StderrRedirector()
 
+else:
 
-sys.stderr = sys_stderr = StderrRedirector()
+    sys_stdout = sys.stdout
+    sys_stderr = sys.stderr
 
 
 def post_init():
