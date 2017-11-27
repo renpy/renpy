@@ -579,6 +579,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
             self.screen.function(**self.scope)
 
+            del self.scope["_scope"]
+
             renpy.ui.close()
 
         finally:
