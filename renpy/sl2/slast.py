@@ -32,6 +32,7 @@ import collections
 import linecache
 from cPickle import loads, dumps
 import zlib
+import weakref
 
 import renpy.display
 import renpy.pyanalysis
@@ -727,6 +728,8 @@ class SLDisplayable(SLBlock):
                 ctx.uses_scope = [ ]
 
             SLBlock.keywords(self, ctx)
+
+            del ctx.keywords
 
             # Get the widget id and transform, if any.
             widget_id = keywords.pop("id", None)
@@ -1701,7 +1704,7 @@ class SLUse(SLNode):
         ctx = SLContext(context)
         ctx.scope = scope
         ctx.cache = cache
-        ctx.parent = context
+        ctx.parent = weakref.ref(context)
 
         if update:
             ctx.updating = True
@@ -1748,7 +1751,11 @@ class SLTransclude(SLNode):
 
         cache["transclude"] = context.transclude
 
-        ctx = SLContext(context.parent)
+        parent = context.parent
+        if parent is not None:
+            parent = parent()
+
+        ctx = SLContext(parent)
 
         ctx.cache = cache
 
