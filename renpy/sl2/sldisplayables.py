@@ -300,7 +300,10 @@ def sl2viewport(context=None, **kwargs):
     renpy.ui.stack.pop()
 
     rv = d.child
-    rv._main = vp
+
+    if vp is not rv:
+        rv._main = vp
+
     rv._composite_parts = list(rv.children)
 
     return rv
@@ -322,7 +325,10 @@ def sl2vpgrid(context=None, **kwargs):
     renpy.ui.stack.pop()
 
     rv = d.child
-    rv._main = vp
+
+    if vp is not rv:
+        rv._main = vp
+
     rv._composite_parts = list(rv.children)
 
     return rv
