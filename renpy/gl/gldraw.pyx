@@ -257,24 +257,28 @@ cdef class GLDraw:
 
         # Handle swap control.
         target_framerate = renpy.game.preferences.gl_framerate
+        refresh_rate = info.refresh_rate
+
+        if not refresh_rate:
+            refresh_rate = 60
 
         if target_framerate is None:
             sync_frames = 1
         else:
-            sync_frames = int(round(1.0 * info.refresh_rate) / target_framerate)
+            sync_frames = int(round(1.0 * refresh_rate) / target_framerate)
             if sync_frames < 1:
                 sync_frames = 1
 
         if renpy.game.preferences.gl_tearing:
             sync_frames = -sync_frames
 
-
         vsync = int(os.environ.get("RENPY_GL_VSYNC", sync_frames))
 
-        renpy.display.interface.frame_duration = 1.0 * abs(vsync) / info.refresh_rate
+        renpy.display.interface.frame_duration = 1.0 * abs(vsync) / refresh_rate
 
         renpy.display.log.write("swap interval: %r frames", vsync)
 
+        # Set the display mode.
 
         if ANGLE:
             opengl = 0
