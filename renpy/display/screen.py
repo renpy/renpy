@@ -579,11 +579,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
             self.screen.function(**self.scope)
 
-            del self.scope["_scope"]
-
             renpy.ui.close()
 
         finally:
+            del self.scope["_scope"]
+
             renpy.ui.screen = old_ui_screen
             pop_current_screen()
 
@@ -1120,6 +1120,9 @@ def predict_screen(_screen_name, *_args, **kwargs):
             print("While predicting screen", _screen_name)
             traceback.print_exc()
 
+    finally:
+        del scope["_scope"]
+
     renpy.ui.reset()
 
 
@@ -1170,7 +1173,10 @@ def use_screen(_screen_name, *_args, **kwargs):
     scope["_scope"] = scope
     scope["_name"] = (_name, name)
 
-    screen.function(**scope)
+    try:
+        screen.function(**scope)
+    finally:
+        del scope["_scope"]
 
     _current_screen.old_transfers = old_transfers
 

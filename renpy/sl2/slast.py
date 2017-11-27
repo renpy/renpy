@@ -1181,7 +1181,6 @@ class SLIf(SLNode):
             context.predicted.add(self.serial)
 
         for cond, block in self.prepared_entries:
-
             try:
                 cond_value = (cond is None) or eval(cond, context.globals, context.scope)
             except:
@@ -1711,7 +1710,10 @@ class SLUse(SLNode):
 
         ctx.transclude = self.block
 
-        ast.execute(ctx)
+        try:
+            ast.execute(ctx)
+        finally:
+            del scope["_scope"]
 
         if ctx.fail:
             context.fail = True
