@@ -31,6 +31,8 @@ import os
 import sys
 import time
 import zipfile
+import gc
+
 import __main__
 
 last_clock = time.time()
@@ -477,6 +479,11 @@ def main():
         # Make a clean copy of the store.
         renpy.python.make_clean_stores()
         log_clock("Making clean stores")
+
+        gc.collect()
+        gc.set_threshold(*renpy.config.gc_thresholds)
+        gc.set_debug(int(os.environ.get("RENPY_GC_DEBUG", 0)))
+        log_clock("Initial gc.")
 
         # Start debugging file opens.
         renpy.debug.init_main_thread_open()
