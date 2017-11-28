@@ -140,7 +140,7 @@ translate russian rightaway_289664f3:
 translate russian rightaway_8cb5deeb:
 
     # s "Sure, but what's a \"visual novel?\"" nointeract
-    s "Конечно, но что такое \"визуальная новелла?\"" nointeract
+    s "Конечно, но что такое \"визуальная новелла\"?" nointeract
 
 # game/script.rpy:111
 translate russian game_65cca574:

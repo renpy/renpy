@@ -161,87 +161,87 @@ translate russian strings:
     old "Quick save complete."
     new "Быстрое сохранение завершено."
 
-    # 00director.rpy:689
+    # 00director.rpy:703
     old "The interactive director is not enabled here."
     new "Интерактивный директор недоступен."
 
-    # 00director.rpy:1466
+    # 00director.rpy:1490
     old "Done"
     new "Принять"
 
-    # 00director.rpy:1474
+    # 00director.rpy:1498
     old "(statement)"
     new "(функция)"
 
-    # 00director.rpy:1475
+    # 00director.rpy:1499
     old "(tag)"
     new "(тег)"
 
-    # 00director.rpy:1476
+    # 00director.rpy:1500
     old "(attributes)"
     new "(аттрибут)"
 
-    # 00director.rpy:1477
+    # 00director.rpy:1501
     old "(transform)"
     new "(трансформация)"
 
-    # 00director.rpy:1502
+    # 00director.rpy:1526
     old "(transition)"
     new "(переход)"
 
-    # 00director.rpy:1514
+    # 00director.rpy:1538
     old "(channel)"
     new "(канал)"
 
-    # 00director.rpy:1515
+    # 00director.rpy:1539
     old "(filename)"
     new "(имя файла)"
 
-    # 00director.rpy:1540
+    # 00director.rpy:1564
     old "Change"
     new "Изменить"
 
-    # 00director.rpy:1542
+    # 00director.rpy:1566
     old "Add"
     new "Добавить"
 
-    # 00director.rpy:1545
+    # 00director.rpy:1569
     old "Cancel"
     new "Отмена"
 
-    # 00director.rpy:1548
+    # 00director.rpy:1572
     old "Remove"
     new "Убрать"
 
-    # 00director.rpy:1581
+    # 00director.rpy:1605
     old "Statement:"
     new "Функции:"
 
-    # 00director.rpy:1602
+    # 00director.rpy:1626
     old "Tag:"
     new "Теги:"
 
-    # 00director.rpy:1618
+    # 00director.rpy:1642
     old "Attributes:"
     new "Аттрибут:"
 
-    # 00director.rpy:1636
+    # 00director.rpy:1660
     old "Transforms:"
     new "Трансформации:"
 
-    # 00director.rpy:1655
+    # 00director.rpy:1679
     old "Behind:"
     new "Позади:"
 
-    # 00director.rpy:1674
+    # 00director.rpy:1698
     old "Transition:"
     new "Переходы:"
 
-    # 00director.rpy:1692
+    # 00director.rpy:1716
     old "Channel:"
     new "Каналы:"
 
-    # 00director.rpy:1710
+    # 00director.rpy:1734
     old "Audio Filename:"
     new "Имя файла:"
 
@@ -285,11 +285,11 @@ translate russian strings:
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Вы уверены, что хотите пропустить непрочитанные диалоги до следующего выбора?"
 
-    # 00keymap.rpy:254
+    # 00keymap.rpy:255
     old "Failed to save screenshot as %s."
     new "Провалена попытка сохранить скриншот как %s."
 
-    # 00keymap.rpy:266
+    # 00keymap.rpy:267
     old "Saved screenshot as %s."
     new "Скриншот сохранён как %s."
 
@@ -313,21 +313,21 @@ translate russian strings:
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Эта программа содержит свободное и открытое программное обеспечение под несколькими лицензиями, включая лицензию MIT и GNU Lesser General Public. Полный список лицензий, включая ссылки на полный исходный код, можно найти {a=https://www.renpy.org/l/license}здесь{/a}."
 
-    # 00preferences.rpy:442
+    # 00preferences.rpy:472
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "Озвучка буфера обмена включена. Нажмите 'shift+C', чтобы отключить её."
 
-    # 00preferences.rpy:444
+    # 00preferences.rpy:474
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "Синтезатор речи должен сказать \"[renpy.display.tts.last]\". Нажмите 'alt+shift+V', чтобы отключить его."
 
-    # 00preferences.rpy:446
+    # 00preferences.rpy:476
     old "Self-voicing enabled. Press 'v' to disable."
     new "Синтезатор речи включён. Нажмите 'v', чтобы отключить его."
 
     # _compat\gamemenu.rpym:198
     old "Empty Slot."
-    new "Пустой слот."
+    new "Пустой слот"
 
     # _compat\gamemenu.rpym:355
     old "Previous"
@@ -477,75 +477,75 @@ translate russian strings:
     old "Contacting App Store\nPlease Wait..."
     new "Связываюсь с App Store\nПожалуйста, ждите..."
 
-    # 00updater.rpy:373
+    # 00updater.rpy:372
     old "The Ren'Py Updater is not supported on mobile devices."
     new "Ren'Py Updater не поддерживается на мобильных устройствах."
 
-    # 00updater.rpy:492
+    # 00updater.rpy:491
     old "An error is being simulated."
     new "Симулируется ошибка."
 
-    # 00updater.rpy:668
+    # 00updater.rpy:667
     old "Either this project does not support updating, or the update status file was deleted."
-    new "Или этот проект не поддерживает обновление или файл статуса обновления был удалён."
+    new "Или этот проект не поддерживает обновление, или файл статуса обновления был удалён."
 
-    # 00updater.rpy:682
+    # 00updater.rpy:681
     old "This account does not have permission to perform an update."
     new "У этого аккаунта нет прав проводить обновление."
 
-    # 00updater.rpy:685
+    # 00updater.rpy:684
     old "This account does not have permission to write the update log."
     new "У этого аккаунта нет прав писать лог обновления."
 
-    # 00updater.rpy:710
+    # 00updater.rpy:711
     old "Could not verify update signature."
     new "Не могу верифицировать подпись обновления."
 
-    # 00updater.rpy:981
+    # 00updater.rpy:986
     old "The update file was not downloaded."
     new "Файл обновления не был загружен."
 
-    # 00updater.rpy:999
+    # 00updater.rpy:1004
     old "The update file does not have the correct digest - it may have been corrupted."
     new "Файл обновления не содержит корректного дайджеста — он может быть повреждён."
 
-    # 00updater.rpy:1055
+    # 00updater.rpy:1060
     old "While unpacking {}, unknown type {}."
-    new "При распаковке {}, обнаружен неизвестный тип {}."
+    new "При распаковке {} обнаружен неизвестный тип {}."
 
-    # 00updater.rpy:1399
+    # 00updater.rpy:1407
     old "Updater"
     new "Обновление"
 
-    # 00updater.rpy:1410
+    # 00updater.rpy:1418
     old "This program is up to date."
     new "Эта программа обновлена."
 
-    # 00updater.rpy:1412
+    # 00updater.rpy:1420
     old "[u.version] is available. Do you want to install it?"
     new "[u.version] доступна. Вы хотите её установить?"
 
-    # 00updater.rpy:1414
+    # 00updater.rpy:1422
     old "Preparing to download the updates."
     new "Подготовка к загрузке обновлений."
 
-    # 00updater.rpy:1416
+    # 00updater.rpy:1424
     old "Downloading the updates."
     new "Загрузка обновлений."
 
-    # 00updater.rpy:1418
+    # 00updater.rpy:1426
     old "Unpacking the updates."
     new "Распаковка обновлений."
 
-    # 00updater.rpy:1422
+    # 00updater.rpy:1430
     old "The updates have been installed. The program will restart."
     new "Обновления установлены. Программа будет перезапущена."
 
-    # 00updater.rpy:1424
+    # 00updater.rpy:1432
     old "The updates have been installed."
     new "Обновления были установлены."
 
-    # 00updater.rpy:1426
+    # 00updater.rpy:1434
     old "The updates were cancelled."
     new "Обновления были отменены."
 

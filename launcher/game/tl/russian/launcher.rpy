@@ -261,31 +261,31 @@ translate russian strings:
     old "Archiving files..."
     new "Архивирую файлы..."
 
-    # distribute.rpy:1055
+    # distribute.rpy:1068
     old "Unpacking the Macintosh application for signing..."
     new "Распаковываю приложение Macintosh для подписи..."
 
-    # distribute.rpy:1065
+    # distribute.rpy:1078
     old "Signing the Macintosh application...\n(This may take a long time.)"
     new "Подписываю приложение Macintosh...\n(Это может занять время.)"
 
-    # distribute.rpy:1087
+    # distribute.rpy:1100
     old "Creating the Macintosh DMG..."
     new "Создаю Macintosh DMG..."
 
-    # distribute.rpy:1096
+    # distribute.rpy:1109
     old "Signing the Macintosh DMG..."
     new "Подписываю Macintosh DMG..."
 
-    # distribute.rpy:1291
+    # distribute.rpy:1304
     old "Writing the [variant] [format] package."
     new "Пишу пакет [variant] [format]"
 
-    # distribute.rpy:1304
+    # distribute.rpy:1317
     old "Making the [variant] update zsync file."
     new "Создаю файл zsync для обновления [variant]"
 
-    # distribute.rpy:1414
+    # distribute.rpy:1427
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
     new "Обработано {b}[complete]{/b} из {b}[total]{/b} файлов."
 
@@ -1017,27 +1017,27 @@ translate russian strings:
     old "Please ensure that your project launches normally before running this command."
     new "Пожалуйста, убедитесь, что ваш проект нормально запускается перед использованием этой команды."
 
-    # project.rpy:289
+    # project.rpy:292
     old "Ren'Py is scanning the project..."
     new "Ren'Py сканирует проект..."
 
-    # project.rpy:696
+    # project.rpy:721
     old "Launching"
     new "Запускаю"
 
-    # project.rpy:730
+    # project.rpy:755
     old "PROJECTS DIRECTORY"
     new "ДИРЕКТОРИЯ ПРОЕКТОВ"
 
-    # project.rpy:730
+    # project.rpy:755
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Пожалуйста, выберите директорию проектов, используя выборщик директорий.\n{b}Он мог появиться позади этого окна.{/b}"
 
-    # project.rpy:730
+    # project.rpy:755
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Лаунчер будет искать проекты в этой директории, создавать новые проекты в этой директории, и размещать построенные проекты в этой директории."
 
-    # project.rpy:735
+    # project.rpy:760
     old "Ren'Py has set the projects directory to:"
     new "Ren'Py установила директорию проектов на:"
 
