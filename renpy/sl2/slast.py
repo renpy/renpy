@@ -729,8 +729,6 @@ class SLDisplayable(SLBlock):
 
             SLBlock.keywords(self, ctx)
 
-            del ctx.keywords
-
             # Get the widget id and transform, if any.
             widget_id = keywords.pop("id", None)
             transform = keywords.pop("at", None)
@@ -862,6 +860,8 @@ class SLDisplayable(SLBlock):
                     fail = True
 
         finally:
+
+            ctx.keywords = None
 
             stack.pop()
 
