@@ -521,6 +521,8 @@ def main():
 
     finally:
 
+        gc.set_debug(0)
+
         renpy.loader.auto_quit()
         renpy.savelocation.quit()
         renpy.translation.write_updated_strings()
