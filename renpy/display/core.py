@@ -36,6 +36,7 @@ import time
 import cStringIO
 import threading
 import copy
+import gc
 
 import_time = time.time()
 
@@ -3087,7 +3088,15 @@ class Interface(object):
                         pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
                         old_timeout_time = self.timeout_time
 
+                # We want this to include the GC time, so we don't predict on
+                # frames where we GC.
                 prediction_start = get_time()
+
+                if not self.event_peek():
+                    if gc.get_count()[0] >= renpy.config.idle_gc_count:
+                        renpy.plog(1, "before gc")
+                        gc.collect(0)
+                        renpy.plog(1, "after gc")
 
                 # Predict images, if we haven't done so already.
                 while prediction_coroutine is not None:

@@ -842,8 +842,11 @@ fast_empty_window = True
 # Should all nodes participate in rollback?
 all_nodes_rollback = False
 
-# Thresholds that apply to garbage collection.
-gc_thresholds = (20000, 10, 10)
+# Default thresholds that apply to garbage collection.
+gc_thresholds = (25000, 10, 10)
+
+# The threshold for a level 0 gc when we have the time.
+idle_gc_count = 2500
 
 del os
 del collections
