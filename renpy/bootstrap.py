@@ -85,6 +85,7 @@ def extra_imports():
     import compileall; compileall
     import cProfile; cProfile
     import pstats; pstats
+    import _ssl; _ssl
 
 
 class NullFile(io.IOBase):
