@@ -139,7 +139,7 @@ class MusicContext(renpy.python.RevertableObject):
 next_channel_number = 0
 
 # the lock that mediates between the periodic and main threads.
-lock = threading.Condition()
+lock = threading.RLock()
 
 
 class Channel(object):
@@ -818,7 +818,7 @@ def init():
         renpy.game.preferences.volumes.setdefault(m, default_volume)
         renpy.game.preferences.mute.setdefault(m, False)
 
-    with lock:
+    with periodic_condition:
 
         periodic_thread_quit = False
 
@@ -835,10 +835,11 @@ def quit():  # @ReservedAssignment
     global pcm_ok
     global mix_ok
 
-    with lock:
+    with periodic_condition:
+
         if periodic_thread is not None:
             periodic_thread_quit = True
-            lock.notify()
+            periodic_condition.notify()
 
             periodic_thread.join()
 
@@ -943,20 +944,33 @@ def periodic_pass():
             raise
 
 
+# The exception that's been thrown by the periodic thread.
 periodic_exc = None
+
+
+# Should we run the periodic thread now?
+run_periodic = False
+
+# The condition the perodic thread runs on.
+periodic_condition = threading.Condition()
 
 
 def periodic_thread_main():
 
     global periodic_exc
+    global run_periodic
 
-    with lock:
-        while True:
-
-            lock.wait()
-
+    while True:
+        with periodic_condition:
             if periodic_thread_quit:
                 return
+
+            if not run_periodic:
+                periodic_condition.wait()
+
+            run_periodic = False
+
+        with lock:
 
             try:
                 periodic_pass()
@@ -966,12 +980,13 @@ def periodic_thread_main():
 
 def periodic():
     global periodic_exc
+    global run_periodic
 
     if not renpy.config.audio_periodic_thread:
         periodic_pass()
         return
 
-    with lock:
+    with periodic_condition:
 
         for c in all_channels:
             c.get_context()
@@ -982,7 +997,8 @@ def periodic():
 
             raise exc[0], exc[1], exc[2]
 
-        lock.notify()
+        run_periodic = True
+        periodic_condition.notify()
 
 
 def interact():

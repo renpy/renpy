@@ -188,6 +188,7 @@ name_blacklist = {
     "renpy.loader.auto_lock",
     "renpy.display.screen.cprof",
     "renpy.audio.audio.lock",
+    "renpy.audio.audio.periodic_condition",
     }
 
 
