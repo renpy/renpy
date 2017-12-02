@@ -302,7 +302,10 @@ class Displayable(renpy.object.Object):
     # Does this displayable require clipping?
     _clipping = False
 
-    def __init__(self, focus=None, default=False, style='default', _args=None, **properties):
+    # Does this displayable have a tooltip?
+    _tooltip = None
+
+    def __init__(self, focus=None, default=False, style='default', _args=None, tooltip=None, **properties):
 
         global default_style
 
@@ -313,6 +316,7 @@ class Displayable(renpy.object.Object):
 
         self.focus_name = focus
         self.default = default
+        self.tooltip = tooltip
 
         if _args is not None:
             self._args = _args
