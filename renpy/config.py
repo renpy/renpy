@@ -848,6 +848,10 @@ gc_thresholds = (25000, 10, 10)
 # The threshold for a level 0 gc when we have the time.
 idle_gc_count = 2500
 
+# The first frame that we consider to be "idle", so we can do gc and
+# prediction.
+idle_frame = 4
+
 del os
 del collections
 

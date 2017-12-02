@@ -2919,6 +2919,9 @@ class Interface(object):
         # We're no longer after rollback.
         renpy.game.after_rollback = False
 
+        # How many frames have we shown so far?
+        frame = 0
+
         # This try block is used to force cleanup even on termination
         # caused by an exception propagating through this function.
         try:
@@ -2979,6 +2982,7 @@ class Interface(object):
 
                         renpy.display.render.adjust_render_cache_times(self.frame_time, self.interact_time)
 
+                    frame += 1
                     renpy.config.frames += 1
 
                     # If profiling is enabled, report the profile time.
@@ -3088,42 +3092,44 @@ class Interface(object):
                         pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
                         old_timeout_time = self.timeout_time
 
-                # We want this to include the GC time, so we don't predict on
-                # frames where we GC.
-                prediction_start = get_time()
+                if can_block or (frame >= renpy.config.idle_frame):
 
-                if not self.event_peek():
-                    if gc.get_count()[0] >= renpy.config.idle_gc_count:
-                        renpy.plog(1, "before gc")
-                        gc.collect(0)
-                        renpy.plog(1, "after gc")
+                    # We want this to include the GC time, so we don't predict on
+                    # frames where we GC.
+                    prediction_start = get_time()
 
-                # Predict images, if we haven't done so already.
-                while prediction_coroutine is not None:
+                    if not self.event_peek():
+                        if gc.get_count()[0] >= renpy.config.idle_gc_count:
+                            renpy.plog(1, "before gc")
+                            gc.collect(0)
+                            renpy.plog(1, "after gc")
 
-                    if self.event_peek():
-                        break
+                    # Predict images, if we haven't done so already.
+                    while prediction_coroutine is not None:
 
-                    # Can we do expensive prediction?
-                    expensive_predict = not (needs_redraw or renpy.audio.music.is_playing("movie"))
-
-                    result = prediction_coroutine.send(expensive_predict)
-
-                    if not result:
-                        prediction_coroutine = None
-                        break
-
-                    if not can_block:
-                        if get_time() > (prediction_start + .001):
+                        if self.event_peek():
                             break
 
-                if not self.event_peek():
+                        # Can we do expensive prediction?
+                        expensive_predict = not (needs_redraw or renpy.audio.music.is_playing("movie"))
 
-                    # Handle autosaving and persistent checking, as necessary.
-                    if not did_autosave:
-                        renpy.loadsave.autosave()
-                        renpy.persistent.check_update()
-                        did_autosave = True
+                        result = prediction_coroutine.send(expensive_predict)
+
+                        if not result:
+                            prediction_coroutine = None
+                            break
+
+                        if not can_block:
+                            if get_time() > (prediction_start + .001):
+                                break
+
+                    if not self.event_peek():
+
+                        # Handle autosaving and persistent checking, as necessary.
+                        if not did_autosave:
+                            renpy.loadsave.autosave()
+                            renpy.persistent.check_update()
+                            did_autosave = True
 
                 if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
                     renpy.plog(1, "pre peek")
