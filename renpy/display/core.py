@@ -316,7 +316,7 @@ class Displayable(renpy.object.Object):
 
         self.focus_name = focus
         self.default = default
-        self.tooltip = tooltip
+        self._tooltip = tooltip
 
         if _args is not None:
             self._args = _args
@@ -2882,16 +2882,16 @@ class Interface(object):
         # so we are ready for a new interaction or a restart.
         self.old_scene = scene
 
-        # Something updated the screens. Deal with it now, so the player doesn't
-        # see it.
-        if self.restart_interaction:
-            return True, None
-
         # Okay, from here on we now have a single root widget (root_widget),
         # which we will try to show to the user.
 
         # Figure out what should be focused.
         renpy.display.focus.before_interact(focus_roots)
+
+        # Something updated the screens. Deal with it now, so the player doesn't
+        # see it.
+        if self.restart_interaction:
+            return True, None
 
         # Redraw the screen.
         renpy.display.render.process_redraws()

@@ -79,6 +79,10 @@ focus_type = "mouse"
 # the focus to change.
 pending_focus_type = "mouse"
 
+
+# The current tooltip and tooltip screen.
+tooltip = None
+
 # Sets the currently focused widget.
 
 
@@ -93,21 +97,58 @@ def set_focused(widget, arg, screen):
 
     renpy.display.tts.displayable(widget)
 
-# Gets the currently focused widget.
+    global tooltip
+
+    # Figure out the tooltip.
+
+    if widget is None:
+        new_tooltip = None
+    else:
+        new_tooltip = widget._tooltip
+
+    if tooltip != new_tooltip:
+        tooltip = new_tooltip
+        renpy.exports.restart_interaction()
 
 
 def get_focused():
-    return renpy.game.context().scene_lists.focused
+    """
+    Gets the currently focused displayable.
+    """
 
-# Get the mouse cursor for the focused widget.
+    return renpy.game.context().scene_lists.focused
 
 
 def get_mouse():
+    """
+    Gets the mouse associated with the currently focused displayable.
+    """
+
     focused = get_focused()
     if focused is None:
         return None
     else:
         return focused.style.mouse
+
+
+def get_tooltip(self, screen=None):
+    """
+    Gets the tooltip information.
+    """
+
+    if screen is None:
+        return tooltip
+
+    if screen_of_focused is None:
+        return None
+
+    if screen_of_focused.screen_name[0] == screen:
+        return tooltip
+
+    if screen_of_focused.tag == screen:
+        return tooltip
+
+    return None
 
 
 def set_grab(widget):
@@ -119,6 +160,7 @@ def set_grab(widget):
 
 def get_grab():
     return grab
+
 
 # The current list of focuses that we know about.
 focus_list = [ ]
