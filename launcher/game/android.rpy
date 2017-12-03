@@ -164,6 +164,8 @@ init python:
         with open(filename, "r") as f:
             android_json = json.load(f)
 
+        old_android_json = dict(android_json)
+
         if "google_play_key" in build:
             android_json["google_play_key"] = build["google_play_key"]
         else:
@@ -178,9 +180,11 @@ init python:
         else:
             android_json.pop("google_play_salt", None)
 
+        if android_json != old_android_json:
 
-        with open(filename, "w") as f:
-            json.dump(android_json, f)
+            with open(filename, "w") as f:
+                json.dump(android_json, f)
+
 
     def android_build(command, p=None, gui=True, launch=False, destination=None, opendir=False):
         """
