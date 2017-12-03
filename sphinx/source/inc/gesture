@@ -1,7 +1,0 @@
-.. Automatically generated file - do not modify.
-
-.. function:: renpy.cancel_gesture()
-    
-    Cancels the current gesture, preventing the gesture from being recognized.
-    This should be called by displayables that have gesture-like behavior.
-

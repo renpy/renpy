@@ -1,7 +1,0 @@
-.. Automatically generated file - do not modify.
-
-.. function:: SideImage()
-    
-    Returns the side image associated with the currently speaking character,
-    or a Null displayable if no such side image exists.
-

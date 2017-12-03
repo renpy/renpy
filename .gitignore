@@ -76,3 +76,5 @@ renpy/vc_version.py
 /*-linux*/
 /*-dists/
 doc-web
+
+sphinx/source/inc

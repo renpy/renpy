@@ -1,9 +1,0 @@
-.. Automatically generated file - do not modify.
-
-.. function:: Grid(*args, **properties)
-    
-    Lays out displayables in a a grid. The first two positional arguments
-    are the number of columns and rows in the grid. This must be followed
-    by `columns * rows` positional arguments giving the displayables that
-    fill the grid.
-
