@@ -78,3 +78,7 @@ renpy/vc_version.py
 doc-web
 
 sphinx/source/inc
+sphinx/source/keywords.py
+sphinx/source/thequestion.rst
+tutorial/game/tutorial_director.rpy
+launcher/theme
