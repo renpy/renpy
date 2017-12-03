@@ -541,9 +541,6 @@ class Layout(object):
         # The time at which the next glyph will be displayed.
         gt = 0.0
 
-        # True if we've encountered the end segment while assigning times.
-        ended = False
-
         # 2. Breaks the text into a list of paragraphs, where each paragraph is
         # represented as a list of (Segment, text string) tuples.
         #
@@ -552,11 +549,21 @@ class Layout(object):
 
         if splits_from:
             self.paragraphs = splits_from.paragraphs
+            self.start_segment = splits_from.start_segment
+            self.end_segment = splits_from.end_segment
+            self.has_hyperlinks = splits_from.has_hyperlinks
+            self.hyperlink_targets = splits_from.hyperlink_targets
+            self.has_ruby = splits_from.has_ruby
         else:
             self.paragraphs = self.segment(text.tokens, style, renders, text)
 
         first_indent = self.scale_int(style.first_indent)
         rest_indent = self.scale_int(style.rest_indent)
+
+        # True if we've encountered the start and end segments respectively
+        # while assigning times.
+        started = self.start_segment is None
+        ended = False
 
         for p_num, p in enumerate(self.paragraphs):
 
@@ -634,9 +641,9 @@ class Layout(object):
 
             for ts, glyphs in seg_glyphs:
                 # Only assign a time if we're past the start segment.
-                if self.start_segment is not None:
+                if not started:
                     if self.start_segment is ts:
-                        self.start_segment = None
+                        started = True
                     else:
                         continue
 
