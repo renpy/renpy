@@ -143,9 +143,47 @@ This function returns the side image to use.
 
 .. include:: inc/side_image_function
 
+.. _tooltips:
 
 Tooltips
 --------
+
+Tooltips can now be accessed by the tooltip property available on all
+displayables, and the GetTooltip function. The GetTooltip function
+returns the value of the tooltip property when the displayable
+gains focus.
+
+Here's an example::
+
+    screen tooltip_example():
+        vbox:
+            textbutton "North":
+                action Return("n")
+                tooltip "To meet a polar bear."
+
+            textbutton "South":
+                action Return("s")
+                tooltip "All the way to the tropics."
+
+            textbutton "East":
+                action Return("e")
+                tooltip "So we can embrace the dawn."
+
+            textbutton "West":
+                action Return("w")
+                tooltip "Where to go to see the best sunsets."
+
+            $ tooltip = GetTooltip()
+
+            if tooltip:
+                text "[tooltip]"
+
+.. include:: inc/get_tooltip
+
+Legacy
+^^^^^^
+
+.. warning:: This has been obsoleted by the above, but you might see it in older projects.
 
 The tooltip class changes the screen when a button is hovered.
 

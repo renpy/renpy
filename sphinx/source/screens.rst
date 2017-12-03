@@ -234,6 +234,12 @@ All user interface statements take the following common properties:
     the third button of a box with the same will be highlighted at
     the start of the next interaction.
 
+`tooltip`
+    Assigns a tooltip to this displayable. When the displayable gains
+    focus, the value of this property will be made available from the
+    :func:`GetTooltip` function. See the :ref:`tooltips` section for
+    more details.
+
 Many user interface statements take classes of style properties, or
 transform properties. These properties can have a style prefix
 associated with them, that determines when they apply. For example, if
