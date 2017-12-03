@@ -131,7 +131,7 @@ def get_mouse():
         return focused.style.mouse
 
 
-def get_tooltip(self, screen=None):
+def get_tooltip(screen=None):
     """
     Gets the tooltip information.
     """
