@@ -593,6 +593,12 @@ Text Style Properties
     If not None, this should be a style object. The style that's used for
     ruby text.
 
+.. style-property:: slow_abortable boolean
+
+    If True, a click that reaches the Text object will cause the slow
+    text to abort, which means that the rest of the slow text will be
+    displayed instantly.
+
 .. style-property:: slow_cps int or True
 
     If a number, shows text at the rate of that many characters per
@@ -604,6 +610,7 @@ Text Style Properties
     The speed of the text is multiplied by this number. This can be
     used to have a character that speaks at a faster-than-normal rate
     of speed.
+
 
 .. style-property:: strikethrough boolean
 
