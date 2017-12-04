@@ -149,6 +149,8 @@ init -1900 python:
             config.keep_show_layer_state = False
             config.atl_multiple_events = False
 
+        if version <= (6, 99, 13):
+            config.zap_transient = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
