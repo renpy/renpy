@@ -330,6 +330,14 @@ init python:
     build.classify_renpy("doc/**", "source")
     build.classify_renpy("LICENSE.txt", "source")
 
+    build.classify_renpy("sphinx/", "source_only")
+    build.classify_renpy("sphinx/build.sh", "source_only")
+    build.classify_renpy("sphinx/checks.py", "source_only")
+    build.classify_renpy("sphinx/game/**", "source_only")
+    build.classify_renpy("sphinx/source/inc/", None)
+    build.classify_renpy("sphinx/source/**", "source_only")
+
+
     # module.
     build.classify_renpy("module/", "source")
     build.classify_renpy("module/*.c", "source")
