@@ -852,6 +852,9 @@ idle_gc_count = 2500
 # prediction.
 idle_frame = 4
 
+# Does taking the transform state go through image reference targets?
+take_state_from_target = False
+
 del os
 del collections
 

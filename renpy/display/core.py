@@ -882,11 +882,19 @@ class SceneLists(renpy.object.Object):
         if isinstance(new_thing, renpy.display.screen.ScreenDisplayable):
             return new_thing
 
-        old_transform = old_thing._target()
+        if renpy.config.take_state_from_target:
+            old_transform = old_thing._target()
+        else:
+            old_transform = old_thing
+
         if not isinstance(old_transform, renpy.display.motion.Transform):
             return new_thing
 
-        new_transform = new_thing._target()
+        if renpy.config.take_state_from_target:
+            new_transform = new_thing._target()
+        else:
+            new_transform = new_thing
+
         if not isinstance(new_transform, renpy.display.motion.Transform):
             new_thing = new_transform = renpy.display.motion.Transform(child=new_thing)
 
