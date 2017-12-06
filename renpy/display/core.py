@@ -2728,7 +2728,7 @@ class Interface(object):
 
         # Tick time forward.
         renpy.display.im.cache.tick()
-        renpy.text.text.layout_cache_tick()
+        renpy.text.text.text_tick()
         renpy.display.predict.reset()
 
         # Clear the size groups.

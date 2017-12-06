@@ -1258,7 +1258,11 @@ def layout_cache_clear():
     virtual_layout_cache_new = { }
 
 
-def layout_cache_tick():
+# A list of slow text that's being displayed right now.
+slow_text = [ ]
+
+
+def text_tick():
     """
     Called once per interaction, to merge the old and new layout caches.
     """
@@ -1270,6 +1274,9 @@ def layout_cache_tick():
     global virtual_layout_cache_old, virtual_layout_cache_new
     virtual_layout_cache_old = layout_cache_new
     virtual_layout_cache_new = { }
+
+    global slow_text
+    slow_text = [ ]
 
 
 VERT_REVERSE = renpy.display.render.Matrix2D(0, -1, 1, 0)
@@ -1484,6 +1491,9 @@ class Text(renpy.display.core.Displayable):
         if (self.language != renpy.game.preferences.language) and not self._uses_scope:
             self.set_text(self.text_parameter, substitute=self.substitute, update=True)
 
+        if self.style.slow_abortable:
+            slow_text.append(self)
+
     def set_ctc(self, ctc):
         self.ctc = ctc
         self.dirty = True
@@ -1693,8 +1703,12 @@ class Text(renpy.display.core.Displayable):
         """
 
         if self.slow and renpy.display.behavior.map_event(ev, "dismiss") and self.style.slow_abortable:
-            self.call_slow_done(st)
-            self.slow = False
+
+            for i in slow_text:
+                if i.slow:
+                    i.call_slow_done(st)
+                    i.slow = False
+
             raise renpy.display.core.IgnoreEvent()
 
         layout = self.get_layout()
