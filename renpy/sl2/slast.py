@@ -651,7 +651,7 @@ class SLDisplayable(SLBlock):
 
         cache = context.cache.get(self.serial, None)
 
-        if cache is None:
+        if not isinstance(cache, SLCache):
             context.cache[self.serial] = cache = SLCache()
 
         copy_on_change = cache.copy_on_change
@@ -1089,7 +1089,7 @@ class SLDisplayable(SLBlock):
     def copy_on_change(self, cache):
         c = cache.get(self.serial, None)
 
-        if c is not None:
+        if isinstance(c, SLCache):
             c.copy_on_change = True
 
         for i in self.children:
@@ -1394,6 +1394,9 @@ class SLFor(SLBlock):
         newcaches = {}
         oldcaches = context.cache.get(self.serial, newcaches)
 
+        if not isinstance(oldcaches, dict):
+            oldcaches = newcaches
+
         ctx = SLContext(context)
 
         for index, v in enumerate(value):
@@ -1430,7 +1433,8 @@ class SLFor(SLBlock):
 
     def copy_on_change(self, cache):
         c = cache.get(self.serial, None)
-        if c is None:
+
+        if not isinstance(c, dict):
             return
 
         for child_cache in c.values():
