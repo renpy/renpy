@@ -303,7 +303,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 
         renpy.exports.shown_window()
 
-        return (screen, "what", layer)
+        return (tag, "what", layer)
 
     # Apply the transform.
     if transform:
