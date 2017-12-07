@@ -192,6 +192,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
                      screen=None,
                      layer=None,
                      properties={},
+                     multiple=None,
                      **kwargs):
     """
     This is called (by default) by renpy.display_say to add the
@@ -250,6 +251,12 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         rv.update(properties)
         return rv
 
+    if multiple:
+        if not screen:
+            raise Exception("Multiple say requires a screen. (What year is this?)")
+
+        screen = "{}_{}_{}".format(screen, multiple[0], multiple[1])
+
     if screen and renpy.display.screen.has_screen(screen):
 
         if layer is None:
@@ -284,6 +291,9 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         renpy.exports.shown_window()
 
         return (screen, "what", layer)
+
+    if multiple and not renpy.display.screen.has_screen(screen):
+        raise Exception("Screen {} does not exist in multiple say.".format(screen))
 
     # Apply the transform.
     if transform:
@@ -379,12 +389,25 @@ def display_say(
         checkpoint=True,
         ctc_timedpause=None,
         ctc_force=False,
-        advance=True):
+        advance=True,
+        multiple=None):
 
-    if not interact:
+    # Final is true if this statement should perform an interaction.
+
+    if multiple is None:
+        final = interact
+    else:
+        step, total = multiple
+
+        if step == total:
+            final = interact
+        else:
+            final = False
+
+    if not final:
         advance = False
 
-    if interact and (not renpy.game.preferences.skip_unseen) and (not renpy.game.context().seen_current(True)) and renpy.config.skipping == "fast":
+    if final and (not renpy.game.preferences.skip_unseen) and (not renpy.game.context().seen_current(True)) and renpy.config.skipping == "fast":
         renpy.config.skipping = None
 
     # If we're in fast skipping mode, don't bother with say
@@ -496,7 +519,10 @@ def display_say(
             slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay)
 
             # Show the text.
-            what_text = show_function(who, what_string)
+            if multiple:
+                what_text = show_function(who, what_string, multiple=multiple)
+            else:
+                what_text = show_function(who, what_string)
 
             if interact or what_string or (what_ctc is not None) or (behavior and afm):
 
@@ -530,7 +556,7 @@ def display_say(
             if not slow:
                 slow_done()
 
-            if interact:
+            if final:
                 rv = renpy.ui.interact(mouse='say', type=type, roll_forward=roll_forward)
 
                 # This is only the case if the user has rolled forward, {nw} happens, or
@@ -550,7 +576,7 @@ def display_say(
         exception = e
 
     # Do the checkpoint and with None.
-    if interact:
+    if final:
 
         if not dtt.no_wait:
             if checkpoint:
@@ -741,16 +767,32 @@ class ADVCharacter(object):
         return
 
     # This is what shows the screen for a given interaction.
-    def do_show(self, who, what):
-        return self.show_function(
-            who,
-            what,
-            who_args=self.who_args,
-            what_args=self.what_args,
-            window_args=self.window_args,
-            screen=self.screen,
-            properties=self.properties,
-            **self.show_args)
+    def do_show(self, who, what, multiple=None):
+
+        if multiple is not None:
+
+            return self.show_function(
+                who,
+                what,
+                who_args=self.who_args,
+                what_args=self.what_args,
+                window_args=self.window_args,
+                screen=self.screen,
+                properties=self.properties,
+                multiple=multiple,
+                **self.show_args)
+
+        else:
+
+            return self.show_function(
+                who,
+                what,
+                who_args=self.who_args,
+                what_args=self.what_args,
+                window_args=self.window_args,
+                screen=self.screen,
+                properties=self.properties,
+                **self.show_args)
 
     # This is called after the last interaction is done.
     def do_done(self, who, what, multiple=None):
