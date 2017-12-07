@@ -359,6 +359,8 @@ class SlowDone(object):
 
 # This function takes care of repeatably showing the screen as part of
 # an interaction.
+
+
 def display_say(
         who,
         what,
@@ -585,12 +587,19 @@ class HistoryEntry(renpy.object.Object):
 
     # See ADVCharacter.add_history for the fields.
 
+    multiple = None
+
     def __repr__(self):
         return "<History {!r} {!r}>".format(self.who, self.what)
 
 
 # This is used to flag values that haven't been set by the user.
 NotSet = renpy.object.Sentinel("NotSet")
+
+
+# The number of multiple characters we've seen during the current
+# interaction.
+multiple_count = 0
 
 
 class ADVCharacter(object):
@@ -728,7 +737,7 @@ class ADVCharacter(object):
         return type(self)(name, kind=self, **properties)
 
     # This is called before the interaction.
-    def do_add(self, who, what):
+    def do_add(self, who, what, multiple=None):
         return
 
     # This is what shows the screen for a given interaction.
@@ -744,8 +753,8 @@ class ADVCharacter(object):
             **self.show_args)
 
     # This is called after the last interaction is done.
-    def do_done(self, who, what):
-        self.add_history("adv", who, what)
+    def do_done(self, who, what, multiple=None):
+        self.add_history("adv", who, what, multiple=multiple)
 
     # This is called when an extend occurs, before the usual add/show
     # cycel.
@@ -855,10 +864,10 @@ class ADVCharacter(object):
 
         self("", interact=False, _call_done=False)
 
-    def __call__(self, what, interact=True, _call_done=True, **kwargs):
+    def __call__(self, what, interact=True, _call_done=True, multiple=None, **kwargs):
 
         if kwargs:
-            return Character(kind=self, **kwargs)(what, interact=interact, _call_done=_call_done)
+            return Character(kind=self, **kwargs)(what, interact=interact, _call_done=_call_done, multiple=multiple)
 
         # Check self.condition to see if we should show this line at all.
         if not (self.condition is None or renpy.python.py_eval(self.condition)):
@@ -867,21 +876,38 @@ class ADVCharacter(object):
         if not isinstance(what, basestring):
             raise Exception("Character expects its what argument to be a string, got %r." % (what,))
 
-        if interact and (renpy.config.speaking_attribute is not None):
-            speaking = [ renpy.config.speaking_attribute ]
+        # Figure out multiple and final. Multiple is None if this is not a multiple
+        # dialogue, or a step and the total number of steps in a multiple interaction.
+
+        global multiple_count
+
+        if multiple is None:
+            multiple_count = 0
+
         else:
-            speaking = [ ]
+            multiple_count += 1
+            multiple = (multiple_count, multiple)
 
-        self.resolve_say_attributes(False, wanted=speaking)
+            if multiple_count == multiple[1]:
+                multiple_count = 0
 
-        old_side_image_attributes = renpy.store._side_image_attributes
+        if multiple is None:
 
-        if self.image_tag:
-            attrs = (self.image_tag,) + renpy.game.context().images.get_attributes("master", self.image_tag)
-        else:
-            attrs = None
+            if interact and (renpy.config.speaking_attribute is not None):
+                speaking = [ renpy.config.speaking_attribute ]
+            else:
+                speaking = [ ]
 
-        renpy.store._side_image_attributes = attrs
+            self.resolve_say_attributes(False, wanted=speaking)
+
+            old_side_image_attributes = renpy.store._side_image_attributes
+
+            if self.image_tag:
+                attrs = (self.image_tag,) + renpy.game.context().images.get_attributes("master", self.image_tag)
+            else:
+                attrs = None
+
+            renpy.store._side_image_attributes = attrs
 
         if renpy.config.voice_tag_callback is not None:
             renpy.config.voice_tag_callback(self.voice_tag)
@@ -894,6 +920,9 @@ class ADVCharacter(object):
             # Figure out the arguments to display.
             display_args = self.display_args.copy()
             display_args["interact"] = display_args["interact"] and interact
+
+            if multiple is not None:
+                display_args["multiple"] = multiple
 
             who = self.name
 
@@ -926,24 +955,33 @@ class ADVCharacter(object):
 
             # Run the add_function, to add this character to the
             # things like NVL-mode.
-            self.do_add(who, what)
+
+            if multiple is not None:
+                self.do_add(who, what, multiple=multiple)
+            else:
+                self.do_add(who, what)
 
             # Now, display the damned thing.
             self.do_display(who, what, cb_args=self.cb_args, **display_args)
 
             # Indicate that we're done.
             if _call_done:
-                self.do_done(who, what)
+
+                if multiple is not None:
+                    self.do_done(who, what)
+                else:
+                    self.do_done(who, what, multiple=multiple)
 
                 # Finally, log this line of dialogue.
                 if who and isinstance(who, (str, unicode)):
                     renpy.exports.log(who)
+
                 renpy.exports.log(what)
                 renpy.exports.log("")
 
         finally:
 
-            if interact:
+            if (multiple is None) and interact:
                 renpy.store._side_image_attributes = old_side_image_attributes
 
                 self.resolve_say_attributes(False, remove=speaking)
@@ -983,7 +1021,7 @@ class ADVCharacter(object):
 
         return self.display_args['interact']
 
-    def add_history(self, kind, who, what, **kwargs):
+    def add_history(self, kind, who, what, multiple=None, **kwargs):
         """
         This is intended to be called by subclasses of ADVCharacter to add
         History entries to _history_list.
@@ -1012,6 +1050,8 @@ class ADVCharacter(object):
         h.show_args = self.show_args
 
         h.image_tag = self.image_tag
+
+        h.multiple = multiple
 
         if renpy.game.context().rollback:
             h.rollback_identifier = renpy.game.log.current.identifier
