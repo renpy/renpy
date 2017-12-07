@@ -956,7 +956,9 @@ def get_screen(name, layer=None):
         if sd is not None:
             return sd
 
-        sd = sl.get_displayable_by_name(layer, name)
+    for tag in name:
+
+        sd = sl.get_displayable_by_name(layer, (tag, ))
         if sd is not None:
             return sd
 
@@ -1039,7 +1041,7 @@ def show_screen(_screen_name, *_args, **kwargs):
 
     d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, scope)
 
-    old_d = get_screen(name, _layer)
+    old_d = get_screen(_tag, _layer)
 
     if old_d and old_d.cache:
         d.cache = old_d.cache
