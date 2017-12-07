@@ -138,26 +138,33 @@ def predict_show_display_say(who, what, who_args, what_args, window_args, image=
         return
 
 
-def compute_widget_properties(who_args, what_args, window_args, properties, variant=None):
+def compute_widget_properties(who_args, what_args, window_args, properties, variant=None, multiple=None):
     """
     Computes and returns the widget properties.
     """
 
-    def style_args(d):
+    def style_args(d, name):
 
-        if "style" not in d:
-            return d
+        style = d.get("style", None)
+
+        if style is None:
+            if multiple is None:
+                return d
+            else:
+                style = name
 
         in_rollback = renpy.exports.in_rollback()
 
-        if (not in_rollback) and (not variant):
+        if (not in_rollback) and (not variant) and (not multiple):
             return d
 
         d = d.copy()
 
-        style = d["style"]
-
         if isinstance(style, basestring):
+
+            if multiple is not None:
+                style = "block{}_multiple{}_{}".format(multiple[0], multiple[1], style)
+
             style = getattr(renpy.store.style, style)
 
             if variant is not None:
@@ -170,11 +177,15 @@ def compute_widget_properties(who_args, what_args, window_args, properties, vari
 
         return d
 
-    who_args = style_args(who_args)
-    what_args = style_args(what_args)
-    window_args = style_args(window_args)
+    who_args = style_args(who_args, "who")
+    what_args = style_args(what_args, "what")
+    window_args = style_args(window_args, "window")
 
     rv = dict(properties)
+
+    for prefix in renpy.config.character_id_prefixes:
+        rv[prefix] = style_args(properties.get(prefix, {}), prefix)
+
     rv["window"] = window_args
     rv["what"] = what_args
     rv["who"] = who_args
@@ -227,7 +238,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     displaying the what text.
     """
 
-    props = compute_widget_properties(who_args, what_args, window_args, properties, variant=variant)
+    props = compute_widget_properties(who_args, what_args, window_args, properties, variant=variant, multiple=multiple)
 
     def handle_who():
         if who:
@@ -251,12 +262,6 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         rv.update(properties)
         return rv
 
-    if multiple:
-        if not screen:
-            raise Exception("Multiple say requires a screen. (What year is this?)")
-
-        screen = "{}_{}_{}".format(screen, multiple[0], multiple[1])
-
     if screen and renpy.display.screen.has_screen(screen):
 
         if layer is None:
@@ -265,7 +270,15 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         tag = screen
         index = 0
 
-        while renpy.exports.showing(tag):
+        if multiple:
+
+            if renpy.display.screen.has_screen("multiple_" + screen):
+                screen = "multiple_" + screen
+                kwargs["multiple"] = multiple
+
+            tag = "block{}_multiple{}_{}".format(multiple[0], multiple[1], tag)
+
+        while renpy.exports.showing(tag, layer=layer):
             index += 1
             tag = "%s%d" % (screen, index)
 
@@ -291,9 +304,6 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         renpy.exports.shown_window()
 
         return (screen, "what", layer)
-
-    if multiple and not renpy.display.screen.has_screen(screen):
-        raise Exception("Screen {} does not exist in multiple say.".format(screen))
 
     # Apply the transform.
     if transform:
