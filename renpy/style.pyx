@@ -592,7 +592,8 @@ cdef class StyleCore:
             for pdict in reversed(s.properties):
 
                 propnames = list(pdict)
-                propnames.sort(key=lambda pn : -priority.get(pn, -100))
+                propnames.sort(key=lambda pn : priority.get(pn, 100))
+                propnames.reverse()
 
                 for propname in propnames:
                     prop_affects = affects.get(propname, [ ])
@@ -688,6 +689,7 @@ cpdef build_style(StyleCore s):
 
         for d in s.properties:
             for k, v in d.items():
+
                 pfw = property_functions.get(k, None)
 
                 if pfw is None:
