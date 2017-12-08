@@ -169,6 +169,8 @@ init -1500 python:
             e.window_args = kwargs["window_args"]
             e.properties = kwargs["properties"]
 
+            e.multiple = kwargs["multiple"]
+
             dialogue.append(e)
 
         show_args = dict(kwargs)
@@ -177,6 +179,9 @@ init -1500 python:
             del show_args["who_args"]
             del show_args["what_args"]
             del show_args["window_args"]
+
+            show_args.pop("multiple", None)
+
 
         return widget_properties, dialogue, show_args
 
@@ -193,7 +198,7 @@ init -1500 python:
 
         return renpy.get_widget(screen_name, "what", config.nvl_layer)
 
-    def nvl_show_core(who=None, what=None):
+    def nvl_show_core(who=None, what=None, multiple=None):
 
          # Screen version.
         if renpy.has_screen("nvl"):
@@ -286,20 +291,21 @@ init -1500 python:
                 kind=kind,
                 **properties)
 
-        def push_nvl_list(self, who, what):
+        def push_nvl_list(self, who, what, multiple=None):
 
             kwargs = self.show_args.copy()
             kwargs["properties"] = dict(self.properties)
             kwargs["what_args"] = dict(self.what_args)
             kwargs["who_args"] = dict(self.who_args)
             kwargs["window_args"] = dict(self.window_args)
+            kwargs["multiple"] = multiple
 
             store.nvl_list.append((who, what, kwargs))
 
         def pop_nvl_list(self):
             store.nvl_list.pop()
 
-        def do_add(self, who, what):
+        def do_add(self, who, what, multiple=None):
 
             if store.nvl_list is None:
                 store.nvl_list = [ ]
@@ -311,7 +317,7 @@ init -1500 python:
             while config.nvl_list_length and (len(nvl_list) + 1 > config.nvl_list_length):
                 nvl_list.pop(0)
 
-        def do_display(self, who, what, **display_args):
+        def do_display(self, who, what, multiple=None, **display_args):
 
             page = self.clear or nvl_clear_next()
 
@@ -329,23 +335,30 @@ init -1500 python:
             else:
                 checkpoint = True
 
-            self.push_nvl_list(who, what)
+            self.push_nvl_list(who, what, multiple=multiple)
 
             renpy.display_say(
                 who,
                 what,
                 nvl_show_core,
                 checkpoint=checkpoint,
+                multiple=multiple,
                 **display_args)
 
             self.pop_nvl_list()
 
-        def do_done(self, who, what):
+        def do_done(self, who, what, multiple=None):
 
-            self.push_nvl_list(who, what)
+            self.push_nvl_list(who, what, multiple=multiple)
 
-            nvl_list[-1][2]["what_args"]["alt"] = ""
-            nvl_list[-1][2]["who_args"]["alt"] = ""
+            if multiple is None:
+                start = -1
+            elif multiple[0] == multiple[1]:
+                start = -multiple[0]
+
+            for i in range(start, 0):
+                nvl_list[i][2]["what_args"]["alt"] = ""
+                nvl_list[i][2]["who_args"]["alt"] = ""
 
             if self.clear:
                 nvl_clear()
