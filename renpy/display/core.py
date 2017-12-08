@@ -3123,7 +3123,7 @@ class Interface(object):
                             break
 
                         # Can we do expensive prediction?
-                        expensive_predict = not (needs_redraw or renpy.audio.music.is_playing("movie"))
+                        expensive_predict = True  # not (needs_redraw or renpy.audio.music.is_playing("movie"))
 
                         result = prediction_coroutine.send(expensive_predict)
 
@@ -3132,7 +3132,7 @@ class Interface(object):
                             break
 
                         if not can_block:
-                            if get_time() > (prediction_start + .001):
+                            if get_time() > (prediction_start + .007):
                                 break
 
                     if not self.event_peek():
