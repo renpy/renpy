@@ -445,12 +445,13 @@ init python:
             last_blank = not i
 
             if not raw:
+                i = regex.sub(translate, i)
+
                 if not (persistent.show_translation_marker or showtrans):
                     i = re.sub(r'__?\((".*?")\)', r'\1', i)
                     i = re.sub(r"__?\(('.*?')\)", r'\1', i)
                     i = i.replace("!t]", "]")
 
-                i = regex.sub(translate, i)
                 i = quote(i)
                 i = regex.sub(colorize, i)
 
