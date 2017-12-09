@@ -30,7 +30,7 @@ registry = { }
 parsers = renpy.parser.ParseTrie()
 
 
-def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False, execute_init=None):  # @ReservedAssignment
+def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False, execute_init=None, label=None):  # @ReservedAssignment
     """
     :doc: statement_register
     :name: renpy.register_statement
@@ -80,6 +80,11 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
         the second argument to transfer control into the block, or None to
         continue to the statement after this one.
 
+    `label`
+        This is a function that is called to determine the label of this
+        statement. If it returns a string, that string is used as the statement
+        label, which can be called and jumped to like any other label.
+
     `scry`
         Used internally by Ren'Py.
 
@@ -97,7 +102,8 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
                           execute_init=execute_init,
                           predict=predict,
                           next=next,
-                          scry=scry)
+                          scry=scry,
+                          label=label)
 
     # The function that is called to create an ast.UserStatement.
     def parse_user_statement(l, loc):

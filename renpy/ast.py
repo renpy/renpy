@@ -1741,8 +1741,10 @@ class UserStatement(Node):
         self.code_block = None
         self.parsed = None
 
-        # Do not store the parse quite yet.
-        _parse_info = renpy.statements.parse(self, self.line, self.block)
+        self.name = self.call("label")
+
+        # Do not store the parse.
+        self.parsed = None
 
     def __repr__(self):
         return "<UserStatement {!r}>".format(self.line)
