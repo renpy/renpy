@@ -69,7 +69,10 @@ class Prefix(object):
 
         # The priority of this prefix. When added at the same time, higher
         # priority prefixes take precendence over lower priority prefixes.
-        self.priority = priority
+        #
+        # We double the priority here so we have room for the special priority
+        # stuff below.
+        self.priority = priority * 2
 
         # A list of prefix indexes that should be updated when this prefix is
         # updated, including this prefix.
@@ -87,8 +90,8 @@ class Prefix(object):
         prefixes[name] = self
 
 
-# The number of priority levels we have.
-PRIORITY_LEVELS = 4
+# The number of priority levels we have. Double the number given below, due to the doubling above.
+PRIORITY_LEVELS = 8
 
 # The number of prefixes we have.
 PREFIX_COUNT = 6
@@ -233,6 +236,7 @@ displayable_properties = {
     "thumb_shadow",
     }
 
+
 # A map from a style property to its index in the order of style_properties.
 style_property_index = collections.OrderedDict()
 for i, name in enumerate(style_properties):
@@ -242,6 +246,33 @@ style_property_count = len(style_properties)
 
 # print("{} properties * {} prefixes = {} cache entries".format(
 #     style_property_count, PREFIX_COUNT, style_property_count * PREFIX_COUNT))
+
+
+# Special priority properties - these take a +1 compared to others. Generally,
+# these would be listed in the tuples in synthetic_properies, below.
+property_priority = sorted_dict(
+    left_margin=1,
+    top_margin=1,
+    right_margin=1,
+    bottom_margin=1,
+    xpos=1,
+    xanchor=1,
+    ypos=1,
+    yanchor=1,
+    left_padding=1,
+    top_padding=1,
+    right_padding=1,
+    bottom_padding=1,
+    xoffset=1,
+    yoffset=1,
+    xminimum=1,
+    yminimum=1,
+    xmaximum=1,
+    ymaximum=1,
+    xfill=1,
+    yfill=1,
+)
+
 
 # A list of synthetic style properties, where each property is expanded into
 # multiple style properties. Each property are mapped into a list of tuples,
@@ -482,7 +513,7 @@ def generate_property_function(g, prefix, propname, properties):
     g.write("cdef int {name}_property(PyObject **cache, int *cache_priorities, int priority, object value) except -1:", name=name)
     g.indent()
 
-    g.write("priority += {}", prefix.priority)
+    g.write("priority += {}", prefix.priority + property_priority.get(propname, 0))
 
     for stylepropname, func in properties:
         value = "value"
@@ -612,6 +643,7 @@ def generate_sets():
     g.write("prefix_priority = {}", prefix_priority)
     g.write("prefix_alts = {}", prefix_alts)
     g.write("prefix_search = {}", PREFIX_SEARCH)
+    g.write("property_priority = {}", property_priority)
     g.write('"""')
     g.close()
 
