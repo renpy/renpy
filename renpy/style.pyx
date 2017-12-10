@@ -639,7 +639,7 @@ cdef class StyleCore:
 # This will be replaced when renpy.styledata.import_style_functions is called.
 Style = StyleCore
 
-from renpy.styledata.stylesets import all_properties, prefix_priority, prefix_alts
+from renpy.styledata.stylesets import all_properties, prefix_priority, prefix_alts, property_priority
 
 # The set of all prefixed properties we know about.
 prefixed_all_properties = {
@@ -751,7 +751,7 @@ def init_inspect():
 
     for prefixname, pri in prefix_priority.items():
         for propname, proplist in all_properties.items():
-            priority[prefixname + propname] = pri
+            priority[prefixname + propname] = pri + property_priority.get(propname, 0)
             affects[prefixname + propname] = [ a + i for a in prefix_alts[prefixname] for i in proplist ]
 
 
