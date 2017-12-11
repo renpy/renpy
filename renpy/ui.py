@@ -1110,6 +1110,10 @@ def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
     vscrollbar_properties.setdefault("alt", alt + " vertical scrollbar")
 
     if scrollbars == "vertical":
+
+        if renpy.config.scrollbar_child_size:
+            viewport_properties.setdefault("child_size", (None, sys.maxint))
+
         side("c r", **side_properties)
 
         rv = vpfunc(**viewport_properties)
@@ -1123,6 +1127,10 @@ def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
         return rv
 
     elif scrollbars == "horizontal":
+
+        if renpy.config.scrollbar_child_size:
+            viewport_properties.setdefault("child_size", (sys.maxint, None))
+
         side("c b", **side_properties)
 
         rv = vpfunc(**viewport_properties)
@@ -1136,6 +1144,9 @@ def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
         return rv
 
     else:
+
+        if renpy.config.scrollbar_child_size:
+            viewport_properties.setdefault("child_size", (sys.maxint, sys.maxint))
 
         side("c r b", **side_properties)
 

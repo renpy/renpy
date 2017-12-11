@@ -855,6 +855,9 @@ idle_frame = 4
 # Does taking the transform state go through image reference targets?
 take_state_from_target = False
 
+# Does ui.viewport set the child_size if not set?
+scrollbar_child_size = True
+
 del os
 del collections
 

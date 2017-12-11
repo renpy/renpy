@@ -153,6 +153,7 @@ init -1900 python:
             config.zap_transient = False
             config.gc_thresholds = (700, 10, 10)
             config.idle_gc_count = 10000
+            config.scrollbar_child_size = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
