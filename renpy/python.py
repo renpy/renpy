@@ -1468,9 +1468,9 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                    and data == fwd_data
-                    and (keep_rollback or self.rolled_forward)
-                    ):
+                            and data == fwd_data
+                            and (keep_rollback or self.rolled_forward)
+                        ):
                     self.forward.pop(0)
                 else:
                     self.forward = [ ]
@@ -1861,7 +1861,22 @@ def method_pickle(method):
 def method_unpickle(obj, name):
     return getattr(obj, name)
 
+# Code for pickling modules.
+
+
+def module_pickle(module):
+    if renpy.config.developer:
+        raise Exception("Could not pickle {!r}.".format(module))
+
+    return module_unpickle, (module.__name__,)
+
+
+def module_unpickle(name):
+    return __import__(name)
+
 
 import copy_reg
 import types
-copy_reg.pickle(types.MethodType, method_pickle, method_unpickle)
+
+copy_reg.pickle(types.MethodType, method_pickle)
+copy_reg.pickle(types.ModuleType, module_pickle)
