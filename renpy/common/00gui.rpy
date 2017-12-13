@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1100 python in gui:
-    from store import config, layout, _preferences, Frame, Null
+    from store import config, layout, _preferences, Frame, Null, persistent, Action, DictEquality
 
     config.translate_clean_stores.append("gui")
 
@@ -59,6 +59,11 @@ init -1100 python in gui:
         from store import build
         build.include_old_themes = False
 
+        if persistent._gui_preference is None:
+            persistent._gui_preference = { }
+
+        if persistent._gui_preference_default is None:
+            persistent._gui_preference_default = { }
 
     def rebuild():
         """
@@ -77,6 +82,40 @@ init -1100 python in gui:
         # Do the same sort of reset we'd do when changing language, without
         # actually changing the language.
         renpy.change_language(_preferences.language, force=True)
+
+    not_set = object()
+
+    def preference(name, default=not_set):
+        prefs = persistent._gui_preference
+        defaults = persistent._gui_preference_default
+
+        if default is not not_set:
+            if (name not in defaults) or (defaults[name] != default):
+                prefs[name] = default
+                defaults[name] = default
+
+        return prefs[name]
+
+
+    class SetPreference(Action, DictEquality):
+
+        def __init__(self, name, value, rebuild=True):
+            self.name = name
+            self.value = value
+            self.rebuild = rebuild
+
+        def __call__(self):
+            prefs = persistent._gui_preference
+
+            prefs[self.name] = self.value
+            rebuild()
+
+        def get_selected(self):
+            prefs = persistent._gui_preference
+            return prefs.get(self.name, not_set) == self.value
+
+    renpy.pure("gui.preference")
+    renpy.pure("gui.SetPreference")
 
 
     def button_properties(kind):
