@@ -1867,6 +1867,8 @@ def get_namespace(store):
 # and then again at init time.
 EARLY_CONFIG = { "save_directory" }
 
+define_statements = [ ]
+
 
 class Define(Node):
 
@@ -1903,6 +1905,8 @@ class Define(Node):
         next_node(self.next)
         statement_name("define")
 
+        define_statements.append(self)
+
         value = renpy.python.py_eval_bytecode(self.code.bytecode)
 
         if self.store == 'store':
@@ -1913,6 +1917,25 @@ class Define(Node):
 
         ns, _special = get_namespace(self.store)
         ns.set(self.varname, value)
+
+    def redefine(self, stores):
+
+        if self.store not in stores:
+            return
+
+        value = renpy.python.py_eval_bytecode(self.code.bytecode)
+        ns, _special = get_namespace(self.store)
+        ns.set(self.varname, value)
+
+
+def redefine(stores):
+    """
+    Re-runs the given define statements.
+    """
+
+    for i in define_statements:
+        i.redefine(stores)
+
 
 
 # All the default statements, in the order they were registered.

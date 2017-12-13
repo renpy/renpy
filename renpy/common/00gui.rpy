@@ -69,6 +69,8 @@ init -1100 python in gui:
         Note: This is a very slow function.
         """
 
+        renpy.ast.redefine([ "store.gui" ])
+
         for i in config.translate_clean_stores:
             renpy.python.clean_store_backup.backup_one("store." + i)
 
