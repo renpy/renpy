@@ -59,6 +59,24 @@ init -1100 python in gui:
         from store import build
         build.include_old_themes = False
 
+
+    def rebuild():
+        """
+        :doc: gui
+
+        Rebuilds all the styles using the updated values of gui variables.
+
+        Note: This is a very slow function.
+        """
+
+        for i in config.translate_clean_stores:
+            renpy.python.clean_store_backup.backup_one("store." + i)
+
+        # Do the same sort of reset we'd do when changing language, without
+        # actually changing the language.
+        renpy.change_language(_preferences.language, force=True)
+
+
     def button_properties(kind):
         """
         :doc: gui

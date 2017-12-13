@@ -403,6 +403,7 @@ def add_string_translation(language, old, new, newloc):
     tl.languages.add(language)
     stl.add(old, new, newloc)
 
+
 Default = renpy.object.Sentinel("default")
 
 
@@ -490,6 +491,7 @@ def load_all_rpts():
 # Changing language
 ################################################################################
 
+
 style_backup = None
 
 
@@ -504,6 +506,7 @@ def init_translation():
     load_all_rpts()
 
     renpy.store._init_language()  # @UndefinedVariable
+
 
 old_language = "language never set"
 
@@ -559,7 +562,7 @@ def new_change_language(tl, language):
     renpy.game.invoke_in_new_context(run_blocks)
 
 
-def change_language(language):
+def change_language(language, force=False):
     """
     :doc: translation_functions
 
@@ -587,7 +590,7 @@ def change_language(language):
     for i in renpy.config.change_language_callbacks:
         i()
 
-    if old_language != language:
+    if force or (old_language != language):
 
         # Reset various parts of the system. Most notably, this clears the image
         # cache, letting us load translated images.

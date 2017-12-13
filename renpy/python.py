@@ -216,10 +216,16 @@ class StoreBackup():
         # The contents of ever_been_changed for each store.
         self.ever_been_changed = { }
 
-        for k, v in store_dicts.iteritems():
-            self.store[k] = dict(v)
-            self.old[k] = v.old.as_dict()
-            self.ever_been_changed[k] = set(v.ever_been_changed)
+        for k in store_dicts:
+            self.backup_one(k)
+
+    def backup_one(self, name):
+
+        d = store_dicts[name]
+
+        self.store[name] = dict(d)
+        self.old[name] = d.old.as_dict()
+        self.ever_been_changed[name] = set(d.ever_been_changed)
 
     def restore_one(self, name):
         sd = store_dicts[name]
@@ -1468,9 +1474,9 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                            and data == fwd_data
-                            and (keep_rollback or self.rolled_forward)
-                        ):
+                    and data == fwd_data
+                    and (keep_rollback or self.rolled_forward)
+                    ):
                     self.forward.pop(0)
                 else:
                     self.forward = [ ]
