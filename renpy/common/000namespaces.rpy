@@ -45,7 +45,16 @@
             if hasattr(config, default_field):
                 setattr(config, default_field, value)
 
+    class _GuiNamespace(object):
+        def set(self, name, value):
+            setattr(gui, name, value)
+
+        def set_default(self, name, value):
+            setattr(gui, name, value)
+
+
     config.special_namespaces["store.config"] = _ObjectNamespace(config, "config")
     config.special_namespaces["store.persistent"] = _PersistentNamespace()
     config.special_namespaces["store.preferences"] =  _PreferencesNamespace()
+    config.special_namespaces["store.gui"] = _GuiNamespace()
 
