@@ -14,7 +14,6 @@ There are some Python functions that support the GUI.
 
 .. include:: inc/gui
 
-
 More on gui.rebuild
 --------------------
 
@@ -63,5 +62,44 @@ However, if as part of the game script, we have::
 Ren'Py will only re-run the define, so it will set the hover color to
 the accent color, and then update the styles. This makes it possible
 to have parts of the gui that change as the game progresses.
+
+.. _gui-preferences:
+
+GUI Preferences
+===============
+
+Ren'Py also supports a GUI preference system, consisting of a single function
+and a pair of actions.
+
+.. include:: inc/gui_preference
+
+Example
+-------
+
+The GUI preference system is used by calling gui.preference when defining
+variables, with the name of the preference and the default value.
+For example, one can use gui preferences to define the text font and
+size. ::
+
+    define gui.text_font = gui.preference("font", "DejaVuSans.ttf")
+    define gui.text_size = gui.preference("size", 22)
+
+It's then possible to use the gui.SetPreference and gui.TogglePreference
+actions to add change the values of the preferences. Here's some examples
+that can be added to the preferences screen.  ::
+
+    vbox:
+        style_prefix "check"
+        label _("Options")
+        textbutton _("OpenDyslexic") action gui.TogglePreference("font", "OpenDyslexic-Regular.otf", "DejaVuSans.ttf")
+
+    vbox:
+        style_prefix "radio"
+        label _("Text Size")
+        textbutton _("Small") action gui.SetPreference("size", 20)
+        textbutton _("Medium") action gui.SetPreference("size", 22)
+        textbutton _("Big") action gui.SetPreference("size", 24)
+
+
 
 

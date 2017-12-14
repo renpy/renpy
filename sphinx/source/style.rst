@@ -228,6 +228,12 @@ Styles. ::
 Style Preferences
 -----------------
 
+.. note::
+
+    :ref:`gui-preferences` may often provide a better way of accomplishing
+    the same thing, as a gui preference can change a variable used in multiple
+    styles.
+
 It's often desirable to allow the user to customize aspects of the user
 interface that are best expressed as styles. For example, a creator may want
 to give players of his game the ability to adjust the look, color, and size
