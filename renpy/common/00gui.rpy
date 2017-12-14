@@ -69,7 +69,7 @@ init -1100 python in gui:
         """
         :doc: gui
 
-        Rebuilds all the styles using the updated values of gui variables.
+        Rebuilds the GUI.
 
         Note: This is a very slow function.
         """
@@ -86,6 +86,19 @@ init -1100 python in gui:
     not_set = object()
 
     def preference(name, default=not_set):
+        """
+        :doc: gui_preference
+
+        This function returns the value of the gui preference with
+        `name`.
+
+        `default`
+            If given, this value becomes the default value of the gui
+            preference. The default value should be given the first time
+            the preference is used.
+        """
+
+
         prefs = persistent._gui_preference
         defaults = persistent._gui_preference_default
 
@@ -98,6 +111,20 @@ init -1100 python in gui:
 
 
     class SetPreference(Action, DictEquality):
+        """
+        :doc: gui_preference
+
+        This Action sets the gui preference with `name` to `value`.
+
+        `rebuild`
+            If true, the default, :func:`gui.rebuild` is called to make
+            the changes take effect. This should generally be true, except
+            in the case of multiple gui.SetPreference actions, in which case
+            it should be False in all but the last one.
+
+        This is a very slow action, and probably not suitable for use
+        when a button is hovered.
+        """
 
         def __init__(self, name, value, rebuild=True):
             self.name = name

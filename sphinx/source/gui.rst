@@ -1460,6 +1460,13 @@ that, a creator can do whatever they want. It usually makes sense to include
 some or all of the :ref:`special screens <screen-special>`, to make sure
 players can have access to all the functionality Ren'Py provides.
 
+
+See Also
+========
+
+For more information about the GUI, see the :ref:`Advanced GUI <gui-advanced>`
+section.
+
 Python Functions
 ================
 

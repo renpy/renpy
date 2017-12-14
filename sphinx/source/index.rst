@@ -101,6 +101,7 @@ Python and Ren'Py
    save_load_rollback
    persistent
    trans_trans_python
+   gui_advanced
    screen_python
    modes
    udd
