@@ -141,8 +141,50 @@ init -1100 python in gui:
             prefs = persistent._gui_preference
             return prefs.get(self.name, not_set) == self.value
 
+
+    class TogglePreference(Action, DictEquality):
+        """
+        :doc: gui_preference
+
+        This Action toggles the gui preference with `name` between
+        value `a` and value `b`. It is selected if the value is equal
+        to `a`.
+
+        `rebuild`
+            If true, the default, :func:`gui.rebuild` is called to make
+            the changes take effect. This should generally be true, except
+            in the case of multiple gui.SetPreference actions, in which case
+            it should be False in all but the last one.
+
+        This is a very slow action, and probably not suitable for use
+        when a button is hovered.
+        """
+
+        def __init__(self, name, a, b, rebuild=True):
+            self.name = name
+            self.a = a
+            self.b = b
+            self.rebuild = rebuild
+
+        def __call__(self):
+            prefs = persistent._gui_preference
+
+            if prefs[self.name] == self.a:
+                prefs[self.name] = self.b
+            else:
+                prefs[self.name] = self.a
+
+            rebuild()
+
+        def get_selected(self):
+            prefs = persistent._gui_preference
+            return prefs.get(self.name, not_set) == self.a
+
+
+
     renpy.pure("gui.preference")
     renpy.pure("gui.SetPreference")
+    renpy.pure("gui.TogglePreference")
 
 
     def button_properties(kind):
