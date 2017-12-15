@@ -196,6 +196,13 @@ the following parameter:
         are automatically applied if the id is set as above, but are also
         made available separately.
 
+    .. attribute:: multiple
+
+        If :ref:`multiple character dialogue <multiple-dialogue>`, this is
+        a two component tuple. The first component is the one-based number
+        of the dialogue block, and the second is the total number of dialogue
+        blocks in the multiple statement.
+
 `items`
     This is the same list of items that would be supplied to the
     :ref:`choice screen <choice-screen>`. If this is empty,

@@ -90,6 +90,7 @@ Other Functionality
    keymap
    achievement
    history
+   multiple
 
 Python and Ren'Py
 -----------------
