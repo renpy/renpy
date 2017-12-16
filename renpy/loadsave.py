@@ -32,6 +32,7 @@ import threading
 import types
 import shutil
 import os
+import sys
 
 import renpy
 
@@ -59,6 +60,7 @@ def loads(s):
         return cPickle.loads(s)
     else:
         return pickle.loads(s)
+
 
 # This is used as a quick and dirty way of versioning savegame
 # files.
@@ -181,6 +183,105 @@ def save_dump(roots, log):
 
     f.close()
 
+
+def find_bad_reduction(roots, log):
+    """
+    Finds objects that can't be reduced properly.
+    """
+
+    seen = set()
+
+    def visit(o, path):
+        ido = id(o)
+
+        if ido in seen:
+            return
+
+        seen.add(ido)
+
+        if isinstance(o, (int, float, types.NoneType, types.ClassType)):
+            return
+
+        if isinstance(o, (tuple, list)):
+            for i, oo in enumerate(o):
+                rv = visit(oo, "{0}[{1!r}]".format(path, i))
+                if rv is not None:
+                    return rv
+
+        elif isinstance(o, dict):
+            for k, v in o.iteritems():
+                rv = visit(v, "{0}[{1!r}]".format(path, k))
+                if rv is not None:
+                    return rv
+
+        elif isinstance(o, types.MethodType):
+            return visit(o.im_self, path + ".im_self")
+
+        elif isinstance(o, types.ModuleType):
+
+            return "{} = {}".format(path, repr(o)[:160])
+
+        else:
+
+            try:
+                reduction = o.__reduce_ex__(2)
+            except:
+
+                import copy
+
+                try:
+                    copy.copy(o)
+                    return None
+                except:
+                    pass
+
+                return "{} = {}".format(path, repr(o)[:160])
+
+            # Gets an element from the reduction, or o if we don't have
+            # such an element.
+            def get(idx, default):
+                if idx < len(reduction) and reduction[idx] is not None:
+                    return reduction[idx]
+                else:
+                    return default
+
+            state = get(2, { })
+            if isinstance(state, dict):
+                for k, v in state.iteritems():
+                    rv = visit(v, path + "." + k)
+                    if rv is not None:
+                        return rv
+            else:
+                rv = visit(state, path + ".__getstate__()")
+                if rv is not None:
+                    return rv
+
+            for i, oo in enumerate(get(3, [])):
+                rv = visit(oo, "{0}[{1}]".format(path, i))
+                if rv is not None:
+                    return rv
+
+            for i in get(4, []):
+
+                if len(i) != 2:
+                    continue
+
+                k, v = i
+
+                rv = visit(v, "{0}[{1!r}]".format(path, k))
+                if rv is not None:
+                    return rv
+
+        return None
+
+    for k, v in roots.items():
+        rv = visit(v, k)
+        if rv is not None:
+            return rv
+
+    return visit(log, "renpy.game.log")
+
+
 ################################################################################
 # Saving
 ################################################################################
@@ -297,7 +398,25 @@ def save(slotname, extra_info='', mutate_flag=False):
         save_dump(roots, renpy.game.log)
 
     logf = StringIO()
-    dump((roots, renpy.game.log), logf)
+    try:
+        dump((roots, renpy.game.log), logf)
+    except:
+
+        t, e, tb = sys.exc_info()
+
+        if mutate_flag:
+            raise t, e, tb
+
+        try:
+            bad = find_bad_reduction(roots, renpy.game.log)
+        except:
+            raise t, e, tb
+
+        if bad is None:
+            raise t, e, tb
+
+        e.args = ( e.args[0] + ' (perhaps {})'.format(bad), ) + e.args[1:]
+        raise t, e, tb
 
     if mutate_flag and renpy.python.mutate_flag:
         raise SaveAbort()
@@ -510,6 +629,7 @@ def list_slots(regexp=None):
 
     return slots
 
+
 # A cache for newest slot info.
 newest_slot_cache = { }
 
@@ -663,6 +783,7 @@ def cycle_saves(name, count):
 # Cache
 ################################################################################
 
+
 # None is a possible value for some of the attributes.
 unknown = renpy.object.Sentinel("unknown")
 
@@ -712,6 +833,7 @@ class Cache(object):
             rv = self.screenshot = location.screenshot(self.slotname)
 
         return self.screenshot
+
 
 # A map from slotname to cache object. This is used to cache savegame scan
 # data until the slot changes.
