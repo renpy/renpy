@@ -250,9 +250,4 @@ def report_exception(e, editor=True):
     except:
         pass
 
-    try:
-        renpy.display.log.exception()  # @UndefinedVariable
-    except:
-        pass
-
     return simple.decode("utf-8", "replace"), full.decode("utf-8", "replace"), traceback_fn
