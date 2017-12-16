@@ -101,9 +101,6 @@ class LogFile(object):
 
             altfn = os.path.join(tempfile.gettempdir(), "renpy-" + self.name + ".txt")
 
-            if renpy.android:
-                print("Logging to", fn)
-
             if self.append:
                 mode = "a"
             else:
