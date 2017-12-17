@@ -366,7 +366,15 @@ init -1500 python:
 
         import os
 
-        if not _preferences.performance_test and "RENPY_PERFORMANCE_TEST" not in os.environ:
+        performance_test = os.environ.get("RENPY_PERFORMANCE_TEST", None)
+
+        if performance_test is not None:
+            performance_test = int(performance_test)
+
+        if performance_test == 0:
+            return
+
+        if not _preferences.performance_test and not performance_test:
             return
 
         # Don't bother on android or ios - there's nothing the user can do.
