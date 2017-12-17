@@ -300,6 +300,17 @@ init -1500 python:
             kwargs["window_args"] = dict(self.window_args)
             kwargs["multiple"] = multiple
 
+            if multiple:
+
+                def multiple_style(k):
+                    style = kwargs[k]["style"]
+                    style = "block{}_multiple{}_{}".format(multiple[0], multiple[1], style)
+                    kwargs[k]["style"] = style
+
+                multiple_style("what_args")
+                multiple_style("who_args")
+                multiple_style("window_args")
+
             store.nvl_list.append((who, what, kwargs))
 
         def pop_nvl_list(self):
