@@ -1020,9 +1020,9 @@ class ADVCharacter(object):
             if _call_done:
 
                 if multiple is not None:
-                    self.do_done(who, what)
-                else:
                     self.do_done(who, what, multiple=multiple)
+                else:
+                    self.do_done(who, what)
 
                 # Finally, log this line of dialogue.
                 if who and isinstance(who, (str, unicode)):

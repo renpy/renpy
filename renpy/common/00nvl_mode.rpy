@@ -355,6 +355,8 @@ init -1500 python:
                 start = -1
             elif multiple[0] == multiple[1]:
                 start = -multiple[0]
+            else:
+                start = 0
 
             for i in range(start, 0):
                 nvl_list[i][2]["what_args"]["alt"] = ""
