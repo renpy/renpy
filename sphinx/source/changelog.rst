@@ -2,10 +2,128 @@
 Full Changelog
 ==============
 
-.. _renpy-6.99.13.1:
+.. _renpy-6.99.14:
 
-Ren'Py 6.99.13.1
-================
+Ren'Py 6.99.14
+==============
+
+Performance
+-----------
+
+Quite a bit of work has been done to improve performance, both absolute
+performance and apparent framerate stability.
+
+When connected to a device with AC power, Ren'Py will attempt to draw
+the screen at a constant framerate. When the device is on battery, several
+frame will be drawn before reverting to the 5fps framerate, to ensure updates
+to the screen are pushed through display buffering.
+
+Ren'Py has a number of options that control display performance, accessed
+through the shift+G menu. In addition to the GL performance change described
+above, this allows the player to lock the framerate and accept tearing when
+a frame is late. A player on a slow machine might choose to prefer 30fps
+to an unstable framerate. If the developer expects many players will be on
+slow devices, a default can be chosen with::
+
+    default preferences.gl_framerate = 30
+
+When a frame takes too long to render (say, because an unpredicted image
+has to be loaded from disk), Ren'Py will attempt to use the time the frame
+was presented as the base time for transitions and displayables. Effectively,
+this means that if Ren'Py has to skip frames, it'll skip them before the first
+frame in a sequence, rather than between the first and second frame.
+
+Ren'Py manually triggers garbage collection immediately after a frame is
+drawn, if enough objects have been created. Outside of this collection, the
+number of objects required to trigger the garbage collector has been raised.
+The thresholds are high enough that collection should not be required if
+the game does not create circular object references. (That is, objects that
+refer to each other in a loop.) Ren'Py has been changed to eliminate common
+sources of circular object references.
+
+By default, Ren'Py will remove transient screens (like say and choice)
+and displayables without triggering on "hide" event handlers. The process of
+checking  for such handlers was relatively expensive, while the use of
+those handlers is rare. This change can be reverted by setting
+:var:`config.zap_transients` to False.
+
+Ren'Py will now cache compiled Python expressions the first time it
+encounters them, rather than compiling an expression each time it is
+encountered. This speeds up the overused ConditionSwitch displayable,
+along with other parts of Ren'Py. Because of this change, a game will
+open slowly the first time it's run under Ren'Py 6.99.14, as all of the
+expressions need to be compiled.
+
+This release both increases the speed of maintaining the information required
+by rollback, and does so less often. This may be visible to players by
+Ren'Py now allowing them to roll back farther than before.
+
+There have also been many other performance improvements that will only be
+visible by the increased speed. This release just includes the first round
+of performance improvements, while a new performance profiling framework
+included will allow Ren'Py developers to further improve things.
+
+
+Multiple Character Dialogue
+---------------------------
+
+Ren'Py now includes a system that allows multiple characters to speak dialogue
+at the same time. It's accessed by giving the multiple argument to consecutive
+say statements. For example::
+
+    e "Ren'Py now supports multiple character dialogue." (multiple=2)
+    l "About time! I've been wanting this for years!" (multiple=2)
+
+As there is more than one way to show dialogue from multiple characters
+(side-by-side? top-and-bottom? one or two textboxes?), Ren'Py doesn't include
+support for this out of the box yet. Please see the :ref:`multiple-character-dialogue`
+section of the documentation for the styles you'll need to define.
+
+GUI Preferences
+----------------
+
+Ren'Py supports a new GUI preference system that replaces the old style preference
+system, as it allows preferences to apply to variables in the new GUI that can
+be referenced from multiple styles.
+
+This makes it possible to write::
+
+    define gui.text_font = gui.preference("font", "DejaVuSans.ttf")
+
+To access the preference, and::
+
+    vbox:
+        style_prefix "radio"
+        label _("Font")
+        textbutton _("DejaVu") action gui.SetPreference("font", "DejaVuSans.ttf")
+        textbutton _("Dyslexic") action gui.SetPreference("font", "OpenDyslexic-Regular.otf")
+
+to set it. See the section on :ref:`gui-preferences` for more details.
+
+Tooltips
+--------
+
+A new tooltip system has been added to Ren'Py, to replaced the one that
+already existed. While in the previous system, one had to write::
+
+    default tt = Tooltip("No button selected.")
+
+    textbutton "One.":
+        action Return(1)
+        hovered tt.Action("The loneliest number.")
+
+    text tt.value
+
+It's now possible to write::
+
+    textbutton "One.":
+        action Return(1)
+        tooltip "The loneliest number."
+
+    text GetTooltip()
+
+This is intended to save boilerplate and make screens more readable. For
+more information, see the :ref:`tooltips` section.
 
 Changes
 -------
@@ -21,13 +139,47 @@ binary data, as might be downloaded from a web server.
 The :var:`config.loadable` callback lets scripts inform Ren'Py about
 additional loadable files.
 
+Ren'Py will attempt to diagnose problems with pickling objects during
+a save, and report an object that caused a pickling problem. (This is
+best-effort, but tends to catch common problems.)
+
+When a viewport is given scrollbars, Ren'Py will now offer its child
+a large amount of space in the given direction. This prevents problems
+with displayables drawn at or below the visible area of a viewport.
+
+Ren'Py now resolves the ambiguity between the :propref:`xpos` and :propref:`xalign`
+style properties in favor of xpos, and similarly for other cases where both
+more and less specific style properties are given to the same style.
+
+Custom statements now take a label function that can return a custom label
+for the statement. This allows the custom statements to be jumped to or
+called.
+
+The new config.gl_clear_color variable allows a creator to set the color
+of the letterboxes and pillarboxes used when the screen is not filled.
+
+Drag displayables (part of the drag and drop system) now support a bottom
+method, that can be used to lower the drag to the bottom of its drg
+group.
+
 Fixes
 -----
+
+There have been several improvements to the interactive director, allowing
+it to work in more circumstances.
+
+A race condition that could cause Ren'Py to lock up (causing a blank
+screen to be displayed) on Android and iOS has been fixed.
 
 In 6.99.13, a race condition caused Ren'Py to infrequently skip movie
 playback entirely.
 
 Ren'Py now supports the AltGr key.
+
+Ren'Py now limits the amount of console output it logs, to prevent print
+statements from consuming memory if the console is never displayed.
+
+
 
 
 .. _renpy-6.99.13:
