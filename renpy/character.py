@@ -660,7 +660,6 @@ class ADVCharacter(object):
     voice_tag = None
     properties = { }
 
-    # When adding a new argument here, remember to add it to copy below.
     def __init__(
             self,
             name=NotSet,
@@ -688,21 +687,24 @@ class ADVCharacter(object):
             else:
                 return kind.display_args[n]
 
-        self.name = v('name')
-        self.who_prefix = v('who_prefix')
-        self.who_suffix = v('who_suffix')
-        self.what_prefix = v('what_prefix')
-        self.what_suffix = v('what_suffix')
+        for field_name in [
+            'name',
+            'who_prefix',
+            'who_suffix',
+            'what_prefix',
+            'what_suffix',
 
-        self.show_function = v('show_function')
-        self.predict_function = v('predict_function')
+            'show_function',
+            'predict_function',
 
-        self.condition = v('condition')
-        self.dynamic = v('dynamic')
-        self.screen = v('screen')
-        self.mode = v('mode')
+            'condition',
+            'dynamic',
+            'screen',
+            'mode',
 
-        self.voice_tag = v('voice_tag')
+            'voice_tag',
+        ]:
+            setattr(self, field_name, v(field_name))
 
         if renpy.config.new_character_image_argument:
             if "image" in properties:
