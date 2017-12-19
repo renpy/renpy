@@ -137,6 +137,10 @@ expression. It takes the following properties:
     A string that's used to provide a prefix for the style for the
     children of this screen, as :ref:`described below <style-prefix>`.
 
+`layer`
+    A string giving the name of the layer the screen is shown on by
+    default.
+
 ::
 
    screen hello_world():
