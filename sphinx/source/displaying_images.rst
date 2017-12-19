@@ -134,6 +134,12 @@ displayable. For example::
         "eileen_happy.png",
         )
 
+When an image is not directly in the game directory, you'll need to
+give the directories underneath it. For example, if the image is in
+game/eileen/happy.png, then you can write::
+
+    image eileen happy = "eileen/happy.png"
+
 The image statement is run at init-time, before the menus are shown
 or the start label runs. When not contained inside an init block,
 image statements are run as if they were placed inside an init block of
