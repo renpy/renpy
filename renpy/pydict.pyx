@@ -112,22 +112,13 @@ cdef class DictItems(object):
 
         quicksort_items(self.items, self.size)
 
-        # Set this to True to check quicksort for correctness.
-        IF False:
-
-            cdef int i
-
-            for 0 <= i < (self.size - 1):
-                if self.items[i].key > self.items[i+1].key:
-                    print("PROBLEM!")
-
     def as_dict(self):
 
         cdef int i
 
         rv = { }
 
-        for 0 <= i < (self.size - 1):
+        for 0 <= i < self.size:
             rv[<object> self.items[i].key] = <object> self.items[i].value
 
         return rv
