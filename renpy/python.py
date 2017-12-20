@@ -589,8 +589,6 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
             py_compile_cache[key] = rv
             return rv
 
-        print("CACHE MISS", cache, key, ast_node, mode)
-
     source = unicode(source)
     source = source.replace("\r", "")
     source = escape_unicode(source)
