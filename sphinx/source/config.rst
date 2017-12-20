@@ -262,6 +262,13 @@ Occasionally Used
 
     The number of slots used by autosaves.
 
+.. var:: config.cache_surfaces = True
+
+    If True, the underlying data of an image is stored in RAM, allowing
+    image manipulators to be applied to that image without reloading it
+    from disk. If False, the data is dropped from the cache, but kept as
+    a texture in video memory, reducing RAM usage.
+
 .. var:: config.character_id_prefixes = [ ]
 
     This specifies a list of style property prefixes that can be given

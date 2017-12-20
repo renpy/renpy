@@ -162,6 +162,11 @@ Drag displayables (part of the drag and drop system) now support a bottom
 method, that can be used to lower the drag to the bottom of its drg
 group.
 
+The :var:`config.cache_surfaces` variable, added in the last release, has
+been documented. Setting this variable to False can reduce Ren'Py's
+memory consumption, at the cost of of slowing down images used by multiple
+image manipulators. (Which should be a rare case in modern Ren'Py.)
+
 Fixes
 -----
 
