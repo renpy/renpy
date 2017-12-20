@@ -114,6 +114,7 @@ class Script(object):
         self.namemap = { }
         self.all_stmts = [ ]
         self.all_pycode = [ ]
+        self.all_pyexpr = [ ]
 
         # A list of statements that haven't been analyzed.
         self.need_analysis = [ ]
@@ -126,8 +127,8 @@ class Script(object):
         self.bytecode_dirty = False
 
         self.translator = renpy.translation.ScriptTranslator()
-
         self.init_bytecode()
+
         self.scan_script_files()
 
         self.translator.chain_translates()
@@ -767,6 +768,7 @@ class Script(object):
             version, cache = loads(renpy.loader.load(BYTECODE_FILE).read().decode("zlib"))
             if version == BYTECODE_VERSION:
                 self.bytecode_oldcache = cache
+
         except:
             pass
 
@@ -775,6 +777,14 @@ class Script(object):
         Compiles the PyCode objects in self.all_pycode, updating the
         cache. Clears out self.all_pycode.
         """
+
+        for i in self.all_pyexpr:
+            try:
+                renpy.python.py_compile(i, 'eval')
+            except:
+                pass
+
+        self.all_pyexpr = [ ]
 
         # Update all of the PyCode objects in the system with the loaded
         # bytecode.

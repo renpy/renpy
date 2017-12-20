@@ -534,7 +534,11 @@ new_compile_flags = (  old_compile_flags
                        )
 
 
-def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
+# A cache for the results of py_compile.
+py_compile_cache = { }
+
+
+def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True):
     """
     Compiles the given source code using the supplied codegenerator.
     Lists, List Comprehensions, and Dictionaries are wrapped when
@@ -560,6 +564,9 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
         that would be used.
     """
 
+    if ast_node:
+        cache = False
+
     if isinstance(source, ast.Module):
         return compile(source, filename, mode)
 
@@ -567,17 +574,22 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
         filename = source.filename
         lineno = source.linenumber
 
-    if not ast_node:
-        key = (lineno, filename, source, mode, renpy.script.MAGIC)
+    if cache:
+        key = (lineno, filename, unicode(source), mode, renpy.script.MAGIC)
 
-        rv = renpy.game.script.bytecode_newcache.get(key, None)
+        rv = py_compile_cache.get(key, None)
         if rv is not None:
             return rv
 
-        rv = renpy.game.script.bytecode_oldcache.get(key, None)
-        if rv is not None:
-            renpy.game.script.bytecode_newcache[key] = None
+        bytecode = renpy.game.script.bytecode_oldcache.get(key, None)
+        if bytecode is not None:
+
+            renpy.game.script.bytecode_newcache[key] = bytecode
+            rv = marshal.loads(bytecode)
+            py_compile_cache[key] = rv
             return rv
+
+        print("CACHE MISS", cache, key, ast_node, mode)
 
     source = unicode(source)
     source = source.replace("\r", "")
@@ -604,7 +616,12 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
             return tree.body
 
         rv = compile(tree, filename, mode, flags, 1)
-        renpy.game.script.bytecode_newcache[key] = rv
+
+        if cache:
+            py_compile_cache[key] = rv
+            renpy.game.script.bytecode_newcache[key] = marshal.dumps(rv)
+            renpy.game.script.bytecode_dirty = True
+
         return rv
 
     except SyntaxError, e:
@@ -616,13 +633,13 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
 
 
 def py_compile_exec_bytecode(source, **kwargs):
-    code = py_compile(source, 'exec', **kwargs)
+    code = py_compile(source, 'exec', cache=False, **kwargs)
     return marshal.dumps(code)
 
 
 def py_compile_eval_bytecode(source, **kwargs):
     source = source.strip()
-    code = py_compile(source, 'eval', **kwargs)
+    code = py_compile(source, 'eval', cache=False, **kwargs)
     return marshal.dumps(code)
 
 
@@ -1474,8 +1491,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                    and data == fwd_data
-                    and (keep_rollback or self.rolled_forward)
+                        and data == fwd_data
+                        and (keep_rollback or self.rolled_forward)
                     ):
                     self.forward.pop(0)
                 else:
@@ -1817,6 +1834,7 @@ def py_eval_bytecode(bytecode, globals=None, locals=None):  # @ReservedAssignmen
 def py_eval(code, globals=None, locals=None):  # @ReservedAssignment
     if isinstance(code, basestring):
         code = py_compile(code, 'eval')
+
     return py_eval_bytecode(code, globals, locals)
 
 

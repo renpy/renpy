@@ -195,10 +195,15 @@ class ArgumentInfo(object):
 def __newobj__(cls, *args):
     return cls.__new__(cls, *args)
 
-# This represents a string containing python code.
+
+# A list of pyexprs that need to be precompiled.
+pyexpr_list = [ ]
 
 
 class PyExpr(unicode):
+    """
+    Represents a string containing python code.
+    """
 
     __slots__ = [
         'filename',
@@ -210,12 +215,9 @@ class PyExpr(unicode):
         self.filename = filename
         self.linenumber = linenumber
 
-        # Try to precompile the string.
-        if self:
-            try:
-                renpy.python.py_compile(self, 'eval')
-            except:
-                pass
+        # Queue the string for precompilation.
+        if self and (renpy.game.script.all_pyexpr is not None):
+            renpy.game.script.all_pyexpr.append(self)
 
         return self
 
