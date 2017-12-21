@@ -382,16 +382,9 @@ class CodeGenerator(object):
         if not os.path.exists(src):
             src = os.path.join(self.p.template, name)
 
-        with open(src, "rb") as f:
-            data = f.read().decode("utf-8")
-
-        data = data.replace(u"\ufeff", u"")
-        data = u"\ufeff" + data
-        data = data.replace(u"\r\n", u"\n")
-        data = data.replace(u"\n", u"\r\n")
-
-        with open(dst, "wb") as f:
-            f.write(data.encode("utf-8"))
+        self.load_template(src)
+        self.remove_scale()
+        self.write_target(dst)
 
     def add_code(self, fn):
 
