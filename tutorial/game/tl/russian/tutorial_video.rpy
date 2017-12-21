@@ -21,7 +21,7 @@ translate russian tutorial_video_b56ccf19:
 translate russian tutorial_video_fbaa71e4:
 
     # e "Then, we can show the movie displayable, which starts the movie playing."
-    e "Затем мы можем показать этот объект и воспроизведение начнётся."
+    e "Затем мы можем показать этот объект, и воспроизведение начнётся."
 
 # game/tutorial_video.rpy:30
 translate russian tutorial_video_bbbb242d:

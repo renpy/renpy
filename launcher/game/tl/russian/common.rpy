@@ -245,43 +245,43 @@ translate russian strings:
     old "Audio Filename:"
     new "Имя файла:"
 
-    # 00gui.rpy:240
+    # 00gui.rpy:368
     old "Are you sure?"
     new "Вы уверены?"
 
-    # 00gui.rpy:241
+    # 00gui.rpy:369
     old "Are you sure you want to delete this save?"
     new "Вы уверены, что хотите удалить это сохранение?"
 
-    # 00gui.rpy:242
+    # 00gui.rpy:370
     old "Are you sure you want to overwrite your save?"
     new "Вы уверены, что хотите перезаписать ваше сохранение?"
 
-    # 00gui.rpy:243
+    # 00gui.rpy:371
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Загрузка игры приведёт к потере несохранённого прогресса.\nВы уверены, что хотите это сделать?"
 
-    # 00gui.rpy:244
+    # 00gui.rpy:372
     old "Are you sure you want to quit?"
     new "Вы уверены, что хотите выйти?"
 
-    # 00gui.rpy:245
+    # 00gui.rpy:373
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Вы уверены, что хотите вернуться в главное меню?\nЭто приведёт к потере несохранённого прогресса."
 
-    # 00gui.rpy:246
+    # 00gui.rpy:374
     old "Are you sure you want to end the replay?"
     new "Вы уверены, что хотите завершить повтор?"
 
-    # 00gui.rpy:247
+    # 00gui.rpy:375
     old "Are you sure you want to begin skipping?"
     new "Вы уверены, что хотите начать пропуск?"
 
-    # 00gui.rpy:248
+    # 00gui.rpy:376
     old "Are you sure you want to skip to the next choice?"
     new "Вы точно хотите пропустить всё до следующего выбора?"
 
-    # 00gui.rpy:249
+    # 00gui.rpy:377
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Вы уверены, что хотите пропустить непрочитанные диалоги до следующего выбора?"
 
@@ -324,154 +324,6 @@ translate russian strings:
     # 00preferences.rpy:476
     old "Self-voicing enabled. Press 'v' to disable."
     new "Синтезатор речи включён. Нажмите 'v', чтобы отключить его."
-
-    # _compat\gamemenu.rpym:198
-    old "Empty Slot."
-    new "Пустой слот"
-
-    # _compat\gamemenu.rpym:355
-    old "Previous"
-    new "Предыдущий"
-
-    # _compat\gamemenu.rpym:362
-    old "Next"
-    new "Следующий"
-
-    # _compat\preferences.rpym:428
-    old "Joystick Mapping"
-    new "Назначение джойстика"
-
-    # _developer\developer.rpym:38
-    old "Developer Menu"
-    new "Меню разработчика"
-
-    # _developer\developer.rpym:43
-    old "Interactive Director (D)"
-    new "Интерактивный Директор (D)"
-
-    # _developer\developer.rpym:45
-    old "Reload Game (Shift+R)"
-    new "Перезагрузить игру (Shift+R)"
-
-    # _developer\developer.rpym:47
-    old "Console (Shift+O)"
-    new "Консоль (Shift+O)"
-
-    # _developer\developer.rpym:49
-    old "Variable Viewer"
-    new "Просмотр переменных"
-
-    # _developer\developer.rpym:53
-    old "Image Location Picker"
-    new "Инструмент позиционирования на изображениях"
-
-    # _developer\developer.rpym:55
-    old "Filename List"
-    new "Список файлов"
-
-    # _developer\developer.rpym:59
-    old "Show Image Load Log"
-    new "Показать лог загрузки изображений"
-
-    # _developer\developer.rpym:62
-    old "Hide Image Load Log"
-    new "Скрыть лог загрузки изображений"
-
-    # _developer\developer.rpym:67
-    old "Show Texture Size"
-    new "Показать размер текстур"
-
-    # _developer\developer.rpym:70
-    old "Hide Texture size"
-    new "Скрыть размер текстур"
-
-    # _developer\developer.rpym:108
-    old "Nothing to inspect."
-    new "Переменные не заданы."
-
-    # _developer\developer.rpym:236
-    old "Return to the developer menu"
-    new "Вернуться в меню разработчика"
-
-    # _developer\developer.rpym:396
-    old "Rectangle: %r"
-    new "Прямоугольник: %r"
-
-    # _developer\developer.rpym:401
-    old "Mouse position: %r"
-    new "Позиция мыши: %r"
-
-    # _developer\developer.rpym:406
-    old "Right-click or escape to quit."
-    new "Нажмите правую кнопку мыши или ESC чтобы выйти."
-
-    # _developer\developer.rpym:438
-    old "Rectangle copied to clipboard."
-    new "Координаты прямоугольника скопированы в буфер обмена."
-
-    # _developer\developer.rpym:441
-    old "Position copied to clipboard."
-    new "Координаты позиции скопированы в буфер обмена."
-
-    # _developer\developer.rpym:550
-    old "✔ "
-    new "✔ "
-
-    # _developer\developer.rpym:553
-    old "✘ "
-    new "✘ "
-
-    # _developer\developer.rpym:558
-    old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ предсказанное изображение (хорошо){/color}\n{color=#fcc}✘ внезапное изображение (плохо){/color}\n{color=#fff}Нажмите, чтобы передвинуть.{/color}"
-
-    # _developer\developer.rpym:569
-    old "{size_mb:,.1f} MB in {count} textures."
-    new "{size_mb:,.1f} МБ при количестве текстур: {count}."
-
-    # _developer\inspector.rpym:38
-    old "Displayable Inspector"
-    new "Диспетчер объектов"
-
-    # _developer\inspector.rpym:61
-    old "Size"
-    new "Разрешение"
-
-    # _developer\inspector.rpym:65
-    old "Style"
-    new "Стиль"
-
-    # _developer\inspector.rpym:71
-    old "Location"
-    new "Местоположение"
-
-    # _developer\inspector.rpym:122
-    old "Inspecting Styles of [displayable_name!q]"
-    new "Инспектирую стили [displayable_name!q]"
-
-    # _developer\inspector.rpym:139
-    old "displayable:"
-    new "объект:"
-
-    # _developer\inspector.rpym:145
-    old "        (no properties affect the displayable)"
-    new "        (на объект не влияют никакие параметры)"
-
-    # _developer\inspector.rpym:147
-    old "        (default properties omitted)"
-    new "        (настройки по умолчанию опущены)"
-
-    # _developer\inspector.rpym:185
-    old "<repr() failed>"
-    new "<repr() провален>"
-
-    # _layout\classic_load_save.rpym:170
-    old "a"
-    new "а"
-
-    # _layout\classic_load_save.rpym:179
-    old "q"
-    new "б"
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."

@@ -363,7 +363,7 @@ translate russian screens_control_6768768b:
 translate russian screen_use_c6a20a16:
 
     # e "The screen language use statement lets you include a screen inside another. This can be useful to prevent duplication inside screens."
-    e "Язык экранов использует оператор, позволяющий вам включить один экран в другой (эффект экран-в-экране). Это может быть полезно, если вы хотите избавить от разных дубликатов экранов."
+    e "Язык экранов использует оператор, позволяющий вам включить один экран в другой (эффект экран-в-экране). Это может быть полезно, если вы хотите избавиться от разных дубликатов экранов."
 
 # game/tutorial_screens.rpy:616
 translate russian screen_use_95a34d3a:
