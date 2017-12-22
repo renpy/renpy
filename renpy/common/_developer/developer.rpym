@@ -485,7 +485,7 @@ label _image_location_picker:
         image_files = [
             fn
             for dir, fn in renpy.loader.listdirfiles()
-            if fn.lower().endswith(".jpg") or fn.lower().endswith(".png")
+            if fn.lower().endswith(".jpg") or fn.lower().endswith(".png") or fn.lower().endswith(".webp")
             if not fn[0] == "_"
             ]
 
