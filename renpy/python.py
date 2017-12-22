@@ -1162,8 +1162,7 @@ class Rollback(renpy.object.Object):
                 reached(rb, reachable, wait)
             else:
                 if renpy.config.debug:
-                    print(("Removing unreachable:", o))
-
+                    print("Removing unreachable:", o, file=renpy.log.real_stdout)
                     pass
 
         self.objects = new_objects
