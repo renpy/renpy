@@ -1072,6 +1072,8 @@ transform = Wrapper(renpy.display.motion.Transform, one=True, style='transform')
 _viewport = Wrapper(renpy.display.viewport.Viewport, one=True, replaces=True, style='viewport')
 _vpgrid = Wrapper(renpy.display.viewport.VPGrid, many=True, replaces=True, style='vpgrid')
 
+VIEWPORT_SIZE = 32767
+
 
 def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
 
@@ -1112,7 +1114,7 @@ def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
     if scrollbars == "vertical":
 
         if renpy.config.scrollbar_child_size:
-            viewport_properties.setdefault("child_size", (None, sys.maxint))
+            viewport_properties.setdefault("child_size", (None, VIEWPORT_SIZE))
 
         side("c r", **side_properties)
 
@@ -1129,7 +1131,7 @@ def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
     elif scrollbars == "horizontal":
 
         if renpy.config.scrollbar_child_size:
-            viewport_properties.setdefault("child_size", (sys.maxint, None))
+            viewport_properties.setdefault("child_size", (VIEWPORT_SIZE, None))
 
         side("c b", **side_properties)
 
@@ -1146,7 +1148,7 @@ def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
     else:
 
         if renpy.config.scrollbar_child_size:
-            viewport_properties.setdefault("child_size", (sys.maxint, sys.maxint))
+            viewport_properties.setdefault("child_size", (VIEWPORT_SIZE, VIEWPORT_SIZE))
 
         side("c r b", **side_properties)
 
