@@ -164,6 +164,7 @@ init label _errorhandling:
 
     style _text is _default
     style _fixed is _default
+    style _input is _default
 
     style _hbox is _default:
         box_layout 'horizontal'
