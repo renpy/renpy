@@ -482,12 +482,19 @@ label _image_location_picker:
 
     python hide:
 
-        image_files = [
-            fn
-            for dir, fn in renpy.loader.listdirfiles()
-            if fn.lower().endswith(".jpg") or fn.lower().endswith(".png") or fn.lower().endswith(".webp")
-            if not fn[0] == "_"
-            ]
+        extensions = [ ".jpg", ".jpeg", ".png", ".webp" ]
+
+        image_files = [ ]
+
+        for fn in renpy.list_files():
+            if fn[0] == "_":
+                continue
+
+            lfn = fn.lower()
+
+            for i in extensions:
+                if fn.endswith(i):
+                    image_files.append(fn)
 
         image_files.sort()
 
