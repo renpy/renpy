@@ -218,7 +218,13 @@ class StdioRedirector(object):
         self.log = open("log", developer=False, append=False)
 
     def write(self, s):
-        self.real_file.write(s)
+
+        if isinstance(s, unicode):
+            es = s.encode("utf-8")
+        else:
+            es = s
+
+        self.real_file.write(es)
         self.real_file.flush()
 
         if renpy.ios:
