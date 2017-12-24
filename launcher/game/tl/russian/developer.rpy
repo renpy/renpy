@@ -73,19 +73,23 @@ translate russian strings:
     old "Position copied to clipboard."
     new "Координаты позиции скопированы в буфер обмена."
 
-    # _developer/developer.rpym:550
+    # _developer/developer.rpym:460
+    old "Type to filter: "
+    new "Текущий фильтр: "
+
+    # _developer/developer.rpym:564
     old "✔ "
     new "✔ "
 
-    # _developer/developer.rpym:553
+    # _developer/developer.rpym:567
     old "✘ "
     new "✘ "
 
-    # _developer/developer.rpym:558
+    # _developer/developer.rpym:572
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
     new "\n{color=#cfc}✔ предсказанное изображение (хорошо){/color}\n{color=#fcc}✘ внезапное изображение (плохо){/color}\n{color=#fff}Нажмите, чтобы передвинуть.{/color}"
 
-    # _developer/developer.rpym:569
+    # _developer/developer.rpym:583
     old "{size_mb:,.1f} MB in {count} textures."
     new "{size_mb:,.1f} МБ при количестве текстур: {count}."
 
