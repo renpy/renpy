@@ -792,6 +792,8 @@ def add_auto(fn, force=False):
     starts/stops existing, we trigger a reload.
     """
 
+    fn = fn.replace("\\", "/")
+
     if not renpy.autoreload:
         return
 
