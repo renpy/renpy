@@ -42,6 +42,8 @@ class Line(object):
 
     def __init__(self, filename, number, start):
 
+        filename = filename.replace("\\", "/")
+
         # The full path to the file with the line in it.
         self.filename = filename
 
@@ -88,6 +90,8 @@ def get_line_text(filename, linenumber):
     the line does not exist.
     """
 
+    filename = filename.replace("\\", "/")
+
     ensure_loaded(filename)
 
     if (filename, linenumber) in lines:
@@ -109,6 +113,8 @@ def adjust_line_locations(filename, linenumber, char_offset, line_offset):
     `line_offset`
         The number of line in the file to offset the code by.
     """
+
+    filename = filename.replace("\\", "/")
 
     ensure_loaded(filename)
 
@@ -138,6 +144,8 @@ def insert_line_before(code, filename, linenumber):
     correspond to an existing line, and the code is inserted with the same
     indentation as that line.
     """
+
+    filename = filename.replace("\\", "/")
 
     if renpy.config.clear_lines:
         raise Exception("config.clear_lines must be False for script editing to work.")
@@ -189,6 +197,8 @@ def remove_line(filename, linenumber):
     to a logical line.
     """
 
+    filename = filename.replace("\\", "/")
+
     if renpy.config.clear_lines:
         raise Exception("config.clear_lines must be False for script editing to work.")
 
@@ -218,6 +228,8 @@ def get_full_text(filename, linenumber):
     Returns the full text of `linenumber` from `filename`, including
     any comment or delimiter characters that exist.
     """
+
+    filename = filename.replace("\\", "/")
 
     ensure_loaded(filename)
 
