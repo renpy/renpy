@@ -1653,7 +1653,7 @@ Use and Transclude
 
 A use statement may also take a block containing screen language statements.
 When a block is given, the screen that is used may contain the ``transclude``
-statement. The ``transclude`` statement is replaces with the statements
+statement. The ``transclude`` statement is replaced with the statements
 contained within the use statement's block.
 
 This makes it possible to define reusable layouts using screens. For example,
