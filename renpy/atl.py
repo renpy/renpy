@@ -634,6 +634,10 @@ class Statement(renpy.object.Object):
     def visit(self):
         return [ ]
 
+    # Does this respond to an event?
+    def _handles_event(self, event):
+        return False
+
 # This represents a Raw ATL block.
 
 
@@ -691,6 +695,14 @@ class Block(Statement):
                 self.times.append((s.time, i + 1))
 
         self.times.sort()
+
+    def _handles_event(self, event):
+
+        for i in self.statements:
+            if i._handles_event(event):
+                return True
+
+        return False
 
     def execute(self, trans, st, state, events):
 
@@ -1288,6 +1300,14 @@ class Parallel(Statement):
         super(Parallel, self).__init__(loc)
         self.blocks = blocks
 
+    def _handles_event(self, event):
+
+        for i in self.blocks:
+            if i._handles_event(event):
+                return True
+
+        return False
+
     def execute(self, trans, st, state, events):
 
         executing(self.loc)
@@ -1361,6 +1381,14 @@ class Choice(Statement):
         super(Choice, self).__init__(loc)
 
         self.choices = choices
+
+    def _handles_event(self, event):
+
+        for i in self.choices:
+            if i[1]._handles_event(event):
+                return True
+
+        return False
 
     def execute(self, trans, st, state, events):
 
@@ -1436,7 +1464,6 @@ class RawOn(RawStatement):
             self.handlers[i] = block
 
     def compile(self, ctx):  # @ReservedAssignment
-
         compiling(self.loc)
 
         handlers = { }
@@ -1466,6 +1493,12 @@ class On(Statement):
         super(On, self).__init__(loc)
 
         self.handlers = handlers
+
+    def _handles_event(self, event):
+        if event in self.handlers:
+            return True
+        else:
+            return False
 
     def execute(self, trans, st, state, events):
 
@@ -1588,6 +1621,9 @@ class Function(Statement):
         super(Function, self).__init__(loc)
 
         self.function = function
+
+    def _handles_event(self, event):
+        return True
 
     def execute(self, trans, st, state, events):
         fr = self.function(trans, st, trans.at)
