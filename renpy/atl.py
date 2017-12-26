@@ -323,6 +323,15 @@ class ATLTransformBase(renpy.object.Object):
         if renpy.game.context().init_phase:
             compile_queue.append(self)
 
+    def _handles_event(self, event):
+        if (self.block is not None) and (self.block._handles_event(event)):
+            return True
+
+        if self.child is None:
+            return False
+
+        return self.child._handles_event(event)
+
     def get_block(self):
         """
         Returns the compiled block to use.

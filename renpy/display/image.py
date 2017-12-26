@@ -367,6 +367,12 @@ class ImageReference(renpy.display.core.Displayable):
         rv.target = target
         return rv
 
+    def _handles_event(self, event):
+        if self.target is None:
+            return False
+
+        return self.target._handles_event(event)
+
     def _hide(self, st, at, kind):
         if self.target is None:
             self.find_target()
@@ -572,6 +578,12 @@ class DynamicImage(renpy.display.core.Displayable):
 
         rv.locked = True
         return rv
+
+    def _handles_event(self, event):
+        if self.target is None:
+            return False
+
+        return self.target._handles_event(event)
 
     def _hide(self, st, at, kind):
         if self.target is None:

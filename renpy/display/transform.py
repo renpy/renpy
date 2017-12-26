@@ -740,6 +740,15 @@ class Transform(Container):
 
         return rv
 
+    def _handles_event(self, event):
+        if self.function is not None:
+            return True
+
+        if self.child and self.child._handles_event(event):
+            return True
+
+        return False
+
     def _hide(self, st, at, kind):
 
         if not self.child:

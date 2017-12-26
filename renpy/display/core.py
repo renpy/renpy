@@ -594,6 +594,13 @@ class Displayable(renpy.object.Object):
         if self.transform_event_responder:
             renpy.display.render.redraw(self, 0)
 
+    def _handles_event(self, event):
+        """
+        Returns True if the displayable handles event, False otherwise.
+        """
+
+        return False
+
     def _hide(self, st, at, kind):
         """
         Returns None if this displayable is ready to be hidden, or

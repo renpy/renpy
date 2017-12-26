@@ -435,11 +435,20 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         return rv
 
+    def _handles_event(self, event):
+        if self.child is None:
+            return
+
+        return self.child._handles_event(event)
+
     def _hide(self, st, at, kind):
 
         if self.phase == HIDE:
             hid = self
         else:
+
+            if (self.child is not None) and (not self.child._handles_event(kind)):
+                return None
 
             updated_screens.discard(self)
             self.update()
@@ -448,6 +457,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 return None
 
             if self.child is None:
+                return None
+
+            if not self.child._handles_event(kind):
                 return None
 
             if self.screen.ast is not None:
