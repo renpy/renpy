@@ -103,6 +103,13 @@ class Container(renpy.display.core.Displayable):
 
         super(Container, self).__init__(**properties)
 
+    def _handles_event(self, event):
+        for i in self.children:
+            if i._handles_event(event):
+                return True
+
+        return False
+
     def set_style_prefix(self, prefix, root):
         super(Container, self).set_style_prefix(prefix, root)
 
@@ -1684,7 +1691,6 @@ class AdjustTimes(Container):
             at = 0
 
         return st, at
-
 
     def render(self, w, h, st, at):
 

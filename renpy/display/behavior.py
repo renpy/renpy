@@ -2052,6 +2052,12 @@ class OnEvent(renpy.display.core.Displayable):
         self.event_name = event
         self.action = action
 
+    def _handles_event(self, event):
+        if self.event_name == event:
+            return True
+        else:
+            return False
+
     def set_transform_event(self, event):
         if event == self.event_name:
             run(self.action)

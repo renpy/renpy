@@ -850,9 +850,6 @@ class SceneLists(renpy.object.Object):
             from happening.
         """
 
-        if renpy.config.zap_transient:
-            prefix = None
-
         for i in renpy.config.transient_layers:
             self.clear(i, True)
 
@@ -1075,6 +1072,10 @@ class SceneLists(renpy.object.Object):
 
         st = oldsle.show_time or now
         at = oldsle.animation_time or now
+
+        if renpy.config.zap_transient:
+            if not oldsle.displayable._handles_event(prefix):
+                prefix = None
 
         if (prefix is not None) and oldsle.tag:
 
