@@ -47,6 +47,7 @@ the omission in future versions.
 * Duanemoody
 * Edward Betts
 * Edwin
+* Eliza Velasquez
 * Emmanuel Marty
 * Emmeken
 * Eniko
