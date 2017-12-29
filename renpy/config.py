@@ -834,7 +834,7 @@ profile_time = 1.0 / 50.0
 profile_to_event = "end frame"
 
 # Should we instantly zap transient displayables, or properly hide them?
-zap_transient = True
+fast_unhandled_event = True
 
 # Should a fast path be used when displaying empty windows.
 fast_empty_window = True

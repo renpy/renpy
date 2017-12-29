@@ -1073,7 +1073,7 @@ class SceneLists(renpy.object.Object):
         st = oldsle.show_time or now
         at = oldsle.animation_time or now
 
-        if renpy.config.zap_transient:
+        if renpy.config.fast_unhandled_event:
             if not oldsle.displayable._handles_event(prefix):
                 prefix = None
 

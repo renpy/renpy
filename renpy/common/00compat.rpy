@@ -150,7 +150,7 @@ init -1900 python:
             config.atl_multiple_events = False
 
         if version <= (6, 99, 13):
-            config.zap_transient = False
+            config.fast_unhandled_event = False
             config.gc_thresholds = (700, 10, 10)
             config.idle_gc_count = 10000
             config.scrollbar_child_size = False
