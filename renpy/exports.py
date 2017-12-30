@@ -829,7 +829,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     return rv
 
 
-def menu(items, set_expr):
+def menu(items, set_expr, use_screen):
     """
     :undocumented:
 
@@ -867,7 +867,7 @@ def menu(items, set_expr):
         return None
 
     # Show the menu.
-    rv = renpy.store.menu(items)
+    rv = renpy.store.menu(items, screen=use_screen)
 
     # If we have a set, fill it in with the label of the chosen item.
     if set is not None and rv is not None:

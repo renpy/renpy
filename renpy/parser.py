@@ -1369,6 +1369,7 @@ def parse_menu(stmtl, loc):
 
     with_ = None
     set = None  # @ReservedAssignment
+    use_screen = 'choice'
 
     say_who = None
     say_what = None
@@ -1394,6 +1395,11 @@ def parse_menu(stmtl, loc):
             l.expect_noblock('set menuitem')
             l.advance()
 
+            continue
+
+        if l.keyword('use'):
+            use_screen = l.simple_expression()
+            l.advance()
             continue
 
         # Try to parse a say menuitem.
@@ -1470,7 +1476,7 @@ def parse_menu(stmtl, loc):
     if has_say:
         rv.append(ast.Say(loc, say_who, say_what, None, interact=False))
 
-    rv.append(ast.Menu(loc, items, set, with_))
+    rv.append(ast.Menu(loc, items, set, with_, use_screen))
 
     return rv
 

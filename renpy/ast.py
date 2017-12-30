@@ -1439,14 +1439,16 @@ class Menu(Node):
         'items',
         'set',
         'with_',
+        'use_screen',
         ]
 
-    def __init__(self, loc, items, set, with_):  # @ReservedAssignment
+    def __init__(self, loc, items, set, with_, use_screen):  # @ReservedAssignment
         super(Menu, self).__init__(loc)
 
         self.items = items
         self.set = set
         self.with_ = with_
+        self.use_screen = use_screen
 
     def diff_info(self):
         return (Menu,)
@@ -1501,7 +1503,7 @@ class Menu(Node):
             renpy.exports.say(None, "\n".join(narration), interact=False)
 
         say_menu_with(self.with_, renpy.game.interface.set_transition)
-        choice = renpy.exports.menu(choices, self.set)
+        choice = renpy.exports.menu(choices, self.set, self.use_screen)
 
         if choice is not None:
             next_node(self.items[choice][2][0])
