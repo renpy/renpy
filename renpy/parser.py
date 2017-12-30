@@ -744,11 +744,27 @@ class Lexer(object):
             else:
                 return c
 
+        def munge(m):
+            brackets = m.group(1)
+
+            if (len(brackets) & 1) == 0:
+                return m.group(0)
+
+            if m.group(2).endswith("__"):
+                return m.group(0)
+
+            return brackets + munge_filename(self.filename) + m.group(2)
+
         if not raw:
 
             # Collapse runs of whitespace into single spaces.
             s = re.sub(r'\s+', ' ', s)
             s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)
+
+            if "[__" in s:
+
+                # Munge substitutions.
+                s = re.sub(r'(\[+)__(\w+)', munge, s)
 
         return s
 
