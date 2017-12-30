@@ -191,6 +191,17 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
     contents. In that case, `filename` need not exist.
     """
 
+    def munge_string(m):
+        brackets = m.group(1)
+
+        if (len(brackets) & 1) == 0:
+            return m.group(0)
+
+        if "__" in m.group(2):
+            return m.group(0)
+
+        return brackets + prefix + m.group(2)
+
     global original_filename
 
     original_filename = filename
@@ -332,6 +343,8 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                     pos += 2
                     triplequote = True
 
+                s = [ ]
+
                 while pos < len_data:
 
                     c = data[pos]
@@ -346,30 +359,39 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                     if escape:
                         escape = False
                         pos += 1
-                        line.append(c)
+                        s.append(c)
                         continue
 
                     if c == delim:
 
                         if not triplequote:
                             pos += 1
-                            line.append(c)
+                            s.append(c)
                             break
 
                         if (pos < len_data - 2) and (data[pos+1] == delim) and (data[pos+2] == delim):
                             pos += 3
-                            line.append(delim)
-                            line.append(delim)
-                            line.append(delim)
+                            s.append(delim)
+                            s.append(delim)
+                            s.append(delim)
                             break
 
                     if c == u'\\':
                         escape = True
 
-                    line.append(c)
+                    s.append(c)
                     pos += 1
 
                     continue
+
+                s = "".join(s)
+
+                if "[__" in s:
+
+                    # Munge substitutions.
+                    s = re.sub(r'(\[+)__(\w+)', munge_string, s)
+
+                line.append(s)
 
                 continue
 
@@ -744,27 +766,11 @@ class Lexer(object):
             else:
                 return c
 
-        def munge(m):
-            brackets = m.group(1)
-
-            if (len(brackets) & 1) == 0:
-                return m.group(0)
-
-            if m.group(2).endswith("__"):
-                return m.group(0)
-
-            return brackets + munge_filename(self.filename) + m.group(2)
-
         if not raw:
 
             # Collapse runs of whitespace into single spaces.
             s = re.sub(r'\s+', ' ', s)
             s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)
-
-            if "[__" in s:
-
-                # Munge substitutions.
-                s = re.sub(r'(\[+)__(\w+)', munge, s)
 
         return s
 
