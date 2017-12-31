@@ -481,7 +481,10 @@ def main():
         log_clock("Making clean stores")
 
         gc.collect()
-        gc.set_threshold(*renpy.config.gc_thresholds)
+
+        if renpy.config.manage_gc:
+            gc.set_threshold(*renpy.config.gc_thresholds)
+
         gc.set_debug(int(os.environ.get("RENPY_GC_DEBUG", 0)))
         log_clock("Initial gc.")
 

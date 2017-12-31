@@ -2640,6 +2640,21 @@ class Interface(object):
             if renpy.game.log is not None:
                 renpy.game.log.did_interaction = True
 
+    def consider_gc(self):
+        """
+        Considers if we should peform a garbage collection.
+        """
+
+        if not renpy.config.manage_gc:
+            return
+
+        if gc.get_count()[0] >= renpy.config.idle_gc_count:
+            renpy.plog(1, "before gc")
+            gc.set_threshold(renpy.config.idle_gc_count)
+            gc.collect()
+            gc.set_threshold(renpy.config.gc_thresholds[0])
+            renpy.plog(1, "after gc")
+
     def interact_core(self,
                       show_mouse=True,
                       trans_pause=False,
@@ -3119,12 +3134,7 @@ class Interface(object):
                     prediction_start = get_time()
 
                     if not self.event_peek():
-                        if gc.get_count()[0] >= renpy.config.idle_gc_count:
-                            renpy.plog(1, "before gc")
-                            gc.set_threshold(renpy.config.idle_gc_count)
-                            gc.collect()
-                            gc.set_threshold(renpy.config.gc_thresholds[0])
-                            renpy.plog(1, "after gc")
+                        self.consider_gc()
 
                     # Predict images, if we haven't done so already.
                     while prediction_coroutine is not None:
@@ -3405,6 +3415,8 @@ class Interface(object):
 
             pygame.time.set_timer(TIMEEVENT, 0)
             pygame.time.set_timer(REDRAW, 0)
+
+            self.consider_gc()
 
             renpy.game.context().runtime += end_time - start_time
 
