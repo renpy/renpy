@@ -3121,7 +3121,9 @@ class Interface(object):
                     if not self.event_peek():
                         if gc.get_count()[0] >= renpy.config.idle_gc_count:
                             renpy.plog(1, "before gc")
-                            gc.collect(0)
+                            gc.set_threshold(renpy.config.idle_gc_count)
+                            gc.collect()
+                            gc.set_threshold(renpy.config.gc_thresholds[0])
                             renpy.plog(1, "after gc")
 
                     # Predict images, if we haven't done so already.
