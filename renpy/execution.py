@@ -828,6 +828,7 @@ def run_context(top):
 
             if label and renpy.game.script.has_label(label):
                 context.call(label)
+                context.make_dynamic([ "_return" ])
 
             label = None
 
