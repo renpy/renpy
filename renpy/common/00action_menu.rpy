@@ -168,7 +168,7 @@ init -1500 python:
 
                 layout.yesno_screen(layout.MAIN_MENU, MainMenu(False))
             else:
-                renpy.full_restart()
+                renpy.full_restart(config.game_main_transition)
 
         def get_sensitive(self):
             return not renpy.context()._main_menu
