@@ -218,13 +218,7 @@ label _noisy_return:
 
 # Return to the game.
 label _return:
-
-    if main_menu:
-        $ renpy.transition(config.game_main_transition)
-        jump _main_menu_screen
-
     $ renpy.transition(config.exit_transition)
-
     return
 
 label _confirm_quit:
