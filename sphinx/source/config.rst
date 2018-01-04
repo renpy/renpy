@@ -684,7 +684,7 @@ Occasionally Used
     For example::
 
         def say_arguments_callback(who, interact=True, color="#fff"):
-            return (), { "interact" : interact, "what_color" : color" }
+            return (), { "interact" : interact, "what_color" : color }
 
         config.say_arguments_callback = say_arguments_callback
 
