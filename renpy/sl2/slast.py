@@ -1405,7 +1405,7 @@ class SLFor(SLBlock):
 
             cache = oldcaches.get(index, None)
 
-            if cache is None:
+            if not isinstance(cache, dict):
                 cache = {}
 
             newcaches[index] = cache
@@ -1653,7 +1653,7 @@ class SLUse(SLNode):
                 if cache is None:
                     cache = context.cache.get(self.serial, None)
 
-                if cache is None:
+                if not isinstance(cache, dict):
                     cache = { }
 
             context.cache[self.serial] = cache
@@ -1665,7 +1665,7 @@ class SLUse(SLNode):
 
             cache = context.cache.get(self.serial, None)
 
-            if cache is None:
+            if not isinstance(cache, dict):
                 context.cache[self.serial] = cache = { }
 
         # Evaluate the arguments.
@@ -1752,7 +1752,7 @@ class SLTransclude(SLNode):
 
         cache = context.cache.get(self.serial, None)
 
-        if cache is None:
+        if not isinstance(cache, dict):
             context.cache[self.serial] = cache = { }
 
         cache["transclude"] = context.transclude
@@ -2002,7 +2002,7 @@ class SLScreen(SLBlock):
         main_cache = current_screen.cache
 
         cache = main_cache.get(name, None)
-        if cache is None or (cache["version"] != self.version):
+        if (not isinstance(cache, dict)) or (cache["version"] != self.version):
             cache = { "version" : self.version }
             main_cache[name] = cache
 
