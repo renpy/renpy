@@ -167,6 +167,9 @@ been documented. Setting this variable to False can reduce Ren'Py's
 memory consumption, at the cost of of slowing down images used by multiple
 image manipulators. (Which should be a rare case in modern Ren'Py.)
 
+Variable and field munging (which change the name of a variable that begins with
+__ to a file-specific value) now work inside string substitutions.
+
 Fixes
 -----
 

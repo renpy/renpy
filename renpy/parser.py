@@ -389,7 +389,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                 if "[__" in s:
 
                     # Munge substitutions.
-                    s = re.sub(r'(\[+)__(\w+)', munge_string, s)
+                    s = re.sub(r'(\.|\[+)__(\w+)', munge_string, s)
 
                 line.append(s)
 
