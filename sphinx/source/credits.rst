@@ -103,6 +103,7 @@ the omission in future versions.
 * Piroshki
 * Pratomo Asta Nugraha
 * Project Gardares
+* Rastagong
 * RangHo Lee
 * Ren
 * Renoa
