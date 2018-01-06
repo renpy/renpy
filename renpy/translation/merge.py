@@ -72,6 +72,9 @@ def merge_strings():
         if k not in data:
             continue
 
+        if k not in st.translation_loc:
+            continue
+
         new = data[k]
         quoted = renpy.translation.quote_unicode(new)
         code = u'new "{}"'.format(quoted)
@@ -81,5 +84,6 @@ def merge_strings():
         renpy.scriptedit.remove_line(filename, linenumber + 1)
 
     return False
+
 
 renpy.arguments.register_command("merge_strings", merge_strings)

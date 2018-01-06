@@ -347,7 +347,9 @@ class StringTranslator(object):
             raise Exception("A translation for %r already exists." % old)
 
         self.translations[old] = new
-        self.translation_loc[old] = newloc
+
+        if newloc is not None:
+            self.translation_loc[old] = newloc
 
     def translate(self, old):
 
@@ -469,7 +471,7 @@ def load_rpt(fn):
             if old is None:
                 raise Exception("{0} translation {1!r} doesn't belong to a string.".format(language, s))
 
-            add_string_translation(language, old, s)
+            add_string_translation(language, old, s, None)
             old = None
 
     f.close()
