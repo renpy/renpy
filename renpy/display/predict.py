@@ -84,11 +84,11 @@ def prediction_coroutine(root_widget):
 
     global predicting
 
-    # Wait to be told to start.
-    yield True
-
     # Start the prediction thread (to clean out the cache).
     renpy.display.im.cache.start_prediction()
+
+    # Wait to be told to start.
+    yield True
 
     # Set up the image prediction method.
     global image
