@@ -1,4 +1,4 @@
-
+﻿
 translate indonesian strings:
 
     # gui.rpy:2

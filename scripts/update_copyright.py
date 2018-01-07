@@ -55,7 +55,7 @@ def process_file(fn):
         for l in f:
             l = re.sub(
                 r"Copyright (\d{4})-\d{4} Tom Rothamel",
-                r"Copyright \1-2017 Tom Rothamel",
+                r"Copyright \1-2018 Tom Rothamel",
                 l)
 
             if re.search(r"Copyright .* Tom Rothamel", l):
@@ -85,6 +85,7 @@ def process(root):
         for fn in files:
             fn = os.path.join(dirname, fn)
             process_file(fn)
+
 
 process_file("renpy.py")
 process("renpy")

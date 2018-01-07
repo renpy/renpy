@@ -1,4 +1,4 @@
-translate indonesian strings:
+﻿translate indonesian strings:
 
     # 00gltest.rpy:64
     old "Graphics Acceleration"

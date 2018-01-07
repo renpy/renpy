@@ -1,4 +1,4 @@
-
+﻿
 translate indonesian strings:
 
     # screens.rpy:9

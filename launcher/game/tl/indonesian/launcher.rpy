@@ -1,4 +1,4 @@
-
+﻿
 translate indonesian strings:
 
     # about.rpy:39

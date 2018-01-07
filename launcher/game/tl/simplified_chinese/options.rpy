@@ -1,4 +1,4 @@
-translate simplified_chinese strings:
+﻿translate simplified_chinese strings:
 
     # options.rpy:1
     old "## This file contains options that can be changed to customize your game."
