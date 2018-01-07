@@ -173,11 +173,24 @@ __ to a file-specific value) now work inside string substitutions.
 Fixes
 -----
 
+An issue where screens could display incorrectly when compiled at different
+times has been fixed. This could only show up under certain circumstances.
+
+* The project has screens in multiple files.
+* The files were compiled at different times. (This can never be the case for
+  a released game, since all files are recompiled at the same time when
+  building distributions.)
+
+After upgrading to this release, the problem can be fixed by pressing "Force
+Recompile" in the launcher. This can be done for any game in development, but
+isn't necessary for released games.
+
 There have been several improvements to the interactive director, allowing
 it to work in more circumstances.
 
 A race condition that could cause Ren'Py to lock up (causing a blank
-screen to be displayed) on Android and iOS has been fixed.
+screen to be displayed) on Android and iOS has been fixed. This was
+introduced in 6.99.13.
 
 In 6.99.13, a race condition caused Ren'Py to infrequently skip movie
 playback entirely.
@@ -186,7 +199,6 @@ Ren'Py now supports the AltGr key.
 
 Ren'Py now limits the amount of console output it logs, to prevent print
 statements from consuming memory if the console is never displayed.
-
 
 
 
