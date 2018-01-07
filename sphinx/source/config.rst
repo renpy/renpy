@@ -1189,7 +1189,12 @@ Rarely or Internally Used
 .. var:: config.rollback_length = 128
 
     When there are more than this many statements in the rollback log,
-    Ren'Py will consider trimming the log.
+    Ren'Py will consider trimming the log. This also covers how many
+    steps Ren'Py will rollback when trying to load a save when the script
+    has changed.
+
+    Decreasing this below the default value may cause Ren'Py to become
+    unstable.
 
 .. var:: config.rollback_side_size = .2
 
