@@ -26,6 +26,7 @@
 # When adding fields to a class in an __init__ method, we need to ensure that
 # field is copied in the copy() method.
 
+from __future__ import print_function
 
 import ast
 import collections
@@ -44,13 +45,15 @@ from renpy.display.predict import displayable as predict_displayable
 
 from renpy.python import py_eval_bytecode
 from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST, ccache
+
 import hashlib
+import time
 
 # This file contains the abstract syntax tree for a screen language
 # screen.
 
 # A serial number that makes each SLNode unique.
-serial = 0
+serial = int(time.time() * 1000000)
 
 # A sentinel used to indicate we should use the value found in the
 # expression.
