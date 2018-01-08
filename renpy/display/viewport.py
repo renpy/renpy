@@ -39,6 +39,7 @@ class Viewport(renpy.display.layout.Container):
     __version__ = 5
 
     arrowkeys = False
+    pagekeys = False
 
     def after_upgrade(self, version):
         if version < 1:
@@ -87,6 +88,7 @@ class Viewport(renpy.display.layout.Container):
                  yinitial=None,
                  replaces=None,
                  arrowkeys=False,
+                 pagekeys=False,
                  **properties):
 
         super(Viewport, self).__init__(style=style, **properties)
@@ -118,6 +120,7 @@ class Viewport(renpy.display.layout.Container):
         self.mousewheel = mousewheel
         self.draggable = draggable
         self.arrowkeys = arrowkeys
+        self.pagekeys = pagekeys
 
         # Layout participates in the focus system so drags get migrated.
         self.focusable = draggable or arrowkeys
@@ -405,6 +408,24 @@ class Viewport(renpy.display.layout.Container):
                     return None
 
                 rv = self.yadjustment.change(self.yadjustment.value + self.yadjustment.step)
+                if rv is not None:
+                    return rv
+                else:
+                    raise renpy.display.core.IgnoreEvent()
+
+        if self.pagekeys:
+
+            if renpy.display.behavior.map_event(ev, 'viewport_pageup'):
+
+                rv = self.yadjustment.change(self.yadjustment.value - self.yadjustment.page)
+                if rv is not None:
+                    return rv
+                else:
+                    raise renpy.display.core.IgnoreEvent()
+
+            if renpy.display.behavior.map_event(ev, 'viewport_pagedown'):
+
+                rv = self.yadjustment.change(self.yadjustment.value + self.yadjustment.page)
                 if rv is not None:
                     return rv
                 else:

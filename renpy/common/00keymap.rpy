@@ -88,6 +88,8 @@ init -1600 python:
         viewport_wheeldown = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
+        viewport_pageup = [  'K_PAGEUP', 'repeat_K_PAGEUP' ],
+        viewport_pagedown = [  'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
 
         # These keys control skipping.
         skip = [ 'K_LCTRL', 'K_RCTRL' ],
