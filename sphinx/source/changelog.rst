@@ -170,6 +170,10 @@ image manipulators. (Which should be a rare case in modern Ren'Py.)
 Variable and field munging (which change the name of a variable that begins with
 __ to a file-specific value) now work inside string substitutions.
 
+Viewports and vpgrids now support an pagekeys property, which allows one
+to use the pageup and pagedown keys to scroll the viewport. The arrowkeys
+property is now documented.
+
 Fixes
 -----
 

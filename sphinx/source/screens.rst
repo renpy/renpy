@@ -1111,7 +1111,15 @@ following properties:
 
     If `scrollbars` is not None, the viewport takes properties prefixed
     with "side_". These are passed to the created side layout.
-
+`arrowkeys`
+    If true, the viewport can be scrolled with the left, right, up, and down
+    arrow keys. This takes precedence over the usual function of these keys,
+    which is changing focus. However, the arrow keys will change focus when the
+    viewport reaches its limits.
+`pagekeys`
+    If true, the viewport can be scrolled up and down by the pageup and
+    pagedown keys. This disables the usual functionality of these keys,
+    which is to cause rollback and rollforward.
 
 In addition, it takes the following groups of style properties:
 
