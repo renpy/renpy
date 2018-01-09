@@ -374,58 +374,62 @@ translate piglatin strings:
     new "## Hetay ordersbay ofay hetay ackgroundbay ofay hetay Vlnay-odemay ackgroundbay indowway."
 
     # gui.rpy:363
+    old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
+    new "## Hetay aximummay umbernay ofay Vlnay-odemay entriesay Enray'Ypay illway isplayday. Henway oremay entriesay hantay histay areay otay ebay owshay, hetay oldestay entryay illway ebay emovedray."
+
+    # gui.rpy:367
     old "## The height of an NVL-mode entry. Set this to None to have the entries dynamically adjust height."
     new "## Hetay eighthay ofay anay Vlnay-odemay entryay. Etsay histay otay Onenay otay avehay hetay entriesay ynamicallyday adjustay eighthay."
 
-    # gui.rpy:367
+    # gui.rpy:371
     old "## The spacing between NVL-mode entries when gui.nvl_height is None, and between NVL-mode entries and an NVL-mode menu."
     new "## Hetay pacingsay etweenbay Vlnay-odemay entriesay henway uigay.vl_heightnay isay Onenay, anday etweenbay Vlnay-odemay entriesay anday anay Vlnay-odemay enumay."
 
-    # gui.rpy:384
+    # gui.rpy:388
     old "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"
     new "## Hetay ositionpay, idthway, anday alignmentay ofay vl_thoughtnay exttay (hetay exttay aidsay ybay hetay vl_narratornay aracterchay.)"
 
-    # gui.rpy:391
+    # gui.rpy:395
     old "## The position of nvl menu_buttons."
     new "## Hetay ositionpay ofay vlnay enu_buttonsmay."
 
-    # gui.rpy:395
+    # gui.rpy:399
     old "## Localization"
     new "## Ocalizationlay"
 
-    # gui.rpy:397
+    # gui.rpy:401
     old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
     new "## Histay ontrolscay hereway aay inelay eakbray isay ermittedpay. Hetay efaultday isay uitablesay orfay ostmay anguageslay. Aay istlay ofay availableay aluesvay ancay ebay oundfay atay ttpshay://wwway.enpyray.orgay/ocday/tmlhay/yle_propertiesstay.tmlhay#ylestay-ropertypay-anguagelay"
 
-    # gui.rpy:405
+    # gui.rpy:409
     old "## Mobile devices"
     new "## Obilemay evicesday"
 
-    # gui.rpy:410
+    # gui.rpy:414
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
     new "## Histay increasesay hetay izesay ofay hetay uickqay uttonsbay otay akemay hemtay easieray otay ouchtay onay abletstay anday onesphay."
 
-    # gui.rpy:416
+    # gui.rpy:420
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
     new "## Histay angeschay hetay izesay anday pacingsay ofay ariousvay Uigay elementsay otay ensureay heytay areay easilyay isiblevay onay onesphay."
 
-    # gui.rpy:420
+    # gui.rpy:424
     old "## Font sizes."
     new "## Ontfay izessay."
 
-    # gui.rpy:428
+    # gui.rpy:432
     old "## Adjust the location of the textbox."
     new "## Djustaay hetay ocationlay ofay hetay extboxtay."
 
-    # gui.rpy:434
+    # gui.rpy:438
     old "## Change the size and spacing of various things."
     new "## Hangecay hetay izesay anday pacingsay ofay ariousvay hingstay."
 
-    # gui.rpy:447
+    # gui.rpy:451
     old "## File button layout."
     new "## Ilefay uttonbay ayoutlay."
 
-    # gui.rpy:451
+    # gui.rpy:455
     old "## NVL-mode."
     new "## Vlnay-odemay."
 

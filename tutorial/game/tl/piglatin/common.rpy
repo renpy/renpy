@@ -161,131 +161,135 @@ translate piglatin strings:
     old "Quick save complete."
     new "Uickqay avesay ompletecay."
 
-    # 00director.rpy:689
+    # 00director.rpy:703
     old "The interactive director is not enabled here."
     new "Hetay interactiveay irectorday isay otnay enableday erehay."
 
-    # 00director.rpy:1461
+    # 00director.rpy:1490
     old "Done"
     new "Oneday"
 
-    # 00director.rpy:1469
+    # 00director.rpy:1498
     old "(statement)"
     new "(atementstay)"
 
-    # 00director.rpy:1470
+    # 00director.rpy:1499
     old "(tag)"
     new "(agtay)"
 
-    # 00director.rpy:1471
+    # 00director.rpy:1500
     old "(attributes)"
     new "(attributesay)"
 
-    # 00director.rpy:1472
+    # 00director.rpy:1501
     old "(transform)"
     new "(ansformtray)"
 
-    # 00director.rpy:1497
+    # 00director.rpy:1526
     old "(transition)"
     new "(ansitiontray)"
 
-    # 00director.rpy:1509
+    # 00director.rpy:1538
     old "(channel)"
     new "(annelchay)"
 
-    # 00director.rpy:1510
+    # 00director.rpy:1539
     old "(filename)"
     new "(ilenamefay)"
 
-    # 00director.rpy:1535
+    # 00director.rpy:1564
     old "Change"
     new "Hangecay"
 
-    # 00director.rpy:1537
+    # 00director.rpy:1566
     old "Add"
     new "Ddaay"
 
-    # 00director.rpy:1540
+    # 00director.rpy:1569
     old "Cancel"
     new "Ancelcay"
 
-    # 00director.rpy:1543
+    # 00director.rpy:1572
     old "Remove"
     new "Emoveray"
 
-    # 00director.rpy:1576
+    # 00director.rpy:1605
     old "Statement:"
     new "Tatementsay:"
 
-    # 00director.rpy:1597
+    # 00director.rpy:1626
     old "Tag:"
     new "Agtay:"
 
-    # 00director.rpy:1613
+    # 00director.rpy:1642
     old "Attributes:"
     new "Ttributesaay:"
 
-    # 00director.rpy:1631
+    # 00director.rpy:1660
     old "Transforms:"
     new "Ransformstay:"
 
-    # 00director.rpy:1650
+    # 00director.rpy:1679
     old "Behind:"
     new "Ehindbay:"
 
-    # 00director.rpy:1669
+    # 00director.rpy:1698
     old "Transition:"
     new "Ransitiontay:"
 
-    # 00director.rpy:1687
+    # 00director.rpy:1716
     old "Channel:"
     new "Hannelcay:"
 
-    # 00director.rpy:1705
+    # 00director.rpy:1734
     old "Audio Filename:"
     new "Udioaay Ilenamefay:"
 
-    # 00gui.rpy:240
+    # 00gui.rpy:368
     old "Are you sure?"
     new "Reaay ouyay uresay?"
 
-    # 00gui.rpy:241
+    # 00gui.rpy:369
     old "Are you sure you want to delete this save?"
     new "Reaay ouyay uresay ouyay antway otay eleteday histay avesay?"
 
-    # 00gui.rpy:242
+    # 00gui.rpy:370
     old "Are you sure you want to overwrite your save?"
     new "Reaay ouyay uresay ouyay antway otay overwriteay ouryay avesay?"
 
-    # 00gui.rpy:243
+    # 00gui.rpy:371
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Oadinglay illway oselay unsaveday rogresspay.\nReaay ouyay uresay ouyay antway otay oday histay?"
 
-    # 00gui.rpy:244
+    # 00gui.rpy:372
     old "Are you sure you want to quit?"
     new "Reaay ouyay uresay ouyay antway otay uitqay?"
 
-    # 00gui.rpy:245
+    # 00gui.rpy:373
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Reaay ouyay uresay ouyay antway otay eturnray otay hetay ainmay enumay?\nHistay illway oselay unsaveday rogresspay."
 
-    # 00gui.rpy:246
+    # 00gui.rpy:374
     old "Are you sure you want to end the replay?"
     new "Reaay ouyay uresay ouyay antway otay enday hetay eplayray?"
 
-    # 00gui.rpy:247
+    # 00gui.rpy:375
     old "Are you sure you want to begin skipping?"
     new "Reaay ouyay uresay ouyay antway otay eginbay kippingsay?"
 
-    # 00gui.rpy:248
+    # 00gui.rpy:376
     old "Are you sure you want to skip to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay otay hetay extnay oicechay?"
 
-    # 00gui.rpy:249
+    # 00gui.rpy:377
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay unseenay ialogueday otay hetay extnay oicechay?"
 
-    # 00keymap.rpy:262
+    # 00keymap.rpy:257
+    old "Failed to save screenshot as %s."
+    new "Ailedfay otay avesay creenshotsay asay %say."
+
+    # 00keymap.rpy:269
     old "Saved screenshot as %s."
     new "Avedsay creenshotsay asay %say."
 
@@ -309,15 +313,15 @@ translate piglatin strings:
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Histay rogrampay ontainscay eefray oftwaresay underay aay umbernay ofay icenseslay, includingay hetay Itmay Icenselay anday Nugay Esserlay Eneralgay Ublicpay Icenselay. Aay ompletecay istlay ofay oftwaresay, includingay inkslay otay ullfay ourcesay odecay, ancay ebay oundfay {a=https://www.renpy.org/l/license}erehay{/a}."
 
-    # 00preferences.rpy:442
+    # 00preferences.rpy:472
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "Lipboardcay oicingvay enableday. Resspay 'iftshay+Cay' otay isableday."
 
-    # 00preferences.rpy:444
+    # 00preferences.rpy:474
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "Elfsay-oicingvay ouldway aysay \"[renpy.display.tts.last]\". Resspay 'altay+iftshay+Vay' otay isableday."
 
-    # 00preferences.rpy:446
+    # 00preferences.rpy:476
     old "Self-voicing enabled. Press 'v' to disable."
     new "Elfsay-oicingvay enableday. Resspay 'vay' otay isableday."
 
@@ -325,91 +329,91 @@ translate piglatin strings:
     old "Contacting App Store\nPlease Wait..."
     new "Ontactingcay Ppaay Toresay\nLeasepay Aitway..."
 
-    # 00updater.rpy:373
+    # 00updater.rpy:372
     old "The Ren'Py Updater is not supported on mobile devices."
     new "Hetay Enray'Ypay Pdateruay isay otnay upportedsay onay obilemay evicesday."
 
-    # 00updater.rpy:492
+    # 00updater.rpy:491
     old "An error is being simulated."
     new "Naay erroray isay eingbay imulatedsay."
 
-    # 00updater.rpy:668
+    # 00updater.rpy:667
     old "Either this project does not support updating, or the update status file was deleted."
     new "Ithereay histay rojectpay oesday otnay upportsay updatingay, oray hetay updateay atusstay ilefay asway eletedday."
 
-    # 00updater.rpy:682
+    # 00updater.rpy:681
     old "This account does not have permission to perform an update."
     new "Histay accountay oesday otnay avehay ermissionpay otay erformpay anay updateay."
 
-    # 00updater.rpy:685
+    # 00updater.rpy:684
     old "This account does not have permission to write the update log."
     new "Histay accountay oesday otnay avehay ermissionpay otay riteway hetay updateay oglay."
 
-    # 00updater.rpy:710
+    # 00updater.rpy:711
     old "Could not verify update signature."
     new "Ouldcay otnay erifyvay updateay ignaturesay."
 
-    # 00updater.rpy:981
+    # 00updater.rpy:986
     old "The update file was not downloaded."
     new "Hetay updateay ilefay asway otnay ownloadedday."
 
-    # 00updater.rpy:999
+    # 00updater.rpy:1004
     old "The update file does not have the correct digest - it may have been corrupted."
     new "Hetay updateay ilefay oesday otnay avehay hetay orrectcay igestday - itay aymay avehay eenbay orruptedcay."
 
-    # 00updater.rpy:1055
+    # 00updater.rpy:1060
     old "While unpacking {}, unknown type {}."
     new "Hileway unpackingay {}, unknownay ypetay {}."
 
-    # 00updater.rpy:1399
+    # 00updater.rpy:1407
     old "Updater"
     new "Pdateruay"
 
-    # 00updater.rpy:1406
+    # 00updater.rpy:1414
     old "An error has occured:"
     new "Naay erroray ashay occureday:"
 
-    # 00updater.rpy:1408
+    # 00updater.rpy:1416
     old "Checking for updates."
     new "Heckingcay orfay updatesay."
 
-    # 00updater.rpy:1410
+    # 00updater.rpy:1418
     old "This program is up to date."
     new "Histay rogrampay isay upay otay ateday."
 
-    # 00updater.rpy:1412
+    # 00updater.rpy:1420
     old "[u.version] is available. Do you want to install it?"
     new "[u.version] isay availableay. Oday ouyay antway otay installay itay?"
 
-    # 00updater.rpy:1414
+    # 00updater.rpy:1422
     old "Preparing to download the updates."
     new "Reparingpay otay ownloadday hetay updatesay."
 
-    # 00updater.rpy:1416
+    # 00updater.rpy:1424
     old "Downloading the updates."
     new "Ownloadingday hetay updatesay."
 
-    # 00updater.rpy:1418
+    # 00updater.rpy:1426
     old "Unpacking the updates."
     new "Npackinguay hetay updatesay."
 
-    # 00updater.rpy:1420
+    # 00updater.rpy:1428
     old "Finishing up."
     new "Inishingfay upay."
 
-    # 00updater.rpy:1422
+    # 00updater.rpy:1430
     old "The updates have been installed. The program will restart."
     new "Hetay updatesay avehay eenbay installeday. Hetay rogrampay illway estartray."
 
-    # 00updater.rpy:1424
+    # 00updater.rpy:1432
     old "The updates have been installed."
     new "Hetay updatesay avehay eenbay installeday."
 
-    # 00updater.rpy:1426
+    # 00updater.rpy:1434
     old "The updates were cancelled."
     new "Hetay updatesay ereway ancelledcay."
 
-    # 00updater.rpy:1441
+    # 00updater.rpy:1449
     old "Proceed"
     new "Roceedpay"
 
@@ -433,99 +437,123 @@ translate piglatin strings:
     old "return"
     new "eturnray"
 
-    # 00gltest.rpy:64
-    old "Graphics Acceleration"
-    new "Raphicsgay Ccelerationaay"
-
     # 00gltest.rpy:70
+    old "Renderer"
+    new "Endererray"
+
+    # 00gltest.rpy:74
     old "Automatically Choose"
     new "Utomaticallyaay Hoosecay"
 
-    # 00gltest.rpy:75
+    # 00gltest.rpy:79
     old "Force Angle/DirectX Renderer"
     new "Orcefay Ngleaay/Irectxday Endererray"
 
-    # 00gltest.rpy:79
+    # 00gltest.rpy:83
     old "Force OpenGL Renderer"
     new "Orcefay Pengloay Endererray"
 
-    # 00gltest.rpy:83
+    # 00gltest.rpy:87
     old "Force Software Renderer"
     new "Orcefay Oftwaresay Endererray"
 
-    # 00gltest.rpy:89
+    # 00gltest.rpy:93
     old "NPOT"
     new "Potnay"
 
-    # 00gltest.rpy:93
+    # 00gltest.rpy:97
     old "Enable"
     new "Nableeay"
 
-    # 00gltest.rpy:97
+    # 00gltest.rpy:101
     old "Disable"
     new "Isableday"
 
-    # 00gltest.rpy:124
+    # 00gltest.rpy:131
+    old "Powersave"
+    new "Owersavepay"
+
+    # 00gltest.rpy:149
+    old "Framerate"
+    new "Rameratefay"
+
+    # 00gltest.rpy:153
+    old "Screen"
+    new "Creensay"
+
+    # 00gltest.rpy:157
+    old "60"
+    new "06ay"
+
+    # 00gltest.rpy:161
+    old "30"
+    new "03ay"
+
+    # 00gltest.rpy:167
+    old "Tearing"
+    new "Earingtay"
+
+    # 00gltest.rpy:183
     old "Changes will take effect the next time this program is run."
     new "Hangescay illway aketay effectay hetay extnay imetay histay rogrampay isay unray."
 
-    # 00gltest.rpy:156
+    # 00gltest.rpy:217
     old "Performance Warning"
     new "Erformancepay Arningway"
 
-    # 00gltest.rpy:161
+    # 00gltest.rpy:222
     old "This computer is using software rendering."
     new "Histay omputercay isay usingay oftwaresay enderingray."
 
-    # 00gltest.rpy:163
+    # 00gltest.rpy:224
     old "This computer is not using shaders."
     new "Histay omputercay isay otnay usingay adersshay."
 
-    # 00gltest.rpy:165
+    # 00gltest.rpy:226
     old "This computer is displaying graphics slowly."
     new "Histay omputercay isay isplayingday aphicsgray owlyslay."
 
-    # 00gltest.rpy:167
+    # 00gltest.rpy:228
     old "This computer has a problem displaying graphics: [problem]."
     new "Histay omputercay ashay aay roblempay isplayingday aphicsgray: [problem]."
 
-    # 00gltest.rpy:172
+    # 00gltest.rpy:233
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
     new "Tsiay aphicsgray riversday aymay ebay outay ofay ateday oray otnay operatingay orrectlycay. Histay ancay eadlay otay owslay oray incorrectay aphicsgray isplayday. Pdatinguay Irectxday ouldcay ixfay histay roblempay."
 
-    # 00gltest.rpy:174
+    # 00gltest.rpy:235
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
     new "Tsiay aphicsgray riversday aymay ebay outay ofay ateday oray otnay operatingay orrectlycay. Histay ancay eadlay otay owslay oray incorrectay aphicsgray isplayday."
 
-    # 00gltest.rpy:179
+    # 00gltest.rpy:240
     old "Update DirectX"
     new "Pdateuay Irectxday"
 
-    # 00gltest.rpy:185
+    # 00gltest.rpy:246
     old "Continue, Show this warning again"
     new "Ontinuecay, Howsay histay arningway againay"
 
-    # 00gltest.rpy:189
+    # 00gltest.rpy:250
     old "Continue, Don't show warning again"
     new "Ontinuecay, Onday'tay owshay arningway againay"
 
-    # 00gltest.rpy:207
+    # 00gltest.rpy:268
     old "Updating DirectX."
     new "Pdatinguay Irectxday."
 
-    # 00gltest.rpy:211
+    # 00gltest.rpy:272
     old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
     new "Irectxday ebway etupsay ashay eenbay artedstay. Tiay aymay artstay inimizedmay inay hetay askbartay. Leasepay ollowfay hetay romptspay otay installay Irectxday."
 
-    # 00gltest.rpy:215
+    # 00gltest.rpy:276
     old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
     new "{b}Otenay:{/b} Icrosoftmay'say Irectxday ebway etupsay rogrampay illway, ybay efaultday, installay hetay Ingbay oolbartay. Fiay ouyay oday otnay antway histay oolbartay, uncheckay hetay appropriateay oxbay."
 
-    # 00gltest.rpy:219
+    # 00gltest.rpy:280
     old "When setup finishes, please click below to restart this program."
     new "Henway etupsay inishesfay, easeplay ickclay elowbay otay estartray histay rogrampay."
 
-    # 00gltest.rpy:221
+    # 00gltest.rpy:282
     old "Restart"
     new "Estartray"
 
@@ -553,75 +581,75 @@ translate piglatin strings:
     old "Back (B)"
     new "Ackbay (Bay)"
 
-    # _errorhandling.rpym:523
+    # _errorhandling.rpym:526
     old "Open"
     new "Penoay"
 
-    # _errorhandling.rpym:525
+    # _errorhandling.rpym:528
     old "Opens the traceback.txt file in a text editor."
     new "Pensoay hetay acebacktray.xttay ilefay inay aay exttay editoray."
 
-    # _errorhandling.rpym:527
+    # _errorhandling.rpym:530
     old "Copy"
     new "Opycay"
 
-    # _errorhandling.rpym:529
+    # _errorhandling.rpym:532
     old "Copies the traceback.txt file to the clipboard."
     new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay."
 
-    # _errorhandling.rpym:556
+    # _errorhandling.rpym:559
     old "An exception has occurred."
     new "Naay exceptionay ashay occurreday."
 
-    # _errorhandling.rpym:576
+    # _errorhandling.rpym:579
     old "Rollback"
     new "Ollbackray"
 
-    # _errorhandling.rpym:578
+    # _errorhandling.rpym:581
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "Ttemptsaay aay ollray ackbay otay aay riorpay imetay, allowingay ouyay otay avesay oray oosechay aay ifferentday oicechay."
 
-    # _errorhandling.rpym:581
+    # _errorhandling.rpym:584
     old "Ignore"
     new "Gnoreiay"
 
-    # _errorhandling.rpym:585
+    # _errorhandling.rpym:588
     old "Ignores the exception, allowing you to continue."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay."
 
-    # _errorhandling.rpym:587
+    # _errorhandling.rpym:590
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay. Histay oftenay eadslay otay additionalay errorsay."
 
-    # _errorhandling.rpym:591
+    # _errorhandling.rpym:594
     old "Reload"
     new "Eloadray"
 
-    # _errorhandling.rpym:593
+    # _errorhandling.rpym:596
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "Eloadsray hetay amegay omfray iskday, avingsay anday estoringray amegay atestay ifay ossiblepay."
 
-    # _errorhandling.rpym:596
+    # _errorhandling.rpym:599
     old "Console"
     new "Onsolecay"
 
-    # _errorhandling.rpym:598
+    # _errorhandling.rpym:601
     old "Opens a console to allow debugging the problem."
     new "Pensoay aay onsolecay otay alloway ebuggingday hetay roblempay."
 
-    # _errorhandling.rpym:608
+    # _errorhandling.rpym:611
     old "Quits the game."
     new "Uitsqay hetay amegay."
 
-    # _errorhandling.rpym:632
+    # _errorhandling.rpym:635
     old "Parsing the script failed."
     new "Arsingpay hetay criptsay ailedfay."
 
-    # _errorhandling.rpym:658
+    # _errorhandling.rpym:661
     old "Opens the errors.txt file in a text editor."
     new "Pensoay hetay errorsay.xttay ilefay inay aay exttay editoray."
 
-    # _errorhandling.rpym:662
+    # _errorhandling.rpym:665
     old "Copies the errors.txt file to the clipboard."
     new "Opiescay hetay errorsay.xttay ilefay otay hetay ipboardclay."
 

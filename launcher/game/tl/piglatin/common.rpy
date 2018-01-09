@@ -161,131 +161,135 @@ translate piglatin strings:
     old "Quick save complete."
     new "Uickqay avesay ompletecay."
 
-    # 00director.rpy:689
+    # 00director.rpy:703
     old "The interactive director is not enabled here."
     new "Hetay interactiveay irectorday isay otnay enableday erehay."
 
-    # 00director.rpy:1461
+    # 00director.rpy:1490
     old "Done"
     new "Oneday"
 
-    # 00director.rpy:1469
+    # 00director.rpy:1498
     old "(statement)"
     new "(atementstay)"
 
-    # 00director.rpy:1470
+    # 00director.rpy:1499
     old "(tag)"
     new "(agtay)"
 
-    # 00director.rpy:1471
+    # 00director.rpy:1500
     old "(attributes)"
     new "(attributesay)"
 
-    # 00director.rpy:1472
+    # 00director.rpy:1501
     old "(transform)"
     new "(ansformtray)"
 
-    # 00director.rpy:1497
+    # 00director.rpy:1526
     old "(transition)"
     new "(ansitiontray)"
 
-    # 00director.rpy:1509
+    # 00director.rpy:1538
     old "(channel)"
     new "(annelchay)"
 
-    # 00director.rpy:1510
+    # 00director.rpy:1539
     old "(filename)"
     new "(ilenamefay)"
 
-    # 00director.rpy:1535
+    # 00director.rpy:1564
     old "Change"
     new "Hangecay"
 
-    # 00director.rpy:1537
+    # 00director.rpy:1566
     old "Add"
     new "Ddaay"
 
-    # 00director.rpy:1540
+    # 00director.rpy:1569
     old "Cancel"
     new "Ancelcay"
 
-    # 00director.rpy:1543
+    # 00director.rpy:1572
     old "Remove"
     new "Emoveray"
 
-    # 00director.rpy:1576
+    # 00director.rpy:1605
     old "Statement:"
     new "Tatementsay:"
 
-    # 00director.rpy:1597
+    # 00director.rpy:1626
     old "Tag:"
     new "Agtay:"
 
-    # 00director.rpy:1613
+    # 00director.rpy:1642
     old "Attributes:"
     new "Ttributesaay:"
 
-    # 00director.rpy:1631
+    # 00director.rpy:1660
     old "Transforms:"
     new "Ransformstay:"
 
-    # 00director.rpy:1650
+    # 00director.rpy:1679
     old "Behind:"
     new "Ehindbay:"
 
-    # 00director.rpy:1669
+    # 00director.rpy:1698
     old "Transition:"
     new "Ransitiontay:"
 
-    # 00director.rpy:1687
+    # 00director.rpy:1716
     old "Channel:"
     new "Hannelcay:"
 
-    # 00director.rpy:1705
+    # 00director.rpy:1734
     old "Audio Filename:"
     new "Udioaay Ilenamefay:"
 
-    # 00gui.rpy:240
+    # 00gui.rpy:368
     old "Are you sure?"
     new "Reaay ouyay uresay?"
 
-    # 00gui.rpy:241
+    # 00gui.rpy:369
     old "Are you sure you want to delete this save?"
     new "Reaay ouyay uresay ouyay antway otay eleteday histay avesay?"
 
-    # 00gui.rpy:242
+    # 00gui.rpy:370
     old "Are you sure you want to overwrite your save?"
     new "Reaay ouyay uresay ouyay antway otay overwriteay ouryay avesay?"
 
-    # 00gui.rpy:243
+    # 00gui.rpy:371
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Oadinglay illway oselay unsaveday rogresspay.\nReaay ouyay uresay ouyay antway otay oday histay?"
 
-    # 00gui.rpy:244
+    # 00gui.rpy:372
     old "Are you sure you want to quit?"
     new "Reaay ouyay uresay ouyay antway otay uitqay?"
 
-    # 00gui.rpy:245
+    # 00gui.rpy:373
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Reaay ouyay uresay ouyay antway otay eturnray otay hetay ainmay enumay?\nHistay illway oselay unsaveday rogresspay."
 
-    # 00gui.rpy:246
+    # 00gui.rpy:374
     old "Are you sure you want to end the replay?"
     new "Reaay ouyay uresay ouyay antway otay enday hetay eplayray?"
 
-    # 00gui.rpy:247
+    # 00gui.rpy:375
     old "Are you sure you want to begin skipping?"
     new "Reaay ouyay uresay ouyay antway otay eginbay kippingsay?"
 
-    # 00gui.rpy:248
+    # 00gui.rpy:376
     old "Are you sure you want to skip to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay otay hetay extnay oicechay?"
 
-    # 00gui.rpy:249
+    # 00gui.rpy:377
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay unseenay ialogueday otay hetay extnay oicechay?"
 
-    # 00keymap.rpy:262
+    # 00keymap.rpy:257
+    old "Failed to save screenshot as %s."
+    new "Ailedfay otay avesay creenshotsay asay %say."
+
+    # 00keymap.rpy:269
     old "Saved screenshot as %s."
     new "Avedsay creenshotsay asay %say."
 
@@ -309,15 +313,15 @@ translate piglatin strings:
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Histay rogrampay ontainscay eefray oftwaresay underay aay umbernay ofay icenseslay, includingay hetay Itmay Icenselay anday Nugay Esserlay Eneralgay Ublicpay Icenselay. Aay ompletecay istlay ofay oftwaresay, includingay inkslay otay ullfay ourcesay odecay, ancay ebay oundfay {a=https://www.renpy.org/l/license}erehay{/a}."
 
-    # 00preferences.rpy:442
+    # 00preferences.rpy:472
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "Lipboardcay oicingvay enableday. Resspay 'iftshay+Cay' otay isableday."
 
-    # 00preferences.rpy:444
+    # 00preferences.rpy:474
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "Elfsay-oicingvay ouldway aysay \"[renpy.display.tts.last]\". Resspay 'altay+iftshay+Vay' otay isableday."
 
-    # 00preferences.rpy:446
+    # 00preferences.rpy:476
     old "Self-voicing enabled. Press 'v' to disable."
     new "Elfsay-oicingvay enableday. Resspay 'vay' otay isableday."
 
@@ -325,75 +329,75 @@ translate piglatin strings:
     old "Contacting App Store\nPlease Wait..."
     new "Ontactingcay Ppaay Toresay\nLeasepay Aitway..."
 
-    # 00updater.rpy:373
+    # 00updater.rpy:372
     old "The Ren'Py Updater is not supported on mobile devices."
     new "Hetay Enray'Ypay Pdateruay isay otnay upportedsay onay obilemay evicesday."
 
-    # 00updater.rpy:492
+    # 00updater.rpy:491
     old "An error is being simulated."
     new "Naay erroray isay eingbay imulatedsay."
 
-    # 00updater.rpy:668
+    # 00updater.rpy:667
     old "Either this project does not support updating, or the update status file was deleted."
     new "Ithereay histay rojectpay oesday otnay upportsay updatingay, oray hetay updateay atusstay ilefay asway eletedday."
 
-    # 00updater.rpy:682
+    # 00updater.rpy:681
     old "This account does not have permission to perform an update."
     new "Histay accountay oesday otnay avehay ermissionpay otay erformpay anay updateay."
 
-    # 00updater.rpy:685
+    # 00updater.rpy:684
     old "This account does not have permission to write the update log."
     new "Histay accountay oesday otnay avehay ermissionpay otay riteway hetay updateay oglay."
 
-    # 00updater.rpy:710
+    # 00updater.rpy:711
     old "Could not verify update signature."
     new "Ouldcay otnay erifyvay updateay ignaturesay."
 
-    # 00updater.rpy:981
+    # 00updater.rpy:986
     old "The update file was not downloaded."
     new "Hetay updateay ilefay asway otnay ownloadedday."
 
-    # 00updater.rpy:999
+    # 00updater.rpy:1004
     old "The update file does not have the correct digest - it may have been corrupted."
     new "Hetay updateay ilefay oesday otnay avehay hetay orrectcay igestday - itay aymay avehay eenbay orruptedcay."
 
-    # 00updater.rpy:1055
+    # 00updater.rpy:1060
     old "While unpacking {}, unknown type {}."
     new "Hileway unpackingay {}, unknownay ypetay {}."
 
-    # 00updater.rpy:1399
+    # 00updater.rpy:1407
     old "Updater"
     new "Pdateruay"
 
-    # 00updater.rpy:1410
+    # 00updater.rpy:1418
     old "This program is up to date."
     new "Histay rogrampay isay upay otay ateday."
 
-    # 00updater.rpy:1412
+    # 00updater.rpy:1420
     old "[u.version] is available. Do you want to install it?"
     new "[u.version] isay availableay. Oday ouyay antway otay installay itay?"
 
-    # 00updater.rpy:1414
+    # 00updater.rpy:1422
     old "Preparing to download the updates."
     new "Reparingpay otay ownloadday hetay updatesay."
 
-    # 00updater.rpy:1416
+    # 00updater.rpy:1424
     old "Downloading the updates."
     new "Ownloadingday hetay updatesay."
 
-    # 00updater.rpy:1418
+    # 00updater.rpy:1426
     old "Unpacking the updates."
     new "Npackinguay hetay updatesay."
 
-    # 00updater.rpy:1422
+    # 00updater.rpy:1430
     old "The updates have been installed. The program will restart."
     new "Hetay updatesay avehay eenbay installeday. Hetay rogrampay illway estartray."
 
-    # 00updater.rpy:1424
+    # 00updater.rpy:1432
     old "The updates have been installed."
     new "Hetay updatesay avehay eenbay installeday."
 
-    # 00updater.rpy:1426
+    # 00updater.rpy:1434
     old "The updates were cancelled."
     new "Hetay updatesay ereway ancelledcay."
 

@@ -73,19 +73,23 @@ translate piglatin strings:
     old "Position copied to clipboard."
     new "Ositionpay opiedcay otay ipboardclay."
 
-    # _developer/developer.rpym:550
+    # _developer/developer.rpym:460
+    old "Type to filter: "
+    new "Ypetay otay ilterfay: "
+
+    # _developer/developer.rpym:564
     old "✔ "
     new "✔ "
 
-    # _developer/developer.rpym:553
+    # _developer/developer.rpym:567
     old "✘ "
     new "✘ "
 
-    # _developer/developer.rpym:558
+    # _developer/developer.rpym:572
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
     new "\n{color=#cfc}✔ redictedpay imageay (oodgay){/color}\n{color=#fcc}✘ unpredicteday imageay (adbay){/color}\n{color=#fff}Ragday otay ovemay.{/color}"
 
-    # _developer/developer.rpym:569
+    # _developer/developer.rpym:583
     old "{size_mb:,.1f} MB in {count} textures."
     new "{size_mb:,.1f} Bmay inay {count} exturestay."
 
@@ -125,67 +129,67 @@ translate piglatin strings:
     old "<repr() failed>"
     new "<eprray() ailedfay>"
 
-    # 00console.rpy:227
+    # 00console.rpy:255
     old "Press <esc> to exit console. Type help for help.\n"
     new "Resspay <escay> otay exitay onsolecay. Ypetay elphay orfay elphay.\n"
 
-    # 00console.rpy:231
+    # 00console.rpy:259
     old "Ren'Py script enabled."
     new "Enray'Ypay criptsay enableday."
 
-    # 00console.rpy:233
+    # 00console.rpy:261
     old "Ren'Py script disabled."
     new "Enray'Ypay criptsay isabledday."
 
-    # 00console.rpy:459
+    # 00console.rpy:496
     old "help: show this help"
     new "elphay: owshay histay elphay"
 
-    # 00console.rpy:464
+    # 00console.rpy:501
     old "commands:\n"
     new "ommandscay:\n"
 
-    # 00console.rpy:474
+    # 00console.rpy:511
     old " <renpy script statement>: run the statement\n"
     new " <enpyray criptsay atementstay>: unray hetay atementstay\n"
 
-    # 00console.rpy:476
+    # 00console.rpy:513
     old " <python expression or statement>: run the expression or statement"
     new " <ythonpay expressionay oray atementstay>: unray hetay expressionay oray atementstay"
 
-    # 00console.rpy:484
+    # 00console.rpy:521
     old "clear: clear the console history"
     new "earclay: earclay hetay onsolecay istoryhay"
 
-    # 00console.rpy:488
+    # 00console.rpy:525
     old "exit: exit the console"
     new "exitay: exitay hetay onsolecay"
 
-    # 00console.rpy:496
+    # 00console.rpy:533
     old "load <slot>: loads the game from slot"
     new "oadlay <otslay>: oadslay hetay amegay omfray otslay"
 
-    # 00console.rpy:509
+    # 00console.rpy:546
     old "save <slot>: saves the game in slot"
     new "avesay <otslay>: avessay hetay amegay inay otslay"
 
-    # 00console.rpy:520
+    # 00console.rpy:557
     old "reload: reloads the game, refreshing the scripts"
     new "eloadray: eloadsray hetay amegay, efreshingray hetay criptssay"
 
-    # 00console.rpy:528
+    # 00console.rpy:565
     old "watch <expression>: watch a python expression"
     new "atchway <expressionay>: atchway aay ythonpay expressionay"
 
-    # 00console.rpy:554
+    # 00console.rpy:591
     old "unwatch <expression>: stop watching an expression"
     new "unwatchay <expressionay>: opstay atchingway anay expressionay"
 
-    # 00console.rpy:585
+    # 00console.rpy:622
     old "unwatchall: stop watching all expressions"
     new "unwatchallay: opstay atchingway allay expressionsay"
 
-    # 00console.rpy:602
+    # 00console.rpy:639
     old "jump <label>: jumps to label"
     new "umpjay <abellay>: umpsjay otay abellay"
 

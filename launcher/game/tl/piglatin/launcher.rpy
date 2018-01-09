@@ -101,99 +101,99 @@ translate piglatin strings:
     old "Retrieves the log from the Android device and writes it to a file."
     new "Etrievesray hetay oglay omfray hetay Ndroidaay eviceday anday ritesway itay otay aay ilefay."
 
-    # android.rpy:240
+    # android.rpy:244
     old "Copying Android files to distributions directory."
     new "Opyingcay Ndroidaay ilesfay otay istributionsday irectoryday."
 
-    # android.rpy:304
+    # android.rpy:308
     old "Android: [project.current.display_name!q]"
     new "Ndroidaay: [project.current.display_name!q]"
 
-    # android.rpy:324
+    # android.rpy:328
     old "Emulation:"
     new "Mulationeay:"
 
-    # android.rpy:333
+    # android.rpy:337
     old "Phone"
     new "Honepay"
 
-    # android.rpy:337
+    # android.rpy:341
     old "Tablet"
     new "Ablettay"
 
-    # android.rpy:341
+    # android.rpy:345
     old "Television"
     new "Elevisiontay"
 
-    # android.rpy:353
+    # android.rpy:357
     old "Build:"
     new "Uildbay:"
 
-    # android.rpy:361
+    # android.rpy:365
     old "Install SDK & Create Keys"
     new "Nstalliay Dksay & Reatecay Eyskay"
 
-    # android.rpy:365
+    # android.rpy:369
     old "Configure"
     new "Onfigurecay"
 
-    # android.rpy:369
+    # android.rpy:373
     old "Build Package"
     new "Uildbay Ackagepay"
 
-    # android.rpy:373
+    # android.rpy:377
     old "Build & Install"
     new "Uildbay & Nstalliay"
 
-    # android.rpy:377
+    # android.rpy:381
     old "Build, Install & Launch"
     new "Uildbay, Nstalliay & Aunchlay"
 
-    # android.rpy:388
+    # android.rpy:392
     old "Other:"
     new "Theroay:"
 
-    # android.rpy:396
+    # android.rpy:400
     old "Remote ADB Connect"
     new "Emoteray Dbaay Onnectcay"
 
-    # android.rpy:400
+    # android.rpy:404
     old "Remote ADB Disconnect"
     new "Emoteray Dbaay Isconnectday"
 
-    # android.rpy:404
+    # android.rpy:408
     old "Logcat"
     new "Ogcatlay"
 
-    # android.rpy:437
+    # android.rpy:441
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
     new "Eforebay ackagingpay Ndroidaay appsay, ouyay'llay eednay otay ownloadday Aptray, hetay Enray'Ypay Ndroidaay Ackagingpay Ooltay. Ouldway ouyay ikelay otay ownloadday Aptray ownay?"
 
-    # android.rpy:496
+    # android.rpy:500
     old "Remote ADB Address"
     new "Emoteray Dbaay Ddressaay"
 
-    # android.rpy:496
+    # android.rpy:500
     old "Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."
     new "Leasepay enteray hetay Piay addressay anday ortpay umbernay otay onnectcay otay, inay hetay ormfay \"921ay.681ay.1ay.431ay:5555ay\". Onsultcay ouryay eviceday'say ocumentationday otay etermineday ifay itay upportssay emoteray Dbaay, anday ifay osay, hetay addressay anday ortpay otay useay."
 
-    # android.rpy:508
+    # android.rpy:512
     old "Invalid remote ADB address"
     new "Nvalidiay emoteray Dbaay addressay"
 
-    # android.rpy:508
+    # android.rpy:512
     old "The address must contain one exactly one ':'."
     new "Hetay addressay ustmay ontaincay oneay exactlyay oneay ':'."
 
-    # android.rpy:512
+    # android.rpy:516
     old "The host may not contain whitespace."
     new "Hetay osthay aymay otnay ontaincay hitespaceway."
 
-    # android.rpy:518
+    # android.rpy:522
     old "The port must be a number."
     new "Hetay ortpay ustmay ebay aay umbernay."
 
-    # android.rpy:544
+    # android.rpy:548
     old "Retrieving logcat information from device."
     new "Etrievingray ogcatlay informationay omfray eviceday."
 
@@ -261,31 +261,31 @@ translate piglatin strings:
     old "Archiving files..."
     new "Rchivingaay ilesfay..."
 
-    # distribute.rpy:1055
+    # distribute.rpy:1068
     old "Unpacking the Macintosh application for signing..."
     new "Npackinguay hetay Acintoshmay applicationay orfay igningsay..."
 
-    # distribute.rpy:1065
+    # distribute.rpy:1078
     old "Signing the Macintosh application...\n(This may take a long time.)"
     new "Igningsay hetay Acintoshmay applicationay...\n(Histay aymay aketay aay onglay imetay.)"
 
-    # distribute.rpy:1087
+    # distribute.rpy:1100
     old "Creating the Macintosh DMG..."
     new "Reatingcay hetay Acintoshmay Mgday..."
 
-    # distribute.rpy:1096
+    # distribute.rpy:1109
     old "Signing the Macintosh DMG..."
     new "Igningsay hetay Acintoshmay Mgday..."
 
-    # distribute.rpy:1291
+    # distribute.rpy:1304
     old "Writing the [variant] [format] package."
     new "Ritingway hetay [variant] [format] ackagepay."
 
-    # distribute.rpy:1304
+    # distribute.rpy:1317
     old "Making the [variant] update zsync file."
     new "Akingmay hetay [variant] updateay synczay ilefay."
 
-    # distribute.rpy:1414
+    # distribute.rpy:1427
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
     new "Rocessedpay {b}[complete]{/b} ofay {b}[total]{/b} ilesfay."
 
@@ -356,6 +356,14 @@ translate piglatin strings:
     # distribute_gui.rpy:288
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
     new "Ouryay rojectpay oesday otnay ontaincay uildbay informationay. Ouldway ouyay ikelay otay adday uildbay informationay otay hetay enday ofay optionsay.pyray?"
+
+    # dmgcheck.rpy:50
+    old "Ren'Py is running from a read only folder. Some functionality will not work."
+    new "Enray'Ypay isay unningray omfray aay eadray onlyay olderfay. Omesay unctionalityfay illway otnay orkway."
+
+    # dmgcheck.rpy:50
+    old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
+    new "Histay isay robablypay ecausebay Enray'Ypay isay unningray irectlyday omfray aay Acintoshmay riveday imageay. Otay ixfay histay, uitqay histay auncherlay, opycay hetay entireay %say olderfay omewheresay elseay onay ouryay omputercay, anday unray Enray'Ypay againay."
 
     # editor.rpy:150
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
@@ -513,15 +521,15 @@ translate piglatin strings:
     old "Extract Dialogue"
     new "Xtracteay Ialogueday"
 
-    # front_page.rpy:272
+    # front_page.rpy:273
     old "Checking script for potential problems..."
     new "Heckingcay criptsay orfay otentialpay roblemspay..."
 
-    # front_page.rpy:287
+    # front_page.rpy:288
     old "Deleting persistent data..."
     new "Eletingday ersistentpay ataday..."
 
-    # front_page.rpy:295
+    # front_page.rpy:296
     old "Recompiling all rpy files into rpyc files..."
     new "Ecompilingray allay pyray ilesfay intoay pycray ilesfay..."
 
@@ -1009,27 +1017,27 @@ translate piglatin strings:
     old "Please ensure that your project launches normally before running this command."
     new "Leasepay ensureay hattay ouryay rojectpay auncheslay ormallynay eforebay unningray histay ommandcay."
 
-    # project.rpy:289
+    # project.rpy:292
     old "Ren'Py is scanning the project..."
     new "Enray'Ypay isay canningsay hetay rojectpay..."
 
-    # project.rpy:696
+    # project.rpy:721
     old "Launching"
     new "Aunchinglay"
 
-    # project.rpy:730
+    # project.rpy:755
     old "PROJECTS DIRECTORY"
     new "Rojectspay Irectoryday"
 
-    # project.rpy:730
+    # project.rpy:755
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Leasepay oosechay hetay rojectspay irectoryday usingay hetay irectoryday ooserchay.\n{b}Hetay irectoryday ooserchay aymay avehay openeday ehindbay histay indowway.{/b}"
 
-    # project.rpy:730
+    # project.rpy:755
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Histay auncherlay illway cansay orfay rojectspay inay histay irectoryday, illway reatecay ewnay rojectspay inay histay irectoryday, anday illway aceplay uiltbay rojectspay intoay histay irectoryday."
 
-    # project.rpy:735
+    # project.rpy:760
     old "Ren'Py has set the projects directory to:"
     new "Enray'Ypay ashay etsay hetay rojectspay irectoryday otay:"
 
