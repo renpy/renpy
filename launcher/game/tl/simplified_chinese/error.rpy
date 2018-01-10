@@ -148,7 +148,7 @@ translate simplified_chinese strings:
     # _errorhandling.rpym:545
     old "Ignores the exception, allowing you to continue."
     new "忽略异常，让您可以继续。"
-    
+
     # _errorhandling.rpym:587
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "忽略异常，让您可以继续。但这通常会引起更多错误。"

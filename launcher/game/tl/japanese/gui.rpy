@@ -445,7 +445,6 @@ translate japanese strings:
     old "## Change the size and spacing of various things."
     new "## 様々なサイズとスペーシングを変更。"
 
-# TODO: Translation updated at 2017-11-10 15:02
 
 translate japanese strings:
 

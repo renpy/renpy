@@ -1,4 +1,4 @@
-# game/script.rpy:19
+﻿# game/script.rpy:19
 translate russian start_915cb944:
 
     # "It's only when I hear the sounds of shuffling feet and supplies being put away that I realize that the lecture's over."

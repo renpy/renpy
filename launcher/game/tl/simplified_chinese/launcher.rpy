@@ -204,7 +204,7 @@ translate simplified_chinese strings:
     # choose_directory.rpy:104
     old "The selected projects directory is not writable."
     new "所选的工程目录无法执行写操作。"
-    
+
     # choose_theme.rpy:303
     old "Could not change the theme. Perhaps options.rpy was changed too much."
     new "无法更改主题。可能 options.rpy 已被过度修改。"
@@ -412,7 +412,7 @@ translate simplified_chinese strings:
     # front_page.rpy:35
     old "Open [text] directory."
     new "打开 [text] 目录。"
-    
+
     # front_page.rpy:91
     old "PROJECTS:"
     new "工程："
@@ -632,7 +632,7 @@ translate simplified_chinese strings:
     # interface.rpy:120
     old "quit"
     new "退出"
-    
+
     # interface.rpy:136
     old "Ren'Py Sponsor Information"
     new "Ren'Py 赞助者信息"
@@ -896,7 +896,7 @@ translate simplified_chinese strings:
     # new_project.rpy:69
     old "Legacy Theme Interface"
     new "传统主题界面"
-    
+
     # new_project.rpy:71
     old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
     new "您将创建一个 [new_project_language] 语言的工程。要创建其他语言的工程，请在设置里更改启动器语言。"
@@ -976,7 +976,7 @@ translate simplified_chinese strings:
     # preferences.rpy:178
     old "Console output"
     new "控制台输出"
-    
+
     # preferences.rpy:187
     old "Force new tutorial"
     new "强制新手教程"

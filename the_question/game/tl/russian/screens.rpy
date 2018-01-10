@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2017-11-20 01:04
-
+﻿
 translate russian strings:
 
     # screens.rpy:251

@@ -1244,7 +1244,6 @@ translate japanese strings:
     old "Extract Dialogue: [project.current.display_name!q]"
     new "台詞の抽出: [project.current.display_name!q]"
 
-# TODO: Translation updated at 2017-11-10 15:02
 
 translate japanese strings:
 

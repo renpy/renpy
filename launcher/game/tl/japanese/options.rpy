@@ -201,7 +201,6 @@ translate japanese strings:
     old "## Set this to a string containing your Apple Developer ID Application to enable codesigning on the Mac. Be sure to change it to your own Apple-issued ID."
     new "## Mac のコード署名を有効にするため Apple Developer ID アプリケーション を含む文字列を設定します。必ず Apple が発行したあなたの ID に変更してください。"
 
-# TODO: Translation updated at 2017-11-10 15:02
 
 translate japanese strings:
 

@@ -420,7 +420,6 @@ translate japanese strings:
     old "Interactive Director (D)"
     new "インタラクティブディレクター(D)"
 
-# TODO: Translation updated at 2017-11-10 15:02
 
 translate japanese strings:
 
