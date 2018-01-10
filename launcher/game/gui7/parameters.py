@@ -97,7 +97,7 @@ class GuiParameters(object):
 
         self.name = name
 
-        GOOD_CHARACTERS = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMMOPQRSTUVWXYZ-_"
+        GOOD_CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_"
 
         simple_name = "".join(i for i in name if i in GOOD_CHARACTERS).encode("ascii")
 
