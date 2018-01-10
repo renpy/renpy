@@ -71,7 +71,7 @@ translate arabic strings:
 
     # screens.rpy:262
     old "History"
-    new "History"
+    new "سجل الحوار"
 
     # screens.rpy:263
     old "Skip"
@@ -111,11 +111,11 @@ translate arabic strings:
 
     # screens.rpy:308
     old "Start"
-    new "Start"
+    new "إبدأ"
 
     # screens.rpy:316
     old "Load"
-    new "Load"
+    new "استرجاع"
 
     # screens.rpy:318
     old "Preferences"
@@ -227,15 +227,15 @@ translate arabic strings:
 
     # screens.rpy:607
     old "Page {}"
-    new "Page {}"
+    new "صفحة {}"
 
     # screens.rpy:607
     old "Automatic saves"
-    new "Automatic saves"
+    new "الحفظ التلقائي"
 
     # screens.rpy:607
     old "Quick saves"
-    new "Quick saves"
+    new "الحفظ السريع"
 
     # screens.rpy:613
     old "## This ensures the input will get the enter event before any of the buttons do."
@@ -251,7 +251,7 @@ translate arabic strings:
 
     # screens.rpy:649
     old "empty slot"
-    new "empty slot"
+    new "خانة فارغة"
 
     # screens.rpy:657
     old "## Buttons to access other pages."
@@ -263,11 +263,11 @@ translate arabic strings:
 
     # screens.rpy:668
     old "{#auto_page}A"
-    new "{#auto_page}A"
+    new "{#auto_page}ت"
 
     # screens.rpy:670
     old "{#quick_page}Q"
-    new "{#quick_page}Q"
+    new "{#quick_page}س"
 
     # screens.rpy:676
     old ">"
@@ -303,19 +303,19 @@ translate arabic strings:
 
     # screens.rpy:745
     old "Disable"
-    new "Disable"
+    new "غير مفعّل"
 
     # screens.rpy:746
     old "Left"
-    new "Left"
+    new "يسار"
 
     # screens.rpy:747
     old "Right"
-    new "Right"
+    new "يمين"
 
     # screens.rpy:752
     old "Unseen Text"
-    new "Unseen Text"
+    new "النصوص التي لم تُشاهَد بعد"
 
     # screens.rpy:753
     old "After Choices"
@@ -355,7 +355,7 @@ translate arabic strings:
 
     # screens.rpy:806
     old "Mute All"
-    new "Mute All"
+    new "كتم الكل"
 
     # screens.rpy:882
     old "## History screen"
@@ -395,15 +395,15 @@ translate arabic strings:
 
     # screens.rpy:986
     old "Keyboard"
-    new "Keyboard"
+    new "لوحة المفاتيح"
 
     # screens.rpy:987
     old "Mouse"
-    new "Mouse"
+    new "الفأرة"
 
     # screens.rpy:990
     old "Gamepad"
-    new "Gamepad"
+    new "عصا اللعب"
 
     # screens.rpy:1003
     old "Enter"
@@ -411,7 +411,7 @@ translate arabic strings:
 
     # screens.rpy:1004
     old "Advances dialogue and activates the interface."
-    new "Advances dialogue and activates the interface."
+    new "التقدم في الحوار والتفاعل مع الواجهة."
 
     # screens.rpy:1007
     old "Space"
@@ -419,15 +419,15 @@ translate arabic strings:
 
     # screens.rpy:1008
     old "Advances dialogue without selecting choices."
-    new "Advances dialogue without selecting choices."
+    new "التقدم في الحوار دون تحديد الخيارات."
 
     # screens.rpy:1011
     old "Arrow Keys"
-    new "Arrow Keys"
+    new "مفاتيح الأسهم"
 
     # screens.rpy:1012
     old "Navigate the interface."
-    new "Navigate the interface."
+    new "لتصفح الواجهة."
 
     # screens.rpy:1015
     old "Escape"
@@ -435,7 +435,7 @@ translate arabic strings:
 
     # screens.rpy:1016
     old "Accesses the game menu."
-    new "Accesses the game menu."
+    new "للوصول لقائمة اللعبة."
 
     # screens.rpy:1019
     old "Ctrl"
@@ -443,7 +443,7 @@ translate arabic strings:
 
     # screens.rpy:1020
     old "Skips dialogue while held down."
-    new "Skips dialogue while held down."
+    new "لتخطي الحوار عند الإستمرار بالضغط."
 
     # screens.rpy:1023
     old "Tab"
@@ -451,7 +451,7 @@ translate arabic strings:
 
     # screens.rpy:1024
     old "Toggles dialogue skipping."
-    new "Toggles dialogue skipping."
+    new "للتبديل بين أنظمة تخطي الحوار."
 
     # screens.rpy:1027
     old "Page Up"
@@ -459,7 +459,7 @@ translate arabic strings:
 
     # screens.rpy:1028
     old "Rolls back to earlier dialogue."
-    new "Rolls back to earlier dialogue."
+    new "للعودة للنص السابق."
 
     # screens.rpy:1031
     old "Page Down"
@@ -467,39 +467,39 @@ translate arabic strings:
 
     # screens.rpy:1032
     old "Rolls forward to later dialogue."
-    new "Rolls forward to later dialogue."
+    new "للإستمرار للنص اللاحق."
 
     # screens.rpy:1036
     old "Hides the user interface."
-    new "Hides the user interface."
+    new "لإخفاء الواجهة."
 
     # screens.rpy:1040
     old "Takes a screenshot."
-    new "Takes a screenshot."
+    new "إلتقاط صورة من الشاشة."
 
     # screens.rpy:1044
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
-    new "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
+    new "تفعيل مساعدة {a=https://www.renpy.org/l/voicing}الصوت التلقائي{/a}."
 
     # screens.rpy:1050
     old "Left Click"
-    new "Left Click"
+    new "النقر بالزر الأيسر"
 
     # screens.rpy:1054
     old "Middle Click"
-    new "Middle Click"
+    new "النقر بالزر الأوسط"
 
     # screens.rpy:1058
     old "Right Click"
-    new "Right Click"
+    new "النقر بالزر الأيمن"
 
     # screens.rpy:1062
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "Mouse Wheel Up\nClick Rollback Side"
+    new "تحريك عجلة الفأرة لأعلى\nClick Rollback Side"
 
     # screens.rpy:1066
     old "Mouse Wheel Down"
-    new "Mouse Wheel Down"
+    new "تحريك عجلة الفأرة لأسفل"
 
     # screens.rpy:1073
     old "Right Trigger\nA/Bottom Button"
@@ -507,11 +507,11 @@ translate arabic strings:
 
     # screens.rpy:1074
     old "Advance dialogue and activates the interface."
-    new "Advance dialogue and activates the interface."
+    new "التقدم في الحوار والتفاعل مع الواجهة."
 
     # screens.rpy:1078
     old "Roll back to earlier dialogue."
-    new "Roll back to earlier dialogue."
+    new "للعودة للنص السابق."
 
     # screens.rpy:1081
     old "Right Shoulder"
@@ -519,7 +519,7 @@ translate arabic strings:
 
     # screens.rpy:1082
     old "Roll forward to later dialogue."
-    new "Roll forward to later dialogue."
+    new "للإستمرار للنص اللاحق."
 
     # screens.rpy:1085
     old "D-Pad, Sticks"
@@ -587,7 +587,7 @@ translate arabic strings:
 
     # screens.rpy:1208
     old "Skipping"
-    new "Skipping"
+    new "جاري التخطي"
 
     # screens.rpy:1215
     old "## This transform is used to blink the arrows one after another."
