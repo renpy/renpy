@@ -278,10 +278,6 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 
             tag = "block{}_multiple{}_{}".format(multiple[0], multiple[1], tag)
 
-        while renpy.exports.showing(tag, layer=layer):
-            index += 1
-            tag = "%s%d" % (screen, index)
-
         if image:
             kwargs["image"] = image
 
