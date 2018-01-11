@@ -83,6 +83,7 @@ the omission in future versions.
 * Kyouryuukunn
 * Lapalissiano
 * Lore
+* Maissara Moustafa
 * Marcel
 * Markus Koschany
 * Maxwell Paul Brickner
