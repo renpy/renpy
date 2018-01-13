@@ -851,6 +851,9 @@ gc_thresholds = (25000, 10, 10)
 # The threshold for a level 0 gc when we have the time.
 idle_gc_count = 2500
 
+# Should we print unreachable.
+gc_print_unreachable = "RENPY_GC_PRINT_UNREACHABLE" in os.environ
+
 # The first frame that we consider to be "idle", so we can do gc and
 # prediction.
 idle_frame = 4
@@ -860,6 +863,7 @@ take_state_from_target = False
 
 # Does ui.viewport set the child_size if not set?
 scrollbar_child_size = True
+
 
 del os
 del collections

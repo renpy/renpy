@@ -1745,6 +1745,9 @@ class Interface(object):
         import gc
         gc.collect()
 
+        if gc.garbage:
+            gc.garbage[:] = [ ]
+
         renpy.display.render.render_ready()
 
         # Kill off the presplash.
@@ -2654,11 +2657,21 @@ class Interface(object):
             renpy.plog(1, "before gc")
 
             if count[2] >= renpy.config.gc_thresholds[2]:
-                gc.collect(2)
+                gen = 2
             elif count[1] >= renpy.config.gc_thresholds[1]:
-                gc.collect(1)
+                gen = 1
             else:
-                gc.collect(0)
+                gen = 0
+
+            gc.collect(gen)
+
+            if gc.garbage:
+                print("Garbage after collecting generation {}:".format(gen))
+
+                for i in gc.garbage:
+                    print(" ", repr(i))
+
+                gc.garbage[:] = [ ]
 
             renpy.plog(1, "after gc")
 

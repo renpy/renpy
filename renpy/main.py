@@ -485,7 +485,13 @@ def main():
         if renpy.config.manage_gc:
             gc.set_threshold(*renpy.config.gc_thresholds)
 
-        gc.set_debug(int(os.environ.get("RENPY_GC_DEBUG", 0)))
+            gc_debug = int(os.environ.get("RENPY_GC_DEBUG", 0))
+
+            if renpy.config.gc_print_unreachable:
+                gc_debug |= gc.DEBUG_SAVEALL
+
+            gc.set_debug(gc_debug)
+
         log_clock("Initial gc.")
 
         # Start debugging file opens.
