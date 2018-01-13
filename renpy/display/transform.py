@@ -823,6 +823,8 @@ class Transform(Container):
         This updates the state to that at self.st, self.at.
         """
 
+        # NOTE: This function is duplicated (more or less) in ATLTransform.
+
         self.hide_response = True
         self.replaced_response = True
 
@@ -1009,8 +1011,21 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
         self.raw_child = self.child
 
-    def default_function(self, trans, st, at):
-        return self.execute(trans, st, at)
+    def update_state(self):
+        """
+        This updates the state to that at self.st, self.at.
+        """
+
+        self.hide_response = True
+        self.replaced_response = True
+
+        fr = self.execute(self, self.st, self.at)
+
+        # Order a redraw, if necessary.
+        if fr is not None:
+            renpy.display.render.redraw(self, fr)
+
+        self.active = True
 
     def __repr__(self):
         return "<ATL Transform {:x} {!r}>".format(id(self), self.atl.loc)
