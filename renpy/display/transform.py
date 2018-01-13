@@ -1005,9 +1005,12 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
     def __init__(self, atl, child=None, context={}, parameters=None, **properties):
         renpy.atl.ATLTransformBase.__init__(self, atl, context, parameters)
-        Transform.__init__(self, child=child, function=self.execute, **properties)
+        Transform.__init__(self, child=child, **properties)
 
         self.raw_child = self.child
+
+    def default_function(self, trans, st, at):
+        return self.execute(trans, st, at)
 
     def __repr__(self):
         return "<ATL Transform {:x} {!r}>".format(id(self), self.atl.loc)
