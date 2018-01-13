@@ -2648,11 +2648,18 @@ class Interface(object):
         if not renpy.config.manage_gc:
             return
 
-        if gc.get_count()[0] >= renpy.config.idle_gc_count:
+        count = gc.get_count()
+
+        if count[0] >= renpy.config.idle_gc_count:
             renpy.plog(1, "before gc")
-            gc.set_threshold(renpy.config.idle_gc_count)
-            gc.collect()
-            gc.set_threshold(renpy.config.gc_thresholds[0])
+
+            if count[2] >= renpy.config.gc_thresholds[2]:
+                gc.collect(2)
+            elif count[1] >= renpy.config.gc_thresholds[1]:
+                gc.collect(1)
+            else:
+                gc.collect(0)
+
             renpy.plog(1, "after gc")
 
     def interact_core(self,
