@@ -103,7 +103,7 @@ init -1500 python:
     config.linear_saves_page_size = None
     config.quicksave_slots = 10
 
-    # The number of file pages per
+    # The number of file pages per folder.
     config.file_pages_per_folder = 100
 
     if persistent._file_page is None:
@@ -116,6 +116,8 @@ init -1500 python:
         persistent._file_page_name = { }
 
     config.file_page_names = [ ]
+
+    config.predict_file_pages = True
 
     def __slotname(name, page=None):
 
@@ -505,6 +507,22 @@ init -1500 python:
         else:
             return FileSave(name, page=page, **kwargs)
 
+    def _predict_file_page(page):
+        """
+        Predicts the screenshots on `page`.
+        """
+
+        if not config.predict_file_pages:
+            return
+
+        if page is None:
+            return
+
+        page = unicode(page)
+
+        for i in renpy.list_slots(page + "-"):
+            renpy.predict(renpy.slot_screenshot(i))
+
     @renpy.pure
     class FilePage(Action, DictEquality):
         """
@@ -527,6 +545,9 @@ init -1500 python:
 
         def get_selected(self):
             return self.page == persistent._file_page
+
+        def predict(self):
+            _predict_file_page(self.page)
 
     def FilePageName(auto="a", quick="q"):
         """
@@ -748,6 +769,9 @@ init -1500 python:
         def get_sensitive(self):
             return self.page is not None
 
+        def predict(self):
+            _predict_file_page(self.page)
+
 
     class FilePagePrevious(Action, DictEquality):
         """
@@ -807,6 +831,9 @@ init -1500 python:
 
         def get_sensitive(self):
             return self.page
+
+        def predict(self):
+            _predict_file_page(self.page)
 
     @renpy.pure
     class FileTakeScreenshot(Action, DictEquality):
