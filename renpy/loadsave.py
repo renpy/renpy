@@ -834,6 +834,16 @@ class Cache(object):
 
         return self.screenshot
 
+    def preload(self):
+        """
+        Preloads all the save data (that won't take up a ton of memory).
+        """
+
+        self.get_mtime()
+        self.get_json()
+        self.get_screenshot()
+
+
 
 # A map from slotname to cache object. This is used to cache savegame scan
 # data until the slot changes.
@@ -873,6 +883,16 @@ def clear_cache():
     newest_slot_cache.clear()
 
     renpy.exports.restart_interaction()
+
+
+def init():
+    """
+    Scans all the metadata from the save slot cache.
+    """
+
+    for i in list_slots():
+        if not i.startswith("_"):
+            get_cache(i).preload()
 
 
 # Save locations are places where saves are saved to or loaded from, or a

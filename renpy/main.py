@@ -394,11 +394,16 @@ def main():
     if game.persistent._virtual_size:
         renpy.config.screen_width, renpy.config.screen_height = game.persistent._virtual_size
 
-    # Init save locations.
+    # Init save locations and loadsave.
     renpy.savelocation.init()
 
     # We need to be 100% sure we kill the savelocation thread.
     try:
+
+        # Init save slots.
+        renpy.loadsave.init()
+
+        log_clock("Loading save slot metadata.")
 
         # Load persistent data from all save locations.
         renpy.persistent.update()
