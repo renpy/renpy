@@ -37,6 +37,7 @@ import cStringIO
 import threading
 import copy
 import gc
+import inspect
 
 import_time = time.time()
 
@@ -1742,7 +1743,6 @@ class Interface(object):
         if self.started:
             return
 
-        import gc
         gc.collect()
 
         if gc.garbage:
@@ -2666,11 +2666,7 @@ class Interface(object):
             gc.collect(gen)
 
             if gc.garbage:
-                print("Garbage after collecting generation {}:".format(gen))
-
-                for i in gc.garbage:
-                    print(" ", repr(i))
-
+                renpy.memory.print_garbage(gen)
                 gc.garbage[:] = [ ]
 
             renpy.plog(1, "after gc")

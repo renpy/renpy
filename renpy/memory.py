@@ -29,10 +29,35 @@ import types
 import sys
 import collections
 import gc
+import inspect
 
 import renpy
 
 memory_log = renpy.log.open("memory")
+
+
+def print_garbage(gen):
+    """
+    Prints out the garbage after collecting a generation of memory.
+    """
+
+    print()
+    print("Garbage after collecting generation {}:".format(gen))
+
+    for i in gc.garbage:
+        prefix = ""
+        suffix = ""
+
+        if hasattr(i, "cell_contents"):
+            i = i.cell_contents
+            prefix = "cell: "
+
+        try:
+            suffix = " (" + inspect.getfile(i) + ")"
+        except:
+            pass
+
+        print(" -", prefix + repr(i)[:160] + suffix)
 
 
 def write(s):
