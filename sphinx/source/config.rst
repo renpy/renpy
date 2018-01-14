@@ -1397,3 +1397,39 @@ Rarely or Internally Used
     is occurring. It is expected to return a transition, which may or may not
     be the transition supplied as its argument.
 
+
+Garbage Collection
+------------------
+
+These variables allow you to tune the Python garbage collector and the
+Ren'Py management of the Python garbage collector.
+
+.. var:: config.manage_gc = True
+
+    If True, Ren'Py will manage the GC itself. This means that it will apply
+    the settings below.
+
+.. var:: config.gc_thresholds = (25000, 10, 10)
+
+    The GC thresholds that Ren'Py uses when not idle. These are set to try
+    to ensure that garbage collection doesn't happen. The three numbers are:
+
+    * The net number of objects that need to be allocated before a level-0
+      collection.
+    * The number of level-0 collections that trigger a level-1 collection.
+    * The number of level-1 collections that trigger a level-2 collection.
+
+    (Level-0 collections should be fast enough to not cause a frame drop,
+    level-1 collections might, level-2 will.)
+
+.. var:: config.idle_gc_count = 2500
+
+    The net number of objects that triggers a collection when Ren'Py has
+    reached a steady state. (The fourth frame or later after the screen has been
+    updated.)
+
+.. var:: gc_print_unreachable = False
+
+    If True, Ren'Py will print to its console and logs informaton about the
+    objects that are triggering collections.
+

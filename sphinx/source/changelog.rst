@@ -33,13 +33,18 @@ was presented as the base time for transitions and displayables. Effectively,
 this means that if Ren'Py has to skip frames, it'll skip them before the first
 frame in a sequence, rather than between the first and second frame.
 
-Ren'Py manually triggers garbage collection immediately after a frame is
+Ren'Py itself triggers garbage collection immediately after a frame is
 drawn, if enough objects have been created. Outside of this collection, the
 number of objects required to trigger the garbage collector has been raised.
 The thresholds are high enough that collection should not be required if
 the game does not create circular object references. (That is, objects that
 refer to each other in a loop.) Ren'Py has been changed to eliminate common
 sources of circular object references.
+
+For most games, Ren'Py managed garbage collection should reduce or even
+eliminate frame drops caused by the garbage collector. However, it is
+possible to revert to the previous tuning by setting :var:`config.manage_gc`
+to False.
 
 By default, Ren'Py will remove transient screens (like say and choice)
 and displayables without triggering on "hide" event handlers. The process of
@@ -170,9 +175,12 @@ image manipulators. (Which should be a rare case in modern Ren'Py.)
 Variable and field munging (which change the name of a variable that begins with
 __ to a file-specific value) now work inside string substitutions.
 
-Viewports and vpgrids now support an pagekeys property, which allows one
+Viewports and vpgrids now support the pagekeys property, which allows one
 to use the pageup and pagedown keys to scroll the viewport. The arrowkeys
 property is now documented.
+
+RAPT now compiles Java code using a source and targer version of 1.6, which
+allows it to be built on modern JDKs.
 
 Fixes
 -----
@@ -203,7 +211,6 @@ Ren'Py now supports the AltGr key.
 
 Ren'Py now limits the amount of console output it logs, to prevent print
 statements from consuming memory if the console is never displayed.
-
 
 
 .. _renpy-6.99.13:
