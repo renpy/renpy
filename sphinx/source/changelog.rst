@@ -141,7 +141,7 @@ in built distributions if imported at init time.
 The new :func:`im.Data` image manipulator creates an image from compressed
 binary data, as might be downloaded from a web server.
 
-The :var:`config.loadable` callback lets scripts inform Ren'Py about
+The :var:`config.loadable_callback` lets scripts inform Ren'Py about
 additional loadable files.
 
 Ren'Py will attempt to diagnose problems with pickling objects during
@@ -179,7 +179,7 @@ Viewports and vpgrids now support the pagekeys property, which allows one
 to use the pageup and pagedown keys to scroll the viewport. The arrowkeys
 property is now documented.
 
-RAPT now compiles Java code using a source and targer version of 1.6, which
+RAPT now compiles Java code using a source and target version of 1.6, which
 allows it to be built on modern JDKs.
 
 Fixes
