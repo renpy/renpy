@@ -537,6 +537,9 @@ new_compile_flags = (  old_compile_flags
 # A cache for the results of py_compile.
 py_compile_cache = { }
 
+# An old version of the same, that's preserved across reloads.
+old_py_compile_cache = { }
+
 
 def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True):
     """
@@ -579,6 +582,11 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
         rv = py_compile_cache.get(key, None)
         if rv is not None:
+            return rv
+
+        rv = old_py_compile_cache.get(key, None)
+        if rv is not None:
+            old_py_compile_cache[key] = rv
             return rv
 
         bytecode = renpy.game.script.bytecode_oldcache.get(key, None)

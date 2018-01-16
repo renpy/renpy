@@ -571,6 +571,8 @@ def reload_all():
     renpy.display.draw = None
     renpy.display.interface = None
 
+    py_compile_cache = renpy.python.py_compile_cache
+
     # Delete the store modules.
     for i in sys.modules.keys():
         if i.startswith("store") or i == "renpy.store":
@@ -583,6 +585,8 @@ def reload_all():
 
     # Restore the state of all modules from backup.
     backup.restore()
+
+    renpy.python.old_py_compile_cache = py_compile_cache
 
     renpy.display.im.reset_module()
 
