@@ -627,4 +627,4 @@ screen _texture_size():
 
 init python:
     if config.transparent_tile:
-        config.underlay.append(im.Tile("_transparent_tile.png"))
+        config.underlay.append(Frame("_transparent_tile.png", tile=True))
