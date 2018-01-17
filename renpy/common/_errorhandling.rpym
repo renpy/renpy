@@ -175,6 +175,8 @@ init label _errorhandling:
     style _grid is _default
     style _side is _default
 
+    style _drag is _default
+
     style _viewport is _default:
         xfill True
         yfill True

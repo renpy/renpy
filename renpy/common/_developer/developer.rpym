@@ -585,9 +585,10 @@ init python:
         return Text(message, substitute=False, size=14, style="_default", color="#ffffff"), .25
 
 
-screen _image_load_log:
-
+screen _image_load_log():
     zorder 1000
+
+    style_prefix ""
 
     drag:
         draggable True
@@ -607,6 +608,7 @@ screen _image_load_log:
 screen _texture_size():
     zorder 1000
 
+    style_prefix ""
 
     drag:
         draggable True
