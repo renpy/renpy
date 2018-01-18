@@ -26,6 +26,7 @@ from __future__ import print_function
 import codecs
 import re
 import os
+import time
 
 import renpy.display
 import renpy.test
@@ -2656,6 +2657,7 @@ def report_parse_errors():
 
     print(file=f)
     print("Ren'Py Version:", renpy.version, file=f)
+    print(time.ctime(), file=f)
 
     f.close()
 

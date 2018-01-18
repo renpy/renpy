@@ -27,9 +27,10 @@ import sys
 import cStringIO
 import platform
 import linecache
+import time
+import os
 
 import renpy
-import os
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
@@ -216,6 +217,7 @@ def report_exception(e, editor=True):
         print(platform.platform(), file=full)
         print(renpy.version, file=full)
         print(safe_utf8(renpy.config.name + " " + renpy.config.version), file=full)
+        print(time.ctime(), file=full)
     except:
         pass
 
