@@ -263,7 +263,7 @@ class Context(renpy.object.Object):
 
             vars(self.info).update(vars(context.info))
 
-            for k, v in context.music.iteritems():
+            for k, v in context.music.items():
                 self.music[k] = v.copy()
 
             self.movie = dict(context.movie)
