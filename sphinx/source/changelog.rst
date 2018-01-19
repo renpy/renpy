@@ -2,6 +2,25 @@
 Full Changelog
 ==============
 
+.. _renpy-6.99.14.1:
+
+Improvements
+-------------
+
+The Python expression cache is kept when Ren'Py is reloaded, providing a
+slight increase in performance compared to unmarshalling it on each reload.
+
+The traceback.txt and errors.txt files now include a date at the bottom,
+making it easier to determine if a file is stale.
+
+
+Fixes
+-----
+
+Fixes a bug where the ATL "on hide" clause didn't work.
+
+
+
 .. _renpy-6.99.14:
 
 Ren'Py 6.99.14
