@@ -784,9 +784,6 @@ position_viewport_side = True
 # Things that be given properties via Character.
 character_id_prefixes = [ ]
 
-# Should surfaces be cached?
-cache_surfaces = True
-
 # Should {nw} wait for voice.
 nw_voice = True
 
@@ -864,6 +861,12 @@ take_state_from_target = False
 # Does ui.viewport set the child_size if not set?
 scrollbar_child_size = True
 
+# Should surfaces be cached?
+cache_surfaces = True
+
+# Should we optimize textures by taking the bounding rect?
+optimize_texture_bounds = False
+
 
 del os
 del collections
@@ -883,3 +886,10 @@ def init():
 
     global tts_function
     tts_function = renpy.display.tts.default_tts_function
+
+    import os
+
+    if "RENPY_EXPERIMENTAL" in os.environ:
+        print("Experimental mode.")
+        renpy.config.cache_surfaces = False
+        renpy.config.optimize_texture_bounds = True

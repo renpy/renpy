@@ -37,7 +37,7 @@ import io
 # This is an entry in the image cache.
 class CacheEntry(object):
 
-    def __init__(self, what, surf):
+    def __init__(self, what, surf, bounds, size):
 
         # The object that is being cached (which needs to be
         # hashable and comparable).
@@ -47,15 +47,21 @@ class CacheEntry(object):
         # None if we've tossed the surface.
         self.surf = surf
 
-        # The texture corresponding to the cached object.
+        # The sizes of surf.
+        self.width, self.height = surf.get_size()
+
+        # The texture corresponding to the visible area of the cached object.
         self.texture = None
 
-        # The size of this image.
-        w, h = surf.get_size()
-        self.size = w * h
+        # The bounds, or None if there are no bounds.
+        self.bounds = bounds
+
+        # The size of the image.
+        self.size = size
 
         # The time when this cache entry was last used.
         self.time = 0
+
 
 # This is the singleton image cache.
 
@@ -196,7 +202,12 @@ class Cache(object):
         if ce is not None:
 
             if texture and (ce.texture is not None):
-                return ce.texture
+                if predict:
+                    return None
+
+                rv = renpy.display.render.Render(ce.width, ce.height)
+                rv.blit(ce.texture, ce.bounds[:2])
+                return rv
 
             if ce.surf is None:
                 ce = None
@@ -217,9 +228,24 @@ class Cache(object):
             except:
                 raise
 
+            w, h = surf.get_size()
+            default_bounds = (0, 0, w, h)
+
+            if renpy.config.optimize_texture_bounds:
+                bounds = tuple(surf.get_bounding_rect())
+
+                if not renpy.config.cache_surfaces:
+                    w = bounds[2]
+                    h = bounds[3]
+
+            else:
+                bounds = default_bounds
+
+            size = w * h
+
             with self.lock:
 
-                ce = CacheEntry(image, surf)
+                ce = CacheEntry(image, surf, bounds, size)
 
                 if image not in self.cache:
                     self.total_cache_size += ce.size
@@ -245,10 +271,22 @@ class Cache(object):
             self.size_of_current_generation += ce.size
 
         if texture:
-            if ce.texture is None:
-                ce.texture = renpy.display.draw.load_texture(ce.surf)
 
-            rv = ce.texture
+            if ce.texture is None:
+
+                texsurf = ce.surf
+
+                if ce.bounds != default_bounds:
+                    texsurf = ce.surf.subsurface(ce.bounds)
+                    renpy.display.render.mutated_surface(texsurf)
+
+                ce.texture = renpy.display.draw.load_texture(texsurf)
+
+            if not predict:
+                rv = renpy.display.render.Render(ce.width, ce.height)
+                rv.blit(ce.texture, ce.bounds[:2])
+            else:
+                rv = None
 
         else:
             rv = ce.surf
@@ -315,7 +353,8 @@ class Cache(object):
 
     def get_texture(self, im):
         """
-        Gets `im` as a texture.
+        Gets `im` as a texture. Used when prediction is being used to load
+        the actual image.
         """
 
         self.get(im, texture=True)
@@ -500,13 +539,7 @@ class ImageBase(renpy.display.core.Displayable):
         raise Exception("load method not implemented.")
 
     def render(self, w, h, st, at):
-
-        texture = cache.get(self, texture=True)
-
-        w, h = texture.get_size()
-        rv = renpy.display.render.Render(w, h)
-        rv.blit(texture, (0, 0))
-        return rv
+        return cache.get(self, texture=True)
 
     def predict_one(self):
         renpy.display.predict.image(self)
