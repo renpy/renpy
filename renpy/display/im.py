@@ -238,7 +238,6 @@ class Cache(object):
                 raise
 
             w, h = surf.get_size()
-            default_bounds = (0, 0, w, h)
 
             if optimize_bounds:
                 bounds = tuple(surf.get_bounding_rect())
@@ -248,7 +247,7 @@ class Cache(object):
                     h = bounds[3]
 
             else:
-                bounds = default_bounds
+                bounds = (0, 0, w, h)
 
             size = w * h
 
@@ -285,7 +284,7 @@ class Cache(object):
 
                 texsurf = ce.surf
 
-                if ce.bounds != default_bounds:
+                if ce.bounds != (0, 0, ce.width, ce.height):
                     texsurf = ce.surf.subsurface(ce.bounds)
                     renpy.display.render.mutated_surface(texsurf)
 
