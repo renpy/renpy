@@ -186,7 +186,13 @@ class Cache(object):
     # image. It also takes care of updating the age of images in the
     # cache to be current, and maintaining the size of the current
     # generation of images.
-    def get(self, image, predict=False, texture=False):
+    def get(self, image, predict=False, texture=False, render=False):
+
+        if render:
+            texture = True
+            optimize_bounds = renpy.config.optimize_texture_bounds
+        else:
+            optimize_bounds = False
 
         if not isinstance(image, ImageBase):
             raise Exception("Expected an image of some sort, but got" + str(image) + ".")
@@ -205,9 +211,12 @@ class Cache(object):
                 if predict:
                     return None
 
-                rv = renpy.display.render.Render(ce.width, ce.height)
-                rv.blit(ce.texture, ce.bounds[:2])
-                return rv
+                if render:
+                    rv = renpy.display.render.Render(ce.width, ce.height)
+                    rv.blit(ce.texture, ce.bounds[:2])
+                    return rv
+                else:
+                    return ce.texture
 
             if ce.surf is None:
                 ce = None
@@ -231,7 +240,7 @@ class Cache(object):
             w, h = surf.get_size()
             default_bounds = (0, 0, w, h)
 
-            if renpy.config.optimize_texture_bounds:
+            if optimize_bounds:
                 bounds = tuple(surf.get_bounding_rect())
 
                 if not renpy.config.cache_surfaces:
@@ -283,8 +292,11 @@ class Cache(object):
                 ce.texture = renpy.display.draw.load_texture(texsurf)
 
             if not predict:
-                rv = renpy.display.render.Render(ce.width, ce.height)
-                rv.blit(ce.texture, ce.bounds[:2])
+                if render:
+                    rv = renpy.display.render.Render(ce.width, ce.height)
+                    rv.blit(ce.texture, ce.bounds[:2])
+                else:
+                    rv = ce.texture
             else:
                 rv = None
 
@@ -539,7 +551,7 @@ class ImageBase(renpy.display.core.Displayable):
         raise Exception("load method not implemented.")
 
     def render(self, w, h, st, at):
-        return cache.get(self, texture=True)
+        return cache.get(self, render=True)
 
     def predict_one(self):
         renpy.display.predict.image(self)
