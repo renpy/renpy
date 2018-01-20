@@ -7,6 +7,17 @@ Full Changelog
 Improvements
 -------------
 
+There is an experimental new :var:`config.optimize_texture_bounds` variable
+that causes  Ren'Py to find the minimal bounding box for the non-transparent,
+pixels of an image, then only loads that portion of the image into a GPU
+texture. For the common case of an image composed of mostly-transparent
+layers LiveComposited together, this massively increases image cache capacity
+when used in conjuction with :var:`config.cache_surfaces`, like::
+
+    define config.optimize_texture_bounds = True
+    define config.cache_surfaces = False
+
+
 The Python expression cache is kept when Ren'Py is reloaded, providing a
 slight increase in performance compared to unmarshalling it on each reload.
 

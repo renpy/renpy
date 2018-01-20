@@ -586,6 +586,11 @@ Occasionally Used
     Uses nearest-neighbor filtering by default, to support pixel art or
     melting players' eyes.
 
+.. var:: config.optimize_texture_bounds = False
+
+    When True, Ren'Py will scan images to find the bounding box of the
+    non-transparent pixels, and only load those pixels into a texture.
+
 .. var:: config.overlay_functions = [ ]
 
     A list of functions. When called, each function is expected to
