@@ -519,7 +519,7 @@ def get_prefixes(tl=True):
     rv = [ ]
 
     if tl:
-        language = renpy.game.preferences.language
+        language = renpy.game.preferences.language  # @UndefinedVariable
     else:
         language = None
 
@@ -534,6 +534,9 @@ def get_prefixes(tl=True):
 
 
 def load(name, tl=True):
+
+    if renpy.display.predict.predicting:  # @UndefinedVariable
+        raise Exception("Refusing to open {} while predicting.".format(name))
 
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
