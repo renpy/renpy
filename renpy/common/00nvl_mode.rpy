@@ -132,6 +132,9 @@ init -1500 python:
 
             who, what, kwargs = entry
 
+            kwargs.setdefault("properties", { })
+            kwargs.setdefault("multiple", None)
+
             if i == len(nvl_list) - 1:
                 who_id = "who"
                 what_id = "what"
@@ -175,13 +178,12 @@ init -1500 python:
 
         show_args = dict(kwargs)
         if show_args:
-            del show_args["properties"]
             del show_args["who_args"]
             del show_args["what_args"]
             del show_args["window_args"]
 
+            show_args.pop("properties", None)
             show_args.pop("multiple", None)
-
 
         return widget_properties, dialogue, show_args
 
