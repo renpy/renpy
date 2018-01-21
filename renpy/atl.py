@@ -116,6 +116,7 @@ PROPERTIES = {
     "crop" : (float, float, float, float),
     "crop_relative" : bool,
     "size" : (int, int),
+    "maxsize" : (int, int),
     "corner1" : (float, float),
     "corner2" : (float, float),
     "subpixel" : bool,

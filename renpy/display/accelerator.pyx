@@ -199,6 +199,13 @@ def transform_render(self, widtho, heighto, st, at):
 
     # Size.
     size = state.size
+    maxsize = state.maxsize
+
+    if (maxsize is not None) and (width != 0) and (height != 0):
+        maxsizex, maxsizey = maxsize
+        mul = min(maxsizex / width, maxsizey / height)
+        size = (width * mul, height * mul)
+
     if (size is not None) and (size != (width, height)) and (width != 0) and (height != 0):
         nw, nh = size
 
