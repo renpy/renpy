@@ -28,13 +28,18 @@ import renpy
 import __builtin__
 import threading
 import datetime
+import traceback
 import os
 
 real_open = __builtin__.open
 __builtin__.real_file = __builtin__.file
 
+report = True
+
 
 def replacement_open(*args, **kwargs):
+
+    global report
 
     rv = real_open(*args, **kwargs)
 
@@ -46,6 +51,15 @@ def replacement_open(*args, **kwargs):
 
     if threading.current_thread().name != "MainThread":
         return rv
+
+    if not report:
+        return rv
+
+    if os.environ["RENPY_DEBUG_MAIN_THREAD_OPEN"] == "stack":
+        report = False
+        print()
+        traceback.print_stack()
+        report = True
 
     print(datetime.datetime.now().strftime("%H:%M:%S"), "In main thread: open" + repr(args))
     return rv
