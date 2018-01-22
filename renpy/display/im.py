@@ -383,8 +383,7 @@ class Cache(object):
 
             self.added.add(im)
 
-            if im in self.cache:
-                self.preload_texture(im)
+            if (im in self.cache) and (self.cache[im].texture):
                 in_cache = True
             else:
                 self.preloads.append(im)
