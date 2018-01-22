@@ -536,7 +536,8 @@ def get_prefixes(tl=True):
 def load(name, tl=True):
 
     if renpy.display.predict.predicting:  # @UndefinedVariable
-        raise Exception("Refusing to open {} while predicting.".format(name))
+        if threading.current_thread().name == "MainThread":
+            raise Exception("Refusing to open {} while predicting.".format(name))
 
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
