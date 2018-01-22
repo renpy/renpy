@@ -305,6 +305,10 @@ class Cache(object):
         if not renpy.config.cache_surfaces:
             ce.surf = None
 
+            if ce.texture is None:
+                with self.lock:
+                    self.kill(ce)
+
         # Done... return the surface.
         return rv
 
