@@ -882,6 +882,16 @@ both horizontal and vertical positions.
     If not None, causes the displayable to be scaled to the given
     size.
 
+.. transform-property:: maxsize
+
+    :type: None or (int, int)
+    :default: None
+
+    If not None, causes the displayable to be scaled so that it fits
+    within a box of this size, while preserving aspect ratio. (Note that
+    this means that one of the dimensions may be smaller than the size
+    of this box.)
+
 .. transform-property:: subpixel
 
     :type: boolean
@@ -947,7 +957,7 @@ These properties are applied in the following order:
 
 #. tile
 #. crop, corner1, corner2
-#. size
+#. size, maxsize
 #. zoom, xzoom, yzoom
 #. pan
 #. rotate

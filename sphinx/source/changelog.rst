@@ -24,6 +24,14 @@ slight increase in performance compared to unmarshalling it on each reload.
 The traceback.txt and errors.txt files now include a date at the bottom,
 making it easier to determine if a file is stale.
 
+Transforms now have a new :tpref:`maxsize` property, which scales images
+down until they fit into a bounding box.
+
+Ren'Py now refuses to call functions that read from disk (such as
+:ref:`renpy.image_size`) when predicting screens, rather than risking
+such slow call leading to drops in framerate.
+
+
 
 Fixes
 -----
