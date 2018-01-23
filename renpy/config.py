@@ -92,6 +92,9 @@ savedir = None
 # live in the image cache at once.
 image_cache_size = 16
 
+# The size of the image cache, in megabytes.
+image_cache_size_mb = 300
+
 # The number of statements we will analyze when doing predictive
 # loading. Please note that this is a total number of statements in a
 # BFS along all paths, rather than the depth along any particular

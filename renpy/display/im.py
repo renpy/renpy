@@ -136,9 +136,11 @@ class Cache(object):
 
         rv = sum(i.size() for i in self.cache.values())
 
-#         print("Total cache size: {:.1f}/{:.1f} MB".format(
+#         print("Total cache size: {:.1f}/{:.1f} MB (Textures {:.1f} MB)".format(
 #             4.0 * rv / 1024 / 1024,
-#             4.0 * self.cache_limit / 1024 / 1024))
+#             4.0 * self.cache_limit / 1024 / 1024,
+#             1.0 * renpy.exports.get_texture_size()[0] / 1024 / 1024,
+#             ))
 
         return rv
 
@@ -148,7 +150,10 @@ class Cache(object):
         by the game-maker.
         """
 
-        self.cache_limit = 2 * renpy.config.image_cache_size * renpy.config.screen_width * renpy.config.screen_height
+        if renpy.config.image_cache_size_mb is not None:
+            self.cache_limit = int(renpy.config.image_cache_size_mb * 1024 * 1024 // 4)
+        else:
+            self.cache_limit = 2 * renpy.config.image_cache_size * renpy.config.screen_width * renpy.config.screen_height
 
     def quit(self):  # @ReservedAssignment
         if not self.preload_thread.isAlive():
