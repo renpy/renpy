@@ -2671,6 +2671,90 @@ class Interface(object):
 
             renpy.plog(1, "after gc")
 
+    def idle_frame(self, can_block):
+        """
+        Tasks that are run during "idle" frames.
+        """
+        # We want this to include the GC time, so we don't predict on
+        # frames where we GC.
+        start = get_time()
+
+        step = 1
+
+        while True:
+            if self.event_peek():
+                return
+
+            if not can_block:
+                if get_time() > (start + .007):
+                    return
+
+            # Step 1: Run gc.
+            if step == 1:
+                self.consider_gc()
+                step += 1
+
+            # Step 2: Push textures to GPU.
+            elif step == 2:
+                if not renpy.display.draw.ready_one_texture():
+                    step += 1
+
+            # Step 3: Predict more images.
+            elif step == 3:
+
+                if not self.prediction_coroutine:
+                    step += 1
+                    continue
+
+                expensive_predict = True  # not (needs_redraw or renpy.audio.music.is_playing("movie"))
+                result = self.prediction_coroutine.send(expensive_predict)
+
+                if not result:
+                    self.prediction_coroutine = None
+                    step += 1
+
+            # Step 4: Autosave.
+            elif step == 4:
+
+                if not self.did_autosave:
+                    renpy.loadsave.autosave()
+                    renpy.persistent.check_update()
+                    self.did_autosave = True
+
+                step += 1
+
+            else:
+                break
+
+        if not self.event_peek():
+            self.consider_gc()
+
+        # Predict images, if we haven't done so already.
+        while self.prediction_coroutine is not None:
+
+            if self.event_peek():
+                break
+
+            # Can we do expensive prediction?
+
+            result = self.prediction_coroutine.send(expensive_predict)
+
+            if not result:
+                self.prediction_coroutine = None
+                break
+
+            if not self.can_block:
+                if get_time() > (prediction_start + .007):
+                    break
+
+        if not self.event_peek():
+
+            # Handle autosaving and persistent checking, as necessary.
+            if not self.did_autosave:
+                renpy.loadsave.autosave()
+                renpy.persistent.check_update()
+                self.did_autosave = True
+
     def interact_core(self,
                       show_mouse=True,
                       trans_pause=False,
@@ -2911,8 +2995,8 @@ class Interface(object):
 
         del add_layer
 
-        prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
-        prediction_coroutine.send(None)
+        self.prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
+        self.prediction_coroutine.send(None)
 
         # Clean out the registered adjustments.
         renpy.display.behavior.adj_registered.clear()
@@ -2951,7 +3035,7 @@ class Interface(object):
         self.interact_time = None
 
         # We only want to do autosave once.
-        did_autosave = False
+        self.did_autosave = False
 
         old_timeout_time = None
         old_redraw_time = None
@@ -3143,42 +3227,6 @@ class Interface(object):
                         pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
                         old_timeout_time = self.timeout_time
 
-                if can_block or (frame >= renpy.config.idle_frame):
-
-                    # We want this to include the GC time, so we don't predict on
-                    # frames where we GC.
-                    prediction_start = get_time()
-
-                    if not self.event_peek():
-                        self.consider_gc()
-
-                    # Predict images, if we haven't done so already.
-                    while prediction_coroutine is not None:
-
-                        if self.event_peek():
-                            break
-
-                        # Can we do expensive prediction?
-                        expensive_predict = True  # not (needs_redraw or renpy.audio.music.is_playing("movie"))
-
-                        result = prediction_coroutine.send(expensive_predict)
-
-                        if not result:
-                            prediction_coroutine = None
-                            break
-
-                        if not can_block:
-                            if get_time() > (prediction_start + .007):
-                                break
-
-                    if not self.event_peek():
-
-                        # Handle autosaving and persistent checking, as necessary.
-                        if not did_autosave:
-                            renpy.loadsave.autosave()
-                            renpy.persistent.check_update()
-                            did_autosave = True
-
                 if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
                     renpy.plog(1, "pre peek")
                     ev = self.event_poll()
@@ -3188,11 +3236,14 @@ class Interface(object):
                     ev = self.event_wait()
                     renpy.plog(1, "post wait {!r}", ev)
 
+                if can_block or (frame >= renpy.config.idle_frame):
+                    self.idle_frame(can_block)
+
                 if ev.type == pygame.NOEVENT:
                     if not can_block:
                         needs_redraw = True
 
-                    if (not needs_redraw) and (not prediction_coroutine) and (not self.mouse_move):
+                    if (not needs_redraw) and (not self.prediction_coroutine) and (not self.mouse_move):
                         pygame.time.wait(1)
 
                     continue
