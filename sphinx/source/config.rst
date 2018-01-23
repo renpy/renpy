@@ -482,14 +482,24 @@ Occasionally Used
     assigned to them. See :ref:`the a text tag <a-tag>` for a description
     as to what the possible protocols mean.
 
-.. var:: config.image_cache_size = 8
+.. var:: config.image_cache_size = None
 
-    This is used to set the size of the :ref:`image cache <images>`, as a
+    If not None, this is used to set the size of the :ref:`image cache <images>`, as a
     multiple of the screen size. This number is multiplied by the size of
     the screen, in pixels, to get the size of the image cache in pixels.
 
     If set too large, this can waste memory. If set too small, images
     can be repeatedly loaded, hurting performance.
+
+.. var:: config.image_cache_size_mb = 300
+
+    This is used to set the size of the :ref:`image cache <images>`, in
+    megabytes. If :var:`config.cache_surfaces` is False, an image takes
+    4 bytes per pixel, otherwise it takes 8 bytes per pixel.
+
+    If set too large, this can waste memory. If set too small, images
+    can be repeatedly loaded, hurting performance. If not none,
+    :var:`config.image_cache_size` is used instead of this variable.
 
 .. var:: config.key_repeat = (.3, .03)
 

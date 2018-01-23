@@ -4,34 +4,44 @@ Full Changelog
 
 .. _renpy-6.99.14.1:
 
-Improvements
--------------
+Image Prediction and Caching
+----------------------------
 
-There is an experimental new :var:`config.optimize_texture_bounds` variable
-that causes  Ren'Py to find the minimal bounding box for the non-transparent,
-pixels of an image, then only loads that portion of the image into a GPU
-texture. For the common case of an image composed of mostly-transparent
-layers LiveComposited together, this massively increases image cache capacity
-when used in conjuction with :var:`config.cache_surfaces`, like::
+Ren'Py now searches for the bounding box of non-transparent pixels when
+converting an image into a texture. When the :var:`config.optimize_texture_bounds`
+variable is true (as it is by default), only the non-transparent pixels
+are stored in the image cache. This can massively reduce the in-memory
+size of certain images, such as images that correspond to mostly-transparent
+layers.
 
-    define config.optimize_texture_bounds = True
-    define config.cache_surfaces = False
+The :var:`config.cache_surfaces` variable is now False by default. This
+halves the amount of memory required for the image cache, but may slow
+down multiple image manipulators applied to the same image.
 
+The size of the image cache is now controlled by the
+:var:`config.image_cache_size_mb` variable, which defaults to 300 megabytes.
+With the new default settings, each pixel inside the images non-transparent
+bounding box takes up 4 bytes of memory.
+
+The result of these three changes is that images take up less memory
+in cache, meaning Ren'Py can store far more predicted images.
+
+Ren'Py now refuses to call functions that read from disk (such as
+:ref:`renpy.image_size`) when predicting images and screens, rather
+than risking these slow calls leading to drops in framerate.
+
+
+Other Improvements
+------------------
+
+Transforms now have a new :tpref:`maxsize` property, which scales images
+down until they fit into a bounding box.
 
 The Python expression cache is kept when Ren'Py is reloaded, providing a
 slight increase in performance compared to unmarshalling it on each reload.
 
 The traceback.txt and errors.txt files now include a date at the bottom,
 making it easier to determine if a file is stale.
-
-Transforms now have a new :tpref:`maxsize` property, which scales images
-down until they fit into a bounding box.
-
-Ren'Py now refuses to call functions that read from disk (such as
-:ref:`renpy.image_size`) when predicting screens, rather than risking
-such slow call leading to drops in framerate.
-
-
 
 Fixes
 -----
