@@ -209,9 +209,8 @@ class Cache(object):
 
         if render:
             texture = True
-            optimize_bounds = renpy.config.optimize_texture_bounds
-        else:
-            optimize_bounds = False
+
+        optimize_bounds = renpy.config.optimize_texture_bounds
 
         if not isinstance(image, ImageBase):
             raise Exception("Expected an image of some sort, but got" + str(image) + ".")
@@ -263,11 +262,8 @@ class Cache(object):
 
             if optimize_bounds:
                 bounds = tuple(surf.get_bounding_rect())
-
-                if not renpy.config.cache_surfaces:
-                    w = bounds[2]
-                    h = bounds[3]
-
+                w = bounds[2]
+                h = bounds[3]
             else:
                 bounds = (0, 0, w, h)
 
