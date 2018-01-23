@@ -1,4 +1,4 @@
-cdef extern from "glcompat.h":
+cdef extern from "glcompat.h" nogil:
     ctypedef unsigned int    GLenum
     ctypedef unsigned char   GLboolean
     ctypedef unsigned int    GLbitfield

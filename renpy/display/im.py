@@ -207,8 +207,15 @@ class Cache(object):
     # generation of images.
     def get(self, image, predict=False, texture=False, render=False):
 
+        if predict:
+            prefix = "predict"
+        else:
+            prefix = "real   "
+
         if render:
             texture = True
+
+        start = time.time()
 
         optimize_bounds = renpy.config.optimize_texture_bounds
 
@@ -249,11 +256,17 @@ class Cache(object):
                 if image in self.pin_cache:
                     surf = self.pin_cache[image]
                 else:
+
                     if not predict:
                         with renpy.game.ExceptionInfo("While loading %r:", image):
                             surf = image.load()
                     else:
                         surf = image.load()
+
+                    end = time.time()
+                    print()
+                    print(prefix, "Load of", image, "took", round(1000 * (end-start), 3), "ms")
+                    start = end
 
             except:
                 raise
@@ -266,6 +279,10 @@ class Cache(object):
                 h = bounds[3]
             else:
                 bounds = (0, 0, w, h)
+
+            end = time.time()
+            print(prefix, "Opt of", image, "took", round(1000 * (end-start), 3), "ms")
+            start = end
 
             with self.lock:
 
@@ -310,6 +327,9 @@ class Cache(object):
 
         else:
             rv = ce.surf
+
+        end = time.time()
+        print(prefix, "texload of", image, "took", round(1000 * (end-start), 3), "ms")
 
         if not renpy.config.cache_surfaces:
 

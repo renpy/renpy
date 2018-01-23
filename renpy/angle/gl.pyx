@@ -84,7 +84,8 @@ cdef int glClear(GLbitfield a0) except? 0:
     if check_errors & 4:
         renpy.display.log.write('glClear')
     cdef GLenum error
-    realGlClear(a0)
+    with nogil:
+        realGlClear(a0)
     if check_errors:
         error = realGlGetError()
         if error:
