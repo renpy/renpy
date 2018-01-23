@@ -280,6 +280,12 @@ Occasionally Used
     is given the `namebox_background` property, it sets :propref:`background`
     on the displayable in the say screen with the id "namebox".
 
+.. var:: config.config.conditionswitch_predict_all = False
+
+    The default value of the predict_all argument for :func:`ConditionSwitch`
+    and :func:`ShowingSwitch`, which determines if all possible displayables
+    are shown.
+
 .. var:: config.debug = False
 
     Enables debugging functionality (mostly by turning some missing
@@ -287,9 +293,8 @@ Occasionally Used
 
 .. var:: config.debug_image_cache = False
 
-    If True, Ren'Py will print the contents of the :ref:`image cache <images>`
-    to standard output (wherever that goes) whenever the contents of the
-    image cache change.
+    If True, Ren'Py will write information about the :ref:`image cache <images>`
+    to image_cache.txt.
 
 .. var:: config.debug_sound = False
 
@@ -409,13 +414,6 @@ Occasionally Used
     a font. In this case, requests for a bold italic version of vera
     will get a bold italic version of vera, rather than a bold version
     of the italic vera.
-
-.. var:: config.framerate = 100
-
-    If not None, this is the upper limit on the number of frames
-    Ren'Py will attempt to display per second. This is only respected
-    by the software renderer. The GL renderer will synchronize to
-    vertical blank instead.
 
 .. var:: config.game_menu = [ ... ]
 

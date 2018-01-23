@@ -27,9 +27,13 @@ The result of these three changes is that images take up less memory
 in cache, meaning Ren'Py can store far more predicted images.
 
 Ren'Py now refuses to call functions that read from disk (such as
-:ref:`renpy.image_size`) when predicting images and screens, rather
+:func:`renpy.image_size`) when predicting images and screens, rather
 than risking these slow calls leading to drops in framerate.
 
+The :func:`ConditionSwitch` and :func:`ShowingSwitch` displayables have
+a new predict_all parameter. When True, this causes all displayables to
+be predicted, not just the currently selected one. This could be used
+to have Ren'Py preload all emotions of a sprite.
 
 Other Improvements
 ------------------

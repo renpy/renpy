@@ -1300,13 +1300,16 @@ def condition_switch_pick(switch):
     raise Exception("Switch could not choose a displayable.")
 
 
-def condition_switch_show(st, at, switch):
+def condition_switch_show(st, at, switch, predict_all=None):
     return condition_switch_pick(switch), None
 
 
-def condition_switch_predict(switch):
+def condition_switch_predict(switch, predict_all=None):
 
-    if renpy.game.lint:
+    if predict_all is None:
+        predict_all = renpy.config.conditionswitch_predict_all
+
+    if renpy.game.lint or predict_all:
         return [ d for _cond, d in switch ]
 
     return [ condition_switch_pick(switch) ]
@@ -1315,16 +1318,25 @@ def condition_switch_predict(switch):
 def ConditionSwitch(*args, **kwargs):
     """
     :doc: disp_dynamic
+    :args: (*args, predict_all=None, **properties)
 
     This is a displayable that changes what it is showing based on
-    python conditions. The positional argument should be given in
+    Python conditions. The positional arguments should be given in
     groups of two, where each group consists of:
 
-    * A string containing a python condition.
+    * A string containing a Python condition.
     * A displayable to use if the condition is true.
 
     The first true condition has its displayable shown, at least
     one condition should always be true.
+
+    The conditions uses here should not have externally-visible side-effects.
+
+    `predict_all`
+        If True, all of the possible displayables will be predicted when
+        the displayable is shown. If False, only the current condition is
+        predicted. If None, :var:`config.conditionswitch_predict_all` is
+        used.
 
     ::
 
@@ -1333,6 +1345,7 @@ def ConditionSwitch(*args, **kwargs):
             "True", "jill_sober.png")
     """
 
+    predict_all = kwargs.pop("predict_all", None)
     kwargs.setdefault('style', 'default')
 
     switch = [ ]
@@ -1351,6 +1364,7 @@ def ConditionSwitch(*args, **kwargs):
 
     rv = DynamicDisplayable(condition_switch_show,
                             switch,
+                            predict_all,
                             _predict_function=condition_switch_predict)
 
     return Position(rv, **kwargs)
@@ -1359,6 +1373,7 @@ def ConditionSwitch(*args, **kwargs):
 def ShowingSwitch(*args, **kwargs):
     """
     :doc: disp_dynamic
+    :args: (*args, predict_all=None, **properties)
 
     This is a displayable that changes what it is showing based on the
     images are showing on the screen. The positional argument should
@@ -1368,6 +1383,12 @@ def ShowingSwitch(*args, **kwargs):
     * A displayable to use if the condition is true.
 
     A default image should be specified.
+
+    `predict_all`
+        If True, all of the possible displayables will be predicted when
+        the displayable is shown. If False, only the current condition is
+        predicted. If None, :var:`config.conditionswitch_predict_all` is
+        used.
 
     One use of ShowingSwitch is to have side images change depending on
     the current emotion of a character. For example::

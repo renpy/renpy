@@ -870,6 +870,9 @@ cache_surfaces = False
 # Should we optimize textures by taking the bounding rect?
 optimize_texture_bounds = True
 
+# Should we predict everything in a ConditionSwitch?
+conditionswitch_predict_all = False
+
 
 del os
 del collections
@@ -894,5 +897,3 @@ def init():
 
     if "RENPY_EXPERIMENTAL" in os.environ:
         print("Experimental mode.")
-        renpy.config.cache_surfaces = False
-        renpy.config.optimize_texture_bounds = True
