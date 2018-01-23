@@ -28,6 +28,11 @@ init -1900 python:
         if version is None:
             return
 
+        import os
+
+        if "RENPY_EXPERIMENTAL" in os.environ:
+            return
+
         if version <= (5, 6, 0):
             config.check_properties = False
 
@@ -154,6 +159,12 @@ init -1900 python:
             config.gc_thresholds = (700, 10, 10)
             config.idle_gc_count = 10000
             config.scrollbar_child_size = False
+
+        if version <= (6, 99, 14):
+            config.image_cache_size_mb = None
+            config.image_cache_size = 16
+            config.cache_surfaces = True
+            config.optimize_texture_bounds = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

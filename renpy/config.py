@@ -90,7 +90,7 @@ savedir = None
 
 # The number of screens worth of images that are allowed to
 # live in the image cache at once.
-image_cache_size = 16
+image_cache_size = None
 
 # The size of the image cache, in megabytes.
 image_cache_size_mb = 300
@@ -865,10 +865,10 @@ take_state_from_target = False
 scrollbar_child_size = True
 
 # Should surfaces be cached?
-cache_surfaces = True
+cache_surfaces = False
 
 # Should we optimize textures by taking the bounding rect?
-optimize_texture_bounds = False
+optimize_texture_bounds = True
 
 
 del os

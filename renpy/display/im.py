@@ -150,10 +150,10 @@ class Cache(object):
         by the game-maker.
         """
 
-        if renpy.config.image_cache_size_mb is not None:
-            self.cache_limit = int(renpy.config.image_cache_size_mb * 1024 * 1024 // 4)
-        else:
+        if renpy.config.image_cache_size is not None:
             self.cache_limit = 2 * renpy.config.image_cache_size * renpy.config.screen_width * renpy.config.screen_height
+        else:
+            self.cache_limit = int(renpy.config.image_cache_size_mb * 1024 * 1024 // 4)
 
     def quit(self):  # @ReservedAssignment
         if not self.preload_thread.isAlive():
