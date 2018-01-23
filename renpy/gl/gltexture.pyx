@@ -383,7 +383,7 @@ cdef class TextureCore:
 
             self.nearest = False
 
-            # If we haven't initalized the texture yet, and we're
+            # If we haven't initialized the texture yet, and we're
             # smaller than it, load in the empty texture.
             if w < self.width or h < self.height:
 
@@ -700,6 +700,9 @@ cdef class TextureGrid(object):
         # one.
         self.half_cache = None
 
+        # Has the texture been made ready once?
+        self.ready = False
+
     def __getstate__(self): #@DuplicatedSignature
         if renpy.config.developer:
             raise Exception("Can't pickle a texture.")
@@ -735,13 +738,15 @@ cdef class TextureGrid(object):
         return rv
 
 
-    cdef void make_ready(self, bint nearest):
+    cpdef void make_ready(self, bint nearest):
         """
         Makes ready all the tile-textures in this texture grid.
         """
 
         cdef list row
         cdef TextureCore t
+
+        self.ready = True
 
         for row in self.tiles:
             for t in row:

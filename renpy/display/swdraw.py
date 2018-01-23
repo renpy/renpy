@@ -1086,6 +1086,9 @@ class SWDraw(object):
 
         return rle_surf
 
+    def ready_one_texture(self):
+        return False
+
     def solid_texture(self, w, h, color):
         """
         Creates a texture filled to the edges with color.

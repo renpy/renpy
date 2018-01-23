@@ -154,6 +154,9 @@ cdef class GLDraw:
         # updated.
         self.fast_redraw_frames = 0
 
+        # The queue of textures that might need to be made ready.
+        self.ready_texture_queue = weakref.WeakSet()
+
 
     def get_texture_size(self):
         """
@@ -734,8 +737,27 @@ cdef class GLDraw:
         if rv is None:
             rv = gltexture.texture_grid_from_surface(surf, transient)
             self.texture_cache[surf] = rv
+            self.ready_texture_queue.add(rv)
 
         return rv
+
+    def ready_one_texture(self):
+        """
+        Call from the main thread to make a single texture ready.
+        """
+
+        while True:
+
+            try:
+                tex = self.ready_texture_queue.pop()
+            except KeyError:
+                return False
+
+            if not tex.ready:
+                tex.make_ready(False)
+                return True
+
+        return False
 
     def solid_texture(self, w, h, color):
         surf = renpy.display.pgrender.surface((w + 4, h + 4), True)
@@ -1387,6 +1409,8 @@ cdef class GLDraw:
         y = int(y / self.dpi_scale)
 
         return (x, y)
+
+
 
 
 class Rtt(object):

@@ -50,6 +50,9 @@ cdef class TextureCore:
 
 cdef class TextureGrid:
 
+
+    cdef object __weakref__
+
     cdef public int width
     cdef public int height
     cdef list rows
@@ -57,9 +60,10 @@ cdef class TextureGrid:
     cdef list tiles # list of lists.
     cdef public TextureGrid half_cache
 
-    cdef void make_ready(self, bint nearest)
+    cpdef void make_ready(self, bint nearest)
 
     cdef public object debug
+    cdef public bint ready
 
 
 cpdef blit(
