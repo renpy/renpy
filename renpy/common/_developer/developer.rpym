@@ -551,7 +551,7 @@ screen _image_load_log():
         tex_size_mb = tex_size / 1024.0 / 1024.0
 
         cache_size = renpy.display.im.cache.get_total_size()
-        cache_mb = cache_size * 4.0 / 1024 / 1024
+        cache_size_mb = cache_size * 4.0 / 1024 / 1024
         cache_pct = 100.0 * cache_size / renpy.display.im.cache.cache_limit
 
     drag:
@@ -573,7 +573,7 @@ screen _image_load_log():
                 size 14
                 color "#fff"
 
-            text _("Image cache: [cache_pct:.1f]% ([tex_size_mb:.1f] MB)"):
+            text _("Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"):
                 size 14
                 color "#fff"
 
