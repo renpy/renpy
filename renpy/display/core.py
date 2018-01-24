@@ -2692,7 +2692,7 @@ class Interface(object):
             if self.event_peek():
                 break
 
-            if not can_block:
+            if not (can_block and expensive):
                 if get_time() > (start + .0005):
                     break
 
