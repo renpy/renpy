@@ -395,3 +395,6 @@ init python:
 
 # Enable the special launcher translation mode.
 define config.translate_launcher = True
+
+# Reduce the rate of screen updates.
+default preferences.gl_powersave = True
