@@ -873,7 +873,6 @@ optimize_texture_bounds = True
 # Should we predict everything in a ConditionSwitch?
 conditionswitch_predict_all = False
 
-
 del os
 del collections
 

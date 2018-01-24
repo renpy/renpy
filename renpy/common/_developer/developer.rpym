@@ -62,17 +62,6 @@ screen _developer:
                     textbutton _("Hide Image Load Log"):
                         action Hide("_image_load_log")
 
-
-                if not renpy.get_screen("_texture_size"):
-                    textbutton _("Show Texture Size"):
-                        action Show("_texture_size")
-                else:
-                    textbutton _("Hide Texture size"):
-                        action Hide("_texture_size")
-
-
-
-
         hbox:
             spacing gui._scale(25)
 
@@ -551,44 +540,21 @@ label _filename_list:
     return
 
 
-init python:
-    def _image_load_log_function(st, at):
-
-        ill = list(renpy.get_image_load_log(3))
-
-        vbox = VBox()
-
-        for when, filename, preload in ill:
-            if preload:
-                color="#ccffcc"
-                prefix=__("✔ ")
-            else:
-                color="#ffcccc"
-                prefix=__("✘ ")
-
-            vbox.add(Text(prefix + filename.replace("{", "{{").replace("[", "[["), size=14, color=color, style="_default"))
-
-        if at < 10.0:
-            vbox.add(Text(
-            _("\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"),
-            size=14, style="_default"))
-
-        return vbox, .25
-
-    def _texture_size_function(st, at):
-
-        size, count = renpy.get_texture_size()
-        size_mb = size / 1024.0 / 1024.0
-
-        message =  __("{size_mb:,.1f} MB in {count} textures.").format(count=count, size_mb=size_mb)
-
-        return Text(message, substitute=False, size=14, style="_default", color="#ffffff"), .25
-
-
 screen _image_load_log():
-    zorder 1000
+    zorder 1500
+
+    default show_help = True
 
     style_prefix ""
+
+    python:
+        load_log = list(renpy.get_image_load_log(3))
+        tex_size, tex_count = renpy.get_texture_size()
+        tex_size_mb = tex_size / 1024.0 / 1024.0
+
+        cache_size = renpy.display.im.cache.get_total_size()
+        cache_mb = cache_size * 4.0 / 1024 / 1024
+        cache_pct = 100.0 * cache_size / renpy.display.im.cache.cache_limit
 
     drag:
         draggable True
@@ -603,30 +569,37 @@ screen _image_load_log():
             ypadding 5
             xminimum 200
 
-            add DynamicDisplayable(_image_load_log_function)
+            has vbox
 
-screen _texture_size():
-    zorder 1000
+            text _("Textures: [tex_count] ([tex_size_mb:.1f] MB)"):
+                size 14
+                color "#fff"
 
-    style_prefix ""
+            text _("Image cache: [cache_pct:.1f]% ([tex_size_mb:.1f] MB)"):
+                size 14
+                color "#fff"
 
-    drag:
-        draggable True
-        focus_mask None
-        xpos 0
-        ypos 0
+            if load_log:
+                text "\n" size 14
 
-        frame:
-            style "empty"
-            background "#0004"
-            xpadding 5
-            ypadding 5
-            xminimum 200
+            for when, filename, preload in load_log:
+                if preload:
+                    $ color="#ccffcc"
+                    $ prefix=__("✔ ")
+                else:
+                    $ color="#ffcccc"
+                    $ prefix=__("✘ ")
 
-            add DynamicDisplayable(_texture_size_function)
+                text "[prefix][filename!q]" color color size 14
 
+            if show_help:
+                text _("\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"):
+                    size 14
 
+    timer 10.0 action SetScreenVariable("show_help", False)
 
 init python:
     if config.transparent_tile:
         config.underlay.append(Frame("_transparent_tile.png", tile=True))
+
+    config.per_frame_screens.append("_image_load_log")

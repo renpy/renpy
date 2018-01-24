@@ -25,10 +25,6 @@ init python:
 
     def _clear_performance():
         renpy.display.interface.frame_times[:] = [ ]
-#
-#     import gc
-#     print(gc.get_threshold())
-#     gc.set_debug(gc.DEBUG_STATS)
 
 screen _performance:
 
