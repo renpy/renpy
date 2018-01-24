@@ -445,6 +445,9 @@ def main():
 
         renpy.game.script.report_duplicate_labels()
 
+        # Sort the images.
+        renpy.display.image.image_names.sort()
+
         game.persistent._virtual_size = renpy.config.screen_width, renpy.config.screen_height
 
         for i in renpy.game.persistent._seen_translates:  # @UndefinedVariable

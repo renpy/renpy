@@ -47,6 +47,9 @@ slight increase in performance compared to unmarshalling it on each reload.
 The traceback.txt and errors.txt files now include a date at the bottom,
 making it easier to determine if a file is stale.
 
+The new :func:`renpy.list_images` function returns a list of all the images
+that have been defined.
+
 Fixes
 -----
 

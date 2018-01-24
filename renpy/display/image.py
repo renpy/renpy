@@ -37,6 +37,20 @@ images = { }
 # tag.
 image_attributes = collections.defaultdict(list)
 
+# The set of image names Ren'Py knows about, as strings with spaces.
+image_names = [ ]
+
+
+def list_images():
+    """
+    :doc: image_func
+
+    Returns a list of images that have been added to Ren'Py, as a list of
+    strings with spaces between the name components.
+    """
+
+    return image_names
+
 
 def get_available_image_tags():
     """
@@ -175,6 +189,8 @@ def register_image(name, d):
 
     images[name] = d
     image_attributes[tag].append(rest)
+
+    image_names.append(" ".join(name))
 
 
 def image_exists(name, exact=False):
