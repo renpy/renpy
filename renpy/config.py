@@ -831,7 +831,7 @@ performance_window = 5.0
 profile_time = 1.0 / 50.0
 
 # What event do we check to see if the profile needs to be printed?
-profile_to_event = "end frame"
+profile_to_event = "flip"
 
 # Should we instantly zap transient displayables, or properly hide them?
 fast_unhandled_event = True

@@ -375,6 +375,8 @@ def playing():
         if renpy.audio.music.get_playing(channel):
             return True
 
+    return
+
 
 def update_playing():
     """

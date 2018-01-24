@@ -2654,7 +2654,7 @@ class Interface(object):
         count = gc.get_count()
 
         if count[0] >= renpy.config.idle_gc_count:
-            renpy.plog(1, "before gc")
+            renpy.plog(2, "before gc")
 
             if count[2] >= renpy.config.gc_thresholds[2]:
                 gen = 2
@@ -2669,12 +2669,18 @@ class Interface(object):
                 renpy.memory.print_garbage(gen)
                 gc.garbage[:] = [ ]
 
-            renpy.plog(1, "after gc")
+            renpy.plog(2, "after gc")
 
-    def idle_frame(self, can_block):
+    def idle_frame(self, can_block, expensive):
         """
         Tasks that are run during "idle" frames.
         """
+
+        if expensive:
+            renpy.plog(1, "start idle_frame (expensive)")
+        else:
+            renpy.plog(1, "start idle_frame (inexpensive)")
+
         # We want this to include the GC time, so we don't predict on
         # frames where we GC.
         start = get_time()
@@ -2682,12 +2688,13 @@ class Interface(object):
         step = 1
 
         while True:
+
             if self.event_peek():
-                return
+                break
 
             if not can_block:
-                if get_time() > (start + .007):
-                    return
+                if get_time() > (start + .0005):
+                    break
 
             # Step 1: Run gc.
             if step == 1:
@@ -2696,8 +2703,8 @@ class Interface(object):
 
             # Step 2: Push textures to GPU.
             elif step == 2:
-                if not renpy.display.draw.ready_one_texture():
-                    step += 1
+                renpy.display.draw.ready_one_texture()
+                step += 1
 
             # Step 3: Predict more images.
             elif step == 3:
@@ -2706,12 +2713,15 @@ class Interface(object):
                     step += 1
                     continue
 
-                expensive_predict = True  # not (needs_redraw or renpy.audio.music.is_playing("movie"))
-                result = self.prediction_coroutine.send(expensive_predict)
+                result = self.prediction_coroutine.send(expensive)
 
-                if not result:
+                if result is None:
                     self.prediction_coroutine = None
                     step += 1
+
+                elif result is False:
+                    if not expensive:
+                        step += 1
 
             # Step 4: Autosave.
             elif step == 4:
@@ -2726,34 +2736,10 @@ class Interface(object):
             else:
                 break
 
-        if not self.event_peek():
-            self.consider_gc()
-
-        # Predict images, if we haven't done so already.
-        while self.prediction_coroutine is not None:
-
-            if self.event_peek():
-                break
-
-            # Can we do expensive prediction?
-
-            result = self.prediction_coroutine.send(expensive_predict)
-
-            if not result:
-                self.prediction_coroutine = None
-                break
-
-            if not self.can_block:
-                if get_time() > (prediction_start + .007):
-                    break
-
-        if not self.event_peek():
-
-            # Handle autosaving and persistent checking, as necessary.
-            if not self.did_autosave:
-                renpy.loadsave.autosave()
-                renpy.persistent.check_update()
-                self.did_autosave = True
+        if expensive:
+            renpy.plog(1, "end idle_frame (expensive)")
+        else:
+            renpy.plog(1, "end idle_frame (inexpensive)")
 
     def interact_core(self,
                       show_mouse=True,
@@ -3227,6 +3213,10 @@ class Interface(object):
                         pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
                         old_timeout_time = self.timeout_time
 
+                if can_block or (frame >= renpy.config.idle_frame):
+                    expensive = not ( needs_redraw or (_redraw_in < .2) or (_timeout_in < .2) or renpy.display.video.playing() )
+                    self.idle_frame(can_block, expensive)
+
                 if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
                     renpy.plog(1, "pre peek")
                     ev = self.event_poll()
@@ -3235,9 +3225,6 @@ class Interface(object):
                     renpy.plog(1, "pre wait")
                     ev = self.event_wait()
                     renpy.plog(1, "post wait {!r}", ev)
-
-                if can_block or (frame >= renpy.config.idle_frame):
-                    self.idle_frame(can_block)
 
                 if ev.type == pygame.NOEVENT:
                     if not can_block:
