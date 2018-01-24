@@ -311,7 +311,9 @@ init -1600 python:
         renpy.restart_interaction()
 
     def _memory_profile():
-        if not config.developer:
+        import os
+
+        if "RENPY_EXPERIMENTAL" not in os.environ:
             return
 
         renpy.memory.diff_memory()
