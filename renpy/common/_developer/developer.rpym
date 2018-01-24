@@ -546,7 +546,7 @@ screen _image_load_log():
     style_prefix ""
 
     python:
-        load_log = list(renpy.get_image_load_log(3))
+        load_log = list(renpy.get_image_load_log(5))
         tex_size, tex_count = renpy.get_texture_size()
         tex_size_mb = tex_size / 1024.0 / 1024.0
 
@@ -599,6 +599,7 @@ screen _image_load_log():
 init python:
     if config.transparent_tile:
         config.underlay.append(Frame("_transparent_tile.png", tile=True))
+        renpy.start_predict("_transparent_tile.png")
 
     config.per_frame_screens.append("_image_load_log")
 

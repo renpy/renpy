@@ -217,6 +217,9 @@ init -1700 python:
     # Prediction of screens.
     def _predict_screens():
 
+        for i in config.overlay_screens:
+            renpy.predict_screen(i)
+
         s = _game_menu_screen
 
         if s is None:
