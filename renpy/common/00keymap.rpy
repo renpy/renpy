@@ -314,7 +314,7 @@ init -1600 python:
     def _memory_profile():
         import os
 
-        if "RENPY_EXPERIMENTAL" not in os.environ:
+        if not renpy.experimental:
             return
 
         renpy.memory.diff_memory()

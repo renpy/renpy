@@ -172,6 +172,9 @@ def prediction_coroutine(root_widget):
 
         name, args, kwargs = t
 
+        if name.startswith("_"):
+            continue
+
         predicting = True
 
         try:

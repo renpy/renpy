@@ -893,6 +893,3 @@ def init():
     tts_function = renpy.display.tts.default_tts_function
 
     import os
-
-    if "RENPY_EXPERIMENTAL" in os.environ:
-        print("Experimental mode.")

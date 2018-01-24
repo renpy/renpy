@@ -71,6 +71,9 @@ linux = False
 android = False
 ios = False
 
+# Should we enable experimental features and debugging?
+experimental = "RENPY_EXPERIMENTAL" in os.environ
+
 import platform
 
 
