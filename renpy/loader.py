@@ -196,6 +196,9 @@ game_files = [ ]
 # A list of files that are in the common directory.
 common_files = [ ]
 
+# A map from filename to if the file is loadable.
+loadable_cache = { }
+
 
 def cleardirfiles():
     """
@@ -228,8 +231,8 @@ def scandirfiles():
             return
 
         files.append((dn, fn))
-
         seen.add(fn)
+        loadable_cache[fn.lower()] = True
 
     for apk in apks:
 
@@ -550,9 +553,6 @@ def load(name, tl=True):
             return rv
 
     raise IOError("Couldn't find file '%s'." % name)
-
-
-loadable_cache = { }
 
 
 def loadable_core(name):
