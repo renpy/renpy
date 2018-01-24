@@ -48,18 +48,16 @@ screen _developer:
                     action [ Hide("_developer"), _console.enter ]
                 textbutton _("Variable Viewer"):
                     action ui.callsinnewcontext("_debugger_screen")
-                # textbutton _("Theme Test"):
-                #     action ui.callsinnewcontext("_theme_test")
                 textbutton _("Image Location Picker"):
                     action ui.callsinnewcontext("_image_location_picker")
                 textbutton _("Filename List"):
                     action ui.callsinnewcontext("_filename_list")
 
                 if not renpy.get_screen("_image_load_log"):
-                    textbutton _("Show Image Load Log"):
+                    textbutton _("Show Image Load Log (F4)"):
                         action Show("_image_load_log")
                 else:
-                    textbutton _("Hide Image Load Log"):
+                    textbutton _("Hide Image Load Log (F4)"):
                         action Hide("_image_load_log")
 
         hbox:
@@ -603,3 +601,8 @@ init python:
         config.underlay.append(Frame("_transparent_tile.png", tile=True))
 
     config.per_frame_screens.append("_image_load_log")
+
+    config.underlay.append(renpy.Keymap(
+        image_load_log = ToggleScreen("_image_load_log")
+    ))
+

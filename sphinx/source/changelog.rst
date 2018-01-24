@@ -61,6 +61,8 @@ making it easier to determine if a file is stale.
 The new :func:`renpy.list_images` function returns a list of all the images
 that have been defined.
 
+The F4 key now displays the image load log.
+
 Other Fixes
 -----
 

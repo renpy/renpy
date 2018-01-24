@@ -127,6 +127,7 @@ init -1600 python:
 
         # Profile commands.
         performance = [ 'K_F3' ],
+        image_load_log = [ 'K_F4' ],
         profile_once = [ 'K_F8' ],
         memory_profile = [ 'K_F7' ],
 
