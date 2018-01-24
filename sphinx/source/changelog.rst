@@ -35,6 +35,17 @@ a new predict_all parameter. When True, this causes all displayables to
 be predicted, not just the currently selected one. This could be used
 to have Ren'Py preload all emotions of a sprite.
 
+The :func:`renpy.start_predict` and :func:`renpy.stop_predict` functions
+now take wildcard patterns. For example::
+
+    $ renpy.start_predict("eileen *")
+
+Starts predicting all images beginning with the tag eileen, while::
+
+    $ renpy.start_predict("* beach*")
+
+matches all images that include a beach attribute.
+
 Other Improvements
 ------------------
 
@@ -50,11 +61,14 @@ making it easier to determine if a file is stale.
 The new :func:`renpy.list_images` function returns a list of all the images
 that have been defined.
 
-Fixes
+Other Fixes
 -----
 
 Fixes a bug where the ATL "on hide" clause didn't work.
 
+Release the GIL when waiting for a screen flip, making tasks that run in
+background threads (music playback, image preloading, autosave, etc.) run
+much faster.
 
 
 .. _renpy-6.99.14:

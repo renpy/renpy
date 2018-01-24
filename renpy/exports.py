@@ -124,6 +124,7 @@ renpy_pure("filter_text_tags")
 import time
 import sys
 import threading
+import fnmatch
 
 
 def public_api():
@@ -2526,6 +2527,27 @@ def cache_unpin(*args):
     renpy.store._cache_pin_set = renpy.store._cache_pin_set - new_pins
 
 
+def expand_predict(d):
+    """
+    :undocumented:
+
+    Use the fnmatch function to expland `d` for the purposes of prediction.
+    """
+
+    if not isinstance(d, basestring):
+        return [ d ]
+
+    if not "*" in d:
+        return [ d ]
+
+    if "." in d:
+        l = list_files(False)
+    else:
+        l = list_images()
+
+    return fnmatch.filter(l, d)
+
+
 def start_predict(*args):
     """
     :doc: image_func
@@ -2533,13 +2555,29 @@ def start_predict(*args):
     This function takes one or more displayables as arguments. It causes
     Ren'Py to predict those displayables during every interaction until
     the displayables are removed by :func:`renpy.stop_predict`.
+
+    If a displayable name is a string containing one or more \\*
+    characters, the asterisks are used as a wildcard pattern. If there
+    is at least one . in the string, the pattern is matched against
+    filenames, otherwise it is matched against image names.
+
+    For example::
+
+        $ renpy.start_predict("eileen *")
+
+    starts predicting all images with the name eileen, while::
+
+        $ renpy.start_predict("images/concert*.*")
+
+    matches all files starting with concert in the images directory.
     """
 
     new_predict = renpy.python.RevertableSet(renpy.store._predict_set)
 
-    for d in args:
-        d = renpy.easy.displayable(d)
-        new_predict.add(d)
+    for i in args:
+        for d in expand_predict(i):
+            d = renpy.easy.displayable(d)
+            new_predict.add(d)
 
     renpy.store._predict_set = new_predict
 
@@ -2550,13 +2588,16 @@ def stop_predict(*args):
 
     This function takes one or more displayables as arguments. It causes
     Ren'Py to stop predicting those displayables during every interaction.
+
+    Wildcard patterns can be used as described in :func:`renpy.start_predict`.
     """
 
     new_predict = renpy.python.RevertableSet(renpy.store._predict_set)
 
-    for d in args:
-        d = renpy.easy.displayable(d)
-        new_predict.discard(d)
+    for i in args:
+        for d in expand_predict(i):
+            d = renpy.easy.displayable(d)
+            new_predict.discard(d)
 
     renpy.store._predict_set = new_predict
 
