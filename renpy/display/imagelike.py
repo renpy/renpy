@@ -224,6 +224,15 @@ class Frame(renpy.display.core.Displayable):
         self.right = right
         self.bottom = bottom
 
+    def __repr__(self):
+        return "<Frame {!r} ({},{},{},{}){}>".format(
+            self.image,
+            self.left,
+            self.top,
+            self.right,
+            self.bottom,
+            " tile" if self.tile else "")
+
     def __eq__(self, o):
         if not self._equals(o):
             return False
