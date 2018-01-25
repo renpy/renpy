@@ -409,7 +409,10 @@ class Cache(object):
 
             self.added.add(im)
 
-            if (im in self.cache) and (self.cache[im].texture):
+            ce = self.cache.get(im, None)
+
+            if ce and ce.texture:
+                ce.time = self.time
                 in_cache = True
             else:
                 self.preloads.append(im)
