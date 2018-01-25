@@ -844,6 +844,8 @@ cdef class GLDraw:
             surf = renpy.display.video.render_movie("movie", self.virtual_size[0], self.virtual_size[1])
             if surf is not None:
                 self.draw_transformed(surf, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
+            else:
+                flip = False
 
         else:
             self.draw_transformed(surftree, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
