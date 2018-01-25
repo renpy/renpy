@@ -146,9 +146,8 @@ class Cache(object):
 
     def get_current_size(self, generations):
         """
-        Returns the size of the cache, including `generation` generations ago.
-        (So if generations is 1, the current and previous generations are
-        included.)
+        Returns the size of the most recent `generation` generations of
+        the cache. (1 is the current, 2 is the current and one before).
         """
 
         start = self.time - generations
