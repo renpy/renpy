@@ -67,7 +67,7 @@ screen _performance:
             xminimum 200
 
             vbox:
-                text "[fps:.0f] fps\n[cur_time:.3f] ms\n[max_time:.3f] ms max"
+                text "[fps:.1f] fps\n[cur_time:.3f] ms\n[max_time:.3f] ms max"
 
 
 style _performance_text is _default:
