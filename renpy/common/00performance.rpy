@@ -64,15 +64,25 @@ screen _performance:
             background "#0004"
             xpadding 5
             ypadding 5
-            xminimum 200
+            xminimum 150
 
             vbox:
-                text "[fps:.1f] fps\n[cur_time:.3f] ms\n[max_time:.3f] ms max"
+                text "[fps:.1f] fps\n[cur_time:.3f] ms\n[max_time:.3f] ms max":
+                    style "_default"
+                    color "#fff"
+                    size gui._scale(14)
 
+                if _preferences.gl_powersave:
+                    $ mode = "powersave"
+                else:
+                    $ mode = "performance"
 
-style _performance_text is _default:
-    color "#fff"
-    size gui._scale(14)
+                textbutton "[mode]":
+                    style "_default"
+                    action Preference("gl powersave", "toggle")
+                    text_color "#ddd"
+                    text_hover_color "#fff"
+                    text_size gui._scale(14)
 
 init -1010 python:
     config.per_frame_screens.append("_performance")

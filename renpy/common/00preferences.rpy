@@ -388,7 +388,10 @@ init -1500 python:
                     return SetField(_preferences, field, value)
 
             elif name == "gl powersave":
-                return [ SetField(_preferences, "gl_powersave", value), _DisplayReset() ]
+                if value == "toggle":
+                    return [ ToggleField(_preferences, "gl_powersave"), _DisplayReset() ]
+                else:
+                    return [ SetField(_preferences, "gl_powersave", value), _DisplayReset() ]
 
             elif name == "gl framerate":
                 return [ SetField(_preferences, "gl_framerate", value), _DisplayReset() ]
