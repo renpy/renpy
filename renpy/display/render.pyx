@@ -51,6 +51,8 @@ live_renders = [ ]
 cdef double frame_time
 frame_time = 0
 
+# Are we doing a per_frame update?
+per_frame = False
 
 def adjust_render_cache_times(old_time, new_time):
     """
@@ -263,6 +265,9 @@ def invalidate(d):
     for v in render_cache[id(d)].values():
         v.kill_cache()
 
+    if per_frame:
+        return
+
     if not rendering:
         redraw(d, 0)
 
@@ -297,6 +302,8 @@ def process_redraws():
             continue
 
         if when <= now:
+            print("Redraw", d)
+
             # Remove this displayable and all its parents from the
             # render cache. But don't kill them yet, as that will kill the
             # children that we want to reuse.
@@ -334,6 +341,10 @@ def redraw(d, when):
     """
 
     if not renpy.game.interface:
+        return
+
+    if per_frame:
+        invalidate(d)
         return
 
     redraw_queue.append((when + renpy.game.interface.frame_time, d))

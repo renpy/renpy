@@ -2026,7 +2026,11 @@ class Interface(object):
 
     def draw_screen(self, root_widget, fullscreen_video, draw):
 
-        renpy.display.screen.per_frame()
+        try:
+            renpy.display.render.per_frame = True
+            renpy.display.screen.per_frame()
+        finally:
+            renpy.display.render.per_frame = False
 
         surftree = renpy.display.render.render_screen(
             root_widget,
