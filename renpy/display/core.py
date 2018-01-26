@@ -3043,6 +3043,8 @@ class Interface(object):
         # How many frames have we shown so far?
         frame = 0
 
+        can_block = False
+
         # This try block is used to force cleanup even on termination
         # caused by an exception propagating through this function.
         try:
@@ -3072,7 +3074,7 @@ class Interface(object):
                 # Redraw the screen.
                 if (self.force_redraw or
                     ((first_pass or not pygame.event.peek(ALL_EVENTS)) and
-                     renpy.display.draw.should_redraw(needs_redraw, first_pass))):
+                     renpy.display.draw.should_redraw(needs_redraw, first_pass, can_block))):
 
                     self.force_redraw = False
 
@@ -3227,10 +3229,8 @@ class Interface(object):
                     renpy.plog(1, "post wait {!r}", ev)
 
                 if ev.type == pygame.NOEVENT:
-                    if not can_block:
-                        needs_redraw = True
 
-                    if (not needs_redraw) and (not self.prediction_coroutine) and (not self.mouse_move):
+                    if can_block and (not needs_redraw) and (not self.prediction_coroutine) and (not self.mouse_move):
                         pygame.time.wait(1)
 
                     continue

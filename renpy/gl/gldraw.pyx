@@ -673,7 +673,6 @@ cdef class GLDraw:
         """
 
         powersave = renpy.game.preferences.gl_powersave
-
         if powersave == "auto":
             if renpy.exports.get_on_battery():
                 powersave = True
@@ -685,7 +684,7 @@ cdef class GLDraw:
 
         return not self.fast_redraw_frames
 
-    def should_redraw(self, needs_redraw, first_pass):
+    def should_redraw(self, needs_redraw, first_pass, can_block):
         """
         Redraw whenever the screen needs it, but at least once every
         .2 seconds. We rely on VSYNC to slow down our maximum
@@ -701,6 +700,7 @@ cdef class GLDraw:
         else:
             # Redraw if the mouse moves.
             mx, my, tex = self.mouse_info
+
             if tex and (mx, my) != pygame.mouse.get_pos():
                 rv = True
 
@@ -715,7 +715,7 @@ cdef class GLDraw:
             rv = True
 
         # Store the redraw time.
-        if rv:
+        if rv or (not can_block):
             self.last_redraw_time = time.time()
             return True
         else:
