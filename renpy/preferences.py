@@ -145,7 +145,7 @@ Preference("desktop_rollback_side", "disable")
 Preference("gl_npot", True)
 
 # Should we try to save power by limiting how often we draw frames?
-Preference("gl_powersave", "auto", (basestring, bool))
+Preference("gl_powersave", True)
 
 # The target framerate, used to set the swap interval.
 Preference("gl_framerate", None, (int, type(None)))
@@ -173,6 +173,9 @@ class Preferences(renpy.object.Object):
         """
         Checks that preferences have the right types.
         """
+
+        if self.gl_powersave == "auto":
+            self.gl_powersave = True
 
         error = None
 

@@ -136,10 +136,6 @@ init -1500:
                         action Preference("gl powersave", True)
                         style_suffix "radio_button"
 
-                    textbutton _("Auto"):
-                        action Preference("gl powersave", "auto")
-                        style_suffix "radio_button"
-
                     textbutton _("Disable"):
                         action Preference("gl powersave", False)
                         style_suffix "radio_button"

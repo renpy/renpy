@@ -673,11 +673,6 @@ cdef class GLDraw:
         """
 
         powersave = renpy.game.preferences.gl_powersave
-        if powersave == "auto":
-            if renpy.exports.get_on_battery():
-                powersave = True
-            else:
-                powersave = False
 
         if not powersave:
             return False
