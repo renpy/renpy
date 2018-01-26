@@ -302,7 +302,6 @@ def process_redraws():
             continue
 
         if when <= now:
-            print("Redraw", d)
 
             # Remove this displayable and all its parents from the
             # render cache. But don't kill them yet, as that will kill the
