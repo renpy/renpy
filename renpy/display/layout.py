@@ -1259,8 +1259,13 @@ class DynamicDisplayable(renpy.display.core.Displayable):
             else:
                 child, _ = self.function(0, 0, *self.args, **self.kwargs)
 
-            if child is not None:
-                renpy.display.predict.displayable(child)
+            if isinstance(child, list):
+
+                for i in child:
+                    renpy.display.predict.displayable(i)
+                else:
+                    renpy.display.predict.displayable(child)
+
         except:
             pass
 
