@@ -1314,7 +1314,7 @@ def condition_switch_predict(switch, predict_all=None):
     if predict_all is None:
         predict_all = renpy.config.conditionswitch_predict_all
 
-    if renpy.game.lint or predict_all:
+    if renpy.game.lint or (predict_all and renpy.display.predict.predicting):
         return [ d for _cond, d in switch ]
 
     return [ condition_switch_pick(switch) ]
