@@ -481,55 +481,59 @@ translate piglatin strings:
     old "All script files"
     new "Llaay criptsay ilesfay"
 
-    # front_page.rpy:223
+    # front_page.rpy:218
+    old "Actions"
+    new "Ctionsaay"
+
+    # front_page.rpy:227
     old "Navigate Script"
     new "Avigatenay Criptsay"
 
-    # front_page.rpy:234
+    # front_page.rpy:228
     old "Check Script (Lint)"
     new "Heckcay Criptsay (Intlay)"
 
-    # front_page.rpy:237
+    # front_page.rpy:231
     old "Change/Update GUI"
     new "Hangecay/Pdateuay Uigay"
 
-    # front_page.rpy:239
+    # front_page.rpy:233
     old "Change Theme"
     new "Hangecay Hemetay"
 
-    # front_page.rpy:242
+    # front_page.rpy:236
     old "Delete Persistent"
     new "Eleteday Ersistentpay"
 
-    # front_page.rpy:251
+    # front_page.rpy:245
     old "Build Distributions"
     new "Uildbay Istributionsday"
 
-    # front_page.rpy:253
+    # front_page.rpy:247
     old "Android"
     new "Ndroidaay"
 
-    # front_page.rpy:254
+    # front_page.rpy:248
     old "iOS"
     new "iOSay"
 
-    # front_page.rpy:255
+    # front_page.rpy:249
     old "Generate Translations"
     new "Enerategay Ranslationstay"
 
-    # front_page.rpy:256
+    # front_page.rpy:250
     old "Extract Dialogue"
     new "Xtracteay Ialogueday"
 
-    # front_page.rpy:273
+    # front_page.rpy:267
     old "Checking script for potential problems..."
     new "Heckingcay criptsay orfay otentialpay roblemspay..."
 
-    # front_page.rpy:288
+    # front_page.rpy:282
     old "Deleting persistent data..."
     new "Eletingday ersistentpay ataday..."
 
-    # front_page.rpy:296
+    # front_page.rpy:290
     old "Recompiling all rpy files into rpyc files..."
     new "Ecompilingray allay pyray ilesfay intoay pycray ilesfay..."
 

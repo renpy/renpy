@@ -21,77 +21,73 @@ translate piglatin strings:
     old "Variable Viewer"
     new "Ariablevay Iewervay"
 
-    # _developer/developer.rpym:53
+    # _developer/developer.rpym:51
     old "Image Location Picker"
     new "Mageiay Ocationlay Ickerpay"
 
-    # _developer/developer.rpym:55
+    # _developer/developer.rpym:53
     old "Filename List"
     new "Ilenamefay Istlay"
 
-    # _developer/developer.rpym:59
-    old "Show Image Load Log"
-    new "Howsay Mageiay Oadlay Oglay"
+    # _developer/developer.rpym:57
+    old "Show Image Load Log (F4)"
+    new "Howsay Mageiay Oadlay Oglay (4fay)"
 
-    # _developer/developer.rpym:62
-    old "Hide Image Load Log"
-    new "Idehay Mageiay Oadlay Oglay"
+    # _developer/developer.rpym:60
+    old "Hide Image Load Log (F4)"
+    new "Idehay Mageiay Oadlay Oglay (4fay)"
 
-    # _developer/developer.rpym:67
-    old "Show Texture Size"
-    new "Howsay Exturetay Izesay"
-
-    # _developer/developer.rpym:70
-    old "Hide Texture size"
-    new "Idehay Exturetay izesay"
-
-    # _developer/developer.rpym:108
+    # _developer/developer.rpym:95
     old "Nothing to inspect."
     new "Othingnay otay inspectay."
 
-    # _developer/developer.rpym:236
+    # _developer/developer.rpym:223
     old "Return to the developer menu"
     new "Eturnray otay hetay eveloperday enumay"
 
-    # _developer/developer.rpym:396
+    # _developer/developer.rpym:383
     old "Rectangle: %r"
     new "Ectangleray: %ray"
 
-    # _developer/developer.rpym:401
+    # _developer/developer.rpym:388
     old "Mouse position: %r"
     new "Ousemay ositionpay: %ray"
 
-    # _developer/developer.rpym:406
+    # _developer/developer.rpym:393
     old "Right-click or escape to quit."
     new "Ightray-ickclay oray escapeay otay uitqay."
 
-    # _developer/developer.rpym:438
+    # _developer/developer.rpym:425
     old "Rectangle copied to clipboard."
     new "Ectangleray opiedcay otay ipboardclay."
 
-    # _developer/developer.rpym:441
+    # _developer/developer.rpym:428
     old "Position copied to clipboard."
     new "Ositionpay opiedcay otay ipboardclay."
 
-    # _developer/developer.rpym:460
+    # _developer/developer.rpym:447
     old "Type to filter: "
     new "Ypetay otay ilterfay: "
 
-    # _developer/developer.rpym:564
+    # _developer/developer.rpym:572
+    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
+    new "Exturestay: [tex_count] ([tex_size_mb:.1f] Bmay)"
+
+    # _developer/developer.rpym:576
+    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    new "Mageiay achecay: [cache_pct:.1f]% ([cache_size_mb:.1f] Bmay)"
+
+    # _developer/developer.rpym:586
     old "✔ "
     new "✔ "
 
-    # _developer/developer.rpym:567
+    # _developer/developer.rpym:589
     old "✘ "
     new "✘ "
 
-    # _developer/developer.rpym:572
+    # _developer/developer.rpym:594
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
     new "\n{color=#cfc}✔ redictedpay imageay (oodgay){/color}\n{color=#fcc}✘ unpredicteday imageay (adbay){/color}\n{color=#fff}Ragday otay ovemay.{/color}"
-
-    # _developer/developer.rpym:583
-    old "{size_mb:,.1f} MB in {count} textures."
-    new "{size_mb:,.1f} Bmay inay {count} exturestay."
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"

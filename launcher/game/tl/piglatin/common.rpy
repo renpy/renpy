@@ -153,11 +153,11 @@ translate piglatin strings:
     old "{#month_short}Dec"
     new "{#month_short}Ecday"
 
-    # 00action_file.rpy:235
+    # 00action_file.rpy:237
     old "%b %d, %H:%M"
     new "%bay %day, %Hay:%May"
 
-    # 00action_file.rpy:825
+    # 00action_file.rpy:852
     old "Quick save complete."
     new "Uickqay avesay ompletecay."
 
@@ -285,11 +285,11 @@ translate piglatin strings:
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay unseenay ialogueday otay hetay extnay oicechay?"
 
-    # 00keymap.rpy:257
+    # 00keymap.rpy:258
     old "Failed to save screenshot as %s."
     new "Ailedfay otay avesay creenshotsay asay %say."
 
-    # 00keymap.rpy:269
+    # 00keymap.rpy:270
     old "Saved screenshot as %s."
     new "Avedsay creenshotsay asay %say."
 
@@ -309,19 +309,19 @@ translate piglatin strings:
     old "Skip Mode"
     new "Kipsay Odemay"
 
-    # 00library.rpy:266
+    # 00library.rpy:269
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Histay rogrampay ontainscay eefray oftwaresay underay aay umbernay ofay icenseslay, includingay hetay Itmay Icenselay anday Nugay Esserlay Eneralgay Ublicpay Icenselay. Aay ompletecay istlay ofay oftwaresay, includingay inkslay otay ullfay ourcesay odecay, ancay ebay oundfay {a=https://www.renpy.org/l/license}erehay{/a}."
 
-    # 00preferences.rpy:472
+    # 00preferences.rpy:475
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "Lipboardcay oicingvay enableday. Resspay 'iftshay+Cay' otay isableday."
 
-    # 00preferences.rpy:474
+    # 00preferences.rpy:477
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "Elfsay-oicingvay ouldway aysay \"[renpy.display.tts.last]\". Resspay 'altay+iftshay+Vay' otay isableday."
 
-    # 00preferences.rpy:476
+    # 00preferences.rpy:479
     old "Self-voicing enabled. Press 'v' to disable."
     new "Elfsay-oicingvay enableday. Resspay 'vay' otay isableday."
 
