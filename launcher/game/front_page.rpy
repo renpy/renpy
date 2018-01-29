@@ -214,15 +214,8 @@ screen front_page_project:
                         textbutton _("All script files") action editor.EditAll()
 
         add SPACER
-        add SEPARATOR
-        add SPACER
 
-        frame style "l_indent":
-            has vbox
-
-            textbutton _("Navigate Script") text_size 30 action Jump("navigation")
-
-        add SPACER
+        label _("Actions") style "l_label_small"
 
         grid 2 1:
             xfill True
@@ -231,6 +224,7 @@ screen front_page_project:
             frame style "l_indent":
                 has vbox
 
+                textbutton _("Navigate Script") action Jump("navigation")
                 textbutton _("Check Script (Lint)") action Jump("lint")
 
                 if project.current.exists("game/gui.rpy"):
