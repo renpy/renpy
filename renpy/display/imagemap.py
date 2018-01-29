@@ -98,6 +98,9 @@ class ImageMapCache(renpy.object.Object):
         self.cache_width = None
         self.cache_height = None
 
+        # Temporarily disabled.
+        enable = False
+
         self.enable = enable
 
     def visit(self, index):
