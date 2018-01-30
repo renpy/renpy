@@ -1,4 +1,4 @@
-﻿
+
 translate russian strings:
 
     # _developer/developer.rpym:38
@@ -21,77 +21,73 @@ translate russian strings:
     old "Variable Viewer"
     new "Просмотр переменных"
 
-    # _developer/developer.rpym:53
+    # _developer/developer.rpym:51
     old "Image Location Picker"
     new "Инструмент позиционирования на изображениях"
 
-    # _developer/developer.rpym:55
+    # _developer/developer.rpym:53
     old "Filename List"
     new "Список файлов"
 
-    # _developer/developer.rpym:59
-    old "Show Image Load Log"
-    new "Показать лог загрузки изображений"
+    # _developer/developer.rpym:57
+    old "Show Image Load Log (F4)"
+    new "Показать лог загрузки изображений (F4)"
 
-    # _developer/developer.rpym:62
-    old "Hide Image Load Log"
-    new "Скрыть лог загрузки изображений"
+    # _developer/developer.rpym:60
+    old "Hide Image Load Log (F4)"
+    new "Скрыть лог загрузки изображений (F4)"
 
-    # _developer/developer.rpym:67
-    old "Show Texture Size"
-    new "Показать размер текстур"
-
-    # _developer/developer.rpym:70
-    old "Hide Texture size"
-    new "Скрыть размер текстур"
-
-    # _developer/developer.rpym:108
+    # _developer/developer.rpym:95
     old "Nothing to inspect."
     new "Переменные не заданы."
 
-    # _developer/developer.rpym:236
+    # _developer/developer.rpym:223
     old "Return to the developer menu"
     new "Вернуться в меню разработчика"
 
-    # _developer/developer.rpym:396
+    # _developer/developer.rpym:383
     old "Rectangle: %r"
     new "Прямоугольник: %r"
 
-    # _developer/developer.rpym:401
+    # _developer/developer.rpym:388
     old "Mouse position: %r"
     new "Позиция мыши: %r"
 
-    # _developer/developer.rpym:406
+    # _developer/developer.rpym:393
     old "Right-click or escape to quit."
     new "Нажмите правую кнопку мыши или ESC чтобы выйти."
 
-    # _developer/developer.rpym:438
+    # _developer/developer.rpym:425
     old "Rectangle copied to clipboard."
     new "Координаты прямоугольника скопированы в буфер обмена."
 
-    # _developer/developer.rpym:441
+    # _developer/developer.rpym:428
     old "Position copied to clipboard."
     new "Координаты позиции скопированы в буфер обмена."
 
-    # _developer/developer.rpym:460
+    # _developer/developer.rpym:447
     old "Type to filter: "
     new "Текущий фильтр: "
 
-    # _developer/developer.rpym:564
+    # _developer/developer.rpym:572
+    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
+    new "Текстур: [tex_count] ([tex_size_mb:.1f] МБ)"
+
+    # _developer/developer.rpym:576
+    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    new "Кеш изображений: [cache_pct:.1f]% ([cache_size_mb:.1f] МБ)"
+
+    # _developer/developer.rpym:586
     old "✔ "
     new "✔ "
 
-    # _developer/developer.rpym:567
+    # _developer/developer.rpym:589
     old "✘ "
     new "✘ "
 
-    # _developer/developer.rpym:572
+    # _developer/developer.rpym:594
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
     new "\n{color=#cfc}✔ предсказанное изображение (хорошо){/color}\n{color=#fcc}✘ внезапное изображение (плохо){/color}\n{color=#fff}Нажмите, чтобы передвинуть.{/color}"
-
-    # _developer/developer.rpym:583
-    old "{size_mb:,.1f} MB in {count} textures."
-    new "{size_mb:,.1f} МБ при количестве текстур: {count}."
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
