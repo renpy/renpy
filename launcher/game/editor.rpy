@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -190,7 +190,7 @@ init 1 python in editor:
 
         fei.append(FancyEditorInfo(
             3,
-            "System Editor",
+            _("System Editor"),
             _("Invokes the editor your operating system has associated with .rpy files."),
             None))
 
@@ -206,7 +206,7 @@ init 1 python in editor:
 
         fei.append(FancyEditorInfo(
             5,
-            "None",
+            _("None"),
             _("Prevents Ren'Py from opening a text editor."),
             None))
 

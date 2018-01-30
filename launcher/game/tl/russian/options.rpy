@@ -1,4 +1,4 @@
-﻿
+
 translate russian strings:
 
     # options.rpy:1
@@ -155,7 +155,7 @@ translate russian strings:
 
     # options.rpy:166
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
-    new "## Следующие функции берут образцы файлов. Образцы файлов не учитывают регистр и соответствующе зависят от директории base, с или без учёта /, задающей директорию. Если обнаруживается множество одноимённых файлов, то используется только первый."
+    new "## Следующие функции берут образцы файлов. Образцы файлов не учитывают регистр и соответствующе зависят от директории проекта (base), с или без учёта /, задающей директорию. Если обнаруживается множество одноимённых файлов, то используется только первый."
 
     # options.rpy:171
     old "## In a pattern:"
@@ -175,7 +175,7 @@ translate russian strings:
 
     # options.rpy:179
     old "## For example, \"*.txt\" matches txt files in the base directory, \"game/**.ogg\" matches ogg files in the game directory or any of its subdirectories, and \"**.psd\" matches psd files anywhere in the project."
-    new "## Например, \"*.txt\" берёт все файлы в формате txt из директории base, \"game/**.ogg\" берёт все файлы ogg из директории game и всех поддиректорий, а \"**.psd\" берёт все файлы psd из любого места проекта."
+    new "## Например, \"*.txt\" берёт все файлы формата txt из директории base, \"game/**.ogg\" берёт все файлы ogg из директории game и всех поддиректорий, а \"**.psd\" берёт все файлы psd из любого места проекта."
 
     # options.rpy:183
     old "## Classify files as None to exclude them from the built distributions."

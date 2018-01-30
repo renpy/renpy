@@ -1,4 +1,4 @@
-﻿
+
 translate russian strings:
 
     # about.rpy:39
@@ -101,99 +101,99 @@ translate russian strings:
     old "Retrieves the log from the Android device and writes it to a file."
     new "Берёт лог с Android-устройства и пишет его в файл."
 
-    # android.rpy:240
+    # android.rpy:244
     old "Copying Android files to distributions directory."
     new "Копирую файлы Android в директорию дистрибутивов."
 
-    # android.rpy:304
+    # android.rpy:308
     old "Android: [project.current.display_name!q]"
     new "Android: [project.current.display_name!q]"
 
-    # android.rpy:324
+    # android.rpy:328
     old "Emulation:"
     new "Эмуляция:"
 
-    # android.rpy:333
+    # android.rpy:337
     old "Phone"
     new "Телефон"
 
-    # android.rpy:337
+    # android.rpy:341
     old "Tablet"
     new "Планшет"
 
-    # android.rpy:341
+    # android.rpy:345
     old "Television"
     new "Телевизор"
 
-    # android.rpy:353
+    # android.rpy:357
     old "Build:"
     new "Собрать:"
 
-    # android.rpy:361
+    # android.rpy:365
     old "Install SDK & Create Keys"
     new "Установить SDK и создать ключи"
 
-    # android.rpy:365
+    # android.rpy:369
     old "Configure"
     new "Настроить"
 
-    # android.rpy:369
+    # android.rpy:373
     old "Build Package"
     new "Собрать Пакет"
 
-    # android.rpy:373
+    # android.rpy:377
     old "Build & Install"
     new "Собрать и Установить"
 
-    # android.rpy:377
+    # android.rpy:381
     old "Build, Install & Launch"
     new "Собрать, Установить и Запустить"
 
-    # android.rpy:388
+    # android.rpy:392
     old "Other:"
     new "Другое:"
 
-    # android.rpy:396
+    # android.rpy:400
     old "Remote ADB Connect"
     new "Удалённое Соединение с ADB"
 
-    # android.rpy:400
+    # android.rpy:404
     old "Remote ADB Disconnect"
     new "Удалённое Отсоединение от ADB"
 
-    # android.rpy:404
+    # android.rpy:408
     old "Logcat"
     new "Logcat"
 
-    # android.rpy:437
+    # android.rpy:441
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
     new "Перед тем как собирать приложения Android, вам нужно загрузить RAPT, инструмент Ren'Py для сбора пакетов Android. Хотите загрузить RAPT сейчас?"
 
-    # android.rpy:496
+    # android.rpy:500
     old "Remote ADB Address"
     new "Удалённый адрес ADB"
 
-    # android.rpy:496
+    # android.rpy:500
     old "Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."
     new "Пожалуйста, введите IP-адрес и номер порта, чтобы соединиться с устройством, по форме \"192.168.1.143:5555\". Ознакомьтесь с документацией своего устройства, чтобы определить поддерживает ли оно удалённый ADB, и если так, адрес и порт для использования."
 
-    # android.rpy:508
+    # android.rpy:512
     old "Invalid remote ADB address"
     new "Неверный адрес удалённого ADB"
 
-    # android.rpy:508
+    # android.rpy:512
     old "The address must contain one exactly one ':'."
     new "Адрес должен содержать один, только один ':'."
 
-    # android.rpy:512
+    # android.rpy:516
     old "The host may not contain whitespace."
     new "Хост не может содержать пробелы."
 
-    # android.rpy:518
+    # android.rpy:522
     old "The port must be a number."
     new "Порт должен содержать только цифры."
 
-    # android.rpy:544
+    # android.rpy:548
     old "Retrieving logcat information from device."
     new "Извлекаю информацию logcat из устройства."
 
@@ -394,8 +394,16 @@ translate russian strings:
     new "Это могло случиться из-за того, что Java не установлена в данной системе."
 
     # editor.rpy:191
+    old "System Editor"
+    new "Системный"
+
+    # editor.rpy:191
     old "Invokes the editor your operating system has associated with .rpy files."
     new "Включает текстовый редактор, ассоциированный в вашей системе с файлами .rpy."
+
+    # editor.rpy:207
+    old "None"
+    new "Нет"
 
     # editor.rpy:207
     old "Prevents Ren'Py from opening a text editor."
@@ -479,57 +487,61 @@ translate russian strings:
 
     # front_page.rpy:214
     old "All script files"
-    new "Все файлы сценариев"
+    new "все файлы сценария"
 
-    # front_page.rpy:223
+    # front_page.rpy:218
+    old "Actions"
+    new "Действия с Проектом"
+
+    # front_page.rpy:227
     old "Navigate Script"
-    new "Навигация по Сценарию"
+    new "Навигация по cценарию"
 
-    # front_page.rpy:234
+    # front_page.rpy:228
     old "Check Script (Lint)"
-    new "Проверить сценарий (Lint)"
+    new "Проверить скрипт (Lint)"
 
-    # front_page.rpy:237
+    # front_page.rpy:231
     old "Change/Update GUI"
     new "Изменить/Обновить GUI"
 
-    # front_page.rpy:239
+    # front_page.rpy:233
     old "Change Theme"
     new "Сменить тему"
 
-    # front_page.rpy:242
+    # front_page.rpy:236
     old "Delete Persistent"
     new "Очистить постоянные"
 
-    # front_page.rpy:251
+    # front_page.rpy:245
     old "Build Distributions"
     new "Построить дистрибутивы"
 
-    # front_page.rpy:253
+    # front_page.rpy:247
     old "Android"
     new "Android"
 
-    # front_page.rpy:254
+    # front_page.rpy:248
     old "iOS"
     new "iOS"
 
-    # front_page.rpy:255
+    # front_page.rpy:249
     old "Generate Translations"
     new "Создать переводы"
 
-    # front_page.rpy:256
+    # front_page.rpy:250
     old "Extract Dialogue"
     new "Извлечь диалог"
 
-    # front_page.rpy:273
+    # front_page.rpy:267
     old "Checking script for potential problems..."
     new "Проверка потенциальных проблем сценария..."
 
-    # front_page.rpy:288
+    # front_page.rpy:282
     old "Deleting persistent data..."
     new "Удаление постоянных данных..."
 
-    # front_page.rpy:296
+    # front_page.rpy:290
     old "Recompiling all rpy files into rpyc files..."
     new "Перекомпиляция всех файлов rpy в файлы rpyc..."
 
@@ -811,7 +823,7 @@ translate russian strings:
 
     # navigation.rpy:180
     old "by-file"
-    new "по-файлу"
+    new "по файлу"
 
     # navigation.rpy:182
     old "natural"
@@ -959,7 +971,7 @@ translate russian strings:
 
     # preferences.rpy:181
     old "Show edit file section"
-    new "Показать секцию редактирования"
+    new "Показывать секцию редактирования"
 
     # preferences.rpy:182
     old "Large fonts"
@@ -1143,7 +1155,7 @@ translate russian strings:
 
     # translations.rpy:415
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new "Ren'Py завершила извлечение диалога. Извлечённый диалог можно найти в файле dialogue.[persistent.dialogue_format] в директории base."
+    new "Ren'Py завершила извлечение диалога. Извлечённый диалог можно найти в файле dialogue.[persistent.dialogue_format] в директории проекта."
 
     # updater.rpy:75
     old "Select Update Channel"
