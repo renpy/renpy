@@ -17,7 +17,8 @@ in the launcher to ensure its screens are upgraded to the latest version.
 This guide isn't a substitute for good programming practice. If a screen
 uses nested loops to do a lot of unproductive work, it will be slower than
 a screen that avoids such looping. While understanding the techniques in
-this guide is important,
+this guide is important, avoiding work entirely is always better than
+letting Ren'Py optimize the work for you.
 
 Parameter List
 ==============
