@@ -87,7 +87,7 @@ translate spanish strings:
 
     # android.rpy:46
     old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
-    new "Construye un paquete para Android, lo instala en un dispositivo conectado a el ordenador y luego ejecuta la aplicación en el dispositivo."
+    new "Construye un paquete para Android, lo instala en un dispositivo conectado al ordenador y luego ejecuta la aplicación en el dispositivo."
 
     # android.rpy:48
     old "Connects to an Android device running ADB in TCP/IP mode."
