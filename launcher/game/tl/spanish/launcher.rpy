@@ -1281,3 +1281,11 @@ translate spanish strings:
     old "Extract Dialogue: [project.current.display_name!q]"
     new "Extrae diálogo: [project.current.display_name!q]"
 
+    # editor.rpy:191
+    old "System Editor"
+    new "Editor del sistema"
+
+    # editor.rpy:207
+    old "None"
+    new "Ninguno"
+
