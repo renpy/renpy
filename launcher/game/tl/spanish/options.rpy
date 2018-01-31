@@ -196,3 +196,4 @@ translate spanish strings:
     # options.rpy:146
     old "## Icon"
     new "## Icono"
+

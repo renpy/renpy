@@ -75,11 +75,11 @@ translate spanish strings:
 
     # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    new "\n{color=#cfc}✔ imagen prevista (correcto){/color}\n{color=#fcc}✘ imagen no prevista (fallido){/color}\n{color=#fff}Arrastra para mover.{/color}"
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
-    new "Displayable Inspector"
+    new "Inspector de visualizables"
 
     # _developer/inspector.rpym:61
     old "Size"
@@ -176,4 +176,28 @@ translate spanish strings:
     # 00console.rpy:536
     old "jump <label>: jumps to label"
     new "jump <label>: salta a la etiqueta"
+
+    # _developer/developer.rpym:43
+    old "Interactive Director (D)"
+    new "Director interactivo (D)"
+
+    # _developer/developer.rpym:57
+    old "Show Image Load Log (F4)"
+    new "Mostrar registro de carga de imagen (F4)"
+
+    # _developer/developer.rpym:60
+    old "Hide Image Load Log (F4)"
+    new "Ocultar registro de carga de imagen (F4)"
+
+    # _developer/developer.rpym:447
+    old "Type to filter: "
+    new "Tipo a filtrar: "
+
+    # _developer/developer.rpym:572
+    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
+    new "Texturas: [tex_count] ([tex_size_mb:.1f] MB)"
+
+    # _developer/developer.rpym:576
+    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    new "Caché de imagen: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
 

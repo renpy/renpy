@@ -123,7 +123,7 @@ translate spanish strings:
 
     # screens.rpy:322
     old "End Replay"
-    new "Fin repetición"
+    new "Finaliza repetición"
 
     # screens.rpy:326
     old "Main Menu"
@@ -503,7 +503,7 @@ translate spanish strings:
 
     # screens.rpy:1073
     old "Right Trigger\nA/Bottom Button"
-    new "Right Trigger\nA/Bottom Button"
+    new "Gatillo derecho\nA/Botón inferior"
 
     # screens.rpy:1081
     old "Right Shoulder"
@@ -519,7 +519,7 @@ translate spanish strings:
 
     # screens.rpy:1093
     old "Y/Top Button"
-    new "Y/Top Button"
+    new "Y/Botón superior"
 
     # screens.rpy:1096
     old "Calibrate"
@@ -659,4 +659,5 @@ translate spanish strings:
 
     # screens.rpy:1079
     old "Left Trigger\nLeft Shoulder"
-    new "Left Trigger\nLeft Shoulder"
+    new "Gatillo izquierdo\nLeft Shoulder"
+

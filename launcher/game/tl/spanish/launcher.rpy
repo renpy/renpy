@@ -11,7 +11,7 @@ translate spanish strings:
 
     # add_file.rpy:28
     old "FILENAME"
-    new "Nombre del archivo"
+    new "ARCHIVO"
 
     # add_file.rpy:28
     old "Enter the name of the script file to create."
@@ -31,11 +31,11 @@ translate spanish strings:
 
     # android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Para construir un paquete para Android, por favor descarga RAPT, descomprimelo y colocalo dentro de la carpeta de Ren'Py. Despues reinicia el launcher de Ren'Py."
+    new "Para construir un paquete para Android, por favor descarga RAPT, descomprímelo y colócalo dentro de la carpeta de Ren'Py. Después reinicia el launcher de Ren'Py."
 
     # android.rpy:31
     old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Se necesita Java Development Kit de 32-bit para construir paquetes de Android en Windows. El JDK es diferente al JRE, es posible que tenga Java sin tener el JDK.\n\nPor favor {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}descarga e instala el JDK{/a}, después, reinicia Ren'Py."
+    new "Se necesita Java Development Kit de 32-bit para construir paquetes de Android en Windows. El JDK es diferente al JRE, es posible que tengas Java sin tener el JDK.\n\nPor favor {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}descarga e instala el JDK{/a}, después, reinicia Ren'Py."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -43,7 +43,7 @@ translate spanish strings:
 
     # android.rpy:33
     old "RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore."
-    new "RAPT está instalado, pero la clave aun no se ha configurado. Por favor crea una nueva clave, o restaura android.keystore."
+    new "RAPT está instalado, pero la clave aún no se ha configurado. Por favor crea una nueva clave, o restaura android.keystore."
 
     # android.rpy:34
     old "The current project has not been configured. Use \"Configure\" to configure it before building."
@@ -55,15 +55,15 @@ translate spanish strings:
 
     # android.rpy:37
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Al intentar emular un teléfono Android. \n\nLa entrada táctil se emula mediante el ratón, pero sólo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y PageUp está asignado al botón Atrás."
+    new "Intenta emular un teléfono Android. \n\nLa entrada táctil se emula mediante el ratón, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y PageUp está asignado al botón Atrás."
 
     # android.rpy:38
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Al intentar emular una tablet Android. \n\nLa entrada táctil se emula mediante el ratón, pero sólo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y PageUp está asignado al botón Atrás."
+    new "Intenta emular una tablet Android. \n\nLa entrada táctil se emula mediante el ratón, pero solo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y PageUp está asignado al botón Atrás."
 
     # android.rpy:39
     old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Al intentar emular una consola Android basada en televisión, como OUYA o Fire TV.\n\nPara el control se usan las flechas, Intro está asignado al botón select. Escape está asignado al botón de menú, y PageUp está asignado al botón Atrás."
+    new "Intenta emular una consola Android basada en televisión, como OUYA o Fire TV.\n\nPara el control se usan las flechas, Intro está asignado al botón select. Escape está asignado al botón de menú, y PageUp está asignado al botón Atrás."
 
     # android.rpy:41
     old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
@@ -79,31 +79,31 @@ translate spanish strings:
 
     # android.rpy:44
     old "Builds the Android package."
-    new "Construir el paquete de Android."
+    new "Construye el paquete de Android."
 
     # android.rpy:45
     old "Builds the Android package, and installs it on an Android device connected to your computer."
-    new "Construye el paquete de Android, e instálalo en un dispositivo Android connectado a tu ordenador."
+    new "Construye el paquete de Android y lo instala en un dispositivo Android conectado al ordenador."
 
     # android.rpy:46
     old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
-    new "Construye un paquete para Android, lo instala en un dispositivo conectado a su ordenador, y luego ejecuta la aplicación en su dispositivo."
+    new "Construye un paquete para Android, lo instala en un dispositivo conectado a el ordenador y luego ejecuta la aplicación en el dispositivo."
 
     # android.rpy:48
     old "Connects to an Android device running ADB in TCP/IP mode."
-    new "Conectar a un dispositivo Android ejecutando ADB en modo TCP/IP."
+    new "Conecta a un dispositivo Android ejecutando ADB en modo TCP/IP."
 
     # android.rpy:49
     old "Disconnects from an Android device running ADB in TCP/IP mode."
-    new "Desconectar de un dispositivo Android corriendo ADB en modo TCP/IP."
+    new "Desconecta de un dispositivo Android ejecutando ADB en modo TCP/IP."
 
     # android.rpy:50
     old "Retrieves the log from the Android device and writes it to a file."
-    new "Retrieves the log from the Android device and writes it to a file."
+    new "Recupera el registro del dispositivo Android y lo escribe en un archivo."
 
     # android.rpy:240
     old "Copying Android files to distributions directory."
-    new "Copying Android files to distributions directory."
+    new "Copiando archivos Android al directorio de distribuciones."
 
     # android.rpy:304
     old "Android: [project.current.name!q]"
@@ -143,11 +143,11 @@ translate spanish strings:
 
     # android.rpy:373
     old "Build & Install"
-    new "Construir & Instalar"
+    new "Construir e Instalar"
 
     # android.rpy:377
     old "Build, Install & Launch"
-    new "Construir, instalar & Ejecutar"
+    new "Construir, instalar y ejecutar"
 
     # android.rpy:388
     old "Other:"
@@ -167,7 +167,7 @@ translate spanish strings:
 
     # android.rpy:437
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
-    new "Antes de empaquetar apps para Android, vas a necesitar descargar RAPT, Ren'Py Android Packaging Tool. ¿Quieres descargar RAPT ahora?"
+    new "Antes de empaquetar apps para Android, vas a necesitar descargar RAPT (Ren'Py Android Packaging Tool). ¿Quieres descargar RAPT ahora?"
 
     # android.rpy:496
     old "Remote ADB Address"
@@ -195,11 +195,11 @@ translate spanish strings:
 
     # android.rpy:544
     old "Retrieving logcat information from device."
-    new "Retrieving logcat information from device."
+    new "Recuperando la información 'logcat' del dispositivo."
 
     # choose_directory.rpy:73
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
-    new "Ren'Py fue incapaz de ejecutar python con tkinter para elegir el directorio. Por favor instale el paquete python-tk o tkinter."
+    new "Ren'Py fue incapaz de ejecutar python con tkinter para elegir el directorio. Por favor instala el paquete python-tk o tkinter."
 
     # choose_theme.rpy:303
     old "Could not change the theme. Perhaps options.rpy was changed too much."
@@ -231,7 +231,7 @@ translate spanish strings:
 
     # consolecommand.rpy:84
     old "The command is being run in a new operating system console window."
-    new "The command is being run in a new operating system console window."
+    new "El comando se está ejecutando en una nueva ventana de la consola del sistema operativo."
 
     # distribute.rpy:443
     old "Scanning project files..."
@@ -259,19 +259,19 @@ translate spanish strings:
 
     # distribute.rpy:1050
     old "Unpacking the Macintosh application for signing..."
-    new "Unpacking the Macintosh application for signing..."
+    new "Desempaquetando la aplicación Macintosh para firmar..."
 
     # distribute.rpy:1060
     old "Signing the Macintosh application..."
-    new "Signing the Macintosh application..."
+    new "Firmando la aplicación Macintosh..."
 
     # distribute.rpy:1082
     old "Creating the Macintosh DMG..."
-    new "Creating the Macintosh DMG..."
+    new "Creando el DMG Macintosh..."
 
     # distribute.rpy:1091
     old "Signing the Macintosh DMG..."
-    new "Signing the Macintosh DMG..."
+    new "Firmando el DMG Macintosh..."
 
     # distribute.rpy:1248
     old "Writing the [variant] [format] package."
@@ -315,7 +315,7 @@ translate spanish strings:
 
     # distribute_gui.rpy:199
     old "Upload to itch.io"
-    new "Upload to itch.io"
+    new "Cargar a itch.io"
 
     # distribute_gui.rpy:215
     old "Build Packages:"
@@ -331,7 +331,7 @@ translate spanish strings:
 
     # distribute_gui.rpy:241
     old "Add from clauses to calls"
-    new "Añadir desde cláusula a las llamadas"
+    new "Añadir cláusulas 'from' a las llamadas"
 
     # distribute_gui.rpy:242
     old "Force Recompile"
@@ -343,7 +343,7 @@ translate spanish strings:
 
     # distribute_gui.rpy:250
     old "Adding from clauses to call statements that do not have them."
-    new "Añadiendo desde cláusulas para llamar a las declaraciones que no las tienen."
+    new "Añadiendo cláusulas 'from' a las sentencias 'call' que no las tienen."
 
     # distribute_gui.rpy:271
     old "Errors were detected when running the project. Please ensure the project runs without errors before building distributions."
@@ -479,7 +479,7 @@ translate spanish strings:
 
     # front_page.rpy:237
     old "Change/Update GUI"
-    new "Change/Update GUI"
+    new "Cambiar/Actualizar GUI"
 
     # front_page.rpy:239
     old "Change Theme"
@@ -511,7 +511,7 @@ translate spanish strings:
 
     # front_page.rpy:272
     old "Checking script for potential problems..."
-    new "Comprobando script por problemas potenciales..."
+    new "Comprobando potenciales problemas en el script..."
 
     # front_page.rpy:287
     old "Deleting persistent data..."
@@ -523,23 +523,23 @@ translate spanish strings:
 
     # gui7.rpy:236
     old "Select Accent and Background Colors"
-    new "Select Accent and Background Colors"
+    new "Selecciona colores de fondo y énfasis"
 
     # gui7.rpy:250
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
-    new "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
+    new "Haz clic en el esquema de color que quieres usar y haz clic en Continuar. Estos colores pueden ser cambiados y personalizados más tarde."
 
     # gui7.rpy:294
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
+    new "{b}Aviso{/b}\nSi continúas se sobreescribirán las barras, botones, huecos de partida grabada, barras de desplazamiento y controles deslizantes personalizados.\n\n¿Qué deseas hacer?"
 
     # gui7.rpy:294
     old "Choose new colors, then regenerate image files."
-    new "Choose new colors, then regenerate image files."
+    new "Escoge los nuevos colores y luego regenera las imágenes."
 
     # gui7.rpy:294
     old "Regenerate the image files using the colors in gui.rpy."
-    new "Regenerate the image files using the colors in gui.rpy."
+    new "Regenera las imágenes usando los colores de gui.rpy."
 
     # gui7.rpy:314
     old "PROJECT NAME"
@@ -563,15 +563,15 @@ translate spanish strings:
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
+    new "¿Qué resolución debería usar el proyecto? Aunque Ren'Py puede escalar la ventana más grande o más pequeña este es el tamaño inicial de la ventana, el tamaño en el que se deben dibujar las imágenes y el tamaño en el que serán más nítidas.\n\nEl valor predeterminado de 1280x720 es un compromiso razonable."
 
     # gui7.rpy:389
     old "Creating the new project..."
-    new "Creating the new project..."
+    new "Creando el nuevo proyecto..."
 
     # gui7.rpy:391
     old "Updating the project..."
-    new "Updating the project..."
+    new "Actualizando el proyecto..."
 
     # interface.rpy:107
     old "Documentation"
@@ -639,27 +639,27 @@ translate spanish strings:
 
     # ios.rpy:28
     old "To build iOS packages, please download renios, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Para construir paquetes para iOS, por favor descargue renios, descomprímalo, y colóquelo dentro de la carpeta de Ren'Py. Después reinicie el launcher de Ren'Py."
+    new "Para construir paquetes para iOS, por favor descarga renios, descomprímelo, y colócalo dentro de la carpeta de Ren'Py. Después reinicia el launcher de Ren'Py."
 
     # ios.rpy:29
     old "The directory in where Xcode projects will be placed has not been selected. Choose 'Select Directory' to select it."
-    new "El directorio donde se colocarán los proyectos de Xcode no se ha seleccionado. Seleccione 'Seleccionar directorio' para seleccionarlo."
+    new "El directorio donde se colocarán los proyectos de Xcode no se ha seleccionado. Elige 'Seleccionar directorio' para seleccionarlo."
 
     # ios.rpy:30
     old "There is no Xcode project corresponding to the current Ren'Py project. Choose 'Create Xcode Project' to create one."
-    new "No hay proyecto de Xcode correspondiente al proyecto de Ren'Py actual. Elija 'Crear proyecto de Xcode' para crear uno."
+    new "No hay proyecto de Xcode correspondiente al proyecto de Ren'Py actual. Elige 'Crear proyecto de Xcode' para crear uno."
 
     # ios.rpy:31
     old "An Xcode project exists. Choose 'Update Xcode Project' to update it with the latest game files, or use Xcode to build and install it."
-    new "Existe un proyecto de Xcode. Elija 'Actualizar proyecto de Xcode' para actualizarlo con los últimos archivos del juego, o use Xcode para construirlo e instalarlo."
+    new "Existe un proyecto de Xcode. Elige 'Actualizar proyecto de Xcode' para actualizarlo con los últimos archivos del juego, o usa Xcode para construirlo e instalarlo."
 
     # ios.rpy:33
     old "Attempts to emulate an iPhone.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Al intentar emular un iPhone.\n\nLa entrada táctil se emula a través del ratón, pero solo cuando se mantiene pulsado el botón."
+    new "Intenta emular un iPhone.\n\nLa entrada táctil se emula a través del ratón, pero solo cuando se mantiene pulsado el botón."
 
     # ios.rpy:34
     old "Attempts to emulate an iPad.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Al intentar emular un iPad.\n\nLa entrada táctil se emula a través del ratón, pero solo cuando se mantiene pulsado el botón."
+    new "Intenta emular un iPad.\n\nLa entrada táctil se emula a través del ratón, pero solo cuando se mantiene pulsado el botón."
 
     # ios.rpy:36
     old "Selects the directory where Xcode projects will be placed."
@@ -683,7 +683,7 @@ translate spanish strings:
 
     # ios.rpy:126
     old "The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"
-    new "El proyecto de Xcode ya existe. ¿Quiere cambiar el nombre del antiguo proyecto, y sustituirlo por uno nuevo?"
+    new "El proyecto de Xcode ya existe. ¿Quieres cambiar el nombre del antiguo proyecto, y sustituirlo por uno nuevo?"
 
     # ios.rpy:211
     old "iOS: [project.current.name!q]"
@@ -699,27 +699,27 @@ translate spanish strings:
 
     # ios.rpy:264
     old "Select Xcode Projects Directory"
-    new "Seleccionar directorio para los proyectos de Xcode"
+    new "Selecciona directorio para los proyectos de Xcode"
 
     # ios.rpy:268
     old "Create Xcode Project"
-    new "Crear Proyecto de Xcode"
+    new "Crea Proyecto de Xcode"
 
     # ios.rpy:272
     old "Update Xcode Project"
-    new "Actaulizar Proyecto de Xcode"
+    new "Actualiza Proyecto de Xcode"
 
     # ios.rpy:277
     old "Launch Xcode"
-    new "Ejecutar Xcode"
+    new "Ejecuta Xcode"
 
     # ios.rpy:312
     old "Open Xcode Projects Directory"
-    new "Abrir directorio de proyectos de Xcode"
+    new "Abre directorio de proyectos de Xcode"
 
     # ios.rpy:345
     old "Before packaging iOS apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"
-    new "Antes de empaquetar aplicaciones de iOS, tendrá que descargar renios, el soporte de iOS para Ren'Py. ¿Quiere descargar renios ahora?"
+    new "Antes de empaquetar aplicaciones de iOS, tendrás que descargar renios, el soporte de iOS para Ren'Py. ¿Quieres descargar renios ahora?"
 
     # ios.rpy:354
     old "XCODE PROJECTS DIRECTORY"
@@ -727,35 +727,35 @@ translate spanish strings:
 
     # ios.rpy:354
     old "Please choose the Xcode Projects Directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new "Por favor elija el directorio de proyectos de Xcode usando el selector de directorio. \n{b}El selector de directorio puede haberse abierto detras de esta ventana.{/b}"
+    new "Por favor elige el directorio de proyectos de Xcode usando el selector de directorio.\n{b}El selector de directorio puede haberse abierto detrás de esta ventana.{/b}"
 
     # ios.rpy:359
     old "Ren'Py has set the Xcode Projects Directory to:"
-    new "Ren'Py ha establecidio el directorio de proyectos de Xcode en: "
+    new "Ren'Py ha establecido el directorio de proyectos de Xcode en:"
 
     # itch.rpy:60
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "The built distributions could not be found. Please choose 'Build' and try again."
+    new "Las distribuciones compiladas no se pudieron encontrar. Elige 'Build' y vuelve a intentarlo."
 
     # itch.rpy:91
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "No uploadable files were found. Please choose 'Build' and try again."
+    new "No se encontraron archivos para cargar. Elige 'Build' y vuelve a intentarlo."
 
     # itch.rpy:99
     old "The butler program was not found."
-    new "The butler program was not found."
+    new "No se encontró el programa 'butler'."
 
     # itch.rpy:99
     old "Please install the itch.io app, which includes butler, and try again."
-    new "Please install the itch.io app, which includes butler, and try again."
+    new "Instala la aplicación itch.io, que incluye 'butler', y vuelve a intentarlo."
 
     # itch.rpy:108
     old "The name of the itch project has not been set."
-    new "The name of the itch project has not been set."
+    new "El nombre del proyecto de itch no ha sido establecido."
 
     # itch.rpy:108
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
-    new "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
+    new "{a=https://itch.io/game/new}Crea tu proyecto{/a} y luego añade una línea como \n{vspace=5}define build.itch_project = \"nombre-de-usuario/nombre-del-juego\"\n{vspace=5} en 'options.rpy'."
 
     # mobilebuild.rpy:109
     old "{a=%s}%s{/a}"
@@ -827,23 +827,23 @@ translate spanish strings:
 
     # new_project.rpy:38
     old "New GUI Interface"
-    new "New GUI Interface"
+    new "Nueva interfaz GUI"
 
     # new_project.rpy:48
     old "Both interfaces have been translated to your language."
-    new "Both interfaces have been translated to your language."
+    new "Ambas interfaces han sido traducidas a tu idioma."
 
     # new_project.rpy:50
     old "Only the new GUI has been translated to your language."
-    new "Only the new GUI has been translated to your language."
+    new "Solo la nueva GUI ha sido traducida a tu idioma."
 
     # new_project.rpy:52
     old "Only the legacy theme interface has been translated to your language."
-    new "Only the legacy theme interface has been translated to your language."
+    new "Solo la interfaz del tema antiguo ha sido traducida a tu idioma.."
 
     # new_project.rpy:54
     old "Neither interface has been translated to your language."
-    new "Neither interface has been translated to your language."
+    new "Ninguna interfaz ha sido traducida a tu idioma."
 
     # new_project.rpy:63
     old "The projects directory could not be set. Giving up."
@@ -851,11 +851,11 @@ translate spanish strings:
 
     # new_project.rpy:69
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
-    new "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
+    new "¿Qué interfaz te gustaría usar? La nueva GUI tiene un aspecto moderno, admite pantallas anchas y dispositivos móviles, y es más fácil de personalizar. Es posible que los temas antiguos sean necesarios para trabajar con código anterior.\n\n[language_support!t]\n\nSi tienes dudas, elige la nueva GUI, luego haz clic en Continuar en la parte inferior derecha."
 
     # new_project.rpy:69
     old "Legacy Theme Interface"
-    new "Legacy Theme Interface"
+    new "Interfaz de temas antiguos"
 
     # new_project.rpy:90
     old "Choose Project Template"
@@ -943,7 +943,7 @@ translate spanish strings:
 
     # project.rpy:47
     old "After making changes to the script, press shift+R to reload your game."
-    new "Despues de hacer cambios a un script, presiona shift+R para recargar tu juego."
+    new "Después de hacer cambios a un script, presiona shift+R para recargar tu juego."
 
     # project.rpy:47
     old "Press shift+O (the letter) to access the console."
@@ -991,11 +991,11 @@ translate spanish strings:
 
     # translations.rpy:63
     old "Translations: [project.current.name!q]"
-    new "Translations: [project.current.name!q]"
+    new "Traducciones: [project.current.name!q]"
 
     # translations.rpy:104
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
-    new "The language to work with. This should only contain lower-case ASCII characters and underscores."
+    new "El idioma en que trabajar. Debe contener solo caracteres ASCII minúsculos y guiones bajos."
 
     # translations.rpy:130
     old "Generate empty strings for translations"
@@ -1003,31 +1003,31 @@ translate spanish strings:
 
     # translations.rpy:148
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
+    new "Genera o actualiza los archivos de traducción. Loas archivos serán colocados en game/tl/[persistent.translate_language!q]."
 
     # translations.rpy:168
     old "Extract String Translations"
-    new "Extract String Translations"
+    new "Extrae cadenas traducidas"
 
     # translations.rpy:170
     old "Merge String Translations"
-    new "Merge String Translations"
+    new "Fusiona cadenas traducidas"
 
     # translations.rpy:175
     old "Replace existing translations"
-    new "Replace existing translations"
+    new "Reemplaza traducciones existentes"
 
     # translations.rpy:176
     old "Reverse languages"
-    new "Reverse languages"
+    new "Invertir idiomas"
 
     # translations.rpy:180
     old "Update Default Interface Translations"
-    new "Update Default Interface Translations"
+    new "Actualiza traducciones de la interfaz por defecto"
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
+    new "El comando 'extrae' permite extraer las cadenas traducidas de un proyecto existente en un archivo temporal.\n\nEl comando 'fusiona' introduce las traducciones extraídas en otro proyecto."
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
@@ -1035,55 +1035,55 @@ translate spanish strings:
 
     # translations.rpy:235
     old "Ren'Py has finished generating [language] translations."
-    new "Ren'Py ha terminado de generar las traducciones [language]"
+    new "Ren'Py ha terminado de generar las traducciones en [language]"
 
     # translations.rpy:248
     old "Ren'Py is extracting string translations..."
-    new "Ren'Py is extracting string translations..."
+    new "Ren'Py está extrayendo las cadenas traducidas..."
 
     # translations.rpy:251
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py has finished extracting [language] string translations."
+    new "Ren'Py ha terminado de extrar las cadenas traducidas en [language]."
 
     # translations.rpy:271
     old "Ren'Py is merging string translations..."
-    new "Ren'Py is merging string translations..."
+    new "Ren'Py está fusionando las cadenas traducidas..."
 
     # translations.rpy:274
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py has finished merging [language] string translations."
+    new "Ren'Py ha terminado de fusionar las cadenas traducidas en [language]."
 
     # translations.rpy:282
     old "Updating default interface translations..."
-    new "Updating default interface translations..."
+    new "Actualizando las traducciones por defecto de la interfaz..."
 
     # translations.rpy:306
     old "Extract Dialogue: [project.current.name!q]"
-    new "Extract Dialogue: [project.current.name!q]"
+    new "Extrae diálogo: [project.current.name!q]"
 
     # translations.rpy:322
     old "Format:"
-    new "Format:"
+    new "Formato:"
 
     # translations.rpy:330
     old "Tab-delimited Spreadsheet (dialogue.tab)"
-    new "Tab-delimited Spreadsheet (dialogue.tab)"
+    new "Hoja delimitada por tabuladores (dialogue.tab)"
 
     # translations.rpy:331
     old "Dialogue Text Only (dialogue.txt)"
-    new "Dialogue Text Only (dialogue.txt)"
+    new "Diálogo en solo texto (dialogue.txt)"
 
     # translations.rpy:344
     old "Strip text tags from the dialogue."
-    new "Strip text tags from the dialogue."
+    new "Elimina etiquetas de texto del diálogo."
 
     # translations.rpy:345
     old "Escape quotes and other special characters."
-    new "Escape quotes and other special characters."
+    new "Escapa las comillas y otros caracteres especiales."
 
     # translations.rpy:346
     old "Extract all translatable strings, not just dialogue."
-    new "Extract all translatable strings, not just dialogue."
+    new "Extrae todas las cadenas traducibles, no solo el diálogo."
 
     # translations.rpy:374
     old "Ren'Py is extracting dialogue...."
@@ -1091,7 +1091,7 @@ translate spanish strings:
 
     # translations.rpy:378
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
+    new "Ren'Py ha terminado de extraer el diálogo. El texto se encuentra en dialogue.[persistent.dialogue_format] en el directorio base."
 
     # updater.rpy:75
     old "Select Update Channel"
@@ -1099,11 +1099,11 @@ translate spanish strings:
 
     # updater.rpy:86
     old "The update channel controls the version of Ren'Py the updater will download. Please select an update channel:"
-    new "El canal de actualización controla la versión de Ren'Py que el actualizador descargará. Por favor selecciona un canal de actualización:"
+    new "El canal de actualización controla la versión de Ren'Py que el actualizador descargará. Selecciona un canal de actualización:"
 
     # updater.rpy:91
     old "Release"
-    new "Release"
+    new "Lanzamiento"
 
     # updater.rpy:97
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
@@ -1111,7 +1111,7 @@ translate spanish strings:
 
     # updater.rpy:102
     old "Prerelease"
-    new "Prerelease"
+    new "Prelanzamiento"
 
     # updater.rpy:108
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
@@ -1127,7 +1127,7 @@ translate spanish strings:
 
     # updater.rpy:126
     old "Nightly"
-    new "Nightly"
+    new "Nocturna"
 
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
@@ -1147,7 +1147,7 @@ translate spanish strings:
 
     # updater.rpy:158
     old "[u.version] is now available. Do you want to install it?"
-    new "[u.version] ahora está disponible. ¿Quieres instalarla?"
+    new "[u.version] está disponible. ¿Quieres instalarla?"
 
     # updater.rpy:160
     old "Preparing to download the update."
@@ -1196,3 +1196,88 @@ translate spanish strings:
     # front_page.rpy:91
     old "PROJECTS:"
     new "PROYECTOS:"
+
+    # android.rpy:308
+    old "Android: [project.current.display_name!q]"
+    new "Android: [project.current.display_name!q]"
+
+    # distribute_gui.rpy:157
+    old "Build Distributions: [project.current.display_name!q]"
+    new "Construir distribuciones: [project.current.display_name!q]"
+
+    # dmgcheck.rpy:50
+    old "Ren'Py is running from a read only folder. Some functionality will not work."
+    new "Ren'Py se ejecuta en una carpeta de solo lectura. Algunas funciones no disponibles."
+
+    # dmgcheck.rpy:50
+    old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
+    new "Esto sucede probablemente porque Ren'Py se ejecuta directamente desde una imagen de disco Macintosh. Cierra este lanzador, copia toda la carpeta %s en otro lugar del ordenador y ejecuta Ren'Py de nuevo."
+
+    # front_page.rpy:218
+    old "Actions"
+    new "Acciones"
+
+    # gui7.rpy:357
+    old "Custom. The GUI is optimized for a 16:9 aspect ratio."
+    new "Personalizas. La GUI está optimizada para una ratio 16:9."
+
+    # gui7.rpy:372
+    old "WIDTH"
+    new "ANCHURA"
+
+    # gui7.rpy:372
+    old "Please enter the width of your game, in pixels."
+    new "Introduce la anchura de tu juego en píxels."
+
+    # gui7.rpy:377
+    old "The width must be a number."
+    new "La anchura debe ser un número."
+
+    # gui7.rpy:379
+    old "HEIGHT"
+    new "ALTURA"
+
+    # gui7.rpy:379
+    old "Please enter the height of your game, in pixels."
+    new "Introduce la altura de tu juego en píxels."
+
+    # gui7.rpy:384
+    old "The height must be a number."
+    new "La altura debe ser un número."
+
+    # interface.rpy:136
+    old "Ren'Py Sponsor Information"
+    new "Información de Patrocinadores de Ren'Py"
+
+    # ios.rpy:211
+    old "iOS: [project.current.display_name!q]"
+    new "iOS: [project.current.display_name!q]"
+
+    # navigation.rpy:168
+    old "Navigate: [project.current.display_name!q]"
+    new "Navegar: [project.current.display_name!q]"
+
+    # new_project.rpy:71
+    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
+    new "Vas a crear un proyecto en idioma [new_project_language]. Cambia el idioma del lanzador en preferencias para crear un proyecto en otro idioma."
+
+    # preferences.rpy:187
+    old "Force new tutorial"
+    new "Fuerza el nuevo tutorial"
+
+    # preferences.rpy:189
+    old "Legacy options"
+    new "Opciones antiguas"
+
+    # preferences.rpy:194
+    old "Sponsor message"
+    new "Mensaje patrocinadores"
+
+    # translations.rpy:92
+    old "Translations: [project.current.display_name!q]"
+    new "Traducciones: [project.current.display_name!q]"
+
+    # translations.rpy:343
+    old "Extract Dialogue: [project.current.display_name!q]"
+    new "Extrae diálogo: [project.current.display_name!q]"
+
