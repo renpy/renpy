@@ -791,7 +791,7 @@ translate spanish strings:
 
     # navigation.rpy:197
     old "labels"
-    new "Etiquetas"
+    new "labels"
 
     # navigation.rpy:198
     old "defines"
