@@ -1184,7 +1184,7 @@ In addition, a vpgrid takes all properties a :ref:`viewport <sl-viewport>` can,
 and the following groups of style properties:
 
 * :ref:`Common Properties <common-properties>`
-* :ref:`position-style-properties`00
+* :ref:`position-style-properties`
 * :ref:`grid-style-properties`
 
 ::
