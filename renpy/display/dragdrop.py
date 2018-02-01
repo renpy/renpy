@@ -53,7 +53,7 @@ def default_drag_joined(drag):
 class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     """
     :doc: drag_drop class
-    :args: (d=None, drag_name=None, draggable=True, droppable=True, drag_raise=True, dragged=None, dropped=None, drag_handle=(0.0, 0.0, 1.0, 1.0), drag_joined=..., clicked=None, hovered=None, unhovered=None, mouse_drop_check=False, **properties)
+    :args: (d=None, drag_name=None, draggable=True, droppable=True, drag_raise=True, dragged=None, dropped=None, drag_handle=(0.0, 0.0, 1.0, 1.0), drag_joined=..., clicked=None, hovered=None, unhovered=None, mouse_drop=False, **properties)
 
     A displayable that represents an object that can be dragged around
     its enclosing area. A Drag can also represent an area that
@@ -149,9 +149,10 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         size, as the drags can leave the screen entirely, with no
         way to get them back on the screen.
 
-    `mouse_drop_check`
-        If true, dropped drag is resolved not with majority of overlap
-        but with exact mouse position when drag was released
+    `mouse_drop`
+        If true, the drag is dropped on the first droppable under the cursor. 
+        If false, the default, the drag is dropped onto the droppable with 
+        the largest degree of overlap.
 
     Except for `d`, all of the parameters are available as fields (with
     the same name) on the Drag object. In addition, after the drag has
@@ -185,7 +186,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                  unhovered=None,
                  replaces=None,
                  drag_offscreen=False,
-                 mouse_drop_check=False,
+                 mouse_drop=False,
                  style="drag",
                  **properties):
 
@@ -206,7 +207,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         # if mouse_drop_check is True (default False), the drop will not
         #  use default major overlap between droppables but instead
         #  will use mouse coordinates to select droppable
-        self.mouse_drop_check = mouse_drop_check
+        self.mouse_drop = mouse_drop
 
         # We're focusable if we can be dragged.
         self.focusable = draggable
@@ -281,7 +282,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.old_position = replaces.old_position
             self.drag_moved = replaces.drag_moved
             self.last_drop = replaces.last_drop
-            self.mouse_drop_check = replaces.mouse_drop_check
+            self.mouse_drop = replaces.mouse_drop
 
         if d is not None:
             self.add(d)
@@ -601,7 +602,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             handled = False
 
         if (self.drag_group is not None) and self.drag_moved:
-            if self.mouse_drop_check:
+            if self.mouse_drop:
                drop = self.drag_group.get_drop_at(joined, par_x, par_y)
             else:
                drop = self.drag_group.get_best_drop(joined)
@@ -843,7 +844,7 @@ class DragGroup(renpy.display.layout.MultiBox):
                continue
 
             if (x >= c.x and y >= c.y and
-                x <= (c.x+c.w) and y <= (c.y+c.h)):
+                x < (c.x+c.w) and y < (c.y+c.h)):
                return c
 
     def get_children(self):
