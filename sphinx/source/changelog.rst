@@ -64,7 +64,7 @@ that have been defined.
 The F4 key now displays the image load log.
 
 Other Fixes
------
+-----------
 
 Fixes a bug where the ATL "on hide" clause didn't work.
 
@@ -862,7 +862,7 @@ the Android Runtime for Chrome tool.
 Style Prefix Support
 --------------------
 
-Ren'Py now supports the use of a prefix_ substitution with style properties.
+Ren'Py now supports the use of a prefix\_ substitution with style properties.
 Where previously, one was required to write::
 
     style button:

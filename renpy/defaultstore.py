@@ -267,6 +267,7 @@ A layout that lays out its members from top to bottom.
 
 Grid = _layout_class(renpy.display.layout.Grid, """
 :doc: disp_grid
+:args: (cols, rows, *args, **properties)
 
 Lays out displayables in a grid. The first two positional arguments
 are the number of columns and rows in the grid. This must be followed

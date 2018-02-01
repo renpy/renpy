@@ -93,17 +93,11 @@ class Borders(object):
     It can also provide padding information that can be supplied to the
     :propref:`padding` style property of a window or frame.
 
-    `left`
-    `top`
-    `right`
-    `bottom`
+    `left`, `top`, `right`, `bottom`
         These provide the size of the insets used by a frame, and are added
         to the padding on each side. They should zero or a positive integer.
 
-    `pad_left`
-    `pad_top`
-    `pad_right`
-    `pad_bottom`
+    `pad_left`, `pad_top`, `pad_right`, `pad_bottom`
         These are added to the padding on each side, and may be positive or
         negative. (For example, if `left` is 5 and `pad_left` is -3, the final
         padding is 2.)

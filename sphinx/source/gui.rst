@@ -1467,13 +1467,6 @@ See Also
 For more information about the GUI, see the :ref:`Advanced GUI <gui-advanced>`
 section.
 
-Python Functions
-================
-
-There are some Python functions that support the GUI.
-
-.. include:: inc/gui
-
 
 .. _gui-changes:
 
