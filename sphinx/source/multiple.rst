@@ -1,4 +1,4 @@
-.. _multiple-dialogue:
+.. _multiple-character-dialogue:
 
 Multiple Character Dialogue
 ===========================
