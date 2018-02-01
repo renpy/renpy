@@ -464,6 +464,7 @@ Keyword("clicked")
 Keyword("hovered")
 Keyword("unhovered")
 Keyword("focus_mask")
+Keyword("mouse_drop_check")
 Style("child")
 
 DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many, replaces=True)
