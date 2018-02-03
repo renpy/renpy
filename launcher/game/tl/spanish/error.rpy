@@ -177,3 +177,55 @@ translate spanish strings:
     old "Copies the errors.txt file to the clipboard."
     new "Copia el archivo errors.txt al portapapeles."
 
+    # 00gltest.rpy:70
+    old "Renderer"
+    new "Renderizador"
+
+    # 00gltest.rpy:93
+    old "NPOT"
+    new "NPOT"
+
+    # 00gltest.rpy:131
+    old "Powersave"
+    new "Ahorro de energía"
+
+    # 00gltest.rpy:145
+    old "Framerate"
+    new "Cuadros por s."
+
+    # 00gltest.rpy:149
+    old "Screen"
+    new "Pantalla"
+
+    # 00gltest.rpy:153
+    old "60"
+    new "60"
+
+    # 00gltest.rpy:157
+    old "30"
+    new "30"
+
+    # 00gltest.rpy:163
+    old "Tearing"
+    new "Tearing"
+
+    # _errorhandling.rpym:528
+    old "Open"
+    new "Abrir"
+
+    # _errorhandling.rpym:532
+    old "Copy"
+    new "Copiar"
+
+    # _errorhandling.rpym:590
+    old "Ignores the exception, allowing you to continue."
+    new "Ignora la excepción y permite continuar."
+
+    # _errorhandling.rpym:601
+    old "Console"
+    new "Consola"
+
+    # _errorhandling.rpym:603
+    old "Opens a console to allow debugging the problem."
+    new "Abre una consola y permite depurar el problema."
+

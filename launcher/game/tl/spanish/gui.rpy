@@ -427,8 +427,9 @@ translate spanish strings:
 
     # gui.rpy:397
     old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
-    new "## Esto controla donde se permite un salto de linea. El valor por defecto es adecuado para la mayoria de idiomas. Puede encontrar una lista de valores disponibles en https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+    new "## Esto controla donde se permite un salto de línea. El valor por defecto es adecuado para la mayoria de idiomas. Puede encontrar una lista de valores disponibles en https://www.renpy.org/doc/html/style_properties.html#style-property-language"
 
     # gui.rpy:405
     old "## Mobile devices"
     new "## Dispositivos Móviles"
+

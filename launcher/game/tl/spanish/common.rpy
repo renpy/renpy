@@ -333,3 +333,87 @@ translate spanish strings:
     old "return"
     new "volver"
 
+    # 00director.rpy:703
+    old "The interactive director is not enabled here."
+    new "El director interactivo no está habilitado aquí."
+
+    # 00director.rpy:1490
+    old "Done"
+    new "Hecho"
+
+    # 00director.rpy:1498
+    old "(statement)"
+    new "(sentencia)"
+
+    # 00director.rpy:1499
+    old "(tag)"
+    new "(etiqueta)"
+
+    # 00director.rpy:1500
+    old "(attributes)"
+    new "(atributos)"
+
+    # 00director.rpy:1501
+    old "(transform)"
+    new "(transformación)"
+
+    # 00director.rpy:1526
+    old "(transition)"
+    new "(transición)"
+
+    # 00director.rpy:1538
+    old "(channel)"
+    new "(canal)"
+
+    # 00director.rpy:1539
+    old "(filename)"
+    new "(archivo)"
+
+    # 00director.rpy:1564
+    old "Change"
+    new "Cambiar"
+
+    # 00director.rpy:1566
+    old "Add"
+    new "Añadir"
+
+    # 00director.rpy:1572
+    old "Remove"
+    new "Eliminar"
+
+    # 00director.rpy:1605
+    old "Statement:"
+    new "Sentencia:"
+
+    # 00director.rpy:1626
+    old "Tag:"
+    new "Etiqueta:"
+
+    # 00director.rpy:1642
+    old "Attributes:"
+    new "Atributos:"
+
+    # 00director.rpy:1660
+    old "Transforms:"
+    new "Transformaciones:"
+
+    # 00director.rpy:1679
+    old "Behind:"
+    new "Detrás:"
+
+    # 00director.rpy:1698
+    old "Transition:"
+    new "Transición:"
+
+    # 00director.rpy:1716
+    old "Channel:"
+    new "Canal:"
+
+    # 00director.rpy:1734
+    old "Audio Filename:"
+    new "Archivo de audio:"
+
+    # 00keymap.rpy:258
+    old "Failed to save screenshot as %s."
+    new "No se pudo salvar la captura de pantalla como %s."
+
