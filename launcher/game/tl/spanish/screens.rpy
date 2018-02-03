@@ -507,7 +507,7 @@ translate spanish strings:
 
     # screens.rpy:1081
     old "Right Shoulder"
-    new "Right Shoulder"
+    new "Botón sup. frontal der."
 
     # screens.rpy:1085
     old "D-Pad, Sticks"
@@ -659,5 +659,5 @@ translate spanish strings:
 
     # screens.rpy:1079
     old "Left Trigger\nLeft Shoulder"
-    new "Gatillo izquierdo\nLeft Shoulder"
+    new "Gatillo izquierdo\nBotón sup. frontal izq."
 
