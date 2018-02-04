@@ -46,6 +46,8 @@ Starts predicting all images beginning with the tag eileen, while::
 
 matches all images that include a beach attribute.
 
+The F4 key now displays the image load log.
+
 Other Improvements
 ------------------
 
@@ -61,7 +63,11 @@ making it easier to determine if a file is stale.
 The new :func:`renpy.list_images` function returns a list of all the images
 that have been defined.
 
-The F4 key now displays the image load log.
+Drag displayables now take the `mouse_drop` property. When true, this causes
+the location of the mouse pointer to be used to select a drag to drop on,
+rather than the drag with the maximum overlap.
+
+The Spanish translation has been updated.
 
 Other Fixes
 -----------

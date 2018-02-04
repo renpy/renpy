@@ -50,6 +50,7 @@ the omission in future versions.
 * Eliza Velasquez
 * Emmanuel Marty
 * Emmeken
+* Enerccio
 * Eniko
 * Evilantishad0w
 * Franck_v
