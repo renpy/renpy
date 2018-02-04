@@ -335,6 +335,8 @@ def import_all():
     # Note: If we add a new update_path, we have to add an equivalent
     # hook in the renpython hooks dir.
 
+    # Note: If we add a new module, we need to add it to iOS.
+
     import renpy  # @UnresolvedImport
 
     update_path(renpy)
