@@ -273,7 +273,7 @@ label pong_done:
 
     e "Minigames can spice up your visual novel, but be careful – not every visual novel player wants to be good at arcade games."
 
-    e "Part of the reason Ren'Py works well it's that it's meant for certain types of games, like visual novels and life simulations."
+    e "Part of the reason Ren'Py works well is that it's meant for certain types of games, like visual novels and life simulations."
 
     e "The further afield you get from those games, the more you'll find yourself fighting Ren'Py. At some point, it makes sense to consider other engines."
 
