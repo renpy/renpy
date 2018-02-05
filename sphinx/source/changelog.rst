@@ -4,6 +4,9 @@ Full Changelog
 
 .. _renpy-6.99.14.1:
 
+6.99.14.1
+=========
+
 Image Prediction and Caching
 ----------------------------
 
