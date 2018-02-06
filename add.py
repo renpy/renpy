@@ -106,4 +106,11 @@ for i in links:
 os.chdir("/home/tom/ab/website")
 subprocess.check_call("./upload.sh")
 
+
+os.chdir("/home/tom/ab/renpy/sphinx")
+if args.release:
+    subprocess.check_call("./upload.sh")
+elif args.prerelease:
+    subprocess.check_call("./upload_dev.sh")
+
 print("Version", version)
