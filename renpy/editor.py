@@ -66,7 +66,7 @@ class Editor(object):
 
     def open(self, filename, line=None, **kwargs):  # @ReservedAssignment
         """
-        Ensures `path` is open in the editor. This may be called multiple
+        Ensures `filename` is open in the editor. This may be called multiple
         times per transaction.
 
         `line`
@@ -75,6 +75,14 @@ class Editor(object):
 
         The first open call in a transaction is somewhat special - that file
         should be given focus in a tabbed editor environment.
+        """
+
+    # This should be set to True if the editor supports projects.
+    has_projects = False
+
+    def open_project(self, directory):
+        """
+        Opens `directory` as a project in the editor.
         """
 
 
