@@ -68,7 +68,6 @@ init python:
             os.unlink(write_test)
 
         except:
-            raise
             tempdir = tempfile.mkdtemp()
 
         strings_json = os.path.join(tempdir, "strings.json")
