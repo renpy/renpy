@@ -140,15 +140,43 @@ init 1 python in editor:
         Creates the list of FancyEditorInfo objects.
         """
 
+        import platform
+
         global fancy_editors
 
         scan_all()
 
         fei = fancy_editors = [ ]
 
+        # Atom.
+        AD = _("(Recommended) A modern and approachable text editor.")
+
+        if renpy.windows:
+            dlc = "atom-windows"
+            installed = os.path.exists(os.path.join(config.basedir, "atom/atom-windows"))
+        elif renpy.macintosh:
+            dlc = "atom-mac"
+            installed = os.path.exists(os.path.join(config.basedir, "atom/Atom.app"))
+        else:
+            dlc = "atom-linux"
+            installed = os.path.exists(os.path.join(config.basedir, "atom/atom-linux-" + platform.machine()))
+
+        e = FancyEditorInfo(
+            0,
+            "Atom",
+            AD,
+            dlc,
+            _("Up to 150 MB download required."),
+            None)
+
+        e.installed = e.installed and installed
+
+        fei.append(e)
+
+
         # Editra.
-        ED  = _("{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input.")
-        EDL  = _("{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython.")
+        ED  = _("A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input.")
+        EDL  = _("A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython.")
 
         if renpy.windows:
             dlc = "editra-windows"
@@ -174,7 +202,7 @@ init 1 python in editor:
             _("Up to 22 MB download required."),
             error_message)
 
-        e.installed = e.installed or installed
+        e.installed = e.installed and installed
 
         fei.append(e)
 
@@ -195,7 +223,7 @@ init 1 python in editor:
             None))
 
         for k in editors:
-            if k in [ "Editra", "jEdit", "System Editor", "None" ]:
+            if k in [ "Atom", "Editra", "jEdit", "System Editor", "None" ]:
                 continue
 
             fei.append(FancyEditorInfo(
