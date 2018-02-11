@@ -94,6 +94,76 @@ style
 """
 
 
+def sl2_regexps():
+
+    rv = [ ]
+
+    groups = collections.defaultdict(set)
+    has_style = { }
+
+    for k, v in renpy.sl2.slparser.properties.items():
+        prefix, style = k
+
+        has_style[prefix] = style
+
+        if prefix == "icon_":
+            continue
+
+        props = tuple(sorted(v))
+
+        groups[props, style].add(prefix)
+
+    style_part2 = "(?:" + "|".join(sorted(renpy.sl2.slparser.STYLE_PREFIXES)) + ")"
+
+    items = list(groups.items())
+    items.sort(key=lambda a : ( tuple(sorted(a[1])), a[0][1] ) )
+
+    for k, prefixes in items:
+        names, style = k
+
+        if len(prefixes) > 1:
+            part1 = "(?:" + "|".join(prefixes) + ")"
+        else:
+            part1 = tuple(prefixes)[0]
+
+        if style:
+            part2 = style_part2
+        else:
+            part2 = ""
+
+        part3 = "(?:" + "|".join(sorted(names)) + ")"
+
+        re = part1 + part2 + part3
+        rv.append(re)
+
+    return rv
+
+
+def expanded_sl2_properties():
+
+    rv = set()
+
+    for k, v in renpy.sl2.slparser.properties.items():
+        prefix, style = k
+
+        if prefix == "icon_":
+            continue
+
+        if style:
+            style_prefixes = renpy.sl2.slparser.STYLE_PREFIXES
+        else:
+            style_prefixes = [ '' ]
+
+        for i in style_prefixes:
+            for j in v:
+                rv.add(prefix + i + j)
+
+    rv = list(rv)
+    rv.sort()
+
+    return rv
+
+
 def write_keywords():
     f = file("source/keywords.py", "w")
 
@@ -105,10 +175,11 @@ def write_keywords():
 
     f.write("keywords = %r\n" % kwlist)
 
-    properties = list(i for i in renpy.sl2.slparser.all_keyword_names if i not in kwlist)
-    properties.sort()
+    properties = [ i for i in expanded_sl2_properties() if i not in kwlist ]
 
     f.write("properties = %r\n" % properties)
+
+    f.write("property_regexes = %r\n" % sl2_regexps())
 
     f.close()
 
