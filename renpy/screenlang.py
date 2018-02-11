@@ -80,9 +80,6 @@ class Positional(object):
         if parser:
             parser.add(self)
 
-# Used to generate the documentation
-all_keyword_names = set()
-
 
 class Keyword(object):
     """
@@ -92,10 +89,9 @@ class Keyword(object):
     def __init__(self, name):
         self.name = name
 
-        all_keyword_names.add(self.name)
-
         if parser:
             parser.add(self)
+
 
 STYLE_PREFIXES = [
     '',
@@ -119,9 +115,6 @@ class Style(object):
     def __init__(self, name):
         self.name = name
 
-        for j in STYLE_PREFIXES:
-            all_keyword_names.add(j + self.name)
-
         if parser:
             parser.add(self)
 
@@ -134,9 +127,6 @@ class PrefixStyle(object):
     def __init__(self, prefix, name):
         self.prefix = prefix
         self.name = name
-
-        for j in STYLE_PREFIXES:
-            all_keyword_names.add(prefix + j + self.name)
 
         if parser:
             parser.add(self)
@@ -922,6 +912,7 @@ class PassParser(Parser):
     def parse(self, l, name):
         return self.parse_exec("pass", l.number)
 
+
 PassParser("pass")
 
 
@@ -939,6 +930,7 @@ class DefaultParser(Parser):
         code = "_scope.setdefault(%r, (%s))" % (name, rest)
 
         return self.parse_exec(code, l.number)
+
 
 DefaultParser("default")
 
@@ -980,6 +972,7 @@ class UseParser(Parser):
         code += ")"
 
         return self.parse_exec(code, lineno)
+
 
 UseParser("use")
 
@@ -1043,6 +1036,7 @@ class IfParser(Parser):
                     break
 
         return [ rv ]
+
 
 IfParser("if")
 
@@ -1118,6 +1112,7 @@ class ForParser(Parser):
 
         return rv
 
+
 ForParser("for")
 
 
@@ -1142,6 +1137,7 @@ class PythonParser(Parser):
             lineno += 1
 
         return self.parse_exec(python_code, lineno)
+
 
 PythonParser("$", True)
 PythonParser("python", False)
@@ -1357,6 +1353,7 @@ class ScreenParser(Parser):
         screen.code = renpy.ast.PyCode(node, location, 'exec')
 
         return screen
+
 
 screen_parser = ScreenParser()
 screen_parser.add(all_statements)

@@ -19,10 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import collections
 import renpy.sl2
 import renpy.sl2.slast as slast
 
-# A list of style prefixes that we know of.
+# A tuple of style prefixes that we know of.
 STYLE_PREFIXES = [
     '',
     'insensitive_',
@@ -61,8 +62,8 @@ class Positional(object):
             parser.add(self)
 
 
-# Used to generate the documentation
-all_keyword_names = set()
+# This is a map from (prefix, use_style_prefixes) to a set of property names.
+properties = collections.defaultdict(set)
 
 
 class Keyword(object):
@@ -73,7 +74,7 @@ class Keyword(object):
     def __init__(self, name):
         self.name = name
 
-        all_keyword_names.add(self.name)
+        properties['', False].add(name)
 
         if parser:
             parser.add(self)
@@ -87,8 +88,7 @@ class Style(object):
     def __init__(self, name):
         self.name = name
 
-        for j in STYLE_PREFIXES:
-            all_keyword_names.add(j + self.name)
+        properties['', True].add(self.name)
 
         if parser:
             parser.add(self)
@@ -103,8 +103,7 @@ class PrefixStyle(object):
         self.prefix = prefix
         self.name = name
 
-        for j in STYLE_PREFIXES:
-            all_keyword_names.add(prefix + j + self.name)
+        properties[prefix, True].add(self.name)
 
         if parser:
             parser.add(self)
