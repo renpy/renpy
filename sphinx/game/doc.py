@@ -11,47 +11,23 @@ import os
 
 import __builtin__
 
-# Keywords in the Ren'Py script language.
-KEYWORD1 = """\
+# Additional keywords in the Ren'Py script language.
+SCRIPT_KEYWORDS = """\
 $
 as
 at
 behind
-call
 expression
-hide
-if
-in
-image
-init
-jump
-menu
 onlayer
-python
-return
-scene
-set
-show
-with
-while
 zorder
-transform
-play
-queue
-stop
-pause
-define
-screen
-label
-voice
-translate
+strings
+take
+nointeract
+elif
 """
 
-# Words that are sometimes statement keywords, like for ATL
-# or Screen language statements.
-KEYWORD2 = """\
-nvl
-window
+# ATL Keywords.
+ATL_KEYWORDS = """\
 repeat
 block
 contains
@@ -66,32 +42,40 @@ clockwise
 counterclockwise
 circles
 knot
-null
-text
-hbox
-vbox
-fixed
-grid
-side
-frame
-key
-timer
-input
-button
-imagebutton
-textbutton
-bar
-vbar
-viewport
-imagemap
-hotspot
-hotbar
-transform
-add
-use
-has
-style
 """
+
+
+def script_keywords():
+
+    tries = [ renpy.parser.statements ]
+
+    rv = set()
+
+    while tries:
+        trie = tries.pop(0)
+        for k, v in trie.words.items():
+            rv.add(k)
+            tries.append(v)
+
+    rv.remove("layer")
+
+    return rv
+
+
+script_keywords()
+
+
+def sl2_keywords():
+
+    rv = set()
+
+    for i in renpy.sl2.slparser.all_statements:
+        rv.add(i.name)
+
+    rv.remove("icon")
+    rv.remove("iconbutton")
+
+    return rv
 
 
 def sl2_regexps():
@@ -167,13 +151,18 @@ def expanded_sl2_properties():
 def write_keywords():
     f = file("source/keywords.py", "w")
 
-    kwlist = list(keyword.kwlist)
-    kwlist.extend(KEYWORD1.split())
-    kwlist.extend(KEYWORD2.split())
+    kwlist = set(keyword.kwlist)
+    kwlist |= script_keywords()
+    kwlist |= sl2_keywords()
+    kwlist |= set(ATL_KEYWORDS.split())
+    kwlist |= set(SCRIPT_KEYWORDS.split())
+
+    kwlist = list(kwlist)
 
     kwlist.sort()
 
     f.write("keywords = %r\n" % kwlist)
+    f.write("keyword_regex = %r" % ("|".join(kwlist)))
 
     properties = [ i for i in expanded_sl2_properties() if i not in kwlist ]
 
