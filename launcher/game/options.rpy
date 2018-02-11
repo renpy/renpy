@@ -373,10 +373,22 @@ init python:
     build.classify_renpy("editra/Editra-mac.app/**", "editra-mac")
     build.classify_renpy("editra/lib/**", "editra-windows")
     build.classify_renpy("editra/editra.exe", "editra-windows")
-
-
-    # Executable rules.
     build.executable("editra/Editra/Editra")
+
+    # Atom rules.
+    build.classify_renpy("atom/", "atom-all")
+    build.classify_renpy("atom/Atom.edit.py", "editra-all")
+    build.classify_renpy("atom/atom-windows/**", "atom-windows")
+    build.classify_renpy("atom/Atom.app/**", "atom-mac")
+    build.classify_renpy("atom/atom-linux**", "atom-linux")
+
+    try:
+        with open(os.path.join(config.basedir, "atom", "executable.txt")) as f:
+            for l in f:
+                build.executable(l.strip())
+    except:
+        pass
+
 
     # Packages.
     build.packages = [ ]
@@ -386,9 +398,15 @@ init python:
     build.package("raspi", "tar.bz2", "raspi", dlc=True, update=False)
 
     build.package("jedit", "zip", "jedit", dlc=True)
+
     build.package("editra-linux", "tar.bz2", "editra-all editra-linux", dlc=True)
     build.package("editra-mac", "zip", "editra-all editra-mac", dlc=True)
     build.package("editra-windows", "zip", "editra-all editra-windows", dlc=True)
+
+    build.package("atom-linux", "tar.bz2", "atom-all atom-linux", dlc=True)
+    build.package("atom-mac", "zip", "atom-all atom-mac", dlc=True)
+    build.package("atom-windows", "zip", "atom-all atom-windows", dlc=True)
+
     build.package("rapt", "zip", "rapt", dlc=True)
     build.package("renios", "zip", "renios", dlc=True)
 

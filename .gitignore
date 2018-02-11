@@ -49,6 +49,7 @@ styles.txt
 /module/build
 /module/gen*
 /editra
+/atom
 /launcher/game/theme
 /launcher/game/script_version.rpy
 
