@@ -1,4 +1,4 @@
-# Declare characters used by this game.
+e if # Declare characters used by this game.
 define s = Character(_("Sylvie"), color="#c8ffc8")
 define m = Character(_("Me"), color="#c8c8ff")
 

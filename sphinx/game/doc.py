@@ -162,7 +162,7 @@ def write_keywords():
     kwlist.sort()
 
     f.write("keywords = %r\n" % kwlist)
-    f.write("keyword_regex = %r" % ("|".join(kwlist)))
+    f.write("keyword_regex = %r\n" % ("|".join(kwlist)))
 
     properties = [ i for i in expanded_sl2_properties() if i not in kwlist ]
 
