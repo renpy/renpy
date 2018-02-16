@@ -46,34 +46,34 @@ displayed at once.
 In our example above, the window corresponding to each block of dialogue
 are given the names:
 
-* block1_multiple2_window
-* block2_multiple2_window
+* block1_multiple2_say_window
+* block2_multiple2_say_window
 
 This naming scheme is used for the dialogue, name, and namebox, as well
 as the window. It's designed so style inheritance is useful here. For
 the window styles we'll have:
 
-window
+say_window
     Used for the normal case of a single dialogue window, this can serve as
     a base for all dialogue windows.
 
-multiple2_window
+multiple2_say_window
     This can be used for properties common to the two dialogue windows,
     like changing the background and reducing the margin and padding.
 
-block1_multiple2_window
+block1_multiple2_say_window
     This could be used to position the first of the two dialogue windows,
     such as using xalign 0.0 to put it on the left side.
 
-block2_multiple2_window
+block2_multiple2_say_window
     Similarly, this can be used to position the second window, with
     xalign 1.0 putting it on the right side.
 
 The Multiple Say Screen
 -----------------------
 
-For more control, there is the multiple say screen. When it exists, the
-multiple say screen is used in place of the normal say screen. It takes
+For more control, there is the multiple\_say screen. When it exists, the
+multiple\_say screen is used in place of the normal say screen. It takes
 a third argument, `multiple`, which is a tuple. The first component of
 the tuple is the block number, and the second is the total number of
 screens.
