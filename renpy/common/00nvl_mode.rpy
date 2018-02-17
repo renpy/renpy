@@ -237,11 +237,29 @@ init -1500 python:
         nvl_show_core()
 
     def nvl_show(with_):
+        """
+        :doc: nvl
+
+        The python equivalent of the ``nvl show`` statement.
+
+        `with_`
+            The transition to use to show the NVL-mode window.
+        """
+
         nvl_show_core()
         renpy.with_statement(with_)
         store._last_say_who = "nvl"
 
     def nvl_hide(with_):
+        """
+        :doc: nvl
+
+        The python equivalent of the ``nvl hide`` statement.
+
+        `with_`
+            The transition to use to hide the NVL-mode window.
+        """
+
         nvl_show_core()
         renpy.with_statement(None)
         renpy.with_statement(with_)
@@ -407,6 +425,12 @@ init -1500 python:
         kind=adv)
 
     def nvl_clear():
+        """
+        :doc: nvl
+
+        The python equivalent of the ``nvl clear`` statement.
+        """
+
         store.nvl_list = [ ]
 
     # Run clear at the start of the game.
@@ -414,6 +438,16 @@ init -1500 python:
 
 
     def nvl_menu(items):
+        """
+        :doc: nvl
+
+        A Python function that displays a menu in NVL style. This is rarely
+        used directly. Instead, it's assigned to the :var:`menu` variable,
+        using something like::
+
+            define menu = nvl_menu
+        """
+
 
         renpy.mode('nvl_menu')
 

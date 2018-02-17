@@ -205,6 +205,11 @@ The following config variables control nvl-related functionality.
 
     If true, NVL-mode rollback will occur a full page at a time.
 
+Python Functions
+----------------
+
+.. include:: inc/nvl
+
 
 Paged Rollback
 --------------
