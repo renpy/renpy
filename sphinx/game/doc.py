@@ -24,6 +24,8 @@ strings
 take
 nointeract
 elif
+old
+new
 """
 
 # ATL Keywords.
@@ -42,6 +44,12 @@ clockwise
 counterclockwise
 circles
 knot
+"""
+
+# SL2 Keywords (that aren't statements).
+SL2_KEYWORDS = """\
+tag
+has
 """
 
 
@@ -156,6 +164,7 @@ def write_keywords():
     kwlist |= sl2_keywords()
     kwlist |= set(ATL_KEYWORDS.split())
     kwlist |= set(SCRIPT_KEYWORDS.split())
+    kwlist |= set(SL2_KEYWORDS.split())
 
     kwlist = list(kwlist)
 
