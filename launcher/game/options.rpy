@@ -376,8 +376,9 @@ init python:
     build.executable("editra/Editra/Editra")
 
     # Atom rules.
-    build.classify_renpy("atom/", "atom-all")
-    build.classify_renpy("atom/Atom.edit.py", "editra-all")
+    build.classify_renpy("atom/", "atom-all source")
+    build.classify_renpy("atom/Atom.edit.py", "atom-all source")
+    build.classify_renpy("atom/default-dot-atom/**", "atom-all")
     build.classify_renpy("atom/atom-windows/**", "atom-windows")
     build.classify_renpy("atom/Atom.app/**", "atom-mac")
     build.classify_renpy("atom/atom-linux**", "atom-linux")
