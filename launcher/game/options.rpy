@@ -376,20 +376,19 @@ init python:
     build.executable("editra/Editra/Editra")
 
     # Atom rules.
-    build.classify_renpy("atom/", "atom-all source")
-    build.classify_renpy("atom/Atom.edit.py", "atom-all source")
+    build.classify_renpy("atom/", "atom-all source_only")
+    build.classify_renpy("atom/Atom.edit.py", "atom-all source_only")
     build.classify_renpy("atom/default-dot-atom/**", "atom-all")
     build.classify_renpy("atom/atom-windows/**", "atom-windows")
     build.classify_renpy("atom/Atom.app/**", "atom-mac")
     build.classify_renpy("atom/atom-linux**", "atom-linux")
 
     try:
-        with open(os.path.join(config.basedir, "atom", "executable.txt")) as f:
+        with open(os.path.join(config.renpy_base, "atom", "executable.txt")) as f:
             for l in f:
                 build.executable(l.strip())
     except:
         pass
-
 
     # Packages.
     build.packages = [ ]
