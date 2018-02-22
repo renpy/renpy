@@ -654,7 +654,12 @@ init -1500 python in updater:
                     rv = os.path.join(self.app, "/".join(path[1:]))
                     return rv
 
-            return os.path.join(self.base, name)
+            rv = os.path.join(self.base, name)
+
+            if renpy.windows:
+                rv = "\\\\?\\" + rv.replace("/", "\\")
+
+            return rv
 
         def load_state(self):
             """
