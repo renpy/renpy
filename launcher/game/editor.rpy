@@ -472,6 +472,44 @@ init 1 python in editor:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
                 renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
+
+    class EditProject(Action):
+        """
+        Opens the project's base directory in an editor.
+        """
+
+        alt = "Open project in editor."
+
+        def __call__(self):
+
+            if not check_editor():
+                return
+
+            try:
+
+                e = renpy.editor.editor
+
+                e.begin()
+                e.open_project(project.current.path)
+                e.end()
+
+            except Exception, e:
+                exception = traceback.format_exception_only(type(e), e)[-1][:-1]
+                renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
+
+
+    def CanEditProject():
+        """
+        Returns True if EditProject can be used.
+        """
+
+        try:
+            e = renpy.editor.editor
+            return e.has_projects
+        except:
+            return False
+
+
 screen editor:
 
     frame:
