@@ -125,6 +125,7 @@ the omission in future versions.
 * Tmrwiz
 * Viliam Búr
 * Vollschauer
+* William Tumeo
 * Winter Wolves
 * Xavi-Mat
 * Xela
