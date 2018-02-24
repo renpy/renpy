@@ -95,6 +95,10 @@ init python in project:
             self.dump_mtime = 0
 
         def get_dump_filename(self):
+
+            if os.path.exists(os.path.join(self.gamedir, "saves")):
+                return os.path.join(self.gamedir, "saves", "navigation.json")
+
             self.make_tmp()
             return os.path.join(self.tmp, "navigation.json")
 
