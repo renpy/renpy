@@ -242,7 +242,14 @@ def dump(error):
         pass
 
     if args.json_dump != "-":
-        with file(args.json_dump, "w") as f:
+        new = args.json_dump + ".new"
+
+        with file(new, "w") as f:
             json.dump(result, f)
+
+        if os.path.exists(args.json_dump):
+            os.unlink(args.json_dump)
+
+        os.rename(new, args.json_dump)
     else:
         json.dump(result, sys.stdout, indent=2)
