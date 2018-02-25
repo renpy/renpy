@@ -269,6 +269,22 @@ init python:
     build.classify_renpy("**/thumbs.db", None)
     build.classify_renpy("**/.*", None)
 
+    # Atom rules. These have to be very early, since Atom uses names like
+    # tmp for packages.
+    build.classify_renpy("atom/", "atom-all source_only")
+    build.classify_renpy("atom/Atom.edit.py", "atom-all source_only")
+    build.classify_renpy("atom/default-dot-atom/**", "atom-all")
+    build.classify_renpy("atom/atom-windows/**", "atom-windows")
+    build.classify_renpy("atom/Atom.app/**", "atom-mac")
+    build.classify_renpy("atom/atom-linux**", "atom-linux")
+
+    try:
+        with open(os.path.join(config.renpy_base, "atom", "executable.txt")) as f:
+            for l in f:
+                build.executable(l.strip())
+    except:
+        pass
+
     build.classify_renpy("rapt/**", "rapt")
 
     build.classify_renpy("renios/prototype/base/", None)
@@ -291,6 +307,7 @@ init python:
     build.classify_renpy("**/saves/", None)
     build.classify_renpy("**/tmp/", None)
     build.classify_renpy("**/.Editra", None)
+
 
     # main source.
 
@@ -375,20 +392,6 @@ init python:
     build.classify_renpy("editra/editra.exe", "editra-windows")
     build.executable("editra/Editra/Editra")
 
-    # Atom rules.
-    build.classify_renpy("atom/", "atom-all source_only")
-    build.classify_renpy("atom/Atom.edit.py", "atom-all source_only")
-    build.classify_renpy("atom/default-dot-atom/**", "atom-all")
-    build.classify_renpy("atom/atom-windows/**", "atom-windows")
-    build.classify_renpy("atom/Atom.app/**", "atom-mac")
-    build.classify_renpy("atom/atom-linux**", "atom-linux")
-
-    try:
-        with open(os.path.join(config.renpy_base, "atom", "executable.txt")) as f:
-            for l in f:
-                build.executable(l.strip())
-    except:
-        pass
 
     # Packages.
     build.packages = [ ]
