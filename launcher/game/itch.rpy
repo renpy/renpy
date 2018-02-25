@@ -126,7 +126,9 @@ label itch:
                 butler,
                 "push",
                 filename,
-                itch_project + ":" + build["version"] + "-" + channel,
+                itch_project + ":" + channel,
+                "--userversion",
+                build["version"],
                 )
 
         cc.run()
