@@ -2383,9 +2383,13 @@ class Interface(object):
             anim = renpy.config.mouse[getattr(renpy.store, 'default_mouse', 'default')]
 
         img, x, y = anim[self.ticks % len(anim)]
-        tex = renpy.display.im.load_image(img)
+        rend = renpy.display.im.load_image(img)
 
-        return False, x, y, tex
+        tex = rend.children[0][0]
+        xo = rend.children[0][1]
+        yo = rend.children[0][2]
+
+        return False, x - xo, y - yo, tex
 
     def set_mouse_pos(self, x, y, duration):
         """

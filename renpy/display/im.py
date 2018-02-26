@@ -1715,10 +1715,10 @@ def load_image(im):
     """
     :doc: udd_utility
 
-    Loads the image manipulator `im` using the image cache, and returns a texture.
+    Loads the image manipulator `im` using the image cache, and returns a render.
     """
 
-    return cache.get(image(im), texture=True)
+    return cache.get(image(im), render=True)
 
 
 def load_surface(im):
