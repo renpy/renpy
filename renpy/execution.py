@@ -437,6 +437,9 @@ class Context(renpy.object.Object):
         developer = renpy.config.developer
         tracing = sys.gettrace() is not None
 
+        # Is this the first time through the loop?
+        first = True
+
         while node:
 
             this_node = node
@@ -455,7 +458,7 @@ class Context(renpy.object.Object):
                 if ll_entry not in self.line_log:
                     self.line_log.append(ll_entry)
 
-            if self.force_checkpoint or (node.rollback == "force"):
+            if first or self.force_checkpoint or (node.rollback == "force"):
                 update_rollback = True
                 force_rollback = True
             elif not renpy.config.all_nodes_rollback and (node.rollback == "never"):
@@ -464,6 +467,8 @@ class Context(renpy.object.Object):
             else:
                 update_rollback = True
                 force_rollback = False
+
+            first = False
 
             if update_rollback:
 
