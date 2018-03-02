@@ -475,7 +475,7 @@ class Context(renpy.object.Object):
                 if self.rollback and renpy.game.log:
                     renpy.game.log.begin(force=force_rollback)
 
-                if self.force_checkpoint:
+                if self.rollback and self.force_checkpoint:
                     renpy.game.log.checkpoint(hard=False)
                     self.force_checkpoint = False
 

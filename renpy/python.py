@@ -123,18 +123,24 @@ class StoreDict(dict):
 
         self.old = DictItems(self)
 
-    def get_changes(self):
+    def get_changes(self, cycle):
         """
         For every key that has changed since begin() was called, returns a
         dictionary mapping the key to its value when begin was called, or
         deleted if it did not exist when begin was called.
 
         As a side-effect, updates self.ever_been_changed.
+
+        `cycle`
+            If true, this cycles the old changes to the new changes. If
+            False, does not.
         """
 
         new = DictItems(self)
         rv = find_changes(self.old, new, deleted)
-        self.old = new
+
+        if cycle:
+            self.old = new
 
         if rv is None:
             return EMPTY_DICT
@@ -1312,7 +1318,7 @@ class RollbackLog(renpy.object.Object):
         self.did_interaction = False
 
         if self.current is not None:
-            self.complete()
+            self.complete(True)
         else:
             for sd in store_dicts.itervalues():
                 sd.begin()
@@ -1346,19 +1352,22 @@ class RollbackLog(renpy.object.Object):
 
         self.rolled_forward = False
 
-    def complete(self):
+    def complete(self, begin=False):
         """
         Called after a node is finished executing, before a save
         begins, or right before a rollback is attempted. This may be
         called more than once between calls to begin, and should always
         be called after an update to the store but before a rollback
         occurs.
+
+        `begin`
+            Should be true if called from begin().
         """
 
         # Update self.current.stores with the changes from each store.
         # Also updates .ever_been_changed.
         for name, sd in store_dicts.iteritems():
-            self.current.stores[name] = sd.get_changes()
+            self.current.stores[name] = sd.get_changes(begin)
 
         # Update the list of mutated objects and what we need to do to
         # restore them.
@@ -1496,8 +1505,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                        and data == fwd_data
-                        and (keep_rollback or self.rolled_forward)
+                    and data == fwd_data
+                    and (keep_rollback or self.rolled_forward)
                     ):
                     self.forward.pop(0)
                 else:
@@ -1706,7 +1715,7 @@ class RollbackLog(renpy.object.Object):
         """
 
         # Purge unreachable objects, so we don't save them.
-        self.complete()
+        self.complete(False)
         roots = self.get_roots()
         self.purge_unreachable(roots, wait=wait)
 
