@@ -21,6 +21,7 @@
 
 # This contains various Displayables that handle events.
 
+from __future__ import print_function
 
 import renpy.display
 import renpy.audio
@@ -88,31 +89,41 @@ def compile_event(key, keydown):
     while part[0] in MODIFIERS:
         modifiers.add(part.pop(0))
 
+    key = "_".join(part)
+
     if "repeat" in modifiers:
         rv += " and (ev.repeat)"
     else:
         rv += " and (not ev.repeat)"
 
-    if "alt" in modifiers:
-        rv += " and (ev.mod & %d)" % pygame.KMOD_ALT
-    else:
-        rv += " and not (ev.mod & %d)" % pygame.KMOD_ALT
+    if key not in [ "K_LALT", "K_RALT" ]:
 
-    if "meta" in modifiers:
-        rv += " and (ev.mod & %d)" % pygame.KMOD_META
-    else:
-        rv += " and not (ev.mod & %d)" % pygame.KMOD_META
+        if "alt" in modifiers:
+            rv += " and (ev.mod & %d)" % pygame.KMOD_ALT
+        else:
+            rv += " and not (ev.mod & %d)" % pygame.KMOD_ALT
 
-    if "ctrl" in modifiers:
-        rv += " and (ev.mod & %d)" % pygame.KMOD_CTRL
-    else:
-        rv += " and not (ev.mod & %d)" % pygame.KMOD_CTRL
+    if key not in [ "K_LGUI", "K_RGUI" ]:
 
-    if "shift" in modifiers:
-        rv += " and (ev.mod & %d)" % pygame.KMOD_SHIFT
+        if "meta" in modifiers:
+            rv += " and (ev.mod & %d)" % pygame.KMOD_META
+        else:
+            rv += " and not (ev.mod & %d)" % pygame.KMOD_META
 
-    if "noshift" in modifiers:
-        rv += " and not (ev.mod & %d)" % pygame.KMOD_SHIFT
+    if key not in [ "K_LCTRL", "K_RCTRL" ]:
+
+        if "ctrl" in modifiers:
+            rv += " and (ev.mod & %d)" % pygame.KMOD_CTRL
+        else:
+            rv += " and not (ev.mod & %d)" % pygame.KMOD_CTRL
+
+    if key not in [ "K_LSHIFT", "K_RSHIFT" ]:
+
+        if "shift" in modifiers:
+            rv += " and (ev.mod & %d)" % pygame.KMOD_SHIFT
+
+        if "noshift" in modifiers:
+            rv += " and not (ev.mod & %d)" % pygame.KMOD_SHIFT
 
     if len(part) == 1:
         if len(part[0]) != 1:
@@ -129,8 +140,6 @@ def compile_event(key, keydown):
                 raise Exception("Invalid key specifier %s" % key)
             else:
                 return "(False)"
-
-        key = "_".join(part)
 
         rv += " and ev.key == %d)" % (getattr(pygame.constants, key))
 
