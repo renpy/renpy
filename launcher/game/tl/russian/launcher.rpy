@@ -365,59 +365,67 @@ translate russian strings:
     old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
     new "Вероятно, это из-за того, что Ren'Py запущена напрямую из образа диска Mac. Чтобы исправить это, выйдите из лаунчера и скопируйте всю папку %s куда-нибудь ещё на компьютер и снова запустите Ren'Py."
 
-    # editor.rpy:150
-    old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
-    new "{b}Рекомендуется.{/b} Бета-редактор с простым интерфейсом и возможностями, помогающими в разработке, такими, как проверка орфографии. Editra на данный момент не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов."
+    # editor.rpy:152
+    old "(Recommended) A modern and approachable text editor."
+    new "(Рекомендуется) Современный, доступный текстовый редактор."
 
-    # editor.rpy:151
-    old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
-    new "{b}Рекомендуется.{/b} Бета-редактор с простым интерфейсом и возможностями, помогающими в разработке, такими, как проверка орфографии. Editra на данный момент не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов. На Linux, Editra требует wxPython."
+    # editor.rpy:164
+    old "Up to 150 MB download required."
+    new "Требуется скачать 150 МБ."
 
-    # editor.rpy:167
+    # editor.rpy:178
+    old "A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input."
+    new "Старый, проверенный бета-редактор. Editra на данный момент не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов."
+
+    # editor.rpy:179
+    old "A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
+    new "Старый, проверенный бета-редактор. Editra на данный момент не поддерживает IME, необходимые для ввода Китайского, Японского и Корейского текстов. На Linux, Editra требует wxPython."
+
+    # editor.rpy:195
     old "This may have occured because wxPython is not installed on this system."
     new "Это могло случиться из-за того, что wxPython не установлен на этой системе."
 
-    # editor.rpy:169
+    # editor.rpy:197
     old "Up to 22 MB download required."
     new "Требуется скачать 22 МБ."
 
-    # editor.rpy:182
+    # editor.rpy:210
     old "A mature editor that requires Java."
     new "Проверенный временем редактор. Требует Java."
 
-    # editor.rpy:182
+    # editor.rpy:210
     old "1.8 MB download required."
     new "Требуется скачать 1.8 МБ."
 
-    # editor.rpy:182
+    # editor.rpy:210
     old "This may have occured because Java is not installed on this system."
     new "Это могло случиться из-за того, что Java не установлена в данной системе."
 
-    # editor.rpy:191
+    # editor.rpy:219
     old "System Editor"
     new "Системный"
 
-    # editor.rpy:191
+    # editor.rpy:219
     old "Invokes the editor your operating system has associated with .rpy files."
     new "Включает текстовый редактор, ассоциированный в вашей системе с файлами .rpy."
 
-    # editor.rpy:207
+    # editor.rpy:235
     old "None"
     new "Нет"
 
-    # editor.rpy:207
+    # editor.rpy:235
     old "Prevents Ren'Py from opening a text editor."
     new "Не позволяет Ren'Py запускать текстовый редактор."
 
-    # editor.rpy:359
+    # editor.rpy:387
     old "An exception occured while launching the text editor:\n[exception!q]"
     new "Возникла ошибка при запуске текстового редактора:\n[exception!q]"
 
-    # editor.rpy:457
+    # editor.rpy:523
     old "Select Editor"
     new "Выберите редактор"
 
-    # editor.rpy:472
+    # editor.rpy:538
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
     new "Текстовый редактор — программа, необходимая для редактирования сценариев Ren'Py. Здесь, вы можете выбрать редактор, который будет использовать Ren'Py. Если такового нет, редактор будет автоматически загружен и установлен."
 
@@ -485,63 +493,67 @@ translate russian strings:
     old "Edit File"
     new "Редактировать Файл"
 
-    # front_page.rpy:214
+    # front_page.rpy:215
+    old "Open project"
+    new "Открыть проект"
+
+    # front_page.rpy:217
     old "All script files"
     new "все файлы сценария"
 
-    # front_page.rpy:218
+    # front_page.rpy:221
     old "Actions"
     new "Действия с Проектом"
 
-    # front_page.rpy:227
+    # front_page.rpy:230
     old "Navigate Script"
     new "Навигация по cценарию"
 
-    # front_page.rpy:228
+    # front_page.rpy:231
     old "Check Script (Lint)"
     new "Проверить скрипт (Lint)"
 
-    # front_page.rpy:231
+    # front_page.rpy:234
     old "Change/Update GUI"
     new "Изменить/Обновить GUI"
 
-    # front_page.rpy:233
+    # front_page.rpy:236
     old "Change Theme"
     new "Сменить тему"
 
-    # front_page.rpy:236
+    # front_page.rpy:239
     old "Delete Persistent"
     new "Очистить постоянные"
 
-    # front_page.rpy:245
+    # front_page.rpy:248
     old "Build Distributions"
     new "Построить дистрибутивы"
 
-    # front_page.rpy:247
+    # front_page.rpy:250
     old "Android"
     new "Android"
 
-    # front_page.rpy:248
+    # front_page.rpy:251
     old "iOS"
     new "iOS"
 
-    # front_page.rpy:249
+    # front_page.rpy:252
     old "Generate Translations"
     new "Создать переводы"
 
-    # front_page.rpy:250
+    # front_page.rpy:253
     old "Extract Dialogue"
     new "Извлечь диалог"
 
-    # front_page.rpy:267
+    # front_page.rpy:270
     old "Checking script for potential problems..."
     new "Проверка потенциальных проблем сценария..."
 
-    # front_page.rpy:282
+    # front_page.rpy:285
     old "Deleting persistent data..."
     new "Удаление постоянных данных..."
 
-    # front_page.rpy:290
+    # front_page.rpy:293
     old "Recompiling all rpy files into rpyc files..."
     new "Перекомпиляция всех файлов rpy в файлы rpyc..."
 
@@ -1021,139 +1033,139 @@ translate russian strings:
     old "Have you backed up your projects recently?"
     new "Давно сохраняли свои проекты?"
 
-    # project.rpy:276
+    # project.rpy:280
     old "Launching the project failed."
     new "Запуск проекта провален."
 
-    # project.rpy:276
+    # project.rpy:280
     old "Please ensure that your project launches normally before running this command."
     new "Пожалуйста, убедитесь, что ваш проект нормально запускается перед использованием этой команды."
 
-    # project.rpy:292
+    # project.rpy:296
     old "Ren'Py is scanning the project..."
     new "Ren'Py сканирует проект..."
 
-    # project.rpy:721
+    # project.rpy:725
     old "Launching"
     new "Запускаю"
 
-    # project.rpy:755
+    # project.rpy:759
     old "PROJECTS DIRECTORY"
     new "ДИРЕКТОРИЯ ПРОЕКТОВ"
 
-    # project.rpy:755
+    # project.rpy:759
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Пожалуйста, выберите директорию проектов, используя выборщик директорий.\n{b}Он мог появиться позади этого окна.{/b}"
 
-    # project.rpy:755
+    # project.rpy:759
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Лаунчер будет искать проекты в этой директории, создавать новые проекты в этой директории, и размещать построенные проекты в этой директории."
 
-    # project.rpy:760
+    # project.rpy:764
     old "Ren'Py has set the projects directory to:"
     new "Ren'Py установила директорию проектов на:"
 
-    # translations.rpy:92
+    # translations.rpy:91
     old "Translations: [project.current.display_name!q]"
     new "Переводы: [project.current.display_name!q]"
 
-    # translations.rpy:133
+    # translations.rpy:132
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
     new "Язык работы. Он должен содержать только не-заглавные символы ASCII и подчёркивания."
 
-    # translations.rpy:159
+    # translations.rpy:158
     old "Generate empty strings for translations"
     new "Генерировать пустые строки для переводов"
 
-    # translations.rpy:177
+    # translations.rpy:176
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
     new "Генерирует или обновляет файлы переводов. Файлы будут помещены в game/tl/[persistent.translate_language!q]."
 
-    # translations.rpy:197
+    # translations.rpy:196
     old "Extract String Translations"
     new "Извлечь Строки Для Перевода"
 
-    # translations.rpy:199
+    # translations.rpy:198
     old "Merge String Translations"
     new "Объединить Строки Перевода"
 
-    # translations.rpy:204
+    # translations.rpy:203
     old "Replace existing translations"
     new "Заменить существующие переводы"
 
-    # translations.rpy:205
+    # translations.rpy:204
     old "Reverse languages"
     new "Обратить языки"
 
-    # translations.rpy:209
+    # translations.rpy:208
     old "Update Default Interface Translations"
     new "Обновить Базовый Перевод Интерфейса"
 
-    # translations.rpy:229
+    # translations.rpy:228
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
     new "Команда извлечения позволяет вам извлечь переводимые строки из существующего проекта во временный файл.\n\nКоманда объединения объединяет извлечённые переводы в другой перевод."
 
-    # translations.rpy:253
+    # translations.rpy:252
     old "Ren'Py is generating translations...."
     new "Ren'Py создаёт переводы..."
 
-    # translations.rpy:264
+    # translations.rpy:263
     old "Ren'Py has finished generating [language] translations."
     new "Ren'Py закончила создавать перевод для [language]."
 
-    # translations.rpy:277
+    # translations.rpy:276
     old "Ren'Py is extracting string translations..."
     new "Ren'Py извлекает переводимые строки..."
 
-    # translations.rpy:280
+    # translations.rpy:279
     old "Ren'Py has finished extracting [language] string translations."
     new "Ren'Py завершила извлечение [language] строк перевода."
 
-    # translations.rpy:300
+    # translations.rpy:299
     old "Ren'Py is merging string translations..."
     new "Ren'Py объединяет строки перевода..."
 
-    # translations.rpy:303
+    # translations.rpy:302
     old "Ren'Py has finished merging [language] string translations."
     new "Ren'Py завершила объединение [language] строк перевода."
 
-    # translations.rpy:314
+    # translations.rpy:313
     old "Updating default interface translations..."
     new "Обновляю базовый перевод интерфейса..."
 
-    # translations.rpy:343
+    # translations.rpy:342
     old "Extract Dialogue: [project.current.display_name!q]"
     new "Извлечь диалог: [project.current.display_name!q]"
 
-    # translations.rpy:359
+    # translations.rpy:358
     old "Format:"
     new "Формат:"
 
-    # translations.rpy:367
+    # translations.rpy:366
     old "Tab-delimited Spreadsheet (dialogue.tab)"
     new "Табулированная таблица (dialogue.tab)"
 
-    # translations.rpy:368
+    # translations.rpy:367
     old "Dialogue Text Only (dialogue.txt)"
     new "Только текст диалога (dialogue.txt)"
 
-    # translations.rpy:381
+    # translations.rpy:380
     old "Strip text tags from the dialogue."
     new "Убрать текстовые теги из диалога."
 
-    # translations.rpy:382
+    # translations.rpy:381
     old "Escape quotes and other special characters."
     new "Включать кавычки и регулярные выражения."
 
-    # translations.rpy:383
+    # translations.rpy:382
     old "Extract all translatable strings, not just dialogue."
     new "Извлечь все переводимые строки, не только диалог."
 
-    # translations.rpy:411
+    # translations.rpy:410
     old "Ren'Py is extracting dialogue...."
     new "Ren'Py извлекает диалог..."
 
-    # translations.rpy:415
+    # translations.rpy:414
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
     new "Ren'Py завершила извлечение диалога. Извлечённый диалог можно найти в файле dialogue.[persistent.dialogue_format] в директории проекта."
 
