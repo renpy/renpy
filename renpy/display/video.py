@@ -186,6 +186,14 @@ def render_movie(channel, width, height):
     return rv
 
 
+def default_play_callback(old, new):  # @UnusedVariable
+
+    renpy.audio.music.play(new._play, channel=new.channel, loop=True, synchro_start=True)
+
+    if new.mask:
+        renpy.audio.music.play(new.mask, channel=new.mask_channel, loop=True, synchro_start=True)
+
+
 class Movie(renpy.display.core.Displayable):
     """
     :doc: movie
@@ -232,6 +240,33 @@ class Movie(renpy.display.core.Displayable):
         sprites.) Users can also choose to fall back to this image as a
         preference if video is too taxing for their system.
 
+    ``play_callback``
+        If not None, a function that's used to start the movies playing.
+        (This may do things like queue a transition between sprites, if
+        desired.) It's called with the following arguments:
+
+        `old`
+            The old Movie object, or None if the movie is not playing.
+        `new`
+            The new Movie object.
+
+        A movie object has the `play` parameter available as ``_play``,
+        while the ``channel``, ``mask``, and ``mask_channel`` fields
+        correspond to the given parameters.
+
+        Generally, this will want to use :func:`renpy.music.play` to start
+        the movie playing on the given channel, with synchro_start=True.
+        A minimal implementation is::
+
+            def play_callback(old, new):
+
+                renpy.music.play(new._play, channel=new.channel, loop=True, synchro_start=True)
+
+                if new.mask:
+                    renpy.music.play(new.mask, channel=new.mask_channel, loop=True, synchro_start=True)
+
+
+
     This displayable will be transparent when the movie is not playing.
     """
 
@@ -244,6 +279,8 @@ class Movie(renpy.display.core.Displayable):
 
     image = None
 
+    play_callback = None
+
     def ensure_channel(self, name):
 
         if name is None:
@@ -254,7 +291,7 @@ class Movie(renpy.display.core.Displayable):
 
         renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True)
 
-    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, **properties):
+    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, **properties):
         super(Movie, self).__init__(**properties)
 
         global auto_channel_serial
@@ -279,6 +316,8 @@ class Movie(renpy.display.core.Displayable):
         self.ensure_channel(self.mask_channel)
 
         self.image = renpy.easy.displayable_or_none(image)
+
+        self.play_callback = play_callback
 
         if (self.channel == "movie") and (renpy.config.hw_video) and renpy.mobile:
             raise Exception("Movie(channel='movie') doesn't work on mobile when config.hw_video is true. (Use a different channel argument.)")
@@ -342,10 +381,11 @@ class Movie(renpy.display.core.Displayable):
 
         if self._play != old_play:
             if self._play:
-                renpy.audio.music.play(self._play, channel=self.channel, loop=True, synchro_start=True)
 
-                if self.mask:
-                    renpy.audio.music.play(self.mask, channel=self.mask_channel, loop=True, synchro_start=True)
+                if self.play_callback is not None:
+                    self.play_callback(old, self)
+                else:
+                    default_play_callback(old, self)
 
             else:
                 renpy.audio.music.stop(channel=self.channel)
