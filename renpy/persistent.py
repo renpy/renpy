@@ -490,7 +490,7 @@ def MultiPersistent(name):
             break
 
     try:
-        rv = loads(file(fn).read())
+        rv = loads(file(fn, "rb").read())
     except:
         rv = _MultiPersistent()
 
