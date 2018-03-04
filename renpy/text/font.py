@@ -64,7 +64,7 @@ class ImageFont(object):
             g = textsupport.Glyph()  # @UndefinedVariable
 
             g.character = ord(c)
-            g.ascent = self.height
+            g.ascent = self.baseline
             g.line_spacing = self.height
 
             width = self.width.get(c, None)
@@ -117,7 +117,8 @@ class SFont(ImageFont):
                  spacewidth,
                  default_kern,
                  kerns,
-                 charset):
+                 charset,
+                 baseline=None):
 
         super(SFont, self).__init__()
 
@@ -126,6 +127,7 @@ class SFont(ImageFont):
         self.default_kern = default_kern
         self.kerns = kerns
         self.charset = charset
+        self.baseline = baseline
 
     def load(self):
 
@@ -140,7 +142,11 @@ class SFont(ImageFont):
         sw, sh = surf.get_size()
         height = sh
         self.height = height  # W0201
-        self.baseline = height  # W0201
+        if self.baseline is None:
+            self.baseline = height  # W0201
+        elif self.baseline < 0:
+            # Negative value is the distance from the bottom (vs top)
+            self.baseline = height + self.baseline  # W0201
 
         # Create space characters.
         self.chars[u' '] = renpy.display.pgrender.surface((self.spacewidth, height), True)
@@ -391,7 +397,7 @@ class ScaledImageFont(ImageFont):
 
 
 def register_sfont(name=None, size=None, bold=False, italics=False, underline=False,
-                   filename=None, spacewidth=10, default_kern=0, kerns={},
+                   filename=None, spacewidth=10, baseline=None, default_kern=0, kerns={},
                    charset=u"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"):
     """
     :doc: image_fonts
@@ -423,6 +429,13 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
     `spacewidth`
         The width of a space character, an integer in pixels.
 
+    `baseline`
+        The distance from the top of the font to the baseline (the invisible
+        line letters sit on), an integer in pixels.  If this font is mixed with
+        other fonts, their baselines will be aligned.  Negative values indicate
+        distance from the bottom of the font instead, and ``None`` means the
+        baseline equals the height (i.e., is at the very bottom of the font).
+
     `default_kern`
         The default kern spacing between characters, in pixels.
 
@@ -442,7 +455,7 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
     if name is None or size is None or filename is None:
         raise Exception("When registering an SFont, the font name, font size, and filename are required.")
 
-    sf = SFont(filename, spacewidth, default_kern, kerns, charset)
+    sf = SFont(filename, spacewidth, default_kern, kerns, charset, baseline)
     image_fonts[(name, size, bold, italics)] = sf
 
 
