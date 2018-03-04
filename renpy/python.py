@@ -478,18 +478,23 @@ class WrapNode(ast.NodeTransformer):
 wrap_node = WrapNode()
 
 
-def set_filename(filename, offset, tree):
-    """Set the filename attribute to filename on every node in tree"""
-    worklist = [tree]
-    while worklist:
-        node = worklist.pop(0)
-        node.filename = filename
+def wrap_hide(tree):
+    """
+    Wraps code inside a python hide or python early hide block inside a
+    function, so it gets its own scope that works the way Python expects
+    it to.
+    """
 
-        lineno = getattr(node, 'lineno', None)
-        if lineno is not None:
-            node.lineno = lineno + offset
+    hide = ast.parse("""\
+def _execute_python_hide(): pass;
+_execute_python_hide()
+""")
 
-        worklist.extend(node.getChildNodes())
+    for i in ast.walk(hide):
+        ast.copy_location(i, hide.body[0])
+
+    hide.body[0].body = tree.body
+    tree.body = hide.body
 
 
 unicode_re = re.compile(ur'[\u0080-\uffff]')
@@ -623,6 +628,9 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
             tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
 
         tree = wrap_node.visit(tree)
+
+        if mode == "hide":
+            wrap_hide(tree)
 
         ast.fix_missing_locations(tree)
         ast.increment_lineno(tree, lineno - 1)
@@ -1517,7 +1525,7 @@ class RollbackLog(renpy.object.Object):
                 if (self.current.context.current == fwd_name
                         and data == fwd_data
                         and (keep_rollback or self.rolled_forward)
-                        ):
+                    ):
                     self.forward.pop(0)
                 else:
                     self.forward = [ ]
