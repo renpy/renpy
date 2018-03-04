@@ -831,7 +831,12 @@ class Python(Node):
         super(Python, self).__init__(loc)
 
         self.hide = hide
-        self.code = PyCode(python_code, loc=loc, mode='exec')
+
+        if hide:
+            self.code = PyCode(python_code, loc=loc, mode='hide')
+        else:
+            self.code = PyCode(python_code, loc=loc, mode='exec')
+
         self.store = store
 
     def diff_info(self):
@@ -882,7 +887,12 @@ class EarlyPython(Node):
         super(EarlyPython, self).__init__(loc)
 
         self.hide = hide
-        self.code = PyCode(python_code, loc=loc, mode='exec')
+
+        if hide:
+            self.code = PyCode(python_code, loc=loc, mode='hide')
+        else:
+            self.code = PyCode(python_code, loc=loc, mode='exec')
+
         self.store = store
 
     def diff_info(self):

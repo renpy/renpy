@@ -610,12 +610,17 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
     try:
         line_offset = lineno - 1
 
+        if mode == "hide":
+            py_mode = "exec"
+        else:
+            py_mode = mode
+
         try:
             flags = new_compile_flags
-            tree = compile(source, filename, mode, ast.PyCF_ONLY_AST | flags, 1)
+            tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
         except:
             flags = old_compile_flags
-            tree = compile(source, filename, mode, ast.PyCF_ONLY_AST | flags, 1)
+            tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
 
         tree = wrap_node.visit(tree)
 
@@ -627,7 +632,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         if ast_node:
             return tree.body
 
-        rv = compile(tree, filename, mode, flags, 1)
+        rv = compile(tree, filename, py_mode, flags, 1)
 
         if cache:
             py_compile_cache[key] = rv
@@ -646,6 +651,11 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
 def py_compile_exec_bytecode(source, **kwargs):
     code = py_compile(source, 'exec', cache=False, **kwargs)
+    return marshal.dumps(code)
+
+
+def py_compile_hide_bytecode(source, **kwargs):
+    code = py_compile(source, 'hide', cache=False, **kwargs)
     return marshal.dumps(code)
 
 
@@ -1505,9 +1515,9 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                    and data == fwd_data
-                    and (keep_rollback or self.rolled_forward)
-                    ):
+                        and data == fwd_data
+                        and (keep_rollback or self.rolled_forward)
+                        ):
                     self.forward.pop(0)
                 else:
                     self.forward = [ ]
