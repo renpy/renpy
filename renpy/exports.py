@@ -2647,6 +2647,11 @@ def call_screen(_screen_name, *args, **kwargs):
 
     renpy.exports.mode('screen')
 
+    with_none = renpy.config.implicit_with_none
+
+    if "_with_none" in kwargs:
+        with_none = kwargs.pop("_with_none")
+
     show_screen(_screen_name, _transient=True, *args, **kwargs)
 
     roll_forward = renpy.exports.roll_forward_info()
@@ -2657,11 +2662,6 @@ def call_screen(_screen_name, *args, **kwargs):
         rv = e
 
     renpy.exports.checkpoint(rv)
-
-    with_none = renpy.config.implicit_with_none
-
-    if "_with_none" in kwargs:
-        with_none = kwargs.pop("_with_none")
 
     if with_none:
         renpy.game.interface.do_with(None, None)
