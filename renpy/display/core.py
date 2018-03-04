@@ -2721,7 +2721,12 @@ class Interface(object):
                     step += 1
                     continue
 
-                result = self.prediction_coroutine.send(expensive)
+                try:
+                    result = self.prediction_coroutine.send(expensive)
+                except ValueError:
+                    # Saw this happen once during a quit, giving a
+                    # ValueError: generator already executing
+                    result = None
 
                 if result is None:
                     self.prediction_coroutine = None
