@@ -2,7 +2,7 @@
 The Ren'Py Visual Novel Engine
 ==============================
 
-http://www.renpy.org
+https://www.renpy.org
 
 Ren'Py development takes place on the ``master`` branch, and occasionally
 on feature branches.
@@ -25,7 +25,7 @@ Nightly Build
 
 Nightly builds can be downloaded from:
 
-   http://nightly.renpy.org
+   https://nightly.renpy.org
 
 Note that the latest nightly build is at the bottom of the list. Once you've
 unpacked the nightly, change into this repository, and run::
@@ -154,7 +154,7 @@ Translating
 For best practices when it comes to translating the launcher and template
 game, please read:
 
-http://lemmasoft.renai.us/forums/viewtopic.php?p=321603#p321603
+https://lemmasoft.renai.us/forums/viewtopic.php?p=321603#p321603
 
 
 Contributing
