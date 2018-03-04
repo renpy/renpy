@@ -123,6 +123,16 @@ Dynamic displayables display a child displayable based on the state of
 the game. They do not take any properties, as layout is controlled
 by the properties of the child displayable they return.
 
+Note that these dynamic displayables always display their current state.
+Because of this, a dynamic displayable will not participate in a
+transition. (Or more precisely, it will display the same thing in both the
+old and new states of the transition.)
+
+By design, dynamic displayables are intended to be used for things that
+change rarely and when an image define this way is off screen (Such as
+a character customization system), and not for things that change
+frequently, such as character emotions.
+
 .. include:: inc/disp_dynamic
 
 
