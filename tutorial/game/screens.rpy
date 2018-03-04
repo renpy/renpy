@@ -448,6 +448,8 @@ screen game_menu(title, scroll=None):
                         scrollbars "vertical"
                         mousewheel True
                         draggable True
+                        pagekeys True
+
 
                         side_yfill True
 
@@ -463,6 +465,7 @@ screen game_menu(title, scroll=None):
                         scrollbars "vertical"
                         mousewheel True
                         draggable True
+                        pagekeys True
 
                         side_yfill True
 
