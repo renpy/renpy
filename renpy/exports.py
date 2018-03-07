@@ -3509,3 +3509,19 @@ def get_on_battery():
     else:
         old_battery = False
         return False
+
+
+def get_say_image_tag():
+    """
+    :doc: image_func
+
+    Returns the tag corresponding to the currently speaking character (the
+    `image` argument given to that character). Returns None if no character
+    is speaking or the current speaking character does not have a corresponding
+    image tag.
+    """
+
+    if renpy.store._side_image_attributes is None:
+        return None
+
+    return renpy.store._side_image_attributes[0]
