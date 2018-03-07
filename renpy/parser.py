@@ -834,7 +834,7 @@ class Lexer(object):
         label can be any valid label or None, but this has only effect if label
         has global part.
         """
-        if label and label[0] != '.':
+        if label and (label[0] not in '._'):
             self.global_label = label.split('.')[0]
 
     def label_name(self, declare=False):
