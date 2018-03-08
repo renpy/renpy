@@ -132,6 +132,7 @@ init -1500 python in build:
         ("dialogue.txt", None),
         ("dialogue.tab", None),
         ("profile_screen.txt", None),
+        ("files.txt", None),
 
         ("tmp/", None),
         ("game/saves/", None),

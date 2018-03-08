@@ -518,7 +518,10 @@ label _filename_list:
 
     python hide:
         import os
-        f = file("files.txt", "w")
+
+        FILES_TXT = os.path.join(renpy.config.basedir, "files.txt")
+
+        f = file(FILES_TXT, "w")
 
         for dirname, dirs, files in os.walk(config.gamedir):
 
@@ -533,7 +536,7 @@ label _filename_list:
 
         f.close()
 
-        renpy.launch_editor(["files.txt"], transient=1)
+        renpy.launch_editor([ FILES_TXT ], transient=1)
 
     return
 
