@@ -421,6 +421,7 @@ _in_replay = None
 
 # Used to store the side image attributes.
 _side_image_attributes = None
+_side_image_attributes_reset = False
 
 # True if we're in the main_menu, False otherwise. This controls autosave,
 # among other things.

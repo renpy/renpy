@@ -957,6 +957,9 @@ class ADVCharacter(object):
 
             renpy.store._side_image_attributes = attrs
 
+            if not interact:
+                renpy.store._side_image_attributes_reset = True
+
         if renpy.config.voice_tag_callback is not None:
             renpy.config.voice_tag_callback(self.voice_tag)
 

@@ -2220,6 +2220,10 @@ class Interface(object):
         scene_lists.replace_transient()
         scene_lists.shown_window = False
 
+        if renpy.store._side_image_attributes_reset:
+            renpy.store._side_image_attributes = None
+            renpy.store._side_image_attributes_reset = False
+
     def set_transition(self, transition, layer=None, force=False):
         """
         Sets the transition that will be performed as part of the next
@@ -2650,6 +2654,10 @@ class Interface(object):
 
             if renpy.game.log is not None:
                 renpy.game.log.did_interaction = True
+
+            if renpy.store._side_image_attributes_reset:
+                renpy.store._side_image_attributes = None
+                renpy.store._side_image_attributes_reset = False
 
     def consider_gc(self):
         """
