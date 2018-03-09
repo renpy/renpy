@@ -22,8 +22,8 @@ statement after the label statement whenever the end of the block is reached.
 There are two kinds of labels: *global* and *local* labels. Global labels live
 in one global scope shared across all project files and thus should have unique
 names per game. Local labels logically reside inside the scope of the global label
-they are declared in, which extends until the next global label in the
-same block.
+they are declared in. The scope of a global label extends from one global label
+to the next, and does not consider the indentation of the lines.
 
 To declare a local label, prefix its name with `.`. For example::
 
