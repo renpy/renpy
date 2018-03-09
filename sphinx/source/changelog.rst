@@ -2,7 +2,52 @@
 Full Changelog
 ==============
 
+.. _renpy-6.99.14.2:
+
+6.99.14.2
+=========
+
+Changes
+--------
+
+The Atom text editor is now supported in Ren'Py. When it is selected, Ren'Py
+will download Atom, and will create a new profile with the language-renpy,
+renpy-dark-syntax, and renpy-light-syntax Atom plugins installed, along with
+a few default setting to make Ren'Py programming easier.
+
+It is now possible to supply a baseline to image-based fonts.
+
+When a screen in the default gui scrolls, the pageup and pagedown keys will
+now work to scroll it. (This only works with newly-created projects.)
+
+The :func:`Movie` displayable now takes a play_callback argument, which
+specifies a function that is called to play a movie. This function can
+do things like queue up a transition movie before queuing the usual loop,
+making for smooth transitions.
+
+
+
+
+Fixes
+-----
+
+An issue where a save or auto-save could rarely cause data corruption
+in the non-saved game has been fixed.
+
+Python hide statements are now run in a python function context, which
+makes certain constructs (like generator expressions) compile and run
+correctly.
+
+Global labels now behave as described in the documentation, even when
+indented.
+
+A regression with custom mouse cursors that could cause the mouse to
+jump around wildly has been fixed.
+
+
+
 .. _renpy-6.99.14.1:
+
 
 6.99.14.1
 =========
