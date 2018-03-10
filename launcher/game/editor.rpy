@@ -180,7 +180,7 @@ init 1 python in editor:
 
         if renpy.windows:
             dlc = "editra-windows"
-            installed = os.path.exists(os.path.join(config.basedir, "editra/Editra-win32"))
+            installed = os.path.exists(os.path.join(config.basedir, "editra/editra.exe"))
             description = ED
             error_message = None
         elif renpy.macintosh:
