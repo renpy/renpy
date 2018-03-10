@@ -25,8 +25,8 @@ specifies a function that is called to play a movie. This function can
 do things like queue up a transition movie before queuing the usual loop,
 making for smooth transitions.
 
-
-
+The new :func:`renpy.get_say_image_tag` function makes it possible to
+retrieve the name of the speaking character.
 
 Fixes
 -----
@@ -44,6 +44,7 @@ indented.
 A regression with custom mouse cursors that could cause the mouse to
 jump around wildly has been fixed.
 
+An issue with side images persisting after a menu was shown has been fixed.
 
 
 .. _renpy-6.99.14.1:
