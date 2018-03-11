@@ -105,7 +105,15 @@ class SLContext(renpy.ui.Addable):
 
         # A cache associated with this context. The cache maps from
         # statement serial to information associated with the statement.
-        self.cache = { }
+        self.new_cache = { }
+
+        # The old cache, used to take information from the old version of
+        # this displayable.
+        self.old_cache = { }
+
+        # The miss cache, used to take information that isn't present in
+        # old_cache.
+        self.miss_cache = { }
 
         # The number of times a particular use statement has been called
         # in the current screen. We use this to generate a unique name for
@@ -151,6 +159,10 @@ class SLContext(renpy.ui.Addable):
         # True if it's unlikely this node will run. This is used in prediction
         # to speed things up.
         self.unlikely = False
+
+        # The old and new generations of the use_cache.
+        self.new_use_cache = { }
+        self.old_use_cache = { }
 
     def add(self, d, key):
         self.children.append(d)
@@ -652,10 +664,12 @@ class SLDisplayable(SLBlock):
 
         screen = renpy.ui.screen
 
-        cache = context.cache.get(self.serial, None)
+        cache = context.old_cache.get(self.serial, None) or context.miss_cache.get(self.serial, None)
 
         if not isinstance(cache, SLCache):
-            context.cache[self.serial] = cache = SLCache()
+            cache = SLCache()
+
+        context.new_cache[self.serial] = cache
 
         copy_on_change = cache.copy_on_change
 
@@ -811,7 +825,7 @@ class SLDisplayable(SLBlock):
                 if self.scope:
                     keywords["scope"] = ctx.scope
 
-                if self.replaces and context.updating:
+                if self.replaces and ctx.updating:
                     keywords['replaces'] = old_main
 
                 # Pass the context
@@ -1394,11 +1408,16 @@ class SLFor(SLBlock):
 
             value = [ 0 ]
 
-        newcaches = {}
-        oldcaches = context.cache.get(self.serial, newcaches)
+        newcaches = { }
 
+        oldcaches = context.old_cache.get(serial, newcaches) or { }
         if not isinstance(oldcaches, dict):
-            oldcaches = newcaches
+            oldcaches = { }
+
+        misscaches = context.miss_cache.get(serial, newcaches) or { }
+
+        if not isinstance(misscaches, dict):
+            misscaches = { }
 
         ctx = SLContext(context)
 
@@ -1406,13 +1425,17 @@ class SLFor(SLBlock):
 
             ctx.scope[variable] = v
 
-            cache = oldcaches.get(index, None)
+            ctx.old_cache = oldcaches.get(index, None) or { }
 
-            if not isinstance(cache, dict):
-                cache = {}
+            if not isinstance(ctx.old_cache, dict):
+                ctx.old_cache = {}
 
-            newcaches[index] = cache
-            ctx.cache = cache
+            ctx.miss_cache = misscaches.get(index, None) or { }
+
+            if not isinstance(ctx.miss_cache, dict):
+                ctx.miss_cache = {}
+
+            newcaches[index] = ctx.new_cache = { }
 
             # Inline of SLBlock.execute.
 
@@ -1426,7 +1449,7 @@ class SLFor(SLBlock):
             if context.unlikely:
                 break
 
-        context.cache[self.serial] = newcaches
+        context.new_cache[self.serial] = newcaches
 
         if ctx.fail:
             context.fail = True
@@ -1636,40 +1659,29 @@ class SLUse(SLNode):
 
         # Figure out the cache to use.
 
-        # True if we want to force-mark this as an update.
-        update = False
+        ctx = SLContext(context)
+        ctx.new_cache = context.new_cache[self.serial] = { }
+        ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
 
-        if (not context.predicting) and self.id:
+        if self.id:
 
-            # If we have an id, look it up in the current screen's use_cache.
-
-            current_screen = renpy.display.screen.current_screen()
             use_id = (self.target, eval(self.id, context.globals, context.scope))
 
-            cache = current_screen.use_cache.get(use_id, None)
+            ctx.old_cache = context.old_use_cache.get(use_id, None) or context.old_cache.get(self.serial, None) or { }
 
-            if cache is not None:
-                update = True
+            if use_id in ctx.old_use_cache:
+                ctx.updating = True
 
-            else:
-
-                if cache is None:
-                    cache = context.cache.get(self.serial, None)
-
-                if not isinstance(cache, dict):
-                    cache = { }
-
-            context.cache[self.serial] = cache
-            current_screen.use_cache[use_id] = cache
+            ctx.new_use_cache[use_id] = ctx.new_cache
 
         else:
 
-            # Otherwise, look up the cache based on the statement's location.
+            ctx.old_cache = context.old_cache.get(self.serial, None) or { }
 
-            cache = context.cache.get(self.serial, None)
-
-            if not isinstance(cache, dict):
-                context.cache[self.serial] = cache = { }
+        if not isinstance(ctx.old_cache, dict):
+            ctx.old_cache = { }
+        if not isinstance(ctx.miss_cache, dict):
+            ctx.miss_cache = { }
 
         # Evaluate the arguments.
         try:
@@ -1689,12 +1701,8 @@ class SLUse(SLNode):
         if ast.parameters is not None:
             new_scope = ast.parameters.apply(args, kwargs, ignore_errors=context.predicting)
 
-            scope = cache.get("scope", None)
-
-            if scope is None:
-                scope = cache["scope"] = new_scope
-            else:
-                scope.update(new_scope)
+            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+            scope.update(new_scope)
 
         else:
 
@@ -1707,13 +1715,8 @@ class SLUse(SLNode):
         scope["_scope"] = scope
 
         # Run the child screen.
-        ctx = SLContext(context)
         ctx.scope = scope
-        ctx.cache = cache
         ctx.parent = weakref.ref(context)
-
-        if update:
-            ctx.updating = True
 
         ctx.transclude = self.block
 
@@ -1753,20 +1756,21 @@ class SLTransclude(SLNode):
         if not context.transclude:
             return
 
-        cache = context.cache.get(self.serial, None)
-
-        if not isinstance(cache, dict):
-            context.cache[self.serial] = cache = { }
-
-        cache["transclude"] = context.transclude
-
         parent = context.parent
         if parent is not None:
             parent = parent()
 
         ctx = SLContext(parent)
+        ctx.new_cache = context.new_cache[self.serial] = { }
+        ctx.old_cache = context.old_cache.get(self.serial, None) or { }
+        ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
 
-        ctx.cache = cache
+        if not isinstance(ctx.old_cache, dict):
+            ctx.old_cache = { }
+        if not isinstance(ctx.miss_cache, dict):
+            ctx.miss_cache = { }
+
+        ctx.new_cache["transclude"] = context.transclude
 
         ctx.children = context.children
         ctx.showif = context.showif
@@ -1994,6 +1998,7 @@ class SLScreen(SLBlock):
             debug = True
 
         context = SLContext()
+
         context.scope = scope
         context.globals = renpy.python.store_dicts["store"]
         context.debug = debug
@@ -2002,19 +2007,29 @@ class SLScreen(SLBlock):
 
         name = scope["_name"]
 
-        main_cache = current_screen.cache
+        def get_cache(d):
+            rv = d.get(name, None)
 
-        cache = main_cache.get(name, None)
-        if (not isinstance(cache, dict)) or (cache["version"] != self.version):
-            cache = { "version" : self.version }
-            main_cache[name] = cache
+            if (not isinstance(rv, dict)) or (rv.get("version", None) != self.version):
+                rv = { "version" : self.version }
+                d[name] = rv
 
-        context.cache = cache
+            return rv
+
+        context.old_cache = get_cache(current_screen.cache)
+        context.miss_cache = get_cache(current_screen.miss_cache)
+        context.new_cache = { "version" : self.version }
+
+        context.old_use_cache = current_screen.use_cache
+        context.new_use_cache = { }
 
         self.const_ast.execute(context)
 
         for i in context.children:
             renpy.ui.implicit_add(i)
+
+        current_screen.cache[name] = context.new_cache
+        current_screen.use_cache = context.new_use_cache
 
 
 class ScreenCache(object):

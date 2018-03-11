@@ -362,6 +362,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
         else:
             self.use_cache = { }
 
+        # A version of the cache that's used when we have a screen that is
+        # being displayed with the same tag with a cached copy of the screen
+        # we want to display.
+        self.miss_cache = { }
+
         # What widgets and transforms were the last time this screen was
         # updated. Used to communicate with the ui module, and only
         # valid during an update - not used at other times.
