@@ -480,12 +480,13 @@ class ATLTransformBase(renpy.object.Object):
 
         block = self.atl.compile(self.context)
 
-        if len(block.statements) == 1 and isinstance(block.statements[0], Interpolation):
-
-            interp = block.statements[0]
-
-            if interp.duration == 0 and interp.properties:
-                self.properties = interp.properties[:]
+        if all(
+            isinstance(statement, Interpolation) and statement.duration == 0
+            for statement in block.statements
+        ):
+            self.properties = []
+            for interp in block.statements:
+                self.properties.extend(interp.properties)
 
         if not constant and renpy.display.predict.predicting:
             self.predict_block = block
