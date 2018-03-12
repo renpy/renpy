@@ -873,6 +873,9 @@ optimize_texture_bounds = True
 # Should we predict everything in a ConditionSwitch?
 conditionswitch_predict_all = False
 
+# Transform events to deliver each time one happens.
+repeat_transform_events = [ "show", "hide", "replace", "replaced", "update" ]
+
 del os
 del collections
 
