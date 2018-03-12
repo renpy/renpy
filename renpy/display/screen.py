@@ -609,6 +609,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.old_transforms = None
         self.old_transfers = True
 
+        if self.miss_cache:
+            self.miss_cache.clear()
+
         # Deal with the case where the screen version changes.
         if (self.cache.get(NAME, None) is not old_cache) and (self.current_transform_event is None) and (self.phase == UPDATE):
             self.current_transform_event = "update"
@@ -1062,6 +1065,7 @@ def show_screen(_screen_name, *_args, **kwargs):
 
     if old_d and old_d.cache:
         d.cache = old_d.cache
+        d.miss_cache = cache_get(screen, _args, kwargs)
         d.phase = UPDATE
     else:
         d.cache = cache_get(screen, _args, kwargs)
