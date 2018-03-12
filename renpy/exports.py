@@ -491,7 +491,7 @@ def get_attributes(tag, layer=None):
     :doc: image_func
 
     Return a tuple giving the image attributes for the image with `tag`. If
-    the image is now showing, returns None.
+    the image is not showing, returns None.
 
     `layer`
         The layer to check. If None, uses the default layer for `tag`.
