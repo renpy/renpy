@@ -538,10 +538,9 @@ class ATLTransformBase(renpy.object.Object):
             events.append(self.transform_event)
             self.last_transform_event = self.transform_event
 
-        if renpy.config.repeat_transform_events:
-            if self.transform_event in [ "show", "hide", "replace", "replaced", "update" ]:
-                self.transform_event = None
-                self.last_transform_event = None
+        if self.transform_event in renpy.config.repeat_transform_events:
+            self.transform_event = None
+            self.last_transform_event = None
 
         old_exception_info = renpy.game.exception_info
 
