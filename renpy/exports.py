@@ -232,6 +232,9 @@ def can_rollback():
     Returns true if we can rollback.
     """
 
+    if not renpy.config.rollback_enabled:
+        return False
+
     return renpy.game.log.can_rollback()
 
 
