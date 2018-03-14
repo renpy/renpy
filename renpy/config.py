@@ -874,7 +874,7 @@ optimize_texture_bounds = True
 conditionswitch_predict_all = False
 
 # Transform events to deliver each time one happens.
-repeat_transform_events = [ "show", "hide", "replace", "replaced", "update" ]
+repeat_transform_events = [ "show", "replace", "update" ]
 
 del os
 del collections
