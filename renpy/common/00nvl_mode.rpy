@@ -366,7 +366,10 @@ init -1500 python:
             else:
                 checkpoint = True
 
-            self.push_nvl_list(who, what, multiple=multiple)
+            if multiple is not None:
+                self.push_nvl_list(who, what, multiple=multiple)
+            else:
+                self.push_nvl_list(who, what)
 
             renpy.display_say(
                 who,
@@ -380,7 +383,10 @@ init -1500 python:
 
         def do_done(self, who, what, multiple=None):
 
-            self.push_nvl_list(who, what, multiple=multiple)
+            if multiple is not None:
+                self.push_nvl_list(who, what, multiple=multiple)
+            else:
+                self.push_nvl_list(who, what)
 
             if multiple is None:
                 start = -1
