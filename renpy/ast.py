@@ -2078,12 +2078,13 @@ class Translate(Node):
 
     __slots__ = [
         "identifier",
+        "alternate",
         "language",
         "block",
         "after",
         ]
 
-    def __init__(self, loc, identifier, language, block):
+    def __init__(self, loc, identifier, language, block, alternate=None):
         super(Translate, self).__init__(loc)
 
         self.identifier = identifier
@@ -2111,6 +2112,9 @@ class Translate(Node):
         if self.after is old:
             self.after = new
 
+    def lookup(self):
+        return renpy.game.script.translator.lookup_translate(self.identifier, getattr(self, "alternate", None))
+
     def execute(self):
 
         statement_name("translate")
@@ -2124,18 +2128,18 @@ class Translate(Node):
             renpy.game.seen_translates_count += 1
             renpy.game.new_translates_count += 1
 
-        next_node(renpy.game.script.translator.lookup_translate(self.identifier))
+        next_node(self.lookup())
 
         renpy.game.context().translate_identifier = self.identifier
         renpy.game.context().translate_block_language = self.language
 
     def predict(self):
-        node = renpy.game.script.translator.lookup_translate(self.identifier)
+        node = self.lookup()
         return [ node ]
 
     def scry(self):
         rv = Scry()
-        rv._next = renpy.game.script.translator.lookup_translate(self.identifier)
+        rv._next = self.lookup()
         return rv
 
     def get_children(self, f):

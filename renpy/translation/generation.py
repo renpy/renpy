@@ -207,6 +207,10 @@ def write_translates(filename, language, filter):  # @ReservedAssignment
         if (t.identifier, language) in translator.language_translates:
             continue
 
+        if hasattr(t, "alternate"):
+            if (t.alternate, language) in translator.language_translates:
+                continue
+
         f = open_tl_file(tl_filename)
 
         if label is None:

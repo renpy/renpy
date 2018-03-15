@@ -170,13 +170,17 @@ class ScriptTranslator(object):
 
         self.chain_worklist = unchained
 
-    def lookup_translate(self, identifier):
+    def lookup_translate(self, identifier, alternate=None):
 
         identifier = identifier.replace('.', '_')
         language = renpy.game.preferences.language
 
         if language is not None:
             tl = self.language_translates.get((identifier, language), None)
+
+            if (tl is None) and alternate:
+                tl = self.language_translates.get((identifier, language), alternate)
+
         else:
             tl = None
 
@@ -203,6 +207,8 @@ class Restructurer(object):
 
     def __init__(self, children):
         self.label = None
+        self.alternate = None
+
         self.identifiers = set()
         self.callback(children)
 
@@ -215,22 +221,12 @@ class Restructurer(object):
 
         return False
 
-    def create_translate(self, block):
-        """
-        Creates an ast.Translate that wraps `block`. The block may only contain
-        translatable statements.
-        """
+    def unique_identifier(self, label, digest):
 
-        md5 = hashlib.md5()
-
-        for i in block:
-            code = i.get_code()
-            md5.update(code.encode("utf-8") + "\r\n")
-
-        if self.label:
-            base = self.label.replace('.', '_') + "_" + md5.hexdigest()[:8]
+        if label is None:
+            base = digest
         else:
-            base = md5.hexdigest()[:8]
+            base = label.replace(".", "_") + "_" + digest
 
         i = 0
         suffix = ""
@@ -245,10 +241,34 @@ class Restructurer(object):
             i += 1
             suffix = "_{0}".format(i)
 
+        return identifier
+
+    def create_translate(self, block):
+        """
+        Creates an ast.Translate that wraps `block`. The block may only contain
+        translatable statements.
+        """
+
+        md5 = hashlib.md5()
+
+        for i in block:
+            code = i.get_code()
+            md5.update(code.encode("utf-8") + "\r\n")
+
+        digest = md5.hexdigest()[:8]
+
+        identifier = self.unique_identifier(self.label, digest)
         self.identifiers.add(identifier)
+
+        if self.alternate is not None:
+            alternate = self.unique_identifier(self.alternate, digest)
+            self.identifiers.add(alternate)
+        else:
+            alternate = None
+
         loc = (block[0].filename, block[0].linenumber)
 
-        tl = renpy.ast.Translate(loc, identifier, None, block)
+        tl = renpy.ast.Translate(loc, identifier, None, block, alternate=alternate)
         tl.name = block[0].name + ("translate",)
 
         ed = renpy.ast.EndTranslate(loc)
@@ -269,7 +289,12 @@ class Restructurer(object):
 
             if isinstance(i, renpy.ast.Label):
                 if not i.hide:
-                    self.label = i.name
+
+                    if i.name.startswith("_"):
+                        self.alternate = i.name
+                    else:
+                        self.label = i.name
+                        self.alternate = None
 
             if not isinstance(i, renpy.ast.Translate):
                 i.restructure(self.callback)
