@@ -558,7 +558,7 @@ class Lexer(object):
     sub-lexers to lex sub-blocks.
     """
 
-    def __init__(self, block, init=False, init_offset=0, parent=None):
+    def __init__(self, block, init=False, init_offset=0, global_label=None):
 
         # Are we underneath an init block?
         self.init = init
@@ -576,17 +576,11 @@ class Lexer(object):
         self.text = ""
         self.number = 0
         self.subblock = [ ]
+        self.global_label = global_label
         self.pos = 0
         self.word_cache_pos = -1
         self.word_cache_newpos = -1
         self.word_cache = ""
-
-        self.parent = parent
-
-        if parent is not None:
-            self.global_label = parent.global_label
-        else:
-            self.global_label = None
 
     def advance(self):
         """
@@ -722,7 +716,7 @@ class Lexer(object):
 
         init = self.init or init
 
-        return Lexer(self.subblock, init=init, init_offset=self.init_offset, parent=self)
+        return Lexer(self.subblock, init=init, init_offset=self.init_offset, global_label=self.global_label)
 
     def string(self):
         """
@@ -841,14 +835,7 @@ class Lexer(object):
         has global part.
         """
         if label and (label[0] not in '._'):
-
-            global_label = label.split('.')[0]
-
-            l = self
-
-            while l is not None:
-                l.global_label = global_label
-                l = l.parent
+            self.global_label = label.split('.')[0]
 
     def label_name(self, declare=False):
         """
