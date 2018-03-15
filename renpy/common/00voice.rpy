@@ -305,9 +305,14 @@ init -1500 python:
             self.tag = _voice.tag
 
             if not self.filename and config.auto_voice:
-                tlid = renpy.game.context().translate_identifier
 
-                if tlid is not None:
+                for tlid in [
+                    renpy.game.context().translate_identifier,
+                    renpy.game.context().alternate_translate_identifier,
+                    ]:
+
+                    if tlid is None:
+                        continue
 
                     if isinstance(config.auto_voice, (str, unicode)):
                         fn = config.auto_voice.format(id=tlid)
@@ -322,6 +327,8 @@ init -1500 python:
                             self.sustain = True
                         else:
                             self.filename = fn
+
+                        break
 
                 self.tlid = tlid
 

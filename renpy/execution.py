@@ -130,7 +130,7 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 15
+    __version__ = 16
 
     nosave = [ 'next_node' ]
 
@@ -187,6 +187,9 @@ class Context(renpy.object.Object):
 
         if version < 15:
             self.abnormal_stack = [ False ] * len(self.return_stack)
+
+        if version < 16:
+            self.alternate_translate_identifier = None
 
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -292,6 +295,9 @@ class Context(renpy.object.Object):
 
         # The identifier of the current translate block.
         self.translate_identifier = None
+
+        # The alternate identifier of the current translate block.
+        self.alternate_translate_identifier = None
 
         # The language of the current translate block.
         self.translate_block_language = None

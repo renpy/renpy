@@ -2088,6 +2088,7 @@ class Translate(Node):
         super(Translate, self).__init__(loc)
 
         self.identifier = identifier
+        self.alternate = alternate
         self.language = language
         self.block = block
 
@@ -2131,6 +2132,7 @@ class Translate(Node):
         next_node(self.lookup())
 
         renpy.game.context().translate_identifier = self.identifier
+        renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
         renpy.game.context().translate_block_language = self.language
 
     def predict(self):
@@ -2171,6 +2173,7 @@ class EndTranslate(Node):
         statement_name("end translate")
 
         renpy.game.context().translate_identifier = None
+        renpy.game.context().alternate_translate_identifier = None
         renpy.game.context().translate_block_language = None
 
 
