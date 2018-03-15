@@ -853,7 +853,21 @@ class ShownImageInfo(renpy.object.Object):
             return None
 
         if len(matches) == 1:
-            return matches[0]
+
+            rv = matches[0]
+
+            d = images.get(rv, None)
+            ca = getattr(d, "_choose_attributes", None)
+
+            if ca is not None:
+
+                required = set()
+                optional = set(i for i in optional if i not in rv)
+                tag = " ".join(rv)
+
+                rv =  rv + ca(tag, required, optional)
+
+            return rv
 
         if exception_name:
             raise Exception("Showing '" + " ".join(exception_name) + "' is ambiguous, possible images include: " + ", ".join(" ".join(i) for i in matches))
