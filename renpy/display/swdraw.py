@@ -1046,6 +1046,9 @@ class SWDraw(object):
                 cx = int(cx)
                 cy = int(cy)
 
+                if cx < 0 or cy < 0:
+                    return False
+
                 cw, ch = child.get_size()
                 if cx >= cw or cy >= ch:
                     return False
