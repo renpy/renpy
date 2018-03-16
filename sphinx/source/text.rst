@@ -269,7 +269,7 @@ Tags that apply to all text are:
     shadows) to the given color. The color should be in #rgb, #rgba,
     #rrggbb, or #rrggbbaa format. ::
 
-        "Let's have a {color=#00ff00}Green{/color} outline."
+        "Let's have a {outlinecolor=#00ff00}Green{/outlinecolor} outline."
 
 .. text-tag:: plain
 
