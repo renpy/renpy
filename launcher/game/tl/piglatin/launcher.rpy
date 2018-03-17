@@ -365,51 +365,67 @@ translate piglatin strings:
     old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
     new "Histay isay robablypay ecausebay Enray'Ypay isay unningray irectlyday omfray aay Acintoshmay riveday imageay. Otay ixfay histay, uitqay histay auncherlay, opycay hetay entireay %say olderfay omewheresay elseay onay ouryay omputercay, anday unray Enray'Ypay againay."
 
-    # editor.rpy:150
-    old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
-    new "{b}Ecommendedray.{/b} Aay etabay editoray ithway anay easyay otay useay interfaceay anday eaturesfay hattay aiday inay evelopmentday, uchsay asay pellsay-eckingchay. Ditraeay urrentlycay ackslay hetay Meiay upportsay equiredray orfay Hinesecay, Apanesejay, anday Oreankay exttay inputay."
+    # editor.rpy:152
+    old "(Recommended) A modern and approachable text editor."
+    new "(Ecommendedray) Aay odernmay anday approachableay exttay editoray."
 
-    # editor.rpy:151
-    old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
-    new "{b}Ecommendedray.{/b} Aay etabay editoray ithway anay easyay otay useay interfaceay anday eaturesfay hattay aiday inay evelopmentday, uchsay asay pellsay-eckingchay. Ditraeay urrentlycay ackslay hetay Meiay upportsay equiredray orfay Hinesecay, Apanesejay, anday Oreankay exttay inputay. Noay Inuxlay, Ditraeay equiresray xPythonway."
+    # editor.rpy:164
+    old "Up to 150 MB download required."
+    new "Puay otay 501ay Bmay ownloadday equiredray."
 
-    # editor.rpy:167
+    # editor.rpy:178
+    old "A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input."
+    new "Aay aturemay editoray. Ditraeay ackslay hetay Meiay upportsay equiredray orfay Hinesecay, Apanesejay, anday Oreankay exttay inputay."
+
+    # editor.rpy:179
+    old "A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
+    new "Aay aturemay editoray. Ditraeay ackslay hetay Meiay upportsay equiredray orfay Hinesecay, Apanesejay, anday Oreankay exttay inputay. Noay Inuxlay, Ditraeay equiresray xPythonway."
+
+    # editor.rpy:195
     old "This may have occured because wxPython is not installed on this system."
     new "Histay aymay avehay occureday ecausebay xPythonway isay otnay installeday onay histay ystemsay."
 
-    # editor.rpy:169
+    # editor.rpy:197
     old "Up to 22 MB download required."
     new "Puay otay 22ay Bmay ownloadday equiredray."
 
-    # editor.rpy:182
+    # editor.rpy:210
     old "A mature editor that requires Java."
     new "Aay aturemay editoray hattay equiresray Avajay."
 
-    # editor.rpy:182
+    # editor.rpy:210
     old "1.8 MB download required."
     new "1ay.8ay Bmay ownloadday equiredray."
 
-    # editor.rpy:182
+    # editor.rpy:210
     old "This may have occured because Java is not installed on this system."
     new "Histay aymay avehay occureday ecausebay Avajay isay otnay installeday onay histay ystemsay."
 
-    # editor.rpy:191
+    # editor.rpy:219
+    old "System Editor"
+    new "Ystemsay Ditoreay"
+
+    # editor.rpy:219
     old "Invokes the editor your operating system has associated with .rpy files."
     new "Nvokesiay hetay editoray ouryay operatingay ystemsay ashay associateday ithway .pyray ilesfay."
 
-    # editor.rpy:207
+    # editor.rpy:235
+    old "None"
+    new "Onenay"
+
+    # editor.rpy:235
     old "Prevents Ren'Py from opening a text editor."
     new "Reventspay Enray'Ypay omfray openingay aay exttay editoray."
 
-    # editor.rpy:359
+    # editor.rpy:387
     old "An exception occured while launching the text editor:\n[exception!q]"
     new "Naay exceptionay occureday hileway aunchinglay hetay exttay editoray:\n[exception!q]"
 
-    # editor.rpy:457
+    # editor.rpy:523
     old "Select Editor"
     new "Electsay Ditoreay"
 
-    # editor.rpy:472
+    # editor.rpy:538
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
     new "Aay exttay editoray isay hetay rogrampay ouyay'llay useay otay editay Enray'Ypay criptsay ilesfay. Erehay, ouyay ancay electsay hetay editoray Enray'Ypay illway useay. Fiay otnay alreadyay resentpay, hetay editoray illway ebay automaticallyay ownloadedday anday installeday."
 
@@ -477,63 +493,67 @@ translate piglatin strings:
     old "Edit File"
     new "Diteay Ilefay"
 
-    # front_page.rpy:214
+    # front_page.rpy:215
+    old "Open project"
+    new "Penoay rojectpay"
+
+    # front_page.rpy:217
     old "All script files"
     new "Llaay criptsay ilesfay"
 
-    # front_page.rpy:218
+    # front_page.rpy:221
     old "Actions"
     new "Ctionsaay"
 
-    # front_page.rpy:227
+    # front_page.rpy:230
     old "Navigate Script"
     new "Avigatenay Criptsay"
 
-    # front_page.rpy:228
+    # front_page.rpy:231
     old "Check Script (Lint)"
     new "Heckcay Criptsay (Intlay)"
 
-    # front_page.rpy:231
+    # front_page.rpy:234
     old "Change/Update GUI"
     new "Hangecay/Pdateuay Uigay"
 
-    # front_page.rpy:233
+    # front_page.rpy:236
     old "Change Theme"
     new "Hangecay Hemetay"
 
-    # front_page.rpy:236
+    # front_page.rpy:239
     old "Delete Persistent"
     new "Eleteday Ersistentpay"
 
-    # front_page.rpy:245
+    # front_page.rpy:248
     old "Build Distributions"
     new "Uildbay Istributionsday"
 
-    # front_page.rpy:247
+    # front_page.rpy:250
     old "Android"
     new "Ndroidaay"
 
-    # front_page.rpy:248
+    # front_page.rpy:251
     old "iOS"
     new "iOSay"
 
-    # front_page.rpy:249
+    # front_page.rpy:252
     old "Generate Translations"
     new "Enerategay Ranslationstay"
 
-    # front_page.rpy:250
+    # front_page.rpy:253
     old "Extract Dialogue"
     new "Xtracteay Ialogueday"
 
-    # front_page.rpy:267
+    # front_page.rpy:270
     old "Checking script for potential problems..."
     new "Heckingcay criptsay orfay otentialpay roblemspay..."
 
-    # front_page.rpy:282
+    # front_page.rpy:285
     old "Deleting persistent data..."
     new "Eletingday ersistentpay ataday..."
 
-    # front_page.rpy:290
+    # front_page.rpy:293
     old "Recompiling all rpy files into rpyc files..."
     new "Ecompilingray allay pyray ilesfay intoay pycray ilesfay..."
 
@@ -1013,139 +1033,139 @@ translate piglatin strings:
     old "Have you backed up your projects recently?"
     new "Avehay ouyay ackedbay upay ouryay rojectspay ecentlyray?"
 
-    # project.rpy:276
+    # project.rpy:280
     old "Launching the project failed."
     new "Aunchinglay hetay rojectpay ailedfay."
 
-    # project.rpy:276
+    # project.rpy:280
     old "Please ensure that your project launches normally before running this command."
     new "Leasepay ensureay hattay ouryay rojectpay auncheslay ormallynay eforebay unningray histay ommandcay."
 
-    # project.rpy:292
+    # project.rpy:296
     old "Ren'Py is scanning the project..."
     new "Enray'Ypay isay canningsay hetay rojectpay..."
 
-    # project.rpy:721
+    # project.rpy:725
     old "Launching"
     new "Aunchinglay"
 
-    # project.rpy:755
+    # project.rpy:759
     old "PROJECTS DIRECTORY"
     new "Rojectspay Irectoryday"
 
-    # project.rpy:755
+    # project.rpy:759
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Leasepay oosechay hetay rojectspay irectoryday usingay hetay irectoryday ooserchay.\n{b}Hetay irectoryday ooserchay aymay avehay openeday ehindbay histay indowway.{/b}"
 
-    # project.rpy:755
+    # project.rpy:759
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Histay auncherlay illway cansay orfay rojectspay inay histay irectoryday, illway reatecay ewnay rojectspay inay histay irectoryday, anday illway aceplay uiltbay rojectspay intoay histay irectoryday."
 
-    # project.rpy:760
+    # project.rpy:764
     old "Ren'Py has set the projects directory to:"
     new "Enray'Ypay ashay etsay hetay rojectspay irectoryday otay:"
 
-    # translations.rpy:92
+    # translations.rpy:91
     old "Translations: [project.current.display_name!q]"
     new "Ranslationstay: [project.current.display_name!q]"
 
-    # translations.rpy:133
+    # translations.rpy:132
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
     new "Hetay anguagelay otay orkway ithway. Histay ouldshay onlyay ontaincay owerlay-asecay Sciiaay aracterschay anday underscoresay."
 
-    # translations.rpy:159
+    # translations.rpy:158
     old "Generate empty strings for translations"
     new "Enerategay emptyay ringsstay orfay anslationstray"
 
-    # translations.rpy:177
+    # translations.rpy:176
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
     new "Eneratesgay oray updatesay anslationtray ilesfay. Hetay ilesfay illway ebay acedplay inay amegay/ltay/[persistent.translate_language!q]."
 
-    # translations.rpy:197
+    # translations.rpy:196
     old "Extract String Translations"
     new "Xtracteay Tringsay Ranslationstay"
 
-    # translations.rpy:199
+    # translations.rpy:198
     old "Merge String Translations"
     new "Ergemay Tringsay Ranslationstay"
 
-    # translations.rpy:204
+    # translations.rpy:203
     old "Replace existing translations"
     new "Eplaceray existingay anslationstray"
 
-    # translations.rpy:205
+    # translations.rpy:204
     old "Reverse languages"
     new "Everseray anguageslay"
 
-    # translations.rpy:209
+    # translations.rpy:208
     old "Update Default Interface Translations"
     new "Pdateuay Efaultday Nterfaceiay Ranslationstay"
 
-    # translations.rpy:229
+    # translations.rpy:228
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
     new "Hetay extractay ommandcay allowsay ouyay otay extractay ringstay anslationstray omfray anay existingay rojectpay intoay aay emporarytay ilefay.\n\nHetay ergemay ommandcay ergesmay extracteday anslationstray intoay anotheray rojectpay."
 
-    # translations.rpy:253
+    # translations.rpy:252
     old "Ren'Py is generating translations...."
     new "Enray'Ypay isay eneratinggay anslationstray...."
 
-    # translations.rpy:264
+    # translations.rpy:263
     old "Ren'Py has finished generating [language] translations."
     new "Enray'Ypay ashay inishedfay eneratinggay [language] anslationstray."
 
-    # translations.rpy:277
+    # translations.rpy:276
     old "Ren'Py is extracting string translations..."
     new "Enray'Ypay isay extractingay ringstay anslationstray..."
 
-    # translations.rpy:280
+    # translations.rpy:279
     old "Ren'Py has finished extracting [language] string translations."
     new "Enray'Ypay ashay inishedfay extractingay [language] ringstay anslationstray."
 
-    # translations.rpy:300
+    # translations.rpy:299
     old "Ren'Py is merging string translations..."
     new "Enray'Ypay isay ergingmay ringstay anslationstray..."
 
-    # translations.rpy:303
+    # translations.rpy:302
     old "Ren'Py has finished merging [language] string translations."
     new "Enray'Ypay ashay inishedfay ergingmay [language] ringstay anslationstray."
 
-    # translations.rpy:314
+    # translations.rpy:313
     old "Updating default interface translations..."
     new "Pdatinguay efaultday interfaceay anslationstray..."
 
-    # translations.rpy:343
+    # translations.rpy:342
     old "Extract Dialogue: [project.current.display_name!q]"
     new "Xtracteay Ialogueday: [project.current.display_name!q]"
 
-    # translations.rpy:359
+    # translations.rpy:358
     old "Format:"
     new "Ormatfay:"
 
-    # translations.rpy:367
+    # translations.rpy:366
     old "Tab-delimited Spreadsheet (dialogue.tab)"
     new "Abtay-elimitedday Preadsheetsay (ialogueday.abtay)"
 
-    # translations.rpy:368
+    # translations.rpy:367
     old "Dialogue Text Only (dialogue.txt)"
     new "Ialogueday Exttay Nlyoay (ialogueday.xttay)"
 
-    # translations.rpy:381
+    # translations.rpy:380
     old "Strip text tags from the dialogue."
     new "Tripsay exttay agstay omfray hetay ialogueday."
 
-    # translations.rpy:382
+    # translations.rpy:381
     old "Escape quotes and other special characters."
     new "Scapeeay uotesqay anday otheray pecialsay aracterschay."
 
-    # translations.rpy:383
+    # translations.rpy:382
     old "Extract all translatable strings, not just dialogue."
     new "Xtracteay allay anslatabletray ringsstay, otnay ustjay ialogueday."
 
-    # translations.rpy:411
+    # translations.rpy:410
     old "Ren'Py is extracting dialogue...."
     new "Enray'Ypay isay extractingay ialogueday...."
 
-    # translations.rpy:415
+    # translations.rpy:414
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
     new "Enray'Ypay ashay inishedfay extractingay ialogueday. Hetay extracteday ialogueday ancay ebay oundfay inay ialogueday.[persistent.dialogue_format] inay hetay asebay irectoryday."
 

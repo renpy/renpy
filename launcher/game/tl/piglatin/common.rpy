@@ -337,67 +337,67 @@ translate piglatin strings:
     old "An error is being simulated."
     new "Naay erroray isay eingbay imulatedsay."
 
-    # 00updater.rpy:667
+    # 00updater.rpy:672
     old "Either this project does not support updating, or the update status file was deleted."
     new "Ithereay histay rojectpay oesday otnay upportsay updatingay, oray hetay updateay atusstay ilefay asway eletedday."
 
-    # 00updater.rpy:681
+    # 00updater.rpy:686
     old "This account does not have permission to perform an update."
     new "Histay accountay oesday otnay avehay ermissionpay otay erformpay anay updateay."
 
-    # 00updater.rpy:684
+    # 00updater.rpy:689
     old "This account does not have permission to write the update log."
     new "Histay accountay oesday otnay avehay ermissionpay otay riteway hetay updateay oglay."
 
-    # 00updater.rpy:711
+    # 00updater.rpy:716
     old "Could not verify update signature."
     new "Ouldcay otnay erifyvay updateay ignaturesay."
 
-    # 00updater.rpy:986
+    # 00updater.rpy:991
     old "The update file was not downloaded."
     new "Hetay updateay ilefay asway otnay ownloadedday."
 
-    # 00updater.rpy:1004
+    # 00updater.rpy:1009
     old "The update file does not have the correct digest - it may have been corrupted."
     new "Hetay updateay ilefay oesday otnay avehay hetay orrectcay igestday - itay aymay avehay eenbay orruptedcay."
 
-    # 00updater.rpy:1060
+    # 00updater.rpy:1065
     old "While unpacking {}, unknown type {}."
     new "Hileway unpackingay {}, unknownay ypetay {}."
 
-    # 00updater.rpy:1407
+    # 00updater.rpy:1412
     old "Updater"
     new "Pdateruay"
 
-    # 00updater.rpy:1418
+    # 00updater.rpy:1423
     old "This program is up to date."
     new "Histay rogrampay isay upay otay ateday."
 
-    # 00updater.rpy:1420
+    # 00updater.rpy:1425
     old "[u.version] is available. Do you want to install it?"
     new "[u.version] isay availableay. Oday ouyay antway otay installay itay?"
 
-    # 00updater.rpy:1422
+    # 00updater.rpy:1427
     old "Preparing to download the updates."
     new "Reparingpay otay ownloadday hetay updatesay."
 
-    # 00updater.rpy:1424
+    # 00updater.rpy:1429
     old "Downloading the updates."
     new "Ownloadingday hetay updatesay."
 
-    # 00updater.rpy:1426
+    # 00updater.rpy:1431
     old "Unpacking the updates."
     new "Npackinguay hetay updatesay."
 
-    # 00updater.rpy:1430
+    # 00updater.rpy:1435
     old "The updates have been installed. The program will restart."
     new "Hetay updatesay avehay eenbay installeday. Hetay rogrampay illway estartray."
 
-    # 00updater.rpy:1432
+    # 00updater.rpy:1437
     old "The updates have been installed."
     new "Hetay updatesay avehay eenbay installeday."
 
-    # 00updater.rpy:1434
+    # 00updater.rpy:1439
     old "The updates were cancelled."
     new "Hetay updatesay ereway ancelledcay."
 

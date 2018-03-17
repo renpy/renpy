@@ -205,471 +205,471 @@ translate piglatin strings:
     old "## Reserve space for the navigation section."
     new "## Eserveray pacesay orfay hetay avigationnay ectionsay."
 
-    # screens.rpy:471
+    # screens.rpy:473
     old "Return"
     new "Eturnray"
 
-    # screens.rpy:534
+    # screens.rpy:536
     old "## About screen"
     new "## Boutaay creensay"
 
-    # screens.rpy:536
+    # screens.rpy:538
     old "## This screen gives credit and copyright information about the game and Ren'Py."
     new "## Histay creensay ivesgay reditcay anday opyrightcay informationay aboutay hetay amegay anday Enray'Ypay."
 
-    # screens.rpy:539
+    # screens.rpy:541
     old "## There's nothing special about this screen, and hence it also serves as an example of how to make a custom screen."
     new "## Heretay'say othingnay pecialsay aboutay histay creensay, anday encehay itay alsoay ervessay asay anay exampleay ofay owhay otay akemay aay ustomcay creensay."
 
-    # screens.rpy:546
+    # screens.rpy:548
     old "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
     new "## Histay useay atementstay includesay hetay ame_menugay creensay insideay histay oneay. Hetay boxvay ildchay isay hentay includeday insideay hetay iewportvay insideay hetay ame_menugay creensay."
 
-    # screens.rpy:556
+    # screens.rpy:558
     old "Version [config.version!t]\n"
     new "Ersionvay [config.version!t]\n"
 
-    # screens.rpy:558
+    # screens.rpy:560
     old "## gui.about is usually set in options.rpy."
     new "## uigay.aboutay isay usuallyay etsay inay optionsay.pyray."
 
-    # screens.rpy:562
+    # screens.rpy:564
     old "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
     new "Ademay ithway {a=https://www.renpy.org/}Enray'Ypay{/a} [renpy.version_only].\n\n[renpy.license!t]"
 
-    # screens.rpy:565
+    # screens.rpy:567
     old "## This is redefined in options.rpy to add text to the about screen."
     new "## Histay isay edefinedray inay optionsay.pyray otay adday exttay otay hetay aboutay creensay."
 
-    # screens.rpy:577
+    # screens.rpy:579
     old "## Load and Save screens"
     new "## Oadlay anday Avesay creenssay"
 
-    # screens.rpy:579
+    # screens.rpy:581
     old "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
     new "## Hesetay creenssay areay esponsibleray orfay ettinglay hetay ayerplay avesay hetay amegay anday oadlay itay againay. Incesay heytay areshay earlynay everythingay inay ommoncay, othbay areay implementeday inay ermstay ofay aay hirdtay creensay, ile_slotsfay."
 
-    # screens.rpy:583
+    # screens.rpy:585
     old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
     new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#avesay ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#oadlay"
 
-    # screens.rpy:602
+    # screens.rpy:604
     old "Page {}"
     new "Agepay {}"
 
-    # screens.rpy:602
+    # screens.rpy:604
     old "Automatic saves"
     new "Utomaticaay avessay"
 
-    # screens.rpy:602
+    # screens.rpy:604
     old "Quick saves"
     new "Uickqay avessay"
 
-    # screens.rpy:608
+    # screens.rpy:610
     old "## This ensures the input will get the enter event before any of the buttons do."
     new "## Histay ensuresay hetay inputay illway etgay hetay enteray eventay eforebay anyay ofay hetay uttonsbay oday."
 
-    # screens.rpy:612
+    # screens.rpy:614
     old "## The page name, which can be edited by clicking on a button."
     new "## Hetay agepay amenay, hichway ancay ebay editeday ybay ickingclay onay aay uttonbay."
 
-    # screens.rpy:624
+    # screens.rpy:626
     old "## The grid of file slots."
     new "## Hetay idgray ofay ilefay otsslay."
 
-    # screens.rpy:644
+    # screens.rpy:646
     old "{#file_time}%A, %B %d %Y, %H:%M"
     new "{#file_time}%Aay, %Bay %day %Yay, %Hay:%May"
 
-    # screens.rpy:644
+    # screens.rpy:646
     old "empty slot"
     new "emptyay otslay"
 
-    # screens.rpy:652
+    # screens.rpy:654
     old "## Buttons to access other pages."
     new "## Uttonsbay otay accessay otheray agespay."
 
-    # screens.rpy:661
+    # screens.rpy:663
     old "<"
     new "<"
 
-    # screens.rpy:664
+    # screens.rpy:666
     old "{#auto_page}A"
     new "{#auto_page}Aay"
 
-    # screens.rpy:667
+    # screens.rpy:669
     old "{#quick_page}Q"
     new "{#quick_page}Qay"
 
-    # screens.rpy:669
+    # screens.rpy:671
     old "## range(1, 10) gives the numbers from 1 to 9."
     new "## angeray(1ay, 01ay) ivesgay hetay umbersnay omfray 1ay otay 9ay."
 
-    # screens.rpy:673
+    # screens.rpy:675
     old ">"
     new ">"
 
-    # screens.rpy:708
+    # screens.rpy:710
     old "## Preferences screen"
     new "## Referencespay creensay"
 
-    # screens.rpy:710
+    # screens.rpy:712
     old "## The preferences screen allows the player to configure the game to better suit themselves."
     new "## Hetay referencespay creensay allowsay hetay ayerplay otay onfigurecay hetay amegay otay etterbay uitsay hemselvestay."
 
-    # screens.rpy:713
+    # screens.rpy:715
     old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
     new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#referencespay"
 
-    # screens.rpy:730
+    # screens.rpy:732
     old "Display"
     new "Isplayday"
 
-    # screens.rpy:731
+    # screens.rpy:733
     old "Window"
     new "Indowway"
 
-    # screens.rpy:732
+    # screens.rpy:734
     old "Fullscreen"
     new "Ullscreenfay"
 
-    # screens.rpy:736
+    # screens.rpy:738
     old "Rollback Side"
     new "Ollbackray Idesay"
 
-    # screens.rpy:737
+    # screens.rpy:739
     old "Disable"
     new "Isableday"
 
-    # screens.rpy:738
+    # screens.rpy:740
     old "Left"
     new "Eftlay"
 
-    # screens.rpy:739
+    # screens.rpy:741
     old "Right"
     new "Ightray"
 
-    # screens.rpy:744
+    # screens.rpy:746
     old "Unseen Text"
     new "Nseenuay Exttay"
 
-    # screens.rpy:745
+    # screens.rpy:747
     old "After Choices"
     new "Fteraay Hoicescay"
 
-    # screens.rpy:746
+    # screens.rpy:748
     old "Transitions"
     new "Ransitionstay"
 
-    # screens.rpy:748
+    # screens.rpy:750
     old "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
     new "## Dditionalaay boxesvay ofay ypetay \"adio_prefray\" oray \"eck_prefchay\" ancay ebay addeday erehay, otay adday additionalay reatorcay-efinedday referencespay."
 
-    # screens.rpy:759
+    # screens.rpy:761
     old "Text Speed"
     new "Exttay Peedsay"
 
-    # screens.rpy:763
+    # screens.rpy:765
     old "Auto-Forward Time"
     new "Utoaay-Orwardfay Imetay"
 
-    # screens.rpy:770
+    # screens.rpy:772
     old "Music Volume"
     new "Usicmay Olumevay"
 
-    # screens.rpy:777
+    # screens.rpy:779
     old "Sound Volume"
     new "Oundsay Olumevay"
 
-    # screens.rpy:783
+    # screens.rpy:785
     old "Test"
     new "Esttay"
 
-    # screens.rpy:787
+    # screens.rpy:789
     old "Voice Volume"
     new "Oicevay Olumevay"
 
-    # screens.rpy:798
+    # screens.rpy:800
     old "Mute All"
     new "Utemay Llaay"
 
-    # screens.rpy:874
+    # screens.rpy:876
     old "## History screen"
     new "## Istoryhay creensay"
 
-    # screens.rpy:876
+    # screens.rpy:878
     old "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
     new "## Histay isay aay creensay hattay isplaysday hetay ialogueday istoryhay otay hetay ayerplay. Hileway heretay isnay'tay anythingay pecialsay aboutay histay creensay, itay oesday avehay otay accessay hetay ialogueday istoryhay oredstay inay history_list_ay."
 
-    # screens.rpy:880
+    # screens.rpy:882
     old "## https://www.renpy.org/doc/html/history.html"
     new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/istoryhay.tmlhay"
 
-    # screens.rpy:886
+    # screens.rpy:888
     old "## Avoid predicting this screen, as it can be very large."
     new "## Voidaay redictingpay histay creensay, asay itay ancay ebay eryvay argelay."
 
-    # screens.rpy:897
+    # screens.rpy:899
     old "## This lays things out properly if history_height is None."
     new "## Histay ayslay hingstay outay roperlypay ifay istory_heighthay isay Onenay."
 
-    # screens.rpy:906
+    # screens.rpy:908
     old "## Take the color of the who text from the Character, if set."
     new "## Aketay hetay olorcay ofay hetay howay exttay omfray hetay Haractercay, ifay etsay."
 
-    # screens.rpy:914
+    # screens.rpy:916
     old "The dialogue history is empty."
     new "Hetay ialogueday istoryhay isay emptyay."
 
-    # screens.rpy:917
+    # screens.rpy:919
     old "## This determines what tags are allowed to be displayed on the history screen."
     new "## Histay eterminesday hatway agstay areay alloweday otay ebay isplayedday onay hetay istoryhay creensay."
 
-    # screens.rpy:964
+    # screens.rpy:966
     old "## Help screen"
     new "## Elphay creensay"
 
-    # screens.rpy:966
+    # screens.rpy:968
     old "## A screen that gives information about key and mouse bindings. It uses other screens (keyboard_help, mouse_help, and gamepad_help) to display the actual help."
     new "## Aay creensay hattay ivesgay informationay aboutay eykay anday ousemay indingsbay. Tiay usesay otheray creenssay (eyboard_helpkay, ouse_helpmay, anday amepad_helpgay) otay isplayday hetay actualay elphay."
 
-    # screens.rpy:985
+    # screens.rpy:987
     old "Keyboard"
     new "Eyboardkay"
 
-    # screens.rpy:986
+    # screens.rpy:988
     old "Mouse"
     new "Ousemay"
 
-    # screens.rpy:989
+    # screens.rpy:991
     old "Gamepad"
     new "Amepadgay"
 
-    # screens.rpy:1002
+    # screens.rpy:1004
     old "Enter"
     new "Ntereay"
 
-    # screens.rpy:1003
+    # screens.rpy:1005
     old "Advances dialogue and activates the interface."
     new "Dvancesaay ialogueday anday activatesay hetay interfaceay."
 
-    # screens.rpy:1006
+    # screens.rpy:1008
     old "Space"
     new "Pacesay"
 
-    # screens.rpy:1007
+    # screens.rpy:1009
     old "Advances dialogue without selecting choices."
     new "Dvancesaay ialogueday ithoutway electingsay oiceschay."
 
-    # screens.rpy:1010
+    # screens.rpy:1012
     old "Arrow Keys"
     new "Rrowaay Eyskay"
 
-    # screens.rpy:1011
+    # screens.rpy:1013
     old "Navigate the interface."
     new "Avigatenay hetay interfaceay."
 
-    # screens.rpy:1014
+    # screens.rpy:1016
     old "Escape"
     new "Scapeeay"
 
-    # screens.rpy:1015
+    # screens.rpy:1017
     old "Accesses the game menu."
     new "Ccessesaay hetay amegay enumay."
 
-    # screens.rpy:1018
+    # screens.rpy:1020
     old "Ctrl"
     new "Trlcay"
 
-    # screens.rpy:1019
+    # screens.rpy:1021
     old "Skips dialogue while held down."
     new "Kipssay ialogueday hileway eldhay ownday."
 
-    # screens.rpy:1022
+    # screens.rpy:1024
     old "Tab"
     new "Abtay"
 
-    # screens.rpy:1023
+    # screens.rpy:1025
     old "Toggles dialogue skipping."
     new "Ogglestay ialogueday kippingsay."
 
-    # screens.rpy:1026
+    # screens.rpy:1028
     old "Page Up"
     new "Agepay Puay"
 
-    # screens.rpy:1027
+    # screens.rpy:1029
     old "Rolls back to earlier dialogue."
     new "Ollsray ackbay otay earlieray ialogueday."
 
-    # screens.rpy:1030
+    # screens.rpy:1032
     old "Page Down"
     new "Agepay Ownday"
 
-    # screens.rpy:1031
+    # screens.rpy:1033
     old "Rolls forward to later dialogue."
     new "Ollsray orwardfay otay aterlay ialogueday."
 
-    # screens.rpy:1035
+    # screens.rpy:1037
     old "Hides the user interface."
     new "Ideshay hetay useray interfaceay."
 
-    # screens.rpy:1039
+    # screens.rpy:1041
     old "Takes a screenshot."
     new "Akestay aay creenshotsay."
 
-    # screens.rpy:1043
+    # screens.rpy:1045
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
     new "Ogglestay assistiveay {a=https://www.renpy.org/l/voicing}elfsay-oicingvay{/a}."
 
-    # screens.rpy:1049
+    # screens.rpy:1051
     old "Left Click"
     new "Eftlay Lickcay"
 
-    # screens.rpy:1053
+    # screens.rpy:1055
     old "Middle Click"
     new "Iddlemay Lickcay"
 
-    # screens.rpy:1057
+    # screens.rpy:1059
     old "Right Click"
     new "Ightray Lickcay"
 
-    # screens.rpy:1061
+    # screens.rpy:1063
     old "Mouse Wheel Up\nClick Rollback Side"
     new "Ousemay Heelway Puay\nLickcay Ollbackray Idesay"
 
-    # screens.rpy:1065
+    # screens.rpy:1067
     old "Mouse Wheel Down"
     new "Ousemay Heelway Ownday"
 
-    # screens.rpy:1072
+    # screens.rpy:1074
     old "Right Trigger\nA/Bottom Button"
     new "Ightray Riggertay\nAay/Ottombay Uttonbay"
 
-    # screens.rpy:1076
+    # screens.rpy:1078
     old "Left Trigger\nLeft Shoulder"
     new "Eftlay Riggertay\nEftlay Houldersay"
 
-    # screens.rpy:1080
+    # screens.rpy:1082
     old "Right Shoulder"
     new "Ightray Houldersay"
 
-    # screens.rpy:1085
+    # screens.rpy:1087
     old "D-Pad, Sticks"
     new "Day-Adpay, Tickssay"
 
-    # screens.rpy:1089
+    # screens.rpy:1091
     old "Start, Guide"
     new "Tartsay, Uidegay"
 
-    # screens.rpy:1093
+    # screens.rpy:1095
     old "Y/Top Button"
     new "Yay/Optay Uttonbay"
 
-    # screens.rpy:1096
+    # screens.rpy:1098
     old "Calibrate"
     new "Alibratecay"
 
-    # screens.rpy:1124
+    # screens.rpy:1126
     old "## Additional screens"
     new "## Dditionalaay creenssay"
 
-    # screens.rpy:1128
+    # screens.rpy:1130
     old "## Confirm screen"
     new "## Onfirmcay creensay"
 
-    # screens.rpy:1130
+    # screens.rpy:1132
     old "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
     new "## Hetay onfirmcay creensay isay alledcay henway Enray'Ypay antsway otay askay hetay ayerplay aay esyay oray onay uestionqay."
 
-    # screens.rpy:1133
+    # screens.rpy:1135
     old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
     new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#onfirmcay"
 
-    # screens.rpy:1137
+    # screens.rpy:1139
     old "## Ensure other screens do not get input while this screen is displayed."
     new "## Nsureeay otheray creenssay oday otnay etgay inputay hileway histay creensay isay isplayedday."
 
-    # screens.rpy:1161
+    # screens.rpy:1163
     old "Yes"
     new "Esyay"
 
-    # screens.rpy:1162
+    # screens.rpy:1164
     old "No"
     new "Onay"
 
-    # screens.rpy:1164
+    # screens.rpy:1166
     old "## Right-click and escape answer \"no\"."
     new "## Ightray-ickclay anday escapeay answeray \"onay\"."
 
-    # screens.rpy:1191
+    # screens.rpy:1193
     old "## Skip indicator screen"
     new "## Kipsay indicatoray creensay"
 
-    # screens.rpy:1193
+    # screens.rpy:1195
     old "## The skip_indicator screen is displayed to indicate that skipping is in progress."
     new "## Hetay kip_indicatorsay creensay isay isplayedday otay indicateay hattay kippingsay isay inay rogresspay."
 
-    # screens.rpy:1196
+    # screens.rpy:1198
     old "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
     new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#kipsay-indicatoray"
 
-    # screens.rpy:1208
+    # screens.rpy:1210
     old "Skipping"
     new "Kippingsay"
 
-    # screens.rpy:1215
+    # screens.rpy:1217
     old "## This transform is used to blink the arrows one after another."
     new "## Histay ansformtray isay useday otay inkblay hetay arrowsay oneay afteray anotheray."
 
-    # screens.rpy:1242
+    # screens.rpy:1244
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
     new "## Eway avehay otay useay aay ontfay hattay ashay hetay Lackbay Ightray-Ointingpay Mallsay Riangletay yphglay inay itay."
 
-    # screens.rpy:1247
+    # screens.rpy:1249
     old "## Notify screen"
     new "## Otifynay creensay"
 
-    # screens.rpy:1249
+    # screens.rpy:1251
     old "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
     new "## Hetay otifynay creensay isay useday otay owshay hetay ayerplay aay essagemay. (Orfay exampleay, henway hetay amegay isay uicksavedqay oray aay creenshotsay ashay eenbay akentay.)"
 
-    # screens.rpy:1252
+    # screens.rpy:1254
     old "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
     new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#otifynay-creensay"
 
-    # screens.rpy:1286
+    # screens.rpy:1288
     old "## NVL screen"
     new "## Vlnay creensay"
 
-    # screens.rpy:1288
+    # screens.rpy:1290
     old "## This screen is used for NVL-mode dialogue and menus."
     new "## Histay creensay isay useday orfay Vlnay-odemay ialogueday anday enusmay."
 
-    # screens.rpy:1290
+    # screens.rpy:1292
     old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
     new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#vlnay"
 
-    # screens.rpy:1301
+    # screens.rpy:1303
     old "## Displays dialogue in either a vpgrid or the vbox."
     new "## Isplaysday ialogueday inay eitheray aay pgridvay oray hetay boxvay."
 
-    # screens.rpy:1314
+    # screens.rpy:1316
     old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
     new "## Isplaysday hetay enumay, ifay ivengay. Hetay enumay aymay ebay isplayedday incorrectlyay ifay onfigcay.arrator_menunay isay etsay otay Ruetay, asay itay isay aboveay."
 
-    # screens.rpy:1344
+    # screens.rpy:1346
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
     new "## Histay ontrolscay hetay aximummay umbernay ofay Vlnay-odemay entriesay hattay ancay ebay isplayedday atay onceay."
 
-    # screens.rpy:1406
+    # screens.rpy:1408
     old "## Mobile Variants"
     new "## Obilemay Ariantsvay"
 
-    # screens.rpy:1413
+    # screens.rpy:1415
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
     new "## Incesay aay ousemay aymay otnay ebay resentpay, eway eplaceray hetay uickqay enumay ithway aay ersionvay hattay usesay ewerfay anday iggerbay uttonsbay hattay areay easieray otay ouchtay."
 
-    # screens.rpy:1429
+    # screens.rpy:1431
     old "Menu"
     new "Enumay"
 

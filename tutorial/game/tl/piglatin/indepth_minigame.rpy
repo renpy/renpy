@@ -66,10 +66,10 @@ translate piglatin pong_done_5781d902:
     e "Inigamesmay ancay picesay upay ouryay isualvay ovelnay, utbay ebay arefulcay – otnay everyay isualvay ovelnay ayerplay antsway otay ebay oodgay atay arcadeay amesgay."
 
 # game/indepth_minigame.rpy:276
-translate piglatin pong_done_849cf6db:
+translate piglatin pong_done_631325c8:
 
-    # e "Part of the reason Ren'Py works well it's that it's meant for certain types of games, like visual novels and life simulations."
-    e "Artpay ofay hetay easonray Enray'Ypay orksway ellway itay'say hattay itay'say eantmay orfay ertaincay ypestay ofay amesgay, ikelay isualvay ovelsnay anday ifelay imulationssay."
+    # e "Part of the reason Ren'Py works well is that it's meant for certain types of games, like visual novels and life simulations."
+    e "Artpay ofay hetay easonray Enray'Ypay orksway ellway isay hattay itay'say eantmay orfay ertaincay ypestay ofay amesgay, ikelay isualvay ovelsnay anday ifelay imulationssay."
 
 # game/indepth_minigame.rpy:278
 translate piglatin pong_done_61d60761:

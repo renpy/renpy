@@ -69,23 +69,23 @@ translate piglatin strings:
     old "Type to filter: "
     new "Ypetay otay ilterfay: "
 
-    # _developer/developer.rpym:572
+    # _developer/developer.rpym:575
     old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
     new "Exturestay: [tex_count] ([tex_size_mb:.1f] Bmay)"
 
-    # _developer/developer.rpym:576
+    # _developer/developer.rpym:579
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
     new "Mageiay achecay: [cache_pct:.1f]% ([cache_size_mb:.1f] Bmay)"
 
-    # _developer/developer.rpym:586
+    # _developer/developer.rpym:589
     old "✔ "
     new "✔ "
 
-    # _developer/developer.rpym:589
+    # _developer/developer.rpym:592
     old "✘ "
     new "✘ "
 
-    # _developer/developer.rpym:594
+    # _developer/developer.rpym:597
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
     new "\n{color=#cfc}✔ redictedpay imageay (oodgay){/color}\n{color=#fcc}✘ unpredicteday imageay (adbay){/color}\n{color=#fff}Ragday otay ovemay.{/color}"
 
