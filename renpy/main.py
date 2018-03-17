@@ -391,6 +391,10 @@ def main():
     game.persistent = renpy.persistent.init()
     game.preferences = game.persistent._preferences
 
+    for i in renpy.game.persistent._seen_translates:  # @UndefinedVariable
+        if i in renpy.game.script.translator.default_translates:
+            renpy.game.seen_translates_count += 1
+
     if game.persistent._virtual_size:
         renpy.config.screen_width, renpy.config.screen_height = game.persistent._virtual_size
 
@@ -449,10 +453,6 @@ def main():
         renpy.display.image.image_names.sort()
 
         game.persistent._virtual_size = renpy.config.screen_width, renpy.config.screen_height
-
-        for i in renpy.game.persistent._seen_translates:  # @UndefinedVariable
-            if i in renpy.game.script.translator.default_translates:
-                renpy.game.seen_translates_count += 1
 
         log_clock("Running init code")
 
