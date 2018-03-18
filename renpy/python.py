@@ -1771,8 +1771,6 @@ class RollbackLog(renpy.object.Object):
 
         for name, value in roots.iteritems():
 
-            print(name, value)
-
             if "." in name:
                 store_name, name = name.rsplit(".", 1)
             else:
