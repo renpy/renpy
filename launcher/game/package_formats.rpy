@@ -32,7 +32,7 @@ init python in distribute:
 
     from zipfile import crc32
 
-    zlib.Z_DEFAULT_COMPRESSION = 9
+    zlib.Z_DEFAULT_COMPRESSION = 5
 
     class ZipFile(zipfile.ZipFile):
 
