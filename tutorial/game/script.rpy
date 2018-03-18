@@ -199,6 +199,9 @@ label end:
     show eileen happy at center
     with move
 
+    show _finale behind eileen
+
+
     e "Thank you for viewing this tutorial."
 
     e "If you'd like to see a full Ren'Py game, select \"The Question\" in the launcher."
