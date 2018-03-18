@@ -28,6 +28,18 @@ making for smooth transitions.
 The new :func:`renpy.get_say_image_tag` function makes it possible to
 retrieve the name of the speaking character.
 
+ATL interpolation can now interpolate from a transform with multiple
+lines in it, provided none of the lines takes time to complete.
+
+Adding the from statement to a call no longer changes the translation
+identifier. (Which is also used by the automatic voice code.) Since this
+would be a breaking change, Ren'Py also computes the old-style translation
+identifier and uses that if it exists.
+
+The _choose_attributes method is called when only a single displayable can
+be located. This supports the AttributeImage beta (https://github.com/renpy/ai).
+
+
 Fixes
 -----
 
@@ -45,6 +57,18 @@ A regression with custom mouse cursors that could cause the mouse to
 jump around wildly has been fixed.
 
 An issue with side images persisting after a menu was shown has been fixed.
+
+Ren'Py no longer stores the state of displayables that are not being shown
+in a screen that has been replaced. (This was an issue when the first screen
+is re-show, and the displayables took their old state.)
+
+The show and replace events are now always delivered to a transform in a
+screen. While this behavior was always intended and could occur whenever
+a screen was shown, previously caching could prevent some show events
+from being delivered.
+
+Characters that require the alt key can be typed. (The alt key is necessary
+to type particular characters in European languages.)
 
 
 .. _renpy-6.99.14.1:
