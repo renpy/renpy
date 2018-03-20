@@ -284,7 +284,78 @@ init -1000 python:
 
     # Record the builtins.
     renpy.lint.renpy_builtins = set(globals())
-    renpy.lint.renpy_builtins.remove('menu')
+
+    for i in """
+adv
+anim
+blinds
+center
+default
+default_transition
+dissolve
+ease
+easeinbottom
+easeinleft
+easeinright
+easeintop
+easeoutbottom
+easeoutleft
+easeoutright
+easeouttop
+fade
+hpunch
+irisin
+irisout
+left
+menu
+mouse_visible
+move
+moveinbottom
+moveinleft
+moveinright
+moveintop
+moveoutbottom
+moveoutleft
+moveoutright
+moveouttop
+name_only
+nvl
+nvl_variant
+offscreenleft
+offscreenright
+pixellate
+pushdown
+pushleft
+pushright
+pushup
+right
+save_name
+slideawaydown
+slideawayleft
+slideawayright
+slideawayup
+slidedown
+slideleft
+slideright
+slideup
+squares
+suppress_overlay
+sv
+top
+topleft
+topright
+truecenter
+vpunch
+wipedown
+wipeleft
+wiperight
+wipeup
+zoomin
+zoominout
+zoomout
+""".split():
+
+        renpy.lint.renpy_builtins.remove(i)
 
 # After init, make some changes based on if config.developer is True.
 init 1700 python hide:
