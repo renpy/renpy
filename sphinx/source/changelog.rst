@@ -70,6 +70,10 @@ from being delivered.
 Characters that require the alt key can be typed. (The alt key is necessary
 to type particular characters in European languages.)
 
+When the Android build system fails to rename a file or directory, it will
+retry for 60 seconds before giving up. This is an attempt to work around
+antivirus software breaking Windows semantics.
+
 
 .. _renpy-6.99.14.1:
 
