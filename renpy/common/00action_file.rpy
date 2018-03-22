@@ -534,7 +534,13 @@ init -1500 python:
 
         def __init__(self, page):
             self.page = str(page)
-            self.alt = _("File page [text]")
+
+            if page == "auto":
+                self.alt = _("File page auto")
+            elif page == "quick":
+                self.alt = _("File page quick")
+            else:
+                self.alt = _("File page [text]")
 
         def __call__(self):
             if not self.get_sensitive():

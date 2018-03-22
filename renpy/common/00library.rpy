@@ -149,8 +149,13 @@ init -1700 python:
 
     _("bar")
     _("selected")
+    _("viewport")
     _("horizontal scroll")
     _("vertical scroll")
+    _("activate")
+    _("deactivate")
+    _("increase")
+    _("decrease")
 
     def sv(what, interact=True):
         """

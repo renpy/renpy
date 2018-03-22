@@ -225,7 +225,7 @@ init -1500 python:
                 elif value == "none":
                     return SetField(_preferences, "transitions", 0)
                 elif value == "toggle":
-                    return ToggleField(_preferences, "transitions", true_value=2, false_value=0), "Skip transitions"
+                    return ToggleField(_preferences, "transitions", true_value=2, false_value=0), _("skip transitions")
 
             elif name == _("video sprites"):
 
