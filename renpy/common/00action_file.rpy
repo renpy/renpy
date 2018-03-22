@@ -341,7 +341,7 @@ init -1500 python:
             self.page = page
             self.cycle = cycle
 
-            self.alt = "Save slot %s: [text]" % (name,)
+            self.alt = __("Save slot %s: [text]") % (name,)
 
         def __call__(self):
 
@@ -414,7 +414,7 @@ init -1500 python:
             self.page = page
             self.newest = newest
 
-            self.alt = "Load slot %s: [text]" % (name,)
+            self.alt = __("Load slot %s: [text]") % (name,)
 
 
         def __call__(self):
@@ -456,7 +456,7 @@ init -1500 python:
              If true, prompts before deleting a file.
          """
 
-        alt = "Delete slot [text]"
+        alt = _("Delete slot [text]")
 
         def __init__(self, name, confirm=True, page=None):
             self.name = name
@@ -534,7 +534,7 @@ init -1500 python:
 
         def __init__(self, page):
             self.page = str(page)
-            self.alt = "File page [text]"
+            self.alt = _("File page [text]")
 
         def __call__(self):
             if not self.get_sensitive():
@@ -724,7 +724,7 @@ init -1500 python:
              If true, we can go to the first page when on the last file page if max is set.
          """
 
-        alt = "Next file page"
+        alt = _("Next file page.")
 
         def __init__(self, max=None, wrap=False):
 
@@ -788,7 +788,7 @@ init -1500 python:
              If true, we can go to the last page when on the first file page if max is set.
          """
 
-        alt = "Previous file page"
+        alt = _("Previous file page.")
 
         def __init__(self, max=None, wrap=False):
 
@@ -867,7 +867,7 @@ init -1500 python:
             Notify(message),
             ]
 
-        rv[0].alt = "Quick save."
+        rv[0].alt = _("Quick save.")
 
         if not getattr(renpy.context(), "_menu", False):
             rv.insert(0, FileTakeScreenshot())
@@ -886,7 +886,7 @@ init -1500 python:
         """
 
         rv = FileLoad(1, page="quick", confirm=confirm, newest=False)
-        rv.alt = "Quick load."
+        rv.alt = _("Quick load.")
         return rv
 
 init 1050 python hide:
