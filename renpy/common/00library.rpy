@@ -147,6 +147,11 @@ init -1700 python:
     _("Clipboard voicing enabled. ")
     _("Self-voicing enabled. ")
 
+    _("bar")
+    _("selected")
+    _("horizontal scroll")
+    _("vertical scroll")
+
     def sv(what, interact=True):
         """
         Uses the narrator to speak `what` iff self-voicing is enabled.

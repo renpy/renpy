@@ -33,6 +33,11 @@ init -1500 python:
         def __init__(self, action):
             self.action = action
 
+            try:
+                self.alt = action.alt
+            except:
+                pass
+
         def __call__(self):
             return self.action.__call__()
 

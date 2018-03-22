@@ -918,7 +918,12 @@ class Button(renpy.display.layout.Window):
         return ""
 
     def _tts_all(self):
-        return self._tts_common(alt(self.action))
+        rv = self._tts_common(alt(self.action))
+
+        if self.is_selected():
+            rv += " " + renpy.minstore.__("selected")
+
+        return rv
 
 # Reimplementation of the TextButton widget as a Button and a Text
 # widget.
@@ -1864,9 +1869,9 @@ class Bar(renpy.display.core.Displayable):
         if self.value is not None:
             alt = self.value.alt
         else:
-            alt = "Bar"
+            alt = ""
 
-        return self._tts_common(alt)
+        return self._tts_common(alt) + renpy.minstore.__("bar")
 
 
 class Conditional(renpy.display.layout.Container):

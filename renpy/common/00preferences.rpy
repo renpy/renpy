@@ -202,8 +202,6 @@ init -1500 python:
         if isinstance(value, basestring):
             value = value.lower()
 
-        alt = None
-
         def get():
 
             if name == _("display"):
@@ -227,8 +225,7 @@ init -1500 python:
                 elif value == "none":
                     return SetField(_preferences, "transitions", 0)
                 elif value == "toggle":
-                    alt = _("skip transitions")
-                    return ToggleField(_preferences, "transitions", true_value=2, false_value=0)
+                    return ToggleField(_preferences, "transitions", true_value=2, false_value=0), "Skip transitions"
 
             elif name == _("video sprites"):
 
@@ -266,11 +263,12 @@ init -1500 python:
             elif name == _("skip"):
 
                 if value == "all messages" or value == "all":
-                    return SetField(_preferences, "skip_unseen", True)
+                    return SetField(_preferences, "skip_unseen", True), _("skip unseen [text]")
+
                 elif value == "seen messages" or value == "seen":
-                    return SetField(_preferences, "skip_unseen", False)
+                    return SetField(_preferences, "skip_unseen", False), _("skip unseen [text]")
                 elif value == "toggle":
-                    return ToggleField(_preferences, "skip_unseen")
+                    return ToggleField(_preferences, "skip_unseen"), _("skip unseen text")
 
             elif name == _("begin skipping"):
 
@@ -283,8 +281,7 @@ init -1500 python:
                 elif value == "stop skipping" or value == "stop":
                     return SetField(_preferences, "skip_after_choices", False)
                 elif value == "toggle":
-                    alt = _("skip after choices")
-                    return ToggleField(_preferences, "skip_after_choices")
+                    return ToggleField(_preferences, "skip_after_choices"), _("skip after choices")
 
             elif name == _("auto-forward time"):
 
@@ -307,8 +304,8 @@ init -1500 python:
                 elif value == "disable":
                     return SetField(_preferences, "afm_enable", False)
                 elif value == "toggle":
-                    alt = "Auto forward"
-                    return ToggleField(_preferences, "afm_enable")
+                    return ToggleField(_preferences, "afm_enable"), _("Auto forward")
+
 
             elif name == _("auto-forward after click"):
 
@@ -432,9 +429,9 @@ init -1500 python:
                     mixer = mixer_names.get(n[0], n[0])
 
                 if value is None:
-                    return MixerValue(mixer)
+                    return MixerValue(mixer), alt
                 else:
-                    return SetMixer(mixer, value)
+                    return SetMixer(mixer, value), __(alt) + " [text]"
 
             if n[-1] == "mute":
                 if len(n) == 3 and n[0] == "mixer":
@@ -444,19 +441,22 @@ init -1500 python:
                     alt = "mute " + n[0]
                     mixer = mixer_names.get(n[0], n[0])
 
-
-
                 if value == "enable":
-                    return SetMute(mixer, True)
+                    return SetMute(mixer, True), __(alt) + " [text]"
                 elif value == "disable":
-                    return SetMute(mixer, False)
+                    return SetMute(mixer, False), __(alt) + " [text]"
                 elif value == "toggle":
-                    return ToggleMute(mixer)
+                    return ToggleMute(mixer), alt
 
             else:
                 raise Exception("Preference(%r, %r) is unknown." % (name , value))
 
         rv = get()
+
+        if isinstance(rv, tuple):
+            rv, alt = rv
+        else:
+            alt = None
 
         if alt is not None:
             rv.alt = __(alt)
