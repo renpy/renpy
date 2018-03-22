@@ -166,6 +166,7 @@ screen navigation:
             frame style "l_label":
                 has hbox xfill True
                 text _("Navigate: [project.current.display_name!q]") style "l_label_text"
+                alt _("Navigate Script")
 
                 frame:
                     style "l_alternate"
@@ -192,6 +193,7 @@ screen navigation:
                 hbox:
                     spacing HALF_INDENT
                     text _("Category:")
+                    alt ""
 
                     textbutton _("files") action navigation.ChangeKind("file")
                     textbutton _("labels") action navigation.ChangeKind("label")

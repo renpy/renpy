@@ -335,7 +335,7 @@ init 1 python in editor:
 
 
     class Edit(Action):
-        alt = "Edit [text]."
+        alt = _("Edit [text].")
 
         def __init__(self, filename, line=None, check=False):
             """
@@ -438,8 +438,6 @@ init 1 python in editor:
         Opens all scripts that are part of the current project in a web browser.
         """
 
-        alt = "Edit [text]."
-
         def __init__(self):
             return
 
@@ -477,8 +475,6 @@ init 1 python in editor:
         """
         Opens the project's base directory in an editor.
         """
-
-        alt = "Open project in editor."
 
         def __call__(self):
 

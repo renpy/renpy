@@ -358,18 +358,38 @@ translate piglatin strings:
     new "electedsay"
 
     # 00library.rpy:152
+    old "viewport"
+    new "iewportvay"
+
+    # 00library.rpy:153
     old "horizontal scroll"
     new "orizontalhay crollsay"
 
-    # 00library.rpy:153
+    # 00library.rpy:154
     old "vertical scroll"
     new "erticalvay crollsay"
 
-    # 00library.rpy:188
+    # 00library.rpy:155
+    old "activate"
+    new "activateay"
+
+    # 00library.rpy:156
+    old "deactivate"
+    new "eactivateday"
+
+    # 00library.rpy:157
+    old "increase"
+    new "increaseay"
+
+    # 00library.rpy:158
+    old "decrease"
+    new "ecreaseday"
+
+    # 00library.rpy:193
     old "Skip Mode"
     new "Kipsay Odemay"
 
-    # 00library.rpy:274
+    # 00library.rpy:279
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Histay rogrampay ontainscay eefray oftwaresay underay aay umbernay ofay icenseslay, includingay hetay Itmay Icenselay anday Nugay Esserlay Eneralgay Ublicpay Icenselay. Aay ompletecay istlay ofay oftwaresay, includingay inkslay otay ullfay ourcesay odecay, ancay ebay oundfay {a=https://www.renpy.org/l/license}erehay{/a}."
 

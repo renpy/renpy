@@ -417,15 +417,19 @@ translate piglatin strings:
     old "Prevents Ren'Py from opening a text editor."
     new "Reventspay Enray'Ypay omfray openingay aay exttay editoray."
 
+    # editor.rpy:338
+    old "Edit [text]."
+    new "Diteay [text]."
+
     # editor.rpy:387
     old "An exception occured while launching the text editor:\n[exception!q]"
     new "Naay exceptionay occureday hileway aunchinglay hetay exttay editoray:\n[exception!q]"
 
-    # editor.rpy:523
+    # editor.rpy:519
     old "Select Editor"
     new "Electsay Ditoreay"
 
-    # editor.rpy:538
+    # editor.rpy:534
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
     new "Aay exttay editoray isay hetay rogrampay ouyay'llay useay otay editay Enray'Ypay criptsay ilesfay. Erehay, ouyay ancay electsay hetay editoray Enray'Ypay illway useay. Fiay otnay alreadyay resentpay, hetay editoray illway ebay automaticallyay ownloadedday anday installeday."
 
@@ -825,63 +829,63 @@ translate piglatin strings:
     old "Navigate: [project.current.display_name!q]"
     new "Avigatenay: [project.current.display_name!q]"
 
-    # navigation.rpy:177
+    # navigation.rpy:178
     old "Order: "
     new "Rderoay: "
 
-    # navigation.rpy:178
+    # navigation.rpy:179
     old "alphabetical"
     new "alphabeticalay"
 
-    # navigation.rpy:180
+    # navigation.rpy:181
     old "by-file"
     new "ybay-ilefay"
 
-    # navigation.rpy:182
+    # navigation.rpy:183
     old "natural"
     new "aturalnay"
 
-    # navigation.rpy:194
+    # navigation.rpy:195
     old "Category:"
     new "Ategorycay:"
 
-    # navigation.rpy:196
+    # navigation.rpy:198
     old "files"
     new "ilesfay"
 
-    # navigation.rpy:197
+    # navigation.rpy:199
     old "labels"
     new "abelslay"
 
-    # navigation.rpy:198
+    # navigation.rpy:200
     old "defines"
     new "efinesday"
 
-    # navigation.rpy:199
+    # navigation.rpy:201
     old "transforms"
     new "ansformstray"
 
-    # navigation.rpy:200
+    # navigation.rpy:202
     old "screens"
     new "creenssay"
 
-    # navigation.rpy:201
+    # navigation.rpy:203
     old "callables"
     new "allablescay"
 
-    # navigation.rpy:202
+    # navigation.rpy:204
     old "TODOs"
     new "Odostay"
 
-    # navigation.rpy:241
+    # navigation.rpy:243
     old "+ Add script file"
     new "+ Ddaay criptsay ilefay"
 
-    # navigation.rpy:249
+    # navigation.rpy:251
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
     new "Onay Odotay ommentscay oundfay.\n\nOtay reatecay oneay, includeay \"# Odotay\" inay ouryay criptsay."
 
-    # navigation.rpy:256
+    # navigation.rpy:258
     old "The list of names is empty."
     new "Hetay istlay ofay amesnay isay emptyay."
 
