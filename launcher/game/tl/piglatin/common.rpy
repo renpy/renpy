@@ -157,9 +157,53 @@ translate piglatin strings:
     old "%b %d, %H:%M"
     new "%bay %day, %Hay:%May"
 
-    # 00action_file.rpy:852
+    # 00action_file.rpy:344
+    old "Save slot %s: [text]"
+    new "Avesay otslay %say: [text]"
+
+    # 00action_file.rpy:417
+    old "Load slot %s: [text]"
+    new "Oadlay otslay %say: [text]"
+
+    # 00action_file.rpy:459
+    old "Delete slot [text]"
+    new "Eleteday otslay [text]"
+
+    # 00action_file.rpy:539
+    old "File page auto"
+    new "Ilefay agepay autoay"
+
+    # 00action_file.rpy:541
+    old "File page quick"
+    new "Ilefay agepay uickqay"
+
+    # 00action_file.rpy:543
+    old "File page [text]"
+    new "Ilefay agepay [text]"
+
+    # 00action_file.rpy:733
+    old "Next file page."
+    new "Extnay ilefay agepay."
+
+    # 00action_file.rpy:797
+    old "Previous file page."
+    new "Reviouspay ilefay agepay."
+
+    # 00action_file.rpy:858
     old "Quick save complete."
     new "Uickqay avesay ompletecay."
+
+    # 00action_file.rpy:876
+    old "Quick save."
+    new "Uickqay avesay."
+
+    # 00action_file.rpy:895
+    old "Quick load."
+    new "Uickqay oadlay."
+
+    # 00action_other.rpy:344
+    old "Language [text]"
+    new "Anguagelay [text]"
 
     # 00director.rpy:703
     old "The interactive director is not enabled here."
@@ -305,23 +349,183 @@ translate piglatin strings:
     old "Self-voicing enabled. "
     new "Elfsay-oicingvay enableday. "
 
-    # 00library.rpy:183
+    # 00library.rpy:150
+    old "bar"
+    new "arbay"
+
+    # 00library.rpy:151
+    old "selected"
+    new "electedsay"
+
+    # 00library.rpy:152
+    old "horizontal scroll"
+    new "orizontalhay crollsay"
+
+    # 00library.rpy:153
+    old "vertical scroll"
+    new "erticalvay crollsay"
+
+    # 00library.rpy:188
     old "Skip Mode"
     new "Kipsay Odemay"
 
-    # 00library.rpy:269
+    # 00library.rpy:274
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Histay rogrampay ontainscay eefray oftwaresay underay aay umbernay ofay icenseslay, includingay hetay Itmay Icenselay anday Nugay Esserlay Eneralgay Ublicpay Icenselay. Aay ompletecay istlay ofay oftwaresay, includingay inkslay otay ullfay ourcesay odecay, ancay ebay oundfay {a=https://www.renpy.org/l/license}erehay{/a}."
 
-    # 00preferences.rpy:475
+    # 00preferences.rpy:207
+    old "display"
+    new "isplayday"
+
+    # 00preferences.rpy:219
+    old "transitions"
+    new "ansitionstray"
+
+    # 00preferences.rpy:228
+    old "skip transitions"
+    new "kipsay ansitionstray"
+
+    # 00preferences.rpy:230
+    old "video sprites"
+    new "ideovay pritessay"
+
+    # 00preferences.rpy:239
+    old "show empty window"
+    new "owshay emptyay indowway"
+
+    # 00preferences.rpy:248
+    old "text speed"
+    new "exttay peedsay"
+
+    # 00preferences.rpy:256
+    old "joystick"
+    new "oystickjay"
+
+    # 00preferences.rpy:256
+    old "joystick..."
+    new "oystickjay..."
+
+    # 00preferences.rpy:263
+    old "skip"
+    new "kipsay"
+
+    # 00preferences.rpy:266
+    old "skip unseen [text]"
+    new "kipsay unseenay [text]"
+
+    # 00preferences.rpy:271
+    old "skip unseen text"
+    new "kipsay unseenay exttay"
+
+    # 00preferences.rpy:273
+    old "begin skipping"
+    new "eginbay kippingsay"
+
+    # 00preferences.rpy:277
+    old "after choices"
+    new "afteray oiceschay"
+
+    # 00preferences.rpy:284
+    old "skip after choices"
+    new "kipsay afteray oiceschay"
+
+    # 00preferences.rpy:286
+    old "auto-forward time"
+    new "autoay-orwardfay imetay"
+
+    # 00preferences.rpy:300
+    old "auto-forward"
+    new "autoay-orwardfay"
+
+    # 00preferences.rpy:307
+    old "Auto forward"
+    new "Utoaay orwardfay"
+
+    # 00preferences.rpy:310
+    old "auto-forward after click"
+    new "autoay-orwardfay afteray ickclay"
+
+    # 00preferences.rpy:319
+    old "automatic move"
+    new "automaticay ovemay"
+
+    # 00preferences.rpy:328
+    old "wait for voice"
+    new "aitway orfay oicevay"
+
+    # 00preferences.rpy:337
+    old "voice sustain"
+    new "oicevay ustainsay"
+
+    # 00preferences.rpy:346
+    old "self voicing"
+    new "elfsay oicingvay"
+
+    # 00preferences.rpy:355
+    old "clipboard voicing"
+    new "ipboardclay oicingvay"
+
+    # 00preferences.rpy:364
+    old "debug voicing"
+    new "ebugday oicingvay"
+
+    # 00preferences.rpy:373
+    old "emphasize audio"
+    new "emphasizeay audioay"
+
+    # 00preferences.rpy:382
+    old "rollback side"
+    new "ollbackray idesay"
+
+    # 00preferences.rpy:392
+    old "gl powersave"
+    new "glay owersavepay"
+
+    # 00preferences.rpy:398
+    old "gl framerate"
+    new "glay ameratefray"
+
+    # 00preferences.rpy:401
+    old "gl tearing"
+    new "glay earingtay"
+
+    # 00preferences.rpy:413
+    old "music volume"
+    new "usicmay olumevay"
+
+    # 00preferences.rpy:414
+    old "sound volume"
+    new "oundsay olumevay"
+
+    # 00preferences.rpy:415
+    old "voice volume"
+    new "oicevay olumevay"
+
+    # 00preferences.rpy:416
+    old "mute music"
+    new "utemay usicmay"
+
+    # 00preferences.rpy:417
+    old "mute sound"
+    new "utemay oundsay"
+
+    # 00preferences.rpy:418
+    old "mute voice"
+    new "utemay oicevay"
+
+    # 00preferences.rpy:419
+    old "mute all"
+    new "utemay allay"
+
+    # 00preferences.rpy:498
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "Lipboardcay oicingvay enableday. Resspay 'iftshay+Cay' otay isableday."
 
-    # 00preferences.rpy:477
+    # 00preferences.rpy:500
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "Elfsay-oicingvay ouldway aysay \"[renpy.display.tts.last]\". Resspay 'altay+iftshay+Vay' otay isableday."
 
-    # 00preferences.rpy:479
+    # 00preferences.rpy:502
     old "Self-voicing enabled. Press 'v' to disable."
     new "Elfsay-oicingvay enableday. Resspay 'vay' otay isableday."
 
