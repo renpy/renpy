@@ -7,8 +7,8 @@ Full Changelog
 6.99.14.2
 =========
 
-Changes
---------
+Features and Changes
+--------------------
 
 The Atom text editor is now supported in Ren'Py. When it is selected, Ren'Py
 will download Atom, and will create a new profile with the language-renpy,
@@ -39,6 +39,20 @@ identifier and uses that if it exists.
 The _choose_attributes method is called when only a single displayable can
 be located. This supports the AttributeImage beta (https://github.com/renpy/ai).
 
+Self-Voicing
+------------
+
+Ren'Py's self-voicing mode, which provides accessibility for blind
+users, has been improved:
+
+* Selected buttons say the word "selected" after them.
+* Bars say the world "bar" after them.
+* Some actions have had their self-voicing information changed to better
+  reflect how the action is used in the new GUI.
+* Alt text built into Ren'Py can be translated.
+
+While this can change some of the self-voicing output, the changes
+should not affect any translations that already exist.
 
 Fixes
 -----
