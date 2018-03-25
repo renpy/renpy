@@ -150,6 +150,7 @@ def warp():
     while True:
         n = prev.get(n, None)
         if n:
+            del prev[n]
             run.append(n)
         else:
             break
