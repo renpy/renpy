@@ -1864,6 +1864,9 @@ class Interface(object):
         if self.safe_mode:
             renderer = "sw"
 
+        if (renderer == "angle") and (not renpy.windows):
+            renderer = "auto"
+
         renpy.config.renderer = renderer
 
         if renderer == "auto":
