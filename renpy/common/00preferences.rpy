@@ -453,15 +453,17 @@ init -1500 python:
 
         rv = get()
 
-        if isinstance(rv, tuple):
-            rv, alt = rv
-        else:
-            alt = None
+        if rv is not None:
 
-        if alt is not None:
-            rv.alt = __(alt)
-        else:
-            rv.alt = __(name) + " [text]"
+            if isinstance(rv, tuple):
+                rv, alt = rv
+            else:
+                alt = None
+
+            if alt is not None:
+                rv.alt = __(alt)
+            else:
+                rv.alt = __(name) + " [text]"
 
         return rv
 
