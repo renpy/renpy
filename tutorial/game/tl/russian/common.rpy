@@ -157,18 +157,6 @@ translate russian strings:
     old "%b %d, %H:%M"
     new "%d %b, %H:%M"
 
-    # 00action_file.rpy:569
-    old "Page {}"
-    new "{} страница"
-
-    # 00action_file.rpy:569
-    old "Automatic saves"
-    new "Автосохранения"
-
-    # 00action_file.rpy:569
-    old "Quick saves"
-    new "Быстрые сохранения"
-
     # 00action_file.rpy:820
     old "Quick save complete."
     new "Быстрое сохранение завершено."
@@ -345,10 +333,6 @@ translate russian strings:
     old "Cancel"
     new "Отмена"
 
-    # 00compat.rpy:205
-    old "Fullscreen"
-    new "Полный"
-
     # 00gallery.rpy:563
     old "Image [index] of [count] locked."
     new "Изображение [index] из [count] закрыто."
@@ -389,10 +373,6 @@ translate russian strings:
     old "Force Software Renderer"
     new "Принудительный Программный"
 
-    # 00gltest.rpy:89
-    old "Gamepad"
-    new "Геймпад"
-
     # 00gltest.rpy:93
     old "Enable"
     new "Активировано"
@@ -401,21 +381,9 @@ translate russian strings:
     old "Disable"
     new "Отключено"
 
-    # 00gltest.rpy:103
-    old "Calibrate"
-    new "Калибровка"
-
     # 00gltest.rpy:109
     old "Changes will take effect the next time this program is run."
     new "Изменения вступят в силу при следующем запуске программы."
-
-    # 00gltest.rpy:114
-    old "Quit"
-    new "Выход"
-
-    # 00gltest.rpy:119
-    old "Return"
-    new "Вернуться"
 
     # 00gltest.rpy:141
     old "Performance Warning"
