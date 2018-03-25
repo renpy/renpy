@@ -950,6 +950,7 @@ def display_menu(items,
                  **kwargs):
     """
     :doc: se_menu
+    :name: renpy.display_menu
     :args: (items, interact=True, screen="choice")
 
     This displays a menu to the user. `items` should be a list of 2-item tuples.
