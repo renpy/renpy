@@ -51,6 +51,9 @@ def warp():
     if not renpy.config.developer:
         raise Exception("Can't warp, developer mode disabled.")
 
+    if not filename.startswith("game/"):
+        filename = "game/" + filename
+
     # First, compute for each statement reachable from a scene statement,
     # one statement that reaches that statement.
 
@@ -88,6 +91,9 @@ def warp():
 
     for n in seenset:
 
+        if isinstance(n, renpy.ast.Translate) and n.language:
+            continue
+
         if isinstance(n, renpy.ast.Menu):
             for i in n.items:
                 if i[2] is not None:
@@ -124,7 +130,8 @@ def warp():
 
     candidates = [ (n.linenumber, n)
                    for n in seenset
-                   if n.filename.endswith('/' + filename) and n.linenumber <= line ]
+                   if n.filename == filename and n.linenumber <= line
+                   ]
 
     # We didn't find any candidate statements, so give up the warp.
     if not candidates:
@@ -175,4 +182,4 @@ def warp():
     renpy.exports.block_rollback()
 
     renpy.game.context().goto_label(node.name)
-    renpy.game.context().call('_after_warp')
+    raise renpy.game.RestartContext("_after_warp")
