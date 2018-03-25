@@ -69,23 +69,23 @@ translate russian strings:
     old "Type to filter: "
     new "Текущий фильтр: "
 
-    # _developer/developer.rpym:572
+    # _developer/developer.rpym:575
     old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
     new "Текстур: [tex_count] ([tex_size_mb:.1f] МБ)"
 
-    # _developer/developer.rpym:576
+    # _developer/developer.rpym:579
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
     new "Кеш изображений: [cache_pct:.1f]% ([cache_size_mb:.1f] МБ)"
 
-    # _developer/developer.rpym:586
+    # _developer/developer.rpym:589
     old "✔ "
     new "✔ "
 
-    # _developer/developer.rpym:589
+    # _developer/developer.rpym:592
     old "✘ "
     new "✘ "
 
-    # _developer/developer.rpym:594
+    # _developer/developer.rpym:597
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
     new "\n{color=#cfc}✔ предсказанное изображение (хорошо){/color}\n{color=#fcc}✘ внезапное изображение (плохо){/color}\n{color=#fff}Нажмите, чтобы передвинуть.{/color}"
 

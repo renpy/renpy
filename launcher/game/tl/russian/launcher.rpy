@@ -417,15 +417,19 @@ translate russian strings:
     old "Prevents Ren'Py from opening a text editor."
     new "Не позволяет Ren'Py запускать текстовый редактор."
 
+    # editor.rpy:338
+    old "Edit [text]."
+    new "Редактировать [text]"
+
     # editor.rpy:387
     old "An exception occured while launching the text editor:\n[exception!q]"
     new "Возникла ошибка при запуске текстового редактора:\n[exception!q]"
 
-    # editor.rpy:523
+    # editor.rpy:519
     old "Select Editor"
     new "Выберите редактор"
 
-    # editor.rpy:538
+    # editor.rpy:534
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
     new "Текстовый редактор — программа, необходимая для редактирования сценариев Ren'Py. Здесь, вы можете выбрать редактор, который будет использовать Ren'Py. Если такового нет, редактор будет автоматически загружен и установлен."
 
@@ -829,59 +833,59 @@ translate russian strings:
     old "Order: "
     new "Порядок: "
 
-    # navigation.rpy:178
+    # navigation.rpy:179
     old "alphabetical"
     new "алфавитный"
 
-    # navigation.rpy:180
+    # navigation.rpy:181
     old "by-file"
     new "по файлу"
 
-    # navigation.rpy:182
+    # navigation.rpy:183
     old "natural"
     new "натуральный"
 
-    # navigation.rpy:194
+    # navigation.rpy:195
     old "Category:"
     new "Категория:"
 
-    # navigation.rpy:196
+    # navigation.rpy:198
     old "files"
     new "файлы"
 
-    # navigation.rpy:197
+    # navigation.rpy:199
     old "labels"
     new "метки"
 
-    # navigation.rpy:198
+    # navigation.rpy:200
     old "defines"
     new "определения"
 
-    # navigation.rpy:199
+    # navigation.rpy:201
     old "transforms"
     new "трансформации"
 
-    # navigation.rpy:200
+    # navigation.rpy:202
     old "screens"
     new "экраны"
 
-    # navigation.rpy:201
+    # navigation.rpy:203
     old "callables"
     new "вызываемые"
 
-    # navigation.rpy:202
+    # navigation.rpy:204
     old "TODOs"
     new "TODO"
 
-    # navigation.rpy:241
+    # navigation.rpy:243
     old "+ Add script file"
     new "+ Добавить файл сценария"
 
-    # navigation.rpy:249
+    # navigation.rpy:251
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
     new "Не найдено комментариев TODO.\n\nЧтобы создать такой, включите \"#TODO\" в ваш сценарий"
 
-    # navigation.rpy:256
+    # navigation.rpy:258
     old "The list of names is empty."
     new "Список имён пуст."
 

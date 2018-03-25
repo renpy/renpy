@@ -66,9 +66,9 @@ translate russian pong_done_5781d902:
     e "Мини-игры могут добавить в вашу визуальную новеллу свою остринку, но будьте осторожны — не каждый игрок хорош в аркадных играх."
 
 # game/indepth_minigame.rpy:276
-translate russian pong_done_849cf6db:
+translate russian pong_done_631325c8:
 
-    # e "Part of the reason Ren'Py works well it's that it's meant for certain types of games, like visual novels and life simulations."
+    # e "Part of the reason Ren'Py works well is that it's meant for certain types of games, like visual novels and life simulations."
     e "Одна из причин, почему Ren'Py так хорошо справляется со своей ролью, состоит в том, что он предназначен для определённого типа игр: визуальных новелл, симуляторов жизни и похожих жанров."
 
 # game/indepth_minigame.rpy:278
