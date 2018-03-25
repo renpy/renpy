@@ -153,13 +153,57 @@ translate russian strings:
     old "{#month_short}Dec"
     new "{#month_short}Дек"
 
-    # 00action_file.rpy:235
+    # 00action_file.rpy:237
     old "%b %d, %H:%M"
     new "%d %b, %H:%M"
 
-    # 00action_file.rpy:825
+    # 00action_file.rpy:344
+    old "Save slot %s: [text]"
+    new "Слот сохранения %s: [text]"
+
+    # 00action_file.rpy:417
+    old "Load slot %s: [text]"
+    new "Слот загрузки %s: [text]"
+
+    # 00action_file.rpy:459
+    old "Delete slot [text]"
+    new "Удалить слот [text]"
+
+    # 00action_file.rpy:539
+    old "File page auto"
+    new "Автосохранения"
+
+    # 00action_file.rpy:541
+    old "File page quick"
+    new "Быстрые сохранения"
+
+    # 00action_file.rpy:543
+    old "File page [text]"
+    new "Страница сохранений [text]"
+
+    # 00action_file.rpy:733
+    old "Next file page."
+    new "Следующая страница сохранений"
+
+    # 00action_file.rpy:797
+    old "Previous file page."
+    new "Предыдущая страница сохранений"
+
+    # 00action_file.rpy:858
     old "Quick save complete."
     new "Быстрое сохранение завершено."
+
+    # 00action_file.rpy:876
+    old "Quick save."
+    new "Быстрое сохранение"
+
+    # 00action_file.rpy:895
+    old "Quick load."
+    new "Быстрая загрузка"
+
+    # 00action_other.rpy:344
+    old "Language [text]"
+    new "Язык [text]"
 
     # 00director.rpy:703
     old "The interactive director is not enabled here."
@@ -285,11 +329,11 @@ translate russian strings:
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Вы уверены, что хотите пропустить непрочитанные диалоги до следующего выбора?"
 
-    # 00keymap.rpy:255
+    # 00keymap.rpy:258
     old "Failed to save screenshot as %s."
     new "Провалена попытка сохранить скриншот как %s."
 
-    # 00keymap.rpy:267
+    # 00keymap.rpy:270
     old "Saved screenshot as %s."
     new "Скриншот сохранён как %s."
 
@@ -299,29 +343,209 @@ translate russian strings:
 
     # 00library.rpy:147
     old "Clipboard voicing enabled. "
-    new "Озвучка буфера обмена включена. "
+    new "Озвучка буфера обмена включена."
 
     # 00library.rpy:148
     old "Self-voicing enabled. "
-    new "Синтезатор речи включён. "
+    new "Синтезатор речи включён."
 
-    # 00library.rpy:183
+    # 00library.rpy:150
+    old "bar"
+    new ". Полоса настройки"
+
+    # 00library.rpy:151
+    old "selected"
+    new ". На данный момент это выбрано"
+
+    # 00library.rpy:152
+    old "viewport"
+    new "порт просмотра"
+
+    # 00library.rpy:153
+    old "horizontal scroll"
+    new ". горизонтальная полоса прокрутки"
+
+    # 00library.rpy:154
+    old "vertical scroll"
+    new ". вертикальная полоса прокрутки"
+
+    # 00library.rpy:155
+    old "activate"
+    new "элемент активирован"
+
+    # 00library.rpy:156
+    old "deactivate"
+    new "элемент деактивирован"
+
+    # 00library.rpy:157
+    old "increase"
+    new "больше" ### но полоса прокрутки тоже здесь!
+
+    # 00library.rpy:158
+    old "decrease"
+    new "меньше" ###
+
+    # 00library.rpy:193
     old "Skip Mode"
     new "Режим Пропуска"
 
-    # 00library.rpy:266
+    # 00library.rpy:279
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Эта программа содержит свободное и открытое программное обеспечение под несколькими лицензиями, включая лицензию MIT и GNU Lesser General Public. Полный список лицензий, включая ссылки на полный исходный код, можно найти {a=https://www.renpy.org/l/license}здесь{/a}."
 
-    # 00preferences.rpy:472
+    # 00preferences.rpy:207
+    old "display"
+    new "режим экрана"
+
+    # 00preferences.rpy:219
+    old "transitions"
+    new "переходы"
+
+    # 00preferences.rpy:228
+    old "skip transitions"
+    new "пропускать переходы"
+
+    # 00preferences.rpy:230
+    old "video sprites"
+    new "видео-спрайты"
+
+    # 00preferences.rpy:239
+    old "show empty window"
+    new "показывать пустое окно диалога"
+
+    # 00preferences.rpy:248
+    old "text speed"
+    new "скорость текста"
+
+    # 00preferences.rpy:256
+    old "joystick"
+    new "джойстик"
+
+    # 00preferences.rpy:256
+    old "joystick..."
+    new "джойстик..."
+
+    # 00preferences.rpy:263
+    old "skip"
+    new "пропускать"
+
+    # 00preferences.rpy:266
+    old "skip unseen [text]"
+    new "пропускать весь [text]" ###
+
+    # 00preferences.rpy:271
+    old "skip unseen text"
+    new "пропускать весь текст"
+
+    # 00preferences.rpy:273
+    old "begin skipping"
+    new "начать пропуск"
+
+    # 00preferences.rpy:277
+    old "after choices"
+    new "после выборов"
+
+    # 00preferences.rpy:284
+    old "skip after choices"
+    new "пропускать после выборов"
+
+    # 00preferences.rpy:286
+    old "auto-forward time"
+    new "скорость авточтения"
+
+    # 00preferences.rpy:300
+    old "auto-forward"
+    new "авточтение" ###
+
+    # 00preferences.rpy:307
+    old "Auto forward"
+    new "Авточтение" ###
+
+    # 00preferences.rpy:310
+    old "auto-forward after click"
+    new "продолжать авточтение после клика"
+
+    # 00preferences.rpy:319
+    old "automatic move"
+    new "автоматически передвигать мышь к кнопке" ###
+
+    # 00preferences.rpy:328
+    old "wait for voice"
+    new "ждать голос"
+
+    # 00preferences.rpy:337
+    old "voice sustain"
+    new "не останавливать голос"
+
+    # 00preferences.rpy:346
+    old "self voicing"
+    new "озвучка через синтезатор речи"
+
+    # 00preferences.rpy:355
+    old "clipboard voicing"
+    new "синтез речи из буфера обмена"
+
+    # 00preferences.rpy:364
+    old "debug voicing"
+    new "режим дебага синтеза речи"
+
+    # 00preferences.rpy:373
+    old "emphasize audio"
+    new "усилить громкость заранее заданных звуковых каналов за счёт приглушения остальных каналов"
+
+    # 00preferences.rpy:382
+    old "rollback side"
+    new "сторона отката"
+
+    # 00preferences.rpy:392
+    old "gl powersave"
+    new "настройка графики. Экономия энергии"
+
+    # 00preferences.rpy:398
+    old "gl framerate"
+    new "настройка графики. Частота кадров"
+
+    # 00preferences.rpy:401
+    old "gl tearing"
+    new "настройка графики. Разрывание кадров"
+
+    # 00preferences.rpy:413
+    old "music volume"
+    new "громкость музыки"
+
+    # 00preferences.rpy:414
+    old "sound volume"
+    new "громкость звуков"
+
+    # 00preferences.rpy:415
+    old "voice volume"
+    new "громкость голоса"
+
+    # 00preferences.rpy:416
+    old "mute music"
+    new "без музыки"
+
+    # 00preferences.rpy:417
+    old "mute sound"
+    new "без звуков"
+
+    # 00preferences.rpy:418
+    old "mute voice"
+    new "без голоса"
+
+    # 00preferences.rpy:419
+    old "mute all"
+    new "режим без звука"
+
+    # 00preferences.rpy:498
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "Озвучка буфера обмена включена. Нажмите 'shift+C', чтобы отключить её."
 
-    # 00preferences.rpy:474
+    # 00preferences.rpy:500
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "Синтезатор речи должен сказать \"[renpy.display.tts.last]\". Нажмите 'alt+shift+V', чтобы отключить его."
 
-    # 00preferences.rpy:476
+    # 00preferences.rpy:502
     old "Self-voicing enabled. Press 'v' to disable."
     new "Синтезатор речи включён. Нажмите 'v', чтобы отключить его."
 
@@ -337,67 +561,67 @@ translate russian strings:
     old "An error is being simulated."
     new "Симулируется ошибка."
 
-    # 00updater.rpy:667
+    # 00updater.rpy:672
     old "Either this project does not support updating, or the update status file was deleted."
     new "Или этот проект не поддерживает обновление, или файл статуса обновления был удалён."
 
-    # 00updater.rpy:681
+    # 00updater.rpy:686
     old "This account does not have permission to perform an update."
     new "У этого аккаунта нет прав проводить обновление."
 
-    # 00updater.rpy:684
+    # 00updater.rpy:689
     old "This account does not have permission to write the update log."
     new "У этого аккаунта нет прав писать лог обновления."
 
-    # 00updater.rpy:711
+    # 00updater.rpy:716
     old "Could not verify update signature."
     new "Не могу верифицировать подпись обновления."
 
-    # 00updater.rpy:986
+    # 00updater.rpy:991
     old "The update file was not downloaded."
     new "Файл обновления не был загружен."
 
-    # 00updater.rpy:1004
+    # 00updater.rpy:1009
     old "The update file does not have the correct digest - it may have been corrupted."
     new "Файл обновления не содержит корректного дайджеста — он может быть повреждён."
 
-    # 00updater.rpy:1060
+    # 00updater.rpy:1065
     old "While unpacking {}, unknown type {}."
     new "При распаковке {} обнаружен неизвестный тип {}."
 
-    # 00updater.rpy:1407
+    # 00updater.rpy:1412
     old "Updater"
     new "Обновление"
 
-    # 00updater.rpy:1418
+    # 00updater.rpy:1423
     old "This program is up to date."
     new "Эта программа обновлена."
 
-    # 00updater.rpy:1420
+    # 00updater.rpy:1425
     old "[u.version] is available. Do you want to install it?"
     new "[u.version] доступна. Вы хотите её установить?"
 
-    # 00updater.rpy:1422
+    # 00updater.rpy:1427
     old "Preparing to download the updates."
     new "Подготовка к загрузке обновлений."
 
-    # 00updater.rpy:1424
+    # 00updater.rpy:1429
     old "Downloading the updates."
     new "Загрузка обновлений."
 
-    # 00updater.rpy:1426
+    # 00updater.rpy:1431
     old "Unpacking the updates."
     new "Распаковка обновлений."
 
-    # 00updater.rpy:1430
+    # 00updater.rpy:1435
     old "The updates have been installed. The program will restart."
     new "Обновления установлены. Программа будет перезапущена."
 
-    # 00updater.rpy:1432
+    # 00updater.rpy:1437
     old "The updates have been installed."
     new "Обновления были установлены."
 
-    # 00updater.rpy:1434
+    # 00updater.rpy:1439
     old "The updates were cancelled."
     new "Обновления были отменены."
 

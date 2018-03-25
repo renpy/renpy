@@ -33,87 +33,87 @@ translate russian strings:
     old "Powersave"
     new "Экономия энергии"
 
-    # 00gltest.rpy:149
+    # 00gltest.rpy:145
     old "Framerate"
     new "Частота кадров"
 
-    # 00gltest.rpy:153
+    # 00gltest.rpy:149
     old "Screen"
     new "Экранная"
 
-    # 00gltest.rpy:157
+    # 00gltest.rpy:153
     old "60"
     new "60"
 
-    # 00gltest.rpy:161
+    # 00gltest.rpy:157
     old "30"
     new "30"
 
-    # 00gltest.rpy:167
+    # 00gltest.rpy:163
     old "Tearing"
     new "Разрывание кадров"
 
-    # 00gltest.rpy:183
+    # 00gltest.rpy:179
     old "Changes will take effect the next time this program is run."
     new "Изменения вступят в силу при следующем запуске программы."
 
-    # 00gltest.rpy:217
+    # 00gltest.rpy:213
     old "Performance Warning"
     new "Предупреждение Производительности"
 
-    # 00gltest.rpy:222
+    # 00gltest.rpy:218
     old "This computer is using software rendering."
     new "Этот компьютер использует программный рендеринг."
 
-    # 00gltest.rpy:224
+    # 00gltest.rpy:220
     old "This computer is not using shaders."
     new "Этот компьютер не использует шейдеры."
 
-    # 00gltest.rpy:226
+    # 00gltest.rpy:222
     old "This computer is displaying graphics slowly."
     new "Этот компьютер медленно отображает графику."
 
-    # 00gltest.rpy:228
+    # 00gltest.rpy:224
     old "This computer has a problem displaying graphics: [problem]."
     new "У этого компьютера проблема с отображением графики: [problem]"
 
-    # 00gltest.rpy:233
+    # 00gltest.rpy:229
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
     new "Графические драйвера устарели или работают неверно. Это может привести к медленному или неверному отображению графики. Обновление DirectX может решить эту проблему."
 
-    # 00gltest.rpy:235
+    # 00gltest.rpy:231
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
     new "Графические драйвера устарели или работают неверно. Это может привести к медленному или неверному отображению графики."
 
-    # 00gltest.rpy:240
+    # 00gltest.rpy:236
     old "Update DirectX"
     new "Обновить DirectX"
 
-    # 00gltest.rpy:246
+    # 00gltest.rpy:242
     old "Continue, Show this warning again"
     new "Продолжить, Показать это предупреждение снова"
 
-    # 00gltest.rpy:250
+    # 00gltest.rpy:246
     old "Continue, Don't show warning again"
     new "Продолжить, Не показывать это предупреждение снова."
 
-    # 00gltest.rpy:268
+    # 00gltest.rpy:264
     old "Updating DirectX."
     new "Обновляю DirectX."
 
-    # 00gltest.rpy:272
+    # 00gltest.rpy:268
     old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
     new "Установщик DirectX был запущен. Возможно, что он запустился в свёрнутом состоянии. Пожалуйста, следуйте инструкциям для установки DirectX."
 
-    # 00gltest.rpy:276
+    # 00gltest.rpy:272
     old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
     new "{b}Предупреждение:{/b} Установщик DirectX по умолчанию пытается установить панель инструментов Bing. Если вы этого не хотите, снимите соответствующую галочку."
 
-    # 00gltest.rpy:280
+    # 00gltest.rpy:276
     old "When setup finishes, please click below to restart this program."
     new "По завершению установки, щёлкните, чтобы перезапустить программу."
 
-    # 00gltest.rpy:282
+    # 00gltest.rpy:278
     old "Restart"
     new "Перезапустить"
 
@@ -141,75 +141,75 @@ translate russian strings:
     old "Back (B)"
     new "Back (B)"
 
-    # _errorhandling.rpym:523
+    # _errorhandling.rpym:528
     old "Open"
     new "Журнал"
 
-    # _errorhandling.rpym:525
+    # _errorhandling.rpym:530
     old "Opens the traceback.txt file in a text editor."
     new "Открывает файл traceback.txt в текстовом редакторе."
 
-    # _errorhandling.rpym:527
+    # _errorhandling.rpym:532
     old "Copy"
     new "Копировать"
 
-    # _errorhandling.rpym:529
+    # _errorhandling.rpym:534
     old "Copies the traceback.txt file to the clipboard."
     new "Копирует файл traceback.txt в буфер обмена."
 
-    # _errorhandling.rpym:556
+    # _errorhandling.rpym:561
     old "An exception has occurred."
     new "Возникло исключение."
 
-    # _errorhandling.rpym:576
+    # _errorhandling.rpym:581
     old "Rollback"
     new "Назад"
 
-    # _errorhandling.rpym:578
+    # _errorhandling.rpym:583
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "Пытается вернуться назад, позволяя вам сохраниться или принять другой выбор."
 
-    # _errorhandling.rpym:581
+    # _errorhandling.rpym:586
     old "Ignore"
     new "Игнорировать"
 
-    # _errorhandling.rpym:585
+    # _errorhandling.rpym:590
     old "Ignores the exception, allowing you to continue."
     new "Игнорирует это исключение, позволяя вам продолжить."
 
-    # _errorhandling.rpym:587
+    # _errorhandling.rpym:592
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "Игнорирует это исключение, позволяя вам продолжить. Зачастую это ведёт к дополнительным ошибкам."
 
-    # _errorhandling.rpym:591
+    # _errorhandling.rpym:596
     old "Reload"
     new "Перезагрузить"
 
-    # _errorhandling.rpym:593
+    # _errorhandling.rpym:598
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "Перезагружает игру с диска, сохраняя и восстанавливая её состояние, если это возможно."
 
-    # _errorhandling.rpym:596
+    # _errorhandling.rpym:601
     old "Console"
     new "Консоль"
 
-    # _errorhandling.rpym:598
+    # _errorhandling.rpym:603
     old "Opens a console to allow debugging the problem."
     new "Открывает консоль, позволяющую отладить проблему."
 
-    # _errorhandling.rpym:608
+    # _errorhandling.rpym:613
     old "Quits the game."
     new "Выходит из игры."
 
-    # _errorhandling.rpym:632
+    # _errorhandling.rpym:637
     old "Parsing the script failed."
     new "Обработка сценария завершилась неудачно."
 
-    # _errorhandling.rpym:658
+    # _errorhandling.rpym:663
     old "Opens the errors.txt file in a text editor."
     new "Открывает файл errors.txt в текстовом редакторе."
 
-    # _errorhandling.rpym:662
+    # _errorhandling.rpym:667
     old "Copies the errors.txt file to the clipboard."
     new "Копирует файл errors.txt в буфер обмена."
 
