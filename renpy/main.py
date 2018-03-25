@@ -122,16 +122,6 @@ def run(restart):
 
     game.context().goto_label(start_label)
 
-    # Perhaps warp.
-    warp_label = renpy.warp.warp()
-
-    if warp_label is not None:
-
-        game.context().goto_label(warp_label)
-        game.context().call('_after_warp')
-
-        renpy.config.skipping = None
-
     try:
         renpy.exports.log("--- " + time.ctime())
         renpy.exports.log("")

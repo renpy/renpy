@@ -132,6 +132,8 @@ def warp():
 
     run.reverse()
 
+    renpy.config.skipping = "fast"
+
     # Determine which statements we want to execute, and then run
     # only them.
 
@@ -143,5 +145,10 @@ def warp():
 
     # Now, return the name of the place where we will warp to. This
     # becomes the new starting point of the game.
+
+    renpy.game.context().goto_label(node.name)
+    renpy.game.context().call('_after_warp')
+
+    renpy.config.skipping = None
 
     return node.name

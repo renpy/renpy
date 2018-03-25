@@ -196,6 +196,10 @@ label _start:
         renpy.block_rollback()
 
     call _gl_test
+
+    python hide:
+        renpy.warp.warp()
+
     call _load_reload_game from _call__load_reload_game_1
 
     python hide:
