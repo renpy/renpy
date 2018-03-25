@@ -172,6 +172,9 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
     if isinstance(filenames, basestring):
         filenames = [ filenames ]
 
+    if renpy.config.skipping == "fast":
+        stop(channel)
+
     with renpy.audio.audio.lock:
 
         try:
