@@ -876,6 +876,9 @@ conditionswitch_predict_all = False
 # Transform events to deliver each time one happens.
 repeat_transform_events = [ "show", "replace", "update" ]
 
+# How many statements should we warp through?
+warp_limit = 1000
+
 del os
 del collections
 

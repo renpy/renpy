@@ -30,7 +30,7 @@ registry = { }
 parsers = renpy.parser.ParseTrie()
 
 
-def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False, execute_init=None, label=None):  # @ReservedAssignment
+def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False, execute_init=None, label=None, warp=None):  # @ReservedAssignment
     """
     :doc: statement_register
     :name: renpy.register_statement
@@ -85,6 +85,12 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
         statement. If it returns a string, that string is used as the statement
         label, which can be called and jumped to like any other label.
 
+    `warp`
+        This is a function that is called to determine if this statement
+        should execute during warping. If the function exists and returns
+        true, it's run during warp, otherwise the statement is not run
+        during warp.
+
     `scry`
         Used internally by Ren'Py.
 
@@ -93,6 +99,7 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
         is not already inside an init block, it's automatically placed inside
         an init 0 block.) This calls the execute function, in addition to the
         execute_init function.
+
     """
     name = tuple(name.split())
 
@@ -103,7 +110,8 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
                           predict=predict,
                           next=next,
                           scry=scry,
-                          label=label)
+                          label=label,
+                          warp=warp)
 
     # The function that is called to create an ast.UserStatement.
     def parse_user_statement(l, loc):

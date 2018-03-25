@@ -479,6 +479,15 @@ class Node(object):
         # Does nothing by default.
         return
 
+    warp = False
+
+    def can_warp(self):
+        """
+        Returns true if this should be run while warping, False otherwise.
+        """
+
+        return self.warp
+
 
 def say_menu_with(expression, callback):
     """
@@ -1099,6 +1108,8 @@ class Show(Node):
         'atl',
         ]
 
+    warp = True
+
     def __init__(self, loc, imspec, atl=None):
         """
         @param imspec: A triple consisting of an image name (itself a
@@ -1129,6 +1140,8 @@ class Show(Node):
 
 
 class ShowLayer(Node):
+
+    warp = True
 
     __slots__ = [
         'layer',
@@ -1173,6 +1186,8 @@ class Scene(Node):
         'layer',
         'atl',
         ]
+
+    warp = True
 
     def __init__(self, loc, imgspec, layer, atl=None):
         """
@@ -1223,6 +1238,8 @@ class Hide(Node):
     __slots__ = [
         'imspec',
         ]
+
+    warp = True
 
     def __init__(self, loc, imgspec):
         """
@@ -1847,6 +1864,13 @@ class UserStatement(Node):
 
     def get_code(self, dialogue_filter=None):
         return self.line
+
+    def can_warp(self):
+
+        if self.call("warp"):
+            return True
+
+        return False
 
 
 def create_store(name):

@@ -88,6 +88,9 @@ init -1200 python:
 
     def _window_auto_callback(statement):
 
+        if renpy.game.after_rollback:
+            return
+
         if not store._window_auto:
             return
 
@@ -164,13 +167,16 @@ python early hide:
     renpy.register_statement('window show',
                               parse=parse_window,
                               execute=execute_window_show,
-                              lint=lint_window)
+                              lint=lint_window,
+                              warp=lambda : True)
 
     renpy.register_statement('window hide',
                               parse=parse_window,
                               execute=execute_window_hide,
-                              lint=lint_window)
+                              lint=lint_window,
+                              warp=lambda : True)
 
     renpy.register_statement('window auto',
                              parse=parse_window_auto,
-                             execute=execute_window_auto)
+                             execute=execute_window_auto,
+                             warp=lambda : True)
