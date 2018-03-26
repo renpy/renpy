@@ -442,7 +442,7 @@ label gui_project_common:
         python hide:
             if gui.project_system_font:
                 with open(os.path.join(project.current.gamedir, "tl/None/common.rpym"), "ab") as f:
-                    f.write("define gui.system_font = {!r}\r\n".format(gui.project_system_font))
+                    f.write("define gui.system_font = {!r}\r\n".format(gui.project_system_font).encode("utf-8"))
 
 
 label gui_generate_images:
