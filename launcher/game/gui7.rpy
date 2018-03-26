@@ -290,6 +290,7 @@ screen choose_gui_color():
 
     if gui_color:
         textbutton _("Continue") action Return(True) style "l_right_button"
+        key "input_enter" action Return(True)
 
 
 label change_gui:
