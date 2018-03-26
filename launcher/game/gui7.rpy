@@ -450,7 +450,7 @@ label gui_generate_images:
     python:
 
         interface.processing(_("Updating the project..."))
-        project.current.launch([ 'gui_images' ], env={ "RENPY_VARIANT" : "small phone" } )
-        project.current.launch([ 'gui_images' ])
+        project.current.launch([ 'gui_images' ], env={ "RENPY_VARIANT" : "small phone" }, wait=True)
+        project.current.launch([ 'gui_images' ], wait=True)
 
     jump front_page
