@@ -2035,7 +2035,10 @@ class Default(Node):
             d.ever_been_changed.add("_defaults_set")
 
         if self.varname not in defaults_set:
-            d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
+
+            if start or (self.varname not in d.ever_been_changed):
+                d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
+
             d.ever_been_changed.add(self.varname)
 
             defaults_set.add(self.varname)
