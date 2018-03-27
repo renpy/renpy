@@ -186,6 +186,8 @@ init -1100 python in gui:
     renpy.pure("gui.SetPreference")
     renpy.pure("gui.TogglePreference")
 
+    # The extension used for auto-defined images.
+    button_image_extension = ".png"
 
     def button_properties(kind):
         """
@@ -241,9 +243,9 @@ init -1100 python in gui:
         backgrounds = [ ]
 
         if kind != "button":
-            backgrounds.append("gui/button/" + kind[:-7] + "_[prefix_]background.png")
+            backgrounds.append("gui/button/" + kind[:-7] + "_[prefix_]background" + button_image_extension)
 
-        backgrounds.append("gui/button/[prefix_]background.png")
+        backgrounds.append("gui/button/[prefix_]background" + button_image_extension)
 
         if renpy.variant("small"):
             backgrounds = [ i.replace("gui/button", "gui/phone/button") for i in backgrounds ] + backgrounds

@@ -635,6 +635,10 @@ The following variables set various properties of buttons:
     The horizontal alignment of the button text. 0.0 is left-aligned,
     0.5 is centered, and 1.0 is right-aligned.
 
+.. var:: gui.button_image_extension = ".png"
+
+    The extension for button images. This could be changed to .webp
+    to use WEBP button images instead of png ones.
 
 These variables can be prefixed with the button kind to configure a
 property for a particular kind of button. For example,

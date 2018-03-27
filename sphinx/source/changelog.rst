@@ -39,6 +39,9 @@ identifier and uses that if it exists.
 The _choose_attributes method is called when only a single displayable can
 be located. This supports the AttributeImage beta (https://github.com/renpy/ai).
 
+The new :var:`gui.button_image_extension` variable allows button images to be
+.webps without changing Ren'Py itself.
+
 Self-Voicing
 ------------
 
