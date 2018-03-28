@@ -19,6 +19,7 @@ the omission in future versions.
 * Aleema
 * Alessio
 * Alexandre Tranchant
+* Andyl_kl
 * Apricotorange
 * Arowana-vx
 * Asfdfdfd
@@ -52,6 +53,7 @@ the omission in future versions.
 * Emmeken
 * Enerccio
 * Eniko
+* Eevee (Lexy Munroe)
 * Evilantishad0w
 * Franck_v
 * Gas
