@@ -1227,7 +1227,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
             function = dynamic_displayable_compat
 
         self.predict_function = kwargs.pop("_predict_function", None)
-        self.apply_with = kwargs.pop("_apply_with", False)  # config.conditionswitch_apply_with
+        self.apply_with = kwargs.pop("_apply_with", False)
         self.function = function
         self.args = args
         self.kwargs = kwargs
@@ -1360,7 +1360,7 @@ def ConditionSwitch(*args, **kwargs):
     """
 
     predict_all = kwargs.pop("predict_all", None)
-    apply_with = kwargs.pop("_apply_with", False)  # config.conditionswitch_apply_with
+    apply_with = kwargs.pop("_apply_with", renpy.config.conditionswitch_apply_with)
     kwargs.setdefault('style', 'default')
 
     switch = [ ]

@@ -873,6 +873,9 @@ optimize_texture_bounds = True
 # Should we predict everything in a ConditionSwitch?
 conditionswitch_predict_all = False
 
+#Should ConditionSwitch perform a transition when it happens?
+conditionswitch_apply_with = False
+
 # Transform events to deliver each time one happens.
 repeat_transform_events = [ "show", "replace", "update" ]
 
