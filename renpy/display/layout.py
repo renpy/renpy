@@ -1272,8 +1272,8 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
                 for i in child:
                     renpy.display.predict.displayable(i)
-                else:
-                    renpy.display.predict.displayable(child)
+            else:
+                renpy.display.predict.displayable(child)
 
         except:
             pass
