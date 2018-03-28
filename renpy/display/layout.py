@@ -1227,9 +1227,18 @@ class DynamicDisplayable(renpy.display.core.Displayable):
             function = dynamic_displayable_compat
 
         self.predict_function = kwargs.pop("_predict_function", None)
+        self.apply_with = kwargs.pop("_apply_with", False)  # config.conditionswitch_apply_with
         self.function = function
         self.args = args
         self.kwargs = kwargs
+
+    def _in_current_store(self):
+        if not self.apply_with:
+            return self
+
+        _return = self.child
+        self.per_interact()
+        return _return
 
     def visit(self):
         return [ ]
@@ -1263,8 +1272,8 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
                 for i in child:
                     renpy.display.predict.displayable(i)
-            else:
-                renpy.display.predict.displayable(child)
+                else:
+                    renpy.display.predict.displayable(child)
 
         except:
             pass
@@ -1351,6 +1360,7 @@ def ConditionSwitch(*args, **kwargs):
     """
 
     predict_all = kwargs.pop("predict_all", None)
+    apply_with = kwargs.pop("_apply_with", False)  # config.conditionswitch_apply_with
     kwargs.setdefault('style', 'default')
 
     switch = [ ]
@@ -1370,7 +1380,8 @@ def ConditionSwitch(*args, **kwargs):
     rv = DynamicDisplayable(condition_switch_show,
                             switch,
                             predict_all,
-                            _predict_function=condition_switch_predict)
+                            _predict_function=condition_switch_predict,
+                            _apply_with=apply_with)
 
     return Position(rv, **kwargs)
 
