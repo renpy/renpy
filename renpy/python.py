@@ -86,6 +86,7 @@ def get_store_module(name):
 from renpy.pydict import DictItems, find_changes
 
 EMPTY_DICT = { }
+EMPTY_SET = set()
 
 
 class StoreDict(dict):
@@ -129,7 +130,8 @@ class StoreDict(dict):
         dictionary mapping the key to its value when begin was called, or
         deleted if it did not exist when begin was called.
 
-        As a side-effect, updates self.ever_been_changed.
+        As a side-effect, updates self.ever_been_changed, and returns the
+        changes to ever_been_changed as well.
 
         `cycle`
             If true, this cycles the old changes to the new changes. If
@@ -143,12 +145,18 @@ class StoreDict(dict):
             self.old = new
 
         if rv is None:
-            return EMPTY_DICT
+            return EMPTY_DICT, EMPTY_SET
 
-        for k in rv:
-            self.ever_been_changed.add(k)
+        delta_ebc = set()
 
-        return rv
+        if cycle:
+
+            for k in rv:
+                if k not in self.ever_been_changed:
+                    self.ever_been_changed.add(k)
+                    delta_ebc.add(k)
+
+        return rv, delta_ebc
 
 
 def begin_stores():
@@ -158,7 +166,6 @@ def begin_stores():
 
     for sd in store_dicts.itervalues():
         sd.begin()
-
 
 
 # A map from the name of a store dict to the corresponding StoreDict object.
@@ -1111,7 +1118,7 @@ class Rollback(renpy.object.Object):
     execution of this element.
     """
 
-    __version__ = 4
+    __version__ = 5
 
     identifier = None
 
@@ -1128,6 +1135,10 @@ class Rollback(renpy.object.Object):
 
         # A map of maps name -> (variable -> value)
         self.stores = { }
+
+        # A map from store name to the changes to ever_been_changed that
+        # need to be reverted.
+        self.delta_ebc = { }
 
         # If true, we retain the data in this rollback when a load occurs.
         self.retain_after_load = False
@@ -1163,6 +1174,9 @@ class Rollback(renpy.object.Object):
 
         if version < 4:
             self.hard_checkpoint = self.checkpoint
+
+        if version < 5:
+            self.delta_ebc = { }
 
     def purge_unreachable(self, reachable, wait):
         """
@@ -1224,7 +1238,7 @@ class Rollback(renpy.object.Object):
         for name, changes in self.stores.iteritems():
             store = store_dicts.get(name, None)
             if store is None:
-                return
+                continue
 
             for name, value in changes.iteritems():
                 if value is deleted:
@@ -1232,6 +1246,14 @@ class Rollback(renpy.object.Object):
                         del store[name]
                 else:
                     store[name] = value
+
+        for name, changes in self.delta_ebc.iteritems():
+
+            store = store_dicts.get(name, None)
+            if store is None:
+                continue
+
+            store.ever_been_changed -= changes
 
         rng.pushback(self.random)
 
@@ -1394,7 +1416,7 @@ class RollbackLog(renpy.object.Object):
         # Update self.current.stores with the changes from each store.
         # Also updates .ever_been_changed.
         for name, sd in store_dicts.iteritems():
-            self.current.stores[name] = sd.get_changes(begin)
+            self.current.stores[name], self.current.delta_ebc[name] = sd.get_changes(begin)
 
         # Update the list of mutated objects and what we need to do to
         # restore them.
@@ -1532,8 +1554,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                    and data == fwd_data
-                    and (keep_rollback or self.rolled_forward)
+                        and data == fwd_data
+                        and (keep_rollback or self.rolled_forward)
                     ):
                     self.forward.pop(0)
                 else:
