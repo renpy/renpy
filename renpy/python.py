@@ -151,6 +151,16 @@ class StoreDict(dict):
         return rv
 
 
+def begin_stores():
+    """
+    Calls .begin on every store dict.
+    """
+
+    for sd in store_dicts.itervalues():
+        sd.begin()
+
+
+
 # A map from the name of a store dict to the corresponding StoreDict object.
 # This isn't reset during a reload, so store objects stay the same in modules.
 store_dicts = { }
@@ -1338,8 +1348,7 @@ class RollbackLog(renpy.object.Object):
         if self.current is not None:
             self.complete(True)
         else:
-            for sd in store_dicts.itervalues():
-                sd.begin()
+            begin_stores()
 
         # If the log is too long, prune it.
         if len(self.log) > renpy.config.rollback_length:
@@ -1523,8 +1532,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                        and data == fwd_data
-                        and (keep_rollback or self.rolled_forward)
+                    and data == fwd_data
+                    and (keep_rollback or self.rolled_forward)
                     ):
                     self.forward.pop(0)
                 else:
@@ -1708,6 +1717,8 @@ class RollbackLog(renpy.object.Object):
             i.scene_lists.remove_all_hidden()
 
         renpy.game.contexts.extend(other_contexts)
+
+        begin_stores()
 
         # Restart the context or the top context.
         if replace_context:
