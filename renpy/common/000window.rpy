@@ -54,7 +54,7 @@ init -1200 python:
         if trans is False:
             trans = config.window_show_transition
 
-        if _preferences.show_empty_window:
+        if _preferences.show_empty_window and (not renpy.game.after_rollback):
             renpy.with_statement(None)
             store._window = True
             renpy.with_statement(trans)
@@ -79,7 +79,7 @@ init -1200 python:
         if trans is False:
             trans = config.window_hide_transition
 
-        if _preferences.show_empty_window:
+        if _preferences.show_empty_window and (not renpy.game.after_rollback):
             renpy.with_statement(None)
             store._window = False
             renpy.with_statement(trans)
@@ -87,9 +87,6 @@ init -1200 python:
             store._window = False
 
     def _window_auto_callback(statement):
-
-        if renpy.game.after_rollback:
-            return
 
         if not store._window_auto:
             return
