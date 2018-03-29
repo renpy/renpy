@@ -1362,7 +1362,19 @@ class RollbackLog(renpy.object.Object):
 
         # We only begin a checkpoint if the previous statement reached a checkpoint,
         # or an interaction took place. (Or we're forced.)
-        if (not force) and (self.current and not self.current.checkpoint) and (not self.did_interaction):
+        ignore = True
+
+        if force:
+            ignore = False
+        elif self.did_interaction:
+            ignore = False
+        elif self.current is not None:
+            if self.current.checkpoint:
+                ignore = False
+            elif self.current.retain_after_load:
+                ignore = False
+
+        if ignore:
             return
 
         self.did_interaction = False
@@ -1556,7 +1568,7 @@ class RollbackLog(renpy.object.Object):
                 if (self.current.context.current == fwd_name
                         and data == fwd_data
                         and (keep_rollback or self.rolled_forward)
-                    ):
+                        ):
                     self.forward.pop(0)
                 else:
                     self.forward = [ ]
@@ -1586,8 +1598,12 @@ class RollbackLog(renpy.object.Object):
         when the game is loaded.
         """
 
+        if renpy.display.predict.predicting:
+            return
+
         self.retain_after_load_flag = True
         self.current.retain_after_load = True
+        renpy.game.context().force_checkpoint = True
 
     def fix_rollback(self):
         if not self.rollback_is_fixed and len(self.log) > 1:
