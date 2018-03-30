@@ -2,6 +2,31 @@
 Full Changelog
 ==============
 
+.. _renpy-6.99.14.3:
+
+6.99.14.3
+=========
+
+Fixes
+-----
+
+This release fixes an issue where children of for statements in screens would
+not get their data propagated through screen update cycles. This manifested
+in complicated ways, such as transitions repeating and slow text refusing
+to work.
+
+This release displays the newest save slot in the selected color, as
+intended. This applies to newly created games, older projects can update
+by adding to the bottom of gui.rpy::
+
+    define gui.slot_button_text_selected_idle_color = gui.selected_color
+    define gui.slot_button_text_selected_hover_color = gui.hover_color
+
+A problem introduced in 6.99.14.2 with the the default statement
+not working after a rollback has been fixed. This should only ever
+have affected games that were updated after a save was first
+created.
+
 .. _renpy-6.99.14.2:
 
 6.99.14.2
