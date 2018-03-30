@@ -1410,11 +1410,12 @@ class SLFor(SLBlock):
 
         newcaches = { }
 
-        oldcaches = context.old_cache.get(serial, newcaches) or { }
+        oldcaches = context.old_cache.get(self.serial, newcaches) or { }
+
         if not isinstance(oldcaches, dict):
             oldcaches = { }
 
-        misscaches = context.miss_cache.get(serial, newcaches) or { }
+        misscaches = context.miss_cache.get(self.serial, newcaches) or { }
 
         if not isinstance(misscaches, dict):
             misscaches = { }
