@@ -1235,7 +1235,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
         if not self.editable:
             return None
 
-        if (pygame.key.get_mods() & pygame.KMOD_LALT) and (not ev.unicode):
+        if (ev.type == pygame.KEYDOWN) and (pygame.key.get_mods() & pygame.KMOD_LALT) and (not ev.unicode):
             return None
 
         l = len(self.content)
