@@ -1833,11 +1833,7 @@ class AlphaMask(Container):
     opaque where `child` and `mask` are both opaque.
 
     The `child` and `mask` parameters may be arbitrary displayables. The
-    size of the AlphaMask is the size of the overlap between `child` and
-    `mask`.
-
-    Note that this takes different arguments from :func:`im.AlphaMask`,
-    which uses the mask's color channel.
+    size of the AlphaMask is the size of `child`.
     """
 
     def __init__(self, child, mask, **properties):
@@ -1846,24 +1842,19 @@ class AlphaMask(Container):
         self.add(child)
         self.mask = renpy.easy.displayable(mask)
         self.null = None
-        self.size = None
 
     def render(self, width, height, st, at):
 
         cr = renpy.display.render.render(self.child, width, height, st, at)
-        mr = renpy.display.render.render(self.mask, width, height, st, at)
+        w, h = cr.get_size()
 
-        cw, ch = cr.get_size()
-        mw, mh = mr.get_size()
+        mr = renpy.display.render.Render(w, h)
+        mr.place(self.mask, main=False)
 
-        w = min(cw, mw)
-        h = min(ch, mh)
-        size = (w, h)
+        if self.null is None:
+            self.null = Fixed()
 
-        if self.size != size:
-            self.null = Null(w, h)
-
-        nr = renpy.display.render.render(self.null, width, height, st, at)
+        nr = renpy.display.render.render(self.null, w, h, st, at)
 
         rv = renpy.display.render.Render(w, h, opaque=False)
 
