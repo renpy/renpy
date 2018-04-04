@@ -194,27 +194,19 @@ Image Manipulators
 ------------------
 
 An image manipulator is a displayable that takes an image or image
-manipulator, performs an operation to it, and stores the result of
-that operation in the image cache. Since image manipulators can be
-predicted like images, they can perform expensive operations without
-incuring a display-time overhead.
-
-Image manipulators are limited to storing image data to the
-cache. This means that their result is of a fixed size, known in
-advance, and they can't change in response to game state or
-input. Generally, image manipulators can only take images or other
+manipulator, and either loads it or performs an operation on it.
+Image manipulators can only take images or other
 image manipulators as input.
 
 An image manipulator can be used any place a displayable can, but not
 vice-versa. An :func:`Image` is a kind of image manipulator, so an
 Image can be used whenever an image manipulator is required.
 
-Many image manipulators provide the same functionality as other
-displayables. Most of these exist so they can be provided as input to
-other image manipulators, and so the game-maker can choose between
-cache memory usage and work done at render-time. There's also an
-element of historical accident here - many of these image manipulators
-predate their equivalents.
+With the few exceptions listed below, the use of image manipulators is
+historic. A number of image manipulators that had been documented in the
+past should no longer be used, as they suffer from inherent problems.
+In many cases, the :func:`Transform` displayable provides similar
+functionality in a more general manner, while fixing the problems.
 
 .. include:: inc/im_im
 

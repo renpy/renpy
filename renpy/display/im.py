@@ -704,7 +704,7 @@ class ZipFileImage(ImageBase):
 
 class Composite(ImageBase):
     """
-    :doc: im_im
+    :undocumented:
 
     This image manipulator composites multiple images together to
     form a single image.
@@ -774,7 +774,7 @@ class Composite(ImageBase):
 
 class Scale(ImageBase):
     """
-    :doc: im_im
+    :undocumented:
 
     An image manipulator that scales `im` (an image manipulator) to
     `width` and `height`.
