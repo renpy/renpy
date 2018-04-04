@@ -7,6 +7,26 @@ Full Changelog
 6.99.14.3
 =========
 
+Changes
+-------
+
+The :func:`AlphaMask` displayable now places its mask inside the child
+displayable, in the same way that AlphaDissolve always has. This allows
+the mask to be created using ATL or other transforms.
+
+Several obsolete image manipulators have been deprecated, and removed from
+the documentation. These are image manipulators that have been completely
+replaced by :func:`Transform`.
+
+Several functions have been renamed, to remove a pointless Live prefix.
+
+* LiveComposite is now :func:`Composite`
+* LiveCrop is now :func:`Crop`
+* LiveTile is now :func:`Tile`
+
+The old names have been retained as compatibility alias.
+
+
 Fixes
 -----
 

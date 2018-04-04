@@ -259,8 +259,9 @@ class Container(renpy.display.core.Displayable):
         return False
 
 
-def LiveComposite(size, *args, **properties):
+def Composite(size, *args, **properties):
     """
+    :name: Composite
     :doc: disp_imagelike
 
     This creates a new displayable of `size`, by compositing other
@@ -276,7 +277,7 @@ def LiveComposite(size, *args, **properties):
 
     ::
 
-       image eileen composite = LiveComposite(
+       image eileen composite = Composite(
            (300, 600),
            (0, 0), "body.png",
            (0, 0), "clothes.png",
@@ -299,8 +300,13 @@ def LiveComposite(size, *args, **properties):
     return rv
 
 
+LiveComposite = Composite
+
+
 class Position(Container):
     """
+    :undocumented:
+
     Controls the placement of a displayable on the screen, using
     supplied position properties. This is the non-curried form of
     Position, which should be used when the user has directly created
@@ -1450,17 +1456,21 @@ class IgnoresEvents(Container):
         return None
 
 
-def LiveCrop(rect, child, **properties):
+def Crop(rect, child, **properties):
     """
     :doc: disp_imagelike
+    :name: Crop
 
     This created a displayable by cropping `child` to `rect`, where
     `rect` is an (x, y, width, height) tuple. ::
 
-        image eileen cropped = LiveCrop((0, 0, 300, 300), "eileen happy")
+        image eileen cropped = Crop((0, 0, 300, 300), "eileen happy")
     """
 
     return renpy.display.motion.Transform(child, crop=rect, **properties)
+
+
+LiveCrop = Crop
 
 
 class Side(Container):
@@ -1739,15 +1749,16 @@ class AdjustTimes(Container):
         return self.child.get_placement()
 
 
-class LiveTile(Container):
+class Tile(Container):
     """
     :doc: disp_imagelike
+    :name: Tile
 
     Tiles `child` until it fills the area allocated to this displayable.
 
     ::
 
-        image bg tile = LiveTile("bg.png")
+        image bg tile = Tile("bg.png")
 
     """
 
@@ -1781,6 +1792,9 @@ class LiveTile(Container):
                 rv.blit(ccr, (x, y), focus=False)
 
         return rv
+
+
+LiveTile = Tile
 
 
 class Flatten(Container):
