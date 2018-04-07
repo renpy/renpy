@@ -369,7 +369,15 @@ class StringTranslator(object):
 
     def add(self, old, new, newloc):
         if old in self.translations:
-            raise Exception("A translation for %r already exists." % old)
+
+            if old in self.translation_loc:
+                print(newloc, self.translation_loc[old])
+                fn, line = self.translation_loc[old]
+                raise Exception("A translation for \"{}\" already exists at {}:{}.".format(
+                    quote_unicode(old), fn, line))
+            else:
+                raise Exception("A translation for \"{}\" already exists.".format(
+                    quote_unicode(old)))
 
         self.translations[old] = new
 
