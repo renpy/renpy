@@ -714,7 +714,7 @@ translate russian strings:
     new "jump <label>: прыжок на метку"
 
 
-translate None strings:
+translate russian strings:
 
     # 00action_file.rpy:344
     old "Save slot %s: [text]"
