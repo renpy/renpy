@@ -51,6 +51,7 @@ init python:
 
         return rv
 
+    show_legacy = os.path.exists(os.path.join(config.renpy_base, "templates", "english", "game", "script.rpy"))
 
 default persistent.legacy = False
 default persistent.force_new_tutorial = False
@@ -184,12 +185,16 @@ screen preferences:
                         if renpy.windows:
                             textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
 
-                        textbutton _("Force new tutorial") style "l_checkbox" action [ ToggleField(persistent, "force_new_tutorial"), project.SelectTutorial(True) ]
+                        if project.manager.get("oldtutorial"):
 
-                        textbutton _("Legacy options") style "l_checkbox" action ToggleField(persistent, "legacy")
+                           textbutton _("Force new tutorial") style "l_checkbox" action [ ToggleField(persistent, "force_new_tutorial"), project.SelectTutorial(True) ]
 
-                        if persistent.legacy:
-                            textbutton _("Show templates") style "l_checkbox" action ToggleField(persistent, "show_templates")
+                        if show_legacy:
+
+                            textbutton _("Legacy options") style "l_checkbox" action ToggleField(persistent, "legacy")
+
+                            if persistent.legacy:
+                                textbutton _("Show templates") style "l_checkbox" action ToggleField(persistent, "show_templates")
 
                         textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 
