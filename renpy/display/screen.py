@@ -302,6 +302,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
     restarting = False
     hiding = False
+    transient = False
 
     def after_setstate(self):
         self.screen = get_screen_variant(self.screen_name[0])
@@ -319,7 +320,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         self.profile = profile.get(self.screen_name, None)
 
-    def __init__(self, screen, tag, layer, widget_properties={}, scope={}, **properties):
+    def __init__(self, screen, tag, layer, widget_properties={}, scope={}, transient=False, **properties):
 
         super(ScreenDisplayable, self).__init__(**properties)
 
@@ -403,6 +404,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.restarting = False
         self.hiding = False
 
+        # Is this a transient screen?
+        self.transient = transient
+
         # Modal and zorder.
         self.modal = renpy.python.py_eval(self.screen.modal, locals=self.scope)
         self.zorder = renpy.python.py_eval(self.screen.zorder, locals=self.scope)
@@ -456,7 +460,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
     def _handles_event(self, event):
         if self.child is None:
-            return
+
+            if self.transient:
+                return False
+
+            self.update()
 
         return self.child._handles_event(event)
 
@@ -1073,7 +1081,7 @@ def show_screen(_screen_name, *_args, **kwargs):
     else:
         scope.update(kwargs)
 
-    d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, scope)
+    d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, scope, transient=_transient)
 
     old_d = get_screen(_tag, _layer)
 
