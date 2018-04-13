@@ -52,6 +52,13 @@ tag
 has
 """
 
+# AttributeImage keywords
+AI_KEYWORDS = """\
+attributeimage
+attribute
+group
+"""
+
 
 def script_keywords():
 
@@ -165,6 +172,7 @@ def write_keywords():
     kwlist |= set(ATL_KEYWORDS.split())
     kwlist |= set(SCRIPT_KEYWORDS.split())
     kwlist |= set(SL2_KEYWORDS.split())
+    kwlist |= set(AI_KEYWORDS.split())
 
     kwlist = list(kwlist)
 
