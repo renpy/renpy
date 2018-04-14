@@ -2,6 +2,41 @@
 Full Changelog
 ==============
 
+
+.. _renpy-7.0:
+
+7.0
+===
+
+Ren'Py 7.0 marks the completion of over a decade of development since
+Ren'Py 6 that brought features like ATL, Screen Language, OpenGL and DirectX
+acceleration,  support for the Android and iOS platforms, Translation,
+Accessibility, and so much more.
+
+For releases between 6.0 and 7.0, see the other entries in this changelog,
+and the older changelog on the Ren'Py website. The rest of this entry
+contains the differences between 7.0 and 6.99.14.3.
+
+Changes
+-------
+
+The old tutorial and old templates are no longer includes with Ren'Py.
+They can still be used with new version of Ren'Py if copied into
+this or later versions.
+
+
+Fixes
+-----
+
+This fixes a regression that prevented screens from handling the hide or
+replaced events when the screen was not being shown. (This might be the
+case when the player is skipping through the game.)
+
+An issue that caused the interactive director to be translated into
+Russian when the default (English) language was being used has been
+fixed.
+
+
 .. _renpy-6.99.14.3:
 
 6.99.14.3
@@ -4242,4 +4277,4 @@ Older Changelogs
 
 Older changelogs can be found at:
 
-    http://www.renpy.org/dl/6.10.2/CHANGELOG.txt
+    https://www.renpy.org/dl/6.10.2/CHANGELOG.txt
