@@ -161,14 +161,20 @@ python early in _attribute:
             else:
                 properties = dict()
 
+            if self.image:
+                image = eval(self.image)
+            else:
+                image = None
+
             properties.update({ k : eval(v) for k, v in self.properties.items() })
-            return [ Attribute(group, self.name, eval(self.image), **properties) ]
+            return [ Attribute(group, self.name, image, **properties) ]
 
 
     class RawAttributeGroup(object):
 
-        def __init__(self, group):
+        def __init__(self, image_name, group):
 
+            self.image_name = image_name
             self.group = group
             self.properties = OrderedDict()
             self.children = [ ]
@@ -176,11 +182,28 @@ python early in _attribute:
         def execute(self):
 
             properties = { k : eval(v) for k, v in self.properties.items() }
+            auto = properties.pop("auto", False)
 
             rv = [ ]
 
             for i in self.children:
                 rv.extend(i.execute(group=self.group, properties=properties))
+
+            if auto:
+                seen = set(i.attribute for i in rv)
+
+                prefix = self.image_name + " " + self.group + " "
+
+                for i in renpy.list_images():
+
+                    print(repr(i), repr(prefix))
+
+                    if i.startswith(prefix):
+                        rest = i[len(prefix):]
+                        attrs = rest.split()
+
+                        if len(attrs) == 1:
+                            rv.append(Attribute(self.group, attrs[0], renpy.displayable(i), **properties))
 
             return rv
 
@@ -565,11 +588,11 @@ python early in _attribute:
         return
 
 
-    def parse_group(l, parent):
+    def parse_group(l, parent, image_name):
 
         group = l.require(l.image_name_component)
 
-        rv = RawAttributeGroup(group)
+        rv = RawAttributeGroup(image_name, group)
         parent.children.append(rv)
 
         l.require(':')
@@ -583,7 +606,7 @@ python early in _attribute:
                 parse_attribute(ll, rv)
                 continue
 
-            while parse_property(ll, rv, [ "at" ] + ATL_PROPERTIES):
+            while parse_property(ll, rv, [ "at", "auto" ] + ATL_PROPERTIES):
                 pass
 
             ll.expect_eol()
@@ -688,7 +711,7 @@ python early in _attribute:
 
             elif ll.match('group'):
 
-                parse_group(ll, rv)
+                parse_group(ll, rv, name)
                 ll.advance()
 
             elif ll.match('if'):
