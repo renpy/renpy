@@ -194,9 +194,9 @@ python early in _attribute:
 
                 prefix = self.image_name + " " + self.group + " "
 
-                for i in renpy.list_images():
+                auto_attrs = [ ]
 
-                    print(repr(i), repr(prefix))
+                for i in renpy.list_images():
 
                     if i.startswith(prefix):
                         rest = i[len(prefix):]
@@ -456,13 +456,22 @@ python early in _attribute:
 
             return rv
 
-        def _list_attributes(self, attributes):
+        def _list_attributes(self, tag, attributes):
             banned = self.get_banned(attributes)
 
-            rv = [ ]
+            group_attr = [ ]
+
             seen = set()
 
+            group_count = 0
+            old_group = None
+
             for a in self.attributes:
+
+                if a.group != old_group:
+                    old_group = a.group
+                    group_count += 1
+
                 if a.attribute in banned:
                     continue
 
@@ -470,9 +479,11 @@ python early in _attribute:
                     continue
 
                 seen.add(a.attribute)
-                rv.add(a.attribute)
+                group_attr.append((group_count, a.attribute))
 
-            return rv
+            group_attr.sort()
+
+            return [ i[1] for i in group_attr ]
 
         def _choose_attributes(self, tag, attributes, optional):
 
