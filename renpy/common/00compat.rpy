@@ -166,6 +166,9 @@ init -1900 python:
             config.cache_surfaces = True
             config.optimize_texture_bounds = False
 
+        if version <= (6, 99, 14, 3):
+            config.late_images_scan = True
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None
