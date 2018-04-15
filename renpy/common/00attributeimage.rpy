@@ -2,7 +2,7 @@ init offset = -100
 
 python early in _attribute:
 
-    from store import Transform, ConditionSwitch, Fixed, Null
+    from store import Transform, ConditionSwitch, Fixed, Null, config, Text
     from collections import OrderedDict
 
     ATL_PROPERTIES =[ i for i in renpy.atl.PROPERTIES ]
@@ -433,9 +433,13 @@ python early in _attribute:
             name = " ".join(args.name + tuple(args.args))
 
             attributes = set(args.args)
+            unknown = set(args.args)
             banned = self.get_banned(attributes)
 
             for a in self.attributes:
+
+                unknown.discard(a.attribute)
+
                 if a.default and (a.attribute not in banned):
                     attributes.add(a.attribute)
 
@@ -450,6 +454,23 @@ python early in _attribute:
                         d = d._duplicate(args)
 
                     rv.add(d)
+
+            if unknown and config.developer:
+
+                message = [" ".join(args.name), "unknown attributes:", " ".join(sorted(unknown))]
+
+                text = Text(
+                    "\n".join(message),
+                    size=16,
+                    xalign=0.5,
+                    yalign=0.5,
+                    text_align=0.5,
+                    color="#fff",
+                    outlines=[ (1, "#0008", 0, 0) ],
+                )
+
+                rv = Fixed(rv, text, fit_first=True)
+
 
             for i in self.at:
                 rv = i(rv)
@@ -487,6 +508,8 @@ python early in _attribute:
 
         def _choose_attributes(self, tag, attributes, optional):
 
+            unknown = list(attributes)
+
             attributes = set(attributes)
             banned = self.get_banned(attributes)
 
@@ -502,11 +525,15 @@ python early in _attribute:
             rv = [ ]
 
             for a in self.attributes:
+
                 if a.attribute in attributes:
                     rv.append(a.attribute)
                     attributes.remove(a.attribute)
 
-            return tuple(rv)
+                if a.attribute in unknown:
+                    unknown.remove(a.attribute)
+
+            return tuple(rv + unknown)
 
     class RawAttributeImage(object):
 
