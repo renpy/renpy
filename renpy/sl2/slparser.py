@@ -716,6 +716,11 @@ class ForParser(Parser):
         else:
             code = None
 
+        if l.match('index'):
+            index_expression = l.require(l.say_expression)
+        else:
+            index_expression = None
+
         l.require('in')
 
         expression = l.require(l.python_expression)
@@ -723,7 +728,7 @@ class ForParser(Parser):
         l.require(':')
         l.expect_eol()
 
-        rv = slast.SLFor(loc, name, expression)
+        rv = slast.SLFor(loc, name, expression, index_expression)
 
         if code:
             rv.children.append(slast.SLPython(loc, code))

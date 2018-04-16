@@ -1347,11 +1347,14 @@ class SLFor(SLBlock):
     simple for loops that assign a single variable.
     """
 
-    def __init__(self, loc, variable, expression):
+    index_expression = None
+
+    def __init__(self, loc, variable, expression, index_expression):
         SLBlock.__init__(self, loc)
 
         self.variable = variable
         self.expression = expression
+        self.index_expression = index_expression
 
     def copy(self, transclude):
         rv = self.instantiate(transclude)
@@ -1425,6 +1428,9 @@ class SLFor(SLBlock):
         for index, v in enumerate(value):
 
             ctx.scope[variable] = v
+
+            if self.index_expression is not None:
+                index = eval(self.index_expression, ctx.globals, ctx.scope)
 
             ctx.old_cache = oldcaches.get(index, None) or { }
 
