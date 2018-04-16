@@ -68,8 +68,12 @@ python early in _attribute:
 
         return image
 
+    class Layer(object):
+        """
+        Base class for our layers.
+        """
 
-    class Attribute(object):
+    class Attribute(Layer):
         """
         This is used to represent a layer of an AttributeImage that is
         controlled by an attribute. A single attribute can control
@@ -208,7 +212,7 @@ python early in _attribute:
             return rv
 
 
-    class Condition(object):
+    class Condition(Layer):
         """
         This is used to represent a layer of an AttributeImage that
         is controlled by a condition. When the condition is true,
@@ -280,7 +284,7 @@ python early in _attribute:
             return [ Condition(self.condition, eval(self.image), **properties) ]
 
 
-    class ConditionGroup(object):
+    class ConditionGroup(Layer):
         """
         Combines a list of conditions into a single ConditionSwitch.
         """
@@ -316,6 +320,57 @@ python early in _attribute:
                 l.extend(i.execute())
 
             return [ ConditionGroup(l) ]
+
+
+    class Always(Layer):
+
+        def __init__(self, d, at=[ ], **kwargs):
+
+            self.image = d
+
+            if not isinstance(at, list):
+
+                at = list(at)
+
+            self.at = at
+            self.transform_args = kwargs
+
+        def apply_format(self, ai):
+
+            self.image = ai.format(
+                "Always",
+                group=None,
+                attribute=None,
+                image=self.image,
+                )
+
+            self.image = renpy.displayable(self.image)
+
+            if self.transform_args:
+                self.image = Transform(self.image, **self.transform_args)
+
+            for i in self.at:
+                self.image = i(self.image)
+
+        def get_displayable(self, attributes):
+            return self.image
+
+    class RawAlways(object):
+
+        def __init__(self):
+            self.image = None
+            self.properties = OrderedDict()
+
+        def execute(self):
+
+            if self.image:
+                image = eval(self.image)
+            else:
+                image = None
+
+            properties = { k : eval(v) for k, v in self.properties.items() }
+            return [ Always(image, **properties) ]
+
 
 
     class AttributeImage(object):
@@ -403,6 +458,10 @@ python early in _attribute:
                 image_format=self.image_format)
 
         def add(self, a):
+
+            if not isinstance(a, Layer):
+                a = Always(a)
+
             a.apply_format(self)
             self.layers.append(a)
 
@@ -625,6 +684,53 @@ python early in _attribute:
 
         return
 
+    def parse_always(l, parent):
+
+        a = RawAlways()
+        parent.children.append(a)
+
+        def line(l):
+
+            while True:
+
+                if parse_property(l, a, [ "at" ] + ATL_PROPERTIES):
+                    continue
+
+                image = l.simple_expression()
+                if image is not None:
+
+                    if a.image is not None:
+                        l.error('The always statement can only have one displayable, two found.')
+
+                    a.image = image
+                    continue
+
+                break
+
+
+        line(l)
+
+        if not l.match(':'):
+            l.expect_eol()
+            l.expect_noblock('attribute')
+            return
+
+
+        l.expect_block('attribute')
+        l.expect_eol()
+
+        ll = l.subblock_lexer()
+
+        while ll.advance():
+            line(ll)
+            ll.expect_eol()
+            ll.expect_noblock('attribute')
+
+        if a.image is None:
+            l.error("The always statement must have a displayable.")
+
+        return
+
 
     def parse_group(l, parent, image_name):
 
@@ -756,6 +862,10 @@ python early in _attribute:
 
                 parse_conditions(ll, rv)
                 # Advances for us.
+
+            elif ll.match('always'):
+                parse_always(ll, rv)
+                ll.advance()
 
             else:
 
