@@ -709,9 +709,6 @@ translate russian strings:
     old "jump <label>: jumps to label"
     new "jump <label>: прыжок на метку"
 
-
-translate None strings:
-
     # 00action_file.rpy:344
     old "Save slot %s: [text]"
     new "Слот сохранения %s: [text]"
@@ -1079,4 +1076,3 @@ translate None strings:
     # _developer/developer.rpym:579
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
     new "Кеш изображений: [cache_pct:.1f]% ([cache_size_mb:.1f] МБ)"
-
