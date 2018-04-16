@@ -50,6 +50,7 @@ knot
 SL2_KEYWORDS = """\
 tag
 has
+index
 """
 
 # AttributeImage keywords
@@ -57,6 +58,7 @@ AI_KEYWORDS = """\
 attributeimage
 attribute
 group
+always
 """
 
 
