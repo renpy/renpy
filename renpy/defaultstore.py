@@ -136,6 +136,11 @@ FileCurrentScreenshot = renpy.display.imagelike.FileCurrentScreenshot
 LiveComposite = renpy.display.layout.LiveComposite
 LiveCrop = renpy.display.layout.LiveCrop
 LiveTile = renpy.display.layout.LiveTile
+
+Composite = renpy.display.layout.Composite
+Crop = renpy.display.layout.Crop
+Tile = renpy.display.layout.Tile
+
 Flatten = renpy.display.layout.Flatten
 
 Null = renpy.display.layout.Null
