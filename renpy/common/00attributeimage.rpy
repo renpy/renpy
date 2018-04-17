@@ -100,6 +100,14 @@ python early in _attribute:
             A transform or list of transforms that are applied to the
             image.
 
+        `if_also`
+            An attribute or list of attributes. The displayable is only shown
+            if all of these are showing.
+
+        `if_not`
+            An attribute or list of attributes. The displayabel is only shown
+            if none of these are showing.
+
         Other keyword arguments are interpreted as transform properties. If
         any are present, a transform is created that wraps the image. (For
         example, pos=(100, 200) can be used to offset the image by 100 pixels
@@ -110,7 +118,7 @@ python early in _attribute:
         to generate an image filename.
         """
 
-        def __init__(self, group, attribute, image=None, default=False, at=[ ], **kwargs):
+        def __init__(self, group, attribute, image=None, default=False, at=[ ], if_also=[ ], if_not=[ ], **kwargs):
 
             self.raw_group = group
             self.group = group or attribute
@@ -119,9 +127,19 @@ python early in _attribute:
             self.default = default
 
             if not isinstance(at, list):
-                at = list(at)
+                at = [ at ]
 
             self.at = at
+
+            if not isinstance(if_also, list):
+                if_also = [ if_also ]
+
+            self.if_also = if_also
+
+            if not isinstance(if_not, list):
+                if_not = [ if_not ]
+
+            self.if_not = if_not
 
             self.transform_args = kwargs
 
@@ -144,6 +162,14 @@ python early in _attribute:
                 self.image = Transform(self.image, **self.transform_args)
 
         def get_displayable(self, attributes):
+
+            for i in self.if_also:
+                if i not in attributes:
+                    return None
+
+            for i in self.if_not:
+                if i in attributes:
+                    return None
 
             if self.attribute in attributes:
                 return self.image
@@ -198,8 +224,6 @@ python early in _attribute:
 
                 prefix = self.image_name + " " + self.group + " "
 
-                auto_attrs = [ ]
-
                 for i in renpy.list_images():
 
                     if i.startswith(prefix):
@@ -207,7 +231,8 @@ python early in _attribute:
                         attrs = rest.split()
 
                         if len(attrs) == 1:
-                            rv.append(Attribute(self.group, attrs[0], renpy.displayable(i), **properties))
+                            if attrs[0] not in seen:
+                                rv.append(Attribute(self.group, attrs[0], renpy.displayable(i), **properties))
 
             return rv
 
@@ -242,7 +267,7 @@ python early in _attribute:
             self.image = image
 
             if not isinstance(at, list):
-                at = list(at)
+                at = [ at ]
 
             self.at = at
 
@@ -323,16 +348,30 @@ python early in _attribute:
 
 
     class Always(Layer):
+        """
+        This is used for a displayable that is always shown.
+        """
 
-        def __init__(self, d, at=[ ], **kwargs):
+
+        def __init__(self, d, at=[ ], if_also=[ ], if_not=[ ], **kwargs):
 
             self.image = d
 
             if not isinstance(at, list):
-
-                at = list(at)
+                at = [ at ]
 
             self.at = at
+
+            if not isinstance(if_also, list):
+                if_also = [ if_also ]
+
+            self.if_also = if_also
+
+            if not isinstance(if_not, list):
+                if_not = [ if_not ]
+
+            self.if_not = if_not
+
             self.transform_args = kwargs
 
         def apply_format(self, ai):
@@ -353,6 +392,15 @@ python early in _attribute:
                 self.image = i(self.image)
 
         def get_displayable(self, attributes):
+
+            for i in self.if_also:
+                if i not in attributes:
+                    return None
+
+            for i in self.if_not:
+                if i in attributes:
+                    return None
+
             return self.image
 
     class RawAlways(object):
@@ -649,7 +697,7 @@ python early in _attribute:
 
             while True:
 
-                if parse_property(l, a, [ "default", "at" ] + ATL_PROPERTIES):
+                if parse_property(l, a, [ "default", "at", "if_also", "if_not" ] + ATL_PROPERTIES):
                     continue
 
                 image = l.simple_expression()
@@ -693,7 +741,7 @@ python early in _attribute:
 
             while True:
 
-                if parse_property(l, a, [ "at" ] + ATL_PROPERTIES):
+                if parse_property(l, a, [ "at", "if_also", "if_not" ] + ATL_PROPERTIES):
                     continue
 
                 image = l.simple_expression()
