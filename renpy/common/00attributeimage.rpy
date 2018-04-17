@@ -7,6 +7,9 @@ python early in _attribute:
 
     ATL_PROPERTIES =[ i for i in renpy.atl.PROPERTIES ]
 
+    # This is the default value for predict_all given to conditions.
+    predict_all = False
+
     def format_function(what, name, group, attribute, image, image_format, **kwargs):
         """
         This is called to format the information about an attribute
@@ -294,6 +297,7 @@ python early in _attribute:
             return ConditionSwitch(
                 self.condition, self.image,
                 None, Null(),
+                predict_all=predict_all,
             )
 
 
@@ -331,7 +335,7 @@ python early in _attribute:
             args.append(None)
             args.append(Null())
 
-            return ConditionSwitch(*args)
+            return ConditionSwitch(predict_all=predict_all, *args)
 
     class RawConditionGroup(object):
 
