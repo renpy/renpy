@@ -1,6 +1,6 @@
 init offset = -100
 
-python early in _attribute:
+python early in _layerimage:
 
     from store import Transform, ConditionSwitch, Fixed, Null, config, Text
     from collections import OrderedDict
@@ -78,7 +78,7 @@ python early in _attribute:
 
     class Attribute(Layer):
         """
-        This is used to represent a layer of an AttributeImage that is
+        This is used to represent a layer of an LayerImage that is
         controlled by an attribute. A single attribute can control
         multiple layers, in which case all layers corresponding to
         that attribute will be displayed.
@@ -116,7 +116,7 @@ python early in _attribute:
         example, pos=(100, 200) can be used to offset the image by 100 pixels
         horizontally and 200 vertically.)
 
-        If the `image` parameter is omitted or None, and the AttributeImage
+        If the `image` parameter is omitted or None, and the LayerImage
         has been given the `image_format` parameter, the image_format is used
         to generate an image filename.
         """
@@ -242,7 +242,7 @@ python early in _attribute:
 
     class Condition(Layer):
         """
-        This is used to represent a layer of an AttributeImage that
+        This is used to represent a layer of an LayerImage that
         is controlled by a condition. When the condition is true,
         the layer is displayed. Otherwise, nothing is displayed.
 
@@ -425,7 +425,7 @@ python early in _attribute:
 
 
 
-    class AttributeImage(object):
+    class LayerImage(object):
         """
         This is an image-like object that, when shown with the proper set of
         attributes, shows a displayable created by compositing together the
@@ -453,7 +453,7 @@ python early in _attribute:
             of sprites.
 
         `format_function`
-            A function that is used instead of `_attribute.format_function` to format
+            A function that is used instead of `_layerimage.format_function` to format
             the image information into a displayable.
 
         Additional keyword arguments are passed to a Fixed that is created to hold
@@ -461,7 +461,7 @@ python early in _attribute:
         the Fixed, which means it will shrink to the smallest size that fits all
         of the layer images it is showing.
 
-        An AttributeImage is not a displayable, and can't be used in all the
+        A LayerImage is not a displayable, and can't be used in all the
         places a displayable can be used. This is because it requires an image
         name (generally including image attributes) to be provided. As such,
         it should either be displayed through a scene or show statement, or by
@@ -646,7 +646,7 @@ python early in _attribute:
 
             return tuple(rv + unknown)
 
-    class RawAttributeImage(object):
+    class RawLayerImage(object):
 
         def __init__(self, name):
             self.name = name
@@ -663,10 +663,10 @@ python early in _attribute:
 
             renpy.image(
                 self.name,
-                AttributeImage(l, name=self.name, **properties),
+                LayerImage(l, name=self.name, **properties),
             )
 
-    def execute_attributeimage(rai):
+    def execute_layerimage(rai):
         rai.execute()
 
 
@@ -877,7 +877,7 @@ python early in _attribute:
         parent.children.append(cg)
 
 
-    def parse_attributeimage(l):
+    def parse_layerimage(l):
 
         name = [ l.require(l.image_name_component) ]
 
@@ -890,13 +890,13 @@ python early in _attribute:
             name.append(part)
 
         l.require(':')
-        l.expect_block("attributeimage")
+        l.expect_block("layerimage")
 
         ll = l.subblock_lexer()
         ll.advance()
 
         name = " ".join(name)
-        rv = RawAttributeImage(name)
+        rv = RawLayerImage(name)
 
         while not ll.eob:
 
@@ -931,9 +931,9 @@ python early in _attribute:
         return rv
 
 
-    renpy.register_statement("attributeimage", parse=parse_attributeimage, execute=execute_attributeimage, init=True, block=True)
+    renpy.register_statement("layerimage", parse=parse_layerimage, execute=execute_layerimage, init=True, block=True)
 
     renpy.store.Attribute = Attribute
-    renpy.store.AttributeImage = AttributeImage
+    renpy.store.LayerImage = LayerImage
     renpy.store.Condition = Condition
     renpy.store.ConditionGroup = ConditionGroup

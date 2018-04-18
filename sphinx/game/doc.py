@@ -53,9 +53,9 @@ has
 index
 """
 
-# AttributeImage keywords
-AI_KEYWORDS = """\
-attributeimage
+# LayerImage keywords
+LI_KEYWORDS = """\
+layerimage
 attribute
 group
 always
@@ -174,7 +174,7 @@ def write_keywords():
     kwlist |= set(ATL_KEYWORDS.split())
     kwlist |= set(SCRIPT_KEYWORDS.split())
     kwlist |= set(SL2_KEYWORDS.split())
-    kwlist |= set(AI_KEYWORDS.split())
+    kwlist |= set(LI_KEYWORDS.split())
 
     kwlist = list(kwlist)
 
