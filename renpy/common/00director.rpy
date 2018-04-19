@@ -40,6 +40,10 @@ init python in director:
     # The set of tags that should only be used with the show statement.
     show_tags = set()
 
+    # Should we try to filter out tags that have other tags as their
+    # prefix (as are used alot in layerimages)?
+    blacklist_prefixed_tags = True
+
     # A list of transforms to use.
     transforms = [ "left", "center", "right" ]
 
@@ -1346,7 +1350,7 @@ init python in director:
 
         return tuple(rv)
 
-init 1101 python hide in director:
+init 2202 python hide in director:
 
     if state.active:
 
@@ -1380,6 +1384,28 @@ init 1101 python hide in director:
                 audio_files[c].append(fn)
 
             audio_files[c].sort()
+
+    if blacklist_prefixed_tags:
+
+        available = set()
+
+        for i in sorted(renpy.get_available_image_tags()):
+
+            blacklist = False
+
+            for j in available:
+                if i.startswith(j + "_"):
+                    blacklist = True
+
+            if i in scene_tags:
+                blacklist = False
+            if i in show_tags:
+                blacklist = False
+
+            if blacklist:
+                tag_blacklist.add(i)
+            else:
+                available.add(i)
 
 
 

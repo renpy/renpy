@@ -453,7 +453,7 @@ python early in layerimage:
             of sprites.
 
         `format_function`
-            A function that is used instead of `_layerimage.format_function` to format
+            A function that is used instead of `layerimage.format_function` to format
             the image information into a displayable.
 
         Additional keyword arguments are passed to a Fixed that is created to hold
