@@ -50,14 +50,14 @@ init -1600 python:
             return getattr(self.object, self.field) == self.value
 
     @renpy.pure
-    def SetVariable(variable, value):
+    def SetVariable(name, value):
         """
          :doc: data_action
 
-         Causes `variable` to be set to `value`.
+         Causes the variable with `name` to be set to `value`.
          """
 
-        return SetField(store, variable, value)
+        return SetField(store, name, value)
 
     @renpy.pure
     class SetDict(Action, FieldEquality):
