@@ -1,6 +1,6 @@
 init offset = -100
 
-python early in _layerimage:
+python early in layerimage:
 
     from store import Transform, ConditionSwitch, Fixed, Null, config, Text
     from collections import OrderedDict
