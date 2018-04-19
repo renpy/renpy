@@ -663,7 +663,7 @@ python early in _layerimage:
 
             renpy.image(
                 self.name,
-                LayerImage(l, name=self.name, **properties),
+                LayerImage(l, name=self.name.replace(" ", "_"), **properties),
             )
 
     def execute_layerimage(rai):
