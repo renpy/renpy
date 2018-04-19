@@ -319,6 +319,10 @@ class ImageReference(renpy.display.core.Displayable):
             error("Image '%s' not found." % ' '.join(self.name))
             return False
 
+        if name and (self._args.name == name):
+            error("Image '{}' refers to itself.".format(' '.join(name)))
+            return False
+
         try:
 
             a = self._args.copy(name=name, args=args)
