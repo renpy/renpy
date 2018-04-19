@@ -13,7 +13,7 @@ python early in _layerimage:
     def format_function(what, name, group, attribute, image, image_format, **kwargs):
         """
         This is called to format the information about an attribute
-        or condtion into a displayable. This can be replaced by a
+        or condition into a displayable. This can be replaced by a
         creator, but the new function should ignore unknown kwargs.
 
         `what`
@@ -36,15 +36,15 @@ python early in _layerimage:
         `image_format`
             The image_format argument of the attribute image.
 
-        If `image `is None, then `name`, `group` (if not None), and
+         If `image `is None, then `name`, `group` (if not None), and
         `attribute` are combined to create `imasge`. If `images` is
         a string, and `image_format` is not None, `image` is formatted
         into the string to get the final displayable.
 
         So if `name` is "eileen", `group` is "expression", and
         `attribute` is "happy", `image` would be set to
-        "eileen expression happy". If `image_format` is "images/{image}.png",
-        the final image Ren'Py finds is "images/eileen expression happy.png".
+        "eileen_expression_happy". If `image_format` is "images/{image}.png",
+        the final image Ren'Py finds is "images/eileen_expression_happy.png".
         But note that it would have found the same image without the format
         argument.
         """
@@ -64,7 +64,7 @@ python early in _layerimage:
 
             parts.append(attribute)
 
-            image = " ".join(parts)
+            image = "_".join(parts)
 
         if isinstance(image, basestring) and (image_format is not None):
             image = image_format.format(name=name, image=image)
@@ -108,7 +108,7 @@ python early in _layerimage:
             if all of these are showing.
 
         `if_not`
-            An attribute or list of attributes. The displayabel is only shown
+            An attribute or list of attributes. The displayable is only shown
             if none of these are showing.
 
         Other keyword arguments are interpreted as transform properties. If
@@ -225,7 +225,7 @@ python early in _layerimage:
             if auto:
                 seen = set(i.attribute for i in rv)
 
-                prefix = self.image_name + " " + self.group + " "
+                prefix = self.image_name + "_" + self.group + "_"
 
                 for i in renpy.list_images():
 
