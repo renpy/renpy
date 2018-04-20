@@ -183,4 +183,5 @@ def warp():
     renpy.exports.block_rollback()
 
     renpy.game.context().goto_label(node.name)
-    raise renpy.game.RestartContext("_after_warp")
+    renpy.game.context().come_from(node.name, "_after_warp")
+    raise renpy.game.RestartContext()

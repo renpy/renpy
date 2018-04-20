@@ -138,6 +138,9 @@ class Context(renpy.object.Object):
 
     force_checkpoint = False
 
+    come_from_name = None
+    come_from_label = None
+
     def after_upgrade(self, version):
         if version < 1:
             self.scene_lists.image_predict_info = self.predict_info.images
@@ -426,6 +429,14 @@ class Context(renpy.object.Object):
         code = compile(module, node.filename, 'exec')
         exec(code)
 
+    def come_from(self, name, label):
+        """
+        When control reaches name, call label. Only for internal use.
+        """
+
+        self.come_from_name = name
+        self.come_from_label = label
+
     def run(self, node=None):
         """
         Executes as many nodes as possible in the current context. If the
@@ -447,6 +458,12 @@ class Context(renpy.object.Object):
         first = True
 
         while node:
+
+            if node.name == self.come_from_name:
+                print("Come from", self.come_from_name, "to", self.come_from_label)
+                self.come_from_name = None
+                node = self.call(self.come_from_label, return_site=node.name)
+                self.make_dynamic([ "_return" ])
 
             this_node = node
             type_node_name = type(node).__name__
@@ -829,19 +846,11 @@ def run_context(top):
     the RestartContext and RestartTopContext exceptions.
     """
 
-    label = None
-
     while True:
 
         try:
 
             context = renpy.game.context()
-
-            if label and renpy.game.script.has_label(label):
-                context.call(label)
-                context.make_dynamic([ "_return" ])
-
-            label = None
 
             context.run()
 
@@ -855,10 +864,6 @@ def run_context(top):
 
             # Apply defaults.
             renpy.exports.execute_default_statement(False)
-
-            if e.label:
-                label = e.label
-
             continue
 
         except renpy.game.RestartTopContext as e:
@@ -866,10 +871,6 @@ def run_context(top):
 
                 # Apply defaults.
                 renpy.exports.execute_default_statement(False)
-
-                if e.label:
-                    label = e.label
-
                 continue
 
             else:

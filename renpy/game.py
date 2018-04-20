@@ -124,18 +124,12 @@ class RestartContext(Exception):
     in the restarted context.
     """
 
-    def __init__(self, label):
-        self.label = label
-
 
 class RestartTopContext(Exception):
     """
     Restarts the top context. If `label` is given, calls that label
     in the restarted context.
     """
-
-    def __init__(self, label):
-        self.label = label
 
 
 class FullRestartException(Exception):

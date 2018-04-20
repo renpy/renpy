@@ -1566,8 +1566,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                        and data == fwd_data
-                        and (keep_rollback or self.rolled_forward)
+                            and data == fwd_data
+                            and (keep_rollback or self.rolled_forward)
                         ):
                     self.forward.pop(0)
                 else:
@@ -1712,6 +1712,7 @@ class RollbackLog(renpy.object.Object):
         if renpy.game.context().rollback:
             replace_context = False
             other_contexts = [ ]
+
         else:
             replace_context = True
             other_contexts = renpy.game.contexts[1:]
@@ -1721,6 +1722,8 @@ class RollbackLog(renpy.object.Object):
             retained = revlog.pop()
         else:
             retained = None
+
+        come_from = renpy.game.context().current
 
         # Actually roll things back.
         for rb in revlog:
@@ -1735,6 +1738,12 @@ class RollbackLog(renpy.object.Object):
         if retained is not None:
             retained.rollback_control()
             self.log.append(retained)
+
+        if greedy:
+            come_from = renpy.game.context().current
+
+        if label is not None:
+            renpy.game.context().come_from(come_from, label)
 
         # Disable the next transition, as it's pointless. (Only when not used with a label.)
         renpy.game.interface.suppress_transition = abnormal
@@ -1764,14 +1773,14 @@ class RollbackLog(renpy.object.Object):
             if force_checkpoint:
                 renpy.game.contexts[0].force_checkpoint = True
 
-            raise renpy.game.RestartTopContext(label)
+            raise renpy.game.RestartTopContext()
 
         else:
 
             if force_checkpoint:
                 renpy.game.context().force_checkpoint = True
 
-            raise renpy.game.RestartContext(label)
+            raise renpy.game.RestartContext()
 
     def freeze(self, wait=None):
         """
