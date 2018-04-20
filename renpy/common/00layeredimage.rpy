@@ -684,7 +684,11 @@ python early in layeredimage:
         if name in o.properties:
             ll.error("Duplicate property " + name)
 
-        expr = l.require(l.simple_expression)
+        if name == "auto" or name == "default":
+            expr = "True"
+        else:
+            expr = l.require(l.simple_expression)
+
         o.properties[name] = expr
 
         return True

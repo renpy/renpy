@@ -47,7 +47,7 @@ explicitly given. ::
 
         group eyes:
 
-            attribute open:
+            attribute open default:
                 "augustina_eyes_open"
                 default True
 
@@ -56,9 +56,8 @@ explicitly given. ::
 
         group eyebrows:
 
-            attribute normal:
+            attribute normal default:
                 "augustina_eyebrows_normal"
-                default True
 
             attribute oneup:
                 "augustina_eyebrows_oneup"
@@ -67,9 +66,8 @@ explicitly given. ::
 
             pos (100, 100)
 
-            attribute smile:
+            attribute smile default:
                 "augustina_mouth_smile"
-                default True
 
             attribute happy:
                 "augustina_mouth_happy"
@@ -104,7 +102,7 @@ can automatically declare attributes.
 The attribute statement introduces a layer that is displayed if an attribute
 is supplied to the image. For example, "augustina_outfit_dress" is only
 displayed if if the "dress" attribute is supplied. If given the default
-property, the attribute is displayed if no conflicting attributes are
+keyword, the attribute is displayed if no conflicting attributes are
 provided; in this example, "augustina_eyes_open" is displayed unless the
 unless the "wink" attribute is given.
 
@@ -193,16 +191,16 @@ Here's our example of having done that::
             attribute jeans
 
         group eyes:
-            attribute open default True
+            attribute open default
             attribute wink
 
         group eyebrows:
-            attribute normal default True
+            attribute normal default
             attribute oneup
 
         group mouth:
             pos (100, 100)
-            attribute smile default True
+            attribute smile default
             attribute happy
 
         if evil:
@@ -216,8 +214,8 @@ the outfit group uses "augustina_outfit_dress" for the displayable, a
 displayable that references the image with  that name.
 
 It's possible to go even further than this, by automatically defining the
-attributes in a group. This is done by giving a group the auto property,
-and setting that to True. This causes the group to search for defined
+attributes in a group. This is done by giving a group the auto keyword,
+which causes the group to search for defined
 images that would match the pattern, then define the attribute if it does
 not already exist.
 
@@ -231,17 +229,17 @@ Here's an example of the final form::
 
         always "augustina_base"
 
-        group outfit auto True
+        group outfit auto
 
-        group eyes auto True:
-            attribute open default True
+        group eyes auto:
+            attribute open default
 
-        group eyebrows auto True:
-            attribute normal default True
+        group eyebrows auto:
+            attribute normal default
 
-        group mouth auto True:
+        group mouth auto:
             pos (100, 100)
-            attribute smile default True
+            attribute smile default
 
         if evil:
             "augustina_glasses_evil"
