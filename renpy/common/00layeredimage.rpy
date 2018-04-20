@@ -791,23 +791,30 @@ python early in layeredimage:
         rv = RawAttributeGroup(image_name, group)
         parent.children.append(rv)
 
-        l.require(':')
-        l.expect_block("group")
-        l.expect_eol()
+        while parse_property(l, rv, [ "at", "auto" ] + ATL_PROPERTIES):
+            pass
 
-        ll = l.subblock_lexer()
+        if l.match(':'):
 
-        while ll.advance():
-            if ll.match("attribute"):
-                parse_attribute(ll, rv)
-                continue
+            l.expect_eol()
+            l.expect_block("group")
 
-            while parse_property(ll, rv, [ "at", "auto" ] + ATL_PROPERTIES):
-                pass
+            ll = l.subblock_lexer()
 
-            ll.expect_eol()
-            ll.expect_noblock('group property')
+            while ll.advance():
+                if ll.match("attribute"):
+                    parse_attribute(ll, rv)
+                    continue
 
+                while parse_property(ll, rv, [ "at", "auto" ] + ATL_PROPERTIES):
+                    pass
+
+                ll.expect_eol()
+                ll.expect_noblock('group property')
+
+        else:
+            l.expect_eol()
+            l.expect_noblock("group")
 
     def parse_condition(l, need_expr):
 
