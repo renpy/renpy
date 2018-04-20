@@ -171,6 +171,91 @@ Layered images can also be used with the scene statement.
 Automatic Attributes
 --------------------
 
-There's a lot of repetition in that example, especially when it comes to
-attribute names.
+There's a lot of repetition our first example, when it comes to the
+attribute names and the displayables that define the attribute. To
+save you from having to do a lot of redundant typing, Ren'Py can
+automatically determine a displayable name from the image name, group name,
+and attribute name. This is done by combining the names with underscores.
 
+When doing this, you can also take advantage of another feature of
+attributes - it's possible to add any properties to the first line and
+omit the block entirely.
+
+Here's our example of having done that::
+
+    layeredimage augustina:
+
+        always:
+            "augustina_base"
+
+        group outfit:
+            attribute dress
+            attribute jeans
+
+        group eyes:
+            attribute open default True
+            attribute wink
+
+        group eyebrows:
+            attribute normal default True
+            attribute oneup
+
+        group mouth:
+            pos (100, 100)
+            attribute smile default True
+            attribute happy
+
+        if evil:
+            "augustina_glasses_evil"
+        else:
+            "augustina_glasses"
+
+This example is equivalent to the first one (as we gave the same names for
+the displayables in the first example). For example, the dress attribute in
+the outfit group uses "augustina_outfit_dress" for the displayable, a
+displayable that references the image with  that name.
+
+It's possible to go even further than this, by automatically defining the
+attributes in a group. This is done by giving a group the auto property,
+and setting that to True. This causes the group to search for defined
+images that would match the pattern, then define the attribute if it does
+not already exist.
+
+As with attribute, properties can be placed on the first line of the
+group and the block omitted. The displayable and properties of the
+always statement can be put on the first line the same way.
+
+Here's an example of the final form::
+
+    layeredimage augustina:
+
+        always "augustina_base"
+
+        group outfit auto True
+
+        group eyes auto True:
+            attribute open default True
+
+        group eyebrows auto True:
+            attribute normal default True
+
+        group mouth auto True:
+            pos (100, 100)
+            attribute smile default True
+
+        if evil:
+            "augustina_glasses_evil"
+        else:
+            "augustina_glasses"
+
+
+This is about as simply as we can define that image, without changing
+what we define. The savings with auto-definition increases as we have
+more attributes per group. We could also save lines if we didn't need
+default attributes. In that case, all of the groups could be written on
+single lines.
+
+There's no way to omit the displayables from the always or if statements,
+so this is as short as it gets - but with a few more images with proper
+names, it's possible to use this to define thousands or even millions
+of combinations of layers.
