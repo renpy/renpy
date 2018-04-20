@@ -17,7 +17,7 @@ by attributes provided to the image or conditions that are evaluated at
 runtime.
 
 To make defining layered images easier, Ren'Py has the layeredimage statement,
-which introduces a domain-specific language that lets you define a layer
+which introduces a domain-specific language that lets you define a layered
 image. There's also the :func:`LayeredImage` object, which isn't an image
 but can be assigned to an image statement and used like one.
 
