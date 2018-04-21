@@ -34,7 +34,7 @@ python early in layeredimage:
             Either a displayable or string.
 
         `image_format`
-            The image_format argument of the attribute image.
+            The image_format argument of the LayeredImage.
 
          If `image `is None, then `name`, `group` (if not None), and
         `attribute` are combined to create `imasge`. If `images` is
@@ -795,7 +795,7 @@ python early in layeredimage:
         rv = RawAttributeGroup(image_name, group)
         parent.children.append(rv)
 
-        while parse_property(l, rv, [ "at", "auto" ] + ATL_PROPERTIES):
+        while parse_property(l, rv, [ "at", "auto", "if_also", "if_not" ] + ATL_PROPERTIES):
             pass
 
         if l.match(':'):
@@ -810,7 +810,7 @@ python early in layeredimage:
                     parse_attribute(ll, rv)
                     continue
 
-                while parse_property(ll, rv, [ "at", "auto" ] + ATL_PROPERTIES):
+                while parse_property(ll, rv, [ "at", "auto", "if_also", "if_not" ] + ATL_PROPERTIES):
                     pass
 
                 ll.expect_eol()
