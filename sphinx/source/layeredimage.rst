@@ -21,6 +21,7 @@ which introduces a domain-specific language that lets you define a layered
 image. There's also the :func:`LayeredImage` object, which isn't an image
 but can be assigned to an image statement and used like one.
 
+
 Defining Layered Images
 -----------------------
 
@@ -257,3 +258,133 @@ There's no way to omit the displayables from the always or if statements,
 so this is as short as it gets - but with a few more images with proper
 names, it's possible to use this to define thousands or even millions
 of combinations of layers.
+
+
+Statement Reference
+-------------------
+
+Note that with the conditions in the `if` statement, all expressions are
+evaluated at init-time, when the layered image is first defined.
+
+Layeredimage
+^^^^^^^^^^^^
+
+The ``layeredimage`` statement is a statement in the Ren'Py script language
+that introduces a layered image. It starts with an image name, and takes
+a block that can contain attribute, group, and if statements.
+
+Layeredimage takes the following properties:
+
+`image_format`
+    When a given image is a string, and this is supplied, the image name
+    is interpolated into `image_format` to make an image file. For example,
+    "sprites/eileen/{image}.png" will look for the image in a subdirectory
+    of sprites. (This is not used by auto groups, which look for images and
+    not image files.)
+
+`format_function`
+    A function that is used instead of `layeredimage.format_function` to format
+    the image information into a displayable.
+
+:ref:`transform properties <transform-properties>`
+    If present, these are used to construct a :func:`Transform` that is applied
+    to the displayable.
+
+`at`
+    A transform or list of transforms that are applied to the layered image.
+
+Attribute
+^^^^^^^^^
+
+The ``attribute`` statement adds a layer that is displayed when the given
+attribute is used to display the image. The same attribute can be used with
+multiple layers, with all layers corresponding to the attribute being shown
+(the if_also and if_not properties can change this).
+
+An attribute takes an attribute name, and optionally the `default` keyword
+to indicate that the attribute should be present by default. After these, it
+optionally takes a displayable and optional properties, which may be included
+on the line or placed in an optional block.
+
+If the displayable is not present it will be computer from the layer,
+group, and attribute name, using the layered image's format function.
+(Which defaults to :func:`layeredimage.format_function`.)
+
+If an attribute is not inside a group, it's placed in a group with the
+same name, but that group is not used to compute the displayable name.
+(So it would look for "image_attribute", not "image_attribute_attribute").
+
+The attribute statement takes the following properties:
+
+`if_also`
+    A string or list of strings giving the names of attributes. If this is
+    present, this layer is only displayed if all of the named attributes
+    are present.
+
+`if_not`
+    A string or list of strings giving the names of attributes. If this is
+    present, this layer is only displayed if none of the named attributes are
+    present.
+
+
+:ref:`transform properties <transform-properties>`
+    If present, these are used to construct a transform that is applied
+    to the layer.
+
+`at`
+    A transform or list of transforms that are applied to the layer.
+
+Group
+^^^^^
+
+The ``group`` statement groups together alternative layers. When an attribute is
+inside a group, it is an error to include any of the other attributes in
+that group. (But it's fine to include the same attribute twice.)
+
+The group statement takes a name. The name isn't used for very much, but is
+used to generate the default names of attributes inside the group.
+
+The name may be followed by the `auto` keyword. If it's present, after any
+attributes in the group have been declared, Ren'Py will scan it's list of
+images for those of the form `image`\_`group`\_`attribute`, where image is the name
+of the layered image and group is the name of this group. Any images that are found
+that do not correspond to declared attributes are then added to the group as if
+declared with the attribute statement.
+
+Properties can then be declared on the first line of the group, and it can
+take a block that contains properties and attributes.
+
+The group statement doesn't take any properties on it's own, but instead takes
+the same properties ``attribute`` does. Properties supplied to the group are
+passed to the attributes inside the group, unless overridden by the same
+property of the attribute.
+
+If
+^^
+
+The if statement (or more fully the if-elif-else) statement allows you
+to supply one or more conditions that are evaluated at runtime. Each
+condition is associated with a layer, with the first true condition
+being the one that is shown. If no condition is true, the else layer
+is shown if present.
+
+A more complete example of an if statement might look like::
+
+    if glasses == "evil":
+        "augustina_glasses_evil"
+    elif glasses == "normal":
+        "augustina_glasses"
+    else:
+        "augustina_nose_mark"
+
+Each layer must have a displayable given. It can also be given these properties:
+
+:ref:`transform properties <transform-properties>`
+    If present, these are used to construct a transform that is applied
+    to the layer.
+
+`at`
+    A transform or list of transforms that are applied to the layer.
+
+The If statement is transformed to a :func:`ConditionSwitch` when the
+``layeredimage`` statement runs.

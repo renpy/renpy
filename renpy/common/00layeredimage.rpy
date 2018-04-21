@@ -37,7 +37,7 @@ python early in layeredimage:
             The image_format argument of the LayeredImage.
 
          If `image `is None, then `name`, `group` (if not None), and
-        `attribute` are combined to create `imasge`. If `images` is
+        `attribute` are combined with underscores to create `image`. If `images` is
         a string, and `image_format` is not None, `image` is formatted
         into the string to get the final displayable.
 
@@ -447,10 +447,11 @@ python early in layeredimage:
             of image components.
 
         `image_format`
-            When a given image is a string, and this is supplied, the image and
-            the name are interpolated into `image_format` to make an image. For example,
-            "sprites/{name}/{image}.png" will look for the image in a subdirectory
-            of sprites.
+            When a given image is a string, and this is supplied, the image name
+            is interpolated into `image_format` to make an image file. For example,
+            "sprites/eileen/{image}.png" will look for the image in a subdirectory
+            of sprites. (This is not used by auto groups, which look for images and
+            not image files.)
 
         `format_function`
             A function that is used instead of `layeredimage.format_function` to format
