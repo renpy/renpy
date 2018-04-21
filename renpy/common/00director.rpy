@@ -1310,6 +1310,9 @@ init python in director:
             if rv is not None:
                 return rv
 
+            if ev.type == renpy.display.core.TIMEEVENT:
+                return None
+
             if state.mode != "lines":
 
                 if renpy.map_event(ev, "rollback") or renpy.map_event(ev, "rollforward"):
