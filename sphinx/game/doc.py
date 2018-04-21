@@ -55,7 +55,7 @@ index
 
 # LayerImage keywords
 LI_KEYWORDS = """\
-layerimage
+layeredimage
 attribute
 group
 always

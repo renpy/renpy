@@ -12,6 +12,8 @@ python early in layeredimage:
 
     def format_function(what, name, group, attribute, image, image_format, **kwargs):
         """
+        :doc: li_ff
+
         This is called to format the information about an attribute
         or condition into a displayable. This can be replaced by a
         creator, but the new function should ignore unknown kwargs.
@@ -36,7 +38,7 @@ python early in layeredimage:
         `image_format`
             The image_format argument of the LayeredImage.
 
-         If `image `is None, then `name`, `group` (if not None), and
+        If `image `is None, then `name`, `group` (if not None), and
         `attribute` are combined with underscores to create `image`. If `images` is
         a string, and `image_format` is not None, `image` is formatted
         into the string to get the final displayable.
@@ -78,6 +80,9 @@ python early in layeredimage:
 
     class Attribute(Layer):
         """
+        :doc: li
+        :name: Attribute
+
         This is used to represent a layer of an LayeredImage that is
         controlled by an attribute. A single attribute can control
         multiple layers, in which case all layers corresponding to
@@ -242,6 +247,9 @@ python early in layeredimage:
 
     class Condition(Layer):
         """
+        :doc: li
+        :name: Condition
+
         This is used to represent a layer of an LayeredImage that
         is controlled by a condition. When the condition is true,
         the layer is displayed. Otherwise, nothing is displayed.
@@ -353,13 +361,35 @@ python early in layeredimage:
 
     class Always(Layer):
         """
+        :doc: li
+        :name: Always
+
         This is used for a displayable that is always shown.
+
+        `image`
+            The displayable to show.
+
+        `default`
+            If True, and no other attribute for the group is selected,
+            this attribute is.
+
+        `at`
+            A transform or list of transforms that are applied to the
+            image.
+
+        `if_also`
+            An attribute or list of attributes. The displayable is only shown
+            if all of these are showing.
+
+        `if_not`
+            An attribute or list of attributes. The displayable is only shown
+            if none of these are showing.
         """
 
 
-        def __init__(self, d, at=[ ], if_also=[ ], if_not=[ ], **kwargs):
+        def __init__(self, image, at=[ ], if_also=[ ], if_not=[ ], **kwargs):
 
-            self.image = d
+            self.image = image
 
             if not isinstance(at, list):
                 at = [ at ]
@@ -427,6 +457,9 @@ python early in layeredimage:
 
     class LayeredImage(object):
         """
+        :doc: li
+        :name: LayeredImage
+
         This is an image-like object that, when shown with the proper set of
         attributes, shows a displayable created by compositing together the
         displayables associated with those attribute.

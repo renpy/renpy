@@ -1,7 +1,7 @@
 .. _layeredimage:
 
 Layered Images
---------------
+==============
 
 When a sprite-set gets to a certain level of complexity, defining every
 possible combination may become unwieldy. For example, a sprite with
@@ -359,10 +359,37 @@ the same properties ``attribute`` does. Properties supplied to the group are
 passed to the attributes inside the group, unless overridden by the same
 property of the attribute.
 
+Always
+^^^^^^
+
+The ``always`` statement declares a layer tht is always shown. It
+must be supplied a displayable, and can take properties also. Both can
+be placed on the same line or inside a block.
+
+The always statement takes the following properties:
+
+`if_also`
+    A string or list of strings giving the names of attributes. If this is
+    present, this layer is only displayed if all of the named attributes
+    are present.
+
+`if_not`
+    A string or list of strings giving the names of attributes. If this is
+    present, this layer is only displayed if none of the named attributes are
+    present.
+
+
+:ref:`transform properties <transform-properties>`
+    If present, these are used to construct a transform that is applied
+    to the layer.
+
+`at`
+    A transform or list of transforms that are applied to the layer.
+
 If
 ^^
 
-The if statement (or more fully the if-elif-else) statement allows you
+The ``if`` statement (or more fully the if-elif-else) statement allows you
 to supply one or more conditions that are evaluated at runtime. Each
 condition is associated with a layer, with the first true condition
 being the one that is shown. If no condition is true, the else layer
@@ -388,3 +415,30 @@ Each layer must have a displayable given. It can also be given these properties:
 
 The If statement is transformed to a :func:`ConditionSwitch` when the
 ``layeredimage`` statement runs.
+
+.. var: layeredimage.predict_all = None
+
+    Sets the value of `predict_all` for the ConditionSwitches produced
+    by layered image if statements.
+
+When predict_all is not true, changing the condition of the if statement
+should be avoided while the layered image is shown or about to be shown,
+as it would lead to an unpredicted image load. It's intended for use for
+character customization options that change rarely.
+
+
+Python
+------
+
+Of course, the ``layeredimage`` statements have a Python equivalents. The
+group statement does not - the group is supplied to Attribute, and the
+auto functioality can be implemented using :func:`renpy.list_images`.
+
+.. include:: inc/li
+
+Layeredimage.format_function is a function that is used to format attributes
+and displayables into image files. It's supplied so you can see how it's
+documented, and the arguments it takes if you want to supply your own
+`format_function` to replace it.
+
+.. include:: inc/li_ff

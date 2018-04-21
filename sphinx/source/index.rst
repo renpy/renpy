@@ -49,6 +49,7 @@ Text, Displayables, Transforms, and Transitions
    transforms
    transitions
    atl
+   layeredimage
 
 Customizing Ren'Py
 ------------------
