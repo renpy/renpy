@@ -30,7 +30,7 @@ and :func:`ConditionSwitch` to define layered images. It includes a language
 that makes defining such images simpler, and Ren'Py can generate portions
 of the definitions from appropriately named files. It also integrates better
 with the rest of Ren'Py, as attributes can be predicted in ways that a
-ConditionSwitch cannot.
+ConditionSwitch cannot, and layered images work with the interactive director.
 
 Changes
 -------
@@ -42,6 +42,14 @@ this or later versions.
 Automatic image definitions now take place at init level 0, rather than
 an init level of greater than 999. This allows :func:`renpy.has_image` to
 be used in init blocks.
+
+The interactive director now has a button that allows you to choose if it
+is displayed at the top or the bottom of the screen.
+
+Translations
+------------
+
+The Japanese translation has been updated.
 
 Fixes
 -----
