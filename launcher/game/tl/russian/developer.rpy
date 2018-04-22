@@ -1,4 +1,4 @@
-
+﻿
 translate russian strings:
 
     # _developer/developer.rpym:38

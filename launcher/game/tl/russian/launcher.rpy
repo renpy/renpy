@@ -1,4 +1,4 @@
-
+﻿
 translate russian strings:
 
     # about.rpy:39

@@ -1301,7 +1301,7 @@ translate japanese strings:
     # editor.rpy:179
     old "A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
     new "成熟したエディターです。Editra は中国語・韓国語・日本語の入力に必要な IME のサポートに欠陥があります。Linux では Editra は wxpython を必要とします。"
-    
+
     # editor.rpy:219
     old "System Editor"
     new "システムエディタ―"
