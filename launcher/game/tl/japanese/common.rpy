@@ -386,31 +386,31 @@ translate japanese strings:
 
     # 00director.rpy:1576
     old "Statement:"
-    new "Statement（命令）:"
+    new "ステートメント:"
 
     # 00director.rpy:1597
     old "Tag:"
-    new "Tag（タグ）:"
+    new "画像タグ:"
 
     # 00director.rpy:1613
     old "Attributes:"
-    new "Attributes（属性）:"
+    new "画像属性:"
 
     # 00director.rpy:1631
     old "Transforms:"
-    new "Transforms（画像変形）:"
+    new "変換:"
 
     # 00director.rpy:1650
     old "Behind:"
-    new "Behind（裏に表示）:"
+    new "背後に表示:"
 
     # 00director.rpy:1669
     old "Transition:"
-    new "Transition（遷移演出）:"
+    new "トランジション:"
 
     # 00director.rpy:1687
     old "Channel:"
-    new "キャンセル"
+    new "チャンネル:"
 
     # 00director.rpy:1705
     old "Audio Filename:"
@@ -438,4 +438,259 @@ translate japanese strings:
     # _developer\developer.rpym:569
     old "{size_mb:,.1f} MB in {count} textures."
     new "{size_mb:,.1f} MB in {count} textures."
+
+
+translate japanese strings:
+
+    # 00action_file.rpy:344
+    old "Save slot %s: [text]"
+    new "スロット%s: [text]にセーブ"
+
+    # 00action_file.rpy:417
+    old "Load slot %s: [text]"
+    new "スロット%s: [text]をロード"
+
+    # 00action_file.rpy:459
+    old "Delete slot [text]"
+    new "スロット[text]を削除"
+
+    # 00action_file.rpy:539
+    old "File page auto"
+    new "オートファイルページ"
+
+    # 00action_file.rpy:541
+    old "File page quick"
+    new "クイックファイルページ"
+
+    # 00action_file.rpy:543
+    old "File page [text]"
+    new "ファイルページ[text]"
+
+    # 00action_file.rpy:733
+    old "Next file page."
+    new "次のファイルページ"
+
+    # 00action_file.rpy:797
+    old "Previous file page."
+    new "前のファイルページ"
+
+    # 00action_file.rpy:876
+    old "Quick save."
+    new "クイックセーブ"
+
+    # 00action_file.rpy:895
+    old "Quick load."
+    new "クイックロード"
+
+    # 00action_other.rpy:344
+    old "Language [text]"
+    new "言語 [text]"
+
+    # 00director.rpy:1476
+    old "⬆"
+    new "⬆"
+
+    # 00director.rpy:1482
+    old "⬇"
+    new "⬇"
+
+    # 00library.rpy:150
+    old "bar"
+    new "バー"
+
+    # 00library.rpy:151
+    old "selected"
+    new "選択中"
+
+    # 00library.rpy:152
+    old "viewport"
+    new "ビューポート"
+
+    # 00library.rpy:153
+    old "horizontal scroll"
+    new "水平スクロール"
+
+    # 00library.rpy:154
+    old "vertical scroll"
+    new "垂直スクロール"
+
+    # 00library.rpy:155
+    old "activate"
+    new "有効"
+
+    # 00library.rpy:156
+    old "deactivate"
+    new "無効"
+
+    # 00library.rpy:157
+    old "increase"
+    new "増加"
+
+    # 00library.rpy:158
+    old "decrease"
+    new "減少"
+
+    # 00preferences.rpy:207
+    old "display"
+    new "表示"
+
+    # 00preferences.rpy:219
+    old "transitions"
+    new "トランジション"
+
+    # 00preferences.rpy:228
+    old "skip transitions"
+    new "トランジションをスキップ"
+
+    # 00preferences.rpy:230
+    old "video sprites"
+    new "ビデオ スプライト"
+
+    # 00preferences.rpy:239
+    old "show empty window"
+    new "空のウィンドウを表示"
+
+    # 00preferences.rpy:248
+    old "text speed"
+    new "テキストスピード"
+
+    # 00preferences.rpy:256
+    old "joystick"
+    new "ジョイスティック"
+
+    # 00preferences.rpy:256
+    old "joystick..."
+    new "ジョイスティック..."
+
+    # 00preferences.rpy:263
+    old "skip"
+    new "スキップ"
+
+    # 00preferences.rpy:266
+    old "skip unseen [text]"
+    new "未読の[text]をスキップ"
+
+    # 00preferences.rpy:271
+    old "skip unseen text"
+    new "未読のテキストをスキップ"
+
+    # 00preferences.rpy:273
+    old "begin skipping"
+    new "スキップ開始"
+
+    # 00preferences.rpy:277
+    old "after choices"
+    new "選択肢後"
+
+    # 00preferences.rpy:284
+    old "skip after choices"
+    new "選択肢後もスキップ"
+
+    # 00preferences.rpy:286
+    old "auto-forward time"
+    new "オート待ち時間"
+
+    # 00preferences.rpy:300
+    old "auto-forward"
+    new "オート送り"
+
+    # 00preferences.rpy:307
+    old "Auto forward"
+    new "オート送り"
+
+    # 00preferences.rpy:310
+    old "auto-forward after click"
+    new "クリック後もオート"
+
+    # 00preferences.rpy:319
+    old "automatic move"
+    new "自動ムービー"
+
+    # 00preferences.rpy:328
+    old "wait for voice"
+    new "ボイスを待つ"
+
+    # 00preferences.rpy:337
+    old "voice sustain"
+    new "voice sustain"
+
+    # 00preferences.rpy:346
+    old "self voicing"
+    new "セルフボイシング"
+
+    # 00preferences.rpy:355
+    old "clipboard voicing"
+    new "クリップボードボイシング"
+
+    # 00preferences.rpy:364
+    old "debug voicing"
+    new "ボイシングのデバッグ"
+
+    # 00preferences.rpy:373
+    old "emphasize audio"
+    new "オーディオの強調"
+
+    # 00preferences.rpy:382
+    old "rollback side"
+    new "ロールバックサイド"
+
+    # 00preferences.rpy:392
+    old "gl powersave"
+    new "ＧＬパワーセーブ"
+
+    # 00preferences.rpy:398
+    old "gl framerate"
+    new "ＧＬフレームレート"
+
+    # 00preferences.rpy:401
+    old "gl tearing"
+    new "ＧＬティアリング"
+
+    # 00preferences.rpy:413
+    old "music volume"
+    new "音楽の音量"
+
+    # 00preferences.rpy:414
+    old "sound volume"
+    new "効果音の音量"
+
+    # 00preferences.rpy:415
+    old "voice volume"
+    new "ボイスの音量"
+
+    # 00preferences.rpy:416
+    old "mute music"
+    new "音楽をミュート"
+
+    # 00preferences.rpy:417
+    old "mute sound"
+    new "効果音をミュート"
+
+    # 00preferences.rpy:418
+    old "mute voice"
+    new "ボイスをミュート"
+
+    # 00preferences.rpy:419
+    old "mute all"
+    new "音声を全てミュート"
+
+    # _developer\developer.rpym:57
+    old "Show Image Load Log (F4)"
+    new "画像ロードログを表示する (F4)"
+
+    # _developer\developer.rpym:60
+    old "Hide Image Load Log (F4)"
+    new "画像ロードログを隠す (F4)"
+
+    # _developer\developer.rpym:447
+    old "Type to filter: "
+    new "フィルタして検索: "
+
+    # _developer\developer.rpym:575
+    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
+    new "テクスチャー: [tex_count] ([tex_size_mb:.1f] MB)"
+
+    # _developer\developer.rpym:579
+    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    new "イメージキャッシュ: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
 
