@@ -203,7 +203,35 @@ translate japanese strings:
 
 translate japanese strings:
 
+    # 00gltest.rpy:70
+    old "Renderer"
+    new "レンダラー"
+
     # 00gltest.rpy:89
     old "NPOT"
     new "NPOT"
+
+    # 00gltest.rpy:131
+    old "Powersave"
+    new "パワーセーブ"
+
+    # 00gltest.rpy:145
+    old "Framerate"
+    new "フレームレート"
+
+    # 00gltest.rpy:149
+    old "Screen"
+    new "スクリーン"
+
+    # 00gltest.rpy:153
+    old "60"
+    new "60"
+
+    # 00gltest.rpy:157
+    old "30"
+    new "30"
+
+    # 00gltest.rpy:163
+    old "Tearing"
+    new "ティアリング"
 

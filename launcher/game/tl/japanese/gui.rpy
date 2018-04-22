@@ -7,7 +7,7 @@ translate japanese strings:
 
     # gui.rpy:5
     old "## The init offset statement causes the init code in this file to run before init code in any other file."
-    new "## このファイルは GUI をカスタマイズする基本的なオプションを記載しています。次の init offset 文は、このファイルの init コードを他のファイルよりも先に実行しています。"
+    new "## このファイルは GUI をカスタマイズする基本的なオプションを記載しています。次の init offset ステートメントは、このファイルの init コードを他のファイルよりも先に実行しています。"
 
     # gui.rpy:9
     old "## Calling gui.init resets the styles to sensible default values, and sets the width and height of the game."
@@ -35,15 +35,15 @@ translate japanese strings:
 
     # gui.rpy:32
     old "## The small color is used for small text, which needs to be brighter/darker to achieve the same effect."
-    new "## スモールカラー。明るさを調節する必要のあるクイックメニューなどの小さなテキストボタンに使います。"
+    new "## スモールカラー。クイックメニューなどの、明るさを調節する必要のある小さなテキストボタンに使います。"
 
     # gui.rpy:36
     old "## The color that is used for buttons and bars that are hovered."
-    new "## hover（フォーカス中）のテキストボタンのカラー。また、バーの充足部分（左側）・hover のスライダーのつまみ等の画像を再生成するときにも使われます。"
+    new "## hover（フォーカス中）のテキストボタンのカラー。また、バーの充足部分（左側）やスライダーのつまみ等の画像を再生成するときにも使われます。"
 
     # gui.rpy:39
     old "## The color used for a text button when it is selected but not focused. A button is selected if it is the current screen or preference value."
-    new "## selected（選択中）のテキストボタンのカラー。ボタンは、現在の環境設定の値や表示中のスクリーンと一致するものが選択中になります。"
+    new "## selected（選択中）のテキストボタンのカラー。ボタンが現在のスクリーンであったり、環境設定の値と一致したりすると、ボタンは選択中になります。"
 
     # gui.rpy:43
     old "## The color used for a text button when it cannot be selected."
@@ -51,11 +51,11 @@ translate japanese strings:
 
     # gui.rpy:46
     old "## Colors used for the portions of bars that are not filled in. These are not used directly, but are used when re-generating bar image files."
-    new "## バーの非充足部分（右側）やスライダーの背景部分のカラー。バーやスライダーのカラーは、ゲームでは直接使われず GUI を変更・更新した場合の画像生成に使われます。"
+    new "## バーの非充足部分（右側）やスライダーの背景部分のカラー。バーやスライダーのカラーは直接使われず、 GUI を変更・更新した場合の画像生成に使われます。"
 
     # gui.rpy:51
     old "## The colors used for dialogue and menu choice text."
-    new "## 次の text_color は台詞や選択肢のテキストのカラーです。その次の interface_text_color はヒストリーやヘルプなどそれ以外のテキストのカラーです。"
+    new "## text_color は台詞や選択肢のテキストのカラーです。interface_text_color はヒストリーやヘルプなどそれ以外のテキストのカラーです。"
 
     # gui.rpy:56
     old "## Fonts and Font Sizes"
@@ -284,7 +284,7 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
 
     # gui.rpy:279
     old "## These variables control the look of frames that can contain user interface components when an overlay or window is not present."
-    new "## 以下の変数は、インターフェースのコンポーネントを収納するフレームを制御します。フレームは、ウィンドウやオーバーレイが用いられない場面で使われます。"
+    new "## 以下の変数は、インターフェースのコンポーネントを収納するフレームを制御します。フレームは、ウィンドウやオーバーレイが用意されていない場面で使われます。"
 
     # gui.rpy:282
     old "## Generic frames that are introduced by player code."
@@ -450,7 +450,7 @@ translate japanese strings:
 
     # gui.rpy:5
     old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
-    new "## このファイルは GUI をカスタマイズする基本的なオプションを記載しています。次の init offset 文により、このファイルの init 文は他のファイルの init 文よりも先に実行されます。"
+    new "## このファイルは GUI をカスタマイズする基本的なオプションを記載しています。次の init offset ステートメントにより、このファイルの init 文は他のファイルの init 文よりも先に実行されます。"
 
     # gui.rpy:282
     old "## Generic frames."

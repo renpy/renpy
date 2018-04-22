@@ -19,7 +19,7 @@ translate japanese strings:
 
     # screens.rpy:98
     old "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. It can also create displayables with id \"who\" and id \"window\" to apply style properties."
-    new "## このスクリーンは、テキストを表示するために \"what\" のＩＤを持つ text displayable（表示可能オブジェクト）を必ず作成しなければなりません。また、スタイルのプロパティを適用するために、ＩＤ \"who\" とＩＤ \"window\" を持つ text displayable も作成するといいでしょう。"
+    new "## このスクリーンは、テキストを表示するために \"what\" のＩＤを持つ text displayable を必ず作成しなければなりません。また、スタイルのプロパティを適用するために、ＩＤ \"who\" とＩＤ \"window\" を持つ text displayable も作成するといいでしょう。"
 
     # screens.rpy:102
     old "## https://www.renpy.org/doc/html/screen_special.html#say"
@@ -39,7 +39,7 @@ translate japanese strings:
 
     # screens.rpy:174
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
-    new "## このスクリーンは input のパラメーター を受け付けるために \"input\" をＩＤに持つ input displayable（表示可能オブジェクト）を作成する必要があります。"
+    new "## このスクリーンは input のパラメーター を受け付けるために \"input\" をＩＤに持つ input displayable を作成する必要があります。"
 
     # screens.rpy:177
     old "## http://www.renpy.org/doc/html/screen_special.html#input"
@@ -51,7 +51,7 @@ translate japanese strings:
 
     # screens.rpy:207
     old "## This screen is used to display the in-game choices presented by the menu statement. The one parameter, items, is a list of objects, each with caption and action fields."
-    new "## このスクリーンは、ゲーム内の選択肢を表示するのに使います。items のパラメーターは caption（選択肢のテキスト）と action（クリック時の実行内容）を要素に持つオブジェクトのリスト（配列）です。"
+    new "## このスクリーンは、ゲーム内の選択肢を表示する menu ステートメントに使います。items のパラメーターは caption（選択肢のテキスト）と action（クリック時の実行内容）を要素に持つオブジェクトのリスト（配列）です。"
 
     # screens.rpy:211
     old "## http://www.renpy.org/doc/html/screen_special.html#choice"
@@ -67,7 +67,7 @@ translate japanese strings:
 
     # screens.rpy:246
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
-    new "## クイックメニューはゲーム中つねに表示されるスクリーンで、ゲーム外の機能に素早くアクセスすることができます。"
+    new "## クイックメニューはゲーム中に常時表示されるスクリーンで、ゲーム外の機能に素早くアクセスすることができます。"
 
     # screens.rpy:251
     old "## Ensure this appears on top of other screens."
@@ -182,7 +182,7 @@ translate japanese strings:
 
     # screens.rpy:369
     old "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
-    new "## use 文は、他のスクリーンを現在のスクリーンの内に表示するのに使います。メインメニューの実際のコンテンツは navigation（ナビゲーション）スクリーンです。"
+    new "## use ステートメントは、他のスクリーンを現在のスクリーンの内に表示するのに使います。メインメニューの実際のコンテンツは navigation（ナビゲーション）スクリーンです。"
 
     # screens.rpy:413
     old "## Game Menu screen"
@@ -218,7 +218,7 @@ translate japanese strings:
 
     # screens.rpy:551
     old "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
-    new "## 次の use 文は game_menu（ゲームメニュー）スクリーンをこのスクリーンの内に表示しています。use 文の子（内包されたオブジェクト）の vbox は game_menu スクリーンの中の viewport に配置されます。"
+    new "## 次の use ステートメントは game_menu（ゲームメニュー）スクリーンをこのスクリーンの内に表示しています。use 文の子（内包されたオブジェクト）の vbox は game_menu スクリーンの中の viewport に配置されます。"
 
     # screens.rpy:561
     old "Version [config.version!t]\n"
@@ -561,7 +561,7 @@ translate japanese strings:
 
     # screens.rpy:1124
     old "## Additional screens"
-    new "## 追加スクリーン"
+    new "## 付加的なスクリーン"
 
     # screens.rpy:1128
     old "## Confirm screen"

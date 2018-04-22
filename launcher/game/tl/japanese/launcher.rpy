@@ -1283,3 +1283,42 @@ translate japanese strings:
     old "The height must be a number."
     new "画面の高さは数字でなければなりません。"
 
+
+translate japanese strings:
+
+    # editor.rpy:152
+    old "(Recommended) A modern and approachable text editor."
+    new "（推奨）モダンで親しみやすいテキストエディターです。"
+
+    # editor.rpy:164
+    old "Up to 150 MB download required."
+    new "最大 150 MB のダウンロードが必要です。"
+
+    # editor.rpy:178
+    old "A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input."
+    new "成熟したエディターです。Editra は中国語・韓国語・日本語の入力に必要な IME のサポートに欠陥があります。"
+
+    # editor.rpy:179
+    old "A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
+    new "成熟したエディターです。Editra は中国語・韓国語・日本語の入力に必要な IME のサポートに欠陥があります。Linux では Editra は wxpython を必要とします。"
+    
+    # editor.rpy:219
+    old "System Editor"
+    new "システムエディタ―"
+
+    # editor.rpy:235
+    old "None"
+    new "無効"
+
+    # editor.rpy:338
+    old "Edit [text]."
+    new "Edit [text]."
+
+    # front_page.rpy:215
+    old "Open project"
+    new "プロジェクトを開く"
+
+    # front_page.rpy:221
+    old "Actions"
+    new "アクション"
+
