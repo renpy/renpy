@@ -12,6 +12,20 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the gui is regenerated.
 
+
+.. _incompatible-7.0:
+
+7.0
+---
+
+Ren'Py now defines automatic images at init 0, rather than at a very late
+init level. To revert to the prior behavior, add::
+
+    init -1:
+        define config.late_images_scan = True
+
+to your game.
+
 .. _incompatible-6.99:
 
 6.99.13

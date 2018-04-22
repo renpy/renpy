@@ -57,6 +57,10 @@ fixed.
 The :func:`Composite`, :func:`Crop` and :func:`Tile` displayables are now
 actually available under their new names.
 
+An issue that could cause Ren'Py to roll back to an incorrect place when
+accessing the console has been fixed. This could cause the console to
+display incorrect data, while in the console itself.
+
 
 .. _renpy-6.99.14.3:
 
