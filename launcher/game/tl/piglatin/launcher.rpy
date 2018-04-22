@@ -569,75 +569,75 @@ translate piglatin strings:
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
     new "Leasepay ickclay onay hetay olorcay chemesay ouyay ishway otay useay, hentay ickclay Ontinuecay. Hesetay olorscay ancay ebay angedchay anday ustomizedcay aterlay."
 
-    # gui7.rpy:310
+    # gui7.rpy:311
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
     new "{b}Arningway{/b}\nOntinuingcay illway overwriteay ustomizedcay arbay, uttonbay, avesay otslay, crollbarsay, anday iderslay imagesay.\n\nHatway ouldway ouyay ikelay otay oday?"
 
-    # gui7.rpy:310
+    # gui7.rpy:311
     old "Choose new colors, then regenerate image files."
     new "Hoosecay ewnay olorscay, hentay egenerateray imageay ilesfay."
 
-    # gui7.rpy:310
+    # gui7.rpy:311
     old "Regenerate the image files using the colors in gui.rpy."
     new "Egenerateray hetay imageay ilesfay usingay hetay olorscay inay uigay.pyray."
 
-    # gui7.rpy:330
+    # gui7.rpy:331
     old "PROJECT NAME"
     new "Rojectpay Amenay"
 
-    # gui7.rpy:330
+    # gui7.rpy:331
     old "Please enter the name of your project:"
     new "Leasepay enteray hetay amenay ofay ouryay rojectpay:"
 
-    # gui7.rpy:338
+    # gui7.rpy:339
     old "The project name may not be empty."
     new "Hetay rojectpay amenay aymay otnay ebay emptyay."
 
-    # gui7.rpy:343
+    # gui7.rpy:344
     old "[project_name!q] already exists. Please choose a different project name."
     new "[project_name!q] alreadyay existsay. Leasepay oosechay aay ifferentday rojectpay amenay."
 
-    # gui7.rpy:346
+    # gui7.rpy:347
     old "[project_dir!q] already exists. Please choose a different project name."
     new "[project_dir!q] alreadyay existsay. Leasepay oosechay aay ifferentday rojectpay amenay."
 
-    # gui7.rpy:357
+    # gui7.rpy:358
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
     new "Hatway esolutionray ouldshay hetay rojectpay useay? Lthoughaay Enray'Ypay ancay calesay hetay indowway upay anday ownday, histay isay hetay initialay izesay ofay hetay indowway, hetay izesay atay hichway assetsay ouldshay ebay rawnday, anday hetay izesay atay hichway hetay assetsay illway ebay atay heirtay arpestshay.\n\nHetay efaultday ofay 280x7201ay isay aay easonableray ompromisecay."
 
-    # gui7.rpy:357
+    # gui7.rpy:358
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
     new "Ustomcay. Hetay Uigay isay optimizeday orfay aay 61ay:9ay aspectay atioray."
 
-    # gui7.rpy:372
+    # gui7.rpy:373
     old "WIDTH"
     new "Idthway"
 
-    # gui7.rpy:372
+    # gui7.rpy:373
     old "Please enter the width of your game, in pixels."
     new "Leasepay enteray hetay idthway ofay ouryay amegay, inay ixelspay."
 
-    # gui7.rpy:377
+    # gui7.rpy:378
     old "The width must be a number."
     new "Hetay idthway ustmay ebay aay umbernay."
 
-    # gui7.rpy:379
+    # gui7.rpy:380
     old "HEIGHT"
     new "Eighthay"
 
-    # gui7.rpy:379
+    # gui7.rpy:380
     old "Please enter the height of your game, in pixels."
     new "Leasepay enteray hetay eighthay ofay ouryay amegay, inay ixelspay."
 
-    # gui7.rpy:384
+    # gui7.rpy:385
     old "The height must be a number."
     new "Hetay eighthay ustmay ebay aay umbernay."
 
-    # gui7.rpy:426
+    # gui7.rpy:427
     old "Creating the new project..."
     new "Reatingcay hetay ewnay rojectpay..."
 
-    # gui7.rpy:428
+    # gui7.rpy:429
     old "Updating the project..."
     new "Pdatinguay hetay rojectpay..."
 
@@ -933,91 +933,91 @@ translate piglatin strings:
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
     new "Leasepay electsay aay emplatetay otay useay orfay ouryay ewnay rojectpay. Hetay emplatetay etssay hetay efaultday ontfay anday hetay useray interfaceay anguagelay. Fiay ouryay anguagelay isay otnay upportedsay, oosechay 'englishay'."
 
-    # preferences.rpy:72
+    # preferences.rpy:73
     old "Launcher Preferences"
     new "Auncherlay Referencespay"
 
-    # preferences.rpy:93
+    # preferences.rpy:94
     old "Projects Directory:"
     new "Rojectspay Irectoryday:"
 
-    # preferences.rpy:100
+    # preferences.rpy:101
     old "[persistent.projects_directory!q]"
     new "[persistent.projects_directory!q]"
 
-    # preferences.rpy:102
+    # preferences.rpy:103
     old "Projects directory: [text]"
     new "Rojectspay irectoryday: [text]"
 
-    # preferences.rpy:104
+    # preferences.rpy:105
     old "Not Set"
     new "Otnay Etsay"
 
-    # preferences.rpy:119
+    # preferences.rpy:120
     old "Text Editor:"
     new "Exttay Ditoreay:"
 
-    # preferences.rpy:125
+    # preferences.rpy:126
     old "Text editor: [text]"
     new "Exttay editoray: [text]"
 
-    # preferences.rpy:141
+    # preferences.rpy:142
     old "Update Channel:"
     new "Pdateuay Hannelcay:"
 
-    # preferences.rpy:161
+    # preferences.rpy:162
     old "Navigation Options:"
     new "Avigationnay Ptionsoay:"
 
-    # preferences.rpy:165
+    # preferences.rpy:166
     old "Include private names"
     new "Ncludeiay rivatepay amesnay"
 
-    # preferences.rpy:166
+    # preferences.rpy:167
     old "Include library names"
     new "Ncludeiay ibrarylay amesnay"
 
-    # preferences.rpy:176
+    # preferences.rpy:177
     old "Launcher Options:"
     new "Auncherlay Ptionsoay:"
 
-    # preferences.rpy:180
+    # preferences.rpy:181
     old "Hardware rendering"
     new "Ardwarehay enderingray"
 
-    # preferences.rpy:181
+    # preferences.rpy:182
     old "Show edit file section"
     new "Howsay editay ilefay ectionsay"
 
-    # preferences.rpy:182
+    # preferences.rpy:183
     old "Large fonts"
     new "Argelay ontsfay"
 
-    # preferences.rpy:185
+    # preferences.rpy:186
     old "Console output"
     new "Onsolecay outputay"
 
-    # preferences.rpy:187
+    # preferences.rpy:190
     old "Force new tutorial"
     new "Orcefay ewnay utorialtay"
 
-    # preferences.rpy:189
+    # preferences.rpy:194
     old "Legacy options"
     new "Egacylay optionsay"
 
-    # preferences.rpy:192
+    # preferences.rpy:197
     old "Show templates"
     new "Howsay emplatestay"
 
-    # preferences.rpy:194
+    # preferences.rpy:199
     old "Sponsor message"
     new "Ponsorsay essagemay"
 
-    # preferences.rpy:214
+    # preferences.rpy:219
     old "Open launcher project"
     new "Penoay auncherlay rojectpay"
 
-    # preferences.rpy:228
+    # preferences.rpy:233
     old "Language:"
     new "Anguagelay:"
 

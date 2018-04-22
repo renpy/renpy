@@ -205,127 +205,135 @@ translate piglatin strings:
     old "Language [text]"
     new "Anguagelay [text]"
 
-    # 00director.rpy:703
+    # 00director.rpy:709
     old "The interactive director is not enabled here."
     new "Hetay interactiveay irectorday isay otnay enableday erehay."
 
-    # 00director.rpy:1490
+    # 00director.rpy:1479
+    old "⬆"
+    new "⬆"
+
+    # 00director.rpy:1485
+    old "⬇"
+    new "⬇"
+
+    # 00director.rpy:1549
     old "Done"
     new "Oneday"
 
-    # 00director.rpy:1498
+    # 00director.rpy:1559
     old "(statement)"
     new "(atementstay)"
 
-    # 00director.rpy:1499
+    # 00director.rpy:1560
     old "(tag)"
     new "(agtay)"
 
-    # 00director.rpy:1500
+    # 00director.rpy:1561
     old "(attributes)"
     new "(attributesay)"
 
-    # 00director.rpy:1501
+    # 00director.rpy:1562
     old "(transform)"
     new "(ansformtray)"
 
-    # 00director.rpy:1526
+    # 00director.rpy:1587
     old "(transition)"
     new "(ansitiontray)"
 
-    # 00director.rpy:1538
+    # 00director.rpy:1599
     old "(channel)"
     new "(annelchay)"
 
-    # 00director.rpy:1539
+    # 00director.rpy:1600
     old "(filename)"
     new "(ilenamefay)"
 
-    # 00director.rpy:1564
+    # 00director.rpy:1629
     old "Change"
     new "Hangecay"
 
-    # 00director.rpy:1566
+    # 00director.rpy:1631
     old "Add"
     new "Ddaay"
 
-    # 00director.rpy:1569
+    # 00director.rpy:1634
     old "Cancel"
     new "Ancelcay"
 
-    # 00director.rpy:1572
+    # 00director.rpy:1637
     old "Remove"
     new "Emoveray"
 
-    # 00director.rpy:1605
+    # 00director.rpy:1672
     old "Statement:"
     new "Tatementsay:"
 
-    # 00director.rpy:1626
+    # 00director.rpy:1693
     old "Tag:"
     new "Agtay:"
 
-    # 00director.rpy:1642
+    # 00director.rpy:1709
     old "Attributes:"
     new "Ttributesaay:"
 
-    # 00director.rpy:1660
+    # 00director.rpy:1727
     old "Transforms:"
     new "Ransformstay:"
 
-    # 00director.rpy:1679
+    # 00director.rpy:1746
     old "Behind:"
     new "Ehindbay:"
 
-    # 00director.rpy:1698
+    # 00director.rpy:1765
     old "Transition:"
     new "Ransitiontay:"
 
-    # 00director.rpy:1716
+    # 00director.rpy:1783
     old "Channel:"
     new "Hannelcay:"
 
-    # 00director.rpy:1734
+    # 00director.rpy:1801
     old "Audio Filename:"
     new "Udioaay Ilenamefay:"
 
-    # 00gui.rpy:368
+    # 00gui.rpy:370
     old "Are you sure?"
     new "Reaay ouyay uresay?"
 
-    # 00gui.rpy:369
+    # 00gui.rpy:371
     old "Are you sure you want to delete this save?"
     new "Reaay ouyay uresay ouyay antway otay eleteday histay avesay?"
 
-    # 00gui.rpy:370
+    # 00gui.rpy:372
     old "Are you sure you want to overwrite your save?"
     new "Reaay ouyay uresay ouyay antway otay overwriteay ouryay avesay?"
 
-    # 00gui.rpy:371
+    # 00gui.rpy:373
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Oadinglay illway oselay unsaveday rogresspay.\nReaay ouyay uresay ouyay antway otay oday histay?"
 
-    # 00gui.rpy:372
+    # 00gui.rpy:374
     old "Are you sure you want to quit?"
     new "Reaay ouyay uresay ouyay antway otay uitqay?"
 
-    # 00gui.rpy:373
+    # 00gui.rpy:375
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Reaay ouyay uresay ouyay antway otay eturnray otay hetay ainmay enumay?\nHistay illway oselay unsaveday rogresspay."
 
-    # 00gui.rpy:374
+    # 00gui.rpy:376
     old "Are you sure you want to end the replay?"
     new "Reaay ouyay uresay ouyay antway otay enday hetay eplayray?"
 
-    # 00gui.rpy:375
+    # 00gui.rpy:377
     old "Are you sure you want to begin skipping?"
     new "Reaay ouyay uresay ouyay antway otay eginbay kippingsay?"
 
-    # 00gui.rpy:376
+    # 00gui.rpy:378
     old "Are you sure you want to skip to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay otay hetay extnay oicechay?"
 
-    # 00gui.rpy:377
+    # 00gui.rpy:379
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay unseenay ialogueday otay hetay extnay oicechay?"
 
@@ -537,15 +545,15 @@ translate piglatin strings:
     old "mute all"
     new "utemay allay"
 
-    # 00preferences.rpy:498
+    # 00preferences.rpy:500
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "Lipboardcay oicingvay enableday. Resspay 'iftshay+Cay' otay isableday."
 
-    # 00preferences.rpy:500
+    # 00preferences.rpy:502
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "Elfsay-oicingvay ouldway aysay \"[renpy.display.tts.last]\". Resspay 'altay+iftshay+Vay' otay isableday."
 
-    # 00preferences.rpy:502
+    # 00preferences.rpy:504
     old "Self-voicing enabled. Press 'v' to disable."
     new "Elfsay-oicingvay enableday. Resspay 'vay' otay isableday."
 
