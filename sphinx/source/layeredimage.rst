@@ -1,4 +1,4 @@
-.. _layeredimage:
+.. _layered-images:
 
 Layered Images
 ==============

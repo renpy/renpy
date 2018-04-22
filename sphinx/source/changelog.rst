@@ -2,7 +2,6 @@
 Full Changelog
 ==============
 
-
 .. _renpy-7.0:
 
 7.0
@@ -17,6 +16,22 @@ For releases between 6.0 and 7.0, see the other entries in this changelog,
 and the older changelog on the Ren'Py website. The rest of this entry
 contains the differences between 7.0 and 6.99.14.3.
 
+Layered Images
+--------------
+
+A :ref:`layered image <layered-images>` is a new way of defining images
+for use in Ren'Py. It's intended to be used with a sprite that has been
+created in Photoshop or some other program as a a series of layers.
+The layered image system can use the attributes the image was displayed
+with and Python conditions to determine what layers to display.
+
+Layered images are intended to be a replacement for the use of (Live):func:`composite`
+and :func:`ConditionSwitch` to define layered images. It includes a language
+that makes defining such images simpler, and Ren'Py can generate portions
+of the definitions from appropriately named files. It also integrates better
+with the rest of Ren'Py, as attributes can be predicted in ways that a
+ConditionSwitch cannot.
+
 Changes
 -------
 
@@ -24,6 +39,9 @@ The old tutorial and old templates are no longer includes with Ren'Py.
 They can still be used with new version of Ren'Py if copied into
 this or later versions.
 
+Automatic image definitions now take place at init level 0, rather than
+an init level of greater than 999. This allows :func:`renpy.has_image` to
+be used in init blocks.
 
 Fixes
 -----
@@ -35,6 +53,9 @@ case when the player is skipping through the game.)
 An issue that caused the interactive director to be translated into
 Russian when the default (English) language was being used has been
 fixed.
+
+The :func:`Composite`, :func:`Crop` and :func:`Tile` displayables are now
+actually available under their new names.
 
 
 .. _renpy-6.99.14.3:
