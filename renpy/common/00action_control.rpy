@@ -183,7 +183,7 @@ init -1500 python:
          If not None, `transition` is use to show the new screen.
          """
 
-        return Show(screen, transition=transition, _transient=True, *args, **kwargs)
+        return Show(screen, transition, _transient=True, *args, **kwargs)
 
     @renpy.pure
     class Hide(Action, DictEquality):
