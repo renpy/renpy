@@ -589,6 +589,9 @@ init python in project:
                 if language is None:
                     rv = p
 
+                elif rv is None:
+                    rv = p
+
                 elif os.path.exists(os.path.join(p.path, "game", "tl", _preferences.language)):
                     rv = p
 
