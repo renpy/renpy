@@ -5,7 +5,11 @@ python early in layeredimage:
     from store import Transform, ConditionSwitch, Fixed, Null, config, Text
     from collections import OrderedDict
 
-    ATL_PROPERTIES =[ i for i in renpy.atl.PROPERTIES ]
+    ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
+
+    # The properties for attribute layers.
+    LAYER_PROPERTIES = [ "if_all", "if_any", "if_not", "at" ] + ATL_PROPERTIES
+
 
     # This is the default value for predict_all given to conditions.
     predict_all = False
@@ -78,6 +82,50 @@ python early in layeredimage:
         Base class for our layers.
         """
 
+        def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=[ ], **kwargs):
+
+            if not isinstance(at, list):
+                at = [ at ]
+
+            self.at = at
+
+            if not isinstance(if_all, list):
+                if_all = [ if_all ]
+
+            self.if_all = if_all
+
+            if not isinstance(if_any, list):
+                if_any = [ if_any ]
+
+            self.if_any = if_any
+
+            if not isinstance(if_not, list):
+                if_not = [ if_not ]
+
+            self.if_not = if_not
+
+            self.transform_args = kwargs
+
+        def check(self, attributes):
+
+            for i in self.if_all:
+                if i not in attributes:
+                    return False
+
+            if self.if_any:
+
+                for i in self.if_any:
+                    if i in attributes:
+                        break
+                else:
+                    return False
+
+            for i in self.if_not:
+                if i in attributes:
+                    return False
+
+            return True
+
     class Attribute(Layer):
         """
         :doc: li
@@ -112,6 +160,10 @@ python early in layeredimage:
             An attribute or list of attributes. The displayable is only shown
             if all of these are showing.
 
+        `if_any`
+            An attribute or list of attributes. if not empty, the displayable is only shown
+            if any of these are showing.
+
         `if_not`
             An attribute or list of attributes. The displayable is only shown
             if none of these are showing.
@@ -126,30 +178,15 @@ python early in layeredimage:
         to generate an image filename.
         """
 
-        def __init__(self, group, attribute, image=None, default=False, at=[ ], if_also=[ ], if_not=[ ], **kwargs):
+        def __init__(self, group, attribute, image=None, default=False, **kwargs):
+
+            super(Attribute, self).__init__(**kwargs)
 
             self.raw_group = group
             self.group = group or attribute
             self.attribute = attribute
             self.image = image
             self.default = default
-
-            if not isinstance(at, list):
-                at = [ at ]
-
-            self.at = at
-
-            if not isinstance(if_also, list):
-                if_also = [ if_also ]
-
-            self.if_also = if_also
-
-            if not isinstance(if_not, list):
-                if_not = [ if_not ]
-
-            self.if_not = if_not
-
-            self.transform_args = kwargs
 
         def apply_format(self, ai):
 
@@ -171,18 +208,13 @@ python early in layeredimage:
 
         def get_displayable(self, attributes):
 
-            for i in self.if_also:
-                if i not in attributes:
-                    return None
+            if self.attribute not in attributes:
+                return None
 
-            for i in self.if_not:
-                if i in attributes:
-                    return None
+            if not self.check(attributes):
+                return None
 
-            if self.attribute in attributes:
-                return self.image
-
-            return None
+            return self.image
 
 
     class RawAttribute(object):
@@ -259,7 +291,20 @@ python early in layeredimage:
             if the layer is displayed.
 
         `image`
-            The displayable that is shown when the condition is True.
+            If not None, this should be a displayable that is displayed when
+            the condition is true.
+
+        `if_all`
+            An attribute or list of attributes. The condition is only evaluated
+            if all of these are showing.
+
+        `if_any`
+            An attribute or list of attributes. If not empty, the condition is only evaluated
+            if any of these are showing.
+
+        `if_not`
+            An attribute or list of attributes. The condition is only evaluated
+            if none of these are showing.
 
         `at`
             A transform or list of transforms that are applied to the
@@ -273,16 +318,11 @@ python early in layeredimage:
 
         at = [ ]
 
-        def __init__(self, condition, image, at=[ ], **kwargs):
+        def __init__(self, condition, image, **kwargs):
             self.condition = condition
             self.image = image
 
-            if not isinstance(at, list):
-                at = [ at ]
-
-            self.at = at
-
-            self.transform_args = kwargs
+            super(Condition, self).__init__(**kwargs)
 
         def apply_format(self, ai):
 
@@ -302,6 +342,10 @@ python early in layeredimage:
                 self.image = i(self.image)
 
         def get_displayable(self, attributes):
+
+            if not self.check(attributes):
+                return None
+
             return ConditionSwitch(
                 self.condition, self.image,
                 None, Null(),
@@ -337,6 +381,9 @@ python early in layeredimage:
             args = [ ]
 
             for i in self.conditions:
+                if not i.check(attributes):
+                    continue
+
                 args.append(i.condition)
                 args.append(i.image)
 
@@ -377,9 +424,13 @@ python early in layeredimage:
             A transform or list of transforms that are applied to the
             image.
 
-        `if_also`
+        `if_all`
             An attribute or list of attributes. The displayable is only shown
             if all of these are showing.
+
+        `if_any`
+            An attribute or list of attributes. If not empty, the displayable
+            is only shown if any of these are showing.
 
         `if_not`
             An attribute or list of attributes. The displayable is only shown
@@ -387,26 +438,11 @@ python early in layeredimage:
         """
 
 
-        def __init__(self, image, at=[ ], if_also=[ ], if_not=[ ], **kwargs):
+        def __init__(self, image, **kwargs):
 
             self.image = image
 
-            if not isinstance(at, list):
-                at = [ at ]
-
-            self.at = at
-
-            if not isinstance(if_also, list):
-                if_also = [ if_also ]
-
-            self.if_also = if_also
-
-            if not isinstance(if_not, list):
-                if_not = [ if_not ]
-
-            self.if_not = if_not
-
-            self.transform_args = kwargs
+            super(Always, self).__init__(**kwargs)
 
         def apply_format(self, ai):
 
@@ -427,13 +463,8 @@ python early in layeredimage:
 
         def get_displayable(self, attributes):
 
-            for i in self.if_also:
-                if i not in attributes:
-                    return None
-
-            for i in self.if_not:
-                if i in attributes:
-                    return None
+            if not self.check(attributes):
+                return None
 
             return self.image
 
@@ -452,8 +483,6 @@ python early in layeredimage:
 
             properties = { k : eval(v) for k, v in self.properties.items() }
             return [ Always(image, **properties) ]
-
-
 
     class LayeredImage(object):
         """
@@ -739,7 +768,7 @@ python early in layeredimage:
 
             while True:
 
-                if parse_property(l, a, [ "default", "at", "if_also", "if_not" ] + ATL_PROPERTIES):
+                if parse_property(l, a, [ "default" ] + LAYER_PROPERTIES):
                     continue
 
                 image = l.simple_expression()
@@ -783,7 +812,7 @@ python early in layeredimage:
 
             while True:
 
-                if parse_property(l, a, [ "at", "if_also", "if_not" ] + ATL_PROPERTIES):
+                if parse_property(l, a, LAYER_PROPERTIES):
                     continue
 
                 image = l.simple_expression()
@@ -829,7 +858,7 @@ python early in layeredimage:
         rv = RawAttributeGroup(image_name, group)
         parent.children.append(rv)
 
-        while parse_property(l, rv, [ "at", "auto", "if_also", "if_not" ] + ATL_PROPERTIES):
+        while parse_property(l, rv, [ "auto" ] + LAYER_PROPERTIES):
             pass
 
         if l.match(':'):
@@ -844,7 +873,7 @@ python early in layeredimage:
                     parse_attribute(ll, rv)
                     continue
 
-                while parse_property(ll, rv, [ "at", "auto", "if_also", "if_not" ] + ATL_PROPERTIES):
+                while parse_property(ll, rv, [ "auto" ] + LAYER_PROPERTIES):
                     pass
 
                 ll.expect_eol()
@@ -877,7 +906,7 @@ python early in layeredimage:
 
             while True:
 
-                if parse_property(ll, rv, [ "at" ] + ATL_PROPERTIES):
+                if parse_property(ll, rv, LAYER_PROPERTIES):
                     continue
 
                 image = ll.simple_expression()
@@ -966,7 +995,10 @@ python early in layeredimage:
 
             else:
 
-                while parse_property(ll, rv, [ "image_format", "format_function", "at" ] + ATL_PROPERTIES):
+                while parse_property(ll, rv, [ "image_format", "format_function", "at" ] +
+                    renpy.sl2.slproperties.position_property_names +
+                    renpy.sl2.slproperties.box_property_names
+                    ):
                     pass
 
                 ll.expect_noblock('statement')

@@ -169,8 +169,7 @@ bar_properties = [ Style(i) for i in bar_property_names ]
 scrollbar_bar_properties = [ PrefixStyle("scrollbar_", i) for i in bar_property_names ]
 vscrollbar_bar_properties = [ PrefixStyle("vscrollbar_", i) for i in bar_property_names ]
 
-
-box_properties = [ Style(i) for i in [
+box_property_names = [
     "box_layout",
     "box_wrap",
     "box_reverse",
@@ -183,7 +182,9 @@ box_properties = [ Style(i) for i in [
     "minimum",
     "xminimum",
     "yminimum",
-    ] ]
+]
+
+box_properties = [ Style(i) for i in box_property_names ]
 
 grid_properties = [ Style(i) for i in [
     "spacing",
