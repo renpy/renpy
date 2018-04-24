@@ -460,7 +460,6 @@ class Context(renpy.object.Object):
         while node:
 
             if node.name == self.come_from_name:
-                print("Come from", self.come_from_name, "to", self.come_from_label)
                 self.come_from_name = None
                 node = self.call(self.come_from_label, return_site=node.name)
                 self.make_dynamic([ "_return" ])
