@@ -126,6 +126,23 @@ python early in layeredimage:
 
             return True
 
+        def wrap(self, d):
+            """
+            Wraps a displayable in the at list and transform arguments.
+            """
+
+            d = renpy.displayable(d)
+
+            for i in self.at:
+                d = i(d)
+
+            if self.transform_args:
+
+                d = Transform(d, **self.transform_args)
+
+            return d
+
+
     class Attribute(Layer):
         """
         :doc: li
@@ -151,6 +168,8 @@ python early in layeredimage:
         `default`
             If True, and no other attribute for the group is selected,
             this attribute is.
+
+        The following keyword arguments are also known:
 
         `at`
             A transform or list of transforms that are applied to the
@@ -190,21 +209,12 @@ python early in layeredimage:
 
         def apply_format(self, ai):
 
-            self.image = ai.format(
+            self.image = self.wrap(ai.format(
                 "Attribute ({!r}, {!r})".format(self.raw_group, self.attribute),
                 group=self.raw_group,
                 attribute=self.attribute,
                 image=self.image,
-                )
-
-            self.image = renpy.displayable(self.image)
-
-            for i in self.at:
-                self.image = i(self.image)
-
-            if self.transform_args:
-
-                self.image = Transform(self.image, **self.transform_args)
+                ))
 
         def get_displayable(self, attributes):
 
@@ -326,20 +336,12 @@ python early in layeredimage:
 
         def apply_format(self, ai):
 
-            self.image = ai.format(
+            self.image = self.wrap(ai.format(
                 "Condition ({})".format(self.condition),
                 group=None,
                 attribute=None,
                 image=self.image,
-                )
-
-            self.image = renpy.displayable(self.image)
-
-            if self.transform_args:
-                self.image = Transform(self.image, **self.transform_args)
-
-            for i in self.at:
-                self.image = i(self.image)
+                ))
 
         def get_displayable(self, attributes):
 
@@ -446,20 +448,12 @@ python early in layeredimage:
 
         def apply_format(self, ai):
 
-            self.image = ai.format(
+            self.image = self.wrap(ai.format(
                 "Always",
                 group=None,
                 attribute=None,
                 image=self.image,
-                )
-
-            self.image = renpy.displayable(self.image)
-
-            if self.transform_args:
-                self.image = Transform(self.image, **self.transform_args)
-
-            for i in self.at:
-                self.image = i(self.image)
+                ))
 
         def get_displayable(self, attributes):
 
