@@ -111,12 +111,24 @@ def check_image_attributes(tag, attributes):
     Otherwise, returns None.
     """
 
-    ca = get_tag_method(tag, "_choose_attributes")
+    l = [ ]
 
-    if ca is not None:
-        return ca(tag, attributes, None)
+    for attrs, d in image_attributes[tag].items():
 
-    l = get_available_image_attributes(tag, attributes)
+        remainder = [ i for i in attributes if i not in attrs ]
+
+        ca = getattr(d, "_choose_attributes", None)
+
+        if ca is not None:
+
+            chosen = ca(tag, remainder, None)
+            if chosen is not None:
+                l.append(list(attrs) + list(chosen))
+
+        else:
+
+            if not remainder:
+                l.append(attrs)
 
     # Check to see if there's an image that is exactly the one we want.
     for i in l:
@@ -147,32 +159,80 @@ def get_ordered_image_attributes(tag, attributes=(), sort=None):
 
     """
 
-    la = get_tag_method(tag, "_list_attributes")
-
-    if la is not None:
-        return la(tag, attributes)
+    sequences = [ ]
 
     attrcount = collections.defaultdict(int)
     attrtotalpos = collections.defaultdict(float)
 
-    for attrlist in get_available_image_attributes(tag, attributes):
-        for i, attr in enumerate(attrlist):
-            attrcount[attr] += 1
-            attrtotalpos[attr] += i
+    for attrs, d in sorted(image_attributes[tag].items()):
+
+        la = getattr(d, "_list_attributes", None)
+        if la is not None:
+
+            sequence = list(attrs) + la(tag, [ i for i in attributes if i not in attrs ])
+
+            if not all(i in sequence for i in attributes):
+                continue
+
+            sequences.append(sequence)
+
+        else:
+
+            if not all(i in attrs for i in attributes):
+                continue
+
+            for i, attr in enumerate(attrs):
+                attrcount[attr] += 1
+                attrtotalpos[attr] += i
 
     if sort is None:
+        return list(set(attrcount.keys()) | set(j for i in sequences for j in i))
 
-        return list(attrcount.keys())
+    # If we have a sequence, do a topological sort on the before-after relation -
+    # with an ajustment to make sure it will complete even if it loops.
 
-    else:
+    rv = [ ]
 
-        l = [ ]
+    # A map from an attribute to all the attributes it is after.
+    after = collections.defaultdict(set)
 
-        for attr in attrcount:
+    for i in sequences:
+        while i:
+
+            j = i.pop(0)
+
+            # Ensure it exists.
+            after[j]
+
+            for k in i:
+                after[k].add(j)
+
+    while after:
+
+        mincount = min(len(i) for i in after.values())
+        ready = set(k for k, v in after.items() if len(v) == mincount)
+
+        for i in ready:
+            del after[i]
+
+        for k in after:
+            after[k] = after[k] - ready
+
+        ready = list(ready)
+        ready.sort(key=lambda a : (sort(a), a))
+
+        rv.extend(ready)
+
+    l = [ ]
+
+    for attr in attrcount:
+        if attr not in rv:
             l.append((attrtotalpos[attr] / attrcount[attr], sort(attr), attr))
 
-        l.sort()
-        return [ i[2] for i in l ]
+    l.sort()
+    rv.extend(l)
+
+    return rv
 
 
 def register_image(name, d):
