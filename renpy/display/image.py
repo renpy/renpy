@@ -35,7 +35,7 @@ images = { }
 
 # A map from image tag to lists of possible attributes for images with that
 # tag.
-image_attributes = collections.defaultdict(list)
+image_attributes = collections.defaultdict(dict)
 
 # The set of image names Ren'Py knows about, as strings with spaces.
 image_names = [ ]
@@ -188,7 +188,7 @@ def register_image(name, d):
     rest = name[1:]
 
     images[name] = d
-    image_attributes[tag].append(rest)
+    image_attributes[tag][rest] = d
 
     image_names.append(" ".join(name))
 
