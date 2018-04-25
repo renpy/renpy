@@ -272,7 +272,7 @@ python early in layeredimage:
             if auto:
                 seen = set(i.attribute for i in rv)
 
-                prefix = self.image_name + "_" + self.group + "_"
+                prefix = self.image_name.replace(" ", "_")  + "_" + self.group + "_"
 
                 for i in renpy.list_images():
 
@@ -646,6 +646,7 @@ python early in layeredimage:
             return rv
 
         def _list_attributes(self, tag, attributes):
+
             banned = self.get_banned(attributes)
 
             group_attr = [ ]
