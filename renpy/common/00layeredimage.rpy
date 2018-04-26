@@ -2,7 +2,7 @@ init offset = -100
 
 python early in layeredimage:
 
-    from store import Transform, ConditionSwitch, Fixed, Null, config, Text
+    from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval
     from collections import OrderedDict
 
     ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
