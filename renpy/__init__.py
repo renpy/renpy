@@ -534,6 +534,8 @@ def post_import():
     for k, v in renpy.defaultstore.__dict__.iteritems():
         renpy.store.__dict__.setdefault(k, v)
 
+    renpy.store.eval = renpy.defaultstore.eval
+
     # Import everything into renpy.exports, provided it isn't
     # already there.
     for k, v in globals().iteritems():

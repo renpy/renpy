@@ -1928,6 +1928,14 @@ def py_eval(code, globals=None, locals=None):  # @ReservedAssignment
     return py_eval_bytecode(code, globals, locals)
 
 
+def store_eval(code, globals=None, locals=None):
+
+    if globals is None:
+        globals = sys._getframe(1).f_globals
+
+    return py_eval(code, globals, locals)
+
+
 def raise_at_location(e, loc):
     """
     Raises `e` (which must be an Exception object) at location `loc`.
