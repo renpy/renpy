@@ -469,7 +469,7 @@ init -1500 python in _console:
 
         if renpy.game.context().rollback:
             try:
-                renpy.rollback(checkpoints=0, force=True, greedy=False, label="_console")
+                renpy.rollback(checkpoints=0, force=True, greedy=False, current_label="_console")
             except renpy.game.CONTROL_EXCEPTIONS:
                 raise
             except:

@@ -1566,9 +1566,9 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                            and data == fwd_data
-                            and (keep_rollback or self.rolled_forward)
-                        ):
+                    and data == fwd_data
+                    and (keep_rollback or self.rolled_forward)
+                    ):
                     self.forward.pop(0)
                 else:
                     self.forward = [ ]
@@ -1616,7 +1616,7 @@ class RollbackLog(renpy.object.Object):
 
         return self.rollback_limit > 0
 
-    def rollback(self, checkpoints, force=False, label=None, greedy=True, on_load=False, abnormal=True):
+    def rollback(self, checkpoints, force=False, label=None, greedy=True, on_load=False, abnormal=True, current_label=None):
         """
         This rolls the system back to the first valid rollback point
         after having rolled back past the specified number of checkpoints.
@@ -1644,6 +1644,11 @@ class RollbackLog(renpy.object.Object):
         `abnormal`
             If true, treats this as an abnormal event, suppresisng rollback
             and so on.
+
+        `current_label`
+            A lable that is called when control returns to the current statement,
+            after rollback. (At most one of `current_label` and `label` can be
+            provided.)
         """
 
         # If we have exceeded the rollback limit, and don't have force,
@@ -1723,7 +1728,11 @@ class RollbackLog(renpy.object.Object):
         else:
             retained = None
 
-        come_from = renpy.game.context().current
+        come_from = None
+
+        if current_label is not None:
+            come_from = renpy.game.context().current
+            label = current_label
 
         # Actually roll things back.
         for rb in revlog:
@@ -1739,10 +1748,10 @@ class RollbackLog(renpy.object.Object):
             retained.rollback_control()
             self.log.append(retained)
 
-        if greedy:
+        if (label is not None) and (come_from is None):
             come_from = renpy.game.context().current
 
-        if label is not None:
+        if come_from is not None:
             renpy.game.context().come_from(come_from, label)
 
         # Disable the next transition, as it's pointless. (Only when not used with a label.)

@@ -1416,9 +1416,10 @@ def with_statement(trans, always=False, paired=None, clear=True):
 globals()["with"] = with_statement
 
 
-def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, abnormal=True):
+def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, abnormal=True, current_label=None):
     """
     :doc: rollback
+    :args: (force=False, checkpoints=1, defer=False, greedy=True, label=None, abnormal=True)
 
     Rolls the state of the game back to the last checkpoint.
 
@@ -1465,7 +1466,7 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, a
 
     renpy.config.skipping = None
     renpy.game.log.complete()
-    renpy.game.log.rollback(checkpoints, greedy=greedy, label=label, force=(force is True), abnormal=abnormal)
+    renpy.game.log.rollback(checkpoints, greedy=greedy, label=label, force=(force is True), abnormal=abnormal, current_label=current_label)
 
 
 def toggle_fullscreen():
