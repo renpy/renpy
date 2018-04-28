@@ -301,10 +301,12 @@ attribute is used to display the image. The same attribute can be used with
 multiple layers, with all layers corresponding to the attribute being shown
 (the if_also and if_not properties can change this).
 
-An attribute takes an attribute name, and optionally the `default` keyword
-to indicate that the attribute should be present by default. After these, it
-optionally takes a displayable and optional properties, which may be included
-on the line or placed in an optional block.
+An attribute takes an attribute name. It can also take two keyworks.
+The``default`` keyword indicates that the attribute should be present
+by default if no attribute in its group conflicts. The ``null`` keyword
+prevents Ren'Py from automatically searching for a displayable corresponding
+to this attribute, which is useful to have an attribute that is intended solely
+for use with `if_all`, `if_any`, or `if_not`.
 
 If the displayable is not present it will be computer from the layer,
 group, and attribute name, using the layered image's format function.

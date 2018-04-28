@@ -766,7 +766,11 @@ python early in layeredimage:
                 if parse_property(l, a, [ "default" ] + LAYER_PROPERTIES):
                     continue
 
-                image = l.simple_expression()
+                if l.match('null'):
+                    image = "Null()"
+                else:
+                    image = l.simple_expression()
+
                 if image is not None:
 
                     if a.image is not None:
@@ -776,7 +780,6 @@ python early in layeredimage:
                     continue
 
                 break
-
 
         line(l)
 
@@ -828,7 +831,6 @@ python early in layeredimage:
             l.expect_eol()
             l.expect_noblock('attribute')
             return
-
 
         l.expect_block('attribute')
         l.expect_eol()
