@@ -175,7 +175,7 @@ python early in layeredimage:
             A transform or list of transforms that are applied to the
             image.
 
-        `if_also`
+        `if_all`
             An attribute or list of attributes. The displayable is only shown
             if all of these are showing.
 

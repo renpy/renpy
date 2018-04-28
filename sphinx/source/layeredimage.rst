@@ -318,9 +318,14 @@ same name, but that group is not used to compute the displayable name.
 
 The attribute statement takes the following properties:
 
-`if_also`
+`if_all`
     A string or list of strings giving the names of attributes. If this is
     present, this layer is only displayed if all of the named attributes
+    are present.
+
+`if_any`
+    A string or list of strings giving the names of attributes. If this is
+    present, this layer is only displayed if any of the named attributes
     are present.
 
 `if_not`
@@ -370,16 +375,20 @@ be placed on the same line or inside a block.
 
 The always statement takes the following properties:
 
-`if_also`
+`if_all`
     A string or list of strings giving the names of attributes. If this is
     present, this layer is only displayed if all of the named attributes
+    are present.
+
+`if_any`
+    A string or list of strings giving the names of attributes. If this is
+    present, this layer is only displayed if any of the named attributes
     are present.
 
 `if_not`
     A string or list of strings giving the names of attributes. If this is
     present, this layer is only displayed if none of the named attributes are
     present.
-
 
 :ref:`transform properties <transform-properties>`
     If present, these are used to construct a transform that is applied
@@ -407,6 +416,22 @@ A more complete example of an if statement might look like::
         "augustina_nose_mark"
 
 Each layer must have a displayable given. It can also be given these properties:
+
+`if_all`
+    A string or list of strings giving the names of attributes. If this is
+    present, this condition is only considered if all of the named attributes
+    are present.
+
+`if_any`
+    A string or list of strings giving the names of attributes. If this is
+    present, this condition is only considered if any of the named attributes
+    are present.
+
+`if_not`
+    A string or list of strings giving the names of attributes. If this is
+    present, this condition is only considered if none of the named attributes are
+    present.
+
 
 :ref:`transform properties <transform-properties>`
     If present, these are used to construct a transform that is applied
