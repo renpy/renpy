@@ -1410,7 +1410,27 @@ def with_statement(trans, always=False, paired=None, clear=True):
 
     renpy.exports.mode('with')
 
-    return renpy.game.interface.do_with(trans, paired, clear=clear)
+    if isinstance(paired, dict):
+        paired = paired.get(None, None)
+
+        if (trans is None) and (paired is None):
+            return
+
+    if isinstance(trans, dict):
+
+        for k, v in trans.items():
+            if k is None:
+                continue
+
+            renpy.exports.transition(v, layer=k)
+
+        if None not in trans:
+            return
+
+        trans = trans[None]
+
+    else:
+        return renpy.game.interface.do_with(trans, paired, clear=clear)
 
 
 globals()["with"] = with_statement
