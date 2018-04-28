@@ -62,7 +62,7 @@ and rolled-back when rollback occurs.
 .. var:: menu = renpy.display_menu
 
     The function that's called to display the in-gamemenu. It should take the same
-    arguments as :func`renpy.display_menu`. Assigning :func:`nvl_menu` to this
+    arguments as :func:`renpy.display_menu`. Assigning :func:`nvl_menu` to this
     will display an nvl-mode menu.
 
 .. var:: mouse_visible = True
