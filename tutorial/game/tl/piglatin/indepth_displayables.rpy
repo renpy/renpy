@@ -62,8 +62,8 @@ translate piglatin simple_displayables_0befbee0:
 # game/indepth_displayables.rpy:91
 translate piglatin simple_displayables_fde549c4:
 
-    # e "The LiveComposite displayable lets us group multiple displayables together into a single one, from bottom to top."
-    e "Hetay Ivecompositelay isplayableday etslay usay oupgray ultiplemay isplayablesday ogethertay intoay aay inglesay oneay, omfray ottombay otay optay."
+    # e "The Composite displayable lets us group multiple displayables together into a single one, from bottom to top."
+    e "Hetay Ompositecay isplayableday etslay usay oupgray ultiplemay isplayablesday ogethertay intoay aay inglesay oneay, omfray ottombay otay optay."
 
 # game/indepth_displayables.rpy:101
 translate piglatin simple_displayables_3dc0050e:
@@ -106,4 +106,3 @@ translate piglatin strings:
     # indepth_displayables.rpy:67
     old "This is a text displayable."
     new "Histay isay aay exttay isplayableday."
-

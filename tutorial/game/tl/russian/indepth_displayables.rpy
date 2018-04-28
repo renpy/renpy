@@ -63,8 +63,8 @@ translate russian simple_displayables_0befbee0:
 # game/indepth_displayables.rpy:91
 translate russian simple_displayables_fde549c4:
 
-    # e "The LiveComposite displayable lets us group multiple displayables together into a single one, from bottom to top."
-    e "Объект LiveComposite позволяет нам группировать разные объекты в один снизу вверх."
+    # e "The Composite displayable lets us group multiple displayables together into a single one, from bottom to top."
+    e "Объект Composite позволяет нам группировать разные объекты в один снизу вверх."
 
 # game/indepth_displayables.rpy:101
 translate russian simple_displayables_3dc0050e:
@@ -107,4 +107,3 @@ translate russian strings:
     # indepth_displayables.rpy:67
     old "This is a text displayable."
     new "Это текстовый объект."
-
