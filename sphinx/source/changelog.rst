@@ -32,6 +32,15 @@ of the definitions from appropriately named files. It also integrates better
 with the rest of Ren'Py, as attributes can be predicted in ways that a
 ConditionSwitch cannot, and layered images work with the interactive director.
 
+Dict Transitions
+----------------
+
+The new :ref:`Dict Layer Transitions <dict-layer-transitions>` makes it
+possible to use the with statement and certain other functions to apply
+transitions to one or more layers. This makes it possible - and even
+convenient - to have a sprite transition expression whle dialogue is
+displayed.
+
 Changes
 -------
 

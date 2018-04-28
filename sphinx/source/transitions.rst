@@ -164,3 +164,53 @@ Transition families are functions that define a large family of
 related transitions.
 
 .. include:: inc/transition_family
+
+
+.. _dict-transitions:
+
+Dict Transitions
+================
+
+In many places where Ren'Py takes a transition, it's possible to instead
+specify a dictionary that maps layer names to this transition. When this
+is the case, Ren'Py applies each transition to the appropriate layer.
+
+When a dict is used, the pause that usually occurs when a transition takes
+place does not occur. Instead, the statement taking the dictionary returns
+immediately, and the transitions are scheduled to occur at the start of the
+next interaction.
+
+This can be used with the master layer to cause transitions to occur while
+dialogue is being shown on the screen. For example, if we wrote::
+
+    define dis = { "master" : Dissolve(1.0) }
+
+and::
+
+    show eileen happy
+    with dis
+
+    e "Hello, world."
+
+The dissolve will take place while the text is displayed on the screen.
+
+Dict layer transitions can't be used every place a transition can be used,
+only places where applying transitions to a layer is possible. It can be
+used with the ``with`` statement and ``with`` cause of the scene, show, and
+hide statements. It can also be used with :func:`renpy.with_statement` and
+:func:`renpy.transition`, the :func:`Show` and :func:`Hide` actions, and
+various config variables that take transitions. Dict layer transitions *will not*
+work inside things that don't work with layers, such as ATL, :func:`ComposeTransition`
+and :func:`MultipleTransition`.
+
+This can interact poorly with statements that cause a transition to occur
+themselves, like the transitions caused by ``window auto``. That can often be
+solved with a second dict transition that applies to a different layer.
+For example, if you are seeing weird blinking when the dialogue window shows
+and hides, consider changing options.rpy to have::
+
+    define config.window_show_transition = { "screens" : Dissolve(.25) }
+    define config.window_hide_transition = { "screens" : Dissolve(.25) }
+
+This works because the dialogue window exists entirely on the screens layer.
+
