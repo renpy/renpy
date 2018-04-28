@@ -315,9 +315,7 @@ class Dissolve(Transition):
         The time the dissolve will take.
 
     `alpha`
-        If true, the dissolve will alpha-composite the result of the transition
-        with the screen. If false, the result of the transition will replace the
-        screen, which is more efficient.
+        Ignored.
 
     `time_warp`
         A function that adjusts the timeline. If not None, this should be a
@@ -363,10 +361,10 @@ class Dissolve(Transition):
         width = min(top.width, bottom.width)
         height = min(top.height, bottom.height)
 
-        rv = renpy.display.render.Render(width, height, opaque=not self.alpha)
+        rv = renpy.display.render.Render(width, height, opaque=not (self.alpha or renpy.config.dissolve_force_alpha))
 
         rv.operation = renpy.display.render.DISSOLVE
-        rv.operation_alpha = self.alpha
+        rv.operation_alpha = self.alpha or renpy.config.dissolve_force_alpha
         rv.operation_complete = complete
 
         rv.blit(bottom, (0, 0), focus=False, main=False)
@@ -405,9 +403,7 @@ class ImageDissolve(Transition):
         If true, black pixels will dissolve in before white pixels.
 
     `alpha`
-        If true, the dissolve will alpha-composite the result of the transition
-        with the screen. If false, the result of the transition will replace the
-        screen, which is more efficient.
+        Ignored.
 
     `time_warp`
         A function that adjusts the timeline. If not None, this should be a
@@ -499,7 +495,7 @@ class ImageDissolve(Transition):
         width = min(bottom.width, top.width, image.width)
         height = min(bottom.height, top.height, image.height)
 
-        rv = renpy.display.render.Render(width, height, opaque=not self.alpha)
+        rv = renpy.display.render.Render(width, height, opaque=not (self.alpha or renpy.config.dissolve_force_alpha))
 
         complete = st / self.delay
 
@@ -507,7 +503,7 @@ class ImageDissolve(Transition):
             complete = self.time_warp(complete)
 
         rv.operation = renpy.display.render.IMAGEDISSOLVE
-        rv.operation_alpha = self.alpha
+        rv.operation_alpha = self.alpha or renpy.config.dissolve_force_alpha
         rv.operation_complete = complete
         rv.operation_parameter = self.ramplen
 
@@ -537,8 +533,7 @@ class AlphaDissolve(Transition):
         The time the transition takes, before ending.
 
     `alpha`
-        If true, the image is composited with what's behind it. If false,
-        the default, the image is opaque and overwrites what's behind it.
+        Ignored.
 
     `reverse`
         If true, the alpha channel is reversed. Opaque areas are taken
@@ -590,7 +585,7 @@ class AlphaDissolve(Transition):
         rv = renpy.display.render.Render(width, height, opaque=not self.alpha)
 
         rv.operation = renpy.display.render.IMAGEDISSOLVE
-        rv.operation_alpha = self.alpha
+        rv.operation_alpha = self.alpha or renpy.config.dissolve_force_alpha
         rv.operation_complete = 256.0 / (256.0 + 256.0)
         rv.operation_parameter = 256
 
@@ -873,7 +868,7 @@ class PushMove(Transition):
     :name: PushMove
 
     Returns a transition that works by taking the new scene and using it to
-    "push" the old scene off the screen. 
+    "push" the old scene off the screen.
 
     `time`
         The time the transition takes.

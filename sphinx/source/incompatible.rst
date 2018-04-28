@@ -19,12 +19,17 @@ such changes only take effect when the gui is regenerated.
 ---
 
 Ren'Py now defines automatic images at init 0, rather than at a very late
-init level. To revert to the prior behavior, add::
+init level. To revert to the prior behavior, add to your game::
 
     init -1:
         define config.late_images_scan = True
 
-to your game.
+The :func:`Dissolve`, :func:`ImageDissolve`, and :func:`AlphaDissolve`
+transitions now default to using the alpha channel of the source
+displayables, as if alpha=True was given. To revert this change, add::
+
+    define config.dissolve_force_alpha = False
+
 
 .. _incompatible-6.99:
 

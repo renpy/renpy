@@ -35,11 +35,12 @@ ConditionSwitch cannot, and layered images work with the interactive director.
 Dict Transitions
 ----------------
 
-The new :ref:`Dict Layer Transitions <dict-layer-transitions>` makes it
+:ref:`Dict Transitions <dict-transitions>` makes it
 possible to use the with statement and certain other functions to apply
-transitions to one or more layers. This makes it possible - and even
-convenient - to have a sprite transition expression whle dialogue is
-displayed.
+transitions to one or more layers. Ren'Py will not pause for these
+transitions to occur. Dict transitions make it possible - and even
+convenient - to have a transition apply to the sprites alone while dialogue is
+being displayed.
 
 Changes
 -------
@@ -47,6 +48,12 @@ Changes
 The old tutorial and old templates are no longer includes with Ren'Py.
 They can still be used with new version of Ren'Py if copied into
 this or later versions.
+
+The :func:`Dissolve`, :func:`ImageDissolve`, and :func:`AlphaDissolve`
+transitions now respect the alpha channels of their source displayables, as
+if given the alpha=True argument. As omitting the alpha channel is no
+longer an optimization, this change allows the same transitions to be
+used in more places.
 
 Automatic image definitions now take place at init level 0, rather than
 an init level of greater than 999. This allows :func:`renpy.has_image` to
