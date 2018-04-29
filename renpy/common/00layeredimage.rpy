@@ -10,11 +10,10 @@ python early in layeredimage:
     # The properties for attribute layers.
     LAYER_PROPERTIES = [ "if_all", "if_any", "if_not", "at" ] + ATL_PROPERTIES
 
-
     # This is the default value for predict_all given to conditions.
     predict_all = False
 
-    def format_function(what, name, group, attribute, image, image_format, **kwargs):
+    def format_function(what, name, group, variant, attribute, image, image_format, **kwargs):
         """
         :doc: li_ff
 
@@ -33,6 +32,10 @@ python early in layeredimage:
             The group of an attribute, None if not supplied or if it's
             part of a condition.
 
+        `variant`
+            The variant argument to the group, or None if it is not
+            supplied.
+
         `attribute`
             The attribute itself.
 
@@ -42,14 +45,16 @@ python early in layeredimage:
         `image_format`
             The image_format argument of the LayeredImage.
 
-        If `image `is None, then `name`, `group` (if not None), and
-        `attribute` are combined with underscores to create `image`. If `images` is
-        a string, and `image_format` is not None, `image` is formatted
+        If `image `is None, then `name`, `group` (if not None), `variant` (if not None),
+        and `attribute` are combined with underscores to create `image`, which
+        will then be a string.
+
+        If `images` is a string, and `image_format` is not None, `image` is formatted
         into the string to get the final displayable.
 
         So if `name` is "eileen", `group` is "expression", and
-        `attribute` is "happy", `image` would be set to
-        "eileen_expression_happy". If `image_format` is "images/{image}.png",
+        `attribute` is "happy", `image` would be set to "eileen_expression_happy".
+        If `image_format` is "images/{image}.png",
         the final image Ren'Py finds is "images/eileen_expression_happy.png".
         But note that it would have found the same image without the format
         argument.
@@ -67,6 +72,9 @@ python early in layeredimage:
 
             if group is not None:
                 parts.append(group)
+
+            if variant is not None:
+                parts.append(variant)
 
             parts.append(attribute)
 
@@ -199,20 +207,30 @@ python early in layeredimage:
 
         def __init__(self, group, attribute, image=None, default=False, **kwargs):
 
+            prefix = kwargs.pop("prefix", None)
+            variant = kwargs.pop("variant", None)
+
             super(Attribute, self).__init__(**kwargs)
 
-            self.raw_group = group
-            self.group = group or attribute
+            self.group = group
+
+            self.raw_attribute = attribute
+
+            if prefix is not None:
+                attribute = prefix + "_" + attribute
+
             self.attribute = attribute
             self.image = image
             self.default = default
+            self.variant = variant
 
         def apply_format(self, ai):
 
             self.image = self.wrap(ai.format(
-                "Attribute ({!r}, {!r})".format(self.raw_group, self.attribute),
-                group=self.raw_group,
-                attribute=self.attribute,
+                "Attribute ({!r}, {!r})".format(self.group, self.attribute),
+                group=self.group,
+                variant=self.variant,
+                attribute=self.raw_attribute,
                 image=self.image,
                 ))
 
@@ -262,7 +280,9 @@ python early in layeredimage:
         def execute(self):
 
             properties = { k : eval(v) for k, v in self.properties.items() }
+
             auto = properties.pop("auto", False)
+            variant = properties.get("variant", None)
 
             rv = [ ]
 
@@ -270,14 +290,16 @@ python early in layeredimage:
                 rv.extend(i.execute(group=self.group, properties=properties))
 
             if auto:
-                seen = set(i.attribute for i in rv)
+                seen = set(i.raw_attribute for i in rv)
+                pattern = self.image_name.replace(" ", "_")  + "_" + self.group + "_"
 
-                prefix = self.image_name.replace(" ", "_")  + "_" + self.group + "_"
+                if variant:
+                    pattern += variant + "_"
 
                 for i in renpy.list_images():
 
-                    if i.startswith(prefix):
-                        rest = i[len(prefix):]
+                    if i.startswith(pattern):
+                        rest = i[len(pattern):]
                         attrs = rest.split()
 
                         if len(attrs) == 1:
@@ -561,7 +583,7 @@ python early in layeredimage:
 
             self.fixed_args = kwargs
 
-        def format(self, what, attribute, group, image):
+        def format(self, what, attribute=None, group=None, variant=None, image=None):
 
             ff = format_function
 
@@ -571,8 +593,9 @@ python early in layeredimage:
             return ff(
                 what=what,
                 name=self.name,
-                attribute=attribute,
                 group=group,
+                variant=variant,
+                attribute=attribute,
                 image=image,
                 image_format=self.image_format)
 
@@ -873,7 +896,7 @@ python early in layeredimage:
         rv = RawAttributeGroup(image_name, group)
         parent.children.append(rv)
 
-        while parse_property(l, rv, [ "auto" ] + LAYER_PROPERTIES):
+        while parse_property(l, rv, [ "auto", "prefix", "variant" ] + LAYER_PROPERTIES):
             pass
 
         if l.match(':'):
