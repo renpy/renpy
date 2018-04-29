@@ -746,10 +746,15 @@ python early in layeredimage:
         Parses a property, returns True if one is found.
         """
 
-        regex = "|".join(names)
-        name = l.match(regex)
+        checkpoint = l.checkpoint()
+
+        name = l.word()
 
         if name is None:
+            return False
+
+        if name not in names:
+            l.revert(checkpoint)
             return False
 
         if name in o.properties:
@@ -879,7 +884,7 @@ python early in layeredimage:
             ll = l.subblock_lexer()
 
             while ll.advance():
-                if ll.match("attribute"):
+                if ll.keyword("attribute"):
                     parse_attribute(ll, rv)
                     continue
 
@@ -948,12 +953,12 @@ python early in layeredimage:
         cg.conditions.append(parse_condition(l, True))
         l.advance()
 
-        while l.match('elif'):
+        while l.keyword('elif'):
 
             cg.conditions.append(parse_condition(l, True))
             l.advance()
 
-        if l.match('else'):
+        if l.keyword('else'):
 
             cg.conditions.append(parse_condition(l, False))
             l.advance()
@@ -984,22 +989,22 @@ python early in layeredimage:
 
         while not ll.eob:
 
-            if ll.match('attribute\b'):
+            if ll.keyword('attribute'):
 
                 parse_attribute(ll, rv)
                 ll.advance()
 
-            elif ll.match('group'):
+            elif ll.keyword('group'):
 
                 parse_group(ll, rv, name)
                 ll.advance()
 
-            elif ll.match('if'):
+            elif ll.keyword('if'):
 
                 parse_conditions(ll, rv)
                 # Advances for us.
 
-            elif ll.match('always'):
+            elif ll.keyword('always'):
                 parse_always(ll, rv)
                 ll.advance()
 
