@@ -49,6 +49,9 @@ The old tutorial and old templates are no longer includes with Ren'Py.
 They can still be used with new version of Ren'Py if copied into
 this or later versions.
 
+The new :func:`Scroll` action makes it possible to have buttons that
+change the position of a viewport or the value of a bar.
+
 The :func:`Dissolve`, :func:`ImageDissolve`, and :func:`AlphaDissolve`
 transitions now respect the alpha channels of their source displayables, as
 if given the alpha=True argument. As omitting the alpha channel is no

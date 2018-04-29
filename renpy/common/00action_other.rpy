@@ -553,6 +553,68 @@ init -1500 python:
         def get_selected(self):
             return renpy.is_selected(self.yes)
 
+
+    @renpy.pure
+    class Scroll(Action, DictEquality):
+        """
+        :doc: other_action
+
+        Causes a Bar, Viewport, or Vpgrid to scroll.
+
+        `id`
+            The id of a bar, viewport, or vpgrid in the current screen.
+
+        `direction`
+            For a vbar, one of "increase" or "decrease". For a viewport
+            or vpgrid, one of "horizontal increase", "vertical increase",
+            "horizontal decrease", or "vertical decrease".
+
+        `amount`
+            The amount to scroll by. This can be a number of pixels, or
+            else "step" or "page".
+        """
+
+        def __init__(self, id, direction, amount="step"):
+            self.id = id
+            self.direction = direction
+            self.amount = amount
+
+        def __call__(self):
+
+            d = renpy.get_widget(None, self.id)
+
+            if d is None:
+                raise Exception("There is no displayable with the id {}.".format(self.id))
+
+            if self.direction == "increase":
+                delta = +1
+                adjustment = d.adjustment
+            elif self.direction == "decrease":
+                delta = -1
+                adjustment = d.adjustment
+            elif self.direction == "horizontal increase":
+                delta = +1
+                adjustment = d.xadjustment
+            elif self.direction == "horizontal decrease":
+                delta = -1
+                adjustment = d.xadjustment
+            elif self.direction == "vertical increase":
+                delta = +1
+                adjustment = d.yadjustment
+            elif self.direction == "vertical decrease":
+                delta = -1
+                adjustment = d.yadjustment
+            else:
+                raise Exception("Unknown scroll direction: {}".format(self.direction))
+
+            if self.amount == "step":
+                adjustment.change(adjustment.value + delta * adjustment.step)
+            elif self.amount == "page":
+                adjustment.change(adjustment.value + delta * adjustment.page)
+            else:
+                adjustment.change(adjustment.value + delta * self.amount)
+
+
 init -1500:
 
     transform _notify_transform:
