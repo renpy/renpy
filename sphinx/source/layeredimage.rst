@@ -480,6 +480,57 @@ should be avoided while the layered image is shown or about to be shown,
 as it would lead to an unpredicted image load. It's intended for use for
 character customization options that change rarely.
 
+Poses
+-----
+
+It's possible to have a character that has sprites in multiple poses,
+where everything - or at least everything of interest - is different.
+For example, if a character has standing and sitting poses, all the image
+parts will be in different places.
+
+In that case, it makes sense to define multiple layered images for the same
+image tag. The ``layeredimage`` statement makes this possible by allowing
+you to include attributes as part of the image name. So we can have::
+
+    layeredimage augustina sitting:
+        ...
+
+    layeredimage augustina standing:
+        ...
+
+This is especially useful when using a layeredimage to compose a side
+image, where the side images of different characters will have nothing
+to do with each other. ::
+
+    layeredimage side eileen:
+        ...
+
+    layeredimage side lucy:
+        ...
+
+
+Advice
+------
+
+**Use underscores in image names.**
+By default, Ren'Py's layered images use underscores to separate sections
+of image names. It might be tempting to use images with spaces between
+sections, but that could lead to problems later on.
+
+Ren'Py has a rule that if you show an image with the exact name as one
+that's being shown, it's shown instead. This can bypass the layeredimage
+you defined and show the layer directly, which can lead to weird problems
+like a pair of eyes floating in space.
+
+By having each layer have a different tag from the main image, this is no
+longer a problem.
+
+**Cropping layers isn't necessary.**
+Ren'Py optimizes images by cropping them to the bounding box of the
+non-transparent pixels before loading them into RAM. As a result, assuming
+the images are being predicted properly, it generally won't improve
+performance or image size much to crop the images yourself.
+
 
 Python
 ------
