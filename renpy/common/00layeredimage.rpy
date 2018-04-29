@@ -513,6 +513,13 @@ python early in layeredimage:
             A function that is used instead of `layeredimage.format_function` to format
             the image information into a displayable.
 
+        `attribute_function`
+            If not None, a function that's called with a set of attributes supplied to
+            the image, and returns the set of attributes used to select layers. This is
+            called when determining the layers to display, after the attribute themselves
+            have been chosen. It can be used to express complex dependencies between attributes
+            or select attributes at random.
+
         Additional keyword arguments are passed to a Fixed that is created to hold
         the layer. Unless explicitly overridden, xfit and yfit are set to true on
         the Fixed, which means it will shrink to the smallest size that fits all
@@ -525,11 +532,14 @@ python early in layeredimage:
         an image name string used as a displayable.
         """
 
-        def __init__(self, attributes, at=[], name=None, image_format=None, format_function=None, **kwargs):
+        attribute_function = None
+
+        def __init__(self, attributes, at=[], name=None, image_format=None, format_function=None, attribute_function=None, **kwargs):
 
             self.name = name
             self.image_format = image_format
             self.format_function = format_function
+            self.attribute_function = attribute_function
 
             self.attributes = [ ]
             self.layers = [ ]
@@ -610,6 +620,9 @@ python early in layeredimage:
 
                 if a.default and (a.attribute not in banned):
                     attributes.add(a.attribute)
+
+            if self.attribute_function:
+                attributes = set(self.attribute_function(attributes))
 
             rv = Fixed(**self.fixed_args)
 
@@ -971,7 +984,7 @@ python early in layeredimage:
 
         while not ll.eob:
 
-            if ll.match('attribute'):
+            if ll.match('attribute\b'):
 
                 parse_attribute(ll, rv)
                 ll.advance()
@@ -992,7 +1005,7 @@ python early in layeredimage:
 
             else:
 
-                while parse_property(ll, rv, [ "image_format", "format_function", "at" ] +
+                while parse_property(ll, rv, [ "image_format", "format_function", "attribute_function", "at" ] +
                     renpy.sl2.slproperties.position_property_names +
                     renpy.sl2.slproperties.box_property_names
                     ):
