@@ -301,16 +301,19 @@ attribute is used to display the image. The same attribute can be used with
 multiple layers, with all layers corresponding to the attribute being shown
 (the if_also and if_not properties can change this).
 
-An attribute takes an attribute name. It can also take two keyworks.
+An attribute takes an attribute name. It can also take two keywords.
 The``default`` keyword indicates that the attribute should be present
 by default if no attribute in its group conflicts. The ``null`` keyword
 prevents Ren'Py from automatically searching for a displayable corresponding
 to this attribute, which is useful to have an attribute that is intended solely
 for use with `if_all`, `if_any`, or `if_not`.
 
-If the displayable is not present it will be computer from the layer,
-group, and attribute name, using the layered image's format function.
-(Which defaults to :func:`layeredimage.format_function`.)
+If the displayable is not present, it will be computed from the name of the
+layer, group, group variant, and attribute, by replacing all spaces with
+underscores and using underscores to combine everything together. So
+if we have an image named "augustina", the group "eyes" and the name "closed",
+the image "augustina_eyes_closed" will be used. (The layered image's
+format function is used to do this, defaulting to :func:`layeredimage.format_function`.)
 
 If an attribute is not inside a group, it's placed in a group with the
 same name, but that group is not used to compute the displayable name.
@@ -352,19 +355,43 @@ The group statement takes a name. The name isn't used for very much, but is
 used to generate the default names of attributes inside the group.
 
 The name may be followed by the `auto` keyword. If it's present, after any
-attributes in the group have been declared, Ren'Py will scan it's list of
-images for those of the form `image`\_`group`\_`attribute`, where image is the name
-of the layered image and group is the name of this group. Any images that are found
+attributes in the group have been declared, Ren'Py will scan its list of images
+for those that match the group's pattern (see below). Any images that are found
 that do not correspond to declared attributes are then added to the group as if
 declared with the attribute statement.
 
 Properties can then be declared on the first line of the group, and it can
 take a block that contains properties and attributes.
 
-The group statement doesn't take any properties on it's own, but instead takes
-the same properties ``attribute`` does. Properties supplied to the group are
-passed to the attributes inside the group, unless overridden by the same
-property of the attribute.
+There are two properties that are specific to groups.
+
+`variant`
+    If given, this should be a string. If present, it adds a variant element
+    that becomes part of automatically-generated image names and the pattern
+    used to search for automatically-defined attributes.
+
+`prefix`
+    If given, this is a prefix that is concatenated using an underscore with
+    the manually or automatically defined attributes names. So if prefix is
+    "leftarm", and the attribute name "hip" is encountered, the attribute
+    "leftarm_hip" is defined instead.
+
+The group statement also takes the same properties ``attribute`` does.  Properties
+supplied to the group are passed to the attributes inside the group, unless
+overridden by the same property of the attribute itself.
+
+**Pattern.** The image pattern used consists of:
+
+* The name of the image, with spaces replaced with underscores.
+* The name of the group.
+* The name of the variant.
+* The name of the attribute.
+
+All combined with underscores. For example, if we have a layerimage with
+the name "augustina work", and the group "eyes", this will match images
+that match the pattern augustina_work_eyes_`attribute`. With a `variant`
+of `blue`, it would match the pattern augustina_work_eyes_blue_`attribute`.
+
 
 Always
 ^^^^^^
