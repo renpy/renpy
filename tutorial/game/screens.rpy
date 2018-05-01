@@ -774,6 +774,7 @@ screen preferences():
 
                     # Real languages should go alphabetical order by English name.
                     textbutton "English" text_font "DejaVuSans.ttf"action Language(None)
+                    textbutton "Français" text_font "DejaVuSans.ttf"action Language("french")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
 
                     # This should be last.
@@ -1491,7 +1492,3 @@ style slider_pref_vbox:
 style slider_pref_slider:
     variant "small"
     xsize 600
-
-
-
-
