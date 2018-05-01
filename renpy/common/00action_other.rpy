@@ -194,10 +194,21 @@ init -1500 python:
 
         This action causes a rollback to occur, when a rollback is possible.
         Otherwise, nothing happens.
+
+        The arguments are given to :func:`renpy.rollback`, except that the
+        `force` argument defaults to "menu".
         """
 
+        args = tuple()
+        kwargs = { "force" : "menu" }
+
+        def __init__(self, *args, **kwargs):
+            self.args = args
+            kwargs.setdefault("force", "menu")
+            self.kwargs = kwargs
+
         def __call__(self):
-            renpy.rollback(force="menu")
+            renpy.rollback(*self.args, **self.kwargs)
 
         def get_sensitive(self):
             return renpy.can_rollback()
