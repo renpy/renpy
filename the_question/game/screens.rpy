@@ -800,6 +800,7 @@ screen preferences():
                     label _("Language")
 
                     textbutton "English" text_font "DejaVuSans.ttf"action Language(None)
+                    textbutton "Français" text_font "DejaVuSans.ttf"action Language("french")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
 
 #end language_picker
@@ -1518,4 +1519,3 @@ style slider_pref_slider:
 style main_menu_vbox:
     variant "small"
     xsize 900
-
