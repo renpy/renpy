@@ -165,6 +165,7 @@ init -1800:
         slow_cps_multiplier 1.0
         slow_abortable False
         ruby_style style.ruby_text
+        altruby_style style.altruby_text
         # hyperlink_functions is set in 00defaults.rpy
         hinting "auto"
         adjust_spacing True
@@ -329,6 +330,10 @@ init -1800:
     # Ruby text (Furigana)
 
     style ruby_text:
+        size 22
+        xoffset 0
+
+    style altruby_text:
         size 22
         xoffset 0
 

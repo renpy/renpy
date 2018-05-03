@@ -692,6 +692,14 @@ def mark_ruby_top(list l):
     for g in l:
         g.ruby = RUBY_TOP
 
+def mark_altruby_top(list l):
+
+    cdef Glyph g
+
+    for g in l:
+        g.ruby = RUBY_ALT
+
+
 def mark_ruby_bottom(list l):
 
     cdef Glyph g
@@ -700,7 +708,7 @@ def mark_ruby_bottom(list l):
         g.ruby = RUBY_BOTTOM
 
 
-def place_ruby(list glyphs, int ruby_offset, int surf_width, int surf_height):
+def place_ruby(list glyphs, int ruby_offset, int altruby_offset, int surf_width, int surf_height):
 
     cdef Glyph g
     cdef ruby_t last_ruby = RUBY_NONE
@@ -739,16 +747,18 @@ def place_ruby(list glyphs, int ruby_offset, int surf_width, int surf_height):
             pos += 1
             continue
 
-        # Otherwise, we have RUBY_TOP.
+        # Otherwise, we have RUBY_TOP or RUBY_ALT
 
         # Find the run of RUBY_TOP. When this is done, the run will be in
         # glyphs[start_top:pos].
         start_top = pos
 
+        last_ruby = g.ruby
+
         while pos < len_glyphs:
 
             g = glyphs[pos]
-            if g.ruby != RUBY_TOP:
+            if g.ruby != last_ruby:
                 break
 
             pos += 1
@@ -769,11 +779,14 @@ def place_ruby(list glyphs, int ruby_offset, int surf_width, int surf_height):
         for i from start_top <= i < pos:
             g = glyphs[i]
             g.x = <int> (x + .5)
-            g.y = y + ruby_offset
+
+            if g.ruby == RUBY_TOP:
+                g.y = y + ruby_offset
+            else:
+                g.y = y + altruby_offset
 
             x += g.advance
 
-        last_ruby = RUBY_TOP
 
 def align_and_justify(list lines, int width, float text_align, bint justify):
     """

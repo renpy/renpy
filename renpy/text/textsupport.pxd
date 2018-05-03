@@ -28,6 +28,7 @@ cdef enum ruby_t:
     RUBY_NONE
     RUBY_BOTTOM
     RUBY_TOP
+    RUBY_ALT
 
 cdef class Glyph:
 
