@@ -382,10 +382,8 @@ begins.
             textbutton _("Help") action Help()
             textbutton _("Quit") action Quit(confirm=False)
 
-    init python:
-
-        # Make all the main menu buttons be the same size.
-        style.mm_button.size_group = "mm"
+    style mm_button:
+        size_group "mm"
 
 .. _navigation-screen:
 
@@ -420,8 +418,8 @@ then use that screen from the save, load and preferences screens.
             textbutton _("Help") action Help()
             textbutton _("Quit") action Quit()
 
-    init python:
-        style.gm_nav_button.size_group = "gm_nav"
+    style gm_nav_button:
+        size_group "gm_nav"
 
 .. _save-screen:
 
@@ -645,21 +643,24 @@ from :func:`Preference`.
                     bar value Preference("voice volume")
                     textbutton "Test" action Play("voice", "voice_test.ogg") style "soundtest_button"
 
-    init python:
+    style pref_frame:
+        xfill True
+        xmargin 5
+        top_margin 5
 
-        style.pref_frame.xfill = True
-        style.pref_frame.xmargin = 5
-        style.pref_frame.top_margin = 5
+    style pref_vbox:
+        xfill True
 
-        style.pref_vbox.xfill = True
+    style pref_button:
+        size_group "pref"
+        xalign 1.0
 
-        style.pref_button.size_group = "pref"
-        style.pref_button.xalign = 1.0
+    style pref_slider:
+        xmaximum 192
+        xalign 1.0
 
-        style.pref_slider.xmaximum = 192
-        style.pref_slider.xalign = 1.0
-
-        style.soundtest_button.xalign = 1.0
+    style soundtest_button:
+        xalign 1.0
 
 .. _yesno-prompt-screen:
 .. _confirm-screen:
