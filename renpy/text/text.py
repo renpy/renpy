@@ -722,8 +722,6 @@ class Layout(object):
         if self.has_ruby:
             textsupport.place_ruby(all_glyphs, self.scale_int(style.ruby_style.yoffset), self.scale_int(style.altruby_style.yoffset), sw, sh)
 
-            print(style.ruby_style.yoffset, style.altruby_style.yoffset)
-
         # Check for glyphs that are being drawn out of bounds, because the font
         # or anti-aliasing or whatever makes them bigger than the bounding box. If
         # we have them, grow the bounding box.
