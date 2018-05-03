@@ -335,6 +335,9 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
         if g.ruby == RUBY_TOP:
             continue
 
+        if g.ruby == RUBY_ALT:
+            continue
+
         # If the x coordinate is greater than the width of the screen,
         # split at the last split point, if any.
         if x > width and split_g is not None:
@@ -447,6 +450,9 @@ def place_horizontal(list glyphs, float start_x, float first_indent, float rest_
         if g.ruby == RUBY_TOP:
             continue
 
+        if g.ruby == RUBY_ALT:
+            continue
+
         if g.split != SPLIT_NONE and old_g:
             # When a glyph is at the end of the line, set its advance to
             # be its width. (This makes things like strikeout and underline
@@ -518,6 +524,9 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
                 gg = glyphs[i]
 
                 if gg.ruby == RUBY_TOP:
+                    continue
+
+                if gg.ruby == RUBY_ALT:
                     continue
 
                 if gg.ascent:
@@ -598,7 +607,7 @@ def assign_times(float t, float gps, list glyphs):
 
     for g in glyphs:
 
-        if g.ruby == RUBY_TOP:
+        if (g.ruby == RUBY_TOP) or (g.ruby == RUBY_ALT):
             g.time = t
             continue
 
@@ -818,6 +827,9 @@ def align_and_justify(list lines, int width, float text_align, bint justify):
             if g.ruby == RUBY_TOP:
                 continue
 
+            if g.ruby == RUBY_ALT:
+                continue
+
             if g.character == 0x20:
                 spaces += 1
 
@@ -837,6 +849,9 @@ def align_and_justify(list lines, int width, float text_align, bint justify):
                 if g.ruby == RUBY_TOP:
                     continue
 
+                if g.ruby == RUBY_ALT:
+                    continue
+
                 if g.character == 0x20:
                     justify_offset += justify_per_space
 
@@ -848,6 +863,9 @@ def align_and_justify(list lines, int width, float text_align, bint justify):
             for g in l.glyphs:
 
                 if g.ruby == RUBY_TOP:
+                    continue
+
+                if g.ruby == RUBY_ALT:
                     continue
 
                 g.x += offset
