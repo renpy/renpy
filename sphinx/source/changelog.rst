@@ -73,6 +73,9 @@ The :ref:`screen language for <sl-for>` statement now takes an index clause::
 When provided, it should return a unique value that can map information like
 button and transform state to the object it originates from.
 
+There is now alternate ruby text, allowing two kinds of ruby text
+to be displayed at once. (Such as a translation and pronunciation guide.)
+
 Translations
 ------------
 

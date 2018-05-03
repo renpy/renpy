@@ -203,6 +203,12 @@ Tags that apply to all text are:
         "{alpha=-0.1}This text is 10 percent more transparent than the default.{/alpha}"
         "{alpha=*0.5}This text is half as opaque as the default.{/alpha}"
 
+.. text-tag:: art
+
+   The alternate ruby top tag marks text between itself and its closing tag as
+   alternate ruby top text. See the section on :ref:`Ruby Text <ruby-text>` for
+   more information.
+
 .. text-tag:: b
 
     The bold tag renders the text between itself and its closing tag
@@ -497,14 +503,15 @@ changes are required:
 
 For example::
 
-    init python:
-        style.default.line_leading = 12
+    style ruby_style is default:
+        size 12
+        yoffset -20
 
-        style.ruby_style = Style(style.default)
-        style.ruby_style.size = 12
-        style.ruby_style.yoffset = -20
+    style say_dialogue:
+        line_leading 12
+        ruby_style style.ruby_style
 
-        style.default.ruby_style = style.ruby_style
+(Use style.style_name to refer to a style for this purpose.)
 
 Once Ren'Py has been configured, ruby text can be included using the
 rt and rb text tags. The rt tag is used to mark one or more characters
@@ -522,6 +529,10 @@ It's the creator's responsibility to ensure that ruby text does not
 leave the boundaries of the text. It may be necessary to add leading
 or spaces to the left and right of the text to prevent these errors
 from occurring.
+
+Ren'Py also supports alternate ruby text, which is a second kind of
+ruby top text. This is introduced with the art text tag (instead of rt),
+and the altruby_style property (instead of ruby_style).
 
 Fonts
 =====
@@ -597,8 +608,8 @@ points, and the first range to cover a point is used.
 
 For example::
 
-    init python:
-         style.default.font = FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
+    style default:
+         font FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
 
 .. include:: inc/font_group
 
