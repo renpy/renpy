@@ -1543,6 +1543,22 @@ it does not support the else clause. It supports assignment to
                 textbutton numeral action Return(i + 1)
 
 
+The for statement takes an index clause::
+
+
+    screen five_buttons():
+        vbox:
+            for i, numeral index numeral in enumerate(numerals):
+                textbutton numeral action Return(i + 1)
+
+If given, the index clause should consist of an expression that returns
+a hashable and comparable value that is unique for each row in the list.
+Ren'Py uses this value to make sure that transforms and other state wind
+up associated with the correct iteration. If you're seeing weird behavior
+when elements are added to or removed from a list you're iterating over,
+you might want to use an index clause.
+
+
 .. _sl-if:
 
 If

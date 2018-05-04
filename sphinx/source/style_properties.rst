@@ -416,6 +416,11 @@ Text Style Properties
 
     Defaults to True for most text, but False for text in an ``input``.
 
+.. style-property:: altruby_style style or None
+
+    If not None, this should be a style object. The style that's used for
+    alternate ruby text.
+
 .. style-property:: black_color color
 
     When rendering an image-based font, black will be mapped to this

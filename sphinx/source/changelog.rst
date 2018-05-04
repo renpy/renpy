@@ -40,7 +40,7 @@ possible to use the with statement and certain other functions to apply
 transitions to one or more layers. Ren'Py will not pause for these
 transitions to occur. Dict transitions make it possible - and even
 convenient - to have a transition apply to the sprites alone while dialogue is
-being displayed.
+being displaye
 
 Changes
 -------
@@ -65,10 +65,23 @@ be used in init blocks.
 The interactive director now has a button that allows you to choose if it
 is displayed at the top or the bottom of the screen.
 
+The :ref:`screen language for <sl-for>` statement now takes an index clause::
+
+    for i index i.name in party:
+        ...
+
+When provided, it should return a unique value that can map information like
+button and transform state to the object it originates from.
+
+There is now alternate ruby text, allowing two kinds of ruby text
+to be displayed at once. (Such as a translation and pronunciation guide.)
+
 Translations
 ------------
 
-The Japanese translation has been updated.
+The tutorial now has a French translation, thanks to Alexandre Tranchant.
+
+The Japanese and Russian translations have been updated.
 
 Fixes
 -----

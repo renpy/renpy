@@ -134,6 +134,7 @@ style_properties = sorted_dict(
     aft_bar='none_is_null',
     aft_gutter=None,
     alt=None,
+    altruby_style=None,
     antialias=None,
     vertical=None,
     background='renpy.easy.displayable_or_none',

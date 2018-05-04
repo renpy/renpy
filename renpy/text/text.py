@@ -248,6 +248,8 @@ class TextSegment(object):
 
         if self.ruby_bottom:
             textsupport.mark_ruby_bottom(rv)
+        elif self.ruby_top == "alt":
+            textsupport.mark_altruby_top(rv)
         elif self.ruby_top:
             textsupport.mark_ruby_top(rv)
 
@@ -718,7 +720,7 @@ class Layout(object):
 
         # Place ruby.
         if self.has_ruby:
-            textsupport.place_ruby(all_glyphs, self.scale_int(style.ruby_style.yoffset), sw, sh)
+            textsupport.place_ruby(all_glyphs, self.scale_int(style.ruby_style.yoffset), self.scale_int(style.altruby_style.yoffset), sw, sh)
 
         # Check for glyphs that are being drawn out of bounds, because the font
         # or anti-aliasing or whatever makes them bigger than the bounding box. If
@@ -1039,6 +1041,15 @@ class Layout(object):
                 ts.take_style(style.ruby_style, self)
                 ts.vertical = vert_style
                 ts.ruby_top = True
+                self.has_ruby = True
+
+            elif tag == "art":
+                ts = push()
+                # inherit vertical style
+                vert_style = ts.vertical
+                ts.take_style(style.altruby_style, self)
+                ts.vertical = vert_style
+                ts.ruby_top = "alt"
                 self.has_ruby = True
 
             elif tag == "rb":
