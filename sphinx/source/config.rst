@@ -345,6 +345,10 @@ Occasionally Used
     detect if the game has been packaged into a distribution, and
     set config.developer as appropriate.
 
+.. var:: config.displayable_prefix = { }
+
+    See :ref:`Displayable prefixes <displayable-prefix>`.
+
 .. var:: config.emphasize_audio_channels = [ 'voice' ]
 
     A list of strings giving audio channel names.

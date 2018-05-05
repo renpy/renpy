@@ -16,6 +16,8 @@ five things that can be provided:
 
 * An object of type Displayable, created by calling one of the
   functions given below.
+* A string with a colon (:) in it. These are rare, but see the section on
+  :ref:`displayable prefixes <displayable-prefix>` below.
 * A string with a dot (.) in it. Such a string is interpreted as
   a filename by :func:`Image`.
 * A color. A color may either be given as a hexadecimal color string in "#rgb",
@@ -247,3 +249,31 @@ manually when the defaults are inappropriate. ::
          "Sue" "How do you do? Now you gonna die!"
 
 .. include:: inc/placeholder
+
+.. _displayable-prefix:
+
+Displayable Prefixes
+--------------------
+
+Displayable prefixes make it possible for a creator to define their own
+displayables, and refer to them anywhere a displayable can be used in
+Ren'Py. A prefixed displayable is a string with a colon in it. The prefix
+is to the left of the colon, and the argument is anything to the right of
+it. The :var:`config.displayable_prefix` variable maps a prefix to a function.
+The function takes the argument, and either returns a displayable or None.
+
+For example, this makes the big prefix return an image that is twice as
+big as the original. ::
+
+    init -10 python:
+        def embiggen(s):
+            return Transform(s, zoom=2)
+
+        config.displayable_prefix["big"] = embiggen
+
+The init -10 makes sure the prefix is defined before any images that use it.
+The prefix can then be used to define images::
+
+    image eileen big = "big:eileen happy"
+
+or in any other place where a displayable is required.

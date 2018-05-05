@@ -40,7 +40,7 @@ possible to use the with statement and certain other functions to apply
 transitions to one or more layers. Ren'Py will not pause for these
 transitions to occur. Dict transitions make it possible - and even
 convenient - to have a transition apply to the sprites alone while dialogue is
-being displaye
+being displayed.
 
 Changes
 -------
@@ -75,6 +75,10 @@ button and transform state to the object it originates from.
 
 There is now alternate ruby text, allowing two kinds of ruby text
 to be displayed at once. (Such as a translation and pronunciation guide.)
+
+The new :ref:`displayable prefix` system make it possible to define your
+own displayables that can be accessed using strings, the same way that
+images, image files, and solids have a string form.
 
 Translations
 ------------
