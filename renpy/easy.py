@@ -31,6 +31,24 @@ Color = renpy.color.Color
 color = renpy.color.Color
 
 
+def lookup_displayable_prefix(d):
+    """
+    Given `d`, a string given a displayable, returns the displayale it
+    corresponds to or None if it it does notr correspond to one.
+    """
+
+    prefix, colon, arg = d.partition(":")
+
+    if not colon:
+        return None
+
+    fn = renpy.config.displayable_prefix.get(prefix, None)
+    if fn is None:
+        return None
+
+    return displayable(fn(arg))
+
+
 def displayable_or_none(d, scope=None, dynamic=True):
 
     if isinstance(d, renpy.display.core.Displayable):
@@ -44,6 +62,11 @@ def displayable_or_none(d, scope=None, dynamic=True):
             raise Exception("An empty string cannot be used as a displayable.")
         elif ("[" in d) and renpy.config.dynamic_images and dynamic:
             return renpy.display.image.DynamicImage(d, scope=scope)
+
+        rv = lookup_displayable_prefix(d)
+
+        if rv is not None:
+            return rv
         elif d[0] == '#':
             return renpy.store.Solid(d)
         elif "." in d:
@@ -85,6 +108,11 @@ def displayable(d, scope=None):
             raise Exception("An empty string cannot be used as a displayable.")
         elif ("[" in d) and renpy.config.dynamic_images:
             return renpy.display.image.DynamicImage(d, scope=scope)
+
+        rv = lookup_displayable_prefix(d)
+
+        if rv is not None:
+            return rv
         elif d[0] == '#':
             return renpy.store.Solid(d)
         elif "." in d:
@@ -125,6 +153,9 @@ def dynamic_image(d, scope=None, prefix=None, search=None):
             return True
 
         if renpy.exports.image_exists(name):
+            return True
+
+        if lookup_displayable_prefix(name):
             return True
 
         if (len(d) == 1) and (renpy.config.missing_image_callback is not None):
