@@ -36,6 +36,7 @@ init python in distribute:
 
     class ZipFile(zipfile.ZipFile):
 
+
         def write_with_info(self, zinfo, filename):
             """Put the bytes from filename into the archive under the name
             arcname."""
@@ -66,8 +67,13 @@ init python in distribute:
                 # Must overwrite CRC and sizes with correct data later
                 zinfo.CRC = CRC = 0
                 zinfo.compress_size = compress_size = 0
-                zinfo.file_size = file_size = 0
-                self.fp.write(zinfo.FileHeader())
+                file_size = 0
+
+                zip64 = self._allowZip64 and \
+                        zinfo.file_size * 1.05 > zipfile.ZIP64_LIMIT
+
+                self.fp.write(zinfo.FileHeader(zip64))
+
                 if zinfo.compress_type == zipfile.ZIP_DEFLATED:
                     cmpr = zlib.compressobj(zlib.Z_DEFAULT_COMPRESSION,
                          zlib.DEFLATED, -15)
@@ -92,11 +98,19 @@ init python in distribute:
                 zinfo.compress_size = file_size
             zinfo.CRC = CRC
             zinfo.file_size = file_size
+
+            if not zip64 and self._allowZip64:
+                if file_size > zipfile.ZIP64_LIMIT:
+                    raise RuntimeError('File size has increased during compressing')
+                if compress_size > zipfile.ZIP64_LIMIT:
+                    raise RuntimeError('Compressed size larger than uncompressed size')
+
             # Seek backwards and write CRC and file sizes
             position = self.fp.tell()       # Preserve current position in file
-            self.fp.seek(zinfo.header_offset + 14, 0)
-            self.fp.write(struct.pack("<LLL", zinfo.CRC, zinfo.compress_size,
-                  zinfo.file_size))
+            self.fp.seek(zinfo.header_offset, 0)
+
+            self.fp.write(zinfo.FileHeader(zip64))
+
             self.fp.seek(position, 0)
             self.filelist.append(zinfo)
             self.NameToInfo[zinfo.filename] = zinfo

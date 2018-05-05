@@ -80,6 +80,11 @@ The new :ref:`displayable prefix` system make it possible to define your
 own displayables that can be accessed using strings, the same way that
 images, image files, and solids have a string form.
 
+Ren'Py now supports creating .zip files that have single files (such as
+.rpa files) that are larger than 2GB. As this requires the use of the
+Zip64 standard, unpacking such files may not be supported on some platforms,
+most notably Windows XP.
+
 Translations
 ------------
 
