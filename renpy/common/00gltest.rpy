@@ -435,13 +435,14 @@ init -1500 python:
 label _gl_test:
 
     # Show the test image.
-    scene
+    scene black
     show expression config.gl_test_image
+    with None
 
     $ __gl_test()
 
     # Hide the test image.
-    scene
+    scene black
 
     return
 
