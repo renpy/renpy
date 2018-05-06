@@ -1720,6 +1720,7 @@ class SLUse(SLNode):
             scope.update(kwargs)
 
         scope["_scope"] = scope
+        ctx.new_cache["scope"] = scope
 
         # Run the child screen.
         ctx.scope = scope
