@@ -88,7 +88,8 @@ most notably Windows XP.
 Translations
 ------------
 
-The tutorial now has a French translation, thanks to Alexandre Tranchant.
+The Ren'Py tutorial and The Question now have French translations, thanks
+to Alexandre Tranchant.
 
 The Japanese and Russian translations have been updated.
 
