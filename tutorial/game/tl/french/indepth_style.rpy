@@ -1,4 +1,4 @@
-
+﻿
 # game/indepth_style.rpy:40
 translate french new_gui_17a0326e:
 

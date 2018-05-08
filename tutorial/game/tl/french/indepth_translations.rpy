@@ -1,4 +1,4 @@
-
+﻿
 # game/indepth_translations.rpy:12
 translate french translations_c4ef181f:
 

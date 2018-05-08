@@ -201,7 +201,7 @@ translate piglatin strings:
     old "Quick load."
     new "Uickqay oadlay."
 
-    # 00action_other.rpy:344
+    # 00action_other.rpy:355
     old "Language [text]"
     new "Anguagelay [text]"
 

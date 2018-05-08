@@ -1,4 +1,4 @@
-
+﻿
 # game/tutorial_screens.rpy:165
 translate french tutorial_screens_2faa22e5:
 

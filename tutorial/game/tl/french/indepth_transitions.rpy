@@ -1,4 +1,4 @@
-
+﻿
 # game/indepth_transitions.rpy:56
 translate french demo_transitions_5bbc72fe:
 

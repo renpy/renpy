@@ -1,4 +1,4 @@
-
+﻿
 # game/tutorial_distribute.rpy:3
 translate french distribute_7db9b042:
 

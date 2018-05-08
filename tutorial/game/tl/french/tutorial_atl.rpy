@@ -1,4 +1,4 @@
-
+﻿
 # game/tutorial_atl.rpy:205
 translate french tutorial_positions_a09a3fd1:
 

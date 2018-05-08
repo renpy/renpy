@@ -1,4 +1,4 @@
-
+﻿
 # game/tutorial_screen_displayables.rpy:3
 translate french screen_displayables_7c897a6d:
 

@@ -1,4 +1,4 @@
-
+﻿
 # game/tutorial_director.rpy:5
 translate french director_e4543d9b:
 

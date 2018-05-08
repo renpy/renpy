@@ -1,4 +1,4 @@
-
+﻿
 # game/indepth_displayables.rpy:15
 translate french simple_displayables_db46fd25:
 

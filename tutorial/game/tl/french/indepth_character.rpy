@@ -1,4 +1,4 @@
-
+﻿
 # game/indepth_character.rpy:11
 translate french demo_character_e7e1b1bb:
 

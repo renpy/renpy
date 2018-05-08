@@ -1,4 +1,4 @@
-
+﻿
 # game/indepth_minigame.rpy:220
 translate french demo_minigame_8f14835c:
 

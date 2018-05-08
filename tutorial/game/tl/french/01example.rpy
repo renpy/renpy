@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # 01example.rpy:473
     old "Copied the example to the clipboard."

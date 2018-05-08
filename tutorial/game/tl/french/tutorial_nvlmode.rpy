@@ -1,4 +1,4 @@
-
+﻿
 # game/tutorial_nvlmode.rpy:17
 translate french tutorial_nvlmode_76b2fe88:
 

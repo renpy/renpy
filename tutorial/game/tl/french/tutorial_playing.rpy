@@ -1,4 +1,4 @@
-
+﻿
 # game/tutorial_playing.rpy:11
 translate french tutorial_playing_2985ab86:
 

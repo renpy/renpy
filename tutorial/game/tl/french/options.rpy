@@ -1,4 +1,4 @@
-
+﻿
 translate french strings:
 
     # options.rpy:15

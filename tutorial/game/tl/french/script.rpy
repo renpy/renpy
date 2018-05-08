@@ -1,4 +1,4 @@
-
+﻿
 # game/script.rpy:156
 translate french start_0e6a5bb4:
 

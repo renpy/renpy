@@ -1049,23 +1049,23 @@ translate piglatin strings:
     old "Ren'Py is scanning the project..."
     new "Enray'Ypay isay canningsay hetay rojectpay..."
 
-    # project.rpy:725
+    # project.rpy:728
     old "Launching"
     new "Aunchinglay"
 
-    # project.rpy:759
+    # project.rpy:762
     old "PROJECTS DIRECTORY"
     new "Rojectspay Irectoryday"
 
-    # project.rpy:759
+    # project.rpy:762
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Leasepay oosechay hetay rojectspay irectoryday usingay hetay irectoryday ooserchay.\n{b}Hetay irectoryday ooserchay aymay avehay openeday ehindbay histay indowway.{/b}"
 
-    # project.rpy:759
+    # project.rpy:762
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Histay auncherlay illway cansay orfay rojectspay inay histay irectoryday, illway reatecay ewnay rojectspay inay histay irectoryday, anday illway aceplay uiltbay rojectspay intoay histay irectoryday."
 
-    # project.rpy:764
+    # project.rpy:767
     old "Ren'Py has set the projects directory to:"
     new "Enray'Ypay ashay etsay hetay rojectspay irectoryday otay:"
 
