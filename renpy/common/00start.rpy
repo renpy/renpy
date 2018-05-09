@@ -156,10 +156,7 @@ label _start_replay:
 
     call _start_store
 
-    if config.start_scene_black:
-        scene black
-    else:
-        scene
+    scene black
 
     $ _init_language()
     $ renpy.block_rollback()
@@ -195,6 +192,9 @@ label _start:
 
         renpy.block_rollback()
 
+
+    scene black
+
     call _gl_test
 
     python hide:
@@ -209,8 +209,6 @@ label _start:
 
     if config.start_scene_black:
         scene black
-    else:
-        scene
 
     if not _restart:
         $ renpy.display.interface.with_none(overlay=False)
@@ -239,11 +237,7 @@ label _start:
 
     $ renpy.music.stop(channel="movie")
 
-    # Clean out any residual scene from the splashscreen.
-    if config.start_scene_black:
-        scene black
-    else:
-        scene
+    scene black
 
     python:
         # Stop predicting the main menu, now that we're ready to show it.
