@@ -34,8 +34,8 @@ translate arabic strings:
     new "لبناء ملفات الأندرويد, الرجاء تحميل RAPT, ثم فك الضغط عن الملف ووضعه في مجلد رينباي. قد تحتاج لإعادة تشغيل رينباي ليعمل بشكل صحيح."
 
     # android.rpy:31
-    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "تحتاج لنسخة برمجية من جافا تعتمد الـ 32-بت لتستطيع إنشاء ملفات الأندرويد على نظام الوندوز. حزمة JDK تختلف عن JRE, قد تكون الجافا لديك موجوده لكنها تفتقد الـ JDK. \n\n الرجاء {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}تحميل و تنصيب JDK{/a} ثم إعادة تشغيل رينباي"
+    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "تحتاج لنسخة برمجية من جافا تعتمد الـ 32-بت لتستطيع إنشاء ملفات الأندرويد على نظام الوندوز. حزمة JDK تختلف عن JRE, قد تكون الجافا لديك موجوده لكنها تفتقد الـ JDK. \n\n الرجاء {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}تحميل و تنصيب JDK{/a} ثم إعادة تشغيل رينباي"
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."

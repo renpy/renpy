@@ -34,8 +34,8 @@ translate indonesian strings:
     new "Untuk membuat package Android, silahkan download RAPT, unzip/extrak, dan taruh di direktori Ren,Py. Dan restart launcher Ren'Py."
 
     # android.rpy:31
-    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Java Development Kit 32-bit di perlukan untuk membuat package Android di Windows, JDK itu berbeda dari JRE, jadi sangat mungkin kamu memiliki java tanpa JDK\n\nTolong {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}Download dan install JDK{/a}, lalu restart launcher Ren'Py "
+    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Java Development Kit 32-bit di perlukan untuk membuat package Android di Windows, JDK itu berbeda dari JRE, jadi sangat mungkin kamu memiliki java tanpa JDK\n\nTolong {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}Download dan install JDK{/a}, lalu restart launcher Ren'Py "
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."

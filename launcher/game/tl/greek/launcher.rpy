@@ -34,8 +34,8 @@ translate greek strings:
     new "Για να χτίσετε πακέτα για το Android, παρακαλούμε κατεβάστε το RAPT και τοποθετήστε το στον φάκελο της Ren'Py. Κατόπιν αυτού, επανεκκινήστε τον Εκκινητή."
 
     # android.rpy:31
-    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Αν εργάζεστε σε Windows, για τη δημιουργία πακέτων Android, απαιτείται ένα 32-bit Java Development Kit. Το JDK είναι διαφορετικό του JRE, οπότε μπορεί να έχετε Java χωρίς όμως να έχετε το JDK. Παρακαλoύμε λοιπόν να  {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html} κατεβάσετε κι εγκαταστήσετε από εδώ το JDK{/a} και κατόπιν να επανεκκινήσετε τον Εκκινητή της Ren'Py. "
+    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Αν εργάζεστε σε Windows, για τη δημιουργία πακέτων Android, απαιτείται ένα x86 Java Development Kit. Το JDK είναι διαφορετικό του JRE, οπότε μπορεί να έχετε Java χωρίς όμως να έχετε το JDK. Παρακαλoύμε λοιπόν να  {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html} κατεβάσετε κι εγκαταστήσετε από εδώ το JDK{/a} και κατόπιν να επανεκκινήσετε τον Εκκινητή της Ren'Py. "
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."

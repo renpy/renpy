@@ -34,8 +34,8 @@ translate piglatin strings:
     new "Otay uildbay Ndroidaay ackagespay, easeplay ownloadday Aptray, unzipay itay, anday aceplay itay intoay hetay Enray'Ypay irectoryday. Hentay estartray hetay Enray'Ypay auncherlay."
 
     # android.rpy:31
-    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Aay 23ay-itbay Avajay Evelopmentday Itkay isay equiredray otay uildbay Ndroidaay ackagespay onay Indowsway. Hetay Dkjay isay ifferentday omfray hetay Rejay, osay itay'say ossiblepay ouyay avehay Avajay ithoutway avinghay hetay Dkjay.\n\nLeasepay {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}ownloadday anday installay hetay Dkjay{/a}, hentay estartray hetay Enray'Ypay auncherlay."
+    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Aay 23ay-itbay Avajay Evelopmentday Itkay isay equiredray otay uildbay Ndroidaay ackagespay onay Indowsway. Hetay Dkjay isay ifferentday omfray hetay Rejay, osay itay'say ossiblepay ouyay avehay Avajay ithoutway avinghay hetay Dkjay.\n\nLeasepay {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}ownloadday anday installay hetay Dkjay{/a}, hentay estartray hetay Enray'Ypay auncherlay."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."

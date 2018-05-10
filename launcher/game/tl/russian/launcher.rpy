@@ -34,7 +34,7 @@ translate russian strings:
     new "Чтобы построить Android-пакет, пожалуйста, загрузите RAPT, разархивируйте его и поместить в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
 
     # android.rpy:31
-    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
     new "Чтобы построить Android-пакеты на Windows требуется 32-разрядный инструментарий разработки Java. JDK отличен от JRE, и возможно, у вас есть Java без JDK.\n\nПожалуйста, {a=httpу://www.oracle.com/technetwork/java/javase/downloads/index.html}загрузите и установите JDK{/a}, и перезапустите лаунчер Ren'Py."
 
     # android.rpy:32

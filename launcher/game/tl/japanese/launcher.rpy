@@ -34,8 +34,8 @@ translate japanese strings:
     new "Android パッケージをビルドするには、RAPT をダウンロード・展開し、Ren'Py のディレクトリーに設置して下さい。その後、Ren'Py を再起動して下さい。"
 
     # android.rpy:31
-    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Windows では、Android パッケージのビルドに 32-bit の Java 開発キットが必要です。JDK は JRE とは異なるため、JDK が無くても Java が利用できます。\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}JDK のダウンロードとインストール{/a}を行い、Ren'Py ランチャーを再起動して下さい。"
+    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Windows では、Android パッケージのビルドに 32-bit の Java 開発キットが必要です。JDK は JRE とは異なるため、JDK が無くても Java が利用できます。\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}JDK のダウンロードとインストール{/a}を行い、Ren'Py ランチャーを再起動して下さい。"
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."

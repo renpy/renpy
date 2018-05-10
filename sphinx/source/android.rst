@@ -160,7 +160,10 @@ The Java Development Kit (JDK) contains several tools that are used by
 |PGS4A|, including the tools used to generate keys and sign
 packages. It can be downloaded from:
 
-    http://www.oracle.com/technetwork/java/javase/downloads/index.html
+    http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+
+You'll need version 8 of the JDK, and on Windows you will want the
+x86 version.
 
 Please note that the developer-focused JDK is different from the
 user-focused JRE, and you'll need the JDK to create Android packages.

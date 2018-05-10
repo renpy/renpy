@@ -34,8 +34,8 @@ translate finnish strings:
     new "Luodaksesi Android-sovelluksia, ole hyvä ja lataa RAPT, pura se, ja aseta se Ren'Py kansioon. Tämän jälkeen käynnistä Ren'Py uudelleen."
 
     # android.rpy:31
-    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "32-bittinen Javan kehitystyökalu vaaditaan Android-sovellusten luomiseen Windowsilla. JDK on erilainen kuin JRE, joten on mahdollista, että sinulla on Java ilman JDK:ta.\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}Lataa ja asenna JDK{/a}, ja sen jälkeen käynnistä Ren'Py uudelleen."
+    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "32-bittinen Javan kehitystyökalu vaaditaan Android-sovellusten luomiseen Windowsilla. JDK on erilainen kuin JRE, joten on mahdollista, että sinulla on Java ilman JDK:ta.\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}Lataa ja asenna JDK{/a}, ja sen jälkeen käynnistä Ren'Py uudelleen."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."

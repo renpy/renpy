@@ -34,8 +34,8 @@ translate vietnamese strings:
     new "Để xây dựng các gói Android, hãy tải về RAPT, giải nén nó và đặt nó vào thư mục Ren'Py. Sau đó khởi động lại Ren'Py."
 
     # android.rpy:31
-    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Cần một bản 32-bit Java Development Kit để xây dựng gói Android trên Windows. JDK khác với JRE, vì vậy có thể là bạn có Java nhưng ko có JDK.\n\n Hãy vào {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download và cài đặt JDK{/a}, rồi khởi động lại Renpy. "
+    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Cần một bản x86 Java Development Kit để xây dựng gói Android trên Windows. JDK khác với JRE, vì vậy có thể là bạn có Java nhưng ko có JDK.\n\n Hãy vào {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download và cài đặt JDK{/a}, rồi khởi động lại Renpy. "
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."

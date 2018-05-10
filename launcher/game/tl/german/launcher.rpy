@@ -34,8 +34,8 @@ translate german strings:
     new "Um eine Android-Datei zu erstellen, laden Sie bitte RAPT herunter, entpacken Sie es und platzieren Sie es im Ren’Py Verzeichnis. Starten Sie dann bitte Ren’Py neu."
 
     # android.rpy:31
-    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Ein 32-bit Java-Development-Kit wird benötigt, um Android-Packages auf Windows zu erstellen. Das JDK unterscheidet sich vom JRE, daher ist es möglich, dass Sie Java ohne das JDK installiert haben.\n\nBitte {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}laden Sie das JDK herunter und installieren Sie es{/a}, dann starten Sie den Ren’Py-Launcher neu."
+    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Ein x86 Java-Development-Kit wird benötigt, um Android-Packages auf Windows zu erstellen. Das JDK unterscheidet sich vom JRE, daher ist es möglich, dass Sie Java ohne das JDK installiert haben.\n\nBitte {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}laden Sie das JDK herunter und installieren Sie es{/a}, dann starten Sie den Ren’Py-Launcher neu."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."

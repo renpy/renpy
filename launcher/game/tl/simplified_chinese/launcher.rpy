@@ -34,8 +34,8 @@ translate simplified_chinese strings:
     new "要生成安卓应用包，请下载 RAPT，并解压到 Ren'Py 目录中。之后重启 Ren'Py。"
 
     # android.rpy:31
-    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "要在 Windows 中创建安卓应用包，您需要一个 32 位的 Java 开发套件（JDK）。JDK 不同于 JRE，所以您可能已安装过 Java 但尚未安装 JDK。\n\n请{a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}下载并安装 JDK{/a}，然后重启 Ren'Py。"
+    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "要在 Windows 中创建安卓应用包，您需要一个 32 位的 Java 开发套件（JDK）。JDK 不同于 JRE，所以您可能已安装过 Java 但尚未安装 JDK。\n\n请{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}下载并安装 JDK{/a}，然后重启 Ren'Py。"
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
