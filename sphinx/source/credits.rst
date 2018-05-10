@@ -104,6 +104,7 @@ the omission in future versions.
 * Patrick Dawson
 * Paul Morio
 * Pavel Langwell
+* Peter DeVita
 * Piroshki
 * Pratomo Asta Nugraha
 * Project Gardares
