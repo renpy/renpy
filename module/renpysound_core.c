@@ -41,7 +41,7 @@ void media_advance_time(void);
 void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba);
 
 MediaState *media_open(SDL_RWops *, const char *);
-void media_want_video(MediaState *);
+void media_want_video(MediaState *, int);
 void media_start_end(MediaState *, double, double);
 void media_start(MediaState *);
 void media_close(MediaState *);
@@ -199,7 +199,8 @@ struct Channel {
     unsigned int vol2_length;
     unsigned int vol2_done;
 
-    /* This is set to true if this is a movie channel. */
+    /* This is set to 1 if this is a movie channel with dropping, 2 if it's a
+     * video channel without dropping. */
     int video;
 
 };
@@ -566,7 +567,7 @@ struct MediaState *load_sample(SDL_RWops *rw, const char *ext, double start, dou
     media_start_end(rv, start, end);
 
     if (video) {
-    	media_want_video(rv);
+    	media_want_video(rv, video);
     }
 
     media_start(rv);

@@ -172,15 +172,21 @@ def read_video(channel):
     w, h = rv.get_size()
     return rv.subsurface((4, 4, w-8, h-8))
 
+NO_VIDEO = 0
+NODROP_VIDEO = 1
+DROP_VIDEO = 2
+
 def set_video(channel, video):
     """
     Sets a flag that determines if this channel will attempt to decode video.
     """
 
-    if video:
-        RPS_set_video(channel, 1)
+    if video == NODROP_VIDEO:
+        RPS_set_video(channel, NODROP_VIDEO)
+    elif video:
+        RPS_set_video(channel, DROP_VIDEO)
     else:
-        RPS_set_video(channel, 0)
+        RPS_set_video(channel, NO_VIDEO)
 
 def init(freq, stereo, samples, status=False):
     if status:

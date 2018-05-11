@@ -238,6 +238,9 @@ typedef struct MediaState {
 	/* The wall time the last video frame was read. */
 	double video_read_time;
 
+	/* Are frame drops allowed? */
+	int frame_drops;
+
 } MediaState;
 
 static AVFrame *dequeue_frame(FrameQueue *fq);
@@ -671,7 +674,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		return NULL;
 	}
 
-	// If we're behind on decoding the frame, skip it.
+	// If we're behind on decoding the frame, drop it.
 	if (ms->video_pts_offset && (ms->video_pts_offset + pts < ms->video_read_time)) {
 
 		// If we're 5s behind, give up on video for the time being, so we don't
@@ -680,7 +683,9 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 			ms->video_finished = 1;
 		}
 
-		return NULL;
+		if (ms->frame_drops) {
+		    return NULL;
+		}
 	}
 
 	SDL_Surface *sample = rgba_surface;
@@ -1159,6 +1164,7 @@ MediaState *media_open(SDL_RWops *rwops, const char *filename) {
 	ms->lock = SDL_CreateMutex();
 
 	ms->audio_duration = -1;
+	ms->frame_drops = 1;
 
 	return ms;
 }
@@ -1189,8 +1195,9 @@ void media_start_end(MediaState *ms, double start, double end) {
 /**
  * Marks the channel as having video.
  */
-void media_want_video(MediaState *ms) {
+void media_want_video(MediaState *ms, int video) {
 	ms->want_video = 1;
+	ms->frame_drops = (video != 2);
 }
 
 void media_close(MediaState *ms) {

@@ -147,7 +147,7 @@ class Channel(object):
     This stores information about the currently-playing music.
     """
 
-    def __init__(self, name, default_loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie):
+    def __init__(self, name, default_loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie, framedrop):
 
         # The name assigned to this channel. This is used to look up
         # information about the channel in the MusicContext object.
@@ -232,7 +232,14 @@ class Channel(object):
             self.default_loop_set = True
 
         # Is this a movie channel?
-        self.movie = movie
+
+        if movie:
+            if framedrop:
+                self.movie = renpy.audio.renpysound.DROP_VIDEO
+            else:
+                self.movie = renpy.audio.renpysound.NODROP_VIDEO
+        else:
+            self.movie = renpy.audio.renpysound.NO_VIDEO
 
     def get_number(self):
         """
@@ -654,7 +661,7 @@ all_channels = [ ]
 channels = { }
 
 
-def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix="", buffer_queue=True, movie=False):
+def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix="", buffer_queue=True, movie=False, framedrop=True):
     """
     :doc: audio
 
@@ -693,6 +700,11 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
 
     `movie`
         If true, this channel will be set up to play back videos.
+
+    `framedrop`
+        This controls what a video does when lagging. If true, frames will
+        be dropped to keep up with realtime and the soundtrack. If false,
+        Ren'Py will display frames late rather than dropping them.
     """
 
     if name == "movie":
@@ -706,7 +718,7 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
     elif renpy.ios and renpy.config.hw_video and name == "movie":
         c = IOSVideoChannel(name, default_loop=loop, file_prefix=file_prefix, file_suffix=file_suffix)
     else:
-        c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie=movie)
+        c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie=movie, framedrop=framedrop)
 
     c.mixer = mixer
 
