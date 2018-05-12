@@ -85,6 +85,10 @@ Ren'Py now supports creating .zip files that have single files (such as
 Zip64 standard, unpacking such files may not be supported on some platforms,
 most notably Windows XP.
 
+The new :func:`renpy.get_hidden_tags` function returns the set of tags that
+have attributes but or otherwise hidden, while the :func:`renpy.get_showing_tags`
+function can return a list of tags in sorted order.
+
 Translations
 ------------
 

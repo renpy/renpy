@@ -479,22 +479,38 @@ def showing(name, layer='master'):
     return renpy.game.context().images.showing(layer, name)
 
 
-def get_showing_tags(layer='master'):
+def get_showing_tags(layer='master', sort=False):
     """
     :doc: image_func
 
-    Returns the set of image tags that are currently being shown on `layer`
+    Returns the set of image tags that are currently being shown on `layer`. If
+    sort is true, returns a list of the tags from back to front.
     """
 
+    if sort:
+        return scene_lists().get_sorted_tags(layer)
+
     return renpy.game.context().images.get_showing_tags(layer)
+
+
+def get_hidden_tags(layer='master'):
+    """
+    :doc: image_func
+
+    Returns the set of image tags on `layer` that are currently hidden, but
+    still have attribute information associated with them.
+    """
+
+    return renpy.game.context().images.get_hidden_tags(layer)
 
 
 def get_attributes(tag, layer=None):
     """
     :doc: image_func
 
-    Return a tuple giving the image attributes for the image with `tag`. If
-    the image is not showing, returns None.
+    Return a tuple giving the image attributes for the image `tag`. If
+    the image tag has not had any attributes associated since the last
+    time it was hidden, returns None.
 
     `layer`
         The layer to check. If None, uses the default layer for `tag`.

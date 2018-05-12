@@ -795,6 +795,14 @@ class ShownImageInfo(renpy.object.Object):
 
         return { t for l, t in self.shown if l == layer }
 
+    def get_hidden_tags(self, layer):
+        """
+        Returns the set of tags on layer that have attributes,
+        but aren't being shown.
+        """
+
+        return { t for l, t in self.attributes if l == layer if (l, t) not in self.shown }
+
     def predict_scene(self, layer):
         """
         Predicts the scene statement being called on layer.

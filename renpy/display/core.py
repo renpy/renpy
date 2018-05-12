@@ -1212,6 +1212,20 @@ class SceneLists(renpy.object.Object):
     def get_showing_tags(self, layer):
         return self.shown.get_showing_tags(layer)
 
+    def get_sorted_tags(self, layer):
+        rv = [ ]
+
+        for sle in self.layers[layer]:
+            if not sle.tag:
+                continue
+
+            if "$" in sle.tag:
+                continue
+
+            rv.append(sle.tag)
+
+        return rv
+
     def make_layer(self, layer, properties):
         """
         Creates a Fixed with the given layer name and scene_list.
