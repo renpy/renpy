@@ -567,6 +567,6 @@ creates a duplicate of the image that can be displayed independently. This
 also takes a transform argument that makes it useful to position a side
 image, like this::
 
-    image side augustina = LayeredImageProxy("augustina", Transform("augustina", crop=(0, 0, 362, 362), xoffset=-80))
+    image side augustina = LayeredImageProxy("augustina", Transform(crop=(0, 0, 362, 362), xoffset=-80))
 
 .. include:: inc/li_proxy
