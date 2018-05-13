@@ -76,7 +76,7 @@ button and transform state to the object it originates from.
 There is now alternate ruby text, allowing two kinds of ruby text
 to be displayed at once. (Such as a translation and pronunciation guide.)
 
-The new :ref:`displayable prefix` system make it possible to define your
+The new :ref:`displayable prefix <displayable-prefix>` system make it possible to define your
 own displayables that can be accessed using strings, the same way that
 images, image files, and solids have a string form.
 
