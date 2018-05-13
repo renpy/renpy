@@ -285,6 +285,20 @@ def image_exists(name, exact=False):
     return False
 
 
+def get_registered_image(name):
+    """
+    :doc: image_func
+
+    If an image with the same name has been registered with renpy.register_image,
+    returns it. Otherwise, returns None.
+    """
+
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    return images.get(name)
+
+
 def wrap_render(child, w, h, st, at):
     rend = render(child, w, h, st, at)
     rv = Render(rend.width, rend.height)
