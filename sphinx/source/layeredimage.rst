@@ -547,3 +547,26 @@ documented, and the arguments it takes if you want to supply your own
 `format_function` to replace it.
 
 .. include:: inc/li_ff
+
+Proxying Layered Images
+-----------------------
+
+Sometimes, it's necessary to proxy a layered image, to used the same
+layered image in multiple places. One reason for this would be to have
+the same sprite at multiple sizes, while another would be to use it as
+a side image.
+
+The LayeredImageProxy object does this, taking one layered image and
+duplicating it somewhere else.
+
+For example::
+
+    image dupe = LayeredImageProxy("augustina")
+
+creates a duplicate of the image that can be displayed independently. This
+also takes a transform argument that makes it useful to position a side
+image, like this::
+
+    image side augustina = LayeredImageProxy("augustina", Transform("augustina", crop=(0, 0, 362, 362), xoffset=-80))
+
+.. include:: inc/li_proxy
