@@ -230,7 +230,8 @@ def get_ordered_image_attributes(tag, attributes=(), sort=None):
             l.append((attrtotalpos[attr] / attrcount[attr], sort(attr), attr))
 
     l.sort()
-    rv.extend(l)
+    for i in l:
+        rv.append(i[2])
 
     return rv
 
