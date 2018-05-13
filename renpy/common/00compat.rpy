@@ -169,6 +169,7 @@ init -1900 python:
         if version <= (6, 99, 14, 3):
             config.late_images_scan = True
             config.dissolve_force_alpha = False
+            config.replay_movie_sprites = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

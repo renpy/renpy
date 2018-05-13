@@ -93,6 +93,10 @@ channel_movie = { }
 # Is there a video being displayed fullscreen?
 fullscreen = False
 
+# Movie channels that had a hide operation since the last interaction took
+# place.
+reset_channels = set()
+
 
 def early_interact():
     """
@@ -344,6 +348,9 @@ class Movie(renpy.display.core.Displayable):
         if self._play:
             channel_movie[self.channel] = self
 
+            if st == 0:
+                reset_channels.add(self.channel)
+
         playing = renpy.audio.music.get_playing(self.channel)
 
         if self.size is None:
@@ -384,7 +391,7 @@ class Movie(renpy.display.core.Displayable):
         else:
             old_play = old._play
 
-        if self._play != old_play:
+        if (self._play != old_play) or renpy.config.replay_movie_sprites:
             if self._play:
 
                 if self.play_callback is not None:
@@ -434,7 +441,9 @@ def update_playing():
 
         old = old_channel_movie.get(c, None)
 
-        if old is not m:
+        if (c in reset_channels) and renpy.config.replay_movie_sprites:
+            m.play(old)
+        elif old is not m:
             m.play(old)
 
     for c, m in old_channel_movie.items():
@@ -442,6 +451,7 @@ def update_playing():
             m.stop()
 
     renpy.game.context().movie = dict(channel_movie)
+    reset_channels.clear()
 
 
 def frequent():

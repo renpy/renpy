@@ -89,6 +89,9 @@ The new :func:`renpy.get_hidden_tags` function returns the set of tags that
 have attributes but or otherwise hidden, while the :func:`renpy.get_showing_tags`
 function can return a list of tags in sorted order.
 
+Showing a movie sprite a second time will now replay the movie from the start,
+for consistency with ATL and other animations.
+
 Translations
 ------------
 

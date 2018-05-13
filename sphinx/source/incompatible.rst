@@ -30,6 +30,12 @@ displayables, as if alpha=True was given. To revert this change, add::
 
     define config.dissolve_force_alpha = False
 
+Showing a movie sprite that is already showing will now re-play the movie.
+To revert to the previous behavior::
+
+    define config.replay_movie_sprites = False
+
+
 
 .. _incompatible-6.99:
 

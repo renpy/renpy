@@ -886,6 +886,9 @@ dissolve_force_alpha = True
 # corresponding to the argument.
 displayable_prefix = { }
 
+# Should we re-play a movie when it's shown again.
+replay_movie_sprites = True
+
 del os
 del collections
 
