@@ -72,6 +72,7 @@ from renpy.display.predict import screen as predict_screen
 
 from renpy.display.image import image_exists, image_exists as has_image, list_images
 from renpy.display.image import get_available_image_tags, get_available_image_attributes, check_image_attributes, get_ordered_image_attributes
+from renpy.display.image import get_registered_image
 
 from renpy.display.im import load_surface, load_image
 
@@ -165,6 +166,7 @@ def public_api():
     const, pure, not_const
     image_exists, has_image, list_images
     get_available_image_tags, get_available_image_attributes, check_image_attributes, get_ordered_image_attributes
+    get_registered_image
     load_image, load_surface
     profile_memory, diff_memory, profile_rollback
     TEXT_TAG

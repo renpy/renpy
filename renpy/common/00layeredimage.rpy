@@ -1045,10 +1045,59 @@ python early in layeredimage:
 
         return rv
 
-
     renpy.register_statement("layeredimage", parse=parse_layeredimage, execute=execute_layeredimage, init=True, block=True)
+
+
+    class LayeredImageProxy(object):
+        """
+        :doc: li_proxy
+        :name: LayeredImageProxy
+
+        This is an image-like object that proxies attributes passed to it to
+        another layered image.
+
+        `name`
+            A string giving the name of the layered image to proxy to.
+
+        `transform`
+            If given, a transform or list of transforms that are applied to the
+            image after it has been proxied.
+        """
+
+        def __init__(self, name, transform=None):
+
+            self.image = renpy.get_registered_image(name)
+
+            if self.image is None:
+                raise Exception("{!r} is not a registered image name.")
+
+            if transform is None:
+                self.transform = [ ]
+
+            elif isinstance(transform, list):
+                self.transform = transform
+
+            else:
+                self.transform = [ transform ]
+
+        def _duplicate(self, args):
+
+            rv = self.image._duplicate(args)
+
+
+            for i in self.transform:
+                rv = i(rv)
+
+            return rv
+
+        def _choose_attributes(self, tag, attributes, optional):
+            return self.image._choose_attributes(tag, attributes, optional)
+
+        def _list_attributes(self, tag, attributes):
+            return self.image._list_attributes(tag, attributes)
 
     renpy.store.Attribute = Attribute
     renpy.store.LayeredImage = LayeredImage
+    renpy.store.LayeredImageProxy = LayeredImageProxy
     renpy.store.Condition = Condition
     renpy.store.ConditionGroup = ConditionGroup
