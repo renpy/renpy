@@ -161,10 +161,6 @@ translate spanish strings:
     old "Save slot %s: [text]"
     new "Grabar partida %s: [text]"
 
-    # 00action_file.rpy:417
-    old "Load slot %s: [text]"
-    new "Cargar partida %s: [text]"
-
     # 00action_file.rpy:459
     old "Delete slot [text]"
     new "Borrar partida [text]"
