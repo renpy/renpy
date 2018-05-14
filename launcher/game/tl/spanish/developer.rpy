@@ -3,7 +3,7 @@ translate spanish strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"
-    new "Menú De Desarrollo"
+    new "Menú de desarrollo"
 
     # _developer/developer.rpym:43
     old "Interactive Director (D)"
@@ -11,7 +11,7 @@ translate spanish strings:
 
     # _developer/developer.rpym:45
     old "Reload Game (Shift+R)"
-    new "Reiniciar Juego (Shift+R)"
+    new "Reiniciar juego (Shift+R)"
 
     # _developer/developer.rpym:47
     old "Console (Shift+O)"
@@ -19,7 +19,7 @@ translate spanish strings:
 
     # _developer/developer.rpym:49
     old "Variable Viewer"
-    new "Visor De Variables"
+    new "Visor de variables"
 
     # _developer/developer.rpym:51
     old "Image Location Picker"
@@ -27,7 +27,7 @@ translate spanish strings:
 
     # _developer/developer.rpym:53
     old "Filename List"
-    new "Lista De Archivos"
+    new "Lista de archivos"
 
     # _developer/developer.rpym:57
     old "Show Image Load Log (F4)"
