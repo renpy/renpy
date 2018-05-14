@@ -419,23 +419,22 @@ init python in director:
         """
 
         if state.kind is None:
-            return None
+            rv = None
 
         elif state.kind == "with":
-            return "with {}".format(state.transition)
+            rv = "with {}".format(state.transition)
 
         elif state.kind in ("play", "queue"):
-            return get_play_queue_statement()
+            rv = get_play_queue_statement()
 
         elif state.kind == "stop":
-            return get_stop_statement()
+            rv = get_stop_statement()
 
         elif state.kind == "voice":
-            return get_voice_statement()
+            rv = get_voice_statement()
 
         else:
-            return get_scene_show_hide_statement()
-
+            rv = get_scene_show_hide_statement()
 
         return rv
 
