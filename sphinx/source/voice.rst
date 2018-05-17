@@ -3,14 +3,14 @@ Voice
 =====
 
 Ren'Py includes support for playing back voice in conjunction with
-dialogue. This is done through the voice statement, which gives the
+dialogue. This is done through the ``voice`` statement, which gives the
 voice filename to play::
 
   voice "line0001.ogg"
   "Welcome to Ren'Py"
 
 Normally, a playing voice is stopped at the start of the next
-interaction. The voice sustain statement can sustain voice playback
+interaction. The ``voice sustain`` statement can sustain voice playback
 through an interaction. ::
 
   voice "line0001.ogg"
