@@ -15,7 +15,7 @@ directly invoke Python, through the various python statements.
 Python
 ------
 
-The python statement takes a block of Python, and runs the block
+The ``python`` statement takes a block of Python, and runs the block
 when control reaches the statement. A basic python statement can be
 very simple::
 
@@ -33,7 +33,6 @@ There are two modifiers to the python statement that change its
 behavior:
 
 ``hide``
-
     If given the hide modifier, the python statement will run the
     block of Python in an anonymous scope. The scope will be lost when the
     python block terminates.
@@ -43,7 +42,6 @@ behavior:
     on the store object, rather than directly.
 
 ``in``
-
    The ``in`` modifier takes a name. Instead of executing in the
    default store, the Python will execute in the store with that
    name.
@@ -57,7 +55,7 @@ default store. For example, a Python one-liner can be used to
 initialize or update a flag. To make writing Python one-liners
 more convenient, there is the one-line python statement.
 
-The one-line python statement begins with the dollar-sign ($)
+The one-line Python statement begins with the dollar-sign ($)
 character, and contains everything else on that line. Here
 are some example of python one-liners::
 
@@ -122,7 +120,7 @@ variables should not be changed after init is over.
 Define Statement
 ----------------
 
-The define statement sets a single variable to a value at init time.
+The ``define`` statement sets a single variable to a value at init time.
 For example::
 
     define e = Character("Eileen")
@@ -151,7 +149,7 @@ when this is not the case.)
 Default Statement
 -----------------
 
-The default statement sets a single variable to a value if that variable
+The ``default`` statement sets a single variable to a value if that variable
 is not defined when the game starts, or after a new game is loaded. For
 example::
 
@@ -179,9 +177,9 @@ prepending it to the variable name with a dot. For example::
 Init Offset Statement
 ---------------------
 
-The init offset statement sets a priority offset for all statements
-that run at init time. (init, init python, define, default, screen,
-transform, style, and more.) The offset applies to all following
+The ``init offset`` statement sets a priority offset for all statements
+that run at init time (init, init python, define, default, screen,
+transform, style, and more). The offset applies to all following
 statements in the current block and chold blocks, up to the next
 init priority statement. The statement::
 
@@ -225,7 +223,7 @@ The following faulty script::
         $ e += 1
         e "You scored a point!"
 
-will not work, because the variable `e` is being used as both a
+will not work, because the variable ``e`` is being used as both a
 character and a flag. Other things that are usually placed into
 the store are transitions and transforms.
 
@@ -243,8 +241,8 @@ conflicts.
 Named stores can be accessed by supplying the ``in`` clause to
 ``python`` or ``init python``, all of which run Python in a named
 store. Each store corresponds to a Python module. The default store is
-``store``, while a named store is accessed as ``store``.`name`. These
-python modules can be imported using the Python import statement,
+``store``, while a named store is accessed as ``store.name``. These
+Python modules can be imported using the Python ``import`` statement,
 while names in the modules can be imported using the Python from
 statement.
 
@@ -274,11 +272,11 @@ define names in a named store.
 
 .. _python-modules:
 
-First and Third Party Python Modules and Packages
+First and Third-Party Python Modules and Packages
 -------------------------------------------------
 
 Ren'Py can import pure-python modules and packages. First-party modules
-and packages - ones  written for the game - can be placed directly
+and packages—ones written for the game—can be placed directly
 into the game directory. Third party packages can be placed into the
 game/python-packages directory.
 
