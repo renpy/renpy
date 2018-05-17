@@ -1591,6 +1591,7 @@ class RollbackLog(renpy.object.Object):
         """
 
         self.rollback_limit = 0
+        renpy.game.context().force_checkpoint = True
 
     def retain_after_load(self):
         """
