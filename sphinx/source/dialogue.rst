@@ -237,7 +237,7 @@ non-dialogue interactions.
 
 The ``window auto`` statement uses :var:`config.window_show_transition`
 and :var:`config.window_hide_transition` to show and hide the window,
-respectively. ``window auto`` is cancelled by ``window show`` or ``window hide``.
+respectively. ``window auto`` is cancelled by ``window show`` and ``window hide``.
 
 For example::
 
@@ -273,7 +273,7 @@ in parenthesis after the say statement. For example, one can write::
 
     e "Hello, world." (what_color="#8c8")
 
-Arguments to the Say statement are first processed by var:`config.say_arguments_callback`,
+Arguments to the say statement are first processed by var:`config.say_arguments_callback`,
 if it is not None. If any remain, they are then passed to the character,
 which treats them as if they were present when the character was defined.
 So, the example above displays the dialogue in green.
@@ -324,7 +324,7 @@ When e is a Character, this is further equivalent to::
     Character(kind=e, what_size=32)("Hello, world.", interact=True)
 
 But it's possible to use var:`config.say_arguments_callback` or
-have `e` wrap a character to do things differently.
+have ``e`` wrap a character to do things differently.
 
 
 
