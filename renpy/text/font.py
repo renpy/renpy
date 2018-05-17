@@ -443,7 +443,8 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
         A map from two-character strings to the kern that should be used between
         those characters.
 
-    `charset` - The character set of the font. A string containing characters in
+    `charset`
+        The character set of the font. A string containing characters in
         the order in which they are found in the image. The default character
         set for a SFont is::
 
