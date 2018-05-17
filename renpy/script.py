@@ -362,7 +362,7 @@ class Script(object):
             A list we append init statements to.
 
         `check_names`
-            If true, produce duplicate name errors.
+            If True, produce duplicate name errors.
 
         `filename`
             If given, a filename that overrides the filename found inside the
@@ -876,7 +876,7 @@ class Script(object):
 
     def has_label(self, label):
         """
-        Returns true if the label exists, or false otherwise.
+        Returns True if the label exists, or False otherwise.
         """
 
         label = renpy.config.label_overrides.get(label, label)
