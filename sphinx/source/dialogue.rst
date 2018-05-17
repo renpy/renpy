@@ -216,27 +216,24 @@ these statements control the presence or absence of the window during
 non-dialogue interactions.
 
 ``window show``
-
-The window show statement causes the window to be shown.
-It takes as an argument an optional transition, which is used to show the
-window. If the transition is omitted, :var:`config.window_show_transition`
-is used.
+    The window show statement causes the window to be shown.
+    It takes as an argument an optional transition, which is used to show the
+    window. If the transition is omitted, :var:`config.window_show_transition`
+    is used.
 
 ``window hide``
-
-The window hide statement causes the window to be hidden. It takes as an
-argument an optional transition, which is used to hide the window. If
-the transition is omitted,  :var:`config.window_hide_transition` is
-used.
+    The window hide statement causes the window to be hidden. It takes as an
+    argument an optional transition, which is used to hide the window. If
+    the transition is omitted,  :var:`config.window_hide_transition` is
+    used.
 
 ``window auto``
-
-This enables automatic management of the window. The window is shown
-before statements listed in :var:`config.window_auto_show` - by default,
-say statements. The window is hidden before statements listed in
-:var:`config.window_auto_hide` - by default, ``scene`` and ``call screen``
-statements. (Only statements are considered, not statement equivalent
-functions.)
+    This enables automatic management of the window. The window is shown
+    before statements listed in :var:`config.window_auto_show` - by default,
+    say statements. The window is hidden before statements listed in
+    :var:`config.window_auto_hide` - by default, ``scene`` and ``call screen``
+    statements. (Only statements are considered, not statement equivalent
+    functions.)
 
 The ``window auto`` statement uses :var:`config.window_show_transition`
 and :var:`config.window_hide_transition` to show and hide the window,
