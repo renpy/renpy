@@ -182,7 +182,7 @@ Preference Defaults
 -------------------
 
 Ren'Py has a number of variables that set the default values of
-preferences. Please see the section on :var:`preference variables <preference-variables>`
+preferences. Please see the section on :ref:`preference variables <preference-variables>`
 for more information on how to set defaults for various preferences.
 
 Occasionally Used

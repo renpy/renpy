@@ -16,7 +16,7 @@ in Ren'Py.) Layers can be shown unconditionally, or can be selected
 by attributes provided to the image or conditions that are evaluated at
 runtime.
 
-To make defining layered images easier, Ren'Py has the layeredimage statement,
+To make defining layered images easier, Ren'Py has the ``layeredimage`` statement,
 which introduces a domain-specific language that lets you define a layered
 image. There's also the :func:`LayeredImage` object, which isn't an image
 but can be assigned to an image statement and used like one.
@@ -82,33 +82,33 @@ explicitly given. ::
 That is a large amount of script, but it's very regular, and below
 we'll show how to simplify it.
 
-First off, the layeredimage statement introduces a layered image
+First off, the ``layeredimage`` statement introduces a layered image
 with the name of the sprite. This statement is part of the Ren'Py
 script language, and runs at init time.
 
 The block of a layered image can contain always, group, and if
-statements. A group statement can take attributes. The always and if
+statements. A ``group`` statement can take attributes. The ``always`` and ``if``
 statements must be supplied displayables, while the attribute statement
 can optionally be supplied one. All statements can be supplied properties.
 
-The always statement declares a layer that is always displayed, like the
+The ``always`` statement declares a layer that is always displayed, like the
 background of a sprite.
 
-The group statement introduces a group of attributes, where only one of
+The ``group`` statement introduces a group of attributes, where only one of
 the attributes can be displayed at a time. So this layered image can only
 have one outfit, and one post for each of the eyes, eyebrows, and mouth.
 Properties given to the group are passed on to the attributes, and a group
 can automatically declare attributes.
 
-The attribute statement introduces a layer that is displayed if an attribute
+The ``attribute`` statement introduces a layer that is displayed if an attribute
 is supplied to the image. For example, "augustina_outfit_dress" is only
 displayed if if the "dress" attribute is supplied. If given the default
 keyword, the attribute is displayed if no conflicting attributes are
 provided; in this example, "augustina_eyes_open" is displayed unless the
 unless the "wink" attribute is given.
 
-Finally, the if statement adds a layer that selects between displayables
-using a python statement. This is evaluated constantly, and the first
+Finally, the ``if`` statement adds a layer that selects between displayables
+using a Python statement. This is evaluated constantly, and the first
 condition that evaluates to true is the one that's displayed.
 
 Properties consist of a property name and a simple expression, and
@@ -215,12 +215,12 @@ the outfit group uses "augustina_outfit_dress" for the displayable, a
 displayable that references the image with  that name.
 
 It's possible to go even further than this, by automatically defining the
-attributes in a group. This is done by giving a group the auto keyword,
+attributes in a group. This is done by giving a group the `auto` keyword,
 which causes the group to search for defined
 images that would match the pattern, then define the attribute if it does
 not already exist.
 
-As with attribute, properties can be placed on the first line of the
+As with ``attribute``, properties can be placed on the first line of the
 group and the block omitted. The displayable and properties of the
 always statement can be put on the first line the same way.
 
@@ -254,7 +254,7 @@ more attributes per group. We could also save lines if we didn't need
 default attributes. In that case, all of the groups could be written on
 single lines.
 
-There's no way to omit the displayables from the always or if statements,
+There's no way to omit the displayables from the ``always`` or ``if`` statements,
 so this is as short as it gets - but with a few more images with proper
 names, it's possible to use this to define thousands or even millions
 of combinations of layers.
@@ -263,7 +263,7 @@ of combinations of layers.
 Statement Reference
 -------------------
 
-Note that with the conditions in the `if` statement, all expressions are
+Note that with the conditions in the ``if`` statement, all expressions are
 evaluated at init-time, when the layered image is first defined.
 
 Layeredimage
@@ -302,7 +302,7 @@ multiple layers, with all layers corresponding to the attribute being shown
 (the if_also and if_not properties can change this).
 
 An attribute takes an attribute name. It can also take two keywords.
-The``default`` keyword indicates that the attribute should be present
+The ``default`` keyword indicates that the attribute should be present
 by default if no attribute in its group conflicts. The ``null`` keyword
 prevents Ren'Py from automatically searching for a displayable corresponding
 to this attribute, which is useful to have an attribute that is intended solely
@@ -351,7 +351,7 @@ The ``group`` statement groups together alternative layers. When an attribute is
 inside a group, it is an error to include any of the other attributes in
 that group. (But it's fine to include the same attribute twice.)
 
-The group statement takes a name. The name isn't used for very much, but is
+The ``group`` statement takes a name. The name isn't used for very much, but is
 used to generate the default names of attributes inside the group.
 
 The name may be followed by the `auto` keyword. If it's present, after any
@@ -396,7 +396,7 @@ of `blue`, it would match the pattern augustina_work_eyes_blue_`attribute`.
 Always
 ^^^^^^
 
-The ``always`` statement declares a layer tht is always shown. It
+The ``always`` statement declares a layer that is always shown. It
 must be supplied a displayable, and can take properties also. Both can
 be placed on the same line or inside a block.
 
@@ -430,10 +430,10 @@ If
 The ``if`` statement (or more fully the if-elif-else) statement allows you
 to supply one or more conditions that are evaluated at runtime. Each
 condition is associated with a layer, with the first true condition
-being the one that is shown. If no condition is true, the else layer
+being the one that is shown. If no condition is true, the ``else`` layer
 is shown if present.
 
-A more complete example of an if statement might look like::
+A more complete example of an ``if`` statement might look like::
 
     if glasses == "evil":
         "augustina_glasses_evil"
@@ -467,7 +467,7 @@ Each layer must have a displayable given. It can also be given these properties:
 `at`
     A transform or list of transforms that are applied to the layer.
 
-The If statement is transformed to a :func:`ConditionSwitch` when the
+The ``if`` statement is transformed to a :func:`ConditionSwitch` when the
 ``layeredimage`` statement runs.
 
 .. var: layeredimage.predict_all = None
@@ -475,7 +475,7 @@ The If statement is transformed to a :func:`ConditionSwitch` when the
     Sets the value of `predict_all` for the ConditionSwitches produced
     by layered image if statements.
 
-When predict_all is not true, changing the condition of the if statement
+When ``predict_all`` is not true, changing the condition of the if statement
 should be avoided while the layered image is shown or about to be shown,
 as it would lead to an unpredicted image load. It's intended for use for
 character customization options that change rarely.
@@ -498,7 +498,7 @@ you to include attributes as part of the image name. So we can have::
     layeredimage augustina standing:
         ...
 
-This is especially useful when using a layeredimage to compose a side
+This is especially useful when using a layered image to compose a side
 image, where the side images of different characters will have nothing
 to do with each other. ::
 
@@ -518,7 +518,7 @@ of image names. It might be tempting to use images with spaces between
 sections, but that could lead to problems later on.
 
 Ren'Py has a rule that if you show an image with the exact name as one
-that's being shown, it's shown instead. This can bypass the layeredimage
+that's being shown, it's shown instead. This can bypass the layered image
 you defined and show the layer directly, which can lead to weird problems
 like a pair of eyes floating in space.
 
@@ -537,11 +537,11 @@ Python
 
 Of course, the ``layeredimage`` statements have a Python equivalents. The
 group statement does not - the group is supplied to Attribute, and the
-auto functioality can be implemented using :func:`renpy.list_images`.
+auto functionality can be implemented using :func:`renpy.list_images`.
 
 .. include:: inc/li
 
-Layeredimage.format_function is a function that is used to format attributes
+:func:`layeredimage.format_function` is a function that is used to format attributes
 and displayables into image files. It's supplied so you can see how it's
 documented, and the arguments it takes if you want to supply your own
 `format_function` to replace it.
@@ -556,7 +556,7 @@ layered image in multiple places. One reason for this would be to have
 the same sprite at multiple sizes, while another would be to use it as
 a side image.
 
-The LayeredImageProxy object does this, taking one layered image and
+The :func:`LayeredImageProxy` object does this, taking one layered image and
 duplicating it somewhere else.
 
 For example::
