@@ -61,7 +61,6 @@ the ``[`` character begins a substitution. To use them in dialogue,
 double them. It may also be necessary to precede a quote with a
 backslash to prevent it from closing the string. For example::
 
-   ###
        "I walked past a sign saying, \"Let's give it 100%!\""
 
 
@@ -79,10 +78,9 @@ assign a Character to a variable. For example::
 
 Once this is done, the character can be used in a say statement::
 
-    ###
         e "Hello, world."
 
-Character is a python function, that takes a large number of keyword
+Character is a Python function that takes a large number of keyword
 arguments. These keyword arguments control the behavior of the
 character.
 
