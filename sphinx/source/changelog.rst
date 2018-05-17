@@ -9,7 +9,7 @@ Full Changelog
 
 Ren'Py 7.0 marks the completion of over a decade of development since
 Ren'Py 6 that brought features like ATL, Screen Language, OpenGL and DirectX
-acceleration,  support for the Android and iOS platforms, Translation,
+acceleration, support for the Android and iOS platforms, Translation,
 Accessibility, and so much more.
 
 For releases between 6.0 and 7.0, see the other entries in this changelog,
@@ -25,7 +25,7 @@ created in Photoshop or some other program as a a series of layers.
 The layered image system can use the attributes the image was displayed
 with and Python conditions to determine what layers to display.
 
-Layered images are intended to be a replacement for the use of (Live):func:`composite`
+Layered images are intended to be a replacement for the use of :func:`Composite`
 and :func:`ConditionSwitch` to define layered images. It includes a language
 that makes defining such images simpler, and Ren'Py can generate portions
 of the definitions from appropriately named files. It also integrates better
@@ -38,14 +38,14 @@ Dict Transitions
 :ref:`Dict Transitions <dict-transitions>` makes it
 possible to use the with statement and certain other functions to apply
 transitions to one or more layers. Ren'Py will not pause for these
-transitions to occur. Dict transitions make it possible - and even
-convenient - to have a transition apply to the sprites alone while dialogue is
+transitions to occur. Dict transitions make it possible—and even
+convenient—to have a transition apply to the sprites alone while dialogue is
 being displayed.
 
 Changes
 -------
 
-The old tutorial and old templates are no longer includes with Ren'Py.
+The old tutorial and old templates are no longer included with Ren'Py.
 They can still be used with new version of Ren'Py if copied into
 this or later versions.
 
@@ -54,7 +54,7 @@ change the position of a viewport or the value of a bar.
 
 The :func:`Dissolve`, :func:`ImageDissolve`, and :func:`AlphaDissolve`
 transitions now respect the alpha channels of their source displayables, as
-if given the alpha=True argument. As omitting the alpha channel is no
+if given the ``alpha=True`` argument. As omitting the alpha channel is no
 longer an optimization, this change allows the same transitions to be
 used in more places.
 
@@ -74,7 +74,7 @@ When provided, it should return a unique value that can map information like
 button and transform state to the object it originates from.
 
 There is now alternate ruby text, allowing two kinds of ruby text
-to be displayed at once. (Such as a translation and pronunciation guide.)
+to be displayed at once (such as a translation and pronunciation guide).
 
 The new :ref:`displayable prefix <displayable-prefix>` system make it possible to define your
 own displayables that can be accessed using strings, the same way that
