@@ -52,7 +52,7 @@ init -1500 python:
     _voice.info = None
     _voice.last_playing = 0.0
 
-    # If true, the voice system ignores the interaction.
+    # If True, the voice system ignores the interaction.
     _voice.ignore_interaction = False
 
     # The voice filename format. This may contain the voice tag
@@ -126,12 +126,12 @@ init -1500 python:
         if _last_voice_play is not None:
             renpy.sound.play(_last_voice_play, channel="voice")
 
-    # Returns true if we can replay the voice.
+    # Returns True if we can replay the voice.
     def voice_can_replay():
         """
         :doc: voice
 
-        Returns true if it's possible to replay the current voice.
+        Returns True if it's possible to replay the current voice.
         """
 
         return _last_voice_play is not None
@@ -141,8 +141,8 @@ init -1500 python:
         """
         :doc: voice_action
 
-        If `mute` is true, mutes voices that are played with the given
-        `voice_tag`. If `mute` is false, unmutes voices that are played
+        If `mute` is True, mutes voices that are played with the given
+        `voice_tag`. If `mute` is False, unmutes voices that are played
         with `voice_tag`.
         """
 
@@ -197,7 +197,7 @@ init -1500 python:
             The full path to a sound file. No voice-related handling
             of this file is done.
 
-         selected`
+        `selected`
             If True, buttons using this action will be marked as selected
             while the sample is playing.
         """
@@ -251,7 +251,7 @@ init -1500 python:
         :doc: voice_action
 
         Toggles the muting of `voice_tag`. This is selected if
-        the given voice tag is muted, unless `invert` is true,
+        the given voice tag is muted, unless `invert` is True,
         in which case it's selected if the voice is unmuted.
         """
 
