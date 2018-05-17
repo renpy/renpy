@@ -26,7 +26,7 @@ inside the following container formats:
 * WebM
 * Matroska
 * Ogg
-* Avi
+* AVI
 * Various kinds of MPEG stream.
 
 (Note that using some of these formats may require patent licenses.
