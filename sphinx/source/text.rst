@@ -601,7 +601,7 @@ the mood the creator intends. To support this, Ren'Py supports font groups
 that can take characters from two or more fonts and combine them into a
 single font.
 
-To create a font group, create a :func:`FontGroup` object and call the ``.add`` method
+To create a font group, create a :class:`FontGroup` object and call the ``.add`` method
 on it once or more. A FontGroup can be used wherever a font name can be
 used. The add method takes the start and end of a range of Unicode character
 points, and the first range to cover a point is used.
