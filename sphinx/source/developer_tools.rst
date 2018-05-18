@@ -10,7 +10,7 @@ Shift+O Console
 The debug console makes it possible to interactively run Ren'Py script and
 Python statements, and immediately see the results. The console is available in
 developer mode or when :var:`config.console` is True, and can be accessed by
-pressing "shift+O".
+pressing Shift+O.
 
 The console can be used to:
 
