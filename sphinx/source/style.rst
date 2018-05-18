@@ -83,7 +83,7 @@ When :var:`config.developer` is true, the style inspector can be used to
 see which styles are being used by a displayable.
 
 To activate the style inspector, place the mouse over a displayable, and
-press shift+I. Ren'Py will display a list of displayables that include
+press Shift+I. Ren'Py will display a list of displayables that include
 the mouse position, in the order they are drawn to the screen. (That is,
 the last displayable is the one on top of the others.)
 
@@ -202,25 +202,26 @@ Styles. ::
         style object.
 
 
-..
+.. _indexed-styles:
 
-    Indexed Styles
+Indexed Styles
+--------------
 
-    Indexed styles are lightweight styles that can be used to customize the look
-    of a displayable based on the data supplied to that displayable. An index
-    style is created by indexing a style object with a string or integer. If an
-    indexed style does not exist, indexing creates it.::
+Indexed styles are lightweight styles that can be used to customize the look
+of a displayable based on the data supplied to that displayable. An index
+style is created by indexing a style object with a string or integer. If an
+indexed style does not exist, indexing creates it. ::
 
-        init python:
-            style.button['Foo'].background = "#f00"
-            style.button['Bar'].background = "#00f"
+    init python:
+        style.button['Foo'].background = "#f00"
+        style.button['Bar'].background = "#00f"
 
-    An index style is used by supplying the indexed style to a displayable.::
+An index style is used by supplying the indexed style to a displayable.::
 
-        screen indexed_style_test:
-            vbox:
-                textbutton "Foo" style style.button["Foo"]
-                textbutton "Bar" style style.button["Bar"]
+    screen indexed_style_test:
+        vbox:
+            textbutton "Foo" style style.button["Foo"]
+            textbutton "Bar" style style.button["Bar"]
 
 
 .. _style-preferences:
