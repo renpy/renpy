@@ -27,7 +27,7 @@ Voice Tags
 
 Ren'Py includes a voice tag system that makes it possible to selectively
 mute or unmute a character's voice. To take advantage of this system,
-supply a voice_tag argument to each :func:`Character`, and use the
+supply a ``voice_tag`` argument to each :func:`Character`, and use the
 :func:`SetVoiceMute` or :func:`ToggleVoiceMute` actions to allow the
 player to toggle the voice.
 
@@ -63,7 +63,7 @@ making it possible to play back voice without having to put voice statements
 before each line of dialogue.
 
 This is done by creating voice files that match the identifier for each line
-of dialogue. To determine the identifiers to use , first export the dialogue
+of dialogue. To determine the identifiers to use, first export the dialogue
 to a spreadsheet by choosing from the launcher "Extract Dialogue", "Tab-delimited
 Spreadsheet (dialogue.tab)", and "Continue". This will produce a file, dialogue.tab,
 that can be loaded in a spreadsheet program.
@@ -72,7 +72,7 @@ The first column of the spreadsheet is the identifier to use, with other
 columns giving more information about the dialogue.
 
 To make Ren'Py automatically play voices, set :var:`config.auto_voice` to
-a string containing `{id}`. When dialogue occurs, `{id}` is replaced with
+a string containing ``{id}``. When dialogue occurs, ``{id}`` is replaced with
 the dialogue identifier, forming a filename. If the filename exists, it is
 played.
 
