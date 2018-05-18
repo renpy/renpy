@@ -99,7 +99,7 @@ Style Property Values
 =====================
 
 Each style property expects a specific kind of data. Many of these are
-standard python types, but a few are novel. Here are descriptions of the
+standard Python types, but a few are novel. Here are descriptions of the
 novel kinds of value a style property can expect.
 
 `position`
@@ -121,7 +121,7 @@ novel kinds of value a style property can expect.
         sides of the containing area, while 1.0 is on the right or bottom
         side.
     renpy.absolute (like renpy.absolute(100.25))
-        A renpy.absolute number is interpreted as the number of pixels
+        A ``renpy.absolute`` number is interpreted as the number of pixels
         from the left or top side of the screen, when using subpixel-precise
         rendering.
 
@@ -365,30 +365,31 @@ or on the screen when not inside a layout.
 
 .. style-property:: xfill boolean
 
-    If true, the displayable will expand to fill all available
-    horizontal space. If not true, it will only be large enough to
+    If True, the displayable will expand to fill all available
+    horizontal space. If not True, it will only be large enough to
     contain its children.
 
     This only works for displayables that can change size.
 
 .. style-property:: yfill boolean
 
-    If true, the displayable will expand to fill all available
-    vertical space. If not true, it will only be large enough to
+    If True, the displayable will expand to fill all available
+    vertical space. If not True, it will only be large enough to
     contain its children.
 
     This only works for displayables that can change size.
 
 .. style-property:: area tuple of (int, int, int, int)
 
-    The tuple is interpreted as (`xpos`, `ypos`, `width`,
-    `height`). Attempts to position the displayable such that it's
+    The tuple is interpreted as (``xpos``, ``ypos``, ``width``,
+    ``height``). Attempts to position the displayable such that it's
     upper-left corner is at `xpos` and `ypos`, and its size is `width`
     and `height`.
 
-    It does this by setting the xpos, ypos, xanchor, yanchor,
-    xmaximum, ymaximum, xminimum, yminimum, xfill, and yfill
-    properties to appropriate values.
+    It does this by setting the :propref:`xpos`, :propref:`ypos`, 
+    :propref:`xanchor`, :propref:`yanchor`, :propref:`xmaximum`, 
+    :propref:`ymaximum`, :propref:`xminimum`, :propref:`yminimum`, 
+    :propref:`xfill`, and :propref:`yfill` properties to appropriate values.
 
     This will not work with all displayables and all layouts.
 
@@ -400,7 +401,7 @@ Text Style Properties
 
 .. style-property:: antialias boolean
 
-    If True, the default, truetype font text will be rendered
+    If True, the default, TrueType font text will be rendered
     anti-aliased.
 
 .. style-property:: adjust_spacing boolean
@@ -424,11 +425,11 @@ Text Style Properties
 .. style-property:: black_color color
 
     When rendering an image-based font, black will be mapped to this
-    color. This has no effect for truetype fonts.
+    color. This has no effect for TrueType fonts.
 
 .. style-property:: bold boolean
 
-    If True, render the font in a bold style. For a truetype font,
+    If True, render the font in a bold style. For a TrueType font,
     this usually involves synthetically increasing the font weight. It
     can also cause the font to be remapped, using
     :var:`config.font_replacement_map`.
@@ -441,7 +442,7 @@ Text Style Properties
 
 .. style-property:: color color
 
-    The color the text is rendered in. When using a truetype font,
+    The color the text is rendered in. When using a TrueType font,
     the font is rendered in this color. When using an image-based
     font, white is mapped to this color.
 
@@ -454,7 +455,7 @@ Text Style Properties
 
     A string giving the name of the font used to render text.
 
-    For a truetype font file, this is usually the name of the file
+    For a TrueType font file, this is usually the name of the file
     containing the font (like ``"DejaVuSans.ttf"``). To select a second
     font in a collection, this can be prefixed with a number and
     at sign (like ``"0@font.ttc"`` or ``"1@font.ttc"``). For an
@@ -469,14 +470,14 @@ Text Style Properties
 
 .. style-property:: italic boolean
 
-    If true, the text will be rendered in italics. For a truetype font,
+    If True, the text will be rendered in italics. For a TrueType font,
     this usually involves synthetically increasing the font slant. It
     can also cause the font to be remapped, using
     :var:`config.font_replacement_map`.
 
 .. style-property:: justify boolean
 
-    If true, additional whitespace is inserted between words so that
+    If True, additional whitespace is inserted between words so that
     the left and right margins of each line are even. This is not
     performed on the last line of a paragraph.
 
@@ -560,7 +561,7 @@ Text Style Properties
 
 .. style-property:: newline_indent boolean
 
-    If true, the :propref:`first_indent` indentation is used after
+    If True, the :propref:`first_indent` indentation is used after
     each newline in a string. Otherwise, the :propref:`rest_indent`
     indentation is used.
 
@@ -570,15 +571,15 @@ Text Style Properties
     tuple specifies an outline, and outlines are drawn from back to
     front.
 
-    The list contains (`size`, `color`, `xoffset`, `yoffset`)
-    tuples. `Size` is the amount the font is expanded by, in
-    pixels. `Color` is the color of the outline. `xoffset` and
-    `yoffset` are the amount the outline is shifted by, in pixels.
+    The list contains (``size``, ``color``, ``xoffset``, ``yoffset``)
+    tuples. ``size`` is the amount the font is expanded by, in
+    pixels. ``color`` is the color of the outline. ``xoffset`` and
+    ``yoffset`` are the amount the outline is shifted by, in pixels.
 
     The outline functionality can also be used to give drop-shadows to
     fonts, by specifying a size of 0 and non-zero offsets.
 
-    By default, `size`, `xoffset` and `yoffset` are scaled with the text.
+    By default, ``size``, ``xoffset`` and ``yoffset`` are scaled with the text.
     When given as the absolute type, they are not scaled. For example::
 
         style default:
@@ -586,7 +587,7 @@ Text Style Properties
 
     will always produce a 1 pixel-wide border.
 
-    Outlines only work with truetype fonts.
+    Outlines only work with TrueType fonts.
 
 .. style-property:: rest_indent int
 
@@ -632,7 +633,7 @@ Text Style Properties
 
 .. style-property:: underline boolean
 
-    If true, an underline will be added to the text.
+    If True, an underline will be added to the text.
 
 .. style-property:: hyperlink_functions tuple of (function, function, function)
 
@@ -654,7 +655,7 @@ Text Style Properties
 
 .. style-property:: vertical boolean
 
-    If true, the text will be rendered vertically.
+    If True, the text will be rendered vertically.
 
 .. style-property:: hinting str
 
@@ -807,27 +808,27 @@ Button Style Properties
         focused).
     callable
         If a non-displayable callable (like a function, method, or object
-        with a __call__ method) is given, the function is called with two
+        with a ``__call__`` method) is given, the function is called with two
         arguments, the x and y offset from the top-left corner of the
-        displayable. If the function returns true, the displayable is
+        displayable. If the function returns True, the displayable is
         focused.
     None
         If none is given, the entire button can be focused.
 
 .. style-property:: keyboard_focus boolean
 
-   If true, the default, this button can be focused using the keyboard focus
-   mechanism, if it can be focused at all. If false, the keyboard focus
+   If True, the default, this button can be focused using the keyboard focus
+   mechanism, if it can be focused at all. If False, the keyboard focus
    mechanism will skip this button. (The keyboard focus mechanism is used
    by keyboards and keyboard-like devices, such as joypads.)
 
 .. style-property:: key_events boolean
 
-    If true, keyboard-generated events are passed to the children of this
-    button. If false, those events are not propagated. In this default style,
-    this is set to true while the button is hovered, and false otherwise.
+    If True, keyboard-generated events are passed to the children of this
+    button. If False, those events are not propagated. In this default style,
+    this is set to True while the button is hovered, and False otherwise.
 
-    Setting this to true can be used to propagate keyboard events to an input
+    Setting this to True can be used to propagate keyboard events to an input
     inside a button, even when the button isn't focused.
 
 
@@ -852,17 +853,17 @@ left and right sides are used.
 
 .. style-property:: bar_vertical boolean
 
-    If true, the bar has a vertical orientation. If false, it has a
+    If True, the bar has a vertical orientation. If False, it has a
     horizontal orientation.
 
 .. style-property:: bar_invert boolean
 
-    If true, the value of the bar is represented on the right/top
+    If True, the value of the bar is represented on the right/top
     side of the bar, rather than the left/bottom side.
 
 .. style-property:: bar_resizing boolean
 
-    If true, we resize the sides of the bar. If false, we render the
+    If True, we resize the sides of the bar. If False, we render the
     sides of the bar at full size, and then crop them.
 
 .. style-property:: left_gutter int
@@ -943,8 +944,8 @@ left and right sides are used.
 
 .. style-property:: keyboard_focus boolean
 
-   If true, the default, this button can be focused using the keyboard focus
-   mechanism, if it can be focused at all. If false, the keyboard focus
+   If True, the default, this button can be focused using the keyboard focus
+   mechanism, if it can be focused at all. If False, the keyboard focus
    mechanism will skip this button. (The keyboard focus mechanism is used
    by keyboards and keyboard-like devices, such as joypads.)
 
@@ -967,14 +968,14 @@ These are used for the horizontal and vertical box layouts.
 
 .. style-property:: box_reverse boolean
 
-    If true, the placement of the items in the box will be reversed. When
-    this is true, a hbox will be filled right-to-left, and a vbox will
-    be filled bottom-to-top. This defaults to false.
+    If True, the placement of the items in the box will be reversed. When
+    this is True, a hbox will be filled right-to-left, and a vbox will
+    be filled bottom-to-top. This defaults to False.
 
 .. style-property:: box_wrap boolean
 
-    If true, then boxes will wrap when they reach the end of a line or column.
-    If false (the default), they will extend past the end of the line.
+    If True, then boxes will wrap when they reach the end of a line or column.
+    If False (the default), they will extend past the end of the line.
 
 
 
@@ -1009,24 +1010,24 @@ These are used with the fixed layout.
 
 .. style-property:: fit_first boolean or "width" or "height"
 
-    If true, then the size of the fixed layout is shrunk to be equal with
+    If True, then the size of the fixed layout is shrunk to be equal with
     the size of the first item in the layout. If "width", only the width is changed
     (the fixed will fill the screen vertically). Similarly, "height" only changes
     the height.
 
 .. style-property:: xfit boolean
 
-    If true, the size of the fixed layout is shrunk horizontally to match the
+    If True, the size of the fixed layout is shrunk horizontally to match the
     right side of the rightmost child of the fixed.
 
 .. style-property:: yfit boolean
 
-    If true, the size of the fixed layout is shrunk vertically to match the
+    If True, the size of the fixed layout is shrunk vertically to match the
     bottom side of the bottommost child of the fixed.
 
 .. style-property:: order_reverse boolean
 
-    If false, the default, the items in the box will be draw first-to-last,
-    with the first item in the box being below the second, and so on. If true,
+    If False, the default, the items in the box will be draw first-to-last,
+    with the first item in the box being below the second, and so on. If True,
     this order will be reversed, and the first item in the box will be above
     all other items in the box.
