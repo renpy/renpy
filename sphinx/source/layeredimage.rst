@@ -389,8 +389,8 @@ overridden by the same property of the attribute itself.
 
 All combined with underscores. For example, if we have a layerimage with
 the name "augustina work", and the group "eyes", this will match images
-that match the pattern augustina_work_eyes_`attribute`. With a `variant`
-of `blue`, it would match the pattern augustina_work_eyes_blue_`attribute`.
+that match the pattern augustina_work_eyes\_\ `attribute`. With a `variant`
+of `blue`, it would match the pattern augustina_work_eyes_blue\_\ `attribute`.
 
 
 Always

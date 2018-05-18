@@ -234,7 +234,7 @@ class Movie(renpy.display.core.Displayable):
 
     `mask_channel`
         The channel the alpha mask video is played on. If not given,
-        defaults to `channel`_mask. (For example, if `channel` is "sprite",
+        defaults to `channel`\ _mask. (For example, if `channel` is "sprite",
         `mask_channel` defaults to "sprite_mask".)
 
     `image`
