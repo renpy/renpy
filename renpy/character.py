@@ -398,7 +398,7 @@ def display_say(
         advance=True,
         multiple=None):
 
-    # Final is true if this statement should perform an interaction.
+    # Final is True if this statement should perform an interaction.
 
     if multiple is None:
         final = interact
@@ -1148,17 +1148,17 @@ def Character(name=NotSet, kind=None, **properties):
 
     `name`
         If a string, the name of the character for dialogue. When
-        `name` is ``None``, display of the name is omitted, as for
+        ``name`` is None, display of the name is omitted, as for
         narration.
 
     `kind`
         The Character to base this Character off of. When used, the
         default value of any argument not supplied to this Character
-        is the value of that argument supplied to `kind`. This can
+        is the value of that argument supplied to ``kind``. This can
         be used to define a template character, and then copy that
         character with changes.
 
-    **Linked Image**
+    **Linked Image.**
     An image tag may be associated with a Character. This allows a
     say statement involving this character to display an image with
     the tag, and also allows Ren'Py to automatically select a side
@@ -1168,7 +1168,7 @@ def Character(name=NotSet, kind=None, **properties):
          A string giving the image tag that is linked with this
          character.
 
-    **Voice Tag**
+    **Voice Tag.**
     If a voice tag is assign to a Character, the voice files that are
     associated with it, can be muted or played in the preference
     screen.
@@ -1202,7 +1202,7 @@ def Character(name=NotSet, kind=None, **properties):
     These options help to control the display of the name.
 
     `dynamic`
-        If true, then `name` should be a string containing a python
+        If True, then ``name`` should be a string containing a python
         expression. That string will be evaluated before each line
         of dialogue, and the result used as the name of the character.
 
@@ -1212,12 +1212,12 @@ def Character(name=NotSet, kind=None, **properties):
 
     `condition`
         If given, this should be a string containing a python
-        expression. If the expression is false, the dialogue
+        expression. If the expression is False, the dialogue
         does not occur, as if the say statement did not happen.
 
     `interact`
-        If true, the default, an interaction occurs whenever the
-        dialogue is shown. If false, an interaction will not occur,
+        If True, the default, an interaction occurs whenever the
+        dialogue is shown. If False, an interaction will not occur,
         and additional elements can be added to the screen.
 
     `advance`
@@ -1241,18 +1241,18 @@ def Character(name=NotSet, kind=None, **properties):
     finished displaying, to prompt the user to advance.
 
     `ctc`
-        A Displayable to use as the click-to-continue indicator, unless
+        A displayable to use as the click-to-continue indicator, unless
         a more specific indicator is used.
 
     `ctc_pause`
-        A Displayable to use a the click-to-continue indicator when the
+        A displayable to use a the click-to-continue indicator when the
         display of text is paused by the {p} or {w} text tags.
 
     `ctc_timedpause`
-        A Displayable to use a the click-to-continue indicator when the
+        A displayable to use a the click-to-continue indicator when the
         display of text is paused by the {p=} or {w=} text tags. When
         None, this takes its default from ctc_pause, use ``Null()``
-        when you want a ctc_pause but no ctc_timedpause.
+        when you want a ``ctc_pause`` but no ``ctc_timedpause``.
 
     `ctc_position`
         Controls the location of the click-to-continue indicator. If
@@ -1272,18 +1272,18 @@ def Character(name=NotSet, kind=None, **properties):
     Keyword arguments beginning with ``show_`` have the prefix
     stripped off, and are passed to the screen as arguments. For
     example, the value of ``show_myflag`` will become the value of
-    the ``myflag`` variable in the screen. (The myflag variable isn't
+    the ``myflag`` variable in the screen. (The ``myflag`` variable isn't
     used by default, but can be used by a custom say screen.)
 
     One show variable is, for historical reasons, handled by Ren'Py itself:
 
     `show_layer`
         If given, this should be a string giving the name of the layer
-        to show the "say" screen on.
+        to show the say screen on.
 
     **Styling Text and Windows.**
     Keyword arguments beginning with ``who_``, ``what_``, and
-    `window_`` have their prefix stripped, and are used to :ref:`style
+    ``window_`` have their prefix stripped, and are used to :ref:`style
     <styles>` the character name, the spoken text, and the window
     containing both, respectively.
 
@@ -1294,8 +1294,8 @@ def Character(name=NotSet, kind=None, **properties):
     dialogue.
 
     The style applied to the character name, spoken text, and window
-    can also be set this way, using the `who_style`, `what_style`, and
-    `window_style` arguments, respectively.
+    can also be set this way, using the ``who_style``, ``what_style``, and
+    ``window_style`` arguments, respectively.
 
     Setting :var:`config.character_id_prefixes` makes it possible to style
     other displayables as well. For example, when the default GUI is used,
