@@ -34,7 +34,7 @@ init block, then it is automatically placed inside an init block with a
 priority of 0. The transform may have a list of parameters, which must be
 supplied when it is called.
 
-`Name` must be a python identifier. The transform created by the ATL block is
+`Name` must be a Python identifier. The transform created by the ATL block is
 bound to this name.::
 
    transform left_to_right:
@@ -99,7 +99,7 @@ There are two kinds of ATL statements: simple and complex. Simple statements
 do not take an ATL block. A single logical line may contain one or more ATL
 statements, separated by commas. A complex statement contains a block, must
 be on its own line. The first line of a complex statement always ends with a
-colon (":").
+colon ``:``.
 
 By default, statements in a block are executed in the order in which they
 appear, starting with the first statement in the block. Execution terminates
@@ -195,7 +195,7 @@ Some sample interpolations are::
 An important special case is that the pause warper, followed by a time and
 nothing else, causes ATL execution to pause for that amount of time.
 
-Some properties can have values of multiple types. For example, the xpos
+Some properties can have values of multiple types. For example, the :propref:`xpos`
 property can be an int, float, or absolute. The behavior is undefined when an
 interpolation has old and new property values of different types.
 
@@ -203,7 +203,7 @@ Time Statement
 --------------
 
 The time statement is a simple control statement. It contains a single
-simple_expression, which is evaluated to give a time, expressed as seconds
+``simple_expression``, which is evaluated to give a time, expressed as seconds
 from the start of execution of the containing block.
 
 .. productionlist:: atl
@@ -287,7 +287,7 @@ Repeat Statement
 The repeat statement is a simple statement that causes the block containing it
 to resume execution from the beginning. If the expression is present, then it
 is evaluated to give an integer number of times the block will execute. (So a
-block ending with "repeat 2" will execute at most twice.)
+block ending with ``repeat 2`` will execute at most twice.)
 
 .. productionlist:: atl
     atl_repeat : "repeat" (`simple_expression`)?
@@ -335,7 +335,7 @@ the last choice in the choice set.
               :     `atl_block`
 
 Choice statements are greedily grouped into a choice set when more than one
-choice statement appears consecutively in a block. If the `simple_expression`
+choice statement appears consecutively in a block. If the ``simple_expression``
 is supplied, it is a floating-point weight given to that block, otherwise 1.0
 is assumed.
 
@@ -520,7 +520,6 @@ The functions have the same signature as those used with :func:`Transform`:
 
 ::
 
-    init python:
         def slide_function(trans, st, at):
             if st > 1.0:
                 trans.xalign = 1.0
@@ -572,8 +571,8 @@ http://www.easings.net/.
 
 .. include:: inc/easings
 
-New warpers can be defined using the renpy.atl_warper decorator, in a python
-early block. It should be placed in a file that is parsed before any file
+New warpers can be defined using the renpy.atl_warper decorator, in a ``python
+early`` block. It should be placed in a file that is parsed before any file
 that uses the warper. This looks like::
 
     python early hide:
@@ -589,11 +588,11 @@ List of Transform Properties
 
 The following transform properties exist.
 
-When the type is given as position, it may be an int, renpy.absolute, or
+When the type is given as position, it may be an int, ``renpy.absolute``, or
 float. If it's a float, it's interpreted as a fraction of the size of the
-containing area (for pos) or displayable (for anchor).
+containing area (for :propref:`pos`) or displayable (for :propref:`anchor`).
 
-Note that not all properties are independent. For example, xalign and xpos
+Note that not all properties are independent. For example, :propref:`xalign` and :propref:`xpos`
 both update some of the same underlying data. In a parallel statement, only
 one block should adjust horizontal position, and one should adjust vertical
 positions. (These may be the same block.) The angle and radius properties set
@@ -763,7 +762,7 @@ both horizontal and vertical positions.
     :type: boolean
     :default: None
 
-    If true, the displayable and its children are drawn using nearest-neighbor
+    If True, the displayable and its children are drawn using nearest-neighbor
     filtering. If False, the displayable and its children are drawn using
     bilinear filtering. If None, this is inherited from the parent, or
     :var:`config.nearest_neighbor`, which defaults to False.
@@ -999,7 +998,7 @@ The following events can be triggered automatically:
 
 ``hide``
     Triggered when the transform is hidden using the hide statement or its
-    python equivalent.
+    Python equivalent.
 
     Note that this isn't triggered when the transform is eliminated via
     the scene statement or exiting the context it exists in, such as when
