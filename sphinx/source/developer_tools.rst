@@ -16,14 +16,14 @@ The console can be used to:
 
 * Jump to a label.
 * Interactively try out Ren'Py script statements.
-* Evaluate a python expression or statement to see the result.
-* Trace python expressions as the game progresses.
+* Evaluate a Python expression or statement to see the result.
+* Trace Python expressions as the game progresses.
 
 Shift+E Editor Support
 ----------------------
 
 The :var:`config.editor` variable allows a developer to specify an editor
-command that is run when the launch_editor keypress (by default, "shift-E")
+command that is run when the launch_editor keypress (by default, Shift+E)
 occurs.
 
 please see :ref:`Text Editor Integration <text-editor-integration>`
@@ -31,15 +31,15 @@ please see :ref:`Text Editor Integration <text-editor-integration>`
 Shift+D Developer Menu
 ----------------------
 
-When :var:`config.developer` is true, hitting "shift+D" will display a developer
+When :var:`config.developer` is True, hitting Shift+D will display a developer
 menu that provides easy access to some of the features given below.
 
 Shift+R Reloading
 -----------------
 
-When :var:`config.developer` is true, hitting "shift+R" will save the current
+When :var:`config.developer` is True, hitting Shift+R will save the current
 game, reload the game script, and reload the game. This will often place you at
-the last unchanged statement encountered before "shift+R" was pressed.
+the last unchanged statement encountered before Shift+R was pressed.
 
 This allows the developer to make script changes with an external editor, and
 not have to exit and restart Ren'Py to see the effect of the changes.
@@ -52,7 +52,7 @@ new effect.
 Shift+I Style Inspecting
 ------------------------
 
-When :var:`config.developer` is true, pressing "shift+I" will cause style
+When :var:`config.developer` is True, pressing Shift+I will cause style
 inspection to occur. This will display a list of displayables underneath the
 mouse. For each displayable, it will display the type, the style used, and the
 size it is being rendered at.
@@ -61,7 +61,7 @@ Shift+Y Style Dumping
 ---------------------
 
 When :var:`config.developer` is True, pressing the dump_styles key (by default,
-"shift-Y"), will write a description of every style Ren'Py knows about to the
+Shift+Y), will write a description of every style Ren'Py knows about to the
 file "styles.txt". This description includes every property that is part of the
 style, the value of that property, and the style the property is inherited
 from.
@@ -70,7 +70,7 @@ from.
 ---------------
 
 When :var:`config.developer` or :var:`config.fast_skipping` is True, pressing
-the fast_skip key (by default, ">") causes the the game to immediately skip to
+the ``fast_skip`` key (by default, ">") causes the the game to immediately skip to
 the next important interaction.  For this purpose, an important interaction is
 one that is not caused by a say statement, transition, or pause command.
 Usually, this means skipping to the next menu, but it will also stop when
