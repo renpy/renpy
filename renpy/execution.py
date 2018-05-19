@@ -141,6 +141,19 @@ class Context(renpy.object.Object):
     come_from_name = None
     come_from_label = None
 
+    def __repr__(self):
+
+        if not self.current:
+            return "<Context>"
+
+        node = renpy.game.script.lookup(self.current)
+
+        return "<Context: {}:{} {!r}>".format(
+            node.filename,
+            node.linenumber,
+            node.diff_info(),
+            )
+
     def after_upgrade(self, version):
         if version < 1:
             self.scene_lists.image_predict_info = self.predict_info.images
