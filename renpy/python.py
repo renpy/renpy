@@ -1577,7 +1577,7 @@ class RollbackLog(renpy.object.Object):
                 if (self.current.context.current == fwd_name
                         and data == fwd_data
                         and (keep_rollback or self.rolled_forward)
-                    ):
+                        ):
                     self.forward.pop(0)
                 else:
                     self.forward = [ ]
@@ -1711,13 +1711,6 @@ class RollbackLog(renpy.object.Object):
                 break
 
             if rb.hard_checkpoint:
-
-                # If the last checkpoint is a label, it's likely the start label.
-                # go back to it.
-                if isinstance(rb.context.current, basestring):
-                    force_checkpoint = True
-                    revlog.append(self.log.pop())
-
                 break
 
             revlog.append(self.log.pop())
