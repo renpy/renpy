@@ -318,6 +318,18 @@ class Context(renpy.object.Object):
         # The language of the current translate block.
         self.translate_block_language = None
 
+    def replace_node(self, old, new):
+
+        def replace_one(name):
+            n = renpy.game.script.lookup(name)
+            if n is old:
+                return new.name
+
+            return name
+
+        self.current = replace_one(self.current)
+        self.return_stack = [ replace_one(i) for i in self.return_stack ]
+
     def make_dynamic(self, names, context=False):
         """
         Makes the variable names listed in names dynamic, by backing up

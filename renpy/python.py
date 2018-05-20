@@ -1420,9 +1420,7 @@ class RollbackLog(renpy.object.Object):
         """
 
         for i in self.log:
-            n = renpy.game.script.lookup(i.context.current)
-            if n is old:
-                i.context.current = new.name
+            i.context.replace_node(old, new)
 
     def complete(self, begin=False):
         """
