@@ -1413,6 +1413,17 @@ class RollbackLog(renpy.object.Object):
 
         self.rolled_forward = False
 
+    def replace_node(self, old, new):
+        """
+        Replaces references to the `old` ast node with a reference to the
+        `new` ast node.
+        """
+
+        for i in self.log:
+            n = renpy.game.script.lookup(i.context.current)
+            if n is old:
+                i.context.current = new.name
+
     def complete(self, begin=False):
         """
         Called after a node is finished executing, before a save
@@ -1566,8 +1577,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                    and data == fwd_data
-                    and (keep_rollback or self.rolled_forward)
+                        and data == fwd_data
+                        and (keep_rollback or self.rolled_forward)
                     ):
                     self.forward.pop(0)
                 else:

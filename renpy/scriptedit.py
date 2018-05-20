@@ -349,6 +349,7 @@ def add_to_ast_before(code, filename, linenumber):
         i.replace_next(old, block[0])
 
     renpy.ast.chain_block(block, old)
+    renpy.game.log.replace_node(old, block[0])
 
 
 def can_add_before(filename, linenumber):
