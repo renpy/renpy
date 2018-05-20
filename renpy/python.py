@@ -1710,7 +1710,7 @@ class RollbackLog(renpy.object.Object):
             if not renpy.game.script.has_label(rb.context.current):
                 break
 
-            if rb.checkpoint:
+            if rb.hard_checkpoint:
 
                 # If the last checkpoint is a label, it's likely the start label.
                 # go back to it.
