@@ -4,7 +4,7 @@ In-App Purchasing
 
 Ren'Py includes a high-level in-app purchasing framework. This framework
 currently only supports unlock-style purchases from the Apple App Store,
-Google Play, and the Amazon App Store.
+Google Play, and the Amazon Appstore.
 
 Using this framework is fairly simple, and consists of the following
 functions.
@@ -27,12 +27,12 @@ Apple App Store
     special configuration.
 
 Google Play
-    Before Google Play can be used, you must add the google play key and
+    Before Google Play can be used, you must add the Google Play key and
     a salt to your project. See the :ref:`Expansion APK <expansion-apk>`
     section for information on how to do this.
 
-Amazon App Store
-    The Amazon app store is based on the package name, and does not
+Amazon Appstore
+    The Amazon Appstore is based on the package name, and does not
     require special configuration.
 
 

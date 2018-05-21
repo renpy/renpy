@@ -35,23 +35,19 @@ is used to replace the text tag and its contents.
 
 Content tuples consist of two components. The first component is one of the
 the constants in the following list. The second component varies based on
-the first component, as describe below.
+the first component, as described below.
 
 renpy.TEXT_TEXT
-
     The second component is text that is intended for display to the user.
 
 renpy.TEXT_TAG
-
     The second component is the contents of a text tag, without the
     enclosing braces.
 
 renpy.TEXT_DISPLAYABLE
-
     The second component is a displayable to be embedded into the text.
 
 renpy.TEXT_PARAGRAPH
-
     This represents a break between paragraphs, and the second component
     is undefined (but must be present).
 

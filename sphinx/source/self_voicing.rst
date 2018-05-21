@@ -28,7 +28,7 @@ adjust your platform's speech settings.
 
 Windows
     On Windows, Ren'Py uses the Microsoft Speech API. Speech synthesis
-    settings can  be changed on the "Text to Speech" tab of the "Speech
+    settings can be changed on the "Text to Speech" tab of the "Speech
     Recognition" control panel.
 
 Mac OS X
@@ -82,7 +82,7 @@ Alternative text
     available as the "[text]" string substitution. No other string
     substitutions are allowed.
 
-    Supplying the `who_alt` and `what_alt` parameters to Character
+    Supplying the ``who_alt`` and ``what_alt`` parameters to Character
     sets the alt style property for the character name and body text,
     respectively. As an example, we define a Character that uses italics
     to indicate thoughts normally, but explicitly indicates thoughts
@@ -93,13 +93,13 @@ Alternative text
 Descriptive Text
     Descriptive text is text that is displayed (and spoken) by the narrator if
     self-voicing is enabled. The text is not displayed if self-voicing is
-    disabled. Self voicing text uses the `sv` variable, which is defined to
+    disabled. Self-voicing text uses the :var:`sv` variable, which is defined to
     be similar to a character.
 
     .. var:: sv = ...
 
         A character-like object that uses the narrator to speak text if
-        self-vocing is enabled.
+        self-voicing is enabled.
 
     For example::
 
@@ -111,6 +111,6 @@ Descriptive Text
         show event sun_exploding
         pause 10
 
-A self-voicing debug mode can be enabled by typing shift+alt+V. This will
+A self-voicing debug mode can be enabled by typing Shift+Alt+V. This will
 display the text that would be voiced on the screen for development
 purposes.

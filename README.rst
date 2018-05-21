@@ -11,14 +11,14 @@ on feature branches.
 Getting Started
 ===============
 
-Ren'Py depends on a number of python modules written in Cython and C. For
-changes to Ren'Py that only involve python modules, you can use the modules
+Ren'Py depends on a number of Python modules written in Cython and C. For
+changes to Ren'Py that only involve Python modules, you can use the modules
 found in the latest nightly build. Otherwise, you'll have to compile the
 modules yourself.
 
 The development scripts assume a POSIX-like platform. The scripts should run
-on Linux or Mac OS X, and can be made to run on Windows using an environment
-like Msys.
+on Linux or macOS, and can be made to run on Windows using an environment
+like MSYS.
 
 Nightly Build
 -------------

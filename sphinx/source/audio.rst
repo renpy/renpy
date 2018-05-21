@@ -4,23 +4,23 @@ Audio
 Ren'Py supports playing music and sound effects in the background,
 using the following audio file formats
 
-* OPUS
-* OGG Vorbis
+* Opus
+* Ogg Vorbis
 * MP3
 * WAV (uncompressed PCM only)
 
 Ren'Py supports an arbitrary number of audio channels. There are three
 normal channels defined by default:
 
-* music - A channel for music playback.
-* sound - A channel for sound effects.
-* voice - A channel for voice.
+* ``music`` - A channel for music playback.
+* ``sound`` - A channel for sound effects.
+* ``voice`` - A channel for voice.
 
 Normal channels support playing and queueing audio, but only play back
 one audio file at a time. New normal channels can be registered with
 :func:`renpy.music.register_channel`.
 
-The 'Music Volume', 'Sound Volume', and 'Voice Volume' settings
+The Music Volume, Sound Volume, and Voice Volume settings
 of the in-game preferences menu are used to set individual
 volumes for these channels.
 
@@ -42,11 +42,11 @@ the three music/sound statements.
 Play Statement
 ------------------
 
-The play statement is used to play sound and music. If a file is
+The ``play`` statement is used to play sound and music. If a file is
 currently playing on a normal channel, it is interrupted and replaced with
 the new file.
 
-The name of a channel is expected following keyword ``play``,
+The name of a channel is expected following the keyword ``play``.
 (Usually, this is either "sound", "music", "voice", or "audio"). This is
 followed by audiofile(s), where audiofile(s) can be one file or list of files.
 When the list is given, the item of it is played in order.
@@ -54,11 +54,11 @@ When the list is given, the item of it is played in order.
 
 The ``fadein`` and ``fadeout`` clauses are optional. Fadeout gives the fadeout
 time for currently playing music, in seconds, while fadein gives the time
-it takes to fade in the new music. If fadeout is not given, config.fade_music
+it takes to fade in the new music. If fadeout is not given, :var:`config.fade_music`
 is used.
 
 The ``loop`` and ``noloop`` clauses are also optional. The loop clause causes
-the music to loop, while noloop causes it to play only once. If both of them isn't
+the music to loop, while noloop causes it to play only once. If neither of them are
 given, the default of the channel is used. ::
 
         play music "mozart.ogg"
@@ -78,7 +78,7 @@ time::
 Stop Statement
 --------------
 
-The stop statement begin with keyword ``stop``, followed by the the name of a
+The ``stop`` statement begins with the keyword ``stop``, followed by the the name of a
 channel to stop sound on. It may optionally have a ``fadeout``
 clause. ::
 
@@ -89,10 +89,10 @@ clause. ::
 Queue Statement
 ---------------
 
-The queue statement is used to queue up audio files. They will be played when
+The ``queue`` statement is used to queue up audio files. They will be played when
 the channel finishes playing the currently playing file.
 
-The queue statement begin with keyword ``queue``, followed by the the name of a
+The queue statement begins with keyword ``queue``, followed by the the name of a
 channel to play sound on. It optionally takes the ``loop`` and ``noloop`` clauses. ::
 
         queue sound "woof.ogg"
@@ -100,8 +100,8 @@ channel to play sound on. It optionally takes the ``loop`` and ``noloop`` clause
 
 The advantage of using these statements is that your program will be checked for
 missing sound and music files when lint is run. The functions below exist to allow
-access to allow music and sound to be controlled from python, and to expose
-advanced (rarely-used) features.
+access to allow music and sound to be controlled from Python, and to expose
+advanced (rarely used) features.
 
 
 .. _partial-playback:
@@ -134,11 +134,11 @@ For example::
 
         play music "<from 5 to 15.5>waves.opus"
 
-Will play 10.5 seconds of waves.opus, starting at the 5 second mark. The statement::
+will play 10.5 seconds of waves.opus, starting at the 5 second mark. The statement::
 
         play music "<loop 6.333>song.opus"
 
-Will play song.opus all the way through once, then loop back to the 6.333
+will play song.opus all the way through once, then loop back to the 6.333
 second mark before playing it again all the way through to the end.
 
 .. _silence:
@@ -182,6 +182,6 @@ Functions
 Sound Functions
 ---------------
 
-Most renpy.music functions have aliases in renpy.sound. These functions are similar,
+Most ``renpy.music`` functions have aliases in ``renpy.sound``. These functions are similar,
 except they default to the sound channel rather than the music channel, and default
 to not looping.

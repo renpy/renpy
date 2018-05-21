@@ -20,7 +20,7 @@ current image attributes that are associated with that tag.
 To determine the side image associated with a tag, Ren'Py tries to find
 an image with the tag "side", and the largest number of attributes from
 the pool. If no image can be found, or more than one image has the same
-number of attributes, an :class:`Null` is shown instead.
+number of attributes, a :class:`Null` is shown instead.
 
 For example, say we have the following script::
 
@@ -98,7 +98,7 @@ using config variables.
 
 .. var:: config.side_image_only_not_showing = False
 
-    When set to true, the side image will only show if an image with that tag
+    When set to True, the side image will only show if an image with that tag
     is not already being shown on the screen.
 
 .. var:: config.side_image_prefix_tag = 'side'
@@ -109,7 +109,7 @@ using config variables.
 
     The Null displayable to use when not displaying a side image. This
     be changed, but only to other Null objects. One reason for doing so
-    would be to set the side of the Null (eg. Null(width=200, height=150))
+    would be to set the side of the Null (eg. ``Null(width=200, height=150)``)
     to prevent dissolves from being cut off.
 
 .. var:: config.side_image_same_transform = None
@@ -152,7 +152,7 @@ associated with that image changes::
 
 This is used to dissolve between old and new side images when the
 character remains the same. (For example, when the character changes
-emotion.) For the Dissolve to work correctly, both side images must
+emotion.) For the :class:`Dissolve` to work correctly, both side images must
 be the same size. ::
 
     transform same_transform(old, new):
@@ -178,7 +178,7 @@ or ``nvl`` screens. Both include the line::
 
     add SideImage() xalign 0.0 yalign 1.0
 
-By changing the xalign and yalign properties, you can control the positioning
+By changing the :propref:`xalign` and :propref:`yalign` properties, you can control the positioning
 of the side image on the screen.
 
 Finally, the :func:`SideImage` function returns, as a displayable, the

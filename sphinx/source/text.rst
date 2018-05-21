@@ -5,7 +5,7 @@ Text
 ====
 
 Ren'Py contains several ways of displaying text. The :ref:`say <say-statement>`
-and :ref:`menu <menu-statement>` are primarily concerned with the
+and :ref:`menu <menu-statement>` statements are primarily concerned with the
 display of text to the user. The user interface often contains text,
 displayed using the :ref:`text <sl-text>`, :ref:`textbutton <sl-textbutton>`,
 and :ref:`label <sl-label>` screen language statements. These
@@ -96,7 +96,7 @@ formatting syntax. Ren'Py uses [ to introduce string formatting
 because { was taken by text tags.
 
 Along with the !s and !r conversion flags supported by Python, Ren'Py
-supports !q and !t conversion flag. The !q conversion flag ensures that
+supports !q and !t conversion flags. The !q conversion flag ensures that
 text tags are properly quoted, so that displaying a string will not
 introduce unwanted formatting constructs. For example::
 
@@ -125,9 +125,9 @@ styling a portion of text block, or a small fraction of the text
 blocks in the program. If you find yourself applying the same text
 tags to every line of text, consider using a style instead.
 
-There are two text tags. Some text tags are self-closing, while others
+There are two types of text tags. Some text tags are self-closing, while others
 require a closing tag. When multiple closing tags are used, they
-should be closed last open, first closed order - Ren'Py will reject
+should be closed last open, first closed order—Ren'Py will reject
 incorrect nesting. For example::
 
     # This line is correct.
@@ -155,12 +155,12 @@ Tags that apply to all text are:
     :propref:`hyperlink_functions` style property, the default handler
     has the following behavior.
 
-    * When the argument begins with jump:, the rest of the argument is a label to jump to.
+    * When the argument begins with ``jump:``, the rest of the argument is a label to jump to.
 
-    * When the argument begins with call:, the rest of the argument is a label
+    * When the argument begins with ``call:``, the rest of the argument is a label
       to call. As usual, a call ends the current Ren'Py statement.
 
-    * When the argument begins with call_in_new_context:, the rest of the argument
+    * When the argument begins with ``call_in_new_context:``, the rest of the argument
       is a label to call in a new context (using :func:`renpy.call_in_new_context`).
 
     * Otherwise, the argument is a URL that is opened by the system web browser.
@@ -486,7 +486,7 @@ Ruby Text
 
 Ruby text (also known as furigana or interlinear annotations) is a way
 of placing small text above a character or word. There are several
-steps required for your game to support Ruby text.
+steps required for your game to support ruby text.
 
 First, you must set up styles for the ruby text. The following style
 changes are required:
@@ -496,7 +496,7 @@ changes are required:
 2. A new named style must be created. The properties of this style,
    such as :propref:`size` should be set in a fashion appropriate
    for ruby text.
-3. The yoffset of the new style should be set, in order to move the
+3. The :propref:`yoffset` of the new style should be set, in order to move the
    ruby text above the baseline.
 4. The :propref:`ruby_style` field of the text's style should be set
    to the newly-created style.
@@ -511,12 +511,12 @@ For example::
         line_leading 12
         ruby_style style.ruby_style
 
-(Use style.style_name to refer to a style for this purpose.)
+(Use ``style.style_name`` to refer to a style for this purpose.)
 
 Once Ren'Py has been configured, ruby text can be included using the
-rt and rb text tags. The rt tag is used to mark one or more characters
+{rt} and {rb} text tags. The {rt} tag is used to mark one or more characters
 to be displayed as ruby text. If the ruby text is preceded by text
-enclosed in the rb tag, the ruby text is centered over that
+enclosed in the {rb} tag, the ruby text is centered over that
 text. Otherwise, it is centered over the preceding character.
 
 For example::
@@ -531,8 +531,8 @@ or spaces to the left and right of the text to prevent these errors
 from occurring.
 
 Ren'Py also supports alternate ruby text, which is a second kind of
-ruby top text. This is introduced with the art text tag (instead of rt),
-and the altruby_style property (instead of ruby_style).
+ruby top text. This is introduced with the {art} text tag (instead of {rt}),
+and the :propref:`altruby_style` property (instead of :propref:`ruby_style`).
 
 Fonts
 =====
@@ -541,7 +541,7 @@ Ren'Py supports TrueType/OpenType fonts and collections, and
 Image-Based fonts.
 
 A TrueType or OpenType font is specified by giving the name of the font
-file. The file must be present in the game directory, or one of the archive
+file. The file must be present in the game directory or one of the archive
 files.
 
 Ren'Py also supports TrueType/OpenType collections that define more than one
@@ -559,8 +559,8 @@ mapped to a similar combination. This allows a font with proper
 italics to be used instead of the automatically-generated italics.
 
 Once such mapping would be to replace the italic version of the Deja
-Vu Sans font with the official oblique version. (You'll need to
-download the oblique font from the web.)::
+Vu Sans font with the official oblique version (You'll need to
+download the oblique font from the web)::
 
     init python:
         config.font_replacement_map["DejaVuSans.ttf", False, True] = ("DejaVuSans-Oblique.ttf", False, False)
@@ -601,9 +601,9 @@ the mood the creator intends. To support this, Ren'Py supports font groups
 that can take characters from two or more fonts and combine them into a
 single font.
 
-To create a font group, create a FontGroup object and call the .add method
-on it once or more. a FontGroup can be used wherever a font name can be
-used. The add method takes the start and end of a range of unicode character
+To create a font group, create a :class:`FontGroup` object and call the ``.add`` method
+on it once or more. A FontGroup can be used wherever a font name can be
+used. The add method takes the start and end of a range of Unicode character
 points, and the first range to cover a point is used.
 
 For example::

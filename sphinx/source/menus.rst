@@ -6,10 +6,10 @@ In-Game Menus
 =============
 
 In many visual novels, the player is asked to make choices that
-control the outcome of the story. The Ren'Py language contains a menus
+control the outcome of the story. The Ren'Py language contains a ``menu``
 statement that makes it easy to present choices to the user.
 
-Here's an example of a menu statement::
+Here's an example of a ``menu`` statement::
 
     menu:
          "What should I do?"
@@ -29,7 +29,7 @@ Here's an example of a menu statement::
 
          "After having my drink, I got on with my morning."
 
-The menu statement begins with the keyword menu. This may be followed
+The ``menu`` statement begins with the keyword ``menu``. This may be followed
 by a label name, in which case it's equivalent to preceding the menu
 with that label. For example::
 
@@ -52,7 +52,7 @@ When the choice is selected, the block of statements is run. If execution
 reaches the end of the block, it continues with the statement
 after the end of the menu statement.
 
-An if-clause consists of the keyword ``if``, followed by a python
+An if-clause consists of the keyword ``if``, followed by a Python
 expression. The menu choice is only displayed if the expression is
 true. In the following menu::
 
@@ -64,5 +64,5 @@ true. In the following menu::
         "Fly above." if drank_tea:
             ...
 
-The third choice will only be presented if the drank_tea variable is
+The third choice will only be presented if the ``drank_tea`` variable is
 true.

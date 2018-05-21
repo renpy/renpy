@@ -21,9 +21,9 @@ statement after the label statement whenever the end of the block is reached.
 
 There are two kinds of labels: *global* and *local* labels. Global labels live
 in one global scope shared across all project files and thus should have unique
-names per game. Local labels logically reside inside scope of the global label
-they are declared in. To declare a local label, prefix its name with `.`. For
-example: ::
+names per game. Local labels logically reside inside the scope of the global label
+they are declared in. To declare a local label, prefix its name with a period ``.``.
+For example::
 
     label global_label:
         "Inside a global label.."
@@ -101,8 +101,7 @@ stacks can return to the proper place when loaded on a changed script. ::
 
         return
 
-The call statement may take arguments, which are processed as described in PEP
-3102.
+The call statement may take arguments, which are processed as described in :pep:`3102`.
 
 When using a call expression with an arguments list, the ``pass`` keyword must
 be inserted between the expression and the arguments list. Otherwise, the
@@ -114,12 +113,12 @@ call.
 Return Statement
 ----------------
 
-The return statement pops the top statement off of the call stack, and transfers
+The ``return`` statement pops the top statement off of the call stack, and transfers
 control to it. If the call stack is empty, the return statement restarts
 Ren'Py, returning control to the main menu.
 
 If the optional expression is given to return, it is evaluated, and it's result
-is stored in the _return variable. This variable is dynamically scoped to each
+is stored in the ``_return`` variable. This variable is dynamically scoped to each
 context.
 
 Special Labels
@@ -158,7 +157,7 @@ The following labels are used by Ren'Py:
 
 ``after_warp``
     If it is existed, this label is called after a warp but before the warped-to
-    statement executes. please see :ref:`Warping to a line <warping_to_a_line>`
+    statement executes. Please see :ref:`Warping to a line <warping_to_a_line>`.
 
 Labels & Control Flow Functions
 -------------------------------

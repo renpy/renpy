@@ -88,7 +88,7 @@ selectedness.
 
 All actions provided with Ren'Py conform to this definition. When defining
 your own actions, it makes sense to provide them with this notion of
-equality. This can be done by supplying an appropriate __eq__ method.
+equality. This can be done by supplying an appropriate ``__eq__`` method.
 For example::
 
     class TargetShip(Action):
@@ -105,7 +105,7 @@ For example::
             global target
             target = self.ship
 
-It's important to define the __eq__ function carefully, making sure it
+It's important to define the ``__eq__`` function carefully, making sure it
 compares all fields, and uses equality (==) and identity (is) comparison
 as appropriate.
 

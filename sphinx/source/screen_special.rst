@@ -97,12 +97,12 @@ with the menu statement. It is given the following parameter:
     .. attribute:: action
 
         An action that should be invoked when the menu choice is
-        chosen. This many be None if this is a menu cation, and
-        :var:`config.narrator_menu` is false.
+        chosen. This may be None if this is a menu caption, and
+        :var:`config.narrator_menu` is False.
 
     .. attribute:: chosen
 
-        This is true if this choice has been chosen at least once
+        This is True if this choice has been chosen at least once
         in any playthrough of the game.
 
 ::

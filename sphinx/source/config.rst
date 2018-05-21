@@ -12,7 +12,7 @@ initialized, configuration variables will not change. Changing configuration
 variables outside of init blocks can lead to undefined behavior.
 Configuration variables are not part of the save data.
 
-Configuration variables are often changed in init python blocks::
+Configuration variables are often changed in ``init python`` blocks::
 
     init python:
 
@@ -306,7 +306,7 @@ Occasionally Used
 
 .. var:: config.debug_text_overflow = False
 
-    When true, Ren'Py will log text overflows to text_overflow.txt. A text
+    When True, Ren'Py will log text overflows to text_overflow.txt. A text
     overflow occurs when a :class:`Text` displayable renders to a size
     larger than that allocated to it. By setting this to True and setting
     the :propref:`xmaximum` and :propref:`ymaximum` style properties of the dialogue
@@ -327,7 +327,7 @@ Occasionally Used
 
 .. var:: config.defer_styles = False
 
-    When true, the execution of style statements is deferred until after
+    When True, the execution of style statements is deferred until after
     all "translate python" blocks have executed. This lets a translate
     python block update variables that are then used in style (not
     translate style) statements.
@@ -446,7 +446,7 @@ Occasionally Used
 
 .. var:: config.has_autosave = True
 
-    If true, the game will autosave. If false, no autosaving will
+    If True, the game will autosave. If False, no autosaving will
     occur.
 
 .. var:: config.history_callbacks = [ ... ]
@@ -466,9 +466,9 @@ Occasionally Used
 
 .. var:: config.hw_video = False
 
-    If true, hardware video playback will be used on mobile platforms. This
+    If True, hardware video playback will be used on mobile platforms. This
     is faster, but only some formats are supported and only fullscreen video
-    is available. If false, software playback will be used, but it may be
+    is available. If False, software playback will be used, but it may be
     too slow to be useful.
 
 .. var:: config.hyperlink_handlers = { ... }
@@ -588,7 +588,7 @@ Occasionally Used
 
 .. var:: config.narrator_menu = False
 
-    (This is set to True by the default screens.rpy file.) If true,
+    (This is set to True by the default screens.rpy file.) If True,
     then narration inside a menu is displayed using the narrator
     character. Otherwise, narration is displayed as captions
     within the menu itself.
@@ -879,11 +879,11 @@ Rarely or Internally Used
 
 .. var:: config.autoreload = True
 
-    If true, shift+R will toggle automatic reloading. When automatic
+    If True, Shift+R will toggle automatic reloading. When automatic
     reloading is enabled, Ren'Py will reload the game whenever a used
     file is modified.
 
-    If false, Ren'Py will reload the game once per press of shift+R.
+    If False, Ren'Py will reload the game once per press of Shift+R.
 
 .. var:: config.autosave_frequency = 200
 
@@ -893,12 +893,12 @@ Rarely or Internally Used
 
 .. var:: config.autosave_on_choice = True
 
-    If true, Ren'Py will autosave upon encountering an in-game choice.
+    If True, Ren'Py will autosave upon encountering an in-game choice.
     (When :func:`renpy.choice_for_skipping` is called.)
 
 .. var:: config.autosave_on_quit = True
 
-    If true, Ren'Py will attempt to autosave when the user attempts to quit,
+    If True, Ren'Py will attempt to autosave when the user attempts to quit,
     return to the main menu, or load a game over the existing game. (To
     save time, the autosave occurs while the user is being prompted to confirm
     his or her decision.)
@@ -998,9 +998,9 @@ Rarely or Internally Used
 
 .. var:: config.imagemap_cache = True
 
-    If true, imagemap hotspots will be cached to PNG files,
+    If True, imagemap hotspots will be cached to PNG files,
     reducing time and memory usage, but increasing the size of
-    the game on disk. Set this to false to disable this behavior.
+    the game on disk. Set this to False to disable this behavior.
 
 .. var:: config.implicit_with_none = True
 
@@ -1016,9 +1016,9 @@ Rarely or Internally Used
 
 .. var:: config.keep_running_transform = True
 
-    If true, showing an image without supplying a transform or ATL
+    If True, showing an image without supplying a transform or ATL
     block will cause the image to continue the previous transform
-    an image with that tag was using, if any. If false, the transform
+    an image with that tag was using, if any. If False, the transform
     is stopped.
 
 .. var:: config.keymap = dict(...)
@@ -1031,8 +1031,8 @@ Rarely or Internally Used
 
     If not None, this is a function that is called whenever a label is
     reached. It is called with two parameters. The first is the name
-    of the label. The second is true if the label was reached through
-    jumping, calling, or creating a new context, and false
+    of the label. The second is True if the label was reached through
+    jumping, calling, or creating a new context, and False
     otherwise.
 
 .. var:: config.label_overrides = { }
@@ -1065,7 +1065,7 @@ Rarely or Internally Used
     This is a list of functions that are called, with no arguments,
     when lint is run. The functions are expected to check the script
     data for errors, and print any they find to standard output (using
-    the python print statement is fine in this case).
+    the Python ``print`` statement is fine in this case).
 
 .. var:: config.load_before_transition = True
 
@@ -1142,12 +1142,12 @@ Rarely or Internally Used
 
 .. var:: config.new_substitutions = True
 
-    If true, Ren'Py will apply new-style (square-bracket)
+    If True, Ren'Py will apply new-style (square-bracket)
     substitutions to all text displayed.
 
 .. var:: config.old_substitutions = False
 
-    If true, Ren'Py will apply old-style (percent) substitutions to
+    If True, Ren'Py will apply old-style (percent) substitutions to
     text displayed by the :ref:`say <say-statement>` and :ref:`menu
     <menu-statement>` statements.
 
@@ -1196,7 +1196,7 @@ Rarely or Internally Used
 
 .. var:: config.quit_on_mobile_background = False
 
-    If true, the mobile app will quit when it loses focus.
+    If True, the mobile app will quit when it loses focus.
 
 .. var:: config.rollback_enabled = True
 
@@ -1223,7 +1223,7 @@ Rarely or Internally Used
 
     If not None, this should be a function. The function is called
     with no arguments when the user attempts to dismiss a :ref:`say
-    statement <say-statement>`. If this function returns true, the
+    statement <say-statement>`. If this function returns True, the
     dismissal is allowed, otherwise it is ignored.
 
 .. var:: config.say_layer = "screens"
@@ -1245,7 +1245,7 @@ Rarely or Internally Used
 
 .. var:: config.save_dump = False
 
-   If set to true, Ren'Py will create the file save_dump.txt whenever it
+   If set to True, Ren'Py will create the file save_dump.txt whenever it
    saves a game. This file contains information about the objects contained
    in the save file. Each line consists of a relative size estimate, the path
    to the object, information about if the object is an alias, and a
@@ -1253,21 +1253,21 @@ Rarely or Internally Used
 
 .. var:: config.save_on_mobile_background = True
 
-    If true, the mobile app will save its state when it loses focus. The state
+    If True, the mobile app will save its state when it loses focus. The state
     is saved in a way that allows it to be automatically loaded (and the game
     to resume its place) when the app starts again.
 
 .. var:: config.save_physical_size = True
 
-    If true, the physical size of the window will be saved in the
+    If True, the physical size of the window will be saved in the
     preferences, and restored when the game resumes.
 
 .. var:: config.savedir = ...
 
     The complete path to the directory in which the game is
-    saved. This should only be set in a python early block. See also
+    saved. This should only be set in a ``python early`` block. See also
     config.save_directory, which generates the default value for this
-    if it is not set during a python early block.
+    if it is not set during a ``python early`` block.
 
 .. var:: config.scene = renpy.scene
 
@@ -1291,7 +1291,7 @@ Rarely or Internally Used
 .. var:: config.screenshot_pattern = "screenshot%04d.png"
 
     The pattern used to create screenshot files. This pattern is applied (using
-    python's %-formatting rules) to the natural numbers to generate a sequence
+    Python's %-formatting rules) to the natural numbers to generate a sequence
     of filenames. The filenames may be absolute, or relative to
     config.renpy_base. The first filename that does not exist is used as the
     name of the screenshot.
@@ -1383,7 +1383,7 @@ Rarely or Internally Used
 
 .. var:: config.transition_screens = True
 
-    If true, screens will participate in transitions, dissolving from the
+    If True, screens will participate in transitions, dissolving from the
     old state of the screen to the new state of the screen. If False, only
     the latest state of the screen will be shown.
 

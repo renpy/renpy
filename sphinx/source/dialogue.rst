@@ -61,7 +61,6 @@ the ``[`` character begins a substitution. To use them in dialogue,
 double them. It may also be necessary to precede a quote with a
 backslash to prevent it from closing the string. For example::
 
-   ###
        "I walked past a sign saying, \"Let's give it 100%!\""
 
 
@@ -79,10 +78,9 @@ assign a Character to a variable. For example::
 
 Once this is done, the character can be used in a say statement::
 
-    ###
         e "Hello, world."
 
-Character is a python function, that takes a large number of keyword
+Character is a Python function that takes a large number of keyword
 arguments. These keyword arguments control the behavior of the
 character.
 
@@ -218,31 +216,28 @@ these statements control the presence or absence of the window during
 non-dialogue interactions.
 
 ``window show``
-
-The window show statement causes the window to be shown.
-It takes as an argument an optional transition, which is used to show the
-window. If the transition is omitted, :var:`config.window_show_transition`
-is used.
+    The window show statement causes the window to be shown.
+    It takes as an argument an optional transition, which is used to show the
+    window. If the transition is omitted, :var:`config.window_show_transition`
+    is used.
 
 ``window hide``
-
-The window hide statement causes the window to be hidden. It takes as an
-argument an optional transition, which is used to hide the window. If
-the transition is omitted,  :var:`config.window_hide_transition` is
-used.
+    The window hide statement causes the window to be hidden. It takes as an
+    argument an optional transition, which is used to hide the window. If
+    the transition is omitted,  :var:`config.window_hide_transition` is
+    used.
 
 ``window auto``
-
-This enables automatic management of the window. The window is shown
-before statements listed in :var:`config.window_auto_show` - by default,
-say statements. The window is hidden before statements listed in
-:var:`config.window_auto_hide` - by default, ``scene`` and ``call screen``
-statements. (Only statements are considered, not statement equivalent
-functions.)
+    This enables automatic management of the window. The window is shown
+    before statements listed in :var:`config.window_auto_show` - by default,
+    say statements. The window is hidden before statements listed in
+    :var:`config.window_auto_hide` - by default, ``scene`` and ``call screen``
+    statements. (Only statements are considered, not statement equivalent
+    functions.)
 
 The ``window auto`` statement uses :var:`config.window_show_transition`
 and :var:`config.window_hide_transition` to show and hide the window,
-respectively. ``window auto`` is cancelled by ``window show`` or ``window hide``.
+respectively. ``window auto`` is cancelled by ``window show`` and ``window hide``.
 
 For example::
 
@@ -278,7 +273,7 @@ in parenthesis after the say statement. For example, one can write::
 
     e "Hello, world." (what_color="#8c8")
 
-Arguments to the Say statement are first processed by var:`config.say_arguments_callback`,
+Arguments to the say statement are first processed by var:`config.say_arguments_callback`,
 if it is not None. If any remain, they are then passed to the character,
 which treats them as if they were present when the character was defined.
 So, the example above displays the dialogue in green.
@@ -329,7 +324,7 @@ When e is a Character, this is further equivalent to::
     Character(kind=e, what_size=32)("Hello, world.", interact=True)
 
 But it's possible to use var:`config.say_arguments_callback` or
-have `e` wrap a character to do things differently.
+have ``e`` wrap a character to do things differently.
 
 
 
