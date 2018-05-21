@@ -1575,8 +1575,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                        and data == fwd_data
-                        and (keep_rollback or self.rolled_forward)
+                            and data == fwd_data
+                            and (keep_rollback or self.rolled_forward)
                         ):
                     self.forward.pop(0)
                 else:
@@ -1593,7 +1593,7 @@ class RollbackLog(renpy.object.Object):
 
         self.checkpointing_suspended = flag
 
-    def block(self):
+    def block(self, purge=False):
         """
         Called to indicate that the user should not be able to rollback
         through this checkpoint.
@@ -1601,6 +1601,9 @@ class RollbackLog(renpy.object.Object):
 
         self.rollback_limit = 0
         renpy.game.context().force_checkpoint = True
+
+        if purge:
+            self.log = [ ]
 
     def retain_after_load(self):
         """

@@ -271,15 +271,16 @@ def checkpoint(data=None, keep_rollback=None):
     renpy.game.log.checkpoint(data, keep_rollback=keep_rollback, hard=renpy.store._rollback)
 
 
-def block_rollback():
+def block_rollback(purge=False):
     """
     :doc: blockrollback
+    :args: ()
 
     Prevents the game from rolling back to before the current
     statement.
     """
 
-    renpy.game.log.block()
+    renpy.game.log.block(purge=purge)
 
 
 def suspend_rollback(flag):

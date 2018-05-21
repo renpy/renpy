@@ -159,7 +159,7 @@ label _start_replay:
     scene black
 
     $ _init_language()
-    $ renpy.block_rollback()
+    $ renpy.block_rollback(purge=True)
 
     jump expression _in_replay
 
@@ -278,9 +278,11 @@ label _invoke_main_menu:
 # initialize it.
 label _main_menu(_main_menu_screen="_main_menu_screen"):
 
-    $ _enter_menu()
-
     python:
+        renpy.block_rollback(purge=True)
+
+        _enter_menu()
+
         renpy.dynamic("_load_prompt")
         _load_prompt = False
 
