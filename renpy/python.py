@@ -1706,7 +1706,7 @@ class RollbackLog(renpy.object.Object):
         force_checkpoint = False
 
         # Try to rollback to just after the previous checkpoint.
-        while greedy and self.log:
+        while greedy and self.log and (self.rollback_limit > 0):
 
             rb = self.log[-1]
 
