@@ -1647,6 +1647,12 @@ class Text(renpy.display.core.Displayable):
 
         return rv
 
+    def set_style_prefix(self, prefix, root):
+        if prefix != self.style.prefix:
+            self.kill_layout()
+
+        super(Text, self).set_style_prefix(prefix, root)
+
     def focus(self, default=False):
         """
         Called when a hyperlink gains focus.
@@ -1666,14 +1672,8 @@ class Text(renpy.display.core.Displayable):
         hyperlink_focus = self.style.hyperlink_functions[2]
         target = layout.hyperlink_targets.get(renpy.display.focus.argument, None)
 
-        if hyperlink_focus:
+        if hyperlink_focus and (not default) and (target is not None):
             return hyperlink_focus(target)
-
-    def set_style_prefix(self, prefix, root):
-        if prefix != self.style.prefix:
-            self.kill_layout()
-
-        super(Text, self).set_style_prefix(prefix, root)
 
     def unfocus(self, default=False):
         """
@@ -1685,7 +1685,7 @@ class Text(renpy.display.core.Displayable):
 
         hyperlink_focus = self.style.hyperlink_functions[2]
 
-        if hyperlink_focus:
+        if hyperlink_focus and not default:
             return hyperlink_focus(None)
 
     def call_slow_done(self, st):

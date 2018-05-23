@@ -264,7 +264,7 @@ def before_interact(roots):
         for f, n, screen in fwn:
             if f.full_focus_name == current_name:
                 current = f
-                set_focused(f, None, screen)
+                set_focused(f, argument, screen)
                 break
         else:
             current = None
