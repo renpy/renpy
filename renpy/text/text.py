@@ -1573,6 +1573,13 @@ class Text(renpy.display.core.Displayable):
         # Text.
         self.tokens, self.displayables = self.get_displayables(tokens)
 
+        for type, text in self.tokens:
+            if type == TAG and text.startswith("a="):
+                self.focusable = True
+                break
+        else:
+            self.focusable = False
+
     def visit(self):
 
         if self.dirty or self.displayables is None:
