@@ -74,7 +74,7 @@ init -1700 python:
     # Layers to clear when entering the menus.
     config.menu_clear_layers = [ ]
 
-    # What we do on a game menu invokcation.
+    # What we do on a game menu invocation.
     config.game_menu_action = None
 
     # The screen that we go to when entering the game menu.
