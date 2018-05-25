@@ -341,7 +341,10 @@ init -1500 python:
             self.page = page
             self.cycle = cycle
 
-            self.alt = __("Save slot %s: [text]") % (name,)
+            try:
+                self.alt = __("Save slot %s: [text]") % (name,)
+            except:
+                self.alt = "Save slot %s: [text]" % (name,)
 
         def __call__(self):
 
@@ -414,7 +417,11 @@ init -1500 python:
             self.page = page
             self.newest = newest
 
-            self.alt = __("Load slot %s: [text]") % (name,)
+            try:
+                self.alt = __("Load slot %s: [text]") % (name,)
+            except:
+                self.alt = "Load slot %s: [text]" % (name,)
+
 
 
         def __call__(self):
