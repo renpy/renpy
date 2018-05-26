@@ -498,10 +498,10 @@ translate french tutorial_simple_positions_2377e3b3:
     e "Habituellement les transformations sont définies au début du fichier, juste après les personnages, mais l’endroit où vous les définissez n’a pas vraiment d’importance."
 
 # game/tutorial_quickstart.rpy:347
-translate french tutorial_simple_positions_fa09596c:
+translate french tutorial_simple_positions_3ce7e367:
 
-    # e "The transform is given a name, sightleft, and then the xalign and yalign properties."
-    e "La transformation est définie par un nom 'sightleft' et ensuite par les propriétés 'xalign' et 'yalign'."
+    # e "The transform is given a name, slightleft, and then the xalign and yalign properties."
+    e "La transformation est définie par un nom 'slightleft' et ensuite par les propriétés 'xalign' et 'yalign'."
 
 # game/tutorial_quickstart.rpy:355
 translate french tutorial_simple_positions_82d640d9:
