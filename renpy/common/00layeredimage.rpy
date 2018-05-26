@@ -733,12 +733,15 @@ python early in layeredimage:
 
                 if a.attribute in attributes:
                     rv.append(a.attribute)
-                    attributes.remove(a.attribute)
+
 
                 if a.attribute in unknown:
                     unknown.remove(a.attribute)
 
-            return tuple(rv + unknown)
+            if unknown:
+                return None
+
+            return tuple(rv)
 
     class RawLayeredImage(object):
 
