@@ -23,6 +23,8 @@
 # Most of the guts of this file have been moved into im.py, with only some
 # of the stuff thar uses images remaining.
 
+from __future__ import print_function
+
 import renpy.display
 import renpy.text
 from renpy.display.render import render, Render
