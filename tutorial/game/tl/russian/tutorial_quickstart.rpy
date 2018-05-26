@@ -498,10 +498,10 @@ translate russian tutorial_simple_positions_2377e3b3:
     e "Обычно трансформации определяются выше основного скрипта, сразу после определения персонажей, но в Ren'Py не имеет значения, где вы будете их определять."
 
 # game/tutorial_quickstart.rpy:347
-translate russian tutorial_simple_positions_fa09596c:
+translate russian tutorial_simple_positions_3ce7e367:
 
-    # e "The transform is given a name, sightleft, and then the xalign and yalign properties."
-    e "Нашей трансформации даётся имя sightleft, а затем параметры xalign и yalign."
+    # e "The transform is given a name, slightleft, and then the xalign and yalign properties."
+    e "Нашей трансформации даётся имя slightleft, а затем параметры xalign и yalign."
 
 # game/tutorial_quickstart.rpy:355
 translate russian tutorial_simple_positions_82d640d9:
