@@ -894,20 +894,25 @@ class ShownImageInfo(renpy.object.Object):
 
     def choose_image(self, tag, required, optional, exception_name):
 
-        ca = get_tag_method(tag, "_choose_attributes")
-        if ca is not None:
-            attrs = ca(tag, required, optional)
-
-            if attrs is not None:
-                return (tag,) + attrs
-
         # The longest length of an image that matches.
         max_len = -1
 
         # The list of matching images.
         matches = None
 
-        for attrs in image_attributes[tag]:
+        for attrs, d in image_attributes[tag].items():
+
+            ca = getattr(d, "_choose_attributes", None)
+
+            if ca:
+                ca_required = { i for i in required if i not in attrs }
+                ca_optional = { i for i in optional if i not in attrs }
+                newattrs = ca(tag, ca_required, ca_optional)
+
+                if newattrs is None:
+                    continue
+
+                attrs = attrs + newattrs
 
             num_required = 0
 
@@ -942,21 +947,7 @@ class ShownImageInfo(renpy.object.Object):
             return None
 
         if len(matches) == 1:
-
-            rv = matches[0]
-
-            d = images.get(rv, None)
-            ca = getattr(d, "_choose_attributes", None)
-
-            if ca is not None:
-
-                required = set()
-                optional = set(i for i in optional if i not in rv)
-                tag = " ".join(rv)
-
-                rv =  rv + ca(tag, required, optional)
-
-            return rv
+            return matches[0]
 
         if exception_name:
             raise Exception("Showing '" + " ".join(exception_name) + "' is ambiguous, possible images include: " + ", ".join(" ".join(i) for i in matches))
