@@ -61,7 +61,7 @@ translate russian simple_displayables_0befbee0:
     e "Это означает, что мы можем применять к нему и другие объекты, так же как и к изображениям, например, трансформацию."
 
 # game/indepth_displayables.rpy:91
-translate russian simple_displayables_fde549c4:
+translate russian simple_displayables_fcf2325f:
 
     # e "The Composite displayable lets us group multiple displayables together into a single one, from bottom to top."
     e "Объект Composite позволяет нам группировать разные объекты в один снизу вверх."
