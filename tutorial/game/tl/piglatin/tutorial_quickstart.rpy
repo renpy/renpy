@@ -498,10 +498,10 @@ translate piglatin tutorial_simple_positions_2377e3b3:
     e "Suallyuay ansformstray areay efinedday atay hetay optay ofay aay ilefay, ightray afteray hetay aracterschay. Utbay itay oesnday'tay attermay otay Enray'Ypay hereway ouyay efineday hemtay."
 
 # game/tutorial_quickstart.rpy:347
-translate piglatin tutorial_simple_positions_fa09596c:
+translate piglatin tutorial_simple_positions_3ce7e367:
 
-    # e "The transform is given a name, sightleft, and then the xalign and yalign properties."
-    e "Hetay ansformtray isay ivengay aay amenay, ightleftsay, anday hentay hetay alignxay anday alignyay ropertiespay."
+    # e "The transform is given a name, slightleft, and then the xalign and yalign properties."
+    e "Hetay ansformtray isay ivengay aay amenay, ightleftslay, anday hentay hetay alignxay anday alignyay ropertiespay."
 
 # game/tutorial_quickstart.rpy:355
 translate piglatin tutorial_simple_positions_82d640d9:

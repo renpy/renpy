@@ -157,47 +157,47 @@ translate piglatin strings:
     old "%b %d, %H:%M"
     new "%bay %day, %Hay:%May"
 
-    # 00action_file.rpy:344
+    # 00action_file.rpy:345
     old "Save slot %s: [text]"
     new "Avesay otslay %say: [text]"
 
-    # 00action_file.rpy:417
+    # 00action_file.rpy:421
     old "Load slot %s: [text]"
     new "Oadlay otslay %say: [text]"
 
-    # 00action_file.rpy:459
+    # 00action_file.rpy:466
     old "Delete slot [text]"
     new "Eleteday otslay [text]"
 
-    # 00action_file.rpy:539
+    # 00action_file.rpy:546
     old "File page auto"
     new "Ilefay agepay autoay"
 
-    # 00action_file.rpy:541
+    # 00action_file.rpy:548
     old "File page quick"
     new "Ilefay agepay uickqay"
 
-    # 00action_file.rpy:543
+    # 00action_file.rpy:550
     old "File page [text]"
     new "Ilefay agepay [text]"
 
-    # 00action_file.rpy:733
+    # 00action_file.rpy:740
     old "Next file page."
     new "Extnay ilefay agepay."
 
-    # 00action_file.rpy:797
+    # 00action_file.rpy:804
     old "Previous file page."
     new "Reviouspay ilefay agepay."
 
-    # 00action_file.rpy:858
+    # 00action_file.rpy:865
     old "Quick save complete."
     new "Uickqay avesay ompletecay."
 
-    # 00action_file.rpy:876
+    # 00action_file.rpy:883
     old "Quick save."
     new "Uickqay avesay."
 
-    # 00action_file.rpy:895
+    # 00action_file.rpy:902
     old "Quick load."
     new "Uickqay oadlay."
 
@@ -205,95 +205,95 @@ translate piglatin strings:
     old "Language [text]"
     new "Anguagelay [text]"
 
-    # 00director.rpy:709
+    # 00director.rpy:708
     old "The interactive director is not enabled here."
     new "Hetay interactiveay irectorday isay otnay enableday erehay."
 
-    # 00director.rpy:1479
+    # 00director.rpy:1478
     old "⬆"
     new "⬆"
 
-    # 00director.rpy:1485
+    # 00director.rpy:1484
     old "⬇"
     new "⬇"
 
-    # 00director.rpy:1549
+    # 00director.rpy:1548
     old "Done"
     new "Oneday"
 
-    # 00director.rpy:1559
+    # 00director.rpy:1558
     old "(statement)"
     new "(atementstay)"
 
-    # 00director.rpy:1560
+    # 00director.rpy:1559
     old "(tag)"
     new "(agtay)"
 
-    # 00director.rpy:1561
+    # 00director.rpy:1560
     old "(attributes)"
     new "(attributesay)"
 
-    # 00director.rpy:1562
+    # 00director.rpy:1561
     old "(transform)"
     new "(ansformtray)"
 
-    # 00director.rpy:1587
+    # 00director.rpy:1586
     old "(transition)"
     new "(ansitiontray)"
 
-    # 00director.rpy:1599
+    # 00director.rpy:1598
     old "(channel)"
     new "(annelchay)"
 
-    # 00director.rpy:1600
+    # 00director.rpy:1599
     old "(filename)"
     new "(ilenamefay)"
 
-    # 00director.rpy:1629
+    # 00director.rpy:1628
     old "Change"
     new "Hangecay"
 
-    # 00director.rpy:1631
+    # 00director.rpy:1630
     old "Add"
     new "Ddaay"
 
-    # 00director.rpy:1634
+    # 00director.rpy:1633
     old "Cancel"
     new "Ancelcay"
 
-    # 00director.rpy:1637
+    # 00director.rpy:1636
     old "Remove"
     new "Emoveray"
 
-    # 00director.rpy:1672
+    # 00director.rpy:1671
     old "Statement:"
     new "Tatementsay:"
 
-    # 00director.rpy:1693
+    # 00director.rpy:1692
     old "Tag:"
     new "Agtay:"
 
-    # 00director.rpy:1709
+    # 00director.rpy:1708
     old "Attributes:"
     new "Ttributesaay:"
 
-    # 00director.rpy:1727
+    # 00director.rpy:1726
     old "Transforms:"
     new "Ransformstay:"
 
-    # 00director.rpy:1746
+    # 00director.rpy:1745
     old "Behind:"
     new "Ehindbay:"
 
-    # 00director.rpy:1765
+    # 00director.rpy:1764
     old "Transition:"
     new "Ransitiontay:"
 
-    # 00director.rpy:1783
+    # 00director.rpy:1782
     old "Channel:"
     new "Hannelcay:"
 
-    # 00director.rpy:1801
+    # 00director.rpy:1800
     old "Audio Filename:"
     new "Udioaay Ilenamefay:"
 
