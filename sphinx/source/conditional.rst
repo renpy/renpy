@@ -15,12 +15,12 @@ and for statements, but can't embed Ren'Py script statements.
 If Statement
 ------------
 
-The ``if`` statement conditionally executes a block of statements if a python
+The ``if`` statement conditionally executes a block of statements if a Python
 expression is true. It consists of an ``if`` clause, zero or more ``elif``
 clauses, and an optional ``else`` clause.
 
 Each clause should be on its own logical line, followed by a block of
-statements. The ``if`` and ``elif`` clauses are followed by an expression,
+statements. The if and elif clauses are followed by an expression,
 while all clauses end with a colon ``:``.
 
 Examples are::
@@ -40,12 +40,12 @@ Examples are::
         jump worst_ending
 
 The expressions in the if statement are evaluated in order, from
-first to last. When an expression evaluates to True, the block
+first to last. When an expression evaluates to true, the block
 corresponding to that statement is executed. When control reaches the
 end of the block, it proceeds to the statement following the if
 statement.
 
-If all expressions evaluate to False, the block associated with
+If all expressions evaluate to false, the block associated with
 the ``else`` clause is executed, if the ``else`` clause is present.
 
 
@@ -76,7 +76,7 @@ evaluates True. For example::
 
 The expression is evaluated when while statement is first reached, and
 then each time control reaches the end of the block. When the expression
-return a False value, the statement after the while statement is executed.
+returns a false value, the statement after the while statement is executed.
 
 Ren'Py does not have continue, break, or for statements. Continue and break
 statements can be replaced by jumps to labels placed before or after the

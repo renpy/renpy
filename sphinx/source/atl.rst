@@ -22,7 +22,7 @@ ATL can be included as part of three Ren'Py script statements.
 Transform Statement
 -------------------
 
-The transform statement creates a transform that can be supplied as part of an
+The ``transform`` statement creates a transform that can be supplied as part of an
 at clause. The syntax of the transform statement is:
 
 .. productionlist:: script
@@ -30,7 +30,7 @@ at clause. The syntax of the transform statement is:
                   :    `atl_block`
 
 The transform statement  must be run at init time. If it is found outside an
-init block, then it is automatically placed inside an init block with a
+``init`` block, then it is automatically placed inside an ``init`` block with a
 priority of 0. The transform may have a list of parameters, which must be
 supplied when it is called.
 
@@ -47,7 +47,7 @@ bound to this name.::
 Image Statement With ATL Block
 ------------------------------
 
-The second way to use ATL is as part of an image statement with ATL block.
+The second way to use ATL is as part of an ``image`` statement with ATL block.
 This binds an image name to the given transform. As there's no way to supply
 parameters to this transform, it's only useful if the transform defines an
 animation. The syntax for an image statement with ATL block is:
@@ -69,7 +69,7 @@ animation. The syntax for an image statement with ATL block is:
 Scene and Show Statements with ATL Block
 ----------------------------------------
 
-The final way to use ATL is as part of a scene or show statement. This wraps
+The final way to use ATL is as part of a ``scene`` or ``show`` statement. This wraps
 the image being shown inside an ATL transformation.
 
 .. productionlist:: script
@@ -111,7 +111,7 @@ terminated.
 
 If an ATL statement requires evaluation of an expression, such evaluation
 occurs when the transform is first added to the scene list. (Such as when
-using a show statement or ui function.)
+using a ``show`` statement or ``ui`` function.)
 
 ATL Statements
 ==============
@@ -202,8 +202,8 @@ interpolation has old and new property values of different types.
 Time Statement
 --------------
 
-The time statement is a simple control statement. It contains a single
-``simple_expression``, which is evaluated to give a time, expressed as seconds
+The ``time`` statement is a simple control statement. It contains a single
+`simple_expression`, which is evaluated to give a time, expressed as seconds
 from the start of execution of the containing block.
 
 .. productionlist:: atl
@@ -276,7 +276,7 @@ Pass Statement
 .. productionlist:: atl
     atl_pass : "pass"
 
-The pass statement is a simple statement that causes nothing to happen. This
+The ``pass`` statement is a simple statement that causes nothing to happen. This
 can be used when there's a desire to separate statements, like when there are
 two sets of choice statements that would otherwise be back-to-back.
 
@@ -284,7 +284,7 @@ Repeat Statement
 ----------------
 
 
-The repeat statement is a simple statement that causes the block containing it
+The ``repeat`` statement is a simple statement that causes the block containing it
 to resume execution from the beginning. If the expression is present, then it
 is evaluated to give an integer number of times the block will execute. (So a
 block ending with ``repeat 2`` will execute at most twice.)
@@ -304,7 +304,7 @@ The repeat statement must be the last statement in a block.::
 Block Statement
 ---------------
 
-The block statement is a complex statement that contains a block of ATL statements.
+The ``block`` statement is a complex statement that contains a block of ATL statements.
 This can be used to group statements that will repeat.
 
 .. productionlist:: atl
@@ -325,7 +325,7 @@ This can be used to group statements that will repeat.
 Choice Statement
 ----------------
 
-The choice statement is a complex statement that defines one of a set of
+The ``choice`` statement is a complex statement that defines one of a set of
 potential choices. Ren'Py will pick one of the choices in the set, and
 execute the ATL block associated with it, and then continue execution after
 the last choice in the choice set.
@@ -335,7 +335,7 @@ the last choice in the choice set.
               :     `atl_block`
 
 Choice statements are greedily grouped into a choice set when more than one
-choice statement appears consecutively in a block. If the ``simple_expression``
+choice statement appears consecutively in a block. If the `simple_expression`
 is supplied, it is a floating-point weight given to that block, otherwise 1.0
 is assumed.
 
@@ -355,7 +355,7 @@ is assumed.
 Parallel Statement
 ------------------
 
-The parallel statement is used to define a set of ATL blocks to execute in
+The ``parallel`` statement is used to define a set of ATL blocks to execute in
 parallel.
 
 .. productionlist:: atl
@@ -388,7 +388,7 @@ undefined.
 Event Statement
 ---------------
 
-The event statement is a simple statement that causes an event with the given
+The ``event`` statement is a simple statement that causes an event with the given
 name to be produced.
 
 .. productionlist:: atl
@@ -402,7 +402,7 @@ handler.
 On Statement
 ------------
 
-The On statement is a complex statement that defines an event handler. On
+The ``on`` statement is a complex statement that defines an event handler. On
 statements are greedily grouped into a single statement. On statement can
 handle a single event name, or a comma-separated list of event names.
 
@@ -435,8 +435,8 @@ by the time statement, or an enclosing event handler.)
 Contains Statement
 ------------------
 
-The contains statement sets the displayable contained by this ATL transform.
-(The child of the transform.) There are two variants of the contains
+The ``contains`` statement sets the displayable contained by this ATL transform
+(The child of the transform). There are two variants of the contains
 statement.
 
 The contains expression variant takes an expression, and sets that expression
@@ -496,7 +496,7 @@ arguments to be easily passed to the children.
 Function Statement
 ------------------
 
-The function statement allows ATL to use Python functions to control the ATL
+The ``function`` statement allows ATL to use Python functions to control the ATL
 properties.
 
 .. productionlist:: atl
@@ -520,6 +520,7 @@ The functions have the same signature as those used with :func:`Transform`:
 
 ::
 
+    init python:
         def slide_function(trans, st, at):
             if st > 1.0:
                 trans.xalign = 1.0
@@ -571,7 +572,7 @@ http://www.easings.net/.
 
 .. include:: inc/easings
 
-New warpers can be defined using the renpy.atl_warper decorator, in a ``python
+New warpers can be defined using the ``renpy.atl_warper`` decorator, in a ``python
 early`` block. It should be placed in a file that is parsed before any file
 that uses the warper. This looks like::
 
@@ -681,7 +682,6 @@ both horizontal and vertical positions.
 
     The number of pixels the displayable is offset by in the vertical
     direction. Positive values offset toward the bottom.
-
 
 
 .. transform-property:: xcenter
@@ -844,7 +844,7 @@ both horizontal and vertical positions.
 
     If not None, causes the displayable to be cropped to the given
     box. The box is specified as a tuple of (x, y, width, height).
-    If floats are given and crop_relative is true, the components are
+    If floats are given and ``crop_relative`` is true, the components are
     taken as a fraction of the width and hight of the source image.
     Otherwise, the components are considered to be an absolute number
     of pixels.
@@ -985,7 +985,7 @@ External Events
 The following events can be triggered automatically:
 
 ``start``
-    A pseudo-event, triggered on entering an on statement, if no event of
+    A pseudo-event, triggered on entering an ``on`` statement, if no event of
     higher priority has happened.
 
 ``show``
@@ -993,11 +993,11 @@ The following events can be triggered automatically:
     statement, and no image with the given tag exists.
 
 ``replace``
-    Triggered when transform is shown using the show statement, replacing
+    Triggered when transform is shown using the ``show`` statement, replacing
     an image with the given tag.
 
 ``hide``
-    Triggered when the transform is hidden using the hide statement or its
+    Triggered when the transform is hidden using the ``hide`` statement or its
     Python equivalent.
 
     Note that this isn't triggered when the transform is eliminated via

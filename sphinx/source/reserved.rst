@@ -15,7 +15,7 @@ names can lead to obscure problems.
 .. include:: inc/reserved_builtins
 
 The following is a list of names that are used by Ren'Py. While in some
-cases it makes to redefine these names, one should be aware that doing
+cases it makes sense to redefine these names, one should be aware that doing
 so can cause obscure problems.
 
 .. include:: inc/reserved_renpy

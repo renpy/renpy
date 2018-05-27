@@ -49,7 +49,7 @@ Basic Configuration
 
 The build process can be configured by setting variables and calling
 function that live in the build namespace. This must be done from
-inside an init python block.
+inside an ``init python`` block.
 
 There are a few basic variables and functions that many games will
 use.
@@ -176,7 +176,7 @@ Documentation
 
 Calling the build.documentation function with patterns marks files
 matching those patterns as documentation. Documentation files are
-included twice in a Macintosh application - both inside and outside
+included twice in a Macintosh application—both inside and outside
 of the application itself.
 
 For example, to mark all txt and html files in the base directory as
@@ -238,7 +238,7 @@ game scripts into scripts.rpa::
 If an archive file is empty, it will not be built.
 
 Please think twice about archiving your game. Keeping files open will
-help others run your game on future platforms - platforms that may not
+help others run your game on future platforms—platforms that may not
 exist until after you're gone.
 
 
@@ -264,7 +264,7 @@ The following variables provide further control of the build process:
     may be an absolute or a relative path. A relative path is considered to
     be relative to the projects directory.
 
-    The following values are substituted in using python's str.format function.
+    The following values are substituted in using Python's ``str.format`` function.
 
     ``{directory_name}``
         The value of build.directory_name.

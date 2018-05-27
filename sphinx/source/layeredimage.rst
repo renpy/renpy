@@ -109,7 +109,7 @@ unless the "wink" attribute is given.
 
 Finally, the ``if`` statement adds a layer that selects between displayables
 using a Python statement. This is evaluated constantly, and the first
-condition that evaluates to true is the one that's displayed.
+condition that evaluates to True is the one that's displayed.
 
 Properties consist of a property name and a simple expression, and
 can be given to each layer. Some properties change the functioning of
@@ -122,7 +122,7 @@ corner of each mouth image.
 The resulting image is the size of the bounding box of all the layers, so
 it probably makes sense to have one layer the full size of the image, which
 no other layer goes outside of. The first layer is in the back of the image,
-while the last is in front -  in this example, the glasses will be on top of
+while the last is in front—in this example, the glasses will be on top of
 the other layers.
 
 Groups and attributes may appear more than once in a layered image, with
@@ -138,7 +138,7 @@ a value, for example with::
     default evil = True
 
 Then the layered image can be shown like any other image. Almost certainly,
-one of the outfits should be given - while Ren'Py doesn't enforce this,
+one of the outfits should be given—while Ren'Py doesn't enforce this,
 this image requires one::
 
     show augustina jeans
@@ -177,7 +177,7 @@ automatically determine a displayable name from the image name, group name,
 and attribute name. This is done by combining the names with underscores.
 
 When doing this, you can also take advantage of another feature of
-attributes - it's possible to add any properties to the first line and
+attributes—it's possible to add any properties to the first line and
 omit the block entirely.
 
 Here's our example of having done that::
@@ -255,7 +255,7 @@ default attributes. In that case, all of the groups could be written on
 single lines.
 
 There's no way to omit the displayables from the ``always`` or ``if`` statements,
-so this is as short as it gets - but with a few more images with proper
+so this is as short as it gets—but with a few more images with proper
 names, it's possible to use this to define thousands or even millions
 of combinations of layers.
 
@@ -299,7 +299,7 @@ Attribute
 The ``attribute`` statement adds a layer that is displayed when the given
 attribute is used to display the image. The same attribute can be used with
 multiple layers, with all layers corresponding to the attribute being shown
-(the if_also and if_not properties can change this).
+(the `if_also` and `if_not` properties can change this).
 
 An attribute takes an attribute name. It can also take two keywords.
 The ``default`` keyword indicates that the attribute should be present
@@ -354,7 +354,7 @@ that group. (But it's fine to include the same attribute twice.)
 The ``group`` statement takes a name. The name isn't used for very much, but is
 used to generate the default names of attributes inside the group.
 
-The name may be followed by the `auto` keyword. If it's present, after any
+The name may be followed by the ``auto`` keyword. If it's present, after any
 attributes in the group have been declared, Ren'Py will scan its list of images
 for those that match the group's pattern (see below). Any images that are found
 that do not correspond to declared attributes are then added to the group as if
@@ -372,7 +372,7 @@ There are two properties that are specific to groups.
 
 `prefix`
     If given, this is a prefix that is concatenated using an underscore with
-    the manually or automatically defined attributes names. So if prefix is
+    the manually or automatically defined attribute names. So if prefix is
     "leftarm", and the attribute name "hip" is encountered, the attribute
     "leftarm_hip" is defined instead.
 
@@ -387,7 +387,7 @@ overridden by the same property of the attribute itself.
 * The name of the variant.
 * The name of the attribute.
 
-All combined with underscores. For example, if we have a layerimage with
+all combined with underscores. For example, if we have a layered image with
 the name "augustina work", and the group "eyes", this will match images
 that match the pattern augustina_work_eyes\_\ `attribute`. With a `variant`
 of `blue`, it would match the pattern augustina_work_eyes_blue\_\ `attribute`.
@@ -484,7 +484,7 @@ Poses
 -----
 
 It's possible to have a character that has sprites in multiple poses,
-where everything - or at least everything of interest - is different.
+where everything—or at least everything of interest—is different.
 For example, if a character has standing and sitting poses, all the image
 parts will be in different places.
 
@@ -536,7 +536,7 @@ Python
 ------
 
 Of course, the ``layeredimage`` statements have a Python equivalents. The
-group statement does not - the group is supplied to Attribute, and the
+group statement does not—the group is supplied to ``attribute``, and the
 auto functionality can be implemented using :func:`renpy.list_images`.
 
 .. include:: inc/li

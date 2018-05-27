@@ -7,7 +7,7 @@ Ren'Py is written in the Python programming language, and includes
 support for including Python inside Ren'Py scripts. Python
 support can be used for many things, from setting a flag to creating
 new displayables. This chapter covers ways in which Ren'Py scripts can
-directly invoke Python, through the various python statements.
+directly invoke Python, through the various Python statements.
 
 
 .. _python-statement:
@@ -16,7 +16,7 @@ Python
 ------
 
 The ``python`` statement takes a block of Python, and runs the block
-when control reaches the statement. A basic python statement can be
+when control reaches the statement. A basic Python statement can be
 very simple::
 
     python:
@@ -29,16 +29,16 @@ Python statements can get more complex, when necessary::
         if enemy_vampire:
             enemy_health = min(enemy_health + damage, enemy_max_health)
 
-There are two modifiers to the python statement that change its
+There are two modifiers to the Python statement that change its
 behavior:
 
 ``hide``
-    If given the hide modifier, the python statement will run the
+    If given the hide modifier, the Python statement will run the
     block of Python in an anonymous scope. The scope will be lost when the
-    python block terminates.
+    Python block terminates.
 
     This allows Python to use temporary variables that can't be
-    saved - but it means that the store needs to be accessed as fields
+    saved—but it means that the store needs to be accessed as fields
     on the store object, rather than directly.
 
 ``in``
@@ -53,11 +53,11 @@ One-line Python Statement
 A common case is to have a single line of Python that runs in the
 default store. For example, a Python one-liner can be used to
 initialize or update a flag. To make writing Python one-liners
-more convenient, there is the one-line python statement.
+more convenient, there is the one-line Python statement.
 
-The one-line Python statement begins with the dollar-sign ($)
+The one-line Python statement begins with the dollar-sign ``$``
 character, and contains everything else on that line. Here
-are some example of python one-liners::
+are some example of Python one-liners::
 
     # Set a flag.
     $ flag = True
@@ -100,7 +100,7 @@ persistent data. ::
         persistent.endings.add("bad_ending")
 
 A priority number can be placed between ``init`` and ``python``. When
-a priority is not given, 0 is used. Init  statements are run in priority
+a priority is not given, 0 is used. Init statements are run in priority
 order, from lowest to highest. Init statements of the same priority are run in
 unicode order by filename, and then from top to bottom within a file.
 
@@ -227,7 +227,7 @@ will not work, because the variable ``e`` is being used as both a
 character and a flag. Other things that are usually placed into
 the store are transitions and transforms.
 
-Names beginning with underscore (\_) are reserved for Ren'Py's
+Names beginning with underscore ``_`` are reserved for Ren'Py's
 internal use. In addition, there is an :ref:`Index of Reserved Names <reserved-names>`.
 
 
@@ -243,7 +243,7 @@ Named stores can be accessed by supplying the ``in`` clause to
 store. Each store corresponds to a Python module. The default store is
 ``store``, while a named store is accessed as ``store.name``. These
 Python modules can be imported using the Python ``import`` statement,
-while names in the modules can be imported using the Python from
+while names in the modules can be imported using the Python ``from``
 statement.
 
 For example::
@@ -275,7 +275,7 @@ define names in a named store.
 First and Third-Party Python Modules and Packages
 -------------------------------------------------
 
-Ren'Py can import pure-python modules and packages. First-party modules
+Ren'Py can import pure-Python modules and packages. First-party modules
 and packages—ones written for the game—can be placed directly
 into the game directory. Third party packages can be placed into the
 game/python-packages directory.

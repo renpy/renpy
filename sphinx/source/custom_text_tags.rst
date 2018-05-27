@@ -81,8 +81,8 @@ multiplier to its argument. ::
 
     "This is {big=3}BIG!{/big}"
 
-The example rot13 text tag applies the rot13 transform to text. Note that
-rot26 - rot13 applied twice - is just normal text. ::
+The example ``rot13`` text tag applies the ROT13 transform to text. Note that
+ROT26—ROT13 applied twice—is just normal text. ::
 
     init python:
 

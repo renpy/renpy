@@ -8,7 +8,7 @@ Ren'Py scripts.
 Transforms
 ----------
 
-A transform is a python callable that, when called with a displayable,
+A transform is a Python callable that, when called with a displayable,
 returns another displayable.
 
 For example::
@@ -23,7 +23,7 @@ For example::
              else:
                  return left(d)
 
-The python equivalent of an ATL transform is a Transform object.
+The Python equivalent of an ATL transform is a Transform object.
 
 .. class:: Transform(child=None, function=None, **properties)
 
@@ -75,7 +75,7 @@ The python equivalent of an ATL transform is a Transform object.
 Transitions
 -----------
 
-A transition is a python callable that, when called with two keyword
+A transition is a Python callable that, when called with two keyword
 arguments, returns a displayable that performs the transition effect.
 The two keyword arguments are:
 

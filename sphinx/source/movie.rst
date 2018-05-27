@@ -48,7 +48,7 @@ it. ::
         $ renpy.movie_cutscene("On_Your_Mark.webm")
 
 On mobile platforms, such as Android and iOS, hardware video decoding is
-used when :var:`config.hw_video` is true, the default. This is generally
+used when :var:`config.hw_video` is True, the default. This is generally
 much faster, but the list of supported movie formats depends on the
 platform.
 

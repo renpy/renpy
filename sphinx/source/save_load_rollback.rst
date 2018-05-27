@@ -19,7 +19,7 @@ What is Saved
 =============
 
 Ren'Py attempts to save the game state. This includes both internal state
-and python state.
+and Python state.
 
 The internal state consists of all aspects of Ren'Py that are intented to
 change once the game has started, and includes:
@@ -31,9 +31,9 @@ change once the game has started, and includes:
 * The music that Ren'Py is playing.
 * The list of nvl-mode text blocks.
 
-The python state consists of the variables in the store that have changed since
+The Python state consists of the variables in the store that have changed since
 the game began, and all objects reachable from those variables. Note that it's
-the change to the variables that matters - changes to fields in objects will
+the change to the variables that matters—changes to fields in objects will
 not cause those objects to be saved.
 
 In this example::
@@ -46,7 +46,7 @@ In this example::
          $ o.value = 42
 
 only `b` will be saved. A will not be saved because it does not change once
-the game begins. `O` is not saved because it does not change - the object it
+the game begins. `O` is not saved because it does not change—the object it
 refers to changes, but the variable itself does not.
 
 
@@ -87,7 +87,7 @@ mappings of image names to displayables
 
 configuration variables, styles, and style properties
     Configuration variables and styles aren't saved as part of the game.
-    Therefore, they should only be changed in init blocks, and left alone
+    Therefore, they should only be changed in ``init`` blocks, and left alone
     once the game has started.
 
 
@@ -102,7 +102,7 @@ statement. If a load or rollback occurs in the middle of a statement that
 interacts multiple times, the state will be the state that was active
 when the statement began.
 
-This can be a problem in python-defined statements. In::
+This can be a problem in Python-defined statements. In::
 
     python:
 
@@ -115,7 +115,7 @@ This can be a problem in python-defined statements. In::
               narrator("The count is now [i].")
 
 if the user saves and loads in the middle, the loop will begin anew. Using
-Ren'Py script - rather than Python - to loop avoids this problem.::
+Ren'Py script—rather than Python—to loop avoids this problem.::
 
    $ i = 0
 

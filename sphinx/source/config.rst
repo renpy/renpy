@@ -9,7 +9,7 @@ kinds of archive files).
 
 Ren'Py's implementation makes the assumption that, once the GUI system has
 initialized, configuration variables will not change. Changing configuration
-variables outside of init blocks can lead to undefined behavior.
+variables outside of ``init`` blocks can lead to undefined behavior.
 Configuration variables are not part of the save data.
 
 Configuration variables are often changed in ``init python`` blocks::
@@ -51,8 +51,8 @@ Commonly Used
     lead to problems when a game is installed as Administrator, but run
     as a user.
 
-    This must be set with either the define statement, or in a python
-    early block. In either case, this will be run before any other
+    This must be set with either the define statement, or in a ``python
+    early`` block. In either case, this will be run before any other
     statement, and so it should be set to a string, not an expression.
 
     To locate the save directory, read :var:`config.savedir` instead of
@@ -306,7 +306,7 @@ Occasionally Used
 
 .. var:: config.debug_text_overflow = False
 
-    When True, Ren'Py will log text overflows to text_overflow.txt. A text
+    When true, Ren'Py will log text overflows to text_overflow.txt. A text
     overflow occurs when a :class:`Text` displayable renders to a size
     larger than that allocated to it. By setting this to True and setting
     the :propref:`xmaximum` and :propref:`ymaximum` style properties of the dialogue
@@ -327,9 +327,9 @@ Occasionally Used
 
 .. var:: config.defer_styles = False
 
-    When True, the execution of style statements is deferred until after
-    all "translate python" blocks have executed. This lets a translate
-    python block update variables that are then used in style (not
+    When true, the execution of style statements is deferred until after
+    all ``translate python`` blocks have executed. This lets a ``translate
+    python`` block update variables that are then used in style (not
     translate style) statements.
 
     While this defaults to False, it's set to True when :func:`gui.init`
@@ -446,7 +446,7 @@ Occasionally Used
 
 .. var:: config.has_autosave = True
 
-    If True, the game will autosave. If False, no autosaving will
+    If true, the game will autosave. If false, no autosaving will
     occur.
 
 .. var:: config.history_callbacks = [ ... ]
@@ -466,9 +466,9 @@ Occasionally Used
 
 .. var:: config.hw_video = False
 
-    If True, hardware video playback will be used on mobile platforms. This
+    If true, hardware video playback will be used on mobile platforms. This
     is faster, but only some formats are supported and only fullscreen video
-    is available. If False, software playback will be used, but it may be
+    is available. If false, software playback will be used, but it may be
     too slow to be useful.
 
 .. var:: config.hyperlink_handlers = { ... }
@@ -588,7 +588,7 @@ Occasionally Used
 
 .. var:: config.narrator_menu = False
 
-    (This is set to True by the default screens.rpy file.) If True,
+    (This is set to True by the default screens.rpy file.) If true,
     then narration inside a menu is displayed using the narrator
     character. Otherwise, narration is displayed as captions
     within the menu itself.
@@ -623,7 +623,7 @@ Occasionally Used
 .. var:: config.python_callbacks = [ ]
 
     A list of functions. The functions in this list are called, without
-    any arguments, whenever a python block is run outside of the init
+    any arguments, whenever a Python block is run outside of the init
     phase.
 
     One possible use of this would be to have a function limit a variable
@@ -677,13 +677,13 @@ Occasionally Used
     that is stored with each save and marked accessible through :func:`FileJson`
     and :func:`renpy.slot_json`.
 
-    Each callback is called with a python dictionary that will eventually be
-    saved. Callbacks should modify that dictionary by adding json-compatible
-    python types, such as numbers, strings, lists, and dicts. The dictionary
+    Each callback is called with a Python dictionary that will eventually be
+    saved. Callbacks should modify that dictionary by adding JSON-compatible
+    Python types, such as numbers, strings, lists, and dicts. The dictionary
     at the end of the last callback is then saved as part of the save slot.
 
     The dictionary passed to the callbacks may have already have keys
-    beginning with an underscore (_). These keys are used by Ren'Py,
+    beginning with an underscore ``_``. These keys are used by Ren'Py,
     and should not be changed.
 
 .. var:: config.say_arguments_callback = None
@@ -829,7 +829,7 @@ Rarely or Internally Used
 
 .. var:: config.afm_callback = None
 
-    If not None, a python function that is called to determine if it
+    If not None, a Python function that is called to determine if it
     is safe to auto-forward. The intent is that this can be used by a
     voice system to disable auto-forwarding when a voice is playing.
 

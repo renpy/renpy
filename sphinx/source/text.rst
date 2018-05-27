@@ -57,11 +57,11 @@ ensure that their writing is not accidentally misinterpreted by the engine.
 [ (left bracket)
     The left bracket is used to introduce interpolation of a value
     into the text. To include a single left bracket in your text,
-    double it - write ``[[``.
+    double it—write ``[[``.
 
 { (left brace)
     The left brace is used to introduce a text tag. To include a left
-    brace in your text, double it - write ``{{``.
+    brace in your text, double it—write ``{{``.
 
 
 .. _text-interpolation:
@@ -95,14 +95,14 @@ Ren'Py's string interpolation is taken from the :pep:`3101` string
 formatting syntax. Ren'Py uses [ to introduce string formatting
 because { was taken by text tags.
 
-Along with the !s and !r conversion flags supported by Python, Ren'Py
-supports !q and !t conversion flags. The !q conversion flag ensures that
+Along with the ``!s`` and ``!r`` conversion flags supported by Python, Ren'Py
+supports ``!q`` and ``!t`` conversion flags. The ``!q`` conversion flag ensures that
 text tags are properly quoted, so that displaying a string will not
 introduce unwanted formatting constructs. For example::
 
     g "Don't pull a fast one on me, [playername!q]."
 
-The !t flag will translate the interpolated string::
+The ``!t`` flag will translate the interpolated string::
 
     if points > 5:
         $ mood = _("happy")

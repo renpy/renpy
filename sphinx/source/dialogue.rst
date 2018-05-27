@@ -18,7 +18,7 @@ objects.
 Say Statement
 -------------
 
-The say statement is used for dialogue and narration. Since it's
+The ``say`` statement is used for dialogue and narration. Since it's
 almost always the most frequently used statement in Ren'Py scripts,
 the say statement has a syntax that minimizes the overhead in
 writing it. Some example say statements are::
@@ -69,7 +69,7 @@ Defining Character Objects
 
 By creating a Character object and using it in a say statement, you
 can customize the look (and to some extent, the behavior) of
-dialogue. Characters are created by using the define statement to
+dialogue. Characters are created by using the ``define`` statement to
 assign a Character to a variable. For example::
 
     define e = Character("Eileen",
@@ -85,7 +85,7 @@ arguments. These keyword arguments control the behavior of the
 character.
 
 The define statement causes its expression to be evaluated, and assigned to the
-supplied name. If not inside an init block, the define statement will
+supplied name. If not inside an ``init`` block, the define statement will
 automatically be run with init priority 0.
 
 .. include:: inc/character
@@ -184,7 +184,7 @@ them can be a problem.
      and the dialogue given to extend. This can be used to have the screen
      change over the course of dialogue.
 
-     Extend is aware of NVL-mode, and treats it correctly.
+     Extend is aware of NVL-mode and treats it correctly.
 
 For example::
 
@@ -224,14 +224,14 @@ non-dialogue interactions.
 ``window hide``
     The window hide statement causes the window to be hidden. It takes as an
     argument an optional transition, which is used to hide the window. If
-    the transition is omitted,  :var:`config.window_hide_transition` is
+    the transition is omitted, :var:`config.window_hide_transition` is
     used.
 
 ``window auto``
     This enables automatic management of the window. The window is shown
-    before statements listed in :var:`config.window_auto_show` - by default,
+    before statements listed in :var:`config.window_auto_show`—by default,
     say statements. The window is hidden before statements listed in
-    :var:`config.window_auto_hide` - by default, ``scene`` and ``call screen``
+    :var:`config.window_auto_hide`—by default, ``scene`` and ``call screen``
     statements. (Only statements are considered, not statement equivalent
     functions.)
 
@@ -288,7 +288,7 @@ Python Equivalents
 
 When the first parameter to a say statement is present and an expression,
 the say statement is equivalent to calling that expressing with the dialogue
-and an `interact` argument of True. For example::
+and an ``interact`` argument of True. For example::
 
     e "Hello, world."
 

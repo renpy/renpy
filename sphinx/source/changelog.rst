@@ -60,7 +60,7 @@ used in more places.
 
 Automatic image definitions now take place at init level 0, rather than
 an init level of greater than 999. This allows :func:`renpy.has_image` to
-be used in init blocks.
+be used in ``init`` blocks.
 
 The interactive director now has a button that allows you to choose if it
 is displayed at the top or the bottom of the screen.
@@ -225,7 +225,7 @@ Fixes
 An issue where a save or auto-save could rarely cause data corruption
 in the non-saved game has been fixed.
 
-Python hide statements are now run in a python function context, which
+Python hide statements are now run in a Python function context, which
 makes certain constructs (like generator expressions) compile and run
 correctly.
 
@@ -352,7 +352,7 @@ frame will be drawn before reverting to the 5fps framerate, to ensure updates
 to the screen are pushed through display buffering.
 
 Ren'Py has a number of options that control display performance, accessed
-through the shift+G menu. In addition to the GL performance change described
+through the Shift+G menu. In addition to the GL performance change described
 above, this allows the player to lock the framerate and accept tearing when
 a frame is late. A player on a slow machine might choose to prefer 30fps
 to an unstable framerate. If the developer expects many players will be on
@@ -586,7 +586,7 @@ makes it possible to add the scene, show, hide, with, play, queue, stop,
 and voice statements to Ren'Py from inside an under-development visual
 novel, without having to change to a text editor and reload the project.
 The interactive director can be accessed by pressing the D key (without
-shift) inside an unreleased game.
+Shift) inside an unreleased game.
 
 The interactive director had been distributed outside of Ren'Py, with
 a license that made it free for noncommercial use. It's now part of Ren'Py,
@@ -677,7 +677,7 @@ The Indonesian and Simplified Chinese translations have been updated.
 Other
 -----
 
-The new :var:`config.preload_fonts` variable can take a list of truetype or
+The new :var:`config.preload_fonts` variable can take a list of TrueType or
 opentype font files to preload at Ren'Py stop. This prevents Ren'Py from
 pausing animations when opening a new font.
 
@@ -730,7 +730,7 @@ id "logo".
 
 Ren'Py now supports the Python print function. Output printed with the print
 function will go to the log.txt file and the Ren'Py console, which can be
-accessed by typing shift+O.
+accessed by typing Shift+O.
 
 It is now possible to customize what happens when the Ignore button is
 clicked on the exception reporting screen. This is done using the :var:`_ignore_action`
@@ -783,7 +783,7 @@ The PlayCharacterVoice action can now mark a button as selected while the
 character voice is playing.
 
 The new :func:`renpy.add_python_directory` function provides a way to add
-subdirectories of the game directory to the python path.
+subdirectories of the game directory to the Python path.
 
 The Ren'Py documentation has been edited to remove the use of the word "code",
 and replace it with less cryptic terminology.
@@ -964,7 +964,7 @@ improved. When a new project is created, it includes translations of the
 interface strings into the project's language, allowing the translation
 of text presented to the player by Ren'Py.
 
-There is now a single place for translating Ren'Py - translating
+There is now a single place for translating Ren'Py—translating
 the launcher also now translates the comments of a generated game. The process
 of translating Ren'Py (the launcher and the GUI) is now documented
 on the :ref:`Translating Ren'py <translating-renpy>` page. This page also
@@ -1289,7 +1289,7 @@ returned when enter is pressed.
 
 Ren'Py support a :func:`renpy.get_refresh_rate` function, which returns the
 referesh rate of the primary screen. This allows games using nearest neighbor
-mode to move at a whole-pixel rate - just like a Commodore 64 did.
+mode to move at a whole-pixel rate—just like a Commodore 64 did.
 
 Ren'Py can now automatically upload your game to itch.io, if
 :var:`build.itch_project` is set.
@@ -1312,7 +1312,7 @@ video sprites (and use fallback images) on hardware too slow to support
 them.
 
 The progress indicator now can be accessed using the F2 key, in addition to
-the shift-alt-P binding. The latter binding has been fixed to work reliably
+the Shift+Alt+P binding. The latter binding has been fixed to work reliably
 on PC platforms.
 
 
@@ -1475,7 +1475,7 @@ Edgescrolling stops when the mouse leaves a viewport.
 
 It is now possible to translate the prompts that occur when self-voicing
 is enabled. A self-voicing debug mode can be accessed by typing
-shift+alt+D.
+Shift+Alt+D.
 
 The :func:`Preference` action can now adjust the volume of non-standard
 mixers.
@@ -1597,7 +1597,7 @@ leaves the game window.
 
 The hbox and vbox displayables now support the :propref:`xminimum` and
 :propref:`yminimum` style properties (and hence, :propref:`xsize`,
-:propref`ysize`, :propref:`xysize`, and :propref`area` properties.)
+:propref:`ysize`, :propref:`xysize`, and :propref:`area` properties.)
 
 The new :func:`PlayCharacterVoice` action makes it possible to play
 a sample of a character's voice at that character's voice volume level.
@@ -1663,7 +1663,7 @@ set.
 Android/iOS
 -----------
 
-The android SELECT key - present on remote controls - is now supported
+The android SELECT key—present on remote controls—is now supported
 for advancing text and selecting buttons, bars, etc. This means most
 TV-based android consoles should be supported.
 
@@ -1680,7 +1680,7 @@ consumable in-app purchases have been added for iOS only.
 Other
 -----
 
-Unknown gamepads can be calibrated from the shift+G menu.
+Unknown gamepads can be calibrated from the Shift+G menu.
 
 The new :var:`config.replace_text` callback makes it possible to replace
 text with other text. For example, one can replace multiple dashes with
@@ -1969,7 +1969,7 @@ Ren'Py 6.99.2
 =============
 
 Ren'Py now supports an images directory underneath the game directory.
-Images found inside this directory - or in subdirectories of this directory - will
+Images found inside this directory—or in subdirectories of this directory—will
 be automatically defined as images in Ren'Py. This will likely render the use of
 the image statement obsolete in simple games.
 
@@ -2129,7 +2129,7 @@ and Korean.
 Clipboard Voicing
 -----------------
 
-Ren'Py now supports clipboard voicing, which is accessed by shift+C.
+Ren'Py now supports clipboard voicing, which is accessed by Shift+C.
 
 Clipboard voicing is a form of self-voicing that works by copying the
 text to the clipboard, where a screenreader program is likely to read
@@ -2167,7 +2167,7 @@ Three new set manipulation actions :func:`AddToSet`, :func:`RemoveFromSet`,
 and :func:`ToggleSetMembership` manipulate sets and lists-as-sets. (Such
 as inventory lists.)
 
-Drags (as in, drag-and-drop) now support the focus_mask style property.
+Drags (as in, drag-and-drop) now supports the :propref:`focus_mask` style property.
 
 The complexity of the style system has been reduced, decreasing memory
 usage and startup time.
@@ -2178,7 +2178,7 @@ checkpoints, while still allowing rollback to occur.
 The RENPY_GL_CHECK_ERRORS controlls the logging of OpenGL/ANGLE function
 calls and errors.
 
-A completion progress indicator can be toggled by typing shift-alt-P or
+A completion progress indicator can be toggled by typing Shift+Alt+P or
 swiping up-down-left-right-left-right.
 
 As of this release, dictionary and set comprehensions are wrapped to
@@ -2539,14 +2539,14 @@ The RENPY_TIMEWARP environment variable makes it possible to speedup and
 slow down time.
 
 An experimental new autoreload system can be accessed by setting
-:var:`config.autoreload` to True, then pressing shift+R to toggle
+:var:`config.autoreload` to True, then pressing Shift+R to toggle
 automatic reloading.
 
 Fixes
 -----
 
-A regression in 6.17.4 caused a major memory leak on shift+R. This has
-been fixed. Several other problems with shift+R have also been fixed.
+A regression in 6.17.4 caused a major memory leak on Shift+R. This has
+been fixed. Several other problems with Shift+R have also been fixed.
 
 An issue preventing transitions from working properly inside a restarted
 ATL transform has been fixed.
@@ -2561,7 +2561,7 @@ Ren'Py 6.17.4
 Reloading
 ---------
 
-This release contains a complete rewrite of shift+R reloading.
+This release contains a complete rewrite of Shift+R reloading.
 
 The rewrite was necessary to eliminate several major memory leaks that
 were triggered by reloading.
@@ -2624,7 +2624,7 @@ can be replaced with::
         idle_color "#8888"
         hover_color "#ccc"
 
-Finally, the style inspector (accessed through shift+I) has been
+Finally, the style inspector (accessed through Shift+I) has been
 rewritten.
 
 Syntax Changes
@@ -3043,8 +3043,8 @@ combined at the translator's discretion. As most Ren'Py statements are
 allowed inside the new translation blocks, it's possible to use logic (like
 conditions) to tailor the translations to your language.
 
-The launcher includes a new "Generate Translations" button, which - as part of
-a sanctioned translation where the full script is present - will generate
+The launcher includes a new "Generate Translations" button, which—as part of
+a sanctioned translation where the full script is present—will generate
 empty translation files for a new language.
 
 Improved Japanese Support
@@ -3080,7 +3080,7 @@ Console
 The new debug console makes it possible to interactively run Ren'Py script and
 Python statements, and immediately see the results. The console is available
 in developer mode or when :var:`config.console` is True, and can be accessed
-by pressing shift+O.
+by pressing Shift+O.
 
 The console can be used to:
 
@@ -3429,7 +3429,7 @@ where the user is able to add new slots to the list.
 Multiple Store Support
 ----------------------
 
-Ren'Py now supports multiple stores - multiple namespaces in which python code
+Ren'Py now supports multiple stores—multiple namespaces in which python code
 can be run. Variables in these stores are saved, loaded, and rolled-back in
 the same way that variables in the default store are.
 
@@ -3485,8 +3485,8 @@ that have occurred are:
 Other Changes
 -------------
 
-* The :func:`renpy.call` function allows - with major and important caveats -
-  a call to a Ren'Py label to begin from inside python code. Such a call
+* The :func:`renpy.call` function allows—with major and important caveats—
+  a call to a Ren'Py label to begin from inside Python code. Such a call
   immediately terminates the current statement.
 
 * When an action is expected, nested lists of actions can be given. The
@@ -3772,7 +3772,7 @@ Image Attributes
 
 The process of showing images is now attribute-based. Image names now consist
 of a tag, and zero or more attributes. When showing an image, the order of
-attributes is no longer important - it's now possible to define an image
+attributes is no longer important—it's now possible to define an image
 using one set of attributes, and show it using those attributes in a
 different order.
 
@@ -3934,7 +3934,7 @@ Android support required several changes in Ren'Py:
   when the android device suspends, and reloads (if necessary) upon resume.
 
 * We added the concept of :ref:`screen-variants`. This allows a single game
-  to have multiple interfaces - such a mouse interface for computer
+  to have multiple interfaces—such a mouse interface for computer
   platforms, and a touch interface for Android-based smartphones and tablets.
 
 * We built a system that allows one to package a game separately from
@@ -3978,7 +3978,7 @@ automatic, but only occurs when using screens.
 Screens may be invoked at any time, in order to allow for image prediction,
 unless they have a predict property of False. This means that displaying a
 screen should not have side effects. (Most screens only have side effects
-when a button is clicked or a bar changed - that's still fine.)
+when a button is clicked or a bar changed—that's still fine.)
 
 Ren'Py now supports hotspot caching for screen language imagemaps. When
 :var:`config.developer` is true, Ren'Py will write a PNG file in the
@@ -4001,7 +4001,7 @@ Ren'Py now ships with a default set of screens, which are used by the demo and
 installed by default when a new game is created. You can find them in
 template/game/screens.rpy, and they can be used by copying that file into
 your project. These screens are not 100% compatible with the previous layout
-system - for example, some styles have changed. That's why games must opt-in
+system—for example, some styles have changed. That's why games must opt-in
 to them.
 
 The definition of the `items` parameter of the :ref:`choice-screen` and
@@ -4157,7 +4157,7 @@ distributed as part of Ren'Py. These modules allow data to be retrieved from
 web servers.
 
 The launcher now includes an experimental updater, that makes it easier to
-update to the latest pre-release. Hitting shift+U at the launcher's main
+update to the latest pre-release. Hitting Shift+U at the launcher's main
 screen will cause Ren'Py to be updated.
 
 Fixes

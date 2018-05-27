@@ -5,7 +5,7 @@ Creator-defined statements allow you to add your own statements to Ren'Py. This
 makes it possible to add things that are not supported by the current syntax of
 Ren'Py.
 
-Creator-defined statements must be defined in a python early block. What's more,
+Creator-defined statements must be defined in a ``python early`` block. What's more,
 the filename containing the user-defined statement must be be loaded earlier
 than any file that uses it. Since Ren'Py loads files in unicode sort order, it
 generally makes sense to prefix the name of any file containing a user-defined
@@ -63,7 +63,7 @@ The parse method takes a Lexer object:
 
     .. method:: simple_expression()
 
-        Matches a simple python expression, returns it as a string.
+        Matches a simple Python expression, returns it as a string.
 
     .. method:: rest()
 

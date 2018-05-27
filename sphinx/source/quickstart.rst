@@ -28,7 +28,7 @@ Once you've downloaded Ren'Py, you'll want to extract and run it.
   drive. When the drive opens, copy the folder named ``renpy-<version>``
   somewhere else. (Where does not matter, but it has to be moved out of
   the read-only drive image. Do not move the renpy app out of the folder it's in
-  - it won't work elsewhere.) Then change into it, and run the ``renpy``
+ —it won't work elsewhere.) Then change into it, and run the ``renpy``
   application.
 
 * On Linux, unpack the tarball, change into the ``renpy-<version>``
@@ -91,7 +91,7 @@ default of 1280x720 is a good compromise between game size and image quality.
 For the purpose of this tutorial, we will select 1280x720 to match
 "The Question" game art, then click "Continue".
 
-The launcher will then ask you to choose a color scheme - an accent and
+The launcher will then ask you to choose a color scheme—an accent and
 background color for the new GUI. It doesn't matter what you pick at
 this point, so just pick something you find appealing, and then click
 "Continue".
@@ -254,9 +254,8 @@ you want to try it out.
 
         "Silence."
 
-all images from the screen, and displays a single image.
-This segment of script introduces two new statements. The scene statement on
-line 6 clears all images and displays a background image. The show statements
+This segment of script introduces two new statements. The ``scene`` statement on
+line 6 clears all images and displays a background image. The ``show`` statements
 on lines 16 and 26 display a sprite on top of the background, and change the
 displaying sprite, respectively.
 
@@ -282,8 +281,8 @@ Ren'Py searches for image files in the images directory, which can be
 found by selecting "images" in the "Open Directory" section of the
 launcher. Ren'Py expects character art to be an PNG or WEBP file,
 while background art should be a JPG, JPEG, PNG, or WEBP file.
-The name of a file  is very important - the extension is removed, the file
-name is forced to lower-case, and that's used as the image name.
+The name of a file is very important—the extension is removed, the file
+name is forced to lowercase, and that's used as the image name.
 
 For example, the following files, placed in the images directory, define the
 following images.
@@ -301,7 +300,7 @@ The directory name is ignored and only the filename is used to define the
 image name.
 
 **Hide Statement.**
-Ren'Py also supports a hide statement, which hides the given image.
+Ren'Py also supports a ``hide`` statement, which hides the given image.
 
 ::
 
@@ -322,7 +321,7 @@ the scene stays the same.
 
 **Image Statement.**
 Sometimes, a creator might not want to let Ren'Py define images
-automatically. This is what the image statement is for. It should
+automatically. This is what the ``image`` statement is for. It should
 be at the top level of the file (unindented, and before label start),
 and can be used to map an image name to an image file. For example::
 
@@ -345,7 +344,7 @@ important, Ren'Py supports transitions that allow effects to be
 applied when what is being shown changes.
 
 Transitions change what is displayed from what it was at the end of
-the last interaction (dialogue, menu, or transition - among other
+the last interaction (dialogue, menu, or transition—among other
 statements) to what it looks like after scene, show, and hide statements
 have run.
 
@@ -427,7 +426,7 @@ purposes.
    ###
         show sylvie green smile at right
 
-To do this repositioning, add an at clause to a show statement. The at
+To do this repositioning, add an ``at`` clause to a show statement. The at
 clause takes a position, and shows the image at that position. Ren'Py
 includes several predefined positions: ``left`` for the left side of
 the screen, ``right`` for the right side, ``center`` for centered
@@ -441,7 +440,7 @@ Music and Sound
 ---------------
 
 Most Ren'Py games play music in the background. Music is played with the
-play music statement. The play music statement takes a filename that
+``play music`` statement. The play music statement takes a filename that
 is interpreted as an audio file to play.  Audio filenames are interpreted
 relative to the game directory. Audio files should be in opus, ogg vorbis,
 or mp3 format.
@@ -451,25 +450,25 @@ For example::
     ###
         play music "illurock.ogg"
 
-When changing music, one can supply a fadeout and a fadein clause, which
+When changing music, one can supply a ``fadeout`` and a ``fadein`` clause, which
 are used to fade out the old music and fade in the new music. ::
 
     ###
         play music "illurock.ogg" fadeout 1.0 fadein 1.0
 
-The queue music statement plays an audio file after the current file
+The ``queue music`` statement plays an audio file after the current file
 finishes playing. ::
 
     ###
         queue music "next_track.opus"
 
-Music can be stopped with the stop music statement, which can also
+Music can be stopped with the ``stop music`` statement, which can also
 optionally take a fadeout clause. ::
 
     ###
         stop music
 
-Sound effects can be played with the play sound statement. Unlike music, sound
+Sound effects can be played with the ``play sound`` statement. Unlike music, sound
 effects do not loop. ::
 
     ###
@@ -479,7 +478,7 @@ effects do not loop. ::
 Pause Statement
 ---------------
 
-The pause statement causes Ren'Py to pause until the mouse is clicked. ::
+The ``pause`` statement causes Ren'Py to pause until the mouse is clicked. ::
 
     ###
         pause
@@ -494,7 +493,7 @@ have elapsed. ::
 Ending the Game
 ---------------
 
-You can end the game by running the return statement, without having
+You can end the game by running the ``return`` statement, without having
 called anything. Before doing this, it's best to put something in the
 game that indicates that the game is ending, and perhaps giving the
 user an ending number or ending name. ::
@@ -511,7 +510,7 @@ presents menus to the user.
 Menus, Labels, and Jumps
 -------------------------
 
-The menu statement lets presents a choice to the player::
+The ``menu`` statement lets presents a choice to the player::
 
     ###
         s "Sure, but what's a \"visual novel?\""
@@ -546,7 +545,7 @@ consisting of a string followed by a colon. These are the menu choices that are
 presented to the player. Each menu choice takes its own indented block of lines,
 which is run when that menu choices is chosen.
 
-In this example, each of the two menu choices runs a single jump statement.
+In this example, each of the two menu choices runs a single ``jump`` statement.
 The jump statement transfers control to the a label defined using the label
 statement. After a jump, script statements following the label are run.
 
@@ -606,14 +605,14 @@ assignment statement here assigns a value to a variable. Ren'Py has support
 for other ways of including Python, such as a multi-line Python statement,
 that are discussed in other sections of this manual.
 
-To check the flag, use the if statement::
+To check the flag, use the ``if`` statement::
 
         if book:
 
             "Our first game is based on one of Sylvie's ideas, but afterwards I get to come up with stories of my own, too."
 
 If the condition is true, the block of script is run. If not, it is skipped.
-The if statement can also take an else clause, that introduced a block of
+The ``if`` statement can also take an ``else`` clause, that introduced a block of
 script that is run if the condition is false. ::
 
         if book:
@@ -686,14 +685,14 @@ Where do we go from here?
 -------------------------
 
 This Quickstart barely scratches the surface of what Ren'Py is capable of.
-For brevity's sake, we've omitted many features Ren'Py supports, and
-simplified others - focusing on the minimum set of features used to make a
+For brevity's sake, we've omitted many features Ren'Py supports and
+simplified others—focusing on the minimum set of features used to make a
 visual novel.
 
 To get a feel for what Ren'Py is capable of, please play through the Tutorial,
 and perhaps some of the games featured on the `Ren'Py website <https://www.renpy.org>`_.
-You may also want to read the rest of this manual, starting with the GUI Customization
-Guide.
+You may also want to read the rest of this manual, starting with the :ref:`GUI Customization
+Guide <gui>`.
 
 Beyond that, we recommend checking out the Ren'Py section of the `Lemma Soft Forums <https://lemmasoft.renai.us/forums>`_, which
 has a section for asking questions, and a cookbook section with libraries and examples meant for reuse. The Lemma Soft Forums are the

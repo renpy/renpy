@@ -73,7 +73,7 @@ it using the default parent.
 Style names beginning with an underscore are reserved for Ren'Py use.
 
 As Ren'Py builds styles on startup, named styles should not be changed
-outside of a style statement or init block.
+outside of a style statement or ``init`` block.
 
 
 Style Inspector
@@ -158,7 +158,7 @@ Examples of style statements are::
         take big_red
 
 Style statements are always run at init-time. If a style statement is not
-in an init block, it is automatically placed init an init 0 block.
+in an ``init`` block, it is automatically placed into an ``init 0`` block.
 
 
 Defining Styles: Python

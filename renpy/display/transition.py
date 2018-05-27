@@ -536,7 +536,7 @@ class AlphaDissolve(Transition):
         Ignored.
 
     `reverse`
-        If True, the alpha channel is reversed. Opaque areas are taken
+        If true, the alpha channel is reversed. Opaque areas are taken
         from the old image, while transparent areas are taken from the
         new image.
      """
@@ -659,8 +659,8 @@ class CropMove(Transition):
         to the screen at, a 2-element tuple containing x and y.
 
     `topnew`
-        If True, the scene that is cropped and moved (and is on top of
-        the other scene) is the new scene. If False, it is the old scene.
+        If true, the scene that is cropped and moved (and is on top of
+        the other scene) is the new scene. If false, it is the old scene.
 
     ::
 

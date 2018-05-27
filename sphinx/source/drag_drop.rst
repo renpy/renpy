@@ -19,7 +19,7 @@ other uses of drag and drop. There are two classes involved here. The
 Drag class represents either something that can be dragged around the
 screen, something that can have a draggable dropped onto it, or
 something that can do both. The DragGroup class represents a group of
-Drags - for a drag and drop to occur, both Drags must be part of the
+Drags—for a drag and drop to occur, both Drags must be part of the
 same drag group.
 
 The drag and drop system can be used either through the :ref:`Screen

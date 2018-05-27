@@ -398,7 +398,7 @@ def display_say(
         advance=True,
         multiple=None):
 
-    # Final is True if this statement should perform an interaction.
+    # Final is true if this statement should perform an interaction.
 
     if multiple is None:
         final = interact
@@ -1202,7 +1202,7 @@ def Character(name=NotSet, kind=None, **properties):
     These options help to control the display of the name.
 
     `dynamic`
-        If True, then ``name`` should be a string containing a python
+        If true, then `name` should be a string containing a python
         expression. That string will be evaluated before each line
         of dialogue, and the result used as the name of the character.
 
@@ -1212,12 +1212,12 @@ def Character(name=NotSet, kind=None, **properties):
 
     `condition`
         If given, this should be a string containing a python
-        expression. If the expression is False, the dialogue
+        expression. If the expression is false, the dialogue
         does not occur, as if the say statement did not happen.
 
     `interact`
-        If True, the default, an interaction occurs whenever the
-        dialogue is shown. If False, an interaction will not occur,
+        If true, the default, an interaction occurs whenever the
+        dialogue is shown. If false, an interaction will not occur,
         and additional elements can be added to the screen.
 
     `advance`
@@ -1251,8 +1251,8 @@ def Character(name=NotSet, kind=None, **properties):
     `ctc_timedpause`
         A displayable to use a the click-to-continue indicator when the
         display of text is paused by the {p=} or {w=} text tags. When
-        None, this takes its default from ctc_pause, use ``Null()``
-        when you want a ``ctc_pause`` but no ``ctc_timedpause``.
+        None, this takes its default from `ctc_pause`, use ``Null()``
+        when you want a `ctc_pause` but no `ctc_timedpause`.
 
     `ctc_position`
         Controls the location of the click-to-continue indicator. If

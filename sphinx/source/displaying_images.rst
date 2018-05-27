@@ -120,7 +120,7 @@ example, all of these files will define the image ``eileen happy``::
 Image Statement
 ---------------
 
-An image statement is used to define an image. An image statement
+The ``image`` statement is used to define an image. An image statement
 consists of a single logical line beginning with the keyword ``image``,
 followed by an image name, an equals sign (``=``), and a
 displayable. For example::
@@ -141,8 +141,8 @@ game/eileen/happy.png, then you can write::
     image eileen happy = "eileen/happy.png"
 
 The image statement is run at init-time, before the menus are shown
-or the start label runs. When not contained inside an init block,
-image statements are run as if they were placed inside an init block of
+or the start label runs. When not contained inside an ``init`` block,
+image statements are run as if they were placed inside an ``init`` block of
 priority 500.
 
 See also the :ref:`ATL variant of the image statement. <atl-image-statement>`
@@ -367,7 +367,7 @@ transition is, by default, defined as a .5 second dissolve.)
 
 The second transition occurs after the Eileen and Lucy images are
 shown. It causes a dissolve from the scene consisting solely of the
-background to the scene consisting of all three images - the result is
+background to the scene consisting of all three images—the result is
 that the two new images appear to dissolve in simultaneously.
 
 .. _with-none:
@@ -378,7 +378,7 @@ With None
 In the above example, there are two dissolves. But what if we wanted
 the background to appear instantly, followed by a dissolve of the two
 characters? Simply omitting the first with statement would cause all
-three images to dissolve in - we need a way to say that the first
+three images to dissolve in—we need a way to say that the first
 should be show instantly.
 
 The with statement changes behavior when given the special value
