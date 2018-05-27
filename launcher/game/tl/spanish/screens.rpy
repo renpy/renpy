@@ -1,4 +1,4 @@
-
+﻿
 translate spanish strings:
 
     # screens.rpy:9

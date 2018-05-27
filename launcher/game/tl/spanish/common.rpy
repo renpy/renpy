@@ -1,4 +1,4 @@
-
+﻿
 translate spanish strings:
 
     # 00action_file.rpy:26

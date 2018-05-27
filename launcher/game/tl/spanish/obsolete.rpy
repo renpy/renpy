@@ -1,4 +1,4 @@
-
+﻿
 translate spanish strings:
 
     # _layout/classic_joystick_preferences.rpym:94

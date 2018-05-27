@@ -1,4 +1,4 @@
-
+﻿
 translate spanish strings:
 
     # 00gltest.rpy:70

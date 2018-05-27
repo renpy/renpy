@@ -1,4 +1,4 @@
-
+﻿
 translate french strings:
 
     # screens.rpy:251

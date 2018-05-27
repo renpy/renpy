@@ -1,4 +1,4 @@
-
+﻿
 translate spanish strings:
 
     # gui.rpy:2

@@ -1,4 +1,4 @@
-
+﻿
 translate spanish strings:
 
     # about.rpy:39

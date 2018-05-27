@@ -1,4 +1,4 @@
-
+﻿
 translate spanish strings:
 
     # options.rpy:1
