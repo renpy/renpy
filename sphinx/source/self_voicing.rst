@@ -1,7 +1,7 @@
 .. _self-voicing:
 
 ============
-Self Voicing
+Self-Voicing
 ============
 
 Ren'Py supports a self-voicing mode in which a speech synthesizer is used
@@ -82,7 +82,7 @@ Alternative text
     available as the "[text]" string substitution. No other string
     substitutions are allowed.
 
-    Supplying the ``who_alt`` and ``what_alt`` parameters to Character
+    Supplying the `who_alt` and `what_alt` parameters to Character
     sets the alt style property for the character name and body text,
     respectively. As an example, we define a Character that uses italics
     to indicate thoughts normally, but explicitly indicates thoughts

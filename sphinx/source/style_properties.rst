@@ -365,31 +365,30 @@ or on the screen when not inside a layout.
 
 .. style-property:: xfill boolean
 
-    If True, the displayable will expand to fill all available
-    horizontal space. If not True, it will only be large enough to
+    If true, the displayable will expand to fill all available
+    horizontal space. If not true, it will only be large enough to
     contain its children.
 
     This only works for displayables that can change size.
 
 .. style-property:: yfill boolean
 
-    If True, the displayable will expand to fill all available
-    vertical space. If not True, it will only be large enough to
+    If true, the displayable will expand to fill all available
+    vertical space. If not true, it will only be large enough to
     contain its children.
 
     This only works for displayables that can change size.
 
 .. style-property:: area tuple of (int, int, int, int)
 
-    The tuple is interpreted as (``xpos``, ``ypos``, ``width``,
-    ``height``). Attempts to position the displayable such that it's
+    The tuple is interpreted as (`xpos`, `ypos`, `width`,
+    `height`). Attempts to position the displayable such that it's
     upper-left corner is at `xpos` and `ypos`, and its size is `width`
     and `height`.
 
-    It does this by setting the :propref:`xpos`, :propref:`ypos`, 
-    :propref:`xanchor`, :propref:`yanchor`, :propref:`xmaximum`, 
-    :propref:`ymaximum`, :propref:`xminimum`, :propref:`yminimum`, 
-    :propref:`xfill`, and :propref:`yfill` properties to appropriate values.
+    It does this by setting the xpos, ypos, xanchor, yanchor,
+    xmaximum, ymaximum, xminimum, yminimum, xfill, and yfill
+    properties to appropriate values.
 
     This will not work with all displayables and all layouts.
 
@@ -470,7 +469,7 @@ Text Style Properties
 
 .. style-property:: italic boolean
 
-    If True, the text will be rendered in italics. For a TrueType font,
+    If true, the text will be rendered in italics. For a TrueType font,
     this usually involves synthetically increasing the font slant. It
     can also cause the font to be remapped, using
     :var:`config.font_replacement_map`.
@@ -556,12 +555,12 @@ Text Style Properties
 .. style-property:: min_width int
 
     Sets the minimum width of each line of that. If a line is shorter
-    than this, it is padded to this length, with text_align used to
+    than this, it is padded to this length, with ``text_align`` used to
     specify where such padding is placed.
 
 .. style-property:: newline_indent boolean
 
-    If True, the :propref:`first_indent` indentation is used after
+    If true, the :propref:`first_indent` indentation is used after
     each newline in a string. Otherwise, the :propref:`rest_indent`
     indentation is used.
 
@@ -571,15 +570,15 @@ Text Style Properties
     tuple specifies an outline, and outlines are drawn from back to
     front.
 
-    The list contains (``size``, ``color``, ``xoffset``, ``yoffset``)
-    tuples. ``size`` is the amount the font is expanded by, in
-    pixels. ``color`` is the color of the outline. ``xoffset`` and
-    ``yoffset`` are the amount the outline is shifted by, in pixels.
+    The list contains (`size`, `color`, `xoffset`, `yoffset`)
+    tuples. `size` is the amount the font is expanded by, in
+    pixels. `color` is the color of the outline. `xoffset` and
+    `yoffset` are the amount the outline is shifted by, in pixels.
 
     The outline functionality can also be used to give drop-shadows to
     fonts, by specifying a size of 0 and non-zero offsets.
 
-    By default, ``size``, ``xoffset`` and ``yoffset`` are scaled with the text.
+    By default, `size`, `xoffset` and `yoffset` are scaled with the text.
     When given as the absolute type, they are not scaled. For example::
 
         style default:
@@ -651,7 +650,7 @@ Text Style Properties
     The third item is the hyperlink focus function. This function is called
     with the argument of the hyperlink when the hyperlink gains focus, and
     with None when it loses focus. If it returns a value other than None,
-    the interaction returns that value
+    the interaction returns that value.
 
 .. style-property:: vertical boolean
 

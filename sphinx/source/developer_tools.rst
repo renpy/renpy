@@ -26,12 +26,12 @@ The :var:`config.editor` variable allows a developer to specify an editor
 command that is run when the launch_editor keypress (by default, Shift+E)
 occurs.
 
-please see :ref:`Text Editor Integration <text-editor-integration>`
+Please see :ref:`Text Editor Integration <text-editor-integration>`.
 
 Shift+D Developer Menu
 ----------------------
 
-When :var:`config.developer` is True, hitting Shift+D will display a developer
+When :var:`config.developer` is true, hitting Shift+D will display a developer
 menu that provides easy access to some of the features given below.
 
 Shift+R Reloading
@@ -52,7 +52,7 @@ new effect.
 Shift+I Style Inspecting
 ------------------------
 
-When :var:`config.developer` is True, pressing Shift+I will cause style
+When :var:`config.developer` is true, pressing Shift+I will cause style
 inspection to occur. This will display a list of displayables underneath the
 mouse. For each displayable, it will display the type, the style used, and the
 size it is being rendered at.
@@ -88,7 +88,7 @@ preview.
 
 To invoke warping, run Ren'Py with the ``--warp`` command-line argument followed
 by a filename:line combination, to specify where you would like to warp to. For
-example ::
+example::
 
     renpy.exe my_project --warp script.rpy:458
 

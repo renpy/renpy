@@ -39,7 +39,7 @@ declared in or by their full name, consisting of global and local name parts: ::
         jump global_label.local_name
 
 The label statement may take an optional list of parameters. These parameters
-are processed as described in PEP 3102, with two exceptions:
+are processed as described in :pep:`3102`, with two exceptions:
 
 * The values of default parameters are evaluated at call time.
 * The variables are dynamically, rather than lexically, scoped.

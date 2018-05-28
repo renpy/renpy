@@ -12,7 +12,7 @@ to it.
 
 When the Raspberry Pi is configured correctly, Ren'Py should run using the
 device's hardware OpenGL ES. This means that it has the same limitations as
-the Android and iOS platforms, with respect to ``focus_mast`` not working.
+the Android and iOS platforms, with respect to :propref:`focus_mask` not working.
 
 
 Configuring the Raspberry Pi

@@ -96,7 +96,7 @@ Changing the Launcher Style
 ---------------------------
 
 The styles used by the launcher can be configured by setting variables
-in a translate python block. The following variables are available. The
+in a ``translate python`` block. The following variables are available. The
 names are a bit confusing, as they reflect the English-language translation.
 
 These variables are only available in the launcher.
@@ -111,13 +111,13 @@ These variables are only available in the launcher.
 
 .. var:: gui.REGULAR_BOLD = False
 
-    If true, heavy-weight text is bolded.
+    If True, heavy-weight text is bolded.
 
 .. var:: gui.FONT_SCALE = 1.0
 
     A scaling factor that is applied to all text in the launcher.
 
-A translate python block is used to set these variables. For example, the
+A ``translate python`` block is used to set these variables. For example, the
 following is used to change the fonts in the Arabic translation of
 Ren'Py::
 
@@ -132,7 +132,7 @@ Functions
 ---------
 
 The following functions are used to configure translation in the launcher.
-They should be called from the init python block.
+They should be called from the ``init python`` block.
 
 .. function:: translate_font(language, font)
 

@@ -19,15 +19,15 @@ Generally, there's no difference between a script broken into multiple
 files, and a script that consists of one big file. Control can be
 transferred between files by jumping to or calling a label in another
 file.  This makes the division of a script up into files a matter of
-personal style - some game-makers prefer to have small files (like one
+personal style—some game-makers prefer to have small files (like one
 per event, or one per day), while others prefer to have one big
 script.
 
-To speed up loading time, Ren'Py will compile the ``.rpy`` files into
-.rpyc files when it starts up. When a ``.rpy`` file is changed, the ``.rpyc``
+To speed up loading time, Ren'Py will compile the .rpy files into
+.rpyc files when it starts up. When a .rpy file is changed, the .rpyc
 file will be updated when Ren'Py starts up. However, if a .rpyc file
-exists without a corresponding ``.rpy`` file, the ``.rpyc`` file will be
-used. This can lead to problems if a ``.rpy`` file is deleted without
+exists without a corresponding .rpy file, the .rpyc file will be
+used. This can lead to problems if a .rpy file is deleted without
 deleting the .rpyc file.
 
 Base Directory
@@ -216,12 +216,12 @@ Ren'Py statements are made of a few basic parts.
     * A name.
     * A string.
     * A number.
-    * Any python expression, in parenthesis.
+    * Any Python expression, in parenthesis.
 
     This can be followed by any number of:
 
     * A dot followed by a name.
-    * A parenthesised python expression.
+    * A parenthesised Python expression.
 
     As an example, ``3``, ``(3 + 4)``, ``foo.bar``, and ``foo(42)``
     are all simple expressions. But ``3 + 4`` is not, as the
@@ -231,7 +231,7 @@ Ren'Py statements are made of a few basic parts.
     An at list is a list of simple expressions, separated by commas.
 
 :dfn:`Python Expression`
-    A python expression is an arbitrary python expression, that may
+    A Python expression is an arbitrary Python expression, that may
     not include a colon. These are used to express the conditions in
     the if and while statements.
 
@@ -266,12 +266,12 @@ Python Expression Syntax
   can go back and review this.
 
 
-Many portions of Ren'Py take python expressions. For example, defining
-a new Character involves a call to the Character function. While
+Many portions of Ren'Py take Python expressions. For example, defining
+a new Character involves a call to the :func:`Character` function. While
 Python expressions are very powerful, only a fraction of that power is
 necessary to write a basic Ren'Py game.
 
-Here's a synopsis of python expressions.
+Here's a synopsis of Python expressions.
 
 :dfn:`Integer`
     An integer is a number without a decimal point. ``3`` and ``42``
@@ -285,7 +285,7 @@ Here's a synopsis of python expressions.
     Python strings begin with " or ', and end with the same
     character. \\ is used to escape the end character, and to
     introduce special characters like newlines (\\n). Unlike Ren'Py
-    strings, python strings can't span lines.
+    strings, Python strings can't span lines.
 
 :dfn:`True, False, None`
     There are three special values. ``True`` is a true value, ``False`` is
@@ -298,7 +298,7 @@ Here's a synopsis of python expressions.
     height) to represent a rectangle.
 
     Tuples begin with a left-parenthesis ``(``, consist of zero or
-    more comma-separated python expressions, and end with a
+    more comma-separated Python expressions, and end with a
     right-parenthesis ``)``. As a special case, the one-item tuple
     must have a comma following the item. For example::
 
@@ -319,7 +319,7 @@ Here's a synopsis of python expressions.
 
 :dfn:`Variable`
     Python expressions can use variables, that store values defined
-    using the define statement or python statements. A variable begins
+    using the ``define`` statement or Python statements. A variable begins
     with a letter or underscore, and then has zero or more letters,
     numbers, or underscores. For example::
 
@@ -345,7 +345,7 @@ Here's a synopsis of python expressions.
     begin with an expression (usually a variable), followed by a
     left-parenthesis, a comma-separated list of arguments, and a
     right-parenthesis. The argument list begins with the position
-    arguments, which are python expressions. These are followed by
+    arguments, which are Python expressions. These are followed by
     keyword arguments, which consist of the argument name, and equals
     sign, and an expression. In the example example::
 
@@ -387,5 +387,5 @@ To learn Python in more detail, we recommend starting with the Python
 tutorial, which is available from
 `python.org <http://docs.python.org/release/2.7/tutorial/index.html>`_.
 While we don't think a deep knowledge of Python is necessary to work
-with Ren'Py, the basics of python statements and expressions is
+with Ren'Py, the basics of Python statements and expressions is
 often helpful.

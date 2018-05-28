@@ -45,7 +45,7 @@ python early in layeredimage:
         `image_format`
             The image_format argument of the LayeredImage.
 
-        If `image `is None, then `name`, `group` (if not None), `variant` (if not None),
+        If `image` is None, then `name`, `group` (if not None), `variant` (if not None),
         and `attribute` are combined with underscores to create `image`, which
         will then be a string.
 

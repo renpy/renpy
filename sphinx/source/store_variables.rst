@@ -33,7 +33,7 @@ and rolled-back when rollback occurs.
 
 .. var:: _history = True
 
-    If True, Ren'Py will record dialogue history when a line is shown. (Note
+    If true, Ren'Py will record dialogue history when a line is shown. (Note
     that :var:`config.history_list_length` must be set as well.)
 
 .. var:: _history_list = [ ]
@@ -67,7 +67,7 @@ and rolled-back when rollback occurs.
 
 .. var:: mouse_visible = True
 
-    Controls if the mouse is visible. This is automatically set to True when
+    Controls if the mouse is visible. This is automatically set to true when
     entering the standard game menus.
 
 .. var:: name_only = Character(...)
@@ -107,7 +107,7 @@ and rolled-back when rollback occurs.
     is being said.
 
     The third argument must be a keyword argument named `interact` and defaulting
-    to True. If True, the say function will wait for a click. If False, it will
+    to True. If true, the say function will wait for a click. If false, it will
     immediately return with the dialogue displayed on the screen.
 
     It's rare to call this function directly, as one can simply call a character
@@ -125,13 +125,13 @@ and rolled-back when rollback occurs.
 .. var:: _window = False
 
     This set by the ``window show`` and ``window hide`` statements, and indirectly
-    by ``window auto``. If True, the dialogue window is shown during non-dialogue
+    by ``window auto``. If true, the dialogue window is shown during non-dialogue
     statements.
 
 .. var:: _window_auto = False
 
-    This is set to True by ``window auto`` and to False by ``window show`` and
-    ``window hide``. If True, the window auto behavior occurs.
+    This is set to true by ``window auto`` and to false by ``window show`` and
+    ``window hide``. If true, the window auto behavior occurs.
 
 .. var:: _window_subtitle = ''
 

@@ -25,7 +25,7 @@ be to check for an update to your graphics card drivers.
 If upgrading your video drivers does not fix the problem, you should
 consider switching video renderers, using the following steps.
 
-1. Hold down shift while starting Ren'Py, or press shift+G once Ren'Py has started.
+1. Hold down Shift while starting Ren'Py, or press Shift+G once Ren'Py has started.
 2. From the "Graphics Acceleration" menu that appears, choose the renderer to use.
 3. Choose "Quit", then restart Ren'Py.
 

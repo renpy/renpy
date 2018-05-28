@@ -289,7 +289,7 @@ difference between the two modes are:
   the replay. In normal mode, end_replay does nothing.
 
 To take advantage of the replay mode, a scene should begin with a
-label, and end with a call to renpy.end_replay. The scene should make
+label, and end with a call to :func:`renpy.end_replay`. The scene should make
 no assumption as to the state of the layers or variables, which can be
 very different in normal and replay mode. (When a replay begins, the label
 is invoked with a black screen.)

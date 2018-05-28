@@ -166,7 +166,7 @@ Note that the default values are often different than what's found in
 this documentation. The default values can changed based on size and
 colors selected for the game, and the values in this file are an example
 of extensive GUI customization. It's best to search gui.rpy for define and
-the variable in question - for example, "define gui.font_size".
+the variable in question—for example, "define gui.font_size".
 
 Some of the adjustments below either partially or completely effect image
 files. As a result, the changes only take effect when the image files
@@ -438,12 +438,12 @@ variables control text sizes.
 Borders
 -------
 
-There are a number of GUI components - such as buttons and bars - that use
+There are a number of GUI components—such as buttons and bars—that use
 scalable backgrounds configured using Border objects. Before discussing,
 how to customize buttons and bars, we'll first describe how this works.
 
 Borders are given to the :func:`Frame` displayable.
-A Frame takes an image, and divides it into nine parts - the four corners,
+A Frame takes an image, and divides it into nine parts—the four corners,
 the four sides, and the center. The corners always remain the same size,
 the left and right sides are stretched vertically, the top and bottom sides
 are stretched horizontally, and the center is stretched in both directions.
@@ -755,7 +755,7 @@ gui/slider/horizontal_idle_bar.png, gui/slider/horizontal_hover_bar.png, gui/sli
     hover states.
 
 gui/slider/horizontal_idle_thumb.png, gui/slider/horizontal_hover_thumb.png, gui/slider/vertical_idle_thumb.png, gui/slider/vertical_hover_thumb.png
-    Images used for the thumb - the movable part of the bar.
+    Images used for the thumb—the movable part of the bar.
 
 The following variables are also used:
 
@@ -815,7 +815,7 @@ gui/scrollbar/horizontal_idle_bar.png, gui/scrollbar/horizontal_hover_bar.png, g
     hover states.
 
 gui/scrollbar/horizontal_idle_thumb.png, gui/scrollbar/horizontal_hover_thumb.png, gui/scrollbar/vertical_idle_thumb.png, gui/scrollbar/vertical_hover_thumb.png
-    Images used for the thumb - the movable part of the bar.
+    Images used for the thumb—the movable part of the bar.
 
 The following variables are also used:
 
@@ -1007,14 +1007,14 @@ has a name (an empty name, like " ", counts).
     The horizontal and vertical positions of the name and namebox. These
     are usually a number of pixels from the left or top side of the textbox.
     Setting a variable to 0.5 centers the name in the textbox (see below).
-    These numbers can also be negative - for example, setting gui.name_ypos
+    These numbers can also be negative—for example, setting gui.name_ypos
     to -22 causes it to be places 22 pixels above the top of the textbox.
 
 .. var:: gui.name_xalign = 0.0
 
     The horizontal alignment of the character's name. This can be 0.0 for left-
     aligned, 0.5 for centered, and 1.0 for right-aligned. (It's almost always
-    0.0 or 0.5) This is used for both the position of the namebox relative
+    0.0 or 0.5.) This is used for both the position of the namebox relative
     to gui.name_xpos, and to select the side of of the namebox that is aligned
     with xpos.
 
@@ -1090,7 +1090,7 @@ is displayed.
 .. var:: gui.history_height = 210
 
     The height of a history entry, in pixels. This can be None to allow
-    the height of a history entry to vary at the cost of performance -
+    the height of a history entry to vary at the cost of performance—
     config.history_length may need to be lowered significantly when this
     is None.
 
@@ -1279,8 +1279,8 @@ Translation and GUI Variables
 -----------------------------
 
 The gui namespace is special, in that it is saved after the init phase,
-but before any translate python blocks are run. This makes it possible to
-change any GUI variable in a translate python block to accommodate a second
+but before any ``translate python`` blocks are run. This makes it possible to
+change any GUI variable in a ``translate python`` block to accommodate a second
 language. For example, the following code changes the default text font
 and size. ::
 
@@ -1321,13 +1321,13 @@ Styles
 
 :ref:`Styles <styles>` and :ref:`style properties <style-properties>` control how displayables
 are displayed. To find out what style a displayable is using, put the mouse
-over it and type shift+I. This invokes the style inspector, which shows
+over it and type Shift+I. This invokes the style inspector, which shows
 style names. Once the style name is known, a style statement can be used
 to customize it.
 
 For example, say we've lost our minds writing GUI documentation, and want to
 add a bright red outline to the dialogue text. We can hover the text and press
-shift+I to find out the style used is named say_dialogue. We can then
+Shift+I to find out the style used is named say_dialogue. We can then
 add (to the end of screens.rpy, or somewhere in options.rpy) the style statement::
 
     style say_dialogue:
@@ -1459,7 +1459,7 @@ Total GUI Replacement
 
 Advanced creators can replace some or all of screens.rpy in its entirely.
 When doing so, some or all of the contents of gui.rpy may become redundant.
-It's probably a good idea to call :func:`gui.init` to reset styles - but after
+It's probably a good idea to call :func:`gui.init` to reset styles—but after
 that, a creator can do whatever they want. It usually makes sense to include
 some or all of the :ref:`special screens <screen-special>`, to make sure
 players can have access to all the functionality Ren'Py provides.
@@ -1478,7 +1478,7 @@ Incompatible GUI Changes
 ========================
 
 As the GUI is changed, occasionally some of the variables change name. These
-changes only take effect when the GUI is regenerated - until then, the game
+changes only take effect when the GUI is regenerated—until then, the game
 will continue to use the old variable names in the new Ren'Py.
 
 6.99.12.3

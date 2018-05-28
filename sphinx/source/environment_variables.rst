@@ -91,5 +91,5 @@ variables.
 
 At startup, Ren'Py will look in the Ren'Py directory (the one containing
 renpy.exe or renpy.py) for the file "environment.txt". If it exists, it will be
-evaluated as a python file, and the values defined in that file will be used as
+evaluated as a Python file, and the values defined in that file will be used as
 the default values of environment variables.

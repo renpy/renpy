@@ -221,7 +221,7 @@ def in_rollback():
     """
     :doc: rollback
 
-    Returns True if the game has been rolled back.
+    Returns true if the game has been rolled back.
     """
 
     return renpy.game.log.in_rollback()
@@ -231,7 +231,7 @@ def can_rollback():
     """
     :doc: rollback
 
-    Returns True if we can rollback.
+    Returns true if we can rollback.
     """
 
     if not renpy.config.rollback_enabled:
@@ -244,7 +244,7 @@ def in_fixed_rollback():
     """
     :doc: blockrollback
 
-    Returns True if rollback is currently occurring and the current
+    Returns true if rollback is currently occurring and the current
     context is before an executed renpy.fix_rollback() statement.
     """
 
@@ -292,7 +292,7 @@ def suspend_rollback(flag):
     suspended.
 
     `flag`:
-        When `flag` is True, rollback is suspended. When False,
+        When `flag` is true, rollback is suspended. When false,
         rollback is resumed.
     """
 
@@ -461,7 +461,7 @@ def showing(name, layer='master'):
     """
     :doc: image_func
 
-    Returns True if an image with the same tag as `name` is showing on
+    Returns true if an image with the same tag as `name` is showing on
     `layer`
 
     `image`
@@ -487,7 +487,7 @@ def get_showing_tags(layer='master', sort=False):
     :doc: image_func
 
     Returns the set of image tags that are currently being shown on `layer`. If
-    sort is True, returns a list of the tags from back to front.
+    sort is true, returns a list of the tags from back to front.
     """
 
     if sort:
@@ -868,7 +868,7 @@ def menu(items, set_expr):
             return s
 
     # Filter the list of items to only include ones for which the
-    # condition is True.
+    # condition is true.
     items = [ (substitute(label), value)
               for label, condition, value in items
               if renpy.python.py_eval(condition) ]
@@ -981,7 +981,7 @@ def display_menu(items,
     Except for `items`, all arguments should be given as keyword arguments.
 
     `interact`
-        If False, the menu is displayed, but no interaction is performed.
+        If false, the menu is displayed, but no interaction is performed.
 
     `screen`
         The name of the screen used to display the menu.
@@ -1171,8 +1171,8 @@ def say(who, what, *args, **kwargs):
         in this string.
 
     `interact`
-        If True, Ren'Py waits for player input when displaying the dialogue. If
-        False, Ren'Py shows the dialogue, but does not perform an interaction.
+        If true, Ren'Py waits for player input when displaying the dialogue. If
+        false, Ren'Py shows the dialogue, but does not perform an interaction.
         (This is passed in as a keyword argument.)
 
     This function is rarely necessary, as the following three lines are
@@ -1268,8 +1268,8 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     """
     :doc: other
 
-    Causes Ren'Py to pause. Returns True if the user clicked to end the pause,
-    or False if the pause timed out or was skipped.
+    Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
+    or false if the pause timed out or was skipped.
 
     `delay`
         If given, the number of seconds Ren'Py should pause for.
@@ -1281,12 +1281,12 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
         Determines if a with None clause is executed at the end of the pause.
 
     `hard`
-        If True, a click will not interrupt the pause. Use this sparingly,
+        If true, a click will not interrupt the pause. Use this sparingly,
         as it's hard to distinguish a hard pause from a crashing game.
 
     `checkpoint`
-        If True, a checkpoint will be set, and players will be able to roll
-        back to this statement. If False, no checkpoint will be set. If None,
+        If true, a checkpoint will be set, and players will be able to roll
+        back to this statement. If false, no checkpoint will be set. If None,
         a checkpoint will only be set if delay is set.
     """
 
@@ -1414,8 +1414,8 @@ def with_statement(trans, always=False, paired=None, clear=True):
         If True, the transition will always occur, even if the user has
         disabled transitions.
 
-    This function returns True if the user chose to interrupt the transition,
-    and False otherwise.
+    This function returns true if the user chose to interrupt the transition,
+    and false otherwise.
     """
 
     if renpy.game.context().init_phase:
@@ -1463,7 +1463,7 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, a
     Rolls the state of the game back to the last checkpoint.
 
     `force`
-        If True, the rollback will occur in all circumstances. Otherwise,
+        If true, the rollback will occur in all circumstances. Otherwise,
         the rollback will only occur if rollback is enabled in the store,
         context, and config.
 
@@ -1472,18 +1472,18 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, a
         will roll back as far as it can, subject to this condition.
 
     `defer`
-        If True, the call will be deferred until control returns to the main
+        If true, the call will be deferred until control returns to the main
         context.
 
     `greedy`
-        If True, rollback will finish just after the previous checkpoint.
-        If False, rollback finish just before the current checkpoint.
+        If true, rollback will finish just after the previous checkpoint.
+        If false, rollback finish just before the current checkpoint.
 
     `label`
         If not None, a label that is called when rollback completes.
 
     `abnormal`
-        If True, the default, script executed after the transition is run in
+        If true, the default, script executed after the transition is run in
         an abnormal mode that skips transitions that would have otherwise
         occured. Abnormal mode ends when an interaction begins.
     """
@@ -1529,7 +1529,7 @@ def has_label(name):
     """
     :doc: label
 
-    Returns True if `name` is a valid label the program, or False otherwise.
+    Returns true if `name` is a valid label the program, or false otherwise.
 
     `name`
         Should be a string to check for the existence of a label. It can
@@ -1634,7 +1634,7 @@ def quit(relaunch=False, status=0):  # @ReservedAssignment
     This causes Ren'Py to exit entirely.
 
     `relaunch`
-        If True, Ren'Py will run a second copy of itself before quitting.
+        If true, Ren'Py will run a second copy of itself before quitting.
 
     `status`
         The status code Ren'Py will return to the operating system.
@@ -1675,7 +1675,7 @@ def call(label, *args, **kwargs):
     to the statement following the current statement.
 
     `from_current`
-        If True, control will return to the current statement, rather than
+        If true, control will return to the current statement, rather than
         the statement following the current statement. (This will lead to
         the current statement being run twice. This must be passed as a
         keyword argument.)
@@ -1713,10 +1713,10 @@ def version(tuple=False):  # @ReservedAssignment
     """
     :doc: renpy_version
 
-    If `tuple` is False, returns a string containing "Ren'Py ", followed by
+    If `tuple` is false, returns a string containing "Ren'Py ", followed by
     the current version of Ren'Py.
 
-    If `tuple` is True, returns a tuple giving each component of the
+    If `tuple` is true, returns a tuple giving each component of the
     version as an integer.
     """
 
@@ -1756,7 +1756,7 @@ def transition(trans, layer=None, always=False, force=False):
         applies to the entire scene.
 
     `always`
-        If False, this respects the transition preference. If True, the
+        If false, this respects the transition preference. If true, the
         transition is always run.
     """
 
@@ -1826,7 +1826,7 @@ def exists(filename):
     """
     :doc: file_rare
 
-    Returns True if the given filename can be found in the
+    Returns true if the given filename can be found in the
     searchpath. This only works if a physical file exists on disk. It
     won't find the file if it's inside of an archive.
 
@@ -2040,8 +2040,8 @@ def seen_label(label):
     """
     :doc: label
 
-    Returns True if the named label has executed at least once on the current user's
-    system, and False otherwise. This can be used to unlock scene galleries, for
+    Returns true if the named label has executed at least once on the current user's
+    system, and false otherwise. This can be used to unlock scene galleries, for
     example.
     """
     return label in renpy.game.persistent._seen_ever  # @UndefinedVariable
@@ -2153,8 +2153,8 @@ def show_layer_at(at_list, layer='master', reset=True):
     statement.
 
     `reset`
-        If True, the transform state is reset to the start when it is shown.
-        If False, the transform state is persisted, allowing the new transform
+        If true, the transform state is reset to the start when it is shown.
+        If false, the transform state is persisted, allowing the new transform
         to update that state.
     """
 
@@ -2277,12 +2277,12 @@ def scry():
 
     Returns the scry object for the current statement.
 
-    The scry object tells Ren'Py about things that must be True in the
+    The scry object tells Ren'Py about things that must be true in the
     future of the current statement. Right now, the scry object has one
     field:
 
     ``nvl_clear``
-        Is True if an ``nvl clear`` statement will execute before the
+        Is true if an ``nvl clear`` statement will execute before the
         next interaction.
     """
 
@@ -2689,7 +2689,7 @@ def call_screen(_screen_name, *args, **kwargs):
     Keyword arguments not beginning with _ are passed to the scope of
     the screen.
 
-    If the keyword argument `_with_none` is False, "with None" is not
+    If the keyword argument `_with_none` is false, "with None" is not
     run at the end of end of the interaction.
     """
 
@@ -2729,7 +2729,7 @@ def list_files(common=False):
     a list of files, with / as the directory separator.
 
     `common`
-        If True, files in the common directory are included in the
+        If true, files in the common directory are included in the
         listing.
     """
 
@@ -2854,7 +2854,7 @@ def variant(name):
     """
     :doc: screens
 
-    Returns True if a `name` is a screen variant that can be chosen
+    Returns true if a `name` is a screen variant that can be chosen
     by Ren'Py. See :ref:`screen-variants` for more details. This function
     can be used as the condition in a python if statement to set up the
     appropriate styles for the selected screen variant.
@@ -3029,7 +3029,7 @@ def get_image_load_log(age=None):
 
     * The time the image was loaded (in seconds since the epoch).
     * The filename of the image that was loaded.
-    * A boolean that is True if the image was preloaded, and False if the
+    * A boolean that is true if the image was preloaded, and false if the
       game stalled to load it.
 
     The entries are ordered from newest to oldest.
@@ -3079,10 +3079,10 @@ def is_seen(ever=True):
     """
     :doc: other
 
-    Returns True if the current line has been seen by the player.
+    Returns true if the current line has been seen by the player.
 
-    If `ever` is True, we check to see if the line has ever been seen by the
-    player. If False, we check if the line has been seen in the current
+    If `ever` is true, we check to see if the line has ever been seen by the
+    player. If false, we check if the line has been seen in the current
     play-through.
     """
 
@@ -3301,7 +3301,7 @@ def predicting():
     """
     :doc: screens
 
-    Returns True if Ren'Py is currently predicting the screen.
+    Returns true if Ren'Py is currently predicting the screen.
     """
 
     return renpy.display.predict.predicting
@@ -3349,7 +3349,7 @@ def add_layer(layer, above=None, below=None, menu_clear=True):
         be placed below.
 
     `menu_clear`
-        If True, this layer will be cleared when entering the game menu
+        If true, this layer will be cleared when entering the game menu
         context, and restored when leaving the
     """
 
@@ -3403,7 +3403,7 @@ def is_start_interact():
     """
     :doc: other
 
-    Returns True if restart_interaction has not been called during the current
+    Returns true if restart_interaction has not been called during the current
     interaction. This can be used to determine if the interaction is just being
     started, or has been restarted.
     """
@@ -3433,8 +3433,8 @@ def get_editable_input_value():
     """
     :undocumented:
 
-    Returns the current input value, and a flag that is True if it is editable.
-    and False otherwise.
+    Returns the current input value, and a flag that is true if it is editable.
+    and false otherwise.
     """
 
     return renpy.display.behavior.current_input_value, renpy.display.behavior.input_value_active
@@ -3516,8 +3516,8 @@ def get_skipping():
     """
     :doc: other
 
-    Returns True if the Ren'Py is skipping, "fast" if Ren'Py is fast skipping,
-    and False if it is not skipping.
+    Returns true if the Ren'Py is skipping, "fast" if Ren'Py is fast skipping,
+    and false if it is not skipping.
     """
 
     return renpy.config.skipping

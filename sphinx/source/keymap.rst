@@ -35,26 +35,26 @@ Keyboard keysyms may be preceded by the following prefixes, separated by
 underscores:
 
 alt
-    Matches if the alt key is pressed. Keysyms without this prefix match
-    when the alt key is not pressed.
+    Matches if the Alt key is pressed. Keysyms without this prefix match
+    when the Alt key is not pressed.
 meta
-    Matches if the meta, command, or windows key is pressed. Keysyms without
+    Matches if the meta, Command, or Windows key is pressed. Keysyms without
     this prefix match when the meta key is not pressed.
 ctrl
-    Matches if the ctrl key is pressed. Keysyms without this prefix match
-    when the ctrl key is not pressed. (Ctrl is not very useful, as it
+    Matches if the Ctrl key is pressed. Keysyms without this prefix match
+    when the Ctrl key is not pressed. (Ctrl is not very useful, as it
     usually triggers skipping.)
 shift
-    Matches when the shift key is pressed.
+    Matches when the Shift key is pressed.
 noshift
-    Matches when the shift key is not pressed. A K\_ keysym ignores the state
-    of the shift key when matching.
+    Matches when the Shift key is not pressed. A K\_ keysym ignores the state
+    of the Shift key when matching.
 repeat
     Matches when the key is a repeat due to the key being held down. Keysyms
     without this prefix do not match repeats.
 
 For example, the keysym "shift_alt_K_F5" will match the F5 key being pressed
-while shift and alt are held down.
+while Shift and Alt are held down.
 
 
 To change a binding, update the appropriate list in :var:`config.keymap`. The

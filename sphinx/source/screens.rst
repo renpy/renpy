@@ -96,7 +96,7 @@ consists of the property name, followed by the value of that
 property. Property values are simple expressions, unless otherwise
 noted. A property list is a space-separated list of these properties.
 
-If a statement ends with a colon (:), then it takes a block. Each line
+If a statement ends with a colon ``:``, then it takes a block. Each line
 in a block may be one of two things:
 
 * A property list.
@@ -189,7 +189,7 @@ All user interface statements take the following common properties:
     given identifier. Some screens will require that a displayable
     with a given identifier is created.
 
-    By default, the id is automatically-generated.
+    By default, the ``id`` is automatically-generated.
 
 `style`
     The name of the style applied to this displayable. This may be a
@@ -463,7 +463,7 @@ It also takes:
 * :ref:`position-style-properties`
 * :ref:`grid-style-properties`
 
-This must be given columns * rows children. Giving it a different
+This must be given (columns * rows) children. Giving it a different
 number of children is an error.
 
 ::
@@ -737,7 +737,7 @@ Mousearea
 A mouse area is an area of the screen that can react to the mouse
 entering or leaving it. Unlike a button, a mouse area does not take
 focus, so it's possible to have a mouse area with buttons inside it.
-The mousearea statement takes no parameters, and the following properties:
+The ``mousearea`` statement takes no parameters, and the following properties:
 
 `hovered`
     An action to run when the mouse enters the mouse area.
@@ -982,7 +982,7 @@ Transform
 ---------
 
 Applies a transform to its child. This takes no parameters, and the
-following property groups :
+following property groups:
 
 * :ref:`Common Properties <common-properties>`
 * :ref:`Transform Properties <transform-properties>`
@@ -1711,7 +1711,7 @@ The use and transclude constructs form the basis of
 Python
 ------
 
-The screen language also includes single-line and multiple-line ``python``
+The screen language also includes single-line and multiple-line Python
 statements, which can execute Python. The Python runs in the scope
 of the screen.
 
@@ -1746,7 +1746,7 @@ events to manage the show and hide process, so that Ren'Py can animate
 the show and hide process.
 
 Multiple showif statements can be grouped together into a single
-showif/elif/else construct, similiar to an if statement.
+``showif``/``elif``/``else`` construct, similiar to an if statement.
 **Unlike the if statement, showif executes all of its blocks, including Python, even if the condition is false.**
 This is because the showif statement needs to create the children that it is
 hiding.
@@ -1761,7 +1761,7 @@ Showif delivers three events to its children:
 ``hide``
     Is delivered when the condition changes from true to false.
 
-For these purposes, the condition of an elif clause is always false if any
+For these purposes, the condition of an ``elif`` clause is always false if any
 prior condition is true, while the condition of an else clause is only true
 when all prior conditions are false.
 

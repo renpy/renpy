@@ -37,7 +37,7 @@ given its own version control branch, to allow bugfix releases to be
 made.
 
 Full releases of Ren'Py may require changes to game scripts, but should be
-capable of running older games that use the script_version mechanism
+capable of running older games that use the ``script_version`` mechanism
 to indicate the version of Ren'Py they are written for.
 
 Full releases of Ren'Py may break savegame compatibility, although we have

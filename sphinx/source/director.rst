@@ -18,7 +18,7 @@ Using the Director
 ------------------
 
 You can access the director after starting your game by pressing the D
-(without shift) key on your keyboard. If this is your first time in
+(without Shift) key on your keyboard. If this is your first time in
 a session running the director, Ren'Py will reload your game to ensure
 it has the data required to edit it.
 

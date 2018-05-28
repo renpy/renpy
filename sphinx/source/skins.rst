@@ -4,7 +4,7 @@
 Skins
 =====
 
-Ren'Py supports skinning the launcher - changing what the launcher
+Ren'Py supports skinning the launcher—changing what the launcher
 looks like. To do this, follow the following steps:
 
 Skins are specific to the Ren'Py version in use, and can't be
