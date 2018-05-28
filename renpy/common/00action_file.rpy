@@ -636,9 +636,9 @@ init -1500 python:
             page = self.get_page()
 
             if page == "auto":
-                return self.auto
+                return __(self.auto)
             elif page == "quick":
-                return self.quick
+                return __(self.quick)
             else:
 
                 page = int(page)
