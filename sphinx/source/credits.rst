@@ -35,6 +35,7 @@ the omission in future versions.
 * Chris Mear
 * Christian Koepp
 * Civalin
+* Craig P. Donson
 * DaFool
 * Daniel Luque
 * David Gowers

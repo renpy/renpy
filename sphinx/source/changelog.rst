@@ -92,6 +92,8 @@ function can return a list of tags in sorted order.
 Showing a movie sprite a second time will now replay the movie from the start,
 for consistency with ATL and other animations.
 
+The documentation has received an editing pass, courtesy of Craig P. Donson.
+
 Translations
 ------------
 
