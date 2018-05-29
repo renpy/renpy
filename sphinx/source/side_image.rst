@@ -43,7 +43,7 @@ For example, say we have the following script::
 At point A, the character ``e`` is speaking, which is linked to the image
 tag "eileen". The "eileen happy" image is showing, so the pool of attributes
 is "eileen" and "happy". We look for an image with the "side" tag, and as
-many of those attributes as possible—and we match "side eileen happy",
+many of those attributes as possible â€“ and we match "side eileen happy",
 which is the side image Ren'Py will display.
 
 At point B, the "eileen concerned" image is showing. The pool of attributes
@@ -129,7 +129,7 @@ Transforms and Transitions
 
 The :var:`config.side_image_same_transform` and
 :var:`config.side_image_change_transform` transforms are called with two
-arguments—old and new side image displayables—each time the side
+arguments â€“ old and new side image displayables â€“ each time the side
 image is displayed. These can be used to move around side images, or
 use a transition to go between side images.
 

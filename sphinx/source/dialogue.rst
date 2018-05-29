@@ -229,9 +229,9 @@ non-dialogue interactions.
 
 ``window auto``
     This enables automatic management of the window. The window is shown
-    before statements listed in :var:`config.window_auto_show`—by default,
+    before statements listed in :var:`config.window_auto_show` â€“ by default,
     say statements. The window is hidden before statements listed in
-    :var:`config.window_auto_hide`—by default, ``scene`` and ``call screen``
+    :var:`config.window_auto_hide` â€“ by default, ``scene`` and ``call screen``
     statements. (Only statements are considered, not statement equivalent
     functions.)
 

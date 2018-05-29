@@ -19,7 +19,7 @@ Generally, there's no difference between a script broken into multiple
 files, and a script that consists of one big file. Control can be
 transferred between files by jumping to or calling a label in another
 file.  This makes the division of a script up into files a matter of
-personal style—some game-makers prefer to have small files (like one
+personal style â€“ some game-makers prefer to have small files (like one
 per event, or one per day), while others prefer to have one big
 script.
 

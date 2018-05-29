@@ -828,6 +828,7 @@ This positions displayables in the corners or center of a grid. It
 takes a single parameter, string containing a space-separated list of
 places to place its children. Each component of this list should be
 one of:
+
     'c', 't', 'b', 'l', 'r', 'tl', 'tr', 'bl', 'br'
 
 'c' means center, 't' top, 'tl' top left, 'br' bottom right, and so on.

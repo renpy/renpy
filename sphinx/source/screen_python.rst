@@ -99,7 +99,7 @@ The following UI functions do not take any children.
 * ui.spritemanager
 
 The following UI functions take a single child. They must be given
-that child—use :func:`ui.null` if the child is missing.
+that child â€“ use :func:`ui.null` if the child is missing.
 
 * ui.button
 * ui.frame
@@ -339,7 +339,7 @@ function:
 As an example of a creator-defined screen language statement, here's an
 implementation of the ``titledwindow`` statement given above. First, the
 statement must be registered in a ``python early`` block in a file that is loaded
-early—a name like 01custom.rpy will often load soon enough. The registration
+early â€“ a name like 01custom.rpy will often load soon enough. The registration
 call looks like::
 
 

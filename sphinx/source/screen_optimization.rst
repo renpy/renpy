@@ -82,7 +82,7 @@ showing it to the user, which can lead to another significant speedup.
 To compare positional arguments and properties, Ren'Py uses the notion of
 equality embodied by Python's == operator. We've extended this notion of
 equality to actions by deciding two actions should be equal when they are
-indistinguishable from each other—when it doesn't matter which action
+indistinguishable from each other â€“ when it doesn't matter which action
 is invoked, or which action is queried to determine sensitivity or
 selectedness.
 

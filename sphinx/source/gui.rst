@@ -166,7 +166,7 @@ Note that the default values are often different than what's found in
 this documentation. The default values can changed based on size and
 colors selected for the game, and the values in this file are an example
 of extensive GUI customization. It's best to search gui.rpy for define and
-the variable in question—for example, "define gui.font_size".
+the variable in question â€“ for example, "define gui.font_size".
 
 Some of the adjustments below either partially or completely effect image
 files. As a result, the changes only take effect when the image files
@@ -438,12 +438,12 @@ variables control text sizes.
 Borders
 -------
 
-There are a number of GUI components—such as buttons and bars—that use
+There are a number of GUI components â€“ such as buttons and bars â€“ that use
 scalable backgrounds configured using Border objects. Before discussing,
 how to customize buttons and bars, we'll first describe how this works.
 
 Borders are given to the :func:`Frame` displayable.
-A Frame takes an image, and divides it into nine parts—the four corners,
+A Frame takes an image, and divides it into nine parts â€“ the four corners,
 the four sides, and the center. The corners always remain the same size,
 the left and right sides are stretched vertically, the top and bottom sides
 are stretched horizontally, and the center is stretched in both directions.
@@ -755,7 +755,7 @@ gui/slider/horizontal_idle_bar.png, gui/slider/horizontal_hover_bar.png, gui/sli
     hover states.
 
 gui/slider/horizontal_idle_thumb.png, gui/slider/horizontal_hover_thumb.png, gui/slider/vertical_idle_thumb.png, gui/slider/vertical_hover_thumb.png
-    Images used for the thumb—the movable part of the bar.
+    Images used for the thumb â€“ the movable part of the bar.
 
 The following variables are also used:
 
@@ -815,7 +815,7 @@ gui/scrollbar/horizontal_idle_bar.png, gui/scrollbar/horizontal_hover_bar.png, g
     hover states.
 
 gui/scrollbar/horizontal_idle_thumb.png, gui/scrollbar/horizontal_hover_thumb.png, gui/scrollbar/vertical_idle_thumb.png, gui/scrollbar/vertical_hover_thumb.png
-    Images used for the thumb—the movable part of the bar.
+    Images used for the thumb â€“ the movable part of the bar.
 
 The following variables are also used:
 
@@ -1007,7 +1007,7 @@ has a name (an empty name, like " ", counts).
     The horizontal and vertical positions of the name and namebox. These
     are usually a number of pixels from the left or top side of the textbox.
     Setting a variable to 0.5 centers the name in the textbox (see below).
-    These numbers can also be negative—for example, setting gui.name_ypos
+    These numbers can also be negative â€“ for example, setting gui.name_ypos
     to -22 causes it to be places 22 pixels above the top of the textbox.
 
 .. var:: gui.name_xalign = 0.0
@@ -1090,7 +1090,7 @@ is displayed.
 .. var:: gui.history_height = 210
 
     The height of a history entry, in pixels. This can be None to allow
-    the height of a history entry to vary at the cost of performance—
+    the height of a history entry to vary at the cost of performance â€“ 
     config.history_length may need to be lowered significantly when this
     is None.
 
@@ -1459,7 +1459,7 @@ Total GUI Replacement
 
 Advanced creators can replace some or all of screens.rpy in its entirely.
 When doing so, some or all of the contents of gui.rpy may become redundant.
-It's probably a good idea to call :func:`gui.init` to reset styles—but after
+It's probably a good idea to call :func:`gui.init` to reset styles â€“ but after
 that, a creator can do whatever they want. It usually makes sense to include
 some or all of the :ref:`special screens <screen-special>`, to make sure
 players can have access to all the functionality Ren'Py provides.
@@ -1478,7 +1478,7 @@ Incompatible GUI Changes
 ========================
 
 As the GUI is changed, occasionally some of the variables change name. These
-changes only take effect when the GUI is regenerated—until then, the game
+changes only take effect when the GUI is regenerated â€“ until then, the game
 will continue to use the old variable names in the new Ren'Py.
 
 6.99.12.3

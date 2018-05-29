@@ -367,7 +367,7 @@ transition is, by default, defined as a .5 second dissolve.)
 
 The second transition occurs after the Eileen and Lucy images are
 shown. It causes a dissolve from the scene consisting solely of the
-background to the scene consisting of all three images—the result is
+background to the scene consisting of all three images â€“ the result is
 that the two new images appear to dissolve in simultaneously.
 
 .. _with-none:
@@ -378,7 +378,7 @@ With None
 In the above example, there are two dissolves. But what if we wanted
 the background to appear instantly, followed by a dissolve of the two
 characters? Simply omitting the first with statement would cause all
-three images to dissolve in—we need a way to say that the first
+three images to dissolve in â€“ we need a way to say that the first
 should be show instantly.
 
 The with statement changes behavior when given the special value

@@ -28,7 +28,7 @@ Once you've downloaded Ren'Py, you'll want to extract and run it.
   drive. When the drive opens, copy the folder named ``renpy-<version>``
   somewhere else. (Where does not matter, but it has to be moved out of
   the read-only drive image. Do not move the renpy app out of the folder it's in
- —it won't work elsewhere.) Then change into it, and run the ``renpy``
+  â€“ it won't work elsewhere.) Then change into it, and run the ``renpy``
   application.
 
 * On Linux, unpack the tarball, change into the ``renpy-<version>``
@@ -91,7 +91,7 @@ default of 1280x720 is a good compromise between game size and image quality.
 For the purpose of this tutorial, we will select 1280x720 to match
 "The Question" game art, then click "Continue".
 
-The launcher will then ask you to choose a color scheme—an accent and
+The launcher will then ask you to choose a color scheme â€“ an accent and
 background color for the new GUI. It doesn't matter what you pick at
 this point, so just pick something you find appealing, and then click
 "Continue".
@@ -281,7 +281,7 @@ Ren'Py searches for image files in the images directory, which can be
 found by selecting "images" in the "Open Directory" section of the
 launcher. Ren'Py expects character art to be an PNG or WEBP file,
 while background art should be a JPG, JPEG, PNG, or WEBP file.
-The name of a file is very important—the extension is removed, the file
+The name of a file is very important â€“ the extension is removed, the file
 name is forced to lowercase, and that's used as the image name.
 
 For example, the following files, placed in the images directory, define the
@@ -344,7 +344,7 @@ important, Ren'Py supports transitions that allow effects to be
 applied when what is being shown changes.
 
 Transitions change what is displayed from what it was at the end of
-the last interaction (dialogue, menu, or transition—among other
+the last interaction (dialogue, menu, or transition â€“ among other
 statements) to what it looks like after scene, show, and hide statements
 have run.
 
@@ -686,7 +686,7 @@ Where do we go from here?
 
 This Quickstart barely scratches the surface of what Ren'Py is capable of.
 For brevity's sake, we've omitted many features Ren'Py supports and
-simplified others—focusing on the minimum set of features used to make a
+simplified others â€“ focusing on the minimum set of features used to make a
 visual novel.
 
 To get a feel for what Ren'Py is capable of, please play through the Tutorial,

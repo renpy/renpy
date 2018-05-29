@@ -192,7 +192,7 @@ The tooltip class changes the screen when a button is hovered.
 When using a tooltip with a screen, the usual behavior is to create a
 tooltip object in a default statement. The value of the tooltip and
 the action method can then be used within the screen. The order of
-use within a screen doesn't matter—it's possible to use the value
+use within a screen doesn't matter â€“ it's possible to use the value
 before an action is used.
 
 Tooltips can take on any value. While in the example below we use the

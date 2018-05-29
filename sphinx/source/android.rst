@@ -9,7 +9,7 @@ smartphones and tablets. While these devices do not support 100% of
 Ren'Py's functionality, with minimal modification visual novels can be
 packaged and ported to these devices.
 
-RAPT—the Ren'Py Android Packaging Tool—is a program, downloaded separately
+RAPT â€“ the Ren'Py Android Packaging Tool â€“ is a program, downloaded separately
 from Ren'Py, that creates an Android package for testing or release purposes.
 
 Required Language
@@ -226,8 +226,8 @@ Before building a package, you must give Ren'Py some information
 about the Android build of your game. To do this, choose "Configure"
 from the Android screen of the Ren'Py launcher.
 
-If you need to change the information—for example, if you release a
-new version of your game—you can re-run the configure command. Your
+If you need to change the information â€“ for example, if you release a
+new version of your game â€“ you can re-run the configure command. Your
 previous choices will be remembered.
 
 Step 4: Build and Install the Package

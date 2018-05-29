@@ -33,7 +33,7 @@ change once the game has started, and includes:
 
 The Python state consists of the variables in the store that have changed since
 the game began, and all objects reachable from those variables. Note that it's
-the change to the variables that matters—changes to fields in objects will
+the change to the variables that matters â€“ changes to fields in objects will
 not cause those objects to be saved.
 
 In this example::
@@ -46,7 +46,7 @@ In this example::
          $ o.value = 42
 
 only `b` will be saved. A will not be saved because it does not change once
-the game begins. `O` is not saved because it does not change—the object it
+the game begins. `O` is not saved because it does not change â€“ the object it
 refers to changes, but the variable itself does not.
 
 
@@ -115,7 +115,7 @@ This can be a problem in Python-defined statements. In::
               narrator("The count is now [i].")
 
 if the user saves and loads in the middle, the loop will begin anew. Using
-Ren'Py script—rather than Python—to loop avoids this problem.::
+Ren'Py script â€“ rather than Python â€“ to loop avoids this problem.::
 
    $ i = 0
 

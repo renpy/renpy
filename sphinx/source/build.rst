@@ -176,7 +176,7 @@ Documentation
 
 Calling the build.documentation function with patterns marks files
 matching those patterns as documentation. Documentation files are
-included twice in a Macintosh application—both inside and outside
+included twice in a Macintosh application â€“ both inside and outside
 of the application itself.
 
 For example, to mark all txt and html files in the base directory as
@@ -238,7 +238,7 @@ game scripts into scripts.rpa::
 If an archive file is empty, it will not be built.
 
 Please think twice about archiving your game. Keeping files open will
-help others run your game on future platforms—platforms that may not
+help others run your game on future platforms â€“ platforms that may not
 exist until after you're gone.
 
 

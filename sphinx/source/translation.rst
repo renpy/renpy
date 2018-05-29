@@ -347,8 +347,8 @@ in preference to "game/library.png".
 Style Translations
 ==================
 
-It may be necessary to change styles—especially font-related
-styles—when translating a game. Ren'Py handles this with ``translate
+It may be necessary to change styles â€“ especially font-related
+styles â€“ when translating a game. Ren'Py handles this with ``translate
 style`` blocks and ``translate python`` blocks. These blocks can
 change language-related variables and styles. For example::
 
@@ -360,8 +360,8 @@ or equivalently::
   translate piglatin python:
       style.default.font = "stonecutter.ttf"
 
-When a language is activated—either at the start of the game, or
-after a language change—Ren'Py resets the styles to their contents
+When a language is activated â€“ either at the start of the game, or
+after a language change â€“ Ren'Py resets the styles to their contents
 at the end of the init phase. It then runs all translate python blocks
 and translate style blocks associated with the current language, guaranteeing
 that blocks appearing earlier in a file are executed first. Finally, it
