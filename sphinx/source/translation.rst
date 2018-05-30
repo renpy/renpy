@@ -362,7 +362,7 @@ or equivalently::
 
 When a language is activated – either at the start of the game, or
 after a language change – Ren'Py resets the styles to their contents
-at the end of the init phase. It then runs all translate python blocks
+at the end of the init phase. It then runs all ``translate python`` blocks
 and translate style blocks associated with the current language, guaranteeing
 that blocks appearing earlier in a file are executed first. Finally, it
 rebuilds styles, allowing the changes to take effect.
@@ -467,7 +467,7 @@ This will update the "game/tl/language/strings.rpy" file with a
 translation template that contains all of the strings in it.
 
 If a game doesn't include support for changing the language, it may be
-appropriate to use an init python block to set :var:`config.language`
+appropriate to use an ``init python`` block to set :var:`config.language`
 to the target language.
 
 Along with the use of string translations for dialogue, unsanctioned

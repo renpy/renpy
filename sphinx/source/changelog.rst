@@ -1868,7 +1868,7 @@ pixel art stays sharp when scaled up.
 The new :func:`renpy.predicting` function returns true if Ren'Py is running
 a screen for prediction purposes.
 
-The new :func:`renpy.return_statement` function is a python equivalent to
+The new :func:`renpy.return_statement` function is a Python equivalent to
 the Ren'Py return statement.
 
 The new :var:`_dismiss_pause` and :var:`_skipping` variables make it possible to
@@ -2610,7 +2610,7 @@ style, this has the potential to lead to a substantial performance
 improvement.
 
 This release also introduced a new style statement that can be used
-to define styles, in place of python code. (Of course, the older form
+to define styles, in place of Python code. (Of course, the older form
 remains fully supported.) Lengthy and redundant code like::
 
     init python:
@@ -2946,7 +2946,7 @@ This release includes many bugfixes. Some of the more important are:
   slow video card, and present the user with the appropriate error message.
 
 * A fix to a problem where Ren'Py would fail to display the proper error
-  message when python code containing non-ASCII characters fails to compile.
+  message when Python code containing non-ASCII characters fails to compile.
 
 
 
@@ -3088,8 +3088,8 @@ The console can be used to:
 
 * Jump to a label.
 * Interactively try out Ren'Py script statements.
-* Evaluate a python expression or statement to see the result.
-* Trace python expressions as the game progresses.
+* Evaluate a Python expression or statement to see the result.
+* Trace Python expressions as the game progresses.
 
 The console was originally written by Shiz, C, and delta.
 
@@ -3113,7 +3113,7 @@ Ren'Py now includes support for :ref:`replaying <replay>` scenes. A scene
 replay can be invoked from anywhere in Ren'Py (for example, from a main menu
 or game menus screen, even when the game has started). When the replay ends,
 Ren'Py will return to the location the replay was invoked from, even if that
-location is in a screen or in python code. Rollback works inside a replay,
+location is in a screen or in Python code. Rollback works inside a replay,
 but saving and loading is disabled.
 
 The :func:`Replay` action begins a replay. The :func:`renpy.end_replay` ends a
@@ -3161,7 +3161,7 @@ lib/ directory. Ren'Py itself has now been placed in the renpy/ directory.
 The common/ directory has been moved to renpy/common/, as it's considered an
 integral part of Ren'Py.
 
-Ren'Py now uses renamed but otherwise unmodified python binaries on all
+Ren'Py now uses renamed but otherwise unmodified Python binaries on all
 desktop platforms. (Previously, it used platform-specific binaries.) Portions
 of the library are shared between the desktop builds.
 
@@ -3214,7 +3214,7 @@ Other Changes
   :var:`config.exit_yesno_transition` variables allow a creator to supply
   transitions that are used upon entering and exiting yes/no prompts.
 
-* The python decimal module is now included in the default builds of Ren'Py.
+* The Python decimal module is now included in the default builds of Ren'Py.
 
 Bugfixes
 --------
@@ -3431,7 +3431,7 @@ where the user is able to add new slots to the list.
 Multiple Store Support
 ----------------------
 
-Ren'Py now supports multiple stores – multiple namespaces in which python code
+Ren'Py now supports multiple stores – multiple namespaces in which Python code
 can be run. Variables in these stores are saved, loaded, and rolled-back in
 the same way that variables in the default store are.
 
@@ -3567,7 +3567,7 @@ Side images can now be limited to showing a single character, or only showing
 characters that are not on the screen. See :var:`config.side_image_tag` and
 :var:`config.side_image_only_not_showing`.
 
-Added :var:`config.python_callbacks`, a list of python functions that are
+Added :var:`config.python_callbacks`, a list of Python functions that are
 called at the end of each python block.
 
 Ren'Py now tests the video card it is running on for functionality. If it
@@ -4329,8 +4329,8 @@ Other Changes
   into two parts at the first underscore. If the second part corresponds to
   an existing style, we create a new style instead of causing an error.
 
-* The python compiler has been rewritten to use the python ast module. This
-  should both improve performance, and improve error handling for python
+* The Python compiler has been rewritten to use the Python ast module. This
+  should both improve performance, and improve error handling for Python
   syntax.
 
   Because of this change, Ren'Py now ships with and requires Python 2.6.
