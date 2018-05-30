@@ -252,7 +252,7 @@ or on the screen when not inside a layout.
 
 .. style-property:: ypos position
 
-    The position of the displayable relative to the right side of the
+    The position of the displayable relative to the top side of the
     containing area.
 
 .. style-property:: pos tuple of (position, position)
