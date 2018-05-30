@@ -57,11 +57,11 @@ ensure that their writing is not accidentally misinterpreted by the engine.
 [ (left bracket)
     The left bracket is used to introduce interpolation of a value
     into the text. To include a single left bracket in your text,
-    double it—write ``[[``.
+    double it – write ``[[``.
 
 { (left brace)
     The left brace is used to introduce a text tag. To include a left
-    brace in your text, double it—write ``{{``.
+    brace in your text, double it – write ``{{``.
 
 
 .. _text-interpolation:
@@ -127,7 +127,7 @@ tags to every line of text, consider using a style instead.
 
 There are two types of text tags. Some text tags are self-closing, while others
 require a closing tag. When multiple closing tags are used, they
-should be closed last open, first closed order—Ren'Py will reject
+should be closed last open, first closed order – Ren'Py will reject
 incorrect nesting. For example::
 
     # This line is correct.

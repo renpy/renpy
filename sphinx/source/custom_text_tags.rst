@@ -1,4 +1,4 @@
-.. _custom-text-tags:
+ï»¿.. _custom-text-tags:
 
 ================
 Custom Text Tags
@@ -82,7 +82,7 @@ multiplier to its argument. ::
     "This is {big=3}BIG!{/big}"
 
 The example ``rot13`` text tag applies the ROT13 transform to text. Note that
-ROT26—ROT13 applied twice—is just normal text. ::
+ROT26 â€“ ROT13 applied twice â€“ is just normal text. ::
 
     init python:
 

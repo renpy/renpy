@@ -38,8 +38,8 @@ Dict Transitions
 :ref:`Dict Transitions <dict-transitions>` makes it
 possible to use the with statement and certain other functions to apply
 transitions to one or more layers. Ren'Py will not pause for these
-transitions to occur. Dict transitions make it possible—and even
-convenient—to have a transition apply to the sprites alone while dialogue is
+transitions to occur. Dict transitions make it possible – and even
+convenient – to have a transition apply to the sprites alone while dialogue is
 being displayed.
 
 Changes
@@ -966,7 +966,7 @@ improved. When a new project is created, it includes translations of the
 interface strings into the project's language, allowing the translation
 of text presented to the player by Ren'Py.
 
-There is now a single place for translating Ren'Py—translating
+There is now a single place for translating Ren'Py – translating
 the launcher also now translates the comments of a generated game. The process
 of translating Ren'Py (the launcher and the GUI) is now documented
 on the :ref:`Translating Ren'py <translating-renpy>` page. This page also
@@ -1291,7 +1291,7 @@ returned when enter is pressed.
 
 Ren'Py support a :func:`renpy.get_refresh_rate` function, which returns the
 referesh rate of the primary screen. This allows games using nearest neighbor
-mode to move at a whole-pixel rate—just like a Commodore 64 did.
+mode to move at a whole-pixel rate – just like a Commodore 64 did.
 
 Ren'Py can now automatically upload your game to itch.io, if
 :var:`build.itch_project` is set.
@@ -1665,7 +1665,7 @@ set.
 Android/iOS
 -----------
 
-The android SELECT key—present on remote controls—is now supported
+The android SELECT key – present on remote controls – is now supported
 for advancing text and selecting buttons, bars, etc. This means most
 TV-based android consoles should be supported.
 
@@ -1971,7 +1971,7 @@ Ren'Py 6.99.2
 =============
 
 Ren'Py now supports an images directory underneath the game directory.
-Images found inside this directory—or in subdirectories of this directory—will
+Images found inside this directory – or in subdirectories of this directory – will
 be automatically defined as images in Ren'Py. This will likely render the use of
 the image statement obsolete in simple games.
 
@@ -3045,8 +3045,8 @@ combined at the translator's discretion. As most Ren'Py statements are
 allowed inside the new translation blocks, it's possible to use logic (like
 conditions) to tailor the translations to your language.
 
-The launcher includes a new "Generate Translations" button, which—as part of
-a sanctioned translation where the full script is present—will generate
+The launcher includes a new "Generate Translations" button, which – as part of
+a sanctioned translation where the full script is present – will generate
 empty translation files for a new language.
 
 Improved Japanese Support
@@ -3431,7 +3431,7 @@ where the user is able to add new slots to the list.
 Multiple Store Support
 ----------------------
 
-Ren'Py now supports multiple stores—multiple namespaces in which python code
+Ren'Py now supports multiple stores – multiple namespaces in which python code
 can be run. Variables in these stores are saved, loaded, and rolled-back in
 the same way that variables in the default store are.
 
@@ -3487,7 +3487,7 @@ that have occurred are:
 Other Changes
 -------------
 
-* The :func:`renpy.call` function allows—with major and important caveats—
+* The :func:`renpy.call` function allows – with major and important caveats – 
   a call to a Ren'Py label to begin from inside Python code. Such a call
   immediately terminates the current statement.
 
@@ -3774,7 +3774,7 @@ Image Attributes
 
 The process of showing images is now attribute-based. Image names now consist
 of a tag, and zero or more attributes. When showing an image, the order of
-attributes is no longer important—it's now possible to define an image
+attributes is no longer important – it's now possible to define an image
 using one set of attributes, and show it using those attributes in a
 different order.
 
@@ -3936,7 +3936,7 @@ Android support required several changes in Ren'Py:
   when the android device suspends, and reloads (if necessary) upon resume.
 
 * We added the concept of :ref:`screen-variants`. This allows a single game
-  to have multiple interfaces—such a mouse interface for computer
+  to have multiple interfaces – such a mouse interface for computer
   platforms, and a touch interface for Android-based smartphones and tablets.
 
 * We built a system that allows one to package a game separately from
@@ -3980,7 +3980,7 @@ automatic, but only occurs when using screens.
 Screens may be invoked at any time, in order to allow for image prediction,
 unless they have a predict property of False. This means that displaying a
 screen should not have side effects. (Most screens only have side effects
-when a button is clicked or a bar changed—that's still fine.)
+when a button is clicked or a bar changed – that's still fine.)
 
 Ren'Py now supports hotspot caching for screen language imagemaps. When
 :var:`config.developer` is true, Ren'Py will write a PNG file in the
@@ -4003,7 +4003,7 @@ Ren'Py now ships with a default set of screens, which are used by the demo and
 installed by default when a new game is created. You can find them in
 template/game/screens.rpy, and they can be used by copying that file into
 your project. These screens are not 100% compatible with the previous layout
-system—for example, some styles have changed. That's why games must opt-in
+system – for example, some styles have changed. That's why games must opt-in
 to them.
 
 The definition of the `items` parameter of the :ref:`choice-screen` and

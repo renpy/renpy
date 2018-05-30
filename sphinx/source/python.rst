@@ -38,7 +38,7 @@ behavior:
     Python block terminates.
 
     This allows Python to use temporary variables that can't be
-    saved—but it means that the store needs to be accessed as fields
+    saved – but it means that the store needs to be accessed as fields
     on the store object, rather than directly.
 
 ``in``
@@ -276,7 +276,7 @@ First and Third-Party Python Modules and Packages
 -------------------------------------------------
 
 Ren'Py can import pure-Python modules and packages. First-party modules
-and packages—ones written for the game—can be placed directly
+and packages – ones written for the game – can be placed directly
 into the game directory. Third party packages can be placed into the
 game/python-packages directory.
 
