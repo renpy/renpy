@@ -6,8 +6,8 @@ Displayables
 A displayable is an object that can be shown to the user. Ren'Py
 displayables can be used in many ways.
 
-* Assignment to an image name using the image statement.
-* Added to a screen using the screen language add statement.
+* Assignment to an image name using the ``image`` statement.
+* Added to a screen using the screen language ``add`` statement.
 * Assignment to certain config variables.
 * Assignment to certain style properties.
 
@@ -16,9 +16,9 @@ five things that can be provided:
 
 * An object of type Displayable, created by calling one of the
   functions given below.
-* A string with a colon (:) in it. These are rare, but see the section on
+* A string with a colon ``:`` in it. These are rare, but see the section on
   :ref:`displayable prefixes <displayable-prefix>` below.
-* A string with a dot (.) in it. Such a string is interpreted as
+* A string with a dot ``.`` in it. Such a string is interpreted as
   a filename by :func:`Image`.
 * A color. A color may either be given as a hexadecimal color string in "#rgb",
   "#rgba", "#rrggbb", or "#rrggbbaa" form, a :class:`Color`, or an (r, g, b, a) tuple,
@@ -64,14 +64,14 @@ properties.
 
 There are three image file formats we recommend you use:
 
-* Webp
-* Png
-* Jpg
+* WEBP
+* PNG
+* JPG
 
-Non-animated Gif and Bmp files are also supported, but should not be
+Non-animated GIF and BMP files are also supported, but should not be
 used in modern games.
 
-Loading an Image from from a file on disk and decoding it so it can be
+Loading an Image from a file on disk and decoding it so it can be
 drawn to the screen takes a long amount of time. While measured in the
 tenths or hundreds of seconds, the duration of the loading process is
 long enough that it can prevent an acceptable framerate, and become
@@ -79,7 +79,7 @@ annoying to the user.
 
 Since an Image is of a fixed size, and doesn't change in response to
 input, game state, or the size of the area available to it, an Image
-can be loaded before it is needed, and placed into an area of memory
+can be loaded before it is needed and placed into an area of memory
 known as the image cache. Once an Image is decoded and in the cache,
 it can be quickly drawn to the screen.
 
@@ -91,7 +91,7 @@ that are no longer being used.
 By default, Ren'Py will predictively cache up to 8 screens worth of
 image data. (If your screen is 800x600, then a screen's worth of data
 is one 800x600 image, two 400x600 images, and so on.) This can be
-changed with the :var:config.image_cache_size configuration
+changed with the :var:`config.image_cache_size` configuration
 variable.
 
 Although the precise amount is dependent on implementation details and
@@ -271,7 +271,7 @@ big as the original. ::
 
         config.displayable_prefix["big"] = embiggen
 
-The init -10 makes sure the prefix is defined before any images that use it.
+The ``init -10`` makes sure the prefix is defined before any images that use it.
 The prefix can then be used to define images::
 
     image eileen big = "big:eileen happy"

@@ -11,29 +11,24 @@ With no configuration, Ren'Py is able to build the following kinds of
 packages:
 
 PC: Windows and Linux
-
     A zip file targeting Windows x86, Linux x86, and Linux x86_64.
 
 Linux x86/x86_64
-
     A tar.bz2 file targeting Linux x86 and Linux x86_64.
 
 Macintosh x86_64
-
     A zip file containing a Macintosh application targeting Macintosh
     OS X on Intel processors. Game data will be included inside the
     application, which appears to the user as a single file.
 
 Windows x86
-
-   A zip file targeting Windows x86.
+     A zip file targeting Windows x86.
 
 Windows, Mac, and Linux for Markets
-
-   A distribution that contains the information required to run on
-   software markets like itch.io and Steam. This isn't meant to be
-   run directly (and probably won't work on the Mac), but should be
-   fed to the app store upload process.
+     A distribution that contains the information required to run on
+     software markets like itch.io and Steam. This isn't meant to be
+     run directly (and probably won't work on the Mac), but should be
+     fed to the app store upload process.
 
 .. warning::
 

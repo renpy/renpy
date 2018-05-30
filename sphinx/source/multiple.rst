@@ -11,7 +11,7 @@ argument. For example::
     l "About bloody time! I've been waiting for this for years." (multiple=2)
 
 Multiple dialogue is invoked by passing a line of dialogue the `multiple` argument
-with the number of lines of dialogue to combine together. (So if we had multiple=3,
+with the number of lines of dialogue to combine together. (So if we had ``multiple=3``,
 three blocks of dialogue would be combined.)
 
 Multiple dialogue works by showing the say screen more than once, with

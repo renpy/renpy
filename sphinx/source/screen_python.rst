@@ -22,7 +22,9 @@ with the same id. Ids are generated automatically by the screen
 language, but when doing things by hand, they must be manually
 specified.
 
-Warning: UI Functions are deprecated and not recommended.
+.. warning::
+
+    UI Functions are deprecated and not recommended.
 
 Here's an example Python screen::
 

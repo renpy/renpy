@@ -99,7 +99,7 @@ These functions are useful in writing lint functions.
 Example
 -------
 
-This creates a new statement "line" that allows lines of text to be specified
+This creates a new statement ``line`` that allows lines of text to be specified
 without quotes. ::
 
     python early:

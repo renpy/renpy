@@ -61,7 +61,7 @@ text tag, or passed through unchanged.
 Examples
 --------
 
-The example big text tag works like the {size} text tag, but applies a
+The example ``big`` text tag works like the {size} text tag, but applies a
 multiplier to its argument. ::
 
     init python:
@@ -82,7 +82,7 @@ multiplier to its argument. ::
     "This is {big=3}BIG!{/big}"
 
 The example ``rot13`` text tag applies the ROT13 transform to text. Note that
-ROT26 â€“ ROT13 applied twice â€“ is just normal text. ::
+ROT26—ROT13 applied twice—is just normal text. ::
 
     init python:
 
