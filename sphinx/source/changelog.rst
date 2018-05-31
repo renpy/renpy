@@ -889,7 +889,7 @@ Other
 
 A crash on video playback on Android and iOS has been fixed.
 
-The default encoding for non-unicode strings in Ren'Py has been changed to
+The default encoding for non-Unicode strings in Ren'Py has been changed to
 the filesystem encoding. This should address a series of encoding issues
 that have occured on non-ascii systems since 6.99.12.
 
@@ -3546,7 +3546,7 @@ Fixed the following bugs in Ren'Py.
   numbers. This fixes a bug where non-integer kerning would lead to text
   overflowing its bounding box.
 * Menu choices are logged correctly.
-* All file access is now done in unicode, rather than the system's native
+* All file access is now done in Unicode, rather than the system's native
   encoding. This prevents crashes that occurred when Ren'Py was placed in a
   directory that had non-ASCII characters in it.
 * Fixed focus_mask on the ANGLE renderer.
@@ -3628,7 +3628,7 @@ Some of the new features that are now supported by the text display system are:
 
 * The new :tt:`cps` text tag controls the speed of text display.
 
-* By default, Ren'Py uses the unicode linebreaking algorithm to find points
+* By default, Ren'Py uses the Unicode linebreaking algorithm to find points
   at which a line can be broken. This algorithm should correctly break lines
   that contain a mix of western and eastern languages. Since that algorithm
   is incorrect on some Korean texts, Ren'Py also implements a

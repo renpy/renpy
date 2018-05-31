@@ -492,7 +492,7 @@ Text Style Properties
     values are:
 
     ``"unicode"`` (default)
-        Uses the unicode linebreaking algorithm, which is suitable for
+        Uses the Unicode linebreaking algorithm, which is suitable for
         most languages.
 
     ``"japanese-strict"``
