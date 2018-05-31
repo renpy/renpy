@@ -132,7 +132,7 @@ What Ren'Py can Save
 Ren'Py uses the Python pickle system to save game state. This module can
 save:
 
-* Basic types, such as True, False, None, int, str, float, complex, str, and unicode objects.
+* Basic types, such as True, False, None, int, str, float, complex, str, and Unicode objects.
 * Compound types, like lists, tuples, sets, and dicts.
 * Creator-defined objects, classes, functions, methods, and bound methods. For
   pickling these functions to succeed, they must remain available under their

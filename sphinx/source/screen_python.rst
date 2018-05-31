@@ -22,7 +22,9 @@ with the same id. Ids are generated automatically by the screen
 language, but when doing things by hand, they must be manually
 specified.
 
-Warning: UI Functions are deprecated and not recommended.
+.. warning::
+
+    UI Functions are deprecated and not recommended.
 
 Here's an example Python screen::
 
@@ -327,7 +329,7 @@ becomes::
 
 Creator-defined screen language statements must be registered in a ``python early`` block.
 What's more, the filename containing the creator-defined statement must be be loaded earlier
-than any file that uses it. Since Ren'Py loads files in unicode sort order, it
+than any file that uses it. Since Ren'Py loads files in Unicode sort order, it
 generally makes sense to prefix the name of any file registering a user-defined
 statement with 01, or some other small number.
 

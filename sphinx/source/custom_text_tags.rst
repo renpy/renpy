@@ -1,4 +1,4 @@
-.. _custom-text-tags:
+﻿.. _custom-text-tags:
 
 ================
 Custom Text Tags
@@ -61,7 +61,7 @@ text tag, or passed through unchanged.
 Examples
 --------
 
-The example big text tag works like the {size} text tag, but applies a
+The example ``big`` text tag works like the {size} text tag, but applies a
 multiplier to its argument. ::
 
     init python:

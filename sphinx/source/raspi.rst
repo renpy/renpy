@@ -6,7 +6,7 @@ demonstrated to run on the Raspberry Pi 3B, but may run on other models.
 
 It's important to realize that the Raspberry Pi is a very limited system,
 even compared to iOS and Android smartphones. As a result, not every Ren'Py
-game will run well—or at all—on a Raspberry Pi. What's more, it's possible
+game will run well – or at all – on a Raspberry Pi. What's more, it's possible
 to crash Ren'Py by allowing a game to use more RAM than the system has available
 to it.
 

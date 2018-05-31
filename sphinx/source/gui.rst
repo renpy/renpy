@@ -1298,7 +1298,7 @@ and later on::
 
     define gui.button_text_font = gui.interface_text_font
 
-Since both of these statements run before any translate block runs, both
+Since both of these statements run before any ``translate`` block runs, both
 variables need to be changed. ::
 
     translate japanese python::

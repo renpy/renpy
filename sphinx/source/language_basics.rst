@@ -12,7 +12,7 @@ Files
 
 The script of a Ren'Py game is made up of all the files found under
 the game directory ending with the .rpy extension. Ren'Py will
-consider each of these files (in unicode order), and will use the
+consider each of these files (in Unicode order), and will use the
 contents of the files as the script.
 
 Generally, there's no difference between a script broken into multiple
@@ -178,7 +178,7 @@ Ren'Py statements are made of a few basic parts.
 :dfn:`Name`
     A name begins with a letter or underscore, which is followed by
     zero or more letters, numbers, and underscores. For our purpose,
-    unicode characters between U+00a0 and U+fffd are considered to be
+    Unicode characters between U+00a0 and U+fffd are considered to be
     letters.
 
 :dfn:`Image Name`

@@ -122,7 +122,7 @@ Image Statement
 
 The ``image`` statement is used to define an image. An image statement
 consists of a single logical line beginning with the keyword ``image``,
-followed by an image name, an equals sign (``=``), and a
+followed by an image name, an equals sign ``=``, and a
 displayable. For example::
 
     image eileen happy = "eileen_happy.png"
@@ -219,7 +219,7 @@ Assuming we have the following images defined::
 
 Some example show statements are::
 
-    # Basic show
+    # Basic show.
     show mary night sad
 
     # Since 'mary night happy' is showing, the following statement is

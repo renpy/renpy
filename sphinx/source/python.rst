@@ -38,7 +38,7 @@ behavior:
     Python block terminates.
 
     This allows Python to use temporary variables that can't be
-    saved—but it means that the store needs to be accessed as fields
+    saved – but it means that the store needs to be accessed as fields
     on the store object, rather than directly.
 
 ``in``
@@ -102,7 +102,7 @@ persistent data. ::
 A priority number can be placed between ``init`` and ``python``. When
 a priority is not given, 0 is used. Init statements are run in priority
 order, from lowest to highest. Init statements of the same priority are run in
-unicode order by filename, and then from top to bottom within a file.
+Unicode order by filename, and then from top to bottom within a file.
 
 To avoid conflict with Ren'Py, creators should use priorities in the
 range -999 to 999. Priorities of less than 0 are generally used for
@@ -276,7 +276,7 @@ First and Third-Party Python Modules and Packages
 -------------------------------------------------
 
 Ren'Py can import pure-Python modules and packages. First-party modules
-and packages—ones written for the game—can be placed directly
+and packages – ones written for the game – can be placed directly
 into the game directory. Third party packages can be placed into the
 game/python-packages directory.
 

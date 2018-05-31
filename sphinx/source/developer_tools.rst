@@ -60,7 +60,7 @@ size it is being rendered at.
 Shift+Y Style Dumping
 ---------------------
 
-When :var:`config.developer` is True, pressing the dump_styles key (by default,
+When :var:`config.developer` is True, pressing the `dump_styles` key (by default,
 Shift+Y), will write a description of every style Ren'Py knows about to the
 file "styles.txt". This description includes every property that is part of the
 style, the value of that property, and the style the property is inherited
@@ -70,7 +70,7 @@ from.
 ---------------
 
 When :var:`config.developer` or :var:`config.fast_skipping` is True, pressing
-the ``fast_skip`` key (by default, ">") causes the the game to immediately skip to
+the `fast_skip` key (by default, ">") causes the the game to immediately skip to
 the next important interaction.  For this purpose, an important interaction is
 one that is not caused by a say statement, transition, or pause command.
 Usually, this means skipping to the next menu, but it will also stop when
