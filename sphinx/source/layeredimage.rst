@@ -102,7 +102,7 @@ can automatically declare attributes.
 
 The ``attribute`` statement introduces a layer that is displayed if an attribute
 is supplied to the image. For example, "augustina_outfit_dress" is only
-displayed if if the "dress" attribute is supplied. If given the default
+displayed if if the "dress" attribute is supplied. If given the ``default``
 keyword, the attribute is displayed if no conflicting attributes are
 provided; in this example, "augustina_eyes_open" is displayed unless the
 unless the "wink" attribute is given.
