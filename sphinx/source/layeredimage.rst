@@ -122,7 +122,7 @@ corner of each mouth image.
 The resulting image is the size of the bounding box of all the layers, so
 it probably makes sense to have one layer the full size of the image, which
 no other layer goes outside of. The first layer is in the back of the image,
-while the last is in front�in this example, the glasses will be on top of
+while the last is in front – in this example, the glasses will be on top of
 the other layers.
 
 Groups and attributes may appear more than once in a layered image, with
@@ -138,7 +138,7 @@ a value, for example with::
     default evil = True
 
 Then the layered image can be shown like any other image. Almost certainly,
-one of the outfits should be given�while Ren'Py doesn't enforce this,
+one of the outfits should be given – while Ren'Py doesn't enforce this,
 this image requires one::
 
     show augustina jeans
@@ -177,7 +177,7 @@ automatically determine a displayable name from the image name, group name,
 and attribute name. This is done by combining the names with underscores.
 
 When doing this, you can also take advantage of another feature of
-attributes�it's possible to add any properties to the first line and
+attributes – it's possible to add any properties to the first line and
 omit the block entirely.
 
 Here's our example of having done that::
@@ -255,7 +255,7 @@ default attributes. In that case, all of the groups could be written on
 single lines.
 
 There's no way to omit the displayables from the ``always`` or ``if`` statements,
-so this is as short as it gets�but with a few more images with proper
+so this is as short as it gets – but with a few more images with proper
 names, it's possible to use this to define thousands or even millions
 of combinations of layers.
 
@@ -484,7 +484,7 @@ Poses
 -----
 
 It's possible to have a character that has sprites in multiple poses,
-where everything�or at least everything of interest�is different.
+where everything – or at least everything of interest – is different.
 For example, if a character has standing and sitting poses, all the image
 parts will be in different places.
 
@@ -536,7 +536,7 @@ Python
 ------
 
 Of course, the ``layeredimage`` statements have a Python equivalents. The
-group statement does not�the group is supplied to ``attribute``, and the
+group statement does not – the group is supplied to ``attribute``, and the
 auto functionality can be implemented using :func:`renpy.list_images`.
 
 .. include:: inc/li
