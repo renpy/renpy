@@ -3,7 +3,7 @@
 translate french demo_minigame_8f14835c:
 
     # e "You may want to mix Ren'Py with other forms of gameplay. There are a couple of ways to do this."
-    e "Vous pouvez vouloir mixer Ren’Py avec d’autres formes de gameplay. Il y a pas mal de moyens pour faire cela."
+    e "Vous pourriez vouloir mixer Ren’Py avec d’autres formes de gameplay. Il y a pas mal de moyens pour faire cela."
 
 # game/indepth_minigame.rpy:222
 translate french demo_minigame_9b01503e:
@@ -27,7 +27,7 @@ translate french demo_minigame_a92baa6b:
 translate french demo_minigame_a07dbae0:
 
     # e "That makes it possible to create all kinds of minigames. Would you like to play some pong?"
-    e "Cela permet de réaliser toute sorte de mini-jeux. Voulez-vous jouer à Pong ?"
+    e "Cela permet de réaliser toutes sortes de mini-jeux. Voulez-vous jouer à Pong ?"
 
 # game/indepth_minigame.rpy:245
 translate french play_pong_ce00ff63:
@@ -75,7 +75,7 @@ translate french pong_done_631325c8:
 translate french pong_done_61d60761:
 
     # e "The further afield you get from those games, the more you'll find yourself fighting Ren'Py. At some point, it makes sense to consider other engines."
-    e "Plus vous voulez aller loin dans ce type de jeux et plus vous aurez à combattre le système de Ren’Py. À un certain moment, il sera logique de vous pencher vers d’autres moteurs de jeux."
+    e "Plus vous voudrez aller loin dans ce type de jeux et plus vous aurez à combattre le système de Ren’Py. À un certain moment, il sera logique de vous pencher vers d’autres moteurs de jeux."
 
 # game/indepth_minigame.rpy:282
 translate french pong_done_715c7b12:

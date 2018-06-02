@@ -135,7 +135,7 @@ translate french demo_character_71535ecf:
 translate french demo_character_e9ac7482:
 
     # e5 "The first number is the size of the outline, in pixels. That's followed by a string giving the hex-code of the color of the outline, and the x and y offsets."
-    e5 "Le premier nombre définit la taille de la bordure en pixel. Il est suivi par le code héxadécimal de la couleur de la bordure puis des décalages x et y (offsets en anglais)."
+    e5 "Le premier nombre définit la taille de la bordure en pixel. Il est suivi par le code hexadécimal de la couleur de la bordure puis des décalages x et y (offsets en anglais)."
 
 # game/indepth_character.rpy:93
 translate french demo_character_ea72d988:

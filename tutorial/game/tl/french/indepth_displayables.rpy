@@ -21,7 +21,7 @@ translate french simple_displayables_cef4598b:
 translate french simple_displayables_a661fb63:
 
     # e "The string can also contain a color code, consisting of hexadecimal digits, just like the colors used by web browsers."
-    e "La chaîne peut également contenir un code couleur, une chaîne de caractères héxadécimaux, comme les couleurs déclarées pour les navigateurs web."
+    e "La chaîne peut également contenir un code couleur, une chaîne de caractères hexadécimaux, comme les couleurs déclarées pour les navigateurs web."
 
 # game/indepth_displayables.rpy:43
 translate french simple_displayables_7f2efb23:
@@ -75,19 +75,19 @@ translate french simple_displayables_3dc0050e:
 translate french simple_displayables_801b7910:
 
     # e "The Frame displayable expands or shrinks to fit the area available to it. It does this by scaling the center in two dimensions and the sides in one, while keeping the corners the same size."
-    e "L’élément 'frame' étend ou rétrécie son contenu pour remplir l’aire disponible. Il le fait en étendant le centre dans les deux dimensions et en étendant les bords dans une seule. Les coins gardent ainsi la même dimension."
+    e "L’élément 'frame' étend ou rétrécit son contenu pour remplir l’aire disponible. Il le fait en étendant le centre dans les deux dimensions et en étendant les bords dans une seule. Les coins gardent ainsi la même dimension."
 
 # game/indepth_displayables.rpy:118
 translate french simple_displayables_00603985:
 
     # e "A Frame can also tile sections of the displayable supplied to it, rather than scaling."
-    e "La section centrale de l’élément peut être tuilées plutôt qu’étirée. Le centre se duplique en mosaïque."
+    e "La section centrale de l’élément peut être tuilée plutôt qu’étirée. Le centre se duplique en mosaïque."
 
 # game/indepth_displayables.rpy:126
 translate french simple_displayables_d8b23480:
 
     # e "Frames might look a little weird in the abstract, but when used with a texture, you can see how we create scalable interface components."
-    e "Les cadres peuvent paraître un peu étrange dans la théorie, mais quand ils sont utilisés avec une texture, vous pouvez voir comment nous pouvons les utiliser comme composants d’interface."
+    e "Les cadres peuvent paraître un peu étranges dans la théorie, mais quand ils sont utilisés avec une texture, vous pouvez voir comment nous pouvons les utiliser comme composants d’interface."
 
 # game/indepth_displayables.rpy:132
 translate french simple_displayables_ae3f35f5:

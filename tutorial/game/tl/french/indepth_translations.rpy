@@ -9,7 +9,7 @@ translate french translations_c4ef181f:
 translate french translations_20b9a600:
 
     # e "This includes the translation of every string in the game, including dialogue, menu choice, and interface strings, and of images and other assets."
-    e "Celui inclut la traduction de chaque chaîne dans le jeu, inluant donc les dialogues, les menus de choix, les textes de l’interface, mais aussi les images et les autres points."
+    e "Celui inclut la traduction de chaque chaîne dans le jeu, incluant donc les dialogues, les menus de choix, les textes de l’interface, mais aussi les images et les autres points."
 
 # game/indepth_translations.rpy:16
 translate french translations_07c7643c:
@@ -27,7 +27,7 @@ translate french translations_317d73e5:
 translate french translations_ab0f3c94:
 
     # e "To mark Lucy's name as translatable, we surround it by parentheses preceded by a single underscore."
-    e "Pour déclarer le nom de Lucy comme traductible, nous l’encradons de parenthèses et ajoutons un simple underscore."
+    e "Pour déclarer le nom de Lucy comme traductible, nous l’encadrons de parenthèses et ajoutons un simple underscore."
 
 # game/indepth_translations.rpy:26
 translate french translations_c81acfc7:
@@ -45,7 +45,7 @@ translate french translations_8272a0ef:
 translate french translations_fde34832:
 
     # e "After you type in the name of the language you'll be translating to, choosing Generate Translations will scan your game and create translation files."
-    e "Après que vous aillez saisi le nom du langage dans lequel vous allez traduire votre jeu, en choisissant « Extraire les traductions » vous allez lancer le scan de votre jeu et Ren’Py va créer les fichiers de traductions."
+    e "Après que vous ayez saisi le nom du langage dans lequel vous allez traduire votre jeu, en choisissant « Extraire les traductions » vous allez lancer le scan de votre jeu et Ren’Py va créer les fichiers de traductions."
 
 # game/indepth_translations.rpy:37
 translate french translations_e2ebb4af:

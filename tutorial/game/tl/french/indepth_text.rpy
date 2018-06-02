@@ -9,7 +9,7 @@ translate french a_label_8d79d234:
 translate french text_578c4060:
 
     # e "Sometimes, when showing text, we'll want to change the way some of the text is displayed."
-    e "Parfois, quand vous afficher du texte, vous voudrez changer la façon dont celui-ci est affiché."
+    e "Parfois, quand vous affichez du texte, vous voudriez changer la façon dont celui-ci est affiché."
 
 # game/indepth_text.rpy:31
 translate french text_60750345:
@@ -135,7 +135,7 @@ translate french after_a_label_1f2697ba:
 translate french after_a_label_dbfca166:
 
     # e "To break a line without pausing,\none can write \\n. \\' and \\\" include quotes in the text."
-    e "Pour effectuer un saut de ligne sans pause, \non peut écrire \\n. \\' et \\\" permettent d’écrire des guillemets dans le texte. (NDLT : En français, pour éviter tout soucis, vous pouvez utiliser le véritable apostrophe ’.)"
+    e "Pour effectuer un saut de ligne sans pause, \non peut écrire \\n. \\' et \\\" permettent d’écrire des guillemets dans le texte. (NDLT : En français, pour éviter tout soucis, vous pouvez utiliser la véritable apostrophe ’.)"
 
 # game/indepth_text.rpy:111
 translate french after_a_label_ffdf7e76:

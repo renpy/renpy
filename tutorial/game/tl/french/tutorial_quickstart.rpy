@@ -33,13 +33,13 @@ translate french tutorial_create_dea3e5c2:
 translate french tutorial_create_3289ea75:
 
     # e "Finally, Ren'Py will ask you to select a color scheme. You can change this after the game has been created, so just pick a color that's pleasing."
-    e "Enfin, Ren’Py vous demandera la couleur principale de votre jeu. Vous pouvez la changer après la création du jeu, alors sélectionner simplement la couleur qui vous plait."
+    e "Enfin, Ren’Py vous demandera la couleur principale de votre jeu. Vous pouvez la changer après la création du jeu, alors sélectionnez simplement la couleur qui vous plait."
 
 # game/tutorial_quickstart.rpy:48
 translate french tutorial_create_6b9e3b96:
 
     # e "Once that's done, Ren'Py will work for a bit and return you to the main menu with the new project selected. Now, when you click Launch, Ren'Py will start your new game."
-    e "Quand tout cela est fait, Ren’Py va travailler quelques temps et vous retournerez au menu principal du lanceur où le nouveau projet sera selectionné. Maintenant, quand vous cliquez sur « Lancer le projet », Ren’Py démarre votre nouveau jeu."
+    e "Quand tout cela est fait, Ren’Py va travailler quelques temps et vous retournerez au menu principal du lanceur où le nouveau projet sera sélectionné. Maintenant, quand vous cliquez sur « Lancer le projet », Ren’Py démarre votre nouveau jeu."
 
 # game/tutorial_quickstart.rpy:50
 translate french tutorial_create_bdf94f9b:
@@ -93,7 +93,7 @@ translate french tutorial_dialogue_5269d005:
 translate french tutorial_dialogue_241c0c74:
 
     # "Eileen" "Script might seem scary at first, but if you look you'll see it's easy to match it up to what I'm saying."
-    "Eileen" "Les scripts peuvent paraître impressionnant au début, mais vous allez voir rapidement comme il facile de faire la correspondance avec ce que je dis."
+    "Eileen" "Les scripts peuvent paraître impressionnants au début, mais vous allez voir rapidement comme il est facile de faire la correspondance avec ce que je dis."
 
 # game/tutorial_quickstart.rpy:82
 translate french tutorial_dialogue_f0d66410:
@@ -147,7 +147,7 @@ translate french tutorial_dialogue_b0afbe96:
 translate french tutorial_dialogue_628c9e4c:
 
     # e "Special characters in strings can be escaped with a backslash. To include \" in a string, we have to write \\\"."
-    e "Les caractères spéciaux dans une châine de caractère doivent être protégés par un antislash. Pour inclure une \" dans une chaîne de caractères, vous devez taper \\\"."
+    e "Les caractères spéciaux dans une chaîne de caractère doivent être protégés par un antislash. Pour inclure une \" dans une chaîne de caractères, vous devez taper \\\"."
 
 # game/tutorial_quickstart.rpy:116
 translate french tutorial_dialogue_3e6b0068_1:
@@ -183,7 +183,7 @@ translate french tutorial_dialogue_64ffe685:
 translate french tutorial_dialogue_97a33275:
 
     # e "If you'd like, you can run this game yourself by erasing everything in your project's script.rpy file, and replacing it with the code in the box above."
-    e "Si vous le souhaitez, vous pouvez éxecuter ce jeu vous-même en effaçant tout ce que contient le fichier script.rpy dans votre projet et en le remplaçant par le code de la boîte ci-dessus."
+    e "Si vous le souhaitez, vous pouvez exécuter ce jeu vous-même en effaçant tout ce que contient le fichier script.rpy dans votre projet et en le remplaçant par le code de la boîte ci-dessus."
 
 # game/tutorial_quickstart.rpy:145
 translate french tutorial_dialogue_c5e70d7e:
@@ -195,7 +195,7 @@ translate french tutorial_dialogue_c5e70d7e:
 translate french tutorial_dialogue_90719f73:
 
     # e "Using a string for a character's name is inconvenient, for two reasons."
-    e "Utiliser une chaîne de caractère pour le nom d’un personnage est problématique pour deux raisons."
+    e "Utiliser une chaîne de caractères pour le nom d’un personnage est problématique pour deux raisons."
 
 # game/tutorial_quickstart.rpy:151
 translate french tutorial_dialogue_910f286a:
@@ -273,7 +273,7 @@ translate french tutorial_dialogue_023bcd31:
 translate french tutorial_dialogue_48bb9547:
 
     # e "The one-argument form of the say statement is unchanged, but in the two-argument form, instead of the first string we can use a short name."
-    e "La déclaration formée d’un seul argument ne change pas, mais la forme avec deux arguments évolue. À la place de la chaîne de caractère, on peut utiliser le nom court."
+    e "La déclaration formée d’un seul argument ne change pas, mais la forme avec deux arguments évolue. À la place de la chaîne de caractères, on peut utiliser le nom court."
 
 # game/tutorial_quickstart.rpy:192
 translate french tutorial_dialogue_56a9936f:
@@ -291,7 +291,7 @@ translate french tutorial_dialogue_d5984a21:
 translate french tutorial_dialogue_a5bcac8b:
 
     # e "Since the bulk of a visual novel is dialogue, we've tried to make it as easy to write as possible."
-    e "Comme l’essence des romans visuel est le dialogue, nous avons essayé de les rendre aussi simple que possible à écrire."
+    e "Comme l’essence des romans visuel est le dialogue, nous avons essayé de les rendre aussi simples que possible à écrire."
 
 # game/tutorial_quickstart.rpy:200
 translate french tutorial_dialogue_6b9a42d0:
@@ -309,7 +309,7 @@ translate french tutorial_images_e09ac970:
 translate french tutorial_images_40140793:
 
     # e "Before we can show images, we must first choose image names, then place the image files into the images directory."
-    e "Avant de pouvoir afficher des images, nous devons d’abord choisir des noms d’images puis placer les fichiers dans le répertoire image."
+    e "Avant de pouvoir afficher des images, nous devons d’abord choisir des noms d’images puis placer les fichiers dans le répertoire images."
 
 # game/tutorial_quickstart.rpy:210
 translate french tutorial_images_d73388f8:
@@ -369,7 +369,7 @@ translate french tutorial_images_d77ffa1c:
 translate french tutorial_images_6c0c938b:
 
     # e "Here's the script for that scene. Notice how it includes two new statements, the scene and show statement."
-    e "Voici le script pour cette scène. Remarquez comment sont inclus les deux nouvelles déclarations, les déclarations 'scene' et 'show'."
+    e "Voici le script pour cette scène. Remarquez comment sont incluses les deux nouvelles déclarations, les déclarations 'scene' et 'show'."
 
 # game/tutorial_quickstart.rpy:244
 translate french tutorial_images_1a4660b9:
@@ -525,7 +525,7 @@ translate french tutorial_simple_positions_5d5e0cfd:
 translate french tutorial_simple_positions_e65da9bf:
 
     # e "But for many visual novels, xalign and yalign are the only properties that matter."
-    e "Mais pour la plupart des romans visules, les propriétés 'xalign' et 'yalign' sont les seules propriétés qui importent."
+    e "Mais pour la plupart des romans visuels, les propriétés 'xalign' et 'yalign' sont les seules propriétés qui importent."
 
 # game/tutorial_quickstart.rpy:381
 translate french tutorial_transitions_9b8c714c:
@@ -573,7 +573,7 @@ translate french tutorial_transitions_033042cc:
 translate french tutorial_transitions_0ba82f00:
 
     # e "Once a transition has been given a short name, we can use it in our game."
-    e "Une fois que nous avons donné un nom à la transtion, nous pouvons l’utiliser dans notre jeu."
+    e "Une fois que nous avons donné un nom à la transition, nous pouvons l’utiliser dans notre jeu."
 
 # game/tutorial_quickstart.rpy:431
 translate french tutorial_transitions_51ff9600:
@@ -585,7 +585,7 @@ translate french tutorial_transitions_51ff9600:
 translate french tutorial_transitions_1528f73f:
 
     # e "If you're interested, check out the Transitions Gallery section of this tutorial."
-    e "Si vous voulez en savoir plus, regardez la section « galerie de transition » de ce tutoriel."
+    e "Si vous voulez en savoir plus, regardez la section « galerie de transitions » de ce tutoriel."
 
 # game/tutorial_quickstart.rpy:439
 translate french tutorial_music_8b92efb7:
@@ -729,13 +729,13 @@ translate french choice1_done_2851a313:
 translate french choice1_done_ff761b03:
 
     # e "When the first menu choice is picked, we jump to the choice1_yes, which runs two lines of script before jumping to choice1_done."
-    e "Quand le premier choix du menu est sélectionné, nous sautons au label 'choice1_yes' qui éxecute deux lignes de script avant de sauter au label 'choice1_done'."
+    e "Quand le premier choix du menu est sélectionné, nous sautons au label 'choice1_yes' qui exécute deux lignes de script avant de sauter au label 'choice1_done'."
 
 # game/tutorial_quickstart.rpy:540
 translate french choice1_done_664fe702:
 
     # e "Similarly, picking the second choice jumps us to choice1_no, which also runs two lines of script."
-    e "De façon similaire, choisir le second choix du menu renvoie au label 'choice1_no' qui exécute deux autres lignes de codes."
+    e "De façon similaire, choisir le second choix du menu renvoie au label 'choice1_no' qui exécute deux autres lignes de code."
 
 # game/tutorial_quickstart.rpy:542
 translate french choice1_done_31d12b1e:

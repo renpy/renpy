@@ -69,7 +69,7 @@ translate french after_nvl_menu_cb560cd2:
 translate french after_nvl_menu_10a6e85a:
 
     # e "You can specify transitions that occur when going from NVL-mode to ADV-mode."
-    e "Vous pouvez spécifier des transitions qui surviennet quand on passe d’un mode NVL à un mode ADV."
+    e "Vous pouvez spécifier des transitions qui surviennent quand on passe d’un mode NVL à un mode ADV."
 
 # game/tutorial_nvlmode.rpy:73
 translate french after_nvl_menu_d43b28d1:
