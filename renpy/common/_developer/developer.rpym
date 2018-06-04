@@ -60,6 +60,9 @@ screen _developer:
                     textbutton _("Hide Image Load Log (F4)"):
                         action Hide("_image_load_log")
 
+                textbutton _("Image Attributes"):
+                    action ui.callsinnewcontext("_image_attributes")
+
         hbox:
             spacing gui._scale(25)
 
@@ -67,6 +70,39 @@ screen _developer:
                 action Hide("_developer")
                 size_group "developer"
 
+
+screen _image_attributes():
+
+    frame:
+        style_group ""
+        right_padding 0
+
+        has side "c b":
+            spacing gui._scale(10)
+
+
+        vbox:
+            label _("Image Attributes")
+
+            text "Coming soon."
+
+
+        hbox:
+            spacing gui._scale(25)
+
+            textbutton _(u"Return"):
+                action Return(True)
+
+
+    pass
+
+label _image_attributes:
+
+    call _enter_game_menu
+
+    call screen _image_attributes
+
+    return
 
 screen _variable_viewer(entries):
 
