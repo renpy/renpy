@@ -305,7 +305,26 @@ def empty_filter(s):
     return ""
 
 
-def generic_filter(s, transform):
+def generic_filter(s, function):
+    """
+    :doc: text_utility
+
+    Transforms `s`, while leaving text tags and interpolation the same.
+
+    `function`
+        A function that is called with strings corresponding to runs of
+        text, and should return a second string that replaces that run
+        of text.
+
+    ::
+
+        init python:
+            def upper(s):
+                return s.upper()
+
+        $ upper = renpy.transform_text("{b}Not Upper{/b}")
+
+    """
 
     def remove_special(s, start, end, process):
         specials = 0
@@ -352,7 +371,7 @@ def generic_filter(s, transform):
         return rv
 
     def remove_braces(s):
-        return remove_special(s, "{", "}", transform)
+        return remove_special(s, "{", "}", function)
 
     return remove_special(s, "[", "]", remove_braces)
 

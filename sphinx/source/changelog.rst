@@ -2,6 +2,15 @@
 Full Changelog
 ==============
 
+.. _renpy-7.0.1:
+
+7.0
+===
+
+Add :func:`renpy.transform_text`, a function to transform text without
+touching text tags or interpolation.
+
+
 .. _renpy-7.0:
 
 7.0
@@ -3487,7 +3496,7 @@ that have occurred are:
 Other Changes
 -------------
 
-* The :func:`renpy.call` function allows – with major and important caveats – 
+* The :func:`renpy.call` function allows – with major and important caveats –
   a call to a Ren'Py label to begin from inside Python code. Such a call
   immediately terminates the current statement.
 
