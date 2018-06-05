@@ -157,7 +157,7 @@ Examples of style statements are::
         variant "touch"
         take big_red
 
-Style statements are always run at init-time. If a style statement is not
+Style statements are always run at init time. If a style statement is not
 in an ``init`` block, it is automatically placed into an ``init 0`` block.
 
 
