@@ -346,9 +346,10 @@ class Channel(object):
         if self.playing and force_stop:
             renpysound.stop(self.number)
             self.playing = False
-            self.wait_stop = False
 
         if force_stop:
+            self.wait_stop = False
+
             if self.loop:
                 self.queue = self.queue[-len(self.loop):]
             else:
@@ -482,6 +483,8 @@ class Channel(object):
 
             if self.keep_queue == 0:
                 renpysound.dequeue(self.number, even_tight)
+                self.wait_stop = False
+                self.synchro_start = False
 
     def interact(self):
         """
