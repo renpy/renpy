@@ -219,7 +219,7 @@ class Channel(object):
         self.buffer_queue = buffer_queue
 
         # Are we paused?
-        self.paused = False
+        self.paused = None
 
         if default_loop is None:
             # By default, should we loop the music?
