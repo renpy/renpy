@@ -15,7 +15,7 @@ translate french start_d3abb53c:
 translate french end_b2482727:
 
     # e "Thank you for viewing this tutorial."
-    e "Merci d’avoir consulter ce tutoriel."
+    e "Merci d’avoir consulté ce tutoriel."
 
 # game/script.rpy:207
 translate french end_38362e36:

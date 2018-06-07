@@ -117,7 +117,7 @@ translate french style_basics_ac6a8414:
 translate french style_basics_3d9bdff7:
 
     # e "A style property can inherit from a parent. If a style property is not given in a style, it comes from the parent of that style."
-    e "Un propriété de style peut hériter des informations d’un parent. Si une propriété de style n’est pas donnée à un style, alors il prendra la valeur de la classe parente."
+    e "Une propriété de style peut hériter des informations d’un parent. Si une propriété de style n’est pas donnée à un style, alors il prendra la valeur de la classe parente."
 
 # game/indepth_style.rpy:182
 translate french style_basics_49c5fbfe:
@@ -171,7 +171,7 @@ translate french style_basics_22ed20a1:
 translate french style_basics_7a58037e:
 
     # e "These can be preceded by selected_ to change how the button looks when it represents a selected value or screen."
-    e "Ceux-ci peuvent également être précédé par 'selected_' pour changer son apparence quand il représente une valeur sélectionnée."
+    e "Ceux-ci peuvent également être précédés par 'selected_' pour changer son apparence quand il représente une valeur sélectionnée."
 
 # game/indepth_style.rpy:233
 translate french style_basics_0cdcb8c3:
@@ -237,7 +237,7 @@ translate french style_general_cd5cc97c:
 translate french style_general_e5a58f0b:
 
     # e "Finally, the alt property changes the text used by self-voicing for the hearing impaired."
-    e "Enfin, la propriété 'alt' change le texte utilisé par la synthèse vocale pour aider les joueurs sourds ou mal-entendant."
+    e "Enfin, la propriété 'alt' change le texte utilisé par la synthèse vocale pour aider les joueurs sourds ou malentendants."
 
 # game/indepth_style.rpy:335
 translate french style_text_fe457b8f:
@@ -261,7 +261,7 @@ translate french style_text_6dd42a57:
 translate french style_text_c689130e:
 
     # e "The bold style property makes the text bold. This can be done using an algorithm, rather than a different version of the font."
-    e "La propriété de style 'bold' rend le text en gras. "
+    e "La propriété de style 'bold' rend le texte en gras. "
 
 # game/indepth_style.rpy:355
 translate french style_text_3420bfe4:
@@ -321,7 +321,7 @@ translate french style_text_aee9277a:
 translate french style_text_b4c5190f:
 
     # e "But if you ignore the brackets and parenthesis, you have the width of the outline, the color, and then horizontal and vertical offsets."
-    e "Si vous ignorez les crochets et les parenthèses, vous verrez l’épaisseur de la la bordure, la couleur et les déclages horizontal et vertical."
+    e "Si vous ignorez les crochets et les parenthèses, vous verrez l’épaisseur de la bordure, la couleur et les décalages horizontal et vertical."
 
 # game/indepth_style.rpy:434
 translate french style_text_5a0c2c02:
@@ -465,7 +465,7 @@ translate french style_button_81283d42:
 translate french style_button_0b7aca6b:
 
     # e "The size_group style property takes a string. Ren'Py will make sure that all the windows or buttons with the same size_group string are the same size."
-    e "La propriété de style 'size_group' reçoit une chaîne de caractère. Ren’Py va s’assurer que toutes les fenêtres ou les boutons avec la même valeur 'size_group' aient tous la même taille."
+    e "La propriété de style 'size_group' reçoit une chaîne de caractères. Ren’Py va s’assurer que toutes les fenêtres ou les boutons avec la même valeur 'size_group' aient tous la même taille."
 
 # game/indepth_style.rpy:647
 translate french style_button_4c6da7d9:
@@ -681,7 +681,7 @@ translate french style_inspector_21bc0709:
 translate french style_inspector_243c50f0:
 
     # e "To use it, place the mouse over a portion of the Ren'Py user interface, and hit shift+I. That's I for inspector."
-    e "Pour l’utiliser, placer votre souris sur l’élément affiché dont vous souhaitez obtenir les informations et pressez Maj+I. C’est I pour inspecteur."
+    e "Pour l’utiliser, placez votre souris sur l’élément affiché dont vous souhaitez obtenir les informations et pressez Maj+I. C’est I pour inspecteur."
 
 # game/indepth_style.rpy:1088
 translate french style_inspector_bcbdc396:

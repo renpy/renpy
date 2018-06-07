@@ -21,7 +21,7 @@ translate french screen_displayable_properties_76c5639a:
 translate french screen_displayable_properties_527d4b4e:
 
     # e "First off, every screen language displayable supports the position properties. When the container a displayable is in supports it, you can use properties like align, anchor, pos, and so so on."
-    e "Tout d’abord, chaque code d’instruction des écrans supporte les propriétés de position. Quand un conteneur dans lequel se trouve un élément affichable le supporte, vous pouvez utilisez les propriétés telles que 'align', 'anchor', 'pos', etc.."
+    e "Tout d’abord, chaque code d’instruction des écrans supporte les propriétés de position. Quand un conteneur dans lequel se trouve un élément affichable le supporte, vous pouvez utiliser les propriétés telles que 'align', 'anchor', 'pos', etc.."
 
 # game/tutorial_screen_displayables.rpy:69
 translate french screen_displayable_properties_8aff26dd:
@@ -39,7 +39,7 @@ translate french screen_displayable_properties_2ed40a70:
 translate french screen_displayable_properties_da5733d1:
 
     # e "It tells Ren'Py which displayables are the background window, 'who' is speaking, and 'what' is being said. This used to apply per-Character styles, and help with auto-forward mode."
-    e "Elle indique à Ren’Py quel élément affichage utiliser pour la fenêtre, 'who' correspond à qui est en train de parler et 'what' correspond à ce qui est dit. C’est utilisé pour appliquer des styles par personnage et cela aide avec le mode 'avance rapide'."
+    e "Elle indique à Ren’Py quel élément d'affichage utiliser pour la fenêtre, 'who' correspond à qui est en train de parler et 'what' correspond à ce qui est dit. C’est utilisé pour appliquer des styles par personnage et cela aide avec le mode 'avance rapide'."
 
 # game/tutorial_screen_displayables.rpy:123
 translate french screen_displayable_properties_cc09fade:
@@ -135,7 +135,7 @@ translate french text_displayable_32d76ccb:
 translate french text_displayable_7e84a5d1:
 
     # e "Those variables may be parameters given to the screen, defined with the default or python statements, or set using the SetScreenVariable action."
-    e "Ces variables peuvent être des paramètres transmis à l’écran, définies avec les déclaration 'default' ou 'python' ou encore initialiser en utilisant l’action 'SetScreenVariable'."
+    e "Ces variables peuvent être des paramètres transmis à l’écran, définis avec les déclaration 'default' ou 'python' ou encore initialisés en utilisant l’action 'SetScreenVariable'."
 
 # game/tutorial_screen_displayables.rpy:247
 translate french text_displayable_8bc866c4:
@@ -201,7 +201,7 @@ translate french layout_displayables_afdc1b11:
 translate french layout_displayables_a23e2826:
 
     # e "The fixed displayable displays the children using Ren'Py's normal placement algorithm. This lets you place displayables anywhere in the screen."
-    e "L’élément 'fixed' affiche ses enfants en utilisant l’algorithme standard de placement de Ren’Py. Cela vous permet d’afficher les éléments n’importe où dans l’écran."
+    e "L’élément 'fixed' affiche ses enfants en utilisant l’algorithme standard de placement de Ren’Py. Cela vous permet d’afficher les éléments n’importe où à l’écran."
 
 # game/tutorial_screen_displayables.rpy:355
 translate french layout_displayables_fd3926ca:
@@ -213,7 +213,7 @@ translate french layout_displayables_fd3926ca:
 translate french layout_displayables_eff42786:
 
     # e "When a non-layout displayable is given two or more children, it's not necessary to create a fixed. A fixed is automatically added, and the children are added to it."
-    e "Quand un élément qui n’est pas un canvas a un ou deux enfants, alors il n’est pas nécessaire de créer un élément 'fixed'. Un élément 'fixed' est en effet automatiquement créé et et les enfants sont ajoutés en son sein."
+    e "Quand un élément qui n’est pas un canvas a un ou deux enfants, alors il n’est pas nécessaire de créer un élément 'fixed'. Un élément 'fixed' est en effet automatiquement créé et les enfants sont ajoutés en son sein."
 
 # game/tutorial_screen_displayables.rpy:384
 translate french layout_displayables_c32324a7:
@@ -243,13 +243,13 @@ translate french window_displayables_495d332b:
 translate french window_displayables_2c0565ab:
 
     # e "But when I add a background, it's much easier. That's why there are two displayables that are intended to give backgrounds to user interface elements."
-    e "Mais quand j’ajoute un arrière plan, c’est beaucoup plus facile. C’est pourquoi deux éléments affichables sont destinés pour fournir des arrière-plan aux éléments de l’interface utilisateur."
+    e "Mais quand j’ajoute un arrière plan, c’est beaucoup plus facile. C’est pourquoi deux éléments affichables sont destinés pour fournir des arrière-plans aux éléments de l’interface utilisateur."
 
 # game/tutorial_screen_displayables.rpy:419
 translate french window_displayables_c7d0968c:
 
     # e "The two displayables are frame and window. Frame is the one we use above, and it's designed to provide a background for arbitrary parts of the user interface."
-    e "Ces deux éléments sont 'frame' et 'window'. 'Frame' est celle que nous utilisons ci-dessus et elle est designée pour fournir un arrière-plan pour les parties arbitraire de l’interface utilisateur."
+    e "Ces deux éléments sont 'frame' et 'window'. 'Frame' est celle que nous utilisons ci-dessus et elle est conçue pour fournir un arrière-plan pour les parties arbitraires de l’interface utilisateur."
 
 # game/tutorial_screen_displayables.rpy:423
 translate french window_displayables_7d843f62:
@@ -381,7 +381,7 @@ translate french bar_displayables_1b037b21:
 translate french bar_displayables_c2aa4725:
 
     # e "The middle stye is the 'slider' value. It's used for values the player is expected to adjust, like a volume preference."
-    e "Au milieu, la propriété 'style' est à 'slider' (curseur en français). Elle est utilisée pour les valeurs que le joueur est sensé ajuster, comme ses préférences de volume."
+    e "Au milieu, la propriété 'style' est à 'slider' (curseur en français). Elle est utilisée pour les valeurs que le joueur est censé ajuster, comme ses préférences de volume."
 
 # game/tutorial_screen_displayables.rpy:606
 translate french bar_displayables_2fc44226:
@@ -561,7 +561,7 @@ translate french imagemap_done_dcb45224:
 translate french imagemap_done_5b5bc5e5:
 
     # e "Imagemaps have pluses and minuses. On one hand, they are easy for a designer to create, and can look very good. At the same time, they can be hard to translate, and text baked into images may be blurry when the window is scaled."
-    e "Les cartes d’images ont des avantages et des inconvénients. Pour le designer, elles sont très simple à créer et peuvent avoir un très beau look, mais d’un autre côté, elles sont complexes à traduire et le texte dans les images peut-être floue quand elles sont réduites."
+    e "Les cartes d’images ont des avantages et des inconvénients. Pour le designer, elles sont très simple à créer et peuvent avoir un très beau look, mais d’un autre côté, elles sont complexes à traduire et le texte dans les images peut être flou quand elles sont réduites."
 
 # game/tutorial_screen_displayables.rpy:780
 translate french imagemap_done_b6cebf2b:

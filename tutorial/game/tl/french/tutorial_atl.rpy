@@ -9,7 +9,7 @@ translate french tutorial_positions_a09a3fd1:
 translate french tutorial_positions_ba39aabc:
 
     # e "There are two main kinds of numbers in Python: integers and floating point numbers. An integer consists entirely of digits, while a floating point number has a decimal point."
-    e "Il y a deux types principaux de nombres en Python : les entiers et les nombres décimaux. Un entier est uniquement composé de chiffre, tandis qu’un nombre décimal contient une virgule (NDLT : un point en notation anglaise)."
+    e "Il y a deux types principaux de nombres en Python : les entiers et les nombres décimaux. Un entier est uniquement composé de chiffres, tandis qu’un nombre décimal contient une virgule (NDLT : un point en notation anglaise)."
 
 # game/tutorial_atl.rpy:209
 translate french tutorial_positions_a60b775d:
@@ -27,7 +27,7 @@ translate french tutorial_positions_7f1a560c:
 translate french tutorial_positions_8e7d3e52:
 
     # e "When we're positioning something, the area is usually the entire screen."
-    e "Quand nous positionnons quelquechose, la surface est généralement l’écran en entier."
+    e "Quand nous positionnons quelque chose, la surface est généralement l’écran en entier."
 
 # game/tutorial_atl.rpy:215
 translate french tutorial_positions_fdcf9d8b:
@@ -165,7 +165,7 @@ translate french tutorial_positions_2b184a93:
 translate french tutorial_positions_5aac4f3f:
 
     # e "With the right combination of position and anchor, any place on the screen can be specified, without even knowing the size of the image."
-    e "Avec la bonne combinaison de position et d’ancre, n’importe quelle position à l'écran peut être choisi, sans se souvier de la taille de l’image."
+    e "Avec la bonne combinaison de position et d’ancre, n’importe quelle position à l'écran peut être choisi, sans se soucier de la taille de l’image."
 
 # game/tutorial_atl.rpy:357
 translate french tutorial_positions_3b59b797:
@@ -249,7 +249,7 @@ translate french tutorial_atl_d5d6b62a:
 translate french tutorial_atl_7e853c9d:
 
     # e "Transforms can be very simple affairs that place the image somewhere on the screen, like the right transform."
-    e "Le transformations peuvent être de très simple outils qui placent une image quelque part sur l’écran, comme la transformation à droite."
+    e "Les transformations peuvent être de très simples outils qui placent une image quelque part sur l’écran, comme la transformation à droite."
 
 # game/tutorial_atl.rpy:429
 translate french tutorial_atl_87a6ecbd:
@@ -285,7 +285,7 @@ translate french tutorial_atl_1f22f875:
 translate french tutorial_atl_fd036bdf:
 
     # e "The first place ATL can be used is as part of an image statement. Instead of a displayable, an image may be defined as a block of ATL code."
-    e "Le premier endroit où les ATL peuvent être utilisés, c’est dans une déclaration 'image'. Au lieu d’un affichage habituel, une image image peut être définit comme un bloc de code ATL."
+    e "Le premier endroit où les ATL peuvent être utilisés, c’est dans une déclaration 'image'. Au lieu d’un affichage habituel, une image peut être définie comme un bloc de code ATL."
 
 # game/tutorial_atl.rpy:456
 translate french tutorial_atl_7cad2ab9:
@@ -297,13 +297,13 @@ translate french tutorial_atl_7cad2ab9:
 translate french tutorial_atl_c78b2a1e:
 
     # e "The second way is through the use of the transform statement. This assigns the ATL block to a python variable, allowing it to be used in at clauses and inside other transforms."
-    e "La seconde approche consiste à utiliser la déclaration 'transform'. Ceci assigne le bloc ATL à une variable python l’autorisant à être utilisé dans une clause ou dans une autre transformation."
+    e "La seconde approche consiste à utiliser la déclaration 'transform'. Ceci assigne le bloc ATL à une variable python, l’autorisant à être utilisé dans une clause ou dans une autre transformation."
 
 # game/tutorial_atl.rpy:473
 translate french tutorial_atl_da7a7759:
 
     # e "Finally, an ATL block can be used as part of a show statement, instead of the at clause."
-    e "Enfin, un bloc ATL peut être utiliser dans une déclaration 'show', à la place de la clause 'at'."
+    e "Enfin, un bloc ATL peut être utilisé dans une déclaration 'show', à la place de la clause 'at'."
 
 # game/tutorial_atl.rpy:480
 translate french tutorial_atl_1dd345c6:
@@ -459,7 +459,7 @@ translate french tutorial_atl_d08fe8d9:
 translate french tutorial_atl_84b22ac0:
 
     # e "ATL transforms created using the statement become ATL statements themselves. Since the default positions are also transforms, this means that we can use left, right, and center inside of an ATL block."
-    e "Les transformations ATL créés en utilisant des déclarations deviennent elle-même des déclarations. Ainsi les positions par défaut sont elles-même transformées, ce qui signifie que nous pouvons utiliser 'left', 'right' et 'center' au sein d’un bloc ATL."
+    e "Les transformations ATL créés en utilisant des déclarations deviennent elle-même des déclarations. Ainsi les positions par défaut sont elles-mêmes transformées, ce qui signifie que nous pouvons utiliser 'left', 'right' et 'center' au sein d’un bloc ATL."
 
 # game/tutorial_atl.rpy:635
 translate french tutorial_atl_331126c1:
@@ -495,7 +495,7 @@ translate french tutorial_atl_5d0f8f9d:
 translate french tutorial_atl_28a7d27e:
 
     # e "Finally, the choice statement makes Ren'Py randomly pick a block of ATL code. This allows you to add some variation as to what Ren'Py shows."
-    e "Enfin, la déclaration 'choice' fait que Ren’Py choisit aléatoirement un bloc de code ATL. Ceci vous permet de faire quelque variations dans ce que Ren’Py montre."
+    e "Enfin, la déclaration 'choice' fait que Ren’Py choisit aléatoirement un bloc de code ATL. Ceci vous permet de faire quelques variations dans ce que Ren’Py montre."
 
 # game/tutorial_atl.rpy:675
 translate french tutorial_atl_2265254b:
@@ -525,7 +525,7 @@ translate french transform_properties_88daf990:
 translate french transform_properties_d7a487f1:
 
     # e "The position properties can also be used to pan over a displayable larger than the screen, by giving xpos and ypos negative values."
-    e "Les propriétés de position peuvent aussi être utiliser pour déplacer une image plus large que l’écran en donnant des valeurs négatives à 'xpos' et 'ypos'."
+    e "Les propriétés de position peuvent aussi être utilisées pour déplacer une image plus large que l’écran en donnant des valeurs négatives à 'xpos' et 'ypos'."
 
 # game/tutorial_atl.rpy:729
 translate french transform_properties_89e0d7c2:
@@ -579,7 +579,7 @@ translate french transform_properties_b98b780b:
 translate french transform_properties_74d542ff:
 
     # e "Instead of zooming by a scale factor, the size transform property can be used to scale a displayable to a size in pixels."
-    e "Au lieu de zoomer avec un facteur d’échelle, la propriété de transformation 'size' peut être utilisé pour redimensionner l’élément affichable à une valeur précise de pixels."
+    e "Au lieu de zoomer avec un facteur d’échelle, la propriété de transformation 'size' peut être utilisée pour redimensionner l’élément affichable à une valeur précise de pixels."
 
 # game/tutorial_atl.rpy:834
 translate french transform_properties_438ed776:

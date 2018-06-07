@@ -15,7 +15,7 @@ translate french tutorial_playing_ca4769bb:
 translate french tutorial_playing_f30f1979:
 
     # e "One of the nice things about Ren'Py is that the engine provides many of these features for you. You can spend your time creating your game, and let us provide these things."
-    e "Un des éléments intéressant à propos de Ren’Py, c’est que son moteur fournit beaucoup de ces fonctionnalités. Vous pourrez vous concentrer sur la création du jeu en nous laissons gérer ces fonctionnalités attendues."
+    e "Un des éléments intéressants à propos de Ren’Py, c’est que son moteur fournit beaucoup de ces fonctionnalités. Vous pourrez vous concentrer sur la création du jeu en nous laissant gérer ces fonctionnalités attendues."
 
 # game/tutorial_playing.rpy:17
 translate french tutorial_playing_afa743e7:
@@ -69,7 +69,7 @@ translate french tutorial_playing_4b21f071:
 translate french tutorial_playing_eaac8ba9:
 
     # e "This screen lets you decide how Ren'Py displays, pick what Ren'Py skips, control text speed and auto-click speed, and adjust sound, music, and voice volumes."
-    e "Dans cet écran, vous décidez comment Ren’Py s’affiche, ce que Ren’Py saute, comment contrôler la vitesse du texte, la vitesse du clic automatique, vous pouvez ajuster le volum des sons, de la musique et des voix."
+    e "Dans cet écran, vous décidez comment Ren’Py s’affiche, ce que Ren’Py saute, comment contrôler la vitesse du texte, la vitesse du clic automatique, vous pouvez ajuster le volume des sons, de la musique et des voix."
 
 # game/tutorial_playing.rpy:42
 translate french tutorial_playing_b1562a34:

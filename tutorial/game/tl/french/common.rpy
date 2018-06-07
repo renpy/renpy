@@ -1025,7 +1025,7 @@ translate french strings:
 
     # _errorhandling.rpym:663
     old "Opens the errors.txt file in a text editor."
-    new "Ouvrir le fihchier « errors.txt » dans un éditeur de texte."
+    new "Ouvrir le fichier « errors.txt » dans un éditeur de texte."
 
     # _errorhandling.rpym:667
     old "Copies the errors.txt file to the clipboard."

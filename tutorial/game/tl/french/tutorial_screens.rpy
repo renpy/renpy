@@ -129,7 +129,7 @@ translate french screens_showing_7e48fc22:
 translate french screens_showing_80425bf3:
 
     # e "There are a trio of statements that are used to display screens."
-    e "Il y a un trio de déclaration qui sont utilisées pour afficher les écrans."
+    e "Il y a un trio de déclarations qui sont utilisées pour afficher les écrans."
 
 # game/tutorial_screens.rpy:291
 translate french screens_showing_7d2deb37:
@@ -177,7 +177,7 @@ translate french screens_showing_a38d1702:
 translate french screens_parameters_0666043d:
 
     # e "Here's an example of a screen that takes three parameters. The message parameter is a message to show, while the okay and cancel actions are run when the appropriate button is chosen."
-    e "Voici un exemple qui prend trois paramètres. Le paramètre 'message' est le message à afficher, tandis que les actions 'okay' et 'cancel' sont éxecutées quand vous pressez sur le bouton correspondant."
+    e "Voici un exemple qui prend trois paramètres. Le paramètre 'message' est le message à afficher, tandis que les actions 'okay' et 'cancel' sont exécutées quand vous pressez sur le bouton correspondant."
 
 # game/tutorial_screens.rpy:337
 translate french screens_parameters_cf95b914:
@@ -225,7 +225,7 @@ translate french screens_properties_4fde164e:
 translate french screens_properties_550c0bea:
 
     # e "When a screen has the tag property, it's treated like the tag part of an image name. Here, I'm showing a_tag_screen."
-    e "Quand un écran a la propriété 'tag', il est traité comme la partie étiquettée d’une image nommée. Ici, j’affiche 'a_tag_screen'."
+    e "Quand un écran a la propriété 'tag', il est traité comme la partie étiquetée d’une image nommée. Ici, j’affiche 'a_tag_screen'."
 
 # game/tutorial_screens.rpy:402
 translate french screens_properties_4fcf8af8:
@@ -291,7 +291,7 @@ translate french screens_properties_c7ad3a8e:
 translate french screens_control_4a1d8d7c:
 
     # e "The screen language has a few statements that do things other than show displayables. If you haven't seen the section on {a=jump:warp_screen_displayables}Screen Displayables{/a} yet, you might want to check it out, then come back here."
-    e "L’écran 'language' dispose de quelques déclarations qui gère d’autres chose que son affichage. Si vous n’avez pas encore lu la section sur {a=jump:warp_screen_displayables}les écrans affichables{/a}, vous devriez la consulter avant de revenir ici."
+    e "L’écran 'language' dispose de quelques déclarations qui gère d’autres choses que son affichage. Si vous n’avez pas encore lu la section sur {a=jump:warp_screen_displayables}les écrans affichables{/a}, vous devriez la consulter avant de revenir ici."
 
 # game/tutorial_screens.rpy:503
 translate french screens_control_0e939050:
@@ -315,7 +315,7 @@ translate french screens_control_ba8f5f13:
 translate french screens_control_f75fa254:
 
     # e "The reason for this is that Ren'Py will run a screen, and the Python in it, during screen prediction."
-    e "La raison à cela est que Ren’Py va exécuter un 'screen' et que le Python intégré n’existera que durant cette éxecution."
+    e "La raison à cela est que Ren’Py va exécuter un 'screen' et que le Python intégré n’existera que durant cette exécution."
 
 # game/tutorial_screens.rpy:536
 translate french screens_control_40c12afa:
@@ -357,7 +357,7 @@ translate french screens_control_328b0676:
 translate french screens_control_6768768b:
 
     # e "The key event runs an event when a key is pressed."
-    e "L’évènement 'key' s’exécute quand une touche est préssée."
+    e "L’évènement 'key' s’exécute quand une touche est pressée."
 
 # game/tutorial_screens.rpy:600
 translate french screen_use_c6a20a16:

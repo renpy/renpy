@@ -9,7 +9,7 @@ translate french distribute_7db9b042:
 translate french distribute_d373903b:
 
     # e "Before you build distributions, you should use the Lint command to check your game for problems."
-    e "Avant de compiler des distributions, vous devez utilier la commande 'Lint' pour vérifier que votre jeu n’a aucun problème."
+    e "Avant de compiler des distributions, vous devez utiliser la commande 'Lint' pour vérifier que votre jeu n’a aucun problème."
 
 # game/tutorial_distribute.rpy:7
 translate french distribute_2f970565:

@@ -111,7 +111,7 @@ translate french demo_simple_transitions_57f19473:
 translate french demo_simple_transitions_fce83e12:
 
     # e "There's also the 'move' transition, which is confusingly enough defined using the 'MoveTransition' function."
-    e "Il y a également la transition 'move' qui est défini par la fonction 'MoveTransition'."
+    e "Il y a également la transition 'move' qui est définie par la fonction 'MoveTransition'."
 
 # game/indepth_transitions.rpy:164
 translate french demo_simple_transitions_1050b6a4:
@@ -237,7 +237,7 @@ translate french demo_imagedissolve_transitions_20d9cf6c:
 translate french demo_imagedissolve_transitions_906f7800:
 
     # e "A dissolve only seems to affect parts of the scene that have changed..."
-    e "La dissolution semble n’affecter que les parties de la scène qui ont changé…"
+    e "La dissolution semble n’affecter que les parties de la scène qui ont changées…"
 
 # game/indepth_transitions.rpy:277
 translate french demo_imagedissolve_transitions_4b557a29:
@@ -417,7 +417,7 @@ translate french demo_movetransition_098ee9f1:
 translate french demo_movetransition_09748f81:
 
     # e "The moveout transitions (moveoutleft, moveoutright, moveouttop, and moveoutbottom) slide hidden images off the appropriate side of the screen."
-    e "Les transitions 'moveout' ('moveoutleft', 'moveoutright', 'moveouttop' et 'moveoutbottom') glisse une image cachée depuis le côté correspondant de l’écran."
+    e "Les transitions 'moveout' ('moveoutleft', 'moveoutright', 'moveouttop' et 'moveoutbottom') glissent une image cachée depuis le côté correspondant de l’écran."
 
 # game/indepth_transitions.rpy:450
 translate french demo_movetransition_5edf6007:
@@ -441,7 +441,7 @@ translate french demo_movetransition_569952e3:
 translate french demo_movetransition_bbb75540:
 
     # e "Finally, there are the zoomin and zoomout transitions, which show and hide things using a zoom."
-    e "Enfin, il y a les transitions 'zoomin' et 'zoomout' qui affiche ou cache les images en utilisant un zoom."
+    e "Enfin, il y a les transitions 'zoomin' et 'zoomout' qui affichent ou cachent les images en utilisant un zoom."
 
 # game/indepth_transitions.rpy:499
 translate french demo_movetransition_dc5ccd54:
