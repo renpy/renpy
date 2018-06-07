@@ -775,6 +775,62 @@ class Lexer(object):
 
         return s
 
+    def triple_string(self):
+        """
+        Lexes a triple quoted string, intended for use with monologue mode.
+        This is about the same as the double-quoted strings, except that
+        runs of whitespace with multiple newlines are turned into a single
+        newline.
+        """
+
+        s = self.match(r'r?"""([^\\"]|\\.)*"""')
+
+        if s is None:
+            s = self.match(r"r?'''([^\\']|\\.)*'''")
+
+        if s is None:
+            s = self.match(r"r?```([^\\`]|\\.)*```")
+
+        if s is None:
+            return None
+
+        if s[0] == 'r':
+            raw = True
+            s = s[1:]
+        else:
+            raw = False
+
+        # Strip off delimiters.
+        s = s[3:-3]
+
+        def dequote(m):
+            c = m.group(1)
+
+            if c == "{":
+                return "{{"
+            elif c == "[":
+                return "[["
+            elif c == "%":
+                return "%%"
+            elif c == "n":
+                return "\n"
+            elif c[0] == 'u':
+                group2 = m.group(2)
+
+                if group2:
+                    return unichr(int(m.group(2), 16))
+            else:
+                return c
+
+        if not raw:
+
+            # Collapse runs of whitespace into single spaces.
+            s = re.sub(r' *\n *', '\n', s)
+            s = re.sub(r' +', ' ', s)
+            s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)
+
+        return s
+
     def integer(self):
         """
         Tries to parse an integer. Returns a string containing the
