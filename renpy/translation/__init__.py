@@ -179,7 +179,7 @@ class ScriptTranslator(object):
             tl = self.language_translates.get((identifier, language), None)
 
             if (tl is None) and alternate:
-                tl = self.language_translates.get((identifier, language), alternate)
+                tl = self.language_translates.get((identifier, language), None)
 
         else:
             tl = None
