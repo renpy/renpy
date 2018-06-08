@@ -826,8 +826,21 @@ class Lexer(object):
 
             # Collapse runs of whitespace into single spaces.
             s = re.sub(r' *\n *', '\n', s)
-            s = re.sub(r' +', ' ', s)
-            s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)
+
+            rv = [ ]
+
+            for s in s.split("\n\n"):
+                s = s.strip()
+
+                if not s:
+                    continue
+
+                s = re.sub(r' +', ' ', s)
+                s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)
+
+                rv.append(s)
+
+            return rv
 
         return s
 
