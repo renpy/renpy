@@ -63,7 +63,7 @@ translate french strings:
 
     # screens.rpy:246
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
-    new "## Les menus rapides sont affiché dans le jeu pour permettre un accès rapide à certaines fonctions."
+    new "## Les menus rapides sont affichés dans le jeu pour permettre un accès rapide à certaines fonctions."
 
     # screens.rpy:261
     old "Back"
@@ -135,7 +135,7 @@ translate french strings:
 
     # screens.rpy:332
     old "## Help isn't necessary or relevant to mobile devices."
-    new "## L'aide n’est ni nécessaire ni pertinante sur les appareils mobiles."
+    new "## L'aide n’est ni nécessaire ni pertinente sur les appareils mobiles."
 
     # screens.rpy:333
     old "Help"
@@ -239,7 +239,7 @@ translate french strings:
 
     # screens.rpy:613
     old "## This ensures the input will get the enter event before any of the buttons do."
-    new "## Cette instruction s’assure que l’évenement enter aura lieu avant que l’un des boutons ne fonctionne."
+    new "## Cette instruction s’assure que l’évènement enter aura lieu avant que l’un des boutons ne fonctionne."
 
     # screens.rpy:629
     old "## The grid of file slots."
@@ -279,7 +279,7 @@ translate french strings:
 
     # screens.rpy:713
     old "## The preferences screen allows the player to configure the game to better suit themselves."
-    new "## L’écran de préférence permet au joueur de configurer le jeu pour mieux correspondre à ses attentes."
+    new "## L’écran de préférences permet au joueur de configurer le jeu pour mieux correspondre à ses attentes."
 
     # screens.rpy:716
     old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
@@ -627,7 +627,7 @@ translate french strings:
 
     # screens.rpy:1344
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
-    new "## Ce paramètre controle le maximum d’entrée dans le mode NVL qui peuvent être affichée simultanément."
+    new "## Ce paramètre contrôle le maximum d’entrée dans le mode NVL qui peuvent être affichée simultanément."
 
     # screens.rpy:1406
     old "## Mobile Variants"
@@ -640,4 +640,3 @@ translate french strings:
     # screens.rpy:1429
     old "Menu"
     new "Menu"
-

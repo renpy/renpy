@@ -23,7 +23,7 @@ translate french strings:
 
     # add_file.rpy:39
     old "The file already exists."
-    new "Le fichier éxiste déjà."
+    new "Le fichier existe déjà."
 
     # add_file.rpy:42
     old "# Ren'Py automatically loads all script files ending with .rpy. To use this\n# file, define a label and jump to it from another file.\n"
@@ -31,7 +31,7 @@ translate french strings:
 
     # android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Pour compiler les paquets Android, veuillez télécharger RAPT, le décompresser et le placer dans le répertoir de Ren’Py. Ensuite, redémarrez le lanceur Ren’Py."
+    new "Pour compiler les paquets Android, veuillez télécharger RAPT, le décompresser et le placer dans le répertoire de Ren’Py. Ensuite, redémarrez le lanceur Ren’Py."
 
     # android.rpy:31
     old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
@@ -51,7 +51,7 @@ translate french strings:
 
     # android.rpy:35
     old "Choose \"Build\" to build the current project, or attach an Android device and choose \"Build & Install\" to build and install it on the device."
-    new "Choisissez « Compiler »(build) pour compiler le projet actuel ou connectez un appareil Android et choisissez « Compiler et installer » (Build & Install) pour l’installer sur l’appareil."
+    new "Choisissez « Compiler » (build) pour compiler le projet actuel ou connectez un appareil Android et choisissez « Compiler et installer » (Build & Install) pour l’installer sur l’appareil."
 
     # android.rpy:37
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
@@ -59,11 +59,11 @@ translate french strings:
 
     # android.rpy:38
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Tentative d’émulation d'une tablette Android.\n\nLe contact est émulé par la souris, mails uniquement lorsque le bouton est pressé. La barre d’espace correspond au bouton menu et la touche PageUp correspond au bouton retour."
+    new "Tentative d’émulation d'une tablette Android.\n\nLe contact est émulé par la souris, mais uniquement lorsque le bouton est pressé. La barre d’espace correspond au bouton menu et la touche PageUp correspond au bouton retour."
 
     # android.rpy:39
     old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    new "Tentative d’émulation d'une console télé basée sur Android, comme OUYA ou Fire TV.\n\n Le contrôleur est émulé par les touches fléchées, le bouton select par la touche Entrée, le bouton menu par la touche Echap, et le bouton retour par la touche PageUp."
 
     # android.rpy:41
     old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
@@ -71,7 +71,7 @@ translate french strings:
 
     # android.rpy:42
     old "Configures the package name, version, and other information about this project."
-    new "Configure le nom du packet, sa version et d’autres informations à propos de ce projet."
+    new "Configure le nom du paquet, sa version et d’autres informations à propos de ce projet."
 
     # android.rpy:43
     old "Opens the file containing the Google Play keys in the editor.\n\nThis is only needed if the application is using an expansion APK. Read the documentation for more details."
@@ -87,7 +87,7 @@ translate french strings:
 
     # android.rpy:46
     old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
-    new "Compile le paquet Android, l’installe sur l’appareil Android connécté à votre ordinateur et lance l’application sur l’appareil."
+    new "Compile le paquet Android, l’installe sur l’appareil Android connecté à votre ordinateur et lance l’application sur l’appareil."
 
     # android.rpy:48
     old "Connects to an Android device running ADB in TCP/IP mode."
@@ -239,7 +239,7 @@ translate french strings:
 
     # distribute.rpy:459
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
-    new "La compilation de la distribution a échoué :\n\nLe variable « build.directory_name » ne doit pas contenir d’espace, ni de virgule, ni de point-virgule."
+    new "La compilation de la distribution a échoué :\n\nLa variable « build.directory_name » ne doit pas contenir d’espace, ni de virgule, ni de point-virgule."
 
     # distribute.rpy:504
     old "No packages are selected, so there's nothing to do."
@@ -251,7 +251,7 @@ translate french strings:
 
     # distribute.rpy:569
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
-    new "Tous les paquets ont été contruits.\n\nDu fait de l’absence de systèmes de permissions sur Windows, il n’est pas possible de reconstruire les paquets construits sur GNU-Linux ou Mac OS sur Windows."
+    new "Tous les paquets ont été construits.\n\nDu fait de l’absence de systèmes de permissions sur Windows, il n’est pas possible de reconstruire les paquets construits sur GNU-Linux ou Mac OS sur Windows."
 
     # distribute.rpy:752
     old "Archiving files..."
@@ -259,7 +259,7 @@ translate french strings:
 
     # distribute.rpy:1050
     old "Unpacking the Macintosh application for signing..."
-    new "Décompression de l’application Machintosh pour calcul de la signature..."
+    new "Décompression de l’application Macintosh pour calcul de la signature..."
 
     # distribute.rpy:1060
     old "Signing the Macintosh application..."
@@ -287,7 +287,7 @@ translate french strings:
 
     # distribute_gui.rpy:157
     old "Build Distributions: [project.current.name!q]"
-    new "Construction des packets : [project.current.name!q]"
+    new "Construction des paquets : [project.current.name!q]"
 
     # distribute_gui.rpy:171
     old "Directory Name:"
@@ -319,7 +319,7 @@ translate french strings:
 
     # distribute_gui.rpy:215
     old "Build Packages:"
-    new "Compiler les packets :"
+    new "Compiler les paquets :"
 
     # distribute_gui.rpy:234
     old "Options:"
@@ -347,7 +347,7 @@ translate french strings:
 
     # distribute_gui.rpy:271
     old "Errors were detected when running the project. Please ensure the project runs without errors before building distributions."
-    new "Des erreurs ont été détectées lors de l’exécution du projet. Assurez-vous qu’il n'y ait plus d’erreur avant de compiler les paquets."
+    new "Des erreurs ont été détectées lors de l’exécution du projet. Assurez-vous qu’il n'y ait plus d’erreurs avant de compiler les paquets."
 
     # distribute_gui.rpy:288
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
@@ -355,11 +355,11 @@ translate french strings:
 
     # editor.rpy:150
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
-    new "{b}Recommendé.{/b} Un éditeur en version beta avec une interface simple et des fonctionnalités d’assistance au développement. Editra manque pour le moment du support pour les textes en chinois, japonais et coréen."
+    new "{b}Recommandé.{/b} Un éditeur en version beta avec une interface simple et des fonctionnalités d’assistance au développement. Editra manque pour le moment du support pour les textes en chinois, japonais et coréen."
 
     # editor.rpy:151
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
-    new "{b}Recommendé.{/b} Un éditeur en version beta avec une interface simple et des fonctionnalités d’assistance au développement. Editra manque pour le moment du support pour les textes en chinois, japonais et coréen. Sur GNU-Linux, Editra nécessite wxPython."
+    new "{b}Recommandé.{/b} Un éditeur en version beta avec une interface simple et des fonctionnalités d’assistance au développement. Editra manque pour le moment du support pour les textes en chinois, japonais et coréen. Sur GNU-Linux, Editra nécessite wxPython."
 
     # editor.rpy:167
     old "This may have occured because wxPython is not installed on this system."
@@ -523,7 +523,7 @@ translate french strings:
 
     # gui7.rpy:236
     old "Select Accent and Background Colors"
-    new "Selectionner les couleurs des surbrillances et des arrière-plans"
+    new "Sélectionner les couleurs des surbrillances et des arrière-plans"
 
     # gui7.rpy:250
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
@@ -979,7 +979,7 @@ translate french strings:
 
     # project.rpy:597
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new "Choisissez le répertoire de projets avec le sélectionneur de fichier.\n{b}Il se peut que le sélectionneur de fichier s’ouvre derière cette fenêtre.{/b}"
+    new "Choisissez le répertoire de projets avec le sélectionneur de fichier.\n{b}Il se peut que le sélectionneur de fichier s’ouvre derrière cette fenêtre.{/b}"
 
     # project.rpy:597
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
@@ -1107,7 +1107,7 @@ translate french strings:
 
     # updater.rpy:97
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
-    new "{b}Recommendé.{/b} La version de Ren’Py qui devrait être utilisée pour tous les jeux récemment sortis."
+    new "{b}Recommandé.{/b} La version de Ren’Py qui devrait être utilisée pour tous les jeux récemment sortis."
 
     # updater.rpy:102
     old "Prerelease"
@@ -1115,7 +1115,7 @@ translate french strings:
 
     # updater.rpy:108
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
-    new "Un aperçu de la prochaine version de Ren’Py qui peut être utilisée pour faire des tests et profiter de toutes nouvelles fonctionnalitées, mais par pour créer de nouveaux jeux."
+    new "Un aperçu de la prochaine version de Ren’Py qui peut être utilisée pour faire des tests et profiter de toutes nouvelles fonctionnalités, mais par pour créer de nouveaux jeux."
 
     # updater.rpy:114
     old "Experimental"
@@ -1184,4 +1184,3 @@ translate french strings:
     # updater.rpy:195
     old "Proceed"
     new "Continuer"
-

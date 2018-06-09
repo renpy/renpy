@@ -35,11 +35,11 @@ translate french strings:
 
     # options.rpy:31
     old "## Text that is placed on the game's about screen. To insert a blank line between paragraphs, write \\n\\n."
-    new "## Text qui est placé dans l’écran « À propos ». Pour insérer une ligne vide entre deux paragraphes écrivez \\n\\n."
+    new "## Texte qui est placé dans l’écran « À propos ». Pour insérer une ligne vide entre deux paragraphes écrivez \\n\\n."
 
     # options.rpy:37
     old "## A short name for the game used for executables and directories in the built distribution. This must be ASCII-only, and must not contain spaces, colons, or semicolons."
-    new "## Un nom court pour le jeu qui sera utilisé pour les répertoires et le nom de l’exécutable. Il ne doit contenir que des caractères ASCII et ne doit pas contenir d’espace, de virgules ou de points-virgule."
+    new "## Un nom court pour le jeu qui sera utilisé pour les répertoires et le nom de l’exécutable. Il ne doit contenir que des caractères ASCII et ne doit pas contenir d’espace, de virgules ou de points-virgules."
 
     # options.rpy:44
     old "## Sounds and music"
@@ -63,7 +63,7 @@ translate french strings:
 
     # options.rpy:71
     old "## These variables set transitions that are used when certain events occur. Each variable should be set to a transition, or None to indicate that no transition should be used."
-    new "## Ces varaibles configurent les transitions qui sont utilisées quand certains événements surviennent. Chaque variable peuvent être configurée pour une transition. La valeur None indique qu’aucune transition ne doit être utilisée."
+    new "## Ces variables configurent les transitions qui sont utilisées quand certains événements surviennent. Chaque variable peuvent être configurée pour une transition. La valeur None indique qu’aucune transition ne doit être utilisée."
 
     # options.rpy:75
     old "## Entering or exiting the game menu."
@@ -107,7 +107,7 @@ translate french strings:
 
     # options.rpy:123
     old "## The default auto-forward delay. Larger numbers lead to longer waits, with 0 to 30 being the valid range."
-    new "## Le délai d’avancée automatique. Des nombres importants entraîne une longue attente. Des valeurs réputées correctes sont comprises dans une plage allant de 0 à 30."
+    new "## Le délai d’avancée automatique. Des nombres importants entraînent une longue attente. Des valeurs réputées correctes sont comprises dans une plage allant de 0 à 30."
 
     # options.rpy:129
     old "## Save directory"
@@ -115,7 +115,7 @@ translate french strings:
 
     # options.rpy:131
     old "## Controls the platform-specific place Ren'Py will place the save files for this game. The save files will be placed in:"
-    new "## Ces valeurs, dépendant de la plateforme, détermine l’emplacement où Ren’Py stockera les fichiers de sauvegarde. Les fichiers de sauvegardes seront stockés dans :"
+    new "## Ces valeurs, dépendant de la plateforme, déterminent l’emplacement où Ren’Py stockera les fichiers de sauvegarde. Les fichiers de sauvegardes seront stockés dans :"
 
     # options.rpy:134
     old "## Windows: %APPDATA\\RenPy\\<config.save_directory>"
@@ -192,4 +192,3 @@ translate french strings:
     # options.rpy:203
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Le nom d’utilisateur et du projet associé au projet itch.io, séparé par un slash."
-

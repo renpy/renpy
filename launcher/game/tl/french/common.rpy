@@ -187,7 +187,7 @@ translate french strings:
 
     # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
-    new "Êtes-vous sûr de vouloir mettre arrêter la rediffusion ?"
+    new "Êtes-vous sûr de vouloir arrêter la rediffusion ?"
 
     # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
@@ -332,4 +332,3 @@ translate french strings:
     # 00gallery.rpy:586
     old "return"
     new "retour"
-
