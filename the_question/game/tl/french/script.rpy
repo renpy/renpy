@@ -141,7 +141,7 @@ translate french rightaway_289664f3:
 translate french rightaway_8cb5deeb:
 
     # s "Sure, but what's a \"visual novel?\"" nointeract
-    s "Bien sûr, mais c’est quoi un \"visual novel?\"" nointeract
+    s "Bien sûr, mais c’est quoi un \"roman visuel?\"" nointeract
 
 # game/script.rpy:111
 translate french game_65cca574:
@@ -243,7 +243,7 @@ translate french book_ccd3e9b0:
 translate french book_e325967b:
 
     # s "I'd love to!"
-    s "J’adorerai !"
+    s "J’adorerais !"
 
 # game/script.rpy:165
 translate french marry_4509e340:
@@ -369,13 +369,13 @@ translate french marry_0db38565:
 translate french marry_ca27786f:
 
     # "We get married shortly after that."
-    "Nous nous sommes marriés peu de temps après cela."
+    "Nous nous sommes mariés peu de temps après cela."
 
 # game/script.rpy:230
 translate french marry_621ed4fc:
 
     # "Our visual novel duo lives on even after we're married...and I try my best to be more decisive."
-    "Notre duo d’auteurs de roman visuel continue de vivre même après notre mariage… et je fais de mon mieux pour être plus décisif."
+    "Notre duo d’auteurs de romans visuel continue de vivre même après notre mariage… et je fais de mon mieux pour être plus décisif."
 
 # game/script.rpy:232
 translate french marry_3c7f0bf0:
