@@ -558,7 +558,7 @@ class Lexer(object):
     sub-lexers to lex sub-blocks.
     """
 
-    def __init__(self, block, init=False, init_offset=0, global_label=None):
+    def __init__(self, block, init=False, init_offset=0, global_label=None, monologue_delimiter="\n\n"):
 
         # Are we underneath an init block?
         self.init = init
@@ -581,6 +581,8 @@ class Lexer(object):
         self.word_cache_pos = -1
         self.word_cache_newpos = -1
         self.word_cache = ""
+
+        self.monologue_delimiter = monologue_delimiter
 
     def advance(self):
         """
@@ -716,7 +718,7 @@ class Lexer(object):
 
         init = self.init or init
 
-        return Lexer(self.subblock, init=init, init_offset=self.init_offset, global_label=self.global_label)
+        return Lexer(self.subblock, init=init, init_offset=self.init_offset, global_label=self.global_label, monologue_delimiter=self.monologue_delimiter)
 
     def string(self):
         """
@@ -829,7 +831,7 @@ class Lexer(object):
 
             rv = [ ]
 
-            for s in s.split("\n\n"):
+            for s in s.split(self.monologue_delimiter):
                 s = s.strip()
 
                 if not s:
