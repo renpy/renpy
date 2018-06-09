@@ -2543,7 +2543,10 @@ def finish_say(l, loc, who, what, attributes=None):
 
             arguments = args
 
-    return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact, arguments=arguments)
+    if isinstance(what, list):
+        return [ ast.Say(loc, who, i, with_, attributes=attributes, interact=interact, arguments=arguments) for i in what ]
+    else:
+        return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact, arguments=arguments)
 
 
 @statement("")
@@ -2552,7 +2555,7 @@ def say_statement(l, loc):
     state = l.checkpoint()
 
     # Try for a single-argument say statement.
-    what = l.string()
+    what = l.triple_string() or l.string()
 
     rv = finish_say(l, loc, None, what)
 
@@ -2587,7 +2590,7 @@ def say_statement(l, loc):
     else:
         attributes = None
 
-    what = l.string()
+    what = l.triple_string() or l.string()
 
     if (who is not None) and (what is not None):
 
