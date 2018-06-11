@@ -279,6 +279,46 @@ which treats them as if they were present when the character was defined.
 So, the example above displays the dialogue in green.
 
 
+.. _monologue-mode:
+
+Monologue Mode
+--------------
+
+Some visual novels have extended narration, or multiple blocks of dialogue
+from the same character. In these cases, typing the name of the character
+and the quotes multiple times is somewhat redundant.
+
+To cover these cases, Ren'Py supports monologue mode. When dialogue is inside
+triple quoted strings, Ren'Py will break the dialogue up into blocks at blank
+lines. Each block is then used to create its own say statement. Here's an
+example, with three blocs of narration followed by three lines of dialogue::
+
+    """
+    This is the first line of narration. It's longer than the other two
+    lines, so it has to wrap.
+
+    This is the second line of narration.
+
+    This is the third line of narration.
+    """
+
+    e """
+    This is the first line of dialogue. It's longer than the other two
+    lines, so it has to wrap.
+
+    This is the second line of dialogue.
+
+    This is the third line of dialogue.
+    """
+
+While additional clauses like arguments or attributes are allowed, they are
+passed to each line in the monologue, which may be less useful.
+
+If you'd like to omit the spaces between the blocks, write
+``rpy monologue single`` at the top level of the file, before the first
+monologue line.
+
+
 Python Equivalents
 ------------------
 
