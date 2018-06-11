@@ -837,7 +837,7 @@ class Lexer(object):
                 if not s:
                     continue
 
-                s = re.sub(r' +', ' ', s)
+                s = re.sub(r'\s+', ' ', s)
                 s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)
 
                 rv.append(s)
@@ -2243,6 +2243,23 @@ def init_statement(l, loc):
     return ast.Init(loc, block, priority + l.init_offset)
 
 
+@statement("rpy monologue")
+def rpy_statement(l, loc):
+
+    if l.keyword("double"):
+        l.monologue_delimiter = "\n\n"
+    elif l.keyword("single"):
+        l.monologue_delimiter = "\n"
+    else:
+        l.error("rpy monologue expects either single or double.")
+
+    l.expect_eol()
+    l.expect_noblock('rpy monologue')
+    l.advance()
+
+    return [ ]
+
+
 def screen1_statement(l, loc):
 
     # The guts of screen language parsing is in screenlang.py. It
@@ -2546,7 +2563,18 @@ def finish_say(l, loc, who, what, attributes=None):
             arguments = args
 
     if isinstance(what, list):
-        return [ ast.Say(loc, who, i, with_, attributes=attributes, interact=interact, arguments=arguments) for i in what ]
+
+        rv = [ ]
+
+        for i in what:
+
+            if i == "{clear}":
+                rv.append(ast.UserStatement(loc, "nvl clear", [ ]))
+            else:
+                rv.append(ast.Say(loc, who, i, with_, attributes=attributes, interact=interact, arguments=arguments))
+
+        return rv
+
     else:
         return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact, arguments=arguments)
 
