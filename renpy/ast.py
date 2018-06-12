@@ -311,7 +311,10 @@ class Scry(object):
         if self._next is None:
             return None
         else:
-            return self._next.scry()
+            try:
+                return self._next.scry()
+            except:
+                return None
 
 
 class Node(object):
