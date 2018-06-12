@@ -390,6 +390,25 @@ Text tags that only apply to dialogue are:
 
         "Line 1{w} Line 1{w=1.0} Line 1"
 
+
+.. text-tag:: clear
+
+    The clear text tag only makes sense on a line by itself in the :ref:`NVL monologue mode <nvl-monologue-mode>`.
+    It does the same thing at the ``nvl clear`` statement without ending the block of text. ::
+
+        """
+        Block 1 on page 1.
+
+        Block 2 on page 1.
+
+        {clear}
+
+        Block 1 on page 2.
+
+        etc.
+        """
+
+
 It's also possible to define :ref:`custom text tags <custom-text-tags>` using
 Python.
 

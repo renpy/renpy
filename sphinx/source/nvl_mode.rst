@@ -67,6 +67,24 @@ While nvl-mode games generally have more text per paragraph, this
 example demonstrates a basic NVL-mode script. (Suitable for use in a
 kinetic novel that does not have transitions.)
 
+.. _nvl-monologe-mode:
+
+:ref:`Monologue mode <monologue-modes>` works with NVL-mode as well.
+Including the ``{clear}`` text tag on a line by itself is the equivalent
+of an ``nvl clear`` statement without leaving monologue mode. For example::
+
+    ::
+
+        s """
+        This is one block of text in monologue mode.
+
+        This is a second block, on the same page as the first.
+
+        {clear}
+
+        The page just cleared!
+        """
+
 Menus
 -----
 
