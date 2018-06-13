@@ -181,6 +181,11 @@ def walkdir(dir):  # @ReservedAssignment
         if i[0] == ".":
             continue
 
+        try:
+            i = renpy.exports.fsdecode(i)
+        except:
+            continue
+
         if os.path.isdir(dir + "/" + i):
             for fn in walkdir(dir + "/" + i):
                 rv.append(i + "/" + fn)
