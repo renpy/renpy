@@ -691,6 +691,9 @@ class Transform(Container):
 
         self.state.take_state(t.state)
 
+        if isinstance(self.child, Transform) and isinstance(t.child, Transform):
+            self.child.take_state(t.child)
+
         if (self.child is None) and (t.child is not None):
             self.add(t.child)
             self.child_st_base = t.child_st_base
