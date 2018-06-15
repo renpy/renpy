@@ -686,13 +686,7 @@ class Say(Node):
     def scry(self):
         rv = Node.scry(self)
 
-        if self.who is not None:
-            if self.who_fast:
-                who = getattr(renpy.store, self.who)
-            else:
-                who = renpy.python.py_eval(self.who)
-        else:
-            who = None
+        who = eval_who(self.who, self.who_fast)
 
         if self.interact:
             renpy.exports.scry_say(who, rv)
