@@ -123,6 +123,8 @@ init -1500 python:
             return rv
         elif renpy.loadable(rv):
             return rv
+        elif renpy.easy.lookup_displayable_prefix(rv):
+            return rv
         else:
             return None
 
