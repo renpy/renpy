@@ -1733,8 +1733,14 @@ class Text(renpy.display.core.Displayable):
             raise renpy.display.core.IgnoreEvent()
 
         layout = self.get_layout()
+
         if layout is None:
             return
+
+        if layout.redraw_typewriter(st) is None:
+            if self.slow:
+                self.call_slow_done(st)
+                self.slow = False
 
         for d, xo, yo, _ in layout.displayable_blits:
             rv = d.event(ev, x - xo - layout.xoffset, y - yo - layout.yoffset, st)
@@ -1953,7 +1959,7 @@ class Text(renpy.display.core.Displayable):
             if redraw is not None:
                 renpy.display.render.redraw(self, redraw)
             else:
-                self.call_slow_done(st)
+                renpy.display.interface.timeout(0)
 
         rv.forward = layout.forward
         rv.reverse = layout.reverse
