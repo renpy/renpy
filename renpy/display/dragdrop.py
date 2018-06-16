@@ -22,6 +22,8 @@
 # TODO: Use overlap (rather than simple pointer location) to determine
 # drag and drop.
 
+from __future__ import print_function
+
 import renpy.display
 from renpy.display.render import render, Render, redraw
 from renpy.display.core import absolute

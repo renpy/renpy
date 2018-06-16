@@ -21,6 +21,8 @@
 
 # This file contains the routines that manage image prediction.
 
+from __future__ import print_function
+
 import renpy.display
 
 # Called to indicate an image should be loaded or preloaded. This is

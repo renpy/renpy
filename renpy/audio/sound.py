@@ -24,6 +24,8 @@
 # TODO: Check to see if SFX are enabled before playing sounds with play or
 # queue.
 
+from __future__ import print_function
+
 import renpy.audio
 
 # This is basically a thin wrapper around music, with the default

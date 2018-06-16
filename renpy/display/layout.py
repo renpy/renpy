@@ -22,6 +22,8 @@
 # This file contains classes that handle layout of displayables on
 # the screen.
 
+from __future__ import print_function
+
 from renpy.display.render import render, Render
 import renpy.display
 

@@ -21,6 +21,8 @@
 
 # Utility functions used by the various property functions:
 
+from __future__ import print_function
+
 import renpy
 
 

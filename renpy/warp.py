@@ -23,6 +23,8 @@
 # the Ren'Py source code, given the filename and line number of the
 # location.
 
+from __future__ import print_function
+
 import renpy
 
 warp_spec = None

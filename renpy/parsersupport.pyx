@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 cdef inline int letterlike(Py_UNICODE c):
     if u'a' <= c <= u'z':
         return 1

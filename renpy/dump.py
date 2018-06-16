@@ -23,6 +23,8 @@
 # information about the game that's used to reflect on the contents,
 # including how to navigate around the game.
 
+from __future__ import print_function
+
 import inspect
 import json
 import sys

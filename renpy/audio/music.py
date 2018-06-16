@@ -21,6 +21,8 @@
 
 # The public API for music in games.
 
+from __future__ import print_function
+
 import renpy.audio
 
 from renpy.audio.audio import get_channel, get_serial

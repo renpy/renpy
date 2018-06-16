@@ -26,6 +26,8 @@
 
 # All functions in the is file should be documented in the wiki.
 
+from __future__ import print_function
+
 import sys
 import renpy.display
 import renpy.text

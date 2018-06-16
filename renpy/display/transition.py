@@ -24,6 +24,8 @@
 # are None, at least to the point of making it through __init__. This is
 # so that prediction of images works.
 
+from __future__ import print_function
+
 import renpy.display
 from renpy.display.render import render
 

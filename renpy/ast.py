@@ -26,6 +26,8 @@
 # When updating this file, consider if lint.py or warp.py also need
 # updating.
 
+from __future__ import print_function
+
 import renpy.display
 import renpy.test
 

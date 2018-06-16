@@ -21,6 +21,8 @@
 
 # This code supports sprite and particle animation.
 
+from __future__ import print_function
+
 from renpy.display.render import render, BLIT
 
 import renpy.display

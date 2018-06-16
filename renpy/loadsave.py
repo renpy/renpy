@@ -21,6 +21,8 @@
 
 # This file contains functions that load and save the game state.
 
+from __future__ import print_function
+
 import pickle
 import cPickle
 

@@ -24,6 +24,8 @@
 #
 # The current save location is stored in the location variable in loadsave.py.
 
+from __future__ import print_function
+
 import os
 import zipfile
 import json

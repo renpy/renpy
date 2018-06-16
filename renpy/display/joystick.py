@@ -22,6 +22,8 @@
 # This file was responsible for joystick support in Ren'Py, which has
 # been removed, save for a few compatibility functions.
 
+from __future__ import print_function
+
 import renpy.display
 import pygame_sdl2
 

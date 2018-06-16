@@ -23,6 +23,8 @@
 # screen up as soon as possible, to let the user know something is
 # going on.
 
+from __future__ import print_function
+
 import threading
 import pygame_sdl2
 import os.path

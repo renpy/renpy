@@ -21,6 +21,8 @@
 
 
 # Allow pickling NoneType.
+from __future__ import print_function
+
 import __builtin__
 __builtin__.NoneType = type(None)
 

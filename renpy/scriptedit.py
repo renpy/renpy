@@ -22,6 +22,8 @@
 # This file contains code to add and remove statements from the AST
 # and the textual representation of Ren'Py code.
 
+from __future__ import print_function
+
 import renpy
 import re
 import codecs

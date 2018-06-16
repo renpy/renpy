@@ -22,6 +22,8 @@
 # This used to hack pygame to support resolution-scaling. Now it just kinda
 # sits here, to provide compatibility with what it used to be.
 
+from __future__ import print_function
+
 import pygame_sdl2 as pygame
 import renpy.display
 import renpy.display.pgrender as pgrender

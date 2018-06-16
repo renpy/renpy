@@ -21,6 +21,8 @@
 
 # This file contains support for state-machine controlled animations.
 
+from __future__ import print_function
+
 import renpy.display
 import renpy.game
 import renpy.easy

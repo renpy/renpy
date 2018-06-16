@@ -22,6 +22,8 @@
 # This module wraps the pygame surface class (and associated functions). It
 # ensures that returned surfaces have a 2px border around them.
 
+from __future__ import print_function
+
 import sys
 import pygame_sdl2 as pygame
 import threading

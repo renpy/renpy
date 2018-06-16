@@ -22,6 +22,8 @@
 # This file contains support for string translation and string formatting
 # operations.
 
+from __future__ import print_function
+
 import renpy
 import string
 import os

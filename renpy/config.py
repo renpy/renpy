@@ -23,6 +23,8 @@
 # This includes both simple settings (like the screen dimensions) and
 # methods that perform standard tasks, like the say and menu methods.
 
+from __future__ import print_function
+
 import collections
 import os
 

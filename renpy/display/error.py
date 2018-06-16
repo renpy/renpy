@@ -21,6 +21,8 @@
 
 # This file contains code to handle GUI-based error reporting.
 
+from __future__ import print_function
+
 import renpy.display
 import os
 

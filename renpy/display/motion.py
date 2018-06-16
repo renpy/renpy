@@ -22,6 +22,8 @@
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
 
+from __future__ import print_function
+
 from renpy.display.transform import *  # @UnusedWildImport
 
 import math

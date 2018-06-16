@@ -21,6 +21,8 @@
 
 # The Character object (and friends).
 
+from __future__ import print_function
+
 import renpy.display
 
 import re

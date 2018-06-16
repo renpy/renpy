@@ -23,6 +23,8 @@
 # It's purpose is to store in one global all of the data that would
 # be to annoying to lug around otherwise.
 
+from __future__ import print_function
+
 import renpy.display
 
 # The basepath.

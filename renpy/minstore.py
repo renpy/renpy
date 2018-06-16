@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 python_list = _list = list
 python_dict = _dict = dict
 python_object = _object = object

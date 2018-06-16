@@ -24,6 +24,8 @@
 # Invariants: The periodic callback assumes pcm_ok. If we don't have
 # at least pcm_ok, we have no sound whatsoever.
 
+from __future__ import print_function
+
 import renpy.audio  # @UnusedImport
 import renpy.display  # @UnusedImport
 

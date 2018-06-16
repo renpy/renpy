@@ -21,6 +21,8 @@
 
 # This module contains code to support user-defined statements.
 
+from __future__ import print_function
+
 import renpy
 
 # The statement registry. It's a map from tuples giving the prefixes of

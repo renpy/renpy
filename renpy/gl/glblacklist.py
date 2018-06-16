@@ -29,6 +29,8 @@
 # If both of the last two entries are false, GL refuses to
 # start.
 
+from __future__ import print_function
+
 BLACKLIST = [
 
     # Crashes for Mugenjohncel.
