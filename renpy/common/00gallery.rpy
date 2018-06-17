@@ -334,7 +334,7 @@ init -1500 python:
             else:
                 return None
 
-        def make_button(self, name, unlocked, locked=None, hover_border=None, idle_border=None, **properties):
+        def make_button(self, name, unlocked, locked=None, hover_border=None, idle_border=None, style=None, **properties):
             """
             :doc: gallery method
 
@@ -363,6 +363,11 @@ init -1500 python:
                 it is unlocked but unfocused. If None, the idle_border
                 field of the gallery object is used.
 
+            `style`
+                The style the button inherits from. When None, defaults
+                to the "empty" style, so as not to inherit borders and
+                so on.
+
             Additional keyword arguments become style properties of the
             created button object.
             """
@@ -378,7 +383,14 @@ init -1500 python:
             if idle_border is None:
                 idle_border = self.idle_border
 
-            return Button(action=action, child=unlocked, insensitive_child=locked, hover_foreground=hover_border, idle_foreground=idle_border, **properties)
+            if style is None:
+
+                if (config.script_version is not None) and (config.script_version <= (7, 0, 0)):
+                    style = "button"
+                else:
+                    style = "empty"
+
+            return Button(action=action, child=unlocked, insensitive_child=locked, hover_foreground=hover_border, idle_foreground=idle_border, style=style, **properties)
 
         def get_fraction(self, name, format="{seen}/{total}"):
             """

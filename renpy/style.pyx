@@ -298,6 +298,11 @@ cdef class StyleCore:
 
             self.properties.append(properties)
 
+        if properties and ("insensitive_child" in properties):
+            if properties["insensitive_child"] is False:
+                import traceback
+                traceback.print_stack()
+
         self.parent = get_tuple_name(parent)
         self.name = name
         self.help = help
