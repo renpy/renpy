@@ -4,11 +4,29 @@ Full Changelog
 
 .. _renpy-7.0.1:
 
-7.0
-===
+7.0.1
+=====
 
 Add :func:`renpy.transform_text`, a function to transform text without
 touching text tags or interpolation.
+
+Buttons created using the make_buttons method of a Gallery object now
+inherit from the empty style, and not button. This prevents properties from
+the button style from causing problems.
+
+The code to finish displaying text is now called from the event method,
+as if the mouse button was clicked. This helps prevent interaction ends
+when menus are up.
+
+Displayable prefixes are supported when evaluating auto images in imagebuttons
+and image maps.
+
+A bug that caused an error in an NVL-mode statement if the next statement
+was an NVL-mode statement with an undefined character name has been fixed.
+
+
+
+
 
 
 .. _renpy-7.0:
