@@ -84,8 +84,14 @@ screen _image_attributes():
         vbox:
             label _("Image Attributes")
 
-            text "Coming soon."
 
+            for name in renpy.get_hidden_tags():
+                $ attributes = " ".join(renpy.get_attributes(name))
+                text _("[name] [attributes] (hidden)")
+
+            for name in renpy.get_showing_tags():
+                $ attributes = " ".join(renpy.get_attributes(name))
+                text _("[name] [attributes]")
 
         hbox:
             spacing gui._scale(25)
