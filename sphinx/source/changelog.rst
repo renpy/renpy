@@ -7,6 +7,34 @@ Full Changelog
 7.0.1
 =====
 
+
+Monologue Mode
+--------------
+
+It's now possible to write multiple blocks of dialogue or narration at
+once, using triple-quoted strings. For example::
+
+    e """
+    This is one block of dialogue.
+
+    And this is a second block.
+    """
+
+Will create two blocks of dialogue. See :ref:`monologue-mode` for more
+info.
+
+There is also a new {clear} text tag that works with monologue. When
+the {clear} tag is part of a line by itself, it is the equivalent of
+the ``nvl clear`` statement. See :ref:`nvl-monologue-mode` for more
+about this.
+
+
+Other
+-----
+
+The developer menu (accessed through shift+D) can now display a screen
+that shows the attributes associated with displayed and hidden images.
+
 Add :func:`renpy.transform_text`, a function to transform text without
 touching text tags or interpolation.
 
@@ -24,6 +52,8 @@ and image maps.
 A bug that caused an error in an NVL-mode statement if the next statement
 was an NVL-mode statement with an undefined character name has been fixed.
 
+When two ATL transforms are nested, the state from both is propagated, not
+just the outermost.
 
 
 
