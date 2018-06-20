@@ -36,8 +36,6 @@ init python:
 
     version_tuple = renpy.version(tuple=True)
 
-    DLC_URL = "http://update.renpy.org/{}/updates.json".format(".".join(str(i) for i in version_tuple[:-1]))
-
     if persistent.update_channel not in UPDATE_URLS:
         persistent.update_channel = "Release"
 
@@ -55,10 +53,15 @@ init python:
         Returns True if the DLC is installed, False otherwise.
         """
 
-        if persistent.update_channel == "Nightly":
-            dlc_url = UPDATE_URLS["Nightly"]
-        else:
-            dlc_url = DLC_URL
+        dlc_url = "http://update.renpy.org/{}/updates.json".format(".".join(str(i) for i in version_tuple[:-1]))
+
+        state = updater.get_installed_state()
+
+        if state is not None:
+            base_name = state.get("sdk", {}).get('base_name', '')
+
+            if base_name.startswith("renpy-nightly-"):
+                dlc_url = "http://nightly.renpy.org/{}/updates.json".format(base_name[6:])
 
         return renpy.invoke_in_new_context(updater.update, dlc_url, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=restart)
 
