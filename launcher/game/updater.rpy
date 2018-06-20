@@ -23,7 +23,7 @@ init python:
     # This can be one of None, "available", "not-available", or "error".
     #
     # It must be None for a release.
-    UPDATE_SIMULATE = None
+    UPDATE_SIMULATE = os.environ.get("RENPY_UPDATE_SIMULATE", None)
 
     PUBLIC_KEY = "renpy_public.pem"
 
