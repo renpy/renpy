@@ -1221,7 +1221,7 @@ init python in distribute:
 
             self.update_versions[variant] = fl.hash(self)
 
-            update = { variant : { "version" : self.update_versions[variant], "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
+            update = { variant : { "version" : self.update_versions[variant], "base_name" : self.base_name, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
             update_fn = os.path.join(self.destination, filename + ".update.json")
 

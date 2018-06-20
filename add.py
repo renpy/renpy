@@ -103,6 +103,7 @@ for i in links:
         os.unlink(i)
     os.symlink(short_version, i)
 
+
 os.chdir("/home/tom/ab/website")
 subprocess.check_call("./upload.sh")
 

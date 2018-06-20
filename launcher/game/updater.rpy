@@ -62,6 +62,9 @@ init python:
 
         return renpy.invoke_in_new_context(updater.update, dlc_url, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=restart)
 
+    # Strings so they can be translated.
+
+
 screen update_channel:
 
     frame:
