@@ -1188,8 +1188,37 @@ init -1500 python in updater:
                 self.clean(i + ".update.new")
                 self.clean(i + ".zsync")
 
-    installed_packages_cache = None
+    installed_state_cache = None
 
+    def get_installed_state(base=None):
+        """
+        :undocumented:
+
+        Returns the state of the installed packages.
+
+        `base`
+            The base directory to update. Defaults to the current project's
+            base directory.
+        """
+
+        global installed_state_cache
+
+        if installed_state_cache is not None:
+            return installed_state_cache
+
+        if base is None:
+            base = config.basedir
+
+        fn = os.path.join(base, "update", "current.json")
+
+        if not os.path.exists(fn):
+            return None
+
+        with open(fn, "rb") as f:
+            state = json.load(f)
+
+        installed_state_cache = state
+        return state
 
     def get_installed_packages(base=None):
         """
@@ -1202,24 +1231,12 @@ init -1500 python in updater:
             base directory.
         """
 
-        global installed_packages_cache
+        state = get_installed_state(base)
 
-        if installed_packages_cache is not None:
-            return installed_packages_cache
-
-        if base is None:
-            base = config.basedir
-
-        fn = os.path.join(base, "update", "current.json")
-
-        if not os.path.exists(fn):
+        if state is None:
             return [ ]
 
-        with open(fn, "rb") as f:
-            state = json.load(f)
-
         rv = list(state.keys())
-        installed_packages_cache = rv
         return rv
 
 
