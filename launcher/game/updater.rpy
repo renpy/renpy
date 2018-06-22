@@ -126,11 +126,6 @@ screen update_channel(channels):
     textbutton _("Cancel") action Jump("front_page") style "l_left_button"
 
 
-label update_preference:
-    call screen update_channel
-    return
-
-
 screen updater:
 
     frame:
