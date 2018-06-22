@@ -216,7 +216,7 @@ init -1500 python in updater:
         # The update was cancelled.
         CANCELLED = "CANCELLED"
 
-        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False):
+        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False, confirm=True):
             """
             Takes the same arguments as update().
             """
@@ -263,6 +263,9 @@ init -1500 python in updater:
             # If true, we check for an update, and update persistent._update_version
             # as appropriate.
             self.check_only = check_only
+
+            # Do we prompt for confirmation?
+            self.confirm = confirm
 
             # The base path of the game that we're updating, and the path to the update
             # directory underneath it.
@@ -391,7 +394,7 @@ init -1500 python in updater:
                 renpy.restart_interaction()
                 return
 
-            if not self.add:
+            if self.confirm and (not self.add):
 
                 # Confirm with the user that the update is available.
                 with self.condition:
@@ -505,17 +508,20 @@ init -1500 python in updater:
                 return
 
             # Confirm with the user that the update is available.
-            with self.condition:
-                self.can_cancel = True
-                self.can_proceed = True
-                self.state = self.UPDATE_AVAILABLE
-                self.version = pretty_version
 
-                while True:
-                    if self.cancelled or self.proceeded:
-                        break
+            if self.confirm:
 
-                    self.condition.wait()
+                with self.condition:
+                    self.can_cancel = True
+                    self.can_proceed = True
+                    self.state = self.UPDATE_AVAILABLE
+                    self.version = pretty_version
+
+                    while True:
+                        if self.cancelled or self.proceeded:
+                            break
+
+                        self.condition.wait()
 
             self.can_proceed = False
 
@@ -1263,7 +1269,7 @@ init -1500 python in updater:
         return not not get_installed_packages(base)
 
 
-    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True):
+    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, confirm=True):
         """
         :doc: updater
 
@@ -1299,12 +1305,16 @@ init -1500 python in updater:
 
         `restart`
             Restart the game after the update.
+
+        `confirm`
+            Should Ren'Py prompt the user to confirm the update? If False, the
+            update will proceed without confirmation.
         """
 
         global installed_packages_cache
         installed_packages_cache = None
 
-        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate, add=add, restart=restart)
+        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate, add=add, restart=restart, confirm=confirm)
         ui.timer(.1, repeat=True, action=renpy.restart_interaction)
         renpy.call_screen("updater", u=u)
 

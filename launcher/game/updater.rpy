@@ -98,12 +98,12 @@ screen update_channel(channels):
 
                     has vbox
 
-                    text _("The update channel controls the version of Ren'Py the updater will download. Please select an update channel:")
+                    text _("The update channel controls the version of Ren'Py the updater will download.")
 
                     for c in channels:
 
                         if  c["split_version"] != list(renpy.version_tuple):
-                            $ action = NullAction()
+                            $ action = updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False)
                             $ current = ""
                         else:
                             $ action = None
@@ -199,8 +199,5 @@ label update:
 
         renpy.call_screen("update_channel", channels)
 
-    jump front_page
-
-    # This should never happen.
     jump front_page
 
