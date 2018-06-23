@@ -175,6 +175,8 @@ init -1500 python:
 
     _confirm_quit = True
 
+    config.quit_slot = None
+
     @renpy.pure
     class Quit(Action, DictEquality):
         """
@@ -203,7 +205,12 @@ init -1500 python:
                     renpy.force_autosave()
 
                 layout.yesno_screen(layout.QUIT, Quit(False))
+
             else:
+
+                if config.quit_slot is not None:
+                    renpy.save(config.quit_slot)
+
                 renpy.jump("_quit")
 
     @renpy.pure
