@@ -782,12 +782,16 @@ prepared = False
 sorted_screens = [ ]
 screens_at_sort = { }
 
+# The list of screens that participate in a use cycle.
+use_cycle = [ ]
+
 
 def sort_screens():
     """
     Produces a list of SL2 screens in topologically sorted order.
     """
 
+    global use_cycle
     global sorted_screens
     global screens_at_sort
 
@@ -839,8 +843,9 @@ def sort_screens():
 
         del reverse[name]
 
-    # A use-cycle is possible, but we live with it - we need to return something
-    # from this in order to be able to show error messages.
+    # Store the use cycle for later reporting.
+    use_cycle = reverse.keys()
+    use_cycle.sort()
 
     sorted_screens = rv
     screens_at_sort = dict(screens)
@@ -903,6 +908,9 @@ def prepare_screens():
         s.ast.prepare_screen()
 
     prepared = True
+
+    if renpy.config.developer and use_cycle:
+        raise Exception("The following screens use each other in a loop: " + ", ".join(use_cycle) +". This is not allowed.")
 
 
 def define_screen(*args, **kwargs):
