@@ -10,7 +10,7 @@ these changes to be reverted, at the cost of losing access to recent
 features.
 
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
-such changes only take effect when the gui is regenerated.
+such changes only take effect when the GUI is regenerated.
 
 
 .. _incompatible-7.0:
@@ -26,11 +26,11 @@ init level. To revert to the prior behavior, add to your game::
 
 The :func:`Dissolve`, :func:`ImageDissolve`, and :func:`AlphaDissolve`
 transitions now default to using the alpha channel of the source
-displayables, as if alpha=True was given. To revert this change, add::
+displayables, as if ``alpha=True`` was given. To revert this change, add::
 
     define config.dissolve_force_alpha = False
 
-Showing a movie sprite that is already showing will now re-play the movie.
+Showing a movie sprite that is already showing will now replay the movie.
 To revert to the previous behavior::
 
     define config.replay_movie_sprites = False

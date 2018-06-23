@@ -201,12 +201,12 @@ especially when that dialogue is repeated in more than one place
 inside a label. In some cases, it may be necessary to assign
 a translation identifier directly, using a statement like::
 
-    translate None mylable_03ac197e_1:
+    translate None mylabel_03ac197e_1:
         "..."
 
 Adding labels can also confuse the translation process. To prevent
-translations.::
 this, labels that are given the ``hide`` clause are ignored when generating
+translations.::
 
     label ignored_by_translation hide:
         "..."

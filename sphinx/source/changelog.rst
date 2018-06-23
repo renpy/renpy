@@ -4382,7 +4382,7 @@ Other Changes
 * The new ``input``, ``side``, ``grid``, and ``fixed`` styles were created,
   and the corresponding displayables use them by default.
 
-* When a style is accessed at init-time, and doesn't exist, we divide it
+* When a style is accessed at init time, and doesn't exist, we divide it
   into two parts at the first underscore. If the second part corresponds to
   an existing style, we create a new style instead of causing an error.
 

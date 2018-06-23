@@ -140,7 +140,7 @@ game/eileen/happy.png, then you can write::
 
     image eileen happy = "eileen/happy.png"
 
-The image statement is run at init-time, before the menus are shown
+The image statement is run at init time, before the menus are shown
 or the start label runs. When not contained inside an ``init`` block,
 image statements are run as if they were placed inside an ``init`` block of
 priority 500.

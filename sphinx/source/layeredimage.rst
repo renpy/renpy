@@ -264,7 +264,7 @@ Statement Reference
 -------------------
 
 Note that with the conditions in the ``if`` statement, all expressions are
-evaluated at init-time, when the layered image is first defined.
+evaluated at init time, when the layered image is first defined.
 
 Layeredimage
 ^^^^^^^^^^^^
