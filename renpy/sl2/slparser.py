@@ -118,7 +118,7 @@ class Parser(object):
     # inside something that takes a single child.
     nchildren = "many"
 
-    def __init__(self, name):
+    def __init__(self, name, statement=True):
 
         # The name of this object.
         self.name = name
@@ -129,7 +129,8 @@ class Parser(object):
         self.keyword = { }
         self.children = { }
 
-        all_statements.append(self)
+        if statement:
+            all_statements.append(self)
 
         global parser
         parser = self
@@ -944,7 +945,7 @@ class CustomParser(Parser):
 class ScreenParser(Parser):
 
     def __init__(self):
-        super(ScreenParser, self).__init__("screen")
+        super(ScreenParser, self).__init__("screen", statement=False)
 
     def parse(self, loc, l, parent, name="_name"):
 
