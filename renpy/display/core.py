@@ -3493,6 +3493,9 @@ class Interface(object):
 
         finally:
 
+            if renpy.game.context().rollback:
+                self.lose_screenshot()
+
             renpy.game.context().say_attributes = None
 
             # Clean out the overlay layers.
