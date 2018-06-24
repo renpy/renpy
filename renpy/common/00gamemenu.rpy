@@ -200,8 +200,6 @@ label _game_menu_preferences:
         jump expression "preferences_screen"
 
 label _quit:
-    if renpy.has_label("quit"):
-        call expression "quit"
     $ renpy.quit()
 
 label _return_fast_skipping:

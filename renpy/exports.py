@@ -1652,6 +1652,9 @@ def quit(relaunch=False, status=0, save=False):  # @ReservedAssignment
     if save and (renpy.store._quit_slot is not None):
         renpy.loadsave.save(renpy.store._quit_slot, getattr(renpy.store, "save_name", ""))
 
+    if has_label("quit"):
+        call_in_new_context("quit")
+
     raise renpy.game.QuitException(relaunch=relaunch, status=status)
 
 
