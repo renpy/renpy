@@ -207,11 +207,7 @@ init -1500 python:
                 layout.yesno_screen(layout.QUIT, Quit(False))
 
             else:
-
-                if config.quit_slot is not None:
-                    renpy.save(config.quit_slot)
-
-                renpy.jump("_quit")
+                renpy.quit(save=True)
 
     @renpy.pure
     class Skip(Action, DictEquality):

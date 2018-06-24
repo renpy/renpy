@@ -2352,11 +2352,14 @@ class Interface(object):
         This is called to handle the user invoking a quit.
         """
 
+        if self.screenshot is None:
+            renpy.exports.take_screenshot()
+
         if self.quit_time > (time.time() - .75):
-            raise renpy.game.QuitException()
+            renpy.exports.quit(save=True)
 
         if self.in_quit_event:
-            raise renpy.game.QuitException()
+            renpy.exports.quit(save=True)
 
         if renpy.config.quit_action is not None:
             self.quit_time = time.time()
@@ -2372,7 +2375,7 @@ class Interface(object):
                 self.in_quit_event = False
 
         else:
-            raise renpy.game.QuitException()
+            renpy.exports.quit(save=True)
 
     def get_mouse_info(self):
         # Figure out if the mouse visibility algorithm is hiding the mouse.

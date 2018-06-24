@@ -1631,7 +1631,7 @@ def reload_script():
         utter_restart()
 
 
-def quit(relaunch=False, status=0):  # @ReservedAssignment
+def quit(relaunch=False, status=0, save=False):  # @ReservedAssignment
     """
     :doc: other
 
@@ -1643,7 +1643,14 @@ def quit(relaunch=False, status=0):  # @ReservedAssignment
     `status`
         The status code Ren'Py will return to the operating system.
         Generally, 0 is success, and positive integers are failure.
+
+    `save`
+        If true, the game is saved in :var:`_quit_slot` before Ren'Py
+        terminates.
     """
+
+    if save and (renpy.store._quit_slot is not None):
+        renpy.loadsave.save(renpy.store._quit_slot, getattr(renpy.store, "save_name", ""))
 
     raise renpy.game.QuitException(relaunch=relaunch, status=status)
 

@@ -438,6 +438,9 @@ main_menu = False
 # error handling screen.
 _ignore_action = None
 
+# The save slot that Ren'Py saves to on quit.
+_quit_slot = None
+
 # Make these available to user code.
 import sys
 import os
