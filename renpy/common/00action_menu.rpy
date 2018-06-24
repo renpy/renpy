@@ -175,8 +175,6 @@ init -1500 python:
 
     _confirm_quit = True
 
-    config.quit_slot = None
-
     @renpy.pure
     class Quit(Action, DictEquality):
         """
