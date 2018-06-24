@@ -2679,6 +2679,9 @@ class Interface(object):
                 renpy.store._side_image_attributes = None
                 renpy.store._side_image_attributes_reset = False
 
+            if renpy.game.context().rollback:
+                self.lose_screenshot()
+
     def consider_gc(self):
         """
         Considers if we should peform a garbage collection.
@@ -3495,10 +3498,6 @@ class Interface(object):
             return False, e.value
 
         finally:
-
-            if renpy.game.context().rollback:
-                self.lose_screenshot()
-
             renpy.game.context().say_attributes = None
 
             # Clean out the overlay layers.
