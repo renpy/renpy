@@ -32,6 +32,10 @@ about this.
 Other
 -----
 
+Ren'Py can now automatically save the game upon quit, in a reliable
+fashion. (As compared to the previous autosave, which could fail or
+be cycled out.) This is controlled by the :var:`_quit_slot` variable.
+
 The developer menu (accessed through shift+D) can now display a screen
 that shows the attributes associated with displayed and hidden images.
 

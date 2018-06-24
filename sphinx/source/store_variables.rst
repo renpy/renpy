@@ -95,6 +95,11 @@ and rolled-back when rollback occurs.
 
         narrator "Hello, world."
 
+.. var:: _quit_slot = None
+
+    If not None, this should be a string giving the name of a file slot.
+    When Ren'Py quits, the game will be saved in this slot.
+
 .. var:: _rollback = True
 
     Controls if rollback is allowed.
