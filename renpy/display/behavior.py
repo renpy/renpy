@@ -811,6 +811,7 @@ class Button(renpy.display.layout.Window):
                 clicked = self.action
             else:
                 clicked = None
+                role = ''
 
         else:
             role = ''
