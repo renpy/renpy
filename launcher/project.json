@@ -1,1 +1,1 @@
-{"build_update": true, "packages": ["all", "linux", "mac", "win", "sdk", "source", "jedit", "editra-mac", "editra-linux", "editra-windows"], "type": "hidden"}
+{"type": "hidden", "renamed_all": true, "renamed_steam": true, "force_recompile": true, "build_update": true, "packages": ["linux", "mac", "win", "sdk", "source", "jedit", "editra-mac", "editra-linux", "editra-windows", "pc", "raspi", "atom-linux", "atom-mac", "atom-windows", "rapt", "renios"], "add_from": true}
