@@ -867,8 +867,10 @@ class ADVCharacter(object):
             if images.showing(layer, new_image, exact=True):
                 return
 
+            show_image = (self.image_tag,) + attrs + tuple(wanted) + tuple( "-" + i for i in remove)
+
             if predict:
-                images.predict_show(new_image)
+                images.predict_show(show_image)
             else:
                 trans = renpy.config.say_attribute_transition
                 layer = renpy.config.say_attribute_transition_layer
@@ -876,7 +878,7 @@ class ADVCharacter(object):
                 if (trans is not None) and (layer is not None):
                     renpy.exports.with_statement(None)
 
-                renpy.exports.show(new_image)
+                renpy.exports.show(show_image)
 
                 if trans is not None:
                     if layer is None:
