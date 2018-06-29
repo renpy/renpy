@@ -90,6 +90,7 @@ the omission in future versions.
 * Maissara Moustafa
 * Marcel
 * Markus Koschany
+* Max le Fou
 * Maxwell Paul Brickner
 * Merumelu
 * mikey (ATP Projects)
