@@ -30,6 +30,7 @@ import time
 import tempfile
 
 import renpy
+import renpy.config
 import sys
 
 real_stdout = sys.stdout
@@ -148,7 +149,7 @@ class LogFile(object):
                 s = s % args
                 s += "\n"
 
-            if not isinstance(s, unicode):
+            if not isinstance(s, unicode) and "encodings.latin_1" in sys.modules:
                 s = s.decode("latin-1")
 
             s = s.replace("\n", "\r\n")
