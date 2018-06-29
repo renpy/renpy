@@ -28,6 +28,19 @@ the {clear} tag is part of a line by itself, it is the equivalent of
 the ``nvl clear`` statement. See :ref:`nvl-monologue-mode` for more
 about this.
 
+Updater Changes
+---------------
+
+The updater for Ren'Py itself now asks you to select the update channel
+each time you go to update. The purpose of this is to make it clear
+which channel you're updating to each time you update, so you don't
+accidentally update to a prerelease or nightly version after a
+release comes out.
+
+As part of this, you might see the Prerelease channel missing for some
+updates. That's normal - unlike in previous versions, the channel only
+appears when there are prereleases available.
+
 
 Other
 -----
@@ -35,6 +48,10 @@ Other
 Ren'Py can now automatically save the game upon quit, in a reliable
 fashion. (As compared to the previous autosave, which could fail or
 be cycled out.) This is controlled by the :var:`_quit_slot` variable.
+
+File actions (like :ref:`FileSave`, :ref:`FileLoad`, and :ref:`FileAction`)
+can now take a slot=True argument. When this is given, the action loads
+a named slot, without involving the page.
 
 The developer menu (accessed through shift+D) can now display a screen
 that shows the attributes associated with displayed and hidden images.
@@ -58,7 +75,6 @@ was an NVL-mode statement with an undefined character name has been fixed.
 
 When two ATL transforms are nested, the state from both is propagated, not
 just the outermost.
-
 
 
 
