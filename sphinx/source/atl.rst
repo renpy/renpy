@@ -210,7 +210,7 @@ from the start of execution of the containing block.
     atl_time : "time" `simple_expression`
 
 When the time given in the statement is reached, the following statement
-begins to execute.This transfer of control occurs even if a previous
+begins to execute. This transfer of control occurs even if a previous
 statement is still executing, and causes any prior statement to immediately
 terminate.
 
@@ -267,7 +267,7 @@ There are three things the first simple expression may evaluate to:
          # Show logo_bw.png, with a dissolve.
          "logo_bw.png" with Dissolve(0.5, alpha=True)
 
-         # Run the move_right tranform.
+         # Run the move_right transform.
          move_right
 
 Pass Statement
@@ -436,7 +436,7 @@ Contains Statement
 ------------------
 
 The ``contains`` statement sets the displayable contained by this ATL transform
-(The child of the transform). There are two variants of the contains
+(the child of the transform). There are two variants of the contains
 statement.
 
 The contains expression variant takes an expression, and sets that expression

@@ -289,9 +289,9 @@ from the same character. In these cases, typing the name of the character
 and the quotes multiple times is somewhat redundant.
 
 To cover these cases, Ren'Py supports monologue mode. When dialogue is inside
-triple quoted strings, Ren'Py will break the dialogue up into blocks at blank
+triple-quoted strings, Ren'Py will break the dialogue up into blocks at blank
 lines. Each block is then used to create its own say statement. Here's an
-example, with three blocs of narration followed by three lines of dialogue::
+example, with three blocks of narration followed by three lines of dialogue::
 
     """
     This is the first line of narration. It's longer than the other two
@@ -363,7 +363,7 @@ When e is a Character, this is further equivalent to::
 
     Character(kind=e, what_size=32)("Hello, world.", interact=True)
 
-But it's possible to use var:`config.say_arguments_callback` or
+But it's possible to use :var:`config.say_arguments_callback` or
 have ``e`` wrap a character to do things differently.
 
 

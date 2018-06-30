@@ -47,14 +47,14 @@ To disable this, add::
 
     define config.hyperlink_inherit_size = False
 
-The {nw} test tag now waits until voice and self-voicing are finished before
+The {nw} text tag now waits until voice and self-voicing are finished before
 it continues.  To disable this behavior, add::
 
     define config.nw_voice = False
 
 ATL Transforms now show at least one frame whenever a pause or interpolation
 occurs. When a game doesn't expect this, it can show up as a series of
-rapidly displayed singe fames. This can be disabled with::
+rapidly displayed single frames. This can be disabled with::
 
     define config.atl_one_frame = False
 

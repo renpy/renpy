@@ -60,7 +60,7 @@ screens. It consists of a statement that declares a new screen,
 statements that add displayables to that screen, and control
 statements.
 
-Here's an example of a screen.::
+Here's an example of a screen::
 
     screen say(who, what):
         window id "window":
@@ -1614,7 +1614,7 @@ The ``use`` statement allows a screen to include another. The use
 statement takes the name of the screen to use. This can optionally be
 followed by an argument list, in parenthesis.
 
-If the used screen include parameters, its scope is initialized to the
+If the used screen includes parameters, its scope is initialized to the
 result of assigning the arguments to those parameters. Otherwise, it
 is passed the scope of the current screen, updated with any keyword
 arguments passed to the screen.
