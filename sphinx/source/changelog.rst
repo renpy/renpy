@@ -25,7 +25,7 @@ info.
 
 There is also a new {clear} text tag that works with monologue. When
 the {clear} tag is part of a line by itself, it is the equivalent of
-the ``nvl clear`` statement. See :ref:`nvl-monologue-mode` for more
+the ``nvl clear`` statement. See :ref:`NVL Monlologue Mode <nvl-monologue-mode>` for more
 about this.
 
 Updater Changes
@@ -49,7 +49,7 @@ Ren'Py can now automatically save the game upon quit, in a reliable
 fashion. (As compared to the previous autosave, which could fail or
 be cycled out.) This is controlled by the :var:`_quit_slot` variable.
 
-File actions (like :ref:`FileSave`, :ref:`FileLoad`, and :ref:`FileAction`)
+File actions (like :func:`FileSave`, :func:`FileLoad`, and :func:`FileAction`)
 can now take a slot=True argument. When this is given, the action loads
 a named slot, without involving the page.
 
