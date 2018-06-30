@@ -802,6 +802,7 @@ screen preferences():
                     textbutton "English" text_font "DejaVuSans.ttf"action Language(None)
                     textbutton "Français" text_font "DejaVuSans.ttf"action Language("french")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
+                    textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf"action Language("malay")
 
 #end language_picker
 
