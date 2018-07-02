@@ -407,7 +407,7 @@ There are two translation-related functions:
 
 .. include:: inc/translation_functions
 
-In addition, there are three functions that are related to string
+In addition, there are four functions that are related to string
 translation:
 
 .. function:: _(s)
@@ -426,6 +426,8 @@ translation:
    is displayed.
 
 .. include:: inc/underscore_p
+
+.. include:: inc/translate_string
 
 There are two language-related variables. One is
 :var:`config.language`, which is used to change the default language

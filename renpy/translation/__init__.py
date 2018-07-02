@@ -444,8 +444,12 @@ Default = renpy.object.Sentinel("default")
 
 def translate_string(s, language=Default):
     """
-    Translates interface string `s` to `language`. If `languages` is Default,
-    uses the language set in the preferences.
+    :doc: translate_string
+    :name: renpy.translate_string
+
+    Translates interface string `s` to `language`. If `language` is Default,
+    uses the language set in the preferences. This does not mark `s` to be
+    translated.
     """
 
     if language is Default:
