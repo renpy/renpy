@@ -1056,7 +1056,7 @@ To center the character's name, use::
 To center dialogue text, use::
 
     define gui.dialogue_xpos = 0.5
-    define gui.dialogue_text_xalign = 1.0
+    define gui.dialogue_text_xalign = 0.5
 
 Our example game uses these statements to customize the centered namebox::
 
@@ -1090,7 +1090,7 @@ is displayed.
 .. var:: gui.history_height = 210
 
     The height of a history entry, in pixels. This can be None to allow
-    the height of a history entry to vary at the cost of performance – 
+    the height of a history entry to vary at the cost of performance –
     config.history_length may need to be lowered significantly when this
     is None.
 
