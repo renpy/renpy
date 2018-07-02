@@ -20,7 +20,7 @@ once, using triple-quoted strings. For example::
     And this is a second block.
     """
 
-Will create two blocks of dialogue. See :ref:`monologue-mode` for more
+will create two blocks of dialogue. See :ref:`monologue-mode` for more
 info.
 
 There is also a new {clear} text tag that works with monologue. When
@@ -38,7 +38,7 @@ accidentally update to a prerelease or nightly version after a
 release comes out.
 
 As part of this, you might see the Prerelease channel missing for some
-updates. That's normal - unlike in previous versions, the channel only
+updates. That's normal – unlike in previous versions, the channel only
 appears when there are prereleases available.
 
 
@@ -53,10 +53,10 @@ File actions (like :func:`FileSave`, :func:`FileLoad`, and :func:`FileAction`)
 can now take a slot=True argument. When this is given, the action loads
 a named slot, without involving the page.
 
-The developer menu (accessed through shift+D) can now display a screen
+The developer menu (accessed through Shift+D) can now display a screen
 that shows the attributes associated with displayed and hidden images.
 
-Add :func:`renpy.transform_text`, a function to transform text without
+Added :func:`renpy.transform_text`, a function to transform text without
 touching text tags or interpolation.
 
 Buttons created using the make_buttons method of a Gallery object now

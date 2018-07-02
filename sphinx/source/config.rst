@@ -696,7 +696,7 @@ Occasionally Used
 
     This should return a pair, containing a tuple of positional arguments
     (almost always empty), and a dictionary of keyword arguments (almost
-    always with at least interact in it.
+    always with at least interact in it).
 
     For example::
 

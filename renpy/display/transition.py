@@ -611,7 +611,7 @@ class CropMove(Transition):
 
     Returns a transition that works by cropping a scene and positioning it on the
     screen. This can be used to implement a variety of effects, all of which
-    involved changing rectangular slices of scenes.
+    involve changing rectangular slices of scenes.
 
     `time`
         The time the transition takes.
