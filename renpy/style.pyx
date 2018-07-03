@@ -528,7 +528,7 @@ cdef class StyleCore:
         return self._get(index - self.prefix_offset)
 
 
-    def _predict_window(self, pd):
+    def _visit_window(self, pd):
         """
         Predicts properties for a window.
 
@@ -542,7 +542,7 @@ cdef class StyleCore:
                 if v is not None:
                     pd(v)
 
-    def _predict_bar(self, pd):
+    def _visit_bar(self, pd):
         """
         Predicts properties for a window.
 
@@ -556,7 +556,7 @@ cdef class StyleCore:
                 if v is not None:
                     pd(v)
 
-    def _predict_frame(self, pd):
+    def _visit_frame(self, pd):
         """
         Predicts properties for a Frame.
 

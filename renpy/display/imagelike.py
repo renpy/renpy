@@ -517,12 +517,9 @@ class Frame(renpy.display.core.Displayable):
         return rv
 
     def visit(self):
-        return [ ]
-
-    def predict_one(self):
-        pd = renpy.display.predict.displayable
-        self.style._predict_frame(pd)
-        pd(self.image)
+        rv = [ ]
+        self.style._visit_frame(rv)
+        return rv
 
 
 class FileCurrentScreenshot(renpy.display.core.Displayable):

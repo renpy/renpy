@@ -1612,9 +1612,10 @@ class Bar(renpy.display.core.Displayable):
         self.focusable = self.adjustment.adjustable
         self.adjustment.register(self)
 
-    def predict_one(self):
-        pd = renpy.display.predict.displayable
-        self.style._predict_window(pd)
+    def visit(self):
+        rv = [ ]
+        self.style._visit_bar(rv.append)
+        return rv
 
     def render(self, width, height, st, at):
 

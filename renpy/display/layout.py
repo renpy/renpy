@@ -1057,7 +1057,9 @@ class Window(Container):
             self.add(child)
 
     def visit(self):
-        return [ self.style.background ] + self.children
+        rv = [ ]
+        self.style._visit_window(rv.append)
+        return rv + self.children
 
     def get_child(self):
         return self.style.child or self.child
@@ -1071,10 +1073,6 @@ class Window(Container):
                 group = size_groups[size_group] = SizeGroup()
 
             group.members.append(self)
-
-    def predict_one(self):
-        pd = renpy.display.predict.displayable
-        self.style._predict_window(pd)
 
     def render(self, width, height, st, at):
 
