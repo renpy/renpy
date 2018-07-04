@@ -28,9 +28,12 @@ import traceback
 import platform
 import time
 import tempfile
-
-import renpy
 import sys
+
+import encodings.latin_1  # @UnusedImport
+
+import renpy.config
+
 
 real_stdout = sys.stdout
 real_stderr = sys.stderr
