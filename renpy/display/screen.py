@@ -420,12 +420,12 @@ class ScreenDisplayable(renpy.display.layout.Container):
     def visit(self):
         return [ self.child ]
 
-    def visit_all(self, callback):
+    def visit_all(self, callback, seen=None):
         callback(self)
 
         try:
             push_current_screen(self)
-            self.child.visit_all(callback)
+            self.child.visit_all(callback, seen=None)
         finally:
             pop_current_screen()
 

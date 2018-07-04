@@ -499,16 +499,26 @@ class Displayable(renpy.object.Object):
 
         return self.style.get_placement()
 
-    def visit_all(self, callback):
+    def visit_all(self, callback, seen=None):
         """
         Calls the callback on this displayable, and then on all children
         of this displayable.
         """
 
+        if seen is None:
+            seen = set()
+
         for d in self.visit():
+
             if not d:
                 continue
-            d.visit_all(callback)
+
+            id_d = id(d)
+            if id_d in seen:
+                continue
+
+            seen.add(id_d)
+            d.visit_all(callback, seen)
 
         callback(self)
 
