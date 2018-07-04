@@ -76,10 +76,11 @@ Then, install pygame_sdl2 by running the following commands::
     python setup.py install_headers
     popd
 
-Next, set RENPY_DEPS_INSTALL To a \::-separated list of paths containing the
-dependencies, and RENPY_CYTHON to the name of the cython command::
+Next, set RENPY_DEPS_INSTALL To a \:-separated (\;-separated on Windows)
+list of paths containing the dependencies, and RENPY_CYTHON to the name
+of the cython command::
 
-    export RENPY_DEPS_INSTALL="/usr::/usr/lib/x86_64-linux-gnu/"
+    export RENPY_DEPS_INSTALL="/usr:/usr/lib/x86_64-linux-gnu/"
     export RENPY_CYTHON=cython
 
 Finally, use setup.py in the Ren'Py ``module`` directory to compile and

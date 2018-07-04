@@ -58,7 +58,12 @@ cython_command = os.environ.get("RENPY_CYTHON", "cython")
 # dependencies installed in them.
 if not (android or ios):
     install = os.environ.get("RENPY_DEPS_INSTALL", "/usr")
-    install = install.split("::")
+
+    if "::" in install:
+        install = install.split("::")
+    else:
+        install = install.split(os.pathsep)
+
     install = [ os.path.abspath(i) for i in install ]
 
     if "VIRTUAL_ENV" in os.environ:
