@@ -505,27 +505,12 @@ class Displayable(renpy.object.Object):
         of this displayable.
         """
 
-        seen = { id(self), id(None) }
-        queue = [ self ]
-        done = [ ]
+        for d in self.visit():
+            if not d:
+                continue
+            d.visit_all(callback)
 
-        while queue:
-            d = queue.pop(0)
-            done.append(d)
-
-            for i in d.visit():
-
-                id_i = id(i)
-
-                if id_i in seen:
-                    continue
-
-                queue.append(i)
-
-        done.reverse()
-
-        for i in done:
-            callback(i)
+        callback(self)
 
     def visit(self):
         """
