@@ -76,7 +76,11 @@ was an NVL-mode statement with an undefined character name has been fixed.
 When two ATL transforms are nested, the state from both is propagated, not
 just the outermost.
 
+Ren'Py now updates dynamic images that are used in windows, bars, and
+frames. (And derived displayables, like buttons and imagemaps.)
 
+An issue that caused Ren'Py to consume 100% of a core when modal True was
+given has been fixed.
 
 
 .. _renpy-7.0:
