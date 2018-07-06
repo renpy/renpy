@@ -87,6 +87,13 @@ def extra_imports():
     import pstats; pstats
     import _ssl; _ssl
 
+    # Used by requests.
+    import cgi; cgi
+    import Cookie; Cookie
+    import hmac; hmac
+    import Queue; Queue
+    import uuid; uuid
+
 
 class NullFile(io.IOBase):
     """
