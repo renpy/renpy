@@ -33,7 +33,7 @@ example minigame:
                 # The speed of the computer.
                 self.computerspeed = 380.0
 
-                # The position, dental-position, and the speed of the
+                # The position, delta-position, and the speed of the
                 # ball.
                 self.bx = self.PADDLE_X + self.PADDLE_WIDTH + 10
                 self.by = self.playery
