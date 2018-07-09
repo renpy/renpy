@@ -824,7 +824,7 @@ class Structure:
                         except exceptions.ValueError, e:
                             val_str += ' [INVALID TIME]'
                 else:
-                    val_str = ''.join([c for c in str(val) if c != '\0'])
+                    val_str = str(val).replace('\0', '')
 
                 dump.append('%-30s %s' % (key+':', val_str))
 

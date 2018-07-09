@@ -673,10 +673,10 @@ def AskFileForOpen(
     ofn.lpfnHook = LPOFNHOOKPROC(hookProc)
 
     if fn(ctypes.byref(ofn)):
-        filenames = [fn for fn in filename.split('\0') if fn]
+        filenames = [pn for pn in filename.split('\0') if pn]
         if len(filenames) > 1:
             dir, filenames = filenames[0], filenames[1:]
-            return [os.path.join(dir, fn) for fn in filenames]
+            return [os.path.join(dir, pn) for pn in filenames]
         elif multiple:
             return filenames
         else:
