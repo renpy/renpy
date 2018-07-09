@@ -143,13 +143,13 @@ init -1400 python:
 
         `time_warp`, `in_time_warp`, `out_time_warp`
             Time warp functions that are given a time from 0.0 to 1.0 representing
-            the fraction of the move complete, and return a value in the same
+            the fraction of the move that is complete, and return a value in the same
             range giving the fraction of a linear move that is complete.
 
             This can be used to define functions that ease the images around,
             rather than moving them at a constant speed.
 
-            The three argument are used for images remaining on the screen,
+            The three arguments are used for images remaining on the screen,
             newly shown images, and newly hidden images, respectively.
 
         `old`
