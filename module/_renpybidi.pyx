@@ -37,6 +37,7 @@ ON = FRIBIDI_TYPE_ON
 RTL = FRIBIDI_TYPE_RTL
 WRTL = FRIBIDI_TYPE_WR
 
+
 def log2vis(s, int direction=FRIBIDI_TYPE_ON):
 
     s = s.encode("utf8")

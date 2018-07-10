@@ -1,14 +1,11 @@
 #include <Python.h>
-#include <fribidi/fribidi.h>
+#include <fribidi-src/lib/fribidi.h>
 #include <stdlib.h>
 
 #ifndef alloca
 #include <alloca.h>
 #endif
 
-/* This is easier than trying to figure out the header that alloca is */
-/* defined in. */
-// void *alloca(size_t size);
 
 PyObject *renpybidi_log2vis(PyObject *s, int *direction) {
     char *src;

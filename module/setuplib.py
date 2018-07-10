@@ -163,7 +163,7 @@ extensions = [ ]
 global_macros = [ ]
 
 
-def cmodule(name, source, libs=[], define_macros=[], language="c"):
+def cmodule(name, source, libs=[], define_macros=[], includes=[], language="c"):
     """
     Compiles the python module `name` from the files given in
     `source`, and the libraries in `libs`.
@@ -177,7 +177,7 @@ def cmodule(name, source, libs=[], define_macros=[], language="c"):
     extensions.append(distutils.core.Extension(
         name,
         source,
-        include_dirs=include_dirs,
+        include_dirs=include_dirs + includes,
         library_dirs=library_dirs,
         extra_compile_args=eca,
         extra_link_args=extra_link_args,
@@ -190,7 +190,7 @@ def cmodule(name, source, libs=[], define_macros=[], language="c"):
 necessary_gen = [ ]
 
 
-def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None, language="c"):
+def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros=[], pyx=None, language="c"):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
     when it, or any of the files it depends on, changes.
@@ -326,7 +326,7 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
         if mod_coverage:
             define_macros = define_macros + [ ("CYTHON_TRACE", "1") ]
 
-        cmodule(name, [ c_fn ] + source, libs=libs, define_macros=define_macros, language=language)
+        cmodule(name, [ c_fn ] + source, libs=libs, includes=includes, define_macros=define_macros, language=language)
 
 
 def find_unnecessary_gen():

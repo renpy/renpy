@@ -29,7 +29,8 @@ import os
 import subprocess
 
 # Change to the directory containing this file.
-os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
+BASE=os.path.abspath(os.path.dirname(sys.argv[0]))
+os.chdir(BASE)
 
 # Create the gen directory if it doesn't exist.
 try:
@@ -54,7 +55,7 @@ setup_env("LD")
 setup_env("CXX")
 
 import setuplib
-from setuplib import android, ios, raspi, include, library, cython, copyfile, find_unnecessary_gen
+from setuplib import android, ios, raspi, include, library, cython, cmodule, copyfile, find_unnecessary_gen
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
@@ -91,7 +92,6 @@ has_avresample = library("avresample", optional=True)
 has_swresample = library("swresample", optional=True)
 has_swscale = library("swscale", optional=True)
 library("freetype")
-has_fribidi = library("fribidi", optional=True)
 library("z")
 has_libglew = library("GLEW", optional=True)
 has_libglew32 = library("glew32", optional=True)
@@ -104,16 +104,6 @@ if android:
 else:
     sdl = [ 'SDL2' ]
     png = 'png'
-
-
-if has_fribidi and (not android) and (not ios):
-    try:
-        # Some versions of fribidi require glib, and it doesn't hurt to include it in
-        # our path.
-        glib_flags = subprocess.check_output(["pkg-config", "--cflags", "glib-2.0"])
-        setuplib.extra_compile_args.extend(glib_flags.split())
-    except:
-        pass
 
 steam_sdk = os.environ.get("RENPY_STEAM_SDK", None)
 steam_platform = os.environ.get("RENPY_STEAM_PLATFORM", "")
@@ -128,11 +118,41 @@ cython(
     [ "IMG_savepng.c", "core.c", "subpixel.c"],
     sdl + [ png, 'z', 'm' ])
 
-if has_fribidi:
-    cython(
-        "_renpybidi",
-        [ "renpybidicore.c" ],
-        ['fribidi'], define_macros=[ ("FRIBIDI_ENTRY", "") ])
+FRIBIDI_SOURCES = """
+fribidi-src/lib/fribidi.c
+fribidi-src/lib/fribidi-arabic.c
+fribidi-src/lib/fribidi-bidi.c
+fribidi-src/lib/fribidi-bidi-types.c
+fribidi-src/lib/fribidi-deprecated.c
+fribidi-src/lib/fribidi-joining.c
+fribidi-src/lib/fribidi-joining-types.c
+fribidi-src/lib/fribidi-mem.c
+fribidi-src/lib/fribidi-mirroring.c
+fribidi-src/lib/fribidi-run.c
+fribidi-src/lib/fribidi-shape.c
+fribidi-src/charset/fribidi-char-sets-cp1256.c
+fribidi-src/charset/fribidi-char-sets-iso8859-8.c
+fribidi-src/charset/fribidi-char-sets-cap-rtl.c
+fribidi-src/charset/fribidi-char-sets-utf8.c
+fribidi-src/charset/fribidi-char-sets.c
+fribidi-src/charset/fribidi-char-sets-cp1255.c
+fribidi-src/charset/fribidi-char-sets-iso8859-6.c
+renpybidicore.c
+""".split()
+
+cython(
+    "_renpybidi",
+    FRIBIDI_SOURCES,
+    includes=[
+        BASE + "/fribidi-src/",
+        BASE + "/fribidi-src/lib/",
+        BASE + "/fribidi-src/charset/",
+        ],
+    define_macros=[
+        ("FRIBIDI_ENTRY", ""),
+        ("HAVE_CONFIG_H", "1"),
+        ])
+
 
 cython("_renpysteam", language="c++", compile_if=steam_sdk, libs=["steam_api"])
 
@@ -244,6 +264,3 @@ sys.path.insert(0, '..')
 import renpy
 
 setuplib.setup("Ren'Py", renpy.version[7:])  # @UndefinedVariable
-
-if not has_fribidi:
-    print("Warning: Did not include fribidi.")
