@@ -189,8 +189,10 @@ label update:
 
         import urllib2
         import json
+        import ssl
 
-        channels = json.load(urllib2.urlopen(CHANNELS_URL))["releases"]
+        context = ssl._create_unverified_context()
+        channels = json.load(urllib2.urlopen(CHANNELS_URL, context=context))["releases"]
 
         renpy.call_screen("update_channel", channels)
 
