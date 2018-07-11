@@ -130,23 +130,14 @@ fribidi-src/lib/fribidi-mem.c
 fribidi-src/lib/fribidi-mirroring.c
 fribidi-src/lib/fribidi-run.c
 fribidi-src/lib/fribidi-shape.c
-fribidi-src/charset/fribidi-char-sets-cp1256.c
-fribidi-src/charset/fribidi-char-sets-iso8859-8.c
-fribidi-src/charset/fribidi-char-sets-cap-rtl.c
-fribidi-src/charset/fribidi-char-sets-utf8.c
-fribidi-src/charset/fribidi-char-sets.c
-fribidi-src/charset/fribidi-char-sets-cp1255.c
-fribidi-src/charset/fribidi-char-sets-iso8859-6.c
 renpybidicore.c
 """.split()
-
 cython(
     "_renpybidi",
     FRIBIDI_SOURCES,
     includes=[
         BASE + "/fribidi-src/",
         BASE + "/fribidi-src/lib/",
-        BASE + "/fribidi-src/charset/",
         ],
     define_macros=[
         ("FRIBIDI_ENTRY", ""),
