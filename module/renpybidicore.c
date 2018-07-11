@@ -7,38 +7,38 @@
 #endif
 
 
-PyObject *renpybidi_log2vis(PyObject *s, int *direction) {
-    char *src;
-    int size;
+PyObject *renpybidi_log2vis(PyUnicodeObject *s, int *direction) {
+    Py_ssize_t size;
     FriBidiChar *srcuni;
-    int unisize;
     FriBidiChar *dstuni;
-    char *dst;
+    PyUnicodeObject *rv;
 
-    src = PyString_AsString(s);
 
-    if (src == NULL) {
-        return NULL;
-    }
-
-    size = PyString_Size(s);
+    Py_UNICODE *p = PyUnicode_AS_UNICODE(s);
+    size = PyUnicode_GET_SIZE(s);
 
     srcuni = (FriBidiChar *) alloca(size * 4);
     dstuni = (FriBidiChar *) alloca(size * 4);
-    dst = (char *) alloca(size * 4);
 
-    unisize = fribidi_charset_to_unicode(FRIBIDI_CHAR_SET_UTF8, src, size, srcuni);
+    for (Py_ssize_t i = 0; i < size; i++) {
+        srcuni[i] = p[i];
+    }
 
     fribidi_log2vis(
         srcuni,
-        unisize,
+        size,
         direction,
         dstuni,
         NULL,
         NULL,
         NULL);
 
-    fribidi_unicode_to_charset(FRIBIDI_CHAR_SET_UTF8, dstuni, unisize, dst);
+    rv = PyUnicode_FromUnicode(NULL, size);
+    p = PyUnicode_AS_UNICODE(rv);
 
-    return PyString_FromString(dst);
+    for (Py_ssize_t i = 0; i < size; i++) {
+        p[i] = dstuni[i];
+    }
+
+    return rv;
 }
