@@ -41,6 +41,11 @@ As part of this, you might see the Prerelease channel missing for some
 updates. That's normal – unlike in previous versions, the channel only
 appears when there are prereleases available.
 
+Translations
+------------
+
+The Ren'Py launcher, template game, and The Question have been translated
+into the Latin script of Malay by Muhammad Nur Hidayat Yasuyoshi.
 
 Other
 -----
@@ -81,6 +86,9 @@ frames. (And derived displayables, like buttons and imagemaps.)
 
 An issue that caused Ren'Py to consume 100% of a core when modal True was
 given has been fixed.
+
+Ren'Py now includes a copy of fribidi, rather than requiring an OS-installed
+version.
 
 
 .. _renpy-7.0:

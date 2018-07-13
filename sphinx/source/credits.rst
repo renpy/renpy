@@ -96,7 +96,8 @@ the omission in future versions.
 * mikey (ATP Projects)
 * Morgan Willcock
 * MrStalker
-* Mugenjohncel
+* Mugenjohncel (Uncle Mugen)
+* Muhammad Nur Hidayat Yasuyoshi
 * NetGenSuperstar
 * NoJoker
 * Nolanlemahn
