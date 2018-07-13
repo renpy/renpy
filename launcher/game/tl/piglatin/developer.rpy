@@ -37,55 +37,67 @@ translate piglatin strings:
     old "Hide Image Load Log (F4)"
     new "Idehay Mageiay Oadlay Oglay (4fay)"
 
-    # _developer/developer.rpym:95
+    # _developer/developer.rpym:63
+    old "Image Attributes"
+    new "Mageiay Ttributesaay"
+
+    # _developer/developer.rpym:90
+    old "[name] [attributes] (hidden)"
+    new "[name] [attributes] (iddenhay)"
+
+    # _developer/developer.rpym:94
+    old "[name] [attributes]"
+    new "[name] [attributes]"
+
+    # _developer/developer.rpym:137
     old "Nothing to inspect."
     new "Othingnay otay inspectay."
 
-    # _developer/developer.rpym:223
+    # _developer/developer.rpym:265
     old "Return to the developer menu"
     new "Eturnray otay hetay eveloperday enumay"
 
-    # _developer/developer.rpym:383
+    # _developer/developer.rpym:425
     old "Rectangle: %r"
     new "Ectangleray: %ray"
 
-    # _developer/developer.rpym:388
+    # _developer/developer.rpym:430
     old "Mouse position: %r"
     new "Ousemay ositionpay: %ray"
 
-    # _developer/developer.rpym:393
+    # _developer/developer.rpym:435
     old "Right-click or escape to quit."
     new "Ightray-ickclay oray escapeay otay uitqay."
 
-    # _developer/developer.rpym:425
+    # _developer/developer.rpym:467
     old "Rectangle copied to clipboard."
     new "Ectangleray opiedcay otay ipboardclay."
 
-    # _developer/developer.rpym:428
+    # _developer/developer.rpym:470
     old "Position copied to clipboard."
     new "Ositionpay opiedcay otay ipboardclay."
 
-    # _developer/developer.rpym:447
+    # _developer/developer.rpym:489
     old "Type to filter: "
     new "Ypetay otay ilterfay: "
 
-    # _developer/developer.rpym:575
+    # _developer/developer.rpym:617
     old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
     new "Exturestay: [tex_count] ([tex_size_mb:.1f] Bmay)"
 
-    # _developer/developer.rpym:579
+    # _developer/developer.rpym:621
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
     new "Mageiay achecay: [cache_pct:.1f]% ([cache_size_mb:.1f] Bmay)"
 
-    # _developer/developer.rpym:589
+    # _developer/developer.rpym:631
     old "✔ "
     new "✔ "
 
-    # _developer/developer.rpym:592
+    # _developer/developer.rpym:634
     old "✘ "
     new "✘ "
 
-    # _developer/developer.rpym:597
+    # _developer/developer.rpym:639
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
     new "\n{color=#cfc}✔ redictedpay imageay (oodgay){/color}\n{color=#fcc}✘ unpredicteday imageay (adbay){/color}\n{color=#fff}Ragday otay ovemay.{/color}"
 

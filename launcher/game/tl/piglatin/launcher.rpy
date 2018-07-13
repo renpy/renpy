@@ -961,63 +961,59 @@ translate piglatin strings:
     old "Text editor: [text]"
     new "Exttay editoray: [text]"
 
-    # preferences.rpy:142
-    old "Update Channel:"
-    new "Pdateuay Hannelcay:"
-
-    # preferences.rpy:162
+    # preferences.rpy:145
     old "Navigation Options:"
     new "Avigationnay Ptionsoay:"
 
-    # preferences.rpy:166
+    # preferences.rpy:149
     old "Include private names"
     new "Ncludeiay rivatepay amesnay"
 
-    # preferences.rpy:167
+    # preferences.rpy:150
     old "Include library names"
     new "Ncludeiay ibrarylay amesnay"
 
-    # preferences.rpy:177
+    # preferences.rpy:160
     old "Launcher Options:"
     new "Auncherlay Ptionsoay:"
 
-    # preferences.rpy:181
+    # preferences.rpy:164
     old "Hardware rendering"
     new "Ardwarehay enderingray"
 
-    # preferences.rpy:182
+    # preferences.rpy:165
     old "Show edit file section"
     new "Howsay editay ilefay ectionsay"
 
-    # preferences.rpy:183
+    # preferences.rpy:166
     old "Large fonts"
     new "Argelay ontsfay"
 
-    # preferences.rpy:186
+    # preferences.rpy:169
     old "Console output"
     new "Onsolecay outputay"
 
-    # preferences.rpy:190
+    # preferences.rpy:173
     old "Force new tutorial"
     new "Orcefay ewnay utorialtay"
 
-    # preferences.rpy:194
+    # preferences.rpy:177
     old "Legacy options"
     new "Egacylay optionsay"
 
-    # preferences.rpy:197
+    # preferences.rpy:180
     old "Show templates"
     new "Howsay emplatestay"
 
-    # preferences.rpy:199
+    # preferences.rpy:182
     old "Sponsor message"
     new "Ponsorsay essagemay"
 
-    # preferences.rpy:219
+    # preferences.rpy:202
     old "Open launcher project"
     new "Penoay auncherlay rojectpay"
 
-    # preferences.rpy:233
+    # preferences.rpy:216
     old "Language:"
     new "Anguagelay:"
 
@@ -1173,95 +1169,107 @@ translate piglatin strings:
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
     new "Enray'Ypay ashay inishedfay extractingay ialogueday. Hetay extracteday ialogueday ancay ebay oundfay inay ialogueday.[persistent.dialogue_format] inay hetay asebay irectoryday."
 
-    # updater.rpy:75
-    old "Select Update Channel"
-    new "Electsay Pdateuay Hannelcay"
-
-    # updater.rpy:86
-    old "The update channel controls the version of Ren'Py the updater will download. Please select an update channel:"
-    new "Hetay updateay annelchay ontrolscay hetay ersionvay ofay Enray'Ypay hetay updateray illway ownloadday. Leasepay electsay anay updateay annelchay:"
-
-    # updater.rpy:91
+    # updater.rpy:62
     old "Release"
     new "Eleaseray"
 
-    # updater.rpy:97
+    # updater.rpy:63
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
     new "{b}Ecommendedray.{/b} Hetay ersionvay ofay Enray'Ypay hattay ouldshay ebay useday inay allay ewlynay-eleasedray amesgay."
 
-    # updater.rpy:102
+    # updater.rpy:65
     old "Prerelease"
     new "Rereleasepay"
 
-    # updater.rpy:108
+    # updater.rpy:66
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
     new "Aay reviewpay ofay hetay extnay ersionvay ofay Enray'Ypay hattay ancay ebay useday orfay estingtay anday akingtay advantageay ofay ewnay eaturesfay, utbay otnay orfay inalfay eleasesray ofay amesgay."
 
-    # updater.rpy:114
+    # updater.rpy:68
     old "Experimental"
     new "Xperimentaleay"
 
-    # updater.rpy:120
+    # updater.rpy:69
     old "Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer."
     new "Xperimentaleay ersionsvay ofay Enray'Ypay. Ouyay ouldnshay'tay electsay histay annelchay unlessay askeday ybay aay Enray'Ypay eveloperday."
 
-    # updater.rpy:126
+    # updater.rpy:71
     old "Nightly"
     new "Ightlynay"
 
-    # updater.rpy:132
+    # updater.rpy:72
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
     new "Hetay eedingblay edgeay ofay Enray'Ypay evelopmentday. Histay aymay avehay hetay atestlay eaturesfay, oray ightmay otnay unray atay allay."
 
-    # updater.rpy:152
+    # updater.rpy:90
+    old "Select Update Channel"
+    new "Electsay Pdateuay Hannelcay"
+
+    # updater.rpy:101
+    old "The update channel controls the version of Ren'Py the updater will download."
+    new "Hetay updateay annelchay ontrolscay hetay ersionvay ofay Enray'Ypay hetay updateray illway ownloadday."
+
+    # updater.rpy:110
+    old "• This version is installed and up-to-date."
+    new "• Histay ersionvay isay installeday anday upay-otay-ateday."
+
+    # updater.rpy:118
+    old "%B %d, %Y"
+    new "%Bay %day, %Yay"
+
+    # updater.rpy:140
     old "An error has occured:"
     new "Naay erroray ashay occureday:"
 
-    # updater.rpy:154
+    # updater.rpy:142
     old "Checking for updates."
     new "Heckingcay orfay updatesay."
 
-    # updater.rpy:156
+    # updater.rpy:144
     old "Ren'Py is up to date."
     new "Enray'Ypay isay upay otay ateday."
 
-    # updater.rpy:158
+    # updater.rpy:146
     old "[u.version] is now available. Do you want to install it?"
     new "[u.version] isay ownay availableay. Oday ouyay antway otay installay itay?"
 
-    # updater.rpy:160
+    # updater.rpy:148
     old "Preparing to download the update."
     new "Reparingpay otay ownloadday hetay updateay."
 
-    # updater.rpy:162
+    # updater.rpy:150
     old "Downloading the update."
     new "Ownloadingday hetay updateay."
 
-    # updater.rpy:164
+    # updater.rpy:152
     old "Unpacking the update."
     new "Npackinguay hetay updateay."
 
-    # updater.rpy:166
+    # updater.rpy:154
     old "Finishing up."
     new "Inishingfay upay."
 
-    # updater.rpy:168
+    # updater.rpy:156
     old "The update has been installed. Ren'Py will restart."
     new "Hetay updateay ashay eenbay installeday. Enray'Ypay illway estartray."
 
-    # updater.rpy:170
+    # updater.rpy:158
     old "The update has been installed."
     new "Hetay updateay ashay eenbay installeday."
 
-    # updater.rpy:172
+    # updater.rpy:160
     old "The update was cancelled."
     new "Hetay updateay asway ancelledcay."
 
-    # updater.rpy:189
+    # updater.rpy:177
     old "Ren'Py Update"
     new "Enray'Ypay Pdateuay"
 
-    # updater.rpy:195
+    # updater.rpy:183
     old "Proceed"
     new "Roceedpay"
+
+    # updater.rpy:188
+    old "Fetching the list of update channels"
+    new "Etchingfay hetay istlay ofay updateay annelschay"
 

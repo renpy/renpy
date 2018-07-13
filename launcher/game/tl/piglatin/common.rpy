@@ -153,51 +153,51 @@ translate piglatin strings:
     old "{#month_short}Dec"
     new "{#month_short}Ecday"
 
-    # 00action_file.rpy:237
+    # 00action_file.rpy:240
     old "%b %d, %H:%M"
     new "%bay %day, %Hay:%May"
 
-    # 00action_file.rpy:345
+    # 00action_file.rpy:353
     old "Save slot %s: [text]"
     new "Avesay otslay %say: [text]"
 
-    # 00action_file.rpy:421
+    # 00action_file.rpy:434
     old "Load slot %s: [text]"
     new "Oadlay otslay %say: [text]"
 
-    # 00action_file.rpy:466
+    # 00action_file.rpy:487
     old "Delete slot [text]"
     new "Eleteday otslay [text]"
 
-    # 00action_file.rpy:546
+    # 00action_file.rpy:569
     old "File page auto"
     new "Ilefay agepay autoay"
 
-    # 00action_file.rpy:548
+    # 00action_file.rpy:571
     old "File page quick"
     new "Ilefay agepay uickqay"
 
-    # 00action_file.rpy:550
+    # 00action_file.rpy:573
     old "File page [text]"
     new "Ilefay agepay [text]"
 
-    # 00action_file.rpy:740
+    # 00action_file.rpy:763
     old "Next file page."
     new "Extnay ilefay agepay."
 
-    # 00action_file.rpy:804
+    # 00action_file.rpy:827
     old "Previous file page."
     new "Reviouspay ilefay agepay."
 
-    # 00action_file.rpy:865
+    # 00action_file.rpy:888
     old "Quick save complete."
     new "Uickqay avesay ompletecay."
 
-    # 00action_file.rpy:883
+    # 00action_file.rpy:906
     old "Quick save."
     new "Uickqay avesay."
 
-    # 00action_file.rpy:902
+    # 00action_file.rpy:925
     old "Quick load."
     new "Uickqay oadlay."
 
@@ -561,95 +561,95 @@ translate piglatin strings:
     old "Contacting App Store\nPlease Wait..."
     new "Ontactingcay Ppaay Toresay\nLeasepay Aitway..."
 
-    # 00updater.rpy:372
+    # 00updater.rpy:375
     old "The Ren'Py Updater is not supported on mobile devices."
     new "Hetay Enray'Ypay Pdateruay isay otnay upportedsay onay obilemay evicesday."
 
-    # 00updater.rpy:491
+    # 00updater.rpy:494
     old "An error is being simulated."
     new "Naay erroray isay eingbay imulatedsay."
 
-    # 00updater.rpy:672
+    # 00updater.rpy:678
     old "Either this project does not support updating, or the update status file was deleted."
     new "Ithereay histay rojectpay oesday otnay upportsay updatingay, oray hetay updateay atusstay ilefay asway eletedday."
 
-    # 00updater.rpy:686
+    # 00updater.rpy:692
     old "This account does not have permission to perform an update."
     new "Histay accountay oesday otnay avehay ermissionpay otay erformpay anay updateay."
 
-    # 00updater.rpy:689
+    # 00updater.rpy:695
     old "This account does not have permission to write the update log."
     new "Histay accountay oesday otnay avehay ermissionpay otay riteway hetay updateay oglay."
 
-    # 00updater.rpy:716
+    # 00updater.rpy:722
     old "Could not verify update signature."
     new "Ouldcay otnay erifyvay updateay ignaturesay."
 
-    # 00updater.rpy:991
+    # 00updater.rpy:997
     old "The update file was not downloaded."
     new "Hetay updateay ilefay asway otnay ownloadedday."
 
-    # 00updater.rpy:1009
+    # 00updater.rpy:1015
     old "The update file does not have the correct digest - it may have been corrupted."
     new "Hetay updateay ilefay oesday otnay avehay hetay orrectcay igestday - itay aymay avehay eenbay orruptedcay."
 
-    # 00updater.rpy:1065
+    # 00updater.rpy:1071
     old "While unpacking {}, unknown type {}."
     new "Hileway unpackingay {}, unknownay ypetay {}."
 
-    # 00updater.rpy:1412
+    # 00updater.rpy:1439
     old "Updater"
     new "Pdateruay"
 
-    # 00updater.rpy:1423
+    # 00updater.rpy:1450
     old "This program is up to date."
     new "Histay rogrampay isay upay otay ateday."
 
-    # 00updater.rpy:1425
+    # 00updater.rpy:1452
     old "[u.version] is available. Do you want to install it?"
     new "[u.version] isay availableay. Oday ouyay antway otay installay itay?"
 
-    # 00updater.rpy:1427
+    # 00updater.rpy:1454
     old "Preparing to download the updates."
     new "Reparingpay otay ownloadday hetay updatesay."
 
-    # 00updater.rpy:1429
+    # 00updater.rpy:1456
     old "Downloading the updates."
     new "Ownloadingday hetay updatesay."
 
-    # 00updater.rpy:1431
+    # 00updater.rpy:1458
     old "Unpacking the updates."
     new "Npackinguay hetay updatesay."
 
-    # 00updater.rpy:1435
+    # 00updater.rpy:1462
     old "The updates have been installed. The program will restart."
     new "Hetay updatesay avehay eenbay installeday. Hetay rogrampay illway estartray."
 
-    # 00updater.rpy:1437
+    # 00updater.rpy:1464
     old "The updates have been installed."
     new "Hetay updatesay avehay eenbay installeday."
 
-    # 00updater.rpy:1439
+    # 00updater.rpy:1466
     old "The updates were cancelled."
     new "Hetay updatesay ereway ancelledcay."
 
-    # 00gallery.rpy:573
+    # 00gallery.rpy:585
     old "Image [index] of [count] locked."
     new "Mageiay [index] ofay [count] ockedlay."
 
-    # 00gallery.rpy:593
+    # 00gallery.rpy:605
     old "prev"
     new "revpay"
 
-    # 00gallery.rpy:594
+    # 00gallery.rpy:606
     old "next"
     new "extnay"
 
-    # 00gallery.rpy:595
+    # 00gallery.rpy:607
     old "slideshow"
     new "ideshowslay"
 
-    # 00gallery.rpy:596
+    # 00gallery.rpy:608
     old "return"
     new "eturnray"
 
