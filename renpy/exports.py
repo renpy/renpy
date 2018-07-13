@@ -466,7 +466,7 @@ def showing(name, layer='master'):
     :doc: image_func
 
     Returns true if an image with the same tag as `name` is showing on
-    `layer`
+    `layer`.
 
     `image`
         May be a string giving the image name or a tuple giving each
