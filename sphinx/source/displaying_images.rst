@@ -439,7 +439,7 @@ If not given, it defaults to :var:`config.window_show_transition` and
 it from occurring.
 
 The window itself is displayed by calling :var:`config.empty_window`. It defaults to
-having the narrator say an empty string.::
+having the narrator say an empty string. ::
 
         show bg washington
         show eileen happy

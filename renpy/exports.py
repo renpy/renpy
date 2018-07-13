@@ -341,7 +341,7 @@ def image(name, d):
     """
     :doc: se_images
 
-    Defines an image. This function is the python equivalent of the
+    Defines an image. This function is the Python equivalent of the
     image statement.
 
     `name`
@@ -466,7 +466,7 @@ def showing(name, layer='master'):
     :doc: image_func
 
     Returns true if an image with the same tag as `name` is showing on
-    `layer`
+    `layer`.
 
     `image`
         May be a string giving the image name or a tuple giving each
@@ -713,7 +713,7 @@ def hide(name, layer=None):
     """
     :doc: se_images
 
-    Hides an image from a layer. The python equivalent of the hide statement.
+    Hides an image from a layer. The Python equivalent of the hide statement.
 
     `name`
          The name of the image to hide. Only the image tag is used, and
@@ -1408,7 +1408,7 @@ def with_statement(trans, always=False, paired=None, clear=True):
     :name: renpy.with_statement
     :args: (trans, always=False)
 
-    Causes a transition to occur. This is the python equivalent of the
+    Causes a transition to occur. This is the Python equivalent of the
     with statement.
 
     `trans`
@@ -2098,7 +2098,7 @@ def file(fn):  # @ReservedAssignment
     accessed using Ren'Py's standard search method, and may reside in an RPA archive.
     or as an Android asset.
 
-    The object supports a wide subset of the fields and methods found on python's
+    The object supports a wide subset of the fields and methods found on Python's
     standard file object, opened in binary mode. (Basically, all of the methods that
     are sensible for a read-only file.)
     """
@@ -2163,7 +2163,7 @@ def show_layer_at(at_list, layer='master', reset=True):
     :doc: se_images
     :name: renpy.show_layer_at
 
-    The python equivalent of the ``show layer`` `layer` ``at`` `at_list`
+    The Python equivalent of the ``show layer`` `layer` ``at`` `at_list`
     statement.
 
     `reset`
@@ -2872,7 +2872,7 @@ def variant(name):
 
     Returns true if a `name` is a screen variant that can be chosen
     by Ren'Py. See :ref:`screen-variants` for more details. This function
-    can be used as the condition in a python if statement to set up the
+    can be used as the condition in a Python if statement to set up the
     appropriate styles for the selected screen variant.
 
     `name` can also be a list of variants, in which case this function
