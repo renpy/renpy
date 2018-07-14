@@ -159,7 +159,7 @@ translate spanish strings:
 
     # gui.rpy:145
     old "## These variables, along with the image files in gui/button, control aspects of how buttons are displayed."
-    new "## Estas variables, junto con las imágenes de 'gui/button', controal el aspecto de los botones."
+    new "## Estas variables, junto con las imágenes de 'gui/button', controla el aspecto de los botones."
 
     # gui.rpy:148
     old "## The width and height of a button, in pixels. If None, Ren'Py computes a size."
