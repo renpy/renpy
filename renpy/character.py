@@ -1225,9 +1225,9 @@ def Character(name=NotSet, kind=None, **properties):
         and additional elements can be added to the screen.
 
     `advance`
-        If True, the default, the player can click to advance through
+        If true, the default, the player can click to advance through
         the statement, and other means of advancing (such as skip and
-        auto-forward mode) will also work. If False, the player will be
+        auto-forward mode) will also work. If false, the player will be
         unable to move past the say statement unless an alternate means
         (such as a jump hyperlink or screen) is provided.
 
