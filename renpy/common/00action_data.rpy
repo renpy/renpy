@@ -309,7 +309,7 @@ init -1600 python:
         Adds `value` to `set`.
 
         `set`
-            The set to add to. This may be a python set or list, in which
+            The set to add to. This may be a Python set or list, in which
             case the value is appended to the list.
         `value`
             The value to add or append.

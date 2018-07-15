@@ -240,7 +240,7 @@ init -1500 python:
         """
         :doc: nvl
 
-        The python equivalent of the ``nvl show`` statement.
+        The Python equivalent of the ``nvl show`` statement.
 
         `with_`
             The transition to use to show the NVL-mode window.
@@ -254,7 +254,7 @@ init -1500 python:
         """
         :doc: nvl
 
-        The python equivalent of the ``nvl hide`` statement.
+        The Python equivalent of the ``nvl hide`` statement.
 
         `with_`
             The transition to use to hide the NVL-mode window.
@@ -434,7 +434,7 @@ init -1500 python:
         """
         :doc: nvl
 
-        The python equivalent of the ``nvl clear`` statement.
+        The Python equivalent of the ``nvl clear`` statement.
         """
 
         store.nvl_list = [ ]

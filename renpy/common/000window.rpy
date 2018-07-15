@@ -40,7 +40,7 @@ init -1200 python:
         """
         :doc: window
 
-        The python equivalent of the "window show" statement.
+        The Python equivalent of the "window show" statement.
 
         `trans`
             If False, the default window show transition is used. If None,
@@ -65,7 +65,7 @@ init -1200 python:
         """
         :doc: window
 
-        The python equivalent of the "window hide" statement.
+        The Python equivalent of the "window hide" statement.
 
         `trans`
             If False, the default window hide transition is used. If None,

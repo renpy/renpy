@@ -1206,7 +1206,7 @@ def Character(name=NotSet, kind=None, **properties):
     These options help to control the display of the name.
 
     `dynamic`
-        If true, then `name` should be a string containing a python
+        If true, then `name` should be a string containing a Python
         expression. That string will be evaluated before each line
         of dialogue, and the result used as the name of the character.
 
@@ -1215,7 +1215,7 @@ def Character(name=NotSet, kind=None, **properties):
     interaction occurs, and the mode that is entered upon display.
 
     `condition`
-        If given, this should be a string containing a python
+        If given, this should be a string containing a Python
         expression. If the expression is false, the dialogue
         does not occur, as if the say statement did not happen.
 
@@ -1225,9 +1225,9 @@ def Character(name=NotSet, kind=None, **properties):
         and additional elements can be added to the screen.
 
     `advance`
-        If True, the default, the player can click to advance through
+        If true, the default, the player can click to advance through
         the statement, and other means of advancing (such as skip and
-        auto-forward mode) will also work. If False, the player will be
+        auto-forward mode) will also work. If false, the player will be
         unable to move past the say statement unless an alternate means
         (such as a jump hyperlink or screen) is provided.
 

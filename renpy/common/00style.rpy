@@ -24,7 +24,7 @@
 
 init -1800 python:
 
-    # The style hierarchy root has to be initialized through python
+    # The style hierarchy root has to be initialized through Python
     # code.
     style.default = Style(None)
     style.empty = Style(None)

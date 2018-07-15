@@ -284,7 +284,7 @@ init -1500 python:
             A condition that is satisfied when an expression evaluates to true.
 
             `expression`
-                A string giving a python expression.
+                A string giving a Python expression.
             """
 
             if not isinstance(expression, basestring):
@@ -400,7 +400,7 @@ init -1500 python:
             named `name`.
 
             `format`
-                A python format string that's used to format the numbers. This has three values that
+                A Python format string that's used to format the numbers. This has three values that
                 can be substituted in:
 
                 {seen}

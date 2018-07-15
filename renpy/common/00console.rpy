@@ -576,7 +576,7 @@ init -1500 python in _console:
         :name: renpy.watch
         :doc: debug
 
-        This watches the given python expression, by displaying it in the
+        This watches the given Python expression, by displaying it in the
         upper-right corner of the screen.
         """
 
@@ -607,7 +607,7 @@ init -1500 python in _console:
         :name: renpy.unwatch
         :doc: debug
 
-        Stops watching the given python expression.
+        Stops watching the given Python expression.
         """
 
         block = [ ( "<console>", 1, expr, [ ]) ]
@@ -629,7 +629,7 @@ init -1500 python in _console:
         :name: renpy.unwatch
         :doc: debug
 
-        Stops watching all python expressions.
+        Stops watching all Python expressions.
         """
 
         unwatchall(None)
