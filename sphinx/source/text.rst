@@ -685,4 +685,4 @@ necessary.
 3. Run the game.
 
 Whenever text is displayed that overflows the available area, Ren'Py
-will log an error to the ``text_overflow.txt`` file.
+will log an error to the text_overflow.txt file.

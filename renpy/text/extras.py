@@ -130,7 +130,7 @@ def filter_text_tags(s, allow=None, deny=None):
         A set of tags that are allowed. If a tag is not in this list, it is removed.
 
     `deny`
-        A set of tags that are denied. If a tage is not in this list, it is kept in the string.
+        A set of tags that are denied. If a tag is not in this list, it is kept in the string.
     """
 
     if (allow is None) and (deny is None):
