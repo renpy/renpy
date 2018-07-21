@@ -116,6 +116,7 @@ init label _errorhandling:
         first_spacing None
         box_layout None
         box_wrap False
+        box_wrap_spacing 0
         box_reverse False
         order_reverse False
         xfit False
@@ -679,4 +680,3 @@ screen _parse_errors:
 
     if config.developer and reload_action:
         key "R" action reload_action
-
