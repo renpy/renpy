@@ -13,7 +13,7 @@ statement with 01, or some other small number.
 
 A user-defined statement cannot be used in the file in which it is defined.
 
-Creator-defined statement are registered using the renpy.register_statement
+Creator-defined statement are registered using the :func:`renpy.register_statement`
 function.
 
 .. include:: inc/statement_register
@@ -67,7 +67,7 @@ The parse method takes a Lexer object:
 
     .. method:: rest()
 
-        Skips whitespace, the returns the rest of the line.
+        Skips whitespace, then returns the rest of the line.
 
     .. method:: checkpoint()
 
