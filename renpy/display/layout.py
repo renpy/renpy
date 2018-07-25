@@ -1465,7 +1465,7 @@ def Crop(rect, child, **properties):
     :doc: disp_imagelike
     :name: Crop
 
-    This created a displayable by cropping `child` to `rect`, where
+    This creates a displayable by cropping `child` to `rect`, where
     `rect` is an (x, y, width, height) tuple. ::
 
         image eileen cropped = Crop((0, 0, 300, 300), "eileen happy")
