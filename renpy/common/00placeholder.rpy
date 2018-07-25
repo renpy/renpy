@@ -59,7 +59,7 @@ init -1500 python:
                     the character's name, and uses that. (The 'girl' placeholder
                     is used when the service can't guess.)
 
-                    The webservice will only be contacted when config.developer
+                    The webservice will only be contacted when :var:`config.developer`
                     is True.
 
             `full`
