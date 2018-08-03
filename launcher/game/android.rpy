@@ -45,9 +45,10 @@ init python:
     BUILD_AND_INSTALL_TEXT = _("Builds the Android package, and installs it on an Android device connected to your computer.")
     BUILD_INSTALL_AND_LAUNCH_TEXT = _("Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device.")
 
-    CONNECT_TEXT = _("Connects to an Android device running ADB in TCP/IP mode.")
-    DISCONNECT_TEXT = _("Disconnects from an Android device running ADB in TCP/IP mode.")
     LOGCAT_TEXT = _("Retrieves the log from the Android device and writes it to a file.")
+
+    DEBUG_TEXT = _("Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device.")
+    RELEASE_TEXT = _("Selects the Release build, which can be uploaded to stores. Changing between debug and release builds requires an uninstall from your device.")
 
 
     import subprocess
@@ -266,6 +267,10 @@ init python:
             rapt.build.build(rapt_interface, dist, command, launch=launch, finished=finished)
 
 
+    def android_build_argument(cmd):
+        return cmd + project.current.data["android_build"]
+
+
 
 # The android support can stick unicode into os.environ. Fix that.
 init 100 python:
@@ -360,6 +365,20 @@ screen android:
 
                             has vbox
 
+                            hbox:
+                                spacing 15
+
+                                textbutton _("Debug"):
+                                    action SetDict(project.current.data, "android_build", "Debug")
+                                    hovered tt.Action(DEBUG_TEXT)
+
+                                textbutton _("Release"):
+                                    action SetDict(project.current.data, "android_build", "Release")
+                                    hovered tt.Action(RELEASE_TEXT)
+
+
+                            add HALF_SPACER
+
                             textbutton _("Install SDK & Create Keys"):
                                 action AndroidIfState(state, ANDROID_NO_SDK, Jump("android_installsdk"))
                                 hovered tt.Action(INSTALL_SDK_TEXT)
@@ -394,14 +413,6 @@ screen android:
                         frame style "l_indent":
 
                             has vbox
-
-                            textbutton _("Remote ADB Connect"):
-                                action AndroidIfState(state, ANDROID_OK, Jump("android_connect"))
-                                hovered tt.Action(CONNECT_TEXT)
-
-                            textbutton _("Remote ADB Disconnect"):
-                                action AndroidIfState(state, ANDROID_OK, Jump("android_disconnect"))
-                                hovered tt.Action(DISCONNECT_TEXT)
 
                             textbutton _("Logcat"):
                                 action AndroidIfState(state, ANDROID_NO_KEY, Jump("logcat"))
@@ -467,74 +478,20 @@ label android_configure:
 
 label android_build:
 
-    $ android_build([ 'release' ], opendir=True)
+    $ android_build([ android_build_argument("assemble") ], opendir=True)
 
     jump android
 
 
 label android_build_and_install:
 
-    $ android_build([ 'release', 'install' ])
+    $ android_build([ android_build_argument("install") ])
 
     jump android
 
 label android_build_install_and_launch:
 
-    $ android_build([ 'release', 'install' ], launch=True)
-
-    jump android
-
-
-label android_connect:
-
-    python hide:
-
-        if persistent.connect_address is not None:
-            address = persistent.connect_address
-        else:
-            address = ""
-
-        while True:
-            address = interface.input(
-                _("Remote ADB Address"),
-                _("Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."),
-                default=address,
-                cancel=Jump("android"),
-                )
-
-            address = address.strip()
-
-            try:
-                host, port = address.split(":")
-            except:
-                interface.error(_("Invalid remote ADB address"), _("The address must contain one exactly one ':'."), label=None)
-                continue
-
-            if " " in host:
-                interface.error(_("Invalid remote ADB address"), _("The host may not contain whitespace."), label=None)
-                continue
-
-            try:
-                int(port)
-            except:
-                interface.error(_("Invalid remote ADB address"), _("The port must be a number."), label=None)
-                continue
-
-            break
-
-        persistent.connect_address = address
-
-        rapt_interface = MobileInterface("android")
-        rapt.build.connect(rapt_interface, address)
-
-    jump android
-
-label android_disconnect:
-
-    python hide:
-
-        rapt_interface = MobileInterface("android")
-        rapt.build.disconnect(rapt_interface)
+    $ android_build([android_build_argument("install") ], launch=True)
 
     jump android
 
