@@ -400,6 +400,8 @@ class ImageReference(renpy.display.core.Displayable):
             error("Image '{}' refers to itself.".format(' '.join(name)))
             return False
 
+        args += self._args.args
+
         try:
 
             a = self._args.copy(name=name, args=args)
