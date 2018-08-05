@@ -511,7 +511,7 @@ init python:
     def android_build_command():
         ap = renpy.arguments.ArgumentParser()
         ap.add_argument("android_project", help="The path to the project directory.")
-        ap.add_argument("ant_commands", help="Commands to pass to ant. (Try 'release' 'install'.)", nargs='+')
+        ap.add_argument("gradle_commands", help="Commands to pass to gradle. (Try 'installDebug' or 'assembleRelease'.)", nargs='+')
         ap.add_argument("--launch", action="store_true", help="Launches the app after build and install compete.")
         ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
 
@@ -519,7 +519,7 @@ init python:
 
         p = project.Project(args.android_project)
 
-        android_build(args.ant_commands, p=p, gui=False, launch=args.launch, destination=args.destination)
+        android_build(args.gradle_commands, p=p, gui=False, launch=args.launch, destination=args.destination)
 
         return False
 
