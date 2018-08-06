@@ -149,6 +149,7 @@ style_properties = sorted_dict(
     box_layout=None,
     box_reverse=None,
     box_wrap=None,
+    box_wrap_spacing=None,
     caret='renpy.easy.displayable_or_none',
     child='renpy.easy.displayable_or_none',
     clipping=None,

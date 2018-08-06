@@ -781,6 +781,7 @@ class MultiBox(Container):
         spacings = [ first_spacing ] + [ spacing ] * (len(self.children) - 1)
 
         box_wrap = self.style.box_wrap
+        box_wrap_spacing = self.style.box_wrap_spacing
         xfill = self.style.xfill
         yfill = self.style.yfill
         xminimum = self.style.xminimum
@@ -882,7 +883,7 @@ class MultiBox(Container):
                 if box_wrap and remwidth - sw - padding < 0 and line:
                     maxx, maxy = layout_line(line, target_width - x, 0)
 
-                    y += line_height
+                    y += line_height + box_wrap_spacing
                     x = 0
                     line_height = 0
                     remwidth = width
@@ -924,7 +925,7 @@ class MultiBox(Container):
                 if box_wrap and remheight - sh - padding < 0:
                     maxx, maxy = layout_line(line, 0, target_height - y)
 
-                    x += line_width
+                    x += line_width + box_wrap_spacing
                     y = 0
                     line_width = 0
                     remheight = height

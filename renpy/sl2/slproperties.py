@@ -174,6 +174,7 @@ vscrollbar_bar_properties = [ PrefixStyle("vscrollbar_", i) for i in bar_propert
 box_property_names = [
     "box_layout",
     "box_wrap",
+    "box_wrap_spacing",
     "box_reverse",
     "order_reverse",
     "spacing",
