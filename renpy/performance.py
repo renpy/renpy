@@ -93,7 +93,7 @@ def analyze():
         return
 
     s = "\n"
-    renpy.log.real_stdout.write(s)
+    renpy.log.real_stdout.write(s.encode("utf-8"))
     renpy.display.log.write(s)
 
     times = [ fpl[0][0] ] * DEPTH_LEVELS
@@ -109,7 +109,7 @@ def analyze():
             event.format(*args),
             )
 
-        renpy.log.real_stdout.write(s)
+        renpy.log.real_stdout.write(s.encode("utf-8"))
         renpy.display.log.write(s)
 
         for i in range(depth, DEPTH_LEVELS):
