@@ -717,7 +717,11 @@ Occasionally Used
 
     If not None, this should be a string giving the name of an image
     attribute. The image attribute is added to the image when the
-    character is speaking, and removed when the character stops.
+    character's image tag when the character is speaking, and removed
+    when the character stops.
+
+    This is applied to the image on the default layer for the tag,
+    which can be set using :var:`config.tag_layer`.
 
 .. var:: config.tag_layer = { }
 
