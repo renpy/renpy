@@ -551,7 +551,7 @@ documented, and the arguments it takes if you want to supply your own
 Proxying Layered Images
 -----------------------
 
-Sometimes, it's necessary to proxy a layered image, to used the same
+Sometimes, it's necessary to proxy a layered image, to use the same
 layered image in multiple places. One reason for this would be to have
 the same sprite at multiple sizes, while another would be to use it as
 a side image.
