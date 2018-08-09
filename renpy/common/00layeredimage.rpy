@@ -1069,10 +1069,11 @@ python early in layeredimage:
 
         def __init__(self, name, transform=None):
 
-            self.image = renpy.get_registered_image(name)
+            self.name = name
 
-            if self.image is None:
-                raise Exception("{!r} is not a registered image name.")
+            if "[" not in self.name:
+                if renpy.get_registered_image(name) is None:
+                        raise Exception("{!r} is not a registered image name.".format(self.name))
 
             if transform is None:
                 self.transform = [ ]
@@ -1082,6 +1083,23 @@ python early in layeredimage:
 
             else:
                 self.transform = [ transform ]
+
+
+        @property
+        def image(self):
+
+            name = self.name
+
+            if "[" in name:
+                name = renpy.substitute(name, translate=False)
+
+            image = renpy.get_registered_image(name)
+
+            if image is None:
+                raise Exception("{!r} is not a registered image name, in LayeredImageProxy.".format(name))
+
+            return image
+
 
         def _duplicate(self, args):
 
