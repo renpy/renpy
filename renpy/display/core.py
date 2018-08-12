@@ -2448,7 +2448,7 @@ class Interface(object):
         """
 
         def save():
-            if renpy.config.save_on_mobile_background:
+            if renpy.config.save_on_mobile_background and (not renpy.store.main_menu):
                 renpy.loadsave.save("_reload-1")
 
             renpy.persistent.update(True)

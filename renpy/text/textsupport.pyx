@@ -157,6 +157,7 @@ for i in range(0, 65536):
 def language_tailor(chars, cls):
     """
     :doc: other
+    :args: (chars, cls)
 
     This can be used to override the line breaking class of a character. For
     example, the linebreaking class of a character can be set to ID to
@@ -164,10 +165,10 @@ def language_tailor(chars, cls):
     character.
 
     `chars`
-        A list of characters to tailor.
+        A string containing each of the characters to tailor.
 
     `cls`
-        The character class. This should be one of the classes defined in Table
+        A string giving a character class. This should be one of the classes defined in Table
         1 of `UAX #14: Unicode Line Breaking Algorithm <http://www.unicode.org/reports/tr14/tr14-30.html>`_.
     """
 

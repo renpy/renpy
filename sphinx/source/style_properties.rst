@@ -976,6 +976,11 @@ These are used for the horizontal and vertical box layouts.
     If True, then boxes will wrap when they reach the end of a line or column.
     If False (the default), they will extend past the end of the line.
 
+.. style-property:: box_wrap_spacing int
+
+    When box_wrap is True, this is the spacing between wrapped lines
+    or columns. (So it is the vertical spacing between lines in a wrapped
+    hbox, and the horizontal spacing between columns in a wrapped vbox.)
 
 
 .. _grid-style-properties:

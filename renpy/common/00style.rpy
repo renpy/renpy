@@ -203,6 +203,7 @@ init -1800:
         first_spacing None
         box_layout None
         box_wrap False
+        box_wrap_spacing 0
         box_reverse False
         order_reverse False
         xfit False
@@ -442,4 +443,3 @@ init label _style_reset:
 # Older init code doesn't necessarily like defer styles.
 init 1001 python:
     config.defer_styles = False
-

@@ -2450,7 +2450,7 @@ def game_menu(screen=None):
     if screen is None:
         call_in_new_context("_game_menu")
     else:
-        call_in_new_context("_game_menu", screen)
+        call_in_new_context("_game_menu", _game_menu_screen = screen)
 
 
 def shown_window():

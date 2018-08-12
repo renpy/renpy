@@ -1395,8 +1395,11 @@ init 2202 python hide in director:
 
             blacklist = False
 
-            for j in available:
-                if i.startswith(j + "_"):
+            prefix = i
+
+            while prefix:
+                prefix, _, _  = prefix.rpartition("_")
+                if prefix in available:
                     blacklist = True
 
             if i in scene_tags:
