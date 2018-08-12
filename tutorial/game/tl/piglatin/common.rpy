@@ -209,91 +209,91 @@ translate piglatin strings:
     old "The interactive director is not enabled here."
     new "Hetay interactiveay irectorday isay otnay enableday erehay."
 
-    # 00director.rpy:1478
+    # 00director.rpy:1481
     old "⬆"
     new "⬆"
 
-    # 00director.rpy:1484
+    # 00director.rpy:1487
     old "⬇"
     new "⬇"
 
-    # 00director.rpy:1548
+    # 00director.rpy:1551
     old "Done"
     new "Oneday"
 
-    # 00director.rpy:1558
+    # 00director.rpy:1561
     old "(statement)"
     new "(atementstay)"
 
-    # 00director.rpy:1559
+    # 00director.rpy:1562
     old "(tag)"
     new "(agtay)"
 
-    # 00director.rpy:1560
+    # 00director.rpy:1563
     old "(attributes)"
     new "(attributesay)"
 
-    # 00director.rpy:1561
+    # 00director.rpy:1564
     old "(transform)"
     new "(ansformtray)"
 
-    # 00director.rpy:1586
+    # 00director.rpy:1589
     old "(transition)"
     new "(ansitiontray)"
 
-    # 00director.rpy:1598
+    # 00director.rpy:1601
     old "(channel)"
     new "(annelchay)"
 
-    # 00director.rpy:1599
+    # 00director.rpy:1602
     old "(filename)"
     new "(ilenamefay)"
 
-    # 00director.rpy:1628
+    # 00director.rpy:1631
     old "Change"
     new "Hangecay"
 
-    # 00director.rpy:1630
+    # 00director.rpy:1633
     old "Add"
     new "Ddaay"
 
-    # 00director.rpy:1633
+    # 00director.rpy:1636
     old "Cancel"
     new "Ancelcay"
 
-    # 00director.rpy:1636
+    # 00director.rpy:1639
     old "Remove"
     new "Emoveray"
 
-    # 00director.rpy:1671
+    # 00director.rpy:1674
     old "Statement:"
     new "Tatementsay:"
 
-    # 00director.rpy:1692
+    # 00director.rpy:1695
     old "Tag:"
     new "Agtay:"
 
-    # 00director.rpy:1708
+    # 00director.rpy:1711
     old "Attributes:"
     new "Ttributesaay:"
 
-    # 00director.rpy:1726
+    # 00director.rpy:1729
     old "Transforms:"
     new "Ransformstay:"
 
-    # 00director.rpy:1745
+    # 00director.rpy:1748
     old "Behind:"
     new "Ehindbay:"
 
-    # 00director.rpy:1764
+    # 00director.rpy:1767
     old "Transition:"
     new "Ransitiontay:"
 
-    # 00director.rpy:1782
+    # 00director.rpy:1785
     old "Channel:"
     new "Hannelcay:"
 
-    # 00director.rpy:1800
+    # 00director.rpy:1803
     old "Audio Filename:"
     new "Udioaay Ilenamefay:"
 
@@ -813,75 +813,75 @@ translate piglatin strings:
     old "Back (B)"
     new "Ackbay (Bay)"
 
-    # _errorhandling.rpym:528
+    # _errorhandling.rpym:529
     old "Open"
     new "Penoay"
 
-    # _errorhandling.rpym:530
+    # _errorhandling.rpym:531
     old "Opens the traceback.txt file in a text editor."
     new "Pensoay hetay acebacktray.xttay ilefay inay aay exttay editoray."
 
-    # _errorhandling.rpym:532
+    # _errorhandling.rpym:533
     old "Copy"
     new "Opycay"
 
-    # _errorhandling.rpym:534
+    # _errorhandling.rpym:535
     old "Copies the traceback.txt file to the clipboard."
     new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay."
 
-    # _errorhandling.rpym:561
+    # _errorhandling.rpym:562
     old "An exception has occurred."
     new "Naay exceptionay ashay occurreday."
 
-    # _errorhandling.rpym:581
+    # _errorhandling.rpym:582
     old "Rollback"
     new "Ollbackray"
 
-    # _errorhandling.rpym:583
+    # _errorhandling.rpym:584
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "Ttemptsaay aay ollray ackbay otay aay riorpay imetay, allowingay ouyay otay avesay oray oosechay aay ifferentday oicechay."
 
-    # _errorhandling.rpym:586
+    # _errorhandling.rpym:587
     old "Ignore"
     new "Gnoreiay"
 
-    # _errorhandling.rpym:590
+    # _errorhandling.rpym:591
     old "Ignores the exception, allowing you to continue."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay."
 
-    # _errorhandling.rpym:592
+    # _errorhandling.rpym:593
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay. Histay oftenay eadslay otay additionalay errorsay."
 
-    # _errorhandling.rpym:596
+    # _errorhandling.rpym:597
     old "Reload"
     new "Eloadray"
 
-    # _errorhandling.rpym:598
+    # _errorhandling.rpym:599
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "Eloadsray hetay amegay omfray iskday, avingsay anday estoringray amegay atestay ifay ossiblepay."
 
-    # _errorhandling.rpym:601
+    # _errorhandling.rpym:602
     old "Console"
     new "Onsolecay"
 
-    # _errorhandling.rpym:603
+    # _errorhandling.rpym:604
     old "Opens a console to allow debugging the problem."
     new "Pensoay aay onsolecay otay alloway ebuggingday hetay roblempay."
 
-    # _errorhandling.rpym:613
+    # _errorhandling.rpym:614
     old "Quits the game."
     new "Uitsqay hetay amegay."
 
-    # _errorhandling.rpym:637
+    # _errorhandling.rpym:638
     old "Parsing the script failed."
     new "Arsingpay hetay criptsay ailedfay."
 
-    # _errorhandling.rpym:663
+    # _errorhandling.rpym:664
     old "Opens the errors.txt file in a text editor."
     new "Pensoay hetay errorsay.xttay ilefay inay aay exttay editoray."
 
-    # _errorhandling.rpym:667
+    # _errorhandling.rpym:668
     old "Copies the errors.txt file to the clipboard."
     new "Opiescay hetay errorsay.xttay ilefay otay hetay ipboardclay."
 

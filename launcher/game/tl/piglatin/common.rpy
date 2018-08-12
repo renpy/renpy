@@ -209,91 +209,91 @@ translate piglatin strings:
     old "The interactive director is not enabled here."
     new "Hetay interactiveay irectorday isay otnay enableday erehay."
 
-    # 00director.rpy:1478
+    # 00director.rpy:1481
     old "⬆"
     new "⬆"
 
-    # 00director.rpy:1484
+    # 00director.rpy:1487
     old "⬇"
     new "⬇"
 
-    # 00director.rpy:1548
+    # 00director.rpy:1551
     old "Done"
     new "Oneday"
 
-    # 00director.rpy:1558
+    # 00director.rpy:1561
     old "(statement)"
     new "(atementstay)"
 
-    # 00director.rpy:1559
+    # 00director.rpy:1562
     old "(tag)"
     new "(agtay)"
 
-    # 00director.rpy:1560
+    # 00director.rpy:1563
     old "(attributes)"
     new "(attributesay)"
 
-    # 00director.rpy:1561
+    # 00director.rpy:1564
     old "(transform)"
     new "(ansformtray)"
 
-    # 00director.rpy:1586
+    # 00director.rpy:1589
     old "(transition)"
     new "(ansitiontray)"
 
-    # 00director.rpy:1598
+    # 00director.rpy:1601
     old "(channel)"
     new "(annelchay)"
 
-    # 00director.rpy:1599
+    # 00director.rpy:1602
     old "(filename)"
     new "(ilenamefay)"
 
-    # 00director.rpy:1628
+    # 00director.rpy:1631
     old "Change"
     new "Hangecay"
 
-    # 00director.rpy:1630
+    # 00director.rpy:1633
     old "Add"
     new "Ddaay"
 
-    # 00director.rpy:1633
+    # 00director.rpy:1636
     old "Cancel"
     new "Ancelcay"
 
-    # 00director.rpy:1636
+    # 00director.rpy:1639
     old "Remove"
     new "Emoveray"
 
-    # 00director.rpy:1671
+    # 00director.rpy:1674
     old "Statement:"
     new "Tatementsay:"
 
-    # 00director.rpy:1692
+    # 00director.rpy:1695
     old "Tag:"
     new "Agtay:"
 
-    # 00director.rpy:1708
+    # 00director.rpy:1711
     old "Attributes:"
     new "Ttributesaay:"
 
-    # 00director.rpy:1726
+    # 00director.rpy:1729
     old "Transforms:"
     new "Ransformstay:"
 
-    # 00director.rpy:1745
+    # 00director.rpy:1748
     old "Behind:"
     new "Ehindbay:"
 
-    # 00director.rpy:1764
+    # 00director.rpy:1767
     old "Transition:"
     new "Ransitiontay:"
 
-    # 00director.rpy:1782
+    # 00director.rpy:1785
     old "Channel:"
     new "Hannelcay:"
 
-    # 00director.rpy:1800
+    # 00director.rpy:1803
     old "Audio Filename:"
     new "Udioaay Ilenamefay:"
 

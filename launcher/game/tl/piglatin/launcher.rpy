@@ -34,8 +34,8 @@ translate piglatin strings:
     new "Otay uildbay Ndroidaay ackagespay, easeplay ownloadday Aptray, unzipay itay, anday aceplay itay intoay hetay Enray'Ypay irectoryday. Hentay estartray hetay Enray'Ypay auncherlay."
 
     # android.rpy:31
-    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Naay 86xay Avajay Evelopmentday Itkay isay equiredray otay uildbay Ndroidaay ackagespay onay Indowsway. Hetay Dkjay isay ifferentday omfray hetay Rejay, osay itay'say ossiblepay ouyay avehay Avajay ithoutway avinghay hetay Dkjay.\n\nLeasepay {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}ownloadday anday installay hetay Dkjay{/a}, hentay estartray hetay Enray'Ypay auncherlay."
+    old "A Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Aay Avajay 8ay Evelopmentday Itkay isay equiredray otay uildbay Ndroidaay ackagespay onay Indowsway. Hetay Dkjay isay ifferentday omfray hetay Rejay, osay itay'say ossiblepay ouyay avehay Avajay ithoutway avinghay hetay Dkjay.\n\nLeasepay {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}ownloadday anday installay hetay Dkjay{/a}, hentay estartray hetay Enray'Ypay auncherlay."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -90,112 +90,328 @@ translate piglatin strings:
     new "Uildsbay hetay Ndroidaay ackagepay, installsay itay onay anay Ndroidaay eviceday onnectedcay otay ouryay omputercay, hentay auncheslay hetay appay onay ouryay eviceday."
 
     # android.rpy:48
-    old "Connects to an Android device running ADB in TCP/IP mode."
-    new "Onnectscay otay anay Ndroidaay eviceday unningray Dbaay inay Cptay/Piay odemay."
-
-    # android.rpy:49
-    old "Disconnects from an Android device running ADB in TCP/IP mode."
-    new "Isconnectsday omfray anay Ndroidaay eviceday unningray Dbaay inay Cptay/Piay odemay."
-
-    # android.rpy:50
     old "Retrieves the log from the Android device and writes it to a file."
     new "Etrievesray hetay oglay omfray hetay Ndroidaay eviceday anday ritesway itay otay aay ilefay."
 
-    # android.rpy:244
+    # android.rpy:50
+    old "Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device."
+    new "Electssay hetay Ebugday uildbay, hichway ancay ebay accesseday hroughtay Ndroidaay Tudiosay. Hangingcay etweenbay ebugday anday eleaseray uildsbay equiresray anay uninstallay omfray ouryay eviceday."
+
+    # android.rpy:51
+    old "Selects the Release build, which can be uploaded to stores. Changing between debug and release builds requires an uninstall from your device."
+    new "Electssay hetay Eleaseray uildbay, hichway ancay ebay uploadeday otay oresstay. Hangingcay etweenbay ebugday anday eleaseray uildsbay equiresray anay uninstallay omfray ouryay eviceday."
+
+    # android.rpy:243
     old "Copying Android files to distributions directory."
     new "Opyingcay Ndroidaay ilesfay otay istributionsday irectoryday."
 
-    # android.rpy:308
+    # android.rpy:311
     old "Android: [project.current.display_name!q]"
     new "Ndroidaay: [project.current.display_name!q]"
 
-    # android.rpy:328
+    # android.rpy:331
     old "Emulation:"
     new "Mulationeay:"
 
-    # android.rpy:337
+    # android.rpy:340
     old "Phone"
     new "Honepay"
 
-    # android.rpy:341
+    # android.rpy:344
     old "Tablet"
     new "Ablettay"
 
-    # android.rpy:345
+    # android.rpy:348
     old "Television"
     new "Elevisiontay"
 
-    # android.rpy:357
+    # android.rpy:360
     old "Build:"
     new "Uildbay:"
 
-    # android.rpy:365
+    # android.rpy:371
+    old "Debug"
+    new "Ebugday"
+
+    # android.rpy:375
+    old "Release"
+    new "Eleaseray"
+
+    # android.rpy:382
     old "Install SDK & Create Keys"
     new "Nstalliay Dksay & Reatecay Eyskay"
 
-    # android.rpy:369
+    # android.rpy:386
     old "Configure"
     new "Onfigurecay"
 
-    # android.rpy:373
+    # android.rpy:390
     old "Build Package"
     new "Uildbay Ackagepay"
 
-    # android.rpy:377
+    # android.rpy:394
     old "Build & Install"
     new "Uildbay & Nstalliay"
 
-    # android.rpy:381
+    # android.rpy:398
     old "Build, Install & Launch"
     new "Uildbay, Nstalliay & Aunchlay"
 
-    # android.rpy:392
+    # android.rpy:409
     old "Other:"
     new "Theroay:"
 
-    # android.rpy:400
-    old "Remote ADB Connect"
-    new "Emoteray Dbaay Onnectcay"
-
-    # android.rpy:404
-    old "Remote ADB Disconnect"
-    new "Emoteray Dbaay Isconnectday"
-
-    # android.rpy:408
+    # android.rpy:417
     old "Logcat"
     new "Ogcatlay"
 
-    # android.rpy:441
+    # android.rpy:450
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
     new "Eforebay ackagingpay Ndroidaay appsay, ouyay'llay eednay otay ownloadday Aptray, hetay Enray'Ypay Ndroidaay Ackagingpay Ooltay. Ouldway ouyay ikelay otay ownloadday Aptray ownay?"
 
-    # android.rpy:500
-    old "Remote ADB Address"
-    new "Emoteray Dbaay Ddressaay"
-
-    # android.rpy:500
-    old "Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."
-    new "Leasepay enteray hetay Piay addressay anday ortpay umbernay otay onnectcay otay, inay hetay ormfay \"921ay.681ay.1ay.431ay:5555ay\". Onsultcay ouryay eviceday'say ocumentationday otay etermineday ifay itay upportssay emoteray Dbaay, anday ifay osay, hetay addressay anday ortpay otay useay."
-
-    # android.rpy:512
-    old "Invalid remote ADB address"
-    new "Nvalidiay emoteray Dbaay addressay"
-
-    # android.rpy:512
-    old "The address must contain one exactly one ':'."
-    new "Hetay addressay ustmay ontaincay oneay exactlyay oneay ':'."
-
-    # android.rpy:516
-    old "The host may not contain whitespace."
-    new "Hetay osthay aymay otnay ontaincay hitespaceway."
-
-    # android.rpy:522
-    old "The port must be a number."
-    new "Hetay ortpay ustmay ebay aay umbernay."
-
-    # android.rpy:548
+    # android.rpy:503
     old "Retrieving logcat information from device."
     new "Etrievingray ogcatlay informationay omfray eviceday."
+
+    # androidstrings.rpy:7
+    old "{} is not a directory."
+    new "{} isay otnay aay irectoryday."
+
+    # androidstrings.rpy:8
+    old "{} does not contain a Ren'Py game."
+    new "{} oesday otnay ontaincay aay Enray'Ypay amegay."
+
+    # androidstrings.rpy:9
+    old "Run configure before attempting to build the app."
+    new "Unray onfigurecay eforebay attemptingay otay uildbay hetay appay."
+
+    # androidstrings.rpy:10
+    old "Google Play support is enabled, but build.google_play_key is not defined."
+    new "Ooglegay Laypay upportsay isay enableday, utbay uildbay.oogle_play_keygay isay otnay efinedday."
+
+    # androidstrings.rpy:11
+    old "Creating assets directory."
+    new "Reatingcay assetsay irectoryday."
+
+    # androidstrings.rpy:12
+    old "Creating expansion file."
+    new "Reatingcay expansionay ilefay."
+
+    # androidstrings.rpy:13
+    old "Packaging internal data."
+    new "Ackagingpay internalay ataday."
+
+    # androidstrings.rpy:14
+    old "I'm using Gradle to build the package."
+    new "Iay'may usingay Radlegay otay uildbay hetay ackagepay."
+
+    # androidstrings.rpy:15
+    old "Uploading expansion file."
+    new "Ploadinguay expansionay ilefay."
+
+    # androidstrings.rpy:16
+    old "The build seems to have failed."
+    new "Hetay uildbay eemssay otay avehay ailedfay."
+
+    # androidstrings.rpy:17
+    old "Launching app."
+    new "Aunchinglay appay."
+
+    # androidstrings.rpy:18
+    old "The build seems to have succeeded."
+    new "Hetay uildbay eemssay otay avehay ucceededsay."
+
+    # androidstrings.rpy:19
+    old "What is the full name of your application? This name will appear in the list of installed applications."
+    new "Hatway isay hetay ullfay amenay ofay ouryay applicationay? Histay amenay illway appearay inay hetay istlay ofay installeday applicationsay."
+
+    # androidstrings.rpy:20
+    old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
+    new "Hatway isay hetay ortshay amenay ofay ouryay applicationay? Histay amenay illway ebay useday inay hetay auncherlay, anday orfay applicationay ortcutsshay."
+
+    # androidstrings.rpy:21
+    old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
+    new "Hatway isay hetay amenay ofay hetay ackagepay?\n\nHistay isay usuallyay ofay hetay ormfay omcay.omainday.rogrampay oray omcay.omainday.emailay.rogrampay. Tiay aymay onlyay ontaincay Sciiaay etterslay anday otsday. Tiay ustmay ontaincay atay eastlay oneay otday."
+
+    # androidstrings.rpy:22
+    old "The package name may not be empty."
+    new "Hetay ackagepay amenay aymay otnay ebay emptyay."
+
+    # androidstrings.rpy:23
+    old "The package name may not contain spaces."
+    new "Hetay ackagepay amenay aymay otnay ontaincay pacessay."
+
+    # androidstrings.rpy:24
+    old "The package name must contain at least one dot."
+    new "Hetay ackagepay amenay ustmay ontaincay atay eastlay oneay otday."
+
+    # androidstrings.rpy:25
+    old "The package name may not contain two dots in a row, or begin or end with a dot."
+    new "Hetay ackagepay amenay aymay otnay ontaincay wotay otsday inay aay owray, oray eginbay oray enday ithway aay otday."
+
+    # androidstrings.rpy:26
+    old "Each part of the package name must start with a letter, and contain only letters, numbers, and underscores."
+    new "Acheay artpay ofay hetay ackagepay amenay ustmay artstay ithway aay etterlay, anday ontaincay onlyay etterslay, umbersnay, anday underscoresay."
+
+    # androidstrings.rpy:27
+    old "{} is a Java keyword, and can't be used as part of a package name."
+    new "{} isay aay Avajay eywordkay, anday ancay'tay ebay useday asay artpay ofay aay ackagepay amenay."
+
+    # androidstrings.rpy:28
+    old "What is the application's version?\n\nThis should be the human-readable version that you would present to a person. It must contain only numbers and dots."
+    new "Hatway isay hetay applicationay'say ersionvay?\n\nHistay ouldshay ebay hetay umanhay-eadableray ersionvay hattay ouyay ouldway resentpay otay aay ersonpay. Tiay ustmay ontaincay onlyay umbersnay anday otsday."
+
+    # androidstrings.rpy:29
+    old "The version number must contain only numbers and dots."
+    new "Hetay ersionvay umbernay ustmay ontaincay onlyay umbersnay anday otsday."
+
+    # androidstrings.rpy:30
+    old "What is the version code?\n\nThis must be a positive integer number, and the value should increase between versions."
+    new "Hatway isay hetay ersionvay odecay?\n\nHistay ustmay ebay aay ositivepay integeray umbernay, anday hetay aluevay ouldshay increaseay etweenbay ersionsvay."
+
+    # androidstrings.rpy:31
+    old "The numeric version must contain only numbers."
+    new "Hetay umericnay ersionvay ustmay ontaincay onlyay umbersnay."
+
+    # androidstrings.rpy:32
+    old "How would you like your application to be displayed?"
+    new "Owhay ouldway ouyay ikelay ouryay applicationay otay ebay isplayedday?"
+
+    # androidstrings.rpy:33
+    old "In landscape orientation."
+    new "Niay andscapelay orientationay."
+
+    # androidstrings.rpy:34
+    old "In portrait orientation."
+    new "Niay ortraitpay orientationay."
+
+    # androidstrings.rpy:35
+    old "In the user's preferred orientation."
+    new "Niay hetay useray'say referredpay orientationay."
+
+    # androidstrings.rpy:36
+    old "Which app store would you like to support in-app purchasing through?"
+    new "Hichway appay orestay ouldway ouyay ikelay otay upportsay inay-appay urchasingpay hroughtay?"
+
+    # androidstrings.rpy:37
+    old "Google Play."
+    new "Ooglegay Laypay."
+
+    # androidstrings.rpy:38
+    old "Amazon App Store."
+    new "Mazonaay Ppaay Toresay."
+
+    # androidstrings.rpy:39
+    old "Both, in one app."
+    new "Othbay, inay oneay appay."
+
+    # androidstrings.rpy:40
+    old "Neither."
+    new "Eithernay."
+
+    # androidstrings.rpy:41
+    old "Would you like to create an expansion APK?"
+    new "Ouldway ouyay ikelay otay reatecay anay expansionay Pkaay?"
+
+    # androidstrings.rpy:42
+    old "No. Size limit of 100 MB on Google Play, but can be distributed through other stores and sideloaded."
+    new "Onay. Izesay imitlay ofay 001ay Bmay onay Ooglegay Laypay, utbay ancay ebay istributedday hroughtay otheray oresstay anday ideloadedsay."
+
+    # androidstrings.rpy:43
+    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work.)"
+    new "Esyay. 2ay Bgay izesay imitlay, utbay onway'tay orkway outsideay ofay Ooglegay Laypay. (Eadray hetay ocumentationday otay etgay histay otay orkway.)"
+
+    # androidstrings.rpy:44
+    old "Do you want to allow the app to access the Internet?"
+    new "Oday ouyay antway otay alloway hetay appay otay accessay hetay Nternetiay?"
+
+    # androidstrings.rpy:45
+    old "Unknown configuration variable: {}"
+    new "Nknownuay onfigurationcay ariablevay: {}"
+
+    # androidstrings.rpy:46
+    old "I'm compiling a short test program, to see if you have a working JDK on your system."
+    new "Iay'may ompilingcay aay ortshay esttay rogrampay, otay eesay ifay ouyay avehay aay orkingway Dkjay onay ouryay ystemsay."
+
+    # androidstrings.rpy:47
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Without a working JDK, I can't continue."
+    new "Iay asway unableay otay useay avacjay otay ompilecay aay esttay ilefay. Fiay ouyay avenhay'tay installeday hetay Avajay Evelopmentday Itkay etyay, easeplay ownloadday itay omfray:\n\nttphay://wwway.oracleay.omcay/echnetworktay/avajay/avasejay/ownloadsday/dk8jay-ownloadsday-1331512ay.tmlhay\n\nHetay Dkjay isay ifferentday omfray hetay Rejay, osay itay'say ossiblepay ouyay avehay Avajay ithoutway avinghay hetay Dkjay. Ithoutway aay orkingway Dkjay, Iay ancay'tay ontinuecay."
+
+    # androidstrings.rpy:48
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variabe to use a different version of Java."
+    new "Hetay ersionvay ofay Avajay onay ouryay omputercay oesday otnay appearay otay ebay Dkjay 8ay, hichway isay hetay onlyay ersionvay upportedsay ybay hetay Ndroidaay Dksay. Fiay ouyay eednay otay installay Dkjay 8ay, ouyay ancay ownloadday itay omfray:\n\nttphay://wwway.oracleay.omcay/echnetworktay/avajay/avasejay/ownloadsday/dk8jay-ownloadsday-1331512ay.tmlhay\n\nOuyay ancay alsoay etsay hetay Ava_homejay environmentay ariabevay otay useay aay ifferentday ersionvay ofay Avajay."
+
+    # androidstrings.rpy:49
+    old "The JDK is present and working. Good!"
+    new "Hetay Dkjay isay resentpay anday orkingway. Oodgay!"
+
+    # androidstrings.rpy:50
+    old "The Android SDK has already been unpacked."
+    new "Hetay Ndroidaay Dksay ashay alreadyay eenbay unpackeday."
+
+    # androidstrings.rpy:51
+    old "Do you accept the Android SDK Terms and Conditions?"
+    new "Oday ouyay acceptay hetay Ndroidaay Dksay Ermstay anday Onditionscay?"
+
+    # androidstrings.rpy:52
+    old "I'm downloading the Android SDK. This might take a while."
+    new "Iay'may ownloadingday hetay Ndroidaay Dksay. Histay ightmay aketay aay hileway."
+
+    # androidstrings.rpy:53
+    old "I'm extracting the Android SDK."
+    new "Iay'may extractingay hetay Ndroidaay Dksay."
+
+    # androidstrings.rpy:54
+    old "I've finished unpacking the Android SDK."
+    new "Iay'evay inishedfay unpackingay hetay Ndroidaay Dksay."
+
+    # androidstrings.rpy:55
+    old "I'm about to download and install the required Android packages. This might take a while."
+    new "Iay'may aboutay otay ownloadday anday installay hetay equiredray Ndroidaay ackagespay. Histay ightmay aketay aay hileway."
+
+    # androidstrings.rpy:56
+    old "I was unable to accept the Android licenses."
+    new "Iay asway unableay otay acceptay hetay Ndroidaay icenseslay."
+
+    # androidstrings.rpy:57
+    old "I was unable to install the required Android packages."
+    new "Iay asway unableay otay installay hetay equiredray Ndroidaay ackagespay."
+
+    # androidstrings.rpy:58
+    old "I've finished installing the required Android packages."
+    new "Iay'evay inishedfay installingay hetay equiredray Ndroidaay ackagespay."
+
+    # androidstrings.rpy:59
+    old "You set the keystore yourself, so I'll assume it's how you want it."
+    new "Ouyay etsay hetay eystorekay ourselfyay, osay Iay'llay assumeay itay'say owhay ouyay antway itay."
+
+    # androidstrings.rpy:60
+    old "You've already created an Android keystore, so I won't create a new one for you."
+    new "Ouyay'evay alreadyay reatedcay anay Ndroidaay eystorekay, osay Iay onway'tay reatecay aay ewnay oneay orfay ouyay."
+
+    # androidstrings.rpy:61
+    old "I can create an application signing key for you. Signing an application with this key allows it to be placed in the Android Market and other app stores.\n\nDo you want to create a key?"
+    new "Iay ancay reatecay anay applicationay igningsay eykay orfay ouyay. Igningsay anay applicationay ithway histay eykay allowsay itay otay ebay acedplay inay hetay Ndroidaay Arketmay anday otheray appay oresstay.\n\nOday ouyay antway otay reatecay aay eykay?"
+
+    # androidstrings.rpy:62
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\n\\You also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    new "Iay illway reatecay hetay eykay inay hetay androiday.eystorekay ilefay.\n\nOuyay eednay otay ackbay histay ilefay upay. Fiay ouyay oselay itay, ouyay illway otnay ebay ableay otay upgradeay ouryay applicationay.\n\n\\Ouyay alsoay eednay otay eepkay hetay eykay afesay. Fiay evilay eoplepay etgay histay ilefay, heytay ouldcay akemay akefay ersionsvay ofay ouryay applicationay, anday otentiallypay ealstay ouryay usersay' ataday.\n\nIllway ouyay akemay aay ackupbay ofay androiday.eystorekay, anday eepkay itay inay aay afesay aceplay?"
+
+    # androidstrings.rpy:63
+    old "Please enter your name or the name of your organization."
+    new "Leasepay enteray ouryay amenay oray hetay amenay ofay ouryay organizationay."
+
+    # androidstrings.rpy:64
+    old "Could not create android.keystore. Is keytool in your path?"
+    new "Ouldcay otnay reatecay androiday.eystorekay. Siay eytoolkay inay ouryay athpay?"
+
+    # androidstrings.rpy:65
+    old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
+    new "Iay'evay inishedfay reatingcay androiday.eystorekay. Leasepay ackbay itay upay, anday eepkay itay inay aay afesay aceplay."
+
+    # androidstrings.rpy:66
+    old "It looks like you're ready to start packaging games."
+    new "Tiay ookslay ikelay ouyay'eray eadyray otay artstay ackagingpay amesgay."
 
     # choose_directory.rpy:87
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
@@ -1033,35 +1249,35 @@ translate piglatin strings:
     old "Have you backed up your projects recently?"
     new "Avehay ouyay ackedbay upay ouryay rojectspay ecentlyray?"
 
-    # project.rpy:280
+    # project.rpy:281
     old "Launching the project failed."
     new "Aunchinglay hetay rojectpay ailedfay."
 
-    # project.rpy:280
+    # project.rpy:281
     old "Please ensure that your project launches normally before running this command."
     new "Leasepay ensureay hattay ouryay rojectpay auncheslay ormallynay eforebay unningray histay ommandcay."
 
-    # project.rpy:296
+    # project.rpy:297
     old "Ren'Py is scanning the project..."
     new "Enray'Ypay isay canningsay hetay rojectpay..."
 
-    # project.rpy:728
+    # project.rpy:729
     old "Launching"
     new "Aunchinglay"
 
-    # project.rpy:762
+    # project.rpy:763
     old "PROJECTS DIRECTORY"
     new "Rojectspay Irectoryday"
 
-    # project.rpy:762
+    # project.rpy:763
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Leasepay oosechay hetay rojectspay irectoryday usingay hetay irectoryday ooserchay.\n{b}Hetay irectoryday ooserchay aymay avehay openeday ehindbay histay indowway.{/b}"
 
-    # project.rpy:762
+    # project.rpy:763
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Histay auncherlay illway cansay orfay rojectspay inay histay irectoryday, illway reatecay ewnay rojectspay inay histay irectoryday, anday illway aceplay uiltbay rojectspay intoay histay irectoryday."
 
-    # project.rpy:767
+    # project.rpy:768
     old "Ren'Py has set the projects directory to:"
     new "Enray'Ypay ashay etsay hetay rojectspay irectoryday otay:"
 
@@ -1168,10 +1384,6 @@ translate piglatin strings:
     # translations.rpy:414
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
     new "Enray'Ypay ashay inishedfay extractingay ialogueday. Hetay extracteday ialogueday ancay ebay oundfay inay ialogueday.[persistent.dialogue_format] inay hetay asebay irectoryday."
-
-    # updater.rpy:62
-    old "Release"
-    new "Eleaseray"
 
     # updater.rpy:63
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
