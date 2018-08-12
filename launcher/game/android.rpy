@@ -84,6 +84,8 @@ init python:
         import rapt.interface
 
         rapt.plat.renpy = True
+        rapt.plat.translate = __
+
     else:
         rapt = None
 
