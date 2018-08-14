@@ -403,7 +403,7 @@ Text Style Properties
     If True, the default, TrueType font text will be rendered
     anti-aliased.
 
-.. style-property:: adjust_spacing boolean
+.. style-property:: adjust_spacing boolean or str
 
     If True, Ren'Py will adjust the spacing of drawable-resolution text
     to match the spacing of the text rendered at virtual resolution, to
@@ -413,6 +413,10 @@ Text Style Properties
     When set to False, text will not change in size, but it is the creator's
     responsibility to ensure there is enough space to layout text at any
     window size.
+
+    When set to the string "horizontal", text will adjust in the horizontal
+    direction only. When set to the string "vertical", text will adjust in
+    the vertical direction only.
 
     Defaults to True for most text, but False for text in an ``input``.
 

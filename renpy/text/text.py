@@ -701,11 +701,21 @@ class Layout(object):
 
         textsupport.align_and_justify(lines, maxx, style.text_align, style.justify)
 
-        if splits_from and text.style.adjust_spacing:
+        adjust_spacing = text.style.adjust_spacing
+
+        if splits_from and adjust_spacing:
             target_x = self.scale_int(splits_from.size[0] - splits_from.xborder)
             target_y = self.scale_int(splits_from.size[1] - splits_from.yborder)
 
-            textsupport.tweak_glyph_spacing(all_glyphs, lines, target_x - maxx, target_y - y, maxx, y)  # @UndefinedVariable
+            target_x_delta = target_x - maxx
+            target_y_delta = target_y - y
+
+            if adjust_spacing == "horizontal":
+                target_y_delta = 0.0
+            elif adjust_spacing == "vertical":
+                target_x_delta = 0.0
+
+            textsupport.tweak_glyph_spacing(all_glyphs, lines, target_x_delta, target_y_delta, maxx, y)  # @UndefinedVariable
 
             maxx = target_x
             y = target_y
