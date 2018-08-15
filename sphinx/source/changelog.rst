@@ -2,10 +2,26 @@
 Full Changelog
 ==============
 
-.. _renpy-7.0.1:
+.. _renpy-7.1:
 
-7.0.1
-=====
+7.1
+===
+
+Android
+-------
+
+This release sees a major rewrite of Ren'Py's support for Android to
+modernize it. This is required so Ren'Py games can be uploaded to the
+Google Play store. Some of these changes may require you to update
+a game's files. Most notably, the format of icons has changed, so the
+icons will need to be redone.
+
+The minimum version of Android that Ren'Py will run on has been raised
+to Android 19 (aka 4.4 KitKat), while it targets Android 28 (aka 9 Pie).
+
+The x86_64 architecture has been added, while x86 has been dropped. (Some x86
+devices may be able to run the arm platform version through binary translation
+layers.)
 
 
 Monologue Mode
