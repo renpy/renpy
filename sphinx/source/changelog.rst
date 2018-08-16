@@ -63,6 +63,9 @@ Translations
 The Ren'Py launcher, template game, and The Question have been translated
 into the Latin script of Malay by Muhammad Nur Hidayat Yasuyoshi.
 
+It is now possible to translate the strings used by RAPT into non-English
+languages.
+
 Other
 -----
 
@@ -105,6 +108,13 @@ given has been fixed.
 
 Ren'Py now includes a copy of fribidi, rather than requiring an OS-installed
 version.
+
+The new :propref:`box_wrap_spacing` allows control of the spacing between
+rows or columns introduced by :propref:`box_wrap`.
+
+The :propref:`adjust_spacing` style property can now take "horizontal" and
+"vertical" as values, causing text spacing to be adjusted in only the
+specified direction.
 
 
 .. _renpy-7.0:
