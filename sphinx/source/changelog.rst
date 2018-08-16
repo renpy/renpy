@@ -116,7 +116,7 @@ The :propref:`adjust_spacing` style property can now take "horizontal" and
 "vertical" as values, causing text spacing to be adjusted in only the
 specified direction.
 
-
+LayerdImageProxy can now take an interpolated string.
 
 
 
