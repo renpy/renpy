@@ -117,6 +117,9 @@ The :propref:`adjust_spacing` style property can now take "horizontal" and
 specified direction.
 
 
+
+
+
 .. _renpy-7.0:
 
 7.0
