@@ -193,6 +193,26 @@ class ArgumentInfo(object):
 
         return tuple(args), kwargs
 
+    def get_code(self):
+
+        l = [ ]
+
+        for keyword, expression in self.arguments:
+            if keyword is not None:
+                l.append("{}={}".format(keyword, expression))
+            else:
+                l.append(expression)
+
+        if self.extrapos is not None:
+            l.append("*" + self.extrapos)
+
+        if self.extrakw is not None:
+            l.append("*" + self.extrakw)
+
+        return "(" + ", ".join(l) + ")"
+
+
+
 
 def __newobj__(cls, *args):
     return cls.__new__(cls, *args)
@@ -615,7 +635,11 @@ class Say(Node):
             rv.append("with")
             rv.append(self.with_)
 
+        if self.arguments:
+            rv.append(self.arguments.get_code())
+
         return " ".join(rv)
+
 
     def execute(self):
 
