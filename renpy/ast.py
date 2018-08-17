@@ -207,7 +207,7 @@ class ArgumentInfo(object):
             l.append("*" + self.extrapos)
 
         if self.extrakw is not None:
-            l.append("*" + self.extrakw)
+            l.append("**" + self.extrakw)
 
         return "(" + ", ".join(l) + ")"
 
