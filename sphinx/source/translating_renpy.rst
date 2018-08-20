@@ -12,7 +12,7 @@ message can be translated.
 
 To create a new translation:
 
-1. Open the Ren'PY launcher.
+1. Open the Ren'Py launcher.
 2. On the preferences page, choose "Open launcher project".
 3. Choose "Generate Translations."
 4. Enter the name of the language to translate to. This should consist of
