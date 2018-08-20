@@ -933,8 +933,10 @@ class Button(renpy.display.layout.Window):
 def TextButton(text, style='button', text_style='button_text',
                clicked=None, **properties):
 
-    text = renpy.text.text.Text(text, style=text_style)  # @UndefinedVariable
-    return Button(text, style=style, clicked=clicked, **properties)
+    text_properties, button_properties = renpy.easy.split_properties(properties, "text_", "")
+
+    text = renpy.text.text.Text(text, style=text_style, **text_properties)  # @UndefinedVariable
+    return Button(text, style=style, clicked=clicked, **button_properties)
 
 
 class ImageButton(Button):
