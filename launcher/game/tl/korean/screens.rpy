@@ -216,7 +216,7 @@ translate korean strings:
 
     # screens.rpy:582
     old "## Load and Save screens"
-    new "## Load and Save screens"
+    new "## Load and Save 스크린"
 
     # screens.rpy:584
     old "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
