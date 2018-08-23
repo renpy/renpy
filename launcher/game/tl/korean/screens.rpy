@@ -18,8 +18,7 @@ translate korean strings:
     new "## Say 스크린은 플레이어에게 대사를 출력할 때 씁니다. 화자 who와 대사 what, 두 개의 매개변수를 받습니다. (화자 이름이 없으면 who는 None일 수 있음)"
 
     # screens.rpy:98
-    old "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. 
-    It can also create displayables with id \"who\" and id \"window\" to apply style properties."
+    old "## This screen must create a text displayable with id \"what\", as Ren'Py uses this to manage text display. It can also create displayables with id \"who\" and id \"window\" to apply style properties."
     new "## 이 스크린은 id \"what\"을 가진 텍스트 디스플레이어블을 생성해야 합니다. (이 디스플레이어블은 렌파이의 대사 출력에 필요합니다.) id \"who\" 와 id \"window\" 디스플레이블이 존재할 경우 관련 스타일 속성이 적용됩니다."
 
     # screens.rpy:102
