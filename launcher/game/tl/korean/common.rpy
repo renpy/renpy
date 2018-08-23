@@ -1,157 +1,157 @@
-﻿
+
 translate korean strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
-    new "{#weekday}Monday"
+    new "{#weekday}월요일"
 
     # 00action_file.rpy:26
     old "{#weekday}Tuesday"
-    new "{#weekday}Tuesday"
+    new "{#weekday}화요일"
 
     # 00action_file.rpy:26
     old "{#weekday}Wednesday"
-    new "{#weekday}Wednesday"
+    new "{#weekday}수요일"
 
     # 00action_file.rpy:26
     old "{#weekday}Thursday"
-    new "{#weekday}Thursday"
+    new "{#weekday}목요일"
 
     # 00action_file.rpy:26
     old "{#weekday}Friday"
-    new "{#weekday}Friday"
+    new "{#weekday}금요일"
 
     # 00action_file.rpy:26
     old "{#weekday}Saturday"
-    new "{#weekday}Saturday"
+    new "{#weekday}토요일"
 
     # 00action_file.rpy:26
     old "{#weekday}Sunday"
-    new "{#weekday}Sunday"
+    new "{#weekday}일일"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Mon"
-    new "{#weekday_short}Mon"
+    new "{#weekday_short}월"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Tue"
-    new "{#weekday_short}Tue"
+    new "{#weekday_short}화"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Wed"
-    new "{#weekday_short}Wed"
+    new "{#weekday_short}수"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Thu"
-    new "{#weekday_short}Thu"
+    new "{#weekday_short}목"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Fri"
-    new "{#weekday_short}Fri"
+    new "{#weekday_short}금"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Sat"
-    new "{#weekday_short}Sat"
+    new "{#weekday_short}토"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Sun"
-    new "{#weekday_short}Sun"
+    new "{#weekday_short}일"
 
     # 00action_file.rpy:47
     old "{#month}January"
-    new "{#month}January"
+    new "{#month}1월"
 
     # 00action_file.rpy:47
     old "{#month}February"
-    new "{#month}February"
+    new "{#month}2월"
 
     # 00action_file.rpy:47
     old "{#month}March"
-    new "{#month}March"
+    new "{#month}3월"
 
     # 00action_file.rpy:47
     old "{#month}April"
-    new "{#month}April"
+    new "{#month}4월"
 
     # 00action_file.rpy:47
     old "{#month}May"
-    new "{#month}May"
+    new "{#month}5월"
 
     # 00action_file.rpy:47
     old "{#month}June"
-    new "{#month}June"
+    new "{#month}6월"
 
     # 00action_file.rpy:47
     old "{#month}July"
-    new "{#month}July"
+    new "{#month}7월"
 
     # 00action_file.rpy:47
     old "{#month}August"
-    new "{#month}August"
+    new "{#month}8월"
 
     # 00action_file.rpy:47
     old "{#month}September"
-    new "{#month}September"
+    new "{#month}9월"
 
     # 00action_file.rpy:47
     old "{#month}October"
-    new "{#month}October"
+    new "{#month}10월"
 
     # 00action_file.rpy:47
     old "{#month}November"
-    new "{#month}November"
+    new "{#month}11월"
 
     # 00action_file.rpy:47
     old "{#month}December"
-    new "{#month}December"
+    new "{#month}12월"
 
     # 00action_file.rpy:63
     old "{#month_short}Jan"
-    new "{#month_short}Jan"
+    new "{#month_short}1월"
 
     # 00action_file.rpy:63
     old "{#month_short}Feb"
-    new "{#month_short}Feb"
+    new "{#month_short}2월"
 
     # 00action_file.rpy:63
     old "{#month_short}Mar"
-    new "{#month_short}Mar"
+    new "{#month_short}3월"
 
     # 00action_file.rpy:63
     old "{#month_short}Apr"
-    new "{#month_short}Apr"
+    new "{#month_short}4월"
 
     # 00action_file.rpy:63
     old "{#month_short}May"
-    new "{#month_short}May"
+    new "{#month_short}5월"
 
     # 00action_file.rpy:63
     old "{#month_short}Jun"
-    new "{#month_short}Jun"
+    new "{#month_short}6월"
 
     # 00action_file.rpy:63
     old "{#month_short}Jul"
-    new "{#month_short}Jul"
+    new "{#month_short}7월"
 
     # 00action_file.rpy:63
     old "{#month_short}Aug"
-    new "{#month_short}Aug"
+    new "{#month_short}8월"
 
     # 00action_file.rpy:63
     old "{#month_short}Sep"
-    new "{#month_short}Sep"
+    new "{#month_short}9월"
 
     # 00action_file.rpy:63
     old "{#month_short}Oct"
-    new "{#month_short}Oct"
+    new "{#month_short}10월"
 
     # 00action_file.rpy:63
     old "{#month_short}Nov"
-    new "{#month_short}Nov"
+    new "{#month_short}11월"
 
     # 00action_file.rpy:63
     old "{#month_short}Dec"
-    new "{#month_short}Dec"
+    new "{#month_short}12월"
 
     # 00action_file.rpy:235
     old "%b %d, %H:%M"
@@ -187,7 +187,7 @@ translate korean strings:
 
     # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
-    new "Are you sure you want to end the replay?"
+    new "리플레이를 종료하겠습니까?"
 
     # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
@@ -199,7 +199,7 @@ translate korean strings:
 
     # 00gui.rpy:236
     old "Are you sure you want to skip unseen dialogue to the next choice?"
-    new "Are you sure you want to skip unseen dialogue to the next choice?"
+    new "다음 선택지가 나타날 때까지 본 적이 없는 대사까지 모두 스킵하겠습니까?"
 
     # 00keymap.rpy:250
     old "Saved screenshot as %s."
@@ -207,15 +207,15 @@ translate korean strings:
 
     # 00library.rpy:142
     old "Self-voicing disabled."
-    new "Self-voicing disabled."
+    new "대사 읽기를 끕니다."
 
     # 00library.rpy:143
     old "Clipboard voicing enabled. "
-    new "Clipboard voicing enabled. "
+    new "대사 복사하기를 켭니다. "
 
     # 00library.rpy:144
     old "Self-voicing enabled. "
-    new "Self-voicing enabled. "
+    new "대사 읽기를 켭니다. "
 
     # 00library.rpy:179
     old "Skip Mode"
@@ -223,7 +223,7 @@ translate korean strings:
 
     # 00library.rpy:262
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
+    new "이 프로그램은 MIT 라이선스와 GNU 라이선스를 포함한 여러 가지 라이선스의 적용을 받는 오픈소스 소프트웨어를 포함하고 있습니다. {a=https://www.renpy.org/l/license}이곳{/a}에서 포함된 모든 소프트웨어와 그 소스코드를 확인할 수 있습니다."
 
     # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
@@ -239,7 +239,7 @@ translate korean strings:
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
-    new "Contacting App Store\nPlease Wait..."
+    new "앱스토어와 통신 중\n잠시만 기다려주십시오..."
 
     # 00updater.rpy:367
     old "The Ren'Py Updater is not supported on mobile devices."
