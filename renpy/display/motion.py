@@ -153,7 +153,7 @@ class Motion(Container):
         res = tuple(res)
 
         if len(res) == 2:
-            self.position = res + (self.style.xanchor, self.style.yanchor)
+            self.position = res + (self.style.xanchor or 0, self.style.yanchor or 0)
         else:
             self.position = res
 

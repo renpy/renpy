@@ -2,10 +2,26 @@
 Full Changelog
 ==============
 
-.. _renpy-7.0.1:
+.. _renpy-7.1:
 
-7.0.1
-=====
+7.1
+===
+
+Android
+-------
+
+This release sees a major rewrite of Ren'Py's support for Android to
+modernize it. This is required so Ren'Py games can be uploaded to the
+Google Play store. Some of these changes may require you to update
+a game's files. Most notably, the format of icons has changed, so the
+icons will need to be redone.
+
+The minimum version of Android that Ren'Py will run on has been raised
+to Android 19 (aka 4.4 KitKat), while it targets Android 28 (aka 9 Pie).
+
+The x86_64 architecture has been added, while x86 has been dropped. (Some x86
+devices may be able to run the arm platform version through binary translation
+layers.)
 
 
 Monologue Mode
@@ -46,6 +62,9 @@ Translations
 
 The Ren'Py launcher, template game, and The Question have been translated
 into the Latin script of Malay by Muhammad Nur Hidayat Yasuyoshi.
+
+It is now possible to translate the strings used by RAPT into non-English
+languages.
 
 Other
 -----
@@ -89,6 +108,16 @@ given has been fixed.
 
 Ren'Py now includes a copy of fribidi, rather than requiring an OS-installed
 version.
+
+The new :propref:`box_wrap_spacing` allows control of the spacing between
+rows or columns introduced by :propref:`box_wrap`.
+
+The :propref:`adjust_spacing` style property can now take "horizontal" and
+"vertical" as values, causing text spacing to be adjusted in only the
+specified direction.
+
+LayerdImageProxy can now take an interpolated string.
+
 
 
 .. _renpy-7.0:

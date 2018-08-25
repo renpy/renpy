@@ -123,7 +123,9 @@ eval = renpy.python.py_eval  # @ReservedAssignment
 # Displayables.
 Bar = renpy.display.behavior.Bar
 Button = renpy.display.behavior.Button
+ImageButton = renpy.display.behavior.ImageButton
 Input = renpy.display.behavior.Input
+TextButton = renpy.display.behavior.TextButton
 
 ImageReference = renpy.display.image.ImageReference
 DynamicImage = renpy.display.image.DynamicImage
