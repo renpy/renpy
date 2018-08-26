@@ -138,7 +138,7 @@ translate russian strings:
     new "## Границы окна, содержащего имя персонажа слева, сверху, справа и снизу по порядку."
 
     # gui.rpy:124
-    old "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
+    old "## If True, the background of the namebox will be tiled, if False, the background of the namebox will be scaled."
     new "## Если True, фон текстового окна будет моститься (расширяться по эффекту плитки). Если False, фон текстового окна будет фиксированным."
 
     # gui.rpy:129
