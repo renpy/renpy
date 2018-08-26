@@ -2365,7 +2365,11 @@ def translate_strings(init_loc, language, l):
                 ll.error("previous string is missing a translation")
 
             loc = ll.get_location()
-            old = parse_string(ll.rest())
+
+            try:
+                old = parse_string(ll.rest())
+            except:
+                ll.error("Could not parse string.")
 
         elif ll.keyword('new'):
 
@@ -2373,7 +2377,10 @@ def translate_strings(init_loc, language, l):
                 ll.error('no string to translate')
 
             newloc = ll.get_location()
-            new = parse_string(ll.rest())
+            try:
+                new = parse_string(ll.rest())
+            except:
+                ll.error("Could not parse string.")
 
             block.append(renpy.ast.TranslateString(loc, language, old, new, newloc))
 
