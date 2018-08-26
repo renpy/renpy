@@ -142,7 +142,7 @@ translate japanese strings:
     new "## ネームボックスのボーダーのサイズ。左、上、右、下の順で指定します。ボックスのサイズは、その中に表示されるキャラクター名のサイズから更にボーダー分拡張したサイズになります。"
 
     # gui.rpy:127
-    old "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
+    old "## If True, the background of the namebox will be tiled, if False, the background of the namebox will be scaled."
     new "## True に設定すると、ネームボックスの背景画像をスケーリングではなくタイリングで表示します。"
 
     # gui.rpy:132
