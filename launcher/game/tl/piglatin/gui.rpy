@@ -138,7 +138,7 @@ translate piglatin strings:
     new "## Hetay ordersbay ofay hetay oxbay ontainingcay hetay aracterchay'say amenay, inay eftlay, optay, ightray, ottombay orderay."
 
     # gui.rpy:124
-    old "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
+    old "## If True, the background of the namebox will be tiled, if False, the background of the namebox will be scaled."
     new "## Fiay Ruetay, hetay ackgroundbay ofay hetay ameboxnay illway ebay iledtay, ifay Alsefay, hetay ackgroundbay ifay hetay ameboxnay illway ebay caledsay."
 
     # gui.rpy:129
