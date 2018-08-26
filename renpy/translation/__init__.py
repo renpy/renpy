@@ -577,8 +577,6 @@ def old_change_language(tl, language):
 
 def new_change_language(tl, language):
 
-    renpy.config.init_system_styles()
-
     for i in tl.python[language]:
         renpy.python.py_exec_bytecode(i.code.bytecode)
 
@@ -599,6 +597,8 @@ def new_change_language(tl, language):
             renpy.game.context().run(i.block[0])
 
     renpy.game.invoke_in_new_context(run_blocks)
+
+    renpy.config.init_system_styles()
 
 
 def change_language(language, force=False):
