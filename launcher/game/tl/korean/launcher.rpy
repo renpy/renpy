@@ -99,7 +99,7 @@ translate korean strings:
 
     # android.rpy:50
     old "Retrieves the log from the Android device and writes it to a file."
-    new "Retrieves the log from the Android device and writes it to a file."
+    new "안드로이드 기기와 쓰여진 파일로부터 로그를 검색합니다."
 
     # android.rpy:240
     old "Copying Android files to distributions directory."
@@ -195,7 +195,7 @@ translate korean strings:
 
     # android.rpy:544
     old "Retrieving logcat information from device."
-    new "Retrieving logcat information from device."
+    new "기기로부터 로그캣 정보를 검색합니다."
 
     # choose_directory.rpy:73
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
@@ -231,7 +231,7 @@ translate korean strings:
 
     # consolecommand.rpy:84
     old "The command is being run in a new operating system console window."
-    new "The command is being run in a new operating system console window."
+    new "커맨트가 새로운 운영체제 콘솔 창에서 실행 중입니다."
 
     # distribute.rpy:443
     old "Scanning project files..."
@@ -259,19 +259,19 @@ translate korean strings:
 
     # distribute.rpy:1050
     old "Unpacking the Macintosh application for signing..."
-    new "Unpacking the Macintosh application for signing..."
+    new "서명을 위해 매킨토시 애플리케이션을 압축해제하는 중입니다..."
 
     # distribute.rpy:1060
     old "Signing the Macintosh application..."
-    new "Signing the Macintosh application..."
+    new "매킨토시 애플리케이션을 서명하는 중입니다..."
 
     # distribute.rpy:1082
     old "Creating the Macintosh DMG..."
-    new "Creating the Macintosh DMG..."
+    new "매킨토시 DMG를 생성하는 중입니다..."
 
     # distribute.rpy:1091
     old "Signing the Macintosh DMG..."
-    new "Signing the Macintosh DMG..."
+    new "매킨토시 DMG에 서명하는 중입니다..."
 
     # distribute.rpy:1248
     old "Writing the [variant] [format] package."
@@ -523,23 +523,23 @@ translate korean strings:
 
     # gui7.rpy:236
     old "Select Accent and Background Colors"
-    new "Select Accent and Background Colors"
+    new "강조와 배경 색상 선택"
 
     # gui7.rpy:250
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
-    new "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
+    new "원하는 색상 스키마를 선택하고 다음을 누르세요. 이러한 색상과 사용자 지정은 나중에 변경할 수 있습니다."
 
     # gui7.rpy:294
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
+    new "{b}경고g{/b}\n계속하면 사용자 지정된 막대, 버튼, 저장 슬롯, 스크롤바, 그리고 슬라이더 이미지들을 덮어씌웁니다.\n\n무엇을 하고 싶으세요?"
 
     # gui7.rpy:294
     old "Choose new colors, then regenerate image files."
-    new "Choose new colors, then regenerate image files."
+    new "새로운 색상을 선택하면 이미지 파일들이 재생성됩니다."
 
     # gui7.rpy:294
     old "Regenerate the image files using the colors in gui.rpy."
-    new "Regenerate the image files using the colors in gui.rpy."
+    new "gui.rpy에서 사용하는 색상으로 이미지 파일 재생성."
 
     # gui7.rpy:314
     old "PROJECT NAME"
@@ -563,15 +563,15 @@ translate korean strings:
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
+    new "프로젝트에서 어떤 해상도를 사용하나요? 렌파이가 창을 위아래로 확장 할 수 있지만, 이것은 창의 초기 크기, 에셋이 그려지는 크기, 애셋이 가장 선명하게 될 크기입니다.\n\n1280x720의 기본값은 적절한 절충안입니다."
 
     # gui7.rpy:389
     old "Creating the new project..."
-    new "Creating the new project..."
+    new "새 프로젝트를 만드는 중..."
 
     # gui7.rpy:391
     old "Updating the project..."
-    new "Updating the project..."
+    new "프로젝트 업데이트중..."
 
     # interface.rpy:107
     old "Documentation"
@@ -735,27 +735,27 @@ translate korean strings:
 
     # itch.rpy:60
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "The built distributions could not be found. Please choose 'Build' and try again."
+    new "빌드된 배포판을 찾을 수 없습니다. '빌드'를 선택하고 다시 시도하세요."
 
     # itch.rpy:91
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "No uploadable files were found. Please choose 'Build' and try again."
+    new "업로드가능한 파일이 없습니다. '빌드'를 선택하고 다시 시도하세요."
 
     # itch.rpy:99
     old "The butler program was not found."
-    new "The butler program was not found."
+    new "집사(butler) 프로그램이 없습니다."
 
     # itch.rpy:99
     old "Please install the itch.io app, which includes butler, and try again."
-    new "Please install the itch.io app, which includes butler, and try again."
+    new "집사(butler)를 포함한 itch.io 앱을 설치하고 다시 시도하세요."
 
     # itch.rpy:108
     old "The name of the itch project has not been set."
-    new "The name of the itch project has not been set."
+    new "itch 프로젝트의 이름이 설정되지 않았습니다."
 
     # itch.rpy:108
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
-    new "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
+    new "{a=https://itch.io/game/new}프로젝트를 만드세요{/a}, 그리고 options.rpy에 다음과 같은 라인을 작성하세요: \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5}."
 
     # mobilebuild.rpy:109
     old "{a=%s}%s{/a}"
@@ -827,23 +827,23 @@ translate korean strings:
 
     # new_project.rpy:38
     old "New GUI Interface"
-    new "New GUI Interface"
+    new "새로운 GUI 인터페이스"
 
     # new_project.rpy:48
     old "Both interfaces have been translated to your language."
-    new "Both interfaces have been translated to your language."
+    new "모든 인터페이스는 귀하의 언어로 번역됐습니다."
 
     # new_project.rpy:50
     old "Only the new GUI has been translated to your language."
-    new "Only the new GUI has been translated to your language."
+    new "새로운 GUI만 귀하의 언어로 번역됐습니다."
 
     # new_project.rpy:52
     old "Only the legacy theme interface has been translated to your language."
-    new "Only the legacy theme interface has been translated to your language."
+    new "레거시 테마 인터페이스가 귀하의 언어로 번역됐습니다."
 
     # new_project.rpy:54
     old "Neither interface has been translated to your language."
-    new "Neither interface has been translated to your language."
+    new "어느 인터페이스도 귀하의 언어로 번역되지 않았습니다."
 
     # new_project.rpy:63
     old "The projects directory could not be set. Giving up."
@@ -851,11 +851,11 @@ translate korean strings:
 
     # new_project.rpy:69
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
-    new "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
+    new "어떤 인터페이스를 사용하고 싶으세요? 새로운 GUI는 현대적인 스타일로, 와이드 스크린과 휴대기기를 지원하며 쉽게 커스텀 가능합니다. 레거시 테마는 작업에 오래된 예제 코드가 필요할 수 있습니다.\n\n[language_support!t]\n\n의심스럽다면 새로운 GUI를 선택한 다음, 오른쪽 하단의 계속하기를 클릭하십시오."
 
     # new_project.rpy:69
     old "Legacy Theme Interface"
-    new "Legacy Theme Interface"
+    new "레거시 테마 인터페이스"
 
     # new_project.rpy:90
     old "Choose Project Template"
@@ -991,11 +991,11 @@ translate korean strings:
 
     # translations.rpy:63
     old "Translations: [project.current.name!q]"
-    new "Translations: [project.current.name!q]"
+    new "번역: [project.current.name!q]"
 
     # translations.rpy:104
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
-    new "The language to work with. This should only contain lower-case ASCII characters and underscores."
+    new "작업할 언어. 소문자 ASCII 문자와 밑줄만 포함해야 합니다."
 
     # translations.rpy:130
     old "Generate empty strings for translations"
@@ -1003,19 +1003,19 @@ translate korean strings:
 
     # translations.rpy:148
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
+    new "번역 파일을 생성하거나 업데이트합니다. 파일들은 in game/tl/[persistent.translate_language!q]에 배치됩니다."
 
     # translations.rpy:168
     old "Extract String Translations"
-    new "Extract String Translations"
+    new "문자열 번역 추출"
 
     # translations.rpy:170
     old "Merge String Translations"
-    new "Merge String Translations"
+    new "문자열 번역 병합"
 
     # translations.rpy:175
     old "Replace existing translations"
-    new "Replace existing translations"
+    new "기존 번역 대체"
 
     # translations.rpy:176
     old "Reverse languages"
@@ -1023,11 +1023,11 @@ translate korean strings:
 
     # translations.rpy:180
     old "Update Default Interface Translations"
-    new "Update Default Interface Translations"
+    new "기본 인터페이스 번역 업데이트"
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
+    new "추출 명령은 기존 프로젝트의 문자열 번역을 임시 파일로 추출 할 수 있습니다.\n\n병합 명령은 추출된 번역을 다른 프로젝트로 병합합니다."
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
@@ -1039,51 +1039,51 @@ translate korean strings:
 
     # translations.rpy:248
     old "Ren'Py is extracting string translations..."
-    new "Ren'Py is extracting string translations..."
+    new "문자열 번역을 추출하고 있습니다..."
 
     # translations.rpy:251
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py has finished extracting [language] string translations."
+    new "[language] 문자열 번역 추출을 완료했습니다."
 
     # translations.rpy:271
     old "Ren'Py is merging string translations..."
-    new "Ren'Py is merging string translations..."
+    new "문자열 번역을 병합하고 있습니다..."
 
     # translations.rpy:274
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py has finished merging [language] string translations."
+    new "[language] 문자열 번역 병합을 완료했습니다."
 
     # translations.rpy:282
     old "Updating default interface translations..."
-    new "Updating default interface translations..."
+    new "기본 인터페이스 번역을 업데이트하고 있습니다..."
 
     # translations.rpy:306
     old "Extract Dialogue: [project.current.name!q]"
-    new "Extract Dialogue: [project.current.name!q]"
+    new "다이얼로그 추출: [project.current.name!q]"
 
     # translations.rpy:322
     old "Format:"
-    new "Format:"
+    new "포맷:"
 
     # translations.rpy:330
     old "Tab-delimited Spreadsheet (dialogue.tab)"
-    new "Tab-delimited Spreadsheet (dialogue.tab)"
+    new "탭으로 구분되는 스프레드시트 (dialogue.tab)"
 
     # translations.rpy:331
     old "Dialogue Text Only (dialogue.txt)"
-    new "Dialogue Text Only (dialogue.txt)"
+    new "대사 글자만 (dialogue.txt)"
 
     # translations.rpy:344
     old "Strip text tags from the dialogue."
-    new "Strip text tags from the dialogue."
+    new "텍스트 태그를 대사에서 제거합니다."
 
     # translations.rpy:345
     old "Escape quotes and other special characters."
-    new "Escape quotes and other special characters."
+    new "따옴표와 기타 특수 문자를 제거합니다."
 
     # translations.rpy:346
     old "Extract all translatable strings, not just dialogue."
-    new "Extract all translatable strings, not just dialogue."
+    new "모든 번역 가능한 문자열을 추출합니다."
 
     # translations.rpy:374
     old "Ren'Py is extracting dialogue...."
@@ -1091,7 +1091,7 @@ translate korean strings:
 
     # translations.rpy:378
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
+    new "대사 추출을 완료했습니다. 추출된 대사는 기본 디렉토리의 dialogue.[persistent.dialogue_format]에서 찾을 수 있습니다."
 
     # updater.rpy:75
     old "Select Update Channel"
