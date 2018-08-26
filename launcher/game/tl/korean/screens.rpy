@@ -32,7 +32,7 @@ translate korean strings:
     # screens.rpy:171
     old "## This screen is used to display renpy.input. The prompt parameter is used to pass a text prompt in."
     new "## 플레이어 입력을 받는 renpy.input을 출력할 때 쓰이는 스크린입니다. prompt 매개변수를 통해 입력 지문을 표시할 수 있습니다."
-    
+
     # screens.rpy:174
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
     new "## 이 스크린은 id \"input\"을 가진 input 디스플레이어블을 생성해야 합니다."
@@ -123,7 +123,7 @@ translate korean strings:
 
     # screens.rpy:322
     old "End Replay"
-    new "리플레이 기"기
+    new "리플레이 기"
 
     # screens.rpy:326
     old "Main Menu"
@@ -579,7 +579,7 @@ translate korean strings:
 
     # screens.rpy:1193
     old "## The skip_indicator screen is displayed to indicate that skipping is in progress."
-    new "## Skip_indicator 스크린은 스킵 중일 때 "스킵 중"을 표시하기 위해 출력됩니다."
+    new "## Skip_indicator 스크린은 스킵 중일 때 \"스킵 중\"을 표시하기 위해 출력됩니다."
 
     # screens.rpy:1196
     old "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
