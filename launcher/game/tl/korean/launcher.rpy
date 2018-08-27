@@ -231,7 +231,7 @@ translate korean strings:
 
     # consolecommand.rpy:84
     old "The command is being run in a new operating system console window."
-    new "커맨트가 새로운 운영체제 콘솔 창에서 실행 중입니다."
+    new "커맨드가 새로운 운영체제 콘솔 창에서 실행 중입니다."
 
     # distribute.rpy:443
     old "Scanning project files..."
