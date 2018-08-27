@@ -91,7 +91,7 @@ translate korean strings:
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "보정할 "
+    new "보정할 게임패드 선택"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
