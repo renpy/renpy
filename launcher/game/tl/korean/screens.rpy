@@ -275,7 +275,7 @@ translate korean strings:
 
     # screens.rpy:711
     old "## Preferences screen"
-    new "## Preferences screen"
+    new "## Preferences 스크린"
 
     # screens.rpy:713
     old "## The preferences screen allows the player to configure the game to better suit themselves."
@@ -487,7 +487,7 @@ translate korean strings:
 
     # screens.rpy:1054
     old "Middle Click"
-    new "가운데버튼이나 휠버튼 클릭"
+    new "가운데 버튼이나 휠버튼 클릭"
 
     # screens.rpy:1058
     old "Right Click"
