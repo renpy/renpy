@@ -7,7 +7,7 @@ translate korean strings:
 
     # options.rpy:4
     old "## Lines beginning with two '#' marks are comments, and you shouldn't uncomment them. Lines beginning with a single '#' mark are commented-out code, and you may want to uncomment them when appropriate."
-    new "## 두 개의 '#' 표시로 시작되는 줄은 주석이며, 그것을 없애지 말아야 합니다. 한 개의 '#' 표시로 시작되는 라인은 주석 처리된 코드로 필요한 경우 제거해도 됩니다."
+    new "## 두 개의 '#' 표시로 시작되는 줄은 주석이며, 그것을 없애지 말아야 합니다. 한 개의 '#' 표시로 시작되는 줄은 주석 처리된 코드로 필요한 경우 제거해도 됩니다."
 
     # options.rpy:10
     old "## Basics"
