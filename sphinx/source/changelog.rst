@@ -118,6 +118,9 @@ specified direction.
 
 LayerdImageProxy can now take an interpolated string.
 
+The new :var:`config.context_callback` is called when starting the game or
+entering a new context, like a menu context. It can be used to stop voice
+or sounds from playing when entering that context.
 
 
 .. _renpy-7.0:

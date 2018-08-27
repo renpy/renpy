@@ -891,6 +891,9 @@ displayable_prefix = { }
 # Should we re-play a movie when it's shown again.
 replay_movie_sprites = True
 
+# A callback that is called when entering a new context.
+context_callback = None
+
 del os
 del collections
 
