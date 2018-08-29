@@ -123,7 +123,7 @@ translate korean strings:
 
     # screens.rpy:322
     old "End Replay"
-    new "리플레이 기"
+    new "리플레이 끝내기"
 
     # screens.rpy:326
     old "Main Menu"
