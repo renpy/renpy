@@ -131,7 +131,7 @@ init python in project:
             data.setdefault("packages", [ "pc", "mac" ])
             data.setdefault("add_from", True)
             data.setdefault("force_recompile", True)
-            data.setdefault("android_build", "Debug")
+            data.setdefault("android_build", "Release")
 
             if "renamed_all" not in data:
                 dp = data["packages"]

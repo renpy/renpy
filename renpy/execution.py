@@ -870,6 +870,9 @@ def run_context(top):
     the RestartContext and RestartTopContext exceptions.
     """
 
+    if renpy.config.context_callback is not None:
+        renpy.config.context_callback()
+
     while True:
 
         try:

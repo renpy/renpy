@@ -280,11 +280,16 @@ Occasionally Used
     is given the `namebox_background` property, it sets :propref:`background`
     on the displayable in the say screen with the id "namebox".
 
-.. var:: config.config.conditionswitch_predict_all = False
+.. var:: config.conditionswitch_predict_all = False
 
     The default value of the predict_all argument for :func:`ConditionSwitch`
     and :func:`ShowingSwitch`, which determines if all possible displayables
     are shown.
+
+.. var:: config.context_callback = None
+
+    This is a callback that is called when Ren'Py enteres a new context,
+    such as a menu context.
 
 .. var:: config.debug = False
 
