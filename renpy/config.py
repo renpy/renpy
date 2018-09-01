@@ -894,6 +894,10 @@ replay_movie_sprites = True
 # A callback that is called when entering a new context.
 context_callback = None
 
+# Should we reject . and .. in filenames?
+reject_relative = True
+
+
 del os
 del collections
 
