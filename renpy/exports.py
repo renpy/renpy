@@ -1775,11 +1775,11 @@ def transition(trans, layer=None, always=False, force=False):
     """
 
     if isinstance(trans, dict):
-        for k, v in trans.items():
-            transition(k, v, always=always, force=force)
+        for layer, t in trans.items():
+            transition(t, layer=layer, always=always, force=force)
         return
 
-    if not always and not renpy.game.preferences.transitions:
+    if (not always) and not renpy.game.preferences.transitions:
         trans = None
 
     renpy.game.interface.set_transition(trans, layer, force=force)
