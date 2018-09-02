@@ -32,9 +32,6 @@ init -1650 python:
     # is not shown.
     config.side_image_only_not_showing = False
 
-    # The prefix to use on the side image.
-    config.side_image_prefix_tag = 'side'
-
     # A transform to use when the side image changes to that of a different
     # character.
     config.side_image_change_transform = None
