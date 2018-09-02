@@ -1452,8 +1452,7 @@ def with_statement(trans, always=False, paired=None, clear=True):
 
         trans = trans[None]
 
-    else:
-        return renpy.game.interface.do_with(trans, paired, clear=clear)
+    return renpy.game.interface.do_with(trans, paired, clear=clear)
 
 
 globals()["with"] = with_statement
