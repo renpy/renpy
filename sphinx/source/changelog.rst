@@ -44,6 +44,25 @@ the {clear} tag is part of a line by itself, it is the equivalent of
 the ``nvl clear`` statement. See :ref:`NVL Monlologue Mode <nvl-monologue-mode>` for more
 about this.
 
+
+Say-With-Attribute Change
+-------------------------
+
+There has been a change to the way a say-with-attributes is handled
+when there is not an image with the tag displaying. Previously, Ren'Py
+would use the attributes given in the most recent say-with-attributes statement
+to selected the side image to show.
+
+Now, Ren'Py will use the provided attributes and existing attributes to resolve
+the side image. This makes a say-with-attributes that occurs when an image
+is not showing work the same way as when it is. When the attributes do not
+select a single side image, Ren'Py will select the image with all of the given
+attributes, and the most possible of the existing attributes.
+
+The rationale for this change is to help with side images that are defined
+as layered images, where providing only the attributes that change makes
+sense.
+
 Updater Changes
 ---------------
 
