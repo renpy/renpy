@@ -894,6 +894,15 @@ replay_movie_sprites = True
 # A callback that is called when entering a new context.
 context_callback = None
 
+# Should we reject . and .. in filenames?
+reject_relative = True
+
+# The prefix to use on the side image.
+side_image_prefix_tag = 'side'
+
+# Do the say attributes of a hidden side image use the side image tag?
+say_attributes_use_side_image = True
+
 del os
 del collections
 

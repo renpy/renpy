@@ -13,6 +13,15 @@ Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
 
+.. _incompatible-7.1:
+
+When an image is not being show, say-with-attributes now resolves a side
+image, rather than just using the attributes given. To disable this, add::
+
+
+    define config.say_attributes_use_side_image = False
+
+
 .. _incompatible-7.0:
 
 7.0
