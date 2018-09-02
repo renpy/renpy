@@ -2450,7 +2450,7 @@ def game_menu(screen=None):
     if screen is None:
         call_in_new_context("_game_menu")
     else:
-        call_in_new_context("_game_menu", _game_menu_screen = screen)
+        call_in_new_context("_game_menu", _game_menu_screen=screen)
 
 
 def shown_window():
@@ -2917,7 +2917,7 @@ def get_say_attributes():
     return renpy.game.context().say_attributes
 
 
-def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer='master'):
+def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer=None):
     """
     :doc: other
 
