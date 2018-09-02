@@ -19,7 +19,7 @@ When an image is not being show, say-with-attributes now resolves a side
 image, rather than just using the attributes given. To disable this, add::
 
 
-    define config.say_attributes_use_side_image = Fase
+    define config.say_attributes_use_side_image = False
 
 
 .. _incompatible-7.0:
