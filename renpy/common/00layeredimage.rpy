@@ -732,14 +732,15 @@ python early in layeredimage:
             for a in self.attributes:
 
                 if a.attribute in attributes:
-                    rv.append(a.attribute)
-
+                    if a.attribute not in rv:
+                        rv.append(a.attribute)
 
                 if a.attribute in unknown:
                     unknown.remove(a.attribute)
 
             if unknown:
                 return None
+
 
             return tuple(rv)
 
