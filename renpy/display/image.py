@@ -871,7 +871,8 @@ class ShownImageInfo(renpy.object.Object):
 
         # If the name matches one that exactly exists, return it.
         if (name in images) and not (wanted or remove):
-            ca = get_tag_method(tag, "_choose_attributes")
+            ca = getattr(images[name], "_choose_attributes", None)
+
             if ca is None:
                 return name
 
