@@ -1452,8 +1452,7 @@ def with_statement(trans, always=False, paired=None, clear=True):
 
         trans = trans[None]
 
-    else:
-        return renpy.game.interface.do_with(trans, paired, clear=clear)
+    return renpy.game.interface.do_with(trans, paired, clear=clear)
 
 
 globals()["with"] = with_statement
@@ -1775,11 +1774,11 @@ def transition(trans, layer=None, always=False, force=False):
     """
 
     if isinstance(trans, dict):
-        for k, v in trans.items():
-            trans(k, v, always=always, force=force)
+        for layer, t in trans.items():
+            transition(t, layer=layer, always=always, force=force)
         return
 
-    if not always and not renpy.game.preferences.transitions:
+    if (not always) and not renpy.game.preferences.transitions:
         trans = None
 
     renpy.game.interface.set_transition(trans, layer, force=force)
@@ -2450,7 +2449,7 @@ def game_menu(screen=None):
     if screen is None:
         call_in_new_context("_game_menu")
     else:
-        call_in_new_context("_game_menu", _game_menu_screen = screen)
+        call_in_new_context("_game_menu", _game_menu_screen=screen)
 
 
 def shown_window():
@@ -2917,7 +2916,7 @@ def get_say_attributes():
     return renpy.game.context().say_attributes
 
 
-def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer='master'):
+def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer=None):
     """
     :doc: other
 

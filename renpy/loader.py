@@ -519,6 +519,22 @@ def load_core(name):
     return None
 
 
+def check_name(name):
+    """
+    Checks the name to see if it violates any of Ren'Py's rules.
+    """
+
+    if renpy.config.reject_backslash and "\\" in name:
+        raise Exception("Backslash in filename, use '/' instead: %r" % name)
+
+    if renpy.config.reject_relative:
+
+        split = name.split("/")
+
+        if ("." in split) or (".." in split):
+            raise Exception("Filenames may not contain relative directories like '.' and '..': %r" % name)
+
+
 def get_prefixes(tl=True):
     """
     Returns a list of prefixes to search for files.

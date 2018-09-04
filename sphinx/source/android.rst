@@ -279,7 +279,7 @@ For more information about adaptive icons, please check out:
 
     https://medium.com/google-design/designing-adaptive-icons-515af294c783
 
-Note that 1dp is corresponds to 4 actual pixels.
+Note that 1dp corresponds to 4 actual pixels.
 
 When generating the application, Ren'Py will convert these files to an
 appropriate size for each device, and will generate static icons for devices
@@ -290,7 +290,8 @@ Presplash
 ---------
 
 The presplash is shown before Ren'Py fully loads, before the main splashscreen
-starts. It's especially important on Android, as the first itme Ren'Py
+starts. It's especially important on Android, as the first time Ren'Py runs
+it will unpack supporting files, which make take some time.
 
 android-presplash.jpg
     The image that's used when the app is loading. This should be surrounded

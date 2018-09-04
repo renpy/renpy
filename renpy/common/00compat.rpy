@@ -171,6 +171,10 @@ init -1900 python:
             config.dissolve_force_alpha = False
             config.replay_movie_sprites = False
 
+        if version <= (7, 0, 0):
+            config.reject_relative = False
+            config.say_attributes_use_side_image = False
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None

@@ -870,7 +870,8 @@ class ADVCharacter(object):
             show_image = (self.image_tag,) + attrs + tuple(wanted) + tuple( "-" + i for i in remove)
 
             if predict:
-                images.predict_show(show_image)
+                images.predict_show(new_image)
+
             else:
                 trans = renpy.config.say_attribute_transition
                 layer = renpy.config.say_attribute_transition_layer
@@ -888,8 +889,21 @@ class ADVCharacter(object):
 
         else:
 
-            # Otherwise, just record the attributes of the image.
-            images.predict_show("master", tagged_attrs, show=False)
+            if renpy.config.say_attributes_use_side_image:
+
+                tagged_attrs = (renpy.config.side_image_prefix_tag,) + tagged_attrs
+
+                new_image = images.apply_attributes(layer, self.image_tag, tagged_attrs, wanted, remove)
+
+                if new_image is None:
+                    new_image = tagged_attrs
+
+                images.predict_show(layer, new_image[1:], show=False)
+
+            else:
+
+                # Otherwise, just record the attributes of the image.
+                images.predict_show(layer, tagged_attrs, show=False)
 
     def __unicode__(self):
 
