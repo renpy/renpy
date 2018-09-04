@@ -23,7 +23,7 @@ translate korean strings:
 
     # 00gltest.rpy:93
     old "Enable"
-    new "Enable"
+    new "활성"
 
     # 00gltest.rpy:109
     old "Changes will take effect the next time this program is run."
@@ -91,27 +91,27 @@ translate korean strings:
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
-    new "Select Gamepad to Calibrate"
+    new "보정할 게임패드 선택"
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "No Gamepads Available"
+    new "사용 가능한 게임패드가 없습니다."
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
-    new "Calibrating [name] ([i]/[total])"
+    new "[name]를 보정 중입니다. ([i]/[total])"
 
     # 00gamepad.rpy:58
     old "Press or move the [control!r] [kind]."
-    new "Press or move the [control!r] [kind]."
+    new "[control!r] [kind]를 누르거나 이동합니다."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    new "Skip (A)"
+    new "스킵 (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
-    new "Back (B)"
+    new "뒤로 (B)"
 
     # _errorhandling.rpym:495
     old "Open Traceback"
@@ -123,11 +123,11 @@ translate korean strings:
 
     # _errorhandling.rpym:499
     old "Copy to Clipboard"
-    new "Copy to Clipboard"
+    new "클립보드로 복사"
 
     # _errorhandling.rpym:501
     old "Copies the traceback.txt file to the clipboard."
-    new "Copies the traceback.txt file to the clipboard."
+    new "traceback.txt 파일을 클립보드로 복사합니다."
 
     # _errorhandling.rpym:519
     old "An exception has occurred."
@@ -175,5 +175,5 @@ translate korean strings:
 
     # _errorhandling.rpym:612
     old "Copies the errors.txt file to the clipboard."
-    new "Copies the errors.txt file to the clipboard."
+    new "errors.txt 파일을 클립보드로 복사합니다."
 

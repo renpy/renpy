@@ -138,8 +138,8 @@ translate simplified_chinese strings:
     new "## The borders of the box containing the character's name, in left, top, right, bottom order."
 
     # gui.rpy:127
-    old "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
-    new "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
+    old "## If True, the background of the namebox will be tiled, if False, the background of the namebox will be scaled."
+    new "## If True, the background of the namebox will be tiled, if False, the background of the namebox will be scaled."
 
     # gui.rpy:132
     old "## The placement of dialogue relative to the textbox. These can be a whole number of pixels relative to the left or top side of the textbox, or 0.5 to center."

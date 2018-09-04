@@ -122,7 +122,7 @@ define gui.namebox_height = None
 define gui.namebox_borders = Borders(5, 5, 5, 5)
 
 ## If True, the background of the namebox will be tiled, if False, the background
-## if the namebox will be scaled.
+## of the namebox will be scaled.
 define gui.namebox_tile = False
 
 

@@ -138,7 +138,7 @@ translate spanish strings:
     new "## Los bordes de la caja que contiene el nombre del personaje, en orden: izquierda, arriba, derecha, abajo."
 
     # gui.rpy:124
-    old "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
+    old "## If True, the background of the namebox will be tiled, if False, the background of the namebox will be scaled."
     new "## Si es 'True, el fondo de la caja del nombre será en mosaico, si es 'False', el fondo, si la caja del nombre es escalada."
 
     # gui.rpy:129

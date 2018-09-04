@@ -137,7 +137,7 @@
     new "## Sempadan kotak yang mengandungi nama watak, mengikut susunan kiri, atas, kanan, bawah."
 
     # gui.rpy:124
-    old "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
+    old "## If True, the background of the namebox will be tiled, if False, the background of the namebox will be scaled."
     new "## Jika ditetapkan kepada True, latar belakang kotak nama akan dijubinkan, jika False, latar belakang kotak nama akan dissesuaikan saiznya."
 
     # gui.rpy:129
