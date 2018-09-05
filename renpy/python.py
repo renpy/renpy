@@ -1731,6 +1731,7 @@ class RollbackLog(renpy.object.Object):
 
         if on_load and revlog[-1].retain_after_load:
             retained = revlog.pop()
+            self.retain_after_load_flag = True
         else:
             retained = None
 
