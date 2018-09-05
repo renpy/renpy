@@ -286,7 +286,7 @@ init python:
         pass
 
     build.classify_renpy("rapt/**", "rapt")
-    build.executable("rapt/project/gradlew")
+    build.executable("rapt/prototype/gradlew")
 
     build.classify_renpy("renios/prototype/base/", None)
     build.classify_renpy("renios/prototype/prototype.xcodeproj/*.xcworkspace/", None)
