@@ -1009,16 +1009,9 @@ class ADVCharacter(object):
                 else:
                     who = self.who_prefix + who + self.who_suffix
 
-            ctx = renpy.game.context()
-
-            if ctx.translate_block_language is not None:
-                translate = False
-            else:
-                translate = True
-
             if renpy.config.new_substitutions:
                 what_pattern = sub(self.what_prefix + "[[what]" + self.what_suffix)
-                what = what_pattern.replace("[what]", sub(what, translate=translate))
+                what = what_pattern.replace("[what]", sub(what, translate=True))
             else:
                 what = self.what_prefix + what + self.what_suffix
 
