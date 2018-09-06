@@ -82,6 +82,8 @@ Translations
 The Ren'Py launcher, template game, and The Question have been translated
 into the Latin script of Malay by Muhammad Nur Hidayat Yasuyoshi.
 
+The Korean translation has been significantly updated.
+
 It is now possible to translate the strings used by RAPT into non-English
 languages.
 

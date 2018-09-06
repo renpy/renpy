@@ -19,7 +19,7 @@ the omission in future versions.
 * Aleema
 * Alessio
 * Alexandre Tranchant
-* Andyl_kl
+* Andykl
 * Apricotorange
 * Arowana-vx
 * Asfdfdfd
@@ -86,6 +86,7 @@ the omission in future versions.
 * Kuroonehalf
 * Kyouryuukunn
 * Lapalissiano
+* Lee Yunseok
 * Lore
 * Maissara Moustafa
 * Marcel
@@ -95,6 +96,7 @@ the omission in future versions.
 * Merumelu
 * mikey (ATP Projects)
 * Morgan Willcock
+* Moshibit
 * MrStalker
 * Mugenjohncel (Uncle Mugen)
 * Muhammad Nur Hidayat Yasuyoshi
@@ -108,6 +110,7 @@ the omission in future versions.
 * Paul Morio
 * Pavel Langwell
 * Peter DeVita
+* Philat
 * Piroshki
 * Pratomo Asta Nugraha
 * Project Gardares
@@ -120,6 +123,7 @@ the omission in future versions.
 * Rikxz
 * rivvil
 * Robert Penner
+* Saltome
 * Sapphi
 * Scout
 * Shiz
