@@ -107,6 +107,12 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         If true, this Drag is raised to the top when it is dragged. If
         it is joined to other Drags, all joined drags are raised.
 
+    `activated`
+        A callback (or list of callbacks) that is called when the mouse
+        is pressed down on the drag. It is called with one argument, a
+        a list of Drags that are being dragged. The return value of this
+        callback is ignored.
+
     `dragged`
         A callback (or list of callbacks) that is called when the Drag
         has been dragged. It is called with two arguments. The first is
@@ -152,8 +158,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         way to get them back on the screen.
 
     `mouse_drop`
-        If true, the drag is dropped on the first droppable under the cursor. 
-        If false, the default, the drag is dropped onto the droppable with 
+        If true, the drag is dropped on the first droppable under the cursor.
+        If false, the default, the drag is dropped onto the droppable with
         the largest degree of overlap.
 
     Except for `d`, all of the parameters are available as fields (with
@@ -172,6 +178,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     drag_group = None
     old_position = None
     drag_offscreen = False
+    activated = None
 
     def __init__(self,
                  d=None,
@@ -189,6 +196,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                  replaces=None,
                  drag_offscreen=False,
                  mouse_drop=False,
+                 activated=None,
                  style="drag",
                  **properties):
 
@@ -205,6 +213,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.clicked = clicked
         self.hovered = hovered
         self.unhovered = unhovered
+        self.activated = activated
         self.drag_offscreen = drag_offscreen
         # if mouse_drop_check is True (default False), the drop will not
         #  use default major overlap between droppables but instead
@@ -531,6 +540,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
             renpy.display.focus.set_grab(self)
 
+            run(joined[0].activated, joined)
+
             self.grab_x = x
             self.grab_y = y
 
@@ -605,9 +616,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         if (self.drag_group is not None) and self.drag_moved:
             if self.mouse_drop:
-               drop = self.drag_group.get_drop_at(joined, par_x, par_y)
+                drop = self.drag_group.get_drop_at(joined, par_x, par_y)
             else:
-               drop = self.drag_group.get_best_drop(joined)
+                drop = self.drag_group.get_best_drop(joined)
         else:
             drop = None
 
@@ -837,17 +848,17 @@ class DragGroup(renpy.display.layout.MultiBox):
         joined_set = set(joined)
         for c in self.children:
             if c in joined_set:
-               continue
+                continue
 
             if not c.droppable:
-               continue
+                continue
 
             if c.x is None:
-               continue
+                continue
 
             if (x >= c.x and y >= c.y and
-                x < (c.x+c.w) and y < (c.y+c.h)):
-               return c
+                    x < (c.x+c.w) and y < (c.y+c.h)):
+                return c
 
     def get_children(self):
         """

@@ -143,6 +143,10 @@ The new :var:`config.context_callback` is called when starting the game or
 entering a new context, like a menu context. It can be used to stop voice
 or sounds from playing when entering that context.
 
+The :func:`Drag` displayable (and the screen language equivalent, ``drag``)
+have grown a new `activated` property. This is callback that is called when
+the user first clicks the mouse on a drag. (Before it starts moving.)
+
 
 .. _renpy-7.0:
 

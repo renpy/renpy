@@ -451,6 +451,7 @@ for name in [ "add", "image" ]:
         Style(i)
 
 DisplayableParser("drag", renpy.display.dragdrop.Drag, "drag", 1, replaces=True)
+Keyword("activated")
 Keyword("drag_name")
 Keyword("draggable")
 Keyword("droppable")
