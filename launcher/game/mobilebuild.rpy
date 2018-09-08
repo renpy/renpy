@@ -84,7 +84,8 @@ init -1 python:
 
             self.info_msg = ""
 
-            with open(self.filename, "w"):
+            with open(self.filename, "w") as f:
+                f.write(renpy.version() + "\n")
                 pass
 
         def log(self, msg):
