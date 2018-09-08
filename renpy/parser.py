@@ -894,7 +894,7 @@ class Lexer(object):
         rv = self.word()
 
         if (rv == "r") or (rv == "u"):
-            if self.text[self.pos:self.pos+1] in "\"'`":
+            if self.text[self.pos:self.pos+1] in ( '"', "'", "`"):
                 self.pos = oldpos
                 return None
 
@@ -969,7 +969,7 @@ class Lexer(object):
         rv = self.match(image_word_regexp)
 
         if (rv == "r") or (rv == "u"):
-            if self.text[self.pos:self.pos+1] in "\"'`":
+            if self.text[self.pos:self.pos+1] in ( '"', "'", "`"):
                 self.pos = oldpos
                 return None
 
