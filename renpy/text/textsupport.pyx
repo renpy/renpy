@@ -611,11 +611,12 @@ def assign_times(float t, float gps, list glyphs):
     for g in glyphs:
 
         if (g.ruby == RUBY_TOP) or (g.ruby == RUBY_ALT):
-            g.time = t
+            g.time = -1
             continue
 
         t += tpg
         g.time = t
+
 
     return t
 

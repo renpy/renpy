@@ -1219,6 +1219,9 @@ class Layout(object):
 
         for g in l.glyphs:
 
+            if g.time == -1:
+                continue
+
             if g.time > st:
                 continue
 
