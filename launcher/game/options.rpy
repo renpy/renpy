@@ -367,6 +367,7 @@ init python:
     build.classify_renpy("module/pysdlsound/", "source")
     build.classify_renpy("module/pysdlsound/*.py", "source")
     build.classify_renpy("module/pysdlsound/*.pyx", "source")
+    build.classify_renpy("module/fribidi-src/**", "source")
 
     # all-platforms binary.
     build.classify_renpy("lib/**/_renpysteam*", None)
