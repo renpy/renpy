@@ -330,7 +330,7 @@ init -1500 python:
 
                         break
 
-                self.tlid = tlid
+            self.tlid = renpy.game.context().translate_identifier
 
             if self.filename:
                 self.sustain = False
@@ -416,7 +416,14 @@ init -1500 python hide:
             renpy.sound.stop(channel="voice")
             return
 
+        if _preferences.voice_sustain and not _voice.sustain:
+            _voice.sustain = "preference"
+
+        if _voice.play:
+            _voice.sustain = False
+
         vi = VoiceInfo()
+
         if not _voice.sustain:
             _voice.info = vi
 
@@ -451,9 +458,6 @@ init -1500 python hide:
         _voice.play = None
         _voice.sustain = False
         _voice.tag = None
-
-        if _preferences.voice_sustain and not _voice.sustain:
-            _voice.sustain = "preference"
 
     config.start_interact_callbacks.append(voice_interact)
     config.fast_skipping_callbacks.append(voice_interact)
