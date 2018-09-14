@@ -299,7 +299,7 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
         if g.character == 0:
             g.split = SPLIT_BEFORE
 
-        if g.ruby == RUBY_TOP:
+        if g.ruby == RUBY_TOP or g.ruby == RUBY_ALT:
             g.split = SPLIT_NONE
 
         elif g.ruby == RUBY_BOTTOM and old_g.ruby == RUBY_BOTTOM:
@@ -611,11 +611,12 @@ def assign_times(float t, float gps, list glyphs):
     for g in glyphs:
 
         if (g.ruby == RUBY_TOP) or (g.ruby == RUBY_ALT):
-            g.time = t
+            g.time = -1
             continue
 
         t += tpg
         g.time = t
+
 
     return t
 

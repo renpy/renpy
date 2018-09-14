@@ -192,9 +192,6 @@ class Context(renpy.object.Object):
         if version < 11:
             self.say_attributes = None
 
-        if version < 12:
-            self.translate_block_language = None
-
         if version < 13:
             self.line_log = [ ]
 
@@ -314,9 +311,6 @@ class Context(renpy.object.Object):
 
         # The alternate identifier of the current translate block.
         self.alternate_translate_identifier = None
-
-        # The language of the current translate block.
-        self.translate_block_language = None
 
     def replace_node(self, old, new):
 

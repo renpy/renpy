@@ -212,8 +212,6 @@ class ArgumentInfo(object):
         return "(" + ", ".join(l) + ")"
 
 
-
-
 def __newobj__(cls, *args):
     return cls.__new__(cls, *args)
 
@@ -639,7 +637,6 @@ class Say(Node):
             rv.append(self.arguments.get_code())
 
         return " ".join(rv)
-
 
     def execute(self):
 
@@ -2183,7 +2180,6 @@ class Translate(Node):
 
         renpy.game.context().translate_identifier = self.identifier
         renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
-        renpy.game.context().translate_block_language = self.language
 
     def predict(self):
         node = self.lookup()
@@ -2224,7 +2220,6 @@ class EndTranslate(Node):
 
         renpy.game.context().translate_identifier = None
         renpy.game.context().alternate_translate_identifier = None
-        renpy.game.context().translate_block_language = None
 
 
 class TranslateString(Node):

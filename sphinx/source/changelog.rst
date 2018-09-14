@@ -2,6 +2,25 @@
 Full Changelog
 ==============
 
+.. _renpy-7.1.1:
+
+Fixes
+-----
+
+Ren'Py now crops and sizes the icon correctly for versions of Android below
+Android 8 (Oreo).
+
+Ren'Py now sets the amount of memory used by the Android build tool to
+the Google-set default of 1536 megabytes. To change this, edit
+rapt/project/gradle.properties.
+
+The source code to the embedded version of fribidi that Ren'Py is expected
+to build with is now included in the -source archive.
+
+There have been a number of fixes to the voice sustain preference to make
+it work better with history and the voice replay action.
+
+
 .. _renpy-7.1:
 
 7.1
@@ -82,6 +101,8 @@ Translations
 The Ren'Py launcher, template game, and The Question have been translated
 into the Latin script of Malay by Muhammad Nur Hidayat Yasuyoshi.
 
+The Korean translation has been significantly updated.
+
 It is now possible to translate the strings used by RAPT into non-English
 languages.
 
@@ -140,6 +161,10 @@ LayerdImageProxy can now take an interpolated string.
 The new :var:`config.context_callback` is called when starting the game or
 entering a new context, like a menu context. It can be used to stop voice
 or sounds from playing when entering that context.
+
+The :func:`Drag` displayable (and the screen language equivalent, ``drag``)
+have grown a new `activated` property. This is callback that is called when
+the user first clicks the mouse on a drag. (Before it starts moving.)
 
 
 .. _renpy-7.0:
