@@ -2,6 +2,25 @@
 Full Changelog
 ==============
 
+.. _renpy-7.1.1:
+
+Fixes
+-----
+
+Ren'Py now crops and sizes the icon correctly for versions of Android below
+Android 8 (Oreo).
+
+Ren'Py now sets the amount of memory used by the Android build tool to
+the Google-set default of 1536 megabytes. To change this, edit
+rapt/project/gradle.properties.
+
+The source code to the embedded version of fribidi that Ren'Py is expected
+to build with is now included in the -source archive.
+
+There have been a number of fixes to the voice sustain preference to make
+it work better with history and the voice replay action.
+
+
 .. _renpy-7.1:
 
 7.1
