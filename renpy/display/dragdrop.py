@@ -138,6 +138,12 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         and clicked.  If the callback returns a value other than None,
         that value is returned as the result of the interaction.
 
+    `alternate`
+        An action that is run when the Drag is right-clicked (on the
+        desktop) or long-pressed without moving (on mobile). It may
+        be necessary to increase :var:`config.longpress_duration` if
+        this triggers to early on mobile platforms.
+
     `drag_handle`
         A (x, y, width, height) tuple, giving the position of the drag
         handle within the child. In this tuple, integers are considered
@@ -179,6 +185,10 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     old_position = None
     drag_offscreen = False
     activated = None
+    alternate = None
+
+    # The time a click started, or None if a click is not in progress.
+    click_time = None
 
     def __init__(self,
                  d=None,
@@ -197,6 +207,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                  drag_offscreen=False,
                  mouse_drop=False,
                  activated=None,
+                 alternate=None,
                  style="drag",
                  **properties):
 
@@ -214,6 +225,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.hovered = hovered
         self.unhovered = unhovered
         self.activated = activated
+        self.alternate = alternate
         self.drag_offscreen = drag_offscreen
         # if mouse_drop_check is True (default False), the drop will not
         #  use default major overlap between droppables but instead
@@ -294,6 +306,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.drag_moved = replaces.drag_moved
             self.last_drop = replaces.last_drop
             self.mouse_drop = replaces.mouse_drop
+            self.click_time = replaces.click_time
 
         if d is not None:
             self.add(d)
@@ -526,6 +539,10 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         grabbed = (renpy.display.focus.get_grab() is self)
 
+        if (self.alternate is not None) and renpy.display.touch and map_event(ev, "drag_activate"):
+            self.click_time = st
+            renpy.game.interface.timeout(renpy.config.longpress_duration)
+
         if grabbed:
             joined_offsets = self.drag_joined(self)
             joined = [ i[0] for i in joined_offsets ]
@@ -559,9 +576,30 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
             grabbed = True
 
+        elif (self.alternate is not None) and map_event(ev, "button_alternate"):
+            rv = run(self.alternate)
+            if rv is not None:
+                return rv
+
+            raise renpy.display.core.IgnoreEvent()
+
+        if ((self.alternate is not None) and
+            renpy.display.touch and
+            (self.click_time is not None) and
+                ((st - self.click_time) > renpy.config.longpress_duration)):
+
+            self.click_time = None
+
+            rv = run(self.alternate)
+            if rv is not None:
+                return rv
+
         # Handle clicking on droppables.
         if not grabbed:
             if self.clicked is not None and map_event(ev, "drag_deactivate"):
+
+                self.click_time = None
+
                 rv = run(self.clicked)
                 if rv is not None:
                     return rv
@@ -577,6 +615,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
             if not self.drag_moved and (self.start_x != par_x or self.start_y != par_y):
                 self.drag_moved = True
+                self.click_time = None
 
                 # We may not be in the drag_joined group.
                 self.set_style_prefix("idle_", True)
@@ -633,6 +672,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.last_drop = drop
 
         if map_event(ev, 'drag_deactivate'):
+
+            self.click_time = None
+
             renpy.display.focus.set_grab(None)
 
             if drop is not None:
