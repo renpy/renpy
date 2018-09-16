@@ -34,8 +34,8 @@ translate russian strings:
     new "Чтобы построить Android-пакет, пожалуйста, загрузите RAPT, разархивируйте его и поместить в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
 
     # android.rpy:31
-    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Чтобы построить Android-пакеты на Windows требуется 32-разрядный инструментарий разработки Java. JDK отличен от JRE, и возможно, у вас есть Java без JDK.\n\nПожалуйста, {a=httpу://www.oracle.com/technetwork/java/javase/downloads/index.html}загрузите и установите JDK{/a}, и перезапустите лаунчер Ren'Py."
+    old "A Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Чтобы построить Android-пакеты на Windows требуется инструментарий разработки Java 8. JDK отличен от JRE, и возможно, у вас есть Java без JDK.\n\nПожалуйста, {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}загрузите и установите JDK{/a}, и перезапустите лаунчер Ren'Py."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -90,112 +90,344 @@ translate russian strings:
     new "Собирает Android-пакет, устанавливает его на Android-устройстве, подключённом к компьютеру, а затем запускает приложение на устройстве."
 
     # android.rpy:48
-    old "Connects to an Android device running ADB in TCP/IP mode."
-    new "Присоединение к Android-устройству с запущенным Android Debug Bridge в режиме TCP/IP."
-
-    # android.rpy:49
-    old "Disconnects from an Android device running ADB in TCP/IP mode."
-    new "Отсоединение от Android-устройства с запущенным Android Debug Bridge в режиме TCP/IP."
+    old "Retrieves the log from the Android device and writes it to a file."
+    new "Берёт лог с Андроид-устройства и пишет его в файл."
 
     # android.rpy:50
-    old "Retrieves the log from the Android device and writes it to a file."
-    new "Берёт лог с Android-устройства и пишет его в файл."
+    old "Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device."
+    new "Выбор сборки Отладки, доступной для Android Studio. Смена режимов между отладкой и релизом требует предварительного удаления приложения с вашего устройства."
 
-    # android.rpy:244
+    # android.rpy:51
+    old "Selects the Release build, which can be uploaded to stores. Changing between debug and release builds requires an uninstall from your device."
+    new "Выбор сборки Релиза, которую можно загружать в магазины приложений. Смена режимов между отладкой и релизом требует предварительного удаления приложения с вашего устройства."
+
+    # android.rpy:245
     old "Copying Android files to distributions directory."
     new "Копирую файлы Android в директорию дистрибутивов."
 
-    # android.rpy:308
+    # android.rpy:313
     old "Android: [project.current.display_name!q]"
     new "Android: [project.current.display_name!q]"
 
-    # android.rpy:328
+    # android.rpy:333
     old "Emulation:"
     new "Эмуляция:"
 
-    # android.rpy:337
+    # android.rpy:342
     old "Phone"
     new "Телефон"
 
-    # android.rpy:341
+    # android.rpy:346
     old "Tablet"
     new "Планшет"
 
-    # android.rpy:345
+    # android.rpy:350
     old "Television"
     new "Телевизор"
 
-    # android.rpy:357
+    # android.rpy:362
     old "Build:"
     new "Собрать:"
 
-    # android.rpy:365
+    # android.rpy:373
+    old "Debug"
+    new "Отладку"
+
+    # android.rpy:377
+    old "Release"
+    new "Релиз"
+
+    # android.rpy:384
     old "Install SDK & Create Keys"
     new "Установить SDK и создать ключи"
 
-    # android.rpy:369
+    # android.rpy:388
     old "Configure"
     new "Настроить"
 
-    # android.rpy:373
+    # android.rpy:392
     old "Build Package"
     new "Собрать Пакет"
 
-    # android.rpy:377
+    # android.rpy:396
     old "Build & Install"
     new "Собрать и Установить"
 
-    # android.rpy:381
+    # android.rpy:400
     old "Build, Install & Launch"
     new "Собрать, Установить и Запустить"
 
-    # android.rpy:392
+    # android.rpy:411
     old "Other:"
     new "Другое:"
 
-    # android.rpy:400
-    old "Remote ADB Connect"
-    new "Удалённое Соединение с ADB"
-
-    # android.rpy:404
-    old "Remote ADB Disconnect"
-    new "Удалённое Отсоединение от ADB"
-
-    # android.rpy:408
+    # android.rpy:419
     old "Logcat"
     new "Logcat"
 
-    # android.rpy:441
+    # android.rpy:452
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
-    new "Перед тем как собирать приложения Android, вам нужно загрузить RAPT, инструмент Ren'Py для сбора пакетов Android. Хотите загрузить RAPT сейчас?"
+    new "Перед упаковкой приложений Android вам нужно загрузить RAPT, инструмент упаковки Ren'Py Android. Желаете загрузить RAPT сейчас?"
 
-    # android.rpy:500
-    old "Remote ADB Address"
-    new "Удалённый адрес ADB"
-
-    # android.rpy:500
-    old "Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."
-    new "Пожалуйста, введите IP-адрес и номер порта, чтобы соединиться с устройством, по форме \"192.168.1.143:5555\". Ознакомьтесь с документацией своего устройства, чтобы определить поддерживает ли оно удалённый ADB, и если так, адрес и порт для использования."
-
-    # android.rpy:512
-    old "Invalid remote ADB address"
-    new "Неверный адрес удалённого ADB"
-
-    # android.rpy:512
-    old "The address must contain one exactly one ':'."
-    new "Адрес должен содержать один, только один ':'."
-
-    # android.rpy:516
-    old "The host may not contain whitespace."
-    new "Хост не может содержать пробелы."
-
-    # android.rpy:522
-    old "The port must be a number."
-    new "Порт должен содержать только цифры."
-
-    # android.rpy:548
+    # android.rpy:505
     old "Retrieving logcat information from device."
-    new "Извлекаю информацию logcat из устройства."
+    new "Извлекаю информацию logcat с устройства."
+
+    # androidstrings.rpy:7
+    old "{} is not a directory."
+    new "{} - не папка."
+
+    # androidstrings.rpy:8
+    old "{} does not contain a Ren'Py game."
+    new "{} не содержит игру Ren'Py."
+
+    # androidstrings.rpy:9
+    old "Run configure before attempting to build the app."
+    new "Запуск настройки перед попыткой постройки приложения."
+
+    # androidstrings.rpy:10
+    old "Google Play support is enabled, but build.google_play_key is not defined."
+    new "Поддержка Google Play включена, однако переменная build.google_play_key не определена."
+
+    # androidstrings.rpy:11
+    old "Updating project."
+    new "Обновляю проект"
+
+    # androidstrings.rpy:12
+    old "Creating assets directory."
+    new "Создаю директорию ресурсов"
+
+    # androidstrings.rpy:13
+    old "Creating expansion file."
+    new "Создаю файл-расширение"
+
+    # androidstrings.rpy:14
+    old "Packaging internal data."
+    new "Пакую внутренние данные"
+
+    # androidstrings.rpy:15
+    old "I'm using Gradle to build the package."
+    new "Использую Gradle для сборки пакета"
+
+    # androidstrings.rpy:16
+    old "Uploading expansion file."
+    new "Загружаю файл-расширение"
+
+    # androidstrings.rpy:17
+    old "The build seems to have failed."
+    new "Ой, ошибка со сборкой приключилась..."
+
+    # androidstrings.rpy:18
+    old "Launching app."
+    new "Запускаю приложение"
+
+    # androidstrings.rpy:19
+    old "The build seems to have succeeded."
+    new "Кажется, сборка прошла успешно!"
+
+    # androidstrings.rpy:20
+    old "What is the full name of your application? This name will appear in the list of installed applications."
+    new "Каким будет полное имя вашего приложения? Это имя будет представлено в списке установленных приложений."
+
+    # androidstrings.rpy:21
+    old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
+    new "Каким будет короткое имя вашего приложения? Это имя будет использоваться в лаунчере, а также ярлыках приложения."
+
+    # androidstrings.rpy:22
+    old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
+    new "Каким будет имя собранного пакета?\n\nОбычно оно имеет форму com.domain.program или com.domain.email.program. Имя может содержать только символы ASCII и точки. Также оно должно содержать хотя бы одну точку."
+
+    # androidstrings.rpy:23
+    old "The package name may not be empty."
+    new "Имя пакета не может быть пустым."
+
+    # androidstrings.rpy:24
+    old "The package name may not contain spaces."
+    new "В имени пакета не должно быть пробелов."
+
+    # androidstrings.rpy:25
+    old "The package name must contain at least one dot."
+    new "Имя пакета должно содержать как минимум одну точку."
+
+    # androidstrings.rpy:26
+    old "The package name may not contain two dots in a row, or begin or end with a dot."
+    new "Имя пакета не должно содержать две и более точек подряд, или начинаться и заканчиваться с точки."
+
+    # androidstrings.rpy:27
+    old "Each part of the package name must start with a letter, and contain only letters, numbers, and underscores."
+    new "Каждая часть имя пакета должна начинаться с буквы и содержать только английские буквы, цифры и подчёркивания."
+
+    # androidstrings.rpy:28
+    old "{} is a Java keyword, and can't be used as part of a package name."
+    new "{} - оператор Java, его нельзя использовать в имени пакета."
+
+    # androidstrings.rpy:29
+    old "What is the application's version?\n\nThis should be the human-readable version that you would present to a person. It must contain only numbers and dots."
+    new "Какой будет версия приложения?\n\nВерсия приложения представлена для человека и независима от config.version. Она может содержать только цифры и точки."
+
+    # androidstrings.rpy:30
+    old "The version number must contain only numbers and dots."
+    new "Номер версии должен содержать только цифры и точки."
+
+    # androidstrings.rpy:31
+    old "What is the version code?\n\nThis must be a positive integer number, and the value should increase between versions."
+    new "Каким будет код версии?\n\nЭто должно быть положительное целое число, и его значение должно увеличиваться с каждой версией."
+
+    # androidstrings.rpy:32
+    old "The numeric version must contain only numbers."
+    new "Целое версии должно содержать только цифры."
+
+    # androidstrings.rpy:33
+    old "How would you like your application to be displayed?"
+    new "В какой ориентации экрана вы хотите отображать ваше приложение?"
+
+    # androidstrings.rpy:34
+    old "In landscape orientation."
+    new "В альбомном виде."
+
+    # androidstrings.rpy:35
+    old "In portrait orientation."
+    new "В портретном виде."
+
+    # androidstrings.rpy:36
+    old "In the user's preferred orientation."
+    new "По желанию пользователя."
+
+    # androidstrings.rpy:37
+    old "Which app store would you like to support in-app purchasing through?"
+    new "Через какой магазин приложений вы желаете поддерживать микротранзакции внутри приложения?"
+
+    # androidstrings.rpy:38
+    old "Google Play."
+    new "Google Play."
+
+    # androidstrings.rpy:39
+    old "Amazon App Store."
+    new "Магазин приложений Amazon."
+
+    # androidstrings.rpy:40
+    old "Both, in one app."
+    new "Оба, в одном приложении."
+
+    # androidstrings.rpy:41
+    old "Neither."
+    new "Отключить."
+
+    # androidstrings.rpy:42
+    old "Would you like to create an expansion APK?"
+    new "Желаете создать пакет в формате APK+кэш?"
+
+    # androidstrings.rpy:43
+    old "No. Size limit of 100 MB on Google Play, but can be distributed through other stores and sideloaded."
+    new "Нет. Ограничение по размеру в Google Play - 100 МБ, но может распространяться через другие магазины или локально."
+
+    # androidstrings.rpy:44
+    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work.)"
+    new "Да. Ограничение в 2 ГБ, но не будет работать вне среды Google Play. (Ознакомьтесь с {a=https://renpy.org/doc/html/android.html?highlight=apk#google-play-expansion-apks}документацией{/a})"
+
+    # androidstrings.rpy:45
+    old "Do you want to allow the app to access the Internet?"
+    new "Желаете разрешить вашему приложению доступ в Интернет?"
+
+    # androidstrings.rpy:46
+    old "Do you want to automatically update the generated project?"
+    new "Желаете автоматически обновлять сгенерированный проект?"
+
+    # androidstrings.rpy:47
+    old "Yes. This is the best choice for most projects."
+    new "Да. Это лучшее решение для большинства проектов."
+
+    # androidstrings.rpy:48
+    old "No. This may require manual updates when Ren'Py or the project configuration changes."
+    new "Нет. Это решение может потребовать ручных обновлений при изменении Ren'Py или конфигурации проекта."
+
+    # androidstrings.rpy:49
+    old "Unknown configuration variable: {}"
+    new "Неизвестная конфигурационная переменная: {}"
+
+    # androidstrings.rpy:50
+    old "I'm compiling a short test program, to see if you have a working JDK on your system."
+    new "Сейчас я компилирую небольшую тестовую программу, чтобы убедиться, что в вашей системе есть работающий JDK."
+
+    # androidstrings.rpy:51
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Without a working JDK, I can't continue."
+    new "Я не смогла воспользоваться javac для компиляции тестового файла. Если у вас не установлен Инструментарий Разработки Java, пожалуйста, загрузите его с:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nJDK отличается от JRE, так что есть вероятность, что у вас установлена Java без JDK. Без функционирующего JDK я не могу продолжить."
+
+    # androidstrings.rpy:52
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variabe to use a different version of Java."
+    new "Судя по всему, версия Java на вашем компьютере - не JDK 8, единственная версия, поддерживаемая Android SDK. Если вам нужно установить JDK 8, вы можете скачать его с:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nТакже вы можете изменить переменную окружения JAVA_HOME, чтобы воспользоваться другой версией Java."
+
+    # androidstrings.rpy:53
+    old "The JDK is present and working. Good!"
+    new "JDK найден и работает. Отлично!"
+
+    # androidstrings.rpy:54
+    old "The Android SDK has already been unpacked."
+    new "Android SDK уже распакован."
+
+    # androidstrings.rpy:55
+    old "Do you accept the Android SDK Terms and Conditions?"
+    new "Вы принимаете условияя и положения пользования Android SDK?"
+
+    # androidstrings.rpy:56
+    old "I'm downloading the Android SDK. This might take a while."
+    new "Загружаю Android SDK. Это может занять некоторое время."
+
+    # androidstrings.rpy:57
+    old "I'm extracting the Android SDK."
+    new "Извлекаю Android SDK."
+
+    # androidstrings.rpy:58
+    old "I've finished unpacking the Android SDK."
+    new "Извлечение Android SDK завершено."
+
+    # androidstrings.rpy:59
+    old "I'm about to download and install the required Android packages. This might take a while."
+    new "Начинаю загрузку и установку необходимых пакетов Android. Это может занять время."
+
+    # androidstrings.rpy:60
+    old "I was unable to accept the Android licenses."
+    new "Внимание, не удалось принять соглашения Android!"
+
+    # androidstrings.rpy:61
+    old "I was unable to install the required Android packages."
+    new "Установка необходимых пакетов Android не удалась!"
+
+    # androidstrings.rpy:62
+    old "I've finished installing the required Android packages."
+    new "Заканчиваю установку необходимых пакетов Android."
+
+    # androidstrings.rpy:63
+    old "You set the keystore yourself, so I'll assume it's how you want it."
+    new "Вы сами установили хранилище ключей, так что посмею предположить, что оно настроено так, как вы хотите."
+
+    # androidstrings.rpy:64
+    old "You've already created an Android keystore, so I won't create a new one for you."
+    new "Вы уже создали хранилище ключей Android, так что я не буду создавать для вас новое."
+
+    # androidstrings.rpy:65
+    old "I can create an application signing key for you. Signing an application with this key allows it to be placed in the Android Market and other app stores.\n\nDo you want to create a key?"
+    new "Я могу создать для вас ключ для подписи приложения. Подпись приложения этим ключом позволит разместить его в Android Market и других магазинах приложений.\n\nХотите создать ключ?"
+
+    # androidstrings.rpy:66
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\n\\You also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    new "Я создам ключ в файле android.keystore.\n\nВам нужно сохранить этот файл. Если вы его потеряете, то не сможете обновлять ваше приложение. n.\n\n\\Также вам нужно держать ваш ключ в безопасность. Если злоумышленникам удастся получить его, они потенциально могут создать вредоносную версию приложения и красть данные ваших пользователей.\n\nБудете ли вы хранить android.keystore и держать его в надёжном месте?"
+
+    # androidstrings.rpy:67
+    old "Please enter your name or the name of your organization."
+    new "Пожалуйста, введите ваше имя или имя вашей организации."
+
+    # androidstrings.rpy:68
+    old "Could not create android.keystore. Is keytool in your path?"
+    new "Не могу создать android.keystore. Хранилище ключей расположено в вашем пути файлов?"
+
+    # androidstrings.rpy:69
+    old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
+    new "Создание android.keystore завершено. Пожалуйста, сохраните его и держите в надёжном месте."
+
+    # androidstrings.rpy:70
+    old "It looks like you're ready to start packaging games."
+    new "Похоже, вы готовы собирать игры!"
 
     # choose_directory.rpy:87
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
@@ -569,75 +801,75 @@ translate russian strings:
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
     new "Пожалуйста, кликните на цветовую схему, которую вы хотите использовать, а затем кликните Продолжить. Эти цвета можно изменить позже."
 
-    # gui7.rpy:310
+    # gui7.rpy:311
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
     new "{b}Внимание{/b}\nПродолжив, вы перепишете настроенные полосы, кнопки, слоты сохранения, полосы прокрутки и ползунки.\n\nЧто вы хотите сделать?"
 
-    # gui7.rpy:310
+    # gui7.rpy:311
     old "Choose new colors, then regenerate image files."
     new "Выбрать новые цвета, затем воссоздать файлы изображений."
 
-    # gui7.rpy:310
+    # gui7.rpy:311
     old "Regenerate the image files using the colors in gui.rpy."
     new "Воссоздать файлы изображений используя цвета из gui.rpy."
 
-    # gui7.rpy:330
+    # gui7.rpy:331
     old "PROJECT NAME"
     new "ИМЯ ПРОЕКТА"
 
-    # gui7.rpy:330
+    # gui7.rpy:331
     old "Please enter the name of your project:"
     new "Пожалуйста, введите имя проекта:"
 
-    # gui7.rpy:338
+    # gui7.rpy:339
     old "The project name may not be empty."
     new "Имя проекта не должно быть пустым."
 
-    # gui7.rpy:343
+    # gui7.rpy:344
     old "[project_name!q] already exists. Please choose a different project name."
     new "[project_name!q] уже существует. Выберите другое имя проекта."
 
-    # gui7.rpy:346
+    # gui7.rpy:347
     old "[project_dir!q] already exists. Please choose a different project name."
     new "[project_dir!q] уже существует. Выберите другое имя проекта."
 
-    # gui7.rpy:357
+    # gui7.rpy:358
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
     new "Какое разрешение будет использовать ваш проект? Хотя Ren'Py может масштабировать окно, это будет целевой размер окна, по отношению к которому будут вырисовываться ресурсы, и на котором они будут наиболее чёткие.\n\nСтандартный 1280x720 — резонный компромисс."
 
-    # gui7.rpy:357
+    # gui7.rpy:358
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
     new "Своё. GUI оптимизирован под соотношение сторон 16:9."
 
-    # gui7.rpy:372
+    # gui7.rpy:373
     old "WIDTH"
     new "ШИРИНА"
 
-    # gui7.rpy:372
+    # gui7.rpy:373
     old "Please enter the width of your game, in pixels."
     new "Пожалуйста, введите ширину вашей игры в пикселях."
 
-    # gui7.rpy:377
+    # gui7.rpy:378
     old "The width must be a number."
     new "Ширина должна быть цифрой."
 
-    # gui7.rpy:379
+    # gui7.rpy:380
     old "HEIGHT"
     new "ВЫСОТА"
 
-    # gui7.rpy:379
+    # gui7.rpy:380
     old "Please enter the height of your game, in pixels."
     new "Пожалуйста, введите высоту вашей игры в пикселях."
 
-    # gui7.rpy:384
+    # gui7.rpy:385
     old "The height must be a number."
     new "Высота должна быть цифрой."
 
-    # gui7.rpy:426
+    # gui7.rpy:427
     old "Creating the new project..."
     new "Создаю новый проект..."
 
-    # gui7.rpy:428
+    # gui7.rpy:429
     old "Updating the project..."
     new "Обновляю проект..."
 
@@ -821,7 +1053,7 @@ translate russian strings:
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
     new "Пожалуйста, {a=https://itch.io/game/new}создайте ваш проект{/a}, затем добавьте строку типа\n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} в options.rpy."
 
-    # mobilebuild.rpy:109
+    # mobilebuild.rpy:110
     old "{a=%s}%s{/a}"
     new "{a=%s}%s{/a}"
 
@@ -829,7 +1061,7 @@ translate russian strings:
     old "Navigate: [project.current.display_name!q]"
     new "Навигация: [project.current.display_name!q]"
 
-    # navigation.rpy:177
+    # navigation.rpy:178
     old "Order: "
     new "Порядок: "
 
@@ -933,91 +1165,87 @@ translate russian strings:
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
     new "Пожалуйста, выберите образец, на котором основывать ваш проект. Образец задаёт шрифт и язык по умолчанию для интерфейса. Если ваш язык не поддерживается, выберите 'english'."
 
-    # preferences.rpy:72
+    # preferences.rpy:73
     old "Launcher Preferences"
     new "Настройки лаунчера"
 
-    # preferences.rpy:93
+    # preferences.rpy:94
     old "Projects Directory:"
     new "Папка проектов:"
 
-    # preferences.rpy:100
+    # preferences.rpy:101
     old "[persistent.projects_directory!q]"
     new "[persistent.projects_directory!q]"
 
-    # preferences.rpy:102
+    # preferences.rpy:103
     old "Projects directory: [text]"
     new "Папка проектов: [text]"
 
-    # preferences.rpy:104
+    # preferences.rpy:105
     old "Not Set"
     new "Не задано"
 
-    # preferences.rpy:119
+    # preferences.rpy:120
     old "Text Editor:"
     new "Текстовый редактор:"
 
-    # preferences.rpy:125
+    # preferences.rpy:126
     old "Text editor: [text]"
     new "Текстовый редактор: [text]"
 
-    # preferences.rpy:141
-    old "Update Channel:"
-    new "Канал обновлений:"
-
-    # preferences.rpy:161
+    # preferences.rpy:145
     old "Navigation Options:"
     new "Опции навигации:"
 
-    # preferences.rpy:165
+    # preferences.rpy:149
     old "Include private names"
     new "Включать приватные имена"
 
-    # preferences.rpy:166
+    # preferences.rpy:150
     old "Include library names"
     new "Включать имена библиотек"
 
-    # preferences.rpy:176
+    # preferences.rpy:160
     old "Launcher Options:"
     new "Опции лаунчера:"
 
-    # preferences.rpy:180
+    # preferences.rpy:164
     old "Hardware rendering"
     new "Аппаратный рендеринг"
 
-    # preferences.rpy:181
+    # preferences.rpy:165
     old "Show edit file section"
     new "Показывать секцию редактирования"
 
-    # preferences.rpy:182
+    # preferences.rpy:166
     old "Large fonts"
     new "Большие шрифты"
 
-    # preferences.rpy:185
+    # preferences.rpy:169
     old "Console output"
     new "Вывод на консоль"
 
-    # preferences.rpy:187
+    # preferences.rpy:173
     old "Force new tutorial"
     new "Новое обучение"
 
-    # preferences.rpy:189
+    # preferences.rpy:177
     old "Legacy options"
     new "Включить старые темы"
 
-    # preferences.rpy:192
+    # preferences.rpy:180
     old "Show templates"
     new "Показывать образцы"
 
-    # preferences.rpy:194
+    # preferences.rpy:182
     old "Sponsor message"
     new "Сообщение спонсорам"
 
-    # preferences.rpy:214
+    # preferences.rpy:202
     old "Open launcher project"
     new "Открыть проект лаунчера"
 
-    # preferences.rpy:228
+    # preferences.rpy:216
     old "Language:"
     new "Язык:"
 
@@ -1037,35 +1265,35 @@ translate russian strings:
     old "Have you backed up your projects recently?"
     new "Давно сохраняли свои проекты?"
 
-    # project.rpy:280
+    # project.rpy:281
     old "Launching the project failed."
     new "Запуск проекта провален."
 
-    # project.rpy:280
+    # project.rpy:281
     old "Please ensure that your project launches normally before running this command."
     new "Пожалуйста, убедитесь, что ваш проект нормально запускается перед использованием этой команды."
 
-    # project.rpy:296
+    # project.rpy:297
     old "Ren'Py is scanning the project..."
     new "Ren'Py сканирует проект..."
 
-    # project.rpy:725
+    # project.rpy:729
     old "Launching"
     new "Запускаю"
 
-    # project.rpy:759
+    # project.rpy:763
     old "PROJECTS DIRECTORY"
     new "ДИРЕКТОРИЯ ПРОЕКТОВ"
 
-    # project.rpy:759
+    # project.rpy:763
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Пожалуйста, выберите директорию проектов, используя выборщик директорий.\n{b}Он мог появиться позади этого окна.{/b}"
 
-    # project.rpy:759
+    # project.rpy:763
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Лаунчер будет искать проекты в этой директории, создавать новые проекты в этой директории, и размещать построенные проекты в этой директории."
 
-    # project.rpy:764
+    # project.rpy:768
     old "Ren'Py has set the projects directory to:"
     new "Ren'Py установила директорию проектов на:"
 
@@ -1173,95 +1401,102 @@ translate russian strings:
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
     new "Ren'Py завершила извлечение диалога. Извлечённый диалог можно найти в файле dialogue.[persistent.dialogue_format] в директории проекта."
 
-    # updater.rpy:75
-    old "Select Update Channel"
-    new "Выберите канал обновлений"
-
-    # updater.rpy:86
-    old "The update channel controls the version of Ren'Py the updater will download. Please select an update channel:"
-    new "Канал обновлений выбирает, какую версию Ren'Py скачает программа для обновления. Выберите канал:"
-
-    # updater.rpy:91
-    old "Release"
-    new "Релиз"
-
-    # updater.rpy:97
+    # updater.rpy:63
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
     new "{b}Рекомендуется.{/b} Эта версия Ren'Py должна использоваться для всех новых игр."
 
-    # updater.rpy:102
+    # updater.rpy:65
     old "Prerelease"
     new "Пререлиз"
 
-    # updater.rpy:108
+    # updater.rpy:66
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
     new "Публичный анонс следующей версии Ren'Py, который можно использовать для тестирования, в том числе новых возможностей Ren'Py, но не для финальных релизов игр."
 
-    # updater.rpy:114
+    # updater.rpy:68
     old "Experimental"
     new "Экспериментальный"
 
-    # updater.rpy:120
+    # updater.rpy:69
     old "Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer."
     new "Экспериментальные версии Ren'Py. Не выбирайте этот канал, если вас не просил об этом разработчик Ren'Py."
 
-    # updater.rpy:126
+    # updater.rpy:71
     old "Nightly"
     new "Ночной"
 
-    # updater.rpy:132
+    # updater.rpy:72
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
     new "Развитие Ren'Py на краю горизонта событий. Здесь можно найти новейшие возможности Ren'Py или всё может просто не запуститься."
 
-    # updater.rpy:152
+    # updater.rpy:90
+    old "Select Update Channel"
+    new "Выберите канал обновлений"
+
+    # updater.rpy:101
+    old "The update channel controls the version of Ren'Py the updater will download."
+    new "Канал обновлений отвечает за версию Ren'Py, скачиваемую через обновление."
+
+    # updater.rpy:110
+    old "• This version is installed and up-to-date."
+    new "• На данный момент установлена эта версия."
+
+    # updater.rpy:118
+    old "%B %d, %Y"
+    new "%B %d, %Y"
+
+    # updater.rpy:140
     old "An error has occured:"
     new "Возникла ошибка:"
 
-    # updater.rpy:154
+    # updater.rpy:142
     old "Checking for updates."
     new "Проверка обновлений."
 
-    # updater.rpy:156
+    # updater.rpy:144
     old "Ren'Py is up to date."
     new "Ren'Py обновлена."
 
-    # updater.rpy:158
+    # updater.rpy:146
     old "[u.version] is now available. Do you want to install it?"
     new "[u.version] доступна. Вы хотите её установить?"
 
-    # updater.rpy:160
+    # updater.rpy:148
     old "Preparing to download the update."
     new "Подготовка к обновлению."
 
-    # updater.rpy:162
+    # updater.rpy:150
     old "Downloading the update."
     new "Загрузка обновления."
 
-    # updater.rpy:164
+    # updater.rpy:152
     old "Unpacking the update."
     new "Распаковка обновления."
 
-    # updater.rpy:166
+    # updater.rpy:154
     old "Finishing up."
     new "Завершаю..."
 
-    # updater.rpy:168
+    # updater.rpy:156
     old "The update has been installed. Ren'Py will restart."
     new "Обновление было установлено. Ren'Py будет перезапущена."
 
-    # updater.rpy:170
+    # updater.rpy:158
     old "The update has been installed."
     new "Обновление было установлено."
 
-    # updater.rpy:172
+    # updater.rpy:160
     old "The update was cancelled."
     new "Обновление было отменено."
 
-    # updater.rpy:189
+    # updater.rpy:177
     old "Ren'Py Update"
     new "Обновление Ren'Py"
 
-    # updater.rpy:195
+    # updater.rpy:183
     old "Proceed"
     new "Продолжить"
 
+    # updater.rpy:188
+    old "Fetching the list of update channels"
+    new "Запрашиваю список каналов обновления"
