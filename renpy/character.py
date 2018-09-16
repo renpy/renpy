@@ -540,8 +540,12 @@ def display_say(
                 if not isinstance(what_text, renpy.text.text.Text):  # @UndefinedVariable
                     raise Exception("The say screen (or show_function) must return a Text object.")
 
-                if what_ctc and ctc_position == "nestled":
-                    what_text.set_ctc(what_ctc)
+                if what_ctc:
+
+                    if ctc_position == "nestled":
+                        what_text.set_ctc(what_ctc)
+                    elif ctc_position == "nestled-close":
+                        what_text.set_ctc([ u"\ufeff", what_ctc])
 
                 # Update the properties of the what_text widget.
                 what_text.start = start
@@ -1268,7 +1272,9 @@ def Character(name=NotSet, kind=None, **properties):
     `ctc_position`
         Controls the location of the click-to-continue indicator. If
         ``"nestled"``, the indicator is displayed as part of the text
-        being shown, immediately after the last character. If ``"fixed"``,
+        being shown, immediately after the last character. ``"nestled-close"`` is
+        similar, except a brak is not allowed between the text and the CTC
+        inidicator. If ``"fixed"``,
         the indicator is added to the screen, and its position is
         controlled by the position style properties.
 
