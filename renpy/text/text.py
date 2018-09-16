@@ -391,7 +391,7 @@ class DisplayableSegment(object):
         w = layout.scale_int(self.width)
         h = layout.scale_int(self.height)
 
-        glyph.character = 0
+        glyph.character = 0xfffc
         glyph.ascent = 0
         glyph.line_spacing = h
         glyph.advance = w
