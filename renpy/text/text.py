@@ -1560,7 +1560,10 @@ class Text(renpy.display.core.Displayable):
             text_split.append(mid_string)
 
             if self.ctc is not None:
-                text_split.append(self.ctc)
+                if isinstance(self.ctc, list):
+                    text_split.extend(self.ctc)
+                else:
+                    text_split.append(self.ctc)
 
             if end_string:
                 text_split.append(end_string)
