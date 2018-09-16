@@ -243,7 +243,7 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
             new_type = BC_AL
 
         # Normalize the class by turning various groups into AL.
-        if (new_type >= BC_PITCH and new_type != BC_SP):
+        if (new_type >= BC_PITCH and new_type != BC_SP and new_type != BC_CB):
             new_type = BC_AL
 
         if tailor_type != BC_XX:
@@ -258,6 +258,22 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
         # If we have a combining mark, continue.
         if new_type == BC_CM:
             g.split = SPLIT_NONE
+            continue
+
+        if new_type == BC_CB:
+            if old_type == BC_WJ or old_type == BC_GL:
+                g.split = SPLIT_NONE
+            else:
+                g.split = SPLIT_BEFORE
+
+            continue
+
+        if old_type == BC_CB:
+            if new_type == BC_WJ or new_type == BC_GL:
+                g.split = SPLIT_NONE
+            else:
+                g.split = SPLIT_BEFORE
+
             continue
 
         # Figure out the type of break opportunity we have here.
