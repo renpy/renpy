@@ -153,179 +153,187 @@ translate russian strings:
     old "{#month_short}Dec"
     new "{#month_short}Дек"
 
-    # 00action_file.rpy:237
+    # 00action_file.rpy:240
     old "%b %d, %H:%M"
     new "%d %b, %H:%M"
 
-    # 00action_file.rpy:344
+    # 00action_file.rpy:353
     old "Save slot %s: [text]"
     new "Слот сохранения %s: [text]"
 
-    # 00action_file.rpy:417
+    # 00action_file.rpy:434
     old "Load slot %s: [text]"
     new "Слот загрузки %s: [text]"
 
-    # 00action_file.rpy:459
+    # 00action_file.rpy:487
     old "Delete slot [text]"
     new "Удалить слот [text]"
 
-    # 00action_file.rpy:539
+    # 00action_file.rpy:569
     old "File page auto"
     new "Автосохранения"
 
-    # 00action_file.rpy:541
+    # 00action_file.rpy:571
     old "File page quick"
     new "Быстрые сохранения"
 
-    # 00action_file.rpy:543
+    # 00action_file.rpy:573
     old "File page [text]"
     new "Страница сохранений [text]"
 
-    # 00action_file.rpy:733
+    # 00action_file.rpy:763
     old "Next file page."
     new "Следующая страница сохранений"
 
-    # 00action_file.rpy:797
+    # 00action_file.rpy:827
     old "Previous file page."
     new "Предыдущая страница сохранений"
 
-    # 00action_file.rpy:858
+    # 00action_file.rpy:888
     old "Quick save complete."
     new "Быстрое сохранение завершено."
 
-    # 00action_file.rpy:876
+    # 00action_file.rpy:906
     old "Quick save."
     new "Быстрое сохранение"
 
-    # 00action_file.rpy:895
+    # 00action_file.rpy:925
     old "Quick load."
     new "Быстрая загрузка"
 
-    # 00action_other.rpy:344
+    # 00action_other.rpy:355
     old "Language [text]"
     new "Язык [text]"
 
-    # 00director.rpy:703
+    # 00director.rpy:708
     old "The interactive director is not enabled here."
     new "Интерактивный директор недоступен."
 
-    # 00director.rpy:1490
+    # 00director.rpy:1481
+    old "⬆"
+    new "⬆"
+
+    # 00director.rpy:1487
+    old "⬇"
+    new "⬇"
+
+    # 00director.rpy:1551
     old "Done"
     new "Принять"
 
-    # 00director.rpy:1498
+    # 00director.rpy:1561
     old "(statement)"
     new "(функция)"
 
-    # 00director.rpy:1499
+    # 00director.rpy:1562
     old "(tag)"
     new "(тег)"
 
-    # 00director.rpy:1500
+    # 00director.rpy:1563
     old "(attributes)"
     new "(аттрибут)"
 
-    # 00director.rpy:1501
+    # 00director.rpy:1564
     old "(transform)"
     new "(трансформация)"
 
-    # 00director.rpy:1526
+    # 00director.rpy:1589
     old "(transition)"
     new "(переход)"
 
-    # 00director.rpy:1538
+    # 00director.rpy:1601
     old "(channel)"
     new "(канал)"
 
-    # 00director.rpy:1539
+    # 00director.rpy:1602
     old "(filename)"
     new "(имя файла)"
 
-    # 00director.rpy:1564
+    # 00director.rpy:1631
     old "Change"
     new "Изменить"
 
-    # 00director.rpy:1566
+    # 00director.rpy:1633
     old "Add"
     new "Добавить"
 
-    # 00director.rpy:1569
+    # 00director.rpy:1636
     old "Cancel"
     new "Отмена"
 
-    # 00director.rpy:1572
+    # 00director.rpy:1639
     old "Remove"
     new "Убрать"
 
-    # 00director.rpy:1605
+    # 00director.rpy:1674
     old "Statement:"
     new "Функции:"
 
-    # 00director.rpy:1626
+    # 00director.rpy:1695
     old "Tag:"
     new "Теги:"
 
-    # 00director.rpy:1642
+    # 00director.rpy:1711
     old "Attributes:"
     new "Аттрибут:"
 
-    # 00director.rpy:1660
+    # 00director.rpy:1729
     old "Transforms:"
     new "Трансформации:"
 
-    # 00director.rpy:1679
+    # 00director.rpy:1748
     old "Behind:"
     new "Позади:"
 
-    # 00director.rpy:1698
+    # 00director.rpy:1767
     old "Transition:"
     new "Переходы:"
 
-    # 00director.rpy:1716
+    # 00director.rpy:1785
     old "Channel:"
     new "Каналы:"
 
-    # 00director.rpy:1734
+    # 00director.rpy:1803
     old "Audio Filename:"
     new "Имя файла:"
 
-    # 00gui.rpy:368
+    # 00gui.rpy:370
     old "Are you sure?"
     new "Вы уверены?"
 
-    # 00gui.rpy:369
+    # 00gui.rpy:371
     old "Are you sure you want to delete this save?"
     new "Вы уверены, что хотите удалить это сохранение?"
 
-    # 00gui.rpy:370
+    # 00gui.rpy:372
     old "Are you sure you want to overwrite your save?"
     new "Вы уверены, что хотите перезаписать ваше сохранение?"
 
-    # 00gui.rpy:371
+    # 00gui.rpy:373
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Загрузка игры приведёт к потере несохранённого прогресса.\nВы уверены, что хотите это сделать?"
 
-    # 00gui.rpy:372
+    # 00gui.rpy:374
     old "Are you sure you want to quit?"
     new "Вы уверены, что хотите выйти?"
 
-    # 00gui.rpy:373
+    # 00gui.rpy:375
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Вы уверены, что хотите вернуться в главное меню?\nЭто приведёт к потере несохранённого прогресса."
 
-    # 00gui.rpy:374
+    # 00gui.rpy:376
     old "Are you sure you want to end the replay?"
     new "Вы уверены, что хотите завершить повтор?"
 
-    # 00gui.rpy:375
+    # 00gui.rpy:377
     old "Are you sure you want to begin skipping?"
     new "Вы уверены, что хотите начать пропуск?"
 
-    # 00gui.rpy:376
+    # 00gui.rpy:378
     old "Are you sure you want to skip to the next choice?"
     new "Вы точно хотите пропустить всё до следующего выбора?"
 
-    # 00gui.rpy:377
+    # 00gui.rpy:379
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Вы уверены, что хотите пропустить непрочитанные диалоги до следующего выбора?"
 
@@ -379,11 +387,11 @@ translate russian strings:
 
     # 00library.rpy:157
     old "increase"
-    new "больше" ### но полоса прокрутки тоже здесь!
+    new "больше"
 
     # 00library.rpy:158
     old "decrease"
-    new "меньше" ###
+    new "меньше"
 
     # 00library.rpy:193
     old "Skip Mode"
@@ -431,7 +439,7 @@ translate russian strings:
 
     # 00preferences.rpy:266
     old "skip unseen [text]"
-    new "пропускать весь [text]" ###
+    new "пропускать весь [text]"
 
     # 00preferences.rpy:271
     old "skip unseen text"
@@ -455,11 +463,11 @@ translate russian strings:
 
     # 00preferences.rpy:300
     old "auto-forward"
-    new "авточтение" ###
+    new "авточтение"
 
     # 00preferences.rpy:307
     old "Auto forward"
-    new "Авточтение" ###
+    new "Авточтение"
 
     # 00preferences.rpy:310
     old "auto-forward after click"
@@ -537,111 +545,271 @@ translate russian strings:
     old "mute all"
     new "режим без звука"
 
-    # 00preferences.rpy:498
+    # 00preferences.rpy:500
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "Озвучка буфера обмена включена. Нажмите 'shift+C', чтобы отключить её."
 
-    # 00preferences.rpy:500
+    # 00preferences.rpy:502
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "Синтезатор речи должен сказать \"[renpy.display.tts.last]\". Нажмите 'alt+shift+V', чтобы отключить его."
 
-    # 00preferences.rpy:502
+    # 00preferences.rpy:504
     old "Self-voicing enabled. Press 'v' to disable."
     new "Синтезатор речи включён. Нажмите 'v', чтобы отключить его."
+
+    # _compat\gamemenu.rpym:198
+    old "Empty Slot."
+    new "Пустой слот"
+
+    # _compat\gamemenu.rpym:355
+    old "Previous"
+    new "Назад"
+
+    # _compat\gamemenu.rpym:362
+    old "Next"
+    new "Далее"
+
+    # _compat\preferences.rpym:428
+    old "Joystick Mapping"
+    new "Раскладка джойстика"
+
+    # _developer\developer.rpym:38
+    old "Developer Menu"
+    new "Меню разработчика"
+
+    # _developer\developer.rpym:43
+    old "Interactive Director (D)"
+    new "Интерактивный Директор (D)"
+
+    # _developer\developer.rpym:45
+    old "Reload Game (Shift+R)"
+    new "Перезагрузить игру (Shift+R)"
+
+    # _developer\developer.rpym:47
+    old "Console (Shift+O)"
+    new "Консоль (Shift+O)"
+
+    # _developer\developer.rpym:49
+    old "Variable Viewer"
+    new "Просмотр переменных"
+
+    # _developer\developer.rpym:51
+    old "Image Location Picker"
+    new "Инструмент позиционирования на изображениях"
+
+    # _developer\developer.rpym:53
+    old "Filename List"
+    new "Список файлов"
+
+    # _developer\developer.rpym:57
+    old "Show Image Load Log (F4)"
+    new "Показать лог загрузки изображений (F4)"
+
+    # _developer\developer.rpym:60
+    old "Hide Image Load Log (F4)"
+    new "Скрыть лог загрузки изображений (F4)"
+
+    # _developer\developer.rpym:63
+    old "Image Attributes"
+    new "Аттрибуты изображения"
+
+    # _developer\developer.rpym:90
+    old "[name] [attributes] (hidden)"
+    new "[name] [attributes] (hidden)"
+
+    # _developer\developer.rpym:94
+    old "[name] [attributes]"
+    new "[name] [attributes]"
+
+    # _developer\developer.rpym:137
+    old "Nothing to inspect."
+    new "Переменные не заданы."
+
+    # _developer\developer.rpym:265
+    old "Return to the developer menu"
+    new "Вернуться в меню разработчика"
+
+    # _developer\developer.rpym:425
+    old "Rectangle: %r"
+    new "Прямоугольник: %r"
+
+    # _developer\developer.rpym:430
+    old "Mouse position: %r"
+    new "Позиция мыши: %r"
+
+    # _developer\developer.rpym:435
+    old "Right-click or escape to quit."
+    new "Нажмите правую кнопку мыши или ESC чтобы выйти."
+
+    # _developer\developer.rpym:467
+    old "Rectangle copied to clipboard."
+    new "Координаты прямоугольника скопированы в буфер обмена."
+
+    # _developer\developer.rpym:470
+    old "Position copied to clipboard."
+    new "Координаты позиции скопированы в буфер обмена."
+
+    # _developer\developer.rpym:489
+    old "Type to filter: "
+    new "Текущий фильтр: "
+
+    # _developer\developer.rpym:617
+    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
+    new "Текстур: [tex_count] ([tex_size_mb:.1f] МБ)"
+
+    # _developer\developer.rpym:621
+    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    new "Кеш изображений: [cache_pct:.1f]% ([cache_size_mb:.1f] МБ)"
+
+    # _developer\developer.rpym:631
+    old "✔ "
+    new "✔ "
+
+    # _developer\developer.rpym:634
+    old "✘ "
+    new "✘ "
+
+    # _developer\developer.rpym:639
+    old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    new "\n{color=#cfc}✔ предсказанное изображение (хорошо){/color}\n{color=#fcc}✘ внезапное изображение (плохо){/color}\n{color=#fff}Нажмите, чтобы передвинуть.{/color}"
+
+    # _developer\inspector.rpym:38
+    old "Displayable Inspector"
+    new "Диспетчер объектов"
+
+    # _developer\inspector.rpym:61
+    old "Size"
+    new "Разрешение"
+
+    # _developer\inspector.rpym:65
+    old "Style"
+    new "Стиль"
+
+    # _developer\inspector.rpym:71
+    old "Location"
+    new "Местоположение"
+
+    # _developer\inspector.rpym:122
+    old "Inspecting Styles of [displayable_name!q]"
+    new "Инспектирую стили [displayable_name!q]"
+
+    # _developer\inspector.rpym:139
+    old "displayable:"
+    new "объект:"
+
+    # _developer\inspector.rpym:145
+    old "        (no properties affect the displayable)"
+    new "        (на объект не влияют никакие параметры)"
+
+    # _developer\inspector.rpym:147
+    old "        (default properties omitted)"
+    new "        (настройки по умолчанию опущены)"
+
+    # _developer\inspector.rpym:185
+    old "<repr() failed>"
+    new "<repr() провален>"
+
+    # _layout\classic_load_save.rpym:170
+    old "a"
+    new "а"
+
+    # _layout\classic_load_save.rpym:179
+    old "q"
+    new "б"
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
     new "Связываюсь с App Store\nПожалуйста, ждите..."
 
-    # 00updater.rpy:372
+    # 00updater.rpy:375
     old "The Ren'Py Updater is not supported on mobile devices."
     new "Ren'Py Updater не поддерживается на мобильных устройствах."
 
-    # 00updater.rpy:491
+    # 00updater.rpy:494
     old "An error is being simulated."
     new "Симулируется ошибка."
 
-    # 00updater.rpy:672
+    # 00updater.rpy:678
     old "Either this project does not support updating, or the update status file was deleted."
     new "Или этот проект не поддерживает обновление, или файл статуса обновления был удалён."
 
-    # 00updater.rpy:686
+    # 00updater.rpy:692
     old "This account does not have permission to perform an update."
     new "У этого аккаунта нет прав проводить обновление."
 
-    # 00updater.rpy:689
+    # 00updater.rpy:695
     old "This account does not have permission to write the update log."
     new "У этого аккаунта нет прав писать лог обновления."
 
-    # 00updater.rpy:716
+    # 00updater.rpy:722
     old "Could not verify update signature."
     new "Не могу верифицировать подпись обновления."
 
-    # 00updater.rpy:991
+    # 00updater.rpy:997
     old "The update file was not downloaded."
     new "Файл обновления не был загружен."
 
-    # 00updater.rpy:1009
+    # 00updater.rpy:1015
     old "The update file does not have the correct digest - it may have been corrupted."
     new "Файл обновления не содержит корректного дайджеста — он может быть повреждён."
 
-    # 00updater.rpy:1065
+    # 00updater.rpy:1071
     old "While unpacking {}, unknown type {}."
     new "При распаковке {} обнаружен неизвестный тип {}."
 
-    # 00updater.rpy:1412
+    # 00updater.rpy:1439
     old "Updater"
     new "Обновление"
 
-    # 00updater.rpy:1423
+    # 00updater.rpy:1450
     old "This program is up to date."
     new "Эта программа обновлена."
 
-    # 00updater.rpy:1425
+    # 00updater.rpy:1452
     old "[u.version] is available. Do you want to install it?"
     new "[u.version] доступна. Вы хотите её установить?"
 
-    # 00updater.rpy:1427
+    # 00updater.rpy:1454
     old "Preparing to download the updates."
     new "Подготовка к загрузке обновлений."
 
-    # 00updater.rpy:1429
+    # 00updater.rpy:1456
     old "Downloading the updates."
     new "Загрузка обновлений."
 
-    # 00updater.rpy:1431
+    # 00updater.rpy:1458
     old "Unpacking the updates."
     new "Распаковка обновлений."
 
-    # 00updater.rpy:1435
+    # 00updater.rpy:1462
     old "The updates have been installed. The program will restart."
     new "Обновления установлены. Программа будет перезапущена."
 
-    # 00updater.rpy:1437
+    # 00updater.rpy:1464
     old "The updates have been installed."
     new "Обновления были установлены."
 
-    # 00updater.rpy:1439
+    # 00updater.rpy:1466
     old "The updates were cancelled."
     new "Обновления были отменены."
 
-    # 00gallery.rpy:573
+    # 00gallery.rpy:585
     old "Image [index] of [count] locked."
     new "Изображение [index] из [count] закрыто."
 
-    # 00gallery.rpy:593
+    # 00gallery.rpy:605
     old "prev"
     new "пред"
 
-    # 00gallery.rpy:594
+    # 00gallery.rpy:606
     old "next"
     new "след"
 
-    # 00gallery.rpy:595
+    # 00gallery.rpy:607
     old "slideshow"
     new "слайд-шоу"
 
-    # 00gallery.rpy:596
+    # 00gallery.rpy:608
     old "return"
     new "вернуться"
 

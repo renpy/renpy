@@ -205,7 +205,7 @@ translate russian strings:
     old "## Reserve space for the navigation section."
     new "## Резервирует пространство для навигации."
 
-    # screens.rpy:471
+    # screens.rpy:473
     old "Return"
     new "Вернуться"
 
@@ -297,7 +297,7 @@ translate russian strings:
     old "{#auto_page}A"
     new "{#auto_page}А"
 
-    # screens.rpy:667
+    # screens.rpy:669
     old "{#quick_page}Q"
     new "{#quick_page}Б"
 
