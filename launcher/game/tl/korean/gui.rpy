@@ -39,7 +39,7 @@ translate korean strings:
 
     # gui.rpy:39
     old "## The color used for a text button when it is selected but not focused. A button is selected if it is the current screen or preference value."
-    new "## 텍스트 버튼(text button)에 선택됐지만(selected) 포커스되지 않았을 때(focused) 사용됩니다. 버튼(button)은 현재 화면이거나 설정값인 경우 선택됨(selected)이 됩니다."
+    new "## 텍스트 버튼(text button)에 선택됐지만(selected) 포커스되지(focused) 않았을 때 사용됩니다. 버튼(button)은 현재 화면이거나 설정값인 경우 선택됨(selected)이 됩니다."
 
     # gui.rpy:43
     old "## The color used for a text button when it cannot be selected."
@@ -379,7 +379,7 @@ translate korean strings:
 
     # gui.rpy:403
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
-    new "## 이것은 휴대전화와 태블릿에서 쉽게 터지할 수 있도록 퀵 버튼들의 크기를 크게 합니다."
+    new "## 이것은 휴대전화와 태블릿에서 쉽게 터지할 수 있도록 빠른(Quick) 버튼들의 크기를 크게 합니다."
 
     # gui.rpy:409
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
