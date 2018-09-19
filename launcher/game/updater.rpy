@@ -117,7 +117,7 @@ screen update_channel(channels):
 
                         $ date = _strftime(__("%B %d, %Y"), time.localtime(c["timestamp"]))
 
-                        text "[date] • [c[pretty_version]] [current]" style "l_small_text"
+                        text "[date] • [c[pretty_version]] [current!t]" style "l_small_text"
 
                         add HALF_SPACER
 
