@@ -207,10 +207,13 @@ def report_exception(e, editor=True):
     print(safe_utf8(e), file=full)
 
     # Write to stdout/stderr.
-    sys.stdout.write("\n")
-    sys.stdout.write(full.getvalue())
-    sys.stdout.write("\n")
-    sys.stdout.write(simple.getvalue())
+    try:
+        sys.stdout.write("\n")
+        sys.stdout.write(full.getvalue())
+        sys.stdout.write("\n")
+        sys.stdout.write(simple.getvalue())
+    except:
+        pass
 
     print(file=full)
     try:

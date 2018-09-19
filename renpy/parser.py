@@ -2769,10 +2769,14 @@ def report_parse_errors():
         except:
             pass
 
-        print()
         print(file=f)
-        print(i)
         print(i, file=f)
+
+        try:
+            print()
+            print(i)
+        except:
+            pass
 
     print(file=f)
     print("Ren'Py Version:", renpy.version, file=f)
