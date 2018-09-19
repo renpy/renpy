@@ -1273,8 +1273,8 @@ def Character(name=NotSet, kind=None, **properties):
         Controls the location of the click-to-continue indicator. If
         ``"nestled"``, the indicator is displayed as part of the text
         being shown, immediately after the last character. ``"nestled-close"`` is
-        similar, except a brak is not allowed between the text and the CTC
-        inidicator. If ``"fixed"``,
+        similar, except a break is not allowed between the text and the CTC
+        indicator. If ``"fixed"``,
         the indicator is added to the screen, and its position is
         controlled by the position style properties.
 
