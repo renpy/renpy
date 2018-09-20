@@ -47,10 +47,11 @@ def default_drag_group():
 
     return rv
 
-
 def default_drag_joined(drag):
     return [ (drag, 0, 0) ]
 
+def default_drop_allowable(drop, drags):
+    return True
 
 class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     """
@@ -198,6 +199,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                  drag_raise=True,
                  dragged=None,
                  dropped=None,
+                 drop_allowable=default_drop_allowable,
                  drag_handle=(0.0, 0.0, 1.0, 1.0),
                  drag_joined=default_drag_joined,
                  clicked=None,
@@ -219,6 +221,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.drag_raise = drag_raise
         self.dragged = dragged
         self.dropped = dropped
+        self.drop_allowable = drop_allowable
         self.drag_handle = drag_handle
         self.drag_joined = drag_joined
         self.clicked = clicked
@@ -876,7 +879,11 @@ class DragGroup(renpy.display.layout.MultiBox):
 
                 overlap = rect_overlap_area(r1, r2)
 
-                if overlap >= max_overlap and overlap >= self.min_overlap:
+                if (
+                    overlap >= max_overlap and
+                    overlap >= self.min_overlap and
+                    c.drop_allowable(c, joined)
+                ):
                     rv = c
                     max_overlap = overlap
 
@@ -901,7 +908,11 @@ class DragGroup(renpy.display.layout.MultiBox):
             if c.x is None:
                 continue
 
-            if (x >= c.x and y >= c.y and x < (c.x + c.w) and y < (c.y + c.h)):
+            if (
+                x >= c.x and y >= c.y and
+                x < (c.x + c.w) and y < (c.y + c.h) and
+                c.drop_allowable(c, joined)
+            ):
                 return c
 
     def get_children(self):
