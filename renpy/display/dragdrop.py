@@ -898,8 +898,7 @@ class DragGroup(renpy.display.layout.MultiBox):
             if c.x is None:
                 continue
 
-            if (x >= c.x and y >= c.y and
-                    x < (c.x+c.w) and y < (c.y+c.h)):
+            if (x >= c.x and y >= c.y and x < (c.x + c.w) and y < (c.y + c.h)):
                 return c
 
     def get_children(self):
