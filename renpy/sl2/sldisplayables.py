@@ -471,6 +471,7 @@ Keyword("alternate")
 Style("child")
 
 DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many, replaces=True)
+Keyword("min_overlap")
 
 DisplayableParser("mousearea", renpy.display.behavior.MouseArea, 0, replaces=True)
 Keyword("hovered")

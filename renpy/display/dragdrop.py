@@ -753,6 +753,9 @@ class DragGroup(renpy.display.layout.MultiBox):
 
         replaces = properties.pop("replaces", None)
 
+        min_overlap = properties.pop("min_overlap", 0)
+        self.min_overlap = min_overlap
+
         super(DragGroup, self).__init__(**properties)
 
         if replaces is not None:
@@ -873,7 +876,7 @@ class DragGroup(renpy.display.layout.MultiBox):
 
                 overlap = rect_overlap_area(r1, r2)
 
-                if overlap >= max_overlap:
+                if overlap >= max_overlap and overlap >= self.min_overlap:
                     rv = c
                     max_overlap = overlap
 

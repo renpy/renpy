@@ -893,6 +893,7 @@ add(ui_properties)
 add(position_properties)
 
 FunctionStatementParser("draggroup", "ui.draggroup", many)
+Keyword("min_overlap")
 add(ui_properties)
 add(position_properties)
 
