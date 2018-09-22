@@ -80,6 +80,8 @@ cdef bint is_zerowidth(unsigned int char):
     if char == 0xfeff: # Zero width non-breaking space.
         return True
 
+    return False
+
 cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count):
     """
     Seeks to offset, and then reads count bytes from the stream into buffer.
