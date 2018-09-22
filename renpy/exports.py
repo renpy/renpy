@@ -1068,7 +1068,8 @@ def display_menu(items,
                       choice_chosen_button_style=choice_chosen_button_style,
                       **kwargs)
 
-    renpy.exports.shown_window()
+    if renpy.config.menu_showed_window:
+        renpy.exports.shown_window()
 
     # Log the chosen choice.
     for label, val in items:

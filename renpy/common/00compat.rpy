@@ -175,6 +175,9 @@ init -1900 python:
             config.reject_relative = False
             config.say_attributes_use_side_image = False
 
+        if version >= (7, 1, 0):
+            config.menu_showed_window = True
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None
