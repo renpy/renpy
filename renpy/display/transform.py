@@ -40,6 +40,7 @@ def get_null():
 
     if null is None:
         null = renpy.display.layout.Null()
+        renpy.display.motion.null = null
 
     return null
 
