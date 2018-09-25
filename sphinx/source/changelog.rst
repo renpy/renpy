@@ -4,6 +4,63 @@ Full Changelog
 
 .. _renpy-7.1.1:
 
+
+History Fix
+-----------
+
+This release fixes an issue with Ren'Py's history screen. The problem occurred
+when a line of dialogue contained a quoted square bracket, so something like::
+
+    "I [[think] I'm having a problem."
+
+When this occurs, the string "I [think] I'm having a problem." is added to
+the history. Ren'Py would then display that in history, substitute the
+``think`` variable, and crash.
+
+This is fixed by adding ``substitute False`` to the history screen. This
+is done to new projects, but for existing ones you'll need to make the fix
+yourself. Here's the new history screen::
+
+    screen history():
+
+        tag menu
+
+        ## Avoid predicting this screen, as it can be very large.
+        predict False
+
+        use game_menu(_("History"), scroll=("vpgrid" if gui.history_height else "viewport"), yinitial=1.0):
+
+            style_prefix "history"
+
+            for h in _history_list:
+
+                window:
+
+                    ## This lays things out properly if history_height is None.
+                    has fixed:
+                        yfit True
+
+                    if h.who:
+
+                        label h.who:
+                            style "history_name"
+                            substitute False
+
+                            ## Take the color of the who text from the Character, if set.
+                            if "color" in h.who_args:
+                                text_color h.who_args["color"]
+
+                    $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
+                    text what substitute False
+
+            if not _history_list:
+                label _("The dialogue history is empty.")
+
+
+The new lines are the ones with ``substitute False`` on them. You'll want to make
+this change to your history screen to prevent his problem from happening.
+
+
 Fixes
 -----
 
