@@ -61,6 +61,15 @@ The new lines are the ones with ``substitute False`` on them. You'll want to mak
 this change to your history screen to prevent his problem from happening.
 
 
+Android Improvements
+--------------------
+
+Ren'Py now sets the amount of memory used to build an Android app to 1.5 GB.
+To make sure you're capable of building larger games, please make sure your
+computer has a 64-bit version of Java 8.
+
+Ren'Py explicity tells Android to pass the enter key to an input.
+
 Fixes
 -----
 
