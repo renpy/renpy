@@ -407,14 +407,7 @@ class DisplayableSegment(object):
 
         if di.displayable_blits is not None:
 
-            xo, yo = renpy.display.core.place(
-                glyph.width,
-                glyph.ascent,
-                glyph.width,
-                glyph.line_spacing,
-                self.d.get_placement())
-
-            di.displayable_blits.append((self.d, glyph.x + xo, glyph.y + yo, glyph.time))
+            di.displayable_blits.append((self.d, glyph.x, glyph.y, glyph.width, glyph.ascent, glyph.line_spacing, glyph.time))
 
     def assign_times(self, gt, glyphs):
         if self.cps != 0:
@@ -1955,12 +1948,19 @@ class Text(renpy.display.core.Displayable):
             drend.forward = layout.reverse
             drend.reverse = layout.forward
 
-            for d, xo, yo, t in layout.displayable_blits:
+            for d, x, y, width, ascent, line_spacing, t in layout.displayable_blits:
 
                 if self.slow and t > st:
                     continue
 
-                drend.absolute_blit(renders[d], (xo + layout.xoffset, yo + layout.yoffset))
+                xo, yo = renpy.display.core.place(
+                    width,
+                    ascent,
+                    width,
+                    line_spacing,
+                    d.get_placement())
+
+                drend.absolute_blit(renders[d], (x + xo + layout.xoffset, y + yo + layout.yoffset))
 
             rv.blit(drend, (0, 0))
 
