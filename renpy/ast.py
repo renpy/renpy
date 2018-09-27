@@ -1486,14 +1486,21 @@ class Menu(Node):
         'items',
         'set',
         'with_',
+        'has_caption',
         ]
 
-    def __init__(self, loc, items, set, with_):  # @ReservedAssignment
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
+        self.has_caption = False
+        return self
+
+    def __init__(self, loc, items, set, with_, has_caption):  # @ReservedAssignment
         super(Menu, self).__init__(loc)
 
         self.items = items
         self.set = set
         self.with_ = with_
+        self.has_caption = has_caption
 
     def diff_info(self):
         return (Menu,)
@@ -1525,7 +1532,11 @@ class Menu(Node):
     def execute(self):
 
         next_node(self.next)
-        statement_name("menu")
+
+        if self.has_caption:
+            statement_name("menu-with-caption")
+        else:
+            statement_name("menu")
 
         choices = [ ]
         narration = [ ]

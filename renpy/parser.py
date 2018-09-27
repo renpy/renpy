@@ -1574,7 +1574,7 @@ def parse_menu(stmtl, loc):
     if has_say:
         rv.append(ast.Say(loc, say_who, say_what, None, interact=False))
 
-    rv.append(ast.Menu(loc, items, set, with_))
+    rv.append(ast.Menu(loc, items, set, with_, has_say or has_caption))
 
     return rv
 
