@@ -29,10 +29,10 @@ init -1200 python:
     config.window = None
 
     # A list of statements that cause the window to be auto-shown.
-    config.window_auto_show = [ "say" ]
+    config.window_auto_show = [ "say", "menu-with-caption" ]
 
     # A list of statements that cause the window to be auto-hidden.
-    config.window_auto_hide = [ "scene", "call screen" ]
+    config.window_auto_hide = [ "scene", "call screen", "menu" ]
 
     _window_auto = False
 

@@ -61,24 +61,27 @@ The new lines are the ones with ``substitute False`` on them. You'll want to mak
 this change to your history screen to prevent his problem from happening.
 
 
+
 Android Improvements
 --------------------
 
-Ren'Py now sets the amount of memory used to build an Android app to 1.5 GB.
-To make sure you're capable of building larger games, please make sure your
-computer has a 64-bit version of Java 8.
+Ren'Py now sets the amount of memory used by the Android build tool to
+the Google-set default of 1536 megabytes. To change this, edit
+rapt/project/gradle.properties. To make sure you're capable of building
+larger games, please make sure your computer has a 64-bit version of Java 8.
 
-Ren'Py explicity tells Android to pass the enter key to an input.
-
-Fixes
------
+Ren'Py explicitly tells Android to pass the enter key to an input.
 
 Ren'Py now crops and sizes the icon correctly for versions of Android below
 Android 8 (Oreo).
 
-Ren'Py now sets the amount of memory used by the Android build tool to
-the Google-set default of 1536 megabytes. To change this, edit
-rapt/project/gradle.properties.
+
+Fixes
+-----
+
+Automatic management of the dialogue window (as enabled by the ``window auto``
+statement) now considers if an in-game menu has a dialogue or caption associated
+with it, and treats that appropriately.
 
 The source code to the embedded version of fribidi that Ren'Py is expected
 to build with is now included in the -source archive.
