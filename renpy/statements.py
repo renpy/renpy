@@ -63,7 +63,8 @@ def register(
         When this is False, the statement does not expect a block. When True, it
         expects a block, but leaves it up to the lexer to parse that block. If the
         string "script", the block is interpreted as containing one or more
-        Ren'Py script language statements.
+        Ren'Py script language statements. If the string "possible", the
+        block expect condition is determined by the parse function.
 
     `parse`
         This is a function that takes a Lexer object. This function should parse the
@@ -143,16 +144,20 @@ def register(
             rv = renpy.ast.UserStatement(loc, l.text, l.subblock)
             rv.translatable = translatable
 
-            if not block:
+            if block is False:
                 l.expect_noblock(" ".join(name) + " statement")
-                l.advance()
+            elif block is True:
+                l.expect_block(" ".join(name) + " statement")
             elif block == "script":
                 l.expect_block(" ".join(name) + " statement")
                 rv.code_block = renpy.parser.parse_block(l.subblock_lexer())
-                l.advance()
+            elif block == "possible":
+                pass
             else:
-                l.expect_block(" ".join(name) + " statement")
-                l.advance()
+                raise Exception("Unknown \"block\" argument value")
+
+            l.advance()
+
         finally:
             renpy.exports.pop_error_handler()
 
