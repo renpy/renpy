@@ -60,8 +60,6 @@ yourself. Here's the new history screen::
 The new lines are the ones with ``substitute False`` on them. You'll want to make
 this change to your history screen to prevent his problem from happening.
 
-
-
 Android Improvements
 --------------------
 
@@ -75,20 +73,36 @@ Ren'Py explicitly tells Android to pass the enter key to an input.
 Ren'Py now crops and sizes the icon correctly for versions of Android below
 Android 8 (Oreo).
 
+Other Improvements
+------------------
+
+Ren'Py now handles the (lack of) drawing of zero width characters itself, preventing
+such characters from appearing as squares in text if the font does not support
+the zero width character.
+
+Ren'Py supports the use of non-breaking space and zero-width non-breaking spavce
+characters to prevent images in text from being wrapped.
+
+Ren'Py supports the a new "nestled-close" value for the `ctc_position` parameter
+of :func:`Character`. This value prevents there from being a break betweeen the
+click-to-continue indicator and the other lines.
+
+Drags (in drag-and-drop) now support alternate clicks. (Right clicks on desktop
+and long-clicks on touch platforms.)
+
 
 Fixes
 -----
 
 Automatic management of the dialogue window (as enabled by the ``window auto``
 statement) now considers if an in-game menu has a dialogue or caption associated
-with it, and treats that appropriately.
+with it, and handles that appropriately.
 
 The source code to the embedded version of fribidi that Ren'Py is expected
 to build with is now included in the -source archive.
 
 There have been a number of fixes to the voice sustain preference to make
 it work better with history and the voice replay action.
-
 
 .. _renpy-7.1:
 
