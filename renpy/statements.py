@@ -136,6 +136,9 @@ def register(
         warp=warp,
     )
 
+    if block not in [True, False, "script", "possible"]:
+        raise Exception("Unknown \"block\" argument value: {}".format(block))
+
     # The function that is called to create an ast.UserStatement.
     def parse_user_statement(l, loc):
         renpy.exports.push_error_handler(l.error)
@@ -151,10 +154,6 @@ def register(
             elif block == "script":
                 l.expect_block(" ".join(name) + " statement")
                 rv.code_block = renpy.parser.parse_block(l.subblock_lexer())
-            elif block == "possible":
-                pass
-            else:
-                raise Exception("Unknown \"block\" argument value")
 
             l.advance()
 
