@@ -1413,6 +1413,9 @@ class Text(renpy.display.core.Displayable):
 
         self._duplicatable = self.slow
 
+        # The list of displayables and their offsets.
+        self.displayable_offsets = [ ]
+
     def _duplicate(self, args):
         if self._duplicatable:
             rv = self._copy(args)
@@ -1753,8 +1756,8 @@ class Text(renpy.display.core.Displayable):
                 self.call_slow_done(st)
                 self.slow = False
 
-        for d, xo, yo, _ in layout.displayable_blits:
-            rv = d.event(ev, x - xo - layout.xoffset, y - yo - layout.yoffset, st)
+        for d, xo, yo in self.displayable_offsets:
+            rv = d.event(ev, x - xo, y - yo, st)
             if rv is not None:
                 return rv
 
@@ -1944,6 +1947,8 @@ class Text(renpy.display.core.Displayable):
         # Blit displayables.
         if layout.displayable_blits:
 
+            self.displayable_offsets = [ ]
+
             drend = renpy.display.render.Render(w, h)
             drend.forward = layout.reverse
             drend.reverse = layout.forward
@@ -1960,7 +1965,11 @@ class Text(renpy.display.core.Displayable):
                     line_spacing,
                     d.get_placement())
 
-                drend.absolute_blit(renders[d], (x + xo + layout.xoffset, y + yo + layout.yoffset))
+                xo = x + xo + layout.xoffset
+                yo = y + yo + layout.yoffset
+
+                drend.absolute_blit(renders[d], (xo, yo))
+                self.displayable_offsets.append((d, xo, yo))
 
             rv.blit(drend, (0, 0))
 
