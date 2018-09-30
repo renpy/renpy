@@ -273,6 +273,8 @@ class Script(object):
 
         self.initcode = [ (prio, code) for prio, index, code in initcode ]
 
+        self.translator.chain_translates()
+
     def load_module(self, name):
 
         files = [ (fn, dir) for fn, dir in self.module_files if fn == name ]  # @ReservedAssignment
