@@ -232,7 +232,8 @@ non-dialogue interactions.
     before statements listed in :var:`config.window_auto_show` – by default,
     say statements. The window is hidden before statements listed in
     :var:`config.window_auto_hide` – by default, ``scene`` and ``call screen``
-    statements. (Only statements are considered, not statement equivalent
+    statements, and ``menu`` statements without a caption.
+    (Only statements are considered, not statement equivalent
     functions.)
 
 The ``window auto`` statement uses :var:`config.window_show_transition`

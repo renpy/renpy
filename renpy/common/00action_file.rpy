@@ -883,6 +883,7 @@ init -1500 python:
 
         def __call__(self):
             renpy.take_screenshot()
+            renpy.restart_interaction()
 
     @renpy.pure
     def QuickSave(message=_("Quick save complete."), newest=False):

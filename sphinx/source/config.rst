@@ -776,12 +776,12 @@ Occasionally Used
     platform specific, and so this should be set in a platform-specific
     manner. (It may make sense to change this in translations, as well.)
 
-.. var:: config.window_auto_hide = [ 'scene', 'call screen' ]
+.. var:: config.window_auto_hide = [ 'scene', 'call screen', 'menu' ]
 
     A list of statements that cause ``window auto`` to hide the empty
     dialogue window.
 
-.. var:: config.window_auto_show = [ 'say' ]
+.. var:: config.window_auto_show = [ 'say', 'menu-with-caption' ]
 
     A list of statements that cause ``window auto`` to show the empty
     dialogue window.

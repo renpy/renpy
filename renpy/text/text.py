@@ -391,7 +391,7 @@ class DisplayableSegment(object):
         w = layout.scale_int(self.width)
         h = layout.scale_int(self.height)
 
-        glyph.character = 0
+        glyph.character = 0xfffc
         glyph.ascent = 0
         glyph.line_spacing = h
         glyph.advance = w
@@ -407,14 +407,7 @@ class DisplayableSegment(object):
 
         if di.displayable_blits is not None:
 
-            xo, yo = renpy.display.core.place(
-                glyph.width,
-                glyph.ascent,
-                glyph.width,
-                glyph.line_spacing,
-                self.d.get_placement())
-
-            di.displayable_blits.append((self.d, glyph.x + xo, glyph.y + yo, glyph.time))
+            di.displayable_blits.append((self.d, glyph.x, glyph.y, glyph.width, glyph.ascent, glyph.line_spacing, glyph.time))
 
     def assign_times(self, gt, glyphs):
         if self.cps != 0:
@@ -1420,6 +1413,9 @@ class Text(renpy.display.core.Displayable):
 
         self._duplicatable = self.slow
 
+        # The list of displayables and their offsets.
+        self.displayable_offsets = [ ]
+
     def _duplicate(self, args):
         if self._duplicatable:
             rv = self._copy(args)
@@ -1560,7 +1556,10 @@ class Text(renpy.display.core.Displayable):
             text_split.append(mid_string)
 
             if self.ctc is not None:
-                text_split.append(self.ctc)
+                if isinstance(self.ctc, list):
+                    text_split.extend(self.ctc)
+                else:
+                    text_split.append(self.ctc)
 
             if end_string:
                 text_split.append(end_string)
@@ -1757,8 +1756,8 @@ class Text(renpy.display.core.Displayable):
                 self.call_slow_done(st)
                 self.slow = False
 
-        for d, xo, yo, _ in layout.displayable_blits:
-            rv = d.event(ev, x - xo - layout.xoffset, y - yo - layout.yoffset, st)
+        for d, xo, yo in self.displayable_offsets:
+            rv = d.event(ev, x - xo, y - yo, st)
             if rv is not None:
                 return rv
 
@@ -1948,16 +1947,29 @@ class Text(renpy.display.core.Displayable):
         # Blit displayables.
         if layout.displayable_blits:
 
+            self.displayable_offsets = [ ]
+
             drend = renpy.display.render.Render(w, h)
             drend.forward = layout.reverse
             drend.reverse = layout.forward
 
-            for d, xo, yo, t in layout.displayable_blits:
+            for d, x, y, width, ascent, line_spacing, t in layout.displayable_blits:
 
                 if self.slow and t > st:
                     continue
 
-                drend.absolute_blit(renders[d], (xo + layout.xoffset, yo + layout.yoffset))
+                xo, yo = renpy.display.core.place(
+                    width,
+                    ascent,
+                    width,
+                    line_spacing,
+                    d.get_placement())
+
+                xo = x + xo + layout.xoffset
+                yo = y + yo + layout.yoffset
+
+                drend.absolute_blit(renders[d], (xo, yo))
+                self.displayable_offsets.append((d, xo, yo))
 
             rv.blit(drend, (0, 0))
 

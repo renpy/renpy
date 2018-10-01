@@ -64,6 +64,24 @@ def init():
     if error:
         raise FreetypeError(error)
 
+cdef bint is_zerowidth(unsigned int char):
+    if char == 0x200b: # Zero-width space.
+        return True
+
+    if char == 0x200c: # Zero-width non-joiner.
+        return True
+
+    if char == 0x200d: # Zero-width joiner.
+        return True
+
+    if char == 0x2060: # Word joiner.
+        return True
+
+    if char == 0xfeff: # Zero width non-breaking space.
+        return True
+
+    return False
+
 cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count):
     """
     Seeks to offset, and then reads count bytes from the stream into buffer.
@@ -491,12 +509,7 @@ cdef class FTFont:
 
             gl.character = c
             gl.ascent = self.ascent
-
-            if c == 0x200B:
-                gl.width = 0
-            else:
-                gl.width = cache.width
-
+            gl.width = cache.width
             gl.line_spacing = self.lineskip
 
             if i < len_s - 1:
@@ -518,6 +531,10 @@ cdef class FTFont:
 
             else:
                 gl.advance = cache.advance
+
+            if is_zerowidth(gl.character):
+                gl.width = 0
+                gl.advance = 0
 
             rv.append(gl)
 
@@ -623,7 +640,7 @@ cdef class FTFont:
             if glyph.split == SPLIT_INSTEAD:
                 continue
 
-            if glyph.character == 0x200b:
+            if glyph.width == 0:
                 continue
 
             x = <int> (glyph.x + xo)

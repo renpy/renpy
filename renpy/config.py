@@ -903,6 +903,9 @@ side_image_prefix_tag = 'side'
 # Do the say attributes of a hidden side image use the side image tag?
 say_attributes_use_side_image = True
 
+# Does the menu statement show a window by itself, when there is no caption?
+menu_showed_window = False
+
 del os
 del collections
 

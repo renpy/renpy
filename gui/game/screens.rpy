@@ -904,13 +904,15 @@ screen history():
 
                     label h.who:
                         style "history_name"
+                        substitute False
 
                         ## Take the color of the who text from the Character, if set.
                         if "color" in h.who_args:
                             text_color h.who_args["color"]
 
                 $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
-                text what
+                text what:
+                    substitute False
 
         if not _history_list:
             label _("The dialogue history is empty.")

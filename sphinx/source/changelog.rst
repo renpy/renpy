@@ -4,22 +4,105 @@ Full Changelog
 
 .. _renpy-7.1.1:
 
-Fixes
------
+
+History Fix
+-----------
+
+This release fixes an issue with Ren'Py's history screen. The problem occurred
+when a line of dialogue contained a quoted square bracket, so something like::
+
+    "I [[think] I'm having a problem."
+
+When this occurs, the string "I [think] I'm having a problem." is added to
+the history. Ren'Py would then display that in history, substitute the
+``think`` variable, and crash.
+
+This is fixed by adding ``substitute False`` to the history screen. This
+is done to new projects, but for existing ones you'll need to make the fix
+yourself. Here's the new history screen::
+
+    screen history():
+
+        tag menu
+
+        ## Avoid predicting this screen, as it can be very large.
+        predict False
+
+        use game_menu(_("History"), scroll=("vpgrid" if gui.history_height else "viewport"), yinitial=1.0):
+
+            style_prefix "history"
+
+            for h in _history_list:
+
+                window:
+
+                    ## This lays things out properly if history_height is None.
+                    has fixed:
+                        yfit True
+
+                    if h.who:
+
+                        label h.who:
+                            style "history_name"
+                            substitute False
+
+                            ## Take the color of the who text from the Character, if set.
+                            if "color" in h.who_args:
+                                text_color h.who_args["color"]
+
+                    $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
+                    text what substitute False
+
+            if not _history_list:
+                label _("The dialogue history is empty.")
+
+
+The new lines are the ones with ``substitute False`` on them. You'll want to make
+this change to your history screen to prevent his problem from happening.
+
+Android Improvements
+--------------------
+
+Ren'Py now sets the amount of memory used by the Android build tool to
+the Google-set default of 1536 megabytes. To change this, edit
+rapt/project/gradle.properties. To make sure you're capable of building
+larger games, please make sure your computer has a 64-bit version of Java 8.
+
+Ren'Py explicitly tells Android to pass the enter key to an input.
 
 Ren'Py now crops and sizes the icon correctly for versions of Android below
 Android 8 (Oreo).
 
-Ren'Py now sets the amount of memory used by the Android build tool to
-the Google-set default of 1536 megabytes. To change this, edit
-rapt/project/gradle.properties.
+Other Improvements
+------------------
+
+Ren'Py now handles the (lack of) drawing of zero width characters itself, preventing
+such characters from appearing as squares in text if the font does not support
+the zero width character.
+
+Ren'Py supports the use of non-breaking space and zero-width non-breaking spavce
+characters to prevent images in text from being wrapped.
+
+Ren'Py supports the a new "nestled-close" value for the `ctc_position` parameter
+of :func:`Character`. This value prevents there from being a break betweeen the
+click-to-continue indicator and the other lines.
+
+Drags (in drag-and-drop) now support alternate clicks. (Right clicks on desktop
+and long-clicks on touch platforms.)
+
+
+Fixes
+-----
+
+Automatic management of the dialogue window (as enabled by the ``window auto``
+statement) now considers if an in-game menu has a dialogue or caption associated
+with it, and handles that appropriately.
 
 The source code to the embedded version of fribidi that Ren'Py is expected
 to build with is now included in the -source archive.
 
 There have been a number of fixes to the voice sustain preference to make
 it work better with history and the voice replay action.
-
 
 .. _renpy-7.1:
 
