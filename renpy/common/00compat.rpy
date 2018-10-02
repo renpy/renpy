@@ -175,7 +175,7 @@ init -1900 python:
             config.reject_relative = False
             config.say_attributes_use_side_image = False
 
-        if version >= (7, 1, 0):
+        if version <= (7, 1, 0):
             config.menu_showed_window = True
             config.window_auto_show = [ "say" ]
             config.window_auto_hide = [ "scene", "call screen" ]
