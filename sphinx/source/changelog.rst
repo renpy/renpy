@@ -3,7 +3,7 @@ Full Changelog
 ==============
 
 .. _renpy-7.1.1:
-
+.. _history-7.1.1:
 
 History Fix
 -----------
