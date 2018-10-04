@@ -80,11 +80,11 @@ Ren'Py now handles the (lack of) drawing of zero width characters itself, preven
 such characters from appearing as squares in text if the font does not support
 the zero width character.
 
-Ren'Py supports the use of non-breaking space and zero-width non-breaking spavce
+Ren'Py supports the use of non-breaking space and zero-width non-breaking space
 characters to prevent images in text from being wrapped.
 
 Ren'Py supports the a new "nestled-close" value for the `ctc_position` parameter
-of :func:`Character`. This value prevents there from being a break betweeen the
+of :func:`Character`. This value prevents there from being a break between the
 click-to-continue indicator and the other lines.
 
 Drags (in drag-and-drop) now support alternate clicks. (Right clicks on desktop
