@@ -73,6 +73,11 @@ Ren'Py explicitly tells Android to pass the enter key to an input.
 Ren'Py now crops and sizes the icon correctly for versions of Android below
 Android 8 (Oreo).
 
+Ren'Py gives a different numeric version number to the x86_64 apk. This will
+allow both x86_64 and armeabi-v7a builds to be uploaded to Google Play and
+other stores, rather than having to first created one build and then the other,
+manually changing the version numbers between.
+
 Other Improvements
 ------------------
 
