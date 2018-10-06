@@ -104,6 +104,9 @@ def main():
     if args.variant:
         destination += "-" + args.variant
 
+    if os.path.exists(os.path.join(destination, "checksums.txt")):
+        raise Exception("The checksums.txt file exists.")
+
     print("Version {} ({})".format(args.version, full_version))
 
     # Perhaps autobuild.
