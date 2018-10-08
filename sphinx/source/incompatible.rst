@@ -13,7 +13,30 @@ Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
 
+.. _incompatible-7.1.1:
+
+7.1.1
+-----
+
+Ren'Py's window auto function will now determine if dialogue or a caption
+is associated with a menu statement, and will attempt to hide or show the
+dialogue window as appropriate. A "Force Recompile" is necessary to include
+the information that enables this feature. While it should work with older
+games, this can be disabled and the old behavior restored with::
+
+    define config.menu_showed_window = True
+    define config.window_auto_show = [ "say" ]
+    define config.window_auto_hide = [ "scene", "call screen" ]
+
+While not technically an incompatible change, there is a recommend change
+to the history screen. Please see :ref:`the changelog entry <history-7.1.1>`
+for details of how to update your game.
+
+
 .. _incompatible-7.1:
+
+7.1
+---
 
 When an image is not being show, say-with-attributes now resolves a side
 image, rather than just using the attributes given. To disable this, add::

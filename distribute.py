@@ -47,12 +47,13 @@ def main():
         raise Exception("Not running with python optimization.")
 
     ap = argparse.ArgumentParser()
-    ap.add_argument("version")
+    ap.add_argument("version", nargs="?")
     ap.add_argument("--fast", action="store_true")
     ap.add_argument("--pygame", action="store", default=None)
     ap.add_argument("--no-rapt", action="store_true")
     ap.add_argument("--variant", action="store")
-    ap.add_argument("--sign", action="store_true")
+    ap.add_argument("--sign", action="store_true", default=True)
+    ap.add_argument("--nosign", action="store_false", dest="sign")
 
     args = ap.parse_args()
 
@@ -65,6 +66,9 @@ def main():
     # Determine the version. We grab the current revision, and if any
     # file has changed, bump it by 1.
     import renpy
+
+    if args.version is None:
+        args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])  # @UndefinedVariable
 
     match_version = ".".join(str(i) for i in renpy.version_tuple[:2])  # @UndefinedVariable
 
@@ -102,6 +106,9 @@ def main():
 
     if args.variant:
         destination += "-" + args.variant
+
+    if os.path.exists(os.path.join(destination, "checksums.txt")):
+        raise Exception("The checksums.txt file exists.")
 
     print("Version {} ({})".format(args.version, full_version))
 

@@ -3,7 +3,7 @@ Full Changelog
 ==============
 
 .. _renpy-7.1.1:
-
+.. _history-7.1.1:
 
 History Fix
 -----------
@@ -73,6 +73,11 @@ Ren'Py explicitly tells Android to pass the enter key to an input.
 Ren'Py now crops and sizes the icon correctly for versions of Android below
 Android 8 (Oreo).
 
+Ren'Py gives a different numeric version number to the x86_64 apk. This will
+allow both x86_64 and armeabi-v7a builds to be uploaded to Google Play and
+other stores, rather than having to first created one build and then the other,
+manually changing the version numbers between.
+
 Other Improvements
 ------------------
 
@@ -80,11 +85,11 @@ Ren'Py now handles the (lack of) drawing of zero width characters itself, preven
 such characters from appearing as squares in text if the font does not support
 the zero width character.
 
-Ren'Py supports the use of non-breaking space and zero-width non-breaking spavce
+Ren'Py supports the use of non-breaking space and zero-width non-breaking space
 characters to prevent images in text from being wrapped.
 
 Ren'Py supports the a new "nestled-close" value for the `ctc_position` parameter
-of :func:`Character`. This value prevents there from being a break betweeen the
+of :func:`Character`. This value prevents there from being a break between the
 click-to-continue indicator and the other lines.
 
 Drags (in drag-and-drop) now support alternate clicks. (Right clicks on desktop
