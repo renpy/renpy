@@ -99,6 +99,11 @@ and long-clicks on touch platforms.)
 Fixes
 -----
 
+The :func:`SetVariable` and :func:`ToggleVariable` functions have been extended
+to accept namespaces and fields. So it's now possible to have actions like
+``SetVariable("hero.strength", hero.strength + 1)`` or
+``ToggleVariable("persistent.alternate_perspective")``.
+
 Automatic management of the dialogue window (as enabled by the ``window auto``
 statement) now considers if an in-game menu has a dialogue or caption associated
 with it, and handles that appropriately.
