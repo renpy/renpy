@@ -24,10 +24,36 @@ init -1600 python:
    ##########################################################################
     # Functions that set variables or fields.
 
+    __FieldNotFound = object()
+
+    def __get_field(obj, name, kind):
+
+        if not name:
+            return obj
+
+        rv = obj
+
+        for i in name.split("."):
+            rv = getattr(rv, i, __FieldNotFound)
+            if rv is __FieldNotFound:
+                raise NameError("The {} {} does not exist.".format(kind, name))
+
+        return rv
+
+    def __set_field(obj, name, value, kind):
+        fields, _, attr = name.rpartition(".")
+
+        try:
+            obj = __get_field(obj, fields, kind)
+            setattr(obj, attr, value)
+        except:
+            raise NameError("The {} {} does not exist.".format(kind, name))
+
     @renpy.pure
     class SetField(Action, FieldEquality):
         """
          :doc: data_action
+         :args: (object, field, value)
 
          Causes the a field on an object to be set to a given value.
          `object` is the object, `field` is a string giving the name of the
@@ -37,27 +63,34 @@ init -1600 python:
         identity_fields = [ "object" ]
         equality_fields = [ "field", "value" ]
 
-        def __init__(self, object, field, value):
+        kind = "field"
+
+        def __init__(self, object, field, value, kind="field"):
             self.object = object
             self.field = field
             self.value = value
+            self.kind = kind
 
         def __call__(self):
-            setattr(self.object, self.field, self.value)
+            __set_field(self.object, self.field, self.value, self.kind)
             renpy.restart_interaction()
 
         def get_selected(self):
-            return getattr(self.object, self.field) == self.value
+            return __get_field(self.object, self.field, self.kind) == self.value
 
     @renpy.pure
     def SetVariable(name, value):
         """
-         :doc: data_action
+        :doc: data_action
 
-         Causes the variable with `name` to be set to `value`.
-         """
+        Causes the variable with `name` to be set to `value`.
 
-        return SetField(store, name, value)
+        The `name` argument must be a string, and can be a simple name like "strength", or
+        one with dots separating the variable from fields, like "hero.strength"
+        or "persistent.show_cutscenes".
+        """
+
+        return SetField(store, name, value, kind="variable")
 
     @renpy.pure
     class SetDict(Action, FieldEquality):
@@ -129,6 +162,7 @@ init -1600 python:
     class ToggleField(Action, FieldEquality):
         """
          :doc: data_action
+         :args: (object, field, true_value=None, false_value=None)
 
          Toggles `field` on `object`. Toggling means to invert the boolean
          value of that field when the action is performed.
@@ -142,14 +176,17 @@ init -1600 python:
         identity_fields = [ "object"]
         equality_fields = [ "field", "true_value", "false_value"  ]
 
-        def __init__(self, object, field, true_value=None, false_value=None):
+        kind = "field"
+
+        def __init__(self, object, field, true_value=None, false_value=None, kind="field"):
             self.object = object
             self.field = field
             self.true_value = true_value
             self.false_value = false_value
+            self.kind = kind
 
         def __call__(self):
-            value = getattr(self.object, self.field)
+            value = __get_field(self.object, self.field, self.kind)
 
             if self.true_value is not None:
                 value = (value == self.true_value)
@@ -162,11 +199,11 @@ init -1600 python:
                 else:
                     value = self.false_value
 
-            setattr(self.object, self.field, value)
+            __set_field(self.object, self.field, value, self.kind)
             renpy.restart_interaction()
 
         def get_selected(self):
-            rv = getattr(self.object, self.field)
+            rv = __get_field(self.object, self.field, self.kind)
 
             if self.true_value is not None:
                 rv = (rv == self.true_value)
@@ -177,17 +214,22 @@ init -1600 python:
     @renpy.pure
     def ToggleVariable(variable, true_value=None, false_value=None):
         """
-         :doc: data_action
+        :doc: data_action
 
-         Toggles `variable`.
+        Toggles `variable`.
 
-         `true_value`
-             If not None, then this is the true value we use.
-         `false_value`
-             If not None, then this is the false value we use.
-         """
+        The `variable` argument must be a string, and can be a simple name like "strength", or
+        one with dots separating the variable from fields, like "hero.strength"
+        or "persistent.show_cutscenes".
 
-        return ToggleField(store, variable, true_value=true_value, false_value=false_value)
+
+        `true_value`
+            If not None, then this is the true value we use.
+        `false_value`
+            If not None, then this is the false value we use.
+        """
+
+        return ToggleField(store, variable, true_value=true_value, false_value=false_value, kind="variable")
 
 
     @renpy.pure
