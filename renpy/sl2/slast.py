@@ -383,6 +383,10 @@ class SLBlock(SLNode):
         if self.atl_transform is not None:
             self.has_keyword = True
 
+            self.atl_transform.mark_constant()
+            const = self.atl_transform.constant
+            self.constant = min(self.constant, const)
+
         for i in self.children:
             if i.has_keyword:
                 self.keyword_children.append(i)
