@@ -39,7 +39,7 @@ import renpy.display
 import renpy.pyanalysis
 import renpy.sl2
 
-from renpy.display.motion import Transform
+from renpy.display.transform import Transform, ATLTransform
 from renpy.display.layout import Fixed
 from renpy.display.predict import displayable as predict_displayable
 
@@ -425,7 +425,8 @@ class SLBlock(SLNode):
             i.keywords(context)
 
         if self.atl_transform is not None:
-            context.keywords["at"] = self.atl_transform
+            transform = ATLTransform(self.atl_transform, context=context.scope)
+            context.keywords["at"] = transform
 
         style_prefix = context.keywords.pop("style_prefix", NotGiven)
 
@@ -762,10 +763,6 @@ class SLDisplayable(SLBlock):
             # Get the widget id and transform, if any.
             widget_id = keywords.pop("id", None)
             transform = keywords.pop("at", None)
-
-            # If transform from parse is RawBlock - eval it and add scope
-            if isinstance(transform, renpy.atl.RawBlock):
-                transform = renpy.display.motion.ATLTransform(transform, context=ctx.scope)
 
             arguments = keywords.pop("arguments", None)
             properties = keywords.pop("properties", None)
