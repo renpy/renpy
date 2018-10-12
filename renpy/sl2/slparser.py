@@ -220,6 +220,7 @@ class Parser(object):
         """
 
         seen_keywords = set()
+        block = False
 
         # Parses a keyword argument from the lexer.
         def parse_keyword(l, expect):
@@ -243,6 +244,15 @@ class Parser(object):
                 l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
 
             seen_keywords.add(name)
+
+            if name == "at":
+                if block and l.keyword("transform"):
+                    l.require(":")
+                    l.expect_eol()
+                    l.expect_block("ATL block")
+                    expr = renpy.atl.parse_atl(l.subblock_lexer())
+                    target.keyword.append((name, expr))
+                    return
 
             expr = l.comma_expression()
 

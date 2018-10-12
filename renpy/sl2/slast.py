@@ -349,6 +349,13 @@ class SLBlock(SLNode):
         keyword_exprs = [ ]
 
         for k, expr in self.keyword:
+            if k == "at" and isinstance(expr, renpy.atl.RawBlock):
+
+                #expr.mark_constant()
+                # const = expr.constant
+                # self.constant = min(self.constant, const)
+                keyword_values[k] = expr
+                continue
 
             node = ccache.ast_eval(expr)
 
@@ -749,6 +756,10 @@ class SLDisplayable(SLBlock):
             # Get the widget id and transform, if any.
             widget_id = keywords.pop("id", None)
             transform = keywords.pop("at", None)
+
+            # If transform from parse is RawBlock - eval it and add scope
+            if isinstance(transform, renpy.atl.RawBlock):
+                transform = renpy.display.motion.ATLTransform(transform, context=ctx.scope)
 
             arguments = keywords.pop("arguments", None)
             properties = keywords.pop("properties", None)
