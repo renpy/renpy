@@ -312,6 +312,9 @@ class SLBlock(SLNode):
     and child displayables.
     """
 
+    # RawBlock from parse or None if not present.
+    atl_transform = None
+
     def __init__(self, loc):
         SLNode.__init__(self, loc)
 
@@ -349,13 +352,6 @@ class SLBlock(SLNode):
         keyword_exprs = [ ]
 
         for k, expr in self.keyword:
-            if k == "at" and isinstance(expr, renpy.atl.RawBlock):
-
-                #expr.mark_constant()
-                # const = expr.constant
-                # self.constant = min(self.constant, const)
-                keyword_values[k] = expr
-                continue
 
             node = ccache.ast_eval(expr)
 
@@ -383,6 +379,9 @@ class SLBlock(SLNode):
 
         self.has_keyword = bool(self.keyword)
         self.keyword_children = [ ]
+
+        if self.atl_transform is not None:
+            self.has_keyword = True
 
         for i in self.children:
             if i.has_keyword:
@@ -420,6 +419,9 @@ class SLBlock(SLNode):
 
         for i in self.keyword_children:
             i.keywords(context)
+
+        if self.atl_transform is not None:
+            context.keywords["at"] = self.atl_transform
 
         style_prefix = context.keywords.pop("style_prefix", NotGiven)
 

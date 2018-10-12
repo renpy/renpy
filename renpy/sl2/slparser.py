@@ -245,14 +245,13 @@ class Parser(object):
 
             seen_keywords.add(name)
 
-            if name == "at":
-                if block and l.keyword("transform"):
-                    l.require(":")
-                    l.expect_eol()
-                    l.expect_block("ATL block")
-                    expr = renpy.atl.parse_atl(l.subblock_lexer())
-                    target.keyword.append((name, expr))
-                    return
+            if name == "at" and block and l.keyword("transform"):
+                l.require(":")
+                l.expect_eol()
+                l.expect_block("ATL block")
+                expr = renpy.atl.parse_atl(l.subblock_lexer())
+                target.atl_transform = expr
+                return
 
             expr = l.comma_expression()
 
