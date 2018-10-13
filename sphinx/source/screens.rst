@@ -169,10 +169,25 @@ allow the game to react to various events.
 All user interface statements take the following common properties:
 
 `at`
-    A transform, or list of transforms, that are used to wrap this
-    displayable. The show, hide, replace, and replaced external events
-    are delivered to a transform if and only if it is added directly
-    to the screen.
+    This can be a transform, or a list of transforms, or an anonymous
+    transform (a transform that is defined directly in at)
+
+::
+
+    transform hello_t:
+        align (0.7, 0.5) alpha 0.0
+        linear 0.5 alpha 1.0
+
+    screen hello_title():
+        text "Hello." at hello_t
+        text "Hello.":
+            at transform:
+                align (0.2, 0.5) alpha 0.0
+                linear 0.5 alpha 1.0
+
+    This transforms are used to wrap this displayable. The show, hide,
+    replace, and replaced external events are delivered to a transform
+    if and only if it is added directly to the screen.
 
     For example, if a vbox is wrapped in a transform, and added directly
     to the screen, then events are delivered to that transform. But if
@@ -1986,4 +2001,3 @@ An example of defining a screen variant is:
         variant "small"
 
         text "Hello, World." size 30
-
