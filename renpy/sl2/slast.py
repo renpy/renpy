@@ -39,7 +39,7 @@ import renpy.display
 import renpy.pyanalysis
 import renpy.sl2
 
-from renpy.display.motion import Transform
+from renpy.display.transform import Transform, ATLTransform
 from renpy.display.layout import Fixed
 from renpy.display.predict import displayable as predict_displayable
 
@@ -312,6 +312,9 @@ class SLBlock(SLNode):
     and child displayables.
     """
 
+    # RawBlock from parse or None if not present.
+    atl_transform = None
+
     def __init__(self, loc):
         SLNode.__init__(self, loc)
 
@@ -377,6 +380,13 @@ class SLBlock(SLNode):
         self.has_keyword = bool(self.keyword)
         self.keyword_children = [ ]
 
+        if self.atl_transform is not None:
+            self.has_keyword = True
+
+            self.atl_transform.mark_constant()
+            const = self.atl_transform.constant
+            self.constant = min(self.constant, const)
+
         for i in self.children:
             if i.has_keyword:
                 self.keyword_children.append(i)
@@ -413,6 +423,10 @@ class SLBlock(SLNode):
 
         for i in self.keyword_children:
             i.keywords(context)
+
+        if self.atl_transform is not None:
+            transform = ATLTransform(self.atl_transform, context=context.scope)
+            context.keywords["at"] = transform
 
         style_prefix = context.keywords.pop("style_prefix", NotGiven)
 
