@@ -90,7 +90,7 @@ class ShowIf(renpy.display.layout.Container):
         if self.show_child:
             cw, ch = cr.get_size()
             rv = renpy.display.render.Render(cw, ch)
-            rv.blit(cr, (0, 0))
+            rv.blit(cr, (0, 0), focus=self.condition)
         else:
             rv = renpy.display.render.Render(0, 0)
 
