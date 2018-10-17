@@ -157,6 +157,26 @@ init -1600 python:
 
             return cs.scope[self.name] == self.value
 
+    # Not pure.
+    def SetLocalVariable(name, value):
+        """
+        :doc: data_action
+
+        Causes the variable `name` to be set to `value` in the current
+        local context.
+
+        This function is only useful in a screen that has been use by
+        another scene, as it provides a way of setting the value of a
+        variable inside the used screen. In all other cases,
+        :func:`SetScreenVariable` should be preferred, as it allows more
+        of the screen to be cached.
+
+        This must be created in the context that the variable is set
+        in - it can't be passed in from somewhere else.
+        """
+
+        return SetDict(sys._getframe(1).f_locals, name, value)
+
 
     @renpy.pure
     class ToggleField(Action, FieldEquality):
@@ -224,9 +244,9 @@ init -1600 python:
 
 
         `true_value`
-            If not None, then this is the true value we use.
+            If not None, then this is the true value used.
         `false_value`
-            If not None, then this is the false value we use.
+            If not None, then this is the false value used.
         """
 
         return ToggleField(store, variable, true_value=true_value, false_value=false_value, kind="variable")
@@ -241,9 +261,9 @@ init -1600 python:
          value when the action is performed.
 
          `true_value`
-             If not None, then this is the true value we use.
+             If not None, then this is the true value used.
          `false_value`
-             If not None, then this is the false value we use.
+             If not None, then this is the false value used.
          """
 
         identity_fields = [ "dict", ]
@@ -283,6 +303,29 @@ init -1600 python:
 
             return rv
 
+    # Not pure.
+    def ToggleLocalVariable(name, true_value=None, false_value=None):
+        """
+        :doc: data_action
+
+        Toggles the value of `name` in the current local context.
+
+        This function is only useful in a screen that has been use by
+        another scene, as it provides a way of setting the value of a
+        variable inside the used screen. In all other cases,
+        :func:`ToggleScreenVariable` should be preferred, as it allows more
+        of the screen to be cached.
+
+        This must be created in the context that the variable is set
+        in - it can't be passed in from somewhere else.
+
+        `true_value`
+            If not None, then this is the true value used.
+        `false_value`
+            If not None, then this is the false value used.
+        """
+
+        return ToggleDict(sys._getframe(1).f_locals, name, true_value=true_value, false_value=false_value)
 
     @renpy.pure
     class ToggleScreenVariable(Action, FieldEquality):
@@ -292,9 +335,9 @@ init -1600 python:
          Toggles the value of the variable `name` in the current screen.
 
          `true_value`
-             If not None, then this is the true value we use.
+             If not None, then this is the true value used.
          `false_value`
-             If not None, then this is the false value we use.
+             If not None, then this is the false value used.
          """
 
         equality_fields = [ "name", "true_value", "false_value" ]
