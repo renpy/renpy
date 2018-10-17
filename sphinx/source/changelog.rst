@@ -19,6 +19,8 @@ transforms. It's now possible to write::
                 align (0.5, 0.5) alpha 0.0
                 linear 0.5 alpha 1.0
 
+The new :func:`SetLocalVariable` and :func:`ToggleLocalVariable` actions
+make it possible to set variables inside used screens.
 
 Fixes
 -----
