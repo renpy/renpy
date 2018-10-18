@@ -1612,6 +1612,10 @@ def reload_script():
 
     s = get_screen("menu")
 
+    session.pop("_reload_screen", None)
+    session.pop("_reload_screen_args", None)
+    session.pop("_reload_screen_kwargs", None)
+
     if not renpy.store.main_menu:
 
         if s is not None:
