@@ -2721,7 +2721,7 @@ def parse(fn, filedata=None, linenumber=1):
     try:
         lines = list_logical_lines(fn, filedata, linenumber)
         nested = group_logical_lines(lines)
-    except ParseError, e:
+    except ParseError as e:
         parse_errors.append(e.message)
         return None
 

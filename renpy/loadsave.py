@@ -37,6 +37,7 @@ import os
 import sys
 
 import renpy
+from renpy import six
 
 from json import dumps as json_dumps
 
@@ -407,18 +408,18 @@ def save(slotname, extra_info='', mutate_flag=False):
         t, e, tb = sys.exc_info()
 
         if mutate_flag:
-            raise t, e, tb
+            six.reraise(t, e, tb)
 
         try:
             bad = find_bad_reduction(roots, renpy.game.log)
         except:
-            raise t, e, tb
+            six.reraise(t, e, tb)
 
         if bad is None:
-            raise t, e, tb
+            six.reraise(t, e, tb)
 
         e.args = ( e.args[0] + ' (perhaps {})'.format(bad), ) + e.args[1:]
-        raise t, e, tb
+        six.reraise(t, e, tb)
 
     if mutate_flag and renpy.python.mutate_flag:
         raise SaveAbort()
