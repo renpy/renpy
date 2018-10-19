@@ -573,8 +573,8 @@ label _filename_list:
             for fn in files:
                 fn = os.path.join(dirname, fn)
                 fn = fn[len(config.gamedir) + 1:]
-                print >>f, fn.encode("utf-8", "replace")
-                print fn.encode("utf-8", "replace")
+                print(fn.encode("utf-8", "replace"), file=f)
+                print(fn.encode("utf-8", "replace"))
 
         f.close()
 
