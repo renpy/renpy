@@ -662,10 +662,13 @@ class ChoiceActionBase(Action):
     previously visited and mark it so if it is chosen.
     """
 
-    def __init__(self, label, value, location=None, block_all=None):
+    sensitive = True
+
+    def __init__(self, label, value, location=None, block_all=None, sensitive=True):
         self.label = label
         self.value = value
         self.location = location
+        self.sensitive = sensitive
 
         if block_all is None:
             self.block_all = renpy.config.fix_rollback_without_choice
@@ -681,7 +684,8 @@ class ChoiceActionBase(Action):
                 self.chosen = renpy.game.persistent._chosen = { }
 
     def get_sensitive(self):
-        return not renpy.exports.in_fixed_rollback() or (not self.block_all and self.get_selected())
+        return (self.sensitive and
+                not renpy.exports.in_fixed_rollback() or (not self.block_all and self.get_selected()))
 
     def get_selected(self):
         roll_forward = renpy.exports.roll_forward_info()

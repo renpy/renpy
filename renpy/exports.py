@@ -873,9 +873,29 @@ def menu(items, set_expr):
 
     # Filter the list of items to only include ones for which the
     # condition is true.
-    items = [ (substitute(label), value)
-              for label, condition, value in items
-              if renpy.python.py_eval(condition) ]
+
+    if renpy.config.menu_actions:
+
+        location=renpy.game.context().current
+
+        new_items = [ ]
+
+        for label, condition, value in items:
+            label = substitute(label)
+            condition = renpy.python.py_eval(condition)
+
+            if (not renpy.config.menu_include_disabled) and (not condition):
+                continue
+
+            new_items.append((label, renpy.ui.ChoiceReturn(label, value, location, sensitive=condition)))
+
+        items = new_items
+
+    else:
+
+        items = [ (substitute(label), value)
+                  for label, condition, value in items
+                  if renpy.python.py_eval(condition) ]
 
     # Filter the list of items on the set_expr:
     if set_expr:
@@ -904,6 +924,7 @@ def menu(items, set_expr):
                     set.append(label)
                 except AttributeError:
                     set.add(label)
+
     return rv
 
 
@@ -1035,7 +1056,11 @@ def display_menu(items,
             if not label:
                 value = None
 
-            if value is not None:
+            if isinstance(value, renpy.ui.ChoiceReturn):
+                action = value
+                chosen = action.get_chosen()
+
+            elif value is not None:
                 action = renpy.ui.ChoiceReturn(label, value, location)
                 chosen = action.get_chosen()
             else:
