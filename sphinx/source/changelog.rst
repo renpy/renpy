@@ -22,6 +22,9 @@ transforms. It's now possible to write::
 The new :func:`SetLocalVariable` and :func:`ToggleLocalVariable` actions
 make it possible to set variables inside used screens.
 
+The new :var:`config.menu_include_disabled` variable determines if menus
+should include entries disabled by an if clause.
+
 Fixes
 -----
 

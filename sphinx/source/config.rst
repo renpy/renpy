@@ -534,6 +534,11 @@ Occasionally Used
     A list of layer names (as strings) that are cleared when entering
     the game menu.
 
+.. var:: config.menu_include_disabled = False
+
+    When this variable is set, choices disables with the if statement are
+    included as disabled buttons.
+
 .. var:: config.menu_window_subtitle = ""
 
     The :var:`_window_subtitle` variable is set to this value when entering
