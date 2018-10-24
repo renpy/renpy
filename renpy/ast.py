@@ -767,7 +767,6 @@ class Label(Node):
     rollback = "force"
 
     translation_relevant = True
-
     __slots__ = [
         'name',
         'parameters',
@@ -1409,6 +1408,9 @@ class Call(Node):
             args, kwargs = self.arguments.evaluate()
             renpy.store._args = args
             renpy.store._kwargs = kwargs
+        else:
+            renpy.store._args = None
+            renpy.store._kwargs = None
 
     def predict(self):
 

@@ -2,7 +2,43 @@
 Full Changelog
 ==============
 
+.. _renpy-7.1.2:
+
+7.1.2
+=====
+
+Improvements
+------------
+
+Ren'Py's Screen language now support the inclusion of anonymous ATL
+transforms. It's now possible to write::
+
+    screen hello_title():
+        text "Hello.":
+            at transform:
+                align (0.5, 0.5) alpha 0.0
+                linear 0.5 alpha 1.0
+
+The new :func:`SetLocalVariable` and :func:`ToggleLocalVariable` actions
+make it possible to set variables inside used screens.
+
+The new :var:`config.menu_include_disabled` variable determines if menus
+should include entries disabled by an if clause.
+
+Fixes
+-----
+
+A Windows-specific bug that caused RTL (the support for languages like
+Arabic and Hebrew) to corrupt the second half of text strings has been
+fixed. This should prevent garbage characters from being displayed when
+rendering those languages.
+
+
 .. _renpy-7.1.1:
+
+7.1.1
+=====
+
 .. _history-7.1.1:
 
 History Fix
@@ -98,6 +134,11 @@ and long-clicks on touch platforms.)
 
 Fixes
 -----
+
+The :func:`SetVariable` and :func:`ToggleVariable` functions have been extended
+to accept namespaces and fields. So it's now possible to have actions like
+``SetVariable("hero.strength", hero.strength + 1)`` or
+``ToggleVariable("persistent.alternate_perspective")``.
 
 Automatic management of the dialogue window (as enabled by the ``window auto``
 statement) now considers if an in-game menu has a dialogue or caption associated

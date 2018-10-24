@@ -41,12 +41,12 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (7, 1, 1, vc_version)
+version_tuple = (7, 2, 0, vc_version)
 
 # The name of this version.
 version_name = "On the road again."
 
-# A string giving the version number only (7.0.1.123).
+# A string giving the version number only (8.0.1.123).
 version_only = ".".join(str(i) for i in version_tuple)
 
 # A verbose string giving the version.

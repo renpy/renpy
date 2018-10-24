@@ -180,6 +180,9 @@ init -1900 python:
             config.window_auto_show = [ "say" ]
             config.window_auto_hide = [ "scene", "call screen" ]
 
+        if vesion <= (7, 1, 1):
+            config.menu_actions = False
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None

@@ -906,6 +906,12 @@ say_attributes_use_side_image = True
 # Does the menu statement show a window by itself, when there is no caption?
 menu_showed_window = False
 
+# Should the menu statement produce actions instead of values?
+menu_actions = True
+
+# Should disabled menu items be included?
+menu_include_disabled = False
+
 del os
 del collections
 

@@ -510,7 +510,7 @@ class Displayable(renpy.object.Object):
 
         for d in self.visit():
 
-            if not d:
+            if d is None:
                 continue
 
             id_d = id(d)

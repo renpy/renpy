@@ -65,4 +65,5 @@ true. In the following menu::
             ...
 
 The third choice will only be presented if the ``drank_tea`` variable is
-true.
+true. (However if, the :var:`config.menu_include_disabled` variable is set
+to True, it will be shown as a disabled button.)
