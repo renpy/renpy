@@ -924,10 +924,18 @@ class Layout(object):
                     line = [ ]
 
                 elif tag == "space":
+
+                    if len(value) < 1:
+                        raise Exception("empty value supplied for tag %r" % tag)
+
                     width = self.scale_int(int(value))
                     line.append((SpaceSegment(tss[-1], width=width), u""))
 
                 elif tag == "vspace":
+
+                    if len(value) < 1:
+                        raise Exception("empty value supplied for tag %r" % tag)
+
                     # Duplicates from the newline tag.
 
                     height = self.scale_int(int(value))
@@ -1016,18 +1024,34 @@ class Layout(object):
                     push().font = value
 
                 elif tag == "size":
+
+                    if len(value) < 1:
+                        raise Exception("empty value supplied for tag %r" % tag)
+
                     if value[0] in "+-":
                         push().size += int(value)
                     else:
                         push().size = int(value)
 
                 elif tag == "color":
+
+                    if len(value) < 1:
+                        raise Exception("empty value supplied for tag %r" % tag)
+
                     push().color = renpy.easy.color(value)
 
                 elif tag == "outlinecolor":
+
+                    if len(value) < 1:
+                        raise Exception("empty value supplied for tag %r" % tag)
+
                     push().outline_color = renpy.easy.color(value)
 
                 elif tag == "alpha":
+
+                    if len(value) < 1:
+                        raise Exception("empty value supplied for tag %r" % tag)
+
                     ts = push()
                     if value[0] in "+-":
                         value = ts.color.alpha + float(value)
@@ -1039,6 +1063,10 @@ class Layout(object):
                     ts.color = ts.color.replace_opacity(value)
 
                 elif tag == "k":
+
+                    if len(value) < 1:
+                        raise Exception("empty value supplied for tag %r" % tag)
+
                     push().kerning = self.scale(float(value))
 
                 elif tag == "rt":
@@ -1064,6 +1092,10 @@ class Layout(object):
                     # We only care about ruby if we have a top.
 
                 elif tag == "cps":
+
+                    if len(value) < 1:
+                        raise Exception("empty value supplied for tag %r" % tag)
+
                     ts = push()
 
                     if value[0] == "*":
