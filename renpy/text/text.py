@@ -875,212 +875,218 @@ class Layout(object):
 
         for type, text in tokens:  # @ReservedAssignment
 
-            if type == PARAGRAPH:
+            try:
 
-                # Note that this code is duplicated for the p tag, and for
-                # the empty line case, below.
-                fill_empty_line()
+                if type == PARAGRAPH:
 
-                paragraphs.append(line)
-                line = [ ]
+                    # Note that this code is duplicated for the p tag, and for
+                    # the empty line case, below.
+                    fill_empty_line()
 
-                continue
+                    paragraphs.append(line)
+                    line = [ ]
 
-            elif type == TEXT:
-                line.extend(tss[-1].subsegment(text))
-                continue
+                    continue
 
-            elif type == DISPLAYABLE:
-                line.append((DisplayableSegment(tss[-1], text, renders), u""))
-                continue
+                elif type == TEXT:
+                    line.extend(tss[-1].subsegment(text))
+                    continue
 
-            # Otherwise, we have a text tag.
+                elif type == DISPLAYABLE:
+                    line.append((DisplayableSegment(tss[-1], text, renders), u""))
+                    continue
 
-            tag, _, value = text.partition("=")
+                # Otherwise, we have a text tag.
 
-            if tag and tag[0] == "/":
-                tss.pop()
+                tag, _, value = text.partition("=")
 
-                if not tss:
-                    raise Exception("%r closes a text tag that isn't open." % text)
+                if tag and tag[0] == "/":
+                    tss.pop()
 
-            elif tag == "_start":
-                fs = FlagSegment()
-                line.append((fs, ""))
-                self.start_segment = fs
+                    if not tss:
+                        raise Exception("%r closes a text tag that isn't open." % text)
 
-            elif tag == "_end":
-                fs = FlagSegment()
-                line.append((fs, ""))
-                self.end_segment = fs
+                elif tag == "_start":
+                    fs = FlagSegment()
+                    line.append((fs, ""))
+                    self.start_segment = fs
 
-            elif tag == "p":
-                # Duplicated from the newline tag.
-                fill_empty_line()
+                elif tag == "_end":
+                    fs = FlagSegment()
+                    line.append((fs, ""))
+                    self.end_segment = fs
 
-                paragraphs.append(line)
-                line = [ ]
+                elif tag == "p":
+                    # Duplicated from the newline tag.
+                    fill_empty_line()
 
-            elif tag == "space":
-                width = self.scale_int(int(value))
-                line.append((SpaceSegment(tss[-1], width=width), u""))
+                    paragraphs.append(line)
+                    line = [ ]
 
-            elif tag == "vspace":
-                # Duplicates from the newline tag.
+                elif tag == "space":
+                    width = self.scale_int(int(value))
+                    line.append((SpaceSegment(tss[-1], width=width), u""))
 
-                height = self.scale_int(int(value))
+                elif tag == "vspace":
+                    # Duplicates from the newline tag.
 
-                if line:
+                    height = self.scale_int(int(value))
+
+                    if line:
+                        paragraphs.append(line)
+
+                    line = [ (SpaceSegment(tss[-1], height=height), u"") ]
                     paragraphs.append(line)
 
-                line = [ (SpaceSegment(tss[-1], height=height), u"") ]
-                paragraphs.append(line)
+                    line = [ ]
 
-                line = [ ]
+                elif tag == "w":
+                    pass
 
-            elif tag == "w":
-                pass
+                elif tag == "fast":
+                    pass
 
-            elif tag == "fast":
-                pass
+                elif tag == "nw":
+                    pass
 
-            elif tag == "nw":
-                pass
+                elif tag == "a":
+                    self.has_hyperlinks = True
 
-            elif tag == "a":
-                self.has_hyperlinks = True
+                    hyperlink_styler = style.hyperlink_functions[0]
 
-                hyperlink_styler = style.hyperlink_functions[0]
+                    if hyperlink_styler:
+                        hls = hyperlink_styler(value)
+                    else:
+                        hls = style
 
-                if hyperlink_styler:
-                    hls = hyperlink_styler(value)
+                    old_prefix = hls.prefix
+
+                    link = len(self.hyperlink_targets) + 1
+                    self.hyperlink_targets[link] = value
+
+                    if not text_displayable.hyperlink_sensitive(value):
+                        hls.set_prefix("insensitive_")
+                    elif (renpy.display.focus.get_focused() is text_displayable) and (renpy.display.focus.argument == link):
+                        hls.set_prefix("hover_")
+                    else:
+                        hls.set_prefix("idle_")
+
+                    ts = push()
+                    # inherit vertical style
+                    vert_style = ts.vertical
+                    size = ts.size
+
+                    ts.take_style(hls, self)
+
+                    ts.vertical = vert_style
+                    ts.hyperlink = link
+
+                    if renpy.config.hyperlink_inherit_size:
+                        ts.size = size
+
+                    hls.set_prefix(old_prefix)
+
+                elif tag == "b":
+                    push().bold = True
+
+                elif tag == "i":
+                    push().italic = True
+
+                elif tag == "u":
+                    if value:
+                        push().underline = self.scale_int(int(value))
+                    else:
+                        push().underline = self.scale_int(1)
+
+                elif tag == "s":
+                    push().strikethrough = True
+
+                elif tag == "plain":
+                    ts = push()
+                    ts.bold = False
+                    ts.italic = False
+                    ts.underline = False
+                    ts.strikethrough = False
+
+                elif tag == "":
+                    style = getattr(renpy.store.style, value)
+                    push().take_style(style, self)
+
+                elif tag == "font":
+                    push().font = value
+
+                elif tag == "size":
+                    if value[0] in "+-":
+                        push().size += int(value)
+                    else:
+                        push().size = int(value)
+
+                elif tag == "color":
+                    push().color = renpy.easy.color(value)
+
+                elif tag == "outlinecolor":
+                    push().outline_color = renpy.easy.color(value)
+
+                elif tag == "alpha":
+                    ts = push()
+                    if value[0] in "+-":
+                        value = ts.color.alpha + float(value)
+                    elif value[0] == "*":
+                        value = ts.color.alpha * float(value[1:])
+                    else:
+                        value = float(value)
+
+                    ts.color = ts.color.replace_opacity(value)
+
+                elif tag == "k":
+                    push().kerning = self.scale(float(value))
+
+                elif tag == "rt":
+                    ts = push()
+                    # inherit vertical style
+                    vert_style = ts.vertical
+                    ts.take_style(style.ruby_style, self)
+                    ts.vertical = vert_style
+                    ts.ruby_top = True
+                    self.has_ruby = True
+
+                elif tag == "art":
+                    ts = push()
+                    # inherit vertical style
+                    vert_style = ts.vertical
+                    ts.take_style(style.altruby_style, self)
+                    ts.vertical = vert_style
+                    ts.ruby_top = "alt"
+                    self.has_ruby = True
+
+                elif tag == "rb":
+                    push().ruby_bottom = True
+                    # We only care about ruby if we have a top.
+
+                elif tag == "cps":
+                    ts = push()
+
+                    if value[0] == "*":
+                        ts.cps *= float(value[1:])
+                    else:
+                        ts.cps = float(value)
+
+                elif tag == "vert":
+                    push().vertical = True
+
+                elif tag == "horiz":
+                    ts = push()
+                    ts.vertical = False
+
+                elif tag[0] == "#":
+                    pass
+
                 else:
-                    hls = style
+                    raise Exception("Unknown text tag %r" % text)
 
-                old_prefix = hls.prefix
-
-                link = len(self.hyperlink_targets) + 1
-                self.hyperlink_targets[link] = value
-
-                if not text_displayable.hyperlink_sensitive(value):
-                    hls.set_prefix("insensitive_")
-                elif (renpy.display.focus.get_focused() is text_displayable) and (renpy.display.focus.argument == link):
-                    hls.set_prefix("hover_")
-                else:
-                    hls.set_prefix("idle_")
-
-                ts = push()
-                # inherit vertical style
-                vert_style = ts.vertical
-                size = ts.size
-
-                ts.take_style(hls, self)
-
-                ts.vertical = vert_style
-                ts.hyperlink = link
-
-                if renpy.config.hyperlink_inherit_size:
-                    ts.size = size
-
-                hls.set_prefix(old_prefix)
-
-            elif tag == "b":
-                push().bold = True
-
-            elif tag == "i":
-                push().italic = True
-
-            elif tag == "u":
-                if value:
-                    push().underline = self.scale_int(int(value))
-                else:
-                    push().underline = self.scale_int(1)
-
-            elif tag == "s":
-                push().strikethrough = True
-
-            elif tag == "plain":
-                ts = push()
-                ts.bold = False
-                ts.italic = False
-                ts.underline = False
-                ts.strikethrough = False
-
-            elif tag == "":
-                style = getattr(renpy.store.style, value)
-                push().take_style(style, self)
-
-            elif tag == "font":
-                push().font = value
-
-            elif tag == "size":
-                if value[0] in "+-":
-                    push().size += int(value)
-                else:
-                    push().size = int(value)
-
-            elif tag == "color":
-                push().color = renpy.easy.color(value)
-
-            elif tag == "outlinecolor":
-                push().outline_color = renpy.easy.color(value)
-
-            elif tag == "alpha":
-                ts = push()
-                if value[0] in "+-":
-                    value = ts.color.alpha + float(value)
-                elif value[0] == "*":
-                    value = ts.color.alpha * float(value[1:])
-                else:
-                    value = float(value)
-
-                ts.color = ts.color.replace_opacity(value)
-
-            elif tag == "k":
-                push().kerning = self.scale(float(value))
-
-            elif tag == "rt":
-                ts = push()
-                # inherit vertical style
-                vert_style = ts.vertical
-                ts.take_style(style.ruby_style, self)
-                ts.vertical = vert_style
-                ts.ruby_top = True
-                self.has_ruby = True
-
-            elif tag == "art":
-                ts = push()
-                # inherit vertical style
-                vert_style = ts.vertical
-                ts.take_style(style.altruby_style, self)
-                ts.vertical = vert_style
-                ts.ruby_top = "alt"
-                self.has_ruby = True
-
-            elif tag == "rb":
-                push().ruby_bottom = True
-                # We only care about ruby if we have a top.
-
-            elif tag == "cps":
-                ts = push()
-
-                if value[0] == "*":
-                    ts.cps *= float(value[1:])
-                else:
-                    ts.cps = float(value)
-
-            elif tag == "vert":
-                push().vertical = True
-
-            elif tag == "horiz":
-                ts = push()
-                ts.vertical = False
-
-            elif tag[0] == "#":
-                pass
-
-            else:
-                raise Exception("Unknown text tag %r" % text)
+            except:
+                renpy.game.exception_info = "While processing text tag {{{!s}}} in {!r}.:".format(text, text_displayable.get_all_text())
+                raise
 
         # If the line is empty, fill it with a space.
         fill_empty_line()
@@ -1452,6 +1458,18 @@ class Text(renpy.display.core.Displayable):
 
         s = s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
         return u"Text \"{}\"".format(s)
+
+    def get_all_text(self):
+        """
+        Gets all the text,
+        """
+        s = u""
+
+        for i in self.text:
+            if isinstance(i, basestring):
+                s += i
+
+        return s
 
     def _scope(self, scope, update=True):
         """
