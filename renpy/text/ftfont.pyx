@@ -640,9 +640,6 @@ cdef class FTFont:
             if glyph.split == SPLIT_INSTEAD:
                 continue
 
-            if glyph.width == 0:
-                continue
-
             x = <int> (glyph.x + xo)
             y = <int> (glyph.y + yo)
 
@@ -668,37 +665,38 @@ cdef class FTFont:
 
             underline_end = min(underline_end, surf.w - 1)
 
-            for py from 0 <= py < rows:
+            if glyph.width > 0:
 
-                if bmy < 0:
+                for py from 0 <= py < rows:
+
+                    if bmy < 0:
+                        bmy += 1
+                        continue
+
+                    line = pixels + bmy * pitch + bmx * 4
+                    gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
+
+                    for px from 0 <= px < width:
+
+                        alpha = gline[0]
+
+                        # Modulate Sa by the glyph's alpha.
+
+                        alpha = (alpha * Sa + Sa) >> 8
+
+                        # Only draw if we increase the alpha - a cheap way to
+                        # allow overlapping characters.
+                        if line[3] < alpha:
+
+                            line[0] = Sr
+                            line[1] = Sg
+                            line[2] = Sb
+                            line[3] = alpha
+
+                        gline += 1
+                        line += 4
+
                     bmy += 1
-                    continue
-
-                line = pixels + bmy * pitch + bmx * 4
-                gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
-
-                for px from 0 <= px < width:
-
-                    alpha = gline[0]
-
-                    # Modulate Sa by the glyph's alpha.
-
-                    alpha = (alpha * Sa + Sa) >> 8
-
-                    # Only draw if we increase the alpha - a cheap way to
-                    # allow overlapping characters.
-                    if line[3] < alpha:
-
-                        line[0] = Sr
-                        line[1] = Sg
-                        line[2] = Sb
-                        line[3] = alpha
-
-                    gline += 1
-                    line += 4
-
-                bmy += 1
-
 
             # Underlining.
             if underline:
