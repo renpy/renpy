@@ -139,17 +139,22 @@ def image_exists_imprecise(name):
         else:
             required.add(i)
 
-    for im in renpy.display.image.images:
+    for im, d in renpy.display.image.images.items():
 
         if im[0] != nametag:
             continue
 
         attrs = set(im[1:])
 
-        if [ i for i in required if i not in attrs ]:
+        if [ i for i in banned if i in attrs ]:
             continue
 
-        if [ i for i in banned if i in attrs ]:
+        li = getattr(d, "_list_attributes", None)
+
+        if li is not None:
+            attrs = attrs | set(li(im[0], required))
+
+        if [ i for i in required if i not in attrs ]:
             continue
 
         imprecise_cache.add(name)
