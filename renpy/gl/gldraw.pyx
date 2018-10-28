@@ -557,7 +557,7 @@ cdef class GLDraw:
 
         # Pick a texture environment subsystem.
 
-        if EGL or renpy.android or renpy.ios or (allow_shader and use_subsystem(
+        if EGL or renpy.android or renpy.ios or renpy.emscripten or (allow_shader and use_subsystem(
             glenviron_shader,
             "RENPY_GL_ENVIRON",
             "shader",
