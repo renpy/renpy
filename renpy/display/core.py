@@ -240,6 +240,13 @@ class DisplayableArguments(renpy.object.Object):
 
         return rv
 
+    def extraneous(self):
+        if renpy.config.developer and renpy.config.report_extraneous_attributes:
+            raise Exception("Image '{}' does not accept attributes '{}'.".format(
+                " ".join(self.name),
+                " ".join(self.args),
+                ))
+
 
 default_style = renpy.style.Style("default")
 
@@ -351,6 +358,9 @@ class Displayable(renpy.object.Object):
         This should call _unique on children that have been copied before
         setting its own _duplicatable flag.
         """
+
+        if args and args.args:
+            args.extraneous()
 
         return self
 

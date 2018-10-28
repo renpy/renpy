@@ -433,6 +433,9 @@ class ImageReference(renpy.display.core.Displayable):
 
     def _duplicate(self, args):
 
+        if args and args.args:
+            args.extraneous()
+
         rv = self._copy(args)
         rv.target = None
 
@@ -663,6 +666,10 @@ class DynamicImage(renpy.display.core.Displayable):
         return True
 
     def _duplicate(self, args):
+
+        if args and args.args:
+            args.extraneous()
+
         rv = self._copy(args)
         rv.target = None
         # This does not set _duplicatable, since it should always remain the

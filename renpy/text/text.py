@@ -1455,6 +1455,10 @@ class Text(renpy.display.core.Displayable):
         self.displayable_offsets = [ ]
 
     def _duplicate(self, args):
+
+        if args and args.args:
+            args.extraneous()
+
         if self._duplicatable:
             rv = self._copy(args)
             rv._unique()

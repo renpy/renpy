@@ -912,6 +912,9 @@ menu_actions = True
 # Should disabled menu items be included?
 menu_include_disabled = False
 
+# Should we report extraneous attributes?
+report_extraneous_attributes = True
+
 del os
 del collections
 
