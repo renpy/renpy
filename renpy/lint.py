@@ -177,18 +177,40 @@ def image_exists_precise(name):
 
     nametag = name[0]
 
-    required = set(name[1:])
+    required = set()
+    banned = set()
 
-    for im in renpy.display.image.images:
+    for i in name[1:]:
+        if i[0] == "-":
+            banned.add(i[1:])
+        else:
+            required.add(i)
+
+    for im, d in renpy.display.image.images.items():
 
         if im[0] != nametag:
             continue
 
         attrs = set(im[1:])
 
-        if attrs == required:
-            precise_cache.add(name)
-            return True
+        if attrs - required:
+            continue
+
+        rest = required - attrs
+
+        if rest:
+
+            try:
+                da = renpy.display.core.DisplayableArguments()
+                da.name=( im[0], ) + tuple(i for i in name[1:] if i in attrs)
+                da.args=tuple(i for i in name[1:] if i in rest)
+                d._duplicate(da)
+            except:
+                continue
+
+        precise_cache.add(name)
+
+        return True
 
     return False
 
@@ -207,26 +229,16 @@ def image_exists(name, expression, tag, precise=True):
     if expression:
         return
 
-    namelist = list(name)
-    names = " ".join(namelist)
-
-    # Look for the precise name.
-    while namelist:
-        if tuple(namelist) in renpy.display.image.images:
-            return
-
-        namelist.pop()
-
-    # If we're not precise, then we have to start looking for images
-    # that we can possibly match.
-    if precise:
-        if image_exists_precise(name):
-            return
-    else:
+    if not precise:
         if image_exists_imprecise(name):
             return
 
-    report("The image named '%s' was not declared.", names)
+    # If we're not precise, then we have to start looking for images
+    # that we can possibly match.
+    if image_exists_precise(name):
+        return
+
+    report("'{}' is not an image.".format(" ".join(name)) )
 
 
 # Only check each file once.
