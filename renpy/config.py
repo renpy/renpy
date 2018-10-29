@@ -27,6 +27,7 @@ from __future__ import print_function
 
 import collections
 import os
+import renpy
 
 # Can we add more config variables?
 locked = False
@@ -806,6 +807,8 @@ fast_skipping_callbacks = [ ]
 
 # Should the audio periodic callback run in its own thread.
 audio_periodic_thread = True
+if renpy.emscripten:
+    audio_periodic_thread = False
 
 # A list of fonts to preload on Ren'Py startup.
 preload_fonts = [ ]

@@ -55,7 +55,7 @@ setup_env("LD")
 setup_env("CXX")
 
 import setuplib
-from setuplib import android, ios, raspi, include, library, cython, cmodule, copyfile, find_unnecessary_gen
+from setuplib import android, ios, emscripten, raspi, include, library, cython, cmodule, copyfile, find_unnecessary_gen
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
@@ -189,6 +189,10 @@ if (android or ios):
     glew_libs = [ 'GLESv2', 'z', 'm' ]
     gl2_only = True
     egl = "egl_none.c"
+elif emscripten:
+    glew_libs = []
+    gl2_only = True
+    egl = "egl_none.c"
 elif raspi:
     glew_libs = [ 'SDL2', 'GLESv2', 'EGL', 'z', 'm' ]
     gl2_only = True
@@ -212,7 +216,7 @@ cython("renpy.gl.glenviron_limited", libs=glew_libs, compile_if=not gl2_only)
 cython("renpy.gl.glrtt_copy", libs=glew_libs)
 cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 
-if not (android or ios):
+if not (android or ios or emscripten):
     # renpy.angle
     def anglecopy(fn):
         copyfile("renpy/gl/" + fn, "renpy/angle/" + fn, "DEF ANGLE = False", "DEF ANGLE = True")

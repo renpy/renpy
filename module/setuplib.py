@@ -39,6 +39,9 @@ ios = "RENPY_IOS" in os.environ
 # True of we're building on raspberry pi.
 raspi = "RENPY_RASPBERRY_PI" in os.environ
 
+# True of we're building with emscripten.
+emscripten = "RENPY_EMSCRIPTEN" in os.environ
+
 # Is coverage enabled?
 coverage = "RENPY_COVERAGE" in os.environ
 
@@ -92,7 +95,7 @@ def include(header, directory=None, optional=True):
         If given, returns False rather than abandoning the process.
     """
 
-    if android or ios:
+    if android or ios or emscripten:
         return True
 
     for i in install:
@@ -131,7 +134,7 @@ def library(name, optional=False):
         rather than reporting an error.
     """
 
-    if android or ios:
+    if android or ios or emscripten:
         return True
 
     for i in install:

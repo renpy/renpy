@@ -1783,6 +1783,8 @@ except:
         platform = "Android"
     elif renpy.ios:
         platform = "iOS"
+    elif sys.platform == "emscripten":
+        platform = "emscripten"
     else:
         platform = "Unknown"
 
