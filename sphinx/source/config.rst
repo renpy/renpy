@@ -520,6 +520,12 @@ Occasionally Used
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
 
+.. var:: config.locale_to_language_function = ...
+
+    A function that determines the language used by the game by the user's locale.
+    It takes 2 arguments, the ISO code of the locale and region.
+    It should return a string of existing translation or None.
+
 .. var:: config.main_menu = [ ... ]
 
     The default main menu, when not using screens. For more details,
