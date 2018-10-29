@@ -951,6 +951,7 @@ screen history():
         if not _history_list:
             label _("The dialogue history is empty.")
 
+define gui.history_allow_tags = set()
 
 style history_window is empty
 
