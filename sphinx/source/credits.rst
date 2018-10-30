@@ -56,6 +56,7 @@ the omission in future versions.
 * Eniko
 * Eevee (Lexy Munroe)
 * Evilantishad0w
+* Felix Lampe
 * Franck_v
 * Gas
 * George Economidis
@@ -82,6 +83,7 @@ the omission in future versions.
 * Kevin Turner
 * Kinsman
 * Koichi "vbkaisetsu" Akabe
+* Konstantin Mozheyko
 * Konstantin Nikolayev
 * Kuroonehalf
 * Kyouryuukunn
@@ -126,10 +128,12 @@ the omission in future versions.
 * Saltome
 * Sapphi
 * Scout
+* Shehriyar Qureshi
 * Shiz
 * SleepKirby
 * Spiky Caterpillar
 * Susnux
+* Sylvain Beucler
 * Thuong Nguyen Huu
 * Tlm-2501
 * Tmrwiz
