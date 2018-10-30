@@ -381,8 +381,8 @@ The default language is chosen using the following method:
 * If the game has ever chosen a language in the past, that language is
   used.
 * If this is the first time the game has been run and
-  :var:`config.enable_language_autodetect` is True, Ren'Py trying
-  autodetect user language by locale.
+  :var:`config.enable_language_autodetect` is True, Ren'Py tries to
+  autodtetect the language using :var:`config.locale_to_language_function`.
 * If this is the first time the game has been run,
   :var:`config.default_language` is used. (This defaults to the None
   language.)

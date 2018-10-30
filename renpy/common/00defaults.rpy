@@ -36,7 +36,7 @@ init -1500 python:
     config.default_afm_enable = False
 
     # If not None, the default language to use.
-    config.default_language = None
+    config.default_language = "russian"
 
     # If not None, the default value of wait_voice
     config.default_wait_for_voice = True
@@ -76,16 +76,14 @@ init 1500 python hide:
         if config.default_afm_time is not None:
             _preferences.afm_time = config.default_afm_time
 
-        detected = False
         if config.enable_language_autodetect:
             locale, region = renpy.translation.detect_user_locale()
             if locale is not None:
                 lang_name = config.locale_to_language_function(locale, region)
                 if lang_name is not None:
-                    _preferences.language = lang_name
-                    detected = True
+                    config.default_language = lang_name
 
-        if (not detected) and config.default_language is not None:
+        if config.default_language is not None:
             _preferences.language = config.default_language
 
         if config.default_wait_for_voice is not None:
