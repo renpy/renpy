@@ -720,6 +720,12 @@ translate_files = [ ]
 # translated.
 translate_comments = [ ]
 
+# Should we trying detect user locale on first launch?
+enable_language_autodetect = False
+
+# A function from (locale, region) -> existing language.
+locale_to_language_function = None
+
 # Should we pass the full argument list to the say screen?
 old_say_args = False
 

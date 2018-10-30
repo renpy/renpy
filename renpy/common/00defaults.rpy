@@ -76,7 +76,16 @@ init 1500 python hide:
         if config.default_afm_time is not None:
             _preferences.afm_time = config.default_afm_time
 
-        if config.default_language is not None:
+        detected = False
+        if config.enable_language_autodetect:
+            locale, region = renpy.translation.detect_user_locale()
+            if locale is not None:
+                lang_name = config.locale_to_language_function(locale, region)
+                if lang_name is not None:
+                    _preferences.language = lang_name
+                    detected = True
+
+        if (not detected) and config.default_language is not None:
             _preferences.language = config.default_language
 
         if config.default_wait_for_voice is not None:
@@ -114,6 +123,18 @@ init 1500 python hide:
     if error:
         renpy.persistent.save()
         raise Exception(error)
+
+init -1500 python:
+    def _locale_to_language_function(locale, region):
+        lang_name = renpy.translation.locales.get(region)
+        if lang_name is not None and lang_name in renpy.known_languages():
+            return lang_name
+
+        lang_name = renpy.translation.locales.get(locale)
+        if lang_name is not None and lang_name in renpy.known_languages():
+            return lang_name
+
+    config.locale_to_language_function = _locale_to_language_function
 
 init -1500 python:
     def _imagemap_auto_function(auto_param, variant):
@@ -202,4 +223,3 @@ init -1500 python:
 init -1500:
     image text = renpy.ParameterizedText(style="centered_text")
     image vtext = renpy.ParameterizedText(style="centered_vtext")
-
