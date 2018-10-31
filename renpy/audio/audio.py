@@ -335,7 +335,7 @@ class Channel(object):
         """
 
         # Update the channel volume.
-        vol = self.chan_volume * renpy.game.preferences.volumes[self.mixer]
+        vol = self.chan_volume * renpy.game.preferences.volumes.get(self.mixer, 1.0)
 
         if vol != self.actual_volume:
             renpysound.set_volume(self.number, vol)
@@ -343,7 +343,7 @@ class Channel(object):
 
         # This should be set from something that checks to see if our
         # mixer is muted.
-        force_stop = self.context.force_stop or (renpy.game.preferences.mute[self.mixer] and self.stop_on_mute)
+        force_stop = self.context.force_stop or (renpy.game.preferences.mute.get(self.mixer, False) and self.stop_on_mute)
 
         if self.playing and force_stop:
             renpysound.stop(self.number)
