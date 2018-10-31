@@ -47,10 +47,11 @@ def default_drag_group():
 
     return rv
 
-
 def default_drag_joined(drag):
     return [ (drag, 0, 0) ]
 
+def default_drop_allowable(drop, drags):
+    return True
 
 class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     """
@@ -168,6 +169,12 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         If false, the default, the drag is dropped onto the droppable with
         the largest degree of overlap.
 
+    `drop_allowable`
+        A callback that is called to determine whether this drop allow
+        the current drags dropped onto. It is called with two arguments.
+        The first is the Drag which determines its sensitivity.
+        The second is a list of Drags that are being dragged.
+
     Except for `d`, all of the parameters are available as fields (with
     the same name) on the Drag object. In addition, after the drag has
     been rendered, the following fields become available:
@@ -177,7 +184,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
     `w`, `h`
          The width and height of the Drag's child, in pixels.
-        """
+    """
 
     focusable = True
 
@@ -198,6 +205,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                  drag_raise=True,
                  dragged=None,
                  dropped=None,
+                 drop_allowable=default_drop_allowable,
                  drag_handle=(0.0, 0.0, 1.0, 1.0),
                  drag_joined=default_drag_joined,
                  clicked=None,
@@ -219,6 +227,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.drag_raise = drag_raise
         self.dragged = dragged
         self.dropped = dropped
+        self.drop_allowable = drop_allowable
         self.drag_handle = drag_handle
         self.drag_joined = drag_joined
         self.clicked = clicked
@@ -740,6 +749,11 @@ class DragGroup(renpy.display.layout.MultiBox):
 
     All positional parameters to the DragGroup constructor should be
     Drags, that are added to the DragGroup.
+
+
+    `min_overlap`
+        An integer which means the minimum number of pixels at the
+        overlap so that drop will be allow.
     """
 
     _list_type = renpy.python.RevertableList
@@ -752,6 +766,9 @@ class DragGroup(renpy.display.layout.MultiBox):
         properties.setdefault("layout", "fixed")
 
         replaces = properties.pop("replaces", None)
+
+        min_overlap = properties.pop("min_overlap", 0)
+        self.min_overlap = min_overlap
 
         super(DragGroup, self).__init__(**properties)
 
@@ -873,7 +890,11 @@ class DragGroup(renpy.display.layout.MultiBox):
 
                 overlap = rect_overlap_area(r1, r2)
 
-                if overlap >= max_overlap:
+                if (
+                    overlap >= max_overlap and
+                    overlap >= self.min_overlap and
+                    c.drop_allowable(c, joined)
+                ):
                     rv = c
                     max_overlap = overlap
 
@@ -898,8 +919,11 @@ class DragGroup(renpy.display.layout.MultiBox):
             if c.x is None:
                 continue
 
-            if (x >= c.x and y >= c.y and
-                    x < (c.x+c.w) and y < (c.y+c.h)):
+            if (
+                x >= c.x and y >= c.y and
+                x < (c.x + c.w) and y < (c.y + c.h) and
+                c.drop_allowable(c, joined)
+            ):
                 return c
 
     def get_children(self):
