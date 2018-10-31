@@ -169,6 +169,12 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         If false, the default, the drag is dropped onto the droppable with
         the largest degree of overlap.
 
+    `drop_allowable`
+        A callback that is called to determine whether this drop allow
+        the current drags dropped onto. It is called with two arguments.
+        The first is the Drag which determines its sensitivity.
+        The second is a list of Drags that are being dragged.
+
     Except for `d`, all of the parameters are available as fields (with
     the same name) on the Drag object. In addition, after the drag has
     been rendered, the following fields become available:
@@ -178,7 +184,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
     `w`, `h`
          The width and height of the Drag's child, in pixels.
-        """
+    """
 
     focusable = True
 
@@ -743,6 +749,11 @@ class DragGroup(renpy.display.layout.MultiBox):
 
     All positional parameters to the DragGroup constructor should be
     Drags, that are added to the DragGroup.
+
+
+    `min_overlap`
+        An integer which means the minimum number of pixels at the
+        overlap so that drop will be allow.
     """
 
     _list_type = renpy.python.RevertableList
