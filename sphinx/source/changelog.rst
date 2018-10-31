@@ -39,6 +39,8 @@ system, and use it to set the language. Please see
 :var:`config.enable_language_autodetect` and the :ref:`Translation <translation>`
 documentation for how this works.
 
+The German translation has been updated.
+
 Fixes
 -----
 
@@ -56,6 +58,13 @@ Lint has been improved to deal with images that take attributes that are
 not in the image name, like layerd images.
 
 Ren'Py generates choice menu images that are suitable for use on the phone.
+
+Android Fixes
+-------------
+
+As Ren'Py's new Android support only worked well on a 64-bit version of
+Java 8, we make that 64-bit requirement explicit.
+
 
 
 .. _renpy-7.1.1:
