@@ -55,7 +55,7 @@ if ``eileen happy`` exists and ``eileen happy unknown`` was shown, the
 additional attribute would be ignored.
 
 Lint has been improved to deal with images that take attributes that are
-not in the image name, like layerd images.
+not in the image name, like layered images.
 
 Ren'Py generates choice menu images that are suitable for use on the phone.
 
