@@ -17,15 +17,12 @@ class TestRenpyPath:
         # This test should fail if the function is changed and returns
         # something else.
 
-        # The reason we're doing the same thing as the function is because
-        # the function uses os.path which, when running the program does the
-        # right thing i.e return path in which renpy directory resides but
-        # when this test is run using pytest, the sys.argv values are changed
-        # from pointing towards directory in which renpy resides to pointing
-        # towards the directory inside which pytest resides.
+        # we change sys.argv to mimimc as if renpy is being run
+        sys.argv.pop(1)
+        sys.argv[0] = 'renpy.py'
 
         renpy_base = main.path_to_renpy_base()
-        check_value = os.path.abspath(
-            os.path.dirname(os.path.realpath(sys.argv[0])))
 
-        assert renpy_base == check_value
+        # we use sys.path[0] as it is the same as the result of function
+        # being tested
+        assert renpy_base == sys.path[0]
