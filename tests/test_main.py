@@ -11,7 +11,7 @@ import main
 
 
 class TestRenpyPath:
-    def test_renpy_path_to_common(self):
+    def test_renpy_path_to_renpy_base(self):
 
         # We're just doing what the function does and comparing the values.
         # This test should fail if the function is changed and returns
@@ -25,3 +25,7 @@ class TestRenpyPath:
 
         # we use sys.path[0] as it is the expected result of function
         assert renpy_base == sys.path[0]
+
+    def test_path_to_common(self):
+        assert main.path_to_common(sys.path[0]) == "{}/renpy/common".format(
+            sys.path[0])
