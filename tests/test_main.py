@@ -23,6 +23,5 @@ class TestRenpyPath:
 
         renpy_base = main.path_to_renpy_base()
 
-        # we use sys.path[0] as it is the same as the result of function
-        # being tested
+        # we use sys.path[0] as it is the expected result of function
         assert renpy_base == sys.path[0]
