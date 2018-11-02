@@ -1,12 +1,10 @@
 # Copyright 2018 Shehriyar Qureshi <SShehriyar266@gmail.com>
-from __future__ import print_function
-
 import os
 import sys
 
 # add renpy directory to path else main module isn't found
-pwd_result = os.getcwd()
-sys.path.insert(0, pwd_result)
+current_directory = os.getcwd()
+sys.path.insert(0, current_directory)
 
 # thou shalt not move this artifact unless thou can without errors
 import main
@@ -26,9 +24,9 @@ class TestRenpyPath:
         # towards renpy folder to pointing towards the directory inside which
         # pytest resides.
 
-        # Long comment para because most of the time output value is known
-        # but in this case it changes to something else. Value is similar
-        # but not consistent. Thank you for reading this big abomination.
+        # Long comment para because most of the time output value is constant
+        # but in this case it changes to something else. Value is consistent
+        # but not constant.
         renpy_base = main.path_to_renpy_base()
         check_value = os.path.abspath(
             os.path.dirname(os.path.realpath(sys.argv[0])))
