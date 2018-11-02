@@ -19,14 +19,11 @@ class TestRenpyPath:
 
         # The reason we're doing the same thing as the function is because
         # the function uses os.path which, when running the program does the
-        # right thing i.e return path to renpy directory but when this test
-        # is run using pytest, the sys.argv values are changed from pointing
-        # towards renpy folder to pointing towards the directory inside which
-        # pytest resides.
+        # right thing i.e return path in which renpy directory resides but
+        # when this test is run using pytest, the sys.argv values are changed
+        # from pointing towards directory in which renpy resides to pointing
+        # towards the directory inside which pytest resides.
 
-        # Long comment para because most of the time output value is constant
-        # but in this case it changes to something else. Value is consistent
-        # but not constant.
         renpy_base = main.path_to_renpy_base()
         check_value = os.path.abspath(
             os.path.dirname(os.path.realpath(sys.argv[0])))
