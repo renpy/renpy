@@ -1253,7 +1253,7 @@ translate indonesian strings:
     new "Navigasi: [project.current.display_name!q]"
 
     # new_project.rpy:71
-    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
+    old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
     new "Kamu akan membuat bahasa proyek : [new_project_language]. Ganti bahasa launcher di pengaturan untuk membuat proyek dalam bahasa lain."
 
     # preferences.rpy:187
@@ -1271,4 +1271,3 @@ translate indonesian strings:
     # translations.rpy:343
     old "Extract Dialogue: [project.current.display_name!q]"
     new "Extrak Dialog: [project.current.display_name!q]"
-

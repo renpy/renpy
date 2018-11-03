@@ -78,7 +78,7 @@ label new_project:
             gui_kind = "new_gui_project"
 
             # When translating this, feel free to replace [new_project_language] with the translation of your language.
-            interface.info(_("You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."))
+            interface.info(_("You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."))
 
     python:
         project_name = ""
