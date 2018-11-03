@@ -881,6 +881,10 @@ class MultiBox(Container):
                     rw = remwidth
 
                 surf = render(d, rw, height - y, cst, cat)
+                if isinstance(d, renpy.sl2.sldisplayables.ShowIf) and (not d.show_child):
+                    line.append((d, x, y, surf))
+                    continue
+
                 sw, sh = surf.get_size()
 
                 if box_wrap and remwidth - sw - padding < 0 and line:
@@ -923,6 +927,10 @@ class MultiBox(Container):
                     rh = remheight
 
                 surf = render(d, width - x, rh, cst, cat)
+                if isinstance(d, renpy.sl2.sldisplayables.ShowIf) and (not d.show_child):
+                    line.append((d, x, y, surf))
+                    continue
+
                 sw, sh = surf.get_size()
 
                 if box_wrap and remheight - sh - padding < 0:
