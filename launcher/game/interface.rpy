@@ -391,7 +391,7 @@ init python in interface:
 
     import string
     DIGITS_LETTERS = string.digits
-    PROJECT_LETTERS = DIGITS_LETTERS + string.ascii_letters
+    PROJECT_LETTERS = DIGITS_LETTERS + string.ascii_letters + " _"
     FILENAME_LETTERS = PROJECT_LETTERS + "\\/"
 
     def input(title, message, filename=False, sanitize=True, cancel=None, allow=None, default=""):
