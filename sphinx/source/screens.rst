@@ -1823,16 +1823,11 @@ Screen Statements
 In addition to the screen statement, there are three Ren'Py script
 language statements that involve screens.
 
-Two of these statements take a keyword argument list. This is a Python
-argument list, in parentheses, consisting of only keyword
-arguments. Positional arguments, extra positional arguments (*), and
-extra keyword arguments (**) are not allowed.
-
 Show Screen
 -----------
 
 The ``show screen`` statement causes a screen to be shown. It takes an
-screen name, and an optional argument list. If present, the arguments
+screen name, and an optional Python argument list. If present, the arguments
 are used to initialize the scope of the screen.
 
 The show screen statement takes an optional ``nopredict`` keyword, that
