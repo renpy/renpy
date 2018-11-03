@@ -49,6 +49,9 @@ pure_functions = {
 
     # enumerator and reversed return iterators at the moment.
 
+    # In addition, absolute, because it completely repeats the work of float
+    "absolute",
+
     # minstore.py
     "_",
     "_p",
@@ -68,7 +71,6 @@ pure_functions = {
     "color", "Color",
 
     # ui.py
-
     "ui.returns",
     "ui.jumps",
     "ui.jumpsoutofcontext",
@@ -77,7 +79,6 @@ pure_functions = {
     "ui.gamemenus",
 
     # renpy.py
-
     "renpy.version_string",
     "renpy.version_only",
     "renpy.version_tuple",
