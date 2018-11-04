@@ -30,7 +30,7 @@ screen _developer:
     modal True
 
     frame:
-        style_group ""
+        style_prefix ""
 
         has side "t c b":
             spacing gui._scale(10)
@@ -74,7 +74,7 @@ screen _developer:
 screen _image_attributes():
 
     frame:
-        style_group ""
+        style_prefix ""
         right_padding 0
 
         has side "c b":
@@ -110,13 +110,19 @@ label _image_attributes:
 
     return
 
-screen _variable_viewer(entries):
+screen _variable_viewer(all_entries, deleted_entries):
 
     zorder 1010
     modal True
+    default show_deleted = True
+    python:
+        if show_deleted:
+            entries = all_entries
+        else:
+            entries = [(n, v) for n, v in all_entries if n not in deleted_entries]
 
     frame:
-        style_group ""
+        style_prefix ""
         right_padding 0
 
         has side "t c b":
@@ -144,6 +150,9 @@ screen _variable_viewer(entries):
 
             textbutton _(u"Return"):
                 action Return(True)
+            if all_entries and deleted_entries:
+                textbutton (_(u"Hide deleted") if show_deleted else _(u"Show deleted")):
+                    action ToggleScreenVariable("show_deleted")
 
 
 label _debugger_screen:
@@ -157,6 +166,7 @@ label _debugger_screen:
         aRepr.maxstring = 120
 
         entries = [ ]
+        deleted_entries = set()
 
         for sn, d in renpy.python.store_dicts.items():
 
@@ -181,11 +191,14 @@ label _debugger_screen:
 
                 name = (sn + "." + vn)[6:]
 
+                if vn not in d:
+                    deleted_entries.add(name)
+
                 entries.append((name, value))
 
         entries.sort(key=lambda e : e[0])
 
-        renpy.call_screen("_variable_viewer", entries=entries)
+        renpy.call_screen("_variable_viewer", all_entries=entries, deleted_entries=deleted_entries)
 
     return
 
@@ -477,7 +490,7 @@ screen _image_location_picker(image_files):
     default filter = ""
 
     frame:
-        style_group ""
+        style_prefix ""
 
         has side "t c b":
             spacing gui._scale(10)
@@ -651,4 +664,3 @@ init python:
     config.underlay.append(renpy.Keymap(
         image_load_log = ToggleScreen("_image_load_log")
     ))
-
