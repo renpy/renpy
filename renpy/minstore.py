@@ -49,6 +49,8 @@ from renpy.translation import translate_string as __  # @UnusedImport
 
 from renpy.python import store_eval as eval
 
+from renpy.display.core import absolute
+
 
 def _(s):
     """
