@@ -31,6 +31,9 @@ emulation mode.
 Ren'Py now better reports errors in text tags that require a value but are
 not given one.
 
+The new :var:`_version` variable indicates the version of the game itself
+that was used when a new game is first created.
+
 Translations
 ------------
 

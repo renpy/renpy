@@ -221,3 +221,6 @@ init -1500 python:
 init -1500:
     image text = renpy.ParameterizedText(style="centered_text")
     image vtext = renpy.ParameterizedText(style="centered_vtext")
+
+# Set _version to the version when the game was first started.
+default _version = config.version
