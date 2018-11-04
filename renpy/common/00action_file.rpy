@@ -815,6 +815,11 @@ init -1500 python:
 
          Goes to the previous file page, if possible.
 
+         `min`
+            The first file page that can be navigated to.
+            By default, will be "auto".
+            This should be one of either "auto", "quick", or "1".
+
          `max`
              If set, this should be an integer that gives the number of
              the maximum file page we can go to. This is required to enable
@@ -826,7 +831,7 @@ init -1500 python:
 
         alt = _("Previous file page.")
 
-        def __init__(self, max=None, wrap=False):
+        def __init__(self, min="auto", max=None, wrap=False):
 
             if wrap and max is not None:
                 max = str(max)
@@ -840,15 +845,15 @@ init -1500 python:
                 page = max
 
             elif page == "quick":
-                if config.has_autosave:
+                if config.has_autosave and page != min:
                     page = "auto"
                 else:
                     page = max
 
             elif page == "1":
-                if config.has_quicksave:
+                if config.has_quicksave and page != min:
                     page = "quick"
-                elif config.has_autosave:
+                elif config.has_autosave and page != min:
                     page = "auto"
                 else:
                     page = max
@@ -937,4 +942,3 @@ init 1050 python hide:
             int(persistent._file_page)
         except:
             persistent._file_page = "1"
-
