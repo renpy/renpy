@@ -1221,7 +1221,7 @@ translate japanese strings:
     new "ナビゲーション: [project.current.display_name!q]"
 
     # new_project.rpy:71
-    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
+    old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
     new "日本語のプロジェクトを作成します。別の言語のプロジェクトを作成するには、設定でランチャーの言語を変更してください。"
 
     # preferences.rpy:187
@@ -1321,4 +1321,3 @@ translate japanese strings:
     # front_page.rpy:221
     old "Actions"
     new "アクション"
-

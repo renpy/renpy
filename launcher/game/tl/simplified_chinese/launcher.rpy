@@ -898,7 +898,7 @@ translate simplified_chinese strings:
     new "传统主题界面"
 
     # new_project.rpy:71
-    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
+    old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
     new "您将创建一个 [new_project_language] 语言的工程。要创建其他语言的工程，请在设置里更改启动器语言。"
 
     # new_project.rpy:90
@@ -1248,4 +1248,3 @@ translate simplified_chinese strings:
     # dmgcheck.rpy:50
     old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
     new "这可能是由于 Ren'Py 直接从 Macintosh 磁盘镜像中运行导致的。要修复此问题，退出启动器，复制整个 %s 文件夹到您计算机的其他任意位置，并重新运行 Ren'Py。"
-

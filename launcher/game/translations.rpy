@@ -116,7 +116,7 @@ screen translate:
                                 value FieldInputValue(persistent, "translate_language")
                                 size 24
                                 color INPUT_COLOR
-
+                                allow interface.TRANSLATE_LETTERS
                 # Left side.
                 frame:
                     style "l_indent"

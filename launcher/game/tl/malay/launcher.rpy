@@ -913,7 +913,7 @@
     new "Direktori projek tidak boleh ditetapkan. Putus asa."
 
     # new_project.rpy:71
-    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
+    old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
     new "Anda akan mencipta projek bahasa [new_project_language]. Tukar bahasa pelancar dalam menu keutamaan untuk mencipta projek dalam bahasa yang lain."
 
     # new_project.rpy:79
@@ -1263,4 +1263,3 @@
     # updater.rpy:201
     old "Proceed"
     new "Teruskan"
-
