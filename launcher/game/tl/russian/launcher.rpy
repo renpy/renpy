@@ -35,7 +35,7 @@ translate russian strings:
 
     # android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Чтобы построить Android-пакет, пожалуйста, загрузите RAPT, разархивируйте его и поместить в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
+    new "Чтобы построить Android-пакет, пожалуйста, загрузите RAPT, разархивируйте его, и поместите в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
 
     # android.rpy:31
     old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
@@ -219,7 +219,7 @@ translate russian strings:
 
     # androidstrings.rpy:17
     old "The build seems to have failed."
-    new "Ой, ошибка со сборкой приключилась..."
+    new "Похоже, сборка провалилась."
 
     # androidstrings.rpy:18
     old "Launching app."
@@ -375,7 +375,7 @@ translate russian strings:
 
     # androidstrings.rpy:55
     old "Do you accept the Android SDK Terms and Conditions?"
-    new "Вы принимаете условияя и положения пользования Android SDK?"
+    new "Вы принимаете условия и положения пользования Android SDK?"
 
     # androidstrings.rpy:56
     old "I'm downloading the Android SDK. This might take a while."
