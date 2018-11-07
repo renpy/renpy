@@ -27,6 +27,7 @@ from __future__ import print_function
 
 import collections
 import os
+import renpy
 
 # Can we add more config variables?
 locked = False
@@ -719,6 +720,12 @@ translate_files = [ ]
 # translated.
 translate_comments = [ ]
 
+# Should we trying detect user locale on first launch?
+enable_language_autodetect = False
+
+# A function from (locale, region) -> existing language.
+locale_to_language_function = None
+
 # Should we pass the full argument list to the say screen?
 old_say_args = False
 
@@ -806,6 +813,8 @@ fast_skipping_callbacks = [ ]
 
 # Should the audio periodic callback run in its own thread.
 audio_periodic_thread = True
+if renpy.emscripten:
+    audio_periodic_thread = False
 
 # A list of fonts to preload on Ren'Py startup.
 preload_fonts = [ ]
@@ -911,6 +920,9 @@ menu_actions = True
 
 # Should disabled menu items be included?
 menu_include_disabled = False
+
+# Should we report extraneous attributes?
+report_extraneous_attributes = True
 
 del os
 del collections

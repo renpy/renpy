@@ -77,10 +77,14 @@ def touch_emulator(ev, x, y):
             y = 0
 
     elif ev.type == pygame.KEYDOWN and not ios:
-        if not ev.key in TOUCH_KEYS:
+        if ev.mod & pygame.KMOD_SHIFT:
+            pass
+        elif not ev.key in TOUCH_KEYS:
             return None, x, y
 
     elif ev.type == pygame.KEYUP and not ios:
+        if ev.mod & pygame.KMOD_SHIFT:
+            pass
         if not ev.key in TOUCH_KEYS:
             return None, x, y
 

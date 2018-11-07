@@ -251,7 +251,12 @@ screen launcher_input:
 
             add SPACER
 
-            input style "l_default" value ScreenVariableInputValue("value", returnable=True) size 24 xalign 0.5 color INPUT_COLOR
+            input style "l_default":
+                value ScreenVariableInputValue("value", returnable=True)
+                size 24
+                xalign 0.5
+                color INPUT_COLOR
+                allow allow
 
             if filename:
                 add SPACER
@@ -384,7 +389,13 @@ init python in interface:
         yield
         store._ignore_action = Jump("front_page")
 
-    def input(title, message, filename=False, sanitize=True, cancel=None, default=""):
+    import string
+    DIGITS_LETTERS = string.digits
+    PROJECT_LETTERS = DIGITS_LETTERS + string.ascii_letters + " _"
+    FILENAME_LETTERS = PROJECT_LETTERS + "\\/"
+    TRANSLATE_LETTERS = string.ascii_letters + "_"
+
+    def input(title, message, filename=False, sanitize=True, cancel=None, allow=None, default=""):
         """
         Requests typewritten input from the user.
         """
@@ -393,7 +404,15 @@ init python in interface:
 
         while True:
 
-            rv = renpy.call_screen("launcher_input", title=title, message=message, filename=filename, cancel=cancel, default=rv)
+            rv = renpy.call_screen(
+                "launcher_input",
+                title=title,
+                message=message,
+                filename=filename or (allow in [PROJECT_LETTERS, FILENAME_LETTERS]),
+                allow=allow,
+                cancel=cancel,
+                default=rv
+            )
 
             if sanitize:
                 if ("[" in rv) or ("{" in rv):
@@ -507,6 +526,3 @@ init python in interface:
         """
 
         return common(_("CHOICE"), store.QUESTION_COLOR, message, choices=choices, selected=selected, **kwargs)
-
-
-

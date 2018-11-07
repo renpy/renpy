@@ -21,6 +21,10 @@ translate russian strings:
     old "The filename must have the .rpy extension."
     new "Имя должно иметь расширение .rpy."
 
+    # add_file.rpy:37
+    old "The file name may not be empty."
+    new "Имя файла не может быть пустым."
+
     # add_file.rpy:39
     old "The file already exists."
     new "Файл уже существует."
@@ -31,11 +35,11 @@ translate russian strings:
 
     # android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Чтобы построить Android-пакет, пожалуйста, загрузите RAPT, разархивируйте его и поместить в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
+    new "Чтобы построить Android-пакет, пожалуйста, загрузите RAPT, разархивируйте его, и поместите в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
 
     # android.rpy:31
-    old "A Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Чтобы построить Android-пакеты на Windows требуется инструментарий разработки Java 8. JDK отличен от JRE, и возможно, у вас есть Java без JDK.\n\nПожалуйста, {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}загрузите и установите JDK{/a}, и перезапустите лаунчер Ren'Py."
+    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Чтобы построить Android-пакеты на Windows требуется 64-битный инструментарий разработки Java 8. JDK отличен от JRE, и возможно, у вас есть Java без JDK.\n\nПожалуйста, {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}загрузите и установите JDK{/a}, и перезапустите лаунчер Ren'Py."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -215,7 +219,7 @@ translate russian strings:
 
     # androidstrings.rpy:17
     old "The build seems to have failed."
-    new "Ой, ошибка со сборкой приключилась..."
+    new "Похоже, сборка провалилась."
 
     # androidstrings.rpy:18
     old "Launching app."
@@ -224,6 +228,10 @@ translate russian strings:
     # androidstrings.rpy:19
     old "The build seems to have succeeded."
     new "Кажется, сборка прошла успешно!"
+
+    # androidstrings.rpy:20
+    old "The armeabi-v7a version works on most phones on tablets, while the x86_64 version works on the simulator and chromebooks."
+    new "Версия armeabi-v7a работает на большинстве смартфонов и планшетов, а версия x86_64 требуется для симуляторов и хромбуков."
 
     # androidstrings.rpy:20
     old "What is the full name of your application? This name will appear in the list of installed applications."
@@ -367,7 +375,7 @@ translate russian strings:
 
     # androidstrings.rpy:55
     old "Do you accept the Android SDK Terms and Conditions?"
-    new "Вы принимаете условияя и положения пользования Android SDK?"
+    new "Вы принимаете условия и положения пользования Android SDK?"
 
     # androidstrings.rpy:56
     old "I'm downloading the Android SDK. This might take a while."
@@ -1146,8 +1154,8 @@ translate russian strings:
     new "Директория проектов не может быть установлена. Сдаюсь."
 
     # new_project.rpy:71
-    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
-    new "Вы создаёте проект на языке [new_project_language]. Чтобы создать проект на другом языке, измените язык лаунчера."
+    old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
+    new "Вы создаёте проект на русском языке. Чтобы создать проект на другом языке, измените язык лаунчера."
 
     # new_project.rpy:79
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."

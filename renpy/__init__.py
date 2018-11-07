@@ -41,7 +41,7 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (7, 2, 0, vc_version)
+version_tuple = (7, 1, 2, vc_version)
 
 # The name of this version.
 version_name = "On the road again."
@@ -70,6 +70,7 @@ macintosh = False
 linux = False
 android = False
 ios = False
+emscripten = False
 
 # Should we enable experimental features and debugging?
 experimental = "RENPY_EXPERIMENTAL" in os.environ
@@ -121,11 +122,13 @@ elif platform.mac_ver()[0]:
     macintosh = True
 elif "ANDROID_PRIVATE" in os.environ:
     android = True
+elif sys.platform == 'emscripten':
+    emscripten = True
 else:
     linux = True
 
 # A flag that's true if we're on a smartphone or tablet-like platform.
-mobile = android or ios
+mobile = android or ios or emscripten
 
 # A flag that's set to true if the game directory is bundled inside a mac app.
 macapp = False

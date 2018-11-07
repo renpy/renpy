@@ -10,7 +10,7 @@ Full Changelog
 Improvements
 ------------
 
-Ren'Py's Screen language now support the inclusion of anonymous ATL
+Ren'Py's screen language now support the inclusion of anonymous ATL
 transforms. It's now possible to write::
 
     screen hello_title():
@@ -25,6 +25,25 @@ make it possible to set variables inside used screens.
 The new :var:`config.menu_include_disabled` variable determines if menus
 should include entries disabled by an if clause.
 
+Shift-keybindings (like shift+I and shift+R) now work in the android
+emulation mode.
+
+Ren'Py now better reports errors in text tags that require a value but are
+not given one.
+
+The new :var:`_version` variable indicates the version of the game itself
+that was used when a new game is first created.
+
+Translations
+------------
+
+Ren'Py now has the ability to automatically detect the locale of the user's
+system, and use it to set the language. Please see
+:var:`config.enable_language_autodetect` and the :ref:`Translation <translation>`
+documentation for how this works.
+
+The German translation has been updated.
+
 Fixes
 -----
 
@@ -32,6 +51,23 @@ A Windows-specific bug that caused RTL (the support for languages like
 Arabic and Hebrew) to corrupt the second half of text strings has been
 fixed. This should prevent garbage characters from being displayed when
 rendering those languages.
+
+Ren'Py will now report an error if a game accesses an image that does not
+exist, but has as a prefix an image that does exist. Before this change,
+if ``eileen happy`` exists and ``eileen happy unknown`` was shown, the
+additional attribute would be ignored.
+
+Lint has been improved to deal with images that take attributes that are
+not in the image name, like layered images.
+
+Ren'Py generates choice menu images that are suitable for use on the phone.
+
+Android Fixes
+-------------
+
+As Ren'Py's new Android support only worked well on a 64-bit version of
+Java 8, we make that 64-bit requirement explicit.
+
 
 
 .. _renpy-7.1.1:

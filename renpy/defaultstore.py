@@ -219,8 +219,6 @@ BarValue = renpy.ui.BarValue
 
 Style = renpy.style.Style  # @UndefinedVariable
 
-absolute = renpy.display.core.absolute
-
 NoRollback = renpy.python.NoRollback
 
 

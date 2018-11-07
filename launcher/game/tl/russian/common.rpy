@@ -813,3 +813,10 @@ translate russian strings:
     old "return"
     new "вернуться"
 
+    # _developer\developer.rpym:154
+    old "Hide deleted"
+    new "Скрыть удалённые"
+
+    # _developer\developer.rpym:154
+    old "Show deleted"
+    new "Показать удалённые"

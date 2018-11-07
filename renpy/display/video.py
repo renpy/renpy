@@ -137,7 +137,7 @@ def interact():
     return fullscreen
 
 
-def get_movie_texture(channel, mask_channel=None):
+def get_movie_texture(channel, mask_channel=None, side_mask=False):
 
     if not renpy.audio.music.get_playing(channel):
         return None, False
@@ -145,16 +145,29 @@ def get_movie_texture(channel, mask_channel=None):
     c = renpy.audio.music.get_channel(channel)
     surf = c.read_video()
 
-    if mask_channel:
+    if side_mask:
+
+        if surf is not None:
+
+            w, h = surf.get_size()
+            w //= 2
+
+            mask_surf = surf.subsurface((w, 0, w, h))
+            surf = surf.subsurface((0, 0, w, h))
+
+        else:
+            mask_surf = None
+
+    elif mask_channel:
         mc = renpy.audio.music.get_channel(mask_channel)
         mask_surf = mc.read_video()
     else:
         mask_surf = None
 
-    if mask_channel:
+    if mask_surf is not None:
 
         # Something went wrong with the mask video.
-        if surf and mask_surf:
+        if surf:
             renpy.display.module.alpha_munge(mask_surf, surf, renpy.display.im.identity)
         else:
             surf = None
@@ -228,6 +241,16 @@ class Movie(renpy.display.core.Displayable):
         file will be automatically played on `channel` when the Movie is
         shown, and automatically stopped when the movie is hidden.
 
+    `side_mask`
+        If true, this tells Ren'Py to use the side-by-side mask mode for
+        the Movie. In this case, the movie is divided in half. The left
+        half is used for color information, while the right half is used
+        for alpha information. The width of the displayable is half the
+        width of the movie file.
+
+        Where possible, `side_mask` should be used over `mask` as it has
+        no chance of frames going out of sync.
+
     `mask`
         If given, this should be the path to a movie file that is used as
         the alpha channel of this displayable. The movie file will be
@@ -282,6 +305,7 @@ class Movie(renpy.display.core.Displayable):
 
     mask = None
     mask_channel = None
+    side_mask = False
 
     image = None
 
@@ -302,7 +326,7 @@ class Movie(renpy.display.core.Displayable):
 
         renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop)
 
-    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, **properties):
+    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, **properties):
         super(Movie, self).__init__(**properties)
 
         global auto_channel_serial
@@ -314,6 +338,9 @@ class Movie(renpy.display.core.Displayable):
         self.channel = channel
         self._play = play
 
+        if side_mask:
+            mask = None
+
         self.mask = mask
 
         if mask is None:
@@ -322,6 +349,8 @@ class Movie(renpy.display.core.Displayable):
             self.mask_channel = channel + "_mask"
         else:
             self.mask_channel = mask_channel
+
+        self.side_mask = side_mask
 
         self.ensure_channel(self.channel)
         self.ensure_channel(self.mask_channel)
@@ -357,7 +386,7 @@ class Movie(renpy.display.core.Displayable):
 
         if self.size is None:
 
-            tex, _ = get_movie_texture(self.channel, self.mask_channel)
+            tex, _ = get_movie_texture(self.channel, self.mask_channel, self.side_mask)
 
             if playing and (tex is not None):
                 width, height = tex.get_size()

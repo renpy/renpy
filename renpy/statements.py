@@ -32,7 +32,22 @@ registry = { }
 parsers = renpy.parser.ParseTrie()
 
 
-def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False, execute_init=None, label=None, warp=None):  # @ReservedAssignment
+def register(
+        name,
+        parse=None,
+        lint=None,
+        execute=None,
+        predict=None,
+        next=None,
+        scry=None,
+        block=False,
+        init=False,
+        translatable=False,
+        execute_init=None,
+        init_priority=0,
+        label=None,
+        warp=None,
+):
     """
     :doc: statement_register
     :name: renpy.register_statement
@@ -48,7 +63,8 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
         When this is False, the statement does not expect a block. When True, it
         expects a block, but leaves it up to the lexer to parse that block. If the
         string "script", the block is interpreted as containing one or more
-        Ren'Py script language statements.
+        Ren'Py script language statements. If the string "possible", the
+        block expect condition is determined by the parse function.
 
     `parse`
         This is a function that takes a Lexer object. This function should parse the
@@ -99,21 +115,29 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
     `init`
         True if this statement should be run at init-time. (If the statement
         is not already inside an init block, it's automatically placed inside
-        an init 0 block.) This calls the execute function, in addition to the
+        an init block.) This calls the execute function, in addition to the
         execute_init function.
+
+    `init_priority`
+        An integer that determines the priority of initialisation of init block.
 
     """
     name = tuple(name.split())
 
-    registry[name] = dict(parse=parse,
-                          lint=lint,
-                          execute=execute,
-                          execute_init=execute_init,
-                          predict=predict,
-                          next=next,
-                          scry=scry,
-                          label=label,
-                          warp=warp)
+    registry[name] = dict(
+        parse=parse,
+        lint=lint,
+        execute=execute,
+        execute_init=execute_init,
+        predict=predict,
+        next=next,
+        scry=scry,
+        label=label,
+        warp=warp,
+    )
+
+    if block not in [True, False, "script", "possible"]:
+        raise Exception("Unknown \"block\" argument value: {}".format(block))
 
     # The function that is called to create an ast.UserStatement.
     def parse_user_statement(l, loc):
@@ -123,21 +147,21 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
             rv = renpy.ast.UserStatement(loc, l.text, l.subblock)
             rv.translatable = translatable
 
-            if not block:
+            if block is False:
                 l.expect_noblock(" ".join(name) + " statement")
-                l.advance()
+            elif block is True:
+                l.expect_block(" ".join(name) + " statement")
             elif block == "script":
                 l.expect_block(" ".join(name) + " statement")
                 rv.code_block = renpy.parser.parse_block(l.subblock_lexer())
-                l.advance()
-            else:
-                l.expect_block(" ".join(name) + " statement")
-                l.advance()
+
+            l.advance()
+
         finally:
             renpy.exports.pop_error_handler()
 
         if init and not l.init:
-            rv = renpy.ast.Init(loc, [ rv ], 0)
+            rv = renpy.ast.Init(loc, [rv], init_priority + l.init_offset)
 
         return rv
 

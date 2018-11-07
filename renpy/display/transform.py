@@ -983,6 +983,9 @@ class Transform(Container):
 
     def _duplicate(self, args):
 
+        if args and args.args:
+            args.extraneous()
+
         if not self._duplicatable:
             return self
 

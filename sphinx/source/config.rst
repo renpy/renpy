@@ -389,6 +389,12 @@ Occasionally Used
     The default implementation of this uses the narrator character to
     display a blank line without interacting.
 
+.. var:: config.enable_language_autodetect = False
+
+    If true, Ren'Py will attempt to determine the name of the language
+    to use based on the locale of the player's system. If successful,
+    this languagfe will be used as the default language.
+
 .. var:: config.enter_sound = None
 
     If not None, this is a sound file that is played when entering the
@@ -519,6 +525,16 @@ Occasionally Used
 
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
+
+.. var:: config.locale_to_language_function = ...
+
+    A function that determines the language the game should use,
+    based on the the user's locale.
+    It takes 2 arguments strings that give the the ISO code of the locale
+    and the ISO code of the region.
+
+    It should return a string giving the name of a translation to use, or
+    None to use the default translation.
 
 .. var:: config.main_menu = [ ... ]
 

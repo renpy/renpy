@@ -704,6 +704,9 @@ class Button(renpy.display.layout.Window):
         self._duplicatable = False
 
     def _duplicate(self, args):
+        if args and args.args:
+            args.extraneous()
+
         return self
 
     def predict_one_action(self):

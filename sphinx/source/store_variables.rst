@@ -127,6 +127,15 @@ and rolled-back when rollback occurs.
 
     Controls of if skipping is allowed.
 
+.. var:: _version = ...
+
+    This is set to :var:`config.version` when a new game is started. It can be
+    use by the ``after_load`` label or :var:`config.after_load_callbacks` to
+    determine which upgrades need to be done.
+
+    This is only set once, upon the initial start. After that, the game is
+    responsible for updating _version as necessary.
+
 .. var:: _window = False
 
     This set by the ``window show`` and ``window hide`` statements, and indirectly

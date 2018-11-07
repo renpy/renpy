@@ -52,6 +52,7 @@ pure_functions = {
     # minstore.py
     "_",
     "_p",
+    "absolute",
 
     # defaultstore.py
     "ImageReference", "Image", "Frame", "Solid", "LiveComposite", "LiveCrop",

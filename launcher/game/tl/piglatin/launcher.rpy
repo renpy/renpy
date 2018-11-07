@@ -1130,7 +1130,7 @@ translate piglatin strings:
     new "Hetay rojectspay irectoryday ouldcay otnay ebay etsay. Ivinggay upay."
 
     # new_project.rpy:71
-    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
+    old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
     new "Ouyay illway ebay reatingcay anay [new_project_language] anguagelay rojectpay. Hangecay hetay auncherlay anguagelay inay referencespay otay reatecay aay rojectpay inay anotheray anguagelay."
 
     # new_project.rpy:79
@@ -1484,4 +1484,3 @@ translate piglatin strings:
     # updater.rpy:188
     old "Fetching the list of update channels"
     new "Etchingfay hetay istlay ofay updateay annelschay"
-
