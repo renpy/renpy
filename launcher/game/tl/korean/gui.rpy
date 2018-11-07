@@ -379,7 +379,7 @@ translate korean strings:
 
     # gui.rpy:403
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
-    new "## 이것은 휴대전화와 태블릿에서 쉽게 터지할 수 있도록 빠른(Quick) 버튼들의 크기를 크게 합니다."
+    new "## 이것은 휴대전화와 태블릿에서 쉽게 터치할 수 있도록 빠른(Quick) 버튼들의 크기를 크게 합니다."
 
     # gui.rpy:409
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
