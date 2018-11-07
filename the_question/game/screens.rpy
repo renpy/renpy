@@ -799,10 +799,10 @@ screen preferences():
                     style_prefix "radio"
                     label _("Language")
 
-                    textbutton "English" text_font "DejaVuSans.ttf"action Language(None)
-                    textbutton "Français" text_font "DejaVuSans.ttf"action Language("french")
+                    textbutton "English" text_font "DejaVuSans.ttf" action Language(None)
+                    textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
-                    textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf"action Language("malay")
+                    textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
 
 #end language_picker
 
