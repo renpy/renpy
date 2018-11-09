@@ -241,32 +241,34 @@ init label _errorhandling:
         color "#405060"
         hover_color Color("#048")
 
-    # Early hyperlink support.
-    python hide:
-        def hyperlink_styler(target):
-            return style._hyperlink
-
-        def hyperlink_function(target):
-            if target.startswith("http:") or target.startswith("https:"):
-                try:
-                    import webbrowser
-                    webbrowser.open(target)
-                except:
-                    pass
-
-            if target.startswith("edit:"):
-                prefix, line, filename = target.split(":", 2)
-                line = int(line)
-
-                renpy.launch_editor([ filename ], line)
-
-        style._default.hyperlink_functions = (hyperlink_styler, hyperlink_function, None)
-
     return
 
 # Invokes _errorhanding when this is first loaded.
 init:
     call _errorhandling
+
+# Early hyperlink support.
+init python:
+
+    def _error_hyperlink_styler(target):
+        return style._hyperlink
+
+    def _error_hyperlink_function(target):
+        if target.startswith("http:") or target.startswith("https:"):
+            try:
+                import webbrowser
+                webbrowser.open(target)
+            except:
+                pass
+
+        if target.startswith("edit:"):
+            prefix, line, filename = target.split(":", 2)
+            line = int(line)
+
+            renpy.launch_editor([ filename ], line)
+
+    style._default.hyperlink_functions = (_error_hyperlink_styler, _error_hyperlink_function, None)
+
 
 init python:
 
