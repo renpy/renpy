@@ -267,7 +267,7 @@ init python in distribute:
 
         def mkdir(self, path):
             if not os.path.isdir(path):
-                os.mkdir(path, 0755)
+                os.makedirs(path, 0755)
 
         def __init__(self, path):
             self.path = path
@@ -278,8 +278,7 @@ init python in distribute:
 
             # If this is not a directory, ensure all parent directories
             # have been created
-            if not os.path.isdir(os.path.dirname(fn)):
-                os.makedirs(os.path.dirname(fn), 0755)
+            self.mkdir(os.path.dirname(fn))
             shutil.copy2(path, fn)
 
             if xbit:
