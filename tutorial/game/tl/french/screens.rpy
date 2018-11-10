@@ -139,7 +139,7 @@ translate french strings:
 
     # screens.rpy:773
     old "Language"
-    new "Langage"
+    new "Langue"
 
     # screens.rpy:793
     old "Text Speed"
@@ -275,7 +275,7 @@ translate french strings:
 
     # screens.rpy:1089
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "Molette de souris vers le haut\nClic dans le sens Rollback"
+    new "Molette de souris vers le haut\nClic du côté rembobinage"
 
     # screens.rpy:1093
     old "Mouse Wheel Down"
