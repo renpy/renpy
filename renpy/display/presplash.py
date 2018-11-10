@@ -123,6 +123,12 @@ def end():
     global event_thread
     global window
 
+    if renpy.emscripten:
+        # presplash handled on the JavaScript side, because emscripten
+        # currently does not support destroying/recreating GL contexts
+        import emscripten
+        emscripten.run_script(r"""presplashEnd();""")
+
     if window is None:
         return
 
