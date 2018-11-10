@@ -723,6 +723,7 @@ def push_current_screen(screen):
 
 
 def pop_current_screen():
+    global _current_screen
     _current_screen = current_screen_stack.pop()
 
 
