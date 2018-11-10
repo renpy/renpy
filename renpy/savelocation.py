@@ -36,6 +36,9 @@ import threading
 from renpy.loadsave import clear_slot, safe_rename
 import shutil
 
+if renpy.emscripten:
+    import emscripten
+
 disk_lock = threading.RLock()
 
 # A suffix used to disambguate temporary files being written by multiple
@@ -147,6 +150,9 @@ class FileLocation(object):
 
         with disk_lock:
             record.write_file(filename)
+
+        if renpy.emscripten:
+            emscripten.syncfs()
 
         self.scan()
 
@@ -266,6 +272,9 @@ class FileLocation(object):
             if os.path.exists(filename):
                 os.unlink(filename)
 
+            if renpy.emscripten:
+                emscripten.syncfs()
+
             self.scan()
 
     def rename(self, old, new):
@@ -286,6 +295,9 @@ class FileLocation(object):
 
             os.rename(old, new)
 
+            if renpy.emscripten:
+                emscripten.syncfs()
+
             self.scan()
 
     def copy(self, old, new):
@@ -301,6 +313,9 @@ class FileLocation(object):
                 return
 
             shutil.copyfile(old, new)
+
+            if renpy.emscripten:
+                emscripten.syncfs()
 
             self.scan()
 
@@ -337,6 +352,9 @@ class FileLocation(object):
             safe_rename(fn_tmp, fn_new)
             safe_rename(fn_new, fn)
 
+            if renpy.emscripten:
+                emscripten.syncfs()
+
     def unlink_persistent(self):
 
         if not self.active:
@@ -346,6 +364,9 @@ class FileLocation(object):
             os.unlink(self.persistent)
         except:
             pass
+
+        if renpy.emscripten:
+            emscripten.syncfs()
 
     def __eq__(self, other):
         if not isinstance(other, FileLocation):
