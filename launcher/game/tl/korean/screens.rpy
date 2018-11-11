@@ -71,7 +71,7 @@ translate korean strings:
 
     # screens.rpy:262
     old "History"
-    new "History"
+    new "지난 대사록"
 
     # screens.rpy:263
     old "Skip"
@@ -407,7 +407,7 @@ translate korean strings:
 
     # screens.rpy:1003
     old "Enter"
-    new "Enter"
+    new "엔터(Enter)"
 
     # screens.rpy:1004
     old "Advances dialogue and activates the interface."
@@ -415,7 +415,7 @@ translate korean strings:
 
     # screens.rpy:1007
     old "Space"
-    new "Space"
+    new "스페이스(Space)"
 
     # screens.rpy:1008
     old "Advances dialogue without selecting choices."
@@ -431,7 +431,7 @@ translate korean strings:
 
     # screens.rpy:1015
     old "Escape"
-    new "Esc"
+    new "이스케이프(Esc)"
 
     # screens.rpy:1016
     old "Accesses the game menu."
@@ -439,7 +439,7 @@ translate korean strings:
 
     # screens.rpy:1019
     old "Ctrl"
-    new "Ctrl"
+    new "컨트롤(Ctrl)"
 
     # screens.rpy:1020
     old "Skips dialogue while held down."
@@ -447,7 +447,7 @@ translate korean strings:
 
     # screens.rpy:1023
     old "Tab"
-    new "Tab"
+    new "탭(Tab)"
 
     # screens.rpy:1024
     old "Toggles dialogue skipping."
@@ -455,7 +455,7 @@ translate korean strings:
 
     # screens.rpy:1027
     old "Page Up"
-    new "Page Up"
+    new "페이지 업(Page Up)"
 
     # screens.rpy:1028
     old "Rolls back to earlier dialogue."
@@ -463,7 +463,7 @@ translate korean strings:
 
     # screens.rpy:1031
     old "Page Down"
-    new "Page Down"
+    new "페이지 다운(Page Down)"
 
     # screens.rpy:1032
     old "Rolls forward to later dialogue."
@@ -527,7 +527,7 @@ translate korean strings:
 
     # screens.rpy:1089
     old "Start, Guide"
-    new "스타스 버튼/가이드 버튼"
+    new "스타트 버튼/가이드 버튼"
 
     # screens.rpy:1090
     old "Access the game menu."
@@ -640,4 +640,3 @@ translate korean strings:
     # screens.rpy:1429
     old "Menu"
     new "메뉴"
-

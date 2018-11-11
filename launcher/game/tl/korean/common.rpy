@@ -27,7 +27,7 @@ translate korean strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Sunday"
-    new "{#weekday}일일"
+    new "{#weekday}일요일"
 
     # 00action_file.rpy:37
     old "{#weekday_short}Mon"
@@ -231,7 +231,7 @@ translate korean strings:
 
     # 00preferences.rpy:424
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
+    new "대사 읽기 기능이 \"[renpy.display.tts.last]\" 를(을) 말할 것입니다. 'alt+shift+V'를 누르면 비활성화됩니다."
 
     # 00preferences.rpy:426
     old "Self-voicing enabled. Press 'v' to disable."
@@ -332,4 +332,3 @@ translate korean strings:
     # 00gallery.rpy:586
     old "return"
     new "돌아가기"
-

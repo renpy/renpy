@@ -119,7 +119,7 @@ translate korean strings:
 
     # _errorhandling.rpym:497
     old "Opens the traceback.txt file in a text editor."
-    new "traceback.txt 파일을 스크립트 에디터로 엽니다."
+    new "traceback.txt 파일을 텍스트 에디터로 엽니다."
 
     # _errorhandling.rpym:499
     old "Copy to Clipboard"
@@ -171,9 +171,8 @@ translate korean strings:
 
     # _errorhandling.rpym:608
     old "Opens the errors.txt file in a text editor."
-    new "errors.txt 파일을 스크립트 에디터로 엽니다."
+    new "errors.txt 파일을 텍스트 에디터로 엽니다."
 
     # _errorhandling.rpym:612
     old "Copies the errors.txt file to the clipboard."
     new "errors.txt 파일을 클립보드로 복사합니다."
-

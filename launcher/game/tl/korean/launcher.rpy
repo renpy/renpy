@@ -163,7 +163,7 @@ translate korean strings:
 
     # android.rpy:404
     old "Logcat"
-    new "Logcat"
+    new "로그캣"
 
     # android.rpy:437
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
@@ -315,7 +315,7 @@ translate korean strings:
 
     # distribute_gui.rpy:199
     old "Upload to itch.io"
-    new "Upload to itch.io"
+    new "itch.io로 업로드"
 
     # distribute_gui.rpy:215
     old "Build Packages:"
@@ -479,7 +479,7 @@ translate korean strings:
 
     # front_page.rpy:237
     old "Change/Update GUI"
-    new "Change/Update GUI"
+    new "GUI 교체/업데이트"
 
     # front_page.rpy:239
     old "Change Theme"
@@ -1184,4 +1184,3 @@ translate korean strings:
     # updater.rpy:195
     old "Proceed"
     new "다음으로"
-
