@@ -924,6 +924,9 @@ menu_include_disabled = False
 # Should we report extraneous attributes?
 report_extraneous_attributes = True
 
+# Should we play non-loooped music when skipping?
+skip_sounds = False
+
 del os
 del collections
 

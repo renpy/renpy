@@ -739,6 +739,11 @@ Occasionally Used
 
     The width of the screen. Usually set by :func:`gui.init`.
 
+.. var:: config.skip_sounds = False
+
+    If False, non-looping audio will not be played when Ren'Py is
+    skipping.
+
 .. var:: config.speaking_attribute = None
 
     If not None, this should be a string giving the name of an image
