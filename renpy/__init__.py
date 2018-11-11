@@ -427,6 +427,9 @@ def import_all():
     import renpy.gl
     update_path(renpy.gl)
 
+    import renpy.gl2
+    update_path(renpy.gl2)
+
     import renpy.angle
     update_path(renpy.angle)
 
