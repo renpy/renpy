@@ -204,7 +204,7 @@ translate korean strings:
 
     # screens.rpy:752
     old "Unseen Text"
-    new "모두 넘기기"
+    new "읽지 않은 지문"
 
     # screens.rpy:753
     old "After Choices"

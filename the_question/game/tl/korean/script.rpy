@@ -22,7 +22,7 @@ translate korean start_622654e3:
 translate korean start_5aee3489:
 
     # "It's a question that I've been meaning to ask a certain someone."
-    "나는 어떤 사람에게 그것을 물어볼 것이다."
+    "그것은 내가 어떤 사람에게 묻고 싶었던 것들이다."
 
 # game/script.rpy:30
 translate korean start_66c6d238:
@@ -34,7 +34,7 @@ translate korean start_66c6d238:
 translate korean start_1d44d9d7:
 
     # "I've known Sylvie since we were kids. She's got a big heart and she's always been a good friend to me."
-    "나는 어렸을 때부터 실비를 알았다. 그녀는 넓은 마음을 지녔고 언제나 내겐 좋은 친구였다."
+    "어렸을 때부터 실비를 알았다. 그녀는 넓은 마음을 지녔고 언제나 내겐 좋은 친구였다."
 
 # game/script.rpy:37
 translate korean start_1c8af99f:
@@ -106,7 +106,7 @@ translate korean rightaway_aa84c954:
 translate korean rightaway_79becbf8:
 
     # "She turns to me and smiles. She looks so welcoming that I feel my nervousness melt away."
-    "그녀가 미소로 돌아본다. 그런 그녀의 모습을 보며 내 긴장감이 녹아내리는 것을 느낀다."
+    "그녀가 미소로 돌아본다. 그런 그녀의 모습을 보니 내 긴장감이 녹아내리는 것을 느낀다."
 
 # game/script.rpy:84
 translate korean rightaway_6a5d032c:
@@ -172,7 +172,7 @@ translate korean game_68b33461:
 translate korean game_fa834128:
 
     # m "Exactly! I've got lots of different ideas that I think would work."
-    m "정확해! 나는 작동할 거라 생각하는 많은 다른 아이디어들을 가지고 있어."
+    m "정확해! 나는 작동할 거라 생각하는 다른 많은 아이디어들을 가지고 있어."
 
 # game/script.rpy:121
 translate korean game_d9b28ade:
@@ -190,13 +190,13 @@ translate korean game_eaa56bc9:
 translate korean game_9befd1bf:
 
     # s "Well, sure! I can try. I just hope I don't disappoint you."
-    s "글쎄, 좋아! 시도해볼게. 네가 실망하지 않았으면 좋겠네."
+    s "글쎄, 좋아! 시도해볼게. 단지 내가 널 실망하게 하지 않았으면 좋겠네."
 
 # game/script.rpy:129
 translate korean game_c788ae90:
 
     # m "You know you could never disappoint me, Sylvie."
-    m "네가 나를 실망시키지 않을 거란 걸 알잖아, 실비."
+    m "그럴 리 없다는 걸 알잖아, 실비."
 
 # game/script.rpy:138
 translate korean book_4221b3bd:
@@ -220,7 +220,7 @@ translate korean book_b9c732c8:
 translate korean book_1c7ac61a:
 
     # s "So where does the \"visual\" part come in?"
-    s "그럼 \"비주얼\" 파트는 어디에 있는 거야?"
+    s "그럼 \"비주얼\"이란 부분은 어디서 하는 거야?"
 
 # game/script.rpy:148
 translate korean book_763f25a8:
@@ -232,7 +232,7 @@ translate korean book_763f25a8:
 translate korean book_2277f2aa:
 
     # s "I see! That certainly sounds like fun. I actually used to make webcomics way back when, so I've got lots of story ideas."
-    s "알았어! 그건 확실히 재밌을 것 같아. 나 실제로 옛날에 웹코믹스를 만들어봤어, 그래서 많은 스토리 아이디어를 가지고 있어."
+    s "알았어! 그건 확실히 재밌을 것 같아. 나 옛날에 실제로 웹코믹스를 만들어봤어, 그래서 많은 스토리 아이디어를 가지고 있어."
 
 # game/script.rpy:154
 translate korean book_ccd3e9b0:
@@ -244,7 +244,7 @@ translate korean book_ccd3e9b0:
 translate korean book_e325967b:
 
     # s "I'd love to!"
-    s "나는 그러고 싶어!"
+    s "난 그러고 싶어!"
 
 # game/script.rpy:165
 translate korean marry_4509e340:
@@ -376,7 +376,7 @@ translate korean marry_ca27786f:
 translate korean marry_621ed4fc:
 
     # "Our visual novel duo lives on even after we're married...and I try my best to be more decisive."
-    "우리의 비주얼 노블 듀오는 우리가 결혼한 후에도 살아 있다... 그리고 나는 더 단호해지기 위해 최선을 다한다."
+    "우리의 비주얼 노블 듀오는 우리가 결혼한 후에도 살아 있다... 그리고 나는 더 결단력 있는 사람이 되기 위해 최선을 다한다."
 
 # game/script.rpy:232
 translate korean marry_3c7f0bf0:
