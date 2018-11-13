@@ -27,7 +27,7 @@ DEF ANGLE = False
 
 from libc.stdlib cimport malloc, free
 from sdl2 cimport *
-from gl cimport *
+from uguugl cimport *
 
 from pygame_sdl2 cimport *
 import_pygame_sdl2()
@@ -39,6 +39,7 @@ import os.path
 import weakref
 import array
 import time
+import uguugl
 
 cimport renpy.display.render as render
 cimport gltexture
@@ -46,7 +47,7 @@ import gltexture
 import glblacklist
 
 
-cdef extern from "glcompat.h":
+cdef extern from "renpygl.h":
     GLenum glewInit()
     GLubyte *glewGetErrorString(GLenum)
     GLboolean glewIsSupported(char *)
@@ -415,6 +416,8 @@ cdef class GLDraw:
         self.virt_to_draw = render.Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
         self.draw_to_virt = render.Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
 
+        uguugl.load()
+
         if not self.did_init:
             if not self.init():
                 return False
@@ -550,12 +553,6 @@ cdef class GLDraw:
                     return False
 
             return True
-
-        # Count the number of texture units.
-        cdef GLint texture_units = 0
-        glGetIntegerv(GL_MAX_TEXTURE_UNITS, &texture_units)
-
-        renpy.display.log.write("Number of texture units: %d", texture_units)
 
         # Pick a texture environment subsystem.
 
