@@ -1,5 +1,4 @@
-﻿
-translate korean strings:
+﻿translate korean strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"

@@ -1,5 +1,4 @@
-﻿
-translate korean strings:
+﻿translate korean strings:
 
     # about.rpy:39
     old "[version!q]"
@@ -23,7 +22,7 @@ translate korean strings:
 
     # add_file.rpy:39
     old "The file already exists."
-    new "이 파일 이름은 이미 존재합니다."
+    new "파일 이름이 이미 존재합니다."
 
     # add_file.rpy:42
     old "# Ren'Py automatically loads all script files ending with .rpy. To use this\n# file, define a label and jump to it from another file.\n"
@@ -479,7 +478,7 @@ translate korean strings:
 
     # front_page.rpy:237
     old "Change/Update GUI"
-    new "GUI 교체/업데이트"
+    new "GUI 변경/업데이트"
 
     # front_page.rpy:239
     old "Change Theme"

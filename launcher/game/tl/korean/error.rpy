@@ -1,5 +1,4 @@
-﻿
-translate korean strings:
+﻿translate korean strings:
 
     # 00gltest.rpy:64
     old "Graphics Acceleration"

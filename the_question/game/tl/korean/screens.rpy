@@ -64,7 +64,7 @@ translate korean strings:
 
     # screens.rpy:327
     old "Quit"
-    new "끝내기"
+    new "종료하기"
 
     # screens.rpy:467
     old "Return"
@@ -188,7 +188,7 @@ translate korean strings:
 
     # screens.rpy:744
     old "Rollback Side"
-    new "롤백 클릭 옵션"
+    new "측면 되감기"
 
     # screens.rpy:745
     old "Disable"

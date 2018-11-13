@@ -1,5 +1,4 @@
-﻿
-translate korean strings:
+﻿translate korean strings:
 
     # _layout/classic_joystick_preferences.rpym:94
     old "Joystick Mapping"
@@ -24,4 +23,3 @@ translate korean strings:
     # _compat/gamemenu.rpym:362
     old "Next"
     new "앞으로"
-

@@ -1,5 +1,4 @@
-﻿
-translate korean strings:
+﻿translate korean strings:
 
     # gui.rpy:2
     old "## Initialization"
@@ -408,4 +407,3 @@ translate korean strings:
     # gui.rpy:456
     old "## Quick buttons."
     new "## 빠른(Quick) 버튼들."
-
