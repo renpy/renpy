@@ -138,7 +138,7 @@
 
     # screens.rpy:333
     old "Help"
-    new "도움말"
+    new "조작방법"
 
     # screens.rpy:335
     old "## The quit button is banned on iOS and unnecessary on Android."

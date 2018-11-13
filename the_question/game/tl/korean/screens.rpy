@@ -60,7 +60,7 @@ translate korean strings:
 
     # screens.rpy:333
     old "Help"
-    new "도움말"
+    new "조작방법"
 
     # screens.rpy:327
     old "Quit"
