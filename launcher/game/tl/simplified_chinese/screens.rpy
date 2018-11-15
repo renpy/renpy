@@ -531,7 +531,7 @@ translate simplified_chinese strings:
 
     # screens.rpy:1061
     old "Right Click"
-    new "邮件点击"
+    new "右键点击"
 
     # screens.rpy:1065
     old "Mouse Wheel Up\nClick Rollback Side"
