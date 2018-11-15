@@ -655,7 +655,7 @@ python early in layeredimage:
                 if d is not None:
 
                     if d._duplicatable:
-                        d = d._duplicate(args)
+                        d = d._duplicate(None)
 
                     rv.add(d)
 
@@ -740,7 +740,6 @@ python early in layeredimage:
 
             if unknown:
                 return None
-
 
             return tuple(rv)
 
