@@ -1,5 +1,5 @@
 
-translate simplified_chinese  strings:
+translate simplified_chinese strings:
 
     # screens.rpy:9
     old "## Styles"
