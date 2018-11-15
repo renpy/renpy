@@ -32,7 +32,19 @@ Ren'Py now better reports errors in text tags that require a value but are
 not given one.
 
 The new :var:`_version` variable indicates the version of the game itself
-that was used when a new game is first created.
+that was used when a new game is first created. This only stores the version
+at game creation - after that, it's up to the creator to keep it updated.
+
+The :func:`Movie` displayable now supports a new mode the color data and
+alpha mask data are placed side-by-side in the same file. This prevents
+issues where a main and mask movie could go out of sync.
+
+The :func:`FilePageNext` and :func:`FilePagePrevious` functions now take
+arguments that control if the they can bring the player to the auto or
+quick save pages.
+
+The new :func:`config.skip_sounds` variables determines if Ren'Py will skip
+non-looping audio files that are played while Ren'Py is skipping.
 
 Translations
 ------------
@@ -42,7 +54,7 @@ system, and use it to set the language. Please see
 :var:`config.enable_language_autodetect` and the :ref:`Translation <translation>`
 documentation for how this works.
 
-The German translation has been updated.
+The French, German, Korean, and Russian translations have been updated.
 
 Fixes
 -----
@@ -67,7 +79,6 @@ Android Fixes
 
 As Ren'Py's new Android support only worked well on a 64-bit version of
 Java 8, we make that 64-bit requirement explicit.
-
 
 
 .. _renpy-7.1.1:

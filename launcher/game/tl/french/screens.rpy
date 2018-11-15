@@ -299,7 +299,7 @@ translate french strings:
 
     # screens.rpy:744
     old "Rollback Side"
-    new "Sens d’annulation"
+    new "Rembobinage côté"
 
     # screens.rpy:745
     old "Disable"
@@ -495,7 +495,7 @@ translate french strings:
 
     # screens.rpy:1062
     old "Molette vers le haut\nBouton de retour en arrière"
-    new "Mouse Wheel Up\nClick Rollback Side"
+    new "Mouse Wheel Up\nClic du côté rembobinage"
 
     # screens.rpy:1066
     old "Mouse Wheel Down"

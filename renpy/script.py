@@ -580,7 +580,7 @@ class Script(object):
             finally:
                 self.record_pycode = True
 
-            self.assign_names(stmts, fullfn)
+            self.assign_names(stmts, renpy.parser.elide_filename(fullfn))
 
             if not renpy.macapp:
 
