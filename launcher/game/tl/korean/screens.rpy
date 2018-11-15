@@ -196,7 +196,7 @@
     old "## This use statement includes the game_menu screen inside this one. The vbox child is then included inside the viewport inside the game_menu screen."
     new "## 이 use 명령어로 game_menu 스크린을 이 스크린 내에 불러옵니다. use 명령어 하위블럭(vbox 내용)은 game_menu 스크린 내 transclude 명령어가 있는 곳에 다시 불려집니다."
 
-# screens.rpy:561
+    # screens.rpy:561
     old "Version [config.version!t]\n"
     new "버젼 [config.version!t]\n"
 

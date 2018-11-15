@@ -33,8 +33,8 @@
     new "안드로이드 패키지를 만드려면, RAPT 파일을 내려받은 뒤에 렌파이 디렉토리에 압축 해제하세요. 그 다음 렌파이 런처를 재시작하세요."
 
     # android.rpy:31
-    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "윈도우에서 안드로이드 패키지를 만드려면 32비트 JDK가 필요합니다. JDK는 JRE와 다르므로 PC에 JDK가 없는 자바가 설치되어 있을 수 있습니다.\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}JDK를 내려받아 설치한 뒤{/a}, 렌파이 런처를 재시작해주세요."
+    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "윈도우에서 안드로이드 패키지를 만드려면 64비트 JDK가 필요합니다. JDK는 JRE와 다르므로 PC에 JDK가 없는 자바가 설치되어 있을 수 있습니다.\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}JDK를 내려받아 설치한 뒤{/a}, 렌파이 런처를 재시작해주세요."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -89,116 +89,348 @@
     new "안드로이드 패키지를 만들어 컴퓨터와 연결된 안드로이드 기기에 설치한 뒤 기기에서 설치한 앱을 실행합니다."
 
     # android.rpy:48
-    old "Connects to an Android device running ADB in TCP/IP mode."
-    new "TCP/IP 모드로 실행 중인 ADB를 안드로이드 기기에 연결합니다."
-
-    # android.rpy:49
-    old "Disconnects from an Android device running ADB in TCP/IP mode."
-    new "TCP/IP 모드로 실행 중인 ADB를 안드로이드 기기에서 연결 해제합니다."
-
-    # android.rpy:50
     old "Retrieves the log from the Android device and writes it to a file."
     new "안드로이드 기기와 쓰여진 파일로부터 로그를 검색합니다."
 
-    # android.rpy:240
+    # android.rpy:245
     old "Copying Android files to distributions directory."
     new "안드로이드 파일을 패키지 경로에 복사하는 중."
 
-    # android.rpy:304
+    # android.rpy:313
     old "Android: [project.current.name!q]"
     new "안드로이드: [project.current.name!q]"
 
-    # android.rpy:324
+    # android.rpy:333
     old "Emulation:"
     new "에뮬레이션:"
 
-    # android.rpy:333
+    # android.rpy:342
     old "Phone"
     new "스마트폰"
 
-    # android.rpy:337
+    # android.rpy:346
     old "Tablet"
     new "태블릿"
 
-    # android.rpy:341
+    # android.rpy:350
     old "Television"
     new "TV"
 
-    # android.rpy:353
+    # android.rpy:362
     old "Build:"
     new "만들기:"
 
-    # android.rpy:361
+    # android.rpy:373
+    old "디버그"
+    new "Debug"
+
+    # android.rpy:377
+    old "Release"
+    new "배포판"
+
+    # android.rpy:384
     old "Install SDK & Create Keys"
     new "SDK 설치 & 키 생성하기"
 
-    # android.rpy:365
+    # android.rpy:388
     old "Configure"
     new "설정하기"
 
-    # android.rpy:369
+    # android.rpy:392
     old "Build Package"
     new "패키지 만들기"
 
-    # android.rpy:373
+    # android.rpy:396
     old "Build & Install"
     new "패키지 만들기 & 설치"
 
-    # android.rpy:377
+    # android.rpy:400
     old "Build, Install & Launch"
     new "패키지를 만들어 설치하고 실행하기"
 
-    # android.rpy:388
+    # android.rpy:411
     old "Other:"
     new "기타:"
 
-    # android.rpy:396
-    old "Remote ADB Connect"
-    new "ADB 연결"
-
-    # android.rpy:400
-    old "Remote ADB Disconnect"
-    new "원격 ADB 연결 해제"
-
-    # android.rpy:404
+    # android.rpy:419
     old "Logcat"
     new "로그캣"
 
-    # android.rpy:437
+    # android.rpy:452
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
     new "안드로이드 앱을 만들기 전에, 렌파이 안드로이드 패키징 도구(RAPT)를 내려받아야합니다. RAPT를 내려받으시겠습니까?"
 
-    # android.rpy:496
-    old "Remote ADB Address"
-    new "원격 ADB 주소"
-
-    # android.rpy:496
-    old "Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."
-    new "\"192.168.1.143:5555\" 형식으로 연결할 기기의 IP주소와 포트를 입력하세요.  문서를 참고하여 기기가 원격 ADB를 지원하는지 확인한 다음, 사용할 주소와 포트를 입력하세요."
-
-    # android.rpy:508
-    old "Invalid remote ADB address"
-    new "사용할 수 없는 원격 ADB 주소"
-
-    # android.rpy:508
-    old "The address must contain one exactly one ':'."
-    new "주소에는 ':' 한 개가 포함되어야 합니다."
-
-    # android.rpy:512
-    old "The host may not contain whitespace."
-    new "호스트 주소에는 공백이 없어야 합니다."
-
-    # android.rpy:518
-    old "The port must be a number."
-    new "포트는 반드시 숫자이어야 합니다."
-
-    # android.rpy:544
+    # android.rpy:505
     old "Retrieving logcat information from device."
     new "기기로부터 로그캣 정보를 검색합니다."
 
-    # choose_directory.rpy:73
+    # androidstrings.rpy:7
+    old "{} is not a directory."
+    new "{}는 디렉토리가 아닙니다."
+
+    # androidstrings.rpy:8
+    old "{} does not contain a Ren'Py game."
+    new "{}는 렌파이 게임이 포함돼있지 않습니다."
+
+    # androidstrings.rpy:9
+    old "Run configure before attempting to build the app."
+    new "앱을 빌드하기 전에 \"설정하기\"를 실행하십시오."
+
+    # androidstrings.rpy:10
+    old "Google Play support is enabled, but build.google_play_key is not defined."
+    new "구글 플레이 지원은 활성화됐지만 build.google_play_key가 정의되지 않았습니다."
+
+    # androidstrings.rpy:11
+    old "Updating project."
+    new "프로젝트를 업데이트하는 중입니다."
+
+    # androidstrings.rpy:12
+    old "Creating assets directory."
+    new "assets 디렉토리를 생성합니다."
+
+    # androidstrings.rpy:13
+    old "Creating expansion file."
+    new "확장 파일을 생성합니다."
+
+    # androidstrings.rpy:14
+    old "Packaging internal data."
+    new "내부 데이터를 패키징합니다."
+
+    # androidstrings.rpy:15
+    old "I'm using Gradle to build the package."
+    new "패키지를 빌드하기 위해 요람(Gradle)을 사용합니다."
+
+    # androidstrings.rpy:16
+    old "Uploading expansion file."
+    new "확장 파일을 구성합니다."
+
+    # androidstrings.rpy:17
+    old "The build seems to have failed."
+    new "빌드가 실패했습니다."
+
+    # androidstrings.rpy:18
+    old "Launching app."
+    new "앱을 런칭합니다."
+
+    # androidstrings.rpy:19
+    old "The build seems to have succeeded."
+    new "빌드를 성공했습니다."
+
+    # androidstrings.rpy:20
+    old "The armeabi-v7a version works on most phones or tablets, while the x86_64 version works on the simulator and chromebooks."
+    new "armeabi-v7a 버전은 대부분의 휴대폰과 태블릿에서 작동하며, x86_64 버전은 시뮬레이터와 크롬북에서 작동합니다."
+
+    # androidstrings.rpy:21
+    old "What is the full name of your application? This name will appear in the list of installed applications."
+    new "애플리케이션의 전체 이름을 무엇인가요? 이것은 설치된 애플리케이션 목록에 표시됩니다."
+
+    # androidstrings.rpy:22
+    old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
+    new "애플리케이션의 짧은 이름은 무엇인가요? 이것은 런처와 애플리케이션 숏컷에 사용됩니다."
+
+    # androidstrings.rpy:23
+    old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
+    new "패키지의 이름은 무엇입니까？\n\n이것은 일반적으로 com.domain.program 또는 com.domain.email.program 형식입니다. ASCII 문자와 점만 포함할 수 있습니다. 하나 이상의 점이 있어야 합니다."
+
+    # androidstrings.rpy:24
+    old "The package name may not be empty."
+    new "패키지 이름은 비워둘 수 없습니다."
+
+    # androidstrings.rpy:25
+    old "The package name may not contain spaces."
+    new "패키지 이름은 공백을 포함할 수 없습니다."
+
+    # androidstrings.rpy:26
+    old "The package name must contain at least one dot."
+    new "패키지 이름은 하나 이상의 점을 포함해야 합니다."
+
+    # androidstrings.rpy:27
+    old "The package name may not contain two dots in a row, or begin or end with a dot."
+    new "패키지 이름은 행에 두 개의 점이 포함될 수 없으며, 점으로 시작되거나 끝날 수 없습니다."
+
+    # androidstrings.rpy:28
+    old "Each part of the package name must start with a letter, and contain only letters, numbers, and underscores."
+    new "패키지 이름의 각 부분은 문자로 시작해야 하며, 문자와 숫자, 그리고 밑줄만 포함해야 합니다."
+
+    # androidstrings.rpy:29
+    old "{} is a Java keyword, and can't be used as part of a package name."
+    new "{} 는 자바 키워드이며 패키지 이름의 부분으로 사용될 수 없습니다."
+
+    # androidstrings.rpy:30
+    old "What is the application's version?\n\nThis should be the human-readable version that you would present to a person. It must contain only numbers and dots."
+    new "애플리케이션의 버전은 어떻게 되나요?\n\n이것은 사람이 읽을 수 있어야 하며 숫자와 점만 포함될 수 있습니다."
+
+    # androidstrings.rpy:31
+    old "The version number must contain only numbers and dots."
+    new "버전 넘버는 숫자와 점만을 포함해야 합니다."
+
+    # androidstrings.rpy:32
+    old "What is the version code?\n\nThis must be a positive integer number, and the value should increase between versions."
+    new "버전 코드는 어떻게 되나요?\n\n이것은 양의 정수여야 하며, 값은 버전에 따라 증가할 수 있습니다."
+
+    # androidstrings.rpy:33
+    old "The numeric version must contain only numbers."
+    new "버전의 숫자는 숫자만 포함해야 합니다."
+
+    # androidstrings.rpy:34
+    old "How would you like your application to be displayed?"
+    new "애플리케이션을 어떻게 표시할까요?"
+
+    # androidstrings.rpy:35
+    old "In landscape orientation."
+    new "가로(Landscape) 방향으로."
+
+    # androidstrings.rpy:36
+    old "In portrait orientation."
+    new "세로(Portrait) 방향으로"
+
+    # androidstrings.rpy:37
+    old "In the user's preferred orientation."
+    new "사용자가 선호하는 방향으로."
+
+    # androidstrings.rpy:38
+    old "Which app store would you like to support in-app purchasing through?"
+    new "인앱 구매를 지원하려는 앱 스토어가 있습니까?"
+
+    # androidstrings.rpy:39
+    old "Google Play."
+    new "구글 플레이."
+
+    # androidstrings.rpy:40
+    old "Amazon App Store."
+    new "아마존 앱 스토어."
+
+    # androidstrings.rpy:41
+    old "Both, in one app."
+    new "모두, 하나의 앱에."
+
+    # androidstrings.rpy:42
+    old "Neither."
+    new "지원하지 않음."
+
+    # androidstrings.rpy:43
+    old "Would you like to create an expansion APK?"
+    new "확장 APK를 생성하시겠습니까?"
+
+    # androidstrings.rpy:44
+    old "No. Size limit of 100 MB on Google Play, but can be distributed through other stores and sideloaded."
+    new "아니오. 구글 플레이의 100 MB 크기 제한으로, 하지만 다른 스토어 및 사이드로드를 통해 배포할 수 있습니다."
+
+    # androidstrings.rpy:45
+    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work.)"
+    new "네. 2GB 크기 제한으로, 하지만 구글 플레이 외부에서 작동하지 않습니다. (이 기능을 사용하려면 설명서를 읽으십시오.)"
+
+    # androidstrings.rpy:46
+    old "Do you want to allow the app to access the Internet?"
+    new "앱이 인터넷에 액세스하도록 허용하시겠습니까?"
+
+    # androidstrings.rpy:47
+    old "Do you want to automatically update the generated project?"
+    new "생성된 프로젝트를 자동으로 업데이트하시겠습니까?"
+
+    # androidstrings.rpy:48
+    old "Yes. This is the best choice for most projects."
+    new "예. 이것은 대부분의 프로젝트에 적합합니다."
+
+    # androidstrings.rpy:49
+    old "No. This may require manual updates when Ren'Py or the project configuration changes."
+    new "아니오. 렌파이 또는 프로젝트 구성이 변경되면 수동 업데이트가 필요할 수 있습니다."
+
+    # androidstrings.rpy:50
+    old "Unknown configuration variable: {}"
+    new "알 수 없는 환경 변수: {}"
+
+    # androidstrings.rpy:51
+    old "I'm compiling a short test program, to see if you have a working JDK on your system."
+    new "시스템에 작동하는 JDK가 있는지 확인하기 위해 간단한 테스트 프로그램을 컴파일하고 있습니다."
+
+    # androidstrings.rpy:52
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Without a working JDK, I can't continue."
+    new "javac를 사용하여 테스트 파일을 컴파일할 수 없습니다. 자바 개발 키트를 아직 설치하지 않은 경우 아래에서 설치하세요:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nJDK는 JRE와 다르므로 JDK가 없어도 Java를 사용할 수 있습니다. 작동하는 JDK가 없으면 계속할 수 없습니다."
+
+    # androidstrings.rpy:53
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variabe to use a different version of Java."
+    new "컴퓨터에 설치된 자바 버전은 안드로이드 SDK에서 지원하는 유일한 버전인 JDK 8이 아닙니다. JDK 8은 아래에서 설치할 수 있습니다:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\n다른 버전의 자바를 사용하도록 JAVA_HOME 환경 변수를 설정할 수도 있습니다."
+
+    # androidstrings.rpy:54
+    old "The JDK is present and working. Good!"
+    new "JDK가 잘 작동하고 있네요！"
+
+    # androidstrings.rpy:55
+    old "The Android SDK has already been unpacked."
+    new "안드로이드 SDK가 이미 설치돼 있습니다."
+
+    # androidstrings.rpy:56
+    old "Do you accept the Android SDK Terms and Conditions?"
+    new "안드로이드 SDK 이용 약관에 동의하십니까?"
+
+    # androidstrings.rpy:57
+    old "I'm downloading the Android SDK. This might take a while."
+    new "안드로이드 SDK를 내려받는 중입니다. 다소 시간이 소요될 수 있습니다."
+
+    # androidstrings.rpy:58
+    old "I'm extracting the Android SDK."
+    new "안드로이드 SDK의 압축을 풀고 있습니다."
+
+    # androidstrings.rpy:59
+    old "I've finished unpacking the Android SDK."
+    new "안드로이드 SDK의 설치를 완료했습니다."
+
+    # androidstrings.rpy:60
+    old "I'm about to download and install the required Android packages. This might take a while."
+    new "필요한 안드로이드 패키지를 설치하고 있습니다. 다소 시간이 소요될 수 있습니다."
+
+    # androidstrings.rpy:61
+    old "I was unable to accept the Android licenses."
+    new "안드로이드 라이선스를 수락할 수 없었습니다."
+
+    # androidstrings.rpy:62
+    old "I was unable to install the required Android packages."
+    new "필요한 안드로이드 패키지를 설치할 수 없었습니다."
+
+    # androidstrings.rpy:63
+    old "I've finished installing the required Android packages."
+    new "필요한 안드로이드 패키지의 설치가 완료됐습니다."
+
+    # androidstrings.rpy:64
+    old "You set the keystore yourself, so I'll assume it's how you want it."
+    new "키스토어(keystore)를 설정합니다."
+
+    # androidstrings.rpy:65
+    old "You've already created an Android keystore, so I won't create a new one for you."
+    new "이미 안드로이드 키스토어(keystore)를 만들었습니다."
+
+    # androidstrings.rpy:66
+    old "I can create an application signing key for you. Signing an application with this key allows it to be placed in the Android Market and other app stores.\n\nDo you want to create a key?"
+    new "애플리케이션 서명 키를 만들 수 있습니다. 이 키를 사용하여 애플리케이션에 서명하면 안드로이드 상점 및 기타 앱 스토어에 배포할 수 있습니다.\n\n키를 만드시겠습니까?"
+
+    # androidstrings.rpy:67
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\n\\You also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    new "android.keystore 파일에 키를 생성할 것입니다.\n\n애플리케이션의 업그레이드에 필요하기 때문에 파일을 반드시 백업하시기 바랍니다.\n\n또한 키를 안전한 곳에 보과해야 합니다."
+
+    # androidstrings.rpy:68
+    old "Please enter your name or the name of your organization."
+    new "당신의 이름과 단체 이름을 기입하십시오."
+
+    # androidstrings.rpy:69
+    old "Could not create android.keystore. Is keytool in your path?"
+    new "android.keystore를 생성하지 못했습니다. 키툴(keytool)이 경로에 있습니까?"
+
+    # androidstrings.rpy:70
+    old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
+    new "android.keystore를 생성했습니다. 백업하시고, 안전한 곳에 보관하십시오."
+
+    # androidstrings.rpy:71
+    old "It looks like you're ready to start packaging games."
+    new "게임을 패키징할 준비가 됐습니다."
+
+    # choose_directory.rpy:87
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
     new "프로젝트 경로를 선택하는 tkinter를 구동하지 못했습니다. python-tk나 tkinter 패키지를 설치하세요."
+
+    # choose_directory.rpy:104
+    old "The selected projects directory is not writable."
+    new "선택한 프로젝트 디렉토리에 쓸 수 없습니다."
 
     # choose_theme.rpy:303
     old "Could not change the theme. Perhaps options.rpy was changed too much."
@@ -232,177 +464,201 @@
     old "The command is being run in a new operating system console window."
     new "커맨드가 새로운 운영체제 콘솔 창에서 실행 중입니다."
 
-    # distribute.rpy:443
+    # distribute.rpy:444
     old "Scanning project files..."
     new "프로젝트 파일 살펴보는 중..."
 
-    # distribute.rpy:459
+    # distribute.rpy:460
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
     new "배포판 만들기에 실패했습니다.\n\n build.directory_name 변수에는 공백이나 콜론, 세미 콜론 문자를 입력할 수 없습니다."
 
-    # distribute.rpy:504
+    # distribute.rpy:505
     old "No packages are selected, so there's nothing to do."
     new "선택된 패키지가 없으므로 할 수 있는 작업이 없습니다."
 
-    # distribute.rpy:516
+    # distribute.rpy:517
     old "Scanning Ren'Py files..."
     new "렌파이 파일 살펴보는 중..."
 
-    # distribute.rpy:569
+    # distribute.rpy:572
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
     new "패키지를 전부 작성했습니다.\n\n 권한 정보로 인해 리눅스와 매킨토시 배포판을 윈도우에서 압축해제하거나 재압축하는 것은 지원하지 않습니다."
 
-    # distribute.rpy:752
+    # distribute.rpy:755
     old "Archiving files..."
     new "파일 압축 중..."
 
-    # distribute.rpy:1050
+    # distribute.rpy:1068
     old "Unpacking the Macintosh application for signing..."
     new "서명을 위해 매킨토시 애플리케이션을 압축해제하는 중입니다..."
 
-    # distribute.rpy:1060
-    old "Signing the Macintosh application..."
-    new "매킨토시 애플리케이션을 서명하는 중입니다..."
+    # distribute.rpy:1078
+    old "Signing the Macintosh application...\n(This may take a long time.)"
+    new "매킨토시 애플리케이션을 서명하는 중입니다...\n(꽤 시간이 걸릴 것입니다.)"
 
-    # distribute.rpy:1082
+    # distribute.rpy:1100
     old "Creating the Macintosh DMG..."
     new "매킨토시 DMG를 생성하는 중입니다..."
 
-    # distribute.rpy:1091
+    # distribute.rpy:1109
     old "Signing the Macintosh DMG..."
     new "매킨토시 DMG에 서명하는 중입니다..."
 
-    # distribute.rpy:1248
+    # distribute.rpy:1304
     old "Writing the [variant] [format] package."
     new "[variant] [format] 패키지 작성 중."
 
-    # distribute.rpy:1261
+    # distribute.rpy:1317
     old "Making the [variant] update zsync file."
     new "[variant] 업데이트 zsync 파일 생성 중."
 
-    # distribute.rpy:1404
+    # distribute.rpy:1427
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
     new "총 {b}[total]{/b}개의 파일 중에서 {b}[complete]{/b} 파일 완료."
 
-    # distribute_gui.rpy:157
+    # distribute_gui.rpy:162
     old "Build Distributions: [project.current.name!q]"
     new "[project.current.name!q] 배포판 만들기"
 
-    # distribute_gui.rpy:171
+    # distribute_gui.rpy:176
     old "Directory Name:"
     new "디렉토리 이름:"
 
-    # distribute_gui.rpy:175
+    # distribute_gui.rpy:180
     old "Executable Name:"
     new "실행 파일 이름:"
 
-    # distribute_gui.rpy:185
+    # distribute_gui.rpy:190
     old "Actions:"
     new "작업:"
 
-    # distribute_gui.rpy:193
+    # distribute_gui.rpy:198
     old "Edit options.rpy"
     new "options.rpy 수정하기"
 
-    # distribute_gui.rpy:194
+    # distribute_gui.rpy:199
     old "Add from clauses to calls, once"
     new "from 절을 call 문에 추가하기(1회)"
 
-    # distribute_gui.rpy:195
+    # distribute_gui.rpy:200
     old "Refresh"
     new "새로고침"
 
-    # distribute_gui.rpy:199
+    # distribute_gui.rpy:204
     old "Upload to itch.io"
     new "itch.io로 업로드"
 
-    # distribute_gui.rpy:215
+    # distribute_gui.rpy:220
     old "Build Packages:"
     new "만들 패키지:"
 
-    # distribute_gui.rpy:234
+    # distribute_gui.rpy:239
     old "Options:"
     new "설정:"
 
-    # distribute_gui.rpy:239
+    # distribute_gui.rpy:244
     old "Build Updates"
     new "업데이트 파일 만들기"
 
-    # distribute_gui.rpy:241
+    # distribute_gui.rpy:246
     old "Add from clauses to calls"
     new "from 절을 call 문에 추가하기"
 
-    # distribute_gui.rpy:242
+    # distribute_gui.rpy:247
     old "Force Recompile"
     new "강제 재컴파일"
 
-    # distribute_gui.rpy:246
+    # distribute_gui.rpy:270
     old "Build"
     new "만들기"
 
-    # distribute_gui.rpy:250
+    # distribute_gui.rpy:274
     old "Adding from clauses to call statements that do not have them."
     new "from 절이 없는 call 문에 from 절을 추가합니다."
 
-    # distribute_gui.rpy:271
+    # distribute_gui.rpy:295
     old "Errors were detected when running the project. Please ensure the project runs without errors before building distributions."
     new "프로젝트를 실행하던 도중 오류를 발견했습니다. 배포판을 작성하기 전에 프로젝트가 오류 없이 실행되는지 확인하세요."
 
-    # distribute_gui.rpy:288
+    # distribute_gui.rpy:312
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
     new "프로젝트에 배포판 정보가 없습니다. options.rpy 끝부분에 배포판 정보를 추가하겠습니까?"
 
-    # editor.rpy:150
-    old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
-    new "{b}추천.{/b} 인터페이스를 사용하기 쉬우며 맞춤법 검사 등 개발을 편리하게 해주는 기능이 있는 에디터입니다. 에디트라는 현재 중국어, 일본어, 한국어 텍스트를 입력할 때 필요한 IME를 지원하지 않습니다."
+    # dmgcheck.rpy:50
+    old "Ren'Py is running from a read only folder. Some functionality will not work."
+    new "렌파이가 읽기 전용 폴더로부터 실행되고 있습니다. 일부 기능이 작동하지 않을 수 있습니다."
 
-    # editor.rpy:151
-    old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
-    new "{b}추천.{/b} 인터페이스를 사용하기 쉬우며 맞춤법 검사 등 개발을 편리하게 해주는 기능이 있는 에디터입니다. 에디트라는 현재 중국어, 일본어, 한국어 텍스트를 입력할 때 필요한 IME를 지원하지 않습니다. 에디트라를 리눅스에서 실행하려면 wxPython이 필요합니다."
+    # dmgcheck.rpy:50
+    old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
+    new "이것은 렌파이가 매킨토시 드라이브 이미지에서 직접 실행되기 때문일 수 있습니다. 해결을 위해 이 런처를 종료하고, %s 폴더 전체를 컴퓨터의 다른 곳에 복사하고 렌파이를 다시 실행하십시오."
 
-    # editor.rpy:167
+    # editor.rpy:152
+    old "(Recommended) A modern and approachable text editor."
+    new "(추천) 현대적이고 친숙한 텍스트 편집기."
+
+    # editor.rpy:164
+    old "Up to 150 MB download required."
+    new "150 MB의 용량이 필요합니다."
+
+    # editor.rpy:178
+    old "A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input."
+    new "에디트라(Editra)는 현재 중국어, 일본어, 한국어 텍스트를 입력할 때 필요한 IME를 지원하지 않습니다."
+
+    # editor.rpy:179
+    old "A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
+    new "에디트라(Editra)는 현재 중국어, 일본어, 한국어 텍스트를 입력할 때 필요한 IME를 지원하지 않습니다. 리눅스에서, 에디트라는 wxPython이 필요합니다."
+
+    # editor.rpy:195
     old "This may have occured because wxPython is not installed on this system."
     new "wxPython이 설치되지 않아 문제가 발생했을 가능성이 있습니다."
 
-    # editor.rpy:169
+    # editor.rpy:197
     old "Up to 22 MB download required."
     new "22MB 내려받기 필요."
 
-    # editor.rpy:182
+    # editor.rpy:210
     old "A mature editor that requires Java."
-    new "Java를 사용하는 완성도 높은 에디터."
+    new "자바(Java)를 사용하는 완성도 높은 에디터."
 
-    # editor.rpy:182
+    # editor.rpy:210
     old "1.8 MB download required."
     new "1.8MB 내려받기 필요."
 
-    # editor.rpy:182
+    # editor.rpy:210
     old "This may have occured because Java is not installed on this system."
-    new "Java가 설치되지 않아 문제가 발생했을 수도 있습니다."
+    new "자바(Java)가 설치되지 않아 문제가 발생했을 수도 있습니다."
 
-    # editor.rpy:191
+    # editor.rpy:219
+    old "System Editor"
+    new "시스템 편집기"
+
+    # editor.rpy:219
     old "Invokes the editor your operating system has associated with .rpy files."
     new "OS에서 .rpy 파일을 열 때 사용하는 에디터를 실행합니다."
 
-    # editor.rpy:207
-    old "Prevents Ren'Py from opening a text editor."
-    new "렌파이가 스크립트 에디터를 실행하지 못하도록 합니다."
+    # editor.rpy:235
+    old "None"
+    new "없음"
 
-    # editor.rpy:359
+    # editor.rpy:235
+    old "Prevents Ren'Py from opening a text editor."
+    new "렌파이가 텍스트 에디터를 실행하지 못하도록 합니다."
+
+    # editor.rpy:338
+    old "Edit [text]."
+    new "[text] 편집."
+
+    # editor.rpy:387
     old "An exception occured while launching the text editor:\n[exception!q]"
     new "스크립트 에디터를 실행하던 도중 예외가 발생했습니다:\n[exception!q]"
 
-    # editor.rpy:457
+    # editor.rpy:519
     old "Select Editor"
     new "에디터 선택하기"
 
-    # editor.rpy:472
+    # editor.rpy:534
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
     new "스크립트 에디터란 렌파이 스크립트 파일을 수정할 때 사용하는 프로그램입니다. 이곳에서는 렌파이가 실행시킬 에디터를 선택할 수 있습니다. 에디터가 없다면 에디터를 자동으로 다운로드해 설치합니다."
-
-    # editor.rpy:494
-    old "Cancel"
-    new "취소"
 
     # front_page.rpy:35
     old "Open [text] directory."
@@ -434,15 +690,11 @@
 
     # front_page.rpy:166
     old "The Question"
-    new "The Question"
+    new "물음(The Question)"
 
     # front_page.rpy:182
     old "Active Project"
     new "진행 중인 프로젝트"
-
-    # front_page.rpy:190
-    old "Open Directory"
-    new "폴더 열기"
 
     # front_page.rpy:195
     old "game"
@@ -464,175 +716,203 @@
     old "Edit File"
     new "파일 수정하기"
 
-    # front_page.rpy:214
+    # front_page.rpy:215
+    old "Open Directory"
+    new "폴더 열기"
+
+    # front_page.rpy:217
     old "All script files"
     new "모든 스크립트 파일"
 
-    # front_page.rpy:223
+    # front_page.rpy:221
+    old "Actions"
+    new "작업"
+
+    # front_page.rpy:230
     old "Navigate Script"
     new "스크립트 살펴보기"
 
-    # front_page.rpy:234
+    # front_page.rpy:231
     old "Check Script (Lint)"
     new "스크립트 확인 (오류 검사)"
 
-    # front_page.rpy:237
+    # front_page.rpy:234
     old "Change/Update GUI"
     new "GUI 변경/업데이트"
 
-    # front_page.rpy:239
+    # front_page.rpy:236
     old "Change Theme"
     new "테마 바꾸기"
 
-    # front_page.rpy:242
+    # front_page.rpy:239
     old "Delete Persistent"
     new "지속 데이터 삭제하기"
 
-    # front_page.rpy:251
+    # front_page.rpy:248
     old "Build Distributions"
     new "배포판 만들기"
 
-    # front_page.rpy:253
+    # front_page.rpy:250
     old "Android"
     new "안드로이드"
 
-    # front_page.rpy:254
+    # front_page.rpy:251
     old "iOS"
     new "iOS"
 
-    # front_page.rpy:255
+    # front_page.rpy:252
     old "Generate Translations"
     new "번역 파일 만들기"
 
-    # front_page.rpy:256
+    # front_page.rpy:253
     old "Extract Dialogue"
     new "대사 추출하기"
 
-    # front_page.rpy:272
+    # front_page.rpy:270
     old "Checking script for potential problems..."
     new "스크립트에서 문제가 발생할 수 있는지를 확인하고 있습니다..."
 
-    # front_page.rpy:287
+    # front_page.rpy:285
     old "Deleting persistent data..."
     new "지속 데이터를 삭제하고 있습니다... "
 
-    # front_page.rpy:295
+    # front_page.rpy:293
     old "Recompiling all rpy files into rpyc files..."
     new "모든 rpy 파일을 rpyc 파일로 재컴파일하는 중..."
 
-    # gui7.rpy:236
+    # gui7.rpy:252
     old "Select Accent and Background Colors"
     new "강조와 배경 색상 선택"
 
-    # gui7.rpy:250
+    # gui7.rpy:266
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
     new "원하는 색상 스키마를 선택하고 다음을 누르세요. 이러한 색상과 사용자 지정은 나중에 변경할 수 있습니다."
 
-    # gui7.rpy:294
+    # gui7.rpy:311
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
     new "{b}경고g{/b}\n계속하면 사용자 지정된 막대, 버튼, 저장 슬롯, 스크롤바, 그리고 슬라이더 이미지들을 덮어씌웁니다.\n\n무엇을 하고 싶으세요?"
 
-    # gui7.rpy:294
+    # gui7.rpy:311
     old "Choose new colors, then regenerate image files."
     new "새로운 색상을 선택하면 이미지 파일들이 재생성됩니다."
 
-    # gui7.rpy:294
+    # gui7.rpy:311
     old "Regenerate the image files using the colors in gui.rpy."
     new "gui.rpy에서 사용하는 색상으로 이미지 파일 재생성."
 
-    # gui7.rpy:314
+    # gui7.rpy:331
     old "PROJECT NAME"
     new "프로젝트 이름"
 
-    # gui7.rpy:314
+    # gui7.rpy:331
     old "Please enter the name of your project:"
     new "프로젝트 이름을 입력하세요:"
 
-    # gui7.rpy:322
+    # gui7.rpy:339
     old "The project name may not be empty."
     new "프로젝트 이름을 입력하지 않았습니다."
 
-    # gui7.rpy:327
+    # gui7.rpy:344
     old "[project_name!q] already exists. Please choose a different project name."
     new "[project_name!q]는 이미 존재합니다. 다른 프로젝트 이름을 선택하세요."
 
-    # gui7.rpy:330
+    # gui7.rpy:347
     old "[project_dir!q] already exists. Please choose a different project name."
     new "[project_dir!q]는 이미 존재합니다. 다른 프로젝트 이름을 선택하세요."
 
-    # gui7.rpy:341
+    # gui7.rpy:358
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
     new "프로젝트에서 어떤 해상도를 사용하나요? 렌파이가 창을 위아래로 확장 할 수 있지만, 이것은 창의 초기 크기, 에셋이 그려지는 크기, 애셋이 가장 선명하게 될 크기입니다.\n\n1280x720의 기본값은 적절한 절충안입니다."
 
-    # gui7.rpy:389
+    # gui7.rpy:358
+    old "Custom. The GUI is optimized for a 16:9 aspect ratio."
+    new "사용자 정의. GUI는 종회비 16:9로 최적화되어 있습니다."
+
+    # gui7.rpy:373
+    old "WIDTH"
+    new "너비"
+
+    # gui7.rpy:373
+    old "Please enter the width of your game, in pixels."
+    new "게임의 너비를 픽셀로 입력해주세요."
+
+    # gui7.rpy:378
+    old "The width must be a number."
+    new "너비는 숫자여야 합니다."
+
+    # gui7.rpy:380
+    old "HEIGHT"
+    new "높이"
+
+    # gui7.rpy:380
+    old "Please enter the height of your game, in pixels."
+    new "게임의 높이를 픽셀로 입력해주세요."
+
+    # gui7.rpy:385
+    old "The height must be a number."
+    new "높이는 숫자여야 합니다."
+
+    # gui7.rpy:427
     old "Creating the new project..."
     new "새 프로젝트를 만드는 중..."
 
-    # gui7.rpy:391
+    # gui7.rpy:429
     old "Updating the project..."
     new "프로젝트 업데이트중..."
 
-    # interface.rpy:107
+    # interface.rpy:119
     old "Documentation"
     new "매뉴얼"
 
-    # interface.rpy:108
+    # interface.rpy:120
     old "Ren'Py Website"
     new "렌파이 공식 홈페이지"
 
-    # interface.rpy:109
+    # interface.rpy:121
     old "Ren'Py Games List"
     new "렌파이 게임 목록"
 
-    # interface.rpy:117
+    # interface.rpy:129
     old "update"
     new "업데이트"
 
-    # interface.rpy:119
+    # interface.rpy:131
     old "preferences"
     new "환경설정"
 
-    # interface.rpy:120
+    # interface.rpy:132
     old "quit"
     new "종료"
 
-    # interface.rpy:232
+    # interface.rpy:258
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
     new "패키지 형식에 제한이 있으므로 ASCII가 아닌 문자가 입력된 파일 이름이나 디렉토리 이름은 사용할 수 없습니다."
 
-    # interface.rpy:327
+    # interface.rpy:354
     old "ERROR"
     new "오류"
 
-    # interface.rpy:356
-    old "While [what!q], an error occured:"
-    new "[what!q] 도중, 에러가 발생했습니다:"
-
-    # interface.rpy:356
-    old "[exception!q]"
-    new "[exception!q]"
-
-    # interface.rpy:375
+    # interface.rpy:400
     old "Text input may not contain the {{ or [[ characters."
     new "글자를 입력할 때는 {{나 [[ 문자는 없어야 합니다."
 
-    # interface.rpy:380
+    # interface.rpy:405
     old "File and directory names may not contain / or \\."
     new "파일 및 디렉토리 이름에는 / 나 \\가 없어야 합니다."
 
-    # interface.rpy:386
+    # interface.rpy:411
     old "File and directory names must consist of ASCII characters."
     new "파일이나 디렉토리 이름은 ASCII 문자로 지어야 합니다."
 
-    # interface.rpy:454
+    # interface.rpy:479
     old "PROCESSING"
     new "처리 중"
 
-    # interface.rpy:471
+    # interface.rpy:496
     old "QUESTION"
     new "확인"
 
-    # interface.rpy:484
+    # interface.rpy:509
     old "CHOICE"
     new "선택"
 
@@ -736,27 +1016,27 @@
     old "The built distributions could not be found. Please choose 'Build' and try again."
     new "빌드된 배포판을 찾을 수 없습니다. '빌드'를 선택하고 다시 시도하세요."
 
-    # itch.rpy:91
+    # itch.rpy:98
     old "No uploadable files were found. Please choose 'Build' and try again."
     new "업로드가능한 파일이 없습니다. '빌드'를 선택하고 다시 시도하세요."
 
-    # itch.rpy:99
+    # itch.rpy:106
     old "The butler program was not found."
     new "집사(butler) 프로그램이 없습니다."
 
-    # itch.rpy:99
+    # itch.rpy:106
     old "Please install the itch.io app, which includes butler, and try again."
     new "집사(butler)를 포함한 itch.io 앱을 설치하고 다시 시도하세요."
 
-    # itch.rpy:108
+    # itch.rpy:115
     old "The name of the itch project has not been set."
     new "itch 프로젝트의 이름이 설정되지 않았습니다."
 
-    # itch.rpy:108
+    # itch.rpy:115
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
     new "{a=https://itch.io/game/new}프로젝트를 만드세요{/a}, 그리고 options.rpy에 다음과 같은 라인을 작성하세요: \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5}."
 
-    # mobilebuild.rpy:109
+    # mobilebuild.rpy:110
     old "{a=%s}%s{/a}"
     new "{a=%s}%s{/a}"
 
@@ -764,63 +1044,63 @@
     old "Navigate: [project.current.name]"
     new "[project.current.name] 살펴보기"
 
-    # navigation.rpy:177
+    # navigation.rpy:178
     old "Order: "
     new "순서: "
 
-    # navigation.rpy:178
+    # navigation.rpy:179
     old "alphabetical"
     new "알파벳 순서로"
 
-    # navigation.rpy:180
+    # navigation.rpy:181
     old "by-file"
     new "파일 별로"
 
-    # navigation.rpy:182
+    # navigation.rpy:183
     old "natural"
     new "생성된 순서대로"
 
-    # navigation.rpy:194
+    # navigation.rpy:195
     old "Category:"
     new "종류:"
 
-    # navigation.rpy:196
+    # navigation.rpy:198
     old "files"
     new "파일"
 
-    # navigation.rpy:197
+    # navigation.rpy:199
     old "labels"
     new "레이블"
 
-    # navigation.rpy:198
+    # navigation.rpy:200
     old "defines"
     new "정의"
 
-    # navigation.rpy:199
+    # navigation.rpy:201
     old "transforms"
     new "트랜스폼"
 
-    # navigation.rpy:200
+    # navigation.rpy:202
     old "screens"
     new "스크린"
 
-    # navigation.rpy:201
+    # navigation.rpy:206
     old "callables"
     new "콜러블"
 
-    # navigation.rpy:202
+    # navigation.rpy:204
     old "TODOs"
     new "해야할 작업"
 
-    # navigation.rpy:241
+    # navigation.rpy:243
     old "+ Add script file"
     new "+ 새 스크립트 파일 추가하기"
 
-    # navigation.rpy:249
+    # navigation.rpy:251
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
     new "TODO 주석을 발견하지 못했습니다.\n\nTODO 주석을 만드려면 스크립트 파일에 \"# TODO\" 를 적으세요."
 
-    # navigation.rpy:256
+    # navigation.rpy:258
     old "The list of names is empty."
     new "이름 목록이 비었습니다."
 
@@ -848,338 +1128,358 @@
     old "The projects directory could not be set. Giving up."
     new "프로젝트 경로를 설정할 수 없습니다. 취소 중."
 
-    # new_project.rpy:69
+    # new_project.rpy:71
+    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
+    new "[new_project_language] 언어 프로젝트를 생성할 것입니다. 다른 언어로 프로젝트를 생성하려면 환경설정에서 런처 언어를 변경하십시오."
+
+    # new_project.rpy:79
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
     new "어떤 인터페이스를 사용하고 싶으세요? 새로운 GUI는 현대적인 스타일로, 와이드 스크린과 휴대기기를 지원하며 쉽게 커스텀 가능합니다. 레거시 테마는 작업에 오래된 예제 코드가 필요할 수 있습니다.\n\n[language_support!t]\n\n의심스럽다면 새로운 GUI를 선택한 다음, 오른쪽 하단의 계속하기를 클릭하십시오."
 
-    # new_project.rpy:69
+    # new_project.rpy:79
     old "Legacy Theme Interface"
     new "레거시 테마 인터페이스"
 
-    # new_project.rpy:90
+    # new_project.rpy:100
     old "Choose Project Template"
     new "프로젝트의 서식을 선택하세요"
 
-    # new_project.rpy:108
+    # new_project.rpy:118
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
     new "새 프로젝트에서 사용할 서식을 선택하세요. 서식은 기본 사용 폰트와 UI 언어를 설정합니다. 본인이 사용하는 언어가 지원되지 않는다면, 'english' 를 선택하세요."
 
-    # preferences.rpy:64
+    # preferences.rpy:73
     old "Launcher Preferences"
     new "런처 환경설정"
 
-    # preferences.rpy:85
+    # preferences.rpy:94
     old "Projects Directory:"
     new "프로젝트 경로:"
 
-    # preferences.rpy:92
+    # preferences.rpy:101
     old "[persistent.projects_directory!q]"
     new "[persistent.projects_directory!q]"
 
-    # preferences.rpy:94
+    # preferences.rpy:103
     old "Projects directory: [text]"
     new "프로젝트 경로: [text]"
 
-    # preferences.rpy:96
+    # preferences.rpy:105
     old "Not Set"
     new "설정되지 않음"
 
-    # preferences.rpy:111
+    # preferences.rpy:120
     old "Text Editor:"
-    new "스크립트 에디터:"
+    new "텍스트 에디터:"
 
-    # preferences.rpy:117
+    # preferences.rpy:126
     old "Text editor: [text]"
     new "텍스트 에디터: [text]"
 
-    # preferences.rpy:133
-    old "Update Channel:"
-    new "업데이트 경로:"
-
-    # preferences.rpy:153
+    # preferences.rpy:145
     old "Navigation Options:"
     new "스크립트 살펴보기 옵션:"
 
-    # preferences.rpy:157
+    # preferences.rpy:149
     old "Include private names"
     new "개인 이름을 포함한다"
 
-    # preferences.rpy:158
+    # preferences.rpy:150
     old "Include library names"
     new "라이브러리 이름을 포함한다"
 
-    # preferences.rpy:168
+    # preferences.rpy:160
     old "Launcher Options:"
     new "런처 옵션:"
 
-    # preferences.rpy:172
+    # preferences.rpy:164
     old "Hardware rendering"
     new "하드웨어 렌더링"
 
-    # preferences.rpy:173
-    old "Show templates"
-    new "서식 표시하기"
-
-    # preferences.rpy:174
+    # preferences.rpy:165
     old "Show edit file section"
     new "파일 수정하기 영역 표시하기"
 
-    # preferences.rpy:175
+    # preferences.rpy:166
     old "Large fonts"
     new "글자 크게 표시하기"
 
-    # preferences.rpy:178
+    # preferences.rpy:169
     old "Console output"
     new "콘솔 출력"
 
-    # preferences.rpy:199
+    # preferences.rpy:173
+    old "Force new tutorial"
+    new "새 튜토리얼 적용"
+
+    # preferences.rpy:177
+    old "Legacy options"
+    new "레거시 옵션"
+
+    # preferences.rpy:180
+    old "Show templates"
+    new "탬플릿 보기"
+
+    # preferences.rpy:182
+    old "Sponsor message"
+    new "스폰서 메시지"
+
+    # preferences.rpy:202
     old "Open launcher project"
     new "런처 프로젝트 열기"
 
-    # preferences.rpy:213
+    # preferences.rpy:216
     old "Language:"
     new "언어:"
 
-    # project.rpy:47
+    # project.rpy:49
     old "After making changes to the script, press shift+R to reload your game."
     new "스크립트를 변경한 다음에는 Shift+R를 눌러 게임을 다시 불러오세요."
 
-    # project.rpy:47
+    # project.rpy:49
     old "Press shift+O (the letter) to access the console."
     new "Shift+O로 콘솔을 엽니다."
 
-    # project.rpy:47
+    # project.rpy:49
     old "Press shift+D to access the developer menu."
     new "Shift+D로 개발자 메뉴를 엽니다."
 
-    # project.rpy:47
+    # project.rpy:49
     old "Have you backed up your projects recently?"
     new "프로젝트는 자주 백업합시다!"
 
-    # project.rpy:229
+    # project.rpy:281
     old "Launching the project failed."
     new "프로젝트를 실행하지 못했습니다."
 
-    # project.rpy:229
+    # project.rpy:281
     old "Please ensure that your project launches normally before running this command."
     new "이 명령을 실행하기 전에 프로젝트를 정상적으로 실행했는지 확인하세요."
 
-    # project.rpy:242
+    # project.rpy:297
     old "Ren'Py is scanning the project..."
     new "프로젝트를 살펴보고 있습니다..."
 
-    # project.rpy:568
+    # project.rpy:729
     old "Launching"
     new "실행 중"
 
-    # project.rpy:597
+    # project.rpy:763
     old "PROJECTS DIRECTORY"
     new "프로젝트 경로"
 
-    # project.rpy:597
+    # project.rpy:763
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "경로 선택창을 이용하여 프로젝트가 저장된 경로를 선택하세요.\n{b}경로 선택창이 런처 창 뒤에서 열렸을 수도 있습니다."
 
-    # project.rpy:597
+    # project.rpy:763
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "런처가 이 경로를 살펴보고 이 경로에서 새 프로젝트를 생성하며 프로젝트 배포판을 만듭니다."
 
-    # project.rpy:602
+    # project.rpy:768
     old "Ren'Py has set the projects directory to:"
     new "렌파이가 프로젝트 경로를 다음과 같이 설정했습니다."
 
-    # translations.rpy:63
+    # translations.rpy:91
     old "Translations: [project.current.name!q]"
     new "번역: [project.current.name!q]"
 
-    # translations.rpy:104
+    # translations.rpy:132
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
     new "작업할 언어. 소문자 ASCII 문자와 밑줄만 포함해야 합니다."
 
-    # translations.rpy:130
+    # translations.rpy:158
     old "Generate empty strings for translations"
     new "번역 파일 생성 시 빈 문자열 만들기"
 
-    # translations.rpy:148
+    # translations.rpy:176
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
     new "번역 파일을 생성하거나 업데이트합니다. 파일들은 in game/tl/[persistent.translate_language!q]에 배치됩니다."
 
-    # translations.rpy:168
+    # translations.rpy:196
     old "Extract String Translations"
     new "문자열 번역 추출"
 
-    # translations.rpy:170
+    # translations.rpy:198
     old "Merge String Translations"
     new "문자열 번역 병합"
 
-    # translations.rpy:175
+    # translations.rpy:203
     old "Replace existing translations"
     new "기존 번역 대체"
 
-    # translations.rpy:176
+    # translations.rpy:204
     old "Reverse languages"
-    new "Reverse languages"
+    new "역방향 언어"
 
-    # translations.rpy:180
+    # translations.rpy:208
     old "Update Default Interface Translations"
     new "기본 인터페이스 번역 업데이트"
 
-    # translations.rpy:200
+    # translations.rpy:228
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
     new "추출 명령은 기존 프로젝트의 문자열 번역을 임시 파일로 추출 할 수 있습니다.\n\n병합 명령은 추출된 번역을 다른 프로젝트로 병합합니다."
 
-    # translations.rpy:224
+    # translations.rpy:252
     old "Ren'Py is generating translations...."
     new "번역 파일을 만들고 있습니다..."
 
-    # translations.rpy:235
+    # translations.rpy:263
     old "Ren'Py has finished generating [language] translations."
     new "[language] 번역 파일을 만들었습니다."
 
-    # translations.rpy:248
+    # translations.rpy:276
     old "Ren'Py is extracting string translations..."
     new "문자열 번역을 추출하고 있습니다..."
 
-    # translations.rpy:251
+    # translations.rpy:279
     old "Ren'Py has finished extracting [language] string translations."
     new "[language] 문자열 번역 추출을 완료했습니다."
 
-    # translations.rpy:271
+    # translations.rpy:299
     old "Ren'Py is merging string translations..."
     new "문자열 번역을 병합하고 있습니다..."
 
-    # translations.rpy:274
+    # translations.rpy:302
     old "Ren'Py has finished merging [language] string translations."
     new "[language] 문자열 번역 병합을 완료했습니다."
 
-    # translations.rpy:282
+    # translations.rpy:313
     old "Updating default interface translations..."
     new "기본 인터페이스 번역을 업데이트하고 있습니다..."
 
-    # translations.rpy:306
+    # translations.rpy:342
     old "Extract Dialogue: [project.current.name!q]"
     new "다이얼로그 추출: [project.current.name!q]"
 
-    # translations.rpy:322
+    # translations.rpy:358
     old "Format:"
     new "포맷:"
 
-    # translations.rpy:330
+    # translations.rpy:366
     old "Tab-delimited Spreadsheet (dialogue.tab)"
     new "탭으로 구분되는 스프레드시트 (dialogue.tab)"
 
-    # translations.rpy:331
+    # translations.rpy:367
     old "Dialogue Text Only (dialogue.txt)"
     new "대사 글자만 (dialogue.txt)"
 
-    # translations.rpy:344
+    # translations.rpy:380
     old "Strip text tags from the dialogue."
     new "텍스트 태그를 대사에서 제거합니다."
 
-    # translations.rpy:345
+    # translations.rpy:381
     old "Escape quotes and other special characters."
     new "따옴표와 기타 특수 문자를 제거합니다."
 
-    # translations.rpy:346
+    # translations.rpy:382
     old "Extract all translatable strings, not just dialogue."
     new "모든 번역 가능한 문자열을 추출합니다."
 
-    # translations.rpy:374
+    # translations.rpy:410
     old "Ren'Py is extracting dialogue...."
     new "대사를 추출하고 있습니다..."
 
-    # translations.rpy:378
+    # translations.rpy:414
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
     new "대사 추출을 완료했습니다. 추출된 대사는 기본 디렉토리의 dialogue.[persistent.dialogue_format]에서 찾을 수 있습니다."
 
-    # updater.rpy:75
-    old "Select Update Channel"
-    new "업데이트 경로 선택"
-
-    # updater.rpy:86
-    old "The update channel controls the version of Ren'Py the updater will download. Please select an update channel:"
-    new "업데이트 경로는 업데이터가 다운로드할 렌파이 버전을 제어합니다. 업데이트 경로를 선택해주세요:"
-
-    # updater.rpy:91
-    old "Release"
-    new "배포판"
-
-    # updater.rpy:97
+    # updater.rpy:63
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
     new "{b}추천.{/b} 새로 배포되는 게임에서 사용할 렌파이 버전."
 
-    # updater.rpy:102
+    # updater.rpy:65
     old "Prerelease"
     new "선배포판"
 
-    # updater.rpy:108
+    # updater.rpy:66
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
     new "렌파이의 다음 버전을 테스트하거나 새로운 기능을 미리 이용할 수 있으나 게임을 최종적으로 배포하기에는 적합하지 않은 선배포 버전. "
 
-    # updater.rpy:114
+    # updater.rpy:68
     old "Experimental"
     new "실험용"
 
-    # updater.rpy:120
+    # updater.rpy:69
     old "Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer."
     new "렌파이 실험용 버전. 렌파이 개발자에게 요구받은 것이 아니라면 이 경로를 선택하지 마십시오."
 
-    # updater.rpy:126
+    # updater.rpy:71
     old "Nightly"
     new "야간용"
 
-    # updater.rpy:132
+    # updater.rpy:72
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
     new "검증되지 않은 렌파이 최신 버전. 최신 기능이 포함되어 있거나 전혀 실행되지 않을 수도 있습니다."
 
-    # updater.rpy:152
+    # updater.rpy:90
+    old "Select Update Channel"
+    new "업데이트 채널 선택"
+
+    # updater.rpy:101
+    old "The update channel controls the version of Ren'Py the updater will download."
+    new "업데이트 채널은 업데이터가 내려받을 렌파이의 버전을 제어합니다."
+
+    # updater.rpy:110
+    old "• This version is installed and up-to-date."
+    new "• 최신 버전이 설치돼 있습니다."
+
+    # updater.rpy:118
+    old "%B %d, %Y"
+    new "%Y년 %m월 %d일"
+
+    # updater.rpy:140
     old "An error has occured:"
     new "오류가 발생했습니다:"
 
-    # updater.rpy:154
+    # updater.rpy:142
     old "Checking for updates."
     new "업데이트 확인 중."
 
-    # updater.rpy:156
+    # updater.rpy:144
     old "Ren'Py is up to date."
     new "렌파이가 최신 버전입니다."
 
-    # updater.rpy:158
+    # updater.rpy:146
     old "[u.version] is now available. Do you want to install it?"
     new "[u.version] 버전을 내려받을 수 있습니다. 설치할까요?"
 
-    # updater.rpy:160
+    # updater.rpy:148
     old "Preparing to download the update."
     new "업데이트 파일 내려받기 준비."
 
-    # updater.rpy:162
+    # updater.rpy:150
     old "Downloading the update."
     new "업데이트 파일 내려받는 중."
 
-    # updater.rpy:164
+    # updater.rpy:152
     old "Unpacking the update."
     new "업데이트 파일 압축해제 중."
 
-    # updater.rpy:166
+    # updater.rpy:154
     old "Finishing up."
     new "마무리 중."
 
-    # updater.rpy:168
+    # updater.rpy:156
     old "The update has been installed. Ren'Py will restart."
     new "업데이트를 설치했습니다. 렌파이를 재시작합니다."
 
-    # updater.rpy:170
+    # updater.rpy:158
     old "The update has been installed."
     new "업데이트를 설치했습니다."
 
-    # updater.rpy:172
+    # updater.rpy:160
     old "The update was cancelled."
     new "업데이트가 취소되었습니다."
 
-    # updater.rpy:189
+    # updater.rpy:177
     old "Ren'Py Update"
     new "렌파이 업데이트"
 
-    # updater.rpy:195
+    # updater.rpy:183
     old "Proceed"
     new "다음으로"
+
+    # updater.rpy:188
+    old "Fetching the list of update channels"
+    new "업데이트 채널 목록 가져오기"

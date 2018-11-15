@@ -152,73 +152,393 @@
     old "{#month_short}Dec"
     new "{#month_short}12월"
 
-    # 00action_file.rpy:235
+    # 00action_file.rpy:240
     old "%b %d, %H:%M"
     new "%b %d %H:%M"
 
-    # 00action_file.rpy:820
+    # 00action_file.rpy:353
+    old "Save slot %s: [text]"
+    new "%s 슬롯에 저장: [text]"
+
+    # 00action_file.rpy:434
+    old "Load slot %s: [text]"
+    new "%s 슬롯 불러오기: [text]"
+
+    # 00action_file.rpy:487
+    old "Delete slot [text]"
+    new "[text] 슬롯 삭제"
+
+    # 00action_file.rpy:569
+    old "File page auto"
+    new "자동 파일 페이지"
+
+    # 00action_file.rpy:571
+    old "File page quick"
+    new "빠른 파일 페이지"
+
+    # 00action_file.rpy:573
+    old "File page [text]"
+    new "[text] 파일 페이지"
+
+    # 00action_file.rpy:763
+    old "Next file page."
+    new "다음 파일 페이지."
+
+    # 00action_file.rpy:827
+    old "Previous file page."
+    new "이전 파일 페이지."
+
+    # 00action_file.rpy:889
     old "Quick save complete."
     new "퀵세이브 완료."
 
-    # 00gui.rpy:227
+    # 00action_file.rpy:907
+    old "Quick save."
+    new "빠른 저장."
+
+    # 00action_file.rpy:926
+    old "Quick load."
+    new "빠른 불러오기."
+
+    # 00action_other.rpy:355
+    old "Language [text]"
+    new "[text] 언어"
+
+    # 00director.rpy:708
+    old "The interactive director is not enabled here."
+    new "인터렉티브 디렉터는 여기에서 사용할 수 없습니다."
+
+    # 00director.rpy:1481
+    old "⬆"
+    new "⬆"
+
+    # 00director.rpy:1487
+    old "⬇"
+    new "⬇"
+
+    # 00director.rpy:1551
+    old "Done"
+    new "완료"
+
+    # 00director.rpy:1561
+    old "(statement)"
+    new "(명령문)"
+
+    # 00director.rpy:1562
+    old "(tag)"
+    new "(태그)"
+
+    # 00director.rpy:1563
+    old "(attributes)"
+    new "(속성)"
+
+    # 00director.rpy:1564
+    old "(transform)"
+    new "(변환)"
+
+    # 00director.rpy:1589
+    old "(transition)"
+    new "(전환)"
+
+    # 00director.rpy:1601
+    old "(channel)"
+    new "(채널)"
+
+    # 00director.rpy:1602
+    old "(filename)"
+    new "(파일이름)"
+
+    # 00director.rpy:1631
+    old "Change"
+    new "교체"
+
+    # 00director.rpy:1633
+    old "Add"
+    new "추가"
+
+    # 00director.rpy:1636
+    old "Cancel"
+    new "취소"
+
+    # 00director.rpy:1639
+    old "Remove"
+    new "제거"
+
+    # 00director.rpy:1674
+    old "Statement:"
+    new "명령문:"
+
+    # 00director.rpy:1695
+    old "Tag:"
+    new "태그:"
+
+    # 00director.rpy:1711
+    old "Attributes:"
+    new "속성:"
+
+    # 00director.rpy:1729
+    old "Transforms:"
+    new "변환:"
+
+    # 00director.rpy:1748
+    old "Behind:"
+    new "뒤에:"
+
+    # 00director.rpy:1767
+    old "Transition:"
+    new "전환:"
+
+    # 00director.rpy:1785
+    old "Channel:"
+    new "채널:"
+
+    # 00director.rpy:1803
+    old "Audio Filename:"
+    new "오디오 파일이름:"
+
+    # 00gui.rpy:370
     old "Are you sure?"
     new "정말입니까?"
 
-    # 00gui.rpy:228
+    # 00gui.rpy:371
     old "Are you sure you want to delete this save?"
     new "이 세이브 파일을 지우겠습니까?"
 
-    # 00gui.rpy:229
+    # 00gui.rpy:372
     old "Are you sure you want to overwrite your save?"
     new "이 세이브 파일에 덮어쓰겠습니까?"
 
-    # 00gui.rpy:230
+    # 00gui.rpy:373
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "불러오기를 하면 저장하지 않은 데이터를 잃게 됩니다.\n파일을 불러올까요?"
 
-    # 00gui.rpy:231
+    # 00gui.rpy:374
     old "Are you sure you want to quit?"
     new "종료하겠습니까?"
 
-    # 00gui.rpy:232
+    # 00gui.rpy:375
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "메인 메뉴로 돌아가겠습니까?\n저장하지 않은 데이터는 잃게 됩니다."
 
-    # 00gui.rpy:233
+    # 00gui.rpy:376
     old "Are you sure you want to end the replay?"
     new "리플레이를 종료하겠습니까?"
 
-    # 00gui.rpy:234
+    # 00gui.rpy:377
     old "Are you sure you want to begin skipping?"
     new "스킵을 시작하겠습니까?"
 
-    # 00gui.rpy:235
+    # 00gui.rpy:378
     old "Are you sure you want to skip to the next choice?"
     new "다음 선택지가 나타날 때까지 스킵하겠습니까?"
 
-    # 00gui.rpy:236
+    # 00gui.rpy:379
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "다음 선택지가 나타날 때까지 본 적이 없는 대사까지 모두 스킵하겠습니까?"
 
-    # 00keymap.rpy:250
+    # 00keymap.rpy:258
+    old "Failed to save screenshot as %s."
+    new "%s 에 스크린샷 저장을 실패했습니다."
+
+    # 00keymap.rpy:270
     old "Saved screenshot as %s."
     new "스크린샷을 %s 에 저장했습니다."
 
-    # 00library.rpy:142
+    # 00library.rpy:146
     old "Self-voicing disabled."
     new "대사 읽기를 끕니다."
 
-    # 00library.rpy:143
+    # 00library.rpy:147
     old "Clipboard voicing enabled. "
     new "대사 복사하기를 켭니다. "
 
-    # 00library.rpy:144
+    # 00library.rpy:148
     old "Self-voicing enabled. "
     new "대사 읽기를 켭니다. "
 
-    # 00library.rpy:179
+    # 00library.rpy:150
+    old "bar"
+    new "바"
+
+    # 00library.rpy:151
+    old "selected"
+    new "선택된"
+
+    # 00library.rpy:152
+    old "viewport"
+    new "뷰포트"
+
+    # 00library.rpy:153
+    old "horizontal scroll"
+    new "수평 스크롤"
+
+    # 00library.rpy:154
+    old "vertical scroll"
+    new "수직 스크롤"
+
+    # 00library.rpy:155
+    old "activate"
+    new "활성화"
+
+    # 00library.rpy:156
+    old "deactivate"
+    new "비활성화"
+
+    # 00library.rpy:157
+    old "increase"
+    new "증가"
+
+    # 00library.rpy:158
+    old "decrease"
+    new "감소"
+
+    # 00library.rpy:193
     old "Skip Mode"
     new "스킵 모드"
+
+    # 00preferences.rpy:207
+    old "display"
+    new "화면 모드"
+
+    # 00preferences.rpy:219
+    old "transitions"
+    new "화면 전환"
+
+    # 00preferences.rpy:228
+    old "skip transitions"
+    new "화면 전환 스킵"
+
+    # 00preferences.rpy:230
+    old "video sprites"
+    new "비디오 스프라이트"
+
+    # 00preferences.rpy:239
+    old "show empty window"
+    new "빈 창 보이기"
+
+    # 00preferences.rpy:248
+    old "text speed"
+    new "텍스트 속도"
+
+    # 00preferences.rpy:256
+    old "joystick"
+    new "조이스틱"
+
+    # 00preferences.rpy:256
+    old "joystick..."
+    new "조이스틱..."
+
+    # 00preferences.rpy:263
+    old "skip"
+    new "스킵"
+
+    # 00preferences.rpy:266
+    old "skip unseen [text]"
+    new "읽지 않은 [text] 스킵"
+
+    # 00preferences.rpy:271
+    old "skip unseen text"
+    new "읽지 않은 텍스트까지 모두 스킵"
+
+    # 00preferences.rpy:273
+    old "begin skipping"
+    new "스킵 시작"
+
+    # 00preferences.rpy:277
+    old "after choices"
+    new "선택지 이후에도 스킵"
+
+    # 00preferences.rpy:284
+    old "skip after choices"
+    new "선택후 스킵"
+
+    # 00preferences.rpy:286
+    old "auto-forward time"
+    new "자동 진행 시간"
+
+    # 00preferences.rpy:300
+    old "auto-forward"
+    new "자동 진행"
+
+    # 00preferences.rpy:307
+    old "Auto forward"
+    new "자동 진행"
+
+    # 00preferences.rpy:310
+    old "auto-forward after click"
+    new "클릭후 자동 진행"
+
+    # 00preferences.rpy:319
+    old "automatic move"
+    new "자동 이동"
+
+    # 00preferences.rpy:328
+    old "wait for voice"
+    new "음성 기다리기"
+
+    # 00preferences.rpy:337
+    old "voice sustain"
+    new "음성 지속"
+
+    # 00preferences.rpy:346
+    old "self voicing"
+    new "대사 읽기"
+
+    # 00preferences.rpy:355
+    old "clipboard voicing"
+    new "대사 복사하기"
+
+    # 00preferences.rpy:364
+    old "debug voicing"
+    new "음성 디버그"
+
+    # 00preferences.rpy:373
+    old "emphasize audio"
+    new "오디오 강조"
+
+    # 00preferences.rpy:382
+    old "rollback side"
+    new "롤백 클릭 옵션"
+
+    # 00preferences.rpy:392
+    old "gl powersave"
+    new "GL 절전"
+
+    # 00preferences.rpy:398
+    old "gl framerate"
+    new "GL 프레임 속도"
+
+    # 00preferences.rpy:401
+    old "gl tearing"
+    new "GL 티어링"
+
+    # 00preferences.rpy:413
+    old "music volume"
+    new "배경음악 크기"
+
+    # 00preferences.rpy:414
+    old "sound volume"
+    new "효과음 크기"
+
+    # 00preferences.rpy:415
+    old "voice volume"
+    new "음성 크기"
+
+    # 00preferences.rpy:416
+    old "mute music"
+    new "배경음악 크기"
+
+    # 00preferences.rpy:417
+    old "mute sound"
+    new "효과음 끄기"
+
+    # 00preferences.rpy:418
+    old "mute voice"
+    new "음성 끄기"
+
+    # 00preferences.rpy:419
+    old "mute all"
+    new "모두 음소거"
 
     # 00library.rpy:262
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
@@ -235,6 +555,166 @@
     # 00preferences.rpy:426
     old "Self-voicing enabled. Press 'v' to disable."
     new "대사 읽기 기능을 실행했습니다. 'v' 키를 눌러 종료합니다."
+
+    # _compat\gamemenu.rpym:198
+    old "Empty Slot."
+    new "빈 슬롯"
+
+    # _compat\gamemenu.rpym:355
+    old "Previous"
+    new "이전"
+
+    # _compat\gamemenu.rpym:362
+    old "Next"
+    new "다음"
+
+    # _compat\preferences.rpym:428
+    old "Joystick Mapping"
+    new "조이스틱 매핑"
+
+    # _developer\developer.rpym:38
+    old "Developer Menu"
+    new "개발자 메뉴"
+
+    # _developer\developer.rpym:43
+    old "Interactive Director (D)"
+    new "인터렉티브 디렉터 (D)"
+
+    # _developer\developer.rpym:45
+    old "Reload Game (Shift+R)"
+    new "게임 재시작 (Shift+R)"
+
+    # _developer\developer.rpym:47
+    old "Console (Shift+O)"
+    new "콘솔 (Shift+O)"
+
+    # _developer\developer.rpym:49
+    old "Variable Viewer"
+    new "변수 확인"
+
+    # _developer\developer.rpym:51
+    old "Image Location Picker"
+    new "이미지 위치 확인"
+
+    # _developer\developer.rpym:53
+    old "Filename List"
+    new "파일이름 목록"
+
+    # _developer\developer.rpym:57
+    old "Show Image Load Log (F4)"
+    new "이미지 불러오기 목록을 표시하기 (F4)"
+
+    # _developer\developer.rpym:60
+    old "Hide Image Load Log (F4)"
+    new "이미지 불러오기 목록을 숨기기 (F4)"
+
+    # _developer\developer.rpym:63
+    old "Image Attributes"
+    new "이미지 속성"
+
+    # _developer\developer.rpym:90
+    old "[name] [attributes] (hidden)"
+    new "[name] [attributes] (hidden)"
+
+    # _developer\developer.rpym:94
+    old "[name] [attributes]"
+    new "[name] [attributes]"
+
+    # _developer\developer.rpym:137
+    old "Nothing to inspect."
+    new "조사할 것이 없습니다."
+
+    # _developer\developer.rpym:265
+    old "Return to the developer menu"
+    new "개발자 메뉴로 돌아가기"
+
+    # _developer\developer.rpym:425
+    old "Rectangle: %r"
+    new "사각 영역 좌표: %r"
+
+    # _developer\developer.rpym:430
+    old "Mouse position: %r"
+    new "마우스 포인터 좌표: %r"
+
+    # _developer\developer.rpym:435
+    old "Right-click or escape to quit."
+    new "우클릭 및 Esc 키로 종료하기."
+
+    # _developer\developer.rpym:467
+    old "Rectangle copied to clipboard."
+    new "선택 영역 좌표가 복사되었습니다."
+
+    # _developer\developer.rpym:470
+    old "Position copied to clipboard."
+    new "좌표가 복사되었습니다."
+
+    # _developer\developer.rpym:489
+    old "Type to filter: "
+    new "필터: "
+
+    # _developer\developer.rpym:617
+    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
+    new "텍스쳐: [tex_count] ([tex_size_mb:.1f] MB)"
+
+    # _developer\developer.rpym:621
+    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    new "이미지 캐시: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+
+    # _developer\developer.rpym:631
+    old "✔ "
+    new "✔ "
+
+    # _developer\developer.rpym:634
+    old "✘ "
+    new "✘ "
+
+    # _developer\developer.rpym:639
+    old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    new "\n{color=#cfc}✔ 예측된 이미지 (좋은){/color}\n{color=#fcc}✘ 예측하지 못한 이미지 (나쁜){/color}\n{color=#fff}드래그로 이동.{/color}"
+
+    # _developer\inspector.rpym:38
+    old "Displayable Inspector"
+    new "디스플레이어블 조사"
+
+    # _developer\inspector.rpym:61
+    old "Size"
+    new "크기"
+
+    # _developer\inspector.rpym:65
+    old "Style"
+    new "스타일"
+
+    # _developer\inspector.rpym:71
+    old "Location"
+    new "위치"
+
+    # _developer\inspector.rpym:122
+    old "Inspecting Styles of [displayable_name!q]"
+    new "[displayable_name!q]의 스타일 조사 중"
+
+    # _developer\inspector.rpym:139
+    old "displayable:"
+    new "디스플레이어블:"
+
+    # _developer\inspector.rpym:145
+    old "        (no properties affect the displayable)"
+    new "(디스플레이어블에 적용되는 속성이 없습니다)"
+
+    # _developer\inspector.rpym:147
+    old "        (default properties omitted)"
+    new "        (기본 속성이 빠져있습니다)"
+
+    # _developer\inspector.rpym:185
+    old "<repr() failed>"
+    new "<repr() 실패>"
+
+    # _layout\classic_load_save.rpym:170
+    old "a"
+    new "a"
+
+    # _layout\classic_load_save.rpym:179
+    old "q"
+    new "q"
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
