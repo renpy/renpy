@@ -1,5 +1,4 @@
-﻿
-translate korean strings:
+﻿translate korean strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"
@@ -7,7 +6,7 @@ translate korean strings:
 
     # _developer/developer.rpym:43
     old "Reload Game (Shift+R)"
-    new "게임 재시작 (Shift + R)"
+    new "게임 재시작 (Shift+R)"
 
     # _developer/developer.rpym:45
     old "Console (Shift+O)"
@@ -51,7 +50,7 @@ translate korean strings:
 
     # _developer/developer.rpym:378
     old "Mouse position: %r"
-    new "마우스 포인터 좌료: %r"
+    new "마우스 포인터 좌표: %r"
 
     # _developer/developer.rpym:383
     old "Right-click or escape to quit."
@@ -75,7 +74,7 @@ translate korean strings:
 
     # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    new "\n{color=#cfc}✔ 예측된 이미지 (좋은){/color}\n{color=#fcc}✘ 예측하지 못한 이미지 (나쁜){/color}\n{color=#fff}드래그로 이동.{/color}"
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
@@ -176,4 +175,3 @@ translate korean strings:
     # 00console.rpy:536
     old "jump <label>: jumps to label"
     new "jump <label>: label로 점프한다"
-

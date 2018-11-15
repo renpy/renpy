@@ -803,6 +803,7 @@ screen preferences():
                     textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
                     textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
+                    textbutton "한국어" text_font "../../launcher/game/fonts/NanumGothic.ttf" action Language("korean")
 
 #end language_picker
 

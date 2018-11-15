@@ -1,5 +1,4 @@
-﻿
-translate korean strings:
+﻿translate korean strings:
 
     # screens.rpy:9
     old "## Styles"
@@ -67,15 +66,15 @@ translate korean strings:
 
     # screens.rpy:261
     old "Back"
-    new "뒤로"
+    new "되감기"
 
     # screens.rpy:262
     old "History"
-    new "History"
+    new "대사록"
 
     # screens.rpy:263
     old "Skip"
-    new "스킵"
+    new "넘기기"
 
     # screens.rpy:264
     old "Auto"
@@ -87,11 +86,11 @@ translate korean strings:
 
     # screens.rpy:266
     old "Q.Save"
-    new "퀵세이브"
+    new "Q.저장하기"
 
     # screens.rpy:267
     old "Q.Load"
-    new "퀵로드"
+    new "Q.불러오기"
 
     # screens.rpy:268
     old "Prefs"
@@ -115,11 +114,11 @@ translate korean strings:
 
     # screens.rpy:316
     old "Load"
-    new "로드"
+    new "불러오기"
 
     # screens.rpy:318
     old "Preferences"
-    new "환경 설정"
+    new "환경설정"
 
     # screens.rpy:322
     old "End Replay"
@@ -131,7 +130,7 @@ translate korean strings:
 
     # screens.rpy:328
     old "About"
-    new "렌파이란"
+    new "작품정보"
 
     # screens.rpy:332
     old "## Help isn't necessary or relevant to mobile devices."
@@ -139,7 +138,7 @@ translate korean strings:
 
     # screens.rpy:333
     old "Help"
-    new "도움말"
+    new "조작방법"
 
     # screens.rpy:335
     old "## The quit button is banned on iOS and unnecessary on Android."
@@ -147,7 +146,7 @@ translate korean strings:
 
     # screens.rpy:336
     old "Quit"
-    new "끝내기"
+    new "종료하기"
 
     # screens.rpy:350
     old "## Main Menu screen"
@@ -291,15 +290,15 @@ translate korean strings:
 
     # screens.rpy:739
     old "Window"
-    new "창 모드"
+    new "창 화면"
 
     # screens.rpy:740
     old "Fullscreen"
-    new "전체 화면 모드"
+    new "전체 화면"
 
     # screens.rpy:744
     old "Rollback Side"
-    new "롤백 클릭 옵션"
+    new "측면 되감기"
 
     # screens.rpy:745
     old "Disable"
@@ -315,15 +314,15 @@ translate korean strings:
 
     # screens.rpy:752
     old "Unseen Text"
-    new "읽지 않은 텍스트까지 모두 스킵"
+    new "읽지 않은 지문"
 
     # screens.rpy:753
     old "After Choices"
-    new "선택지 이후에도 스킵"
+    new "선택지 이후"
 
     # screens.rpy:754
     old "Transitions"
-    new "화면 전환 효과를 모두 스킵"
+    new "화면 전환 효과"
 
     # screens.rpy:756
     old "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
@@ -339,11 +338,11 @@ translate korean strings:
 
     # screens.rpy:778
     old "Music Volume"
-    new "배경음악 크기"
+    new "배경음 음량"
 
     # screens.rpy:785
     old "Sound Volume"
-    new "효과음 크기"
+    new "효과음 음량"
 
     # screens.rpy:791
     old "Test"
@@ -351,7 +350,7 @@ translate korean strings:
 
     # screens.rpy:795
     old "Voice Volume"
-    new "음성 크기"
+    new "음성 음량"
 
     # screens.rpy:806
     old "Mute All"
@@ -407,7 +406,7 @@ translate korean strings:
 
     # screens.rpy:1003
     old "Enter"
-    new "Enter"
+    new "엔터(Enter)"
 
     # screens.rpy:1004
     old "Advances dialogue and activates the interface."
@@ -415,7 +414,7 @@ translate korean strings:
 
     # screens.rpy:1007
     old "Space"
-    new "Space"
+    new "스페이스(Space)"
 
     # screens.rpy:1008
     old "Advances dialogue without selecting choices."
@@ -431,7 +430,7 @@ translate korean strings:
 
     # screens.rpy:1015
     old "Escape"
-    new "Esc"
+    new "이스케이프(Esc)"
 
     # screens.rpy:1016
     old "Accesses the game menu."
@@ -439,7 +438,7 @@ translate korean strings:
 
     # screens.rpy:1019
     old "Ctrl"
-    new "Ctrl"
+    new "컨트롤(Ctrl)"
 
     # screens.rpy:1020
     old "Skips dialogue while held down."
@@ -447,7 +446,7 @@ translate korean strings:
 
     # screens.rpy:1023
     old "Tab"
-    new "Tab"
+    new "탭(Tab)"
 
     # screens.rpy:1024
     old "Toggles dialogue skipping."
@@ -455,7 +454,7 @@ translate korean strings:
 
     # screens.rpy:1027
     old "Page Up"
-    new "Page Up"
+    new "페이지 업(Page Up)"
 
     # screens.rpy:1028
     old "Rolls back to earlier dialogue."
@@ -463,7 +462,7 @@ translate korean strings:
 
     # screens.rpy:1031
     old "Page Down"
-    new "Page Down"
+    new "페이지 다운(Page Down)"
 
     # screens.rpy:1032
     old "Rolls forward to later dialogue."
@@ -527,7 +526,7 @@ translate korean strings:
 
     # screens.rpy:1089
     old "Start, Guide"
-    new "스타스 버튼/가이드 버튼"
+    new "스타트 버튼/가이드 버튼"
 
     # screens.rpy:1090
     old "Access the game menu."
@@ -587,7 +586,7 @@ translate korean strings:
 
     # screens.rpy:1208
     old "Skipping"
-    new "스킵 중"
+    new "넘기는 중"
 
     # screens.rpy:1215
     old "## This transform is used to blink the arrows one after another."
@@ -631,7 +630,7 @@ translate korean strings:
 
     # screens.rpy:1406
     old "## Mobile Variants"
-    new "## 모바일 버젼"
+    new "## 모바일 버전"
 
     # screens.rpy:1413
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
@@ -640,4 +639,3 @@ translate korean strings:
     # screens.rpy:1429
     old "Menu"
     new "메뉴"
-
