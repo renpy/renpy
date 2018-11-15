@@ -17,7 +17,7 @@ init python hide:
     __("The build seems to have failed.")
     __("Launching app.")
     __("The build seems to have succeeded.")
-    __("The armeabi-v7a version works on most phones on tablets, while the x86_64 version works on the simulator and chromebooks.")
+    __("The armeabi-v7a version works on most phones or tablets, while the x86_64 version works on the simulator and chromebooks.")
     __("What is the full name of your application? This name will appear in the list of installed applications.")
     __("What is the short name of your application? This name will be used in the launcher, and for application shortcuts.")
     __("What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot.")
