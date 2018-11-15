@@ -371,7 +371,7 @@ translate simplified_chinese strings:
 
     # screens.rpy:765
     old "Auto-Forward Time"
-    new "自动前时间"
+    new "自动前进时间"
 
     # screens.rpy:772
     old "Music Volume"
