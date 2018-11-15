@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2018-11-11 10:13
-
+﻿
 translate korean strings:
 
     # 00action_file.rpy:26
