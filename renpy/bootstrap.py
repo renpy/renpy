@@ -352,6 +352,9 @@ You may be using a system install of python. Please run {0}.sh,
         if renpy.display.draw:
             renpy.display.draw.quit()
 
+        renpy.audio.audio.quit()
+
+
         # Prevent subprocess from throwing errors while trying to run it's
         # __del__ method during shutdown.
         subprocess.Popen.__del__ = popen_del
