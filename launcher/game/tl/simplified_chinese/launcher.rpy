@@ -226,7 +226,7 @@ translate simplified_chinese strings:
     new "构建似乎已成功。"
 
     # androidstrings.rpy:20
-    old "The armeabi-v7a version works on most phones on tablets, while the x86_64 version works on the simulator and chromebooks."
+    old "The armeabi-v7a version works on most phones or tablets, while the x86_64 version works on the simulator and chromebooks."
     new "armeabi-v7a 版用于多数手机或平板，而 x86_64 版用于模拟器和 Chromebook。"
 
     # androidstrings.rpy:21
