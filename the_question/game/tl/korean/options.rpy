@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2018-11-11 10:13
-
+﻿
 translate korean python:
     gui.main_font = "../../launcher/game/fonts/NanumGothic.ttf"
     gui.text_font = "../../launcher/game/fonts/NanumGothic.ttf"

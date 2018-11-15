@@ -1,4 +1,4 @@
-translate korean strings:
+﻿translate korean strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
