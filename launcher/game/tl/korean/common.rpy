@@ -568,37 +568,9 @@
     old "Next"
     new "다음"
 
-    # _compat\preferences.rpym:428
-    old "Joystick Mapping"
-    new "조이스틱 매핑"
-
-    # _developer\developer.rpym:38
-    old "Developer Menu"
-    new "개발자 메뉴"
-
     # _developer\developer.rpym:43
     old "Interactive Director (D)"
     new "인터렉티브 디렉터 (D)"
-
-    # _developer\developer.rpym:45
-    old "Reload Game (Shift+R)"
-    new "게임 재시작 (Shift+R)"
-
-    # _developer\developer.rpym:47
-    old "Console (Shift+O)"
-    new "콘솔 (Shift+O)"
-
-    # _developer\developer.rpym:49
-    old "Variable Viewer"
-    new "변수 확인"
-
-    # _developer\developer.rpym:51
-    old "Image Location Picker"
-    new "이미지 위치 확인"
-
-    # _developer\developer.rpym:53
-    old "Filename List"
-    new "파일이름 목록"
 
     # _developer\developer.rpym:57
     old "Show Image Load Log (F4)"
@@ -620,34 +592,6 @@
     old "[name] [attributes]"
     new "[name] [attributes]"
 
-    # _developer\developer.rpym:137
-    old "Nothing to inspect."
-    new "조사할 것이 없습니다."
-
-    # _developer\developer.rpym:265
-    old "Return to the developer menu"
-    new "개발자 메뉴로 돌아가기"
-
-    # _developer\developer.rpym:425
-    old "Rectangle: %r"
-    new "사각 영역 좌표: %r"
-
-    # _developer\developer.rpym:430
-    old "Mouse position: %r"
-    new "마우스 포인터 좌표: %r"
-
-    # _developer\developer.rpym:435
-    old "Right-click or escape to quit."
-    new "우클릭 및 Esc 키로 종료하기."
-
-    # _developer\developer.rpym:467
-    old "Rectangle copied to clipboard."
-    new "선택 영역 좌표가 복사되었습니다."
-
-    # _developer\developer.rpym:470
-    old "Position copied to clipboard."
-    new "좌표가 복사되었습니다."
-
     # _developer\developer.rpym:489
     old "Type to filter: "
     new "필터: "
@@ -659,54 +603,6 @@
     # _developer\developer.rpym:621
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
     new "이미지 캐시: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
-
-    # _developer\developer.rpym:631
-    old "✔ "
-    new "✔ "
-
-    # _developer\developer.rpym:634
-    old "✘ "
-    new "✘ "
-
-    # _developer\developer.rpym:639
-    old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ 예측된 이미지 (좋은){/color}\n{color=#fcc}✘ 예측하지 못한 이미지 (나쁜){/color}\n{color=#fff}드래그로 이동.{/color}"
-
-    # _developer\inspector.rpym:38
-    old "Displayable Inspector"
-    new "디스플레이어블 조사"
-
-    # _developer\inspector.rpym:61
-    old "Size"
-    new "크기"
-
-    # _developer\inspector.rpym:65
-    old "Style"
-    new "스타일"
-
-    # _developer\inspector.rpym:71
-    old "Location"
-    new "위치"
-
-    # _developer\inspector.rpym:122
-    old "Inspecting Styles of [displayable_name!q]"
-    new "[displayable_name!q]의 스타일 조사 중"
-
-    # _developer\inspector.rpym:139
-    old "displayable:"
-    new "디스플레이어블:"
-
-    # _developer\inspector.rpym:145
-    old "        (no properties affect the displayable)"
-    new "(디스플레이어블에 적용되는 속성이 없습니다)"
-
-    # _developer\inspector.rpym:147
-    old "        (default properties omitted)"
-    new "        (기본 속성이 빠져있습니다)"
-
-    # _developer\inspector.rpym:185
-    old "<repr() failed>"
-    new "<repr() 실패>"
 
     # _layout\classic_load_save.rpym:170
     old "a"

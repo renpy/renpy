@@ -184,10 +184,6 @@
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "현재 상태를 저장한 뒤 복원하여 게임을 디스크에서 다시 불러옵니다."
 
-    # _errorhandling.rpym:599
-    old "Quits the game."
-    new "게임을 종료합니다."
-
     # _errorhandling.rpym:602
     old "Console"
     new "콘솔"
