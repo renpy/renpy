@@ -583,7 +583,7 @@ translate simplified_chinese strings:
 
     # _developer\developer.rpym:45
     old "Reload Game (Shift+R)"
-    new "重新载入游戏 (Shift+R)"
+    new "重新加载游戏 (Shift+R)"
 
     # _developer\developer.rpym:47
     old "Console (Shift+O)"
@@ -591,23 +591,23 @@ translate simplified_chinese strings:
 
     # _developer\developer.rpym:49
     old "Variable Viewer"
-    new "变量查看"
+    new "变量查看器"
 
     # _developer\developer.rpym:51
     old "Image Location Picker"
-    new "图像位置选择"
+    new "图像坐标提取器"
 
     # _developer\developer.rpym:53
     old "Filename List"
-    new "文件名列表"
+    new "文件列表"
 
     # _developer\developer.rpym:57
     old "Show Image Load Log (F4)"
-    new "显示图像载入日志 (F4)"
+    new "显示图像加载日志 (F4)"
 
     # _developer\developer.rpym:60
     old "Hide Image Load Log (F4)"
-    new "隐藏图像载入日志 (F4)"
+    new "隐藏图像加载日志 (F4)"
 
     # _developer\developer.rpym:63
     old "Image Attributes"
@@ -623,7 +623,7 @@ translate simplified_chinese strings:
 
     # _developer\developer.rpym:137
     old "Nothing to inspect."
-    new "尚无可查看的内容。"
+    new "无对象可查验。"
 
     # _developer\developer.rpym:265
     old "Return to the developer menu"
@@ -631,7 +631,7 @@ translate simplified_chinese strings:
 
     # _developer\developer.rpym:425
     old "Rectangle: %r"
-    new "矩阵坐标：%r"
+    new "矩形参数：%r"
 
     # _developer\developer.rpym:430
     old "Mouse position: %r"
@@ -639,11 +639,11 @@ translate simplified_chinese strings:
 
     # _developer\developer.rpym:435
     old "Right-click or escape to quit."
-    new "右键点击或按下 ESC 来退出。"
+    new "右键点击或按下 Esc 键来退出。"
 
     # _developer\developer.rpym:467
     old "Rectangle copied to clipboard."
-    new "矩阵坐标已复制到剪贴板。"
+    new "矩形参数已复制到剪贴板。"
 
     # _developer\developer.rpym:470
     old "Position copied to clipboard."
@@ -671,11 +671,11 @@ translate simplified_chinese strings:
 
     # _developer\developer.rpym:639
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ 已预载图像（优）{/color}\n{color=#fcc}✘ 未预载图像（劣）{/color}\n{color=#fff}拖动来移动位置。{/color}"
+    new "\n{color=#cfc}✔ 已预载图像（良好）{/color}\n{color=#fcc}✘ 未预载图像（糟糕）{/color}\n{color=#fff}拖动来移动位置。{/color}"
 
     # _developer\inspector.rpym:38
     old "Displayable Inspector"
-    new "可视组件查看"
+    new "可视组件查验器"
 
     # _developer\inspector.rpym:61
     old "Size"
@@ -691,7 +691,7 @@ translate simplified_chinese strings:
 
     # _developer\inspector.rpym:122
     old "Inspecting Styles of [displayable_name!q]"
-    new "正在查看 [displayable_name!q] 的样式"
+    new "正在查验 [displayable_name!q] 的样式"
 
     # _developer\inspector.rpym:139
     old "displayable:"
@@ -699,11 +699,11 @@ translate simplified_chinese strings:
 
     # _developer\inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "        (尚无影响此可视组件的属性)"
+    new "        (可视组件尚无属性关联)"
 
     # _developer\inspector.rpym:147
     old "        (default properties omitted)"
-    new "        (已忽略默认属性)"
+    new "        (已省略默认属性)"
 
     # _developer\inspector.rpym:185
     old "<repr() failed>"
