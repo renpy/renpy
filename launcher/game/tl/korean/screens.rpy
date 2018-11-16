@@ -142,7 +142,7 @@
 
     # screens.rpy:324
     old "About"
-    new "작품정보"
+    new "버전정보"
 
     # screens.rpy:328
     old "## Help isn't necessary or relevant to mobile devices."

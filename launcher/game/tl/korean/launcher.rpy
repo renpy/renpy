@@ -892,6 +892,10 @@
     old "quit"
     new "종료"
 
+    # interface.rpy:136
+    old "Ren'Py Sponsor Information"
+    new "렌파이 후원자 정보"
+
     # interface.rpy:258
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
     new "패키지 형식에 제한이 있으므로 ASCII가 아닌 문자가 입력된 파일 이름이나 디렉토리 이름은 사용할 수 없습니다."
