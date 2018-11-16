@@ -1,4 +1,4 @@
-
+﻿
 # game/script.rpy:19
 translate traditional_chinese start_915cb944:
 
