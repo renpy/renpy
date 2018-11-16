@@ -54,7 +54,8 @@ system, and use it to set the language. Please see
 :var:`config.enable_language_autodetect` and the :ref:`Translation <translation>`
 documentation for how this works.
 
-The French, German, Korean, and Russian translations have been updated.
+The French, German, Korean, Russian, and Simplifed Chinese translations
+have been updated.
 
 Fixes
 -----
