@@ -92,6 +92,14 @@
     old "Retrieves the log from the Android device and writes it to a file."
     new "안드로이드 기기와 쓰여진 파일로부터 로그를 검색합니다."
 
+    # android.rpy:50
+    old "Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device."
+    new "안드로이드 스튜디오를 통해 액세스할 수 있는 디버그 빌드를 선택합니다. 디버그 빌드와 배포판 빌드를 변경하려면 장치에서 제거해야 합니다."
+
+    # android.rpy:51
+    old "Selects the Release build, which can be uploaded to stores. Changing between debug and release builds requires an uninstall from your device."
+    new "상점에 업로드할 수 있는 배포판 빌드를 선택합니다. 디버그 빌드와 배포판 빌드를 변경하려면 장치에서 제거해야 합니다."
+
     # android.rpy:245
     old "Copying Android files to distributions directory."
     new "안드로이드 파일을 패키지 경로에 복사하는 중."
@@ -121,8 +129,8 @@
     new "만들기:"
 
     # android.rpy:373
-    old "디버그"
-    new "Debug"
+    old "Debug"
+    new "디버그"
 
     # android.rpy:377
     old "Release"
