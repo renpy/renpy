@@ -46,15 +46,6 @@ cimport gltexture
 import gltexture
 import glblacklist
 
-
-cdef extern from "renpygl.h":
-    GLenum glewInit()
-    GLubyte *glewGetErrorString(GLenum)
-    GLboolean glewIsSupported(char *)
-
-    enum:
-        GLEW_OK
-
 cdef extern from "eglsupport.h":
     int egl_available()
     char *egl_init(SDL_Window *, int)
@@ -471,15 +462,6 @@ cdef class GLDraw:
         This does the first-time initialization of OpenGL, deciding
         which subsystems to use.
         """
-
-        if not EGL:
-
-            # Init glew.
-            err = glewInit()
-
-            if err != GLEW_OK:
-                renpy.display.log.write("Glew init failed: %s" % <char *> glewGetErrorString(err))
-                return False
 
         # Log the GL version.
         renderer = <char *> glGetString(GL_RENDERER)
