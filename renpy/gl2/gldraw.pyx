@@ -509,16 +509,9 @@ cdef class GLDraw:
             renpy.display.log.write("GL is totally blacklisted.")
             return False
 
-        if EGL:
-            gltexture.use_gles()
-
-        elif renpy.android or renpy.ios:
+        if renpy.android or renpy.ios:
             self.redraw_period = 1.0
             self.always_opaque = True
-            gltexture.use_gles()
-
-        else:
-            gltexture.use_gl()
 
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(extensions_string.split(" "))

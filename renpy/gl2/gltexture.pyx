@@ -25,7 +25,7 @@ from __future__ import print_function
 
 DEF ANGLE = False
 
-from gl cimport *
+from uguugl cimport *
 from gldraw cimport *
 
 from sdl2 cimport *
@@ -56,51 +56,6 @@ generation = 1
 # A map from texture number to generation
 texture_generation = { }
 
-cdef GLenum tex_format = GL_RGBA
-cdef GLenum tex_internalformat = GL_RGBA
-cdef GLenum tex_type = GL_UNSIGNED_BYTE
-cdef GLenum rtt_format = GL_RGBA
-cdef GLenum rtt_internalformat = GL_RGBA
-cdef GLenum rtt_type = GL_UNSIGNED_BYTE
-
-def use_gles():
-    global tex_format
-    global tex_internalformat
-    global tex_type
-    global rtt_format
-    global rtt_internalformat
-    global rtt_type
-
-    tex_format = GL_RGBA
-    tex_internalformat = GL_RGBA
-    tex_type = GL_UNSIGNED_BYTE
-
-    rtt_format = GL_RGBA
-    rtt_internalformat = GL_RGBA
-    rtt_type = GL_UNSIGNED_BYTE
-
-def use_gl():
-    global tex_format
-    global tex_internalformat
-    global tex_type
-    global rtt_format
-    global rtt_internalformat
-    global rtt_type
-
-    # Optimize for the case of little-endian systems that use ARGB.
-    if sys.byteorder == 'little':
-        tex_format = GL_BGRA
-        tex_internalformat = GL_RGBA
-        tex_type = GL_UNSIGNED_INT_8_8_8_8_REV
-    else:
-        tex_format = GL_RGBA
-        tex_internalformat = GL_RGBA
-        tex_type = GL_UNSIGNED_BYTE
-
-    rtt_format = GL_RGBA
-    rtt_internalformat = GL_RGBA
-    rtt_type = GL_UNSIGNED_BYTE
-
 def test_texture_sizes(Environ environ, draw):
     """
     Tests each possible texture size to see if it can be used. We test the
@@ -124,7 +79,7 @@ def test_texture_sizes(Environ environ, draw):
 
     # There could be an error queued up from an ANGLE reset. Purge it before we do the
     # texture testing.
-    error = realGlGetError()
+    error = glGetError()
     if error != GL_NO_ERROR:
         renpy.display.log.write("- Ignored error at start of testing: {0:x}".format(error))
 
@@ -147,34 +102,25 @@ def test_texture_sizes(Environ environ, draw):
 
 
         with nogil:
-            if tex_format == GL_RGBA:
 
-                for i from 0 <= i < size * size:
-                    bitmap[i * 4 + 0] = 0xff # r
-                    bitmap[i * 4 + 1] = 0x00 # g
-                    bitmap[i * 4 + 2] = 0x00 # b
-                    bitmap[i * 4 + 3] = 0xff # a
-
-            else:
-
-                for i from 0 <= i < size * size:
-                    bitmap[i * 4 + 0] = 0x00 # b
-                    bitmap[i * 4 + 1] = 0x00 # g
-                    bitmap[i * 4 + 2] = 0xff # r
-                    bitmap[i * 4 + 3] = 0xff # a
+            for i from 0 <= i < size * size:
+                bitmap[i * 4 + 0] = 0xff # r
+                bitmap[i * 4 + 1] = 0x00 # g
+                bitmap[i * 4 + 2] = 0x00 # b
+                bitmap[i * 4 + 3] = 0xff # a
 
         # Create a texture of the given size.
-        glActiveTextureARB(GL_TEXTURE0)
+        glActiveTexture(GL_TEXTURE0)
         glGenTextures(1, &tex)
         glBindTexture(GL_TEXTURE_2D, tex)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, tex_internalformat, size, size, 0, tex_format, tex_type, bitmap)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, bitmap)
 
         # Free the bitmap.
         free(bitmap)
 
-        error = realGlGetError()
+        error = glGetError()
         if error != GL_NO_ERROR:
             renpy.display.log.write("- Error loading {0}px bitmap: {1:x}".format(size, error))
             glDeleteTextures(1, &tex)
@@ -214,7 +160,7 @@ def test_texture_sizes(Environ environ, draw):
         # Delete the texture.
         glDeleteTextures(1, &tex)
 
-        error = realGlGetError()
+        error = glGetError()
         if error != GL_NO_ERROR:
             renpy.display.log.write("- Error drawing {0}px texture: {1:x}".format(size, error))
             break
@@ -222,7 +168,7 @@ def test_texture_sizes(Environ environ, draw):
         # Check the pixel color.
         glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
 
-        error = realGlGetError()
+        error = glGetError()
         if error != GL_NO_ERROR:
             renpy.display.log.write("- Error reading {0}px texture: {1:x}".format(size, error))
             break
@@ -270,7 +216,7 @@ cdef class TextureCore:
         self.number = 0
 
         # The format of this texture in the GPU (or 0 if not known).
-        self.format = 0
+        self.loaded = False
 
         # These are used to map an index into texture coordinates.
         self.xmul = 0
@@ -389,7 +335,7 @@ cdef class TextureCore:
             # smaller than it, load in the empty texture.
             if w < self.width or h < self.height:
 
-                if self.format != tex_internalformat:
+                if not self.loaded:
                     load_premultiplied(
                         None,
                         self.width,
@@ -398,20 +344,16 @@ cdef class TextureCore:
                         False,
                         )
 
-                    self.format = tex_internalformat
-
             # Otherwise, either load or replace the texture.
             load_premultiplied(
                 self.premult,
                 w,
                 h,
-                (self.format == tex_internalformat),
+                self.loaded,
                 False,
                 )
 
-            # Needs to be here twice, since we may not go through the w < SIDE
-            # h < SIDE thing all the time.
-            self.format = tex_internalformat
+            self.loaded = True
 
             # Finally, load in the default math.
             self.xadd = self.yadd = 0
@@ -427,7 +369,7 @@ cdef class TextureCore:
 
         self.allocate()
 
-        if self.format != rtt_format:
+        if not self.loaded:
 
             glBindTexture(GL_TEXTURE_2D, self.number)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
@@ -444,7 +386,7 @@ cdef class TextureCore:
                 0,
                 True)
 
-            self.format = rtt_format
+            self.loaded = True
 
         rtt.render(environ, self.number, x, y, self.width, self.height, draw_func)
 
@@ -469,7 +411,7 @@ cdef class TextureCore:
         glGenTextures(1, texnums)
 
         self.number = texnums[0]
-        self.format = 0
+        self.loaded = False
 
         texture_generation[self.number] = generation
 
@@ -1235,63 +1177,29 @@ def premultiply(
             # Advance to the next row.
             pixels += surf.pitch
 
-            if tex_format == GL_RGBA:
+            if alpha:
 
-                # RGBA path.
+                while p < pend:
 
-                if alpha:
+                    a = p[3]
 
-                    while p < pend:
+                    op[0] = (p[0] * a + a) >> 8
+                    op[1] = (p[1] * a + a) >> 8
+                    op[2] = (p[2] * a + a) >> 8
+                    op[3] = a
 
-                        a = p[3]
-
-                        op[0] = (p[0] * a + a) >> 8
-                        op[1] = (p[1] * a + a) >> 8
-                        op[2] = (p[2] * a + a) >> 8
-                        op[3] = a
-
-                        p += 4
-                        op += 4
-
-                else:
-
-                    while p < pend:
-
-                        (<unsigned int *> op)[0] = (<unsigned int *> p)[0]
-                        op[3] = 255
-
-                        p += 4
-                        op += 4
+                    p += 4
+                    op += 4
 
             else:
 
-                # BGRA Path.
+                while p < pend:
 
-                if alpha:
+                    (<unsigned int *> op)[0] = (<unsigned int *> p)[0]
+                    op[3] = 255
 
-                    while p < pend:
-
-                        a = p[3]
-
-                        op[0] = (p[2] * a + a) >> 8 # b
-                        op[1] = (p[1] * a + a) >> 8 # g
-                        op[2] = (p[0] * a + a) >> 8 # r
-                        op[3] = a
-
-                        p += 4
-                        op += 4
-
-                else:
-
-                    while p < pend:
-
-                        op[0] = p[2] # b
-                        op[1] = p[1] # g
-                        op[2] = p[0] # r
-                        op[3] = 0xff # a
-
-                        p += 4
-                        op += 4
+                    p += 4
+                    op += 4
 
         if border_left:
             pp = <unsigned int *> (out)
@@ -1338,15 +1246,6 @@ def load_premultiplied(data, width, height, update, rtt):
     cdef GLenum format
     cdef GLenum type
 
-    if rtt:
-        internalformat = rtt_internalformat
-        format = rtt_format
-        type = rtt_type
-    else:
-        internalformat = tex_internalformat
-        format = tex_format
-        type = tex_type
-
     if data:
         pixels = data
     else:
@@ -1360,20 +1259,20 @@ def load_premultiplied(data, width, height, update, rtt):
             0,
             width,
             height,
-            format,
-            type,
+            GL_RGBA,
+            GL_UNSIGNED_BYTE,
             <GLubyte *> pixels)
 
     else:
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
-            internalformat,
+            GL_RGBA,
             width,
             height,
             0,
-            format,
-            type,
+            GL_RGBA,
+            GL_UNSIGNED_BYTE,
             <GLubyte *> pixels)
 
 cdef void draw_rectangle(
@@ -1447,7 +1346,7 @@ cdef void draw_rectangle(
 
         has_tex0 = 1
 
-        glActiveTextureARB(GL_TEXTURE0)
+        glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, tex0.number)
 
         xadd = tex0.xadd
@@ -1467,7 +1366,7 @@ cdef void draw_rectangle(
 
         has_tex1 = 1
 
-        glActiveTextureARB(GL_TEXTURE1)
+        glActiveTexture(GL_TEXTURE1)
         glBindTexture(GL_TEXTURE_2D, tex1.number)
 
         xadd = tex1.xadd
@@ -1483,26 +1382,25 @@ cdef void draw_rectangle(
     else:
         has_tex1 = 0
 
-    if RENPY_THIRD_TEXTURE:
-        if tex2 is not None:
+    if tex2 is not None:
 
-            has_tex2 = 1
+        has_tex2 = 1
 
-            glActiveTextureARB(GL_TEXTURE2)
-            glBindTexture(GL_TEXTURE_2D, tex2.number)
+        glActiveTexture(GL_TEXTURE2)
+        glBindTexture(GL_TEXTURE_2D, tex2.number)
 
-            xadd = tex2.xadd
-            yadd = tex2.yadd
-            xmul = tex2.xmul
-            ymul = tex2.ymul
+        xadd = tex2.xadd
+        yadd = tex2.yadd
+        xmul = tex2.xmul
+        ymul = tex2.ymul
 
-            t2u0 = xadd + xmul * (tex2x + 0)
-            t2u1 = xadd + xmul * (tex2x + w)
-            t2v0 = yadd + ymul * (tex2y + 0)
-            t2v1 = yadd + ymul * (tex2y + h)
+        t2u0 = xadd + xmul * (tex2x + 0)
+        t2u1 = xadd + xmul * (tex2x + w)
+        t2v0 = yadd + ymul * (tex2y + 0)
+        t2v1 = yadd + ymul * (tex2y + h)
 
-        else:
-            has_tex2 = 0
+    else:
+        has_tex2 = 0
 
 
     # Now, actually draw the textured rectangle.
@@ -1541,7 +1439,6 @@ cdef void draw_rectangle(
     else:
         environ.set_texture(1, NULL)
 
-    if RENPY_THIRD_TEXTURE:
         if has_tex2:
 
             tex2coords[0] = t2u0
