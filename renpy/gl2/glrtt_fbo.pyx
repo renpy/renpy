@@ -23,7 +23,7 @@
 
 from __future__ import print_function
 
-from gl cimport *
+from uguugl cimport *
 from gldraw cimport *
 from gldraw import Rtt
 
@@ -41,7 +41,7 @@ class FboRtt(Rtt):
     """
 
     def init(self):
-        glGenFramebuffersEXT(1, &fbo)
+        glGenFramebuffers(1, &fbo)
 
         cdef int i
 
@@ -49,7 +49,7 @@ class FboRtt(Rtt):
         self.size_limit = i
         renpy.display.log.write("FBO Maximum Texture Size: %d", i)
 
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &root_fbo);
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &root_fbo);
         renpy.display.log.write("Root FBO is: %d", root_fbo)
 
     def deinit(self):
@@ -57,8 +57,8 @@ class FboRtt(Rtt):
         Called before changing the GL context.
         """
 
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
-        glDeleteFramebuffersEXT(1, &fbo)
+        glBindFramebuffer(GL_FRAMEBUFFER, root_fbo)
+        glDeleteFramebuffers(1, &fbo)
 
     def begin(self):
         """
@@ -75,11 +75,11 @@ class FboRtt(Rtt):
         to render the texture.
         """
 
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo)
 
-        glFramebufferTexture2DEXT(
-            GL_FRAMEBUFFER_EXT,
-            GL_COLOR_ATTACHMENT0_EXT,
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER,
+            GL_COLOR_ATTACHMENT0,
             GL_TEXTURE_2D,
             texture,
             0)
@@ -89,7 +89,7 @@ class FboRtt(Rtt):
 
         draw_func(x, y, w, h)
 
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
+        glBindFramebuffer(GL_FRAMEBUFFER, root_fbo)
 
 
     def get_size_limit(self, dimension):
