@@ -152,7 +152,7 @@
     old "{#month_short}Dec"
     new "{#month_short}12월"
 
-    # 00action_file.rpy:240
+    # 00action_file.rpy:235
     old "%b %d, %H:%M"
     new "%b %d %H:%M"
 
@@ -190,7 +190,7 @@
 
     # 00action_file.rpy:889
     old "Quick save complete."
-    new "퀵세이브 완료."
+    new "빠른 저장 완료."
 
     # 00action_file.rpy:907
     old "Quick save."
@@ -296,43 +296,43 @@
     old "Audio Filename:"
     new "오디오 파일이름:"
 
-    # 00gui.rpy:370
+    # 00gui.rpy:227
     old "Are you sure?"
     new "정말입니까?"
 
-    # 00gui.rpy:371
+    # 00gui.rpy:228
     old "Are you sure you want to delete this save?"
     new "이 세이브 파일을 지우겠습니까?"
 
-    # 00gui.rpy:372
+    # 00gui.rpy:229
     old "Are you sure you want to overwrite your save?"
     new "이 세이브 파일에 덮어쓰겠습니까?"
 
-    # 00gui.rpy:373
+    # 00gui.rpy:230
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "불러오기를 하면 저장하지 않은 데이터를 잃게 됩니다.\n파일을 불러올까요?"
 
-    # 00gui.rpy:374
+    # 00gui.rpy:231
     old "Are you sure you want to quit?"
     new "종료하겠습니까?"
 
-    # 00gui.rpy:375
+    # 00gui.rpy:232
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "메인 메뉴로 돌아가겠습니까?\n저장하지 않은 데이터는 잃게 됩니다."
 
-    # 00gui.rpy:376
+    # 00gui.rpy:233
     old "Are you sure you want to end the replay?"
     new "리플레이를 종료하겠습니까?"
 
-    # 00gui.rpy:377
+    # 00gui.rpy:234
     old "Are you sure you want to begin skipping?"
     new "스킵을 시작하겠습니까?"
 
-    # 00gui.rpy:378
+    # 00gui.rpy:235
     old "Are you sure you want to skip to the next choice?"
     new "다음 선택지가 나타날 때까지 스킵하겠습니까?"
 
-    # 00gui.rpy:379
+    # 00gui.rpy:236
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "다음 선택지가 나타날 때까지 본 적이 없는 대사까지 모두 스킵하겠습니까?"
 
@@ -344,15 +344,15 @@
     old "Saved screenshot as %s."
     new "스크린샷을 %s 에 저장했습니다."
 
-    # 00library.rpy:146
+    # 00library.rpy:142
     old "Self-voicing disabled."
     new "대사 읽기를 끕니다."
 
-    # 00library.rpy:147
+    # 00library.rpy:143
     old "Clipboard voicing enabled. "
     new "대사 복사하기를 켭니다. "
 
-    # 00library.rpy:148
+    # 00library.rpy:144
     old "Self-voicing enabled. "
     new "대사 읽기를 켭니다. "
 
@@ -392,9 +392,13 @@
     old "decrease"
     new "감소"
 
-    # 00library.rpy:193
+    # 00library.rpy:179
     old "Skip Mode"
     new "스킵 모드"
+
+    # 00library.rpy:262
+    old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
+    new "이 프로그램은 MIT 라이선스와 GNU 라이선스를 포함한 여러 가지 라이선스의 적용을 받는 오픈소스 소프트웨어를 포함하고 있습니다. {a=https://www.renpy.org/l/license}이곳{/a}에서 포함된 모든 소프트웨어와 그 소스코드를 확인할 수 있습니다.\n\n이 프로그램의 한국어 지원에는 네이버에서 제공한 {a=https://hangeul.naver.com/2017/nanum}나눔글꼴{/a}이 사용되고 있습니다."
 
     # 00preferences.rpy:207
     old "display"
@@ -506,7 +510,7 @@
 
     # 00preferences.rpy:398
     old "gl framerate"
-    new "GL 프레임 속도"
+    new "GL 프레임레이트"
 
     # 00preferences.rpy:401
     old "gl tearing"
@@ -540,10 +544,6 @@
     old "mute all"
     new "모두 음소거"
 
-    # 00library.rpy:262
-    old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "이 프로그램은 MIT 라이선스와 GNU 라이선스를 포함한 여러 가지 라이선스의 적용을 받는 오픈소스 소프트웨어를 포함하고 있습니다. {a=https://www.renpy.org/l/license}이곳{/a}에서 포함된 모든 소프트웨어와 그 소스코드를 확인할 수 있습니다."
-
     # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "대사 복사하기 기능을 실행했습니다. 'Shift+C'로 종료합니다."
@@ -568,9 +568,37 @@
     old "Next"
     new "다음"
 
+    # _compat\preferences.rpym:428
+    old "Joystick Mapping"
+    new "조이스틱 매핑"
+
+    # _developer\developer.rpym:38
+    old "Developer Menu"
+    new "개발자 메뉴"
+
     # _developer\developer.rpym:43
     old "Interactive Director (D)"
     new "인터렉티브 디렉터 (D)"
+
+    # _developer\developer.rpym:45
+    old "Reload Game (Shift+R)"
+    new "게임 재시작 (Shift+R)"
+
+    # _developer\developer.rpym:47
+    old "Console (Shift+O)"
+    new "콘솔 (Shift+O)"
+
+    # _developer\developer.rpym:49
+    old "Variable Viewer"
+    new "변수 확인"
+
+    # _developer\developer.rpym:51
+    old "Image Location Picker"
+    new "이미지 위치 확인"
+
+    # _developer\developer.rpym:53
+    old "Filename List"
+    new "파일이름 목록"
 
     # _developer\developer.rpym:57
     old "Show Image Load Log (F4)"
@@ -592,6 +620,34 @@
     old "[name] [attributes]"
     new "[name] [attributes]"
 
+    # _developer\developer.rpym:137
+    old "Nothing to inspect."
+    new "조사할 것이 없습니다."
+
+    # _developer\developer.rpym:265
+    old "Return to the developer menu"
+    new "개발자 메뉴로 돌아가기"
+
+    # _developer\developer.rpym:425
+    old "Rectangle: %r"
+    new "사각 영역 좌표: %r"
+
+    # _developer\developer.rpym:430
+    old "Mouse position: %r"
+    new "마우스 포인터 좌표: %r"
+
+    # _developer\developer.rpym:435
+    old "Right-click or escape to quit."
+    new "우클릭 및 Esc 키로 종료하기."
+
+    # _developer\developer.rpym:467
+    old "Rectangle copied to clipboard."
+    new "선택 영역 좌표가 복사되었습니다."
+
+    # _developer\developer.rpym:470
+    old "Position copied to clipboard."
+    new "좌표가 복사되었습니다."
+
     # _developer\developer.rpym:489
     old "Type to filter: "
     new "필터: "
@@ -603,6 +659,54 @@
     # _developer\developer.rpym:621
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
     new "이미지 캐시: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+
+    # _developer\developer.rpym:631
+    old "✔ "
+    new "✔ "
+
+    # _developer\developer.rpym:634
+    old "✘ "
+    new "✘ "
+
+    # _developer\developer.rpym:639
+    old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    new "\n{color=#cfc}✔ 예측된 이미지 (좋은){/color}\n{color=#fcc}✘ 예측하지 못한 이미지 (나쁜){/color}\n{color=#fff}드래그로 이동.{/color}"
+
+    # _developer\inspector.rpym:38
+    old "Displayable Inspector"
+    new "디스플레이어블 조사"
+
+    # _developer\inspector.rpym:61
+    old "Size"
+    new "크기"
+
+    # _developer\inspector.rpym:65
+    old "Style"
+    new "스타일"
+
+    # _developer\inspector.rpym:71
+    old "Location"
+    new "위치"
+
+    # _developer\inspector.rpym:122
+    old "Inspecting Styles of [displayable_name!q]"
+    new "[displayable_name!q]의 스타일 조사 중"
+
+    # _developer\inspector.rpym:139
+    old "displayable:"
+    new "디스플레이어블:"
+
+    # _developer\inspector.rpym:145
+    old "        (no properties affect the displayable)"
+    new "(디스플레이어블에 적용되는 속성이 없습니다)"
+
+    # _developer\inspector.rpym:147
+    old "        (default properties omitted)"
+    new "        (기본 속성이 빠져있습니다)"
+
+    # _developer\inspector.rpym:185
+    old "<repr() failed>"
+    new "<repr() 실패>"
 
     # _layout\classic_load_save.rpym:170
     old "a"
@@ -656,6 +760,14 @@
     old "Updater"
     new "업데이터"
 
+    # 00updater.rpy:1446
+    old "An error has occured:"
+    new "에러가 발생했습니다:"
+
+    # 00updater.rpy:1448
+    old "Checking for updates."
+    new "업데이트를 체크하는 중."
+
     # 00updater.rpy:1404
     old "This program is up to date."
     new "이 프로그램은 최신 버전입니다"
@@ -676,6 +788,10 @@
     old "Unpacking the updates."
     new "업데이트 파일 압축해제 중."
 
+    # 00updater.rpy:1460
+    old "Finishing up."
+    new "완료하는 중."
+
     # 00updater.rpy:1416
     old "The updates have been installed. The program will restart."
     new "업데이트를 설치했습니다. 프로그램을 재시작합니다."
@@ -687,6 +803,10 @@
     # 00updater.rpy:1420
     old "The updates were cancelled."
     new "업데이트가 취소되었습니다."
+
+    # 00updater.rpy:1481
+    old "Proceed"
+    new "다음으로"
 
     # 00gallery.rpy:563
     old "Image [index] of [count] locked."
@@ -707,3 +827,215 @@
     # 00gallery.rpy:586
     old "return"
     new "돌아가기"
+
+    # 00gltest.rpy:70
+    old "Renderer"
+    new "렌더러"
+
+    # 00gltest.rpy:74
+    old "Automatically Choose"
+    new "자동으로 선택한다"
+
+    # 00gltest.rpy:79
+    old "Force Angle/DirectX Renderer"
+    new "앵글/다이렉트X 렌더러를 강제한다"
+
+    # 00gltest.rpy:83
+    old "Force OpenGL Renderer"
+    new "오픈GL 렌더러를 강제한다"
+
+    # 00gltest.rpy:87
+    old "Force Software Renderer"
+    new "소프트웨어 렌더러를 강제한다"
+
+    # 00gltest.rpy:93
+    old "NPOT"
+    new "NPOT"
+
+    # 00gltest.rpy:97
+    old "Enable"
+    new "활성"
+
+    # 00gltest.rpy:131
+    old "Powersave"
+    new "절전"
+
+    # 00gltest.rpy:145
+    old "Framerate"
+    new "프레임레이트"
+
+    # 00gltest.rpy:149
+    old "Screen"
+    new "스크린"
+
+    # 00gltest.rpy:153
+    old "60"
+    new "60"
+
+    # 00gltest.rpy:157
+    old "30"
+    new "30"
+
+    # 00gltest.rpy:163
+    old "Tearing"
+    new "티어링"
+
+    # 00gltest.rpy:179
+    old "Changes will take effect the next time this program is run."
+    new "변경사항은 프로그램을 재시작하면 적용됩니다."
+
+    # 00gltest.rpy:213
+    old "Performance Warning"
+    new "성능 경고"
+
+    # 00gltest.rpy:218
+    old "This computer is using software rendering."
+    new "이 컴퓨터에서는 소프트웨어 렌더링을 사용하고 있습니다."
+
+    # 00gltest.rpy:220
+    old "This computer is not using shaders."
+    new "이 컴퓨터에서는 쉐이더를 사용하지 않습니다."
+
+    # 00gltest.rpy:222
+    old "This computer is displaying graphics slowly."
+    new "이 컴퓨터에서는 그래픽을 느리게 표시합니다."
+
+    # 00gltest.rpy:224
+    old "This computer has a problem displaying graphics: [problem]."
+    new "이 컴퓨터에는 그래픽 표시에 문제가 있습니다. [problem]."
+
+    # 00gltest.rpy:229
+    old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
+    new "컴퓨터의 그래픽 드라비어가 구버전이거나 제대로 작동하지 않습니다. 그래픽을 느리게 표시하거나 제대로 표시하지 못할 수 있습니다. 다이렉트X를 업데이트하면 이 문제를 해결할 수 있습니다."
+
+    # 00gltest.rpy:231
+    old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
+    new "컴퓨터의 그래픽 드라비어가 구버전이거나 제대로 작동하지 않습니다. 그래픽을 느리게 표시하거나 제대로 표시하지 못할 수 있습니다."
+
+    # 00gltest.rpy:236
+    old "Update DirectX"
+    new "다이렉트X 업데이트하기"
+
+    # 00gltest.rpy:242
+    old "Continue, Show this warning again"
+    new "계속한다. 이 경고를 다시 표시한다."
+
+    # 00gltest.rpy:246
+    old "Continue, Don't show warning again"
+    new "계속한다. 이 경고를 다시 표시하지 않는다."
+
+    # 00gltest.rpy:264
+    old "Updating DirectX."
+    new "다이렉트X를 업데이트하고 있습니다."
+
+    # 00gltest.rpy:268
+    old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
+    new "다이렉트X 웹 설치를 시작했습니다. 작업표시줄에 최소화 상태로 시작되었을 수도 있습니다. 설치 안내창에 따라 다이렉트X를 설치하세요."
+
+    # 00gltest.rpy:272
+    old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
+    new "{b}* 주의{/b}/n 마이크로소프트의 다이렉트X 웹 설치 프로그램은 기본적으로 Bing 툴바를 설치합니다. 이 툴바를 설치하고 싶지 않다면 체크 박스의 체크 표시를 해제하세요."
+
+    # 00gltest.rpy:276
+    old "When setup finishes, please click below to restart this program."
+    new "설치가 완료되면 아래 버튼을 눌러 프로그램을 다시 시작하세요."
+
+    # 00gltest.rpy:278
+    old "Restart"
+    new "다시 시작"
+
+    # 00gamepad.rpy:32
+    old "Select Gamepad to Calibrate"
+    new "보정할 게임패드 선택"
+
+    # 00gamepad.rpy:35
+    old "No Gamepads Available"
+    new "사용 가능한 게임패드가 없습니다."
+
+    # 00gamepad.rpy:54
+    old "Calibrating [name] ([i]/[total])"
+    new "[name]를 보정 중입니다. ([i]/[total])"
+
+    # 00gamepad.rpy:58
+    old "Press or move the [control!r] [kind]."
+    new "[control!r] [kind]를 누르거나 이동합니다."
+
+    # 00gamepad.rpy:66
+    old "Skip (A)"
+    new "스킵 (A)"
+
+    # 00gamepad.rpy:69
+    old "Back (B)"
+    new "뒤로 (B)"
+
+    # _errorhandling.rpym:529
+    old "Open"
+    new "열기"
+
+    # _errorhandling.rpym:531
+    old "Opens the traceback.txt file in a text editor."
+    new "traceback.txt 파일을 텍스트 에디터로 엽니다."
+
+    # _errorhandling.rpym:533
+    old "Copy"
+    new "복사"
+
+    # _errorhandling.rpym:535
+    old "Copies the traceback.txt file to the clipboard."
+    new "traceback.txt 파일을 클립보드로 복사합니다."
+
+    # _errorhandling.rpym:562
+    old "An exception has occurred."
+    new "예외가 발생했습니다."
+
+    # _errorhandling.rpym:582
+    old "Rollback"
+    new "롤백"
+
+    # _errorhandling.rpym:584
+    old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
+    new "게임을 저장하거나 다른 선택지를 선택할 수 있도록 이전으로 롤백합니다."
+
+    # _errorhandling.rpym:587
+    old "Ignore"
+    new "무시"
+
+    # _errorhandling.rpym:591
+    old "Ignores the exception, allowing you to continue."
+    new "예외를 무시하고 게임을 계속합니다."
+
+    # _errorhandling.rpym:593
+    old "Ignores the exception, allowing you to continue. This often leads to additional errors."
+    new "예외를 무시하고 게임을 계속합니다. 간혹 오류가 추가 발생할 수 있습니다."
+
+    # _errorhandling.rpym:597
+    old "Reload"
+    new "다시 불러오기"
+
+    # _errorhandling.rpym:599
+    old "Reloads the game from disk, saving and restoring game state if possible."
+    new "현재 상태를 저장한 뒤 복원하여 게임을 디스크에서 다시 불러옵니다."
+
+    # _errorhandling.rpym:602
+    old "Console"
+    new "콘솔"
+
+    # _errorhandling.rpym:604
+    old "Opens a console to allow debugging the problem."
+    new "콘솔을 열어 문제를 디버깅합니다."
+
+    # _errorhandling.rpym:614
+    old "Quits the game."
+    new "게임을 종료합니다."
+
+    # _errorhandling.rpym:638
+    old "Parsing the script failed."
+    new "스크립트 해석 실패."
+
+    # _errorhandling.rpym:664
+    old "Opens the errors.txt file in a text editor."
+    new "errors.txt 파일을 텍스트 에디터로 엽니다."
+
+    # _errorhandling.rpym:668
+    old "Copies the errors.txt file to the clipboard."
+    new "errors.txt 파일을 클립보드로 복사합니다."

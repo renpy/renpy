@@ -19,14 +19,13 @@ the omission in future versions.
 * Aleema
 * Alessio
 * Alexandre Tranchant
-* Andykl
+* Andy_kl
 * Apricotorange
 * Arowana-vx
 * Asfdfdfd
 * Auro-Cyanide
 * Baekansi
 * Bbs3223474
-* Beuc
 * BlackDragonHunt/Mangagamer
 * Bryan Tsang
 * Carl
@@ -143,6 +142,7 @@ the omission in future versions.
 * Winter Wolves
 * Xavi-Mat
 * Xela
+* Zedraxlo
 * Zhangning
 * Zigmut
 
