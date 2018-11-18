@@ -2,6 +2,16 @@
 Full Changelog
 ==============
 
+.. _renpy-7.1.3:
+
+7.1.3
+=====
+
+This was a quick re-release of 7.1.2 in order to fix a single bug, which
+was that a test change had been left in causing :var:`config.default_language`
+to be set on initial startup.
+
+
 .. _renpy-7.1.2:
 
 7.1.2
