@@ -36,7 +36,7 @@ init -1500 python:
     config.default_afm_enable = False
 
     # If not None, the default language to use.
-    config.default_language = "russian"
+    config.default_language = None
 
     # If not None, the default value of wait_voice
     config.default_wait_for_voice = True

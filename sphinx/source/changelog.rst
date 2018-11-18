@@ -43,7 +43,7 @@ The :func:`FilePageNext` and :func:`FilePagePrevious` functions now take
 arguments that control if the they can bring the player to the auto or
 quick save pages.
 
-The new :func:`config.skip_sounds` variables determines if Ren'Py will skip
+The new :var:`config.skip_sounds` variables determines if Ren'Py will skip
 non-looping audio files that are played while Ren'Py is skipping.
 
 Translations
