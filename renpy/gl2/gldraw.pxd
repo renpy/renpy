@@ -47,7 +47,6 @@ cdef class GLDraw:
     cdef tuple clip_cache
     cdef bint fast_dissolve
     cdef bint always_opaque
-    cdef bint allow_fixed
     cdef tuple default_clip
     cdef bint did_render_to_texture
     cdef float dpi_scale
@@ -63,6 +62,8 @@ cdef class GLDraw:
     cdef public render.Matrix2D draw_to_virt
 
     cdef public int fast_redraw_frames
+
+    cdef public bint gles
 
     cpdef set_clip(GLDraw self, tuple clip)
 

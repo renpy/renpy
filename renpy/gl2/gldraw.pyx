@@ -46,16 +46,6 @@ cimport gltexture
 import gltexture
 import glblacklist
 
-cdef extern from "eglsupport.h":
-    int egl_available()
-    char *egl_init(SDL_Window *, int)
-    void egl_swap()
-    void egl_quit()
-
-# EGL is a flag we check to see if we have EGL on this platform.
-cdef bint EGL
-EGL = egl_available()
-
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 DISSOLVE = renpy.display.render.DISSOLVE
@@ -73,7 +63,10 @@ frame_times = [ ]
 
 cdef class GLDraw:
 
-    def __init__(self, allow_fixed=True):
+    def __init__(self, renderer_name, gles):
+
+        # Should we use gles or opengl?
+        self.gles = gles
 
         # Did we do the first-time init?
         self.did_init = False
@@ -109,12 +102,7 @@ cdef class GLDraw:
         self.redraw_period = .2
 
         # Info.
-        self.info = { "resizable" : True, "additive" : True }
-
-        if not ANGLE:
-            self.info["renderer"] = "gl"
-        else:
-            self.info["renderer"] = "angle"
+        self.info = { "resizable" : True, "additive" : True, "renderer" : renderer_name }
 
         # Old value of fullscreen.
         self.old_fullscreen = None
@@ -131,9 +119,6 @@ cdef class GLDraw:
 
         # Should we always report pixels as being always opaque?
         self.always_opaque = renpy.android
-
-        # Should we allow the fixed-function environment?
-        self.allow_fixed = allow_fixed
 
         # Did we do the texture test at least once?
         self.did_texture_test = False
@@ -169,13 +154,11 @@ cdef class GLDraw:
 
         global vsync
 
-        cdef char *egl_error
-
         if not renpy.config.gl_enable:
             renpy.display.log.write("GL Disabled.")
             return False
 
-        print("In GL2.")
+        print("Using {} renderer.".format(self.info["renderer"]))
 
         if self.did_init:
             self.deinit()
@@ -279,53 +262,59 @@ cdef class GLDraw:
 
         # Set the display mode.
 
-        if ANGLE:
-            opengl = 0
-            resizable = pygame.RESIZABLE
+        gles = self.gles
 
-        elif EGL:
-            opengl = 0
-            resizable = 0
+        window_flags = pygame.OPENGL | pygame.DOUBLEBUF
 
-        elif renpy.android:
-            opengl = pygame.OPENGL
-            resizable = 0
+        if renpy.android:
 
             pwidth = 0
             pheight = 0
+
+            gles = True
 
         elif renpy.ios:
-            opengl = pygame.OPENGL | pygame.WINDOW_ALLOW_HIGHDPI
-            resizable = pygame.RESIZABLE
 
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
+            window_flags |= pygame.WINDOW_ALLOW_HIGHDPI | pygame.RESIZABLE
 
             pwidth = 0
             pheight = 0
 
+            gles = True
+
         else:
-            opengl = pygame.OPENGL
 
             if self.dpi_scale == 1.0:
-                opengl |= pygame.WINDOW_ALLOW_HIGHDPI
+                window_flags |= pygame.WINDOW_ALLOW_HIGHDPI
 
             if renpy.config.gl_resize:
-                resizable = pygame.RESIZABLE
-            else:
-                resizable = 0
+                window_flags |= pygame.RESIZABLE
 
-        if opengl:
-            pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
-            pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
 
+        pygame.display.gl_reset_attributes()
+
+        pygame.display.gl_set_attribute(pygame.GL_RED_SIZE, 8)
+        pygame.display.gl_set_attribute(pygame.GL_GREEN_SIZE, 8)
+        pygame.display.gl_set_attribute(pygame.GL_BLUE_SIZE, 8)
+        pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
+
+        pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
+
+        if gles:
+            pygame.display.hint("SDL_OPENGL_ES_DRIVER", "1")
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
+
+        else:
+            pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
 
         self.window = None
 
         if fullscreen:
             try:
                 renpy.display.log.write("Fullscreen mode.")
-                self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | opengl | pygame.DOUBLEBUF)
+                self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | window_flags)
             except pygame.error as e:
                 renpy.display.log.write("Opening in fullscreen failed: %r", e)
                 self.window = None
@@ -333,23 +322,12 @@ cdef class GLDraw:
         if self.window is None:
             try:
                 renpy.display.log.write("Windowed mode.")
-                self.window = pygame.display.set_mode((pwidth, pheight), resizable | opengl | pygame.DOUBLEBUF, **window_args)
+                self.window = pygame.display.set_mode((pwidth, pheight), window_flags, **window_args)
 
             except pygame.error, e:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
                 return False
 
-        # Use EGL to get the OpenGL ES 2 context, if necessary.
-        if EGL:
-
-            # This ensures the display is shown.
-            pygame.display.flip()
-
-            egl_error = egl_init(PyWindow_AsWindow(None), vsync)
-
-            if egl_error is not NULL:
-                renpy.display.log.write("Initializing EGL: %s" % egl_error)
-                return False
 
         # Get the size of the created screen.
         pwidth, pheight = self.window.get_size()
@@ -472,24 +450,7 @@ cdef class GLDraw:
         renpy.display.log.write("Version: %r", version)
         renpy.display.log.write("Display Info: %s", self.display_info)
 
-
-        allow_shader = True
-        allow_fixed = self.allow_fixed
-
-        for r, v, allow_shader_, allow_fixed_ in glblacklist.BLACKLIST:
-            if r in renderer and v in version:
-                allow_shader = allow_shader and allow_shader_
-                allow_fixed = allow_fixed and allow_fixed_
-                break
-
-        if not allow_shader:
-            renpy.display.log.write("Shaders are blacklisted.")
-        if not allow_fixed:
-            renpy.display.log.write("Fixed-function is blacklisted.")
-
-        if not allow_shader and not allow_fixed:
-            renpy.display.log.write("GL is totally blacklisted.")
-            return False
+        print(renderer, version)
 
         if renpy.android or renpy.ios:
             self.redraw_period = 1.0
@@ -545,10 +506,6 @@ cdef class GLDraw:
         self.rtt = glrtt_fbo.FboRtt()
         self.info["rtt"] = "fbo"
         self.rtt.init()
-
-#         renpy.display.log.write("Can't find a workable rtt.")
-#         return False
-
 
         renpy.display.log.write("Using {0} renderer.".format(self.info["renderer"]))
 
@@ -759,10 +716,7 @@ cdef class GLDraw:
 
             renpy.plog(1, "flip")
 
-            if EGL:
-                egl_swap()
-            else:
-                pygame.display.flip()
+            pygame.display.flip()
 
             end = time.time()
 
@@ -1312,9 +1266,6 @@ cdef class GLDraw:
         y = int(y / self.dpi_scale)
 
         return (x, y)
-
-
-
 
 class Rtt(object):
     """
