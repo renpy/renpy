@@ -1937,7 +1937,7 @@ class Interface(object):
 
         make_draw("gl", "renpy.gl.gldraw", "GLDraw", not has_angle)
         make_draw("gl2", "renpy.gl2.gldraw", "GLDraw", "gl2", False)
-        make_draw("gles2", "renpy.gl2.gldraw", "GLDraw", "egl2", True)
+        make_draw("gles2", "renpy.gl2.gldraw", "GLDraw", "gles2", True)
         make_draw("sw", "renpy.display.swdraw", "SWDraw")
 
         rv = [ ]
