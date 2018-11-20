@@ -41,11 +41,7 @@ import collections
 import renpy
 
 # The maximum size of a texture.
-MAX_SIZE = 2048
-
-# Possible sizes for a texture, ordered from largest to smallest.
-# (Now set in test_texture_sizes.)
-SIZES = [ 64 ]
+MAX_SIZE = 4096
 
 # A list of texture number allocated.
 texture_numbers = set()
@@ -73,7 +69,6 @@ def test_texture_sizes(Environ environ, draw):
     cdef int hw_max_size
 
     global MAX_SIZE
-    global SIZES
 
     renpy.display.log.write("Texture testing:")
 
@@ -86,11 +81,10 @@ def test_texture_sizes(Environ environ, draw):
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &hw_max_size)
 
     renpy.display.log.write("- Hardware max texture size: %d", hw_max_size)
-    hw_max_size = min(2048, hw_max_size)
-
-    SIZES = [ ]
+    hw_max_size = min(4096, hw_max_size)
 
     size = 64
+
     while size <= hw_max_size:
 
         # Create an all-red bitmap of the given size.
@@ -180,7 +174,6 @@ def test_texture_sizes(Environ environ, draw):
         # Record success.
         renpy.display.log.write("- {0}px textures work.".format(size))
 
-        SIZES.append(size)
         MAX_SIZE = size
 
         # Double the size and try again.
@@ -192,11 +185,10 @@ def test_texture_sizes(Environ environ, draw):
     if MAX_SIZE > 2048:
         MAX_SIZE = 2048
 
-    if not SIZES:
+    if MAX_SIZE < 1024:
         renpy.display.log.write("Textures are not rendering properly.")
         return False
 
-    SIZES.reverse()
     return True
 
 cdef class TextureCore:
@@ -467,10 +459,6 @@ class Texture(TextureCore):
         return
 
 
-# This is a map from texture sizes to a list of free textures of that
-# size.
-free_textures = collections.defaultdict(list)
-
 # A list of NPOT textures that need to be freed.
 npot_free_textures = [ ]
 
@@ -489,43 +477,20 @@ def alloc_texture(width, height):
     returned texture has a reference count of 1.
     """
 
-    if renpy.game.preferences.gl_npot:
-        rv = Texture(width, height)
-        rv.free_list = npot_free_textures
-        rv.generation = generation
-        return rv
-
-    l = free_textures[width, height]
-
-    if l:
-        rv = l.pop()
-    else:
-        rv = Texture(width, height)
-
-    rv.free_list = l
-
+    rv = Texture(width, height)
+    rv.free_list = npot_free_textures
+    rv.generation = generation
     return rv
+
 
 
 def dealloc_textures():
     cdef GLuint texnums[1]
 
-    for l in free_textures.values():
-        for t in l:
-            t.deallocate()
-
     for i in npot_free_textures:
         i.deallocate()
 
     npot_free_textures[:] = [ ]
-
-    if not renpy.game.preferences.gl_npot:
-
-        for t in texture_numbers:
-            texnums[0] = t
-            glDeleteTextures(1, texnums)
-
-    free_textures.clear()
 
     # Do not reset texture numbers - we don't want to reuse a number that's
     # in use, only to have it deallocated later.
@@ -543,11 +508,6 @@ def cleanup():
     # If we have more than one of a texture size, deallocate the last one of
     # that size. This prevents us from leaking memory via textures, while
     # making it unlikely we'll constantly allocate/deallocate textures.
-
-    for l in free_textures.values():
-        if len(l) > 1:
-            t = l.pop()
-            t.deallocate()
 
     for i in npot_free_textures:
         i.deallocate()
@@ -703,13 +663,10 @@ cdef class TextureGrid(object):
 
 
 
-# The old value of the gl_npot preference.
-old_gl_npot = None
-
 # This is a cache from (width, size) to the results of compute_tiling.
 tiling_cache = { }
 
-def compute_tiling(width, max_size, min_fill_factor):
+def compute_tiling(width, max_size):
     """
     This computes a tiling for an image with the given width (or
     height). It takes a width as an argument, and returns two lists.
@@ -724,17 +681,7 @@ def compute_tiling(width, max_size, min_fill_factor):
     (x, width, etc), it
     """
 
-    global old_gl_npot
-
-
-    gl_npot = renpy.game.preferences.gl_npot
-
-    if old_gl_npot != gl_npot:
-        old_gl_npot = gl_npot
-        tiling_cache.clear()
-
-    if gl_npot:
-        max_size = min(SIZES[0], max_size)
+    max_size = min(MAX_SIZE, max_size)
 
     orig_width = width
 
@@ -758,7 +705,7 @@ def compute_tiling(width, max_size, min_fill_factor):
     # The index into the row.
     row_index = 0
 
-    if gl_npot and width <= max_size:
+    if width <= max_size:
         left_border = 0
         right_border = 0
     else:
@@ -767,20 +714,7 @@ def compute_tiling(width, max_size, min_fill_factor):
 
     while width:
 
-        if gl_npot:
-
-            size = min(width + left_border + right_border, max_size)
-
-        else:
-
-            # Figure out the texture size to use.
-            for size in SIZES:
-                if size > max_size:
-                    continue
-
-                # Ensure each texture is full enough.
-                if size * min_fill_factor <= width + left_border + right_border:
-                    break
+        size = min(width + left_border + right_border, max_size)
 
         # The number of pixels to display to the user from this tile.
         row_size = min(width, size - left_border - right_border)
@@ -804,23 +738,14 @@ def texture_grid_from_surface(surf, transient):
     This takes a Surface and turns it into a TextureGrid.
     """
 
-    if renpy.game.preferences.gl_npot:
-        max_size = SIZES[0]
-        fill_factor = 0.5
-
-    elif transient:
-        max_size = SIZES[0]
-        fill_factor = 0.5
-    else:
-        max_size = MAX_SIZE
-        fill_factor = .66
+    max_size = MAX_SIZE
 
     width, height = surf.get_size()
 
     rv = TextureGrid(width, height)
 
-    rv.columns, texcolumns = compute_tiling(width, max_size, fill_factor)
-    rv.rows, texrows = compute_tiling(height, max_size, fill_factor)
+    rv.columns, texcolumns = compute_tiling(width, max_size)
+    rv.rows, texrows = compute_tiling(height, max_size)
 
     for rv_row, texrow in zip(rv.rows, texrows):
         border_top, _, border_bottom = rv_row
@@ -856,8 +781,8 @@ def texture_grid_from_drawing(width, height, draw_func, rtt, environ):
     gldraw = renpy.display.draw
     pwidth, pheight = gldraw.physical_size
 
-    rv.columns, texcolumns = compute_tiling(width, rtt.get_size_limit(pwidth), 0.5)
-    rv.rows, texrows = compute_tiling(height, rtt.get_size_limit(pheight), 0.5)
+    rv.columns, texcolumns = compute_tiling(width, rtt.get_size_limit(pwidth))
+    rv.rows, texrows = compute_tiling(height, rtt.get_size_limit(pheight))
 
     for y, height, texheight in texrows:
         row = [ ]
