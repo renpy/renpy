@@ -230,7 +230,7 @@ translate russian strings:
     new "Кажется, сборка прошла успешно!"
 
     # androidstrings.rpy:20
-    old "The armeabi-v7a version works on most phones on tablets, while the x86_64 version works on the simulator and chromebooks."
+    old "The armeabi-v7a version works on most phones or tablets, while the x86_64 version works on the simulator and chromebooks."
     new "Версия armeabi-v7a работает на большинстве смартфонов и планшетов, а версия x86_64 требуется для симуляторов и хромбуков."
 
     # androidstrings.rpy:20

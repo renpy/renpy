@@ -327,10 +327,6 @@ init python:
         build.classify_renpy(pattern + "/**", source)
 
     build.classify_renpy("renpy.py", "binary")
-
-    # Remove in the gl2 branch.
-    build.classify_renpy("renpy/gl2", None)
-
     source_and_binary("renpy")
 
     # games.

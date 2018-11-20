@@ -181,23 +181,23 @@ translate piglatin strings:
     old "File page [text]"
     new "Ilefay agepay [text]"
 
-    # 00action_file.rpy:763
+    # 00action_file.rpy:772
     old "Next file page."
     new "Extnay ilefay agepay."
 
-    # 00action_file.rpy:827
+    # 00action_file.rpy:845
     old "Previous file page."
     new "Reviouspay ilefay agepay."
 
-    # 00action_file.rpy:888
+    # 00action_file.rpy:906
     old "Quick save complete."
     new "Uickqay avesay ompletecay."
 
-    # 00action_file.rpy:906
+    # 00action_file.rpy:924
     old "Quick save."
     new "Uickqay avesay."
 
-    # 00action_file.rpy:925
+    # 00action_file.rpy:943
     old "Quick load."
     new "Uickqay oadlay."
 

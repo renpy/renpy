@@ -216,6 +216,14 @@ cython("renpy.gl.glenviron_limited", libs=glew_libs, compile_if=not gl2_only)
 cython("renpy.gl.glrtt_copy", libs=glew_libs)
 cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 
+cython("renpy.gl2.uguugl", libs=sdl)
+cython("renpy.gl2.uguu", libs=sdl)
+cython("renpy.gl2.gldraw", libs=glew_libs, source=[ egl ])
+cython("renpy.gl2.gltexture", libs=glew_libs)
+cython("renpy.gl2.glenviron_shader", libs=glew_libs)
+cython("renpy.gl2.glrtt_fbo", libs=glew_libs)
+
+
 if not (android or ios or emscripten):
     # renpy.angle
     def anglecopy(fn):

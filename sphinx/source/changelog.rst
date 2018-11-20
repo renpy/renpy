@@ -2,6 +2,16 @@
 Full Changelog
 ==============
 
+.. _renpy-7.1.3:
+
+7.1.3
+=====
+
+This was a quick re-release of 7.1.2 in order to fix a single bug, which
+was that a test change had been left in causing :var:`config.default_language`
+to be set on initial startup.
+
+
 .. _renpy-7.1.2:
 
 7.1.2
@@ -43,7 +53,7 @@ The :func:`FilePageNext` and :func:`FilePagePrevious` functions now take
 arguments that control if the they can bring the player to the auto or
 quick save pages.
 
-The new :func:`config.skip_sounds` variables determines if Ren'Py will skip
+The new :var:`config.skip_sounds` variables determines if Ren'Py will skip
 non-looping audio files that are played while Ren'Py is skipping.
 
 Translations
@@ -54,7 +64,8 @@ system, and use it to set the language. Please see
 :var:`config.enable_language_autodetect` and the :ref:`Translation <translation>`
 documentation for how this works.
 
-The French, German, Korean, and Russian translations have been updated.
+The French, German, Korean, Russian, and Simplifed Chinese translations
+have been updated.
 
 Fixes
 -----

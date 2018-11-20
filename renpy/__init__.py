@@ -41,7 +41,7 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (7, 1, 2, vc_version)
+version_tuple = (7, 2, 0, vc_version)
 
 # The name of this version.
 version_name = "On the road again."
@@ -426,6 +426,9 @@ def import_all():
 
     import renpy.gl
     update_path(renpy.gl)
+
+    import renpy.gl2
+    update_path(renpy.gl2)
 
     import renpy.angle
     update_path(renpy.angle)
