@@ -80,7 +80,7 @@ translate russian demo_character_b456f0a9:
 # game/indepth_character.rpy:48
 translate russian demo_character_3c3b8e00:
 
-    # e1 "The window_background property sets the image thay's used for the background of the textbox, which should be the same size as the default in gui/textbox.png."
+    # e1 "The window_background property sets the image that's used for the background of the textbox, which should be the same size as the default in gui/textbox.png."
     e1 "Параметр window_background устанавливает картинку фоном диалогового окна. Она должно быть того же размера, что и стандартное, по адресу gui/textbox.png."
 
 # game/indepth_character.rpy:54
