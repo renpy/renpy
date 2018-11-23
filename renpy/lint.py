@@ -577,6 +577,12 @@ def check_label(node):
         add_arg(pi.extrapos)
         add_arg(pi.extrakw)
 
+def check_screen(node):
+
+    if (node.screen.parameters is None) and renpy.config.lint_screens_without_parameters:
+        report("The screen {} has not been given a parameter list.".format(node.screen.name))
+        add("This can be fixed by writing 'screen {}():' instead.".format(node.screen.name))
+
 
 def check_styles():
     for full_name, s in renpy.style.styles.iteritems():  # @UndefinedVariable
@@ -615,7 +621,6 @@ def check_filename_encodings():
 
         report("%s contains non-ASCII characters in its filename.", filename)
         add("(ZIP file distributions can only reliably include ASCII filenames.)")
-
 
 class Count(object):
     """
@@ -758,6 +763,7 @@ def lint():
 
         elif isinstance(node, renpy.ast.Screen):
             screen_count += 1
+            check_screen(node)
 
         elif isinstance(node, renpy.ast.Define):
             check_define(node, "define")

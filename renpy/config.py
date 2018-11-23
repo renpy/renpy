@@ -927,6 +927,9 @@ report_extraneous_attributes = True
 # Should we play non-loooped music when skipping?
 skip_sounds = False
 
+# Should we lint screens without parameters?
+lint_screens_without_parameters = True
+
 del os
 del collections
 
