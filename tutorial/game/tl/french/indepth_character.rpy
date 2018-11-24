@@ -80,7 +80,7 @@ translate french demo_character_b456f0a9:
 # game/indepth_character.rpy:48
 translate french demo_character_3c3b8e00:
 
-    # e1 "The window_background property sets the image thay's used for the background of the textbox, which should be the same size as the default in gui/textbox.png."
+    # e1 "The window_background property sets the image that's used for the background of the textbox, which should be the same size as the default in gui/textbox.png."
     e1 "La propriété 'window_background' définit l’image qui sera utilisée en arrière plan de la zone de texte. Cette image doit avoir la même taille que celle par défaut (gui/textbox.png)."
 
 # game/indepth_character.rpy:54
