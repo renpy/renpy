@@ -511,6 +511,7 @@ cdef class FTFont:
             gl.ascent = self.ascent
             gl.width = cache.width
             gl.line_spacing = self.lineskip
+            gl.draw = True
 
             if i < len_s - 1:
                 next_c = s[i + 1]
@@ -535,6 +536,7 @@ cdef class FTFont:
             if is_zerowidth(gl.character):
                 gl.width = 0
                 gl.advance = 0
+                gl.draw = False
 
             rv.append(gl)
 
@@ -665,7 +667,7 @@ cdef class FTFont:
 
             underline_end = min(underline_end, surf.w - 1)
 
-            if glyph.width > 0:
+            if glyph.draw:
 
                 for py from 0 <= py < rows:
 
