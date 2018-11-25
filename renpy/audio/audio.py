@@ -852,13 +852,13 @@ def quit():  # @ReservedAssignment
     global pcm_ok
     global mix_ok
 
-    with periodic_condition:
+    if periodic_thread is not None:
+        with periodic_condition:
 
-        if periodic_thread is not None:
             periodic_thread_quit = True
             periodic_condition.notify()
 
-            periodic_thread.join()
+        periodic_thread.join()
 
     if not pcm_ok:
         return
