@@ -649,6 +649,9 @@ class Transform(Container):
     # the style prefix, and applies them to the state.
     def default_function(self, state, st, at):
 
+        if self.function is not None:
+            return None
+
         if self.arguments is None:
             return None
 
