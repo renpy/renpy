@@ -702,6 +702,8 @@ class Script(object):
             except:
                 rpycdigest = None
 
+            digest = None
+
             if os.path.exists(rpyfn) and os.path.exists(rpycfn):
 
                 # Are we forcing a compile?
@@ -745,7 +747,8 @@ class Script(object):
 
                 digest = rpydigest
 
-            self.backup_list.append((rpyfn, digest))
+            if digest is not None:
+                self.backup_list.append((rpyfn, digest))
 
         if data is None:
             raise Exception("Could not load file %s." % lastfn)
