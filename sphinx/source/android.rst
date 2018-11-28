@@ -118,6 +118,8 @@ issues, like the size of a user's fingers.
 
 .. highlight:: none
 
+.. _android-building:
+
 Building Android Applications
 =============================
 
