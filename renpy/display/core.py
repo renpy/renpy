@@ -3545,7 +3545,7 @@ class Interface(object):
 
             renpy.plog(1, "end interact_core")
 
-            # print "It took", frames, "frames."
+            # print("It took", frames, "frames.")
 
     def timeout(self, offset):
         if offset < 0:

@@ -890,7 +890,7 @@ class SectionStructure(Structure):
         return self.VirtualAddress <= rva < self.VirtualAddress + size
 
     def contains(self, rva):
-        #print "DEPRECATION WARNING: you should use contains_rva() instead of contains()"
+        #print("DEPRECATION WARNING: you should use contains_rva() instead of contains()")
         return self.contains_rva(rva)
 
 

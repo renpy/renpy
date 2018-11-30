@@ -317,7 +317,7 @@ def change_icons(oldexe, icofn):
 
     alignment = pe.OPTIONAL_HEADER.SectionAlignment
 
-    # print "Alignment is", alignment
+    # print("Alignment is", alignment)
 
     if len(rsrc) % alignment:
         pad = alignment - (len(rsrc) % alignment)
