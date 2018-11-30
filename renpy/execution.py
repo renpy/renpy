@@ -28,6 +28,7 @@ import time
 
 import renpy.display
 import renpy.test
+from renpy import six
 
 pyast = __import__("ast", { })
 
@@ -565,7 +566,7 @@ class Context(renpy.object.Object):
                     except renpy.game.CONTROL_EXCEPTIONS as ce:
                         raise ce
                     except Exception as ce:
-                        raise exc_info[0], exc_info[1], exc_info[2]
+                        six.reraise(exc_info[0], exc_info[1], exc_info[2])
 
                 node = self.next_node
 
