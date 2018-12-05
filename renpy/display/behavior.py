@@ -552,7 +552,13 @@ class SayBehavior(renpy.display.layout.Null):
 
     def set_text(self, text):
         self.text = text
-        self.afm_length = max(text.end - text.start, 1)
+
+        try:
+            afm_text = text.text[0][text.start:text.end]
+            afm_text = renpy.text.extras.filter_text_tags(afm_text, allow=[])
+            self.afm_length = max(len(afm_text), 1)
+        except:
+            self.afm_length = max(text.end - text.start, 1)
 
     def event(self, ev, x, y, st):
 
