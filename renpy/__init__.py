@@ -319,8 +319,9 @@ def update_path(package):
     name = package.__name__.split(".")
 
     import _renpy
-    libexec = os.path.dirname(_renpy.__file__)
-    package.__path__.append(os.path.join(libexec, *name))
+    if hasattr(_renpy, '__file__'):  # .so/.dll
+        libexec = os.path.dirname(_renpy.__file__)
+        package.__path__.append(os.path.join(libexec, *name))
 
     # Also find encodings, to deal with the way py2exe lays things out.
     import encodings
