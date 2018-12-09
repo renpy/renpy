@@ -27,7 +27,6 @@ import sys
 import os
 import copy
 import types
-import threading
 import cPickle
 
 ################################################################################
