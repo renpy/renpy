@@ -90,6 +90,15 @@ class FileLocation(object):
 
         return os.path.join(self.directory, renpy.exports.fsencode(slotname + renpy.savegame_suffix))
 
+    def sync(self):
+        """
+        Called to indicate that the filesystem was changed.
+        """
+
+        if renpy.emscripten:
+            import emscripten  # @UnresolvedImport
+            emscripten.syncfs()
+
     def scan(self):
         """
         Scan for files that are added or removed.
@@ -148,6 +157,7 @@ class FileLocation(object):
         with disk_lock:
             record.write_file(filename)
 
+        self.sync()
         self.scan()
 
     def list(self):
@@ -266,6 +276,7 @@ class FileLocation(object):
             if os.path.exists(filename):
                 os.unlink(filename)
 
+            self.sync()
             self.scan()
 
     def rename(self, old, new):
@@ -286,6 +297,7 @@ class FileLocation(object):
 
             os.rename(old, new)
 
+            self.sync()
             self.scan()
 
     def copy(self, old, new):
@@ -302,6 +314,7 @@ class FileLocation(object):
 
             shutil.copyfile(old, new)
 
+            self.sync()
             self.scan()
 
     def load_persistent(self):
@@ -337,6 +350,8 @@ class FileLocation(object):
             safe_rename(fn_tmp, fn_new)
             safe_rename(fn_new, fn)
 
+            self.sync()
+
     def unlink_persistent(self):
 
         if not self.active:
@@ -344,6 +359,8 @@ class FileLocation(object):
 
         try:
             os.unlink(self.persistent)
+
+            self.sync()
         except:
             pass
 
