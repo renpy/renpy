@@ -3473,7 +3473,7 @@ def play(filename, channel=None, **kwargs):
     if channel is None:
         channel = renpy.config.play_channel
 
-    renpy.audio.music.play(filename, channel=channel, **kwargs)
+    renpy.audio.music.play(filename, channel=channel, loop=False, **kwargs)
 
 
 def get_editable_input_value():
