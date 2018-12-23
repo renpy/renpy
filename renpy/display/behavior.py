@@ -353,6 +353,7 @@ def run_periodic(var, st):
 
 def is_selected(action):
     """
+    :name: renpy.is_selected
     :doc: run
 
     Returns true if `action` indicates it is selected, or false otherwise.
@@ -372,6 +373,7 @@ def is_selected(action):
 
 def is_sensitive(action):
     """
+    :name: renpy.is_sensitive
     :doc: run
 
     Returns true if `action` indicates it is sensitive, or False otherwise.

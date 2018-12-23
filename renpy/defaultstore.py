@@ -250,6 +250,7 @@ class _layout_class(__builtins__["object"]):
 
 
 Fixed = _layout_class(renpy.display.layout.MultiBox, """
+:name: Fixed
 :doc: disp_box
 :args: (*args, **properties)
 

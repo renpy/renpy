@@ -271,6 +271,7 @@ init -1100 python in gui:
 
     def text_properties(kind=None, accent=False):
         """
+        :name: gui.text_properties
         :doc: gui
 
         Given a `kind` of button, returns a dictionary giving standard style

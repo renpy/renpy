@@ -167,6 +167,7 @@ def filter_text_tags(s, allow=None, deny=None):
 
 class ParameterizedText(object):
     """
+    :name: ParameterizedText
     :doc: text
 
     This is a displayable that can be shown with an additional string

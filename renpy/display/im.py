@@ -1713,6 +1713,7 @@ def image(arg, loose=False, **properties):
 
 def load_image(im):
     """
+    :name: renpy.load_image
     :doc: udd_utility
 
     Loads the image manipulator `im` using the image cache, and returns a render.
@@ -1723,6 +1724,7 @@ def load_image(im):
 
 def load_surface(im):
     """
+    :name: renpy.load_surface
     :doc: udd_utility
 
     Loads the image manipulator `im` using the image cache, and returns a pygame Surface.
