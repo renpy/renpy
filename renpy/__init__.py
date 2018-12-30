@@ -121,7 +121,7 @@ elif platform.mac_ver()[0]:
     macintosh = True
 elif "ANDROID_PRIVATE" in os.environ:
     android = True
-elif sys.platform == 'emscripten':
+elif sys.platform == 'emscripten' or "RENPY_EMSCRIPTEN" in os.environ:
     emscripten = True
 else:
     linux = True
