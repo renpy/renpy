@@ -52,7 +52,7 @@ label simple_displayables:
 
     e "The Transform displayable takes a displayable and can apply transform properties to it."
 
-    e "Notice how, since it takes a displayable, it can take another image. In face, it can take any displayable defined here."
+    e "Notice how, since it takes a displayable, it can take another image. In fact, it can take any displayable defined here."
 
     example:
         image logo solidexample = Solid("#0000cc", xysize=(200, 200))
