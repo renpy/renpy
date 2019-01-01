@@ -1786,6 +1786,7 @@ class UserStatement(Node):
         'block',
         'translatable',
         'code_block',
+        'translation_relevant',
         ]
 
     def __new__(cls, *args, **kwargs):
@@ -1793,6 +1794,7 @@ class UserStatement(Node):
         self.block = [ ]
         self.code_block = None
         self.translatable = False
+        self.translation_relevant = False
         return self
 
     def __init__(self, loc, line, block):

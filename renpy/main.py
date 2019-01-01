@@ -515,7 +515,7 @@ def main():
                     restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
                     renpy.persistent.update(True)
 
-            except game.FullRestartException, e:
+            except game.FullRestartException as e:
                 restart = e.reason
 
             finally:

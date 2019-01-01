@@ -841,7 +841,8 @@ class ADVCharacter(object):
         statement.
         """
 
-        attrs = renpy.exports.get_say_attributes()
+        attrs = renpy.game.context().say_attributes
+        renpy.game.context().say_attributes = None
 
         if not (attrs or wanted or remove):
             return

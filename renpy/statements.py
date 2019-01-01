@@ -47,6 +47,7 @@ def register(
         init_priority=0,
         label=None,
         warp=None,
+        translation_strings=None,
 ):
     """
     :doc: statement_register
@@ -119,7 +120,13 @@ def register(
         execute_init function.
 
     `init_priority`
-        An integer that determines the priority of initialisation of init block.
+        An integer that determines the priority of initialization of the
+        init block.
+
+    `translation_strings`
+        A function that is called with the parsed block. It's expected to
+        return a list of strings, which are then reported as being available
+        to be translated.
 
     """
     name = tuple(name.split())
@@ -134,6 +141,7 @@ def register(
         scry=scry,
         label=label,
         warp=warp,
+        translation_strings=translation_strings,
     )
 
     if block not in [True, False, "script", "possible"]:
@@ -146,6 +154,7 @@ def register(
         try:
             rv = renpy.ast.UserStatement(loc, l.text, l.subblock)
             rv.translatable = translatable
+            rv.translation_relevant = bool(translation_strings)
 
             if block is False:
                 l.expect_noblock(" ".join(name) + " statement")

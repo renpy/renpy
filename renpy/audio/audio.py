@@ -28,6 +28,7 @@ from __future__ import print_function
 
 import renpy.audio  # @UnusedImport
 import renpy.display  # @UnusedImport
+from renpy import six
 
 import time
 import pygame_sdl2  # @UnusedImport
@@ -852,13 +853,13 @@ def quit():  # @ReservedAssignment
     global pcm_ok
     global mix_ok
 
-    with periodic_condition:
+    if periodic_thread is not None:
+        with periodic_condition:
 
-        if periodic_thread is not None:
             periodic_thread_quit = True
             periodic_condition.notify()
 
-            periodic_thread.join()
+        periodic_thread.join()
 
     if not pcm_ok:
         return
@@ -1012,7 +1013,7 @@ def periodic():
             exc = periodic_exc
             periodic_exc = None
 
-            raise exc[0], exc[1], exc[2]
+            six.reraise(exc[0], exc[1], exc[2])
 
         run_periodic = True
         periodic_condition.notify()

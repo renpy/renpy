@@ -353,6 +353,7 @@ def run_periodic(var, st):
 
 def is_selected(action):
     """
+    :name: renpy.is_selected
     :doc: run
 
     Returns true if `action` indicates it is selected, or false otherwise.
@@ -372,6 +373,7 @@ def is_selected(action):
 
 def is_sensitive(action):
     """
+    :name: renpy.is_sensitive
     :doc: run
 
     Returns true if `action` indicates it is sensitive, or False otherwise.
@@ -552,7 +554,13 @@ class SayBehavior(renpy.display.layout.Null):
 
     def set_text(self, text):
         self.text = text
-        self.afm_length = max(text.end - text.start, 1)
+
+        try:
+            afm_text = text.text[0][text.start:text.end]
+            afm_text = renpy.text.extras.filter_text_tags(afm_text, allow=[])
+            self.afm_length = max(len(afm_text), 1)
+        except:
+            self.afm_length = max(text.end - text.start, 1)
 
     def event(self, ev, x, y, st):
 

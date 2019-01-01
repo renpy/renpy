@@ -1336,6 +1336,7 @@ def condition_switch_predict(switch, predict_all=None):
 
 def ConditionSwitch(*args, **kwargs):
     """
+    :name: ConditionSwitch
     :doc: disp_dynamic
     :args: (*args, predict_all=None, **properties)
 

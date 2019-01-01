@@ -66,6 +66,9 @@ cdef class Glyph:
         # The hyperlink this is part of.
         public short hyperlink
 
+        # Should we draw this glyph.
+        public bint draw
+
 
 cdef class Line:
 

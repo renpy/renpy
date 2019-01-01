@@ -1346,6 +1346,7 @@ VERT_FORWARD = renpy.display.render.Matrix2D(0, 1, -1, 0)
 class Text(renpy.display.core.Displayable):
 
     """
+    :name: Text
     :doc: text
     :args: (text, slow=None, scope=None, substitute=None, slow_done=None, **properties)
 

@@ -37,9 +37,9 @@ translate russian simple_displayables_9cd108c6:
     e "Объект Трансформация (Transform) берёт определённый объект и применяет к нему свои настройки."
 
 # game/indepth_displayables.rpy:55
-translate russian simple_displayables_a313a959:
+translate russian simple_displayables_f8e1ba3f:
 
-    # e "Notice how, since it takes a displayable, it can take another image. In face, it can take any displayable defined here."
+    # e "Notice how, since it takes a displayable, it can take another image. In fact, it can take any displayable defined here."
     e "Заметьте, раз трансформации нужен объект, она также может взять и изображение. Впрочем, трансформация может изменить любой объявленный здесь объект."
 
 # game/indepth_displayables.rpy:63

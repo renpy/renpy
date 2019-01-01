@@ -27,7 +27,6 @@ import sys
 import os
 import copy
 import types
-import threading
 import cPickle
 
 ################################################################################
@@ -122,7 +121,7 @@ elif platform.mac_ver()[0]:
     macintosh = True
 elif "ANDROID_PRIVATE" in os.environ:
     android = True
-elif sys.platform == 'emscripten':
+elif sys.platform == 'emscripten' or "RENPY_EMSCRIPTEN" in os.environ:
     emscripten = True
 else:
     linux = True
@@ -163,6 +162,7 @@ backup_blacklist = {
     "renpy.display.scale",
     "renpy.display.presplash",
     "renpy.display.test",
+    "renpy.six",
     "renpy.text.ftfont",
     "renpy.test",
     "renpy.test.testast",
@@ -318,8 +318,9 @@ def update_path(package):
     name = package.__name__.split(".")
 
     import _renpy
-    libexec = os.path.dirname(_renpy.__file__)
-    package.__path__.append(os.path.join(libexec, *name))
+    if hasattr(_renpy, '__file__'):  # .so/.dll
+        libexec = os.path.dirname(_renpy.__file__)
+        package.__path__.append(os.path.join(libexec, *name))
 
     # Also find encodings, to deal with the way py2exe lays things out.
     import encodings

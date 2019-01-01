@@ -99,6 +99,7 @@ class ScriptTranslator(object):
         TranslateBlock = renpy.ast.TranslateBlock
         TranslateEarlyBlock = renpy.ast.TranslateEarlyBlock
         Menu = renpy.ast.Menu
+        UserStatement = renpy.ast.UserStatement
         Translate = renpy.ast.Translate
 
         filename = renpy.exports.unelide_filename(nodes[0].filename)
@@ -138,6 +139,16 @@ class ScriptTranslator(object):
                     if s is None:
                         continue
 
+                    self.additional_strings[filename].append((n.linenumber, s))
+
+            elif type_n is UserStatement:
+
+                strings = n.call("translation_strings")
+
+                if strings is None:
+                    continue
+
+                for s in strings:
                     self.additional_strings[filename].append((n.linenumber, s))
 
             elif type_n is Translate:
@@ -686,6 +697,7 @@ def known_languages():
 # Detect language
 ################################################################################
 
+
 locales = {
     "ab": "abkhazian",
     "aa": "afar",
@@ -864,6 +876,7 @@ locales = {
     "cht": "traditional_chinese",
     "zh": "traditional_chinese",
 }
+
 
 def detect_user_locale():
     import locale

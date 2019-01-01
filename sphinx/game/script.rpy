@@ -31,5 +31,7 @@ init 1000000 python:
 
     doc.write_tq()
 
+    doc.check_dups()
+
     raise SystemExit
 
