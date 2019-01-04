@@ -547,13 +547,18 @@ def display_say(
                     elif ctc_position == "nestled-close":
                         what_text.set_ctc([ u"\ufeff", what_ctc])
 
-                # Update the properties of the what_text widget.
-                what_text.start = start
-                what_text.end = end
-                what_text.slow = slow
-                what_text.slow_done = slow_done
+                if what_text.text[0] == what_string:
 
-                what_text.update()
+                    # Update the properties of the what_text widget.
+                    what_text.start = start
+                    what_text.end = end
+                    what_text.slow = slow
+                    what_text.slow_done = slow_done
+
+                    what_text.update()
+
+                elif renpy.config.developer:
+                    raise Exception("The displayable with id 'what' was not given the exact contents of the what variable given to the say screen.")
 
                 if behavior and afm:
                     behavior.set_text(what_text)
