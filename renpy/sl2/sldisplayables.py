@@ -168,6 +168,7 @@ Keyword("suffix")
 Keyword("changed")
 Keyword("pixel_width")
 Keyword("value")
+Style("caret")
 add(text_properties)
 
 # Omit imagemap_compat for being too high level (and obsolete).
