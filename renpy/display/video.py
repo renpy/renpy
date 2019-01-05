@@ -267,7 +267,8 @@ class Movie(renpy.display.core.Displayable):
         file it refers to does not exist. (For example, this can be used
         to create a slimmed-down mobile version that does not use movie
         sprites.) Users can also choose to fall back to this image as a
-        preference if video is too taxing for their system.
+        preference if video is too taxing for their system. The image will
+        also be used if the video plays, and then the movie ends.
 
     ``play_callback``
         If not None, a function that's used to start the movies playing.
@@ -364,7 +365,19 @@ class Movie(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
-        if (self.image is not None) and (self._play is not None):
+        if self._play and not (renpy.game.preferences.video_image_fallback is True):
+            channel_movie[self.channel] = self
+
+            if st == 0:
+                reset_channels.add(self.channel)
+
+        playing = renpy.audio.music.get_playing(self.channel)
+
+        not_playing = not playing
+        if self.channel in reset_channels:
+            not_playing = False
+
+        if (self.image is not None) and not_playing:
             # Checks if the given movie is loadable or if the user prefers images only
             if (not renpy.loader.loadable(self._play)) or (renpy.game.preferences.video_image_fallback is True):
                 surf = renpy.display.render.render(self.image, width, height, st, at)
@@ -375,14 +388,6 @@ class Movie(renpy.display.core.Displayable):
                 rv.blit(surf, (0, 0))
 
                 return rv
-
-        if self._play:
-            channel_movie[self.channel] = self
-
-            if st == 0:
-                reset_channels.add(self.channel)
-
-        playing = renpy.audio.music.get_playing(self.channel)
 
         if self.size is None:
 
