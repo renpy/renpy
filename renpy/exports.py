@@ -887,7 +887,10 @@ def menu(items, set_expr):
             if (not renpy.config.menu_include_disabled) and (not condition):
                 continue
 
-            new_items.append((label, renpy.ui.ChoiceReturn(label, value, location, sensitive=condition)))
+            if value is not None:
+                new_items.append((label, renpy.ui.ChoiceReturn(label, value, location, sensitive=condition)))
+            else:
+                new_items.append((label, None))
 
         items = new_items
 
@@ -1063,6 +1066,7 @@ def display_menu(items,
             elif value is not None:
                 action = renpy.ui.ChoiceReturn(label, value, location)
                 chosen = action.get_chosen()
+
             else:
                 action = None
                 chosen = False
