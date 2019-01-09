@@ -221,12 +221,12 @@ class DisplayableArguments(renpy.object.Object):
     # Arguments supplied.
     args = ()
 
-    # This gets set to true if the arguments are consumed.
-    consumed = False
-
     # The style prefix in play. This is used by DynamicImage to figure
     # out the prefix list to apply.
     prefix = None
+
+    # True if lint is in use.
+    lint = False
 
     def copy(self, **kwargs):
         """
