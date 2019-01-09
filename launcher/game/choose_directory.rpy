@@ -94,7 +94,8 @@ init python:
 
         is_default = False
 
-        if path is None:
+        # Path being None or "" means nothing was selected.
+        if not path:
             path = default_path
             is_default = True
 

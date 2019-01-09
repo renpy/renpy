@@ -47,4 +47,8 @@ if __name__ == "__main__":
     root.withdraw()
 
     result = askdirectory(initialdir=sys.argv[1], parent=root, title="Select Ren'Py Projects Directory")
+
+    if result == ():
+        result = ""
+
     sys.stdout.write(result.encode("utf8"))
