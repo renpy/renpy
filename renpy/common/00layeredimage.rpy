@@ -659,6 +659,11 @@ python early in layeredimage:
 
                     rv.add(d)
 
+            if unknown and args.lint:
+                args = args.copy()
+                args.args = tuple(unknown)
+                args.extraneous()
+
             if unknown and config.developer:
 
                 message = [" ".join(args.name), "unknown attributes:", " ".join(sorted(unknown))]
