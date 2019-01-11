@@ -221,9 +221,6 @@ cdef class GLDraw:
         pwidth *= self.dpi_scale
         pheight *= self.dpi_scale
 
-        pwidth = max(vwidth / 2, pwidth)
-        pheight = max(vheight / 2, pheight)
-
         window_args = { }
 
         info = renpy.display.get_info()
