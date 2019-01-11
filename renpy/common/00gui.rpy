@@ -456,6 +456,7 @@ init -1100 python in gui:
                 return self
 
             def fill_rect(self, rect, color=None):
+
                 if color is None:
                     color = gui.accent_color
 
@@ -488,18 +489,21 @@ init -1100 python in gui:
             height = scale(gui.button_height, 33)
 
         check_width = gui.check_button_borders.padding[0]
+        check_margin = scale(None, 3)
         check_rect = (
-            scale(None, 3),
+            check_margin,
             gui.check_button_borders.padding[1],
-            min(check_width, scale(None, 5)),
+            min(check_width - check_margin, scale(None, 5)),
             height - gui.check_button_borders.padding[1] - gui.check_button_borders.padding[3],
             )
 
         radio_width = gui.radio_button_borders.padding[0]
+        radio_margin = scale(None, 3)
+
         radio_rect = (
-            scale(None, 3),
+            radio_margin,
             gui.radio_button_borders.padding[1],
-            min(radio_width, scale(None, 5)),
+            min(radio_width - radio_margin, scale(None, 5)),
             height - gui.radio_button_borders.padding[1] - gui.radio_button_borders.padding[3],
             )
 
