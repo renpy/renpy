@@ -374,20 +374,19 @@ class Movie(renpy.display.core.Displayable):
         playing = renpy.audio.music.get_playing(self.channel)
 
         not_playing = not playing
+
         if self.channel in reset_channels:
             not_playing = False
 
         if (self.image is not None) and not_playing:
-            # Checks if the given movie is loadable or if the user prefers images only
-            if (not renpy.loader.loadable(self._play)) or (renpy.game.preferences.video_image_fallback is True):
-                surf = renpy.display.render.render(self.image, width, height, st, at)
+            surf = renpy.display.render.render(self.image, width, height, st, at)
 
-                w, h = surf.get_size()
+            w, h = surf.get_size()
 
-                rv = renpy.display.render.Render(w, h)
-                rv.blit(surf, (0, 0))
+            rv = renpy.display.render.Render(w, h)
+            rv.blit(surf, (0, 0))
 
-                return rv
+            return rv
 
         if self.size is None:
 
