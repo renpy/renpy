@@ -1,10 +1,5 @@
 ﻿translate korean python:
-    gui.main_font = "../../launcher/game/fonts/NanumGothic.ttf"
-    gui.text_font = "../../launcher/game/fonts/NanumGothic.ttf"
-    gui.name_text_font = "../../launcher/game/fonts/NanumGothic.ttf"
-    gui.interface_text_font = "../../launcher/game/fonts/NanumGothic.ttf"
-    gui.button_text_font = "../../launcher/game/fonts/NanumGothic.ttf"
-    gui.choice_button_text_font = "../../launcher/game/fonts/NanumGothic.ttf"
+    gui.main_font = gui.text_font = gui.name_text_font = gui.interface_text_font = gui.button_text_font = gui.choice_button_text_font = "../../launcher/game/fonts/NanumGothic.ttf"
     config.window_title = u"물음 (The Question)"
 
 translate korean strings:
