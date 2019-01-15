@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -77,19 +77,24 @@ def compile_event(key, keydown):
     if part[0] == "joy" or part[0] == "pad":
         return "(False)"
 
-    # Otherwise, deal with it as a key.
-    if keydown:
-        rv = "(ev.type == %d" % pygame.KEYDOWN
-    else:
-        rv = "(ev.type == %d" % pygame.KEYUP
-
-    MODIFIERS = { "repeat", "alt", "meta", "shift", "noshift", "ctrl" }
+    MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl" }
     modifiers = set()
 
     while part[0] in MODIFIERS:
         modifiers.add(part.pop(0))
 
     key = "_".join(part)
+
+    if "keydown" in modifiers:
+        keydown = True
+    elif "keyup" in modifiers:
+        keydown = False
+
+    # Otherwise, deal with it as a key.
+    if keydown:
+        rv = "(ev.type == %d" % pygame.KEYDOWN
+    else:
+        rv = "(ev.type == %d" % pygame.KEYUP
 
     if "repeat" in modifiers:
         rv += " and (ev.repeat)"

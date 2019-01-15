@@ -1,4 +1,4 @@
-init offset = -100
+﻿init offset = -100
 
 python early in layeredimage:
 
@@ -658,6 +658,11 @@ python early in layeredimage:
                         d = d._duplicate(None)
 
                     rv.add(d)
+
+            if unknown and args.lint:
+                args = args.copy()
+                args.args = tuple(unknown)
+                args.extraneous()
 
             if unknown and config.developer:
 

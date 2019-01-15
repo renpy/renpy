@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -385,9 +385,16 @@ init python in interface:
                 f = open("log.txt", "w")
         """
 
-        store._ignore_action = Jump(label)
-        yield
-        store._ignore_action = Jump("front_page")
+        try:
+            yield
+        except Exception as e:
+            renpy.renpy.error.report_exception(e, editor=False)
+
+            error(_("While [what!q], an error occured:"),
+                _("[exception!q]"),
+                what=what,
+                label=label,
+                exception=traceback.format_exception_only(type(e), e)[-1][:-1])
 
     import string
     DIGITS_LETTERS = string.digits

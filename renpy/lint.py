@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -204,6 +204,7 @@ def image_exists_precise(name):
                 da = renpy.display.core.DisplayableArguments()
                 da.name=( im[0], ) + tuple(i for i in name[1:] if i in attrs)
                 da.args=tuple(i for i in name[1:] if i in rest)
+                da.lint = True
                 d._duplicate(da)
             except:
                 continue
@@ -577,6 +578,7 @@ def check_label(node):
         add_arg(pi.extrapos)
         add_arg(pi.extrakw)
 
+
 def check_screen(node):
 
     if (node.screen.parameters is None) and renpy.config.lint_screens_without_parameters:
@@ -621,6 +623,7 @@ def check_filename_encodings():
 
         report("%s contains non-ASCII characters in its filename.", filename)
         add("(ZIP file distributions can only reliably include ASCII filenames.)")
+
 
 class Count(object):
     """
