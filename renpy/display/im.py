@@ -1160,6 +1160,49 @@ class Recolor(ImageBase):
         return self.image.predict_files()
 
 
+class Blur(ImageBase):
+    """
+    :doc: im_im
+
+    An image manipulator that blurs the image manipulator `im` using
+    an elliptical kernel described by `xrad` and optionally `yrad`.
+
+    If `yrad` is None, it will take the value of `xrad` resulting in
+    a circular kernel being used.
+
+    ::
+
+        image logo blurred = im.Blur("logo.png", 1.5)
+    """
+
+    def __init__(self, im, xrad, yrad=None, **properties):
+
+        im = image(im)
+
+        super(Blur, self).__init__(im, xrad, yrad, **properties)
+
+        self.image = im
+        self.rx = xrad
+        self.ry = xrad if yrad is None else yrad
+
+    def get_hash(self):
+        return self.image.get_hash()
+
+    def load(self):
+
+        surf = cache.get(self.image)
+
+        ws = renpy.display.pgrender.surface(surf.get_size(), True)
+        rv = renpy.display.pgrender.surface(surf.get_size(), True)
+
+        renpy.display.module.blur(surf, ws, rv, self.rx, self.ry)
+
+        return rv
+
+    def predict_files(self):
+        return self.image.predict_files()
+
+
 class MatrixColor(ImageBase):
     """
     :doc: im_matrixcolor
