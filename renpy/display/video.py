@@ -207,10 +207,10 @@ def render_movie(channel, width, height):
 
 def default_play_callback(old, new):  # @UnusedVariable
 
-    renpy.audio.music.play(new._play, channel=new.channel, loop=True, synchro_start=True)
+    renpy.audio.music.play(new._play, channel=new.channel, loop=new.loop, synchro_start=True)
 
     if new.mask:
-        renpy.audio.music.play(new.mask, channel=new.mask_channel, loop=True, synchro_start=True)
+        renpy.audio.music.play(new.mask, channel=new.mask_channel, loop=new.loop, synchro_start=True)
 
 
 class Movie(renpy.display.core.Displayable):
@@ -281,7 +281,7 @@ class Movie(renpy.display.core.Displayable):
             The new Movie object.
 
         A movie object has the `play` parameter available as ``_play``,
-        while the ``channel``, ``mask``, and ``mask_channel`` fields
+        while the ``channel``, ``loop``, ``mask``, and ``mask_channel`` fields
         correspond to the given parameters.
 
         Generally, this will want to use :func:`renpy.music.play` to start
@@ -290,10 +290,15 @@ class Movie(renpy.display.core.Displayable):
 
             def play_callback(old, new):
 
-                renpy.music.play(new._play, channel=new.channel, loop=True, synchro_start=True)
+                renpy.music.play(new._play, channel=new.channel, loop=new.loop, synchro_start=True)
 
                 if new.mask:
-                    renpy.music.play(new.mask, channel=new.mask_channel, loop=True, synchro_start=True)
+                    renpy.music.play(new.mask, channel=new.mask_channel, loop=new.loop, synchro_start=True)
+
+        `loop`
+            If False, the movie will not loop. If `image` is defined, the image
+            will be displayed when the movie ends. Otherwise, the movie will
+            become transparent.
 
 
 
@@ -312,6 +317,8 @@ class Movie(renpy.display.core.Displayable):
 
     play_callback = None
 
+    loop = True
+
     def ensure_channel(self, name):
 
         if name is None:
@@ -327,7 +334,7 @@ class Movie(renpy.display.core.Displayable):
 
         renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop)
 
-    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, **properties):
+    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, **properties):
         super(Movie, self).__init__(**properties)
 
         global auto_channel_serial
@@ -338,6 +345,7 @@ class Movie(renpy.display.core.Displayable):
         self.size = size
         self.channel = channel
         self._play = play
+        self.loop = loop
 
         if side_mask:
             mask = None
