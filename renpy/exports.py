@@ -871,6 +871,13 @@ def menu(items, set_expr):
         def substitute(s):
             return s
 
+    # Filter the list of items on the set_expr:
+    if set_expr:
+        set = renpy.python.py_eval(set_expr)  # @ReservedAssignment
+        items = [ i for i in items if (i[0] not in set) ]
+    else:
+        set = None  # @ReservedAssignment
+
     # Filter the list of items to only include ones for which the
     # condition is true.
 
@@ -892,36 +899,25 @@ def menu(items, set_expr):
             else:
                 new_items.append((label, None))
 
-        items = new_items
-
     else:
 
-        items = [ (substitute(label), value)
-                  for label, condition, value in items
-                  if renpy.python.py_eval(condition) ]
-
-    # Filter the list of items on the set_expr:
-    if set_expr:
-        set = renpy.python.py_eval(set_expr)  # @ReservedAssignment
-        items = [ (label, value)
-                  for label, value in items
-                  if label not in set ]
-    else:
-        set = None  # @ReservedAssignment
+        new_items = [ (substitute(label), value)
+                      for label, condition, value in items
+                      if renpy.python.py_eval(condition) ]
 
     # Check to see if there's at least one choice in set of items:
-    choices = [ value for label, value in items if value is not None ]
+    choices = [ value for label, value in new_items if value is not None ]
 
     # If not, bail out.
     if not choices:
         return None
 
     # Show the menu.
-    rv = renpy.store.menu(items)
+    rv = renpy.store.menu(new_items)
 
     # If we have a set, fill it in with the label of the chosen item.
     if set is not None and rv is not None:
-        for label, value in items:
+        for label, condition, value in items:
             if value == rv:
                 try:
                     set.append(label)
