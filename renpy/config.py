@@ -930,6 +930,10 @@ skip_sounds = False
 # Should we lint screens without parameters?
 lint_screens_without_parameters = True
 
+# If not None, a function that's used to process and modify menu arguments.
+menu_arguments_callback = None
+
+
 del os
 del collections
 

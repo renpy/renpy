@@ -869,7 +869,7 @@ def get_menu_args():
     (as a dict) passed to the current menu statement.
     """
 
-    return (menu_args or tuple(), menu_kwargs or dict())
+    return menu_args, menu_kwargs
 
 
 def menu(items, set_expr, args=None, kwargs=None):
@@ -882,6 +882,12 @@ def menu(items, set_expr, args=None, kwargs=None):
 
     global menu_args
     global menu_kwargs
+
+    args = args or tuple()
+    kwargs = kwargs or dict()
+
+    if renpy.config.menu_arguments_callback is not None:
+        args, kwargs = renpy.config.menu_arguments_callback(*args, **kwargs)
 
     if renpy.config.old_substitutions:
         def substitute(s):
