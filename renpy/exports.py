@@ -856,13 +856,32 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     return rv
 
 
-def menu(items, set_expr):
+# The arguments and keyword arguments for the current menu call.
+menu_args = None
+menu_kwargs = None
+
+
+def get_menu_args():
+    """
+    :other:
+
+    Returns a tuple giving the arguments (as a tuple) and the keyword arguments
+    (as a dict) passed to the current menu statement.
+    """
+
+    return (menu_args or tuple(), menu_kwargs or dict())
+
+
+def menu(items, set_expr, args=None, kwargs=None):
     """
     :undocumented:
 
     Displays a menu, and returns to the user the value of the selected
     choice. Also handles conditions and the menuset.
     """
+
+    global menu_args
+    global menu_kwargs
 
     if renpy.config.old_substitutions:
         def substitute(s):
@@ -913,7 +932,18 @@ def menu(items, set_expr):
         return None
 
     # Show the menu.
-    rv = renpy.store.menu(new_items)
+    try:
+        old_menu_args = menu_args
+        old_menu_kwargs = menu_kwargs
+
+        menu_args = args
+        menu_kwargs = kwargs
+
+        rv = renpy.store.menu(new_items)
+
+    finally:
+        menu_args = old_menu_args
+        old_menu_kwargs = old_menu_kwargs
 
     # If we have a set, fill it in with the label of the chosen item.
     if set is not None and rv is not None:
@@ -1040,6 +1070,13 @@ def display_menu(items,
     if in_fixed_rollback() and renpy.config.fix_rollback_without_choice:
         renpy.ui.saybehavior()
 
+    scope = dict(scope)
+
+    menu_args, menu_kwargs = get_menu_args()
+    screen = menu_kwargs.pop("screen", screen)
+
+    scope.update(menu_kwargs)
+
     # Show the menu.
     if has_screen(screen):
 
@@ -1078,7 +1115,14 @@ def display_menu(items,
 
             item_actions.append(me)
 
-            show_screen(screen, items=item_actions, _widget_properties=props, _transient=True, _layer=renpy.config.choice_layer, **scope)
+            show_screen(
+                screen,
+                items=item_actions,
+                _widget_properties=props,
+                _transient=True,
+                _layer=renpy.config.choice_layer,
+                *menu_args,
+                **scope)
 
     else:
         renpy.ui.window(style=window_style, focus="menu")

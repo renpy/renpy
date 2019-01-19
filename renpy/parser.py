@@ -1462,7 +1462,7 @@ def parse_with(l, node):
              ast.With(loc, expr) ]
 
 
-def parse_menu(stmtl, loc):
+def parse_menu(stmtl, loc, arguments):
 
     l = stmtl.subblock_lexer()
 
@@ -1574,7 +1574,7 @@ def parse_menu(stmtl, loc):
     if has_say:
         rv.append(ast.Say(loc, say_who, say_what, None, interact=False))
 
-    rv.append(ast.Menu(loc, items, set, with_, has_say or has_caption))
+    rv.append(ast.Menu(loc, items, set, with_, has_say or has_caption, arguments))
 
     return rv
 
@@ -1833,10 +1833,13 @@ def menu_statement(l, loc):
     l.expect_block('menu statement')
     label = l.label_name_declare()
     l.set_global_label(label)
+
+    arguments = parse_arguments(l)
+
     l.require(':')
     l.expect_eol()
 
-    menu = parse_menu(l, loc)
+    menu = parse_menu(l, loc, arguments)
 
     l.advance()
 

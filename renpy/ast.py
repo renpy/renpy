@@ -1489,20 +1489,23 @@ class Menu(Node):
         'set',
         'with_',
         'has_caption',
+        'arguments',
         ]
 
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.has_caption = False
+        self.arguments = None
         return self
 
-    def __init__(self, loc, items, set, with_, has_caption):  # @ReservedAssignment
+    def __init__(self, loc, items, set, with_, has_caption, arguments):  # @ReservedAssignment
         super(Menu, self).__init__(loc)
 
         self.items = items
         self.set = set
         self.with_ = with_
         self.has_caption = has_caption
+        self.arguments = arguments
 
     def diff_info(self):
         return (Menu,)
@@ -1540,6 +1543,11 @@ class Menu(Node):
         else:
             statement_name("menu")
 
+        if self.arguments is not None:
+            args, kwargs = self.arguments.evaluate()
+        else:
+            args = kwargs = None
+
         choices = [ ]
         narration = [ ]
 
@@ -1561,7 +1569,8 @@ class Menu(Node):
             renpy.exports.say(None, "\n".join(narration), interact=False)
 
         say_menu_with(self.with_, renpy.game.interface.set_transition)
-        choice = renpy.exports.menu(choices, self.set)
+
+        choice = renpy.exports.menu(choices, self.set, args, kwargs)
 
         if choice is not None:
             next_node(self.items[choice][2][0])
