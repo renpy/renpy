@@ -1479,6 +1479,7 @@ def parse_menu(stmtl, loc, arguments):
 
     # Tuples of (label, condition, block)
     items = [ ]
+    item_arguments = [ ]
 
     l.advance()
 
@@ -1546,6 +1547,7 @@ def parse_menu(stmtl, loc, arguments):
                 has_caption = True
 
             items.append((label, "True", None))
+            item_arguments.append(None)
             l.advance()
 
             continue
@@ -1554,6 +1556,8 @@ def parse_menu(stmtl, loc, arguments):
         has_choice = True
 
         condition = "True"
+
+        item_arguments.append(parse_arguments(l))
 
         if l.keyword('if'):
             condition = l.require(l.python_expression)
@@ -1574,7 +1578,7 @@ def parse_menu(stmtl, loc, arguments):
     if has_say:
         rv.append(ast.Say(loc, say_who, say_what, None, interact=False))
 
-    rv.append(ast.Menu(loc, items, set, with_, has_say or has_caption, arguments))
+    rv.append(ast.Menu(loc, items, set, with_, has_say or has_caption, arguments, item_arguments))
 
     return rv
 

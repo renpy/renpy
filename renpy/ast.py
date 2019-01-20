@@ -1490,15 +1490,17 @@ class Menu(Node):
         'with_',
         'has_caption',
         'arguments',
+        'item_arguments',
         ]
 
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.has_caption = False
         self.arguments = None
+        self.item_arguments = None
         return self
 
-    def __init__(self, loc, items, set, with_, has_caption, arguments):  # @ReservedAssignment
+    def __init__(self, loc, items, set, with_, has_caption, arguments, item_arguments):  # @ReservedAssignment
         super(Menu, self).__init__(loc)
 
         self.items = items
@@ -1506,6 +1508,7 @@ class Menu(Node):
         self.with_ = with_
         self.has_caption = has_caption
         self.arguments = arguments
+        self.item_arguments = item_arguments
 
     def diff_info(self):
         return (Menu,)
@@ -1550,11 +1553,17 @@ class Menu(Node):
 
         choices = [ ]
         narration = [ ]
+        item_arguments = [ ]
 
         for i, (label, condition, block) in enumerate(self.items):
 
             if renpy.config.say_menu_text_filter:
                 label = renpy.config.say_menu_text_filter(label)
+
+            if self.item_arguments and (self.item_arguments[i] is not None):
+                item_arguments.append(self.item_arguments[i].evaluate())
+            else:
+                item_arguments.append((tuple(), dict()))
 
             if block is None:
                 if renpy.config.narrator_menu and label:
@@ -1570,7 +1579,7 @@ class Menu(Node):
 
         say_menu_with(self.with_, renpy.game.interface.set_transition)
 
-        choice = renpy.exports.menu(choices, self.set, args, kwargs)
+        choice = renpy.exports.menu(choices, self.set, args, kwargs, item_arguments)
 
         if choice is not None:
             next_node(self.items[choice][2][0])

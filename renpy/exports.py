@@ -872,7 +872,7 @@ def get_menu_args():
     return menu_args, menu_kwargs
 
 
-def menu(items, set_expr, args=None, kwargs=None):
+def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
     """
     :undocumented:
 
@@ -895,13 +895,15 @@ def menu(items, set_expr, args=None, kwargs=None):
     else:
         def substitute(s):
             return s
-
     # Filter the list of items on the set_expr:
     if set_expr:
         set = renpy.python.py_eval(set_expr)  # @ReservedAssignment
         items = [ i for i in items if (i[0] not in set) ]
     else:
         set = None  # @ReservedAssignment
+
+    if item_arguments is None:
+        item_arguments = [ (tuple(), dict()) ] * len(items)
 
     # Filter the list of items to only include ones for which the
     # condition is true.
@@ -912,7 +914,7 @@ def menu(items, set_expr, args=None, kwargs=None):
 
         new_items = [ ]
 
-        for label, condition, value in items:
+        for (label, condition, value), (item_args, item_kwargs) in zip(items, item_arguments):
             label = substitute(label)
             condition = renpy.python.py_eval(condition)
 
@@ -920,7 +922,7 @@ def menu(items, set_expr, args=None, kwargs=None):
                 continue
 
             if value is not None:
-                new_items.append((label, renpy.ui.ChoiceReturn(label, value, location, sensitive=condition)))
+                new_items.append((label, renpy.ui.ChoiceReturn(label, value, location, sensitive=condition, args=item_args, kwargs=item_kwargs)))
             else:
                 new_items.append((label, None))
 
@@ -1101,14 +1103,20 @@ def display_menu(items,
             if isinstance(value, renpy.ui.ChoiceReturn):
                 action = value
                 chosen = action.get_chosen()
+                item_args = action.args
+                item_kwargs = action.kwargs
 
             elif value is not None:
                 action = renpy.ui.ChoiceReturn(label, value, location)
                 chosen = action.get_chosen()
+                item_args = ()
+                item_kwargs = { }
 
             else:
                 action = None
                 chosen = False
+                item_args = ()
+                item_kwargs = { }
 
             if renpy.config.choice_screen_chosen:
                 me = MenuEntry((label, action, chosen))
@@ -1118,6 +1126,8 @@ def display_menu(items,
             me.caption = label
             me.action = action
             me.chosen = chosen
+            me.args = item_args
+            me.kwargs = item_kwargs
 
             item_actions.append(me)
 
