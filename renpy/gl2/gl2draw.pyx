@@ -42,9 +42,9 @@ import time
 import uguugl
 
 cimport renpy.display.render as render
-cimport gltexture
-import gltexture
-import glblacklist
+cimport gl2texture
+import gl2texture
+import gl2blacklist
 
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
@@ -61,7 +61,7 @@ vsync = True
 # A list of frame end times, used for the same purpose.
 frame_times = [ ]
 
-cdef class GLDraw:
+cdef class GL2Draw:
 
     def __init__(self, renderer_name, gles):
 
@@ -142,7 +142,7 @@ cdef class GLDraw:
         Returns the amount of memory locked up in textures.
         """
 
-        return gltexture.total_texture_size, gltexture.texture_count
+        return gl2texture.total_texture_size, gl2texture.texture_count
 
 
     def set_mode(self, virtual_size, physical_size, fullscreen):
@@ -418,7 +418,7 @@ cdef class GLDraw:
 
         self.texture_cache.clear()
 
-        gltexture.dealloc_textures()
+        gl2texture.dealloc_textures()
 
         if self.rtt:
             self.rtt.deinit()
@@ -431,7 +431,7 @@ cdef class GLDraw:
         if not self.old_fullscreen:
             renpy.display.gl_size = self.physical_size
 
-        gltexture.dealloc_textures()
+        gl2texture.dealloc_textures()
 
         self.old_fullscreen = None
 
@@ -493,7 +493,7 @@ cdef class GLDraw:
         # Pick a texture environment subsystem.
 
         renpy.display.log.write("Using shader environment.")
-        self.environ = glenviron_shader.ShaderEnviron()
+        self.environ = gl2environ_shader.ShaderEnviron()
         self.info["environ"] = "shader"
         self.environ.init()
 
@@ -503,7 +503,7 @@ cdef class GLDraw:
         # ANGLE from working with fbo on Windows.
 
         renpy.display.log.write("Using FBO RTT.")
-        self.rtt = glrtt_fbo.FboRtt()
+        self.rtt = gl2rtt_fbo.FboRtt()
         self.info["rtt"] = "fbo"
         self.rtt.init()
 
@@ -511,7 +511,7 @@ cdef class GLDraw:
 
         # Figure out the sizes of texture that render properly.
         if not self.did_texture_test:
-            rv = gltexture.test_texture_sizes(self.environ, self)
+            rv = gl2texture.test_texture_sizes(self.environ, self)
         else:
             rv = True
 
@@ -593,7 +593,7 @@ cdef class GLDraw:
         rv = self.texture_cache.get(surf, None)
 
         if rv is None:
-            rv = gltexture.texture_grid_from_surface(surf, transient)
+            rv = gl2texture.texture_grid_from_surface(surf, transient)
             self.texture_cache[surf] = rv
             self.ready_texture_queue.add(rv)
 
@@ -650,7 +650,7 @@ cdef class GLDraw:
         self.environ.unset_clip(self)
 
     # private
-    cpdef set_clip(GLDraw self, tuple clip):
+    cpdef set_clip(GL2Draw self, tuple clip):
 
         if self.clip_cache == clip:
             return
@@ -737,9 +737,9 @@ cdef class GLDraw:
                         renpy.plog(1, "after broken vsync sleep")
 
 
-        gltexture.cleanup()
+        gl2texture.cleanup()
 
-    cpdef int draw_render_textures(GLDraw self, what, bint non_aligned) except 1:
+    cpdef int draw_render_textures(GL2Draw self, what, bint non_aligned) except 1:
         """
         This is responsible for rendering things to textures,
         as necessary.
@@ -790,7 +790,7 @@ cdef class GLDraw:
             what.render_to_texture(True)
 
     cpdef int draw_transformed(
-        GLDraw self,
+        GL2Draw self,
         object what,
         tuple clip,
         double xo,
@@ -807,7 +807,7 @@ cdef class GLDraw:
 
         if not isinstance(what, render.Render):
 
-            if isinstance(what, gltexture.TextureGrid):
+            if isinstance(what, gl2texture.TextureGrid):
 
                 if (not subpixel) and reverse.is_unit_aligned():
                     xo = round(xo)
@@ -815,8 +815,8 @@ cdef class GLDraw:
 
                 self.set_clip(clip)
 
-                gltexture.blit(
-                    <gltexture.TextureGrid> what,
+                gl2texture.blit(
+                    <gl2texture.TextureGrid> what,
                     xo,
                     yo,
                     reverse,
@@ -858,7 +858,7 @@ cdef class GLDraw:
 
                 self.set_clip(clip)
 
-                gltexture.blend(
+                gl2texture.blend(
                     rend.children[0][0].render_to_texture(what.operation_alpha),
                     rend.children[1][0].render_to_texture(what.operation_alpha),
                     xo,
@@ -876,7 +876,7 @@ cdef class GLDraw:
 
             self.set_clip(clip)
 
-            gltexture.imageblend(
+            gl2texture.imageblend(
                 rend.children[0][0].render_to_texture(True),
                 rend.children[1][0].render_to_texture(what.operation_alpha),
                 rend.children[2][0].render_to_texture(what.operation_alpha),
@@ -905,7 +905,7 @@ cdef class GLDraw:
 
             reverse *= renpy.display.render.Matrix2D(1.0 * what.width / pc.width, 0, 0, 1.0 * what.height / pc.height)
 
-            gltexture.blit(
+            gl2texture.blit(
                 pc,
                 xo,
                 yo,
@@ -998,7 +998,7 @@ cdef class GLDraw:
         if isinstance(what, render.Render):
             what.is_opaque()
 
-        rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
+        rv = gl2texture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
         self.did_render_to_texture = True
 
@@ -1057,7 +1057,7 @@ cdef class GLDraw:
         """
         # Used to work around a bug in cython where self was not getting
         # the right type when being assigned to the closure.
-        cdef GLDraw draw = self
+        cdef GL2Draw draw = self
 
         if what.half_cache:
             return what.half_cache
@@ -1081,7 +1081,7 @@ cdef class GLDraw:
         if isinstance(what, render.Render):
             what.is_opaque()
 
-        rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
+        rv = gl2texture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
         what.half_cache = rv
 
@@ -1187,7 +1187,7 @@ cdef class GLDraw:
         self.clip_mode_screen()
         self.set_clip((-pbx, -pby, pw, ph))
 
-        gltexture.blit(
+        gl2texture.blit(
             tex,
             x,
             y,
@@ -1254,7 +1254,7 @@ cdef class GLDraw:
 
     def free_memory(self):
         self.texture_cache.clear()
-        gltexture.dealloc_textures()
+        gl2texture.dealloc_textures()
 
     def event_peek_sleep(self):
         pass
@@ -1336,12 +1336,12 @@ cdef class Environ(object):
         Sets the color to be shown.
         """
 
-    cdef void set_clip(self, tuple clip_box, GLDraw draw):
+    cdef void set_clip(self, tuple clip_box, GL2Draw draw):
         """
         Sets the clipping rectangle.
         """
 
-    cdef void unset_clip(self, GLDraw draw):
+    cdef void unset_clip(self, GL2Draw draw):
         """
         Removes the clipping rectangle.
         """
@@ -1357,35 +1357,6 @@ cdef class Environ(object):
         Sets the GL viewport.
         """
 
-
-# These imports need to be down at the bottom, after the Rtt and Environ
-# classes have been created.
-try:
-    import glrtt_copy
-except:
-    glrtt_copy = None
-
-# Copy doesn't work on iOS.
-if renpy.ios:
-    glrtt_copy = None
-
-try:
-    import glrtt_fbo
-except ImportError:
-    glrtt_fbo = None
-
-try:
-    import glenviron_fixed
-except ImportError:
-    glenviron_fixed = None
-
-try:
-    import glenviron_shader
-except ImportError:
-    glenviron_shader = None
-
-try:
-    import glenviron_limited
-except ImportError:
-    glenviron_limited = None
+import gl2rtt_fbo
+import gl2environ_shader
 

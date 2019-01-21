@@ -23,7 +23,7 @@ cimport renpy.display.render as render
 
 cdef class Environ
 
-cdef class GLDraw:
+cdef class GL2Draw:
 
     cdef bint did_init
     cdef bint did_texture_test
@@ -65,15 +65,15 @@ cdef class GLDraw:
 
     cdef public bint gles
 
-    cpdef set_clip(GLDraw self, tuple clip)
+    cpdef set_clip(GL2Draw self, tuple clip)
 
     cpdef int draw_render_textures(
-        GLDraw self,
+        GL2Draw self,
         object what,
         bint non_aligned) except 1
 
     cpdef int draw_transformed(
-        GLDraw self,
+        GL2Draw self,
         object what,
         tuple clip,
         double xo,
@@ -91,8 +91,8 @@ cdef class Environ:
     cdef void set_vertex(self, float *vertices)
     cdef void set_texture(self, int unit, float *coords)
     cdef void set_color(self, float r, float g, float b, float a)
-    cdef void set_clip(self, tuple clip_box, GLDraw draw)
-    cdef void unset_clip(self, GLDraw draw)
+    cdef void set_clip(self, tuple clip_box, GL2Draw draw)
+    cdef void unset_clip(self, GL2Draw draw)
     cdef void ortho(self, double left, double right, double bottom, double top, double near, double far)
     cdef void viewport(self, int x, int y, int width, int height)
 

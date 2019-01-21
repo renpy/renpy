@@ -24,8 +24,8 @@
 from __future__ import print_function
 
 from uguugl cimport *
-from gldraw cimport *
-from gldraw import Rtt
+from gl2draw cimport *
+from gl2draw import Rtt
 
 import renpy
 

@@ -1914,6 +1914,7 @@ class Interface(object):
         draw_objects = { }
 
         def make_draw(name, mod, cls, *args):
+
             if name not in renderers:
                 return False
 
@@ -1936,8 +1937,8 @@ class Interface(object):
             has_angle = False
 
         make_draw("gl", "renpy.gl.gldraw", "GLDraw", not has_angle)
-        make_draw("gl2", "renpy.gl2.gldraw", "GLDraw", "gl2", False)
-        make_draw("gles2", "renpy.gl2.gldraw", "GLDraw", "gles2", True)
+        make_draw("gl2", "renpy.gl2.gl2draw", "GL2Draw", "gl2", False)
+        make_draw("gles2", "renpy.gl2.gl2draw", "GL2Draw", "gles2", True)
         make_draw("sw", "renpy.display.swdraw", "SWDraw")
 
         rv = [ ]
