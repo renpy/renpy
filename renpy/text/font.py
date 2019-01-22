@@ -88,7 +88,7 @@ class ImageFont(object):
             g.ascent = self.baseline
             g.line_spacing = self.height
 
-            if is_zerowidth(g.character):
+            if not is_zerowidth(g.character):
 
                 width = self.width.get(c, None)
                 if width is None:
