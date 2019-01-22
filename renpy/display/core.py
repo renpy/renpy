@@ -2603,9 +2603,6 @@ class Interface(object):
 
             not_shown = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown()  # @UndefinedVariable
 
-            if not self.old_text_rect or not_shown:
-                pygame.key.start_text_input()  # @UndefinedVariable
-
             if self.old_text_rect != self.text_rect:
                 x, y, w, h = self.text_rect
                 x0, y0 = renpy.display.draw.untranslate_point(x, y)
@@ -2613,6 +2610,9 @@ class Interface(object):
                 rect = (x0, y0, x1 - x0, y1 - y0)
 
                 pygame.key.set_text_input_rect(rect)  # @UndefinedVariable
+
+            if not self.old_text_rect or not_shown:
+                pygame.key.start_text_input()  # @UndefinedVariable
 
         else:
             if self.old_text_rect:
