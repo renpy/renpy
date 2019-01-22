@@ -1931,10 +1931,7 @@ class Interface(object):
 
                 return False
 
-        if renpy.windows:
-            has_angle = make_draw("angle", "renpy.angle.gldraw", "GLDraw")
-        else:
-            has_angle = False
+        has_angle = "angle" in renderers and make_draw("angle", "renpy.angle.gldraw", "GLDraw")
 
         make_draw("gl", "renpy.gl.gldraw", "GLDraw", not has_angle)
         make_draw("gl2", "renpy.gl2.gl2draw", "GL2Draw", "gl2", False)
