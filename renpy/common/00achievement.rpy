@@ -127,6 +127,10 @@ init -1500 python in achievement:
 
     steam_maximum_framerate = 15
 
+    # The position of the steam notification popup. One of "top left", "top right",
+    # "bottom left", or "bottom right".
+    steam_position = None
+
     class SteamBackend(Backend):
         """
         A backend that sends achievements to Steam. This is only used if steam
@@ -357,3 +361,16 @@ init -1500 python in achievement:
                     if not i.has(a):
                         return True
             return False
+
+init 1500 python in achievement:
+
+    # Steam position.
+    if steam is not None:
+        if steam_position == "top left":
+            steam.set_overlay_notification_position(steam.POSITION_TOP_LEFT)
+        elif steam_position == "top right":
+            steam.set_overlay_notification_position(steam.POSITION_TOP_RIGHT)
+        elif steam_position == "bottom left":
+            steam.set_overlay_notification_position(steam.POSITION_BOTTOM_LEFT)
+        elif steam_position == "bottom right":
+            steam.set_overlay_notification_position(steam.POSITION_BOTTOM_RIGHT)
