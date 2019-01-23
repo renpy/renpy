@@ -113,7 +113,7 @@ def early_interact():
 def interact():
     """
     This is called each time the screen is drawn, and should return True
-    if the movie should display fulscreen.
+    if the movie should display fullscreen.
     """
 
     global fullscreen
