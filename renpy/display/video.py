@@ -532,7 +532,7 @@ def frequent():
 
         return False
 
-    elif fullscreen and not (renpy.mobile and renpy.config.hw_video):
+    elif fullscreen and not ((renpy.android or renpy.ios) and renpy.config.hw_video):
 
         c = renpy.audio.audio.get_channel("movie")
 
