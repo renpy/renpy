@@ -264,6 +264,8 @@ def checkpoint(data=None, keep_rollback=None):
     this function has been called, there should be no more interaction with the
     user in the current statement.
 
+    This will also clear the current screenshot used by saved games.
+
     `data`
         This data is returned by :func:`renpy.roll_forward_info` when the
         game is being rolled back.
@@ -273,6 +275,9 @@ def checkpoint(data=None, keep_rollback=None):
         keep_rollback = renpy.config.keep_rollback_data
 
     renpy.game.log.checkpoint(data, keep_rollback=keep_rollback, hard=renpy.store._rollback)
+
+    if renpy.store._rollback and renpy.config.auto_clear_screenshot:
+        renpy.game.interface.clear_screenshot = True
 
 
 def block_rollback(purge=False):

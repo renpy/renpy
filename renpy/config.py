@@ -933,6 +933,8 @@ lint_screens_without_parameters = True
 # If not None, a function that's used to process and modify menu arguments.
 menu_arguments_callback = None
 
+# Should Ren'PY automatically clear the screenshot?
+auto_clear_screenshot = True
 
 del os
 del collections

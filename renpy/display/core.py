@@ -1603,6 +1603,9 @@ class Interface(object):
         # rest of a mousepress after a longpress occurs.
         self.ignore_touch = False
 
+        # Should we clear the screenshot at the start of the next interaction?
+        self.clear_screenshot = False
+
         for layer in renpy.config.layers + renpy.config.top_layers:
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
@@ -2103,6 +2106,8 @@ class Interface(object):
            If true, we're in a background thread. So queue the request
            until it can be handled by the main thread.
         """
+
+        self.clear_screenshot = False
 
         # Do nothing before the first interaction.
         if not self.started:
@@ -2642,6 +2647,11 @@ class Interface(object):
         if not self.started:
             self.start()
 
+        if self.clear_screenshot:
+            self.lose_screenshot()
+
+        self.clear_screenshot = False
+
         self.trans_pause = trans_pause
 
         # Cancel magic error reporting.
@@ -2701,9 +2711,6 @@ class Interface(object):
             if renpy.store._side_image_attributes_reset:
                 renpy.store._side_image_attributes = None
                 renpy.store._side_image_attributes_reset = False
-
-            if renpy.game.context().rollback:
-                self.lose_screenshot()
 
     def consider_gc(self):
         """
