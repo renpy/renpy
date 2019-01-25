@@ -365,8 +365,8 @@ rtl = False
 file_open_callback = None
 
 # The size of screenshot thumbnails. (Redefined in common/)
-thumbnail_width = None
-thumbnail_height = None
+thumbnail_width = 256
+thumbnail_height = 144
 
 # The end game transition.
 end_game_transition = None
