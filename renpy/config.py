@@ -936,6 +936,9 @@ menu_arguments_callback = None
 # Should Ren'PY automatically clear the screenshot?
 auto_clear_screenshot = True
 
+# Should Ren'Py allow duplicate labels.
+allow_duplicate_labels = False
+
 del os
 del collections
 

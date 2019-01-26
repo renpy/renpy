@@ -430,6 +430,10 @@ class Script(object):
                                        bad_node.filename, bad_node.linenumber))
 
                 else:
+
+                    if renpy.config.allow_duplicate_labels:
+                        return
+
                     self.duplicate_labels.append(
                         u'The label {} is defined twice, at\n  File "{}", line {} and\n  File "{}", line {}.'.format(
                             bad_name, old_node.filename, old_node.linenumber, bad_node.filename, bad_node.linenumber))
