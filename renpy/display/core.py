@@ -1820,6 +1820,8 @@ class Interface(object):
         This is called after display init, but before the window is created.
         """
 
+        pygame.display.hint("SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS", "0")
+
         # Needed for Unity.
         wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
         os.environ[b'SDL_VIDEO_X11_WMCLASS'] = wmclass.encode("utf-8")
