@@ -349,7 +349,8 @@ Group
 
 The ``group`` statement groups together alternative layers. When an attribute is
 inside a group, it is an error to include any of the other attributes in
-that group. (But it's fine to include the same attribute twice.)
+that group. (But it's fine to include the same attribute twice. The ``multiple``
+keyword removes this restriction.)
 
 The ``group`` statement takes a name. The name isn't used for very much, but is
 used to generate the default names of attributes inside the group.
@@ -359,6 +360,11 @@ attributes in the group have been declared, Ren'Py will scan its list of images
 for those that match the group's pattern (see below). Any images that are found
 that do not correspond to declared attributes are then added to the group as if
 declared with the attribute statement.
+
+This can be followed by the ``multiple`` keyword. If present, more than one
+member of the group can be selected at the same time. This is useful to have
+a group auto-define multiple attributes that are not exclusive. This conflicts
+with the default keyword being given to one of the attributes.
 
 Properties can then be declared on the first line of the group, and it can
 take a block that contains properties and attributes.
