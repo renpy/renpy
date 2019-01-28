@@ -193,7 +193,7 @@ cdef class GLDraw:
 
             self.did_init = False
 
-            if self.old_fullscreen is not None:
+            if renpy.windows and (self.old_fullscreen is not None):
                 pygame.display.quit()
 
             pygame.display.init()
@@ -322,13 +322,12 @@ cdef class GLDraw:
             pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
             pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
 
-
         self.window = None
 
-        if fullscreen:
+        if (self.window is None) and fullscreen:
             try:
                 renpy.display.log.write("Fullscreen mode.")
-                self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | opengl | pygame.DOUBLEBUF)
+                self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | resizable | opengl | pygame.DOUBLEBUF)
             except pygame.error as e:
                 renpy.display.log.write("Opening in fullscreen failed: %r", e)
                 self.window = None
