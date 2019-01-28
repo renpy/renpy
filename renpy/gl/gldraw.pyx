@@ -225,7 +225,13 @@ cdef class GLDraw:
 
         info = renpy.display.get_info()
 
-        if not renpy.mobile:
+        old_surface = pygame.display.get_surface()
+        if old_surface is not None:
+            maximized = old_surface.get_flags() & pygame.WINDOW_MAXIMIZED
+        else:
+            maximized = False
+
+        if (not renpy.mobile) and (not maximized):
 
             visible_w = info.current_w
             visible_h = info.current_h
@@ -243,6 +249,7 @@ cdef class GLDraw:
 
             pwidth = min(visible_w, pwidth)
             pheight = min(visible_h, pheight)
+
 
             # The first time through.
             if not self.did_init:
