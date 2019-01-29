@@ -299,7 +299,7 @@ Attribute
 The ``attribute`` statement adds a layer that is displayed when the given
 attribute is used to display the image. The same attribute can be used with
 multiple layers, with all layers corresponding to the attribute being shown
-(the `if_also` and `if_not` properties can change this).
+(the `if_all`, `if_any`, and `if_not` properties can change this).
 
 An attribute takes an attribute name. It can also take two keywords.
 The ``default`` keyword indicates that the attribute should be present
@@ -311,7 +311,7 @@ for use with `if_all`, `if_any`, or `if_not`.
 If the displayable is not present, it will be computed from the name of the
 layer, group, group variant, and attribute, by replacing all spaces with
 underscores and using underscores to combine everything together. So
-if we have an image named "augustina", the group "eyes" and the name "closed",
+if we have an image named "augustina", the group "eyes" and the attribute "closed",
 the image "augustina_eyes_closed" will be used. (The layered image's
 format function is used to do this, defaulting to :func:`layeredimage.format_function`.)
 
