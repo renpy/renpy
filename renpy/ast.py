@@ -1560,19 +1560,26 @@ class Menu(Node):
             if renpy.config.say_menu_text_filter:
                 label = renpy.config.say_menu_text_filter(label)
 
-            if self.item_arguments and (self.item_arguments[i] is not None):
-                item_arguments.append(self.item_arguments[i].evaluate())
-            else:
-                item_arguments.append((tuple(), dict()))
+            has_item = False
 
             if block is None:
                 if renpy.config.narrator_menu and label:
                     narration.append(label)
                 else:
                     choices.append((label, condition, None))
+                    has_item = True
+
             else:
                 choices.append((label, condition, i))
+                has_item = True
+
                 next_node(block[0])
+
+            if has_item:
+                if self.item_arguments and (self.item_arguments[i] is not None):
+                    item_arguments.append(self.item_arguments[i].evaluate())
+                else:
+                    item_arguments.append((tuple(), dict()))
 
         if narration:
             renpy.exports.say(None, "\n".join(narration), interact=False)
