@@ -900,15 +900,26 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
     else:
         def substitute(s):
             return s
-    # Filter the list of items on the set_expr:
-    if set_expr:
-        set = renpy.python.py_eval(set_expr)  # @ReservedAssignment
-        items = [ i for i in items if (i[0] not in set) ]
-    else:
-        set = None  # @ReservedAssignment
 
     if item_arguments is None:
         item_arguments = [ (tuple(), dict()) ] * len(items)
+
+    # Filter the list of items on the set_expr:
+    if set_expr:
+        set = renpy.python.py_eval(set_expr)  # @ReservedAssignment
+
+        new_items = [ ]
+        new_item_arguments = [ ]
+
+        for i, ia in zip(items, item_arguments):
+            if i[0] not in set:
+                new_items.append(i)
+                new_item_arguments.append(ia)
+
+        items = new_items
+        item_arguments = new_item_arguments
+    else:
+        set = None  # @ReservedAssignment
 
     # Filter the list of items to only include ones for which the
     # condition is true.
