@@ -105,6 +105,19 @@ with the menu statement. It is given the following parameter:
         This is True if this choice has been chosen at least once
         in any playthrough of the game.
 
+    .. attribute:: args
+
+        This is a tuple that contains any positional arguments passed
+        to the menu choice.
+
+    .. attribute:: kwargs
+
+        This is a dictionary that contains any keyword arguments passed
+        to the menu choice.
+
+In addition, any arguments passed to a menu statement are passed in during
+the call to the screen.
+
 ::
 
     screen choice(items):

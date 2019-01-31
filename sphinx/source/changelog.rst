@@ -15,16 +15,16 @@ Ren'Py now has support for :ref:`menu arguments <menu-arguments>`. Arguments
 can be passed to a choice menu as a whole, or to the individual choices within
 the menu, using the syntax::
 
-    menu (screen="destinations", airline="Eastwest"):
+    menu ("jfk", screen="airport"):
 
-        "New York" (price=250):
-            jump new_york
+        "Chicago, IL" (200):
+            jump chicago_trip
 
-        "Chicago" (price=200) if unlocked_chicago:
-            jump chicago
+        "Dallas, TX" (150, sale=True):
+            jump dallas_trip
 
-        "Hot Springs" (price=99, sale=True):
-            jump hot_springs
+        "Hot Springs, AR" (300) if secret_unlocked:
+            jump hot_springs_trip
 
 
 Menu arguments passed to the menu itself become arguments to the screen,

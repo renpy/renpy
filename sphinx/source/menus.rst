@@ -67,3 +67,34 @@ true. In the following menu::
 The third choice will only be presented if the ``drank_tea`` variable is
 true. (However if, the :var:`config.menu_include_disabled` variable is set
 to True, it will be shown as a disabled button.)
+
+
+.. _menu-argument:
+
+Menu Arguments
+--------------
+
+It's possible to pass arguments to the menu itself, and to the individual
+choices in a menu. To pass arguments to the menu, add them to the
+menu line, after the optional name, and immediately before the colon. To
+pass arguments to a menu choice, put them after the menu string and before
+the ``if`` keyword or colon. ::
+
+
+    menu ("jfk", screen="airport"):
+
+        "Chicago, IL" (200):
+            jump chicago_trip
+
+        "Dallas, TX" (150, sale=True):
+            jump dallas_trip
+
+        "Hot Springs, AR" (300) if secret_unlocked:
+            jump hot_springs_trip
+
+Menu arguments passed to the menu itself become arguments to the screen,
+except the `screen` argument which selects the screen. The arguments to
+the choices become arguments to the items passed to the menu screen.
+
+See the documentation for :ref:`the choice screen <choice_screen>` and
+:var:`config.menu_arguments_callback`.
