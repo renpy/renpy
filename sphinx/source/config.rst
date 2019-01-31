@@ -545,6 +545,15 @@ Occasionally Used
 
     If not None, a music file to play when at the main menu.
 
+.. var:: config.menu_arguments_callback = None
+
+    If not None, this should be a function that takes positional and/or
+    keyword arguments. It's called whenever a menu statement runs,
+    with the arguments to that menu statement.
+
+    This should return a pair, containing a tuple of positional arguments
+    (almost always empty), and a dictionary of keyword arguments.
+
 .. var:: config.menu_clear_layers = []
 
     A list of layer names (as strings) that are cleared when entering

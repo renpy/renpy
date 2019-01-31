@@ -1462,7 +1462,7 @@ def parse_with(l, node):
              ast.With(loc, expr) ]
 
 
-def parse_menu(stmtl, loc):
+def parse_menu(stmtl, loc, arguments):
 
     l = stmtl.subblock_lexer()
 
@@ -1479,6 +1479,7 @@ def parse_menu(stmtl, loc):
 
     # Tuples of (label, condition, block)
     items = [ ]
+    item_arguments = [ ]
 
     l.advance()
 
@@ -1546,6 +1547,7 @@ def parse_menu(stmtl, loc):
                 has_caption = True
 
             items.append((label, "True", None))
+            item_arguments.append(None)
             l.advance()
 
             continue
@@ -1554,6 +1556,8 @@ def parse_menu(stmtl, loc):
         has_choice = True
 
         condition = "True"
+
+        item_arguments.append(parse_arguments(l))
 
         if l.keyword('if'):
             condition = l.require(l.python_expression)
@@ -1574,7 +1578,7 @@ def parse_menu(stmtl, loc):
     if has_say:
         rv.append(ast.Say(loc, say_who, say_what, None, interact=False))
 
-    rv.append(ast.Menu(loc, items, set, with_, has_say or has_caption))
+    rv.append(ast.Menu(loc, items, set, with_, has_say or has_caption, arguments, item_arguments))
 
     return rv
 
@@ -1833,10 +1837,13 @@ def menu_statement(l, loc):
     l.expect_block('menu statement')
     label = l.label_name_declare()
     l.set_global_label(label)
+
+    arguments = parse_arguments(l)
+
     l.require(':')
     l.expect_eol()
 
-    menu = parse_menu(l, loc)
+    menu = parse_menu(l, loc, arguments)
 
     l.advance()
 

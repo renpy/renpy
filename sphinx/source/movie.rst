@@ -50,7 +50,9 @@ it. ::
 On mobile platforms, such as Android and iOS, hardware video decoding is
 used when :var:`config.hw_video` is True, the default. This is generally
 much faster, but the list of supported movie formats depends on the
-platform.
+platform. See for instance
+`Android's supported media formats <https://developer.android.com/guide/topics/media/media-formats>`_.
+A quick way to test if your videos are supported is to copy them to your target device and play them with its default video player.
 
 Movie Displayables and Movie Sprites
 ------------------------------------

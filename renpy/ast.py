@@ -1489,20 +1489,26 @@ class Menu(Node):
         'set',
         'with_',
         'has_caption',
+        'arguments',
+        'item_arguments',
         ]
 
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.has_caption = False
+        self.arguments = None
+        self.item_arguments = None
         return self
 
-    def __init__(self, loc, items, set, with_, has_caption):  # @ReservedAssignment
+    def __init__(self, loc, items, set, with_, has_caption, arguments, item_arguments):  # @ReservedAssignment
         super(Menu, self).__init__(loc)
 
         self.items = items
         self.set = set
         self.with_ = with_
         self.has_caption = has_caption
+        self.arguments = arguments
+        self.item_arguments = item_arguments
 
     def diff_info(self):
         return (Menu,)
@@ -1540,28 +1546,47 @@ class Menu(Node):
         else:
             statement_name("menu")
 
+        if self.arguments is not None:
+            args, kwargs = self.arguments.evaluate()
+        else:
+            args = kwargs = None
+
         choices = [ ]
         narration = [ ]
+        item_arguments = [ ]
 
         for i, (label, condition, block) in enumerate(self.items):
 
             if renpy.config.say_menu_text_filter:
                 label = renpy.config.say_menu_text_filter(label)
 
+            has_item = False
+
             if block is None:
                 if renpy.config.narrator_menu and label:
                     narration.append(label)
                 else:
                     choices.append((label, condition, None))
+                    has_item = True
+
             else:
                 choices.append((label, condition, i))
+                has_item = True
+
                 next_node(block[0])
+
+            if has_item:
+                if self.item_arguments and (self.item_arguments[i] is not None):
+                    item_arguments.append(self.item_arguments[i].evaluate())
+                else:
+                    item_arguments.append((tuple(), dict()))
 
         if narration:
             renpy.exports.say(None, "\n".join(narration), interact=False)
 
         say_menu_with(self.with_, renpy.game.interface.set_transition)
-        choice = renpy.exports.menu(choices, self.set)
+
+        choice = renpy.exports.menu(choices, self.set, args, kwargs, item_arguments)
 
         if choice is not None:
             next_node(self.items[choice][2][0])
@@ -1936,7 +1961,7 @@ def get_namespace(store):
 
 # Config variables that are set twice - once when the rpy is first loaded,
 # and then again at init time.
-EARLY_CONFIG = { "save_directory" }
+EARLY_CONFIG = { "save_directory", "allow_duplicate_labels" }
 
 define_statements = [ ]
 

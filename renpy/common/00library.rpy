@@ -29,6 +29,9 @@ init 9999:
 
 init -1700 python:
 
+    # Should we debug the equality operations?
+    config.debug_equality = False
+
     class DictEquality(object):
         """
         Declares two objects equal if their types are the same, and
@@ -36,13 +39,21 @@ init -1700 python:
         """
 
         def __eq__(self, o):
-            if self is o:
-                return True
 
-            if _type(self) is _type(o):
-                return (self.__dict__ == o.__dict__)
+            try:
+                if self is o:
+                    return True
 
-            return False
+                if _type(self) is _type(o):
+                    return (self.__dict__ == o.__dict__)
+
+                return False
+
+            except:
+                if config.debug_equality:
+                    raise
+
+                return False
 
     class FieldEquality(object):
         """
@@ -55,21 +66,32 @@ init -1700 python:
         identity_fields = [ ]
 
         def __eq__(self, o):
-            if self is o:
+
+            try:
+
+                if self is o:
+                    return True
+
+                if _type(self) is not _type(o):
+                    return False
+
+                for k in self.equality_fields:
+                    if self.__dict__[k] != o.__dict__[k]:
+                        return False
+
+                for k in self.identity_fields:
+                    if self.__dict__[k] is not o.__dict__[k]:
+                        return False
+
                 return True
 
-            if _type(self) is not _type(o):
+            except:
+
+                if config.debug_equality:
+                    raise
+
                 return False
 
-            for k in self.equality_fields:
-                if self.__dict__[k] != o.__dict__[k]:
-                    return False
-
-            for k in self.identity_fields:
-                if self.__dict__[k] is not o.__dict__[k]:
-                    return False
-
-            return True
 
 init -1700 python:
 

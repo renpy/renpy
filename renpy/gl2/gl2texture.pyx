@@ -26,7 +26,7 @@ from __future__ import print_function
 DEF ANGLE = False
 
 from uguugl cimport *
-from gldraw cimport *
+from gl2draw cimport *
 
 from sdl2 cimport *
 from pygame_sdl2 cimport *

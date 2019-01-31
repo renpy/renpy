@@ -221,6 +221,8 @@ init -1500 python:
 
             self.slideshow_delay = 5
 
+            self.slideshow = False
+
         def button(self, name):
             """
             :doc: gallery method

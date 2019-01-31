@@ -50,6 +50,8 @@ label add_file:
                 interface.error(_("The file already exists."), label=None)
                 continue
 
+            break
+
         try:
             os.makedirs(dir)
         except:

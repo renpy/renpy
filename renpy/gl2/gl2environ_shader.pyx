@@ -25,7 +25,7 @@ from __future__ import print_function
 DEF ANGLE = False
 
 from uguugl cimport *
-from gldraw cimport *
+from gl2draw cimport *
 
 cdef int round(double d):
     return <int> (d + .5)
@@ -605,7 +605,7 @@ cdef class ShaderEnviron(Environ):
         rv_y[0] = x * self.projection[1] + y * self.projection[5] + z * self.projection[9] + self.projection[13]
         rv_z[0] = x * self.projection[2] + y * self.projection[6] + z * self.projection[10] + self.projection[14]
 
-    cdef void set_clip(self, tuple clip_box, GLDraw draw):
+    cdef void set_clip(self, tuple clip_box, GL2Draw draw):
 
         cdef double minx, miny, maxx, maxy, z
         cdef double vwidth, vheight
@@ -673,7 +673,7 @@ cdef class ShaderEnviron(Environ):
 
         self.program = None
 
-    cdef void unset_clip(self, GLDraw draw):
+    cdef void unset_clip(self, GL2Draw draw):
 
         glDisable(GL_SCISSOR_TEST)
 

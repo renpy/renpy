@@ -1603,6 +1603,9 @@ class Interface(object):
         # rest of a mousepress after a longpress occurs.
         self.ignore_touch = False
 
+        # Should we clear the screenshot at the start of the next interaction?
+        self.clear_screenshot = False
+
         for layer in renpy.config.layers + renpy.config.top_layers:
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
@@ -1817,6 +1820,8 @@ class Interface(object):
         This is called after display init, but before the window is created.
         """
 
+        pygame.display.hint("SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS", "0")
+
         # Needed for Unity.
         wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
         os.environ[b'SDL_VIDEO_X11_WMCLASS'] = wmclass.encode("utf-8")
@@ -1914,6 +1919,7 @@ class Interface(object):
         draw_objects = { }
 
         def make_draw(name, mod, cls, *args):
+
             if name not in renderers:
                 return False
 
@@ -1936,8 +1942,8 @@ class Interface(object):
             has_angle = False
 
         make_draw("gl", "renpy.gl.gldraw", "GLDraw", not has_angle)
-        make_draw("gl2", "renpy.gl2.gldraw", "GLDraw", "gl2", False)
-        make_draw("gles2", "renpy.gl2.gldraw", "GLDraw", "gles2", True)
+        make_draw("gl2", "renpy.gl2.gl2draw", "GL2Draw", "gl2", False)
+        make_draw("gles2", "renpy.gl2.gl2draw", "GL2Draw", "gles2", True)
         make_draw("sw", "renpy.display.swdraw", "SWDraw")
 
         rv = [ ]
@@ -2102,6 +2108,8 @@ class Interface(object):
            If true, we're in a background thread. So queue the request
            until it can be handled by the main thread.
         """
+
+        self.clear_screenshot = False
 
         # Do nothing before the first interaction.
         if not self.started:
@@ -2602,9 +2610,6 @@ class Interface(object):
 
             not_shown = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown()  # @UndefinedVariable
 
-            if not self.old_text_rect or not_shown:
-                pygame.key.start_text_input()  # @UndefinedVariable
-
             if self.old_text_rect != self.text_rect:
                 x, y, w, h = self.text_rect
                 x0, y0 = renpy.display.draw.untranslate_point(x, y)
@@ -2612,6 +2617,9 @@ class Interface(object):
                 rect = (x0, y0, x1 - x0, y1 - y0)
 
                 pygame.key.set_text_input_rect(rect)  # @UndefinedVariable
+
+            if not self.old_text_rect or not_shown:
+                pygame.key.start_text_input()  # @UndefinedVariable
 
         else:
             if self.old_text_rect:
@@ -2640,6 +2648,11 @@ class Interface(object):
 
         if not self.started:
             self.start()
+
+        if self.clear_screenshot:
+            self.lose_screenshot()
+
+        self.clear_screenshot = False
 
         self.trans_pause = trans_pause
 
@@ -2700,9 +2713,6 @@ class Interface(object):
             if renpy.store._side_image_attributes_reset:
                 renpy.store._side_image_attributes = None
                 renpy.store._side_image_attributes_reset = False
-
-            if renpy.game.context().rollback:
-                self.lose_screenshot()
 
     def consider_gc(self):
         """

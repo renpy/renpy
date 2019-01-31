@@ -664,7 +664,7 @@ class ChoiceActionBase(Action):
 
     sensitive = True
 
-    def __init__(self, label, value, location=None, block_all=None, sensitive=True):
+    def __init__(self, label, value, location=None, block_all=None, sensitive=True, args=None, kwargs=None):
         self.label = label
         self.value = value
         self.location = location
@@ -682,6 +682,10 @@ class ChoiceActionBase(Action):
 
             if self.chosen is None:
                 self.chosen = renpy.game.persistent._chosen = { }
+
+        # The arguments passed to a menu choice.
+        self.args = args
+        self.kwargs = kwargs
 
     def get_sensitive(self):
         return (self.sensitive and

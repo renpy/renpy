@@ -281,13 +281,20 @@ python early in layeredimage:
 
             properties = { k : eval(v) for k, v in self.properties.items() }
 
+
             auto = properties.pop("auto", False)
             variant = properties.get("variant", None)
+            multiple = properties.pop("multiple", False)
 
             rv = [ ]
 
+            if multiple:
+                group = None
+            else:
+                group = self.group
+
             for i in self.children:
-                rv.extend(i.execute(group=self.group, properties=properties))
+                rv.extend(i.execute(group=group, properties=properties))
 
             if auto:
                 seen = set(i.raw_attribute for i in rv)
@@ -304,7 +311,7 @@ python early in layeredimage:
 
                         if len(attrs) == 1:
                             if attrs[0] not in seen:
-                                rv.append(Attribute(self.group, attrs[0], renpy.displayable(i), **properties))
+                                rv.append(Attribute(group, attrs[0], renpy.displayable(i), **properties))
 
             return rv
 
@@ -791,7 +798,7 @@ python early in layeredimage:
         if name in o.properties:
             l.error("Duplicate property " + name)
 
-        if name == "auto" or name == "default":
+        if name == "auto" or name == "default" or name == "multiple":
             expr = "True"
         else:
             expr = l.require(l.simple_expression)
@@ -904,7 +911,7 @@ python early in layeredimage:
         rv = RawAttributeGroup(image_name, group)
         parent.children.append(rv)
 
-        while parse_property(l, rv, [ "auto", "prefix", "variant" ] + LAYER_PROPERTIES):
+        while parse_property(l, rv, [ "auto", "prefix", "variant", "multiple" ] + LAYER_PROPERTIES):
             pass
 
         if l.match(':'):

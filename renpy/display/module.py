@@ -152,6 +152,23 @@ def map(src, dst, rmap, gmap, bmap, amap):  # @ReservedAssignment
                      *endian_order(dst, rmap, gmap, bmap, amap))
 
 
+def blur(src, wrk, dst, xrad, yrad=None):  # @ReservedAssignment
+    """
+    This blurs the source surface. It approximates a Gaussian blur
+    using several box blurs with box sizes based on the desired
+    standard deviation.
+
+    Unlike other operations, blur requires an additional surface
+    to use as a holding location for intermediate results. This
+    surface should not be expected to contain anything usable and
+    it's final state is not defined.
+
+    The surfaces must all be the same size and colour depth.
+    """
+
+    convert_and_call(_renpy.blur, src, wrk, dst, xrad, yrad)
+
+
 def twomap(src, dst, white, black):
     """
     Given colors for white and black, linearly maps things
