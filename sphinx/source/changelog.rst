@@ -2,7 +2,6 @@
 Full Changelog
 ==============
 
-
 .. _renpy-7.1.4:
 
 7.1.4
@@ -35,7 +34,7 @@ the choices become arguments to the items passed to the menu screen.
 Changes
 -------
 
-The new :ref:`im.Blur` image manipulator can blur an image. Thanks to
+The new :func:`im.Blur` image manipulator can blur an image. Thanks to
 Mal Graty for contributing it.
 
 LayeredImage groups now support a ``multiple`` property, which allows
