@@ -227,12 +227,12 @@ def unpause_all():
 
     RPS_unpause_all()
 
-def fadeout(channel, ms):
+def fadeout(channel, delay):
     """
-    Fades out `channel` over `ms` milliseconds.
+    Fades out `channel` over `delay` seconds.
     """
 
-    RPS_fadeout(channel, ms)
+    RPS_fadeout(channel, int(delay * 1000))
     check_error()
 
 def busy(channel):
@@ -301,10 +301,6 @@ def set_secondary_volume(channel, volume, delay):
     """
 
     RPS_set_secondary_volume(channel, volume, delay)
-    check_error()
-
-def set_end_event(channel, event):
-    RPS_set_endevent(channel, event)
     check_error()
 
 def get_volume(channel):
@@ -426,7 +422,3 @@ def sample_surfaces(rgb, rgba):
 
     RPS_sample_surfaces(rgb, rgba)
 
-
-def check_version(version):
-    if version < 2 or version > 4:
-        raise Exception("pysdlsound version mismatch.")
