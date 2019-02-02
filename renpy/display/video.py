@@ -262,6 +262,10 @@ class Movie(renpy.display.core.Displayable):
         defaults to `channel`\ _mask. (For example, if `channel` is "sprite",
         `mask_channel` defaults to "sprite_mask".)
 
+    `start_image`
+        An image that is displayed when playback has started, but the
+        first frame has not yet been decoded.
+
     `image`
         An image that is displayed when `play` has been given, but the
         file it refers to does not exist. (For example, this can be used
@@ -314,6 +318,7 @@ class Movie(renpy.display.core.Displayable):
     side_mask = False
 
     image = None
+    start_image = None
 
     play_callback = None
 
@@ -334,7 +339,7 @@ class Movie(renpy.display.core.Displayable):
 
         renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop)
 
-    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, **properties):
+    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, **properties):
         super(Movie, self).__init__(**properties)
 
         global auto_channel_serial
@@ -365,6 +370,7 @@ class Movie(renpy.display.core.Displayable):
         self.ensure_channel(self.mask_channel)
 
         self.image = renpy.easy.displayable_or_none(image)
+        self.start_image = renpy.easy.displayable_or_none(start_image)
 
         self.play_callback = play_callback
 
@@ -388,9 +394,7 @@ class Movie(renpy.display.core.Displayable):
 
         if (self.image is not None) and not_playing:
             surf = renpy.display.render.render(self.image, width, height, st, at)
-
             w, h = surf.get_size()
-
             rv = renpy.display.render.Render(w, h)
             rv.blit(surf, (0, 0))
 
@@ -400,11 +404,17 @@ class Movie(renpy.display.core.Displayable):
 
             tex, _ = get_movie_texture(self.channel, self.mask_channel, self.side_mask)
 
-            if playing and (tex is not None):
+            if (not not_playing) and (tex is not None):
                 width, height = tex.get_size()
 
                 rv = renpy.display.render.Render(width, height)
                 rv.blit(tex, (0, 0))
+
+            elif (not not_playing) and (self.start_image is not None):
+                surf = renpy.display.render.render(self.start_image, width, height, st, at)
+                w, h = surf.get_size()
+                rv = renpy.display.render.Render(w, h)
+                rv.blit(surf, (0, 0))
 
             else:
                 rv = renpy.display.render.Render(0, 0)
