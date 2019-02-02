@@ -469,6 +469,9 @@ class Movie(renpy.display.core.Displayable):
         displayable_channels[(self.channel, self.mask_channel)].append(self)
         renpy.display.render.redraw(self, 0)
 
+    def visit(self):
+        return [ self.image, self.start_image ]
+
 
 def playing():
     if renpy.audio.music.get_playing("movie"):
