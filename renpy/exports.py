@@ -874,6 +874,9 @@ def get_menu_args():
     (as a dict) passed to the current menu statement.
     """
 
+    if menu_args is None:
+        return tuple(), dict()
+
     return menu_args, menu_kwargs
 
 
