@@ -56,7 +56,7 @@ import pygame_sdl2
 
 from renpy.text.extras import ParameterizedText, filter_text_tags
 from renpy.text.font import register_sfont, register_mudgefont, register_bmfont
-from renpy.text.text import language_tailor
+from renpy.text.text import language_tailor, BASELINE
 from renpy.display.behavior import Keymap
 from renpy.display.behavior import run, run as run_action, run_unhovered, run_periodic
 from renpy.display.behavior import map_event, queue_event, clear_keymap_cache

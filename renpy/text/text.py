@@ -33,6 +33,8 @@ import renpy.text.extras as extras
 
 from _renpybidi import log2vis, WRTL, RTL, ON  # @UnresolvedImport
 
+BASELINE = -65536
+
 
 class Blit(object):
     """
@@ -718,6 +720,11 @@ class Layout(object):
         # per-outline basis.)
         sw, sh = size = (maxx + self.xborder, y + self.yborder)
         self.size = size
+
+        if all_glyphs:
+            self.baseline = all_glyphs[0].ascent
+        else:
+            self.baseline = 0
 
         # If we only care about the size, we're done.
         if size_only:
@@ -1728,6 +1735,21 @@ class Text(renpy.display.core.Displayable):
             self.kill_layout()
 
         super(Text, self).set_style_prefix(prefix, root)
+
+    def get_placement(self):
+
+        rv = super(Text, self).get_placement()
+
+        layout = self.get_virtual_layout()
+        if layout is None:
+            return rv
+
+        xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = rv
+
+        if yanchor != BASELINE:
+            return rv
+
+        return (xpos, ypos, xanchor, layout.baseline, xoffset, yoffset, subpixel)
 
     def focus(self, default=False):
         """
