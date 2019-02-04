@@ -34,6 +34,10 @@ the choices become arguments to the items passed to the menu screen.
 Changes
 -------
 
+When positioning a Text object, the :propref:`yanchor` property can be
+renpy.BASELINE. When it is, the anchor is set to the baseline of the
+first line of the text.
+
 The new :func:`im.Blur` image manipulator can blur an image. Thanks to
 Mal Graty for contributing it.
 

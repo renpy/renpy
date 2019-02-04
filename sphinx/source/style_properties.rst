@@ -270,6 +270,10 @@ or on the screen when not inside a layout.
     The position of the anchor relative to the top side of the
     displayable.
 
+    If the displayable is a :func:`Text`, then there is one special value
+    of this property. If the property is set to renpy.BASELINE, the anchor
+    is set to the baseline of the first line of text.
+
 .. style-property:: anchor tuple of (position, position)
 
     Equivalent to setting xanchor to the first component of the tuple,
