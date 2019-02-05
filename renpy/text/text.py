@@ -722,7 +722,7 @@ class Layout(object):
         self.size = size
 
         if all_glyphs:
-            self.baseline = all_glyphs[0].ascent
+            self.baseline = all_glyphs[0].y
         else:
             self.baseline = 0
 
