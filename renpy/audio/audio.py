@@ -980,11 +980,14 @@ def periodic_thread_main():
 
     while True:
         with periodic_condition:
+            if not run_periodic:
+                periodic_condition.wait(.05)
+
             if periodic_thread_quit:
                 return
 
             if not run_periodic:
-                periodic_condition.wait()
+                continue
 
             run_periodic = False
 
