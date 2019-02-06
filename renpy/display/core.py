@@ -3393,7 +3393,7 @@ class Interface(object):
 
                     # We seem to get a spurious event like this when leaving
                     # fullscreen mode on windows.
-                    if ev.w == 1 and ev.h == 1:
+                    if ev.w < 256 or ev.h < 256:
                         continue
 
                     size = (ev.w // self.dpi_scale, ev.h // self.dpi_scale)
