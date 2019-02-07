@@ -333,11 +333,30 @@ CTC (Click-To-Continue)
 
 If present, the ``ctc`` screen is displayed when dialogue has finished
 showing, to prompt the player to click to display more text. It may be
-given a single parameter.
+given a single parameter and multiple keyword arguments.
 
 `arg`
-    If the :func:`Character` object is given a `ctc` argument, it is passed
-    as the first positional argument to this screen.
+    The ctc displayable selected by the :func:`Character`. This is one of
+    the `ctc`, `ctc_pause`, or `ctc_timedpause` arguments to Character,
+    as appropriate. If no CTC is given to the Character, this argument is not passed at
+    all.
+
+In addition, there are several parameters that are only passed if the screen requires
+them.
+
+`ctc_kind`
+    The kind of CTC to display. One of "last" (for the last CTC on a line),
+    "pause", or "timedpause".
+
+`ctc_last`
+    The `ctc` argument to :func:`Character`.
+
+`ctc_pause`
+    The `ctc_pause` argument to :func:`Character`.
+
+`ctc_timedpause`
+    The `ctc_timedpause` argument to :func:`Character`.
+
 
 Here's a very simple ctc screen::
 

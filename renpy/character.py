@@ -341,8 +341,9 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 
 class SlowDone(object):
     delay = None
+    ctc_kwargs = { }
 
-    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay):  # @ReservedAssignment
+    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs):  # @ReservedAssignment
         self.ctc = ctc
         self.ctc_position = ctc_position
         self.callback = callback
@@ -350,6 +351,7 @@ class SlowDone(object):
         self.type = type
         self.cb_args = cb_args
         self.delay = delay
+        self.ctc_kwargs = ctc_kwargs
 
     def __call__(self):
 
@@ -360,7 +362,7 @@ class SlowDone(object):
             else:
                 args = [ ]
 
-            renpy.display.screen.show_screen("ctc", *args, _transient=True)
+            renpy.display.screen.show_screen("ctc", *args, _transient=True, _ignore_extra_kwargs=True, **self.ctc_kwargs)
             renpy.exports.restart_interaction()
 
         elif self.ctc and self.ctc_position == "fixed":
@@ -501,11 +503,21 @@ def display_say(
             # Figure out the CTC to use, if any.
             if last_pause:
                 what_ctc = ctc
+                ctc_kind = "last"
             else:
                 if delay is not None:
                     what_ctc = ctc_timedpause or ctc_pause
+                    ctc_kind = "timedpause"
                 else:
                     what_ctc = ctc_pause
+                    ctc_kind = "pause"
+
+            ctc_kwargs = {
+                "ctc_kind" : ctc_kind,
+                "ctc_last" : ctc,
+                "ctc_pause" : ctc_pause,
+                "ctc_timedpause" : ctc_timedpause,
+            }
 
             if not (interact or ctc_force):
                 what_ctc = None
@@ -524,7 +536,7 @@ def display_say(
                 c("show", interact=interact, type=type, **cb_args)
 
             # Create the callback that is called when the slow text is done.
-            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay)
+            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs)
 
             # Show the text.
             if multiple:
