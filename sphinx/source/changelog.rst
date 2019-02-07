@@ -34,6 +34,9 @@ the choices become arguments to the items passed to the menu screen.
 Changes
 -------
 
+The :ref:`ctc screen <ctc-screen` now takes a number of new parameters,
+if required.
+
 When positioning a Text object, the :propref:`yanchor` property can be
 renpy.BASELINE. When it is, the anchor is set to the baseline of the
 first line of the text.
@@ -53,7 +56,8 @@ The :var:`config.allow_duplicate_labels` variable can be defined or set in an
 init python block to allow duplicate labels to be defined in a game.
 
 The :func`Movie` displayable can now be told not to loop, and displays the
-associated static image when it stops looping.
+associated static image when it stops looping. It also can take an image
+that is displayed before the movie proper starts.
 
 
 Android Changes

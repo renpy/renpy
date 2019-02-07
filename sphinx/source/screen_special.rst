@@ -328,6 +328,8 @@ Here's a very simple skip indicator screen::
         text _("Skipping")
 
 
+.. _ctc-screen:
+
 CTC (Click-To-Continue)
 -----------------------
 
