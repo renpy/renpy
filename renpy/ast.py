@@ -137,7 +137,11 @@ class ParameterInfo(object):
 
         if self.extrakw:
             rv[self.extrakw] = values
-        elif values and not ignore_errors:
+
+        elif values.get("_ignore_extra_kwargs", False):
+            pass
+
+        elif values and (not ignore_errors):
             raise Exception("Unknown keyword arguments: %s" % ( ", ".join(values.keys())))
 
         return rv
