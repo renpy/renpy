@@ -427,15 +427,16 @@ init python:
                 pass
 
     class _CopyFile(Action):
-        def __init__(self, filename):
+        def __init__(self, filename, template):
             self.filename = filename
+            self.template = template
 
         def __call__(self):
             import pygame.scrap
 
             with open(self.filename, "rb") as f:
                 f.read(3) # skip the BOM.
-                s = u"[code]\n{}[/code]\n".format(f.read().decode("utf-8"))
+                s = self.template.format(f.read().decode("utf-8"))
 
             s = s.replace("\n", "\r\n")
             s = s.replace("\r\r", "\r")
@@ -532,9 +533,15 @@ screen _exception_actions(traceback_fn, tt, *args):
         action _EditFile(traceback_fn)
         hovered tt.action(_("Opens the traceback.txt file in a text editor."))
 
-    textbutton _("Copy"):
-        action _CopyFile(traceback_fn)
-        hovered tt.action(_("Copies the traceback.txt file to the clipboard."))
+    textbutton _("Copy BBCode"):
+        action _CopyFile(traceback_fn, u"[code]\n{}[/code]\n")
+        hovered tt.action(_("Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."))
+
+    textbutton __("Copy Markdown"):
+        action _CopyFile(traceback_fn, u"```\n{}```\n")
+        hovered tt.action(_("Copies the traceback.txt file to the clipboard as Markdown for Discord."))
+
+
 
 python early in _errorhandling:
 
@@ -665,9 +672,13 @@ screen _parse_errors:
                     action _EditFile(error_fn)
                     hovered tt.action(_("Opens the errors.txt file in a text editor."))
 
-                textbutton _("Copy"):
-                    action _CopyFile(error_fn)
-                    hovered tt.action(_("Copies the errors.txt file to the clipboard."))
+                textbutton _("Copy BBCode"):
+                    action _CopyFile(error_fn, u"[code]\n{}[/code]\n")
+                    hovered tt.action(_("Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."))
+
+                textbutton __("Copy Markdown"):
+                    action _CopyFile(error_fn, u"```\n{}```\n")
+                    hovered tt.action(_("Copies the errors.txt file to the clipboard as Markdown for Discord."))
 
                 vbox:
                     xfill True
