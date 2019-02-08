@@ -183,12 +183,12 @@ init label _errorhandling:
         yfill True
 
     style _button is _default:
-        ypadding gui._scale(2)
+        ypadding gui._scale(6)
 
     style _button_text is _default:
-        size gui._scale(26)
-        color "#405060"
-        hover_color "#048"
+        size gui._scale(22)
+        color "#468"
+        hover_color "#24c"
         insensitive_color "#00000020"
 
     style _small_button is _button
@@ -197,10 +197,13 @@ init label _errorhandling:
         size gui._scale(16)
 
     style _radio_button is _button:
-        selected_background Solid("#048", xsize=gui._scale(5), ysize=gui._scale(22), yalign=0.5)
+        selected_background Solid("#468", xsize=gui._scale(5), ysize=gui._scale(22), yalign=0.5)
+        selected_hover_background Solid("#24C", xsize=gui._scale(5), ysize=gui._scale(22), yalign=0.5)
         left_padding gui._scale(15)
+        ypadding gui._scale(2)
 
-    style _radio_button_text is _button_text
+    style _radio_button_text is _button_text:
+        size gui._scale(26)
 
     style _label is _default:
         top_margin gui._scale(10)
@@ -211,12 +214,12 @@ init label _errorhandling:
         kerning -1
 
     style _bar is _default:
-        left_bar "#048"
+        left_bar "#24C"
         right_bar "#b0b0b0"
         ysize gui._scale(20)
 
     style _vbar is _default:
-        bottom_bar "#048"
+        bottom_bar "#24C"
         top_bar "#b0b0b0"
         xsize gui._scale(20)
         bar_vertical True
@@ -238,8 +241,8 @@ init label _errorhandling:
         bar_invert True
 
     style _hyperlink is _default:
-        color "#405060"
-        hover_color Color("#048")
+        color "#468"
+        hover_color Color("#24C")
 
     return
 
