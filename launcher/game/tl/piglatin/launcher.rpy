@@ -29,7 +29,7 @@ translate piglatin strings:
     old "The file already exists."
     new "Hetay ilefay alreadyay existsay."
 
-    # add_file.rpy:59
+    # add_file.rpy:61
     old "# Ren'Py automatically loads all script files ending with .rpy. To use this\n# file, define a label and jump to it from another file.\n"
     new "# Enray'Ypay automaticallyay oadslay allay criptsay ilesfay endingay ithway .pyray. Otay useay histay\n# ilefay, efineday aay abellay anday umpjay otay itay omfray anotheray ilefay.\n"
 
@@ -441,7 +441,7 @@ translate piglatin strings:
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
     new "Enray'Ypay asway unableay otay unray ythonpay ithway kintertay otay oosechay hetay irectoryday. Leasepay installay hetay ythonpay-ktay oray kintertay ackagepay."
 
-    # choose_directory.rpy:104
+    # choose_directory.rpy:105
     old "The selected projects directory is not writable."
     new "Hetay electedsay rojectspay irectoryday isay otnay ritableway."
 
@@ -897,27 +897,35 @@ translate piglatin strings:
     old "ERROR"
     new "Rroreay"
 
-    # interface.rpy:419
+    # interface.rpy:393
+    old "While [what!q], an error occured:"
+    new "Hileway [what!q], anay erroray occureday:"
+
+    # interface.rpy:393
+    old "[exception!q]"
+    new "[exception!q]"
+
+    # interface.rpy:426
     old "Text input may not contain the {{ or [[ characters."
     new "Exttay inputay aymay otnay ontaincay hetay {{ oray [[ aracterschay."
 
-    # interface.rpy:424
+    # interface.rpy:431
     old "File and directory names may not contain / or \\."
     new "Ilefay anday irectoryday amesnay aymay otnay ontaincay / oray \\."
 
-    # interface.rpy:430
+    # interface.rpy:437
     old "File and directory names must consist of ASCII characters."
     new "Ilefay anday irectoryday amesnay ustmay onsistcay ofay Sciiaay aracterschay."
 
-    # interface.rpy:498
+    # interface.rpy:505
     old "PROCESSING"
     new "Rocessingpay"
 
-    # interface.rpy:515
+    # interface.rpy:522
     old "QUESTION"
     new "Uestionqay"
 
-    # interface.rpy:528
+    # interface.rpy:535
     old "CHOICE"
     new "Hoicecay"
 

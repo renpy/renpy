@@ -345,59 +345,59 @@ translate piglatin strings:
     old "Saved screenshot as %s."
     new "Avedsay creenshotsay asay %say."
 
-    # 00library.rpy:146
+    # 00library.rpy:168
     old "Self-voicing disabled."
     new "Elfsay-oicingvay isabledday."
 
-    # 00library.rpy:147
+    # 00library.rpy:169
     old "Clipboard voicing enabled. "
     new "Lipboardcay oicingvay enableday. "
 
-    # 00library.rpy:148
+    # 00library.rpy:170
     old "Self-voicing enabled. "
     new "Elfsay-oicingvay enableday. "
 
-    # 00library.rpy:150
+    # 00library.rpy:172
     old "bar"
     new "arbay"
 
-    # 00library.rpy:151
+    # 00library.rpy:173
     old "selected"
     new "electedsay"
 
-    # 00library.rpy:152
+    # 00library.rpy:174
     old "viewport"
     new "iewportvay"
 
-    # 00library.rpy:153
+    # 00library.rpy:175
     old "horizontal scroll"
     new "orizontalhay crollsay"
 
-    # 00library.rpy:154
+    # 00library.rpy:176
     old "vertical scroll"
     new "erticalvay crollsay"
 
-    # 00library.rpy:155
+    # 00library.rpy:177
     old "activate"
     new "activateay"
 
-    # 00library.rpy:156
+    # 00library.rpy:178
     old "deactivate"
     new "eactivateday"
 
-    # 00library.rpy:157
+    # 00library.rpy:179
     old "increase"
     new "increaseay"
 
-    # 00library.rpy:158
+    # 00library.rpy:180
     old "decrease"
     new "ecreaseday"
 
-    # 00library.rpy:193
+    # 00library.rpy:215
     old "Skip Mode"
     new "Kipsay Odemay"
 
-    # 00library.rpy:279
+    # 00library.rpy:301
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Histay rogrampay ontainscay eefray oftwaresay underay aay umbernay ofay icenseslay, includingay hetay Itmay Icenselay anday Nugay Esserlay Eneralgay Ublicpay Icenselay. Aay ompletecay istlay ofay oftwaresay, includingay inkslay otay ullfay ourcesay odecay, ancay ebay oundfay {a=https://www.renpy.org/l/license}erehay{/a}."
 
@@ -649,23 +649,23 @@ translate piglatin strings:
     old "Proceed"
     new "Roceedpay"
 
-    # 00gallery.rpy:585
+    # 00gallery.rpy:587
     old "Image [index] of [count] locked."
     new "Mageiay [index] ofay [count] ockedlay."
 
-    # 00gallery.rpy:605
+    # 00gallery.rpy:607
     old "prev"
     new "revpay"
 
-    # 00gallery.rpy:606
+    # 00gallery.rpy:608
     old "next"
     new "extnay"
 
-    # 00gallery.rpy:607
+    # 00gallery.rpy:609
     old "slideshow"
     new "ideshowslay"
 
-    # 00gallery.rpy:608
+    # 00gallery.rpy:610
     old "return"
     new "eturnray"
 
@@ -813,75 +813,87 @@ translate piglatin strings:
     old "Back (B)"
     new "Ackbay (Bay)"
 
-    # _errorhandling.rpym:531
+    # _errorhandling.rpym:535
     old "Open"
     new "Penoay"
 
-    # _errorhandling.rpym:533
+    # _errorhandling.rpym:537
     old "Opens the traceback.txt file in a text editor."
     new "Pensoay hetay acebacktray.xttay ilefay inay aay exttay editoray."
 
-    # _errorhandling.rpym:535
-    old "Copy"
-    new "Opycay"
+    # _errorhandling.rpym:539
+    old "Copy BBCode"
+    new "Opycay Bcodebay"
 
-    # _errorhandling.rpym:537
-    old "Copies the traceback.txt file to the clipboard."
-    new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay."
+    # _errorhandling.rpym:541
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay asay Bcodebay orfay orumsfay ikelay ttpshay://emmasoftlay.enairay.usay/."
 
-    # _errorhandling.rpym:564
+    # _errorhandling.rpym:543
+    old "Copy Markdown"
+    new "Opycay Arkdownmay"
+
+    # _errorhandling.rpym:545
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay asay Arkdownmay orfay Iscordday."
+
+    # _errorhandling.rpym:574
     old "An exception has occurred."
     new "Naay exceptionay ashay occurreday."
 
-    # _errorhandling.rpym:584
+    # _errorhandling.rpym:594
     old "Rollback"
     new "Ollbackray"
 
-    # _errorhandling.rpym:586
+    # _errorhandling.rpym:596
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "Ttemptsaay aay ollray ackbay otay aay riorpay imetay, allowingay ouyay otay avesay oray oosechay aay ifferentday oicechay."
 
-    # _errorhandling.rpym:589
+    # _errorhandling.rpym:599
     old "Ignore"
     new "Gnoreiay"
 
-    # _errorhandling.rpym:593
+    # _errorhandling.rpym:603
     old "Ignores the exception, allowing you to continue."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay."
 
-    # _errorhandling.rpym:595
+    # _errorhandling.rpym:605
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay. Histay oftenay eadslay otay additionalay errorsay."
 
-    # _errorhandling.rpym:599
+    # _errorhandling.rpym:609
     old "Reload"
     new "Eloadray"
 
-    # _errorhandling.rpym:601
+    # _errorhandling.rpym:611
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "Eloadsray hetay amegay omfray iskday, avingsay anday estoringray amegay atestay ifay ossiblepay."
 
-    # _errorhandling.rpym:604
+    # _errorhandling.rpym:614
     old "Console"
     new "Onsolecay"
 
-    # _errorhandling.rpym:606
+    # _errorhandling.rpym:616
     old "Opens a console to allow debugging the problem."
     new "Pensoay aay onsolecay otay alloway ebuggingday hetay roblempay."
 
-    # _errorhandling.rpym:616
+    # _errorhandling.rpym:626
     old "Quits the game."
     new "Uitsqay hetay amegay."
 
-    # _errorhandling.rpym:640
+    # _errorhandling.rpym:650
     old "Parsing the script failed."
     new "Arsingpay hetay criptsay ailedfay."
 
-    # _errorhandling.rpym:666
+    # _errorhandling.rpym:676
     old "Opens the errors.txt file in a text editor."
     new "Pensoay hetay errorsay.xttay ilefay inay aay exttay editoray."
 
-    # _errorhandling.rpym:670
-    old "Copies the errors.txt file to the clipboard."
-    new "Opiescay hetay errorsay.xttay ilefay otay hetay ipboardclay."
+    # _errorhandling.rpym:680
+    old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "Opiescay hetay errorsay.xttay ilefay otay hetay ipboardclay asay Bcodebay orfay orumsfay ikelay ttpshay://emmasoftlay.enairay.usay/."
+
+    # _errorhandling.rpym:684
+    old "Copies the errors.txt file to the clipboard as Markdown for Discord."
+    new "Opiescay hetay errorsay.xttay ilefay otay hetay ipboardclay asay Arkdownmay orfay Iscordday."
 
