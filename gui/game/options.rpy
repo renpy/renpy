@@ -67,6 +67,12 @@ define config.has_voice = True
 # define config.main_menu_music = "main-menu-theme.ogg"
 
 
+## Uncomment the following line to set a fadein for the main menu music 
+## when the main menu is shown.
+
+# define config.main_menu_music_fadein = 3
+
+
 ## Transitions #################################################################
 ##
 ## These variables set transitions that are used when certain events occur.
