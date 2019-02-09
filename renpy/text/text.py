@@ -385,6 +385,8 @@ class DisplayableSegment(object):
 
         self.hyperlink = ts.hyperlink
         self.cps = ts.cps
+        self.ruby_top = ts.ruby_top
+        self.ruby_bottom = ts.ruby_bottom
 
     def glyphs(self, s, layout):
 
@@ -402,7 +404,16 @@ class DisplayableSegment(object):
         if self.hyperlink:
             glyph.hyperlink = self.hyperlink
 
-        return [ glyph ]
+        rv = [ glyph ]
+
+        if self.ruby_bottom:
+            textsupport.mark_ruby_bottom(rv)
+        elif self.ruby_top == "alt":
+            textsupport.mark_altruby_top(rv)
+        elif self.ruby_top:
+            textsupport.mark_ruby_top(rv)
+
+        return rv
 
     def draw(self, glyphs, di, xo, yo, layout):
         glyph = glyphs[0]
