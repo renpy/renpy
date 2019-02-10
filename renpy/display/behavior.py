@@ -33,6 +33,12 @@ import pygame_sdl2 as pygame
 import math
 
 
+def get_clipboard():
+    return pygame.scrap.get(pygame.scrap.SCRAP_TEXT)
+
+def set_clipboard(text):
+    pygame.scrap.put(pygame.scrap.SCRAP_TEXT, text)
+
 def compile_event(key, keydown):
     """
     Compiles a keymap entry into a python expression.
@@ -1095,6 +1101,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
                  style='input',
                  allow=None,
                  exclude=None,
+                 allow_copypaste=False,
                  prefix="",
                  suffix="",
                  changed=None,
@@ -1121,6 +1128,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
         self.exclude = exclude
         self.prefix = prefix
         self.suffix = suffix
+        self.allow_copypaste = allow_copypaste
 
         self.changed = changed
 
@@ -1319,6 +1327,13 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             self.update_text(self.content, self.editable)
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
+
+        elif self.allow_copypaste and map_event(ev, "input_copy"):
+            set_clipboard(self.content)
+            raise renpy.display.core.IgnoreEvent()
+
+        elif self.allow_copypaste and map_event(ev, "input_paste"):
+            raw_text = get_clipboard()
 
         elif ev.type == pygame.TEXTEDITING:
             self.update_text(self.content, self.editable, check_size=True)
