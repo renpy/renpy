@@ -128,6 +128,8 @@ as of version 6.99 is as follows::
         input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
         input_home = [ 'K_HOME' ],
         input_end = [ 'K_END' ],
+        input_copy = [ 'ctrl_K_INSERT', 'ctrl_K_c' ],
+        input_paste = [ 'shift_K_INSERT', 'ctrl_K_v' ],
 
         # Viewport.
         viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],

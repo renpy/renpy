@@ -647,6 +647,10 @@ The input statement takes no parameters, and the following properties:
     A string containing characters that are disallowed from being
     typed into this input. (By default, "{}".)
 
+`allow_copypaste`
+    If True, it becomes possible to copy and paste
+    into this input. (By default, disabled.)
+
 `prefix`
     An immutable string to prepend to what the user has typed.
 
