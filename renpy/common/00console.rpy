@@ -763,7 +763,7 @@ screen _console:
                 else:
                     text "... " style "_console_prompt"
 
-                input default default style "_console_input_text" exclude "" allow_copypaste True
+                input default default style "_console_input_text" exclude "" copypaste True
 
 
     key "game_menu" action Jump("_console_return")

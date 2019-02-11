@@ -1101,7 +1101,6 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
                  style='input',
                  allow=None,
                  exclude=None,
-                 allow_copypaste=False,
                  prefix="",
                  suffix="",
                  changed=None,
@@ -1110,6 +1109,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
                  editable=True,
                  pixel_width=None,
                  value=None,
+                 copypaste=False,
                  **properties):
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
@@ -1128,7 +1128,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
         self.exclude = exclude
         self.prefix = prefix
         self.suffix = suffix
-        self.allow_copypaste = allow_copypaste
+        self.copypaste = copypaste
 
         self.changed = changed
 
@@ -1328,12 +1328,16 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
-        elif self.allow_copypaste and map_event(ev, "input_copy"):
+        elif self.copypaste and map_event(ev, "input_copy"):
             set_clipboard(self.content)
             raise renpy.display.core.IgnoreEvent()
 
-        elif self.allow_copypaste and map_event(ev, "input_paste"):
-            raw_text = get_clipboard()
+        elif self.copypaste and map_event(ev, "input_paste"):
+            text = get_clipboard()
+            raw_text = ""
+            for c in text:
+                if ord(c) >= 32:
+                    raw_text += c
 
         elif ev.type == pygame.TEXTEDITING:
             self.update_text(self.content, self.editable, check_size=True)
