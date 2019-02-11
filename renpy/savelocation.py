@@ -92,7 +92,7 @@ class FileLocation(object):
 
     def sync(self):
         """
-        Called to indicate that the filesystem was changed.
+        Called to indicate that the HOME filesystem was changed.
         """
 
         if renpy.emscripten:
