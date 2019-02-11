@@ -578,6 +578,7 @@ class Say(Node):
         'interact',
         'attributes',
         'arguments',
+        'temporary_attributes',
         ]
 
     def diff_info(self):
@@ -588,9 +589,10 @@ class Say(Node):
         self.attributes = None
         self.interact = True
         self.arguments = None
+        self.temporary_attributes = None
         return self
 
-    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None):
+    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None, temporary_attributes=None):
 
         super(Say, self).__init__(loc)
 
@@ -614,6 +616,9 @@ class Say(Node):
         # A tuple of attributes that are applied to the character that's
         # speaking, or None to disable this behavior.
         self.attributes = attributes
+
+        # Ditto for temporary attributes.
+        self.temporary_attributes = temporary_attributes
 
     def get_code(self, dialogue_filter=None):
         rv = [ ]
@@ -650,6 +655,7 @@ class Say(Node):
         try:
 
             renpy.game.context().say_attributes = self.attributes
+            renpy.game.context().temporary_attributes = self.temporary_attributes
 
             who = eval_who(self.who, self.who_fast)
 
@@ -683,10 +689,12 @@ class Say(Node):
 
         finally:
             renpy.game.context().say_attributes = None
+            renpy.game.context().temporary_attributes = None
 
     def predict(self):
 
         old_attributes = renpy.game.context().say_attributes
+        old_temporary_attributes = renpy.game.context().temporary_attributes
 
         try:
 
@@ -707,6 +715,7 @@ class Say(Node):
 
         finally:
             renpy.game.context().say_attributes = old_attributes
+            renpy.game.context().temporary_attributes = old_temporary_attributes
 
         return [ self.next ]
 

@@ -142,6 +142,8 @@ class Context(renpy.object.Object):
     come_from_name = None
     come_from_label = None
 
+    temporary_attributes = None
+
     def __repr__(self):
 
         if not self.current:
@@ -262,6 +264,7 @@ class Context(renpy.object.Object):
 
         # The attributes that are used by the current say statement.
         self.say_attributes = None
+        self.temporary_attributes = None
 
         # A list of lines that were run since the last time this log was
         # cleared.
