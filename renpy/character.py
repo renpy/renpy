@@ -852,14 +852,11 @@ class ADVCharacter(object):
             properties=self.properties,
             **self.show_args)
 
-    def resolve_say_attributes(self, predict, wanted=[], remove=[]):
+    def resolve_say_attributes(self, predict, attrs, wanted=[], remove=[], skip_trans=False):
         """
         Deals with image attributes associated with the current say
         statement.
         """
-
-        attrs = renpy.game.context().say_attributes
-        renpy.game.context().say_attributes = None
 
         if not (attrs or wanted or remove):
             return
@@ -872,8 +869,10 @@ class ADVCharacter(object):
 
         if attrs is None:
             attrs = ()
+        else:
+            attrs = tuple(attrs)
 
-        tagged_attrs = (self.image_tag,) + attrs
+        tagged_attrs = ( self.image_tag,) + attrs
         images = renpy.game.context().images
 
         layer = renpy.config.tag_layer.get(self.image_tag, "master")
@@ -895,19 +894,22 @@ class ADVCharacter(object):
                 images.predict_show(new_image)
 
             else:
+
                 trans = renpy.config.say_attribute_transition
                 layer = renpy.config.say_attribute_transition_layer
 
-                if (trans is not None) and (layer is not None):
-                    renpy.exports.with_statement(None)
+                if not skip_trans:
+                    if (trans is not None) and (layer is not None):
+                        renpy.exports.with_statement(None)
 
                 renpy.exports.show(show_image)
 
-                if trans is not None:
-                    if layer is None:
-                        renpy.exports.with_statement(trans)
-                    else:
-                        renpy.exports.transition(trans, layer=layer)
+                if not skip_trans:
+                    if trans is not None:
+                        if layer is None:
+                            renpy.exports.with_statement(trans)
+                        else:
+                            renpy.exports.transition(trans, layer=layer)
 
         else:
 
@@ -926,6 +928,80 @@ class ADVCharacter(object):
 
                 # Otherwise, just record the attributes of the image.
                 images.predict_show(layer, tagged_attrs, show=False)
+
+    def handle_say_attributes(self, predicting, interact):
+
+        attrs = renpy.game.context().say_attributes
+        renpy.game.context().say_attributes = None
+
+        temporary_attrs = renpy.game.context().temporary_attributes
+        renpy.game.context().say_attributes = None
+
+        if interact:
+            if renpy.config.speaking_attribute is not None:
+                speaking = [ renpy.config.speaking_attribute ]
+            else:
+                speaking = [ ]
+
+            if temporary_attrs:
+                temporary_attrs = list(temporary_attrs) + speaking
+            else:
+                temporary_attrs = [ ]
+
+        self.resolve_say_attributes(predicting, attrs, skip_trans=temporary_attrs)
+
+        # This is so late to give resolve_say_attributes time to do some
+        # error handling.
+        if not self.image_tag:
+            return None
+
+        images = renpy.game.context().images
+        rv = images.get_attributes(None, self.image_tag)
+
+        self.resolve_say_attributes(predicting, temporary_attrs)
+
+        return rv
+
+    def restore_say_attributes(self, predicting, attrs, interact):
+
+        if not attrs:
+            return
+
+        if not self.image_tag:
+            return
+
+        image_with_attrs = (self.image_tag,) + attrs
+
+        images = renpy.game.context().images
+
+        if attrs == images.get_attributes(None, self.image_tag):
+            return
+
+        if images.showing(None, (self.image_tag,)):
+
+            if not predicting:
+
+                trans = renpy.config.say_attribute_transition
+                layer = renpy.config.say_attribute_transition_layer
+
+                if interact:
+                    if (trans is not None) and (layer is not None):
+                        renpy.exports.with_statement(None)
+
+                renpy.exports.show(image_with_attrs)
+
+                if interact:
+                    if trans is not None:
+                        if layer is None:
+                            renpy.exports.with_statement(trans)
+                        else:
+                            renpy.exports.transition(trans, layer=layer)
+
+            else:
+                images.predict_show(None, image_with_attrs)
+
+        else:
+            images.predict_show(None, image_with_attrs, show=False)
 
     def __unicode__(self):
 
@@ -981,17 +1057,12 @@ class ADVCharacter(object):
 
         if multiple is None:
 
-            if interact and (renpy.config.speaking_attribute is not None):
-                speaking = [ renpy.config.speaking_attribute ]
-            else:
-                speaking = [ ]
-
-            self.resolve_say_attributes(False, wanted=speaking)
+            old_attrs = self.handle_say_attributes(False, interact)
 
             old_side_image_attributes = renpy.store._side_image_attributes
 
             if self.image_tag:
-                attrs = (self.image_tag,) + renpy.game.context().images.get_attributes("master", self.image_tag)
+                attrs = (self.image_tag,) + renpy.game.context().images.get_attributes(None, self.image_tag)
             else:
                 attrs = None
 
@@ -1067,10 +1138,11 @@ class ADVCharacter(object):
 
             if (multiple is None) and interact:
                 renpy.store._side_image_attributes = old_side_image_attributes
-
-                self.resolve_say_attributes(False, remove=speaking)
+                self.restore_say_attributes(False, old_attrs, interact)
 
     def predict(self, what):
+
+        attrs = self.handle_say_attributes(True, True)
 
         self.resolve_say_attributes(True)
 
@@ -1097,6 +1169,7 @@ class ADVCharacter(object):
 
         finally:
             renpy.store._side_image_attributes = old_side_image_attributes
+            self.restore_say_attributes(True, attrs, True)
 
     def will_interact(self):
 
