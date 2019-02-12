@@ -786,6 +786,9 @@ class ShownImageInfo(renpy.object.Object):
         layer.
         """
 
+        if layer is None:
+            layer = renpy.config.tag_layer.get(tag, "master")
+
         return self.attributes.get((layer, tag), default)
 
     def showing(self, layer, name, exact=False):
@@ -796,6 +799,9 @@ class ShownImageInfo(renpy.object.Object):
 
         tag = name[0]
         rest = name[1:]
+
+        if layer is None:
+            layer = renpy.config.tag_layer.get(tag, "master")
 
         if (layer, tag) not in self.shown:
             return None
@@ -855,6 +861,9 @@ class ShownImageInfo(renpy.object.Object):
         tag = name[0]
         rest = name[1:]
 
+        if layer is None:
+            layer = renpy.config.tag_layer.get(tag, "master")
+
         self.attributes[layer, tag] = rest
 
         if show:
@@ -862,6 +871,9 @@ class ShownImageInfo(renpy.object.Object):
 
     def predict_hide(self, layer, name):
         tag = name[0]
+
+        if layer is None:
+            layer = renpy.config.tag_layer.get(tag, "master")
 
         if (layer, tag) in self.attributes:
             del self.attributes[layer, tag]
@@ -875,6 +887,9 @@ class ShownImageInfo(renpy.object.Object):
         an exception if it's ambiguious, and returns None if an image
         with that name couldn't be found.
         """
+
+        if layer is None:
+            layer = renpy.config.tag_layer.get(tag, "master")
 
         # If the name matches one that exactly exists, return it.
         if (name in images) and not (wanted or remove):
