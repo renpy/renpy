@@ -34,7 +34,14 @@ the choices become arguments to the items passed to the menu screen.
 Changes
 -------
 
-The :ref:`ctc screen <ctc-screen` now takes a number of new parameters,
+The new ``window auto show`` and ``window auto hide`` statements
+allow :ref:`automatic dialogue window management <dialogue-window-management>`
+to continue while showing or hiding the dialogue window.
+
+The :ref:`renpy.force_autosave` function takes a new argument, that causes
+the autosave to block until it completes.
+
+The :ref:`ctc screen <ctc-screen>` now takes a number of new parameters,
 if required.
 
 When positioning a Text object, the :propref:`yanchor` property can be

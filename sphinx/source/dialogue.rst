@@ -236,6 +236,11 @@ non-dialogue interactions.
     (Only statements are considered, not statement equivalent
     functions.)
 
+``window auto hide``, ``window auto show``
+    These statements show or hide the window, with an optional transition,
+    like ``window show`` or ``window hide`` do. However, unlike those
+    statements, this keeps automatic management enabled.
+
 The ``window auto`` statement uses :var:`config.window_show_transition`
 and :var:`config.window_hide_transition` to show and hide the window,
 respectively. ``window auto`` is cancelled by ``window show`` and ``window hide``.
@@ -260,6 +265,13 @@ For example::
 
     scene bg washington  # the window is hidden before the scene change.
     with dissolve
+
+    window auto show     # Shows the window before it normally would be shown.
+
+    show eileen
+    with dissolve
+
+    "Without window auto show, the window would have been shown here."
 
 Dialogue window management is subject to the "show empty window"
 :func:`Preference`. If the preference is disabled, the statements above
