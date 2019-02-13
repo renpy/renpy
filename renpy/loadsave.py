@@ -504,7 +504,7 @@ def autosave():
 
 
 # This assumes a screenshot has already been taken.
-def force_autosave(take_screenshot=False):
+def force_autosave(take_screenshot=False, block=False):
     """
     :doc: other
 
@@ -513,7 +513,13 @@ def force_autosave(take_screenshot=False):
     `take_screenshot`
         If True, a new screenshot will be taken. If False, the existing
         screenshot will be used.
+
+    `block`
+        If True, blocks until the autosave completes.
     """
+
+    if renpy.game.after_rollback or renpy.exports.in_rollback():
+        return
 
     # That is, autosave is running.
     if not autosave_not_running.isSet():
@@ -525,6 +531,22 @@ def force_autosave(take_screenshot=False):
 
     # Do not save if we're in a replay.
     if renpy.store._in_replay:
+        return
+
+    if block:
+
+        if renpy.config.auto_save_extra_info:
+            extra_info = renpy.config.auto_save_extra_info()
+        else:
+            extra_info = ""
+
+        cycle_saves("auto-", renpy.config.autosave_slots)
+
+        if take_screenshot:
+            renpy.exports.take_screenshot()
+
+        save("auto-1", extra_info=extra_info)
+
         return
 
     autosave_not_running.clear()
