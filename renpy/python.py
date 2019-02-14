@@ -569,6 +569,22 @@ py_compile_cache = { }
 old_py_compile_cache = { }
 
 
+# Duplicated from ast.py to prevent a gc cycle.
+def fix_missing_locations(node, lineno, col_offset):
+    if 'lineno' in node._attributes:
+        if not hasattr(node, 'lineno'):
+            node.lineno = lineno
+        else:
+            lineno = node.lineno
+    if 'col_offset' in node._attributes:
+        if not hasattr(node, 'col_offset'):
+            node.col_offset = col_offset
+        else:
+            col_offset = node.col_offset
+    for child in ast.iter_child_nodes(node):
+        fix_missing_locations(child, lineno, col_offset)
+
+
 def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True):
     """
     Compiles the given source code using the supplied codegenerator.
@@ -649,7 +665,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         if mode == "hide":
             wrap_hide(tree)
 
-        ast.fix_missing_locations(tree)
+        fix_missing_locations(tree, 1, 0)
         ast.increment_lineno(tree, lineno - 1)
 
         line_offset = 0
@@ -1575,9 +1591,9 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                            and data == fwd_data
-                            and (keep_rollback or self.rolled_forward)
-                        ):
+                    and data == fwd_data
+                    and (keep_rollback or self.rolled_forward)
+                    ):
                     self.forward.pop(0)
                 else:
                     self.forward = [ ]
