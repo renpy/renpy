@@ -30,6 +30,26 @@ Menu arguments passed to the menu itself become arguments to the screen,
 except the `screen` argument which selects the screen. The arguments to
 the choices become arguments to the items passed to the menu screen.
 
+Temporary Say Attributes
+------------------------
+
+Ren'Py now supports temporary say attributes. Just like regular say
+attributes, these are included as part of the say statement. However,
+these temporary say attributes are reverted once the dialogue has
+finished. For example, in the script. ::
+
+    show eileen happy
+
+    e "I'm happy."
+
+    e @ vhappy "I'm really happy!"
+
+    e "I'm still happy."
+
+In the first line and last line of dialogues, Eileen is using her happy
+emotion. The vhappy emotion is shown before the second line of dialogue,
+and replaced with the previous emotion (happy in this case), before it.
+
 
 Changes
 -------
