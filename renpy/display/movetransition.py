@@ -488,7 +488,11 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
     use_old = old
 
-    def merge_slide(old, new):
+    def merge_slide(old, new, merge_slide):
+
+        # This function takes itself as an argument to prevent a reference
+        # loop that occurs when it refers to itself in the it's parent's
+        # scope.
 
         # If new does not have .layers or .scene_list, then we simply
         # insert a move from the old position to the new position, if
@@ -517,7 +521,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
                     and layer in layers
                         and f.scene_list is not None):
 
-                    f = merge_slide(old.layers[layer], new.layers[layer])
+                    f = merge_slide(old.layers[layer], new.layers[layer], merge_slide)
 
                 rv.layers[layer] = f
                 rv.add(f)
@@ -634,7 +638,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
         return rv
 
     # Call merge_slide to actually do the merging.
-    rv = merge_slide(old_widget, new_widget)
+    rv = merge_slide(old_widget, new_widget, merge_slide)
     rv.delay = delay
 
     return rv

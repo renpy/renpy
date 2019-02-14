@@ -3530,6 +3530,7 @@ class Interface(object):
             return False, e.value
 
         finally:
+
             renpy.game.context().say_attributes = None
 
             # Clean out the overlay layers.
