@@ -232,25 +232,29 @@ cdef class GLDraw:
         else:
             maximized = False
 
+
+        visible_w = info.current_w
+        visible_h = info.current_h
+
+        if renpy.windows and renpy.windows <= (6, 1):
+            visible_h -= 102
+
+        bounds = pygame.display.get_display_bounds(0)
+
+        renpy.display.log.write("primary display bounds: %r", bounds)
+
+        head_full_w = bounds[2]
+        head_w = bounds[2] - 102
+        head_h = bounds[3] - 102
+
+        # Figure out the default window size.
+        bound_w = min(vwidth, visible_w, head_w)
+        bound_h = min(vwidth, visible_h, head_h)
+
         if (not renpy.mobile) and (not maximized):
-
-            visible_w = info.current_w
-            visible_h = info.current_h
-
-            if renpy.windows and renpy.windows <= (6, 1):
-                visible_h -= 102
-
-            bounds = pygame.display.get_display_bounds(0)
-
-            renpy.display.log.write("primary display bounds: %r", bounds)
-
-            head_full_w = bounds[2]
-            head_w = bounds[2] - 102
-            head_h = bounds[3] - 102
 
             pwidth = min(visible_w, pwidth)
             pheight = min(visible_h, pheight)
-
 
             # The first time through.
             if not self.did_init:
@@ -435,6 +439,14 @@ cdef class GLDraw:
 
         self.environ.init()
         self.rtt.init()
+
+        if self.window.get_flags() & pygame.WINDOW_MAXIMIZED:
+            self.info["max_window_size"] = self.window.get_size()
+        else:
+            self.info["max_window_size"] = (
+                int(round(min(bound_h * virtual_ar, bound_w))),
+                int(round(min(bound_w / virtual_ar, bound_h))),
+                )
 
         return True
 
