@@ -355,19 +355,21 @@ class SlowDone(object):
 
     def __call__(self):
 
-        if self.interact and renpy.display.screen.has_screen("ctc"):
+        if self.interact and self.delay != 0:
 
-            if self.ctc:
-                args = [ self.ctc ]
-            else:
-                args = [ ]
+            if renpy.display.screen.has_screen("ctc"):
 
-            renpy.display.screen.show_screen("ctc", *args, _transient=True, _ignore_extra_kwargs=True, **self.ctc_kwargs)
-            renpy.exports.restart_interaction()
+                if self.ctc:
+                    args = [ self.ctc ]
+                else:
+                    args = [ ]
 
-        elif self.interact and self.ctc and self.ctc_position == "fixed":
-            renpy.display.screen.show_screen("_ctc", _transient=True, ctc=self.ctc)
-            renpy.exports.restart_interaction()
+                renpy.display.screen.show_screen("ctc", *args, _transient=True, _ignore_extra_kwargs=True, **self.ctc_kwargs)
+                renpy.exports.restart_interaction()
+
+            elif self.ctc and self.ctc_position == "fixed":
+                renpy.display.screen.show_screen("_ctc", _transient=True, ctc=self.ctc)
+                renpy.exports.restart_interaction()
 
         if self.delay is not None:
             renpy.ui.pausebehavior(self.delay, True, voice=True)
