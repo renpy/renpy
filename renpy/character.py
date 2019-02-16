@@ -355,7 +355,7 @@ class SlowDone(object):
 
     def __call__(self):
 
-        if renpy.display.screen.has_screen("ctc"):
+        if self.interact and renpy.display.screen.has_screen("ctc"):
 
             if self.ctc:
                 args = [ self.ctc ]
@@ -365,7 +365,7 @@ class SlowDone(object):
             renpy.display.screen.show_screen("ctc", *args, _transient=True, _ignore_extra_kwargs=True, **self.ctc_kwargs)
             renpy.exports.restart_interaction()
 
-        elif self.ctc and self.ctc_position == "fixed":
+        elif self.interact and self.ctc and self.ctc_position == "fixed":
             renpy.display.screen.show_screen("_ctc", _transient=True, ctc=self.ctc)
             renpy.exports.restart_interaction()
 
