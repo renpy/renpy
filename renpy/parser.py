@@ -1304,6 +1304,14 @@ class Lexer(object):
         process(self.subblock, '')
         return ''.join(rv)
 
+    def arguments(self):
+        """
+        Returns an Argument object if there is a list of arguments, or None
+        there is not one.
+        """
+
+        return parse_arguments(self)
+
 
 def parse_image_name(l, string=False, nodash=False):
     """

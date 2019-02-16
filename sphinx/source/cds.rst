@@ -48,6 +48,11 @@ The parse method takes a Lexer object:
         Matches any word, including keywords. Returns the text of the
         matched word.
 
+    .. method:: image_name_component():
+
+        Matches an image name component. Unlike a a word, and image name
+        component can begin with a number.
+
     .. method:: string()
 
         Matches a Ren'Py string.
@@ -61,9 +66,29 @@ The parse method takes a Lexer object:
         Matches a floating point number, returns a string containing the
         floating point number.
 
+    .. method:: label_name(declare=False)
+
+        Matches a label name, either absolute or relative. If `declare`
+        is true, then the global label name is set. (Note that this does not
+        actually declare the label - the statement is required to do that
+        by returning it from the `label` function.)
+
     .. method:: simple_expression()
 
         Matches a simple Python expression, returns it as a string.
+
+    .. method:: delimited_python(delim)
+
+        Matches a pythio expression that ends in a delimiter, often
+        ':' or '='.
+
+    .. method:: arguments()
+
+        Returns an object representing the arguments to a function
+        call. This object has an ``evaluate`` method on it that
+        takes an optional `scope` dictionary, and returns a tuple
+        in which the first component is a tuple of positional arguments,
+        and the second component is a dictionary of keyword arguments.
 
     .. method:: rest()
 
