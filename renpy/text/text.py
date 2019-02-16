@@ -339,7 +339,7 @@ class SpaceSegment(object):
         self.glyph = glyph = textsupport.Glyph()
 
         glyph.character = 0
-        glyph.ascent = 0
+        glyph.ascent = 1
         glyph.line_spacing = height
         glyph.advance = width
         glyph.width = width
@@ -357,6 +357,7 @@ class SpaceSegment(object):
 
     def draw(self, glyphs, di, xo, yo, layout):
         # Does nothing - since there's nothing to draw.
+
         return
 
     def assign_times(self, gt, glyphs):
