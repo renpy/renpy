@@ -117,6 +117,9 @@ to override those included with the game proper.
 Fixes
 ------
 
+A bug that could cause a transparent, black, or gray line to appear on
+the bottom line of a screen during a dissolve has been fixed.
+
 A regression in support for imagefonts has been fixed.
 
 Creating a new file from the navigation menu of the launcher now works.
