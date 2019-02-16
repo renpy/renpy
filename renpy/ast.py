@@ -678,6 +678,8 @@ class Say(Node):
                 args = tuple()
                 kwargs = dict()
 
+            kwargs.setdefault("interact", self.interact)
+
             if getattr(who, "record_say", True):
                 renpy.store._last_say_who = self.who
                 renpy.store._last_say_what = what
@@ -685,7 +687,7 @@ class Say(Node):
                 renpy.store._last_say_kwargs = kwargs
 
             say_menu_with(self.with_, renpy.game.interface.set_transition)
-            renpy.exports.say(who, what, interact=self.interact, *args, **kwargs)
+            renpy.exports.say(who, what, *args, **kwargs)
 
         finally:
             renpy.game.context().say_attributes = None
