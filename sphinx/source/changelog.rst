@@ -58,7 +58,16 @@ The new ``window auto show`` and ``window auto hide`` statements
 allow :ref:`automatic dialogue window management <dialogue-window-management>`
 to continue while showing or hiding the dialogue window.
 
-The :ref:`renpy.force_autosave` function takes a new argument, that causes
+:func:`Preference`("display", "window") now avoids creating a window bigger
+than the screen, and will be selected if the current window size is the
+maximum window size, if the size selected with :func:`gui.init` is bigger
+than the maximum window size.
+
+:ref:`Creator defined statements <cds>` now have a few more lexer methods available,
+making it possible to to parse arguments, image name components, labels, and
+delimited python.
+
+The :func:`renpy.force_autosave` function takes a new argument, that causes
 the autosave to block until it completes.
 
 The :ref:`ctc screen <ctc-screen>` now takes a number of new parameters,
