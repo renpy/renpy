@@ -39,6 +39,7 @@ import os.path
 import weakref
 import array
 import time
+import math
 
 cimport renpy.display.render as render
 cimport gltexture
@@ -1121,8 +1122,8 @@ cdef class GLDraw:
 
     def render_to_texture(self, what, alpha):
 
-        width = int(what.width * self.draw_per_virt)
-        height = int(what.height * self.draw_per_virt)
+        width = int(math.ceil(what.width * self.draw_per_virt))
+        height = int(math.ceil(what.height * self.draw_per_virt))
 
         def draw_func(x, y, w, h):
 
