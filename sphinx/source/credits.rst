@@ -130,6 +130,7 @@ the omission in future versions.
 * Sapphi
 * Scout
 * Sergey Musiyenko
+* Shayne Officer
 * Shehriyar Qureshi
 * Shiz
 * SleepKirby
