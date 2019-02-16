@@ -485,7 +485,8 @@ class Context(renpy.object.Object):
             if node.name == self.come_from_name:
                 self.come_from_name = None
                 node = self.call(self.come_from_label, return_site=node.name)
-                self.make_dynamic([ "_return" ])
+                self.make_dynamic([ "_return", "_begin_rollback" ])
+                renpy.store._begin_rollback = False
 
             this_node = node
             type_node_name = type(node).__name__
@@ -503,7 +504,10 @@ class Context(renpy.object.Object):
                 if ll_entry not in self.line_log:
                     self.line_log.append(ll_entry)
 
-            if first or self.force_checkpoint or (node.rollback == "force"):
+            if not renpy.store._begin_rollback:
+                update_rollback = False
+                force_rollback = False
+            elif first or self.force_checkpoint or (node.rollback == "force"):
                 update_rollback = True
                 force_rollback = True
             elif not renpy.config.all_nodes_rollback and (node.rollback == "never"):

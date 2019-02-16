@@ -47,6 +47,9 @@ _window_subtitle = ''
 # Should rollback be allowed?
 _rollback = True
 
+# Should beginning a new rollback be allowed?
+_begin_rollback = True
+
 # Should skipping be allowed?
 _skipping = True
 
