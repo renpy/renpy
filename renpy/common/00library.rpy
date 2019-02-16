@@ -154,8 +154,9 @@ init -1700 python:
         args = args + _last_say_args
         kw = dict(kwargs)
         kw.update(_last_say_kwargs)
+        kw.setdefault("interact", interact)
 
-        renpy.exports.say(who, what, interact=interact, *args, **kw)
+        renpy.exports.say(who, what, *args, **kw)
         store._last_say_what = what
 
     extend.record_say = False
