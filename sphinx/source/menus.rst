@@ -69,7 +69,46 @@ true. (However if, the :var:`config.menu_include_disabled` variable is set
 to True, it will be shown as a disabled button.)
 
 
-.. _menu-argument:
+.. _menu-set:
+
+Menu Set
+--------
+
+A menu can take a set clause, on a line by itself. If present, only items
+with captions that are not in the set are displayed as part of the menu.
+When an choice is selected, the caption of that choice can be added to the
+set.
+
+As with all menus, if no choices are available it advances to the statement
+after the menu.
+
+For historical reasons, the set can be either a set object or a list.
+
+::
+
+    default menuset = set()
+
+
+    menu chapter_1_places:
+
+        set menuset
+        "Where should I go?"
+
+        "Go to class.":
+            jump go_to_class
+
+        "Go to the bar.":
+            jump go_to_bar
+
+        "Go to jail.":
+            jump go_to_jal
+
+    menu chapter_1_after_places:
+
+        "Wow, that was one heck of a Tuesday."
+
+
+.. _menu-arguments:
 
 Menu Arguments
 --------------
@@ -96,5 +135,5 @@ Menu arguments passed to the menu itself become arguments to the screen,
 except the `screen` argument which selects the screen. The arguments to
 the choices become arguments to the items passed to the menu screen.
 
-See the documentation for :ref:`the choice screen <choice_screen>` and
+See the documentation for :ref:`the choice screen <choice-screen>` and
 :var:`config.menu_arguments_callback`.

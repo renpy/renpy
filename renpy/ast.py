@@ -137,7 +137,11 @@ class ParameterInfo(object):
 
         if self.extrakw:
             rv[self.extrakw] = values
-        elif values and not ignore_errors:
+
+        elif values.get("_ignore_extra_kwargs", False):
+            pass
+
+        elif values and (not ignore_errors):
             raise Exception("Unknown keyword arguments: %s" % ( ", ".join(values.keys())))
 
         return rv
@@ -574,6 +578,7 @@ class Say(Node):
         'interact',
         'attributes',
         'arguments',
+        'temporary_attributes',
         ]
 
     def diff_info(self):
@@ -584,9 +589,10 @@ class Say(Node):
         self.attributes = None
         self.interact = True
         self.arguments = None
+        self.temporary_attributes = None
         return self
 
-    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None):
+    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None, temporary_attributes=None):
 
         super(Say, self).__init__(loc)
 
@@ -610,6 +616,9 @@ class Say(Node):
         # A tuple of attributes that are applied to the character that's
         # speaking, or None to disable this behavior.
         self.attributes = attributes
+
+        # Ditto for temporary attributes.
+        self.temporary_attributes = temporary_attributes
 
     def get_code(self, dialogue_filter=None):
         rv = [ ]
@@ -646,6 +655,7 @@ class Say(Node):
         try:
 
             renpy.game.context().say_attributes = self.attributes
+            renpy.game.context().temporary_attributes = self.temporary_attributes
 
             who = eval_who(self.who, self.who_fast)
 
@@ -668,6 +678,8 @@ class Say(Node):
                 args = tuple()
                 kwargs = dict()
 
+            kwargs.setdefault("interact", self.interact)
+
             if getattr(who, "record_say", True):
                 renpy.store._last_say_who = self.who
                 renpy.store._last_say_what = what
@@ -675,14 +687,16 @@ class Say(Node):
                 renpy.store._last_say_kwargs = kwargs
 
             say_menu_with(self.with_, renpy.game.interface.set_transition)
-            renpy.exports.say(who, what, interact=self.interact, *args, **kwargs)
+            renpy.exports.say(who, what, *args, **kwargs)
 
         finally:
             renpy.game.context().say_attributes = None
+            renpy.game.context().temporary_attributes = None
 
     def predict(self):
 
         old_attributes = renpy.game.context().say_attributes
+        old_temporary_attributes = renpy.game.context().temporary_attributes
 
         try:
 
@@ -703,6 +717,7 @@ class Say(Node):
 
         finally:
             renpy.game.context().say_attributes = old_attributes
+            renpy.game.context().temporary_attributes = old_temporary_attributes
 
         return [ self.next ]
 

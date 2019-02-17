@@ -23,16 +23,32 @@ init -1500 python:
 
     @renpy.pure
     class __DisplayAction(Action, DictEquality):
+
+        factor = 1.0
+
         def __init__(self, factor):
-            self.width = int(factor * config.screen_width)
-            self.height = int(factor * config.screen_height)
+            self.factor = factor
+
+        def get_size(self):
+
+            w = int(self.factor * config.screen_width)
+            h = int(self.factor * config.screen_height)
+
+            rv = (w, h)
+
+            max_window_size = renpy.get_renderer_info().get("max_window_size", rv)
+
+            if w > max_window_size[0]:
+                rv = max_window_size
+
+            return rv
 
         def __call__(self):
-            renpy.set_physical_size((self.width, self.height))
+            renpy.set_physical_size(self.get_size())
             renpy.restart_interaction()
 
         def get_sensitive(self):
-            if self.width == config.screen_width and self.height == config.screen_height:
+            if self.factor == 1.0:
                 return True
 
             return renpy.get_renderer_info()["resizable"]
@@ -41,7 +57,7 @@ init -1500 python:
             if _preferences.fullscreen:
                 return False
 
-            return (self.width, self.height) == renpy.get_physical_size()
+            return self.get_size() == renpy.get_physical_size()
 
     _m1_00screen__DisplayAction = __DisplayAction
 

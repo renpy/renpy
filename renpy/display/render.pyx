@@ -688,7 +688,10 @@ cdef class Render:
         live_renders.append(self)
 
     def __repr__(self): #@DuplicatedSignature
-        return "<Render %x of %r>" % (id(self), self.render_of)
+        return "<{}Render {:x} of {!r}>".format(
+            ("dead " if self.cache_killed else ""),
+            id(self),
+            self.render_of)
 
     def __getstate__(self): #@DuplicatedSignature
         if renpy.config.developer:
@@ -1040,6 +1043,10 @@ cdef class Render:
 
             if not cache:
                 del render_cache[id_ro]
+
+        self.render_of = None
+        self.focuses = None
+        self.pass_focuses = None
 
     def kill(self):
         """

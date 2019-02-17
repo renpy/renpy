@@ -56,7 +56,7 @@ import pygame_sdl2
 
 from renpy.text.extras import ParameterizedText, filter_text_tags
 from renpy.text.font import register_sfont, register_mudgefont, register_bmfont
-from renpy.text.text import language_tailor
+from renpy.text.text import language_tailor, BASELINE
 from renpy.display.behavior import Keymap
 from renpy.display.behavior import run, run as run_action, run_unhovered, run_periodic
 from renpy.display.behavior import map_event, queue_event, clear_keymap_cache
@@ -873,6 +873,9 @@ def get_menu_args():
     Returns a tuple giving the arguments (as a tuple) and the keyword arguments
     (as a dict) passed to the current menu statement.
     """
+
+    if menu_args is None:
+        return tuple(), dict()
 
     return menu_args, menu_kwargs
 
@@ -3085,7 +3088,6 @@ def set_physical_size(size):
     renpy.game.preferences.fullscreen = False
 
     if get_renderer_info()["resizable"]:
-        renpy.display.draw.quit()
         renpy.display.interface.set_mode(size)
         renpy.display.interface.last_resize = size
 
@@ -3102,7 +3104,6 @@ def reset_physical_size():
     renpy.game.preferences.fullscreen = False
 
     if get_renderer_info()["resizable"]:
-        renpy.display.draw.quit()
         renpy.display.interface.set_mode((renpy.config.screen_width, renpy.config.screen_height))
 
 

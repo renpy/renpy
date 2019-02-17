@@ -48,12 +48,13 @@ the omission in future versions.
 * Duanemoody
 * Edward Betts
 * Edwin
+* Eevee (Lexy Munroe)
 * Eliza Velasquez
 * Emmanuel Marty
 * Emmeken
 * Enerccio
 * Eniko
-* Eevee (Lexy Munroe)
+* Eric Ahn
 * Evilantishad0w
 * Felix Lampe
 * Franck_v
@@ -90,6 +91,7 @@ the omission in future versions.
 * Lee Yunseok
 * Lore
 * Maissara Moustafa
+* Mal Graty
 * Marcel
 * Markus Koschany
 * Max le Fou
@@ -127,6 +129,8 @@ the omission in future versions.
 * Saltome
 * Sapphi
 * Scout
+* Sergey Musiyenko
+* Shayne Officer
 * Shehriyar Qureshi
 * Shiz
 * SleepKirby

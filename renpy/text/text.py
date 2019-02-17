@@ -33,6 +33,8 @@ import renpy.text.extras as extras
 
 from _renpybidi import log2vis, WRTL, RTL, ON  # @UnresolvedImport
 
+BASELINE = -65536
+
 
 class Blit(object):
     """
@@ -337,7 +339,7 @@ class SpaceSegment(object):
         self.glyph = glyph = textsupport.Glyph()
 
         glyph.character = 0
-        glyph.ascent = 0
+        glyph.ascent = 1
         glyph.line_spacing = height
         glyph.advance = width
         glyph.width = width
@@ -355,6 +357,7 @@ class SpaceSegment(object):
 
     def draw(self, glyphs, di, xo, yo, layout):
         # Does nothing - since there's nothing to draw.
+
         return
 
     def assign_times(self, gt, glyphs):
@@ -383,6 +386,8 @@ class DisplayableSegment(object):
 
         self.hyperlink = ts.hyperlink
         self.cps = ts.cps
+        self.ruby_top = ts.ruby_top
+        self.ruby_bottom = ts.ruby_bottom
 
     def glyphs(self, s, layout):
 
@@ -400,7 +405,16 @@ class DisplayableSegment(object):
         if self.hyperlink:
             glyph.hyperlink = self.hyperlink
 
-        return [ glyph ]
+        rv = [ glyph ]
+
+        if self.ruby_bottom:
+            textsupport.mark_ruby_bottom(rv)
+        elif self.ruby_top == "alt":
+            textsupport.mark_altruby_top(rv)
+        elif self.ruby_top:
+            textsupport.mark_ruby_top(rv)
+
+        return rv
 
     def draw(self, glyphs, di, xo, yo, layout):
         glyph = glyphs[0]
@@ -718,6 +732,11 @@ class Layout(object):
         # per-outline basis.)
         sw, sh = size = (maxx + self.xborder, y + self.yborder)
         self.size = size
+
+        if all_glyphs:
+            self.baseline = all_glyphs[0].y
+        else:
+            self.baseline = 0
 
         # If we only care about the size, we're done.
         if size_only:
@@ -1728,6 +1747,21 @@ class Text(renpy.display.core.Displayable):
             self.kill_layout()
 
         super(Text, self).set_style_prefix(prefix, root)
+
+    def get_placement(self):
+
+        rv = super(Text, self).get_placement()
+
+        layout = self.get_virtual_layout()
+        if layout is None:
+            return rv
+
+        xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = rv
+
+        if yanchor != BASELINE:
+            return rv
+
+        return (xpos, ypos, xanchor, layout.baseline, xoffset, yoffset, subpixel)
 
     def focus(self, default=False):
         """

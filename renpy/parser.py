@@ -1304,6 +1304,14 @@ class Lexer(object):
         process(self.subblock, '')
         return ''.join(rv)
 
+    def arguments(self):
+        """
+        Returns an Argument object if there is a list of arguments, or None
+        there is not one.
+        """
+
+        return parse_arguments(self)
+
 
 def parse_image_name(l, string=False, nodash=False):
     """
@@ -2555,7 +2563,7 @@ def style_statement(l, loc):
     return rv
 
 
-def finish_say(l, loc, who, what, attributes=None):
+def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None):
 
     if what is None:
         return None
@@ -2595,12 +2603,38 @@ def finish_say(l, loc, who, what, attributes=None):
             if i == "{clear}":
                 rv.append(ast.UserStatement(loc, "nvl clear", [ ]))
             else:
-                rv.append(ast.Say(loc, who, i, with_, attributes=attributes, interact=interact, arguments=arguments))
+                rv.append(ast.Say(loc, who, i, with_, attributes=attributes, interact=interact, arguments=arguments, temporary_attributes=temporary_attributes))
 
         return rv
 
     else:
-        return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact, arguments=arguments)
+        return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact, arguments=arguments, temporary_attributes=temporary_attributes)
+
+
+def say_attributes(l):
+    """
+    Returns a list of say attributes, or None if there aren't any.
+    """
+
+    attributes = [ ]
+    while True:
+        prefix = l.match(r'-')
+        if not prefix:
+            prefix = ""
+
+        component = l.image_name_component()
+
+        if component is None:
+            break
+
+        attributes.append(prefix + component)
+
+    if attributes:
+        attributes = tuple(attributes)
+    else:
+        attributes = None
+
+    return attributes
 
 
 @statement("")
@@ -2626,29 +2660,18 @@ def say_statement(l, loc):
     # Try for a two-argument say statement.
     who = l.say_expression()
 
-    attributes = [ ]
-    while True:
-        prefix = l.match(r'-')
-        if not prefix:
-            prefix = ""
+    attributes = say_attributes(l)
 
-        component = l.image_name_component()
-
-        if component is None:
-            break
-
-        attributes.append(prefix + component)
-
-    if attributes:
-        attributes = tuple(attributes)
+    if l.match(r'\@'):
+        temporary_attributes = say_attributes(l)
     else:
-        attributes = None
+        temporary_attributes = None
 
     what = l.triple_string() or l.string()
 
     if (who is not None) and (what is not None):
 
-        rv = finish_say(l, loc, who, what, attributes)
+        rv = finish_say(l, loc, who, what, attributes, temporary_attributes)
 
         l.expect_eol()
         l.expect_noblock('say statement')

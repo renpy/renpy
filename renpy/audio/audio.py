@@ -530,7 +530,7 @@ class Channel(object):
             if secs == 0:
                 renpysound.stop(self.number)
             else:
-                renpysound.fadeout(self.number, int(secs * 1000))
+                renpysound.fadeout(self.number, secs)
 
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False):
 
@@ -980,11 +980,14 @@ def periodic_thread_main():
 
     while True:
         with periodic_condition:
+            if not run_periodic:
+                periodic_condition.wait(.05)
+
             if periodic_thread_quit:
                 return
 
             if not run_periodic:
-                periodic_condition.wait()
+                continue
 
             run_periodic = False
 

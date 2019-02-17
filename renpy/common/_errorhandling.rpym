@@ -183,12 +183,12 @@ init label _errorhandling:
         yfill True
 
     style _button is _default:
-        ypadding gui._scale(2)
+        ypadding gui._scale(6)
 
     style _button_text is _default:
-        size gui._scale(26)
-        color "#405060"
-        hover_color "#048"
+        size gui._scale(22)
+        color "#468"
+        hover_color "#24c"
         insensitive_color "#00000020"
 
     style _small_button is _button
@@ -197,10 +197,13 @@ init label _errorhandling:
         size gui._scale(16)
 
     style _radio_button is _button:
-        selected_background Solid("#048", xsize=gui._scale(5), ysize=gui._scale(22), yalign=0.5)
+        selected_background Solid("#468", xsize=gui._scale(5), ysize=gui._scale(22), yalign=0.5)
+        selected_hover_background Solid("#24C", xsize=gui._scale(5), ysize=gui._scale(22), yalign=0.5)
         left_padding gui._scale(15)
+        ypadding gui._scale(2)
 
-    style _radio_button_text is _button_text
+    style _radio_button_text is _button_text:
+        size gui._scale(26)
 
     style _label is _default:
         top_margin gui._scale(10)
@@ -211,12 +214,12 @@ init label _errorhandling:
         kerning -1
 
     style _bar is _default:
-        left_bar "#048"
+        left_bar "#24C"
         right_bar "#b0b0b0"
         ysize gui._scale(20)
 
     style _vbar is _default:
-        bottom_bar "#048"
+        bottom_bar "#24C"
         top_bar "#b0b0b0"
         xsize gui._scale(20)
         bar_vertical True
@@ -238,8 +241,8 @@ init label _errorhandling:
         bar_invert True
 
     style _hyperlink is _default:
-        color "#405060"
-        hover_color Color("#048")
+        color "#468"
+        hover_color Color("#24C")
 
     return
 
@@ -427,15 +430,16 @@ init python:
                 pass
 
     class _CopyFile(Action):
-        def __init__(self, filename):
+        def __init__(self, filename, template):
             self.filename = filename
+            self.template = template
 
         def __call__(self):
             import pygame.scrap
 
             with open(self.filename, "rb") as f:
                 f.read(3) # skip the BOM.
-                s = u"[code]\n{}[/code]\n".format(f.read().decode("utf-8"))
+                s = self.template.format(f.read().decode("utf-8"))
 
             s = s.replace("\n", "\r\n")
             s = s.replace("\r\r", "\r")
@@ -532,9 +536,15 @@ screen _exception_actions(traceback_fn, tt, *args):
         action _EditFile(traceback_fn)
         hovered tt.action(_("Opens the traceback.txt file in a text editor."))
 
-    textbutton _("Copy"):
-        action _CopyFile(traceback_fn)
-        hovered tt.action(_("Copies the traceback.txt file to the clipboard."))
+    textbutton _("Copy BBCode"):
+        action _CopyFile(traceback_fn, u"[code]\n{}[/code]\n")
+        hovered tt.action(_("Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."))
+
+    textbutton __("Copy Markdown"):
+        action _CopyFile(traceback_fn, u"```\n{}```\n")
+        hovered tt.action(_("Copies the traceback.txt file to the clipboard as Markdown for Discord."))
+
+
 
 python early in _errorhandling:
 
@@ -665,9 +675,13 @@ screen _parse_errors:
                     action _EditFile(error_fn)
                     hovered tt.action(_("Opens the errors.txt file in a text editor."))
 
-                textbutton _("Copy"):
-                    action _CopyFile(error_fn)
-                    hovered tt.action(_("Copies the errors.txt file to the clipboard."))
+                textbutton _("Copy BBCode"):
+                    action _CopyFile(error_fn, u"[code]\n{}[/code]\n")
+                    hovered tt.action(_("Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."))
+
+                textbutton __("Copy Markdown"):
+                    action _CopyFile(error_fn, u"```\n{}```\n")
+                    hovered tt.action(_("Copies the errors.txt file to the clipboard as Markdown for Discord."))
 
                 vbox:
                     xfill True

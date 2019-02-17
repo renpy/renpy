@@ -2,7 +2,6 @@
 Full Changelog
 ==============
 
-
 .. _renpy-7.1.4:
 
 7.1.4
@@ -31,11 +30,54 @@ Menu arguments passed to the menu itself become arguments to the screen,
 except the `screen` argument which selects the screen. The arguments to
 the choices become arguments to the items passed to the menu screen.
 
+Temporary Say Attributes
+------------------------
+
+Ren'Py now supports temporary say attributes. Just like regular say
+attributes, these are included as part of the say statement. However,
+these temporary say attributes are reverted once the dialogue has
+finished. For example, in the script. ::
+
+    show eileen happy
+
+    e "I'm happy."
+
+    e @ vhappy "I'm really happy!"
+
+    e "I'm still happy."
+
+In the first line and last line of dialogues, Eileen is using her happy
+emotion. The vhappy emotion is shown before the second line of dialogue,
+and replaced with the previous emotion (happy in this case), before it.
+
 
 Changes
 -------
 
-The new :ref:`im.Blur` image manipulator can blur an image. Thanks to
+The new ``window auto show`` and ``window auto hide`` statements
+allow :ref:`automatic dialogue window management <dialogue-window-management>`
+to continue while showing or hiding the dialogue window.
+
+:func:`Preference`("display", "window") now avoids creating a window bigger
+than the screen, and will be selected if the current window size is the
+maximum window size, if the size selected with :func:`gui.init` is bigger
+than the maximum window size.
+
+:ref:`Creator defined statements <cds>` now have a few more lexer methods available,
+making it possible to to parse arguments, image name components, labels, and
+delimited python.
+
+The :func:`renpy.force_autosave` function takes a new argument, that causes
+the autosave to block until it completes.
+
+The :ref:`ctc screen <ctc-screen>` now takes a number of new parameters,
+if required.
+
+When positioning a Text object, the :propref:`yanchor` property can be
+renpy.BASELINE. When it is, the anchor is set to the baseline of the
+first line of the text.
+
+The new :func:`im.Blur` image manipulator can blur an image. Thanks to
 Mal Graty for contributing it.
 
 LayeredImage groups now support a ``multiple`` property, which allows
@@ -50,7 +92,8 @@ The :var:`config.allow_duplicate_labels` variable can be defined or set in an
 init python block to allow duplicate labels to be defined in a game.
 
 The :func`Movie` displayable can now be told not to loop, and displays the
-associated static image when it stops looping.
+associated static image when it stops looping. It also can take an image
+that is displayed before the movie proper starts.
 
 
 Android Changes
@@ -73,6 +116,9 @@ to override those included with the game proper.
 
 Fixes
 ------
+
+A bug that could cause a transparent, black, or gray line to appear on
+the bottom line of a screen during a dissolve has been fixed.
 
 A regression in support for imagefonts has been fixed.
 
