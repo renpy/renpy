@@ -734,7 +734,7 @@ class Layout(object):
         self.size = size
 
         if all_glyphs:
-            self.baseline = all_glyphs[0].y
+            self.baseline = all_glyphs[0].y + self.yoffset
         else:
             self.baseline = 0
 
