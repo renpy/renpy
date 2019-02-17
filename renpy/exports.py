@@ -2586,6 +2586,17 @@ class placement(renpy.python.RevertableObject):
         self.yoffset = p[5]
         self.subpixel = p[6]
 
+    @property
+    def pos(self):
+        return self.xpos, self.ypos
+
+    @property
+    def anchor(self):
+        return self.xanchor, self.yanchor
+
+    @property
+    def offset(self):
+        return self.xoffset, self.yoffset
 
 def get_placement(d):
     """
