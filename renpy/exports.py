@@ -516,20 +516,20 @@ def get_hidden_tags(layer='master'):
     return renpy.game.context().images.get_hidden_tags(layer)
 
 
-def get_attributes(tag, layer=None):
+def get_attributes(tag, layer=None, if_hidden=None):
     """
     :doc: image_func
 
     Return a tuple giving the image attributes for the image `tag`. If
     the image tag has not had any attributes associated since the last
-    time it was hidden, returns None.
+    time it was hidden, returns `if_hidden`.
 
     `layer`
         The layer to check. If None, uses the default layer for `tag`.
     """
 
     layer = default_layer(layer, tag)
-    return renpy.game.context().images.get_attributes(layer, tag, None)
+    return renpy.game.context().images.get_attributes(layer, tag, if_hidden)
 
 
 def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
