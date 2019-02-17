@@ -1103,6 +1103,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
                  editable=True,
                  pixel_width=None,
                  value=None,
+                 copypaste=False,
                  **properties):
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
@@ -1121,6 +1122,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
         self.exclude = exclude
         self.prefix = prefix
         self.suffix = suffix
+        self.copypaste = copypaste
 
         self.changed = changed
 
@@ -1319,6 +1321,17 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             self.update_text(self.content, self.editable)
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
+
+        elif self.copypaste and map_event(ev, "input_copy"):
+            pygame.scrap.put(pygame.scrap.SCRAP_TEXT, self.content)
+            raise renpy.display.core.IgnoreEvent()
+
+        elif self.copypaste and map_event(ev, "input_paste"):
+            text = pygame.scrap.get(pygame.scrap.SCRAP_TEXT)
+            raw_text = ""
+            for c in text:
+                if ord(c) >= 32:
+                    raw_text += c
 
         elif ev.type == pygame.TEXTEDITING:
             self.update_text(self.content, self.editable, check_size=True)
