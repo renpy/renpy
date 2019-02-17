@@ -144,6 +144,10 @@ def render_ready():
     global render_is_ready
     render_is_ready = 1
 
+# These are good until the next call to render.
+render_width = 0
+render_height = 0
+
 cpdef render(d, object widtho, object heighto, double st, double at):
     """
     :doc: udd_utility
@@ -166,6 +170,8 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     """
 
     global rendering
+    global render_width
+    global render_height
     global render_st
     global render_at
 
@@ -175,11 +181,15 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     cdef dict render_cache_d
     cdef Render rv
 
+
     if not render_is_ready:
         if renpy.config.developer:
             raise Exception("Displayables may not be rendered during the init phase.")
 
     orig_wh = (widtho, heighto, frame_time-st, frame_time-at)
+
+    render_width = widtho
+    render_height = heighto
 
     id_d = id(d)
     render_cache_d = render_cache[id_d]

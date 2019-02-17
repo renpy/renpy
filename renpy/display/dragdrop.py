@@ -47,11 +47,14 @@ def default_drag_group():
 
     return rv
 
+
 def default_drag_joined(drag):
     return [ (drag, 0, 0) ]
 
+
 def default_drop_allowable(drop, drags):
     return True
+
 
 class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     """
@@ -425,8 +428,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         if child is None:
             child = self.child
 
-        self.parent_width = width
-        self.parent_height = height
+        self.parent_width = renpy.display.render.render_width
+        self.parent_height = renpy.display.render.render_height
 
         cr = render(child, width, height, st, at)
         cw, ch = cr.get_size()
