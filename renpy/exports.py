@@ -2609,11 +2609,14 @@ def get_placement(d):
     This returns an object with the following fields, each corresponding to a style
     property:
 
+    * pos
     * xpos
-    * xanchor
-    * xoffset
     * ypos
+    * anchor
+    * xanchor
     * yanchor
+    * offset
+    * xoffset
     * yoffset
     * subpixel
 
