@@ -2586,6 +2586,17 @@ class placement(renpy.python.RevertableObject):
         self.yoffset = p[5]
         self.subpixel = p[6]
 
+    @property
+    def pos(self):
+        return self.xpos, self.ypos
+
+    @property
+    def anchor(self):
+        return self.xanchor, self.yanchor
+
+    @property
+    def offset(self):
+        return self.xoffset, self.yoffset
 
 def get_placement(d):
     """
@@ -2598,11 +2609,14 @@ def get_placement(d):
     This returns an object with the following fields, each corresponding to a style
     property:
 
+    * pos
     * xpos
-    * xanchor
-    * xoffset
     * ypos
+    * anchor
+    * xanchor
     * yanchor
+    * offset
+    * xoffset
     * yoffset
     * subpixel
 
