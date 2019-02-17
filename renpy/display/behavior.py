@@ -33,12 +33,6 @@ import pygame_sdl2 as pygame
 import math
 
 
-def get_clipboard():
-    return pygame.scrap.get(pygame.scrap.SCRAP_TEXT)
-
-def set_clipboard(text):
-    pygame.scrap.put(pygame.scrap.SCRAP_TEXT, text)
-
 def compile_event(key, keydown):
     """
     Compiles a keymap entry into a python expression.
@@ -1329,11 +1323,11 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             raise renpy.display.core.IgnoreEvent()
 
         elif self.copypaste and map_event(ev, "input_copy"):
-            set_clipboard(self.content)
+            pygame.scrap.put(pygame.scrap.SCRAP_TEXT, self.content)
             raise renpy.display.core.IgnoreEvent()
 
         elif self.copypaste and map_event(ev, "input_paste"):
-            text = get_clipboard()
+            text = pygame.scrap.get(pygame.scrap.SCRAP_TEXT)
             raw_text = ""
             for c in text:
                 if ord(c) >= 32:
