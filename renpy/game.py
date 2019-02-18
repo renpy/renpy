@@ -306,7 +306,6 @@ def call_in_new_context(label, *args, **kwargs):
     new context, and saving/loading will occur in the top level
     context.
 
-    This is used to begin a second interaction with the player
     Use this to begin a second interaction with the user while
     inside an interaction.
     """
