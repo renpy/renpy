@@ -181,7 +181,6 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     cdef dict render_cache_d
     cdef Render rv
 
-
     if not render_is_ready:
         if renpy.config.developer:
             raise Exception("Displayables may not be rendered during the init phase.")
