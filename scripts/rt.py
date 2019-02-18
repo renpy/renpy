@@ -72,7 +72,8 @@ def new_command(args):
         shutil.rmtree(p)
 
     shutil.copytree(RENPY / 'gui', p)
-    shutil.copy(RENPY / 'scripts/script.rpy', p / 'game/script.rpy')
+    shutil.copy(RENPY / 'scripts/rt/script.rpy', p / 'game')
+    shutil.copy(RENPY / 'scripts/rt/augustina.rpy', p / 'game')
 
     subprocess.call([
         RENPY / "run.sh",
@@ -90,6 +91,8 @@ def new_command(args):
     copy("tutorial/game/images/eileen *", "game/images")
     copy("tutorial/game/images/lucy *", "game/images")
     copy("tutorial/game/images/bg *", "game/images")
+    copy("scripts/rt/*.png", "game/images")
+
 
     (p / "project.json").unlink()
 
@@ -128,11 +131,9 @@ def main():
     sp.add_argument("name")
     sp.add_argument("--force", action='store_true')
 
-
     sp = asp.add_parser('run')
     sp.set_defaults(func=run_command)
     sp.add_argument("args", nargs=argparse.REMAINDER)
-
 
     args = ap.parse_args()
     args.func(args)
