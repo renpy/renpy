@@ -972,12 +972,14 @@ class ADVCharacter(object):
         if not self.image_tag:
             return
 
-        image_with_attrs = (self.image_tag,) + attrs
-
         images = renpy.game.context().images
 
-        if attrs == images.get_attributes(None, self.image_tag):
+        current_attrs = images.get_attributes(None, self.image_tag)
+
+        if attrs == current_attrs:
             return
+
+        image_with_attrs = (self.image_tag,) + attrs + tuple("-" + i for i in current_attrs if i not in attrs)
 
         if images.showing(None, (self.image_tag,)):
 
