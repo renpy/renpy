@@ -54,6 +54,10 @@ and replaced with the previous emotion (happy in this case), before it.
 Changes
 -------
 
+The :ref:`input <sl-input>` displayable now takes a new `copypaste`
+property, which when true allows copying with ctrl+C and pasting with
+ctrl+V. This is enabled in the console and launcher.
+
 The new ``window auto show`` and ``window auto hide`` statements
 allow :ref:`automatic dialogue window management <dialogue-window-management>`
 to continue while showing or hiding the dialogue window.
@@ -116,6 +120,9 @@ to override those included with the game proper.
 
 Fixes
 ------
+
+Size-changing properties like :ref:`xysize` now apply to a Drag and not
+the space it can move around in.
 
 A bug that could cause a transparent, black, or gray line to appear on
 the bottom line of a screen during a dissolve has been fixed.
