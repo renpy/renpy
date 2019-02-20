@@ -734,7 +734,7 @@ class Layout(object):
         self.size = size
 
         if all_glyphs:
-            self.baseline = all_glyphs[0].y
+            self.baseline = int(all_glyphs[0].y + self.yoffset)
         else:
             self.baseline = 0
 
@@ -831,6 +831,9 @@ class Layout(object):
     def scale_int(self, n):
         if n is None:
             return n
+
+        if isinstance(n, renpy.display.core.absolute):
+            return int(n)
 
         return int(round(n * self.oversample))
 
@@ -1752,16 +1755,17 @@ class Text(renpy.display.core.Displayable):
 
         rv = super(Text, self).get_placement()
 
-        layout = self.get_virtual_layout()
-        if layout is None:
+        if rv[3] != BASELINE:
             return rv
+
+        layout = self.get_layout()
+
+        if layout is None:
+            layout = self.size(return_layout=True)
 
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = rv
-
-        if yanchor != BASELINE:
-            return rv
-
-        return (xpos, ypos, xanchor, layout.baseline, xoffset, yoffset, subpixel)
+        rv = (xpos, ypos, xanchor, renpy.display.core.absolute(layout.baseline / layout.oversample), xoffset, yoffset, subpixel)
+        return rv
 
     def focus(self, default=False):
         """
@@ -1870,8 +1874,10 @@ class Text(renpy.display.core.Displayable):
 
                 return rv
 
-    def size(self, width=4096, height=4096, st=0, at=0):
+    def size(self, width=4096, height=4096, st=0, at=0, return_layout=False):
         """
+        :args: (width=4096, height=4096, st=0, at=0)
+
         Attempts to figure out the size of the text. The parameters are
         as for render.
 
@@ -1886,9 +1892,12 @@ class Text(renpy.display.core.Displayable):
         for i in self.displayables:
             renders[i] = renpy.display.render.render(i, width, self.style.size, st, at)
 
-        layout = Layout(self, width, height, renders, size_only=True)
+        layout = Layout(self, width, height, renders, size_only=True, drawable_res=True)
 
-        return layout.unscale_pair(*layout.size)
+        if return_layout:
+            return layout
+        else:
+            return layout.unscale_pair(*layout.size)
 
     def get_time(self):
         """
