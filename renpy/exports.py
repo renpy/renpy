@@ -2598,6 +2598,7 @@ class placement(renpy.python.RevertableObject):
     def offset(self):
         return self.xoffset, self.yoffset
 
+
 def get_placement(d):
     """
     :doc: image_func
@@ -3709,3 +3710,14 @@ def get_say_image_tag():
         return None
 
     return renpy.store._side_image_attributes[0]
+
+
+def is_skipping():
+    """
+    :doc: other
+
+    Returns True if Ren'Py is currently skipping (in fast or slow skip mode),
+    or False otherwise.
+    """
+
+    return not not renpy.config.skipping
