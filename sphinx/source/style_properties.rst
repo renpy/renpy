@@ -305,7 +305,7 @@ or on the screen when not inside a layout.
 
 .. style-property:: ycenter position
 
-    Equivalent to setting ypos to the value of tihis property, and
+    Equivalent to setting ypos to the value of this property, and
     yanchor to 0.5.
 
 .. style-property:: xoffset int
