@@ -966,9 +966,6 @@ class ADVCharacter(object):
 
     def restore_say_attributes(self, predicting, attrs, interact):
 
-        if not attrs:
-            return
-
         if not self.image_tag:
             return
 
