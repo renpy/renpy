@@ -1198,10 +1198,10 @@ class Layout(object):
                 dslist = [ dslist ]
 
             for dsx, dsy in dslist:
-                outlines.append((0, style.drop_shadow_color, self.scale_outline(dsx), self.scale_outline(dsy)))
+                outlines.append((0, style.drop_shadow_color, self.scale_int(dsx), self.scale_int(dsy)))
 
         for size, color, xo, yo in style_outlines:
-            outlines.append((self.scale_outline(size), color, self.scale_outline(xo), self.scale_outline(yo)))
+            outlines.append((self.scale_outline(size), color, self.scale_int(xo), self.scale_int(yo)))
 
         # The outline borders we reserve.
         left = 0
