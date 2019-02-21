@@ -84,6 +84,7 @@ text_property_names = [
     "min_width",
     "newline_indent",
     "outlines",
+    "outline_scaling",
     "rest_indent",
     "ruby_style",
     "slow_cps",

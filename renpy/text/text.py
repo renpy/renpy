@@ -498,11 +498,14 @@ class Layout(object):
             self.reverse = renpy.display.draw.draw_to_virt
             self.forward = renpy.display.draw.virt_to_draw
 
+            self.outline_step = text.style.outline_scaling != "linear"
+
         else:
 
             self.oversample = 1.0
             self.reverse = renpy.display.render.IDENTITY
             self.forward = renpy.display.render.IDENTITY
+            self.outline_step = True
 
         style = text.style
 
@@ -851,10 +854,25 @@ class Layout(object):
         if isinstance(n, renpy.display.core.absolute):
             return int(n)
 
-        if self.oversample < 1:
-            return n
+        if self.outline_step:
 
-        return n * int(self.oversample)
+            if self.oversample < 1:
+                return n
+
+            return n * int(self.oversample)
+
+        else:
+            if n == 0:
+                return 0
+
+            rv = round(n * self.oversample)
+
+            if n < 0 and rv > -1:
+                rv = -1
+            if n > 0 and rv < 1:
+                rv = 1
+
+            return rv
 
     def unscale_pair(self, x, y):
         return x / self.oversample, y / self.oversample
