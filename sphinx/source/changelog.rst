@@ -36,7 +36,7 @@ Temporary Say Attributes
 Ren'Py now supports temporary say attributes. Just like regular say
 attributes, these are included as part of the say statement. However,
 these temporary say attributes are reverted once the dialogue has
-finished. For example, in the script. ::
+finished. For example, in the script::
 
     show eileen happy
 
@@ -62,7 +62,7 @@ The new ``window auto show`` and ``window auto hide`` statements
 allow :ref:`automatic dialogue window management <dialogue-window-management>`
 to continue while showing or hiding the dialogue window.
 
-:func:`Preference`("display", "window") now avoids creating a window bigger
+:func:`Preference("display", "window")` now avoids creating a window bigger
 than the screen, and will be selected if the current window size is the
 maximum window size, if the size selected with :func:`gui.init` is bigger
 than the maximum window size.
@@ -95,7 +95,7 @@ shrinking a maximized window during a reload.
 The :var:`config.allow_duplicate_labels` variable can be defined or set in an
 init python block to allow duplicate labels to be defined in a game.
 
-The :func`Movie` displayable can now be told not to loop, and displays the
+The :func:`Movie` displayable can now be told not to loop, and displays the
 associated static image when it stops looping. It also can take an image
 that is displayed before the movie proper starts.
 
@@ -110,7 +110,7 @@ An explicit action is now given to the keyboard, to make sure the enter
 key works.
 
 Ren'Py now uses the Amazon payment APIs when sideloaded onto a device
-made by Amazon, allowing their payement system to be tested on a dual-store
+made by Amazon, allowing their payment system to be tested on a dual-store
 APK.
 
 
@@ -175,7 +175,7 @@ make it possible to set variables inside used screens.
 The new :var:`config.menu_include_disabled` variable determines if menus
 should include entries disabled by an if clause.
 
-Shift-keybindings (like shift+I and shift+R) now work in the android
+Shift-keybindings (like Shift+I and Shift+R) now work in the Android
 emulation mode.
 
 Ren'Py now better reports errors in text tags that require a value but are
@@ -302,7 +302,7 @@ the Google-set default of 1536 megabytes. To change this, edit
 rapt/project/gradle.properties. To make sure you're capable of building
 larger games, please make sure your computer has a 64-bit version of Java 8.
 
-Ren'Py explicitly tells Android to pass the enter key to an input.
+Ren'Py explicitly tells Android to pass the Enter key to an input.
 
 Ren'Py now crops and sizes the icon correctly for versions of Android below
 Android 8 (Oreo).
@@ -450,7 +450,7 @@ that shows the attributes associated with displayed and hidden images.
 Added :func:`renpy.transform_text`, a function to transform text without
 touching text tags or interpolation.
 
-Buttons created using the make_buttons method of a Gallery object now
+Buttons created using the ``make_buttons`` method of a Gallery object now
 inherit from the empty style, and not button. This prevents properties from
 the button style from causing problems.
 
@@ -513,7 +513,7 @@ Layered Images
 
 A :ref:`layered image <layered-images>` is a new way of defining images
 for use in Ren'Py. It's intended to be used with a sprite that has been
-created in Photoshop or some other program as a a series of layers.
+created in Photoshop or some other program as a series of layers.
 The layered image system can use the attributes the image was displayed
 with and Python conditions to determine what layers to display.
 
