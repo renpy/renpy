@@ -940,15 +940,13 @@ class ADVCharacter(object):
         renpy.game.context().say_attributes = None
 
         if interact:
-            if renpy.config.speaking_attribute is not None:
-                speaking = [ renpy.config.speaking_attribute ]
-            else:
-                speaking = [ ]
-
             if temporary_attrs:
-                temporary_attrs = list(temporary_attrs) + speaking
+                temporary_attrs = list(temporary_attrs)
             else:
                 temporary_attrs = [ ]
+
+            if renpy.config.speaking_attribute is not None:
+                temporary_attrs.insert(0, renpy.config.speaking_attribute)
 
         self.resolve_say_attributes(predicting, attrs, skip_trans=temporary_attrs)
 

@@ -900,17 +900,18 @@ class ShownImageInfo(renpy.object.Object):
 
         nametag = name[0]
 
-        # The set of attributes a matching image must have.
-        required = set(name[1:])
-
         # The set of attributes a matching image may have.
         optional = set(wanted) | set(self.attributes.get((layer, tag), [ ]))
 
-        # Deal with banned attributes..
+        # The set of attributes a matching image must have/not have.
+        # Evaluated in order.
+        required = set()
         for i in name[1:]:
             if i[0] == "-":
                 optional.discard(i[1:])
-                required.discard(i)
+                required.discard(i[1:])
+            else:
+                required.add(i)
 
         for i in remove:
             optional.discard(i)
