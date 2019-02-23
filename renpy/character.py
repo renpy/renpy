@@ -945,8 +945,10 @@ class ADVCharacter(object):
             else:
                 temporary_attrs = [ ]
 
+            # Prepend speaking_attribute, if present. This allows it to
+            # be suppressed by a negative temporary_attr, if desired.
             if renpy.config.speaking_attribute is not None:
-                temporary_attrs.append(renpy.config.speaking_attribute)
+                temporary_attrs.insert(0, renpy.config.speaking_attribute)
 
         self.resolve_say_attributes(predicting, attrs, skip_trans=temporary_attrs)
 
