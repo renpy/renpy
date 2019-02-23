@@ -956,21 +956,25 @@ class ADVCharacter(object):
             return None
 
         images = renpy.game.context().images
-        rv = images.get_attributes(None, self.image_tag)
+        attrs = images.get_attributes(None, self.image_tag)
 
         self.resolve_say_attributes(predicting, temporary_attrs)
 
-        return rv
+        return (attrs, images)
 
-    def restore_say_attributes(self, predicting, attrs, interact):
+    def restore_say_attributes(self, predicting, state, interact):
 
-        if attrs is None:
+        if state is None:
             return
+
+        attrs, images = state
 
         if not self.image_tag:
             return
 
-        images = renpy.game.context().images
+        # This is False when the context changes.
+        if images is not renpy.game.context().images:
+            return
 
         current_attrs = images.get_attributes(None, self.image_tag)
 
@@ -1059,7 +1063,7 @@ class ADVCharacter(object):
 
         if multiple is None:
 
-            old_attrs = self.handle_say_attributes(False, interact)
+            old_attr_state = self.handle_say_attributes(False, interact)
 
             old_side_image_attributes = renpy.store._side_image_attributes
 
@@ -1140,13 +1144,11 @@ class ADVCharacter(object):
 
             if (multiple is None) and interact:
                 renpy.store._side_image_attributes = old_side_image_attributes
-                self.restore_say_attributes(False, old_attrs, interact)
+                self.restore_say_attributes(False, old_attr_state, interact)
 
     def predict(self, what):
 
-        attrs = self.handle_say_attributes(True, True)
-
-        self.resolve_say_attributes(True)
+        old_attr_state = self.handle_say_attributes(True, True)
 
         if renpy.config.speaking_attribute is not None:
             self.resolve_say_attributes(True, wanted=[ renpy.config.speaking_attribute ])
@@ -1171,7 +1173,7 @@ class ADVCharacter(object):
 
         finally:
             renpy.store._side_image_attributes = old_side_image_attributes
-            self.restore_say_attributes(True, attrs, True)
+            self.restore_say_attributes(True, old_attr_state, True)
 
     def will_interact(self):
 
