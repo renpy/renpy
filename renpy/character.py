@@ -946,13 +946,16 @@ class ADVCharacter(object):
                 temporary_attrs = [ ]
 
             if renpy.config.speaking_attribute is not None:
-                temporary_attrs.insert(0, renpy.config.speaking_attribute)
+                temporary_attrs.append(renpy.config.speaking_attribute)
 
         self.resolve_say_attributes(predicting, attrs, skip_trans=temporary_attrs)
 
         # This is so late to give resolve_say_attributes time to do some
         # error handling.
         if not self.image_tag:
+            return None
+
+        if not temporary_attrs:
             return None
 
         images = renpy.game.context().images
