@@ -827,7 +827,12 @@ class UseParser(Parser):
 
     def parse(self, loc, l, parent):
 
-        target = l.require(l.word)
+        if l.keyword('expression'):
+            target = l.require(l.simple_expression)
+            l.keyword('pass')
+        else:
+            target = l.require(l.word)
+
         args = renpy.parser.parse_arguments(l)
 
         if l.keyword('id'):
