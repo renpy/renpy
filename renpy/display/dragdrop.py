@@ -189,6 +189,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
          The width and height of the Drag's child, in pixels.
     """
 
+    z = 0
+
     focusable = True
 
     drag_group = None
@@ -302,6 +304,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         # Did we move over the course of this drag?
         self.drag_moved = False
 
+        # A z index that's changed when something is raised or lowered.
+        self.z = 0
+
         if replaces is not None:
             self.x = replaces.x
             self.y = replaces.y
@@ -319,6 +324,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.last_drop = replaces.last_drop
             self.mouse_drop = replaces.mouse_drop
             self.click_time = replaces.click_time
+            self.z = replaces.z
 
         if d is not None:
             self.add(d)
@@ -759,6 +765,9 @@ class DragGroup(renpy.display.layout.MultiBox):
         overlap so that drop will be allow.
     """
 
+    z_serial = 0
+    sorted = False
+
     _list_type = renpy.python.RevertableList
 
     def __unicode__(self):
@@ -775,12 +784,16 @@ class DragGroup(renpy.display.layout.MultiBox):
 
         super(DragGroup, self).__init__(**properties)
 
+        self.sorted = False
+
         if replaces is not None:
             self.positions = renpy.python.RevertableDict(replaces.positions)
             self.sensitive = replaces.sensitive
+            self.z_serial = replaces.z_serial
         else:
             self.positions = renpy.python.RevertableDict()
             self.sensitive = True
+            self.z_serial = 0
 
         for i in children:
             self.add(i)
@@ -798,6 +811,8 @@ class DragGroup(renpy.display.layout.MultiBox):
         child.drag_group = self
         super(DragGroup, self).add(child)
 
+        self.sorted = False
+
     def remove(self, child):
         """
         :doc: drag_drop method
@@ -810,6 +825,14 @@ class DragGroup(renpy.display.layout.MultiBox):
 
         child.x = None
         super(DragGroup, self).remove(child)
+
+    def render(self, width, height, st, at):
+
+        if not self.sorted:
+            self.children.sort(key=lambda i : i.z)
+            self.sorted = True
+
+        return super(DragGroup, self).render(width, height, st, at)
 
     def event(self, ev, x, y, st):
 
@@ -824,32 +847,13 @@ class DragGroup(renpy.display.layout.MultiBox):
         order given in l for those children.
         """
 
-        s = set(l)
+        self.sorted = False
 
-        offset_map = { }
+        for i in l:
+            self.z_serial += 1
+            i.z = self.z_serial
 
-        children = [ ]
-        offsets = [ ]
-
-        for i, c in enumerate(self.children):
-            if i < len(self.offsets):
-                o = self.offsets[i]
-            else:
-                o = (0, 0)
-
-            if c not in s:
-                children.append(c)
-                offsets.append(o)
-            else:
-                offset_map[c] = o
-
-        for c in l:
-            if c in offset_map:
-                children.append(c)
-                offsets.append(offset_map[c])
-
-        self.children = self._list_type(children)
-        self.offsets = self._list_type(offsets)
+        renpy.display.render.redraw(self, 0)
 
     def lower_children(self, l):
         """
@@ -857,13 +861,13 @@ class DragGroup(renpy.display.layout.MultiBox):
         the one at the bottom being the lowest.
         """
 
-        self.children.reverse()
-        self.offsets.reverse()
+        self.sorted = False
 
-        self.raise_children(l)
+        for i in l:
+            self.z_serial += 1
+            i.z = -self.z_serial
 
-        self.children.reverse()
-        self.offsets.reverse()
+        renpy.display.render.redraw(self, 0)
 
     def get_best_drop(self, joined):
         """
