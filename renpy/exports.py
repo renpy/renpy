@@ -1376,13 +1376,31 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     """
     :doc: other
-    :args: (delay=None)
+    :args: (delay=None, hard=False)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
 
     `delay`
         If given, the number of seconds Ren'Py should pause for.
+
+    `hard`
+        This must be given as a keyword argument. When True, Ren'Py may prevent
+        the user from clicking to interrupt the pause. If the player enables
+        skipping, the hard pause will be skipped. There may be other circumstances
+        where the hard pause ends early or prevents Ren'Py from operating properly,
+        these will not be treated as bugs.
+
+        In general, using hard pauses is rude. When the user clicks to advance
+        the game, it's an explicit request - the user wishes the game to advance.
+        To override that request is to assume you understand what the player
+        wants more than the player does.
+
+        Calling renpy.pause guarantees that whatever is on the screen will be
+        displayed for at least one frame, and hence has been shown to the
+        player.
+
+        tl;dr - Don't use renpy.pause with hard=True.
     """
 
     if checkpoint is None:
