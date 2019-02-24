@@ -1376,27 +1376,13 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     """
     :doc: other
+    :args: (delay=None)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
 
     `delay`
         If given, the number of seconds Ren'Py should pause for.
-
-    `music`
-        Retained for compatibility purposes.
-
-    `with_none`
-        Determines if a with None clause is executed at the end of the pause.
-
-    `hard`
-        If true, a click will not interrupt the pause. Use this sparingly,
-        as it's hard to distinguish a hard pause from a crashing game.
-
-    `checkpoint`
-        If true, a checkpoint will be set, and players will be able to roll
-        back to this statement. If false, no checkpoint will be set. If None,
-        a checkpoint will only be set if delay is set.
     """
 
     if checkpoint is None:
