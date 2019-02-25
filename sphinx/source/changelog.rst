@@ -51,16 +51,49 @@ emotion. The vhappy emotion is shown before the second line of dialogue,
 and replaced with the previous emotion (happy in this case), before it.
 
 
-Changes
--------
+Text
+-----
 
-The :ref:`input <sl-input>` displayable now takes a new `copypaste`
-property, which when true allows copying with ctrl+C and pasting with
-ctrl+V. This is enabled in the console and launcher.
+There have been a number of text changes that affect text when a window
+is scaled to a non-default size:
+
+* The text is now aligned on it's baseline, rather than at the top of
+  the text. This is relevant when an absolute outline offset is
+  used.
+
+* It is now possible to choose how the outline scales when the window
+  is scaled. This is done with the :propref:`outline_scaling` style
+  property.
+
+When positioning a Text object, the :propref:`yanchor` property can be
+renpy.BASELINE. When it is, the anchor is set to the baseline of the
+first line of the text.
+
+Statements
+----------
 
 The new ``window auto show`` and ``window auto hide`` statements
 allow :ref:`automatic dialogue window management <dialogue-window-management>`
 to continue while showing or hiding the dialogue window.
+
+The ``show screen`` and ``hide screen`` statements now take a with
+clause, that works the same way it does with ``show`` and ``hide``.
+
+The screen language ``use`` statement now can take an ``expression``
+clause, that makes it take an expression rather than a literal screen
+name. This allows a variable to be used when selecting the screen that
+is included. See :ref:`sl-use` for more details.
+
+
+Changes
+-------
+
+The new :func:`renpy.is_skipping` function reports if Ren'Py is currently
+skipping.
+
+The :ref:`input <sl-input>` displayable now takes a new `copypaste`
+property, which when true allows copying with ctrl+C and pasting with
+ctrl+V. This is enabled in the console and launcher.
 
 :func:`Preference("display", "window")` now avoids creating a window bigger
 than the screen, and will be selected if the current window size is the
@@ -76,10 +109,6 @@ the autosave to block until it completes.
 
 The :ref:`ctc screen <ctc-screen>` now takes a number of new parameters,
 if required.
-
-When positioning a Text object, the :propref:`yanchor` property can be
-renpy.BASELINE. When it is, the anchor is set to the baseline of the
-first line of the text.
 
 The new :func:`im.Blur` image manipulator can blur an image. Thanks to
 Mal Graty for contributing it.
@@ -98,6 +127,9 @@ init python block to allow duplicate labels to be defined in a game.
 The :func:`Movie` displayable can now be told not to loop, and displays the
 associated static image when it stops looping. It also can take an image
 that is displayed before the movie proper starts.
+
+
+
 
 
 Android Changes
@@ -120,6 +152,17 @@ to override those included with the game proper.
 
 Fixes
 ------
+
+A bug preventing Ren'Py from displaying zero or negative-width
+characters (such as certain diacritics) has been fixed.
+
+An issue that prevented Ren'Py from updating a displayable that was
+added to a screen with transform properties has been fixed.
+
+The order of drags within a drag group is now preserved when an
+interaction restart occurs.
+
+
 
 Size-changing properties like :ref:`xysize` now apply to a Drag and not
 the space it can move around in.
