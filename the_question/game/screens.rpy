@@ -799,10 +799,14 @@ screen preferences():
                     style_prefix "radio"
                     label _("Language")
 
-                    textbutton "English" text_font "DejaVuSans.ttf"action Language(None)
-                    textbutton "Français" text_font "DejaVuSans.ttf"action Language("french")
+                    textbutton "English" text_font "DejaVuSans.ttf" action Language(None)
+                    textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
-                    textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf"action Language("malay")
+                    textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
+                    textbutton "한국어" text_font "../../launcher/game/fonts/NanumGothic.ttf" action Language("korean")
+                    textbutton "简体中文" text_font "../../launcher/game/fonts/SourceHanSans-Light-Lite.ttf" action Language("simplified_chinese")
+                    textbutton "繁體中文" text_font "../../launcher/game/fonts/SourceHanSans-Light-Lite.ttf" action Language("traditional_chinese")
+                    textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
 
 #end language_picker
 
@@ -960,17 +964,21 @@ screen history():
 
                     label h.who:
                         style "history_name"
+                        substitute False
 
                         ## Take the color of the who text from the Character, if
                         ## set.
                         if "color" in h.who_args:
                             text_color h.who_args["color"]
 
-                text h.what
+                $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
+                text what:
+                    substitute False
 
         if not _history_list:
             label _("The dialogue history is empty.")
 
+define gui.history_allow_tags = set()
 
 style history_window is empty
 
