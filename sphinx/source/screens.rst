@@ -1690,6 +1690,32 @@ is transfered from old to new.
         pause
         return
 
+Instead of the name of the screen, the keyword ``expression`` can be
+given, followed by an expression giving the name of the screen to use.
+If parameters are required, the ``pass`` keyword must be given to separate
+them from the expression.
+
+::
+
+    screen ed(num):
+        text "Ed"
+        text "Captain"
+
+    screen kelly(num):
+        text "Kelly"
+        text "First Officer"
+
+    screen bortus(num):
+        text "Bortus"
+        text "Second Officer"
+
+    screen crew():
+        hbox:
+            for i, member in enumerate(party):
+                vbox:
+                    use member.screen pass (i+1)
+
+
 Use and Transclude
 ^^^^^^^^^^^^^^^^^^
 
@@ -1856,17 +1882,24 @@ hidden. This allows them to be used for overlay purposes.
         show rare_screen nopredict
 
 
+The ``show screen`` statement takes a with clause, which is interpreted in the
+same way that the with clause of a ``show`` statement is. ::
+
+    show screen clock_screen with dissolve
+
 Hide Screen
 -----------
 
 The ``hide screen`` statement is used to hide a screen that is currently
-being shown. If the screen is not being shown, nothing happens.
+being shown. If the screen is not being shown, nothing happens. The with
+clause is interpreted the same way the ``with`` clause of a show statement
+is.
 
 ::
 
+    hide screen rare_screen
+    hide screen clock_screen with dissolve
     hide screen overlay_screen
-    hide screen clock
-
 
 Call Screen
 -----------

@@ -128,10 +128,6 @@ The :func:`Movie` displayable can now be told not to loop, and displays the
 associated static image when it stops looping. It also can take an image
 that is displayed before the movie proper starts.
 
-
-
-
-
 Android Changes
 ---------------
 
@@ -148,7 +144,6 @@ APK.
 
 Ren'Py will now allow files in the public game directory (/mnt/sdcard/Android/`package`/files/game)
 to override those included with the game proper.
-
 
 Fixes
 ------
