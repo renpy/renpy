@@ -1713,7 +1713,7 @@ them from the expression.
         hbox:
             for i, member in enumerate(party):
                 vbox:
-                    use member.screen pass (i+1)
+                    use expression member.screen pass (i + 1)
 
 
 Use and Transclude
