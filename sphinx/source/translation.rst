@@ -290,7 +290,7 @@ language, to translate the Ren'Py user interface. ::
          old "Start Game"
          new "Artstay Amegay"
 
-Translating substitutions
+Translating Substitutions
 -------------------------
 
 String substitutions can be translated using the ``!t`` conversion
@@ -306,7 +306,7 @@ the dialogue and string translation systems::
 
 .. _extract-merge-translations:
 
-Extracting and merging string translations
+Extracting and Merging String Translations
 ------------------------------------------
 
 String translations can be extracted from one project, and moved to
@@ -327,8 +327,8 @@ Replace existing translations
 
 Reverse languages
     Reverses the strings before merging. This can be used, for example,
-    to use a set of english -> russian translations to create a
-    russian -> english translation.
+    to use a set of English -> Russian translations to create a
+    Russian -> English translation.
 
 Image and File Translations
 ===========================
