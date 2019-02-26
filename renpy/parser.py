@@ -1190,7 +1190,7 @@ class Lexer(object):
         if not text:
             return None
 
-        return renpy.ast.PyExpr(self.text[start:self.pos].strip(), self.filename, self.number)
+        return renpy.ast.PyExpr(text, self.filename, self.number)
 
     def comma_expression(self):
         """
