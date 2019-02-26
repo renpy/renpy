@@ -283,10 +283,30 @@ def invalidate(d):
         redraw(d, 0)
 
 
+def check_redraws():
+    """
+    Returns true if a redraw is required, and False otherwise.
+    """
+
+    redraw_queue.sort()
+
+    now = renpy.display.core.get_time()
+
+    for when, d in redraw_queue:
+
+        id_d = id(d)
+
+        if id_d not in render_cache:
+            continue
+
+        if when <= now:
+            return True
+
+    return False
+
 def process_redraws():
     """
-    Called to determine if any redraws are pending. Returns true if we
-    need to redraw the screen now, false otherwise.
+    Removes any pending redraws from the redraw queue.
     """
 
     global redraw_queue
