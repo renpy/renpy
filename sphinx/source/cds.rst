@@ -24,9 +24,42 @@ The parse method takes a Lexer object:
 
 .. class:: Lexer
 
+    .. method:: error(msg)
+
+        Adds a `msg` (with the current position) in the list of detected
+        parsing errors. This interrupts the parsing of the current statement,
+        but does not prevent further parsing.
+
+    .. method:: require(thing, name=None)
+
+        Tries to parse `thing`, and reports an error if it cannot be done.
+
+        If `thing` is a string, tries to parse it using :func:`match`.
+        Otherwise, thing must be a other method on this lexer object,
+        which is called without arguments. If `name` is not specified,
+        the name of the method will be used in the message
+        (or `thing` if it's a string), otherwise the `name` will be used.
+
     .. method:: eol()
 
         True if the lexer is at the end of the line.
+
+    .. method:: expect_eol()
+
+        If we are not at the end of the line, raise an error.
+
+
+    .. method:: expect_noblock(stmt)
+
+        Called to indicate this statement does not expect a block.
+        If a block is found, raises an error. `stmt` should be a string,
+        it will be added to the message with an error.
+
+    .. method:: expect_block(stmt)
+
+        Called to indicate that the statement requires that a non-empty
+        block is present. `stmt` should be a string, it will be added
+        to the message with an error.
 
     .. method:: match(re)
 
@@ -35,7 +68,8 @@ The parse method takes a Lexer object:
         All of the statements in the lexer that match things are implemented
         in terms of this function. They first skip whitespace, then attempt
         to match against the line. If the match succeeds, the matched text
-        is returned. Otherwise, None is returned.
+        is returned. Otherwise, None is returned, and the state of the lexer
+        is unchanged.
 
     .. method:: keyword(s)
 
@@ -86,7 +120,9 @@ The parse method takes a Lexer object:
 
     .. method:: arguments()
 
-        Returns an object representing the arguments to a function
+        This must be called before the parentheses with the arguments list,
+        if they are not specified returns None, otherwise
+        returns an object representing the arguments to a function
         call. This object has an ``evaluate`` method on it that
         takes an optional `scope` dictionary, and returns a tuple
         in which the first component is a tuple of positional arguments,
@@ -113,7 +149,9 @@ The parse method takes a Lexer object:
     .. method:: advance()
 
         In a subblock lexer, advances to the next line. This must be called
-        before the first line, so the first line can be parsed.
+        before the first line, so the first line can be parsed. Returns True
+        if we've successfully advanced to a line in the block, or False
+        if we have advanced beyond all lines in the block.
 
 
 Lint Utility Functions
