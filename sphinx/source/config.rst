@@ -1013,8 +1013,8 @@ Rarely or Internally Used
 .. var:: config.help = "README.html"
 
     This controls the functionality of the help system invoked by the
-    help button on the main and game menus, or by pressing f1 or
-    command-?.
+    help button on the main and game menus, or by pressing F1 or
+    Command-?.
 
     If None, the help system is disabled and does not show up on
     menus.  If a string corresponding to a label found in the script,
@@ -1259,9 +1259,9 @@ Rarely or Internally Used
 
 .. var:: config.rollback_side_size = .2
 
-	If the rollback side is enabled, the fraction of of the screen on the
-	rollback side that, when clicked or touched, causes a rollback to
-	occur.
+    If the rollback side is enabled, the fraction of of the screen on the
+    rollback side that, when clicked or touched, causes a rollback to
+    occur.
 
 .. var:: config.say_allow_dismiss = None
 

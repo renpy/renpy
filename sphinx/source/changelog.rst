@@ -58,7 +58,7 @@ Text
 There have been a number of text changes that affect text when a window
 is scaled to a non-default size:
 
-* The text is now aligned on it's baseline, rather than at the top of
+* The text is now aligned on its baseline, rather than at the top of
   the text. This is relevant when an absolute outline offset is
   used.
 

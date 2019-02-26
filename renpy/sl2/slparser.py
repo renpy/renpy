@@ -448,25 +448,25 @@ def register_sl_displayable(*args, **kwargs):
 
         Adds a positional argument with `name`
 
-    .. method:: add_property(name):
+    .. method:: add_property(name)
 
         Adds a property with `name`. Properties are passed as keyword
         arguments.
 
-    .. method:: add_style_property(name):
+    .. method:: add_style_property(name)
 
         Adds a family of properties, ending with `name` and prefixed with
         the various style property prefixes. For example, if called with
         ("size"), this will define size, idle_size, hover_size, etc.
 
-    .. method:: add_prefix_style_property(prefix, name):
+    .. method:: add_prefix_style_property(prefix, name)
 
         Adds a family of properties with names consisting of `prefix`,
         a style property prefix, and `name`. For example, if called
         with a prefix of `text_` and a name of `size`, this will
         create text_size, text_idle_size, text_hover_size, etc.
 
-    .. method:: add_property_group(group, prefix=''):
+    .. method:: add_property_group(group, prefix='')
 
         Adds a group of properties, prefixed with `prefix`. `Group` may
         be one of the strings:

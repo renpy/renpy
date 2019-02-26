@@ -24,7 +24,7 @@ Parameter List
 ==============
 
 For best performance, all screens should be defined with a parameter list.
-When a screen doesn't take parameters, it should be define with an empty
+When a screen doesn't take parameters, it should be defined with an empty
 parameter list. The screen::
 
     screen test():
@@ -40,7 +40,7 @@ is faster than::
                 text "[i]"
 
 When a screen is defined without a parameter list, any name used in that
-screen can be redefined when the screen is show. This requires Ren'Py to be
+screen can be redefined when the screen is shown. This requires Ren'Py to be
 more conservative when analyzing the screen, which can limit the optimization
 it performs.
 
@@ -55,7 +55,7 @@ There are two ways Ren'Py automatically predicts screens:
 
 * Ren'Py will predict screens shown by the ``show screen`` and ``call screen``
   statements.
-* Ren'Py will predict screen that will be shown by the :func:`Show` and :func:`ShowMenu`
+* Ren'Py will predict screens that will be shown by the :func:`Show` and :func:`ShowMenu`
   actions.
 
 If screens are shown from Python, it's a good idea to start predicting
