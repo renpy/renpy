@@ -132,7 +132,8 @@ the ``if`` keyword or colon. ::
             jump hot_springs_trip
 
 Menu arguments passed to the menu itself become arguments to the screen,
-except the `screen` argument which selects the screen. The arguments to
+except the `screen` argument which selects the screen, and the `nvl` argument
+that selects the :ref:`NVL-mode menu <nvl-mode-menu>`. The arguments to
 the choices become arguments to the items passed to the menu screen.
 
 See the documentation for :ref:`the choice screen <choice-screen>` and

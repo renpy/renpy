@@ -894,6 +894,8 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
     args = args or tuple()
     kwargs = kwargs or dict()
 
+    nvl = kwargs.pop("nvl", False)
+
     if renpy.config.menu_arguments_callback is not None:
         args, kwargs = renpy.config.menu_arguments_callback(*args, **kwargs)
 
@@ -966,7 +968,10 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
         menu_args = args
         menu_kwargs = kwargs
 
-        rv = renpy.store.menu(new_items)
+        if nvl:
+            rv = renpy.store.nvl_menu(new_items)  # @UndefinedVariable
+        else:
+            rv = renpy.store.menu(new_items)
 
     finally:
         menu_args = old_menu_args

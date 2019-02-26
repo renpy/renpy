@@ -85,8 +85,10 @@ of an ``nvl clear`` statement without leaving monologue mode. For example::
         The page just cleared!
         """
 
-Menus
------
+.. _nvl-mode-menu:
+
+NVL-mode Menus
+--------------
 
 By default, menus are displayed in ADV-mode, taking up the full
 screen. There is also an alternate NVL-mode menu presentation, which
@@ -100,6 +102,19 @@ To access this alternate menu presentation, write::
 The menu will disappear after the choice has been made, so it usually
 makes sense to follow menus with an "nvl clear" or some sort of
 indication as to the choice.
+
+:ref:`Menu arguments <menu-arguments>` can also be used to access
+a NVL-mode menu. This is done by providing a true `nvl` argument
+that is set to True. This is useful when mixing NVL-mode and ADV-mode
+menus in a single game. ::
+
+    menu (nvl=True):
+        "I prefer NVL-mode.":
+            pass
+
+        "ADV-mode is more for me.":
+            pass
+
 
 Showing and Hiding the NVL-mode Window
 --------------------------------------

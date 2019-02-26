@@ -27,7 +27,8 @@ the menu, using the syntax::
 
 
 Menu arguments passed to the menu itself become arguments to the screen,
-except the `screen` argument which selects the screen. The arguments to
+except the `screen` argument which selects the screen, and the `nvl`
+argument, which - if present - selects the NVL-mode menu. The arguments to
 the choices become arguments to the items passed to the menu screen.
 
 Temporary Say Attributes
