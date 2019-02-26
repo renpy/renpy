@@ -722,7 +722,7 @@ class Lexer(object):
 
     def string(self):
         """
-        Lexes a string, and returns the string to the user, or none if
+        Lexes a string, and returns the string to the user, or None if
         no string could be found. This also takes care of expanding
         escapes and collapsing whitespace.
 

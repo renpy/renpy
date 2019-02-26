@@ -50,9 +50,9 @@ The parse method takes a Lexer object:
         Matches any word, including keywords. Returns the text of the
         matched word.
 
-    .. method:: image_name_component():
+    .. method:: image_name_component()
 
-        Matches an image name component. Unlike a a word, and image name
+        Matches an image name component. Unlike a word, a image name
         component can begin with a number.
 
     .. method:: string()
@@ -81,7 +81,7 @@ The parse method takes a Lexer object:
 
     .. method:: delimited_python(delim)
 
-        Matches a pythio expression that ends in a delimiter, often
+        Matches a Python expression that ends in a delimiter, often
         ':' or '='.
 
     .. method:: arguments()
