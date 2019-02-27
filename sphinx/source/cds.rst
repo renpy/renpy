@@ -48,7 +48,6 @@ The parse method takes a Lexer object:
 
         If we are not at the end of the line, raise an error.
 
-
     .. method:: expect_noblock(stmt)
 
         Called to indicate this statement does not expect a block.
@@ -112,11 +111,17 @@ The parse method takes a Lexer object:
     .. method:: simple_expression()
 
         Matches a simple Python expression, returns it as a string.
+        This is often used when you expect a variable name.
+        It is not recommended to change the result. The correct action is
+        to evaluate the result in the future.
 
     .. method:: delimited_python(delim)
 
-        Matches a Python expression that ends in a delimiter, often
-        ':' or '='.
+        Matches a Python expression that ends in a `delim`, for example ':'.
+        This is often used when you expect a condition until the delimiter.
+        It is not recommended to change the result. The correct action is
+        to evaluate the result in the future. This raises an error if
+        end of line is reached before the delimiter.
 
     .. method:: arguments()
 
