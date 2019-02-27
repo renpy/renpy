@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,7 +27,6 @@ import sys
 import os
 import copy
 import types
-import threading
 import cPickle
 
 ################################################################################
@@ -41,12 +40,14 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (7, 0, 1, vc_version)
+version_tuple = (7, 2, 0, vc_version)
 
 # The name of this version.
-version_name = "For all mankind."
+version_name = "What's on the menu."
+# 7.3: The world (wide web) is not enough.
 
-# A string giving the version number only (7.0.1.123).
+
+# A string giving the version number only (8.0.1.123).
 version_only = ".".join(str(i) for i in version_tuple)
 
 # A verbose string giving the version.
@@ -70,6 +71,7 @@ macintosh = False
 linux = False
 android = False
 ios = False
+emscripten = False
 
 # Should we enable experimental features and debugging?
 experimental = "RENPY_EXPERIMENTAL" in os.environ
@@ -121,11 +123,13 @@ elif platform.mac_ver()[0]:
     macintosh = True
 elif "ANDROID_PRIVATE" in os.environ:
     android = True
+elif sys.platform == 'emscripten' or "RENPY_EMSCRIPTEN" in os.environ:
+    emscripten = True
 else:
     linux = True
 
 # A flag that's true if we're on a smartphone or tablet-like platform.
-mobile = android or ios
+mobile = android or ios or emscripten
 
 # A flag that's set to true if the game directory is bundled inside a mac app.
 macapp = False
@@ -160,6 +164,7 @@ backup_blacklist = {
     "renpy.display.scale",
     "renpy.display.presplash",
     "renpy.display.test",
+    "renpy.six",
     "renpy.text.ftfont",
     "renpy.test",
     "renpy.test.testast",
@@ -315,8 +320,9 @@ def update_path(package):
     name = package.__name__.split(".")
 
     import _renpy
-    libexec = os.path.dirname(_renpy.__file__)
-    package.__path__.append(os.path.join(libexec, *name))
+    if hasattr(_renpy, '__file__'):  # .so/.dll
+        libexec = os.path.dirname(_renpy.__file__)
+        package.__path__.append(os.path.join(libexec, *name))
 
     # Also find encodings, to deal with the way py2exe lays things out.
     import encodings
@@ -423,6 +429,9 @@ def import_all():
 
     import renpy.gl
     update_path(renpy.gl)
+
+    import renpy.gl2
+    update_path(renpy.gl2)
 
     import renpy.angle
     update_path(renpy.angle)

@@ -446,7 +446,7 @@ label tutorial_music:
 
     e "The sounds themselves are stored in audio files. Ren'Py supports the Opus, Ogg Vorbis, and mp3 formats."
 
-    e "Let's check out some of the commands that can effect the music channel."
+    e "Let's check out some of the commands that can affect the music channel."
 
     example:
         play music "sunflower-slow-drag.ogg" fadeout 1

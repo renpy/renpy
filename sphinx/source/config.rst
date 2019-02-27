@@ -280,11 +280,16 @@ Occasionally Used
     is given the `namebox_background` property, it sets :propref:`background`
     on the displayable in the say screen with the id "namebox".
 
-.. var:: config.config.conditionswitch_predict_all = False
+.. var:: config.conditionswitch_predict_all = False
 
     The default value of the predict_all argument for :func:`ConditionSwitch`
     and :func:`ShowingSwitch`, which determines if all possible displayables
     are shown.
+
+.. var:: config.context_callback = None
+
+    This is a callback that is called when Ren'Py enteres a new context,
+    such as a menu context.
 
 .. var:: config.debug = False
 
@@ -383,6 +388,12 @@ Occasionally Used
 
     The default implementation of this uses the narrator character to
     display a blank line without interacting.
+
+.. var:: config.enable_language_autodetect = False
+
+    If true, Ren'Py will attempt to determine the name of the language
+    to use based on the locale of the player's system. If successful,
+    this languagfe will be used as the default language.
 
 .. var:: config.enter_sound = None
 
@@ -515,6 +526,16 @@ Occasionally Used
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
 
+.. var:: config.locale_to_language_function = ...
+
+    A function that determines the language the game should use,
+    based on the the user's locale.
+    It takes 2 arguments strings that give the the ISO code of the locale
+    and the ISO code of the region.
+
+    It should return a string giving the name of a translation to use, or
+    None to use the default translation.
+
 .. var:: config.main_menu = [ ... ]
 
     The default main menu, when not using screens. For more details,
@@ -524,10 +545,24 @@ Occasionally Used
 
     If not None, a music file to play when at the main menu.
 
+.. var:: config.menu_arguments_callback = None
+
+    If not None, this should be a function that takes positional and/or
+    keyword arguments. It's called whenever a menu statement runs,
+    with the arguments to that menu statement.
+
+    This should return a pair, containing a tuple of positional arguments
+    (almost always empty), and a dictionary of keyword arguments.
+
 .. var:: config.menu_clear_layers = []
 
     A list of layer names (as strings) that are cleared when entering
     the game menu.
+
+.. var:: config.menu_include_disabled = False
+
+    When this variable is set, choices disables with the if statement are
+    included as disabled buttons.
 
 .. var:: config.menu_window_subtitle = ""
 
@@ -713,11 +748,20 @@ Occasionally Used
 
     The width of the screen. Usually set by :func:`gui.init`.
 
+.. var:: config.skip_sounds = False
+
+    If False, non-looping audio will not be played when Ren'Py is
+    skipping.
+
 .. var:: config.speaking_attribute = None
 
     If not None, this should be a string giving the name of an image
     attribute. The image attribute is added to the image when the
-    character is speaking, and removed when the character stops.
+    character's image tag when the character is speaking, and removed
+    when the character stops.
+
+    This is applied to the image on the default layer for the tag,
+    which can be set using :var:`config.tag_layer`.
 
 .. var:: config.tag_layer = { }
 
@@ -767,12 +811,12 @@ Occasionally Used
     platform specific, and so this should be set in a platform-specific
     manner. (It may make sense to change this in translations, as well.)
 
-.. var:: config.window_auto_hide = [ 'scene', 'call screen' ]
+.. var:: config.window_auto_hide = [ 'scene', 'call screen', 'menu' ]
 
     A list of statements that cause ``window auto`` to hide the empty
     dialogue window.
 
-.. var:: config.window_auto_show = [ 'say' ]
+.. var:: config.window_auto_show = [ 'say', 'menu-with-caption' ]
 
     A list of statements that cause ``window auto`` to show the empty
     dialogue window.
@@ -969,8 +1013,8 @@ Rarely or Internally Used
 .. var:: config.help = "README.html"
 
     This controls the functionality of the help system invoked by the
-    help button on the main and game menus, or by pressing f1 or
-    command-?.
+    help button on the main and game menus, or by pressing F1 or
+    Command-?.
 
     If None, the help system is disabled and does not show up on
     menus.  If a string corresponding to a label found in the script,
@@ -1215,9 +1259,9 @@ Rarely or Internally Used
 
 .. var:: config.rollback_side_size = .2
 
-	If the rollback side is enabled, the fraction of of the screen on the
-	rollback side that, when clicked or touched, causes a rollback to
-	occur.
+    If the rollback side is enabled, the fraction of of the screen on the
+    rollback side that, when clicked or touched, causes a rollback to
+    occur.
 
 .. var:: config.say_allow_dismiss = None
 

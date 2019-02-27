@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -141,7 +141,7 @@ class Frame(renpy.display.core.Displayable):
     :name: Frame
 
     A displayable that resizes an image to fill the available area,
-    while preserving the width and height of its borders.  is often
+    while preserving the width and height of its borders. It is often
     used as the background of a window or button.
 
     .. figure:: frame_example.png

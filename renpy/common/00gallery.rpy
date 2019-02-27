@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -221,6 +221,8 @@ init -1500 python:
 
             self.slideshow_delay = 5
 
+            self.slideshow = False
+
         def button(self, name):
             """
             :doc: gallery method
@@ -284,7 +286,7 @@ init -1500 python:
             A condition that is satisfied when an expression evaluates to true.
 
             `expression`
-                A string giving a python expression.
+                A string giving a Python expression.
             """
 
             if not isinstance(expression, basestring):
@@ -400,7 +402,7 @@ init -1500 python:
             named `name`.
 
             `format`
-                A python format string that's used to format the numbers. This has three values that
+                A Python format string that's used to format the numbers. This has three values that
                 can be substituted in:
 
                 {seen}

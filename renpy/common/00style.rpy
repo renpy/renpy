@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,7 @@
 
 init -1800 python:
 
-    # The style hierarchy root has to be initialized through python
+    # The style hierarchy root has to be initialized through Python
     # code.
     style.default = Style(None)
     style.empty = Style(None)
@@ -150,6 +150,7 @@ init -1800:
         drop_shadow None
         drop_shadow_color (0, 0, 0, 255)
         outlines [ ]
+        outline_scaling "step"
         minwidth 0
         text_align 0
         justify False
@@ -203,6 +204,7 @@ init -1800:
         first_spacing None
         box_layout None
         box_wrap False
+        box_wrap_spacing 0
         box_reverse False
         order_reverse False
         xfit False
@@ -442,4 +444,3 @@ init label _style_reset:
 # Older init code doesn't necessarily like defer styles.
 init 1001 python:
     config.defer_styles = False
-

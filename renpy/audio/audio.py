@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,6 +28,7 @@ from __future__ import print_function
 
 import renpy.audio  # @UnusedImport
 import renpy.display  # @UnusedImport
+from renpy import six
 
 import time
 import pygame_sdl2  # @UnusedImport
@@ -335,7 +336,7 @@ class Channel(object):
         """
 
         # Update the channel volume.
-        vol = self.chan_volume * renpy.game.preferences.volumes[self.mixer]
+        vol = self.chan_volume * renpy.game.preferences.volumes.get(self.mixer, 1.0)
 
         if vol != self.actual_volume:
             renpysound.set_volume(self.number, vol)
@@ -343,7 +344,7 @@ class Channel(object):
 
         # This should be set from something that checks to see if our
         # mixer is muted.
-        force_stop = self.context.force_stop or (renpy.game.preferences.mute[self.mixer] and self.stop_on_mute)
+        force_stop = self.context.force_stop or (renpy.game.preferences.mute.get(self.mixer, False) and self.stop_on_mute)
 
         if self.playing and force_stop:
             renpysound.stop(self.number)
@@ -529,7 +530,7 @@ class Channel(object):
             if secs == 0:
                 renpysound.stop(self.number)
             else:
-                renpysound.fadeout(self.number, int(secs * 1000))
+                renpysound.fadeout(self.number, secs)
 
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False):
 
@@ -852,13 +853,13 @@ def quit():  # @ReservedAssignment
     global pcm_ok
     global mix_ok
 
-    with periodic_condition:
+    if periodic_thread is not None:
+        with periodic_condition:
 
-        if periodic_thread is not None:
             periodic_thread_quit = True
             periodic_condition.notify()
 
-            periodic_thread.join()
+        periodic_thread.join()
 
     if not pcm_ok:
         return
@@ -979,11 +980,14 @@ def periodic_thread_main():
 
     while True:
         with periodic_condition:
+            if not run_periodic:
+                periodic_condition.wait(.05)
+
             if periodic_thread_quit:
                 return
 
             if not run_periodic:
-                periodic_condition.wait()
+                continue
 
             run_periodic = False
 
@@ -1012,7 +1016,7 @@ def periodic():
             exc = periodic_exc
             periodic_exc = None
 
-            raise exc[0], exc[1], exc[2]
+            six.reraise(exc[0], exc[1], exc[2])
 
         run_periodic = True
         periodic_condition.notify()

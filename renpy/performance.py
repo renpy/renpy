@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -93,6 +93,8 @@ def analyze():
         return
 
     s = "\n"
+    s = s.encode("utf-8")
+
     renpy.log.real_stdout.write(s)
     renpy.display.log.write(s)
 
@@ -108,6 +110,7 @@ def analyze():
             dt[3],
             event.format(*args),
             )
+        s = s.encode("utf-8")
 
         renpy.log.real_stdout.write(s)
         renpy.display.log.write(s)

@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -617,6 +617,7 @@ bar_properties = [ Style(i) for i in [
 box_properties = [ Style(i) for i in [
     "box_layout",
     "box_wrap",
+    "box_wrap_spacing",
     "box_reverse",
     "order_reverse",
     "spacing",
@@ -715,6 +716,7 @@ Keyword("default")
 Keyword("length")
 Keyword("allow")
 Keyword("exclude")
+Keyword("copypaste")
 Keyword("prefix")
 Keyword("suffix")
 Keyword("changed")
@@ -881,6 +883,7 @@ Keyword("droppable")
 Keyword("drag_raise")
 Keyword("dragged")
 Keyword("dropped")
+Keyword("drop_allowable")
 Keyword("drag_handle")
 Keyword("drag_joined")
 Keyword("clicked")
@@ -892,6 +895,7 @@ add(ui_properties)
 add(position_properties)
 
 FunctionStatementParser("draggroup", "ui.draggroup", many)
+Keyword("min_overlap")
 add(ui_properties)
 add(position_properties)
 

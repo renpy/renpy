@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -149,6 +149,7 @@ style_properties = sorted_dict(
     box_layout=None,
     box_reverse=None,
     box_wrap=None,
+    box_wrap_spacing=None,
     caret='renpy.easy.displayable_or_none',
     child='renpy.easy.displayable_or_none',
     clipping=None,
@@ -185,6 +186,7 @@ style_properties = sorted_dict(
     newline_indent=None,
     order_reverse=None,
     outlines='expand_outlines',
+    outline_scaling=None,
     rest_indent=None,
     right_margin=None,
     right_padding=None,

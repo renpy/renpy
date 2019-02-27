@@ -169,159 +169,159 @@ translate piglatin strings:
     old "Mute All"
     new "Utemay Llaay"
 
-    # screens.rpy:949
+    # screens.rpy:952
     old "The dialogue history is empty."
     new "Hetay ialogueday istoryhay isay emptyay."
 
-    # screens.rpy:1014
+    # screens.rpy:1018
     old "Keyboard"
     new "Eyboardkay"
 
-    # screens.rpy:1015
+    # screens.rpy:1019
     old "Mouse"
     new "Ousemay"
 
-    # screens.rpy:1018
+    # screens.rpy:1022
     old "Gamepad"
     new "Amepadgay"
 
-    # screens.rpy:1031
+    # screens.rpy:1035
     old "Enter"
     new "Ntereay"
 
-    # screens.rpy:1032
+    # screens.rpy:1036
     old "Advances dialogue and activates the interface."
     new "Dvancesaay ialogueday anday activatesay hetay interfaceay."
 
-    # screens.rpy:1035
+    # screens.rpy:1039
     old "Space"
     new "Pacesay"
 
-    # screens.rpy:1036
+    # screens.rpy:1040
     old "Advances dialogue without selecting choices."
     new "Dvancesaay ialogueday ithoutway electingsay oiceschay."
 
-    # screens.rpy:1039
+    # screens.rpy:1043
     old "Arrow Keys"
     new "Rrowaay Eyskay"
 
-    # screens.rpy:1040
+    # screens.rpy:1044
     old "Navigate the interface."
     new "Avigatenay hetay interfaceay."
 
-    # screens.rpy:1043
+    # screens.rpy:1047
     old "Escape"
     new "Scapeeay"
 
-    # screens.rpy:1044
+    # screens.rpy:1048
     old "Accesses the game menu."
     new "Ccessesaay hetay amegay enumay."
 
-    # screens.rpy:1047
+    # screens.rpy:1051
     old "Ctrl"
     new "Trlcay"
 
-    # screens.rpy:1048
+    # screens.rpy:1052
     old "Skips dialogue while held down."
     new "Kipssay ialogueday hileway eldhay ownday."
 
-    # screens.rpy:1051
+    # screens.rpy:1055
     old "Tab"
     new "Abtay"
 
-    # screens.rpy:1052
+    # screens.rpy:1056
     old "Toggles dialogue skipping."
     new "Ogglestay ialogueday kippingsay."
 
-    # screens.rpy:1055
+    # screens.rpy:1059
     old "Page Up"
     new "Agepay Puay"
 
-    # screens.rpy:1056
+    # screens.rpy:1060
     old "Rolls back to earlier dialogue."
     new "Ollsray ackbay otay earlieray ialogueday."
 
-    # screens.rpy:1059
+    # screens.rpy:1063
     old "Page Down"
     new "Agepay Ownday"
 
-    # screens.rpy:1060
+    # screens.rpy:1064
     old "Rolls forward to later dialogue."
     new "Ollsray orwardfay otay aterlay ialogueday."
 
-    # screens.rpy:1064
+    # screens.rpy:1068
     old "Hides the user interface."
     new "Ideshay hetay useray interfaceay."
 
-    # screens.rpy:1068
+    # screens.rpy:1072
     old "Takes a screenshot."
     new "Akestay aay creenshotsay."
 
-    # screens.rpy:1072
+    # screens.rpy:1076
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
     new "Ogglestay assistiveay {a=https://www.renpy.org/l/voicing}elfsay-oicingvay{/a}."
 
-    # screens.rpy:1078
+    # screens.rpy:1082
     old "Left Click"
     new "Eftlay Lickcay"
 
-    # screens.rpy:1082
+    # screens.rpy:1086
     old "Middle Click"
     new "Iddlemay Lickcay"
 
-    # screens.rpy:1086
+    # screens.rpy:1090
     old "Right Click"
     new "Ightray Lickcay"
 
-    # screens.rpy:1090
+    # screens.rpy:1094
     old "Mouse Wheel Up\nClick Rollback Side"
     new "Ousemay Heelway Puay\nLickcay Ollbackray Idesay"
 
-    # screens.rpy:1094
+    # screens.rpy:1098
     old "Mouse Wheel Down"
     new "Ousemay Heelway Ownday"
 
-    # screens.rpy:1101
+    # screens.rpy:1105
     old "Right Trigger\nA/Bottom Button"
     new "Ightray Riggertay\nAay/Ottombay Uttonbay"
 
-    # screens.rpy:1105
+    # screens.rpy:1109
     old "Left Trigger\nLeft Shoulder"
     new "Eftlay Riggertay\nEftlay Houldersay"
 
-    # screens.rpy:1109
+    # screens.rpy:1113
     old "Right Shoulder"
     new "Ightray Houldersay"
 
-    # screens.rpy:1113
+    # screens.rpy:1117
     old "D-Pad, Sticks"
     new "Day-Adpay, Tickssay"
 
-    # screens.rpy:1117
+    # screens.rpy:1121
     old "Start, Guide"
     new "Tartsay, Uidegay"
 
-    # screens.rpy:1121
+    # screens.rpy:1125
     old "Y/Top Button"
     new "Yay/Optay Uttonbay"
 
-    # screens.rpy:1124
+    # screens.rpy:1128
     old "Calibrate"
     new "Alibratecay"
 
-    # screens.rpy:1189
+    # screens.rpy:1193
     old "Yes"
     new "Esyay"
 
-    # screens.rpy:1190
+    # screens.rpy:1194
     old "No"
     new "Onay"
 
-    # screens.rpy:1236
+    # screens.rpy:1240
     old "Skipping"
     new "Kippingsay"
 
-    # screens.rpy:1457
+    # screens.rpy:1461
     old "Menu"
     new "Enumay"
 

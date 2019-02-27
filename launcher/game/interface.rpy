@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -251,7 +251,13 @@ screen launcher_input:
 
             add SPACER
 
-            input style "l_default" value ScreenVariableInputValue("value", returnable=True) size 24 xalign 0.5 color INPUT_COLOR
+            input style "l_default":
+                value ScreenVariableInputValue("value", returnable=True)
+                size 24
+                xalign 0.5
+                color INPUT_COLOR
+                allow allow
+                copypaste True
 
             if filename:
                 add SPACER
@@ -380,11 +386,24 @@ init python in interface:
                 f = open("log.txt", "w")
         """
 
-        store._ignore_action = Jump(label)
-        yield
-        store._ignore_action = Jump("front_page")
+        try:
+            yield
+        except Exception as e:
+            renpy.renpy.error.report_exception(e, editor=False)
 
-    def input(title, message, filename=False, sanitize=True, cancel=None, default=""):
+            error(_("While [what!q], an error occured:"),
+                _("[exception!q]"),
+                what=what,
+                label=label,
+                exception=traceback.format_exception_only(type(e), e)[-1][:-1])
+
+    import string
+    DIGITS_LETTERS = string.digits
+    PROJECT_LETTERS = DIGITS_LETTERS + string.ascii_letters + " _"
+    FILENAME_LETTERS = PROJECT_LETTERS + "\\/"
+    TRANSLATE_LETTERS = string.ascii_letters + "_"
+
+    def input(title, message, filename=False, sanitize=True, cancel=None, allow=None, default=""):
         """
         Requests typewritten input from the user.
         """
@@ -393,7 +412,15 @@ init python in interface:
 
         while True:
 
-            rv = renpy.call_screen("launcher_input", title=title, message=message, filename=filename, cancel=cancel, default=rv)
+            rv = renpy.call_screen(
+                "launcher_input",
+                title=title,
+                message=message,
+                filename=filename or (allow in [PROJECT_LETTERS, FILENAME_LETTERS]),
+                allow=allow,
+                cancel=cancel,
+                default=rv
+            )
 
             if sanitize:
                 if ("[" in rv) or ("{" in rv):
@@ -507,6 +534,3 @@ init python in interface:
         """
 
         return common(_("CHOICE"), store.QUESTION_COLOR, message, choices=choices, selected=selected, **kwargs)
-
-
-

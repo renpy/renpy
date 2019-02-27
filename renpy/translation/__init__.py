@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -99,6 +99,7 @@ class ScriptTranslator(object):
         TranslateBlock = renpy.ast.TranslateBlock
         TranslateEarlyBlock = renpy.ast.TranslateEarlyBlock
         Menu = renpy.ast.Menu
+        UserStatement = renpy.ast.UserStatement
         Translate = renpy.ast.Translate
 
         filename = renpy.exports.unelide_filename(nodes[0].filename)
@@ -138,6 +139,16 @@ class ScriptTranslator(object):
                     if s is None:
                         continue
 
+                    self.additional_strings[filename].append((n.linenumber, s))
+
+            elif type_n is UserStatement:
+
+                strings = n.call("translation_strings")
+
+                if strings is None:
+                    continue
+
+                for s in strings:
                     self.additional_strings[filename].append((n.linenumber, s))
 
             elif type_n is Translate:
@@ -577,8 +588,6 @@ def old_change_language(tl, language):
 
 def new_change_language(tl, language):
 
-    renpy.config.init_system_styles()
-
     for i in tl.python[language]:
         renpy.python.py_exec_bytecode(i.code.bytecode)
 
@@ -599,6 +608,8 @@ def new_change_language(tl, language):
             renpy.game.context().run(i.block[0])
 
     renpy.game.invoke_in_new_context(run_blocks)
+
+    renpy.config.init_system_styles()
 
 
 def change_language(language, force=False):
@@ -681,3 +692,222 @@ def known_languages():
     """
 
     return { i for i in renpy.game.script.translator.languages if i is not None }  # @UndefinedVariable
+
+################################################################################
+# Detect language
+################################################################################
+
+
+locales = {
+    "ab": "abkhazian",
+    "aa": "afar",
+    "af": "afrikaans",
+    "ak": "akan",
+    "sq": "albanian",
+    "am": "amharic",
+    "ar": "arabic",
+    "an": "aragonese",
+    "hy": "armenian",
+    "as": "assamese",
+    "av": "avaric",
+    "ae": "avestan",
+    "ay": "aymara",
+    "az": "azerbaijani",
+    "bm": "bambara",
+    "ba": "bashkir",
+    "eu": "basque",
+    "be": "belarusian",
+    "bn": "bengali",
+    "bh": "bihari",
+    "bi": "bislama",
+    "bs": "bosnian",
+    "br": "breton",
+    "bg": "bulgarian",
+    "my": "burmese",
+    "ca": "catalan",
+    "ch": "chamorro",
+    "ce": "chechen",
+    "ny": "chewa",
+    "cv": "chuvash",
+    "kw": "cornish",
+    "co": "corsican",
+    "cr": "cree",
+    "hr": "croatian",
+    "cs": "czech",
+    "da": "danish",
+    "dv": "maldivian",
+    "nl": "dutch",
+    "dz": "dzongkha",
+    "en": "english",
+    "et": "estonian",
+    "ee": "ewe",
+    "fo": "faroese",
+    "fj": "fijian",
+    "fi": "finnish",
+    "fr": "french",
+    "ff": "fulah",
+    "gl": "galician",
+    "ka": "georgian",
+    "de": "german",
+    "el": "greek",
+    "gn": "guaran",
+    "gu": "gujarati",
+    "ht": "haitian",
+    "ha": "hausa",
+    "he": "hebrew",
+    "hz": "herero",
+    "hi": "hindi",
+    "ho": "hiri_motu",
+    "hu": "hungarian",
+    "id": "indonesian",
+    "ga": "irish",
+    "ig": "igbo",
+    "ik": "inupiaq",
+    "is": "icelandic",
+    "it": "italian",
+    "iu": "inuktitut",
+    "ja": "japanese",
+    "jv": "javanese",
+    "kl": "greenlandic",
+    "kn": "kannada",
+    "kr": "kanuri",
+    "ks": "kashmiri",
+    "kk": "kazakh",
+    "km": "khmer",
+    "ki": "kikuyu",
+    "rw": "kinyarwanda",
+    "ky": "kirghiz",
+    "kv": "komi",
+    "kg": "kongo",
+    "ko": "korean",
+    "ku": "kurdish",
+    "kj": "kuanyama",
+    "la": "latin",
+    "lb": "luxembourgish",
+    "lg": "ganda",
+    "li": "limburgan",
+    "ln": "lingala",
+    "lo": "lao",
+    "lt": "lithuanian",
+    "lv": "latvian",
+    "gv": "manx",
+    "mk": "macedonian",
+    "mg": "malagasy",
+    "ms": "malay",
+    "ml": "malayalam",
+    "mt": "maltese",
+    "mi": "maori",
+    "mr": "marathi",
+    "mh": "marshallese",
+    "mn": "mongolian",
+    "na": "nauru",
+    "nv": "navaho",
+    "ne": "nepali",
+    "ng": "ndonga",
+    "no": "norwegian",
+    "ii": "nuosu",
+    "nr": "ndebele",
+    "oc": "occitan",
+    "oj": "ojibwa",
+    "om": "oromo",
+    "or": "oriya",
+    "os": "ossetian",
+    "pa": "panjabi",
+    "pi": "pali",
+    "fa": "persian",
+    "pl": "polish",
+    "ps": "pashto",
+    "pt": "portuguese",
+    "qu": "quechua",
+    "rm": "romansh",
+    "rn": "rundi",
+    "ro": "romanian",
+    "ru": "russian",
+    "sa": "sanskrit",
+    "sc": "sardinian",
+    "sd": "sindhi",
+    "se": "sami",
+    "sm": "samoan",
+    "sg": "sango",
+    "sr": "serbian",
+    "gd": "gaelic",
+    "sn": "shona",
+    "si": "sinhala",
+    "sk": "slovak",
+    "sl": "slovene",
+    "so": "somali",
+    "st": "sotho",
+    "es": "spanish",
+    "su": "sundanese",
+    "sw": "swahili",
+    "ss": "swati",
+    "sv": "swedish",
+    "ta": "tamil",
+    "te": "telugu",
+    "tg": "tajik",
+    "th": "thai",
+    "ti": "tigrinya",
+    "bo": "tibetan",
+    "tk": "turkmen",
+    "tl": "tagalog",
+    "tn": "tswana",
+    "to": "tongan",
+    "tr": "turkish",
+    "ts": "tsonga",
+    "tt": "tatar",
+    "tw": "twi",
+    "ty": "tahitian",
+    "ug": "uighur",
+    "uk": "ukrainian",
+    "ur": "urdu",
+    "uz": "uzbek",
+    "ve": "venda",
+    "vi": "vietnamese",
+    "wa": "walloon",
+    "cy": "welsh",
+    "wo": "wolof",
+    "fy": "frisian",
+    "xh": "xhosa",
+    "yi": "yiddish",
+    "yo": "yoruba",
+    "za": "zhuang",
+    "zu": "zulu",
+    "chs": "simplified_chinese",
+    "cht": "traditional_chinese",
+    "zh": "traditional_chinese",
+}
+
+
+def detect_user_locale():
+    import locale
+    if renpy.windows:
+        import ctypes
+        windll = ctypes.windll.kernel32
+        locale_name = locale.windows_locale.get(windll.GetUserDefaultUILanguage())
+    elif renpy.android:
+        from jnius import autoclass
+        Locale = autoclass('java.util.Locale')
+        locale_name = str(Locale.getDefault().getLanguage())
+    elif renpy.ios:
+        import pyobjus
+        NSLocale = pyobjus.autoclass("NSLocale")
+        languages = NSLocale.preferredLanguages()
+        locale_name = languages.objectAtIndex_(0).UTF8String().decode("utf-8")
+        locale_name.replace("-", "_")
+    else:
+        locale_name = locale.getdefaultlocale()
+        if locale_name is not None:
+            locale_name = locale_name[0]
+
+    if locale_name is None:
+        return None, None
+
+    normalize = locale.normalize(locale_name)
+    if normalize == locale_name:
+        language = region = locale_name
+    else:
+        locale_name = normalize
+        if '.' in locale_name:
+            locale_name, _ = locale_name.split('.', 1)
+        language, region = locale_name.lower().split("_")
+    return language, region

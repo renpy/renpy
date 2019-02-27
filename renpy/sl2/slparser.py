@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -220,6 +220,7 @@ class Parser(object):
         """
 
         seen_keywords = set()
+        block = False
 
         # Parses a keyword argument from the lexer.
         def parse_keyword(l, expect):
@@ -243,6 +244,14 @@ class Parser(object):
                 l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
 
             seen_keywords.add(name)
+
+            if name == "at" and block and l.keyword("transform"):
+                l.require(":")
+                l.expect_eol()
+                l.expect_block("ATL block")
+                expr = renpy.atl.parse_atl(l.subblock_lexer())
+                target.atl_transform = expr
+                return
 
             expr = l.comma_expression()
 
@@ -439,25 +448,25 @@ def register_sl_displayable(*args, **kwargs):
 
         Adds a positional argument with `name`
 
-    .. method:: add_property(name):
+    .. method:: add_property(name)
 
         Adds a property with `name`. Properties are passed as keyword
         arguments.
 
-    .. method:: add_style_property(name):
+    .. method:: add_style_property(name)
 
         Adds a family of properties, ending with `name` and prefixed with
         the various style property prefixes. For example, if called with
         ("size"), this will define size, idle_size, hover_size, etc.
 
-    .. method:: add_prefix_style_property(prefix, name):
+    .. method:: add_prefix_style_property(prefix, name)
 
         Adds a family of properties with names consisting of `prefix`,
         a style property prefix, and `name`. For example, if called
         with a prefix of `text_` and a name of `size`, this will
         create text_size, text_idle_size, text_hover_size, etc.
 
-    .. method:: add_property_group(group, prefix=''):
+    .. method:: add_property_group(group, prefix='')
 
         Adds a group of properties, prefixed with `prefix`. `Group` may
         be one of the strings:
@@ -818,7 +827,12 @@ class UseParser(Parser):
 
     def parse(self, loc, l, parent):
 
-        target = l.require(l.word)
+        if l.keyword('expression'):
+            target = l.require(l.simple_expression)
+            l.keyword('pass')
+        else:
+            target = l.require(l.word)
+
         args = renpy.parser.parse_arguments(l)
 
         if l.keyword('id'):

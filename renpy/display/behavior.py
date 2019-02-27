@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -77,19 +77,24 @@ def compile_event(key, keydown):
     if part[0] == "joy" or part[0] == "pad":
         return "(False)"
 
-    # Otherwise, deal with it as a key.
-    if keydown:
-        rv = "(ev.type == %d" % pygame.KEYDOWN
-    else:
-        rv = "(ev.type == %d" % pygame.KEYUP
-
-    MODIFIERS = { "repeat", "alt", "meta", "shift", "noshift", "ctrl" }
+    MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl" }
     modifiers = set()
 
     while part[0] in MODIFIERS:
         modifiers.add(part.pop(0))
 
     key = "_".join(part)
+
+    if "keydown" in modifiers:
+        keydown = True
+    elif "keyup" in modifiers:
+        keydown = False
+
+    # Otherwise, deal with it as a key.
+    if keydown:
+        rv = "(ev.type == %d" % pygame.KEYDOWN
+    else:
+        rv = "(ev.type == %d" % pygame.KEYUP
 
     if "repeat" in modifiers:
         rv += " and (ev.repeat)"
@@ -353,6 +358,7 @@ def run_periodic(var, st):
 
 def is_selected(action):
     """
+    :name: renpy.is_selected
     :doc: run
 
     Returns true if `action` indicates it is selected, or false otherwise.
@@ -372,6 +378,7 @@ def is_selected(action):
 
 def is_sensitive(action):
     """
+    :name: renpy.is_sensitive
     :doc: run
 
     Returns true if `action` indicates it is sensitive, or False otherwise.
@@ -552,7 +559,13 @@ class SayBehavior(renpy.display.layout.Null):
 
     def set_text(self, text):
         self.text = text
-        self.afm_length = max(text.end - text.start, 1)
+
+        try:
+            afm_text = text.text[0][text.start:text.end]
+            afm_text = renpy.text.extras.filter_text_tags(afm_text, allow=[])
+            self.afm_length = max(len(afm_text), 1)
+        except:
+            self.afm_length = max(text.end - text.start, 1)
 
     def event(self, ev, x, y, st):
 
@@ -704,6 +717,9 @@ class Button(renpy.display.layout.Window):
         self._duplicatable = False
 
     def _duplicate(self, args):
+        if args and args.args:
+            args.extraneous()
+
         return self
 
     def predict_one_action(self):
@@ -933,8 +949,10 @@ class Button(renpy.display.layout.Window):
 def TextButton(text, style='button', text_style='button_text',
                clicked=None, **properties):
 
-    text = renpy.text.text.Text(text, style=text_style)  # @UndefinedVariable
-    return Button(text, style=style, clicked=clicked, **properties)
+    text_properties, button_properties = renpy.easy.split_properties(properties, "text_", "")
+
+    text = renpy.text.text.Text(text, style=text_style, **text_properties)  # @UndefinedVariable
+    return Button(text, style=style, clicked=clicked, **button_properties)
 
 
 class ImageButton(Button):
@@ -1085,6 +1103,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
                  editable=True,
                  pixel_width=None,
                  value=None,
+                 copypaste=False,
                  **properties):
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
@@ -1103,6 +1122,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
         self.exclude = exclude
         self.prefix = prefix
         self.suffix = suffix
+        self.copypaste = copypaste
 
         self.changed = changed
 
@@ -1301,6 +1321,17 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             self.update_text(self.content, self.editable)
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
+
+        elif self.copypaste and map_event(ev, "input_copy"):
+            pygame.scrap.put(pygame.scrap.SCRAP_TEXT, self.content)
+            raise renpy.display.core.IgnoreEvent()
+
+        elif self.copypaste and map_event(ev, "input_paste"):
+            text = pygame.scrap.get(pygame.scrap.SCRAP_TEXT)
+            raw_text = ""
+            for c in text:
+                if ord(c) >= 32:
+                    raw_text += c
 
         elif ev.type == pygame.TEXTEDITING:
             self.update_text(self.content, self.editable, check_size=True)

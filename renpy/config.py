@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,6 +27,7 @@ from __future__ import print_function
 
 import collections
 import os
+import renpy
 
 # Can we add more config variables?
 locked = False
@@ -364,8 +365,8 @@ rtl = False
 file_open_callback = None
 
 # The size of screenshot thumbnails. (Redefined in common/)
-thumbnail_width = None
-thumbnail_height = None
+thumbnail_width = 256
+thumbnail_height = 144
 
 # The end game transition.
 end_game_transition = None
@@ -719,6 +720,12 @@ translate_files = [ ]
 # translated.
 translate_comments = [ ]
 
+# Should we trying detect user locale on first launch?
+enable_language_autodetect = False
+
+# A function from (locale, region) -> existing language.
+locale_to_language_function = None
+
 # Should we pass the full argument list to the say screen?
 old_say_args = False
 
@@ -806,6 +813,8 @@ fast_skipping_callbacks = [ ]
 
 # Should the audio periodic callback run in its own thread.
 audio_periodic_thread = True
+if renpy.emscripten:
+    audio_periodic_thread = False
 
 # A list of fonts to preload on Ren'Py startup.
 preload_fonts = [ ]
@@ -890,6 +899,45 @@ displayable_prefix = { }
 
 # Should we re-play a movie when it's shown again.
 replay_movie_sprites = True
+
+# A callback that is called when entering a new context.
+context_callback = None
+
+# Should we reject . and .. in filenames?
+reject_relative = True
+
+# The prefix to use on the side image.
+side_image_prefix_tag = 'side'
+
+# Do the say attributes of a hidden side image use the side image tag?
+say_attributes_use_side_image = True
+
+# Does the menu statement show a window by itself, when there is no caption?
+menu_showed_window = False
+
+# Should the menu statement produce actions instead of values?
+menu_actions = True
+
+# Should disabled menu items be included?
+menu_include_disabled = False
+
+# Should we report extraneous attributes?
+report_extraneous_attributes = True
+
+# Should we play non-loooped music when skipping?
+skip_sounds = False
+
+# Should we lint screens without parameters?
+lint_screens_without_parameters = True
+
+# If not None, a function that's used to process and modify menu arguments.
+menu_arguments_callback = None
+
+# Should Ren'PY automatically clear the screenshot?
+auto_clear_screenshot = True
+
+# Should Ren'Py allow duplicate labels.
+allow_duplicate_labels = False
 
 del os
 del collections

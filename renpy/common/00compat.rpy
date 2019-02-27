@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -170,6 +170,18 @@ init -1900 python:
             config.late_images_scan = True
             config.dissolve_force_alpha = False
             config.replay_movie_sprites = False
+
+        if version <= (7, 0, 0):
+            config.reject_relative = False
+            config.say_attributes_use_side_image = False
+
+        if version <= (7, 1, 0):
+            config.menu_showed_window = True
+            config.window_auto_show = [ "say" ]
+            config.window_auto_hide = [ "scene", "call screen" ]
+
+        if version <= (7, 1, 1):
+            config.menu_actions = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

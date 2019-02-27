@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -117,7 +117,7 @@ screen update_channel(channels):
 
                         $ date = _strftime(__("%B %d, %Y"), time.localtime(c["timestamp"]))
 
-                        text "[date] • [c[pretty_version]] [current]" style "l_small_text"
+                        text "[date] • [c[pretty_version]] [current!t]" style "l_small_text"
 
                         add HALF_SPACER
 
@@ -191,8 +191,12 @@ label update:
         import json
         import ssl
 
-        context = ssl._create_unverified_context()
-        channels = json.load(urllib2.urlopen(CHANNELS_URL, context=context))["releases"]
+        with interface.error_handling("downloading the list of update channels"):
+            context = ssl._create_unverified_context()
+            channel_data = urllib2.urlopen(CHANNELS_URL, context=context)
+
+        with interface.error_handling("parsing the list of update channels"):
+            channels = json.load(channel_data)["releases"]
 
         renpy.call_screen("update_channel", channels)
 

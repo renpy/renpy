@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -59,7 +59,7 @@ init -1500 python:
                     the character's name, and uses that. (The 'girl' placeholder
                     is used when the service can't guess.)
 
-                    The webservice will only be contacted when config.developer
+                    The webservice will only be contacted when :var:`config.developer`
                     is True.
 
             `full`

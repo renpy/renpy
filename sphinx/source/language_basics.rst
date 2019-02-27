@@ -30,6 +30,9 @@ exists without a corresponding .rpy file, the .rpyc file will be
 used. This can lead to problems if a .rpy file is deleted without
 deleting the .rpyc file.
 
+Filenames must being with a letter or number, and may not begin with
+"00", as Ren'Py uses such files for its own purposes.
+
 Base Directory
 --------------
 

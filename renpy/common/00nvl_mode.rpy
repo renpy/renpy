@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -240,7 +240,7 @@ init -1500 python:
         """
         :doc: nvl
 
-        The python equivalent of the ``nvl show`` statement.
+        The Python equivalent of the ``nvl show`` statement.
 
         `with_`
             The transition to use to show the NVL-mode window.
@@ -254,7 +254,7 @@ init -1500 python:
         """
         :doc: nvl
 
-        The python equivalent of the ``nvl hide`` statement.
+        The Python equivalent of the ``nvl hide`` statement.
 
         `with_`
             The transition to use to hide the NVL-mode window.
@@ -434,7 +434,7 @@ init -1500 python:
         """
         :doc: nvl
 
-        The python equivalent of the ``nvl clear`` statement.
+        The Python equivalent of the ``nvl clear`` statement.
         """
 
         store.nvl_list = [ ]

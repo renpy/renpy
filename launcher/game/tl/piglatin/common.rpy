@@ -181,23 +181,23 @@ translate piglatin strings:
     old "File page [text]"
     new "Ilefay agepay [text]"
 
-    # 00action_file.rpy:763
+    # 00action_file.rpy:772
     old "Next file page."
     new "Extnay ilefay agepay."
 
-    # 00action_file.rpy:827
+    # 00action_file.rpy:845
     old "Previous file page."
     new "Reviouspay ilefay agepay."
 
-    # 00action_file.rpy:888
+    # 00action_file.rpy:906
     old "Quick save complete."
     new "Uickqay avesay ompletecay."
 
-    # 00action_file.rpy:906
+    # 00action_file.rpy:924
     old "Quick save."
     new "Uickqay avesay."
 
-    # 00action_file.rpy:925
+    # 00action_file.rpy:943
     old "Quick load."
     new "Uickqay oadlay."
 
@@ -209,131 +209,131 @@ translate piglatin strings:
     old "The interactive director is not enabled here."
     new "Hetay interactiveay irectorday isay otnay enableday erehay."
 
-    # 00director.rpy:1478
+    # 00director.rpy:1481
     old "⬆"
     new "⬆"
 
-    # 00director.rpy:1484
+    # 00director.rpy:1487
     old "⬇"
     new "⬇"
 
-    # 00director.rpy:1548
+    # 00director.rpy:1551
     old "Done"
     new "Oneday"
 
-    # 00director.rpy:1558
+    # 00director.rpy:1561
     old "(statement)"
     new "(atementstay)"
 
-    # 00director.rpy:1559
+    # 00director.rpy:1562
     old "(tag)"
     new "(agtay)"
 
-    # 00director.rpy:1560
+    # 00director.rpy:1563
     old "(attributes)"
     new "(attributesay)"
 
-    # 00director.rpy:1561
+    # 00director.rpy:1564
     old "(transform)"
     new "(ansformtray)"
 
-    # 00director.rpy:1586
+    # 00director.rpy:1589
     old "(transition)"
     new "(ansitiontray)"
 
-    # 00director.rpy:1598
+    # 00director.rpy:1601
     old "(channel)"
     new "(annelchay)"
 
-    # 00director.rpy:1599
+    # 00director.rpy:1602
     old "(filename)"
     new "(ilenamefay)"
 
-    # 00director.rpy:1628
+    # 00director.rpy:1631
     old "Change"
     new "Hangecay"
 
-    # 00director.rpy:1630
+    # 00director.rpy:1633
     old "Add"
     new "Ddaay"
 
-    # 00director.rpy:1633
+    # 00director.rpy:1636
     old "Cancel"
     new "Ancelcay"
 
-    # 00director.rpy:1636
+    # 00director.rpy:1639
     old "Remove"
     new "Emoveray"
 
-    # 00director.rpy:1671
+    # 00director.rpy:1674
     old "Statement:"
     new "Tatementsay:"
 
-    # 00director.rpy:1692
+    # 00director.rpy:1695
     old "Tag:"
     new "Agtay:"
 
-    # 00director.rpy:1708
+    # 00director.rpy:1711
     old "Attributes:"
     new "Ttributesaay:"
 
-    # 00director.rpy:1726
+    # 00director.rpy:1729
     old "Transforms:"
     new "Ransformstay:"
 
-    # 00director.rpy:1745
+    # 00director.rpy:1748
     old "Behind:"
     new "Ehindbay:"
 
-    # 00director.rpy:1764
+    # 00director.rpy:1767
     old "Transition:"
     new "Ransitiontay:"
 
-    # 00director.rpy:1782
+    # 00director.rpy:1785
     old "Channel:"
     new "Hannelcay:"
 
-    # 00director.rpy:1800
+    # 00director.rpy:1803
     old "Audio Filename:"
     new "Udioaay Ilenamefay:"
 
-    # 00gui.rpy:370
+    # 00gui.rpy:371
     old "Are you sure?"
     new "Reaay ouyay uresay?"
 
-    # 00gui.rpy:371
+    # 00gui.rpy:372
     old "Are you sure you want to delete this save?"
     new "Reaay ouyay uresay ouyay antway otay eleteday histay avesay?"
 
-    # 00gui.rpy:372
+    # 00gui.rpy:373
     old "Are you sure you want to overwrite your save?"
     new "Reaay ouyay uresay ouyay antway otay overwriteay ouryay avesay?"
 
-    # 00gui.rpy:373
+    # 00gui.rpy:374
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Oadinglay illway oselay unsaveday rogresspay.\nReaay ouyay uresay ouyay antway otay oday histay?"
 
-    # 00gui.rpy:374
+    # 00gui.rpy:375
     old "Are you sure you want to quit?"
     new "Reaay ouyay uresay ouyay antway otay uitqay?"
 
-    # 00gui.rpy:375
+    # 00gui.rpy:376
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Reaay ouyay uresay ouyay antway otay eturnray otay hetay ainmay enumay?\nHistay illway oselay unsaveday rogresspay."
 
-    # 00gui.rpy:376
+    # 00gui.rpy:377
     old "Are you sure you want to end the replay?"
     new "Reaay ouyay uresay ouyay antway otay enday hetay eplayray?"
 
-    # 00gui.rpy:377
+    # 00gui.rpy:378
     old "Are you sure you want to begin skipping?"
     new "Reaay ouyay uresay ouyay antway otay eginbay kippingsay?"
 
-    # 00gui.rpy:378
+    # 00gui.rpy:379
     old "Are you sure you want to skip to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay otay hetay extnay oicechay?"
 
-    # 00gui.rpy:379
+    # 00gui.rpy:380
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay unseenay ialogueday otay hetay extnay oicechay?"
 
@@ -345,59 +345,59 @@ translate piglatin strings:
     old "Saved screenshot as %s."
     new "Avedsay creenshotsay asay %say."
 
-    # 00library.rpy:146
+    # 00library.rpy:168
     old "Self-voicing disabled."
     new "Elfsay-oicingvay isabledday."
 
-    # 00library.rpy:147
+    # 00library.rpy:169
     old "Clipboard voicing enabled. "
     new "Lipboardcay oicingvay enableday. "
 
-    # 00library.rpy:148
+    # 00library.rpy:170
     old "Self-voicing enabled. "
     new "Elfsay-oicingvay enableday. "
 
-    # 00library.rpy:150
+    # 00library.rpy:172
     old "bar"
     new "arbay"
 
-    # 00library.rpy:151
+    # 00library.rpy:173
     old "selected"
     new "electedsay"
 
-    # 00library.rpy:152
+    # 00library.rpy:174
     old "viewport"
     new "iewportvay"
 
-    # 00library.rpy:153
+    # 00library.rpy:175
     old "horizontal scroll"
     new "orizontalhay crollsay"
 
-    # 00library.rpy:154
+    # 00library.rpy:176
     old "vertical scroll"
     new "erticalvay crollsay"
 
-    # 00library.rpy:155
+    # 00library.rpy:177
     old "activate"
     new "activateay"
 
-    # 00library.rpy:156
+    # 00library.rpy:178
     old "deactivate"
     new "eactivateday"
 
-    # 00library.rpy:157
+    # 00library.rpy:179
     old "increase"
     new "increaseay"
 
-    # 00library.rpy:158
+    # 00library.rpy:180
     old "decrease"
     new "ecreaseday"
 
-    # 00library.rpy:193
+    # 00library.rpy:215
     old "Skip Mode"
     new "Kipsay Odemay"
 
-    # 00library.rpy:279
+    # 00library.rpy:301
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Histay rogrampay ontainscay eefray oftwaresay underay aay umbernay ofay icenseslay, includingay hetay Itmay Icenselay anday Nugay Esserlay Eneralgay Ublicpay Icenselay. Aay ompletecay istlay ofay oftwaresay, includingay inkslay otay ullfay ourcesay odecay, ancay ebay oundfay {a=https://www.renpy.org/l/license}erehay{/a}."
 
@@ -633,23 +633,23 @@ translate piglatin strings:
     old "The updates were cancelled."
     new "Hetay updatesay ereway ancelledcay."
 
-    # 00gallery.rpy:585
+    # 00gallery.rpy:587
     old "Image [index] of [count] locked."
     new "Mageiay [index] ofay [count] ockedlay."
 
-    # 00gallery.rpy:605
+    # 00gallery.rpy:607
     old "prev"
     new "revpay"
 
-    # 00gallery.rpy:606
+    # 00gallery.rpy:608
     old "next"
     new "extnay"
 
-    # 00gallery.rpy:607
+    # 00gallery.rpy:609
     old "slideshow"
     new "ideshowslay"
 
-    # 00gallery.rpy:608
+    # 00gallery.rpy:610
     old "return"
     new "eturnray"
 

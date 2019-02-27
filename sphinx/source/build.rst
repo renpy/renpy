@@ -236,6 +236,37 @@ Please think twice about archiving your game. Keeping files open will
 help others run your game on future platforms – platforms that may not
 exist until after you're gone.
 
+Requirements
+------------
+
+Some stores ask the requirements for Ren'Py applications to run. While
+this varies from game to game, here's a set of minimums for a generic
+visual novel.
+
+**Windows**
+
+* Version: Windows XP or higher.
+* CPU: 2.0 GHz Core 2 Duo
+* RAM: 2.0 GB
+* Graphics: OpenGL 2.0 or DirectX 9.0c
+
+**macOS**
+
+* Version: 10.6+
+* CPU: 2.0 GHz Core 2 Duo (64 bit only)
+* RAM: 2.0 GB
+* Graphics: OpenGL 2.0
+
+**Linux**
+
+* Version: Ubuntu 12.04+
+* CPU: 2.0 GHz Core 2 Duo
+* RAM: 2.0 GB
+* Graphics: OpenGL 2.0
+
+The amount of disk space required is entirely determined by the assets in your
+game, and the amount of CPU and RAM needed may also vary.
+
 
 Build Functions
 ---------------

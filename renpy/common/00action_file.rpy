@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -748,26 +748,35 @@ init -1500 python:
 
     class FilePageNext(Action, DictEquality):
         """
-         :doc: file_action
+        :doc: file_action
 
-         Goes to the next file page.
+        Goes to the next file page.
 
-         `max`
-             If set, this should be an integer that gives the number of
-             the maximum file page we can go to.
+        `max`
+            If set, this should be an integer that gives the number of
+            the maximum file page we can go to.
 
-         `wrap`
-             If true, we can go to the first page when on the last file page if max is set.
-         """
+        `wrap`
+            If true, we can go to the first page when on the
+            last file page if `max` is set.
+
+        `auto`
+            If true and wrap is set, this can bring the player to
+            the page of automatic saves.
+
+        `quick`
+            If true and wrap is set, this can bring the player to
+            the page of automatic saves.
+        """
 
         alt = _("Next file page.")
 
-        def __init__(self, max=None, wrap=False):
+        def __init__(self, max=None, wrap=False, auto=True, quick=True):
 
             page = persistent._file_page
 
             if page == "auto":
-                if config.has_quicksave:
+                if config.has_quicksave and quick:
                     page = "quick"
                 else:
                     page = "1"
@@ -781,9 +790,9 @@ init -1500 python:
                 if max is not None:
                     if page > max:
                         if wrap:
-                            if config.has_autosave:
+                            if config.has_autosave and auto:
                                 page = "auto"
-                            elif config.has_quicksave:
+                            elif config.has_quicksave and quick:
                                 page = "quick"
                             else:
                                 page = "1"
@@ -815,24 +824,32 @@ init -1500 python:
 
          Goes to the previous file page, if possible.
 
-         `max`
-             If set, this should be an integer that gives the number of
-             the maximum file page we can go to. This is required to enable
-             wrap.
+        `max`
+            If set, this should be an integer that gives the number of
+            the maximum file page we can go to. This is required to enable
+            wrap.
 
-         `wrap`
-             If true, we can go to the last page when on the first file page if max is set.
+        `wrap`
+            If true, we can go to the last page when on the first file page if max is set.
+
+        `auto`
+            If true, this can bring the player to
+            the page of automatic saves.
+
+        `quick`
+            If true, this can bring the player to
+            the page of automatic saves.
+
          """
 
         alt = _("Previous file page.")
 
-        def __init__(self, max=None, wrap=False):
+        def __init__(self, max=None, wrap=False, auto=True, quick=True):
 
             if wrap and max is not None:
                 max = str(max)
             else:
                 max = None
-
 
             page = persistent._file_page
 
@@ -840,15 +857,15 @@ init -1500 python:
                 page = max
 
             elif page == "quick":
-                if config.has_autosave:
+                if config.has_autosave and auto:
                     page = "auto"
                 else:
                     page = max
 
             elif page == "1":
-                if config.has_quicksave:
+                if config.has_quicksave and quick:
                     page = "quick"
-                elif config.has_autosave:
+                elif config.has_autosave and auto:
                     page = "auto"
                 else:
                     page = max
@@ -883,6 +900,7 @@ init -1500 python:
 
         def __call__(self):
             renpy.take_screenshot()
+            renpy.restart_interaction()
 
     @renpy.pure
     def QuickSave(message=_("Quick save complete."), newest=False):

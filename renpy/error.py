@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -207,10 +207,13 @@ def report_exception(e, editor=True):
     print(safe_utf8(e), file=full)
 
     # Write to stdout/stderr.
-    sys.stdout.write("\n")
-    sys.stdout.write(full.getvalue())
-    sys.stdout.write("\n")
-    sys.stdout.write(simple.getvalue())
+    try:
+        sys.stdout.write("\n")
+        sys.stdout.write(full.getvalue())
+        sys.stdout.write("\n")
+        sys.stdout.write(simple.getvalue())
+    except:
+        pass
 
     print(file=full)
     try:

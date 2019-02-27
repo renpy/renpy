@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -50,6 +50,10 @@ def default_drag_group():
 
 def default_drag_joined(drag):
     return [ (drag, 0, 0) ]
+
+
+def default_drop_allowable(drop, drags):
+    return True
 
 
 class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
@@ -107,6 +111,12 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         If true, this Drag is raised to the top when it is dragged. If
         it is joined to other Drags, all joined drags are raised.
 
+    `activated`
+        A callback (or list of callbacks) that is called when the mouse
+        is pressed down on the drag. It is called with one argument, a
+        a list of Drags that are being dragged. The return value of this
+        callback is ignored.
+
     `dragged`
         A callback (or list of callbacks) that is called when the Drag
         has been dragged. It is called with two arguments. The first is
@@ -132,6 +142,12 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         and clicked.  If the callback returns a value other than None,
         that value is returned as the result of the interaction.
 
+    `alternate`
+        An action that is run when the Drag is right-clicked (on the
+        desktop) or long-pressed without moving (on mobile). It may
+        be necessary to increase :var:`config.longpress_duration` if
+        this triggers to early on mobile platforms.
+
     `drag_handle`
         A (x, y, width, height) tuple, giving the position of the drag
         handle within the child. In this tuple, integers are considered
@@ -152,9 +168,15 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         way to get them back on the screen.
 
     `mouse_drop`
-        If true, the drag is dropped on the first droppable under the cursor. 
-        If false, the default, the drag is dropped onto the droppable with 
+        If true, the drag is dropped on the first droppable under the cursor.
+        If false, the default, the drag is dropped onto the droppable with
         the largest degree of overlap.
+
+    `drop_allowable`
+        A callback that is called to determine whether this drop allow
+        the current drags dropped onto. It is called with two arguments.
+        The first is the Drag which determines its sensitivity.
+        The second is a list of Drags that are being dragged.
 
     Except for `d`, all of the parameters are available as fields (with
     the same name) on the Drag object. In addition, after the drag has
@@ -165,13 +187,20 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
     `w`, `h`
          The width and height of the Drag's child, in pixels.
-        """
+    """
+
+    z = 0
 
     focusable = True
 
     drag_group = None
     old_position = None
     drag_offscreen = False
+    activated = None
+    alternate = None
+
+    # The time a click started, or None if a click is not in progress.
+    click_time = None
 
     def __init__(self,
                  d=None,
@@ -181,6 +210,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                  drag_raise=True,
                  dragged=None,
                  dropped=None,
+                 drop_allowable=default_drop_allowable,
                  drag_handle=(0.0, 0.0, 1.0, 1.0),
                  drag_joined=default_drag_joined,
                  clicked=None,
@@ -189,6 +219,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                  replaces=None,
                  drag_offscreen=False,
                  mouse_drop=False,
+                 activated=None,
+                 alternate=None,
                  style="drag",
                  **properties):
 
@@ -200,11 +232,14 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.drag_raise = drag_raise
         self.dragged = dragged
         self.dropped = dropped
+        self.drop_allowable = drop_allowable
         self.drag_handle = drag_handle
         self.drag_joined = drag_joined
         self.clicked = clicked
         self.hovered = hovered
         self.unhovered = unhovered
+        self.activated = activated
+        self.alternate = alternate
         self.drag_offscreen = drag_offscreen
         # if mouse_drop_check is True (default False), the drop will not
         #  use default major overlap between droppables but instead
@@ -269,6 +304,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         # Did we move over the course of this drag?
         self.drag_moved = False
 
+        # A z index that's changed when something is raised or lowered.
+        self.z = 0
+
         if replaces is not None:
             self.x = replaces.x
             self.y = replaces.y
@@ -285,6 +323,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.drag_moved = replaces.drag_moved
             self.last_drop = replaces.last_drop
             self.mouse_drop = replaces.mouse_drop
+            self.click_time = replaces.click_time
+            self.z = replaces.z
 
         if d is not None:
             self.add(d)
@@ -394,8 +434,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         if child is None:
             child = self.child
 
-        self.parent_width = width
-        self.parent_height = height
+        self.parent_width = renpy.display.render.render_width
+        self.parent_height = renpy.display.render.render_height
 
         cr = render(child, width, height, st, at)
         cw, ch = cr.get_size()
@@ -517,6 +557,10 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         grabbed = (renpy.display.focus.get_grab() is self)
 
+        if (self.alternate is not None) and renpy.display.touch and map_event(ev, "drag_activate"):
+            self.click_time = st
+            renpy.game.interface.timeout(renpy.config.longpress_duration)
+
         if grabbed:
             joined_offsets = self.drag_joined(self)
             joined = [ i[0] for i in joined_offsets ]
@@ -530,6 +574,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                 raise renpy.display.core.IgnoreEvent()
 
             renpy.display.focus.set_grab(self)
+
+            run(joined[0].activated, joined)
 
             self.grab_x = x
             self.grab_y = y
@@ -548,9 +594,30 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
             grabbed = True
 
+        elif (self.alternate is not None) and map_event(ev, "button_alternate"):
+            rv = run(self.alternate)
+            if rv is not None:
+                return rv
+
+            raise renpy.display.core.IgnoreEvent()
+
+        if ((self.alternate is not None) and
+            renpy.display.touch and
+            (self.click_time is not None) and
+                ((st - self.click_time) > renpy.config.longpress_duration)):
+
+            self.click_time = None
+
+            rv = run(self.alternate)
+            if rv is not None:
+                return rv
+
         # Handle clicking on droppables.
         if not grabbed:
             if self.clicked is not None and map_event(ev, "drag_deactivate"):
+
+                self.click_time = None
+
                 rv = run(self.clicked)
                 if rv is not None:
                     return rv
@@ -566,6 +633,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
             if not self.drag_moved and (self.start_x != par_x or self.start_y != par_y):
                 self.drag_moved = True
+                self.click_time = None
 
                 # We may not be in the drag_joined group.
                 self.set_style_prefix("idle_", True)
@@ -605,9 +673,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         if (self.drag_group is not None) and self.drag_moved:
             if self.mouse_drop:
-               drop = self.drag_group.get_drop_at(joined, par_x, par_y)
+                drop = self.drag_group.get_drop_at(joined, par_x, par_y)
             else:
-               drop = self.drag_group.get_best_drop(joined)
+                drop = self.drag_group.get_best_drop(joined)
         else:
             drop = None
 
@@ -622,6 +690,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.last_drop = drop
 
         if map_event(ev, 'drag_deactivate'):
+
+            self.click_time = None
+
             renpy.display.focus.set_grab(None)
 
             if drop is not None:
@@ -687,7 +758,15 @@ class DragGroup(renpy.display.layout.MultiBox):
 
     All positional parameters to the DragGroup constructor should be
     Drags, that are added to the DragGroup.
+
+
+    `min_overlap`
+        An integer which means the minimum number of pixels at the
+        overlap so that drop will be allow.
     """
+
+    z_serial = 0
+    sorted = False
 
     _list_type = renpy.python.RevertableList
 
@@ -700,14 +779,21 @@ class DragGroup(renpy.display.layout.MultiBox):
 
         replaces = properties.pop("replaces", None)
 
+        min_overlap = properties.pop("min_overlap", 0)
+        self.min_overlap = min_overlap
+
         super(DragGroup, self).__init__(**properties)
+
+        self.sorted = False
 
         if replaces is not None:
             self.positions = renpy.python.RevertableDict(replaces.positions)
             self.sensitive = replaces.sensitive
+            self.z_serial = replaces.z_serial
         else:
             self.positions = renpy.python.RevertableDict()
             self.sensitive = True
+            self.z_serial = 0
 
         for i in children:
             self.add(i)
@@ -725,6 +811,8 @@ class DragGroup(renpy.display.layout.MultiBox):
         child.drag_group = self
         super(DragGroup, self).add(child)
 
+        self.sorted = False
+
     def remove(self, child):
         """
         :doc: drag_drop method
@@ -737,6 +825,14 @@ class DragGroup(renpy.display.layout.MultiBox):
 
         child.x = None
         super(DragGroup, self).remove(child)
+
+    def render(self, width, height, st, at):
+
+        if not self.sorted:
+            self.children.sort(key=lambda i : i.z)
+            self.sorted = True
+
+        return super(DragGroup, self).render(width, height, st, at)
 
     def event(self, ev, x, y, st):
 
@@ -751,32 +847,13 @@ class DragGroup(renpy.display.layout.MultiBox):
         order given in l for those children.
         """
 
-        s = set(l)
+        self.sorted = False
 
-        offset_map = { }
+        for i in l:
+            self.z_serial += 1
+            i.z = self.z_serial
 
-        children = [ ]
-        offsets = [ ]
-
-        for i, c in enumerate(self.children):
-            if i < len(self.offsets):
-                o = self.offsets[i]
-            else:
-                o = (0, 0)
-
-            if c not in s:
-                children.append(c)
-                offsets.append(o)
-            else:
-                offset_map[c] = o
-
-        for c in l:
-            if c in offset_map:
-                children.append(c)
-                offsets.append(offset_map[c])
-
-        self.children = self._list_type(children)
-        self.offsets = self._list_type(offsets)
+        renpy.display.render.redraw(self, 0)
 
     def lower_children(self, l):
         """
@@ -784,13 +861,13 @@ class DragGroup(renpy.display.layout.MultiBox):
         the one at the bottom being the lowest.
         """
 
-        self.children.reverse()
-        self.offsets.reverse()
+        self.sorted = False
 
-        self.raise_children(l)
+        for i in l:
+            self.z_serial += 1
+            i.z = -self.z_serial
 
-        self.children.reverse()
-        self.offsets.reverse()
+        renpy.display.render.redraw(self, 0)
 
     def get_best_drop(self, joined):
         """
@@ -820,7 +897,11 @@ class DragGroup(renpy.display.layout.MultiBox):
 
                 overlap = rect_overlap_area(r1, r2)
 
-                if overlap >= max_overlap:
+                if (
+                    overlap >= max_overlap and
+                    overlap >= self.min_overlap and
+                    c.drop_allowable(c, joined)
+                ):
                     rv = c
                     max_overlap = overlap
 
@@ -837,17 +918,20 @@ class DragGroup(renpy.display.layout.MultiBox):
         joined_set = set(joined)
         for c in self.children:
             if c in joined_set:
-               continue
+                continue
 
             if not c.droppable:
-               continue
+                continue
 
             if c.x is None:
-               continue
+                continue
 
-            if (x >= c.x and y >= c.y and
-                x < (c.x+c.w) and y < (c.y+c.h)):
-               return c
+            if (
+                x >= c.x and y >= c.y and
+                x < (c.x + c.w) and y < (c.y + c.h) and
+                c.drop_allowable(c, joined)
+            ):
+                return c
 
     def get_children(self):
         """

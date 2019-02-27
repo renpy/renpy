@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -84,6 +84,7 @@ text_property_names = [
     "min_width",
     "newline_indent",
     "outlines",
+    "outline_scaling",
     "rest_indent",
     "ruby_style",
     "slow_cps",
@@ -174,6 +175,7 @@ vscrollbar_bar_properties = [ PrefixStyle("vscrollbar_", i) for i in bar_propert
 box_property_names = [
     "box_layout",
     "box_wrap",
+    "box_wrap_spacing",
     "box_reverse",
     "order_reverse",
     "spacing",

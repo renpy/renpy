@@ -82,7 +82,7 @@ overlay
 
 Additional layers can be defined by updating :var:`config.layers`, and
 the various other layer-related config variables. Using
-:func:`renpy.layer_at_list`, one or more transforms can be applied to
+:func:`renpy.show_layer_at`, one or more transforms can be applied to
 a layer.
 
 Defining Images
@@ -439,7 +439,7 @@ If not given, it defaults to :var:`config.window_show_transition` and
 it from occurring.
 
 The window itself is displayed by calling :var:`config.empty_window`. It defaults to
-having the narrator say an empty string.::
+having the narrator say an empty string. ::
 
         show bg washington
         show eileen happy

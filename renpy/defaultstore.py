@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -46,6 +46,9 @@ _window_subtitle = ''
 
 # Should rollback be allowed?
 _rollback = True
+
+# Should beginning a new rollback be allowed?
+_begin_rollback = True
 
 # Should skipping be allowed?
 _skipping = True
@@ -123,7 +126,9 @@ eval = renpy.python.py_eval  # @ReservedAssignment
 # Displayables.
 Bar = renpy.display.behavior.Bar
 Button = renpy.display.behavior.Button
+ImageButton = renpy.display.behavior.ImageButton
 Input = renpy.display.behavior.Input
+TextButton = renpy.display.behavior.TextButton
 
 ImageReference = renpy.display.image.ImageReference
 DynamicImage = renpy.display.image.DynamicImage
@@ -217,8 +222,6 @@ BarValue = renpy.ui.BarValue
 
 Style = renpy.style.Style  # @UndefinedVariable
 
-absolute = renpy.display.core.absolute
-
 NoRollback = renpy.python.NoRollback
 
 
@@ -250,6 +253,7 @@ class _layout_class(__builtins__["object"]):
 
 
 Fixed = _layout_class(renpy.display.layout.MultiBox, """
+:name: Fixed
 :doc: disp_box
 :args: (*args, **properties)
 

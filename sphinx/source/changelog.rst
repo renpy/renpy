@@ -2,10 +2,411 @@
 Full Changelog
 ==============
 
-.. _renpy-7.0.1:
+.. _renpy-7.1.4:
 
-7.0.1
+7.1.4
 =====
+
+Menu Arguments
+--------------
+
+Ren'Py now has support for :ref:`menu arguments <menu-arguments>`. Arguments
+can be passed to a choice menu as a whole, or to the individual choices within
+the menu, using the syntax::
+
+    menu ("jfk", screen="airport"):
+
+        "Chicago, IL" (200):
+            jump chicago_trip
+
+        "Dallas, TX" (150, sale=True):
+            jump dallas_trip
+
+        "Hot Springs, AR" (300) if secret_unlocked:
+            jump hot_springs_trip
+
+
+Menu arguments passed to the menu itself become arguments to the screen,
+except the `screen` argument which selects the screen, and the `nvl`
+argument, which - if present - selects the NVL-mode menu. The arguments to
+the choices become arguments to the items passed to the menu screen.
+
+Temporary Say Attributes
+------------------------
+
+Ren'Py now supports temporary say attributes. Just like regular say
+attributes, these are included as part of the say statement. However,
+these temporary say attributes are reverted once the dialogue has
+finished. For example, in the script::
+
+    show eileen happy
+
+    e "I'm happy."
+
+    e @ vhappy "I'm really happy!"
+
+    e "I'm still happy."
+
+In the first line and last line of dialogues, Eileen is using her happy
+emotion. The vhappy emotion is shown before the second line of dialogue,
+and replaced with the previous emotion (happy in this case), before it.
+
+
+Text
+-----
+
+There have been a number of text changes that affect text when a window
+is scaled to a non-default size:
+
+* The text is now aligned on its baseline, rather than at the top of
+  the text. This is relevant when an absolute outline offset is
+  used.
+
+* It is now possible to choose how the outline scales when the window
+  is scaled. This is done with the :propref:`outline_scaling` style
+  property.
+
+When positioning a Text object, the :propref:`yanchor` property can be
+renpy.BASELINE. When it is, the anchor is set to the baseline of the
+first line of the text.
+
+Statements
+----------
+
+The new ``window auto show`` and ``window auto hide`` statements
+allow :ref:`automatic dialogue window management <dialogue-window-management>`
+to continue while showing or hiding the dialogue window.
+
+The ``show screen`` and ``hide screen`` statements now take a with
+clause, that works the same way it does with ``show`` and ``hide``.
+
+The screen language ``use`` statement now can take an ``expression``
+clause, that makes it take an expression rather than a literal screen
+name. This allows a variable to be used when selecting the screen that
+is included. See :ref:`sl-use` for more details.
+
+
+Changes
+-------
+
+The new :func:`renpy.is_skipping` function reports if Ren'Py is currently
+skipping.
+
+The :ref:`input <sl-input>` displayable now takes a new `copypaste`
+property, which when true allows copying with ctrl+C and pasting with
+ctrl+V. This is enabled in the console and launcher.
+
+:func:`Preference("display", "window")` now avoids creating a window bigger
+than the screen, and will be selected if the current window size is the
+maximum window size, if the size selected with :func:`gui.init` is bigger
+than the maximum window size.
+
+:ref:`Creator defined statements <cds>` now have a few more lexer methods available,
+making it possible to to parse arguments, image name components, labels, and
+delimited python.
+
+The :func:`renpy.force_autosave` function takes a new argument, that causes
+the autosave to block until it completes.
+
+The :ref:`ctc screen <ctc-screen>` now takes a number of new parameters,
+if required.
+
+The new :func:`im.Blur` image manipulator can blur an image. Thanks to
+Mal Graty for contributing it.
+
+LayeredImage groups now support a ``multiple`` property, which allows
+multiple attributes in the same group to be displayed at the same time.
+This is useful because it allows the auto-definition function of a group
+to be applied to non-conflicting images.
+
+Ren'Py will remain fullscreen when the mouse changes desktops, and will avoid
+shrinking a maximized window during a reload.
+
+The :var:`config.allow_duplicate_labels` variable can be defined or set in an
+init python block to allow duplicate labels to be defined in a game.
+
+The :func:`Movie` displayable can now be told not to loop, and displays the
+associated static image when it stops looping. It also can take an image
+that is displayed before the movie proper starts.
+
+Android Changes
+---------------
+
+The downloading of the Android SDK has been updated to fix a change in the
+provided tools that prevented things from downloading.
+
+An explicit action is now given to the keyboard, to make sure the enter
+key works.
+
+Ren'Py now uses the Amazon payment APIs when sideloaded onto a device
+made by Amazon, allowing their payment system to be tested on a dual-store
+APK.
+
+
+Ren'Py will now allow files in the public game directory (/mnt/sdcard/Android/`package`/files/game)
+to override those included with the game proper.
+
+Fixes
+------
+
+A bug preventing Ren'Py from displaying zero or negative-width
+characters (such as certain diacritics) has been fixed.
+
+An issue that prevented Ren'Py from updating a displayable that was
+added to a screen with transform properties has been fixed.
+
+The order of drags within a drag group is now preserved when an
+interaction restart occurs.
+
+
+
+Size-changing properties like :ref:`xysize` now apply to a Drag and not
+the space it can move around in.
+
+A bug that could cause a transparent, black, or gray line to appear on
+the bottom line of a screen during a dissolve has been fixed.
+
+A regression in support for imagefonts has been fixed.
+
+Creating a new file from the navigation menu of the launcher now works.
+
+Menu sets now work again.
+
+Ren'Py will no longer crash if an incomparable type is given to :func:`Function`
+and other actions.
+
+A case where rolling forward would fail is now fixed.
+
+A problem that prevented the Steam overlay from showing up on macOS was fixed.
+
+
+
+.. _renpy-7.1.3:
+
+7.1.3
+=====
+
+This was a quick re-release of 7.1.2 in order to fix a single bug, which
+was that a test change had been left in causing :var:`config.default_language`
+to be set on initial startup.
+
+
+.. _renpy-7.1.2:
+
+7.1.2
+=====
+
+Improvements
+------------
+
+Ren'Py's screen language now support the inclusion of anonymous ATL
+transforms. It's now possible to write::
+
+    screen hello_title():
+        text "Hello.":
+            at transform:
+                align (0.5, 0.5) alpha 0.0
+                linear 0.5 alpha 1.0
+
+The new :func:`SetLocalVariable` and :func:`ToggleLocalVariable` actions
+make it possible to set variables inside used screens.
+
+The new :var:`config.menu_include_disabled` variable determines if menus
+should include entries disabled by an if clause.
+
+Shift-keybindings (like Shift+I and Shift+R) now work in the Android
+emulation mode.
+
+Ren'Py now better reports errors in text tags that require a value but are
+not given one.
+
+The new :var:`_version` variable indicates the version of the game itself
+that was used when a new game is first created. This only stores the version
+at game creation - after that, it's up to the creator to keep it updated.
+
+The :func:`Movie` displayable now supports a new mode the color data and
+alpha mask data are placed side-by-side in the same file. This prevents
+issues where a main and mask movie could go out of sync.
+
+The :func:`FilePageNext` and :func:`FilePagePrevious` functions now take
+arguments that control if the they can bring the player to the auto or
+quick save pages.
+
+The new :var:`config.skip_sounds` variables determines if Ren'Py will skip
+non-looping audio files that are played while Ren'Py is skipping.
+
+Translations
+------------
+
+Ren'Py now has the ability to automatically detect the locale of the user's
+system, and use it to set the language. Please see
+:var:`config.enable_language_autodetect` and the :ref:`Translation <translation>`
+documentation for how this works.
+
+The French, German, Korean, Russian, and Simplifed Chinese translations
+have been updated.
+
+Fixes
+-----
+
+A Windows-specific bug that caused RTL (the support for languages like
+Arabic and Hebrew) to corrupt the second half of text strings has been
+fixed. This should prevent garbage characters from being displayed when
+rendering those languages.
+
+Ren'Py will now report an error if a game accesses an image that does not
+exist, but has as a prefix an image that does exist. Before this change,
+if ``eileen happy`` exists and ``eileen happy unknown`` was shown, the
+additional attribute would be ignored.
+
+Lint has been improved to deal with images that take attributes that are
+not in the image name, like layered images.
+
+Ren'Py generates choice menu images that are suitable for use on the phone.
+
+Android Fixes
+-------------
+
+As Ren'Py's new Android support only worked well on a 64-bit version of
+Java 8, we make that 64-bit requirement explicit.
+
+
+.. _renpy-7.1.1:
+
+7.1.1
+=====
+
+.. _history-7.1.1:
+
+History Fix
+-----------
+
+This release fixes an issue with Ren'Py's history screen. The problem occurred
+when a line of dialogue contained a quoted square bracket, so something like::
+
+    "I [[think] I'm having a problem."
+
+When this occurs, the string "I [think] I'm having a problem." is added to
+the history. Ren'Py would then display that in history, substitute the
+``think`` variable, and crash.
+
+This is fixed by adding ``substitute False`` to the history screen. This
+is done to new projects, but for existing ones you'll need to make the fix
+yourself. Here's the new history screen::
+
+    screen history():
+
+        tag menu
+
+        ## Avoid predicting this screen, as it can be very large.
+        predict False
+
+        use game_menu(_("History"), scroll=("vpgrid" if gui.history_height else "viewport"), yinitial=1.0):
+
+            style_prefix "history"
+
+            for h in _history_list:
+
+                window:
+
+                    ## This lays things out properly if history_height is None.
+                    has fixed:
+                        yfit True
+
+                    if h.who:
+
+                        label h.who:
+                            style "history_name"
+                            substitute False
+
+                            ## Take the color of the who text from the Character, if set.
+                            if "color" in h.who_args:
+                                text_color h.who_args["color"]
+
+                    $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
+                    text what substitute False
+
+            if not _history_list:
+                label _("The dialogue history is empty.")
+
+
+The new lines are the ones with ``substitute False`` on them. You'll want to make
+this change to your history screen to prevent his problem from happening.
+
+Android Improvements
+--------------------
+
+Ren'Py now sets the amount of memory used by the Android build tool to
+the Google-set default of 1536 megabytes. To change this, edit
+rapt/project/gradle.properties. To make sure you're capable of building
+larger games, please make sure your computer has a 64-bit version of Java 8.
+
+Ren'Py explicitly tells Android to pass the Enter key to an input.
+
+Ren'Py now crops and sizes the icon correctly for versions of Android below
+Android 8 (Oreo).
+
+Ren'Py gives a different numeric version number to the x86_64 apk. This will
+allow both x86_64 and armeabi-v7a builds to be uploaded to Google Play and
+other stores, rather than having to first created one build and then the other,
+manually changing the version numbers between.
+
+Other Improvements
+------------------
+
+Ren'Py now handles the (lack of) drawing of zero width characters itself, preventing
+such characters from appearing as squares in text if the font does not support
+the zero width character.
+
+Ren'Py supports the use of non-breaking space and zero-width non-breaking space
+characters to prevent images in text from being wrapped.
+
+Ren'Py supports the a new "nestled-close" value for the `ctc_position` parameter
+of :func:`Character`. This value prevents there from being a break between the
+click-to-continue indicator and the other lines.
+
+Drags (in drag-and-drop) now support alternate clicks. (Right clicks on desktop
+and long-clicks on touch platforms.)
+
+
+Fixes
+-----
+
+The :func:`SetVariable` and :func:`ToggleVariable` functions have been extended
+to accept namespaces and fields. So it's now possible to have actions like
+``SetVariable("hero.strength", hero.strength + 1)`` or
+``ToggleVariable("persistent.alternate_perspective")``.
+
+Automatic management of the dialogue window (as enabled by the ``window auto``
+statement) now considers if an in-game menu has a dialogue or caption associated
+with it, and handles that appropriately.
+
+The source code to the embedded version of fribidi that Ren'Py is expected
+to build with is now included in the -source archive.
+
+There have been a number of fixes to the voice sustain preference to make
+it work better with history and the voice replay action.
+
+.. _renpy-7.1:
+
+7.1
+===
+
+Android
+-------
+
+This release sees a major rewrite of Ren'Py's support for Android to
+modernize it. This is required so Ren'Py games can be uploaded to the
+Google Play store. Some of these changes may require you to update
+a game's files. Most notably, the format of icons has changed, so the
+icons will need to be redone.
+
+The minimum version of Android that Ren'Py will run on has been raised
+to Android 19 (aka 4.4 KitKat), while it targets Android 28 (aka 9 Pie).
+
+The x86_64 architecture has been added, while x86 has been dropped. (Some x86
+devices may be able to run the arm platform version through binary translation
+layers.)
 
 
 Monologue Mode
@@ -28,6 +429,25 @@ the {clear} tag is part of a line by itself, it is the equivalent of
 the ``nvl clear`` statement. See :ref:`NVL Monlologue Mode <nvl-monologue-mode>` for more
 about this.
 
+
+Say-With-Attribute Change
+-------------------------
+
+There has been a change to the way a say-with-attributes is handled
+when there is not an image with the tag displaying. Previously, Ren'Py
+would use the attributes given in the most recent say-with-attributes statement
+to selected the side image to show.
+
+Now, Ren'Py will use the provided attributes and existing attributes to resolve
+the side image. This makes a say-with-attributes that occurs when an image
+is not showing work the same way as when it is. When the attributes do not
+select a single side image, Ren'Py will select the image with all of the given
+attributes, and the most possible of the existing attributes.
+
+The rationale for this change is to help with side images that are defined
+as layered images, where providing only the attributes that change makes
+sense.
+
 Updater Changes
 ---------------
 
@@ -47,6 +467,11 @@ Translations
 The Ren'Py launcher, template game, and The Question have been translated
 into the Latin script of Malay by Muhammad Nur Hidayat Yasuyoshi.
 
+The Korean translation has been significantly updated.
+
+It is now possible to translate the strings used by RAPT into non-English
+languages.
+
 Other
 -----
 
@@ -64,7 +489,7 @@ that shows the attributes associated with displayed and hidden images.
 Added :func:`renpy.transform_text`, a function to transform text without
 touching text tags or interpolation.
 
-Buttons created using the make_buttons method of a Gallery object now
+Buttons created using the ``make_buttons`` method of a Gallery object now
 inherit from the empty style, and not button. This prevents properties from
 the button style from causing problems.
 
@@ -90,6 +515,23 @@ given has been fixed.
 Ren'Py now includes a copy of fribidi, rather than requiring an OS-installed
 version.
 
+The new :propref:`box_wrap_spacing` allows control of the spacing between
+rows or columns introduced by :propref:`box_wrap`.
+
+The :propref:`adjust_spacing` style property can now take "horizontal" and
+"vertical" as values, causing text spacing to be adjusted in only the
+specified direction.
+
+LayerdImageProxy can now take an interpolated string.
+
+The new :var:`config.context_callback` is called when starting the game or
+entering a new context, like a menu context. It can be used to stop voice
+or sounds from playing when entering that context.
+
+The :func:`Drag` displayable (and the screen language equivalent, ``drag``)
+have grown a new `activated` property. This is callback that is called when
+the user first clicks the mouse on a drag. (Before it starts moving.)
+
 
 .. _renpy-7.0:
 
@@ -110,7 +552,7 @@ Layered Images
 
 A :ref:`layered image <layered-images>` is a new way of defining images
 for use in Ren'Py. It's intended to be used with a sprite that has been
-created in Photoshop or some other program as a a series of layers.
+created in Photoshop or some other program as a series of layers.
 The layered image system can use the attributes the image was displayed
 with and Python conditions to determine what layers to display.
 

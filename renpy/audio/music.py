@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -111,7 +111,13 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
                 c.fadeout(fadeout)
                 loop_only = False
 
-            c.enqueue(filenames, loop=loop, synchro_start=synchro_start, fadein=fadein, tight=tight, loop_only=loop_only)
+            if renpy.config.skip_sounds and renpy.config.skipping and (not loop):
+                enqueue = False
+            else:
+                enqueue = True
+
+            if enqueue:
+                c.enqueue(filenames, loop=loop, synchro_start=synchro_start, fadein=fadein, tight=tight, loop_only=loop_only)
 
             t = get_serial()
             ctx.last_changed = t
@@ -193,7 +199,13 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
             if clear_queue:
                 c.dequeue(True)
 
-            c.enqueue(filenames, loop=loop, fadein=fadein, tight=tight)
+            if renpy.config.skip_sounds and renpy.config.skipping and (not loop):
+                enqueue = False
+            else:
+                enqueue = True
+
+            if enqueue:
+                c.enqueue(filenames, loop=loop, fadein=fadein, tight=tight)
 
             t = get_serial()
             ctx.last_changed = t

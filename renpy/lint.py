@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -139,17 +139,22 @@ def image_exists_imprecise(name):
         else:
             required.add(i)
 
-    for im in renpy.display.image.images:
+    for im, d in renpy.display.image.images.items():
 
         if im[0] != nametag:
             continue
 
         attrs = set(im[1:])
 
-        if [ i for i in required if i not in attrs ]:
+        if [ i for i in banned if i in attrs ]:
             continue
 
-        if [ i for i in banned if i in attrs ]:
+        li = getattr(d, "_list_attributes", None)
+
+        if li is not None:
+            attrs = attrs | set(li(im[0], required))
+
+        if [ i for i in required if i not in attrs ]:
             continue
 
         imprecise_cache.add(name)
@@ -172,18 +177,41 @@ def image_exists_precise(name):
 
     nametag = name[0]
 
-    required = set(name[1:])
+    required = set()
+    banned = set()
 
-    for im in renpy.display.image.images:
+    for i in name[1:]:
+        if i[0] == "-":
+            banned.add(i[1:])
+        else:
+            required.add(i)
+
+    for im, d in renpy.display.image.images.items():
 
         if im[0] != nametag:
             continue
 
         attrs = set(im[1:])
 
-        if attrs == required:
-            precise_cache.add(name)
-            return True
+        if attrs - required:
+            continue
+
+        rest = required - attrs
+
+        if rest:
+
+            try:
+                da = renpy.display.core.DisplayableArguments()
+                da.name=( im[0], ) + tuple(i for i in name[1:] if i in attrs)
+                da.args=tuple(i for i in name[1:] if i in rest)
+                da.lint = True
+                d._duplicate(da)
+            except:
+                continue
+
+        precise_cache.add(name)
+
+        return True
 
     return False
 
@@ -202,26 +230,16 @@ def image_exists(name, expression, tag, precise=True):
     if expression:
         return
 
-    namelist = list(name)
-    names = " ".join(namelist)
-
-    # Look for the precise name.
-    while namelist:
-        if tuple(namelist) in renpy.display.image.images:
-            return
-
-        namelist.pop()
-
-    # If we're not precise, then we have to start looking for images
-    # that we can possibly match.
-    if precise:
-        if image_exists_precise(name):
-            return
-    else:
+    if not precise:
         if image_exists_imprecise(name):
             return
 
-    report("The image named '%s' was not declared.", names)
+    # If we're not precise, then we have to start looking for images
+    # that we can possibly match.
+    if image_exists_precise(name):
+        return
+
+    report("'{}' is not an image.".format(" ".join(name)) )
 
 
 # Only check each file once.
@@ -561,6 +579,13 @@ def check_label(node):
         add_arg(pi.extrakw)
 
 
+def check_screen(node):
+
+    if (node.screen.parameters is None) and renpy.config.lint_screens_without_parameters:
+        report("The screen {} has not been given a parameter list.".format(node.screen.name))
+        add("This can be fixed by writing 'screen {}():' instead.".format(node.screen.name))
+
+
 def check_styles():
     for full_name, s in renpy.style.styles.iteritems():  # @UndefinedVariable
         name = "style." + full_name[0]
@@ -741,6 +766,7 @@ def lint():
 
         elif isinstance(node, renpy.ast.Screen):
             screen_count += 1
+            check_screen(node)
 
         elif isinstance(node, renpy.ast.Define):
             check_define(node, "define")

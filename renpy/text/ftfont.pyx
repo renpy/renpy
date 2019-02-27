@@ -1,5 +1,5 @@
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -63,6 +63,24 @@ def init():
     error = FT_Init_FreeType(&library)
     if error:
         raise FreetypeError(error)
+
+cdef bint is_zerowidth(unsigned int char):
+    if char == 0x200b: # Zero-width space.
+        return True
+
+    if char == 0x200c: # Zero-width non-joiner.
+        return True
+
+    if char == 0x200d: # Zero-width joiner.
+        return True
+
+    if char == 0x2060: # Word joiner.
+        return True
+
+    if char == 0xfeff: # Zero width non-breaking space.
+        return True
+
+    return False
 
 cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count):
     """
@@ -491,13 +509,9 @@ cdef class FTFont:
 
             gl.character = c
             gl.ascent = self.ascent
-
-            if c == 0x200B:
-                gl.width = 0
-            else:
-                gl.width = cache.width
-
+            gl.width = cache.width
             gl.line_spacing = self.lineskip
+            gl.draw = True
 
             if i < len_s - 1:
                 next_c = s[i + 1]
@@ -518,6 +532,11 @@ cdef class FTFont:
 
             else:
                 gl.advance = cache.advance
+
+            if is_zerowidth(gl.character):
+                gl.width = 0
+                gl.advance = 0
+                gl.draw = False
 
             rv.append(gl)
 
@@ -623,9 +642,6 @@ cdef class FTFont:
             if glyph.split == SPLIT_INSTEAD:
                 continue
 
-            if glyph.character == 0x200b:
-                continue
-
             x = <int> (glyph.x + xo)
             y = <int> (glyph.y + yo)
 
@@ -651,37 +667,38 @@ cdef class FTFont:
 
             underline_end = min(underline_end, surf.w - 1)
 
-            for py from 0 <= py < rows:
+            if glyph.draw:
 
-                if bmy < 0:
+                for py from 0 <= py < rows:
+
+                    if bmy < 0:
+                        bmy += 1
+                        continue
+
+                    line = pixels + bmy * pitch + bmx * 4
+                    gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
+
+                    for px from 0 <= px < width:
+
+                        alpha = gline[0]
+
+                        # Modulate Sa by the glyph's alpha.
+
+                        alpha = (alpha * Sa + Sa) >> 8
+
+                        # Only draw if we increase the alpha - a cheap way to
+                        # allow overlapping characters.
+                        if line[3] < alpha:
+
+                            line[0] = Sr
+                            line[1] = Sg
+                            line[2] = Sb
+                            line[3] = alpha
+
+                        gline += 1
+                        line += 4
+
                     bmy += 1
-                    continue
-
-                line = pixels + bmy * pitch + bmx * 4
-                gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
-
-                for px from 0 <= px < width:
-
-                    alpha = gline[0]
-
-                    # Modulate Sa by the glyph's alpha.
-
-                    alpha = (alpha * Sa + Sa) >> 8
-
-                    # Only draw if we increase the alpha - a cheap way to
-                    # allow overlapping characters.
-                    if line[3] < alpha:
-
-                        line[0] = Sr
-                        line[1] = Sg
-                        line[2] = Sb
-                        line[3] = alpha
-
-                    gline += 1
-                    line += 4
-
-                bmy += 1
-
 
             # Underlining.
             if underline:

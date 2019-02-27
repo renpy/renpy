@@ -620,7 +620,7 @@ translate piglatin tutorial_music_3555b640:
 # game/tutorial_quickstart.rpy:449
 translate piglatin tutorial_music_a776b6ad:
 
-    # e "Let's check out some of the commands that can effect the music channel."
+    # e "Let's check out some of the commands that can affect the music channel."
     e "Etlay'say eckchay outay omesay ofay hetay ommandscay hattay ancay effectay hetay usicmay annelchay."
 
 # game/tutorial_quickstart.rpy:454

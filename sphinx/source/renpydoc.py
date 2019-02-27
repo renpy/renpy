@@ -1,4 +1,5 @@
 #@PydevCodeAnalysisIgnore
+from __future__ import print_function
 from pygments.lexers.agile import PythonLexer
 from pygments.token import Token, Name, Operator
 
@@ -67,7 +68,7 @@ def parse_style_node(env, sig, signode):
     ref = m.group(1)
 
     while ref in style_seen_ids:
-        print "duplicate id:", ref
+        print("duplicate id:", ref)
         ref = ref + "_alt"
 
     style_seen_ids.add(ref)

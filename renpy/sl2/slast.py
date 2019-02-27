@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -39,7 +39,7 @@ import renpy.display
 import renpy.pyanalysis
 import renpy.sl2
 
-from renpy.display.motion import Transform
+from renpy.display.transform import Transform, ATLTransform
 from renpy.display.layout import Fixed
 from renpy.display.predict import displayable as predict_displayable
 
@@ -312,6 +312,9 @@ class SLBlock(SLNode):
     and child displayables.
     """
 
+    # RawBlock from parse or None if not present.
+    atl_transform = None
+
     def __init__(self, loc):
         SLNode.__init__(self, loc)
 
@@ -377,6 +380,13 @@ class SLBlock(SLNode):
         self.has_keyword = bool(self.keyword)
         self.keyword_children = [ ]
 
+        if self.atl_transform is not None:
+            self.has_keyword = True
+
+            self.atl_transform.mark_constant()
+            const = self.atl_transform.constant
+            self.constant = min(self.constant, const)
+
         for i in self.children:
             if i.has_keyword:
                 self.keyword_children.append(i)
@@ -413,6 +423,10 @@ class SLBlock(SLNode):
 
         for i in self.keyword_children:
             i.keywords(context)
+
+        if self.atl_transform is not None:
+            transform = ATLTransform(self.atl_transform, context=context.scope)
+            context.keywords["at"] = transform
 
         style_prefix = context.keywords.pop("style_prefix", NotGiven)
 
@@ -1613,26 +1627,34 @@ class SLUse(SLNode):
         else:
             const = False
 
-        target = renpy.display.screen.get_screen_variant(self.target)
+        if isinstance(self.target, renpy.ast.PyExpr):
 
-        if target is None:
             self.constant = NOT_CONST
+            const = False
+            self.ast = None
 
-            if renpy.config.developer:
-                raise Exception("A screen named {} does not exist.".format(self.target))
-            else:
+        else:
+
+            target = renpy.display.screen.get_screen_variant(self.target)
+
+            if target is None:
+                self.constant = NOT_CONST
+
+                if renpy.config.developer:
+                    raise Exception("A screen named {} does not exist.".format(self.target))
+                else:
+                    return
+
+            if target.ast is None:
+                self.constant = NOT_CONST
                 return
 
-        if target.ast is None:
-            self.constant = NOT_CONST
-            return
+            if const:
+                self.ast = target.ast.const_ast
+            else:
+                self.ast = target.ast.not_const_ast
 
-        if const:
-            self.ast = target.ast.const_ast
-        else:
-            self.ast = target.ast.not_const_ast
-
-        self.constant = min(self.constant, self.ast.constant)
+            self.constant = min(self.constant, self.ast.constant)
 
     def execute_use_screen(self, context):
 
@@ -1655,7 +1677,20 @@ class SLUse(SLNode):
 
     def execute(self, context):
 
-        ast = self.ast
+        if isinstance(self.target, renpy.ast.PyExpr):
+            target_name = eval(self.target, context.globals, context.scope)
+            target = renpy.display.screen.get_screen_variant(target_name)
+
+            if target is None:
+                raise Exception("A screen named {} does not exist.".format(self.target))
+
+            ast = target.ast.not_const_ast
+
+            id_prefix = "_use_expression"
+
+        else:
+            id_prefix = self.target
+            ast = self.ast
 
         # If self.ast is not an SL2 screen, run it using renpy.display.screen.use_screen.
         if ast is None:
@@ -1672,7 +1707,7 @@ class SLUse(SLNode):
 
         if self.id:
 
-            use_id = (self.target, eval(self.id, context.globals, context.scope))
+            use_id = (id_prefix, eval(self.id, context.globals, context.scope))
 
             ctx.old_cache = context.old_use_cache.get(use_id, None) or context.old_cache.get(self.serial, None) or { }
 

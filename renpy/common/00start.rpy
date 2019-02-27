@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -247,7 +247,7 @@ label _start:
         # Implement config.window
         _init_window()
 
-    # This has to be python, to deal with a case where _restart may
+    # This has to be Python, to deal with a case where _restart may
     # change across a shift-reload.
     python:
         if _restart is None:
@@ -260,7 +260,7 @@ label _start:
 
 label _invoke_main_menu:
 
-    # Again, this has to be python.
+    # Again, this has to be Python.
     python:
         if _restart:
             renpy.call_in_new_context(_restart[2])

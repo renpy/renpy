@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -38,6 +38,9 @@ ios = "RENPY_IOS" in os.environ
 
 # True of we're building on raspberry pi.
 raspi = "RENPY_RASPBERRY_PI" in os.environ
+
+# True of we're building with emscripten.
+emscripten = "RENPY_EMSCRIPTEN" in os.environ
 
 # Is coverage enabled?
 coverage = "RENPY_COVERAGE" in os.environ
@@ -92,7 +95,7 @@ def include(header, directory=None, optional=True):
         If given, returns False rather than abandoning the process.
     """
 
-    if android or ios:
+    if android or ios or emscripten:
         return True
 
     for i in install:
@@ -131,7 +134,7 @@ def library(name, optional=False):
         rather than reporting an error.
     """
 
-    if android or ios:
+    if android or ios or emscripten:
         return True
 
     for i in install:
@@ -314,7 +317,7 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
                 "-o",
                 c_fn])
 
-        except subprocess.CalledProcessError, e:
+        except subprocess.CalledProcessError as e:
             print()
             print(str(e))
             print()

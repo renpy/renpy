@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -606,12 +606,12 @@ init python in distribute:
                     if match(match_name, pattern):
                         break
                 else:
-                    print >> self.log, match_name.encode("utf-8"), "doesn't match anything."
+                    print(match_name.encode("utf-8"), "doesn't match anything.", file=self.log)
 
                     pattern = None
                     file_list = None
 
-                print >> self.log, match_name.encode("utf-8"), "matches", pattern, "(" + str(file_list) + ")."
+                print(match_name.encode("utf-8"), "matches", pattern, "(" + str(file_list) + ").", file=self.log)
 
                 if file_list is None:
                     return
@@ -1026,7 +1026,7 @@ init python in distribute:
 
             cmd = [ renpy.fsencode(i.format(**kwargs)) for i in command ]
 
-            # print "\"" + "\" \"".join(cmd) + "\""
+            # print("\"" + "\" \"".join(cmd) + "\"")
 
             try:
                 import sys, os
@@ -1396,13 +1396,13 @@ init python in distribute:
 
         def dump(self):
             for k, v in sorted(self.file_lists.items()):
-                print
-                print k + ":"
+                print()
+                print(k + ":")
 
                 v.sort()
 
                 for i in v:
-                    print "   ", i.name, "xbit" if i.executable else ""
+                    print("   ", i.name, "xbit" if i.executable else "")
 
     class GuiReporter(object):
         """
@@ -1441,7 +1441,7 @@ init python in distribute:
             what = what.replace("[", "{")
             what = what.replace("]", "}")
             what = what.format(**kwargs)
-            print what
+            print(what)
 
         def progress(self, what, done, total, **kwargs):
             what = what.replace("[", "{")

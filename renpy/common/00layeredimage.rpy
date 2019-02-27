@@ -1,4 +1,4 @@
-init offset = -100
+﻿init offset = -100
 
 python early in layeredimage:
 
@@ -281,13 +281,20 @@ python early in layeredimage:
 
             properties = { k : eval(v) for k, v in self.properties.items() }
 
+
             auto = properties.pop("auto", False)
             variant = properties.get("variant", None)
+            multiple = properties.pop("multiple", False)
 
             rv = [ ]
 
+            if multiple:
+                group = None
+            else:
+                group = self.group
+
             for i in self.children:
-                rv.extend(i.execute(group=self.group, properties=properties))
+                rv.extend(i.execute(group=group, properties=properties))
 
             if auto:
                 seen = set(i.raw_attribute for i in rv)
@@ -304,7 +311,7 @@ python early in layeredimage:
 
                         if len(attrs) == 1:
                             if attrs[0] not in seen:
-                                rv.append(Attribute(self.group, attrs[0], renpy.displayable(i), **properties))
+                                rv.append(Attribute(group, attrs[0], renpy.displayable(i), **properties))
 
             return rv
 
@@ -655,9 +662,14 @@ python early in layeredimage:
                 if d is not None:
 
                     if d._duplicatable:
-                        d = d._duplicate(args)
+                        d = d._duplicate(None)
 
                     rv.add(d)
+
+            if unknown and args.lint:
+                args = args.copy()
+                args.args = tuple(unknown)
+                args.extraneous()
 
             if unknown and config.developer:
 
@@ -732,8 +744,8 @@ python early in layeredimage:
             for a in self.attributes:
 
                 if a.attribute in attributes:
-                    rv.append(a.attribute)
-
+                    if a.attribute not in rv:
+                        rv.append(a.attribute)
 
                 if a.attribute in unknown:
                     unknown.remove(a.attribute)
@@ -786,7 +798,7 @@ python early in layeredimage:
         if name in o.properties:
             l.error("Duplicate property " + name)
 
-        if name == "auto" or name == "default":
+        if name == "auto" or name == "default" or name == "multiple":
             expr = "True"
         else:
             expr = l.require(l.simple_expression)
@@ -899,7 +911,7 @@ python early in layeredimage:
         rv = RawAttributeGroup(image_name, group)
         parent.children.append(rv)
 
-        while parse_property(l, rv, [ "auto", "prefix", "variant" ] + LAYER_PROPERTIES):
+        while parse_property(l, rv, [ "auto", "prefix", "variant", "multiple" ] + LAYER_PROPERTIES):
             pass
 
         if l.match(':'):
@@ -1069,10 +1081,11 @@ python early in layeredimage:
 
         def __init__(self, name, transform=None):
 
-            self.image = renpy.get_registered_image(name)
+            self.name = name
 
-            if self.image is None:
-                raise Exception("{!r} is not a registered image name.")
+            if "[" not in self.name:
+                if renpy.get_registered_image(name) is None:
+                        raise Exception("{!r} is not a registered image name.".format(self.name))
 
             if transform is None:
                 self.transform = [ ]
@@ -1082,6 +1095,23 @@ python early in layeredimage:
 
             else:
                 self.transform = [ transform ]
+
+
+        @property
+        def image(self):
+
+            name = self.name
+
+            if "[" in name:
+                name = renpy.substitute(name, translate=False)
+
+            image = renpy.get_registered_image(name)
+
+            if image is None:
+                raise Exception("{!r} is not a registered image name, in LayeredImageProxy.".format(name))
+
+            return image
+
 
         def _duplicate(self, args):
 

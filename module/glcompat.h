@@ -29,6 +29,10 @@
 
 	#define RENPY_GLES_2
 
+#elif defined EMSCRIPTEN
+
+	#define RENPY_GLES_2
+
 #elif defined RASPBERRY_PI
 
     #define RENPY_GLES_2

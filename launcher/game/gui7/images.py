@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,6 +24,7 @@ import os
 
 from renpy.store import config
 import renpy.display
+
 
 class ImageGenerator(object):
 
@@ -199,7 +200,6 @@ class ImageGenerator(object):
 
         self.generate_image("textbox", X, Y, self.boring_color.opacity(.8))
 
-
         YSIZE = 240
         YBORDER = 5
 
@@ -237,7 +237,6 @@ class ImageGenerator(object):
             (YSIZE, 1.0),
             ]
 
-
         self.generate_image("nvl", X, Y, self.boring_color.opacity(.8))
 
         X = [
@@ -251,8 +250,6 @@ class ImageGenerator(object):
             ]
 
         self.generate_image("phone/nvl", X, Y, self.boring_color.opacity(.8))
-
-
 
     def generate_choice_button(self):
         XSIZE = 790
@@ -277,6 +274,8 @@ class ImageGenerator(object):
 
         self.generate_image("button/choice_idle_background", X, Y, self.boring_color.opacity(.8))
         self.generate_image("button/choice_hover_background", X, Y, self.accent_color.opacity(.95))
+        self.generate_image("phone/button/choice_idle_background", X, Y, self.boring_color.opacity(.8))
+        self.generate_image("phone/button/choice_hover_background", X, Y, self.accent_color.opacity(.95))
 
     def generate_overlay(self):
 
@@ -287,7 +286,6 @@ class ImageGenerator(object):
         game_height = self.scale_int(570)
 
         line_width = self.scale_int(3)
-
 
         if self.p.light:
             opacity = 0.9
@@ -331,7 +329,6 @@ class ImageGenerator(object):
         s.fill(self.accent_color)
         s.subsurface((border, border, width - 2 * border, height - 2 * border)).fill(self.boring_color)
         self.save(s, "frame")
-
 
     def generate_quick_buttons(self):
         width = self.scale_int(100)
@@ -379,7 +376,6 @@ class ImageGenerator(object):
 
         self.generate_image("notify", X, Y, self.boring_color.opacity(.8))
 
-
     def generate_icon(self):
 
         icon_fn = os.path.join(config.renpy_base, "launcher", "game", "gui7", "icon.png")
@@ -406,14 +402,12 @@ class ImageGenerator(object):
 
         self.save(surf, "window_icon", overwrite=False)
 
-
     def generate_menus(self):
         s = self.make_surface(self.width, self.height)
         s.fill(self.menu_color)
 
         self.save(s, "main_menu", overwrite=False)
         self.save(s, "game_menu", overwrite=False)
-
 
     def generate_all(self):
         self.generate_textbox()
@@ -427,6 +421,7 @@ class ImageGenerator(object):
         self.generate_menus()
         self.generate_icon()
 
+
 if __name__ == "__main__":
     import argparse
 
@@ -439,5 +434,3 @@ if __name__ == "__main__":
     args = ap.parse_args()
 
     ImageGenerator(args.prefix, args.width, args.height).generate_all()
-
-

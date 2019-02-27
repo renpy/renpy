@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -38,6 +38,25 @@ WHITE = (255, 255, 255, 255)
 BLACK = (0, 0, 0, 255)
 
 
+def is_zerowidth(char):
+    if char == 0x200b:  # Zero-width space.
+        return True
+
+    if char == 0x200c:  # Zero-width non-joiner.
+        return True
+
+    if char == 0x200d:  # Zero-width joiner.
+        return True
+
+    if char == 0x2060:  # Word joiner.
+        return True
+
+    if char == 0xfeff:  # Zero width non-breaking space.
+        return True
+
+    return False
+
+
 class ImageFont(object):
 
     # ImageFonts are expected to have the following fields defined by
@@ -69,12 +88,18 @@ class ImageFont(object):
             g.ascent = self.baseline
             g.line_spacing = self.height
 
-            width = self.width.get(c, None)
-            if width is None:
-                raise Exception("Character {0!r} not found in image-based font.".format(c))
+            if not is_zerowidth(g.character):
 
-            g.width = self.width[c]
-            g.advance = self.advance[c]
+                width = self.width.get(c, None)
+                if width is None:
+                    raise Exception("Character {0!r} not found in image-based font.".format(c))
+
+                g.width = self.width[c]
+                g.advance = self.advance[c]
+
+            else:
+                g.width = 0
+                g.advance = 0
 
             rv.append(g)
 
@@ -94,6 +119,10 @@ class ImageFont(object):
             return
 
         for g in glyphs:
+
+            if not g.width:
+                continue
+
             c = unichr(g.character)
 
             cxo, cyo = self.offsets[c]

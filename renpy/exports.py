@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -56,7 +56,7 @@ import pygame_sdl2
 
 from renpy.text.extras import ParameterizedText, filter_text_tags
 from renpy.text.font import register_sfont, register_mudgefont, register_bmfont
-from renpy.text.text import language_tailor
+from renpy.text.text import language_tailor, BASELINE
 from renpy.display.behavior import Keymap
 from renpy.display.behavior import run, run as run_action, run_unhovered, run_periodic
 from renpy.display.behavior import map_event, queue_event, clear_keymap_cache
@@ -264,6 +264,8 @@ def checkpoint(data=None, keep_rollback=None):
     this function has been called, there should be no more interaction with the
     user in the current statement.
 
+    This will also clear the current screenshot used by saved games.
+
     `data`
         This data is returned by :func:`renpy.roll_forward_info` when the
         game is being rolled back.
@@ -273,6 +275,9 @@ def checkpoint(data=None, keep_rollback=None):
         keep_rollback = renpy.config.keep_rollback_data
 
     renpy.game.log.checkpoint(data, keep_rollback=keep_rollback, hard=renpy.store._rollback)
+
+    if renpy.store._rollback and renpy.config.auto_clear_screenshot:
+        renpy.game.interface.clear_screenshot = True
 
 
 def block_rollback(purge=False):
@@ -341,7 +346,7 @@ def image(name, d):
     """
     :doc: se_images
 
-    Defines an image. This function is the python equivalent of the
+    Defines an image. This function is the Python equivalent of the
     image statement.
 
     `name`
@@ -466,7 +471,7 @@ def showing(name, layer='master'):
     :doc: image_func
 
     Returns true if an image with the same tag as `name` is showing on
-    `layer`
+    `layer`.
 
     `image`
         May be a string giving the image name or a tuple giving each
@@ -511,20 +516,20 @@ def get_hidden_tags(layer='master'):
     return renpy.game.context().images.get_hidden_tags(layer)
 
 
-def get_attributes(tag, layer=None):
+def get_attributes(tag, layer=None, if_hidden=None):
     """
     :doc: image_func
 
     Return a tuple giving the image attributes for the image `tag`. If
     the image tag has not had any attributes associated since the last
-    time it was hidden, returns None.
+    time it was hidden, returns `if_hidden`.
 
     `layer`
         The layer to check. If None, uses the default layer for `tag`.
     """
 
     layer = default_layer(layer, tag)
-    return renpy.game.context().images.get_attributes(layer, tag, None)
+    return renpy.game.context().images.get_attributes(layer, tag, if_hidden)
 
 
 def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
@@ -713,7 +718,7 @@ def hide(name, layer=None):
     """
     :doc: se_images
 
-    Hides an image from a layer. The python equivalent of the hide statement.
+    Hides an image from a layer. The Python equivalent of the hide statement.
 
     `name`
          The name of the image to hide. Only the image tag is used, and
@@ -856,13 +861,43 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     return rv
 
 
-def menu(items, set_expr):
+# The arguments and keyword arguments for the current menu call.
+menu_args = None
+menu_kwargs = None
+
+
+def get_menu_args():
+    """
+    :other:
+
+    Returns a tuple giving the arguments (as a tuple) and the keyword arguments
+    (as a dict) passed to the current menu statement.
+    """
+
+    if menu_args is None:
+        return tuple(), dict()
+
+    return menu_args, menu_kwargs
+
+
+def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
     """
     :undocumented:
 
     Displays a menu, and returns to the user the value of the selected
     choice. Also handles conditions and the menuset.
     """
+
+    global menu_args
+    global menu_kwargs
+
+    args = args or tuple()
+    kwargs = kwargs or dict()
+
+    nvl = kwargs.pop("nvl", False)
+
+    if renpy.config.menu_arguments_callback is not None:
+        args, kwargs = renpy.config.menu_arguments_callback(*args, **kwargs)
 
     if renpy.config.old_substitutions:
         def substitute(s):
@@ -871,39 +906,86 @@ def menu(items, set_expr):
         def substitute(s):
             return s
 
-    # Filter the list of items to only include ones for which the
-    # condition is true.
-    items = [ (substitute(label), value)
-              for label, condition, value in items
-              if renpy.python.py_eval(condition) ]
+    if item_arguments is None:
+        item_arguments = [ (tuple(), dict()) ] * len(items)
 
     # Filter the list of items on the set_expr:
     if set_expr:
         set = renpy.python.py_eval(set_expr)  # @ReservedAssignment
-        items = [ (label, value)
-                  for label, value in items
-                  if label not in set ]
+
+        new_items = [ ]
+        new_item_arguments = [ ]
+
+        for i, ia in zip(items, item_arguments):
+            if i[0] not in set:
+                new_items.append(i)
+                new_item_arguments.append(ia)
+
+        items = new_items
+        item_arguments = new_item_arguments
     else:
         set = None  # @ReservedAssignment
 
+    # Filter the list of items to only include ones for which the
+    # condition is true.
+
+    if renpy.config.menu_actions:
+
+        location=renpy.game.context().current
+
+        new_items = [ ]
+
+        for (label, condition, value), (item_args, item_kwargs) in zip(items, item_arguments):
+            label = substitute(label)
+            condition = renpy.python.py_eval(condition)
+
+            if (not renpy.config.menu_include_disabled) and (not condition):
+                continue
+
+            if value is not None:
+                new_items.append((label, renpy.ui.ChoiceReturn(label, value, location, sensitive=condition, args=item_args, kwargs=item_kwargs)))
+            else:
+                new_items.append((label, None))
+
+    else:
+
+        new_items = [ (substitute(label), value)
+                      for label, condition, value in items
+                      if renpy.python.py_eval(condition) ]
+
     # Check to see if there's at least one choice in set of items:
-    choices = [ value for label, value in items if value is not None ]
+    choices = [ value for label, value in new_items if value is not None ]
 
     # If not, bail out.
     if not choices:
         return None
 
     # Show the menu.
-    rv = renpy.store.menu(items)
+    try:
+        old_menu_args = menu_args
+        old_menu_kwargs = menu_kwargs
+
+        menu_args = args
+        menu_kwargs = kwargs
+
+        if nvl:
+            rv = renpy.store.nvl_menu(new_items)  # @UndefinedVariable
+        else:
+            rv = renpy.store.menu(new_items)
+
+    finally:
+        menu_args = old_menu_args
+        old_menu_kwargs = old_menu_kwargs
 
     # If we have a set, fill it in with the label of the chosen item.
     if set is not None and rv is not None:
-        for label, value in items:
+        for label, condition, value in items:
             if value == rv:
                 try:
                     set.append(label)
                 except AttributeError:
                     set.add(label)
+
     return rv
 
 
@@ -1020,6 +1102,13 @@ def display_menu(items,
     if in_fixed_rollback() and renpy.config.fix_rollback_without_choice:
         renpy.ui.saybehavior()
 
+    scope = dict(scope)
+
+    menu_args, menu_kwargs = get_menu_args()
+    screen = menu_kwargs.pop("screen", screen)
+
+    scope.update(menu_kwargs)
+
     # Show the menu.
     if has_screen(screen):
 
@@ -1035,12 +1124,23 @@ def display_menu(items,
             if not label:
                 value = None
 
-            if value is not None:
+            if isinstance(value, renpy.ui.ChoiceReturn):
+                action = value
+                chosen = action.get_chosen()
+                item_args = action.args
+                item_kwargs = action.kwargs
+
+            elif value is not None:
                 action = renpy.ui.ChoiceReturn(label, value, location)
                 chosen = action.get_chosen()
+                item_args = ()
+                item_kwargs = { }
+
             else:
                 action = None
                 chosen = False
+                item_args = ()
+                item_kwargs = { }
 
             if renpy.config.choice_screen_chosen:
                 me = MenuEntry((label, action, chosen))
@@ -1050,10 +1150,19 @@ def display_menu(items,
             me.caption = label
             me.action = action
             me.chosen = chosen
+            me.args = item_args
+            me.kwargs = item_kwargs
 
             item_actions.append(me)
 
-            show_screen(screen, items=item_actions, _widget_properties=props, _transient=True, _layer=renpy.config.choice_layer, **scope)
+            show_screen(
+                screen,
+                items=item_actions,
+                _widget_properties=props,
+                _transient=True,
+                _layer=renpy.config.choice_layer,
+                *menu_args,
+                **scope)
 
     else:
         renpy.ui.window(style=window_style, focus="menu")
@@ -1068,7 +1177,8 @@ def display_menu(items,
                       choice_chosen_button_style=choice_chosen_button_style,
                       **kwargs)
 
-    renpy.exports.shown_window()
+    if renpy.config.menu_showed_window:
+        renpy.exports.shown_window()
 
     # Log the chosen choice.
     for label, val in items:
@@ -1271,6 +1381,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     """
     :doc: other
+    :args: (delay=None, hard=False)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
@@ -1278,20 +1389,23 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     `delay`
         If given, the number of seconds Ren'Py should pause for.
 
-    `music`
-        Retained for compatibility purposes.
-
-    `with_none`
-        Determines if a with None clause is executed at the end of the pause.
-
     `hard`
-        If true, a click will not interrupt the pause. Use this sparingly,
-        as it's hard to distinguish a hard pause from a crashing game.
+        This must be given as a keyword argument. When True, Ren'Py may prevent
+        the user from clicking to interrupt the pause. If the player enables
+        skipping, the hard pause will be skipped. There may be other circumstances
+        where the hard pause ends early or prevents Ren'Py from operating properly,
+        these will not be treated as bugs.
 
-    `checkpoint`
-        If true, a checkpoint will be set, and players will be able to roll
-        back to this statement. If false, no checkpoint will be set. If None,
-        a checkpoint will only be set if delay is set.
+        In general, using hard pauses is rude. When the user clicks to advance
+        the game, it's an explicit request - the user wishes the game to advance.
+        To override that request is to assume you understand what the player
+        wants more than the player does.
+
+        Calling renpy.pause guarantees that whatever is on the screen will be
+        displayed for at least one frame, and hence has been shown to the
+        player.
+
+        tl;dr - Don't use renpy.pause with hard=True.
     """
 
     if checkpoint is None:
@@ -1408,7 +1522,7 @@ def with_statement(trans, always=False, paired=None, clear=True):
     :name: renpy.with_statement
     :args: (trans, always=False)
 
-    Causes a transition to occur. This is the python equivalent of the
+    Causes a transition to occur. This is the Python equivalent of the
     with statement.
 
     `trans`
@@ -1452,8 +1566,7 @@ def with_statement(trans, always=False, paired=None, clear=True):
 
         trans = trans[None]
 
-    else:
-        return renpy.game.interface.do_with(trans, paired, clear=clear)
+    return renpy.game.interface.do_with(trans, paired, clear=clear)
 
 
 globals()["with"] = with_statement
@@ -1611,6 +1724,10 @@ def reload_script():
     """
 
     s = get_screen("menu")
+
+    session.pop("_reload_screen", None)
+    session.pop("_reload_screen_args", None)
+    session.pop("_reload_screen_kwargs", None)
 
     if not renpy.store.main_menu:
 
@@ -1775,11 +1892,11 @@ def transition(trans, layer=None, always=False, force=False):
     """
 
     if isinstance(trans, dict):
-        for k, v in trans.items():
-            trans(k, v, always=always, force=force)
+        for layer, t in trans.items():
+            transition(t, layer=layer, always=always, force=force)
         return
 
-    if not always and not renpy.game.preferences.transitions:
+    if (not always) and not renpy.game.preferences.transitions:
         trans = None
 
     renpy.game.interface.set_transition(trans, layer, force=force)
@@ -2098,7 +2215,7 @@ def file(fn):  # @ReservedAssignment
     accessed using Ren'Py's standard search method, and may reside in an RPA archive.
     or as an Android asset.
 
-    The object supports a wide subset of the fields and methods found on python's
+    The object supports a wide subset of the fields and methods found on Python's
     standard file object, opened in binary mode. (Basically, all of the methods that
     are sensible for a read-only file.)
     """
@@ -2163,7 +2280,7 @@ def show_layer_at(at_list, layer='master', reset=True):
     :doc: se_images
     :name: renpy.show_layer_at
 
-    The python equivalent of the ``show layer`` `layer` ``at`` `at_list`
+    The Python equivalent of the ``show layer`` `layer` ``at`` `at_list`
     statement.
 
     `reset`
@@ -2450,7 +2567,7 @@ def game_menu(screen=None):
     if screen is None:
         call_in_new_context("_game_menu")
     else:
-        call_in_new_context("_game_menu", screen)
+        call_in_new_context("_game_menu", _game_menu_screen=screen)
 
 
 def shown_window():
@@ -2478,6 +2595,18 @@ class placement(renpy.python.RevertableObject):
         self.yoffset = p[5]
         self.subpixel = p[6]
 
+    @property
+    def pos(self):
+        return self.xpos, self.ypos
+
+    @property
+    def anchor(self):
+        return self.xanchor, self.yanchor
+
+    @property
+    def offset(self):
+        return self.xoffset, self.yoffset
+
 
 def get_placement(d):
     """
@@ -2490,11 +2619,14 @@ def get_placement(d):
     This returns an object with the following fields, each corresponding to a style
     property:
 
+    * pos
     * xpos
-    * xanchor
-    * xoffset
     * ypos
+    * anchor
+    * xanchor
     * yanchor
+    * offset
+    * xoffset
     * yoffset
     * subpixel
 
@@ -2872,7 +3004,7 @@ def variant(name):
 
     Returns true if a `name` is a screen variant that can be chosen
     by Ren'Py. See :ref:`screen-variants` for more details. This function
-    can be used as the condition in a python if statement to set up the
+    can be used as the condition in a Python if statement to set up the
     appropriate styles for the selected screen variant.
 
     `name` can also be a list of variants, in which case this function
@@ -2917,7 +3049,7 @@ def get_say_attributes():
     return renpy.game.context().say_attributes
 
 
-def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer='master'):
+def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer=None):
     """
     :doc: other
 
@@ -2980,7 +3112,6 @@ def set_physical_size(size):
     renpy.game.preferences.fullscreen = False
 
     if get_renderer_info()["resizable"]:
-        renpy.display.draw.quit()
         renpy.display.interface.set_mode(size)
         renpy.display.interface.last_resize = size
 
@@ -2997,7 +3128,6 @@ def reset_physical_size():
     renpy.game.preferences.fullscreen = False
 
     if get_renderer_info()["resizable"]:
-        renpy.display.draw.quit()
         renpy.display.interface.set_mode((renpy.config.screen_width, renpy.config.screen_height))
 
 
@@ -3442,7 +3572,7 @@ def play(filename, channel=None, **kwargs):
     if channel is None:
         channel = renpy.config.play_channel
 
-    renpy.audio.music.play(filename, channel=channel, **kwargs)
+    renpy.audio.music.play(filename, channel=channel, loop=False, **kwargs)
 
 
 def get_editable_input_value():
@@ -3589,3 +3719,14 @@ def get_say_image_tag():
         return None
 
     return renpy.store._side_image_attributes[0]
+
+
+def is_skipping():
+    """
+    :doc: other
+
+    Returns True if Ren'Py is currently skipping (in fast or slow skip mode),
+    or False otherwise.
+    """
+
+    return not not renpy.config.skipping

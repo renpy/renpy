@@ -455,7 +455,7 @@ This can be changed from the default of "unicode" in gui.rpy.
 
 Japanese has multiple rules for line breaking. We recommend starting with
 "japanese-normal", and moving to "japanese-loose" or "japanese-strict" for
-more or less break opportunities, respectively.::
+more or less break opportunities, respectively. ::
 
     define gui.language = "japanese-loose"
 
@@ -565,8 +565,8 @@ files.
 
 Ren'Py also supports TrueType/OpenType collections that define more than one
 font. When accessing a collection, use the 0-based font index,
-followed by an at-sign and the file name. For example, "0@font.ttc" is
-the first font in a collection, "1@font.ttc" the second, and so on.
+followed by an at-sign and the file name. For example, "0\@font.ttc" is
+the first font in a collection, "1\@font.ttc" the second, and so on.
 
 
 Font Replacement
@@ -685,4 +685,4 @@ necessary.
 3. Run the game.
 
 Whenever text is displayed that overflows the available area, Ren'Py
-will log an error to the ``text_overflow.txt`` file.
+will log an error to the text_overflow.txt file.

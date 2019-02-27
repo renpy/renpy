@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,12 +22,15 @@
 # This is kind of a catch-all file for things that are defined in the library,
 # but don't merit their own files.
 
-init -9999:
+init 9999:
     # Re-run the errorhandling setup, so we can adjust the styles to the new size
     # of the screen.
     call _errorhandling
 
 init -1700 python:
+
+    # Should we debug the equality operations?
+    config.debug_equality = False
 
     class DictEquality(object):
         """
@@ -36,13 +39,21 @@ init -1700 python:
         """
 
         def __eq__(self, o):
-            if self is o:
-                return True
 
-            if _type(self) is _type(o):
-                return (self.__dict__ == o.__dict__)
+            try:
+                if self is o:
+                    return True
 
-            return False
+                if _type(self) is _type(o):
+                    return (self.__dict__ == o.__dict__)
+
+                return False
+
+            except:
+                if config.debug_equality:
+                    raise
+
+                return False
 
     class FieldEquality(object):
         """
@@ -55,21 +66,32 @@ init -1700 python:
         identity_fields = [ ]
 
         def __eq__(self, o):
-            if self is o:
+
+            try:
+
+                if self is o:
+                    return True
+
+                if _type(self) is not _type(o):
+                    return False
+
+                for k in self.equality_fields:
+                    if self.__dict__[k] != o.__dict__[k]:
+                        return False
+
+                for k in self.identity_fields:
+                    if self.__dict__[k] is not o.__dict__[k]:
+                        return False
+
                 return True
 
-            if _type(self) is not _type(o):
+            except:
+
+                if config.debug_equality:
+                    raise
+
                 return False
 
-            for k in self.equality_fields:
-                if self.__dict__[k] != o.__dict__[k]:
-                    return False
-
-            for k in self.identity_fields:
-                if self.__dict__[k] is not o.__dict__[k]:
-                    return False
-
-            return True
 
 init -1700 python:
 
@@ -132,8 +154,9 @@ init -1700 python:
         args = args + _last_say_args
         kw = dict(kwargs)
         kw.update(_last_say_kwargs)
+        kw.setdefault("interact", interact)
 
-        renpy.exports.say(who, what, interact=interact, *args, **kw)
+        renpy.exports.say(who, what, *args, **kw)
         store._last_say_what = what
 
     extend.record_say = False

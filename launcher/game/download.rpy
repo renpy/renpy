@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -56,7 +56,10 @@ init python:
 
             try:
                 # Open the URL.
-                self.urlfile = urllib2.urlopen(url)
+
+                import ssl
+                context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=renpy.loader.transfn("cacert.pem"))
+                self.urlfile = urllib2.urlopen(url, context=context)
 
                 t = threading.Thread(target=self.thread)
                 t.daemon = True

@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -119,6 +119,9 @@ class Container(renpy.display.core.Displayable):
             i.set_style_prefix(prefix, False)
 
     def _duplicate(self, args):
+
+        if args and args.args:
+            args.extraneous()
 
         if not self._duplicatable:
             return self
@@ -781,6 +784,7 @@ class MultiBox(Container):
         spacings = [ first_spacing ] + [ spacing ] * (len(self.children) - 1)
 
         box_wrap = self.style.box_wrap
+        box_wrap_spacing = self.style.box_wrap_spacing
         xfill = self.style.xfill
         yfill = self.style.yfill
         xminimum = self.style.xminimum
@@ -882,7 +886,7 @@ class MultiBox(Container):
                 if box_wrap and remwidth - sw - padding < 0 and line:
                     maxx, maxy = layout_line(line, target_width - x, 0)
 
-                    y += line_height
+                    y += line_height + box_wrap_spacing
                     x = 0
                     line_height = 0
                     remwidth = width
@@ -924,7 +928,7 @@ class MultiBox(Container):
                 if box_wrap and remheight - sh - padding < 0:
                     maxx, maxy = layout_line(line, 0, target_height - y)
 
-                    x += line_width
+                    x += line_width + box_wrap_spacing
                     y = 0
                     line_width = 0
                     remheight = height
@@ -1332,6 +1336,7 @@ def condition_switch_predict(switch, predict_all=None):
 
 def ConditionSwitch(*args, **kwargs):
     """
+    :name: ConditionSwitch
     :doc: disp_dynamic
     :args: (*args, predict_all=None, **properties)
 
@@ -1465,7 +1470,7 @@ def Crop(rect, child, **properties):
     :doc: disp_imagelike
     :name: Crop
 
-    This created a displayable by cropping `child` to `rect`, where
+    This creates a displayable by cropping `child` to `rect`, where
     `rect` is an (x, y, width, height) tuple. ::
 
         image eileen cropped = Crop((0, 0, 300, 300), "eileen happy")

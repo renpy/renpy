@@ -2,7 +2,7 @@ Conditional Statements
 ======================
 
 Ren'Py includes several statements that can alter control flow based on
-expression values. (This is in addition to the :ref:`jump <jump-statement>`,
+expression values. This is in addition to the :ref:`jump <jump-statement>`,
 :ref:`call <call-statement>` and :ref:`return <return-statement>` statements,
 which transfer control unconditionally.
 

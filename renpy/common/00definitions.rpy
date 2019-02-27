@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -352,7 +352,7 @@ init -1400:
 
     define irisout = CropMove(1.0, "irisout")
     define irisin = CropMove(1.0, "irisin")
-    
+
     # Various uses of PushMove.
     define pushright = PushMove(1.0, "pushright")
     define pushleft = PushMove(1.0, "pushleft")
@@ -375,6 +375,8 @@ init -1400:
 
     # The default narrator.
     define _narrator = Character(None, kind=adv, what_style='say_thought')
+    define centered = Character(None, what_style="centered_text", window_style="centered_window")
+    define vcentered = Character(None, what_style="centered_vtext", window_style="centered_window")
 
 init 1400 python:
     if not hasattr(store, 'narrator'):
@@ -382,14 +384,6 @@ init 1400 python:
 
     renpy.pure('narrator')
     renpy.pure('name_only')
-
-    if not hasattr(store, 'centered'):
-        centered = Character(None, what_style="centered_text", window_style="centered_window")
-    if not hasattr(store, 'vcentered'):
-        vcentered = Character(None, what_style="centered_vtext", window_style="centered_window")
-
-    renpy.pure('centered')
-    renpy.pure('vcentered')
 
     # This is necessary to ensure that config.default_transform works.
     if config.default_transform:

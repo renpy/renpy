@@ -169,10 +169,25 @@ allow the game to react to various events.
 All user interface statements take the following common properties:
 
 `at`
-    A transform, or list of transforms, that are used to wrap this
-    displayable. The show, hide, replace, and replaced external events
-    are delivered to a transform if and only if it is added directly
-    to the screen.
+    This can be a transform, or a list of transforms, or an anonymous
+    transform (a transform that is defined directly in at)
+
+::
+
+    transform hello_t:
+        align (0.7, 0.5) alpha 0.0
+        linear 0.5 alpha 1.0
+
+    screen hello_title():
+        text "Hello." at hello_t
+        text "Hello.":
+            at transform:
+                align (0.2, 0.5) alpha 0.0
+                linear 0.5 alpha 1.0
+
+    This transforms are used to wrap this displayable. The show, hide,
+    replace, and replaced external events are delivered to a transform
+    if and only if it is added directly to the screen.
 
     For example, if a vbox is wrapped in a transform, and added directly
     to the screen, then events are delivered to that transform. But if
@@ -631,6 +646,10 @@ The input statement takes no parameters, and the following properties:
 `exclude`
     A string containing characters that are disallowed from being
     typed into this input. (By default, "{}".)
+
+`copypaste`
+    If True, it becomes possible to copy and paste
+    into this input. (By default, disabled.)
 
 `prefix`
     An immutable string to prepend to what the user has typed.
@@ -1671,6 +1690,32 @@ is transfered from old to new.
         pause
         return
 
+Instead of the name of the screen, the keyword ``expression`` can be
+given, followed by an expression giving the name of the screen to use.
+If parameters are required, the ``pass`` keyword must be given to separate
+them from the expression.
+
+::
+
+    screen ed(num):
+        text "Ed"
+        text "Captain"
+
+    screen kelly(num):
+        text "Kelly"
+        text "First Officer"
+
+    screen bortus(num):
+        text "Bortus"
+        text "Second Officer"
+
+    screen crew():
+        hbox:
+            for i, member in enumerate(party):
+                vbox:
+                    use member.screen pass (i+1)
+
+
 Use and Transclude
 ^^^^^^^^^^^^^^^^^^
 
@@ -1808,16 +1853,11 @@ Screen Statements
 In addition to the screen statement, there are three Ren'Py script
 language statements that involve screens.
 
-Two of these statements take a keyword argument list. This is a Python
-argument list, in parentheses, consisting of only keyword
-arguments. Positional arguments, extra positional arguments (*), and
-extra keyword arguments (**) are not allowed.
-
 Show Screen
 -----------
 
 The ``show screen`` statement causes a screen to be shown. It takes an
-screen name, and an optional argument list. If present, the arguments
+screen name, and an optional Python argument list. If present, the arguments
 are used to initialize the scope of the screen.
 
 The show screen statement takes an optional ``nopredict`` keyword, that
@@ -1842,17 +1882,24 @@ hidden. This allows them to be used for overlay purposes.
         show rare_screen nopredict
 
 
+The ``show screen`` statement takes a with clause, which is interpreted in the
+same way that the with clause of a ``show`` statement is. ::
+
+    show screen clock_screen with dissolve
+
 Hide Screen
 -----------
 
 The ``hide screen`` statement is used to hide a screen that is currently
-being shown. If the screen is not being shown, nothing happens.
+being shown. If the screen is not being shown, nothing happens. The with
+clause is interpreted the same way the ``with`` clause of a show statement
+is.
 
 ::
 
+    hide screen rare_screen
+    hide screen clock_screen with dissolve
     hide screen overlay_screen
-    hide screen clock
-
 
 Call Screen
 -----------
@@ -1986,4 +2033,3 @@ An example of defining a screen variant is:
         variant "small"
 
         text "Hello, World." size 30
-

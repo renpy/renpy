@@ -1,7 +1,10 @@
 # Fixes line endings and adds UTF-8 BOM to all rpy files in a
 # directory.
 
+from __future__ import print_function
+import os
 import sys
+
 
 def process(fn):
     with open(fn, "rb") as f:
@@ -16,7 +19,6 @@ def process(fn):
     with open(fn, "wb") as f:
         f.write(data)
 
-import os
 
 for directory, dirs, files in os.walk(sys.argv[1]):
     for fn in files:
@@ -25,5 +27,5 @@ for directory, dirs, files in os.walk(sys.argv[1]):
         if not fn.endswith(".rpy"):
             continue
 
-        print fn
+        print(fn)
         process(fn)

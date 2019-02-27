@@ -270,6 +270,10 @@ or on the screen when not inside a layout.
     The position of the anchor relative to the top side of the
     displayable.
 
+    If the displayable is a :func:`Text`, then there is one special value
+    of this property. If the property is set to renpy.BASELINE, the anchor
+    is set to the baseline of the first line of text.
+
 .. style-property:: anchor tuple of (position, position)
 
     Equivalent to setting xanchor to the first component of the tuple,
@@ -301,7 +305,7 @@ or on the screen when not inside a layout.
 
 .. style-property:: ycenter position
 
-    Equivalent to setting ypos to the value of tihis property, and
+    Equivalent to setting ypos to the value of this property, and
     yanchor to 0.5.
 
 .. style-property:: xoffset int
@@ -403,7 +407,7 @@ Text Style Properties
     If True, the default, TrueType font text will be rendered
     anti-aliased.
 
-.. style-property:: adjust_spacing boolean
+.. style-property:: adjust_spacing boolean or str
 
     If True, Ren'Py will adjust the spacing of drawable-resolution text
     to match the spacing of the text rendered at virtual resolution, to
@@ -413,6 +417,10 @@ Text Style Properties
     When set to False, text will not change in size, but it is the creator's
     responsibility to ensure there is enough space to layout text at any
     window size.
+
+    When set to the string "horizontal", text will adjust in the horizontal
+    direction only. When set to the string "vertical", text will adjust in
+    the vertical direction only.
 
     Defaults to True for most text, but False for text in an ``input``.
 
@@ -587,6 +595,27 @@ Text Style Properties
     will always produce a 1 pixel-wide border.
 
     Outlines only work with TrueType fonts.
+
+.. style-property: outline_scaling string
+
+    This determines how outline suzels or offsets are scaled when the
+    window is scaled.
+
+    ``"step"``
+        The default, best for text that uses thin outlines and text
+        that uses multiple outlines. The window scaling factor is
+        rounded down to an integer and applied ot the outline size
+        and offsets.
+
+        The window scaling factor is always above 1.
+
+    ``"linear"``
+        Best for text with thick outlines. The window scaling factor
+        is applied to the outline size, and then rounded to an integer.
+        This looks better for thick outlines, but small outlines can
+        dissappear.
+
+        The resulting width is always at least 1 pixel.
 
 .. style-property:: rest_indent int
 
@@ -976,6 +1005,11 @@ These are used for the horizontal and vertical box layouts.
     If True, then boxes will wrap when they reach the end of a line or column.
     If False (the default), they will extend past the end of the line.
 
+.. style-property:: box_wrap_spacing int
+
+    When box_wrap is True, this is the spacing between wrapped lines
+    or columns. (So it is the vertical spacing between lines in a wrapped
+    hbox, and the horizontal spacing between columns in a wrapped vbox.)
 
 
 .. _grid-style-properties:

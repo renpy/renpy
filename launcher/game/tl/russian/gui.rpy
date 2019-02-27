@@ -138,7 +138,7 @@ translate russian strings:
     new "## Границы окна, содержащего имя персонажа слева, сверху, справа и снизу по порядку."
 
     # gui.rpy:124
-    old "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
+    old "## If True, the background of the namebox will be tiled, if False, the background of the namebox will be scaled."
     new "## Если True, фон текстового окна будет моститься (расширяться по эффекту плитки). Если False, фон текстового окна будет фиксированным."
 
     # gui.rpy:129
@@ -221,215 +221,215 @@ translate russian strings:
     old "## The save slot button."
     new "## Кнопка слота сохранения."
 
-    # gui.rpy:231
+    # gui.rpy:233
     old "## The width and height of thumbnails used by the save slots."
     new "## Ширина и высота миниатюры, используемой слотом сохранения."
 
-    # gui.rpy:235
+    # gui.rpy:237
     old "## The number of columns and rows in the grid of save slots."
     new "## Количество колонок и рядов в таблице слотов."
 
-    # gui.rpy:240
+    # gui.rpy:242
     old "## Positioning and Spacing"
     new "## Позиционирование и Интервалы"
 
-    # gui.rpy:242
+    # gui.rpy:244
     old "## These variables control the positioning and spacing of various user interface elements."
     new "## Эти переменные контролируют позиционирование и интервалы различных элементов пользовательского интерфейса."
 
-    # gui.rpy:245
+    # gui.rpy:247
     old "## The position of the left side of the navigation buttons, relative to the left side of the screen."
     new "## Местоположение левого края навигационных кнопок по отношению к левому краю экрана."
 
-    # gui.rpy:249
+    # gui.rpy:251
     old "## The vertical position of the skip indicator."
     new "## Вертикальная позиция индикатора пропуска."
 
-    # gui.rpy:252
+    # gui.rpy:254
     old "## The vertical position of the notify screen."
     new "## Вертикальная позиция экрана уведомлений."
 
-    # gui.rpy:255
+    # gui.rpy:257
     old "## The spacing between menu choices."
     new "## Интервал между выборами в меню."
 
-    # gui.rpy:258
+    # gui.rpy:260
     old "## Buttons in the navigation section of the main and game menus."
     new "## Кнопки в секции навигации главного и игрового меню."
 
-    # gui.rpy:261
+    # gui.rpy:263
     old "## Controls the amount of spacing between preferences."
     new "## Контролирует интервал между настройками."
 
-    # gui.rpy:264
+    # gui.rpy:266
     old "## Controls the amount of spacing between preference buttons."
     new "## Контролирует интервал между кнопками настройки."
 
-    # gui.rpy:267
+    # gui.rpy:269
     old "## The spacing between file page buttons."
     new "## Интервал между кнопками страниц."
 
-    # gui.rpy:270
+    # gui.rpy:272
     old "## The spacing between file slots."
     new "## Интервал между слотами."
 
-    # gui.rpy:273
+    # gui.rpy:275
     old "## The position of the main menu text."
     new "## Позиция текста главного меню."
 
-    # gui.rpy:277
+    # gui.rpy:279
     old "## Frames"
     new "## Рамки"
 
-    # gui.rpy:279
+    # gui.rpy:281
     old "## These variables control the look of frames that can contain user interface components when an overlay or window is not present."
     new "## Эти переменные контролируют вид рамок, содержащих компоненты пользовательского интерфейса, когда наложения или окна не представлены."
 
-    # gui.rpy:282
+    # gui.rpy:284
     old "## Generic frames."
     new "## Генерируем рамки."
 
-    # gui.rpy:285
+    # gui.rpy:287
     old "## The frame that is used as part of the confirm screen."
     new "## Рамки, используемые в частях экрана подтверждения."
 
-    # gui.rpy:288
+    # gui.rpy:290
     old "## The frame that is used as part of the skip screen."
     new "## Рамки, используемые в частях экрана пропуска."
 
-    # gui.rpy:291
+    # gui.rpy:293
     old "## The frame that is used as part of the notify screen."
     new "## Рамки, используемые в частях экрана уведомлений."
 
-    # gui.rpy:294
+    # gui.rpy:296
     old "## Should frame backgrounds be tiled?"
     new "## Должны ли фоны рамок моститься?"
 
-    # gui.rpy:298
+    # gui.rpy:300
     old "## Bars, Scrollbars, and Sliders"
     new "## Панели, Полосы прокрутки и Ползунки"
 
-    # gui.rpy:300
+    # gui.rpy:302
     old "## These control the look and size of bars, scrollbars, and sliders."
     new "## Эти настройки контролируют вид и размер панелей, полос прокрутки и ползунков."
 
-    # gui.rpy:302
+    # gui.rpy:304
     old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
     new "## Стандартный GUI использует только ползунки и вертикальные полосы прокрутки. Все остальные полосы используются только в новосозданных экранах."
 
-    # gui.rpy:305
+    # gui.rpy:307
     old "## The height of horizontal bars, scrollbars, and sliders. The width of vertical bars, scrollbars, and sliders."
     new "## Высота горизонтальных панелей, полос прокрутки и ползунков. Ширина вертикальных панелей, полос прокрутки и ползунков."
 
-    # gui.rpy:311
+    # gui.rpy:313
     old "## True if bar images should be tiled. False if they should be linearly scaled."
     new "## True, если изображения панелей должны моститься. False, если они должны быть линейно масштабированы."
 
-    # gui.rpy:316
+    # gui.rpy:318
     old "## Horizontal borders."
     new "## Горизонтальные границы."
 
-    # gui.rpy:321
+    # gui.rpy:323
     old "## Vertical borders."
     new "## Вертикальные границы."
 
-    # gui.rpy:326
+    # gui.rpy:328
     old "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
     new "## Что делать с непрокручиваемыми полосами прокрутки в интерфейсе. \"hide\" прячет их, а None их показывает."
 
-    # gui.rpy:331
+    # gui.rpy:333
     old "## History"
     new "## История"
 
-    # gui.rpy:333
+    # gui.rpy:335
     old "## The history screen displays dialogue that the player has already dismissed."
     new "## Экран истории показывает диалог, который игрок уже прошёл."
 
-    # gui.rpy:335
+    # gui.rpy:337
     old "## The number of blocks of dialogue history Ren'Py will keep."
     new "## Количество диалоговых блоков истории, которые Ren'Py будет хранить."
 
-    # gui.rpy:338
+    # gui.rpy:340
     old "## The height of a history screen entry, or None to make the height variable at the cost of performance."
     new "## Высота доступных записей на экране истории, или None, чтобы задать высоту в зависимости от производительности."
 
-    # gui.rpy:342
+    # gui.rpy:344
     old "## The position, width, and alignment of the label giving the name of the speaking character."
     new "## Местоположение, ширина и выравнивание заголовка, показывающего имя говорящего персонажа."
 
-    # gui.rpy:349
+    # gui.rpy:351
     old "## The position, width, and alignment of the dialogue text."
     new "## Местоположение, ширина и выравнивание диалогового текста."
 
-    # gui.rpy:356
+    # gui.rpy:358
     old "## NVL-Mode"
     new "## Режим NVL"
 
-    # gui.rpy:358
+    # gui.rpy:360
     old "## The NVL-mode screen displays the dialogue spoken by NVL-mode characters."
     new "## Экран режима NVL показывает диалог NVL персонажей."
 
-    # gui.rpy:360
+    # gui.rpy:362
     old "## The borders of the background of the NVL-mode background window."
     new "## Границы фона окна NVL."
 
-    # gui.rpy:363
+    # gui.rpy:365
     old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
     new "## Максимальное число показываемых строк в режиме NVL. Когда количество строчек начинает превышать это значение, старые строчки очищаются."
 
-    # gui.rpy:367
+    # gui.rpy:369
     old "## The height of an NVL-mode entry. Set this to None to have the entries dynamically adjust height."
     new "## Высота доступных строчек в режиме NVL. Установите на None, чтобы строчки динамически регулировали свою высоту."
 
-    # gui.rpy:371
+    # gui.rpy:373
     old "## The spacing between NVL-mode entries when gui.nvl_height is None, and between NVL-mode entries and an NVL-mode menu."
     new "## Интервал между строчками в режиме NVL, если gui.nvl_height имеет значение None, а также между строчками и меню режима NVL."
 
-    # gui.rpy:388
+    # gui.rpy:390
     old "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"
     new "## Местоположение, ширина и выравнивание текста nvl_thought (текст от лица персонажа nvl_narrator)."
 
-    # gui.rpy:395
+    # gui.rpy:397
     old "## The position of nvl menu_buttons."
     new "## Местоположение кнопок меню NVL."
 
-    # gui.rpy:399
+    # gui.rpy:401
     old "## Localization"
     new "## Локализация"
 
-    # gui.rpy:401
+    # gui.rpy:403
     old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
     new "## Эта настройка контролирует доступ к разрыву линий. Стандартная настройка подходит для большинства языков. Список доступных значений можно найти на https://www.renpy.org/doc/html/style_properties.html#style-property-language"
 
-    # gui.rpy:409
+    # gui.rpy:411
     old "## Mobile devices"
     new "## Мобильные устройства"
 
-    # gui.rpy:414
+    # gui.rpy:416
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
     new "## Этот параметр увеличивает размер быстрых кнопок, чтобы сделать их доступнее для нажатия на планшетах и телефонах."
 
-    # gui.rpy:420
+    # gui.rpy:422
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
     new "## Это изменяет размеры и интервалы различных элементов GUI, чтобы убедиться, что они будут лучше видны на телефонах."
 
-    # gui.rpy:424
+    # gui.rpy:426
     old "## Font sizes."
     new "## Размеры шрифтов."
 
-    # gui.rpy:432
+    # gui.rpy:434
     old "## Adjust the location of the textbox."
     new "## Регулирует местоположение текстового окна."
 
-    # gui.rpy:438
+    # gui.rpy:440
     old "## Change the size and spacing of various things."
     new "## Изменяет размеры и интервалы различных объектов."
 
-    # gui.rpy:451
+    # gui.rpy:453
     old "## File button layout."
     new "## Местоположение кнопок слотов."
 
-    # gui.rpy:455
+    # gui.rpy:457
     old "## NVL-mode."
     new "## Режим NVL."
 

@@ -122,7 +122,7 @@ Dynamic Displayables
 --------------------
 
 Dynamic displayables display a child displayable based on the state of
-the game. They do not take any properties, as layout is controlled
+the game. They do not take any properties, as their layout is controlled
 by the properties of the child displayable they return.
 
 Note that these dynamic displayables always display their current state.
@@ -152,7 +152,7 @@ Layout Boxes and Grids
 
 Layout boxes are displayables that lay out their children on the
 screen. They can lay out the children in a horizontal or vertical
-manner, or can lay them out using the standard positioning algorithm.
+manner, or lay them out using the standard positioning algorithm.
 
 The box displayables take any number of positional and keyword
 arguments. Positional arguments should be displayables that are

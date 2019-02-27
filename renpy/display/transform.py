@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -40,6 +40,7 @@ def get_null():
 
     if null is None:
         null = renpy.display.layout.Null()
+        renpy.display.motion.null = null
 
     return null
 
@@ -982,12 +983,18 @@ class Transform(Container):
 
     def _duplicate(self, args):
 
+        if args and args.args:
+            args.extraneous()
+
         if not self._duplicatable:
             return self
 
         rv = self(_args=args)
         rv.take_execution_state(self)
         rv._unique()
+
+        if rv.child and rv.child._duplicatable:
+            rv.child = rv.child._duplicate(None)
 
         return rv
 

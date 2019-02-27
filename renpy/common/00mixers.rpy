@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -79,8 +79,10 @@ init 1600:
 
         else:
             for i, m in enumerate(mixers):
+
                 renpy.sound.set_mixer(i, m, default=True)
-                if m == 'music':
+
+                if i >= 3:
                     renpy.music.set_music(i, True, default=True)
                 else:
                     renpy.music.set_music(i, False, default=True)

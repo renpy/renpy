@@ -15,7 +15,7 @@ from Ren'Py, that creates an Android package for testing or release purposes.
 Required Language
 =================
 
-Some of the libraries used by Ren'Py on iOS are licensed under the terms
+Some of the libraries used by RAPT are licensed under the terms
 of the GNU Lesser/Library General Public License. You'll need to comply
 with the terms of that license to distribute Ren'Py. We believe including
 the following language in your app's description will suffice, but check
@@ -61,13 +61,10 @@ due to the Android software and hardware are:
   only produce mouse events when the user is actively touching the
   screen.
 
-* Movie playback is only supported in fullscreen mode, and only with
+* Movie playback in fullscreen mode can only use
   media formats that are supported by Android devices. See
   `this page <http://developer.android.com/guide/appendix/media-formats.html>`_
   for a list of supported video formats.
-
-* Ren'Py cannot change the device volume. However, the android volume
-  buttons work normally.
 
 * Ren'Py can't handle transparency in buttons and imagemaps.
   (This is due to performance problems on some devices with the
@@ -121,6 +118,8 @@ issues, like the size of a user's fingers.
 
 .. highlight:: none
 
+.. _android-building:
+
 Building Android Applications
 =============================
 
@@ -162,25 +161,22 @@ packages. It can be downloaded from:
 
     http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
-You'll need version 8 of the JDK, and on Windows you will want the
-x86 version.
+You'll need version 8 of the JDK.
 
 Please note that the developer-focused JDK is different from the
 user-focused JRE, and you'll need the JDK to create Android packages.
 
 
-**Android Device Drivers.**
-On Windows, you may want to install a device driver to access
-your device, although this is not necessary. Links to android device drivers can be found at:
+**Android Device.**
+You'll also want to set your device up for development. You'll want to enable
+developer mode on your device, and set up your computer for Android development.
+Instructions on how to set up your computer can be found at:
 
-    http://developer.android.com/sdk/oem-usb.html
+    https://developer.android.com/studio/run/device
 
-On Linux or OS X, you won't need a device driver. If you can't access
-your device, you may need to read:
-
-    http://developer.android.com/guide/developing/device.html#setting-up
-
-However, modern versions of Linux and OS X should just work.
+You can also run your app in an x86_64 image on the Android emulator (note
+that x86 is not supported). Setting the emulator up is outside of the scope
+of this document.
 
 
 Step 2: Set up the Android SDK and Development Environment
@@ -190,7 +186,6 @@ The next step is to set up the Android SDK and the rest of your
 development environment. This step will:
 
 * Check that the JDK is installed properly.
-* Install Apache Ant.
 * Install the Android SDK.
 * Use the Android SDK to install the appropriate development
   packages.
@@ -218,6 +213,9 @@ warnings about licenses, and ask if you want it to generate a key.
    a safe place. You should also back it up, because without the
    key, you won't be able to upload the generated applications.
 
+If you don't want to download the SDK each time, you can create a file
+named sdk.txt containing a single line that is the path to the
+already-installed SDK.
 
 Step 3: Configure Your Game
 ---------------------------
@@ -242,53 +240,64 @@ to authorize your computer to install applications.)
 If you'd rather copy the game's apk file to your Android device manually,
 choose "Build Package" from the Android screen of the Ren'Py launcher. Then
 navigate to the 'bin' directory underneath the RAPT directory and copy the
-file mygame-release.apk into your Android Device. You will then need to find
+appropriate file to your Android device. You will then need to find
 the .apk file in your Android device using a file manager application and
 open it to install the game.
 
+Ren'Py allows you to select between two release modes, Debug and Release.
+The debug mode is useful for testing, as it allows you to easily use Android
+studio to view the logs or files on the device. Release produces a version
+of the app suitable to upload to the various stores.
 
+You will need to uninstall the app when switching between debug and
+release builds.
 
-Viewing Debug Output
-====================
-
-Debug output can be found by running the adb command manually from
-the terminal. After installing the SDK, the adb command can be
-found as `rapt-dir`/android-sdk/platform-tools/adb. (On Windows,
-use adb.exe.)
-
-To view output from Ren'Py, consider a command line like:
-
-    adb logcat -s python:*
 
 Icon and Presplash Images
 =========================
 
-There are several special files that are used to set the icon and
-presplash images used by the package. These files should be placed
-in the base directory.
+Icon
+-----
 
-android-icon.png
-    The icon that's used for the app in the Android launcher. This icon is
-    automatically scaled down to the appropriate size, and should be larger
-    that 144x144.
+Ren'Py will create an icon from your app from two files in the game's
+base directory:
 
-android-`density`-icon.png
-    If present, these are used in preference to android-icon.png for screens
-    of the given densities. This allows for pixel-perfect icons. Available
-    screen densities and the corresponding icon sizes are:
+android-icon_foreground.png
+    The foreground layer of the icon. This should be 432x432 pixels
+    and transparent.
 
-    * ldpi (36x36)
-    * mdpi (48x48)
-    * hdpi (72x72)
-    * xhdpi (96x96)
-    * xxhdpi (144x144)
+
+android-icon_background.png
+    The background layer of the icon. This should be 432x432 pixels
+    and opaque.
+
+Android adaptive icons work by masking the two layers of the icon to an area that
+is at least 132x132 pixels, in the center. The area outside of this safe
+space may be shown, but it might be masked out, too. Bleeding outside
+of the safe area is encouraged. The two layers might move a little relative
+to each other when the icon is dragged around.
+
+For more information about adaptive icons, please check out:
+
+    https://medium.com/google-design/designing-adaptive-icons-515af294c783
+
+Note that 1dp corresponds to 4 actual pixels.
+
+When generating the application, Ren'Py will convert these files to an
+appropriate size for each device, and will generate static icons for devices
+that do not support adaptive icons.
+
+
+Presplash
+---------
+
+The presplash is shown before Ren'Py fully loads, before the main splashscreen
+starts. It's especially important on Android, as the first time Ren'Py runs
+it will unpack supporting files, which make take some time.
 
 android-presplash.jpg
     The image that's used when the app is loading. This should be surrounded
     by a monocolored border. That border is expanded to fill the screen.
-
-ouya-icon.png
-    A 732x412 icon that's used on the OUYA console.
 
 
 .. _expansion-apk:

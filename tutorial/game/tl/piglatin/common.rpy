@@ -181,23 +181,23 @@ translate piglatin strings:
     old "File page [text]"
     new "Ilefay agepay [text]"
 
-    # 00action_file.rpy:763
+    # 00action_file.rpy:772
     old "Next file page."
     new "Extnay ilefay agepay."
 
-    # 00action_file.rpy:827
+    # 00action_file.rpy:845
     old "Previous file page."
     new "Reviouspay ilefay agepay."
 
-    # 00action_file.rpy:888
+    # 00action_file.rpy:906
     old "Quick save complete."
     new "Uickqay avesay ompletecay."
 
-    # 00action_file.rpy:906
+    # 00action_file.rpy:924
     old "Quick save."
     new "Uickqay avesay."
 
-    # 00action_file.rpy:925
+    # 00action_file.rpy:943
     old "Quick load."
     new "Uickqay oadlay."
 
@@ -209,131 +209,131 @@ translate piglatin strings:
     old "The interactive director is not enabled here."
     new "Hetay interactiveay irectorday isay otnay enableday erehay."
 
-    # 00director.rpy:1478
+    # 00director.rpy:1481
     old "⬆"
     new "⬆"
 
-    # 00director.rpy:1484
+    # 00director.rpy:1487
     old "⬇"
     new "⬇"
 
-    # 00director.rpy:1548
+    # 00director.rpy:1551
     old "Done"
     new "Oneday"
 
-    # 00director.rpy:1558
+    # 00director.rpy:1561
     old "(statement)"
     new "(atementstay)"
 
-    # 00director.rpy:1559
+    # 00director.rpy:1562
     old "(tag)"
     new "(agtay)"
 
-    # 00director.rpy:1560
+    # 00director.rpy:1563
     old "(attributes)"
     new "(attributesay)"
 
-    # 00director.rpy:1561
+    # 00director.rpy:1564
     old "(transform)"
     new "(ansformtray)"
 
-    # 00director.rpy:1586
+    # 00director.rpy:1589
     old "(transition)"
     new "(ansitiontray)"
 
-    # 00director.rpy:1598
+    # 00director.rpy:1601
     old "(channel)"
     new "(annelchay)"
 
-    # 00director.rpy:1599
+    # 00director.rpy:1602
     old "(filename)"
     new "(ilenamefay)"
 
-    # 00director.rpy:1628
+    # 00director.rpy:1631
     old "Change"
     new "Hangecay"
 
-    # 00director.rpy:1630
+    # 00director.rpy:1633
     old "Add"
     new "Ddaay"
 
-    # 00director.rpy:1633
+    # 00director.rpy:1636
     old "Cancel"
     new "Ancelcay"
 
-    # 00director.rpy:1636
+    # 00director.rpy:1639
     old "Remove"
     new "Emoveray"
 
-    # 00director.rpy:1671
+    # 00director.rpy:1674
     old "Statement:"
     new "Tatementsay:"
 
-    # 00director.rpy:1692
+    # 00director.rpy:1695
     old "Tag:"
     new "Agtay:"
 
-    # 00director.rpy:1708
+    # 00director.rpy:1711
     old "Attributes:"
     new "Ttributesaay:"
 
-    # 00director.rpy:1726
+    # 00director.rpy:1729
     old "Transforms:"
     new "Ransformstay:"
 
-    # 00director.rpy:1745
+    # 00director.rpy:1748
     old "Behind:"
     new "Ehindbay:"
 
-    # 00director.rpy:1764
+    # 00director.rpy:1767
     old "Transition:"
     new "Ransitiontay:"
 
-    # 00director.rpy:1782
+    # 00director.rpy:1785
     old "Channel:"
     new "Hannelcay:"
 
-    # 00director.rpy:1800
+    # 00director.rpy:1803
     old "Audio Filename:"
     new "Udioaay Ilenamefay:"
 
-    # 00gui.rpy:370
+    # 00gui.rpy:371
     old "Are you sure?"
     new "Reaay ouyay uresay?"
 
-    # 00gui.rpy:371
+    # 00gui.rpy:372
     old "Are you sure you want to delete this save?"
     new "Reaay ouyay uresay ouyay antway otay eleteday histay avesay?"
 
-    # 00gui.rpy:372
+    # 00gui.rpy:373
     old "Are you sure you want to overwrite your save?"
     new "Reaay ouyay uresay ouyay antway otay overwriteay ouryay avesay?"
 
-    # 00gui.rpy:373
+    # 00gui.rpy:374
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Oadinglay illway oselay unsaveday rogresspay.\nReaay ouyay uresay ouyay antway otay oday histay?"
 
-    # 00gui.rpy:374
+    # 00gui.rpy:375
     old "Are you sure you want to quit?"
     new "Reaay ouyay uresay ouyay antway otay uitqay?"
 
-    # 00gui.rpy:375
+    # 00gui.rpy:376
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Reaay ouyay uresay ouyay antway otay eturnray otay hetay ainmay enumay?\nHistay illway oselay unsaveday rogresspay."
 
-    # 00gui.rpy:376
+    # 00gui.rpy:377
     old "Are you sure you want to end the replay?"
     new "Reaay ouyay uresay ouyay antway otay enday hetay eplayray?"
 
-    # 00gui.rpy:377
+    # 00gui.rpy:378
     old "Are you sure you want to begin skipping?"
     new "Reaay ouyay uresay ouyay antway otay eginbay kippingsay?"
 
-    # 00gui.rpy:378
+    # 00gui.rpy:379
     old "Are you sure you want to skip to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay otay hetay extnay oicechay?"
 
-    # 00gui.rpy:379
+    # 00gui.rpy:380
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay unseenay ialogueday otay hetay extnay oicechay?"
 
@@ -345,59 +345,59 @@ translate piglatin strings:
     old "Saved screenshot as %s."
     new "Avedsay creenshotsay asay %say."
 
-    # 00library.rpy:146
+    # 00library.rpy:168
     old "Self-voicing disabled."
     new "Elfsay-oicingvay isabledday."
 
-    # 00library.rpy:147
+    # 00library.rpy:169
     old "Clipboard voicing enabled. "
     new "Lipboardcay oicingvay enableday. "
 
-    # 00library.rpy:148
+    # 00library.rpy:170
     old "Self-voicing enabled. "
     new "Elfsay-oicingvay enableday. "
 
-    # 00library.rpy:150
+    # 00library.rpy:172
     old "bar"
     new "arbay"
 
-    # 00library.rpy:151
+    # 00library.rpy:173
     old "selected"
     new "electedsay"
 
-    # 00library.rpy:152
+    # 00library.rpy:174
     old "viewport"
     new "iewportvay"
 
-    # 00library.rpy:153
+    # 00library.rpy:175
     old "horizontal scroll"
     new "orizontalhay crollsay"
 
-    # 00library.rpy:154
+    # 00library.rpy:176
     old "vertical scroll"
     new "erticalvay crollsay"
 
-    # 00library.rpy:155
+    # 00library.rpy:177
     old "activate"
     new "activateay"
 
-    # 00library.rpy:156
+    # 00library.rpy:178
     old "deactivate"
     new "eactivateday"
 
-    # 00library.rpy:157
+    # 00library.rpy:179
     old "increase"
     new "increaseay"
 
-    # 00library.rpy:158
+    # 00library.rpy:180
     old "decrease"
     new "ecreaseday"
 
-    # 00library.rpy:193
+    # 00library.rpy:215
     old "Skip Mode"
     new "Kipsay Odemay"
 
-    # 00library.rpy:279
+    # 00library.rpy:301
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Histay rogrampay ontainscay eefray oftwaresay underay aay umbernay ofay icenseslay, includingay hetay Itmay Icenselay anday Nugay Esserlay Eneralgay Ublicpay Icenselay. Aay ompletecay istlay ofay oftwaresay, includingay inkslay otay ullfay ourcesay odecay, ancay ebay oundfay {a=https://www.renpy.org/l/license}erehay{/a}."
 
@@ -649,23 +649,23 @@ translate piglatin strings:
     old "Proceed"
     new "Roceedpay"
 
-    # 00gallery.rpy:585
+    # 00gallery.rpy:587
     old "Image [index] of [count] locked."
     new "Mageiay [index] ofay [count] ockedlay."
 
-    # 00gallery.rpy:605
+    # 00gallery.rpy:607
     old "prev"
     new "revpay"
 
-    # 00gallery.rpy:606
+    # 00gallery.rpy:608
     old "next"
     new "extnay"
 
-    # 00gallery.rpy:607
+    # 00gallery.rpy:609
     old "slideshow"
     new "ideshowslay"
 
-    # 00gallery.rpy:608
+    # 00gallery.rpy:610
     old "return"
     new "eturnray"
 
@@ -813,75 +813,87 @@ translate piglatin strings:
     old "Back (B)"
     new "Ackbay (Bay)"
 
-    # _errorhandling.rpym:528
+    # _errorhandling.rpym:535
     old "Open"
     new "Penoay"
 
-    # _errorhandling.rpym:530
+    # _errorhandling.rpym:537
     old "Opens the traceback.txt file in a text editor."
     new "Pensoay hetay acebacktray.xttay ilefay inay aay exttay editoray."
 
-    # _errorhandling.rpym:532
-    old "Copy"
-    new "Opycay"
+    # _errorhandling.rpym:539
+    old "Copy BBCode"
+    new "Opycay Bcodebay"
 
-    # _errorhandling.rpym:534
-    old "Copies the traceback.txt file to the clipboard."
-    new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay."
+    # _errorhandling.rpym:541
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay asay Bcodebay orfay orumsfay ikelay ttpshay://emmasoftlay.enairay.usay/."
 
-    # _errorhandling.rpym:561
+    # _errorhandling.rpym:543
+    old "Copy Markdown"
+    new "Opycay Arkdownmay"
+
+    # _errorhandling.rpym:545
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay asay Arkdownmay orfay Iscordday."
+
+    # _errorhandling.rpym:574
     old "An exception has occurred."
     new "Naay exceptionay ashay occurreday."
 
-    # _errorhandling.rpym:581
+    # _errorhandling.rpym:594
     old "Rollback"
     new "Ollbackray"
 
-    # _errorhandling.rpym:583
+    # _errorhandling.rpym:596
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "Ttemptsaay aay ollray ackbay otay aay riorpay imetay, allowingay ouyay otay avesay oray oosechay aay ifferentday oicechay."
 
-    # _errorhandling.rpym:586
+    # _errorhandling.rpym:599
     old "Ignore"
     new "Gnoreiay"
 
-    # _errorhandling.rpym:590
+    # _errorhandling.rpym:603
     old "Ignores the exception, allowing you to continue."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay."
 
-    # _errorhandling.rpym:592
+    # _errorhandling.rpym:605
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay. Histay oftenay eadslay otay additionalay errorsay."
 
-    # _errorhandling.rpym:596
+    # _errorhandling.rpym:609
     old "Reload"
     new "Eloadray"
 
-    # _errorhandling.rpym:598
+    # _errorhandling.rpym:611
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "Eloadsray hetay amegay omfray iskday, avingsay anday estoringray amegay atestay ifay ossiblepay."
 
-    # _errorhandling.rpym:601
+    # _errorhandling.rpym:614
     old "Console"
     new "Onsolecay"
 
-    # _errorhandling.rpym:603
+    # _errorhandling.rpym:616
     old "Opens a console to allow debugging the problem."
     new "Pensoay aay onsolecay otay alloway ebuggingday hetay roblempay."
 
-    # _errorhandling.rpym:613
+    # _errorhandling.rpym:626
     old "Quits the game."
     new "Uitsqay hetay amegay."
 
-    # _errorhandling.rpym:637
+    # _errorhandling.rpym:650
     old "Parsing the script failed."
     new "Arsingpay hetay criptsay ailedfay."
 
-    # _errorhandling.rpym:663
+    # _errorhandling.rpym:676
     old "Opens the errors.txt file in a text editor."
     new "Pensoay hetay errorsay.xttay ilefay inay aay exttay editoray."
 
-    # _errorhandling.rpym:667
-    old "Copies the errors.txt file to the clipboard."
-    new "Opiescay hetay errorsay.xttay ilefay otay hetay ipboardclay."
+    # _errorhandling.rpym:680
+    old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "Opiescay hetay errorsay.xttay ilefay otay hetay ipboardclay asay Bcodebay orfay orumsfay ikelay ttpshay://emmasoftlay.enairay.usay/."
+
+    # _errorhandling.rpym:684
+    old "Copies the errors.txt file to the clipboard as Markdown for Discord."
+    new "Opiescay hetay errorsay.xttay ilefay otay hetay ipboardclay asay Arkdownmay orfay Iscordday."
 

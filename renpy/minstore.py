@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -48,6 +48,8 @@ import renpy.exports as renpy  # @Reimport @UnusedImport
 from renpy.translation import translate_string as __  # @UnusedImport
 
 from renpy.python import store_eval as eval
+
+from renpy.display.core import absolute
 
 
 def _(s):

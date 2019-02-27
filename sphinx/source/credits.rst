@@ -19,14 +19,13 @@ the omission in future versions.
 * Aleema
 * Alessio
 * Alexandre Tranchant
-* Andyl_kl
+* Andy_kl
 * Apricotorange
 * Arowana-vx
 * Asfdfdfd
 * Auro-Cyanide
 * Baekansi
 * Bbs3223474
-* Beuc
 * BlackDragonHunt/Mangagamer
 * Bryan Tsang
 * Carl
@@ -49,13 +48,15 @@ the omission in future versions.
 * Duanemoody
 * Edward Betts
 * Edwin
+* Eevee (Lexy Munroe)
 * Eliza Velasquez
 * Emmanuel Marty
 * Emmeken
 * Enerccio
 * Eniko
-* Eevee (Lexy Munroe)
+* Eric Ahn
 * Evilantishad0w
+* Felix Lampe
 * Franck_v
 * Gas
 * George Economidis
@@ -82,12 +83,15 @@ the omission in future versions.
 * Kevin Turner
 * Kinsman
 * Koichi "vbkaisetsu" Akabe
+* Konstantin Mozheyko
 * Konstantin Nikolayev
 * Kuroonehalf
 * Kyouryuukunn
 * Lapalissiano
+* Lee Yunseok
 * Lore
 * Maissara Moustafa
+* Mal Graty
 * Marcel
 * Markus Koschany
 * Max le Fou
@@ -95,6 +99,7 @@ the omission in future versions.
 * Merumelu
 * mikey (ATP Projects)
 * Morgan Willcock
+* Moshibit
 * MrStalker
 * Mugenjohncel (Uncle Mugen)
 * Muhammad Nur Hidayat Yasuyoshi
@@ -108,6 +113,7 @@ the omission in future versions.
 * Paul Morio
 * Pavel Langwell
 * Peter DeVita
+* Philat
 * Piroshki
 * Pratomo Asta Nugraha
 * Project Gardares
@@ -120,12 +126,17 @@ the omission in future versions.
 * Rikxz
 * rivvil
 * Robert Penner
+* Saltome
 * Sapphi
 * Scout
+* Sergey Musiyenko
+* Shayne Officer
+* Shehriyar Qureshi
 * Shiz
 * SleepKirby
 * Spiky Caterpillar
 * Susnux
+* Sylvain Beucler
 * Thuong Nguyen Huu
 * Tlm-2501
 * Tmrwiz
@@ -135,6 +146,7 @@ the omission in future versions.
 * Winter Wolves
 * Xavi-Mat
 * Xela
+* Zedraxlo
 * Zhangning
 * Zigmut
 

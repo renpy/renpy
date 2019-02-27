@@ -1084,3 +1084,11 @@ translate russian strings:
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
     new "Кеш изображений: [cache_pct:.1f]% ([cache_size_mb:.1f] МБ)"
 
+    # 00director.rpy:1481
+    old "⬆"
+    new "⬆"
+
+    # 00director.rpy:1487
+    old "⬇"
+    new "⬇"
+

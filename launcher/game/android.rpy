@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,7 +28,7 @@ init python:
     ANDROID_OK = 5
 
     NO_RAPT_TEXT = _("To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher.")
-    NO_JDK_TEXT = _("An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher.")
+    NO_JDK_TEXT = _("A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher.")
     NO_SDK_TEXT = _("RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this.")
     NO_KEY_TEXT = _("RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore.")
     NO_CONFIG_TEXT = _("The current project has not been configured. Use \"Configure\" to configure it before building.")
@@ -45,9 +45,10 @@ init python:
     BUILD_AND_INSTALL_TEXT = _("Builds the Android package, and installs it on an Android device connected to your computer.")
     BUILD_INSTALL_AND_LAUNCH_TEXT = _("Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device.")
 
-    CONNECT_TEXT = _("Connects to an Android device running ADB in TCP/IP mode.")
-    DISCONNECT_TEXT = _("Disconnects from an Android device running ADB in TCP/IP mode.")
     LOGCAT_TEXT = _("Retrieves the log from the Android device and writes it to a file.")
+
+    DEBUG_TEXT = _("Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device.")
+    RELEASE_TEXT = _("Selects the Release build, which can be uploaded to stores. Changing between debug and release builds requires an uninstall from your device.")
 
 
     import subprocess
@@ -83,6 +84,8 @@ init python:
         import rapt.interface
 
         rapt.plat.renpy = True
+        rapt.plat.translate = __
+
     else:
         rapt = None
 
@@ -95,11 +98,9 @@ init python:
             return ANDROID_NO_RAPT
         if renpy.windows and not "JAVA_HOME" in os.environ:
             return ANDROID_NO_JDK
-        if not os.path.exists(rapt.plat.path("android-sdk/platforms/" + rapt.plat.target)):
+        if not os.path.exists(rapt.plat.adb):
             return ANDROID_NO_SDK
-        if not os.path.exists(rapt.plat.path("android.keystore")):
-            return ANDROID_NO_KEY
-        if not os.path.exists(rapt.plat.path("local.properties")):
+        if not os.path.exists(rapt.plat.path("project/local.properties")):
             return ANDROID_NO_KEY
         if not os.path.exists(os.path.join(project.current.path, ".android.json")):
             return ANDROID_NO_CONFIG
@@ -268,6 +269,10 @@ init python:
             rapt.build.build(rapt_interface, dist, command, launch=launch, finished=finished)
 
 
+    def android_build_argument(cmd):
+        return cmd + project.current.data["android_build"]
+
+
 
 # The android support can stick unicode into os.environ. Fix that.
 init 100 python:
@@ -362,6 +367,20 @@ screen android:
 
                             has vbox
 
+                            hbox:
+                                spacing 15
+
+                                textbutton _("Debug"):
+                                    action SetDict(project.current.data, "android_build", "Debug")
+                                    hovered tt.Action(DEBUG_TEXT)
+
+                                textbutton _("Release"):
+                                    action SetDict(project.current.data, "android_build", "Release")
+                                    hovered tt.Action(RELEASE_TEXT)
+
+
+                            add HALF_SPACER
+
                             textbutton _("Install SDK & Create Keys"):
                                 action AndroidIfState(state, ANDROID_NO_SDK, Jump("android_installsdk"))
                                 hovered tt.Action(INSTALL_SDK_TEXT)
@@ -396,14 +415,6 @@ screen android:
                         frame style "l_indent":
 
                             has vbox
-
-                            textbutton _("Remote ADB Connect"):
-                                action AndroidIfState(state, ANDROID_OK, Jump("android_connect"))
-                                hovered tt.Action(CONNECT_TEXT)
-
-                            textbutton _("Remote ADB Disconnect"):
-                                action AndroidIfState(state, ANDROID_OK, Jump("android_disconnect"))
-                                hovered tt.Action(DISCONNECT_TEXT)
 
                             textbutton _("Logcat"):
                                 action AndroidIfState(state, ANDROID_NO_KEY, Jump("logcat"))
@@ -469,74 +480,20 @@ label android_configure:
 
 label android_build:
 
-    $ android_build([ 'release' ], opendir=True)
+    $ android_build([ android_build_argument("assemble") ], opendir=True)
 
     jump android
 
 
 label android_build_and_install:
 
-    $ android_build([ 'release', 'install' ])
+    $ android_build([ android_build_argument("install") ])
 
     jump android
 
 label android_build_install_and_launch:
 
-    $ android_build([ 'release', 'install' ], launch=True)
-
-    jump android
-
-
-label android_connect:
-
-    python hide:
-
-        if persistent.connect_address is not None:
-            address = persistent.connect_address
-        else:
-            address = ""
-
-        while True:
-            address = interface.input(
-                _("Remote ADB Address"),
-                _("Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."),
-                default=address,
-                cancel=Jump("android"),
-                )
-
-            address = address.strip()
-
-            try:
-                host, port = address.split(":")
-            except:
-                interface.error(_("Invalid remote ADB address"), _("The address must contain one exactly one ':'."), label=None)
-                continue
-
-            if " " in host:
-                interface.error(_("Invalid remote ADB address"), _("The host may not contain whitespace."), label=None)
-                continue
-
-            try:
-                int(port)
-            except:
-                interface.error(_("Invalid remote ADB address"), _("The port must be a number."), label=None)
-                continue
-
-            break
-
-        persistent.connect_address = address
-
-        rapt_interface = MobileInterface("android")
-        rapt.build.connect(rapt_interface, address)
-
-    jump android
-
-label android_disconnect:
-
-    python hide:
-
-        rapt_interface = MobileInterface("android")
-        rapt.build.disconnect(rapt_interface)
+    $ android_build([android_build_argument("install") ], launch=True)
 
     jump android
 
@@ -556,7 +513,7 @@ init python:
     def android_build_command():
         ap = renpy.arguments.ArgumentParser()
         ap.add_argument("android_project", help="The path to the project directory.")
-        ap.add_argument("ant_commands", help="Commands to pass to ant. (Try 'release' 'install'.)", nargs='+')
+        ap.add_argument("gradle_commands", help="Commands to pass to gradle. (Try 'installDebug' or 'assembleRelease'.)", nargs='+')
         ap.add_argument("--launch", action="store_true", help="Launches the app after build and install compete.")
         ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
 
@@ -564,7 +521,7 @@ init python:
 
         p = project.Project(args.android_project)
 
-        android_build(args.ant_commands, p=p, gui=False, launch=args.launch, destination=args.destination)
+        android_build(args.gradle_commands, p=p, gui=False, launch=args.launch, destination=args.destination)
 
         return False
 

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -286,6 +286,7 @@ init python:
         pass
 
     build.classify_renpy("rapt/**", "rapt")
+    build.executable("rapt/prototype/gradlew")
 
     build.classify_renpy("renios/prototype/base/", None)
     build.classify_renpy("renios/prototype/prototype.xcodeproj/*.xcworkspace/", None)
@@ -366,6 +367,7 @@ init python:
     build.classify_renpy("module/pysdlsound/", "source")
     build.classify_renpy("module/pysdlsound/*.py", "source")
     build.classify_renpy("module/pysdlsound/*.pyx", "source")
+    build.classify_renpy("module/fribidi-src/**", "source")
 
     # all-platforms binary.
     build.classify_renpy("lib/**/_renpysteam*", None)

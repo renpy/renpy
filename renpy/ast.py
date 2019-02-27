@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -137,7 +137,11 @@ class ParameterInfo(object):
 
         if self.extrakw:
             rv[self.extrakw] = values
-        elif values and not ignore_errors:
+
+        elif values.get("_ignore_extra_kwargs", False):
+            pass
+
+        elif values and (not ignore_errors):
             raise Exception("Unknown keyword arguments: %s" % ( ", ".join(values.keys())))
 
         return rv
@@ -192,6 +196,24 @@ class ArgumentInfo(object):
             kwargs.update(renpy.python.py_eval(self.extrakw, locals=scope))
 
         return tuple(args), kwargs
+
+    def get_code(self):
+
+        l = [ ]
+
+        for keyword, expression in self.arguments:
+            if keyword is not None:
+                l.append("{}={}".format(keyword, expression))
+            else:
+                l.append(expression)
+
+        if self.extrapos is not None:
+            l.append("*" + self.extrapos)
+
+        if self.extrakw is not None:
+            l.append("**" + self.extrakw)
+
+        return "(" + ", ".join(l) + ")"
 
 
 def __newobj__(cls, *args):
@@ -556,6 +578,7 @@ class Say(Node):
         'interact',
         'attributes',
         'arguments',
+        'temporary_attributes',
         ]
 
     def diff_info(self):
@@ -566,9 +589,10 @@ class Say(Node):
         self.attributes = None
         self.interact = True
         self.arguments = None
+        self.temporary_attributes = None
         return self
 
-    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None):
+    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None, temporary_attributes=None):
 
         super(Say, self).__init__(loc)
 
@@ -593,6 +617,9 @@ class Say(Node):
         # speaking, or None to disable this behavior.
         self.attributes = attributes
 
+        # Ditto for temporary attributes.
+        self.temporary_attributes = temporary_attributes
+
     def get_code(self, dialogue_filter=None):
         rv = [ ]
 
@@ -615,6 +642,9 @@ class Say(Node):
             rv.append("with")
             rv.append(self.with_)
 
+        if self.arguments:
+            rv.append(self.arguments.get_code())
+
         return " ".join(rv)
 
     def execute(self):
@@ -625,6 +655,7 @@ class Say(Node):
         try:
 
             renpy.game.context().say_attributes = self.attributes
+            renpy.game.context().temporary_attributes = self.temporary_attributes
 
             who = eval_who(self.who, self.who_fast)
 
@@ -647,6 +678,8 @@ class Say(Node):
                 args = tuple()
                 kwargs = dict()
 
+            kwargs.setdefault("interact", self.interact)
+
             if getattr(who, "record_say", True):
                 renpy.store._last_say_who = self.who
                 renpy.store._last_say_what = what
@@ -654,14 +687,16 @@ class Say(Node):
                 renpy.store._last_say_kwargs = kwargs
 
             say_menu_with(self.with_, renpy.game.interface.set_transition)
-            renpy.exports.say(who, what, interact=self.interact, *args, **kwargs)
+            renpy.exports.say(who, what, *args, **kwargs)
 
         finally:
             renpy.game.context().say_attributes = None
+            renpy.game.context().temporary_attributes = None
 
     def predict(self):
 
         old_attributes = renpy.game.context().say_attributes
+        old_temporary_attributes = renpy.game.context().temporary_attributes
 
         try:
 
@@ -682,6 +717,7 @@ class Say(Node):
 
         finally:
             renpy.game.context().say_attributes = old_attributes
+            renpy.game.context().temporary_attributes = old_temporary_attributes
 
         return [ self.next ]
 
@@ -746,7 +782,6 @@ class Label(Node):
     rollback = "force"
 
     translation_relevant = True
-
     __slots__ = [
         'name',
         'parameters',
@@ -1388,6 +1423,9 @@ class Call(Node):
             args, kwargs = self.arguments.evaluate()
             renpy.store._args = args
             renpy.store._kwargs = kwargs
+        else:
+            renpy.store._args = None
+            renpy.store._kwargs = None
 
     def predict(self):
 
@@ -1465,14 +1503,27 @@ class Menu(Node):
         'items',
         'set',
         'with_',
+        'has_caption',
+        'arguments',
+        'item_arguments',
         ]
 
-    def __init__(self, loc, items, set, with_):  # @ReservedAssignment
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
+        self.has_caption = False
+        self.arguments = None
+        self.item_arguments = None
+        return self
+
+    def __init__(self, loc, items, set, with_, has_caption, arguments, item_arguments):  # @ReservedAssignment
         super(Menu, self).__init__(loc)
 
         self.items = items
         self.set = set
         self.with_ = with_
+        self.has_caption = has_caption
+        self.arguments = arguments
+        self.item_arguments = item_arguments
 
     def diff_info(self):
         return (Menu,)
@@ -1504,30 +1555,53 @@ class Menu(Node):
     def execute(self):
 
         next_node(self.next)
-        statement_name("menu")
+
+        if self.has_caption:
+            statement_name("menu-with-caption")
+        else:
+            statement_name("menu")
+
+        if self.arguments is not None:
+            args, kwargs = self.arguments.evaluate()
+        else:
+            args = kwargs = None
 
         choices = [ ]
         narration = [ ]
+        item_arguments = [ ]
 
         for i, (label, condition, block) in enumerate(self.items):
 
             if renpy.config.say_menu_text_filter:
                 label = renpy.config.say_menu_text_filter(label)
 
+            has_item = False
+
             if block is None:
                 if renpy.config.narrator_menu and label:
                     narration.append(label)
                 else:
                     choices.append((label, condition, None))
+                    has_item = True
+
             else:
                 choices.append((label, condition, i))
+                has_item = True
+
                 next_node(block[0])
+
+            if has_item:
+                if self.item_arguments and (self.item_arguments[i] is not None):
+                    item_arguments.append(self.item_arguments[i].evaluate())
+                else:
+                    item_arguments.append((tuple(), dict()))
 
         if narration:
             renpy.exports.say(None, "\n".join(narration), interact=False)
 
         say_menu_with(self.with_, renpy.game.interface.set_transition)
-        choice = renpy.exports.menu(choices, self.set)
+
+        choice = renpy.exports.menu(choices, self.set, args, kwargs, item_arguments)
 
         if choice is not None:
             next_node(self.items[choice][2][0])
@@ -1752,6 +1826,7 @@ class UserStatement(Node):
         'block',
         'translatable',
         'code_block',
+        'translation_relevant',
         ]
 
     def __new__(cls, *args, **kwargs):
@@ -1759,6 +1834,7 @@ class UserStatement(Node):
         self.block = [ ]
         self.code_block = None
         self.translatable = False
+        self.translation_relevant = False
         return self
 
     def __init__(self, loc, line, block):
@@ -1900,7 +1976,7 @@ def get_namespace(store):
 
 # Config variables that are set twice - once when the rpy is first loaded,
 # and then again at init time.
-EARLY_CONFIG = { "save_directory" }
+EARLY_CONFIG = { "save_directory", "allow_duplicate_labels" }
 
 define_statements = [ ]
 
@@ -2159,7 +2235,6 @@ class Translate(Node):
 
         renpy.game.context().translate_identifier = self.identifier
         renpy.game.context().alternate_translate_identifier = getattr(self, "alternate", None)
-        renpy.game.context().translate_block_language = self.language
 
     def predict(self):
         node = self.lookup()
@@ -2200,7 +2275,6 @@ class EndTranslate(Node):
 
         renpy.game.context().translate_identifier = None
         renpy.game.context().alternate_translate_identifier = None
-        renpy.game.context().translate_block_language = None
 
 
 class TranslateString(Node):

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,9 +31,6 @@ init -1650 python:
     # If True, the side image will only be shown if an image with the same tag
     # is not shown.
     config.side_image_only_not_showing = False
-
-    # The prefix to use on the side image.
-    config.side_image_prefix_tag = 'side'
 
     # A transform to use when the side image changes to that of a different
     # character.

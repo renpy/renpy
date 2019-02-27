@@ -187,7 +187,7 @@ translate french strings:
 
     # screens.rpy:782
     old "Rollback Side"
-    new "Rollback"
+    new "Rembobinage côté"
 
     # screens.rpy:783
     #old "Disable"
@@ -215,7 +215,7 @@ translate french strings:
 
     # screens.rpy:800
     old "Language"
-    new "Langage"
+    new "Langue"
 
     # screens.rpy:815
     old "Text Speed"
@@ -351,7 +351,7 @@ translate french strings:
 
     # screens.rpy:1111
     old "Mouse Wheel Up\nClick Rollback Side"
-    new "Molette de souris vers le haut\nClic dans le sens Rollback"
+    new "Molette de souris vers le haut\nClic du côté rembobinage"
 
     # screens.rpy:1115
     old "Mouse Wheel Down"

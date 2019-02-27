@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -662,10 +662,13 @@ class ChoiceActionBase(Action):
     previously visited and mark it so if it is chosen.
     """
 
-    def __init__(self, label, value, location=None, block_all=None):
+    sensitive = True
+
+    def __init__(self, label, value, location=None, block_all=None, sensitive=True, args=None, kwargs=None):
         self.label = label
         self.value = value
         self.location = location
+        self.sensitive = sensitive
 
         if block_all is None:
             self.block_all = renpy.config.fix_rollback_without_choice
@@ -680,8 +683,13 @@ class ChoiceActionBase(Action):
             if self.chosen is None:
                 self.chosen = renpy.game.persistent._chosen = { }
 
+        # The arguments passed to a menu choice.
+        self.args = args
+        self.kwargs = kwargs
+
     def get_sensitive(self):
-        return not renpy.exports.in_fixed_rollback() or (not self.block_all and self.get_selected())
+        return (self.sensitive and
+                not renpy.exports.in_fixed_rollback() or (not self.block_all and self.get_selected()))
 
     def get_selected(self):
         roll_forward = renpy.exports.roll_forward_info()

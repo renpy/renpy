@@ -904,13 +904,15 @@ screen history():
 
                     label h.who:
                         style "history_name"
+                        substitute False
 
                         ## Take the color of the who text from the Character, if set.
                         if "color" in h.who_args:
                             text_color h.who_args["color"]
 
                 $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
-                text what
+                text what:
+                    substitute False
 
         if not _history_list:
             label _("The dialogue history is empty.")
@@ -1419,16 +1421,18 @@ screen quick_menu():
 
     zorder 100
 
-    hbox:
-        style_prefix "quick"
+    if quick_menu:
 
-        xalign 0.5
-        yalign 1.0
+        hbox:
+            style_prefix "quick"
 
-        textbutton _("Back") action Rollback()
-        textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
-        textbutton _("Auto") action Preference("auto-forward", "toggle")
-        textbutton _("Menu") action ShowMenu()
+            xalign 0.5
+            yalign 1.0
+
+            textbutton _("Back") action Rollback()
+            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
+            textbutton _("Auto") action Preference("auto-forward", "toggle")
+            textbutton _("Menu") action ShowMenu()
 
 
 style window:
@@ -1510,8 +1514,3 @@ style slider_pref_vbox:
 style slider_pref_slider:
     variant "small"
     xsize gui.scale(600)
-
-
-
-
-

@@ -138,7 +138,7 @@ translate indonesian strings:
     new "## Tepi kotak bersisi urutan nama karakter, di kiri, atas, kanan, bawah."
 
     # gui.rpy:127
-    old "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
+    old "## If True, the background of the namebox will be tiled, if False, the background of the namebox will be scaled."
     new "## Jika Benar, latar dari kotaknama akan di beri judul, jika Salah, latar dari kotaknama akan di ukur ulang."
 
     # gui.rpy:132
