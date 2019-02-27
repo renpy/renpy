@@ -24,7 +24,7 @@ than any file that uses it. Since Ren'Py loads files in Unicode sort order, it
 generally makes sense to prefix the name of any file containing a user-defined
 statement with 01, or some other small number.
 
-A user-defined statement cannot be used in the file in which it is defined.
+A creator-defined statement cannot be used in the file in which it is defined.
 
 Creator-defined statement are registered using the :func:`renpy.register_statement`
 function.
@@ -174,6 +174,25 @@ Lint Utility Functions
 ----------------------
 
 These functions are useful in writing lint functions.
+
+.. function:: renpy.error(msg)
+
+    Writes an error `msg` to the report file. Writes an error message to
+    the report file.
+
+.. function:: renpy.lint.try_compile(where, expr, additional=None)
+
+    Tries to compile an expression and announcing an error if it fails.
+    `where` must be a string that answers the question "where is places
+    the expression?" If `additional` is specified, it must be
+    a string which will be added to the message.
+
+.. function:: renpy.lint.try_eval(where, expr, additional=None)
+
+    Tries to evaluate an expression, announcing an error if it fails.
+    `where` must be a string that answers the question "where is places
+    the expression?" If `additional` is specified, it must be
+    a string which will be added to the message.
 
 .. include:: inc/lint
 
