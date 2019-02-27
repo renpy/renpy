@@ -3,9 +3,20 @@
 Creator-Defined Statements
 ==========================
 
-Creator-defined statements allow you to add your own statements to Ren'Py. This
+Creator-Defined Statements(CDS) allow you to add your own statements to Ren'Py. This
 makes it possible to add things that are not supported by the current syntax of
-Ren'Py.
+Ren'Py. CDS are more flexible than the direct python code. Most often, CDS are used
+when you have a repeatable construction. For example, calling a function with one argument.
+Ren'Py does not know what this function does and how it should be executed,
+so Ren'Py does not do anything with it until execution and has an error if an exception occurs.
+Using the CDS allows you to check the correctness of the syntax using parse
+(for example, check that the argument is a valid string), to ignore incorrect data
+at execution (for non-critical functions, it is better to skip the execute than
+to throw an exception), predict displayables (if the function uses them),
+and give you addition information during lint (if at runtime it was ignored you
+can have a report here). The CDS does not guarantee that the execution will be successful,
+but the better you code your statement, the better Ren'Py can "understand" what
+you expect from it.
 
 Creator-defined statements must be defined in a ``python early`` block. What's more,
 the filename containing the user-defined statement must be be loaded earlier
