@@ -2,10 +2,11 @@
 Full Changelog
 ==============
 
+.. _renpy-7.2:
 .. _renpy-7.1.4:
 
-7.1.4
-=====
+7.2
+===
 
 Menu Arguments
 --------------
