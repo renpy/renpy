@@ -77,7 +77,7 @@ def add(msg):
         print(unicode(msg).encode('utf-8'))
 
 
-# Trys to evaluate an expression, announcing an error if it fails.
+# Tries to evaluate an expression, announcing an error if it fails.
 def try_eval(where, expr, additional=None):
 
     # Make sure the expression compiles.

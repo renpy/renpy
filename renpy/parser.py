@@ -722,7 +722,7 @@ class Lexer(object):
 
     def string(self):
         """
-        Lexes a string, and returns the string to the user, or none if
+        Lexes a string, and returns the string to the user, or None if
         no string could be found. This also takes care of expanding
         escapes and collapsing whitespace.
 
@@ -1190,7 +1190,7 @@ class Lexer(object):
         if not text:
             return None
 
-        return renpy.ast.PyExpr(self.text[start:self.pos].strip(), self.filename, self.number)
+        return renpy.ast.PyExpr(text, self.filename, self.number)
 
     def comma_expression(self):
         """
