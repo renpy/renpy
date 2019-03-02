@@ -1463,12 +1463,12 @@ def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
     """
     :doc: movie_cutscene
 
-    This displays an MPEG-1 cutscene for the specified number of
+    This displays a movie cutscene for the specified number of
     seconds. The user can click to interrupt the cutscene.
     Overlays and Underlays are disabled for the duration of the cutscene.
 
     `filename`
-        The name of a file containing an MPEG-1 movie.
+        The name of a file containing any movie playable by Ren'Py.
 
     `delay`
         The number of seconds to wait before ending the cutscene.
