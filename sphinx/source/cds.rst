@@ -3,9 +3,9 @@
 Creator-Defined Statements
 ==========================
 
-Creator-Defined Statements(CDS) allow you to add your own statements to Ren'Py. This
+Creator-Defined Statements (CDS) allow you to add your own statements to Ren'Py. This
 makes it possible to add things that are not supported by the current syntax of
-Ren'Py. CDS are more flexible than the direct python code. Most often, CDS are used
+Ren'Py. CDS are more flexible than the direct Python code. Most often, CDS are used
 when you have a repeatable construction. For example, calling a function with one argument.
 Ren'Py does not know what this function does and how it should be executed,
 so Ren'Py does not do anything with it until execution and has an error if an exception occurs.
@@ -174,25 +174,6 @@ Lint Utility Functions
 ----------------------
 
 These functions are useful in writing lint functions.
-
-.. function:: renpy.error(msg)
-
-    Writes an error `msg` to the report file. Writes an error message to
-    the report file.
-
-.. function:: renpy.lint.try_compile(where, expr, additional=None)
-
-    Tries to compile an expression and announcing an error if it fails.
-    `where` must be a string that answers the question "where is places
-    the expression?" If `additional` is specified, it must be
-    a string which will be added to the message.
-
-.. function:: renpy.lint.try_eval(where, expr, additional=None)
-
-    Tries to evaluate an expression, announcing an error if it fails.
-    `where` must be a string that answers the question "where is places
-    the expression?" If `additional` is specified, it must be
-    a string which will be added to the message.
 
 .. include:: inc/lint
 

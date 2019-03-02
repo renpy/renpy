@@ -79,6 +79,24 @@ def add(msg):
 
 # Tries to evaluate an expression, announcing an error if it fails.
 def try_eval(where, expr, additional=None):
+    """
+    :doc: lint
+
+    Tries to evaluate an expression, and writes an error to lint.txt if
+    it fails.
+
+    `where`
+        A string giving the location the expression is found. Used to
+        generate an error message of the form "Could not evaluate `expr`
+        in `where`."
+
+    `expr`
+        The expression to try evaluating.
+
+    `additional`
+        If given, an additional line of information that is addded to the
+        error message.
+    """
 
     # Make sure the expression compiles.
     try_compile(where, expr)
@@ -105,6 +123,24 @@ def try_eval(where, expr, additional=None):
 
 
 def try_compile(where, expr, additional=None):
+    """
+    :doc: lint
+
+    Tries to compile an expression, and writes an error to lint.txt if
+    it fails.
+
+    `where`
+        A string giving the location the expression is found. Used to
+        generate an error message of the form "Could not evaluate `expr`
+        in `where`."
+
+    `expr`
+        The expression to try compiling.
+
+    `additional`
+        If given, an additional line of information that is addded to the
+        error message.
+    """
 
     try:
         renpy.python.py_compile_eval_bytecode(expr)
