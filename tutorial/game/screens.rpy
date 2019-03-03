@@ -776,6 +776,7 @@ screen preferences():
                     textbutton "English" text_font "DejaVuSans.ttf"action Language(None)
                     textbutton "Français" text_font "DejaVuSans.ttf"action Language("french")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
+                    textbutton "Español" text_font "DejaVuSans.ttf"action Language("spanish")
 
                     # This should be last.
                     textbutton "Pig Latin" text_font "DejaVuSans.ttf" action Language("piglatin")
