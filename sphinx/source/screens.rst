@@ -207,9 +207,8 @@ All user interface statements take the following common properties:
     By default, the ``id`` is automatically-generated.
 
 `style`
-    The name of the style applied to this displayable. This may be a
-    string name, or a style object. The style gives default
-    values for style properties.
+    A string giving the name of the style applied to this displayable. The
+    style gives default values for style properties.
 
 `style_prefix`
     .. _style-prefix:
@@ -258,6 +257,14 @@ All user interface statements take the following common properties:
     focus, the value of this property will be made available from the
     :func:`GetTooltip` function. See the :ref:`tooltips` section for
     more details.
+
+`arguments`
+    A tuple or list containing additional positional arguments that
+    are given to the displayable.
+
+`properties`
+    A dictionary containing additional properties given to the
+    displayable.
 
 Many user interface statements take classes of style properties, or
 transform properties. These properties can have a style prefix
