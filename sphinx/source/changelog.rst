@@ -44,7 +44,7 @@ finished. For example, in the script::
 
     e "I'm happy."
 
-    e @ vhappy "I'm really happy!"
+    e \@ vhappy "I'm really happy!"
 
     e "I'm still happy."
 
@@ -161,7 +161,7 @@ interaction restart occurs.
 
 
 
-Size-changing properties like :ref:`xysize` now apply to a Drag and not
+Size-changing properties like :propref:`xysize` now apply to a Drag and not
 the space it can move around in.
 
 A bug that could cause a transparent, black, or gray line to appear on
