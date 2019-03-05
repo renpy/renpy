@@ -4,19 +4,19 @@
 translate spanish director_e4543d9b:
 
     # e "There are a few tools you can access by pressing the right commands on the keyboard."
-    e ""
+    e "Hay algunas herramientas a las que puede acceder presionando los comandos correctos en el teclado."
 
 # game/tutorial_director.rpy:7
 translate spanish director_ebf40500:
 
     # e "Typing Shift+R turns on autoreload mode. When it's enabled, your game will automatically reload when you edit a script file."
-    e ""
+    e "Al escribir Shift + R se activa el modo de carga automática. Cuando está habilitado, tu juego se volverá a cargar automáticamente cuando edites un archivo de script."
 
 # game/tutorial_director.rpy:9
 translate spanish director_6f3d1bea:
 
     # e "Shift+O brings you to the console, which lets you enter Ren'Py and Python commands to try them out."
-    e ""
+    e "Shift + O te lleva a la consola, que te permite ingresar los comandos Ren'Py y Python para probarlos."
 
 # game/tutorial_director.rpy:11
 translate spanish director_70a61c1c:
