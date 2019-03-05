@@ -44,7 +44,7 @@ finished. For example, in the script::
 
     e "I'm happy."
 
-    e \@ vhappy "I'm really happy!"
+    e @ vhappy "I'm really happy!"
 
     e "I'm still happy."
 
