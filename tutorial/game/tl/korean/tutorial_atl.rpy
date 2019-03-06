@@ -4,79 +4,79 @@
 translate korean tutorial_positions_a09a3fd1:
 
     # e "In this tutorial, I'll teach you how Ren'Py positions things on the screen. But before that, let's learn a little bit about how Python handles numbers."
-    e ""
+    e "이 길라잡이에서는 렌파이가 어떤 방식으로 스크린에 항목을 배치하는지 알아볼 거야. 그러기 전에, 파이썬이 어떻게 숫자를 다루는지 알려줄게."
 
 # game/tutorial_atl.rpy:207
 translate korean tutorial_positions_ba39aabc:
 
     # e "There are two main kinds of numbers in Python: integers and floating point numbers. An integer consists entirely of digits, while a floating point number has a decimal point."
-    e ""
+    e "파이썬에는 숫자를 구성하는 '정수'와 '부동 소수점'의 두 가지 주요 종류가 있어. 정수는 모두 숫자로 구성되는 반면에 부동 소수점의 숫자에는 소수점이 있어."
 
 # game/tutorial_atl.rpy:209
 translate korean tutorial_positions_a60b775d:
 
     # e "For example, 100 is an integer, while 0.5 is a floating point number, or float for short. In this system, there are two zeros: 0 is an integer, and 0.0 is a float."
-    e ""
+    e "예를 들어, 100은 '정수', 0.5는 부동 소수점 혹은 짧게 '실수'야. 이 시스템에는 정수 0과 실수 0.0인 두 개의 0이 있지."
 
 # game/tutorial_atl.rpy:211
 translate korean tutorial_positions_7f1a560c:
 
     # e "Ren'Py uses integers to represent absolute coordinates, and floats to represent fractions of an area with known size."
-    e ""
+    e "렌파이는 절대 좌표를 나타내는데 정수를 사용하고 알려진 크기의 영역을 나타낼 때 실수를 사용해."
 
 # game/tutorial_atl.rpy:213
 translate korean tutorial_positions_8e7d3e52:
 
     # e "When we're positioning something, the area is usually the entire screen."
-    e ""
+    e "우리가 무언가의 위치를 잡을 때, 그 영역은 일반적으로 화면 전체일 거야."
 
 # game/tutorial_atl.rpy:215
 translate korean tutorial_positions_fdcf9d8b:
 
     # e "Let me get out of the way, and I'll show you where some positions are."
-    e ""
+    e "이제 나를 화면 밖으로 내보내고, 위치들이 어디에 있는지 보여줄게."
 
 # game/tutorial_atl.rpy:229
 translate korean tutorial_positions_76d7a5bf:
 
     # e "The origin is the upper-left corner of the screen. That's where the x position (xpos) and the y position (ypos) are both zero."
-    e ""
+    e "원점은 화면의 왼쪽 위 모서리야. 거기는 x좌표(xpos)와 y좌표(ypos)가 모두 0인 곳이지."
 
 # game/tutorial_atl.rpy:235
 translate korean tutorial_positions_be14c7c3:
 
     # e "When we increase xpos, we move to the right. So here's an xpos of .5, meaning half the width across the screen."
-    e ""
+    e "xpos를 늘리면 오른쪽으로 이동해. 그래서 여기의 xpos는 .5이며 화면의 너비의 절반이야."
 
 # game/tutorial_atl.rpy:240
 translate korean tutorial_positions_9b91be6c:
 
     # e "Increasing xpos to 1.0 moves us to the right-hand border of the screen."
-    e ""
+    e "xpos를 1.0으로 늘리면 화면의 오른쪽 테두리로 이동해."
 
 # game/tutorial_atl.rpy:246
 translate korean tutorial_positions_2b293304:
 
     # e "We can also use an absolute xpos, which is given in an absolute number of pixels from the left side of the screen. For example, since this window is 1280 pixels across, using an xpos of 640 will return the target to the center of the top row."
-    e ""
+    e "우리는 정수로 절대 xpos를 사용할 수도 있어. 이 경우 xpos는 화면의 왼쪽에서부터 절대 픽셀 수로 지정돼. 예를 들어, 이 창은 가로가 1280 픽셀이니까 640의 xpos를 사용하면 대상이 가운데 상단으로 적용되지."
 
 # game/tutorial_atl.rpy:248
 translate korean tutorial_positions_c4d18c0a:
 
     # e "The y-axis position, or ypos works the same way. Right now, we have a ypos of 0.0."
-    e ""
+    e "y좌표 혹은 ypos는 같은 방식으로 작동해. 지금 우리의 ypos 값은 0.0이야."
 
 # game/tutorial_atl.rpy:254
 translate korean tutorial_positions_16933a61:
 
     # e "Here's a ypos of 0.5."
-    e ""
+    e "여기는 ypos 0.5이고."
 
 # game/tutorial_atl.rpy:259
 translate korean tutorial_positions_6eb36777:
 
     # e "A ypos of 1.0 specifies a position at the bottom of the screen. If you look carefully, you can see the position indicator spinning below the text window."
-    e ""
+    e "1.0의 ypos는 화면 하단의 위치를 지정해. 잘 살펴보면 텍스트 창 아래에서 위치 표시기가 회전하는 것이 보일 거야."
 
 # game/tutorial_atl.rpy:261
 translate korean tutorial_positions_a423050f:
