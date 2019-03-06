@@ -130,7 +130,7 @@ translate korean tutorial_dialogue_f51ecf1f:
 translate korean tutorial_dialogue_bc7ec147:
 
     # e "The first line is a label statement. The label statement is used to give a name to a place in the program."
-    e "첫 번째 줄은 레이블 문이야. 레이블 문은 프로그램의 특정 위치의 이름을 지정하는 데 사용됩니다."
+    e "첫 번째 줄은 레이블 문이야. 레이블 문은 프로그램의 특정 위치의 이름을 지정하는 데 사용돼."
 
 # game/tutorial_quickstart.rpy:105
 translate korean tutorial_dialogue_b20db833:
