@@ -56,7 +56,7 @@ translate korean strings:
 
     # script.rpy:56
     old "Quickstart"
-    new "빠른 시작"
+    new "학습하기"
 
     # script.rpy:58
     old "Player Experience"
@@ -108,7 +108,7 @@ translate korean strings:
 
     # script.rpy:72
     old "In Depth"
-    new "깊은 곳에"
+    new "보강하기"
 
     # script.rpy:74
     old "Text Tags, Escapes, and Interpolation"
@@ -168,8 +168,8 @@ translate korean strings:
 
     # script.rpy:168
     old "What would you like to see?"
-    new "뭘 보고 싶어?"
+    new "뭘 알고 싶어?"
 
     # script.rpy:170
     old "Is there anything else you'd like to see?"
-    new "보고 싶은 것이 있어?"
+    new "더 알고 싶은 것이 있어?"
