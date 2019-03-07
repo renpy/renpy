@@ -4,7 +4,7 @@
 translate korean tutorial_positions_a09a3fd1:
 
     # e "In this tutorial, I'll teach you how Ren'Py positions things on the screen. But before that, let's learn a little bit about how Python handles numbers."
-    e "이 길라잡이에서는 렌파이가 대상을 어떤 방식으로 스크린에 배치하는지 알아볼 거야. 그러기 전에, 파이썬이 어떻게 숫자를 다루는지 알려줄게."
+    e "이 길라잡이에서는 렌파이가 대상을 어떤 방식으로 화면에 배치하는지 알아볼 거야. 그러기 전에, 파이썬이 어떻게 숫자를 다루는지 알려줄게."
 
 # game/tutorial_atl.rpy:207
 translate korean tutorial_positions_ba39aabc:
