@@ -1627,26 +1627,34 @@ class SLUse(SLNode):
         else:
             const = False
 
-        target = renpy.display.screen.get_screen_variant(self.target)
+        if isinstance(self.target, renpy.ast.PyExpr):
 
-        if target is None:
             self.constant = NOT_CONST
+            const = False
+            self.ast = None
 
-            if renpy.config.developer:
-                raise Exception("A screen named {} does not exist.".format(self.target))
-            else:
+        else:
+
+            target = renpy.display.screen.get_screen_variant(self.target)
+
+            if target is None:
+                self.constant = NOT_CONST
+
+                if renpy.config.developer:
+                    raise Exception("A screen named {} does not exist.".format(self.target))
+                else:
+                    return
+
+            if target.ast is None:
+                self.constant = NOT_CONST
                 return
 
-        if target.ast is None:
-            self.constant = NOT_CONST
-            return
+            if const:
+                self.ast = target.ast.const_ast
+            else:
+                self.ast = target.ast.not_const_ast
 
-        if const:
-            self.ast = target.ast.const_ast
-        else:
-            self.ast = target.ast.not_const_ast
-
-        self.constant = min(self.constant, self.ast.constant)
+            self.constant = min(self.constant, self.ast.constant)
 
     def execute_use_screen(self, context):
 
@@ -1669,7 +1677,20 @@ class SLUse(SLNode):
 
     def execute(self, context):
 
-        ast = self.ast
+        if isinstance(self.target, renpy.ast.PyExpr):
+            target_name = eval(self.target, context.globals, context.scope)
+            target = renpy.display.screen.get_screen_variant(target_name)
+
+            if target is None:
+                raise Exception("A screen named {} does not exist.".format(self.target))
+
+            ast = target.ast.not_const_ast
+
+            id_prefix = "_use_expression"
+
+        else:
+            id_prefix = self.target
+            ast = self.ast
 
         # If self.ast is not an SL2 screen, run it using renpy.display.screen.use_screen.
         if ast is None:
@@ -1686,7 +1707,7 @@ class SLUse(SLNode):
 
         if self.id:
 
-            use_id = (self.target, eval(self.id, context.globals, context.scope))
+            use_id = (id_prefix, eval(self.id, context.globals, context.scope))
 
             ctx.old_cache = context.old_use_cache.get(use_id, None) or context.old_cache.get(self.serial, None) or { }
 

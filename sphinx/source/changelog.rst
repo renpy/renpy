@@ -2,10 +2,11 @@
 Full Changelog
 ==============
 
+.. _renpy-7.2:
 .. _renpy-7.1.4:
 
-7.1.4
-=====
+7.2
+===
 
 Menu Arguments
 --------------
@@ -27,7 +28,8 @@ the menu, using the syntax::
 
 
 Menu arguments passed to the menu itself become arguments to the screen,
-except the `screen` argument which selects the screen. The arguments to
+except the `screen` argument which selects the screen, and the `nvl`
+argument, which - if present - selects the NVL-mode menu. The arguments to
 the choices become arguments to the items passed to the menu screen.
 
 Temporary Say Attributes
@@ -36,7 +38,7 @@ Temporary Say Attributes
 Ren'Py now supports temporary say attributes. Just like regular say
 attributes, these are included as part of the say statement. However,
 these temporary say attributes are reverted once the dialogue has
-finished. For example, in the script. ::
+finished. For example, in the script::
 
     show eileen happy
 
@@ -51,14 +53,51 @@ emotion. The vhappy emotion is shown before the second line of dialogue,
 and replaced with the previous emotion (happy in this case), before it.
 
 
-Changes
--------
+Text
+-----
+
+There have been a number of text changes that affect text when a window
+is scaled to a non-default size:
+
+* The text is now aligned on its baseline, rather than at the top of
+  the text. This is relevant when an absolute outline offset is
+  used.
+
+* It is now possible to choose how the outline scales when the window
+  is scaled. This is done with the :propref:`outline_scaling` style
+  property.
+
+When positioning a Text object, the :propref:`yanchor` property can be
+renpy.BASELINE. When it is, the anchor is set to the baseline of the
+first line of the text.
+
+Statements
+----------
 
 The new ``window auto show`` and ``window auto hide`` statements
 allow :ref:`automatic dialogue window management <dialogue-window-management>`
 to continue while showing or hiding the dialogue window.
 
-:func:`Preference`("display", "window") now avoids creating a window bigger
+The ``show screen`` and ``hide screen`` statements now take a with
+clause, that works the same way it does with ``show`` and ``hide``.
+
+The screen language ``use`` statement now can take an ``expression``
+clause, that makes it take an expression rather than a literal screen
+name. This allows a variable to be used when selecting the screen that
+is included. See :ref:`sl-use` for more details.
+
+
+Changes
+-------
+
+The new :func:`renpy.is_skipping` function reports if Ren'Py is currently
+skipping.
+
+The :ref:`input <sl-input>` displayable now takes a new `copypaste`
+property, which when true allows copying with ctrl+C and pasting with
+ctrl+V. This is enabled in the console and launcher.
+
+:func:`Preference("display", "window")` now avoids creating a window bigger
 than the screen, and will be selected if the current window size is the
 maximum window size, if the size selected with :func:`gui.init` is bigger
 than the maximum window size.
@@ -72,10 +111,6 @@ the autosave to block until it completes.
 
 The :ref:`ctc screen <ctc-screen>` now takes a number of new parameters,
 if required.
-
-When positioning a Text object, the :propref:`yanchor` property can be
-renpy.BASELINE. When it is, the anchor is set to the baseline of the
-first line of the text.
 
 The new :func:`im.Blur` image manipulator can blur an image. Thanks to
 Mal Graty for contributing it.
@@ -91,10 +126,9 @@ shrinking a maximized window during a reload.
 The :var:`config.allow_duplicate_labels` variable can be defined or set in an
 init python block to allow duplicate labels to be defined in a game.
 
-The :func`Movie` displayable can now be told not to loop, and displays the
+The :func:`Movie` displayable can now be told not to loop, and displays the
 associated static image when it stops looping. It also can take an image
 that is displayed before the movie proper starts.
-
 
 Android Changes
 ---------------
@@ -106,16 +140,29 @@ An explicit action is now given to the keyboard, to make sure the enter
 key works.
 
 Ren'Py now uses the Amazon payment APIs when sideloaded onto a device
-made by Amazon, allowing their payement system to be tested on a dual-store
+made by Amazon, allowing their payment system to be tested on a dual-store
 APK.
 
 
 Ren'Py will now allow files in the public game directory (/mnt/sdcard/Android/`package`/files/game)
 to override those included with the game proper.
 
-
 Fixes
 ------
+
+A bug preventing Ren'Py from displaying zero or negative-width
+characters (such as certain diacritics) has been fixed.
+
+An issue that prevented Ren'Py from updating a displayable that was
+added to a screen with transform properties has been fixed.
+
+The order of drags within a drag group is now preserved when an
+interaction restart occurs.
+
+
+
+Size-changing properties like :propref:`xysize` now apply to a Drag and not
+the space it can move around in.
 
 A bug that could cause a transparent, black, or gray line to appear on
 the bottom line of a screen during a dissolve has been fixed.
@@ -168,7 +215,7 @@ make it possible to set variables inside used screens.
 The new :var:`config.menu_include_disabled` variable determines if menus
 should include entries disabled by an if clause.
 
-Shift-keybindings (like shift+I and shift+R) now work in the android
+Shift-keybindings (like Shift+I and Shift+R) now work in the Android
 emulation mode.
 
 Ren'Py now better reports errors in text tags that require a value but are
@@ -295,7 +342,7 @@ the Google-set default of 1536 megabytes. To change this, edit
 rapt/project/gradle.properties. To make sure you're capable of building
 larger games, please make sure your computer has a 64-bit version of Java 8.
 
-Ren'Py explicitly tells Android to pass the enter key to an input.
+Ren'Py explicitly tells Android to pass the Enter key to an input.
 
 Ren'Py now crops and sizes the icon correctly for versions of Android below
 Android 8 (Oreo).
@@ -443,7 +490,7 @@ that shows the attributes associated with displayed and hidden images.
 Added :func:`renpy.transform_text`, a function to transform text without
 touching text tags or interpolation.
 
-Buttons created using the make_buttons method of a Gallery object now
+Buttons created using the ``make_buttons`` method of a Gallery object now
 inherit from the empty style, and not button. This prevents properties from
 the button style from causing problems.
 
@@ -506,7 +553,7 @@ Layered Images
 
 A :ref:`layered image <layered-images>` is a new way of defining images
 for use in Ren'Py. It's intended to be used with a sprite that has been
-created in Photoshop or some other program as a a series of layers.
+created in Photoshop or some other program as a series of layers.
 The layered image system can use the attributes the image was displayed
 with and Python conditions to determine what layers to display.
 

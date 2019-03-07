@@ -207,9 +207,8 @@ All user interface statements take the following common properties:
     By default, the ``id`` is automatically-generated.
 
 `style`
-    The name of the style applied to this displayable. This may be a
-    string name, or a style object. The style gives default
-    values for style properties.
+    A string giving the name of the style applied to this displayable. The
+    style gives default values for style properties.
 
 `style_prefix`
     .. _style-prefix:
@@ -258,6 +257,14 @@ All user interface statements take the following common properties:
     focus, the value of this property will be made available from the
     :func:`GetTooltip` function. See the :ref:`tooltips` section for
     more details.
+
+`arguments`
+    A tuple or list containing additional positional arguments that
+    are given to the displayable.
+
+`properties`
+    A dictionary containing additional properties given to the
+    displayable.
 
 Many user interface statements take classes of style properties, or
 transform properties. These properties can have a style prefix
@@ -646,6 +653,10 @@ The input statement takes no parameters, and the following properties:
 `exclude`
     A string containing characters that are disallowed from being
     typed into this input. (By default, "{}".)
+
+`copypaste`
+    If True, it becomes possible to copy and paste
+    into this input. (By default, disabled.)
 
 `prefix`
     An immutable string to prepend to what the user has typed.
@@ -1686,6 +1697,32 @@ is transfered from old to new.
         pause
         return
 
+Instead of the name of the screen, the keyword ``expression`` can be
+given, followed by an expression giving the name of the screen to use.
+If parameters are required, the ``pass`` keyword must be given to separate
+them from the expression.
+
+::
+
+    screen ed(num):
+        text "Ed"
+        text "Captain"
+
+    screen kelly(num):
+        text "Kelly"
+        text "First Officer"
+
+    screen bortus(num):
+        text "Bortus"
+        text "Second Officer"
+
+    screen crew():
+        hbox:
+            for i, member in enumerate(party):
+                vbox:
+                    use expression member.screen pass (i + 1)
+
+
 Use and Transclude
 ^^^^^^^^^^^^^^^^^^
 
@@ -1852,17 +1889,24 @@ hidden. This allows them to be used for overlay purposes.
         show rare_screen nopredict
 
 
+The ``show screen`` statement takes a with clause, which is interpreted in the
+same way that the with clause of a ``show`` statement is. ::
+
+    show screen clock_screen with dissolve
+
 Hide Screen
 -----------
 
 The ``hide screen`` statement is used to hide a screen that is currently
-being shown. If the screen is not being shown, nothing happens.
+being shown. If the screen is not being shown, nothing happens. The with
+clause is interpreted the same way the ``with`` clause of a show statement
+is.
 
 ::
 
+    hide screen rare_screen
+    hide screen clock_screen with dissolve
     hide screen overlay_screen
-    hide screen clock
-
 
 Call Screen
 -----------

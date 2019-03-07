@@ -144,6 +144,10 @@ def render_ready():
     global render_is_ready
     render_is_ready = 1
 
+# These are good until the next call to render.
+render_width = 0
+render_height = 0
+
 cpdef render(d, object widtho, object heighto, double st, double at):
     """
     :doc: udd_utility
@@ -166,6 +170,8 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     """
 
     global rendering
+    global render_width
+    global render_height
     global render_st
     global render_at
 
@@ -180,6 +186,9 @@ cpdef render(d, object widtho, object heighto, double st, double at):
             raise Exception("Displayables may not be rendered during the init phase.")
 
     orig_wh = (widtho, heighto, frame_time-st, frame_time-at)
+
+    render_width = widtho
+    render_height = heighto
 
     id_d = id(d)
     render_cache_d = render_cache[id_d]
@@ -274,10 +283,30 @@ def invalidate(d):
         redraw(d, 0)
 
 
+def check_redraws():
+    """
+    Returns true if a redraw is required, and False otherwise.
+    """
+
+    redraw_queue.sort()
+
+    now = renpy.display.core.get_time()
+
+    for when, d in redraw_queue:
+
+        id_d = id(d)
+
+        if id_d not in render_cache:
+            continue
+
+        if when <= now:
+            return True
+
+    return False
+
 def process_redraws():
     """
-    Called to determine if any redraws are pending. Returns true if we
-    need to redraw the screen now, false otherwise.
+    Removes any pending redraws from the redraw queue.
     """
 
     global redraw_queue
@@ -837,6 +866,12 @@ cdef class Render:
         """
 
         (x, y, w, h) = rect
+
+        x = int(x)
+        y = int(y)
+        w = int(w)
+        h = int(h)
+
         rv = Render(w, h)
 
         reverse = self.reverse

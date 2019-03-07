@@ -1498,6 +1498,7 @@ class Return(Node):
 class Menu(Node):
 
     translation_relevant = True
+    rollback = "force"
 
     __slots__ = [
         'items',
@@ -1827,6 +1828,7 @@ class UserStatement(Node):
         'translatable',
         'code_block',
         'translation_relevant',
+        'rollback',
         ]
 
     def __new__(cls, *args, **kwargs):
@@ -1835,6 +1837,7 @@ class UserStatement(Node):
         self.code_block = None
         self.translatable = False
         self.translation_relevant = False
+        self.rollback = "normal"
         return self
 
     def __init__(self, loc, line, block):
@@ -1846,6 +1849,7 @@ class UserStatement(Node):
         self.parsed = None
 
         self.name = self.call("label")
+        self.rollback = renpy.statements.get("rollback", self.parsed) or "normal"
 
         # Do not store the parse.
         self.parsed = None

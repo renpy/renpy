@@ -179,9 +179,19 @@ def take_focuses():
     global default_focus
     default_focus = None
 
+    global grab
+
+    grab_found = False
+
     for f in focus_list:
         if f.x is None:
             default_focus = f
+
+        if f.widget is grab:
+            grab_found = True
+
+    if not grab_found:
+        grab = None
 
     if (default_focus is not None) and (get_focused() is None):
         change_focus(default_focus, True)

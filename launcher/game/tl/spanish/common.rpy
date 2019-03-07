@@ -179,7 +179,7 @@ translate spanish strings:
 
     # 00action_file.rpy:733
     old "Next file page."
-    new "Próxima página."
+    new "Página siguiente."
 
     # 00action_file.rpy:797
     old "Previous file page."

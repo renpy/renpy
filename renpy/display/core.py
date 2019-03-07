@@ -3087,7 +3087,6 @@ class Interface(object):
             return True, None
 
         # Redraw the screen.
-        renpy.display.render.process_redraws()
         needs_redraw = True
 
         # First pass through the while loop?
@@ -3153,6 +3152,8 @@ class Interface(object):
                      renpy.display.draw.should_redraw(needs_redraw, first_pass, can_block))):
 
                     self.force_redraw = False
+
+                    renpy.display.render.process_redraws()
 
                     # If we have a movie, start showing it.
                     fullscreen_video = renpy.display.video.interact()
@@ -3239,7 +3240,7 @@ class Interface(object):
                     needs_redraw = True
                     video_frame_drawn = True
 
-                if renpy.display.render.process_redraws():
+                if renpy.display.render.check_redraws():
                     needs_redraw = True
 
                 # How many seconds until we timeout.
@@ -3512,7 +3513,7 @@ class Interface(object):
                         self.post_time_event()
 
                 # Check again after handling the event.
-                needs_redraw |= renpy.display.render.process_redraws()
+                needs_redraw |= renpy.display.render.check_redraws()
 
                 if self.restart_interaction:
                     return True, None

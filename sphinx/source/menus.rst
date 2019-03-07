@@ -76,7 +76,7 @@ Menu Set
 
 A menu can take a set clause, on a line by itself. If present, only items
 with captions that are not in the set are displayed as part of the menu.
-When an choice is selected, the caption of that choice can be added to the
+When a choice is selected, the caption of that choice can be added to the
 set.
 
 As with all menus, if no choices are available it advances to the statement
@@ -101,7 +101,7 @@ For historical reasons, the set can be either a set object or a list.
             jump go_to_bar
 
         "Go to jail.":
-            jump go_to_jal
+            jump go_to_jail
 
     menu chapter_1_after_places:
 
@@ -132,7 +132,8 @@ the ``if`` keyword or colon. ::
             jump hot_springs_trip
 
 Menu arguments passed to the menu itself become arguments to the screen,
-except the `screen` argument which selects the screen. The arguments to
+except the `screen` argument which selects the screen, and the `nvl` argument
+that selects the :ref:`NVL-mode menu <nvl-mode-menu>`. The arguments to
 the choices become arguments to the items passed to the menu screen.
 
 See the documentation for :ref:`the choice screen <choice-screen>` and

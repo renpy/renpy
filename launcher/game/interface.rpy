@@ -257,6 +257,7 @@ screen launcher_input:
                 xalign 0.5
                 color INPUT_COLOR
                 allow allow
+                copypaste True
 
             if filename:
                 add SPACER

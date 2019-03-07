@@ -3744,7 +3744,7 @@ class PE:
 
         offset = self.get_physical_by_rva(rva)
         if not offset:
-            raise False
+            return False
 
         return self.set_bytes_at_offset(offset, data)
 

@@ -61,7 +61,7 @@ and rolled-back when rollback occurs.
 
 .. var:: menu = renpy.display_menu
 
-    The function that's called to display the in-gamemenu. It should take the same
+    The function that's called to display the in-game menu. It should take the same
     arguments as :func:`renpy.display_menu`. Assigning :func:`nvl_menu` to this
     will display an nvl-mode menu.
 
@@ -125,12 +125,12 @@ and rolled-back when rollback occurs.
 
 .. var:: _skipping = True
 
-    Controls of if skipping is allowed.
+    Controls if skipping is allowed.
 
 .. var:: _version = ...
 
     This is set to :var:`config.version` when a new game is started. It can be
-    use by the ``after_load`` label or :var:`config.after_load_callbacks` to
+    used by the ``after_load`` label or :var:`config.after_load_callbacks` to
     determine which upgrades need to be done.
 
     This is only set once, upon the initial start. After that, the game is

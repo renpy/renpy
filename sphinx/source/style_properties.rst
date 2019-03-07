@@ -305,7 +305,7 @@ or on the screen when not inside a layout.
 
 .. style-property:: ycenter position
 
-    Equivalent to setting ypos to the value of tihis property, and
+    Equivalent to setting ypos to the value of this property, and
     yanchor to 0.5.
 
 .. style-property:: xoffset int
@@ -595,6 +595,27 @@ Text Style Properties
     will always produce a 1 pixel-wide border.
 
     Outlines only work with TrueType fonts.
+
+.. style-property: outline_scaling string
+
+    This determines how outline suzels or offsets are scaled when the
+    window is scaled.
+
+    ``"step"``
+        The default, best for text that uses thin outlines and text
+        that uses multiple outlines. The window scaling factor is
+        rounded down to an integer and applied ot the outline size
+        and offsets.
+
+        The window scaling factor is always above 1.
+
+    ``"linear"``
+        Best for text with thick outlines. The window scaling factor
+        is applied to the outline size, and then rounded to an integer.
+        This looks better for thick outlines, but small outlines can
+        dissappear.
+
+        The resulting width is always at least 1 pixel.
 
 .. style-property:: rest_indent int
 

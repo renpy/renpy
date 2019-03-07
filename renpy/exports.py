@@ -114,6 +114,8 @@ from renpy.ast import eval_who
 
 from renpy.loader import add_python_directory
 
+from renpy.lint import try_compile, try_eval
+
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
 renpy_pure("has_screen")
@@ -182,6 +184,7 @@ def public_api():
     eval_who
     is_selected, is_sensitive
     add_python_directory
+    try_compile, try_eval
 
 
 del public_api
@@ -516,20 +519,20 @@ def get_hidden_tags(layer='master'):
     return renpy.game.context().images.get_hidden_tags(layer)
 
 
-def get_attributes(tag, layer=None):
+def get_attributes(tag, layer=None, if_hidden=None):
     """
     :doc: image_func
 
     Return a tuple giving the image attributes for the image `tag`. If
     the image tag has not had any attributes associated since the last
-    time it was hidden, returns None.
+    time it was hidden, returns `if_hidden`.
 
     `layer`
         The layer to check. If None, uses the default layer for `tag`.
     """
 
     layer = default_layer(layer, tag)
-    return renpy.game.context().images.get_attributes(layer, tag, None)
+    return renpy.game.context().images.get_attributes(layer, tag, if_hidden)
 
 
 def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
@@ -894,6 +897,8 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
     args = args or tuple()
     kwargs = kwargs or dict()
 
+    nvl = kwargs.pop("nvl", False)
+
     if renpy.config.menu_arguments_callback is not None:
         args, kwargs = renpy.config.menu_arguments_callback(*args, **kwargs)
 
@@ -966,7 +971,10 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
         menu_args = args
         menu_kwargs = kwargs
 
-        rv = renpy.store.menu(new_items)
+        if nvl:
+            rv = renpy.store.nvl_menu(new_items)  # @UndefinedVariable
+        else:
+            rv = renpy.store.menu(new_items)
 
     finally:
         menu_args = old_menu_args
@@ -1376,6 +1384,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     """
     :doc: other
+    :args: (delay=None, hard=False)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
@@ -1383,20 +1392,23 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     `delay`
         If given, the number of seconds Ren'Py should pause for.
 
-    `music`
-        Retained for compatibility purposes.
-
-    `with_none`
-        Determines if a with None clause is executed at the end of the pause.
-
     `hard`
-        If true, a click will not interrupt the pause. Use this sparingly,
-        as it's hard to distinguish a hard pause from a crashing game.
+        This must be given as a keyword argument. When True, Ren'Py may prevent
+        the user from clicking to interrupt the pause. If the player enables
+        skipping, the hard pause will be skipped. There may be other circumstances
+        where the hard pause ends early or prevents Ren'Py from operating properly,
+        these will not be treated as bugs.
 
-    `checkpoint`
-        If true, a checkpoint will be set, and players will be able to roll
-        back to this statement. If false, no checkpoint will be set. If None,
-        a checkpoint will only be set if delay is set.
+        In general, using hard pauses is rude. When the user clicks to advance
+        the game, it's an explicit request - the user wishes the game to advance.
+        To override that request is to assume you understand what the player
+        wants more than the player does.
+
+        Calling renpy.pause guarantees that whatever is on the screen will be
+        displayed for at least one frame, and hence has been shown to the
+        player.
+
+        tl;dr - Don't use renpy.pause with hard=True.
     """
 
     if checkpoint is None:
@@ -1454,12 +1466,12 @@ def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
     """
     :doc: movie_cutscene
 
-    This displays an MPEG-1 cutscene for the specified number of
+    This displays a movie cutscene for the specified number of
     seconds. The user can click to interrupt the cutscene.
     Overlays and Underlays are disabled for the duration of the cutscene.
 
     `filename`
-        The name of a file containing an MPEG-1 movie.
+        The name of a file containing any movie playable by Ren'Py.
 
     `delay`
         The number of seconds to wait before ending the cutscene.
@@ -2361,6 +2373,14 @@ def pop_error_handler():
 
 
 def error(msg):
+    """
+    :doc: lint
+
+    Reports `msg`, a string, as as error for the user. This is logged as a
+    parse or lint error when approprate, and otherwise it is raised as an
+    exception.
+    """
+
     _error_handlers[-1](msg)
 
 
@@ -2586,6 +2606,18 @@ class placement(renpy.python.RevertableObject):
         self.yoffset = p[5]
         self.subpixel = p[6]
 
+    @property
+    def pos(self):
+        return self.xpos, self.ypos
+
+    @property
+    def anchor(self):
+        return self.xanchor, self.yanchor
+
+    @property
+    def offset(self):
+        return self.xoffset, self.yoffset
+
 
 def get_placement(d):
     """
@@ -2598,11 +2630,14 @@ def get_placement(d):
     This returns an object with the following fields, each corresponding to a style
     property:
 
+    * pos
     * xpos
-    * xanchor
-    * xoffset
     * ypos
+    * anchor
+    * xanchor
     * yanchor
+    * offset
+    * xoffset
     * yoffset
     * subpixel
 
@@ -3695,3 +3730,14 @@ def get_say_image_tag():
         return None
 
     return renpy.store._side_image_attributes[0]
+
+
+def is_skipping():
+    """
+    :doc: other
+
+    Returns True if Ren'Py is currently skipping (in fast or slow skip mode),
+    or False otherwise.
+    """
+
+    return not not renpy.config.skipping

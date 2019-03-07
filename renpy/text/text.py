@@ -479,6 +479,13 @@ class Layout(object):
             Layout (which must be another Layout of the same text).
         """
 
+        def find_baseline():
+            for g in all_glyphs:
+                if g.ascent:
+                    return g.y + self.yoffset
+
+            return 0
+
         width = min(32767, width)
         height = min(32767, height)
 
@@ -491,11 +498,14 @@ class Layout(object):
             self.reverse = renpy.display.draw.draw_to_virt
             self.forward = renpy.display.draw.virt_to_draw
 
+            self.outline_step = text.style.outline_scaling != "linear"
+
         else:
 
             self.oversample = 1.0
             self.reverse = renpy.display.render.IDENTITY
             self.forward = renpy.display.render.IDENTITY
+            self.outline_step = True
 
         style = text.style
 
@@ -711,6 +721,7 @@ class Layout(object):
         adjust_spacing = text.style.adjust_spacing
 
         if splits_from and adjust_spacing:
+
             target_x = self.scale_int(splits_from.size[0] - splits_from.xborder)
             target_y = self.scale_int(splits_from.size[1] - splits_from.yborder)
 
@@ -727,16 +738,15 @@ class Layout(object):
             maxx = target_x
             y = target_y
 
+            textsupport.offset_glyphs(all_glyphs, 0, int(round(splits_from.baseline * self.oversample)) - find_baseline())
+
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a
         # per-outline basis.)
         sw, sh = size = (maxx + self.xborder, y + self.yborder)
         self.size = size
 
-        if all_glyphs:
-            self.baseline = all_glyphs[0].y
-        else:
-            self.baseline = 0
+        self.baseline = find_baseline()
 
         # If we only care about the size, we're done.
         if size_only:
@@ -832,6 +842,9 @@ class Layout(object):
         if n is None:
             return n
 
+        if isinstance(n, renpy.display.core.absolute):
+            return int(n)
+
         return int(round(n * self.oversample))
 
     def scale_outline(self, n):
@@ -841,10 +854,25 @@ class Layout(object):
         if isinstance(n, renpy.display.core.absolute):
             return int(n)
 
-        if self.oversample < 1:
-            return n
+        if self.outline_step:
 
-        return n * int(self.oversample)
+            if self.oversample < 1:
+                return n
+
+            return n * int(self.oversample)
+
+        else:
+            if n == 0:
+                return 0
+
+            rv = round(n * self.oversample)
+
+            if n < 0 and rv > -1:
+                rv = -1
+            if n > 0 and rv < 1:
+                rv = 1
+
+            return rv
 
     def unscale_pair(self, x, y):
         return x / self.oversample, y / self.oversample
@@ -1188,10 +1216,10 @@ class Layout(object):
                 dslist = [ dslist ]
 
             for dsx, dsy in dslist:
-                outlines.append((0, style.drop_shadow_color, self.scale_outline(dsx), self.scale_outline(dsy)))
+                outlines.append((0, style.drop_shadow_color, self.scale_int(dsx), self.scale_int(dsy)))
 
         for size, color, xo, yo in style_outlines:
-            outlines.append((self.scale_outline(size), color, self.scale_outline(xo), self.scale_outline(yo)))
+            outlines.append((self.scale_outline(size), color, self.scale_int(xo), self.scale_int(yo)))
 
         # The outline borders we reserve.
         left = 0
@@ -1752,16 +1780,31 @@ class Text(renpy.display.core.Displayable):
 
         rv = super(Text, self).get_placement()
 
-        layout = self.get_virtual_layout()
-        if layout is None:
+        if rv[3] != BASELINE:
             return rv
+
+        layout = self.get_virtual_layout()
+
+        if layout is None:
+
+            width = 4096
+            height = 4096
+            st = 0
+            at = 0
+
+            if self.dirty or self.displayables is None:
+                self.update()
+
+            renders = { }
+
+            for i in self.displayables:
+                renders[i] = renpy.display.render.render(i, width, self.style.size, st, at)
+
+            layout = Layout(self, width, height, renders, size_only=True, drawable_res=True)
 
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = rv
-
-        if yanchor != BASELINE:
-            return rv
-
-        return (xpos, ypos, xanchor, layout.baseline, xoffset, yoffset, subpixel)
+        rv = (xpos, ypos, xanchor, layout.baseline, xoffset, yoffset, subpixel)
+        return rv
 
     def focus(self, default=False):
         """
@@ -1872,11 +1915,15 @@ class Text(renpy.display.core.Displayable):
 
     def size(self, width=4096, height=4096, st=0, at=0):
         """
+        :args: (width=4096, height=4096, st=0, at=0)
+
         Attempts to figure out the size of the text. The parameters are
         as for render.
 
         This does not rotate vertical text.
         """
+
+        # This is mostly duplicated in get_placement.
 
         if self.dirty or self.displayables is None:
             self.update()
@@ -1886,7 +1933,7 @@ class Text(renpy.display.core.Displayable):
         for i in self.displayables:
             renders[i] = renpy.display.render.render(i, width, self.style.size, st, at)
 
-        layout = Layout(self, width, height, renders, size_only=True)
+        layout = Layout(self, width, height, renders, size_only=True, drawable_res=True)
 
         return layout.unscale_pair(*layout.size)
 

@@ -654,15 +654,15 @@ class ScreenDisplayable(renpy.display.layout.Container):
             if self.profile.debug:
                 profile_log.write("\n")
 
-        if self.phase == SHOW:
-            self.phase = UPDATE
-
         return self.widgets
 
     def render(self, w, h, st, at):
 
         if not self.child:
             self.update()
+
+        if self.phase == SHOW:
+            self.phase = UPDATE
 
         try:
             push_current_screen(self)
