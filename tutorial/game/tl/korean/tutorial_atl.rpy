@@ -4,7 +4,7 @@
 translate korean tutorial_positions_a09a3fd1:
 
     # e "In this tutorial, I'll teach you how Ren'Py positions things on the screen. But before that, let's learn a little bit about how Python handles numbers."
-    e "이 길라잡이에서는 렌파이가 어떤 방식으로 스크린에 항목을 배치하는지 알아볼 거야. 그러기 전에, 파이썬이 어떻게 숫자를 다루는지 알려줄게."
+    e "이 길라잡이에서는 렌파이가 대상을 어떤 방식으로 스크린에 배치하는지 알아볼 거야. 그러기 전에, 파이썬이 어떻게 숫자를 다루는지 알려줄게."
 
 # game/tutorial_atl.rpy:207
 translate korean tutorial_positions_ba39aabc:
@@ -82,139 +82,139 @@ translate korean tutorial_positions_6eb36777:
 translate korean tutorial_positions_a423050f:
 
     # e "Like xpos, ypos can also be an integer. In this case, ypos would give the total number of pixels from the top of the screen."
-    e ""
+    e "xpos와 마찬가지로 ypos도 정수가 될 수 있어. 이 경우에, ypos는 화면 상단에서부터의 총 픽셀 수를 나타내."
 
 # game/tutorial_atl.rpy:267
 translate korean tutorial_positions_bc7a809a:
 
     # e "Can you guess where this position is, relative to the screen?" nointeract
-    e "" nointeract
+    e "이 위치가 어디인지 추측할 수 있겠어?" nointeract
 
 # game/tutorial_atl.rpy:273
 translate korean tutorial_positions_6f926e18:
 
     # e "Sorry, that's wrong. The xpos is .75, and the ypos is .25."
-    e ""
+    e "미안, 그게 아니야. xpos는 .75, ypos는 .25야."
 
 # game/tutorial_atl.rpy:275
 translate korean tutorial_positions_5d5feb98:
 
     # e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top."
-    e ""
+    e "다른 말로는, 왼쪽으로부터 75%%를 온 거고 위쪽으로부터 25%%를 온 거야."
 
 # game/tutorial_atl.rpy:279
 translate korean tutorial_positions_77b45218:
 
     # e "Good job! You got that position right."
-    e ""
+    e "그래! 잘 맞췄어."
 
 # game/tutorial_atl.rpy:283
 translate korean tutorial_positions_6f926e18_1:
 
     # e "Sorry, that's wrong. The xpos is .75, and the ypos is .25."
-    e ""
+    e "미안, 그게 아니야. xpos는 .75, ypos는 .25야."
 
 # game/tutorial_atl.rpy:285
 translate korean tutorial_positions_5d5feb98_1:
 
     # e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top."
-    e ""
+    e "다른 말로는, 왼쪽으로부터 75%%를 온 거고 위쪽으로부터 25%%를 온 거야."
 
 # game/tutorial_atl.rpy:299
 translate korean tutorial_positions_e4380a83:
 
     # e "The second position we care about is the anchor. The anchor is a spot on the thing being positioned."
-    e ""
+    e "두 번째 위치는 닻 혹은 앵커(anchor)야. anchor는 배치되는 대상의 지점이야."
 
 # game/tutorial_atl.rpy:301
 translate korean tutorial_positions_d1db1246:
 
     # e "For example, here we have an xanchor of 0.0 and a yanchor of 0.0. It's in the upper-left corner of the logo image."
-    e ""
+    e "예들 들면, 여기 우리는 0.0의 xanchor와 0.0의 yanchor를 가지고 있어. 그건 로고 이미지의 왼쪽 상단에 있지."
 
 # game/tutorial_atl.rpy:306
 translate korean tutorial_positions_6056873f:
 
     # e "When we increase the xanchor to 1.0, the anchor moves to the right corner of the image."
-    e ""
+    e "우리가 xanchor를 1.0으로 늘리면, anchor는 이미지의 오른쪽으로 갈 거야."
 
 # game/tutorial_atl.rpy:311
 translate korean tutorial_positions_7cdb8dcc:
 
     # e "Similarly, when both xanchor and yanchor are 1.0, the anchor is the bottom-right corner."
-    e ""
+    e "비슷하게, xanchor와 yanchor 모두 1.0이며, anchor는 오른쪽 하단이 되지."
 
 # game/tutorial_atl.rpy:318
 translate korean tutorial_positions_03a07da8:
 
     # e "To place an image on the screen, we need both the position and the anchor."
-    e ""
+    e "화면에 이미지를 배치하려면 위치와 앵커가 모두 필요해."
 
 # game/tutorial_atl.rpy:326
 translate korean tutorial_positions_8945054f:
 
     # e "We then line them up, so that both the position and anchor are at the same point on the screen."
-    e ""
+    e "그런 다음 위치와 앵커가 모두 화면의 같은 지점에 오도록 앵커를 정렬해."
 
 # game/tutorial_atl.rpy:336
 translate korean tutorial_positions_2b184a93:
 
     # e "When we place both in the upper-left corner, the image moves to the upper-left corner of the screen."
-    e ""
+    e "두 요소를 모두 왼쪽 상단 모서리에 놓으면 이미지가 화면의 왼쪽 상단 모서리로 이동하지."
 
 # game/tutorial_atl.rpy:345
 translate korean tutorial_positions_5aac4f3f:
 
     # e "With the right combination of position and anchor, any place on the screen can be specified, without even knowing the size of the image."
-    e ""
+    e "위치와 앵커의 올바른 조합을 사용하면 이미지의 크기를 알지 못해도 화면의 모든 위치를 지정할 수 있어."
 
 # game/tutorial_atl.rpy:357
 translate korean tutorial_positions_3b59b797:
 
     # e "It's often useful to set xpos and xanchor to the same value. We call that xalign, and it gives a fractional position on the screen."
-    e ""
+    e "xpos와 xanchor를 종종 같은 값으로 설정하는 것이 유용해. 우리는 그걸 xalign이라 부르고, 화면에 분수 위치를 부여하는 거야."
 
 # game/tutorial_atl.rpy:362
 translate korean tutorial_positions_b8ebf9fe:
 
     # e "For example, when we set xalign to 0.0, things are aligned to the left side of the screen."
-    e ""
+    e "예를 들어, xalign을 0.0으로 설정하면, 대상은 화면의 왼쪽으로 정렬되는 거야."
 
 # game/tutorial_atl.rpy:367
 translate korean tutorial_positions_8ce35d52:
 
     # e "When we set it to 1.0, then we're aligned to the right side of the screen."
-    e ""
+    e "xalign을 1.0으로 설정하면, 화면의 오른쪽으로 정렬되는 거지."
 
 # game/tutorial_atl.rpy:372
 translate korean tutorial_positions_6745825f:
 
     # e "And when we set it to 0.5, we're back to the center of the screen."
-    e ""
+    e "xalign을 0.5로 설정하면 화면의 중앙으로 돌아가."
 
 # game/tutorial_atl.rpy:374
 translate korean tutorial_positions_64428a07:
 
     # e "Setting yalign is similar, except along the y-axis."
-    e ""
+    e "yalign을 설정하는 것은 좌표가 y값인 것을 제외하고는 비슷해."
 
 # game/tutorial_atl.rpy:376
 translate korean tutorial_positions_cfb77d42:
 
     # e "Remember that xalign is just setting xpos and xanchor to the same value, and yalign is just setting ypos and yanchor to the same value."
-    e ""
+    e "xalign은 xpos와 xanchor를 같은 값으로 설정하고 yalign은 ypos와 yanchor를 같은 값으로 설정한다는 걸 기억해둬."
 
 # game/tutorial_atl.rpy:381
 translate korean tutorial_positions_cfc1723e:
 
     # e "The xcenter and ycenter properties position the center of the image. Here, with xcenter set to .75, the center of the image is three-quarters of the way to the right side of the screen."
-    e ""
+    e "xcenter 및 ycenter 속성은 이미지의 가운데 위치야. 여기서, xcenter를 .75로 설정하면 이미지의 가운데는 화면의 오른쪽으로 4분의 3이야."
 
 # game/tutorial_atl.rpy:386
 translate korean tutorial_positions_7728dbf9:
 
     # e "The difference between xalign and xcenter is more obvious when xcenter is 1.0, and the image is halfway off the right side of the screen."
-    e ""
+    e "xalign과 xcenter의 차이점은 xcenter가 1.0이고 이미지가 화면의 오른쪽 절반 지점에 있을 때 명백히 드러나."
 
 # game/tutorial_atl.rpy:394
 translate korean tutorial_positions_1b1cedc6:
