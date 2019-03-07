@@ -2,11 +2,23 @@
 Full Changelog
 ==============
 
+.. _renpy-7.2.1:
+
+7.2.1
+=====
+
+Explicitly asks for text (as opposed to email, password, phone number
+etc) input on Android when the keyboard is displayed.
+
+Fixes a bug that prevents roll-forward through a menu.
+
+
+.. _renpy-7.2.0:
 .. _renpy-7.2:
 .. _renpy-7.1.4:
 
-7.2
-===
+7.2.0
+=====
 
 Menu Arguments
 --------------
