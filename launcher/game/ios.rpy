@@ -119,6 +119,10 @@ init python:
         return os.path.join(persistent.xcode_projects_directory, xcode_name(p.name))
 
     def ios_create(p=None, gui=True):
+        project.current.update_dump(force=True)
+
+        name = project.current.dump.get("name", None)
+        version = project.current.dump.get("version", None)
 
         dest = xcode_project(p)
 
@@ -135,7 +139,7 @@ init python:
             os.rename(dest, backup)
 
         iface = MobileInterface("ios")
-        renios.create.create_project(iface, dest)
+        renios.create.create_project(iface, dest, name, version)
 
         ios_populate(p, gui=gui)
 
