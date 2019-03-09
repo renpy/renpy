@@ -4,301 +4,301 @@
 translate spanish tutorial_create_27048c11:
 
     # e "When you're ready to use Ren'Py to create your visual novel, the first step is to create a new project."
-    e ""
+    e "Cuando estés listo para usar Ren'Py para crear tu novela visual, el primer paso es crear un nuevo proyecto."
 
 # game/tutorial_quickstart.rpy:30
 translate spanish tutorial_create_bae6289c:
 
     # e "You can create a new project by clicking 'Create New Project' on the front screen of the launcher."
-    e ""
+    e "Puede crear un nuevo proyecto haciendo clic en 'Crear Un Nuevo Proyecto' en la pantalla principal del launcher."
 
 # game/tutorial_quickstart.rpy:32
 translate spanish tutorial_create_45915fcb:
 
     # e "If this is your first time using Ren'Py, it'll ask you for the place you want to keep your projects. The best place is always somewhere that's frequently backed up."
-    e ""
+    e "Si es la primera vez que usas Ren'Py, te pedirá el lugar donde deseas guardar tus proyectos. El mejor lugar es siempre un lugar que se respalda con frecuencia."
 
 # game/tutorial_quickstart.rpy:36
 translate spanish tutorial_create_55e30cb5:
 
     # e "After that, Ren'Py will ask for a name for your project. You'll have to stick to English letters and numbers, as zip files can't handle anything more than that."
-    e ""
+    e "Después de eso, Ren'Py le pedirá un nombre para su proyecto. Tendrás que atenerte a las letras y números en inglés, ya que los archivos zip no pueden manejar nada más que eso."
 
 # game/tutorial_quickstart.rpy:40
 translate spanish tutorial_create_dea3e5c2:
 
     # e "The next thing Ren'Py will ask for is the resolution the visual novel will run at. This controls how large or small you'll have to make your game's artwork."
-    e ""
+    e "Lo siguiente que Ren'Py pedirá es la resolución a la que se ejecutará la novela visual. Esto controla qué tan grande o pequeño tendrás que hacer las ilustraciones de tu juego."
 
 # game/tutorial_quickstart.rpy:44
 translate spanish tutorial_create_3289ea75:
 
     # e "Finally, Ren'Py will ask you to select a color scheme. You can change this after the game has been created, so just pick a color that's pleasing."
-    e ""
+    e "Finalmente, Ren'Py te pedirá que seleccione una combinación de colores. Puedes cambiar esto después de que el juego haya sido creado, así que solo elige un color que sea agradable."
 
 # game/tutorial_quickstart.rpy:48
 translate spanish tutorial_create_6b9e3b96:
 
     # e "Once that's done, Ren'Py will work for a bit and return you to the main menu with the new project selected. Now, when you click Launch, Ren'Py will start your new game."
-    e ""
+    e "Una vez hecho esto, Ren'Py trabajará un poco y volverá al menú principal con el nuevo proyecto seleccionado. Ahora, cuando haces clic en Ejecutar, Ren'Py comenzará tu nuevo juego."
 
 # game/tutorial_quickstart.rpy:50
 translate spanish tutorial_create_bdf94f9b:
 
     # e "To get back here, you can choose 'Tutorial' to switch to this tutorial game."
-    e ""
+    e "Para volver aquí, puedes elegir 'Tutorial' para cambiar a este juego tutorial."
 
 # game/tutorial_quickstart.rpy:52
 translate spanish tutorial_create_22f516df:
 
     # e "You'll also need to edit the games script to make changes. To do that, click 'script.rpy' on the front page of the launcher."
-    e ""
+    e "También necesitarás editar el script de juegos para hacer cambios. Para hacer eso, haga clic en 'script.rpy' en la página principal del lanzador."
 
 # game/tutorial_quickstart.rpy:54
 translate spanish tutorial_create_18cd1d9d:
 
     # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Editra might be a safe choice, but read the descriptions to be sure."
-    e ""
+    e "Si es la primera vez que lo haces, Ren'Py te pedirá que selecciones un editor de texto. Editra puede ser una opción segura, pero lee las descripciones para estar seguro."
 
 # game/tutorial_quickstart.rpy:56
 translate spanish tutorial_create_bfbd6220:
 
     # e "After the text editor is downloaded, the script will open up and you can start to change what characters are saying."
-    e ""
+    e "Después de descargar el editor de texto, el script se abrirá y podrá comenzar a cambiar lo que dicen los personajes."
 
 # game/tutorial_quickstart.rpy:69
 translate spanish tutorial_dialogue_112ff505:
 
     # e "Probably the most common thing a creator does with Ren'Py is to write dialogue for the player to read."
-    e ""
+    e "Probablemente lo más común que un creador hace con Ren'Py es escribir un diálogo para que el jugador lo lea."
 
 # game/tutorial_quickstart.rpy:71
 translate spanish tutorial_dialogue_be2be31a:
 
     # e "But before I can show you how to write dialogue, let me show you how we present script examples."
-    e ""
+    e "Pero antes de que pueda mostrarte cómo escribir diálogos, permítame mostrarte cómo presentamos ejemplos de scripts."
 
 # game/tutorial_quickstart.rpy:74
 translate spanish tutorial_dialogue_7b6be28e:
 
     # "Eileen" "Examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
-    "Eileen" ""
+    "Eileen" "Los ejemplos se mostrarán en una ventana como la de arriba. Deberás hacer clic fuera de la ventana de ejemplo para avanzar en el tutorial."
 
 # game/tutorial_quickstart.rpy:76
 translate spanish tutorial_dialogue_5269d005:
 
     # "Eileen" "When an example is bigger than the screen, you can scroll around in it using the mouse wheel or by simply dragging the mouse."
-    "Eileen" ""
+    "Eileen" "Cuando un ejemplo es más grande que la pantalla, puede desplazarse utilizando la rueda del ratón o simplemente arrastrando el ratón."
 
 # game/tutorial_quickstart.rpy:78
 translate spanish tutorial_dialogue_241c0c74:
 
     # "Eileen" "Script might seem scary at first, but if you look you'll see it's easy to match it up to what I'm saying."
-    "Eileen" ""
+    "Eileen" "La secuencia de comandos puede parecer atemorizante al principio, pero si miras, verás que es fácil hacerlo coincidir con lo que digo."
 
 # game/tutorial_quickstart.rpy:82
 translate spanish tutorial_dialogue_f0d66410:
 
     # e "Let's see the simplest possible Ren'Py game."
-    e ""
+    e "Veamos el juego de Ren'Py más simple posible."
 
 # game/tutorial_quickstart.rpy:89
 translate spanish tutorial_dialogue_3e6b0068:
 
     # "Wow, It's really really dark in here."
-    ""
+    "Guau, realmente está muy oscuro aquí."
 
 # game/tutorial_quickstart.rpy:91
 translate spanish tutorial_dialogue_5072a404:
 
     # "Lucy" "Better watch out. You don't want to be eaten by a Grue."
-    "Lucy" ""
+    "Lucy" "Mejor ten cuidado. No quieres ser comido por un Grue."
 
 # game/tutorial_quickstart.rpy:99
 translate spanish tutorial_dialogue_d39d1b2b:
 
     # e "I'll show you the script of that example."
-    e ""
+    e "Te mostraré el script de ese ejemplo."
 
 # game/tutorial_quickstart.rpy:101
 translate spanish tutorial_dialogue_f51ecf1f:
 
     # e "This script demonstrates two kinds of Ren'Py statements, labels and say statements."
-    e ""
+    e "Este script muestra dos tipos de declaraciones de Ren'Py, labels y declaraciones say."
 
 # game/tutorial_quickstart.rpy:103
 translate spanish tutorial_dialogue_bc7ec147:
 
     # e "The first line is a label statement. The label statement is used to give a name to a place in the program."
-    e ""
+    e "La primera línea es una declaración de label. La declaración de label se utiliza para dar un nombre a un lugar en el programa."
 
 # game/tutorial_quickstart.rpy:105
 translate spanish tutorial_dialogue_b20db833:
 
     # e "In this case, we're naming a place \"start\". The start label is special, as it marks the place a game begins running."
-    e ""
+    e "En este caso, estamos nombrando un lugar \"start\". La label start es especial, ya que marca el lugar donde un juego comienza a ejecutarse."
 
 # game/tutorial_quickstart.rpy:107
 translate spanish tutorial_dialogue_b0afbe96:
 
     # e "The next line is a simple say statement. It consists of a string beginning with a double-quote, and ending at the next double-quote."
-    e ""
+    e "La siguiente línea es una simple declaración say. Consiste en una cadena que comienza con una comilla doble y termina en la siguiente comilla doble."
 
 # game/tutorial_quickstart.rpy:109
 translate spanish tutorial_dialogue_628c9e4c:
 
     # e "Special characters in strings can be escaped with a backslash. To include \" in a string, we have to write \\\"."
-    e ""
+    e "Los caracteres especiales en cadenas se pueden escapar con una barra invertida. Para incluir \" en una cadena, tenemos que escribir \\\"."
 
 # game/tutorial_quickstart.rpy:116
 translate spanish tutorial_dialogue_3e6b0068_1:
 
     # "Wow, It's really really dark in here."
-    ""
+    "Guau, realmente está muy oscuro aquí."
 
 # game/tutorial_quickstart.rpy:125
 translate spanish tutorial_dialogue_d7f0b5b7:
 
     # e "When Ren'Py sees a single string on a line by itself, it uses the narrator to say that string. So a single string can be used to express a character's thoughts."
-    e ""
+    e "Cuando Ren'Py ve una sola cadena en una línea, usa el narrador para decir esa cadena. Por lo tanto, se puede usar una sola cadena para expresar los pensamientos de un personaje."
 
 # game/tutorial_quickstart.rpy:131
 translate spanish tutorial_dialogue_5072a404_1:
 
     # "Lucy" "Better watch out. You don't want to be eaten by a Grue."
-    "Lucy" ""
+    "Lucy" "Mejor ten cuidado. No quieres ser comido por un grue."
 
 # game/tutorial_quickstart.rpy:139
 translate spanish tutorial_dialogue_9dd2d543:
 
     # e "When we have two strings separated by a space, the first is used as the character's name, and the second is what the character is saying."
-    e ""
+    e "Cuando tenemos dos cadenas separadas por un espacio, la primera se usa como el nombre del personaje, y la segunda es lo que el personaje está diciendo."
 
 # game/tutorial_quickstart.rpy:141
 translate spanish tutorial_dialogue_64ffe685:
 
     # e "This two-argument form of the say statement is used for dialogue, where a character is speaking out loud."
-    e ""
+    e "Esta forma la declaracion say de dos argumentos se usa para diálogo, donde un personaje habla en voz alta."
 
 # game/tutorial_quickstart.rpy:143
 translate spanish tutorial_dialogue_97a33275:
 
     # e "If you'd like, you can run this game yourself by erasing everything in your project's script.rpy file, and replacing it with the code in the box above."
-    e ""
+    e "Si lo deseas, puede ejecutar este juego borrando todo el archivo script.rpy de tu proyecto y reemplazándolo con el código en el cuadro de arriba."
 
 # game/tutorial_quickstart.rpy:145
 translate spanish tutorial_dialogue_c5e70d7e:
 
     # e "Be sure to preserve the spacing before lines. That's known as indentation, and it's used to help Ren'Py group lines of script into blocks."
-    e ""
+    e "Asegúrese de preservar el espacio antes de las líneas. Eso se conoce como sangría y se usa para ayudar a Ren'Py a agrupar líneas de script en bloques."
 
 # game/tutorial_quickstart.rpy:149
 translate spanish tutorial_dialogue_90719f73:
 
     # e "Using a string for a character's name is inconvenient, for two reasons."
-    e ""
+    e "Usar una cadena para el nombre de un personaje es inconveniente, por dos razones."
 
 # game/tutorial_quickstart.rpy:151
 translate spanish tutorial_dialogue_910f286a:
 
     # e "The first is that's it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
-    e ""
+    e "La primera es que es un poco verbosa. Mientras que escribir \"Lucy\" no es tan malo, imagínate si tuvieras que escribir \"Eileen Richardson\" miles de veces."
 
 # game/tutorial_quickstart.rpy:153
 translate spanish tutorial_dialogue_9c9d59c2:
 
     # e "The second is that it doesn't leave any place to put styling, which can change the look of a character."
-    e ""
+    e "La segunda es que no deja ningún lugar para poner estilo, lo que puede cambiar el aspecto de un personaje."
 
 # game/tutorial_quickstart.rpy:155
 translate spanish tutorial_dialogue_2a2d1e51:
 
     # e "To solve these problems, Ren'Py lets you define Characters."
-    e ""
+    e "Para resolver estos problemas, Ren'Py te permite definir Characters."
 
 # game/tutorial_quickstart.rpy:159
 translate spanish tutorial_dialogue_16e8c5fd:
 
     # e "Here's an example Character definition. It begins with the word \"define\". That tells Ren'Py that we are defining something."
-    e ""
+    e "Aquí hay un ejemplo de definición de Character. Comienza con la palabra \"define\". Eso le dice a Ren'Py que estamos definiendo algo."
 
 # game/tutorial_quickstart.rpy:161
 translate spanish tutorial_dialogue_34fe5aa0:
 
     # e "Define is followed by a short name for the character, like \"l\". We'll be able to use that short name when writing dialogue."
-    e ""
+    e "Define va seguido de un nombre corto para el personaje, como \"l\". Podremos usar ese nombre corto al escribir diálogos."
 
 # game/tutorial_quickstart.rpy:163
 translate spanish tutorial_dialogue_67f90201:
 
     # e "This is followed by an equals sign, and the thing that we're defining. In this case, it's a Character."
-    e ""
+    e "A esto le sigue un signo igual y lo que estamos definiendo. En este caso, es un Character."
 
 # game/tutorial_quickstart.rpy:165
 translate spanish tutorial_dialogue_4e454a89:
 
     # e "On the first line, the character's name is given to be \"Lucy\", and her name will be drawn a reddish color."
-    e ""
+    e "En la primera línea, el nombre del personaje aparece como \"Lucy\", y su nombre aparecerá en un color rojizo."
 
 # game/tutorial_quickstart.rpy:167
 translate spanish tutorial_dialogue_db11f026:
 
     # e "These short names are case-sensitive. Capital L is a different name from lower-case l, so you'll need to be careful about that."
-    e ""
+    e "Estos nombres cortos distinguen entre mayúsculas y minúsculas. L mayuscula es un nombre diferente a l minúscula, por lo que deberás tener cuidado con eso."
 
 # game/tutorial_quickstart.rpy:171
 translate spanish tutorial_dialogue_1d161320:
 
     # e "Now that we have a character defined, we can use it to say dialogue."
-    e ""
+    e "Ahora que tenemos un personaje definido, podemos usar esto para mostrar diálogos."
 
 # game/tutorial_quickstart.rpy:178
 translate spanish tutorial_dialogue_3710169c:
 
     # l "Why are you trying to put words into my mouth? And who are you calling \"it\"?"
-    l ""
+    l "¿Por qué intentas poner palabras en mi boca? ¿Y a quién llamas \"esto\"?"
 
 # game/tutorial_quickstart.rpy:180
 translate spanish tutorial_dialogue_6d463776:
 
     # l "What's more, what are you going to do about the Grue problem? Are you just going to leave me here?"
-    l ""
+    l "Además, ¿qué vas a hacer con el problema del grue? ¿Me vas a dejar aquí?"
 
 # game/tutorial_quickstart.rpy:188
 translate spanish tutorial_dialogue_023bcd31:
 
     # e "Here's the full game, including the two new lines of dialogue, both of which use the Character we defined to say dialogue."
-    e ""
+    e "Aquí está el juego completo, incluidas las dos nuevas líneas de diálogo, las cuales utilizan al Character que definimos para mostrar diálogos."
 
 # game/tutorial_quickstart.rpy:190
 translate spanish tutorial_dialogue_48bb9547:
 
     # e "The one-argument form of the say statement is unchanged, but in the two-argument form, instead of the first string we can use a short name."
-    e ""
+    e "La forma de un argumento de la declaración say no se modifica, pero en la forma de dos argumentos, en lugar de la primera cadena podemos usar un nombre corto."
 
 # game/tutorial_quickstart.rpy:192
 translate spanish tutorial_dialogue_56a9936f:
 
     # e "When this say statement is run, Ren'Py will look up the short name, which is really a Python variable. It will then use the associated Character to show the dialogue."
-    e ""
+    e "Cuando se ejecuta esta declaración, Ren'Py buscará el nombre corto, que es realmente una variable de Python. A continuación, utilizará el Character asociado para mostrar el diálogo."
 
 # game/tutorial_quickstart.rpy:194
 translate spanish tutorial_dialogue_d5984a21:
 
     # e "The Character object controls who is speaking, the color of their name, and many other properties of the dialogue."
-    e ""
+    e "El objeto Character controla quién está hablando, el color de su nombre y muchas otras propiedades del diálogo."
 
 # game/tutorial_quickstart.rpy:198
 translate spanish tutorial_dialogue_a5bcac8b:
 
     # e "Since the bulk of a visual novel is dialogue, we've tried to make it as easy to write as possible."
-    e ""
+    e "Dado que la mayor parte de una novela visual es el diálogo, hemos intentado que sea lo más fácil de escribir posible."
 
 # game/tutorial_quickstart.rpy:200
 translate spanish tutorial_dialogue_6b9a42d0:
 
     # e "Hopefully, by allowing the use of short names for characters, we've succeeded."
-    e ""
+    e "Afortunadamente, al permitir el uso de nombres cortos para los personajes, hemos tenido éxito."
 
 # game/tutorial_quickstart.rpy:206
 translate spanish tutorial_images_e09ac970:
@@ -682,7 +682,7 @@ translate spanish tutorial_menus_0426904b:
 translate spanish tutorial_menus_431eeff0:
 
     # e "Do you like to play visual novels with choices in them?"
-    e ""
+    e "¿Te gusta jugar novelas visuales con opciones?"
 
 # game/tutorial_quickstart.rpy:509
 translate spanish choice1_yes_f6d95df8:
@@ -844,21 +844,21 @@ translate spanish strings:
 
     # tutorial_quickstart.rpy:2
     old "Lucy"
-    new ""
+    new "Lucy"
 
     # tutorial_quickstart.rpy:497
     old "Yes, I do."
-    new ""
+    new "Sí."
 
     # tutorial_quickstart.rpy:497
     old "No, I don't."
-    new ""
+    new "No."
 
     # tutorial_quickstart.rpy:589
     old "What's your name?"
-    new ""
+    new "¿Cómo te llmas?"
 
     # tutorial_quickstart.rpy:591
     old "Guy Shy"
-    new ""
+    new "Chico Timido"
 
