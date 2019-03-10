@@ -179,7 +179,7 @@ def save_dump(roots, log):
 
         return size
 
-    f = file("save_dump.txt", "w")
+    f, _ = renpy.error.open_error_file("save_dump.txt", "w")
 
     visit(roots, "roots")
     visit(log, "log")
