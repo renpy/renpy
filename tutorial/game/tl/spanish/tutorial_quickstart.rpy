@@ -1,4 +1,5 @@
-﻿# TODO: Translation updated at 2019-03-03 09:03
+﻿
+# TODO: Translation updated at 2019-03-03 09:03
 
 # game/tutorial_quickstart.rpy:28
 translate spanish tutorial_create_27048c11:
@@ -166,7 +167,7 @@ translate spanish tutorial_dialogue_d7f0b5b7:
 translate spanish tutorial_dialogue_5072a404_1:
 
     # "Lucy" "Better watch out. You don't want to be eaten by a Grue."
-    "Lucy" "Mejor ten cuidado. No quieres ser comido por un grue."
+    "Lucy" "Mejor ten cuidado. No quieres ser comido por un Grue."
 
 # game/tutorial_quickstart.rpy:139
 translate spanish tutorial_dialogue_9dd2d543:
@@ -262,7 +263,7 @@ translate spanish tutorial_dialogue_3710169c:
 translate spanish tutorial_dialogue_6d463776:
 
     # l "What's more, what are you going to do about the Grue problem? Are you just going to leave me here?"
-    l "Además, ¿qué vas a hacer con el problema del grue? ¿Me vas a dejar aquí?"
+    l "Además, ¿qué vas a hacer con el problema del Grue? ¿Me vas a dejar aquí?"
 
 # game/tutorial_quickstart.rpy:188
 translate spanish tutorial_dialogue_023bcd31:
@@ -304,187 +305,187 @@ translate spanish tutorial_dialogue_6b9a42d0:
 translate spanish tutorial_images_e09ac970:
 
     # e "A visual novel isn't much without images. So let's add some images to our little game."
-    e ""
+    e "Una novela visual no es mucho sin imágenes. Así que vamos a añadir algunas imágenes a nuestro pequeño juego."
 
 # game/tutorial_quickstart.rpy:208
 translate spanish tutorial_images_40140793:
 
     # e "Before we can show images, we must first choose image names, then place the image files into the images directory."
-    e ""
+    e "Antes de que podamos mostrar imágenes, primero debemos elegir los nombres de las imágenes, luego colocar los archivos de imágenes en el carpeta images."
 
 # game/tutorial_quickstart.rpy:210
 translate spanish tutorial_images_d73388f8:
 
     # e "An image name is something like 'bg cave' or 'lucy happy', with one or more parts separated by spaces."
-    e ""
+    e "Un nombre de imagen es algo así como 'bg cave' o 'lucy happy', con una o más partes separadas por espacios."
 
 # game/tutorial_quickstart.rpy:212
 translate spanish tutorial_images_2d5596d4:
 
     # e "Each part should start with a lower-case letter, and then contain lower-case letters, numbers, and underscores."
-    e ""
+    e "Cada parte debe comenzar con una letra minúscula, y luego contener letras minúsculas, números y guiones bajos."
 
 # game/tutorial_quickstart.rpy:214
 translate spanish tutorial_images_e02c0c82:
 
     # e "The first part of an image is called the tag. For 'bg cave' the tag is 'bg', while for 'lucy happy' the tag is 'lucy'."
-    e ""
+    e "La primera parte de una imagen se llama etiqueta. Para 'bg cave' la etiqueta es 'bg', mientras que para 'lucy happy' la etiqueta es 'lucy'."
 
 # game/tutorial_quickstart.rpy:216
 translate spanish tutorial_images_d5eafcf2:
 
     # e "You can open the images directory by clicking the appropriate button in the Ren'Py launcher."
-    e ""
+    e "Puede abrir la capeta images haciendo clic en el botón correspondiente en el launcher de Ren'Py."
 
 # game/tutorial_quickstart.rpy:218
 translate spanish tutorial_images_e4b12fb6:
 
     # e "The files in the images directory should have the same name as the image, followed by an extension like .jpg, .png, or .webp."
-    e ""
+    e "Los archivos en el directorio de imágenes deben tener el mismo nombre que la imagen, seguido de una extensión como .jpg, .png o .webp."
 
 # game/tutorial_quickstart.rpy:220
 translate spanish tutorial_images_a3bd89b2:
 
     # e "Our example uses 'bg cave.jpg', 'lucy happy.png', and 'lucy mad.png'."
-    e ""
+    e "Nuestro ejemplo utiliza 'bg cave.jpg', 'lucy happy.png' y 'lucy mad.png'."
 
 # game/tutorial_quickstart.rpy:224
 translate spanish tutorial_images_76b954de:
 
     # e "Let's see what those look like in the game."
-    e ""
+    e "Vamos a ver cómo se ven esos en el juego."
 
 # game/tutorial_quickstart.rpy:230
 translate spanish tutorial_images_f04e72ea:
 
     # l "Now that the lights are on, we don't have to worry about Grues anymore."
-    l ""
+    l "Ahora que las luces están encendidas, ya no tenemos que preocuparnos por los Grues."
 
 # game/tutorial_quickstart.rpy:234
 translate spanish tutorial_images_d77ffa1c:
 
     # l "But what's the deal with me being in a cave? Eileen gets to be out in the sun, and I'm stuck here!"
-    l ""
+    l "Pero, ¿por qué estoy en una cueva? ¡Eileen sale a la luz del sol y yo estoy atrapada aquí!"
 
 # game/tutorial_quickstart.rpy:242
 translate spanish tutorial_images_6c0c938b:
 
     # e "Here's the script for that scene. Notice how it includes two new statements, the scene and show statement."
-    e ""
+    e "Aquí está el script para esa escena. Observa cómo incluye dos declaraciones nuevas, scene y show."
 
 # game/tutorial_quickstart.rpy:244
 translate spanish tutorial_images_1a4660b9:
 
     # e "The scene statement clears the screen, and then adds a background image."
-    e ""
+    e "La declaración scene borra la pantalla y luego agrega una imagen de fondo."
 
 # game/tutorial_quickstart.rpy:246
 translate spanish tutorial_images_672c8cb8:
 
     # e "The show statement adds a background image on top of all the other images on the screen."
-    e ""
+    e "La declaración show agrega una imagen de fondo sobre todas las demás imágenes en la pantalla."
 
 # game/tutorial_quickstart.rpy:248
 translate spanish tutorial_images_2fc7baee:
 
     # e "If there was already an image with the same tag, the new image is used to replace the old one."
-    e ""
+    e "Si ya existía una imagen con la misma etiqueta, la nueva imagen se usa para reemplazar la antigua."
 
 # game/tutorial_quickstart.rpy:250
 translate spanish tutorial_images_802825f2:
 
     # e "Changes to the list of shown images take place instantly, so in the example, the user won't see the background by itself."
-    e ""
+    e "Los cambios en la lista de imágenes mostradas tienen lugar al instante, por lo que en el ejemplo, el usuario no verá el fondo por sí mismo."
 
 # game/tutorial_quickstart.rpy:252
 translate spanish tutorial_images_b246dfdd:
 
     # e "The second show statement has an at clause, which gives a location on the screen. Common locations are left, right, and center, but you can define many more."
-    e ""
+    e "La segunda declaración show tiene una cláusula at, que da una ubicación en la pantalla. Las ubicaciones comunes son left, right y center, pero puedes definir muchas más."
 
 # game/tutorial_quickstart.rpy:257
 translate spanish tutorial_images_82fceeb8:
 
     # e "In this example, we show an image named logo base, and we show it at a creator-defined position, rightish."
-    e ""
+    e "En este ejemplo, mostramos una imagen llamada logo base, y la mostramos en una posición definida por el creador, rightish."
 
 # game/tutorial_quickstart.rpy:259
 translate spanish tutorial_images_9defda43:
 
     # e "We also specify that it should be shown behind another image, in this case eileen. That's me."
-    e ""
+    e "También especificamos que debe mostrarse detrás(behind) de otra imagen, en este caso eileen. Ese soy yo."
 
 # game/tutorial_quickstart.rpy:264
 translate spanish tutorial_images_73d331f7:
 
     # e "Finally, there's the hide statement, which hides the image with the given tag."
-    e ""
+    e "Finalmente, está la declaración hide, que oculta la imagen con la etiqueta dada"
 
 # game/tutorial_quickstart.rpy:266
 translate spanish tutorial_images_f34f62d5:
 
     # e "Since the show statement replaces an image, and the scene statement clears the scene, it's pretty rare to hide an image."
-    e ""
+    e "Dado que la declaración show reemplaza una imagen, y la declaración scene borra la escena, es bastante raro ocultar una imagen."
 
 # game/tutorial_quickstart.rpy:268
 translate spanish tutorial_images_e06fa53a:
 
     # e "The main use is for when a character or prop leaves before the scene is over."
-    e ""
+    e "El uso principal es para cuando un personaje o accesorio se va antes de que termine la escena."
 
 # game/tutorial_quickstart.rpy:282
 translate spanish tutorial_simple_positions_b492e793:
 
     # e "When the standard positions that come with Ren'Py aren't enough for you, you can create your own. Here, I'll show you the easy way to do it."
-    e ""
+    e "Cuando las posiciones estándar que vienen con Ren'Py no son suficientes para ti, puedes crear las tuyas. Aquí, te mostraré la manera fácil de hacerlo."
 
 # game/tutorial_quickstart.rpy:291
 translate spanish tutorial_simple_positions_04e3bc44:
 
     # e "The first way to do it is to show an image followed by a colon. Then indented on the next couple of lines are the xalign and yalign transform properties."
-    e ""
+    e "La primera forma de hacerlo es mostrar una imagen seguida de dos puntos. Luego, en el siguiente par de líneas, están sangradas las propiedades de transformación xalign y yalign."
 
 # game/tutorial_quickstart.rpy:293
 translate spanish tutorial_simple_positions_3ecad5f8:
 
     # e "Each of the transform properties is a name followed by a value. For xalign and yalign, the values are numbers."
-    e ""
+    e "Cada una de las propiedades de transformación es un nombre seguido de un valor. Para xalign y yalign, los valores son números."
 
 # game/tutorial_quickstart.rpy:295
 translate spanish tutorial_simple_positions_61c1b124:
 
     # e "The xalign transform property is the important one, as it controls where the image is placed horizontally on the screen."
-    e ""
+    e "La propiedad de transformación xalign es la importante, ya que controla dónde se coloca la imagen horizontalmente en la pantalla."
 
 # game/tutorial_quickstart.rpy:305
 translate spanish tutorial_simple_positions_67ebea97:
 
     # e "An xalign of 0.0 is the left side."
-    e ""
+    e "Un valor 0.0 en xalign es el laso izquierdo"
 
 # game/tutorial_quickstart.rpy:315
 translate spanish tutorial_simple_positions_bd4f56d8:
 
     # e "0.5 is the center."
-    e ""
+    e "0.5 es el centro."
 
 # game/tutorial_quickstart.rpy:324
 translate spanish tutorial_simple_positions_fb2c48f2:
 
     # e "And 1.0 is the right. The decimal place is important and has to be there. Just 1 by itself won't work the same."
-    e ""
+    e "Y 1.0 es el lado derecho. La posición decimal es importante y tiene que estar allí. Solo 1 funcionará igual."
 
 # game/tutorial_quickstart.rpy:333
 translate spanish tutorial_simple_positions_8eebc9a7:
 
     # e "Of course, you can pick any position in between."
-    e ""
+    e "Por supuesto, puedes elegir cualquier posición intermedia."
 
 # game/tutorial_quickstart.rpy:335
 translate spanish tutorial_simple_positions_4cd917f6:
 
     # e "The yalign property is the same way, with 0.0 being the top of the screen and 1.0 being the bottom. Since most sprites stick to the bottom, it's almost always 1.0."
-    e ""
+    e "La propiedad yalign es de la misma manera, siendo 0.0 la parte superior de la pantalla y 1.0 la parte inferior. Como la mayoría de los sprites se adhieren al fondo, casi siempre es 1.0."
 
 # game/tutorial_quickstart.rpy:341
 translate spanish tutorial_simple_positions_fbd1a3eb:
