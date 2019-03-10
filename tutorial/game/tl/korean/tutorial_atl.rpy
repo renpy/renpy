@@ -46,13 +46,13 @@ translate korean tutorial_positions_76d7a5bf:
 translate korean tutorial_positions_be14c7c3:
 
     # e "When we increase xpos, we move to the right. So here's an xpos of .5, meaning half the width across the screen."
-    e "xpos를 늘리면 오른쪽으로 이동해. 그래서 여기의 xpos는 .5이며 화면의 너비의 절반이야."
+    e "xpos를 늘리면 오른쪽으로 이동해. 현재 여기의 xpos는 .5. 총 화면 너비의 절반이야."
 
 # game/tutorial_atl.rpy:240
 translate korean tutorial_positions_9b91be6c:
 
     # e "Increasing xpos to 1.0 moves us to the right-hand border of the screen."
-    e "xpos를 1.0으로 늘리면 화면의 오른쪽 테두리로 이동해."
+    e "xpos를 1.0으로 늘리면 화면의 오른쪽 모서리로 이동해."
 
 # game/tutorial_atl.rpy:246
 translate korean tutorial_positions_2b293304:
@@ -70,13 +70,13 @@ translate korean tutorial_positions_c4d18c0a:
 translate korean tutorial_positions_16933a61:
 
     # e "Here's a ypos of 0.5."
-    e "여기는 ypos 0.5이고."
+    e "여기는 ypos 0.5."
 
 # game/tutorial_atl.rpy:259
 translate korean tutorial_positions_6eb36777:
 
     # e "A ypos of 1.0 specifies a position at the bottom of the screen. If you look carefully, you can see the position indicator spinning below the text window."
-    e "1.0의 ypos는 화면 하단의 위치를 지정해. 잘 살펴보면 텍스트 창 아래에서 위치 표시기가 회전하는 것이 보일 거야."
+    e "1.0의 ypos 위치는 화면 하단이야. 잘 살펴보면 텍스트 창 아래에서 위치 표시기가 회전하는 것이 보일 거야."
 
 # game/tutorial_atl.rpy:261
 translate korean tutorial_positions_a423050f:
@@ -130,7 +130,7 @@ translate korean tutorial_positions_e4380a83:
 translate korean tutorial_positions_d1db1246:
 
     # e "For example, here we have an xanchor of 0.0 and a yanchor of 0.0. It's in the upper-left corner of the logo image."
-    e "예들 들면, 여기 우리는 0.0의 xanchor와 0.0의 yanchor를 가지고 있어. 그건 로고 이미지의 왼쪽 상단에 있지."
+    e "예들 들면, 여기에 우리는 0.0의 xanchor와 0.0의 yanchor를 가지고 있어. 그건 로고 이미지의 왼쪽 상단에 있지."
 
 # game/tutorial_atl.rpy:306
 translate korean tutorial_positions_6056873f:
@@ -142,7 +142,7 @@ translate korean tutorial_positions_6056873f:
 translate korean tutorial_positions_7cdb8dcc:
 
     # e "Similarly, when both xanchor and yanchor are 1.0, the anchor is the bottom-right corner."
-    e "비슷하게, xanchor와 yanchor 모두 1.0이며, anchor는 오른쪽 하단이 되지."
+    e "비슷하게, xanchor와 yanchor 모두 1.0이면, anchor는 오른쪽 하단이 되지."
 
 # game/tutorial_atl.rpy:318
 translate korean tutorial_positions_03a07da8:
@@ -214,139 +214,139 @@ translate korean tutorial_positions_cfc1723e:
 translate korean tutorial_positions_7728dbf9:
 
     # e "The difference between xalign and xcenter is more obvious when xcenter is 1.0, and the image is halfway off the right side of the screen."
-    e "xalign과 xcenter의 차이점은 xcenter가 1.0이고 이미지가 화면의 오른쪽 절반 지점에 있을 때 명백히 드러나."
+    e "xalign과 xcenter의 차이점은 xcenter가 1.0이고 이미지의 절반이 화면의 오른쪽 밖으로 나갔을 때 명백히 드러나."
 
 # game/tutorial_atl.rpy:394
 translate korean tutorial_positions_1b1cedc6:
 
     # e "There are the xoffset and yoffset properties, which are applied after everything else, and offset things to the right or bottom, respectively."
-    e ""
+    e "xoffset과 yoffset 속성은 다른 속성들 다음에 적용되고, 오른쪽 또는 아래쪽에 있는 것들을 각각 상쇄해."
 
 # game/tutorial_atl.rpy:399
 translate korean tutorial_positions_e6da2798:
 
     # e "Of course, you can use negative numbers to offset things to the left and top."
-    e ""
+    e "물론, 너는 offset에 음수를 사용해서 대상을 왼쪽과 상단으로 놓을 수 있어."
 
 # game/tutorial_atl.rpy:404
 translate korean tutorial_positions_e0fe2d81:
 
     # e "Lastly, I'll mention that there are combined properties like align, pos, anchor, and center. Align takes a pair of numbers, and sets xalign to the first and yalign to the second. The others are similar."
-    e ""
+    e "마지막으로, align, pos, anchor 및 center 같은 속성들은 결합되어 있다는 걸 명심해. 정렬(align)은 한 쌍의 숫자를 취해 xalign을 첫 번째로, yalign을 두 번째로 설정해야 해. 나머지는 비슷해."
 
 # game/tutorial_atl.rpy:411
 translate korean tutorial_positions_0f4ca2b6:
 
     # e "Once you understand positions, you can use transformations to move things around the Ren'Py screen."
-    e ""
+    e "위치를 이해하면 변환(transform)을 사용해서 대상을 움직일 수 있어."
 
 # game/tutorial_atl.rpy:418
 translate korean tutorial_atl_d5d6b62a:
 
     # e "Ren'Py uses transforms to animate, manipulate, and place images. We've already seen the very simplest of transforms in use:"
-    e ""
+    e "렌파이는 변환(transform)을 사용하여 이미지의 애니메이션, 조작 및 배치를 수행해. 우리는 방금 사용할 수 있는 변환 중 가장 간단한 것을 봤어."
 
 # game/tutorial_atl.rpy:425
 translate korean tutorial_atl_7e853c9d:
 
     # e "Transforms can be very simple affairs that place the image somewhere on the screen, like the right transform."
-    e ""
+    e "변환은 오른쪽 변환(at right)과 같이 화면의 어딘가에 이미지를 배치하는 정말 간단한 작업이 될 수 있어."
 
 # game/tutorial_atl.rpy:429
 translate korean tutorial_atl_87a6ecbd:
 
     # e "But transforms can also be far more complicated affairs, that introduce animation and effects into the mix. To demonstrate, let's have a Gratuitous Rock Concert!"
-    e ""
+    e "하지만 변환은 애니메이션이나 효과가 혼합된 훨씬 복잡한 작업을 할 수도 있어. 시범으로, 완전무상 록 콘서트에 가자!"
 
 # game/tutorial_atl.rpy:437
 translate korean tutorial_atl_65badef3:
 
     # e "But first, let's have... a Gratuitous Rock Concert!"
-    e ""
+    e "그러면..., 완전무상 록 콘서트를 즐겨!"
 
 # game/tutorial_atl.rpy:445
 translate korean tutorial_atl_e0d3c5ec:
 
     # e "That was a lot of work, but it was built out of small parts."
-    e ""
+    e "그것은 많은 작업이었지만 작은 부품들로 만들어졌어."
 
 # game/tutorial_atl.rpy:447
 translate korean tutorial_atl_f2407514:
 
     # e "Most transforms in Ren'Py are built using the Animation and Transform Language, or ATL for short."
-    e ""
+    e "렌파이에서 대부분의 변환은 애니메이션과 변환 언어(ATL, Animation and Transform Language)를 사용해 만들어졌어."
 
 # game/tutorial_atl.rpy:449
 translate korean tutorial_atl_1f22f875:
 
     # e "There are currently three places where ATL can be used in Ren'Py."
-    e ""
+    e "렌파이에는 현재 ATL이 사용될 수 있는 세 장소가 있어."
 
 # game/tutorial_atl.rpy:454
 translate korean tutorial_atl_fd036bdf:
 
     # e "The first place ATL can be used is as part of an image statement. Instead of a displayable, an image may be defined as a block of ATL code."
-    e ""
+    e "첫 번째는 이미지(image) 문의 부품으로 사용되는 거야. 디스플레이어블 대신에, 이미지는 ATL 코드의 블록으로 정의될 수 있지."
 
 # game/tutorial_atl.rpy:456
 translate korean tutorial_atl_7cad2ab9:
 
     # e "When used in this way, we have to be sure that ATL includes one or more displayables to actually show."
-    e ""
+    e "이 방법을 사용했을 때, 우리는 ATL이 실제로 보여줄 디스플레이어블을 포함하고 있는지 확인해야 해."
 
 # game/tutorial_atl.rpy:461
 translate korean tutorial_atl_c78b2a1e:
 
     # e "The second way is through the use of the transform statement. This assigns the ATL block to a python variable, allowing it to be used in at clauses and inside other transforms."
-    e ""
+    e "두 번째 방법은 변환(transform) 문을 통해 사용하는 거야. 이렇게하면 ATL 블록을 파이썬 변수에 할당해서 at 절이나 다른 변환에서 사용할 수 있어."
 
 # game/tutorial_atl.rpy:473
 translate korean tutorial_atl_da7a7759:
 
     # e "Finally, an ATL block can be used as part of a show statement, instead of the at clause."
-    e ""
+    e "마지막으로, ATL 블록은 at 절을 대신해 show 문의 부품으로 사용될 수 있어."
 
 # game/tutorial_atl.rpy:480
 translate korean tutorial_atl_1dd345c6:
 
     # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place."
-    e ""
+    e "ATL이 show 문의 부품으로 사용될 때, 변환이 변경되더라도 특성의 값은 존재해. 따라서 클릭으로 동작이 중단되더라도 이미지는 같은 위치에 유지되지."
 
 # game/tutorial_atl.rpy:488
 translate korean tutorial_atl_c21bc1d1:
 
-    # e "The key to ATL is what we call composeability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
-    e ""
+    # e "The key to ATL is what we call composability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
+    e "우리는 ATL의 핵심을 '결합성'이라 불러. ATL은 상대적으로 간단한 명령으로 구성되어 있는데, 복잡한 명령을 함께 사용하여 복잡한 변환을 만들 수 있어."
 
 # game/tutorial_atl.rpy:490
 translate korean tutorial_atl_ed82983f:
 
     # e "Before I explain how ATL works, let me explain what animation and transformation are."
-    e ""
+    e "ATL이 어떻게 작동하는지 알려주기 전에, 애니메이션과 변환이 무엇인지부터 설명할게."
 
 # game/tutorial_atl.rpy:495
 translate korean tutorial_atl_2807adff:
 
     # e "Animation is when the displayable being shown changes. For example, right now I am changing my expression."
-    e ""
+    e "애니메이션은 표시되는 디스플레이어블이 변경되는 거야. 예를 들어, 지금 나는 내 표정을 바꾸고 있어."
 
 # game/tutorial_atl.rpy:522
 translate korean tutorial_atl_3eec202b:
 
     # e "Transformation involves moving or distorting an image. This includes placing it on the screen, zooming it in and out, rotating it, and changing its opacity."
-    e ""
+    e "변환은 이미지를 움직이거나 왜곡시키는 거야. 여기에는 화면에 배치, 확대 및 축소, 회전 및 불투명도 변경이 포함돼."
 
 # game/tutorial_atl.rpy:530
 translate korean tutorial_atl_fbc9bf83:
 
-    # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
-    e ""
+    # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of four lines of ATL code, contained within an image statement."
+    e "ATL의 소개를 위해, 간단한 애니메이션을 보면서 시작할게. 다음은 이미지 문에 포함된 4줄로 구성된 ATL 코드야."
 
 # game/tutorial_atl.rpy:532
 translate korean tutorial_atl_bf92d973:
 
     # e "To change a displayable, simply mention it on a line of ATL. Here, we're switching back and forth between two images."
-    e ""
+    e "디스플레이어블의 변경을 위해, ATL의 한 줄 씩 간단히 설명할게. 여기에서, 우리는 두 이미지 사이를 왔다갔다 해."
 
 # game/tutorial_atl.rpy:534
 translate korean tutorial_atl_51a41db4:
