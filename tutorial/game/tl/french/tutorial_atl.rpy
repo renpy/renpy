@@ -314,7 +314,7 @@ translate french tutorial_atl_1dd345c6:
 # game/tutorial_atl.rpy:488
 translate french tutorial_atl_c21bc1d1:
 
-    # e "The key to ATL is what we call composeability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
+    # e "The key to ATL is what we call composability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
     e "La clé de l’ATL est ce que nous appelons la composabilité. ATL est fait de commandes relativement simples qui peuvent être combinées ensemble pour créer des transformations complexes."
 
 # game/tutorial_atl.rpy:490
@@ -338,7 +338,7 @@ translate french tutorial_atl_3eec202b:
 # game/tutorial_atl.rpy:530
 translate french tutorial_atl_fbc9bf83:
 
-    # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
+    # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of four lines of ATL code, contained within an image statement."
     e "Pour introduire les ATL, commençons par regarder une simple animation. Celle-ci se résume à cinq lignes de code ATL, contenue dans une déclaration 'image'."
 
 # game/tutorial_atl.rpy:532

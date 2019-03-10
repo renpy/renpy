@@ -485,7 +485,7 @@ label tutorial_atl:
 
     hide screen example
 
-    e "The key to ATL is what we call composeability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
+    e "The key to ATL is what we call composability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
 
     e "Before I explain how ATL works, let me explain what animation and transformation are."
 
@@ -527,7 +527,7 @@ label tutorial_atl:
     show example atl_image
     show eileen animated
 
-    e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
+    e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of four lines of ATL code, contained within an image statement."
 
     e "To change a displayable, simply mention it on a line of ATL. Here, we're switching back and forth between two images."
 

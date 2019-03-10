@@ -314,7 +314,7 @@ translate russian tutorial_atl_1dd345c6:
 # game/tutorial_atl.rpy:488
 translate russian tutorial_atl_c21bc1d1:
 
-    # e "The key to ATL is what we call composeability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
+    # e "The key to ATL is what we call composability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
     e "Ключом к ATL является то, что он создаётся из относительно простых команд, но их можно сочетать для создания сложных трансформаций."
 
 # game/tutorial_atl.rpy:490
@@ -338,7 +338,7 @@ translate russian tutorial_atl_3eec202b:
 # game/tutorial_atl.rpy:530
 translate russian tutorial_atl_fbc9bf83:
 
-    # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
+    # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of four lines of ATL code, contained within an image statement."
     e "Для введения в ATL, начнём с простой анимации. Вот анимация, состоящая из пяти строк кода ATL, содержащаяся внутри оператора image."
 
 # game/tutorial_atl.rpy:532
