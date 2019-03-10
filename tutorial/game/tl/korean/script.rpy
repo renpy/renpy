@@ -4,19 +4,19 @@
 translate korean start_0e6a5bb4:
 
     # e "Hi! My name is Eileen, and I'd like to welcome you to the Ren'Py tutorial."
-    e "안녕! 나는 아일린이야. 렌파이 튜토리얼에 온 걸 환영해."
+    e "안녕! 나는 아일린이야. 렌파이 길라잡이에 온 걸 환영해."
 
 # game/script.rpy:160
 translate korean start_d3abb53c:
 
     # e "In this tutorial, we'll teach you the basics of Ren'Py, so you can make games of your own. We'll also demonstrate many features, so you can see what Ren'Py is capable of."
-    e "이 튜토리얼에서, 우리는 네게 너만의 게임을 만들 수 있게 렌파이의 기본을 알려줄 거야. 또한 렌파이가 어떤 기능을 제공하는지 알 수 있도록 많은 기능을 선보일 거야."
+    e "이 길라잡이에서, 우리는 네게 너만의 게임을 만들 수 있게 렌파이의 기본을 알려줄 거야. 또한 렌파이가 어떤 기능을 제공하는지 알 수 있도록 많은 기능을 선보일 거야."
 
 # game/script.rpy:205
 translate korean end_b2482727:
 
     # e "Thank you for viewing this tutorial."
-    e "이 튜토리얼을 봐줘서 고마와."
+    e "이 길라잡이을 봐줘서 고마와."
 
 # game/script.rpy:207
 translate korean end_38362e36:
