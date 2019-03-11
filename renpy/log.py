@@ -148,7 +148,11 @@ class LogFile(object):
         if self.open():
 
             if not self.raw_write:
-                s = s % args
+                try:
+                    s = s % args
+                except:
+                    s = repr((s,) + args)
+
                 s += "\n"
 
             if not isinstance(s, unicode):

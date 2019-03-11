@@ -598,6 +598,9 @@ class DynamicImage(renpy.display.core.Displayable):
         if self.name != o.name:
             return False
 
+        if self._uses_scope and (self.target != o.target):
+            return False
+
         return True
 
     def _target(self):

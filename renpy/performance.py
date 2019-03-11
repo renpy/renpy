@@ -108,7 +108,7 @@ def analyze():
             dt[1],
             dt[2],
             dt[3],
-            event.format(*args),
+            event.format(*args).replace("%", "%%"),
             )
         s = s.encode("utf-8")
 

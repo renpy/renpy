@@ -1081,10 +1081,16 @@ def display_menu(items,
         renpy.exports.mode(type)
         choice_for_skipping()
 
-    # The possible choices in the menu.
-    choices = [ val for label, val in items ]
-    while None in choices:
-        choices.remove(None)
+    choices = [ ]
+
+    for _, val in items:
+        if isinstance(val, renpy.ui.ChoiceReturn):
+            val = val.value
+
+        if val is None:
+            continue
+
+        choices.append(val)
 
     # Roll forward.
     roll_forward = renpy.exports.roll_forward_info()
