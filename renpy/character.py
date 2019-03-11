@@ -854,7 +854,7 @@ class ADVCharacter(object):
             properties=self.properties,
             **self.show_args)
 
-    def resolve_say_attributes(self, predict, attrs, wanted=[], remove=[], skip_trans=False):
+    def resolve_say_attributes(self, mode, predict, attrs, wanted=[], remove=[], skip_trans=False):
         """
         Deals with image attributes associated with the current say
         statement.
@@ -896,9 +896,7 @@ class ADVCharacter(object):
                 images.predict_show(new_image)
 
             else:
-
-                trans = renpy.config.say_attribute_transition
-                layer = renpy.config.say_attribute_transition_layer
+                trans, layer = renpy.config.say_attribute_transition_callback(self.image_tag, mode)
 
                 if not skip_trans:
                     if (trans is not None) and (layer is not None):
@@ -950,7 +948,7 @@ class ADVCharacter(object):
             if renpy.config.speaking_attribute is not None:
                 temporary_attrs.insert(0, renpy.config.speaking_attribute)
 
-        self.resolve_say_attributes(predicting, attrs, skip_trans=temporary_attrs)
+        self.resolve_say_attributes("permanent", predicting, attrs, skip_trans=temporary_attrs)
 
         # This is so late to give resolve_say_attributes time to do some
         # error handling.
@@ -963,7 +961,7 @@ class ADVCharacter(object):
         images = renpy.game.context().images
         attrs = images.get_attributes(None, self.image_tag)
 
-        self.resolve_say_attributes(predicting, temporary_attrs)
+        self.resolve_say_attributes("temporary", predicting, temporary_attrs)
 
         return (attrs, images)
 
@@ -991,9 +989,7 @@ class ADVCharacter(object):
         if images.showing(None, (self.image_tag,)):
 
             if not predicting:
-
-                trans = renpy.config.say_attribute_transition
-                layer = renpy.config.say_attribute_transition_layer
+                trans, layer = renpy.config.say_attribute_transition_callback(self.image_tag, "restore")
 
                 if interact:
                     if (trans is not None) and (layer is not None):

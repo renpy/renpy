@@ -939,6 +939,18 @@ auto_clear_screenshot = True
 # Should Ren'Py allow duplicate labels.
 allow_duplicate_labels = False
 
+
+def say_attribute_transition_callback(tag, mode):
+    """
+    Returns the say attribute transition to use, and the layer the transition
+    should be applied to (with None being a valid layer.
+
+    Mode is one of "permanent", "temporary", or "restore"
+    """
+
+    return renpy.config.say_attribute_transition, renpy.config.say_attribute_transition_layer
+
+
 del os
 del collections
 
