@@ -160,6 +160,29 @@ These control transitions between various screens.
     If not None, a transition to use when the image is changed by a
     say statement with image attributes.
 
+.. var:: config.say_attribute_transition_callback = ...
+
+    This is a function that return a transition to apply and a layer to
+    apply it on
+
+    This should be a function that takes two arguments, the image tag
+    being shown, and a `mode` parameter that is one of:
+
+    * "permanent", for permanent attribute change (one that lasts longer
+      than the current say statement).
+    * "temporary", for a temporary attribute change (one that is restored
+      at the end of the current say statement).
+    * "restore", for when a temporary change is being restored.
+
+    This should return a 2-component tuple, consiting of:
+
+    * The transition to use, or None if no transition should occur.
+    * The layer the transition should be on, either a string or None. This is
+      almost always None.
+
+    The default implementation of this returns (config.say_attribute_transition,
+    config.say_attribute_transition_layer).
+
 .. var:: config.say_attribute_transition_layer = None
 
     If not None, this must be a string giving the name of a layer. (Almost always
