@@ -352,61 +352,61 @@ translate korean tutorial_atl_bf92d973:
 translate korean tutorial_atl_51a41db4:
 
     # e "Since we're defining an image, the first line of ATL must give a displayable. Otherwise, there would be nothing to show."
-    e ""
+    e "우리가 이미지를 정의하고 있기 때문에, ATL의 첫 번째 줄은 디스플레이어블을 제공해야 해. 그렇지 않으면 보여줄 것이 없으니까."
 
 # game/tutorial_atl.rpy:536
 translate korean tutorial_atl_3d065074:
 
     # e "The second and fourth lines are pause statements, which cause ATL to wait half a second each before continuing. That's how we give the delay between images."
-    e ""
+    e "두 번째 및 네 번째 줄은 일시 중지(pause) 문으로, ATL이 이어지기 전에 각각 0.5초 동안 대기 시간을 주고 있어. 어떻게 이미지들 사이에 지연이 발생하는지 알려주는 거야."
 
 # game/tutorial_atl.rpy:538
 translate korean tutorial_atl_60f2a5e8:
 
     # e "The final line is a repeat statement. This causes the current block of ATL to be restarted. You can only have one repeat statement per block."
-    e ""
+    e "마지막 줄은 반복(repeat) 문이야. 이건 현재의 ATL 블록을 재실행하는 거야. 반복문은 블록별로 한 번만 쓸 수 있어."
 
 # game/tutorial_atl.rpy:543
 translate korean tutorial_atl_146cf4c4:
 
     # e "If we were to write repeat 2 instead, the animation would loop twice, then stop."
-    e ""
+    e "우리가 repeat 2를 쓴다면, 애니메이션은 두 번 반복한 후에 멈추게 돼있어."
 
 # game/tutorial_atl.rpy:548
 translate korean tutorial_atl_d90b1838:
 
     # e "Omitting the repeat statement means that the animation stops once we reach the end of the block of ATL code."
-    e ""
+    e "반복 문을 생략하면 ATL 코드 블록의 끝에 도달했을 때 애니메이션이 중지돼."
 
 # game/tutorial_atl.rpy:554
 translate korean tutorial_atl_e5872360:
 
     # e "By default, displayables are replaced instantaneously. We can also use a with clause to give a transition between displayables."
-    e ""
+    e "기본적으로, 디스플레이어블은 즉시 변경돼. with 절의 사용으로 디스플레이어블 사이를 전환할 수 있기도 해."
 
 # game/tutorial_atl.rpy:561
 translate korean tutorial_atl_2e9d63ea:
 
     # e "With animation done, we'll see how we can use ATL to transform images, starting with positioning an image on the screen."
-    e ""
+    e "애니메이션이 끝나면 ATL을 사용하여 이미지를 화면에 배치하는 방법부터 시작해서 이미지를 변환하는 방법을 알아보자."
 
 # game/tutorial_atl.rpy:570
 translate korean tutorial_atl_ddc55039:
 
     # e "The simplest thing we can to is to statically position an image. This is done by giving the names of the position properties, followed by the property values."
-    e ""
+    e "우리가 할 수 있는 가장 간단한 일은 이미지를 정적으로 배치하는 거야. 위치 속성의 이름 뒤에 속성 값을 지정하면 되는 일이지."
 
 # game/tutorial_atl.rpy:575
 translate korean tutorial_atl_43516492:
 
     # e "With a few more statements, we can move things around on the screen."
-    e ""
+    e "몇 가지 더 많은 문을 통해 화면에서 대상을 움직이게 할 수 있어."
 
 # game/tutorial_atl.rpy:577
 translate korean tutorial_atl_fb979287:
 
     # e "This example starts the image off at the top-right of the screen, and waits a second. It then moves it to the left side, waits another second, and repeats."
-    e ""
+    e "이 예제는 화면의 오른쪽 상단에서 이미지를 시작하고 잠시 기다려. 그런 다음 왼쪽으로 이동하고 잠시 기다린 다음 반복해."
 
 # game/tutorial_atl.rpy:579
 translate korean tutorial_atl_7650ec09:
