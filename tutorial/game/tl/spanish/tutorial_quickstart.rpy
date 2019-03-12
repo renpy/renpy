@@ -461,7 +461,7 @@ translate spanish tutorial_simple_positions_61c1b124:
 translate spanish tutorial_simple_positions_67ebea97:
 
     # e "An xalign of 0.0 is the left side."
-    e "Un valor 0.0 en xalign es el laso izquierdo"
+    e "Un valor 0.0 en xalign es el lado izquierdo"
 
 # game/tutorial_quickstart.rpy:315
 translate spanish tutorial_simple_positions_bd4f56d8:
@@ -473,7 +473,7 @@ translate spanish tutorial_simple_positions_bd4f56d8:
 translate spanish tutorial_simple_positions_fb2c48f2:
 
     # e "And 1.0 is the right. The decimal place is important and has to be there. Just 1 by itself won't work the same."
-    e "Y 1.0 es el lado derecho. La posición decimal es importante y tiene que estar allí. Solo 1 funcionará igual."
+    e "Y 1.0 es el lado derecho. La posición decimal es importante y tiene que estar allí. Solo 1 no funcionará igual."
 
 # game/tutorial_quickstart.rpy:333
 translate spanish tutorial_simple_positions_8eebc9a7:
@@ -491,49 +491,49 @@ translate spanish tutorial_simple_positions_4cd917f6:
 translate spanish tutorial_simple_positions_fbd1a3eb:
 
     # e "While being able to write positions like this is useful, having to repeatedly do so isn't. So Ren'Py lets you define a transform once, and reuse it."
-    e ""
+    e "Si bien poder escribir posiciones como esta es útil, tener que hacerlo repetidamente no lo es. Entonces, Ren'Py le permite definir una transformación una vez y reutilizarla."
 
 # game/tutorial_quickstart.rpy:345
 translate spanish tutorial_simple_positions_2377e3b3:
 
     # e "Usually transforms are defined at the top of a file, right after the characters. But it doesn't matter to Ren'Py where you define them."
-    e ""
+    e "Por lo general, las transformaciones se definen en la parte superior de un archivo, justo después de los personajes. Pero a Ren'Py no le importa dónde las definas."
 
 # game/tutorial_quickstart.rpy:347
 translate spanish tutorial_simple_positions_3ce7e367:
 
     # e "The transform is given a name, slightleft, and then the xalign and yalign properties."
-    e ""
+    e "Transform recibe un nombre, slightleft y luego las propiedades xalign e yalign."
 
 # game/tutorial_quickstart.rpy:355
 translate spanish tutorial_simple_positions_82d640d9:
 
     # e "Once a transform has been defined, you can use it in the at clause of the show statement."
-    e ""
+    e "Una vez que se ha definido una transformación, puede usarla en la cláusula at de la declaración show."
 
 # game/tutorial_quickstart.rpy:360
 translate spanish tutorial_simple_positions_16b66785:
 
     # e "Transforms are sticky. If you replace an image without using a transform, Ren'Py will keep the same transforms it had been using."
-    e ""
+    e "Las transformaciones son aderibles. Si reemplazas una imagen sin usar una transformación, Ren'Py mantendrá las mismas transformaciones que había estado usando."
 
 # game/tutorial_quickstart.rpy:364
 translate spanish tutorial_simple_positions_5d5e0cfd:
 
     # e "Of course, there's a lot more to transforms than this. If you want to learn more, you can read the sections on Position Properties, Transforms and Animation, and Transform Properties."
-    e ""
+    e "Por supuesto, hay mucho más para transformar que esto. Si deseas obtener más información, puedes leer las secciones sobre Propiedades de Posición, Transformaciones y Animaciones, y Propiedades de Transformación."
 
 # game/tutorial_quickstart.rpy:366
 translate spanish tutorial_simple_positions_e65da9bf:
 
     # e "But for many visual novels, xalign and yalign are the only properties that matter."
-    e ""
+    e "Pero para muchas novelas visuales, xalign y yalign son las únicas propiedades que importan."
 
 # game/tutorial_quickstart.rpy:381
 translate spanish tutorial_transitions_9b8c714c:
 
     # e "It can be somewhat jarring for the game to jump from place to place."
-    e ""
+    e "Puede ser un tanto chocante para el juego saltar de un lugar a otro."
 
 # game/tutorial_quickstart.rpy:388
 translate spanish tutorial_transitions_3e290ea8:
