@@ -82,7 +82,7 @@ translate korean tutorial_playing_b1562a34:
 translate korean tutorial_playing_790f9dc7:
 
     # e "While the default game menus look a bit generic, with a little work they can be customized or even entirely replaced, allowing you to create menus as unique as your game."
-    e "기본 게임 메뉴는 약간 일반화되어 있지만, 약간의 작업으로 사용자 정의하거나 완전히 대체할 수 있기 때문에 네 게임처럼 독창적인 메뉴를 만들 수도 있어."
+    e "기본 게임 메뉴는 조금 일반화되어 있지만, 약간의 작업으로 사용자 정의하거나 완전히 대체할 수 있기 때문에 네 게임처럼 독창적인 메뉴를 만들 수도 있어."
 
 # game/tutorial_playing.rpy:53
 translate korean tutorial_playing_bc29822e:
