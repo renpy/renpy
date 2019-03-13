@@ -160,7 +160,7 @@ translate korean screens_showing_8f78a97d:
 translate korean screens_showing_b52e420c:
 
     # e "Since we can't display dialogue at the same time, you'll have to click 'Okay' to continue."
-    e "우리는 동시에 지문을 표시하지 못하기 때문에, 계속하려면 '확인'을 클릭해야 해."
+    e "여기서 우리는 지문을 표시하지 못하기 때문에, 계속하려면 '확인'을 클릭해야 해."
 
 # game/tutorial_screens.rpy:310
 translate korean screens_showing_c5ca730f:
