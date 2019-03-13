@@ -4,163 +4,163 @@
 translate korean tutorial_screens_2faa22e5:
 
     # e "Screens are the most powerful part of Ren'Py. Screens let you customize the out-of-game interface, and create new in-game interface components."
-    e ""
+    e "스크린(screen)은 렌파이의 가장 강력한 부분이야. 스크린은 외부(out-of-game) 인터페이스를 사용자 정의하고 새로운 내부(in-game) 인터페이스 컴포넌트를 만들 수 있게 해줘."
 
 # game/tutorial_screens.rpy:171
 translate korean screens_menu_7f31d730:
 
     # e "What would you like to know about screens?" nointeract
-    e "" nointeract
+    e "스크린의 어떤 것들이 궁금해?" nointeract
 
 # game/tutorial_screens.rpy:201
 translate korean screens_demo_115a4b8f:
 
     # e "Screens are how we create the user interface in Ren'Py. With the exception of images and transitions, everything you see comes from a screen."
-    e ""
+    e "스크린은 우리가 렌파이에서 유저 인터페이스를 만드는 방법이야. 이미지와 장면 전환을 제외한 볼 수 있는 모든 것은 스크린에서 나와."
 
 # game/tutorial_screens.rpy:203
 translate korean screens_demo_ce100e07:
 
     # e "When I'm speaking to you, I'm using the 'say' screen. It's responsible for taking dialogue and presenting it to the player."
-    e ""
+    e "나는 'say' 스크린을 사용해서 네게 말해. 'say' 스크린은 지문(dialogue)을 플레이어에게 제시하는 역할을 하지."
 
 # game/tutorial_screens.rpy:205
 translate korean screens_demo_1bdfb4bd:
 
     # e "And when the menu statement displays an in-game choice, the 'choice' screen is used. Got it?" nointeract
-    e "" nointeract
+    e "그리고 메뉴(menu) 명령문이 선택지를 표시할 때는 'choice' 스크린이 사용돼. 알겠지?" nointeract
 
 # game/tutorial_screens.rpy:215
 translate korean screens_demo_31a20e24:
 
     # e "Text input uses the 'input' screen, NVL mode uses the 'nvl' screen, and so on."
-    e ""
+    e "글자 입력에는 'input' 스크린을, NVL 모드는 'nvl' 스크린을 사용해. 계속해서,"
 
 # game/tutorial_screens.rpy:217
 translate korean screens_demo_5a5aa2d5:
 
     # e "More than one screen can be displayed at once. For example, the buttons at the bottom - Back, History, Skip, and so on - are all displayed by a quick_menu screen that's shown all of the time."
-    e ""
+    e "동시에 하나 이상의 스크린이 표시될 수 있어. 예를 들면, 하단의 버튼-되감기, 대사록, 넘기기 등-은 항상 보이는 quick_menu 스크린에 모두 표시되지."
 
 # game/tutorial_screens.rpy:219
 translate korean screens_demo_58d48fde:
 
     # e "There are a lot of special screens, like 'main_menu', 'load', 'save', and 'preferences'. Rather than list them all here, I'll {a=https://www.renpy.org/doc/html/screen_special.html}send you to the documentation{/a}."
-    e ""
+    e "'main_menu'와 'load', 'save', 그리고 'preferences' 같은 많은 특수한 스크린이 있어. 여기에 목록을 적는 대신에 {a=https://www.renpy.org/doc/html/screen_special.html}공식 문서{/a}를 연결할게."
 
 # game/tutorial_screens.rpy:221
 translate korean screens_demo_27476d11:
 
     # e "In a newly created project, all these screens live in screens.rpy. You can edit that file in order to change them."
-    e ""
+    e "새로 만들어진 프로젝트에서, 이러한 모든 스크린들은 screens.rpy에 있어. 스크린을 변경하려면 그것들을 편집하면 돼."
 
 # game/tutorial_screens.rpy:223
 translate korean screens_demo_a699b1cb:
 
     # e "You aren't limited to these screens either. In Ren'Py, you can make your own screens, and use them for your game's interface."
-    e ""
+    e "스크린에는 종류나 수의 제한이 없어. 렌파이에서, 네가 원하는 너만의 스크린을 만들고, 그것을 네 게임의 인터페이스로 사용할 수 있어."
 
 # game/tutorial_screens.rpy:230
 translate korean screens_demo_a136e191:
 
     # e "For example, in an RPG like visual novel, a screen can display the player's statistics."
-    e ""
+    e "예를 들어, RPG 게임에서 스크린은 플레이어의 통계를 보여줘."
 
 # game/tutorial_screens.rpy:234
 translate korean screens_demo_1f50f3d3:
 
     # e "Which reminds me, I should probably heal you."
-    e ""
+    e "힘든 것 같으니 치유 주문을 걸어줄게."
 
 # game/tutorial_screens.rpy:241
 translate korean screens_demo_8a54de7a:
 
     # e "Complex screens can be the basis of whole game mechanics. A stats screen like this can be the basis of dating and life-sims."
-    e ""
+    e "복잡한 스크린은 전체 게임 역학의 기초가 될 수 있어. 이런 통계 스크린은 연애나 육성 게임의 기본이 될 수 있지."
 
 # game/tutorial_screens.rpy:246
 translate korean screens_demo_62c184f8:
 
     # e "While screens might be complex, they're really just the result of a lot of simple parts working together to make something larger than all of them."
-    e ""
+    e "스크린이 복잡해 보일 수 있지만, 실제로는 단순한 많은 부품들이 함께 작업해 더 큰 것을 만들어 낸 결과야."
 
 # game/tutorial_screens.rpy:265
 translate korean screens_showing_1b51e9a4:
 
     # e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen, and it's name is simple_screen."
-    e ""
+    e "이건 굉장히 단순한 스크린의 예야. simple_screen이라는 이름의 스크린을 screen 명령문으로 렌파이에게 말해주는 거야."
 
 # game/tutorial_screens.rpy:267
 translate korean screens_showing_5a6bbad0:
 
     # e "Inside the screen statement, lines introduces displayables such as frame, vbox, text, and textbutton; or properties like action, xalign, and ypos."
-    e ""
+    e "스크린 명령문 안쪽의 줄들은 frame, vbox, text, textbutton과 같은 디스플레이어블 또는 action과 xalign, ypos 같은 속성을 소개해."
 
 # game/tutorial_screens.rpy:272
 translate korean screens_showing_ae40755c:
 
     # e "I'll work from the inside out to describe the statements. But first, I'll show the screen so you can see it in action."
-    e ""
+    e "안쪽에 정해진 것들을 설명할 거야. 하지만 먼저, 네가 실제로 볼 수 있도록 스크린을 보여줄게."
 
 # game/tutorial_screens.rpy:274
 translate korean screens_showing_bc320819:
 
     # e "The text statement is used to display the text provided."
-    e ""
+    e "텍스트(text) 명령문은 제공된 글자들을 표시하는 데 사용돼."
 
 # game/tutorial_screens.rpy:276
 translate korean screens_showing_64f23380:
 
     # e "The textbutton statement introduces a button that can be clicked. When the button is clicked, the provided action is run."
-    e ""
+    e "텍스트버튼(textbutton) 명령문은 클릭할 수 있는 버튼이야. 버튼을 클릭하면 제공된 동작(action)이 실행돼."
 
 # game/tutorial_screens.rpy:278
 translate korean screens_showing_e8f68c08:
 
     # e "Both are inside a vbox, which means vertical box, statement - that places the text on top of the button."
-    e ""
+    e "세로 상자를 뜻하는 vbox 안에는 앞서 말한 버튼과 텍스트 명령문 모두가 들어가 있어."
 
 # game/tutorial_screens.rpy:280
 translate korean screens_showing_7e48fc22:
 
     # e "And that is inside a frame that provides the background and borders. The frame has an at property that takes a transform giving its position."
-    e ""
+    e "그리고 그것들은 배경(background)과 테두리(borders)를 제공하는 프레임(frame) 안에 있어. 프레임은 위치 변형을 사용하는 at 속성을 가지고 있고."
 
 # game/tutorial_screens.rpy:286
 translate korean screens_showing_80425bf3:
 
     # e "There are a trio of statements that are used to display screens."
-    e ""
+    e "스크린 표시에 사용되는 명령문은 세 개야."
 
 # game/tutorial_screens.rpy:291
 translate korean screens_showing_7d2deb37:
 
     # e "The first is the show screen statement, which displays a screen and lets Ren'Py keep going."
-    e ""
+    e "첫 번째 show screen 명령문은 렌파이가 표시하는 스크린을 유지해."
 
 # game/tutorial_screens.rpy:293
 translate korean screens_showing_7626dc8b:
 
     # e "The screen will stay shown until it is hidden."
-    e ""
+    e "스크린은 숨길 때까지 계속 유지될 거야."
 
 # game/tutorial_screens.rpy:297
 translate korean screens_showing_c79038a4:
 
     # e "Hiding a screen is done with the hide screen statement."
-    e ""
+    e "스크린을 숨기는 것은 hide screen 명령문을 사용해."
 
 # game/tutorial_screens.rpy:301
 translate korean screens_showing_8f78a97d:
 
     # e "The call screen statement stops Ren'Py from executing script until the screen either returns a value, or jumps the script somewhere else."
-    e ""
+    e "call screen 명령문은 스크린이 어떤 값을 반환하거나 스크립트를 다른 곳으로 점프할 때까지 렌파이의 스크립트 실행을 중지해."
 
 # game/tutorial_screens.rpy:303
 translate korean screens_showing_b52e420c:
 
     # e "Since we can't display dialogue at the same time, you'll have to click 'Okay' to continue."
-    e ""
+    e "우리는 동시에 지문을 표시하지 못하기 때문에, 계속하려면 '확인'을 클릭해야 해."
 
 # game/tutorial_screens.rpy:310
 translate korean screens_showing_c5ca730f:
