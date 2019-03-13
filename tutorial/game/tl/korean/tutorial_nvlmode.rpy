@@ -22,7 +22,7 @@ translate korean tutorial_nvlmode_e7030787:
 translate korean tutorial_nvlmode_c9a35125:
 
     # nvle "Then just use that character in a say statement."
-    nvle "그다음 say 문으로 캐릭터를 사용하기만 하면 돼."
+    nvle "그다음 say 명령문으로 캐릭터를 사용하기만 하면 돼."
 
 # game/tutorial_nvlmode.rpy:30
 translate korean tutorial_nvlmode_130610c2:
@@ -36,7 +36,7 @@ translate korean tutorial_nvlmode_130610c2:
 translate korean tutorial_nvlmode_390a4eb1:
 
     # nvle "The 'nvl show' and 'nvl hide' statements use transitions to show and hide the NVL window."
-    nvle "'nvl show'와 'nvl hide' 문은 NVL 창을 보이거나 숨길 때 사용해."
+    nvle "'nvl show'와 'nvl hide' 명령문은 NVL 창을 보이거나 숨길 때 사용해."
 
 # game/tutorial_nvlmode.rpy:48
 translate korean tutorial_nvlmode_05956e33:

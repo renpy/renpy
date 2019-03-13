@@ -286,7 +286,7 @@ translate korean tutorial_atl_1f22f875:
 translate korean tutorial_atl_fd036bdf:
 
     # e "The first place ATL can be used is as part of an image statement. Instead of a displayable, an image may be defined as a block of ATL code."
-    e "첫 번째는 이미지(image) 문의 부품으로 사용되는 거야. 디스플레이어블 대신에, 이미지는 ATL 코드의 블록으로 정의될 수 있지."
+    e "첫 번째는 이미지(image) 명령문의 부품으로 사용되는 거야. 디스플레이어블 대신에, 이미지는 ATL 코드의 블록으로 정의될 수 있지."
 
 # game/tutorial_atl.rpy:456
 translate korean tutorial_atl_7cad2ab9:
@@ -298,19 +298,19 @@ translate korean tutorial_atl_7cad2ab9:
 translate korean tutorial_atl_c78b2a1e:
 
     # e "The second way is through the use of the transform statement. This assigns the ATL block to a python variable, allowing it to be used in at clauses and inside other transforms."
-    e "두 번째 방법은 변환(transform) 문을 통해 사용하는 거야. 이렇게하면 ATL 블록을 파이썬 변수에 할당해서 at 절이나 다른 변환에서 사용할 수 있어."
+    e "두 번째 방법은 변환(transform) 명령문을 통해 사용하는 거야. 이렇게하면 ATL 블록을 파이썬 변수에 할당해서 at 절이나 다른 변환에서 사용할 수 있어."
 
 # game/tutorial_atl.rpy:473
 translate korean tutorial_atl_da7a7759:
 
     # e "Finally, an ATL block can be used as part of a show statement, instead of the at clause."
-    e "마지막으로, ATL 블록은 at 절을 대신해 show 문의 부품으로 사용될 수 있어."
+    e "마지막으로, ATL 블록은 at 절을 대신해 show 명령문의 부품으로 사용될 수 있어."
 
 # game/tutorial_atl.rpy:480
 translate korean tutorial_atl_1dd345c6:
 
     # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place."
-    e "ATL이 show 문의 부품으로 사용될 때, 변환이 변경되더라도 특성의 값은 존재해. 따라서 클릭으로 동작이 중단되더라도 이미지는 같은 위치에 유지되지."
+    e "ATL이 show 명령문의 부품으로 사용될 때, 변환이 변경되더라도 특성의 값은 존재해. 따라서 클릭으로 동작이 중단되더라도 이미지는 같은 위치에 유지되지."
 
 # game/tutorial_atl.rpy:488
 translate korean tutorial_atl_c21bc1d1:
@@ -340,7 +340,7 @@ translate korean tutorial_atl_3eec202b:
 translate korean tutorial_atl_fbc9bf83:
 
     # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of four lines of ATL code, contained within an image statement."
-    e "ATL의 소개를 위해, 간단한 애니메이션을 보면서 시작할게. 다음은 이미지 문에 포함된 4줄로 구성된 ATL 코드야."
+    e "ATL의 소개를 위해, 간단한 애니메이션을 보면서 시작할게. 다음은 이미지 명령문에 포함된 4줄로 구성된 ATL 코드야."
 
 # game/tutorial_atl.rpy:532
 translate korean tutorial_atl_bf92d973:
@@ -358,13 +358,13 @@ translate korean tutorial_atl_51a41db4:
 translate korean tutorial_atl_3d065074:
 
     # e "The second and fourth lines are pause statements, which cause ATL to wait half a second each before continuing. That's how we give the delay between images."
-    e "두 번째 및 네 번째 줄은 일시 중지(pause) 문으로, ATL이 이어지기 전에 각각 0.5초 동안 대기 시간을 주고 있어. 어떻게 이미지들 사이에 지연이 발생하는지 알려주는 거야."
+    e "두 번째 및 네 번째 줄은 일시 중지(pause) 명령문으로, ATL이 이어지기 전에 각각 0.5초 동안 대기 시간을 주고 있어. 어떻게 이미지들 사이에 지연이 발생하는지 알려주는 거야."
 
 # game/tutorial_atl.rpy:538
 translate korean tutorial_atl_60f2a5e8:
 
     # e "The final line is a repeat statement. This causes the current block of ATL to be restarted. You can only have one repeat statement per block."
-    e "마지막 줄은 반복(repeat) 문이야. 이건 현재의 ATL 블록을 재실행하는 거야. 반복문은 블록별로 한 번만 쓸 수 있어."
+    e "마지막 줄은 반복(repeat) 명령문이야. 이건 현재의 ATL 블록을 재실행하는 거야. 반복 명령문은 블록별로 한 번만 쓸 수 있어."
 
 # game/tutorial_atl.rpy:543
 translate korean tutorial_atl_146cf4c4:
@@ -376,7 +376,7 @@ translate korean tutorial_atl_146cf4c4:
 translate korean tutorial_atl_d90b1838:
 
     # e "Omitting the repeat statement means that the animation stops once we reach the end of the block of ATL code."
-    e "반복 문을 생략하면 ATL 코드 블록의 끝에 도달했을 때 애니메이션이 중지돼."
+    e "반복 명령문을 생략하면 ATL 코드 블록의 끝에 도달했을 때 애니메이션이 중지돼."
 
 # game/tutorial_atl.rpy:554
 translate korean tutorial_atl_e5872360:
@@ -400,7 +400,7 @@ translate korean tutorial_atl_ddc55039:
 translate korean tutorial_atl_43516492:
 
     # e "With a few more statements, we can move things around on the screen."
-    e "몇 가지 더 많은 문을 통해 화면에서 대상을 움직이게 할 수 있어."
+    e "몇 가지 더 많은 명령문을 통해 화면에서 대상을 움직이게 할 수 있어."
 
 # game/tutorial_atl.rpy:577
 translate korean tutorial_atl_fb979287:

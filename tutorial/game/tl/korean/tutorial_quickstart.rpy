@@ -124,13 +124,13 @@ translate korean tutorial_dialogue_d39d1b2b:
 translate korean tutorial_dialogue_f51ecf1f:
 
     # e "This script demonstrates two kinds of Ren'Py statements, labels and say statements."
-    e "이 스크립트는 두 종류의 렌파이 문, 레이블 및 say 문을 보여주는 거야."
+    e "이 스크립트는 두 종류의 렌파이 명령문, 레이블 및 say를 보여주는 거야."
 
 # game/tutorial_quickstart.rpy:103
 translate korean tutorial_dialogue_bc7ec147:
 
     # e "The first line is a label statement. The label statement is used to give a name to a place in the program."
-    e "첫 번째 줄은 레이블 문이야. 레이블 문은 프로그램의 특정 위치의 이름을 지정하는 데 사용돼."
+    e "첫 번째 줄은 레이블 명령문이야. 레이블 명령문은 프로그램의 특정 위치의 이름을 지정하는 데 사용돼."
 
 # game/tutorial_quickstart.rpy:105
 translate korean tutorial_dialogue_b20db833:
@@ -142,7 +142,7 @@ translate korean tutorial_dialogue_b20db833:
 translate korean tutorial_dialogue_b0afbe96:
 
     # e "The next line is a simple say statement. It consists of a string beginning with a double-quote, and ending at the next double-quote."
-    e "다음 줄은 간단한 say 문이야. 큰 따옴표로 시작해서 다음 큰 따옴표로 끝나는 문자열로 구성돼."
+    e "다음 줄은 간단한 say 명령문이야. 큰 따옴표로 시작해서 다음 큰 따옴표로 끝나는 문자열로 구성돼."
 
 # game/tutorial_quickstart.rpy:109
 translate korean tutorial_dialogue_628c9e4c:
