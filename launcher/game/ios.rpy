@@ -58,6 +58,7 @@ init python:
 
     if RENIOS_PATH:
         import renios.create
+        import renios.image
 
     def IOSState():
         if not RENIOS_PATH:
@@ -190,6 +191,15 @@ init python:
                     main_f.write(l)
 
         os.unlink(py_fn)
+
+        ios_image(p, "ios-icon.png", "Media.xcassets/AppIcon.appiconset", True)
+        ios_image(p, "ios-launchimage.png", "Media.xcassets/LaunchImage.launchimage", False)
+
+    def ios_image(p, source, destination, scale):
+        source = os.path.join(p.path, source)
+        destination = os.path.join(xcode_project(p), destination)
+
+        renios.image.generate(source, destination, scale)
 
 
     def launch_xcode():
