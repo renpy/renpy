@@ -124,7 +124,7 @@ translate korean strings:
 
     # script.rpy:77
     old "Transition Gallery"
-    new "갤러리 전화"
+    new "갤러리 전환"
 
     # script.rpy:80
     old "Position Properties"
@@ -132,15 +132,15 @@ translate korean strings:
 
     # script.rpy:83
     old "Transforms and Animation"
-    new "트랜스폼과 애니메이션"
+    new "변환과 애니메이션"
 
     # script.rpy:84
     old "Transform Properties"
-    new "트랜스폼 속성"
+    new "변환 속성"
 
     # script.rpy:86
     old "GUI Customization"
-    new "GUI 커스터마이징"
+    new "GUI 사용자 정의"
 
     # script.rpy:87
     old "Styles and Style Properties"
@@ -172,4 +172,4 @@ translate korean strings:
 
     # script.rpy:170
     old "Is there anything else you'd like to see?"
-    new "더 알고 싶은 것이 있어?"
+    new "더 궁금한 것이 있어?"
