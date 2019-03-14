@@ -527,7 +527,7 @@ label tutorial_atl:
     show example atl_image
     show eileen animated
 
-    e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of four lines of ATL code, contained within an image statement."
+    e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
 
     e "To change a displayable, simply mention it on a line of ATL. Here, we're switching back and forth between two images."
 

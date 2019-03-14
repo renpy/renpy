@@ -339,8 +339,8 @@ translate korean tutorial_atl_3eec202b:
 # game/tutorial_atl.rpy:530
 translate korean tutorial_atl_fbc9bf83:
 
-    # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of four lines of ATL code, contained within an image statement."
-    e "ATL의 소개를 위해, 간단한 애니메이션을 보면서 시작할게. 다음은 이미지 명령문에 포함된 4줄로 구성된 ATL 코드야."
+    # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
+    e "ATL의 소개를 위해, 간단한 애니메이션을 보면서 시작할게. 다음은 이미지 명령문에 포함된 다섯 줄로 구성된 ATL 코드야."
 
 # game/tutorial_atl.rpy:532
 translate korean tutorial_atl_bf92d973:

@@ -338,7 +338,7 @@ translate russian tutorial_atl_3eec202b:
 # game/tutorial_atl.rpy:530
 translate russian tutorial_atl_fbc9bf83:
 
-    # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of four lines of ATL code, contained within an image statement."
+    # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
     e "Для введения в ATL, начнём с простой анимации. Вот анимация, состоящая из пяти строк кода ATL, содержащаяся внутри оператора image."
 
 # game/tutorial_atl.rpy:532
