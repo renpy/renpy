@@ -231,7 +231,7 @@ def in_rollback():
     Returns true if the game has been rolled back.
     """
 
-    return renpy.game.log.in_rollback()
+    return renpy.game.log.in_rollback() or renpy.game.after_rollback
 
 
 def can_rollback():

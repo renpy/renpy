@@ -1671,7 +1671,7 @@ class RollbackLog(renpy.object.Object):
             load. Used to implement .retain_after_load()
 
         `abnormal`
-            If true, treats this as an abnormal event, suppresisng rollback
+            If true, treats this as an abnormal event, suppressing transitions
             and so on.
 
         `current_label`
