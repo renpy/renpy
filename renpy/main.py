@@ -274,6 +274,10 @@ def main():
     else:
         renpy.config.commondir = None
 
+    # Add path from env variable, if any
+    if "RENPY_SEARCHPATH" in os.environ:
+        renpy.config.searchpath.extend(os.environ["RENPY_SEARCHPATH"].split("::"))
+
     if renpy.android:
         renpy.config.searchpath = [ ]
         renpy.config.commondir = None
