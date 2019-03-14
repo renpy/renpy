@@ -128,4 +128,18 @@ to display the game's user interface.
 Once Ren'Py finishes initializing, it will either resume the current game,
 or run the splashscreen and main menu.
 
+Generation
+-----------
 
+To ease development, it's possible to have Ren'Py generate the iOS icon
+and launch image from files.
+
+``ios-icon.png``
+    If present, this file is scaled to the various sizes of png file
+    needed to make an iOS icon.
+
+``ios-launchimage.png``
+    If present, this file is used to make an iOS Launch Image. This is done
+    by creating an image of the required sized, filling it with the top-left
+    pixel of this file, and then centering this file in the center of the
+    Launch Image.
