@@ -319,7 +319,7 @@ init -1500 python:
                     else:
                         fn = config.auto_voice(tlid)
 
-                    _voice.auto_filename = fn
+                    self.auto_filename = fn
 
                     if fn and renpy.loadable(fn):
 
