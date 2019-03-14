@@ -508,31 +508,31 @@ translate korean tutorial_atl_2265254b:
 translate korean transform_properties_391169cf:
 
     # e "Ren'Py has quite a few transform properties that can be used with ATL, the Transform displayable, and the add Screen Language statement."
-    e ""
+    e "렌파이는 ATL, 변환 디스플레이어블 및 add 스크린 언어 명령문에서 사용할 수 있는 꽤 많은 변형 속성을 가지고 있어."
 
 # game/tutorial_atl.rpy:685
 translate korean transform_properties_fc895a1f:
 
     # e "Here, we'll show them off so you can see them in action and get used to what each does."
-    e ""
+    e "여기서, 우리는 그것들을 보고 각각의 속성들이 하는 것을 배우고 익숙해질 거야."
 
 # game/tutorial_atl.rpy:701
 translate korean transform_properties_88daf990:
 
     # e "First off, all of the position properties are also transform properties. These include the pos, anchor, align, center, and offset properties."
-    e ""
+    e "우선, 모든 위치 속성은 변형 속성이라는 걸 알아둬. 이러한 것들은 pos, anchor, align, center, 그리고 offset 속성을 포함해."
 
 # game/tutorial_atl.rpy:719
 translate korean transform_properties_d7a487f1:
 
     # e "The position properties can also be used to pan over a displayable larger than the screen, by giving xpos and ypos negative values."
-    e ""
+    e "위치 속성은 xpos와 ypos에 음수로 값을 부여하여 스크린보다 더 큰 디스플레이어블을 밖으로 넘길 때도 사용할 수 있어."
 
 # game/tutorial_atl.rpy:729
 translate korean transform_properties_89e0d7c2:
 
     # "The subpixel property controls how things are lined up with the screen. When False, images can be pixel-perfect, but there can be pixel jumping."
-    ""
+    "서브 픽셀(subpixel) 속성은 대상이 화면에 어떻게 정렬되어 있는지를 제어해. 거짓(False)일 때, 이미지는 픽셀 단위로 완벽할 수 있지만 픽셀 점프가 있을 수 있어."
 
 # game/tutorial_atl.rpy:736
 translate korean transform_properties_4194527e:
@@ -640,13 +640,13 @@ translate korean strings:
 
     # tutorial_atl.rpy:267
     old "xpos 1.0 ypos .5"
-    new ""
+    new "xpos 1.0 ypos .5"
 
     # tutorial_atl.rpy:267
     old "xpos .75 ypos .25"
-    new ""
+    new "xpos .75 ypos .25"
 
     # tutorial_atl.rpy:267
     old "xpos .25 ypos .33"
-    new ""
+    new "xpos .25 ypos .33"
 
