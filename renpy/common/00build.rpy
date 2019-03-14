@@ -148,6 +148,9 @@ init -1500 python in build:
         ("ouya_icon.png", "android"),
 
         ("ios-presplash.*", "ios"),
+        ("ios-launchimage.png", None),
+        ("ios-icon.png", None),
+
         ])
 
     base_patterns = [ ]
