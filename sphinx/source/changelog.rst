@@ -7,8 +7,50 @@ Full Changelog
 7.2.1
 =====
 
-Explicitly asks for text (as opposed to email, password, phone number
+iOS Improvements
+----------------
+
+Ren'Py will now set the version field for the iOS application when generating
+a project.
+
+Ren'Py will now look for the files ios-icon.png and ios-launchimage.png,
+and use them to generate the icon and launch image in the sizes required
+for iOS.
+
+Other Improvements
+-------------------
+
+The :func:`renpy.in_rollback` function returns True when in the rollback that
+occurs immediately after a load. This makes it possible to use::
+
+    python:
+        if not renpy.in_rollback():
+            renpy.run(ShowMenu('save'))
+
+To display a save menu during an initial playthough, but not during loading
+or rollback.
+
+
+:var:`config.say_attribute_transition_callback` now exists, making it possible
+to select the transition to use on a per-say-statement basis.
+
+
+Fixes
+-----
+
+Ren'Py now properly considers the scope when comparing dynamic images for
+equality. This fixes an issue that prevented some dynamic images from
+updating when part of a screen.
+
+A crash when :var:`config.save_dump` is true on macOS has been fixed.
+
+A crash when :var`config.profile` is true has been fixed.
+
+Ren'Py now explicitly asks for text (as opposed to email, password, phone number
 etc) input on Android when the keyboard is displayed.
+
+An issue has been fixed that prevented roll-forward from working through a
+menu statement.
 
 Fixes a bug that prevents roll-forward through a menu.
 
