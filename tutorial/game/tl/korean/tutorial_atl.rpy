@@ -262,7 +262,7 @@ translate korean tutorial_atl_87a6ecbd:
 translate korean tutorial_atl_65badef3:
 
     # e "But first, let's have... a Gratuitous Rock Concert!"
-    e "그러면..., 완전무상 록 콘서트를 즐겨!"
+    e "그럼..., 완전무상 록 콘서트를 즐겨!"
 
 # game/tutorial_atl.rpy:445
 translate korean tutorial_atl_e0d3c5ec:
@@ -388,7 +388,7 @@ translate korean tutorial_atl_e5872360:
 translate korean tutorial_atl_2e9d63ea:
 
     # e "With animation done, we'll see how we can use ATL to transform images, starting with positioning an image on the screen."
-    e "애니메이션이 끝나면 ATL을 사용하여 이미지를 화면에 배치하는 방법부터 시작해서 이미지를 변환하는 방법을 알아보자."
+    e "애니메이션이 끝났으니 ATL을 사용하여 이미지를 화면에 배치하는 방법부터 시작해서 이미지를 변환하는 방법을 알아보자."
 
 # game/tutorial_atl.rpy:570
 translate korean tutorial_atl_ddc55039:
@@ -412,97 +412,97 @@ translate korean tutorial_atl_fb979287:
 translate korean tutorial_atl_7650ec09:
 
     # e "The pause and repeat statements are the same statements we used in our animations. They work throughout ATL code."
-    e ""
+    e "일시 중지 및 반복 명령문은 우리가 애니메이션에서 사용한 것과 같아. 그것들은 ATL 코드를 통해 작동해."
 
 # game/tutorial_atl.rpy:584
 translate korean tutorial_atl_d3416d4f:
 
     # e "Having the image jump around on the screen isn't all that useful. That's why ATL has the interpolation statement."
-    e ""
+    e "화면에서 이미지가 순간이동하는 것은 그다지 유용하지 않아. 그게 ATL이 보간 명령문을 갖는 이유야."
 
 # game/tutorial_atl.rpy:586
 translate korean tutorial_atl_4e7512ec:
 
     # e "The interpolation statement allows you to smoothly vary the value of a transform property, from an old to a new value."
-    e ""
+    e "보간문을 사용하면 변환 속성 값을 이전 값에서 새 값으로 부드럽게 변경할 수 있어."
 
 # game/tutorial_atl.rpy:588
 translate korean tutorial_atl_685eeeaa:
 
     # e "Here, we have an interpolation statement on the second ATL line. It starts off with the name of a time function, in this case linear."
-    e ""
+    e "여기, 우리는 두 번째 ATL 행에 보간 명령문이 있는 것을 확인할 수 있어. 그건 시간 함수로 시작하고, 이 경우는 선형(linear)이야."
 
 # game/tutorial_atl.rpy:590
 translate korean tutorial_atl_c5cb49de:
 
     # e "That's followed by an amount of time, in this case three seconds. It ends with a list of properties, each followed by its new value."
-    e ""
+    e "이 코드에서 그것(linear)은 3초의 시간을 따르고 있어. 시간이 진행되면서 뒤에 오는 새로운 속성(xalign) 값을 따르게 되지."
 
 # game/tutorial_atl.rpy:592
 translate korean tutorial_atl_04b8bc1d:
 
     # e "The value of each property is interpolated from its value when the statement starts to the value at the end of the statement. This is done once per frame, allowing smooth animation."
-    e ""
+    e "각 속성의 값은 명령문 끝에서 명령문이 값을 시작할 때 그 값으로부터 보간돼. 이것은 프레임별로 한 번 수행하여 원활한 애니메이션을 가능하게 해."
 
 # game/tutorial_atl.rpy:603
 translate korean tutorial_atl_2958f397:
 
     # e "ATL supports more complicated move types, like circle and spline motion. But I won't be showing those here."
-    e ""
+    e "ATL은 원 및 스플라인 모션과 같은 복잡한 이동 유형도 지원해. 하지만 여기서 그것들을 모두 보여주진 않을 거야."
 
 # game/tutorial_atl.rpy:607
 translate korean tutorial_atl_d08fe8d9:
 
     # e "Apart from displayables, pause, interpolation, and repeat, there are a few other statements we can use as part of ATL."
-    e ""
+    e "디스플레이어블, 일시 중지, 보간 및 반복을 제외하고도 ATL의 일부로 사용할 수 있는 몇 가지 다른 명령문이 있어."
 
 # game/tutorial_atl.rpy:619
 translate korean tutorial_atl_84b22ac0:
 
     # e "ATL transforms created using the statement become ATL statements themselves. Since the default positions are also transforms, this means that we can use left, right, and center inside of an ATL block."
-    e ""
+    e "명령문을 사용해 만들어진 ATL 변환은 ATL 명령문 자체가 돼. 기본 위치 또한 변환으로, ATL 블록 안에서 왼쪽, 오른쪽 및 가운데를 사용할 수 있다는 뜻이야."
 
 # game/tutorial_atl.rpy:635
 translate korean tutorial_atl_331126c1:
 
     # e "Here, we have two new statements. The block statement allows you to include a block of ATL code. Since the repeat statement applies to blocks, this lets you repeat only part of an ATL transform."
-    e ""
+    e "여기에는 두 개의 새로운 명령문이 있어. 블록 명령문을 사용하면 ATL 코드의 블록을 포함할 수 있어. 반복(repeat) 명령문은 블록에 적용되는 것으로 ATL 변환의 일부만 반복하게 할 수 있어."
 
 # game/tutorial_atl.rpy:637
 translate korean tutorial_atl_24f67b67:
 
     # e "We also have the time statement, which runs after the given number of seconds have elapsed from the start of the block. It will run even if another statement is running, stopping the other statement."
-    e ""
+    e "또한 블록의 시작부터 주어진 시간이 경과한 후에 실행되는 시간 명령문이 존재해. 그건 다른 명령문이 실행 중일 때도 실행되며 다른 명령문은 중지시켜."
 
 # game/tutorial_atl.rpy:639
 translate korean tutorial_atl_b7709507:
 
     # e "So this example bounces the image back and forth for eleven and a half seconds, and then moves it to the right side of the screen."
-    e ""
+    e "따라서 이 예제에서는 이미지를 11.5초 동안 좌우로 왔다갔다 하고 나서 화면의 오른쪽으로 이동해."
 
 # game/tutorial_atl.rpy:653
 translate korean tutorial_atl_f903bc3b:
 
     # e "The parallel statement lets us run two blocks of ATL code at the same time."
-    e ""
+    e "평행(parallel) 문을 사용하여 동시에 두 블록의 ATL 코드를 실행해보자."
 
 # game/tutorial_atl.rpy:655
 translate korean tutorial_atl_5d0f8f9d:
 
     # e "Here, the top block move the image in the horizontal direction, and the bottom block moves it in the vertical direction. Since they're moving at different speeds, it looks like the image is bouncing on the screen."
-    e ""
+    e "이 코드에서 상단 블록은 이미지를 수평 방향으로, 하단 블록은 수직 방향으로 이동시켜. 서로 다른 속도로 움직이기 때문에 이미지가 화면에서 튀는 것처럼 보이지."
 
 # game/tutorial_atl.rpy:669
 translate korean tutorial_atl_28a7d27e:
 
     # e "Finally, the choice statement makes Ren'Py randomly pick a block of ATL code. This allows you to add some variation as to what Ren'Py shows."
-    e ""
+    e "마지막으로, 선택(choice) 명령문을 사용해서 렌파이가 임의로 ATL 코드 블록을 선택하게 해보자. 이건 렌파이가 보여주는 것과 같은 변형을 추가 할 수 있어."
 
 # game/tutorial_atl.rpy:675
 translate korean tutorial_atl_2265254b:
 
     # e "This tutorial game has only scratched the surface of what you can do with ATL. For example, we haven't even covered the on and event statements. For more information, you might want to check out {a=https://renpy.org/doc/html/atl.html}the ATL chapter in the reference manual{/a}."
-    e ""
+    e "이 길라잡이는 ATL로 수행 할 수 있는 작업의 일부만을 보여주는 거야. 예를 들어, 우린 on 및 event 문도 다루지 않았어. ATL의 보다 자세한 내용은 참조 설명서의 {a=https://renpy.org/doc/html/atl.html}ATL{/a}을 참고하길 바라."
 
 # game/tutorial_atl.rpy:684
 translate korean transform_properties_391169cf:
