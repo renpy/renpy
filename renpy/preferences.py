@@ -233,6 +233,9 @@ class Preferences(renpy.object.Object):
     def __eq__(self, other):
         return vars(self) == vars(other)
 
+    def __ne__(self, other):
+        return not (self == other)
+
 
 renpy.game.Preferences = Preferences
 renpy.game.preferences = Preferences()

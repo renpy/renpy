@@ -55,6 +55,9 @@ init -1700 python:
 
                 return False
 
+        def __ne__(self, o):
+            return not (self == o)
+
     class FieldEquality(object):
         """
         Declares two objects equal if their types are the same, and
@@ -91,6 +94,9 @@ init -1700 python:
                     raise
 
                 return False
+
+        def __ne__(self, o):
+            return not (self == o)
 
 
 init -1700 python:

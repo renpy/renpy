@@ -107,6 +107,9 @@ class LineLogEntry(object):
 
         return (self.filename == other.filename) and (self.line == other.line) and (self.node is other.node)
 
+    def __ne__(self, other):
+        return not (self == other)
+
 
 class Context(renpy.object.Object):
     """
