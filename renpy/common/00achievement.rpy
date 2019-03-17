@@ -226,6 +226,7 @@ init -1500 python in achievement:
             backends.insert(0, SteamBackend())
         else:
             renpy.write_log("Failed to initialize steam.")
+            steam = None
 
 
     def register(name, **kwargs):
