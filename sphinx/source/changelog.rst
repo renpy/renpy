@@ -42,8 +42,8 @@ Fixes
 Ren'Py has been audited to make sure that the semantics of == and != match,
 whenever == was redefined.
 
-There was a fix to problems that might occur when a transform was ``add``ed
-to a screen.
+There was a fix to problems that might occur when a transform is added
+to a screen using the ``add`` statement.
 
 The way ``extend`` processes arguments was changed to ensure that newer
 arguments take priority over arguments given to the statement being
