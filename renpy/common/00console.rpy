@@ -418,7 +418,7 @@ init -1500 python in _console:
                     l.advance()
 
                     # Command can be None, but that's okay, since the lookup will fail.
-                    command = l.name()
+                    command = l.word()
 
                     command_fn = config.console_commands.get(command, None)
 
