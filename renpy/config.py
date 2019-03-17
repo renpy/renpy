@@ -940,11 +940,12 @@ auto_clear_screenshot = True
 allow_duplicate_labels = False
 
 
-def say_attribute_transition_callback(tag, mode):
+def say_attribute_transition_callback(tag, attrs, mode):
     """
     Returns the say attribute transition to use, and the layer the transition
     should be applied to (with None being a valid layer.
 
+    Attrs is the list of tags/attributes of the incoming image
     Mode is one of "permanent", "temporary", or "restore"
     """
 
