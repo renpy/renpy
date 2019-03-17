@@ -58,6 +58,7 @@ the omission in future versions.
 * Evilantishad0w
 * Felix Lampe
 * Franck_v
+* Frédéric Chapoton
 * Gas
 * George Economidis
 * Giuseppe Bertone
