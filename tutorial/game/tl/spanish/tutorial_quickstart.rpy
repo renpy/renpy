@@ -539,139 +539,139 @@ translate spanish tutorial_transitions_9b8c714c:
 translate spanish tutorial_transitions_3e290ea8:
 
     # e "To help take some of edge off a change in scene, Ren'Py supports the use of transitions. Let's try that scene change again, but this time we'll use transitions."
-    e ""
+    e "Para ayudar a sacar algo de ventaja a un cambio en la escena, Ren'Py admite el uso de transiciones. Probemos el cambio de escena nuevamente, pero esta vez usaremos transiciones."
 
 # game/tutorial_quickstart.rpy:402
 translate spanish tutorial_transitions_9c0a86c4:
 
     # e "That's much smoother. Here's some example code showing how we include transitions in our game."
-    e ""
+    e "Eso es mucho más suave. Aquí hay un código de ejemplo que muestra cómo incluimos las transiciones en nuestro juego."
 
 # game/tutorial_quickstart.rpy:404
 translate spanish tutorial_transitions_3e490d40:
 
     # e "It uses the with statement. The with statement causes the scene to transition from the last things shown to the things currently being shown."
-    e ""
+    e "Utiliza la sentencia with. La sentencia with hace que la escena pase de las últimas cosas mostradas a las que se muestran actualmente."
 
 # game/tutorial_quickstart.rpy:406
 translate spanish tutorial_transitions_a43847df:
 
     # e "It takes a transition as an argument. In this case, we're using the Dissolve transition. This transition takes as an argument the amount of time the dissolve should take."
-    e ""
+    e "Toma una transición como argumento. En este caso, estamos utilizando la transición Dissolve. Esta transición toma como argumento la cantidad de tiempo que la disolución debería tomar."
 
 # game/tutorial_quickstart.rpy:408
 translate spanish tutorial_transitions_6fcee414:
 
     # e "In this case, each transition takes half a second."
-    e ""
+    e "En este caso, cada transición dura medio segundo."
 
 # game/tutorial_quickstart.rpy:412
 translate spanish tutorial_transitions_033042cc:
 
     # e "We can define a short name for a transition, using the define statement. Here, we're defining slowdissolve to be a dissolve that takes a whole second."
-    e ""
+    e "Podemos definir un nombre corto para una transición, utilizando la sentencia define. Aquí, estamos definiendo slowdissolve como una disolución que toma un segundo."
 
 # game/tutorial_quickstart.rpy:427
 translate spanish tutorial_transitions_0ba82f00:
 
     # e "Once a transition has been given a short name, we can use it in our game."
-    e ""
+    e "Una vez que se le ha dado un nombre corto a una transición, podemos usarla en nuestro juego."
 
 # game/tutorial_quickstart.rpy:431
 translate spanish tutorial_transitions_51ff9600:
 
     # e "Ren'Py defines some transitions for you, like dissolve, fade, and move. For more complex or customized transitions, you'll have to define your own."
-    e ""
+    e "Ren'Py define algunas transiciones por ti, como dissolve, fade y move. Para transiciones más complejas o personalizadas, tendrás que definir las tuyas propias."
 
 # game/tutorial_quickstart.rpy:433
 translate spanish tutorial_transitions_1528f73f:
 
     # e "If you're interested, check out the Transitions Gallery section of this tutorial."
-    e ""
+    e "Si estás interesado, consulta la sección Galería de Transiciones de este tutorial."
 
 # game/tutorial_quickstart.rpy:439
 translate spanish tutorial_music_8b92efb7:
 
     # e "Another important part of a visual novel or simulation game is the soundtrack."
-    e ""
+    e "Otra parte importante de una novela visual o juego de simulación es la banda sonora."
 
 # game/tutorial_quickstart.rpy:441
 translate spanish tutorial_music_53910317:
 
     # e "Ren'Py breaks sound up into channels. The channel a sound is played on determines if the sound loops, and if it is saved and restored with the game."
-    e ""
+    e "Ren'Py separa el sonido en canales. El canal en el que se reproduce un sonido determina si el sonido se repite, y si se guarda y se restaura con el juego."
 
 # game/tutorial_quickstart.rpy:443
 translate spanish tutorial_music_a1e37712:
 
     # e "When a sound is played on the music channel, it is looped, and it is saved when the game is saved."
-    e ""
+    e "Cuando se reproduce un sonido en el canal music, se reproduce en bucle y se guarda cuando se guarda el juego."
 
 # game/tutorial_quickstart.rpy:445
 translate spanish tutorial_music_d9086d22:
 
     # e "When the channel named sound is used, the sound is played once and then stopped. It isn't saved."
-    e ""
+    e "Cuando se utiliza el canal denominado sound, el sonido se reproduce una vez y luego se detiene. No se guarda."
 
 # game/tutorial_quickstart.rpy:447
 translate spanish tutorial_music_3555b640:
 
     # e "The sounds themselves are stored in audio files. Ren'Py supports the Opus, Ogg Vorbis, and mp3 formats."
-    e ""
+    e "Los sonidos mismos se almacenan en archivos de audio. Ren'Py soporta los formatos Opus, Ogg Vorbis y mp3."
 
 # game/tutorial_quickstart.rpy:449
 translate spanish tutorial_music_a776b6ad:
 
     # e "Let's check out some of the commands that can effect the music channel."
-    e ""
+    e "Echemos un vistazo a algunos de los comandos que pueden afectar el canal music."
 
 # game/tutorial_quickstart.rpy:454
 translate spanish tutorial_music_8b606a55:
 
     # e "The play music command replaces the currently playing music, and replaces it with the named filename."
-    e ""
+    e "El comando play music reemplaza la música que se está reproduciendo actualmente y la reemplaza archivo nombrado."
 
 # game/tutorial_quickstart.rpy:456
 translate spanish tutorial_music_18650fe7:
 
     # e "If you specify the currently-playing song, it will restart it."
-    e ""
+    e "Si especificas la canción que se está reproduciendo actualmente, se reiniciará."
 
 # game/tutorial_quickstart.rpy:458
 translate spanish tutorial_music_413d91fc:
 
     # e "If the optional fadeout clause is given, it will fade out the currently playing music before starting the new music."
-    e ""
+    e "Si la cláusula opcional fadeout se dio, se desvanecerá la música que se está reproduciendo en ese momento antes de iniciar la nueva música."
 
 # game/tutorial_quickstart.rpy:463
 translate spanish tutorial_music_a282a0e3:
 
     # e "The queue statement also adds music to the named channel, but it waits until the currently-playing song is finished before playing the new music."
-    e ""
+    e "La declaración queue también agrega música al canal nombrado, pero espera hasta que la canción que se está reproduciendo se termine antes de reproducir la nueva música."
 
 # game/tutorial_quickstart.rpy:468
 translate spanish tutorial_music_01ca6bad:
 
     # e "The third statement is the stop statement. It stops the music playing on a channel. It too takes the fadeout clause."
-    e ""
+    e "La tercera declaración es stop. Detiene la reproducción de música en un canal. También toma la cláusula fadeout."
 
 # game/tutorial_quickstart.rpy:473
 translate spanish tutorial_music_384937da:
 
     # e "Unlike the music channel, playing a sound on the sound channel causes it to play only once."
-    e ""
+    e "A diferencia del canal music, la reproducción de un sonido en el canal sound hace que se reproduzca solo una vez."
 
 # game/tutorial_quickstart.rpy:480
 translate spanish tutorial_music_1d3e9fd2:
 
     # e "You can queue up multiple sounds on the sound channel, but the sounds will only play one at a time."
-    e ""
+    e "Puedes poner en cola varios sonidos en el canal de sonido, pero los sonidos solo se reproducirán uno a la vez."
 
 # game/tutorial_quickstart.rpy:486
 translate spanish tutorial_music_aa01c19d:
 
     # e "Ren'Py has separate mixers for sound, music, and voices, so the player can adjust them as they like."
-    e ""
+    e "Ren'Py tiene mezcladores separados para sonido, música y voces, por lo que el jugador puede ajustarlos a su gusto."
 
 # game/tutorial_quickstart.rpy:492
 translate spanish tutorial_menus_0426904b:
