@@ -55,7 +55,7 @@ updating when part of a screen.
 
 A crash when :var:`config.save_dump` is true on macOS has been fixed.
 
-A crash when :var`config.profile` is true has been fixed.
+A crash when :var:`config.profile` is true has been fixed.
 
 Ren'Py now explicitly asks for text (as opposed to email, password, phone number
 etc) input on Android when the keyboard is displayed.
