@@ -30,13 +30,24 @@ occurs immediately after a load. This makes it possible to use::
 To display a save menu during an initial playthough, but not during loading
 or rollback.
 
-
 :var:`config.say_attribute_transition_callback` now exists, making it possible
 to select the transition to use on a per-say-statement basis.
 
+The new ``RENPY_SEARCHPATH`` environment variable makes it possible to
+override :var:`config.searchpath` on launch.
 
 Fixes
 -----
+
+Ren'Py has been audited to make sure that the semantics of == and != match,
+whenever == was redefined.
+
+There was a fix to problems that might occur when a transform was ``add``ed
+to a screen.
+
+The way ``extend`` processes arguments was changed to ensure that newer
+arguments take priority over arguments given to the statement being
+extended.
 
 Ren'Py now properly considers the scope when comparing dynamic images for
 equality. This fixes an issue that prevented some dynamic images from
