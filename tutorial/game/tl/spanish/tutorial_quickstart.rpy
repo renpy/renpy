@@ -1,6 +1,4 @@
 ﻿
-# TODO: Translation updated at 2019-03-03 09:03
-
 # game/tutorial_quickstart.rpy:28
 translate spanish tutorial_create_27048c11:
 
@@ -677,7 +675,7 @@ translate spanish tutorial_music_aa01c19d:
 translate spanish tutorial_menus_0426904b:
 
     # e "Many visual novels require the player to make choices from in-game menus. These choices can add some challenge to the game, or adjust it to the player's preferences."
-    e ""
+    e "Muchas novelas visuales requieren que el jugador haga elecciones en los menús del juego. Estas opciones pueden agregar algún desafío al juego, o ajustarlo a las preferencias del jugador."
 
 # game/tutorial_quickstart.rpy:494
 translate spanish tutorial_menus_431eeff0:
@@ -689,157 +687,157 @@ translate spanish tutorial_menus_431eeff0:
 translate spanish choice1_yes_f6d95df8:
 
     # e "While creating a multi-path visual novel can be a bit more work, it can yield a unique experience."
-    e ""
+    e "Si bien la creación de una novela visual de múltiples rutas puede ser un poco más de trabajo, puede brindar una experiencia única."
 
 # game/tutorial_quickstart.rpy:517
 translate spanish choice1_no_72958b50:
 
     # e "Games without menus are called kinetic novels, and there are dozens of them available to play."
-    e ""
+    e "Los juegos sin menús se llaman novelas cinéticas, y hay docenas de ellas disponibles para jugar."
 
 # game/tutorial_quickstart.rpy:528
 translate spanish choice1_done_acba9504:
 
     # e "Here, you can see the code for that menu. If you scroll down, you can see the code we run after the menu."
-    e ""
+    e "Aquí puedes ver el código de ese menú. Si se desplaza hacia abajo, puede ver el código que corremos después del menu."
 
 # game/tutorial_quickstart.rpy:530
 translate spanish choice1_done_f9fa6889:
 
     # e "Menus are introduced by the menu statement. The menu statement takes an indented block, in which there can be one line of dialogue and multiple choices."
-    e ""
+    e "Los menús son introducidos por la declaración del menu. La declaración menu toma un bloque con sangría, en el que puede haber una línea de diálogo y múltiples opciones."
 
 # game/tutorial_quickstart.rpy:532
 translate spanish choice1_done_ebb2db38:
 
     # e "Each choice must end with a colon, as each choice has its own block of Ren'Py code, that is run when that choice is selected."
-    e ""
+    e "Cada opción debe terminar con dos puntos, ya que cada opción tiene su propio bloque de código Ren'Py, que se ejecuta cuando se selecciona esa opción."
 
 # game/tutorial_quickstart.rpy:534
 translate spanish choice1_done_59cac95d:
 
     # e "Here, each block jumps to a label. While you could put small amounts of Ren'Py code inside a menu label, it's probably good practice to usually jump to a bigger block of code."
-    e ""
+    e "Aquí, cada bloque salta(jump) a una label. Si bien puede colocar pequeñas cantidades de código Ren'Py dentro de una etiqueta de menú, probablemente sea una buena práctica saltar a un bloque de código más grande."
 
 # game/tutorial_quickstart.rpy:536
 translate spanish choice1_done_2851a313:
 
     # e "Scrolling down past the menu, you can see the labels that the menu jumps to. There are three labels here, named choice1_yes, choice1_no, and choice1_done."
-    e ""
+    e "Desplazándose hacia abajo más allá del menú, puede ver las labels a las que salta el menú. Aquí hay tres labels, denominadas choice1_yes, choice1_no y choice1_done."
 
 # game/tutorial_quickstart.rpy:538
 translate spanish choice1_done_ff761b03:
 
     # e "When the first menu choice is picked, we jump to the choice1_yes, which runs two lines of script before jumping to choice1_done."
-    e ""
+    e "Cuando se selecciona la primera opción de menú, saltamos a choice1_yes, que ejecuta dos líneas de script antes de saltar a la choice1_done."
 
 # game/tutorial_quickstart.rpy:540
 translate spanish choice1_done_664fe702:
 
     # e "Similarly, picking the second choice jumps us to choice1_no, which also runs two lines of script."
-    e ""
+    e "De manera similar, elegir la segunda opción nos lleva a choice1_no, que también ejecuta dos líneas de script."
 
 # game/tutorial_quickstart.rpy:542
 translate spanish choice1_done_31d12b1e:
 
     # e "The lines beginning with the dollar sign are lines of python code, which are used to set a flag based on the user's choice."
-    e ""
+    e "Las líneas que comienzan con el signo de dólar son líneas de código Python, que se utilizan para establecer una flag en función de la elección del usuario."
 
 # game/tutorial_quickstart.rpy:544
 translate spanish choice1_done_88398d3e:
 
     # e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag, so the game can remember the user's choices."
-    e ""
+    e "La flag se llama menu_flag y se establece en True o False según la elección del usuario. La sentencia if se puede usar para probar una flag, para que el juego pueda recordar las elecciones del usuario."
 
 # game/tutorial_quickstart.rpy:549
 translate spanish choice1_done_2828dbfc:
 
     # e "For example, I remember that you plan to use menus in your game."
-    e ""
+    e "Por ejemplo, recuerdo que planeas usar menús en tu juego."
 
 # game/tutorial_quickstart.rpy:553
 translate spanish choice1_done_503786e4:
 
     # e "For example, I remember that you're planning to make a kinetic novel, without menus."
-    e ""
+    e "Por ejemplo, recuerdo que planeas hacer una novela cinética, sin menús."
 
 # game/tutorial_quickstart.rpy:555
 translate spanish choice1_done_819e234a:
 
     # e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
-    e ""
+    e "Aquí hay un ejemplo que muestra cómo podemos probar una flag y hacer cosas diferentes si es verdad o no."
 
 # game/tutorial_quickstart.rpy:559
 translate spanish choice1_done_461e6a59:
 
     # e "Finally, this shows how you can show dialogue and menus at the same time. Understand?" nointeract
-    e "" nointeract
+    e "Finalmente, esto muestra cómo puedes mostrar diálogos y menús al mismo tiempo. ¿Entender?" nointeract
 
 # game/tutorial_quickstart.rpy:564
 translate spanish choice1_done_a32e30fd:
 
     # e "Great."
-    e ""
+    e "Genial."
 
 # game/tutorial_quickstart.rpy:568
 translate spanish choice1_done_fbd1dbc1:
 
     # e "If you look at the example, before the first choice, there's an indented say statement."
-    e ""
+    e "Si nos fijamos en el ejemplo, antes de la primera opción, hay una declaración con sangría."
 
 # game/tutorial_quickstart.rpy:574
 translate spanish menu3_done_47fa2268:
 
     # e "Although we won't demonstrate it here, Ren'Py supports making decisions based on a combinations of points, flags, and other factors."
-    e ""
+    e "Aunque no lo demostraremos aquí, Ren'Py admite la toma de decisiones basadas en una combinación de puntos, flags y otros factores."
 
 # game/tutorial_quickstart.rpy:576
 translate spanish menu3_done_826a600b:
 
     # e "One of Ren'Py's big advantages is the flexibility using a scripting language like Python provides us. It lets us easily scale from kinetic novels to complex simulation games."
-    e ""
+    e "Una de las grandes ventajas de Ren'Py es la flexibilidad que ofrece el uso de un lenguajes de scripting como Python. Nos permite escalar fácilmente de novelas cinéticas a juegos de simulación complejos."
 
 # game/tutorial_quickstart.rpy:585
 translate spanish tutorial_input_066611c5:
 
     # e "Some games might prompt the player for input."
-    e ""
+    e "Algunos juegos pueden pedirle al jugador una entrada."
 
 # game/tutorial_quickstart.rpy:599
 translate spanish tutorial_input_dc3b4560:
 
     # e "That's done with Python, and especially the renpy.input function. The first line of this example prompts the player for some texts, and sticks it in the name variable."
-    e ""
+    e "Eso se hace con Python, y especialmente con la función renpy.input. La primera línea de este ejemplo solicita al jugador algunos textos y lo pega en la variable de nombre."
 
 # game/tutorial_quickstart.rpy:601
 translate spanish tutorial_input_c88b3f4e:
 
     # e "Often times, you'll want to clean the name up before you use it. The last line does that, by calling the strip method to remove whitespace, and replacing the name with a default if it's missing."
-    e ""
+    e "Muchas veces, querrá limpiar el nombre antes de usarlo. La última línea hace eso, llamando al método strip para eliminar los espacios en blanco, y reemplazando el nombre con un valor predeterminado si falta."
 
 # game/tutorial_quickstart.rpy:605
 translate spanish tutorial_input_1236e9da:
 
     # e "To interpolate a variable, write it in square brackets. Isn't that right, [name]?"
-    e ""
+    e "Para interpolar una variable, escríbala entre corchetes. ¿No es correcto, [name]?"
 
 # game/tutorial_quickstart.rpy:609
 translate spanish tutorial_input_c1f7a808:
 
     # e "Variable names can also be shown in character names. To do that, just include the variable in square brackets in the character's name. Got it?"
-    e ""
+    e "Los nombres de variables también se pueden mostrar en nombres de personajes. Para hacer eso, simplemente incluya la variable entre corchetes en el nombre del personaje. ¿Entendido?"
 
 # game/tutorial_quickstart.rpy:612
 translate spanish tutorial_input_f7757a8e:
 
     # g "I think I do."
-    g ""
+    g "Creo que sí."
 
 # game/tutorial_quickstart.rpy:619
 translate spanish tutorial_input_0548d3e2:
 
     # e "Variable interpolation also works with other variables. Here, the answer is [answer] and the flag is [flag]."
-    e ""
+    e "La interpolación de variables también funciona con otras variables. Aquí, la respuesta es [answer] y la flag es [flag]."
 
 translate spanish strings:
 
