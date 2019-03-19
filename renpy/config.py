@@ -942,6 +942,12 @@ allow_duplicate_labels = False
 # A map of font transform name to font transform function.
 font_transforms = { }
 
+# A scaling factor that is applied to a truetype font.
+ftfont_scale = { }
+
+# This is used to scale the ascent and descent of a font.
+ftfont_vertical_extent_scale = { }
+
 
 def say_attribute_transition_callback(tag, mode):
     """

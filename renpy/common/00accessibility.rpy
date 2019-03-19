@@ -41,5 +41,9 @@ init -1500 python hide:
 
     config.font_transforms["opendyslexic"] = opendyslexic
 
+    config.ftfont_scale["OpenDyslexic3-Regular.ttf"] = .87
+    config.ftfont_vertical_extent_scale["OpenDyslexic3-Regular.ttf"] = .66
+
+
 style _default:
     line_leading 0

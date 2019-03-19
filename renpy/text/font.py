@@ -635,7 +635,7 @@ def load_face(fn):
     if font_file is None:
         raise Exception("Could not find font {0!r}.".format(orig_fn))
 
-    rv = ftfont.FTFace(font_file, index)  # @UndefinedVariable
+    rv = ftfont.FTFace(font_file, index, orig_fn)  # @UndefinedVariable
 
     face_cache[orig_fn] = rv
 
