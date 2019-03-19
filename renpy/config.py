@@ -939,6 +939,9 @@ auto_clear_screenshot = True
 # Should Ren'Py allow duplicate labels.
 allow_duplicate_labels = False
 
+# A map of font transform name to font transform function.
+font_transforms = { }
+
 
 def say_attribute_transition_callback(tag, mode):
     """

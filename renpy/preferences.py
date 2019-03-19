@@ -153,6 +153,9 @@ Preference("gl_framerate", None, (int, type(None)))
 # Do we allow tearing?
 Preference("gl_tearing", False)
 
+# The font transformation used.
+Preference("font_transform", None, (type(None), basestring))
+
 
 class Preferences(renpy.object.Object):
     """
