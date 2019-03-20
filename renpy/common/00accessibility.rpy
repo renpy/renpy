@@ -44,6 +44,7 @@ init -1500 python hide:
     config.ftfont_scale["OpenDyslexic3-Regular.ttf"] = .87
     config.ftfont_vertical_extent_scale["OpenDyslexic3-Regular.ttf"] = .66
 
+    def dejavusans(f):
+        return "DejaVuSans.ttf"
 
-style _default:
-    line_leading 0
+    config.font_transforms["dejavusans"] = dejavusans
