@@ -1084,7 +1084,7 @@ class DetRandom(random.Random):
         Resets the RNG, removing all of the pushbacked numbers.
         """
 
-        self.stack = [ ]
+        del self.stack[:]
 
     def Random(self, seed=None):
         """
@@ -1237,7 +1237,8 @@ class Rollback(renpy.object.Object):
                     print("Removing unreachable:", o, file=renpy.log.real_stdout)
                     pass
 
-        self.objects = new_objects
+        del self.objects[:]
+        self.objects.extend(new_objects)
 
         return True
 
@@ -1338,7 +1339,7 @@ class RollbackLog(renpy.object.Object):
         self.did_interaction = True
 
     def after_setstate(self):
-        self.mutated = { }
+        self.mutated.clear()
         self.rolled_forward = False
 
     def after_upgrade(self, version):
@@ -1401,8 +1402,8 @@ class RollbackLog(renpy.object.Object):
             begin_stores()
 
         # If the log is too long, prune it.
-        if len(self.log) > renpy.config.rollback_length:
-            self.log = self.log[-renpy.config.rollback_length:]
+        while len(self.log) > renpy.config.rollback_length:
+            self.log.pop()
 
         # check for the end of fixed rollback
         if self.log and self.log[-1] == self.current:
@@ -1420,7 +1421,7 @@ class RollbackLog(renpy.object.Object):
 
         self.log.append(self.current)
 
-        self.mutated = { }
+        self.mutated.clear()
 
         # Flag a mutation as having happened. This is used by the
         # save code.
@@ -1460,7 +1461,7 @@ class RollbackLog(renpy.object.Object):
 
         for _i in xrange(4):
 
-            self.current.objects = [ ]
+            del self.current.objects[:]
 
             try:
                 for _k, v in self.mutated.iteritems():
@@ -1582,7 +1583,7 @@ class RollbackLog(renpy.object.Object):
                 self.forward.pop(0)
             else:
                 self.current.forward = data
-                self.forward = [ ]
+                del self.forward[:]
 
         elif data is not None:
             if self.forward:
@@ -1596,7 +1597,7 @@ class RollbackLog(renpy.object.Object):
                     ):
                     self.forward.pop(0)
                 else:
-                    self.forward = [ ]
+                    del self.forward[:]
 
             # Log the data in case we roll back again.
             self.current.forward = data
@@ -1619,7 +1620,7 @@ class RollbackLog(renpy.object.Object):
         renpy.game.context().force_checkpoint = True
 
         if purge:
-            self.log = [ ]
+            del self.log[:]
 
     def retain_after_load(self):
         """
@@ -1716,7 +1717,7 @@ class RollbackLog(renpy.object.Object):
             print("Can't find a place to rollback to. Not rolling back.")
 
             revlog.reverse()
-            self.log = self.log + revlog
+            self.log.extend(revlog)
             return
 
         force_checkpoint = False
@@ -1783,7 +1784,7 @@ class RollbackLog(renpy.object.Object):
         # If necessary, reset the RNG.
         if force:
             rng.reset()
-            self.forward = [ ]
+            del self.forward[:]
 
         # Flag that we're in the transition immediately after a rollback.
         renpy.game.after_rollback = abnormal
