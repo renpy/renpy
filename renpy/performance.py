@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -108,7 +108,7 @@ def analyze():
             dt[1],
             dt[2],
             dt[3],
-            event.format(*args),
+            event.format(*args).replace("%", "%%"),
             )
         s = s.encode("utf-8")
 

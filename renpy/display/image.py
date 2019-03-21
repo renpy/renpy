@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -598,6 +598,9 @@ class DynamicImage(renpy.display.core.Displayable):
         if self.name != o.name:
             return False
 
+        if self._uses_scope and (self.target != o.target):
+            return False
+
         return True
 
     def _target(self):
@@ -786,6 +789,9 @@ class ShownImageInfo(renpy.object.Object):
         layer.
         """
 
+        if layer is None:
+            layer = renpy.config.tag_layer.get(tag, "master")
+
         return self.attributes.get((layer, tag), default)
 
     def showing(self, layer, name, exact=False):
@@ -796,6 +802,9 @@ class ShownImageInfo(renpy.object.Object):
 
         tag = name[0]
         rest = name[1:]
+
+        if layer is None:
+            layer = renpy.config.tag_layer.get(tag, "master")
 
         if (layer, tag) not in self.shown:
             return None
@@ -855,6 +864,9 @@ class ShownImageInfo(renpy.object.Object):
         tag = name[0]
         rest = name[1:]
 
+        if layer is None:
+            layer = renpy.config.tag_layer.get(tag, "master")
+
         self.attributes[layer, tag] = rest
 
         if show:
@@ -862,6 +874,9 @@ class ShownImageInfo(renpy.object.Object):
 
     def predict_hide(self, layer, name):
         tag = name[0]
+
+        if layer is None:
+            layer = renpy.config.tag_layer.get(tag, "master")
 
         if (layer, tag) in self.attributes:
             del self.attributes[layer, tag]
@@ -876,6 +891,9 @@ class ShownImageInfo(renpy.object.Object):
         with that name couldn't be found.
         """
 
+        if layer is None:
+            layer = renpy.config.tag_layer.get(tag, "master")
+
         # If the name matches one that exactly exists, return it.
         if (name in images) and not (wanted or remove):
             ca = getattr(images[name], "_choose_attributes", None)
@@ -885,17 +903,18 @@ class ShownImageInfo(renpy.object.Object):
 
         nametag = name[0]
 
-        # The set of attributes a matching image must have.
-        required = set(name[1:])
-
         # The set of attributes a matching image may have.
         optional = set(wanted) | set(self.attributes.get((layer, tag), [ ]))
 
-        # Deal with banned attributes..
+        # The set of attributes a matching image must have/not have.
+        # Evaluated in order.
+        required = set()
         for i in name[1:]:
             if i[0] == "-":
                 optional.discard(i[1:])
-                required.discard(i)
+                required.discard(i[1:])
+            else:
+                required.add(i)
 
         for i in remove:
             optional.discard(i)

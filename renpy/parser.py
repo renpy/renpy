@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -722,7 +722,7 @@ class Lexer(object):
 
     def string(self):
         """
-        Lexes a string, and returns the string to the user, or none if
+        Lexes a string, and returns the string to the user, or None if
         no string could be found. This also takes care of expanding
         escapes and collapsing whitespace.
 
@@ -1190,7 +1190,7 @@ class Lexer(object):
         if not text:
             return None
 
-        return renpy.ast.PyExpr(self.text[start:self.pos].strip(), self.filename, self.number)
+        return renpy.ast.PyExpr(text, self.filename, self.number)
 
     def comma_expression(self):
         """
@@ -1303,6 +1303,14 @@ class Lexer(object):
 
         process(self.subblock, '')
         return ''.join(rv)
+
+    def arguments(self):
+        """
+        Returns an Argument object if there is a list of arguments, or None
+        there is not one.
+        """
+
+        return parse_arguments(self)
 
 
 def parse_image_name(l, string=False, nodash=False):
@@ -1462,7 +1470,7 @@ def parse_with(l, node):
              ast.With(loc, expr) ]
 
 
-def parse_menu(stmtl, loc):
+def parse_menu(stmtl, loc, arguments):
 
     l = stmtl.subblock_lexer()
 
@@ -1479,6 +1487,7 @@ def parse_menu(stmtl, loc):
 
     # Tuples of (label, condition, block)
     items = [ ]
+    item_arguments = [ ]
 
     l.advance()
 
@@ -1546,6 +1555,7 @@ def parse_menu(stmtl, loc):
                 has_caption = True
 
             items.append((label, "True", None))
+            item_arguments.append(None)
             l.advance()
 
             continue
@@ -1554,6 +1564,8 @@ def parse_menu(stmtl, loc):
         has_choice = True
 
         condition = "True"
+
+        item_arguments.append(parse_arguments(l))
 
         if l.keyword('if'):
             condition = l.require(l.python_expression)
@@ -1574,7 +1586,7 @@ def parse_menu(stmtl, loc):
     if has_say:
         rv.append(ast.Say(loc, say_who, say_what, None, interact=False))
 
-    rv.append(ast.Menu(loc, items, set, with_, has_say or has_caption))
+    rv.append(ast.Menu(loc, items, set, with_, has_say or has_caption, arguments, item_arguments))
 
     return rv
 
@@ -1833,10 +1845,13 @@ def menu_statement(l, loc):
     l.expect_block('menu statement')
     label = l.label_name_declare()
     l.set_global_label(label)
+
+    arguments = parse_arguments(l)
+
     l.require(':')
     l.expect_eol()
 
-    menu = parse_menu(l, loc)
+    menu = parse_menu(l, loc, arguments)
 
     l.advance()
 
@@ -2548,7 +2563,7 @@ def style_statement(l, loc):
     return rv
 
 
-def finish_say(l, loc, who, what, attributes=None):
+def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None):
 
     if what is None:
         return None
@@ -2588,12 +2603,38 @@ def finish_say(l, loc, who, what, attributes=None):
             if i == "{clear}":
                 rv.append(ast.UserStatement(loc, "nvl clear", [ ]))
             else:
-                rv.append(ast.Say(loc, who, i, with_, attributes=attributes, interact=interact, arguments=arguments))
+                rv.append(ast.Say(loc, who, i, with_, attributes=attributes, interact=interact, arguments=arguments, temporary_attributes=temporary_attributes))
 
         return rv
 
     else:
-        return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact, arguments=arguments)
+        return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact, arguments=arguments, temporary_attributes=temporary_attributes)
+
+
+def say_attributes(l):
+    """
+    Returns a list of say attributes, or None if there aren't any.
+    """
+
+    attributes = [ ]
+    while True:
+        prefix = l.match(r'-')
+        if not prefix:
+            prefix = ""
+
+        component = l.image_name_component()
+
+        if component is None:
+            break
+
+        attributes.append(prefix + component)
+
+    if attributes:
+        attributes = tuple(attributes)
+    else:
+        attributes = None
+
+    return attributes
 
 
 @statement("")
@@ -2619,29 +2660,18 @@ def say_statement(l, loc):
     # Try for a two-argument say statement.
     who = l.say_expression()
 
-    attributes = [ ]
-    while True:
-        prefix = l.match(r'-')
-        if not prefix:
-            prefix = ""
+    attributes = say_attributes(l)
 
-        component = l.image_name_component()
-
-        if component is None:
-            break
-
-        attributes.append(prefix + component)
-
-    if attributes:
-        attributes = tuple(attributes)
+    if l.match(r'\@'):
+        temporary_attributes = say_attributes(l)
     else:
-        attributes = None
+        temporary_attributes = None
 
     what = l.triple_string() or l.string()
 
     if (who is not None) and (what is not None):
 
-        rv = finish_say(l, loc, who, what, attributes)
+        rv = finish_say(l, loc, who, what, attributes, temporary_attributes)
 
         l.expect_eol()
         l.expect_noblock('say statement')
@@ -2721,7 +2751,7 @@ def parse(fn, filedata=None, linenumber=1):
     try:
         lines = list_logical_lines(fn, filedata, linenumber)
         nested = group_logical_lines(lines)
-    except ParseError, e:
+    except ParseError as e:
         parse_errors.append(e.message)
         return None
 

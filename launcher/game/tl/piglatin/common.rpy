@@ -297,43 +297,43 @@ translate piglatin strings:
     old "Audio Filename:"
     new "Udioaay Ilenamefay:"
 
-    # 00gui.rpy:370
+    # 00gui.rpy:371
     old "Are you sure?"
     new "Reaay ouyay uresay?"
 
-    # 00gui.rpy:371
+    # 00gui.rpy:372
     old "Are you sure you want to delete this save?"
     new "Reaay ouyay uresay ouyay antway otay eleteday histay avesay?"
 
-    # 00gui.rpy:372
+    # 00gui.rpy:373
     old "Are you sure you want to overwrite your save?"
     new "Reaay ouyay uresay ouyay antway otay overwriteay ouryay avesay?"
 
-    # 00gui.rpy:373
+    # 00gui.rpy:374
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Oadinglay illway oselay unsaveday rogresspay.\nReaay ouyay uresay ouyay antway otay oday histay?"
 
-    # 00gui.rpy:374
+    # 00gui.rpy:375
     old "Are you sure you want to quit?"
     new "Reaay ouyay uresay ouyay antway otay uitqay?"
 
-    # 00gui.rpy:375
+    # 00gui.rpy:376
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Reaay ouyay uresay ouyay antway otay eturnray otay hetay ainmay enumay?\nHistay illway oselay unsaveday rogresspay."
 
-    # 00gui.rpy:376
+    # 00gui.rpy:377
     old "Are you sure you want to end the replay?"
     new "Reaay ouyay uresay ouyay antway otay enday hetay eplayray?"
 
-    # 00gui.rpy:377
+    # 00gui.rpy:378
     old "Are you sure you want to begin skipping?"
     new "Reaay ouyay uresay ouyay antway otay eginbay kippingsay?"
 
-    # 00gui.rpy:378
+    # 00gui.rpy:379
     old "Are you sure you want to skip to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay otay hetay extnay oicechay?"
 
-    # 00gui.rpy:379
+    # 00gui.rpy:380
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay unseenay ialogueday otay hetay extnay oicechay?"
 
@@ -345,59 +345,59 @@ translate piglatin strings:
     old "Saved screenshot as %s."
     new "Avedsay creenshotsay asay %say."
 
-    # 00library.rpy:146
+    # 00library.rpy:168
     old "Self-voicing disabled."
     new "Elfsay-oicingvay isabledday."
 
-    # 00library.rpy:147
+    # 00library.rpy:169
     old "Clipboard voicing enabled. "
     new "Lipboardcay oicingvay enableday. "
 
-    # 00library.rpy:148
+    # 00library.rpy:170
     old "Self-voicing enabled. "
     new "Elfsay-oicingvay enableday. "
 
-    # 00library.rpy:150
+    # 00library.rpy:172
     old "bar"
     new "arbay"
 
-    # 00library.rpy:151
+    # 00library.rpy:173
     old "selected"
     new "electedsay"
 
-    # 00library.rpy:152
+    # 00library.rpy:174
     old "viewport"
     new "iewportvay"
 
-    # 00library.rpy:153
+    # 00library.rpy:175
     old "horizontal scroll"
     new "orizontalhay crollsay"
 
-    # 00library.rpy:154
+    # 00library.rpy:176
     old "vertical scroll"
     new "erticalvay crollsay"
 
-    # 00library.rpy:155
+    # 00library.rpy:177
     old "activate"
     new "activateay"
 
-    # 00library.rpy:156
+    # 00library.rpy:178
     old "deactivate"
     new "eactivateday"
 
-    # 00library.rpy:157
+    # 00library.rpy:179
     old "increase"
     new "increaseay"
 
-    # 00library.rpy:158
+    # 00library.rpy:180
     old "decrease"
     new "ecreaseday"
 
-    # 00library.rpy:193
+    # 00library.rpy:215
     old "Skip Mode"
     new "Kipsay Odemay"
 
-    # 00library.rpy:279
+    # 00library.rpy:301
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Histay rogrampay ontainscay eefray oftwaresay underay aay umbernay ofay icenseslay, includingay hetay Itmay Icenselay anday Nugay Esserlay Eneralgay Ublicpay Icenselay. Aay ompletecay istlay ofay oftwaresay, includingay inkslay otay ullfay ourcesay odecay, ancay ebay oundfay {a=https://www.renpy.org/l/license}erehay{/a}."
 
@@ -633,23 +633,23 @@ translate piglatin strings:
     old "The updates were cancelled."
     new "Hetay updatesay ereway ancelledcay."
 
-    # 00gallery.rpy:585
+    # 00gallery.rpy:587
     old "Image [index] of [count] locked."
     new "Mageiay [index] ofay [count] ockedlay."
 
-    # 00gallery.rpy:605
+    # 00gallery.rpy:607
     old "prev"
     new "revpay"
 
-    # 00gallery.rpy:606
+    # 00gallery.rpy:608
     old "next"
     new "extnay"
 
-    # 00gallery.rpy:607
+    # 00gallery.rpy:609
     old "slideshow"
     new "ideshowslay"
 
-    # 00gallery.rpy:608
+    # 00gallery.rpy:610
     old "return"
     new "eturnray"
 

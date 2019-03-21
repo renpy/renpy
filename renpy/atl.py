@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -250,6 +250,9 @@ class Context(object):
             return False
 
         return self.context == other.context
+
+    def __ne__(self, other):
+        return not (self == other)
 
 # This is intended to be subclassed by ATLTransform. It takes care of
 # managing ATL execution, which allows ATLTransform itself to not care

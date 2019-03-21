@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1160,6 +1160,49 @@ class Recolor(ImageBase):
         return self.image.predict_files()
 
 
+class Blur(ImageBase):
+    """
+    :doc: im_im
+
+    An image manipulator that blurs the image manipulator `im` using
+    an elliptical kernel described by `xrad` and optionally `yrad`.
+
+    If `yrad` is None, it will take the value of `xrad` resulting in
+    a circular kernel being used.
+
+    ::
+
+        image logo blurred = im.Blur("logo.png", 1.5)
+    """
+
+    def __init__(self, im, xrad, yrad=None, **properties):
+
+        im = image(im)
+
+        super(Blur, self).__init__(im, xrad, yrad, **properties)
+
+        self.image = im
+        self.rx = xrad
+        self.ry = xrad if yrad is None else yrad
+
+    def get_hash(self):
+        return self.image.get_hash()
+
+    def load(self):
+
+        surf = cache.get(self.image)
+
+        ws = renpy.display.pgrender.surface(surf.get_size(), True)
+        rv = renpy.display.pgrender.surface(surf.get_size(), True)
+
+        renpy.display.module.blur(surf, ws, rv, self.rx, self.ry)
+
+        return rv
+
+    def predict_files(self):
+        return self.image.predict_files()
+
+
 class MatrixColor(ImageBase):
     """
     :doc: im_matrixcolor
@@ -1713,6 +1756,7 @@ def image(arg, loose=False, **properties):
 
 def load_image(im):
     """
+    :name: renpy.load_image
     :doc: udd_utility
 
     Loads the image manipulator `im` using the image cache, and returns a render.
@@ -1723,6 +1767,7 @@ def load_image(im):
 
 def load_surface(im):
     """
+    :name: renpy.load_surface
     :doc: udd_utility
 
     Loads the image manipulator `im` using the image cache, and returns a pygame Surface.

@@ -418,7 +418,7 @@ init -1500 python in _console:
                     l.advance()
 
                     # Command can be None, but that's okay, since the lookup will fail.
-                    command = l.name()
+                    command = l.word()
 
                     command_fn = config.console_commands.get(command, None)
 
@@ -763,7 +763,7 @@ screen _console:
                 else:
                     text "... " style "_console_prompt"
 
-                input default default style "_console_input_text" exclude ""
+                input default default style "_console_input_text" exclude "" copypaste True
 
 
     key "game_menu" action Jump("_console_return")

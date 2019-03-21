@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -965,3 +965,15 @@ def tweak_glyph_spacing(list glyphs, list lines, double dx, double dy, double w,
         end += int(dy * end / h)
 
         l.height = end - l.y
+
+def offset_glyphs(list glyphs, short x, short y):
+    cdef Glyph g
+
+    if x == 0 and y == 0:
+        return
+
+    for g in glyphs:
+        g.x += x
+        g.y += y
+
+

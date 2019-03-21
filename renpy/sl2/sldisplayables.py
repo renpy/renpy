@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -163,11 +163,13 @@ Keyword("default")
 Keyword("length")
 Keyword("allow")
 Keyword("exclude")
+Keyword("copypaste")
 Keyword("prefix")
 Keyword("suffix")
 Keyword("changed")
 Keyword("pixel_width")
 Keyword("value")
+Style("caret")
 add(text_properties)
 
 # Omit imagemap_compat for being too high level (and obsolete).
@@ -435,12 +437,13 @@ def sl2add(d, replaces=None, scope=None, **kwargs):
 
     Transform = renpy.display.motion.Transform
 
-    if kwargs:
-        rv = Transform(child=d, **kwargs)
-
     if (replaces is not None) and isinstance(rv, Transform):
         rv.take_state(replaces)
         rv.take_execution_state(replaces)
+
+    if kwargs:
+        rv = Transform(child=d, **kwargs)
+        rv._main = d
 
     return rv
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -317,7 +317,7 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
                 "-o",
                 c_fn])
 
-        except subprocess.CalledProcessError, e:
+        except subprocess.CalledProcessError as e:
             print()
             print(str(e))
             print()

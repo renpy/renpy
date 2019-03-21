@@ -82,7 +82,7 @@ overlay
 
 Additional layers can be defined by updating :var:`config.layers`, and
 the various other layer-related config variables. Using
-:func:`renpy.layer_at_list`, one or more transforms can be applied to
+:func:`renpy.show_layer_at`, one or more transforms can be applied to
 a layer.
 
 Defining Images

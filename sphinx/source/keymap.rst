@@ -47,11 +47,14 @@ ctrl
 shift
     Matches when the Shift key is pressed.
 noshift
-    Matches when the Shift key is not pressed. A K\_ keysym ignores the state
-    of the Shift key when matching.
+    Matches when the Shift key is not pressed.
 repeat
     Matches when the key is a repeat due to the key being held down. Keysyms
     without this prefix do not match repeats.
+keydown
+    Matches when the key is being pressed down (the default).
+keyup
+    Matches when the key is being released.
 
 For example, the keysym "shift_alt_K_F5" will match the F5 key being pressed
 while Shift and Alt are held down.
@@ -125,6 +128,8 @@ as of version 6.99 is as follows::
         input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
         input_home = [ 'K_HOME' ],
         input_end = [ 'K_END' ],
+        input_copy = [ 'ctrl_K_INSERT', 'ctrl_K_c' ],
+        input_paste = [ 'shift_K_INSERT', 'ctrl_K_v' ],
 
         # Viewport.
         viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],

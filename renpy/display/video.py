@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -113,7 +113,7 @@ def early_interact():
 def interact():
     """
     This is called each time the screen is drawn, and should return True
-    if the movie should display fulscreen.
+    if the movie should display fullscreen.
     """
 
     global fullscreen
@@ -207,10 +207,10 @@ def render_movie(channel, width, height):
 
 def default_play_callback(old, new):  # @UnusedVariable
 
-    renpy.audio.music.play(new._play, channel=new.channel, loop=True, synchro_start=True)
+    renpy.audio.music.play(new._play, channel=new.channel, loop=new.loop, synchro_start=True)
 
     if new.mask:
-        renpy.audio.music.play(new.mask, channel=new.mask_channel, loop=True, synchro_start=True)
+        renpy.audio.music.play(new.mask, channel=new.mask_channel, loop=new.loop, synchro_start=True)
 
 
 class Movie(renpy.display.core.Displayable):
@@ -262,12 +262,17 @@ class Movie(renpy.display.core.Displayable):
         defaults to `channel`\ _mask. (For example, if `channel` is "sprite",
         `mask_channel` defaults to "sprite_mask".)
 
+    `start_image`
+        An image that is displayed when playback has started, but the
+        first frame has not yet been decoded.
+
     `image`
         An image that is displayed when `play` has been given, but the
         file it refers to does not exist. (For example, this can be used
         to create a slimmed-down mobile version that does not use movie
         sprites.) Users can also choose to fall back to this image as a
-        preference if video is too taxing for their system.
+        preference if video is too taxing for their system. The image will
+        also be used if the video plays, and then the movie ends.
 
     ``play_callback``
         If not None, a function that's used to start the movies playing.
@@ -280,7 +285,7 @@ class Movie(renpy.display.core.Displayable):
             The new Movie object.
 
         A movie object has the `play` parameter available as ``_play``,
-        while the ``channel``, ``mask``, and ``mask_channel`` fields
+        while the ``channel``, ``loop``, ``mask``, and ``mask_channel`` fields
         correspond to the given parameters.
 
         Generally, this will want to use :func:`renpy.music.play` to start
@@ -289,10 +294,15 @@ class Movie(renpy.display.core.Displayable):
 
             def play_callback(old, new):
 
-                renpy.music.play(new._play, channel=new.channel, loop=True, synchro_start=True)
+                renpy.music.play(new._play, channel=new.channel, loop=new.loop, synchro_start=True)
 
                 if new.mask:
-                    renpy.music.play(new.mask, channel=new.mask_channel, loop=True, synchro_start=True)
+                    renpy.music.play(new.mask, channel=new.mask_channel, loop=new.loop, synchro_start=True)
+
+        `loop`
+            If False, the movie will not loop. If `image` is defined, the image
+            will be displayed when the movie ends. Otherwise, the movie will
+            become transparent.
 
 
 
@@ -308,8 +318,11 @@ class Movie(renpy.display.core.Displayable):
     side_mask = False
 
     image = None
+    start_image = None
 
     play_callback = None
+
+    loop = True
 
     def ensure_channel(self, name):
 
@@ -326,7 +339,7 @@ class Movie(renpy.display.core.Displayable):
 
         renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop)
 
-    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, **properties):
+    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, **properties):
         super(Movie, self).__init__(**properties)
 
         global auto_channel_serial
@@ -337,6 +350,7 @@ class Movie(renpy.display.core.Displayable):
         self.size = size
         self.channel = channel
         self._play = play
+        self.loop = loop
 
         if side_mask:
             mask = None
@@ -356,6 +370,7 @@ class Movie(renpy.display.core.Displayable):
         self.ensure_channel(self.mask_channel)
 
         self.image = renpy.easy.displayable_or_none(image)
+        self.start_image = renpy.easy.displayable_or_none(start_image)
 
         self.play_callback = play_callback
 
@@ -364,19 +379,7 @@ class Movie(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
-        if (self.image is not None) and (self._play is not None):
-            # Checks if the given movie is loadable or if the user prefers images only
-            if (not renpy.loader.loadable(self._play)) or (renpy.game.preferences.video_image_fallback is True):
-                surf = renpy.display.render.render(self.image, width, height, st, at)
-
-                w, h = surf.get_size()
-
-                rv = renpy.display.render.Render(w, h)
-                rv.blit(surf, (0, 0))
-
-                return rv
-
-        if self._play:
+        if self._play and not (renpy.game.preferences.video_image_fallback is True):
             channel_movie[self.channel] = self
 
             if st == 0:
@@ -384,15 +387,34 @@ class Movie(renpy.display.core.Displayable):
 
         playing = renpy.audio.music.get_playing(self.channel)
 
+        not_playing = not playing
+
+        if self.channel in reset_channels:
+            not_playing = False
+
+        if (self.image is not None) and not_playing:
+            surf = renpy.display.render.render(self.image, width, height, st, at)
+            w, h = surf.get_size()
+            rv = renpy.display.render.Render(w, h)
+            rv.blit(surf, (0, 0))
+
+            return rv
+
         if self.size is None:
 
             tex, _ = get_movie_texture(self.channel, self.mask_channel, self.side_mask)
 
-            if playing and (tex is not None):
+            if (not not_playing) and (tex is not None):
                 width, height = tex.get_size()
 
                 rv = renpy.display.render.Render(width, height)
                 rv.blit(tex, (0, 0))
+
+            elif (not not_playing) and (self.start_image is not None):
+                surf = renpy.display.render.render(self.start_image, width, height, st, at)
+                w, h = surf.get_size()
+                rv = renpy.display.render.Render(w, h)
+                rv.blit(surf, (0, 0))
 
             else:
                 rv = renpy.display.render.Render(0, 0)
@@ -446,6 +468,9 @@ class Movie(renpy.display.core.Displayable):
     def per_interact(self):
         displayable_channels[(self.channel, self.mask_channel)].append(self)
         renpy.display.render.redraw(self, 0)
+
+    def visit(self):
+        return [ self.image, self.start_image ]
 
 
 def playing():
@@ -520,7 +545,7 @@ def frequent():
 
         return False
 
-    elif fullscreen and not (renpy.mobile and renpy.config.hw_video):
+    elif fullscreen and not ((renpy.android or renpy.ios) and renpy.config.hw_video):
 
         c = renpy.audio.audio.get_channel("movie")
 

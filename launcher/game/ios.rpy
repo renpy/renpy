@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -58,6 +58,7 @@ init python:
 
     if RENIOS_PATH:
         import renios.create
+        import renios.image
 
     def IOSState():
         if not RENIOS_PATH:
@@ -119,6 +120,10 @@ init python:
         return os.path.join(persistent.xcode_projects_directory, xcode_name(p.name))
 
     def ios_create(p=None, gui=True):
+        project.current.update_dump(force=True)
+
+        name = project.current.dump.get("name", None)
+        version = project.current.dump.get("version", None)
 
         dest = xcode_project(p)
 
@@ -135,7 +140,7 @@ init python:
             os.rename(dest, backup)
 
         iface = MobileInterface("ios")
-        renios.create.create_project(iface, dest)
+        renios.create.create_project(iface, dest, name, version)
 
         ios_populate(p, gui=gui)
 
@@ -186,6 +191,15 @@ init python:
                     main_f.write(l)
 
         os.unlink(py_fn)
+
+        ios_image(p, "ios-icon.png", "Media.xcassets/AppIcon.appiconset", True)
+        ios_image(p, "ios-launchimage.png", "Media.xcassets/LaunchImage.launchimage", False)
+
+    def ios_image(p, source, destination, scale):
+        source = os.path.join(p.path, source)
+        destination = os.path.join(xcode_project(p), destination)
+
+        renios.image.generate(source, destination, scale)
 
 
     def launch_xcode():

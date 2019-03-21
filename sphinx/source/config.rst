@@ -160,6 +160,29 @@ These control transitions between various screens.
     If not None, a transition to use when the image is changed by a
     say statement with image attributes.
 
+.. var:: config.say_attribute_transition_callback = ...
+
+    This is a function that return a transition to apply and a layer to
+    apply it on
+
+    This should be a function that takes two arguments, the image tag
+    being shown, and a `mode` parameter that is one of:
+
+    * "permanent", for permanent attribute change (one that lasts longer
+      than the current say statement).
+    * "temporary", for a temporary attribute change (one that is restored
+      at the end of the current say statement).
+    * "restore", for when a temporary change is being restored.
+
+    This should return a 2-component tuple, consiting of:
+
+    * The transition to use, or None if no transition should occur.
+    * The layer the transition should be on, either a string or None. This is
+      almost always None.
+
+    The default implementation of this returns (config.say_attribute_transition,
+    config.say_attribute_transition_layer).
+
 .. var:: config.say_attribute_transition_layer = None
 
     If not None, this must be a string giving the name of a layer. (Almost always
@@ -544,6 +567,15 @@ Occasionally Used
 .. var:: config.main_menu_music = None
 
     If not None, a music file to play when at the main menu.
+
+.. var:: config.menu_arguments_callback = None
+
+    If not None, this should be a function that takes positional and/or
+    keyword arguments. It's called whenever a menu statement runs,
+    with the arguments to that menu statement.
+
+    This should return a pair, containing a tuple of positional arguments
+    (almost always empty), and a dictionary of keyword arguments.
 
 .. var:: config.menu_clear_layers = []
 
@@ -1004,8 +1036,8 @@ Rarely or Internally Used
 .. var:: config.help = "README.html"
 
     This controls the functionality of the help system invoked by the
-    help button on the main and game menus, or by pressing f1 or
-    command-?.
+    help button on the main and game menus, or by pressing F1 or
+    Command-?.
 
     If None, the help system is disabled and does not show up on
     menus.  If a string corresponding to a label found in the script,
@@ -1250,9 +1282,9 @@ Rarely or Internally Used
 
 .. var:: config.rollback_side_size = .2
 
-	If the rollback side is enabled, the fraction of of the screen on the
-	rollback side that, when clicked or touched, causes a rollback to
-	occur.
+    If the rollback side is enabled, the fraction of of the screen on the
+    rollback side that, when clicked or touched, causes a rollback to
+    occur.
 
 .. var:: config.say_allow_dismiss = None
 

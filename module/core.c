@@ -562,30 +562,114 @@ void linmap24_core(PyObject *pysrc,
     Py_END_ALLOW_THREADS
 }
 
+/*
+ * Helper function to describe averaging filters (AFs) needed to
+ * approximate a specific Gaussian. Takes a desired standard deviation
+ * and number of passes and produces lower and upper AF widths and the
+ * number of passes to perform with the lower AF width.
+ * ref: Peter Kovesi, "Fast Almost-Gaussian Filtering", 2010
+ *      section II; equations 3 and 5
+ *      https://www.peterkovesi.com/papers/FastGaussianSmoothing.pdf
+ */
+void blur_filters(float sigma, int n, int *wl, int *wu, int *m) {
+    *wl = (int) floor(sqrt(12 * sigma * sigma / n + 1));
+    if (*wl % 2 == 0) (*wl)--;
+    *wu = *wl + 2;
+    *m = (int) round(
+        (12 * sigma * sigma - n * *wl * *wl - 4 * n * *wl - 3 * n)
+        / (-4 * *wl - 4)
+    );
+}
 
-#if 0
+/*
+ * This expects pysrc, pywrk and pydst to be surfaces of the same size.
+ * It approximates a Gaussian blur using several box blurs. Box sizes
+ * are AF widths as described by blur_filters. Box blurs are performed
+ * using two passes of a one-dimensional blur, on the x and y axes
+ * respectively. The pywrk surface is used to hold intermediate results
+ * only and should not be treated as valid output.
+ * ref: Ivan Kutskir, "Fastest Gaussian Blur (in linear time)", 2013
+ *      http://blog.ivank.net/fastest-gaussian-blur.html
+ */
+void blur32_core(PyObject *pysrc,
+                 PyObject *pywrk,
+                 PyObject *pydst,
+                 float xrad,
+                 float yrad) {
 
-void xblur32_core(PyObject *pysrc,
-                  PyObject *pydst,
-                  int radius) {
+    int n = 3; // number of passes, no more than six
 
-    int i, x, y;
+    int xl, xu, xm;
+    int yl, yu, ym;
+
+    blur_filters(xrad, n, &xl, &xu, &xm);
+
+    if (xrad != yrad) {
+        blur_filters(yrad, n, &yl, &yu, &ym);
+    } else {
+        yl = xl; yu = xu; ym = xm;
+    }
+
+    for (int i = 0; i < n; i++) {
+        int xr = i < xm ? xl : xu;
+        linblur32_core(pysrc, pywrk, xr, 0);
+        int yr = i < ym ? yl : yu;
+        linblur32_core(pywrk, pydst, yr, 1);
+        pysrc = pydst;
+    }
+}
+
+void blur24_core(PyObject *pysrc,
+                 PyObject *pywrk,
+                 PyObject *pydst,
+                 float xrad,
+                 float yrad) {
+
+    int n = 3; // number of passes, no more than six
+
+    int xl, xu, xm;
+    int yl, yu, ym;
+
+    blur_filters(xrad, n, &xl, &xu, &xm);
+
+    if (xrad != yrad) {
+        blur_filters(yrad, n, &yl, &yu, &ym);
+    } else {
+        yl = xl; yu = xu; ym = xm;
+    }
+
+    for (int i = 0; i < n; i++) {
+        int xr = i < xm ? xl : xu;
+        linblur24_core(pysrc, pywrk, xr, 0);
+        int yr = i < ym ? yl : yu;
+        linblur24_core(pywrk, pydst, yr, 1);
+        pysrc = pydst;
+    }
+}
+
+/*
+ * This expects pysrc and pydst to be surfaces of the same size. It
+ * implements a linear time one-dimensional blur using accumulators,
+ * with a sample size of twice the radius plus one. It can operate in
+ * both the x and y axes.
+ */
+void linblur32_core(PyObject *pysrc,
+                    PyObject *pydst,
+                    int radius,
+                    int vertical) {
+
+    int c, r;
 
     SDL_Surface *src;
     SDL_Surface *dst;
 
-    Uint32 srcpitch, dstpitch;
-    Uint32 srcw, srch;
-    Uint32 dstw, dsth;
+    Uint32 rows, cols;
+    Uint32 incr, skip;
 
     unsigned char *srcpixels;
     unsigned char *dstpixels;
 
-    int count;
-
-    unsigned char *srcp;
     unsigned char *dstp;
-
 
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
@@ -594,25 +678,30 @@ void xblur32_core(PyObject *pysrc,
 
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
-    srcpitch = src->pitch;
-    dstpitch = dst->pitch;
-    srcw = src->w;
-    dstw = dst->w;
-    srch = src->h;
-    dsth = dst->h;
+
+    if (vertical) {
+        rows = dst->w;
+        skip = 4;
+        incr = dst->pitch - 4;
+        cols = dst->h;
+    } else {
+        rows = dst->h;
+        skip = dst->pitch;
+        incr = 0;
+        cols = dst->w;
+    }
 
     int divisor = radius * 2 + 1;
 
-    for (y = 0; y < dsth; y++) {
-
+    for (r = 0; r < rows; r++) {
         // The values of the pixels on the left and right ends of the
         // line.
         unsigned char lr, lg, lb, la;
         unsigned char rr, rg, rb, ra;
 
-        unsigned char *leader = srcpixels + y * srcpitch;
+        unsigned char *leader = srcpixels + r * skip;
         unsigned char *trailer = leader;
-        dstp = dstpixels + y * dstpitch;
+        dstp = dstpixels + r * skip;
 
         lr = *leader;
         lg = *(leader + 1);
@@ -624,25 +713,27 @@ void xblur32_core(PyObject *pysrc,
         int sumb = lb * radius;
         int suma = la * radius;
 
-
-        for (x = 0; x < radius + 0; x++) {
+        for (c = 0; c < radius; c++) {
             sumr += *leader++;
             sumg += *leader++;
             sumb += *leader++;
             suma += *leader++;
+            leader += incr;
         }
 
         // left side of the kernel is off of the screen.
-        for (x = 0; x < radius; x++) {
+        for (c = 0; c < radius; c++) {
             sumr += *leader++;
             sumg += *leader++;
             sumb += *leader++;
             suma += *leader++;
+            leader += incr;
 
             *dstp++ = sumr / divisor;
             *dstp++ = sumg / divisor;
             *dstp++ = sumb / divisor;
             *dstp++ = suma / divisor;
+            dstp += incr;
 
             sumr -= lr;
             sumg -= lg;
@@ -650,24 +741,27 @@ void xblur32_core(PyObject *pysrc,
             suma -= la;
         }
 
-        int end = srcw - radius - 1;
+        int end = cols - radius - 1;
 
         // The kernel is fully on the screen.
-        for (; x < end; x++) {
+        for (; c < end; c++) {
             sumr += *leader++;
             sumg += *leader++;
             sumb += *leader++;
             suma += *leader++;
+            leader += incr;
 
             *dstp++ = sumr / divisor;
             *dstp++ = sumg / divisor;
             *dstp++ = sumb / divisor;
             *dstp++ = suma / divisor;
+            dstp += incr;
 
             sumr -= *trailer++;
             sumg -= *trailer++;
             sumb -= *trailer++;
             suma -= *trailer++;
+            trailer += incr;
         }
 
         rr = *leader++;
@@ -676,7 +770,7 @@ void xblur32_core(PyObject *pysrc,
         ra = *leader++;
 
         // The kernel is off the right side of the screen.
-        for (; x < srcw; x++) {
+        for (; c < cols; c++) {
             sumr += rr;
             sumg += rg;
             sumb += rb;
@@ -686,19 +780,145 @@ void xblur32_core(PyObject *pysrc,
             *dstp++ = sumg / divisor;
             *dstp++ = sumb / divisor;
             *dstp++ = suma / divisor;
+            dstp += incr;
 
             sumr -= *trailer++;
             sumg -= *trailer++;
             sumb -= *trailer++;
             suma -= *trailer++;
+            trailer += incr;
         }
     }
 
     Py_END_ALLOW_THREADS
 }
 
-#endif
+void linblur24_core(PyObject *pysrc,
+                    PyObject *pydst,
+                    int radius,
+                    int vertical) {
 
+    int c, r;
+
+    SDL_Surface *src;
+    SDL_Surface *dst;
+
+    Uint32 rows, cols;
+    Uint32 incr, skip;
+
+    unsigned char *srcpixels;
+    unsigned char *dstpixels;
+
+    unsigned char *dstp;
+
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+
+    Py_BEGIN_ALLOW_THREADS
+
+    srcpixels = (unsigned char *) src->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+
+    if (vertical) {
+        rows = dst->w;
+        skip = 3;
+        incr = dst->pitch - 3;
+        cols = dst->h;
+    } else {
+        rows = dst->h;
+        skip = dst->pitch;
+        incr = 0;
+        cols = dst->w;
+    }
+
+    int divisor = radius * 2 + 1;
+
+    for (r = 0; r < rows; r++) {
+        // The values of the pixels on the left and right ends of the
+        // line.
+        unsigned char lr, lg, lb;
+        unsigned char rr, rg, rb;
+
+        unsigned char *leader = srcpixels + r * skip;
+        unsigned char *trailer = leader;
+        dstp = dstpixels + r * skip;
+
+        lr = *leader;
+        lg = *(leader + 1);
+        lb = *(leader + 2);
+
+        int sumr = lr * radius;
+        int sumg = lg * radius;
+        int sumb = lb * radius;
+
+        for (c = 0; c < radius; c++) {
+            sumr += *leader++;
+            sumg += *leader++;
+            sumb += *leader++;
+            leader += incr;
+        }
+
+        // left side of the kernel is off of the screen.
+        for (c = 0; c < radius; c++) {
+            sumr += *leader++;
+            sumg += *leader++;
+            sumb += *leader++;
+            leader += incr;
+
+            *dstp++ = sumr / divisor;
+            *dstp++ = sumg / divisor;
+            *dstp++ = sumb / divisor;
+            dstp += incr;
+
+            sumr -= lr;
+            sumg -= lg;
+            sumb -= lb;
+        }
+
+        int end = cols - radius - 1;
+
+        // The kernel is fully on the screen.
+        for (; c < end; c++) {
+            sumr += *leader++;
+            sumg += *leader++;
+            sumb += *leader++;
+            leader += incr;
+
+            *dstp++ = sumr / divisor;
+            *dstp++ = sumg / divisor;
+            *dstp++ = sumb / divisor;
+            dstp += incr;
+
+            sumr -= *trailer++;
+            sumg -= *trailer++;
+            sumb -= *trailer++;
+            trailer += incr;
+        }
+
+        rr = *leader++;
+        rg = *leader++;
+        rb = *leader++;
+
+        // The kernel is off the right side of the screen.
+        for (; c < cols; c++) {
+            sumr += rr;
+            sumg += rg;
+            sumb += rb;
+
+            *dstp++ = sumr / divisor;
+            *dstp++ = sumg / divisor;
+            *dstp++ = sumb / divisor;
+            dstp += incr;
+
+            sumr -= *trailer++;
+            sumg -= *trailer++;
+            sumb -= *trailer++;
+            trailer += incr;
+        }
+    }
+
+    Py_END_ALLOW_THREADS
+}
 
 // Alpha Munge takes a channel from the source pixel, maps it, and
 // sticks it into the alpha channel of the destination, overwriting

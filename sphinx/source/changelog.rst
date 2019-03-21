@@ -2,6 +2,251 @@
 Full Changelog
 ==============
 
+.. _renpy-7.2.1:
+
+7.2.1
+=====
+
+iOS Improvements
+----------------
+
+Ren'Py will now set the version field for the iOS application when generating
+a project.
+
+Ren'Py will now look for the files ios-icon.png and ios-launchimage.png,
+and use them to generate the icon and launch image in the sizes required
+for iOS.
+
+Other Improvements
+-------------------
+
+The :func:`renpy.in_rollback` function returns True when in the rollback that
+occurs immediately after a load. This makes it possible to use::
+
+    python:
+        if not renpy.in_rollback():
+            renpy.run(ShowMenu('save'))
+
+To display a save menu during an initial playthough, but not during loading
+or rollback.
+
+:var:`config.say_attribute_transition_callback` now exists, making it possible
+to select the transition to use on a per-say-statement basis.
+
+The new ``RENPY_SEARCHPATH`` environment variable makes it possible to
+override :var:`config.searchpath` on launch.
+
+Fixes
+-----
+
+Ren'Py has been audited to make sure that the semantics of == and != match,
+whenever == was redefined.
+
+There was a fix to problems that might occur when a transform is added
+to a screen using the ``add`` statement.
+
+The way ``extend`` processes arguments was changed to ensure that newer
+arguments take priority over arguments given to the statement being
+extended.
+
+Ren'Py now properly considers the scope when comparing dynamic images for
+equality. This fixes an issue that prevented some dynamic images from
+updating when part of a screen.
+
+A crash when :var:`config.save_dump` is true on macOS has been fixed.
+
+A crash when :var:`config.profile` is true has been fixed.
+
+Ren'Py now explicitly asks for text (as opposed to email, password, phone number
+etc) input on Android when the keyboard is displayed.
+
+An issue has been fixed that prevented roll-forward from working through a
+menu statement.
+
+Fixes a bug that prevents roll-forward through a menu.
+
+
+.. _renpy-7.2.0:
+.. _renpy-7.2:
+.. _renpy-7.1.4:
+
+7.2.0
+=====
+
+Menu Arguments
+--------------
+
+Ren'Py now has support for :ref:`menu arguments <menu-arguments>`. Arguments
+can be passed to a choice menu as a whole, or to the individual choices within
+the menu, using the syntax::
+
+    menu ("jfk", screen="airport"):
+
+        "Chicago, IL" (200):
+            jump chicago_trip
+
+        "Dallas, TX" (150, sale=True):
+            jump dallas_trip
+
+        "Hot Springs, AR" (300) if secret_unlocked:
+            jump hot_springs_trip
+
+
+Menu arguments passed to the menu itself become arguments to the screen,
+except the `screen` argument which selects the screen, and the `nvl`
+argument, which - if present - selects the NVL-mode menu. The arguments to
+the choices become arguments to the items passed to the menu screen.
+
+Temporary Say Attributes
+------------------------
+
+Ren'Py now supports temporary say attributes. Just like regular say
+attributes, these are included as part of the say statement. However,
+these temporary say attributes are reverted once the dialogue has
+finished. For example, in the script::
+
+    show eileen happy
+
+    e "I'm happy."
+
+    e @ vhappy "I'm really happy!"
+
+    e "I'm still happy."
+
+In the first line and last line of dialogues, Eileen is using her happy
+emotion. The vhappy emotion is shown before the second line of dialogue,
+and replaced with the previous emotion (happy in this case), before it.
+
+
+Text
+-----
+
+There have been a number of text changes that affect text when a window
+is scaled to a non-default size:
+
+* The text is now aligned on its baseline, rather than at the top of
+  the text. This is relevant when an absolute outline offset is
+  used.
+
+* It is now possible to choose how the outline scales when the window
+  is scaled. This is done with the :propref:`outline_scaling` style
+  property.
+
+When positioning a Text object, the :propref:`yanchor` property can be
+renpy.BASELINE. When it is, the anchor is set to the baseline of the
+first line of the text.
+
+Statements
+----------
+
+The new ``window auto show`` and ``window auto hide`` statements
+allow :ref:`automatic dialogue window management <dialogue-window-management>`
+to continue while showing or hiding the dialogue window.
+
+The ``show screen`` and ``hide screen`` statements now take a with
+clause, that works the same way it does with ``show`` and ``hide``.
+
+The screen language ``use`` statement now can take an ``expression``
+clause, that makes it take an expression rather than a literal screen
+name. This allows a variable to be used when selecting the screen that
+is included. See :ref:`sl-use` for more details.
+
+
+Changes
+-------
+
+The new :func:`renpy.is_skipping` function reports if Ren'Py is currently
+skipping.
+
+The :ref:`input <sl-input>` displayable now takes a new `copypaste`
+property, which when true allows copying with ctrl+C and pasting with
+ctrl+V. This is enabled in the console and launcher.
+
+:func:`Preference("display", "window")` now avoids creating a window bigger
+than the screen, and will be selected if the current window size is the
+maximum window size, if the size selected with :func:`gui.init` is bigger
+than the maximum window size.
+
+:ref:`Creator defined statements <cds>` now have a few more lexer methods available,
+making it possible to to parse arguments, image name components, labels, and
+delimited python.
+
+The :func:`renpy.force_autosave` function takes a new argument, that causes
+the autosave to block until it completes.
+
+The :ref:`ctc screen <ctc-screen>` now takes a number of new parameters,
+if required.
+
+The new :func:`im.Blur` image manipulator can blur an image. Thanks to
+Mal Graty for contributing it.
+
+LayeredImage groups now support a ``multiple`` property, which allows
+multiple attributes in the same group to be displayed at the same time.
+This is useful because it allows the auto-definition function of a group
+to be applied to non-conflicting images.
+
+Ren'Py will remain fullscreen when the mouse changes desktops, and will avoid
+shrinking a maximized window during a reload.
+
+The :var:`config.allow_duplicate_labels` variable can be defined or set in an
+init python block to allow duplicate labels to be defined in a game.
+
+The :func:`Movie` displayable can now be told not to loop, and displays the
+associated static image when it stops looping. It also can take an image
+that is displayed before the movie proper starts.
+
+Android Changes
+---------------
+
+The downloading of the Android SDK has been updated to fix a change in the
+provided tools that prevented things from downloading.
+
+An explicit action is now given to the keyboard, to make sure the enter
+key works.
+
+Ren'Py now uses the Amazon payment APIs when sideloaded onto a device
+made by Amazon, allowing their payment system to be tested on a dual-store
+APK.
+
+
+Ren'Py will now allow files in the public game directory (/mnt/sdcard/Android/`package`/files/game)
+to override those included with the game proper.
+
+Fixes
+------
+
+A bug preventing Ren'Py from displaying zero or negative-width
+characters (such as certain diacritics) has been fixed.
+
+An issue that prevented Ren'Py from updating a displayable that was
+added to a screen with transform properties has been fixed.
+
+The order of drags within a drag group is now preserved when an
+interaction restart occurs.
+
+
+
+Size-changing properties like :propref:`xysize` now apply to a Drag and not
+the space it can move around in.
+
+A bug that could cause a transparent, black, or gray line to appear on
+the bottom line of a screen during a dissolve has been fixed.
+
+A regression in support for imagefonts has been fixed.
+
+Creating a new file from the navigation menu of the launcher now works.
+
+Menu sets now work again.
+
+Ren'Py will no longer crash if an incomparable type is given to :func:`Function`
+and other actions.
+
+A case where rolling forward would fail is now fixed.
+
+A problem that prevented the Steam overlay from showing up on macOS was fixed.
+
+
+
 .. _renpy-7.1.3:
 
 7.1.3
@@ -35,7 +280,7 @@ make it possible to set variables inside used screens.
 The new :var:`config.menu_include_disabled` variable determines if menus
 should include entries disabled by an if clause.
 
-Shift-keybindings (like shift+I and shift+R) now work in the android
+Shift-keybindings (like Shift+I and Shift+R) now work in the Android
 emulation mode.
 
 Ren'Py now better reports errors in text tags that require a value but are
@@ -162,7 +407,7 @@ the Google-set default of 1536 megabytes. To change this, edit
 rapt/project/gradle.properties. To make sure you're capable of building
 larger games, please make sure your computer has a 64-bit version of Java 8.
 
-Ren'Py explicitly tells Android to pass the enter key to an input.
+Ren'Py explicitly tells Android to pass the Enter key to an input.
 
 Ren'Py now crops and sizes the icon correctly for versions of Android below
 Android 8 (Oreo).
@@ -310,7 +555,7 @@ that shows the attributes associated with displayed and hidden images.
 Added :func:`renpy.transform_text`, a function to transform text without
 touching text tags or interpolation.
 
-Buttons created using the make_buttons method of a Gallery object now
+Buttons created using the ``make_buttons`` method of a Gallery object now
 inherit from the empty style, and not button. This prevents properties from
 the button style from causing problems.
 
@@ -373,7 +618,7 @@ Layered Images
 
 A :ref:`layered image <layered-images>` is a new way of defining images
 for use in Ren'Py. It's intended to be used with a sprite that has been
-created in Photoshop or some other program as a a series of layers.
+created in Photoshop or some other program as a series of layers.
 The layered image system can use the attributes the image was displayed
 with and Python conditions to determine what layers to display.
 

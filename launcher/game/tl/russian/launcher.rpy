@@ -1451,7 +1451,7 @@ translate russian strings:
 
     # updater.rpy:118
     old "%B %d, %Y"
-    new "%B %d, %Y"
+    new "%d %B %Y года"
 
     # updater.rpy:140
     old "An error has occured:"

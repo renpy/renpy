@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,6 +28,7 @@ import time
 
 import renpy.display
 import renpy.test
+from renpy import six
 
 pyast = __import__("ast", { })
 
@@ -106,6 +107,9 @@ class LineLogEntry(object):
 
         return (self.filename == other.filename) and (self.line == other.line) and (self.node is other.node)
 
+    def __ne__(self, other):
+        return not (self == other)
+
 
 class Context(renpy.object.Object):
     """
@@ -140,6 +144,8 @@ class Context(renpy.object.Object):
 
     come_from_name = None
     come_from_label = None
+
+    temporary_attributes = None
 
     def __repr__(self):
 
@@ -261,6 +267,7 @@ class Context(renpy.object.Object):
 
         # The attributes that are used by the current say statement.
         self.say_attributes = None
+        self.temporary_attributes = None
 
         # A list of lines that were run since the last time this log was
         # cleared.
@@ -481,7 +488,8 @@ class Context(renpy.object.Object):
             if node.name == self.come_from_name:
                 self.come_from_name = None
                 node = self.call(self.come_from_label, return_site=node.name)
-                self.make_dynamic([ "_return" ])
+                self.make_dynamic([ "_return", "_begin_rollback" ])
+                renpy.store._begin_rollback = False
 
             this_node = node
             type_node_name = type(node).__name__
@@ -499,7 +507,10 @@ class Context(renpy.object.Object):
                 if ll_entry not in self.line_log:
                     self.line_log.append(ll_entry)
 
-            if first or self.force_checkpoint or (node.rollback == "force"):
+            if not renpy.store._begin_rollback:
+                update_rollback = False
+                force_rollback = False
+            elif first or self.force_checkpoint or (node.rollback == "force"):
                 update_rollback = True
                 force_rollback = True
             elif not renpy.config.all_nodes_rollback and (node.rollback == "never"):
@@ -508,6 +519,11 @@ class Context(renpy.object.Object):
             else:
                 update_rollback = True
                 force_rollback = False
+
+            # Force a new rollback to start to match things in the forward log.
+            if renpy.game.log.forward and renpy.game.log.forward[0][0] == node.name:
+                update_rollback = True
+                force_rollback = True
 
             first = False
 
@@ -565,7 +581,7 @@ class Context(renpy.object.Object):
                     except renpy.game.CONTROL_EXCEPTIONS as ce:
                         raise ce
                     except Exception as ce:
-                        raise exc_info[0], exc_info[1], exc_info[2]
+                        six.reraise(exc_info[0], exc_info[1], exc_info[2])
 
                 node = self.next_node
 

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -94,7 +94,8 @@ init python:
 
         is_default = False
 
-        if path is None:
+        # Path being None or "" means nothing was selected.
+        if not path:
             path = default_path
             is_default = True
 

@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 cimport renpy.display.render as render
-from gldraw cimport Environ
+from gl2draw cimport Environ
 
 cdef class TextureCore:
     cdef public int width

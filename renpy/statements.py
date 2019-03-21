@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -48,6 +48,7 @@ def register(
         label=None,
         warp=None,
         translation_strings=None,
+        force_begin_rollback=False,
 ):
     """
     :doc: statement_register
@@ -128,8 +129,14 @@ def register(
         return a list of strings, which are then reported as being available
         to be translated.
 
+    `force_begin_rollback`
+        This should be set to true on statements that are likely to cause the
+        end of a fast skip, similar to ``menu`` or ``call screen``.
     """
     name = tuple(name.split())
+
+    if label:
+        force_begin_rollback = True
 
     registry[name] = dict(
         parse=parse,
@@ -142,6 +149,7 @@ def register(
         label=label,
         warp=warp,
         translation_strings=translation_strings,
+        rollback="force" if force_begin_rollback else "normal",
     )
 
     if block not in [True, False, "script", "possible"]:
@@ -210,6 +218,11 @@ def call(method, parsed, *args, **kwargs):
         return None
 
     return method(parsed, *args, **kwargs)
+
+
+def get(key, parsed):
+    name, parsed = parsed
+    return registry[name].get(key, None)
 
 
 def get_name(parsed):

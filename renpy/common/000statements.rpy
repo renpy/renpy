@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -462,9 +462,14 @@ python early hide:
     def parse_hide_screen(l):
         name = l.require(l.name)
 
+        transition_expr = None
+
+        if l.keyword('with'):
+            transition_expr = l.require(l.simple_expression)
+
         l.expect_eol()
 
-        return dict(name=name)
+        return dict(name=name, transition_expr=transition_expr)
 
     def predict_screen(p):
 
@@ -498,7 +503,14 @@ python early hide:
             args = [ ]
             kwargs = { }
 
+        transition_expr = p.get("transition_expr", None)
+        if transition_expr is not None:
+            renpy.with_statement(None)
+
         renpy.show_screen(name, *args, **kwargs)
+
+        if transition_expr is not None:
+            renpy.with_statement(eval(transition_expr))
 
     def execute_call_screen(p):
 
@@ -520,7 +532,16 @@ python early hide:
 
     def execute_hide_screen(p):
         name = p["name"]
+
+        transition_expr = p.get("transition_expr", None)
+        if transition_expr is not None:
+            renpy.with_statement(None)
+
         renpy.hide_screen(name)
+
+        if transition_expr is not None:
+            renpy.with_statement(eval(transition_expr))
+
 
     def lint_screen(p):
         name = p["name"]
@@ -539,7 +560,8 @@ python early hide:
                               parse=parse_show_call_screen,
                               execute=execute_call_screen,
                               predict=predict_screen,
-                              lint=lint_screen)
+                              lint=lint_screen,
+                              force_begin_rollback=True)
 
     renpy.register_statement("hide screen",
                               parse=parse_hide_screen,

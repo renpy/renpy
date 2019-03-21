@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -218,10 +218,10 @@ cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 
 cython("renpy.gl2.uguugl", libs=sdl)
 cython("renpy.gl2.uguu", libs=sdl)
-cython("renpy.gl2.gldraw", libs=glew_libs, source=[ egl ])
-cython("renpy.gl2.gltexture", libs=glew_libs)
-cython("renpy.gl2.glenviron_shader", libs=glew_libs)
-cython("renpy.gl2.glrtt_fbo", libs=glew_libs)
+cython("renpy.gl2.gl2draw", libs=sdl)
+cython("renpy.gl2.gl2texture", libs=sdl)
+cython("renpy.gl2.gl2environ_shader", libs=sdl)
+cython("renpy.gl2.gl2rtt_fbo", libs=sdl)
 
 
 if not (android or ios or emscripten):

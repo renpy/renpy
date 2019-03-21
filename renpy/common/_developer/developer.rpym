@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -327,9 +327,14 @@ init 1050 python:
 
             return True
 
-        config.missing_scene = __missing_scene_callback
-        config.missing_show = __missing_show_callback
-        config.missing_hide = __missing_hide_callback
+        if config.missing_scene is None:
+            config.missing_scene = __missing_scene_callback
+
+        if config.missing_show is None:
+            config.missing_show = __missing_show_callback
+
+        if config.missing_hide is None:
+            config.missing_hide = __missing_hide_callback
 
 
 init -1050 python:
@@ -586,8 +591,8 @@ label _filename_list:
             for fn in files:
                 fn = os.path.join(dirname, fn)
                 fn = fn[len(config.gamedir) + 1:]
-                print >>f, fn.encode("utf-8", "replace")
-                print fn.encode("utf-8", "replace")
+                print(fn.encode("utf-8", "replace"), file=f)
+                print(fn.encode("utf-8", "replace"))
 
         f.close()
 

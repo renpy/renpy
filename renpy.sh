@@ -31,6 +31,7 @@ if [ -z "$RENPY_PLATFORM" ] ; then
             RENPY_PLATFORM="darwin-x86_64"
             ROOT1="$ROOT/../Resources/autorun"
             ROOT2="$ROOT/../../.."
+            export DYLD_INSERT_LIBRARIES="${DYLD_INSERT_LIBRARIES:-${STEAM_DYLD_INSERT_LIBRARIES}}"
                         ;;
         *-x86_64|amd64)
             RENPY_PLATFORM="linux-x86_64"

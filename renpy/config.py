@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -365,8 +365,8 @@ rtl = False
 file_open_callback = None
 
 # The size of screenshot thumbnails. (Redefined in common/)
-thumbnail_width = None
-thumbnail_height = None
+thumbnail_width = 256
+thumbnail_height = 144
 
 # The end game transition.
 end_game_transition = None
@@ -929,6 +929,36 @@ skip_sounds = False
 
 # Should we lint screens without parameters?
 lint_screens_without_parameters = True
+
+# If not None, a function that's used to process and modify menu arguments.
+menu_arguments_callback = None
+
+# Should Ren'PY automatically clear the screenshot?
+auto_clear_screenshot = True
+
+# Should Ren'Py allow duplicate labels.
+allow_duplicate_labels = False
+
+# A map of font transform name to font transform function.
+font_transforms = { }
+
+# A scaling factor that is applied to a truetype font.
+ftfont_scale = { }
+
+# This is used to scale the ascent and descent of a font.
+ftfont_vertical_extent_scale = { }
+
+
+def say_attribute_transition_callback(tag, mode):
+    """
+    Returns the say attribute transition to use, and the layer the transition
+    should be applied to (with None being a valid layer.
+
+    Mode is one of "permanent", "temporary", or "restore"
+    """
+
+    return renpy.config.say_attribute_transition, renpy.config.say_attribute_transition_layer
+
 
 del os
 del collections

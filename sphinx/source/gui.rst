@@ -156,17 +156,17 @@ is certainly possible.
 Many of these changes involve editing variables in gui.rpy. For example,
 to increase the dialogue font size, find the line that reads::
 
-    define gui.font_size = 22
+    define gui.text_size = 22
 
 and increase or decrease it, for example, to::
 
-    define gui.font_size = 20
+    define gui.text_size = 20
 
 Note that the default values are often different than what's found in
 this documentation. The default values can changed based on size and
 colors selected for the game, and the values in this file are an example
 of extensive GUI customization. It's best to search gui.rpy for define and
-the variable in question – for example, "define gui.font_size".
+the variable in question – for example, "define gui.text_size".
 
 Some of the adjustments below either partially or completely effect image
 files. As a result, the changes only take effect when the image files

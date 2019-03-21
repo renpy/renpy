@@ -98,8 +98,9 @@ can then change it again.)
 
 .. var:: preferences.skip_unseen = False
 
-    When True, Ren'Py will only skip unseen text. When False, Ren'Py will
-    skip all text. The equivalent of the "skip" preference.
+    When True, Ren'Py will skip all text. When False, Ren'Py will
+    only skip text that has been read by the player in any session.
+    The equivalent of the "skip" preference.
 
 .. var:: preferences.text_cps = 0
 

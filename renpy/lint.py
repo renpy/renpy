@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -77,8 +77,26 @@ def add(msg):
         print(unicode(msg).encode('utf-8'))
 
 
-# Trys to evaluate an expression, announcing an error if it fails.
+# Tries to evaluate an expression, announcing an error if it fails.
 def try_eval(where, expr, additional=None):
+    """
+    :doc: lint
+
+    Tries to evaluate an expression, and writes an error to lint.txt if
+    it fails.
+
+    `where`
+        A string giving the location the expression is found. Used to
+        generate an error message of the form "Could not evaluate `expr`
+        in `where`."
+
+    `expr`
+        The expression to try evaluating.
+
+    `additional`
+        If given, an additional line of information that is addded to the
+        error message.
+    """
 
     # Make sure the expression compiles.
     try_compile(where, expr)
@@ -105,6 +123,24 @@ def try_eval(where, expr, additional=None):
 
 
 def try_compile(where, expr, additional=None):
+    """
+    :doc: lint
+
+    Tries to compile an expression, and writes an error to lint.txt if
+    it fails.
+
+    `where`
+        A string giving the location the expression is found. Used to
+        generate an error message of the form "Could not evaluate `expr`
+        in `where`."
+
+    `expr`
+        The expression to try compiling.
+
+    `additional`
+        If given, an additional line of information that is addded to the
+        error message.
+    """
 
     try:
         renpy.python.py_compile_eval_bytecode(expr)
@@ -204,6 +240,7 @@ def image_exists_precise(name):
                 da = renpy.display.core.DisplayableArguments()
                 da.name=( im[0], ) + tuple(i for i in name[1:] if i in attrs)
                 da.args=tuple(i for i in name[1:] if i in rest)
+                da.lint = True
                 d._duplicate(da)
             except:
                 continue
@@ -577,6 +614,7 @@ def check_label(node):
         add_arg(pi.extrapos)
         add_arg(pi.extrakw)
 
+
 def check_screen(node):
 
     if (node.screen.parameters is None) and renpy.config.lint_screens_without_parameters:
@@ -621,6 +659,7 @@ def check_filename_encodings():
 
         report("%s contains non-ASCII characters in its filename.", filename)
         add("(ZIP file distributions can only reliably include ASCII filenames.)")
+
 
 class Count(object):
     """

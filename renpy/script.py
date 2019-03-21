@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -402,41 +402,49 @@ class Script(object):
                 for i in all_stmts:
                     i.filename = filename
 
-        # Check for duplicate names.
-        if check_names and not renpy.mobile:
+        def check_name(node):
+
+            if not check_names:
+                return
+
+            if renpy.mobile:
+                return
+
             bad_name = None
             bad_node = None
             old_node = None
 
-            for node in all_stmts:
-                name = node.name
+            name = node.name
 
-                if name in self.namemap:
+            if name in self.namemap:
 
-                    bad_name = name
-                    bad_node = node
-                    old_node = self.namemap[name]
+                bad_name = name
+                bad_node = node
+                old_node = self.namemap[name]
 
-                    if not isinstance(bad_name, basestring):
+                if not isinstance(bad_name, basestring):
 
-                        raise ScriptError("Name %s is defined twice, at %s:%d and %s:%d." %
-                                          (repr(bad_name),
-                                           old_node.filename, old_node.linenumber,
-                                           bad_node.filename, bad_node.linenumber))
+                    raise ScriptError("Name %s is defined twice, at %s:%d and %s:%d." %
+                                      (repr(bad_name),
+                                       old_node.filename, old_node.linenumber,
+                                       bad_node.filename, bad_node.linenumber))
 
-                    else:
-                        self.duplicate_labels.append(
-                            u'The label {} is defined twice, at\n  File "{}", line {} and\n  File "{}", line {}.'.format(
-                                bad_name, old_node.filename, old_node.linenumber, bad_node.filename, bad_node.linenumber))
+                else:
 
-                # Add twice, so we can find duplicates in the same file.
-                self.namemap[name] = node
+                    if renpy.config.allow_duplicate_labels:
+                        return
+
+                    self.duplicate_labels.append(
+                        u'The label {} is defined twice, at\n  File "{}", line {} and\n  File "{}", line {}.'.format(
+                            bad_name, old_node.filename, old_node.linenumber, bad_node.filename, bad_node.linenumber))
 
         self.update_bytecode()
 
         for node in all_stmts:
 
             name = node.name
+
+            check_name(node)
 
             # Add the name to the namemap.
             self.namemap[name] = node
@@ -702,6 +710,8 @@ class Script(object):
             except:
                 rpycdigest = None
 
+            digest = None
+
             if os.path.exists(rpyfn) and os.path.exists(rpycfn):
 
                 # Are we forcing a compile?
@@ -745,7 +755,8 @@ class Script(object):
 
                 digest = rpydigest
 
-            self.backup_list.append((rpyfn, digest))
+            if digest is not None:
+                self.backup_list.append((rpyfn, digest))
 
         if data is None:
             raise Exception("Could not load file %s." % lastfn)

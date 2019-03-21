@@ -67,3 +67,74 @@ true. In the following menu::
 The third choice will only be presented if the ``drank_tea`` variable is
 true. (However if, the :var:`config.menu_include_disabled` variable is set
 to True, it will be shown as a disabled button.)
+
+
+.. _menu-set:
+
+Menu Set
+--------
+
+A menu can take a set clause, on a line by itself. If present, only items
+with captions that are not in the set are displayed as part of the menu.
+When a choice is selected, the caption of that choice can be added to the
+set.
+
+As with all menus, if no choices are available it advances to the statement
+after the menu.
+
+For historical reasons, the set can be either a set object or a list.
+
+::
+
+    default menuset = set()
+
+
+    menu chapter_1_places:
+
+        set menuset
+        "Where should I go?"
+
+        "Go to class.":
+            jump go_to_class
+
+        "Go to the bar.":
+            jump go_to_bar
+
+        "Go to jail.":
+            jump go_to_jail
+
+    menu chapter_1_after_places:
+
+        "Wow, that was one heck of a Tuesday."
+
+
+.. _menu-arguments:
+
+Menu Arguments
+--------------
+
+It's possible to pass arguments to the menu itself, and to the individual
+choices in a menu. To pass arguments to the menu, add them to the
+menu line, after the optional name, and immediately before the colon. To
+pass arguments to a menu choice, put them after the menu string and before
+the ``if`` keyword or colon. ::
+
+
+    menu ("jfk", screen="airport"):
+
+        "Chicago, IL" (200):
+            jump chicago_trip
+
+        "Dallas, TX" (150, sale=True):
+            jump dallas_trip
+
+        "Hot Springs, AR" (300) if secret_unlocked:
+            jump hot_springs_trip
+
+Menu arguments passed to the menu itself become arguments to the screen,
+except the `screen` argument which selects the screen, and the `nvl` argument
+that selects the :ref:`NVL-mode menu <nvl-mode-menu>`. The arguments to
+the choices become arguments to the items passed to the menu screen.
+
+See the documentation for :ref:`the choice screen <choice-screen>` and
+:var:`config.menu_arguments_callback`.

@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -258,6 +258,13 @@ def main():
     game.basepath = renpy.config.gamedir
     renpy.config.searchpath = [ renpy.config.gamedir ]
 
+    if renpy.android and ("ANDROID_PUBLIC" in os.environ):
+
+        android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
+
+        if os.path.exists(android_game):
+            renpy.config.searchpath.insert(0, android_game)
+
     # Find the common directory.
     commondir = __main__.path_to_common(renpy.config.renpy_base)  # E1101 @UndefinedVariable
 
@@ -266,6 +273,10 @@ def main():
         renpy.config.commondir = commondir
     else:
         renpy.config.commondir = None
+
+    # Add path from env variable, if any
+    if "RENPY_SEARCHPATH" in os.environ:
+        renpy.config.searchpath.extend(os.environ["RENPY_SEARCHPATH"].split("::"))
 
     if renpy.android:
         renpy.config.searchpath = [ ]
@@ -515,7 +526,7 @@ def main():
                     restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
                     renpy.persistent.update(True)
 
-            except game.FullRestartException, e:
+            except game.FullRestartException as e:
                 restart = e.reason
 
             finally:

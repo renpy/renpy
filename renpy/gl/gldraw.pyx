@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -39,6 +39,7 @@ import os.path
 import weakref
 import array
 import time
+import math
 
 cimport renpy.display.render as render
 cimport gltexture
@@ -193,7 +194,7 @@ cdef class GLDraw:
 
             self.did_init = False
 
-            if self.old_fullscreen is not None:
+            if renpy.windows and (self.old_fullscreen is not None):
                 pygame.display.quit()
 
             pygame.display.init()
@@ -221,28 +222,36 @@ cdef class GLDraw:
         pwidth *= self.dpi_scale
         pheight *= self.dpi_scale
 
-        pwidth = max(vwidth / 2, pwidth)
-        pheight = max(vheight / 2, pheight)
-
         window_args = { }
 
         info = renpy.display.get_info()
 
-        if not renpy.mobile:
+        old_surface = pygame.display.get_surface()
+        if old_surface is not None:
+            maximized = old_surface.get_flags() & pygame.WINDOW_MAXIMIZED
+        else:
+            maximized = False
 
-            visible_w = info.current_w
-            visible_h = info.current_h
 
-            if renpy.windows and renpy.windows <= (6, 1):
-                visible_h -= 102
+        visible_w = info.current_w
+        visible_h = info.current_h
 
-            bounds = pygame.display.get_display_bounds(0)
+        if renpy.windows and renpy.windows <= (6, 1):
+            visible_h -= 102
 
-            renpy.display.log.write("primary display bounds: %r", bounds)
+        bounds = pygame.display.get_display_bounds(0)
 
-            head_full_w = bounds[2]
-            head_w = bounds[2] - 102
-            head_h = bounds[3] - 102
+        renpy.display.log.write("primary display bounds: %r", bounds)
+
+        head_full_w = bounds[2]
+        head_w = bounds[2] - 102
+        head_h = bounds[3] - 102
+
+        # Figure out the default window size.
+        bound_w = min(vwidth, visible_w, head_w)
+        bound_h = min(vwidth, visible_h, head_h)
+
+        if (not renpy.mobile) and (not maximized):
 
             pwidth = min(visible_w, pwidth)
             pheight = min(visible_h, pheight)
@@ -325,13 +334,12 @@ cdef class GLDraw:
             pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
             pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
 
-
         self.window = None
 
-        if fullscreen:
+        if (self.window is None) and fullscreen:
             try:
                 renpy.display.log.write("Fullscreen mode.")
-                self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | opengl | pygame.DOUBLEBUF)
+                self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | resizable | opengl | pygame.DOUBLEBUF)
             except pygame.error as e:
                 renpy.display.log.write("Opening in fullscreen failed: %r", e)
                 self.window = None
@@ -431,6 +439,14 @@ cdef class GLDraw:
 
         self.environ.init()
         self.rtt.init()
+
+        if self.window.get_flags() & pygame.WINDOW_MAXIMIZED:
+            self.info["max_window_size"] = self.window.get_size()
+        else:
+            self.info["max_window_size"] = (
+                int(round(min(bound_h * virtual_ar, bound_w))),
+                int(round(min(bound_w / virtual_ar, bound_h))),
+                )
 
         return True
 
@@ -1118,8 +1134,8 @@ cdef class GLDraw:
 
     def render_to_texture(self, what, alpha):
 
-        width = int(what.width * self.draw_per_virt)
-        height = int(what.height * self.draw_per_virt)
+        width = int(math.ceil(what.width * self.draw_per_virt))
+        height = int(math.ceil(what.height * self.draw_per_virt))
 
         def draw_func(x, y, w, h):
 

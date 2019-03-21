@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -153,6 +153,9 @@ Preference("gl_framerate", None, (int, type(None)))
 # Do we allow tearing?
 Preference("gl_tearing", False)
 
+# The font transformation used.
+Preference("font_transform", None, (type(None), basestring))
+
 
 class Preferences(renpy.object.Object):
     """
@@ -232,6 +235,9 @@ class Preferences(renpy.object.Object):
 
     def __eq__(self, other):
         return vars(self) == vars(other)
+
+    def __ne__(self, other):
+        return not (self == other)
 
 
 renpy.game.Preferences = Preferences

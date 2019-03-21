@@ -36,9 +36,9 @@ translate french simple_displayables_9cd108c6:
     e "L’élément affichable 'Transform' prend en argument un élément affichable et lui applique une transformation."
 
 # game/indepth_displayables.rpy:55
-translate french simple_displayables_a313a959:
+translate french simple_displayables_f8e1ba3f:
 
-    # e "Notice how, since it takes a displayable, it can take another image. In face, it can take any displayable defined here."
+    # e "Notice how, since it takes a displayable, it can take another image. In fact, it can take any displayable defined here."
     e "Regardez, comme il peut prendre un élément affichable en paramètre, il peut utiliser une image. En fait, il peut prendre n’importe quel élément affichable déjà défini."
 
 # game/indepth_displayables.rpy:63
@@ -106,3 +106,4 @@ translate french strings:
     # indepth_displayables.rpy:67
     old "This is a text displayable."
     new "Ceci est un texte affichable."
+

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -153,13 +153,33 @@ python early hide:
         _window_hide(trans)
 
     def parse_window_auto(l):
+
+        rv = { }
+
+        if l.keyword('hide'):
+            hide = l.simple_expression() or "False"
+            rv["hide"] = hide
+
+        elif l.keyword('show'):
+            show = l.simple_expression() or "False"
+            rv["show"] = show
+
         if not l.eol():
             renpy.error('expected end of line')
 
-        return { }
+        return rv
 
     def execute_window_auto(p):
         store._window_auto = True
+
+        if "hide" in p:
+            trans = eval(p["hide"])
+            _window_hide(trans)
+
+        if "show" in p:
+            trans = eval(p["show"])
+            _window_show(trans)
+
 
     renpy.register_statement('window show',
                               parse=parse_window,

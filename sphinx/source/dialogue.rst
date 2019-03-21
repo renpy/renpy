@@ -102,7 +102,6 @@ issue a show command involving the character tag and the
 attributes. If the image is not shown, Ren'Py will store the
 attributes for use by side images, but will not show an image.
 
-
 For example::
 
     define e = Character("Eileen", image="eileen")
@@ -126,8 +125,46 @@ is equivalent to::
         show eileen happy
         e "But it's just a passing thing."
 
+
+When the image attribute begins with an @, the change is temporary, and
+reverts to the previously displaying image at the end of the line of dialogue.
+
+For example::
+
+    define e = Character("Eileen", image="eileen")
+
+    label start:
+
+        show eileen mad
+        e "I'm a little upset at you."
+
+        e @ happy "That's funny."
+
+        e "But don't think it gets you out of hot water."
+
+is equivalent to::
+
+    define e = Character("Eileen")
+
+    label start:
+
+        show eileen mad
+        e "I'm a little upset at you."
+
+        show eileen happy
+        e "That's funny."
+
+        show eileen mad
+        e "But don't think it gets you out of hot water."
+
+The two syntaxes can be combined, with the permanent changes coming before
+the @ and the temporary ones coming after. ::
+
+    e happy @ vhappy "Really! That changes everything."
+
 To cause a transition to occur whenever the images are changed in this way, set
-:var:`config.say_attribute_transition` to a transition.
+:var:`config.say_attribute_transition` to a transition. For more control,
+use :var:`config.say_attribute_transition_callback`.
 
 
 Example Characters
@@ -236,6 +273,11 @@ non-dialogue interactions.
     (Only statements are considered, not statement equivalent
     functions.)
 
+``window auto hide``, ``window auto show``
+    These statements show or hide the window, with an optional transition,
+    like ``window show`` or ``window hide`` do. However, unlike those
+    statements, this keeps automatic management enabled.
+
 The ``window auto`` statement uses :var:`config.window_show_transition`
 and :var:`config.window_hide_transition` to show and hide the window,
 respectively. ``window auto`` is cancelled by ``window show`` and ``window hide``.
@@ -260,6 +302,13 @@ For example::
 
     scene bg washington  # the window is hidden before the scene change.
     with dissolve
+
+    window auto show     # Shows the window before it normally would be shown.
+
+    show eileen
+    with dissolve
+
+    "Without window auto show, the window would have been shown here."
 
 Dialogue window management is subject to the "show empty window"
 :func:`Preference`. If the preference is disabled, the statements above

@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,6 +32,8 @@ import renpy.text.font as font
 import renpy.text.extras as extras
 
 from _renpybidi import log2vis, WRTL, RTL, ON  # @UnresolvedImport
+
+BASELINE = -65536
 
 
 class Blit(object):
@@ -291,13 +293,21 @@ class TextSegment(object):
         on the font group.
         """
 
-        if not isinstance(self.font, font.FontGroup):
+        tf = self.font
+
+        font_transform = renpy.game.preferences.font_transform
+        if font_transform is not None:
+            font_func = renpy.config.font_transforms.get(font_transform, None)
+            if font_func is not None:
+                tf = font_func(tf)
+
+        if not isinstance(tf, font.FontGroup):
             yield (self, s)
             return
 
         segs = { }
 
-        for f, ss in self.font.segment(s):
+        for f, ss in tf.segment(s):
 
             seg = segs.get(f, None)
 
@@ -337,7 +347,7 @@ class SpaceSegment(object):
         self.glyph = glyph = textsupport.Glyph()
 
         glyph.character = 0
-        glyph.ascent = 0
+        glyph.ascent = 1
         glyph.line_spacing = height
         glyph.advance = width
         glyph.width = width
@@ -355,6 +365,7 @@ class SpaceSegment(object):
 
     def draw(self, glyphs, di, xo, yo, layout):
         # Does nothing - since there's nothing to draw.
+
         return
 
     def assign_times(self, gt, glyphs):
@@ -383,6 +394,8 @@ class DisplayableSegment(object):
 
         self.hyperlink = ts.hyperlink
         self.cps = ts.cps
+        self.ruby_top = ts.ruby_top
+        self.ruby_bottom = ts.ruby_bottom
 
     def glyphs(self, s, layout):
 
@@ -400,7 +413,16 @@ class DisplayableSegment(object):
         if self.hyperlink:
             glyph.hyperlink = self.hyperlink
 
-        return [ glyph ]
+        rv = [ glyph ]
+
+        if self.ruby_bottom:
+            textsupport.mark_ruby_bottom(rv)
+        elif self.ruby_top == "alt":
+            textsupport.mark_altruby_top(rv)
+        elif self.ruby_top:
+            textsupport.mark_ruby_top(rv)
+
+        return rv
 
     def draw(self, glyphs, di, xo, yo, layout):
         glyph = glyphs[0]
@@ -465,6 +487,13 @@ class Layout(object):
             Layout (which must be another Layout of the same text).
         """
 
+        def find_baseline():
+            for g in all_glyphs:
+                if g.ascent:
+                    return g.y + self.yoffset
+
+            return 0
+
         width = min(32767, width)
         height = min(32767, height)
 
@@ -477,11 +506,14 @@ class Layout(object):
             self.reverse = renpy.display.draw.draw_to_virt
             self.forward = renpy.display.draw.virt_to_draw
 
+            self.outline_step = text.style.outline_scaling != "linear"
+
         else:
 
             self.oversample = 1.0
             self.reverse = renpy.display.render.IDENTITY
             self.forward = renpy.display.render.IDENTITY
+            self.outline_step = True
 
         style = text.style
 
@@ -697,6 +729,7 @@ class Layout(object):
         adjust_spacing = text.style.adjust_spacing
 
         if splits_from and adjust_spacing:
+
             target_x = self.scale_int(splits_from.size[0] - splits_from.xborder)
             target_y = self.scale_int(splits_from.size[1] - splits_from.yborder)
 
@@ -713,11 +746,15 @@ class Layout(object):
             maxx = target_x
             y = target_y
 
+            textsupport.offset_glyphs(all_glyphs, 0, int(round(splits_from.baseline * self.oversample)) - find_baseline())
+
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a
         # per-outline basis.)
         sw, sh = size = (maxx + self.xborder, y + self.yborder)
         self.size = size
+
+        self.baseline = find_baseline()
 
         # If we only care about the size, we're done.
         if size_only:
@@ -813,6 +850,9 @@ class Layout(object):
         if n is None:
             return n
 
+        if isinstance(n, renpy.display.core.absolute):
+            return int(n)
+
         return int(round(n * self.oversample))
 
     def scale_outline(self, n):
@@ -822,10 +862,25 @@ class Layout(object):
         if isinstance(n, renpy.display.core.absolute):
             return int(n)
 
-        if self.oversample < 1:
-            return n
+        if self.outline_step:
 
-        return n * int(self.oversample)
+            if self.oversample < 1:
+                return n
+
+            return n * int(self.oversample)
+
+        else:
+            if n == 0:
+                return 0
+
+            rv = round(n * self.oversample)
+
+            if n < 0 and rv > -1:
+                rv = -1
+            if n > 0 and rv < 1:
+                rv = 1
+
+            return rv
 
     def unscale_pair(self, x, y):
         return x / self.oversample, y / self.oversample
@@ -1169,10 +1224,10 @@ class Layout(object):
                 dslist = [ dslist ]
 
             for dsx, dsy in dslist:
-                outlines.append((0, style.drop_shadow_color, self.scale_outline(dsx), self.scale_outline(dsy)))
+                outlines.append((0, style.drop_shadow_color, self.scale_int(dsx), self.scale_int(dsy)))
 
         for size, color, xo, yo in style_outlines:
-            outlines.append((self.scale_outline(size), color, self.scale_outline(xo), self.scale_outline(yo)))
+            outlines.append((self.scale_outline(size), color, self.scale_int(xo), self.scale_int(yo)))
 
         # The outline borders we reserve.
         left = 0
@@ -1346,6 +1401,7 @@ VERT_FORWARD = renpy.display.render.Matrix2D(0, 1, -1, 0)
 class Text(renpy.display.core.Displayable):
 
     """
+    :name: Text
     :doc: text
     :args: (text, slow=None, scope=None, substitute=None, slow_done=None, **properties)
 
@@ -1728,6 +1784,36 @@ class Text(renpy.display.core.Displayable):
 
         super(Text, self).set_style_prefix(prefix, root)
 
+    def get_placement(self):
+
+        rv = super(Text, self).get_placement()
+
+        if rv[3] != BASELINE:
+            return rv
+
+        layout = self.get_virtual_layout()
+
+        if layout is None:
+
+            width = 4096
+            height = 4096
+            st = 0
+            at = 0
+
+            if self.dirty or self.displayables is None:
+                self.update()
+
+            renders = { }
+
+            for i in self.displayables:
+                renders[i] = renpy.display.render.render(i, width, self.style.size, st, at)
+
+            layout = Layout(self, width, height, renders, size_only=True, drawable_res=True)
+
+        xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = rv
+        rv = (xpos, ypos, xanchor, layout.baseline, xoffset, yoffset, subpixel)
+        return rv
+
     def focus(self, default=False):
         """
         Called when a hyperlink gains focus.
@@ -1837,11 +1923,15 @@ class Text(renpy.display.core.Displayable):
 
     def size(self, width=4096, height=4096, st=0, at=0):
         """
+        :args: (width=4096, height=4096, st=0, at=0)
+
         Attempts to figure out the size of the text. The parameters are
         as for render.
 
         This does not rotate vertical text.
         """
+
+        # This is mostly duplicated in get_placement.
 
         if self.dirty or self.displayables is None:
             self.update()
@@ -1851,7 +1941,7 @@ class Text(renpy.display.core.Displayable):
         for i in self.displayables:
             renders[i] = renpy.display.render.render(i, width, self.style.size, st, at)
 
-        layout = Layout(self, width, height, renders, size_only=True)
+        layout = Layout(self, width, height, renders, size_only=True, drawable_res=True)
 
         return layout.unscale_pair(*layout.size)
 

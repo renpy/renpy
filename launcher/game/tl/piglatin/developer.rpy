@@ -145,67 +145,75 @@ translate piglatin strings:
     old "<repr() failed>"
     new "<eprray() ailedfay>"
 
-    # 00console.rpy:255
+    # 00console.rpy:271
     old "Press <esc> to exit console. Type help for help.\n"
     new "Resspay <escay> otay exitay onsolecay. Ypetay elphay orfay elphay.\n"
 
-    # 00console.rpy:259
+    # 00console.rpy:275
     old "Ren'Py script enabled."
     new "Enray'Ypay criptsay enableday."
 
-    # 00console.rpy:261
+    # 00console.rpy:277
     old "Ren'Py script disabled."
     new "Enray'Ypay criptsay isabledday."
 
-    # 00console.rpy:496
+    # 00console.rpy:524
     old "help: show this help"
     new "elphay: owshay histay elphay"
 
-    # 00console.rpy:501
+    # 00console.rpy:529
     old "commands:\n"
     new "ommandscay:\n"
 
-    # 00console.rpy:511
+    # 00console.rpy:539
     old " <renpy script statement>: run the statement\n"
     new " <enpyray criptsay atementstay>: unray hetay atementstay\n"
 
-    # 00console.rpy:513
+    # 00console.rpy:541
     old " <python expression or statement>: run the expression or statement"
     new " <ythonpay expressionay oray atementstay>: unray hetay expressionay oray atementstay"
 
-    # 00console.rpy:521
+    # 00console.rpy:549
     old "clear: clear the console history"
     new "earclay: earclay hetay onsolecay istoryhay"
 
-    # 00console.rpy:525
+    # 00console.rpy:553
     old "exit: exit the console"
     new "exitay: exitay hetay onsolecay"
 
-    # 00console.rpy:533
+    # 00console.rpy:561
     old "load <slot>: loads the game from slot"
     new "oadlay <otslay>: oadslay hetay amegay omfray otslay"
 
-    # 00console.rpy:546
+    # 00console.rpy:574
     old "save <slot>: saves the game in slot"
     new "avesay <otslay>: avessay hetay amegay inay otslay"
 
-    # 00console.rpy:557
+    # 00console.rpy:585
     old "reload: reloads the game, refreshing the scripts"
     new "eloadray: eloadsray hetay amegay, efreshingray hetay criptssay"
 
-    # 00console.rpy:565
+    # 00console.rpy:593
     old "watch <expression>: watch a python expression"
     new "atchway <expressionay>: atchway aay ythonpay expressionay"
 
-    # 00console.rpy:591
+    # 00console.rpy:619
     old "unwatch <expression>: stop watching an expression"
     new "unwatchay <expressionay>: opstay atchingway anay expressionay"
 
-    # 00console.rpy:622
+    # 00console.rpy:650
     old "unwatchall: stop watching all expressions"
     new "unwatchallay: opstay atchingway allay expressionsay"
 
-    # 00console.rpy:639
+    # 00console.rpy:667
     old "jump <label>: jumps to label"
     new "umpjay <abellay>: umpsjay otay abellay"
+
+    # 00console.rpy:680
+    old "short: Shorten the representation of objects on the console (default)."
+    new "ortshay: Hortensay hetay epresentationray ofay objectsay onay hetay onsolecay (efaultday)."
+
+    # 00console.rpy:685
+    old "long: Print the full representation of objects on the console."
+    new "onglay: Rintpay hetay ullfay epresentationray ofay objectsay onay hetay onsolecay."
 

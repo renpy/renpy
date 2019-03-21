@@ -1,6 +1,6 @@
 #@PydevCodeAnalysisIgnore
 #cython: profile=False
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,7 +26,7 @@ from __future__ import print_function
 DEF ANGLE = False
 
 from uguugl cimport *
-from gldraw cimport *
+from gl2draw cimport *
 
 from sdl2 cimport *
 from pygame_sdl2 cimport *

@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -179,9 +179,19 @@ def take_focuses():
     global default_focus
     default_focus = None
 
+    global grab
+
+    grab_found = False
+
     for f in focus_list:
         if f.x is None:
             default_focus = f
+
+        if f.widget is grab:
+            grab_found = True
+
+    if not grab_found:
+        grab = None
 
     if (default_focus is not None) and (get_focused() is None):
         change_focus(default_focus, True)
