@@ -496,29 +496,29 @@ translate spanish strings:
 
     # indepth_transitions.rpy:58
     old "Simple Transitions"
-    new ""
+    new "Transiciones Simples"
 
     # indepth_transitions.rpy:58
     old "ImageDissolve Transitions"
-    new ""
+    new "Transiciones ImageDissolve"
 
     # indepth_transitions.rpy:58
     old "MoveTransition Transitions"
-    new ""
+    new "Transiciones MoveTransition"
 
     # indepth_transitions.rpy:58
     old "CropMove Transitions"
-    new ""
+    new "Transiciones CropMove"
 
     # indepth_transitions.rpy:58
     old "PushMove Transitions"
-    new ""
+    new "Transiciones PushMove"
 
     # indepth_transitions.rpy:58
     old "AlphaDissolve Transitions"
-    new ""
+    new "Transiciones AlphaDissolve"
 
     # indepth_transitions.rpy:58
     old "How about something else?"
-    new ""
+    new "¿Que hay de otra cosa?" #TODO
 

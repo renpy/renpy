@@ -712,105 +712,104 @@ translate spanish strings:
 
     # indepth_style.rpy:20
     old "Button 1"
-    new ""
+    new "Botón 1"
 
     # indepth_style.rpy:22
     old "Button 2"
-    new ""
+    new "Botón 2"
 
     # indepth_style.rpy:66
     old "Style basics."
-    new ""
+    new "Style básicos"
 
     # indepth_style.rpy:66
     old "General style properties."
-    new ""
+    new "Propiedades de estilo Generales"
 
     # indepth_style.rpy:66
     old "Text style properties."
-    new ""
+    new "propiedes de estilo de Texto"
 
     # indepth_style.rpy:66
     old "Window and Button style properties."
-    new ""
+    new "Propiedes de estilo de Ventanas y Botones"
 
     # indepth_style.rpy:66
     old "Bar style properties."
-    new ""
+    new "Propiedes de estilo de Barras"
 
     # indepth_style.rpy:66
     old "Box, Grid, and Fixed style properties."
-    new ""
+    new "Propiedes de estilo de Cajas, Mayas y Fijado" #TODO
 
     # indepth_style.rpy:66
     old "The Displayable Inspector."
-    new ""
+    new "El inspector visualizables."
 
     # indepth_style.rpy:66
     old "That's all I want to know."
-    new ""
+    new "Eso es todo lo que quiero saber."
 
     # indepth_style.rpy:112
     old "This text is colored green."
-    new ""
+    new "Este texto es de color verde."
 
     # indepth_style.rpy:126
     old "Danger"
-    new ""
+    new "Peligro"
 
     # indepth_style.rpy:142
     old "This text is colored red."
-    new ""
+    new "Este texto es de color rojo."
 
     # indepth_style.rpy:170
     old "This text is colored blue."
-    new ""
+    new "Este texto es de color azul."
 
     # indepth_style.rpy:248
     old "Orbiting Earth in the spaceship, I saw how beautiful our planet is.\n–Yuri Gagarin"
-    new ""
+    new "Orbitando la Tierra en la nave espacial, vi lo hermoso que es nuestro planeta. \n–Yuri Gagarin"
 
     # indepth_style.rpy:303
     old "\"Orbiting Earth in the spaceship, I saw how beautiful our planet is.\" Said by Yuri Gagarin."
-    new ""
+    new "\"Orbitando la Tierra en la nave espacial, vi lo hermoso que es nuestro planeta.\" Frace de Yuri Gagarin"
 
     # indepth_style.rpy:326
     old "Vertical"
-    new ""
+    new "Vertical"
 
     # indepth_style.rpy:329
     old "Far better it is to dare mighty things, to win glorious triumphs, even though checkered by failure, than to rank with those poor spirits who neither enjoy nor suffer much, because they live in the gray twilight that knows not victory nor defeat.\n\n–Theodore Roosevelt"
-    new ""
+    new "Mucho mejor es atreverse a hacer cosas poderosas, ganar gloriosos triunfos, aunque estén frustrados por el fracaso, que clasificarse con aquellos espíritus pobres que ni disfrutan ni sufren mucho, porque viven en el crepúsculo gris que no sabe de victoria ni de derrota. \n\n–Theodore Roosevelt"
 
     # indepth_style.rpy:561
     old "Top Choice"
-    new ""
+    new "Eleccion Superior"
 
     # indepth_style.rpy:566
     old "Bottom Choice"
-    new ""
+    new "Eleccion Inferior"
 
     # indepth_style.rpy:879
     old "First Child"
-    new ""
+    new "Primer Hijo"
 
     # indepth_style.rpy:880
     old "Second Child"
-    new ""
+    new "Segundo Hijo"
 
     # indepth_style.rpy:881
     old "Third Child"
-    new ""
+    new "Tercer Hijo"
 
     # indepth_style.rpy:884
     old "Fourth Child"
-    new ""
+    new "Cuato Hijo"
 
     # indepth_style.rpy:885
     old "Fifth Child"
-    new ""
+    new "Quinto Hijo"
 
     # indepth_style.rpy:886
     old "Sixth Child"
-    new ""
-
+    new "Sexto Hijo"

@@ -621,7 +621,7 @@ translate spanish tutorial_music_3555b640:
 translate spanish tutorial_music_a776b6ad:
 
     # e "Let's check out some of the commands that can effect the music channel."
-    e "Echemos un vistazo a algunos de los comandos que pueden afectar el canal music."
+    e "Echemos un vistazo a algunos de los comandos que pueden afectar el canal music." #TODO
 
 # game/tutorial_quickstart.rpy:454
 translate spanish tutorial_music_8b606a55:
@@ -771,7 +771,7 @@ translate spanish choice1_done_819e234a:
 translate spanish choice1_done_461e6a59:
 
     # e "Finally, this shows how you can show dialogue and menus at the same time. Understand?" nointeract
-    e "Finalmente, esto muestra cómo puedes mostrar diálogos y menús al mismo tiempo. ¿Entender?" nointeract
+    e "Finalmente, esto muestra cómo puedes mostrar diálogos y menús al mismo tiempo. ¿Entendido?" nointeract
 
 # game/tutorial_quickstart.rpy:564
 translate spanish choice1_done_a32e30fd:
@@ -855,7 +855,7 @@ translate spanish strings:
 
     # tutorial_quickstart.rpy:589
     old "What's your name?"
-    new "¿Cómo te llmas?"
+    new "¿Cómo te llamas?"
 
     # tutorial_quickstart.rpy:591
     old "Guy Shy"

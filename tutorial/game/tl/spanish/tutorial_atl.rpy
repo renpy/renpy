@@ -640,13 +640,13 @@ translate spanish strings:
 
     # tutorial_atl.rpy:267
     old "xpos 1.0 ypos .5"
-    new ""
+    new "xpos 1.0 ypos .5"
 
     # tutorial_atl.rpy:267
     old "xpos .75 ypos .25"
-    new ""
+    new "xpos .75 ypos .25"
 
     # tutorial_atl.rpy:267
     old "xpos .25 ypos .33"
-    new ""
+    new "xpos .25 ypos .33"
 

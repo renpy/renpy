@@ -88,17 +88,17 @@ translate spanish strings:
 
     # indepth_minigame.rpy:198
     old "Player"
-    new ""
+    new "Jugador"
 
     # indepth_minigame.rpy:211
     old "Click to Begin"
-    new ""
+    new "Click para iniciar"
 
     # indepth_minigame.rpy:255
     old "Sure."
-    new ""
+    new "Serguro"
 
     # indepth_minigame.rpy:255
     old "No thanks."
-    new ""
+    new "No, gracias"
 
