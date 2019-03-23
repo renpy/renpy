@@ -119,7 +119,7 @@ translate spanish strings:
 
     # script.rpy:75
     old "Character Objects"
-    new "Objetos de personajes"
+    new "Objetos Character"
 
     # script.rpy:76
     old "Simple Displayables"
