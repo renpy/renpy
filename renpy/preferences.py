@@ -156,6 +156,12 @@ Preference("gl_tearing", False)
 # The font transformation used.
 Preference("font_transform", None, (type(None), basestring))
 
+# An adjustment applied to font size.
+Preference("font_size", 1.0)
+
+# An adjustment applied to font line spacing.
+Preference("font_line_spacing", 1.0)
+
 
 class Preferences(renpy.object.Object):
     """

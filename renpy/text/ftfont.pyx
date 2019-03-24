@@ -256,7 +256,7 @@ cdef class FTFont:
         if bold:
             antialias = True
 
-        size = size * renpy.config.ftfont_scale.get(face.fn, 1.0)
+        size = size * renpy.config.ftfont_scale.get(face.fn, 1.0) * renpy.game.preferences.font_size
 
         self.face_object = face
         self.face = self.face_object.face
@@ -332,7 +332,7 @@ cdef class FTFont:
             # if self.height > self.lineskip:
             #     self.lineskip = self.height
 
-            self.lineskip = self.height
+            self.lineskip = <int> self.height * renpy.game.preferences.font_line_spacing
 
             if self.vertical:
                 self.underline_offset = FT_FLOOR(FT_MulFix(face.ascender + face.descender - face.underline_position, scale))
