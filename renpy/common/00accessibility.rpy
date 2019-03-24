@@ -48,3 +48,47 @@ init -1500 python hide:
         return "DejaVuSans.ttf"
 
     config.font_transforms["dejavusans"] = dejavusans
+
+screen _accessibility():
+    modal True
+
+    frame:
+        style_group ""
+
+        has side "c b":
+            spacing gui._scale(10)
+            xfill True
+            yfill True
+
+        fixed:
+
+            vbox:
+
+                xmaximum 0.48
+
+                label _("Font Override")
+
+                null height 10
+
+                textbutton _("Default"):
+                    action Preference("font transform", None)
+                    style_suffix "radio_button"
+
+                textbutton _("DejaVu Sans"):
+                    action Preference("font transform", "dejavusans")
+                    style_suffix "radio_button"
+
+                textbutton _("Opendyslexic"):
+                    action Preference("font transform", "opendyslexic")
+                    style_suffix "radio_button"
+
+
+        vbox:
+
+            hbox:
+                spacing gui._scale(25)
+
+                textbutton _("Return"):
+                    action Hide("_accessibility")
+                    yalign 1.0
+
