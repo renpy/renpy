@@ -50,6 +50,7 @@ init -1500 python hide:
     config.font_transforms["dejavusans"] = dejavusans
 
 screen _accessibility():
+    zorder 10000
     modal True
 
     frame:
@@ -82,6 +83,30 @@ screen _accessibility():
                     action Preference("font transform", "opendyslexic")
                     style_suffix "radio_button"
 
+            vbox:
+
+                xpos 0.5
+                xmaximum 0.48
+
+                label _("Self-Voicing")
+
+                null height 10
+
+                textbutton _("Off"):
+                    action Preference("self voicing", "disable")
+                    style_suffix "radio_button"
+
+                textbutton _("Text-to-speech"):
+                    action Preference("self voicing", "enable")
+                    style_suffix "radio_button"
+
+                textbutton _("Clipboard"):
+                    action Preference("clipboard voicing", "enable")
+                    style_suffix "radio_button"
+
+                textbutton _("Debug"):
+                    action Preference("debug voicing", "enable")
+                    style_suffix "radio_button"
 
         vbox:
 

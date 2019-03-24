@@ -645,7 +645,7 @@ screen _parse_errors:
         has side "t c b":
             spacing gui._scale(10)
 
-        label _("Parsing the script failed.")
+        label _("Parsing the script failed.") text_size gui._scale(40)
 
         viewport:
             id "viewport"
