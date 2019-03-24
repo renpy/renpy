@@ -4,127 +4,127 @@
 translate spanish tutorial_positions_a09a3fd1:
 
     # e "In this tutorial, I'll teach you how Ren'Py positions things on the screen. But before that, let's learn a little bit about how Python handles numbers."
-    e ""
+    e "En este tutorial, te enseñaré cómo Ren'Py coloca las cosas en la pantalla. Pero antes de eso, aprendamos un poco sobre cómo Python maneja los números."
 
 # game/tutorial_atl.rpy:207
 translate spanish tutorial_positions_ba39aabc:
 
     # e "There are two main kinds of numbers in Python: integers and floating point numbers. An integer consists entirely of digits, while a floating point number has a decimal point."
-    e ""
+    e "Hay dos tipos principales de números en Python: enteros y números de punto flotante. Un entero consta de dígitos, mientras que un número de punto flotante tiene un punto decimal."
 
 # game/tutorial_atl.rpy:209
 translate spanish tutorial_positions_a60b775d:
 
     # e "For example, 100 is an integer, while 0.5 is a floating point number, or float for short. In this system, there are two zeros: 0 is an integer, and 0.0 is a float."
-    e ""
+    e "Por ejemplo, 100 es un número entero, mientras que 0.5 es un número de punto flotante, o flotante para abreviar. En este sistema, hay dos ceros: 0 es un número entero y 0.0 es un flotante."
 
 # game/tutorial_atl.rpy:211
 translate spanish tutorial_positions_7f1a560c:
 
     # e "Ren'Py uses integers to represent absolute coordinates, and floats to represent fractions of an area with known size."
-    e ""
+    e "Ren'Py usa números enteros para representar coordenadas absolutas y flotantes para representar fracciones de un área con un tamaño conocido."
 
 # game/tutorial_atl.rpy:213
 translate spanish tutorial_positions_8e7d3e52:
 
     # e "When we're positioning something, the area is usually the entire screen."
-    e ""
+    e "Cuando estamos posicionando algo, el área es usualmente la pantalla completa."
 
 # game/tutorial_atl.rpy:215
 translate spanish tutorial_positions_fdcf9d8b:
 
     # e "Let me get out of the way, and I'll show you where some positions are."
-    e ""
+    e "Déjame salir del camino y te mostraré dónde están algunas posiciones."
 
 # game/tutorial_atl.rpy:229
 translate spanish tutorial_positions_76d7a5bf:
 
     # e "The origin is the upper-left corner of the screen. That's where the x position (xpos) and the y position (ypos) are both zero."
-    e ""
+    e "El origen es la esquina superior izquierda de la pantalla. Ahí es donde la posición x (xpos) y la posición y (ypos) son ambas cero."
 
 # game/tutorial_atl.rpy:235
 translate spanish tutorial_positions_be14c7c3:
 
     # e "When we increase xpos, we move to the right. So here's an xpos of .5, meaning half the width across the screen."
-    e ""
+    e "Cuando aumentamos xpos, nos movemos a la derecha. Así que aquí hay un xpos de .5, que significa la mitad del ancho en la pantalla."
 
 # game/tutorial_atl.rpy:240
 translate spanish tutorial_positions_9b91be6c:
 
     # e "Increasing xpos to 1.0 moves us to the right-hand border of the screen."
-    e ""
+    e "Al aumentar xpos a 1.0, nos movemos al borde derecho de la pantalla."
 
 # game/tutorial_atl.rpy:246
 translate spanish tutorial_positions_2b293304:
 
     # e "We can also use an absolute xpos, which is given in an absolute number of pixels from the left side of the screen. For example, since this window is 1280 pixels across, using an xpos of 640 will return the target to the center of the top row."
-    e ""
+    e "También podemos usar un xpos absoluto, que se da en un número absoluto de píxeles desde el lado izquierdo de la pantalla. Por ejemplo, dado que esta ventana tiene 1280 píxeles de ancho, usar un xpos de 640 devolverá el objetivo al centro de la fila superior."
 
 # game/tutorial_atl.rpy:248
 translate spanish tutorial_positions_c4d18c0a:
 
     # e "The y-axis position, or ypos works the same way. Right now, we have a ypos of 0.0."
-    e ""
+    e "La posición del eje y, o ypos, funciona de la misma manera. En este momento, tenemos un ypos de 0.0."
 
 # game/tutorial_atl.rpy:254
 translate spanish tutorial_positions_16933a61:
 
     # e "Here's a ypos of 0.5."
-    e ""
+    e "Aquí hay un ypos de 0.5."
 
 # game/tutorial_atl.rpy:259
 translate spanish tutorial_positions_6eb36777:
 
     # e "A ypos of 1.0 specifies a position at the bottom of the screen. If you look carefully, you can see the position indicator spinning below the text window."
-    e ""
+    e "Un ypos de 1.0 especifica una posición en la parte inferior de la pantalla. Si observa detenidamente, puede ver el indicador de posición girando debajo de la ventana de texto."
 
 # game/tutorial_atl.rpy:261
 translate spanish tutorial_positions_a423050f:
 
     # e "Like xpos, ypos can also be an integer. In this case, ypos would give the total number of pixels from the top of the screen."
-    e ""
+    e "Como xpos, ypos también puede ser un número entero. En este caso, ypos daría el número total de píxeles desde la parte superior de la pantalla."
 
 # game/tutorial_atl.rpy:267
 translate spanish tutorial_positions_bc7a809a:
 
     # e "Can you guess where this position is, relative to the screen?" nointeract
-    e "" nointeract
+    e "¿Puedes adivinar dónde está esta posición, relativa a la pantalla?" nointeract
 
 # game/tutorial_atl.rpy:273
 translate spanish tutorial_positions_6f926e18:
 
     # e "Sorry, that's wrong. The xpos is .75, and the ypos is .25."
-    e ""
+    e "Lo siento, eso está mal. El xpos es .75, y el ypos es .25."
 
 # game/tutorial_atl.rpy:275
 translate spanish tutorial_positions_5d5feb98:
 
     # e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top."
-    e ""
+    e "En otras palabras, es 75%% del lado izquierdo, y 25%% del camino desde la parte superior."
 
 # game/tutorial_atl.rpy:279
 translate spanish tutorial_positions_77b45218:
 
     # e "Good job! You got that position right."
-    e ""
+    e "¡Buen trabajo! Tienes la posición correcta."
 
 # game/tutorial_atl.rpy:283
 translate spanish tutorial_positions_6f926e18_1:
 
     # e "Sorry, that's wrong. The xpos is .75, and the ypos is .25."
-    e ""
+    e "Lo siento, está mal. El xpos es .75, y el ypos es .25."
 
 # game/tutorial_atl.rpy:285
 translate spanish tutorial_positions_5d5feb98_1:
 
     # e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top."
-    e ""
+    e "En otras palabras, es 75%% del lado izquierdo, y 25%% del camino desde la parte superior."
 
 # game/tutorial_atl.rpy:299
 translate spanish tutorial_positions_e4380a83:
 
     # e "The second position we care about is the anchor. The anchor is a spot on the thing being positioned."
-    e ""
+    e "La segunda posición que nos importa es el anchor. El anchor es un punto en la cosa que se coloca."
 
 # game/tutorial_atl.rpy:301
 translate spanish tutorial_positions_d1db1246:
