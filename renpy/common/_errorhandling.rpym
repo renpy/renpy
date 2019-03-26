@@ -212,15 +212,20 @@ init label _errorhandling:
         kerning -1
 
     style _bar is _default:
-        left_bar "#24C"
+        left_bar "#468"
+        hover_left_bar "#24C"
         right_bar "#b0b0b0"
         ysize gui._scale(20)
 
     style _vbar is _default:
-        bottom_bar "#24C"
+        bottom_bar "#468"
+        hover_bottom_bar "#24C"
         top_bar "#b0b0b0"
         xsize gui._scale(20)
         bar_vertical True
+
+    style _slider is _bar
+    style _vslider is _vbar
 
     style _scrollbar is _default:
         thumb "#808080"
