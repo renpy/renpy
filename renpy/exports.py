@@ -2314,8 +2314,10 @@ def free_memory():
     Attempts to free some memory. Useful before running a renpygame-based
     minigame.
     """
+
     force_full_redraw()
     renpy.display.interface.kill_textures_and_surfaces()
+    renpy.text.font.free_memory()
 
 
 @renpy_pure
