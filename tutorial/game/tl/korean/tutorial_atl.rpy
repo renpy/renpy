@@ -238,25 +238,25 @@ translate korean tutorial_positions_e0fe2d81:
 translate korean tutorial_positions_0f4ca2b6:
 
     # e "Once you understand positions, you can use transformations to move things around the Ren'Py screen."
-    e "위치를 이해하면 변환(transform)을 사용해서 대상을 움직일 수 있어."
+    e "위치를 이해하면 변형(transform)을 사용해서 대상을 움직일 수 있어."
 
 # game/tutorial_atl.rpy:418
 translate korean tutorial_atl_d5d6b62a:
 
     # e "Ren'Py uses transforms to animate, manipulate, and place images. We've already seen the very simplest of transforms in use:"
-    e "렌파이는 변환(transform)을 사용하여 이미지의 애니메이션, 조작 및 배치를 수행해. 우리는 방금 사용할 수 있는 변환 중 가장 간단한 것을 봤어."
+    e "렌파이는 변형(transform)을 사용하여 이미지의 애니메이션, 조작 및 배치를 수행해. 우리는 방금 사용할 수 있는 변형 중 가장 간단한 것을 봤어."
 
 # game/tutorial_atl.rpy:425
 translate korean tutorial_atl_7e853c9d:
 
     # e "Transforms can be very simple affairs that place the image somewhere on the screen, like the right transform."
-    e "변환은 오른쪽 변환(at right)과 같이 화면의 어딘가에 이미지를 배치하는 정말 간단한 작업이 될 수 있어."
+    e "변형은 오른쪽 변형(at right)과 같이 화면의 어딘가에 이미지를 배치하는 정말 간단한 작업이 될 수 있어."
 
 # game/tutorial_atl.rpy:429
 translate korean tutorial_atl_87a6ecbd:
 
     # e "But transforms can also be far more complicated affairs, that introduce animation and effects into the mix. To demonstrate, let's have a Gratuitous Rock Concert!"
-    e "하지만 변환은 애니메이션이나 효과가 혼합된 훨씬 복잡한 작업을 할 수도 있어. 시범으로, 완전무상 록 콘서트에 가자!"
+    e "하지만 변형은 애니메이션이나 효과가 혼합된 훨씬 복잡한 작업을 할 수도 있어. 시범으로, 완전무상 록 콘서트에 가자!"
 
 # game/tutorial_atl.rpy:437
 translate korean tutorial_atl_65badef3:
@@ -274,7 +274,7 @@ translate korean tutorial_atl_e0d3c5ec:
 translate korean tutorial_atl_f2407514:
 
     # e "Most transforms in Ren'Py are built using the Animation and Transform Language, or ATL for short."
-    e "렌파이에서 대부분의 변환은 애니메이션과 변환 언어(ATL, Animation and Transform Language)를 사용해 만들어졌어."
+    e "렌파이에서 대부분의 변형은 애니메이션과 변형 언어(ATL, Animation and Transform Language)를 사용해 만들어졌어."
 
 # game/tutorial_atl.rpy:449
 translate korean tutorial_atl_1f22f875:
@@ -298,7 +298,7 @@ translate korean tutorial_atl_7cad2ab9:
 translate korean tutorial_atl_c78b2a1e:
 
     # e "The second way is through the use of the transform statement. This assigns the ATL block to a python variable, allowing it to be used in at clauses and inside other transforms."
-    e "두 번째 방법은 변환(transform) 명령문을 통해 사용하는 거야. 이렇게하면 ATL 블록을 파이썬 변수에 할당해서 at 절이나 다른 변환에서 사용할 수 있어."
+    e "두 번째 방법은 변형(transform) 명령문을 통해 사용하는 거야. 이렇게하면 ATL 블록을 파이썬 변수에 할당해서 at 절이나 다른 변형에서 사용할 수 있어."
 
 # game/tutorial_atl.rpy:473
 translate korean tutorial_atl_da7a7759:
@@ -310,19 +310,19 @@ translate korean tutorial_atl_da7a7759:
 translate korean tutorial_atl_1dd345c6:
 
     # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place."
-    e "ATL이 show 명령문의 부품으로 사용될 때, 변환이 변경되더라도 특성의 값은 존재해. 따라서 클릭으로 동작이 중단되더라도 이미지는 같은 위치에 유지되지."
+    e "ATL이 show 명령문의 부품으로 사용될 때, 변형이 변경되더라도 특성의 값은 존재해. 따라서 클릭으로 동작이 중단되더라도 이미지는 같은 위치에 유지되지."
 
 # game/tutorial_atl.rpy:488
 translate korean tutorial_atl_c21bc1d1:
 
     # e "The key to ATL is what we call composability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
-    e "우리는 ATL의 핵심을 '결합성'이라 불러. ATL은 상대적으로 간단한 명령으로 구성되어 있는데, 복잡한 명령을 함께 사용하여 복잡한 변환을 만들 수 있어."
+    e "우리는 ATL의 핵심을 '결합성'이라 불러. ATL은 상대적으로 간단한 명령으로 구성되어 있는데, 복잡한 명령을 함께 사용하여 복잡한 변형을 만들 수 있어."
 
 # game/tutorial_atl.rpy:490
 translate korean tutorial_atl_ed82983f:
 
     # e "Before I explain how ATL works, let me explain what animation and transformation are."
-    e "ATL이 어떻게 작동하는지 알려주기 전에, 애니메이션과 변환이 무엇인지부터 설명할게."
+    e "ATL이 어떻게 작동하는지 알려주기 전에, 애니메이션과 변형이 무엇인지부터 설명할게."
 
 # game/tutorial_atl.rpy:495
 translate korean tutorial_atl_2807adff:
@@ -334,7 +334,7 @@ translate korean tutorial_atl_2807adff:
 translate korean tutorial_atl_3eec202b:
 
     # e "Transformation involves moving or distorting an image. This includes placing it on the screen, zooming it in and out, rotating it, and changing its opacity."
-    e "변환은 이미지를 움직이거나 왜곡시키는 거야. 여기에는 화면에 배치, 확대 및 축소, 회전 및 불투명도 변경이 포함돼."
+    e "변형은 이미지를 움직이거나 왜곡시키는 거야. 여기에는 화면에 배치, 확대 및 축소, 회전 및 불투명도 변경이 포함돼."
 
 # game/tutorial_atl.rpy:530
 translate korean tutorial_atl_fbc9bf83:
@@ -388,7 +388,7 @@ translate korean tutorial_atl_e5872360:
 translate korean tutorial_atl_2e9d63ea:
 
     # e "With animation done, we'll see how we can use ATL to transform images, starting with positioning an image on the screen."
-    e "애니메이션이 끝났으니 ATL을 사용하여 이미지를 화면에 배치하는 방법부터 시작해서 이미지를 변환하는 방법을 알아보자."
+    e "애니메이션이 끝났으니 ATL을 사용하여 이미지를 화면에 배치하는 방법부터 시작해서 이미지를 변형하는 방법을 알아보자."
 
 # game/tutorial_atl.rpy:570
 translate korean tutorial_atl_ddc55039:
@@ -424,7 +424,7 @@ translate korean tutorial_atl_d3416d4f:
 translate korean tutorial_atl_4e7512ec:
 
     # e "The interpolation statement allows you to smoothly vary the value of a transform property, from an old to a new value."
-    e "보간문을 사용하면 변환 속성 값을 이전 값에서 새 값으로 부드럽게 변경할 수 있어."
+    e "보간문을 사용하면 변형 속성 값을 이전 값에서 새 값으로 부드럽게 변경할 수 있어."
 
 # game/tutorial_atl.rpy:588
 translate korean tutorial_atl_685eeeaa:
@@ -460,13 +460,13 @@ translate korean tutorial_atl_d08fe8d9:
 translate korean tutorial_atl_84b22ac0:
 
     # e "ATL transforms created using the statement become ATL statements themselves. Since the default positions are also transforms, this means that we can use left, right, and center inside of an ATL block."
-    e "명령문을 사용해 만들어진 ATL 변환은 ATL 명령문 자체가 돼. 기본 위치 또한 변환으로, ATL 블록 안에서 왼쪽, 오른쪽 및 가운데를 사용할 수 있다는 뜻이야."
+    e "명령문을 사용해 만들어진 ATL 변형은 ATL 명령문 자체가 돼. 기본 위치 또한 변형으로, ATL 블록 안에서 왼쪽, 오른쪽 및 가운데를 사용할 수 있다는 뜻이야."
 
 # game/tutorial_atl.rpy:635
 translate korean tutorial_atl_331126c1:
 
     # e "Here, we have two new statements. The block statement allows you to include a block of ATL code. Since the repeat statement applies to blocks, this lets you repeat only part of an ATL transform."
-    e "여기에는 두 개의 새로운 명령문이 있어. 블록 명령문을 사용하면 ATL 코드의 블록을 포함할 수 있어. 반복(repeat) 명령문은 블록에 적용되는 것으로 ATL 변환의 일부만 반복하게 할 수 있어."
+    e "여기에는 두 개의 새로운 명령문이 있어. 블록 명령문을 사용하면 ATL 코드의 블록을 포함할 수 있어. 반복(repeat) 명령문은 블록에 적용되는 것으로 ATL 변형의 일부만 반복하게 할 수 있어."
 
 # game/tutorial_atl.rpy:637
 translate korean tutorial_atl_24f67b67:
@@ -508,13 +508,13 @@ translate korean tutorial_atl_2265254b:
 translate korean transform_properties_391169cf:
 
     # e "Ren'Py has quite a few transform properties that can be used with ATL, the Transform displayable, and the add Screen Language statement."
-    e "렌파이는 ATL, 변환 디스플레이어블 및 add 스크린 언어 명령문에서 사용할 수 있는 꽤 많은 변형 속성을 가지고 있어."
+    e "렌파이는 ATL, 변형 디스플레이어블 및 add 스크린 언어 명령문에서 사용할 수 있는 꽤 많은 변형 속성을 가지고 있어."
 
 # game/tutorial_atl.rpy:685
 translate korean transform_properties_fc895a1f:
 
     # e "Here, we'll show them off so you can see them in action and get used to what each does."
-    e "여기서, 우리는 그것들을 보고 각각의 속성들이 하는 것을 배우고 익숙해질 거야."
+    e "여기서, 우리는 각각의 속성들이 하는 것을 보고 배우게 될 거야."
 
 # game/tutorial_atl.rpy:701
 translate korean transform_properties_88daf990:
@@ -538,103 +538,103 @@ translate korean transform_properties_89e0d7c2:
 translate korean transform_properties_4194527e:
 
     # "When it's set to True, movement is smoother at the cost of blurring images a little."
-    ""
+    "값을 참(True)으로 설정하면 이미지가 약간 희미해지는 대신에 부드럽게 움직이게 돼."
 
 # game/tutorial_atl.rpy:755
 translate korean transform_properties_35934e77:
 
     # e "Transforms also support polar coordinates. The around property sets the center of the coordinate system to coordinates given in pixels."
-    e ""
+    e "변형은 또한 극좌표를 지원해. 주변(around) 속성은 좌표계의 중심을 픽셀로 주어진 좌표로 설정하지."
 
 # game/tutorial_atl.rpy:763
 translate korean transform_properties_605ebd0c:
 
     # e "The angle property gives the angle in degrees. Angles run clockwise, with the zero angle at the top of the screen."
-    e ""
+    e "각도(angle) 속성은 각도를 도(º)로 제공해. 각도는 시계 방향으로 돌고, 화면 상단의 각도는 0이야."
 
 # game/tutorial_atl.rpy:772
 translate korean transform_properties_6d4555ed:
 
     # e "The radius property gives the distance in pixels from the anchor of the displayable to the center of the coordinate system."
-    e ""
+    e "반경(radius) 속성은 디스플레이어블의 앵커에서 좌표계의 중심까지 거리를 픽셀 단위로 나타내."
 
 # game/tutorial_atl.rpy:786
 translate korean transform_properties_7af037a5:
 
     # e "There are several ways to resize a displayable. The zoom property lets us scale a displayable by a factor, making it bigger and smaller."
-    e ""
+    e "디스플레이어블의 크기를 조정하는 방법에는 여러 가지가 있어. 줌(zoom) 속성을 사용하면 디스플레이어블을 배율로 해 그 배율을 조정하여 더 크게 또는 더 작게 만들 수 있지."
 
 # game/tutorial_atl.rpy:799
 translate korean transform_properties_b6527546:
 
     # e "The xzoom and yzoom properties allow the displayable to be scaled in the X and Y directions independently."
-    e ""
+    e "xzoom과 yzoom 속성을 사용하면 디스플레이어블을 X 및 Y 방향으로 개별 조정할 수 있어."
 
 # game/tutorial_atl.rpy:809
 translate korean transform_properties_b98b780b:
 
     # e "By making xzoom or yzoom a negative number, we can flip the image horizontally or vertically."
-    e ""
+    e "xzoom이나 yzoom을 음수로 설정하면, 이미지를 수직 또는 수평으로 뒤집을 수 있고."
 
 # game/tutorial_atl.rpy:819
 translate korean transform_properties_74d542ff:
 
     # e "Instead of zooming by a scale factor, the size transform property can be used to scale a displayable to a size in pixels."
-    e ""
+    e "크기(size) 변형 속성은 디스플레이어블의 크기를 픽셀 단위로 조정하는데 사용될 수 있어."
 
 # game/tutorial_atl.rpy:834
 translate korean transform_properties_438ed776:
 
     # e "The alpha property is used to change the opacity of a displayable. This can make it appear and disappear."
-    e ""
+    e "알파(alpha) 속성은 디스플레이어블의 불투명도를 변경할 때 사용해. 이 속성은 대상을 보이거나 보이지 않게 만들 수 있지."
 
 # game/tutorial_atl.rpy:847
 translate korean transform_properties_aee19f86:
 
     # e "The rotate property rotates a displayable."
-    e ""
+    e "회전(rotate) 속성은 디스플레이어블을 회전시켜."
 
 # game/tutorial_atl.rpy:858
 translate korean transform_properties_57b3235a:
 
     # e "By default, when a displayable is rotated, Ren'Py will include extra space on all four sides, so the size doesn't change as it rotates. Here, you can see the extra space on the left and top, and it's also there on the right and bottom."
-    e ""
+    e "기본적으로, 렌파이는 네면에 여분의 공간을 포함하기 때문에 디스플레이어블이 회전됐을 때 크기가 변하지 않아. 여기서, 우리는 왼쪽과 위쪽에 여분의 공간을 볼 수 있고 오른쪽과 아래쪽도 마찬가지야."
 
 # game/tutorial_atl.rpy:870
 translate korean transform_properties_66d29ee8:
 
     # e "By setting rotate_pad to False, we can get rid of the space, at the cost of the size of the displayable changing as it rotates."
-    e ""
+    e "rotate_pad를 거짓(False)으로 설정하면 회전할 때 디스플레이어블 크기가 변경되는 대신에 공간을 제거할 수 있어."
 
 # game/tutorial_atl.rpy:881
 translate korean transform_properties_7f32e8ad:
 
     # e "The tile transform properties, xtile and ytile, repeat the displayable multiple times."
-    e ""
+    e "타일(tile) 변형 속성인 xtile과 ytile은 디스플레이어블을 여러 번 반복해."
 
 # game/tutorial_atl.rpy:891
 translate korean transform_properties_207b7fc8:
 
     # e "The crop property crops a rectangle out of a displayable, showing only part of it."
-    e ""
+    e "자르기(crop) 속성은 디스플레이어블에서 사각형의 영역을 잘라내."
 
 # game/tutorial_atl.rpy:905
 translate korean transform_properties_e7e22d28:
 
     # e "When used together, crop and size can be used to focus in on specific parts of an image."
-    e ""
+    e "자르기(crop)와 크기(size)를 함께 사용하면 이미지의 특정 부분에 집중할 수 있어."
 
 # game/tutorial_atl.rpy:917
 translate korean transform_properties_f34abd82:
 
     # e "The xpan and ypan properties can be used to pan over a displayable, given an angle in degrees, with 0 being the center."
-    e ""
+    e "xpan과 ypan 속성은 0을 중심으로 디스플레이어블의 각도(0도 단위)를 표시하는 데 사용할 수 있어."
 
 # game/tutorial_atl.rpy:924
 translate korean transform_properties_bfa3b139:
 
     # e "Those are all the transform properties we have to work with. By putting them together in the right order, you can create complex things."
-    e ""
+    e "지금까지 본 것들은 모두 우리가 작업해야 하는 변형 속성이야. 올바른 순서로 함께 배치하면 복잡한 것을 만들 수도 있어."
 
 translate korean strings:
 

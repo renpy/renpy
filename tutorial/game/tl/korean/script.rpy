@@ -132,11 +132,11 @@ translate korean strings:
 
     # script.rpy:83
     old "Transforms and Animation"
-    new "변환과 애니메이션"
+    new "변형과 애니메이션"
 
     # script.rpy:84
     old "Transform Properties"
-    new "변환 속성"
+    new "변형 속성"
 
     # script.rpy:86
     old "GUI Customization"

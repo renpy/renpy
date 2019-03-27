@@ -234,7 +234,7 @@
 
     # 00director.rpy:1564
     old "(transform)"
-    new "(변환)"
+    new "(변형)"
 
     # 00director.rpy:1589
     old "(transition)"
@@ -278,7 +278,7 @@
 
     # 00director.rpy:1729
     old "Transforms:"
-    new "변환:"
+    new "변형:"
 
     # 00director.rpy:1748
     old "Behind:"
