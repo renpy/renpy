@@ -166,127 +166,127 @@ translate korean screens_showing_b52e420c:
 translate korean screens_showing_c5ca730f:
 
     # e "When a call screen statement ends, the screen is automatically hidden."
-    e ""
+    e "call screen 명령문이 끝날 때 스크린은 자동으로 숨겨지게 돼."
 
 # game/tutorial_screens.rpy:312
 translate korean screens_showing_a38d1702:
 
     # e "Generally, you use show screen to show overlays that are up all the time, and call screen to show screens the player interacts with for a little while."
-    e ""
+    e "일반적으로, 항상 오버레이로 보여지는 것들을 show screen으로, 플레이어의 상호작용에 따라 잠시 화면에 표시될 것들을 call screen으로 사용해."
 
 # game/tutorial_screens.rpy:335
 translate korean screens_parameters_0666043d:
 
     # e "Here's an example of a screen that takes three parameters. The message parameter is a message to show, while the okay and cancel actions are run when the appropriate button is chosen."
-    e ""
+    e "이것은 세 가지 매개 변수를 사용하는 화면의 예제야. message 매개 변수는 보여질 메시지이고, okay 및 cancel은 해당 단추를 선택하면 작업이 실행돼."
 
 # game/tutorial_screens.rpy:337
 translate korean screens_parameters_cf95b914:
 
     # e "While the message parameter always has to be supplied, the okay and cancel parameters have default values that are used if no argument is given."
-    e ""
+    e "message 매개 변수는 항상 제공되어야 하지만, okay와 cancel에는 인수가 제공되지 않은 경우에 사용되는 기본값이 있어."
 
 # game/tutorial_screens.rpy:339
 translate korean screens_parameters_4ce03111:
 
     # e "Each parameter is a variable that is defined inside the screen. Inside the screen, these variables take priority over those used in the rest of Ren'Py."
-    e ""
+    e "각각의 매개 변수는 스크린 내에 정의된 변수야. 스크린 내에서, 이 변수는 렌파이에서 사용되는 나머지 변수보다 우선해."
 
 # game/tutorial_screens.rpy:343
 translate korean screens_parameters_106c2a04:
 
     # e "When a screen is shown, arguments can be supplied for each of the parameters. Arguments can be given by position or by name."
-    e ""
+    e "스크린이 표시되면 각 매개 변수에 인수를 제공할 수 있어. 인수는 위치나 이름으로 지정될 수 있고."
 
 # game/tutorial_screens.rpy:350
 translate korean screens_parameters_12ac92d4:
 
     # e "Parameters let us change what a screen displays, simply by re-showing it with different arguments."
-    e ""
+    e "매개 변수를 사용하면 화면에 표시되는 내용을 다른 인수로 다시 표시함으로써 간단하게 변경할 수 있어."
 
 # game/tutorial_screens.rpy:357
 translate korean screens_parameters_d143a994:
 
     # e "The call screen statement can also take arguments, much like show screen does."
-    e ""
+    e "call screen 명령문 역시 show screen처럼 인수를 사용할 수 있어."
 
 # game/tutorial_screens.rpy:369
 translate korean screens_properties_423246a2:
 
     # e "There are a few properties that can be applied to a screen itself."
-    e ""
+    e "스크린 자체에 적용할 수 있는 몇 가지 속성이 있는데,"
 
 # game/tutorial_screens.rpy:380
 translate korean screens_properties_4fde164e:
 
     # e "When the modal property is true, you can't interact with things beneath the screen. You'll have to click 'Close This Screen' before you can continue."
-    e ""
+    e "모달(modal) 속성이 참(true)이면 스크린의 외부 항목과 상호작용할 수 없어. 계속하려면 '이 화면 닫기'를 클릭해야 해."
 
 # game/tutorial_screens.rpy:398
 translate korean screens_properties_550c0bea:
 
     # e "When a screen has the tag property, it's treated like the tag part of an image name. Here, I'm showing a_tag_screen."
-    e ""
+    e "화면에 태그(tag) 속성이 있으면 이미지 이름의 태그처럼 처리돼. 지금은, a_tag_screen을 보여주고 있어."
 
 # game/tutorial_screens.rpy:402
 translate korean screens_properties_4fcf8af8:
 
     # e "When I show b_tag_screen, it replaces a_tag_screen."
-    e ""
+    e "b_tag_screen을 보여주면 a_tag_screen을 교체할 거야."
 
 # game/tutorial_screens.rpy:404
 translate korean screens_properties_7ed5a791:
 
     # e "This is useful in the game and main menus, where you want the load screen to replace the preferences screen. By default, all those screens have tag menu."
-    e ""
+    e "이 기능은 게임 및 메인 메뉴에서, 불러오기 스크린을 설정 스크린으로 교체하는 것 같은 것들에 유용해. 기본적으로 모든 스크린에는 tag menu가 있어."
 
 # game/tutorial_screens.rpy:408
 translate korean screens_properties_5d51bd1e:
 
     # e "For some reason, tag takes a name, and not an expression. It's too late to change it."
-    e ""
+    e "몇 가지 이유로, 태그는 표현식(expression)이 아니라 이름을 사용해. 그것을 변경하기에는 너무 늦었어."
 
 # game/tutorial_screens.rpy:432
 translate korean screens_properties_6706e266:
 
     # e "The zorder property controls the order in which screens overlap each other. The larger the zorder number, the closer the screen is to the player."
-    e ""
+    e "zorder 속성은 화면이 서로 겹치는 순서를 제어해. zorder의 숫자가 클수록 스크린이 우선적으로 보이게 돼."
 
 # game/tutorial_screens.rpy:434
 translate korean screens_properties_f7a2c73d:
 
     # e "By default, a screen has a zorder of 0. When two screens have the same zorder number, the screen that is shown second is closer to the player."
-    e ""
+    e "기본적으로, 스크린은 0의 zorder 값을 가져. 같은 값의 zorder를 가진 두 스크린이 표시된다면 두 번째 스크린이 우선적으로 표시되지."
 
 # game/tutorial_screens.rpy:454
 translate korean screens_properties_78433eb8:
 
     # e "The variant property selects a screen based on the properties of the device it's running on."
-    e ""
+    e "변체(variant) 속성은 실행중인 장치의 속성을 기반으로 스크린을 선택해."
 
 # game/tutorial_screens.rpy:456
 translate korean screens_properties_e6db6d02:
 
     # e "In this example, the first screen will be used for small devices like telephones, and the other screen will be used for tablets and computers."
-    e ""
+    e "이 예제에서, 첫 번째 스크린은 휴대전화 같은 작은 장치에서 사용될 것이고, 다른 스크린은 태블릿이나 컴퓨터같은 장치에서 사용될 거야."
 
 # game/tutorial_screens.rpy:475
 translate korean screens_properties_d21b5500:
 
     # e "Finally, the style_prefix property specifies a prefix that's applied to the styles in the screen."
-    e ""
+    e "마지막으로, style_prefix 속성은 화면의 스타일에 적용되는 접두어를 지정하도록 돼있어."
 
 # game/tutorial_screens.rpy:477
 translate korean screens_properties_560ca08a:
 
     # e "When the 'red' prefix is given, the frame gets the 'red_frame' style, and the text gets the 'red_text' style."
-    e ""
+    e "'red' 접두어가 주어지면 프레임은 'red_frame'의 스타일을 가져오고, 글자는 'red_text' 스타일을 사용하게 돼."
 
 # game/tutorial_screens.rpy:479
 translate korean screens_properties_c7ad3a8e:
 
     # e "This can save a lot of typing when styling screens with many displayables in them."
-    e ""
+    e "이렇게 하면 많은 디스플레이어블이 있는 스크린의 스타일을 설정할 때 많은 타이핑을 줄일 수 있지."
 
 # game/tutorial_screens.rpy:491
 translate korean screens_control_4a1d8d7c:
@@ -418,39 +418,39 @@ translate korean strings:
 
     # tutorial_screens.rpy:26
     old " Lv. [lv]"
-    new ""
+    new " Lv. [lv]"
 
     # tutorial_screens.rpy:29
     old "HP"
-    new ""
+    new "HP"
 
     # tutorial_screens.rpy:58
     old "Morning"
-    new ""
+    new "아침"
 
     # tutorial_screens.rpy:58
     old "Afternoon"
-    new ""
+    new "오후"
 
     # tutorial_screens.rpy:58
     old "Evening"
-    new ""
+    new "저녁"
 
     # tutorial_screens.rpy:61
     old "Study"
-    new ""
+    new "공부하기"
 
     # tutorial_screens.rpy:61
     old "Exercise"
-    new ""
+    new "운동하기"
 
     # tutorial_screens.rpy:61
     old "Eat"
-    new ""
+    new "먹기"
 
     # tutorial_screens.rpy:61
     old "Drink"
-    new ""
+    new "마시기"
 
     # tutorial_screens.rpy:61
     old "Be Merry"
@@ -458,137 +458,137 @@ translate korean strings:
 
     # tutorial_screens.rpy:107
     old "Strength"
-    new ""
+    new "힘"
 
     # tutorial_screens.rpy:111
     old "Intelligence"
-    new ""
+    new "지능"
 
     # tutorial_screens.rpy:115
     old "Moxie"
-    new ""
+    new "투지"
 
     # tutorial_screens.rpy:119
     old "Chutzpah"
-    new ""
+    new "배짱"
 
     # tutorial_screens.rpy:171
     old "What screens can do."
-    new ""
+    new "스크린이 할 수 있는 것"
 
     # tutorial_screens.rpy:171
     old "How to show screens."
-    new ""
+    new "스크린을 보여주는 방법"
 
     # tutorial_screens.rpy:171
     old "Passing parameters to screens."
-    new ""
+    new "스크린에 매개 변수 전달"
 
     # tutorial_screens.rpy:171
     old "Screen properties."
-    new ""
+    new "스크린 속성"
 
     # tutorial_screens.rpy:171
     old "Special screen statements."
-    new ""
+    new "특수 스크린 명령문"
 
     # tutorial_screens.rpy:171
     old "Using other screens."
-    new ""
+    new "다른 스크린을 사용하는 방법"
 
     # tutorial_screens.rpy:171
     old "That's it."
-    new ""
+    new "이제 됐어"
 
     # tutorial_screens.rpy:205
     old "I do."
-    new ""
+    new "알았어"
 
     # tutorial_screens.rpy:331
     old "Hello, world."
-    new ""
+    new "Hello, world."
 
     # tutorial_screens.rpy:331
     old "You can't cancel this."
-    new ""
+    new "이건 취소할 수 없어."
 
     # tutorial_screens.rpy:346
     old "Shiro was here."
-    new ""
+    new "시로가 여기에 있었어."
 
     # tutorial_screens.rpy:362
     old "Click either button to continue."
-    new ""
+    new "버튼을 클릭해봐."
 
     # tutorial_screens.rpy:377
     old "Close This Screen"
-    new ""
+    new "스크린 닫기"
 
     # tutorial_screens.rpy:388
     old "A Tag Screen"
-    new ""
+    new "A 태그 스크린"
 
     # tutorial_screens.rpy:395
     old "B Tag Screen"
-    new ""
+    new "B 태그 스크린"
 
     # tutorial_screens.rpy:447
     old "You're on a small device."
-    new ""
+    new "작은 기기로 하고 있어."
 
     # tutorial_screens.rpy:452
     old "You're not on a small device."
-    new ""
+    new "작은 기기가 아니야."
 
     # tutorial_screens.rpy:466
     old "This text is red."
-    new ""
+    new "이 글자는 빨간색이야."
 
     # tutorial_screens.rpy:496
     old "Hello, World."
-    new ""
+    new "Hello, World."
 
     # tutorial_screens.rpy:510
     old "It's good to meet you."
-    new ""
+    new "만나서 반가워."
 
     # tutorial_screens.rpy:534
     old "Increase"
-    new ""
+    new "키우기"
 
     # tutorial_screens.rpy:563
     old "Earth"
-    new ""
+    new "지구"
 
     # tutorial_screens.rpy:563
     old "Moon"
-    new ""
+    new "달"
 
     # tutorial_screens.rpy:563
     old "Mars"
-    new ""
+    new "화성"
 
     # tutorial_screens.rpy:581
     old "Now press 'a'."
-    new ""
+    new "이제 'a'를 눌러."
 
     # tutorial_screens.rpy:583
     old "The screen was just shown."
-    new ""
+    new "스크린이 보여."
 
     # tutorial_screens.rpy:585
     old "You pressed the 'a' key."
-    new ""
+    new "'a' 키를 눌렀어."
 
     # tutorial_screens.rpy:608
     old "Health"
-    new ""
+    new "체력"
 
     # tutorial_screens.rpy:613
     old "Magic"
-    new ""
+    new "마법"
 
     # tutorial_screens.rpy:644
     old "There's not much left to see."
-    new ""
+    new "여긴 볼 게 없어."
 
