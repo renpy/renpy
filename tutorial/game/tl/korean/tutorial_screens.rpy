@@ -178,7 +178,7 @@ translate korean screens_showing_a38d1702:
 translate korean screens_parameters_0666043d:
 
     # e "Here's an example of a screen that takes three parameters. The message parameter is a message to show, while the okay and cancel actions are run when the appropriate button is chosen."
-    e "이것은 세 가지 매개 변수를 사용하는 화면의 예제야. message 매개 변수는 보여질 메시지이고, okay 및 cancel은 해당 단추를 선택하면 작업이 실행돼."
+    e "이것은 세 가지 매개 변수를 사용하는 화면의 예제야. message 매개 변수는 보여질 메시지이고, okay 및 cancel은 해당 버튼을 선택했을 때 실행될 작업이야."
 
 # game/tutorial_screens.rpy:337
 translate korean screens_parameters_cf95b914:
