@@ -1520,6 +1520,9 @@ class Side(Container):
         super(Side, self)._clear()
         self.sized = False
 
+    def per_interact(self):
+        self.sized = False
+
     def render(self, width, height, st, at):
 
         pos_d = { }
