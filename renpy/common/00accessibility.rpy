@@ -50,7 +50,7 @@ init -1500 python hide:
     config.font_transforms["dejavusans"] = dejavusans
 
 screen _accessibility():
-    zorder 10000
+    zorder 2000
     modal True
 
     frame:
@@ -63,52 +63,80 @@ screen _accessibility():
 
         fixed:
 
-            vbox:
+            viewport:
+                scrollbars "vertical"
+                mousewheel True
 
-                xmaximum 0.48
+                has grid 2 1:
+                    xfill True
+                    spacing 20
 
-                label _("Font Override")
+                vbox:
 
-                null height 10
+                    label _("Font Override")
 
-                textbutton _("Default"):
-                    action Preference("font transform", None)
-                    style_suffix "radio_button"
+                    null height 10
 
-                textbutton _("DejaVu Sans"):
-                    action Preference("font transform", "dejavusans")
-                    style_suffix "radio_button"
+                    textbutton _("Default"):
+                        action Preference("font transform", None)
+                        style_suffix "radio_button"
 
-                textbutton _("Opendyslexic"):
-                    action Preference("font transform", "opendyslexic")
-                    style_suffix "radio_button"
+                    textbutton _("DejaVu Sans"):
+                        action Preference("font transform", "dejavusans")
+                        style_suffix "radio_button"
 
-            vbox:
+                    textbutton _("Opendyslexic"):
+                        action Preference("font transform", "opendyslexic")
+                        style_suffix "radio_button"
 
-                xpos 0.5
-                xmaximum 0.48
+                    null height 10
 
-                label _("Self-Voicing")
+                    label _("Text Size Scaling")
 
-                null height 10
+                    null height 10
 
-                textbutton _("Off"):
-                    action Preference("self voicing", "disable")
-                    style_suffix "radio_button"
+                    bar value Preference("font size")
 
-                textbutton _("Text-to-speech"):
-                    action Preference("self voicing", "enable")
-                    style_suffix "radio_button"
+                    textbutton _("Reset"):
+                        action Preference("font size", 1.0)
 
-                textbutton _("Clipboard"):
-                    action Preference("clipboard voicing", "enable")
-                    style_suffix "radio_button"
+                    null height 10
 
-                textbutton _("Debug"):
-                    action Preference("debug voicing", "enable")
-                    style_suffix "radio_button"
+                    label _("Line Spacing Scaling")
+
+                    null height 10
+
+                    bar value Preference("font line spacing")
+
+                    textbutton _("Reset"):
+                        action Preference("font line spacing", 1.0)
+
+
+                vbox:
+
+                    label _("Self-Voicing")
+
+                    null height 10
+
+                    textbutton _("Off"):
+                        action Preference("self voicing", "disable")
+                        style_suffix "radio_button"
+
+                    textbutton _("Text-to-speech"):
+                        action Preference("self voicing", "enable")
+                        style_suffix "radio_button"
+
+                    textbutton _("Clipboard"):
+                        action Preference("clipboard voicing", "enable")
+                        style_suffix "radio_button"
+
+                    textbutton _("Debug"):
+                        action Preference("debug voicing", "enable")
+                        style_suffix "radio_button"
 
         vbox:
+
+            text ("The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine.")
 
             hbox:
                 spacing gui._scale(25)
