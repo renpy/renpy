@@ -621,7 +621,7 @@ translate spanish tutorial_music_3555b640:
 translate spanish tutorial_music_a776b6ad:
 
     # e "Let's check out some of the commands that can effect the music channel."
-    e "Echemos un vistazo a algunos de los comandos que pueden afectar el canal music." #TODO
+    e ""
 
 # game/tutorial_quickstart.rpy:454
 translate spanish tutorial_music_8b606a55:
@@ -860,4 +860,10 @@ translate spanish strings:
     # tutorial_quickstart.rpy:591
     old "Guy Shy"
     new "Chico Timido"
+
+# game/tutorial_quickstart.rpy:449
+translate spanish tutorial_music_a2ffbe9b:
+
+    # e "Let's check out some of the commands that can affect the music channel."
+    e "Revisemos algunos de los comandos que pueden afectar el canla music."
 

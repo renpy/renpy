@@ -81,7 +81,7 @@ translate spanish demo_character_b456f0a9:
 translate spanish demo_character_3c3b8e00:
 
     # e1 "The window_background property sets the image thay's used for the background of the textbox, which should be the same size as the default in gui/textbox.png." 
-    e1 "La propiedad window_background establece la imagen que se utiliza para el fondo del cuadro de texto, que debe tener el mismo tamaño que el predeterminado en gui/textbox.png." #TODO
+    e1 ""
 
 # game/indepth_character.rpy:54
 translate spanish demo_character_18ba073d:
@@ -208,4 +208,10 @@ translate spanish demo_character_0c8f314a:
 
     # "I think I do."
     "Eso creo."
+
+# game/indepth_character.rpy:48
+translate spanish demo_character_31ace18e:
+
+    # e1 "The window_background property sets the image that's used for the background of the textbox, which should be the same size as the default in gui/textbox.png."
+    e1 "La propiedad window_background establece la imagen que se utiliza para el fondo del cuadro de texto, que debe tener el mismo tamaño que el predeterminado en gui/textbox.png."
 

@@ -740,7 +740,7 @@ translate spanish strings:
 
     # indepth_style.rpy:66
     old "Box, Grid, and Fixed style properties."
-    new "Propiedes de estilo de Cajas, Mayas y Fijado" #TODO
+    new "Propiedes de estilo de Cajas, Mayas y Fijado"
 
     # indepth_style.rpy:66
     old "The Displayable Inspector."

@@ -172,7 +172,7 @@ translate spanish strings:
 
     # indepth_text.rpy:115
     old "{i}variable value{/i}"
-    new "{i}valor de variable{/i}"#TODO
+    new "{i}valor de variable{/i}"
 
     # indepth_text.rpy:124
     old "translatable text"

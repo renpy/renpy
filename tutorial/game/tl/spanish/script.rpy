@@ -123,7 +123,7 @@ translate spanish strings:
 
     # script.rpy:76
     old "Simple Displayables"
-    new "Displayables simples"
+    new "Visualizables simples"
 
     # script.rpy:77
     old "Transition Gallery"

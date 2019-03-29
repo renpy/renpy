@@ -520,5 +520,5 @@ translate spanish strings:
 
     # indepth_transitions.rpy:58
     old "How about something else?"
-    new "¿Que hay de otra cosa?" #TODO
+    new "¿Que hay de otra cosa?"
 
