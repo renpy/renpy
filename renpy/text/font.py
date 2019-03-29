@@ -384,6 +384,10 @@ class BMFont(ImageFont):
                 self.width[c] = w + xo
                 self.advance[c] = xadvance
                 self.offsets[c] = (xo, yo)
+            elif kind == "kerning":
+                first = unichr(int(args["first"]))
+                second = unichr(int(args["second"]))
+                self.kerns[first + second] = int(args["amount"])
 
         f.close()
 
