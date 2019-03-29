@@ -849,6 +849,8 @@ both horizontal and vertical positions.
     Otherwise, the components are considered to be an absolute number
     of pixels.
 
+    If corners and crop are given, crop takes priority over corners.
+
 .. transform-property:: crop_relative
 
     :type: boolean
@@ -862,16 +864,16 @@ both horizontal and vertical positions.
     :type: None or (int, int)
     :default: None
 
-    If not None, gives the upper-left corner of the crop box. This
-    takes priority over crop.
+    If not None, gives the upper-left corner of the crop box. Crop takes
+    priority over corners.
 
 .. transform-property:: corner2
 
     :type: None or (int, int)
     :default: None
 
-    If not None, gives the lower right corner of the crop box. This
-    takes priority over crop.
+    If not None, gives the lower right corner of the crop box. Cropt takes
+    priority over corners.
 
 .. transform-property:: size
 
