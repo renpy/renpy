@@ -292,127 +292,127 @@ translate korean screens_properties_c7ad3a8e:
 translate korean screens_control_4a1d8d7c:
 
     # e "The screen language has a few statements that do things other than show displayables. If you haven't seen the section on {a=jump:warp_screen_displayables}Screen Displayables{/a} yet, you might want to check it out, then come back here."
-    e ""
+    e "스크린 언어에는 디스플레이어블을 표시하는 것 이외의 일을 하는 명령문들이 있어. {a=jump:warp_screen_displayables}스크린 디스플레이어블{/a}에 관한 길라잡이를 숙지하지 않았다면, 해당 길라잡이를 살펴본 후에 다시 여기로 오는 게 좋을 거야."
 
 # game/tutorial_screens.rpy:503
 translate korean screens_control_0e939050:
 
     # e "The python statement works just about the same way it does in the script. A single line of Python is introduced with a dollar sign. This line is run each time the screen updates."
-    e ""
+    e "파이썬 명령문은 스크립트에서와 같은 방식으로 작동해. 파이썬의 한 줄에는 달러 기호가 붙지. 이러한 행들은 화면이 갱신될 때마다 실행돼."
 
 # game/tutorial_screens.rpy:518
 translate korean screens_control_6334650a:
 
     # e "Similarly, the python statement introduces an indented block of python statements. But there is one big difference in Python in screens and Python in scripts."
-    e ""
+    e "비슷하게, python 문은 파이썬 명령문의 들여쓰기 된 블록을 사용해. 하지만 스크립트에서의 파이썬과 스크린에서의 파이썬에는 큰 차이가 있어."
 
 # game/tutorial_screens.rpy:520
 translate korean screens_control_ba8f5f13:
 
     # e "The Python you use in screens isn't allowed to have side effects. That means that it can't do things like change the value of a variable."
-    e ""
+    e "스크린에서 사용하는 파이썬은 부가 효과를 허용하지 않아. 그것은 변수의 값을 변경하는 것과 같은 일을 할 수 없다는 것을 의미해."
 
 # game/tutorial_screens.rpy:522
 translate korean screens_control_f75fa254:
 
     # e "The reason for this is that Ren'Py will run a screen, and the Python in it, during screen prediction."
-    e ""
+    e "그 이유는 렌파이가 스크린을 예측할 때 스크린을 실행하고 나서 파이썬을 실행하기 때문이야."
 
 # game/tutorial_screens.rpy:536
 translate korean screens_control_40c12afa:
 
     # e "The default statement lets you set the value of a screen variable the first time the screen runs. This value can be changed with the SetScreenVariable and ToggleScreenVariable actions."
-    e ""
+    e "기본(default) 명령문을 사용하면 처음 스크린을 실행할 때 스크린 변수의 값을 설정할 수 있어. 이 값은 SetScreenVariable 혹은 ToggleScreenVariable 액션을 사용하여 변경될 수 있어."
 
 # game/tutorial_screens.rpy:538
 translate korean screens_control_39e0f7e6:
 
     # e "The default statement differs from the Python statement in that it is only run once. Python runs each time the screen updates, and hence the variable would never change value."
-    e ""
+    e "기본 명령문이 파이썬 명령문과 다른 점은 한 번만 실행된다는 거야. 파이썬은 화면이 업데이트될 때마다 실행되기 때문에 변수는 절대로 값을 변경하지 않아."
 
 # game/tutorial_screens.rpy:557
 translate korean screens_control_87a75fe7:
 
     # e "The if statement works like it does in script, running one block if the condition is true and another if the condition is false."
-    e ""
+    e "if 문은 스크립트와 작동하는 방식이 같아. 조건이 참(true)이면 블록 하나를 실행하고 거짓(false)이면 다른 블록을 실행해."
 
 # game/tutorial_screens.rpy:572
 translate korean screens_control_6a8c07f6:
 
     # e "The for statement takes a list of values, and iterates through them, running the block inside the for loop with the variable bound to each list item."
-    e ""
+    e "for 문은 값의 목록을 가져와 반복하며 각 루프 항목에 바인딩된 변수를 사용해 for 루프 내에서 블록을 실행해."
 
 # game/tutorial_screens.rpy:588
 translate korean screens_control_f7b755fa:
 
     # e "The on and key statements probably only make sense at the top level of the screen."
-    e ""
+    e "on과 key 명령문은 스크린의 최상위 수준에서만 의미가 있을 거야."
 
 # game/tutorial_screens.rpy:590
 translate korean screens_control_328b0676:
 
     # e "The on statement makes the screen run an action when an event occurs. The 'show' event happens when the screen is first shown, and the 'hide' event happens when it is hidden."
-    e ""
+    e "on 명령문은 이벤트가 발생할 때 스크린에 액션을 실행해. 'show' 이벤트는 스크린이 처음 표시될 때 발생하고, 'hide' 이벤트는 스크린이 숨겨질 때 발생하지."
 
 # game/tutorial_screens.rpy:592
 translate korean screens_control_6768768b:
 
     # e "The key event runs an event when a key is pressed."
-    e ""
+    e "이 스크린에서 key 이벤트는 a 키를 눌렀을 때 실행돼."
 
 # game/tutorial_screens.rpy:600
 translate korean screen_use_c6a20a16:
 
     # e "The screen language use statement lets you include a screen inside another. This can be useful to prevent duplication inside screens."
-    e ""
+    e "스크린 언어는 사용(use) 명령문을 사용해 스크린에 다른 스크린을 포함할 수 있어. 이 기능은 중복된 코드를 방지하는 데 유용할 수 있어."
 
 # game/tutorial_screens.rpy:616
 translate korean screen_use_95a34d3a:
 
     # e "Take for example this screen, which shows two stat entries. There's already a lot of duplication there, and if we had more stats, there would be more."
-    e ""
+    e "예를 들어 이 화면에는 두 가지 통계 항목이 표시돼. 이미 중복된 것들이 많은데, 통계가 많을수록 더 많아지겠지?"
 
 # game/tutorial_screens.rpy:633
 translate korean screen_use_e2c673d9:
 
     # e "Here, we moved the statements that show the text and bar into a second screen, and the use statement includes that screen in the first one."
-    e ""
+    e "여기, 우리는 보여지는 글자의 정의(name)와 바(bar)를 두 번째 스크린으로 옮기고 첫 번째 스크린에서 use 문을 사용해 그것을 포함시켰어."
 
 # game/tutorial_screens.rpy:635
 translate korean screen_use_2efdd2ff:
 
     # e "The name and amount of the stat are passed in as arguments to the screen, just as is done in the call screen statement."
-    e ""
+    e "stat의 이름과 양은 call screen 명령문에서와 같이 인수로 전달돼."
 
 # game/tutorial_screens.rpy:637
 translate korean screen_use_f8d1bf9d:
 
     # e "By doing it this way, we control the amount of duplication, and can change the stat in one place."
-    e ""
+    e "이 방법으로 복제하는 양을 제어하고 한 곳에서 통계를 변경할 수 있는 거지."
 
 # game/tutorial_screens.rpy:653
 translate korean screen_use_4e22c25e:
 
     # e "The transclude statement goes one step further, by letting the use statement take a block of screen language statements."
-    e ""
+    e "중계(transclude) 명령문은 한 단계 더 나아가서, use 문이 스크린 언어 명령문의 블록을 가지게 해."
 
 # game/tutorial_screens.rpy:655
 translate korean screen_use_c83b97e3:
 
     # e "When the included screen reaches the transclude statement it is replaced with the block from the use statement."
-    e ""
+    e "포함된 스크린이 중계(transclude) 문에 도달하면 use 명령문에서 블록으로 바뀌게 되지."
 
 # game/tutorial_screens.rpy:657
 translate korean screen_use_1ad1f358:
 
     # e "The boilerplate screen is included in the first one, and the text from the first screen is transcluded into the boilerplate screen."
-    e ""
+    e "boilerplate 스크린은 첫 번째 스크린에 포함됐고, 그 스크린의 글자는 포함된 boilerplate 스크린 안에 들어갔어."
 
 # game/tutorial_screens.rpy:659
 translate korean screen_use_f74fab6e:
 
     # e "Use and transclude are complex, but very powerful. If you think about it, 'use boilerplate' is only one step removed from writing your own Screen Language statement."
-    e ""
+    e "use와 transclude는 사용하기 복잡하지만 굉장히 강력한 명령이야. 'use boilerplate'가 스크린 언어 명령문을 작성하는 것으로부터 한 단계만 제거됐다는 걸 생각한다면 말야."
 
 translate korean strings:
 
@@ -534,11 +534,11 @@ translate korean strings:
 
     # tutorial_screens.rpy:447
     old "You're on a small device."
-    new "작은 기기로 하고 있어."
+    new "휴대기기로 하고 있어."
 
     # tutorial_screens.rpy:452
     old "You're not on a small device."
-    new "작은 기기가 아니야."
+    new "휴대기기가 아니야."
 
     # tutorial_screens.rpy:466
     old "This text is red."
@@ -554,7 +554,7 @@ translate korean strings:
 
     # tutorial_screens.rpy:534
     old "Increase"
-    new "키우기"
+    new "늘리기"
 
     # tutorial_screens.rpy:563
     old "Earth"
@@ -586,7 +586,7 @@ translate korean strings:
 
     # tutorial_screens.rpy:613
     old "Magic"
-    new "마법"
+    new "마력"
 
     # tutorial_screens.rpy:644
     old "There's not much left to see."
