@@ -2,6 +2,17 @@
 Full Changelog
 ==============
 
+.. _renpy-7.2.2:
+
+7.2.2
+=====
+
+Ren'Py now supports a new Accessibility menu, which can be accessed
+by pressing the A key. This menu, which is intended to be used by
+players, let's the player override the game font, change the scaling
+and spacing of text, and enable self-voicing.
+
+
 .. _renpy-7.2.1:
 
 7.2.1
