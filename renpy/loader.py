@@ -465,6 +465,14 @@ def load_core(name):
         if rv is not None:
             return rv
 
+    # Look for the file directly.
+    if not renpy.config.force_archives:
+        try:
+            fn = transfn(name)
+            return open_file(fn, "rb")
+        except:
+            pass
+
     # Look for the file in the apk.
     for apk in apks:
         prefixed_name = "/".join("x-" + i for i in name.split("/"))
@@ -472,14 +480,6 @@ def load_core(name):
         try:
             return apk.open(prefixed_name)
         except IOError:
-            pass
-
-    # Look for the file directly.
-    if not renpy.config.force_archives:
-        try:
-            fn = transfn(name)
-            return open_file(fn, "rb")
-        except:
             pass
 
     # Look for it in archive files.
@@ -586,17 +586,18 @@ def loadable_core(name):
     if name in loadable_cache:
         return loadable_cache[name]
 
-    for apk in apks:
-        prefixed_name = "/".join("x-" + i for i in name.split("/"))
-        if prefixed_name in apk.info:
-            return True
-
     try:
         transfn(name)
         loadable_cache[name] = True
         return True
     except:
         pass
+
+    for apk in apks:
+        prefixed_name = "/".join("x-" + i for i in name.split("/"))
+        if prefixed_name in apk.info:
+            loadable_cache[name] = True
+            return True
 
     for _prefix, index in archives:
         if name in index:
