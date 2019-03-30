@@ -629,6 +629,10 @@ class Say(Node):
         if self.attributes is not None:
             rv.extend(self.attributes)
 
+        if self.temporary_attributes:
+            rv.append("@")
+            rv.extend(self.temporary_attributes)
+
         what = self.what
         if dialogue_filter is not None:
             what = dialogue_filter(what)
