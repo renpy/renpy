@@ -893,7 +893,7 @@ class ADVCharacter(object):
             show_image = (self.image_tag,) + attrs + tuple(wanted) + tuple( "-" + i for i in remove)
 
             if predict:
-                images.predict_show(new_image)
+                images.predict_show(show_image)
 
             else:
                 trans, layer = renpy.config.say_attribute_transition_callback(self.image_tag, mode)
