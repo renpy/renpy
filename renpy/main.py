@@ -258,13 +258,6 @@ def main():
     game.basepath = renpy.config.gamedir
     renpy.config.searchpath = [ renpy.config.gamedir ]
 
-    if renpy.android and ("ANDROID_PUBLIC" in os.environ):
-
-        android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
-
-        if os.path.exists(android_game):
-            renpy.config.searchpath.insert(0, android_game)
-
     # Find the common directory.
     commondir = __main__.path_to_common(renpy.config.renpy_base)  # E1101 @UndefinedVariable
 
@@ -281,6 +274,14 @@ def main():
     if renpy.android:
         renpy.config.searchpath = [ ]
         renpy.config.commondir = None
+
+        if "ANDROID_PUBLIC" in os.environ:
+            android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
+
+            print("Android searchpath: ", android_game)
+
+            if os.path.exists(android_game):
+                renpy.config.searchpath.insert(0, android_game)
 
     # Load Ren'Py extensions.
     for dir in renpy.config.searchpath:  # @ReservedAssignment
