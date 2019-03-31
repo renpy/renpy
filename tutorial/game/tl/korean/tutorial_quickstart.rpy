@@ -118,7 +118,7 @@ translate korean tutorial_dialogue_5072a404:
 translate korean tutorial_dialogue_d39d1b2b:
 
     # e "I'll show you the script of that example."
-    e "그 예제의 스크립트를 보여줄게."
+    e "이제 금방 보여준 예제의 스크립트를 보여줄게."
 
 # game/tutorial_quickstart.rpy:101
 translate korean tutorial_dialogue_f51ecf1f:
@@ -136,7 +136,7 @@ translate korean tutorial_dialogue_bc7ec147:
 translate korean tutorial_dialogue_b20db833:
 
     # e "In this case, we're naming a place \"start\". The start label is special, as it marks the place a game begins running."
-    e "이 경우에, 우리는 \"start\"으로 이름지을 거야. start는 게임이 시작되는 지점을 표시하는 특별한 레이블이야."
+    e "이 경우에, 우리는 \"start\"로 명명할 거야. start는 게임이 시작되는 지점을 표시하는 특별한 레이블이야."
 
 # game/tutorial_quickstart.rpy:107
 translate korean tutorial_dialogue_b0afbe96:
@@ -160,7 +160,7 @@ translate korean tutorial_dialogue_3e6b0068_1:
 translate korean tutorial_dialogue_d7f0b5b7:
 
     # e "When Ren'Py sees a single string on a line by itself, it uses the narrator to say that string. So a single string can be used to express a character's thoughts."
-    e ""
+    e "한 줄에 하나의 문자열만 사용할 때(캐릭터가 지정되지 않는) 렌파이는 해당 문자열을 말하는 내레이터를 사용해. 따라서 하나의 문자열을 사용하여 캐릭터의 생각을 표현할 수 있어."
 
 # game/tutorial_quickstart.rpy:131
 translate korean tutorial_dialogue_5072a404_1:
@@ -172,145 +172,145 @@ translate korean tutorial_dialogue_5072a404_1:
 translate korean tutorial_dialogue_9dd2d543:
 
     # e "When we have two strings separated by a space, the first is used as the character's name, and the second is what the character is saying."
-    e ""
+    e "우리가 두 개의 문자열을 스페이스로 나눠 사용하면, 첫 번째 문자열은 캐릭터의 이름이고, 두 번째는 캐릭터가 말하는 내용이 돼."
 
 # game/tutorial_quickstart.rpy:141
 translate korean tutorial_dialogue_64ffe685:
 
     # e "This two-argument form of the say statement is used for dialogue, where a character is speaking out loud."
-    e ""
+    e "say 명령문의 두 인자 형식은 캐릭터가 직접 입으로 말하는 대화에 사용돼."
 
 # game/tutorial_quickstart.rpy:143
 translate korean tutorial_dialogue_97a33275:
 
     # e "If you'd like, you can run this game yourself by erasing everything in your project's script.rpy file, and replacing it with the code in the box above."
-    e ""
+    e "원한다면 네 프로젝트의 script.rpy 파일 내용을 모두 지우고 위 상자에 있는 코드로 바꾸어 코드를 직접 실행할 수 있어."
 
 # game/tutorial_quickstart.rpy:145
 translate korean tutorial_dialogue_c5e70d7e:
 
     # e "Be sure to preserve the spacing before lines. That's known as indentation, and it's used to help Ren'Py group lines of script into blocks."
-    e ""
+    e "코딩을 할 때는 줄 앞에 간격을 유지해야 해. 이것은 들여쓰기로 많이 알려져 있고, 블록 안에 스크립트 라인의 그룹으로 사용해."
 
 # game/tutorial_quickstart.rpy:149
 translate korean tutorial_dialogue_90719f73:
 
     # e "Using a string for a character's name is inconvenient, for two reasons."
-    e ""
+    e "캐릭터의 이름에 문자열을 사용하는 것이 불편한 데는 두 가지 이유가 있어."
 
 # game/tutorial_quickstart.rpy:151
 translate korean tutorial_dialogue_910f286a:
 
     # e "The first is that's it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
-    e ""
+    e "첫 번째는 다소 장황하다는 거야. \"루시\"를 타이핑하는 것이 그렇게 나쁘지는 않지만, \"아일린 리차드슨\"을 수천 번 입력해야 한다고 상상해봐."
 
 # game/tutorial_quickstart.rpy:153
 translate korean tutorial_dialogue_9c9d59c2:
 
     # e "The second is that it doesn't leave any place to put styling, which can change the look of a character."
-    e ""
+    e "두 번째는 그렇게 하면 캐릭터의 대사가 어떻게 보일지 스타일링을 하지 않는다는 거야."
 
 # game/tutorial_quickstart.rpy:155
 translate korean tutorial_dialogue_2a2d1e51:
 
     # e "To solve these problems, Ren'Py lets you define Characters."
-    e ""
+    e "이 문제를 해결하려면 캐릭터(Characters)를 정의(define)해야 해."
 
 # game/tutorial_quickstart.rpy:159
 translate korean tutorial_dialogue_16e8c5fd:
 
     # e "Here's an example Character definition. It begins with the word \"define\". That tells Ren'Py that we are defining something."
-    e ""
+    e "여기에 캐릭터 정의의 예제를 보여줄게. 일단 \"define\"으로 시작해. 그것은 렌파이에게 우리가 무언가를 정의한다는 걸 알려주는 거야."
 
 # game/tutorial_quickstart.rpy:161
 translate korean tutorial_dialogue_34fe5aa0:
 
     # e "Define is followed by a short name for the character, like \"l\". We'll be able to use that short name when writing dialogue."
-    e ""
+    e "\"l\"과 같은 이름으로 정의하면 캐릭터를 위한 짧은 이름을 따를 수 있어. 우리는 그 짧은 이름을 지문 작성에 사용할 수 있고."
 
 # game/tutorial_quickstart.rpy:163
 translate korean tutorial_dialogue_67f90201:
 
     # e "This is followed by an equals sign, and the thing that we're defining. In this case, it's a Character."
-    e ""
+    e "그 다음에는 괄호와 우리가 정의하고 있는 것이 뒤따르고, 이 경우에는 캐릭터(Character)가 돼."
 
 # game/tutorial_quickstart.rpy:165
 translate korean tutorial_dialogue_4e454a89:
 
     # e "On the first line, the character's name is given to be \"Lucy\", and her name will be drawn a reddish color."
-    e ""
+    e "예제에서, 캐릭터의 이름은 \"루시\"라고 지어졌고, 그녀의 이름은 붉은 계통의 색으로 보여질 거야."
 
 # game/tutorial_quickstart.rpy:167
 translate korean tutorial_dialogue_db11f026:
 
     # e "These short names are case-sensitive. Capital L is a different name from lower-case l, so you'll need to be careful about that."
-    e ""
+    e "이러한 짧은 이름들은 대소문자를 구분해. 대문자 L은 소문자 l과 다른 이름이니까 주의해야 해."
 
 # game/tutorial_quickstart.rpy:171
 translate korean tutorial_dialogue_1d161320:
 
     # e "Now that we have a character defined, we can use it to say dialogue."
-    e ""
+    e "이제 우리는 정의된 캐릭터를 가지고 지문에 사용할 수 있어."
 
 # game/tutorial_quickstart.rpy:178
 translate korean tutorial_dialogue_3710169c:
 
     # l "Why are you trying to put words into my mouth? And who are you calling \"it\"?"
-    l ""
+    l "왜 내 입으로 말을 하게 하는 거야? 그리고 \"루시\"라 불리는 너는 도대체 누구야?"
 
 # game/tutorial_quickstart.rpy:180
 translate korean tutorial_dialogue_6d463776:
 
     # l "What's more, what are you going to do about the Grue problem? Are you just going to leave me here?"
-    l ""
+    l "게다가, 두루미는 어떻게 할 거야? 나를 여기에 버려두고 갈 셈이야?"
 
 # game/tutorial_quickstart.rpy:188
 translate korean tutorial_dialogue_023bcd31:
 
     # e "Here's the full game, including the two new lines of dialogue, both of which use the Character we defined to say dialogue."
-    e ""
+    e "이건 대화를 말하기 위해 정의한 각각의 캐릭터를 사용하는 두 줄의 대사를 포함하는 게임이야."
 
 # game/tutorial_quickstart.rpy:190
 translate korean tutorial_dialogue_48bb9547:
 
     # e "The one-argument form of the say statement is unchanged, but in the two-argument form, instead of the first string we can use a short name."
-    e ""
+    e "say 문의 인수 형식은 변경되지 않지만, 두 개의 인수 형식에서는 첫 번째 문자열 대신 짧은 이름을 사용할 수 있어."
 
 # game/tutorial_quickstart.rpy:192
 translate korean tutorial_dialogue_56a9936f:
 
     # e "When this say statement is run, Ren'Py will look up the short name, which is really a Python variable. It will then use the associated Character to show the dialogue."
-    e ""
+    e "이 say 명령이 실행되면, 렌파이는 파이썬 변수인 짧은 이름을 찾을 거야. 그런 다음 관련된 캐릭터(Character)를 사용해 지문을 표시하지."
 
 # game/tutorial_quickstart.rpy:194
 translate korean tutorial_dialogue_d5984a21:
 
     # e "The Character object controls who is speaking, the color of their name, and many other properties of the dialogue."
-    e ""
+    e "캐릭터 오브젝트는 누가 말하고, 이름의 색상은 무엇이며, 대사에 적용될 다른 많은 속성에는 무엇이 있는지를 제어할 수 있어."
 
 # game/tutorial_quickstart.rpy:198
 translate korean tutorial_dialogue_a5bcac8b:
 
     # e "Since the bulk of a visual novel is dialogue, we've tried to make it as easy to write as possible."
-    e ""
+    e "시각 소설의 대부분은 대화이기 때문에 우리는 그것을 최대한 쉽게 작성할 수 있도록 노력했어."
 
 # game/tutorial_quickstart.rpy:200
 translate korean tutorial_dialogue_6b9a42d0:
 
     # e "Hopefully, by allowing the use of short names for characters, we've succeeded."
-    e ""
+    e "짧은 이름의 캐릭터를 사용하는 것으로 우리는 성공했다고 할 수 있을 거야."
 
 # game/tutorial_quickstart.rpy:206
 translate korean tutorial_images_e09ac970:
 
     # e "A visual novel isn't much without images. So let's add some images to our little game."
-    e ""
+    e "그림이 없는 시각 소설은 많지 않아. 이제 우리의 작은 게임에 이미지를 추가해보자."
 
 # game/tutorial_quickstart.rpy:208
 translate korean tutorial_images_40140793:
 
     # e "Before we can show images, we must first choose image names, then place the image files into the images directory."
-    e ""
+    e "이미지를 표시하려면 먼저 이미지 이름을 선택하고 이미지 파일을 images 디렉토리에 저장해야 돼."
 
 # game/tutorial_quickstart.rpy:210
 translate korean tutorial_images_d73388f8:
