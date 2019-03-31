@@ -8,10 +8,28 @@ Full Changelog
 =====
 
 Ren'Py now supports a new Accessibility menu, which can be accessed
-by pressing the A key. This menu, which is intended to be used by
+by pressing the "a" key. This menu, which is intended to be used by
 players, let's the player override the game font, change the scaling
 and spacing of text, and enable self-voicing.
 
+Ren'Py will now allow files in the public game directory
+(/mnt/sdcard/Android/`package`/files/game) to override those included with the
+game proper. This has been listed as a feature in 7.2.0, but didn't work
+right.
+
+Ren'Py will now include temporary image attributes in the say statements
+generated as part of the translation process.
+
+When uploading to itch.io, Ren'Py now downloads butler itself. This means
+there is no longer a dependence on the location or structure of the Itch
+app, as there was before.
+
+The bar values :func:`DictValue`, :func:`FieldValue`, :func:`VariableValue`,
+and :func:`ScreenVariableValue` all take a new `action` parameter, which
+gives an action that is performed each time the value changes.
+
+The rollback system has been optimized to reduce the amount of garbage
+that needs to be collected.
 
 .. _renpy-7.2.1:
 
@@ -218,7 +236,6 @@ key works.
 Ren'Py now uses the Amazon payment APIs when sideloaded onto a device
 made by Amazon, allowing their payment system to be tested on a dual-store
 APK.
-
 
 Ren'Py will now allow files in the public game directory (/mnt/sdcard/Android/`package`/files/game)
 to override those included with the game proper.

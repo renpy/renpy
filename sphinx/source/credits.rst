@@ -97,6 +97,7 @@ the omission in future versions.
 * Markus Koschany
 * Max le Fou
 * Maxwell Paul Brickner
+* Meithal
 * Merumelu
 * mikey (ATP Projects)
 * Morgan Willcock

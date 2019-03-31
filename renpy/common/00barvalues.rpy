@@ -350,8 +350,8 @@ init -1500 python:
         `step`
             The amount to change the bar by. If None, defaults to 1/10th of
             the bar.
-         `action`
-             If not None, an action to call when the field has changed.
+        `action`
+            If not None, an action to call when the field has changed.
          """
 
         action = None
