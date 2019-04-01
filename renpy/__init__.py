@@ -40,7 +40,7 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (7, 2, 2, vc_version)
+version_tuple = (7, 2, 3, vc_version)
 
 # The name of this version.
 version_name = "What's on the menu."
