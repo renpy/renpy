@@ -36,7 +36,12 @@ import threading
 from renpy.loadsave import clear_slot, safe_rename
 import shutil
 
-disk_lock = threading.RLock()
+#disk_lock = threading.RLock()
+class RLockStub:
+    def __enter__(self): pass
+    def __exit__(self, type, value, traceback): pass
+disk_lock = RLockStub()
+
 
 # A suffix used to disambguate temporary files being written by multiple
 # processes.
@@ -297,7 +302,10 @@ class FileLocation(object):
 
             os.rename(old, new)
 
-            self.sync()
+            # Cf. loadsave.autosave_thread()
+            #if renpy.emscripten:
+            #    emscripten.syncfs()
+
             self.scan()
 
     def copy(self, old, new):
@@ -519,8 +527,15 @@ scan_thread = None
 quit_scan_thread = False
 
 # The condition we wait on.
-scan_thread_condition = threading.Condition()
-
+#scan_thread_condition = threading.Condition()
+class ConditionStub:
+    def __enter__(self): pass
+    def __exit__(self, type, value, traceback): pass
+    def notify(self): pass
+    def acquire(self): pass
+    def release(self): pass
+    def notifyAll(self): pass
+scan_thread_condition = ConditionStub()
 
 def run_scan_thread():
     global quit_scan_thread
@@ -545,7 +560,7 @@ def quit():  # @ReservedAssignment
         quit_scan_thread = True
         scan_thread_condition.notifyAll()
 
-    scan_thread.join()
+    #scan_thread.join()
 
 
 def init():
@@ -566,5 +581,5 @@ def init():
 
     renpy.loadsave.location = location
 
-    scan_thread = threading.Thread(target=run_scan_thread)
-    scan_thread.start()
+    #scan_thread = threading.Thread(target=run_scan_thread)
+    #scan_thread.start()
