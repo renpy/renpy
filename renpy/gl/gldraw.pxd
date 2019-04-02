@@ -89,7 +89,7 @@ cdef class Environ:
     cdef void imageblend(self, double fraction, int ramp)
     cdef void set_vertex(self, float *vertices)
     cdef void set_texture(self, int unit, float *coords)
-    cdef void set_color(self, float r, float g, float b, float a)
+    cdef void set_color(self, double r, double g, double b, double a)
     cdef void set_clip(self, tuple clip_box, GLDraw draw)
     cdef void unset_clip(self, GLDraw draw)
     cdef void ortho(self, double left, double right, double bottom, double top, double near, double far)

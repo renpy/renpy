@@ -593,7 +593,7 @@ cdef int glTexSubImage2D(GLenum a0, GLint a1, GLint a2, GLint a3, GLsizei a4, GL
                 raise Exception(message)
     return 1
 
-cdef int glUniform1fARB(GLint a0, GLfloat a1) except? 0:
+cdef int glUniform1fARB(GLint a0, double a1) except? 0:
     if check_errors & 4:
         renpy.display.log.write('glUniform1fARB')
     cdef GLenum error
@@ -623,7 +623,7 @@ cdef int glUniform1iARB(GLint a0, GLint a1) except? 0:
                 raise Exception(message)
     return 1
 
-cdef int glUniform2fARB(GLint a0, GLfloat a1, GLfloat a2) except? 0:
+cdef int glUniform2fARB(GLint a0, double a1, double a2) except? 0:
     if check_errors & 4:
         renpy.display.log.write('glUniform2fARB')
     cdef GLenum error
@@ -638,7 +638,7 @@ cdef int glUniform2fARB(GLint a0, GLfloat a1, GLfloat a2) except? 0:
                 raise Exception(message)
     return 1
 
-cdef int glUniform4fARB(GLint a0, GLfloat a1, GLfloat a2, GLfloat a3, GLfloat a4) except? 0:
+cdef int glUniform4fARB(GLint a0, double a1, double a2, double a3, double a4) except? 0:
     if check_errors & 4:
         renpy.display.log.write('glUniform4fARB')
     cdef GLenum error

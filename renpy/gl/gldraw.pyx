@@ -1492,7 +1492,7 @@ cdef class Environ(object):
         Sets the array of texture coordinates for unit `unit`.
         """
 
-    cdef void set_color(self, float r, float g, float b, float a):
+    cdef void set_color(self, double r, double g, double b, double a):
         """
         Sets the color to be shown.
         """
