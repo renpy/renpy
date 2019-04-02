@@ -29,7 +29,7 @@ import renpy.display
 import math
 import zipfile
 import cStringIO
-import threading
+#import threading
 import time
 import io
 
@@ -92,11 +92,21 @@ class Cache(object):
         # False if this is not the first preload in this tick.
         self.first_preload_in_tick = True
 
+        class ConditionStub:
+            def __enter__(self): pass
+            def __exit__(self, type, value, traceback): pass
+            def notify(self): cache.preload_thread_main()
+            def acquire(self): pass
+            def release(self): pass
+            def notifyAll(self): pass
+            def wait(self): pass
         # A lock that must be held when updating the cache.
-        self.lock = threading.Condition()
+        #self.lock = threading.Condition()
+        self.lock = ConditionStub()
 
         # A lock that mist be held to notify the preload thread.
-        self.preload_lock = threading.Condition()
+        #self.preload_lock = threading.Condition()
+        self.preload_lock = ConditionStub()
 
         # Is the preload_thread alive?
         self.keep_preloading = True
@@ -112,9 +122,9 @@ class Cache(object):
         self.cache_limit = 0
 
         # The preload thread.
-        self.preload_thread = threading.Thread(target=self.preload_thread_main, name="preloader")
-        self.preload_thread.setDaemon(True)
-        self.preload_thread.start()
+        #self.preload_thread = threading.Thread(target=self.preload_thread_main, name="preloader")
+        #self.preload_thread.setDaemon(True)
+        #self.preload_thread.start()
 
         # Have we been added this tick?
         self.added = set()
@@ -167,14 +177,14 @@ class Cache(object):
             self.cache_limit = int(renpy.config.image_cache_size_mb * 1024 * 1024 // 4)
 
     def quit(self):  # @ReservedAssignment
-        if not self.preload_thread.isAlive():
-            return
+        #if not self.preload_thread.isAlive():
+        #    return
 
         with self.preload_lock:
             self.keep_preloading = False
             self.preload_lock.notify()
 
-        self.preload_thread.join()
+        #self.preload_thread.join()
 
         self.clear()
 
@@ -436,7 +446,8 @@ class Cache(object):
 
     def preload_thread_main(self):
 
-        while self.keep_preloading:
+        #while self.keep_preloading:
+        if self.keep_preloading:
 
             self.preload_lock.acquire()
             self.preload_lock.wait()
@@ -507,11 +518,11 @@ class Cache(object):
                         self.preload_blacklist.add(image)
 
     def add_load_log(self, filename):
-
         if not renpy.config.developer:
             return
 
-        preload = (threading.current_thread() is self.preload_thread)
+        #preload = (threading.current_thread() is self.preload_thread)
+        preload = True
 
         self.load_log.insert(0, (time.time(), filename, preload))
 
