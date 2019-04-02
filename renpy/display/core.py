@@ -34,7 +34,7 @@ import sys
 import os
 import time
 import cStringIO
-import threading
+#import threading
 import copy
 import gc
 import inspect
@@ -1648,7 +1648,7 @@ class Interface(object):
         self.last_resize = None
 
         # The thread that can do display operations.
-        self.thread = threading.current_thread()
+        #self.thread = threading.current_thread()
 
         # Initialize audio.
         renpy.audio.audio.init()
@@ -1676,7 +1676,14 @@ class Interface(object):
         self.bgscreenshot_needed = False
 
         # Event used to signal background screenshot taken.
-        self.bgscreenshot_event = threading.Event()
+        #self.bgscreenshot_event = threading.Event()
+        class EventStub:
+            def set(self): pass
+            def isSet(self): return True
+            def clear(self): pass
+            def wait(self, timeout=None): return True
+        self.bgscreenshot_event = EventStub()
+
 
         # The background screenshot surface.
         self.bgscreenshot_surface = None
@@ -2118,7 +2125,7 @@ class Interface(object):
         if not self.started:
             return
 
-        if background:
+        if background and not renpy.emscripten:
             self.bgscreenshot_event.clear()
             self.bgscreenshot_needed = True
 
