@@ -26,7 +26,7 @@ from __future__ import print_function
 
 import sys
 import pygame_sdl2 as pygame
-import threading
+#import threading
 import renpy.display
 import renpy.audio
 
@@ -139,7 +139,12 @@ copy_surface_unscaled = copy_surface
 safe_formats = { "png", "jpg", "jpeg", "webp" }
 
 # Lock used for loading unsafe formats.
-image_load_lock = threading.RLock()
+#image_load_lock = threading.RLock()
+class RLockStub:
+    def __enter__(self): pass
+    def __exit__(self, type, value, traceback): pass
+image_load_lock = RLockStub()
+
 
 
 def load_image(f, filename):
