@@ -316,6 +316,15 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
                 fn,
                 "-o",
                 c_fn])
+            # Fix-up source for static loading
+            if len(split_name) > 1:
+                parent_module = '.'.join(split_name[:-1])
+                parent_module_identifier = parent_module.replace('.', '_')
+                with open(c_fn, 'r') as f: ccode = f.read()
+                ccode = re.sub('Py_InitModule4\("([^"]+)"', 'Py_InitModule4("'+parent_module+'.\\1"', ccode)
+                ccode = re.sub('^__Pyx_PyMODINIT_FUNC init', '__Pyx_PyMODINIT_FUNC init'+parent_module_identifier+'_', ccode, 0, re.MULTILINE)  # Cython 0.28.2
+                ccode = re.sub('^PyMODINIT_FUNC init', 'PyMODINIT_FUNC init'+parent_module_identifier+'_', ccode, 0, re.MULTILINE)  # Cython 0.25.2
+                with open(c_fn, 'w') as f: f.write(ccode)
 
         except subprocess.CalledProcessError as e:
             print()
