@@ -34,7 +34,7 @@ import time
 import pygame_sdl2  # @UnusedImport
 import os
 import re
-import threading
+#import threading
 import sys
 
 # Import the appropriate modules, or set them to None if we cannot.
@@ -142,7 +142,11 @@ class MusicContext(renpy.python.RevertableObject):
 next_channel_number = 0
 
 # the lock that mediates between the periodic and main threads.
-lock = threading.RLock()
+#lock = threading.RLock()
+class RLockStub:
+    def __enter__(self): pass
+    def __exit__(self, type, value, traceback): pass
+lock = RLockStub()
 
 
 class Channel(object):
@@ -840,9 +844,9 @@ def init():
 
         periodic_thread_quit = False
 
-        periodic_thread = threading.Thread(target=periodic_thread_main)
-        periodic_thread.daemon = True
-        periodic_thread.start()
+        #periodic_thread = threading.Thread(target=periodic_thread_main)
+        #periodic_thread.daemon = True
+        #periodic_thread.start()
 
 
 def quit():  # @ReservedAssignment
@@ -970,7 +974,15 @@ periodic_exc = None
 run_periodic = False
 
 # The condition the perodic thread runs on.
-periodic_condition = threading.Condition()
+class ConditionStub:
+    def __enter__(self): pass
+    def __exit__(self, type, value, traceback): pass
+    def notify(self): pass
+    def acquire(self): pass
+    def release(self): pass
+    def notifyAll(self): pass
+#periodic_condition = threading.Condition()
+periodic_condition = ConditionStub()
 
 
 def periodic_thread_main():
