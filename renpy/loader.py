@@ -26,7 +26,7 @@ from pickle import loads
 from cStringIO import StringIO
 import sys
 import types
-import threading
+#import threading
 import zlib
 import re
 
@@ -795,7 +795,15 @@ auto_thread = None
 auto_quit_flag = True
 
 # The lock used by auto_thread.
-auto_lock = threading.Condition()
+#auto_lock = threading.Condition()
+class ConditionStub:
+    def __enter__(self): pass
+    def __exit__(self, type, value, traceback): pass
+    def notify(self): pass
+    def acquire(self): pass
+    def release(self): pass
+    def notifyAll(self): pass
+lock = ConditionStub()
 
 # Used to indicate that this file is blacklisted.
 auto_blacklisted = renpy.object.Sentinel("auto_blacklisted")
