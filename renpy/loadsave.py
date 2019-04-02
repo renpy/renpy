@@ -30,7 +30,7 @@ from cStringIO import StringIO
 
 import zipfile
 import re
-import threading
+#import threading
 import types
 import shutil
 import os
@@ -441,8 +441,14 @@ def save(slotname, extra_info='', mutate_flag=False):
 
 
 # Flag that lets us know if an autosave is in progress.
-autosave_not_running = threading.Event()
-autosave_not_running.set()
+#autosave_not_running = threading.Event()
+#autosave_not_running.set()
+class EventStub:
+    def set(self): pass
+    def isSet(self): return True
+    def clear(self): pass
+    def wait(self, timeout=None): return True
+autosave_not_running = EventStub()
 
 # The number of times autosave has been called without a save occuring.
 autosave_counter = 0
@@ -474,6 +480,9 @@ def autosave_thread(take_screenshot):
 
     finally:
         autosave_not_running.set()
+        if renpy.emscripten:
+            import emscripten
+            emscripten.syncfs()
 
 
 def autosave():
@@ -550,9 +559,13 @@ def force_autosave(take_screenshot=False, block=False):
         return
 
     autosave_not_running.clear()
-    t = threading.Thread(target=autosave_thread, args=(take_screenshot,))
-    t.daemon = True
-    t.start()
+    if not renpy.emscripten:
+        t = threading.Thread(target=autosave_thread, args=(take_screenshot,))
+        t.daemon = True
+        t.start()
+    else:
+        import emscripten
+        emscripten.async_call(autosave_thread, take_screenshot, -1)
 
 
 ################################################################################
