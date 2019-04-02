@@ -22,7 +22,7 @@
 from __future__ import print_function
 import os.path
 import sys
-import subprocess
+#import subprocess
 import io
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
@@ -357,4 +357,4 @@ You may be using a system install of python. Please run {0}.sh,
 
         # Prevent subprocess from throwing errors while trying to run it's
         # __del__ method during shutdown.
-        subprocess.Popen.__del__ = popen_del
+        #subprocess.Popen.__del__ = popen_del
