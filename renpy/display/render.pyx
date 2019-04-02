@@ -24,7 +24,7 @@ from __future__ import print_function
 
 import collections
 import pygame_sdl2 as pygame
-import threading
+#import threading
 import renpy
 import gc
 import math
@@ -32,7 +32,15 @@ import math
 # We grab the blit lock each time it is necessary to blit
 # something. This allows call to the pygame.transform functions to
 # disable blitting, should it prove necessary.
-blit_lock = threading.Condition()
+#blit_lock = threading.Condition()
+class ConditionStub:
+    def __enter__(self): pass
+    def __exit__(self, type, value, traceback): pass
+    def notify(self): pass
+    def acquire(self): pass
+    def release(self): pass
+    def notifyAll(self): pass
+blit_lock = ConditionStub()
 
 # This is a dictionary containing all the renders that we know of. It's a
 # map from displayable to dictionaries containing the render of that
