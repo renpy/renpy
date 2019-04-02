@@ -25,7 +25,7 @@
 
 from __future__ import print_function
 
-import threading
+#import threading
 import pygame_sdl2
 import os.path
 import sys
@@ -104,11 +104,11 @@ def start(basedir, gamedir):
     window.get_surface().blit(img, (0, 0))
     window.update()
 
-    global event_thread
+    #global event_thread
 
-    event_thread = threading.Thread(target=run_event_thread)
-    event_thread.daemon = True
-    event_thread.start()
+    #event_thread = threading.Thread(target=run_event_thread)
+    #event_thread.daemon = True
+    #event_thread.start()
 
     global start_time
     start_time = time.time()
@@ -120,7 +120,7 @@ def end():
     """
 
     global keep_running
-    global event_thread
+    #global event_thread
     global window
 
     if renpy.emscripten:
@@ -134,7 +134,7 @@ def end():
 
     keep_running = False
 
-    event_thread.join()
+    #event_thread.join()
 
     window.destroy()
     window = None
