@@ -536,7 +536,7 @@ def main():
                 renpy.display.interface.finish_pending()
 
                 # Give Ren'Py a couple of seconds to finish saving.
-                renpy.loadsave.autosave_not_running.wait(3.0)
+                #renpy.loadsave.autosave_not_running.wait(3.0)
 
     finally:
 
