@@ -54,6 +54,7 @@ def main():
     ap.add_argument("--variant", action="store")
     ap.add_argument("--sign", action="store_true", default=True)
     ap.add_argument("--nosign", action="store_false", dest="sign")
+    ap.add_argument("--vc-version-only", action="store_true")
 
     args = ap.parse_args()
 
@@ -85,6 +86,9 @@ def main():
 
     with open("renpy/vc_version.py", "w") as f:
         f.write("vc_version = {}".format(vc_version))
+
+    if args.vc_version_only:
+        return
 
     try:
         reload(sys.modules['renpy.vc_version'])  # @UndefinedVariable
