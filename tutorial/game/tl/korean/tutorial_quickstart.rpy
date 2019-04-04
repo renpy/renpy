@@ -112,7 +112,7 @@ translate korean tutorial_dialogue_3e6b0068:
 translate korean tutorial_dialogue_5072a404:
 
     # "Lucy" "Better watch out. You don't want to be eaten by a Grue."
-    "루시" "조심해. 두루미에게 먹히고 싶지 않으면."
+    "루시" "조심해. 그루(조크 시리즈에서 어둠 속 플레이어를 잡아먹는 괴물)에게 먹히고 싶지 않으면."
 
 # game/tutorial_quickstart.rpy:99
 translate korean tutorial_dialogue_d39d1b2b:
@@ -166,7 +166,7 @@ translate korean tutorial_dialogue_d7f0b5b7:
 translate korean tutorial_dialogue_5072a404_1:
 
     # "Lucy" "Better watch out. You don't want to be eaten by a Grue."
-    "루시" "조심해. 두루미에게 먹히고 싶지 않으면."
+    "루시" "조심해. 그루에게 먹히고 싶지 않으면."
 
 # game/tutorial_quickstart.rpy:139
 translate korean tutorial_dialogue_9dd2d543:
@@ -184,7 +184,7 @@ translate korean tutorial_dialogue_64ffe685:
 translate korean tutorial_dialogue_97a33275:
 
     # e "If you'd like, you can run this game yourself by erasing everything in your project's script.rpy file, and replacing it with the code in the box above."
-    e "원한다면 네 프로젝트의 script.rpy 파일 내용을 모두 지우고 위 상자에 있는 코드로 바꾸어 코드를 직접 실행할 수 있어."
+    e "원한다면 네 프로젝트의 script.rpy 파일 내용을 모두 지우고 위 상자에 있는 내용으로 바꾸어 코드를 직접 실행할 수 있어."
 
 # game/tutorial_quickstart.rpy:145
 translate korean tutorial_dialogue_c5e70d7e:
@@ -262,7 +262,7 @@ translate korean tutorial_dialogue_3710169c:
 translate korean tutorial_dialogue_6d463776:
 
     # l "What's more, what are you going to do about the Grue problem? Are you just going to leave me here?"
-    l "게다가, 두루미는 어떻게 할 거야? 나를 여기에 버려두고 갈 셈이야?"
+    l "게다가, 그루는 어떻게 할 거야? 나를 여기에 버려두고 갈 셈이야?"
 
 # game/tutorial_quickstart.rpy:188
 translate korean tutorial_dialogue_023bcd31:
@@ -316,121 +316,121 @@ translate korean tutorial_images_40140793:
 translate korean tutorial_images_d73388f8:
 
     # e "An image name is something like 'bg cave' or 'lucy happy', with one or more parts separated by spaces."
-    e ""
+    e "'bg cave'나 'lucy happy' 이름의 이미지들은 공백으로 분리된 하나 이상의 부품을 포함하고 있어."
 
 # game/tutorial_quickstart.rpy:212
 translate korean tutorial_images_2d5596d4:
 
     # e "Each part should start with a lower-case letter, and then contain lower-case letters, numbers, and underscores."
-    e ""
+    e "각 부품들은 소문자로 시작될 수 있고, 그다음 소문자와 숫자, 밑줄을 포함할 수 있지."
 
 # game/tutorial_quickstart.rpy:214
 translate korean tutorial_images_e02c0c82:
 
     # e "The first part of an image is called the tag. For 'bg cave' the tag is 'bg', while for 'lucy happy' the tag is 'lucy'."
-    e ""
+    e "이미지의 첫 번째 부품은 태그로 분류돼. 'bg cave'의 태그는 'bg', 'lucy happy'의 태그는 'lucy'야."
 
 # game/tutorial_quickstart.rpy:216
 translate korean tutorial_images_d5eafcf2:
 
     # e "You can open the images directory by clicking the appropriate button in the Ren'Py launcher."
-    e ""
+    e "렌파이 런처에서는 images를 클릭해 디렉토리를 열 수 있어."
 
 # game/tutorial_quickstart.rpy:218
 translate korean tutorial_images_e4b12fb6:
 
     # e "The files in the images directory should have the same name as the image, followed by an extension like .jpg, .png, or .webp."
-    e ""
+    e "images 디렉토리의 파일은 이미지와 이름이 같아야 하고, .jpg, .png 또는 .webp와 같은 확장자를 따라야 해."
 
 # game/tutorial_quickstart.rpy:220
 translate korean tutorial_images_a3bd89b2:
 
     # e "Our example uses 'bg cave.jpg', 'lucy happy.png', and 'lucy mad.png'."
-    e ""
+    e "다음으로 보여질 예제는 'bg cave.jpg', 'lucy happy.png', 그리고 'lucy mad.png'를 사용해."
 
 # game/tutorial_quickstart.rpy:224
 translate korean tutorial_images_76b954de:
 
     # e "Let's see what those look like in the game."
-    e ""
+    e "이것들이 게임에서 어떻게 보이는지 확인해보자."
 
 # game/tutorial_quickstart.rpy:230
 translate korean tutorial_images_f04e72ea:
 
     # l "Now that the lights are on, we don't have to worry about Grues anymore."
-    l ""
+    l "불이 켜졌네. 더 이상 그루를 걱정하지 않아도 되겠어."
 
 # game/tutorial_quickstart.rpy:234
 translate korean tutorial_images_d77ffa1c:
 
     # l "But what's the deal with me being in a cave? Eileen gets to be out in the sun, and I'm stuck here!"
-    l ""
+    l "하지만 도대체 이 동굴은 나와 무슨 상관인 거야? 아일린은 햇볕을 쬐는데, 나는 왜 여기에 갇힌 거냐고!"
 
 # game/tutorial_quickstart.rpy:242
 translate korean tutorial_images_6c0c938b:
 
     # e "Here's the script for that scene. Notice how it includes two new statements, the scene and show statement."
-    e ""
+    e "이건 예제 장면의 스크립트야. 두 개의 새로운 명령문인 scene과 show 문이 어떻게 포함되어 있는지 확인해둬."
 
 # game/tutorial_quickstart.rpy:244
 translate korean tutorial_images_1a4660b9:
 
     # e "The scene statement clears the screen, and then adds a background image."
-    e ""
+    e "장면(scene) 명령문은 화면을 새로이 하고 배경 이미지를 추가해."
 
 # game/tutorial_quickstart.rpy:246
 translate korean tutorial_images_672c8cb8:
 
     # e "The show statement adds a background image on top of all the other images on the screen."
-    e ""
+    e "show 문은 화면의 다른 모든 이미지 위에 이미지를 추가하고."
 
 # game/tutorial_quickstart.rpy:248
 translate korean tutorial_images_2fc7baee:
 
     # e "If there was already an image with the same tag, the new image is used to replace the old one."
-    e ""
+    e "동일한 태그를 가진 이미지가 이미 화면에 사용되고 있는 경우에는, 새 이미지를 사용해 이전 이미지를 대체하게 돼."
 
 # game/tutorial_quickstart.rpy:250
 translate korean tutorial_images_802825f2:
 
     # e "Changes to the list of shown images take place instantly, so in the example, the user won't see the background by itself."
-    e ""
+    e "표시된 이미지에 대한 변경은 전환을 사용하지 않는 한 즉시 이뤄지게 돼 있어."
 
 # game/tutorial_quickstart.rpy:252
 translate korean tutorial_images_b246dfdd:
 
     # e "The second show statement has an at clause, which gives a location on the screen. Common locations are left, right, and center, but you can define many more."
-    e ""
+    e "두 번째 show 문은 위치를 부여하는 절을 가지고 있어. 기본 정의된 위치에는 왼쪽(left)과 오른쪽(right), 가운데(center)가 있지만 더 많은 것을 직접 정의할 수도 있어."
 
 # game/tutorial_quickstart.rpy:257
 translate korean tutorial_images_82fceeb8:
 
     # e "In this example, we show an image named logo base, and we show it at a creator-defined position, rightish."
-    e ""
+    e "이 예제에서는, logo base라는 이미지와 rightish라는 임의 정의한 위치를 보여줄 거야."
 
 # game/tutorial_quickstart.rpy:259
 translate korean tutorial_images_9defda43:
 
     # e "We also specify that it should be shown behind another image, in this case eileen. That's me."
-    e ""
+    e "또한, 그 이미지가 다른 이미지의 뒤에 표시돼야 한다고 지정할 수 있어. 이 경우에는 eileen이고, 그건 나야."
 
 # game/tutorial_quickstart.rpy:264
 translate korean tutorial_images_73d331f7:
 
     # e "Finally, there's the hide statement, which hides the image with the given tag."
-    e ""
+    e "마지막으로, hide 문은 태그가 주어진 이미지를 숨길 때 사용해."
 
 # game/tutorial_quickstart.rpy:266
 translate korean tutorial_images_f34f62d5:
 
     # e "Since the show statement replaces an image, and the scene statement clears the scene, it's pretty rare to hide an image."
-    e ""
+    e "show 문이 이미지를 대체하고 scene 문은 장면을 지우니까 이미지를 숨기는 일은 거의 없어."
 
 # game/tutorial_quickstart.rpy:268
 translate korean tutorial_images_e06fa53a:
 
     # e "The main use is for when a character or prop leaves before the scene is over."
-    e ""
+    e "hide는 장면이 끝나기 전에 화면에서 캐릭터나 소품을 없애려 할 때 주로 사용해."
 
 # game/tutorial_quickstart.rpy:282
 translate korean tutorial_simple_positions_b492e793:
