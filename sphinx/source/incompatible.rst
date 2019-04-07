@@ -12,6 +12,14 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+.. _incompatible-7.2.2:
+
+7.2.2
+-----
+
+:var:`config.say_attribute_transition_callback` has been changed to
+accept a new argument, the image being displayed.
+
 
 .. _incompatible-7.1.1:
 

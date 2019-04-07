@@ -183,6 +183,9 @@ init -1900 python:
         if version <= (7, 1, 1):
             config.menu_actions = False
 
+        if version <= (7, 2, 2):
+            config.say_attribute_transition_callback_attrs = False
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None
