@@ -165,8 +165,9 @@ These control transitions between various screens.
     This is a function that return a transition to apply and a layer to
     apply it on
 
-    This should be a function that takes two arguments, the image tag
-    being shown, and a `mode` parameter that is one of:
+    This should be a function that takes three arguments, the image tag
+    being shown, a tuple of tags describing the image being shown, and a
+    `mode` parameter that is one of:
 
     * "permanent", for permanent attribute change (one that lasts longer
       than the current say statement).

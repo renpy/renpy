@@ -896,7 +896,7 @@ class ADVCharacter(object):
                 images.predict_show(show_image)
 
             else:
-                trans, layer = renpy.config.say_attribute_transition_callback(self.image_tag, mode)
+                trans, layer = renpy.config.say_attribute_transition_callback(self.image_tag, new_image, mode)
 
                 if not skip_trans:
                     if (trans is not None) and (layer is not None):
@@ -989,7 +989,8 @@ class ADVCharacter(object):
         if images.showing(None, (self.image_tag,)):
 
             if not predicting:
-                trans, layer = renpy.config.say_attribute_transition_callback(self.image_tag, "restore")
+                new_image = images.apply_attributes(None, self.image_tag, image_with_attrs)
+                trans, layer = renpy.config.say_attribute_transition_callback(self.image_tag, new_image, "restore")
 
                 if interact:
                     if (trans is not None) and (layer is not None):
