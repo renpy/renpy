@@ -657,6 +657,13 @@ Occasionally Used
     Uses nearest-neighbor filtering by default, to support pixel art or
     melting players' eyes.
 
+.. var:: config.notify = ...
+
+    This is called by :func:`renpy.notify` or :func:`Notify` with a
+    single  `message` argument, to display the notification. The default
+    implementation is :funct:`renpy.display_notify`. This is intended
+    to allow creators to intercept notifications.
+
 .. var:: config.optimize_texture_bounds = False
 
     When True, Ren'Py will scan images to find the bounding box of the

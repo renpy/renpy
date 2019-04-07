@@ -3009,6 +3009,19 @@ def notify(message):
 
     Only one notification is displayed at a time. If a second notification
     is displayed, the first notification is replaced.
+
+    This function just calls :var:`config.notify`, allowing its implementation
+    to be replaced by assigning a new function to that variable.
+    """
+
+    renpy.config.notify(message)
+
+
+def display_notify(message):
+    """
+    :doc: other
+
+    The default implementation of :func:`renpy.notify`.
     """
 
     hide_screen('notify')

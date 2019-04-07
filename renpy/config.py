@@ -967,6 +967,9 @@ def say_attribute_transition_callback(*args):
 # Should say_attribute_transition_callback take attrs?
 say_attribute_transition_callback_attrs = True
 
+# The function used by renpy.notify
+notify = None
+
 
 del os
 del collections
@@ -987,4 +990,5 @@ def init():
     global tts_function
     tts_function = renpy.display.tts.default_tts_function
 
-    import os
+    global notify
+    notify = renpy.exports.display_notify
