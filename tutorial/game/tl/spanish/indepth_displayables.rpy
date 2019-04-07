@@ -35,12 +35,6 @@ translate spanish simple_displayables_9cd108c6:
     # e "The Transform displayable takes a displayable and can apply transform properties to it."
     e "Transform toma un visualizable y puede aplicarle propiedades de transformación."
 
-# game/indepth_displayables.rpy:55
-translate spanish simple_displayables_a313a959:
-
-    # e "Notice how, since it takes a displayable, it can take another image. In fact, it can take any displayable defined here."
-    e ""
-
 # game/indepth_displayables.rpy:63
 translate spanish simple_displayables_c6e39078:
 

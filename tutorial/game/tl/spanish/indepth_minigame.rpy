@@ -33,7 +33,7 @@ translate spanish demo_minigame_a07dbae0:
 translate spanish play_pong_ce00ff63:
 
     # e "I win!"
-    e "¡Yo gané!"
+    e "¡Gané!"
 
 # game/indepth_minigame.rpy:249
 translate spanish play_pong_68c82e98:

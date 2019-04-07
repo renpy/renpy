@@ -4,253 +4,253 @@
 translate spanish new_gui_17a0326e:
 
     # e "When you create a new project, Ren'Py will automatically create a GUI - a Graphical User Interface - for it."
-    e ""
+    e "Cuando creas un nuevo proyecto, Ren'Py creará automáticamente una GUI, una interfaz gráfica de usuario, para ello."
 
 # game/indepth_style.rpy:42
 translate spanish new_gui_12c814ed:
 
     # e "It defines the look of both in-game interface, like this text box, and out-of-game interface like the main and game menus."
-    e ""
+    e "Define el aspecto de la interfaz tanto en el juego, como este cuadro de texto, y la interfaz fuera del juego, como el menú principal y el menú del juego."
 
 # game/indepth_style.rpy:44
 translate spanish new_gui_0a2a73bb:
 
     # e "The default GUI is meant to be nice enough for a simple project. With a few small changes, it's what you're seeing in this game."
-    e ""
+    e "La interfaz gráfica de usuario predeterminada está diseñada para ser lo suficientemente agradable para un proyecto simple. Con algunos pequeños cambios, es lo que estás viendo en este juego."
 
 # game/indepth_style.rpy:46
 translate spanish new_gui_22adf68e:
 
     # e "The GUI is also meant to be easy for an intermediate creator to customize. Customizing the GUI consists of changing the image files in the gui directory, and changing variables in gui.rpy."
-    e ""
+    e "La GUI también debe ser fácil de personalizar para un creador intermedio. La personalización de la GUI consiste en cambiar los archivos de imagen en el directorio gui y cambiar las variables en gui.rpy."
 
 # game/indepth_style.rpy:48
 translate spanish new_gui_da21de30:
 
     # e "At the same time, even when customized, the default GUI might be too recognizable for an extremely polished game. That's why we've made it easy to totally replace."
-    e ""
+    e "Al mismo tiempo, incluso cuando se personaliza, la GUI predeterminada puede ser demasiado reconocible para un juego extremadamente pulido. Es por eso que hemos hecho que sea fácil de reemplazar totalmente."
 
 # game/indepth_style.rpy:50
 translate spanish new_gui_45765574:
 
     # e "We've put an extensive guide to customizing the GUI on the Ren'Py website. So if you want to learn more, visit the {a=https://www.renpy.org/doc/html/gui.html}GUI customization guide{/a}."
-    e ""
+    e "Hemos incluido una extensa guía para personalizar la GUI en el sitio web de Ren'Py. Entonces, si desea obtener más información, visite la {a = https: //www.renpy.org/doc/html/gui.html} Guía de personalización de la GUI {/ a}."
 
 # game/indepth_style.rpy:58
 translate spanish styles_fa345a38:
 
-    # e "Ren'Py has a powerful style system that controls what displayables look like."
-    e ""
+    # e "Ren'Py has a powerful style system that controls what visualizables look like."
+    e "Ren'Py tiene un potente sistema de estilo que controla el aspecto de las pantallas."
 
 # game/indepth_style.rpy:60
 translate spanish styles_6189ee12:
 
     # e "While the default GUI uses variables to provide styles with sensible defaults, if you're replacing the GUI or creating your own screens, you'll need to learn about styles yourself."
-    e ""
+    e "Si bien la GUI predeterminada utiliza variables para proporcionar estilos con valores predeterminados razonables, si está reemplazando la GUI o creando sus propias pantallas, deberá aprender sobre los estilos usted mismo."
 
 # game/indepth_style.rpy:66
 translate spanish styles_menu_a4a6913e:
 
     # e "What would you like to know about styles?" nointeract
-    e "" nointeract
+    e "¿Qué te gustaría saber sobre los estilos?" nointeract
 
 # game/indepth_style.rpy:98
 translate spanish style_basics_9a79ef89:
 
-    # e "Styles let a displayable look different from game to game, or even inside the same game."
-    e ""
+    # e "Styles let a visualizable look different from game to game, or even inside the same game."
+    e "os estilos permiten que los visualizables se vea diferente de un juego a otro, o incluso dentro del mismo juego."
 
 # game/indepth_style.rpy:103
 translate spanish style_basics_48777f2c:
 
-    # e "Both of these buttons use the same displayables. But since different styles have been applied, the buttons look different from each other."
-    e ""
+    # e "Both of these buttons use the same visualizables. But since different styles have been applied, the buttons look different from each other."
+    e "Ambos de estos botones utilizan los mismos visualizables. Pero como se han aplicado diferentes estilos, los botones se ven diferentes entre sí."
 
 # game/indepth_style.rpy:108
 translate spanish style_basics_57704d8c:
 
     # e "Styles are a combination of information from four different places."
-    e ""
+    e "Los estilos son una combinación de información de cuatro lugares diferentes."
 
 # game/indepth_style.rpy:121
 translate spanish style_basics_144731f6:
 
     # e "The first place Ren'Py can get style information from is part of a screen. Each displayable created by a screen can take a style name and style properties."
-    e ""
+    e "El primer lugar en el que Ren'Py puede obtener información de estilo es parte de una pantalla. Cada elemento visualizable creado por una pantalla puede tomar un nombre de estilo y propiedades de estilo."
 
 # game/indepth_style.rpy:138
 translate spanish style_basics_67e48162:
 
     # e "When a screen displayable contains text, style properties prefixed with text_ apply to that text."
-    e ""
+    e "Cuando una pantalla visualizable contiene texto, las propiedades de estilo con el prefijo text_ se aplican a ese texto."
 
 # game/indepth_style.rpy:151
 translate spanish style_basics_03516b4a:
 
     # e "The next is as part of a displayable created in an image statement. Style properties are just arguments to the displayable."
-    e ""
+    e "El siguiente es como parte de un objeto visualizable creado en una declaración de imagen. Las propiedades de estilo son solo argumentos para visualizables."
 
 # game/indepth_style.rpy:160
 translate spanish style_basics_ccc0d1ca:
 
     # egreen "Style properties can also be given as arguments when defining a character."
-    egreen ""
+    egreen "Las propiedades de estilo también se pueden dar como argumentos al definir un carácter."
 
 # game/indepth_style.rpy:162
 translate spanish style_basics_013ab314:
 
     # egreen "Arguments beginning with who_ are style properties applied to the character's name, while those beginning with what_ are applied to the character's dialogue."
-    egreen ""
+    egreen "Los argumentos que comienzan con who_ son propiedades de estilo que se aplican al nombre del personaje, mientras que los que comienzan con what_ se aplican al diálogo del personaje."
 
 # game/indepth_style.rpy:164
 translate spanish style_basics_dbe80939:
 
     # egreen "Style properties that don't have a prefix are also applied to the character's name."
-    egreen ""
+    egreen "Las propiedades de estilo que no tienen un prefijo también se aplican al nombre del personaje."
 
 # game/indepth_style.rpy:174
 translate spanish style_basics_ac6a8414:
 
     # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
-    e ""
+    e "Finalmente, está la declaración de estilo, que crea o cambia un estilo con nombre. Al darle a Text el argumento de estilo, le decimos que use el estilo blue_text."
 
 # game/indepth_style.rpy:180
 translate spanish style_basics_3d9bdff7:
 
     # e "A style property can inherit from a parent. If a style property is not given in a style, it comes from the parent of that style."
-    e ""
+    e "Una propiedad de estilo puede heredar de un padre. Si una propiedad de estilo no se da en un estilo, proviene del padre de ese estilo."
 
 # game/indepth_style.rpy:182
 translate spanish style_basics_49c5fbfe:
 
     # e "By default the parent of the style has the same name, with the prefix up to the the first underscore removed. If the style does not have an underscore in its name, 'default' is used."
-    e ""
+    e "Por defecto, el padre del estilo tiene el mismo nombre, con el prefijo hasta el primer guión bajo eliminado. Si el estilo no tiene un guión bajo en su nombre, se usa 'default'."
 
 # game/indepth_style.rpy:184
 translate spanish style_basics_6ab170a3:
 
     # e "For example, blue_text inherits from text, which in turn inherits from default. The default style defines all properties, so it doesn't inherit from anything."
-    e ""
+    e "Por ejemplo, blue_text hereda del texto, que a su vez hereda del valor predeterminado. El estilo predeterminado define todas las propiedades, por lo que no se hereda de nada."
 
 # game/indepth_style.rpy:190
 translate spanish style_basics_f78117a7:
 
     # e "The parent can be explicitly changed by giving the style statement an 'is' clause. In this case, we're explictly setting the style to the parent of text."
-    e ""
+    e "El padre se puede cambiar explícitamente al dar a la declaración de estilo una cláusula 'is'. En este caso, estamos configurando explícitamente el estilo al padre del texto."
 
 # game/indepth_style.rpy:194
 translate spanish style_basics_6007040b:
 
     # e "Each displayable has a default style name. By default, it's usually the lower-case displayable name, like 'text' for Text, or 'button' for buttons."
-    e ""
+    e "Cada visualizable tiene un nombre de estilo predeterminado. Por defecto, generalmente es el nombre en minúsculas, como 'text' para texto, o 'button? para botones."
 
 # game/indepth_style.rpy:196
 translate spanish style_basics_35db9a05:
 
     # e "In a screen, a displayable can be given the style_prefix property to give a prefix for that displayable and it's children."
-    e ""
+    e "En una pantalla, a un visualizable se le puede dar la propiedad style_prefix para dar un prefijo para ese visualizable y sus hijos."
 
 # game/indepth_style.rpy:198
 translate spanish style_basics_422a87f7:
 
     # e "For example, a text displayable with a style_prefix of 'help' will be given the style 'help_text'."
-    e ""
+    e "Por ejemplo, un texto visualizables con un prefijo de estilo de 'help' recibirá el estilo 'help_text'."
 
 # game/indepth_style.rpy:200
 translate spanish style_basics_bad2e207:
 
     # e "Lastly, when a displayable is a button, or inside a button, it can take style prefixes."
-    e ""
+    e "Por último, cuando un visualizable es un botón, o dentro de un botón, puede tomar prefijos de estilo."
 
 # game/indepth_style.rpy:202
 translate spanish style_basics_22ed20a1:
 
     # e "The prefixes idle_, hover_, and insensitive_ are used when the button is unfocused, focused, and unfocusable."
-    e ""
+    e "Los prefijos idle_, hover_ e insensitive_ se usan cuando el botón está desenfocado, enfocado y desenfocable."
 
 # game/indepth_style.rpy:204
 translate spanish style_basics_7a58037e:
 
     # e "These can be preceded by selected_ to change how the button looks when it represents a selected value or screen."
-    e ""
+    e "Estos pueden ir precedidos por selected_ para cambiar la apariencia del botón cuando representa un valor o pantalla seleccionado."
 
 # game/indepth_style.rpy:233
 translate spanish style_basics_0cdcb8c3:
 
     # e "This screen shows the style prefixes in action. You can click on a button to select it, or click outside to advance."
-    e ""
+    e "Esta pantalla muestra los prefijos de estilo en acción. Puede hacer clic en un botón para seleccionarlo o hacer clic fuera para avanzar."
 
 # game/indepth_style.rpy:240
 translate spanish style_basics_aed05094:
 
     # e "Those are the basics of styles. If GUI customization isn't enough for you, styles let you customize just about everything in Ren'Py."
-    e ""
+    e "Esos son los fundamentos de los estilos. Si la personalización de la GUI no es suficiente para usted, los estilos le permiten personalizar casi todo en Ren'Py."
 
 # game/indepth_style.rpy:253
 translate spanish style_general_81f3c8ff:
 
     # e "The first group of style properties that we'll go over are the general style properties. These work with every displayable, or at least many different ones."
-    e ""
+    e "El primer grupo de propiedades de estilo que analizaremos son las propiedades de estilo generales. Estos funcionan con todos los visualizables, o al menos muchos diferentes."
 
 # game/indepth_style.rpy:264
 translate spanish style_general_a8d99699:
 
     # e "Every displayable takes the position properties, which control where it can be placed on screen. Since I've already mentioned them, I won't repeat them here."
-    e ""
+    e "Cada visualizable toma las propiedades de posición, que controlan dónde se puede colocar en la pantalla. Como ya los mencioné, no los repetiré aquí."
 
 # game/indepth_style.rpy:275
 translate spanish style_general_58d4a18f:
 
     # e "The xmaximum and ymaximum properties set the maximum width and height of the displayable, respectively. This will cause Ren'Py to shrink things, if possible."
-    e ""
+    e "Las propiedades xmaximum y ymaximum establecen el ancho y la altura máximos de los visualizables, respectivamente. Esto hará que Ren'Py reduzca las cosas, si es posible."
 
 # game/indepth_style.rpy:277
 translate spanish style_general_cae9a39f:
 
     # e "Sometimes, the shrunken size will be smaller than the size given by xmaximum and ymaximum."
-    e ""
+    e "A veces, el tamaño reducido será más pequeño que el tamaño dado por xmaximum y ymaximum."
 
 # game/indepth_style.rpy:279
 translate spanish style_general_5928c24e:
 
     # e "Similarly, the xminimum and yminimum properties set the minimum width and height. If the displayable is smaller, Ren'Py will try to make it bigger."
-    e ""
+    e "Del mismo modo, las propiedades xminimum y yminimum establecen el ancho y la altura mínimos. Si el visualizable es más pequeño, Ren'Py intentará hacerlo más grande."
 
 # game/indepth_style.rpy:289
 translate spanish style_general_35a8ee5e:
 
     # e "The xsize and ysize properties set the minimum and maximum size to the same value, fixing the size."
-    e ""
+    e "Las propiedades xsize y ysize establecen el tamaño mínimo y máximo en el mismo valor, fijando el tamaño."
 
 # game/indepth_style.rpy:291
 translate spanish style_general_fcfb0640:
 
     # e "These only works for displayables than can be resized. Some displayables, like images, can't be made bigger or smaller."
-    e ""
+    e "Estos solo funcionan para visualizables que pueden ser redimensionados. Algunos visualizables, como las imágenes, no pueden hacerse más grandes o más pequeños."
 
 # game/indepth_style.rpy:299
 translate spanish style_general_cd5cc97c:
 
     # e "The area property takes a tuple - a parenthesis bounded list of four items. The first two give the position, and the second two the size."
-    e ""
+    e "La propiedad del área toma una tupla: una lista delimitada por paréntesis de cuatro elementos. Los dos primeros dan la posición, y los dos segundos el tamaño."
 
 # game/indepth_style.rpy:308
 translate spanish style_general_e5a58f0b:
 
     # e "Finally, the alt property changes the text used by self-voicing for the hearing impaired."
-    e ""
+    e "Finalmente, la propiedad alt cambia el texto utilizado por la voz propia para las personas con discapacidad auditiva."
 
 # game/indepth_style.rpy:335
 translate spanish style_text_fe457b8f:
 
     # e "The text style properties apply to text and input displayables."
-    e ""
+    e "Las propiedades de estilo de texto se aplican a visualizables de texto y entrada(input)."
 
 # game/indepth_style.rpy:337
 translate spanish style_text_7ab53f03:
 
     # e "Text displayables can be created implicitly or explicitly. For example, a textbutton creates a text displayable with a style ending in button_text."
-    e ""
+    e "Visualizables de texto pueden ser creados implícitamente o explícitamente. Por ejemplo, un botón de texto crea un texto visualizable con un estilo que termina en button_text."
 
 # game/indepth_style.rpy:339
 translate spanish style_text_6dd42a57:
@@ -720,7 +720,7 @@ translate spanish strings:
 
     # indepth_style.rpy:66
     old "Style basics."
-    new "Style básicos"
+    new "Estilos básicos"
 
     # indepth_style.rpy:66
     old "General style properties."
@@ -744,7 +744,7 @@ translate spanish strings:
 
     # indepth_style.rpy:66
     old "The Displayable Inspector."
-    new "El inspector visualizables."
+    new "El inspector displayables."
 
     # indepth_style.rpy:66
     old "That's all I want to know."

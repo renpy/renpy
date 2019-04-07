@@ -617,12 +617,6 @@ translate spanish tutorial_music_3555b640:
     # e "The sounds themselves are stored in audio files. Ren'Py supports the Opus, Ogg Vorbis, and mp3 formats."
     e "Los sonidos mismos se almacenan en archivos de audio. Ren'Py soporta los formatos Opus, Ogg Vorbis y mp3."
 
-# game/tutorial_quickstart.rpy:449
-translate spanish tutorial_music_a776b6ad:
-
-    # e "Let's check out some of the commands that can effect the music channel."
-    e ""
-
 # game/tutorial_quickstart.rpy:454
 translate spanish tutorial_music_8b606a55:
 

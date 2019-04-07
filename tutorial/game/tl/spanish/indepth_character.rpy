@@ -77,12 +77,6 @@ translate spanish demo_character_b456f0a9:
     # e "There are quite a few different properties that can be set this way. Here are some of the most useful."
     e "Hay bastantes propiedades diferentes que se pueden establecer de esta manera. Éstos son algunos de los más útiles."
 
-# game/indepth_character.rpy:48
-translate spanish demo_character_3c3b8e00:
-
-    # e1 "The window_background property sets the image thay's used for the background of the textbox, which should be the same size as the default in gui/textbox.png." 
-    e1 ""
-
 # game/indepth_character.rpy:54
 translate spanish demo_character_18ba073d:
 

@@ -1079,3 +1079,65 @@ translate spanish strings:
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "Copia el archivo errors.txt al portapapeles como Markdown para Discord."
 
+translate spanish strings:
+
+    # 00accessibility.rpy:76
+    old "Font Override"
+    new "Invalidar Fuente"
+
+    # 00accessibility.rpy:80
+    old "Default"
+    new "por Defecto"
+
+    # 00accessibility.rpy:84
+    old "DejaVu Sans"
+    new "DejaVu Sans"
+
+    # 00accessibility.rpy:88
+    old "Opendyslexic"
+    new "Opendyslexic"
+
+    # 00accessibility.rpy:94
+    old "Text Size Scaling"
+    new "Escala del tamaño del texto"
+
+    # 00accessibility.rpy:100
+    old "Reset"
+    new "Reiniciar"
+
+    # 00accessibility.rpy:105
+    old "Line Spacing Scaling"
+    new "Escala del espacio de líneas"
+
+    # 00accessibility.rpy:117
+    old "Self-Voicing"
+    new "Voz automática"
+
+    # 00accessibility.rpy:121
+    old "Off"
+    new "Apagado"
+
+    # 00accessibility.rpy:125
+    old "Text-to-speech"
+    new "Texto a voz"
+
+    # 00accessibility.rpy:129
+    old "Clipboard"
+    new "Potapapeles"
+
+    # 00accessibility.rpy:133
+    old "Debug"
+    new "Depurar"
+
+    # 00preferences.rpy:430
+    old "font transform"
+    new "transformación de fuente"
+
+    # 00preferences.rpy:433
+    old "font size"
+    new "tamaño de fuente"
+
+    # 00preferences.rpy:441
+    old "font line spacing"
+    new "fuente de espacio de líneas"
+

@@ -130,247 +130,247 @@ translate spanish tutorial_positions_e4380a83:
 translate spanish tutorial_positions_d1db1246:
 
     # e "For example, here we have an xanchor of 0.0 and a yanchor of 0.0. It's in the upper-left corner of the logo image."
-    e ""
+    e "Por ejemplo, aquí tenemos un xanchor de 0.0 y un yanchor de 0.0. Está en la esquina superior izquierda de la imagen del logotipo."
 
 # game/tutorial_atl.rpy:306
 translate spanish tutorial_positions_6056873f:
 
     # e "When we increase the xanchor to 1.0, the anchor moves to the right corner of the image."
-    e ""
+    e "Cuando aumentamos el xanchor a 1.0, el anchor se mueve a la esquina derecha de la imagen."
 
 # game/tutorial_atl.rpy:311
 translate spanish tutorial_positions_7cdb8dcc:
 
     # e "Similarly, when both xanchor and yanchor are 1.0, the anchor is the bottom-right corner."
-    e ""
+    e "De manera similar, cuando tanto xanchor como yanchor son 1.0, el anchor es la esquina inferior derecha."
 
 # game/tutorial_atl.rpy:318
 translate spanish tutorial_positions_03a07da8:
 
     # e "To place an image on the screen, we need both the position and the anchor."
-    e ""
+    e "Para colocar una imagen en la pantalla, necesitamos tanto la posición como el anchor."
 
 # game/tutorial_atl.rpy:326
 translate spanish tutorial_positions_8945054f:
 
     # e "We then line them up, so that both the position and anchor are at the same point on the screen."
-    e ""
+    e "Luego los alineamos, de modo que tanto la posición como el anchor estén en el mismo punto de la pantalla."
 
 # game/tutorial_atl.rpy:336
 translate spanish tutorial_positions_2b184a93:
 
     # e "When we place both in the upper-left corner, the image moves to the upper-left corner of the screen."
-    e ""
+    e "Cuando colocamos ambos en la esquina superior izquierda, la imagen se mueve a la esquina superior izquierda de la pantalla."
 
 # game/tutorial_atl.rpy:345
 translate spanish tutorial_positions_5aac4f3f:
 
     # e "With the right combination of position and anchor, any place on the screen can be specified, without even knowing the size of the image."
-    e ""
+    e "Con la combinación correcta de posición y anchor, se puede especificar cualquier lugar en la pantalla, sin siquiera saber el tamaño de la imagen."
 
 # game/tutorial_atl.rpy:357
 translate spanish tutorial_positions_3b59b797:
 
     # e "It's often useful to set xpos and xanchor to the same value. We call that xalign, and it gives a fractional position on the screen."
-    e ""
+    e "A menudo es útil establecer xpos y xanchor en el mismo valor. Llamamos a eso xalign, y le da una posición fraccionaria en la pantalla."
 
 # game/tutorial_atl.rpy:362
 translate spanish tutorial_positions_b8ebf9fe:
 
     # e "For example, when we set xalign to 0.0, things are aligned to the left side of the screen."
-    e ""
+    e "Por ejemplo, cuando configuramos xalign en 0.0, las cosas se alinean al lado izquierdo de la pantalla."
 
 # game/tutorial_atl.rpy:367
 translate spanish tutorial_positions_8ce35d52:
 
     # e "When we set it to 1.0, then we're aligned to the right side of the screen."
-    e ""
+    e "Cuando lo configuramos a 1.0, entonces estamos alineados al lado derecho de la pantalla."
 
 # game/tutorial_atl.rpy:372
 translate spanish tutorial_positions_6745825f:
 
     # e "And when we set it to 0.5, we're back to the center of the screen."
-    e ""
+    e "Y cuando lo configuramos a 0.5, volvemos al centro de la pantalla."
 
 # game/tutorial_atl.rpy:374
 translate spanish tutorial_positions_64428a07:
 
     # e "Setting yalign is similar, except along the y-axis."
-    e ""
+    e "La configuración de yalign es similar, excepto que es a lo largo del eje y."
 
 # game/tutorial_atl.rpy:376
 translate spanish tutorial_positions_cfb77d42:
 
     # e "Remember that xalign is just setting xpos and xanchor to the same value, and yalign is just setting ypos and yanchor to the same value."
-    e ""
+    e "Recuerde que xalign solo establece xpos y xanchor en el mismo valor, y yalign solo establece ypos y yanchor en el mismo valor."
 
 # game/tutorial_atl.rpy:381
 translate spanish tutorial_positions_cfc1723e:
 
     # e "The xcenter and ycenter properties position the center of the image. Here, with xcenter set to .75, the center of the image is three-quarters of the way to the right side of the screen."
-    e ""
+    e "Las propiedades xcenter y ycenter colocan el centro de la imagen. Aquí, con xcenter establecido en .75, el centro de la imagen está a tres cuartos del lado derecho de la pantalla."
 
 # game/tutorial_atl.rpy:386
 translate spanish tutorial_positions_7728dbf9:
 
     # e "The difference between xalign and xcenter is more obvious when xcenter is 1.0, and the image is halfway off the right side of the screen."
-    e ""
+    e "La diferencia entre xalign y xcenter es más obvia cuando xcenter es 1.0, y la imagen está a mitad de camino del lado derecho de la pantalla."
 
 # game/tutorial_atl.rpy:394
 translate spanish tutorial_positions_1b1cedc6:
 
     # e "There are the xoffset and yoffset properties, which are applied after everything else, and offset things to the right or bottom, respectively."
-    e ""
+    e "Existen las propiedades xoffset y yoffset, que se aplican después de todo lo demás, y compensan las cosas a la derecha o al fondo, respectivamente."
 
 # game/tutorial_atl.rpy:399
 translate spanish tutorial_positions_e6da2798:
 
     # e "Of course, you can use negative numbers to offset things to the left and top."
-    e ""
+    e "Por supuesto, puedes usar números negativos para compensar cosas a la izquierda y arriba."
 
 # game/tutorial_atl.rpy:404
 translate spanish tutorial_positions_e0fe2d81:
 
     # e "Lastly, I'll mention that there are combined properties like align, pos, anchor, and center. Align takes a pair of numbers, and sets xalign to the first and yalign to the second. The others are similar."
-    e ""
+    e "Por último, mencionaré que hay propiedades combinadas como align, pos, anchor y center. Align toma un par de números y establece xalign para el primero y yalign para el segundo. Los otros son similares."
 
 # game/tutorial_atl.rpy:411
 translate spanish tutorial_positions_0f4ca2b6:
 
     # e "Once you understand positions, you can use transformations to move things around the Ren'Py screen."
-    e ""
+    e "Una vez que entiendas las posiciones, puedes usar transformaciones para mover cosas alrededor de la pantalla Ren'Py."
 
 # game/tutorial_atl.rpy:418
 translate spanish tutorial_atl_d5d6b62a:
 
     # e "Ren'Py uses transforms to animate, manipulate, and place images. We've already seen the very simplest of transforms in use:"
-    e ""
+    e "Una vez que entiendas las posiciones, puedes usar transformaciones para mover cosas alrededor de la pantalla Ren'Py."
 
 # game/tutorial_atl.rpy:425
 translate spanish tutorial_atl_7e853c9d:
 
     # e "Transforms can be very simple affairs that place the image somewhere on the screen, like the right transform."
-    e ""
+    e "Las transformaciones pueden ser asuntos muy simples que colocan la imagen en algún lugar de la pantalla, como la transformación right."
 
 # game/tutorial_atl.rpy:429
 translate spanish tutorial_atl_87a6ecbd:
 
     # e "But transforms can also be far more complicated affairs, that introduce animation and effects into the mix. To demonstrate, let's have a Gratuitous Rock Concert!"
-    e ""
+    e "Pero las transformaciones también pueden ser asuntos mucho más complicados, que introducen animación y efectos a la mezcla. Para demostrarlo, ¡tengamos un Concierto de Rock Gratuito!"
 
 # game/tutorial_atl.rpy:437
 translate spanish tutorial_atl_65badef3:
 
     # e "But first, let's have... a Gratuitous Rock Concert!"
-    e ""
+    e "Pero primero, tengamos ... ¡un Concierto de Rock Gratuito!"
 
 # game/tutorial_atl.rpy:445
 translate spanish tutorial_atl_e0d3c5ec:
 
     # e "That was a lot of work, but it was built out of small parts."
-    e ""
+    e "Eso fue mucho trabajo, pero fue construido con pequeñas partes."
 
 # game/tutorial_atl.rpy:447
 translate spanish tutorial_atl_f2407514:
 
     # e "Most transforms in Ren'Py are built using the Animation and Transform Language, or ATL for short."
-    e ""
+    e "La mayoría de las transformaciones en Ren'Py se crean utilizando el lenguaje de animación y transformación, o ATL, para abreviar."
 
 # game/tutorial_atl.rpy:449
 translate spanish tutorial_atl_1f22f875:
 
     # e "There are currently three places where ATL can be used in Ren'Py."
-    e ""
+    e "Actualmente hay tres lugares donde se puede usar ATL en Ren'Py."
 
 # game/tutorial_atl.rpy:454
 translate spanish tutorial_atl_fd036bdf:
 
     # e "The first place ATL can be used is as part of an image statement. Instead of a displayable, an image may be defined as a block of ATL code."
-    e ""
+    e "El primer lugar donde se puede usar ATL es como parte de una declaración de imagen. En lugar de mostrarse, una imagen puede definirse como un bloque de código ATL."
 
 # game/tutorial_atl.rpy:456
 translate spanish tutorial_atl_7cad2ab9:
 
     # e "When used in this way, we have to be sure that ATL includes one or more displayables to actually show."
-    e ""
+    e "Cuando se usa de esta manera, tenemos que asegurarnos de que ATL incluya uno o más elementos visualizables para mostrar realmente."
 
 # game/tutorial_atl.rpy:461
 translate spanish tutorial_atl_c78b2a1e:
 
     # e "The second way is through the use of the transform statement. This assigns the ATL block to a python variable, allowing it to be used in at clauses and inside other transforms."
-    e ""
+    e "La segunda forma es a través del uso de la declaración de transformación. Esto asigna el bloque ATL a una variable de python, lo que permite que se use en cláusulas at y dentro de otras transformaciones."
 
 # game/tutorial_atl.rpy:473
 translate spanish tutorial_atl_da7a7759:
 
     # e "Finally, an ATL block can be used as part of a show statement, instead of the at clause."
-    e ""
+    e "Finalmente, un bloque ATL se puede usar como parte de una declaración show, en lugar de la cláusula at."
 
 # game/tutorial_atl.rpy:480
 translate spanish tutorial_atl_1dd345c6:
 
-    # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place."
-    e ""
+    # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place." # TODO
+    e "Cuando se usa ATL como parte de una declaración show, los valores de las propiedades existen incluso cuando se cambia la transformación. Así que aunque des clic yse detenga el movimiento, la imagen permanece en el mismo lugar."
 
 # game/tutorial_atl.rpy:488
 translate spanish tutorial_atl_c21bc1d1:
 
     # e "The key to ATL is what we call composeability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
-    e ""
+    e "La clave para ATL es lo que llamamos composabilidad. ATL se compone de comandos relativamente simples, que se pueden combinar para crear transformaciones complicadas."
 
 # game/tutorial_atl.rpy:490
 translate spanish tutorial_atl_ed82983f:
 
     # e "Before I explain how ATL works, let me explain what animation and transformation are."
-    e ""
+    e "Antes de explicar cómo funciona ATL, permítanme explicar qué son las animaciones y las transformaciones."
 
 # game/tutorial_atl.rpy:495
 translate spanish tutorial_atl_2807adff:
 
     # e "Animation is when the displayable being shown changes. For example, right now I am changing my expression."
-    e ""
+    e "La animación es cuando el visualizable que se muestra cambia. Por ejemplo, ahora mismo estoy cambiando mi expresión."
 
 # game/tutorial_atl.rpy:522
 translate spanish tutorial_atl_3eec202b:
 
     # e "Transformation involves moving or distorting an image. This includes placing it on the screen, zooming it in and out, rotating it, and changing its opacity."
-    e ""
+    e "Transformación implica mover o distorsionar una imagen. Esto incluye colocarlo en la pantalla, acercarlo y alejarlo, girarlo y cambiar su opacidad."
 
 # game/tutorial_atl.rpy:530
 translate spanish tutorial_atl_fbc9bf83:
 
     # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
-    e ""
+    e "Para presentar ATL, comencemos observando una animación simple. Aquí hay una que consta de cinco líneas de código ATL, contenidas dentro de una declaración de imagen."
 
 # game/tutorial_atl.rpy:532
 translate spanish tutorial_atl_bf92d973:
 
     # e "To change a displayable, simply mention it on a line of ATL. Here, we're switching back and forth between two images."
-    e ""
+    e "Para cambiar un visualizable, simplemente mencionelo en una línea de ATL. Aquí, estamos alternando entre dos imágenes."
 
 # game/tutorial_atl.rpy:534
 translate spanish tutorial_atl_51a41db4:
 
     # e "Since we're defining an image, the first line of ATL must give a displayable. Otherwise, there would be nothing to show."
-    e ""
+    e "Ya que estamos definiendo una imagen, la primera línea de ATL debe dar una visualizable. De lo contrario, no habría nada que mostrar."
 
 # game/tutorial_atl.rpy:536
 translate spanish tutorial_atl_3d065074:
 
     # e "The second and fourth lines are pause statements, which cause ATL to wait half a second each before continuing. That's how we give the delay between images."
-    e ""
+    e "Las líneas segunda y cuarta son declaraciones de pausa, lo que hace que ATL espere medio segundo cada una antes de continuar. Así es como damos la demora entre las imágenes."
 
 # game/tutorial_atl.rpy:538
 translate spanish tutorial_atl_60f2a5e8:
 
     # e "The final line is a repeat statement. This causes the current block of ATL to be restarted. You can only have one repeat statement per block."
-    e ""
+    e "La línea final es una declaración de repetición. Esto hace que el bloque actual de ATL se reinicie. Sólo puede tener una instrucción de repetición por bloque."
 
 # game/tutorial_atl.rpy:543
 translate spanish tutorial_atl_146cf4c4:
 
     # e "If we were to write repeat 2 instead, the animation would loop twice, then stop."
-    e ""
+    e "Si tuviéramos que escribir la repetición 2 en su lugar, la animación se repetirá dos veces y luego se detendrá."
 
 # game/tutorial_atl.rpy:548
 translate spanish tutorial_atl_d90b1838:
