@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-03-03 09:03
-
+﻿
 # game/tutorial_atl.rpy:205
 translate spanish tutorial_positions_a09a3fd1:
 
@@ -309,7 +308,7 @@ translate spanish tutorial_atl_da7a7759:
 # game/tutorial_atl.rpy:480
 translate spanish tutorial_atl_1dd345c6:
 
-    # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place." # TODO
+    # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place."
     e "Cuando se usa ATL como parte de una declaración show, los valores de las propiedades existen incluso cuando se cambia la transformación. Así que aunque des clic yse detenga el movimiento, la imagen permanece en el mismo lugar."
 
 # game/tutorial_atl.rpy:488
@@ -358,283 +357,283 @@ translate spanish tutorial_atl_51a41db4:
 translate spanish tutorial_atl_3d065074:
 
     # e "The second and fourth lines are pause statements, which cause ATL to wait half a second each before continuing. That's how we give the delay between images."
-    e "Las líneas segunda y cuarta son declaraciones de pausa, lo que hace que ATL espere medio segundo cada una antes de continuar. Así es como damos la demora entre las imágenes."
+    e "Las líneas segunda y cuarta son declaraciones pause, lo que hace que ATL espere medio segundo cada una antes de continuar. Así es como damos la demora entre las imágenes."
 
 # game/tutorial_atl.rpy:538
 translate spanish tutorial_atl_60f2a5e8:
 
     # e "The final line is a repeat statement. This causes the current block of ATL to be restarted. You can only have one repeat statement per block."
-    e "La línea final es una declaración de repetición. Esto hace que el bloque actual de ATL se reinicie. Sólo puede tener una instrucción de repetición por bloque."
+    e "La línea final es una declaración repeat. Esto hace que el bloque actual de ATL se reinicie. Sólo puede tener una declaración repeat por bloque."
 
 # game/tutorial_atl.rpy:543
 translate spanish tutorial_atl_146cf4c4:
 
     # e "If we were to write repeat 2 instead, the animation would loop twice, then stop."
-    e "Si tuviéramos que escribir la repetición 2 en su lugar, la animación se repetirá dos veces y luego se detendrá."
+    e "Si en su lugar escribieramos repeat 2, la animación se repetirá dos veces y luego se detendrá."
 
 # game/tutorial_atl.rpy:548
 translate spanish tutorial_atl_d90b1838:
 
     # e "Omitting the repeat statement means that the animation stops once we reach the end of the block of ATL code."
-    e ""
+    e "Omitir la declaración repeat significa que la animación se detiene una vez que llegamos al final del bloque del código ATL."
 
 # game/tutorial_atl.rpy:554
 translate spanish tutorial_atl_e5872360:
 
     # e "By default, displayables are replaced instantaneously. We can also use a with clause to give a transition between displayables."
-    e ""
+    e "De forma predeterminada, los visualizables se reemplazan instantáneamente. También podemos usar una cláusula with para dar una transición entre visualizables."
 
 # game/tutorial_atl.rpy:561
 translate spanish tutorial_atl_2e9d63ea:
 
     # e "With animation done, we'll see how we can use ATL to transform images, starting with positioning an image on the screen."
-    e ""
+    e "Teminamos con la animación, veremos cómo podemos usar ATL para transformar imágenes, comenzando con el posicionamiento de una imagen en la pantalla."
 
 # game/tutorial_atl.rpy:570
 translate spanish tutorial_atl_ddc55039:
 
     # e "The simplest thing we can to is to statically position an image. This is done by giving the names of the position properties, followed by the property values."
-    e ""
+    e "Lo más simple que podemos hacer es posicionar estáticamente una imagen. Esto se hace dando los nombres de las propiedades de posición, seguidos de los valores de propiedad."
 
 # game/tutorial_atl.rpy:575
 translate spanish tutorial_atl_43516492:
 
     # e "With a few more statements, we can move things around on the screen."
-    e ""
+    e "Con unas cuantas declaraciones más, podemos mover las cosas en la pantalla."
 
 # game/tutorial_atl.rpy:577
 translate spanish tutorial_atl_fb979287:
 
     # e "This example starts the image off at the top-right of the screen, and waits a second. It then moves it to the left side, waits another second, and repeats."
-    e ""
+    e "Este ejemplo inicia la imagen en la esquina superior derecha de la pantalla y espera un segundo. Luego lo mueve hacia el lado izquierdo, espera otro segundo y se repite."
 
 # game/tutorial_atl.rpy:579
 translate spanish tutorial_atl_7650ec09:
 
     # e "The pause and repeat statements are the same statements we used in our animations. They work throughout ATL code."
-    e ""
+    e "Las declaraciones pause y repeat son las mismas declaraciones que usamos en nuestras animaciones. Funcionan a lo largo del código ATL."
 
 # game/tutorial_atl.rpy:584
 translate spanish tutorial_atl_d3416d4f:
 
     # e "Having the image jump around on the screen isn't all that useful. That's why ATL has the interpolation statement."
-    e ""
+    e "Hacer que la imagen salte por la pantalla no es tan útil. Es por eso que ATL tiene la declaración de interpolación."
 
 # game/tutorial_atl.rpy:586
 translate spanish tutorial_atl_4e7512ec:
 
     # e "The interpolation statement allows you to smoothly vary the value of a transform property, from an old to a new value."
-    e ""
+    e "La declaración de interpolación le permite variar suavemente el valor de una propiedad de transformación, de un valor antiguo a uno nuevo."
 
 # game/tutorial_atl.rpy:588
 translate spanish tutorial_atl_685eeeaa:
 
     # e "Here, we have an interpolation statement on the second ATL line. It starts off with the name of a time function, in this case linear."
-    e ""
+    e "Aquí, tenemos una declaración de interpolación en la segunda línea ATL. Comienza con el nombre de una función de tiempo, en este caso linear."
 
 # game/tutorial_atl.rpy:590
 translate spanish tutorial_atl_c5cb49de:
 
     # e "That's followed by an amount of time, in this case three seconds. It ends with a list of properties, each followed by its new value."
-    e ""
+    e "A eso le sigue una cantidad de tiempo, en este caso tres segundos. Termina con una lista de propiedades, cada una seguida por su nuevo valor."
 
 # game/tutorial_atl.rpy:592
 translate spanish tutorial_atl_04b8bc1d:
 
     # e "The value of each property is interpolated from its value when the statement starts to the value at the end of the statement. This is done once per frame, allowing smooth animation."
-    e ""
+    e "El valor de cada propiedad se interpola a partir de su valor cuando la declaración comienza al valor al final de la declaración. Esto se hace una vez por fotograma, permitiendo una animación suave."
 
 # game/tutorial_atl.rpy:603
 translate spanish tutorial_atl_2958f397:
 
     # e "ATL supports more complicated move types, like circle and spline motion. But I won't be showing those here."
-    e ""
+    e "ATL admite tipos de movimiento más complicados, como el movimiento de círculo y spline. Pero no los mostraré aquí."
 
 # game/tutorial_atl.rpy:607
 translate spanish tutorial_atl_d08fe8d9:
 
     # e "Apart from displayables, pause, interpolation, and repeat, there are a few other statements we can use as part of ATL."
-    e ""
+    e "Además de visualizables, pausas, interploaciones y repeticiones, hay algunas otras declaraciones que podemos usar como parte de ATL."
 
 # game/tutorial_atl.rpy:619
 translate spanish tutorial_atl_84b22ac0:
 
     # e "ATL transforms created using the statement become ATL statements themselves. Since the default positions are also transforms, this means that we can use left, right, and center inside of an ATL block."
-    e ""
+    e "Las transformaciones ATL creadas usando la declaración se convierten en declaraciones ATL. Dado que las posiciones predeterminadas también son transformaciones, esto significa que podemos usar left, derecha y centro dentro de un bloque ATL."
 
 # game/tutorial_atl.rpy:635
 translate spanish tutorial_atl_331126c1:
 
     # e "Here, we have two new statements. The block statement allows you to include a block of ATL code. Since the repeat statement applies to blocks, this lets you repeat only part of an ATL transform."
-    e ""
+    e "Aquí tenemos dos nuevas declaraciones. La declaración block te permite incluir un bloque de código ATL. Como la declaración repeat se aplica a los bloques, esto le permite repetir solo una parte de una transformación ATL."
 
 # game/tutorial_atl.rpy:637
 translate spanish tutorial_atl_24f67b67:
 
     # e "We also have the time statement, which runs after the given number of seconds have elapsed from the start of the block. It will run even if another statement is running, stopping the other statement."
-    e ""
+    e "También tenemos la declaración time, que se ejecuta después de que hayan transcurrido los segundos dados desde el inicio del bloque. Se ejecutará incluso si se está ejecutando otra declaración, deteniendo la otra declaración."
 
 # game/tutorial_atl.rpy:639
 translate spanish tutorial_atl_b7709507:
 
     # e "So this example bounces the image back and forth for eleven and a half seconds, and then moves it to the right side of the screen."
-    e ""
+    e "Entonces, este ejemplo rebota la imagen de un lado a otro durante once segundos y medio, y luego la mueve hacia el lado derecho de la pantalla."
 
 # game/tutorial_atl.rpy:653
 translate spanish tutorial_atl_f903bc3b:
 
     # e "The parallel statement lets us run two blocks of ATL code at the same time."
-    e ""
+    e "La declaración parallel nos permite ejecutar dos bloques de código ATL al mismo tiempo."
 
 # game/tutorial_atl.rpy:655
 translate spanish tutorial_atl_5d0f8f9d:
 
     # e "Here, the top block move the image in the horizontal direction, and the bottom block moves it in the vertical direction. Since they're moving at different speeds, it looks like the image is bouncing on the screen."
-    e ""
+    e "Aquí, el bloque superior mueve la imagen en la dirección horizontal, y el bloque inferior la mueve en la dirección vertical. Ya que se están moviendo a diferentes velocidades, parece que la imagen rebota en la pantalla."
 
 # game/tutorial_atl.rpy:669
 translate spanish tutorial_atl_28a7d27e:
 
     # e "Finally, the choice statement makes Ren'Py randomly pick a block of ATL code. This allows you to add some variation as to what Ren'Py shows."
-    e ""
+    e "Finalmente, la declaración choice hace que Ren'Py elija aleatoriamente un bloque de código ATL. Esto le permite agregar alguna variación a lo que muestra Ren'Py."
 
 # game/tutorial_atl.rpy:675
 translate spanish tutorial_atl_2265254b:
 
     # e "This tutorial game has only scratched the surface of what you can do with ATL. For example, we haven't even covered the on and event statements. For more information, you might want to check out {a=https://renpy.org/doc/html/atl.html}the ATL chapter in the reference manual{/a}."
-    e ""
+    e "Este juego tutorial solo ha arañado la superficie de lo que puedes hacer con ATL. Por ejemplo, ni siquiera hemos cubierto las declaraciones on y event. Para más información, es posible que desee revisar {a=https://renpy.org/doc/html/atl.html}el capítulo ATL en el manual de referencias{/a}."
 
 # game/tutorial_atl.rpy:684
 translate spanish transform_properties_391169cf:
 
     # e "Ren'Py has quite a few transform properties that can be used with ATL, the Transform displayable, and the add Screen Language statement."
-    e ""
+    e "Ren'Py tiene unas cuantas propiedades de transformación que se pueden usar con ATL, la Transform displayable y la declaración add Screen Language."
 
 # game/tutorial_atl.rpy:685
 translate spanish transform_properties_fc895a1f:
 
     # e "Here, we'll show them off so you can see them in action and get used to what each does."
-    e ""
+    e "Aquí, los mostraremos para que puedas verlos en acción y acostumbrarte a lo que hace cada uno."
 
 # game/tutorial_atl.rpy:701
 translate spanish transform_properties_88daf990:
 
     # e "First off, all of the position properties are also transform properties. These include the pos, anchor, align, center, and offset properties."
-    e ""
+    e "En primer lugar, todas las propiedades de posición también son propiedades de transformación. Estos incluyen las propiedades pos, anchor, align, center y offset."
 
 # game/tutorial_atl.rpy:719
 translate spanish transform_properties_d7a487f1:
 
     # e "The position properties can also be used to pan over a displayable larger than the screen, by giving xpos and ypos negative values."
-    e ""
+    e "Las propiedades de posición también se pueden usar para desplazarse por una pantalla más grande que la pantalla, dando valores negativos a xpos y ypos."
 
 # game/tutorial_atl.rpy:729
 translate spanish transform_properties_89e0d7c2:
 
     # "The subpixel property controls how things are lined up with the screen. When False, images can be pixel-perfect, but there can be pixel jumping."
-    ""
+    "La propiedad de subpíxele controla cómo se alinean las cosas con la pantalla. Cuando es False, las imágenes pueden ser perfectas en píxeles, pero puede haber saltos de píxeles."
 
 # game/tutorial_atl.rpy:736
 translate spanish transform_properties_4194527e:
 
     # "When it's set to True, movement is smoother at the cost of blurring images a little."
-    ""
+    "Cuando se establece en True, el movimiento es más suave a costa de desenfocar un poco las imágenes."
 
 # game/tutorial_atl.rpy:755
 translate spanish transform_properties_35934e77:
 
     # e "Transforms also support polar coordinates. The around property sets the center of the coordinate system to coordinates given in pixels."
-    e ""
+    e "Las transformaciones también soportan coordenadas polares. La propiedad around establece el centro del sistema de coordenadas en coordenadas dadas en píxeles."
 
 # game/tutorial_atl.rpy:763
 translate spanish transform_properties_605ebd0c:
 
     # e "The angle property gives the angle in degrees. Angles run clockwise, with the zero angle at the top of the screen."
-    e ""
+    e "La propiedad de angle da el ángulo en grados. Los ángulos se ejecutan en el sentido de las agujas del reloj, con el ángulo cero en la parte superior de la pantalla."
 
 # game/tutorial_atl.rpy:772
 translate spanish transform_properties_6d4555ed:
 
     # e "The radius property gives the distance in pixels from the anchor of the displayable to the center of the coordinate system."
-    e ""
+    e "La propiedad de radius proporciona la distancia en píxeles desde el anchor del visualizable hasta el centro del sistema de coordenadas."
 
 # game/tutorial_atl.rpy:786
 translate spanish transform_properties_7af037a5:
 
     # e "There are several ways to resize a displayable. The zoom property lets us scale a displayable by a factor, making it bigger and smaller."
-    e ""
+    e "Hay varias formas de cambiar el tamaño de un visuzlizable. La propiedad de zoom nos permite escalar un valor visualizable, haciéndolo más grande y más pequeño."
 
 # game/tutorial_atl.rpy:799
 translate spanish transform_properties_b6527546:
 
     # e "The xzoom and yzoom properties allow the displayable to be scaled in the X and Y directions independently."
-    e ""
+    e "Las propiedades xzoom y yzoom permiten escalar lo visualizable en las direcciones X e Y de forma independiente."
 
 # game/tutorial_atl.rpy:809
 translate spanish transform_properties_b98b780b:
 
     # e "By making xzoom or yzoom a negative number, we can flip the image horizontally or vertically."
-    e ""
+    e "Al hacer que xzoom o yzoom sean un número negativo, podemos voltear la imagen horizontal o verticalmente."
 
 # game/tutorial_atl.rpy:819
 translate spanish transform_properties_74d542ff:
 
     # e "Instead of zooming by a scale factor, the size transform property can be used to scale a displayable to a size in pixels."
-    e ""
+    e "En lugar de hacer zoom en un factor de escala, la propiedad de transformación de tamaño se puede usar para escalar un tamaño que se pueda mostrar a un tamaño en píxeles."
 
 # game/tutorial_atl.rpy:834
 translate spanish transform_properties_438ed776:
 
     # e "The alpha property is used to change the opacity of a displayable. This can make it appear and disappear."
-    e ""
+    e "La propiedad alpha se utiliza para cambiar la opacidad de un visualizable. Esto puede hacer que aparezca y desaparezca "
 
 # game/tutorial_atl.rpy:847
 translate spanish transform_properties_aee19f86:
 
     # e "The rotate property rotates a displayable."
-    e ""
+    e "La propiedad rotate gira un visualizable."
 
 # game/tutorial_atl.rpy:858
 translate spanish transform_properties_57b3235a:
 
     # e "By default, when a displayable is rotated, Ren'Py will include extra space on all four sides, so the size doesn't change as it rotates. Here, you can see the extra space on the left and top, and it's also there on the right and bottom."
-    e ""
+    e "Por defecto, cuando se gira un visualizable, Ren'Py incluirá espacio adicional en los cuatro lados, por lo que el tamaño no cambia a medida que gira. Aquí, puedes ver el espacio adicional a la izquierda y arriba, y también está a la derecha y abajo."
 
 # game/tutorial_atl.rpy:870
 translate spanish transform_properties_66d29ee8:
 
     # e "By setting rotate_pad to False, we can get rid of the space, at the cost of the size of the displayable changing as it rotates."
-    e ""
+    e "Al establecer rotate_pad en False, podemos deshacernos del espacio, a costa del tamaño del cambio visualizable a medida que gira."
 
 # game/tutorial_atl.rpy:881
 translate spanish transform_properties_7f32e8ad:
 
     # e "The tile transform properties, xtile and ytile, repeat the displayable multiple times."
-    e ""
+    e "Las propiedades de transformación tile, xtile y ytile, repiten multiples veces el visualizable."
 
 # game/tutorial_atl.rpy:891
 translate spanish transform_properties_207b7fc8:
 
     # e "The crop property crops a rectangle out of a displayable, showing only part of it."
-    e ""
+    e "La propiedad crop recorta un rectángulo de un objeto visualizable, mostrando solo una parte de él."
 
 # game/tutorial_atl.rpy:905
 translate spanish transform_properties_e7e22d28:
 
     # e "When used together, crop and size can be used to focus in on specific parts of an image."
-    e ""
+    e "Cuando se usan juntos, el recorte y el tamaño se pueden usar para enfocar en partes específicas de una imagen."
 
 # game/tutorial_atl.rpy:917
 translate spanish transform_properties_f34abd82:
 
     # e "The xpan and ypan properties can be used to pan over a displayable, given an angle in degrees, with 0 being the center."
-    e ""
+    e "Las propiedades xpan e ypan se pueden usar para desplazarse sobre un objeto visualizable, dado un ángulo en grados, siendo 0 el centro."
 
 # game/tutorial_atl.rpy:924
 translate spanish transform_properties_bfa3b139:
 
     # e "Those are all the transform properties we have to work with. By putting them together in the right order, you can create complex things."
-    e ""
+    e "Esas son todas las propiedades de transformación con las que tenemos que trabajar. Al juntarlos en el orden correcto, puedes crear cosas complejas."
 
 translate spanish strings:
 
