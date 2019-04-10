@@ -1984,7 +1984,7 @@ def get_namespace(store):
 
 # Config variables that are set twice - once when the rpy is first loaded,
 # and then again at init time.
-EARLY_CONFIG = { "save_directory", "allow_duplicate_labels" }
+EARLY_CONFIG = { "save_directory", "allow_duplicate_labels", "keyword_after_python" }
 
 define_statements = [ ]
 

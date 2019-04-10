@@ -257,7 +257,7 @@ class Parser(object):
 
             expr = l.comma_expression()
 
-            if not keyword:
+            if (not keyword) and (not renpy.config.keyword_after_python):
                 try:
                     literal_eval(expr)
                 except:

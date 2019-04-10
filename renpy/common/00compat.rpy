@@ -190,6 +190,19 @@ init -1900 python:
     # None if it's intended for the current version.
     config.script_version = None
 
+python early hide:
+    try:
+        import ast
+        script_version = renpy.file("script_version.txt").read()
+        script_version = ast.literal_eval(script_version)
+
+        if script_version <= (7, 2, 2):
+            config.keyword_after_python = True
+
+    except:
+        pass
+
+
 init -1000 python hide:
     try:
         import ast

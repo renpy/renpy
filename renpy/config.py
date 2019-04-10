@@ -970,6 +970,9 @@ say_attribute_transition_callback_attrs = True
 # The function used by renpy.notify
 notify = None
 
+# Should Ren'Py support a SL2 keyword after a Python statement?
+keyword_after_python = False
+
 
 del os
 del collections
