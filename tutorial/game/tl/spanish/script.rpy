@@ -115,7 +115,7 @@ translate spanish strings:
 
     # script.rpy:74
     old "Text Tags, Escapes, and Interpolation"
-    new "Etiquetas de Texto, Tscapes e Interpolación"
+    new "Etiquetas de Texto, Escapes e Interpolación"
 
     # script.rpy:75
     old "Character Objects"
