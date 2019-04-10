@@ -166,23 +166,23 @@ class Parser(object):
         elif isinstance(i, Parser):
             self.children[i.name] = i
 
-    def parse_statement(self, loc, l, layout_mode=False):
+    def parse_statement(self, loc, l, layout_mode=False, keyword=True):
         word = l.word() or l.match(r'\$')
 
         if word and word in self.children:
             if layout_mode:
-                c = self.children[word].parse_layout(loc, l, self)
+                c = self.children[word].parse_layout(loc, l, self, keyword)
             else:
-                c = self.children[word].parse(loc, l, self)
+                c = self.children[word].parse(loc, l, self, keyword)
 
             return c
         else:
             return None
 
-    def parse_layout(self, loc, l, parent):
+    def parse_layout(self, loc, l, parent, keyword):
         l.error("The %s statement cannot be used as a container for the has statement." % self.name)
 
-    def parse(self, loc, l, parent):
+    def parse(self, loc, l, parent, keyword):
         """
         This is expected to parse a function statement, and to return
         a list of python ast statements.
@@ -199,7 +199,7 @@ class Parser(object):
 
         raise Exception("Not Implemented")
 
-    def parse_contents(self, l, target, layout_mode=False, can_has=False, can_tag=False, block_only=False):
+    def parse_contents(self, l, target, layout_mode=False, can_has=False, can_tag=False, block_only=False, keyword=True):
         """
         Parses the remainder of the current line of `l`, and all of its subblock,
         looking for keywords and children.
@@ -228,6 +228,9 @@ class Parser(object):
 
             if name is None:
                 l.error(expect)
+
+            if not keyword:
+                l.error('a keyword argument like %r is not allowed after a python block.' % (name,))
 
             if can_tag and name == "tag":
                 if target.tag is not None:
@@ -309,7 +312,7 @@ class Parser(object):
                     if child_index != 0:
                         l.error("The has statement may not be given after a child has been supplied.")
 
-                    c = self.parse_statement(loc, l, layout_mode=True)
+                    c = self.parse_statement(loc, l, layout_mode=True, keyword=keyword)
 
                     if c is None:
                         l.error('Has expects a child statement.')
@@ -553,10 +556,10 @@ class DisplayableParser(Parser):
             add(renpy.sl2.slproperties.ui_properties)
             add(renpy.sl2.slproperties.position_properties)
 
-    def parse_layout(self, loc, l, parent):
-        return self.parse(loc, l, parent, True)
+    def parse_layout(self, loc, l, parent, keyword):
+        return self.parse(loc, l, parent, keyword)
 
-    def parse(self, loc, l, parent, layout_mode=False):
+    def parse(self, loc, l, parent, keyword, layout_mode=False):
 
         rv = slast.SLDisplayable(
             loc,
@@ -612,7 +615,7 @@ class IfParser(Parser):
         if not parent_contents:
             childbearing_statements.add(self)
 
-    def parse(self, loc, l, parent):
+    def parse(self, loc, l, parent, keyword):
 
         if self.parent_contents:
             contents_from = parent
@@ -642,7 +645,7 @@ class IfParser(Parser):
                 l.require(':')
 
                 block = slast.SLBlock(loc)
-                contents_from.parse_contents(l, block, block_only=True)
+                contents_from.parse_contents(l, block, block_only=True, keyword=keyword)
 
                 rv.entries.append((condition, block))
 
@@ -654,7 +657,7 @@ class IfParser(Parser):
                 l.require(':')
 
                 block = slast.SLBlock(loc)
-                contents_from.parse_contents(l, block, block_only=True)
+                contents_from.parse_contents(l, block, block_only=True, keyword=keyword)
 
                 rv.entries.append((condition, block))
 
@@ -713,7 +716,7 @@ class ForParser(Parser):
 
         l.error("expected variable or tuple pattern.")
 
-    def parse(self, loc, l, parent):
+    def parse(self, loc, l, parent, keyword):
 
         l.skip_whitespace()
 
@@ -755,7 +758,7 @@ ForParser("for")
 
 class OneLinePythonParser(Parser):
 
-    def parse(self, loc, l, parent):
+    def parse(self, loc, l, parent, keyword):
 
         loc = l.get_location()
         source = l.require(l.rest_statement)
@@ -772,7 +775,7 @@ OneLinePythonParser("$")
 
 class MultiLinePythonParser(Parser):
 
-    def parse(self, loc, l, parent):
+    def parse(self, loc, l, parent, keyword):
 
         loc = l.get_location()
 
@@ -792,7 +795,7 @@ MultiLinePythonParser("python")
 
 class PassParser(Parser):
 
-    def parse(self, loc, l, parent):
+    def parse(self, loc, l, parent, keyword):
 
         l.expect_eol()
 
@@ -804,7 +807,7 @@ PassParser("pass")
 
 class DefaultParser(Parser):
 
-    def parse(self, loc, l, parent):
+    def parse(self, loc, l, parent, keyword):
 
         name = l.require(l.word)
         l.require(r'=')
@@ -825,7 +828,7 @@ class UseParser(Parser):
         super(UseParser, self).__init__(name)
         childbearing_statements.add(self)
 
-    def parse(self, loc, l, parent):
+    def parse(self, loc, l, parent, keyword):
 
         if l.keyword('expression'):
             target = l.require(l.simple_expression)
@@ -863,7 +866,7 @@ Keyword("style_group")
 
 class TranscludeParser(Parser):
 
-    def parse(self, loc, l, parent):
+    def parse(self, loc, l, parent, keyword):
         l.expect_eol()
         return slast.SLTransclude(loc)
 
@@ -928,7 +931,7 @@ class CustomParser(Parser):
         # The number of positional parameters required.
         self.positional = positional
 
-    def parse(self, loc, l, parent):
+    def parse(self, loc, l, parent, keyword):
 
         arguments = [ ]
 
@@ -961,7 +964,7 @@ class ScreenParser(Parser):
     def __init__(self):
         super(ScreenParser, self).__init__("screen", statement=False)
 
-    def parse(self, loc, l, parent, name="_name"):
+    def parse(self, loc, l, parent, name="_name", keyword=True):
 
         screen = slast.SLScreen(loc)
 
