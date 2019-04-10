@@ -25,6 +25,8 @@ import collections
 import renpy.sl2
 import renpy.sl2.slast as slast
 
+from ast import literal_eval
+
 # A tuple of style prefixes that we know of.
 STYLE_PREFIXES = [
     '',
@@ -229,9 +231,6 @@ class Parser(object):
             if name is None:
                 l.error(expect)
 
-            if not keyword:
-                l.error('a keyword argument like %r is not allowed after a python block.' % (name,))
-
             if can_tag and name == "tag":
                 if target.tag is not None:
                     l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
@@ -257,6 +256,12 @@ class Parser(object):
                 return
 
             expr = l.comma_expression()
+
+            if not keyword:
+                try:
+                    literal_eval(expr)
+                except:
+                    l.error("a non-constant keyword argument like '%s %s' is not allowed after a python block." % (name, expr))
 
             target.keyword.append((name, expr))
 
@@ -319,6 +324,9 @@ class Parser(object):
 
                     target.children.append(c)
 
+                    if c.has_python():
+                        keyword = False
+
                     continue
 
                 c = self.parse_statement(loc, l)
@@ -331,6 +339,10 @@ class Parser(object):
                 if c is not None:
                     target.children.append(c)
                     child_index += 1
+
+                    if c.has_python():
+                        keyword = False
+
                     continue
 
                 l.revert(state)
