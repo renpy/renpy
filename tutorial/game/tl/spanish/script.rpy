@@ -107,7 +107,7 @@ translate spanish strings:
 
     # script.rpy:70
     old "Building Distributions"
-    new "Contrullendo Distribuciones"
+    new "Construllendo Distribuciones"
 
     # script.rpy:72
     old "In Depth"

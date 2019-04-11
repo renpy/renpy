@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-03-03 09:03
-
+﻿
 # game/indepth_transitions.rpy:56
 translate spanish demo_transitions_5bbc72fe:
 
@@ -256,145 +255,145 @@ translate spanish demo_cropmove_transitions_1711a91e:
 translate spanish demo_cropmove_transitions_6d82cfd7:
 
     # e "I'll stand offscreen, so you can see some of its modes. I'll read out the mode name after each transition."
-    e ""
+    e "Me quedaré fuera de la pantalla para que puedas ver algunos de sus modos. Leeré el nombre del modo después de cada transición."
 
 # game/indepth_transitions.rpy:296
 translate spanish demo_cropmove_transitions_4427c78c:
 
     # e "We first have wiperight..."
-    e ""
+    e "Primero tenemos wiperight ..."
 
 # game/indepth_transitions.rpy:302
 translate spanish demo_cropmove_transitions_6d1810a1:
 
     # e "...followed by wipeleft... "
-    e ""
+    e "... seguido de wipeleft... "
 
 # game/indepth_transitions.rpy:308
 translate spanish demo_cropmove_transitions_1dd1c6a1:
 
     # e "...wipeup..."
-    e ""
+    e "...wipeup..."
 
 # game/indepth_transitions.rpy:314
 translate spanish demo_cropmove_transitions_0ea0fa83:
 
     # e "...and wipedown."
-    e ""
+    e "..y wipedown."
 
 # game/indepth_transitions.rpy:316
 translate spanish demo_cropmove_transitions_c7cb4c16:
 
     # e "Next, the slides."
-    e ""
+    e "A continuación, las slides."
 
 # game/indepth_transitions.rpy:322
 translate spanish demo_cropmove_transitions_462a442f:
 
     # e "Slideright..."
-    e ""
+    e "Slideright..."
 
 # game/indepth_transitions.rpy:328
 translate spanish demo_cropmove_transitions_f9a2e523:
 
     # e "...slideleft..."
-    e ""
+    e "...slideleft..."
 
 # game/indepth_transitions.rpy:334
 translate spanish demo_cropmove_transitions_20ce3e9c:
 
     # e "...slideup..."
-    e ""
+    e "...slideup..."
 
 # game/indepth_transitions.rpy:340
 translate spanish demo_cropmove_transitions_9e00a7a6:
 
     # e "and slidedown."
-    e ""
+    e "y slidedown."
 
 # game/indepth_transitions.rpy:342
 translate spanish demo_cropmove_transitions_b8a710c1:
 
     # e "While the slide transitions slide in the new scene, the slideaways slide out the old scene."
-    e ""
+    e "Mientras que las transiciones de slide se deslizan en la nueva escena, las slideaways se deslizan fuera de la escena anterior."
 
 # game/indepth_transitions.rpy:349
 translate spanish demo_cropmove_transitions_1efb4cd0:
 
     # e "Slideawayright..."
-    e ""
+    e "Slideawayright..."
 
 # game/indepth_transitions.rpy:355
 translate spanish demo_cropmove_transitions_bfb5dfd7:
 
     # e "...slideawayleft..."
-    e ""
+    e "...slideawayleft..."
 
 # game/indepth_transitions.rpy:361
 translate spanish demo_cropmove_transitions_6c1a4a6f:
 
     # e "...slideawayup..."
-    e ""
+    e "...slideawayup..."
 
 # game/indepth_transitions.rpy:367
 translate spanish demo_cropmove_transitions_1f994a7b:
 
     # e "and slideawaydown."
-    e ""
+    e "y slideawaydown."
 
 # game/indepth_transitions.rpy:369
 translate spanish demo_cropmove_transitions_025ef723:
 
     # e "We also have a couple of transitions that use a rectangular iris."
-    e ""
+    e "También tenemos un par de transiciones que utilizan un iris rectangular."
 
 # game/indepth_transitions.rpy:376
 translate spanish demo_cropmove_transitions_d00d505e:
 
     # e "There's irisout..."
-    e ""
+    e "Está irisout..."
 
 # game/indepth_transitions.rpy:383
 translate spanish demo_cropmove_transitions_016a1e0a:
 
     # e "... and irisin."
-    e ""
+    e "... y irisin."
 
 # game/indepth_transitions.rpy:387
 translate spanish demo_cropmove_transitions_08d753ed:
 
     # e "It's enough to make you feel a bit dizzy."
-    e ""
+    e "Es suficiente para que te sientas un poco mareado."
 
 # game/indepth_transitions.rpy:393
 translate spanish demo_pushmove_transitions_003e506d:
 
     # e "The PushMove transitions use the new scene to push the old one out. Let's take a look."
-    e ""
+    e "Las transiciones de PushMove utilizan la nueva escena para expulsar la anterior. Vamos a ver."
 
 # game/indepth_transitions.rpy:401
 translate spanish demo_pushmove_transitions_124f375d:
 
     # "There's pushright..."
-    ""
+    "Está pushright ..."
 
 # game/indepth_transitions.rpy:408
 translate spanish demo_pushmove_transitions_ce380ccb:
 
     # "...pushleft..."
-    ""
+    "...pushleft..."
 
 # game/indepth_transitions.rpy:416
 translate spanish demo_pushmove_transitions_77629638:
 
     # "...pushdown..."
-    ""
+    "...pushdown..."
 
 # game/indepth_transitions.rpy:424
 translate spanish demo_pushmove_transitions_b7f33c95:
 
     # "... and pushup. And that's it the for the PushMove-based transitions."
-    ""
+    "... y pushup. Y eso es todo para las transiciones basadas en PushMove."
 
 # game/indepth_transitions.rpy:434
 translate spanish demo_movetransition_14df0e34:
