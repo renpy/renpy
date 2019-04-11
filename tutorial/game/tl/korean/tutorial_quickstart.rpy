@@ -436,103 +436,103 @@ translate korean tutorial_images_e06fa53a:
 translate korean tutorial_simple_positions_b492e793:
 
     # e "When the standard positions that come with Ren'Py aren't enough for you, you can create your own. Here, I'll show you the easy way to do it."
-    e ""
+    e "렌파이와 함께 제공되는 표준 위치가 충분하지 않다면 자신만의 위치 설정을 만들 수 있어. 쉬운 방법을 알려줄게."
 
 # game/tutorial_quickstart.rpy:291
 translate korean tutorial_simple_positions_04e3bc44:
 
     # e "The first way to do it is to show an image followed by a colon. Then indented on the next couple of lines are the xalign and yalign transform properties."
-    e ""
+    e "첫 번째 방법은 이미지를 콜론(:)으로 표시하는 거야. 그런 다음 xalign과 yalign 변형 속성을 ​​다음 줄에 들여쓰기로 작성하면 돼."
 
 # game/tutorial_quickstart.rpy:293
 translate korean tutorial_simple_positions_3ecad5f8:
 
     # e "Each of the transform properties is a name followed by a value. For xalign and yalign, the values are numbers."
-    e ""
+    e "각 변형 속성은 이름 다음에 값이 오게 돼있어. xalign과 yalign의 경우에는 숫자가 값이야."
 
 # game/tutorial_quickstart.rpy:295
 translate korean tutorial_simple_positions_61c1b124:
 
     # e "The xalign transform property is the important one, as it controls where the image is placed horizontally on the screen."
-    e ""
+    e "xalign 변형 속성은 이미지가 화면에서 가로로 배치되는 위치를 제어하는 중요한 속성이야."
 
 # game/tutorial_quickstart.rpy:305
 translate korean tutorial_simple_positions_67ebea97:
 
     # e "An xalign of 0.0 is the left side."
-    e ""
+    e "xalign이 0.0이면 좌측이고,"
 
 # game/tutorial_quickstart.rpy:315
 translate korean tutorial_simple_positions_bd4f56d8:
 
     # e "0.5 is the center."
-    e ""
+    e "0.5면 가운데가 돼."
 
 # game/tutorial_quickstart.rpy:324
 translate korean tutorial_simple_positions_fb2c48f2:
 
     # e "And 1.0 is the right. The decimal place is important and has to be there. Just 1 by itself won't work the same."
-    e ""
+    e "1.0이면 우측이야. 소수점 없이 단지 1만 쓴다면 코드는 작동하지 않아."
 
 # game/tutorial_quickstart.rpy:333
 translate korean tutorial_simple_positions_8eebc9a7:
 
     # e "Of course, you can pick any position in between."
-    e ""
+    e "물론 원하는 위치를 설정할 수도 있어."
 
 # game/tutorial_quickstart.rpy:335
 translate korean tutorial_simple_positions_4cd917f6:
 
     # e "The yalign property is the same way, with 0.0 being the top of the screen and 1.0 being the bottom. Since most sprites stick to the bottom, it's almost always 1.0."
-    e ""
+    e "yalign 속성은 비슷한 방식으로, 화면의 상단은 0.0이고 하단이 1.0이야. 대부분의 스프라이트는 하단에 붙기 때문에 거의 항상 1.0이지."
 
 # game/tutorial_quickstart.rpy:341
 translate korean tutorial_simple_positions_fbd1a3eb:
 
     # e "While being able to write positions like this is useful, having to repeatedly do so isn't. So Ren'Py lets you define a transform once, and reuse it."
-    e ""
+    e "이처럼, 위치를 작성하는 것은 유용하지만 반복적으로 하는 것은 그렇지 않아. 그래서 렌파이는 한 번 정의한 변형을 다시 사용할 수 있어."
 
 # game/tutorial_quickstart.rpy:345
 translate korean tutorial_simple_positions_2377e3b3:
 
     # e "Usually transforms are defined at the top of a file, right after the characters. But it doesn't matter to Ren'Py where you define them."
-    e ""
+    e "일반적으로 변형은 파일의 맨 위에서 캐릭터 바로 다음에 정의하지만, 어디에 정의하는가는 별로 중요하지 않아."
 
 # game/tutorial_quickstart.rpy:347
 translate korean tutorial_simple_positions_3ce7e367:
 
     # e "The transform is given a name, slightleft, and then the xalign and yalign properties."
-    e ""
+    e "변형에는 이름, slightleft, 그다음 xalign 및 yalign 속성이 지정돼."
 
 # game/tutorial_quickstart.rpy:355
 translate korean tutorial_simple_positions_82d640d9:
 
     # e "Once a transform has been defined, you can use it in the at clause of the show statement."
-    e ""
+    e "정의된 변형은 show 문의 at 절에서 사용할 수 있어."
 
 # game/tutorial_quickstart.rpy:360
 translate korean tutorial_simple_positions_16b66785:
 
     # e "Transforms are sticky. If you replace an image without using a transform, Ren'Py will keep the same transforms it had been using."
-    e ""
+    e "변형은 지속성이 있어. 변형을 사용하지 않고 이미지를 바꾸면 렌파이는 사용했던 것과 동일한 변형을 유지할 거야."
 
 # game/tutorial_quickstart.rpy:364
 translate korean tutorial_simple_positions_5d5e0cfd:
 
     # e "Of course, there's a lot more to transforms than this. If you want to learn more, you can read the sections on Position Properties, Transforms and Animation, and Transform Properties."
-    e ""
+    e "물론 이보다 더 많은 변형이 있어. 자세한 내용은 위치 속성, 변형 및 애니메이션, 그리고 변형 속성에 대한 단원을 참고하는 게 좋을 거야."
 
 # game/tutorial_quickstart.rpy:366
 translate korean tutorial_simple_positions_e65da9bf:
 
     # e "But for many visual novels, xalign and yalign are the only properties that matter."
-    e ""
+    e "하지만 많은 시각 소설들에는 xalign과 yalign만이 중요하지."
 
 # game/tutorial_quickstart.rpy:381
 translate korean tutorial_transitions_9b8c714c:
 
     # e "It can be somewhat jarring for the game to jump from place to place."
-    e ""
+    e "게임이 갑자기 점프하는 것은 다소 불쾌할 수 있어."
 
 # game/tutorial_quickstart.rpy:388
 translate korean tutorial_transitions_3e290ea8:
