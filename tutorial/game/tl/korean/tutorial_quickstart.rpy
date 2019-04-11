@@ -532,61 +532,61 @@ translate korean tutorial_simple_positions_e65da9bf:
 translate korean tutorial_transitions_9b8c714c:
 
     # e "It can be somewhat jarring for the game to jump from place to place."
-    e "게임이 갑자기 점프하는 것은 다소 불쾌할 수 있어."
+    e "화면이 갑자기 변경되는 것은 다소 불쾌할 수 있어."
 
 # game/tutorial_quickstart.rpy:388
 translate korean tutorial_transitions_3e290ea8:
 
     # e "To help take some of edge off a change in scene, Ren'Py supports the use of transitions. Let's try that scene change again, but this time we'll use transitions."
-    e ""
+    e "렌파이는 장면의 갑작스러운 변화를 막기 위해 전환 사용을 지원해. 이번에는 전환을 사용해서 장면을 바꿔볼게."
 
 # game/tutorial_quickstart.rpy:402
 translate korean tutorial_transitions_9c0a86c4:
 
     # e "That's much smoother. Here's some example code showing how we include transitions in our game."
-    e ""
+    e "더 부드러워졌어. 이제 게임에서 전환을 어떻게 포함하는지 예제 코드를 보여줄게."
 
 # game/tutorial_quickstart.rpy:404
 translate korean tutorial_transitions_3e490d40:
 
     # e "It uses the with statement. The with statement causes the scene to transition from the last things shown to the things currently being shown."
-    e ""
+    e "전환은 with 문을 사용해. with 명령문은 마지막 장면에서 현재 장면으로 전환돼."
 
 # game/tutorial_quickstart.rpy:406
 translate korean tutorial_transitions_a43847df:
 
     # e "It takes a transition as an argument. In this case, we're using the Dissolve transition. This transition takes as an argument the amount of time the dissolve should take."
-    e ""
+    e "그것은 인수로 전환하고 있어. 이 경우에 Dissolve를 사용하고 있는데, 이 전환은 디졸브가 걸리는 시간을 인수로 하는 거야."
 
 # game/tutorial_quickstart.rpy:408
 translate korean tutorial_transitions_6fcee414:
 
     # e "In this case, each transition takes half a second."
-    e ""
+    e "여기서는 각 전환에 0.5초가 걸리지."
 
 # game/tutorial_quickstart.rpy:412
 translate korean tutorial_transitions_033042cc:
 
     # e "We can define a short name for a transition, using the define statement. Here, we're defining slowdissolve to be a dissolve that takes a whole second."
-    e ""
+    e "우리는 전환을 짧은 이름으로 지정할 수 있어. 여기, 우리는 1초의 디졸브를 slowdissolve로 정의하고 있어."
 
 # game/tutorial_quickstart.rpy:427
 translate korean tutorial_transitions_0ba82f00:
 
     # e "Once a transition has been given a short name, we can use it in our game."
-    e ""
+    e "전환에 짧은 이름이 주어지면 게임에서 그것을 사용할 수 있어."
 
 # game/tutorial_quickstart.rpy:431
 translate korean tutorial_transitions_51ff9600:
 
     # e "Ren'Py defines some transitions for you, like dissolve, fade, and move. For more complex or customized transitions, you'll have to define your own."
-    e ""
+    e "렌파이는 디졸브(dissolve)와 페이드(fade), 무브(move)와 같은 일부 전환을 정의해. 더 많은 전환을 사용하려면 네가 직접 그것을 정의해야 해."
 
 # game/tutorial_quickstart.rpy:433
 translate korean tutorial_transitions_1528f73f:
 
     # e "If you're interested, check out the Transitions Gallery section of this tutorial."
-    e ""
+    e "관심 있다면 길라잡이에서 갤러리 전환 단원을 참고하도록 해."
 
 # game/tutorial_quickstart.rpy:439
 translate korean tutorial_music_8b92efb7:
