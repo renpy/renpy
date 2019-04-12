@@ -592,85 +592,84 @@ translate korean tutorial_transitions_1528f73f:
 translate korean tutorial_music_8b92efb7:
 
     # e "Another important part of a visual novel or simulation game is the soundtrack."
-    e ""
+    e "시각 소설이나 시뮬레이션 게임에서 중요한 다른 부분은 사운드트랙이야."
 
 # game/tutorial_quickstart.rpy:441
 translate korean tutorial_music_53910317:
 
     # e "Ren'Py breaks sound up into channels. The channel a sound is played on determines if the sound loops, and if it is saved and restored with the game."
-    e ""
+    e "렌파이는 소리를 채널로 나눠. 소리가 재생되는 채널은 소리가 반복되는지, 게임과 함께 저장되고 복원되는지 여부를 결정해."
 
 # game/tutorial_quickstart.rpy:443
 translate korean tutorial_music_a1e37712:
 
     # e "When a sound is played on the music channel, it is looped, and it is saved when the game is saved."
-    e ""
+    e "소리가 음악(music) 채널에 재성되면, 그것은 반복되고, 게임이 저장될 때 함께 저장돼."
 
 # game/tutorial_quickstart.rpy:445
 translate korean tutorial_music_d9086d22:
 
     # e "When the channel named sound is used, the sound is played once and then stopped. It isn't saved."
-    e ""
+    e "소리(sound) 채널이 사용되면 소리는 한번 재생되고 멈춰. 그것은 저장되지 않아."
 
 # game/tutorial_quickstart.rpy:447
 translate korean tutorial_music_3555b640:
 
     # e "The sounds themselves are stored in audio files. Ren'Py supports the Opus, Ogg Vorbis, and mp3 formats."
-    e ""
+    e "소리 자체는 오디오 파일에 저장돼 있어. 렌파이는 Opus, Ogg Vorbis 및 mp3 형식을 지원해."
 
 # game/tutorial_quickstart.rpy:449
 translate korean tutorial_music_a776b6ad:
-
     # e "Let's check out some of the commands that can affect the music channel."
-    e ""
+    e "이제 음악 채널에 영향을 줄 수 있는 명령을 확인해보자."
 
 # game/tutorial_quickstart.rpy:454
 translate korean tutorial_music_8b606a55:
 
     # e "The play music command replaces the currently playing music, and replaces it with the named filename."
-    e ""
+    e "play music 명령은 현재 재생되는 음악과 파일 이름을 대체해."
 
 # game/tutorial_quickstart.rpy:456
 translate korean tutorial_music_18650fe7:
 
     # e "If you specify the currently-playing song, it will restart it."
-    e ""
+    e "만약에 현재 재생중인 노래를 지정한다면 그 노래는 다시 시작될 거야."
 
 # game/tutorial_quickstart.rpy:458
 translate korean tutorial_music_413d91fc:
 
     # e "If the optional fadeout clause is given, it will fade out the currently playing music before starting the new music."
-    e ""
+    e "fadeout 절이 주어지면, 새로운 음악을 시작하기 전에 현재 재생되고 있는 음악을 페이드 아웃시켜."
 
 # game/tutorial_quickstart.rpy:463
 translate korean tutorial_music_a282a0e3:
 
     # e "The queue statement also adds music to the named channel, but it waits until the currently-playing song is finished before playing the new music."
-    e ""
+    e "대기열(queue) 문 역시 음악을 지정된 채널에 추가해. 하지만 이건 새로운 음악을 재생하기 전에 현재 재생 중인 음악이 끝날 때까지 기다리지."
 
 # game/tutorial_quickstart.rpy:468
 translate korean tutorial_music_01ca6bad:
 
     # e "The third statement is the stop statement. It stops the music playing on a channel. It too takes the fadeout clause."
-    e ""
+    e "세 번째 명령문은 stop이야. 그건 채널에서 재생하는 음악을 중지하는 역할을 해. fadeout 역시 적용할 수 있어."
 
 # game/tutorial_quickstart.rpy:473
 translate korean tutorial_music_384937da:
 
     # e "Unlike the music channel, playing a sound on the sound channel causes it to play only once."
-    e ""
+    e "music 채널과 다르게, 소리를 sound 채널에서 재생하면 한 번만 재생돼."
 
 # game/tutorial_quickstart.rpy:480
 translate korean tutorial_music_1d3e9fd2:
 
     # e "You can queue up multiple sounds on the sound channel, but the sounds will only play one at a time."
-    e ""
+    e "소리 채널에 여러 소리 대기열을 넣을 수는 있지만 한 번씩만 재생돼."
 
 # game/tutorial_quickstart.rpy:486
 translate korean tutorial_music_aa01c19d:
 
     # e "Ren'Py has separate mixers for sound, music, and voices, so the player can adjust them as they like."
-    e ""
+    e "렌파이는  소리, 음악, 목소리를 위한 별도의 믹서가 있어서 원하는 대로 조절할 수 있어."
 
 # game/tutorial_quickstart.rpy:492
 translate korean tutorial_menus_0426904b:
