@@ -619,7 +619,7 @@ translate korean tutorial_music_3555b640:
     e "소리 자체는 오디오 파일에 저장돼 있어. 렌파이는 Opus, Ogg Vorbis 및 mp3 형식을 지원해."
 
 # game/tutorial_quickstart.rpy:449
-translate korean tutorial_music_a776b6ad:
+translate korean tutorial_music_a2ffbe9b:
     # e "Let's check out some of the commands that can affect the music channel."
     e "이제 음악 채널에 영향을 줄 수 있는 명령을 확인해보자."
 
@@ -801,31 +801,31 @@ translate korean menu3_done_826a600b:
 translate korean tutorial_input_066611c5:
 
     # e "Some games might prompt the player for input."
-    e ""
+    e "일부 게임은 플레이어에게 입력을 요구하기도 해."
 
 # game/tutorial_quickstart.rpy:599
 translate korean tutorial_input_dc3b4560:
 
     # e "That's done with Python, and especially the renpy.input function. The first line of this example prompts the player for some texts, and sticks it in the name variable."
-    e ""
+    e "그건 파이썬에서 renpy.input 함수를 사용하면 돼. 이 예제의 첫 번째 줄에서는 플레이어에게 텍스트를 입력하라는 메시지를 표시하고 그것을 이름 변수에 붙여 넣을 거야."
 
 # game/tutorial_quickstart.rpy:601
 translate korean tutorial_input_c88b3f4e:
 
     # e "Often times, you'll want to clean the name up before you use it. The last line does that, by calling the strip method to remove whitespace, and replacing the name with a default if it's missing."
-    e ""
+    e "때때로, 그것을 사용하기 전에 이름을 정리하고 싶을 거야. 마지막 줄은 strip을 호출하여 공백을 제거하고 누락된 경우 기본값으로 바꾸는 거야."
 
 # game/tutorial_quickstart.rpy:605
 translate korean tutorial_input_1236e9da:
 
     # e "To interpolate a variable, write it in square brackets. Isn't that right, [name]?"
-    e ""
+    e "변수를 보간하려면 대괄호 안에 써야 해. 그렇지 않니, [name]?"
 
 # game/tutorial_quickstart.rpy:609
 translate korean tutorial_input_c1f7a808:
 
     # e "Variable names can also be shown in character names. To do that, just include the variable in square brackets in the character's name. Got it?"
-    e ""
+    e "변수 이름은 캐릭터의 이름으로 표시될 수도 있어. 그렇게하려면 캐릭터의 이름에 대괄호 안에 변수를 포함하면 돼. 알겠지?"
 
 # game/tutorial_quickstart.rpy:612
 translate korean tutorial_input_f7757a8e:
