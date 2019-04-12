@@ -81,12 +81,16 @@ translate spanish director_c7a18979:
 translate spanish director_3dcc4362:
 
     # e "Let's add a background. Click the '+' to pick where to add it, then the 'scene' statement and 'washington' for the image. Finally, click 'Add' to add it."
+    scene bg washington
+
     e "Vamos a añadir un fondo. Haz clic en '+' para elegir dónde agregarlo, luego la declaración 'scene' y 'washington' para la imagen. Finalmente, haga clic en 'Añadir' para agregarlo."
 
 # game/tutorial_director.rpy:48
 translate spanish director_292d58b5:
 
     # e "Next, add a sprite. Click '+', then 'show', 'eileen', 'happy', and 'Add'. Once you've added it, dissolve it in by clicking the second '+', then 'with', 'dissolve', and 'Add'."
+    show eileen happy
+
     e "A continuación, agregue un sprite. Haz clic en '+', luego en 'show', 'eileen', 'happy' y 'Añadir'. Una vez que lo haya agregado, disuélvalo haciendo clic en el segundo '+', luego en 'whit', 'dissolve' y 'Añadir'."
 
 # game/tutorial_director.rpy:52
@@ -99,6 +103,8 @@ translate spanish director_c875c1a7:
 translate spanish director_4e04a74e:
 
     # e "Finally, you can use the play, queue, stop, and voice statements to manage audio. Try adding 'play', 'music', 'sunflower-slow-drag.ogg'."
+    play music 'sunflower-slow-drag.ogg'
+
     e "Finalmente, puede usar las instrucciones de play, queue, stop y voice para administrar el audio. Intente agregar 'play', 'music', 'sunflower-slow-drag.ogg'."
 
 # game/tutorial_director.rpy:61
