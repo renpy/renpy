@@ -569,7 +569,7 @@ class DisplayableParser(Parser):
             add(renpy.sl2.slproperties.position_properties)
 
     def parse_layout(self, loc, l, parent, keyword):
-        return self.parse(loc, l, parent, keyword)
+        return self.parse(loc, l, parent, keyword, layout_mode=True)
 
     def parse(self, loc, l, parent, keyword, layout_mode=False):
 
