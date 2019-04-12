@@ -550,6 +550,13 @@ Occasionally Used
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
 
+.. var:: config.load_failed_label = None
+
+    If a string, this is a label that is jumped to when a load fails because
+    the script has changed so much that Ren'Py can't recover.
+    Before performing the load, Ren'Py will revert to the start of the
+    last statement, then it will clear the call stack.
+
 .. var:: config.locale_to_language_function = ...
 
     A function that determines the language the game should use,

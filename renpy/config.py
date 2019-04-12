@@ -973,6 +973,9 @@ notify = None
 # Should Ren'Py support a SL2 keyword after a Python statement?
 keyword_after_python = False
 
+# A lable Ren'Py should jump to if a load fails.
+load_failed_label = None
+
 
 del os
 del collections

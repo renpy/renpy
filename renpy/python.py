@@ -1592,8 +1592,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                    and data == fwd_data
-                    and (keep_rollback or self.rolled_forward)
+                        and data == fwd_data
+                        and (keep_rollback or self.rolled_forward)
                     ):
                     self.forward.pop(0)
                 else:
@@ -1645,6 +1645,25 @@ class RollbackLog(renpy.object.Object):
         """
 
         return self.rollback_limit > 0
+
+    def load_failed(self):
+        """
+        This is called to try to recover when rollback fails.
+        """
+
+        if not renpy.config.load_failed_label:
+            raise Exception("Couldn't find a place to stop rolling back. Perhaps the script changed in an incompatible way?")
+
+        rb = self.log.pop()
+        rb.rollback()
+
+        while renpy.exports.call_stack_depth():
+            renpy.exports.pop_call()
+
+        renpy.game.contexts[0].force_checkpoint = True
+        renpy.game.contexts[0].goto_label(renpy.config.load_failed_label)
+
+        raise renpy.game.RestartTopContext()
 
     def rollback(self, checkpoints, force=False, label=None, greedy=True, on_load=False, abnormal=True, current_label=None):
         """
@@ -1709,15 +1728,16 @@ class RollbackLog(renpy.object.Object):
                     break
 
         else:
-            if force:
-                raise Exception("Couldn't find a place to stop rolling back. Perhaps the script changed in an incompatible way?")
-
             # Otherwise, just give up.
-
-            print("Can't find a place to rollback to. Not rolling back.")
 
             revlog.reverse()
             self.log.extend(revlog)
+
+            if force:
+                self.load_failed()
+            else:
+                print("Can't find a place to rollback to. Not rolling back.")
+
             return
 
         force_checkpoint = False
