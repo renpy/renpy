@@ -675,127 +675,127 @@ translate korean tutorial_music_aa01c19d:
 translate korean tutorial_menus_0426904b:
 
     # e "Many visual novels require the player to make choices from in-game menus. These choices can add some challenge to the game, or adjust it to the player's preferences."
-    e ""
+    e "많은 시각 소설은 플레이어가 분기에서 선택할 것을 요구해. 이러한 선택은 게임에 약간의 도전을 추가하거나 플레이어의 선호도에 맞게 조정할 수 있지."
 
 # game/tutorial_quickstart.rpy:494
 translate korean tutorial_menus_431eeff0:
 
     # e "Do you like to play visual novels with choices in them?"
-    e ""
+    e "너는 분기가 있는 시각 소설을 좋아하니?"
 
 # game/tutorial_quickstart.rpy:509
 translate korean choice1_yes_f6d95df8:
 
     # e "While creating a multi-path visual novel can be a bit more work, it can yield a unique experience."
-    e ""
+    e "비선형 시각 소설을 만드는 것은 더 많은 작업이 될 수 있지만 그로부터 고유한 경험을 얻을 수 있어."
 
 # game/tutorial_quickstart.rpy:517
 translate korean choice1_no_72958b50:
 
     # e "Games without menus are called kinetic novels, and there are dozens of them available to play."
-    e ""
+    e "분기가 없는 게임은 키네틱 노블이라 부르고, 수십 개의 플레이 가능한 작품들이 있어."
 
 # game/tutorial_quickstart.rpy:528
 translate korean choice1_done_acba9504:
 
     # e "Here, you can see the code for that menu. If you scroll down, you can see the code we run after the menu."
-    e ""
+    e "여기에서 해당 분기의 코드를 볼 수 있어. 아래로 스크롤하면 분기 다음에 실행되는 코드를 볼 수 있고."
 
 # game/tutorial_quickstart.rpy:530
 translate korean choice1_done_f9fa6889:
 
     # e "Menus are introduced by the menu statement. The menu statement takes an indented block, in which there can be one line of dialogue and multiple choices."
-    e ""
+    e "분기는 메뉴(menu) 명령문으로 시작돼. 메뉴는 들여쓰기 된 블록을 사용하고, 한 줄의 대사이거나 여러 선택이 있을 수 있어."
 
 # game/tutorial_quickstart.rpy:532
 translate korean choice1_done_ebb2db38:
 
     # e "Each choice must end with a colon, as each choice has its own block of Ren'Py code, that is run when that choice is selected."
-    e ""
+    e "각 선택 항목은 콜론으로 끝나야 하고, 항목에는 렌파이 코드 블록이 있으며 선택 항목을 선택하면 실행되지."
 
 # game/tutorial_quickstart.rpy:534
 translate korean choice1_done_59cac95d:
 
     # e "Here, each block jumps to a label. While you could put small amounts of Ren'Py code inside a menu label, it's probably good practice to usually jump to a bigger block of code."
-    e ""
+    e "여기서 각 블록은 레이블로 점프해. 소량의 렌파이 코드를 메뉴 레이블에 넣을 수는 있지만, 일반적으로 더 큰 코드 블록으로 점프하는 것이 좋을 거야."
 
 # game/tutorial_quickstart.rpy:536
 translate korean choice1_done_2851a313:
 
     # e "Scrolling down past the menu, you can see the labels that the menu jumps to. There are three labels here, named choice1_yes, choice1_no, and choice1_done."
-    e ""
+    e "메뉴를 스크롤하면 메뉴가 이동하는 레이블을 볼 수 있어. 여기에는 choice1_yes, choice1_no, 그리고 choice1_done이라는 세 개의 레이블이 있어."
 
 # game/tutorial_quickstart.rpy:538
 translate korean choice1_done_ff761b03:
 
     # e "When the first menu choice is picked, we jump to the choice1_yes, which runs two lines of script before jumping to choice1_done."
-    e ""
+    e "첫 번째 분기가 선택되면 choice1_yes로 점프하고 두 줄의 스크립트를 실행한 뒤에 choice1_done으로 건너뛸 거야."
 
 # game/tutorial_quickstart.rpy:540
 translate korean choice1_done_664fe702:
 
     # e "Similarly, picking the second choice jumps us to choice1_no, which also runs two lines of script."
-    e ""
+    e "마찬가지로 두 번째 분기를 선택하면 choose1_no로 이동하여 두 줄의 스크립트를 실행해."
 
 # game/tutorial_quickstart.rpy:542
 translate korean choice1_done_31d12b1e:
 
     # e "The lines beginning with the dollar sign are lines of python code, which are used to set a flag based on the user's choice."
-    e ""
+    e "달러 기호로 시작하는 줄은 사용자 선택에 따라 플래그를 설정하는 데 사용되는 파이썬 코드 줄이야."
 
 # game/tutorial_quickstart.rpy:544
 translate korean choice1_done_88398d3e:
 
     # e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag, so the game can remember the user's choices."
-    e ""
+    e "플래그의 이름은 menu_flag이며 사용자의 선택에 따라 True 또는 False로 설정돼. if 문을 사용하여 플래그를 테스트 할 수 있으므로 게임에서 사용자의 선택을 기억할 수 있지."
 
 # game/tutorial_quickstart.rpy:549
 translate korean choice1_done_2828dbfc:
 
     # e "For example, I remember that you plan to use menus in your game."
-    e ""
+    e "예를 들어, 나는 네 게임에서 메뉴를 사용할 계획이라는 것을 기억해."
 
 # game/tutorial_quickstart.rpy:553
 translate korean choice1_done_503786e4:
 
     # e "For example, I remember that you're planning to make a kinetic novel, without menus."
-    e ""
+    e "예를 들어, 나는 네가 분기가 없는 키네틱 노블을 만들 계획이라는 걸 기억해."
 
 # game/tutorial_quickstart.rpy:555
 translate korean choice1_done_819e234a:
 
     # e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
-    e ""
+    e "다음은 플래그를 테스트 할 수있는 방법을 보여주는 예제이고, 사실인지 아닌지에 따라 다른 작업을 수행해."
 
 # game/tutorial_quickstart.rpy:559
 translate korean choice1_done_461e6a59:
 
     # e "Finally, this shows how you can show dialogue and menus at the same time. Understand?" nointeract
-    e "" nointeract
+    e "마지막으로 지문과 분기를 동시에 표시하는 방법을 보여줄게. 이해되지?" nointeract
 
 # game/tutorial_quickstart.rpy:564
 translate korean choice1_done_a32e30fd:
 
     # e "Great."
-    e ""
+    e "좋아."
 
 # game/tutorial_quickstart.rpy:568
 translate korean choice1_done_fbd1dbc1:
 
     # e "If you look at the example, before the first choice, there's an indented say statement."
-    e ""
+    e "첫 번째 선택을 하기 전에 예제를 살펴보면 들여쓰기 된 say 문이 있는 걸 볼 수 있어."
 
 # game/tutorial_quickstart.rpy:574
 translate korean menu3_done_47fa2268:
 
     # e "Although we won't demonstrate it here, Ren'Py supports making decisions based on a combinations of points, flags, and other factors."
-    e ""
+    e "여기서 설명하지는 않겠지만, 렌파이는 포인트, 플래그 및 기타 요소의 조합을 기반으로 결정을 내릴 수 있어."
 
 # game/tutorial_quickstart.rpy:576
 translate korean menu3_done_826a600b:
 
     # e "One of Ren'Py's big advantages is the flexibility using a scripting language like Python provides us. It lets us easily scale from kinetic novels to complex simulation games."
-    e ""
+    e "렌파이의 가장 큰 장점 중 하나는 파이썬과 같은 스크립팅 언어를 사용하여 유연성을 제공한다는 거야. 우리가 쉽게 키네틱 노블에서 복잡한 시뮬레이션 게임으로 확장할 수 있다는 걸 의미하지."
 
 # game/tutorial_quickstart.rpy:585
 translate korean tutorial_input_066611c5:
@@ -851,7 +851,7 @@ translate korean strings:
 
     # tutorial_quickstart.rpy:497
     old "No, I don't."
-    new "아니, 난 됐어."
+    new "아니, 난 별로야."
 
     # tutorial_quickstart.rpy:589
     old "What's your name?"
