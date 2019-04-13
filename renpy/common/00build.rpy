@@ -71,13 +71,13 @@ init -1500 python in build:
 
         ( "renpy.py", "renpy"),
 
-        ( "renpy/", "all"),
-        ( "renpy/common/", "all"),
-        ( "renpy/common/_compat/**", "renpy"),
-        ( "renpy/common/**.rpy", "renpy"),
-        ( "renpy/common/**.rpym", "renpy"),
-        ( "renpy/common/_compat/**", "renpy"),
-        ( "renpy/common/**", "all"),
+#         ( "renpy/", "all"),
+#         ( "renpy/common/", "all"),
+#         ( "renpy/common/_compat/**", "renpy"),
+#         ( "renpy/common/**.rpy", "renpy"),
+#         ( "renpy/common/**.rpym", "renpy"),
+#         ( "renpy/common/_compat/**", "renpy"),
+#         ( "renpy/common/**", "all"),
         ( "renpy/**", "renpy"),
 
         # Ignore Ren'Py and renpy.exe.
@@ -331,7 +331,7 @@ init -1500 python in build:
     package("steam", "zip", "windows linux mac renpy all", hidden=True)
     package("android", "directory", "android renpy all", hidden=True, update=False, dlc=True)
     package("ios", "directory", "ios renpy all", hidden=True, update=False, dlc=True)
-    package("web", "zip", "renpy all", update=False, dlc=True)
+    package("web", "zip", "all", update=False, dlc=True)
 
     # Data that we expect the user to set.
 
