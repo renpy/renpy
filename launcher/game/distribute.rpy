@@ -965,7 +965,7 @@ init python in distribute:
             old_exe_fn = os.path.join(config.renpy_base, "renpy.exe")
             old_main_fn = os.path.join(config.renpy_base, "lib/windows-i686/renpy.exe")
 
-            if os.path.exists(icon_fn):
+            if os.path.exists(icon_fn) and os.path.exists(old_exe_fn):
                 exe_fn = self.temp_filename("renpy.exe")
                 main_fn = self.temp_filename("main.exe")
 
@@ -979,8 +979,9 @@ init python in distribute:
                 exe_fn = old_exe_fn
                 main_fn = old_main_fn
 
-            self.add_file(windows, self.exe, exe_fn)
-            self.add_file(windows, "lib/windows-i686/" + self.exe, main_fn)
+            if os.path.exists(exe_fn):
+                self.add_file(windows, self.exe, exe_fn)
+                self.add_file(windows, "lib/windows-i686/" + self.exe, main_fn)
 
         def mark_executable(self):
             """
