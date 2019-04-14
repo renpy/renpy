@@ -262,7 +262,7 @@ translate spanish style_text_6dd42a57:
 translate spanish style_text_c689130e:
 
     # e "The bold style property makes the text bold. This can be done using an algorithm, rather than a different version of the font."
-    e "La propiedad de estilo en negrita hace que el texto en negrita. Esto se puede hacer usando un algoritmo, en lugar de una versión diferente de la fuente."
+    e "La propiedad de estilo bold hace que el texto esté en negrita. Esto se puede hacer usando un algoritmo, en lugar de una versión diferente de la fuente."
 
 # game/indepth_style.rpy:355
 translate spanish style_text_3420bfe4:
@@ -352,67 +352,67 @@ translate spanish style_text_efc3c392:
 translate spanish style_text_43be63b9:
 
     # e "The underline property underlines the text."
-    e ""
+    e "La propiedad underline subraya el texto."
 
 # game/indepth_style.rpy:471
 translate spanish style_text_343f6d34:
 
     # e "Those are the most common text style properties, but not the only ones. Here are a few more that you might need in special circumstances."
-    e ""
+    e "Esas son las propiedades de estilo de texto más comunes, pero no las únicas. Aquí hay algunos más que puede necesitar en circunstancias especiales."
 
 # game/indepth_style.rpy:479
 translate spanish style_text_e7204a95:
 
     # e "By default, text in Ren'Py is antialiased, to smooth the edges. The antialias property can turn that off, and make the text a little more jagged."
-    e ""
+    e "Por defecto, el texto en Ren'Py tiene antialias, para suavizar los bordes. La propiedad antialias puede desactivar eso y hacer que el texto sea un poco más irregular."
 
 # game/indepth_style.rpy:487
 translate spanish style_text_b4563984:
 
     # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
-    e ""
+    e "La propiedad adjust_spacing es muy sutil, eso solo importa cuando un jugador cambia el tamaño de la ventana. Cuando es verdadero, los caracteres se desplazarán un poco para que el texto tenga el mismo espaciado relativo."
 
 # game/indepth_style.rpy:496
 translate spanish style_text_605d4e4a:
 
     # e "When False, the text won't jump around as much. But it can be a little wider or narrower based on screen size."
-    e ""
+    e "Cuando es falso, el texto no saltará tanto. Pero puede ser un poco más ancho o más estrecho según el tamaño de la pantalla."
 
 # game/indepth_style.rpy:505
 translate spanish style_text_acf8a0e1:
 
     # e "The layout property has a few special values that control where lines are broken. The 'nobreak' value disables line breaks entirely, making the text wider."
-    e ""
+    e "La propiedad layout tiene algunos valores especiales que controlan dónde se rompen las líneas. El valor 'nobreak' deshabilita los saltos de línea por completo, haciendo que el texto sea más ancho."
 
 # game/indepth_style.rpy:516
 translate spanish style_text_785729cf:
 
     # e "When the layout property is set to 'subtitle', the line breaking algorithm is changed to try to make all lines even in length, as subtitles usually are."
-    e ""
+    e "Cuando la propiedad layout se establece en 'subtitle', el algoritmo de salto de línea se cambia para intentar que todas las líneas tengan una longitud igual a la de los subtítulos."
 
 # game/indepth_style.rpy:524
 translate spanish style_text_9c26f218:
 
     # e "The strikethrough property draws a line through the text. It seems pretty unlikely you'd want to use this one."
-    e ""
+    e "La propiedad strikethrough traza una línea a través del texto. Parece bastante improbable que quieras usar este."
 
 # game/indepth_style.rpy:534
 translate spanish style_text_c7229243:
 
     # e "The vertical style property places text in a vertical layout. It's meant for Asian languages with special fonts."
-    e ""
+    e "La propiedad de estilo vertical coloca el texto en un diseño vertical. Está destinado a los idiomas asiáticos con fuentes especiales."
 
 # game/indepth_style.rpy:540
 translate spanish style_text_724bd5e0:
 
     # e "And those are the text style properties. There might be a lot of them, but we want to give you a lot of control over how you present text to your players."
-    e ""
+    e "Y esas son las propiedades de estilo de texto. Puede que haya muchos, pero queremos darte mucho control sobre cómo presentar el texto a tus jugadores."
 
 # game/indepth_style.rpy:580
 translate spanish style_button_300b6af5:
 
     # e "Next up, we have the window and button style properties. These apply to windows like the text window at the bottom of this screen and frames like the ones we show examples in."
-    e ""
+    e "A continuación, tenemos las propiedades de estilo de window y button. Estos se aplican a ventanas como la ventana de texto en la parte inferior de esta pantalla y marcos como los que mostramos en los ejemplos."
 
 # game/indepth_style.rpy:582
 translate spanish style_button_255a18e4:
@@ -724,11 +724,11 @@ translate spanish strings:
 
     # indepth_style.rpy:66
     old "General style properties."
-    new "Propiedades de estilo Generales"
+    new "Propiedades de estilo generales"
 
     # indepth_style.rpy:66
     old "Text style properties."
-    new "propiedes de estilo de Texto"
+    new "Propiedes de estilo de texto"
 
     # indepth_style.rpy:66
     old "Window and Button style properties."
@@ -736,7 +736,7 @@ translate spanish strings:
 
     # indepth_style.rpy:66
     old "Bar style properties."
-    new "Propiedes de estilo de Barras"
+    new "Propiedes de estilo de barras"
 
     # indepth_style.rpy:66
     old "Box, Grid, and Fixed style properties."
@@ -744,7 +744,7 @@ translate spanish strings:
 
     # indepth_style.rpy:66
     old "The Displayable Inspector."
-    new "El inspector displayables."
+    new "El inspector visualizables."
 
     # indepth_style.rpy:66
     old "That's all I want to know."
@@ -784,11 +784,11 @@ translate spanish strings:
 
     # indepth_style.rpy:561
     old "Top Choice"
-    new "Eleccion Superior"
+    new "Elección Superior"
 
     # indepth_style.rpy:566
     old "Bottom Choice"
-    new "Eleccion Inferior"
+    new "Elección Inferior"
 
     # indepth_style.rpy:879
     old "First Child"
