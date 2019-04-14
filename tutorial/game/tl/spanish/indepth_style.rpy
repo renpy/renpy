@@ -46,7 +46,7 @@ translate spanish styles_fa345a38:
 translate spanish styles_6189ee12:
 
     # e "While the default GUI uses variables to provide styles with sensible defaults, if you're replacing the GUI or creating your own screens, you'll need to learn about styles yourself."
-    e "Si bien la GUI predeterminada utiliza variables para proporcionar estilos con valores predeterminados razonables, si está reemplazando la GUI o creando sus propias pantallas, deberá aprender sobre los estilos usted mismo."
+    e "Si bien la GUI predeterminada utiliza variables para proporcionar estilos con valores predeterminados razonables, si estás reemplazando la GUI o creando tus propias pantallas, deberás aprender sobre los estilos tú mismo."
 
 # game/indepth_style.rpy:66
 translate spanish styles_menu_a4a6913e:
@@ -58,13 +58,13 @@ translate spanish styles_menu_a4a6913e:
 translate spanish style_basics_9a79ef89:
 
     # e "Styles let a visualizable look different from game to game, or even inside the same game."
-    e "os estilos permiten que los visualizables se vea diferente de un juego a otro, o incluso dentro del mismo juego."
+    e "Los estilos permiten que los visualizables se vea diferente de un juego a otro, o incluso dentro del mismo juego."
 
 # game/indepth_style.rpy:103
 translate spanish style_basics_48777f2c:
 
     # e "Both of these buttons use the same visualizables. But since different styles have been applied, the buttons look different from each other."
-    e "Ambos de estos botones utilizan los mismos visualizables. Pero como se han aplicado diferentes estilos, los botones se ven diferentes entre sí."
+    e "Ambos botones utilizan los mismos visualizables. Pero como se han aplicado diferentes estilos, los botones se ven diferentes entre sí."
 
 # game/indepth_style.rpy:108
 translate spanish style_basics_57704d8c:
@@ -166,7 +166,7 @@ translate spanish style_basics_bad2e207:
 translate spanish style_basics_22ed20a1:
 
     # e "The prefixes idle_, hover_, and insensitive_ are used when the button is unfocused, focused, and unfocusable."
-    e "Los prefijos idle_, hover_ e insensitive_ se usan cuando el botón está desenfocado, enfocado y desenfocable."
+    e "Los prefijos idle_, hover_ e insensitive_ se usan cuando el botón está desenfocado, enfocado y no enfocable."
 
 # game/indepth_style.rpy:204
 translate spanish style_basics_7a58037e:
@@ -256,97 +256,97 @@ translate spanish style_text_7ab53f03:
 translate spanish style_text_6dd42a57:
 
     # e "These can also be set in gui.rpy by changing or defining variables with names like gui.button_text_size."
-    e ""
+    e "Estos también se pueden configurar en gui.rpy cambiando o definiendo variables con nombres como gui.button_text_size."
 
 # game/indepth_style.rpy:347
 translate spanish style_text_c689130e:
 
     # e "The bold style property makes the text bold. This can be done using an algorithm, rather than a different version of the font."
-    e ""
+    e "La propiedad de estilo en negrita hace que el texto en negrita. Esto se puede hacer usando un algoritmo, en lugar de una versión diferente de la fuente."
 
 # game/indepth_style.rpy:355
 translate spanish style_text_3420bfe4:
 
     # e "The color property changes the color of the text. It takes hex color codes, just like everything else in Ren'Py."
-    e ""
+    e "La propiedad color cambia el color del texto. Toma códigos de colores hexadecimales, como todo lo demás en Ren'Py."
 
 # game/indepth_style.rpy:363
 translate spanish style_text_14bd6327:
 
     # e "The first_indent style property determines how far the first line is indented."
-    e ""
+    e "La propiedad de estilo first_indent determina hasta qué punto se sangra la primera línea."
 
 # game/indepth_style.rpy:371
 translate spanish style_text_779ac517:
 
     # e "The font style property changes the font the text uses. Ren'Py takes TrueType and OpenType fonts, and you'll have to include the font file as part of your visual novel."
-    e ""
+    e "La propiedad de estilo font cambia la fuente que usa el texto. Ren'Py toma las fuentes TrueType y OpenType, y tendrás que incluir el archivo de fuente como parte de tu novela visual."
 
 # game/indepth_style.rpy:379
 translate spanish style_text_917e2bca:
 
     # e "The size property changes the size of the text."
-    e ""
+    e "La propiedad size cambia el tamaño del texto."
 
 # game/indepth_style.rpy:388
 translate spanish style_text_1a46cd43:
 
     # e "The italic property makes the text italic. Again, this is better done with a font, but for short amounts of text Ren'Py can do it for you."
-    e ""
+    e "La propiedad italic hace que el texto esté en cursiva. Nuevamente, esto se hace mejor con una fuente, pero para cantidades cortas de texto, Ren'Py puede hacerlo ti usted."
 
 # game/indepth_style.rpy:397
 translate spanish style_text_472f382d:
 
     # e "The justify property makes the text justified, lining all but the last line up on the left and the right side."
-    e ""
+    e "La propiedad justify hace que el texto esté justificado, alineando todo menos la última línea del lado izquierdo y derecho."
 
 # game/indepth_style.rpy:405
 translate spanish style_text_87b075f8:
 
     # e "The kerning property kerns the text. When it's negative, characters are closer together. When positive, characters are farther apart."
-    e ""
+    e "La propiedad kerning da espacio el texto. Cuando es negativo, los caracteres están más juntos. Cuando es positivo, los caracteres están más separados."
 
 # game/indepth_style.rpy:415
 translate spanish style_text_fe7dec14:
 
     # e "The line_leading and line_spacing properties put spacing before each line, and between lines, respectively."
-    e ""
+    e "Las propiedades line_leading y line_spacing ponen el espaciado antes de cada línea, y entre líneas, respectivamente."
 
 # game/indepth_style.rpy:424
 translate spanish style_text_aee9277a:
 
     # e "The outlines property puts outlines around text. This takes a list of tuples, which is a bit complicated."
-    e ""
+    e "La propiedad outlines pone contornos alrededor del texto. Esto requiere una lista de tuplas, lo cual es un poco complicado."
 
 # game/indepth_style.rpy:426
 translate spanish style_text_b4c5190f:
 
     # e "But if you ignore the brackets and parenthesis, you have the width of the outline, the color, and then horizontal and vertical offsets."
-    e ""
+    e "Pero si ignoras los corchetes y los paréntesis, tienes el ancho del contorno, el color y, a continuación, los offsets horizontales y verticales."
 
 # game/indepth_style.rpy:434
 translate spanish style_text_5a0c2c02:
 
     # e "The rest_indent property controls the indentation of lines after the first one."
-    e ""
+    e "La propiedad rest_indent controla la sangría de las líneas después de la primera."
 
 # game/indepth_style.rpy:443
 translate spanish style_text_430c1959:
 
     # e "The text_align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
-    e ""
+    e "La propiedad text_align controla el posicionamiento de múltiples líneas de texto dentro del texto visualizable. Por ejemplo, 0.5 significa centrado."
 
 # game/indepth_style.rpy:445
 translate spanish style_text_19aa0833:
 
     # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
-    e ""
+    e "No cambia la posición del texto visualizable. Para eso, a menudo querrá establecer el text_align y el xalign en el mismo valor."
 
 # game/indepth_style.rpy:455
 translate spanish style_text_efc3c392:
 
     # e "When both text_align and xalign are set to 1.0, the text is properly right-justified."
-    e ""
+    e "Cuando tanto text_align como xalign se configuran en 1.0, el texto está correctamente justificado."
 
 # game/indepth_style.rpy:464
 translate spanish style_text_43be63b9:
