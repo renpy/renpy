@@ -249,6 +249,16 @@ class PyExpr(unicode):
         return (unicode(self), self.filename, self.linenumber)  # E1101
 
 
+def probably_side_effect_free(expr):
+    """
+    Returns true if an expr probably does not have side effects, and should
+    be predicted. Basically, this just whitelists a set of characters that
+    doesn't allow for a function call.
+    """
+
+    return not ("(" in expr)
+
+
 class PyCode(object):
 
     __slots__ = [
@@ -1436,6 +1446,10 @@ class Call(Node):
         label = self.label
 
         if self.expression:
+
+            if not probably_side_effect_free(label):
+                return [ ]
+
             label = renpy.python.py_eval(label)
 
         return [ renpy.game.context().predict_call(label, self.next.name) ]
@@ -1682,10 +1696,16 @@ class Jump(Node):
 
     def predict(self):
 
+        label = self.target
+
         if self.expression:
-            return [ ]
-        else:
-            return [ renpy.game.script.lookup(self.target) ]
+
+            if not probably_side_effect_free(label):
+                return [ ]
+
+            label = renpy.python.py_eval(label)
+
+        return [ renpy.game.script.lookup(label) ]
 
     def scry(self):
         rv = Node.scry(self)
