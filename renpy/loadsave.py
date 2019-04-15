@@ -30,7 +30,7 @@ from cStringIO import StringIO
 
 import zipfile
 import re
-#import threading
+import threading
 import types
 import shutil
 import os
@@ -441,14 +441,8 @@ def save(slotname, extra_info='', mutate_flag=False):
 
 
 # Flag that lets us know if an autosave is in progress.
-#autosave_not_running = threading.Event()
-#autosave_not_running.set()
-class EventStub:
-    def set(self): pass
-    def isSet(self): return True
-    def clear(self): pass
-    def wait(self, timeout=None): return True
-autosave_not_running = EventStub()
+autosave_not_running = threading.Event()
+autosave_not_running.set()
 
 # The number of times autosave has been called without a save occuring.
 autosave_counter = 0
