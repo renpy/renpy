@@ -22,7 +22,7 @@ translate spanish new_gui_22adf68e:
 
     # e "The GUI is also meant to be easy for an intermediate creator to customize. Customizing the GUI consists of changing the image files in the gui directory, and changing variables in gui.rpy."
     e "La GUI también debe ser fácil de personalizar para un creador intermedio. La personalización de la GUI consiste en cambiar los archivos de imagen en el directorio gui y cambiar las variables en gui.rpy."
-
+    
 # game/indepth_style.rpy:48
 translate spanish new_gui_da21de30:
 
@@ -75,7 +75,7 @@ translate spanish style_basics_57704d8c:
 translate spanish style_basics_144731f6:
 
     # e "The first place Ren'Py can get style information from is part of a screen. Each displayable created by a screen can take a style name and style properties."
-    e "El primer lugar en el que Ren'Py puede obtener información de estilo es parte de una pantalla. Cada elemento visualizable creado por una pantalla puede tomar un nombre de estilo y propiedades de estilo."
+    e "El primer lugar en el que Ren'Py puede obtener información de estilo es parte de una pantalla. Cada visualizable creado por una pantalla puede tomar un nombre de estilo y propiedades de estilo."
 
 # game/indepth_style.rpy:138
 translate spanish style_basics_67e48162:
@@ -477,7 +477,7 @@ translate spanish style_button_4c6da7d9:
 translate spanish style_button_fd5338b2:
 
     # e "The foreground property gives a displayable that is placed on top of the contents and background of the window or button."
-    e "La propiedad foreground proporciona un elemento visualizable que se coloca sobre el contenido y el fondo de la ventana o el botón."
+    e "La propiedad foreground proporciona un visualizable que se coloca sobre el contenido y el fondo de la ventana o el botón."
 
 # game/indepth_style.rpy:659
 translate spanish style_button_b8af697c:
@@ -513,7 +513,7 @@ translate spanish style_bar_414d454a:
 translate spanish style_bar_9422b7b0:
 
     # e "And here's what we use for parts of the bar that are full."
-    e "Y esto es lo que usamos para partes de la barra que están completas."
+    e "Y esto es lo que usamos para partes de la barra que están llenas."
 
 # game/indepth_style.rpy:775
 translate spanish style_bar_8ae6a14b:
@@ -561,7 +561,7 @@ translate spanish style_bar_b6dfb61b:
 translate spanish style_bar_996466ad:
 
     # e "The left_gutter and right_gutter properties set a gutter on the left or right size of the bar. The gutter is space the bar can't be dragged into, that can be used for borders."
-    e "Las propiedades left_gutter y right_gutter establecen un canal en el tamaño izquierdo o derecho de la barra. La canaleta es el espacio al que no se puede arrastrar la barra, que se puede usar para los bordes."
+    e "Las propiedades left_gutter y right_gutter establecen un canal en el tamaño izquierdo o derecho de la barra. El canal es el espacio al que no se puede arrastrar la barra, que se puede usar para los bordes."
 
 # game/indepth_style.rpy:851
 translate spanish style_bar_fa41a83c:
@@ -681,13 +681,13 @@ translate spanish style_inspector_21bc0709:
 translate spanish style_inspector_243c50f0:
 
     # e "To use it, place the mouse over a portion of the Ren'Py user interface, and hit shift+I. That's I for inspector."
-    e "Para usarlo, coloque el mouse sobre una parte de la interfaz de usuario de Ren'Py y presione Mayús + I. Ese soy yo por inspector."
+    e "Para usarlo, coloca el mouse sobre una parte de la interfaz de usuario de Ren'Py y presiona shift+I. Eso soy yo por inspector."
 
 # game/indepth_style.rpy:1088
 translate spanish style_inspector_bcbdc396:
 
     # e "Ren'Py will pop up a list of displayables the mouse is over. Next to each is the name of the style that displayable uses."
-    e "Ren'Py mostrará una lista de elementos visualizables en los que el mouse ha terminado. Junto a cada uno está el nombre del estilo que utiliza la visualización."
+    e "Ren'Py mostrará una lista de elementos visualizables que el mouse está apuntando. Junto a cada uno está el nombre del estilo que utiliza la visualización."
 
 # game/indepth_style.rpy:1090
 translate spanish style_inspector_d981e5c8:
@@ -705,7 +705,7 @@ translate spanish style_inspector_ef46b86d:
 translate spanish style_inspector_b59c6b69:
 
     # e "You can try the inspector right now, by hovering this text and hitting shift+I."
-    e "Puede probar al inspector ahora mismo, al desplazar este texto y presionar shift+I."
+    e "Puede probar al inspector ahora mismo, al enfocar este texto y presionar shift+I."
 
 translate spanish strings:
 
@@ -727,19 +727,19 @@ translate spanish strings:
 
     # indepth_style.rpy:66
     old "Text style properties."
-    new "Propiedes de estilo de texto"
+    new "Propiedes de estilo Text"
 
     # indepth_style.rpy:66
     old "Window and Button style properties."
-    new "Propiedes de estilo de Ventanas y Botones"
+    new "Propiedes de estilo de Window y Button"
 
     # indepth_style.rpy:66
     old "Bar style properties."
-    new "Propiedes de estilo de barras"
+    new "Propiedes de estilo Bar"
 
     # indepth_style.rpy:66
     old "Box, Grid, and Fixed style properties."
-    new "Propiedes de estilo de Cajas, Mayas y Fijado"
+    new "Propiedes de estilo Box, Grid y Fixed"
 
     # indepth_style.rpy:66
     old "The Displayable Inspector."
