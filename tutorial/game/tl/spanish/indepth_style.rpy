@@ -418,295 +418,295 @@ translate spanish style_button_300b6af5:
 translate spanish style_button_255a18e4:
 
     # e "These properties also apply to buttons, in-game and out-of-game. To Ren'Py, a button is a window you can click."
-    e ""
+    e "Estas propiedades también se aplican a los botones, dentro del juego y fuera del juego. Para Ren'Py, un botón es una ventana en la que puede hacer clic."
 
 # game/indepth_style.rpy:593
 translate spanish style_button_9b53ce93:
 
     # e "I'll start off with this style, which everything will inherit from. To make our lives easier, it inherits from the default style, rather than the customizes buttons in this game's GUI."
-    e ""
+    e "Comenzaré con este estilo, del cual todo heredará. Para hacer nuestra vida más fácil, hereda del estilo default, en lugar de los botones personalizados en la GUI de este juego."
 
 # game/indepth_style.rpy:595
 translate spanish style_button_aece4a8c:
 
     # e "The first style property is the background property. It adds a background to the a button or window. Since this is a button, idle and hover variants choose different backgrounds when focused."
-    e ""
+    e "La primera propiedad de estilo es la propiedad background. Agrega un fondo al botón o ventana. Como se trata de un botón, las variantes idle y hover eligen diferentes fondos cuando se enfocan."
 
 # game/indepth_style.rpy:597
 translate spanish style_button_b969f04a:
 
     # e "We also center the two buttons, using the xalign position property."
-    e ""
+    e "También centramos los dos botones, usando la propiedad de posición xalign."
 
 # game/indepth_style.rpy:601
 translate spanish style_button_269ae069:
 
     # e "We've also customized the style of the button's text, using this style. It centers the text and makes it change color when hovered."
-    e ""
+    e "También hemos personalizado el estilo del texto del botón, utilizando este estilo. Centra el texto y lo hace cambiar de color cuando se enfoca."
 
 # game/indepth_style.rpy:612
 translate spanish style_button_1009f3e1:
 
     # e "Without any padding around the text, the button looks odd. Ren'Py has padding properties that add space inside the button's background."
-    e ""
+    e "Sin ningún relleno alrededor del texto, el botón se ve extraño. Ren'Py tiene propiedades de relleno que agregan espacio dentro del fondo del botón."
 
 # game/indepth_style.rpy:621
 translate spanish style_button_5bdfa45a:
 
     # e "More commonly used are the xpadding and ypadding style properties, which add the same padding to the left and right, or the top and bottom, respectively."
-    e ""
+    e "Más comúnmente utilizadas son las propiedades de estilo xpadding y ypadding, que agregan el mismo relleno a la izquierda y la derecha, o la parte superior e inferior, respectivamente."
 
 # game/indepth_style.rpy:629
 translate spanish style_button_81283d42:
 
     # e "The margin style properties work the same way, except they add space outside the background. The full set exists: left_margin, right_margin, top_margin, bottom_margin, xmargin, and ymargin."
-    e ""
+    e "Las propiedades de estilo margin funcionan de la misma manera, excepto que agregan espacio fuera del fondo. El conjunto completo existe: left_margin, right_margin, top_margin, bottom_margin, xmargin y ymargin."
 
 # game/indepth_style.rpy:638
 translate spanish style_button_0b7aca6b:
 
     # e "The size_group style property takes a string. Ren'Py will make sure that all the windows or buttons with the same size_group string are the same size."
-    e ""
+    e "La propiedad de estilo size_group toma una cadena. Ren'Py se asegurará de que todas las ventanas o botones con la misma cadena size_group sean del mismo tamaño."
 
 # game/indepth_style.rpy:647
 translate spanish style_button_4c6da7d9:
 
     # e "Alternatively, the xfill and yfill style properties make a button take up all available space in the horizontal or vertical directions."
-    e ""
+    e "Alternativamente, las propiedades de estilo xfill y yfill hacen que un botón ocupe todo el espacio disponible en las direcciones horizontal o vertical."
 
 # game/indepth_style.rpy:657
 translate spanish style_button_fd5338b2:
 
     # e "The foreground property gives a displayable that is placed on top of the contents and background of the window or button."
-    e ""
+    e "La propiedad foreground proporciona un elemento visualizable que se coloca sobre el contenido y el fondo de la ventana o el botón."
 
 # game/indepth_style.rpy:659
 translate spanish style_button_b8af697c:
 
     # e "One way to use it is to provide extra decorations to a button that's serving as a checkbox. Another would be to use it with a Frame to provide a glossy shine that overlays the button's contents."
-    e ""
+    e "Una forma de usarlo es proporcionar decoraciones adicionales a un botón que sirve como casilla de verificación. Otra sería usarlo con un Frame para proporcionar un brillo que cubra el contenido del botón."
 
 # game/indepth_style.rpy:668
 translate spanish style_button_c0b1b62e:
 
     # e "There are also a few style properties that only apply to buttons. The hover_sound and activate_sound properties play sound files when a button is focused and activated, respectively."
-    e ""
+    e "También hay algunas propiedades de estilo que solo se aplican a los botones. Las propiedades hover_sound y enable_sound reproducen archivos de sonido cuando un botón está enfocado y activado, respectivamente."
 
 # game/indepth_style.rpy:677
 translate spanish style_button_02fa647e:
 
     # e "Finally, the focus_mask property applies to partially transparent buttons. When it's set to True, only areas of the button that aren't transparent cause a button to focus."
-    e ""
+    e "Finalmente, la propiedad focus_mask se aplica a los botones parcialmente transparentes. Cuando se establece en True, solo las áreas del botón que no son transparentes hacen que el botón se enfoque."
 
 # game/indepth_style.rpy:679
 translate spanish style_button_fb973235:
 
     # e "Be careful with focus_mask, as it only works on desktop platforms. It doesn't yet work on Android or iOS."
-    e ""
+    e "Ten cuidado con focus_mask, ya que solo funciona en plataformas de escritorio. Todavía no funciona en Android o iOS."
 
 # game/indepth_style.rpy:759
 translate spanish style_bar_414d454a:
 
     # e "To demonstrate styles, let me first show two of the images we'll be using. This is the image we're using for parts of the bar that are empty."
-    e ""
+    e "Para demostrar estilos, primero déjame mostrar dos de las imágenes que usaremos. Esta es la imagen que estamos usando para partes de la barra que están vacías."
 
 # game/indepth_style.rpy:763
 translate spanish style_bar_9422b7b0:
 
     # e "And here's what we use for parts of the bar that are full."
-    e ""
+    e "Y esto es lo que usamos para partes de la barra que están completas."
 
 # game/indepth_style.rpy:775
 translate spanish style_bar_8ae6a14b:
 
     # e "The left_bar and right_bar style properties, and their hover variants, give displayables for the left and right side of the bar. By default, the value is shown on the left."
-    e ""
+    e "Las propiedades de estilo left_bar y right_bar, y sus variantes de desplazamiento, permiten mostrar los lados izquierdo y derecho de la barra. Por defecto, el valor se muestra a la izquierda."
 
 # game/indepth_style.rpy:777
 translate spanish style_bar_7f0f50e5:
 
     # e "Also by default, both the left and right displayables are rendered at the full width of the bar, and then cropped to the appropriate size."
-    e ""
+    e "Además, de forma predeterminada, tanto la visualización derecha como la izquierda se representan en todo el ancho de la barra y luego se recortan al tamaño adecuado."
 
 # game/indepth_style.rpy:779
 translate spanish style_bar_9ef4f62f:
 
     # e "We give the bar the ysize property to set how tall it is. We could also give it xsize to choose how wide, but here it's limited by the width of the frame it's in."
-    e ""
+    e "Le damos a la barra la propiedad ysize para establecer qué tan alta es. También podríamos darle xsize para elegir qué ancho, pero aquí está limitado por el ancho del marco en el que se encuentra."
 
 # game/indepth_style.rpy:792
 translate spanish style_bar_80d8ceed:
 
     # e "When the bar_invert style property is true, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
-    e ""
+    e "Cuando la propiedad de estilo bar_invert es True, el valor de la barra se muestra en el lado derecho de la barra. Es posible que también deban intercambiarse los indicadores de barra izquierda y barra derecha."
 
 # game/indepth_style.rpy:806
 translate spanish style_bar_cca67222:
 
     # e "The bar_resizing style property causes the bar images to be resized to represent the value, rather than being rendered at full size and cropped."
-    e ""
+    e "La propiedad de estilo bar_resizing hace que las imágenes de la barra se redimensionen para representar el valor, en lugar de representarse a tamaño completo y recortarse."
 
 # game/indepth_style.rpy:819
 translate spanish style_bar_7d361bac:
 
     # e "The thumb style property gives a thumb image, that's placed based on the bars value. In the case of a scrollbar, it's resized if possible."
-    e ""
+    e "La propiedad de estilo thumb proporciona una imagen thumb, que se coloca según el valor de las barras. En el caso de una barra de desplazamiento, se redimensiona si es posible."
 
 # game/indepth_style.rpy:821
 translate spanish style_bar_b6dfb61b:
 
     # e "Here, we use it with the base_bar style property, which sets both bar images to the same displayable."
-    e ""
+    e "Aquí, lo usamos con la propiedad de estilo base_bar, que establece ambas imágenes de barra en la misma pantalla."
 
 # game/indepth_style.rpy:836
 translate spanish style_bar_996466ad:
 
     # e "The left_gutter and right_gutter properties set a gutter on the left or right size of the bar. The gutter is space the bar can't be dragged into, that can be used for borders."
-    e ""
+    e "Las propiedades left_gutter y right_gutter establecen un canal en el tamaño izquierdo o derecho de la barra. La canaleta es el espacio al que no se puede arrastrar la barra, que se puede usar para los bordes."
 
 # game/indepth_style.rpy:851
 translate spanish style_bar_fa41a83c:
 
     # e "The bar_vertical style property displays a vertically oriented bar. All of the other properties change names - left_bar becomes top_bar, while right_bar becomes bottom_bar."
-    e ""
+    e "La propiedad de estilo bar_vertical muestra una barra orientada verticalmente. Todas las demás propiedades cambian de nombre - left_bar se convierte en top_bar, mientras que la right_bar se convierte en bottom_bar."
 
 # game/indepth_style.rpy:856
 translate spanish style_bar_5d33c5dc:
 
     # e "Finally, there's one style we can't show here, and it's unscrollable. It controls what happens when a scrollbar can't be moved at all."
-    e ""
+    e "Finalmente, hay un estilo que no podemos mostrar aquí y es incontrolable. Controla lo que sucede cuando una barra de desplazamiento no se puede mover en absoluto."
 
 # game/indepth_style.rpy:858
 translate spanish style_bar_e8e32280:
 
     # e "By default, it's shown. But if unscrollable is 'insensitive', the bar becomes insensitive. If it's 'hide', the bar is hidden, but still takes up space."
-    e ""
+    e "Por defecto, se muestra. Pero si no es desplazable es 'insensitive', la barra se vuelve insensible. Si es 'hide', la barra está oculta, pero aún ocupa espacio."
 
 # game/indepth_style.rpy:862
 translate spanish style_bar_f1292000:
 
     # e "That's it for the bar properties. By using them, a creator can customize bars, scrollbars, and sliders."
-    e ""
+    e "Eso es todo por las propiedades de barra. Al usarlos, un creador puede personalizar barras, barras de desplazamiento y controles deslizantes."
 
 # game/indepth_style.rpy:961
 translate spanish style_box_5fd535f4:
 
     # e "The hbox displayable is used to lay its children out horizontally. By default, there's no spacing between children, so they run together."
-    e ""
+    e "El hbox visualizable se usa para colocar a sus hijos horizontalmente. De forma predeterminada, no hay espacio entre los hijos, por lo que se ejecutan juntos."
 
 # game/indepth_style.rpy:967
 translate spanish style_box_0111e5dc:
 
     # e "Similarly, the vbox displayable is used to lay its children out vertically. Both support style properties that control placement."
-    e ""
+    e "Del mismo modo, el vbox visualizable se utiliza para colocar sus hijos verticalmente. Ambos soportan propiedades de estilo que controlan la colocación."
 
 # game/indepth_style.rpy:972
 translate spanish style_box_5a44717b:
 
     # e "To make the size of the box displayable obvious, I'll add a highlight to the box itself, and not the frame containing it."
-    e ""
+    e "Para que el tamaño de la caja sea visible, agregaré highlight a la caja, y no al marco que la contiene."
 
 # game/indepth_style.rpy:980
 translate spanish style_box_239e7a8f:
 
     # e "Boxes support the xfill and yfill style properties. These properties make a box expand to fill the available space, rather than the space of the largest child."
-    e ""
+    e "Las cajas admiten las propiedades de estilo xfill y yfill. Estas propiedades hacen que una caja se expanda para llenar el espacio disponible, en lugar del espacio del hijo mayor."
 
 # game/indepth_style.rpy:990
 translate spanish style_box_e513c946:
 
     # e "The spacing style property takes a value in pixels, and adds that much spacing between each child of the box."
-    e ""
+    e "La propiedad de estilo spacing toma un valor en píxeles y agrega mucho espacio entre cada elemento secundario del cuadro."
 
 # game/indepth_style.rpy:1000
 translate spanish style_box_6ae4f94d:
 
     # e "The first_spacing style property is similar, but it only adds space between the first and second children. This is useful when the first child is a title that needs different spacing."
-    e ""
+    e "La propiedad de estilo first_spacing es similar, pero solo agrega espacio entre el primer y el segundo hijo. Esto es útil cuando el primer hijo es un título que necesita espacios diferentes."
 
 # game/indepth_style.rpy:1010
 translate spanish style_box_0c518d9f:
 
     # e "The box_reverse style property reverses the order of entries in the box."
-    e ""
+    e "La propiedad de estilo box_reverse invierte el orden de las entradas en el cuadro."
 
 # game/indepth_style.rpy:1023
 translate spanish style_box_f73c1422:
 
     # e "We'll switch back to a horizontal box for our next example."
-    e ""
+    e "Volveremos a un cuadro horizontal para nuestro siguiente ejemplo."
 
 # game/indepth_style.rpy:1033
 translate spanish style_box_285592bb:
 
     # e "The box_wrap style property fills the box with children until it's full, then starts again on the next line."
-    e ""
+    e "La propiedad de estilo box_wrap llena la caja con hijos hasta que esté llena, y luego comienza de nuevo en la siguiente línea."
 
 # game/indepth_style.rpy:1046
 translate spanish style_box_a7637552:
 
     # e "Grids bring with them two more style properties. The xspacing and yspacing properties control spacing in the horizontal and vertical directions, respectively."
-    e ""
+    e "Las grillas traen consigo dos propiedades de estilo más. Las propiedades xspacing y yspacing controlan el espaciado en las direcciones horizontal y vertical, respectivamente."
 
 # game/indepth_style.rpy:1053
 translate spanish style_box_4006f74b:
 
     # e "Lastly, we have the fixed layout. The fixed layout usually expands to fill all space, and shows its children from back to front."
-    e ""
+    e "Por último, tenemos el fixed layout. Los fixed layout generalmente se expanden para llenar todo el espacio, y muestran a sus hijos de atrás hacia adelante."
 
 # game/indepth_style.rpy:1055
 translate spanish style_box_4a2866f0:
 
     # e "But of course, we have some style properties that can change that."
-    e ""
+    e "Pero, por supuesto, tenemos algunas propiedades de estilo que pueden cambiar eso."
 
 # game/indepth_style.rpy:1064
 translate spanish style_box_a3b47b6e:
 
     # e "When the xfit style property is true, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
-    e ""
+    e "Cuando la propiedad de estilo xfit es True, los fixed presenta a todos sus hijos como si fuera de tamaño completo, y luego se reduce en ancho para adaptarse a ellos. El estilo yfit funciona de la misma manera, pero en altura."
 
 # game/indepth_style.rpy:1072
 translate spanish style_box_6a593b10:
 
     # e "The order_reverse style property changes the order in which the children are shown. Instead of back-to-front, they're displayed front-to-back."
-    e ""
+    e "La propiedad de estilo order_reverse cambia el orden en que se muestran los hijos. En lugar de último a primero, se muestran de primero a último."
 
 # game/indepth_style.rpy:1084
 translate spanish style_inspector_21bc0709:
 
     # e "Sometimes it's hard to figure out what style is being used for a particular displayable. The displayable inspector can help with that."
-    e ""
+    e "A veces es difícil averiguar qué estilo se está utilizando para un determinado visualizable. El inspector de visualizables puede ayudar con eso."
 
 # game/indepth_style.rpy:1086
 translate spanish style_inspector_243c50f0:
 
     # e "To use it, place the mouse over a portion of the Ren'Py user interface, and hit shift+I. That's I for inspector."
-    e ""
+    e "Para usarlo, coloque el mouse sobre una parte de la interfaz de usuario de Ren'Py y presione Mayús + I. Ese soy yo por inspector."
 
 # game/indepth_style.rpy:1088
 translate spanish style_inspector_bcbdc396:
 
     # e "Ren'Py will pop up a list of displayables the mouse is over. Next to each is the name of the style that displayable uses."
-    e ""
+    e "Ren'Py mostrará una lista de elementos visualizables en los que el mouse ha terminado. Junto a cada uno está el nombre del estilo que utiliza la visualización."
 
 # game/indepth_style.rpy:1090
 translate spanish style_inspector_d981e5c8:
 
     # e "You can click on the name of the style to see where it gets its properties from."
-    e ""
+    e "Puede hacer clic en el nombre del estilo para ver de dónde obtiene sus propiedades."
 
 # game/indepth_style.rpy:1092
 translate spanish style_inspector_ef46b86d:
 
     # e "By default, the inspector only shows interface elements like screens, and not images. Type shift+alt+I if you'd like to see images as well."
-    e ""
+    e "De forma predeterminada, el inspector solo muestra elementos de la interfaz como pantallas y no imágenes. Teclea shift+alt+I si quieres ver imágenes también."
 
 # game/indepth_style.rpy:1094
 translate spanish style_inspector_b59c6b69:
 
     # e "You can try the inspector right now, by hovering this text and hitting shift+I."
-    e ""
+    e "Puede probar al inspector ahora mismo, al desplazar este texto y presionar shift+I."
 
 translate spanish strings:
 
