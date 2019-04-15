@@ -2805,8 +2805,16 @@ class Interface(object):
                     if not expensive:
                         step += 1
 
-            # Step 4: Autosave.
+            # Step 4: Preload images (on emscripten)
             elif step == 4:
+
+                if expensive and renpy.emscripten:
+                    renpy.display.im.cache.preload_thread_pass()
+
+                step += 1
+
+            # Step 5: Autosave.
+            elif step == 5:
 
                 if not self.did_autosave:
                     renpy.loadsave.autosave()
