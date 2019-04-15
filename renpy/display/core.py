@@ -2118,7 +2118,7 @@ class Interface(object):
         if not self.started:
             return
 
-        if background:
+        if background and not renpy.emscripten:
             self.bgscreenshot_event.clear()
             self.bgscreenshot_needed = True
 
