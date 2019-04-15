@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-03-03 09:03
-
+﻿
 # game/indepth_style.rpy:40
 translate spanish new_gui_17a0326e:
 
