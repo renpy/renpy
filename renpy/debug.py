@@ -26,7 +26,7 @@ from __future__ import print_function
 
 import renpy
 import __builtin__
-#import threading
+import threading
 import datetime
 import traceback
 import os
