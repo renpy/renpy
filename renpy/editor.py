@@ -24,7 +24,7 @@ from __future__ import print_function
 import os
 import renpy
 import traceback
-#import subprocess
+import subprocess
 
 
 class Editor(object):
@@ -100,8 +100,7 @@ class SystemEditor(Editor):
             elif renpy.macintosh:
                 subprocess.call([ "open", filename ])  # @UndefinedVariable
             elif renpy.linux:
-                #subprocess.call([ "xdg-open", filename ])  # @UndefinedVariable
-                pass
+                subprocess.call([ "xdg-open", filename ])  # @UndefinedVariable
         except:
             traceback.print_exc()
 
