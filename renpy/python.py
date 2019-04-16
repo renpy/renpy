@@ -1309,6 +1309,7 @@ class RollbackLog(renpy.object.Object):
 
     nosave = [ 'old_store', 'mutated', 'identifier_cache' ]
     identifier_cache = None
+    force_checkpoint = False
 
     def __init__(self):
 
@@ -1337,6 +1338,10 @@ class RollbackLog(renpy.object.Object):
         # Has there been an interaction since the last time this log was
         # reset?
         self.did_interaction = True
+
+        # Should we force a checkpoint before completing the current
+        # statement.
+        self.force_checkpoint = False
 
     def after_setstate(self):
         self.mutated = { }
@@ -1450,6 +1455,10 @@ class RollbackLog(renpy.object.Object):
         `begin`
             Should be true if called from begin().
         """
+
+        if self.force_checkpoint:
+            self.checkpoint(hard=False)
+            self.force_checkpoint = False
 
         # Update self.current.stores with the changes from each store.
         # Also updates .ever_been_changed.
@@ -1592,9 +1601,9 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                        and data == fwd_data
-                        and (keep_rollback or self.rolled_forward)
-                    ):
+                            and data == fwd_data
+                            and (keep_rollback or self.rolled_forward)
+                        ):
                     self.forward.pop(0)
                 else:
                     del self.forward[:]
