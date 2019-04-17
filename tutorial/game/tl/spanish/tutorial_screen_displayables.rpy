@@ -4,169 +4,169 @@
 translate spanish screen_displayables_7c897a6d:
 
     # e "There are quite a few screen displayables. Here, I'll tell you about some of the most important ones."
-    e ""
+    e "Hay bastantes pantallas visualizables. Aquí les contaré algunas de las más importantes."
 
 # game/tutorial_screen_displayables.rpy:9
 translate spanish screen_displayables_menu_fef7b441:
 
     # e "What would you like to know about?" nointeract
-    e "" nointeract
+    e "¿Qué te gustaría saber?" nointeract
 
 # game/tutorial_screen_displayables.rpy:49
 translate spanish screen_displayable_properties_76c5639a:
 
     # e "There are a few properties that every screen language displayable shares. Here, I'll demonstrate them for you."
-    e ""
+    e "Hay algunas propiedades que todos visualizables del lenguaje de pantalla comparten. Aquí, te las demostraré."
 
 # game/tutorial_screen_displayables.rpy:57
 translate spanish screen_displayable_properties_527d4b4e:
 
     # e "First off, every screen language displayable supports the position properties. When the container a displayable is in supports it, you can use properties like align, anchor, pos, and so so on."
-    e ""
+    e "En primer lugar, todos los lenguajes de pantalla visualizables admiten las propiedades de posición. Cuando el contenedor en el que se puede exhibir lo admite, puedes usar propiedades como alinear, anclar, pos, etc."
 
 # game/tutorial_screen_displayables.rpy:69
 translate spanish screen_displayable_properties_8aff26dd:
 
     # e "The at property applies a transform to the displayable, the same way the at clause in the show statement does."
-    e ""
+    e "La propiedad at aplica una transformación al visualizable, de la misma forma que lo hace la cláusula at en la declaración show."
 
 # game/tutorial_screen_displayables.rpy:106
 translate spanish screen_displayable_properties_2ed40a70:
 
     # e "The id property is mostly used with the say screen, which is used to show dialogue. Outside of the say screen, it isn't used much."
-    e ""
+    e "La propiedad id se usa principalmente con la pantalla de say, que se usa para mostrar el diálogo. Fuera de la pantalla de say, no se usa mucho."
 
 # game/tutorial_screen_displayables.rpy:108
 translate spanish screen_displayable_properties_da5733d1:
 
     # e "It tells Ren'Py which displayables are the background window, 'who' is speaking, and 'what' is being said. This used to apply per-Character styles, and help with auto-forward mode."
-    e ""
+    e "Le dice a Ren'Py qué elementos visualizables son la ventana de fondo, 'who' quién hablan y 'what' que se dice. Esto solía aplicar estilos por Character y ayuda con el modo de reenvío automático."
 
 # game/tutorial_screen_displayables.rpy:123
 translate spanish screen_displayable_properties_cc09fade:
 
     # e "The style property lets you specify the style of a single displayable."
-    e ""
+    e "La propiedad de estilo te permiten especificar el estilo de un solo visualizable."
 
 # game/tutorial_screen_displayables.rpy:144
 translate spanish screen_displayable_properties_a7f4e25c:
 
     # e "The style_prefix property sets the prefix of the style that's used for a displayable and its children."
-    e ""
+    e "La propiedad style_prefix establece el prefijo del estilo que se usa para un displayable y sus hijos."
 
 # game/tutorial_screen_displayables.rpy:146
 translate spanish screen_displayable_properties_6bdb0723:
 
     # e "For example, when the style_prefix property is 'green', the vbox has the 'green_vbox' style, and the text in it has the 'green_text' style."
-    e ""
+    e "Por ejemplo, cuando la propiedad style_prefix es 'green', vbox tiene el estilo 'green_vbox' y el texto tiene el estilo 'green_text'."
 
 # game/tutorial_screen_displayables.rpy:150
 translate spanish screen_displayable_properties_8a3a8635:
 
     # e "There are a few more properties than these, and you can find the rest in the documentation. But these are the ones you can expect to see in your game, in the default screens."
-    e ""
+    e "Hay algunas propiedades más que éstas, y puede encontrar el resto en la documentación. Pero estos son los que puedes esperar ver en tu juego, en las pantallas predeterminadas."
 
 # game/tutorial_screen_displayables.rpy:156
 translate spanish add_displayable_ec121c5c:
 
     # e "Sometimes you'll have a displayable, like an image, that you want to add to a screen."
-    e ""
+    e "A veces, tendrás un visualizable, como una imagen, que deseas agregar a una pantalla."
 
 # game/tutorial_screen_displayables.rpy:165
 translate spanish add_displayable_7ec3e2b0:
 
     # e "This can be done using the add statement, which adds an image or other displayable to the screen."
-    e ""
+    e "Esto se puede hacer usando la declaración add, que agrega una imagen u otro visualizable en la pantalla."
 
 # game/tutorial_screen_displayables.rpy:167
 translate spanish add_displayable_7112a377:
 
     # e "There are a few ways to refer to the image. If it's in the images directory or defined with the image statement, you can just put the name inside a quoted string."
-    e ""
+    e "Hay algunas maneras de referirse a la imagen. Si está en el directorio de imágenes o definido con la declaración de la imagen, solo pon el nombre dentro de una cadena entre comillas."
 
 # game/tutorial_screen_displayables.rpy:176
 translate spanish add_displayable_8ba81c26:
 
     # e "An image can also be referred to by it's filename, relative to the game directory."
-    e ""
+    e "También se puede hacer referencia a una imagen por su nombre de archivo, en relación con el directorio del juego."
 
 # game/tutorial_screen_displayables.rpy:185
 translate spanish add_displayable_1f5571e3:
 
     # e "Other displayables can also be added using the add statement. Here, we add the Solid displayable, showing a solid block of color."
-    e ""
+    e "También se pueden agregar otros elementos visualizables utilizando la instrucción add. Aquí, agregamos el visualizable Solid, mostrando un bloque sólido de color."
 
 # game/tutorial_screen_displayables.rpy:195
 translate spanish add_displayable_0213ffa2:
 
     # e "In addition to the displayable, the add statement can be given transform properties. These can place or otherwise transform the displayable being added."
-    e ""
+    e "Además de visualizables, a la instrucción add se le pueden dar propiedades de transformación. Estos pueden colocar o transformar el visualizable agregando."
 
 # game/tutorial_screen_displayables.rpy:207
 translate spanish add_displayable_3a56a464:
 
     # e "Of course, the add statement can also take the at property, letting you give it a more complex transform."
-    e ""
+    e "Por supuesto, la instrucción add también puede tomar la propiedad at, permitiéndole darle una transformación más compleja."
 
 # game/tutorial_screen_displayables.rpy:222
 translate spanish text_displayable_96f88225:
 
     # e "The screen language text statement adds a text displayable to the screen. It takes one argument, the text to be displayed."
-    e ""
+    e "La declaración text del lenguaje de pantalla agrega un texto visualizable a la pantalla. Toma un argumento, el texto que se mostrará."
 
 # game/tutorial_screen_displayables.rpy:224
 translate spanish text_displayable_1ed1a8c2:
 
     # e "In addition to the common properties that all displayables take, text takes the text style properties. For example, size sets the size of the text."
-    e ""
+    e "Además de las propiedades comunes que toman todos los elementos visualizables, el texto toma las propiedades de estilo del texto. Por ejemplo, tamaño establece el tamaño del texto."
 
 # game/tutorial_screen_displayables.rpy:234
 translate spanish text_displayable_9351d9dd:
 
     # e "The text displayable can also interpolate values enclosed in square brackets."
-    e ""
+    e "El texto visualizable también puede interpolar valores encerrados entre corchetes."
 
 # game/tutorial_screen_displayables.rpy:236
 translate spanish text_displayable_32d76ccb:
 
     # e "When text is displayed in a screen using the text statement variables defined in the screen take precedence over those defined outside it."
-    e ""
+    e "Cuando el texto se muestra en una pantalla, las variables de declaración de texto definidas en la pantalla tienen prioridad sobre las definidas fuera de ella."
 
 # game/tutorial_screen_displayables.rpy:238
 translate spanish text_displayable_7e84a5d1:
 
     # e "Those variables may be parameters given to the screen, defined with the default or python statements, or set using the SetScreenVariable action."
-    e ""
+    e "Esas variables pueden ser parámetros dados a la pantalla, definidos con las declaraciones predeterminadas o de python, o configurados mediante la acción SetScreenVariable."
 
 # game/tutorial_screen_displayables.rpy:247
 translate spanish text_displayable_8bc866c4:
 
     # e "There's not much more to say about text in screens, as it works the same way as all other text in Ren'Py."
-    e ""
+    e "No hay mucho más que decir sobre el texto en las pantallas, ya que funciona de la misma manera que el resto del texto en Ren'Py."
 
 # game/tutorial_screen_displayables.rpy:255
 translate spanish layout_displayables_d75efbae:
 
     # e "The layout displayables take other displayables and lay them out on the screen."
-    e ""
+    e "El visualizable layout toma otros visualizables y los coloca en la pantalla."
 
 # game/tutorial_screen_displayables.rpy:269
 translate spanish layout_displayables_9a15144d:
 
     # e "For example, the hbox displayable takes its children and lays them out horizontally."
-    e ""
+    e "Por ejemplo, el visualizable hbox toma a sus hijos y los coloca horizontalmente."
 
 # game/tutorial_screen_displayables.rpy:284
 translate spanish layout_displayables_48eff197:
 
     # e "The vbox displayable is similar, except it takes its children and arranges them vertically."
-    e ""
+    e "El visualizable vbox es similar, excepto que toma a sus hijos y los organiza verticalmente."
 
 # game/tutorial_screen_displayables.rpy:286
 translate spanish layout_displayables_74de8a66:
 
     # e "Both of the boxes take the box style properties, the most useful of which is spacing, the amount of space to leave between children."
-    e ""
+    e "Ambas cajas toman las propiedades de estilo de box, la más útil de las cuales es el spacing, la cantidad de espacio para dejar entre los hijos."
 
 # game/tutorial_screen_displayables.rpy:301
 translate spanish layout_displayables_a156591f:
@@ -646,121 +646,121 @@ translate spanish strings:
 
     # tutorial_screen_displayables.rpy:9
     old "Common properties all displayables share."
-    new ""
+    new "Todas las propiedades comunes comparten visualizables."
 
     # tutorial_screen_displayables.rpy:9
     old "Adding images and other displayables."
-    new ""
+    new "Añadir imágenes y otros visualizables."
 
     # tutorial_screen_displayables.rpy:9
     old "Text."
-    new ""
+    new "Texto."
 
     # tutorial_screen_displayables.rpy:9
     old "Boxes and other layouts."
-    new ""
+    new "Boxes y ortos layouts."
 
     # tutorial_screen_displayables.rpy:9
     old "Windows and frames."
-    new ""
+    new "Windows y frames."
 
     # tutorial_screen_displayables.rpy:9
     old "Buttons."
-    new ""
+    new "Buttons."
 
     # tutorial_screen_displayables.rpy:9
     old "Bars."
-    new ""
+    new "Bars."
 
     # tutorial_screen_displayables.rpy:9
     old "Viewports."
-    new ""
+    new "Viewports."
 
     # tutorial_screen_displayables.rpy:9
     old "Imagemaps."
-    new ""
+    new "Imagemaps."
 
     # tutorial_screen_displayables.rpy:9
     old "That's all for now."
-    new ""
+    new "Eso es todo por ahora."
 
     # tutorial_screen_displayables.rpy:55
     old "This uses position properties."
-    new ""
+    new "Esto utiliza propiedades de posición."
 
     # tutorial_screen_displayables.rpy:63
     old "And the world turned upside down..."
-    new ""
+    new "Y el mundo se puso al revés..."
 
     # tutorial_screen_displayables.rpy:115
     old "Flight pressure in tanks."
-    new ""
+    new "Presión de vuelo en tanques."
 
     # tutorial_screen_displayables.rpy:116
     old "On internal power."
-    new ""
+    new "Energía interna encendida"
 
     # tutorial_screen_displayables.rpy:117
     old "Launch enabled."
-    new ""
+    new "Lanzamiento habilitado."
 
     # tutorial_screen_displayables.rpy:118
     old "Liftoff!"
-    new ""
+    new "¡Despegar!"
 
     # tutorial_screen_displayables.rpy:232
     old "The answer is [answer]."
-    new ""
+    new "La respuesta es [answer]."
 
     # tutorial_screen_displayables.rpy:244
     old "Text tags {color=#c8ffc8}work{/color} in screens."
-    new ""
+    new "Las etiquetas de texto {color=#c8ffc8}funcionan{/color} en las pantallas."
 
     # tutorial_screen_displayables.rpy:336
     old "Bigger"
-    new ""
+    new "Más grande"
 
     # tutorial_screen_displayables.rpy:401
     old "This is a screen."
-    new ""
+    new "Esta es una pantalla."
 
     # tutorial_screen_displayables.rpy:402
     old "Okay"
-    new ""
+    new "¡Muy bien!"
 
     # tutorial_screen_displayables.rpy:440
     old "You clicked the button."
-    new ""
+    new "Hiciste clic en el botón."
 
     # tutorial_screen_displayables.rpy:441
     old "Click me."
-    new ""
+    new "Haz click en mí"
 
     # tutorial_screen_displayables.rpy:453
     old "You hovered the button."
-    new ""
+    new "En focaste el botón"
 
     # tutorial_screen_displayables.rpy:454
     old "You unhovered the button."
-    new ""
+    new "Desenfocaste el botón"
 
     # tutorial_screen_displayables.rpy:470
     old "Heal"
-    new ""
+    new "Curar"
 
     # tutorial_screen_displayables.rpy:479
     old "This is a textbutton."
-    new ""
+    new "Este es un textbutton."
 
     # tutorial_screen_displayables.rpy:539
     old "Or me."
-    new ""
+    new "O yo."
 
     # tutorial_screen_displayables.rpy:541
     old "You clicked the other button."
-    new ""
+    new "Hiciste clic en el otro botón."
 
     # tutorial_screen_displayables.rpy:880
     old "This text is wider than the viewport."
-    new ""
+    new "Este texto es más ancho que el viewport."
 
