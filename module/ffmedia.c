@@ -649,7 +649,6 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		int read_size = avcodec_decode_video2(ms->video_context, ms->video_decode_frame, &got_frame, &ms->video_pkt_tmp);
 
 		if (read_size < 0) {
-			// printf("read_size < 0\n");
 			ms->video_finished = 1;
 			return NULL;
 		}
@@ -662,7 +661,6 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		}
 
 		if (!got_frame && !ms->video_pkt.size) {
-			// printf("!got_frame && !ms->video_pkt.size\n");
 			ms->video_finished = 1;
 			return NULL;
 		}
@@ -682,7 +680,6 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		// If we're 5s behind, give up on video for the time being, so we don't
 		// blow out memory.
 		if (ms->video_pts_offset + pts < ms->video_read_time - 5.0) {
-			// printf("ms->video_pts_offset + pts < ms->video_read_time - 5.0\n");
 			ms->video_finished = 1;
 		}
 
@@ -712,7 +709,6 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		);
 
 	if (!ms->sws) {
-		// printf("!ms->sws\n");
 		ms->video_finished = 1;
 		return NULL;
 	}
@@ -758,13 +754,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 }
 
 
-static unsigned int bench_timespent = 0;
-static unsigned int bench_count = 0;
-
 static void decode_video(MediaState *ms) {
-  // printf("decode_video\n");
-  unsigned int bench_start = SDL_GetTicks();
-
 	if (!ms->video_context) {
 		// printf("!ms->video_context\n");
 		ms->video_finished = 1;
@@ -796,15 +786,6 @@ static void decode_video(MediaState *ms) {
 	}
 
 	SDL_UnlockMutex(ms->lock);
-
-  bench_timespent += SDL_GetTicks() - bench_start;
-  bench_count++;
-  if (bench_timespent > 200) {
-    printf("decode_video: %dms avg\n", bench_timespent/bench_count);
-    //fflush(stdout);
-    bench_count = 0;
-    bench_timespent = 0;
-  }
 }
 
 
@@ -817,10 +798,6 @@ void media_read_sync_finish(struct MediaState *ms);
  * Returns 1 if there is a video frame ready on this channel, or 0 otherwise.
  */
 int media_video_ready(struct MediaState *ms) {
-	// printf("---* media_video_ready\n");
-	// crashes in emscripten/native-emu possibly due to using a real SDL audio thread;
-	// closes video in emscripten/browser as media_sync_start not called yet
-	//media_read_sync(ms);
 
 	int consumed = 0;
 	int rv = 0;
@@ -887,7 +864,6 @@ done:
 
 
 SDL_Surface *media_read_video(MediaState *ms) {
-	// printf("---* media_read_video\n");
 
 	SDL_Surface *rv = NULL;
 	SurfaceQueueEntry *sqe = NULL;
@@ -898,11 +874,11 @@ SDL_Surface *media_read_video(MediaState *ms) {
 
 	SDL_LockMutex(ms->lock);
 
-	/* while (!ms->ready) { */
-	/* 	SDL_CondWait(ms->cond, ms->lock); */
-	/* } */
-	// probably not the right place to do it, doesn't deal with media_video_ready()
-	//media_read_sync(ms);
+#ifndef __EMSCRIPTEN__
+	while (!ms->ready) {
+	    SDL_CondWait(ms->cond, ms->lock);
+	}
+#endif
 
 	if (!ms->surface_queue_size) {
 		goto done;
@@ -1079,7 +1055,6 @@ finish:
 void media_read_sync_finish(struct MediaState *ms) {
 	// copy/paste from end of decode_thread
 
-//finish:
 	/* Data used by the decoder should be freed here, while data shared with
 	 * the readers should be freed in media_close.
 	 */
@@ -1103,7 +1078,7 @@ void media_read_sync_finish(struct MediaState *ms) {
 
 
 static int decode_sync_start(void *arg) {
-        // copy/paste from start of decode_thread
+    // copy/paste from start of decode_thread
 	MediaState *ms = (MediaState *) arg;
 
 	int err;
@@ -1216,7 +1191,9 @@ void media_read_sync(struct MediaState *ms) {
 
 
 int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
-	media_read_sync(ms);
+#ifdef __EMSCRIPTEN__
+    media_read_sync(ms);
+#endif
 
 	SDL_LockMutex(ms->lock);
 
@@ -1301,13 +1278,15 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 }
 
 void media_wait_ready(struct MediaState *ms) {
-    /* SDL_LockMutex(ms->lock); */
+#ifndef __EMSCRIPTEN__
+    SDL_LockMutex(ms->lock);
 
-    /* while (!ms->ready) { */
-    /*     SDL_CondWait(ms->cond, ms->lock); */
-    /* } */
+    while (!ms->ready) {
+        SDL_CondWait(ms->cond, ms->lock);
+    }
 
-    /* SDL_UnlockMutex(ms->lock); */
+    SDL_UnlockMutex(ms->lock);
+#endif
 }
 
 
@@ -1316,17 +1295,21 @@ double media_duration(MediaState *ms) {
 }
 
 void media_start(MediaState *ms) {
-	/* char buf[1024]; */
 
-	/* snprintf(buf, 1024, "decode: %s", ms->filename); */
-	/* SDL_Thread *t = SDL_CreateThread(decode_thread, buf, (void *) ms); */
+#ifdef __EMSCRIPTEN__
+    decode_sync_start(ms);
+#else
 
-	/* if (t) { */
-	/* 	ms->started = 1; */
-	/* 	SDL_DetachThread(t); */
-	/* } */
+    char buf[1024]; */
 
-	decode_sync_start(ms);
+	snprintf(buf, 1024, "decode: %s", ms->filename); */
+	SDL_Thread *t = SDL_CreateThread(decode_thread, buf, (void *) ms); */
+
+	if (t) { */
+		ms->started = 1;
+		SDL_DetachThread(t);
+	}
+#endif
 }
 
 
@@ -1386,7 +1369,11 @@ void media_close(MediaState *ms) {
 	/* Tell the decoder to terminate. It will deallocate everything for us. */
 	SDL_LockMutex(ms->lock);
 	ms->quit = 1;
+
+#ifdef __EMSCRIPTEN__
 	media_read_sync_finish(ms);
+#endif
+
 	SDL_CondBroadcast(ms->cond);
 	SDL_UnlockMutex(ms->lock);
 
