@@ -31,6 +31,28 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #define MAXVOLUME 16384
 
+#ifdef __EMSCRIPTEN__
+
+#define EVAL_LOCK() { }
+#define EVAL_UNLOCK() { }
+#define BEGIN() { }
+#define ENTER() { }
+#define EXIT() { }
+#define ALTENTER() { }
+#define ALTEXIT() { }
+
+#else
+
+#define EVALLOCK() { PyEval_AcquireLock(); }
+#define EVALUNLOCK() { PyEval_ReleaseLock(); }
+#define BEGIN() PyThreadState *_save;
+#define ENTER() { _save = PyEval_SaveThread(); SDL_LockAudio(); }
+#define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); }
+#define ALTENTER() { _save = PyEval_SaveThread(); }
+#define ALTEXIT() { PyEval_RestoreThread(_save); }
+
+#endif
+
 /* Declarations of ffdecode functions. */
 struct MediaState;
 typedef struct MediaState MediaState;
@@ -61,21 +83,21 @@ PyThreadState* thread = NULL;
 static void incref(PyObject *ref) {
     PyThreadState *oldstate;
 
-    /* PyEval_AcquireLock(); */
+    EVAL_LOCK();
     oldstate = PyThreadState_Swap(thread);
     Py_INCREF(ref);
     PyThreadState_Swap(oldstate);
-    /* PyEval_ReleaseLock(); */
+    EVAL_UNLOCK();
 }
 
 static void decref(PyObject *ref) {
     PyThreadState *oldstate;
 
-    /* PyEval_AcquireLock(); */
+    EVAL_LOCK();
     oldstate = PyThreadState_Swap(thread);
     Py_DECREF(ref);
     PyThreadState_Swap(oldstate);
-    /* PyEval_ReleaseLock(); */
+    EVAL_UNLOCK();
 }
 
 /* A mutex that protects the shared data structures. */
@@ -83,17 +105,6 @@ SDL_mutex *name_mutex;
 
 #define LOCK_NAME() { SDL_LockMutex(name_mutex); }
 #define UNLOCK_NAME() { SDL_UnlockMutex(name_mutex); }
-
-/* Locking on entry from python... */
-// #define BEGIN() PyThreadState *_save;
-// #define ENTER() { printf("Locking by %s.\n", __FUNCTION__); _save = PyEval_SaveThread(); SDL_LockAudio(); printf("Lock by %s\n", __FUNCTION__);  }
-// #define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); printf("Release by %s\n", __FUNCTION__); }
-
-#define BEGIN() /* PyThreadState *_save */;
-#define ENTER() { /* _save = PyEval_SaveThread(); */ SDL_LockAudio(); }
-#define EXIT() { SDL_UnlockAudio(); /* PyEval_RestoreThread(_save); */ }
-#define ALTENTER() { /* _save = PyEval_SaveThread(); */ }
-#define ALTEXIT() { /* PyEval_RestoreThread(_save); */ }
 
 /* Min and Max */
 #define min(a, b) (((a) < (b)) ? (a) : (b))
@@ -432,61 +443,7 @@ static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
 
 }
 
-/* Minimal sinewave callback to assess performance */
-/* static unsigned int x = 0; */
-/* static unsigned int callback_count = 0; */
-/* static unsigned int callback_count_start = 0; */
-/* static void callback(void *userdata, Uint8 *stream, int length) { */
-/*   /\* printf("callback\n"); *\/ */
-/*   unsigned int now = SDL_GetTicks(); */
-/*   unsigned int delta_ms = now - callback_count_start; */
-/*   if (delta_ms > 500) { */
-/*     double cps = 1.0 * callback_count / delta_ms * 1000; */
-/*     printf("callback: %.02fHz\n", cps); */
-/*     //fflush(stdout); */
-/*     callback_count = 0; */
-/*     callback_count_start = now; */
-/*   } */
-/*   callback_count++; */
-
-/*   float vol = .5; */
-/*   unsigned int pitch = 440; */
-/*   if (audio_spec.format == AUDIO_F32LSB || audio_spec.format == AUDIO_F32MSB) { */
-/*     float* s = (float*) stream; */
-/*     length /= sizeof(float); */
-/*     length /= audio_spec.channels; */
-/*     for (int i = 0; i < length; i++) { */
-/*       for (int j = 0; j < audio_spec.channels; j++) { */
-/* 	s[i*audio_spec.channels + j] = sin(x * pitch * 2*M_PI / audio_spec.freq) * vol; */
-/*       } */
-/*       x++; */
-/*     } */
-/*   } else { /\* assuming we got AUDIO_S16SYS *\/ */
-/*     Sint16* s = (Sint16*) stream; */
-/*     length /= sizeof(Sint16); */
-/*     length /= audio_spec.channels; */
-/*     for (int i = 0; i < length; i++) { */
-/*       for (int j = 0; j < audio_spec.channels; j++) { */
-/* 	s[i*audio_spec.channels + j] = sin(x * pitch * 2*M_PI / audio_spec.freq) * vol \ */
-/* 	  * pow(2,15); */
-/*       } */
-/*       x++; */
-/*     } */
-/*   } */
-/* } */
-
-static unsigned int callback_count = 0;
-static unsigned int callback_count_start = 0;
 static void callback(void *userdata, Uint8 *stream, int length) {
-    unsigned int now = SDL_GetTicks();
-    unsigned int delta_ms = now - callback_count_start;
-    if (delta_ms > 500) {
-      double cps = 1.0 * callback_count / delta_ms * 1000;
-      //printf("callback: %.02fHz\n", cps);
-      callback_count = 0;
-      callback_count_start = now;
-    }
-    callback_count++;
 
     int channel = 0;
 
@@ -500,8 +457,6 @@ static void callback(void *userdata, Uint8 *stream, int length) {
         if (! c->playing) {
             continue;
         }
-
-        //printf("channel %d playing:%p paused:%d\n", channel, c->playing, c->paused);
 
         if (c->paused) {
             continue;
@@ -1264,7 +1219,10 @@ void RPS_init(int freq, int stereo, int samples, int status) {
 
     name_mutex = SDL_CreateMutex();
 
-    /* PyEval_InitThreads(); */
+#ifndef __EMSCRIPTEN__
+    PyEval_InitThreads();
+#endif
+
     import_pygame_sdl2();
 
     if (!thread) {
