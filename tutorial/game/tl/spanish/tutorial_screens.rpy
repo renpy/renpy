@@ -497,7 +497,7 @@ translate spanish strings:
 
     # tutorial_screens.rpy:171
     old "That's it."
-    new "Eso es."
+    new "Es todo."
 
     # tutorial_screens.rpy:205
     old "I do."
