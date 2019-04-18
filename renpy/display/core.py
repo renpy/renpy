@@ -2118,7 +2118,7 @@ class Interface(object):
         if not self.started:
             return
 
-        if background:
+        if background and not renpy.emscripten:
             self.bgscreenshot_event.clear()
             self.bgscreenshot_needed = True
 
@@ -2194,6 +2194,9 @@ class Interface(object):
 
         try:
             renpy.display.scale.image_save_unscaled(window, filename)
+            if renpy.emscripten:
+                import emscripten
+                emscripten.run_script(r'''FSDownload('%s')''' % filename)
             return True
         except:
             if renpy.config.debug:
@@ -2802,8 +2805,16 @@ class Interface(object):
                     if not expensive:
                         step += 1
 
-            # Step 4: Autosave.
+            # Step 4: Preload images (on emscripten)
             elif step == 4:
+
+                if expensive and renpy.emscripten:
+                    renpy.display.im.cache.preload_thread_pass()
+
+                step += 1
+
+            # Step 5: Autosave.
+            elif step == 5:
 
                 if not self.did_autosave:
                     renpy.loadsave.autosave()

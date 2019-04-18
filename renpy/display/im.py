@@ -442,69 +442,71 @@ class Cache(object):
             self.preload_lock.wait()
             self.preload_lock.release()
 
-            while self.preloads and self.keep_preloading:
+    def preload_thread_pass(self):
 
-                # If the size of the current generation is bigger than the
-                # total cache size, stop preloading.
-                with self.lock:
+        while self.preloads and self.keep_preloading:
 
-                    # If the cache is overfull, clean it out.
-                    if not self.cleanout():
-
-                        if renpy.config.debug_image_cache:
-                            for i in self.preloads:
-                                renpy.display.ic_log.write("Overfull %r", i)
-
-                        self.preloads = [ ]
-
-                        break
-
-                try:
-                    image = self.preloads.pop(0)
-
-                    if image not in self.preload_blacklist:
-                        try:
-                            self.preload_texture(image)
-                        except:
-                            self.preload_blacklist.add(image)
-                except:
-                    pass
-
+            # If the size of the current generation is bigger than the
+            # total cache size, stop preloading.
             with self.lock:
-                self.cleanout()
 
-            # If we have time, preload pinned images.
-            if self.keep_preloading and not renpy.game.less_memory:
+                # If the cache is overfull, clean it out.
+                if not self.cleanout():
 
-                workset = set(renpy.store._cache_pin_set)
+                    if renpy.config.debug_image_cache:
+                        for i in self.preloads:
+                            renpy.display.ic_log.write("Overfull %r", i)
 
-                # Remove things that are not in the workset from the pin cache,
-                # and remove things that are in the workset from pin cache.
-                for i in self.pin_cache.keys():
+                    self.preloads = [ ]
 
-                    if i in workset:
-                        workset.remove(i)
-                    else:
-                        surf = self.pin_cache[i]
+                    break
 
-                        del self.pin_cache[i]
+            try:
+                image = self.preloads.pop(0)
 
-                # For each image in the worklist...
-                for image in workset:
-
-                    if image in self.preload_blacklist:
-                        continue
-
-                    # If we have normal preloads, break out.
-                    if self.preloads:
-                        break
-
+                if image not in self.preload_blacklist:
                     try:
-                        surf = image.load()
-                        self.pin_cache[image] = surf
-                        renpy.display.draw.load_texture(surf)
+                        self.preload_texture(image)
                     except:
                         self.preload_blacklist.add(image)
+            except:
+                pass
+
+        with self.lock:
+            self.cleanout()
+
+        # If we have time, preload pinned images.
+        if self.keep_preloading and not renpy.game.less_memory:
+
+            workset = set(renpy.store._cache_pin_set)
+
+            # Remove things that are not in the workset from the pin cache,
+            # and remove things that are in the workset from pin cache.
+            for i in self.pin_cache.keys():
+
+                if i in workset:
+                    workset.remove(i)
+                else:
+                    surf = self.pin_cache[i]
+
+                    del self.pin_cache[i]
+
+            # For each image in the worklist...
+            for image in workset:
+
+                if image in self.preload_blacklist:
+                    continue
+
+                # If we have normal preloads, break out.
+                if self.preloads:
+                    break
+
+                try:
+                    surf = image.load()
+                    self.pin_cache[image] = surf
+                    renpy.display.draw.load_texture(surf)
+                except:
+                    self.preload_blacklist.add(image)
 
     def add_load_log(self, filename):
 
