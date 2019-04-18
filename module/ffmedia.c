@@ -756,7 +756,6 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 
 static void decode_video(MediaState *ms) {
 	if (!ms->video_context) {
-		// printf("!ms->video_context\n");
 		ms->video_finished = 1;
 		return;
 	}
