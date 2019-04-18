@@ -1304,7 +1304,7 @@ void media_start(MediaState *ms) {
 	snprintf(buf, 1024, "decode: %s", ms->filename); */
 	SDL_Thread *t = SDL_CreateThread(decode_thread, buf, (void *) ms); */
 
-	if (t) { */
+	if (t) {
 		ms->started = 1;
 		SDL_DetachThread(t);
 	}
