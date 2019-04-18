@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-03-03 09:03
-
+﻿
 # game/tutorial_screen_displayables.rpy:3
 translate spanish screen_displayables_7c897a6d:
 
@@ -484,163 +483,163 @@ translate spanish imagemap_done_37f538dc:
 translate spanish imagemap_done_c76b072d:
 
     # e "Selected images like this selected_idle image are used for parts of the bar that are filled, and for selected buttons, like the current screen and a checked checkbox."
-    e ""
+    e "Las imágenes seleccionadas como esta imagen selected_idle se utilizan para partes de la barra que se rellenan, y para los botones seleccionados, como la pantalla actual y una casilla de verificación marcada."
 
 # game/tutorial_screen_displayables.rpy:717
 translate spanish imagemap_done_241a4112:
 
     # e "Here's the selected_hover image. The button here will never be shown, since it will never be marked as selected."
-    e ""
+    e "Aquí está la imagen selected_hover. El botón aquí nunca se mostrará, ya que nunca se marcará como seleccionado."
 
 # game/tutorial_screen_displayables.rpy:723
 translate spanish imagemap_done_3d8f454c:
 
     # e "Finally, an insensitive image can be given, which is used when a hotspot can't be interacted with."
-    e ""
+    e "Finalmente, se puede dar una imagen insensitive, que se usa cuando no se puede interactuar con un hotspot."
 
 # game/tutorial_screen_displayables.rpy:728
 translate spanish imagemap_done_ca286729:
 
     # e "Imagemaps aren't limited to just images. Any displayable can be used where an image is expected."
-    e ""
+    e "Los imagemap no se limitan solo a imágenes. Se puede usar cualquier visualizable donde se espera una imagen."
 
 # game/tutorial_screen_displayables.rpy:743
 translate spanish imagemap_done_6060b17f:
 
     # e "Here's an imagemap built using those five images. Now that it's an imagemap, you can interact with it if you want to."
-    e ""
+    e "Aquí hay un imagemap construido usando esas cinco imágenes. Ahora que es un imagemap, puedes interactuar con él si lo deseas."
 
 # game/tutorial_screen_displayables.rpy:755
 translate spanish imagemap_done_c817794d:
 
     # e "To make this a little more concise, we can replace the five images with the auto property, which replaces '%%s' with 'idle', 'hover', 'selected_idle', 'selected_hover', or 'insensitive' as appropriate."
-    e ""
+    e "Para hacer esto un poco más conciso, podemos reemplazar las cinco imágenes con la propiedad automática, que reemplaza '%%s' con 'idle', 'hover', 'selected_idle', 'selected_hover', o 'insensitive' según corresponda."
 
 # game/tutorial_screen_displayables.rpy:757
 translate spanish imagemap_done_c1ed91b8:
 
     # e "Feel free to omit the selected and insensitive images if your game doesn't need them. Ren'Py will use the idle or hover images to replace them."
-    e ""
+    e "Siéntete libre de omitir las imágenes selected e insensitive si tu juego no las necesita. Ren'Py utilizará las imágenes idle o hover para reemplazarlos."
 
 # game/tutorial_screen_displayables.rpy:759
 translate spanish imagemap_done_166f75db:
 
     # e "The hotspot and hotbar statements describe areas of the imagemap that should act as buttons or bars, respectively."
-    e ""
+    e "Las sentencias hotspot y hotbar describen áreas del imagemap que deben actuar como botones o barras, respectivamente."
 
 # game/tutorial_screen_displayables.rpy:761
 translate spanish imagemap_done_becb9688:
 
     # e "Both take the coordinates of the area, in (x, y, width, height) format."
-    e ""
+    e "Ambas toman las coordenadas del área, en formato (x, y, ancho, alto)."
 
 # game/tutorial_screen_displayables.rpy:763
 translate spanish imagemap_done_fd56baa2:
 
     # e "A hotspot takes an action that is run when the hotspot is activated. It can also take actions that are run when it's hovered and unhovered, just like a button can."
-    e ""
+    e "Un hotspot toma una acción que se ejecuta cuando el hotspot está activado. También puede tomar acciones que se ejecutan cuando está enfocado y no enfocado, al igual que un botón."
 
 # game/tutorial_screen_displayables.rpy:765
 translate spanish imagemap_done_5660a6a2:
 
     # e "A hotbar takes a BarValue object that describes how full the bar is, and the range of values the bar should display, just like a bar and vbar does."
-    e ""
+    e "Una hotbar toma un objeto BarValue que describe qué tan llena está la barra y el rango de valores que debe mostrar la barra, tal como lo hace una barra y una barra vbar."
 
 # game/tutorial_screen_displayables.rpy:772
 translate spanish imagemap_done_10496a29:
 
     # e "A useful pattern is to define a screen with an imagemap that has hotspots that jump to labels, and call that using the call screen statement."
-    e ""
+    e "Un patrón útil es definir una pantalla con un imagemap que tiene hotspots que saltan a las etiquetas y llamarla usando la sentencia screen."
 
 # game/tutorial_screen_displayables.rpy:774
 translate spanish imagemap_done_dcb45224:
 
     # e "That's what we did in the school example I showed before. Here's the script for it. It's long, but the imagemap itself is fairly simple."
-    e ""
+    e "Eso es lo que hicimos en el ejemplo de la escuela que mostré antes. Aquí está el guión para ello. Es largo, pero el imagemap en sí es bastante simple."
 
 # game/tutorial_screen_displayables.rpy:778
 translate spanish imagemap_done_5b5bc5e5:
 
     # e "Imagemaps have pluses and minuses. On one hand, they are easy for a designer to create, and can look very good. At the same time, they can be hard to translate, and text baked into images may be blurry when the window is scaled."
-    e ""
+    e "Imagemaps tienen ventajas y desventajas. Por un lado, son fáciles de crear para un diseñador y pueden verse muy bien. Al mismo tiempo, pueden ser difíciles de traducir, y el texto incrustado en las imágenes puede aparecer borroso cuando se escala la ventana."
 
 # game/tutorial_screen_displayables.rpy:780
 translate spanish imagemap_done_b6cebf2b:
 
     # e "It's up to you and your team to decide if imagemaps are right for your project."
-    e ""
+    e "Depende de ti y tu equipo decidir si los imagemaps son adecuados para su proyecto."
 
 # game/tutorial_screen_displayables.rpy:787
 translate spanish viewport_displayables_e509d50d:
 
     # e "Sometimes, you'll want to display something bigger than the screen. That's what the viewport displayable is for."
-    e ""
+    e "A veces, querrá mostrar algo más grande que la pantalla. Para eso está el visualizable viewport."
 
 # game/tutorial_screen_displayables.rpy:803
 translate spanish viewport_displayables_9853b0e3:
 
     # e "Here's an example of a simple viewport, used to display a single image that's far bigger than the screen. Since the viewport will expand to the size of the screen, we use the xysize property to make it smaller."
-    e ""
+    e "Este es un ejemplo de un viewport simple, que se usa para mostrar una imagen única que es mucho más grande que la pantalla. Dado que el viewport ampliará al tamaño de la pantalla, usamos la propiedad xysize para hacerla más pequeña."
 
 # game/tutorial_screen_displayables.rpy:805
 translate spanish viewport_displayables_778668c8:
 
     # e "By default the viewport can't be moved, so we give the draggable, mousewheel, and arrowkeys properties to allow it to be moved in multiple ways."
-    e ""
+    e "Por defecto, el viewport no se puede mover, por lo que le damos a las propiedades draggable, mousewheel y arrowkeys para permitir que se mueva de varias maneras."
 
 # game/tutorial_screen_displayables.rpy:820
 translate spanish viewport_displayables_bbd63377:
 
     # e "When I give the viewport the edgescroll property, the viewport automatically scrolls when the mouse is near its edges. The two numbers are the size of the edges, and the speed in pixels per second."
-    e ""
+    e "Cuando le doy al viewport la propiedad edgescroll, la ventana se desplaza automáticamente cuando el mouse está cerca de sus bordes. Los dos números son el tamaño de los bordes y la velocidad en píxeles por segundo."
 
 # game/tutorial_screen_displayables.rpy:839
 translate spanish viewport_displayables_7c4678ee:
 
     # e "Giving the viewport the scrollbars property surrounds it with scrollbars. The scrollbars property can take 'both', 'horizontal', and 'vertical' as values."
-    e ""
+    e "Al darle al viewport la propiedad de scrollbars la rodea con barras de desplazamiento. La propiedad scrollbars puede tomar 'ambos', 'horizontal' y 'vertical' como valores."
 
 # game/tutorial_screen_displayables.rpy:841
 translate spanish viewport_displayables_197953b5:
 
     # e "The spacing property controls the space between the viewport and its scrollbars, in pixels."
-    e ""
+    e "La propiedad spacing controla el espacio entre la ventana gráfica y sus barras de desplazamiento, en píxeles."
 
 # game/tutorial_screen_displayables.rpy:864
 translate spanish viewport_displayables_54dd6e7b:
 
     # e "The xinitial and yinitial properties set the initial amount of scrolling, as a fraction of the amount that can be scrolled."
-    e ""
+    e "Las propiedades xinitial y yinitial establecen la cantidad inicial de desplazamiento, como una fracción de la cantidad que se puede desplazar."
 
 # game/tutorial_screen_displayables.rpy:885
 translate spanish viewport_displayables_c047efb5:
 
     # e "Finally, there's the child_size property. To explain what it does, I first have to show you what happens when we don't have it."
-    e ""
+    e "Finalmente, está la propiedad child_size. Para explicar lo que hace, primero tengo que mostrarte lo que sucede cuando no lo tenemos."
 
 # game/tutorial_screen_displayables.rpy:887
 translate spanish viewport_displayables_c563019f:
 
     # e "As you can see, the text wraps. That's because Ren'Py is offering it space that isn't big enough."
-    e ""
+    e "Como puedes ver, el texto se envuelve. Eso es porque Ren'Py le está ofreciendo un espacio que no es lo suficientemente grande."
 
 # game/tutorial_screen_displayables.rpy:909
 translate spanish viewport_displayables_4bcf0ad0:
 
     # e "When we give the screen a child_size, it offers more space to its children, allowing scrolling. It takes a horizontal and vertical size. If one component is None, it takes the size of the viewport."
-    e ""
+    e "Cuando le damos a la pantalla un child_size, ofrece más espacio para sus hijos, lo que permite el desplazamiento. Toma un tamaño horizontal y vertical. Si un componente es None, toma el tamaño del viewport."
 
 # game/tutorial_screen_displayables.rpy:936
 translate spanish viewport_displayables_ae4ff821:
 
     # e "Finally, there's the vpgrid displayable. It combines a viewport and a grid into a single displayable, except it's more efficient than either, since it doesn't have to draw every child."
-    e ""
+    e "Finalmente, está el visualizable vpgrid. Combina un viewport y una malla en una única pantalla, excepto que es más eficiente que cualquiera de los dos, ya que no tiene que dibujar a todos los hijos."
 
 # game/tutorial_screen_displayables.rpy:938
 translate spanish viewport_displayables_71fa0b8f:
 
     # e "It takes the cols and rows properties, which give the number of rows and columns of children. If one is omitted, Ren'Py figures it out from the other and the number of children."
-    e ""
+    e "Toma las propiedades de columnas y filas, que dan el número de filas y columnas de hijos. Si se omite uno, Ren'Py lo calcula a partir del otro y el número de hijos."
 
 translate spanish strings:
 
