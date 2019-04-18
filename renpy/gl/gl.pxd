@@ -1468,10 +1468,10 @@ cdef extern from "glcompat.h" nogil:
     GLvoid realGlLinkProgramARB "glLinkProgramARB" (GLhandleARB)
     GLvoid realGlUseProgramObjectARB "glUseProgramObjectARB" (GLhandleARB)
     GLvoid realGlValidateProgramARB "glValidateProgramARB" (GLhandleARB)
-    GLvoid realGlUniform1fARB "glUniform1fARB" (GLint, double)
-    GLvoid realGlUniform2fARB "glUniform2fARB" (GLint, double, double)
-    GLvoid realGlUniform3fARB "glUniform3fARB" (GLint, double, double, double)
-    GLvoid realGlUniform4fARB "glUniform4fARB" (GLint, double, double, double, double)
+    GLvoid realGlUniform1fARB "glUniform1fARB" (GLint, GLfloat)
+    GLvoid realGlUniform2fARB "glUniform2fARB" (GLint, GLfloat, GLfloat)
+    GLvoid realGlUniform3fARB "glUniform3fARB" (GLint, GLfloat, GLfloat, GLfloat)
+    GLvoid realGlUniform4fARB "glUniform4fARB" (GLint, GLfloat, GLfloat, GLfloat, GLfloat)
     GLvoid realGlUniform1iARB "glUniform1iARB" (GLint, GLint)
     GLvoid realGlUniform2iARB "glUniform2iARB" (GLint, GLint, GLint)
     GLvoid realGlUniform3iARB "glUniform3iARB" (GLint, GLint, GLint, GLint)
@@ -1562,10 +1562,10 @@ cdef int glShaderSourceARB(GLhandleARB, GLsizei, GLchar * *, GLint *) except? 0
 cdef int glTexImage2D(GLenum, GLint, GLint, GLsizei, GLsizei, GLint, GLenum, GLenum, GLubyte *) except? 0
 cdef int glTexParameteri(GLenum, GLenum, GLint) except? 0
 cdef int glTexSubImage2D(GLenum, GLint, GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, GLubyte *) except? 0
-cdef int glUniform1fARB(GLint, double) except? 0
+cdef int glUniform1fARB(GLint, GLfloat) except? 0
 cdef int glUniform1iARB(GLint, GLint) except? 0
-cdef int glUniform2fARB(GLint, double, double) except? 0
-cdef int glUniform4fARB(GLint, double, double, double, double) except? 0
+cdef int glUniform2fARB(GLint, GLfloat, GLfloat) except? 0
+cdef int glUniform4fARB(GLint, GLfloat, GLfloat, GLfloat, GLfloat) except? 0
 cdef int glUniformMatrix4fvARB(GLint, GLsizei, GLboolean, GLfloat *) except? 0
 cdef int glUseProgramObjectARB(GLhandleARB) except? 0
 cdef int glVertexAttribPointerARB(GLuint, GLint, GLenum, GLboolean, GLsizei, GLubyte *) except? 0

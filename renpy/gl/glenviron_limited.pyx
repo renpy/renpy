@@ -182,7 +182,7 @@ cdef class LimitedEnviron(Environ):
         else:
             glDisableClientState(GL_TEXTURE_COORD_ARRAY)
 
-    cdef void set_color(self, double r, double g, double b, double a):
+    cdef void set_color(self, float r, float g, float b, float a):
         glColor4f(r, g, b, a)
 
 
