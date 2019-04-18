@@ -1299,10 +1299,10 @@ void media_start(MediaState *ms) {
     decode_sync_start(ms);
 #else
 
-    char buf[1024]; */
+    char buf[1024];
 
-	snprintf(buf, 1024, "decode: %s", ms->filename); */
-	SDL_Thread *t = SDL_CreateThread(decode_thread, buf, (void *) ms); */
+	snprintf(buf, 1024, "decode: %s", ms->filename);
+	SDL_Thread *t = SDL_CreateThread(decode_thread, buf, (void *) ms);
 
 	if (t) {
 		ms->started = 1;

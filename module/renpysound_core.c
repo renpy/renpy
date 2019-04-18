@@ -43,8 +43,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #else
 
-#define EVALLOCK() { PyEval_AcquireLock(); }
-#define EVALUNLOCK() { PyEval_ReleaseLock(); }
+#define EVAL_LOCK() { PyEval_AcquireLock(); }
+#define EVAL_UNLOCK() { PyEval_ReleaseLock(); }
 #define BEGIN() PyThreadState *_save;
 #define ENTER() { _save = PyEval_SaveThread(); SDL_LockAudio(); }
 #define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); }
