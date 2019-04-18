@@ -112,7 +112,7 @@ translate spanish add_displayable_3a56a464:
 translate spanish text_displayable_96f88225:
 
     # e "The screen language text statement adds a text displayable to the screen. It takes one argument, the text to be displayed."
-    e "La declaración text del lenguaje de pantalla agrega un texto visualizable a la pantalla. Toma un argumento, el texto que se mostrará."
+    e "La declaración text del lenguaje de pantalla agrega un visualizable text a la pantalla. Toma un argumento, el texto que se mostrará."
 
 # game/tutorial_screen_displayables.rpy:224
 translate spanish text_displayable_1ed1a8c2:
@@ -124,7 +124,7 @@ translate spanish text_displayable_1ed1a8c2:
 translate spanish text_displayable_9351d9dd:
 
     # e "The text displayable can also interpolate values enclosed in square brackets."
-    e "El texto visualizable también puede interpolar valores encerrados entre corchetes."
+    e "El visualizable text también puede interpolar valores encerrados entre corchetes."
 
 # game/tutorial_screen_displayables.rpy:236
 translate spanish text_displayable_32d76ccb:
@@ -172,313 +172,313 @@ translate spanish layout_displayables_74de8a66:
 translate spanish layout_displayables_a156591f:
 
     # e "The grid displayable displays its children in a grid of equally-sized cells. It takes two arguments, the number of columns and the number of rows."
-    e ""
+    e "El visualizable grid  muestra a sus hijos en una malla de celdas de igual tamaño. Toma dos argumentos, el número de columnas y el número de filas."
 
 # game/tutorial_screen_displayables.rpy:303
 translate spanish layout_displayables_126f5816:
 
     # e "The grid has to be full, or Ren'Py will produce an error. Notice how in this example, the empty cell is filled with a null."
-    e ""
+    e "La malla tiene que estar llena, o Ren'Py producirá un error. Observe cómo en este ejemplo, la celda vacía se rellena con un valor null."
 
 # game/tutorial_screen_displayables.rpy:305
 translate spanish layout_displayables_bfaaaf9b:
 
     # e "Like the boxes, grid uses the spacing property to specify the space between cells."
-    e ""
+    e "Al igual que las boxes, grid utiliza la propiedad de espaciado para especificar el espacio entre las celdas."
 
 # game/tutorial_screen_displayables.rpy:321
 translate spanish layout_displayables_3e931106:
 
     # e "Grid also takes the transpose property, to make it fill top-to-bottom before it fills left-to-right."
-    e ""
+    e "Grid también toma la propiedad de transposición, para que se llene de arriba a abajo antes de que se llene de izquierda a derecha."
 
 # game/tutorial_screen_displayables.rpy:338
 translate spanish layout_displayables_afdc1b11:
 
     # e "And just to demonstrate that all cells are equally-sized, here's what happens when once child is bigger than the others."
-    e ""
+    e "Y solo para demostrar que todas las celdas tienen el mismo tamaño, esto es lo que sucede cuando un hijo es más grande que los demás."
 
 # game/tutorial_screen_displayables.rpy:353
 translate spanish layout_displayables_a23e2826:
 
     # e "The fixed displayable displays the children using Ren'Py's normal placement algorithm. This lets you place displayables anywhere in the screen."
-    e ""
+    e "El visualizable fixed muestra a los hijos utilizando el algoritmo de colocación normal de Ren'Py. Esto le permite colocar visualizables en cualquier lugar de la pantalla."
 
 # game/tutorial_screen_displayables.rpy:355
 translate spanish layout_displayables_fd3926ca:
 
     # e "By default, the layout expands to fill all the space available to it. To prevent that, we use the xsize and ysize properties to set its size in advance."
-    e ""
+    e "De forma predeterminada, el layout se expande para llenar todo el espacio disponible. Para evitar eso, usamos las propiedades xsize y ysize para establecer su tamaño por adelantado."
 
 # game/tutorial_screen_displayables.rpy:369
 translate spanish layout_displayables_eff42786:
 
     # e "When a non-layout displayable is given two or more children, it's not necessary to create a fixed. A fixed is automatically added, and the children are added to it."
-    e ""
+    e "Cuando a un visualizable que no sea layout da dos o más hijos, no es necesario crear un fixed. Se agrega automáticamente fixed, y se agregan los hijos."
 
 # game/tutorial_screen_displayables.rpy:384
 translate spanish layout_displayables_c32324a7:
 
     # e "Finally, there's one convenience to save space. When many displayables are nested, adding a layout to each could cause crazy indent levels."
-    e ""
+    e "Por último, hay una conveniencia para ahorrar espacio. Cuando se anidan muchos elementos visualizables, agregar un diseño a cada uno podría causar niveles de sangría locos."
 
 # game/tutorial_screen_displayables.rpy:386
 translate spanish layout_displayables_d7fa0f28:
 
     # e "The has statement creates a layout, and then adds all further children of its parent to that layout. It's just a convenience to make screens more readable."
-    e ""
+    e "La declaracion has crea un diseño y luego agrega todos los demás elementos secundarios de su padre a ese diseño. Es solo una conveniencia para hacer las pantallas más legibles."
 
 # game/tutorial_screen_displayables.rpy:395
 translate spanish window_displayables_14beb786:
 
     # e "In the default GUI that Ren'Py creates for a game, most user interface elements expect some sort of background."
-    e ""
+    e "En la GUI predeterminada que Ren'Py crea para un juego, la mayoría de los elementos de la interfaz de usuario esperan algún tipo de fondo."
 
 # game/tutorial_screen_displayables.rpy:405
 translate spanish window_displayables_495d332b:
 
     # e "Without the background, text can be hard to read. While a frame isn't strictly required, many screens have one or more of them."
-    e ""
+    e "Sin el fondo, el texto puede ser difícil de leer. Mientras que un marco no es estrictamente requerido, muchas pantallas tienen uno o más."
 
 # game/tutorial_screen_displayables.rpy:417
 translate spanish window_displayables_2c0565ab:
 
     # e "But when I add a background, it's much easier. That's why there are two displayables that are intended to give backgrounds to user interface elements."
-    e ""
+    e "Pero cuando agrego un fondo, es mucho más fácil. Es por eso que hay dos visualizables destinados a proporcionar fondos a los elementos de la interfaz de usuario."
 
 # game/tutorial_screen_displayables.rpy:419
 translate spanish window_displayables_c7d0968c:
 
     # e "The two displayables are frame and window. Frame is the one we use above, and it's designed to provide a background for arbitrary parts of the user interface."
-    e ""
+    e "Los dos visualizables son frame y window. El que usamos anteriormente es frame, y está diseñado para proporcionar un fondo para partes arbitrarias de la interfaz de usuario."
 
 # game/tutorial_screen_displayables.rpy:423
 translate spanish window_displayables_7d843f62:
 
     # e "On the other hand, the window displayable is very specific. It's used to provide the text window. If you're reading what I'm saying, you're looking at the text window right now."
-    e ""
+    e "Por otro lado, el visualizable window es muy específico. Se utiliza para proporcionar la ventana de texto. Si estás leyendo lo que estoy diciendo, estás mirando la ventana de texto ahora mismo."
 
 # game/tutorial_screen_displayables.rpy:425
 translate spanish window_displayables_de5963e4:
 
     # e "Both frames and windows can be given window style properties, allowing you to change things like the background, margins, and padding around the window."
-    e ""
+    e "Tanto frames como windows pueden recibir propiedades de estilo window, lo que le permite cambiar elementos como el fondo, los márgenes y el relleno alrededor de la ventana."
 
 # game/tutorial_screen_displayables.rpy:433
 translate spanish button_displayables_ea626553:
 
     # e "One of the most flexible displayables is the button displayable, and its textbutton and imagebutton variants."
-    e ""
+    e "Uno de los indicadores más flexibles es el visualizable button, y sus variantes textbutton y imagebutton."
 
 # game/tutorial_screen_displayables.rpy:443
 translate spanish button_displayables_372dcc0f:
 
     # e "A button is a displayable that when selected runs an action. Buttons can be selected by clicking with the mouse, by touch, or with the keyboard and controller."
-    e ""
+    e "Un botón es un botón desplegable que, cuando se selecciona, ejecuta una acción. Los botones se pueden seleccionar haciendo clic con el mouse, al tocar o con el teclado y el controlador."
 
 # game/tutorial_screen_displayables.rpy:445
 translate spanish button_displayables_a6b270ff:
 
     # e "Actions can do many things, like setting variables, showing screens, jumping to a label, or returning a value. There are many {a=https://www.renpy.org/doc/html/screen_actions.html}actions in the Ren'Py documentation{/a}, and you can also write your own."
-    e ""
+    e "Las acciones(action) pueden hacer muchas cosas, como establecer variables, mostrar pantallas, saltar a una etiqueta o devolver un valor. Hay muchas acciones {a=https://www.renpy.org/doc/html/screen_actions.html}en la documentación de Ren'Py{/a}, y también puede escribir las tuyas propias."
 
 # game/tutorial_screen_displayables.rpy:458
 translate spanish button_displayables_4c600d20:
 
     # e "It's also possible to run actions when a button gains and loses focus."
-    e ""
+    e "También es posible ejecutar acciones cuando un botón gana y pierde el foco."
 
 # game/tutorial_screen_displayables.rpy:473
 translate spanish button_displayables_47af4bb9:
 
     # e "A button takes another displayable as children. Since that child can be a layout, it can takes as many children as you want."
-    e ""
+    e "Un button toma otro visualizables como hijos. Dado que ese hijo puede ser un layout, puede tomar tantos hijos como desee."
 
 # game/tutorial_screen_displayables.rpy:483
 translate spanish button_displayables_d01adde3:
 
     # e "In many cases, buttons will be given text. To make that easier, there's the textbutton displayable that takes the text as an argument."
-    e ""
+    e "En muchos casos, los botones recibirán texto. Para hacerlo más fácil, está el visualizable textbutton que toma el texto como un argumento."
 
 # game/tutorial_screen_displayables.rpy:485
 translate spanish button_displayables_01c551b3:
 
     # e "Since the textbutton displayable manages the style of the button text for you, it's the kind of button that's used most often in the default GUI."
-    e ""
+    e "Dado que el visualizable textbutton administra el estilo del texto del botón por ti, es el tipo de botón que se usa con más frecuencia en la GUI predeterminada."
 
 # game/tutorial_screen_displayables.rpy:498
 translate spanish button_displayables_6911fb9b:
 
     # e "There's also the imagebutton, which takes displayables, one for each state the button can be in, and displays them as the button."
-    e ""
+    e "También está el imagebutton, que toma visualizables, uno para cada estado en el que puede estar el botón, y los muestra como el botón."
 
 # game/tutorial_screen_displayables.rpy:500
 translate spanish button_displayables_49720fa6:
 
     # e "An imagebutton gives you the most control over what a button looks like, but is harder to translate and won't look as good if the game window is resized."
-    e ""
+    e "Un imagebutton te da el mayor control sobre el aspecto de un botón, pero es más difícil de traducir y no se verá tan bien si se cambia el tamaño de la ventana del juego."
 
 # game/tutorial_screen_displayables.rpy:522
 translate spanish button_displayables_e8d40fc8:
 
     # e "Buttons take Window style properties, that are used to specify the background, margins, and padding. They also take Button-specific properties, like a sound to play on hover."
-    e ""
+    e "Los botones toman las propiedades de estilo Window, que se utilizan para especificar el fondo, los márgenes y el relleno. También tienen propiedades específicas de los botones, como un sonido para reproducir cuando se enfocan."
 
 # game/tutorial_screen_displayables.rpy:524
 translate spanish button_displayables_1e40e311:
 
     # e "When used with a button, style properties can be given prefixes like idle and hover to make the property change with the button state."
-    e ""
+    e "Cuando se usa con un botón, las propiedades de estilo pueden tener prefijos como idle y hover para hacer que la propiedad cambie con el estado del botón."
 
 # game/tutorial_screen_displayables.rpy:526
 translate spanish button_displayables_220b020d:
 
     # e "A text button also takes Text style properties, prefixed with text. These are applied to the text displayable it creates internally."
-    e ""
+    e "Un botón de texto también toma las propiedades de estilo de texto, prefijadas con text. Estos se aplican al texto desplegable que crea internamente."
 
 # game/tutorial_screen_displayables.rpy:558
 translate spanish button_displayables_b89d12aa:
 
     # e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
-    e ""
+    e "Por supuesto, es muy raro que personalicemos un botón en una pantalla como esa. En su lugar, crearíamos estilos personalizados y le diríamos a Ren'Py que los use."
 
 # game/tutorial_screen_displayables.rpy:577
 translate spanish bar_displayables_946746c2:
 
     # e "The bar and vbar displayables are flexible displayables that show bars representing a value. The value can be static, animated, or adjustable by the player."
-    e ""
+    e "Los visualizables bar y vbar son visualizables flexibles que muestran barras que representan un valor. El valor puede ser estático, animado o ajustable por el jugador."
 
 # game/tutorial_screen_displayables.rpy:579
 translate spanish bar_displayables_af3a51b8:
 
     # e "The value property gives a BarValue, which is an object that determines the bar's value and range. Here, a StaticValue sets the range to 100 and the value to 66, making a bar that's two thirds full."
-    e ""
+    e "La propiedad value proporciona un BarValue, que es un objeto que determina el valor y el rango de la barra. Aquí, un StaticValue establece el rango en 100 y el valor en 66, haciendo que una barra esté dos tercios llena."
 
 # game/tutorial_screen_displayables.rpy:581
 translate spanish bar_displayables_62f8b0ab:
 
     # e "A list of all the BarValues that can be used is found {a=https://www.renpy.org/doc/html/screen_actions.html#bar-values}in the Ren'Py documentation{/a}."
-    e ""
+    e "Una lista de todos los BarValues que se pueden usar se encuentra {a=https://www.renpy.org/doc/html/screen_actions.html#bar-values}en la documentación de Ren'Py{/a}."
 
 # game/tutorial_screen_displayables.rpy:583
 translate spanish bar_displayables_5212eb0a:
 
     # e "In this example, we give the frame the xsize property. If we didn't do that, the bar would expand to fill all available horizontal space."
-    e ""
+    e "En este ejemplo, le damos frame la propiedad xsize. Si no hiciéramos eso, la barra se expandiría para llenar todo el espacio horizontal disponible."
 
 # game/tutorial_screen_displayables.rpy:600
 translate spanish bar_displayables_67295018:
 
     # e "There are a few different bar styles that are defined in the default GUI. The styles are selected by the style property, with the default selected by the value."
-    e ""
+    e "Hay algunos estilos de barras diferentes que se definen en la GUI predeterminada. Los estilos son seleccionados por la propiedad de estilo, con el valor predeterminado seleccionado por el valor."
 
 # game/tutorial_screen_displayables.rpy:602
 translate spanish bar_displayables_1b037b21:
 
     # e "The top style is the 'bar' style. It's used to display values that the player can't adjust, like a life or progress bar."
-    e ""
+    e "El estilo superior es el estilo 'bar'. Se utiliza para mostrar valores que el jugador no puede ajustar, como una barra de vida o de progreso."
 
 # game/tutorial_screen_displayables.rpy:604
 translate spanish bar_displayables_c2aa4725:
 
     # e "The middle stye is the 'slider' value. It's used for values the player is expected to adjust, like a volume preference."
-    e ""
+    e "El estilo de en medio es el valor 'slider'. Se usa para los valores que se espera que el jugador ajuste, como una preferencia de volumen."
 
 # game/tutorial_screen_displayables.rpy:606
 translate spanish bar_displayables_2fc44226:
 
     # e "Finally, the bottom style is the 'scrollbar' style, which is used for horizontal scrollbars. When used as a scrollbar, the thumb in the center changes size to reflect the visible area of a viewport."
-    e ""
+    e "Finalmente, el estilo inferior es el estilo 'scrollbar', que se usa para las barras de desplazamiento horizontal. Cuando se utiliza como una barra de desplazamiento, el thumb en el centro cambia de tamaño para reflejar el área visible de una ventana gráfica."
 
 # game/tutorial_screen_displayables.rpy:623
 translate spanish bar_displayables_26eb88bf:
 
     # e "The vbar displayable is similar to the bar displayable, except it uses vertical styles - 'vbar', 'vslider', and 'vscrollbar' - by default."
-    e ""
+    e "EL visualizable vbar es similar al visualizable bar, excepto que usa estilos verticales: 'vbar', 'vslider' y 'vscrollbar' - de forma predeterminada."
 
 # game/tutorial_screen_displayables.rpy:626
 translate spanish bar_displayables_11cf8af2:
 
     # e "Bars take the Bar style properties, which can customize the look and feel greatly. Just look at the difference between the bar, slider, and scrollbar styles."
-    e ""
+    e "Las baras toman las propiedades de estilo Bar, que pueden personalizar la apariencia enormemente. Solo mira la diferencia entre los estilos de bar, slider y scrollbar."
 
 # game/tutorial_screen_displayables.rpy:635
 translate spanish imagemap_displayables_d62fad02:
 
     # e "Imagemaps use two or more images to show buttons and bars. Let me start by showing you an example of an imagemap in action."
-    e ""
+    e "Los Imagemaps utilizan dos o más imágenes para mostrar botones y barras. Permítame comenzar mostrándote un ejemplo de un Imagemap en acción."
 
 # game/tutorial_screen_displayables.rpy:657
 translate spanish swimming_405542a5:
 
     # e "You chose swimming."
-    e ""
+    e "Elegiste la natación."
 
 # game/tutorial_screen_displayables.rpy:659
 translate spanish swimming_264b5873:
 
     # e "Swimming seems like a lot of fun, but I didn't bring my bathing suit with me."
-    e ""
+    e "La natación parece muy divertida, pero no traje mi traje de baño."
 
 # game/tutorial_screen_displayables.rpy:665
 translate spanish science_83e5c0cc:
 
     # e "You chose science."
-    e ""
+    e "Escogiste ciencia."
 
 # game/tutorial_screen_displayables.rpy:667
 translate spanish science_319cdf4b:
 
     # e "I've heard that some schools have a competitive science team, but to me research is something that can't be rushed."
-    e ""
+    e "He oído que algunas escuelas tienen un equipo científico competitivo, pero para mí la investigación es algo que no se puede apresurar."
 
 # game/tutorial_screen_displayables.rpy:672
 translate spanish art_d2a94440:
 
     # e "You chose art."
-    e ""
+    e "Escogiste arte."
 
 # game/tutorial_screen_displayables.rpy:674
 translate spanish art_e6af6f1d:
 
     # e "Really good background art is hard to make, which is why so many games use filtered photographs. Maybe you can change that."
-    e ""
+    e "Realmente es difícil hacer una buena imagen de fondo, razón por la cual muchos juegos usan fotografías filtradas. Tal vez puedas cambiar eso."
 
 # game/tutorial_screen_displayables.rpy:680
 translate spanish home_373ea9a5:
 
     # e "You chose to go home."
-    e ""
+    e "Elegiste ir a casa."
 
 # game/tutorial_screen_displayables.rpy:686
 translate spanish imagemap_done_48eca0a4:
 
     # e "Anyway..."
-    e ""
+    e "Como sea"
 
 # game/tutorial_screen_displayables.rpy:691
 translate spanish imagemap_done_a60635a1:
 
     # e "To demonstrate how imagemaps are put together, I'll show you the five images that make up a smaller imagemap."
-    e ""
+    e "Para demostrar cómo se combinan los imagemaps, te mostraré las cinco imágenes que conforman un imagemaps más pequeño."
 
 # game/tutorial_screen_displayables.rpy:697
 translate spanish imagemap_done_ac9631ef:
 
     # e "The idle image is used for the background of the imagemap, for hotspot buttons that aren't focused or selected, and for the empty part of an unfocused bar."
-    e ""
+    e "La imagen idle se usa para el fondo del mapa de imágenes, para los botones hotspot que no están enfocados o seleccionados, y para la parte vacía de una barra desenfocada."
 
 # game/tutorial_screen_displayables.rpy:703
 translate spanish imagemap_done_123b5924:
 
     # e "The hover image is used for hotspots that are focused but not selected, and for the empty part of a focused bar."
-    e ""
+    e "La imagen hover se usa para zonas activas que están enfocadas pero no seleccionadas, y para la parte vacía de una barra enfocada."
 
 # game/tutorial_screen_displayables.rpy:705
 translate spanish imagemap_done_37f538dc:
 
     # e "Notice how both the bar and button are highlighted in this image. When we display them as part of a screen, only one of them will show up as focused."
-    e ""
+    e "Observa cómo se resaltan tanto la barra como el botón en esta imagen. Cuando los mostramos como parte de una pantalla, solo uno de ellos aparecerá como enfocado."
 
 # game/tutorial_screen_displayables.rpy:711
 translate spanish imagemap_done_c76b072d:
@@ -658,7 +658,7 @@ translate spanish strings:
 
     # tutorial_screen_displayables.rpy:9
     old "Boxes and other layouts."
-    new "Boxes y ortos layouts."
+    new "Boxes y otros layouts."
 
     # tutorial_screen_displayables.rpy:9
     old "Windows and frames."
@@ -754,7 +754,7 @@ translate spanish strings:
 
     # tutorial_screen_displayables.rpy:539
     old "Or me."
-    new "O yo."
+    new "O en mí."
 
     # tutorial_screen_displayables.rpy:541
     old "You clicked the other button."

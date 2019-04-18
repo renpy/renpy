@@ -153,7 +153,7 @@ translate spanish style_basics_35db9a05:
 translate spanish style_basics_422a87f7:
 
     # e "For example, a text displayable with a style_prefix of 'help' will be given the style 'help_text'."
-    e "Por ejemplo, un texto visualizables con un prefijo de estilo de 'help' recibirá el estilo 'help_text'."
+    e "Por ejemplo, un visualizable text con un prefijo de estilo de 'help' recibirá el estilo 'help_text'."
 
 # game/indepth_style.rpy:200
 translate spanish style_basics_bad2e207:
@@ -249,7 +249,7 @@ translate spanish style_text_fe457b8f:
 translate spanish style_text_7ab53f03:
 
     # e "Text displayables can be created implicitly or explicitly. For example, a textbutton creates a text displayable with a style ending in button_text."
-    e "Visualizables de texto pueden ser creados implícitamente o explícitamente. Por ejemplo, un botón de texto crea un texto visualizable con un estilo que termina en button_text."
+    e "Visualizables de texto pueden ser creados implícitamente o explícitamente. Por ejemplo, un botón de texto crea un visualizable text con un estilo que termina en button_text."
 
 # game/indepth_style.rpy:339
 translate spanish style_text_6dd42a57:
@@ -333,13 +333,13 @@ translate spanish style_text_5a0c2c02:
 translate spanish style_text_430c1959:
 
     # e "The text_align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
-    e "La propiedad text_align controla el posicionamiento de múltiples líneas de texto dentro del texto visualizable. Por ejemplo, 0.5 significa centrado."
+    e "La propiedad text_align controla el posicionamiento de múltiples líneas de texto dentro del visualizable text. Por ejemplo, 0.5 significa centrado."
 
 # game/indepth_style.rpy:445
 translate spanish style_text_19aa0833:
 
     # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
-    e "No cambia la posición del texto visualizable. Para eso, a menudo querrá establecer el text_align y el xalign en el mismo valor."
+    e "No cambia la posición del visualizable text. Para eso, a menudo querrá establecer el text_align y el xalign en el mismo valor."
 
 # game/indepth_style.rpy:455
 translate spanish style_text_efc3c392:
