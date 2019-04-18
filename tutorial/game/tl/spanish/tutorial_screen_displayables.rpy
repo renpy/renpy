@@ -725,7 +725,7 @@ translate spanish strings:
 
     # tutorial_screen_displayables.rpy:402
     old "Okay"
-    new "¡Muy bien!"
+    new "Aceptar"
 
     # tutorial_screen_displayables.rpy:440
     old "You clicked the button."

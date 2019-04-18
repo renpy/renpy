@@ -155,7 +155,7 @@ translate spanish strings:
 
     # script.rpy:89
     old "Screen Displayables"
-    new "Displayables de Pantalla"
+    new "Visualizables de Pantalla"
 
     # script.rpy:91
     old "Minigames and CDDs"

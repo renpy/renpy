@@ -3,7 +3,7 @@ translate spanish strings:
 
     # screens.rpy:261
     old "Back"
-    new "Volver"
+    new "Atrás"
 
     # screens.rpy:262
     old "History"
