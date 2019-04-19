@@ -123,13 +123,13 @@ translate spanish tutorial_dialogue_d39d1b2b:
 translate spanish tutorial_dialogue_f51ecf1f:
 
     # e "This script demonstrates two kinds of Ren'Py statements, labels and say statements."
-    e "Este script muestra dos tipos de declaraciones de Ren'Py, labels y declaraciones say."
+    e "Este script muestra dos tipos de sentencia de Ren'Py, label y say."
 
 # game/tutorial_quickstart.rpy:103
 translate spanish tutorial_dialogue_bc7ec147:
 
     # e "The first line is a label statement. The label statement is used to give a name to a place in the program."
-    e "La primera línea es una declaración de label. La declaración de label se utiliza para dar un nombre a un lugar en el programa."
+    e "La primera línea es una sentencia label. La sentencia label se utiliza para dar un nombre a un lugar en el programa."
 
 # game/tutorial_quickstart.rpy:105
 translate spanish tutorial_dialogue_b20db833:
@@ -141,7 +141,7 @@ translate spanish tutorial_dialogue_b20db833:
 translate spanish tutorial_dialogue_b0afbe96:
 
     # e "The next line is a simple say statement. It consists of a string beginning with a double-quote, and ending at the next double-quote."
-    e "La siguiente línea es una simple declaración say. Consiste en una cadena que comienza con una comilla doble y termina en la siguiente comilla doble."
+    e "La siguiente línea es una simple sentencia say. Consiste en una cadena que comienza con una comilla doble y termina en la siguiente comilla doble."
 
 # game/tutorial_quickstart.rpy:109
 translate spanish tutorial_dialogue_628c9e4c:
@@ -177,7 +177,7 @@ translate spanish tutorial_dialogue_9dd2d543:
 translate spanish tutorial_dialogue_64ffe685:
 
     # e "This two-argument form of the say statement is used for dialogue, where a character is speaking out loud."
-    e "Esta forma la declaracion say de dos argumentos se usa para diálogo, donde un personaje habla en voz alta."
+    e "Esta forma la sentencia say de dos argumentos se usa para diálogo, donde un personaje habla en voz alta."
 
 # game/tutorial_quickstart.rpy:143
 translate spanish tutorial_dialogue_97a33275:
@@ -273,13 +273,13 @@ translate spanish tutorial_dialogue_023bcd31:
 translate spanish tutorial_dialogue_48bb9547:
 
     # e "The one-argument form of the say statement is unchanged, but in the two-argument form, instead of the first string we can use a short name."
-    e "La forma de un argumento de la declaración say no se modifica, pero en la forma de dos argumentos, en lugar de la primera cadena podemos usar un nombre corto."
+    e "La forma de un argumento de la sentencia say no se modifica, pero en la forma de dos argumentos, en lugar de la primera cadena podemos usar un nombre corto."
 
 # game/tutorial_quickstart.rpy:192
 translate spanish tutorial_dialogue_56a9936f:
 
     # e "When this say statement is run, Ren'Py will look up the short name, which is really a Python variable. It will then use the associated Character to show the dialogue."
-    e "Cuando se ejecuta esta declaración, Ren'Py buscará el nombre corto, que es realmente una variable de Python. A continuación, utilizará el Character asociado para mostrar el diálogo."
+    e "Cuando se ejecuta esta sentencia, Ren'Py buscará el nombre corto, que es realmente una variable de Python. A continuación, utilizará el Character asociado para mostrar el diálogo."
 
 # game/tutorial_quickstart.rpy:194
 translate spanish tutorial_dialogue_d5984a21:
@@ -369,19 +369,19 @@ translate spanish tutorial_images_d77ffa1c:
 translate spanish tutorial_images_6c0c938b:
 
     # e "Here's the script for that scene. Notice how it includes two new statements, the scene and show statement."
-    e "Aquí está el script para esa escena. Observa cómo incluye dos declaraciones nuevas, scene y show."
+    e "Aquí está el script para esa escena. Observa cómo incluye dos sentencis nuevas, scene y show."
 
 # game/tutorial_quickstart.rpy:244
 translate spanish tutorial_images_1a4660b9:
 
     # e "The scene statement clears the screen, and then adds a background image."
-    e "La declaración scene borra la pantalla y luego agrega una imagen de fondo."
+    e "La sentencia scene borra la pantalla y luego agrega una imagen de fondo."
 
 # game/tutorial_quickstart.rpy:246
 translate spanish tutorial_images_672c8cb8:
 
     # e "The show statement adds a background image on top of all the other images on the screen."
-    e "La declaración show agrega una imagen de fondo sobre todas las demás imágenes en la pantalla."
+    e "La sentencia show agrega una imagen de fondo sobre todas las demás imágenes en la pantalla."
 
 # game/tutorial_quickstart.rpy:248
 translate spanish tutorial_images_2fc7baee:
@@ -399,7 +399,7 @@ translate spanish tutorial_images_802825f2:
 translate spanish tutorial_images_b246dfdd:
 
     # e "The second show statement has an at clause, which gives a location on the screen. Common locations are left, right, and center, but you can define many more."
-    e "La segunda declaración show tiene una cláusula at, que da una ubicación en la pantalla. Las ubicaciones comunes son left, right y center, pero puedes definir muchas más."
+    e "La segunda sentencia show tiene una cláusula at, que da una ubicación en la pantalla. Las ubicaciones comunes son left, right y center, pero puedes definir muchas más."
 
 # game/tutorial_quickstart.rpy:257
 translate spanish tutorial_images_82fceeb8:
@@ -417,13 +417,13 @@ translate spanish tutorial_images_9defda43:
 translate spanish tutorial_images_73d331f7:
 
     # e "Finally, there's the hide statement, which hides the image with the given tag."
-    e "Finalmente, está la declaración hide, que oculta la imagen con la etiqueta dada"
+    e "Finalmente, está la sentencia hide, que oculta la imagen con la etiqueta dada"
 
 # game/tutorial_quickstart.rpy:266
 translate spanish tutorial_images_f34f62d5:
 
     # e "Since the show statement replaces an image, and the scene statement clears the scene, it's pretty rare to hide an image."
-    e "Dado que la declaración show reemplaza una imagen, y la declaración scene borra la escena, es bastante raro ocultar una imagen."
+    e "Dado que la sentencia show reemplaza una imagen, y la sentencia scene borra la escena, es bastante raro ocultar una imagen."
 
 # game/tutorial_quickstart.rpy:268
 translate spanish tutorial_images_e06fa53a:
@@ -507,7 +507,7 @@ translate spanish tutorial_simple_positions_3ce7e367:
 translate spanish tutorial_simple_positions_82d640d9:
 
     # e "Once a transform has been defined, you can use it in the at clause of the show statement."
-    e "Una vez que se ha definido una transformación, puede usarla en la cláusula at de la declaración show."
+    e "Una vez que se ha definido una transformación, puede usarla en la cláusula at de la sentencia show."
 
 # game/tutorial_quickstart.rpy:360
 translate spanish tutorial_simple_positions_16b66785:
@@ -639,13 +639,13 @@ translate spanish tutorial_music_413d91fc:
 translate spanish tutorial_music_a282a0e3:
 
     # e "The queue statement also adds music to the named channel, but it waits until the currently-playing song is finished before playing the new music."
-    e "La declaración queue también agrega música al canal nombrado, pero espera hasta que la canción que se está reproduciendo se termine antes de reproducir la nueva música."
+    e "La sentencia queue también agrega música al canal nombrado, pero espera hasta que la canción que se está reproduciendo se termine antes de reproducir la nueva música."
 
 # game/tutorial_quickstart.rpy:468
 translate spanish tutorial_music_01ca6bad:
 
     # e "The third statement is the stop statement. It stops the music playing on a channel. It too takes the fadeout clause."
-    e "La tercera declaración es stop. Detiene la reproducción de música en un canal. También toma la cláusula fadeout."
+    e "La tercera sentencia es stop. Detiene la reproducción de música en un canal. También toma la cláusula fadeout."
 
 # game/tutorial_quickstart.rpy:473
 translate spanish tutorial_music_384937da:
@@ -699,7 +699,7 @@ translate spanish choice1_done_acba9504:
 translate spanish choice1_done_f9fa6889:
 
     # e "Menus are introduced by the menu statement. The menu statement takes an indented block, in which there can be one line of dialogue and multiple choices."
-    e "Los menús son introducidos por la declaración del menu. La declaración menu toma un bloque con sangría, en el que puede haber una línea de diálogo y múltiples opciones."
+    e "Los menús son introducidos por la sentencia del menu. La sentencia menu toma un bloque con sangría, en el que puede haber una línea de diálogo y múltiples opciones."
 
 # game/tutorial_quickstart.rpy:532
 translate spanish choice1_done_ebb2db38:
@@ -777,7 +777,7 @@ translate spanish choice1_done_a32e30fd:
 translate spanish choice1_done_fbd1dbc1:
 
     # e "If you look at the example, before the first choice, there's an indented say statement."
-    e "Si nos fijamos en el ejemplo, antes de la primera opción, hay una declaración con sangría."
+    e "Si nos fijamos en el ejemplo, antes de la primera opción, hay una sentencia say con sangría."
 
 # game/tutorial_quickstart.rpy:574
 translate spanish menu3_done_47fa2268:
