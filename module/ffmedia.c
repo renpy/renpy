@@ -10,7 +10,7 @@
 
 #if defined(__arm__) && !(__MACOS__ || __IPHONEOS__)
 #define USE_MEMALIGN
-#include <malloc.h>
+#include <stdlib.h>
 #endif
 
 /* The output audio sample rate. */
@@ -723,7 +723,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 
 
 #ifdef USE_MEMALIGN
-    rv->pixels = memalign(16, rv->pitch * rv->h);
+    posix_memalign(&rv->pixels, 16, rv->pitch * rv->h);
     memset(rv->pixels, 0, rv->pitch * rv->h);
 #else
     rv->pixels = SDL_calloc(1, rv->pitch * rv->h);
