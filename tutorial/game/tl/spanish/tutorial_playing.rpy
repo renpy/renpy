@@ -69,7 +69,7 @@ translate spanish tutorial_playing_4b21f071:
 translate spanish tutorial_playing_eaac8ba9:
 
     # e "This screen lets you decide how Ren'Py displays, pick what Ren'Py skips, control text speed and auto-click speed, and adjust sound, music, and voice volumes."
-    e "Esta pantalla le permite decidir cómo se muestra Ren'Py, elegir qué salta Ren'Py, controlar la velocidad del texto y la velocidad de clic automático, y ajustar el volumen de sonido, música y voz."
+    e "Esta pantalla te permite decidir cómo se muestra Ren'Py, elegir qué salta Ren'Py, controlar la velocidad del texto y la velocidad de clic automático, y ajustar el volumen de sonido, música y voz."
 
 # game/tutorial_playing.rpy:42
 translate spanish tutorial_playing_b1562a34:
@@ -81,7 +81,7 @@ translate spanish tutorial_playing_b1562a34:
 translate spanish tutorial_playing_790f9dc7:
 
     # e "While the default game menus look a bit generic, with a little work they can be customized or even entirely replaced, allowing you to create menus as unique as your game."
-    e "Si bien los menús predeterminados del juego parecen un poco genéricos, con un poco de trabajo pueden personalizarse o incluso reemplazarse por completo, lo que le permite crear menús tan únicos como tu juego."
+    e "Si bien los menús predeterminados del juego parecen un poco genéricos, con un poco de trabajo pueden personalizarse o incluso reemplazarse por completo, lo que te permite crear menús tan únicos como tu juego."
 
 # game/tutorial_playing.rpy:53
 translate spanish tutorial_playing_bc29822e:
@@ -99,7 +99,7 @@ translate spanish tutorial_playing_dc0f9cf7:
 translate spanish tutorial_playing_93f7b8f9:
 
     # e "I can skip a few lines by holding down Control, or I can toggle skip mode by clicking the skip button at the bottom of the screen."
-    e "Puedo saltar algunas líneas manteniendo presionado Control, o puedo alternar el modo de omisión haciendo clic en el botón saltar en la parte inferior de la pantalla."
+    e "Puedo saltar algunas líneas manteniendo presionado Control, o puedo alternar el modo de salto haciendo clic en el botón saltar en la parte inferior de la pantalla."
 
 # game/tutorial_playing.rpy:59
 translate spanish tutorial_playing_d3553fbe:
@@ -111,7 +111,7 @@ translate spanish tutorial_playing_d3553fbe:
 translate spanish tutorial_playing_fc0cac03:
 
     # e "Clicking the auto button toggles auto-forward mode, which makes the game advance without you clicking."
-    e "Al hacer clic en el botón automático, se alterna el modo de avance automático, lo que hace que el juego avance sin que usted haga clic."
+    e "Al hacer clic en el botón auto, se alterna el modo de avance automático, lo que hace que el juego avance sin que usted haga clic."
 
 # game/tutorial_playing.rpy:63
 translate spanish tutorial_playing_14e1c854:
@@ -153,7 +153,7 @@ translate spanish tutorial_rollback_041be71b:
 translate spanish tutorial_rollback_4b903465:
 
     # e "Rolling forward through a menu will make the same choice you did last time. But you don't have to do that - Ren'Py's rollback system allows you to make a different choice."
-    e "Al avanzar por un menú, se tomará la misma decisión que la última vez. Pero no tiene que hacer eso, el sistema de retoceso de Ren'Py te permite hacer una elección diferente."
+    e "Al avanzar por un menú, se tomará la misma decisión que la última vez. Pero no tienes que hacer eso, el sistema de retoceso de Ren'Py te permite hacer una elección diferente."
 
 # game/tutorial_playing.rpy:90
 translate spanish tutorial_rollback_a4633f53:
@@ -189,5 +189,5 @@ translate spanish tutorial_rollback_dce979d4:
 translate spanish tutorial_rollback_done_6564cd32:
 
     # e "By allowing Ren'Py to take care of out-of-game issues like loading and saving, you can focus on making your game, while still giving players the experience they've come to expect when playing visual novels."
-    e "Al permitir que Ren'Py se encargue de los problemas fuera del juego, como cargar y guardar, puedes concentrarse en hacer tu juego, mientras sigue brindando a los jugadores la experiencia que esperan al jugar novelas visuales."
+    e "Al permitir que Ren'Py se encargue de los problemas fuera del juego, como cargar y guardar, puedes concentrarte en hacer tu juego, mientras sigue brindando a los jugadores la experiencia que esperan al jugar novelas visuales."
 
