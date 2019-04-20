@@ -44,7 +44,7 @@ def log_clock(s):
     s = "{} took {:.2f}s".format(s, now - last_clock)
 
     renpy.display.log.write(s)
-    if (renpy.android or renpy.emscripten) and not renpy.config.log_to_stdout:
+    if renpy.android and not renpy.config.log_to_stdout:
         print(s)
 
     last_clock = now
