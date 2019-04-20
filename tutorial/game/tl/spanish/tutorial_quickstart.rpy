@@ -393,7 +393,7 @@ translate spanish tutorial_images_2fc7baee:
 translate spanish tutorial_images_802825f2:
 
     # e "Changes to the list of shown images take place instantly, so in the example, the user won't see the background by itself."
-    e "Los cambios en la lista de imágenes mostradas tienen lugar al instante, por lo que en el ejemplo, el usuario no verá el fondo por sí mismo."
+    e "Los cambios en la lista de imágenes mostradas tienen lugar al instante, por lo que en el ejemplo, el usuario no verá solo el fondo."
 
 # game/tutorial_quickstart.rpy:252
 translate spanish tutorial_images_b246dfdd:
@@ -411,7 +411,7 @@ translate spanish tutorial_images_82fceeb8:
 translate spanish tutorial_images_9defda43:
 
     # e "We also specify that it should be shown behind another image, in this case eileen. That's me."
-    e "También especificamos que debe mostrarse detrás(behind) de otra imagen, en este caso eileen. Ese soy yo."
+    e "También especificamos que debe mostrarse detrás(behind) de otra imagen, en este caso eileen. Esa soy yo."
 
 # game/tutorial_quickstart.rpy:264
 translate spanish tutorial_images_73d331f7:
@@ -633,7 +633,7 @@ translate spanish tutorial_music_18650fe7:
 translate spanish tutorial_music_413d91fc:
 
     # e "If the optional fadeout clause is given, it will fade out the currently playing music before starting the new music."
-    e "Si la cláusula opcional fadeout se dio, se desvanecerá la música que se está reproduciendo en ese momento antes de iniciar la nueva música."
+    e "Si la cláusula opcional fadeout se escribe, se desvanecerá la música que se está reproduciendo en ese momento antes de iniciar la nueva música."
 
 # game/tutorial_quickstart.rpy:463
 translate spanish tutorial_music_a282a0e3:
@@ -693,7 +693,7 @@ translate spanish choice1_no_72958b50:
 translate spanish choice1_done_acba9504:
 
     # e "Here, you can see the code for that menu. If you scroll down, you can see the code we run after the menu."
-    e "Aquí puedes ver el código de ese menú. Si se desplaza hacia abajo, puede ver el código que corremos después del menu."
+    e "Aquí puedes ver el código de ese menú. Si se desplaza hacia abajo, puede ver el código que corremos después de menu."
 
 # game/tutorial_quickstart.rpy:530
 translate spanish choice1_done_f9fa6889:
@@ -711,13 +711,13 @@ translate spanish choice1_done_ebb2db38:
 translate spanish choice1_done_59cac95d:
 
     # e "Here, each block jumps to a label. While you could put small amounts of Ren'Py code inside a menu label, it's probably good practice to usually jump to a bigger block of code."
-    e "Aquí, cada bloque salta(jump) a una label. Si bien puede colocar pequeñas cantidades de código Ren'Py dentro de una etiqueta de menú, probablemente sea una buena práctica saltar a un bloque de código más grande."
+    e "Aquí, cada bloque salta(jump) a una label. Si bien puede colocar pequeñas cantidades de código Ren'Py dentro de una label de menú, probablemente sea una buena práctica saltar a un bloque de código más grande."
 
 # game/tutorial_quickstart.rpy:536
 translate spanish choice1_done_2851a313:
 
     # e "Scrolling down past the menu, you can see the labels that the menu jumps to. There are three labels here, named choice1_yes, choice1_no, and choice1_done."
-    e "Desplazándose hacia abajo más allá del menú, puede ver las labels a las que salta el menú. Aquí hay tres labels, denominadas choice1_yes, choice1_no y choice1_done."
+    e "Desplazándote hacia abajo más allá del menú, puede ver las labels a las que salta el menú. Aquí hay tres labels, denominadas choice1_yes, choice1_no y choice1_done."
 
 # game/tutorial_quickstart.rpy:538
 translate spanish choice1_done_ff761b03:
@@ -859,5 +859,5 @@ translate spanish strings:
 translate spanish tutorial_music_a2ffbe9b:
 
     # e "Let's check out some of the commands that can affect the music channel."
-    e "Revisemos algunos de los comandos que pueden afectar el canla music."
+    e "Revisemos algunos de los comandos que pueden afectar el canal music."
 
