@@ -809,6 +809,7 @@ init python in distribute:
 
             self.add_file_list_hash("rapt")
             self.add_file_list_hash("renios")
+            self.add_file_list_hash("web")
 
             tmp_fn = self.temp_filename("renpy.py")
 
