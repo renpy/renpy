@@ -523,6 +523,10 @@ init python in distribute:
             # Build the mac app and windows exes.
             self.add_mac_files()
             self.add_windows_files()
+            self.add_main_py()
+
+            # Add the main.py.
+            self.add_main_py()
 
             # Add generated/special files.
             if build['renpy']:
@@ -982,6 +986,13 @@ init python in distribute:
             if os.path.exists(exe_fn):
                 self.add_file(windows, self.exe, exe_fn)
                 self.add_file(windows, "lib/windows-i686/" + self.exe, main_fn)
+
+        def add_main_py(self):
+            if self.build['renpy']:
+                return
+
+            self.add_file("web", "main.py", os.path.join(config.renpy_base, "renpy.py"))
+
 
         def mark_executable(self):
             """
