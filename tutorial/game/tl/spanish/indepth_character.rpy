@@ -15,7 +15,7 @@ translate spanish demo_character_d7908a94:
 translate spanish demo_character_275ef8b9:
 
     # e "Each statement creates a Character object, and gives it a single argument, a name. If the name is None, no name is displayed."
-    e "Cada declaración crea un objeto Character y le da un solo argumento, un nombre. Si el nombre es None(Ninguno), no se muestra ningún nombre."
+    e "Cada sentencia crea un objeto Character y le da un solo argumento, un nombre. Si el nombre es None(Ninguno), no se muestra ningún nombre."
 
 # game/indepth_character.rpy:21
 translate spanish demo_character_a63aea0c:

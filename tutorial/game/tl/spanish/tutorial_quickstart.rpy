@@ -699,7 +699,7 @@ translate spanish choice1_done_acba9504:
 translate spanish choice1_done_f9fa6889:
 
     # e "Menus are introduced by the menu statement. The menu statement takes an indented block, in which there can be one line of dialogue and multiple choices."
-    e "Los menús son introducidos por la sentencia del menu. La sentencia menu toma un bloque con sangría, en el que puede haber una línea de diálogo y múltiples opciones."
+    e "Los menús son introducidos por la sentencia menu. La sentencia menu toma un bloque con sangría, en el que puede haber una línea de diálogo y múltiples opciones."
 
 # game/tutorial_quickstart.rpy:532
 translate spanish choice1_done_ebb2db38:

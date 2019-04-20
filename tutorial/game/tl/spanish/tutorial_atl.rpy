@@ -285,7 +285,7 @@ translate spanish tutorial_atl_1f22f875:
 translate spanish tutorial_atl_fd036bdf:
 
     # e "The first place ATL can be used is as part of an image statement. Instead of a displayable, an image may be defined as a block of ATL code."
-    e "El primer lugar donde se puede usar ATL es como parte de una declaración de imagen. En lugar de mostrarse, una imagen puede definirse como un bloque de código ATL."
+    e "El primer lugar donde se puede usar ATL es como parte de una sentencia image. En lugar de mostrarse, una imagen puede definirse como un bloque de código ATL."
 
 # game/tutorial_atl.rpy:456
 translate spanish tutorial_atl_7cad2ab9:
@@ -297,19 +297,19 @@ translate spanish tutorial_atl_7cad2ab9:
 translate spanish tutorial_atl_c78b2a1e:
 
     # e "The second way is through the use of the transform statement. This assigns the ATL block to a python variable, allowing it to be used in at clauses and inside other transforms."
-    e "La segunda forma es a través del uso de la declaración de transformación. Esto asigna el bloque ATL a una variable de python, lo que permite que se use en cláusulas at y dentro de otras transformaciones."
+    e "La segunda forma es a través del uso de la sentencia transform. Esto asigna el bloque ATL a una variable de python, lo que permite que se use en cláusulas at y dentro de otras transformaciones."
 
 # game/tutorial_atl.rpy:473
 translate spanish tutorial_atl_da7a7759:
 
     # e "Finally, an ATL block can be used as part of a show statement, instead of the at clause."
-    e "Finalmente, un bloque ATL se puede usar como parte de una declaración show, en lugar de la cláusula at."
+    e "Finalmente, un bloque ATL se puede usar como parte de una sentencia show, en lugar de la cláusula at."
 
 # game/tutorial_atl.rpy:480
 translate spanish tutorial_atl_1dd345c6:
 
     # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place."
-    e "Cuando se usa ATL como parte de una declaración show, los valores de las propiedades existen incluso cuando se cambia la transformación. Así que aunque des clic yse detenga el movimiento, la imagen permanece en el mismo lugar."
+    e "Cuando se usa ATL como parte de una sentencia show, los valores de las propiedades existen incluso cuando se cambia la transformación. Así que aunque des clic yse detenga el movimiento, la imagen permanece en el mismo lugar."
 
 # game/tutorial_atl.rpy:488
 translate spanish tutorial_atl_c21bc1d1:
@@ -339,7 +339,7 @@ translate spanish tutorial_atl_3eec202b:
 translate spanish tutorial_atl_fbc9bf83:
 
     # e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
-    e "Para presentar ATL, comencemos observando una animación simple. Aquí hay una que consta de cinco líneas de código ATL, contenidas dentro de una declaración de imagen."
+    e "Para presentar ATL, comencemos observando una animación simple. Aquí hay una que consta de cinco líneas de código ATL, contenidas dentro de una sentencia image."
 
 # game/tutorial_atl.rpy:532
 translate spanish tutorial_atl_bf92d973:
@@ -357,13 +357,13 @@ translate spanish tutorial_atl_51a41db4:
 translate spanish tutorial_atl_3d065074:
 
     # e "The second and fourth lines are pause statements, which cause ATL to wait half a second each before continuing. That's how we give the delay between images."
-    e "Las líneas segunda y cuarta son declaraciones pause, lo que hace que ATL espere medio segundo cada una antes de continuar. Así es como damos la demora entre las imágenes."
+    e "Las líneas segunda y cuarta son sentencias pause, lo que hace que ATL espere medio segundo cada una antes de continuar. Así es como damos la demora entre las imágenes."
 
 # game/tutorial_atl.rpy:538
 translate spanish tutorial_atl_60f2a5e8:
 
     # e "The final line is a repeat statement. This causes the current block of ATL to be restarted. You can only have one repeat statement per block."
-    e "La línea final es una declaración repeat. Esto hace que el bloque actual de ATL se reinicie. Sólo puede tener una declaración repeat por bloque."
+    e "La línea final es una sentencia repeat. Esto hace que el bloque actual de ATL se reinicie. Sólo puede tener una sentencia repeat por bloque."
 
 # game/tutorial_atl.rpy:543
 translate spanish tutorial_atl_146cf4c4:
@@ -375,7 +375,7 @@ translate spanish tutorial_atl_146cf4c4:
 translate spanish tutorial_atl_d90b1838:
 
     # e "Omitting the repeat statement means that the animation stops once we reach the end of the block of ATL code."
-    e "Omitir la declaración repeat significa que la animación se detiene una vez que llegamos al final del bloque del código ATL."
+    e "Omitir la sentencia repeat significa que la animación se detiene una vez que llegamos al final del bloque del código ATL."
 
 # game/tutorial_atl.rpy:554
 translate spanish tutorial_atl_e5872360:
@@ -399,7 +399,7 @@ translate spanish tutorial_atl_ddc55039:
 translate spanish tutorial_atl_43516492:
 
     # e "With a few more statements, we can move things around on the screen."
-    e "Con unas cuantas declaraciones más, podemos mover las cosas en la pantalla."
+    e "Con unas cuantas sentencia más, podemos mover las cosas en la pantalla."
 
 # game/tutorial_atl.rpy:577
 translate spanish tutorial_atl_fb979287:
@@ -411,25 +411,25 @@ translate spanish tutorial_atl_fb979287:
 translate spanish tutorial_atl_7650ec09:
 
     # e "The pause and repeat statements are the same statements we used in our animations. They work throughout ATL code."
-    e "Las declaraciones pause y repeat son las mismas declaraciones que usamos en nuestras animaciones. Funcionan a lo largo del código ATL."
+    e "Las sentencia pause y repeat son las mismas sentencias que usamos en nuestras animaciones. Funcionan a lo largo del código ATL."
 
 # game/tutorial_atl.rpy:584
 translate spanish tutorial_atl_d3416d4f:
 
     # e "Having the image jump around on the screen isn't all that useful. That's why ATL has the interpolation statement."
-    e "Hacer que la imagen salte por la pantalla no es tan útil. Es por eso que ATL tiene la declaración de interpolación."
+    e "Hacer que la imagen salte por la pantalla no es tan útil. Es por eso que ATL tiene la sentencia de interpolación."
 
 # game/tutorial_atl.rpy:586
 translate spanish tutorial_atl_4e7512ec:
 
     # e "The interpolation statement allows you to smoothly vary the value of a transform property, from an old to a new value."
-    e "La declaración de interpolación le permite variar suavemente el valor de una propiedad de transformación, de un valor antiguo a uno nuevo."
+    e "La sentencia de interpolación le permite variar suavemente el valor de una propiedad de transformación, de un valor antiguo a uno nuevo."
 
 # game/tutorial_atl.rpy:588
 translate spanish tutorial_atl_685eeeaa:
 
     # e "Here, we have an interpolation statement on the second ATL line. It starts off with the name of a time function, in this case linear."
-    e "Aquí, tenemos una declaración de interpolación en la segunda línea ATL. Comienza con el nombre de una función de tiempo, en este caso linear."
+    e "Aquí, tenemos una sentencia de interpolación en la segunda línea ATL. Comienza con el nombre de una función de tiempo, en este caso linear."
 
 # game/tutorial_atl.rpy:590
 translate spanish tutorial_atl_c5cb49de:
@@ -441,7 +441,7 @@ translate spanish tutorial_atl_c5cb49de:
 translate spanish tutorial_atl_04b8bc1d:
 
     # e "The value of each property is interpolated from its value when the statement starts to the value at the end of the statement. This is done once per frame, allowing smooth animation."
-    e "El valor de cada propiedad se interpola a partir de su valor cuando la declaración comienza al valor al final de la declaración. Esto se hace una vez por fotograma, permitiendo una animación suave."
+    e "El valor de cada propiedad se interpola a partir de su valor cuando la sentencia comienza al valor al final de la sentencia. Esto se hace una vez por fotograma, permitiendo una animación suave."
 
 # game/tutorial_atl.rpy:603
 translate spanish tutorial_atl_2958f397:
@@ -453,25 +453,25 @@ translate spanish tutorial_atl_2958f397:
 translate spanish tutorial_atl_d08fe8d9:
 
     # e "Apart from displayables, pause, interpolation, and repeat, there are a few other statements we can use as part of ATL."
-    e "Además de visualizables, pausas, interploaciones y repeticiones, hay algunas otras declaraciones que podemos usar como parte de ATL."
+    e "Además de visualizables, pausas, interploaciones y repeticiones, hay algunas otras sentencias que podemos usar como parte de ATL."
 
 # game/tutorial_atl.rpy:619
 translate spanish tutorial_atl_84b22ac0:
 
     # e "ATL transforms created using the statement become ATL statements themselves. Since the default positions are also transforms, this means that we can use left, right, and center inside of an ATL block."
-    e "Las transformaciones ATL creadas usando la declaración se convierten en declaraciones ATL. Dado que las posiciones predeterminadas también son transformaciones, esto significa que podemos usar left, derecha y centro dentro de un bloque ATL."
+    e "Las transformaciones ATL creadas usando la sentencia se convierten en sentencias ATL. Dado que las posiciones predeterminadas también son transformaciones, esto significa que podemos usar left, derecha y centro dentro de un bloque ATL."
 
 # game/tutorial_atl.rpy:635
 translate spanish tutorial_atl_331126c1:
 
     # e "Here, we have two new statements. The block statement allows you to include a block of ATL code. Since the repeat statement applies to blocks, this lets you repeat only part of an ATL transform."
-    e "Aquí tenemos dos nuevas declaraciones. La declaración block te permite incluir un bloque de código ATL. Como la declaración repeat se aplica a los bloques, esto le permite repetir solo una parte de una transformación ATL."
+    e "Aquí tenemos dos nuevas sentencias. La sentencia block te permite incluir un bloque de código ATL. Como la sentencia repeat se aplica a los bloques, esto le permite repetir solo una parte de una transformación ATL."
 
 # game/tutorial_atl.rpy:637
 translate spanish tutorial_atl_24f67b67:
 
     # e "We also have the time statement, which runs after the given number of seconds have elapsed from the start of the block. It will run even if another statement is running, stopping the other statement."
-    e "También tenemos la declaración time, que se ejecuta después de que hayan transcurrido los segundos dados desde el inicio del bloque. Se ejecutará incluso si se está ejecutando otra declaración, deteniendo la otra declaración."
+    e "También tenemos la sentencia time, que se ejecuta después de que hayan transcurrido los segundos dados desde el inicio del bloque. Se ejecutará incluso si se está ejecutando otra sentencia, deteniendo la otra sentencia."
 
 # game/tutorial_atl.rpy:639
 translate spanish tutorial_atl_b7709507:
@@ -483,7 +483,7 @@ translate spanish tutorial_atl_b7709507:
 translate spanish tutorial_atl_f903bc3b:
 
     # e "The parallel statement lets us run two blocks of ATL code at the same time."
-    e "La declaración parallel nos permite ejecutar dos bloques de código ATL al mismo tiempo."
+    e "La sentencia parallel nos permite ejecutar dos bloques de código ATL al mismo tiempo."
 
 # game/tutorial_atl.rpy:655
 translate spanish tutorial_atl_5d0f8f9d:
@@ -495,19 +495,19 @@ translate spanish tutorial_atl_5d0f8f9d:
 translate spanish tutorial_atl_28a7d27e:
 
     # e "Finally, the choice statement makes Ren'Py randomly pick a block of ATL code. This allows you to add some variation as to what Ren'Py shows."
-    e "Finalmente, la declaración choice hace que Ren'Py elija aleatoriamente un bloque de código ATL. Esto le permite agregar alguna variación a lo que muestra Ren'Py."
+    e "Finalmente, la sentencia choice hace que Ren'Py elija aleatoriamente un bloque de código ATL. Esto le permite agregar alguna variación a lo que muestra Ren'Py."
 
 # game/tutorial_atl.rpy:675
 translate spanish tutorial_atl_2265254b:
 
     # e "This tutorial game has only scratched the surface of what you can do with ATL. For example, we haven't even covered the on and event statements. For more information, you might want to check out {a=https://renpy.org/doc/html/atl.html}the ATL chapter in the reference manual{/a}."
-    e "Este juego tutorial solo ha arañado la superficie de lo que puedes hacer con ATL. Por ejemplo, ni siquiera hemos cubierto las declaraciones on y event. Para más información, es posible que desee revisar {a=https://renpy.org/doc/html/atl.html}el capítulo ATL en el manual de referencias{/a}."
+    e "Este juego tutorial solo ha arañado la superficie de lo que puedes hacer con ATL. Por ejemplo, ni siquiera hemos cubierto las sentencias on y event. Para más información, es posible que desee revisar {a=https://renpy.org/doc/html/atl.html}el capítulo ATL en el manual de referencias{/a}."
 
 # game/tutorial_atl.rpy:684
 translate spanish transform_properties_391169cf:
 
     # e "Ren'Py has quite a few transform properties that can be used with ATL, the Transform displayable, and the add Screen Language statement."
-    e "Ren'Py tiene unas cuantas propiedades de transformación que se pueden usar con ATL, la Transform displayable y la declaración add Screen Language."
+    e "Ren'Py tiene unas cuantas propiedades de transformación que se pueden usar con ATL, la Transform displayable y la sentencia add Screen Language."
 
 # game/tutorial_atl.rpy:685
 translate spanish transform_properties_fc895a1f:

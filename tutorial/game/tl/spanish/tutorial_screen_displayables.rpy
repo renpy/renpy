@@ -27,7 +27,7 @@ translate spanish screen_displayable_properties_527d4b4e:
 translate spanish screen_displayable_properties_8aff26dd:
 
     # e "The at property applies a transform to the displayable, the same way the at clause in the show statement does."
-    e "La propiedad at aplica una transformación al visualizable, de la misma forma que lo hace la cláusula at en la declaración show."
+    e "La propiedad at aplica una transformación al visualizable, de la misma forma que lo hace la cláusula at en la sentencia show."
 
 # game/tutorial_screen_displayables.rpy:106
 translate spanish screen_displayable_properties_2ed40a70:
@@ -75,13 +75,13 @@ translate spanish add_displayable_ec121c5c:
 translate spanish add_displayable_7ec3e2b0:
 
     # e "This can be done using the add statement, which adds an image or other displayable to the screen."
-    e "Esto se puede hacer usando la declaración add, que agrega una imagen u otro visualizable en la pantalla."
+    e "Esto se puede hacer usando la sentencia add, que agrega una imagen u otro visualizable en la pantalla."
 
 # game/tutorial_screen_displayables.rpy:167
 translate spanish add_displayable_7112a377:
 
     # e "There are a few ways to refer to the image. If it's in the images directory or defined with the image statement, you can just put the name inside a quoted string."
-    e "Hay algunas maneras de referirse a la imagen. Si está en el directorio de imágenes o definido con la declaración de la imagen, solo pon el nombre dentro de una cadena entre comillas."
+    e "Hay algunas maneras de referirse a la imagen. Si está en el directorio de imágenes o definido con la sentencia image, solo pon el nombre dentro de una cadena entre comillas."
 
 # game/tutorial_screen_displayables.rpy:176
 translate spanish add_displayable_8ba81c26:
@@ -111,7 +111,7 @@ translate spanish add_displayable_3a56a464:
 translate spanish text_displayable_96f88225:
 
     # e "The screen language text statement adds a text displayable to the screen. It takes one argument, the text to be displayed."
-    e "La declaración text del lenguaje de pantalla agrega un visualizable text a la pantalla. Toma un argumento, el texto que se mostrará."
+    e "La sentencia text del lenguaje de pantalla agrega un visualizable text a la pantalla. Toma un argumento, el texto que se mostrará."
 
 # game/tutorial_screen_displayables.rpy:224
 translate spanish text_displayable_1ed1a8c2:
@@ -129,13 +129,13 @@ translate spanish text_displayable_9351d9dd:
 translate spanish text_displayable_32d76ccb:
 
     # e "When text is displayed in a screen using the text statement variables defined in the screen take precedence over those defined outside it."
-    e "Cuando el texto se muestra en una pantalla, las variables de declaración de texto definidas en la pantalla tienen prioridad sobre las definidas fuera de ella."
+    e "Cuando el texto se muestra en una pantalla, las variables de sentencia text definidas en la pantalla tienen prioridad sobre las definidas fuera de ella."
 
 # game/tutorial_screen_displayables.rpy:238
 translate spanish text_displayable_7e84a5d1:
 
     # e "Those variables may be parameters given to the screen, defined with the default or python statements, or set using the SetScreenVariable action."
-    e "Esas variables pueden ser parámetros dados a la pantalla, definidos con las declaraciones predeterminadas o de python, o configurados mediante la acción SetScreenVariable."
+    e "Esas variables pueden ser parámetros dados a la pantalla, definidos con las sentencias predeterminadas o de python, o configurados mediante la acción SetScreenVariable."
 
 # game/tutorial_screen_displayables.rpy:247
 translate spanish text_displayable_8bc866c4:
@@ -225,7 +225,7 @@ translate spanish layout_displayables_c32324a7:
 translate spanish layout_displayables_d7fa0f28:
 
     # e "The has statement creates a layout, and then adds all further children of its parent to that layout. It's just a convenience to make screens more readable."
-    e "La declaracion has crea un diseño y luego agrega todos los demás elementos secundarios de su padre a ese diseño. Es solo una conveniencia para hacer las pantallas más legibles."
+    e "La sentencia has crea un diseño y luego agrega todos los demás elementos secundarios de su padre a ese diseño. Es solo una conveniencia para hacer las pantallas más legibles."
 
 # game/tutorial_screen_displayables.rpy:395
 translate spanish window_displayables_14beb786:

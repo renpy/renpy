@@ -21,7 +21,7 @@ translate spanish tutorial_nvlmode_e7030787:
 translate spanish tutorial_nvlmode_c9a35125:
 
     # nvle "Then just use that character in a say statement."
-    nvle "Luego solo usa ese personaje en una declaración say."
+    nvle "Luego solo usa ese personaje en una sentencia say."
 
 # game/tutorial_nvlmode.rpy:30
 translate spanish tutorial_nvlmode_130610c2:
@@ -35,7 +35,7 @@ translate spanish tutorial_nvlmode_130610c2:
 translate spanish tutorial_nvlmode_390a4eb1:
 
     # nvle "The 'nvl show' and 'nvl hide' statements use transitions to show and hide the NVL window."
-    nvle "Las declaraciones 'nvl show' y 'nvl hide' usan transiciones para mostrar y ocultar la ventana NVL."
+    nvle "Las sentencias 'nvl show' y 'nvl hide' usan transiciones para mostrar y ocultar la ventana NVL."
 
 # game/tutorial_nvlmode.rpy:48
 translate spanish tutorial_nvlmode_05956e33:

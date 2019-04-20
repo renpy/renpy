@@ -75,13 +75,13 @@ translate spanish translations_71bf6e72:
 translate spanish translations_82c9748e:
 
     # e "The translate python statement can be used to set the values of gui variables to change the font."
-    e "La declaración translate python se puede usar para establecer los valores de las variables gui para cambiar la fuente."
+    e "La sentencia translate python se puede usar para establecer los valores de las variables gui para cambiar la fuente."
 
 # game/indepth_translations.rpy:52
 translate spanish translations_a0042025:
 
     # e "The translate style statement sets style properties more directly."
-    e "La declaración de translate style establece las propiedades de estilo más directamente."
+    e "La sentencia translate style establece las propiedades de estilo más directamente."
 
 # game/indepth_translations.rpy:54
 translate spanish translations_b10990ce:

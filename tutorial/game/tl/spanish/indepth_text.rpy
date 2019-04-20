@@ -129,7 +129,7 @@ translate spanish after_a_label_e5321e79:
 translate spanish after_a_label_1f2697ba:
 
     # extend " to the next statement."
-    extend " a la siguiente declaración."
+    extend " a la siguiente sentencia."
 
 # game/indepth_text.rpy:106
 translate spanish after_a_label_dbfca166:

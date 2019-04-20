@@ -9,7 +9,7 @@ translate spanish simple_displayables_db46fd25:
 translate spanish simple_displayables_bfe78cb7:
 
     # e "The image statement is used to give an image name to a displayable. The easy way is to simply give an image filename."
-    e "La declaración de imagen se utiliza para dar un nombre de imagen a un visualizable. La forma más sencilla es simplemente dar un nombre de archivo de imagen."
+    e "La sentencia image se utiliza para dar un nombre de imagen a un visualizable. La forma más sencilla es simplemente dar un nombre de archivo de imagen."
 
 # game/indepth_displayables.rpy:29
 translate spanish simple_displayables_cef4598b:

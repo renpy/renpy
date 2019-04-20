@@ -117,7 +117,7 @@ translate spanish screens_showing_64f23380:
 translate spanish screens_showing_e8f68c08:
 
     # e "Both are inside a vbox, which means vertical box, statement - that places the text on top of the button."
-    e "Ambos están dentro de un vbox, lo que significa un cuadro vertical, declaración, que coloca el texto sobre el botón."
+    e "Ambos están dentro de un vbox, lo que significa un cuadro vertical, sentencia, que coloca el texto sobre el botón."
 
 # game/tutorial_screens.rpy:280
 translate spanish screens_showing_7e48fc22:
@@ -129,7 +129,7 @@ translate spanish screens_showing_7e48fc22:
 translate spanish screens_showing_80425bf3:
 
     # e "There are a trio of statements that are used to display screens."
-    e "Hay un trío de declaraciones que se utilizan para mostrar pantallas."
+    e "Hay un trío de sentencias que se utilizan para mostrar pantallas."
 
 # game/tutorial_screens.rpy:291
 translate spanish screens_showing_7d2deb37:
@@ -165,7 +165,7 @@ translate spanish screens_showing_b52e420c:
 translate spanish screens_showing_c5ca730f:
 
     # e "When a call screen statement ends, the screen is automatically hidden."
-    e "Cuando una declaración de pantalla call finaliza, la pantalla se oculta automáticamente."
+    e "Cuando una sentencia screen call finaliza, la pantalla se oculta automáticamente."
 
 # game/tutorial_screens.rpy:312
 translate spanish screens_showing_a38d1702:
@@ -303,7 +303,7 @@ translate spanish screens_control_0e939050:
 translate spanish screens_control_6334650a:
 
     # e "Similarly, the python statement introduces an indented block of python statements. But there is one big difference in Python in screens and Python in scripts."
-    e "De manera similar, la declaración de python introduce un bloque sangrado de declaraciones de python. Pero hay una gran diferencia en Python en pantallas y Python en scripts."
+    e "De manera similar, la sentencia de python introduce un bloque sangrado de sentencias de python. Pero hay una gran diferencia en Python en pantallas y Python en scripts."
 
 # game/tutorial_screens.rpy:520
 translate spanish screens_control_ba8f5f13:
@@ -363,7 +363,7 @@ translate spanish screens_control_6768768b:
 translate spanish screen_use_c6a20a16:
 
     # e "The screen language use statement lets you include a screen inside another. This can be useful to prevent duplication inside screens."
-    e "La declaración use del lenguaje de pantalla te permite incluir una pantalla dentro de otra. Esto puede ser útil para evitar la duplicación dentro de las pantallas."
+    e "La sentencia use del lenguaje de pantalla te permite incluir una pantalla dentro de otra. Esto puede ser útil para evitar la duplicación dentro de las pantallas."
 
 # game/tutorial_screens.rpy:616
 translate spanish screen_use_95a34d3a:
@@ -375,13 +375,13 @@ translate spanish screen_use_95a34d3a:
 translate spanish screen_use_e2c673d9:
 
     # e "Here, we moved the statements that show the text and bar into a second screen, and the use statement includes that screen in the first one."
-    e "Aquí, movimos las sentencias que muestran el texto y la barra a una segunda pantalla, y la declaración de uso incluye esa pantalla en la primera."
+    e "Aquí, movimos las sentencias que muestran el texto y la barra a una segunda pantalla, y la sentencia use incluye esa pantalla en la primera."
 
 # game/tutorial_screens.rpy:635
 translate spanish screen_use_2efdd2ff:
 
     # e "The name and amount of the stat are passed in as arguments to the screen, just as is done in the call screen statement."
-    e "El nombre y la cantidad de la estadística se pasan como argumentos a la pantalla, tal como se hace en la declaración de la pantalla llamada."
+    e "El nombre y la cantidad de la estadística se pasan como argumentos a la pantalla, tal como se hace en la llamada a la sentencia screen."
 
 # game/tutorial_screens.rpy:637
 translate spanish screen_use_f8d1bf9d:
@@ -393,7 +393,7 @@ translate spanish screen_use_f8d1bf9d:
 translate spanish screen_use_4e22c25e:
 
     # e "The transclude statement goes one step further, by letting the use statement take a block of screen language statements."
-    e "La declaración transclude va un paso más allá, al permitir que la declaración de uso tome un bloque de declaraciones de lenguaje de pantalla."
+    e "La sentencia transclude va un paso más allá, al permitir que la sentencia use tome un bloque de sentencia de lenguaje de pantalla."
 
 # game/tutorial_screens.rpy:655
 translate spanish screen_use_c83b97e3:

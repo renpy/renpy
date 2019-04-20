@@ -83,7 +83,7 @@ translate spanish director_3dcc4362:
     # e "Let's add a background. Click the '+' to pick where to add it, then the 'scene' statement and 'washington' for the image. Finally, click 'Add' to add it."
     scene bg washington
 
-    e "Vamos a añadir un fondo. Haz clic en '+' para elegir dónde agregarlo, luego la declaración 'scene' y 'washington' para la imagen. Finalmente, haga clic en 'Añadir' para agregarlo."
+    e "Vamos a añadir un fondo. Haz clic en '+' para elegir dónde agregarlo, luego la sentencia 'scene' y 'washington' para la imagen. Finalmente, haga clic en 'Añadir' para agregarlo."
 
 # game/tutorial_director.rpy:48
 translate spanish director_292d58b5:
@@ -97,7 +97,7 @@ translate spanish director_292d58b5:
 translate spanish director_c875c1a7:
 
     # e "You can edit or remove statements with the pencil icon. You can move me to the right by editing the show statement, then clicking '(transform)', 'right', and 'Change'."
-    e "Puede editar o eliminar declaraciones con el icono de lápiz. Puede moverme a la derecha editando la declaración del programa, luego haciendo clic en '(transform)', 'right' y 'Cambiar'."
+    e "Puede editar o eliminar sentencias con el icono de lápiz. Puede moverme a la derecha editando la sentencia del programa, luego haciendo clic en '(transform)', 'right' y 'Cambiar'."
 
 # game/tutorial_director.rpy:54
 translate spanish director_4e04a74e:

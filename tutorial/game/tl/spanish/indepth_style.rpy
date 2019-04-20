@@ -87,7 +87,7 @@ translate spanish style_basics_67e48162:
 translate spanish style_basics_03516b4a:
 
     # e "The next is as part of a displayable created in an image statement. Style properties are just arguments to the displayable."
-    e "El siguiente es como parte de un objeto visualizable creado en una declaración de imagen. Las propiedades de estilo son solo argumentos para visualizables."
+    e "El siguiente es como parte de un objeto visualizable creado en una sentencia image. Las propiedades de estilo son solo argumentos para visualizables."
 
 # game/indepth_style.rpy:160
 translate spanish style_basics_ccc0d1ca:
@@ -111,7 +111,7 @@ translate spanish style_basics_dbe80939:
 translate spanish style_basics_ac6a8414:
 
     # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
-    e "Finalmente, está la declaración de estilo, que crea o cambia un estilo con nombre. Al darle a Text el argumento de estilo, le decimos que use el estilo blue_text."
+    e "Finalmente, está la sentencia style, que crea o cambia un estilo con nombre. Al darle a Text el argumento de estilo, le decimos que use el estilo blue_text."
 
 # game/indepth_style.rpy:180
 translate spanish style_basics_3d9bdff7:
@@ -135,7 +135,7 @@ translate spanish style_basics_6ab170a3:
 translate spanish style_basics_f78117a7:
 
     # e "The parent can be explicitly changed by giving the style statement an 'is' clause. In this case, we're explictly setting the style to the parent of text."
-    e "El padre se puede cambiar explícitamente al dar a la declaración de estilo una cláusula 'is'. En este caso, estamos configurando explícitamente el estilo al padre del texto."
+    e "El padre se puede cambiar explícitamente al dar a la sentencia style una cláusula 'is'. En este caso, estamos configurando explícitamente el estilo al padre del texto."
 
 # game/indepth_style.rpy:194
 translate spanish style_basics_6007040b:
