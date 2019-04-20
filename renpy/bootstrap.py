@@ -86,6 +86,7 @@ def extra_imports():
     import cProfile; cProfile
     import pstats; pstats
     import _ssl; _ssl
+    import SimpleHTTPServer; SimpleHTTPServer
 
     # Used by requests.
     import cgi; cgi
@@ -353,7 +354,6 @@ You may be using a system install of python. Please run {0}.sh,
             renpy.display.draw.quit()
 
         renpy.audio.audio.quit()
-
 
         # Prevent subprocess from throwing errors while trying to run it's
         # __del__ method during shutdown.
