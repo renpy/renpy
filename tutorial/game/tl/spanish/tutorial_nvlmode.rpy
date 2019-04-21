@@ -15,7 +15,7 @@ translate spanish tutorial_nvlmode_ac125210:
 translate spanish tutorial_nvlmode_e7030787:
 
     # nvle "To use NVL-mode, you need to define Characters with a kind=nvl."
-    nvle "Para usar el modo NVL, debe definir los Characters con kind=nvl."
+    nvle "Para usar el modo NVL, debes definir los Characters con kind=nvl."
 
 # game/tutorial_nvlmode.rpy:28
 translate spanish tutorial_nvlmode_c9a35125:

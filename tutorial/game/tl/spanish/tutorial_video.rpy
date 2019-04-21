@@ -15,13 +15,13 @@ translate spanish tutorial_video_4aefd413:
 translate spanish tutorial_video_b56ccf19:
 
     # e "To do this, we first have to define an image to be a Movie displayable. Movie displayables take a movie to play, and can be given position properties."
-    e "Para hacer esto, primero tenemos que definir una imagen para que sea una Movie visualizable. Los Movie visualizables toman un video para reproducir, y se le pueden dar propiedades de posición."
+    e "Para hacer esto, primero tenemos que definir una imagen para que sea una visualizable Movie. Los visualizables Movie toman un video para reproducir, y se le pueden dar propiedades de posición."
 
 # game/tutorial_video.rpy:25
 translate spanish tutorial_video_fbaa71e4:
 
     # e "Then, we can show the movie displayable, which starts the movie playing."
-    e "Luego, podemos mostrar el video visualizable, que inicia la reproducción de la película."
+    e "Luego, podemos mostrar el visualizable movie, que inicia la reproducción de la película."
 
 # game/tutorial_video.rpy:30
 translate spanish tutorial_video_bbbb242d:
@@ -39,5 +39,5 @@ translate spanish tutorial_video_a66b154c:
 translate spanish tutorial_video_63e75209:
 
     # e "A Movie displayable can also take a mask with an alpha channel, which lets you make movie sprites. But that's more complicated, so I'll stop here for now."
-    e "Un Movie visualizable también puede tomar una máscara con un canal alfa, lo que le permite hacer sprites de videos. Pero eso es más complicado, así que voy a parar aquí por ahora."
+    e "Un visualizable Movie también puede tomar una máscara con un canal alpha, lo que le permite hacer sprites de videos. Pero eso es más complicado, así que voy a parar aquí por ahora."
 

@@ -21,7 +21,7 @@ translate spanish tutorial_create_45915fcb:
 translate spanish tutorial_create_55e30cb5:
 
     # e "After that, Ren'Py will ask for a name for your project. You'll have to stick to English letters and numbers, as zip files can't handle anything more than that."
-    e "Después de eso, Ren'Py le pedirá un nombre para su proyecto. Tendrás que atenerte a las letras y números en inglés, ya que los archivos zip no pueden manejar nada más que eso."
+    e "Después de eso, Ren'Py te pedirá un nombre para su proyecto. Tendrás que atenerte a las letras y números en inglés, ya que los archivos zip no pueden manejar nada más que eso."
 
 # game/tutorial_quickstart.rpy:40
 translate spanish tutorial_create_dea3e5c2:
@@ -489,7 +489,7 @@ translate spanish tutorial_simple_positions_4cd917f6:
 translate spanish tutorial_simple_positions_fbd1a3eb:
 
     # e "While being able to write positions like this is useful, having to repeatedly do so isn't. So Ren'Py lets you define a transform once, and reuse it."
-    e "Si bien poder escribir posiciones como esta es útil, tener que hacerlo repetidamente no lo es. Entonces, Ren'Py le permite definir una transformación una vez y reutilizarla."
+    e "Si bien poder escribir posiciones como esta es útil, tener que hacerlo repetidamente no lo es. Entonces, Ren'Py te permite definir una transformación una vez y reutilizarla."
 
 # game/tutorial_quickstart.rpy:345
 translate spanish tutorial_simple_positions_2377e3b3:
@@ -801,19 +801,19 @@ translate spanish tutorial_input_066611c5:
 translate spanish tutorial_input_dc3b4560:
 
     # e "That's done with Python, and especially the renpy.input function. The first line of this example prompts the player for some texts, and sticks it in the name variable."
-    e "Eso se hace con Python, y especialmente con la función renpy.input. La primera línea de este ejemplo solicita al jugador algunos textos y lo pega en la variable de nombre."
+    e "Eso se hace con Python, y especialmente con la función renpy.input. La primera línea de este ejemplo solicita al jugador algunos textos y lo pega en la variable name."
 
 # game/tutorial_quickstart.rpy:601
 translate spanish tutorial_input_c88b3f4e:
 
     # e "Often times, you'll want to clean the name up before you use it. The last line does that, by calling the strip method to remove whitespace, and replacing the name with a default if it's missing."
-    e "Muchas veces, querrá limpiar el nombre antes de usarlo. La última línea hace eso, llamando al método strip para eliminar los espacios en blanco, y reemplazando el nombre con un valor predeterminado si falta."
+    e "Muchas veces, querrás limpiar name antes de usarla. La última línea hace eso, llamando al método strip para eliminar los espacios en blanco, y reemplazando el nombre con un valor predeterminado si falta."
 
 # game/tutorial_quickstart.rpy:605
 translate spanish tutorial_input_1236e9da:
 
     # e "To interpolate a variable, write it in square brackets. Isn't that right, [name]?"
-    e "Para interpolar una variable, escríbala entre corchetes. ¿No es correcto, [name]?"
+    e "Para interpolar una variable, escríbala entre corchetes. ¿Correcto, [name]?"
 
 # game/tutorial_quickstart.rpy:609
 translate spanish tutorial_input_c1f7a808:
@@ -825,7 +825,7 @@ translate spanish tutorial_input_c1f7a808:
 translate spanish tutorial_input_f7757a8e:
 
     # g "I think I do."
-    g "Creo que sí."
+    g "Eso creo."
 
 # game/tutorial_quickstart.rpy:619
 translate spanish tutorial_input_0548d3e2:

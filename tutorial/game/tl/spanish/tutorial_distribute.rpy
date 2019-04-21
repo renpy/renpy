@@ -51,13 +51,13 @@ translate spanish distribute_0b547b7b:
 translate spanish distribute_50a57bcf:
 
     # e "Mobile platforms might also require you to change your visual novel a little, due to the smaller limited devices. For example, buttons need to be made large enough for a person to touch."
-    e "Las plataformas móviles también pueden requerir que cambiea un poco tu novela visual, debido a los pequeños dispositivos limitados. Por ejemplo, los botones deben ser lo suficientemente grandes para que una persona los toque."
+    e "Las plataformas móviles también pueden requerir que cambies un poco tu novela visual, debido a los pequeños dispositivos limitados. Por ejemplo, los botones deben ser lo suficientemente grandes para que una persona los toque."
 
 # game/tutorial_distribute.rpy:27
 translate spanish distribute_a9a2149f:
 
     # e "Rather than cover mobile here, I'll point you to the {a=https://www.renpy.org/doc/html/android.html}Android{/a} and {a=https://www.renpy.org/doc/html/ios.html}iOS{/a} documentation, where you can read more."
-    e "En lugar de cubrir el móvil aquí, te indicaré la documentación de {a=https://www.renpy.org/doc/html/android.html}Android{/a} y {a=https://www.renpy.org/doc/html/ios.html}iOS{/a}, donde puedes leer más."
+    e "En lugar de cubrir móviles aquí, te indicaré la documentación de {a=https://www.renpy.org/doc/html/android.html}Android{/a} y {a=https://www.renpy.org/doc/html/ios.html}iOS{/a}, donde puedes leer más."
 
 # game/tutorial_distribute.rpy:29
 translate spanish distribute_f1cbc9d0:
