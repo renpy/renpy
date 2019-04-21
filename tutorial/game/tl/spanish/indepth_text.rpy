@@ -39,7 +39,7 @@ translate spanish text_1760f9c8:
 translate spanish text_a620251f:
 
     # e "The a text tag can {a=https://www.renpy.org}link to a website{/a} or {a=jump:a_label}jump to a label{/a}."
-    e "La etiqueta de texto puede {a=https://www.renpy.org}enlazar a un sitio web{/a} o {a=jump:a_label}saltar a una etiqueta{/a}."
+    e "La etiqueta de texto a puede {a=https://www.renpy.org}enlazar a un sitio web{/a} o {a=jump:a_label}saltar a una etiqueta{/a}."
 
 # game/indepth_text.rpy:49
 translate spanish after_a_label_d22d5f4a:

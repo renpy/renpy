@@ -45,7 +45,7 @@ translate spanish demo_simple_transitions_79816523:
 translate spanish demo_simple_transitions_141bb95d:
 
     # e "If you're going to stay at a black screen, you'll probably want to use 'dissolve' rather than 'fade'."
-    e "Si va a permanecer en una pantalla negra, es probable que desee utilizar 'dissolve' en lugar de 'fade'."
+    e "Si va a permanecer en una pantalla negra, es probable que desees utilizar 'dissolve' en lugar de 'fade'."
 
 # game/indepth_transitions.rpy:123
 translate spanish demo_simple_transitions_f059f4ae:

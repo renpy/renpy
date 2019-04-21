@@ -39,19 +39,19 @@ translate spanish simple_displayables_9cd108c6:
 translate spanish simple_displayables_c6e39078:
 
     # e "There's a more complete form of Solid, that can take style properties. This lets us change the size of the Solid, where normally it fills the screen."
-    e "Hay una forma más completa de Solid, que puede tomar propiedades de estilo. Esto nos permite cambiar el tamaño del sólido, donde normalmente llena la pantalla."
+    e "Hay una forma más completa de Solid, que puede tomar propiedades de estilo. Esto nos permite cambiar el tamaño del sólido, que normalmente llena la pantalla."
 
 # game/indepth_displayables.rpy:72
 translate spanish simple_displayables_b102a029:
 
     # e "The Text displayable lets Ren'Py treat text as if it was an image."
-    e "El texto visualizable permite que Ren'Py trate el texto como si fuera una imagen."
+    e "El visualizable Texto permite que Ren'Py trate el texto como si fuera una imagen."
 
 # game/indepth_displayables.rpy:80
 translate spanish simple_displayables_0befbee0:
 
     # e "This means that we can apply other displayables, like Transform, to Text in the same way we do to images."
-    e "Esto significa que podemos aplicar otros elementos visualizables, como Transform, al texto de la misma manera que lo hacemos con las imágenes."
+    e "Esto significa que podemos aplicar otros visualizables, como Transform, al texto de la misma manera que lo hacemos con las imágenes."
 
 # game/indepth_displayables.rpy:91
 translate spanish simple_displayables_fcf2325f:
@@ -63,7 +63,7 @@ translate spanish simple_displayables_fcf2325f:
 translate spanish simple_displayables_3dc0050e:
 
     # e "Some displayables are often used to customize the Ren'Py interface, with the Frame displayable being one of them. The frame displayable takes another displayable, and the size of the left, top, right, and bottom borders."
-    e "Algunos visualizables se utilizan a menudo para personalizar la interfaz Ren'Py, con Frame que se puede mostrar como uno de ellos. El cuadro visualizable toma otro elemento visualizable, y el tamaño de los bordes izquierdo, superior, derecho e inferior."
+    e "Algunos visualizables se utilizan a menudo para personalizar la interfaz Ren'Py, con Frame que se puede mostrar como uno de ellos. El visualizable frame toma otro visualizable, y el tamaño de los bordes izquierdo, superior, derecho e inferior."
 
 # game/indepth_displayables.rpy:111
 translate spanish simple_displayables_801b7910:
@@ -81,13 +81,13 @@ translate spanish simple_displayables_00603985:
 translate spanish simple_displayables_d8b23480:
 
     # e "Frames might look a little weird in the abstract, but when used with a texture, you can see how we create scalable interface components."
-    e "Los marcos pueden parecer un poco raros en lo abstracton, pero cuando se usan con una textura, se puede ver cómo creamos componentes de interfaz escalables."
+    e "Los Frames pueden parecer un poco raros en lo abstracto, pero cuando se usan con una textura, se puede ver cómo creamos componentes de interfaz escalables."
 
 # game/indepth_displayables.rpy:132
 translate spanish simple_displayables_ae3f35f5:
 
     # e "These are just the simplest displayables, the ones you'll use directly the most often."
-    e "Estos son solo los elementos visualizables más simples, los que utilizará directamente más a menudo."
+    e "Estos son solo los visualizables más simples, los que utilizarás directamente más a menudo."
 
 # game/indepth_displayables.rpy:134
 translate spanish simple_displayables_de555a92:
@@ -99,7 +99,7 @@ translate spanish strings:
 
     # indepth_displayables.rpy:67
     old "This is a text displayable."
-    new "Este es un texto visualizable."
+    new "Este es un visualizable text."
 
 # game/indepth_displayables.rpy:55
 translate spanish simple_displayables_f8e1ba3f:

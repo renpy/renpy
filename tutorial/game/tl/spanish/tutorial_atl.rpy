@@ -123,7 +123,7 @@ translate spanish tutorial_positions_5d5feb98_1:
 translate spanish tutorial_positions_e4380a83:
 
     # e "The second position we care about is the anchor. The anchor is a spot on the thing being positioned."
-    e "La segunda posición que nos importa es el anchor. El anchor es un punto en la cosa que se coloca."
+    e "La segunda posición que nos importa es el anchor. El anchor es un punto en la imagen que se coloca."
 
 # game/tutorial_atl.rpy:301
 translate spanish tutorial_positions_d1db1246:
@@ -237,13 +237,13 @@ translate spanish tutorial_positions_e0fe2d81:
 translate spanish tutorial_positions_0f4ca2b6:
 
     # e "Once you understand positions, you can use transformations to move things around the Ren'Py screen."
-    e "Una vez que entiendas las posiciones, puedes usar transformaciones para mover cosas alrededor de la pantalla Ren'Py."
+    e "Una vez que entiendas las posiciones, puedes usar transformaciones para mover cosas por toda la pantalla de Ren'Py."
 
 # game/tutorial_atl.rpy:418
 translate spanish tutorial_atl_d5d6b62a:
 
     # e "Ren'Py uses transforms to animate, manipulate, and place images. We've already seen the very simplest of transforms in use:"
-    e "Una vez que entiendas las posiciones, puedes usar transformaciones para mover cosas alrededor de la pantalla Ren'Py."
+    e "Una vez que entiendas las posiciones, puedes usar transformaciones para mover cosas toda la pantalla de Ren'Py."
 
 # game/tutorial_atl.rpy:425
 translate spanish tutorial_atl_7e853c9d:
@@ -507,7 +507,7 @@ translate spanish tutorial_atl_2265254b:
 translate spanish transform_properties_391169cf:
 
     # e "Ren'Py has quite a few transform properties that can be used with ATL, the Transform displayable, and the add Screen Language statement."
-    e "Ren'Py tiene unas cuantas propiedades de transformación que se pueden usar con ATL, la Transform displayable y la sentencia add Screen Language."
+    e "Ren'Py tiene unas cuantas propiedades de transformación que se pueden usar con ATL, el visualizable Transform y la sentencia add Screen Language."
 
 # game/tutorial_atl.rpy:685
 translate spanish transform_properties_fc895a1f:
@@ -621,13 +621,13 @@ translate spanish transform_properties_207b7fc8:
 translate spanish transform_properties_e7e22d28:
 
     # e "When used together, crop and size can be used to focus in on specific parts of an image."
-    e "Cuando se usan juntos, el recorte y el tamaño se pueden usar para enfocar en partes específicas de una imagen."
+    e "Cuando se usan juntos, crop y size se pueden usar para enfocar en partes específicas de una imagen."
 
 # game/tutorial_atl.rpy:917
 translate spanish transform_properties_f34abd82:
 
     # e "The xpan and ypan properties can be used to pan over a displayable, given an angle in degrees, with 0 being the center."
-    e "Las propiedades xpan e ypan se pueden usar para desplazarse sobre un objeto visualizable, dado un ángulo en grados, siendo 0 el centro."
+    e "Las propiedades xpan e ypan se pueden usar para desplazarse sobre un visualizable, dado un ángulo en grados, siendo 0 el centro."
 
 # game/tutorial_atl.rpy:924
 translate spanish transform_properties_bfa3b139:
