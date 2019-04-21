@@ -39,7 +39,7 @@ translate spanish screen_displayable_properties_2ed40a70:
 translate spanish screen_displayable_properties_da5733d1:
 
     # e "It tells Ren'Py which displayables are the background window, 'who' is speaking, and 'what' is being said. This used to apply per-Character styles, and help with auto-forward mode."
-    e "Le dice a Ren'Py qué elementos visualizables son la ventana de fondo, 'who' quién hablan y 'what' que se dice. Esto solía aplicar estilos por Character y ayuda con el modo de reenvío automático."
+    e "Le dice a Ren'Py qué visualizables son la ventana de fondo, 'who' quién hablan y 'what' que se dice. Esto solía aplicar estilos por Character y ayuda con el modo de reenvío automático."
 
 # game/tutorial_screen_displayables.rpy:123
 translate spanish screen_displayable_properties_cc09fade:
@@ -93,7 +93,7 @@ translate spanish add_displayable_8ba81c26:
 translate spanish add_displayable_1f5571e3:
 
     # e "Other displayables can also be added using the add statement. Here, we add the Solid displayable, showing a solid block of color."
-    e "También se pueden agregar otros elementos visualizables utilizando la instrucción add. Aquí, agregamos el visualizable Solid, mostrando un bloque sólido de color."
+    e "También se pueden agregar otros visualizables utilizando la instrucción add. Aquí, agregamos el visualizable Solid, mostrando un bloque sólido de color."
 
 # game/tutorial_screen_displayables.rpy:195
 translate spanish add_displayable_0213ffa2:
@@ -117,7 +117,7 @@ translate spanish text_displayable_96f88225:
 translate spanish text_displayable_1ed1a8c2:
 
     # e "In addition to the common properties that all displayables take, text takes the text style properties. For example, size sets the size of the text."
-    e "Además de las propiedades comunes que toman todos los elementos visualizables, el texto toma las propiedades de estilo del texto. Por ejemplo, tamaño establece el tamaño del texto."
+    e "Además de las propiedades comunes que toman todos los visualizables, el texto toma las propiedades de estilo del texto. Por ejemplo, tamaño establece el tamaño del texto."
 
 # game/tutorial_screen_displayables.rpy:234
 translate spanish text_displayable_9351d9dd:
@@ -219,13 +219,13 @@ translate spanish layout_displayables_eff42786:
 translate spanish layout_displayables_c32324a7:
 
     # e "Finally, there's one convenience to save space. When many displayables are nested, adding a layout to each could cause crazy indent levels."
-    e "Por último, hay una conveniencia para ahorrar espacio. Cuando se anidan muchos elementos visualizables, agregar un diseño a cada uno podría causar niveles de sangría locos."
+    e "Por último, hay una conveniencia para ahorrar espacio. Cuando se anidan muchos visualizables, agregar un diseño a cada uno podría causar niveles de sangría locos."
 
 # game/tutorial_screen_displayables.rpy:386
 translate spanish layout_displayables_d7fa0f28:
 
     # e "The has statement creates a layout, and then adds all further children of its parent to that layout. It's just a convenience to make screens more readable."
-    e "La sentencia has crea un diseño y luego agrega todos los demás elementos secundarios de su padre a ese diseño. Es solo una conveniencia para hacer las pantallas más legibles."
+    e "La sentencia has crea un diseño y luego agrega todos los demás hijos de su padre a ese diseño. Es solo una conveniencia para hacer las pantallas más legibles."
 
 # game/tutorial_screen_displayables.rpy:395
 translate spanish window_displayables_14beb786:

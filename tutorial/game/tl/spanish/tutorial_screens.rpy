@@ -291,7 +291,7 @@ translate spanish screens_properties_c7ad3a8e:
 translate spanish screens_control_4a1d8d7c:
 
     # e "The screen language has a few statements that do things other than show displayables. If you haven't seen the section on {a=jump:warp_screen_displayables}Screen Displayables{/a} yet, you might want to check it out, then come back here."
-    e "El lenguaje de pantallas tiene algunas sentencias que hacen cosas distintas a mostrar visualizables. Si no has visto la sección en {a=jump:warp_screen_displayables}Visualizables de Pantalla{/a} todavía, es posible que desees revisarla y luego volver aquí."
+    e "El lenguaje de pantallas tiene algunas sentencias que hacen cosas distintas a mostrar visualizables. Si no has visto la sección en {a=jump:warp_screen_displayables}Visualizables Screen{/a} todavía, es posible que desees revisarla y luego volver aquí."
 
 # game/tutorial_screens.rpy:503
 translate spanish screens_control_0e939050:
@@ -501,7 +501,7 @@ translate spanish strings:
 
     # tutorial_screens.rpy:205
     old "I do."
-    new "Lo hago"
+    new "Entendido"
 
     # tutorial_screens.rpy:331
     old "Hello, world."

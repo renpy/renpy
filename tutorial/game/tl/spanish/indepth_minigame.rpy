@@ -21,7 +21,7 @@ translate spanish demo_minigame_3e601161:
 translate spanish demo_minigame_a92baa6b:
 
     # e "When screens are not enough you can write a creator-defined displayable to extend Ren'Py itself. A Creator-defined displayables can process raw events and draw to the screen."
-    e "Cuando las pantallas no son suficientes, puede escribir un creator-defined displayable para extender Ren'Py. Un creator-defined displayable puede procesar eventos en bruto y dibujar en la pantalla."
+    e "Cuando las pantallas no son suficientes, puede escribir un creator-defined displayable para extender Ren'Py. Un visualizable creator-defined puede procesar eventos en bruto y dibujar en la pantalla."
 
 # game/indepth_minigame.rpy:228
 translate spanish demo_minigame_a07dbae0:

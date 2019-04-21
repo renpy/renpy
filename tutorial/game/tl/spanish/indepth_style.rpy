@@ -38,8 +38,8 @@ translate spanish new_gui_45765574:
 # game/indepth_style.rpy:58
 translate spanish styles_fa345a38:
 
-    # e "Ren'Py has a powerful style system that controls what visualizables look like."
-    e "Ren'Py tiene un potente sistema de estilo que controla el aspecto de las pantallas."
+    # e "Ren'Py has a powerful style system that controls what displayable look like."
+    e "Ren'Py tiene un potente sistema de estilo que controla el aspecto del visualizable."
 
 # game/indepth_style.rpy:60
 translate spanish styles_6189ee12:
@@ -56,13 +56,13 @@ translate spanish styles_menu_a4a6913e:
 # game/indepth_style.rpy:98
 translate spanish style_basics_9a79ef89:
 
-    # e "Styles let a visualizable look different from game to game, or even inside the same game."
+    # e "Styles let a displayable look different from game to game, or even inside the same game."
     e "Los estilos permiten que los visualizables se vea diferente de un juego a otro, o incluso dentro del mismo juego."
 
 # game/indepth_style.rpy:103
 translate spanish style_basics_48777f2c:
 
-    # e "Both of these buttons use the same visualizables. But since different styles have been applied, the buttons look different from each other."
+    # e "Both of these buttons use the same displayables. But since different styles have been applied, the buttons look different from each other."
     e "Ambos botones utilizan los mismos visualizables. Pero como se han aplicado diferentes estilos, los botones se ven diferentes entre sí."
 
 # game/indepth_style.rpy:108
@@ -81,13 +81,13 @@ translate spanish style_basics_144731f6:
 translate spanish style_basics_67e48162:
 
     # e "When a screen displayable contains text, style properties prefixed with text_ apply to that text."
-    e "Cuando una pantalla visualizable contiene texto, las propiedades de estilo con el prefijo text_ se aplican a ese texto."
+    e "Cuando un visualizable screen contiene texto, las propiedades de estilo con el prefijo text_ se aplican a ese texto."
 
 # game/indepth_style.rpy:151
 translate spanish style_basics_03516b4a:
 
     # e "The next is as part of a displayable created in an image statement. Style properties are just arguments to the displayable."
-    e "El siguiente es como parte de un objeto visualizable creado en una sentencia image. Las propiedades de estilo son solo argumentos para visualizables."
+    e "El siguiente es como parte de un visualizable creado en una sentencia image. Las propiedades de estilo son solo argumentos para visualizables."
 
 # game/indepth_style.rpy:160
 translate spanish style_basics_ccc0d1ca:
@@ -141,7 +141,7 @@ translate spanish style_basics_f78117a7:
 translate spanish style_basics_6007040b:
 
     # e "Each displayable has a default style name. By default, it's usually the lower-case displayable name, like 'text' for Text, or 'button' for buttons."
-    e "Cada visualizable tiene un nombre de estilo predeterminado. Por defecto, generalmente es el nombre en minúsculas, como 'text' para texto, o 'button? para botones."
+    e "Cada visualizable tiene un nombre de estilo predeterminado. Por defecto, generalmente es el nombre en minúsculas, como 'text' para texto, o 'button' para botones."
 
 # game/indepth_style.rpy:196
 translate spanish style_basics_35db9a05:
@@ -243,13 +243,13 @@ translate spanish style_general_e5a58f0b:
 translate spanish style_text_fe457b8f:
 
     # e "The text style properties apply to text and input displayables."
-    e "Las propiedades de estilo de texto se aplican a visualizables de texto y entrada(input)."
+    e "Las propiedades de estilo de texto se aplican a visualizables text e input."
 
 # game/indepth_style.rpy:337
 translate spanish style_text_7ab53f03:
 
     # e "Text displayables can be created implicitly or explicitly. For example, a textbutton creates a text displayable with a style ending in button_text."
-    e "Visualizables de texto pueden ser creados implícitamente o explícitamente. Por ejemplo, un botón de texto crea un visualizable text con un estilo que termina en button_text."
+    e "Visualizables text pueden ser creados implícitamente o explícitamente. Por ejemplo, un botón de texto crea un visualizable text con un estilo que termina en button_text."
 
 # game/indepth_style.rpy:339
 translate spanish style_text_6dd42a57:
@@ -291,7 +291,7 @@ translate spanish style_text_917e2bca:
 translate spanish style_text_1a46cd43:
 
     # e "The italic property makes the text italic. Again, this is better done with a font, but for short amounts of text Ren'Py can do it for you."
-    e "La propiedad italic hace que el texto esté en cursiva. Nuevamente, esto se hace mejor con una fuente, pero para cantidades cortas de texto, Ren'Py puede hacerlo ti usted."
+    e "La propiedad italic hace que el texto esté en cursiva. Nuevamente, esto se hace mejor con una fuente, pero para cantidades cortas de texto, Ren'Py puede hacerlo por ti."
 
 # game/indepth_style.rpy:397
 translate spanish style_text_472f382d:
@@ -369,13 +369,13 @@ translate spanish style_text_e7204a95:
 translate spanish style_text_b4563984:
 
     # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
-    e "La propiedad adjust_spacing es muy sutil, eso solo importa cuando un jugador cambia el tamaño de la ventana. Cuando es verdadero, los caracteres se desplazarán un poco para que el texto tenga el mismo espaciado relativo."
+    e "La propiedad adjust_spacing es muy sutil, eso solo importa cuando un jugador cambia el tamaño de la ventana. Cuando es True, los caracteres se desplazarán un poco para que el texto tenga el mismo espaciado relativo."
 
 # game/indepth_style.rpy:496
 translate spanish style_text_605d4e4a:
 
     # e "When False, the text won't jump around as much. But it can be a little wider or narrower based on screen size."
-    e "Cuando es falso, el texto no saltará tanto. Pero puede ser un poco más ancho o más estrecho según el tamaño de la pantalla."
+    e "Cuando es False, el texto no saltará tanto. Pero puede ser un poco más ancho o más estrecho según el tamaño de la pantalla."
 
 # game/indepth_style.rpy:505
 translate spanish style_text_acf8a0e1:
@@ -411,7 +411,7 @@ translate spanish style_text_724bd5e0:
 translate spanish style_button_300b6af5:
 
     # e "Next up, we have the window and button style properties. These apply to windows like the text window at the bottom of this screen and frames like the ones we show examples in."
-    e "A continuación, tenemos las propiedades de estilo de window y button. Estos se aplican a ventanas como la ventana de texto en la parte inferior de esta pantalla y marcos como los que mostramos en los ejemplos."
+    e "A continuación, tenemos las propiedades de estilo window y button. Estos se aplican a ventanas como la ventana de texto en la parte inferior de esta pantalla y marcos como los que mostramos en los ejemplos."
 
 # game/indepth_style.rpy:582
 translate spanish style_button_255a18e4:
@@ -591,13 +591,13 @@ translate spanish style_bar_f1292000:
 translate spanish style_box_5fd535f4:
 
     # e "The hbox displayable is used to lay its children out horizontally. By default, there's no spacing between children, so they run together."
-    e "El hbox visualizable se usa para colocar a sus hijos horizontalmente. De forma predeterminada, no hay espacio entre los hijos, por lo que se ejecutan juntos."
+    e "El visualizable hbox se usa para colocar a sus hijos horizontalmente. De forma predeterminada, no hay espacio entre los hijos, por lo que se ejecutan juntos."
 
 # game/indepth_style.rpy:967
 translate spanish style_box_0111e5dc:
 
     # e "Similarly, the vbox displayable is used to lay its children out vertically. Both support style properties that control placement."
-    e "Del mismo modo, el vbox visualizable se utiliza para colocar sus hijos verticalmente. Ambos soportan propiedades de estilo que controlan la colocación."
+    e "Del mismo modo, el visualizable vbox se utiliza para colocar sus hijos verticalmente. Ambos soportan propiedades de estilo que controlan la colocación."
 
 # game/indepth_style.rpy:972
 translate spanish style_box_5a44717b:
@@ -687,7 +687,7 @@ translate spanish style_inspector_243c50f0:
 translate spanish style_inspector_bcbdc396:
 
     # e "Ren'Py will pop up a list of displayables the mouse is over. Next to each is the name of the style that displayable uses."
-    e "Ren'Py mostrará una lista de elementos visualizables que el mouse está apuntando. Junto a cada uno está el nombre del estilo que utiliza la visualización."
+    e "Ren'Py mostrará una lista visualizables que el mouse está apuntando. Junto a cada uno está el nombre del estilo que utiliza la visualización."
 
 # game/indepth_style.rpy:1090
 translate spanish style_inspector_d981e5c8:
@@ -731,7 +731,7 @@ translate spanish strings:
 
     # indepth_style.rpy:66
     old "Window and Button style properties."
-    new "Propiedes de estilo de Window y Button"
+    new "Propiedes de estilo Window y Button"
 
     # indepth_style.rpy:66
     old "Bar style properties."
