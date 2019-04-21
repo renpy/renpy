@@ -85,6 +85,20 @@ screen web():
                             textbutton _("Build Web Application") action Jump("web_build")
                             textbutton _("Build and Open in Browser") action Jump("web_launch")
 
+                        add SPACER
+
+                        text _("Support:")
+
+                        add HALF_SPACER
+
+                        frame style "l_indent":
+
+                            has vbox
+
+                            textbutton _("Renpyweb Home") action OpenURL("https://renpy.beuc.net/")
+                            textbutton _("Beuc's Patreon") action OpenURL("https://www.patreon.com/Beuc/")
+
+
                 # Right side.
                 frame:
                     style "l_indent"
@@ -104,7 +118,7 @@ screen web():
 
                         add SPACER
 
-                        text _("Limitations in the web platform mean that loading large images, audio files, or movies may cause audio or framerate glitches, and lower performance in general.")
+                        text _("Current imitations in the web platform mean that loading large images, audio files, or movies may cause audio or framerate glitches, and lower performance in general.")
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
 
