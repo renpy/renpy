@@ -373,7 +373,7 @@ init python in distribute:
         This manages the process of building distributions.
         """
 
-        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True):
             """
             Distributes `project`.
 
@@ -441,8 +441,9 @@ init python in distribute:
             # dictionaries.
             data = project.data
 
-            self.reporter.info(_("Scanning project files..."))
-            project.update_dump(force=True, gui=False, compile=project.data['force_recompile'])
+            if scan:
+                self.reporter.info(_("Scanning project files..."))
+                project.update_dump(force=True, gui=False, compile=project.data['force_recompile'])
 
             if project.dump.get("error", False):
                 raise Exception("Could not get build data from the project. Please ensure the project runs.")

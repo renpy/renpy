@@ -25,6 +25,9 @@
 
 init python:
 
+    import shutil
+
+
     WEB_PATH = None
 
     def find_web():
@@ -41,6 +44,62 @@ init python:
             WEB_PATH = None
 
     find_web()
+
+    def get_web_destination(p):
+        """
+        Returns the path to the desint
+        """
+
+        build = p.dump['build']
+
+        base_name = build['directory_name']
+        destination = build["destination"]
+
+        parent = os.path.dirname(p.path)
+        destination = os.path.join(parent, destination, base_name + "-web")
+
+        return destination
+
+    def build_web(p, gui=True):
+
+        # Figure out the reporter to use.
+        if gui:
+            reporter = distribute.GuiReporter()
+        else:
+            reporter = distribute.TextReporter()
+
+        # Determine details.
+        p.update_dump(True, gui=gui)
+
+        destination = get_web_destination(p)
+        display_name = p.dump['build']['display_name']
+
+        # Clean the folder, then remale it.
+        if os.path.exists(destination):
+            shutil.rmtree(destination)
+
+        os.makedirs(destination, 0o777)
+
+        # Use the distributor to make game.zip.
+        distribute.Distributor(p, packages=[ "web" ], packagedest=os.path.join(destination, "game"), reporter=reporter, noarchive=True, scan=False)
+
+        # Copy the files from WEB_PATH to destination.
+        for fn in os.listdir(WEB_PATH):
+            if fn in { "game.zip", "hash.txt", "index.html" }:
+                continue
+
+            shutil.copy(os.path.join(WEB_PATH, fn), os.path.join(destination, fn))
+
+        # Copy over index.html.
+        with open(os.path.join(WEB_PATH, "index.html")) as f:
+            html = f.read()
+
+        with open(os.path.join(destination, "index.html"), "w") as f:
+            f.write(html)
+
+
+
+
 
 screen web():
 
@@ -133,3 +192,7 @@ label web:
     call screen web
 
     jump front_page
+
+label web_build:
+    $ build_web(project.current, gui=True)
+    jump web
