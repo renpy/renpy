@@ -94,6 +94,8 @@ init python:
         with open(os.path.join(WEB_PATH, "index.html")) as f:
             html = f.read()
 
+        html = html.replace("%%TITLE%%", display_name.encode("utf-8"))
+
         with open(os.path.join(destination, "index.html"), "w") as f:
             f.write(html)
 
