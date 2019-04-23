@@ -432,7 +432,7 @@ init -1500 python in build:
         rv["renpy_patterns"] = excludes + renpy_patterns
         rv["xbit_patterns"] = xbit_patterns
         rv["version"] = version or directory_name
-        rv["display_name"] = display_name or executable_name
+        rv["display_name"] = display_name or config.name or executable_name
 
         rv["exclude_empty_directories"] = exclude_empty_directories
 
