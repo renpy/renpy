@@ -26,7 +26,7 @@
 init python:
 
     import shutil
-
+    import webserver
 
     WEB_PATH = None
 
@@ -99,9 +99,11 @@ init python:
         with open(os.path.join(destination, "index.html"), "w") as f:
             f.write(html)
 
+        webserver.start(destination)
 
 
-
+    def launch_web():
+        renpy.run(OpenURL("http://127.0.0.1:8042/index.html"))
 
 screen web():
 
@@ -145,6 +147,7 @@ screen web():
 
                             textbutton _("Build Web Application") action Jump("web_build")
                             textbutton _("Build and Open in Browser") action Jump("web_launch")
+                            textbutton _("Open without Build") action Jump("web_start")
 
                         add SPACER
 
@@ -195,6 +198,20 @@ label web:
 
     jump front_page
 
+
 label web_build:
     $ build_web(project.current, gui=True)
+    jump web
+
+
+label web_launch:
+    $ build_web(project.current, gui=True)
+    $ launch_web()
+    jump web
+
+
+label web_start:
+    $ project.current.update_dump(True, gui=True)
+    $ webserver.start(get_web_destination(project.current))
+    $ launch_web()
     jump web
