@@ -813,8 +813,8 @@ def init():
         bufsize = 2048
         if renpy.emscripten:
             # Large buffer (and latency) as compromise to avoid sound jittering
-            #bufsize = 8192  # works for me
-            bufsize = 16384  # should work with slow computers
+            bufsize = 8192  # works for me
+            #bufsize = 16384  # jitter/silence right after starting a sound
 
         if 'RENPY_SOUND_BUFSIZE' in os.environ:
             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
