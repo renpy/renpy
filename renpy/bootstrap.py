@@ -357,4 +357,5 @@ You may be using a system install of python. Please run {0}.sh,
 
         # Prevent subprocess from throwing errors while trying to run it's
         # __del__ method during shutdown.
-        subprocess.Popen.__del__ = popen_del
+        if not renpy.emscripten:
+            subprocess.Popen.__del__ = popen_del
