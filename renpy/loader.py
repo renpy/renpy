@@ -744,7 +744,7 @@ class RenpyImporter(object):
         code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
         exec code in mod.__dict__
 
-        return mod
+        return sys.modules[fullname]
 
     def get_data(self, filename):
         return load(filename).read()
