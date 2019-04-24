@@ -718,6 +718,11 @@ Occasionally Used
     a window. The default action prompts the user to see if he wants
     to quit the game.
 
+.. var:: config.reload_modules = [ ]
+
+    A list of python modules that should be reloaded along with the
+    game. Any submodules will also be reloaded.
+
 .. var:: config.replace_text = None
 
     If not None, a function that is called with a single argument, a text to
