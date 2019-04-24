@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This file contains the launcher support for creating renpyweb projects,
+# This file contains the launcher support for creating RenPyWeb projects,
 # other than the logic in the standard distribute code.
 
 
@@ -159,7 +159,7 @@ screen web():
 
                             has vbox
 
-                            textbutton _("Renpyweb Home") action OpenURL("https://renpy.beuc.net/")
+                            textbutton _("RenPyWeb Home") action OpenURL("https://renpy.beuc.net/")
                             textbutton _("Beuc's Patreon") action OpenURL("https://www.patreon.com/Beuc/")
 
 
@@ -191,7 +191,7 @@ screen web():
 label web:
 
     if WEB_PATH is None:
-        $ interface.yesno(_("Before packaging web apps, you'll need to download renpyweb, Ren'Py's web support. Would you like to download renpyweb now?"), no=Jump("front_page"))
+        $ interface.yesno(_("Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"), no=Jump("front_page"))
         $ add_dlc("web", restart=True)
 
     call screen web
