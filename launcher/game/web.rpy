@@ -182,7 +182,7 @@ screen web():
 
                         add SPACER
 
-                        text _("Current imitations in the web platform mean that loading large images, audio files, or movies may cause audio or framerate glitches, and lower performance in general.")
+                        text _("Current limitations in the web platform mean that loading large images, audio files, or movies may cause audio or framerate glitches, and lower performance in general.")
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
 
