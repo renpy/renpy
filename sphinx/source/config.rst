@@ -720,8 +720,9 @@ Occasionally Used
 
 .. var:: config.reload_modules = [ ]
 
-    A list of python modules that should be reloaded along with the
-    game. Any submodules will also be reloaded.
+    A list of strings giving the names of python modules that should be 
+    reloaded along with the game. Any submodules of these modules 
+    will also be reloaded.
 
 .. var:: config.replace_text = None
 
