@@ -160,7 +160,7 @@ screen web():
                             has vbox
 
                             textbutton _("RenPyWeb Home") action OpenURL("https://renpy.beuc.net/")
-                            textbutton _("Beuc's Patreon") action OpenURL("https://www.patreon.com/Beuc/")
+                            textbutton _("Beuc's Patreon") action OpenURL("https://www.beuc.net/donate/")
 
 
                 # Right side.
