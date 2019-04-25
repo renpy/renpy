@@ -33,7 +33,7 @@ init -1500 python hide:
             start = int(start, 16)
             end = int(end, 16) if end else start
 
-            rv.add("OpenDyslexic3-Regular.ttf", start, end)
+            rv.add("_OpenDyslexic3-Regular.ttf", start, end)
 
         rv.add(f, None, None)
 
@@ -41,8 +41,8 @@ init -1500 python hide:
 
     config.font_transforms["opendyslexic"] = opendyslexic
 
-    config.ftfont_scale["OpenDyslexic3-Regular.ttf"] = .87
-    config.ftfont_vertical_extent_scale["OpenDyslexic3-Regular.ttf"] = .66
+    config.ftfont_scale["_OpenDyslexic3-Regular.ttf"] = .87
+    config.ftfont_vertical_extent_scale["_OpenDyslexic3-Regular.ttf"] = .66
 
     def dejavusans(f):
         return "DejaVuSans.ttf"
