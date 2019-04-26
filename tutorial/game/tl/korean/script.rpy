@@ -156,7 +156,7 @@ translate korean strings:
 
     # script.rpy:91
     old "Minigames and CDDs"
-    new "미니게임과 COD"
+    new "미니게임과 창작자-정의 디스플레이어블"
 
     # script.rpy:92
     old "Translations"
