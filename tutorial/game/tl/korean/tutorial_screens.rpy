@@ -124,7 +124,7 @@ translate korean screens_showing_e8f68c08:
 translate korean screens_showing_7e48fc22:
 
     # e "And that is inside a frame that provides the background and borders. The frame has an at property that takes a transform giving its position."
-    e "그리고 그것들은 배경(background)과 테두리(borders)를 제공하는 프레임(frame) 안에 있어. 프레임은 위치 변형을 사용하는 at 속성을 가지고 있고."
+    e "그리고 그것들은 배경(background)과 테두리(borders)를 제공하는 틀(frame) 안에 있어. 틀은 위치 변형을 사용하는 at 속성을 가지고 있고."
 
 # game/tutorial_screens.rpy:286
 translate korean screens_showing_80425bf3:
@@ -280,7 +280,7 @@ translate korean screens_properties_d21b5500:
 translate korean screens_properties_560ca08a:
 
     # e "When the 'red' prefix is given, the frame gets the 'red_frame' style, and the text gets the 'red_text' style."
-    e "'red' 접두어가 주어지면 프레임은 'red_frame'의 스타일을 가져오고, 글자는 'red_text' 스타일을 사용하게 돼."
+    e "'red' 접두어가 주어지면 틀은 'red_frame'의 스타일을 가져오고, 글자는 'red_text' 스타일을 사용하게 돼."
 
 # game/tutorial_screens.rpy:479
 translate korean screens_properties_c7ad3a8e:

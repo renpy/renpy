@@ -70,25 +70,25 @@ translate korean simple_displayables_fcf2325f:
 translate korean simple_displayables_3dc0050e:
 
     # e "Some displayables are often used to customize the Ren'Py interface, with the Frame displayable being one of them. The frame displayable takes another displayable, and the size of the left, top, right, and bottom borders."
-    e "일부 디스플레이어블은 렌파이의 인터페이스를 사용자 정의하는 데 종종 사용되고, 프레임(Frame) 디스플레이어블은 그중 하나야. 프레임 디스플레이어블은 왼쪽과 위쪽, 오른쪽 및 아래쪽 테두리의 크기를 취하는 또 다른 디스플레이어블이야."
+    e "일부 디스플레이어블은 렌파이의 인터페이스를 사용자 정의하는 데 종종 사용되고, 틀(Frame) 디스플레이어블은 그중 하나야. 틀 디스플레이어블은 왼쪽과 위쪽, 오른쪽 및 아래쪽 테두리의 크기를 취하는 또 다른 디스플레이어블이야."
 
 # game/indepth_displayables.rpy:111
 translate korean simple_displayables_801b7910:
 
     # e "The Frame displayable expands or shrinks to fit the area available to it. It does this by scaling the center in two dimensions and the sides in one, while keeping the corners the same size."
-    e "프레임 디스플레이어블은 사용 가능한 영역에 맞게 확장되거나 축소돼. 모서리를 같은 크기로 유지하면서 중심을 2차원으로, 측면을 1로 크기 조정하여 이 작업을 수행하지."
+    e "틀 디스플레이어블은 사용 가능한 영역에 맞게 확장되거나 축소돼. 모서리를 같은 크기로 유지하면서 중심을 2차원으로, 측면을 1로 크기 조정하여 이 작업을 수행하지."
 
 # game/indepth_displayables.rpy:118
 translate korean simple_displayables_00603985:
 
     # e "A Frame can also tile sections of the displayable supplied to it, rather than scaling."
-    e "프레임은 제공된 디스플레이어블의 구역을 타일링-스케일링보다 나은- 할 수도 있어."
+    e "틀은 제공된 디스플레이어블의 구역을 타일링-스케일링보다 나은- 할 수도 있어."
 
 # game/indepth_displayables.rpy:126
 translate korean simple_displayables_d8b23480:
 
     # e "Frames might look a little weird in the abstract, but when used with a texture, you can see how we create scalable interface components."
-    e "프레임은 추상적으로 약간 이상하게 보일 수 있지만 텍스처와 함께 사용하면 확장 가능한 인터페이스 구성 요소를 어떻게 만드는지 알 수 있어."
+    e "틀은 추상적으로 약간 이상하게 보일 수 있지만 텍스처와 함께 사용하면 확장 가능한 인터페이스 구성 요소를 어떻게 만드는지 알 수 있어."
 
 # game/indepth_displayables.rpy:132
 translate korean simple_displayables_ae3f35f5:
