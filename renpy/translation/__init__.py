@@ -637,6 +637,8 @@ def change_language(language, force=False):
     else:
         old_change_language(tl, language)
 
+    renpy.store._history_list = [ ]
+
     for i in renpy.config.change_language_callbacks:
         i()
 
