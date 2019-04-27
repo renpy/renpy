@@ -237,7 +237,7 @@ translate spanish style_general_cd5cc97c:
 translate spanish style_general_e5a58f0b:
 
     # e "Finally, the alt property changes the text used by self-voicing for the hearing impaired."
-    e "Finalmente, la propiedad alt cambia el texto utilizado por la voz propia para las personas con discapacidad auditiva."
+    e "Finalmente, la propiedad alt cambia el texto utilizado por la voz-automática para las personas con discapacidad auditiva."
 
 # game/indepth_style.rpy:335
 translate spanish style_text_fe457b8f:
@@ -645,7 +645,7 @@ translate spanish style_box_285592bb:
 translate spanish style_box_a7637552:
 
     # e "Grids bring with them two more style properties. The xspacing and yspacing properties control spacing in the horizontal and vertical directions, respectively."
-    e "Las grillas traen consigo dos propiedades de estilo más. Las propiedades xspacing y yspacing controlan el espaciado en las direcciones horizontal y vertical, respectivamente."
+    e "Las grids traen consigo dos propiedades de estilo más. Las propiedades xspacing y yspacing controlan el espaciado en las direcciones horizontal y vertical, respectivamente."
 
 # game/indepth_style.rpy:1053
 translate spanish style_box_4006f74b:

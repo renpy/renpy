@@ -189,7 +189,7 @@ translate spanish screens_parameters_cf95b914:
 translate spanish screens_parameters_4ce03111:
 
     # e "Each parameter is a variable that is defined inside the screen. Inside the screen, these variables take priority over those used in the rest of Ren'Py."
-    e "Cada parámetro es una variable que se define dentro de la pantalla. Dentro de la pantalla, estas variables tienen prioridad sobre las utilizadas en el resto de Ren'Py."
+    e "Cada parámetro es una variable que se define dentro de screen. Dentro de screen, estas variables tienen prioridad sobre las utilizadas en el resto de Ren'Py."
 
 # game/tutorial_screens.rpy:343
 translate spanish screens_parameters_106c2a04:
@@ -207,7 +207,7 @@ translate spanish screens_parameters_12ac92d4:
 translate spanish screens_parameters_d143a994:
 
     # e "The call screen statement can also take arguments, much like show screen does."
-    e "La sentencia de pantalla call también puede tomar argumentos, como lo hace la pantalla show."
+    e "La sentencia de pantalla call también puede tomar argumentos, como lo hace la show screen."
 
 # game/tutorial_screens.rpy:369
 translate spanish screens_properties_423246a2:
