@@ -4,277 +4,277 @@
 translate korean screen_displayables_7c897a6d:
 
     # e "There are quite a few screen displayables. Here, I'll tell you about some of the most important ones."
-    e ""
+    e "꽤 많은 스크린 디스플레이어블이 있어. 여기서는, 가장 중요한 것들에 대해 이야기할 거야."
 
 # game/tutorial_screen_displayables.rpy:9
 translate korean screen_displayables_menu_fef7b441:
 
     # e "What would you like to know about?" nointeract
-    e "" nointeract
+    e "어떤 걸 알려줄까?" nointeract
 
 # game/tutorial_screen_displayables.rpy:49
 translate korean screen_displayable_properties_76c5639a:
 
     # e "There are a few properties that every screen language displayable shares. Here, I'll demonstrate them for you."
-    e ""
+    e "모든 스크린 언어가 공유 할 수 있는 몇 가지 속성이 있어. 여길 잘 보도록 해."
 
 # game/tutorial_screen_displayables.rpy:57
 translate korean screen_displayable_properties_527d4b4e:
 
     # e "First off, every screen language displayable supports the position properties. When the container a displayable is in supports it, you can use properties like align, anchor, pos, and so so on."
-    e ""
+    e "우선, 모든 스크린 언어 디스플레이어블은 위치 속성을 지원해. 컨테이너가 디스플레이어블을 지원하면 align, anchor, pos 등의 속성을 사용할 수 있지."
 
 # game/tutorial_screen_displayables.rpy:69
 translate korean screen_displayable_properties_8aff26dd:
 
     # e "The at property applies a transform to the displayable, the same way the at clause in the show statement does."
-    e ""
+    e "at 속성은 show 문에서 at 절이 수행하는 것과 같은 방법으로 표시 가능한 객체에 변형을 적용해."
 
 # game/tutorial_screen_displayables.rpy:106
 translate korean screen_displayable_properties_2ed40a70:
 
     # e "The id property is mostly used with the say screen, which is used to show dialogue. Outside of the say screen, it isn't used much."
-    e ""
+    e "id 속성은 대개 대화를 표시하는 say 스크린과 함께 사용돼. say 스크린 밖에서는 별로 사용되지 않지."
 
 # game/tutorial_screen_displayables.rpy:108
 translate korean screen_displayable_properties_da5733d1:
 
     # e "It tells Ren'Py which displayables are the background window, 'who' is speaking, and 'what' is being said. This used to apply per-Character styles, and help with auto-forward mode."
-    e ""
+    e "그건 렌파이에게 어떤 디스플레이어블이 배경 창인지, '누가' 말하고, '무엇'을 말하는지 알려줘. 이 기능은 캐릭터별 스타일을 적용하고 자동진행(auto-forward) 모드를 지원하는 데 사용돼."
 
 # game/tutorial_screen_displayables.rpy:123
 translate korean screen_displayable_properties_cc09fade:
 
     # e "The style property lets you specify the style of a single displayable."
-    e ""
+    e "style 속성을 사용하면 단일 디스플레이어블의 스타일을 지정할 수 있는데,"
 
 # game/tutorial_screen_displayables.rpy:144
 translate korean screen_displayable_properties_a7f4e25c:
 
     # e "The style_prefix property sets the prefix of the style that's used for a displayable and its children."
-    e ""
+    e "style_prefix 속성은 디스플레이어블과 그 자식에 사용되는 스타일 접두어를 설정해."
 
 # game/tutorial_screen_displayables.rpy:146
 translate korean screen_displayable_properties_6bdb0723:
 
     # e "For example, when the style_prefix property is 'green', the vbox has the 'green_vbox' style, and the text in it has the 'green_text' style."
-    e ""
+    e "예를 들면, style_prefix 속성이 'green'일 때, vbox는 'green_vbox' 스타일을, 그 안의 글자들은 'green_text'를 취하지."
 
 # game/tutorial_screen_displayables.rpy:150
 translate korean screen_displayable_properties_8a3a8635:
 
     # e "There are a few more properties than these, and you can find the rest in the documentation. But these are the ones you can expect to see in your game, in the default screens."
-    e ""
+    e "이것보다 몇 가지 속성이 더 있는데 나머지는 설명서에서 찾아보도록 해. 하지만 이것들은 게임의 기본 화면에서 볼 수 있는 것들이야."
 
 # game/tutorial_screen_displayables.rpy:156
 translate korean add_displayable_ec121c5c:
 
     # e "Sometimes you'll have a displayable, like an image, that you want to add to a screen."
-    e ""
+    e "때로는 이미지와 같이 화면에 추가할 수 있는 디스플레이어블을 가질 수 있어."
 
 # game/tutorial_screen_displayables.rpy:165
 translate korean add_displayable_7ec3e2b0:
 
     # e "This can be done using the add statement, which adds an image or other displayable to the screen."
-    e ""
+    e "이것은 add 문을 사용하여 수행할 수 있어. add 문은 이미지나 다른 표시 가능한 객체를 화면에 추가하지."
 
 # game/tutorial_screen_displayables.rpy:167
 translate korean add_displayable_7112a377:
 
     # e "There are a few ways to refer to the image. If it's in the images directory or defined with the image statement, you can just put the name inside a quoted string."
-    e ""
+    e "이미지를 참조하는 데는 몇 가지 방법이 있어. images 디렉토리에 있거나 image 문으로 정의된 경우 따옴표로 묶은 문자열 안에 이름을 넣을 수 있고."
 
 # game/tutorial_screen_displayables.rpy:176
 translate korean add_displayable_8ba81c26:
 
     # e "An image can also be referred to by it's filename, relative to the game directory."
-    e ""
+    e "이미지는 게임 디렉토리를 기준으로 파일 이름을 참조할 수도 있어."
 
 # game/tutorial_screen_displayables.rpy:185
 translate korean add_displayable_1f5571e3:
 
     # e "Other displayables can also be added using the add statement. Here, we add the Solid displayable, showing a solid block of color."
-    e ""
+    e "add 문을 사용하여 다른 디스플레이어블을 추가 할 수도 있어. 여기서는 단색(Solid) 디스플레이블을 추가하여 블록을 보여주고 있어."
 
 # game/tutorial_screen_displayables.rpy:195
 translate korean add_displayable_0213ffa2:
 
     # e "In addition to the displayable, the add statement can be given transform properties. These can place or otherwise transform the displayable being added."
-    e ""
+    e "디스플레이어블 외에도 add 문에 변형 속성을 지정할 수 있어. 이것들은 추가되는 디스플레이어블을 배치하거나 변환할 수 있지."
 
 # game/tutorial_screen_displayables.rpy:207
 translate korean add_displayable_3a56a464:
 
     # e "Of course, the add statement can also take the at property, letting you give it a more complex transform."
-    e ""
+    e "물론, add 문은 at 속성을 사용하여 보다 복잡한 변환을 제공할 수 있어."
 
 # game/tutorial_screen_displayables.rpy:222
 translate korean text_displayable_96f88225:
 
     # e "The screen language text statement adds a text displayable to the screen. It takes one argument, the text to be displayed."
-    e ""
+    e "스크린 언어 텍스트 명령문은 화면에 표시할 수 있는 글자를 추가해. 표시할 글자를 하나의 인수로 취하는 방식이야."
 
 # game/tutorial_screen_displayables.rpy:224
 translate korean text_displayable_1ed1a8c2:
 
     # e "In addition to the common properties that all displayables take, text takes the text style properties. For example, size sets the size of the text."
-    e ""
+    e "모든 디스플레이어블이 취하는 공통 속성 외에도 글자는 텍스트 스타일 속성을 사용합니다. 예를 들어 size는 텍스트의 크기를 설정하지."
 
 # game/tutorial_screen_displayables.rpy:234
 translate korean text_displayable_9351d9dd:
 
     # e "The text displayable can also interpolate values enclosed in square brackets."
-    e ""
+    e "텍스트 디스플레이어블은 대괄호로 묶인 값을 보간할 수도 있어."
 
 # game/tutorial_screen_displayables.rpy:236
 translate korean text_displayable_32d76ccb:
 
     # e "When text is displayed in a screen using the text statement variables defined in the screen take precedence over those defined outside it."
-    e ""
+    e "스크린에 정의된 텍스트 문 변수를 사용하여 글자가 화면에 표시 될 때 정의된 변수보다 우선해."
 
 # game/tutorial_screen_displayables.rpy:238
 translate korean text_displayable_7e84a5d1:
 
     # e "Those variables may be parameters given to the screen, defined with the default or python statements, or set using the SetScreenVariable action."
-    e ""
+    e "이러한 변수는 화면에 지정된 매개 변수이거나 기본, 혹은 파이썬 문으로 정의되거나 SetScreenVariable을 사용하여 설정할 수 있어."
 
 # game/tutorial_screen_displayables.rpy:247
 translate korean text_displayable_8bc866c4:
 
     # e "There's not much more to say about text in screens, as it works the same way as all other text in Ren'Py."
-    e ""
+    e "스크린 안에서 텍스트는 렌파이의 다른 모든 텍스트와 같은 방식으로 작동하기 때문에 여기에 관해서는 더 말할 것이 없어."
 
 # game/tutorial_screen_displayables.rpy:255
 translate korean layout_displayables_d75efbae:
 
     # e "The layout displayables take other displayables and lay them out on the screen."
-    e ""
+    e "레이아웃(layout) 디스플레이어블은 다른 디스플레이어블을 가져와 화면에 배치해."
 
 # game/tutorial_screen_displayables.rpy:269
 translate korean layout_displayables_9a15144d:
 
     # e "For example, the hbox displayable takes its children and lays them out horizontally."
-    e ""
+    e "예를 들어, hbox 디스플레이어블은 자식을 가져와 수평으로 배치해."
 
 # game/tutorial_screen_displayables.rpy:284
 translate korean layout_displayables_48eff197:
 
     # e "The vbox displayable is similar, except it takes its children and arranges them vertically."
-    e ""
+    e "vbox 디스플레이어블은 자식을 가져와 수직으로 배치한다는 점을 제외하면 hbox와 비슷해."
 
 # game/tutorial_screen_displayables.rpy:286
 translate korean layout_displayables_74de8a66:
 
     # e "Both of the boxes take the box style properties, the most useful of which is spacing, the amount of space to leave between children."
-    e ""
+    e "두 상자 모두 box 스타일 속성을 사용하는데, 가장 유용한 것은 자식들 사이에 남겨둘 간격(spacing)이야."
 
 # game/tutorial_screen_displayables.rpy:301
 translate korean layout_displayables_a156591f:
 
     # e "The grid displayable displays its children in a grid of equally-sized cells. It takes two arguments, the number of columns and the number of rows."
-    e ""
+    e "그리드(grid) 디스플레이어블은 자식을 동일한 크기의 셀 그리드에 표시해. 열의 수와 행의 수를 인수로 취하지."
 
 # game/tutorial_screen_displayables.rpy:303
 translate korean layout_displayables_126f5816:
 
     # e "The grid has to be full, or Ren'Py will produce an error. Notice how in this example, the empty cell is filled with a null."
-    e ""
+    e "그리드가 가득 채워지지 않으면 오류가 발생해. 이 예제에서 빈 셀은 null로 채워졌어."
 
 # game/tutorial_screen_displayables.rpy:305
 translate korean layout_displayables_bfaaaf9b:
 
     # e "Like the boxes, grid uses the spacing property to specify the space between cells."
-    e ""
+    e "박스처럼, 그리드는 간격 속성을 사용해 셀 사이의 간격을 지정할 수 있어."
 
 # game/tutorial_screen_displayables.rpy:321
 translate korean layout_displayables_3e931106:
 
     # e "Grid also takes the transpose property, to make it fill top-to-bottom before it fills left-to-right."
-    e ""
+    e "그리드는 또한 왼쪽에서 오른쪽으로 채우기 전에 위에서 아래로 채울 수 있도록 이향(transpose) 속성을 사용해."
 
 # game/tutorial_screen_displayables.rpy:338
 translate korean layout_displayables_afdc1b11:
 
     # e "And just to demonstrate that all cells are equally-sized, here's what happens when once child is bigger than the others."
-    e ""
+    e "그리고 모든 셀이 똑같은 크기라는 것을 시연하기 위해, 하나의 자식이 다른 자식보다 크면 어떻게 되는지 보자."
 
 # game/tutorial_screen_displayables.rpy:353
 translate korean layout_displayables_a23e2826:
 
     # e "The fixed displayable displays the children using Ren'Py's normal placement algorithm. This lets you place displayables anywhere in the screen."
-    e ""
+    e "고정(fixed) 디스플레이어블은 렌파이의 일반적인 배치 알고리즘을 사용하여 자식들을 표시해. 이를 통해 디스플레이어블을 화면의 어느 곳에나 배치할 수 있어."
 
 # game/tutorial_screen_displayables.rpy:355
 translate korean layout_displayables_fd3926ca:
 
     # e "By default, the layout expands to fill all the space available to it. To prevent that, we use the xsize and ysize properties to set its size in advance."
-    e ""
+    e "기본적으로, 레이아웃은 사용 가능한 모든 공간을 채우도록 확장돼. 이걸 막으려면 xsize와 ysize 속성을 사용해서 크기를 미리 설정해야 해."
 
 # game/tutorial_screen_displayables.rpy:369
 translate korean layout_displayables_eff42786:
 
     # e "When a non-layout displayable is given two or more children, it's not necessary to create a fixed. A fixed is automatically added, and the children are added to it."
-    e ""
+    e "레이아웃이 아닌 디스플레이어블에 둘 이상의 자식이 주어지면 고정 디스플레이어블이 자동으로 추가되고 자식이 추가되기 때문에 따로 고정 디스플레이어블을 만들 필요가 없어."
 
 # game/tutorial_screen_displayables.rpy:384
 translate korean layout_displayables_c32324a7:
 
     # e "Finally, there's one convenience to save space. When many displayables are nested, adding a layout to each could cause crazy indent levels."
-    e ""
+    e "마지막으로, 공간을 절약할 수 있는 한 가지 편한 방법이 있어. 많은 디스플레이어블이 중첩될 때 각각의 레이아웃을 추가하면 들여쓰기 수준이 높아질 수 있을 거야."
 
 # game/tutorial_screen_displayables.rpy:386
 translate korean layout_displayables_d7fa0f28:
 
     # e "The has statement creates a layout, and then adds all further children of its parent to that layout. It's just a convenience to make screens more readable."
-    e ""
+    e "has 문은 레이아웃을 작성한 다음 상위의 모든 자식들을 해당 레이아웃에 추가해. 스크린을 더 읽기 쉽게 편의를 제공하지."
 
 # game/tutorial_screen_displayables.rpy:395
 translate korean window_displayables_14beb786:
 
     # e "In the default GUI that Ren'Py creates for a game, most user interface elements expect some sort of background."
-    e ""
+    e "렌파이가 게임을 위해 생성하는 기본 GUI에서 대부분의 사용자 인터페이스 요소에는 일종의 배경이 예상될 거야."
 
 # game/tutorial_screen_displayables.rpy:405
 translate korean window_displayables_495d332b:
 
     # e "Without the background, text can be hard to read. While a frame isn't strictly required, many screens have one or more of them."
-    e ""
+    e "배경이 없이는 글자를 읽기가 힘들어. 틀(frame)이 반드시 요구되는 것은 아니지만 많은 화면에는 하나 이상의 틀이 존재해."
 
 # game/tutorial_screen_displayables.rpy:417
 translate korean window_displayables_2c0565ab:
 
     # e "But when I add a background, it's much easier. That's why there are two displayables that are intended to give backgrounds to user interface elements."
-    e ""
+    e "하지만 배경을 추가하면 훨씬 쉬워. 그게 사용자 인터페이스 요소에 배경을 제공하기 위한 두 개의 디스플레이어블이 있는 이유야."
 
 # game/tutorial_screen_displayables.rpy:419
 translate korean window_displayables_c7d0968c:
 
     # e "The two displayables are frame and window. Frame is the one we use above, and it's designed to provide a background for arbitrary parts of the user interface."
-    e ""
+    e "그 두 개의 디스플레이어블은 틀과 창이야. 틀은 위에서 사용된 거고, 사용자 인터페이스의 임의 부분에 대한 배경을 제공하도록 설계됐어."
 
 # game/tutorial_screen_displayables.rpy:423
 translate korean window_displayables_7d843f62:
 
     # e "On the other hand, the window displayable is very specific. It's used to provide the text window. If you're reading what I'm saying, you're looking at the text window right now."
-    e ""
+    e "반면에, 창 디스플레이어블은 매우 구체적이야. 그것은 지문 창(text window)을 제공하는 데 사용돼. 내가 말하는 것을 읽고 있다면 지문 창을 보고 있는 거야."
 
 # game/tutorial_screen_displayables.rpy:425
 translate korean window_displayables_de5963e4:
 
     # e "Both frames and windows can be given window style properties, allowing you to change things like the background, margins, and padding around the window."
-    e ""
+    e "틀과 창은 모두 창 스타일 속성이 부여될 수 있어. 배경(background)과 창 주위의 여백(margin), 메움(padding)과 같은 항목을 변경할 수 있지."
 
 # game/tutorial_screen_displayables.rpy:433
 translate korean button_displayables_ea626553:
 
     # e "One of the most flexible displayables is the button displayable, and its textbutton and imagebutton variants."
-    e ""
+    e "가장 유연한 디스플레이어블 중 하나는 버튼(button) 디스플레이어블과 그것의 글자 버튼(textbutton), 이미지 버튼(imagebutton) 변체야."
 
 # game/tutorial_screen_displayables.rpy:443
 translate korean button_displayables_372dcc0f:
 
     # e "A button is a displayable that when selected runs an action. Buttons can be selected by clicking with the mouse, by touch, or with the keyboard and controller."
-    e ""
+    e "버튼은 선택된 경우 작업을 실행하는 디스플레이어블이야. 버튼은 마우스, 터치 또는 키보드 및 컨트롤러로 선택할 수 있어."
 
 # game/tutorial_screen_displayables.rpy:445
 translate korean button_displayables_a6b270ff:
