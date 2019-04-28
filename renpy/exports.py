@@ -1953,12 +1953,13 @@ def loadable(filename):
     """
     :doc: file
 
-    Returns True if the given filename is loadable, meaning that it
-    can be loaded from the disk or from inside an archive. Returns
-    False if this is not the case.
+    Returns an int representing the origin from which the given filename
+    is loadable, meaning that it can be loaded from the disk, or from
+    inside an archive/APK. Returns False if this is not the case.
     """
 
-    return renpy.loader.loadable(filename)
+    rv = renpy.loader.loadable(filename)
+    return bool(rv) if renpy.config.loadable_boolean else rv
 
 
 @renpy_pure

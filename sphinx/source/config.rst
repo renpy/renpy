@@ -1161,6 +1161,11 @@ Rarely or Internally Used
     images used by that interaction have loaded. (Yeah, it's a lousy
     name.)
 
+.. var:: config.loadable_boolean = False
+
+    If True, :func:`renpy.loadable` will return True rather than
+    an integer representing the origin of the loadable file.
+
 .. var:: config.loadable_callback = None
 
     When not None, a function that's called with a filename. It should return
