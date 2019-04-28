@@ -529,7 +529,11 @@ cdef class GLDraw:
             gltexture.use_gles()
 
         elif renpy.emscripten:
-            self.redraw_period = 1.0
+            # give back control to browser regularly
+            self.redraw_period = 0.1
+            # True messes alpha imagemap/imagebutton mouseover
+            self.always_opaque = False
+            # WebGL is GLES
             gltexture.use_gles()
 
         else:
