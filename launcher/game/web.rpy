@@ -38,7 +38,7 @@ init python:
 
         WEB_PATH = os.path.join(config.renpy_base, "web")
 
-        if os.path.isdir(RENIOS_PATH) and check_hash_txt("web"):
+        if os.path.isdir(WEB_PATH) and check_hash_txt("web"):
             pass
         else:
             WEB_PATH = None
