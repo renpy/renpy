@@ -528,6 +528,10 @@ cdef class GLDraw:
             self.always_opaque = True
             gltexture.use_gles()
 
+        elif renpy.emscripten:
+            self.redraw_period = 1.0
+            gltexture.use_gles()
+
         else:
             gltexture.use_gl()
 
@@ -637,7 +641,7 @@ cdef class GLDraw:
         # ANGLE from working with fbo on Windows.
 
         use_fbo = (
-            renpy.ios or renpy.android or (EGL and not ANGLE) or
+            renpy.ios or renpy.android or renpy.emscripten or (EGL and not ANGLE) or
             use_subsystem(
                 glrtt_fbo,
                 "RENPY_GL_RTT",
