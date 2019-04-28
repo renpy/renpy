@@ -29,6 +29,9 @@ import types
 import threading
 import zlib
 import re
+import imp
+import struct
+import marshal
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
 # to look up filenames.
@@ -194,6 +197,10 @@ def walkdir(dir):  # @ReservedAssignment
 
     return rv
 
+# Code origin constants.
+ORIGIN_SYS = 1
+ORIGIN_APK = 2
+ORIGIN_RPA = 3
 
 # A list of files that make up the game.
 game_files = [ ]
@@ -225,7 +232,7 @@ def scandirfiles():
 
     seen = set()
 
-    def add(dn, fn):
+    def add(dn, fn, origin):
         if fn in seen:
             return
 
@@ -237,7 +244,18 @@ def scandirfiles():
 
         files.append((dn, fn))
         seen.add(fn)
-        loadable_cache[fn.lower()] = True
+        loadable_cache[fn.lower()] = origin
+
+    for i in renpy.config.searchpath:
+
+        if (renpy.config.commondir) and (i == renpy.config.commondir):
+            files = common_files  # @UnusedVariable
+        else:
+            files = game_files  # @UnusedVariable
+
+        i = os.path.join(renpy.config.basedir, i)
+        for j in walkdir(i):
+            add(i, j, ORIGIN_SYS)
 
     for apk in apks:
 
@@ -252,24 +270,13 @@ def scandirfiles():
             # to ensure that aapt actually includes every file.
             f = "/".join(i[2:] for i in f.split("/"))
 
-            add(None, f)
-
-    for i in renpy.config.searchpath:
-
-        if (renpy.config.commondir) and (i == renpy.config.commondir):
-            files = common_files  # @UnusedVariable
-        else:
-            files = game_files  # @UnusedVariable
-
-        i = os.path.join(renpy.config.basedir, i)
-        for j in walkdir(i):
-            add(i, j)
+            add(None, f, ORIGIN_APK)
 
     files = game_files
 
     for _prefix, index in archives:
         for j in index.iterkeys():
-            add(None, j)
+            add(None, j, ORIGIN_RPA)
 
 
 def listdirfiles(common=True):
@@ -578,7 +585,8 @@ def load(name, tl=True):
 
 def loadable_core(name):
     """
-    Returns True if the name is loadable with load, False if it is not.
+    Returns an int representing the origin of the name if it is loadable
+    with load, and False if it is not.
     """
 
     name = lower_map.get(name.lower(), name)
@@ -588,21 +596,21 @@ def loadable_core(name):
 
     try:
         transfn(name)
-        loadable_cache[name] = True
-        return True
+        loadable_cache[name] = ORIGIN_SYS
+        return ORIGIN_SYS
     except:
         pass
 
     for apk in apks:
         prefixed_name = "/".join("x-" + i for i in name.split("/"))
         if prefixed_name in apk.info:
-            loadable_cache[name] = True
-            return True
+            loadable_cache[name] = ORIGIN_APK
+            return ORIGIN_APK
 
     for _prefix, index in archives:
         if name in index:
-            loadable_cache[name] = True
-            return True
+            loadable_cache[name] = ORIGIN_RPA
+            return ORIGIN_RPA
 
     loadable_cache[name] = False
     return False
@@ -612,12 +620,15 @@ def loadable(name):
 
     name = name.lstrip('/')
 
-    if (renpy.config.loadable_callback is not None) and renpy.config.loadable_callback(name):
-        return True
+    if (renpy.config.loadable_callback is not None):
+        rv = renpy.config.loadable_callback(name)
+        if rv:
+            return rv
 
     for p in get_prefixes():
-        if loadable_core(p + name):
-            return True
+        rv = loadable_core(p + name)
+        if rv:
+            return rv
 
     return False
 
@@ -685,6 +696,10 @@ def get_hash(name):
 
 # Module Loading
 
+compile_suffix = __debug__ and 'c' or 'o'
+search_order = ('/__init__.py' + compile_suffix, '/__init__.py',
+                         '.py' + compile_suffix,          '.py')
+
 class RenpyImporter(object):
     """
     An importer, that tries to load modules from the places where Ren'Py
@@ -705,11 +720,9 @@ class RenpyImporter(object):
             # raise Exception("Could importer-translate %r + %r" % (prefix, fullname))
             return None
 
-        if loadable(fn + ".py"):
-            return fn + ".py"
-
-        if loadable(fn + "/__init__.py"):
-            return fn + "/__init__.py"
+        for suffix in search_order:
+            if loadable(fn + suffix):
+                return fn + suffix
 
         return None
 
@@ -726,25 +739,78 @@ class RenpyImporter(object):
 
         filename = self.translate(fullname, self.prefix)
 
+        base, ext = os.path.splitext(filename)
+        base = os.path.basename(base)
+
+        # if pyo and no py on disk load from bytes
+        if ext != ".py" and loadable(filename[:-1]) != ORIGIN_SYS:
+            code = self._load_compiled(filename)
+        else:
+            if ext != ".py":
+                filename = filename[:-1]
+            code = self._load_source(filename)
+
         mod = sys.modules.setdefault(fullname, types.ModuleType(fullname))
         mod.__name__ = fullname
-        mod.__file__ = filename
+        mod.__file__ = bytes(filename)
         mod.__loader__ = self
 
-        if filename.endswith("__init__.py"):
-            mod.__path__ = [ filename[:-len("__init__.py")] ]
+        if base == "__init__":
+            mod.__path__ = [ os.path.dirname(filename) ]
 
-        source = load(filename).read().decode("utf8")
+        exec code in mod.__dict__
+        return sys.modules[fullname]
+
+    def _load_compiled(self, filename):
+        fp = load(filename)
+        if fp.read(4) != imp.get_magic():
+            raise ImportError
+        fp.read(4) # ignore timestamp
+        code = self._load_bytecode(fp)
+        fp.close()
+        return code
+
+    def _load_source(self, filename):
+        if loadable(filename) != ORIGIN_SYS:
+            return self._load_from_source(filename)
+
+        src = transfn(filename)
+        dst = src + compile_suffix
+
+        mtime = int(os.path.getmtime(src))
+
+        if not os.path.exists(dst):
+            return self._build_compiled(filename, dst, mtime)
+
+        with open(dst) as fp:
+            if fp.read(4) == imp.get_magic() \
+                    and struct.unpack('I', fp.read(4))[0] == mtime:
+                return self._load_bytecode(fp)
+
+        return self._build_compiled(filename, dst, mtime)
+
+    def _build_compiled(self, filename, dst, mtime):
+        code = self._load_from_source(filename)
+        with open(dst, 'wb') as fc:
+            fc.write(imp.get_magic())
+            fc.write(struct.pack('I', mtime))
+            marshal.dump(code, fc)
+        return code
+
+    def _load_bytecode(self, fp):
+        return marshal.loads(fp.read())
+
+    def _load_from_source(self, filename):
+        fp = load(filename)
+        source = fp.read().decode("utf8")
+        fp.close()
+
         if source and source[0] == u'\ufeff':
             source = source[1:]
         source = source.encode("raw_unicode_escape")
-
         source = source.replace("\r", "")
 
-        code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
-        exec code in mod.__dict__
-
-        return sys.modules[fullname]
+        return compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
 
     def get_data(self, filename):
         return load(filename).read()
