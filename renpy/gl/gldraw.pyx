@@ -1214,6 +1214,9 @@ cdef class GLDraw:
 
         what.kill()
 
+        if renpy.emscripten:
+            renpy.display.interface.force_redraw = True
+
         return a
 
 
