@@ -77,7 +77,7 @@ cdef extern from "renpysound_core.h":
     void RPS_set_video(int channel, int video)
 
     void RPS_sample_surfaces(object, object)
-    void RPS_init(int freq, int stereo, int samples, int status)
+    void RPS_init(int freq, int stereo, int samples, int status, int equal_mono)
     void RPS_quit()
 
     void RPS_periodic()
@@ -354,7 +354,7 @@ def set_video(channel, video):
     else:
         RPS_set_video(channel, NO_VIDEO)
 
-def init(freq, stereo, samples, status=False):
+def init(freq, stereo, samples, status=False, equal_mono=False):
     """
     Initializes the audio system with the given parameters. The parameter are
     just informational - the audio system should be able to play all supported
@@ -379,7 +379,7 @@ def init(freq, stereo, samples, status=False):
     else:
         status = 0
 
-    RPS_init(freq, stereo, samples, status)
+    RPS_init(freq, stereo, samples, status, equal_mono)
     check_error()
 
 def quit(): # @ReservedAssignment

@@ -13,6 +13,12 @@
 #include <stdlib.h>
 #endif
 
+/* Should a mono channel be split into two equal stero channels (true) or
+ * should the energy be split onto two stereo channels with 1/2 the energy
+ * (false).
+ */
+static int audio_equal_mono = 1;
+
 /* The output audio sample rate. */
 static int audio_sample_rate = 44100;
 
@@ -1387,9 +1393,10 @@ void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba) {
 	rgba_surface = rgba;
 }
 
-void media_init(int rate, int status) {
+void media_init(int rate, int status, int equal_mono) {
 
 	audio_sample_rate = rate / SPEED;
+	audio_equal_mono = equal_mono;
 
     av_register_all();
 

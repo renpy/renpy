@@ -57,7 +57,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 struct MediaState;
 typedef struct MediaState MediaState;
 
-void media_init(int rate, int status);
+void media_init(int rate, int status, int equal_mono);
 
 void media_advance_time(void);
 void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba);
@@ -1211,7 +1211,7 @@ void RPS_set_video(int channel, int video) {
  * Initializes the sound to the given frequencies, channels, and
  * sample buffer size.
  */
-void RPS_init(int freq, int stereo, int samples, int status) {
+void RPS_init(int freq, int stereo, int samples, int status, int equal_mono) {
 
     if (initialized) {
         return;
@@ -1253,7 +1253,7 @@ void RPS_init(int freq, int stereo, int samples, int status) {
         return;
     }
 
-    media_init(audio_spec.freq, status);
+    media_init(audio_spec.freq, status, equal_mono);
 
     SDL_PauseAudio(0);
 

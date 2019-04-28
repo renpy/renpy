@@ -976,8 +976,12 @@ notify = None
 # Should Ren'Py support a SL2 keyword after a Python statement?
 keyword_after_python = False
 
-# A lable Ren'Py should jump to if a load fails.
+# A label Ren'Py should jump to if a load fails.
 load_failed_label = None
+
+# If true, Ren'Py distributes mono to both stereo channels. If false,
+# it splits it 50/50.
+equal_mono = True
 
 
 del os
