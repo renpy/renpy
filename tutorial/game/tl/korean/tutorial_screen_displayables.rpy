@@ -118,7 +118,7 @@ translate korean text_displayable_96f88225:
 translate korean text_displayable_1ed1a8c2:
 
     # e "In addition to the common properties that all displayables take, text takes the text style properties. For example, size sets the size of the text."
-    e "모든 디스플레이어블이 취하는 공통 속성 외에도 글자는 텍스트 스타일 속성을 사용합니다. 예를 들어 size는 텍스트의 크기를 설정하지."
+    e "모든 디스플레이어블이 취하는 공통 속성 외에도 글자는 텍스트 스타일 속성을 사용해. 예를 들어 size는 텍스트의 크기를 설정하지."
 
 # game/tutorial_screen_displayables.rpy:234
 translate korean text_displayable_9351d9dd:
@@ -130,7 +130,7 @@ translate korean text_displayable_9351d9dd:
 translate korean text_displayable_32d76ccb:
 
     # e "When text is displayed in a screen using the text statement variables defined in the screen take precedence over those defined outside it."
-    e "스크린에 정의된 텍스트 문 변수를 사용하여 글자가 화면에 표시 될 때 정의된 변수보다 우선해."
+    e "스크린에 정의된 텍스트 문 변수를 사용하여 글자가 화면에 표시될 때는 정의된 변수보다 우선해."
 
 # game/tutorial_screen_displayables.rpy:238
 translate korean text_displayable_7e84a5d1:
@@ -268,7 +268,7 @@ translate korean window_displayables_de5963e4:
 translate korean button_displayables_ea626553:
 
     # e "One of the most flexible displayables is the button displayable, and its textbutton and imagebutton variants."
-    e "가장 유연한 디스플레이어블 중 하나는 버튼(button) 디스플레이어블과 그것의 글자 버튼(textbutton), 이미지 버튼(imagebutton) 변체야."
+    e "가장 유연한 디스플레이어블 중 하나는 버튼(button) 디스플레이어블과 그것의 텍스트 버튼(textbutton), 이미지 버튼(imagebutton) 변체야."
 
 # game/tutorial_screen_displayables.rpy:443
 translate korean button_displayables_372dcc0f:
@@ -280,67 +280,67 @@ translate korean button_displayables_372dcc0f:
 translate korean button_displayables_a6b270ff:
 
     # e "Actions can do many things, like setting variables, showing screens, jumping to a label, or returning a value. There are many {a=https://www.renpy.org/doc/html/screen_actions.html}actions in the Ren'Py documentation{/a}, and you can also write your own."
-    e ""
+    e "동작(action)은 변수 설정, 화면 표시, 레이블로 점프 또는 값 반환과 같은 많은 작업을 수행 할 수 있어. {a=https://www.renpy.org/doc/html/screen_actions.html}렌파이 문서{/a}에는 많은 동작이 이고, 네가 원하는 동작을 만들 수도 있어."
 
 # game/tutorial_screen_displayables.rpy:458
 translate korean button_displayables_4c600d20:
 
     # e "It's also possible to run actions when a button gains and loses focus."
-    e ""
+    e "게다가 버튼이 포커스를 잃었을 때 동작을 실행할 수도 있지."
 
 # game/tutorial_screen_displayables.rpy:473
 translate korean button_displayables_47af4bb9:
 
     # e "A button takes another displayable as children. Since that child can be a layout, it can takes as many children as you want."
-    e ""
+    e "버튼은 다른 디스플레이어블을 자식으로 사용해. 자식은 레이아웃이 될 수 있기 때문에 원하는 만큼의 자식을 취하게 할 수 있어."
 
 # game/tutorial_screen_displayables.rpy:483
 translate korean button_displayables_d01adde3:
 
     # e "In many cases, buttons will be given text. To make that easier, there's the textbutton displayable that takes the text as an argument."
-    e ""
+    e "많은 상황에서, 버튼에는 글자가 표시돼. 이걸 편하게 하기 위해서, 글자를 인자로 취하는 텍스트 버튼(textbutton) 디스플레이어블이 있어."
 
 # game/tutorial_screen_displayables.rpy:485
 translate korean button_displayables_01c551b3:
 
     # e "Since the textbutton displayable manages the style of the button text for you, it's the kind of button that's used most often in the default GUI."
-    e ""
+    e "텍스트 버튼 디스플레이어블은 버튼 글자의 스타일을 관리하기 때문에 기본 GUI에서 가장 자주 사용되는 버튼 유형이야."
 
 # game/tutorial_screen_displayables.rpy:498
 translate korean button_displayables_6911fb9b:
 
     # e "There's also the imagebutton, which takes displayables, one for each state the button can be in, and displays them as the button."
-    e ""
+    e "이미지 버튼(imagebutton) 역시 버튼을 표시할 수 있는 각 상태에 대해 하나씩 디스플레이어블 가져와 버튼으로 표시하지."
 
 # game/tutorial_screen_displayables.rpy:500
 translate korean button_displayables_49720fa6:
 
     # e "An imagebutton gives you the most control over what a button looks like, but is harder to translate and won't look as good if the game window is resized."
-    e ""
+    e "이미지 버튼을 사용하면 버튼의 모양을 가장 잘 제어할 수 있지만, 번역하기가 어려운 데다가 게임 창의 크기를 조정하면 모양이 좋아 보이지 않을 수 있어."
 
 # game/tutorial_screen_displayables.rpy:522
 translate korean button_displayables_e8d40fc8:
 
     # e "Buttons take Window style properties, that are used to specify the background, margins, and padding. They also take Button-specific properties, like a sound to play on hover."
-    e ""
+    e "버튼은 배경(background), 여백(margin) 및 메움(padding)을 지정하는 데 사용되는 창 스타일 속성을 사용해. 또한 호버(hover)에서 재생할 사운드와 같은 버튼 관련 속성을 사용해."
 
 # game/tutorial_screen_displayables.rpy:524
 translate korean button_displayables_1e40e311:
 
     # e "When used with a button, style properties can be given prefixes like idle and hover to make the property change with the button state."
-    e ""
+    e "버튼과 함께 사용하면 스타일 속성에 유휴 상태 및 호버와 같은 접두사를 지정하여 버튼 상태로 속성을 변경할 수 있어."
 
 # game/tutorial_screen_displayables.rpy:526
 translate korean button_displayables_220b020d:
 
     # e "A text button also takes Text style properties, prefixed with text. These are applied to the text displayable it creates internally."
-    e ""
+    e "텍스트 버튼에는 글자 스타일 접두사가 붙어. 이것은 내부적으로 생성한 디스플레이어블에 적용돼."
 
 # game/tutorial_screen_displayables.rpy:558
 translate korean button_displayables_b89d12aa:
 
     # e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
-    e ""
+    e "물론, 그런 스크린에서 버튼을 사용자 정의하는 경우는 드물지. 대신에, 사용자 정의 스타일을 만들어 렌파이에게 사용하도록 알려주는 거야."
 
 # game/tutorial_screen_displayables.rpy:577
 translate korean bar_displayables_946746c2:
@@ -412,7 +412,7 @@ translate korean imagemap_displayables_d62fad02:
 translate korean swimming_405542a5:
 
     # e "You chose swimming."
-    e ""
+    e "수영을 선택했어."
 
 # game/tutorial_screen_displayables.rpy:659
 translate korean swimming_264b5873:
@@ -424,7 +424,7 @@ translate korean swimming_264b5873:
 translate korean science_83e5c0cc:
 
     # e "You chose science."
-    e ""
+    e "과학을 선택했어."
 
 # game/tutorial_screen_displayables.rpy:667
 translate korean science_319cdf4b:
@@ -436,7 +436,7 @@ translate korean science_319cdf4b:
 translate korean art_d2a94440:
 
     # e "You chose art."
-    e ""
+    e "예술을 선택했어."
 
 # game/tutorial_screen_displayables.rpy:674
 translate korean art_e6af6f1d:
@@ -448,13 +448,13 @@ translate korean art_e6af6f1d:
 translate korean home_373ea9a5:
 
     # e "You chose to go home."
-    e ""
+    e "집으로 가는 것을 선택했어."
 
 # game/tutorial_screen_displayables.rpy:686
 translate korean imagemap_done_48eca0a4:
 
     # e "Anyway..."
-    e ""
+    e "어쨌든..."
 
 # game/tutorial_screen_displayables.rpy:691
 translate korean imagemap_done_a60635a1:
@@ -646,121 +646,121 @@ translate korean strings:
 
     # tutorial_screen_displayables.rpy:9
     old "Common properties all displayables share."
-    new ""
+    new "모든 디스플레이어블이 공유하는 공통 속성."
 
     # tutorial_screen_displayables.rpy:9
     old "Adding images and other displayables."
-    new ""
+    new "그림과 다른 디스플레이어블 추가."
 
     # tutorial_screen_displayables.rpy:9
     old "Text."
-    new ""
+    new "글자."
 
     # tutorial_screen_displayables.rpy:9
     old "Boxes and other layouts."
-    new ""
+    new "박스와 다른 레이아웃."
 
     # tutorial_screen_displayables.rpy:9
     old "Windows and frames."
-    new ""
+    new "틀과 창."
 
     # tutorial_screen_displayables.rpy:9
     old "Buttons."
-    new ""
+    new "버튼."
 
     # tutorial_screen_displayables.rpy:9
     old "Bars."
-    new ""
+    new "바."
 
     # tutorial_screen_displayables.rpy:9
     old "Viewports."
-    new ""
+    new "뷰포트."
 
     # tutorial_screen_displayables.rpy:9
     old "Imagemaps."
-    new ""
+    new "이미지맵."
 
     # tutorial_screen_displayables.rpy:9
     old "That's all for now."
-    new ""
+    new "이제 그만."
 
     # tutorial_screen_displayables.rpy:55
     old "This uses position properties."
-    new ""
+    new "이건 위치 속성을 사용해."
 
     # tutorial_screen_displayables.rpy:63
     old "And the world turned upside down..."
-    new ""
+    new "그리고 세상이 거꾸로 됐어..."
 
     # tutorial_screen_displayables.rpy:115
     old "Flight pressure in tanks."
-    new ""
+    new "탱크의 비행 압력."
 
     # tutorial_screen_displayables.rpy:116
     old "On internal power."
-    new ""
+    new "내부 전원 켜기."
 
     # tutorial_screen_displayables.rpy:117
     old "Launch enabled."
-    new ""
+    new "실행됐어."
 
     # tutorial_screen_displayables.rpy:118
     old "Liftoff!"
-    new ""
+    new "이륙!"
 
     # tutorial_screen_displayables.rpy:232
     old "The answer is [answer]."
-    new ""
+    new "답은 [answer]이야."
 
     # tutorial_screen_displayables.rpy:244
     old "Text tags {color=#c8ffc8}work{/color} in screens."
-    new ""
+    new "글자 태그는 스크린에서 {color=#c8ffc8}작동해{/color}."
 
     # tutorial_screen_displayables.rpy:336
     old "Bigger"
-    new ""
+    new "크게"
 
     # tutorial_screen_displayables.rpy:401
     old "This is a screen."
-    new ""
+    new "이건 스크린이야."
 
     # tutorial_screen_displayables.rpy:402
     old "Okay"
-    new ""
+    new "알았어"
 
     # tutorial_screen_displayables.rpy:440
     old "You clicked the button."
-    new ""
+    new "버튼을 클릭했어."
 
     # tutorial_screen_displayables.rpy:441
     old "Click me."
-    new ""
+    new "나를 클릭해."
 
     # tutorial_screen_displayables.rpy:453
     old "You hovered the button."
-    new ""
+    new "버튼 위에 맴돌고 있어."
 
     # tutorial_screen_displayables.rpy:454
     old "You unhovered the button."
-    new ""
+    new "버튼을 벗어났어."
 
     # tutorial_screen_displayables.rpy:470
     old "Heal"
-    new ""
+    new "치유"
 
     # tutorial_screen_displayables.rpy:479
     old "This is a textbutton."
-    new ""
+    new "이건 텍스트 버튼이야."
 
     # tutorial_screen_displayables.rpy:539
     old "Or me."
-    new ""
+    new "또는 나."
 
     # tutorial_screen_displayables.rpy:541
     old "You clicked the other button."
-    new ""
+    new "다른 버튼을 클릭했어."
 
     # tutorial_screen_displayables.rpy:880
     old "This text is wider than the viewport."
-    new ""
+    new "이 글자는 뷰포트보다 넓어."
 
