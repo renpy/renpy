@@ -280,7 +280,7 @@ translate korean button_displayables_372dcc0f:
 translate korean button_displayables_a6b270ff:
 
     # e "Actions can do many things, like setting variables, showing screens, jumping to a label, or returning a value. There are many {a=https://www.renpy.org/doc/html/screen_actions.html}actions in the Ren'Py documentation{/a}, and you can also write your own."
-    e "동작(action)은 변수 설정, 화면 표시, 레이블로 점프 또는 값 반환과 같은 많은 작업을 수행 할 수 있어. {a=https://www.renpy.org/doc/html/screen_actions.html}렌파이 문서{/a}에는 많은 동작이 이고, 네가 원하는 동작을 만들 수도 있어."
+    e "동작(action)은 변수 설정, 화면 표시, 레이블로 점프 또는 값 반환과 같은 많은 작업을 수행 할 수 있어. {a=https://www.renpy.org/doc/html/screen_actions.html}렌파이 문서{/a}에는 많은 동작이 있고, 네가 원하는 동작을 만들 수도 있어."
 
 # game/tutorial_screen_displayables.rpy:458
 translate korean button_displayables_4c600d20:
