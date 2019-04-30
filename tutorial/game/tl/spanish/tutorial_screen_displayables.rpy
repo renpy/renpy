@@ -3,7 +3,7 @@
 translate spanish screen_displayables_7c897a6d:
 
     # e "There are quite a few screen displayables. Here, I'll tell you about some of the most important ones."
-    e "Hay bastantes pantallas visualizables. Aquí les contaré algunas de las más importantes."
+    e "Hay bastantes visualizables screen. Aquí les contaré algunas de las más importantes."
 
 # game/tutorial_screen_displayables.rpy:9
 translate spanish screen_displayables_menu_fef7b441:
@@ -21,7 +21,7 @@ translate spanish screen_displayable_properties_76c5639a:
 translate spanish screen_displayable_properties_527d4b4e:
 
     # e "First off, every screen language displayable supports the position properties. When the container a displayable is in supports it, you can use properties like align, anchor, pos, and so so on."
-    e "En primer lugar, todos los lenguajes de pantalla visualizables admiten las propiedades de posición. Cuando el contenedor en el que se puede exhibir lo admite, puedes usar propiedades como alinear, anclar, pos, etc."
+    e "En primer lugar, todos los lenguajes de visualizables screen admiten las propiedades de posición. Cuando el contenedor en el que se puede exhibir lo admite, puedes usar propiedades como align, anchor, pos, etc."
 
 # game/tutorial_screen_displayables.rpy:69
 translate spanish screen_displayable_properties_8aff26dd:
@@ -33,7 +33,7 @@ translate spanish screen_displayable_properties_8aff26dd:
 translate spanish screen_displayable_properties_2ed40a70:
 
     # e "The id property is mostly used with the say screen, which is used to show dialogue. Outside of the say screen, it isn't used much."
-    e "La propiedad id se usa principalmente con la pantalla de say, que se usa para mostrar el diálogo. Fuera de la pantalla de say, no se usa mucho."
+    e "La propiedad id se usa principalmente con la pantalla say, que se usa para mostrar el diálogo. Fuera de la pantalla de say, no se usa mucho."
 
 # game/tutorial_screen_displayables.rpy:108
 translate spanish screen_displayable_properties_da5733d1:
@@ -117,7 +117,7 @@ translate spanish text_displayable_96f88225:
 translate spanish text_displayable_1ed1a8c2:
 
     # e "In addition to the common properties that all displayables take, text takes the text style properties. For example, size sets the size of the text."
-    e "Además de las propiedades comunes que toman todos los visualizables, el texto toma las propiedades de estilo del texto. Por ejemplo, tamaño establece el tamaño del texto."
+    e "Además de las propiedades comunes que toman todos los visualizables, el texto toma las propiedades de estilo text. Por ejemplo, tamaño establece el tamaño del texto."
 
 # game/tutorial_screen_displayables.rpy:234
 translate spanish text_displayable_9351d9dd:
@@ -645,7 +645,7 @@ translate spanish strings:
 
     # tutorial_screen_displayables.rpy:9
     old "Common properties all displayables share."
-    new "Todas las propiedades comunes comparten visualizables."
+    new "Todas las propiedades comunes que comparten los visualizables."
 
     # tutorial_screen_displayables.rpy:9
     old "Adding images and other displayables."
@@ -653,7 +653,7 @@ translate spanish strings:
 
     # tutorial_screen_displayables.rpy:9
     old "Text."
-    new "Texto."
+    new "Text."
 
     # tutorial_screen_displayables.rpy:9
     old "Boxes and other layouts."
