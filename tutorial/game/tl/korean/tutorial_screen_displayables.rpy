@@ -340,73 +340,73 @@ translate korean button_displayables_220b020d:
 translate korean button_displayables_b89d12aa:
 
     # e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
-    e "물론, 그런 스크린에서 버튼을 사용자 정의하는 경우는 드물지. 대신에, 사용자 정의 스타일을 만들어 렌파이에게 사용하도록 알려주는 거야."
+    e "물론, 그런 스크린에서 버튼을 사용자 정의하는 경우는 드물지. 대신에 사용자 정의 스타일을 만들어 렌파이에게 사용하도록 알려주는 거야."
 
 # game/tutorial_screen_displayables.rpy:577
 translate korean bar_displayables_946746c2:
 
     # e "The bar and vbar displayables are flexible displayables that show bars representing a value. The value can be static, animated, or adjustable by the player."
-    e ""
+    e "bar와 vbar 디스플레이어블은 값을 나타내는 막대를 표시하는 유연한 디스플레이어블이야. 이 값은 정적, 애니메이션 또는 플레이어에 의해 조정될 수 있어."
 
 # game/tutorial_screen_displayables.rpy:579
 translate korean bar_displayables_af3a51b8:
 
     # e "The value property gives a BarValue, which is an object that determines the bar's value and range. Here, a StaticValue sets the range to 100 and the value to 66, making a bar that's two thirds full."
-    e ""
+    e "값(value) 속성은 막대의 값과 범위를 결정하는 객체인 BarValue를 제공해. 여기에서 StaticValue는 범위를 100으로 설정하고 값은 66으로 설정하여 막대의 3 분의 2가 채워지지."
 
 # game/tutorial_screen_displayables.rpy:581
 translate korean bar_displayables_62f8b0ab:
 
     # e "A list of all the BarValues that can be used is found {a=https://www.renpy.org/doc/html/screen_actions.html#bar-values}in the Ren'Py documentation{/a}."
-    e ""
+    e "사용할 수 있는 모든 BarValues ​​목록은 {a=https://www.renpy.org/doc/html/screen_actions.html#bar-values}렌파이 설명서{/a}에 있어."
 
 # game/tutorial_screen_displayables.rpy:583
 translate korean bar_displayables_5212eb0a:
 
     # e "In this example, we give the frame the xsize property. If we didn't do that, the bar would expand to fill all available horizontal space."
-    e ""
+    e "이 예제에서 우리는 프레임에 xsize 속성을 부여했어. 그러지 않았다면 막대가 사용 가능한 모든 수평 공간을 채웠을 거야."
 
 # game/tutorial_screen_displayables.rpy:600
 translate korean bar_displayables_67295018:
 
     # e "There are a few different bar styles that are defined in the default GUI. The styles are selected by the style property, with the default selected by the value."
-    e ""
+    e "기본 GUI에 정의된 몇 가지 다른 막대 스타일이 있어. 스타일은 style 속성과 값에 의해 선택된 기본으로 정해져."
 
 # game/tutorial_screen_displayables.rpy:602
 translate korean bar_displayables_1b037b21:
 
     # e "The top style is the 'bar' style. It's used to display values that the player can't adjust, like a life or progress bar."
-    e ""
+    e "상단 스타일은 '막대(bar)'스타일이야. 이 값은 플레이어가 조정할 수 없는 값(예: 수명 또는 진행률 막대)을 표시하는 데 사용돼."
 
 # game/tutorial_screen_displayables.rpy:604
 translate korean bar_displayables_c2aa4725:
 
     # e "The middle stye is the 'slider' value. It's used for values the player is expected to adjust, like a volume preference."
-    e ""
+    e "중간 스타일은 '슬라이더(slider)' 값이야. 볼륨 설정과 같이 플레이어가 조정할 것으로 예상되는 값에 사용돼."
 
 # game/tutorial_screen_displayables.rpy:606
 translate korean bar_displayables_2fc44226:
 
     # e "Finally, the bottom style is the 'scrollbar' style, which is used for horizontal scrollbars. When used as a scrollbar, the thumb in the center changes size to reflect the visible area of a viewport."
-    e ""
+    e "마지막으로, 하단은 수평 스크롤 막대에 사용되는 '스크롤바(scrollbar)' 스타일이야. 스크롤 막대로 사용하면 막대의 이동이 가능한 가운데는 뷰포트의 가시 영역을 반영하기 위해 크기가 변경돼."
 
 # game/tutorial_screen_displayables.rpy:623
 translate korean bar_displayables_26eb88bf:
 
     # e "The vbar displayable is similar to the bar displayable, except it uses vertical styles - 'vbar', 'vslider', and 'vscrollbar' - by default."
-    e ""
+    e "vbar 디스플레이어블은 기본적으로 수직 스타일-'vbar', 'vslider', 'vscrollbar'-이라는 걸 제외하면 bar 디스플레이어블과 비슷해."
 
 # game/tutorial_screen_displayables.rpy:626
 translate korean bar_displayables_11cf8af2:
 
     # e "Bars take the Bar style properties, which can customize the look and feel greatly. Just look at the difference between the bar, slider, and scrollbar styles."
-    e ""
+    e "막대는 Bar 스타일 속성을 사용해서 모양과 느낌을 멋지게 사용자 정의할 수 있어. 막대, 슬라이더 및 스크롤 막대 스타일의 차이점을 살펴보도록 해."
 
 # game/tutorial_screen_displayables.rpy:635
 translate korean imagemap_displayables_d62fad02:
 
     # e "Imagemaps use two or more images to show buttons and bars. Let me start by showing you an example of an imagemap in action."
-    e ""
+    e "이미지맵(imagemap)은 두 개 이상의 이미지를 사용하여 버튼과 막대를 표시해. 먼저 이미지맵을 사용하는 예를 보여줄게."
 
 # game/tutorial_screen_displayables.rpy:657
 translate korean swimming_405542a5:
@@ -418,7 +418,7 @@ translate korean swimming_405542a5:
 translate korean swimming_264b5873:
 
     # e "Swimming seems like a lot of fun, but I didn't bring my bathing suit with me."
-    e ""
+    e "수영은 정말 재밌지만, 나는 오늘 수영복을 가져오지 않았어."
 
 # game/tutorial_screen_displayables.rpy:665
 translate korean science_83e5c0cc:
@@ -430,19 +430,19 @@ translate korean science_83e5c0cc:
 translate korean science_319cdf4b:
 
     # e "I've heard that some schools have a competitive science team, but to me research is something that can't be rushed."
-    e ""
+    e "몇몇 학교는 경쟁적인 과학 팀을 가지고 있다고 들었지만, 나에게 있어 연구는 서둘러서는 안 되는 거야."
 
 # game/tutorial_screen_displayables.rpy:672
 translate korean art_d2a94440:
 
     # e "You chose art."
-    e "예술을 선택했어."
+    e "아트를 선택했어."
 
 # game/tutorial_screen_displayables.rpy:674
 translate korean art_e6af6f1d:
 
     # e "Really good background art is hard to make, which is why so many games use filtered photographs. Maybe you can change that."
-    e ""
+    e "정말 좋은 배경 아트는 만들기 어려워. 그래서 많은 게임들이 필터링된 사진을 사용하지. 어쩌면 너는 그것을 바꿀 수 있을지도."
 
 # game/tutorial_screen_displayables.rpy:680
 translate korean home_373ea9a5:
@@ -460,7 +460,7 @@ translate korean imagemap_done_48eca0a4:
 translate korean imagemap_done_a60635a1:
 
     # e "To demonstrate how imagemaps are put together, I'll show you the five images that make up a smaller imagemap."
-    e ""
+    e "이미지맵을 결합하는 방법을 설명하기 위해 작은 이미지맵을 구성하는 다섯 개의 이미지를 보여줄게."
 
 # game/tutorial_screen_displayables.rpy:697
 translate korean imagemap_done_ac9631ef:
@@ -670,7 +670,7 @@ translate korean strings:
 
     # tutorial_screen_displayables.rpy:9
     old "Bars."
-    new "바."
+    new "막대."
 
     # tutorial_screen_displayables.rpy:9
     old "Viewports."
