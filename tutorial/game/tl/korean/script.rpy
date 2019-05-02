@@ -22,7 +22,7 @@ translate korean end_b2482727:
 translate korean end_38362e36:
 
     # e "If you'd like to see a full Ren'Py game, select \"The Question\" in the launcher."
-    e "완성된 렌파이 게임을 보고 싶다면, 런처에서 \"물음(The Question)\을 선택해 봐."
+    e "완성된 렌파이 게임을 보고 싶다면, 런처에서 \"물음(The Question)\"을 선택해 봐."
 
 # game/script.rpy:209
 translate korean end_02527d05:
