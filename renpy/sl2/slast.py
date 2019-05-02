@@ -1884,6 +1884,7 @@ class SLScreen(SLBlock):
     analysis = None
 
     layer = "'screens'"
+    sensitive = "True"
 
     def __init__(self, loc):
 
@@ -1907,6 +1908,9 @@ class SLScreen(SLBlock):
         # Should we predict this screen?
         self.predict = "None"  # expr.
 
+        # Should this screen be sensitive.
+        self.sensitive = "True"
+
         # The parameters this screen takes.
         self.parameters = None
 
@@ -1927,6 +1931,7 @@ class SLScreen(SLBlock):
         rv.variant = self.variant
         rv.predict = self.predict
         rv.parameters = self.parameters
+        rv.sensitive = self.sensitive
 
         rv.prepared = False
         rv.analysis = None
@@ -1950,6 +1955,7 @@ class SLScreen(SLBlock):
             parameters=self.parameters,
             location=self.location,
             layer=renpy.python.py_eval(self.layer),
+            sensitive=self.sensitive,
             )
 
     def analyze(self, analysis):

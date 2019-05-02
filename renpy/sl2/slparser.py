@@ -992,6 +992,7 @@ class ScreenParser(Parser):
         screen.variant = keyword.get("variant", "None")
         screen.predict = keyword.get("predict", "None")
         screen.layer = keyword.get("layer", "'screens'")
+        screen.sensitive = keyword.get("sensitive", "True")
 
         return screen
 
@@ -1004,6 +1005,7 @@ Keyword("predict")
 Keyword("style_group")
 Keyword("style_prefix")
 Keyword("layer")
+Keyword("sensitive")
 parser = None
 
 
