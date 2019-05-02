@@ -4,37 +4,37 @@
 translate korean new_gui_17a0326e:
 
     # e "When you create a new project, Ren'Py will automatically create a GUI - a Graphical User Interface - for it."
-    e ""
+    e "새로운 프로젝트를 만들 때, 렌파이는 프로젝트를 위한 GUI-그래픽 유저 인터페이스-를 자동으로 생성할 거야."
 
 # game/indepth_style.rpy:42
 translate korean new_gui_12c814ed:
 
     # e "It defines the look of both in-game interface, like this text box, and out-of-game interface like the main and game menus."
-    e ""
+    e "GUI는 이 텍스트 상자처럼, 게임 내 인터페이스와 주 메뉴 및 게임 메뉴와 같은 게임 외부 인터페이스의 모양을 정의해."
 
 # game/indepth_style.rpy:44
 translate korean new_gui_0a2a73bb:
 
     # e "The default GUI is meant to be nice enough for a simple project. With a few small changes, it's what you're seeing in this game."
-    e ""
+    e "기본 GUI는 몇 가지 작은 변화와 함께 단순한 프로젝트에 사용하기 충분해. 네가 이 길라잡이에서 보고 있는 것도 GUI야."
 
 # game/indepth_style.rpy:46
 translate korean new_gui_22adf68e:
 
     # e "The GUI is also meant to be easy for an intermediate creator to customize. Customizing the GUI consists of changing the image files in the gui directory, and changing variables in gui.rpy."
-    e ""
+    e "GUI는 제작자가 쉽게 사용자 정의할 수 있도록 제작됐어. GUI를 사용자 정의하는 작업은 gui 디렉토리의 이미지 파일을 변경하고 gui.rpy의 변수를 변경하는 것으로 가능해."
 
 # game/indepth_style.rpy:48
 translate korean new_gui_da21de30:
 
     # e "At the same time, even when customized, the default GUI might be too recognizable for an extremely polished game. That's why we've made it easy to totally replace."
-    e ""
+    e "동시에, 사용자 정의된 극도로 세련된 게임의 경우에도 기본 GUI가 잘 인식 될 수 있어. 그게 우리가 그것을 완전히 교체하기 쉽게 만든 이유야."
 
 # game/indepth_style.rpy:50
 translate korean new_gui_45765574:
 
     # e "We've put an extensive guide to customizing the GUI on the Ren'Py website. So if you want to learn more, visit the {a=https://www.renpy.org/doc/html/gui.html}GUI customization guide{/a}."
-    e ""
+    e "우리는 렌파이 웹 사이트에서 GUI를 커스터마이징하는 것에 대한 광범위한 가이드를 작성했어. 자세한 내용을 보려면 {a=https://www.renpy.org/doc/html/gui.html} GUI 사용자 정의 안내서{/a}를 참고하도록 해."
 
 # game/indepth_style.rpy:58
 translate korean styles_fa345a38:
@@ -712,105 +712,105 @@ translate korean strings:
 
     # indepth_style.rpy:20
     old "Button 1"
-    new ""
+    new "버튼 1"
 
     # indepth_style.rpy:22
     old "Button 2"
-    new ""
+    new "버튼 2"
 
     # indepth_style.rpy:66
     old "Style basics."
-    new ""
+    new "스타일 기초."
 
     # indepth_style.rpy:66
     old "General style properties."
-    new ""
+    new "일반적인 스타일 속성들."
 
     # indepth_style.rpy:66
     old "Text style properties."
-    new ""
+    new "글자 스타일 속성들."
 
     # indepth_style.rpy:66
     old "Window and Button style properties."
-    new ""
+    new "버튼과 창 스타일 속성들."
 
     # indepth_style.rpy:66
     old "Bar style properties."
-    new ""
+    new "막대 스타일 속성들."
 
     # indepth_style.rpy:66
     old "Box, Grid, and Fixed style properties."
-    new ""
+    new "박스, 그리드, 고정된 스타일 속성들."
 
     # indepth_style.rpy:66
     old "The Displayable Inspector."
-    new ""
+    new "디스플레이어블 조사기."
 
     # indepth_style.rpy:66
     old "That's all I want to know."
-    new ""
+    new "다 알 것 같아."
 
     # indepth_style.rpy:112
     old "This text is colored green."
-    new ""
+    new "이 글자는 초록색이야."
 
     # indepth_style.rpy:126
     old "Danger"
-    new ""
+    new "위험"
 
     # indepth_style.rpy:142
     old "This text is colored red."
-    new ""
+    new "이 글자는 빨간색이야."
 
     # indepth_style.rpy:170
     old "This text is colored blue."
-    new ""
+    new "이 글자는 파란색이야."
 
     # indepth_style.rpy:248
     old "Orbiting Earth in the spaceship, I saw how beautiful our planet is.\n–Yuri Gagarin"
-    new ""
+    new "지구 궤도에 진입하는 우주선 안에서, 나는 우리의 행성이 얼마나 아름다운지를 보았습니다.\n-유리 가가린"
 
     # indepth_style.rpy:303
     old "\"Orbiting Earth in the spaceship, I saw how beautiful our planet is.\" Said by Yuri Gagarin."
-    new ""
+    new "유리 가가린이 말했다, \"지구 궤도에 진입하는 우주선 안에서, 나는 우리의 행성이 얼마나 아름다운지를 보았습니다.\" 라고."
 
     # indepth_style.rpy:326
     old "Vertical"
-    new ""
+    new "수직"
 
     # indepth_style.rpy:329
     old "Far better it is to dare mighty things, to win glorious triumphs, even though checkered by failure, than to rank with those poor spirits who neither enjoy nor suffer much, because they live in the gray twilight that knows not victory nor defeat.\n\n–Theodore Roosevelt"
-    new ""
+    new "승리도 실패도 모르는 회색지대에 살며 즐거움도 고통도 느끼지 못하는 불쌍한 사람들에 속하기보다는 실패에 의해 굴곡이 있더라도 위대한 일들을 과감하게 해내고 영광스러운 승리를 얻는 것이 훨씬 더 좋다.\n\n-시어도어 루스벨트"
 
     # indepth_style.rpy:561
     old "Top Choice"
-    new ""
+    new "상단 선택"
 
     # indepth_style.rpy:566
     old "Bottom Choice"
-    new ""
+    new "하단 선택"
 
     # indepth_style.rpy:879
     old "First Child"
-    new ""
+    new "첫 번째 자식"
 
     # indepth_style.rpy:880
     old "Second Child"
-    new ""
+    new "두 번째 자식"
 
     # indepth_style.rpy:881
     old "Third Child"
-    new ""
+    new "세 번째 자식"
 
     # indepth_style.rpy:884
     old "Fourth Child"
-    new ""
+    new "네 번째 자식"
 
     # indepth_style.rpy:885
     old "Fifth Child"
-    new ""
+    new "다섯 번째 자식"
 
     # indepth_style.rpy:886
     old "Sixth Child"
-    new ""
+    new "여섯 번째 자식"
 
