@@ -4,55 +4,55 @@
 translate korean demo_transitions_5bbc72fe:
 
     # e "Ren'Py ships with a large number of built-in transitions, and also includes classes that let you define your own."
-    e ""
+    e "렌파이에는 많은 수의 전환이 내장돼 있고, 사용자가 직접 정의할 수 있는 클래스도 있어."
 
 # game/indepth_transitions.rpy:58
 translate korean demo_transitions_menu_3caf78d3:
 
     # e "What kind of transitions would you like demonstrated?" nointeract
-    e "" nointeract
+    e "어떤 종류의 전환을 보고 싶어?" nointeract
 
 # game/indepth_transitions.rpy:95
 translate korean demo_simple_transitions_2b4fbae3:
 
     # e "Okay, I can tell you about simple transitions. We call them simple because they don't take much in the way of configuration."
-    e ""
+    e "좋아, 간단한 전환에 대해 알려줄게. 많은 설정을 하지 않을 것이기 때문에 simple이라 부를게."
 
 # game/indepth_transitions.rpy:97
 translate korean demo_simple_transitions_4b235ac2:
 
     # e "But don't let that get you down, since they're the transitions you'll probably use the most in a game."
-    e ""
+    e "하지만 네가 게임에서 가장 많이 사용하는 장면 전환이기 때문에 실망하지 않을 거야."
 
 # game/indepth_transitions.rpy:103
 translate korean demo_simple_transitions_af0431ac:
 
     # e "The 'dissolve' transition is probably the most useful, blending one scene into another."
-    e ""
+    e "디졸브(dissolve) 전환은 한 장면을 다른 장면과 블렌딩하하는 것으로 아마도 가장 유용할 거야."
 
 # game/indepth_transitions.rpy:109
 translate korean demo_simple_transitions_5b9f711f:
 
     # e "The 'Dissolve' function lets you create your own dissolves, taking a different amount of time."
-    e ""
+    e "'Dissolve' 기능은 전환 시간을 네가 원하는 대로 조절할 수 있어."
 
 # game/indepth_transitions.rpy:116
 translate korean demo_simple_transitions_79816523:
 
     # e "The 'fade' transition fades to black, and then fades back in to the new scene."
-    e ""
+    e "페이드(fade) 전환은 검정색으로 사라진 후에 새로운 화면으로 돌아와."
 
 # game/indepth_transitions.rpy:118
 translate korean demo_simple_transitions_141bb95d:
 
     # e "If you're going to stay at a black screen, you'll probably want to use 'dissolve' rather than 'fade'."
-    e ""
+    e "검은 화면에 머물러 있다면 '페이드'보다는 '디졸브'를 사용하는 것이 좋아."
 
 # game/indepth_transitions.rpy:123
 translate korean demo_simple_transitions_f059f4ae:
 
     # e "You can use 'Fade' to define your own fades. By changing the timing and the color faded to, you can use this for special effects, like flashbulbs."
-    e ""
+    e "'Fade'를 사용해서 너만의 페이드를 정의할 수 있어. 색이 바래지는 타이밍과 색상을 변경하여 반짝이는 전구와 같은 특수 효과에도 사용할 수 있지."
 
 # game/indepth_transitions.rpy:129
 translate korean demo_simple_transitions_e948905b:
@@ -496,29 +496,29 @@ translate korean strings:
 
     # indepth_transitions.rpy:58
     old "Simple Transitions"
-    new ""
+    new "간단한 전환들"
 
     # indepth_transitions.rpy:58
     old "ImageDissolve Transitions"
-    new ""
+    new "ImageDissolve 전환"
 
     # indepth_transitions.rpy:58
     old "MoveTransition Transitions"
-    new ""
+    new "MoveTransition 전환"
 
     # indepth_transitions.rpy:58
     old "CropMove Transitions"
-    new ""
+    new "CropMove 전환"
 
     # indepth_transitions.rpy:58
     old "PushMove Transitions"
-    new ""
+    new "PushMove 전환"
 
     # indepth_transitions.rpy:58
     old "AlphaDissolve Transitions"
-    new ""
+    new "AlphaDissolve 전환"
 
     # indepth_transitions.rpy:58
     old "How about something else?"
-    new ""
+    new "어때?"
 
