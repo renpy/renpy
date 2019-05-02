@@ -574,73 +574,73 @@ translate korean imagemap_done_b6cebf2b:
 translate korean viewport_displayables_e509d50d:
 
     # e "Sometimes, you'll want to display something bigger than the screen. That's what the viewport displayable is for."
-    e ""
+    e "때로는 화면보다 더 큰 것을 보여주고 싶을 수 있어. 그럴 때 필요한 것이 뷰포트 디스플레이어블이야."
 
 # game/tutorial_screen_displayables.rpy:803
 translate korean viewport_displayables_9853b0e3:
 
     # e "Here's an example of a simple viewport, used to display a single image that's far bigger than the screen. Since the viewport will expand to the size of the screen, we use the xysize property to make it smaller."
-    e ""
+    e "이건 화면보다 훨씬 큰 단일 이미지를 표시하는 데 사용되는 간단한 뷰포트의 예제야. 뷰포트는 스크린의 크기를 확장하기 때문에 xysize 속성을 사용해 뷰포트를 작게 만들었어."
 
 # game/tutorial_screen_displayables.rpy:805
 translate korean viewport_displayables_778668c8:
 
     # e "By default the viewport can't be moved, so we give the draggable, mousewheel, and arrowkeys properties to allow it to be moved in multiple ways."
-    e ""
+    e "기본적으로 뷰포트는 움직일 수 없지만, draggable, mousewheel, arrowkeys 속성을 사용해 여러 방법으로 이동하게 할 수 있어."
 
 # game/tutorial_screen_displayables.rpy:820
 translate korean viewport_displayables_bbd63377:
 
     # e "When I give the viewport the edgescroll property, the viewport automatically scrolls when the mouse is near its edges. The two numbers are the size of the edges, and the speed in pixels per second."
-    e ""
+    e "뷰포트에 edgescroll 속성을 지정하면 마우스가 가장자리 근처에 있을 때 뷰포트가 자동으로 스크롤돼. 두 숫자는 가장자리의 크기와 초당 픽셀 단위의 속도야."
 
 # game/tutorial_screen_displayables.rpy:839
 translate korean viewport_displayables_7c4678ee:
 
     # e "Giving the viewport the scrollbars property surrounds it with scrollbars. The scrollbars property can take 'both', 'horizontal', and 'vertical' as values."
-    e ""
+    e "뷰포트에 scrollbars 속성을 지정하면 스크롤바로 둘러싸게 돼. scrollbars 속성은 값으로 전체(both), 수평(horizontal), 그리고 수직(vertical)을 사용할 수 있고."
 
 # game/tutorial_screen_displayables.rpy:841
 translate korean viewport_displayables_197953b5:
 
     # e "The spacing property controls the space between the viewport and its scrollbars, in pixels."
-    e ""
+    e "spacing 속성은 뷰포트와 스크롤 막대 사이의 간격을 픽셀 단위로 제어해."
 
 # game/tutorial_screen_displayables.rpy:864
 translate korean viewport_displayables_54dd6e7b:
 
     # e "The xinitial and yinitial properties set the initial amount of scrolling, as a fraction of the amount that can be scrolled."
-    e ""
+    e "xinitial과 yinitial 속성은 스크롤 가능한 양으로 스크롤의 초기 위치를 설정해."
 
 # game/tutorial_screen_displayables.rpy:885
 translate korean viewport_displayables_c047efb5:
 
     # e "Finally, there's the child_size property. To explain what it does, I first have to show you what happens when we don't have it."
-    e ""
+    e "마지막으로는 child_size 속성이 있어. 그것이 무엇을 하는지 설명하기 위해, 그 속성을 가지고 있지 않을 때 일어나는 일을 먼저 보여줄게."
 
 # game/tutorial_screen_displayables.rpy:887
 translate korean viewport_displayables_c563019f:
 
     # e "As you can see, the text wraps. That's because Ren'Py is offering it space that isn't big enough."
-    e ""
+    e "보다시피 텍스트가 줄 바꿈돼. 렌파이가 제공하는 공간이 충분히 크지 않기 때문이야."
 
 # game/tutorial_screen_displayables.rpy:909
 translate korean viewport_displayables_4bcf0ad0:
 
     # e "When we give the screen a child_size, it offers more space to its children, allowing scrolling. It takes a horizontal and vertical size. If one component is None, it takes the size of the viewport."
-    e ""
+    e "스크린에 child_size 속성을 사용하면, 자식들에게 더 많은 공간을 제공하여 스크롤을 허용하게 할 수 있어. 거기에는 수평(horizontal) 및 수직(vertical) 크기가 필요해. 만약 하나의 구성 요소가 None이면 뷰포트의 크기를 사용해."
 
 # game/tutorial_screen_displayables.rpy:936
 translate korean viewport_displayables_ae4ff821:
 
     # e "Finally, there's the vpgrid displayable. It combines a viewport and a grid into a single displayable, except it's more efficient than either, since it doesn't have to draw every child."
-    e ""
+    e "마지막으로, vpgrid 디스플레이어블이 있어. 뷰포트와 그리드를 하나의 디스플레이어블에 하는 건데, 모든 자식을 그릴 필요가 없기 때문에 뷰포트와 그리드를 하나의 디스플레이 어블에 결합해."
 
 # game/tutorial_screen_displayables.rpy:938
 translate korean viewport_displayables_71fa0b8f:
 
     # e "It takes the cols and rows properties, which give the number of rows and columns of children. If one is omitted, Ren'Py figures it out from the other and the number of children."
-    e ""
+    e "vpgrid는 자식의 행(cols)과 열(rows)을 제공하는 속성을 사용해. 하나를 생략하면, 렌파이는 그것을 자식의 수와 다른 속성으로부터 계산해"
 
 translate korean strings:
 
@@ -762,5 +762,5 @@ translate korean strings:
 
     # tutorial_screen_displayables.rpy:880
     old "This text is wider than the viewport."
-    new "이 글자는 뷰포트보다 넓어."
+    new "이 글자는 뷰포트의 넓이보다 넓게 작성돼 있어."
 
