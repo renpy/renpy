@@ -466,109 +466,109 @@ translate korean imagemap_done_a60635a1:
 translate korean imagemap_done_ac9631ef:
 
     # e "The idle image is used for the background of the imagemap, for hotspot buttons that aren't focused or selected, and for the empty part of an unfocused bar."
-    e ""
+    e "idle 이미지는 이미지 맵의 배경, 초점이 맞춰지지 않았거나 선택하지 않은 핫스팟 버튼 및 초점에서 벗어난 막대의 빈 부분에 사용돼."
 
 # game/tutorial_screen_displayables.rpy:703
 translate korean imagemap_done_123b5924:
 
     # e "The hover image is used for hotspots that are focused but not selected, and for the empty part of a focused bar."
-    e ""
+    e "hover 이미지는 초점은 맞춰졌지만 선택되지 않은 핫스팟과 초점이 맞춰진 막대의 빈 부분에 사용되고."
 
 # game/tutorial_screen_displayables.rpy:705
 translate korean imagemap_done_37f538dc:
 
     # e "Notice how both the bar and button are highlighted in this image. When we display them as part of a screen, only one of them will show up as focused."
-    e ""
+    e "이 이미지에서 막대 및 버튼이 어떻게 강조 표시되는지 확인해봐. 스크린의 일부로 이들을 표시할 때 그 중 하나에 초점이 맞춰져."
 
 # game/tutorial_screen_displayables.rpy:711
 translate korean imagemap_done_c76b072d:
 
     # e "Selected images like this selected_idle image are used for parts of the bar that are filled, and for selected buttons, like the current screen and a checked checkbox."
-    e ""
+    e "이 selected_idle 이미지와 같은 선택된 이미지는 채워지는 막대의 부분, 현재 화면과 체크된 상자와 같은 선택된 버튼에 사용돼."
 
 # game/tutorial_screen_displayables.rpy:717
 translate korean imagemap_done_241a4112:
 
     # e "Here's the selected_hover image. The button here will never be shown, since it will never be marked as selected."
-    e ""
+    e "이건 selected_hover 이미지야. 여기에 있는 버튼은 선택된 것으로 표시되지 않기 때문에 절대 표시되지 않아."
 
 # game/tutorial_screen_displayables.rpy:723
 translate korean imagemap_done_3d8f454c:
 
     # e "Finally, an insensitive image can be given, which is used when a hotspot can't be interacted with."
-    e ""
+    e "마지막으로, 핫스팟과 상호작용할 수 없을 때 사용되는 insensitive 이미지가 주어질 수 있어."
 
 # game/tutorial_screen_displayables.rpy:728
 translate korean imagemap_done_ca286729:
 
     # e "Imagemaps aren't limited to just images. Any displayable can be used where an image is expected."
-    e ""
+    e "이미지맵은 단지 이미지에만 국한되지 않아. 모든 디스플레이어블은 이미지가 예상되는 곳에 사용될 수 있어."
 
 # game/tutorial_screen_displayables.rpy:743
 translate korean imagemap_done_6060b17f:
 
     # e "Here's an imagemap built using those five images. Now that it's an imagemap, you can interact with it if you want to."
-    e ""
+    e "이건 5개의 이미지를 사용하여 생성 된 이미지맵이야. 원하는 경우 상호작용할 수 있어."
 
 # game/tutorial_screen_displayables.rpy:755
 translate korean imagemap_done_c817794d:
 
     # e "To make this a little more concise, we can replace the five images with the auto property, which replaces '%%s' with 'idle', 'hover', 'selected_idle', 'selected_hover', or 'insensitive' as appropriate."
-    e ""
+    e "좀 더 간략하게하기 위해 '%%s'를 'idle', 'hover', 'selected_idle', 'selected_hover'또는 'insensitive'로 적절히 대체하는 자동(auto) 속성으로 5개의 이미지를 대체할 수 있어."
 
 # game/tutorial_screen_displayables.rpy:757
 translate korean imagemap_done_c1ed91b8:
 
     # e "Feel free to omit the selected and insensitive images if your game doesn't need them. Ren'Py will use the idle or hover images to replace them."
-    e ""
+    e "게임에서 반드시 필요하지 않은 경우에는 selected와 insensitive 이미지는 생략해도 돼. 렌파이는 idle이나 hover 이미지를 사용해 그것들을 대체할 거야."
 
 # game/tutorial_screen_displayables.rpy:759
 translate korean imagemap_done_166f75db:
 
     # e "The hotspot and hotbar statements describe areas of the imagemap that should act as buttons or bars, respectively."
-    e ""
+    e "hotspot과 hotbar 문은 버튼이나 바처럼 행동해야 하는 이미지 맵 영역을 나타내는데,"
 
 # game/tutorial_screen_displayables.rpy:761
 translate korean imagemap_done_becb9688:
 
     # e "Both take the coordinates of the area, in (x, y, width, height) format."
-    e ""
+    e "이것들은 모두 영역의 좌표(x, y, width, height) 형식을 취해."
 
 # game/tutorial_screen_displayables.rpy:763
 translate korean imagemap_done_fd56baa2:
 
     # e "A hotspot takes an action that is run when the hotspot is activated. It can also take actions that are run when it's hovered and unhovered, just like a button can."
-    e ""
+    e "핫스팟은 핫스팟이 활성화될 때 실행되는 작업을 수행해. 버튼처럼 커서를 올리거나 내릴 때 실행되는 작업을 수행할 수도 있지."
 
 # game/tutorial_screen_displayables.rpy:765
 translate korean imagemap_done_5660a6a2:
 
     # e "A hotbar takes a BarValue object that describes how full the bar is, and the range of values the bar should display, just like a bar and vbar does."
-    e ""
+    e "hotbar는 막대가 얼마나 꽉 찼는지 설명하는 BarValue 객체와 막대, bar와 vbar 막대가 표시해야 하는 값의 범위를 사용해."
 
 # game/tutorial_screen_displayables.rpy:772
 translate korean imagemap_done_10496a29:
 
     # e "A useful pattern is to define a screen with an imagemap that has hotspots that jump to labels, and call that using the call screen statement."
-    e ""
+    e "유용한 패턴은 레이블로 점프하는 핫스팟이 있는 이미지맵 스크린을 정의하고 call screen 명령문을 사용하여 호출하는 거야."
 
 # game/tutorial_screen_displayables.rpy:774
 translate korean imagemap_done_dcb45224:
 
     # e "That's what we did in the school example I showed before. Here's the script for it. It's long, but the imagemap itself is fairly simple."
-    e ""
+    e "내가 전에 보여준 학교 예제가 바로 그 방식을 취하고 있었어. 여기에 있는 스크립트를 봐. 스크립트 자체는 길지만 이미지맵은 매우 간단해."
 
 # game/tutorial_screen_displayables.rpy:778
 translate korean imagemap_done_5b5bc5e5:
 
     # e "Imagemaps have pluses and minuses. On one hand, they are easy for a designer to create, and can look very good. At the same time, they can be hard to translate, and text baked into images may be blurry when the window is scaled."
-    e ""
+    e "이미지맵은 장점과 단점이 있어. 디자이너가 쉽고 예쁘게 만들 수 있는 한 편 번역하기가 어려울 수 있고, 창 크기가 조정되면 이미지에 포함된 텍스트가 흐릿하게 보여질 수도 있어."
 
 # game/tutorial_screen_displayables.rpy:780
 translate korean imagemap_done_b6cebf2b:
 
     # e "It's up to you and your team to decide if imagemaps are right for your project."
-    e ""
+    e "프로젝트에 이미지맵 사용여부를 결정하는 것은 너와 네 팀에게 달려 있어."
 
 # game/tutorial_screen_displayables.rpy:787
 translate korean viewport_displayables_e509d50d:
@@ -682,7 +682,7 @@ translate korean strings:
 
     # tutorial_screen_displayables.rpy:9
     old "That's all for now."
-    new "이제 그만."
+    new "이전 단계로."
 
     # tutorial_screen_displayables.rpy:55
     old "This uses position properties."
