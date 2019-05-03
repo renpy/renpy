@@ -484,7 +484,7 @@ label style_text:
 
     show screen text("adjust_true_text")
 
-    e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
+    e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When True, characters will be shifted a bit so the Text has the same relative spacing."
 
 
     example:
