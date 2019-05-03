@@ -2302,6 +2302,7 @@ class Interface(object):
         ev = pygame.event.poll()
 
         if ev.type == pygame.NOEVENT:
+            self.check_background_screenshot()
             # Seems to prevent the CPU from speeding up.
             renpy.display.draw.event_peek_sleep()
             return None

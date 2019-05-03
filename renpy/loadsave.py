@@ -553,6 +553,7 @@ def force_autosave(take_screenshot=False, block=False):
         return
 
     autosave_not_running.clear()
+
     if not renpy.emscripten:
         t = threading.Thread(target=autosave_thread, args=(take_screenshot,))
         t.daemon = True
