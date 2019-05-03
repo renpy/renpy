@@ -367,9 +367,9 @@ translate korean style_text_e7204a95:
     e "기본적으로, 렌파이에서 글자는 가장자리를 매끄럽게 하기 위해 안티에일리어싱돼. 안티에일리어즈(antialias) 속성을 사용하면 글자를 좀 더 들쭉날쭉하게 만들 수 있어."
 
 # game/indepth_style.rpy:487
-translate korean style_text_b4563984:
+translate korean style_text_a5316e4c:
 
-    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
+    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When True, characters will be shifted a bit so the Text has the same relative spacing."
     e "adjust_spacing 속성은 플레이어가 창 크기를 조정할 때만 중요하게 작용하는 미묘한 속성이야. 참(True)으로 설정하면 글자가 약간 이동하여 글자의 간격이 상대적으로 동일하게 변경돼."
 
 # game/indepth_style.rpy:496

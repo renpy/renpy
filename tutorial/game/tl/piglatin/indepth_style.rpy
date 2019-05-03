@@ -366,9 +366,9 @@ translate piglatin style_text_e7204a95:
     e "Ybay efaultday, exttay inay Enray'Ypay isay antialiaseday, otay moothsay hetay edgesay. Hetay antialiasay ropertypay ancay urntay hattay offay, anday akemay hetay exttay aay ittlelay oremay aggedjay."
 
 # game/indepth_style.rpy:487
-translate piglatin style_text_b4563984:
+translate piglatin style_text_a5316e4c:
 
-    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
+    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When True, characters will be shifted a bit so the Text has the same relative spacing."
     e "Hetay adjust_spacingay ropertypay isay aay eryvay ubtlesay oneay, hattay onlyay attersmay henway aay ayerplay esizesray hetay indowway. Henway uetray, aracterschay illway ebay iftedshay aay itbay osay hetay Exttay ashay hetay amesay elativeray pacingsay."
 
 # game/indepth_style.rpy:496

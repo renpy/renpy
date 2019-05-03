@@ -366,9 +366,9 @@ translate spanish style_text_e7204a95:
     e "Por defecto, el texto en Ren'Py tiene antialias, para suavizar los bordes. La propiedad antialias puede desactivar eso y hacer que el texto sea un poco más irregular."
 
 # game/indepth_style.rpy:487
-translate spanish style_text_b4563984:
+translate spanish style_text_a5316e4c:
 
-    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
+    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When True, characters will be shifted a bit so the Text has the same relative spacing."
     e "La propiedad adjust_spacing es muy sutil, eso solo importa cuando un jugador cambia el tamaño de la ventana. Cuando es True, los caracteres se desplazarán un poco para que el texto tenga el mismo espaciado relativo."
 
 # game/indepth_style.rpy:496

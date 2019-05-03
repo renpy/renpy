@@ -366,9 +366,9 @@ translate french style_text_e7204a95:
     e "Par défaut, les textes dans Ren’Py sont antialiasés, pour arrondir les angles. La propriété 'antialias' peut être désactivée rendant le texte un peu plus irrégulier."
 
 # game/indepth_style.rpy:487
-translate french style_text_b4563984:
+translate french style_text_a5316e4c:
 
-    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
+    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When True, characters will be shifted a bit so the Text has the same relative spacing."
     e "La propriété 'adjust_spacing' est très subtile. Elle n’a d’importance que lorsque les joueurs redimensionnent la fenêtre. À True, les caractères seront légèrement décalés pour que le texte conserve le même espacement."
 
 # game/indepth_style.rpy:496

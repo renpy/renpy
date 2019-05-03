@@ -367,9 +367,9 @@ translate russian style_text_e7204a95:
     e "Изначально, весь текст в Ren'Py сглажен, чтобы у него не были видны острые края. Параметр antialias может выключить сглаживание, что сделает текст более резким."
 
 # game/indepth_style.rpy:487
-translate russian style_text_b4563984:
+translate russian style_text_a5316e4c:
 
-    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
+    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When True, characters will be shifted a bit so the Text has the same relative spacing."
     e "Параметр adjust_spacing сперва кажется незаметным, так как он виден только тогда, когда игрок изменяет размеры окна. При включении, символы немного сдвигаются, так что они примерно сохраняют свой относительный отступ."
 
 # game/indepth_style.rpy:496
