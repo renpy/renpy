@@ -22,6 +22,7 @@
 
 from __future__ import print_function
 
+
 class Curry(object):
     """
     Stores a callable and some arguments. When called, calls the
@@ -49,6 +50,9 @@ class Curry(object):
             self.callable == other.callable and
             self.args == other.args and
             self.kwargs == other.kwargs)
+
+    def __ne__(self, other):
+        return not (self == other)
 
     def __hash__(self):
         return hash(self.callable) ^ hash(self.args) ^ hash(self.kwargs)

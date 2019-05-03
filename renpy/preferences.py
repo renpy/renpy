@@ -153,6 +153,15 @@ Preference("gl_framerate", None, (int, type(None)))
 # Do we allow tearing?
 Preference("gl_tearing", False)
 
+# The font transformation used.
+Preference("font_transform", None, (type(None), basestring))
+
+# An adjustment applied to font size.
+Preference("font_size", 1.0)
+
+# An adjustment applied to font line spacing.
+Preference("font_line_spacing", 1.0)
+
 
 class Preferences(renpy.object.Object):
     """
@@ -232,6 +241,9 @@ class Preferences(renpy.object.Object):
 
     def __eq__(self, other):
         return vars(self) == vars(other)
+
+    def __ne__(self, other):
+        return not (self == other)
 
 
 renpy.game.Preferences = Preferences

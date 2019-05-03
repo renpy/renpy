@@ -58,6 +58,7 @@ the omission in future versions.
 * Evilantishad0w
 * Felix Lampe
 * Franck_v
+* Frédéric Chapoton
 * Gas
 * George Economidis
 * Giuseppe Bertone
@@ -96,6 +97,7 @@ the omission in future versions.
 * Markus Koschany
 * Max le Fou
 * Maxwell Paul Brickner
+* Meithal
 * Merumelu
 * mikey (ATP Projects)
 * Morgan Willcock

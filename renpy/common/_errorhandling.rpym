@@ -203,27 +203,29 @@ init label _errorhandling:
         left_padding gui._scale(15)
         ypadding gui._scale(2)
 
-    style _radio_button_text is _button_text:
-        size gui._scale(26)
-
     style _label is _default:
         top_margin gui._scale(10)
         bottom_margin gui._scale(15)
 
     style _label_text is _default:
-        size gui._scale(40)
+        size gui._scale(30)
         kerning -1
 
     style _bar is _default:
-        left_bar "#24C"
+        left_bar "#468"
+        hover_left_bar "#24C"
         right_bar "#b0b0b0"
         ysize gui._scale(20)
 
     style _vbar is _default:
-        bottom_bar "#24C"
+        bottom_bar "#468"
+        hover_bottom_bar "#24C"
         top_bar "#b0b0b0"
         xsize gui._scale(20)
         bar_vertical True
+
+    style _slider is _bar
+    style _vslider is _vbar
 
     style _scrollbar is _default:
         thumb "#808080"
@@ -572,7 +574,7 @@ screen _exception:
 
         side "c r":
             xfill True
-            label _("An exception has occurred.")
+            label _("An exception has occurred.") text_size gui._scale(40)
             text "{size=-3}[config.version!q]\n[renpy.version_only!q]\n[renpy.platform!q]{/size}" text_align 1.0 yalign 0.5
 
         viewport:
@@ -648,7 +650,7 @@ screen _parse_errors:
         has side "t c b":
             spacing gui._scale(10)
 
-        label _("Parsing the script failed.")
+        label _("Parsing the script failed.") text_size gui._scale(40)
 
         viewport:
             id "viewport"

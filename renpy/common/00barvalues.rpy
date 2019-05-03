@@ -139,14 +139,17 @@ init -1500 python:
          `step`
              The amount to change the bar by. If None, defaults to 1/10th of
              the bar.
+         `action`
+             If not None, an action to call when the field has changed.
          """
 
         offset = 0
+        action = None
 
         identity_fields = [ 'dict' ]
-        equality_fields = [ 'key', 'range', 'max_is_zero', 'style', 'offset', 'step']
+        equality_fields = [ 'key', 'range', 'max_is_zero', 'style', 'offset', 'step', 'action']
 
-        def __init__(self, dict, key, range, max_is_zero=False, style="bar", offset=0, step=None):
+        def __init__(self, dict, key, range, max_is_zero=False, style="bar", offset=0, step=None, action=None):
             self.dict = dict
             self.key = key
             self.range = range
@@ -161,6 +164,7 @@ init -1500 python:
                     step = max(range / 10, 1)
 
             self.step = step
+            self.action = action
 
         def changed(self, value):
 
@@ -174,6 +178,8 @@ init -1500 python:
 
             self.dict[self.key] = value
             renpy.restart_interaction()
+
+            renpy.run(self.action)
 
         def get_adjustment(self):
 
@@ -224,14 +230,17 @@ init -1500 python:
          `step`
              The amount to change the bar by. If None, defaults to 1/10th of
              the bar.
+         `action`
+             If not None, an action to call when the field has changed.
          """
 
         offset = 0
+        action = None
 
-        identity_fields = [ 'object' ]
-        equality_fields = [ 'range', 'max_is_zero', 'style', 'offset', 'step']
+        identity_fields = [ 'object', ]
+        equality_fields = [ 'range', 'max_is_zero', 'style', 'offset', 'step', 'action']
 
-        def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None):
+        def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None, action=None):
             self.object = object
             self.field = field
             self.range = range
@@ -246,6 +255,7 @@ init -1500 python:
                     step = max(range / 10, 1)
 
             self.step = step
+            self.action = action
 
         def changed(self, value):
 
@@ -259,6 +269,8 @@ init -1500 python:
 
             setattr(self.object, self.field, value)
             renpy.restart_interaction()
+
+            renpy.run(self.action)
 
         def get_adjustment(self):
 
@@ -282,7 +294,7 @@ init -1500 python:
             return self.style, "v" + self.style
 
     @renpy.pure
-    def VariableValue(variable, range, max_is_zero=False, style="bar", offset=0, step=None):
+    def VariableValue(variable, range, max_is_zero=False, style="bar", offset=0, step=None, action=None):
         """
          :doc: value
 
@@ -307,9 +319,11 @@ init -1500 python:
          `step`
              The amount to change the bar by. If None, defaults to 1/10th of
              the bar.
+         `action`
+             If not None, an action to call when the field has changed.
         """
 
-        return FieldValue(store, variable, range, max_is_zero=max_is_zero, style=style, offset=offset, step=step)
+        return FieldValue(store, variable, range, max_is_zero=max_is_zero, style=style, offset=offset, step=step, action=action)
 
     @renpy.pure
     class ScreenVariableValue(BarValue, FieldEquality):
@@ -336,14 +350,17 @@ init -1500 python:
         `step`
             The amount to change the bar by. If None, defaults to 1/10th of
             the bar.
+        `action`
+            If not None, an action to call when the field has changed.
          """
 
+        action = None
         offset = 0
 
         identity_fields = [  ]
-        equality_fields = [ 'variable', 'max_is_zero', 'style', 'offset', 'step']
+        equality_fields = [ 'variable', 'max_is_zero', 'style', 'offset', 'step', 'action']
 
-        def __init__(self, variable, range, max_is_zero=False, style="bar", offset=0, step=None):
+        def __init__(self, variable, range, max_is_zero=False, style="bar", offset=0, step=None, action=None):
             self.variable = variable
             self.range = range
             self.max_is_zero = max_is_zero
@@ -357,6 +374,7 @@ init -1500 python:
                     step = max(range / 10, 1)
 
             self.step = step
+            self.action = action
 
         def changed(self, value):
 
@@ -372,6 +390,8 @@ init -1500 python:
 
             cs.scope[self.variable] = value
             renpy.restart_interaction()
+
+            renpy.run(self.action)
 
         def get_adjustment(self):
 

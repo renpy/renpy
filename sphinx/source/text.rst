@@ -96,7 +96,7 @@ formatting syntax. Ren'Py uses [ to introduce string formatting
 because { was taken by text tags.
 
 Along with the ``!s`` and ``!r`` conversion flags supported by Python, Ren'Py
-supports ``!q`` and ``!t`` conversion flags. The ``!q`` conversion flag ensures that
+supports several more flags. The ``!q`` conversion flag ensures that
 text tags are properly quoted, so that displaying a string will not
 introduce unwanted formatting constructs. For example::
 
@@ -110,6 +110,10 @@ The ``!t`` flag will translate the interpolated string::
         $ mood = _("annoyed")
 
     g "I'm [mood!t] to see you."
+
+
+The ``!u`` flag forces the text to upper case, the ``!l`` flag forces the
+text to lower-case, and the ``!c`` flag capitalizes the text.
 
 
 Styling and Text Tags

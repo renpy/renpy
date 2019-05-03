@@ -40,7 +40,7 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (7, 2, 1, vc_version)
+version_tuple = (7, 2, 3, vc_version)
 
 # The name of this version.
 version_name = "What's on the menu."
@@ -551,6 +551,10 @@ def post_import():
         vars(renpy.exports).setdefault(k, v)
 
 
+def issubmodule(sub, module):
+    return sub == module or sub.startswith(module + ".")
+
+
 def reload_all():
     """
     Resets all modules to the state they were in right after import_all
@@ -588,14 +592,23 @@ def reload_all():
     renpy.display.interface = None
 
     py_compile_cache = renpy.python.py_compile_cache
+    reload_modules = renpy.config.reload_modules
 
     # Delete the store modules.
     for i in sys.modules.keys():
-        if i.startswith("store") or i == "renpy.store":
+        if issubmodule(i, "store") or i == "renpy.store":
             m = sys.modules[i]
 
             if m is not None:
                 m.__dict__.reset()
+
+            del sys.modules[i]
+
+        elif any(issubmodule(i, m) for m in reload_modules):
+            m = sys.modules[i]
+
+            if m is not None:
+                m.__dict__.clear()
 
             del sys.modules[i]
 

@@ -293,13 +293,21 @@ class TextSegment(object):
         on the font group.
         """
 
-        if not isinstance(self.font, font.FontGroup):
+        tf = self.font
+
+        font_transform = renpy.game.preferences.font_transform
+        if font_transform is not None:
+            font_func = renpy.config.font_transforms.get(font_transform, None)
+            if font_func is not None:
+                tf = font_func(tf)
+
+        if not isinstance(tf, font.FontGroup):
             yield (self, s)
             return
 
         segs = { }
 
-        for f, ss in self.font.segment(s):
+        for f, ss in tf.segment(s):
 
             seg = segs.get(f, None)
 

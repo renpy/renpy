@@ -384,6 +384,10 @@ class BMFont(ImageFont):
                 self.width[c] = w + xo
                 self.advance[c] = xadvance
                 self.offsets[c] = (xo, yo)
+            elif kind == "kerning":
+                first = unichr(int(args["first"]))
+                second = unichr(int(args["second"]))
+                self.kerns[first + second] = int(args["amount"])
 
         f.close()
 
@@ -635,7 +639,7 @@ def load_face(fn):
     if font_file is None:
         raise Exception("Could not find font {0!r}.".format(orig_fn))
 
-    rv = ftfont.FTFace(font_file, index)  # @UndefinedVariable
+    rv = ftfont.FTFace(font_file, index, orig_fn)  # @UndefinedVariable
 
     face_cache[orig_fn] = rv
 
@@ -727,14 +731,9 @@ class FontGroup(object):
 
     def __init__(self):
 
-        # A list of font names we know of.
-        self.fonts = [ ]
-
-        # A map from character to the index of the font it's part of.
-        self.cache = { }
-
-        # A list of (index, start, end) tuples.
-        self.patterns = [ ]
+        # A map from character index to font name. None is used for
+        # the default font.
+        self.map = { }
 
     def add(self, font, start, end):
         """
@@ -744,7 +743,8 @@ class FontGroup(object):
 
         `start`
             The start of the range. This may be a single-character string, or
-            an integer giving a unicode code point.
+            an integer giving a unicode code point. If start is None, then the
+            font is used as the default.
 
         `end`
             The end of the range. This may be a single-character string, or an
@@ -757,6 +757,18 @@ class FontGroup(object):
         chained together.
         """
 
+        if start is None:
+
+            if isinstance(font, FontGroup):
+                for k, v in font.map.items():
+                    if k not in self.map:
+                        self.map[k] = v
+            else:
+                if None not in self.map:
+                    self.map[None] = font
+
+            return self
+
         if not isinstance(start, int):
             start = ord(start)
 
@@ -766,12 +778,9 @@ class FontGroup(object):
         if end < start:
             raise Exception("In FontGroup.add, the start of a character range must be before the end of the range.")
 
-        if font not in self.fonts:
-            self.fonts.append(font)
-
-        index = self.fonts.index(font)
-
-        self.patterns.append((index, start, end))
+        for i in range(start, end+1):
+            if i not in self.map:
+                self.map[i] = font
 
         return self
 
@@ -783,32 +792,27 @@ class FontGroup(object):
         mark = 0
         pos = 0
 
-        old_index = 0
-
-        cache = self.cache
+        old_font = None
 
         for c in s:
 
-            index = cache.get(c, None)
+            n = ord(c)
 
-            if index is None:
-                n = ord(c)
+            font = self.map.get(ord(c), None)
 
-                for index, start, end in self.patterns:
-                    if start <= n <= end:
-                        break
-                else:
+            if font is None:
+                font = self.map.get(None, None)
+
+                if font is None:
                     raise Exception("Character U+{0:04x} not found in FontGroup".format(n))
 
-                cache[c] = index
-
-            if index != old_index:
+            if font != old_font:
                 if pos:
-                    yield self.fonts[old_index], s[mark:pos]
+                    yield old_font, s[mark:pos]
 
-                old_index = index
+                old_font = font
                 mark = pos
 
             pos += 1
 
-        yield self.fonts[old_index], s[mark:]
+        yield font, s[mark:]

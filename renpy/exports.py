@@ -231,7 +231,7 @@ def in_rollback():
     Returns true if the game has been rolled back.
     """
 
-    return renpy.game.log.in_rollback()
+    return renpy.game.log.in_rollback() or renpy.game.after_rollback
 
 
 def can_rollback():
@@ -2314,8 +2314,10 @@ def free_memory():
     Attempts to free some memory. Useful before running a renpygame-based
     minigame.
     """
+
     force_full_redraw()
     renpy.display.interface.kill_textures_and_surfaces()
+    renpy.text.font.free_memory()
 
 
 @renpy_pure
@@ -3007,6 +3009,19 @@ def notify(message):
 
     Only one notification is displayed at a time. If a second notification
     is displayed, the first notification is replaced.
+
+    This function just calls :var:`config.notify`, allowing its implementation
+    to be replaced by assigning a new function to that variable.
+    """
+
+    renpy.config.notify(message)
+
+
+def display_notify(message):
+    """
+    :doc: other
+
+    The default implementation of :func:`renpy.notify`.
     """
 
     hide_screen('notify')

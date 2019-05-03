@@ -183,6 +183,15 @@ class Formatter(string.Formatter):
 
             value = value.replace("{", "{{")
 
+        if "u" in conversion:
+            value = value.upper()
+
+        if "l" in conversion:
+            value = value.lower()
+
+        if "c" in conversion:
+            value = value.capitalize()
+
         return value
 
 

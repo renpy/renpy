@@ -140,6 +140,8 @@ init -1500 python in _console:
     aRepr.repr_RevertableList = aRepr.repr_list
     aRepr.repr_RevertableDict = aRepr.repr_dict
     aRepr.repr_RevertableSet = aRepr.repr_set
+    aRepr.repr_defaultdict = aRepr.repr_dict
+    aRepr.repr_OrderedDict = aRepr.repr_dict
 
     # The list of traced expressions.
     class TracedExpressionsList(NoRollback, list):
@@ -418,7 +420,7 @@ init -1500 python in _console:
                     l.advance()
 
                     # Command can be None, but that's okay, since the lookup will fail.
-                    command = l.name()
+                    command = l.word()
 
                     command_fn = config.console_commands.get(command, None)
 

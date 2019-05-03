@@ -2,13 +2,95 @@
 Full Changelog
 ==============
 
+.. _renpy-7.2.2:
+
+7.2.2
+=====
+
+Ren'Py now supports a new Accessibility menu, which can be accessed
+by pressing the "a" key. This menu, which is intended to be used by
+players, let's the player override the game font, change the scaling
+and spacing of text, and enable self-voicing.
+
+Ren'Py will now allow files in the public game directory
+(/mnt/sdcard/Android/`package`/files/game) to override those included with the
+game proper. This has been listed as a feature in 7.2.0, but didn't work
+right.
+
+Ren'Py will now include temporary image attributes in the say statements
+generated as part of the translation process.
+
+When uploading to itch.io, Ren'Py now downloads butler itself. This means
+there is no longer a dependence on the location or structure of the Itch
+app, as there was before.
+
+The bar values :func:`DictValue`, :func:`FieldValue`, :func:`VariableValue`,
+and :func:`ScreenVariableValue` all take a new `action` parameter, which
+gives an action that is performed each time the value changes.
+
+The rollback system has been optimized to reduce the amount of garbage
+that needs to be collected.
+
 .. _renpy-7.2.1:
 
 7.2.1
 =====
 
-Explicitly asks for text (as opposed to email, password, phone number
+iOS Improvements
+----------------
+
+Ren'Py will now set the version field for the iOS application when generating
+a project.
+
+Ren'Py will now look for the files ios-icon.png and ios-launchimage.png,
+and use them to generate the icon and launch image in the sizes required
+for iOS.
+
+Other Improvements
+-------------------
+
+The :func:`renpy.in_rollback` function returns True when in the rollback that
+occurs immediately after a load. This makes it possible to use::
+
+    python:
+        if not renpy.in_rollback():
+            renpy.run(ShowMenu('save'))
+
+To display a save menu during an initial playthough, but not during loading
+or rollback.
+
+:var:`config.say_attribute_transition_callback` now exists, making it possible
+to select the transition to use on a per-say-statement basis.
+
+The new ``RENPY_SEARCHPATH`` environment variable makes it possible to
+override :var:`config.searchpath` on launch.
+
+Fixes
+-----
+
+Ren'Py has been audited to make sure that the semantics of == and != match,
+whenever == was redefined.
+
+There was a fix to problems that might occur when a transform is added
+to a screen using the ``add`` statement.
+
+The way ``extend`` processes arguments was changed to ensure that newer
+arguments take priority over arguments given to the statement being
+extended.
+
+Ren'Py now properly considers the scope when comparing dynamic images for
+equality. This fixes an issue that prevented some dynamic images from
+updating when part of a screen.
+
+A crash when :var:`config.save_dump` is true on macOS has been fixed.
+
+A crash when :var:`config.profile` is true has been fixed.
+
+Ren'Py now explicitly asks for text (as opposed to email, password, phone number
 etc) input on Android when the keyboard is displayed.
+
+An issue has been fixed that prevented roll-forward from working through a
+menu statement.
 
 Fixes a bug that prevents roll-forward through a menu.
 
@@ -154,7 +236,6 @@ key works.
 Ren'Py now uses the Amazon payment APIs when sideloaded onto a device
 made by Amazon, allowing their payment system to be tested on a dual-store
 APK.
-
 
 Ren'Py will now allow files in the public game directory (/mnt/sdcard/Android/`package`/files/game)
 to override those included with the game proper.

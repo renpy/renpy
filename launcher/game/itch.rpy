@@ -23,23 +23,57 @@ init python:
 
     def find_itch_butler():
 
-        import os
-
         if renpy.windows:
-            rv = os.path.join(os.environ.get("APPDATA", ""), "Roaming", "itch", "bin", "butler.exe")
-
-            if not os.path.exists(rv):
-                rv = os.path.join(os.environ.get("APPDATA", ""), "itch", "bin", "butler.exe")
-
+            platform = "windows-amd64"
+            exe = "butler.exe"
         elif renpy.macintosh:
-            rv = os.path.join(os.environ.get("HOME", ""), "Library", "Application Support", "itch", "bin", "butler")
+            plaform = "darwin-amd64"
+            exe = "butler"
         else:
-            rv = os.path.join(os.environ.get("HOME", ""), ".config", "itch", "bin", "butler")
+            platform = "linux-amd64"
+            exe = "butler"
 
-        if not os.path.exists(rv):
-            return None
+        dn = os.path.join(config.renpy_base, "tmp", "butler-" + platform)
+        zip = os.path.join(dn, "butler.zip")
+        exe = os.path.join(dn, exe)
 
-        return rv
+        if os.path.exists(exe):
+            return exe
+
+        interface.processing(_("Downloading the itch.io butler."))
+
+        try:
+            os.makedirs(dn)
+        except:
+            pass
+
+        import urllib2
+        import ssl
+
+        with interface.error_handling("Downloading the itch.io butler."):
+            context = ssl._create_unverified_context()
+            response = urllib2.urlopen("https://broth.itch.ovh/butler/{}/LATEST/archive/default".format(platform), context=context)
+
+            with open(zip, "wb") as f:
+                while True:
+                    data = response.read(1024 * 1024)
+                    if not data:
+                        break
+
+                    f.write(data)
+
+        import zipfile
+
+        with zipfile.ZipFile(zip) as zf:
+            zf.extractall(dn)
+
+        try:
+            os.chmod(exe, 0o755)
+        except:
+            pass
+
+        return exe
+
 
 label itch:
 
@@ -47,6 +81,8 @@ label itch:
 
 
     python hide:
+
+        butler = find_itch_butler()
 
         build = project.current.dump["build"]
 
@@ -99,8 +135,6 @@ label itch:
                 _("No uploadable files were found. Please choose 'Build' and try again."),
                 label="build_distributions"
                 )
-
-        butler = find_itch_butler()
 
         if not butler:
             interface.error(

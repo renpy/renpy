@@ -301,6 +301,13 @@ class SLNode(object):
 
         return False
 
+    def has_python(self):
+        """
+        Returns true if this node is Python or has a python node as a child.
+        """
+
+        return False
+
 
 # A sentinel used to indicate a keyword argument was not given.
 NotGiven = renpy.object.Sentinel("NotGiven")
@@ -450,6 +457,9 @@ class SLBlock(SLNode):
                 return True
 
         return False
+
+    def has_python(self):
+        return any(i.has_python() for i in self.children)
 
 
 list_or_tuple = (list, tuple)
@@ -1265,6 +1275,9 @@ class SLIf(SLNode):
 
         return False
 
+    def has_python(self):
+        return any(i[1].has_python() for i in self.entries)
+
 
 class SLShowIf(SLNode):
     """
@@ -1353,6 +1366,9 @@ class SLShowIf(SLNode):
                 return True
 
         return False
+
+    def has_python(self):
+        return any(i[1].has_python() for i in self.entries)
 
 
 class SLFor(SLBlock):
@@ -1514,6 +1530,9 @@ class SLPython(SLNode):
         self.constant = NOT_CONST
         self.last_keyword = True
 
+    def has_python(self):
+        return True
+
 
 class SLPass(SLNode):
 
@@ -1558,6 +1577,9 @@ class SLDefault(SLNode):
             return
 
         scope[variable] = eval(self.expr, context.globals, scope)
+
+    def has_python(self):
+        return True
 
 
 class SLUse(SLNode):
@@ -1862,6 +1884,7 @@ class SLScreen(SLBlock):
     analysis = None
 
     layer = "'screens'"
+    sensitive = "True"
 
     def __init__(self, loc):
 
@@ -1885,6 +1908,9 @@ class SLScreen(SLBlock):
         # Should we predict this screen?
         self.predict = "None"  # expr.
 
+        # Should this screen be sensitive.
+        self.sensitive = "True"
+
         # The parameters this screen takes.
         self.parameters = None
 
@@ -1905,6 +1931,7 @@ class SLScreen(SLBlock):
         rv.variant = self.variant
         rv.predict = self.predict
         rv.parameters = self.parameters
+        rv.sensitive = self.sensitive
 
         rv.prepared = False
         rv.analysis = None
@@ -1928,6 +1955,7 @@ class SLScreen(SLBlock):
             parameters=self.parameters,
             location=self.location,
             layer=renpy.python.py_eval(self.layer),
+            sensitive=self.sensitive,
             )
 
     def analyze(self, analysis):

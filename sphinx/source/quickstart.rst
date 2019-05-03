@@ -603,7 +603,8 @@ using a Python assignment statement. ::
 Lines beginning with a dollar-sign are interpreted as Python statements. The
 assignment statement here assigns a value to a variable. Ren'Py has support
 for other ways of including Python, such as a multi-line Python statement,
-that are discussed in other sections of this manual.
+that are discussed in other sections of this manual. Ren'Py supports Python 2.7,
+though we strongly recommend you write Python that runs in Python 2 and Python 3.
 
 To check the flag, use the ``if`` statement::
 

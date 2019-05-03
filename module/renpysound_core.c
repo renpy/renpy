@@ -31,11 +31,33 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #define MAXVOLUME 16384
 
+#ifdef __EMSCRIPTEN__
+
+#define EVAL_LOCK() { }
+#define EVAL_UNLOCK() { }
+#define BEGIN() { }
+#define ENTER() { }
+#define EXIT() { }
+#define ALTENTER() { }
+#define ALTEXIT() { }
+
+#else
+
+#define EVAL_LOCK() { PyEval_AcquireLock(); }
+#define EVAL_UNLOCK() { PyEval_ReleaseLock(); }
+#define BEGIN() PyThreadState *_save;
+#define ENTER() { _save = PyEval_SaveThread(); SDL_LockAudio(); }
+#define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); }
+#define ALTENTER() { _save = PyEval_SaveThread(); }
+#define ALTEXIT() { PyEval_RestoreThread(_save); }
+
+#endif
+
 /* Declarations of ffdecode functions. */
 struct MediaState;
 typedef struct MediaState MediaState;
 
-void media_init(int rate, int status);
+void media_init(int rate, int status, int equal_mono);
 
 void media_advance_time(void);
 void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba);
@@ -61,21 +83,21 @@ PyThreadState* thread = NULL;
 static void incref(PyObject *ref) {
     PyThreadState *oldstate;
 
-    PyEval_AcquireLock();
+    EVAL_LOCK();
     oldstate = PyThreadState_Swap(thread);
     Py_INCREF(ref);
     PyThreadState_Swap(oldstate);
-    PyEval_ReleaseLock();
+    EVAL_UNLOCK();
 }
 
 static void decref(PyObject *ref) {
     PyThreadState *oldstate;
 
-    PyEval_AcquireLock();
+    EVAL_LOCK();
     oldstate = PyThreadState_Swap(thread);
     Py_DECREF(ref);
     PyThreadState_Swap(oldstate);
-    PyEval_ReleaseLock();
+    EVAL_UNLOCK();
 }
 
 /* A mutex that protects the shared data structures. */
@@ -83,17 +105,6 @@ SDL_mutex *name_mutex;
 
 #define LOCK_NAME() { SDL_LockMutex(name_mutex); }
 #define UNLOCK_NAME() { SDL_UnlockMutex(name_mutex); }
-
-/* Locking on entry from python... */
-// #define BEGIN() PyThreadState *_save;
-// #define ENTER() { printf("Locking by %s.\n", __FUNCTION__); _save = PyEval_SaveThread(); SDL_LockAudio(); printf("Lock by %s\n", __FUNCTION__);  }
-// #define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); printf("Release by %s\n", __FUNCTION__); }
-
-#define BEGIN() PyThreadState *_save;
-#define ENTER() { _save = PyEval_SaveThread(); SDL_LockAudio(); }
-#define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); }
-#define ALTENTER() { _save = PyEval_SaveThread(); }
-#define ALTEXIT() { PyEval_RestoreThread(_save); }
 
 /* Min and Max */
 #define min(a, b) (((a) < (b)) ? (a) : (b))
@@ -433,6 +444,7 @@ static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
 }
 
 static void callback(void *userdata, Uint8 *stream, int length) {
+
     int channel = 0;
 
     memset(stream, 0, length);
@@ -1199,7 +1211,7 @@ void RPS_set_video(int channel, int video) {
  * Initializes the sound to the given frequencies, channels, and
  * sample buffer size.
  */
-void RPS_init(int freq, int stereo, int samples, int status) {
+void RPS_init(int freq, int stereo, int samples, int status, int equal_mono) {
 
     if (initialized) {
         return;
@@ -1207,7 +1219,10 @@ void RPS_init(int freq, int stereo, int samples, int status) {
 
     name_mutex = SDL_CreateMutex();
 
+#ifndef __EMSCRIPTEN__
     PyEval_InitThreads();
+#endif
+
     import_pygame_sdl2();
 
     if (!thread) {
@@ -1238,7 +1253,7 @@ void RPS_init(int freq, int stereo, int samples, int status) {
         return;
     }
 
-    media_init(audio_spec.freq, status);
+    media_init(audio_spec.freq, status, equal_mono);
 
     SDL_PauseAudio(0);
 

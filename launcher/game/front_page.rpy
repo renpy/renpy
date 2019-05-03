@@ -249,6 +249,7 @@ screen front_page_project:
 
                 textbutton _("Android") action Jump("android")
                 textbutton _("iOS") action Jump("ios")
+                textbutton _("Web") + " " + _("(Beta)") action Jump("web")
                 textbutton _("Generate Translations") action Jump("translate")
                 textbutton _("Extract Dialogue") action Jump("extract_dialogue")
 

@@ -1084,7 +1084,7 @@ class DetRandom(random.Random):
         Resets the RNG, removing all of the pushbacked numbers.
         """
 
-        self.stack = [ ]
+        del self.stack[:]
 
     def Random(self, seed=None):
         """
@@ -1237,7 +1237,8 @@ class Rollback(renpy.object.Object):
                     print("Removing unreachable:", o, file=renpy.log.real_stdout)
                     pass
 
-        self.objects = new_objects
+        del self.objects[:]
+        self.objects.extend(new_objects)
 
         return True
 
@@ -1308,6 +1309,7 @@ class RollbackLog(renpy.object.Object):
 
     nosave = [ 'old_store', 'mutated', 'identifier_cache' ]
     identifier_cache = None
+    force_checkpoint = False
 
     def __init__(self):
 
@@ -1336,6 +1338,10 @@ class RollbackLog(renpy.object.Object):
         # Has there been an interaction since the last time this log was
         # reset?
         self.did_interaction = True
+
+        # Should we force a checkpoint before completing the current
+        # statement.
+        self.force_checkpoint = False
 
     def after_setstate(self):
         self.mutated = { }
@@ -1401,8 +1407,8 @@ class RollbackLog(renpy.object.Object):
             begin_stores()
 
         # If the log is too long, prune it.
-        if len(self.log) > renpy.config.rollback_length:
-            self.log = self.log[-renpy.config.rollback_length:]
+        while len(self.log) > renpy.config.rollback_length:
+            self.log.pop(0)
 
         # check for the end of fixed rollback
         if self.log and self.log[-1] == self.current:
@@ -1420,7 +1426,7 @@ class RollbackLog(renpy.object.Object):
 
         self.log.append(self.current)
 
-        self.mutated = { }
+        self.mutated.clear()
 
         # Flag a mutation as having happened. This is used by the
         # save code.
@@ -1450,6 +1456,10 @@ class RollbackLog(renpy.object.Object):
             Should be true if called from begin().
         """
 
+        if self.force_checkpoint:
+            self.checkpoint(hard=False)
+            self.force_checkpoint = False
+
         # Update self.current.stores with the changes from each store.
         # Also updates .ever_been_changed.
         for name, sd in store_dicts.iteritems():
@@ -1460,7 +1470,7 @@ class RollbackLog(renpy.object.Object):
 
         for _i in xrange(4):
 
-            self.current.objects = [ ]
+            del self.current.objects[:]
 
             try:
                 for _k, v in self.mutated.iteritems():
@@ -1582,7 +1592,7 @@ class RollbackLog(renpy.object.Object):
                 self.forward.pop(0)
             else:
                 self.current.forward = data
-                self.forward = [ ]
+                del self.forward[:]
 
         elif data is not None:
             if self.forward:
@@ -1591,12 +1601,12 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                    and data == fwd_data
-                    and (keep_rollback or self.rolled_forward)
-                    ):
+                            and data == fwd_data
+                            and (keep_rollback or self.rolled_forward)
+                        ):
                     self.forward.pop(0)
                 else:
-                    self.forward = [ ]
+                    del self.forward[:]
 
             # Log the data in case we roll back again.
             self.current.forward = data
@@ -1619,7 +1629,7 @@ class RollbackLog(renpy.object.Object):
         renpy.game.context().force_checkpoint = True
 
         if purge:
-            self.log = [ ]
+            del self.log[:]
 
     def retain_after_load(self):
         """
@@ -1644,6 +1654,25 @@ class RollbackLog(renpy.object.Object):
         """
 
         return self.rollback_limit > 0
+
+    def load_failed(self):
+        """
+        This is called to try to recover when rollback fails.
+        """
+
+        if not renpy.config.load_failed_label:
+            raise Exception("Couldn't find a place to stop rolling back. Perhaps the script changed in an incompatible way?")
+
+        rb = self.log.pop()
+        rb.rollback()
+
+        while renpy.exports.call_stack_depth():
+            renpy.exports.pop_call()
+
+        renpy.game.contexts[0].force_checkpoint = True
+        renpy.game.contexts[0].goto_label(renpy.config.load_failed_label)
+
+        raise renpy.game.RestartTopContext()
 
     def rollback(self, checkpoints, force=False, label=None, greedy=True, on_load=False, abnormal=True, current_label=None):
         """
@@ -1671,7 +1700,7 @@ class RollbackLog(renpy.object.Object):
             load. Used to implement .retain_after_load()
 
         `abnormal`
-            If true, treats this as an abnormal event, suppresisng rollback
+            If true, treats this as an abnormal event, suppressing transitions
             and so on.
 
         `current_label`
@@ -1708,15 +1737,16 @@ class RollbackLog(renpy.object.Object):
                     break
 
         else:
-            if force:
-                raise Exception("Couldn't find a place to stop rolling back. Perhaps the script changed in an incompatible way?")
-
             # Otherwise, just give up.
 
-            print("Can't find a place to rollback to. Not rolling back.")
-
             revlog.reverse()
-            self.log = self.log + revlog
+            self.log.extend(revlog)
+
+            if force:
+                self.load_failed()
+            else:
+                print("Can't find a place to rollback to. Not rolling back.")
+
             return
 
         force_checkpoint = False
@@ -1783,7 +1813,7 @@ class RollbackLog(renpy.object.Object):
         # If necessary, reset the RNG.
         if force:
             rng.reset()
-            self.forward = [ ]
+            del self.forward[:]
 
         # Flag that we're in the transition immediately after a rollback.
         renpy.game.after_rollback = abnormal

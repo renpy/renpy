@@ -373,7 +373,7 @@ init python in distribute:
         This manages the process of building distributions.
         """
 
-        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True):
             """
             Distributes `project`.
 
@@ -441,8 +441,9 @@ init python in distribute:
             # dictionaries.
             data = project.data
 
-            self.reporter.info(_("Scanning project files..."))
-            project.update_dump(force=True, gui=False, compile=project.data['force_recompile'])
+            if scan:
+                self.reporter.info(_("Scanning project files..."))
+                project.update_dump(force=True, gui=False, compile=project.data['force_recompile'])
 
             if project.dump.get("error", False):
                 raise Exception("Could not get build data from the project. Please ensure the project runs.")
@@ -523,6 +524,10 @@ init python in distribute:
             # Build the mac app and windows exes.
             self.add_mac_files()
             self.add_windows_files()
+            self.add_main_py()
+
+            # Add the main.py.
+            self.add_main_py()
 
             # Add generated/special files.
             if build['renpy']:
@@ -805,6 +810,7 @@ init python in distribute:
 
             self.add_file_list_hash("rapt")
             self.add_file_list_hash("renios")
+            self.add_file_list_hash("web")
 
             tmp_fn = self.temp_filename("renpy.py")
 
@@ -965,7 +971,7 @@ init python in distribute:
             old_exe_fn = os.path.join(config.renpy_base, "renpy.exe")
             old_main_fn = os.path.join(config.renpy_base, "lib/windows-i686/renpy.exe")
 
-            if os.path.exists(icon_fn):
+            if os.path.exists(icon_fn) and os.path.exists(old_exe_fn):
                 exe_fn = self.temp_filename("renpy.exe")
                 main_fn = self.temp_filename("main.exe")
 
@@ -979,8 +985,16 @@ init python in distribute:
                 exe_fn = old_exe_fn
                 main_fn = old_main_fn
 
-            self.add_file(windows, self.exe, exe_fn)
-            self.add_file(windows, "lib/windows-i686/" + self.exe, main_fn)
+            if os.path.exists(exe_fn):
+                self.add_file(windows, self.exe, exe_fn)
+                self.add_file(windows, "lib/windows-i686/" + self.exe, main_fn)
+
+        def add_main_py(self):
+            if self.build['renpy']:
+                return
+
+            self.add_file("web", "main.py", os.path.join(config.renpy_base, "renpy.py"))
+
 
         def mark_executable(self):
             """

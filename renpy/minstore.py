@@ -51,6 +51,20 @@ from renpy.python import store_eval as eval
 
 from renpy.display.core import absolute
 
+_print = print
+
+
+def print(*args, **kwargs):
+    """
+    :undocumented:
+
+    This is a variant of the print function that forces a checkpoint
+    at the start of the next statement, so that it can't be rolled past.
+    """
+
+    renpy.game.context().force_checkpoint = True
+    _print(*args, **kwargs)
+
 
 def _(s):
     """

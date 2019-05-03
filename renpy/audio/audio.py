@@ -811,12 +811,16 @@ def init():
 
     if pcm_ok is None and renpysound:
         bufsize = 2048
+        if renpy.emscripten:
+            # Large buffer (and latency) as compromise to avoid sound jittering
+            bufsize = 8192  # works for me
+            #bufsize = 16384  # jitter/silence right after starting a sound
 
         if 'RENPY_SOUND_BUFSIZE' in os.environ:
             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
 
         try:
-            renpysound.init(renpy.config.sound_sample_rate, 2, bufsize, False)
+            renpysound.init(renpy.config.sound_sample_rate, 2, bufsize, False, renpy.config.equal_mono)
             pcm_ok = True
         except:
             if renpy.config.debug_sound:

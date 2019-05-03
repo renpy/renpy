@@ -163,7 +163,8 @@ the @ and the temporary ones coming after. ::
     e happy @ vhappy "Really! That changes everything."
 
 To cause a transition to occur whenever the images are changed in this way, set
-:var:`config.say_attribute_transition` to a transition.
+:var:`config.say_attribute_transition` to a transition. For more control,
+use :var:`config.say_attribute_transition_callback`.
 
 
 Example Characters
