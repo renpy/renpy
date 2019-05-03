@@ -430,7 +430,7 @@ translate korean style_button_9b53ce93:
 translate korean style_button_aece4a8c:
 
     # e "The first style property is the background property. It adds a background to the a button or window. Since this is a button, idle and hover variants choose different backgrounds when focused."
-    e "첫 번째 스타일 속성은 배경(background) 속성이야. 버튼 또는 창에 배경을 추가하는 것으로, 버튼이기 때문에 유휴(idle) 및 멤돔(hover) 변체는 초점이 맞춰졌을 때 다른 배경을 선택해."
+    e "첫 번째 스타일 속성은 배경(background) 속성이야. 버튼 또는 창에 배경을 추가하는 것으로, 버튼이기 때문에 유휴(idle) 및 맴돔(hover) 변체는 초점이 맞춰졌을 때 다른 배경을 선택해."
 
 # game/indepth_style.rpy:597
 translate korean style_button_b969f04a:
@@ -520,7 +520,7 @@ translate korean style_bar_9422b7b0:
 translate korean style_bar_8ae6a14b:
 
     # e "The left_bar and right_bar style properties, and their hover variants, give displayables for the left and right side of the bar. By default, the value is shown on the left."
-    e "left_bar 및 right_bar 스타일 속성 및 멤돔(hover) 변체는 막대의 왼쪽 및 오른쪽에 디스플레이어블을 제공해. 기본적으로 값은 왼쪽에 표시돼."
+    e "left_bar 및 right_bar 스타일 속성 및 맴돔(hover) 변체는 막대의 왼쪽 및 오른쪽에 디스플레이어블을 제공해. 기본적으로 값은 왼쪽에 표시돼."
 
 # game/indepth_style.rpy:777
 translate korean style_bar_7f0f50e5:
