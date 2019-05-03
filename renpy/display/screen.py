@@ -680,8 +680,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         rv.focus_screen = self
 
         hiding = (self.phase == OLD) or (self.phase == HIDE)
+        sensitive = renpy.python.py_eval(self.screen.sensitive)
 
-        rv.blit(child, (0, 0), focus=not hiding, main=not hiding)
+        rv.blit(child, (0, 0), focus=sensitive and not hiding, main=not hiding)
         rv.modal = self.modal and not hiding
 
         return rv
