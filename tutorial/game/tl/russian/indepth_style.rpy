@@ -664,7 +664,7 @@ translate russian style_box_4a2866f0:
 translate russian style_box_66e042c4:
 
     # e "When the xfit style property is True, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
-    e "Если параметр xfit равен true, фиксация покрывает всех своих детей, а затем сжимается до их размера по ширине. Параметр yfit работает уже по высоте."
+    e "Если параметр xfit равен True, фиксация покрывает всех своих детей, а затем сжимается до их размера по ширине. Параметр yfit работает уже по высоте."
 
 # game/indepth_style.rpy:1072
 translate russian style_box_6a593b10:
