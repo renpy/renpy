@@ -508,205 +508,205 @@ translate korean style_button_fb973235:
 translate korean style_bar_414d454a:
 
     # e "To demonstrate styles, let me first show two of the images we'll be using. This is the image we're using for parts of the bar that are empty."
-    e ""
+    e "스타일을 보여주기 위해 우리가 사용하게 될 두 개의 이미지를 먼저 보여줄게. 이것은 비어있는 부분에 사용되는 이미지야."
 
 # game/indepth_style.rpy:763
 translate korean style_bar_9422b7b0:
 
     # e "And here's what we use for parts of the bar that are full."
-    e ""
+    e "그리고 이건 가득 채워진 막대(bar)에 사용되는 이미지고."
 
 # game/indepth_style.rpy:775
 translate korean style_bar_8ae6a14b:
 
     # e "The left_bar and right_bar style properties, and their hover variants, give displayables for the left and right side of the bar. By default, the value is shown on the left."
-    e ""
+    e "left_bar 및 right_bar 스타일 속성 및 멤돔(hover) 변체는 막대의 왼쪽 및 오른쪽에 디스플레이어블을 제공해. 기본적으로 값은 왼쪽에 표시돼."
 
 # game/indepth_style.rpy:777
 translate korean style_bar_7f0f50e5:
 
     # e "Also by default, both the left and right displayables are rendered at the full width of the bar, and then cropped to the appropriate size."
-    e ""
+    e "또한 기본적으로 왼쪽 및 오른쪽 디스플레이어블은 막대의 전체 너비로 렌더링된 다음 적절한 크기로 잘려."
 
 # game/indepth_style.rpy:779
 translate korean style_bar_9ef4f62f:
 
     # e "We give the bar the ysize property to set how tall it is. We could also give it xsize to choose how wide, but here it's limited by the width of the frame it's in."
-    e ""
+    e "막대에 ysize 속성을 사용해서 높이를 설정해. xsize로 너비를 지정할 수도 있지만 프레임의 너비에 따라 크기가 제한되지."
 
 # game/indepth_style.rpy:792
-translate korean style_bar_80d8ceed:
+translate korean style_bar_d4c29710:
 
-    # e "When the bar_invert style property is true, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
-    e ""
+    # e "When the bar_invert style property is True, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
+    e "bar_invert 스타일 속성이 참(True)이면 막대의 값은 막대 오른쪽에 표시돼. left_bar 및 right_bar 디스플레이어블은 스와핑해야 할 수도 있어."
 
 # game/indepth_style.rpy:806
 translate korean style_bar_cca67222:
 
     # e "The bar_resizing style property causes the bar images to be resized to represent the value, rather than being rendered at full size and cropped."
-    e ""
+    e "bar_resizing 스타일 속성을 사용하면 막대 크기가 전체 크기로 렌더링되거나 잘리지 않고 막대 이미지의 크기를 나타내도록 크기가 조절돼."
 
 # game/indepth_style.rpy:819
 translate korean style_bar_7d361bac:
 
     # e "The thumb style property gives a thumb image, that's placed based on the bars value. In the case of a scrollbar, it's resized if possible."
-    e ""
+    e "갈무리(thumb) 스타일 속성은 막대의 값을 기반으로 배치된 갈무리 이미지를 제공해. 스크롤 막대의 경우에는 가능하다면 크기가 조정돼."
 
 # game/indepth_style.rpy:821
 translate korean style_bar_b6dfb61b:
 
     # e "Here, we use it with the base_bar style property, which sets both bar images to the same displayable."
-    e ""
+    e "여기서는 base_bar 스타일 속성과 함께 사용하여 두 막대 이미지를 동일한 디스플레이어블로 설정하고 있어."
 
 # game/indepth_style.rpy:836
 translate korean style_bar_996466ad:
 
     # e "The left_gutter and right_gutter properties set a gutter on the left or right size of the bar. The gutter is space the bar can't be dragged into, that can be used for borders."
-    e ""
+    e "left_gutter 및 right_gutter 속성은 막대의 왼쪽 또는 오른쪽 크기에 홈통(gutter)을 설정해. 홈통은 막대를 드래그할 수 없는 공간으로, 테두리에 사용할 수 있어."
 
 # game/indepth_style.rpy:851
 translate korean style_bar_fa41a83c:
 
     # e "The bar_vertical style property displays a vertically oriented bar. All of the other properties change names - left_bar becomes top_bar, while right_bar becomes bottom_bar."
-    e ""
+    e "bar_vertical 스타일 속성은 수직 막대를 표시해. 다른 모든 속성은 이름을 변경-left_bar는 top_bar, right_bar는 bottom_bar로-하면 돼."
 
 # game/indepth_style.rpy:856
 translate korean style_bar_5d33c5dc:
 
     # e "Finally, there's one style we can't show here, and it's unscrollable. It controls what happens when a scrollbar can't be moved at all."
-    e ""
+    e "마지막으로 여기에 표시할 수 없는 스타일이 있는데 그것은 스크롤할 수 없어. 그것은 스크롤 막대가 전혀 움직일 수 없을 때 일어나는 일을 제어하도록 돼있어."
 
 # game/indepth_style.rpy:858
 translate korean style_bar_e8e32280:
 
     # e "By default, it's shown. But if unscrollable is 'insensitive', the bar becomes insensitive. If it's 'hide', the bar is hidden, but still takes up space."
-    e ""
+    e "기본적으로 그것은 보여져. 그러나 스크롤할 수 없는 경우에 'insensitive'면 막대는 인식되지 않아. 그것이 'hide'인 경우, 막대는 숨겨지지만 여전히 공간을 차지해."
 
 # game/indepth_style.rpy:862
 translate korean style_bar_f1292000:
 
     # e "That's it for the bar properties. By using them, a creator can customize bars, scrollbars, and sliders."
-    e ""
+    e "지금까지 막대 속성에 대해 알아봤어. 이를 사용하여 제작자는 막대, 스크롤 막대 및 슬라이더를 사용자 정의할 수 있어."
 
 # game/indepth_style.rpy:961
 translate korean style_box_5fd535f4:
 
     # e "The hbox displayable is used to lay its children out horizontally. By default, there's no spacing between children, so they run together."
-    e ""
+    e "hbox 디스플레이어블은 자식을 수평으로 배치하는 데 사용돼. 기본적으로 자식들 사이에는 간격이 없어서 함께 작동하게 돼."
 
 # game/indepth_style.rpy:967
 translate korean style_box_0111e5dc:
 
     # e "Similarly, the vbox displayable is used to lay its children out vertically. Both support style properties that control placement."
-    e ""
+    e "마찬가지로, vbox 디스플레이어블은 자식을 수직으로 배치하는 데 사용돼. 두 가지 모두 배치되는 위치를 제어하는 ​​스타일 속성을 지원해."
 
 # game/indepth_style.rpy:972
 translate korean style_box_5a44717b:
 
     # e "To make the size of the box displayable obvious, I'll add a highlight to the box itself, and not the frame containing it."
-    e ""
+    e "상자(box)의 크기를 명확하게 표시하기 위해 나는 상자를 포함하는 프레임이 아니라 상자 자체에 강조 표시를 추가할 거야."
 
 # game/indepth_style.rpy:980
 translate korean style_box_239e7a8f:
 
     # e "Boxes support the xfill and yfill style properties. These properties make a box expand to fill the available space, rather than the space of the largest child."
-    e ""
+    e "상자는 xfill 및 yfill 스타일 속성을 지원해. 이러한 속성을 사용하면 상자를 상위 자식의 공간이 아닌 아닌 사용 가능한 공간을 채우도록 확장할 수 있어."
 
 # game/indepth_style.rpy:990
 translate korean style_box_e513c946:
 
     # e "The spacing style property takes a value in pixels, and adds that much spacing between each child of the box."
-    e ""
+    e "간격(spacing) 스타일 속성은 픽셀 단위의 값을 사용하고 상자의 각 자식 사이에 간격을 추가해."
 
 # game/indepth_style.rpy:1000
 translate korean style_box_6ae4f94d:
 
     # e "The first_spacing style property is similar, but it only adds space between the first and second children. This is useful when the first child is a title that needs different spacing."
-    e ""
+    e "first_spacing 스타일 속성은 비슷하지만 첫 번째 및 두 번째 자식 사이에만 간격을 추가해. 첫 번째 자식이 나머지 자식들과 다른 간격을 필요로 하는 제목같은 것일 때 유용하게 쓸 수 있어."
 
 # game/indepth_style.rpy:1010
 translate korean style_box_0c518d9f:
 
     # e "The box_reverse style property reverses the order of entries in the box."
-    e ""
+    e "box_reverse 스타일 속성은 상자의 항목 순서를 역순으로 바꿔."
 
 # game/indepth_style.rpy:1023
 translate korean style_box_f73c1422:
 
     # e "We'll switch back to a horizontal box for our next example."
-    e ""
+    e "다음 예제를 위해 수평 배열로 다시 전환할 거야."
 
 # game/indepth_style.rpy:1033
 translate korean style_box_285592bb:
 
     # e "The box_wrap style property fills the box with children until it's full, then starts again on the next line."
-    e ""
+    e "box_wrap 스타일 속성은 상자가 가득찰 때까지 상자를 자식으로 채우고 다음 줄에서 다시 시작해."
 
 # game/indepth_style.rpy:1046
 translate korean style_box_a7637552:
 
     # e "Grids bring with them two more style properties. The xspacing and yspacing properties control spacing in the horizontal and vertical directions, respectively."
-    e ""
+    e "그리드(grid)는 두 가지 더 많은 스타일 속성을 취해. xspacing 및 yspacing 속성은 각각 수평과 수직으로 간격을 제어하지."
 
 # game/indepth_style.rpy:1053
 translate korean style_box_4006f74b:
 
     # e "Lastly, we have the fixed layout. The fixed layout usually expands to fill all space, and shows its children from back to front."
-    e ""
+    e "마지막으로 고정(fixed) 레이아웃이 있어. 고정된 레이아웃은 일반적으로 모든 공간을 채우기 위해 확장되고 그 자식들을 뒤에서 앞으로 보여줘."
 
 # game/indepth_style.rpy:1055
 translate korean style_box_4a2866f0:
 
     # e "But of course, we have some style properties that can change that."
-    e ""
+    e "물론 우리는 그것을 바꿀 수 있는 스타일 속성도 가지고 있지."
 
 # game/indepth_style.rpy:1064
-translate korean style_box_a3b47b6e:
+translate korean style_box_66e042c4:
 
-    # e "When the xfit style property is true, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
-    e ""
+    # e "When the xfit style property is True, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
+    e "xfit 스타일 속성이 참(True)이면 고정 값은 모든 자식을 전체 크기로 배치한 다음 크기에 맞게 '너비'를 조절해. yfit 스타일은 동일한 방식으로 작동하지만 '높이'를 조절하고."
 
 # game/indepth_style.rpy:1072
 translate korean style_box_6a593b10:
 
     # e "The order_reverse style property changes the order in which the children are shown. Instead of back-to-front, they're displayed front-to-back."
-    e ""
+    e "order_reverse 스타일 속성은 자식이 표시되는 순서를 변경해. 뒤에서 앞으로 하는 대신, 앞에서 뒤로 표시하지."
 
 # game/indepth_style.rpy:1084
 translate korean style_inspector_21bc0709:
 
     # e "Sometimes it's hard to figure out what style is being used for a particular displayable. The displayable inspector can help with that."
-    e ""
+    e "때로는 특정 디스플레이어블에 어떤 스타일이 사용되고 있는지 파악하기가 어려울 수 있는데, 그럴 때는 디스플레이어블 조사기가 도움이 될 수 있어."
 
 # game/indepth_style.rpy:1086
 translate korean style_inspector_243c50f0:
 
     # e "To use it, place the mouse over a portion of the Ren'Py user interface, and hit shift+I. That's I for inspector."
-    e ""
+    e "그것을 사용하려면, 렌파이 사용자 인터페이스에 마우스를 놓고 shift+I를 눌러. 그럼 조사기가 실행돼."
 
 # game/indepth_style.rpy:1088
 translate korean style_inspector_bcbdc396:
 
     # e "Ren'Py will pop up a list of displayables the mouse is over. Next to each is the name of the style that displayable uses."
-    e ""
+    e "렌파이는 커서가 올려진 디스플레이어블의 목록을 띄울 거야. 다음은 디스플레이어블이 사용하는 스타일의 이름이야."
 
 # game/indepth_style.rpy:1090
 translate korean style_inspector_d981e5c8:
 
     # e "You can click on the name of the style to see where it gets its properties from."
-    e ""
+    e "스타일의 이름을 클릭하면 속성이 어디로부터 주어졌는지 ​​볼 수 있어."
 
 # game/indepth_style.rpy:1092
 translate korean style_inspector_ef46b86d:
 
     # e "By default, the inspector only shows interface elements like screens, and not images. Type shift+alt+I if you'd like to see images as well."
-    e ""
+    e "기본적으로 조사기는 스크린과 같은 인터페이스 요소만 표시하고 이미지는 표시하지 않아. 이미지를 보고 싶다면 shift+alt+I를 누르면 돼."
 
 # game/indepth_style.rpy:1094
 translate korean style_inspector_b59c6b69:
 
     # e "You can try the inspector right now, by hovering this text and hitting shift+I."
-    e ""
+    e "이 글자에 마우스를 올리고 Shift+I를 누르면 조사기를 당장 실행해볼 수 있어."
 
 translate korean strings:
 

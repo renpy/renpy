@@ -535,9 +535,9 @@ translate russian style_bar_9ef4f62f:
     e "Мы дали полоске параметр ysize, чтобы указать на то, какой высоты она должна быть. Мы так же могли бы сделать с xsize, задав ширину, но в данном случае полоска ограничена шириной рамки."
 
 # game/indepth_style.rpy:792
-translate russian style_bar_80d8ceed:
+translate russian style_bar_d4c29710:
 
-    # e "When the bar_invert style property is true, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
+    # e "When the bar_invert style property is True, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
     e "Когда включается параметр bar_invert, полоска начинает увеличиваться справа налево. Хотя можно просто поменять местами наши объекты."
 
 # game/indepth_style.rpy:806
@@ -661,9 +661,9 @@ translate russian style_box_4a2866f0:
     e "Но само собой, у нас есть для него пара параметров."
 
 # game/indepth_style.rpy:1064
-translate russian style_box_a3b47b6e:
+translate russian style_box_66e042c4:
 
-    # e "When the xfit style property is true, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
+    # e "When the xfit style property is True, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
     e "Если параметр xfit равен true, фиксация покрывает всех своих детей, а затем сжимается до их размера по ширине. Параметр yfit работает уже по высоте."
 
 # game/indepth_style.rpy:1072

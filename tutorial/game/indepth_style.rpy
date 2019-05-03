@@ -789,7 +789,7 @@ label style_bar:
 
     show screen bar('invert_bar')
 
-    e "When the bar_invert style property is true, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
+    e "When the bar_invert style property is True, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
 
     example:
         style resizing_bar is default:
@@ -1061,7 +1061,7 @@ label style_box:
 
     show screen fixed('fit_fixed')
 
-    e "When the xfit style property is true, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
+    e "When the xfit style property is True, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
 
     example:
         style reverse_fixed:

@@ -534,9 +534,9 @@ translate piglatin style_bar_9ef4f62f:
     e "Eway ivegay hetay arbay hetay sizeyay ropertypay otay etsay owhay alltay itay isay. Eway ouldcay alsoay ivegay itay sizexay otay oosechay owhay ideway, utbay erehay itay'say imitedlay ybay hetay idthway ofay hetay amefray itay'say inay."
 
 # game/indepth_style.rpy:792
-translate piglatin style_bar_80d8ceed:
+translate piglatin style_bar_d4c29710:
 
-    # e "When the bar_invert style property is true, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
+    # e "When the bar_invert style property is True, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
     e "Henway hetay ar_invertbay ylestay ropertypay isay uetray, hetay arbay aluevay isay isplayedday onay hetay ightray idesay ofay hetay arbay. Hetay eft_barlay anday ight_barray isplayablesday ightmay alsoay eednay otay ebay wappedsay."
 
 # game/indepth_style.rpy:806
@@ -660,9 +660,9 @@ translate piglatin style_box_4a2866f0:
     e "Utbay ofay oursecay, eway avehay omesay ylestay ropertiespay hattay ancay angechay hattay."
 
 # game/indepth_style.rpy:1064
-translate piglatin style_box_a3b47b6e:
+translate piglatin style_box_66e042c4:
 
-    # e "When the xfit style property is true, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
+    # e "When the xfit style property is True, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
     e "Henway hetay fitxay ylestay ropertypay isay uetray, hetay ixedfay ayslay outay allay itsay ildrenchay asay ifay itay asway ullfay izesay, anday hentay rinksshay inay idthway otay itfay hemtay. Hetay fityay ylestay orksway hetay amesay ayway, utbay inay eighthay."
 
 # game/indepth_style.rpy:1072
