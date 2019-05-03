@@ -124,7 +124,7 @@ translate korean strings:
 
     # script.rpy:77
     old "Transition Gallery"
-    new "전환 갤러리"
+    new "전환 모음"
 
     # script.rpy:80
     old "Position Properties"

@@ -292,7 +292,7 @@ translate korean style_text_917e2bca:
 translate korean style_text_1a46cd43:
 
     # e "The italic property makes the text italic. Again, this is better done with a font, but for short amounts of text Ren'Py can do it for you."
-    e "기울임(italic) 속성은 글자를 기울임꼴로 만들어. 다시 말하지만, 기울임 글꼴을 사용하는 것이 더 낫지만, 짧은 양의 글자는 렌파이가 대신 수행해도 괜찮을 거야."
+    e "기울임(italic) 속성은 글자를 기움꼴로 만들어. 다시 말하지만, 기움 글꼴(italic font)을 사용하는 것이 더 낫지만, 짧은 양의 글자는 렌파이가 대신 수행해도 괜찮을 거야."
 
 # game/indepth_style.rpy:397
 translate korean style_text_472f382d:

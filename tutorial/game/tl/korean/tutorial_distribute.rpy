@@ -40,7 +40,7 @@ translate korean distribute_638f964a:
 translate korean distribute_dd1af4dd:
 
     # e "Ren'Py supports the mobile platforms, Android and iOS. We also support ChromeOS, through its ability to run Android apps."
-    e "렌퍼아는 안드로이드와 iOS 모바일 플랫폼 뿐만 아니라 안드로이드 앱을 실행하는 크롬OS도 지원해."
+    e "렌파이는 안드로이드와 iOS 모바일 플랫폼 뿐만 아니라 안드로이드 앱을 실행하는 크롬OS도 지원해."
 
 # game/tutorial_distribute.rpy:23
 translate korean distribute_0b547b7b:

@@ -22,7 +22,7 @@ translate korean demo_minigame_3e601161:
 translate korean demo_minigame_a92baa6b:
 
     # e "When screens are not enough you can write a creator-defined displayable to extend Ren'Py itself. A Creator-defined displayables can process raw events and draw to the screen."
-    e "스크린이 충분하지 않으면 렌파이 자체를 확장하기 위해 창작자-정의 디스플레이어블을 작성할 수 있어. 창작자-정의된 디스플레이어블은 원시 이벤트를 처리하고 스크린에 그릴 수 있지."
+    e "스크린이 충분하지 않으면 렌파이 자체를 확장하기 위해 창작자-정의 디스플레이어블을 작성할 수 있어. 창작자-정의된 디스플레이어블은 그대로의 이벤트를 처리하고 스크린에 그릴 수 있지."
 
 # game/indepth_minigame.rpy:228
 translate korean demo_minigame_a07dbae0:
