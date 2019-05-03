@@ -648,3 +648,90 @@ translate spanish strings:
     # 00gallery.rpy:596
     old "return"
     new "volver"
+
+translate spanish strings:
+
+    # 00accessibility.rpy:76
+    old "Font Override"
+    new "Invalidar Fuente"
+
+    # 00accessibility.rpy:80
+    old "Default"
+    new "por Defecto"
+
+    # 00accessibility.rpy:84
+    old "DejaVu Sans"
+    new "DejaVu Sans"
+
+    # 00accessibility.rpy:88
+    old "Opendyslexic"
+    new "Opendyslexic"
+
+    # 00accessibility.rpy:94
+    old "Text Size Scaling"
+    new "Tamaño de la Escala del Texto"
+
+    # 00accessibility.rpy:100
+    old "Reset"
+    new "Reiniciar"
+
+    # 00accessibility.rpy:105
+    old "Line Spacing Scaling"
+    new "Escalado del espaciado de línea"
+
+    # 00accessibility.rpy:117
+    old "Self-Voicing"
+    new "Voz-automática"
+
+    # 00accessibility.rpy:121
+    old "Off"
+    new "Apagado"
+
+    # 00accessibility.rpy:125
+    old "Text-to-speech"
+    new "Texto a voz"
+
+    # 00accessibility.rpy:129
+    old "Clipboard"
+    new "Potapapeles"
+
+    # 00accessibility.rpy:133
+    old "Debug"
+    new "Depurar"
+
+    # 00action_file.rpy:434
+    old "Load slot %s: [text]"
+    new "Cargar ranura %s: [text]"
+
+    # 00preferences.rpy:430
+    old "font transform"
+    new "transformación de fuente"
+
+    # 00preferences.rpy:433
+    old "font size"
+    new "tamaño de fuente"
+
+    # 00preferences.rpy:441
+    old "font line spacing"
+    new "fuente de espacio de líneas"
+
+    # _developer\developer.rpym:63
+    old "Image Attributes"
+    new "Atrubutos de Imagen"
+
+    # _developer\developer.rpym:90
+    old "[name] [attributes] (hidden)"
+    new "[name] [attributes] (hidden)"
+
+    # _developer\developer.rpym:94
+    old "[name] [attributes]"
+    new "[name] [attributes]"
+
+    # _developer\developer.rpym:154
+    old "Hide deleted"
+    new "Hide deleted"
+
+    # _developer\developer.rpym:154
+    old "Show deleted"
+    new "Show deleted"
+

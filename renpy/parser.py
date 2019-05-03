@@ -1222,6 +1222,10 @@ class Lexer(object):
 
         self.line, self.filename, self.number, self.text, self.subblock, self.pos = state
         self.word_cache_pos = -1
+        if self.line < len(self.block):
+            self.eob = False
+        else:
+            self.eob = True
 
     def get_location(self):
         """

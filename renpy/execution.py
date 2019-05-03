@@ -107,6 +107,9 @@ class LineLogEntry(object):
 
         return (self.filename == other.filename) and (self.line == other.line) and (self.node is other.node)
 
+    def __ne__(self, other):
+        return not (self == other)
+
 
 class Context(renpy.object.Object):
     """
@@ -530,7 +533,7 @@ class Context(renpy.object.Object):
                     renpy.game.log.begin(force=force_rollback)
 
                 if self.rollback and self.force_checkpoint:
-                    renpy.game.log.checkpoint(hard=False)
+                    renpy.game.log.force_checkpoint = True
                     self.force_checkpoint = False
 
             self.seen = False

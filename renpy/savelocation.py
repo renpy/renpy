@@ -370,6 +370,9 @@ class FileLocation(object):
 
         return self.directory == other.directory
 
+    def __ne__(self, other):
+        return not (self == other)
+
 
 class MultiLocation(object):
     """
@@ -503,6 +506,10 @@ class MultiLocation(object):
             return False
 
         return self.locations == other.locations
+
+    def __ne__(self, other):
+        return not (self == other)
+
 
 
 # The thread that scans locations every few seconds.

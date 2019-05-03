@@ -71,6 +71,7 @@ init -1500 python:
         """
 
         def __call__(self):
+            renpy.free_memory()
             renpy.display.interface.display_reset = True
 
 
@@ -198,6 +199,13 @@ init -1500 python:
          * Preference("gl tearing", True) - Tears rather than skipping frames.
          * Preference("gl tearing", False) - Skips frames rather than tearing.
 
+         * Preference("font transform", "opendyslexic") - Sets the accessibility font transform to opendyslexic.
+         * Preference("font transform", "dejavusans") - Sets the accessibility font trandform to deja vu sans.
+         * Preference("font transform", None) - Disables the accessibility font transform.
+
+         * Preference("font size", 1.0) - Sets the accessibility font size scaling factor.
+         * Preference("font vertical spacing", 1.0) - Sets the accessibility font vertical spacing scaling factor.
+
          Values that can be used with bars are:
 
          * Preference("text speed")
@@ -206,6 +214,8 @@ init -1500 python:
          * Preference("sound volume")
          * Preference("voice volume")
          * Preference("mixer <mixer> volume")
+         * Preference("font size")
+         * Preference("font vertical spacing")
 
          The `range` parameter can be given to give the range of certain bars.
          For "text speed", it defaults to 200 cps. For "auto-forward time", it
@@ -416,6 +426,27 @@ init -1500 python:
 
             elif name == _("gl tearing"):
                 return [ SetField(_preferences, "gl_tearing", value), _DisplayReset() ]
+
+            elif name == _("font transform"):
+                return [ SetField(_preferences, "font_transform", value), _DisplayReset() ]
+
+            elif name == _("font size"):
+
+                if value is None:
+                    bar_range = range or 1.0
+                    return FieldValue(_preferences, "font_size", range=bar_range, style="slider", offset=.5, action=_DisplayReset())
+
+                return [ SetField(_preferences, "font_size", value), _DisplayReset() ]
+
+            elif name == _("font line spacing"):
+
+                if value is None:
+                    bar_range = range or 1.0
+                    return FieldValue(_preferences, "font_line_spacing", range=bar_range, style="slider", offset=.5, action=_DisplayReset())
+
+                return [ SetField(_preferences, "font_line_spacing", value), _DisplayReset() ]
+
+
 
             mixer_names = {
                 "music" : "music",

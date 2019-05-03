@@ -72,13 +72,17 @@ init -1500 python in build:
         ( "renpy.py", "renpy"),
 
         ( "renpy/", "all"),
+        ( "renpy/**.py", "renpy"),
+        ( "renpy/**.pyx", "renpy"),
+        ( "renpy/**.pyd", "renpy"),
+        ( "renpy/**.pxi", "renpy"),
         ( "renpy/common/", "all"),
         ( "renpy/common/_compat/**", "renpy"),
         ( "renpy/common/**.rpy", "renpy"),
         ( "renpy/common/**.rpym", "renpy"),
         ( "renpy/common/_compat/**", "renpy"),
         ( "renpy/common/**", "all"),
-        ( "renpy/**", "renpy"),
+        ( "renpy/**", "all"),
 
         # Ignore Ren'Py and renpy.exe.
         ( "lib/*/renpy", None),
@@ -148,6 +152,9 @@ init -1500 python in build:
         ("ouya_icon.png", "android"),
 
         ("ios-presplash.*", "ios"),
+        ("ios-launchimage.png", None),
+        ("ios-icon.png", None),
+
         ])
 
     base_patterns = [ ]
@@ -326,8 +333,9 @@ init -1500 python in build:
     package("win", "zip", "windows renpy all", "Windows x86")
     package("market", "zip", "windows linux mac renpy all", "Windows, Mac, Linux for Markets")
     package("steam", "zip", "windows linux mac renpy all", hidden=True)
-    package("android", "directory", "android renpy all", hidden=True, update=False, dlc=True)
-    package("ios", "directory", "ios renpy all", hidden=True, update=False, dlc=True)
+    package("android", "directory", "android all", hidden=True, update=False, dlc=True)
+    package("ios", "directory", "ios all", hidden=True, update=False, dlc=True)
+    package("web", "zip", "web all", update=False, dlc=True)
 
     # Data that we expect the user to set.
 
@@ -424,7 +432,7 @@ init -1500 python in build:
         rv["renpy_patterns"] = excludes + renpy_patterns
         rv["xbit_patterns"] = xbit_patterns
         rv["version"] = version or directory_name
-        rv["display_name"] = display_name or executable_name
+        rv["display_name"] = display_name or config.name or executable_name
 
         rv["exclude_empty_directories"] = exclude_empty_directories
 

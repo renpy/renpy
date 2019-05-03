@@ -197,6 +197,8 @@ class Screen(renpy.object.Object):
     This class stores information about the screen.
     """
 
+    sensitive = "True"
+
     def __init__(self,
                  name,
                  function,
@@ -207,7 +209,8 @@ class Screen(renpy.object.Object):
                  variant=None,
                  parameters=False,
                  location=None,
-                 layer="screens"):
+                 layer="screens",
+                 sensitive="True"):
 
         # The name of this screen.
         if isinstance(name, basestring):
@@ -255,6 +258,9 @@ class Screen(renpy.object.Object):
 
         # The layer the screen will be shown on.
         self.layer = layer
+
+        # Is this screen sensitive? An expression.
+        self.sensitive = sensitive
 
         global prepared
         global analyzed
@@ -689,6 +695,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
     def event(self, ev, x, y, st):
 
         if (self.phase == OLD) or (self.phase == HIDE):
+            return
+
+        if not renpy.python.py_eval(self.screen.sensitive):
             return
 
         try:

@@ -9,6 +9,8 @@ support can be used for many things, from setting a flag to creating
 new displayables. This chapter covers ways in which Ren'Py scripts can
 directly invoke Python, through the various Python statements.
 
+Ren'Py currently supports Python 2.7, though we strongly recommend you write
+Python that runs in Python 2 and Python 3.
 
 .. _python-statement:
 

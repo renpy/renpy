@@ -160,6 +160,30 @@ These control transitions between various screens.
     If not None, a transition to use when the image is changed by a
     say statement with image attributes.
 
+.. var:: config.say_attribute_transition_callback = ...
+
+    This is a function that return a transition to apply and a layer to
+    apply it on
+
+    This should be a function that takes three arguments, the image tag
+    being shown, a tuple of tags describing the image being shown, and a
+    `mode` parameter that is one of:
+
+    * "permanent", for permanent attribute change (one that lasts longer
+      than the current say statement).
+    * "temporary", for a temporary attribute change (one that is restored
+      at the end of the current say statement).
+    * "restore", for when a temporary change is being restored.
+
+    This should return a 2-component tuple, consiting of:
+
+    * The transition to use, or None if no transition should occur.
+    * The layer the transition should be on, either a string or None. This is
+      almost always None.
+
+    The default implementation of this returns (config.say_attribute_transition,
+    config.say_attribute_transition_layer).
+
 .. var:: config.say_attribute_transition_layer = None
 
     If not None, this must be a string giving the name of a layer. (Almost always
@@ -526,6 +550,13 @@ Occasionally Used
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
 
+.. var:: config.load_failed_label = None
+
+    If a string, this is a label that is jumped to when a load fails because
+    the script has changed so much that Ren'Py can't recover.
+    Before performing the load, Ren'Py will revert to the start of the
+    last statement, then it will clear the call stack.
+
 .. var:: config.locale_to_language_function = ...
 
     A function that determines the language the game should use,
@@ -633,6 +664,13 @@ Occasionally Used
     Uses nearest-neighbor filtering by default, to support pixel art or
     melting players' eyes.
 
+.. var:: config.notify = ...
+
+    This is called by :func:`renpy.notify` or :func:`Notify` with a
+    single  `message` argument, to display the notification. The default
+    implementation is :funct:`renpy.display_notify`. This is intended
+    to allow creators to intercept notifications.
+
 .. var:: config.optimize_texture_bounds = False
 
     When True, Ren'Py will scan images to find the bounding box of the
@@ -679,6 +717,12 @@ Occasionally Used
     The action that is called when the user clicks the quit button on
     a window. The default action prompts the user to see if he wants
     to quit the game.
+
+.. var:: config.reload_modules = [ ]
+
+    A list of strings giving the names of python modules that should be 
+    reloaded along with the game. Any submodules of these modules 
+    will also be reloaded.
 
 .. var:: config.replace_text = None
 

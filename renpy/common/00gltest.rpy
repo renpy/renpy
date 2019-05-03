@@ -373,7 +373,7 @@ init -1500 python:
         if not _preferences.performance_test and not performance_test:
             return
 
-        # Don't bother on android or ios - there's nothing the user can do.
+        # Don't bother on android or ios or emscripten - there's nothing the user can do.
         if renpy.mobile:
             return
 

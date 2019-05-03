@@ -58,6 +58,10 @@ The following environment variables control the behavior of Ren'Py:
     %d substitution in it. For example, setting this to "screenshot%04d.jpg" will
     cause Ren'Py to write out jpeg screenshots rather than the usual pngs.
 
+``RENPY_SEARCHPATH``
+    If set, a double-colon (\:\:) separated list of additional paths that
+    are added to :var:`config.searchpath`.
+
 ``RENPY_SIMPLE_EXCEPTIONS``
     When set, this disables Ren'Py's graphical exception handling.
 

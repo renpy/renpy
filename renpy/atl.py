@@ -251,6 +251,9 @@ class Context(object):
 
         return self.context == other.context
 
+    def __ne__(self, other):
+        return not (self == other)
+
 # This is intended to be subclassed by ATLTransform. It takes care of
 # managing ATL execution, which allows ATLTransform itself to not care
 # much about the contents of this file.

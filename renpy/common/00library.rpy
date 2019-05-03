@@ -55,6 +55,9 @@ init -1700 python:
 
                 return False
 
+        def __ne__(self, o):
+            return not (self == o)
+
     class FieldEquality(object):
         """
         Declares two objects equal if their types are the same, and
@@ -91,6 +94,9 @@ init -1700 python:
                     raise
 
                 return False
+
+        def __ne__(self, o):
+            return not (self == o)
 
 
 init -1700 python:
@@ -152,9 +158,9 @@ init -1700 python:
         what = _last_say_what + config.extend_interjection + _last_raw_what
 
         args = args + _last_say_args
-        kw = dict(kwargs)
-        kw.update(_last_say_kwargs)
-        kw.setdefault("interact", interact)
+        kw = dict(_last_say_kwargs)
+        kw.update(kwargs)
+        kw["interact"] = interact and kw.get("interact", True)
 
         renpy.exports.say(who, what, *args, **kw)
         store._last_say_what = what

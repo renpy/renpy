@@ -514,6 +514,9 @@ statement_callbacks = [ ]
 # A list of file extensions that are blacklisted by autoreload.
 autoreload_blacklist = [ ".rpyc", ".rpymc", ".rpyb", ".pyc", ".pyo" ]
 
+# A list of python modules that should be reloaded when appropriate.
+reload_modules = [ ]
+
 # The layer dialogue is shown on.
 say_layer = "screens"
 
@@ -939,6 +942,48 @@ auto_clear_screenshot = True
 # Should Ren'Py allow duplicate labels.
 allow_duplicate_labels = False
 
+# A map of font transform name to font transform function.
+font_transforms = { }
+
+# A scaling factor that is applied to a truetype font.
+ftfont_scale = { }
+
+# This is used to scale the ascent and descent of a font.
+ftfont_vertical_extent_scale = { }
+
+
+def say_attribute_transition_callback(*args):
+    """
+    :args: (tag, attrs, mode)
+
+    Returns the say attribute transition to use, and the layer the transition
+    should be applied to (with None being a valid layer.
+
+    Attrs is the list of tags/attributes of the incoming image.
+
+    Mode is one of "permanent", "temporary", or "restore".
+    """
+
+    return renpy.config.say_attribute_transition, renpy.config.say_attribute_transition_layer
+
+
+# Should say_attribute_transition_callback take attrs?
+say_attribute_transition_callback_attrs = True
+
+# The function used by renpy.notify
+notify = None
+
+# Should Ren'Py support a SL2 keyword after a Python statement?
+keyword_after_python = False
+
+# A label Ren'Py should jump to if a load fails.
+load_failed_label = None
+
+# If true, Ren'Py distributes mono to both stereo channels. If false,
+# it splits it 50/50.
+equal_mono = True
+
+
 del os
 del collections
 
@@ -958,4 +1003,5 @@ def init():
     global tts_function
     tts_function = renpy.display.tts.default_tts_function
 
-    import os
+    global notify
+    notify = renpy.exports.display_notify

@@ -528,6 +528,14 @@ cdef class GLDraw:
             self.always_opaque = True
             gltexture.use_gles()
 
+        elif renpy.emscripten:
+            # give back control to browser regularly
+            self.redraw_period = 0.1
+            # True messes alpha imagemap/imagebutton mouseover
+            self.always_opaque = False
+            # WebGL is GLES
+            gltexture.use_gles()
+
         else:
             gltexture.use_gl()
 
@@ -637,7 +645,7 @@ cdef class GLDraw:
         # ANGLE from working with fbo on Windows.
 
         use_fbo = (
-            renpy.ios or renpy.android or (EGL and not ANGLE) or
+            renpy.ios or renpy.android or renpy.emscripten or (EGL and not ANGLE) or
             use_subsystem(
                 glrtt_fbo,
                 "RENPY_GL_RTT",
@@ -1206,6 +1214,9 @@ cdef class GLDraw:
 
         what.kill()
 
+        if renpy.emscripten:
+            renpy.display.interface.force_redraw = True
+
         return a
 
 
@@ -1492,7 +1503,7 @@ cdef class Environ(object):
         Sets the array of texture coordinates for unit `unit`.
         """
 
-    cdef void set_color(self, float r, float g, float b, float a):
+    cdef void set_color(self, double r, double g, double b, double a):
         """
         Sets the color to be shown.
         """

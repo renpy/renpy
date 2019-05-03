@@ -31,6 +31,8 @@ from ttgsubtable cimport *
 from textsupport cimport Glyph, SPLIT_INSTEAD
 import traceback
 
+import renpy.config
+
 cdef extern from "ftsupport.h":
     char *freetype_error_to_string(int error)
 
@@ -147,10 +149,15 @@ cdef class FTFace:
         # The offset in that file.
         unsigned long offset
 
-    def __init__(self, f, index):
+        public object fn
+
+    def __init__(self, f, index, fn):
 
         cdef int error
         cdef unsigned long size
+
+        # The filename.
+        self.fn = fn
 
         # The file that the font is opened from.
         self.f = f
@@ -249,6 +256,8 @@ cdef class FTFont:
         if bold:
             antialias = True
 
+        size = size * renpy.config.ftfont_scale.get(face.fn, 1.0) * renpy.game.preferences.font_size
+
         self.face_object = face
         self.face = self.face_object.face
 
@@ -287,6 +296,7 @@ cdef class FTFont:
         cdef int error
         cdef FT_Face face
         cdef FT_Fixed scale
+        cdef float ascent_scale
 
         face = self.face
 
@@ -303,8 +313,10 @@ cdef class FTFont:
 
             scale = face.size.metrics.y_scale
 
-            self.ascent = FT_CEIL(face.size.metrics.ascender)
-            self.descent = FT_FLOOR(face.size.metrics.descender)
+            vextent_scale = renpy.config.ftfont_vertical_extent_scale.get(self.face_object.fn, 1.0)
+
+            self.ascent = FT_CEIL(int(face.size.metrics.ascender * vextent_scale))
+            self.descent = FT_FLOOR(int(face.size.metrics.descender * vextent_scale))
 
             if self.descent > 0:
                 self.descent = -self.descent
@@ -320,7 +332,7 @@ cdef class FTFont:
             # if self.height > self.lineskip:
             #     self.lineskip = self.height
 
-            self.lineskip = self.height
+            self.lineskip = <int> self.height * renpy.game.preferences.font_line_spacing
 
             if self.vertical:
                 self.underline_offset = FT_FLOOR(FT_MulFix(face.ascender + face.descender - face.underline_position, scale))

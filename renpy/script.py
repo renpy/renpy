@@ -263,6 +263,11 @@ class Script(object):
         initcode = [ ]
 
         for fn, dir in script_files:  # @ReservedAssignment
+            # Mitigate "busy script" warning from the browser
+            if renpy.emscripten:
+                import emscripten
+                emscripten.sleep(0)
+
             self.load_appropriate_file(".rpyc", ".rpy", dir, fn, initcode)
 
         # Make the sort stable.

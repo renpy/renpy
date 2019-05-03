@@ -50,7 +50,7 @@ PyObject *RPS_read_video(int channel);
 void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba);
 void RPS_set_video(int channel, int video);
 
-void RPS_init(int freq, int stereo, int samples, int status);
+void RPS_init(int freq, int stereo, int samples, int status, int equal_mono);
 void RPS_quit(void);
 
 void RPS_advance_time(void);
