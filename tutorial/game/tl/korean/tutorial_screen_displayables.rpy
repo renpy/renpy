@@ -322,13 +322,13 @@ translate korean button_displayables_49720fa6:
 translate korean button_displayables_e8d40fc8:
 
     # e "Buttons take Window style properties, that are used to specify the background, margins, and padding. They also take Button-specific properties, like a sound to play on hover."
-    e "버튼은 배경(background), 여백(margin) 및 메움(padding)을 지정하는 데 사용되는 창 스타일 속성을 사용해. 또한 호버(hover)에서 재생할 사운드와 같은 버튼 관련 속성을 사용해."
+    e "버튼은 배경(background), 여백(margin) 및 메움(padding)을 지정하는 데 사용되는 창 스타일 속성을 사용해. 또한 멤돔(hover)에서 재생할 사운드와 같은 버튼 관련 속성을 사용해."
 
 # game/tutorial_screen_displayables.rpy:524
 translate korean button_displayables_1e40e311:
 
     # e "When used with a button, style properties can be given prefixes like idle and hover to make the property change with the button state."
-    e "버튼과 함께 사용하면 스타일 속성에 유휴 상태 및 호버와 같은 접두사를 지정하여 버튼 상태로 속성을 변경할 수 있어."
+    e "버튼과 함께 사용하면 스타일 속성에 유휴(idle) 상태 및 멤돔(hover)과 같은 접두사를 지정하여 버튼 상태로 속성을 변경할 수 있어."
 
 # game/tutorial_screen_displayables.rpy:526
 translate korean button_displayables_220b020d:
