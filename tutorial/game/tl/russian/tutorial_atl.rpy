@@ -312,7 +312,7 @@ translate russian tutorial_atl_1dd345c6:
     e "Когда ATL используется как часть оператора show, значения параметров сохраняются даже при изменении трансформации. Так что даже после остановки анимации картинка всего-лишь чуть-чуть сместилась вниз со своей последней позиции."
 
 # game/tutorial_atl.rpy:488
-translate russian tutorial_atl_c21bc1d1:
+translate russian tutorial_atl_98047789:
 
     # e "The key to ATL is what we call composability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
     e "Ключом к ATL является то, что он создаётся из относительно простых команд, но их можно сочетать для создания сложных трансформаций."

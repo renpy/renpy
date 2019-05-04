@@ -313,7 +313,7 @@ translate korean tutorial_atl_1dd345c6:
     e "ATL이 show 명령문의 부품으로 사용될 때, 변형이 변경되더라도 특성의 값은 존재해. 따라서 클릭으로 동작이 중단되더라도 이미지는 같은 위치에 유지되지."
 
 # game/tutorial_atl.rpy:488
-translate korean tutorial_atl_c21bc1d1:
+translate korean tutorial_atl_98047789:
 
     # e "The key to ATL is what we call composability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
     e "우리는 ATL의 핵심을 '결합성'이라 불러. ATL은 상대적으로 간단한 명령으로 구성되어 있는데, 복잡한 명령을 함께 사용하여 복잡한 변형을 만들 수 있어."
