@@ -44,7 +44,6 @@ import math
 cimport renpy.display.render as render
 cimport gltexture
 import gltexture
-import glblacklist
 
 
 cdef extern from "glcompat.h":
@@ -504,12 +503,6 @@ cdef class GLDraw:
 
         allow_shader = True
         allow_fixed = self.allow_fixed
-
-        for r, v, allow_shader_, allow_fixed_ in glblacklist.BLACKLIST:
-            if r in renderer and v in version:
-                allow_shader = allow_shader and allow_shader_
-                allow_fixed = allow_fixed and allow_fixed_
-                break
 
         if not allow_shader:
             renpy.display.log.write("Shaders are blacklisted.")
