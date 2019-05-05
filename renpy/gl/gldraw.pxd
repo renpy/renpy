@@ -46,7 +46,6 @@ cdef class GLDraw:
     cdef object display_info
     cdef tuple clip_cache
     cdef bint fast_dissolve
-    cdef bint always_opaque
     cdef bint allow_fixed
     cdef tuple default_clip
     cdef bint did_render_to_texture

@@ -46,7 +46,6 @@ cdef class GL2Draw:
     cdef object display_info
     cdef tuple clip_cache
     cdef bint fast_dissolve
-    cdef bint always_opaque
     cdef tuple default_clip
     cdef bint did_render_to_texture
     cdef float dpi_scale

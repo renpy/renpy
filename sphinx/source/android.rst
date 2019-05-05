@@ -66,11 +66,6 @@ due to the Android software and hardware are:
   `this page <http://developer.android.com/guide/appendix/media-formats.html>`_
   for a list of supported video formats.
 
-* Ren'Py can't handle transparency in buttons and imagemaps.
-  (This is due to performance problems on some devices with the
-  display modes needed to support deciding which pixels are
-  transparent.)
-
 In addition, there are a few changes that may be necessary due to
 human factors:
 

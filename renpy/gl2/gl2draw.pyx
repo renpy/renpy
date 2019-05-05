@@ -117,9 +117,6 @@ cdef class GL2Draw:
         # Should we use the fast (but incorrect) dissolve mode?
         self.fast_dissolve = False # renpy.android
 
-        # Should we always report pixels as being always opaque?
-        self.always_opaque = renpy.android
-
         # Did we do the texture test at least once?
         self.did_texture_test = False
 
@@ -454,7 +451,6 @@ cdef class GL2Draw:
 
         if renpy.android or renpy.ios:
             self.redraw_period = 1.0
-            self.always_opaque = True
 
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(extensions_string.split(" "))
@@ -1012,9 +1008,6 @@ cdef class GL2Draw:
 
         if x < 0 or y < 0 or x >= what.width or y >= what.height:
             return 0
-
-        if self.always_opaque or renpy.display.emulator.always_opaque:
-            return 255
 
         what = what.subsurface((x, y, 1, 1))
 
