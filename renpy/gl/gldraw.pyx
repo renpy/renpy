@@ -1179,13 +1179,10 @@ cdef class GLDraw:
 
         reverse = IDENTITY
 
-        self.did_render_to_texture = False
+        alpha_holder = [ 0 ]
 
-        # We need to render a second time if a render-to-texture occurs, as it
-        # has overwritten the buffer we're drawing to.
-        for _i in range(2):
+        def draw_func(x, y, w, h):
             self.environ.viewport(0, 0, 1, 1)
-
             self.environ.ortho(0, 1, 0, 1, -1, 1)
 
             self.clip_mode_rtt(0, 0, 1, 1)
@@ -1196,21 +1193,25 @@ cdef class GLDraw:
 
             self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
+            cdef unsigned char pixel[4]
+            glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
+
+            alpha_holder[0] = (pixel[3])
+
+        self.did_render_to_texture = False
+
+        # We need to render a second time if a render-to-texture occurs, as it
+        # has overwritten the buffer we're drawing to.
+        for _i in range(2):
+
+            gltexture.texture_grid_from_drawing(1, 1, draw_func, self.rtt, self.environ)
+
             if not self.did_render_to_texture:
                 break
 
-        cdef unsigned char pixel[4]
-
-        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
-
-        a = pixel[3]
-
         what.kill()
 
-        if renpy.emscripten:
-            renpy.display.interface.force_redraw = True
-
-        return a
+        return alpha_holder[0]
 
 
     def get_half(self, what):
