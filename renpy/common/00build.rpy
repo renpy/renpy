@@ -69,7 +69,7 @@ init -1500 python in build:
 
         ( "**/*.pyc", None),
 
-        ( "renpy.py", "renpy"),
+        ( "renpy.py", "all"),
 
         ( "renpy/", "all"),
         ( "renpy/**.py", "renpy"),
