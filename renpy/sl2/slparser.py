@@ -236,7 +236,7 @@ class Parser(object):
                     l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
 
                 target.tag = l.require(l.word)
-
+                l.expect_noblock(name)
                 return True
 
             if name not in self.keyword:
@@ -264,6 +264,8 @@ class Parser(object):
                     l.error("a non-constant keyword argument like '%s %s' is not allowed after a python block." % (name, expr))
 
             target.keyword.append((name, expr))
+
+            l.expect_noblock(name)
 
         if block_only:
             l.expect_eol()
