@@ -16,7 +16,7 @@ To create a new translation:
 2. On the preferences page, choose "Open launcher project".
 3. Choose "Generate Translations."
 4. Enter the name of the language to translate to. This should consist of
-   lower-case ASCII characters and underscores, so "japanese", "russian",
+   lowercase ASCII characters and underscores, so "japanese", "russian",
    or "ancient_klingon" are all valid language names.
 5. Choose "Generate Translations."
 

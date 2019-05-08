@@ -112,8 +112,10 @@ The ``!t`` flag will translate the interpolated string::
     g "I'm [mood!t] to see you."
 
 
-The ``!u`` flag forces the text to upper case, the ``!l`` flag forces the
-text to lower-case, and the ``!c`` flag capitalizes the text.
+The ``!u`` flag forces the text to uppercase and the ``!l`` flag forces the
+text to lowercase. The ``!c`` flag acts only on the first character,
+capitalizing it. These flags may be combined, for example using ``!cl`` would
+capitalize the first character, and force the remaining text to lowercase.
 
 
 Styling and Text Tags
