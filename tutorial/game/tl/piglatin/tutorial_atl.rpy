@@ -312,9 +312,9 @@ translate piglatin tutorial_atl_1dd345c6:
     e "Henway Tlaay isay useday asay artpay ofay aay owshay atementstay, aluesvay ofay ropertiespay existay evenay henway hetay ansformtray isay angedchay. Osay evenay houghtay aay ickclay ouryay ickclay oppedstay hetay otionmay, hetay imageay emainsray inay hetay amesay aceplay."
 
 # game/tutorial_atl.rpy:488
-translate piglatin tutorial_atl_c21bc1d1:
+translate piglatin tutorial_atl_98047789:
 
-    # e "The key to ATL is what we call composeability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
+    # e "The key to ATL is what we call composability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
     e "Hetay eykay otay Tlaay isay hatway eway allcay omposeabilitycay. Tlaay isay ademay upay ofay elativelyray implesay ommandscay, hichway ancay ebay ombinedcay ogethertay otay reatecay omplicatedcay ansformstray."
 
 # game/tutorial_atl.rpy:490

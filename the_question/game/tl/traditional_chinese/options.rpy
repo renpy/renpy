@@ -1,5 +1,5 @@
 ﻿translate traditional_chinese python:
-    gui.main_font = gui.text_font = gui.name_text_font = gui.interface_text_font = gui.button_text_font = gui.choice_button_text_font = "../../launcher/game/fonts/SourceHanSans-Light-Lite.ttf"
+    gui.system_font = gui.main_font = gui.text_font = gui.name_text_font = gui.interface_text_font = gui.button_text_font = gui.choice_button_text_font = "../../launcher/game/fonts/SourceHanSans-Light-Lite.ttf"
 
 
 translate traditional_chinese strings:

@@ -366,9 +366,9 @@ translate french style_text_e7204a95:
     e "Par défaut, les textes dans Ren’Py sont antialiasés, pour arrondir les angles. La propriété 'antialias' peut être désactivée rendant le texte un peu plus irrégulier."
 
 # game/indepth_style.rpy:487
-translate french style_text_b4563984:
+translate french style_text_a5316e4c:
 
-    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
+    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When True, characters will be shifted a bit so the Text has the same relative spacing."
     e "La propriété 'adjust_spacing' est très subtile. Elle n’a d’importance que lorsque les joueurs redimensionnent la fenêtre. À True, les caractères seront légèrement décalés pour que le texte conserve le même espacement."
 
 # game/indepth_style.rpy:496
@@ -534,9 +534,9 @@ translate french style_bar_9ef4f62f:
     e "Nous indiquons à la barre la propriété 'ysize' pour préciser sa hauteur. Nous pourrions aussi lui donner 'xsize' pour choisir sa largeur, mais ici nous sommes limités par la largeur du cadre."
 
 # game/indepth_style.rpy:792
-translate french style_bar_80d8ceed:
+translate french style_bar_d4c29710:
 
-    # e "When the bar_invert style property is true, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
+    # e "When the bar_invert style property is True, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
     e "Quand la propriété de style 'bar_invert' est à True, la jauge de la barre est affichée à droite. Les éléments de 'left_bar' et 'right_bar' ont également besoin d’être intervertis."
 
 # game/indepth_style.rpy:806
@@ -660,9 +660,9 @@ translate french style_box_4a2866f0:
     e "Mais, bien sûr, nous avons quelques propriétés de style pour changer cela."
 
 # game/indepth_style.rpy:1064
-translate french style_box_a3b47b6e:
+translate french style_box_66e042c4:
 
-    # e "When the xfit style property is true, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
+    # e "When the xfit style property is True, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
     e "Quand la propriété de style 'xfit' est à True, alors le canvas affiche chaque élément de contenu à sa taille d’origine et les réduit ensuite en largeur pour les afficher correctement dans la largeur. La propriété de style 'yfit' fonctionne de la même façon, mais en hauteur."
 
 # game/indepth_style.rpy:1072
