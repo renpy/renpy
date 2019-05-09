@@ -2024,6 +2024,10 @@ and choosing the entries that apply to the current platform.
    a mouse and keyboard present, to allow buttons to be hovered, and
    to allow precise pointing.
 
+``"web"``
+    Defined when running inside a web browser. There are no guarantees
+    as to what the hardware that runs the web browser is like.
+
 ``None``
    Always defined.
 

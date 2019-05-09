@@ -229,7 +229,11 @@ def choose_variants():
             renpy.config.variants.insert(0, 'small')
 
     else:
-        renpy.config.variants.insert(0, 'pc')
+        if renpy.emscripten:
+            renpy.config.variants.insert(0, 'web')
+        else:
+            renpy.config.variants.insert(0, 'pc')
+
         renpy.config.variants.insert(0, 'large')
 
 
