@@ -118,6 +118,10 @@ expression. It takes the following properties:
     from interacting with displayables below it, except
     for the default keymap.
 
+`sensitive`
+    An expression that determines whether the screen is sensitive or not.
+    This expression is evaluated at least once per interaction.
+
 `tag`
     Parsed as a name, not an expression. This specifies a tag
     associated with this screen. Showing a screen replaces other
