@@ -311,7 +311,7 @@ class Context(renpy.object.Object):
         self.use_modes = True
 
         # The language we started with.
-        self.translate_language = None
+        self.translate_language = renpy.game.preferences.language
 
         # The identifier of the current translate block.
         self.translate_identifier = None
