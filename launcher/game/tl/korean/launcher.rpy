@@ -225,8 +225,8 @@
     new "빌드를 성공했습니다."
 
     # androidstrings.rpy:20
-    old "The armeabi-v7a version works on most phones or tablets, while the x86_64 version works on the simulator and chromebooks."
-    new "armeabi-v7a 버전은 대부분의 휴대폰과 태블릿에서 작동하며, x86_64 버전은 시뮬레이터와 크롬북에서 작동합니다."
+    old "The arm64-v8a version works on newer Android devices, the armeabi-v7a version works on older devices, and the x86_64 version works on the simulator and chromebooks."
+    new "arm64-v8a 버전은 최신, armeabi-v7a 버전은 구형 안드로이드 휴대폰과 태블릿에서 작동하며, x86_64 버전은 시뮬레이터와 크롬북에서 작동합니다."
 
     # androidstrings.rpy:21
     old "What is the full name of your application? This name will appear in the list of installed applications."
@@ -357,7 +357,7 @@
     new "javac를 사용하여 테스트 파일을 컴파일할 수 없습니다. 자바 개발 키트를 아직 설치하지 않은 경우 아래에서 설치하세요:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nJDK는 JRE와 다르므로 JDK가 없어도 Java를 사용할 수 있습니다. 작동하는 JDK가 없으면 계속할 수 없습니다."
 
     # androidstrings.rpy:53
-    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variabe to use a different version of Java."
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
     new "컴퓨터에 설치된 자바 버전은 안드로이드 SDK에서 지원하는 유일한 버전인 JDK 8이 아닙니다. JDK 8은 아래에서 설치할 수 있습니다:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\n다른 버전의 자바를 사용하도록 JAVA_HOME 환경 변수를 설정할 수도 있습니다."
 
     # androidstrings.rpy:54
