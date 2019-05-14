@@ -39,6 +39,8 @@ import os.path
 import weakref
 import array
 import time
+import math
+
 import uguugl
 
 cimport renpy.display.render as render
@@ -117,9 +119,6 @@ cdef class GL2Draw:
         # Should we use the fast (but incorrect) dissolve mode?
         self.fast_dissolve = False # renpy.android
 
-        # Should we always report pixels as being always opaque?
-        self.always_opaque = renpy.android
-
         # Did we do the texture test at least once?
         self.did_texture_test = False
 
@@ -162,15 +161,15 @@ cdef class GL2Draw:
 
         if self.did_init:
             self.deinit()
-
         if renpy.android:
+
             fullscreen = False
 
         if fullscreen != self.old_fullscreen:
 
             self.did_init = False
 
-            if self.old_fullscreen is not None:
+            if renpy.windows and (self.old_fullscreen is not None):
                 pygame.display.quit()
 
             pygame.display.init()
@@ -205,21 +204,31 @@ cdef class GL2Draw:
 
         info = renpy.display.get_info()
 
-        if not renpy.mobile:
+        old_surface = pygame.display.get_surface()
+        if old_surface is not None:
+            maximized = old_surface.get_flags() & pygame.WINDOW_MAXIMIZED
+        else:
+            maximized = False
 
-            visible_w = info.current_w
-            visible_h = info.current_h
+        visible_w = info.current_w
+        visible_h = info.current_h
 
-            if renpy.windows and renpy.windows <= (6, 1):
-                visible_h -= 102
+        if renpy.windows and renpy.windows <= (6, 1):
+            visible_h -= 102
 
-            bounds = pygame.display.get_display_bounds(0)
+        bounds = pygame.display.get_display_bounds(0)
 
-            renpy.display.log.write("primary display bounds: %r", bounds)
+        renpy.display.log.write("primary display bounds: %r", bounds)
 
-            head_full_w = bounds[2]
-            head_w = bounds[2] - 102
-            head_h = bounds[3] - 102
+        head_full_w = bounds[2]
+        head_w = bounds[2] - 102
+        head_h = bounds[3] - 102
+
+        # Figure out the default window size.
+        bound_w = min(vwidth, visible_w, head_w)
+        bound_h = min(vwidth, visible_h, head_h)
+
+        if (not renpy.mobile) and (not maximized):
 
             pwidth = min(visible_w, pwidth)
             pheight = min(visible_h, pheight)
@@ -311,7 +320,7 @@ cdef class GL2Draw:
 
         self.window = None
 
-        if fullscreen:
+        if (self.window is None) and fullscreen:
             try:
                 renpy.display.log.write("Fullscreen mode.")
                 self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | window_flags)
@@ -406,6 +415,14 @@ cdef class GL2Draw:
         self.environ.init()
         self.rtt.init()
 
+        if self.window.get_flags() & pygame.WINDOW_MAXIMIZED:
+            self.info["max_window_size"] = self.window.get_size()
+        else:
+            self.info["max_window_size"] = (
+                int(round(min(bound_h * virtual_ar, bound_w))),
+                int(round(min(bound_w / virtual_ar, bound_h))),
+                )
+
         return True
 
     def deinit(self):
@@ -454,7 +471,10 @@ cdef class GL2Draw:
 
         if renpy.android or renpy.ios:
             self.redraw_period = 1.0
-            self.always_opaque = True
+
+        elif renpy.emscripten:
+            # give back control to browser regularly
+            self.redraw_period = 0.1
 
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(extensions_string.split(" "))
@@ -974,10 +994,11 @@ cdef class GL2Draw:
 
         return 0
 
+
     def render_to_texture(self, what, alpha):
 
-        width = int(what.width * self.draw_per_virt)
-        height = int(what.height * self.draw_per_virt)
+        width = int(math.ceil(what.width * self.draw_per_virt))
+        height = int(math.ceil(what.height * self.draw_per_virt))
 
         def draw_func(x, y, w, h):
 
@@ -1013,20 +1034,14 @@ cdef class GL2Draw:
         if x < 0 or y < 0 or x >= what.width or y >= what.height:
             return 0
 
-        if self.always_opaque or renpy.display.emulator.always_opaque:
-            return 255
-
         what = what.subsurface((x, y, 1, 1))
 
         reverse = IDENTITY
 
-        self.did_render_to_texture = False
+        alpha_holder = [ 0 ]
 
-        # We need to render a second time if a render-to-texture occurs, as it
-        # has overwritten the buffer we're drawing to.
-        for _i in range(2):
+        def draw_func(x, y, w, h):
             self.environ.viewport(0, 0, 1, 1)
-
             self.environ.ortho(0, 1, 0, 1, -1, 1)
 
             self.clip_mode_rtt(0, 0, 1, 1)
@@ -1037,18 +1052,25 @@ cdef class GL2Draw:
 
             self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
+            cdef unsigned char pixel[4]
+            glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
+
+            alpha_holder[0] = (pixel[3])
+
+        self.did_render_to_texture = False
+
+        # We need to render a second time if a render-to-texture occurs, as it
+        # has overwritten the buffer we're drawing to.
+        for _i in range(2):
+
+            gl2texture.texture_grid_from_drawing(1, 1, draw_func, self.rtt, self.environ)
+
             if not self.did_render_to_texture:
                 break
 
-        cdef unsigned char pixel[4]
-
-        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
-
-        a = pixel[3]
-
         what.kill()
 
-        return a
+        return alpha_holder[0]
 
 
     def get_half(self, what):
@@ -1331,7 +1353,7 @@ cdef class Environ(object):
         Sets the array of texture coordinates for unit `unit`.
         """
 
-    cdef void set_color(self, float r, float g, float b, float a):
+    cdef void set_color(self, double r, double g, double b, double a):
         """
         Sets the color to be shown.
         """

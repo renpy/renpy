@@ -44,7 +44,6 @@ import math
 cimport renpy.display.render as render
 cimport gltexture
 import gltexture
-import glblacklist
 
 
 cdef extern from "glcompat.h":
@@ -137,9 +136,6 @@ cdef class GLDraw:
 
         # Should we use the fast (but incorrect) dissolve mode?
         self.fast_dissolve = False # renpy.android
-
-        # Should we always report pixels as being always opaque?
-        self.always_opaque = renpy.android
 
         # Should we allow the fixed-function environment?
         self.allow_fixed = allow_fixed
@@ -505,12 +501,6 @@ cdef class GLDraw:
         allow_shader = True
         allow_fixed = self.allow_fixed
 
-        for r, v, allow_shader_, allow_fixed_ in glblacklist.BLACKLIST:
-            if r in renderer and v in version:
-                allow_shader = allow_shader and allow_shader_
-                allow_fixed = allow_fixed and allow_fixed_
-                break
-
         if not allow_shader:
             renpy.display.log.write("Shaders are blacklisted.")
         if not allow_fixed:
@@ -525,14 +515,11 @@ cdef class GLDraw:
 
         elif renpy.android or renpy.ios:
             self.redraw_period = 1.0
-            self.always_opaque = True
             gltexture.use_gles()
 
         elif renpy.emscripten:
             # give back control to browser regularly
             self.redraw_period = 0.1
-            # True messes alpha imagemap/imagebutton mouseover
-            self.always_opaque = False
             # WebGL is GLES
             gltexture.use_gles()
 
@@ -640,18 +627,11 @@ cdef class GLDraw:
                 return False
 
         # Pick a Render-to-texture method.
-
-        # 2015-3-3 - had a problem with 2012-era Nvidia drivers that prevented
-        # ANGLE from working with fbo on Windows.
-
-        use_fbo = (
-            renpy.ios or renpy.android or renpy.emscripten or (EGL and not ANGLE) or
-            use_subsystem(
+        use_fbo = renpy.ios or renpy.android or renpy.emscripten or EGL or use_subsystem(
                 glrtt_fbo,
                 "RENPY_GL_RTT",
                 "fbo",
-                # "GL_ARB_framebuffer_object"
-                "RENPY_bogus_extension"))
+                "GL_ARB_framebuffer_object")
 
         if use_fbo:
             renpy.display.log.write("Using FBO RTT.")
@@ -1179,20 +1159,14 @@ cdef class GLDraw:
         if x < 0 or y < 0 or x >= what.width or y >= what.height:
             return 0
 
-        if self.always_opaque or renpy.display.emulator.always_opaque:
-            return 255
-
         what = what.subsurface((x, y, 1, 1))
 
         reverse = IDENTITY
 
-        self.did_render_to_texture = False
+        alpha_holder = [ 0 ]
 
-        # We need to render a second time if a render-to-texture occurs, as it
-        # has overwritten the buffer we're drawing to.
-        for _i in range(2):
+        def draw_func(x, y, w, h):
             self.environ.viewport(0, 0, 1, 1)
-
             self.environ.ortho(0, 1, 0, 1, -1, 1)
 
             self.clip_mode_rtt(0, 0, 1, 1)
@@ -1203,21 +1177,25 @@ cdef class GLDraw:
 
             self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
+            cdef unsigned char pixel[4]
+            glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
+
+            alpha_holder[0] = (pixel[3])
+
+        self.did_render_to_texture = False
+
+        # We need to render a second time if a render-to-texture occurs, as it
+        # has overwritten the buffer we're drawing to.
+        for _i in range(2):
+
+            gltexture.texture_grid_from_drawing(1, 1, draw_func, self.rtt, self.environ)
+
             if not self.did_render_to_texture:
                 break
 
-        cdef unsigned char pixel[4]
-
-        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
-
-        a = pixel[3]
-
         what.kill()
 
-        if renpy.emscripten:
-            renpy.display.interface.force_redraw = True
-
-        return a
+        return alpha_holder[0]
 
 
     def get_half(self, what):

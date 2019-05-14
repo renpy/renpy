@@ -566,7 +566,7 @@ cdef class ShaderEnviron(Environ):
         else:
             glDisableVertexAttribArray(tex)
 
-    cdef void set_color(self, float r, float g, float b, float a):
+    cdef void set_color(self, double r, double g, double b, double a):
         glUniform4f(self.program.Color, r, g, b, a)
 
     cdef void ortho(self, double left, double right, double bottom, double top, double near, double far):

@@ -225,7 +225,7 @@ class Parser(object):
         block = False
 
         # Parses a keyword argument from the lexer.
-        def parse_keyword(l, expect):
+        def parse_keyword(l, expect, first_line):
             name = l.word()
 
             if name is None:
@@ -236,7 +236,7 @@ class Parser(object):
                     l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
 
                 target.tag = l.require(l.word)
-
+                l.expect_noblock(name)
                 return True
 
             if name not in self.keyword:
@@ -265,6 +265,9 @@ class Parser(object):
 
             target.keyword.append((name, expr))
 
+            if not first_line:
+                l.expect_noblock(name)
+
         if block_only:
             l.expect_eol()
             l.expect_block(self.name)
@@ -286,7 +289,7 @@ class Parser(object):
                     block = False
                     break
 
-                parse_keyword(l, 'expected a keyword argument, colon, or end of line.')
+                parse_keyword(l, 'expected a keyword argument, colon, or end of line.', True)
 
         # The index of the child we're adding to this statement.
         child_index = 0
@@ -348,10 +351,10 @@ class Parser(object):
                 l.revert(state)
 
                 if not l.eol():
-                    parse_keyword(l, "expected a keyword argument or child statement.")
+                    parse_keyword(l, "expected a keyword argument or child statement.", False)
 
                 while not l.eol():
-                    parse_keyword(l, "expected a keyword argument or end of line.")
+                    parse_keyword(l, "expected a keyword argument or end of line.", False)
 
     def add_positional(self, name):
         global parser

@@ -297,6 +297,9 @@ init python:
     build.classify_renpy("renios/version.txt", "renios")
     build.classify_renpy("renios/", "renios")
 
+    build.classify_renpy("web/game.zip", None)
+    build.classify_renpy("web/**", "web")
+
     build.classify_renpy("**.old", None)
     build.classify_renpy("**.new", None)
     build.classify_renpy("**.bak", None)
@@ -412,6 +415,7 @@ init python:
 
     build.package("rapt", "zip", "rapt", dlc=True)
     build.package("renios", "zip", "renios", dlc=True)
+    build.package("web", "zip", "web", dlc=True)
 
 
 # Enable the special launcher translation mode.
