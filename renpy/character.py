@@ -1046,8 +1046,11 @@ class ADVCharacter(object):
 
     def __call__(self, what, interact=True, _call_done=True, multiple=None, **kwargs):
 
+        _mode = kwargs.pop("_mode", None)
+        _with_none = kwargs.pop("_with_none", None)
+
         if kwargs:
-            return Character(kind=self, **kwargs)(what, interact=interact, _call_done=_call_done, multiple=multiple)
+            return Character(kind=self, **kwargs)(what, interact=interact, _call_done=_call_done, multiple=multiple, _mode=_mode, _with_none=_with_none)
 
         # Check self.condition to see if we should show this line at all.
         if not (self.condition is None or renpy.python.py_eval(self.condition)):
@@ -1093,7 +1096,8 @@ class ADVCharacter(object):
         try:
 
             if interact:
-                renpy.exports.mode(self.mode)
+                mode = _mode or self.mode
+                renpy.exports.mode(mode)
 
             # Figure out the arguments to display.
             display_args = self.display_args.copy()
@@ -1101,6 +1105,9 @@ class ADVCharacter(object):
 
             if multiple is not None:
                 display_args["multiple"] = multiple
+
+            if _with_none is not None:
+                display_args["with_none"] = _with_none
 
             who = self.name
 
