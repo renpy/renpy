@@ -2860,7 +2860,10 @@ def call_screen(_screen_name, *args, **kwargs):
     run at the end of end of the interaction.
     """
 
-    renpy.exports.mode('screen')
+    mode = "screen"
+    if "_mode" in kwargs:
+        mode = kwargs.pop("_mode")
+    renpy.exports.mode(mode)
 
     with_none = renpy.config.implicit_with_none
 
