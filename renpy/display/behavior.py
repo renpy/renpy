@@ -1544,7 +1544,7 @@ class Adjustment(renpy.object.Object):
         """
 
         for d in adj_registered.setdefault(self, [ ]):
-            renpy.display.render.redraw(d, 0)
+            renpy.display.render.invalidate(d)
 
 
 class Bar(renpy.display.core.Displayable):
