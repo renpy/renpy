@@ -2101,14 +2101,20 @@ class OnEvent(renpy.display.core.Displayable):
         self.event_name = event
         self.action = action
 
+    def is_event(self, event):
+        if isinstance(self.event_name, basestring):
+            return self.event_name == event
+        else:
+            return event in self.event_name
+
     def _handles_event(self, event):
-        if self.event_name == event:
+        if self.is_event(event):
             return True
         else:
             return False
 
     def set_transform_event(self, event):
-        if event == self.event_name:
+        if self.is_event(event):
             run(self.action)
 
     def render(self, width, height, st, at):
