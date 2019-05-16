@@ -668,7 +668,10 @@ init -1500 python in _console:
 
     @command(_("jump <label>: jumps to label"))
     def jump(l):
-        label = l.name()
+        label = l.label_name()
+
+        if label is None:
+            raise Exception("Could not parse label. (Unqualified local labels are not allowed.)")
 
         if not console.can_renpy():
             raise Exception("Ren'Py script not enabled. Not jumping.")
