@@ -586,14 +586,13 @@ def check_style(name, s):
             # Treat font specially.
             if k.endswith("font"):
                 if isinstance(v, renpy.text.font.FontGroup):
-                    for f in v.fonts:
+                    for f in set(v.map.values()):
                         check_file(name, f)
                 else:
                     check_file(name, v)
 
             if isinstance(v, renpy.display.core.Displayable):
                 check_style_property_displayable(name, k, v)
-#                check_displayable(kname, v)
 
 
 def check_label(node):
