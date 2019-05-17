@@ -808,7 +808,13 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     `pixel_width`
         If not None, the input is limited to being this many pixels wide,
         in the font used by the input to display text.
+
+    If :var:`config.disable_input` is True, this function only returns
+    `default`.
     """
+
+    if renpy.config.disable_input:
+        return default
 
     renpy.exports.mode('input')
 

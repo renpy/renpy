@@ -374,6 +374,11 @@ Occasionally Used
     detect if the game has been packaged into a distribution, and
     set config.developer as appropriate.
 
+.. var:: config.disable_input = False
+
+    When true, :func:`renpy.input` terminates immediately and returns its
+    `default` argument.
+
 .. var:: config.displayable_prefix = { }
 
     See :ref:`Displayable prefixes <displayable-prefix>`.
@@ -720,8 +725,8 @@ Occasionally Used
 
 .. var:: config.reload_modules = [ ]
 
-    A list of strings giving the names of python modules that should be 
-    reloaded along with the game. Any submodules of these modules 
+    A list of strings giving the names of python modules that should be
+    reloaded along with the game. Any submodules of these modules
     will also be reloaded.
 
 .. var:: config.replace_text = None
