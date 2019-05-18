@@ -1493,15 +1493,12 @@ def parse_menu(stmtl, loc, arguments):
     items = [ ]
     item_arguments = [ ]
 
-    l.advance()
-
-    while not l.eob:
+    while l.advance():
 
         if l.keyword('with'):
             with_ = l.require(l.simple_expression)
             l.expect_eol()
             l.expect_noblock('with clause')
-            l.advance()
 
             continue
 
@@ -1509,7 +1506,6 @@ def parse_menu(stmtl, loc, arguments):
             set = l.require(l.simple_expression)  # @ReservedAssignment
             l.expect_eol()
             l.expect_noblock('set menuitem')
-            l.advance()
 
             continue
 
@@ -1533,8 +1529,6 @@ def parse_menu(stmtl, loc, arguments):
             has_say = True
             say_who = who
             say_what = what
-
-            l.advance()
 
             continue
 
@@ -1560,7 +1554,6 @@ def parse_menu(stmtl, loc, arguments):
 
             items.append((label, "True", None))
             item_arguments.append(None)
-            l.advance()
 
             continue
 
@@ -1581,7 +1574,6 @@ def parse_menu(stmtl, loc, arguments):
         block = parse_block(l.subblock_lexer())
 
         items.append((label, condition, block))
-        l.advance()
 
     if not has_choice:
         stmtl.error("Menu does not contain any choices.")
