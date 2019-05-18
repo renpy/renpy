@@ -1077,8 +1077,13 @@ def display_menu(items,
 
     """
 
+    menu_args, menu_kwargs = get_menu_args()
+    screen = menu_kwargs.pop("screen", screen)
+    with_none = menu_kwargs.pop("_with_none", with_none)
+    mode = menu_kwargs.pop("_mode", type)
+
     if interact:
-        renpy.exports.mode(type)
+        renpy.exports.mode(mode)
         choice_for_skipping()
 
     choices = [ ]
@@ -1112,9 +1117,6 @@ def display_menu(items,
         renpy.ui.saybehavior()
 
     scope = dict(scope)
-
-    menu_args, menu_kwargs = get_menu_args()
-    screen = menu_kwargs.pop("screen", screen)
 
     scope.update(menu_kwargs)
 
