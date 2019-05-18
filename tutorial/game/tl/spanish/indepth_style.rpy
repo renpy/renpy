@@ -57,7 +57,7 @@ translate spanish styles_menu_a4a6913e:
 translate spanish style_basics_9a79ef89:
 
     # e "Styles let a displayable look different from game to game, or even inside the same game."
-    e "Los estilos permiten que los visualizables se vea diferente de un juego a otro, o incluso dentro del mismo juego."
+    e "Los estilos permiten que los visualizables se vean diferentes de un juego a otro, o incluso dentro del mismo juego."
 
 # game/indepth_style.rpy:103
 translate spanish style_basics_48777f2c:
@@ -93,7 +93,7 @@ translate spanish style_basics_03516b4a:
 translate spanish style_basics_ccc0d1ca:
 
     # egreen "Style properties can also be given as arguments when defining a character."
-    egreen "Las propiedades de estilo también se pueden dar como argumentos al definir un carácter."
+    egreen "Las propiedades de estilo también se pueden dar como argumentos al definir un personaje."
 
 # game/indepth_style.rpy:162
 translate spanish style_basics_013ab314:
@@ -111,7 +111,7 @@ translate spanish style_basics_dbe80939:
 translate spanish style_basics_ac6a8414:
 
     # e "Finally, there is the the style statement, which creates or changes a named style. By giving Text the style argument, we tell it to use the blue_text style."
-    e "Finalmente, está la sentencia style, que crea o cambia un estilo con nombre. Al darle a Text el argumento de estilo, le decimos que use el estilo blue_text."
+    e "Finalmente, está la sentencia style, que crea o cambia un estilo nombrado. Al darle a Text el argumento de estilo, le decimos que use el estilo blue_text."
 
 # game/indepth_style.rpy:180
 translate spanish style_basics_3d9bdff7:
@@ -129,7 +129,7 @@ translate spanish style_basics_49c5fbfe:
 translate spanish style_basics_6ab170a3:
 
     # e "For example, blue_text inherits from text, which in turn inherits from default. The default style defines all properties, so it doesn't inherit from anything."
-    e "Por ejemplo, blue_text hereda del texto, que a su vez hereda del valor predeterminado. El estilo predeterminado define todas las propiedades, por lo que no se hereda de nada."
+    e "Por ejemplo, blue_text hereda de text, que a su vez hereda de default. El estilo default define todas las propiedades, por lo que no hereda de nada."
 
 # game/indepth_style.rpy:190
 translate spanish style_basics_f78117a7:
@@ -159,13 +159,13 @@ translate spanish style_basics_422a87f7:
 translate spanish style_basics_bad2e207:
 
     # e "Lastly, when a displayable is a button, or inside a button, it can take style prefixes."
-    e "Por último, cuando un visualizable es un botón, o dentro de un botón, puede tomar prefijos de estilo."
+    e "Por último, cuando un visualizable es un botón, o está dentro de un botón, puede tomar prefijos de estilo."
 
 # game/indepth_style.rpy:202
 translate spanish style_basics_22ed20a1:
 
     # e "The prefixes idle_, hover_, and insensitive_ are used when the button is unfocused, focused, and unfocusable."
-    e "Los prefijos idle_, hover_ e insensitive_ se usan cuando el botón está desenfocado, enfocado y no enfocable."
+    e "Los prefijos idle_, hover_ e insensitive_ se usan cuando el botón está desenfocado, enfocado y no es enfocable."
 
 # game/indepth_style.rpy:204
 translate spanish style_basics_7a58037e:
@@ -231,7 +231,7 @@ translate spanish style_general_fcfb0640:
 translate spanish style_general_cd5cc97c:
 
     # e "The area property takes a tuple - a parenthesis bounded list of four items. The first two give the position, and the second two the size."
-    e "La propiedad del área toma una tupla: una lista delimitada por paréntesis de cuatro elementos. Los dos primeros dan la posición, y los dos segundos el tamaño."
+    e "La propiedad area toma una tupla: una lista delimitada por paréntesis de cuatro elementos. Los dos primeros dan la posición, y los dos segundos el tamaño."
 
 # game/indepth_style.rpy:308
 translate spanish style_general_e5a58f0b:
@@ -243,13 +243,13 @@ translate spanish style_general_e5a58f0b:
 translate spanish style_text_fe457b8f:
 
     # e "The text style properties apply to text and input displayables."
-    e "Las propiedades de estilo de texto se aplican a visualizables text e input."
+    e "Las propiedades de estilo text se aplican a visualizables text e input."
 
 # game/indepth_style.rpy:337
 translate spanish style_text_7ab53f03:
 
     # e "Text displayables can be created implicitly or explicitly. For example, a textbutton creates a text displayable with a style ending in button_text."
-    e "Visualizables text pueden ser creados implícitamente o explícitamente. Por ejemplo, un botón de texto crea un visualizable text con un estilo que termina en button_text."
+    e "Visualizables text pueden ser creados implícitamente o explícitamente. Por ejemplo, un textbutton crea un visualizable text con un estilo que termina en button_text."
 
 # game/indepth_style.rpy:339
 translate spanish style_text_6dd42a57:
@@ -339,7 +339,7 @@ translate spanish style_text_430c1959:
 translate spanish style_text_19aa0833:
 
     # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
-    e "No cambia la posición del visualizable text. Para eso, a menudo querrá establecer el text_align y el xalign en el mismo valor."
+    e "No cambia la posición del visualizable text. Para eso, a menudo querrás establecer el text_align y el xalign en el mismo valor."
 
 # game/indepth_style.rpy:455
 translate spanish style_text_efc3c392:
@@ -357,7 +357,7 @@ translate spanish style_text_43be63b9:
 translate spanish style_text_343f6d34:
 
     # e "Those are the most common text style properties, but not the only ones. Here are a few more that you might need in special circumstances."
-    e "Esas son las propiedades de estilo de texto más comunes, pero no las únicas. Aquí hay algunos más que puede necesitar en circunstancias especiales."
+    e "Esas son las propiedades de estilo text más comunes, pero no las únicas. Aquí hay algunos más que puede necesitar en circunstancias especiales."
 
 # game/indepth_style.rpy:479
 translate spanish style_text_e7204a95:
@@ -405,7 +405,7 @@ translate spanish style_text_c7229243:
 translate spanish style_text_724bd5e0:
 
     # e "And those are the text style properties. There might be a lot of them, but we want to give you a lot of control over how you present text to your players."
-    e "Y esas son las propiedades de estilo de texto. Puede que haya muchos, pero queremos darte mucho control sobre cómo presentar el texto a tus jugadores."
+    e "Y esas son las propiedades de estilo text. Puede que haya muchos, pero queremos darte mucho control sobre cómo presentar el texto a tus jugadores."
 
 # game/indepth_style.rpy:580
 translate spanish style_button_300b6af5:
@@ -453,7 +453,7 @@ translate spanish style_button_1009f3e1:
 translate spanish style_button_5bdfa45a:
 
     # e "More commonly used are the xpadding and ypadding style properties, which add the same padding to the left and right, or the top and bottom, respectively."
-    e "Más comúnmente utilizadas son las propiedades de estilo xpadding y ypadding, que agregan el mismo relleno a la izquierda y la derecha, o la parte superior e inferior, respectivamente."
+    e "Comúnmente son más utilizadas las propiedades de estilo xpadding y ypadding, que agregan el mismo relleno a la izquierda y la derecha, o la parte superior e inferior, respectivamente."
 
 # game/indepth_style.rpy:629
 translate spanish style_button_81283d42:
@@ -525,13 +525,13 @@ translate spanish style_bar_8ae6a14b:
 translate spanish style_bar_7f0f50e5:
 
     # e "Also by default, both the left and right displayables are rendered at the full width of the bar, and then cropped to the appropriate size."
-    e "Además, de forma predeterminada, tanto la visualización derecha como la izquierda se representan en todo el ancho de la barra y luego se recortan al tamaño adecuado."
+    e "Además, de forma predeterminada, tanto el visualizable derecho como el izquierdo se representan en todo el ancho de la barra y luego se recortan al tamaño adecuado."
 
 # game/indepth_style.rpy:779
 translate spanish style_bar_9ef4f62f:
 
     # e "We give the bar the ysize property to set how tall it is. We could also give it xsize to choose how wide, but here it's limited by the width of the frame it's in."
-    e "Le damos a la barra la propiedad ysize para establecer qué tan alta es. También podríamos darle xsize para elegir qué ancho, pero aquí está limitado por el ancho del marco en el que se encuentra."
+    e "Le damos a la barra la propiedad ysize para establecer qué tan alta es. También podríamos darle xsize para elegir qué ancho, pero aquí está limitado por el ancho del frame en el que se encuentra."
 
 # game/indepth_style.rpy:792
 translate spanish style_bar_80d8ceed:
