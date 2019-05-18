@@ -2185,6 +2185,8 @@ def python_statement(l, loc):
         store = "store." + l.require(l.dotted_name)
 
     l.require(':')
+    l.expect_eol()
+
     l.expect_block('python block')
 
     python_code = l.python_block()

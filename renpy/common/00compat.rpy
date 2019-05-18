@@ -228,7 +228,7 @@ init -1000 python hide:
     except:
         pass
 
-init 1900 python hide::
+init 1900 python hide:
 
     # This returns true if the script_version is <= the
     # script_version supplied. Give it the last script version
@@ -292,5 +292,3 @@ init 1900 python hide::
         config.has_quicksave = False
         config.quit_action = ui.gamemenus("_confirm_quit")
         config.default_afm_enable = None
-
-
