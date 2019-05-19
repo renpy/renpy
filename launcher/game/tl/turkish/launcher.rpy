@@ -4,599 +4,599 @@ translate turkish strings:
 
     # about.rpy:39
     old "[version!q]"
-    new ""
+    new "[version!q]"
 
     # about.rpy:43
     old "View license"
-    new ""
+    new "Lisansı görüntüle"
 
     # add_file.rpy:28
     old "FILENAME"
-    new ""
+    new "DOSYAADI"
 
     # add_file.rpy:28
     old "Enter the name of the script file to create."
-    new ""
+    new "Yaratılacak script dosyasının adını girin."
 
     # add_file.rpy:37
     old "The file name may not be empty."
-    new ""
+    new "Dosya adı boş olamaz."
 
     # add_file.rpy:41
     old "The filename must have the .rpy extension."
-    new ""
+    new "Dosya adı .rpy uzantılı olmalı."
 
     # add_file.rpy:50
     old "The file already exists."
-    new ""
+    new "Dosya zaten var."
 
     # add_file.rpy:61
     old "# Ren'Py automatically loads all script files ending with .rpy. To use this\n# file, define a label and jump to it from another file.\n"
-    new ""
+    new "# Ren'Py, .rpy uzantılı bütün script dosyalarını otomatik olarak yükler. Bu\n# dosyayı kullanmak için bir etiket yarat ve başka bir\n# dosyadan etikete atla.\n"
 
     # android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new ""
+    new "Android paketleri derlemek için lütfen RAPT'ı indirin, açın ve Ren'Py klasörüne atın. Ardından Ren'Py'ı yeniden başlatın."
 
     # android.rpy:31
     old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new ""
+    new "Windows'ta Android paketleri derlemek için bir 64-bit/x64 Java 8 Development Kit gerekir. JDK, JRE'den farklıdır, bu yüzden JDK olmayan bir Java kurulumunuz olabilir.\n\nLütfen JDK'yı {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}indirin ve kurun{/a}, ardından Ren'Py'ı yeniden başlatın."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
-    new ""
+    new "RAPT kuruldu, ancak Android paketleri derlemek için Android SDK'yı kurmanız gerekiyor. Bunu yapmak için SDK Kur'u seçin."
 
     # android.rpy:33
     old "RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore."
-    new ""
+    new "RAPT kuruldu, ancak bir anahtar yapılandırılmadı. Lütfen yeni bir anahtar yaratın ya da android.keystore'u onarın."
 
     # android.rpy:34
     old "The current project has not been configured. Use \"Configure\" to configure it before building."
-    new ""
+    new "Şu anki proje yapılandırılmadı. Lütfen projeyi derlemeden önce \"Yapılandır\" ı seçip yapılandırın."
 
     # android.rpy:35
     old "Choose \"Build\" to build the current project, or attach an Android device and choose \"Build & Install\" to build and install it on the device."
-    new ""
+    new "Şu anki projeyi derlemek için \"Derle\" i seçin, veya bir Android cihaz bağlayarak cihaza kurmak için \"Derle & Kur\" seçeneğini seçin."
 
     # android.rpy:37
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new ""
+    new "Bir Android telefonu canlandırmayı dener.\n\nDokunma girdisi sadece fare basılı olduğu zaman canlandırılır. Escape menü tuşu, PageUp ise geri tuşunun yerini tutar."
 
     # android.rpy:38
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new ""
+    new "Bir Android tableti canlandırmayı dener.\n\nDokunma girdisi sadece fare basılı olduğu zaman canlandırılır. Escape menü tuşu, PageUp ise geri tuşunun yerini tutar."
 
     # android.rpy:39
     old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new ""
+    new "OUYA ya da Fire TV gibi televizyon tabanlı bir Android konsolunu canlandırmayı dener.\n\nKontrolör ok tuşları ile yönetilir. Enter seçim tuşu, Escape menü tuşu, PageUp ise geri tuşu yerini tutar."
 
     # android.rpy:41
     old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
-    new ""
+    new "Android SDK ve destek paketlerini indirir ve kurar. İsteğe bağlı olarak paketi imzalamak için gereken anahtarı yaratır."
 
     # android.rpy:42
     old "Configures the package name, version, and other information about this project."
-    new ""
+    new "Paket adını, versiyonunu ve projeye ait diğer bilgileri yapılandırır."
 
     # android.rpy:43
     old "Opens the file containing the Google Play keys in the editor.\n\nThis is only needed if the application is using an expansion APK. Read the documentation for more details."
-    new ""
+    new "Google Play anahtarlarını içeren dosyayı düzenleyicide açar.\n\nBu ancak uygulama bir genişletme APK'sı kullanıyorsa gerekir. Daha fazla detay için dokümanları okuyun."
 
     # android.rpy:44
     old "Builds the Android package."
-    new ""
+    new "Android paketini derler."
 
     # android.rpy:45
     old "Builds the Android package, and installs it on an Android device connected to your computer."
-    new ""
+    new "Android paketini derler, ve bilgisayarınıza bağlı olan Android cihazına kurar."
 
     # android.rpy:46
     old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
-    new ""
+    new "Android paketini derler, bilgisayarınıza bağlı olan Android cihazına kurar ve uygulamayı cihazınızda açar."
 
     # android.rpy:48
     old "Retrieves the log from the Android device and writes it to a file."
-    new ""
+    new "Android cihazınızdaki kayıt defterini bir dosyaya yazar."
 
     # android.rpy:50
     old "Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device."
-    new ""
+    new "Android Studio'dan erişilebilen Hata Ayıklama derlemesini seçer. Hata ayıklama ve yayınlama derlemeleri arasında geçiş yapmak, uygulamayı cihazınızdan kaldırmayı gerektirir."
 
     # android.rpy:51
     old "Selects the Release build, which can be uploaded to stores. Changing between debug and release builds requires an uninstall from your device."
-    new ""
+    new "Mağazalara yerleştirilebilecek olan Yayınlama derlemesini seçer. Hata ayıklama ve yayınlama derlemeleri arasında geçiş yapmak, uygulamayı cihazınızdan kaldırmayı gerektirir."
 
     # android.rpy:245
     old "Copying Android files to distributions directory."
-    new ""
+    new "Android dosyalarını dağıtımlar klasörüne kopyalıyor."
 
     # android.rpy:313
     old "Android: [project.current.display_name!q]"
-    new ""
+    new "Android: [project.current.display_name!q]"
 
     # android.rpy:333
     old "Emulation:"
-    new ""
+    new "Canlandırma:"
 
     # android.rpy:342
     old "Phone"
-    new ""
+    new "Telefon"
 
     # android.rpy:346
     old "Tablet"
-    new ""
+    new "Tablet"
 
     # android.rpy:350
     old "Television"
-    new ""
+    new "Televizyon:"
 
     # android.rpy:362
     old "Build:"
-    new ""
+    new "Derleme:"
 
     # android.rpy:377
     old "Release"
-    new ""
+    new "Yayınlama"
 
     # android.rpy:384
     old "Install SDK & Create Keys"
-    new ""
+    new "SDK'yı Kur & Anahtarları Yarat"
 
     # android.rpy:388
     old "Configure"
-    new ""
+    new "Yapılandır"
 
     # android.rpy:392
     old "Build Package"
-    new ""
+    new "Paketi Derle"
 
     # android.rpy:396
     old "Build & Install"
-    new ""
+    new "Derle & Kur"
 
     # android.rpy:400
     old "Build, Install & Launch"
-    new ""
+    new "Derle, Kur & Çalıştır"
 
     # android.rpy:411
     old "Other:"
-    new ""
+    new "Diğer"
 
     # android.rpy:419
     old "Logcat"
-    new ""
+    new "Logcat"
 
     # android.rpy:452
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
-    new ""
+    new "Android uygulamalarını paketlemeden önce Ren'Py'ın Android Paketleme Aracı olan RAPT'ı indirmeniz gerekir. RAPT'ı şimdi indirmek ister misiniz?"
 
     # android.rpy:505
     old "Retrieving logcat information from device."
-    new ""
+    new "Cihazdan logcat bilgisi alınıyor."
 
     # androidstrings.rpy:7
     old "{} is not a directory."
-    new ""
+    new "{} bir klasör değil."
 
     # androidstrings.rpy:8
     old "{} does not contain a Ren'Py game."
-    new ""
+    new "{} bir Ren'Py oyunu içermiyor."
 
     # androidstrings.rpy:9
     old "Run configure before attempting to build the app."
-    new ""
+    new "Uygulamayı derlemeye çalışmadan önce yapılandırmayı çalıştır."
 
     # androidstrings.rpy:10
     old "Google Play support is enabled, but build.google_play_key is not defined."
-    new ""
+    new "Google Play desteği etkin ancak build.google_plaY_key tanımlanmamış."
 
     # androidstrings.rpy:11
     old "Updating project."
-    new ""
+    new "Proje güncelleniyor."
 
     # androidstrings.rpy:12
     old "Creating assets directory."
-    new ""
+    new "Varlıklar klasörü yaratılıyor."
 
     # androidstrings.rpy:13
     old "Creating expansion file."
-    new ""
+    new "Genişletme dosyası yaratılıyor."
 
     # androidstrings.rpy:14
     old "Packaging internal data."
-    new ""
+    new "İç veri paketleniyor."
 
     # androidstrings.rpy:15
     old "I'm using Gradle to build the package."
-    new ""
+    new "Bu paketi derlemek için Gradle kullanıyorum."
 
     # androidstrings.rpy:16
     old "Uploading expansion file."
-    new ""
+    new "Genişletme dosyası yükleniyor."
 
     # androidstrings.rpy:17
     old "The build seems to have failed."
-    new ""
+    new "Derleme başarısız olmuş gibi görünüyor."
 
     # androidstrings.rpy:18
     old "Launching app."
-    new ""
+    new "Uygulama çalıştırılıyor."
 
     # androidstrings.rpy:19
     old "The build seems to have succeeded."
-    new ""
+    new "Derleme başarılı olmuş gibi görünüyor."
 
     # androidstrings.rpy:20
     old "The armeabi-v7a version works on most phones or tablets, while the x86_64 version works on the simulator and chromebooks."
-    new ""
+    new "armeabi-v7a versiyonu çoğu tablet ve telefonda çalışırken x86_64 simulatörlerde ve chromebooklarda çalışır."
 
     # androidstrings.rpy:21
     old "What is the full name of your application? This name will appear in the list of installed applications."
-    new ""
+    new "Uygulamanızın tam adı nedir? Bu isim kurulu uygulamalar listesinde görünecektir."
 
     # androidstrings.rpy:22
     old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
-    new ""
+    new "Uygulamanızın kısa ismi nedir? Bu isim başlatıcıda ve uygulama kısayollarında kullanılacaktır."
 
     # androidstrings.rpy:23
     old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
-    new ""
+    new "Bu paketin ismi nedir?\n\nBu genelde com.adres.program or com.adres.email.program şeklindedir. Sadece ASCII harfler ve noktalar kullanılabilir. En az bir nokta içermek zorundadır."
 
     # androidstrings.rpy:24
     old "The package name may not be empty."
-    new ""
+    new "Paket adı boş olamaz."
 
     # androidstrings.rpy:25
     old "The package name may not contain spaces."
-    new ""
+    new "Paket adında boşluk olamaz."
 
     # androidstrings.rpy:26
     old "The package name must contain at least one dot."
-    new ""
+    new "Paket adı en az bir nokta içermelidir."
 
     # androidstrings.rpy:27
     old "The package name may not contain two dots in a row, or begin or end with a dot."
-    new ""
+    new "Paket adı arka arkaya iki nokta içeremez, noktayla başlayıp bitemez."
 
     # androidstrings.rpy:28
     old "Each part of the package name must start with a letter, and contain only letters, numbers, and underscores."
-    new ""
+    new "Paket isminin her parçası bir harfle başlamalı; ancak harf, sayı ve alt çizgi içermelidir."
 
     # androidstrings.rpy:29
     old "{} is a Java keyword, and can't be used as part of a package name."
-    new ""
+    new "{} bir Java anahtar kelimesidir ve paket isinde kullanılamaz."
 
     # androidstrings.rpy:30
     old "What is the application's version?\n\nThis should be the human-readable version that you would present to a person. It must contain only numbers and dots."
-    new ""
+    new "Bu uygulamanın versiyonu nedir?\n\nBu uygulama versiyonunun insanlar tarafından okunabilir bir şekli olmalıdır. Sadece sayı ve nokta içerebilir."
 
     # androidstrings.rpy:31
     old "The version number must contain only numbers and dots."
-    new ""
+    new "Versiyon numarası sadece sayı ve nokta içerebilir."
 
     # androidstrings.rpy:32
     old "What is the version code?\n\nThis must be a positive integer number, and the value should increase between versions."
-    new ""
+    new "Versiyon kodu nedir?\n\nBu ancak pozitif bir tamsayı olmalı ve versiyonlar arasında artmalıdır."
 
     # androidstrings.rpy:33
     old "The numeric version must contain only numbers."
-    new ""
+    new "Numerki versiyon ancak sayı içerebilir."
 
     # androidstrings.rpy:34
     old "How would you like your application to be displayed?"
-    new ""
+    new "Uygulamanızın nasıl gösterilmesini istersiniz?"
 
     # androidstrings.rpy:35
     old "In landscape orientation."
-    new ""
+    new "Manzara (yatay) yöneliminde."
 
     # androidstrings.rpy:36
     old "In portrait orientation."
-    new ""
+    new "Portre (dikey) yöneliminde."
 
     # androidstrings.rpy:37
     old "In the user's preferred orientation."
-    new ""
+    new "Kullanıcı tarafından tercih edilen yönelimde."
 
     # androidstrings.rpy:38
     old "Which app store would you like to support in-app purchasing through?"
-    new ""
+    new "Uygulama içi satın alma işlemlerinde hangi mağazayı kullanmak istersiniz?"
 
     # androidstrings.rpy:39
     old "Google Play."
-    new ""
+    new "Google Play."
 
     # androidstrings.rpy:40
     old "Amazon App Store."
-    new ""
+    new "Amazon App Store."
 
     # androidstrings.rpy:41
     old "Both, in one app."
-    new ""
+    new "Aynı uygulamada ikisini de."
 
     # androidstrings.rpy:42
     old "Neither."
-    new ""
+    new "Hiçbirini."
 
     # androidstrings.rpy:43
     old "Would you like to create an expansion APK?"
-    new ""
+    new "Genişletme APK'sı yaratmak ister misiniz?"
 
     # androidstrings.rpy:44
     old "No. Size limit of 100 MB on Google Play, but can be distributed through other stores and sideloaded."
-    new ""
+    new "Hayır. Google Play'deki boyu limiti 100 MB, ancak diğer mağazalara dağıtılıp yan yükleme yapılabilir."
 
     # androidstrings.rpy:45
     old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work.)"
-    new ""
+    new "Evet. Boyut limiti 2 GB, ancak Google Play dışında çalışmaz. (Bunu yapabilmek için dokümanları okuyun.)"
 
     # androidstrings.rpy:46
     old "Do you want to allow the app to access the Internet?"
-    new ""
+    new "Uygulamanın internete bağlanmasına izin vermek ister misiniz?"
 
     # androidstrings.rpy:47
     old "Do you want to automatically update the generated project?"
-    new ""
+    new "Yaratılan projenin otomatik güncellenmesini ister misiniz?"
 
     # androidstrings.rpy:48
     old "Yes. This is the best choice for most projects."
-    new ""
+    new "Evet. Bu çoğu proje için en iyi seçimdir."
 
     # androidstrings.rpy:49
     old "No. This may require manual updates when Ren'Py or the project configuration changes."
-    new ""
+    new "Hayır. Bunu yapmak Ren'Py ya da proje yapılandırılması değiştiğinde elle  güncelleme gerektirebilir."
 
     # androidstrings.rpy:50
     old "Unknown configuration variable: {}"
-    new ""
+    new "Bilinmeyen yapılandırma değişkeni: {}"
 
     # androidstrings.rpy:51
     old "I'm compiling a short test program, to see if you have a working JDK on your system."
-    new ""
+    new "Sisteminizde JDK'nın olup olmadığını denemek için bir test programı derliyorum."
 
     # androidstrings.rpy:52
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Without a working JDK, I can't continue."
-    new ""
+    new "Javac cullanarak bir test dosyası derleyemedim. Eğer Java Geliştirme Kiti (JDK)'ni hala kurmadıysanız lütfen şuradan indirin:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nJDK, JRE'den farklıdır, bu yüzden JDK olmayan bir Java kurulumunuz olabilir. Çalışan bir JDK olmadan devam edemem."
 
     # androidstrings.rpy:53
     old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variabe to use a different version of Java."
-    new ""
+    new "Bilgisayarınızdaki Java versiyonu Android SDK tarafından desteklenen tek sürüm olan JDK 8 değilmiş gibi görünüyor. JDK 8'i kurmanız gerekiyorsa, şuradan indirebilirsiniz:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nJava'nın başka bir sürümünü kullanmak isterseniz JAVA_HOME ortam değişkenini ayarlayabilirsiniz."
 
     # androidstrings.rpy:54
     old "The JDK is present and working. Good!"
-    new ""
+    new "JDK mevcut ve çalışıyor. Harika!"
 
     # androidstrings.rpy:55
     old "The Android SDK has already been unpacked."
-    new ""
+    new "Android SDK paketi zaten açılmış."
 
     # androidstrings.rpy:56
     old "Do you accept the Android SDK Terms and Conditions?"
-    new ""
+    new "Android SDK Şartlar ve Hükümlerini kabul ediyor musunuz?"
 
     # androidstrings.rpy:57
     old "I'm downloading the Android SDK. This might take a while."
-    new ""
+    new "Android SDK'yı indiriyorum. Biraz zaman alabilir."
 
     # androidstrings.rpy:58
     old "I'm extracting the Android SDK."
-    new ""
+    new "Android SDK'yı çıkarıyorum."
 
     # androidstrings.rpy:59
     old "I've finished unpacking the Android SDK."
-    new ""
+    new "Android SDK paketini açmayı bitirdim."
 
     # androidstrings.rpy:60
     old "I'm about to download and install the required Android packages. This might take a while."
-    new ""
+    new "Gerekli Android paketlerini indirip kuracağım. Biraz zaman alabilir."
 
     # androidstrings.rpy:61
     old "I was unable to accept the Android licenses."
-    new ""
+    new "Android lisanslarını kabul edemedim."
 
     # androidstrings.rpy:62
     old "I was unable to install the required Android packages."
-    new ""
+    new "Gerekli Android paketlerini kuramadım."
 
     # androidstrings.rpy:63
     old "I've finished installing the required Android packages."
-    new ""
+    new "Gerekli Android paketlerini kurmayı bitirdim."
 
     # androidstrings.rpy:64
     old "You set the keystore yourself, so I'll assume it's how you want it."
-    new ""
+    new "Anahtar deposunu siz ayarlamışsınız, böyle istediğinizi varsayacağım."
 
     # androidstrings.rpy:65
     old "You've already created an Android keystore, so I won't create a new one for you."
-    new ""
+    new "Android anahtar deposunu zaten yaratmışsınız, bu yüzden yeni bir tane yaratmayacağım."
 
     # androidstrings.rpy:66
     old "I can create an application signing key for you. Signing an application with this key allows it to be placed in the Android Market and other app stores.\n\nDo you want to create a key?"
-    new ""
+    new "Sizin için bir uygulama imzalama anahtarı yaratabilirim. Bir uygulamayı bu anahtarla imzalamak, uygulamanın Android Market ve diğer mağazalara yerleştirilebilmesini sağlar.\n\nAnahtar yaratmak ister misiniz?"
 
     # androidstrings.rpy:67
     old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\n\\You also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
-    new ""
+    new "Anahtarı android.keystore dosyasında yaratacağım.\n\nBu dosyayı yedeklemeniz gerekecek. Eğer onu kaybederseniz, uygulamanızı güncelleyemeyeceksiniz.\n\n\\Anahtarı da güvenli tutmanız gerekiyor. Eğer kötü niyetli insanların eline geçerse uygulamanızın sahte versiyonlarını yapabilir ve kullanıcılarınızın bilgilerini çalabilirler.\n\nandroid.keystore dosyasını yedekleyip güvenli tutacak mısınız?"
 
     # androidstrings.rpy:68
     old "Please enter your name or the name of your organization."
-    new ""
+    new "Adınızı veya kurumunuzun adını girin."
 
     # androidstrings.rpy:69
     old "Could not create android.keystore. Is keytool in your path?"
-    new ""
+    new "android.keystore yaratılamadı. Anahtar araç (keytool) sizin klasörünüzde mi?"
 
     # androidstrings.rpy:70
     old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
-    new ""
+    new "android.keystore'u yaratmayı bitirdim. Lütfen yedekleyip güvenli bir yerde saklayın."
 
     # androidstrings.rpy:71
     old "It looks like you're ready to start packaging games."
-    new ""
+    new "Oyunları paketlemeye hazırsınız gibi duruyor."
 
     # choose_directory.rpy:87
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
-    new ""
+    new "Ren'Py, klasör seçmek için python'u tkinter ile açamadı. Lütfen python-tk ya da tkinter paketini yükleyin."
 
     # choose_directory.rpy:105
     old "The selected projects directory is not writable."
-    new ""
+    new "Seçilen proje klasörü yazılabilir değil."
 
     # choose_theme.rpy:303
     old "Could not change the theme. Perhaps options.rpy was changed too much."
-    new ""
+    new "Tema değiştirilemedi. Belki de options.rpy aşırı değiştirildi."
 
     # choose_theme.rpy:370
     old "Planetarium"
-    new ""
+    new "Planetaryum"
 
     # choose_theme.rpy:425
     old "Choose Theme"
-    new ""
+    new "Tema Seç"
 
     # choose_theme.rpy:438
     old "Theme"
-    new ""
+    new "Tema"
 
     # choose_theme.rpy:463
     old "Color Scheme"
-    new ""
+    new "Renk Şeması"
 
     # choose_theme.rpy:495
     old "Continue"
-    new ""
+    new "Devam Et"
 
     # consolecommand.rpy:84
     old "INFORMATION"
-    new ""
+    new "BİLGİ"
 
     # consolecommand.rpy:84
     old "The command is being run in a new operating system console window."
-    new ""
+    new "Komut yeni bir işletim sistemi konsol penceresinde çalıştırılıyor."
 
     # distribute.rpy:444
     old "Scanning project files..."
-    new ""
+    new "Proje dosyaları taranıyor..."
 
     # distribute.rpy:460
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
-    new ""
+    new "Dağıtımlar derlenemedi:\n\nbuild.directory_name değişkeni boşluk, virgül ya da noktalı virgül karakterleri içeremez."
 
     # distribute.rpy:505
     old "No packages are selected, so there's nothing to do."
-    new ""
+    new "Hiçbir paket seçilmedi, yapacak bir şey yok."
 
     # distribute.rpy:517
     old "Scanning Ren'Py files..."
-    new ""
+    new "Ren'Py dosyaları taranıyor..."
 
     # distribute.rpy:572
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
-    new ""
+    new "Tüm paketler derlendi.\n\nİzin bilgisi olduğundan dolayı, Linux ve Macintosh dağıtımlarının Windows'ta açılması ve yeniden paketlenmesi desteklenmiyor."
 
     # distribute.rpy:755
     old "Archiving files..."
-    new ""
+    new "Dosyalar arşivleniyor..."
 
     # distribute.rpy:1068
     old "Unpacking the Macintosh application for signing..."
-    new ""
+    new "İmzalamak için Macintosh uygulaması açılıyor..."
 
     # distribute.rpy:1078
     old "Signing the Macintosh application...\n(This may take a long time.)"
-    new ""
+    new "Macintosh uygulaması imzalanıyor...\n(Bu işlem uzun sürebilir.)"
 
     # distribute.rpy:1100
     old "Creating the Macintosh DMG..."
-    new ""
+    new "Macintosh DMG'si yaratılıyor..."
 
     # distribute.rpy:1109
     old "Signing the Macintosh DMG..."
-    new ""
+    new "Macintosh DMG'si imzalanıyor..."
 
     # distribute.rpy:1304
     old "Writing the [variant] [format] package."
-    new ""
+    new "[variant] [format] paketi yazılıyor."
 
     # distribute.rpy:1317
     old "Making the [variant] update zsync file."
-    new ""
+    new "[variant] güncelleme zsync dosyası yapılıyor."
 
     # distribute.rpy:1427
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
-    new ""
+    new "{b}[total]{/b} dosyanın {b}[complete]{/b} kadarı işlendi."
 
     # distribute_gui.rpy:157
     old "Build Distributions: [project.current.display_name!q]"
-    new ""
+    new "Dağıtımları Derle: [project.current.display_name!q]"
 
     # distribute_gui.rpy:171
     old "Directory Name:"
-    new ""
+    new "Klasör Adı:"
 
     # distribute_gui.rpy:175
     old "Executable Name:"
-    new ""
+    new "Uygulama Adı:"
 
     # distribute_gui.rpy:185
     old "Actions:"
-    new ""
+    new "İşlemler:"
 
     # distribute_gui.rpy:193
     old "Edit options.rpy"
-    new ""
+    new "options.rpy'yi düzenle"
 
     # distribute_gui.rpy:194
     old "Add from clauses to calls, once"
-    new ""
+    new "Maddelerden çağırılara ekle (clauses to calls), tek sefer"
 
     # distribute_gui.rpy:195
     old "Refresh"
-    new ""
+    new "Yenile"
 
     # distribute_gui.rpy:199
     old "Upload to itch.io"
-    new ""
+    new "Itch.io'ya yükle"
 
     # distribute_gui.rpy:215
     old "Build Packages:"
-    new ""
+    new "Paketleri Derle:"
 
     # distribute_gui.rpy:234
     old "Options:"
-    new ""
+    new "Seçenekler:"
 
     # distribute_gui.rpy:239
     old "Build Updates"
-    new ""
+    new "Güncellemeleri Derle:"
 
     # distribute_gui.rpy:241
     old "Add from clauses to calls"
-    new ""
+    new "Maddelerden çağırılara ekle (clauses to calls)"
 
     # distribute_gui.rpy:242
     old "Force Recompile"
-    new ""
+    new "Yeniden Derlemeye Zorla"
 
     # distribute_gui.rpy:246
     old "Build"
-    new ""
+    new "Derle"
 
     # distribute_gui.rpy:250
     old "Adding from clauses to call statements that do not have them."
-    new ""
+    new "Maddelerden olmayan çağrı ifadelerine ekle (clauses to call statements)"
 
     # distribute_gui.rpy:271
     old "Errors were detected when running the project. Please ensure the project runs without errors before building distributions."
-    new ""
+    new "Proje çalıştırılırken hatalar tespit edildi. Lütfen dağıtımları derlemeden önce projenin hatasız çalıştığından emin olun."
 
     # distribute_gui.rpy:288
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
-    new ""
+    new "Projeniz derleme bilgisi taşımıyor. options.rpy'nin sonuna derleme bilgisi eklemek ister misiniz?"
 
     # dmgcheck.rpy:50
     old "Ren'Py is running from a read only folder. Some functionality will not work."
-    new ""
+    new "Ren'Py bir sadece-oku klasöründen çalışıyor. Bazı fonksiyonlar çalışmayacak."
 
     # dmgcheck.rpy:50
     old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
