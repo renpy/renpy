@@ -1052,13 +1052,17 @@ def show_screen(_screen_name, *_args, **kwargs):
     Shows the named screen. This takes the following keyword arguments:
 
     `_screen_name`
-        The name of the  screen to show.
+        The name of the screen to show.
     `_layer`
         The layer to show the screen on.
+    `_zorder`
+        The zorder to show the screen on. If not specified, defaults to
+        the zorder associated with the screen. It that's not specified,
+        it is 0 by default.
     `_tag`
         The tag to show the screen with. If not specified, defaults to
         the tag associated with the screen. It that's not specified,
-        defaults to the name of the screen.,
+        defaults to the name of the screen.
     `_widget_properties`
         A map from the id of a widget to a property name -> property
         value map. When a widget with that id is shown by the screen,
