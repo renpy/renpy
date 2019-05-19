@@ -1089,6 +1089,11 @@ Rarely or Internally Used
     The default implementation formats the `auto` property with
     the desired image, and then checks if the computed filename exists.
 
+.. var:: config.keep_side_render_order = True
+
+    If True, the order of substrings in the Side positions will be
+    determine the order of children render.
+
 .. var:: config.imagemap_cache = True
 
     If True, imagemap hotspots will be cached to PNG files,
