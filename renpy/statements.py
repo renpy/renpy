@@ -49,6 +49,8 @@ def register(
         warp=None,
         translation_strings=None,
         force_begin_rollback=False,
+        post_execute=None,
+        post_label=None,
 ):
     """
     :doc: statement_register
@@ -132,6 +134,17 @@ def register(
     `force_begin_rollback`
         This should be set to true on statements that are likely to cause the
         end of a fast skip, similar to ``menu`` or ``call screen``.
+
+    `post_execute`
+        A function that is executed as part the next statement after this
+        one. (Adding a post_execute function changes the contents of the RPYC
+        file, meaning a Force Compile is necessary.)
+
+    `post_label`
+        This is a function that is called to determine the label of this
+        the post execute statement. If it returns a string, that string is used
+        as the statement label, which can be called and jumped to like any other
+        label. This can be used to create a unique return point.
     """
     name = tuple(name.split())
 
@@ -150,6 +163,9 @@ def register(
         warp=warp,
         translation_strings=translation_strings,
         rollback="force" if force_begin_rollback else "normal",
+        post_execute=post_execute,
+        post_label=post_label,
+
     )
 
     if block not in [True, False, "script", "possible"]:
@@ -176,6 +192,10 @@ def register(
 
         finally:
             renpy.exports.pop_error_handler()
+
+        if (post_execute is not None) or (post_label is not None):
+            post = renpy.ast.PostUserStatement(loc, rv)
+            rv = [ rv, post ]
 
         if init and not l.init:
             rv = renpy.ast.Init(loc, [rv], init_priority + l.init_offset)
