@@ -1075,6 +1075,7 @@ def show_screen(_screen_name, *_args, **kwargs):
     _tag = kwargs.pop("_tag", None)
     _widget_properties = kwargs.pop("_widget_properties", {})
     _transient = kwargs.pop("_transient", False)
+    _zorder = kwargs.pop("_zorder", None)
 
     name = _screen_name
 
@@ -1102,6 +1103,9 @@ def show_screen(_screen_name, *_args, **kwargs):
 
     d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, scope, transient=_transient)
 
+    if _zorder is None:
+        _zorder = d.zorder
+
     old_d = get_screen(_tag, _layer)
 
     if old_d and old_d.cache:
@@ -1114,7 +1118,7 @@ def show_screen(_screen_name, *_args, **kwargs):
 
     sls = renpy.display.core.scene_lists()
 
-    sls.add(_layer, d, _tag, zorder=d.zorder, transient=_transient, keep_st=True, name=name)
+    sls.add(_layer, d, _tag, zorder=_zorder, transient=_transient, keep_st=True, name=name)
 
 
 def predict_screen(_screen_name, *_args, **kwargs):
