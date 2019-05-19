@@ -1657,15 +1657,16 @@ class Side(Container):
 
         # This sorts the children for placement according to
         # their order in positions.
-        def sort(elem):
-            pos, x, y, w, h = elem
+        if renpy.config.keep_side_render_order:
+            def sort(elem):
+                pos, x, y, w, h = elem
 
-            if pos not in pos_d:
-                return
+                if pos not in pos_d:
+                    return
 
-            return self.positions.index(pos)
+                return self.positions.index(pos)
 
-        place_order.sort(key=sort)
+            place_order.sort(key=sort)
 
         for pos, x, y, w, h in place_order:
             place(pos, x, y, w, h)

@@ -186,6 +186,9 @@ init -1900 python:
         if version <= (7, 2, 2):
             config.say_attribute_transition_callback_attrs = False
 
+        if version <= (7, 3, 0):
+            config.keep_side_render_order = False
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None
