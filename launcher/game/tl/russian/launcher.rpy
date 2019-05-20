@@ -1518,8 +1518,8 @@ translate russian strings:
     new "Веб-инструменты"
 
     # front_page.rpy:252
-    old "(Beta)"
-    new "(Бета)"
+    old "Web (Beta)"
+    new "Веб-инструменты (Бета)"
 
     # interface.rpy:394
     old "While [what!q], an error occured:"
