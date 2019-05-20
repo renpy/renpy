@@ -600,451 +600,451 @@ translate turkish strings:
 
     # dmgcheck.rpy:50
     old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
-    new ""
+    new "Bunun muhtemel sebebi Ren'pY'ın direkt olarak bir Macintosh sürücü imajından çalışıyor olmasıdır. Bunu düzeltmek için bu başlatıcıdan çıkın, bütün %s klasörünü bilgisayarınızda başka bir yere taşıyın ve Ren'Py'ı yeniden çalıştırın."
 
     # editor.rpy:152
     old "(Recommended) A modern and approachable text editor."
-    new ""
+    new "(Önerilir) Modern ve kolay bir metin düzenleyicisi."
 
     # editor.rpy:164
     old "Up to 150 MB download required."
-    new ""
+    new "150 MB'a kadar indirme gerekir."
 
     # editor.rpy:178
     old "A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input."
-    new ""
+    new "Gelişmiş bir düzenleyici. Editra; Çince, Japonca ve Korece metin girişi için gerekli olan IME desteğinden yoksundur."
 
     # editor.rpy:179
     old "A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
-    new ""
+    new "Gelişmiş bir düzenleyici. Editra; Çince, Japonca ve Korece metin girişi için gerekli olan IME desteğinden yoksundur. Linux'ta Editra wxPython gerektirir."
 
     # editor.rpy:195
     old "This may have occured because wxPython is not installed on this system."
-    new ""
+    new "Bu sistemde wxPython kurulu olmadığı için olabilir."
 
     # editor.rpy:197
     old "Up to 22 MB download required."
-    new ""
+    new "22 MB'a kadar indirme gerekir."
 
     # editor.rpy:210
     old "A mature editor that requires Java."
-    new ""
+    new "Java gerektiren gelişmiş bir editör."
 
     # editor.rpy:210
     old "1.8 MB download required."
-    new ""
+    new "1.8 MB indirme gerekir."
 
     # editor.rpy:210
     old "This may have occured because Java is not installed on this system."
-    new ""
+    new "Bunun sebebi sistemde Java kurulu olmaması olabilir."
 
     # editor.rpy:219
     old "System Editor"
-    new ""
+    new "Sistem Düzenleyicisi"
 
     # editor.rpy:219
     old "Invokes the editor your operating system has associated with .rpy files."
-    new ""
+    new ".rpy dosyalarını düzenlemek için işletim sisteminizin seçtiği düzenleyiciyi kullanır."
 
     # editor.rpy:235
     old "None"
-    new ""
+    new "Hiçbiri"
 
     # editor.rpy:235
     old "Prevents Ren'Py from opening a text editor."
-    new ""
+    new "Ren'Py'ın bir metin düzenleyicisi açmasını engeller."
 
     # editor.rpy:338
     old "Edit [text]."
-    new ""
+    new "Düzenle [text]."
 
     # editor.rpy:387
     old "An exception occured while launching the text editor:\n[exception!q]"
-    new ""
+    new "Metin düzenleyicisini başlatırken bir hata oluştu:\n[exception!q]"
 
     # editor.rpy:519
     old "Select Editor"
-    new ""
+    new "Düzenleyici Seç"
 
     # editor.rpy:534
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
-    new ""
+    new "Metin düzenleyicisi, Ren'Py script dosyalarını düzenlemek için kullanacağınız bir programdır. Burada Ren'Py'ın kullanacağı düzenleyiciyi seçebilirsiniz. Eğer halihazırda yoksa otomatik olarak indirilecek ve kurulacak."
 
     # front_page.rpy:35
     old "Open [text] directory."
-    new ""
+    new "[text] klasörünü aç."
 
     # front_page.rpy:91
     old "PROJECTS:"
-    new ""
+    new "PROJELER:"
 
     # front_page.rpy:93
     old "refresh"
-    new ""
+    new "yenile"
 
     # front_page.rpy:120
     old "+ Create New Project"
-    new ""
+    new "+ Yeni Proje Yarat"
 
     # front_page.rpy:130
     old "Launch Project"
-    new ""
+    new "Projeyi Başlat"
 
     # front_page.rpy:147
     old "[p.name!q] (template)"
-    new ""
+    new "[p.name!q] (şablon)"
 
     # front_page.rpy:149
     old "Select project [text]."
-    new ""
+    new "Proje seç [text]."
 
     # front_page.rpy:165
     old "Tutorial"
-    new ""
+    new "Öğretici"
 
     # front_page.rpy:166
     old "The Question"
-    new ""
+    new "Soru"
 
     # front_page.rpy:182
     old "Active Project"
-    new ""
+    new "Aktif Proje"
 
     # front_page.rpy:190
     old "Open Directory"
-    new ""
+    new "Klasörü Aç"
 
     # front_page.rpy:195
     old "game"
-    new ""
+    new "game"
 
     # front_page.rpy:196
     old "base"
-    new ""
+    new "base"
 
     # front_page.rpy:197
     old "images"
-    new ""
+    new "images"
 
     # front_page.rpy:198
     old "gui"
-    new ""
+    new "gui"
 
     # front_page.rpy:204
     old "Edit File"
-    new ""
+    new "Dosyayı Düzenle"
 
     # front_page.rpy:215
     old "Open project"
-    new ""
+    new "Proje aç"
 
     # front_page.rpy:217
     old "All script files"
-    new ""
+    new "Tüm script dosyaları"
 
     # front_page.rpy:221
     old "Actions"
-    new ""
+    new "Eylemler"
 
     # front_page.rpy:230
     old "Navigate Script"
-    new ""
+    new "Scripti İncele"
 
     # front_page.rpy:231
     old "Check Script (Lint)"
-    new ""
+    new "Scripti Kontrol Et (Lint)"
 
     # front_page.rpy:234
     old "Change/Update GUI"
-    new ""
+    new "GUI Değiştir/Güncelle"
 
     # front_page.rpy:236
     old "Change Theme"
-    new ""
+    new "Tema Değiştir"
 
     # front_page.rpy:239
     old "Delete Persistent"
-    new ""
+    new "Kalıcı Kayıtları (Persistent) Sil"
 
     # front_page.rpy:248
     old "Build Distributions"
-    new ""
+    new "Dağıtımları Derle"
 
     # front_page.rpy:250
     old "Android"
-    new ""
+    new "Android"
 
     # front_page.rpy:251
     old "iOS"
-    new ""
+    new "iOS"
 
     # front_page.rpy:252
     old "Generate Translations"
-    new ""
+    new "Çevirileri Oluştur"
 
     # front_page.rpy:253
     old "Extract Dialogue"
-    new ""
+    new "Diyalogları Ayıkla"
 
     # front_page.rpy:270
     old "Checking script for potential problems..."
-    new ""
+    new "Scriptler olası problemler için kontrol ediliyor..."
 
     # front_page.rpy:285
     old "Deleting persistent data..."
-    new ""
+    new "Kalıcı veriler siliniyor..."
 
     # front_page.rpy:293
     old "Recompiling all rpy files into rpyc files..."
-    new ""
+    new "Bütün rpy dosyaları rpyc dosyaları olarak derleniyor..."
 
     # gui7.rpy:252
     old "Select Accent and Background Colors"
-    new ""
+    new "Tema ve Arkaplan Renklerini Seç"
 
     # gui7.rpy:266
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
-    new ""
+    new "Lütfen kullanmak istediğiniz renk düzenini seçip Devam Et'e tıklayın. Bu renkler sonradan değiştirilip özelleştirilebilir."
 
     # gui7.rpy:311
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new ""
+    new "{b}Uyarı{/b}\nDevam etmek; özelleştirilmiş olan çubukları, düğmeleri, kayıt slotlarını ve kaydırıcı resimlerini değiştirecek.\n\nNe yapmak istersiniz?"
 
     # gui7.rpy:311
     old "Choose new colors, then regenerate image files."
-    new ""
+    new "Yeni renkler seç ve resim dosyalarını yeniden oluştur."
 
     # gui7.rpy:311
     old "Regenerate the image files using the colors in gui.rpy."
-    new ""
+    new "gui.rpy'deki renkleri kullanarak resim dosyalarını yeniden oluştur."
 
     # gui7.rpy:339
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new ""
+    new "Projeniz hangi çözünürlüğü kullanmalı? Ren'Py pencereyi büyütüp küçültebilse de, bu pencerenin ilk boyutudur; nesnelerin çizileceği ve her şeyin en yüksek çözünürlükte olacağı boyut.\n\nVarsayılan olarak kullanılan 1280x720 iyi bir seçimdir."
 
     # gui7.rpy:339
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
-    new ""
+    new "Özel. GUI 16:9 görüntü oranına göre optimize edilir."
 
     # gui7.rpy:355
     old "WIDTH"
-    new ""
+    new "GENİŞLİK"
 
     # gui7.rpy:355
     old "Please enter the width of your game, in pixels."
-    new ""
+    new "Lütfen oyununuzun genişliğini piksel olarak giriniz."
 
     # gui7.rpy:365
     old "The width must be a number."
-    new ""
+    new "Genişlik bir sayı olmalı."
 
     # gui7.rpy:371
     old "HEIGHT"
-    new ""
+    new "YÜKSEKLİK"
 
     # gui7.rpy:371
     old "Please enter the height of your game, in pixels."
-    new ""
+    new "Lütfen oyununuzun yüksekliğini piksel olarak giriniz."
 
     # gui7.rpy:381
     old "The height must be a number."
-    new ""
+    new "Yükseklik bir sayı olmalı."
 
     # gui7.rpy:425
     old "Creating the new project..."
-    new ""
+    new "Yeni proje yaratılıyor..."
 
     # gui7.rpy:427
     old "Updating the project..."
-    new ""
+    new "Proje güncelleniyor..."
 
     # interface.rpy:119
     old "Documentation"
-    new ""
+    new "Dokümanlar"
 
     # interface.rpy:120
     old "Ren'Py Website"
-    new ""
+    new "Ren'Py Websitesi"
 
     # interface.rpy:121
     old "Ren'Py Games List"
-    new ""
+    new "Ren'Py Oyunlar Listesi"
 
     # interface.rpy:129
     old "update"
-    new ""
+    new "güncelle"
 
     # interface.rpy:131
     old "preferences"
-    new ""
+    new "tercihler"
 
     # interface.rpy:132
     old "quit"
-    new ""
+    new "çık"
 
     # interface.rpy:136
     old "Ren'Py Sponsor Information"
-    new ""
+    new "Ren'Py Sponsor Bilgisi"
 
     # interface.rpy:264
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
-    new ""
+    new "Paket formatı sınırlamalarından dolayı ASCII olmayan dosya ve klasör adlarına izin verilemez."
 
     # interface.rpy:360
     old "ERROR"
-    new ""
+    new "HATA"
 
     # interface.rpy:394
     old "While [what!q], an error occured:"
-    new ""
+    new "[what!q] sırasında bir hata meydana geldi:"
 
     # interface.rpy:394
     old "[exception!q]"
-    new ""
+    new "[exception!q]"
 
     # interface.rpy:427
     old "Text input may not contain the {{ or [[ characters."
-    new ""
+    new "Metin girişi {{ veya [[ karakterleri içeremez."
 
     # interface.rpy:432
     old "File and directory names may not contain / or \\."
-    new ""
+    new "Dosya ve klasör adları / veya \\ içeremez."
 
     # interface.rpy:438
     old "File and directory names must consist of ASCII characters."
-    new ""
+    new "Dosya ve klasör adları ASCII karakterler içermelidir."
 
     # interface.rpy:506
     old "PROCESSING"
-    new ""
+    new "İŞLENİYOR"
 
     # interface.rpy:523
     old "QUESTION"
-    new ""
+    new "SORU"
 
     # interface.rpy:536
     old "CHOICE"
-    new ""
+    new "SEÇİM"
 
     # ios.rpy:28
     old "To build iOS packages, please download renios, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new ""
+    new "iOS paketlerini derlemek için lütfen renios'u indirin, açın ve Ren'Py klasörüne atın. Sonra Ren'Py'ı yeniden başlatın."
 
     # ios.rpy:29
     old "The directory in where Xcode projects will be placed has not been selected. Choose 'Select Directory' to select it."
-    new ""
+    new "Xcode projelerinin yerleştirileceği klasör seçilmedi. Lütfen seçmek için 'Klasör Seç'e tıklayın."
 
     # ios.rpy:30
     old "There is no Xcode project corresponding to the current Ren'Py project. Choose 'Create Xcode Project' to create one."
-    new ""
+    new "Şu anki Ren'Py projesine karşılık gelen hiçbir Xcode projesi yok. Lütfen yeni bir tane yaratmak için 'Xcode Projesi Yarat'ı seçin."
 
     # ios.rpy:31
     old "An Xcode project exists. Choose 'Update Xcode Project' to update it with the latest game files, or use Xcode to build and install it."
-    new ""
+    new "Bir Xcode projesi var. Lütfen son oyun dosyalarıyla güncellemek için 'Xcode Projesini Güncelle'yi seçin ya da derleyip kurmak için Xcode'u kullanın."
 
     # ios.rpy:33
     old "Attempts to emulate an iPhone.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new ""
+    new "Bir iPhone'u canlandırmayı dener.\n\nDokunma girdisi ancak fare tıklandığı zaman canlandırılır."
 
     # ios.rpy:34
     old "Attempts to emulate an iPad.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new ""
+    new "Bir iPad'i canlandırmayı dener.\n\nDokunma girdisi ancak fare tıklandığı zaman canlandırılır."
 
     # ios.rpy:36
     old "Selects the directory where Xcode projects will be placed."
-    new ""
+    new "Xcode projelerinin yerleştirileceği klasörü seçer."
 
     # ios.rpy:37
     old "Creates an Xcode project corresponding to the current Ren'Py project."
-    new ""
+    new "Şu anki Ren'Py projesi için bir Xcode projesi yaratır."
 
     # ios.rpy:38
     old "Updates the Xcode project with the latest game files. This must be done each time the Ren'Py project changes."
-    new ""
+    new "Xcode projesini en yeni oyun dosyalarıyla günceller. Bu, Ren'Py projesi her değiştiğinde yapılmalıdır."
 
     # ios.rpy:39
     old "Opens the Xcode project in Xcode."
-    new ""
+    new "Xcode projesini Xcode'da açar."
 
     # ios.rpy:41
     old "Opens the directory containing Xcode projects."
-    new ""
+    new "Xcode projelerini içeren klasörü açar."
 
     # ios.rpy:131
     old "The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"
-    new ""
+    new "Xcode projesi zaten var. Eski projeyi yeniden adlandırmak ister misiniz, yoksa yeni bir taneyle mi değiştirmek istersiniz?"
 
     # ios.rpy:225
     old "iOS: [project.current.display_name!q]"
-    new ""
+    new "iOS: [project.current.display_name!q]"
 
     # ios.rpy:254
     old "iPhone"
-    new ""
+    new "iPhone"
 
     # ios.rpy:258
     old "iPad"
-    new ""
+    new "iPad"
 
     # ios.rpy:278
     old "Select Xcode Projects Directory"
-    new ""
+    new "Xcode Projeleri Klasörünü Seç"
 
     # ios.rpy:282
     old "Create Xcode Project"
-    new ""
+    new "Xcode Projesi Yarat"
 
     # ios.rpy:286
     old "Update Xcode Project"
-    new ""
+    new "Xcode Projesini Güncelle"
 
     # ios.rpy:291
     old "Launch Xcode"
-    new ""
+    new "Xcode'u başlat."
 
     # ios.rpy:326
     old "Open Xcode Projects Directory"
-    new ""
+    new "Xcode Projeleri Klasörünü Aç"
 
     # ios.rpy:359
     old "Before packaging iOS apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"
-    new ""
+    new "iOS uygulamalarını paketlemeden önce Ren'Py'ın iOS desteği olan renios'u indirmeniz gerekir. Renios'u şimdi indirmek ister misiniz?"
 
     # ios.rpy:368
     old "XCODE PROJECTS DIRECTORY"
-    new ""
+    new "XCODE PROJELERİ KLASÖRÜ"
 
     # ios.rpy:368
     old "Please choose the Xcode Projects Directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new ""
+    new "Lütfen klasör seçiciyi kullanarak Xcode Projeleri Klasörü'nü seçin.\n{b}Klasör seçici bu pencerenin arkasında açılmış olabilir.{/b}"
 
     # ios.rpy:373
     old "Ren'Py has set the Xcode Projects Directory to:"
-    new ""
+    new "Ren'Py, Xcode Projeleri Klasörünü şuraya ayarladı:"
 
     # itch.rpy:43
     old "Downloading the itch.io butler."
-    new ""
+    new "İtch.io hizmetçisi indiriliyor."
 
     # itch.rpy:96
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new ""
+    new "Derlenmiş dağıtımlar bulunamadı. Lütfen 'Derle'yi seçin ve yeniden deneyin."
 
     # itch.rpy:134
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new ""
+    new "Yüklenebilecek dosyalar bulunamadı. Lütfen 'Derle'yi seçin ve yeniden deneyin."
 
     # itch.rpy:140
     old "The butler program was not found."
-    new ""
+    new "Hizmetçi program (butler) bulunamadı."
 
     # itch.rpy:140
     old "Please install the itch.io app, which includes butler, and try again."
-    new ""
+    new "Hizmetçiyi (butler) de içeren itch.io uygulamasını kurun ve yeniden deneyin."
 
     # itch.rpy:149
     old "The name of the itch project has not been set."
-    new ""
+    new "İtch projesinin ismi ayarlanmadı."
 
     # itch.rpy:149
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
