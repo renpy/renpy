@@ -1522,8 +1522,8 @@ translate russian strings:
     new "Веб-инструменты (Бета)"
 
     # interface.rpy:394
-    old "While [what!q], an error occured:"
-    new "В процессе выполнения [what!q] произошла ошибка:"
+    old "While [what!qt], an error occured:"
+    new "В процессе выполнения \"[what!qt]\" произошла ошибка:"
 
     # interface.rpy:394
     old "[exception!q]"
@@ -1572,3 +1572,27 @@ translate russian strings:
     # web.rpy:194
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "Перед упаковкой веб-приложений вам необходимо загрузить RenPyWeb, веб-поддержку Ren'Py. Вы хотите загрузить RenPyWeb прямо сейчас?"
+
+    # choose_theme.rpy:507
+    old "changing the theme"
+    new "смена темы"
+
+    # gui7.rpy:429
+    old "creating a new project"
+    new "создание нового проекта"
+
+    # gui7.rpy:433
+    old "activating the new project"
+    new "активация нового проекта"
+
+    # interface.rpy:372
+    old "opening the log file"
+    new "открытие лог-файла"
+
+    # updater.rpy:194
+    old "downloading the list of update channels"
+    new "загрузка списка каналов обновления"
+
+    # updater.rpy:198
+    old "parsing the list of update channels"
+    new "разбор списка каналов обновления"
