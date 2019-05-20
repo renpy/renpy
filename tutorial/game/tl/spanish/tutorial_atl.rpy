@@ -312,9 +312,9 @@ translate spanish tutorial_atl_1dd345c6:
     e "Cuando se usa ATL como parte de una sentencia show, los valores de las propiedades existen incluso cuando se cambia la transformación. Así que aunque des clic yse detenga el movimiento, la imagen permanece en el mismo lugar."
 
 # game/tutorial_atl.rpy:488
-translate spanish tutorial_atl_c21bc1d1:
+translate spanish tutorial_atl_98047789:
 
-    # e "The key to ATL is what we call composeability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
+    # e "The key to ATL is what we call composability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
     e "La clave para ATL es lo que llamamos composabilidad. ATL se compone de comandos relativamente simples, que se pueden combinar para crear transformaciones complicadas."
 
 # game/tutorial_atl.rpy:490
