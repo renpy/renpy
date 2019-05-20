@@ -606,8 +606,8 @@ translate greek strings:
     new "ΣΦΑΛΜΑ"
 
     # interface.rpy:356
-    old "While [what!q], an error occured:"
-    new "Ενόσω [what!q], συνέβη ένα σφάλμα:"
+    old "While [what!qt], an error occured:"
+    new "Ενόσω [what!qt], συνέβη ένα σφάλμα:"
 
     # interface.rpy:356
     old "[exception!q]"

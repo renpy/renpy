@@ -606,8 +606,8 @@ translate japanese strings:
     new "エラー"
 
     # interface.rpy:356
-    old "While [what!q], an error occured:"
-    new "[what!q] 中にエラーが発生しました:"
+    old "While [what!qt], an error occured:"
+    new "[what!qt] 中にエラーが発生しました:"
 
     # interface.rpy:356
     old "[exception!q]"
