@@ -191,11 +191,11 @@ label update:
         import json
         import ssl
 
-        with interface.error_handling("downloading the list of update channels"):
+        with interface.error_handling(_("downloading the list of update channels")):
             context = ssl._create_unverified_context()
             channel_data = urllib2.urlopen(CHANNELS_URL, context=context)
 
-        with interface.error_handling("parsing the list of update channels"):
+        with interface.error_handling(_("parsing the list of update channels")):
             channels = json.load(channel_data)["releases"]
 
         renpy.call_screen("update_channel", channels)
