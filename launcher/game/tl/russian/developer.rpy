@@ -65,3 +65,10 @@ translate russian strings:
     old "jump <label>: jumps to label"
     new "jump <label>: прыжок на метку"
 
+    # 00console.rpy:685
+    old "short: Shorten the representation of objects on the console (default)."
+    new "short: Сокращённое представление обектов (repr) в консоли (по умолчанию)."
+
+    # 00console.rpy:690
+    old "long: Print the full representation of objects on the console."
+    new "long: Выводить полное представление обектов (repr) в консоли."
