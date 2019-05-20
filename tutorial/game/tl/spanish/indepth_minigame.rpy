@@ -15,19 +15,19 @@ translate spanish demo_minigame_9b01503e:
 translate spanish demo_minigame_3e601161:
 
     # e "Screens will work for many simulation-style games and RPGs."
-    e "Screens funcionarán para muchos juegos de estilo simulación y juegos de rol."
+    e "Las pantallas funcionarán para muchos juegos de simulación y juegos de rol."
 
 # game/indepth_minigame.rpy:226
 translate spanish demo_minigame_a92baa6b:
 
     # e "When screens are not enough you can write a creator-defined displayable to extend Ren'Py itself. A Creator-defined displayables can process raw events and draw to the screen."
-    e "Cuando las pantallas no son suficientes, puede escribir un creator-defined displayable para extender Ren'Py. Un visualizable creator-defined puede procesar eventos en bruto y dibujar en la pantalla."
+    e "Cuando las pantallas no son suficientes, puede escribir un visualizable creator-defined para extender Ren'Py. Un visualizable creator-defined puede procesar eventos en bruto y dibujar en la pantalla."
 
 # game/indepth_minigame.rpy:228
 translate spanish demo_minigame_a07dbae0:
 
     # e "That makes it possible to create all kinds of minigames. Would you like to play some pong?"
-    e "Eso hace posible crear todo tipo de minijuegos. ¿Te gustaría jugar algún pong?"
+    e "Eso hace posible crear todo tipo de minijuegos. ¿Te gustaría jugar pong?"
 
 # game/indepth_minigame.rpy:245
 translate spanish play_pong_ce00ff63:
@@ -57,7 +57,7 @@ translate spanish pong_done_a21abf38:
 translate spanish pong_done_750092ed:
 
     # e "I won't go over it in detail here. You can read more about it in the {a=https://www.renpy.org/doc/html/udd.html}Creator-Defined Displayable documentation{/a}."
-    e "No voy a repasar en detalle aquí. Puede leer más sobre esto en la {a=https://www.renpy.org/doc/html/udd.html}Documentación Creator-Defined Displayable{/a}."
+    e "No lo voy a repasar en detalle aquí. Puede leer más sobre esto en la {a=https://www.renpy.org/doc/html/udd.html}Documentación Creator-Defined Displayable{/a}."
 
 # game/indepth_minigame.rpy:274
 translate spanish pong_done_5781d902:

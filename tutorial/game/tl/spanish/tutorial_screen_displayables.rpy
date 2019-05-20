@@ -51,7 +51,7 @@ translate spanish screen_displayable_properties_cc09fade:
 translate spanish screen_displayable_properties_a7f4e25c:
 
     # e "The style_prefix property sets the prefix of the style that's used for a displayable and its children."
-    e "La propiedad style_prefix establece el prefijo del estilo que se usa para un displayable y sus hijos."
+    e "La propiedad style_prefix establece el prefijo del estilo que se usa para un visualizable y sus hijos."
 
 # game/tutorial_screen_displayables.rpy:146
 translate spanish screen_displayable_properties_6bdb0723:
@@ -273,7 +273,7 @@ translate spanish button_displayables_ea626553:
 translate spanish button_displayables_372dcc0f:
 
     # e "A button is a displayable that when selected runs an action. Buttons can be selected by clicking with the mouse, by touch, or with the keyboard and controller."
-    e "Un botón es un botón desplegable que, cuando se selecciona, ejecuta una acción. Los botones se pueden seleccionar haciendo clic con el mouse, al tocar o con el teclado y el controlador."
+    e "Un botón es un botón visualizable que, cuando se selecciona, ejecuta una acción. Los botones se pueden seleccionar haciendo clic con el mouse, por touch o con el teclado y mando."
 
 # game/tutorial_screen_displayables.rpy:445
 translate spanish button_displayables_a6b270ff:
@@ -363,7 +363,7 @@ translate spanish bar_displayables_62f8b0ab:
 translate spanish bar_displayables_5212eb0a:
 
     # e "In this example, we give the frame the xsize property. If we didn't do that, the bar would expand to fill all available horizontal space."
-    e "En este ejemplo, le damos frame la propiedad xsize. Si no hiciéramos eso, la barra se expandiría para llenar todo el espacio horizontal disponible."
+    e "En este ejemplo, le damos a frame la propiedad xsize. Si no hiciéramos eso, la barra se expandiría para llenar todo el espacio horizontal disponible."
 
 # game/tutorial_screen_displayables.rpy:600
 translate spanish bar_displayables_67295018:
