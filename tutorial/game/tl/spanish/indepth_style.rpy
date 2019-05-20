@@ -366,9 +366,9 @@ translate spanish style_text_e7204a95:
     e "Por defecto, el texto en Ren'Py tiene antialias, para suavizar los bordes. La propiedad antialias puede desactivar eso y hacer que el texto sea un poco más irregular."
 
 # game/indepth_style.rpy:487
-translate spanish style_text_b4563984:
+translate spanish style_text_a5316e4c:
 
-    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
+    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When True, characters will be shifted a bit so the Text has the same relative spacing."
     e "La propiedad adjust_spacing es muy sutil, eso solo importa cuando un jugador cambia el tamaño de la ventana. Cuando es True, los caracteres se desplazarán un poco para que el texto tenga el mismo espaciado relativo."
 
 # game/indepth_style.rpy:496
@@ -534,9 +534,9 @@ translate spanish style_bar_9ef4f62f:
     e "Le damos a la barra la propiedad ysize para establecer qué tan alta es. También podríamos darle xsize para elegir qué ancho, pero aquí está limitado por el ancho del frame en el que se encuentra."
 
 # game/indepth_style.rpy:792
-translate spanish style_bar_80d8ceed:
+translate spanish style_bar_d4c29710:
 
-    # e "When the bar_invert style property is true, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
+    # e "When the bar_invert style property is True, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
     e "Cuando la propiedad de estilo bar_invert es True, el valor de la barra se muestra en el lado derecho de la barra. Es posible que también deban intercambiarse los indicadores de barra izquierda y barra derecha."
 
 # game/indepth_style.rpy:806
@@ -660,9 +660,9 @@ translate spanish style_box_4a2866f0:
     e "Pero, por supuesto, tenemos algunas propiedades de estilo que pueden cambiar eso."
 
 # game/indepth_style.rpy:1064
-translate spanish style_box_a3b47b6e:
+translate spanish style_box_66e042c4:
 
-    # e "When the xfit style property is true, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
+    # e "When the xfit style property is True, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
     e "Cuando la propiedad de estilo xfit es True, los fixed presenta a todos sus hijos como si fuera de tamaño completo, y luego se reduce en ancho para adaptarse a ellos. El estilo yfit funciona de la misma manera, pero en altura."
 
 # game/indepth_style.rpy:1072
