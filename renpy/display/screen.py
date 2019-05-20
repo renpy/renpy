@@ -1052,13 +1052,17 @@ def show_screen(_screen_name, *_args, **kwargs):
     Shows the named screen. This takes the following keyword arguments:
 
     `_screen_name`
-        The name of the  screen to show.
+        The name of the screen to show.
     `_layer`
         The layer to show the screen on.
+    `_zorder`
+        The zorder to show the screen on. If not specified, defaults to
+        the zorder associated with the screen. It that's not specified,
+        it is 0 by default.
     `_tag`
         The tag to show the screen with. If not specified, defaults to
         the tag associated with the screen. It that's not specified,
-        defaults to the name of the screen.,
+        defaults to the name of the screen.
     `_widget_properties`
         A map from the id of a widget to a property name -> property
         value map. When a widget with that id is shown by the screen,
@@ -1075,6 +1079,7 @@ def show_screen(_screen_name, *_args, **kwargs):
     _tag = kwargs.pop("_tag", None)
     _widget_properties = kwargs.pop("_widget_properties", {})
     _transient = kwargs.pop("_transient", False)
+    _zorder = kwargs.pop("_zorder", None)
 
     name = _screen_name
 
@@ -1102,6 +1107,9 @@ def show_screen(_screen_name, *_args, **kwargs):
 
     d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, scope, transient=_transient)
 
+    if _zorder is None:
+        _zorder = d.zorder
+
     old_d = get_screen(_tag, _layer)
 
     if old_d and old_d.cache:
@@ -1114,7 +1122,7 @@ def show_screen(_screen_name, *_args, **kwargs):
 
     sls = renpy.display.core.scene_lists()
 
-    sls.add(_layer, d, _tag, zorder=d.zorder, transient=_transient, keep_st=True, name=name)
+    sls.add(_layer, d, _tag, zorder=_zorder, transient=_transient, keep_st=True, name=name)
 
 
 def predict_screen(_screen_name, *_args, **kwargs):

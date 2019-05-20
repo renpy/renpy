@@ -808,7 +808,13 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     `pixel_width`
         If not None, the input is limited to being this many pixels wide,
         in the font used by the input to display text.
+
+    If :var:`config.disable_input` is True, this function only returns
+    `default`.
     """
+
+    if renpy.config.disable_input:
+        return default
 
     renpy.exports.mode('input')
 
@@ -1077,8 +1083,13 @@ def display_menu(items,
 
     """
 
+    menu_args, menu_kwargs = get_menu_args()
+    screen = menu_kwargs.pop("screen", screen)
+    with_none = menu_kwargs.pop("_with_none", with_none)
+    mode = menu_kwargs.pop("_mode", type)
+
     if interact:
-        renpy.exports.mode(type)
+        renpy.exports.mode(mode)
         choice_for_skipping()
 
     choices = [ ]
@@ -1112,9 +1123,6 @@ def display_menu(items,
         renpy.ui.saybehavior()
 
     scope = dict(scope)
-
-    menu_args, menu_kwargs = get_menu_args()
-    screen = menu_kwargs.pop("screen", screen)
 
     scope.update(menu_kwargs)
 
@@ -2858,9 +2866,15 @@ def call_screen(_screen_name, *args, **kwargs):
 
     If the keyword argument `_with_none` is false, "with None" is not
     run at the end of end of the interaction.
+
+    If the keyword argument `_mode` in kwargs, it will be mode of this
+    interaction, otherwise it will be "screen" mode.
     """
 
-    renpy.exports.mode('screen')
+    mode = "screen"
+    if "_mode" in kwargs:
+        mode = kwargs.pop("_mode")
+    renpy.exports.mode(mode)
 
     with_none = renpy.config.implicit_with_none
 

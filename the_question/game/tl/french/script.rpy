@@ -411,7 +411,7 @@ translate french later_982e14b6:
 translate french later_f0f9a061:
 
     # "I guess I'll never know the answer to my question now..."
-    "Je suppose que je ne connaitrais jamais la réponse à ma question, maintenant…"
+    "Je suppose que je ne connaîtrai jamais la réponse à ma question, maintenant…"
 
 # game/script.rpy:251
 translate french later_f5219ac2:

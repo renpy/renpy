@@ -327,7 +327,8 @@ Arguments to the say statement are first processed by :var:`config.say_arguments
 if it is not None. If any remain, they are then passed to the character,
 which treats them as if they were present when the character was defined.
 So, the example above displays the dialogue in green.
-
+Special keywords `_mode` and `_with_node` will override the ones set in
+the character only for this interaction.
 
 .. _monologue-mode:
 

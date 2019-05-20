@@ -577,6 +577,8 @@ cdef class FTFont:
 
         face = self.face
 
+        self.setup()
+
         for glyph in glyphs:
 
             if glyph.split == SPLIT_INSTEAD:

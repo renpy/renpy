@@ -983,6 +983,9 @@ load_failed_label = None
 # it splits it 50/50.
 equal_mono = True
 
+# If True, renpy.input will always return the default.
+disable_input = False
+
 
 del os
 del collections

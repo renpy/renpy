@@ -51,6 +51,7 @@ init python:
 
         if path:
             default_path = path
+            path = None
         else:
             try:
                 default_path = os.path.dirname(os.path.abspath(config.renpy_base))

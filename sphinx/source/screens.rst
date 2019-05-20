@@ -1869,7 +1869,8 @@ Show Screen
 
 The ``show screen`` statement causes a screen to be shown. It takes an
 screen name, and an optional Python argument list. If present, the arguments
-are used to initialize the scope of the screen.
+are used to initialize the scope of the screen. There are also some
+specific keywords passed to :func:`show_screen` and :func:`call_screen`.
 
 The show screen statement takes an optional ``nopredict`` keyword, that
 prevents screen prediction from occurring. During screen prediction,

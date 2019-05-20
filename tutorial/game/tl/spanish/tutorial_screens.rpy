@@ -135,7 +135,7 @@ translate spanish screens_showing_80425bf3:
 translate spanish screens_showing_7d2deb37:
 
     # e "The first is the show screen statement, which displays a screen and lets Ren'Py keep going."
-    e "La primera es la sentencia de pantalla show, que muestra una pantalla y le permite a Ren'Py seguir adelante."
+    e "La primera es la sentencia show screen, que muestra una pantalla y le permite a Ren'Py seguir adelante."
 
 # game/tutorial_screens.rpy:293
 translate spanish screens_showing_7626dc8b:
@@ -147,13 +147,13 @@ translate spanish screens_showing_7626dc8b:
 translate spanish screens_showing_c79038a4:
 
     # e "Hiding a screen is done with the hide screen statement."
-    e "La ocultación de una pantalla se hace con la sentencia de pantalla hide."
+    e "La ocultación de una pantalla se hace con la sentencia hide screen."
 
 # game/tutorial_screens.rpy:301
 translate spanish screens_showing_8f78a97d:
 
     # e "The call screen statement stops Ren'Py from executing script until the screen either returns a value, or jumps the script somewhere else."
-    e "La sentencia de pantalla call impide que Ren'Py ejecute el script hasta que la pantalla devuelva un valor o salte el guión en otro lugar."
+    e "La sentencia call screen impide que Ren'Py ejecute el script hasta que la pantalla devuelva un valor o salte el guión en otro lugar."
 
 # game/tutorial_screens.rpy:303
 translate spanish screens_showing_b52e420c:
@@ -165,7 +165,7 @@ translate spanish screens_showing_b52e420c:
 translate spanish screens_showing_c5ca730f:
 
     # e "When a call screen statement ends, the screen is automatically hidden."
-    e "Cuando una sentencia screen call finaliza, la pantalla se oculta automáticamente."
+    e "Cuando una sentencia call screen finaliza, la pantalla se oculta automáticamente."
 
 # game/tutorial_screens.rpy:312
 translate spanish screens_showing_a38d1702:
@@ -207,13 +207,13 @@ translate spanish screens_parameters_12ac92d4:
 translate spanish screens_parameters_d143a994:
 
     # e "The call screen statement can also take arguments, much like show screen does."
-    e "La sentencia de pantalla call también puede tomar argumentos, como lo hace la show screen."
+    e "La sentencia call screen también puede tomar argumentos, como lo hace la show screen."
 
 # game/tutorial_screens.rpy:369
 translate spanish screens_properties_423246a2:
 
     # e "There are a few properties that can be applied to a screen itself."
-    e "Hay algunas propiedades que se pueden aplicar a una pantalla en sí."
+    e "Hay algunas propiedades que se pueden aplicar a una pantalla."
 
 # game/tutorial_screens.rpy:380
 translate spanish screens_properties_4fde164e:
@@ -237,7 +237,7 @@ translate spanish screens_properties_4fcf8af8:
 translate spanish screens_properties_7ed5a791:
 
     # e "This is useful in the game and main menus, where you want the load screen to replace the preferences screen. By default, all those screens have tag menu."
-    e "Esto es útil en el juego y en los menús principales, donde desea que la pantalla de carga reemplace la pantalla de preferencias. Por defecto, todas esas pantallas tienen etiqueta de menú."
+    e "Esto es útil en el juego y en los menús principales, donde desea que la pantalla de carga reemplace la pantalla de preferencias. Por defecto, todas esas pantallas tienen etiqueta menu."
 
 # game/tutorial_screens.rpy:408
 translate spanish screens_properties_5d51bd1e:

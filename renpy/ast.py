@@ -1976,6 +1976,35 @@ class UserStatement(Node):
         return False
 
 
+class PostUserStatement(Node):
+
+    __slots__ = [
+        'parent',
+        ]
+
+    def __init__(self, loc, parent):
+
+        super(PostUserStatement, self).__init__(loc)
+        self.parent = parent
+
+        self.name = self.parent.call("post_label")
+
+        # Do not store the parse.
+        self.parent.parsed = None
+
+    def __repr__(self):
+        return "<PostUserStatement {!r}>".format(self.parent.line)
+
+    def diff_info(self):
+        return (PostUserStatement, self.parent.line)
+
+    def execute(self):
+        next_node(self.next)
+        statement_name("post " + self.parent.get_name())
+
+        self.parent.call("post_execute")
+
+
 def create_store(name):
     if name not in renpy.config.special_namespaces:
         renpy.python.create_store(name)
