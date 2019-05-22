@@ -207,3 +207,27 @@
     # _errorhandling.rpym:668
     old "Copies the errors.txt file to the clipboard."
     new "errors.txt 파일을 클립보드로 복사합니다."
+    
+    # _errorhandling.rpym:542
+    old "Copy BBCode"
+    new "BB코드 복사"
+
+     # _errorhandling.rpym:544
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "traceback.txt 파일을 https://lemmasoft.renai.us/ 같은 포럼에서 사용하는 BB코드로 클립보드에 복사합니다."
+
+     # _errorhandling.rpym:546
+    old "Copy Markdown"
+    new "마크다운 복사"
+
+     # _errorhandling.rpym:548
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new "traceback.txt 파일을 Discord 마크다운으로 클립보드에 복사합니다."
+
+     # _errorhandling.rpym:683
+    old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "errors.txt 파일을 https://lemmasoft.renai.us/ 같은 포럼에서 사용하는 BB코드로 클립보드에 복사합니다."
+
+     # _errorhandling.rpym:687
+    old "Copies the errors.txt file to the clipboard as Markdown for Discord."
+    new "errors.txt 파일을 디스코드(Discord) 마크다운으로 클립보드에 복사합니다."
