@@ -213,3 +213,26 @@ translate russian strings:
     old "Copies the errors.txt file to the clipboard."
     new "Копирует файл errors.txt в буфер обмена."
 
+    # _errorhandling.rpym:542
+    old "Copy BBCode"
+    new "Скопировать как BBCode"
+
+    # _errorhandling.rpym:544
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "Копирует файл traceback.txt в буфер обмена как BBCode для форумов типа https://lemmasoft.renai.us/."
+
+    # _errorhandling.rpym:546
+    old "Copy Markdown"
+    new "Скопировать как Markdown"
+
+    # _errorhandling.rpym:548
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new "Копирует файл traceback.txt в буфер обмена как Markdown для Дискорда."
+
+    # _errorhandling.rpym:683
+    old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "Копирует файл errors.txt в буфер обмена как BBCode для форумов типа https://lemmasoft.renai.us/."
+
+    # _errorhandling.rpym:687
+    old "Copies the errors.txt file to the clipboard as Markdown for Discord."
+    new "Копирует файл errors.txt в буфер обмена как Markdown для Дискорда."

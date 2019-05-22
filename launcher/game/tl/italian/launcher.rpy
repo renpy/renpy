@@ -606,8 +606,8 @@ translate italian strings:
     new "ERRORE"
 
     # interface.rpy:356
-    old "While [what!q], an error occured:"
-    new "Durante [what!q], si é verificato un errore:"
+    old "While [what!qt], an error occured:"
+    new "Durante [what!qt], si é verificato un errore:"
 
     # interface.rpy:356
     old "[exception!q]"

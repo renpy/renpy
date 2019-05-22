@@ -606,8 +606,8 @@ translate traditional_chinese strings:
     new "錯誤"
 
     # interface.rpy:356
-    old "While [what!q], an error occured:"
-    new "[what!q]時，出現錯誤："
+    old "While [what!qt], an error occured:"
+    new "[what!qt]時，出現錯誤："
 
     # interface.rpy:356
     old "[exception!q]"

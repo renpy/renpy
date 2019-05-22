@@ -156,7 +156,7 @@ label new_theme_project:
 
         template_path = template.path
 
-        with interface.error_handling("creating a new project"):
+        with interface.error_handling(_("creating a new project")):
             shutil.copytree(template_path, project_dir, symlinks=False)
 
             # Delete the tmp directory, if it exists.
@@ -184,7 +184,7 @@ label new_theme_project:
                 shutil.copy(src, dst)
 
         # Activate the project.
-        with interface.error_handling("activating the new project"):
+        with interface.error_handling(_("activating the new project")):
             project.manager.scan()
             project.Select(project.manager.get(project_name))()
 

@@ -504,7 +504,7 @@ label choose_theme_callable:
     call screen choose_theme
 
     python hide:
-        with interface.error_handling("changing the theme"):
+        with interface.error_handling(_("changing the theme")):
             switch_theme()
 
     return

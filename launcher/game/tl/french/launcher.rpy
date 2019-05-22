@@ -606,8 +606,8 @@ translate french strings:
     new "ERREUR"
 
     # interface.rpy:356
-    old "While [what!q], an error occured:"
-    new "Pendant que [what!q], une erreur est survenue :"
+    old "While [what!qt], an error occured:"
+    new "Pendant que [what!qt], une erreur est survenue :"
 
     # interface.rpy:356
     old "[exception!q]"

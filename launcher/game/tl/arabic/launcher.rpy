@@ -606,8 +606,8 @@ translate arabic strings:
     new "خطأ"
 
     # interface.rpy:356
-    old "While [what!q], an error occured:"
-    new "حصل خطأ أثناء [what!q]"
+    old "While [what!qt], an error occured:"
+    new "حصل خطأ أثناء [what!qt]"
 
     # interface.rpy:356
     old "[exception!q]"

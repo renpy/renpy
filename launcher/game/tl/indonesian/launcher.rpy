@@ -606,8 +606,8 @@ translate indonesian strings:
     new "ERROR"
 
     # interface.rpy:356
-    old "While [what!q], an error occured:"
-    new "Kesalahan terjadi ketika : [what!q] adalah :"
+    old "While [what!qt], an error occured:"
+    new "Kesalahan terjadi ketika : [what!qt] adalah :"
 
     # interface.rpy:356
     old "[exception!q]"

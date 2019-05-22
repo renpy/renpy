@@ -50,7 +50,7 @@ init python:
         import urllib2
         import ssl
 
-        with interface.error_handling("Downloading the itch.io butler."):
+        with interface.error_handling(_("Downloading the itch.io butler.")):
             context = ssl._create_unverified_context()
             response = urllib2.urlopen("https://broth.itch.ovh/butler/{}/LATEST/archive/default".format(platform), context=context)
 
