@@ -222,7 +222,7 @@
 
      # _errorhandling.rpym:548
     old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
-    new "traceback.txt 파일을 Discord 마크다운으로 클립보드에 복사합니다."
+    new "traceback.txt 파일을 디스코드(Discord) 마크다운으로 클립보드에 복사합니다."
 
      # _errorhandling.rpym:683
     old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
