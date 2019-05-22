@@ -1059,7 +1059,7 @@ Rarely or Internally Used
     entirely, although we don't recommend that, as rollback is useful
     to let the user see text he skipped by mistake.
 
-.. var:: config.help = "README.html"
+.. var:: config.help = None
 
     This controls the functionality of the help system invoked by the
     help button on the main and game menus, or by pressing F1 or
@@ -1070,7 +1070,7 @@ Rarely or Internally Used
     that label is invoked in a new context. This allows you to define
     an in-game help-screen.  Otherwise, this is interpreted as a
     filename relative to the base directory, that is opened in a web
-    browser.
+    browser. If the file is not exist, the action is ignored.
 
 .. var:: config.hide = renpy.hide
 
@@ -1542,4 +1542,3 @@ Ren'Py management of the Python garbage collector.
 
     If True, Ren'Py will print to its console and logs informaton about the
     objects that are triggering collections.
-

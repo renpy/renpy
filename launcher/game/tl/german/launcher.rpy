@@ -614,8 +614,8 @@ translate german strings:
     new "FEHLER"
 
     # interface.rpy:356
-    old "While [what!q], an error occured:"
-    new "Während [what!q] ist ein Fehler aufgetreten:"
+    old "While [what!qt], an error occured:"
+    new "Während [what!qt] ist ein Fehler aufgetreten:"
 
     # interface.rpy:356
     old "[exception!q]"

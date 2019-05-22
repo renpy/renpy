@@ -898,8 +898,8 @@ translate piglatin strings:
     new "Rroreay"
 
     # interface.rpy:393
-    old "While [what!q], an error occured:"
-    new "Hileway [what!q], anay erroray occureday:"
+    old "While [what!qt], an error occured:"
+    new "Hileway [what!qt], anay erroray occureday:"
 
     # interface.rpy:393
     old "[exception!q]"

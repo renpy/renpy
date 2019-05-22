@@ -426,11 +426,11 @@ label gui_project_common:
         else:
             interface.processing(_("Updating the project..."))
 
-        with interface.error_handling("creating a new project"):
+        with interface.error_handling(_("creating a new project")):
             gui7.generate_gui(p)
 
         # Activate the project.
-        with interface.error_handling("activating the new project"):
+        with interface.error_handling(_("activating the new project")):
             project.manager.scan()
             project.Select(project.manager.get(project_name))()
 

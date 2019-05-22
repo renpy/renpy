@@ -32,6 +32,7 @@ import collections
 import shutil
 
 from renpy.translation import quote_unicode
+from renpy.parser import elide_filename
 
 ################################################################################
 # Translation Generation
@@ -291,7 +292,7 @@ def write_strings(language, filter, min_priority, max_priority, common_only):  #
         for s in sl:
             text = filter(s.text)
 
-            f.write(u"    # {}:{}\n".format(s.elided, s.line))
+            f.write(u"    # {}:{}\n".format(elide_filename(s.filename), s.line))
             f.write(u"    old \"{}\"\n".format(quote_unicode(s.text)))
             f.write(u"    new \"{}\"\n".format(quote_unicode(text)))
             f.write(u"\n")

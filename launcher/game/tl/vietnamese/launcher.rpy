@@ -606,8 +606,8 @@ translate vietnamese strings:
     new "LỖI"
 
     # interface.rpy:356
-    old "While [what!q], an error occured:"
-    new "Trong khi [what!q], một lỗi xảy ra:"
+    old "While [what!qt], an error occured:"
+    new "Trong khi [what!qt], một lỗi xảy ra:"
 
     # interface.rpy:356
     old "[exception!q]"

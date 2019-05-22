@@ -229,7 +229,13 @@ init -1600 python:
 
         try:
             import webbrowser
-            webbrowser.open_new("file:///" + config.basedir + "/" + help)
+            import os
+
+            file_path = os.path.join(config.basedir, help)
+            if not os.path.isfile(file_path):
+                return
+
+            webbrowser.open_new("file:///" + file_path)
         except:
             pass
 

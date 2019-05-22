@@ -606,8 +606,8 @@ translate finnish strings:
     new "VIRHE"
 
     # interface.rpy:356
-    old "While [what!q], an error occured:"
-    new "Kun [what!q], tapahtui virhe:"
+    old "While [what!qt], an error occured:"
+    new "Kun [what!qt], tapahtui virhe:"
 
     # interface.rpy:356
     old "[exception!q]"

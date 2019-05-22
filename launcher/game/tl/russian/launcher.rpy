@@ -362,7 +362,7 @@ translate russian strings:
     new "Я не смогла воспользоваться javac для компиляции тестового файла. Если у вас не установлен Инструментарий Разработки Java, пожалуйста, загрузите его с:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nJDK отличается от JRE, так что есть вероятность, что у вас установлена Java без JDK. Без функционирующего JDK я не могу продолжить."
 
     # androidstrings.rpy:52
-    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variabe to use a different version of Java."
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
     new "Судя по всему, версия Java на вашем компьютере - не JDK 8, единственная версия, поддерживаемая Android SDK. Если вам нужно установить JDK 8, вы можете скачать его с:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nТакже вы можете изменить переменную окружения JAVA_HOME, чтобы воспользоваться другой версией Java."
 
     # androidstrings.rpy:53
@@ -1508,3 +1508,91 @@ translate russian strings:
     # updater.rpy:188
     old "Fetching the list of update channels"
     new "Запрашиваю список каналов обновления"
+
+    # androidstrings.rpy:20
+    old "The arm64-v8a version works on newer Android devices, the armeabi-v7a version works on older devices, and the x86_64 version works on the simulator and chromebooks."
+    new "Версия arm64-v8a работает на новых Android устройствах, версия armeabi-v7a требуется для старых устройств, а версия x86_64 требуется для симуляторов и хромбуков."
+
+    # front_page.rpy:252
+    old "Web"
+    new "Веб-инструменты"
+
+    # front_page.rpy:252
+    old "Web (Beta)"
+    new "Веб-инструменты (Бета)"
+
+    # interface.rpy:394
+    old "While [what!qt], an error occured:"
+    new "В процессе выполнения \"[what!qt]\" произошла ошибка:"
+
+    # interface.rpy:394
+    old "[exception!q]"
+    new "[exception!q]"
+
+    # itch.rpy:43
+    old "Downloading the itch.io butler."
+    new "Загрузка itch.io помошника"
+
+    # web.rpy:118
+    old "Web: [project.current.display_name!q]"
+    new "Web: [project.current.display_name!q]"
+
+    # web.rpy:148
+    old "Build Web Application"
+    new "Построить приложение для сети"
+
+    # web.rpy:149
+    old "Build and Open in Browser"
+    new "Построить и открыть в браузере"
+
+    # web.rpy:150
+    old "Open without Build"
+    new "Открыть без постройки"
+
+    # web.rpy:154
+    old "Support:"
+    new "Поддержка:"
+
+    # web.rpy:162
+    old "RenPyWeb Home"
+    new "RenPyWeb главная страница"
+
+    # web.rpy:163
+    old "Beuc's Patreon"
+    new "Патреон Beuc"
+
+    # web.rpy:181
+    old "Ren'Py web applications require the entire game to be downloaded to the player's computer before it can start."
+    new "Веб-приложения Ren'Py требуют, чтобы вся игра была загружена на компьютер игрока, прежде чем она запуститься."
+
+    # web.rpy:185
+    old "Current limitations in the web platform mean that loading large images, audio files, or movies may cause audio or framerate glitches, and lower performance in general."
+    new "Текущие ограничения веб-платформы означают, что загрузка больших изображений, аудиофайлов или фильмов может привести к сбоям звука или частоты смены кадров, а также к снижению производительности в целом."
+
+    # web.rpy:194
+    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
+    new "Перед упаковкой веб-приложений вам необходимо загрузить RenPyWeb, веб-поддержку Ren'Py. Вы хотите загрузить RenPyWeb прямо сейчас?"
+
+    # choose_theme.rpy:507
+    old "changing the theme"
+    new "смена темы"
+
+    # gui7.rpy:429
+    old "creating a new project"
+    new "создание нового проекта"
+
+    # gui7.rpy:433
+    old "activating the new project"
+    new "активация нового проекта"
+
+    # interface.rpy:372
+    old "opening the log file"
+    new "открытие лог-файла"
+
+    # updater.rpy:194
+    old "downloading the list of update channels"
+    new "загрузка списка каналов обновления"
+
+    # updater.rpy:198
+    old "parsing the list of update channels"
+    new "разбор списка каналов обновления"
