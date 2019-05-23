@@ -1875,9 +1875,6 @@ class UserStatement(Node):
         self.name = self.call("label")
         self.rollback = renpy.statements.get("rollback", self.parsed) or "normal"
 
-        # Do not store the parse.
-        self.parsed = None
-
     def __repr__(self):
         return "<UserStatement {!r}>".format(self.line)
 
@@ -1988,9 +1985,6 @@ class PostUserStatement(Node):
         self.parent = parent
 
         self.name = self.parent.call("post_label")
-
-        # Do not store the parse.
-        self.parent.parsed = None
 
     def __repr__(self):
         return "<PostUserStatement {!r}>".format(self.parent.line)
