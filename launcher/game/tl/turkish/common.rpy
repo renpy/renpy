@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-05-11 23:37
-
+﻿
 translate turkish strings:
 
     # 00accessibility.rpy:76
@@ -448,7 +447,7 @@ translate turkish strings:
 
     # 00library.rpy:308
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "Bu program MIT ve GNU Lesser General Public License da dahil olmak üzere pek çok özgür yazılım lisansı içerir. Tam kaynak kodu da dahil olmak üzere bütün yazılımların listesi {a=https://www.renpy.org/l/license}burada{/a} bulunabilir."
+    new "Bu program MIT ve GNU Lesser General Public License da dahil olmak üzere pek çok özgür yazılım lisansı içerir. Tam kaynak kodu da dahil olmak üzere bütün yazılımların listesi {a=https://www.renpy.org/l/license}here{/a} adresinde bulunabilir."
 
     # 00preferences.rpy:233
     old "display"

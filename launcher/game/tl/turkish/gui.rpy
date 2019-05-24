@@ -336,7 +336,7 @@ translate turkish strings:
 
     # gui.rpy:329
     old "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
-    new "## GUI'deki kaydırılamayan çubukların yapacağı eylem. \"sakla\" onları saklar, seçim yapılmazsa gösterir."
+    new "## GUI'deki kaydırılamayan çubukların yapacağı eylem. \"hide\" onları saklar, seçim yapılmazsa gösterir."
 
     # gui.rpy:334
     old "## History"

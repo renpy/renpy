@@ -52,11 +52,11 @@ translate turkish strings:
 
     # android.rpy:34
     old "The current project has not been configured. Use \"Configure\" to configure it before building."
-    new "Şu anki proje yapılandırılmadı. Lütfen projeyi derlemeden önce \"Yapılandır\" ı seçip yapılandırın."
+    new "Şu anki proje yapılandırılmadı. Lütfen projeyi derlemeden önce \"Configure\" ı seçip yapılandırın."
 
     # android.rpy:35
     old "Choose \"Build\" to build the current project, or attach an Android device and choose \"Build & Install\" to build and install it on the device."
-    new "Şu anki projeyi derlemek için \"Derle\" i seçin, veya bir Android cihaz bağlayarak cihaza kurmak için \"Derle & Kur\" seçeneğini seçin."
+    new "Şu anki projeyi derlemek için \"Build\" i seçin, veya bir Android cihaz bağlayarak cihaza kurmak için \"Build & Install\" seçeneğini seçin."
 
     # android.rpy:37
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
@@ -1048,473 +1048,473 @@ translate turkish strings:
 
     # itch.rpy:149
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
-    new ""
+    new "Lütfen {a=https://itch.io/game/new}projenizi yaratın{/a}, daha sonra options.rpy'ye \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n gibi bir satır ekleyin."
 
     # mobilebuild.rpy:110
     old "{a=%s}%s{/a}"
-    new ""
+    new "{a=%s}%s{/a}"
 
     # navigation.rpy:168
     old "Navigate: [project.current.display_name!q]"
-    new ""
+    new "Gezin: [project.current.display_name!q]"
 
     # navigation.rpy:178
     old "Order: "
-    new ""
+    new "Sırala: "
 
     # navigation.rpy:179
     old "alphabetical"
-    new ""
+    new "alfabetik"
 
     # navigation.rpy:181
     old "by-file"
-    new ""
+    new "dosya ile"
 
     # navigation.rpy:183
     old "natural"
-    new ""
+    new "doğal"
 
     # navigation.rpy:195
     old "Category:"
-    new ""
+    new "Kategori:"
 
     # navigation.rpy:198
     old "files"
-    new ""
+    new "dosyalar"
 
     # navigation.rpy:199
     old "labels"
-    new ""
+    new "etiketler"
 
     # navigation.rpy:200
     old "defines"
-    new ""
+    new "tanımlar"
 
     # navigation.rpy:201
     old "transforms"
-    new ""
+    new "dönüşümler (transforms)"
 
     # navigation.rpy:202
     old "screens"
-    new ""
+    new "ekranlar"
 
     # navigation.rpy:203
     old "callables"
-    new ""
+    new "çağrılabilirler (callables)"
 
     # navigation.rpy:204
     old "TODOs"
-    new ""
+    new "Yapılacaklar"
 
     # navigation.rpy:243
     old "+ Add script file"
-    new ""
+    new "+ Script dosyası ekle"
 
     # navigation.rpy:251
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
-    new ""
+    new "Hiçbir 'Yapılacaklar' yorumu bulunmadı.\n\nYaratmak için scriptinize \"# TODO\" ekleyin."
 
     # navigation.rpy:258
     old "The list of names is empty."
-    new ""
+    new "İsim listesi boş."
 
     # new_project.rpy:38
     old "New GUI Interface"
-    new ""
+    new "Yeni GUI Arayüzü"
 
     # new_project.rpy:48
     old "Both interfaces have been translated to your language."
-    new ""
+    new "Her iki arayüz de sizin dilinize çevrilmiş."
 
     # new_project.rpy:50
     old "Only the new GUI has been translated to your language."
-    new ""
+    new "Sadece yeni GUI sizin dilinize çevrilmiş."
 
     # new_project.rpy:52
     old "Only the legacy theme interface has been translated to your language."
-    new ""
+    new "Sadece eski tema arayüzü sizin dilinize çevrilmiş."
 
     # new_project.rpy:54
     old "Neither interface has been translated to your language."
-    new ""
+    new "Hiçbir arayüz sizin dilinize çevrilmemiş."
 
     # new_project.rpy:63
     old "The projects directory could not be set. Giving up."
-    new ""
+    new "Projeler klasörü ayarlanamadı. Vazgeçiliroy."
 
     # new_project.rpy:70
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
-    new ""
+    new "Hangi arayüzü kullanmak istersiniz? Yeni GUI modern bir görünüşe sahiptir, geniş ekranlar ve mobil cihazları destekler, özelleştirmek daha kolaydır. Eski temalar eski örnek kodlarla çalışmak için gerekli olabilir.\n\n[language_support!t]\n\nEğer emin değilseniz yeni GUI'yi seçin ve alt sağdaki Devam Et'e tıklayın."
 
     # new_project.rpy:70
     old "Legacy Theme Interface"
-    new ""
+    new "Eski Tema Arayüzü"
 
     # new_project.rpy:81
     old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
-    new ""
+    new "[new_project_language]{#this substitution may be localized} dilinde bir proje yaratacaksınız. Başka bir dilde proje yaratmak için başlatıcı dilini tercihlerden değiştirin."
 
     # new_project.rpy:86
     old "PROJECT NAME"
-    new ""
+    new "PROJE ADI"
 
     # new_project.rpy:86
     old "Please enter the name of your project:"
-    new ""
+    new "Lütfen projenizin adını girin:"
 
     # new_project.rpy:96
     old "The project name may not be empty."
-    new ""
+    new "Proje adı boş olamaz."
 
     # new_project.rpy:102
     old "[project_name!q] already exists. Please choose a different project name."
-    new ""
+    new "[project_name!q] zaten var. Lütfen başka bir proje adı seçin."
 
     # new_project.rpy:106
     old "[project_dir!q] already exists. Please choose a different project name."
-    new ""
+    new "[project_dir!q] zaten var. Lütfen başka bir proje adı seçin."
 
     # new_project.rpy:124
     old "Choose Project Template"
-    new ""
+    new "Proje Şablonu Seç"
 
     # new_project.rpy:142
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
-    new ""
+    new "Lütfen yeni projenizde kullanmak için bir şablon seçin. Şablon, varsayılan fontu ve kullanıcı arayüz dilini ayarlar. Eğer diliniz desteklenmiyorsa, 'english (ingilizce)' seçin."
 
     # preferences.rpy:73
     old "Launcher Preferences"
-    new ""
+    new "Başlatıcı Tercihleri"
 
     # preferences.rpy:94
     old "Projects Directory:"
-    new ""
+    new "Projeler Klasörü:"
 
     # preferences.rpy:101
     old "[persistent.projects_directory!q]"
-    new ""
+    new "[persistent.projects_directory!q]"
 
     # preferences.rpy:103
     old "Projects directory: [text]"
-    new ""
+    new "Projeler klasörü: [text]"
 
     # preferences.rpy:105
     old "Not Set"
-    new ""
+    new "Ayarlanmadı"
 
     # preferences.rpy:120
     old "Text Editor:"
-    new ""
+    new "Metin Düzenleyici:"
 
     # preferences.rpy:126
     old "Text editor: [text]"
-    new ""
+    new "Metin düzenleyici: [text]"
 
     # preferences.rpy:145
     old "Navigation Options:"
-    new ""
+    new "Gezinti Seçenekleri:"
 
     # preferences.rpy:149
     old "Include private names"
-    new ""
+    new "Özel adları göster"
 
     # preferences.rpy:150
     old "Include library names"
-    new ""
+    new "Kitaplık adlarını göster"
 
     # preferences.rpy:160
     old "Launcher Options:"
-    new ""
+    new "Başlatıcı Seçenekleri:"
 
     # preferences.rpy:164
     old "Hardware rendering"
-    new ""
+    new "Donanımsal görüntü işleme"
 
     # preferences.rpy:165
     old "Show edit file section"
-    new ""
+    new "Dosya düzenleme bölümünü göster"
 
     # preferences.rpy:166
     old "Large fonts"
-    new ""
+    new "Büyük fontlar"
 
     # preferences.rpy:169
     old "Console output"
-    new ""
+    new "Konsol çıktısı"
 
     # preferences.rpy:173
     old "Force new tutorial"
-    new ""
+    new "Yeni öğreticiye zorla"
 
     # preferences.rpy:177
     old "Legacy options"
-    new ""
+    new "Eski seçenekler"
 
     # preferences.rpy:180
     old "Show templates"
-    new ""
+    new "Şablonları göster"
 
     # preferences.rpy:182
     old "Sponsor message"
-    new ""
+    new "Sponsor mesajı"
 
     # preferences.rpy:202
     old "Open launcher project"
-    new ""
+    new "Başlatıcı projesini aç"
 
     # preferences.rpy:216
     old "Language:"
-    new ""
+    new "Dil:"
 
     # project.rpy:49
     old "After making changes to the script, press shift+R to reload your game."
-    new ""
+    new "Scriptte değişiklikler yaptıktan sonra oyunu yeniden yüklemek için shift+R'ye basın."
 
     # project.rpy:49
     old "Press shift+O (the letter) to access the console."
-    new ""
+    new "Konsola erişmek için shift+O'ya (harf olan O tuşu) basın."
 
     # project.rpy:49
     old "Press shift+D to access the developer menu."
-    new ""
+    new "Geliştirici menüsüne erişmek için shift+D'ye basın."
 
     # project.rpy:49
     old "Have you backed up your projects recently?"
-    new ""
+    new "Projelerinizi yakın zamanda yedeklediniz mi?"
 
     # project.rpy:281
     old "Launching the project failed."
-    new ""
+    new "Projeyi başlatma başarısız."
 
     # project.rpy:281
     old "Please ensure that your project launches normally before running this command."
-    new ""
+    new "Lütfen bu komutu çalıştırmadan önce projelerinizin normal bir biçimde başladığından emin olun."
 
     # project.rpy:297
     old "Ren'Py is scanning the project..."
-    new ""
+    new "Ren'Py projeyi tarıyor..."
 
     # project.rpy:729
     old "Launching"
-    new ""
+    new "Başlatılıyor"
 
     # project.rpy:763
     old "PROJECTS DIRECTORY"
-    new ""
+    new "PROJELER KLASÖRÜ"
 
     # project.rpy:763
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new ""
+    new "Lütfen klasör seçiciyi kullanarak projeler klasörünü seçin.\n{b}Klasör seçici bu pencerenin arkasında açılmış olabilir.{/b}"
 
     # project.rpy:763
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
-    new ""
+    new "Bu başlatıcı klasördeki projeleri tarayacak, yeni projeleri bu klasörde yaratacak ve derlenen projeleri buraya yerleştirecek."
 
     # project.rpy:768
     old "Ren'Py has set the projects directory to:"
-    new ""
+    new "Ren'Py projeler klasörünü şuraya ayarladı:"
 
     # translations.rpy:91
     old "Translations: [project.current.display_name!q]"
-    new ""
+    new "Çeviriler: [project.current.display_name!q]"
 
     # translations.rpy:132
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
-    new ""
+    new "Üstünde çalışılacak dil. Sadece küçük ASCII harfleri ve alt çizgi içermeli."
 
     # translations.rpy:158
     old "Generate empty strings for translations"
-    new ""
+    new "Çeviriler için boş stringler yarat."
 
     # translations.rpy:176
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new ""
+    new "Çeviri dosyalarını yaratır ya da günceller. Bu dosyalar game/tl/[persistent.translate_language!q] klasörüne yerleştirilecek."
 
     # translations.rpy:196
     old "Extract String Translations"
-    new ""
+    new "String Çevirilerini Çıkart"
 
     # translations.rpy:198
     old "Merge String Translations"
-    new ""
+    new "String Çevirilerini Birleştir"
 
     # translations.rpy:203
     old "Replace existing translations"
-    new ""
+    new "Var olan çevirileri değiştir"
 
     # translations.rpy:204
     old "Reverse languages"
-    new ""
+    new "Dilleri ters çevir"
 
     # translations.rpy:208
     old "Update Default Interface Translations"
-    new ""
+    new "Varsayılan Arayüz Çevirilerini Güncelle"
 
     # translations.rpy:228
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new ""
+    new "Bu çıkarma komutu var olan bir projedeki string çevirilerini geçici bir dosyaya çıkarmanızı sağlar.\n\nBirleştirme komutu çıkarılan çevirileri bir başka projeyle birleştirir."
 
     # translations.rpy:252
     old "Ren'Py is generating translations...."
-    new ""
+    new "Ren'Py çevirileri yaratıyor..."
 
     # translations.rpy:263
     old "Ren'Py has finished generating [language] translations."
-    new ""
+    new "Ren'Py [language] dili çevirilerini yaratmayı bitirdi."
 
     # translations.rpy:276
     old "Ren'Py is extracting string translations..."
-    new ""
+    new "Ren'Py string çevirilerini çıkarıyor..."
 
     # translations.rpy:279
     old "Ren'Py has finished extracting [language] string translations."
-    new ""
+    new "Ren'Py [language] dili string çevirilerini çıkarmayı bitirdi."
 
     # translations.rpy:299
     old "Ren'Py is merging string translations..."
-    new ""
+    new "Ren'Py string çevirilerini birleştiriyor..."
 
     # translations.rpy:302
     old "Ren'Py has finished merging [language] string translations."
-    new ""
+    new "Ren'Py [language] dili string çevirilerini birleştirmeyi bitirdi."
 
     # translations.rpy:313
     old "Updating default interface translations..."
-    new ""
+    new "Varsayılan arayüz çevirileri güncelleniyor..."
 
     # translations.rpy:342
     old "Extract Dialogue: [project.current.display_name!q]"
-    new ""
+    new "Diyalogu Çıkar: [project.current.display_name!q]"
 
     # translations.rpy:358
     old "Format:"
-    new ""
+    new "Format:"
 
     # translations.rpy:366
     old "Tab-delimited Spreadsheet (dialogue.tab)"
-    new ""
+    new "Sekme-sınırsız Tablo (dialogue.tab)"
 
     # translations.rpy:367
     old "Dialogue Text Only (dialogue.txt)"
-    new ""
+    new "Sadece-Metin Diyalog (dialogue.txt)"
 
     # translations.rpy:380
     old "Strip text tags from the dialogue."
-    new ""
+    new "Diaylogdan metin etiketlerini sök."
 
     # translations.rpy:381
     old "Escape quotes and other special characters."
-    new ""
+    new "Çıkış alıntıları ve diğer özel karakterler."
 
     # translations.rpy:382
     old "Extract all translatable strings, not just dialogue."
-    new ""
+    new "Sadece diyalogu değil, bütün çevirilebilir stringleri çıkar."
 
     # translations.rpy:410
     old "Ren'Py is extracting dialogue...."
-    new ""
+    new "Ren'Py diyalogları çıkarıyor..."
 
     # translations.rpy:414
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new ""
+    new "Ren'Py diyalogları çıkarmayı bitirdi. Çıkarılan diyaloglar ana klasörde dialogue.[persistent.dialogue_format] 'ta bulunabilir."
 
     # updater.rpy:63
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
-    new ""
+    new "{b}Önerilen.{/b} Bütün yeni yayımlanmış oyunlarda kullanılması gereken Ren'Py versiyonu."
 
     # updater.rpy:65
     old "Prerelease"
-    new ""
+    new "Yayımlama öncesi (prerelease)"
 
     # updater.rpy:66
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
-    new ""
+    new "Ren'Py'ın yeni özellikleri denemek ve onlardan faydalanmak için kullanılabilecek, ama oyunlarınızın son sürümleri için kullanılamayacak olan yeni versiyonu."
 
     # updater.rpy:68
     old "Experimental"
-    new ""
+    new "Deneysel"
 
     # updater.rpy:69
     old "Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer."
-    new ""
+    new "Ren'Py'ın deneysel versiyonu. Bir Ren'Py geliştiricisi tarafından istenmediği sürece bu kanalı seçmemelisiniz."
 
     # updater.rpy:71
     old "Nightly"
-    new ""
+    new "Günlük"
 
     # updater.rpy:72
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
-    new ""
+    new "Ren'Py geliştirmesinin en son ucu. En son özellikleri içerebilir, ama hiç çalışmayabilir de."
 
     # updater.rpy:90
     old "Select Update Channel"
-    new ""
+    new "Güncelleme Kanalı Seç"
 
     # updater.rpy:101
     old "The update channel controls the version of Ren'Py the updater will download."
-    new ""
+    new "Güncelleme kanalı Ren'Py güncelleyicisinin hangi versiyonu indireceğini kontrol eder."
 
     # updater.rpy:110
     old "• This version is installed and up-to-date."
-    new ""
+    new "• Bu versiyon kurulu ve güncel."
 
     # updater.rpy:118
     old "%B %d, %Y"
-    new ""
+    new "%B %d, %Y"
 
     # updater.rpy:140
     old "An error has occured:"
-    new ""
+    new "Bir hata meydana geldi:"
 
     # updater.rpy:142
     old "Checking for updates."
-    new ""
+    new "Güncellemeler kontrol ediliyor."
 
     # updater.rpy:144
     old "Ren'Py is up to date."
-    new ""
+    new "Ren'Py güncel."
 
     # updater.rpy:146
     old "[u.version] is now available. Do you want to install it?"
-    new ""
+    new "[u.version] şu an mevcut. Kurmak istiyor musunuz?"
 
     # updater.rpy:148
     old "Preparing to download the update."
-    new ""
+    new "Güncellemyi indirmeye hazırlanıyor."
 
     # updater.rpy:150
     old "Downloading the update."
-    new ""
+    new "Güncelleme indiriliyor."
 
     # updater.rpy:152
     old "Unpacking the update."
-    new ""
+    new "Güncelleme açılıyor."
 
     # updater.rpy:154
     old "Finishing up."
-    new ""
+    new "İşlem bitiriliyor."
 
     # updater.rpy:156
     old "The update has been installed. Ren'Py will restart."
-    new ""
+    new "Güncelleme kuruldu. Ren'Py yeniden başlayacak."
 
     # updater.rpy:158
     old "The update has been installed."
-    new ""
+    new "Güncelleme kuruldu."
 
     # updater.rpy:160
     old "The update was cancelled."
-    new ""
+    new "Güncelleme iptal edildi."
 
     # updater.rpy:177
     old "Ren'Py Update"
-    new ""
+    new "Ren'Py Güncellemesi"
 
     # updater.rpy:183
     old "Proceed"
-    new ""
+    new "Devam Et"
 
     # updater.rpy:188
     old "Fetching the list of update channels"
-    new ""
+    new "Güncelleme kanalı listesi alınıyor"
 
