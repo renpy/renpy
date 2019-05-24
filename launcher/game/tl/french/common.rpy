@@ -207,15 +207,15 @@ translate french strings:
 
     # 00library.rpy:142
     old "Self-voicing disabled."
-    new "Vocalisation automatique désactivée."
+    new "Lecture vocale désactivée."
 
     # 00library.rpy:143
     old "Clipboard voicing enabled. "
-    new "Vocalisation du contenu du presse-papier activée. "
+    new "Lecture vocale vers presse-papier activée. "
 
     # 00library.rpy:144
     old "Self-voicing enabled. "
-    new "Vocalisation automatique activée. "
+    new "Lecture vocale activée. "
 
     # 00library.rpy:179
     old "Skip Mode"
@@ -227,15 +227,15 @@ translate french strings:
 
     # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "Vocalisation du contenu du presse-papier activée. Pressez « Maj+C » pour la désactiver."
+    new "Lecture vocale vers presse-papier activée. Pressez « Maj+C » pour la désactiver."
 
     # 00preferences.rpy:424
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "La vocalisation automatique veut dire « [renpy.display.tts.last] ». Pressez « Alt+Maj+V » pour la désactiver."
+    new "La lecture vocale veut dire « [renpy.display.tts.last] ». Pressez « Alt+Maj+V » pour la désactiver."
 
     # 00preferences.rpy:426
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Vocalisation automatique activée. Pressez « v » pour la désactiver."
+    new "Lecture vocale activée. Pressez « v » pour la désactiver."
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
@@ -332,3 +332,53 @@ translate french strings:
     # 00gallery.rpy:586
     old "return"
     new "retour"
+
+translate french strings:
+
+    # renpy/common/00accessibility.rpy:76
+    old "Font Override"
+    new "Forcer la police"
+
+    # renpy/common/00accessibility.rpy:80
+    old "Default"
+    new "Par défaut"
+
+    # renpy/common/00accessibility.rpy:84
+    old "DejaVu Sans"
+    new "DejaVu Sans"
+
+    # renpy/common/00accessibility.rpy:88
+    old "Opendyslexic"
+    new "Opendyslexic"
+
+    # renpy/common/00accessibility.rpy:94
+    old "Text Size Scaling"
+    new "Redimensionnement du Texte"
+
+    # renpy/common/00accessibility.rpy:100
+    old "Reset"
+    new "Réinitaliser"
+
+    # renpy/common/00accessibility.rpy:105
+    old "Line Spacing Scaling"
+    new "Espacement Vertical"
+
+    # renpy/common/00accessibility.rpy:117
+    old "Self-Voicing"
+    new "Lecture vocale"
+
+    # renpy/common/00accessibility.rpy:121
+    old "Off"
+    new "Désactivée"
+
+    # renpy/common/00accessibility.rpy:125
+    old "Text-to-speech"
+    new "Synthèse vocale"
+
+    # renpy/common/00accessibility.rpy:129
+    old "Clipboard"
+    new "Presse-papier"
+
+    # renpy/common/00accessibility.rpy:133
+    old "Debug"
+    new "Débogage"
