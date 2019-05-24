@@ -1864,13 +1864,13 @@ class UserStatement(Node):
         self.rollback = "normal"
         return self
 
-    def __init__(self, loc, line, block):
+    def __init__(self, loc, line, block, parsed):
 
         super(UserStatement, self).__init__(loc)
+        self.code_block = None
+        self.parsed = parsed
         self.line = line
         self.block = block
-        self.code_block = None
-        self.parsed = None
 
         self.name = self.call("label")
         self.rollback = renpy.statements.get("rollback", self.parsed) or "normal"
@@ -1909,6 +1909,7 @@ class UserStatement(Node):
     def call(self, method, *args, **kwargs):
 
         parsed = self.parsed
+
         if parsed is None:
             parsed = renpy.statements.parse(self, self.line, self.block)
             self.parsed = parsed

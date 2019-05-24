@@ -73,7 +73,7 @@ def register(
     `parse`
         This is a function that takes a Lexer object. This function should parse the
         statement, and return an object. This object is passed as an argument to all the
-        other functions. The lexer argument has the following methods:
+        other functions.
 
     `lint`
         This is called to check the statement. It is passed a single argument, the
@@ -168,7 +168,7 @@ def register(
 
     )
 
-    if block not in [True, False, "script", "possible"]:
+    if block not in [True, False, "script", "possible" ]:
         raise Exception("Unknown \"block\" argument value: {}".format(block))
 
     # The function that is called to create an ast.UserStatement.
@@ -176,9 +176,10 @@ def register(
         renpy.exports.push_error_handler(l.error)
 
         try:
-            rv = renpy.ast.UserStatement(loc, l.text, l.subblock)
-            rv.translatable = translatable
-            rv.translation_relevant = bool(translation_strings)
+            text = l.text
+            subblock = l.subblock
+
+            code_block = None
 
             if block is False:
                 l.expect_noblock(" ".join(name) + " statement")
@@ -186,9 +187,19 @@ def register(
                 l.expect_block(" ".join(name) + " statement")
             elif block == "script":
                 l.expect_block(" ".join(name) + " statement")
-                rv.code_block = renpy.parser.parse_block(l.subblock_lexer())
+                code_block = renpy.parser.parse_block(l.subblock_lexer())
 
-            l.advance()
+            start_number = l.number
+
+            parsed = name, parse(l)
+
+            if l.number == start_number:
+                l.advance()
+
+            rv = renpy.ast.UserStatement(loc, text, subblock, parsed)
+            rv.translatable = translatable
+            rv.translation_relevant = bool(translation_strings)
+            rv.code_block = code_block
 
         finally:
             renpy.exports.pop_error_handler()
@@ -212,6 +223,9 @@ def register(
 
 
 def parse(node, line, subblock):
+    """
+    This is used for runtime parsing of CDSes that were created before 7.3.
+    """
 
     block = [ (node.filename, node.linenumber, line, subblock) ]
     l = renpy.parser.Lexer(block)
