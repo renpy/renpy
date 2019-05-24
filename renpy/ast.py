@@ -1853,6 +1853,7 @@ class UserStatement(Node):
         'code_block',
         'translation_relevant',
         'rollback',
+        'subparses',
         ]
 
     def __new__(cls, *args, **kwargs):
@@ -1862,6 +1863,7 @@ class UserStatement(Node):
         self.translatable = False
         self.translation_relevant = False
         self.rollback = "normal"
+        self.subparses = [ ]
         return self
 
     def __init__(self, loc, line, block, parsed):
@@ -1871,6 +1873,7 @@ class UserStatement(Node):
         self.parsed = parsed
         self.line = line
         self.block = block
+        self.subparses = [ ]
 
         self.name = self.call("label")
         self.rollback = renpy.statements.get("rollback", self.parsed) or "normal"
@@ -1881,11 +1884,13 @@ class UserStatement(Node):
     def get_children(self, f):
         f(self)
 
-        if not self.code_block:
-            return
+        if self.code_block is not None:
+            for i in self.code_block:
+                i.get_children(f)
 
-        for i in self.code_block:
-            i.get_children(f)
+        for i in self.subparses:
+            for j in i.block:
+                j.get_children(f)
 
     def chain(self, next):  # @ReservedAssignment
         self.next = next
@@ -1893,15 +1898,25 @@ class UserStatement(Node):
         if self.code_block is not None:
             chain_block(self.code_block, next)
 
+        for i in self.subparses:
+            chain_block(i.block, next)
+
     def replace_next(self, old, new):
         Node.replace_next(self, old, new)
 
         if (self.code_block) and (self.code_block[0] is old):
             self.code_block.insert(0, new)
 
+        for i in self.subparses:
+            if i.block[0] is old:
+                self.code_block.insert(0, new)
+
     def restructure(self, callback):
         if self.code_block:
             callback(self.code_block)
+
+        for i in self.subparses:
+            callback(i.block)
 
     def diff_info(self):
         return (UserStatement, self.line)
@@ -1935,10 +1950,14 @@ class UserStatement(Node):
             for i in predictions:
                 renpy.easy.predict(i)
 
+        if self.parsed and renpy.statements.get("predict_all", self.parsed):
+            return [ i[0] for i in self.subparses ] + [ self.get_next() ]
+
         return [ self.get_next() ]
 
     def get_name(self):
         parsed = self.parsed
+
         if parsed is None:
             parsed = renpy.statements.parse(self, self.line, self.block)
             self.parsed = parsed

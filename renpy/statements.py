@@ -51,6 +51,7 @@ def register(
         force_begin_rollback=False,
         post_execute=None,
         post_label=None,
+        predict_all=False,
 ):
     """
     :doc: statement_register
@@ -145,7 +146,12 @@ def register(
         the post execute statement. If it returns a string, that string is used
         as the statement label, which can be called and jumped to like any other
         label. This can be used to create a unique return point.
+
+    `predict_all`
+        If True, then all sub-parses of this statement are considered to be
+        equally likely as the next statement, for prediction purposes.
     """
+
     name = tuple(name.split())
 
     if label:
@@ -165,6 +171,7 @@ def register(
         rollback="force" if force_begin_rollback else "normal",
         post_execute=post_execute,
         post_label=post_label,
+        predict_all=predict_all,
 
     )
 
@@ -173,9 +180,13 @@ def register(
 
     # The function that is called to create an ast.UserStatement.
     def parse_user_statement(l, loc):
-        renpy.exports.push_error_handler(l.error)
 
         try:
+            renpy.exports.push_error_handler(l.error)
+
+            old_subparses = l.subparses
+            l.subparses = [ ]
+
             text = l.text
             subblock = l.subblock
 
@@ -200,8 +211,10 @@ def register(
             rv.translatable = translatable
             rv.translation_relevant = bool(translation_strings)
             rv.code_block = code_block
+            rv.subparses = l.subparses
 
         finally:
+            l.subparses = old_subparses
             renpy.exports.pop_error_handler()
 
         if (post_execute is not None) or (post_label is not None):
