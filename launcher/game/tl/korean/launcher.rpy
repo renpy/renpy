@@ -1492,6 +1492,90 @@
     old "Proceed"
     new "다음으로"
 
+    # front_page.rpy:252
+    old "Web"
+    new "웹"
+
+    # front_page.rpy:252
+    old "Web (Beta)"
+    new "웹 (베타)"
+
+    # interface.rpy:394
+    old "While [what!qt], an error occured:"
+    new "[what!qt]에 오류가 발생했습니다:"
+
+    # interface.rpy:394
+    old "[exception!q]"
+    new "[exception!q]"
+
+    # itch.rpy:43
+    old "Downloading the itch.io butler."
+    new "itch.io 집사를 내려받는 중"
+
+    # web.rpy:118
+    old "Web: [project.current.display_name!q]"
+    new "웹: [project.current.display_name!q]"
+
+    # web.rpy:148
+    old "Build Web Application"
+    new "웹 애플리케이션 빌드"
+
+    # web.rpy:149
+    old "Build and Open in Browser"
+    new "빌드 및 브라우저에서 열기"
+
+    # web.rpy:150
+    old "Open without Build"
+    new "빌드하지 않고 열기"
+
+    # web.rpy:154
+    old "Support:"
+    new "지원:"
+
+    # web.rpy:162
+    old "RenPyWeb Home"
+    new "렌파이웹 누리집"
+
+    # web.rpy:163
+    old "Beuc's Patreon"
+    new "Beuc의 페트론"
+
+    # web.rpy:181
+    old "Ren'Py web applications require the entire game to be downloaded to the player's computer before it can start."
+    new "렌파이 웹 애플리케이션은 게임을 시작하기 전에 전체 게임을 플레이어의 컴퓨터에 다운로드해야 합니다."
+
+    # web.rpy:185
+    old "Current limitations in the web platform mean that loading large images, audio files, or movies may cause audio or framerate glitches, and lower performance in general."
+    new "웹 플랫폼의 현재 제한 사항은 큰 이미지나 오디오 파일, 또는 동영상을 불러오면 오디오 또는 프레임 결함이 발생하고 일반적으로 성능이 저하될 수 있음을 의미합니다."
+
+    # web.rpy:194
+    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
+    new "웹 앱을 패키징하려면 렌파이 렌파이웹(RenpyWeb)이 필요하니다. 지금 내려받으시겠습니까?"
+
     # updater.rpy:188
     old "Fetching the list of update channels"
     new "업데이트 채널 목록 가져오기"
+    
+    # choose_theme.rpy:507
+    old "changing the theme"
+    new "테마를 바꾸는 중"
+
+    # gui7.rpy:429
+    old "creating a new project"
+    new "새 프로젝트를 만드는 중"
+
+    # gui7.rpy:433
+    old "activating the new project"
+    new "새 프로젝트를 활성화하는 중"
+
+    # interface.rpy:372
+    old "opening the log file"
+    new "로그 파일을 여는 중"
+
+    # updater.rpy:194
+    old "downloading the list of update channels"
+    new "업데이트 채널의 목록을 내려받는 중"
+
+    # updater.rpy:198
+    old "parsing the list of update channels"
+    new "업데이트 채널의 목록을 분석하는 중"

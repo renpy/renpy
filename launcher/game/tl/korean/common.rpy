@@ -707,3 +707,67 @@
     # 00gallery.rpy:586
     old "return"
     new "돌아가기"
+
+    # _developer\developer.rpym:154
+    old "Hide deleted"
+    new "삭제항목 숨기기"
+
+    # _developer\developer.rpym:154
+    old "Show deleted"
+    new "삭제항목 보이기"
+
+    # 00accessibility.rpy:76
+    old "Font Override"
+    new "글꼴 덮어쓰기"
+
+    # 00accessibility.rpy:80
+    old "Default"
+    new "기본"
+
+    # 00accessibility.rpy:84
+    old "DejaVu Sans"
+    new "DejaVu Sans"
+
+    # 00accessibility.rpy:88
+    old "Opendyslexic"
+    new "Opendyslexic"
+
+    # 00accessibility.rpy:94
+    old "Text Size Scaling"
+    new "글자 크기 조절"
+
+    # 00accessibility.rpy:100
+    old "Reset"
+    new "초기화"
+
+    # 00accessibility.rpy:105
+    old "Line Spacing Scaling"
+    new "줄 간격 조절"
+
+    # 00accessibility.rpy:117
+    old "Self-Voicing"
+    new "대사 읽기"
+
+    # 00accessibility.rpy:121
+    old "Off"
+    new "끄기"
+
+    # 00accessibility.rpy:125
+    old "Text-to-speech"
+    new "텍스트 음성 변환"
+
+    # 00accessibility.rpy:129
+    old "Clipboard"
+    new "클립보드"
+
+    # 00preferences.rpy:430
+    old "font transform"
+    new "글꼴 변형"
+
+    # 00preferences.rpy:433
+    old "font size"
+    new "글꼴 크기"
+
+    # 00preferences.rpy:441
+    old "font line spacing"
+    new "글꼴 줄 간격"
