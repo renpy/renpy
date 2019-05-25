@@ -176,3 +176,42 @@ translate french strings:
     # _errorhandling.rpym:612
     old "Copies the errors.txt file to the clipboard."
     new "Copie le contenu du fichier « errors.txt » dans le presse-papier."
+
+translate french strings:
+
+    # renpy/common/_errorhandling.rpym:542
+    old "Copy BBCode"
+    new "Copier en BBCode"
+
+    # renpy/common/_errorhandling.rpym:544
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "Copie le fichier traceback.txt dans le presse-papier au format BBcode pour les forums tels que https://lemmasoft.renai.us/."
+
+    # renpy/common/_errorhandling.rpym:546
+    old "Copy Markdown"
+    new "Copier en Markdown"
+
+    # renpy/common/_errorhandling.rpym:548
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new "Copie le fichier traceback.txt dans le presse-papier au format Markdown pour Discord."
+
+    # renpy/common/_errorhandling.rpym:606
+    old "Ignores the exception, allowing you to continue."
+    new "Ignore l’exception, cela vous autorise à poursuivre"
+
+    # renpy/common/_errorhandling.rpym:617
+    old "Console"
+    new "Console"
+
+    # renpy/common/_errorhandling.rpym:619
+    old "Opens a console to allow debugging the problem."
+    new "Ouvre une console pour débuguer le problème."
+
+    # renpy/common/_errorhandling.rpym:683
+    old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "Copie le fichier errors.txt dans le presse-papier au format BBcode pour les forums tels que https://lemmasoft.renai.us/."
+
+    # renpy/common/_errorhandling.rpym:687
+    old "Copies the errors.txt file to the clipboard as Markdown for Discord."
+    new "Copie le fichier errors.txt dans le presse-papier au format Markdown pour Discord."
+

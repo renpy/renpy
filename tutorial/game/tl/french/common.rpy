@@ -347,15 +347,15 @@ translate french strings:
 
     # 00library.rpy:146
     old "Self-voicing disabled."
-    new "Synthèse vocale désactivée."
+    new "Lecture vocale désactivée."
 
     # 00library.rpy:147
     old "Clipboard voicing enabled. "
-    new "Synthèse vocale du contenu du presse-papier activée. "
+    new "Lecture vocale vers presse-papier activée. "
 
     # 00library.rpy:148
     old "Self-voicing enabled. "
-    new "Synthèse vocale activée. "
+    new "Lecture vocale activée. "
 
     # 00library.rpy:150
     old "bar"
@@ -546,15 +546,15 @@ translate french strings:
 
     # 00preferences.rpy:500
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
-    new "Synthèse vocale du contenu du presse-papier activée. Pressez « Maj+C » pour la désactiver."
+    new "Lecture vocale vers presse-papier activée. Pressez « Maj+C » pour la désactiver."
 
     # 00preferences.rpy:502
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "La synthèse vocale veut dire « [renpy.display.tts.last] ». Pressez « Alt+Maj+V » pour la désactiver."
+    new "La lecture vocale veut dire « [renpy.display.tts.last] ». Pressez « Alt+Maj+V » pour la désactiver."
 
     # 00preferences.rpy:504
     old "Self-voicing enabled. Press 'v' to disable."
-    new "Synthèse vocale activée. Pressez « v » pour la désactiver."
+    new "Lecture vocale activée. Pressez « v » pour la désactiver."
 
     # _compat\gamemenu.rpym:198
     old "Empty Slot."
@@ -1030,3 +1030,90 @@ translate french strings:
     # _errorhandling.rpym:667
     old "Copies the errors.txt file to the clipboard."
     new "Copie le contenu du fichier « errors.txt » dans le presse-papier."
+
+translate french strings:
+
+    # renpy/common/00accessibility.rpy:76
+    old "Font Override"
+    new "Forcer la police"
+
+    # renpy/common/00accessibility.rpy:80
+    old "Default"
+    new "Par défaut"
+
+    # renpy/common/00accessibility.rpy:84
+    old "DejaVu Sans"
+    new "DejaVu Sans"
+
+    # renpy/common/00accessibility.rpy:88
+    old "Opendyslexic"
+    new "Opendyslexic"
+
+    # renpy/common/00accessibility.rpy:94
+    old "Text Size Scaling"
+    new "Redimensionnement du Texte"
+
+    # renpy/common/00accessibility.rpy:100
+    old "Reset"
+    new "Réinitaliser"
+
+    # renpy/common/00accessibility.rpy:105
+    old "Line Spacing Scaling"
+    new "Espacement Vertical"
+
+    # renpy/common/00accessibility.rpy:117
+    old "Self-Voicing"
+    new "Lecture vocale"
+
+    # renpy/common/00accessibility.rpy:121
+    old "Off"
+    new "Désactivée"
+
+    # renpy/common/00accessibility.rpy:125
+    old "Text-to-speech"
+    new "Synthèse vocale"
+
+    # renpy/common/00accessibility.rpy:129
+    old "Clipboard"
+    new "Presse-papier"
+
+    # renpy/common/00accessibility.rpy:133
+    old "Debug"
+    new "Débogage"
+
+    # renpy/common/00preferences.rpy:430
+    old "font transform"
+    new "font transform"
+
+    # renpy/common/00preferences.rpy:433
+    old "font size"
+    new "font size"
+
+    # renpy/common/00preferences.rpy:441
+    old "font line spacing"
+    new "font line spacing"
+
+    # renpy/common/_errorhandling.rpym:542
+    old "Copy BBCode"
+    new "Copier en BBCode"
+
+    # renpy/common/_errorhandling.rpym:544
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "Copie le fichier traceback.txt dans le presse-papier au format BBcode pour les forums tels que https://lemmasoft.renai.us/."
+
+    # renpy/common/_errorhandling.rpym:546
+    old "Copy Markdown"
+    new "Copier en Markdown"
+
+    # renpy/common/_errorhandling.rpym:548
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new "Copie le fichier traceback.txt dans le presse-papier au format Markdown pour Discord."
+
+    # renpy/common/_errorhandling.rpym:683
+    old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "Copie le fichier errors.txt dans le presse-papier au format BBcode pour les forums tels que https://lemmasoft.renai.us/."
+
+    # renpy/common/_errorhandling.rpym:687
+    old "Copies the errors.txt file to the clipboard as Markdown for Discord."
+    new "Copie le fichier errors.txt dans le presse-papier au format Markdown pour Discord."
+
