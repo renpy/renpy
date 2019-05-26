@@ -27,6 +27,7 @@ import codecs
 import re
 import os
 import time
+import contextlib
 
 import renpy.display
 import renpy.test
@@ -682,6 +683,23 @@ class Lexer(object):
 
         self.pos = oldpos
         return ''
+
+    @contextlib.contextmanager
+    def catch_error(self):
+        """
+        Catches errors, then causes the line to advance if it hasn't been
+        advanced already.
+        """
+
+        line = self.line
+
+        try:
+            yield
+        except ParseError as e:
+            parse_errors.append(e.message)
+
+            if line == self.line:
+                self.advance()
 
     def error(self, msg):
         """
