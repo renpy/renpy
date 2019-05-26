@@ -878,6 +878,9 @@ class Script(object):
         raises a ScriptError.
         """
 
+        if isinstance(label, renpy.parser.SubParse):
+            label = label.block[0].name
+
         label = renpy.config.label_overrides.get(label, label)
         original = label
 
@@ -896,6 +899,13 @@ class Script(object):
         """
         Returns true if the label exists, or false otherwise.
         """
+
+        if isinstance(label, renpy.parser.SubParse):
+
+            if not label.block:
+                return False
+
+            label = label.block[0].name
 
         label = renpy.config.label_overrides.get(label, label)
 
