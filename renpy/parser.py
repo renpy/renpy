@@ -560,6 +560,13 @@ class SubParse(object):
     def __init__(self, block):
         self.block = block
 
+    def __repr__(self):
+
+        if not self.block:
+            return "<SubParse empty>"
+        else:
+            return "<SubParse {}:{}>".format(self.block[0].filename, self.block[0].linenumber)
+
 
 class Lexer(object):
     """
