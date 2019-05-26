@@ -200,11 +200,11 @@ def register(
                 l.expect_block(" ".join(name) + " statement")
                 code_block = renpy.parser.parse_block(l.subblock_lexer())
 
-            start_number = l.number
+            start_line = l.line
 
             parsed = name, parse(l)
 
-            if l.number == start_number:
+            if l.line == start_line:
                 l.advance()
 
             rv = renpy.ast.UserStatement(loc, text, subblock, parsed)
