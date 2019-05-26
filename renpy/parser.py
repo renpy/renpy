@@ -691,15 +691,10 @@ class Lexer(object):
         advanced already.
         """
 
-        line = self.line
-
         try:
             yield
         except ParseError as e:
             parse_errors.append(e.message)
-
-            if line == self.line:
-                self.advance()
 
     def error(self, msg):
         """
