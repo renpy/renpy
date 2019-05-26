@@ -155,7 +155,7 @@ translate spanish strings:
 
     # 00action_file.rpy:237
     old "%b %d, %H:%M"
-    new "%d %b, %H:%M"
+    new "%d de %b, %H:%M"
 
     # 00action_file.rpy:344
     old "Save slot %s: [text]"
@@ -729,9 +729,9 @@ translate spanish strings:
 
     # _developer\developer.rpym:154
     old "Hide deleted"
-    new "Hide deleted"
+    new "Oculultar borrados"
 
     # _developer\developer.rpym:154
     old "Show deleted"
-    new "Show deleted"
+    new "Mostrar borrados"
 
