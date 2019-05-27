@@ -55,7 +55,7 @@ class Curry(object):
         return not (self == other)
 
     def __hash__(self):
-        return hash(self.callable) ^ hash(self.args) ^ hash(self.kwargs)
+        return hash(self.callable) ^ hash(self.args) ^ hash(tuple(self.kwargs.items()))
 
 
 def curry(fn):
