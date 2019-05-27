@@ -169,6 +169,72 @@ The parse method takes a Lexer object:
         if we've successfully advanced to a line in the block, or False
         if we have advanced beyond all lines in the block.
 
+    .. method:: renpy_statement()
+
+        When called, this parses the current line as a Ren'Py script statement,
+        generating an error if this is not possible. This method returns
+        an opaque object that can be returned from get_next() or passed
+        to :func:`renpy.jump` or :func:`renpy.call`. This object should
+        not be stored except as part of the parse result of the statement.
+
+        When the statement returned from this completes, control is
+        transfered to the statement after the creator-defined statement.
+        (Which might be the statement created using post_execute).
+
+    .. method:: renpy_block()
+
+        This parses all of the remaining lines in the current block
+        as Ren'Py script, and returns a SubParse corresponding to the
+        first statement in the block. The block is chained together such
+        that all statements in the block are run, and then control is
+        transferred to the statement after this creator-defined statement.
+
+        Note that this parses the current block. In the more likely
+        case that you'd like to parse the subblock of the current
+        statement, the correct way to do that is::
+
+
+            def mystatement_parse(l):
+
+                l.require(':')
+                l.expect_eol()
+                l.expect_block("mystatement")
+
+                child = l.subblock_lexer().renpy_block()
+
+                return { "child" : child }
+
+
+    .. method:: catch_error()
+
+        This is a context decorator, used in conjunction with the with
+        statement, that catches and reports lexer errors inside its
+        context block, then continues after the block.
+
+        Here's an example of how it can be used to report multiple errors
+        in a single subblock. ::
+
+            def mystatement_parse(l):
+
+                l.require(':')
+                l.expect_eol()
+                l.expect_block("mystatement")
+
+                strings = [ ]
+                ll = l.subblock_lexer()
+
+                while ll.advance():
+                    with ll.catch_errors():
+                        strings.append(ll.require(ll.string))
+                        ll.expect_noblock("string inside mystatement")
+                        ll.expect_eol()
+
+                return { "strings" : strings }
+
+
+
+
+
 
 Lint Utility Functions
 ----------------------
