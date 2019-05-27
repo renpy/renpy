@@ -30,6 +30,8 @@ class Curry(object):
     supplied to the call.
     """
 
+    hash = None
+
     def __init__(self, callable, *args, **kwargs):  # @ReservedAssignment
         self.callable = callable
         self.args = args
@@ -55,7 +57,14 @@ class Curry(object):
         return not (self == other)
 
     def __hash__(self):
-        return hash(self.callable) ^ hash(self.args) ^ hash(self.kwargs)
+
+        if self.hash is None:
+            self.hash ^= hash(self.callable) ^ hash(self.args)
+
+            for i in self.kwargs.items():
+                self.hash ^= hash(i)
+
+        return self.hash
 
 
 def curry(fn):
