@@ -2195,6 +2195,22 @@ class Text(renpy.display.core.Displayable):
                     rv.append(t)
                     continue
 
+                # Invoke self-closing text tags
+                if tag in renpy.config.self_closing_text_tags:
+
+                    new_contents = func(tag, value, tokens)
+
+                    new_tokens = [ ]
+
+                    for kind2, text2 in new_contents:
+                        if isinstance(text2, str):
+                            text2 = unicode(text2)
+
+                        new_tokens.append((kind2, text2))
+
+                    tokens = new_tokens
+                    continue
+
                 # The contents of this tag.
                 contents = [ ]
 

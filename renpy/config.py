@@ -580,6 +580,9 @@ log_to_stdout = False
 # new-style custom text tags.
 custom_text_tags = { }
 
+# Text tags that will be self-closing when used
+self_closing_text_tags = [ ]
+
 # A function that given the text from a TEXT token, returns a replacement text.
 replace_text = None
 
