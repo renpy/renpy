@@ -119,7 +119,24 @@ send a character to a location::
 
         "Okay, we'll send [detective] to [city]."
 
+
 More complicated systems take significant programming skill to get
 right. The `Ren'Py cardgame framework <http://www.renpy.org/wiki/renpy/Frameworks#Cardgame>`_
 is both an example of how to use drag and drop in a complex
 system, and useful for making card games in its own right.
+
+The ``as`` clause can be used to bind a drag to variable, which can then be
+used to call methods on the drag. Note that the variable can't be used inside
+the drag itself. ::
+
+    screen snap():
+
+        drag:
+            as carmen
+            draggable True
+            child "carmen.png"
+            xpos 100 ypos 100
+
+        vbox:
+            textbutton "London" action Function(carmen.snap, 450, 140, 1.0)
+            textbutton "Paris" action Function(carmen.snap, 500, 280, 1.0)

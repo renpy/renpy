@@ -44,7 +44,7 @@ from renpy.display.layout import Fixed
 from renpy.display.predict import displayable as predict_displayable
 
 from renpy.python import py_eval_bytecode
-from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST, ccache
+from renpy.pyanalysis import Analysis, NOT_CONST, LOCAL_CONST, GLOBAL_CONST, ccache
 
 import hashlib
 import time
@@ -530,11 +530,12 @@ class SLDisplayable(SLBlock):
     """
 
     hotspot = False
+    variable = None
 
     # A list of variables that are locally constant.
     local_constant = [ ]
 
-    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, default_keywords={}, hotspot=False):
+    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, default_keywords={}, hotspot=False, variable=None):
         """
         `displayable`
             A function that, when called with the positional and keyword
@@ -568,6 +569,9 @@ class SLDisplayable(SLBlock):
 
         `default_keywords`
             The default keyword arguments to supply to the displayable.
+
+        `variable`
+            A variable that the main displayable is assigned to.
         """
 
         SLBlock.__init__(self, loc)
@@ -582,6 +586,7 @@ class SLDisplayable(SLBlock):
         self.hotspot = hotspot
         self.replaces = replaces
         self.default_keywords = default_keywords
+        self.variable = variable
 
         # Positional argument expressions.
         self.positional = [ ]
@@ -598,6 +603,7 @@ class SLDisplayable(SLBlock):
         rv.hotspot = self.hotspot
         rv.replaces = self.replaces
         rv.default_keywords = self.default_keywords
+        rv.variable = self.variable
         rv.positional = self.positional
 
         return rv
@@ -625,6 +631,23 @@ class SLDisplayable(SLBlock):
         # kept and placed into the scope.
         if self.scope:
             self.local_constant = list(analysis.local_constant)
+
+        if self.variable is not None:
+            const = self.constant
+
+            for i in self.positional:
+                const = min(self.constant, analysis.is_constant_expr(i))
+
+            for k, v in self.keyword:
+                const = min(self.constant, analysis.is_constant_expr(v))
+
+                if k == "id":
+                    const = NOT_CONST
+
+            if const == LOCAL_CONST:
+                analysis.mark_constant(self.variable)
+            elif const == NOT_CONST:
+                analysis.mark_not_constant(self.variable)
 
     def prepare(self, analysis):
 
@@ -677,6 +700,9 @@ class SLDisplayable(SLBlock):
         for k, _expr in self.keyword:
             if k == "id":
                 self.constant = NOT_CONST
+
+        if self.variable is not None:
+            self.constant = NOT_CONST
 
     def keywords(self, context):
         # We do not want to pass keywords to our parents, so just return.
@@ -1047,6 +1073,9 @@ class SLDisplayable(SLBlock):
                 d = self.wrap_in_showif(d, context, cache)
 
             context.children.append(d)
+
+        if self.variable is not None:
+            context.scope[self.variable] = main
 
     def wrap_in_showif(self, d, context, cache):
         """

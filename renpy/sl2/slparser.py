@@ -131,6 +131,9 @@ class Parser(object):
         self.keyword = { }
         self.children = { }
 
+        # True if this parser takes "as".
+        self.variable = False
+
         if statement:
             all_statements.append(self)
 
@@ -238,6 +241,14 @@ class Parser(object):
                 target.tag = l.require(l.word)
                 l.expect_noblock(name)
                 return True
+
+            if self.variable:
+                if name == "as":
+                    if target.variable is not None:
+                        l.error('an as clause may only appear once in a %s statement.' % (self.name,))
+
+                    target.variable = l.require(l.word)
+                    return
 
             if name not in self.keyword:
                 l.error('%r is not a keyword argument or valid child for the %s statement.' % (name, self.name))
@@ -563,6 +574,7 @@ class DisplayableParser(Parser):
         self.hotspot = hotspot
         self.replaces = replaces
         self.default_keywords = default_keywords
+        self.variable = True
 
         Keyword("arguments")
         Keyword("properties")
