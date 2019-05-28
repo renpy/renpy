@@ -832,6 +832,8 @@ class SLDisplayable(SLBlock):
                 self.report_arguments(cache, positional, keywords, transform)
 
             can_reuse = (old_d is not None) and (positional == cache.positional) and (keywords == cache.keywords) and (context.style_prefix == cache.style_prefix)
+            if (self.variable is not None) and copy_on_change:
+                can_reuse = False
 
             # A hotspot can only be reused if the imagemap it belongs to has
             # not changed.
@@ -908,6 +910,9 @@ class SLDisplayable(SLBlock):
             if not context.predicting:
                 raise
             fail = True
+
+        if self.variable is not None:
+            context.scope[self.variable] = main
 
         ctx.children = [ ]
         ctx.showif = None
@@ -1073,9 +1078,6 @@ class SLDisplayable(SLBlock):
                 d = self.wrap_in_showif(d, context, cache)
 
             context.children.append(d)
-
-        if self.variable is not None:
-            context.scope[self.variable] = main
 
     def wrap_in_showif(self, d, context, cache):
         """

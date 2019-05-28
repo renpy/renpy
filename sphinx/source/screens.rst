@@ -277,9 +277,9 @@ text is given the ``hover_size`` property, it sets the text size when the
 text is hovered.
 
 User interface statements take an ``as`` clause, which takes a variable
-name, without any quotes. At the end of the statement (that is, after any
-properties or children are evaluated) the main displayable of that statement
-is assigned to the given variable.
+name, without any quotes. The displayable that the statement creates is
+assigned to the variable. (An example can be found in :ref:`the drag and drop
+documentation <as-example>`.)
 
 .. _sl-add:
 
