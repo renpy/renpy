@@ -628,6 +628,19 @@ class Lexer(object):
 
         return True
 
+    def unadvance(self):
+        """
+        Puts the parsing point at the end of the previous line. This is used
+        after renpy_statement to prevent the advance that Ren'Py statements
+        do.
+        """
+
+        self.line -= 1
+        self.eob = False
+        self.filename, self.number, self.text, self.subblock = self.block[self.line]
+        self.pos = len(self.text)
+        self.word_cache_pos = -1
+
     def match_regexp(self, regexp):
         """
         Tries to match the given regexp at the current location on the
@@ -1359,6 +1372,7 @@ class Lexer(object):
             raise Exception("A renpy_statement can only be parsed inside a creator-defined statement.")
 
         block = parse_statement(self)
+        self.unadvance()
 
         if not isinstance(block, list):
             block = [ block ]
