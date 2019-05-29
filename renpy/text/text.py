@@ -2192,41 +2192,53 @@ class Text(renpy.display.core.Displayable):
                 func = renpy.config.custom_text_tags.get(tag, None)
 
                 if func is None:
+                    func = renpy.config.self_closing_custom_text_tags.get(tag, None)
+                    self_closing = True
+                else:
+                    self_closing = False
+
+                if func is None:
                     rv.append(t)
                     continue
 
-                # The contents of this tag.
-                contents = [ ]
+                if not self_closing:
 
-                # The close tag we're lookin for.
-                close = "/" + tag
+                    # The contents of this tag.
+                    contents = [ ]
 
-                # The number of open tags.
-                count = 1
+                    # The close tag we're lookin for.
+                    close = "/" + tag
 
-                while tokens:
+                    # The number of open tags.
+                    count = 1
 
-                    # Count the number of `tag` tags that are still open.
-                    t2 = tokens.pop(0)
+                    while tokens:
 
-                    kind2, text2 = t2
+                        # Count the number of `tag` tags that are still open.
+                        t2 = tokens.pop(0)
 
-                    if kind2 == TAG:
-                        tag2, _, _ = text2.partition("=")
+                        kind2, text2 = t2
 
-                        if tag2 == tag:
-                            count += 1
-                        elif tag2 == close:
-                            count -= 1
-                            if not count:
-                                break
+                        if kind2 == TAG:
+                            tag2, _, _ = text2.partition("=")
 
-                    contents.append(t2)
+                            if tag2 == tag:
+                                count += 1
+                            elif tag2 == close:
+                                count -= 1
+                                if not count:
+                                    break
 
-                if count:
-                    raise Exception("Text ended while the '{}' text tag was still open.".format(tag))
+                        contents.append(t2)
 
-                new_contents = func(tag, value, contents)
+                    if count:
+                        raise Exception("Text ended while the '{}' text tag was still open.".format(tag))
+
+                    new_contents = func(tag, value, contents)
+
+                else:
+
+                    new_contents = func(tag, value)
 
                 new_tokens = [ ]
 

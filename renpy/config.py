@@ -580,6 +580,9 @@ log_to_stdout = False
 # new-style custom text tags.
 custom_text_tags = { }
 
+# Same, but for ones that are empty.
+self_closing_custom_text_tags = { }
+
 # A function that given the text from a TEXT token, returns a replacement text.
 replace_text = None
 

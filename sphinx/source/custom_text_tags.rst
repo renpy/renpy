@@ -9,11 +9,19 @@ can manipulate the text and text tags defined within, including adding
 and removing text and other text tags.
 
 Custom text tags are created by assigning a text tag function to an
-entry in the config.custom_text_tags dictionary.
+entry in the config.custom_text_tags dictionary or the
+config.self_closing_custom_tags dictionary.
 
 .. var:: config.custom_text_tags
 
-    Maps text tag names to text tag functions.
+    Maps text tag names to text tag functions, when the text tag can
+    wrap other text.
+
+
+.. var:: config.self_closing_custom_text_tags
+
+    Maps text tag names to a self-closing text tag functions, when the text tag
+    does not wrap other text.
 
 A text tag function takes three arguments: The tag itself, the argument
 for the tag, and a list of content tuples. For example, for the text::
@@ -50,6 +58,9 @@ renpy.TEXT_DISPLAYABLE
 renpy.TEXT_PARAGRAPH
     This represents a break between paragraphs, and the second component
     is undefined (but must be present).
+
+A self-closing text tag function is similar, except that it does not take
+the third argument.
 
 Caveats
 -------
@@ -101,3 +112,14 @@ ROT26 – ROT13 applied twice – is just normal text. ::
         config.custom_text_tags["rot13"] = rot13_tag
 
     "Rot0. {rot13}Rot13. {rot13}Rot26. {/rot13}Rot13. {/rot13}Rot0."
+
+The ``bang`` text tag inserts a specific image into the text, and doesn't require
+a closing tag. ::
+
+    init python:
+        def bang_tag(tag, argument):
+            return [ ( renpy.TEXT_TAG, "size=40"), (renpy.TEXT_TEXT, "!"), (renpy.TEXT_TAG, "/size") ]
+
+        config.self_closing_custom_text_tags["bang"] = bang_tag
+
+    "This is awesome{bang}"
