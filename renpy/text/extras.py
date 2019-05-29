@@ -70,13 +70,15 @@ def check_text_tags(s):
     an error, or None if there is no error.
     """
 
-    custom_tags = renpy.config.custom_text_tags
+    all_tags = dict(text_tags)
 
+    custom_tags = renpy.config.custom_text_tags
     if custom_tags:
-        all_tags = dict(text_tags)
-        all_tags.update(renpy.config.custom_text_tags)
-    else:
-        all_tags = text_tags
+        all_tags.update(custom_tags)
+
+    self_closing_custom_tags = renpy.config.self_closing_custom_text_tags
+    if self_closing_custom_tags:
+        all_tags.update(dict.fromkeys(self_closing_custom_tags, False))
 
     try:
         tokens = textsupport.tokenize(unicode(s))
