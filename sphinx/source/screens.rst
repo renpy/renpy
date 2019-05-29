@@ -883,6 +883,10 @@ then the center. The corners and sides are rendered with an available
 area of 0, so it may be necessary to supply them a minimum size (using
 :propref:`xminimum` or :propref:`yminimum`) to ensure they render at
 all.
+The order of placing children is controlled from top to bottom when
+adding them (i.e. also in the order of substrings in the argument),
+the latter will be the highest. This is may be disabled by
+:var:`config.keep_side_render_order`.
 
 Children correspond to entries in the places list, so this must have
 the same number of children as there are entries in the places list.

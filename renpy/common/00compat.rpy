@@ -186,6 +186,9 @@ init -1900 python:
         if version <= (7, 2, 2):
             config.say_attribute_transition_callback_attrs = False
 
+        if version <= (7, 3, 0):
+            config.keep_side_render_order = False
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None
@@ -228,7 +231,7 @@ init -1000 python hide:
     except:
         pass
 
-init 1900 python hide::
+init 1900 python hide:
 
     # This returns true if the script_version is <= the
     # script_version supplied. Give it the last script version
@@ -292,5 +295,3 @@ init 1900 python hide::
         config.has_quicksave = False
         config.quit_action = ui.gamemenus("_confirm_quit")
         config.default_afm_enable = None
-
-

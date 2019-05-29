@@ -986,6 +986,9 @@ equal_mono = True
 # If True, renpy.input will always return the default.
 disable_input = False
 
+# If True, the order of substrings in the Side positions will
+# also determine the order of their render.
+keep_side_render_order = True
 
 del os
 del collections

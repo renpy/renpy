@@ -1641,17 +1641,35 @@ class Side(Container):
         row2 = top + tops
         row3 = top + tops + cheight + bottoms
 
-        place('c', col2, row2, cwidth, cheight)
+        place_order = [
+            ('c', col2, row2, cwidth, cheight),
 
-        place('t', col2, row1, cwidth, top)
-        place('r', col3, row2, right, cheight)
-        place('b', col2, row3, cwidth, bottom)
-        place('l', col1, row2, left, cheight)
+            ('t', col2, row1, cwidth, top),
+            ('r', col3, row2, right, cheight),
+            ('b', col2, row3, cwidth, bottom),
+            ('l', col1, row2, left, cheight),
 
-        place('tl', col1, row1, left, top)
-        place('tr', col3, row1, right, top)
-        place('br', col3, row3, right, bottom)
-        place('bl', col1, row3, left, bottom)
+            ('tl', col1, row1, left, top),
+            ('tr', col3, row1, right, top),
+            ('br', col3, row3, right, bottom),
+            ('bl', col1, row3, left, bottom),
+        ]
+
+        # This sorts the children for placement according to
+        # their order in positions.
+        if renpy.config.keep_side_render_order:
+            def sort(elem):
+                pos, x, y, w, h = elem
+
+                if pos not in pos_d:
+                    return
+
+                return self.positions.index(pos)
+
+            place_order.sort(key=sort)
+
+        for pos, x, y, w, h in place_order:
+            place(pos, x, y, w, h)
 
         return rv
 
