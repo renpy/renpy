@@ -33,3 +33,13 @@ language, this means native words take precedence over loanwords if and only if
 both native and loanwords exist and both are suitable in the context of use.
 
 * Muhammad Nur Hidayat (MNH48) <translation@mnh48.moe>
+
+Turkish
+---------
+
+Translation to the Turkish language. Some terms and abbreviations (especially 
+those related to coding) are deliberately left untranslated (or the original words
+are provided in brackets) to avoid confusion, relying on their common use in 
+Turkish language and among Turkish developers.
+
+* Arda Güler (WKFO) <ardaguler09@gmail.com>
