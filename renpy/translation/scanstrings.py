@@ -31,8 +31,8 @@ import renpy.translation
 
 STRING_RE = r"""(?x)
 \b_[_p]?\s*\(\s*[uU]?(
-\"\"\"(?:\\.|\"{1,2}|[^\\"])*?\"\"\"
-|'''(?:\\.|\'{1,2}|[^\\'])*?'''
+\"\"\"(?:\\.|\\\n|\"{1,2}|[^\\"])*?\"\"\"
+|'''(?:\\.|\\\n|\'{1,2}|[^\\'])*?'''
 |"(?:\\.|[^\\"])*"
 |'(?:\\.|[^\\'])*'
 )\s*\)
@@ -127,6 +127,8 @@ def scan_strings(filename):
         for m in re.finditer(STRING_RE, text):
 
             s = m.group(1)
+            s = s.replace('\\\n', "")
+
             if s is not None:
                 s = s.strip()
                 s = "u" + s
