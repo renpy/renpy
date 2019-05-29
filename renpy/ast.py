@@ -1951,9 +1951,14 @@ class UserStatement(Node):
                 renpy.easy.predict(i)
 
         if self.parsed and renpy.statements.get("predict_all", self.parsed):
-            return [ i[0] for i in self.subparses ] + [ self.get_next() ]
+            return [ i[0] for i in self.subparses ] + [ self.next ]
 
-        return [ self.get_next() ]
+        next_list = self.call("predict_next")
+
+        if next_list is not None:
+            return [ renpy.game.script.lookup(i) for i in next_list if i is not None ]
+
+        return [ self.next ]
 
     def get_name(self):
         parsed = self.parsed

@@ -52,6 +52,7 @@ def register(
         post_execute=None,
         post_label=None,
         predict_all=False,
+        predict_next=None,
 ):
     """
     :doc: statement_register
@@ -150,6 +151,11 @@ def register(
     `predict_all`
         If True, then all sub-parses of this statement are considered to be
         equally likely as the next statement, for prediction purposes.
+
+    `predict_next`
+        This should be called to predict the statements that can run after
+        this one. It's expected to return a list of of labels or SubParse
+        objects. This is not called if `predict_all` is true.
     """
 
     name = tuple(name.split())
@@ -172,6 +178,7 @@ def register(
         post_execute=post_execute,
         post_label=post_label,
         predict_all=predict_all,
+        predict_next=predict_next,
 
     )
 
