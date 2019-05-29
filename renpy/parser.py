@@ -1995,7 +1995,6 @@ def call_statement(l, loc):
 
     if l.keyword('from'):
         name = l.require(l.label_name_declare)
-        l.set_global_label(name)
         rv.append(ast.Label(loc, name, [], None))
     else:
         if renpy.scriptedit.lines and (loc in renpy.scriptedit.lines):
