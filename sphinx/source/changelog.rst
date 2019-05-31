@@ -98,17 +98,30 @@ text:
 * "[varname!c]" forces the first letter of the text to upper-case, capitalizing it.
 
 
-Translations
------------
-
-French, Korean,
-
-Other Improvements
------
+Android and iOS Improvements
+----------------------------
 
 Ren'Py now uses Framebuffer Objects on any device that claims to
 support it. As a result :propref:`focus_mask` now works on Android
 and iOS.
+
+Ren'Py now produces 64-bit arm binaries for Android. These will be
+required by the Google Play store later this year.
+
+Translations
+------------
+
+The Ren'Py launcher and sample project have been translated into Turkish
+by Arda Güler.
+
+The Ren'Py tutorial game has been translated into Spanish by Moshibit.
+
+French, Korean, Russian and Spanish translations have been updated for
+this release.
+
+
+Other Improvements
+------------------
 
 The ``side`` displayable now renders its children in the order
 they are provided in the control string.
@@ -130,6 +143,9 @@ This makes it possible to a game to implement its own recovery mechanism.
 The new :var:`config.notify` variable makes it possible to intercept the
 notification system and do your own thing.
 
+The interface of :var:`config.say_attribute_transition_callback` has been
+changed in an incompatible way, to allow a the reason for the transition
+to be given.
 
 Fixes
 -----
@@ -139,11 +155,6 @@ accent markers in Arabic, has been fixed.
 
 The filename of the internal copy of OpenDyslexic has been changed so as
 not to cause problems with copies distributed with games.
-
-
-
-
-
 
 
 .. _renpy-7.2.2:
