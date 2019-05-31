@@ -2,6 +2,150 @@
 Full Changelog
 ==============
 
+.. _renpy-7.3.0:
+
+7.3.0
+=====
+
+Renpyweb
+--------
+
+Courtesy of Sylvain Beucler, Ren'Py now can generate distributions for
+the the HTML5 web platforms, capable of running on modern web browsers
+that support the Web Assembly standard. This is intended for small games
+and demonstrations of larger games, as right now the implementation
+downloads the full game to the web browser before running any of it.
+
+Web support is marked as beta, as there are cases where problem with the
+web platform (most notably, a lack of threading) cause problems such as
+sound glitches if an image takes too long to load. As a result, it is
+possible to have a Ren'Py game that works well on all other platforms,
+but not in the web browser. As web browsers themselves improve, we will
+improve our implementation and eventually remove the beta tag.
+
+Building a web distribution can be done from the new "Web" button
+on the Ren'Py launcher. The launcher now includes a small web server,
+that can be used to launch the game in a creator's web browser for test
+purposes.
+
+Creator-Defined Statements
+--------------------------
+
+Ren'Py's creator-defined statements, and the Lexer objects that are
+used by them, have been extended to improve the functionality in
+many ways. With respect to the Lexer:
+
+* It is now possible to ass the Lexer object to parse a single
+  line as a Ren'Py statement, or all the lines remaining in the
+  block as Ren'Py statements.
+
+* It is now possible to ask the lexer to catch errors, so as to
+  limit the scope of errors to a part of a creator-defined statement
+  rather than the whole statement.
+
+The :func:`renpy.register_statement` function has new arguments to enable
+new functionality.
+
+* Statement prediction can be controlled by the `predict_all` and `predict_next`
+  arguments, which predict all possible next statements or take a function
+  that determines what will run next, respectively.
+
+* The new `post_execute` argument lets one specify an execute function that is
+  run as the next statement - the one after the creator-defined statement.
+  This allows a pattern where a statement runs, executes the block inside it,
+  and then run something after the block to clean it up. (For example, an event
+  that serves as a label, and then jumps back to a dispatcher when it is done.)
+
+* The new `post_label` argument lets one specify a function to supply the
+  a label that goes after the creator-defined statement, which can function
+  like the ``from`` clause to the call statement.
+
+Ren'Py now stores the result of parsing a creator-defined statement in the
+.rpyc files. While this allows for more complex syntax and faster startup,
+it means that it may be necessary to force a recompile if you change a
+creator-defined statement's parse function
+
+Screen Language Improvements
+----------------------------
+
+It is now possible to supply an ``as`` clause to a screen
+language displayable. This is especially useful with with drags,
+as it lets the screen capture the drag object and call methods
+on it as necessary.
+
+The ``on`` statement can now take a list of events.
+
+A screen now takes a `sensitive` property, which determines if it is
+possible to interact with the screen at all.
+
+Ren'Py will now produce an error when a non-constant property follows
+a Python statement, inside screen language. (This was very rare, and
+almost always a mistake.)
+
+
+Text Improvements
+-----------------
+
+Ren'Py now includes support for self-closing custom text tags, which
+are :ref:`custom text tags <custom-text-tags>` that do not require as
+closing text tag.
+
+Ren'Py now supports three new flags that can be applied when formatting
+text:
+
+* "[varname!u]" forces the text to upper-case.
+* "[varname!l]" forces the text to lower-case.
+* "[varname!c]" forces the first letter of the text to upper-case, capitalizing it.
+
+
+Translations
+-----------
+
+French, Korean,
+
+Other Improvements
+-----
+
+Ren'Py now uses Framebuffer Objects on any device that claims to
+support it. As a result :propref:`focus_mask` now works on Android
+and iOS.
+
+The ``side`` displayable now renders its children in the order
+they are provided in the control string.
+
+The ``say`` statement, ``menu`` statement, and ``renpy.call_screen``
+statements now tak a `_mode` argument, which specifies the :ref:`mode <modes>`
+Ren'Py goes into when these statements occur.
+
+The :func:`renpy.show_screen` and :func:`renpy.call_screen` functiosn now
+take a zorder argument.
+
+Ren'Py will now play a mono sound file with the same volume as a stereo
+sound file, rather than sending half the energy to each ear.
+
+The new :func:`config.load_failed_label` specifies a label that is jumped
+to when a load fails because Ren'Py can no longer find the current statement.
+This makes it possible to a game to implement its own recovery mechanism.
+
+The new :var:`config.notify` variable makes it possible to intercept the
+notification system and do your own thing.
+
+
+Fixes
+-----
+
+A problem that could cause Ren'Py to drop certain characters, especially
+accent markers in Arabic, has been fixed.
+
+The filename of the internal copy of OpenDyslexic has been changed so as
+not to cause problems with copies distributed with games.
+
+
+
+
+
+
+
 .. _renpy-7.2.2:
 
 7.2.2
