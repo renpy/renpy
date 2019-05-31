@@ -12,6 +12,21 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+
+.. _incompatible-7.3.0:
+
+7.3.0
+-----
+
+The order in which children of the ``side`` layout are drawn is now
+taken from the control string. To reverty to the old fixed order, use::
+
+    define config.keep_side_render_order = False
+
+The interface of :var:`config.say_attribute_transition_callback` has been
+changed in an incompatible way, to allow a the reason for the transition
+to be given.
+
 .. _incompatible-7.2.2:
 
 7.2.2
