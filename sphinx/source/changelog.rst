@@ -35,7 +35,7 @@ Ren'Py's creator-defined statements, and the Lexer objects that are
 used by them, have been extended to improve the functionality in
 many ways. With respect to the Lexer:
 
-* It is now possible to ass the Lexer object to parse a single
+* It is now possible to ask the Lexer object to parse a single
   line as a Ren'Py statement, or all the lines remaining in the
   block as Ren'Py statements.
 
@@ -53,7 +53,7 @@ new functionality.
 * The new `post_execute` argument lets one specify an execute function that is
   run as the next statement - the one after the creator-defined statement.
   This allows a pattern where a statement runs, executes the block inside it,
-  and then run something after the block to clean it up. (For example, an event
+  and then runs something after the block to clean it up. (For example, an event
   that serves as a label, and then jumps back to a dispatcher when it is done.)
 
 * The new `post_label` argument lets one specify a function to supply the
@@ -69,7 +69,7 @@ Screen Language Improvements
 ----------------------------
 
 It is now possible to supply an ``as`` clause to a screen
-language displayable. This is especially useful with with drags,
+language displayable. This is especially useful with drags,
 as it lets the screen capture the drag object and call methods
 on it as necessary.
 
@@ -130,7 +130,7 @@ The ``say`` statement, ``menu`` statement, and ``renpy.call_screen``
 statements now tak a `_mode` argument, which specifies the :ref:`mode <modes>`
 Ren'Py goes into when these statements occur.
 
-The :func:`renpy.show_screen` and :func:`renpy.call_screen` functiosn now
+The :func:`renpy.show_screen` and :func:`renpy.call_screen` functions now
 take a zorder argument.
 
 Ren'Py will now play a mono sound file with the same volume as a stereo
@@ -144,7 +144,7 @@ The new :var:`config.notify` variable makes it possible to intercept the
 notification system and do your own thing.
 
 The interface of :var:`config.say_attribute_transition_callback` has been
-changed in an incompatible way, to allow a the reason for the transition
+changed in an incompatible way, to allow a reason for the transition
 to be given.
 
 Fixes
