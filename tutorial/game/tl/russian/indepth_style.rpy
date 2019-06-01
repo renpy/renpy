@@ -498,12 +498,6 @@ translate russian style_button_02fa647e:
     # e "Finally, the focus_mask property applies to partially transparent buttons. When it's set to True, only areas of the button that aren't transparent cause a button to focus."
     e "И последнее, параметр focus_mask применяется к частично прозрачным кнопкам. Когда параметр включается, только область кнопки, не затронутая прозрачностью, будет вызывать эффект наведения."
 
-# game/indepth_style.rpy:679
-translate russian style_button_fb973235:
-
-    # e "Be careful with focus_mask, as it only works on desktop platforms. It doesn't yet work on Android or iOS."
-    e "Будьте осторожны с этим параметром, так как он работает только на ПК. На Android или iOS он работать не будет."
-
 # game/indepth_style.rpy:759
 translate russian style_bar_414d454a:
 

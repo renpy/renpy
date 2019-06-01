@@ -497,12 +497,6 @@ translate piglatin style_button_02fa647e:
     # e "Finally, the focus_mask property applies to partially transparent buttons. When it's set to True, only areas of the button that aren't transparent cause a button to focus."
     e "Inallyfay, hetay ocus_maskfay ropertypay appliesay otay artiallypay ansparenttray uttonsbay. Henway itay'say etsay otay Ruetay, onlyay areasay ofay hetay uttonbay hattay arenay'tay ansparenttray ausecay aay uttonbay otay ocusfay."
 
-# game/indepth_style.rpy:679
-translate piglatin style_button_fb973235:
-
-    # e "Be careful with focus_mask, as it only works on desktop platforms. It doesn't yet work on Android or iOS."
-    e "Ebay arefulcay ithway ocus_maskfay, asay itay onlyay orksway onay esktopday atformsplay. Tiay oesnday'tay etyay orkway onay Ndroidaay oray iOSay."
-
 # game/indepth_style.rpy:759
 translate piglatin style_bar_414d454a:
 

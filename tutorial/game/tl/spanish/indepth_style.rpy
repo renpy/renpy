@@ -497,12 +497,6 @@ translate spanish style_button_02fa647e:
     # e "Finally, the focus_mask property applies to partially transparent buttons. When it's set to True, only areas of the button that aren't transparent cause a button to focus."
     e "Finalmente, la propiedad focus_mask se aplica a los botones parcialmente transparentes. Cuando se establece en True, solo las áreas del botón que no son transparentes hacen que el botón se enfoque."
 
-# game/indepth_style.rpy:679
-translate spanish style_button_fb973235:
-
-    # e "Be careful with focus_mask, as it only works on desktop platforms. It doesn't yet work on Android or iOS."
-    e "Ten cuidado con focus_mask, ya que solo funciona en plataformas de escritorio. Todavía no funciona en Android o iOS."
-
 # game/indepth_style.rpy:759
 translate spanish style_bar_414d454a:
 
