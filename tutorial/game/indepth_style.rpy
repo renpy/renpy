@@ -676,8 +676,6 @@ label style_button:
 
     e "Finally, the focus_mask property applies to partially transparent buttons. When it's set to True, only areas of the button that aren't transparent cause a button to focus."
 
-    e "Be careful with focus_mask, as it only works on desktop platforms. It doesn't yet work on Android or iOS."
-
     hide example
     hide screen button
     with dissolve
