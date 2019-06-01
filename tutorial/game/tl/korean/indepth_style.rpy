@@ -498,12 +498,6 @@ translate korean style_button_02fa647e:
     # e "Finally, the focus_mask property applies to partially transparent buttons. When it's set to True, only areas of the button that aren't transparent cause a button to focus."
     e "마지막으로, focus_mask 속성은 부분적으로 투명한 버튼에 적용돼. 참(True)으로 설정하면 투명하지 않은 버튼 영역만 초점이 맞춰져."
 
-# game/indepth_style.rpy:679
-translate korean style_button_fb973235:
-
-    # e "Be careful with focus_mask, as it only works on desktop platforms. It doesn't yet work on Android or iOS."
-    e "focus_mask는 데스크톱 플랫폼에서만 작동하니까 주의해야 해. 안드로이드나 iOS에서는 아직 작동하지 않아."
-
 # game/indepth_style.rpy:759
 translate korean style_bar_414d454a:
 
