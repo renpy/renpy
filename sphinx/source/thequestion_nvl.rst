@@ -8,297 +8,297 @@ of the ``script.rpy`` file with the following code.
 
 ::
 
-# Declare characters used by this game.
-define s = Character(None, kind=nvl, what_prefix="\"", what_suffix="\"", what_color="#c8ffc8")
-define m = Character(None, kind=nvl, what_prefix="\"", what_suffix="\"", what_color="#c8c8ff")
-define narrator = Character(None, kind=nvl)
+    # Declare characters used by this game.
+    define s = Character(None, kind=nvl, what_prefix="\"", what_suffix="\"", what_color="#c8ffc8")
+    define m = Character(None, kind=nvl, what_prefix="\"", what_suffix="\"", what_color="#c8c8ff")
+    define narrator = Character(None, kind=nvl)
 
-define menu = nvl_menu
+    define menu = nvl_menu
 
-# This is a variable that is True if you've compared a VN to a book, and False
-# otherwise.
-default book = False
+    # This is a variable that is True if you've compared a VN to a book, and False
+    # otherwise.
+    default book = False
 
-# The game starts here.
-label start:
+    # The game starts here.
+    label start:
 
-    # Start by playing some music.
-    play music "illurock.opus"
+        # Start by playing some music.
+        play music "illurock.opus"
 
-    scene bg lecturehall
-    with fade
-    
-    window show
+        scene bg lecturehall
+        with fade
 
-    "It's only when I hear the sounds of shuffling feet and supplies being put away that I realize that the lecture's over."
+        window show
 
-    "Professor Eileen's lectures are usually interesting, but today I just couldn't concentrate on it."
+        "It's only when I hear the sounds of shuffling feet and supplies being put away that I realize that the lecture's over."
 
-    "I've had a lot of other thoughts on my mind...thoughts that culminate in a question."
+        "Professor Eileen's lectures are usually interesting, but today I just couldn't concentrate on it."
 
-    "It's a question that I've been meaning to ask a certain someone."
-    
-    window hide
-    nvl clear
+        "I've had a lot of other thoughts on my mind...thoughts that culminate in a question."
 
-    scene bg uni
-    with fade
-    window show
+        "It's a question that I've been meaning to ask a certain someone."
 
-    "When we come out of the university, I spot her right away."
+        window hide
+        nvl clear
 
-    window hide
-    show sylvie green normal
-    with dissolve
-    window show
+        scene bg uni
+        with fade
+        window show
 
-    "I've known Sylvie since we were kids. She's got a big heart and she's always been a good friend to me."
+        "When we come out of the university, I spot her right away."
 
-    "But recently... I've felt that I want something more."
+        window hide
+        show sylvie green normal
+        with dissolve
+        window show
 
-    "More than just talking, more than just walking home together when our classes end."
+        "I've known Sylvie since we were kids. She's got a big heart and she's always been a good friend to me."
 
-    menu:
+        "But recently... I've felt that I want something more."
 
-        "As soon as she catches my eye, I decide..."
+        "More than just talking, more than just walking home together when our classes end."
 
-        "To ask her right away.":
+        menu:
 
-            jump rightaway
+            "As soon as she catches my eye, I decide..."
 
-        "To ask her later.":
+            "To ask her right away.":
 
-            jump later
+                jump rightaway
 
+            "To ask her later.":
 
-label rightaway:
-    
-    nvl clear
+                jump later
 
-    show sylvie green smile
 
-    s "Hi there! How was class?"
+    label rightaway:
 
-    m "Good..."
+        nvl clear
 
-    "I can't bring myself to admit that it all went in one ear and out the other."
+        show sylvie green smile
 
-    m "Are you going home now? Wanna walk back with me?"
+        s "Hi there! How was class?"
 
-    s "Sure!"
-    
-    nvl clear
-    
-    window hide
-    scene bg meadow
-    with fade
-    window show
+        m "Good..."
 
-    "After a short while, we reach the meadows just outside the neighborhood where we both live."
+        "I can't bring myself to admit that it all went in one ear and out the other."
 
-    "It's a scenic view I've grown used to. Autumn is especially beautiful here."
+        m "Are you going home now? Wanna walk back with me?"
 
-    "When we were children, we played in these meadows a lot, so they're full of memories."
+        s "Sure!"
 
-    m "Hey... Umm..."
+        nvl clear
 
-    window hide
-    show sylvie green smile
-    with dissolve
-    window show
+        window hide
+        scene bg meadow
+        with fade
+        window show
 
-    "She turns to me and smiles. She looks so welcoming that I feel my nervousness melt away."
+        "After a short while, we reach the meadows just outside the neighborhood where we both live."
 
-    "I'll ask her...!"
+        "It's a scenic view I've grown used to. Autumn is especially beautiful here."
 
-    m "Ummm... Will you..."
+        "When we were children, we played in these meadows a lot, so they're full of memories."
 
-    m "Will you be my artist for a visual novel?"
+        m "Hey... Umm..."
 
-    show sylvie green surprised
-    
-    nvl clear
+        window hide
+        show sylvie green smile
+        with dissolve
+        window show
 
-    "Silence."
+        "She turns to me and smiles. She looks so welcoming that I feel my nervousness melt away."
 
-    "She looks so shocked that I begin to fear the worst. But then..."
+        "I'll ask her...!"
 
-    show sylvie green smile
+        m "Ummm... Will you..."
 
-    menu:
+        m "Will you be my artist for a visual novel?"
 
-        s "Sure, but what's a \"visual novel?\""
+        show sylvie green surprised
 
-        "It's a videogame.":
-            jump game
+        nvl clear
 
-        "It's an interactive book.":
-            jump book
+        "Silence."
 
+        "She looks so shocked that I begin to fear the worst. But then..."
 
-label game:
-    
-    nvl clear
+        show sylvie green smile
 
-    m "It's a kind of videogame you can play on your computer or a console."
+        menu:
 
-    m "Visual novels tell a story with pictures and music."
+            s "Sure, but what's a \"visual novel?\""
 
-    m "Sometimes, you also get to make choices that affect the outcome of the story."
+            "It's a videogame.":
+                jump game
 
-    s "So it's like those choose-your-adventure books?"
+            "It's an interactive book.":
+                jump book
 
-    m "Exactly! I've got lots of different ideas that I think would work."
 
-    m "And I thought maybe you could help me...since I know how you like to draw."
+    label game:
 
-    m "It'd be hard for me to make a visual novel alone."
+        nvl clear
 
-    show sylvie green normal
+        m "It's a kind of videogame you can play on your computer or a console."
 
-    s "Well, sure! I can try. I just hope I don't disappoint you."
+        m "Visual novels tell a story with pictures and music."
 
-    m "You know you could never disappoint me, Sylvie."
+        m "Sometimes, you also get to make choices that affect the outcome of the story."
 
-    jump marry
+        s "So it's like those choose-your-adventure books?"
 
+        m "Exactly! I've got lots of different ideas that I think would work."
 
-label book:
-    
-    nvl clear
+        m "And I thought maybe you could help me...since I know how you like to draw."
 
-    $ book = True
+        m "It'd be hard for me to make a visual novel alone."
 
-    m "It's like an interactive book that you can read on a computer or a console."
+        show sylvie green normal
 
-    show sylvie green surprised
+        s "Well, sure! I can try. I just hope I don't disappoint you."
 
-    s "Interactive?"
+        m "You know you could never disappoint me, Sylvie."
 
-    m "You can make choices that lead to different events and endings in the story."
+        jump marry
 
-    s "So where does the \"visual\" part come in?"
 
-    m "Visual novels have pictures and even music, sound effects, and sometimes voice acting to go along with the text."
+    label book:
 
-    show sylvie green smile
+        nvl clear
 
-    s "I see! That certainly sounds like fun. I actually used to make webcomics way back when, so I've got lots of story ideas."
+        $ book = True
 
-    m "That's great! So...would you be interested in working with me as an artist?"
+        m "It's like an interactive book that you can read on a computer or a console."
 
-    s "I'd love to!"
+        show sylvie green surprised
 
-    jump marry
+        s "Interactive?"
 
-label marry:
-    
-    window hide
-    nvl clear
+        m "You can make choices that lead to different events and endings in the story."
 
-    scene black
-    with dissolve
+        s "So where does the \"visual\" part come in?"
 
-    "And so, we become a visual novel creating duo."
-    
-    nvl clear
+        m "Visual novels have pictures and even music, sound effects, and sometimes voice acting to go along with the text."
 
-    scene bg club
-    with dissolve
-    window show
+        show sylvie green smile
 
-    "Over the years, we make lots of games and have a lot of fun making them."
+        s "I see! That certainly sounds like fun. I actually used to make webcomics way back when, so I've got lots of story ideas."
 
-    if book:
+        m "That's great! So...would you be interested in working with me as an artist?"
 
-        "Our first game is based on one of Sylvie's ideas, but afterwards I get to come up with stories of my own, too."
+        s "I'd love to!"
 
-    "We take turns coming up with stories and characters and support each other to make some great games!"
+        jump marry
 
-    "And one day..."
-    
-    window hide
-    nvl clear
+    label marry:
 
-    show sylvie blue normal
-    with dissolve
-    window show
+        window hide
+        nvl clear
 
-    s "Hey..."
+        scene black
+        with dissolve
 
-    m "Yes?"
+        "And so, we become a visual novel creating duo."
 
-    show sylvie blue giggle
+        nvl clear
 
-    s "Will you marry me?"
+        scene bg club
+        with dissolve
+        window show
 
-    m "What? Where did this come from?"
+        "Over the years, we make lots of games and have a lot of fun making them."
 
-    show sylvie blue surprised
+        if book:
 
-    s "Come on, how long have we been dating?"
+            "Our first game is based on one of Sylvie's ideas, but afterwards I get to come up with stories of my own, too."
 
-    m "A while..."
+        "We take turns coming up with stories and characters and support each other to make some great games!"
 
-    show sylvie blue smile
+        "And one day..."
 
-    s "These last few years we've been making visual novels together, spending time together, helping each other..."
+        window hide
+        nvl clear
 
-    s "I've gotten to know you and care about you better than anyone else. And I think the same goes for you, right?"
+        show sylvie blue normal
+        with dissolve
+        window show
 
-    m "Sylvie..."
+        s "Hey..."
 
-    show sylvie blue giggle
+        m "Yes?"
 
-    s "But I know you're the indecisive type. If I held back, who knows when you'd propose?"
+        show sylvie blue giggle
 
-    nvl clear
-    show sylvie blue normal
+        s "Will you marry me?"
 
-    s "So will you marry me?"
+        m "What? Where did this come from?"
 
-    m "Of course I will! I've actually been meaning to propose, honest!"
+        show sylvie blue surprised
 
-    s "I know, I know."
+        s "Come on, how long have we been dating?"
 
-    m "I guess... I was too worried about timing. I wanted to ask the right question at the right time."
+        m "A while..."
 
-    show sylvie blue giggle
+        show sylvie blue smile
 
-    s "You worry too much. If only this were a visual novel and I could pick an option to give you more courage!"
+        s "These last few years we've been making visual novels together, spending time together, helping each other..."
 
-    nvl clear
-    window hide
-    scene black
-    with dissolve
+        s "I've gotten to know you and care about you better than anyone else. And I think the same goes for you, right?"
 
-    "We get married shortly after that."
+        m "Sylvie..."
 
-    "Our visual novel duo lives on even after we're married...and I try my best to be more decisive."
+        show sylvie blue giggle
 
-    "Together, we live happily ever after even now."
+        s "But I know you're the indecisive type. If I held back, who knows when you'd propose?"
 
-    "{b}Good Ending{/b}."
+        nvl clear
+        show sylvie blue normal
 
-    return
+        s "So will you marry me?"
 
-label later:
+        m "Of course I will! I've actually been meaning to propose, honest!"
 
-    "I can't get up the nerve to ask right now. With a gulp, I decide to ask her later."
+        s "I know, I know."
 
-    nvl clear
-    window hide
-    
-    scene black
-    with dissolve
+        m "I guess... I was too worried about timing. I wanted to ask the right question at the right time."
 
-    "But I'm an indecisive person."
+        show sylvie blue giggle
 
-    "I couldn't ask her that day and I end up never being able to ask her."
+        s "You worry too much. If only this were a visual novel and I could pick an option to give you more courage!"
 
-    "I guess I'll never know the answer to my question now..."
+        nvl clear
+        window hide
+        scene black
+        with dissolve
 
-    "{b}Bad Ending{/b}."
+        "We get married shortly after that."
 
-    return
+        "Our visual novel duo lives on even after we're married...and I try my best to be more decisive."
+
+        "Together, we live happily ever after even now."
+
+        "{b}Good Ending{/b}."
+
+        return
+
+    label later:
+
+        "I can't get up the nerve to ask right now. With a gulp, I decide to ask her later."
+
+        nvl clear
+        window hide
+
+        scene black
+        with dissolve
+
+        "But I'm an indecisive person."
+
+        "I couldn't ask her that day and I end up never being able to ask her."
+
+        "I guess I'll never know the answer to my question now..."
+
+        "{b}Bad Ending{/b}."
+
+        return
 
