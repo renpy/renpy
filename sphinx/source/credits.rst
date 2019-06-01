@@ -21,6 +21,7 @@ the omission in future versions.
 * Alexandre Tranchant
 * Andy_kl
 * Apricotorange
+* Arda Güler
 * Arowana-vx
 * Asfdfdfd
 * Auro-Cyanide
@@ -77,12 +78,14 @@ the omission in future versions.
 * Jake Staines
 * James Broadhead
 * James Pearson Hughes
+* Jan Beich
 * Javimat
 * Joshua Fehler
 * Kalawore
 * Kathryn
 * Kevin Turner
 * Kinsman
+* Kobaltcore
 * Koichi "vbkaisetsu" Akabe
 * Konstantin Mozheyko
 * Konstantin Nikolayev
@@ -116,6 +119,7 @@ the omission in future versions.
 * Pavel Langwell
 * Peter DeVita
 * Philat
+* Pionere
 * Piroshki
 * Pratomo Asta Nugraha
 * Project Gardares
