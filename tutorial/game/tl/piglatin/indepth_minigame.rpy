@@ -85,19 +85,19 @@ translate piglatin pong_done_715c7b12:
 
 translate piglatin strings:
 
-    # indepth_minigame.rpy:198
+    # game/indepth_minigame.rpy:198
     old "Player"
     new "Layerpay"
 
-    # indepth_minigame.rpy:211
+    # game/indepth_minigame.rpy:211
     old "Click to Begin"
     new "Lickcay otay Eginbay"
 
-    # indepth_minigame.rpy:255
+    # game/indepth_minigame.rpy:255
     old "Sure."
     new "Uresay."
 
-    # indepth_minigame.rpy:255
+    # game/indepth_minigame.rpy:255
     old "No thanks."
     new "Onay hankstay."
 

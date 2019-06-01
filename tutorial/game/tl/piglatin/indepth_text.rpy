@@ -169,11 +169,11 @@ translate piglatin after_a_label_fb106a95:
 
 translate piglatin strings:
 
-    # indepth_text.rpy:115
+    # game/indepth_text.rpy:115
     old "{i}variable value{/i}"
     new "{i}ariablevay aluevay{/i}"
 
-    # indepth_text.rpy:124
+    # game/indepth_text.rpy:124
     old "translatable text"
     new "anslatabletray exttay"
 

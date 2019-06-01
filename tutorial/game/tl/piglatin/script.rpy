@@ -49,131 +49,131 @@ translate piglatin end_a634d396:
 
 translate piglatin strings:
 
-    # script.rpy:11
+    # game/script.rpy:11
     old "Eileen"
     new "Ileeneay"
 
-    # script.rpy:56
+    # game/script.rpy:56
     old "Quickstart"
     new "Uickstartqay"
 
-    # script.rpy:58
+    # game/script.rpy:58
     old "Player Experience"
     new "Layerpay Xperienceeay"
 
-    # script.rpy:59
+    # game/script.rpy:59
     old "Creating a New Game"
     new "Reatingcay aay Ewnay Amegay"
 
-    # script.rpy:60
+    # game/script.rpy:60
     old "Writing Dialogue"
     new "Ritingway Ialogueday"
 
-    # script.rpy:61
+    # game/script.rpy:61
     old "Adding Images"
     new "Ddingaay Magesiay"
 
-    # script.rpy:62
+    # game/script.rpy:62
     old "Positioning Images"
     new "Ositioningpay Magesiay"
 
-    # script.rpy:63
+    # game/script.rpy:63
     old "Transitions"
     new "Ransitionstay"
 
-    # script.rpy:64
+    # game/script.rpy:64
     old "Music and Sound Effects"
     new "Usicmay anday Oundsay Ffectseay"
 
-    # script.rpy:65
+    # game/script.rpy:65
     old "Choices and Python"
     new "Hoicescay anday Ythonpay"
 
-    # script.rpy:66
+    # game/script.rpy:66
     old "Input and Interpolation"
     new "Nputiay anday Nterpolationiay"
 
-    # script.rpy:67
+    # game/script.rpy:67
     old "Video Playback"
     new "Ideovay Laybackpay"
 
-    # script.rpy:68
+    # game/script.rpy:68
     old "NVL Mode"
     new "Vlnay Odemay"
 
-    # script.rpy:69
+    # game/script.rpy:69
     old "Tools and the Interactive Director"
     new "Oolstay anday hetay Nteractiveiay Irectorday"
 
-    # script.rpy:70
+    # game/script.rpy:70
     old "Building Distributions"
     new "Uildingbay Istributionsday"
 
-    # script.rpy:72
+    # game/script.rpy:72
     old "In Depth"
     new "Niay Epthday"
 
-    # script.rpy:74
+    # game/script.rpy:74
     old "Text Tags, Escapes, and Interpolation"
     new "Exttay Agstay, Scapeseay, anday Nterpolationiay"
 
-    # script.rpy:75
+    # game/script.rpy:75
     old "Character Objects"
     new "Haractercay Bjectsoay"
 
-    # script.rpy:76
+    # game/script.rpy:76
     old "Simple Displayables"
     new "Implesay Isplayablesday"
 
-    # script.rpy:77
+    # game/script.rpy:77
     old "Transition Gallery"
     new "Ransitiontay Allerygay"
 
-    # script.rpy:80
+    # game/script.rpy:80
     old "Position Properties"
     new "Ositionpay Ropertiespay"
 
-    # script.rpy:83
+    # game/script.rpy:83
     old "Transforms and Animation"
     new "Ransformstay anday Nimationaay"
 
-    # script.rpy:84
+    # game/script.rpy:84
     old "Transform Properties"
     new "Ransformtay Ropertiespay"
 
-    # script.rpy:86
+    # game/script.rpy:86
     old "GUI Customization"
     new "Uigay Ustomizationcay"
 
-    # script.rpy:87
+    # game/script.rpy:87
     old "Styles and Style Properties"
     new "Tylessay anday Tylesay Ropertiespay"
 
-    # script.rpy:88
+    # game/script.rpy:88
     old "Screen Basics"
     new "Creensay Asicsbay"
 
-    # script.rpy:89
+    # game/script.rpy:89
     old "Screen Displayables"
     new "Creensay Isplayablesday"
 
-    # script.rpy:91
+    # game/script.rpy:91
     old "Minigames and CDDs"
     new "Inigamesmay anday Ddscay"
 
-    # script.rpy:92
+    # game/script.rpy:92
     old "Translations"
     new "Ranslationstay"
 
-    # script.rpy:129
+    # game/script.rpy:129
     old "That's enough for now."
     new "Hattay'say enoughay orfay ownay."
 
-    # script.rpy:168
+    # game/script.rpy:168
     old "What would you like to see?"
     new "Hatway ouldway ouyay ikelay otay eesay?"
 
-    # script.rpy:170
+    # game/script.rpy:170
     old "Is there anything else you'd like to see?"
     new "Siay heretay anythingay elseay ouyay'day ikelay otay eesay?"
 

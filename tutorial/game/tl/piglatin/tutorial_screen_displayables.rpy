@@ -643,123 +643,123 @@ translate piglatin viewport_displayables_71fa0b8f:
 
 translate piglatin strings:
 
-    # tutorial_screen_displayables.rpy:9
+    # game/tutorial_screen_displayables.rpy:9
     old "Common properties all displayables share."
     new "Ommoncay ropertiespay allay isplayablesday areshay."
 
-    # tutorial_screen_displayables.rpy:9
+    # game/tutorial_screen_displayables.rpy:9
     old "Adding images and other displayables."
     new "Ddingaay imagesay anday otheray isplayablesday."
 
-    # tutorial_screen_displayables.rpy:9
+    # game/tutorial_screen_displayables.rpy:9
     old "Text."
     new "Exttay."
 
-    # tutorial_screen_displayables.rpy:9
+    # game/tutorial_screen_displayables.rpy:9
     old "Boxes and other layouts."
     new "Oxesbay anday otheray ayoutslay."
 
-    # tutorial_screen_displayables.rpy:9
+    # game/tutorial_screen_displayables.rpy:9
     old "Windows and frames."
     new "Indowsway anday amesfray."
 
-    # tutorial_screen_displayables.rpy:9
+    # game/tutorial_screen_displayables.rpy:9
     old "Buttons."
     new "Uttonsbay."
 
-    # tutorial_screen_displayables.rpy:9
+    # game/tutorial_screen_displayables.rpy:9
     old "Bars."
     new "Arsbay."
 
-    # tutorial_screen_displayables.rpy:9
+    # game/tutorial_screen_displayables.rpy:9
     old "Viewports."
     new "Iewportsvay."
 
-    # tutorial_screen_displayables.rpy:9
+    # game/tutorial_screen_displayables.rpy:9
     old "Imagemaps."
     new "Magemapsiay."
 
-    # tutorial_screen_displayables.rpy:9
+    # game/tutorial_screen_displayables.rpy:9
     old "That's all for now."
     new "Hattay'say allay orfay ownay."
 
-    # tutorial_screen_displayables.rpy:55
+    # game/tutorial_screen_displayables.rpy:55
     old "This uses position properties."
     new "Histay usesay ositionpay ropertiespay."
 
-    # tutorial_screen_displayables.rpy:63
+    # game/tutorial_screen_displayables.rpy:63
     old "And the world turned upside down..."
     new "Ndaay hetay orldway urnedtay upsideay ownday..."
 
-    # tutorial_screen_displayables.rpy:115
+    # game/tutorial_screen_displayables.rpy:115
     old "Flight pressure in tanks."
     new "Lightfay ressurepay inay ankstay."
 
-    # tutorial_screen_displayables.rpy:116
+    # game/tutorial_screen_displayables.rpy:116
     old "On internal power."
     new "Noay internalay owerpay."
 
-    # tutorial_screen_displayables.rpy:117
+    # game/tutorial_screen_displayables.rpy:117
     old "Launch enabled."
     new "Aunchlay enableday."
 
-    # tutorial_screen_displayables.rpy:118
+    # game/tutorial_screen_displayables.rpy:118
     old "Liftoff!"
     new "Iftofflay!"
 
-    # tutorial_screen_displayables.rpy:232
+    # game/tutorial_screen_displayables.rpy:232
     old "The answer is [answer]."
     new "Hetay answeray isay [answer]."
 
-    # tutorial_screen_displayables.rpy:244
+    # game/tutorial_screen_displayables.rpy:244
     old "Text tags {color=#c8ffc8}work{/color} in screens."
     new "Exttay agstay {color=#c8ffc8}orkway{/color} inay creenssay."
 
-    # tutorial_screen_displayables.rpy:336
+    # game/tutorial_screen_displayables.rpy:336
     old "Bigger"
     new "Iggerbay"
 
-    # tutorial_screen_displayables.rpy:401
+    # game/tutorial_screen_displayables.rpy:401
     old "This is a screen."
     new "Histay isay aay creensay."
 
-    # tutorial_screen_displayables.rpy:402
+    # game/tutorial_screen_displayables.rpy:402
     old "Okay"
     new "Kayoay"
 
-    # tutorial_screen_displayables.rpy:440
+    # game/tutorial_screen_displayables.rpy:440
     old "You clicked the button."
     new "Ouyay ickedclay hetay uttonbay."
 
-    # tutorial_screen_displayables.rpy:441
+    # game/tutorial_screen_displayables.rpy:441
     old "Click me."
     new "Lickcay emay."
 
-    # tutorial_screen_displayables.rpy:453
+    # game/tutorial_screen_displayables.rpy:453
     old "You hovered the button."
     new "Ouyay overedhay hetay uttonbay."
 
-    # tutorial_screen_displayables.rpy:454
+    # game/tutorial_screen_displayables.rpy:454
     old "You unhovered the button."
     new "Ouyay unhovereday hetay uttonbay."
 
-    # tutorial_screen_displayables.rpy:470
+    # game/tutorial_screen_displayables.rpy:470
     old "Heal"
     new "Ealhay"
 
-    # tutorial_screen_displayables.rpy:479
+    # game/tutorial_screen_displayables.rpy:479
     old "This is a textbutton."
     new "Histay isay aay extbuttontay."
 
-    # tutorial_screen_displayables.rpy:539
+    # game/tutorial_screen_displayables.rpy:539
     old "Or me."
     new "Roay emay."
 
-    # tutorial_screen_displayables.rpy:541
+    # game/tutorial_screen_displayables.rpy:541
     old "You clicked the other button."
     new "Ouyay ickedclay hetay otheray uttonbay."
 
-    # tutorial_screen_displayables.rpy:880
+    # game/tutorial_screen_displayables.rpy:880
     old "This text is wider than the viewport."
     new "Histay exttay isay iderway hantay hetay iewportvay."
 

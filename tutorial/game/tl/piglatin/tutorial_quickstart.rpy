@@ -618,10 +618,10 @@ translate piglatin tutorial_music_3555b640:
     e "Hetay oundssay hemselvestay areay oredstay inay audioay ilesfay. Enray'Ypay upportssay hetay Pusoay, Ggoay Orbisvay, anday p3may ormatsfay."
 
 # game/tutorial_quickstart.rpy:449
-translate piglatin tutorial_music_a776b6ad:
+translate piglatin tutorial_music_a2ffbe9b:
 
     # e "Let's check out some of the commands that can affect the music channel."
-    e "Etlay'say eckchay outay omesay ofay hetay ommandscay hattay ancay effectay hetay usicmay annelchay."
+    e "Etlay'say eckchay outay omesay ofay hetay ommandscay hattay ancay affectay hetay usicmay annelchay."
 
 # game/tutorial_quickstart.rpy:454
 translate piglatin tutorial_music_8b606a55:
@@ -841,23 +841,23 @@ translate piglatin tutorial_input_0548d3e2:
 
 translate piglatin strings:
 
-    # tutorial_quickstart.rpy:2
+    # game/tutorial_quickstart.rpy:2
     old "Lucy"
     new "Ucylay"
 
-    # tutorial_quickstart.rpy:497
+    # game/tutorial_quickstart.rpy:497
     old "Yes, I do."
     new "Esyay, Iay oday."
 
-    # tutorial_quickstart.rpy:497
+    # game/tutorial_quickstart.rpy:497
     old "No, I don't."
     new "Onay, Iay onday'tay."
 
-    # tutorial_quickstart.rpy:589
+    # game/tutorial_quickstart.rpy:589
     old "What's your name?"
     new "Hatway'say ouryay amenay?"
 
-    # tutorial_quickstart.rpy:591
+    # game/tutorial_quickstart.rpy:591
     old "Guy Shy"
     new "Uygay Hysay"
 

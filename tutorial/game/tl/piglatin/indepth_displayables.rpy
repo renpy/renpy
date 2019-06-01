@@ -103,7 +103,7 @@ translate piglatin simple_displayables_de555a92:
 
 translate piglatin strings:
 
-    # indepth_displayables.rpy:67
+    # game/indepth_displayables.rpy:67
     old "This is a text displayable."
     new "Histay isay aay exttay isplayableday."
 

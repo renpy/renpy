@@ -369,7 +369,7 @@ translate piglatin style_text_e7204a95:
 translate piglatin style_text_a5316e4c:
 
     # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When True, characters will be shifted a bit so the Text has the same relative spacing."
-    e "Hetay adjust_spacingay ropertypay isay aay eryvay ubtlesay oneay, hattay onlyay attersmay henway aay ayerplay esizesray hetay indowway. Henway uetray, aracterschay illway ebay iftedshay aay itbay osay hetay Exttay ashay hetay amesay elativeray pacingsay."
+    e "Hetay adjust_spacingay ropertypay isay aay eryvay ubtlesay oneay, hattay onlyay attersmay henway aay ayerplay esizesray hetay indowway. Henway Ruetay, aracterschay illway ebay iftedshay aay itbay osay hetay Exttay ashay hetay amesay elativeray pacingsay."
 
 # game/indepth_style.rpy:496
 translate piglatin style_text_605d4e4a:
@@ -497,205 +497,205 @@ translate piglatin style_button_02fa647e:
     # e "Finally, the focus_mask property applies to partially transparent buttons. When it's set to True, only areas of the button that aren't transparent cause a button to focus."
     e "Inallyfay, hetay ocus_maskfay ropertypay appliesay otay artiallypay ansparenttray uttonsbay. Henway itay'say etsay otay Ruetay, onlyay areasay ofay hetay uttonbay hattay arenay'tay ansparenttray ausecay aay uttonbay otay ocusfay."
 
-# game/indepth_style.rpy:759
+# game/indepth_style.rpy:757
 translate piglatin style_bar_414d454a:
 
     # e "To demonstrate styles, let me first show two of the images we'll be using. This is the image we're using for parts of the bar that are empty."
     e "Otay emonstrateday ylesstay, etlay emay irstfay owshay wotay ofay hetay imagesay eway'llay ebay usingay. Histay isay hetay imageay eway'eray usingay orfay artspay ofay hetay arbay hattay areay emptyay."
 
-# game/indepth_style.rpy:763
+# game/indepth_style.rpy:761
 translate piglatin style_bar_9422b7b0:
 
     # e "And here's what we use for parts of the bar that are full."
     e "Ndaay erehay'say hatway eway useay orfay artspay ofay hetay arbay hattay areay ullfay."
 
-# game/indepth_style.rpy:775
+# game/indepth_style.rpy:773
 translate piglatin style_bar_8ae6a14b:
 
     # e "The left_bar and right_bar style properties, and their hover variants, give displayables for the left and right side of the bar. By default, the value is shown on the left."
     e "Hetay eft_barlay anday ight_barray ylestay ropertiespay, anday heirtay overhay ariantsvay, ivegay isplayablesday orfay hetay eftlay anday ightray idesay ofay hetay arbay. Ybay efaultday, hetay aluevay isay ownshay onay hetay eftlay."
 
-# game/indepth_style.rpy:777
+# game/indepth_style.rpy:775
 translate piglatin style_bar_7f0f50e5:
 
     # e "Also by default, both the left and right displayables are rendered at the full width of the bar, and then cropped to the appropriate size."
     e "Lsoaay ybay efaultday, othbay hetay eftlay anday ightray isplayablesday areay enderedray atay hetay ullfay idthway ofay hetay arbay, anday hentay roppedcay otay hetay appropriateay izesay."
 
-# game/indepth_style.rpy:779
+# game/indepth_style.rpy:777
 translate piglatin style_bar_9ef4f62f:
 
     # e "We give the bar the ysize property to set how tall it is. We could also give it xsize to choose how wide, but here it's limited by the width of the frame it's in."
     e "Eway ivegay hetay arbay hetay sizeyay ropertypay otay etsay owhay alltay itay isay. Eway ouldcay alsoay ivegay itay sizexay otay oosechay owhay ideway, utbay erehay itay'say imitedlay ybay hetay idthway ofay hetay amefray itay'say inay."
 
-# game/indepth_style.rpy:792
+# game/indepth_style.rpy:790
 translate piglatin style_bar_d4c29710:
 
     # e "When the bar_invert style property is True, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
-    e "Henway hetay ar_invertbay ylestay ropertypay isay uetray, hetay arbay aluevay isay isplayedday onay hetay ightray idesay ofay hetay arbay. Hetay eft_barlay anday ight_barray isplayablesday ightmay alsoay eednay otay ebay wappedsay."
+    e "Henway hetay ar_invertbay ylestay ropertypay isay Ruetay, hetay arbay aluevay isay isplayedday onay hetay ightray idesay ofay hetay arbay. Hetay eft_barlay anday ight_barray isplayablesday ightmay alsoay eednay otay ebay wappedsay."
 
-# game/indepth_style.rpy:806
+# game/indepth_style.rpy:804
 translate piglatin style_bar_cca67222:
 
     # e "The bar_resizing style property causes the bar images to be resized to represent the value, rather than being rendered at full size and cropped."
     e "Hetay ar_resizingbay ylestay ropertypay ausescay hetay arbay imagesay otay ebay esizedray otay epresentray hetay aluevay, atherray hantay eingbay enderedray atay ullfay izesay anday roppedcay."
 
-# game/indepth_style.rpy:819
+# game/indepth_style.rpy:817
 translate piglatin style_bar_7d361bac:
 
     # e "The thumb style property gives a thumb image, that's placed based on the bars value. In the case of a scrollbar, it's resized if possible."
     e "Hetay humbtay ylestay ropertypay ivesgay aay humbtay imageay, hattay'say acedplay asedbay onay hetay arsbay aluevay. Niay hetay asecay ofay aay crollbarsay, itay'say esizedray ifay ossiblepay."
 
-# game/indepth_style.rpy:821
+# game/indepth_style.rpy:819
 translate piglatin style_bar_b6dfb61b:
 
     # e "Here, we use it with the base_bar style property, which sets both bar images to the same displayable."
     e "Erehay, eway useay itay ithway hetay ase_barbay ylestay ropertypay, hichway etssay othbay arbay imagesay otay hetay amesay isplayableday."
 
-# game/indepth_style.rpy:836
+# game/indepth_style.rpy:834
 translate piglatin style_bar_996466ad:
 
     # e "The left_gutter and right_gutter properties set a gutter on the left or right size of the bar. The gutter is space the bar can't be dragged into, that can be used for borders."
     e "Hetay eft_gutterlay anday ight_gutterray ropertiespay etsay aay uttergay onay hetay eftlay oray ightray izesay ofay hetay arbay. Hetay uttergay isay pacesay hetay arbay ancay'tay ebay raggedday intoay, hattay ancay ebay useday orfay ordersbay."
 
-# game/indepth_style.rpy:851
+# game/indepth_style.rpy:849
 translate piglatin style_bar_fa41a83c:
 
     # e "The bar_vertical style property displays a vertically oriented bar. All of the other properties change names - left_bar becomes top_bar, while right_bar becomes bottom_bar."
     e "Hetay ar_verticalbay ylestay ropertypay isplaysday aay erticallyvay orienteday arbay. Llaay ofay hetay otheray ropertiespay angechay amesnay - eft_barlay ecomesbay op_bartay, hileway ight_barray ecomesbay ottom_barbay."
 
-# game/indepth_style.rpy:856
+# game/indepth_style.rpy:854
 translate piglatin style_bar_5d33c5dc:
 
     # e "Finally, there's one style we can't show here, and it's unscrollable. It controls what happens when a scrollbar can't be moved at all."
     e "Inallyfay, heretay'say oneay ylestay eway ancay'tay owshay erehay, anday itay'say unscrollableay. Tiay ontrolscay hatway appenshay henway aay crollbarsay ancay'tay ebay ovedmay atay allay."
 
-# game/indepth_style.rpy:858
+# game/indepth_style.rpy:856
 translate piglatin style_bar_e8e32280:
 
     # e "By default, it's shown. But if unscrollable is 'insensitive', the bar becomes insensitive. If it's 'hide', the bar is hidden, but still takes up space."
     e "Ybay efaultday, itay'say ownshay. Utbay ifay unscrollableay isay 'insensitiveay', hetay arbay ecomesbay insensitiveay. Fiay itay'say 'idehay', hetay arbay isay iddenhay, utbay illstay akestay upay pacesay."
 
-# game/indepth_style.rpy:862
+# game/indepth_style.rpy:860
 translate piglatin style_bar_f1292000:
 
     # e "That's it for the bar properties. By using them, a creator can customize bars, scrollbars, and sliders."
     e "Hattay'say itay orfay hetay arbay ropertiespay. Ybay usingay hemtay, aay reatorcay ancay ustomizecay arsbay, crollbarssay, anday idersslay."
 
-# game/indepth_style.rpy:961
+# game/indepth_style.rpy:959
 translate piglatin style_box_5fd535f4:
 
     # e "The hbox displayable is used to lay its children out horizontally. By default, there's no spacing between children, so they run together."
     e "Hetay boxhay isplayableday isay useday otay aylay itsay ildrenchay outay orizontallyhay. Ybay efaultday, heretay'say onay pacingsay etweenbay ildrenchay, osay heytay unray ogethertay."
 
-# game/indepth_style.rpy:967
+# game/indepth_style.rpy:965
 translate piglatin style_box_0111e5dc:
 
     # e "Similarly, the vbox displayable is used to lay its children out vertically. Both support style properties that control placement."
     e "Imilarlysay, hetay boxvay isplayableday isay useday otay aylay itsay ildrenchay outay erticallyvay. Othbay upportsay ylestay ropertiespay hattay ontrolcay acementplay."
 
-# game/indepth_style.rpy:972
+# game/indepth_style.rpy:970
 translate piglatin style_box_5a44717b:
 
     # e "To make the size of the box displayable obvious, I'll add a highlight to the box itself, and not the frame containing it."
     e "Otay akemay hetay izesay ofay hetay oxbay isplayableday obviousay, Iay'llay adday aay ighlighthay otay hetay oxbay itselfay, anday otnay hetay amefray ontainingcay itay."
 
-# game/indepth_style.rpy:980
+# game/indepth_style.rpy:978
 translate piglatin style_box_239e7a8f:
 
     # e "Boxes support the xfill and yfill style properties. These properties make a box expand to fill the available space, rather than the space of the largest child."
     e "Oxesbay upportsay hetay fillxay anday fillyay ylestay ropertiespay. Hesetay ropertiespay akemay aay oxbay expanday otay illfay hetay availableay pacesay, atherray hantay hetay pacesay ofay hetay argestlay ildchay."
 
-# game/indepth_style.rpy:990
+# game/indepth_style.rpy:988
 translate piglatin style_box_e513c946:
 
     # e "The spacing style property takes a value in pixels, and adds that much spacing between each child of the box."
     e "Hetay pacingsay ylestay ropertypay akestay aay aluevay inay ixelspay, anday addsay hattay uchmay pacingsay etweenbay eachay ildchay ofay hetay oxbay."
 
-# game/indepth_style.rpy:1000
+# game/indepth_style.rpy:998
 translate piglatin style_box_6ae4f94d:
 
     # e "The first_spacing style property is similar, but it only adds space between the first and second children. This is useful when the first child is a title that needs different spacing."
     e "Hetay irst_spacingfay ylestay ropertypay isay imilarsay, utbay itay onlyay addsay pacesay etweenbay hetay irstfay anday econdsay ildrenchay. Histay isay usefulay henway hetay irstfay ildchay isay aay itletay hattay eedsnay ifferentday pacingsay."
 
-# game/indepth_style.rpy:1010
+# game/indepth_style.rpy:1008
 translate piglatin style_box_0c518d9f:
 
     # e "The box_reverse style property reverses the order of entries in the box."
     e "Hetay ox_reversebay ylestay ropertypay eversesray hetay orderay ofay entriesay inay hetay oxbay."
 
-# game/indepth_style.rpy:1023
+# game/indepth_style.rpy:1021
 translate piglatin style_box_f73c1422:
 
     # e "We'll switch back to a horizontal box for our next example."
     e "Eway'llay witchsay ackbay otay aay orizontalhay oxbay orfay ouray extnay exampleay."
 
-# game/indepth_style.rpy:1033
+# game/indepth_style.rpy:1031
 translate piglatin style_box_285592bb:
 
     # e "The box_wrap style property fills the box with children until it's full, then starts again on the next line."
     e "Hetay ox_wrapbay ylestay ropertypay illsfay hetay oxbay ithway ildrenchay untilay itay'say ullfay, hentay artsstay againay onay hetay extnay inelay."
 
-# game/indepth_style.rpy:1046
+# game/indepth_style.rpy:1044
 translate piglatin style_box_a7637552:
 
     # e "Grids bring with them two more style properties. The xspacing and yspacing properties control spacing in the horizontal and vertical directions, respectively."
     e "Ridsgay ingbray ithway hemtay wotay oremay ylestay ropertiespay. Hetay spacingxay anday spacingyay ropertiespay ontrolcay pacingsay inay hetay orizontalhay anday erticalvay irectionsday, espectivelyray."
 
-# game/indepth_style.rpy:1053
+# game/indepth_style.rpy:1051
 translate piglatin style_box_4006f74b:
 
     # e "Lastly, we have the fixed layout. The fixed layout usually expands to fill all space, and shows its children from back to front."
     e "Astlylay, eway avehay hetay ixedfay ayoutlay. Hetay ixedfay ayoutlay usuallyay expandsay otay illfay allay pacesay, anday owsshay itsay ildrenchay omfray ackbay otay ontfray."
 
-# game/indepth_style.rpy:1055
+# game/indepth_style.rpy:1053
 translate piglatin style_box_4a2866f0:
 
     # e "But of course, we have some style properties that can change that."
     e "Utbay ofay oursecay, eway avehay omesay ylestay ropertiespay hattay ancay angechay hattay."
 
-# game/indepth_style.rpy:1064
+# game/indepth_style.rpy:1062
 translate piglatin style_box_66e042c4:
 
     # e "When the xfit style property is True, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
-    e "Henway hetay fitxay ylestay ropertypay isay uetray, hetay ixedfay ayslay outay allay itsay ildrenchay asay ifay itay asway ullfay izesay, anday hentay rinksshay inay idthway otay itfay hemtay. Hetay fityay ylestay orksway hetay amesay ayway, utbay inay eighthay."
+    e "Henway hetay fitxay ylestay ropertypay isay Ruetay, hetay ixedfay ayslay outay allay itsay ildrenchay asay ifay itay asway ullfay izesay, anday hentay rinksshay inay idthway otay itfay hemtay. Hetay fityay ylestay orksway hetay amesay ayway, utbay inay eighthay."
 
-# game/indepth_style.rpy:1072
+# game/indepth_style.rpy:1070
 translate piglatin style_box_6a593b10:
 
     # e "The order_reverse style property changes the order in which the children are shown. Instead of back-to-front, they're displayed front-to-back."
     e "Hetay order_reverseay ylestay ropertypay angeschay hetay orderay inay hichway hetay ildrenchay areay ownshay. Nsteadiay ofay ackbay-otay-ontfray, heytay'eray isplayedday ontfray-otay-ackbay."
 
-# game/indepth_style.rpy:1084
+# game/indepth_style.rpy:1082
 translate piglatin style_inspector_21bc0709:
 
     # e "Sometimes it's hard to figure out what style is being used for a particular displayable. The displayable inspector can help with that."
     e "Ometimessay itay'say ardhay otay igurefay outay hatway ylestay isay eingbay useday orfay aay articularpay isplayableday. Hetay isplayableday inspectoray ancay elphay ithway hattay."
 
-# game/indepth_style.rpy:1086
+# game/indepth_style.rpy:1084
 translate piglatin style_inspector_243c50f0:
 
     # e "To use it, place the mouse over a portion of the Ren'Py user interface, and hit shift+I. That's I for inspector."
     e "Otay useay itay, aceplay hetay ousemay overay aay ortionpay ofay hetay Enray'Ypay useray interfaceay, anday ithay iftshay+Iay. Hattay'say Iay orfay inspectoray."
 
-# game/indepth_style.rpy:1088
+# game/indepth_style.rpy:1086
 translate piglatin style_inspector_bcbdc396:
 
     # e "Ren'Py will pop up a list of displayables the mouse is over. Next to each is the name of the style that displayable uses."
     e "Enray'Ypay illway oppay upay aay istlay ofay isplayablesday hetay ousemay isay overay. Extnay otay eachay isay hetay amenay ofay hetay ylestay hattay isplayableday usesay."
 
-# game/indepth_style.rpy:1090
+# game/indepth_style.rpy:1088
 translate piglatin style_inspector_d981e5c8:
 
     # e "You can click on the name of the style to see where it gets its properties from."
     e "Ouyay ancay ickclay onay hetay amenay ofay hetay ylestay otay eesay hereway itay etsgay itsay ropertiespay omfray."
 
-# game/indepth_style.rpy:1092
+# game/indepth_style.rpy:1090
 translate piglatin style_inspector_ef46b86d:
 
     # e "By default, the inspector only shows interface elements like screens, and not images. Type shift+alt+I if you'd like to see images as well."
     e "Ybay efaultday, hetay inspectoray onlyay owsshay interfaceay elementsay ikelay creenssay, anday otnay imagesay. Ypetay iftshay+altay+Iay ifay ouyay'day ikelay otay eesay imagesay asay ellway."
 
-# game/indepth_style.rpy:1094
+# game/indepth_style.rpy:1092
 translate piglatin style_inspector_b59c6b69:
 
     # e "You can try the inspector right now, by hovering this text and hitting shift+I."
@@ -703,107 +703,107 @@ translate piglatin style_inspector_b59c6b69:
 
 translate piglatin strings:
 
-    # indepth_style.rpy:20
+    # game/indepth_style.rpy:20
     old "Button 1"
     new "Uttonbay 1ay"
 
-    # indepth_style.rpy:22
+    # game/indepth_style.rpy:22
     old "Button 2"
     new "Uttonbay 2ay"
 
-    # indepth_style.rpy:66
+    # game/indepth_style.rpy:66
     old "Style basics."
     new "Tylesay asicsbay."
 
-    # indepth_style.rpy:66
+    # game/indepth_style.rpy:66
     old "General style properties."
     new "Eneralgay ylestay ropertiespay."
 
-    # indepth_style.rpy:66
+    # game/indepth_style.rpy:66
     old "Text style properties."
     new "Exttay ylestay ropertiespay."
 
-    # indepth_style.rpy:66
+    # game/indepth_style.rpy:66
     old "Window and Button style properties."
     new "Indowway anday Uttonbay ylestay ropertiespay."
 
-    # indepth_style.rpy:66
+    # game/indepth_style.rpy:66
     old "Bar style properties."
     new "Arbay ylestay ropertiespay."
 
-    # indepth_style.rpy:66
+    # game/indepth_style.rpy:66
     old "Box, Grid, and Fixed style properties."
     new "Oxbay, Ridgay, anday Ixedfay ylestay ropertiespay."
 
-    # indepth_style.rpy:66
+    # game/indepth_style.rpy:66
     old "The Displayable Inspector."
     new "Hetay Isplayableday Nspectoriay."
 
-    # indepth_style.rpy:66
+    # game/indepth_style.rpy:66
     old "That's all I want to know."
     new "Hattay'say allay Iay antway otay nowkay."
 
-    # indepth_style.rpy:112
+    # game/indepth_style.rpy:112
     old "This text is colored green."
     new "Histay exttay isay oloredcay eengray."
 
-    # indepth_style.rpy:126
+    # game/indepth_style.rpy:126
     old "Danger"
     new "Angerday"
 
-    # indepth_style.rpy:142
+    # game/indepth_style.rpy:142
     old "This text is colored red."
     new "Histay exttay isay oloredcay edray."
 
-    # indepth_style.rpy:170
+    # game/indepth_style.rpy:170
     old "This text is colored blue."
     new "Histay exttay isay oloredcay ueblay."
 
-    # indepth_style.rpy:248
+    # game/indepth_style.rpy:248
     old "Orbiting Earth in the spaceship, I saw how beautiful our planet is.\n–Yuri Gagarin"
     new "Rbitingoay Artheay inay hetay paceshipsay, Iay awsay owhay eautifulbay ouray anetplay isay.\n–Uriyay Agaringay"
 
-    # indepth_style.rpy:303
+    # game/indepth_style.rpy:303
     old "\"Orbiting Earth in the spaceship, I saw how beautiful our planet is.\" Said by Yuri Gagarin."
     new "\"Rbitingoay Artheay inay hetay paceshipsay, Iay awsay owhay eautifulbay ouray anetplay isay.\" Aidsay ybay Uriyay Agaringay."
 
-    # indepth_style.rpy:326
+    # game/indepth_style.rpy:326
     old "Vertical"
     new "Erticalvay"
 
-    # indepth_style.rpy:329
+    # game/indepth_style.rpy:329
     old "Far better it is to dare mighty things, to win glorious triumphs, even though checkered by failure, than to rank with those poor spirits who neither enjoy nor suffer much, because they live in the gray twilight that knows not victory nor defeat.\n\n–Theodore Roosevelt"
     new "Arfay etterbay itay isay otay areday ightymay hingstay, otay inway oriousglay iumphstray, evenay houghtay eckeredchay ybay ailurefay, hantay otay ankray ithway hosetay oorpay piritssay howay eithernay enjoyay ornay uffersay uchmay, ecausebay heytay ivelay inay hetay aygray wilighttay hattay nowskay otnay ictoryvay ornay efeatday.\n\n–Heodoretay Ooseveltray"
 
-    # indepth_style.rpy:561
+    # game/indepth_style.rpy:561
     old "Top Choice"
     new "Optay Hoicecay"
 
-    # indepth_style.rpy:566
+    # game/indepth_style.rpy:566
     old "Bottom Choice"
     new "Ottombay Hoicecay"
 
-    # indepth_style.rpy:879
+    # game/indepth_style.rpy:877
     old "First Child"
     new "Irstfay Hildcay"
 
-    # indepth_style.rpy:880
+    # game/indepth_style.rpy:878
     old "Second Child"
     new "Econdsay Hildcay"
 
-    # indepth_style.rpy:881
+    # game/indepth_style.rpy:879
     old "Third Child"
     new "Hirdtay Hildcay"
 
-    # indepth_style.rpy:884
+    # game/indepth_style.rpy:882
     old "Fourth Child"
     new "Ourthfay Hildcay"
 
-    # indepth_style.rpy:885
+    # game/indepth_style.rpy:883
     old "Fifth Child"
     new "Ifthfay Hildcay"
 
-    # indepth_style.rpy:886
+    # game/indepth_style.rpy:884
     old "Sixth Child"
     new "Ixthsay Hildcay"
 

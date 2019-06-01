@@ -493,31 +493,31 @@ translate piglatin demo_alphadissolve_2e95917b:
 
 translate piglatin strings:
 
-    # indepth_transitions.rpy:58
+    # game/indepth_transitions.rpy:58
     old "Simple Transitions"
     new "Implesay Ransitionstay"
 
-    # indepth_transitions.rpy:58
+    # game/indepth_transitions.rpy:58
     old "ImageDissolve Transitions"
     new "Magedissolveiay Ransitionstay"
 
-    # indepth_transitions.rpy:58
+    # game/indepth_transitions.rpy:58
     old "MoveTransition Transitions"
     new "Ovetransitionmay Ransitionstay"
 
-    # indepth_transitions.rpy:58
+    # game/indepth_transitions.rpy:58
     old "CropMove Transitions"
     new "Ropmovecay Ransitionstay"
 
-    # indepth_transitions.rpy:58
+    # game/indepth_transitions.rpy:58
     old "PushMove Transitions"
     new "Ushmovepay Ransitionstay"
 
-    # indepth_transitions.rpy:58
+    # game/indepth_transitions.rpy:58
     old "AlphaDissolve Transitions"
     new "Lphadissolveaay Ransitionstay"
 
-    # indepth_transitions.rpy:58
+    # game/indepth_transitions.rpy:58
     old "How about something else?"
     new "Owhay aboutay omethingsay elseay?"
 
