@@ -854,10 +854,10 @@ class ADVCharacter(object):
             properties=self.properties,
             **self.show_args)
 
-    def resolve_say_attributes(self, mode, predict, attrs, wanted=[], remove=[], skip_trans=False):
+    def resolve_say_attributes(self, predict, attrs, wanted=[], remove=[]):
         """
         Deals with image attributes associated with the current say
-        statement.
+        statement. Returns True if an image is shown, None otherwise.
         """
 
         if not (attrs or wanted or remove):
@@ -894,26 +894,9 @@ class ADVCharacter(object):
 
             if predict:
                 images.predict_show(show_image)
-
             else:
-
-                if renpy.config.say_attribute_transition_callback_attrs:
-                    trans, layer = renpy.config.say_attribute_transition_callback(self.image_tag, new_image, mode)
-                else:
-                    trans, layer = renpy.config.say_attribute_transition_callback(self.image_tag, mode)
-
-                if not skip_trans:
-                    if (trans is not None) and (layer is not None):
-                        renpy.exports.with_statement(None)
-
                 renpy.exports.show(show_image)
-
-                if not skip_trans:
-                    if trans is not None:
-                        if layer is None:
-                            renpy.exports.with_statement(trans)
-                        else:
-                            renpy.exports.transition(trans, layer=layer)
+                return True
 
         else:
 
@@ -952,22 +935,53 @@ class ADVCharacter(object):
             if renpy.config.speaking_attribute is not None:
                 temporary_attrs.insert(0, renpy.config.speaking_attribute)
 
-        self.resolve_say_attributes("permanent", predicting, attrs, skip_trans=temporary_attrs)
+        images = renpy.game.context().images
+        before = images.get_attributes(None, self.image_tag)
+        mode = None
+
+        if self.resolve_say_attributes(predicting, attrs):
+            mode = 'permanent'
 
         # This is so late to give resolve_say_attributes time to do some
         # error handling.
         if not self.image_tag:
             return None
 
-        if not temporary_attrs:
-            return None
+        if temporary_attrs:
+            attrs = images.get_attributes(None, self.image_tag)
 
-        images = renpy.game.context().images
-        attrs = images.get_attributes(None, self.image_tag)
+            if self.resolve_say_attributes(predicting, temporary_attrs):
+                mode = 'hybrid' if mode else 'temporary'
 
-        self.resolve_say_attributes("temporary", predicting, temporary_attrs)
+        if mode:
+            after = images.get_attributes(None, self.image_tag)
+            self.handle_say_transition(mode, before, after)
 
-        return (attrs, images)
+        if temporary_attrs:
+            return (attrs, images)
+
+    def handle_say_transition(self, mode, before, after):
+
+        before = set(before)
+        after = set(after)
+
+        if before == after:
+            return
+
+        if renpy.config.say_attribute_transition_callback_attrs:
+            delta = (before, after)
+        else:
+            delta = ()
+
+        trans, layer = renpy.config.say_attribute_transition_callback(
+                self.image_tag, mode, *delta)
+
+        if trans is not None:
+            if layer is None:
+                renpy.exports.with_statement(trans)
+            else:
+                renpy.exports.with_statement(None)
+                renpy.exports.transition(trans, layer=layer)
 
     def restore_say_attributes(self, predicting, state, interact):
 
@@ -993,26 +1007,8 @@ class ADVCharacter(object):
         if images.showing(None, (self.image_tag,)):
 
             if not predicting:
-                new_image = images.apply_attributes(None, self.image_tag, image_with_attrs)
-
-                if renpy.config.say_attribute_transition_callback_attrs:
-                    trans, layer = renpy.config.say_attribute_transition_callback(self.image_tag, new_image, "restore")
-                else:
-                    trans, layer = renpy.config.say_attribute_transition_callback(self.image_tag, "restore")
-
-                if interact:
-                    if (trans is not None) and (layer is not None):
-                        renpy.exports.with_statement(None)
-
                 renpy.exports.show(image_with_attrs)
-
-                if interact:
-                    if trans is not None:
-                        if layer is None:
-                            renpy.exports.with_statement(trans)
-                        else:
-                            renpy.exports.transition(trans, layer=layer)
-
+                return True
             else:
                 images.predict_show(None, image_with_attrs)
 
@@ -1161,7 +1157,14 @@ class ADVCharacter(object):
 
             if (multiple is None) and interact:
                 renpy.store._side_image_attributes = old_side_image_attributes
-                self.restore_say_attributes(False, old_attr_state, interact)
+
+                if old_attr_state is not None:
+                    _, images = old_attr_state
+                    before = images.get_attributes(None, self.image_tag)
+
+                if self.restore_say_attributes(False, old_attr_state, interact):
+                    after = images.get_attributes(None, self.image_tag)
+                    self.handle_say_transition('restore', before, after)
 
     def predict(self, what):
 

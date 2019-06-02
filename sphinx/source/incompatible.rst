@@ -23,9 +23,15 @@ taken from the control string. To revert to the old fixed order, use::
 
     define config.keep_side_render_order = False
 
-The interface of :var:`config.say_attribute_transition_callback` has been
-changed in an incompatible way, to allow a the reason for the transition
-to be given.
+The interface of :var:`config.say_attribute_transition_callback` has
+been changed in an incompatible way, to allow the lists of old and new
+tags to be given. To revert to the old interface, use::
+
+    define config.say_attribute_transition_callback_attrs = False
+
+It's mode parameter has also been slightly changed, and will now return
+a value of ``hybrid`` when a hybrid ``permanent`` and ``temporary``
+attribute transition is occuring.
 
 .. _incompatible-7.2.2:
 
