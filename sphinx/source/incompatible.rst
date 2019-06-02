@@ -24,8 +24,8 @@ taken from the control string. To revert to the old fixed order, use::
     define config.keep_side_render_order = False
 
 The interface of :var:`config.say_attribute_transition_callback` has
-been changed in an incompatible way, to allow the lists of old and new
-tags to be given. To revert to the old interface, use::
+been changed in an incompatible way, to allow sets of old and new tags
+to be given. To revert to the old interface, use::
 
     define config.say_attribute_transition_callback_attrs = False
 
