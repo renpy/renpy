@@ -673,7 +673,7 @@ Occasionally Used
 
     This is called by :func:`renpy.notify` or :func:`Notify` with a
     single  `message` argument, to display the notification. The default
-    implementation is :funct:`renpy.display_notify`. This is intended
+    implementation is :func:`renpy.display_notify`. This is intended
     to allow creators to intercept notifications.
 
 .. var:: config.optimize_texture_bounds = False
