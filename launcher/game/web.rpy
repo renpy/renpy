@@ -147,7 +147,8 @@ screen web():
 
                             textbutton _("Build Web Application") action Jump("web_build")
                             textbutton _("Build and Open in Browser") action Jump("web_launch")
-                            textbutton _("Open without Build") action Jump("web_start")
+                            textbutton _("Open in Browser") action Jump("web_start")
+                            textbutton _("Open build directory") action Jump("open_build_directory")
 
                         add SPACER
 
@@ -209,6 +210,10 @@ label web_launch:
     $ launch_web()
     jump web
 
+label open_build_directory():
+    $ project.current.update_dump(True, gui=True)
+    $ OpenDirectory(get_web_destination(project.current))()
+    jump web
 
 label web_start:
     $ project.current.update_dump(True, gui=True)
