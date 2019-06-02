@@ -19,7 +19,7 @@ such changes only take effect when the GUI is regenerated.
 -----
 
 The order in which children of the ``side`` layout are drawn is now
-taken from the control string. To reverty to the old fixed order, use::
+taken from the control string. To revert to the old fixed order, use::
 
     define config.keep_side_render_order = False
 
