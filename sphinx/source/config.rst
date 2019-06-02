@@ -165,15 +165,19 @@ These control transitions between various screens.
     This is a function that return a transition to apply and a layer to
     apply it on
 
-    This should be a function that takes three arguments, the image tag
-    being shown, a tuple of tags describing the image being shown, and a
-    `mode` parameter that is one of:
+    This should be a function that takes four arguments, the image tag
+    being shown, a `mode` parameter, a `set` containing pre-transition tags
+    and a `set` containing post-transition tags. Where the value of the
+    `mode` paramater is one of:
 
     * "permanent", for permanent attribute change (one that lasts longer
       than the current say statement).
     * "temporary", for a temporary attribute change (one that is restored
       at the end of the current say statement).
-    * "restore", for when a temporary change is being restored.
+    * "both", for a simultaneous permanent and temporary attribute change
+      (one that in part lasts longer than the current say statement, and in
+      part is restored at the end of the current say statement).
+    * "restore", for when a temporary (or both) change is being restored.
 
     This should return a 2-component tuple, consiting of:
 

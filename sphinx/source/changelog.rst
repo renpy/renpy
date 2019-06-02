@@ -144,8 +144,8 @@ The new :var:`config.notify` variable makes it possible to intercept the
 notification system and do your own thing.
 
 The interface of :var:`config.say_attribute_transition_callback` has been
-changed in an incompatible way, to allow a reason for the transition
-to be given.
+changed in an incompatible way, to allow sets of old and new tags to be
+given.
 
 Fixes
 -----

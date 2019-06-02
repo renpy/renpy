@@ -19,13 +19,19 @@ such changes only take effect when the GUI is regenerated.
 -----
 
 The order in which children of the ``side`` layout are drawn is now
-taken from the control string. To reverty to the old fixed order, use::
+taken from the control string. To revert to the old fixed order, use::
 
     define config.keep_side_render_order = False
 
-The interface of :var:`config.say_attribute_transition_callback` has been
-changed in an incompatible way, to allow a the reason for the transition
-to be given.
+The interface of :var:`config.say_attribute_transition_callback` has
+been changed in an incompatible way, to allow sets of old and new tags
+to be given. To revert to the old interface, use::
+
+    define config.say_attribute_transition_callback_attrs = False
+
+It's mode parameter has also been slightly changed, and will now return
+a value of ``both`` when both a ``permanent`` and ``temporary``
+attribute transition is occuring.
 
 .. _incompatible-7.2.2:
 
