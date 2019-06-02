@@ -135,13 +135,13 @@ translate spanish rightaway_16b8cb94:
 translate spanish rightaway_289664f3:
 
     # "She looks so shocked that I begin to fear the worst. But then..."
-    ""
+    "Ella se ve tan sorprendida que empiezo a temer lo peor. Pero entonces..."
 
 # game/script.rpy:98
 translate spanish rightaway_8cb5deeb:
 
     # s "Sure, but what's a \"visual novel?\"" nointeract
-    s "Ella se ve tan sorprendida que empiezo a temer lo peor. Pero entonces..." nointeract
+    s "Claro, pero ¿qué es una \"novela visual?\"" nointeract
 
 # game/script.rpy:111
 translate spanish game_65cca574:
