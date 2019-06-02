@@ -174,10 +174,10 @@ These control transitions between various screens.
       than the current say statement).
     * "temporary", for a temporary attribute change (one that is restored
       at the end of the current say statement).
-    * "hybrid", for a simultaneous permanent and temporary attribute change
+    * "both", for a simultaneous permanent and temporary attribute change
       (one that in part lasts longer than the current say statement, and in
       part is restored at the end of the current say statement).
-    * "restore", for when a temporary (or hybrid) change is being restored.
+    * "restore", for when a temporary (or both) change is being restored.
 
     This should return a 2-component tuple, consiting of:
 

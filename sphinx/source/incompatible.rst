@@ -30,7 +30,7 @@ tags to be given. To revert to the old interface, use::
     define config.say_attribute_transition_callback_attrs = False
 
 It's mode parameter has also been slightly changed, and will now return
-a value of ``hybrid`` when a hybrid ``permanent`` and ``temporary``
+a value of ``both`` when both a ``permanent`` and ``temporary``
 attribute transition is occuring.
 
 .. _incompatible-7.2.2:

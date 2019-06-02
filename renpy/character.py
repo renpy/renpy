@@ -951,7 +951,7 @@ class ADVCharacter(object):
             attrs = images.get_attributes(None, self.image_tag)
 
             if self.resolve_say_attributes(predicting, temporary_attrs):
-                mode = 'hybrid' if mode else 'temporary'
+                mode = 'both' if mode else 'temporary'
 
         if mode:
             after = images.get_attributes(None, self.image_tag)
