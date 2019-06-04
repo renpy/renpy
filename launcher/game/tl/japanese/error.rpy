@@ -235,3 +235,27 @@ translate japanese strings:
     old "Tearing"
     new "ティアリング"
 
+    # renpy/common/_errorhandling.rpym:542
+    old "Copy BBCode"
+    new "BBCode でコピー"
+
+    # renpy/common/_errorhandling.rpym:544
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "クリップボードに traceback.txt を https://lemmasoft.renai.us/ 等のフォーラムに適した BBcode 形式でコピーする。"
+
+    # renpy/common/_errorhandling.rpym:546
+    old "Copy Markdown"
+    new "Markdown でコピー"
+
+    # renpy/common/_errorhandling.rpym:548
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new "クリップボードに traceback.txt を Discord に適した Markdown 形式でコピーする。"
+
+    # renpy/common/_errorhandling.rpym:683
+    old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "クリップボードに errors.txt を https://lemmasoft.renai.us/ 等のフォーラムに適した BBcode 形式でコピーする。"
+
+    # renpy/common/_errorhandling.rpym:687
+    old "Copies the errors.txt file to the clipboard as Markdown for Discord."
+    new "クリップボードに errors.txt を Discord に適した Markdown 形式でコピーする。"
+
