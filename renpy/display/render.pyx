@@ -258,6 +258,9 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         rv.render_of.append(d)
         renpy.plog(4, "after clipping")
 
+    # We need to look this up again, as an invalidation might
+    render_cache_d = render_cache[id_d]
+
     render_cache_d[wh] = rv
 
     if wh is not orig_wh:
@@ -273,14 +276,16 @@ def invalidate(d):
     a redraw to start.
     """
 
+    if not rendering:
+        redraw(d, 0)
+        return
+
     for v in render_cache[id(d)].values():
         v.kill_cache()
 
     if per_frame:
         return
 
-    if not rendering:
-        redraw(d, 0)
 
 
 def check_redraws():
