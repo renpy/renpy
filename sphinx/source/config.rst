@@ -426,7 +426,7 @@ Occasionally Used
 
     If true, Ren'Py will attempt to determine the name of the language
     to use based on the locale of the player's system. If successful,
-    this languagfe will be used as the default language.
+    this language will be used as the default language.
 
 .. var:: config.enter_sound = None
 
