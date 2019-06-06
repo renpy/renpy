@@ -419,9 +419,9 @@ init 1700 python hide:
 
 
 
-# Used by renpy.return() to return.
+# Used by renpy.return_statement() to return.
 label _renpy_return:
-    return
+    return _return
 
 # Entry point for the developer screen. The rest of it is loaded from
 # _developer.rpym
