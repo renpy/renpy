@@ -20,7 +20,7 @@ label start:
 
     # 背景を表示します。デフォルトではプレースホルダー（仮画像）を使用しますが、
     # images ディレクトリーにファイル（ファイル名は "bg room.png" や "bg room.jpg"）
-    # を追加することにより表示できます。
+    # を追加することで表示できます。
 
     scene bg room
 
@@ -39,14 +39,10 @@ label start:
 
     with dissolve
 
-    # 音楽を再生します。ここではタグを利用して無音を再生していますが、
-    # game ディレクトリーに "music.ogg" などと命名したファイルを追加すると
-    # play music "music.ogg" の形で再生することができます。
+    # 音楽を再生します。
+    # game ディレクトリーに "music.ogg" などのファイルを追加すると再生できます。
 
-    # 効果音を再生する時は play audio "filename" を使用します。
-    # play music とは違って複数の効果音を同時に再生することができます。
-
-    play music "<silence .5>"
+    # play music "music.ogg"
 
     # 以下は台詞を表示します。
 

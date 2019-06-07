@@ -166,7 +166,7 @@ translate japanese strings:
 
     # screens.rpy:352
     old "## Used to display the main menu when Ren'Py starts."
-    new "## Ren'py が起動した時に表示されるメインメニューを表示するスクリーンです。"
+    new "## Ren'Py が起動した時に表示されるメインメニューを表示するスクリーンです。"
 
     # screens.rpy:354
     old "## http://www.renpy.org/doc/html/screen_special.html#main-menu"

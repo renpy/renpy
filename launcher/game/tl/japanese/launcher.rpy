@@ -51,7 +51,7 @@ translate japanese strings:
 
     # android.rpy:35
     old "Choose \"Build\" to build the current project, or attach an Android device and choose \"Build & Install\" to build and install it on the device."
-    new "「ビルド」を選択して現在のプロジェクトをビルドするか、Android デバイスを接続して「ビルド & インストール」を選択し、ビルド後そのデバイスにインストールしてください。"
+    new "「ビルド」を選択して現在のプロジェクトをビルドするか、Android デバイスを接続して「ビルドとインストール」を選択し、そのデバイスにインストールしてください。"
 
     # android.rpy:37
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
@@ -135,7 +135,7 @@ translate japanese strings:
 
     # android.rpy:365
     old "Configure"
-    new "設定"
+    new "構成の設定"
 
     # android.rpy:369
     old "Build Package"
@@ -143,7 +143,7 @@ translate japanese strings:
 
     # android.rpy:373
     old "Build & Install"
-    new "ビルド & インストール"
+    new "ビルドとインストール"
 
     # android.rpy:377
     old "Build, Install & Launch"
@@ -623,7 +623,7 @@ translate japanese strings:
 
     # interface.rpy:386
     old "File and directory names must consist of ASCII characters."
-    new "ファイル、ディレクトリー名はアスキーコードの文字列で構成される必要があります。"
+    new "ファイル、ディレクトリー名はアスキーコードの文字列でなければなりません。"
 
     # interface.rpy:454
     old "PROCESSING"
@@ -1321,3 +1321,379 @@ translate japanese strings:
     # front_page.rpy:221
     old "Actions"
     new "アクション"
+
+
+translate japanese strings:
+
+    # game/add_file.rpy:37
+    old "The file name may not be empty."
+    new "ファイル名が与えられていません。"
+
+    # game/android.rpy:31
+    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "ウィンドウズでアンドロイドパッケージをビルドするには、 64-bit/x64 Java 8 Development Kit が必要になります。 JDK は JRE とは違うもので、Java には含まれていません。\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}から JDK をダンロードしてインストールし{/a}、それから Ren'Py ランチャーを再起動してください。"
+
+    # game/android.rpy:50
+    old "Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device."
+    new "Android Studio からアクセスできるデバッグビルドを選択する。 デバッグビルドとリリースビルドを切り替えるには、デバイスからアンインストールする必要があります。"
+
+    # game/android.rpy:51
+    old "Selects the Release build, which can be uploaded to stores. Changing between debug and release builds requires an uninstall from your device."
+    new "ストアへアップロード可能なリリースビルドを選択する。 デバッグビルドとリリースビルドを切り替えるには、デバイスからアンインストールする必要があります。"
+
+    # game/androidstrings.rpy:7
+    old "{} is not a directory."
+    new "{} はディレクトリーではありません。"
+
+    # game/androidstrings.rpy:8
+    old "{} does not contain a Ren'Py game."
+    new "{} に Ren'Py のゲームは含まれていません。"
+
+    # game/androidstrings.rpy:9
+    old "Run configure before attempting to build the app."
+    new "アプリをビルドする前に構成を変更する。"
+
+    # game/androidstrings.rpy:10
+    old "Google Play support is enabled, but build.google_play_key is not defined."
+    new "Google Play サポートは有効になりましたが、 build.google_play_key が定義されていません。"
+
+    # game/androidstrings.rpy:11
+    old "Updating project."
+    new "プロジェクトを更新しています。"
+
+    # game/androidstrings.rpy:12
+    old "Creating assets directory."
+    new "アセットディレクトリーを作成しています"
+
+    # game/androidstrings.rpy:13
+    old "Creating expansion file."
+    new "拡張ファイルを作成しています。"
+
+    # game/androidstrings.rpy:14
+    old "Packaging internal data."
+    new "内部データをパッケージングしています。"
+
+    # game/androidstrings.rpy:15
+    old "I'm using Gradle to build the package."
+    new "パッケージのビルドに Gradle を使用しています。"
+
+    # game/androidstrings.rpy:16
+    old "Uploading expansion file."
+    new "拡張ファイルをアップロードしています。"
+
+    # game/androidstrings.rpy:17
+    old "The build seems to have failed."
+    new "ビルドに失敗したようです"
+
+    # game/androidstrings.rpy:18
+    old "Launching app."
+    new "アプリを起動しています。"
+
+    # game/androidstrings.rpy:19
+    old "The build seems to have succeeded."
+    new "ビルドに成功したようです。"
+
+    # game/androidstrings.rpy:20
+    old "The arm64-v8a version works on newer Android devices, the armeabi-v7a version works on older devices, and the x86_64 version works on the simulator and chromebooks."
+    new "arm64-v8a version は新しいアンドロイドデバイスで動きます。 armeabi-v7a version は古いデバイスで動きます。 the x86_64 version はシミュレーターやクロームブックで動きます。"
+
+    # game/androidstrings.rpy:21
+    old "What is the full name of your application? This name will appear in the list of installed applications."
+    new "アプリのフルネームはなんですか？ フルネームはインストール済みアプリの一覧に表示されます。"
+
+    # game/androidstrings.rpy:22
+    old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
+    new "アプリのショートネームは何ですか？　ショートネームはランチャーやショートカットで使われます。"
+
+    # game/androidstrings.rpy:23
+    old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
+    new "パッケージ名はなんですか？\n\nこれは通常 com.domain.program や com.domain.email.program の形を取ります。 ASCII 文字とドットのみで構成され、最低一つのドットを含まなければなりません。"
+
+    # game/androidstrings.rpy:24
+    old "The package name may not be empty."
+    new "パッケージ名が与えられていません。"
+
+    # game/androidstrings.rpy:25
+    old "The package name may not contain spaces."
+    new "パッケージ名はスペースを含んではいけません。"
+
+    # game/androidstrings.rpy:26
+    old "The package name must contain at least one dot."
+    new "パッケージ名は最低一つのドットを含まなければなりません。"
+
+    # game/androidstrings.rpy:27
+    old "The package name may not contain two dots in a row, or begin or end with a dot."
+    new "パッケージ名は２つのドットが連続したり、最初や最後がドットになってはいけません。"
+
+    # game/androidstrings.rpy:28
+    old "Each part of the package name must start with a letter, and contain only letters, numbers, and underscores."
+    new "パッケージ名の各部分は文字から始めまり、文字・数字・アンダースコアのみを使用しなければなりません"
+
+    # game/androidstrings.rpy:29
+    old "{} is a Java keyword, and can't be used as part of a package name."
+    new "{} は Java のキーワードのため、パッケージ名に使用することはできません。."
+
+    # game/androidstrings.rpy:30
+    old "What is the application's version?\n\nThis should be the human-readable version that you would present to a person. It must contain only numbers and dots."
+    new "アプリケーションのバージョンはなんですか？\n\nバージョンは他の人に分かりやすい名前にします。数字とドットのみが使用できます。"
+
+    # game/androidstrings.rpy:31
+    old "The version number must contain only numbers and dots."
+    new "バージョンナンバーは数字とドットのみが使用できます。"
+
+    # game/androidstrings.rpy:32
+    old "What is the version code?\n\nThis must be a positive integer number, and the value should increase between versions."
+    new "バージョンコードは何ですか？\n\nこれは正の整数で、バージョンが上がるごとに増えていきます。"
+
+    # game/androidstrings.rpy:33
+    old "The numeric version must contain only numbers."
+    new "バージョンコードは数字のみが使用できます。"
+
+    # game/androidstrings.rpy:34
+    old "How would you like your application to be displayed?"
+    new "どのようにアプリケーションを表示したいですか？"
+
+    # game/androidstrings.rpy:35
+    old "In landscape orientation."
+    new "ランドスケープ（横向き）"
+
+    # game/androidstrings.rpy:36
+    old "In portrait orientation."
+    new "ポートレイト（縦向き）"
+
+    # game/androidstrings.rpy:37
+    old "In the user's preferred orientation."
+    new "ユーザーが選択した向き"
+
+    # game/androidstrings.rpy:38
+    old "Which app store would you like to support in-app purchasing through?"
+    new "アプリ内課金をどのアプリストアに対応させますか？"
+
+    # game/androidstrings.rpy:39
+    old "Google Play."
+    new "Google Play"
+
+    # game/androidstrings.rpy:40
+    old "Amazon App Store."
+    new "Amazon App Store"
+
+    # game/androidstrings.rpy:41
+    old "Both, in one app."
+    new "一つのアプリで両方とも"
+
+    # game/androidstrings.rpy:42
+    old "Neither."
+    new "どちらも対応させない"
+
+    # game/androidstrings.rpy:43
+    old "Would you like to create an expansion APK?"
+    new "APK 拡張ファイルを作成しますか？"
+
+    # game/androidstrings.rpy:44
+    old "No. Size limit of 100 MB on Google Play, but can be distributed through other stores and sideloaded."
+    new "いいえ。Google Play では１００ＭＢのサイズ制限がありますが、他のストアを通したり、直接配布することが可能です。"
+
+    # game/androidstrings.rpy:45
+    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work.)"
+    new "はい。２ＧＢのサイズまで作成できますが、 Google Play 以外では動きません。（ドキュメンテーションを参照してください。）"
+
+    # game/androidstrings.rpy:46
+    old "Do you want to allow the app to access the Internet?"
+    new "アプリのインターネット接続を許可しますか？"
+
+    # game/androidstrings.rpy:47
+    old "Do you want to automatically update the generated project?"
+    new "作成したプロジェクトを自動的に更新させますか？"
+
+    # game/androidstrings.rpy:48
+    old "Yes. This is the best choice for most projects."
+    new "はい。多くのプロジェクトで最良の選択です。"
+
+    # game/androidstrings.rpy:49
+    old "No. This may require manual updates when Ren'Py or the project configuration changes."
+    new "いいえ。Ren'Py やプロジェクトの構成が変更されるごとに、手動でアップデートする必要があります。"
+
+    # game/androidstrings.rpy:50
+    old "Unknown configuration variable: {}"
+    new "未知の構成変数: {}"
+
+    # game/androidstrings.rpy:51
+    old "I'm compiling a short test program, to see if you have a working JDK on your system."
+    new "小さなテストプログラムをコンパイルして、あなたのシステムで JDK が動作するか確認しています。"
+
+    # game/androidstrings.rpy:52
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Without a working JDK, I can't continue."
+    new "テストファイルのコンパイルに javac が利用できません。Java Development Kit をダウンロードしていないなら、\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nからダウンロードしてください。 JDK は JRE とは違うもので、Java には含まれていません。JDK がなければ継続できません。"
+
+    # game/androidstrings.rpy:53
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    new "あなたのコンピューターにある Java のバージョンは JDK 8 ではないようです。JDK 8 は Android SDK がサポートする唯一のバージョンです。JDK 8 は:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nからダウンロードできます。 異なるバージョンの JAVA を使う場合は、JAVA_HOME の環境変数を設定します。"
+
+    # game/androidstrings.rpy:54
+    old "The JDK is present and working. Good!"
+    new "JDK が動作することを確認しました。"
+
+    # game/androidstrings.rpy:55
+    old "The Android SDK has already been unpacked."
+    new "Android SDK の解凍は完了しています。"
+
+    # game/androidstrings.rpy:56
+    old "Do you accept the Android SDK Terms and Conditions?"
+    new "Android SDK の契約内容・条件を承諾しますか？"
+
+    # game/androidstrings.rpy:57
+    old "I'm downloading the Android SDK. This might take a while."
+    new "Android SDK をダウンロードしています。この処理にはしばらくかかります。"
+
+    # game/androidstrings.rpy:58
+    old "I'm extracting the Android SDK."
+    new "Android SDK を解凍しています。"
+
+    # game/androidstrings.rpy:59
+    old "I've finished unpacking the Android SDK."
+    new "Android SDK の解凍を完了しました。"
+
+    # game/androidstrings.rpy:60
+    old "I'm about to download and install the required Android packages. This might take a while."
+    new "必要な Android パッケージをダウンロードしてインストールしようとしています。この処理にはしばらくかかります。"
+
+    # game/androidstrings.rpy:61
+    old "I was unable to accept the Android licenses."
+    new "Android ライセンスを承諾出来ませんでした。"
+
+    # game/androidstrings.rpy:62
+    old "I was unable to install the required Android packages."
+    new "必要な Android パッケージをインストールできませんでした。"
+
+    # game/androidstrings.rpy:63
+    old "I've finished installing the required Android packages."
+    new "必要な Android パッケージのインストールが終了しました。"
+
+    # game/androidstrings.rpy:64
+    old "You set the keystore yourself, so I'll assume it's how you want it."
+    new "keystore が設定されているため、あなた自身で設定したいのだと判断しました。"
+
+    # game/androidstrings.rpy:65
+    old "You've already created an Android keystore, so I won't create a new one for you."
+    new "Android keystore が既に作成済みのため、新しい keystore の作成は行いません。"
+
+    # game/androidstrings.rpy:66
+    old "I can create an application signing key for you. Signing an application with this key allows it to be placed in the Android Market and other app stores.\n\nDo you want to create a key?"
+    new "アプリケーションに署名するキーを発行できます。このキーでアプリケーションに署名すると、アンドロイドマーケットや他のストアで配布できるようになります。\n\nキーを作成しますか？"
+
+    # game/androidstrings.rpy:67
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\n\\You also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    new "android.keystore ファイルを作成します。\n\nこのファイルはバックアップしてください。もし失くした場合はアプリをアップグレードすることが出来なくなります。\n\nまた、このファイルは安全な場所に保管してください。このファイルが悪意のある人間の手に渡ると、アプリのフェイクバージョンを作られたり、ユーザーデータを盗まれる恐れがあります。\n\nandroid.keystore のバックアップを作成し、安全な場所に保存しますか？"
+
+    # game/androidstrings.rpy:68
+    old "Please enter your name or the name of your organization."
+    new "あなたの名前か組織名を入力してください。"
+
+    # game/androidstrings.rpy:69
+    old "Could not create android.keystore. Is keytool in your path?"
+    new "android.keystore を作成できませんでした。keytool があなたのパスに存在しますか？"
+
+    # game/androidstrings.rpy:70
+    old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
+    new "android.keystore の作成を終了しました。 このファイルをバックアップして、安全な場所に保管してください。"
+
+    # game/androidstrings.rpy:71
+    old "It looks like you're ready to start packaging games."
+    new "ゲームのパッケージングの準備が整ったようです。"
+
+    # game/choose_theme.rpy:507
+    old "changing the theme"
+    new "テーマを変更しています。"
+
+    # game/front_page.rpy:252
+    old "Web"
+    new "Web"
+
+    # game/front_page.rpy:252
+    old "(Beta)"
+    new "(Beta)"
+
+    # game/gui7.rpy:429
+    old "creating a new project"
+    new "新しいプロジェクトを作成しています。"
+
+    # game/gui7.rpy:433
+    old "activating the new project"
+    new "新しいプロジェクトを認証しています。"
+
+    # game/interface.rpy:372
+    old "opening the log file"
+    new "ログファイルを開いています。"
+
+    # game/itch.rpy:43
+    old "Downloading the itch.io butler."
+    new "itch.io butler をダウンロードしています。"
+
+    # game/updater.rpy:101
+    old "The update channel controls the version of Ren'Py the updater will download."
+    new "アップロードチャンネルはアップデーターのバージョンをコントロールします。"
+
+    # game/updater.rpy:110
+    old "• This version is installed and up-to-date."
+    new "• このバージョンは最新の状態でインストールされています。"
+
+    # game/updater.rpy:118
+    old "%B %d, %Y"
+    new "%B %d, %Y"
+
+    # game/updater.rpy:188
+    old "Fetching the list of update channels"
+    new "アップデートチャンネルのリストを取得しています。"
+
+    # game/updater.rpy:194
+    old "downloading the list of update channels"
+    new "アップデートチャンネルのリストをダウンロードしています。"
+
+    # game/updater.rpy:198
+    old "parsing the list of update channels"
+    new "アップデートチャンネルのリストを解析しています。"
+
+    # game/web.rpy:118
+    old "Web: [project.current.display_name!q]"
+    new "Web: [project.current.display_name!q]"
+
+    # game/web.rpy:148
+    old "Build Web Application"
+    new "ウェブアプリケーションをビルドする"
+
+    # game/web.rpy:149
+    old "Build and Open in Browser"
+    new "ビルドしてブラウザで開く"
+
+    # game/web.rpy:150
+    old "Open in Browser"
+    new "ブラウザで開く"
+
+    # game/web.rpy:151
+    old "Open build directory"
+    new "ビルドしたディレクトリーを開く"
+
+    # game/web.rpy:155
+    old "Support:"
+    new "サポート:"
+
+    # game/web.rpy:163
+    old "RenPyWeb Home"
+    new "RenPyWeb ホーム"
+
+    # game/web.rpy:164
+    old "Beuc's Patreon"
+    new "Beuc's Patreon"
+
+    # game/web.rpy:182
+    old "Ren'Py web applications require the entire game to be downloaded to the player's computer before it can start."
+    new "Ren'Py ウェブアプリケーションは、ゲームをスタートする前に、プレイヤーのコンピューターにデータを全てダウンロードする必要があります。"
+
+    # game/web.rpy:186
+    old "Current limitations in the web platform mean that loading large images, audio files, or movies may cause audio or framerate glitches, and lower performance in general."
+    new "現在のウェブプラットホームの限界により、一般的なパフォーマンスの低下や、大きな画像・音声・動画ファイルのロードによる音声やフレームレートの異常が発生します。"
+
+    # game/web.rpy:195
+    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
+    new "ウェブアプリをパッケージングするために、RenPyWeb (Ren'Py's web support) をダウンロードする必要があります。 RenPyWeb をダウンロードしますか？"
+

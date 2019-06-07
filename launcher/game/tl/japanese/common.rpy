@@ -694,3 +694,83 @@ translate japanese strings:
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
     new "イメージキャッシュ: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
 
+    # renpy/common/00accessibility.rpy:76
+    old "Font Override"
+    new "フォントオーバーライド"
+
+    # renpy/common/00accessibility.rpy:80
+    old "Default"
+    new "デフォルト"
+
+    # renpy/common/00accessibility.rpy:84
+    old "DejaVu Sans"
+    new "DejaVu Sans"
+
+    # renpy/common/00accessibility.rpy:88
+    old "Opendyslexic"
+    new "Opendyslexic"
+
+    # renpy/common/00accessibility.rpy:94
+    old "Text Size Scaling"
+    new "テキストサイズのスケーリング"
+
+    # renpy/common/00accessibility.rpy:100
+    old "Reset"
+    new "リセット"
+
+    # renpy/common/00accessibility.rpy:105
+    old "Line Spacing Scaling"
+    new "行間のスケーリング"
+
+    # renpy/common/00accessibility.rpy:117
+    old "Self-Voicing"
+    new "セルフボイシング"
+
+    # renpy/common/00accessibility.rpy:121
+    old "Off"
+    new "オフ"
+
+    # renpy/common/00accessibility.rpy:125
+    old "Text-to-speech"
+    new "テキストを読む"
+
+    # renpy/common/00accessibility.rpy:129
+    old "Clipboard"
+    new "クリップボード"
+
+    # renpy/common/00accessibility.rpy:133
+    old "Debug"
+    new "デバッグ"
+
+    # renpy/common/00preferences.rpy:430
+    old "font transform"
+    new "フォント変換"
+
+    # renpy/common/00preferences.rpy:433
+    old "font size"
+    new "フォントサイズ"
+
+    # renpy/common/00preferences.rpy:441
+    old "font line spacing"
+    new "フォントの行間"
+
+    # renpy/common/_developer/developer.rpym:63
+    old "Image Attributes"
+    new "画像属性"
+
+    # renpy/common/_developer/developer.rpym:90
+    old "[name] [attributes] (hidden)"
+    new "[name] [attributes] (hidden)"
+
+    # renpy/common/_developer/developer.rpym:94
+    old "[name] [attributes]"
+    new "[name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:154
+    old "Hide deleted"
+    new "消去済みを隠す"
+
+    # renpy/common/_developer/developer.rpym:154
+    old "Show deleted"
+    new "消去済みを表示する"
+
