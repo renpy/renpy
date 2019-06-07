@@ -51,7 +51,7 @@ def register(
         force_begin_rollback=False,
         post_execute=None,
         post_label=None,
-        predict_all=False,
+        predict_all=True,
         predict_next=None,
 ):
     """
@@ -154,8 +154,8 @@ def register(
 
     `predict_next`
         This should be called to predict the statements that can run after
-        this one. It's expected to return a list of of labels or SubParse
-        objects. This is not called if `predict_all` is true.
+        this one. It's expected to return a list of labels or SubParse
+        objects.
     """
 
     name = tuple(name.split())
