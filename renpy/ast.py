@@ -1950,15 +1950,28 @@ class UserStatement(Node):
             for i in predictions:
                 renpy.easy.predict(i)
 
-        if self.parsed and renpy.statements.get("predict_all", self.parsed):
-            return [ i[0] for i in self.subparses ] + [ self.next ]
+        rv = [ ]
+        script = renpy.game.script
 
         next_list = self.call("predict_next")
 
         if next_list is not None:
-            return [ renpy.game.script.lookup(i) for i in next_list if i is not None ]
+            for name in next_list:
+                if script.has_label(name):
+                    node = script.lookup(name)
+                    if node not in rv:
+                        rv.append(node)
 
-        return [ self.next ]
+        if self.parsed and renpy.statements.get("predict_all", self.parsed):
+            for subparse in self.subparses:
+                if script.has_label(subparse):
+                    node = script.lookup(subparse)
+                    if node not in rv:
+                        rv.append(node)
+
+        if self.next not in rv:
+            rv.append(self.next)
+        return rv
 
     def get_name(self):
         parsed = self.parsed
