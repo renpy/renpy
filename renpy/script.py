@@ -879,6 +879,10 @@ class Script(object):
         """
 
         if isinstance(label, renpy.parser.SubParse):
+
+            if not label.block:
+                raise ScriptError("lookup label for empty SubParse.")
+
             label = label.block[0].name
 
         label = renpy.config.label_overrides.get(label, label)
