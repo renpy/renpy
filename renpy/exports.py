@@ -1833,13 +1833,14 @@ def call(label, *args, **kwargs):
     raise renpy.game.CallException(label, args, kwargs, from_current=from_current)
 
 
-def return_statement():
+def return_statement(value=None):
     """
     :doc: se_call
 
     Causes Ren'Py to return from the current Ren'Py-level call.
     """
 
+    renpy.store._return = value
     jump("_renpy_return")
 
 
