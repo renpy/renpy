@@ -1567,10 +1567,16 @@ class Side(Container):
                 if pos not in pos_d:
                     return owidth, oheight
 
-                rend = render(pos_d[pos], width, height, st, at)
-                rv = max(owidth, rend.width), max(oheight, rend.height)
-                rend.kill()
-                return rv
+                old_sizing = renpy.display.render.sizing
+                renpy.display.render.sizing = True
+
+                try:
+                    rend = render(pos_d[pos], width, height, st, at)
+                    rv = max(owidth, rend.width), max(oheight, rend.height)
+                    rend.kill()
+                    return rv
+                finally:
+                    renpy.display.render.sizing = old_sizing
 
             cwidth, cheight = sizeit('c', width, height, 0, 0)
             cwidth, top = sizeit('t', cwidth, height, cwidth, top)

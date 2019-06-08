@@ -56,6 +56,9 @@ frame_time = 0
 # Are we doing a per_frame update?
 per_frame = False
 
+# Are we rendering for the purpose of sizing something.
+sizing = False
+
 def adjust_render_cache_times(old_time, new_time):
     """
     This adjusts the render cache such that if a render starts at
