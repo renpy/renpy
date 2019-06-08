@@ -108,6 +108,12 @@ and iOS.
 Ren'Py now produces 64-bit arm binaries for Android. These will be
 required by the Google Play store later this year.
 
+Text input on Android was rewritten again, to fix problems where the user
+was unable to advance. Completion was eliminated, as it was the source
+of the problems. While languages that require input methods will need
+a larger rewrite to function, Ren'Py should now properly handle all direct
+input keyboards.
+
 Translations
 ------------
 
