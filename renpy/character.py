@@ -893,7 +893,7 @@ class ADVCharacter(object):
             show_image = (self.image_tag,) + attrs + tuple(wanted) + tuple( "-" + i for i in remove)
 
             if predict:
-                images.predict_show(show_image)
+                images.predict_show(layer, show_image)
             else:
                 renpy.exports.show(show_image)
                 return True
@@ -974,7 +974,7 @@ class ADVCharacter(object):
             delta = ()
 
         trans, layer = renpy.config.say_attribute_transition_callback(
-                self.image_tag, mode, *delta)
+            self.image_tag, mode, *delta)
 
         if trans is not None:
             if layer is None:
@@ -1169,9 +1169,6 @@ class ADVCharacter(object):
     def predict(self, what):
 
         old_attr_state = self.handle_say_attributes(True, True)
-
-        if renpy.config.speaking_attribute is not None:
-            self.resolve_say_attributes(True, wanted=[ renpy.config.speaking_attribute ])
 
         old_side_image_attributes = renpy.store._side_image_attributes
 
