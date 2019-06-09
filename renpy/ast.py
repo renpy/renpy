@@ -589,6 +589,7 @@ class Say(Node):
         'attributes',
         'arguments',
         'temporary_attributes',
+        'rollback',
         ]
 
     def diff_info(self):
@@ -600,6 +601,7 @@ class Say(Node):
         self.interact = True
         self.arguments = None
         self.temporary_attributes = None
+        self.rollback = "normal"
         return self
 
     def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None, temporary_attributes=None):
@@ -1516,7 +1518,6 @@ class Return(Node):
 class Menu(Node):
 
     translation_relevant = True
-    rollback = "force"
 
     __slots__ = [
         'items',
@@ -1525,6 +1526,7 @@ class Menu(Node):
         'has_caption',
         'arguments',
         'item_arguments',
+        'rollback',
         ]
 
     def __new__(cls, *args, **kwargs):
@@ -1532,6 +1534,7 @@ class Menu(Node):
         self.has_caption = False
         self.arguments = None
         self.item_arguments = None
+        self.rollback = "force"
         return self
 
     def __init__(self, loc, items, set, with_, has_caption, arguments, item_arguments):  # @ReservedAssignment

@@ -1685,6 +1685,12 @@ def parse_menu(stmtl, loc, arguments):
 
     rv.append(ast.Menu(loc, items, set, with_, has_say or has_caption, arguments, item_arguments))
 
+    for index, i in enumerate(rv):
+        if index:
+            i.rollback = "normal"
+        else:
+            i.rollback = "force"
+
     return rv
 
 
