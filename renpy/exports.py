@@ -1081,6 +1081,12 @@ def display_menu(items,
     `screen`
         The name of the screen used to display the menu.
 
+    Note that most Ren'Py games do not use menu captions, but use narration
+    instead. To display a menu using narration, write::
+
+        $ narrator("Which direction would you like to go?", interact=False)
+        $ result = renpy.display_menu([ ("East", "east"), ("West", "west") ])
+
     """
 
     menu_args, menu_kwargs = get_menu_args()
