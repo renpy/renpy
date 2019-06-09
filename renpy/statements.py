@@ -51,7 +51,7 @@ def register(
         force_begin_rollback=False,
         post_execute=None,
         post_label=None,
-        predict_all=False,
+        predict_all=True,
         predict_next=None,
 ):
     """

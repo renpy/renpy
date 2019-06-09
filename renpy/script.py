@@ -911,6 +911,19 @@ class Script(object):
 
         return label in self.namemap
 
+    def lookup_or_none(self, label):
+        """
+        Looks up the label if it exists, or returns None if it does not.
+        """
+
+        if label is None:
+            return None
+
+        if not self.has_label(label):
+            return None
+
+        return self.lookup(label)
+
     def analyze(self):
         """
         Analyzes all statements that need analysis.
