@@ -1382,7 +1382,7 @@ class Lexer(object):
 
         return sp
 
-    def renpy_block(self):
+    def renpy_block(self, empty=False):
 
         if self.subparses is None:
             raise Exception("A renpy_block can only be parsed inside a creator-defined statement.")
@@ -1405,6 +1405,12 @@ class Lexer(object):
             except ParseError as e:
                 parse_errors.append(e.message)
                 self.advance()
+
+        if not block:
+            if empty:
+                block.append(ast.Pass(self.get_location()))
+            else:
+                self.error("At least one Ren'Py statement is expected.")
 
         sp = SubParse(block)
         self.subparses.append(sp)

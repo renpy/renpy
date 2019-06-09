@@ -181,7 +181,7 @@ The parse method takes a Lexer object:
         transfered to the statement after the creator-defined statement.
         (Which might be the statement created using post_execute).
 
-    .. method:: renpy_block()
+    .. method:: renpy_block(empty=False)
 
         This parses all of the remaining lines in the current block
         as Ren'Py script, and returns a SubParse corresponding to the
@@ -203,6 +203,12 @@ The parse method takes a Lexer object:
                 child = l.subblock_lexer().renpy_block()
 
                 return { "child" : child }
+
+        `empty`
+            If True, allows an empty block to be parsed. (An empty block
+            is equivalent to a block with a single ``pass`` statement.)
+
+            If False, an empty block triggers an error.
 
 
     .. method:: catch_error()
