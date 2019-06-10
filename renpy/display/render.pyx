@@ -279,7 +279,7 @@ def invalidate(d):
     a redraw to start.
     """
 
-    if (not per_frame) and (not rendering):
+    if not rendering:
         redraw(d, 0)
         return
 
@@ -377,7 +377,6 @@ def redraw(d, when):
         return
 
     if per_frame:
-        invalidate(d)
         return
 
     redraw_queue.append((when + renpy.game.interface.frame_time, d))
