@@ -279,17 +279,12 @@ def invalidate(d):
     a redraw to start.
     """
 
-    if not rendering:
+    if (not per_frame) and (not rendering):
         redraw(d, 0)
         return
 
     for v in render_cache[id(d)].values():
         v.kill_cache()
-
-    if per_frame:
-        return
-
-
 
 def check_redraws():
     """
