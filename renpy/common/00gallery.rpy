@@ -92,6 +92,8 @@ init -1500 python:
                 else:
                     d = config.default_transform(d)
 
+                d = renpy.display.layout.AdjustTimes(d, None, None)
+
                 displayables.append(d)
 
             renpy.show_screen("_gallery", locked=locked, index=index + 1, count=count, displayables=displayables, gallery=self.gallery)
