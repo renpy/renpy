@@ -173,6 +173,14 @@ sensitive, and when it is selected.
 
        The default implemention returns False.
 
+   .. method:: get_tooltip(self)
+
+       This gets a default tooltip for this button, if a specific
+       tooltip is not assigned. It should return the tooltip value,
+       or None if a tooltip is not known.
+
+       This defaults to returning None.
+
    .. method:: periodic(self, st)
 
        This method is called once at the start of each interaction,
@@ -231,6 +239,14 @@ the adjustment and styles.
         second for vbar.
 
         This defaults to ("bar", "vbar").
+
+   .. method:: get_tooltip(self)
+
+       This gets a default tooltip for this button, if a specific
+       tooltip is not assigned. It should return the tooltip value,
+       or None if a tooltip is not known.
+
+       This defaults to returning None.
 
     .. method:: replaces(self, other)
 

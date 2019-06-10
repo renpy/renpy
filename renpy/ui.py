@@ -54,6 +54,9 @@ class Action(renpy.object.Object):
     def get_selected(self):
         return False
 
+    def get_tooltip(self):
+        return None
+
     def periodic(self, st):
         return
 
@@ -83,6 +86,9 @@ class BarValue(renpy.object.Object):
 
     def get_style(self):
         return "bar", "vbar"
+
+    def get_tooltip(self):
+        return None
 
 
 ##############################################################################

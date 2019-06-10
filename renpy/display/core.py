@@ -367,6 +367,13 @@ class Displayable(renpy.object.Object):
 
         return self
 
+    def _get_tooltip(self):
+        """
+        Returns the tooltip of this displayable.
+        """
+
+        return self._tooltip
+
     def _in_current_store(self):
         """
         Returns a version of this displayable that will not change as it is

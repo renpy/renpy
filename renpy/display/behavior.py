@@ -356,6 +356,23 @@ def run_periodic(var, st):
         return var.periodic(st)
 
 
+def get_tooltip(action):
+
+    if isinstance(action, (list, tuple)):
+        for i in action:
+            rv = get_tooltip(i)
+            if rv is not None:
+                return rv
+
+        return None
+
+    get_tooltip = getattr(action, "get_tooltip", None)
+    if get_tooltip is None:
+        return None
+
+    return get_tooltip()
+
+
 def is_selected(action):
     """
     :name: renpy.is_selected
@@ -721,6 +738,12 @@ class Button(renpy.display.layout.Window):
             args.extraneous()
 
         return self
+
+    def _get_tooltip(self):
+        if self._tooltip is not None:
+            return self._tooltip
+
+        return get_tooltip(self.action)
 
     def predict_one_action(self):
         predict_action(self.clicked)
@@ -1595,6 +1618,10 @@ class Bar(renpy.display.core.Displayable):
                 self.value = value
                 adjustment = value.get_adjustment()
                 renpy.game.interface.timeout(0)
+
+                tooltip = value.get_tooltip()
+                if tooltip is not None:
+                    properties.setdefault("tooltip", tooltip)
 
             else:
                 adjustment = Adjustment(range, value, step=step, page=page, changed=changed)
