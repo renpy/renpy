@@ -366,11 +366,11 @@ def get_tooltip(action):
 
         return None
 
-    get_tooltip = getattr(action, "get_tooltip", None)
-    if get_tooltip is None:
+    func = getattr(action, "get_tooltip", None)
+    if func is None:
         return None
 
-    return get_tooltip()
+    return func()
 
 
 def is_selected(action):
