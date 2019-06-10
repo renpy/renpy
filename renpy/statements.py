@@ -149,10 +149,13 @@ def register(
         label. This can be used to create a unique return point.
 
     `predict_all`
-        If True, then all sub-parses of this statement are considered to be
-        equally likely as the next statement, for prediction purposes.
+        If True, then this predicts all sub-parses of this statement and
+        the statement after this statement.
 
     `predict_next`
+        This is called with a single argument, the label of the statement
+        that would run after this statement.
+
         This should be called to predict the statements that can run after
         this one. It's expected to return a list of of labels or SubParse
         objects. This is not called if `predict_all` is true.

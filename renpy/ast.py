@@ -1956,7 +1956,12 @@ class UserStatement(Node):
         if self.parsed and renpy.statements.get("predict_all", self.parsed):
             return [ i.block[0] for i in self.subparses ] + [ self.next ]
 
-        next_list = self.call("predict_next")
+        if self.next:
+            next_label = self.next.name
+        else:
+            next_label = None
+
+        next_list = self.call("predict_next", next_label)
 
         if next_list is not None:
             nexts = [ renpy.game.script.lookup_or_none(i) for i in next_list if i is not None ]
