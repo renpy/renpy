@@ -564,6 +564,9 @@ init -1500 python:
         def get_selected(self):
             return renpy.is_selected(self.yes)
 
+        def get_tooltip(self):
+            return renpy.display.behavior.get_tooltip(self.yes)
+
 
     @renpy.pure
     class Scroll(Action, DictEquality):
