@@ -153,6 +153,9 @@ The interface of :var:`config.say_attribute_transition_callback` has been
 changed in an incompatible way, to allow sets of old and new tags to be
 given.
 
+:class:`Action` and :class:`BarValue` now support a get_tooltip method,
+which allows the object to supply a default tooltip.
+
 Fixes
 -----
 
