@@ -122,7 +122,7 @@ by Arda Güler.
 
 The Ren'Py tutorial game has been translated into Spanish by Moshibit.
 
-French, Korean, Russian and Spanish translations have been updated for
+French, Japanese, Korean, Russian and Spanish translations have been updated for
 this release.
 
 
