@@ -1097,7 +1097,7 @@ class Window(Container):
             xminimum = max(xminimum, size_groups[size_group].width(width, height, st, at))
 
         width = max(xminimum, width)
-        height = max(xminimum, height)
+        height = max(yminimum, height)
 
         left_margin = scale(style.left_margin, width)
         left_padding = scale(style.left_padding, width)
