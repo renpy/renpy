@@ -1576,7 +1576,7 @@ class Side(Container):
                 try:
                     rend = render(pos_d[pos], width, height, st, at)
                     rv = max(owidth, rend.width), max(oheight, rend.height)
-                    rend.kill()
+                    renpy.display.render.invalidate(pos_d[pos])
                     return rv
                 finally:
                     renpy.display.render.sizing = old_sizing
