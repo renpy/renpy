@@ -279,7 +279,7 @@ def invalidate(d):
     a redraw to start.
     """
 
-    if (not rendering) and (not per_frame):
+    if (not rendering) and (not per_frame) and (not sizing):
         redraw(d, 0)
         return
 
