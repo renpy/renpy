@@ -262,6 +262,9 @@ All user interface statements take the following common properties:
     :func:`GetTooltip` function. See the :ref:`tooltips` section for
     more details.
 
+    Objects passed to tooltip must support equality. If equality is
+    not supported, an infinite loop may occur.
+
 `arguments`
     A tuple or list containing additional positional arguments that
     are given to the displayable.
