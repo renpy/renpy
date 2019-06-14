@@ -1529,7 +1529,7 @@ class Side(Container):
     def render(self, width, height, st, at):
 
         if renpy.config.developer and len(self.positions) != len(self.children):
-            raise Exception("Side not completely full.")
+            raise Exception("A side has the wrong number of children.")
 
         pos_d = { }
         pos_i = { }
