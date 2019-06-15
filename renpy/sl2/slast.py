@@ -1733,7 +1733,7 @@ class SLUse(SLNode):
             target = renpy.display.screen.get_screen_variant(target_name)
 
             if target is None:
-                raise Exception("A screen named {} does not exist.".format(self.target))
+                raise Exception("A screen named {} does not exist.".format(target_name))
 
             ast = target.ast.not_const_ast
 
