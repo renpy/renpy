@@ -21,7 +21,7 @@ translate spanish distribute_2f970565:
 translate spanish distribute_29aea017:
 
     # e "After lint has finished, you can choose Build Distributions to build the Windows, Linux, and Mac distributions of your game."
-    e "Después de que la lint haya terminado, puedes elegir Construir Distribuciones para construir las distribuciones de Windows, Linux y Mac de tu juego."
+    e "Después de que lint haya terminado, puedes elegir Construir Distribuciones para construir las distribuciones de Windows, Linux y Mac de tu juego."
 
 # game/tutorial_distribute.rpy:14
 translate spanish distribute_821be97b:

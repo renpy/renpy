@@ -15,7 +15,7 @@ translate spanish demo_character_d7908a94:
 translate spanish demo_character_275ef8b9:
 
     # e "Each statement creates a Character object, and gives it a single argument, a name. If the name is None, no name is displayed."
-    e "Cada sentencia crea un objeto Character y le da un solo argumento, un nombre. Si el nombre es None(Ninguno), no se muestra ningún nombre."
+    e "Cada sentencia crea un objeto Character y le da un solo argumento, un nombre. Si el nombre es None, no se muestra ningún nombre."
 
 # game/indepth_character.rpy:21
 translate spanish demo_character_a63aea0c:
@@ -129,13 +129,13 @@ translate spanish demo_character_71535ecf:
 translate spanish demo_character_e9ac7482:
 
     # e5 "The first number is the size of the outline, in pixels. That's followed by a string giving the hex-code of the color of the outline, and the x and y offsets."
-    e5 "El primer número es el tamaño del contorno, en píxeles. A esto le sigue una cadena que proporciona el código hexadecimal del color del contorno y las compensaciones de x e y."
+    e5 "El primer número es el tamaño del contorno, en píxeles. A esto le sigue una cadena que proporciona el código hexadecimal del color del contorno y los offsets de x e y."
 
 # game/indepth_character.rpy:93
 translate spanish demo_character_ea72d988:
 
     # e6 "When the outline size is 0 and the offsets are given, what_outlines can also act as a drop-shadow behind the text."
-    e6 "Cuando el tamaño del contorno es 0 y se dan las compensaciones, what_outlines también puede actuar como una sombra detrás del texto."
+    e6 "Cuando el tamaño del contorno es 0 y se dan los offsets, what_outlines también puede actuar como una sombra detrás del texto."
 
 # game/indepth_character.rpy:99
 translate spanish demo_character_8d35ebcd:

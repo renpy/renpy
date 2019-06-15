@@ -123,7 +123,7 @@ translate spanish screens_showing_e8f68c08:
 translate spanish screens_showing_7e48fc22:
 
     # e "And that is inside a frame that provides the background and borders. The frame has an at property that takes a transform giving its position."
-    e "Y eso está dentro de un marco que proporciona el fondo y los bordes. El marco tiene una propiedad at que toma una transformación dando su posición."
+    e "Y eso está dentro de un frame que proporciona el fondo y los bordes. El marco tiene una propiedad at que toma una transformación dando su posición."
 
 # game/tutorial_screens.rpy:286
 translate spanish screens_showing_80425bf3:
@@ -171,7 +171,7 @@ translate spanish screens_showing_c5ca730f:
 translate spanish screens_showing_a38d1702:
 
     # e "Generally, you use show screen to show overlays that are up all the time, and call screen to show screens the player interacts with for a little while."
-    e "Por lo general, usas show screen para mostrar overlays que están arriba todo el tiempo, y la Call screen para mostrar las pantallas con las que el jugador interactúa por un tiempo."
+    e "Por lo general, usas show screen para mostrar overlays que están arriba todo el tiempo, y call screen para mostrar las pantallas con las que el jugador interactúa por un tiempo."
 
 # game/tutorial_screens.rpy:335
 translate spanish screens_parameters_0666043d:
@@ -207,7 +207,7 @@ translate spanish screens_parameters_12ac92d4:
 translate spanish screens_parameters_d143a994:
 
     # e "The call screen statement can also take arguments, much like show screen does."
-    e "La sentencia call screen también puede tomar argumentos, como lo hace la show screen."
+    e "La sentencia call screen también puede tomar argumentos, como lo hace show screen."
 
 # game/tutorial_screens.rpy:369
 translate spanish screens_properties_423246a2:
@@ -517,7 +517,7 @@ translate spanish strings:
 
     # tutorial_screens.rpy:362
     old "Click either button to continue."
-    new "Haga clic en cualquier boton para continuar."
+    new "Haz clic en cualquier boton para continuar."
 
     # tutorial_screens.rpy:377
     old "Close This Screen"

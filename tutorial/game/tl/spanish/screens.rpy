@@ -91,7 +91,7 @@ translate spanish strings:
 
     # screens.rpy:652
     old "{#file_time}%A, %B %d %Y, %H:%M"
-    new "{#file_time}%A, %d %B %Y, %H:%M"
+    new "{#file_time}%A, %d de %B %Y, %H:%M"
 
     # screens.rpy:652
     old "empty slot"

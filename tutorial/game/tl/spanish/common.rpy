@@ -155,7 +155,7 @@ translate spanish strings:
 
     # 00action_file.rpy:240
     old "%b %d, %H:%M"
-    new "%d %b, %H:%M"
+    new "%d de %b, %H:%M"
 
     # 00action_file.rpy:353
     old "Save slot %s: [text]"
@@ -359,7 +359,7 @@ translate spanish strings:
 
     # 00library.rpy:150
     old "bar"
-    new "barra"
+    new "bar"
 
     # 00library.rpy:151
     old "selected"
@@ -1083,7 +1083,7 @@ translate spanish strings:
 
     # 00accessibility.rpy:76
     old "Font Override"
-    new "Invalidar Fuente"
+    new "Cambiar Fuente"
 
     # 00accessibility.rpy:80
     old "Default"
@@ -1107,11 +1107,11 @@ translate spanish strings:
 
     # 00accessibility.rpy:105
     old "Line Spacing Scaling"
-    new "Escala del espacio de líneas"
+    new "Escala del espacio de línea"
 
     # 00accessibility.rpy:117
     old "Self-Voicing"
-    new "Voz automática"
+    new "Voz-automática"
 
     # 00accessibility.rpy:121
     old "Off"

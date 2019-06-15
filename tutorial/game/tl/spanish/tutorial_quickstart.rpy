@@ -471,7 +471,7 @@ translate spanish tutorial_simple_positions_bd4f56d8:
 translate spanish tutorial_simple_positions_fb2c48f2:
 
     # e "And 1.0 is the right. The decimal place is important and has to be there. Just 1 by itself won't work the same."
-    e "Y 1.0 es el lado derecho. La posición decimal es importante y tiene que estar allí. Solo 1 no funcionará igual."
+    e "Y 1.0 es el lado derecho. La posición decimal es importante y tiene que estar ahí. Solo 1 no funcionará igual."
 
 # game/tutorial_quickstart.rpy:333
 translate spanish tutorial_simple_positions_8eebc9a7:
