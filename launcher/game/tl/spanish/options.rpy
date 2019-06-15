@@ -139,11 +139,11 @@ translate spanish strings:
 
     # options.rpy:152
     old "## Icon"
-    new "## Icono"
+    new "## Ícono"
 
     # options.rpy:154
     old "## The icon displayed on the taskbar or dock."
-    new "## El icono mostrado en la barra de tareas."
+    new "## El ícono mostrado en la barra de tareas."
 
     # options.rpy:159
     old "## Build configuration"

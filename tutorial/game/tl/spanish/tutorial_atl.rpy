@@ -309,7 +309,7 @@ translate spanish tutorial_atl_da7a7759:
 translate spanish tutorial_atl_1dd345c6:
 
     # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place."
-    e "Cuando se usa ATL como parte de una sentencia show, los valores de las propiedades existen incluso cuando se cambia la transformación. Así que aunque des clic yse detenga el movimiento, la imagen permanece en el mismo lugar."
+    e "Cuando se usa ATL como parte de una sentencia show, los valores de las propiedades existen incluso cuando se cambia la transformación. Así que aunque des clic y se detenga el movimiento, la imagen permanece en el mismo lugar."
 
 # game/tutorial_atl.rpy:488
 translate spanish tutorial_atl_98047789:
@@ -351,7 +351,7 @@ translate spanish tutorial_atl_bf92d973:
 translate spanish tutorial_atl_51a41db4:
 
     # e "Since we're defining an image, the first line of ATL must give a displayable. Otherwise, there would be nothing to show."
-    e "Ya que estamos definiendo una imagen, la primera línea de ATL debe dar una visualizable. De lo contrario, no habría nada que mostrar."
+    e "Ya que estamos definiendo una imagen, la primera línea de ATL debe dar un visualizable. De lo contrario, no habría nada que mostrar."
 
 # game/tutorial_atl.rpy:536
 translate spanish tutorial_atl_3d065074:
@@ -423,7 +423,7 @@ translate spanish tutorial_atl_d3416d4f:
 translate spanish tutorial_atl_4e7512ec:
 
     # e "The interpolation statement allows you to smoothly vary the value of a transform property, from an old to a new value."
-    e "La sentencia de interpolación le permite variar suavemente el valor de una propiedad de transformación, de un valor antiguo a uno nuevo."
+    e "La sentencia de interpolación te permite variar suavemente el valor de una propiedad de transformación, de un valor antiguo a uno nuevo."
 
 # game/tutorial_atl.rpy:588
 translate spanish tutorial_atl_685eeeaa:

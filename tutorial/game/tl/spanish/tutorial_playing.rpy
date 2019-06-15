@@ -135,7 +135,7 @@ translate spanish tutorial_playing_73f3cfec:
 translate spanish tutorial_playing_f065a34c:
 
     # e "Would you like to hear about rollback?" nointeract
-    e "¿Te gustaría saber acerca de el retoceso?" nointeract
+    e "¿Te gustaría saber acerca del retoceso?" nointeract
 
 # game/tutorial_playing.rpy:84
 translate spanish tutorial_rollback_a520091b:

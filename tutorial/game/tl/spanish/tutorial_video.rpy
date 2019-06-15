@@ -15,7 +15,7 @@ translate spanish tutorial_video_4aefd413:
 translate spanish tutorial_video_b56ccf19:
 
     # e "To do this, we first have to define an image to be a Movie displayable. Movie displayables take a movie to play, and can be given position properties."
-    e "Para hacer esto, primero tenemos que definir una imagen para que sea una visualizable Movie. Los visualizables Movie toman un video para reproducir, y se le pueden dar propiedades de posición."
+    e "Para hacer esto, primero tenemos que definir una imagen para que sea un visualizable Movie. Los visualizables Movie toman un video para reproducir, y se le pueden dar propiedades de posición."
 
 # game/tutorial_video.rpy:25
 translate spanish tutorial_video_fbaa71e4:

@@ -154,8 +154,8 @@ translate spanish strings:
     new "Dic."
 
     # 00action_file.rpy:240
-    old "%b %d, %H:%M"
-    new "%d %b, %H:%M"
+    old "%b de %d, %H:%M"
+    new "%d de %b, %H:%M"
 
     # 00action_file.rpy:353
     old "Save slot %s: [text]"
@@ -1048,4 +1048,94 @@ translate spanish strings:
     # _errorhandling.rpym:670
     old "Copies the errors.txt file to the clipboard."
     new "Copia el archivo errors.txt al portapapeles."
+
+translate spanish strings:
+
+    # renpy/common/00accessibility.rpy:83
+    old "Font Override"
+    new "Cambiar Fuente"
+
+    # renpy/common/00accessibility.rpy:87
+    old "Default"
+    new "por Defecto"
+
+    # renpy/common/00accessibility.rpy:91
+    old "DejaVu Sans"
+    new "DejaVu Sans"
+
+    # renpy/common/00accessibility.rpy:95
+    old "Opendyslexic"
+    new "Opendyslexic"
+
+    # renpy/common/00accessibility.rpy:101
+    old "Text Size Scaling"
+    new "Escala del tamaño del texto"
+
+    # renpy/common/00accessibility.rpy:107
+    old "Reset"
+    new "Reiniciar"
+
+    # renpy/common/00accessibility.rpy:112
+    old "Line Spacing Scaling"
+    new "Escala del espacio de línea"
+
+    # renpy/common/00accessibility.rpy:124
+    old "Self-Voicing"
+    new "Voz-automática"
+
+    # renpy/common/00accessibility.rpy:128
+    old "Off"
+    new "Apagado"
+
+    # renpy/common/00accessibility.rpy:132
+    old "Text-to-speech"
+    new "Texto a voz"
+
+    # renpy/common/00accessibility.rpy:136
+    old "Clipboard"
+    new "Potapapeles"
+
+    # renpy/common/00accessibility.rpy:140
+    old "Debug"
+    new "Depurar"
+
+    # renpy/common/00action_file.rpy:240
+    old "%b %d, %H:%M"
+    new "%d de %b, %H:%M"
+
+    # renpy/common/00preferences.rpy:430
+    old "font transform"
+    new "transformación de fuente"
+
+    # renpy/common/00preferences.rpy:433
+    old "font size"
+    new "tamaño de fuente"
+
+    # renpy/common/00preferences.rpy:441
+    old "font line spacing"
+    new "fuente de espacio de líneas"
+
+    # renpy/common/_errorhandling.rpym:542
+    old "Copy BBCode"
+    new "Copiar BBCode"
+
+    # renpy/common/_errorhandling.rpym:544
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new ""
+
+    # renpy/common/_errorhandling.rpym:546
+    old "Copy Markdown"
+    new "Copiar Markdown"
+
+    # renpy/common/_errorhandling.rpym:548
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new "Copia el archivo traceback.txt en el portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
+
+    # renpy/common/_errorhandling.rpym:683
+    old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "Copia el archivo errors.txt en el portapapeles como BBcode para foros como https://lemmasoft.renai.us/."
+
+    # renpy/common/_errorhandling.rpym:687
+    old "Copies the errors.txt file to the clipboard as Markdown for Discord."
+    new "Copia el archivo errors.txt al portapapeles como Markdown para Discord."
 

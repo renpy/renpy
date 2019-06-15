@@ -165,7 +165,7 @@ translate spanish after_a_label_c90f24a8:
 translate spanish after_a_label_fb106a95:
 
     # e "Finally, certain characters are special. [[, {{, and \\ need to be doubled if included in text. The %% character should be doubled if used in dialogue."
-    e "Finalmente, ciertos caracteres son especiales. [[, {{, y \\ deben duplicarse si se incluyen en el texto. El carácter %% debe doblarse si se usa en el diálogo."
+    e "Finalmente, ciertos caracteres son especiales. [[, {{, y \\ deben duplicarse si se incluyen en el texto. El carácter %% debe duplicarse si se usa en el diálogo."
 
 translate spanish strings:
 

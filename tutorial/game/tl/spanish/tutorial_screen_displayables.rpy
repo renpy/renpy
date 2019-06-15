@@ -39,7 +39,7 @@ translate spanish screen_displayable_properties_2ed40a70:
 translate spanish screen_displayable_properties_da5733d1:
 
     # e "It tells Ren'Py which displayables are the background window, 'who' is speaking, and 'what' is being said. This used to apply per-Character styles, and help with auto-forward mode."
-    e "Le dice a Ren'Py qué visualizables son la ventana de fondo, 'who' quién hablan y 'what' que se dice. Esto solía aplicar estilos por Character y ayuda con el modo de reenvío automático."
+    e "Le dice a Ren'Py qué visualizables son la ventana de fondo, 'who' quién hablan y 'what' que se dice. Se usa para aplicar estilos por Character, y ayuda con el modo de avance automático."
 
 # game/tutorial_screen_displayables.rpy:123
 translate spanish screen_displayable_properties_cc09fade:
@@ -135,7 +135,7 @@ translate spanish text_displayable_32d76ccb:
 translate spanish text_displayable_7e84a5d1:
 
     # e "Those variables may be parameters given to the screen, defined with the default or python statements, or set using the SetScreenVariable action."
-    e "Esas variables pueden ser parámetros dados a la pantalla, definidos con las sentencias predeterminadas o de python, o configurados mediante la acción SetScreenVariable."
+    e "Esas variables pueden ser parámetros dados a la pantalla, definidos con las sentencias predeterminadas o de Python, o configurados mediante la acción SetScreenVariable."
 
 # game/tutorial_screen_displayables.rpy:247
 translate spanish text_displayable_8bc866c4:
@@ -291,7 +291,7 @@ translate spanish button_displayables_4c600d20:
 translate spanish button_displayables_47af4bb9:
 
     # e "A button takes another displayable as children. Since that child can be a layout, it can takes as many children as you want."
-    e "Un button toma otro visualizables como hijos. Dado que ese hijo puede ser un layout, puede tomar tantos hijos como desee."
+    e "Un button toma otro visualizables como hijos. Dado que ese hijo puede ser un layout, puede tomar tantos hijos como quierass."
 
 # game/tutorial_screen_displayables.rpy:483
 translate spanish button_displayables_d01adde3:
@@ -393,7 +393,7 @@ translate spanish bar_displayables_2fc44226:
 translate spanish bar_displayables_26eb88bf:
 
     # e "The vbar displayable is similar to the bar displayable, except it uses vertical styles - 'vbar', 'vslider', and 'vscrollbar' - by default."
-    e "EL visualizable vbar es similar al visualizable bar, excepto que usa estilos verticales: 'vbar', 'vslider' y 'vscrollbar' - de forma predeterminada."
+    e "El visualizable vbar es similar al visualizable bar, excepto que usa estilos verticales: 'vbar', 'vslider' y 'vscrollbar' - de forma predeterminada."
 
 # game/tutorial_screen_displayables.rpy:626
 translate spanish bar_displayables_11cf8af2:
@@ -411,7 +411,7 @@ translate spanish imagemap_displayables_d62fad02:
 translate spanish swimming_405542a5:
 
     # e "You chose swimming."
-    e "Elegiste la natación."
+    e "Elegiste swimming."
 
 # game/tutorial_screen_displayables.rpy:659
 translate spanish swimming_264b5873:
@@ -423,7 +423,7 @@ translate spanish swimming_264b5873:
 translate spanish science_83e5c0cc:
 
     # e "You chose science."
-    e "Escogiste ciencia."
+    e "Elegiste science."
 
 # game/tutorial_screen_displayables.rpy:667
 translate spanish science_319cdf4b:
@@ -435,7 +435,7 @@ translate spanish science_319cdf4b:
 translate spanish art_d2a94440:
 
     # e "You chose art."
-    e "Escogiste arte."
+    e "Elegiste art."
 
 # game/tutorial_screen_displayables.rpy:674
 translate spanish art_e6af6f1d:
@@ -447,7 +447,7 @@ translate spanish art_e6af6f1d:
 translate spanish home_373ea9a5:
 
     # e "You chose to go home."
-    e "Elegiste ir a casa."
+    e "Elegiste go home."
 
 # game/tutorial_screen_displayables.rpy:686
 translate spanish imagemap_done_48eca0a4:
@@ -573,7 +573,7 @@ translate spanish imagemap_done_b6cebf2b:
 translate spanish viewport_displayables_e509d50d:
 
     # e "Sometimes, you'll want to display something bigger than the screen. That's what the viewport displayable is for."
-    e "A veces, querrá mostrar algo más grande que la pantalla. Para eso está el visualizable viewport."
+    e "A veces, querrás mostrar algo más grande que la pantalla. Para eso está el visualizable viewport."
 
 # game/tutorial_screen_displayables.rpy:803
 translate spanish viewport_displayables_9853b0e3:
@@ -639,7 +639,7 @@ translate spanish viewport_displayables_ae4ff821:
 translate spanish viewport_displayables_71fa0b8f:
 
     # e "It takes the cols and rows properties, which give the number of rows and columns of children. If one is omitted, Ren'Py figures it out from the other and the number of children."
-    e "Toma las propiedades de columnas y filas, que dan el número de filas y columnas de hijos. Si se omite uno, Ren'Py lo calcula a partir del otro y el número de hijos."
+    e "Toma las propiedades cols y rows, que dan el número de filas y columnas de hijos. Si se omite uno, Ren'Py lo calcula a partir del otro y el número de hijos."
 
 translate spanish strings:
 
