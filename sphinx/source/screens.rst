@@ -174,20 +174,18 @@ All user interface statements take the following common properties:
 
 `at`
     This can be a transform, or a list of transforms, or an anonymous
-    transform (a transform that is defined directly in at)
+    transform (a transform that is defined directly in at) ::
 
-::
+        transform hello_t:
+            align (0.7, 0.5) alpha 0.0
+            linear 0.5 alpha 1.0
 
-    transform hello_t:
-        align (0.7, 0.5) alpha 0.0
-        linear 0.5 alpha 1.0
-
-    screen hello_title():
-        text "Hello." at hello_t
-        text "Hello.":
-            at transform:
-                align (0.2, 0.5) alpha 0.0
-                linear 0.5 alpha 1.0
+        screen hello_title():
+            text "Hello." at hello_t
+            text "Hello.":
+                at transform:
+                    align (0.2, 0.5) alpha 0.0
+                    linear 0.5 alpha 1.0
 
     This transforms are used to wrap this displayable. The show, hide,
     replace, and replaced external events are delivered to a transform
