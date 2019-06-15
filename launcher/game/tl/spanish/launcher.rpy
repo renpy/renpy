@@ -1577,7 +1577,7 @@ translate spanish strings:
 
     # game/itch.rpy:43
     old "Downloading the itch.io butler."
-    new "DEscargando el butler de itch.io"
+    new "Descargando el butler de itch.io"
 
     # game/updater.rpy:101
     old "The update channel controls the version of Ren'Py the updater will download."
@@ -1589,7 +1589,7 @@ translate spanish strings:
 
     # game/updater.rpy:118
     old "%B %d, %Y"
-    new "%d %B, %Y"
+    new "%d de %B, %Y"
 
     # game/updater.rpy:188
     old "Fetching the list of update channels"
