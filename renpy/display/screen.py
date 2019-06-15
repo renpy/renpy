@@ -699,7 +699,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             return
 
         if not renpy.python.py_eval(self.screen.sensitive, locals=self.scope):
-            return
+            ev = renpy.display.interface.time_event
 
         try:
             push_current_screen(self)
