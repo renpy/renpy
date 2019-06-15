@@ -653,7 +653,7 @@ translate spanish strings:
 
     # 00accessibility.rpy:76
     old "Font Override"
-    new "Invalidar Fuente"
+    new "Cambiar Fuente"
 
     # 00accessibility.rpy:80
     old "Default"
@@ -669,7 +669,7 @@ translate spanish strings:
 
     # 00accessibility.rpy:94
     old "Text Size Scaling"
-    new "Tamaño de la Escala del Texto"
+    new "Escala del tamaño del texto"
 
     # 00accessibility.rpy:100
     old "Reset"
@@ -677,7 +677,7 @@ translate spanish strings:
 
     # 00accessibility.rpy:105
     old "Line Spacing Scaling"
-    new "Escalado del espaciado de línea"
+    new "Escala del espacio de línea"
 
     # 00accessibility.rpy:117
     old "Self-Voicing"
