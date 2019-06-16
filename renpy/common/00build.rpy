@@ -149,11 +149,14 @@ init -1500 python in build:
         (".android.json", "android"),
         ("android-*.png", "android"),
         ("android-*.jpg", "android"),
-        ("ouya_icon.png", "android"),
+        ("ouya_icon.png", None),
 
         ("ios-presplash.*", "ios"),
         ("ios-launchimage.png", None),
         ("ios-icon.png", None),
+
+        ("web-presplash.png", "web"),
+        ("web-presplash.jpg", "web"),
 
         ])
 
