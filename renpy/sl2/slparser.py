@@ -302,9 +302,6 @@ class Parser(object):
 
                 parse_keyword(l, 'expected a keyword argument, colon, or end of line.', True)
 
-        # The index of the child we're adding to this statement.
-        child_index = 0
-
         # A list of lexers we need to parse the contents of.
         lexers = [ ]
 
@@ -328,7 +325,7 @@ class Parser(object):
                     if not can_has:
                         l.error("The has statement is not allowed here.")
 
-                    if child_index != 0:
+                    if target.has_noncondition_child():
                         l.error("The has statement may not be given after a child has been supplied.")
 
                     c = self.parse_statement(loc, l, layout_mode=True, keyword=keyword)
@@ -352,7 +349,6 @@ class Parser(object):
                 # If not none, add the child to our AST.
                 if c is not None:
                     target.children.append(c)
-                    child_index += 1
 
                     if c.has_python():
                         keyword = False

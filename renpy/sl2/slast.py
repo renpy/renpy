@@ -461,6 +461,28 @@ class SLBlock(SLNode):
     def has_python(self):
         return any(i.has_python() for i in self.children)
 
+    def has_noncondition_child(self):
+        """
+        Returns true if this block has a child that is not an SLIf statement,
+        or false otherwise.
+        """
+
+        worklist = list(self.children)
+
+        while worklist:
+
+            n = worklist.pop(0)
+
+            if type(n) is SLBlock:
+                worklist.extend(n.children)
+            elif isinstance(n, SLIf):
+                for _, block in n.entries:
+                    worklist.append(block)
+            else:
+                return True
+
+        return False
+
 
 list_or_tuple = (list, tuple)
 
