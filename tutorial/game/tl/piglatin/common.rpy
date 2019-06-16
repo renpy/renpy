@@ -1,53 +1,57 @@
 ﻿
 translate piglatin strings:
 
-    # renpy/common/00accessibility.rpy:76
+    # renpy/common/00accessibility.rpy:83
     old "Font Override"
     new "Ontfay Verrideoay"
 
-    # renpy/common/00accessibility.rpy:80
+    # renpy/common/00accessibility.rpy:87
     old "Default"
     new "Efaultday"
 
-    # renpy/common/00accessibility.rpy:84
+    # renpy/common/00accessibility.rpy:91
     old "DejaVu Sans"
     new "Ejavuday Anssay"
 
-    # renpy/common/00accessibility.rpy:88
+    # renpy/common/00accessibility.rpy:95
     old "Opendyslexic"
     new "Pendyslexicoay"
 
-    # renpy/common/00accessibility.rpy:94
+    # renpy/common/00accessibility.rpy:101
     old "Text Size Scaling"
     new "Exttay Izesay Calingsay"
 
-    # renpy/common/00accessibility.rpy:100
+    # renpy/common/00accessibility.rpy:107
     old "Reset"
     new "Esetray"
 
-    # renpy/common/00accessibility.rpy:105
+    # renpy/common/00accessibility.rpy:112
     old "Line Spacing Scaling"
     new "Inelay Pacingsay Calingsay"
 
-    # renpy/common/00accessibility.rpy:117
+    # renpy/common/00accessibility.rpy:124
     old "Self-Voicing"
     new "Elfsay-Oicingvay"
 
-    # renpy/common/00accessibility.rpy:121
+    # renpy/common/00accessibility.rpy:128
     old "Off"
     new "Ffoay"
 
-    # renpy/common/00accessibility.rpy:125
+    # renpy/common/00accessibility.rpy:132
     old "Text-to-speech"
     new "Exttay-otay-peechsay"
 
-    # renpy/common/00accessibility.rpy:129
+    # renpy/common/00accessibility.rpy:136
     old "Clipboard"
     new "Lipboardcay"
 
-    # renpy/common/00accessibility.rpy:133
+    # renpy/common/00accessibility.rpy:140
     old "Debug"
     new "Ebugday"
+
+    # renpy/common/00accessibility.rpy:146
+    old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
+    new "Hetay optionsay onay histay enumay areay intendeday otay improveay accessibilityay. Heytay aymay otnay orkway ithway allay amesgay, anday omesay ombinationscay ofay optionsay aymay enderray hetay amegay unplayableay. Histay isay otnay anay issueay ithway hetay amegay oray engineay. Orfay hetay estbay esultsray henway angingchay ontsfay, ytray otay eepkay hetay exttay izesay hetay amesay asay itay originallyay asway."
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Monday"
@@ -709,23 +713,23 @@ translate piglatin strings:
     old "Proceed"
     new "Roceedpay"
 
-    # renpy/common/00gallery.rpy:587
+    # renpy/common/00gallery.rpy:589
     old "Image [index] of [count] locked."
     new "Mageiay [index] ofay [count] ockedlay."
 
-    # renpy/common/00gallery.rpy:607
+    # renpy/common/00gallery.rpy:609
     old "prev"
     new "revpay"
 
-    # renpy/common/00gallery.rpy:608
+    # renpy/common/00gallery.rpy:610
     old "next"
     new "extnay"
 
-    # renpy/common/00gallery.rpy:609
+    # renpy/common/00gallery.rpy:611
     old "slideshow"
     new "ideshowslay"
 
-    # renpy/common/00gallery.rpy:610
+    # renpy/common/00gallery.rpy:612
     old "return"
     new "eturnray"
 

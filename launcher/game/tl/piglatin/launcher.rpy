@@ -1562,30 +1562,34 @@ translate piglatin strings:
     new "Uildbay anday Penoay inay Rowserbay"
 
     # game/web.rpy:150
-    old "Open without Build"
-    new "Penoay ithoutway Uildbay"
+    old "Open in Browser"
+    new "Penoay inay Rowserbay"
 
-    # game/web.rpy:154
+    # game/web.rpy:151
+    old "Open build directory"
+    new "Penoay uildbay irectoryday"
+
+    # game/web.rpy:155
     old "Support:"
     new "Upportsay:"
 
-    # game/web.rpy:162
+    # game/web.rpy:163
     old "RenPyWeb Home"
     new "Enpywebray Omehay"
 
-    # game/web.rpy:163
+    # game/web.rpy:164
     old "Beuc's Patreon"
     new "Eucbay'say Atreonpay"
 
-    # game/web.rpy:181
+    # game/web.rpy:182
     old "Ren'Py web applications require the entire game to be downloaded to the player's computer before it can start."
     new "Enray'Ypay ebway applicationsay equireray hetay entireay amegay otay ebay ownloadedday otay hetay ayerplay'say omputercay eforebay itay ancay artstay."
 
-    # game/web.rpy:185
+    # game/web.rpy:186
     old "Current limitations in the web platform mean that loading large images, audio files, or movies may cause audio or framerate glitches, and lower performance in general."
     new "Urrentcay imitationslay inay hetay ebway atformplay eanmay hattay oadinglay argelay imagesay, audioay ilesfay, oray oviesmay aymay ausecay audioay oray ameratefray itchesglay, anday owerlay erformancepay inay eneralgay."
 
-    # game/web.rpy:194
+    # game/web.rpy:195
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "Eforebay ackagingpay ebway appsay, ouyay'llay eednay otay ownloadday Enpywebray, Enray'Ypay'say ebway upportsay. Ouldway ouyay ikelay otay ownloadday Enpywebray ownay?"
 
