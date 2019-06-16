@@ -22,7 +22,7 @@ translate spanish new_gui_22adf68e:
 
     # e "The GUI is also meant to be easy for an intermediate creator to customize. Customizing the GUI consists of changing the image files in the gui directory, and changing variables in gui.rpy."
     e "La GUI también debe ser fácil de personalizar para un creador intermedio. La personalización de la GUI consiste en cambiar los archivos de imagen en el directorio gui y cambiar las variables en gui.rpy."
-    
+
 # game/indepth_style.rpy:48
 translate spanish new_gui_da21de30:
 

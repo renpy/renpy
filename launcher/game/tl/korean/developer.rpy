@@ -175,7 +175,7 @@
     # 00console.rpy:536
     old "jump <label>: jumps to label"
     new "jump <label>: label로 점프한다"
-    
+
     # 00console.rpy:685
     old "short: Shorten the representation of objects on the console (default)."
     new "short: 콘솔에서 오브젝트 표시를 줄인다 (기본값)."

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-01-15 15:31
-
+﻿
 # game/indepth_minigame.rpy:220
 translate korean demo_minigame_8f14835c:
 

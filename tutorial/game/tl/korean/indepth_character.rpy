@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-01-15 15:31
-
+﻿
 # game/indepth_character.rpy:11
 translate korean demo_character_e7e1b1bb:
 

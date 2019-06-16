@@ -1555,7 +1555,7 @@
     # updater.rpy:188
     old "Fetching the list of update channels"
     new "업데이트 채널 목록 가져오기"
-    
+
     # choose_theme.rpy:507
     old "changing the theme"
     new "테마를 바꾸는 중"

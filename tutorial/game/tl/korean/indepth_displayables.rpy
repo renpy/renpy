@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-01-15 15:31
-
+﻿
 # game/indepth_displayables.rpy:15
 translate korean simple_displayables_db46fd25:
 

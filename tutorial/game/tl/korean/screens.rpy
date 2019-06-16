@@ -1,4 +1,4 @@
-translate korean strings:
+﻿translate korean strings:
 
     # screens.rpy:261
     old "Back"

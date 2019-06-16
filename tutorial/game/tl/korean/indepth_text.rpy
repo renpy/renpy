@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-01-15 15:31
-
+﻿
 # game/indepth_text.rpy:22
 translate korean a_label_8d79d234:
 

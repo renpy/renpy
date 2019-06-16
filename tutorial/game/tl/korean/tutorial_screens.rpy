@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-01-15 15:31
-
+﻿
 # game/tutorial_screens.rpy:165
 translate korean tutorial_screens_2faa22e5:
 

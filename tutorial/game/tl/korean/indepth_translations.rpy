@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-01-15 15:31
-
+﻿
 # game/indepth_translations.rpy:12
 translate korean translations_c4ef181f:
 

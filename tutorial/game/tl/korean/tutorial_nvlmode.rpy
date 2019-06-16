@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-01-15 15:31
-
+﻿
 # game/tutorial_nvlmode.rpy:17
 translate korean tutorial_nvlmode_76b2fe88:
 

@@ -207,7 +207,7 @@
     # _errorhandling.rpym:668
     old "Copies the errors.txt file to the clipboard."
     new "errors.txt 파일을 클립보드로 복사합니다."
-    
+
     # _errorhandling.rpym:542
     old "Copy BBCode"
     new "BB코드 복사"

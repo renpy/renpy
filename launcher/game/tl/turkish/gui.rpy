@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-05-11 23:37
-
+﻿
 translate turkish strings:
 
     # gui.rpy:2

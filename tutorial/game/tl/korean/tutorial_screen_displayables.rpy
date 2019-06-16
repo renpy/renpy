@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-01-15 15:31
-
+﻿
 # game/tutorial_screen_displayables.rpy:3
 translate korean screen_displayables_7c897a6d:
 

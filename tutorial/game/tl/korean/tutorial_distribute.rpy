@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-01-15 15:31
-
+﻿
 # game/tutorial_distribute.rpy:3
 translate korean distribute_7db9b042:
 

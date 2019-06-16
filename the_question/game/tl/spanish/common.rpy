@@ -32,7 +32,7 @@ translate spanish strings:
     # 00action_file.rpy:37
     old "{#weekday_short}Mon"
     new "Lun."
-    
+
     # 00action_file.rpy:37
     old "{#weekday_short}Tue"
     new "Mar."
@@ -68,7 +68,7 @@ translate spanish strings:
     # 00action_file.rpy:47
     old "{#month}March"
     new "Marzo"
-    
+
     # 00action_file.rpy:47
     old "{#month}April"
     new "Abril"
@@ -92,7 +92,7 @@ translate spanish strings:
     # 00action_file.rpy:47
     old "{#month}September"
     new "Septiembre"
-    
+
     # 00action_file.rpy:47
     old "{#month}October"
     new "Octubre"
@@ -108,7 +108,7 @@ translate spanish strings:
     # 00action_file.rpy:63
     old "{#month_short}Jan"
     new "Ene."
-    
+
     # 00action_file.rpy:63
     old "{#month_short}Feb"
     new "Feb."
@@ -1138,7 +1138,7 @@ translate spanish strings:
     # renpy/common/_errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "Copia el archivo errors.txt al portapapeles como Markdown para Discord."
-    
+
     translate spanish strings:
 
     # renpy/common/00accessibility.rpy:146

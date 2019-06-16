@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-01-15 15:31
-
+﻿
 # game/indepth_style.rpy:40
 translate korean new_gui_17a0326e:
 

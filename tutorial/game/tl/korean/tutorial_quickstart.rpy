@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-01-15 15:31
-
+﻿
 # game/tutorial_quickstart.rpy:28
 translate korean tutorial_create_27048c11:
 

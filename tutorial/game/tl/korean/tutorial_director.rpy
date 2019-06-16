@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-05-03 14:36
-
+﻿
 # game/tutorial_director.rpy:5
 translate korean director_e4543d9b:
 

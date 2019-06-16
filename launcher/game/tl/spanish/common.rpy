@@ -734,7 +734,7 @@ translate spanish strings:
     # _developer\developer.rpym:154
     old "Show deleted"
     new "Mostrar borrados"
-    
+
 translate spanish strings:
 
     # renpy/common/00accessibility.rpy:146

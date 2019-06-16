@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2019-01-15 15:31
-
+﻿
 # game/indepth_transitions.rpy:56
 translate korean demo_transitions_5bbc72fe:
 
