@@ -1811,6 +1811,9 @@ When showif's children have transforms, it will supply them with ATL
 events to manage the show and hide process, so that Ren'Py can animate
 the show and hide process.
 
+The ``showif`` statement wraps its children in a displayable that manages
+the show and hide process.
+
 Multiple showif statements can be grouped together into a single
 ``showif``/``elif``/``else`` construct, similiar to an if statement.
 **Unlike the if statement, showif executes all of its blocks, including Python, even if the condition is false.**
