@@ -41,6 +41,9 @@ init -1500 python:
 
         def check(self, all_prior):
             for i in self.images:
+
+                print(i, renpy.seen_image(i))
+
                 if not renpy.seen_image(i):
                     return False
 

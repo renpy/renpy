@@ -66,6 +66,10 @@ Here's an example of the first three steps::
 
         # Step 2. Add buttons and images to the gallery.
 
+        # A button with an image that is always unlocked.
+        g.button("title")
+        g.image("title")
+
         # A button that contains an image that automatically unlocks.
         g.button("dawn")
         g.image("dawn1")
@@ -158,6 +162,8 @@ Here's an example of the first three steps::
 
             add g.make_button("dark mary", "gal-dark_mary.png", xalign=0.5, yalign=0.5)
             add g.make_button("dawn mary", "gal-dawn_mary.png", xalign=0.5, yalign=0.5)
+            add g.make_button("title", "title.png", xalign=0.5, yalign=0.5)
+
 
             # The screen is responsible for returning to the main menu. It could also
             # navigate to other gallery screens.
