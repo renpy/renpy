@@ -412,7 +412,7 @@ translate spanish strings:
     # 00preferences.rpy:228
     old "skip transitions"
     new "salta transiciones"
-    
+
     # 00preferences.rpy:230
     old "video sprites"
     new "sprites de vídeo"
@@ -444,7 +444,7 @@ translate spanish strings:
     # 00preferences.rpy:271
     old "skip unseen text"
     new "salva texto no visto"
-    
+
     # 00preferences.rpy:273
     old "begin skipping"
     new "comienza salto"
@@ -476,7 +476,7 @@ translate spanish strings:
     # 00preferences.rpy:319
     old "automatic move"
     new "movimiento automático"
-    
+
     # 00preferences.rpy:328
     old "wait for voice"
     new "espera la voz"
@@ -496,7 +496,7 @@ translate spanish strings:
     # 00preferences.rpy:364
     old "debug voicing"
     new "debug voz"
-    
+
     # 00preferences.rpy:373
     old "emphasize audio"
     new "enfatiza audio"
@@ -528,7 +528,7 @@ translate spanish strings:
     # 00preferences.rpy:415
     old "voice volume"
     new "volumen voz"
-    
+
     # 00preferences.rpy:416
     old "mute music"
     new "silencia música"
@@ -548,7 +548,7 @@ translate spanish strings:
     # 00preferences.rpy:500
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "'Portapapeles a voz' activado. Pulsa 'Mayús.+C' para desactivarlo."
-    
+
     # 00preferences.rpy:502
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "Voz automática dirà \"[renpy.display.tts.last]\". Pulsa 'alt+shift+V' para desactivar."
@@ -668,7 +668,7 @@ translate spanish strings:
     # _developer\developer.rpym:634
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
     new "Caché de imagen: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
-    
+
     # _developer\developer.rpym:644
     old "✔ "
     new "✔ "
@@ -1140,8 +1140,6 @@ translate spanish strings:
     # 00preferences.rpy:441
     old "font line spacing"
     new "fuente de espacio de líneas"
-    
-   translate spanish strings:
 
     # renpy/common/00accessibility.rpy:146
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
