@@ -182,7 +182,7 @@ init -1500 python in iap:
         def init(self):
             restore(False)
 
-    if renpy.ios:
+    if renpy.renpy.ios:
         import pyobjus
         IAPHelper = pyobjus.autoclass(b"IAPHelper")
         NSMutableArray = pyobjus.autoclass(b"NSMutableArray")
@@ -583,9 +583,9 @@ init -1500 python in iap:
                 persistent._iap_purchases[p.identifier] = False
 
         # Set up the back end.
-        if renpy.android:
+        if renpy.renpy.android:
             backend = init_android()
-        elif renpy.ios:
+        elif renpy.renpy.ios:
             backend = IOSBackend()
         else:
             backend = NoneBackend()

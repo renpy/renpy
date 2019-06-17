@@ -620,7 +620,7 @@ class SayBehavior(renpy.display.layout.Null):
 
                 if not renpy.config.enable_rollback_side:
                     rollback_side = "disable"
-                if renpy.mobile:
+                if renpy.exports.mobile:
                     rollback_side = renpy.game.preferences.mobile_rollback_side
                 else:
                     rollback_side = renpy.game.preferences.desktop_rollback_side
