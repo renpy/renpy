@@ -146,6 +146,14 @@ def init_emulator():
 
     name = os.environ.get("RENPY_EMULATOR", "")
 
+    renpy.exports.windows = False
+    renpy.exports.linux = False
+    renpy.exports.macintosh = False
+    renpy.exports.web = False
+    renpy.exports.android = renpy.exports.variant("android")
+    renpy.exports.ios = renpy.exports.variant("ios")
+    renpy.exports.mobile = renpy.exports.android or renpy.exports.ios  # @UndefinedVariable
+
     if name == "touch":
         emulator = touch_emulator
         overlay = [ renpy.store.DynamicDisplayable(dynamic_keyboard) ]
