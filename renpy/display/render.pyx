@@ -261,17 +261,44 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         rv.render_of.append(d)
         renpy.plog(4, "after clipping")
 
-    # We need to look this up again, as an invalidation might
-    render_cache_d = render_cache[id_d]
 
-    render_cache_d[wh] = rv
+    if not sizing:
 
-    if wh is not orig_wh:
-        render_cache_d[orig_wh] = rv
+        # This lookup is needed because invalidations are possible.
+        render_cache_d = render_cache[id_d]
+        render_cache_d[wh] = rv
+
+        if wh is not orig_wh:
+            render_cache_d[orig_wh] = rv
 
     renpy.plog(2, "end render {!r}", d)
 
     return rv
+
+def render_for_size(d, width, height, st, at):
+    """
+    This returns a render of `d`  that's useful for getting the size or
+    screen location, but not for actual rendering.
+    """
+
+    global sizing
+
+    id_d = id(d)
+    orig_wh = (width, height, frame_time-st, frame_time-at)
+    render_cache_d = render_cache[id_d]
+    rv = render_cache_d.get(orig_wh, None)
+
+    if rv is not None:
+        return rv
+
+    old_sizing = sizing
+    sizing = True
+
+    try:
+        return render(d, width, height, st, at)
+    finally:
+        sizing = old_sizing
+
 
 def invalidate(d):
     """

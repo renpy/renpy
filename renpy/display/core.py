@@ -1413,14 +1413,12 @@ class SceneLists(renpy.object.Object):
         else:
             at = 0
 
-        surf = renpy.display.render.render(sle.displayable, width, height, st, at)
+        surf = renpy.display.render.render_for_size(sle.displayable, width, height, st, at)
 
         sw = surf.width
         sh = surf.height
 
         x, y = place(width, height, sw, sh, sle.displayable.get_placement())
-
-        surf.kill()
 
         return (x, y, sw, sh)
 

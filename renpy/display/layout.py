@@ -1038,7 +1038,7 @@ class SizeGroup(renpy.object.Object):
         maxwidth = 0
 
         for i in self.members:
-            rend = i.render(width, height, st, at)
+            rend = renpy.display.render.render_for_size(i, width, height, st, at)
             maxwidth = max(rend.width, maxwidth)
 
         self._width = maxwidth
@@ -1573,16 +1573,8 @@ class Side(Container):
                 if pos not in pos_d:
                     return owidth, oheight
 
-                old_sizing = renpy.display.render.sizing
-                renpy.display.render.sizing = True
-
-                try:
-                    rend = render(pos_d[pos], width, height, st, at)
-                    rv = max(owidth, rend.width), max(oheight, rend.height)
-                    renpy.display.render.invalidate(pos_d[pos])
-                    return rv
-                finally:
-                    renpy.display.render.sizing = old_sizing
+                rend = renpy.display.render_for_size(pos_d[pos], width, height, st, at)
+                return max(owidth, rend.width), max(oheight, rend.height)
 
             cwidth, cheight = sizeit('c', width, height, 0, 0)
             cwidth, top = sizeit('t', cwidth, height, cwidth, top)
