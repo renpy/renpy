@@ -1046,9 +1046,51 @@ class RevertableObject(object):
         self.__dict__.update(compressed)
 
 
-# An object that handles deterministic randomness, or something.
+class RollbackRandom(random.Random):
+    """
+    This is used for Random objects returned by renpy.random.Random.
+    """
+
+    def __init__(self):
+        log = renpy.game.log
+
+        if log is not None:
+            log.mutated[id(self)] = None
+
+        super(RollbackRandom, self).__init__()
+
+    def _clean(self):
+        return self.getstate()
+
+    def _compress(self, clean):
+        return clean
+
+    def _rollback(self, compressed):
+        super(RollbackRandom, self).setstate(compressed)
+
+    setstate = mutator(random.Random.setstate)
+    jumpahead = mutator(random.Random.jumpahead)
+    getrandbits = mutator(random.Random.getrandbits)
+    seed = mutator(random.Random.seed)
+    random = mutator(random.Random.random)
+
+    def Random(self, seed=None):
+        """
+        Returns a new RNG object separate from the main one.
+        """
+
+        if seed is None:
+            seed = self.random()
+
+        new = RollbackRandom()
+        new.seed(seed)
+        return new
+
 
 class DetRandom(random.Random):
+    """
+    This is renpy.random.
+    """
 
     def __init__(self):
         super(DetRandom, self).__init__()
@@ -1091,7 +1133,10 @@ class DetRandom(random.Random):
         Returns a new RNG object separate from the main one.
         """
 
-        new = DetRandom()
+        if seed is None:
+            seed = self.random()
+
+        new = RollbackRandom()
         new.seed(seed)
         return new
 
@@ -1601,9 +1646,9 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                            and data == fwd_data
-                            and (keep_rollback or self.rolled_forward)
-                        ):
+                        and data == fwd_data
+                        and (keep_rollback or self.rolled_forward)
+                    ):
                     self.forward.pop(0)
                 else:
                     del self.forward[:]
