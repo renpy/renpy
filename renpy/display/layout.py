@@ -1869,6 +1869,8 @@ class Flatten(Container):
 
         return rv
 
+    def get_placement(self):
+        return self.child.get_placement()
 
 class AlphaMask(Container):
     """
