@@ -2,7 +2,7 @@
 
 python early in layeredimage:
 
-    from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval
+    from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, Flatten
     from collections import OrderedDict
 
     ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
@@ -562,13 +562,15 @@ python early in layeredimage:
         """
 
         attribute_function = None
+        invoke_flatten = False
 
-        def __init__(self, attributes, at=[], name=None, image_format=None, format_function=None, attribute_function=None, **kwargs):
+        def __init__(self, attributes, at=[], name=None, image_format=None, format_function=None, attribute_function=None, invoke_flatten=False, **kwargs):
 
             self.name = name
             self.image_format = image_format
             self.format_function = format_function
             self.attribute_function = attribute_function
+            self.invoke_flatten = invoke_flatten
 
             self.attributes = [ ]
             self.layers = [ ]
@@ -665,6 +667,9 @@ python early in layeredimage:
                         d = d._duplicate(None)
 
                     rv.add(d)
+
+            if self.invoke_flatten:
+                rv = Flatten(rv)
 
             if unknown and args.lint:
                 args = args.copy()
@@ -1048,10 +1053,11 @@ python early in layeredimage:
 
             else:
 
-                while parse_property(ll, rv, [ "image_format", "format_function", "attribute_function", "at" ] +
+                while parse_property(ll, rv,
+                    [ "image_format", "format_function", "attribute_function", "at", "invoke_flatten" ] +
                     renpy.sl2.slproperties.position_property_names +
                     renpy.sl2.slproperties.box_property_names
-                    ):
+                ):
                     pass
 
                 ll.expect_noblock('statement')
