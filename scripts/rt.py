@@ -101,10 +101,17 @@ def new_command(args):
 
 def run_command(args):
 
-    subprocess.call([
-        RENPY / "run.sh",
-        CURRENT.resolve()
-        ] + args.args)
+    dash_args = [ i for i in args.args if i.startswith("-") if (i != "--") ]
+    nodash_args = [ i for i in args.args if not i.startswith("-") ]
+
+    if args.lint:
+        dash_args.insert(0, "--lint")
+    if args.compile:
+        dash_args.insert(0, "--compile")
+
+    args = [ RENPY / "run.sh" ] + dash_args + [ CURRENT.resolve() ] + nodash_args
+
+    os.execv(args[0], args)
 
 
 def main():
@@ -133,6 +140,8 @@ def main():
 
     sp = asp.add_parser('run')
     sp.set_defaults(func=run_command)
+    sp.add_argument("--lint", action="store_true")
+    sp.add_argument("--compile", action="store_true")
     sp.add_argument("args", nargs=argparse.REMAINDER)
 
     args = ap.parse_args()
