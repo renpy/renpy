@@ -507,7 +507,6 @@ KEYWORDS = set([
     'python',
     'return',
     'scene',
-    'set',
     'show',
     'with',
     'while',
