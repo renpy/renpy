@@ -205,6 +205,7 @@ ui_properties = [
     Keyword("style_suffix"),
     Keyword("focus"),
     Keyword("default"),
+    Keyword("default_focus"),
     ]
 
 property_groups = {

@@ -316,7 +316,7 @@ class Displayable(renpy.object.Object):
     def __ne__(self, o):
         return not (self == o)
 
-    def __init__(self, focus=None, default=False, style='default', _args=None, tooltip=None, **properties):
+    def __init__(self, focus=None, default=False, style='default', _args=None, tooltip=None, default_focus=False, **properties):
 
         global default_style
 
@@ -326,7 +326,7 @@ class Displayable(renpy.object.Object):
             self.style = renpy.style.Style(style, properties)  # @UndefinedVariable
 
         self.focus_name = focus
-        self.default = default
+        self.default = default or default_focus
         self._tooltip = tooltip
 
         if _args is not None:

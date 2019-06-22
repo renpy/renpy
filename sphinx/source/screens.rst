@@ -196,9 +196,10 @@ All user interface statements take the following common properties:
     a transform wraps a textbutton that is added to the vbox, this
     second transform is not given events.
 
-`default`
-    If given and true, the displayable is focused by default. Only one
-    displayable should have this.
+`default_focus`
+    If given and true, the displayable is focused by default. When
+    multiple displayables have this, the values are compared and the
+    displayable with the greatest default focus becomes the default.
 
 `id`
     An identifier for the user-interface statement. When a screen is
