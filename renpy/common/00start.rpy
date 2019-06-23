@@ -195,7 +195,8 @@ label _start:
 
     scene black
 
-    call _gl_test
+    if not _restart:
+        call _gl_test
 
     python hide:
         renpy.warp.warp()
