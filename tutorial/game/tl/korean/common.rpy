@@ -1090,4 +1090,4 @@
     
     # 00accessibility.rpy:146
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
-    new "이 메뉴의 옵션은 접근성을 향상시키기 위한 것입니다. 모든 게임에서 작동하지 않을 수 있으며 일부 옵션 조합은 게임을 플레이할 수 없게 만들 수 있으며 이러한 경우 게임이나 엔진의 문제가 아닙니다. 글꼴을 변경할 때 최상의 결과를 얻으려면 글자 크기를 원래대로 유지하십시오."
+    new "이 메뉴의 옵션은 접근성을 향상시키기 위한 것입니다. 모든 게임에서 작동하지 않을 수 있고 일부 옵션 조합은 게임을 플레이할 수 없게 만들 수 있으며 이러한 경우 게임이나 엔진의 문제가 아닙니다. 글꼴을 변경할 때 최상의 결과를 얻으려면 글자 크기를 원래대로 유지하십시오."
