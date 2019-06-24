@@ -1039,3 +1039,51 @@
     # _errorhandling.rpym:668
     old "Copies the errors.txt file to the clipboard."
     new "errors.txt 파일을 클립보드로 복사합니다."
+    
+    # 00accessibility.rpy:76
+    old "Font Override"
+    new "글꼴 덮어쓰기"
+
+    # 00accessibility.rpy:80
+    old "Default"
+    new "기본"
+
+    # 00accessibility.rpy:84
+    old "DejaVu Sans"
+    new "DejaVu Sans"
+
+    # 00accessibility.rpy:88
+    old "Opendyslexic"
+    new "Opendyslexic"
+
+    # 00accessibility.rpy:94
+    old "Text Size Scaling"
+    new "글자 크기 조절"
+
+    # 00accessibility.rpy:100
+    old "Reset"
+    new "초기화"
+
+    # 00accessibility.rpy:105
+    old "Line Spacing Scaling"
+    new "줄 간격 조절"
+
+    # 00accessibility.rpy:117
+    old "Self-Voicing"
+    new "대사 읽기"
+
+    # 00accessibility.rpy:121
+    old "Off"
+    new "끄기"
+
+    # 00accessibility.rpy:125
+    old "Text-to-speech"
+    new "텍스트 음성 변환"
+
+    # 00accessibility.rpy:129
+    old "Clipboard"
+    new "클립보드"
+    
+    # 00accessibility.rpy:146
+    old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
+    new "이 메뉴의 옵션은 접근성을 향상시키기 위한 것입니다. 모든 게임에서 작동하지 않을 수 있으며 일부 옵션 조합은 게임을 플레이할 수 없게 만들 수 있으며 이러한 경우 게임이나 엔진의 문제가 아닙니다. 글꼴을 변경할 때 최상의 결과를 얻으려면 글자 크기를 원래대로 유지하십시오."
