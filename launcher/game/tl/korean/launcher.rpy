@@ -1542,7 +1542,7 @@
 
     # web.rpy:163
     old "Beuc's Patreon"
-    new "Beuc의 페이트리론"
+    new "Beuc의 페이트리온"
 
     # web.rpy:181
     old "Ren'Py web applications require the entire game to be downloaded to the player's computer before it can start."
