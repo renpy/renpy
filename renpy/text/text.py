@@ -1686,7 +1686,7 @@ class Text(renpy.display.core.Displayable):
         # Tokenize the text.
         tokens = self.tokenize(text)
 
-        if renpy.config.custom_text_tags or (renpy.config.replace_text is not None):
+        if renpy.config.custom_text_tags or renpy.config.self_closing_custom_text_tags or (renpy.config.replace_text is not None):
             tokens = self.apply_custom_tags(tokens)
 
         # self.tokens is a list of pairs, where the first component of
