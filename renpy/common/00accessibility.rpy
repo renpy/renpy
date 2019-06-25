@@ -19,7 +19,52 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+init -1500 python:
+
+    ##########################################################################
+    # Self-voicing
+
+    # Strings used internally in Ren'Py.
+    _("Self-voicing disabled.")
+    _("Clipboard voicing enabled. ")
+    _("Self-voicing enabled. ")
+
+    _("bar")
+    _("selected")
+    _("viewport")
+    _("horizontal scroll")
+    _("vertical scroll")
+    _("activate")
+    _("deactivate")
+    _("increase")
+    _("decrease")
+
+
+    # The character that's used for descriptive text.
+    config.descriptive_text_character = None
+
+    def alt(what, interact=True):
+        """
+        Uses the narrator to speak `what` if self-voicing is enabled.
+        """
+
+        if _preferences.self_voicing:
+
+            c = config.descriptive_text_character
+
+            if c is None:
+                c = narrator
+
+            return c(what, interact=interact)
+
+    # Old name for alt.
+    sv = alt
+
+
 init -1500 python hide:
+
+    ##########################################################################
+    # Font Transforms.
 
     store.__opendyslexic = { }
 

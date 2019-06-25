@@ -96,7 +96,7 @@ Descriptive Text
     disabled. Self-voicing text uses the :var:`sv` variable, which is defined to
     be similar to a character.
 
-    .. var:: sv = ...
+    .. var:: alt = ...
 
         A character-like object that uses the narrator to speak text if
         self-voicing is enabled.
@@ -105,11 +105,18 @@ Descriptive Text
 
         e "Hang on, this is gonna be a bumpy ride!"
 
-        sv "And then the sun exploded..."
+        alt "And then the sun exploded..."
 
         # A complex and exciting cut scene.
         show event sun_exploding
         pause 10
+
+    There is a variable that controls descriptive text:
+
+    .. var:: config.descriptive_text_character = None
+
+        If not None, this should be a character object that is used to
+        display the descriptive text.
 
 A self-voicing debug mode can be enabled by typing Shift+Alt+V. This will
 display the text that would be voiced on the screen for development

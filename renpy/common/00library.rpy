@@ -169,33 +169,6 @@ init -1700 python:
 
 
     ##########################################################################
-    # Self-voicing
-
-    # Strings used internally in Ren'Py.
-    _("Self-voicing disabled.")
-    _("Clipboard voicing enabled. ")
-    _("Self-voicing enabled. ")
-
-    _("bar")
-    _("selected")
-    _("viewport")
-    _("horizontal scroll")
-    _("vertical scroll")
-    _("activate")
-    _("deactivate")
-    _("increase")
-    _("decrease")
-
-    def sv(what, interact=True):
-        """
-        Uses the narrator to speak `what` iff self-voicing is enabled.
-        """
-
-        if _preferences.self_voicing:
-            return narrator(what, interact=interact)
-
-
-    ##########################################################################
     # Skip indicator
 
     style.skip_indicator = Style(style.default, heavy=True, help='The skip indicator.')
@@ -326,6 +299,7 @@ init -1000 python:
 
     for i in """
 adv
+alt
 anim
 blinds
 center
