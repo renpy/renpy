@@ -1138,8 +1138,6 @@ translate spanish strings:
     # renpy/common/_errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "Copia el archivo errors.txt al portapapeles como Markdown para Discord."
-    
-    translate spanish strings:
 
     # renpy/common/00accessibility.rpy:146
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
