@@ -1140,8 +1140,6 @@ translate spanish strings:
     # 00preferences.rpy:441
     old "font line spacing"
     new "fuente de espacio de líneas"
-    
-   translate spanish strings:
 
     # renpy/common/00accessibility.rpy:146
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
