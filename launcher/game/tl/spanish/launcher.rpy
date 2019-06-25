@@ -1643,8 +1643,6 @@ translate spanish strings:
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "Antes de empaquetar aplicaciones web, deberá descargar RenPyWeb, el soporte web de Ren'Py. ¿Te gustaría descargar RenPyWeb ahora?"
 
-translate spanish strings:
-
     # game/web.rpy:150
     old "Open in Browser"
     new "Abrir en Navegador"
