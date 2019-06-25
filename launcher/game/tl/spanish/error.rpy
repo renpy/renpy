@@ -211,9 +211,7 @@ translate spanish strings:
 
     # _errorhandling.rpym:667
     old "Copies the errors.txt file to the clipboard."
-    new "Copia el archivo errors.txt al portapapeles."
-
-translate spanish strings:
+    new "Copia el archivo errors.txt al portapapeles.
 
     # _errorhandling.rpym:542
     old "Copy BBCode"
