@@ -71,6 +71,10 @@ The parse method takes a Lexer object:
         block is present. `stmt` should be a string, it will be added
         to the message with an error.
 
+    .. method:: has_block()
+
+        True if the current line has a non-empty block.
+
     .. method:: match(re)
 
         Matches an arbitrary regexp string.

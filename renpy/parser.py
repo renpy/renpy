@@ -754,6 +754,12 @@ class Lexer(object):
         if not self.subblock:
             self.error('%s expects a non-empty block.' % stmt)
 
+    def has_block(self):
+        """
+        Called to check if the current line has a non-empty block.
+        """
+        return bool(self.subblock)
+
     def subblock_lexer(self, init=False):
         """
         Returns a new lexer object, equiped to parse the block
