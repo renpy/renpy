@@ -388,7 +388,11 @@ class ATLTransformBase(renpy.object.Object):
         self.atl_st_offset = t.atl_st_offset
 
         if self.child is renpy.display.motion.null:
-            self.child = t.child
+            if t.child._duplicatable:
+                self.child = t.child._duplicate(None)
+            else:
+                self.child = t.child
+
             self.raw_child = t.raw_child
 
     def __call__(self, *args, **kwargs):

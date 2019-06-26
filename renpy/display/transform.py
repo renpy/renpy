@@ -993,9 +993,6 @@ class Transform(Container):
         rv.take_execution_state(self)
         rv._unique()
 
-        if rv.child and rv.child._duplicatable:
-            rv.child = rv.child._duplicate(None)
-
         return rv
 
     def _in_current_store(self):
