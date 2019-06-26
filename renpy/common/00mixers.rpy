@@ -24,9 +24,8 @@
 
 init -1600 python hide:
 
-    # Set to true in the very unlikely event you want to manually init
-    # the sound system.
-    config.force_sound = False
+    # Set to False if you don't want sound to initialize without any mixers.
+    config.force_sound = True
 
     # basics: True if the game will have music.
     config.has_music = True
