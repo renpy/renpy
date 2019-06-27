@@ -713,9 +713,6 @@ translate russian strings:
     old "jump <label>: jumps to label"
     new "jump <label>: прыжок на метку"
 
-
-translate russian strings:
-
     # 00action_file.rpy:344
     old "Save slot %s: [text]"
     new "Слот сохранения %s: [text]"
@@ -1091,4 +1088,3 @@ translate russian strings:
     # 00director.rpy:1487
     old "⬇"
     new "⬇"
-

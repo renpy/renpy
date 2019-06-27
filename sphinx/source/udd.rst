@@ -134,7 +134,7 @@ class, we'll present them with the `self` parameter.
 
     Base class for creator-defined displayables.
 
-    .. method:: __init__(**properties):
+    .. method:: __init__(**properties)
 
         A subclass may override the constructor, perhaps adding new
         parameters. If it does, it should pass all unknown keyword
