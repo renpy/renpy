@@ -1,5 +1,4 @@
-﻿
-translate spanish strings:
+﻿translate spanish strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
@@ -734,8 +733,6 @@ translate spanish strings:
     # _developer\developer.rpym:154
     old "Show deleted"
     new "Mostrar borrados"
-
-translate spanish strings:
 
     # renpy/common/00accessibility.rpy:146
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."

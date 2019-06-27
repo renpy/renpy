@@ -1,5 +1,4 @@
-﻿
-translate spanish strings:
+﻿translate spanish strings:
 
     # options.rpy:1
     old "## This file contains options that can be changed to customize your game."

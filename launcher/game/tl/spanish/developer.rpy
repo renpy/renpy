@@ -1,5 +1,4 @@
-﻿
-translate spanish strings:
+﻿translate spanish strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"
@@ -188,8 +187,6 @@ translate spanish strings:
     # 00console.rpy:639
     old "jump <label>: jumps to label"
     new "jump <label>: salta a la etiqueta"
-
-translate spanish strings:
 
     # 00console.rpy:680
     old "short: Shorten the representation of objects on the console (default)."
