@@ -1779,6 +1779,7 @@ class SLUse(SLNode):
         ctx = SLContext(context)
         ctx.new_cache = context.new_cache[self.serial] = { }
         ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
+        ctx.uses_scope = [ ]
 
         if self.id:
 
@@ -1892,7 +1893,6 @@ class SLTransclude(SLNode):
 
         ctx.children = context.children
         ctx.showif = context.showif
-        ctx.uses_scope = context.uses_scope
 
         try:
             renpy.ui.stack.append(ctx)
