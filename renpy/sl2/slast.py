@@ -750,11 +750,13 @@ class SLDisplayable(SLBlock):
 
         if cache.constant and (cache.style_prefix == context.style_prefix):
 
-            for i, scope, local_scope in cache.constant_uses_scope:
+            for i, local_scope in cache.constant_uses_scope:
 
                 if local_scope:
-                    scope = dict(scope)
+                    scope = dict(context.scope)
                     scope.update(local_scope)
+                else:
+                    scope = context.scope
 
                 if copy_on_change:
                     if i._scope(scope, False):
@@ -1085,7 +1087,7 @@ class SLDisplayable(SLBlock):
                         if i in ctx.scope:
                             local_scope[i] = ctx.scope[i]
 
-                    ctx.uses_scope.append((main, ctx.scope, local_scope))
+                    ctx.uses_scope.append((main, local_scope))
 
                 cache.constant_uses_scope = ctx.uses_scope
 
@@ -1833,6 +1835,7 @@ class SLUse(SLNode):
         # Run the child screen.
         ctx.scope = scope
         ctx.parent = weakref.ref(context)
+
         ctx.transclude = self.block
 
         try:
