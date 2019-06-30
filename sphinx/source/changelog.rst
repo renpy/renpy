@@ -2,6 +2,55 @@
 Full Changelog
 ==============
 
+.. _renpy-7.3.1:
+
+7.3.1
+=====
+
+Changes
+-------
+
+Descriptive text (text that is intended to be show when self-voicing is
+enabled, so that scenes can be described to the vision impared) has been
+updated. Descriptive text is now accessed using the ``alt`` character
+(the old ``sv`` character has been retained as an alias.) It's also now
+possible to display descriptive text using a custom character, rather than
+the narrator.
+
+Ren'Py now always initializes the media playback system, so that a movie
+can be played even if no audio will be played.
+
+The `default` property of most displayables, which is used to choose a
+displayable to be focused by default, has been renamed to `default_focus`
+so that it does not conflict with the ``default`` statement. It also now
+takes an integer, with the displayable with the highest focus number
+getting focus.
+
+The :func:`Flatten` displayable now passes positions from the child.
+
+Seeded random number generators created with renpy.random.Random now
+support rollback.
+
+When emulating Android or iOS, the platform variables (like renpy.android,
+renpy.ios, renpy.windows, and renpy.mobile) are set properly.
+
+Fixes
+-----
+
+This release fixes a fairly major issue that could cause screens that
+interpolate text to not update, or update improperly.
+
+A problem with the {clear} text tag has been fixed.
+
+The :var:`config.end_game_transition`, which was not working properly
+in most circumstances, has been fixed.
+
+Translations
+------------
+
+The Russian, Korean, and Spanish translations were updated.
+
+
 .. _renpy-7.3.0:
 
 7.3.0
