@@ -262,14 +262,6 @@ class SLNode(object):
         # By default, does nothing.
         return
 
-    def scope_change(self, cache):
-        """
-        Called to indicate that the local scope has changed, and hence things
-        that display on the scope need to be updated.
-        """
-
-        return
-
     def copy_on_change(self, cache):
         """
         Flags the displayables that are created by this node and its children
@@ -454,10 +446,6 @@ class SLBlock(SLNode):
     def copy_on_change(self, cache):
         for i in self.children:
             i.copy_on_change(cache)
-
-    def scope_change(self, cache):
-        for i in self.children:
-            i.scope_change(cache)
 
     def used_screens(self, callback):
         for i in self.children:
@@ -762,7 +750,13 @@ class SLDisplayable(SLBlock):
 
         if cache.constant and (cache.style_prefix == context.style_prefix):
 
-            for i, scope in cache.constant_uses_scope:
+            for i, local_scope in cache.constant_uses_scope:
+
+                if local_scope:
+                    scope = dict(context.scope)
+                    scope.update(local_scope)
+                else:
+                    scope = context.scope
 
                 if copy_on_change:
                     if i._scope(scope, False):
@@ -1086,7 +1080,14 @@ class SLDisplayable(SLBlock):
                 cache.constant = d
 
                 if self.scope and main._uses_scope:
-                    ctx.uses_scope.append((main, dict(ctx.scope)))
+
+                    local_scope = { }
+
+                    for i in self.local_constant:
+                        if i in ctx.scope:
+                            local_scope[i] = ctx.scope[i]
+
+                    ctx.uses_scope.append((main, local_scope))
 
                 cache.constant_uses_scope = ctx.uses_scope
 
@@ -1187,16 +1188,6 @@ class SLDisplayable(SLBlock):
 
         for i in self.children:
             i.copy_on_change(cache)
-
-    def scope_change(self, cache):
-        c = cache.get(self.serial, None)
-
-        if isinstance(c, SLCache):
-            if c.constant_uses_scope:
-                c.constant = None
-
-        for i in self.children:
-            i.scope_change(cache)
 
 
 class SLIf(SLNode):
@@ -1326,10 +1317,6 @@ class SLIf(SLNode):
         for _cond, block in self.entries:
             block.copy_on_change(cache)
 
-    def scope_change(self, cache):
-        for _cond, block in self.entries:
-            block.scope_change(cache)
-
     def used_screens(self, callback):
         for _cond, block in self.entries:
             block.used_screens(callback)
@@ -1421,10 +1408,6 @@ class SLShowIf(SLNode):
     def copy_on_change(self, cache):
         for _cond, block in self.entries:
             block.copy_on_change(cache)
-
-    def scope_change(self, cache):
-        for _cond, block in self.entries:
-            block.scope_change(cache)
 
     def used_screens(self, callback):
         for _cond, block in self.entries:
@@ -1573,16 +1556,6 @@ class SLFor(SLBlock):
         for child_cache in c.values():
             for i in self.children:
                 i.copy_on_change(child_cache)
-
-    def scope_change(self, cache):
-        c = cache.get(self.serial, None)
-
-        if not isinstance(c, dict):
-            return
-
-        for child_cache in c.values():
-            for i in self.children:
-                i.scope_change(child_cache)
 
 
 class SLPython(SLNode):
@@ -1806,6 +1779,7 @@ class SLUse(SLNode):
         ctx = SLContext(context)
         ctx.new_cache = context.new_cache[self.serial] = { }
         ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
+        ctx.uses_scope = [ ]
 
         if self.id:
 
@@ -1862,6 +1836,7 @@ class SLUse(SLNode):
         # Run the child screen.
         ctx.scope = scope
         ctx.parent = weakref.ref(context)
+
         ctx.transclude = self.block
 
         try:
@@ -1880,15 +1855,6 @@ class SLUse(SLNode):
 
         if self.ast is not None:
             self.ast.copy_on_change(c)
-
-    def scope_change(self, cache):
-
-        c = cache.get(self.serial, None)
-        if c is None:
-            return
-
-        if self.ast is not None:
-            self.ast.scope_change(c)
 
     def used_screens(self, callback):
         callback(self.target)
@@ -1927,7 +1893,6 @@ class SLTransclude(SLNode):
 
         ctx.children = context.children
         ctx.showif = context.showif
-        ctx.uses_scope = context.uses_scope
 
         try:
             renpy.ui.stack.append(ctx)
@@ -1947,15 +1912,6 @@ class SLTransclude(SLNode):
             return
 
         SLBlock.copy_on_change(c["transclude"], c)
-
-    def scope_change(self, cache):
-
-        c = cache.get(self.serial, None)
-
-        if c is None or "transclude" not in c:
-            return
-
-        SLBlock.scope_change(c["transclude"], c)
 
     def has_transclude(self):
         return True
@@ -2191,44 +2147,11 @@ class SLScreen(SLBlock):
         context.old_use_cache = current_screen.use_cache
         context.new_use_cache = { }
 
-        def scopes_equal(a, b):
-            if len(a) != len(b):
-                return False
-
-            if set(a) ^ set(b):
-                return False
-
-            for k, av in a.iteritems():
-                bv = b[k]
-
-                if av is bv:
-                    continue
-
-                try:
-                    if av != bv:
-                        if k == "_scope":
-                            continue
-
-                        return False
-                except:
-                    return False
-
-            return True
-
-        old_scope = context.old_cache.get("scope", None)
-        if old_scope is not None:
-            if not scopes_equal(old_scope, context.scope):
-                self.const_ast.scope_change(context.old_cache)
-
         self.const_ast.execute(context)
 
         for i in context.children:
             renpy.ui.implicit_add(i)
 
-        scope_copy = dict(context.scope)
-        scope_copy["_scope"] = None
-
-        context.new_cache["scope"] = scope_copy
         current_screen.cache[name] = context.new_cache
         current_screen.use_cache = context.new_use_cache
 

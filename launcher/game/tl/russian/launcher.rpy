@@ -1517,9 +1517,9 @@ translate russian strings:
     old "Web"
     new "Веб-инструменты"
 
-    # front_page.rpy:252
-    old "Web (Beta)"
-    new "Веб-инструменты (Бета)"
+    # game/front_page.rpy:252
+    old "(Beta)"
+    new "(Бета)"
 
     # interface.rpy:394
     old "While [what!qt], an error occured:"
@@ -1596,3 +1596,11 @@ translate russian strings:
     # updater.rpy:198
     old "parsing the list of update channels"
     new "разбор списка каналов обновления"
+
+    # game/web.rpy:150
+    old "Open in Browser"
+    new "Открыть в браузере"
+
+    # game/web.rpy:151
+    old "Open build directory"
+    new "Открыть папку сборки"

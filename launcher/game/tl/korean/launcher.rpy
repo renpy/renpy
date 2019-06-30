@@ -1525,8 +1525,12 @@
     new "빌드 및 브라우저에서 열기"
 
     # web.rpy:150
-    old "Open without Build"
-    new "빌드하지 않고 열기"
+    old "Open in Browser"
+    new "브라우저에서 열기"
+
+    # web.rpy:151
+    old "Open build directory"
+    new "빌드 디렉토리 열기"
 
     # web.rpy:154
     old "Support:"
@@ -1538,7 +1542,7 @@
 
     # web.rpy:163
     old "Beuc's Patreon"
-    new "Beuc의 페트론"
+    new "Beuc의 페이트리온"
 
     # web.rpy:181
     old "Ren'Py web applications require the entire game to be downloaded to the player's computer before it can start."
