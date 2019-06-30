@@ -1,55 +1,103 @@
 ﻿
 translate piglatin strings:
 
-    # renpy/common/00accessibility.rpy:83
+    # renpy/common/00accessibility.rpy:28
+    old "Self-voicing disabled."
+    new "Elfsay-oicingvay isabledday."
+
+    # renpy/common/00accessibility.rpy:29
+    old "Clipboard voicing enabled. "
+    new "Lipboardcay oicingvay enableday. "
+
+    # renpy/common/00accessibility.rpy:30
+    old "Self-voicing enabled. "
+    new "Elfsay-oicingvay enableday. "
+
+    # renpy/common/00accessibility.rpy:32
+    old "bar"
+    new "arbay"
+
+    # renpy/common/00accessibility.rpy:33
+    old "selected"
+    new "electedsay"
+
+    # renpy/common/00accessibility.rpy:34
+    old "viewport"
+    new "iewportvay"
+
+    # renpy/common/00accessibility.rpy:35
+    old "horizontal scroll"
+    new "orizontalhay crollsay"
+
+    # renpy/common/00accessibility.rpy:36
+    old "vertical scroll"
+    new "erticalvay crollsay"
+
+    # renpy/common/00accessibility.rpy:37
+    old "activate"
+    new "activateay"
+
+    # renpy/common/00accessibility.rpy:38
+    old "deactivate"
+    new "eactivateday"
+
+    # renpy/common/00accessibility.rpy:39
+    old "increase"
+    new "increaseay"
+
+    # renpy/common/00accessibility.rpy:40
+    old "decrease"
+    new "ecreaseday"
+
+    # renpy/common/00accessibility.rpy:128
     old "Font Override"
     new "Ontfay Verrideoay"
 
-    # renpy/common/00accessibility.rpy:87
+    # renpy/common/00accessibility.rpy:132
     old "Default"
     new "Efaultday"
 
-    # renpy/common/00accessibility.rpy:91
+    # renpy/common/00accessibility.rpy:136
     old "DejaVu Sans"
     new "Ejavuday Anssay"
 
-    # renpy/common/00accessibility.rpy:95
+    # renpy/common/00accessibility.rpy:140
     old "Opendyslexic"
     new "Pendyslexicoay"
 
-    # renpy/common/00accessibility.rpy:101
+    # renpy/common/00accessibility.rpy:146
     old "Text Size Scaling"
     new "Exttay Izesay Calingsay"
 
-    # renpy/common/00accessibility.rpy:107
+    # renpy/common/00accessibility.rpy:152
     old "Reset"
     new "Esetray"
 
-    # renpy/common/00accessibility.rpy:112
+    # renpy/common/00accessibility.rpy:157
     old "Line Spacing Scaling"
     new "Inelay Pacingsay Calingsay"
 
-    # renpy/common/00accessibility.rpy:124
+    # renpy/common/00accessibility.rpy:169
     old "Self-Voicing"
     new "Elfsay-Oicingvay"
 
-    # renpy/common/00accessibility.rpy:128
+    # renpy/common/00accessibility.rpy:173
     old "Off"
     new "Ffoay"
 
-    # renpy/common/00accessibility.rpy:132
+    # renpy/common/00accessibility.rpy:177
     old "Text-to-speech"
     new "Exttay-otay-peechsay"
 
-    # renpy/common/00accessibility.rpy:136
+    # renpy/common/00accessibility.rpy:181
     old "Clipboard"
     new "Lipboardcay"
 
-    # renpy/common/00accessibility.rpy:140
+    # renpy/common/00accessibility.rpy:185
     old "Debug"
     new "Ebugday"
 
-    # renpy/common/00accessibility.rpy:146
+    # renpy/common/00accessibility.rpy:191
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
     new "Hetay optionsay onay histay enumay areay intendeday otay improveay accessibilityay. Heytay aymay otnay orkway ithway allay amesgay, anday omesay ombinationscay ofay optionsay aymay enderray hetay amegay unplayableay. Histay isay otnay anay issueay ithway hetay amegay oray engineay. Orfay hetay estbay esultsray henway angingchay ontsfay, ytray otay eepkay hetay exttay izesay hetay amesay asay itay originallyay asway."
 
@@ -397,59 +445,11 @@ translate piglatin strings:
     old "Saved screenshot as %s."
     new "Avedsay creenshotsay asay %say."
 
-    # renpy/common/00library.rpy:175
-    old "Self-voicing disabled."
-    new "Elfsay-oicingvay isabledday."
-
-    # renpy/common/00library.rpy:176
-    old "Clipboard voicing enabled. "
-    new "Lipboardcay oicingvay enableday. "
-
-    # renpy/common/00library.rpy:177
-    old "Self-voicing enabled. "
-    new "Elfsay-oicingvay enableday. "
-
-    # renpy/common/00library.rpy:179
-    old "bar"
-    new "arbay"
-
-    # renpy/common/00library.rpy:180
-    old "selected"
-    new "electedsay"
-
-    # renpy/common/00library.rpy:181
-    old "viewport"
-    new "iewportvay"
-
-    # renpy/common/00library.rpy:182
-    old "horizontal scroll"
-    new "orizontalhay crollsay"
-
-    # renpy/common/00library.rpy:183
-    old "vertical scroll"
-    new "erticalvay crollsay"
-
-    # renpy/common/00library.rpy:184
-    old "activate"
-    new "activateay"
-
-    # renpy/common/00library.rpy:185
-    old "deactivate"
-    new "eactivateday"
-
-    # renpy/common/00library.rpy:186
-    old "increase"
-    new "increaseay"
-
-    # renpy/common/00library.rpy:187
-    old "decrease"
-    new "ecreaseday"
-
-    # renpy/common/00library.rpy:222
+    # renpy/common/00library.rpy:195
     old "Skip Mode"
     new "Kipsay Odemay"
 
-    # renpy/common/00library.rpy:308
+    # renpy/common/00library.rpy:281
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "Histay rogrampay ontainscay eefray oftwaresay underay aay umbernay ofay icenseslay, includingay hetay Itmay Icenselay anday Nugay Esserlay Eneralgay Ublicpay Icenselay. Aay ompletecay istlay ofay oftwaresay, includingay inkslay otay ullfay ourcesay odecay, ancay ebay oundfay {a=https://www.renpy.org/l/license}erehay{/a}."
 
@@ -713,23 +713,23 @@ translate piglatin strings:
     old "Proceed"
     new "Roceedpay"
 
-    # renpy/common/00gallery.rpy:589
+    # renpy/common/00gallery.rpy:592
     old "Image [index] of [count] locked."
     new "Mageiay [index] ofay [count] ockedlay."
 
-    # renpy/common/00gallery.rpy:609
+    # renpy/common/00gallery.rpy:612
     old "prev"
     new "revpay"
 
-    # renpy/common/00gallery.rpy:610
+    # renpy/common/00gallery.rpy:613
     old "next"
     new "extnay"
 
-    # renpy/common/00gallery.rpy:611
+    # renpy/common/00gallery.rpy:614
     old "slideshow"
     new "ideshowslay"
 
-    # renpy/common/00gallery.rpy:612
+    # renpy/common/00gallery.rpy:615
     old "return"
     new "eturnray"
 

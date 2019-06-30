@@ -1527,7 +1527,7 @@
     # web.rpy:150
     old "Open in Browser"
     new "브라우저에서 열기"
-    
+
     # web.rpy:151
     old "Open build directory"
     new "빌드 디렉토리 열기"
