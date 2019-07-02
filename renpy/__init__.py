@@ -40,7 +40,7 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (7, 3, 1, vc_version)
+version_tuple = (7, 3, 2, vc_version)
 
 # The name of this version.
 version_name = "The world (wide web) is not enough."
