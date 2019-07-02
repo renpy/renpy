@@ -2,6 +2,23 @@
 Full Changelog
 ==============
 
+.. _renpy-7.3.2
+
+7.3.2
+=====
+
+Fixes
+-----
+
+Fix a regression in the platform variables, caused by the previous
+release.
+
+Translations
+------------
+
+Update the spanish translation.
+
+
 .. _renpy-7.3.1:
 
 7.3.1
