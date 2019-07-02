@@ -45,7 +45,7 @@ translate spanish screens_demo_5a5aa2d5:
 translate spanish screens_demo_58d48fde:
 
     # e "There are a lot of special screens, like 'main_menu', 'load', 'save', and 'preferences'. Rather than list them all here, I'll {a=https://www.renpy.org/doc/html/screen_special.html}send you to the documentation{/a}."
-    e "Hay muchas pantallas especiales, como 'main_menu', 'load', 'save', y 'preferences'. En lugar de enumerarlos a todos aquí, {a=https://www.renpy.org/doc/html/screen_special.html}te enviaré a la documentación{/a}."
+    e "Hay muchas pantallas especiales, como 'main_menu', 'load', 'save', y 'preferences'. En lugar de enumerarlas todas aquí, {a=https://www.renpy.org/doc/html/screen_special.html}te enviaré a la documentación{/a}."
 
 # game/tutorial_screens.rpy:221
 translate spanish screens_demo_27476d11:
