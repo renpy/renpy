@@ -27,6 +27,7 @@ init python:
 
     import shutil
     import webserver
+    import io
 
     WEB_PATH = None
 
@@ -91,12 +92,12 @@ init python:
             shutil.copy(os.path.join(WEB_PATH, fn), os.path.join(destination, fn))
 
         # Copy over index.html.
-        with open(os.path.join(WEB_PATH, "index.html")) as f:
+        with io.open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
             html = f.read()
 
-        html = html.replace("%%TITLE%%", display_name.encode("utf-8"))
+        html = html.replace("%%TITLE%%", display_name)
 
-        with open(os.path.join(destination, "index.html"), "w") as f:
+        with io.open(os.path.join(destination, "index.html"), "w", encoding='utf-8') as f:
             f.write(html)
 
         webserver.start(destination)
