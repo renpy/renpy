@@ -18,6 +18,28 @@ such changes only take effect when the GUI is regenerated.
 7.3.0
 -----
 
+Screen language now produces the error "a non-constant keyword argument ...
+is not allowed after a python block." when it encounters screens similar
+to the following::
+
+    screen test():
+
+        default a = 0
+
+        button:
+            $ a = 1
+            action Return(a)
+
+            text "Test"
+
+This is because the property `action` is run before the python assignment,
+meaning this was returning 0 when clicked, not 1. To disable this check, add ::
+
+    define config.keyword_after_python = True
+
+to a file named 01compat.rpy in your game's game directory. However, your
+game will have the old behavior.
+
 The order in which children of the ``side`` layout are drawn is now
 taken from the control string. To revert to the old fixed order, use::
 
