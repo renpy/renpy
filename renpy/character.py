@@ -975,12 +975,10 @@ class ADVCharacter(object):
 
         trans, layer = renpy.config.say_attribute_transition_callback(
             self.image_tag, mode, *delta)
-
         if trans is not None:
             if layer is None:
                 renpy.exports.with_statement(trans)
             else:
-                renpy.exports.with_statement(None)
                 renpy.exports.transition(trans, layer=layer)
 
     def restore_say_attributes(self, predicting, state, interact):
