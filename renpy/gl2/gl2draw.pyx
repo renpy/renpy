@@ -391,8 +391,8 @@ cdef class GL2Draw:
         else:
             self.draw_per_virt = 1.0
 
-        self.virt_to_draw = render.Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
-        self.draw_to_virt = render.Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
+        self.virt_to_draw = Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
+        self.draw_to_virt = Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
 
         uguugl.load()
 
@@ -817,13 +817,13 @@ cdef class GL2Draw:
         double yo,
         double alpha,
         double over,
-        render.Matrix2D reverse,
+        Matrix reverse,
         bint nearest,
         bint subpixel) except 1:
 
         cdef render.Render rend
         cdef double cxo, cyo, tcxo, tcyo
-        cdef render.Matrix2D child_reverse
+        cdef Matrix child_reverse
 
         if not isinstance(what, render.Render):
 
@@ -923,7 +923,7 @@ cdef class GL2Draw:
                 p /= 2
                 pc = self.get_half(pc)
 
-            reverse *= renpy.display.render.Matrix2D(1.0 * what.width / pc.width, 0, 0, 1.0 * what.height / pc.height)
+            reverse *= Matrix2D(1.0 * what.width / pc.width, 0, 0, 1.0 * what.height / pc.height)
 
             gl2texture.blit(
                 pc,
@@ -1084,7 +1084,7 @@ cdef class GL2Draw:
         if what.half_cache:
             return what.half_cache
 
-        reverse = renpy.display.render.Matrix2D(0.5, 0, 0, .5)
+        reverse = Matrix2D(0.5, 0, 0, .5)
 
         width = max(what.width / 2, 1)
         height = max(what.height / 2, 1)

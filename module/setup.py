@@ -181,6 +181,7 @@ for p in generate_styles.prefixes:
     cython("renpy.styledata.style_{}functions".format(p), pyx=setuplib.gen + "/style_{}functions.pyx".format(p))
 
 # renpy.display
+cython("renpy.display.matrix")
 cython("renpy.display.render", libs=[ 'z', 'm' ])
 cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
 

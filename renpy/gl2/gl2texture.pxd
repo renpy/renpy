@@ -19,6 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from renpy.display.matrix cimport Matrix
 cimport renpy.display.render as render
 from gl2draw cimport Environ
 
@@ -70,7 +71,7 @@ cpdef blit(
     TextureGrid tg,
     double sx,
     double sy,
-    render.Matrix2D transform,
+    Matrix transform,
     double alpha,
     double over,
     Environ environ,
@@ -81,7 +82,7 @@ cpdef blend(
     TextureGrid tg1,
     double sx,
     double sy,
-    render.Matrix2D transform,
+    Matrix transform,
     double alpha,
     double over,
     double fraction,
@@ -94,7 +95,7 @@ cpdef imageblend(
     TextureGrid tg2,
     double sx,
     double sy,
-    render.Matrix2D transform,
+    Matrix transform,
     double alpha,
     double over,
     double fraction,

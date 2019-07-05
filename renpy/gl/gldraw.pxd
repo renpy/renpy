@@ -19,6 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from renpy.display.matrix cimport Matrix, Matrix2D
 cimport renpy.display.render as render
 
 cdef class Environ
@@ -58,8 +59,8 @@ cdef class GLDraw:
     cdef public object draw_per_virt
 
     # Matrices that transform drawable to virtual, and vice versa.
-    cdef public render.Matrix2D virt_to_draw
-    cdef public render.Matrix2D draw_to_virt
+    cdef public Matrix virt_to_draw
+    cdef public Matrix draw_to_virt
 
     cdef public int fast_redraw_frames
 
@@ -78,7 +79,7 @@ cdef class GLDraw:
         double yo,
         double alpha,
         double over,
-        render.Matrix2D reverse,
+        Matrix reverse,
         bint nearest,
         bint subpixel) except 1
 
