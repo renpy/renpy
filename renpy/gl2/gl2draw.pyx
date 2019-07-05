@@ -46,7 +46,6 @@ import uguugl
 cimport renpy.display.render as render
 cimport gl2texture
 import gl2texture
-import gl2blacklist
 
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE

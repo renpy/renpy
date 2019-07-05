@@ -82,3 +82,5 @@ sphinx/source/inc
 sphinx/source/thequestion.rst
 tutorial/game/tutorial_director.rpy
 launcher/theme
+module/emscripten-static/
+web/
