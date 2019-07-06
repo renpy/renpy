@@ -2,7 +2,8 @@ import re
 import io
 import os
 
-from shaders import Program
+import renpy.display
+from renpy.gl2.gl2shader import Program
 
 # A map from shader part name to ShaderPart
 shader_part = { }
@@ -248,8 +249,8 @@ class ShaderCache(object):
             os.rename(tmp, self.filename)
 
         except:
-            # TODO: Log exception.
-            raise
+            renpy.display.log("Saving shaders to {!r}:".format(self.filename))
+            renpy.display.log.exception()
 
     def load(self):
         """
@@ -257,11 +258,14 @@ class ShaderCache(object):
         for which the parts exist, and for which compilation can succeed.
         """
 
+        if not os.path.exists(self.filename):
+            return
+
         try:
             f = io.open(self.filename, "r", encoding="utf-8")
         except:
-            # TODO: Log exception.
-            return
+            renpy.display.log("Opening {!r}:".format(self.filename))
+            renpy.display.log.exception()
 
         for l in f:
             l = l.strip()
@@ -277,8 +281,8 @@ class ShaderCache(object):
             try:
                 self.get(partnames)
             except:
-                # TODO: Log exception.
-                raise
+                renpy.display.log("Precompiling shader {!r}:".format(partnames))
+                renpy.display.log.exception()
                 self.missing.add(partnames)
 
         f.close()
