@@ -224,6 +224,10 @@ cython("renpy.gl2.gl2texture", libs=sdl)
 cython("renpy.gl2.gl2environ_shader", libs=sdl)
 cython("renpy.gl2.gl2rtt_fbo", libs=sdl)
 
+cython("renpy.gl2.gl2polygon", libs=sdl)
+cython("renpy.gl2.gl2mesh", libs=sdl)
+cython("renpy.gl2.gl2shader", libs=sdl)
+cython("renpy.gl2.gl2ftl", libs=sdl)
 
 if not (android or ios or emscripten):
     # renpy.angle
