@@ -654,6 +654,8 @@ def import_cython():
     import renpy.arguments
 
     import renpy.display.accelerator
+
+    import renpy.display.matrix
     import renpy.display.render
 
     import renpy.gl.gl
@@ -672,6 +674,17 @@ def import_cython():
     import renpy.angle.glrtt_copy
     import renpy.angle.glrtt_fbo
     import renpy.angle.gltexture
+
+    import renpy.gl2.gl2draw
+    import renpy.gl2.gl2ftl
+    import renpy.gl2.gl2mesh
+    import renpy.gl2.gl2polygon
+    import renpy.gl2.gl2shader
+    import renpy.gl2.gl2texture
+    import renpy.gl2.gl2environ_shader
+    import renpy.gl2.gl2rtt_fbo
+    import renpy.gl2.uguu
+    import renpy.gl2.uguugl
 
 
 if False:
