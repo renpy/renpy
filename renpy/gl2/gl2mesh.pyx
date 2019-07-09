@@ -58,7 +58,7 @@ cdef class Mesh:
 
         self.polygons.append(p)
 
-    def add_texture_rectangle(Mesh self, float w, float h):
+    def add_texture_rectangle(Mesh self, double w, double h):
         """
         Returns a polygon corresponding to a texture rectangle.
         """

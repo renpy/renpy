@@ -269,25 +269,12 @@ cdef class TextureCore:
         self.generation = 0
         self.number = 0
 
-        # The format of this texture in the GPU (or 0 if not known).
-        self.format = 0
-
-        # These are used to map an index into texture coordinates.
-        self.xmul = 0
-        self.xadd = 0
-        self.ymul = 0
-        self.yadd = 0
-
         # These contained the premultiplied (but not GPU-loaded)
         # surface. They allow us to defer loading until the surface is
         # needed.
 
         self.premult = None
         self.premult_size = None
-        self.premult_left = 0
-        self.premult_right = 0
-        self.premult_top = 0
-        self.premult_bottom = 0
 
         # True if we're in NEAREST mode. False if we're in LINEAR mode.
         self.nearest = False
