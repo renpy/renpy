@@ -10,7 +10,7 @@ from pygame_sdl2 cimport *
 import pygame_sdl2
 import_pygame_sdl2()
 
-from renpy.gl2.gl2mesh import Mesh
+from renpy.gl2.gl2geometry import Mesh
 from renpy.gl2.gl2shader cimport Program
 
 FTL_VERTEX_SHADER = b"""\

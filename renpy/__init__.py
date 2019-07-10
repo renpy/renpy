@@ -677,8 +677,7 @@ def import_cython():
 
     import renpy.gl2.gl2draw
     import renpy.gl2.gl2ftl
-    import renpy.gl2.gl2mesh
-    import renpy.gl2.gl2polygon
+    import renpy.gl2.gl2geometry
     import renpy.gl2.gl2shader
     import renpy.gl2.gl2texture
     import renpy.gl2.uguu

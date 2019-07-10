@@ -1,8 +1,7 @@
 from uguugl cimport *
 from libc.stdlib cimport malloc, free
 
-from renpy.gl2.gl2polygon cimport Polygon
-from renpy.gl2.gl2mesh cimport Mesh
+from renpy.gl2.gl2geometry cimport Polygon, Mesh
 from renpy.display.matrix cimport Matrix
 
 class ShaderError(Exception):
