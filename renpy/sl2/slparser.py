@@ -418,7 +418,7 @@ many = renpy.object.Sentinel("many")
 def register_sl_displayable(*args, **kwargs):
     """
     :doc: custom_sl class
-    :args: (name, displayable, style, nchildren=0, scope=False, replaces=False, default_keywords={})
+    :args: (name, displayable, style, nchildren=0, scope=False, replaces=False, default_keywords={}, default_properties=True)
 
     Registers a screen language statement that creates a displayable.
 
@@ -463,6 +463,9 @@ def register_sl_displayable(*args, **kwargs):
 
     `default_keywords`
         The default set of keyword arguments to supply to the displayable.
+
+    `default_properties`
+        If true, the ui and position properties are added by default.
 
     Returns an object that can have positional arguments and properties
     added to it by calling the following methods. Each of these methods

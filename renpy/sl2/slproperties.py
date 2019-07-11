@@ -39,6 +39,9 @@ position_property_names = [
     "maximum",
     "xmaximum",
     "ymaximum",
+    "minimum",
+    "xminimum",
+    "yminimum",
     "area",
     "clipping",
     "xfill",
@@ -93,9 +96,6 @@ text_property_names = [
     "text_align",
     "text_y_fudge",
     "underline",
-    "minimum",
-    "xminimum",
-    "yminimum",
     "hinting",
     "adjust_spacing",
     ]
@@ -121,9 +121,6 @@ window_properties = [ Style(i) for i in [
     "ypadding",
     "padding",
     "size_group",
-    "minimum",
-    "xminimum",
-    "yminimum",
     ] ]
 
 button_properties = [ Style(i) for i in [
@@ -182,9 +179,6 @@ box_property_names = [
     "fit_first",
     "xfit",
     "yfit",
-    "minimum",
-    "xminimum",
-    "yminimum",
 ]
 
 box_properties = [ Style(i) for i in box_property_names ]
