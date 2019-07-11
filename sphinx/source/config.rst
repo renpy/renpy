@@ -566,6 +566,9 @@ Occasionally Used
     Before performing the load, Ren'Py will revert to the start of the
     last statement, then it will clear the call stack.
 
+    This may also be a function. If it is, the function is called with
+    no arguments, and is expected to return a string giving the label.
+
 .. var:: config.locale_to_language_function = ...
 
     A function that determines the language the game should use,
