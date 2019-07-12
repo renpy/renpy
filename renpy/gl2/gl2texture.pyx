@@ -102,7 +102,10 @@ cdef class GLTextureCore:
         except TypeError:
             pass # Let's not error on shutdown.
 
-# Wraps GLTextureCore in a
+# Wraps GLTextureCore in a Python class, so garbace collection can occur.
+class GLTexture(GLTextureCore):
+    pass
+
 
 
 def cleanup():
@@ -134,6 +137,25 @@ def increase_generation():
 
     global generation
     generation += 1
+
+
+################################################################################
+
+class TexturedMesh:
+    """
+    This represents a combination of the geometry, textures, shaders, and
+    uniform values required to display something on the screen.
+
+    :ivar Mesh mesh: Contains the geometry and per-vertex attributes.
+    :ivar textures: Maps the names of textures used by the shaders to GLTexture
+        objects.
+    :vartype textures: dict(str, GLTexture)
+    :ivar shaders: A list of strings giving the shaders that are used.
+    :vartype shaders: list(str)
+    :ivar dict uniforms: A dictionary mapping uniform names to their values.
+    """
+
+    pass
 
 
 
