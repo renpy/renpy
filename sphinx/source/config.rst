@@ -1550,7 +1550,7 @@ Ren'Py management of the Python garbage collector.
     reached a steady state. (The fourth frame or later after the screen has been
     updated.)
 
-.. var:: gc_print_unreachable = False
+.. var:: config.gc_print_unreachable = False
 
     If True, Ren'Py will print to its console and logs informaton about the
     objects that are triggering collections.
