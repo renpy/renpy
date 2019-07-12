@@ -19,48 +19,23 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from renpy.display.matrix cimport Matrix
-cimport renpy.display.render as render
+cdef class GLTextureCore:
 
-cdef class TextureCore:
+    # The size of the texture.
     cdef public int width
     cdef public int height
+
+    # A generation number, to prevent stale texture objects from being
+    # retained.
     cdef public int generation
+
+    # The number of the texture in OpenGL.
     cdef public unsigned int number
-    cdef bint loaded
-    cdef double xmul
-    cdef double xadd
-    cdef double ymul
-    cdef double yadd
-    cdef object premult
-    cdef tuple premult_size
-    cdef int premult_left
-    cdef int premult_right
-    cdef int premult_top
-    cdef int premult_bottom
-    cdef bint nearest
-    cdef public list free_list
 
-    cdef void make_ready(TextureCore)
-    cdef void make_nearest(TextureCore)
-    cdef void make_linear(TextureCore)
-    cpdef int allocate(TextureCore)
+    # Has this texture been loaded yet?
+    cdef public bint loaded
 
-    cdef public object debug
+    # This is the data required to load a texture, if it has not been
+    # loaded yet.
+    cdef unsigned char *data
 
-cdef class TextureGrid:
-
-
-    cdef object __weakref__
-
-    cdef public int width
-    cdef public int height
-    cdef list rows
-    cdef list columns
-    cdef list tiles # list of lists.
-    cdef public TextureGrid half_cache
-
-    cpdef void make_ready(self, bint nearest)
-
-    cdef public object debug
-    cdef public bint ready

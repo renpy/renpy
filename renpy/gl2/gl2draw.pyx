@@ -456,7 +456,7 @@ cdef class GL2Draw:
 
         self.texture_cache.clear()
 
-        gl2texture.dealloc_textures()
+        gl2texture.increase_generation()
 
     def quit(self):
 

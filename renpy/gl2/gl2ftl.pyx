@@ -107,10 +107,6 @@ cpdef GLuint load_texture(fn):
 
     for 0 <= i < s.h:
         memcpy(p, pixels, s.w * 4)
-        pixels[40 + 0] = 255
-        pixels[40 + 1] = 255
-        pixels[40 + 2] = 255
-        pixels[40 + 3] = 255
 
         pixels += s.pitch
         p += (s.w * 4)
