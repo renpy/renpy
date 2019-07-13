@@ -19,16 +19,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from renpy.display.matrix cimport Matrix, Matrix2D
 cimport renpy.display.render as render
-
-cdef class Environ
 
 cdef class GL2Draw:
 
     cdef bint did_init
-    cdef bint did_texture_test
-    cdef Environ environ
-    cdef public object rtt
     cdef object window
     cdef tuple virtual_size
     cdef public tuple physical_size
@@ -45,9 +41,7 @@ cdef class GL2Draw:
     cdef public object fullscreen_surface
     cdef object display_info
     cdef tuple clip_cache
-    cdef bint fast_dissolve
     cdef tuple default_clip
-    cdef bint did_render_to_texture
     cdef float dpi_scale
     cdef object ready_texture_queue
 
@@ -57,41 +51,10 @@ cdef class GL2Draw:
     cdef public object draw_per_virt
 
     # Matrices that transform drawable to virtual, and vice versa.
-    cdef public render.Matrix2D virt_to_draw
-    cdef public render.Matrix2D draw_to_virt
+    cdef public Matrix virt_to_draw
+    cdef public Matrix draw_to_virt
 
     cdef public int fast_redraw_frames
 
     cdef public bint gles
-
-    cpdef set_clip(GL2Draw self, tuple clip)
-
-    cpdef int draw_render_textures(
-        GL2Draw self,
-        object what,
-        bint non_aligned) except 1
-
-    cpdef int draw_transformed(
-        GL2Draw self,
-        object what,
-        tuple clip,
-        double xo,
-        double yo,
-        double alpha,
-        double over,
-        render.Matrix2D reverse,
-        bint nearest,
-        bint subpixel) except 1
-
-cdef class Environ:
-    cdef void blit(self)
-    cdef void blend(self, double fraction)
-    cdef void imageblend(self, double fraction, int ramp)
-    cdef void set_vertex(self, float *vertices)
-    cdef void set_texture(self, int unit, float *coords)
-    cdef void set_color(self, double r, double g, double b, double a)
-    cdef void set_clip(self, tuple clip_box, GL2Draw draw)
-    cdef void unset_clip(self, GL2Draw draw)
-    cdef void ortho(self, double left, double right, double bottom, double top, double near, double far)
-    cdef void viewport(self, int x, int y, int width, int height)
 

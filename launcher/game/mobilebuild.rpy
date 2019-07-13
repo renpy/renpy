@@ -194,7 +194,9 @@ init -1 python:
                     kwargs["stdin"] = subprocess.PIPE
 
                 try:
-                    self.process = subprocess.Popen(cmd, cwd=renpy.fsencode(RAPT_PATH), stdout=f, stderr=f, startupinfo=startupinfo, **kwargs)
+                    self.process = subprocess.Popen(cmd, cwd=renpy.fsencode(RAPT_PATH), stdout=f, stderr=f, stdin=subprocess.PIPE, startupinfo=startupinfo, **kwargs)
+                    # avoid SIGTTIN caused by e.g. gradle doing empty read on terminal stdin
+                    self.process.stdin.close()
                 except:
                     import traceback
                     traceback.print_exc(file=f)

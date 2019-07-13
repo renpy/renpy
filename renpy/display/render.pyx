@@ -22,6 +22,14 @@
 
 from __future__ import print_function
 
+from renpy.display.matrix import Matrix, Matrix2D
+from renpy.display.matrix cimport Matrix, Matrix2D
+
+# This is required to get these to re-export despite having been defined
+# in cython.
+globals()["Matrix"] = Matrix
+globals()["Matrix2D"] = Matrix2D
+
 import collections
 import pygame_sdl2 as pygame
 import threading
@@ -410,74 +418,6 @@ def redraw(d, when):
     redraw_queue.append((when + renpy.game.interface.frame_time, d))
 
 
-cdef class Matrix2D:
-    """
-    This represents a 2d matrix that can be used to transform
-    points and things like that.
-    """
-
-    def __getstate__(self):
-        return dict(
-            xdx = self.xdx,
-            xdy = self.xdy,
-            ydx = self.ydx,
-            ydy = self.ydy)
-
-    def __setstate__(self, state):
-        self.xdx = state['xdx']
-        self.xdy = state['xdy']
-        self.ydx = state['ydx']
-        self.ydy = state['ydy']
-
-    def __init__(Matrix2D self, double xdx, double xdy, double ydx, double ydy):
-        self.xdx = xdx
-        self.xdy = xdy
-        self.ydx = ydx
-        self.ydy = ydy
-
-    cpdef tuple transform(Matrix2D self, double x, double y):
-        return (x * self.xdx + y * self.xdy), (x * self.ydx + y * self.ydy)
-
-    def __mul__(Matrix2D self, Matrix2D other):
-        return Matrix2D(
-            other.xdx * self.xdx + other.xdy * self.ydx,
-            other.xdx * self.xdy + other.xdy * self.ydy,
-            other.ydx * self.xdx + other.ydy * self.ydx,
-            other.ydx * self.xdy + other.ydy * self.ydy)
-
-    def __repr__(self):
-        return "Matrix2D(xdx=%f, xdy=%f, ydx=%f, ydy=%f)" % (self.xdx, self.xdy, self.ydx, self.ydy)
-
-    def __richcmp__(self, other, op):
-
-        if op != 2:
-            return NotImplemented
-
-        if self is other:
-            return True
-
-        return (
-            abs(self.xdx - other.xdx) +
-            abs(self.xdy - other.xdy) +
-            abs(self.ydx - other.ydx) +
-            abs(self.ydy - other.ydy)) < .00001
-
-    cpdef bint is_unit_aligned(Matrix2D self):
-        """
-        Returns true if exactly one of abs(xdx) or abs(xdy) is 1.0, and
-        the same for xdy and ydy. This is intended to report if a matrix
-        is aligned to the axes.
-
-        (It will also return true for something like xdx=1, xdy=0, ydx=1, xdy=1,
-        but that should never happen.)
-        """
-
-        cdef bint unit_xdx = .99999 < abs(self.xdx) < 1.00001
-        cdef bint unit_xdy = .99999 < abs(self.xdy) < 1.00001
-        cdef bint unit_ydx = .99999 < abs(self.ydx) < 1.00001
-        cdef bint unit_ydy = .99999 < abs(self.ydy) < 1.00001
-
-        return (unit_xdx ^ unit_xdy) and (unit_ydx ^ unit_ydy)
 
 
 IDENTITY = Matrix2D(1, 0, 0, 1)
@@ -1410,7 +1350,7 @@ cdef class Render:
 
         return Canvas(surf)
 
-    def screen_rect(self, double sx, double sy, Matrix2D transform):
+    def screen_rect(self, double sx, double sy, Matrix transform):
         """
         Returns the rectangle, in screen-space coordinates, that will be covered
         by this render when it's drawn to the screen at sx, sy, with the transform

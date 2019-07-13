@@ -240,7 +240,7 @@ the adjustment and styles.
 
         This defaults to ("bar", "vbar").
 
-   .. method:: get_tooltip(self)
+    .. method:: get_tooltip(self)
 
        This gets a default tooltip for this button, if a specific
        tooltip is not assigned. It should return the tooltip value,

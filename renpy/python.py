@@ -1646,9 +1646,9 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                        and data == fwd_data
-                        and (keep_rollback or self.rolled_forward)
-                    ):
+                            and data == fwd_data
+                            and (keep_rollback or self.rolled_forward)
+                        ):
                     self.forward.pop(0)
                 else:
                     del self.forward[:]
@@ -1705,7 +1705,11 @@ class RollbackLog(renpy.object.Object):
         This is called to try to recover when rollback fails.
         """
 
-        if not renpy.config.load_failed_label:
+        lfl = renpy.config.load_failed_label
+        if callable(lfl):
+            lfl = lfl()
+
+        if not lfl:
             raise Exception("Couldn't find a place to stop rolling back. Perhaps the script changed in an incompatible way?")
 
         rb = self.log.pop()
@@ -1715,7 +1719,7 @@ class RollbackLog(renpy.object.Object):
             renpy.exports.pop_call()
 
         renpy.game.contexts[0].force_checkpoint = True
-        renpy.game.contexts[0].goto_label(renpy.config.load_failed_label)
+        renpy.game.contexts[0].goto_label(lfl)
 
         raise renpy.game.RestartTopContext()
 

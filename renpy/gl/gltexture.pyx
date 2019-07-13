@@ -269,25 +269,12 @@ cdef class TextureCore:
         self.generation = 0
         self.number = 0
 
-        # The format of this texture in the GPU (or 0 if not known).
-        self.format = 0
-
-        # These are used to map an index into texture coordinates.
-        self.xmul = 0
-        self.xadd = 0
-        self.ymul = 0
-        self.yadd = 0
-
         # These contained the premultiplied (but not GPU-loaded)
         # surface. They allow us to defer loading until the surface is
         # needed.
 
         self.premult = None
         self.premult_size = None
-        self.premult_left = 0
-        self.premult_right = 0
-        self.premult_top = 0
-        self.premult_bottom = 0
 
         # True if we're in NEAREST mode. False if we're in LINEAR mode.
         self.nearest = False
@@ -992,7 +979,7 @@ def align_axes(*args):
     return rv
 
 
-cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, double alpha, double over, Environ environ, bint nearest):
+cpdef blit(TextureGrid tg, double sx, double sy, Matrix transform, double alpha, double over, Environ environ, bint nearest):
     """
     This draws texgrid `tg` to the screen. `sx` and `sy` are offsets from
     the upper-left corner of the screen.
@@ -1037,7 +1024,7 @@ cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, doub
 
         y += texh
 
-cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matrix2D transform, double alpha, double over, double fraction, Environ environ, bint nearest):
+cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, Matrix transform, double alpha, double over, double fraction, Environ environ, bint nearest):
     """
     Blends two textures to the screen.
 
@@ -1094,7 +1081,7 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matri
         y += t0h
 
 
-cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, double sy, render.Matrix2D transform, double alpha, double over, double fraction, int ramp, Environ environ, bint nearest):
+cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, double sy, Matrix transform, double alpha, double over, double fraction, int ramp, Environ environ, bint nearest):
     """
     This uses texture 0 to control the blending of tetures 1 and 2 to
     the screen.
@@ -1384,7 +1371,7 @@ cdef void draw_rectangle(
     double y,
     double w,
     double h,
-    render.Matrix2D transform,
+    Matrix transform,
     TextureCore tex0, float tex0x, float tex0y,
     TextureCore tex1, float tex1x, float tex1y,
     TextureCore tex2, float tex2x, float tex2y,

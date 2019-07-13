@@ -442,6 +442,8 @@ class Cache(object):
             self.preload_lock.wait()
             self.preload_lock.release()
 
+            self.preload_thread_pass()
+
     def preload_thread_pass(self):
 
         while self.preloads and self.keep_preloading:

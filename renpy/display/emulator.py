@@ -146,21 +146,15 @@ def init_emulator():
 
     name = os.environ.get("RENPY_EMULATOR", "")
 
-    renpy.exports.windows = False
-    renpy.exports.linux = False
-    renpy.exports.macintosh = False
-    renpy.exports.web = False
-    renpy.exports.android = renpy.exports.variant("android")
-    renpy.exports.ios = renpy.exports.variant("ios")
-    renpy.exports.mobile = renpy.exports.android or renpy.exports.ios  # @UndefinedVariable
-
     if name == "touch":
         emulator = touch_emulator
         overlay = [ renpy.store.DynamicDisplayable(dynamic_keyboard) ]
+
     elif name == "ios-touch":
         emulator = touch_emulator
         overlay = [ renpy.store.DynamicDisplayable(dynamic_keyboard) ]
         ios = True
+
     elif name == "tv":
         emulator = tv_emulator
         overlay = [ renpy.display.motion.Transform(
@@ -169,6 +163,16 @@ def init_emulator():
             yalign=0.5,
             size=(int(renpy.config.screen_height * 16.0 / 9.0), renpy.config.screen_height),
             ) ]
+
     else:
         emulator = null_emulator
         overlay = [ ]
+
+    if emulator is not null_emulator:
+        renpy.exports.windows = False
+        renpy.exports.linux = False
+        renpy.exports.macintosh = False
+        renpy.exports.web = False
+        renpy.exports.android = renpy.exports.variant("android")
+        renpy.exports.ios = renpy.exports.variant("ios")
+        renpy.exports.mobile = renpy.exports.android or renpy.exports.ios  # @UndefinedVariable

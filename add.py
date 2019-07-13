@@ -14,6 +14,7 @@ SOURCE = [
     "/home/tom/ab/ripe/renios",
     "/home/tom/ab/renpy-deps",
     "/home/tom/ab/pygame_sdl2",
+    "/home/tom/ab/renpyweb",
     ]
 
 version = ".".join(str(i) for i in version_tuple)

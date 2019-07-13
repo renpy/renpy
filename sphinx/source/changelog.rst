@@ -2,6 +2,23 @@
 Full Changelog
 ==============
 
+.. _renpy-7.3.2
+
+7.3.2
+=====
+
+Fixes
+-----
+
+Fix a regression in the platform variables, caused by the previous
+release.
+
+Translations
+------------
+
+Update the spanish translation.
+
+
 .. _renpy-7.3.1:
 
 7.3.1
@@ -34,11 +51,17 @@ support rollback.
 When emulating Android or iOS, the platform variables (like renpy.android,
 renpy.ios, renpy.windows, and renpy.mobile) are set properly.
 
+Renpyweb now stores the date and time that a save file was created.
+
+
 Fixes
 -----
 
 This release fixes a fairly major issue that could cause screens that
 interpolate text to not update, or update improperly.
+
+This release properly runs the image prediction routine from the
+image prediction thread.
 
 A problem with the {clear} text tag has been fixed.
 

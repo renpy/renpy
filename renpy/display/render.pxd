@@ -19,14 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-cdef class Matrix2D:
-    cdef public double xdx
-    cdef public double xdy
-    cdef public double ydx
-    cdef public double ydy
 
-    cpdef tuple transform(Matrix2D self, double x, double y)
-    cpdef bint is_unit_aligned(Matrix2D self)
+from renpy.display.matrix cimport Matrix, Matrix2D
 
 cdef class Render:
 
@@ -44,7 +38,7 @@ cdef class Render:
     cdef public bint operation_alpha
     cdef public object operation_parameter
 
-    cdef public Matrix2D forward, reverse
+    cdef public Matrix forward, reverse
     cdef public double alpha
     cdef public double over
     cdef public object nearest

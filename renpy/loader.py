@@ -734,14 +734,23 @@ class RenpyImporter(object):
         if filename.endswith("__init__.py"):
             mod.__path__ = [ filename[:-len("__init__.py")] ]
 
-        source = load(filename).read().decode("utf8")
-        if source and source[0] == u'\ufeff':
-            source = source[1:]
-        source = source.encode("raw_unicode_escape")
+        for encoding in [ "utf-8", "latin-1" ]:
 
-        source = source.replace("\r", "")
+            try:
 
-        code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
+                source = load(filename).read().decode(encoding)
+                if source and source[0] == u'\ufeff':
+                    source = source[1:]
+                source = source.encode("raw_unicode_escape")
+
+                source = source.replace("\r", "")
+
+                code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
+                break
+            except:
+                if encoding == "latin-1":
+                    raise
+
         exec code in mod.__dict__
 
         return sys.modules[fullname]
