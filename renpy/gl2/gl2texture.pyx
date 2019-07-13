@@ -39,6 +39,9 @@ import time
 import collections
 import renpy
 
+from renpy.gl2.gl2geometry import rectangle, Mesh
+
+
 ################################################################################
 
 # The texture generation.
@@ -152,10 +155,32 @@ class TexturedMesh:
     :vartype textures: dict(str, GLTexture)
     :ivar shaders: A list of strings giving the shaders that are used.
     :vartype shaders: list(str)
-    :ivar dict uniforms: A dictionary mapping uniform names to their values.
+    :ivar uniforms: A dictionary mapping uniform names to their values.
+    :vartype uniforms: dict(str, object)
     """
 
-    pass
+    def __init__(self, size, mesh, textures, shaders, uniforms):
+        self.size = size
+        self.mesh = mesh
+        self.textures = textures
+        self.shaders = shaders
+        self.uniforms = uniforms
+
+    def copy(self):
+        return TexturedMesh(self.size, self.mesh, self.textures, self.shaders, self.uniforms)
+
+    def get_size(self):
+        return self.size
+
+    def subsurface(self, rect):
+        rv = self.copy()
+
+        x, y, w, h = rect
+
+        rv.mesh = self.mesh.crop_polygon(x, y, w, h)
+        rv.mesh.offset(-x, -y, 0)
+
+        return self
 
 
 

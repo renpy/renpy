@@ -129,11 +129,53 @@ cdef class Polygon:
             print()
 
 
-cpdef Polygon rectangle(float w, float h, float tw, float th):
+cpdef Polygon rectangle(double x, double y, double w, double h):
     """
-    Generates a rectangular polygon with tecture coordinate. One
+    Generates a rectangular polygon with texture coordinate. One
+    corner is at (x, y, 0, 1) and the other is at (x+w, y+h, 0, 1).
+    """
+
+    cdef Polygon rv = Polygon(4, 4, None)
+
+    rv.points = 4
+
+    cdef float *p = rv.data
+
+    p[X] = x
+    p[Y] = y
+    p[Z] = 0
+    p[W] = 1
+
+    p += 4
+
+    p[X] = x+w
+    p[Y] = y
+    p[Z] = 0
+    p[W] = 1
+
+    p += 4
+
+    p[X] = x+w
+    p[Y] = y+h
+    p[Z] = 0
+    p[W] = 1
+
+    p += 4
+
+    p[X] = x
+    p[Y] = y+h
+    p[Z] = 0
+    p[W] = 1
+
+    return rv
+
+
+
+cpdef Polygon texture_rectangle(double x, double y, double w, double h, double tw, double th):
+    """
+    Generates a rectangular polygon with texture coordinate. One
     corner is at (0, 0, 0, 1) with texture coordinates (0, 0), and
-    the other is at (w, h, 0, 1) with texture coordinates (0, 1).
+    the other is at (w, h, 0, 1) with texture coordinates (tw, th).
     """
 
     cdef Polygon rv = Polygon(6, 4, None)
@@ -142,8 +184,8 @@ cpdef Polygon rectangle(float w, float h, float tw, float th):
 
     cdef float *p = rv.data
 
-    p[X] = 0
-    p[Y] = 0
+    p[X] = x
+    p[Y] = y
     p[Z] = 0
     p[W] = 1
     p[TX] = 0
@@ -151,8 +193,8 @@ cpdef Polygon rectangle(float w, float h, float tw, float th):
 
     p += 6
 
-    p[X] = w
-    p[Y] = 0
+    p[X] = x+w
+    p[Y] = y
     p[Z] = 0
     p[W] = 1
     p[TX] = tw
@@ -160,8 +202,8 @@ cpdef Polygon rectangle(float w, float h, float tw, float th):
 
     p += 6
 
-    p[X] = w
-    p[Y] = h
+    p[X] = x+w
+    p[Y] = y+h
     p[Z] = 0
     p[W] = 1
     p[TX] = tw
@@ -169,8 +211,8 @@ cpdef Polygon rectangle(float w, float h, float tw, float th):
 
     p += 6
 
-    p[X] = 0
-    p[Y] = h
+    p[X] = x
+    p[Y] = y+h
     p[Z] = 0
     p[W] = 1
     p[TX] = 0
@@ -491,13 +533,23 @@ cdef class Mesh:
 
         self.polygons.append(p)
 
-    def add_texture_rectangle(Mesh self, double w, double h):
+
+    def add_rectangle(Mesh self, double x, double y, double w, double h):
+        """
+        Adds a polygon.
+        """
+
+        self.points += 4
+        self.polygons.append(rectangle(x, y, w, h))
+
+
+    def add_texture_rectangle(Mesh self, double x, double y, double w, double h):
         """
         Returns a polygon corresponding to a texture rectangle.
         """
 
         self.points += 4
-        self.polygons.append(rectangle(w, h, 1.0, 1.0))
+        self.polygons.append(texture_rectangle(x, y, w, h, 1.0, 1.0))
 
 
     cdef float *get_data(Mesh self, name):
@@ -627,6 +679,31 @@ cdef class Mesh:
 
                 rv.polygons.append(p)
                 rv.points += p.points
+
+        return rv
+
+    def crop_polygon(Mesh self, Polygon op):
+        """
+        Crops this mesh with a polygon. No attributes are taken from the polygon.
+        """
+
+        rv = Mesh()
+        rv.stride = self.stride
+        rv.attributes = self.attributes
+
+        cdef Polygon sp
+        cdef Polygon p
+
+        for sp in self.polygons:
+            p = intersect(op, sp, rv.stride)
+
+            if p is None:
+                continue
+
+            barycentric(sp, p, 0)
+
+            rv.polygons.append(p)
+            rv.points += p.points
 
         return rv
 

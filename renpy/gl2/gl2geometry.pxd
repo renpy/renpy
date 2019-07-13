@@ -17,7 +17,8 @@ cdef class Polygon:
     cpdef void multiply_matrix(Polygon self, int offset, int size, Matrix matrix)
     cpdef void perspective_divide(Polygon self)
 
-cpdef Polygon rectangle(float w, float h, float tw, float th)
+cpdef Polygon rectangle(double x, double y, double w, double h)
+cpdef Polygon texture_rectangle(double x, double y, double w, double h, double tw, double th)
 
 cpdef intersect(Polygon a, Polygon b, int rvstride)
 cpdef barycentric(Polygon a, Polygon b, int offset)

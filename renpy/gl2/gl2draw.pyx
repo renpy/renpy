@@ -47,6 +47,11 @@ cimport renpy.display.render as render
 cimport renpy.gl2.gl2texture as gl2texture
 import renpy.gl2.gl2texture as gl2texture
 import renpy.gl2.gl2shadercache as gl2shadercache
+import renpy.gl2.gl2geometry as gl2geometry
+
+from renpy.gl2.gl2geometry import Mesh
+from renpy.gl2.gl2texture import TexturedMesh
+
 
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
@@ -458,7 +463,7 @@ cdef class GL2Draw:
         if not self.old_fullscreen:
             renpy.display.gl_size = self.physical_size
 
-        gl2texture.dealloc_textures()
+        gl2texture.increate_generation()
 
         self.old_fullscreen = None
 
@@ -565,13 +570,15 @@ cdef class GL2Draw:
 
         rv = self.texture_cache.get(surf, None)
 
-
         if rv is None:
             # rv = gl2texture.texture_grid_from_surface(surf, transient)
-            raise Exception("Not Implemented.")
+
+            w, h = surf.get_size()
+            rv = self.solid_texture(w, h, (0, 0, 255, 255))
 
             self.texture_cache[surf] = rv
-            self.ready_texture_queue.add(rv)
+
+            # self.ready_texture_queue.add(rv)
 
         return rv
 
@@ -592,7 +599,16 @@ cdef class GL2Draw:
         return False
 
     def solid_texture(self, w, h, color):
-        raise Exception("Not implemented.")
+        """
+        Returns a texture that represents a solid color.
+        """
+
+        mesh = gl2geometry.Mesh()
+        mesh.add_rectangle(0, 0, w, h)
+
+        color = tuple(i / 255.0 for i in color)
+
+        return TexturedMesh((w, h), mesh, { }, [ "renpy.solid" ], { "uSolidColor" : color })
 
     def draw_screen(self, render_tree, fullscreen_video, flip=True):
         """
@@ -648,7 +664,6 @@ cdef class GL2Draw:
 
 
         gl2texture.cleanup()
-
 
     def render_to_texture(self, what, alpha):
         """
