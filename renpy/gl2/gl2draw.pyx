@@ -44,8 +44,9 @@ import math
 import uguugl
 
 cimport renpy.display.render as render
-cimport gl2texture
-import gl2texture
+cimport renpy.gl2.gl2texture as gl2texture
+import renpy.gl2.gl2texture as gl2texture
+import renpy.gl2.gl2shadercache as gl2shadercache
 
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
@@ -71,12 +72,6 @@ cdef class GL2Draw:
 
         # Did we do the first-time init?
         self.did_init = False
-
-        # The GL environment to use.
-        self.environ = None
-
-        # The GL render-to-texture to use.
-        self.rtt = None
 
         # The screen.
         self.window = None
@@ -115,9 +110,6 @@ cdef class GL2Draw:
         # The display info, from pygame.
         self.display_info = None
 
-        # Did we do the texture test at least once?
-        self.did_texture_test = False
-
         # The DPI scale factor.
         self.dpi_scale = renpy.display.interface.dpi_scale
 
@@ -127,6 +119,9 @@ cdef class GL2Draw:
 
         # The queue of textures that might need to be made ready.
         self.ready_texture_queue = weakref.WeakSet()
+
+        # The shader cache,
+        self.shader_cache = None
 
 
     def get_texture_size(self):
@@ -484,13 +479,6 @@ cdef class GL2Draw:
 
         print(renderer, version)
 
-        if renpy.android or renpy.ios:
-            self.redraw_period = 1.0
-
-        elif renpy.emscripten:
-            # give back control to browser regularly
-            self.redraw_period = 0.1
-
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(extensions_string.split(" "))
 
@@ -501,6 +489,16 @@ cdef class GL2Draw:
 
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()
+
+        if renpy.android or renpy.ios:
+            self.redraw_period = 1.0
+
+        elif renpy.emscripten:
+            # give back control to browser regularly
+            self.redraw_period = 0.1
+
+        self.shader_cache = gl2shadercache.ShaderCache("cache/shaders.txt")
+        self.shader_cache.load()
 
         return True
 
