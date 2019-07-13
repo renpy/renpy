@@ -128,7 +128,7 @@ def cleanup():
     free_list = [ ]
 
 
-def increase_generation():
+def end_generation():
     """
     This deallocates the current generation of textures, and starts a new one.
     """
@@ -176,8 +176,7 @@ class TexturedMesh:
         rv = self.copy()
 
         x, y, w, h = rect
-
-        rv.mesh = self.mesh.crop_polygon(x, y, w, h)
+        rv.mesh = self.mesh.crop_polygon(rectangle(x, y, w, h))
         rv.mesh.offset(-x, -y, 0)
 
         return self

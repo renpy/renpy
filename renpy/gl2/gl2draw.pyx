@@ -463,7 +463,7 @@ cdef class GL2Draw:
         if not self.old_fullscreen:
             renpy.display.gl_size = self.physical_size
 
-        gl2texture.increate_generation()
+        gl2texture.end_generation()
 
         self.old_fullscreen = None
 
