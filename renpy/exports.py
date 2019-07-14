@@ -3715,8 +3715,8 @@ def get_skipping():
     """
     :doc: other
 
-    Returns true if the Ren'Py is skipping, "fast" if Ren'Py is fast skipping,
-    and false if it is not skipping.
+    Returns "slow" if the Ren'Py is skipping, "fast" if Ren'Py is fast skipping,
+    and None if it is not skipping.
     """
 
     return renpy.config.skipping
