@@ -26,6 +26,11 @@ can then change it again.)
     a click will end auto-forward mode. The equivalent of the
     "auto-forward after click" preference.
 
+.. var:: preferences.afm_enable = False
+
+    If True, auto-forward move is enabled, otherwise False. The equivalent
+    of the "auto-forward" preference.
+
 .. var:: preferences.afm_time = 15
 
     The amount of time to wait for auto-forward mode. Bigger numbers are
