@@ -667,7 +667,7 @@ class SayBehavior(renpy.display.layout.Null):
                 elif renpy.game.context().seen_current(True):
                     return True
                 else:
-                    renpy.config.skipping = False
+                    renpy.config.skipping = None
                     renpy.exports.restart_interaction()
 
             else:
