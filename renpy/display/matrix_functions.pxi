@@ -102,10 +102,7 @@ def perspective(float w, float h, float n, float p, float f):
 def screen_projection(float w, float h):
     """
     This generates a matrix that project the Ren'Py space, where (0, 0) is the
-    top left and (`w`, `h`) is the bottom right, into the OpenGL space, where
-    the
-
-    Generates the matrix that projects the Ren'Py screen to the OpenGL screen.
+    top left and (`w`, `h`) is the bottom right, into the OpenGL space.
     """
 
     cdef Matrix rv = Matrix(None)

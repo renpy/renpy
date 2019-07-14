@@ -45,20 +45,20 @@ UNIFORM_TYPES = {
     "sampler2D" : uniform_sampler2d,
     }
 
-def attribute_float(attribute, name, Mesh m):
-    glVertexAttribPointer(attribute, 1, GL_FLOAT, GL_FALSE, m.stride * sizeof(float), m.get_data(name))
+def attribute_float(attribute, offset, Mesh m):
+    glVertexAttribPointer(attribute, 1, GL_FLOAT, GL_FALSE, m.stride * sizeof(float), m.get_data(offset))
     glEnableVertexAttribArray(attribute)
 
-def attribute_vec2(attribute, name, Mesh m):
-    glVertexAttribPointer(attribute, 2, GL_FLOAT, GL_FALSE, m.stride * sizeof(float), m.get_data(name))
+def attribute_vec2(attribute, offset, Mesh m):
+    glVertexAttribPointer(attribute, 2, GL_FLOAT, GL_FALSE, m.stride * sizeof(float), m.get_data(offset))
     glEnableVertexAttribArray(attribute)
 
-def attribute_vec3(attribute, name, Mesh m):
-    glVertexAttribPointer(attribute, 3, GL_FLOAT, GL_FALSE, m.stride * sizeof(float), m.get_data(name))
+def attribute_vec3(attribute, offset, Mesh m):
+    glVertexAttribPointer(attribute, 3, GL_FLOAT, GL_FALSE, m.stride * sizeof(float), m.get_data(offset))
     glEnableVertexAttribArray(attribute)
 
-def attribute_vec4(attribute, name, Mesh m):
-    glVertexAttribPointer(attribute, 4, GL_FLOAT, GL_FALSE, m.stride * sizeof(float), m.get_data(name))
+def attribute_vec4(attribute, offset, Mesh m):
+    glVertexAttribPointer(attribute, 4, GL_FLOAT, GL_FALSE, m.stride * sizeof(float), m.get_data(offset))
     glEnableVertexAttribArray(attribute)
 
 ATTRIBUTE_TYPES = {
@@ -74,7 +74,8 @@ cdef class Program:
     Represents an OpenGL program.
     """
 
-    def __init__(self, vertex, fragment):
+    def __init__(self, name, vertex, fragment):
+        self.name = name
         self.vertex = vertex
         self.fragment = fragment
 
@@ -199,14 +200,26 @@ cdef class Program:
         self.find_variables(self.vertex)
         self.find_variables(self.fragment)
 
-    def draw(self, Mesh mesh, **kwargs):
+    def missing(self, kind, name):
+        raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
+
+    def draw(self, Mesh mesh, dict uniforms):
         glUseProgram(self.program)
 
         for name, location, data_function in self.uniforms:
-            data_function(location, kwargs[name])
+
+            uniform = uniforms.get(name, None)
+            if uniform is None:
+                self.missing("uniform", name)
+
+            data_function(location, uniform)
 
         for name, location, data_function in self.attributes:
-            data_function(location, name, mesh)
+            offset = mesh.attributes.get(name, None)
+            if offset is None:
+                self.missing("mesh attribute", name)
+
+            data_function(location, offset, mesh)
 
         cdef int i = 0
         cdef Polygon p

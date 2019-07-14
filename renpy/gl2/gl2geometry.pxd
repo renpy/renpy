@@ -41,5 +41,5 @@ cdef class Mesh:
     # until it's created.
     cdef float *data
 
-    cdef float *get_data(self, name)
+    cdef float *get_data(self, int offset)
 

@@ -153,7 +153,7 @@ class TexturedMesh:
     :ivar textures: Maps the names of textures used by the shaders to GLTexture
         objects.
     :vartype textures: dict(str, GLTexture)
-    :ivar shaders: A list of strings giving the shaders that are used.
+    :ivar shaders: A tuple of strings giving the shaders that are used.
     :vartype shaders: list(str)
     :ivar uniforms: A dictionary mapping uniform names to their values.
     :vartype uniforms: dict(str, object)

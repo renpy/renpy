@@ -68,6 +68,7 @@ vsync = True
 # A list of frame end times, used for the same purpose.
 frame_times = [ ]
 
+
 cdef class GL2Draw:
 
     def __init__(self, renderer_name, gles):
@@ -408,8 +409,7 @@ cdef class GL2Draw:
              vheight + y_padding)
 
         # The location of the virtual screen on the physical screen, in
-        # physical pixels. (May not be 100% accurate, but it's good
-        # enough for screenshots.)
+        # physical pixels.
         self.physical_box = (
             int(px_padding / 2),
             int(py_padding / 2),
@@ -417,7 +417,13 @@ cdef class GL2Draw:
             pheight - int(py_padding),
             )
 
-        # How many drawable pixels there are per virtual pixel.
+        # The scaling factor of physical_pixels to drawable pixels.
+        self.draw_per_phys = 1.0 * self.drawable_size[0] / self.physical_size[0]
+
+        # The location of the viewport, in drawable pixels.
+        self.drawable_viewport = tuple(i * self.draw_per_phys for i in self.physical_box)
+
+        # How many drawable pixels there are per virtual pixel?
         self.draw_per_virt = (1.0 * self.drawable_size[0] / pwidth) * (1.0 * view_width / vwidth)
 
         # Matrices that transform from virtual space to drawable space, and vice versa.
@@ -608,7 +614,39 @@ cdef class GL2Draw:
 
         color = tuple(i / 255.0 for i in color)
 
-        return TexturedMesh((w, h), mesh, { }, [ "renpy.solid" ], { "uSolidColor" : color })
+        return TexturedMesh((w, h), mesh, { }, ("renpy.geometry", "renpy.solid"), { "uSolidColor" : color })
+
+    def flip(self):
+        """
+        Called to flip the screen after it's drawn.
+        """
+
+        self.draw_mouse()
+
+        start = time.time()
+
+        renpy.plog(1, "flip")
+
+        pygame.display.flip()
+
+        end = time.time()
+
+        if vsync:
+
+            # When the window is covered, we can get into a state where no
+            # drawing occurs and everything goes fast. Detect that and
+            # sleep.
+
+            frame_times.append(end)
+
+            if len(frame_times) > 10:
+                frame_times.pop(0)
+
+                # If we're running at over 1000 fps, vsync is broken.
+                if (frame_times[-1] - frame_times[0] < .001 * 10):
+                    time.sleep(1.0 / 120.0)
+                    renpy.plog(1, "after broken vsync sleep")
+
 
     def draw_screen(self, render_tree, fullscreen_video, flip=True):
         """
@@ -619,49 +657,30 @@ cdef class GL2Draw:
 
         renpy.plog(1, "start draw_screen")
 
-        reverse = self.virt_to_draw
-
-        render_tree.is_opaque() # Needed?
-
         if renpy.display.video.fullscreen:
             surf = renpy.display.video.render_movie("movie", self.virtual_size[0], self.virtual_size[1])
         else:
             surf = render_tree
 
-        if surf is not None:
-            # TODO: Draw surf
-            pass
-        else:
-            flip = False
+        if surf is None:
+            return
 
-        if flip:
+        # Set up the viewport.
+        x, y, w, h = self.drawable_viewport
+        glViewport(x, y, w, h)
 
-            self.draw_mouse()
+        # Clear the screen.
+        clear_r, clear_g, clear_b = renpy.color.Color(renpy.config.gl_clear_color).rgb
+        glClearColor(clear_r, clear_g, clear_b, 1.0)
+        glClear(GL_COLOR_BUFFER_BIT)
 
-            start = time.time()
+        # TODO: Draw surf
 
-            renpy.plog(1, "flip")
+        tex = self.solid_texture(100, 100, (0, 128, 0, 255))
+        context = GL2DrawingContext(self, "viewport")
+        context.draw_texturemesh(tex)
 
-            pygame.display.flip()
-
-            end = time.time()
-
-            if vsync:
-
-                # When the window is covered, we can get into a state where no
-                # drawing occurs and everything goes fast. Detect that and
-                # sleep.
-
-                frame_times.append(end)
-
-                if len(frame_times) > 10:
-                    frame_times.pop(0)
-
-                    # If we're running at over 1000 fps, vsync is broken.
-                    if (frame_times[-1] - frame_times[0] < .001 * 10):
-                        time.sleep(1.0 / 120.0)
-                        renpy.plog(1, "after broken vsync sleep")
-
+        self.flip()
 
         gl2texture.cleanup()
 
@@ -856,3 +875,37 @@ cdef class GL2Draw:
 
         return (x, y)
 
+
+
+cdef class GL2DrawingContext:
+    """
+    This is an object that represents the state of the GL rendering
+    system. It's responsible for walking the tree of Renders and
+    TextureMeshes, updating its state as appropriate. When it hits
+    a node where drawing is involved, it's responsible for issuing
+    the appropriate draw calls to OpenGL, using the saved state.
+    """
+
+    # The draw object this context is associated with.
+    cdef GL2Draw draw
+
+    # This is a matrix that transforms texture coordinates into
+    # viewport coordinates. (The same direction Render.reverse goes
+    # in.)
+    cdef Matrix to_viewport
+
+
+    def __init__(self, GL2Draw draw, mode):
+
+        self.draw = draw
+
+        if mode == "viewport":
+            self.to_viewport = renpy.display.matrix.screen_projection(draw.virtual_size[0], draw.virtual_size[1])
+
+    def draw_texturemesh(self, tm):
+        shader = self.draw.shader_cache.get(tm.shaders)
+
+        uniforms = tm.uniforms.copy()
+        uniforms["uTransform"] = self.to_viewport
+
+        shader.draw(tm.mesh, uniforms)

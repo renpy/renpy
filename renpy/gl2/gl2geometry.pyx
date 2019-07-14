@@ -552,14 +552,14 @@ cdef class Mesh:
         self.polygons.append(texture_rectangle(x, y, w, h, 1.0, 1.0))
 
 
-    cdef float *get_data(Mesh self, name):
+    cdef float *get_data(Mesh self, int offset):
         cdef Polygon p
         cdef int i
 
         if len(self.polygons) == 1:
 
             p = self.polygons[0]
-            return p.data + <int> self.attributes[name]
+            return p.data + offset
 
         if not self.data:
             self.data = <float *> malloc(self.points * self.stride * sizeof(float))
@@ -570,7 +570,7 @@ cdef class Mesh:
                 memcpy(&self.data[i], p.data, p.points * self.stride * sizeof(float))
                 i += p.points * self.stride
 
-        return self.data + <int> self.attributes[name]
+        return self.data + offset
 
     def copy(Mesh self):
         """

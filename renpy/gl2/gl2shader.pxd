@@ -2,6 +2,9 @@ from uguugl cimport *
 
 cdef class Program:
 
+    # The name of this program.
+    cdef public object name
+
     # The number of the OpenGL program created.
     cdef GLuint program
 

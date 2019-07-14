@@ -207,7 +207,7 @@ class ShaderCache(object):
         vertex = source(vertex_variables, vertex_parts, False)
         fragment = source(fragment_variables, fragment_parts, True)
 
-        rv = Program(vertex, fragment)
+        rv = Program(sortedpartnames, vertex, fragment)
         rv.load()
 
         self.cache[partnames] = rv
@@ -305,6 +305,12 @@ ShaderPart("renpy.texture", variables="""
     gl_FragColor = texture2D(uTex0, vTexCoord.xy);
 """)
 
+
+ShaderPart("renpy.solid", variables="""
+    uniform vec4 uSolidColor;
+""", fragment_110="""
+    gl_FragColor = uSolidColor;
+""")
 
 ShaderPart("renpy.colormatrix", variables="""
     uniform mat4 uColorMatrix;
