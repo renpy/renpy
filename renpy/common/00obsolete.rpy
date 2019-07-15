@@ -86,12 +86,13 @@ init 1900 python hide:
             if fn.startswith("_"):
                 continue
 
-            # Only .png and .jpg
-            if not fn.lower().endswith(".png") and not fn.lower().endswith(".jpg"):
+            # Only .png, .jpg, .webp
+            if not any(fn.lower().endswith(x)
+                       for x in ['.png', '.jpg', '.webp']):
                 continue
 
             # Strip the extension, replace slashes.
-            shortfn = fn[:-4].replace("\\", "/")
+            shortfn = fn.rsplit('.', 1)[0].replace("\\", "/")
 
             # Determine the name.
             name = ( shortfn, )
