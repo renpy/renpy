@@ -46,11 +46,11 @@ import uguugl
 cimport renpy.display.render as render
 cimport renpy.gl2.gl2texture as gl2texture
 import renpy.gl2.gl2texture as gl2texture
-import renpy.gl2.gl2shadercache as gl2shadercache
 import renpy.gl2.gl2geometry as gl2geometry
 
 from renpy.gl2.gl2geometry import Mesh
-from renpy.gl2.gl2texture import TexturedMesh
+from renpy.gl2.gl2texture import TexturedMesh, TextureLoader
+from renpy.gl2.gl2shadercache import ShaderCache
 
 
 # Cache various externals, so we can use them more efficiently.
@@ -123,9 +123,6 @@ cdef class GL2Draw:
         # updated.
         self.fast_redraw_frames = 0
 
-        # The queue of textures that might need to be made ready.
-        self.ready_texture_queue = weakref.WeakSet()
-
         # The shader cache,
         self.shader_cache = None
 
@@ -134,9 +131,8 @@ cdef class GL2Draw:
         """
         Returns the amount of memory locked up in textures.
         """
-        # TODO.
-        return 0, 0
 
+        return self.texture_loader.total_texture_size, self.texture_loader.texture_count
 
     def select_physical_size(self, physical_size):
         """
@@ -430,9 +426,6 @@ cdef class GL2Draw:
         self.virt_to_draw = Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
         self.draw_to_virt = Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
 
-        # Load uguu, and init GL.
-        uguugl.load()
-
         if not self.did_init:
             if not self.init():
                 return False
@@ -466,9 +459,13 @@ cdef class GL2Draw:
 
     def init(self):
         """
+        *Internal*
         This does the first-time initialization of OpenGL, deciding
         which subsystems to use.
         """
+
+        # Load uguu, and init GL.
+        uguugl.load()
 
         # Log the GL version.
         renderer = <char *> glGetString(GL_RENDERER)
@@ -499,8 +496,10 @@ cdef class GL2Draw:
             # give back control to browser regularly
             self.redraw_period = 0.1
 
-        self.shader_cache = gl2shadercache.ShaderCache("cache/shaders.txt")
+        self.shader_cache = ShaderCache("cache/shaders.txt")
         self.shader_cache.load()
+
+        self.texture_loader = TextureLoader(self)
 
         return True
 
@@ -584,14 +583,14 @@ cdef class GL2Draw:
         Call from the main thread to make a single texture ready.
         """
 
-        while True:
-
-            try:
-                tex = self.ready_texture_queue.pop()
-            except KeyError:
-                return False
-
-            raise Exception("Not implemented.")
+#         while True:
+#
+#             try:
+#                 tex = self.ready_texture_queue.pop()
+#             except KeyError:
+#                 return False
+#
+#             raise Exception("Not implemented.")
 
         return False
 
@@ -673,7 +672,7 @@ cdef class GL2Draw:
 
         self.flip()
 
-        gl2texture.cleanup()
+        self.texture_loader.cleanup()
 
     def render_to_texture(self, what, alpha):
         """
@@ -853,7 +852,7 @@ cdef class GL2Draw:
 
     def kill_textures(self):
         self.texture_cache.clear()
-        gl2texture.end_generation()
+        self.texture_loader.end_generation()
 
     def event_peek_sleep(self):
         pass

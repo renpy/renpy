@@ -25,40 +25,74 @@ from __future__ import print_function
 
 DEF ANGLE = False
 
-from uguugl cimport *
-from gl2draw cimport *
 
 from sdl2 cimport *
 from pygame_sdl2 cimport *
 import_pygame_sdl2()
 
-from libc.stdlib cimport calloc, free
+from libc.stdlib cimport malloc, free
+from libc.string cimport memcpy
 
 import sys
 import time
 import collections
-import renpy
+import weakref
 
-from renpy.gl2.gl2geometry import rectangle, Mesh
+import renpy
+from renpy.gl2.uguugl cimport *
+from renpy.gl2.gl2draw cimport GL2Draw
+from renpy.gl2.gl2geometry cimport rectangle, Mesh
 
 
 ################################################################################
 
-# The texture generation.
-generation = 1
 
-# A map from texture number to the generation that number belongs to.
-texture_generation = { }
 
-# A list of (number, generation) pairs for textures that need to be freed.
-free_list = [ ]
+cdef class TextureLoader:
 
-# The number of textues that have been allocated but not deallocated.
-texture_count = 0
+    def __init__(self, draw):
+        self.generation = 1
+        self.texture_generation = { }
+        self.free_list = [ ]
+        self.texture_count = 0
+        self.total_texture_size = 0
+        self.texture_load_queue = weakref.WeakSet()
 
-# The total size (in bytes) of all the textures that have been allocated
-# but not deallocated.
-total_texture_size = 0
+        glGenFramebuffers(1, &self.ftl_fbo)
+
+        self.ftl_program = draw.shader_cache.get(("renpy.ftl",))
+
+    def cleanup(self):
+        """
+        This is called once per frame, to free textures that are no longer used.
+        """
+
+        cdef GLuint texnums[1]
+
+        for (texture_number, texture_generation) in self.free_list:
+            if self.generation == texture_generation:
+                texnums[0] = texture_number
+                glDeleteTextures(1, texnums)
+
+        self.free_list = [ ]
+
+
+    def end_generation(self):
+        """
+        This deallocates the current generation of textures, and starts a new one.
+        """
+
+        self.cleanup()
+
+        # Do not reset texture numbers - we don't want to reuse a number that's
+        # in use, only to have it deallocated later.
+
+        self.generation += 1
+
+        global generation
+        generation += 1
+
+
 
 cdef class GLTextureCore:
     """
@@ -68,11 +102,10 @@ cdef class GLTextureCore:
     are no longer required.
     """
 
-    def __init__(self, int width, int height):
+    def __init__(self, surface, loader):
 
         # The width and height of this texture.
-        self.width = width
-        self.height = height
+        self.width, self.height = surface.get_size()
 
         # The number of the OpenGL texture this texture object
         # represents.
@@ -82,10 +115,118 @@ cdef class GLTextureCore:
         # True if the texture has been loaded into OpenGL, False otherwise.
         self.loaded = False
 
-        global texture_count
-        global total_texture_size
-        total_texture_size += self.width * self.height * 4
-        texture_count += 1
+        # Make a copy of the texture data.
+        cdef SDL_Surface *s
+        s = PySurface_AsSurface(surface)
+
+        cdef unsigned char *pixels = <unsigned char *> s.pixels
+        cdef unsigned char *data = <unsigned char *> malloc(s.h * s.w * 4)
+        cdef unsigned char *p = data
+
+
+        if s.pitch == s.w * 4:
+            memcpy(data, pixels, s.h * s.w * 4)
+        else:
+            for 0 <= i < s.h:
+                memcpy(p, pixels, s.w * 4)
+
+                pixels += s.pitch
+                p += (s.w * 4)
+
+        self.loader = loader
+        loader.texture_load_queue.add(self)
+        self.loader.total_texture_size += self.width * self.height * 4
+        self.loader.texture_count += 1
+
+    def load(self):
+        """
+        Loads this texture. When it's loaded, generation and number are set,
+        and the texture is ready to use.
+        """
+
+        cdef GLuint old_fbo
+        cdef GLuint tex
+        cdef GLuint premultiplied
+
+        if self.loaded:
+            return
+
+        # Generate the old textures.
+        glGenTextures(1, &tex)
+        glGenTextures(1, &premultiplied)
+
+
+        # Bind the framebuffer.
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, <GLint *> &old_fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, self.ftl_fbo)
+
+        # Create premultiplied as an empty texture.
+        glBindTexture(GL_TEXTURE_2D, premultiplied)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL)
+
+        # Bind premultiplied to the framebuffer.
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER,
+            GL_COLOR_ATTACHMENT0,
+            GL_TEXTURE_2D,
+            premultiplied,
+            0)
+
+        # Set up the viewport and clear the  texure.
+        glViewport(0, 0, self.width, self.height)
+
+        # glClearColor(0, 0, 0, 0)
+        # glClear(GL_COLOR_BUFFER_BIT)
+
+        # Set up a mesh.
+        m = Mesh()
+        m.add_attribute("aTexCoord", 2)
+        m.add_polygon([
+            -1.0, -1.0, 0.0, 1.0, 0.0, 0.0,
+            -1.0,  1.0, 0.0, 1.0, 0.0, 1.0,
+             1.0,  1.0, 0.0, 1.0, 1.0, 1.0,
+             1.0, -1.0, 0.0, 1.0, 1.0, 0.0,
+            ])
+
+        # Load the pixel data into tex, and set it up for drawing.
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, tex)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, self.data)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+
+        # Set up the blend mode for premultiplication.
+        glEnable(GL_BLEND)
+        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ZERO, GL_ONE, GL_ZERO)
+
+        # Draw.
+        self.ftl_program.draw(m, { "uTex0" : 0 })
+
+
+        # Deleter tex.
+        glDeleteTextures(1, &tex)
+
+        # Configure premultiplied.
+        glBindTexture(GL_TEXTURE_2D, premultiplied)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        glGenerateMipmap(GL_TEXTURE_2D)
+
+        # Set the old framebuffer.
+        glBindFramebuffer(GL_FRAMEBUFFER, old_fbo)
+
+        # Store the loaded texture.
+        self.number = premultiplied
+        self.generation = self.loader.generation
+        self.texture_generation[self.number] = self.loader.generation
+
+        # Free the data memory.
+        free(self.data)
+        self.data = NULL
 
     def __dealloc__(self):
 
@@ -96,50 +237,17 @@ cdef class GLTextureCore:
     def __del__(self):
         try:
             if self.loaded:
-                free_list.append((self.number, self.generation))
+                self.loader.free_list.append((self.number, self.generation))
 
-            global texture_count
-            global total_texture_size
-            total_texture_size -= self.width * self.height * 4
-            texture_count -= 1
+            self.loader.total_texture_size -= self.width * self.height * 4
+            self.loader.texture_count -= 1
         except TypeError:
             pass # Let's not error on shutdown.
 
-# Wraps GLTextureCore in a Python class, so garbace collection can occur.
+# Wraps GLTextureCore in a Python class, so garbage collection can occur.
 class GLTexture(GLTextureCore):
     pass
 
-
-
-def cleanup():
-    """
-    This is called once per frame, to free textures that are no longer used.
-    """
-
-    global free_list
-    cdef GLuint texnums[1]
-
-    for (texture_number, texture_generation) in free_list:
-        if generation == texture_generation:
-            texnums[0] = texture_number
-
-            glDeleteTextures(1, texnums)
-
-    free_list = [ ]
-
-
-def end_generation():
-    """
-    This deallocates the current generation of textures, and starts a new one.
-    """
-
-    cleanup()
-
-    # Do not reset texture numbers - we don't want to reuse a number that's
-    # in use, only to have it deallocated later.
-
-    global generation
-    generation += 1
 
 
 ################################################################################
@@ -180,7 +288,5 @@ class TexturedMesh:
         rv.mesh.offset(-x, -y, 0)
 
         return self
-
-
 
 

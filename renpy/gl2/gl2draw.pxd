@@ -21,6 +21,7 @@
 
 from renpy.display.matrix cimport Matrix, Matrix2D
 cimport renpy.display.render as render
+from renpy.gl2.gl2texture cimport TextureLoader
 
 cdef class GL2Draw:
 
@@ -43,7 +44,6 @@ cdef class GL2Draw:
     cdef tuple clip_cache
     cdef tuple default_clip
     cdef float dpi_scale
-    cdef object ready_texture_queue
     cdef object shader_cache
 
     cdef public tuple clip_rtt_box
@@ -58,3 +58,5 @@ cdef class GL2Draw:
     cdef public int fast_redraw_frames
     cdef public bint gles
 
+    # The texture_loader singleton.
+    cdef public TextureLoader texture_loader
