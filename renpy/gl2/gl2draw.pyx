@@ -286,7 +286,7 @@ cdef class GL2Draw:
         print("Using {} renderer.".format(self.info["renderer"]))
 
         if self.did_init:
-            self.deinit()
+            self.kill_textures()
 
         if renpy.android:
             fullscreen = False
@@ -452,24 +452,15 @@ cdef class GL2Draw:
 
         return True
 
-    def deinit(self):
-        """
-        De-initializes the system in preparation for a restart, or
-        quit. Flushes out all the textures while it's at it.
-        """
-
-        renpy.display.interface.kill_textures()
-
-        self.texture_cache.clear()
-
-        gl2texture.increase_generation()
-
     def quit(self):
+        """
+        Called when terminating the use of the OpenGL context.
+        """
+
+        self.kill_textures()
 
         if not self.old_fullscreen:
             renpy.display.gl_size = self.physical_size
-
-        gl2texture.end_generation()
 
         self.old_fullscreen = None
 
@@ -860,9 +851,9 @@ cdef class GL2Draw:
 
         return rv
 
-    def free_memory(self):
+    def kill_textures(self):
         self.texture_cache.clear()
-        gl2texture.dealloc_textures()
+        gl2texture.end_generation()
 
     def event_peek_sleep(self):
         pass
