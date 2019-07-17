@@ -317,3 +317,16 @@ ShaderPart("renpy.colormatrix", variables="""
 """, fragment_120="""
     gl_FragColor = gl_FragColor * uColorMatrix;
 """)
+
+
+ShaderPart("renpy.ftl", variables="""
+    attribute vec4 aPosition;
+    attribute vec2 aTexCoord;
+    varying vec2 vTexCoord;
+    uniform sampler2D uTex0;
+""", vertex_100="""
+    vTexCoord = aTexCoord;
+    gl_Position = aPosition;
+""", fragment_100="""
+    gl_FragColor = texture2D(uTex0, vTexCoord.xy);
+""")

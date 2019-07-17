@@ -69,6 +69,9 @@ vsync = True
 frame_times = [ ]
 
 
+logo = None
+
+
 cdef class GL2Draw:
 
     def __init__(self, renderer_name, gles):
@@ -567,7 +570,8 @@ cdef class GL2Draw:
         rv = self.texture_cache.get(surf, None)
 
         if rv is None:
-            # rv = gl2texture.texture_grid_from_surface(surf, transient)
+
+            # rv = self.texture_loader.load(surf)
 
             w, h = surf.get_size()
             rv = self.solid_texture(w, h, (0, 0, 255, 255))
@@ -669,6 +673,17 @@ cdef class GL2Draw:
         tex = self.solid_texture(100, 100, (0, 128, 0, 255))
         context = GL2DrawingContext(self, "viewport")
         context.draw_texturemesh(tex)
+
+
+        global logo
+        if logo is None:
+            logo = pygame.image.load("/home/tom/ab/renpy/tutorial/game/images/logo base.png")
+            logo = logo.convert_alpha()
+            logo = self.texture_loader.load_surface(logo)
+
+            print(logo)
+
+
 
         self.flip()
 

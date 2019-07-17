@@ -41,7 +41,7 @@ import weakref
 import renpy
 from renpy.gl2.uguugl cimport *
 from renpy.gl2.gl2draw cimport GL2Draw
-from renpy.gl2.gl2geometry cimport rectangle, Mesh
+from renpy.gl2.gl2geometry cimport rectangle, texture_rectangle, Mesh
 
 
 ################################################################################
@@ -50,7 +50,7 @@ from renpy.gl2.gl2geometry cimport rectangle, Mesh
 
 cdef class TextureLoader:
 
-    def __init__(self, draw):
+    def __init__(self, GL2Draw draw):
         self.generation = 1
         self.texture_generation = { }
         self.free_list = [ ]
@@ -61,6 +61,33 @@ cdef class TextureLoader:
         glGenFramebuffers(1, &self.ftl_fbo)
 
         self.ftl_program = draw.shader_cache.get(("renpy.ftl",))
+
+    def load_surface(self, surf):
+        """
+        Converts a surface into a texture.
+        """
+
+        size = surf.get_size()
+        w, h = size
+
+        tex = GLTexture(surf, self)
+
+        # TODO: Defer this.
+        tex.load()
+
+        mesh = Mesh()
+
+        mesh.add_attribute("aTexCoord", 2)
+        mesh.add_texture_rectangle(0.0, 0.0, w, h)
+
+        rv = TexturedMesh(surf.get_size(),
+                          mesh,
+                          { "uTex0" : tex },
+                          ( "renpy.geometry", "renpy.texture" ),
+                          { })
+
+        return rv
+
 
     def cleanup(self):
         """
@@ -88,10 +115,6 @@ cdef class TextureLoader:
         # in use, only to have it deallocated later.
 
         self.generation += 1
-
-        global generation
-        generation += 1
-
 
 
 cdef class GLTextureCore:
@@ -134,7 +157,7 @@ cdef class GLTextureCore:
                 p += (s.w * 4)
 
         self.loader = loader
-        loader.texture_load_queue.add(self)
+        self.loader.texture_load_queue.add(self)
         self.loader.total_texture_size += self.width * self.height * 4
         self.loader.texture_count += 1
 
@@ -155,10 +178,9 @@ cdef class GLTextureCore:
         glGenTextures(1, &tex)
         glGenTextures(1, &premultiplied)
 
-
         # Bind the framebuffer.
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, <GLint *> &old_fbo);
-        glBindFramebuffer(GL_FRAMEBUFFER, self.ftl_fbo)
+        glBindFramebuffer(GL_FRAMEBUFFER, self.loader.ftl_fbo)
 
         # Create premultiplied as an empty texture.
         glBindTexture(GL_TEXTURE_2D, premultiplied)
@@ -202,8 +224,7 @@ cdef class GLTextureCore:
         glBlendFuncSeparate(GL_SRC_ALPHA, GL_ZERO, GL_ONE, GL_ZERO)
 
         # Draw.
-        self.ftl_program.draw(m, { "uTex0" : 0 })
-
+        self.loader.ftl_program.draw(m, { "uTex0" : 0 })
 
         # Deleter tex.
         glDeleteTextures(1, &tex)
@@ -222,7 +243,7 @@ cdef class GLTextureCore:
         # Store the loaded texture.
         self.number = premultiplied
         self.generation = self.loader.generation
-        self.texture_generation[self.number] = self.loader.generation
+        self.loader.texture_generation[self.number] = self.loader.generation
 
         # Free the data memory.
         free(self.data)
