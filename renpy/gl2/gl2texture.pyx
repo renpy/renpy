@@ -72,9 +72,6 @@ cdef class TextureLoader:
 
         tex = GLTexture(surf, self)
 
-        # TODO: Defer this.
-        tex.load()
-
         mesh = Mesh()
 
         mesh.add_attribute("aTexCoord", 2)

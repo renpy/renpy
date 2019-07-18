@@ -44,6 +44,10 @@ import math
 import uguugl
 
 cimport renpy.display.render as render
+from renpy.display.render cimport Render
+from renpy.display.matrix cimport Matrix
+from renpy.display.matrix import offset
+
 cimport renpy.gl2.gl2texture as gl2texture
 import renpy.gl2.gl2texture as gl2texture
 import renpy.gl2.gl2geometry as gl2geometry
@@ -566,19 +570,11 @@ cdef class GL2Draw:
         """
 
         # Turn a surface into a texture grid.
-
         rv = self.texture_cache.get(surf, None)
 
         if rv is None:
-
-            # rv = self.texture_loader.load(surf)
-
-            w, h = surf.get_size()
-            rv = self.solid_texture(w, h, (0, 0, 255, 255))
-
+            rv = self.texture_loader.load_surface(surf)
             self.texture_cache[surf] = rv
-
-            # self.ready_texture_queue.add(rv)
 
         return rv
 
@@ -670,18 +666,15 @@ cdef class GL2Draw:
 
         # TODO: Draw surf
 
-        tex = self.solid_texture(100, 100, (0, 128, 0, 255))
-        context = GL2DrawingContext(self, "viewport")
-        context.draw_texturemesh(tex)
+        surf.is_opaque()
 
+        # Project the child from virtual space to the screen space.
+        cdef Matrix transform
+        transform = renpy.display.matrix.screen_projection(self.virtual_size[0], self.virtual_size[1])
 
-        global logo
-        if logo is None:
-            logo = pygame.image.load("/home/tom/ab/renpy/tutorial/game/images/logo base.png")
-            logo = logo.convert_alpha()
-            logo = self.texture_loader.load_surface(logo)
-
-        context.draw_texturemesh(logo)
+        # Use the context to draw the surface tree.
+        context = GL2DrawingContext(self)
+        context.draw(surf, transform)
 
         self.flip()
 
@@ -890,27 +883,17 @@ cdef class GL2DrawingContext:
     """
 
     # The draw object this context is associated with.
-    cdef GL2Draw draw
+    cdef GL2Draw gl2draw
 
-    # This is a matrix that transforms texture coordinates into
-    # viewport coordinates. (The same direction Render.reverse goes
-    # in.)
-    cdef Matrix to_viewport
+    def __init__(self, GL2Draw draw):
+        self.gl2draw = draw
 
+    def draw_texturedmesh(self, tm, transform):
 
-    def __init__(self, GL2Draw draw, mode):
-
-        self.draw = draw
-
-        if mode == "viewport":
-            self.to_viewport = renpy.display.matrix.screen_projection(draw.virtual_size[0], draw.virtual_size[1])
-
-    def draw_texturemesh(self, tm):
-
-        shader = self.draw.shader_cache.get(tm.shaders)
+        shader = self.gl2draw.shader_cache.get(tm.shaders)
 
         uniforms = tm.uniforms.copy()
-        uniforms["uTransform"] = self.to_viewport
+        uniforms["uTransform"] = transform
 
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
@@ -928,3 +911,54 @@ cdef class GL2DrawingContext:
             uniforms[k] = i
 
         shader.draw(tm.mesh, uniforms)
+
+    def draw(self, what, Matrix transform):
+        """
+        This is responsible for walking the surface tree, and drawing any
+        TexturedMeshes, Renders, and Surfaces it encounters.
+
+        `transform`
+            The matrix that transforms texture space into drawable space.
+        """
+
+        if isinstance(what, pygame.Surface):
+            what = self.draw.load_texture(what)
+
+        if isinstance(what, TexturedMesh):
+            self.draw_texturedmesh(what, transform)
+            return
+
+        cdef Render r
+        r = what
+
+        if r.text_input:
+            renpy.display.interface.text_rect = r.screen_rect(0, 0, transform)
+
+        # TODO: Check r.operation to handle other draw mode. (Or replace this
+        # with something new.)
+
+        # TODO: Handle clipping (r.xclipping, r.yclipping, perhaps arbitrary
+        # clipping too.)
+
+        # TODO: Handle r.alpha, r.over, r.nearest.
+
+        if (r.reverse is not None) and (r.reverse is not IDENTITY):
+            transform = transform * r.reverse
+
+        for child, cx, cy, focus, main in r.visible_children:
+
+            # TODO: figure out if subpixel blitting should be done.
+
+            # The type of cx and cy depends on if this is a subpixel blit or not.
+            #             if type(cx) is float:
+            #                 subpixel = True
+
+
+            child_transform = transform
+
+            if (cx or cy):
+                child_transform = child_transform * offset(cx, cy, 0)
+
+            self.draw(child, child_transform)
+
+        return 0
