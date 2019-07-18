@@ -681,9 +681,7 @@ cdef class GL2Draw:
             logo = logo.convert_alpha()
             logo = self.texture_loader.load_surface(logo)
 
-            print(logo)
-
-
+        context.draw_texturemesh(logo)
 
         self.flip()
 
@@ -908,9 +906,25 @@ cdef class GL2DrawingContext:
             self.to_viewport = renpy.display.matrix.screen_projection(draw.virtual_size[0], draw.virtual_size[1])
 
     def draw_texturemesh(self, tm):
+
         shader = self.draw.shader_cache.get(tm.shaders)
 
         uniforms = tm.uniforms.copy()
         uniforms["uTransform"] = self.to_viewport
+
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+
+        for i, (k, tex) in enumerate(tm.textures.items()):
+            tex.load()
+            glActiveTexture(GL_TEXTURE0 + i)
+            glBindTexture(GL_TEXTURE_2D, tex.number)
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+
+            uniforms[k] = i
 
         shader.draw(tm.mesh, uniforms)

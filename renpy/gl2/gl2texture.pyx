@@ -144,11 +144,11 @@ cdef class GLTextureCore:
 
         cdef unsigned char *pixels = <unsigned char *> s.pixels
         cdef unsigned char *data = <unsigned char *> malloc(s.h * s.w * 4)
+
         cdef unsigned char *p = data
 
-
         if s.pitch == s.w * 4:
-            memcpy(data, pixels, s.h * s.w * 4)
+            memcpy(p, pixels, s.h * s.w * 4)
         else:
             for 0 <= i < s.h:
                 memcpy(p, pixels, s.w * 4)
@@ -156,10 +156,13 @@ cdef class GLTextureCore:
                 pixels += s.pitch
                 p += (s.w * 4)
 
+        self.data = data
+
         self.loader = loader
         self.loader.texture_load_queue.add(self)
         self.loader.total_texture_size += self.width * self.height * 4
         self.loader.texture_count += 1
+
 
     def load(self):
         """
@@ -213,6 +216,7 @@ cdef class GLTextureCore:
         # Load the pixel data into tex, and set it up for drawing.
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, tex)
+
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, self.data)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
@@ -226,7 +230,7 @@ cdef class GLTextureCore:
         # Draw.
         self.loader.ftl_program.draw(m, { "uTex0" : 0 })
 
-        # Deleter tex.
+        # Delete tex.
         glDeleteTextures(1, &tex)
 
         # Configure premultiplied.
@@ -244,6 +248,8 @@ cdef class GLTextureCore:
         self.number = premultiplied
         self.generation = self.loader.generation
         self.loader.texture_generation[self.number] = self.loader.generation
+
+        self.loaded = True
 
         # Free the data memory.
         free(self.data)

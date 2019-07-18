@@ -133,10 +133,12 @@ cdef class Program:
 
             if storage == "uniform":
                 location = glGetUniformLocation(self.program, name)
-                self.uniforms.append((name, location, data_function))
+                if location >= 0:
+                    self.uniforms.append((name, location, data_function))
             else:
                 location = glGetAttribLocation(self.program, name)
-                self.attributes.append((name, location, data_function))
+                if location >= 0:
+                    self.attributes.append((name, location, data_function))
 
 
 
