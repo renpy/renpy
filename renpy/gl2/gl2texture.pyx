@@ -197,9 +197,6 @@ cdef class GLTextureCore:
         # Set up the viewport and clear the  texure.
         glViewport(0, 0, self.width, self.height)
 
-        # glClearColor(0, 0, 0, 0)
-        # glClear(GL_COLOR_BUFFER_BIT)
-
         # Set up a mesh.
         m = Mesh()
         m.add_attribute("aTexCoord", 2)
@@ -227,6 +224,17 @@ cdef class GLTextureCore:
         # Draw.
         self.loader.ftl_program.draw(m, { "uTex0" : 0 })
 
+        # Bind premultiplied to the framebuffer.
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER,
+            GL_COLOR_ATTACHMENT0,
+            GL_TEXTURE_2D,
+            0,
+            0)
+
+        # Set the old framebuffer.
+        glBindFramebuffer(GL_FRAMEBUFFER, old_fbo)
+
         # Delete tex.
         glDeleteTextures(1, &tex)
 
@@ -238,8 +246,6 @@ cdef class GLTextureCore:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
         glGenerateMipmap(GL_TEXTURE_2D)
 
-        # Set the old framebuffer.
-        glBindFramebuffer(GL_FRAMEBUFFER, old_fbo)
 
         # Store the loaded texture.
         self.number = premultiplied

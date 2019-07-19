@@ -895,9 +895,6 @@ cdef class GL2DrawingContext:
         uniforms = tm.uniforms.copy()
         uniforms["uTransform"] = transform
 
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
-
         for i, (k, tex) in enumerate(tm.textures.items()):
             tex.load()
             glActiveTexture(GL_TEXTURE0 + i)
@@ -909,6 +906,12 @@ cdef class GL2DrawingContext:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
             uniforms[k] = i
+
+        x, y, w, h = self.gl2draw.drawable_viewport
+        glViewport(x, y, w, h)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+
 
         shader.draw(tm.mesh, uniforms)
 
