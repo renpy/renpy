@@ -369,7 +369,7 @@ class Context(renpy.object.Object):
 
         for k, v in dynamic.iteritems():
             if isinstance(v, Delete):
-                del store[k]
+                store.pop(k, None)
             else:
                 store[k] = v
 
