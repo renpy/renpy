@@ -1828,6 +1828,7 @@ def parse_atl(l):
                 if l.keyword('circles'):
                     expr = l.require(l.simple_expression)
                     rm.add_circles(expr)
+                    continue
 
                 # Try to parse a property.
                 cp = l.checkpoint()
