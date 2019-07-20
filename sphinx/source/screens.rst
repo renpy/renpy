@@ -2043,8 +2043,8 @@ and choosing the entries that apply to the current platform.
    to allow precise pointing.
 
 ``"web"``
-    Defined when running inside a web browser. There are no guarantees
-    as to what the hardware that runs the web browser is like.
+   Defined when running inside a web browser. Check other variants to
+   detect what the browser runs on.
 
 ``None``
    Always defined.
