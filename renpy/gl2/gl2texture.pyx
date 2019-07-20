@@ -307,6 +307,10 @@ class TexturedMesh:
     def copy(self):
         return TexturedMesh(self.size, self.mesh, self.textures, self.shaders, self.uniforms)
 
+    def load(self):
+        for i in self.textures.values():
+            i.load()
+
     def get_size(self):
         return self.size
 

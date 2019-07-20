@@ -34,6 +34,8 @@ import_pygame_sdl2()
 
 import renpy
 import pygame_sdl2 as pygame
+from pygame_sdl2 import Surface
+
 import os
 import os.path
 import weakref
@@ -655,22 +657,28 @@ cdef class GL2Draw:
         if surf is None:
             return
 
-        # Set up the viewport.
-        x, y, w, h = self.drawable_viewport
-        glViewport(x, y, w, h)
+        # Compute visible_children.
+        surf.is_opaque()
+
+        # Load all the textures and RTTs.
+        self.load_all_textures(surf)
 
         # Clear the screen.
         clear_r, clear_g, clear_b = renpy.color.Color(renpy.config.gl_clear_color).rgb
         glClearColor(clear_r, clear_g, clear_b, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
-        # TODO: Draw surf
-
-        surf.is_opaque()
-
         # Project the child from virtual space to the screen space.
         cdef Matrix transform
         transform = renpy.display.matrix.screen_projection(self.virtual_size[0], self.virtual_size[1])
+
+        # Set up the default modes.
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+
+        # Set up the viewport.
+        x, y, w, h = self.drawable_viewport
+        glViewport(x, y, w, h)
 
         # Use the context to draw the surface tree.
         context = GL2DrawingContext(self)
@@ -679,6 +687,27 @@ cdef class GL2Draw:
         self.flip()
 
         self.texture_loader.cleanup()
+
+    def load_all_textures(self, what):
+        """
+        This loads all textures from the surface tree before drawing to
+        the actual framebuffer. This is responsible for walking the
+        surface tree, and loading framebuffers and texture.
+        """
+
+        if isinstance(what, Surface):
+            what = self.load_texture(what)
+            self.load_all_textures(what)
+            return
+
+        if isinstance(what, TexturedMesh):
+            what.load()
+            return
+
+        # TODO: If the render actually renders textures, do the RTT now.
+
+        for i in what.visible_children:
+            self.load_all_textures(i[0])
 
     def render_to_texture(self, what, alpha):
         """
@@ -690,7 +719,6 @@ cdef class GL2Draw:
         height = int(math.ceil(what.height * self.draw_per_virt))
 
         raise
-
 
     def is_pixel_opaque(self, what, x, y):
         """
@@ -872,7 +900,6 @@ cdef class GL2Draw:
         return (x, y)
 
 
-
 cdef class GL2DrawingContext:
     """
     This is an object that represents the state of the GL rendering
@@ -896,7 +923,6 @@ cdef class GL2DrawingContext:
         uniforms["uTransform"] = transform
 
         for i, (k, tex) in enumerate(tm.textures.items()):
-            tex.load()
             glActiveTexture(GL_TEXTURE0 + i)
             glBindTexture(GL_TEXTURE_2D, tex.number)
 
@@ -907,13 +933,8 @@ cdef class GL2DrawingContext:
 
             uniforms[k] = i
 
-        x, y, w, h = self.gl2draw.drawable_viewport
-        glViewport(x, y, w, h)
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
-
-
         shader.draw(tm.mesh, uniforms)
+
 
     def draw(self, what, Matrix transform):
         """
@@ -924,7 +945,7 @@ cdef class GL2DrawingContext:
             The matrix that transforms texture space into drawable space.
         """
 
-        if isinstance(what, pygame.Surface):
+        if isinstance(what, Surface):
             what = self.draw.load_texture(what)
 
         if isinstance(what, TexturedMesh):
