@@ -21,6 +21,7 @@
 
 from uguugl cimport *
 from renpy.gl2.gl2shader cimport Program
+from renpy.gl2.gl2geometry cimport Mesh
 
 cdef class TextureLoader:
 
@@ -46,8 +47,13 @@ cdef class TextureLoader:
     # The program used for fast texture loading
     cdef Program ftl_program
 
+    # The mesh used for fast texture loading.
+    cdef Mesh ftl_mesh
+
     # The queue of textures that need to be loaded.
     cdef object texture_load_queue
+
+
 
 cdef class GLTextureCore:
 

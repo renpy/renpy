@@ -86,15 +86,14 @@ cdef class TextureLoader:
         tex = GLTexture(surf, self)
 
         mesh = Mesh()
-
         mesh.add_attribute("aTexCoord", 2)
         mesh.add_texture_rectangle(0.0, 0.0, w, h)
 
         rv = TexturedMesh(surf.get_size(),
                           mesh,
-                          { "uTex0" : tex },
                           ( "renpy.geometry", "renpy.texture" ),
-                          { })
+                          { "uTex0" : tex },
+                          [ tex ])
 
         return rv
 
@@ -183,6 +182,7 @@ cdef class GLTextureCore:
         cdef GLuint old_fbo
         cdef GLuint tex
         cdef GLuint premultiplied
+        cdef Program program
 
         if self.loaded:
             return
@@ -207,9 +207,6 @@ cdef class GLTextureCore:
             premultiplied,
             0)
 
-        # Set up the viewport and clear the  texure.
-        glViewport(0, 0, self.width, self.height)
-
         # Load the pixel data into tex, and set it up for drawing.
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, tex)
@@ -220,12 +217,19 @@ cdef class GLTextureCore:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
+        # Set up the viewport.
+        glViewport(0, 0, self.width, self.height)
+
         # Set up the blend mode for premultiplication.
         glEnable(GL_BLEND)
         glBlendFuncSeparate(GL_SRC_ALPHA, GL_ZERO, GL_ONE, GL_ZERO)
 
         # Draw.
-        self.loader.ftl_program.draw(self.ftl_mesh, { "uTex0" : 0 })
+        program = self.loader.ftl_program
+        program.start()
+        program.set_uniform("uTex0", tex)
+        program.draw(self.loader.ftl_mesh)
+        program.finish()
 
         # Bind premultiplied to the framebuffer.
         glFramebufferTexture2D(
@@ -289,29 +293,20 @@ class TexturedMesh:
     """
     This represents a combination of the geometry, textures, shaders, and
     uniform values required to display something on the screen.
-
-    :ivar Mesh mesh: Contains the geometry and per-vertex attributes.
-    :ivar textures: Maps the names of textures used by the shaders to GLTexture
-        objects.
-    :vartype textures: dict(str, GLTexture)
-    :ivar shaders: A tuple of strings giving the shaders that are used.
-    :vartype shaders: list(str)
-    :ivar uniforms: A dictionary mapping uniform names to their values.
-    :vartype uniforms: dict(str, object)
     """
 
-    def __init__(self, size, mesh, textures, shaders, uniforms):
+    def __init__(self, size, mesh, shaders, uniforms, textures):
         self.size = size
         self.mesh = mesh
-        self.textures = textures
         self.shaders = shaders
         self.uniforms = uniforms
+        self.textures = textures
 
     def copy(self):
-        return TexturedMesh(self.size, self.mesh, self.textures, self.shaders, self.uniforms)
+        return TexturedMesh(self.size, self.mesh, self.shaders, self.uniforms, self.textures)
 
     def load(self):
-        for i in self.textures.values():
+        for i in self.textures:
             i.load()
 
     def get_size(self):

@@ -12,7 +12,10 @@ cdef class Program:
     cdef object vertex
     cdef object fragment
 
-    cdef public list uniforms
+    cdef public dict uniforms
+
     cdef public list attributes
+
+    cdef public int sampler
 
     cdef GLuint load_shader(self, GLenum shader_type, source) except? 0

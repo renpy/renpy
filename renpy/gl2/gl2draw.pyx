@@ -606,7 +606,7 @@ cdef class GL2Draw:
 
         color = tuple(i / 255.0 for i in color)
 
-        return TexturedMesh((w, h), mesh, { }, ("renpy.geometry", "renpy.solid"), { "uSolidColor" : color })
+        return TexturedMesh((w, h), mesh, ("renpy.geometry", "renpy.solid"), { "uSolidColor" : color }, { })
 
     def flip(self):
         """
@@ -919,22 +919,13 @@ cdef class GL2DrawingContext:
 
         shader = self.gl2draw.shader_cache.get(tm.shaders)
 
-        uniforms = tm.uniforms.copy()
-        uniforms["uTransform"] = transform
+        shader.start()
+        shader.set_uniforms(tm.uniforms)
+        shader.set_uniform("uTransform", transform)
 
-        for i, (k, tex) in enumerate(tm.textures.items()):
-            glActiveTexture(GL_TEXTURE0 + i)
-            glBindTexture(GL_TEXTURE_2D, tex.number)
+        shader.draw(tm.mesh)
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-
-            uniforms[k] = i
-
-        shader.draw(tm.mesh, uniforms)
-
+        shader.finish()
 
     def draw(self, what, Matrix transform):
         """
