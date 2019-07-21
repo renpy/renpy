@@ -54,7 +54,8 @@ cimport renpy.gl2.gl2texture as gl2texture
 import renpy.gl2.gl2texture as gl2texture
 import renpy.gl2.gl2geometry as gl2geometry
 
-from renpy.gl2.gl2geometry import Mesh
+from renpy.gl2.gl2geometry cimport Mesh, Polygon
+from renpy.gl2.gl2geometry import rectangle
 from renpy.gl2.gl2texture import TexturedMesh, TextureLoader
 from renpy.gl2.gl2shadercache import ShaderCache
 
@@ -912,10 +913,26 @@ cdef class GL2DrawingContext:
     # The draw object this context is associated with.
     cdef GL2Draw gl2draw
 
+    # The clipping polygon, if one is defined. This is in viewport
+    # coordinates.
+    cdef Polygon clip_polygon
+
     def __init__(self, GL2Draw draw):
         self.gl2draw = draw
+        self.clip_polygon = None
 
-    def draw_texturedmesh(self, tm, transform):
+    def draw_texturedmesh(self, tm, Matrix transform):
+
+        cdef Mesh mesh = tm.mesh
+
+        # If a clip polygon is in place, clip the mesh with it.
+        if self.clip_polygon is not None:
+            mesh = mesh.copy()
+            mesh.multiply_matrix("aPosition", 4, transform)
+            mesh.perspective_divide()
+            mesh = mesh.crop_polygon(self.clip_polygon)
+
+            transform = IDENTITY
 
         shader = self.gl2draw.shader_cache.get(tm.shaders)
 
@@ -923,7 +940,7 @@ cdef class GL2DrawingContext:
         shader.set_uniforms(tm.uniforms)
         shader.set_uniform("uTransform", transform)
 
-        shader.draw(tm.mesh)
+        shader.draw(mesh)
 
         shader.finish()
 
