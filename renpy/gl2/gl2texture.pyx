@@ -62,6 +62,19 @@ cdef class TextureLoader:
 
         self.ftl_program = draw.shader_cache.get(("renpy.ftl",))
 
+        # Set up a mesh.
+        m = Mesh()
+        m.add_attribute("aTexCoord", 2)
+        m.add_polygon([
+            -1.0, -1.0, 0.0, 1.0, 0.0, 0.0,
+            -1.0,  1.0, 0.0, 1.0, 0.0, 1.0,
+             1.0,  1.0, 0.0, 1.0, 1.0, 1.0,
+             1.0, -1.0, 0.0, 1.0, 1.0, 0.0,
+            ])
+
+        self.ftl_mesh = m
+
+
     def load_surface(self, surf):
         """
         Converts a surface into a texture.
@@ -197,16 +210,6 @@ cdef class GLTextureCore:
         # Set up the viewport and clear the  texure.
         glViewport(0, 0, self.width, self.height)
 
-        # Set up a mesh.
-        m = Mesh()
-        m.add_attribute("aTexCoord", 2)
-        m.add_polygon([
-            -1.0, -1.0, 0.0, 1.0, 0.0, 0.0,
-            -1.0,  1.0, 0.0, 1.0, 0.0, 1.0,
-             1.0,  1.0, 0.0, 1.0, 1.0, 1.0,
-             1.0, -1.0, 0.0, 1.0, 1.0, 0.0,
-            ])
-
         # Load the pixel data into tex, and set it up for drawing.
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, tex)
@@ -222,7 +225,7 @@ cdef class GLTextureCore:
         glBlendFuncSeparate(GL_SRC_ALPHA, GL_ZERO, GL_ONE, GL_ZERO)
 
         # Draw.
-        self.loader.ftl_program.draw(m, { "uTex0" : 0 })
+        self.loader.ftl_program.draw(self.ftl_mesh, { "uTex0" : 0 })
 
         # Bind premultiplied to the framebuffer.
         glFramebufferTexture2D(
