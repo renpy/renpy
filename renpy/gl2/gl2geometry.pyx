@@ -251,7 +251,7 @@ cdef void intersectLines(
     px[0] = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denom
     py[0] = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denom
 
-cdef Polygon intersectOnce(float a0x, float a0y, float a1x, float a1y, Polygon p, int rvstride):
+cdef Polygon intersectOnce(float winding, float a0x, float a0y, float a1x, float a1y, Polygon p, int rvstride):
 
     # The vector from a0 to a1.
     cdef float vecax = a1x - a0x
@@ -273,7 +273,7 @@ cdef Polygon intersectOnce(float a0x, float a0y, float a1x, float a1y, Polygon p
         vecpx = get(p, i, X) - a0x
         vecpy = get(p, i, Y) - a0y
 
-        inside[i] = vecax * vecpy >= vecay * vecpx
+        inside[i] = winding * (vecax * vecpy - vecay * vecpx) <= 0
         allin = allin and inside[i]
 
     # If all the points are inside, just return the polygon intact.
@@ -339,28 +339,38 @@ cpdef intersect(Polygon a, Polygon b, int rvstride):
     Given two Polygons, returns a Polygon that is the intersection of the
     points in the two.
 
-    This assumes that both polygons are convex and wound clockwise.
+    This assumes both polygons are convex.
     """
 
     cdef int i
     cdef float a0x, a0y, a1x, a1y
+    cdef float winding
 
-    a0x = get(a, a.points-1, X)
-    a0y = get(a, a.points-1, Y)
+    a0x = get(a, a.points-2, X)
+    a0y = get(a, a.points-2, Y)
+
+    a1x = get(a, a.points-1, X)
+    a1x = get(a, a.points-1, X)
 
     cdef Polygon rv = b
 
     for 0 <= i < a.points:
-        a1x = get(a, i, X)
-        a1y = get(a, i, Y)
+        a2x = get(a, i, X)
+        a2y = get(a, i, Y)
 
-        rv = intersectOnce(a0x, a0y, a1x, a1y, rv, rvstride)
+        winding = (a2x - a0x)*(a1y - a0y) - (a2y - a0y)*(a1x - a0x)
 
-        if rv.points < 3:
-            return None
+        if winding:
+            rv = intersectOnce(winding, a1x, a1y, a2x, a2y, rv, rvstride)
+
+            if rv.points < 3:
+                return None
 
         a0x = a1x
         a0y = a1y
+
+        a1x = a2x
+        a1y = a2y
 
     # This always has to copy the polygon, so if it's entirely inside, do so.
     if rv is b:
