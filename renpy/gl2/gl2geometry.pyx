@@ -329,8 +329,9 @@ cdef Polygon restride_polygon(Polygon src, int new_stride):
         ap += src.stride
         bp += rv.stride
 
-    return rv
+    rv.points = src.points
 
+    return rv
 
 
 cpdef intersect(Polygon a, Polygon b, int rvstride):
