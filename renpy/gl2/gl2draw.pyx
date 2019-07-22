@@ -54,7 +54,7 @@ cimport renpy.gl2.gl2texture as gl2texture
 import renpy.gl2.gl2texture as gl2texture
 import renpy.gl2.gl2geometry as gl2geometry
 
-from renpy.gl2.gl2geometry cimport Mesh, Polygon
+from renpy.gl2.gl2geometry cimport Mesh, Polygon, intersect
 from renpy.gl2.gl2geometry import rectangle
 from renpy.gl2.gl2texture import TexturedMesh, TextureLoader
 from renpy.gl2.gl2shadercache import ShaderCache
@@ -953,6 +953,9 @@ cdef class GL2DrawingContext:
             The matrix that transforms texture space into drawable space.
         """
 
+        cdef Polygon new_clip_polygon
+        cdef Polygon old_clip_polygon
+
         if isinstance(what, Surface):
             what = self.draw.load_texture(what)
 
@@ -969,8 +972,23 @@ cdef class GL2DrawingContext:
         # TODO: Check r.operation to handle other draw mode. (Or replace this
         # with something new.)
 
-        # TODO: Handle clipping (r.xclipping, r.yclipping, perhaps arbitrary
-        # clipping too.)
+        # Handle clipping.
+        old_clip_polygon = None
+
+        if (r.xclipping or r.yclipping):
+            old_clip_polygon = self.clip_polygon
+
+            new_clip_polygon = rectangle(0, 0, r.width, r.height)
+            new_clip_polygon.multiply_matrix(0, 4, transform)
+            new_clip_polygon.perspective_divide()
+
+            if old_clip_polygon:
+                new_clip_polygon = intersect(new_clip_polygon, old_clip_polygon, 4)
+
+            if new_clip_polygon is None:
+                return
+
+            self.clip_polygon = new_clip_polygon
 
         # TODO: Handle r.alpha, r.over, r.nearest.
 
@@ -992,5 +1010,9 @@ cdef class GL2DrawingContext:
                 child_transform = child_transform * offset(cx, cy, 0)
 
             self.draw(child, child_transform)
+
+        # Restore the clipping polygon.
+        if old_clip_polygon is not None:
+            self.clip_polygon = old_clip_polygon
 
         return 0
