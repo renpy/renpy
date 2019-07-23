@@ -172,6 +172,8 @@ cdef class GLTextureCore:
         self.loader.total_texture_size += self.width * self.height * 4
         self.loader.texture_count += 1
 
+    def __repr__(self):
+        return "<GLTexture {}x{} {}>".format(self.width, self.height, self.number)
 
     def load(self):
         """
