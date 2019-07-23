@@ -1012,7 +1012,7 @@ cdef class GL2DrawingContext:
             self.draw(child, child_transform)
 
         # Restore the clipping polygon.
-        if old_clip_polygon is not None:
+        if (r.xclipping or r.yclipping):
             self.clip_polygon = old_clip_polygon
 
         return 0
