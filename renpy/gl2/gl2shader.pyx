@@ -289,7 +289,7 @@ cdef class Program:
         cdef Uniform u
 
         for a in self.attributes:
-            glEnableVertexAttribArray(a.location)
+            glDisableVertexAttribArray(a.location)
 
         for u in self.uniforms.itervalues():
             u.finish()
