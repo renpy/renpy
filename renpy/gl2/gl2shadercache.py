@@ -207,7 +207,7 @@ class ShaderCache(object):
         vertex = source(vertex_variables, vertex_parts, False)
         fragment = source(fragment_variables, fragment_parts, True)
 
-        rv = Program(vertex, fragment)
+        rv = Program(sortedpartnames, vertex, fragment)
         rv.load()
 
         self.cache[partnames] = rv
@@ -231,9 +231,12 @@ class ShaderCache(object):
         Saves the list of shaders to the file.
         """
 
-        try:
+        fn = "<unknown>"
 
-            tmp = self.filename + ".tmp"
+        try:
+            fn = renpy.loader.get_path(self.filename)
+
+            tmp = fn + ".tmp"
 
             with io.open(tmp, "w", encoding="utf-8") as f:
                 shaders = set(self.cache.keys()) | self.missing
@@ -242,14 +245,14 @@ class ShaderCache(object):
                     f.write(u" ".join(i) + "\r\n")
 
             try:
-                os.unlink(self.filename)
+                os.unlink(fn)
             except:
                 pass
 
-            os.rename(tmp, self.filename)
+            os.rename(tmp, fn)
 
         except:
-            renpy.display.log("Saving shaders to {!r}:".format(self.filename))
+            renpy.display.log.write("Saving shaders to {!r}:".format(fn))
             renpy.display.log.exception()
 
     def load(self):
@@ -258,14 +261,11 @@ class ShaderCache(object):
         for which the parts exist, and for which compilation can succeed.
         """
 
-        if not os.path.exists(self.filename):
-            return
-
         try:
-            f = io.open(self.filename, "r", encoding="utf-8")
+            f = renpy.loader.load(self.filename)
         except:
-            renpy.display.log("Opening {!r}:".format(self.filename))
-            renpy.display.log.exception()
+            renpy.display.log.write("Could not open {!r}:".format(self.filename))
+            return
 
         for l in f:
             l = l.strip()
@@ -281,7 +281,7 @@ class ShaderCache(object):
             try:
                 self.get(partnames)
             except:
-                renpy.display.log("Precompiling shader {!r}:".format(partnames))
+                renpy.display.log.write("Precompiling shader {!r}:".format(partnames))
                 renpy.display.log.exception()
                 self.missing.add(partnames)
 
@@ -306,8 +306,27 @@ ShaderPart("renpy.texture", variables="""
 """)
 
 
+ShaderPart("renpy.solid", variables="""
+    uniform vec4 uSolidColor;
+""", fragment_110="""
+    gl_FragColor = uSolidColor;
+""")
+
 ShaderPart("renpy.colormatrix", variables="""
     uniform mat4 uColorMatrix;
 """, fragment_120="""
     gl_FragColor = gl_FragColor * uColorMatrix;
+""")
+
+
+ShaderPart("renpy.ftl", variables="""
+    attribute vec4 aPosition;
+    attribute vec2 aTexCoord;
+    varying vec2 vTexCoord;
+    uniform sampler2D uTex0;
+""", vertex_100="""
+    vTexCoord = aTexCoord;
+    gl_Position = aPosition;
+""", fragment_100="""
+    gl_FragColor = texture2D(uTex0, vTexCoord.xy);
 """)

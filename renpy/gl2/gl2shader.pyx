@@ -2,6 +2,7 @@ from uguugl cimport *
 from libc.stdlib cimport malloc, free
 
 from renpy.gl2.gl2geometry cimport Polygon, Mesh
+from renpy.gl2.gl2texture cimport GLTextureCore
 from renpy.display.matrix cimport Matrix
 
 class ShaderError(Exception):
@@ -15,57 +16,87 @@ GLSL_PRECISIONS = {
     }
 
 
-def uniform_float(uniform, data):
-    glUniform1f(uniform, data)
+cdef class Uniform:
+    cdef Program program
+    cdef GLint location
+    cdef bint ready
 
-def uniform_vec2(uniform, data):
-    a, b = data
-    glUniform2f(uniform, a, b)
+    def __init__(self, program, location):
+        self.program = program
+        self.location = location
+        self.ready = False
 
-def uniform_vec3(uniform, data):
-    a, b, c = data
-    glUniform3f(uniform, a, b, c)
+    cdef void assign(self, data):
+        return
 
-def uniform_vec4(uniform, data):
-    a, b, c, d = data
-    glUniform4f(uniform, a, b, c, d)
+    cdef void finish(self):
+        return
 
-def uniform_mat4(uniform, Matrix data):
-    glUniformMatrix4fv(uniform, 1, GL_TRUE, data.m)
+cdef class UniformFloat(Uniform):
+    cdef void assign(self, data):
+        glUniform1f(self.location, data)
 
-def uniform_sampler2d(uniform, data):
-    glUniform1i(uniform, data)
+cdef class UniformVec2(Uniform):
+    cdef void assign(self, data):
+        glUniform2f(self.location, data[0], data[1])
+
+cdef class UniformVec3(Uniform):
+    cdef void assign(self, data):
+        glUniform3f(self.location, data[0], data[1], data[2])
+
+cdef class UniformVec4(Uniform):
+    cdef void assign(self, data):
+        glUniform4f(self.location, data[0], data[1], data[2], data[3])
+
+cdef class UniformMat4(Uniform):
+    cdef void assign(self, data):
+        glUniformMatrix4fv(self.location, 1, GL_TRUE, (<Matrix> data).m)
+
+cdef class UniformSampler2D(Uniform):
+    cdef int sampler
+
+    def __init__(self, program, location):
+        self.sampler = program.sampler
+        program.sampler += 1
+
+    cdef void assign(self, data):
+        glActiveTexture(GL_TEXTURE0 + self.sampler)
+        glUniform1i(self.location, self.sampler)
+
+        if isinstance(data, GLTextureCore):
+            glBindTexture(GL_TEXTURE_2D, data.number)
+        else:
+            glBindTexture(GL_TEXTURE_2D, data)
+
+    cdef void finish(self):
+        glActiveTexture(GL_TEXTURE0 + self.sampler)
+        return
+
 
 UNIFORM_TYPES = {
-    "float" : uniform_float,
-    "vec2" : uniform_vec2,
-    "vec3" : uniform_vec3,
-    "vec4" : uniform_vec4,
-    "mat4" : uniform_mat4,
-    "sampler2D" : uniform_sampler2d,
+    "float" : UniformFloat,
+    "vec2" : UniformVec2,
+    "vec3" : UniformVec3,
+    "vec4" : UniformVec4,
+    "mat4" : UniformMat4,
+    "sampler2D" : UniformSampler2D,
     }
 
-def attribute_float(attribute, name, Mesh m):
-    glVertexAttribPointer(attribute, 1, GL_FLOAT, GL_FALSE, m.stride * sizeof(float), m.get_data(name))
-    glEnableVertexAttribArray(attribute)
+cdef class Attribute:
+    cdef object name
+    cdef GLint location
+    cdef GLint size
 
-def attribute_vec2(attribute, name, Mesh m):
-    glVertexAttribPointer(attribute, 2, GL_FLOAT, GL_FALSE, m.stride * sizeof(float), m.get_data(name))
-    glEnableVertexAttribArray(attribute)
-
-def attribute_vec3(attribute, name, Mesh m):
-    glVertexAttribPointer(attribute, 3, GL_FLOAT, GL_FALSE, m.stride * sizeof(float), m.get_data(name))
-    glEnableVertexAttribArray(attribute)
-
-def attribute_vec4(attribute, name, Mesh m):
-    glVertexAttribPointer(attribute, 4, GL_FLOAT, GL_FALSE, m.stride * sizeof(float), m.get_data(name))
-    glEnableVertexAttribArray(attribute)
+    def __init__(self, name, GLint location, GLint size):
+        self.name = name
+        self.location = location
+        self.size = size
 
 ATTRIBUTE_TYPES = {
-    "float" : attribute_float,
-    "vec2" : attribute_vec2,
-    "vec3" : attribute_vec3,
-    "vec4" : attribute_vec4,
+    "float" : 1,
+    "vec2" : 2,
+    "vec3" : 3,
+    "vec4" : 4,
 }
 
 
@@ -74,13 +105,19 @@ cdef class Program:
     Represents an OpenGL program.
     """
 
-    def __init__(self, vertex, fragment):
+    def __init__(self, name, vertex, fragment):
+        self.name = name
         self.vertex = vertex
         self.fragment = fragment
 
-        # A list of (name, location, data_function) tuples.
+        # A map from uniform name to a Uniform object.
+        self.uniforms = { }
+
+        # A list of Attribute objects
         self.attributes = [ ]
-        self.uniforms = [ ]
+
+        # The index of the next sampler to be added.
+        self.sampler = 0
 
     def find_variables(self, source):
 
@@ -128,16 +165,17 @@ cdef class Program:
             if tokens:
                 raise ShaderError("Spurious tokens after the name in '{}'. Arrays are not supported in Ren'Py.".format(l))
 
-            data_function = types[type]
-
             if storage == "uniform":
                 location = glGetUniformLocation(self.program, name)
-                self.uniforms.append((name, location, data_function))
+
+                if location >= 0:
+                    self.uniforms[name] = types[type](self, location)
+
             else:
                 location = glGetAttribLocation(self.program, name)
-                self.attributes.append((name, location, data_function))
 
-
+                if location >= 0:
+                    self.attributes.append(Attribute(name, location, types[type]))
 
     cdef GLuint load_shader(self, GLenum shader_type, source) except? 0:
         """
@@ -199,14 +237,44 @@ cdef class Program:
         self.find_variables(self.vertex)
         self.find_variables(self.fragment)
 
-    def draw(self, Mesh mesh, **kwargs):
+    def missing(self, kind, name):
+        raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
+
+    def start(self):
         glUseProgram(self.program)
 
-        for name, location, data_function in self.uniforms:
-            data_function(location, kwargs[name])
+    def set_uniform(self, name, value):
+        cdef Uniform u
+        u = self.uniforms.get(name, None)
+        if u is None:
+            return
 
-        for name, location, data_function in self.attributes:
-            data_function(location, name, mesh)
+        u.assign(value)
+        u.ready = True
+
+    def set_uniforms(self, dict uniforms):
+        cdef Uniform u
+
+        for name, value in uniforms.iteritems():
+            u = self.uniforms.get(name, None)
+            if u is None:
+                continue
+
+            u.assign(value)
+            u.ready = True
+
+    def draw(self, Mesh mesh):
+
+        cdef Attribute a
+
+        # Set up the attributes.
+        for a in self.attributes:
+            offset = mesh.attributes.get(a.name, None)
+            if offset is None:
+                self.missing("mesh attribute", a.ame)
+
+            glVertexAttribPointer(a.location, a.size, GL_FLOAT, GL_FALSE, mesh.stride * sizeof(float), mesh.get_data(offset))
+            glEnableVertexAttribArray(a.location)
 
         cdef int i = 0
         cdef Polygon p
@@ -215,3 +283,15 @@ cdef class Program:
 
             glDrawArrays(GL_TRIANGLE_FAN, i, p.points)
             i += p.points
+
+    def finish(self):
+        cdef Attribute a
+        cdef Uniform u
+
+        for a in self.attributes:
+            glDisableVertexAttribArray(a.location)
+
+        for u in self.uniforms.itervalues():
+            u.finish()
+
+

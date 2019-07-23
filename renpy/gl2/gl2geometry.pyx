@@ -129,11 +129,53 @@ cdef class Polygon:
             print()
 
 
-cpdef Polygon rectangle(float w, float h, float tw, float th):
+cpdef Polygon rectangle(double x, double y, double w, double h):
     """
-    Generates a rectangular polygon with tecture coordinate. One
+    Generates a rectangular polygon with texture coordinate. One
+    corner is at (x, y, 0, 1) and the other is at (x+w, y+h, 0, 1).
+    """
+
+    cdef Polygon rv = Polygon(4, 4, None)
+
+    rv.points = 4
+
+    cdef float *p = rv.data
+
+    p[X] = x
+    p[Y] = y
+    p[Z] = 0
+    p[W] = 1
+
+    p += 4
+
+    p[X] = x+w
+    p[Y] = y
+    p[Z] = 0
+    p[W] = 1
+
+    p += 4
+
+    p[X] = x+w
+    p[Y] = y+h
+    p[Z] = 0
+    p[W] = 1
+
+    p += 4
+
+    p[X] = x
+    p[Y] = y+h
+    p[Z] = 0
+    p[W] = 1
+
+    return rv
+
+
+
+cpdef Polygon texture_rectangle(double x, double y, double w, double h, double tw, double th):
+    """
+    Generates a rectangular polygon with texture coordinate. One
     corner is at (0, 0, 0, 1) with texture coordinates (0, 0), and
-    the other is at (w, h, 0, 1) with texture coordinates (0, 1).
+    the other is at (w, h, 0, 1) with texture coordinates (tw, th).
     """
 
     cdef Polygon rv = Polygon(6, 4, None)
@@ -142,8 +184,8 @@ cpdef Polygon rectangle(float w, float h, float tw, float th):
 
     cdef float *p = rv.data
 
-    p[X] = 0
-    p[Y] = 0
+    p[X] = x
+    p[Y] = y
     p[Z] = 0
     p[W] = 1
     p[TX] = 0
@@ -151,8 +193,8 @@ cpdef Polygon rectangle(float w, float h, float tw, float th):
 
     p += 6
 
-    p[X] = w
-    p[Y] = 0
+    p[X] = x+w
+    p[Y] = y
     p[Z] = 0
     p[W] = 1
     p[TX] = tw
@@ -160,8 +202,8 @@ cpdef Polygon rectangle(float w, float h, float tw, float th):
 
     p += 6
 
-    p[X] = w
-    p[Y] = h
+    p[X] = x+w
+    p[Y] = y+h
     p[Z] = 0
     p[W] = 1
     p[TX] = tw
@@ -169,8 +211,8 @@ cpdef Polygon rectangle(float w, float h, float tw, float th):
 
     p += 6
 
-    p[X] = 0
-    p[Y] = h
+    p[X] = x
+    p[Y] = y+h
     p[Z] = 0
     p[W] = 1
     p[TX] = 0
@@ -209,7 +251,7 @@ cdef void intersectLines(
     px[0] = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denom
     py[0] = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denom
 
-cdef Polygon intersectOnce(float a0x, float a0y, float a1x, float a1y, Polygon p, int rvstride):
+cdef Polygon intersectOnce(float winding, float a0x, float a0y, float a1x, float a1y, Polygon p, int rvstride):
 
     # The vector from a0 to a1.
     cdef float vecax = a1x - a0x
@@ -231,7 +273,7 @@ cdef Polygon intersectOnce(float a0x, float a0y, float a1x, float a1y, Polygon p
         vecpx = get(p, i, X) - a0x
         vecpy = get(p, i, Y) - a0y
 
-        inside[i] = vecax * vecpy >= vecay * vecpx
+        inside[i] = winding * (vecax * vecpy - vecay * vecpx) <= 0
         allin = allin and inside[i]
 
     # If all the points are inside, just return the polygon intact.
@@ -287,8 +329,9 @@ cdef Polygon restride_polygon(Polygon src, int new_stride):
         ap += src.stride
         bp += rv.stride
 
-    return rv
+    rv.points = src.points
 
+    return rv
 
 
 cpdef intersect(Polygon a, Polygon b, int rvstride):
@@ -296,28 +339,38 @@ cpdef intersect(Polygon a, Polygon b, int rvstride):
     Given two Polygons, returns a Polygon that is the intersection of the
     points in the two.
 
-    This assumes that both polygons are convex and wound clockwise.
+    This assumes both polygons are convex.
     """
 
     cdef int i
     cdef float a0x, a0y, a1x, a1y
+    cdef float winding
 
-    a0x = get(a, a.points-1, X)
-    a0y = get(a, a.points-1, Y)
+    a0x = get(a, a.points-2, X)
+    a0y = get(a, a.points-2, Y)
+
+    a1x = get(a, a.points-1, X)
+    a1x = get(a, a.points-1, X)
 
     cdef Polygon rv = b
 
     for 0 <= i < a.points:
-        a1x = get(a, i, X)
-        a1y = get(a, i, Y)
+        a2x = get(a, i, X)
+        a2y = get(a, i, Y)
 
-        rv = intersectOnce(a0x, a0y, a1x, a1y, rv, rvstride)
+        winding = (a2x - a0x)*(a1y - a0y) - (a2y - a0y)*(a1x - a0x)
 
-        if rv.points < 3:
-            return None
+        if winding:
+            rv = intersectOnce(winding, a1x, a1y, a2x, a2y, rv, rvstride)
+
+            if rv.points < 3:
+                return None
 
         a0x = a1x
         a0y = a1y
+
+        a1x = a2x
+        a1y = a2y
 
     # This always has to copy the polygon, so if it's entirely inside, do so.
     if rv is b:
@@ -491,23 +544,33 @@ cdef class Mesh:
 
         self.polygons.append(p)
 
-    def add_texture_rectangle(Mesh self, double w, double h):
+
+    def add_rectangle(Mesh self, double x, double y, double w, double h):
+        """
+        Adds a polygon.
+        """
+
+        self.points += 4
+        self.polygons.append(rectangle(x, y, w, h))
+
+
+    def add_texture_rectangle(Mesh self, double x, double y, double w, double h):
         """
         Returns a polygon corresponding to a texture rectangle.
         """
 
         self.points += 4
-        self.polygons.append(rectangle(w, h, 1.0, 1.0))
+        self.polygons.append(texture_rectangle(x, y, w, h, 1.0, 1.0))
 
 
-    cdef float *get_data(Mesh self, name):
+    cdef float *get_data(Mesh self, int offset):
         cdef Polygon p
         cdef int i
 
         if len(self.polygons) == 1:
 
             p = self.polygons[0]
-            return p.data + <int> self.attributes[name]
+            return p.data + offset
 
         if not self.data:
             self.data = <float *> malloc(self.points * self.stride * sizeof(float))
@@ -518,7 +581,7 @@ cdef class Mesh:
                 memcpy(&self.data[i], p.data, p.points * self.stride * sizeof(float))
                 i += p.points * self.stride
 
-        return self.data + <int> self.attributes[name]
+        return self.data + offset
 
     def copy(Mesh self):
         """
@@ -627,6 +690,31 @@ cdef class Mesh:
 
                 rv.polygons.append(p)
                 rv.points += p.points
+
+        return rv
+
+    def crop_polygon(Mesh self, Polygon op):
+        """
+        Crops this mesh with a polygon. No attributes are taken from the polygon.
+        """
+
+        rv = Mesh()
+        rv.stride = self.stride
+        rv.attributes = self.attributes
+
+        cdef Polygon sp
+        cdef Polygon p
+
+        for sp in self.polygons:
+            p = intersect(op, sp, rv.stride)
+
+            if p is None:
+                continue
+
+            barycentric(sp, p, 0)
+
+            rv.polygons.append(p)
+            rv.points += p.points
 
         return rv
 

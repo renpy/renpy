@@ -181,7 +181,7 @@ cdef class GLDraw:
             return False
 
         if self.did_init:
-            self.deinit()
+            self.kill_textures()
 
         if renpy.android:
             fullscreen = False
@@ -446,25 +446,18 @@ cdef class GLDraw:
 
         return True
 
-    def deinit(self):
+    def quit(self):
         """
-        De-initializes the system in preparation for a restart, or
-        quit. Flushes out all the textures while it's at it.
+        This shuts down the module and all use of the GL context.
         """
 
-        renpy.display.interface.kill_textures()
-
-        self.texture_cache.clear()
-
-        gltexture.dealloc_textures()
+        self.kill_textures()
 
         if self.rtt:
             self.rtt.deinit()
 
         if self.environ:
             self.environ.deinit()
-
-    def quit(self):
 
         if not self.old_fullscreen:
             renpy.display.gl_size = self.physical_size
@@ -1399,7 +1392,7 @@ cdef class GLDraw:
 
         return rv
 
-    def free_memory(self):
+    def kill_textures(self):
         self.texture_cache.clear()
         gltexture.dealloc_textures()
 

@@ -19,6 +19,42 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from uguugl cimport *
+from renpy.gl2.gl2shader cimport Program
+from renpy.gl2.gl2geometry cimport Mesh
+
+cdef class TextureLoader:
+
+    # The texture generation.
+    cdef int generation
+
+    # A map from texture number to the generation that number belongs to.
+    cdef dict texture_generation
+
+    # A list of (number, generation) pairs for textures that need to be freed.
+    cdef list free_list
+
+    # The number of textures that have been allocated but not deallocated.
+    cdef int texture_count
+
+    # The total size (in bytes) of all the textures that have been allocated
+    # but not deallocated.
+    cdef int total_texture_size
+
+    # The framebuffer object used for fast texture loading.
+    cdef GLuint ftl_fbo
+
+    # The program used for fast texture loading
+    cdef Program ftl_program
+
+    # The mesh used for fast texture loading.
+    cdef Mesh ftl_mesh
+
+    # The queue of textures that need to be loaded.
+    cdef object texture_load_queue
+
+
+
 cdef class GLTextureCore:
 
     # The size of the texture.
@@ -38,4 +74,7 @@ cdef class GLTextureCore:
     # This is the data required to load a texture, if it has not been
     # loaded yet.
     cdef unsigned char *data
+
+    # The texture loader associated with this texture.
+    cdef TextureLoader loader
 

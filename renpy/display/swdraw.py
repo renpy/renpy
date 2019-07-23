@@ -1108,21 +1108,12 @@ class SWDraw(object):
         self.mutated_surface(surf)
         return surf
 
-    def free_memory(self):
+    def kill_textures(self):
         """
-        Frees up memory.
+        Kills all textures and caches of textures.
         """
 
         rle_cache.clear()
-
-    def deinit(self):
-        """
-        Called when we're restarted.
-        """
-
-        renpy.display.render.free_memory()
-
-        return
 
     def quit(self):  # @ReservedAssignment
         """

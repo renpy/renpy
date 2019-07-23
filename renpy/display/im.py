@@ -532,7 +532,6 @@ def free_memory():
     Frees some memory.
     """
 
-    renpy.display.draw.free_memory()
     cache.clear()
 
 

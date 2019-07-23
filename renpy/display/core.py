@@ -1968,6 +1968,9 @@ class Interface(object):
         return rv
 
     def kill_textures(self):
+        if renpy.display.draw is not None:
+            renpy.display.draw.kill_textures()
+
         renpy.display.render.free_memory()
         renpy.text.text.layout_cache_clear()
 
@@ -1977,7 +1980,6 @@ class Interface(object):
         """
 
         self.kill_textures()
-
         renpy.display.im.cache.clear()
         renpy.display.module.bo_cache = None
 
@@ -1990,13 +1992,15 @@ class Interface(object):
         if renpy.display.draw and renpy.display.draw.info["renderer"] == "sw":
             renpy.display.video.movie_stop(clear=False)
 
+        renpy.display.render.free_memory()
+        renpy.text.text.layout_cache_clear()
+        renpy.display.module.bo_cache = None
+
         if self.display_reset:
 
             pygame.key.stop_text_input()  # @UndefinedVariable
             pygame.key.set_text_input_rect(None)  # @UndefinedVariable
             self.text_rect = None
-
-            renpy.display.draw.deinit()
 
             if renpy.display.draw.info["renderer"] == "angle":
                 renpy.display.draw.quit()
@@ -2005,13 +2009,7 @@ class Interface(object):
                 # minimized state on windows.
                 pygame.display.quit()
 
-        renpy.display.render.free_memory()
-        renpy.display.im.cache.clear()
-        renpy.text.text.layout_cache_clear()
-
-        renpy.display.module.bo_cache = None
-
-        self.kill_textures_and_surfaces()
+            self.kill_textures_and_surfaces()
 
         self.old_text_rect = None
         self.display_reset = False

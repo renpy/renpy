@@ -21,6 +21,7 @@
 
 from renpy.display.matrix cimport Matrix, Matrix2D
 cimport renpy.display.render as render
+from renpy.gl2.gl2texture cimport TextureLoader
 
 cdef class GL2Draw:
 
@@ -43,18 +44,19 @@ cdef class GL2Draw:
     cdef tuple clip_cache
     cdef tuple default_clip
     cdef float dpi_scale
-    cdef object ready_texture_queue
+    cdef object shader_cache
 
     cdef public tuple clip_rtt_box
 
-    # The number of drawable pixels per virtual pixel.
-    cdef public object draw_per_virt
+    cdef public float draw_per_phys
+    cdef public tuple drawable_viewport
 
-    # Matrices that transform drawable to virtual, and vice versa.
+    cdef public object draw_per_virt
     cdef public Matrix virt_to_draw
     cdef public Matrix draw_to_virt
 
     cdef public int fast_redraw_frames
-
     cdef public bint gles
 
+    # The texture_loader singleton.
+    cdef public TextureLoader texture_loader

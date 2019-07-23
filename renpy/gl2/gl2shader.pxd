@@ -2,6 +2,9 @@ from uguugl cimport *
 
 cdef class Program:
 
+    # The name of this program.
+    cdef public object name
+
     # The number of the OpenGL program created.
     cdef GLuint program
 
@@ -9,7 +12,10 @@ cdef class Program:
     cdef object vertex
     cdef object fragment
 
-    cdef list uniforms
-    cdef list attributes
+    cdef public dict uniforms
+
+    cdef public list attributes
+
+    cdef public int sampler
 
     cdef GLuint load_shader(self, GLenum shader_type, source) except? 0

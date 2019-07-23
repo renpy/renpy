@@ -34,6 +34,8 @@ import_pygame_sdl2()
 
 import renpy
 import pygame_sdl2 as pygame
+from pygame_sdl2 import Surface
+
 import os
 import os.path
 import weakref
@@ -44,8 +46,19 @@ import math
 import uguugl
 
 cimport renpy.display.render as render
-cimport gl2texture
-import gl2texture
+from renpy.display.render cimport Render
+from renpy.display.matrix cimport Matrix
+from renpy.display.matrix import offset
+
+cimport renpy.gl2.gl2texture as gl2texture
+import renpy.gl2.gl2texture as gl2texture
+import renpy.gl2.gl2geometry as gl2geometry
+
+from renpy.gl2.gl2geometry cimport Mesh, Polygon, intersect
+from renpy.gl2.gl2geometry import rectangle
+from renpy.gl2.gl2texture import TexturedMesh, TextureLoader
+from renpy.gl2.gl2shadercache import ShaderCache
+
 
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
@@ -62,6 +75,10 @@ vsync = True
 # A list of frame end times, used for the same purpose.
 frame_times = [ ]
 
+
+logo = None
+
+
 cdef class GL2Draw:
 
     def __init__(self, renderer_name, gles):
@@ -71,12 +88,6 @@ cdef class GL2Draw:
 
         # Did we do the first-time init?
         self.did_init = False
-
-        # The GL environment to use.
-        self.environ = None
-
-        # The GL render-to-texture to use.
-        self.rtt = None
 
         # The screen.
         self.window = None
@@ -115,9 +126,6 @@ cdef class GL2Draw:
         # The display info, from pygame.
         self.display_info = None
 
-        # Did we do the texture test at least once?
-        self.did_texture_test = False
-
         # The DPI scale factor.
         self.dpi_scale = renpy.display.interface.dpi_scale
 
@@ -125,17 +133,16 @@ cdef class GL2Draw:
         # updated.
         self.fast_redraw_frames = 0
 
-        # The queue of textures that might need to be made ready.
-        self.ready_texture_queue = weakref.WeakSet()
+        # The shader cache,
+        self.shader_cache = None
 
 
     def get_texture_size(self):
         """
         Returns the amount of memory locked up in textures.
         """
-        # TODO.
-        return 0, 0
 
+        return self.texture_loader.total_texture_size, self.texture_loader.texture_count
 
     def select_physical_size(self, physical_size):
         """
@@ -285,7 +292,7 @@ cdef class GL2Draw:
         print("Using {} renderer.".format(self.info["renderer"]))
 
         if self.did_init:
-            self.deinit()
+            self.kill_textures()
 
         if renpy.android:
             fullscreen = False
@@ -408,8 +415,7 @@ cdef class GL2Draw:
              vheight + y_padding)
 
         # The location of the virtual screen on the physical screen, in
-        # physical pixels. (May not be 100% accurate, but it's good
-        # enough for screenshots.)
+        # physical pixels.
         self.physical_box = (
             int(px_padding / 2),
             int(py_padding / 2),
@@ -417,15 +423,18 @@ cdef class GL2Draw:
             pheight - int(py_padding),
             )
 
-        # How many drawable pixels there are per virtual pixel.
+        # The scaling factor of physical_pixels to drawable pixels.
+        self.draw_per_phys = 1.0 * self.drawable_size[0] / self.physical_size[0]
+
+        # The location of the viewport, in drawable pixels.
+        self.drawable_viewport = tuple(i * self.draw_per_phys for i in self.physical_box)
+
+        # How many drawable pixels there are per virtual pixel?
         self.draw_per_virt = (1.0 * self.drawable_size[0] / pwidth) * (1.0 * view_width / vwidth)
 
         # Matrices that transform from virtual space to drawable space, and vice versa.
         self.virt_to_draw = Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
         self.draw_to_virt = Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
-
-        # Load uguu, and init GL.
-        uguugl.load()
 
         if not self.did_init:
             if not self.init():
@@ -446,32 +455,27 @@ cdef class GL2Draw:
 
         return True
 
-    def deinit(self):
-        """
-        De-initializes the system in preparation for a restart, or
-        quit. Flushes out all the textures while it's at it.
-        """
-
-        renpy.display.interface.kill_textures()
-
-        self.texture_cache.clear()
-
-        gl2texture.increase_generation()
-
     def quit(self):
+        """
+        Called when terminating the use of the OpenGL context.
+        """
+
+        self.kill_textures()
 
         if not self.old_fullscreen:
             renpy.display.gl_size = self.physical_size
-
-        gl2texture.dealloc_textures()
 
         self.old_fullscreen = None
 
     def init(self):
         """
+        *Internal*
         This does the first-time initialization of OpenGL, deciding
         which subsystems to use.
         """
+
+        # Load uguu, and init GL.
+        uguugl.load()
 
         # Log the GL version.
         renderer = <char *> glGetString(GL_RENDERER)
@@ -484,13 +488,6 @@ cdef class GL2Draw:
 
         print(renderer, version)
 
-        if renpy.android or renpy.ios:
-            self.redraw_period = 1.0
-
-        elif renpy.emscripten:
-            # give back control to browser regularly
-            self.redraw_period = 0.1
-
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(extensions_string.split(" "))
 
@@ -501,6 +498,18 @@ cdef class GL2Draw:
 
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()
+
+        if renpy.android or renpy.ios:
+            self.redraw_period = 1.0
+
+        elif renpy.emscripten:
+            # give back control to browser regularly
+            self.redraw_period = 0.1
+
+        self.shader_cache = ShaderCache("cache/shaders.txt")
+        self.shader_cache.load()
+
+        self.texture_loader = TextureLoader(self)
 
         return True
 
@@ -564,16 +573,11 @@ cdef class GL2Draw:
         """
 
         # Turn a surface into a texture grid.
-
         rv = self.texture_cache.get(surf, None)
 
-
         if rv is None:
-            # rv = gl2texture.texture_grid_from_surface(surf, transient)
-            raise Exception("Not Implemented.")
-
+            rv = self.texture_loader.load_surface(surf)
             self.texture_cache[surf] = rv
-            self.ready_texture_queue.add(rv)
 
         return rv
 
@@ -582,19 +586,60 @@ cdef class GL2Draw:
         Call from the main thread to make a single texture ready.
         """
 
-        while True:
-
-            try:
-                tex = self.ready_texture_queue.pop()
-            except KeyError:
-                return False
-
-            raise Exception("Not implemented.")
+#         while True:
+#
+#             try:
+#                 tex = self.ready_texture_queue.pop()
+#             except KeyError:
+#                 return False
+#
+#             raise Exception("Not implemented.")
 
         return False
 
     def solid_texture(self, w, h, color):
-        raise Exception("Not implemented.")
+        """
+        Returns a texture that represents a solid color.
+        """
+
+        mesh = gl2geometry.Mesh()
+        mesh.add_rectangle(0, 0, w, h)
+
+        color = tuple(i / 255.0 for i in color)
+
+        return TexturedMesh((w, h), mesh, ("renpy.geometry", "renpy.solid"), { "uSolidColor" : color }, { })
+
+    def flip(self):
+        """
+        Called to flip the screen after it's drawn.
+        """
+
+        self.draw_mouse()
+
+        start = time.time()
+
+        renpy.plog(1, "flip")
+
+        pygame.display.flip()
+
+        end = time.time()
+
+        if vsync:
+
+            # When the window is covered, we can get into a state where no
+            # drawing occurs and everything goes fast. Detect that and
+            # sleep.
+
+            frame_times.append(end)
+
+            if len(frame_times) > 10:
+                frame_times.pop(0)
+
+                # If we're running at over 1000 fps, vsync is broken.
+                if (frame_times[-1] - frame_times[0] < .001 * 10):
+                    time.sleep(1.0 / 120.0)
+                    renpy.plog(1, "after broken vsync sleep")
+
 
     def draw_screen(self, render_tree, fullscreen_video, flip=True):
         """
@@ -605,52 +650,65 @@ cdef class GL2Draw:
 
         renpy.plog(1, "start draw_screen")
 
-        reverse = self.virt_to_draw
-
-        render_tree.is_opaque() # Needed?
-
         if renpy.display.video.fullscreen:
             surf = renpy.display.video.render_movie("movie", self.virtual_size[0], self.virtual_size[1])
         else:
             surf = render_tree
 
-        if surf is not None:
-            # TODO: Draw surf
-            pass
-        else:
-            flip = False
+        if surf is None:
+            return
 
-        if flip:
+        # Compute visible_children.
+        surf.is_opaque()
 
-            self.draw_mouse()
+        # Load all the textures and RTTs.
+        self.load_all_textures(surf)
 
-            start = time.time()
+        # Clear the screen.
+        clear_r, clear_g, clear_b = renpy.color.Color(renpy.config.gl_clear_color).rgb
+        glClearColor(clear_r, clear_g, clear_b, 1.0)
+        glClear(GL_COLOR_BUFFER_BIT)
 
-            renpy.plog(1, "flip")
+        # Project the child from virtual space to the screen space.
+        cdef Matrix transform
+        transform = renpy.display.matrix.screen_projection(self.virtual_size[0], self.virtual_size[1])
 
-            pygame.display.flip()
+        # Set up the default modes.
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
-            end = time.time()
+        # Set up the viewport.
+        x, y, w, h = self.drawable_viewport
+        glViewport(x, y, w, h)
 
-            if vsync:
+        # Use the context to draw the surface tree.
+        context = GL2DrawingContext(self)
+        context.draw(surf, transform)
 
-                # When the window is covered, we can get into a state where no
-                # drawing occurs and everything goes fast. Detect that and
-                # sleep.
+        self.flip()
 
-                frame_times.append(end)
+        self.texture_loader.cleanup()
 
-                if len(frame_times) > 10:
-                    frame_times.pop(0)
+    def load_all_textures(self, what):
+        """
+        This loads all textures from the surface tree before drawing to
+        the actual framebuffer. This is responsible for walking the
+        surface tree, and loading framebuffers and texture.
+        """
 
-                    # If we're running at over 1000 fps, vsync is broken.
-                    if (frame_times[-1] - frame_times[0] < .001 * 10):
-                        time.sleep(1.0 / 120.0)
-                        renpy.plog(1, "after broken vsync sleep")
+        if isinstance(what, Surface):
+            what = self.load_texture(what)
+            self.load_all_textures(what)
+            return
 
+        if isinstance(what, TexturedMesh):
+            what.load()
+            return
 
-        gl2texture.cleanup()
+        # TODO: If the render actually renders textures, do the RTT now.
 
+        for i in what.visible_children:
+            self.load_all_textures(i[0])
 
     def render_to_texture(self, what, alpha):
         """
@@ -662,7 +720,6 @@ cdef class GL2Draw:
         height = int(math.ceil(what.height * self.draw_per_virt))
 
         raise
-
 
     def is_pixel_opaque(self, what, x, y):
         """
@@ -828,9 +885,9 @@ cdef class GL2Draw:
 
         return rv
 
-    def free_memory(self):
+    def kill_textures(self):
         self.texture_cache.clear()
-        gl2texture.dealloc_textures()
+        self.texture_loader.end_generation()
 
     def event_peek_sleep(self):
         pass
@@ -843,3 +900,119 @@ cdef class GL2Draw:
 
         return (x, y)
 
+
+cdef class GL2DrawingContext:
+    """
+    This is an object that represents the state of the GL rendering
+    system. It's responsible for walking the tree of Renders and
+    TextureMeshes, updating its state as appropriate. When it hits
+    a node where drawing is involved, it's responsible for issuing
+    the appropriate draw calls to OpenGL, using the saved state.
+    """
+
+    # The draw object this context is associated with.
+    cdef GL2Draw gl2draw
+
+    # The clipping polygon, if one is defined. This is in viewport
+    # coordinates.
+    cdef Polygon clip_polygon
+
+    def __init__(self, GL2Draw draw):
+        self.gl2draw = draw
+        self.clip_polygon = None
+
+    def draw_texturedmesh(self, tm, Matrix transform):
+
+        cdef Mesh mesh = tm.mesh
+
+        # If a clip polygon is in place, clip the mesh with it.
+        if self.clip_polygon is not None:
+            mesh = mesh.copy()
+            mesh.multiply_matrix("aPosition", 4, transform)
+            mesh.perspective_divide()
+            mesh = mesh.crop_polygon(self.clip_polygon)
+
+            transform = IDENTITY
+
+        shader = self.gl2draw.shader_cache.get(tm.shaders)
+
+        shader.start()
+        shader.set_uniforms(tm.uniforms)
+        shader.set_uniform("uTransform", transform)
+
+        shader.draw(mesh)
+
+        shader.finish()
+
+    def draw(self, what, Matrix transform):
+        """
+        This is responsible for walking the surface tree, and drawing any
+        TexturedMeshes, Renders, and Surfaces it encounters.
+
+        `transform`
+            The matrix that transforms texture space into drawable space.
+        """
+
+        cdef Polygon new_clip_polygon
+        cdef Polygon old_clip_polygon
+
+        if isinstance(what, Surface):
+            what = self.draw.load_texture(what)
+
+        if isinstance(what, TexturedMesh):
+            self.draw_texturedmesh(what, transform)
+            return
+
+        cdef Render r
+        r = what
+
+        if r.text_input:
+            renpy.display.interface.text_rect = r.screen_rect(0, 0, transform)
+
+        # TODO: Check r.operation to handle other draw mode. (Or replace this
+        # with something new.)
+
+        # Handle clipping.
+        old_clip_polygon = None
+
+        if (r.xclipping or r.yclipping):
+            old_clip_polygon = self.clip_polygon
+
+            new_clip_polygon = rectangle(0, 0, r.width, r.height)
+            new_clip_polygon.multiply_matrix(0, 4, transform)
+            new_clip_polygon.perspective_divide()
+
+            if old_clip_polygon:
+                new_clip_polygon = intersect(new_clip_polygon, old_clip_polygon, 4)
+
+            if new_clip_polygon is None:
+                return
+
+            self.clip_polygon = new_clip_polygon
+
+        # TODO: Handle r.alpha, r.over, r.nearest.
+
+        if (r.reverse is not None) and (r.reverse is not IDENTITY):
+            transform = transform * r.reverse
+
+        for child, cx, cy, focus, main in r.visible_children:
+
+            # TODO: figure out if subpixel blitting should be done.
+
+            # The type of cx and cy depends on if this is a subpixel blit or not.
+            #             if type(cx) is float:
+            #                 subpixel = True
+
+
+            child_transform = transform
+
+            if (cx or cy):
+                child_transform = child_transform * offset(cx, cy, 0)
+
+            self.draw(child, child_transform)
+
+        # Restore the clipping polygon.
+        if (r.xclipping or r.yclipping):
+            self.clip_polygon = old_clip_polygon
+
+        return 0
