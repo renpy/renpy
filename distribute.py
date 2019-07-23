@@ -52,7 +52,7 @@ def main():
     ap.add_argument("--pygame", action="store", default=None)
     ap.add_argument("--no-rapt", action="store_true")
     ap.add_argument("--variant", action="store")
-    ap.add_argument("--sign", action="store_true", default=True)
+    ap.add_argument("--sign", action="store_true", default=False)
     ap.add_argument("--nosign", action="store_false", dest="sign")
     ap.add_argument("--vc-version-only", action="store_true")
 
@@ -250,8 +250,8 @@ def main():
 
     print()
 
-    if not (args.fast or args.sign):
-        print("For a final-ish release, remember to use --sign so we're signed on the mac.")
+#     if not (args.fast or args.sign):
+#         print("For a final-ish release, remember to use --sign so we're signed on the mac.")
 
 
 if __name__ == "__main__":
