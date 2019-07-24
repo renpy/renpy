@@ -605,7 +605,13 @@ cdef class GL2Draw:
         mesh = gl2geometry.Mesh()
         mesh.add_rectangle(0, 0, w, h)
 
-        color = tuple(i / 255.0 for i in color)
+
+        a = color[3] / 255.0
+        r = a * color[0] / 255.0
+        g = a * color[1] / 255.0
+        b = a * color[2] / 255.0
+
+        color = (r, g, b, a)
 
         return TexturedMesh((w, h), mesh, ("renpy.geometry", "renpy.solid"), { "uSolidColor" : color }, { })
 
