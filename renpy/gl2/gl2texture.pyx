@@ -321,6 +321,6 @@ class TexturedMesh:
         rv.mesh = self.mesh.crop_polygon(rectangle(x, y, w, h))
         rv.mesh.offset(-x, -y, 0)
 
-        return self
+        return rv
 
 
