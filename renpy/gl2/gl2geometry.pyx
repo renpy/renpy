@@ -350,7 +350,7 @@ cpdef intersect(Polygon a, Polygon b, int rvstride):
     a0y = get(a, a.points-2, Y)
 
     a1x = get(a, a.points-1, X)
-    a1x = get(a, a.points-1, X)
+    a1y = get(a, a.points-1, Y)
 
     cdef Polygon rv = b
 
