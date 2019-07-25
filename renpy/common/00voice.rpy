@@ -170,8 +170,8 @@ init -1500 python:
         :doc: voice_action
 
         This allows the volume of each characters to be adjusted.
-        If `volume` is None, this returns the value of volume of `voice_tag`.
-        Otherwise, this set it to `volume`.
+        If `volume` is None, this returns a BarValue that
+        controls the value of `voice_tag`. Otherwise, this set it to `volume`.
 
         `volume` is a number between 0.0 and 1.0, and is interpreted as a
         fraction of the mixer volume for `voice` channel.
@@ -184,6 +184,17 @@ init -1500 python:
             return DictValue(persistent._character_volume, voice_tag, 1.0)
         else:
             return SetDict(persistent._character_volume, voice_tag, volume)
+
+    def GetCharacterVolume(voice_tag):
+        """
+        :doc: preference_functions
+
+        This returns the volume associated with voice tag, a number
+        between 0.0 and 1.0, which is interpreted as a fraction of the
+        mixer volume for the `voice` channel.
+        """
+
+        return persistent._character_volume.get(voice_tag, 1.0)
 
     @renpy.pure
     class PlayCharacterVoice(Action, FieldEquality):
