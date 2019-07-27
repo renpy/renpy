@@ -304,27 +304,9 @@ class XMLToPYX:
             c = self.commands[i]
 
             w("")
-            w(f"cdef {i}_type real_{i}")
             w(f"cdef {i}_type {i}")
 
             w("")
-
-            param_list = c.format_param_list()
-            proxy_call = c.format_proxy_call()
-
-            if c.return_type != "void":
-
-                w(f'cdef {c.return_type} check_{i}{param_list} nogil:')
-                w(f'    cdef {c.return_type} rv')
-                w(f'    rv = real_{i}{proxy_call}')
-                w(f'    check_error("{i}")')
-                w(f'    return rv')
-
-            else:
-
-                w(f'cdef {c.return_type} check_{i}{param_list} nogil:')
-                w(f'    real_{i}{proxy_call}')
-                w(f'    check_error("{i}")')
 
         w("")
         w("def load():")
@@ -339,16 +321,8 @@ class XMLToPYX:
             names = [ i.encode("utf-8") for i in names ]
 
             w(f"")
-            w(f"    global real_{i}, {i}")
-            w(f"    real_{i} = <{i}_type> find_gl_command({names!r})")
-            w(f"    {i} = real_{i}")
-
-        w("")
-        w("def enable_check_error():")
-
-        for i in sorted(self.features.commands):
             w(f"    global {i}")
-            w(f"    {i} = check_{i}")
+            w(f"    {i} = <{i}_type> find_gl_command({names!r})")
 
     def generate_uguu_pyx(self, f):
 
