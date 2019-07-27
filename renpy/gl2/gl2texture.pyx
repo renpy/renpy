@@ -45,8 +45,6 @@ from renpy.gl2.gl2geometry cimport rectangle, texture_rectangle, Mesh
 
 ################################################################################
 
-
-
 cdef class TextureLoader:
 
     def __init__(self, GL2Draw draw):
@@ -58,6 +56,20 @@ cdef class TextureLoader:
         self.texture_load_queue = weakref.WeakSet()
 
         glGenFramebuffers(1, &self.ftl_fbo)
+
+        glGenRenderbuffers(1, &self.ftl_renderbuffer)
+
+        glBindRenderbuffer(GL_RENDERBUFFER, self.ftl_renderbuffer)
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, 2048, 2048)
+        glBindFramebuffer(GL_FRAMEBUFFER, self.ftl_fbo)
+
+        glFramebufferRenderbuffer(
+            GL_FRAMEBUFFER,
+            GL_COLOR_ATTACHMENT0,
+            GL_RENDERBUFFER,
+            self.ftl_renderbuffer)
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
         self.ftl_program = draw.shader_cache.get(("renpy.ftl",))
 
@@ -196,25 +208,13 @@ cdef class GLTextureCore:
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, <GLint *> &old_fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, self.loader.ftl_fbo)
 
-        # Create premultiplied as an empty texture.
-        glBindTexture(GL_TEXTURE_2D, premultiplied)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL)
-
-        # Bind premultiplied to the framebuffer.
-        glFramebufferTexture2D(
-            GL_FRAMEBUFFER,
-            GL_COLOR_ATTACHMENT0,
-            GL_TEXTURE_2D,
-            premultiplied,
-            0)
-
         # Load the pixel data into tex, and set it up for drawing.
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, tex)
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, self.data)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
@@ -232,29 +232,19 @@ cdef class GLTextureCore:
         program.draw(self.loader.ftl_mesh)
         program.finish()
 
-        # Bind premultiplied to the framebuffer.
-        glFramebufferTexture2D(
-            GL_FRAMEBUFFER,
-            GL_COLOR_ATTACHMENT0,
-            GL_TEXTURE_2D,
-            0,
-            0)
+        # Create premultiplied.
+        glBindTexture(GL_TEXTURE_2D, premultiplied)
+        glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, self.width, self.height, 0)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
         # Set the old framebuffer.
         glBindFramebuffer(GL_FRAMEBUFFER, old_fbo)
 
         # Delete tex.
         glDeleteTextures(1, &tex)
-
-        # Configure premultiplied.
-        glBindTexture(GL_TEXTURE_2D, premultiplied)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-        # glGenerateMipmap(GL_TEXTURE_2D)
-
 
         # Store the loaded texture.
         self.number = premultiplied
