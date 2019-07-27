@@ -9,6 +9,8 @@ static void APIENTRY gl2_debug_callback(GLenum source, GLenum type, GLuint id, G
 
 void gl2_enable_debug(void) {
     void APIENTRY (*debugMessageCallback)(GLDEBUGPROC callback, const void *userParam);
+    void APIENTRY (*debugMessageControl)(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint* ids, GLboolean enabled);
+
 
     printf("GL: Debugging enabled.\n");
 
@@ -18,15 +20,23 @@ void gl2_enable_debug(void) {
         debugMessageCallback = SDL_GL_GetProcAddress("glDebugMessageCallbackKHR");
     }
 
-    if (!debugMessageCallback) {
-        debugMessageCallback = SDL_GL_GetProcAddress("glDebugMessageCallbackARB");
-    }
-
     if (debugMessageCallback == NULL) {
          printf("GL: Could not get glDebugMessageCallback\n");
          return;
     }
 
+    debugMessageControl = SDL_GL_GetProcAddress("glDebugMessageControl");
+
+    if (!debugMessageControl) {
+        debugMessageControl = SDL_GL_GetProcAddress("glDebugMessageControlKHR");
+    }
+
+    if (debugMessageControl == NULL) {
+         printf("GL: Could not get glDebugMessageControl\n");
+         return;
+    }
+
     glEnable(GL_DEBUG_OUTPUT);
     debugMessageCallback(gl2_debug_callback, 0);
+    debugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, 1);
 }
