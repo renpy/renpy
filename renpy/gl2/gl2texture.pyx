@@ -43,7 +43,6 @@ from renpy.gl2.uguugl cimport *
 from renpy.gl2.gl2draw cimport GL2Draw
 from renpy.gl2.gl2geometry cimport rectangle, texture_rectangle, Mesh
 
-
 ################################################################################
 
 

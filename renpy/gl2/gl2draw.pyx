@@ -59,6 +59,7 @@ from renpy.gl2.gl2geometry import rectangle
 from renpy.gl2.gl2texture import TexturedMesh, TextureLoader
 from renpy.gl2.gl2shadercache import ShaderCache
 
+cdef extern void gl2_enable_debug()
 
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
@@ -69,14 +70,14 @@ PIXELLATE = renpy.display.render.PIXELLATE
 cdef object IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
 
+# Should we enable debugging?
+debug = os.environ.get("RENPY_GL_DEBUG", '')
+
 # Should we try to vsync?
 vsync = True
 
 # A list of frame end times, used for the same purpose.
 frame_times = [ ]
-
-
-logo = None
 
 
 cdef class GL2Draw:
@@ -270,6 +271,9 @@ cdef class GL2Draw:
 
         pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
 
+        if debug:
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FLAGS, 1) # SDL_GL_CONTEXT_DEBUG_FLAG
+
         if gles:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "1")
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
@@ -437,7 +441,7 @@ cdef class GL2Draw:
         self.draw_to_virt = Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
 
         if not self.did_init:
-            if not self.init():
+            if not self.init ():
                 return False
 
         # This is just to test a late failure, and the switch from GL to GLES.
@@ -495,6 +499,10 @@ cdef class GL2Draw:
 
         for i in sorted(extensions):
             renpy.display.log.write("    %s", i)
+
+        # Enable debug.
+        if debug:
+            gl2_enable_debug()
 
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()

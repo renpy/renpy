@@ -219,7 +219,7 @@ cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 
 cython("renpy.gl2.uguugl", libs=sdl)
 cython("renpy.gl2.uguu", libs=sdl)
-cython("renpy.gl2.gl2draw", libs=sdl)
+cython("renpy.gl2.gl2draw", source=[ "gl2debug.c" ], libs=sdl)
 cython("renpy.gl2.gl2geometry")
 cython("renpy.gl2.gl2texture", libs=sdl)
 cython("renpy.gl2.gl2shader", libs=sdl)
