@@ -900,7 +900,6 @@ cdef class GL2Draw:
         return rv
 
     def kill_textures(self):
-        print("KT!")
         self.texture_cache.clear()
         self.texture_loader.end_generation()
 
