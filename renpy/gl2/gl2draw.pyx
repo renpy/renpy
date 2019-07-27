@@ -517,7 +517,10 @@ cdef class GL2Draw:
         self.shader_cache = ShaderCache("cache/shaders.txt")
         self.shader_cache.load()
 
-        self.texture_loader = TextureLoader(self)
+        if self.texture_loader is None:
+            self.texture_loader = TextureLoader(self)
+        else:
+            self.texture_loader.end_generation()
 
         return True
 
@@ -901,7 +904,7 @@ cdef class GL2Draw:
 
     def kill_textures(self):
         self.texture_cache.clear()
-        self.texture_loader.end_generation()
+        self.texture_loader.cleanup()
 
     def event_peek_sleep(self):
         pass
