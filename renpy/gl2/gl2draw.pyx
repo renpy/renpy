@@ -54,7 +54,7 @@ cimport renpy.gl2.gl2texture as gl2texture
 import renpy.gl2.gl2texture as gl2texture
 import renpy.gl2.gl2geometry as gl2geometry
 
-from renpy.gl2.gl2geometry cimport Mesh, Polygon, intersect
+from renpy.gl2.gl2geometry cimport Mesh, Polygon
 from renpy.gl2.gl2geometry import rectangle
 from renpy.gl2.gl2texture import TexturedMesh, TextureLoader
 from renpy.gl2.gl2shadercache import ShaderCache
@@ -944,11 +944,9 @@ cdef class GL2DrawingContext:
 
         # If a clip polygon is in place, clip the mesh with it.
         if self.clip_polygon is not None:
-            mesh = mesh.copy()
-            mesh.multiply_matrix("aPosition", 4, transform)
-            mesh.perspective_divide()
-            mesh = mesh.crop_polygon(self.clip_polygon)
-
+            mesh = mesh.multiply_matrix(transform)
+            mesh.perspective_divide_inplace()
+            mesh = mesh.crop(self.clip_polygon)
             transform = IDENTITY
 
         shader = self.gl2draw.shader_cache.get(tm.shaders)
@@ -996,11 +994,11 @@ cdef class GL2DrawingContext:
             old_clip_polygon = self.clip_polygon
 
             new_clip_polygon = rectangle(0, 0, r.width, r.height)
-            new_clip_polygon.multiply_matrix(0, 4, transform)
-            new_clip_polygon.perspective_divide()
+            new_clip_polygon.multiply_matrix_inplace(transform)
+            new_clip_polygon.perspective_divide_inplace()
 
             if old_clip_polygon:
-                new_clip_polygon = intersect(new_clip_polygon, old_clip_polygon, 4)
+                new_clip_polygon = old_clip_polygon.intersect(new_clip_polygon)
 
             if new_clip_polygon is None:
                 return

@@ -62,14 +62,9 @@ cdef class Polygon:
         memcpy(rv.data, self.data, sizeof(float) * self.stride * self.points)
         return rv
 
-    cpdef void offset(Polygon self, float x, float y, float z):
-        """
-        Apply an offset to the position of each vertex
-        """
-
+    cpdef void offset_inplace(Polygon self, double x, double y, double z):
         cdef float *p = self.data
         cdef int i
-
 
         for 0 <= i < self.points:
             p[X] += x
@@ -78,11 +73,18 @@ cdef class Polygon:
 
             p += self.stride
 
-    cpdef void perspective_divide(Polygon self):
+    cpdef Polygon offset(Polygon self, double x, double y, double z):
+        cdef Polygon rv = self.copy()
+        rv.offset_inplace(x, y, z)
+        return rv
+
+    cpdef void perspective_divide_inplace(Polygon self):
+        """
+        Performs a perspective divide on each point in this polygon, in place.
+        """
 
         cdef float *p = self.data
         cdef int i
-
 
         for 0 <= i < self.points:
             if p[W]:
@@ -92,43 +94,80 @@ cdef class Polygon:
 
             p += self.stride
 
-    cpdef void multiply_matrix(Polygon self, int offset, int size, Matrix m):
+    cpdef Polygon perspective_divide(Polygon self):
         """
-        Implements multiply_matrix for a single polygon. See Mesh.multiply_matrix
-        for the
+        Returns a perspective divided copy of this polygon.
+        """
+
+        cdef Polygon rv = self.copy()
+        rv.perspective_divide_inplace()
+        return rv
+
+    cpdef void multiply_matrix_inplace(Polygon self, Matrix m):
+        """
+        Multiplies each point's position with the matrix `m`, in place.
         """
 
         cdef int i
-        cdef float *p = self.data + offset
+        cdef float *p = self.data
 
-        if size == 4:
+        for 0 <= i < self.points:
+            m.transform4(p, p+1, p+2, p+3, p[0], p[1], p[2], p[3])
+            p += self.stride
 
-            for 0 <= i < self.points:
-                m.transform4(p, p+1, p+2, p+3, p[0], p[1], p[2], p[3])
-                p += self.stride
+    cpdef Polygon multiply_matrix(Polygon self, Matrix m):
+        """
+        Multiplies each point's position with the matrix `m`, in place,
+        and returns a copy.
+        """
 
-        elif size == 3:
+        cdef Polygon rv = self.copy()
+        rv.multiply_matrix_inplace(m)
+        return rv
 
-            for 0 <= i < self.points:
-                m.transform3(p, p+1, p+2, p[0], p[1], p[2], 1.0)
-                p += self.stride
+    def __mul__(self, other):
+        if isinstance(other, Matrix):
+            return self.multipy_matrix(other)
 
-        elif size == 2:
+        return NotImplemented
 
-            for 0 <= i < self.points:
-                m.transform2(p, p+1, p[0], p[1], 0.0, 1.0)
-                p += self.stride
+    def __rmul__(self, other):
+        if isinstance(other, Matrix):
+            return self.multipy_matrix(other)
 
+        return NotImplemented
 
-    def print_points(self, prefix):
-        cdef int i
-        cdef int p
+    cpdef Polygon intersect(Polygon self, Polygon other):
+        """
+        Returns a new polygon that is the intersection of the current polygon
+        and the other polygon.
+        """
+
+        rv = intersect(other, self, self.stride + other.stride - 4)
+
+        if rv is None:
+            return None
+
+        # We only need to interpolate OP if it has something other than
+        # position data.
+        if other.stride > 4:
+            barycentric(other, rv, self.stride - 4)
+
+        barycentric(self, rv, 0)
+
+        return rv
+
+    def __repr__(self):
+        rv = "<Polygon"
 
         for 0 <= p < self.points:
-            print(prefix, p, end=':')
+            rv += "\n  ["
             for 0 <= i < self.stride:
-                print(self.data[p * self.stride + i], end=' ')
-            print()
+                rv += "{:g}, ".format(self.data[p * self.stride + i])
+            rv += "]"
+
+        rv += ">"
+        return rv
 
 
 cpdef Polygon rectangle(double x, double y, double w, double h):
@@ -223,6 +262,7 @@ cpdef Polygon texture_rectangle(double x, double y, double w, double h, double t
     return rv
 
 
+# Accssor functions for the contents of polygons.
 cdef inline float get(Polygon p, int index, int offset):
     return p.data[index * p.stride + offset]
 
@@ -232,7 +272,6 @@ cdef inline float *ref(Polygon p, int index, int offset):
 cdef inline float set(Polygon p, int index, int offset, float value):
     p.data[index * p.stride + offset] = value
     return value
-
 
 
 cdef void intersectLines(
@@ -247,6 +286,8 @@ cdef void intersectLines(
     Given a line that goes through (x1, y1) to (x2, y2), and a second line
     that goes through (x3, y3) and (x4, y4), find the point where the two
     lines intersect.
+
+
     """
 
     cdef float denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
@@ -275,7 +316,7 @@ cdef Polygon intersectOnce(float winding, float a0x, float a0y, float a1x, float
         vecpx = get(p, i, X) - a0x
         vecpy = get(p, i, Y) - a0y
 
-        inside[i] = winding * (vecax * vecpy - vecay * vecpx) <= 0.000001
+        inside[i] = winding * (vecax * vecpy - vecay * vecpx) <= 0.00001
         allin = allin and inside[i]
 
     # If all the points are inside, just return the polygon intact.
@@ -315,6 +356,10 @@ cdef Polygon intersectOnce(float winding, float a0x, float a0y, float a1x, float
 
 
 cdef Polygon restride_polygon(Polygon src, int new_stride):
+    """
+    Returns a copy of the polygon with the stride changed to
+    be `new_stride`.
+    """
 
     cdef Polygon rv = Polygon(new_stride, src.points, None)
 
@@ -336,12 +381,13 @@ cdef Polygon restride_polygon(Polygon src, int new_stride):
     return rv
 
 
-cpdef intersect(Polygon a, Polygon b, int rvstride):
+cpdef intersect(Polygon a, Polygon b, int new_stride):
     """
-    Given two Polygons, returns a Polygon that is the intersection of the
-    points in the two.
+    Given two Polygons, returns a new Polygon that is the intersecti of
+    the two. This assumes that both polygons are convex, and wound in the
+    same direction (clockwise or counterclockwise).
 
-    This assumes both polygons are convex.
+    `new_stride` is the stride of the new Polygon.
     """
 
     cdef int i
@@ -364,7 +410,7 @@ cpdef intersect(Polygon a, Polygon b, int rvstride):
         winding = copysign(1.0, winding)
 
         if winding:
-            rv = intersectOnce(winding, a1x, a1y, a2x, a2y, rv, rvstride)
+            rv = intersectOnce(winding, a1x, a1y, a2x, a2y, rv, new_stride)
 
             if rv.points < 3:
                 return None
@@ -377,12 +423,16 @@ cpdef intersect(Polygon a, Polygon b, int rvstride):
 
     # This always has to copy the polygon, so if it's entirely inside, do so.
     if rv is b:
-        rv = restride_polygon(rv, rvstride)
+        rv = restride_polygon(rv, new_stride)
 
     return rv
 
 
 cpdef barycentric(Polygon a, Polygon b, int offset):
+    """
+    This uses barycentric interpolation to transfer the attributes from
+    Polygon `a` to Polygon `b`, starting at `offset`.
+    """
 
     cdef int i
     cdef int j
@@ -463,7 +513,7 @@ cpdef barycentric(Polygon a, Polygon b, int offset):
 
 def barycentric_point(Polygon a, float x, float y):
     """
-    This expects Polygon a to be a polgyon with a stride of 6, with a
+    This expects Polygon a to be a polygon with a stride of 6, with a
     position (x, y, z, 1) and a pair of attributes (tx, ty) at each
     point.
 
@@ -474,7 +524,6 @@ def barycentric_point(Polygon a, float x, float y):
     This is mostly intended to be used to interpolate screen-space
     coordinates onto a Render's internal coordinate space.
     """
-
 
     cdef Polygon b = Polygon(6, 1, None)
     b.points = 1
@@ -497,15 +546,21 @@ cdef class Mesh:
 
     def __init__(Mesh self):
         """
-        Represents a mesh consisting of one or more polygons.
+        Represents a mesh consisting of one or more polygons. A mesh needs
+        to be created either by:
 
-        This needs to be created in the correct order.
+        * First, create the mesh object.
+        * Next, add any additional attributes to it.
+        * Finally, add polygons to the mesh.
 
-        First, use add_attribute to add attributes. Then call add_polygon
-        to add polygons with attributes. After that, it is possible to call
-        methods like offset to manipulate the mesh.
+        Or by copying the mesh or calling a method that returns a new mesh.
 
-        Once get_data is called (by Shader.draw), the mesh becomes immutable.
+        After that, the inplace methods can be called to further change
+        the mesh.
+
+        Lastly, get_data can be called to access the mesh data. Once get_data
+        is called, the mesh becomes immutable. (This is usally called by
+        Shader.draw.)
         """
 
         self.points = 0
@@ -567,6 +622,13 @@ cdef class Mesh:
 
 
     cdef float *get_data(Mesh self, int offset):
+        """
+        When called, this freezes the data of this mesh. It then returns
+        a pointer to the data for the attribute at ``offset``. This is a
+        pointer to the first piece of data, with others following at
+        self.stride intervals.
+        """
+
         cdef Polygon p
         cdef int i
 
@@ -586,9 +648,9 @@ cdef class Mesh:
 
         return self.data + offset
 
-    def copy(Mesh self):
+    cpdef Mesh copy(Mesh self):
         """
-        Returns a copy of this mesh.
+        Returns a copy of this Mesh.
         """
 
         rv = Mesh()
@@ -599,48 +661,81 @@ cdef class Mesh:
 
         return rv
 
-    def offset(Mesh self, float x, float y, float z):
+    cpdef void offset_inplace(Mesh self, double x, double y, double z):
         """
-        Applies an offset to the position of every vertex.
+        Offsets each polygon in the mesh, in place.
+        """
+
+        cdef Polygon p
+
+        for p in self.polygons:
+            p.offset_inplace(x, y, z)
+
+    cpdef Mesh offset(self, double x, double y, double z):
+        """
+        Returns a copy of the mesh with each polygon offset.
+        """
+
+        cdef Mesh rv = self.copy()
+        rv.offset_inplace(x, y, z)
+        return rv
+
+
+    cpdef void perspective_divide_inplace(Mesh self):
+        """
+        Performs a perspective divide on this mesh, inplace.
         """
 
         cdef Polygon p
 
         for p in self.polygons:
-            p.offset(x, y, z)
+            p.perspective_divide_inplace()
 
-    def perspective_divide(Mesh self):
-
-        for p in self.polygons:
-            p.perspective_divide()
-
-    def multiply_matrix(Mesh self, attribute, int attribute_size, Matrix matrix):
+    cpdef Mesh perspective_divide(Mesh self):
         """
-        Multiplies vertex data by a matrix.
+        Returns a copy of this mesh that has been perspective divided.
+        """
 
-        `attribute`
-            The offset of the attribute in question.
+        cdef Mesh rv = self.copy()
+        rv.perspective_divide_inplace()
+        return rv
 
-        `attribute_size`
-            The number of elements in the attribute. If the matrix is larger
-            than this, other fields are padded with 1s.
-
-        `matrix`
-            The matrix to use.
+    cpdef void multiply_matrix_inplace(Mesh self, Matrix matrix):
+        """
+        Multiplies the position data in this Mesh by the matrix, in place.
         """
 
         cdef Polygon p
 
-        cdef int offset = self.attributes[attribute]
-
         for p in self.polygons:
-            p.multiply_matrix(offset, attribute_size, matrix)
+            p.multiply_matrix_inplace(matrix)
 
-
-    def intersect(Mesh self, Mesh other):
+    cpdef Mesh multiply_matrix(Mesh self, Matrix matrix):
         """
-        Intersects this mesh with this one. The resulting mesh has z-coordinates
-        from this one. Attributes that are present in this mesh are taken from
+        Returns a copy of this Mesh with the position data multipled by Matrix.
+        """
+
+        cdef Mesh rv = self.copy()
+        rv.multiply_matrix_inplace(matrix)
+        return rv
+
+    def __mul__(self, other):
+        if isinstance(other, Matrix):
+            return self.multiply_matrix(other)
+
+        return NotImplemented
+
+    def __rmul__(self, other):
+        if isinstance(other, Matrix):
+            return self.multiply_matrix(other)
+
+        return NotImplemented
+
+    cpdef Mesh intersect(Mesh self, Mesh other):
+        """
+        Intersects this mesh with another mesh, and returns a new mesh that
+        is the result. The resulting mesh has z- and w-coordinates from this
+        mesh. Attributes that are present in this mesh are taken from
         this mesh, otherwise the attributes from the other mesh are used.
         """
 
@@ -660,34 +755,10 @@ cdef class Mesh:
                 if p is None:
                     continue
 
-                barycentric(op, p, self.stride - 4)
-                barycentric(sp, p, 0)
-
-                rv.polygons.append(p)
-                rv.points += p.points
-
-        return rv
-
-    def crop(Mesh self, Mesh other):
-        """
-        Crops this mesh with the other one. No attributes are taken from the other
-        mesh.
-        """
-
-        rv = Mesh()
-        rv.stride = self.stride
-        rv.attributes = self.attributes
-
-        cdef Polygon op
-        cdef Polygon sp
-        cdef Polygon p
-
-        for op in other.polygons:
-            for sp in self.polygons:
-                p = intersect(op, sp, rv.stride)
-
-                if p is None:
-                    continue
+                # We only need to interpolate OP if it has something other than
+                # position data.
+                if op.stride > 4:
+                    barycentric(op, p, self.stride - 4)
 
                 barycentric(sp, p, 0)
 
@@ -696,9 +767,9 @@ cdef class Mesh:
 
         return rv
 
-    def crop_polygon(Mesh self, Polygon op):
+    cpdef Mesh crop(Mesh self, Polygon op):
         """
-        Crops this mesh with a polygon. No attributes are taken from the polygon.
+        This uses the polygon `op` to crop this mesh.
         """
 
         rv = Mesh()
@@ -721,9 +792,15 @@ cdef class Mesh:
 
         return rv
 
-    def print_points(Mesh self, prefix):
-        for i, p in enumerate(self.polygons):
-            p.print_points(prefix + " " + str(i))
+    def __repr__(self):
+        rv = "<Mesh "
+
+        for p in self.polygons:
+            rv += repr(p)
+            rv += ", "
+
+        rv += ">"
+        return rv
 
 
 

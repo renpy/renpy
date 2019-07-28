@@ -308,8 +308,8 @@ class TexturedMesh:
         rv = self.copy()
 
         x, y, w, h = rect
-        rv.mesh = self.mesh.crop_polygon(rectangle(x, y, w, h))
-        rv.mesh.offset(-x, -y, 0)
+        rv.mesh = self.mesh.crop(rectangle(x, y, w, h))
+        rv.mesh.offset_inplace(-x, -y, 0)
 
         return rv
 

@@ -13,15 +13,22 @@ cdef class Polygon:
     cdef float *data
 
     cpdef Polygon copy(Polygon self)
-    cpdef void offset(Polygon self, float x, float y, float z)
-    cpdef void multiply_matrix(Polygon self, int offset, int size, Matrix matrix)
-    cpdef void perspective_divide(Polygon self)
 
+    cpdef void offset_inplace(Polygon self, double x, double y, double z)
+    cpdef Polygon offset(Polygon self, double x, double y, double z)
+
+    cpdef void multiply_matrix_inplace(Polygon self, Matrix matrix)
+    cpdef Polygon multiply_matrix(Polygon self, Matrix matrix)
+
+    cpdef void perspective_divide_inplace(Polygon self)
+    cpdef Polygon perspective_divide(Polygon self)
+
+    cpdef Polygon intersect(Polygon self, Polygon other)
+
+# Constructors for particularly useful polygons.
 cpdef Polygon rectangle(double x, double y, double w, double h)
 cpdef Polygon texture_rectangle(double x, double y, double w, double h, double tw, double th)
 
-cpdef intersect(Polygon a, Polygon b, int rvstride)
-cpdef barycentric(Polygon a, Polygon b, int offset)
 
 cdef class Mesh:
 
@@ -42,4 +49,18 @@ cdef class Mesh:
     cdef float *data
 
     cdef float *get_data(self, int offset)
+
+    cpdef Mesh copy(Mesh self)
+
+    cpdef void offset_inplace(Mesh self, double x, double y, double z)
+    cpdef Mesh offset(Mesh self, double x, double y, double z)
+
+    cpdef void multiply_matrix_inplace(Mesh self, Matrix matrix)
+    cpdef Mesh multiply_matrix(Mesh self, Matrix matrix)
+
+    cpdef void perspective_divide_inplace(Mesh self)
+    cpdef Mesh perspective_divide(Mesh self)
+
+    cpdef Mesh intersect(Mesh self, Mesh other)
+    cpdef Mesh crop(Mesh self, Polygon other)
 
