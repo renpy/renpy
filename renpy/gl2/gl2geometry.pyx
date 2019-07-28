@@ -3,6 +3,7 @@ from __future__ import print_function
 from renpy.display.matrix cimport Matrix
 from libc.stdlib cimport malloc, free
 from libc.string cimport memcpy
+from libc.math cimport copysign
 
 DEF MAX_POINTS = 128
 
@@ -13,6 +14,7 @@ DEF W = 3
 
 DEF TX = 4
 DEF TY = 5
+
 
 cdef class Polygon:
 
@@ -273,7 +275,7 @@ cdef Polygon intersectOnce(float winding, float a0x, float a0y, float a1x, float
         vecpx = get(p, i, X) - a0x
         vecpy = get(p, i, Y) - a0y
 
-        inside[i] = winding * (vecax * vecpy - vecay * vecpx) <= 0
+        inside[i] = winding * (vecax * vecpy - vecay * vecpx) <= 0.000001
         allin = allin and inside[i]
 
     # If all the points are inside, just return the polygon intact.
@@ -358,7 +360,8 @@ cpdef intersect(Polygon a, Polygon b, int rvstride):
         a2x = get(a, i, X)
         a2y = get(a, i, Y)
 
-        winding = (a2x - a0x)*(a1y - a0y) - (a2y - a0y)*(a1x - a0x)
+        winding = (a2x - a0x) * (a1y - a0y) - (a2y - a0y) * (a1x - a0x)
+        winding = copysign(1.0, winding)
 
         if winding:
             rv = intersectOnce(winding, a1x, a1y, a2x, a2y, rv, rvstride)
@@ -706,7 +709,7 @@ cdef class Mesh:
         cdef Polygon p
 
         for sp in self.polygons:
-            p = intersect(op, sp, rv.stride)
+            p = intersect(sp, op, rv.stride)
 
             if p is None:
                 continue
