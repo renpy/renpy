@@ -37,6 +37,7 @@ import sys
 import time
 import collections
 import weakref
+import math
 
 import renpy
 from renpy.gl2.uguugl cimport *
@@ -86,7 +87,8 @@ cdef class TextureLoader:
         self.ftl_mesh = m
 
 
-    def load_surface(self, surf):
+
+    def load_one_surface(self, surf, bl, bt, br, bb):
         """
         Converts a surface into a texture.
         """
@@ -98,13 +100,82 @@ cdef class TextureLoader:
 
         mesh = Mesh()
         mesh.add_attribute("aTexCoord", 2)
-        mesh.add_texture_rectangle(0.0, 0.0, w, h, 0.0, 0.0, 1.0, 1.0)
+        if (w and h):
+            mesh.add_texture_rectangle(
+                0.0, 0.0, w - bl - br, h - bt - bb,
+                1.0 * bl / w, 1.0 * bt / h, 1.0 - 1.0 * br / w, 1.0 - 1.0 * bb / h)
 
         rv = TexturedMesh(surf.get_size(),
                           mesh,
                           ( "renpy.geometry", "renpy.texture" ),
                           { "uTex0" : tex },
                           [ tex ])
+
+        return rv
+
+    def texture_axis(self, length, limit, border):
+        """
+        Splits `length` up into multiple textures.
+
+        This returns a series of (offset, width, left/top border, right/bottom border) tuples.
+        """
+
+        if length <= limit:
+            return [ (0, length, 0, 0) ]
+
+        elif length <= 2 * (limit - border):
+
+            right = length // 2
+            left = length - right
+
+            return [ (0, left, 0, border), (left, right, border, 0) ]
+
+        else:
+            tiles = math.ceil(1.0 * length / (limit - 2 * border))
+            tile_length = length / tiles
+            tiles = int(tiles)
+
+            rv = [ ]
+
+            for i in xrange(tiles):
+                start = int(i * tile_length)
+                end = int((i + 1) * tile_length)
+
+                if i > 0:
+                    left = border
+                else:
+                    left = 0
+
+                if i < tiles - 1:
+                    right = border
+                else:
+                    right = 0
+
+                rv.append((start, end - start, left, right))
+
+        return rv
+
+
+    def load_surface(self, surf):
+        limit = 100
+        border = 1
+
+        size = surf.get_size()
+        w, h = size
+
+        if (w <= limit) and (h <= limit):
+            return self.load_one_surface(surf, 0, 0, 0, 0)
+
+        htiles = self.texture_axis(w, limit, border)
+        vtiles = self.texture_axis(h, limit, border)
+
+        rv = renpy.display.render.Render(w, h)
+
+        for ty, th, bt, bb in vtiles:
+            for tx, tw, bl, br in htiles:
+                ss = surf.subsurface((tx - bl, ty - bt, tw + bl + br, th + bt + bb))
+                t = self.load_one_surface(ss, bl, bt, br, bb)
+                rv.blit(t, (tx, ty))
 
         return rv
 
