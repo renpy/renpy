@@ -170,10 +170,9 @@ cdef class Polygon:
         return rv
 
 
-cpdef Polygon rectangle(double x, double y, double w, double h):
+cpdef Polygon rectangle(double l, double t, double r, double b):
     """
-    Generates a rectangular polygon with texture coordinate. One
-    corner is at (x, y, 0, 1) and the other is at (x+w, y+h, 0, 1).
+    Generates a rectangle with one corner at (l, t, 0, 1) and the other at (r, b, 0, 1).
     """
 
     cdef Polygon rv = Polygon(4, 4, None)
@@ -182,41 +181,39 @@ cpdef Polygon rectangle(double x, double y, double w, double h):
 
     cdef float *p = rv.data
 
-    p[X] = x
-    p[Y] = y
+    p[X] = l
+    p[Y] = t
     p[Z] = 0
     p[W] = 1
 
     p += 4
 
-    p[X] = x+w
-    p[Y] = y
+    p[X] = r
+    p[Y] = t
     p[Z] = 0
     p[W] = 1
 
     p += 4
 
-    p[X] = x+w
-    p[Y] = y+h
+    p[X] = r
+    p[Y] = b
     p[Z] = 0
     p[W] = 1
 
     p += 4
 
-    p[X] = x
-    p[Y] = y+h
+    p[X] = l
+    p[Y] = b
     p[Z] = 0
     p[W] = 1
 
     return rv
 
 
-
-cpdef Polygon texture_rectangle(double x, double y, double w, double h, double tw, double th):
+cpdef Polygon texture_rectangle(double pl, double pt, double pr, double pb, double tl, double tt, double tr, double tb):
     """
-    Generates a rectangular polygon with texture coordinate. One
-    corner is at (0, 0, 0, 1) with texture coordinates (0, 0), and
-    the other is at (w, h, 0, 1) with texture coordinates (tw, th).
+    This generates a rectangle with teture coordinates. One corner is at (pl, pt, 0, 1) with
+    texture coordinates (tl, tt), while the other is at (pr, pb, 0, 1) / (tr, tb).
     """
 
     cdef Polygon rv = Polygon(6, 4, None)
@@ -225,39 +222,39 @@ cpdef Polygon texture_rectangle(double x, double y, double w, double h, double t
 
     cdef float *p = rv.data
 
-    p[X] = x
-    p[Y] = y
+    p[X] = pl
+    p[Y] = pt
     p[Z] = 0
     p[W] = 1
-    p[TX] = 0
-    p[TY] = 0
+    p[TX] = tl
+    p[TY] = tt
 
     p += 6
 
-    p[X] = x+w
-    p[Y] = y
+    p[X] = pr
+    p[Y] = pt
     p[Z] = 0
     p[W] = 1
-    p[TX] = tw
-    p[TY] = 0
+    p[TX] = tr
+    p[TY] = tt
 
     p += 6
 
-    p[X] = x+w
-    p[Y] = y+h
+    p[X] = pr
+    p[Y] = pb
     p[Z] = 0
     p[W] = 1
-    p[TX] = tw
-    p[TY] = th
+    p[TX] = tr
+    p[TY] = tb
 
     p += 6
 
-    p[X] = x
-    p[Y] = y+h
+    p[X] = pl
+    p[Y] = pb
     p[Z] = 0
     p[W] = 1
-    p[TX] = 0
-    p[TY] = th
+    p[TX] = tl
+    p[TY] = tb
 
     return rv
 
@@ -612,13 +609,13 @@ cdef class Mesh:
         self.polygons.append(rectangle(x, y, w, h))
 
 
-    def add_texture_rectangle(Mesh self, double x, double y, double w, double h):
+    def add_texture_rectangle(Mesh self, double pl, double pt, double pr, double pb, double tl, double tt, double tr, double tb):
         """
         Returns a polygon corresponding to a texture rectangle.
         """
 
         self.points += 4
-        self.polygons.append(texture_rectangle(x, y, w, h, 1.0, 1.0))
+        self.polygons.append(texture_rectangle(pl, pt, pr, pb, tl, tt, tr, tb))
 
 
     cdef float *get_data(Mesh self, int offset):

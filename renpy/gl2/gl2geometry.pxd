@@ -26,9 +26,8 @@ cdef class Polygon:
     cpdef Polygon intersect(Polygon self, Polygon other)
 
 # Constructors for particularly useful polygons.
-cpdef Polygon rectangle(double x, double y, double w, double h)
-cpdef Polygon texture_rectangle(double x, double y, double w, double h, double tw, double th)
-
+cpdef Polygon rectangle(double l, double t, double r, double b)
+cpdef Polygon texture_rectangle(double pl, double pt, double pr, double pb, double tl, double tt, double tr, double tb)
 
 cdef class Mesh:
 

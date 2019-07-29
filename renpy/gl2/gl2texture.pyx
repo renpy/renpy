@@ -98,7 +98,7 @@ cdef class TextureLoader:
 
         mesh = Mesh()
         mesh.add_attribute("aTexCoord", 2)
-        mesh.add_texture_rectangle(0.0, 0.0, w, h)
+        mesh.add_texture_rectangle(0.0, 0.0, w, h, 0.0, 0.0, 1.0, 1.0)
 
         rv = TexturedMesh(surf.get_size(),
                           mesh,
@@ -308,7 +308,7 @@ class TexturedMesh:
         rv = self.copy()
 
         x, y, w, h = rect
-        rv.mesh = self.mesh.crop(rectangle(x, y, w, h))
+        rv.mesh = self.mesh.crop(rectangle(x, y, x+w, y+h))
         rv.mesh.offset_inplace(-x, -y, 0)
 
         return rv
