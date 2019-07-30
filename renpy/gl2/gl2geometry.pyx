@@ -127,13 +127,13 @@ cdef class Polygon:
 
     def __mul__(self, other):
         if isinstance(other, Matrix):
-            return self.multipy_matrix(other)
+            return self.multiply_matrix(other)
 
         return NotImplemented
 
     def __rmul__(self, other):
         if isinstance(other, Matrix):
-            return self.multipy_matrix(other)
+            return self.multiply_matrix(other)
 
         return NotImplemented
 
@@ -448,7 +448,6 @@ cpdef barycentric(Polygon a, Polygon b, int offset):
     cdef float d003, d013, d113, d203, d213
     cdef float denom
     cdef float u, v, w
-
 
     for 2 <= i < a.points:
 
