@@ -959,6 +959,7 @@ cdef class GL2DrawingContext:
 
         shader.finish()
 
+
     def draw(self, what, Matrix transform):
         """
         This is responsible for walking the surface tree, and drawing any

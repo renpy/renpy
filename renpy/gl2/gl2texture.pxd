@@ -56,6 +56,8 @@ cdef class TextureLoader:
     # The queue of textures that need to be loaded.
     cdef object texture_load_queue
 
+    # The maximum size of a texture.
+    cdef GLint max_texture_size
 
 
 cdef class GLTextureCore:

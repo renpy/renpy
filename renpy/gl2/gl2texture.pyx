@@ -56,6 +56,8 @@ cdef class TextureLoader:
         self.total_texture_size = 0
         self.texture_load_queue = weakref.WeakSet()
 
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &self.max_texture_size)
+
         glGenFramebuffers(1, &self.ftl_fbo)
 
         glGenRenderbuffers(1, &self.ftl_renderbuffer)
@@ -157,7 +159,7 @@ cdef class TextureLoader:
 
 
     def load_surface(self, surf):
-        limit = 100
+        limit = self.max_texture_size
         border = 1
 
         size = surf.get_size()
