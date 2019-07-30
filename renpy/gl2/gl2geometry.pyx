@@ -479,7 +479,7 @@ cpdef barycentric(Polygon a, Polygon b, int offset):
                 v = (d11 * d20 - d01 * d21) / denom
                 w = (d00 * d21 - d01 * d20) / denom
 
-                if not ((0.0 <= v <= 1.0) and (0.0 <= w <= 1.0)):
+                if not ((-0.00001 <= v <= 1.00001) and (-0.00001 <= w <= 1.00001)):
                     continue
 
                 u = 1.0 - v - w
