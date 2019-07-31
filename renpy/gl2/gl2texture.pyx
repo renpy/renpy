@@ -48,31 +48,12 @@ from renpy.gl2.gl2geometry cimport rectangle, texture_rectangle, Mesh
 
 cdef class TextureLoader:
 
-    def __init__(self, GL2Draw draw):
-        self.generation = 1
-        self.texture_generation = { }
+    def __init__(TextureLoader self, GL2Draw draw):
+        self.allocated = set()
         self.free_list = [ ]
-        self.texture_count = 0
         self.total_texture_size = 0
         self.texture_load_queue = weakref.WeakSet()
-
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &self.max_texture_size)
-
-        glGenFramebuffers(1, &self.ftl_fbo)
-
-        glGenRenderbuffers(1, &self.ftl_renderbuffer)
-
-        glBindRenderbuffer(GL_RENDERBUFFER, self.ftl_renderbuffer)
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, 2048, 2048)
-        glBindFramebuffer(GL_FRAMEBUFFER, self.ftl_fbo)
-
-        glFramebufferRenderbuffer(
-            GL_FRAMEBUFFER,
-            GL_COLOR_ATTACHMENT0,
-            GL_RENDERBUFFER,
-            self.ftl_renderbuffer)
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0)
+        self.draw = draw
 
         self.ftl_program = draw.shader_cache.get(("renpy.ftl",))
 
@@ -88,7 +69,60 @@ cdef class TextureLoader:
 
         self.ftl_mesh = m
 
+        # Generate the framebuffer.
+        glGenFramebuffers(1, &self.ftl_fbo)
+        glGenRenderbuffers(1, &self.ftl_renderbuffer)
 
+    def resize(TextureLoader self):
+
+        # Determine the width and height of textures and the renderbuffer.
+        cdef GLint max_renderbuffer_size
+        cdef GLint max_texture_size
+
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size)
+        glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &max_renderbuffer_size)
+
+        width = max(self.draw.virtual_size[0], self.draw.drawable_size[0], 1024)
+        width = min(width, max_texture_size, max_renderbuffer_size)
+        height = max(self.draw.virtual_size[1], self.draw.drawable_size[1], 1024)
+        height = min(height, max_texture_size, max_renderbuffer_size)
+
+        renpy.display.log.write("Maximum texture size: %dx%d", width, height)
+
+        self.max_texture_width = width
+        self.max_texture_height = height
+
+        glBindRenderbuffer(GL_RENDERBUFFER, self.ftl_renderbuffer)
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, self.max_texture_width, self.max_texture_height)
+
+        self.draw.change_fbo(self.ftl_fbo)
+
+        glFramebufferRenderbuffer(
+            GL_FRAMEBUFFER,
+            GL_COLOR_ATTACHMENT0,
+            GL_RENDERBUFFER,
+            self.ftl_renderbuffer)
+
+    def quit(self):
+        """
+        Gets rid of this TextureLoader.
+        """
+
+        cdef GLuint texnums[1]
+
+        glDeleteFramebuffers(1, &self.ftl_fbo)
+        glDeleteRenderbuffers(1, &self.ftl_renderbuffer)
+
+        for texture_number in self.allocated:
+            texnums[0] = texture_number
+            glDeleteTextures(1, texnums)
+
+    def get_texture_size(self):
+        """
+        Returns the amount of memory locked up in textures.
+        """
+
+        return self.total_texture_size, len(self.allocated)
 
     def load_one_surface(self, surf, bl, bt, br, bb):
         """
@@ -159,17 +193,16 @@ cdef class TextureLoader:
 
 
     def load_surface(self, surf):
-        limit = self.max_texture_size
         border = 1
 
         size = surf.get_size()
         w, h = size
 
-        if (w <= limit) and (h <= limit):
+        if (w <= self.max_texture_width) and (h <= self.max_texture_height):
             return self.load_one_surface(surf, 0, 0, 0, 0)
 
-        htiles = self.texture_axis(w, limit, border)
-        vtiles = self.texture_axis(h, limit, border)
+        htiles = self.texture_axis(w, self.max_texture_width, border)
+        vtiles = self.texture_axis(h, self.max_texture_height, border)
 
         rv = renpy.display.render.Render(w, h)
 
@@ -189,25 +222,12 @@ cdef class TextureLoader:
 
         cdef GLuint texnums[1]
 
-        for (texture_number, texture_generation) in self.free_list:
-            if self.generation == texture_generation:
-                texnums[0] = texture_number
-                glDeleteTextures(1, texnums)
+        for texture_number in self.free_list:
+            texnums[0] = texture_number
+            glDeleteTextures(1, texnums)
+            self.allocated.remove(texture_number)
 
         self.free_list = [ ]
-
-
-    def end_generation(self):
-        """
-        This deallocates the current generation of textures, and starts a new one.
-        """
-
-        self.cleanup()
-
-        # Do not reset texture numbers - we don't want to reuse a number that's
-        # in use, only to have it deallocated later.
-
-        self.generation += 1
 
 
 cdef class GLTextureCore:
@@ -254,12 +274,11 @@ cdef class GLTextureCore:
         self.loader = loader
         self.loader.texture_load_queue.add(self)
         self.loader.total_texture_size += self.width * self.height * 4
-        self.loader.texture_count += 1
 
     def __repr__(self):
         return "<GLTexture {}x{} {}>".format(self.width, self.height, self.number)
 
-    def load(self):
+    def load(GLTextureCore self):
         """
         Loads this texture. When it's loaded, generation and number are set,
         and the texture is ready to use.
@@ -278,8 +297,7 @@ cdef class GLTextureCore:
         glGenTextures(1, &premultiplied)
 
         # Bind the framebuffer.
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, <GLint *> &old_fbo);
-        glBindFramebuffer(GL_FRAMEBUFFER, self.loader.ftl_fbo)
+        self.loader.draw.change_fbo(self.loader.ftl_fbo)
 
         # Load the pixel data into tex, and set it up for drawing.
         glActiveTexture(GL_TEXTURE0)
@@ -313,16 +331,12 @@ cdef class GLTextureCore:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
-        # Set the old framebuffer.
-        glBindFramebuffer(GL_FRAMEBUFFER, old_fbo)
-
         # Delete tex.
         glDeleteTextures(1, &tex)
 
         # Store the loaded texture.
         self.number = premultiplied
-        self.generation = self.loader.generation
-        self.loader.texture_generation[self.number] = self.loader.generation
+        self.loader.allocated.add(self.number)
 
         self.loaded = True
 
@@ -339,10 +353,9 @@ cdef class GLTextureCore:
     def __del__(self):
         try:
             if self.loaded:
-                self.loader.free_list.append((self.number, self.generation))
+                self.loader.free_list.append(self.number)
 
             self.loader.total_texture_size -= self.width * self.height * 4
-            self.loader.texture_count -= 1
         except TypeError:
             pass # Let's not error on shutdown.
 

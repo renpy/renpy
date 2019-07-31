@@ -22,20 +22,18 @@
 from uguugl cimport *
 from renpy.gl2.gl2shader cimport Program
 from renpy.gl2.gl2geometry cimport Mesh
+from renpy.gl2.gl2draw cimport GL2Draw
 
 cdef class TextureLoader:
 
-    # The texture generation.
-    cdef int generation
+    # The draw object associated with this TextureLoader
+    cdef GL2Draw draw
 
-    # A map from texture number to the generation that number belongs to.
-    cdef dict texture_generation
+    # All the texture number currently allocated by this loader.
+    cdef set allocated
 
     # A list of (number, generation) pairs for textures that need to be freed.
     cdef list free_list
-
-    # The number of textures that have been allocated but not deallocated.
-    cdef int texture_count
 
     # The total size (in bytes) of all the textures that have been allocated
     # but not deallocated.
@@ -57,7 +55,8 @@ cdef class TextureLoader:
     cdef object texture_load_queue
 
     # The maximum size of a texture.
-    cdef GLint max_texture_size
+    cdef GLint max_texture_width
+    cdef GLint max_texture_height
 
 
 cdef class GLTextureCore:

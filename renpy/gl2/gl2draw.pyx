@@ -137,13 +137,15 @@ cdef class GL2Draw:
         # The shader cache,
         self.shader_cache = None
 
-
     def get_texture_size(self):
         """
         Returns the amount of memory locked up in textures.
         """
 
-        return self.texture_loader.total_texture_size, self.texture_loader.texture_count
+        if self.texture_loader is None:
+            return 0, 0
+
+        return self.texture_loader.get_texture_size()
 
     def select_physical_size(self, physical_size):
         """
@@ -296,6 +298,7 @@ cdef class GL2Draw:
         print("Using {} renderer.".format(self.info["renderer"]))
 
         if self.did_init:
+            self.change_fbo(self.default_fbo)
             self.kill_textures()
 
         if renpy.android:
@@ -319,7 +322,6 @@ cdef class GL2Draw:
             renpy.display.interface.post_init()
 
         renpy.display.log.write("")
-
 
         # Virtual size.
         self.virtual_size = virtual_size
@@ -441,7 +443,7 @@ cdef class GL2Draw:
         self.draw_to_virt = Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
 
         if not self.did_init:
-            if not self.init ():
+            if not self.init():
                 return False
 
         # This is just to test a late failure, and the switch from GL to GLES.
@@ -449,6 +451,9 @@ cdef class GL2Draw:
             return False
 
         self.did_init = True
+
+        # Set the sizes for the texture loader.
+        self.texture_loader.resize()
 
         # Prepare a mouse display.
         self.mouse_old_visible = None
@@ -465,6 +470,10 @@ cdef class GL2Draw:
         """
 
         self.kill_textures()
+
+        if self.texture_loader is not None:
+            self.texture_loader.kill()
+            self.texture_loader = None
 
         if not self.old_fullscreen:
             renpy.display.gl_size = self.physical_size
@@ -517,10 +526,12 @@ cdef class GL2Draw:
         self.shader_cache = ShaderCache("cache/shaders.txt")
         self.shader_cache.load()
 
-        if self.texture_loader is None:
-            self.texture_loader = TextureLoader(self)
-        else:
-            self.texture_loader.end_generation()
+        # Store the default FBO.
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, <GLint *> &self.default_fbo);
+        self.current_fbo = self.default_fbo
+
+        # Initialize the texture loader.
+        self.texture_loader = TextureLoader(self)
 
         return True
 
@@ -616,7 +627,6 @@ cdef class GL2Draw:
         mesh = gl2geometry.Mesh()
         mesh.add_rectangle(0, 0, w, h)
 
-
         a = color[3] / 255.0
         r = a * color[0] / 255.0
         g = a * color[1] / 255.0
@@ -681,6 +691,13 @@ cdef class GL2Draw:
         # Load all the textures and RTTs.
         self.load_all_textures(surf)
 
+        # Switch to the right FBO, and the right viewport.
+        self.change_fbo(self.default_fbo)
+
+        # Set up the viewport.
+        x, y, w, h = self.drawable_viewport
+        glViewport(x, y, w, h)
+
         # Clear the screen.
         clear_r, clear_g, clear_b = renpy.color.Color(renpy.config.gl_clear_color).rgb
         glClearColor(clear_r, clear_g, clear_b, 1.0)
@@ -693,10 +710,6 @@ cdef class GL2Draw:
         # Set up the default modes.
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
-
-        # Set up the viewport.
-        x, y, w, h = self.drawable_viewport
-        glViewport(x, y, w, h)
 
         # Use the context to draw the surface tree.
         context = GL2DrawingContext(self)
@@ -916,6 +929,14 @@ cdef class GL2Draw:
         y = int(y / self.dpi_scale)
 
         return (x, y)
+
+    ############################################################################
+    # Everything below this point is an internal detail.
+
+    cdef void change_fbo(self, GLuint fbo):
+        if self.current_fbo != fbo:
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo)
+            self.current_fbo = fbo
 
 
 cdef class GL2DrawingContext:

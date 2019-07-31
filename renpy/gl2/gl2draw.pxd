@@ -22,6 +22,7 @@
 from renpy.display.matrix cimport Matrix, Matrix2D
 cimport renpy.display.render as render
 from renpy.gl2.gl2texture cimport TextureLoader
+from uguugl cimport *
 
 cdef class GL2Draw:
 
@@ -60,3 +61,11 @@ cdef class GL2Draw:
 
     # The texture_loader singleton.
     cdef public TextureLoader texture_loader
+
+    # The default FBO.
+    cdef public GLuint default_fbo
+
+    # The current FBO.
+    cdef public GLuint current_fbo
+
+    cdef void change_fbo(self, GLuint fbo)
