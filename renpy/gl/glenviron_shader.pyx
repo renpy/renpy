@@ -31,11 +31,17 @@ cdef int round(double d):
     return <int> (d + .5)
 
 
-VERTEX_SHADER1 = """\
+GLES_PORTABILITY = """\
 #ifdef GL_ES
-precision highp float;
+  #ifdef GL_FRAGMENT_PRECISION_HIGH
+    precision highp float;
+  # else
+    precision mediump float;
+  # endif
 #endif
+"""
 
+VERTEX_SHADER1 = GLES_PORTABILITY + """\
 uniform mat4 Projection;
 
 attribute vec4 Vertex;
@@ -53,11 +59,7 @@ void main() {
 }
 """
 
-VERTEX_SHADER2 = """\
-#ifdef GL_ES
-precision highp float;
-#endif
-
+VERTEX_SHADER2 = GLES_PORTABILITY + """\
 uniform mat4 Projection;
 
 attribute vec4 Vertex;
@@ -78,11 +80,7 @@ void main() {
 }
 """
 
-VERTEX_SHADER3 = """\
-#ifdef GL_ES
-precision highp float;
-#endif
-
+VERTEX_SHADER3 = GLES_PORTABILITY + """\
 uniform mat4 Projection;
 
 attribute vec4 Vertex;
@@ -109,11 +107,7 @@ void main() {
 
 
 
-BLIT_SHADER = """
-#ifdef GL_ES
-precision highp float;
-#endif
-
+BLIT_SHADER = GLES_PORTABILITY + """\
 uniform vec4 Color;
 uniform sampler2D tex0;
 
@@ -130,11 +124,7 @@ void main()
 }
 """
 
-BLIT_CLIP_SHADER = """
-#ifdef GL_ES
-precision highp float;
-#endif
-
+BLIT_CLIP_SHADER = GLES_PORTABILITY + """\
 uniform vec4 Color;
 uniform sampler2D tex0;
 
@@ -155,11 +145,7 @@ void main()
 }
 """
 
-BLEND_SHADER = """
-#ifdef GL_ES
-precision highp float;
-#endif
-
+BLEND_SHADER = GLES_PORTABILITY + """\
 uniform vec4 Color;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
@@ -182,11 +168,7 @@ void main()
 """
 
 
-BLEND_CLIP_SHADER = """
-#ifdef GL_ES
-precision highp float;
-#endif
-
+BLEND_CLIP_SHADER = GLES_PORTABILITY + """\
 uniform vec4 Color;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
@@ -212,11 +194,7 @@ void main()
 }
 """
 
-IMAGEBLEND_SHADER = """
-#ifdef GL_ES
-precision highp float;
-#endif
-
+IMAGEBLEND_SHADER = GLES_PORTABILITY + """\
 uniform vec4 Color;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
@@ -244,11 +222,7 @@ void main()
 }
 """
 
-IMAGEBLEND_CLIP_SHADER = """
-#ifdef GL_ES
-precision highp float;
-#endif
-
+IMAGEBLEND_CLIP_SHADER = GLES_PORTABILITY + """\
 uniform vec4 Color;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
