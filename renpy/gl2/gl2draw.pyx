@@ -949,9 +949,19 @@ cdef class GL2DrawingContext:
     # coordinates.
     cdef Polygon clip_polygon
 
+    # The shaders to use.
+    cdef tuple shaders
+
+    # The uniforms to use.
+    cdef dict uniforms
+
     def __init__(self, GL2Draw draw):
         self.gl2draw = draw
         self.clip_polygon = None
+
+        self.shaders = tuple()
+        self.uniforms = dict()
+
 
     def draw_texturedmesh(self, tm, Matrix transform):
 
@@ -964,15 +974,22 @@ cdef class GL2DrawingContext:
             mesh = mesh.crop(self.clip_polygon)
             transform = IDENTITY
 
-        shader = self.gl2draw.shader_cache.get(tm.shaders)
+        if self.shaders:
+            shaders = self.shaders + tm.shaders
+        else:
+            shaders = tm.shaders
 
-        shader.start()
-        shader.set_uniforms(tm.uniforms)
-        shader.set_uniform("uTransform", transform)
+        program = self.gl2draw.shader_cache.get(shaders)
 
-        shader.draw(mesh)
+        program.start()
+        program.set_uniforms(tm.uniforms)
 
-        shader.finish()
+        if self.uniforms:
+            program.set_uniforms(self.uniforms)
+
+        program.set_uniform("uTransform", transform)
+        program.draw(mesh)
+        program.finish()
 
 
     def draw(self, what, Matrix transform):
@@ -984,8 +1001,11 @@ cdef class GL2DrawingContext:
             The matrix that transforms texture space into drawable space.
         """
 
+        cdef tuple old_shaders = self.shaders
+        cdef dict old_uniforms = self.uniforms
+        cdef Polygon old_clip_polygon = self.clip_polygon
+
         cdef Polygon new_clip_polygon
-        cdef Polygon old_clip_polygon
 
         if isinstance(what, Surface):
             what = self.draw.load_texture(what)
@@ -997,53 +1017,62 @@ cdef class GL2DrawingContext:
         cdef Render r
         r = what
 
-        if r.text_input:
-            renpy.display.interface.text_rect = r.screen_rect(0, 0, transform)
+        try:
 
-        # TODO: Check r.operation to handle other draw mode. (Or replace this
-        # with something new.)
+            if r.text_input:
+                renpy.display.interface.text_rect = r.screen_rect(0, 0, transform)
 
-        # Handle clipping.
-        old_clip_polygon = None
+            # TODO: Check r.operation to handle other draw mode. (Or replace this
+            # with something new.)
 
-        if (r.xclipping or r.yclipping):
-            old_clip_polygon = self.clip_polygon
+            # Handle clipping.
+            if (r.xclipping or r.yclipping):
+                new_clip_polygon = rectangle(0, 0, r.width, r.height)
+                new_clip_polygon.multiply_matrix_inplace(transform)
+                new_clip_polygon.perspective_divide_inplace()
 
-            new_clip_polygon = rectangle(0, 0, r.width, r.height)
-            new_clip_polygon.multiply_matrix_inplace(transform)
-            new_clip_polygon.perspective_divide_inplace()
+                if old_clip_polygon:
+                    new_clip_polygon = old_clip_polygon.intersect(new_clip_polygon)
 
-            if old_clip_polygon:
-                new_clip_polygon = old_clip_polygon.intersect(new_clip_polygon)
+                if new_clip_polygon is None:
+                    return
 
-            if new_clip_polygon is None:
-                return
+                self.clip_polygon = new_clip_polygon
 
-            self.clip_polygon = new_clip_polygon
+            if (r.alpha != 1.0) or (r.over != 1.0):
+                if "renpy.alpha" not in self.shaders:
+                    self.shaders = self.shaders + ("renpy.alpha", )
 
-        # TODO: Handle r.alpha, r.over, r.nearest.
+                self.uniforms = dict(self.uniforms)
+                self.uniforms["uAlpha"] = r.alpha * self.uniforms.get("uAlpha", 1.0)
+                self.uniforms["uOver"] = r.over * self.uniforms.get("uOver", 1.0)
 
-        if (r.reverse is not None) and (r.reverse is not IDENTITY):
-            transform = transform * r.reverse
+            # TODO: Handle r.nearest.
 
-        for child, cx, cy, focus, main in r.visible_children:
+            if (r.reverse is not None) and (r.reverse is not IDENTITY):
+                transform = transform * r.reverse
 
-            # TODO: figure out if subpixel blitting should be done.
+            for child, cx, cy, focus, main in r.visible_children:
 
-            # The type of cx and cy depends on if this is a subpixel blit or not.
-            #             if type(cx) is float:
-            #                 subpixel = True
+                # TODO: figure out if subpixel blitting should be done.
+
+                # The type of cx and cy depends on if this is a subpixel blit or not.
+                #             if type(cx) is float:
+                #                 subpixel = True
 
 
-            child_transform = transform
+                child_transform = transform
 
-            if (cx or cy):
-                child_transform = child_transform * offset(cx, cy, 0)
+                if (cx or cy):
+                    child_transform = child_transform * offset(cx, cy, 0)
 
-            self.draw(child, child_transform)
+                self.draw(child, child_transform)
 
-        # Restore the clipping polygon.
-        if (r.xclipping or r.yclipping):
+        finally:
+
+            # Restore the state.
+            self.shaders = old_shaders
+            self.uniforms = old_uniforms
             self.clip_polygon = old_clip_polygon
 
         return 0
