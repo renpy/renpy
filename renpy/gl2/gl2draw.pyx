@@ -608,16 +608,10 @@ cdef class GL2Draw:
         Call from the main thread to make a single texture ready.
         """
 
-#         while True:
-#
-#             try:
-#                 tex = self.ready_texture_queue.pop()
-#             except KeyError:
-#                 return False
-#
-#             raise Exception("Not implemented.")
+        if self.texture_loader is None:
+            return False
 
-        return False
+        return self.texture_loader.ready_one_texture()
 
     def solid_texture(self, w, h, color):
         """

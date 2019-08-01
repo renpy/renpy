@@ -222,6 +222,26 @@ cdef class TextureLoader:
         self.free_list = [ ]
 
 
+    def ready_one_texture(self):
+        """
+        Called by GL2Draw to implement ready_one_texture.
+        """
+
+        while True:
+
+            try:
+                tex = self.texture_load_queue.pop()
+            except KeyError:
+                return False
+
+            if not tex.loaded:
+                tex.load()
+                return True
+
+        return False
+
+
+
 cdef class GLTextureCore:
     """
     This class represents an OpenGL texture that needs to be loaded by
