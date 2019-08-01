@@ -57,18 +57,6 @@ cdef class TextureLoader:
 
         self.ftl_program = draw.shader_cache.get(("renpy.ftl",))
 
-        # Set up a mesh.
-        m = Mesh()
-        m.add_attribute("aTexCoord", 2)
-        m.add_polygon([
-            -1.0, -1.0, 0.0, 1.0, 0.0, 0.0,
-            -1.0,  1.0, 0.0, 1.0, 0.0, 1.0,
-             1.0,  1.0, 0.0, 1.0, 1.0, 1.0,
-             1.0, -1.0, 0.0, 1.0, 1.0, 0.0,
-            ])
-
-        self.ftl_mesh = m
-
         # Generate the framebuffer.
         glGenFramebuffers(1, &self.ftl_fbo)
         glGenRenderbuffers(1, &self.ftl_renderbuffer)
@@ -82,9 +70,13 @@ cdef class TextureLoader:
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size)
         glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &max_renderbuffer_size)
 
-        width = max(self.draw.virtual_size[0], self.draw.drawable_size[0], 1024)
+        # The number of pixels of addiitonal border, so we can load textures with
+        # higher pitch.
+        BORDER = 64
+
+        width = max(self.draw.virtual_size[0] + BORDER, self.draw.drawable_size[0] + BORDER, 1024)
         width = min(width, max_texture_size, max_renderbuffer_size)
-        height = max(self.draw.virtual_size[1], self.draw.drawable_size[1], 1024)
+        height = max(self.draw.virtual_size[1] + BORDER, self.draw.drawable_size[1] + BORDER, 1024)
         height = min(height, max_texture_size, max_renderbuffer_size)
 
         renpy.display.log.write("Maximum texture size: %dx%d", width, height)
@@ -238,14 +230,17 @@ cdef class GLTextureCore:
     are no longer required.
     """
 
-    def __init__(self, surface, loader):
+    def __init__(GLTextureCore self, surface, TextureLoader loader):
+
+        cdef unsigned char *pixels
+        cdef unsigned char *data
+        cdef unsigned char *p
 
         # The width and height of this texture.
         self.width, self.height = surface.get_size()
 
         # The number of the OpenGL texture this texture object
         # represents.
-        self.generation = 0
         self.number = 0
 
         # True if the texture has been loaded into OpenGL, False otherwise.
@@ -255,21 +250,33 @@ cdef class GLTextureCore:
         cdef SDL_Surface *s
         s = PySurface_AsSurface(surface)
 
-        cdef unsigned char *pixels = <unsigned char *> s.pixels
-        cdef unsigned char *data = <unsigned char *> malloc(s.h * s.w * 4)
+        pitch_pixels = s.pitch / 4
+        margin = pitch_pixels - s.w
 
-        cdef unsigned char *p = data
+        if s.w and s.h and (margin < 64) and s.w < loader.max_texture_width:
+            # In-place path.
 
-        if s.pitch == s.w * 4:
-            memcpy(p, pixels, s.h * s.w * 4)
+            self.data = NULL
+            self.surface = surface
+
         else:
-            for 0 <= i < s.h:
-                memcpy(p, pixels, s.w * 4)
+            # Copying path.
 
-                pixels += s.pitch
-                p += (s.w * 4)
+            pixels = <unsigned char *> s.pixels
+            data = <unsigned char *> malloc(s.h * s.w * 4)
+            p = data
 
-        self.data = data
+            if s.pitch == s.w * 4:
+                memcpy(p, pixels, s.h * s.w * 4)
+            else:
+                for 0 <= i < s.h:
+                    memcpy(p, pixels, s.w * 4)
+
+                    pixels += s.pitch
+                    p += (s.w * 4)
+
+            self.data = data
+            self.surface = None
 
         self.loader = loader
         self.loader.texture_load_queue.add(self)
@@ -284,10 +291,10 @@ cdef class GLTextureCore:
         and the texture is ready to use.
         """
 
-        cdef GLuint old_fbo
         cdef GLuint tex
         cdef GLuint premultiplied
         cdef Program program
+        cdef SDL_Surface *s
 
         if self.loaded:
             return
@@ -303,11 +310,22 @@ cdef class GLTextureCore:
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, tex)
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, self.data)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+
+        mesh = Mesh()
+        mesh.add_attribute("aTexCoord", 2)
+
+        # Load the texture through zero-copy and normal paths.
+        if self.surface is not None:
+            s = PySurface_AsSurface(self.surface)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s.pitch / 4, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, s.pixels)
+            mesh.add_texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 4.0 * s.w / s.pitch, 1.0)
+        else:
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, self.data)
+            mesh.add_texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0)
 
         # Set up the viewport.
         glViewport(0, 0, self.width, self.height)
@@ -320,7 +338,7 @@ cdef class GLTextureCore:
         program = self.loader.ftl_program
         program.start()
         program.set_uniform("uTex0", tex)
-        program.draw(self.loader.ftl_mesh)
+        program.draw(mesh)
         program.finish()
 
         # Create premultiplied.
@@ -341,8 +359,11 @@ cdef class GLTextureCore:
         self.loaded = True
 
         # Free the data memory.
-        free(self.data)
-        self.data = NULL
+        if self.data != NULL:
+            free(self.data)
+            self.data = NULL
+
+        self.surface = None
 
     def __dealloc__(self):
 

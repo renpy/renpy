@@ -48,9 +48,6 @@ cdef class TextureLoader:
     # The program used for fast texture loading
     cdef Program ftl_program
 
-    # The mesh used for fast texture loading.
-    cdef Mesh ftl_mesh
-
     # The queue of textures that need to be loaded.
     cdef object texture_load_queue
 
@@ -65,18 +62,18 @@ cdef class GLTextureCore:
     cdef public int width
     cdef public int height
 
-    # A generation number, to prevent stale texture objects from being
-    # retained.
-    cdef public int generation
-
     # The number of the texture in OpenGL.
     cdef public unsigned int number
 
     # Has this texture been loaded yet?
     cdef public bint loaded
 
-    # This is the data required to load a texture, if it has not been
-    # loaded yet.
+    # If we are doing in-place loading, this is the data that's used for
+    # that.
+    cdef object surface
+
+    # If we're not doing in-place loading, this is the data that's used for
+    # that.
     cdef unsigned char *data
 
     # The texture loader associated with this texture.

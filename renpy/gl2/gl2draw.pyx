@@ -472,7 +472,7 @@ cdef class GL2Draw:
         self.kill_textures()
 
         if self.texture_loader is not None:
-            self.texture_loader.kill()
+            self.texture_loader.quit()
             self.texture_loader = None
 
         if not self.old_fullscreen:
