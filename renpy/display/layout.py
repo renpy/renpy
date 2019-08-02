@@ -1871,14 +1871,9 @@ class Flatten(Container):
         cr = renpy.display.render.render(self.child, width, height, st, at)
         cw, ch = cr.get_size()
 
-        tex = cr.render_to_texture(True)
-
         rv = renpy.display.render.Render(cw, ch)
-        rv.blit(tex, (0, 0))
-        rv.depends_on(cr, focus=True)
-
-        rv.reverse = renpy.display.draw.draw_to_virt
-        rv.forward = renpy.display.render.IDENTITY
+        rv.blit(cr, (0, 0))
+        rv.operation = renpy.display.render.FLATTEN
 
         self.offsets = [ (0, 0) ]
 

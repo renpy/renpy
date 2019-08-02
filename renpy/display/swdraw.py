@@ -28,7 +28,7 @@ import weakref
 import time
 import os
 
-from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSOLVE, PIXELLATE
+from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSOLVE, PIXELLATE, FLATTEN
 
 # A map from cached surface to rle version of cached surface.
 rle_cache = weakref.WeakKeyDictionary()
@@ -337,6 +337,10 @@ def draw_special(what, dest, x, y):
             surf.subsurface((-x, -y, w, h)),
             dest.subsurface((0, 0, w, h)),
             px, px, px, px)
+
+    elif what.operation == FLATTEN:
+        surf = what.children[0][0].render_to_texture(dest.get_masks()[3])
+        dest.subsurface((0, 0, w, h)).blit(surf, (0, 0))
 
     else:
         raise Exception("Unknown operation: %d" % what.operation)

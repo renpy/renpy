@@ -570,6 +570,7 @@ BLIT = 0
 DISSOLVE = 1
 IMAGEDISSOLVE = 2
 PIXELLATE = 3
+FLATTEN = 4
 
 cdef class Render:
 
