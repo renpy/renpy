@@ -122,22 +122,26 @@ cdef class TextureLoader:
         """
 
         size = surf.get_size()
-        w, h = size
 
-        tex = GLTexture(surf, self)
+        rv = Texture(size, self)
+        rv.from_surface(surf)
 
-        mesh = Mesh()
-        mesh.add_attribute("aTexCoord", 2)
-        if (w and h):
-            mesh.add_texture_rectangle(
-                0.0, 0.0, w - bl - br, h - bt - bb,
-                1.0 * bl / w, 1.0 * bt / h, 1.0 - 1.0 * br / w, 1.0 - 1.0 * bb / h)
+        if bl or bt or br or bb:
+            w, h = size
 
-        rv = Model(surf.get_size(),
-                          mesh,
-                          ( "renpy.geometry", "renpy.texture" ),
-                          { "uTex0" : tex },
-                          [ tex ])
+            mesh = Mesh()
+            mesh.add_attribute("aTexCoord", 2)
+
+            pw = w - bl - br
+            ph = h - bt - bb
+
+            if (w and h):
+
+                mesh.add_texture_rectangle(
+                    0.0, 0.0, pw, ph,
+                    1.0 * bl / w, 1.0 * bt / h, 1.0 - 1.0 * br / w, 1.0 - 1.0 * bb / h)
+
+            rv = Model((pw, ph), mesh, ("renpy.geometry", "renpy.texture"), { "uTex0" : rv })
 
         return rv
 
@@ -240,7 +244,7 @@ cdef class TextureLoader:
 
         return False
 
-cdef class GLTextureCore:
+cdef class GLTexture:
     """
     This class represents an OpenGL texture that needs to be loaded by
     Ren'Py. It's responsible for handling deferred loading of textures,
@@ -248,14 +252,14 @@ cdef class GLTextureCore:
     are no longer required.
     """
 
-    def __init__(GLTextureCore self, surface, TextureLoader loader):
+    def __init__(GLTexture self, size, TextureLoader loader):
 
         cdef unsigned char *pixels
         cdef unsigned char *data
         cdef unsigned char *p
 
         # The width and height of this texture.
-        self.width, self.height = surface.get_size()
+        self.width, self.height = size
 
         # The number of the OpenGL texture this texture object
         # represents.
@@ -264,6 +268,19 @@ cdef class GLTextureCore:
         # True if the texture has been loaded into OpenGL, False otherwise.
         self.loaded = False
 
+        # Used for loading surfaces.
+        self.data = NULL
+        self.surface = None
+
+        # Update the loader.
+        self.loader = loader
+        self.loader.total_texture_size += self.width * self.height * 4
+
+    def from_surface(GLTexture self, surface):
+        """
+        Called to indicate this texture should be loaded from a surface.
+        """
+
         # Make a copy of the texture data.
         cdef SDL_Surface *s
         s = PySurface_AsSurface(surface)
@@ -271,7 +288,7 @@ cdef class GLTextureCore:
         pitch_pixels = s.pitch / 4
         margin = pitch_pixels - s.w
 
-        if s.w and s.h and (margin < 64) and s.w < loader.max_texture_width:
+        if s.w and s.h and (margin < 64) and s.w < self.loader.max_texture_width:
             # In-place path.
 
             self.data = NULL
@@ -296,14 +313,12 @@ cdef class GLTextureCore:
             self.data = data
             self.surface = None
 
-        self.loader = loader
         self.loader.texture_load_queue.add(self)
-        self.loader.total_texture_size += self.width * self.height * 4
 
     def __repr__(self):
         return "<GLTexture {}x{} {}>".format(self.width, self.height, self.number)
 
-    def load(GLTextureCore self):
+    def load_gltexture(GLTexture self):
         """
         Loads this texture. When it's loaded, generation and number are set,
         and the texture is ready to use.
@@ -398,33 +413,57 @@ cdef class GLTextureCore:
         except TypeError:
             pass # Let's not error on shutdown.
 
-# Wraps GLTextureCore in a Python class, so garbage collection can occur.
-class GLTexture(GLTextureCore):
-    pass
 
 ################################################################################
 
-class Model:
+class Model(object):
     """
-    This represents a combination of the geometry, textures, shaders, and
-    uniform values required to display something on the screen.
+    A Model can be placed in the render tree, and contains the information
+    required to be drawn to a screen.
     """
 
-    def __init__(self, size, mesh, shaders, uniforms, textures):
+    def __init__(self, size, mesh, shaders, uniforms):
+        # The size of this model's bounding box, in virtual pixels.
         self.size = size
+
+        # The mesh.
         self.mesh = mesh
+
+        # A tuple giving the shaders uses with this model.
         self.shaders = shaders
+
+        # Either a dictionary giving uinforms associated with this model,
+        # or None.
         self.uniforms = uniforms
-        self.textures = textures
 
     def load(self):
-        for i in self.textures:
-            i.load()
+        """
+        Loads the textures associated with this model.
+        """
+
+        for i in self.uniforms.itervalues():
+            if isinstance(i, GLTexture):
+                i.load_gltexture()
+
+    def program_uniforms(self, shader):
+        """
+        Called by the rest of the drawing code to set up the textures associated
+        with this model.
+        """
+
+        shader.set_uniforms(self.uniforms)
 
     def get_size(self):
+        """
+        Returns the size of this Model.
+        """
+
         return self.size
 
     def subsurface(self, rect):
+        """
+        Creates Model that fits within `rect`.
+        """
 
         x, y, w, h = rect
 
@@ -438,10 +477,44 @@ class Model:
         else:
             mesh.offset_inplace(-x, -y, 0)
 
-
-        rv = Model(self.size, self.mesh, self.shaders, self.uniforms, self.textures)
+        rv = Model((w, h), self.mesh, self.shaders, self.uniforms)
         rv.mesh = mesh
 
         return rv
 
 
+class Texture(GLTexture, Model):
+    """
+    A texture is Model and a GLTexture at the same time.
+
+    This also implies that the Model has texture coordinates that range from
+    (0.0, 0.0) to (1.0, 1.0) - and hence, that the GLTexture can be used to
+    represent it.
+    """
+
+    def __init__(self, size, loader):
+
+        GLTexture.__init__(self, size, loader)
+
+        mesh = Mesh()
+        mesh.add_attribute("aTexCoord", 2)
+
+        w, h = size
+
+        mesh.add_texture_rectangle(
+            0.0, 0.0, w, h,
+            0.0, 0.0, 1.0, 1.0,
+            )
+
+        Model.__init__(self, size, mesh, ( "renpy.geometry", "renpy.texture" ), None)
+
+    def load(self):
+        self.load_gltexture()
+
+    def program_uniforms(self, shader):
+        shader.set_uniform("uTex0", self)
+
+    def subsurface(self, rect):
+        rv = Model.subsurface(self, rect)
+        rv.uniforms = { "uTex0" : self }
+        return rv

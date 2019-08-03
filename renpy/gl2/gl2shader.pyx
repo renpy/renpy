@@ -2,7 +2,7 @@ from uguugl cimport *
 from libc.stdlib cimport malloc, free
 
 from renpy.gl2.gl2geometry cimport Polygon, Mesh
-from renpy.gl2.gl2texture cimport GLTextureCore
+from renpy.gl2.gl2texture cimport GLTexture
 from renpy.display.matrix cimport Matrix
 
 class ShaderError(Exception):
@@ -63,7 +63,7 @@ cdef class UniformSampler2D(Uniform):
         glActiveTexture(GL_TEXTURE0 + self.sampler)
         glUniform1i(self.location, self.sampler)
 
-        if isinstance(data, GLTextureCore):
+        if isinstance(data, GLTexture):
             glBindTexture(GL_TEXTURE_2D, data.number)
         else:
             glBindTexture(GL_TEXTURE_2D, data)

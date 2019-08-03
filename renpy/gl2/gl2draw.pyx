@@ -628,7 +628,7 @@ cdef class GL2Draw:
 
         color = (r, g, b, a)
 
-        return Model((w, h), mesh, ("renpy.geometry", "renpy.solid"), { "uSolidColor" : color }, { })
+        return Model((w, h), mesh, ("renpy.geometry", "renpy.solid"), { "uSolidColor" : color })
 
     def flip(self):
         """
@@ -982,7 +982,7 @@ cdef class GL2DrawingContext:
         program = self.gl2draw.shader_cache.get(shaders)
 
         program.start()
-        program.set_uniforms(model.uniforms)
+        model.program_uniforms(program)
 
         if self.uniforms:
             program.set_uniforms(self.uniforms)

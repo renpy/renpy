@@ -56,7 +56,7 @@ cdef class TextureLoader:
     cdef GLint max_texture_height
 
 
-cdef class GLTextureCore:
+cdef class GLTexture:
 
     # The size of the texture, in pixels.
     cdef public int width
