@@ -240,8 +240,6 @@ cdef class TextureLoader:
 
         return False
 
-
-
 cdef class GLTextureCore:
     """
     This class represents an OpenGL texture that needs to be loaded by
@@ -404,8 +402,6 @@ cdef class GLTextureCore:
 class GLTexture(GLTextureCore):
     pass
 
-
-
 ################################################################################
 
 class TexturedMesh:
@@ -421,6 +417,7 @@ class TexturedMesh:
         self.uniforms = uniforms
         self.textures = textures
 
+
     def copy(self):
         return TexturedMesh(self.size, self.mesh, self.shaders, self.uniforms, self.textures)
 
@@ -432,11 +429,22 @@ class TexturedMesh:
         return self.size
 
     def subsurface(self, rect):
-        rv = self.copy()
 
         x, y, w, h = rect
-        rv.mesh = self.mesh.crop(rectangle(x, y, x+w, y+h))
-        rv.mesh.offset_inplace(-x, -y, 0)
+
+        mesh = self.mesh.crop(rectangle(x, y, x+w, y+h))
+
+        if mesh is self.mesh:
+            if (x == 0) and (y == 0):
+                return self
+
+            mesh = mesh.offset(-x, -y, 0)
+        else:
+            mesh.offset_inplace(-x, -y, 0)
+
+
+        rv = self.copy()
+        rv.mesh = mesh
 
         return rv
 

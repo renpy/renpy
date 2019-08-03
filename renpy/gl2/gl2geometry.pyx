@@ -143,7 +143,7 @@ cdef class Polygon:
         and the other polygon.
         """
 
-        rv = intersect(other, self, self.stride + other.stride - 4)
+        rv = intersect(other, self, self.stride + other.stride - 4, True)
 
         if rv is None:
             return None
@@ -378,7 +378,7 @@ cdef Polygon restride_polygon(Polygon src, int new_stride):
     return rv
 
 
-cpdef intersect(Polygon a, Polygon b, int new_stride):
+cpdef intersect(Polygon a, Polygon b, int new_stride, bint copy):
     """
     Given two Polygons, returns a new Polygon that is the intersecti of
     the two. This assumes that both polygons are convex, and wound in the
@@ -418,8 +418,10 @@ cpdef intersect(Polygon a, Polygon b, int new_stride):
         a1x = a2x
         a1y = a2y
 
-    # This always has to copy the polygon, so if it's entirely inside, do so.
     if rv is b:
+        if (not copy) and (new_stride == rv.stride):
+            return rv
+
         rv = restride_polygon(rv, new_stride)
 
     return rv
@@ -746,7 +748,7 @@ cdef class Mesh:
 
         for op in other.polygons:
             for sp in self.polygons:
-                p = intersect(op, sp, rv.stride)
+                p = intersect(op, sp, rv.stride, True)
 
                 if p is None:
                     continue
@@ -766,25 +768,41 @@ cdef class Mesh:
     cpdef Mesh crop(Mesh self, Polygon op):
         """
         This uses the polygon `op` to crop this mesh.
+
+        This may or may not return a new Mesh. (If op contains all of self, it
+        will return self.)
         """
 
-        rv = Mesh()
-        rv.stride = self.stride
-        rv.attributes = self.attributes
+        same = True
 
         cdef Polygon sp
         cdef Polygon p
 
+        cdef list polygons = [ ]
+        cdef int points = 0
+
         for sp in self.polygons:
-            p = intersect(sp, op, rv.stride)
+            p = intersect(op, sp, self.stride, False)
 
             if p is None:
+                same = False
                 continue
 
-            barycentric(sp, p, 0)
+            if p is not sp:
+                same = False
+                barycentric(sp, p, 0)
 
-            rv.polygons.append(p)
-            rv.points += p.points
+            polygons.append(p)
+            points += p.points
+
+        if same:
+            return self
+
+        rv = Mesh()
+        rv.stride = self.stride
+        rv.attributes = self.attributes
+        rv.polygons = polygons
+        rv.points = points
 
         return rv
 

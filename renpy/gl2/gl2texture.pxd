@@ -58,7 +58,7 @@ cdef class TextureLoader:
 
 cdef class GLTextureCore:
 
-    # The size of the texture.
+    # The size of the texture, in pixels.
     cdef public int width
     cdef public int height
 
