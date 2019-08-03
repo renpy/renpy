@@ -56,7 +56,7 @@ import renpy.gl2.gl2geometry as gl2geometry
 
 from renpy.gl2.gl2geometry cimport Mesh, Polygon
 from renpy.gl2.gl2geometry import rectangle
-from renpy.gl2.gl2texture import TexturedMesh, TextureLoader
+from renpy.gl2.gl2texture import Model, TextureLoader
 from renpy.gl2.gl2shadercache import ShaderCache
 
 cdef extern void gl2_enable_debug()
@@ -628,7 +628,7 @@ cdef class GL2Draw:
 
         color = (r, g, b, a)
 
-        return TexturedMesh((w, h), mesh, ("renpy.geometry", "renpy.solid"), { "uSolidColor" : color }, { })
+        return Model((w, h), mesh, ("renpy.geometry", "renpy.solid"), { "uSolidColor" : color }, { })
 
     def flip(self):
         """
@@ -725,7 +725,7 @@ cdef class GL2Draw:
             self.load_all_textures(what)
             return
 
-        if isinstance(what, TexturedMesh):
+        if isinstance(what, Model):
             what.load()
             return
 
@@ -963,9 +963,9 @@ cdef class GL2DrawingContext:
         self.uniforms = dict()
 
 
-    def draw_texturedmesh(self, tm, Matrix transform):
+    def draw_model(self, model, Matrix transform):
 
-        cdef Mesh mesh = tm.mesh
+        cdef Mesh mesh = model.mesh
 
         # If a clip polygon is in place, clip the mesh with it.
         if self.clip_polygon is not None:
@@ -975,14 +975,14 @@ cdef class GL2DrawingContext:
             transform = IDENTITY
 
         if self.shaders:
-            shaders = self.shaders + tm.shaders
+            shaders = self.shaders + model.shaders
         else:
-            shaders = tm.shaders
+            shaders = model.shaders
 
         program = self.gl2draw.shader_cache.get(shaders)
 
         program.start()
-        program.set_uniforms(tm.uniforms)
+        program.set_uniforms(model.uniforms)
 
         if self.uniforms:
             program.set_uniforms(self.uniforms)
@@ -995,7 +995,7 @@ cdef class GL2DrawingContext:
     def draw(self, what, Matrix transform):
         """
         This is responsible for walking the surface tree, and drawing any
-        TexturedMeshes, Renders, and Surfaces it encounters.
+        Models, Renders, and Surfaces it encounters.
 
         `transform`
             The matrix that transforms texture space into drawable space.
@@ -1010,8 +1010,8 @@ cdef class GL2DrawingContext:
         if isinstance(what, Surface):
             what = self.draw.load_texture(what)
 
-        if isinstance(what, TexturedMesh):
-            self.draw_texturedmesh(what, transform)
+        if isinstance(what, Model):
+            self.draw_model(what, transform)
             return
 
         cdef Render r

@@ -133,7 +133,7 @@ cdef class TextureLoader:
                 0.0, 0.0, w - bl - br, h - bt - bb,
                 1.0 * bl / w, 1.0 * bt / h, 1.0 - 1.0 * br / w, 1.0 - 1.0 * bb / h)
 
-        rv = TexturedMesh(surf.get_size(),
+        rv = Model(surf.get_size(),
                           mesh,
                           ( "renpy.geometry", "renpy.texture" ),
                           { "uTex0" : tex },
@@ -404,7 +404,7 @@ class GLTexture(GLTextureCore):
 
 ################################################################################
 
-class TexturedMesh:
+class Model:
     """
     This represents a combination of the geometry, textures, shaders, and
     uniform values required to display something on the screen.
@@ -416,10 +416,6 @@ class TexturedMesh:
         self.shaders = shaders
         self.uniforms = uniforms
         self.textures = textures
-
-
-    def copy(self):
-        return TexturedMesh(self.size, self.mesh, self.shaders, self.uniforms, self.textures)
 
     def load(self):
         for i in self.textures:
@@ -443,7 +439,7 @@ class TexturedMesh:
             mesh.offset_inplace(-x, -y, 0)
 
 
-        rv = self.copy()
+        rv = Model(self.size, self.mesh, self.shaders, self.uniforms, self.textures)
         rv.mesh = mesh
 
         return rv
