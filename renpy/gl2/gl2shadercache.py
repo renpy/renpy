@@ -175,7 +175,9 @@ class ShaderCache(object):
         if rv is not None:
             return rv
 
-        sortedpartnames = tuple(sorted(set(partnames)))
+        partnameset = set(partnames)
+        partnameset.add(renpy.config.default_shader)
+        sortedpartnames = tuple(sorted(partnameset))
 
         rv = self.cache.get(sortedpartnames, None)
         if rv is not None:

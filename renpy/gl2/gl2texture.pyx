@@ -141,7 +141,7 @@ cdef class TextureLoader:
                     0.0, 0.0, pw, ph,
                     1.0 * bl / w, 1.0 * bt / h, 1.0 - 1.0 * br / w, 1.0 - 1.0 * bb / h)
 
-            rv = Model((pw, ph), mesh, ("renpy.geometry", "renpy.texture"), { "uTex0" : rv })
+            rv = Model((pw, ph), mesh, ("renpy.texture",), { "uTex0" : rv })
 
         return rv
 
@@ -429,10 +429,10 @@ class Model(object):
         # The mesh.
         self.mesh = mesh
 
-        # A tuple giving the shaders uses with this model.
+        # A tuple giving the shaders used with this model.
         self.shaders = shaders
 
-        # Either a dictionary giving uinforms associated with this model,
+        # Either a dictionary giving uniforms associated with this model,
         # or None.
         self.uniforms = uniforms
 
@@ -506,7 +506,7 @@ class Texture(GLTexture, Model):
             0.0, 0.0, 1.0, 1.0,
             )
 
-        Model.__init__(self, size, mesh, ( "renpy.geometry", "renpy.texture" ), None)
+        Model.__init__(self, size, mesh, ("renpy.texture",), None)
 
     def load(self):
         self.load_gltexture()

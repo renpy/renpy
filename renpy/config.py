@@ -954,6 +954,9 @@ ftfont_scale = { }
 # This is used to scale the ascent and descent of a font.
 ftfont_vertical_extent_scale = { }
 
+# The default shader.
+default_shader = "renpy.geometry"
+
 
 def say_attribute_transition_callback(*args):
     """

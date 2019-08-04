@@ -628,7 +628,7 @@ cdef class GL2Draw:
 
         color = (r, g, b, a)
 
-        return Model((w, h), mesh, ("renpy.geometry", "renpy.solid"), { "uSolidColor" : color })
+        return Model((w, h), mesh, ("renpy.solid", ), { "uSolidColor" : color })
 
     def flip(self):
         """
