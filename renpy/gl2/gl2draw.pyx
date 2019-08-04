@@ -115,7 +115,7 @@ cdef class GL2Draw:
         self.redraw_period = .2
 
         # Info.
-        self.info = { "resizable" : True, "additive" : True, "renderer" : renderer_name }
+        self.info = { "resizable" : True, "additive" : True, "renderer" : renderer_name, "models" : True }
 
         # The old value of the fullscreen preference.
         self.old_fullscreen = None

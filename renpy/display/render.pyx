@@ -67,6 +67,10 @@ per_frame = False
 # Are we rendering for the purpose of sizing something.
 sizing = False
 
+# This is true if we're using a renderer that supports models,
+# false otherwise.
+models = False
+
 def adjust_render_cache_times(old_time, new_time):
     """
     This adjusts the render cache such that if a render starts at
@@ -651,13 +655,11 @@ cdef class Render:
         self.xclipping = False
         self.yclipping = False
 
-
         # Are we modal?
         self.modal = False
 
         # Are we a text input?
         self.text_input = False
-
 
         # gl, sw
 

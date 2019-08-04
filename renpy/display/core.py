@@ -2040,6 +2040,7 @@ class Interface(object):
         for draw in draws:
             if draw.set_mode(virtual_size, physical_size, fullscreen):
                 renpy.display.draw = draw
+                renpy.display.render.models = draw.info.get("models", False)
                 break
             else:
                 # pygame.display.quit()
