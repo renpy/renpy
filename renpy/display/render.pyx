@@ -590,7 +590,6 @@ cdef class Render:
         # Is has this render been removed from the cache?
         self.cache_killed = False
 
-
         self.width = width
         self.height = height
 
@@ -599,25 +598,6 @@ cdef class Render:
         # A list of (surface/render, xoffset, yoffset, focus, main) tuples, ordered from
         # back to front.
         self.children = [ ]
-
-        # The set of renders that either have us as children, or depend on
-        # us.
-        self.parents = set()
-
-        # The renders we depend on, including our children.
-        self.depends_on_list = [ ]
-
-        # The operation we're performing. (BLIT, DISSOLVE, OR IMAGE_DISSOLVE)
-        self.operation = BLIT
-
-        # The fraction of the operation that is complete.
-        self.operation_complete = 0.0
-
-        # Should the dissolve operations preserve alpha?
-        self.operation_alpha = False
-
-        # The parameter to the operation.
-        self.operation_parameter = 0
 
         # Forward is used to transform from screen coordinates to child
         # coordinates.
@@ -671,6 +651,35 @@ cdef class Render:
         self.xclipping = False
         self.yclipping = False
 
+
+        # Are we modal?
+        self.modal = False
+
+        # Are we a text input?
+        self.text_input = False
+
+
+        # gl, sw
+
+        # The set of renders that either have us as children, or depend on
+        # us.
+        self.parents = set()
+
+        # The renders we depend on, including our children.
+        self.depends_on_list = [ ]
+
+        # The operation we're performing. (BLIT, DISSOLVE, OR IMAGE_DISSOLVE)
+        self.operation = BLIT
+
+        # The fraction of the operation that is complete.
+        self.operation_complete = 0.0
+
+        # Should the dissolve operations preserve alpha?
+        self.operation_alpha = False
+
+        # The parameter to the operation.
+        self.operation_parameter = 0
+
         # Caches of the texture created by rendering this surface.
         self.surface = None
         self.alpha_surface = None
@@ -679,11 +688,25 @@ cdef class Render:
         # (This is set in gldraw.)
         self.half_cache = None
 
-        # Are we modal?
-        self.modal = False
+        # gl2
 
-        # Are we a text input?
-        self.text_input = False
+        # The mesh. If this is not None, the children are all rendered to Textures,
+        # and used to form a model. If this is True, the Mesh is taken from the first
+        # child's Texture, otherwise this must be a Mesh.
+        self.mesh = None
+
+        # A tuple of shaders that will be used when rendering, or None.
+        self.shaders = None
+
+        # A dictionary containing uniforms that will be used when rendering, or
+        # None.
+        self.uniforms = None
+
+        # Used to cache the result of rendering this Render to a texture.
+        self.cached_texture = None
+
+        # Used to cache the model.
+        self.cached_model = None
 
         live_renders.append(self)
 
