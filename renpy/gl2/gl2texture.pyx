@@ -516,5 +516,6 @@ class Texture(GLTexture, Model):
 
     def subsurface(self, rect):
         rv = Model.subsurface(self, rect)
-        rv.uniforms = { "uTex0" : self }
+        if rv is not self:
+            rv.uniforms = { "uTex0" : self }
         return rv
