@@ -710,6 +710,9 @@ cdef class Render:
         # Used to cache the model.
         self.cached_model = None
 
+        # Have the textures been loaded?
+        self.loaded = False
+
         live_renders.append(self)
 
     def __repr__(self): #@DuplicatedSignature

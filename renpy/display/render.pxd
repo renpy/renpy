@@ -95,6 +95,9 @@ cdef class Render:
     # Used to cache the model.
     cdef public object cached_model
 
+    # True if the texture has been loaded.
+    cdef public bint loaded
+
 
     # operations ###############################################################
 

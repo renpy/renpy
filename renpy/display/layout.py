@@ -1873,7 +1873,11 @@ class Flatten(Container):
 
         rv = renpy.display.render.Render(cw, ch)
         rv.blit(cr, (0, 0))
+
         rv.operation = renpy.display.render.FLATTEN
+
+        rv.mesh = True
+        rv.shaders = ( "renpy.texture", )
 
         self.offsets = [ (0, 0) ]
 

@@ -56,7 +56,7 @@ import renpy.gl2.gl2geometry as gl2geometry
 
 from renpy.gl2.gl2geometry cimport Mesh, Polygon
 from renpy.gl2.gl2geometry import rectangle
-from renpy.gl2.gl2texture import Model, TextureLoader
+from renpy.gl2.gl2texture import Model, Texture, TextureLoader
 from renpy.gl2.gl2shadercache import ShaderCache
 
 cdef extern void gl2_enable_debug()
@@ -78,7 +78,6 @@ vsync = True
 
 # A list of frame end times, used for the same purpose.
 frame_times = [ ]
-
 
 cdef class GL2Draw:
 
@@ -729,21 +728,62 @@ cdef class GL2Draw:
             what.load()
             return
 
-        # TODO: If the render actually renders textures, do the RTT now.
+        # what is a Render.
 
-        for i in what.visible_children:
+        cdef Render r = what
+
+        if r.loaded:
+            return
+
+        r.loaded = True
+
+        # Load the child textures.
+        for i in r.visible_children:
             self.load_all_textures(i[0])
 
-    def render_to_texture(self, what, alpha):
+        # If we have a mesh (or mesh=True), create the Model.
+        if r.mesh:
+
+            uniforms = { }
+            if r.uniforms:
+                uniforms.update(r.uniforms)
+
+            for i, c in enumerate(r.children):
+                uniforms["uTex" + str(i)] = self.render_to_texture(c[0])
+
+            if r.mesh is True:
+                mesh = uniforms["uTex0"].mesh
+            else:
+                mesh = r.mesh
+
+            r.cached_model = Model(
+                (r.width, r.height),
+                mesh,
+                r.shaders,
+                uniforms)
+
+
+    def render_to_texture(self, what, alpha=True):
         """
         Renders `what` to a texture. The texture will have the drawable
         size of `what`.
         """
 
-        width = int(math.ceil(what.width * self.draw_per_virt))
-        height = int(math.ceil(what.height * self.draw_per_virt))
+        if isinstance(what, Surface):
+            what = self.load_texture(what)
+            self.load_all_textures(what)
 
-        raise
+        if isinstance(what, Texture):
+            return what
+
+        if what.cached_texture is not None:
+            return what.cached_texture
+
+        rv = self.texture_loader.render_to_texture(what)
+
+        what.cached_texture = rv
+
+        return rv
 
     def is_pixel_opaque(self, what, x, y):
         """
@@ -1022,9 +1062,6 @@ cdef class GL2DrawingContext:
             if r.text_input:
                 renpy.display.interface.text_rect = r.screen_rect(0, 0, transform)
 
-            # TODO: Check r.operation to handle other draw mode. (Or replace this
-            # with something new.)
-
             # Handle clipping.
             if (r.xclipping or r.yclipping):
                 new_clip_polygon = rectangle(0, 0, r.width, r.height)
@@ -1051,6 +1088,10 @@ cdef class GL2DrawingContext:
 
             if (r.reverse is not None) and (r.reverse is not IDENTITY):
                 transform = transform * r.reverse
+
+            if r.cached_model is not None:
+                self.draw_model(r.cached_model, transform)
+                return
 
             for child, cx, cy, focus, main in r.visible_children:
 

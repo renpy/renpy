@@ -44,6 +44,8 @@ from renpy.gl2.uguugl cimport *
 from renpy.gl2.gl2draw cimport GL2Draw
 from renpy.gl2.gl2geometry cimport rectangle, texture_rectangle, Mesh
 
+from renpy.display.matrix cimport Matrix
+
 ################################################################################
 
 cdef class TextureLoader:
@@ -210,6 +212,15 @@ cdef class TextureLoader:
 
         return rv
 
+    def render_to_texture(self, what):
+        """
+        Renders `what` to a texture.
+        """
+
+        rv = Texture(what.get_size(), self)
+        rv.from_render(what)
+        return rv
+
 
     def cleanup(self):
         """
@@ -314,6 +325,58 @@ cdef class GLTexture:
             self.surface = None
 
         self.loader.texture_load_queue.add(self)
+
+    def from_render(GLTexture self, what):
+        """
+        This renders `what` to this texture.
+        """
+
+        cw, ch = size = what.get_size()
+
+        loader = self.loader
+        draw = self.loader.draw
+
+        # The visible size of the texture.
+        tw = min(int(math.ceil(cw * draw.draw_per_virt)), loader.max_texture_width)
+        th = min(int(math.ceil(ch * draw.draw_per_virt)), loader.max_texture_height)
+
+        cdef GLuint premultiplied
+
+        glGenTextures(1, &premultiplied)
+
+        # Bind the framebuffer.
+        self.loader.draw.change_fbo(self.loader.ftl_fbo)
+
+        # Set up the viewport.
+        glViewport(0, 0, tw, th)
+
+        # Clear the screen.
+        clear_r, clear_g, clear_b = renpy.color.Color(renpy.config.gl_clear_color).rgb
+        glClearColor(clear_r, clear_g, clear_b, 0.0)
+        glClear(GL_COLOR_BUFFER_BIT)
+
+        # Project the child from virtual space to the screen space.
+        cdef Matrix transform
+        transform = renpy.display.matrix.texture_projection(cw, ch)
+
+        # Set up the default modes.
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+
+        context = renpy.gl2.gl2draw.GL2DrawingContext(draw)
+        context.draw(what, transform)
+
+        glBindTexture(GL_TEXTURE_2D, premultiplied)
+        glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, tw, th, 0)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+
+        self.number = premultiplied
+        self.loader.allocated.add(self.number)
+
+        self.loaded = True
 
     def __repr__(self):
         return "<GLTexture {}x{} {}>".format(self.width, self.height, self.number)
@@ -435,6 +498,9 @@ class Model(object):
         # Either a dictionary giving uniforms associated with this model,
         # or None.
         self.uniforms = uniforms
+
+        # The cached_texture that comes from this model.
+        self.cached_texture = None
 
     def load(self):
         """
