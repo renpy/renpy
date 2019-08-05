@@ -2035,7 +2035,7 @@ and choosing the entries that apply to the current platform.
    also defined).
 
 ``"mobile"``
-   Defined on mobile platforms, such as Android and iOS.
+   Defined on mobile platforms, such as Android, iOS and mobile web browsers.
 
 ``"pc"``
    Defined on Windows, Mac OS X, and Linux. A PC is expected to have
@@ -2043,8 +2043,7 @@ and choosing the entries that apply to the current platform.
    to allow precise pointing.
 
 ``"web"``
-   Defined when running inside a web browser. Check other variants to
-   detect what the browser runs on.
+   Defined when running inside a web browser.
 
 ``None``
    Always defined.

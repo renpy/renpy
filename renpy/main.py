@@ -231,8 +231,19 @@ def choose_variants():
     elif renpy.emscripten:
         import emscripten, re
 
-        # web (always)
+        # web
         renpy.config.variants.insert(0, 'web')
+
+        # mobile
+        userAgent = emscripten.run_script_string(r'''navigator.userAgent''')
+        mobile = re.search('Mobile|Android|iPad|iPhone', userAgent)
+        if mobile:
+            renpy.config.variants.insert(0, 'mobile')
+        # Reserve android/ios for when the OS API is exposed
+        #if re.search('Android', userAgent):
+        #    renpy.config.variants.insert(0, 'android')
+        #if re.search('iPad|iPhone', userAgent):
+        #    renpy.config.variants.insert(0, 'ios')
 
         # touch
         touch = emscripten.run_script_int(r'''
@@ -240,24 +251,9 @@ def choose_variants():
             (navigator.maxTouchPoints > 0) ||
             (navigator.msMaxTouchPoints > 0)''')
         if touch == 1:
-            renpy.config.variants.insert(0, 'touch')
-
-        # android/ios/mobile
-        userAgent = emscripten.run_script_string(r'''navigator.userAgent''')
-        mobile = re.search('Mobile|Android|iPad|iPhone', userAgent)
-        if mobile:
-            renpy.config.variants.insert(0, 'mobile')
-        if re.search('Android', userAgent):
-            renpy.config.variants.insert(0, 'android')
-        if re.search('iPad|iPhone', userAgent):
-            renpy.config.variants.insert(0, 'ios')
-
-        # tv/ouya/firetv
-        # TODO
-
-        # pc (fallback)
-        if not mobile:
-            renpy.config.variants.insert(0, 'pc')
+            # mitigate hybrids (e.g. ms surface) by restricting touch to mobile
+            if mobile:
+                renpy.config.variants.insert(0, 'touch')
 
         # large/medium/small
         # tablet/phone
@@ -269,16 +265,16 @@ def choose_variants():
         # - web screen: 360x640 w/ devicePixelRatio=3
         ref_width  = emscripten.run_script_int(r'''screen.width''')
         ref_height = emscripten.run_script_int(r'''screen.height''')
-        size = 'large';
-        # medium: ipad reports 1024x768, ipad pro 1024x1336
-        if (ref_width <= 1336 or ref_height <= 1336):
-            renpy.config.variants.insert(0, 'medium')
-            if mobile:
-                renpy.config.variants.insert(0, 'tablet')
-        if (ref_width < 768 or ref_height < 768):
-            renpy.config.variants.insert(0, 'small')
-            if mobile:
+        # medium reference point: ipad 1024x768, ipad pro 1336x1024 (browser "pixels")
+        if mobile:
+            if (ref_width < 768 or ref_height < 768):
+                renpy.config.variants.insert(0, 'small')
                 renpy.config.variants.insert(0, 'phone')
+            else:
+                renpy.config.variants.insert(0, 'medium')
+                renpy.config.variants.insert(0, 'tablet')
+        else:
+            renpy.config.variants.insert(0, 'large')
 
     else:
         renpy.config.variants.insert(0, 'pc')
