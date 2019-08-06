@@ -738,7 +738,7 @@ cdef class GL2Draw:
         r.loaded = True
 
         # Load the child textures.
-        for i in r.visible_children:
+        for i in r.children:
             self.load_all_textures(i[0])
 
         # If we have a mesh (or mesh=True), create the Model.

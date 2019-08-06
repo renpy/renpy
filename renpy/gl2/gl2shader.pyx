@@ -56,6 +56,7 @@ cdef class UniformSampler2D(Uniform):
     cdef int sampler
 
     def __init__(self, program, location):
+        Uniform.__init__(self, program, location)
         self.sampler = program.sampler
         program.sampler += 1
 
