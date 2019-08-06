@@ -1428,7 +1428,7 @@ class Adjustment(renpy.object.Object):
 
     """
 
-    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None):  # @ReservedAssignment
+    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False):  # @ReservedAssignment
         """
         The following parameters correspond to fields or properties on
         the adjustment object:
@@ -1490,9 +1490,27 @@ class Adjustment(renpy.object.Object):
         self.changed = changed
         self.adjustable = adjustable
         self.ranged = ranged
+        self.force_step = force_step
+
+    def round_value(self, value, release):
+        # Prevent deadlock border points
+        if value <= 0:
+            return 0
+        elif value >= self._range:
+            return self._range
+
+        if self.force_step is False:
+            return value
+
+        if (not release) and self.force_step == "release":
+            return value
+
+        return self.step * round(float(value) / self.step)
 
     def get_value(self):
-        if self._value > self._range:
+        if self._value <= 0:
+            return 0
+        if self._value >= self._range:
             return self._range
 
         return self._value
