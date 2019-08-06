@@ -369,6 +369,10 @@ class Dissolve(Transition):
         rv.operation_alpha = self.alpha or renpy.config.dissolve_force_alpha
         rv.operation_complete = complete
 
+        rv.mesh = True
+        rv.shaders = ( "renpy.dissolve", )
+        rv.uniforms = { "uDissolve" : complete }
+
         rv.blit(bottom, (0, 0), focus=False, main=False)
         rv.blit(top, (0, 0), focus=True, main=True)
 

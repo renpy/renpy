@@ -313,6 +313,21 @@ ShaderPart("renpy.solid", variables="""
     gl_FragColor = uSolidColor;
 """)
 
+ShaderPart("renpy.dissolve", variables="""
+    uniform sampler2D uTex0;
+    uniform sampler2D uTex1;
+    uniform float uDissolve;
+    attribute vec2 aTexCoord;
+    varying vec2 vTexCoord;
+""", vertex_110="""
+    vTexCoord = aTexCoord;
+""", fragment_110="""
+    vec4 color0 = texture2D(uTex0, vTexCoord.st);
+    vec4 color1 = texture2D(uTex1, vTexCoord.st);
+
+    gl_FragColor = mix(color0, color1, uDissolve);
+""")
+
 ShaderPart("renpy.colormatrix", variables="""
     uniform mat4 uColorMatrix;
 """, fragment_120="""
