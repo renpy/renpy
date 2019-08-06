@@ -147,15 +147,16 @@ init -1500 python:
         action = None
 
         identity_fields = [ 'dict' ]
-        equality_fields = [ 'key', 'range', 'max_is_zero', 'style', 'offset', 'step', 'action']
+        equality_fields = [ 'key', 'range', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step' ]
 
-        def __init__(self, dict, key, range, max_is_zero=False, style="bar", offset=0, step=None, action=None):
+        def __init__(self, dict, key, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False):
             self.dict = dict
             self.key = key
             self.range = range
             self.max_is_zero = max_is_zero
             self.style = style
             self.offset = offset
+            self.force_step = force_step
 
             if step is None:
                 if isinstance(range, float):
@@ -197,7 +198,9 @@ init -1500 python:
                 range=self.range,
                 value=value,
                 changed=self.changed,
-                step=self.step)
+                step=self.step,
+                force_step=self.force_step,
+            )
 
         def get_style(self):
             return self.style, "v" + self.style
@@ -238,15 +241,16 @@ init -1500 python:
         action = None
 
         identity_fields = [ 'object', ]
-        equality_fields = [ 'range', 'max_is_zero', 'style', 'offset', 'step', 'action']
+        equality_fields = [ 'range', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step' ]
 
-        def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None, action=None):
+        def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False):
             self.object = object
             self.field = field
             self.range = range
             self.max_is_zero = max_is_zero
             self.style = style
             self.offset = offset
+            self.force_step = force_step
 
             if step is None:
                 if isinstance(range, float):
@@ -288,13 +292,15 @@ init -1500 python:
                 range=self.range,
                 value=value,
                 changed=self.changed,
-                step=self.step)
+                step=self.step,
+                force_step=self.force_step,
+            )
 
         def get_style(self):
             return self.style, "v" + self.style
 
     @renpy.pure
-    def VariableValue(variable, range, max_is_zero=False, style="bar", offset=0, step=None, action=None):
+    def VariableValue(variable, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False):
         """
          :doc: value
 
@@ -323,7 +329,7 @@ init -1500 python:
              If not None, an action to call when the field has changed.
         """
 
-        return FieldValue(store, variable, range, max_is_zero=max_is_zero, style=style, offset=offset, step=step, action=action)
+        return FieldValue(store, variable, range, max_is_zero=max_is_zero, style=style, offset=offset, step=step, action=action, force_step=force_step)
 
     @renpy.pure
     class ScreenVariableValue(BarValue, FieldEquality):
@@ -358,14 +364,15 @@ init -1500 python:
         offset = 0
 
         identity_fields = [  ]
-        equality_fields = [ 'variable', 'max_is_zero', 'style', 'offset', 'step', 'action']
+        equality_fields = [ 'variable', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step' ]
 
-        def __init__(self, variable, range, max_is_zero=False, style="bar", offset=0, step=None, action=None):
+        def __init__(self, variable, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False):
             self.variable = variable
             self.range = range
             self.max_is_zero = max_is_zero
             self.style = style
             self.offset = offset
+            self.force_step = force_step
 
             if step is None:
                 if isinstance(range, float):
@@ -414,7 +421,9 @@ init -1500 python:
                 range=self.range,
                 value=value,
                 changed=self.changed,
-                step=self.step)
+                step=self.step,
+                force_step=self.force_step,
+            )
 
         def get_style(self):
             return self.style, "v" + self.style
