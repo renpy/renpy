@@ -198,7 +198,7 @@ sensitive, and when it is selected.
            The number of seconds since the screen or displayable this
            action is associated with was first shown.
 
-   .. method:: unhovered(self):
+   .. method:: unhovered(self)
 
        When the action is used as the `hovered` parameter to a button (or
        similar object), this method is called when the object loses focus.

@@ -82,7 +82,8 @@ Bar Values
 
 Bar values are used with bars, to set the bar value, and to allow the bar
 to adjust an underlying property. To create a new bar value, subclass
-the :class:`BarValue` class.
+the :class:`BarValue` class. All classes that have the `step` keyword also accept
+the `force_step` keyword which behavior is described in :func:`ui.adjustment`.
 
 .. include:: inc/value
 

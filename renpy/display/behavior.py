@@ -1456,12 +1456,12 @@ class Adjustment(renpy.object.Object):
         The following parameters control the behavior of the adjustment.
 
         `adjustable`
-             If True, this adjustment can be changed by a bar. If False,
-             it can't.
+            If True, this adjustment can be changed by a bar. If False,
+            it can't.
 
-             It defaults to being adjustable if a `changed` function
-             is given or if the adjustment is associated with a viewport,
-             and not adjustable otherwise.
+            It defaults to being adjustable if a `changed` function
+            is given or if the adjustment is associated with a viewport,
+            and not adjustable otherwise.
 
         `changed`
             This function is called with the new value when the value of
@@ -1470,6 +1470,16 @@ class Adjustment(renpy.object.Object):
         `ranged`
             This function is called with the adjustment object when
             the range of the adjustment is set by a viewport.
+
+        `force_step`
+            If True and this adjustment changes by dragging associated
+            viewport or a bar, value will be changed only if the drag
+            reached next step.
+            If "release" and this adjustment changes by dragging associated
+            viewport or a bar, after the release, value will be
+            rounded to the nearest step.
+            If False, this adjustment will changes by dragging, ignoring
+            the step value.
 
         .. method:: change(value)
 
