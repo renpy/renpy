@@ -369,9 +369,18 @@ class Dissolve(Transition):
         rv.operation_alpha = self.alpha or renpy.config.dissolve_force_alpha
         rv.operation_complete = complete
 
-        rv.mesh = True
-        rv.shaders = ( "renpy.dissolve", )
-        rv.uniforms = { "uDissolve" : complete }
+        if renpy.display.render.models:
+
+            target = rv.get_size()
+
+            if top.get_size() != target:
+                top = top.subsurface((0, 0, width, height))
+            if bottom.get_size() != target:
+                bottom = bottom.subsurface((0, 0, width, height))
+
+            rv.mesh = True
+            rv.shaders = ( "renpy.dissolve", )
+            rv.uniforms = { "uDissolve" : complete }
 
         rv.blit(bottom, (0, 0), focus=False, main=False)
         rv.blit(top, (0, 0), focus=True, main=True)
@@ -512,6 +521,32 @@ class ImageDissolve(Transition):
         rv.operation_alpha = self.alpha or renpy.config.dissolve_force_alpha
         rv.operation_complete = complete
         rv.operation_parameter = self.ramplen
+
+        if renpy.display.render.models:
+
+            target = rv.get_size()
+
+            if image.get_size() != target:
+                image = image.subsurface((0, 0, width, height))
+            if top.get_size() != target:
+                top = top.subsurface((0, 0, width, height))
+            if bottom.get_size() != target:
+                bottom = bottom.subsurface((0, 0, width, height))
+
+            ramp = self.ramplen
+
+            # Prevent a DBZ if the user gives us a 0 ramp.
+            if ramp < 1:
+                ramp = 1
+
+            # Compute the offset to apply to the alpha.
+            start = -1.0
+            end = ramp / 256.0
+            offset = start + ( end - start) * complete
+
+            rv.mesh = True
+            rv.shaders = ( "renpy.imagedissolve", )
+            rv.uniforms = { "uDissolveOffset" : offset, "uDissolveMultiplier" : 256.0 / ramp }
 
         rv.blit(image, (0, 0), focus=False, main=False)
         rv.blit(bottom, (0, 0), focus=False, main=False)

@@ -795,7 +795,9 @@ cdef class GL2Draw:
 
         what = what.subsurface((x, y, 1, 1))
 
-        raise Exception("Not Implemented.")
+        # TODO: Actually implement.
+
+        return True
 
 
     def translate_point(self, x, y):
