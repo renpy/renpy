@@ -1925,9 +1925,18 @@ class Bar(renpy.display.core.Displayable):
             renpy.display.tts.speak(renpy.minstore.__("deactivate"))
             self.set_style_prefix("hover_", True)
             renpy.display.focus.set_grab(None)
-            ignore_event = True
+
+            # Invoke rounding adjustment on bar release
+            value = self.adjustment.round_value(value, release=True)
+            if value != old_value:
+                rv = self.adjustment.change(value)
+                if rv is not None:
+                    return rv
+
+            raise renpy.display.core.IgnoreEvent()
 
         if value != old_value:
+            value = self.adjustment.round_value(value, release=False)
             rv = self.adjustment.change(value)
             if rv is not None:
                 return rv
