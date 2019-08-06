@@ -1428,6 +1428,7 @@ class Adjustment(renpy.object.Object):
 
     """
 
+    force_step = False
     def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False):  # @ReservedAssignment
         """
         The following parameters correspond to fields or properties on
