@@ -59,7 +59,8 @@ from renpy.gl2.gl2geometry import rectangle
 from renpy.gl2.gl2texture import Model, Texture, TextureLoader
 from renpy.gl2.gl2shadercache import ShaderCache
 
-cdef extern void gl2_enable_debug()
+cdef extern from "gl2debug.h":
+    void gl2_enable_debug()
 
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
