@@ -273,8 +273,8 @@ cdef class GL2Draw:
 
         pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
 
-        if debug:
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FLAGS, 1) # SDL_GL_CONTEXT_DEBUG_FLAG
+#         if debug:
+#             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FLAGS, 1) # SDL_GL_CONTEXT_DEBUG_FLAG
 
         if gles:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "1")
@@ -510,8 +510,8 @@ cdef class GL2Draw:
             renpy.display.log.write("    %s", i)
 
         # Enable debug.
-        if debug:
-            gl2_enable_debug()
+#         if debug:
+#             gl2_enable_debug()
 
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()

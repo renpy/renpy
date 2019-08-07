@@ -42,3 +42,4 @@ void gl2_enable_debug(void) {
     debugMessageCallback(gl2_debug_callback, 0);
     debugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, 1);
 }
++
