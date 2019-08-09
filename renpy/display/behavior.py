@@ -1516,7 +1516,7 @@ class Adjustment(renpy.object.Object):
         if (not release) and self.force_step == "release":
             return value
 
-        return self.step * round(float(value) / self.step)
+        return type(self.value)(self.step * round(float(value) / self.step))
 
     def get_value(self):
         if self._value <= 0:
