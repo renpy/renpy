@@ -523,7 +523,7 @@ cdef class GL2Draw:
             # give back control to browser regularly
             self.redraw_period = 0.1
 
-        self.shader_cache = ShaderCache("cache/shaders.txt")
+        self.shader_cache = ShaderCache("cache/shaders.txt", self.gles)
         self.shader_cache.load()
 
         # Store the default FBO.
@@ -1095,6 +1095,14 @@ cdef class GL2DrawingContext:
             if r.cached_model is not None:
                 self.draw_model(r.cached_model, transform)
                 return
+
+            if r.shaders is not None:
+                self.shaders = self.shaders + r.shaders
+
+            if r.uniforms is not None:
+                self.uniforms = dict(self.uniforms)
+                self.uniforms.update(r.uniforms)
+
 
             for child, cx, cy, focus, main in r.visible_children:
 
