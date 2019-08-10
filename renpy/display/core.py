@@ -1921,6 +1921,10 @@ class Interface(object):
                 renderers = [ "gl", "angle", "sw" ]
             else:
                 renderers = [ "gl", "sw" ]
+
+            if renpy.config.gl2:
+                renderers = [ "gl2", "egl2" ] + renderers
+
         else:
             renderers = [ renderer, "sw" ]
 

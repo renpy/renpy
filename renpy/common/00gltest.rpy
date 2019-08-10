@@ -388,8 +388,11 @@ init -1500 python:
 
         renderer_info = renpy.get_renderer_info()
 
+        if config.gl2 and not renderer_info.get("models", False):
+            problem = "fixed"
+
         # Software renderer check.
-        if config.renderer != "sw" and renderer_info["renderer"] == "sw":
+        elif config.renderer != "sw" and renderer_info["renderer"] == "sw":
             problem = "sw"
 
         # Speed check.

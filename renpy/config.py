@@ -996,6 +996,9 @@ disable_input = False
 # also determine the order of their render.
 keep_side_render_order = True
 
+# Should this game enable and require gl2?
+gl2 = False
+
 del os
 del collections
 
