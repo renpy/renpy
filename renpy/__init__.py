@@ -171,6 +171,7 @@ backup_blacklist = {
     "renpy.test.testkey",
     "renpy.test.testmouse",
     "renpy.test.testparser",
+    "renpy.gl2",
     "renpycoverage",
     }
 
