@@ -1001,7 +1001,7 @@ gl2 = False
 
 # Does this game use the depth buffer? If so, how many bits of depth should
 # it use?
-depth_buffer = None
+depth_size = None
 
 del os
 del collections
