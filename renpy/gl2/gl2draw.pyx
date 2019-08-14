@@ -271,6 +271,9 @@ cdef class GL2Draw:
         pygame.display.gl_set_attribute(pygame.GL_BLUE_SIZE, 8)
         pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
 
+        if renpy.config.depth_size:
+            pygame.display.gl_set_attribute(pygame.GL_DEPTH_SIZE, renpy.config.depth_size)
+
         pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
 
 #         if debug:
@@ -1092,6 +1095,11 @@ cdef class GL2DrawingContext:
             if (r.reverse is not None) and (r.reverse is not IDENTITY):
                 transform = transform * r.reverse
 
+            if r.properties is not None:
+                if "depth" in r.properties:
+                    glClear(GL_DEPTH_BUFFER_BIT)
+                    glEnable(GL_DEPTH_TEST)
+
             if r.cached_model is not None:
                 self.draw_model(r.cached_model, transform)
                 return
@@ -1121,6 +1129,10 @@ cdef class GL2DrawingContext:
                 self.draw(child, child_transform)
 
         finally:
+
+            if r.properties is not None:
+                if "depth" in r.properties:
+                    glDisable(GL_DEPTH_TEST)
 
             # Restore the state.
             self.shaders = old_shaders

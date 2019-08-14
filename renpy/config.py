@@ -999,6 +999,10 @@ keep_side_render_order = True
 # Should this game enable and require gl2?
 gl2 = False
 
+# Does this game use the depth buffer? If so, how many bits of depth should
+# it use?
+depth_buffer = None
+
 del os
 del collections
 

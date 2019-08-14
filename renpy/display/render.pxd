@@ -89,6 +89,9 @@ cdef class Render:
     # None.
     cdef public dict uniforms
 
+    # Properties that control rendering.
+    cdef public dict properties
+
     # Used to cache the result of rendering this Render to a texture.
     cdef public object cached_texture
 

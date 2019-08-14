@@ -704,6 +704,9 @@ cdef class Render:
         # None.
         self.uniforms = None
 
+        # Properties that are used for rendering.
+        self.properties = None
+
         # Used to cache the result of rendering this Render to a texture.
         self.cached_texture = None
 
