@@ -39,8 +39,11 @@ cdef class TextureLoader:
     # but not deallocated.
     cdef int total_texture_size
 
-    # The renderbuffer object used for fast texture loading.
-    cdef GLuint ftl_renderbuffer
+    # The color renderbuffer object used for fast texture loading.
+    cdef GLuint ftl_color_renderbuffer
+
+    # The depth renderbuffer object use for fast texture loading.
+    cdef GLuint ftl_depth_renderbuffer
 
     # The framebuffer object used for fast texture loading.
     cdef GLuint ftl_fbo
@@ -78,4 +81,3 @@ cdef class GLTexture:
 
     # The texture loader associated with this texture.
     cdef TextureLoader loader
-

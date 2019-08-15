@@ -61,7 +61,10 @@ cdef class TextureLoader:
 
         # Generate the framebuffer.
         glGenFramebuffers(1, &self.ftl_fbo)
-        glGenRenderbuffers(1, &self.ftl_renderbuffer)
+        glGenRenderbuffers(1, &self.ftl_color_renderbuffer)
+
+        if renpy.config.depth_size:
+          glGenRenderbuffers(1, &self.ftl_depth_renderbuffer)
 
     def resize(TextureLoader self):
 
@@ -86,16 +89,29 @@ cdef class TextureLoader:
         self.max_texture_width = width
         self.max_texture_height = height
 
-        glBindRenderbuffer(GL_RENDERBUFFER, self.ftl_renderbuffer)
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, self.max_texture_width, self.max_texture_height)
-
         self.draw.change_fbo(self.ftl_fbo)
+
+        glBindRenderbuffer(GL_RENDERBUFFER, self.ftl_color_renderbuffer)
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, self.max_texture_width, self.max_texture_height)
 
         glFramebufferRenderbuffer(
             GL_FRAMEBUFFER,
             GL_COLOR_ATTACHMENT0,
             GL_RENDERBUFFER,
-            self.ftl_renderbuffer)
+            self.ftl_color_renderbuffer)
+
+
+        if renpy.config.depth_size:
+
+            glBindRenderbuffer(GL_RENDERBUFFER, self.ftl_depth_renderbuffer)
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, self.max_texture_width, self.max_texture_height)
+
+            glFramebufferRenderbuffer(
+                GL_FRAMEBUFFER,
+                GL_DEPTH_ATTACHMENT,
+                GL_RENDERBUFFER,
+                self.ftl_depth_renderbuffer)
+
 
     def quit(self):
         """
@@ -105,7 +121,10 @@ cdef class TextureLoader:
         cdef GLuint texnums[1]
 
         glDeleteFramebuffers(1, &self.ftl_fbo)
-        glDeleteRenderbuffers(1, &self.ftl_renderbuffer)
+        glDeleteRenderbuffers(1, &self.ftl_color_renderbuffer)
+
+        if renpy.config.depth_size:
+            glDeleteRenderbuffers(1, &self.ftl_depth_renderbuffer)
 
         for texture_number in self.allocated:
             texnums[0] = texture_number
