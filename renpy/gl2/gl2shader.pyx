@@ -277,6 +277,10 @@ cdef class Program:
             glVertexAttribPointer(a.location, a.size, GL_FLOAT, GL_FALSE, mesh.stride * sizeof(float), mesh.get_data(offset))
             glEnableVertexAttribArray(a.location)
 
+        if mesh.polygon_points == 3:
+            glDrawArrays(GL_TRIANGLES, 0, 3 * mesh.polygon_count)
+            return
+
         cdef int i = 0
         cdef Polygon p
 
