@@ -629,10 +629,20 @@ cdef class Mesh:
 
         cdef Polygon p
         cdef int i
+        cdef int count
+        cdef int points
 
-        if len(self.polygons) == 1:
+        self.polygon_count = count = len(self.polygons)
 
-            p = self.polygons[0]
+        if not count:
+            self.polygon_points = 0
+            return NULL
+
+        p = self.polygons[0]
+        points = p.points
+
+        if count == 1:
+            self.polygon_points = points
             return p.data + offset
 
         if not self.data:
@@ -643,6 +653,11 @@ cdef class Mesh:
             for p in self.polygons:
                 memcpy(&self.data[i], p.data, p.points * self.stride * sizeof(float))
                 i += p.points * self.stride
+
+                if p.points != points:
+                    points = 0
+
+            self.polygon_points = points
 
         return self.data + offset
 

@@ -49,6 +49,14 @@ cdef class Mesh:
 
     cdef float *get_data(self, int offset)
 
+    # The count of polygons that comprise the mesh. This is  only valid after
+    # get_data is called.
+    cdef public int polygon_count
+
+    # If all the polygons in the mesh have the same number of points, this is
+    # that number of points. Else, it's 0.
+    cdef public int polygon_points
+
     cpdef Mesh copy(Mesh self)
 
     cpdef void offset_inplace(Mesh self, double x, double y, double z)
