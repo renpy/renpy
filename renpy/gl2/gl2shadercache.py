@@ -134,14 +134,15 @@ def source(variables, parts, functions, fragment, gles):
         rv.append("""
 #version 100 es
 """)
+
+        if fragment:
+            rv.append("""
+precision mediump float;
+""")
+
     else:
         rv.append("""
 #version 120
-""")
-
-    if fragment:
-        rv.append("""
-precision mediump float;
 """)
 
     rv.extend(functions)
