@@ -621,7 +621,7 @@ translate spanish tutorial_music_3555b640:
 translate spanish tutorial_music_8b606a55:
 
     # e "The play music command replaces the currently playing music, and replaces it with the named filename."
-    e "El comando play music reemplaza la música que se está reproduciendo actualmente y la reemplaza archivo nombrado."
+    e "El comando play music reemplaza la música que se está reproduciendo actualmente y la reemplaza con el archivo nombrado."
 
 # game/tutorial_quickstart.rpy:456
 translate spanish tutorial_music_18650fe7:
@@ -663,7 +663,7 @@ translate spanish tutorial_music_1d3e9fd2:
 translate spanish tutorial_music_aa01c19d:
 
     # e "Ren'Py has separate mixers for sound, music, and voices, so the player can adjust them as they like."
-    e "Ren'Py tiene mezcladores separados para sonido, música y voces, por lo que el jugador puede ajustarlos a su gusto."
+    e "Ren'Py tiene mezcladores separados para sonido, música y voces, por lo que el jugador puede ajustarlos a tu gusto."
 
 # game/tutorial_quickstart.rpy:492
 translate spanish tutorial_menus_0426904b:

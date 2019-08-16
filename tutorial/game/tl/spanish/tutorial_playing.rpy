@@ -111,7 +111,7 @@ translate spanish tutorial_playing_d3553fbe:
 translate spanish tutorial_playing_fc0cac03:
 
     # e "Clicking the auto button toggles auto-forward mode, which makes the game advance without you clicking."
-    e "Al hacer clic en el botón auto, se alterna el modo de avance automático, lo que hace que el juego avance sin que usted haga clic."
+    e "Al hacer clic en el botón auto, se alterna el modo de avance automático, lo que hace que el juego avance sin que hagas clic."
 
 # game/tutorial_playing.rpy:63
 translate spanish tutorial_playing_14e1c854:

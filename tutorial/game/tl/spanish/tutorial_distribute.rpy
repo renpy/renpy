@@ -69,5 +69,5 @@ translate spanish distribute_f1cbc9d0:
 translate spanish distribute_500b3e7f:
 
     # e "I hope that soon, yours will be one of them!"
-    e "Espero que pronto, la tuya sea una de ellas!"
+    e "¡Espero que pronto, la tuya sea una de ellas!"
 
