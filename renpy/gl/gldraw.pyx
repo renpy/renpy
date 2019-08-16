@@ -187,6 +187,10 @@ cdef class GLDraw:
         if renpy.android:
             fullscreen = False
 
+        # Refresh fullscreen status (e.g. user pressed Esc. in browser)
+        main_window = pygame.display.get_window()
+        self.old_fullscreen = main_window is not None and bool(main_window.get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP|pygame.WINDOW_FULLSCREEN))
+
         if fullscreen != self.old_fullscreen:
 
             self.did_init = False
