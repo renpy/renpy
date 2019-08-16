@@ -228,11 +228,56 @@ def choose_variants():
             renpy.config.variants.insert(0, 'phone')
             renpy.config.variants.insert(0, 'small')
 
-    else:
-        if renpy.emscripten:
-            renpy.config.variants.insert(0, 'web')
+    elif renpy.emscripten:
+        import emscripten, re
+
+        # web
+        renpy.config.variants.insert(0, 'web')
+
+        # mobile
+        userAgent = emscripten.run_script_string(r'''navigator.userAgent''')
+        mobile = re.search('Mobile|Android|iPad|iPhone', userAgent)
+        if mobile:
+            renpy.config.variants.insert(0, 'mobile')
+        # Reserve android/ios for when the OS API is exposed
+        #if re.search('Android', userAgent):
+        #    renpy.config.variants.insert(0, 'android')
+        #if re.search('iPad|iPhone', userAgent):
+        #    renpy.config.variants.insert(0, 'ios')
+
+        # touch
+        touch = emscripten.run_script_int(r'''
+          ('ontouchstart' in window) ||
+            (navigator.maxTouchPoints > 0) ||
+            (navigator.msMaxTouchPoints > 0)''')
+        if touch == 1:
+            # mitigate hybrids (e.g. ms surface) by restricting touch to mobile
+            if mobile:
+                renpy.config.variants.insert(0, 'touch')
+
+        # large/medium/small
+        # tablet/phone
+        # screen.width/height is auto-adjusted by browser,
+        # so it can be used as a physical sizereference
+        # (see also window.devicePixelRatio)
+        # e.g. Galaxy S5:
+        # - physical / OpenGL: 1080x1920
+        # - web screen: 360x640 w/ devicePixelRatio=3
+        ref_width  = emscripten.run_script_int(r'''screen.width''')
+        ref_height = emscripten.run_script_int(r'''screen.height''')
+        # medium reference point: ipad 1024x768, ipad pro 1336x1024 (browser "pixels")
+        if mobile:
+            if (ref_width < 768 or ref_height < 768):
+                renpy.config.variants.insert(0, 'small')
+                renpy.config.variants.insert(0, 'phone')
+            else:
+                renpy.config.variants.insert(0, 'medium')
+                renpy.config.variants.insert(0, 'tablet')
         else:
-            renpy.config.variants.insert(0, 'pc')
+            renpy.config.variants.insert(0, 'large')
+
+    else:
+        renpy.config.variants.insert(0, 'pc')
 
         renpy.config.variants.insert(0, 'large')
 
