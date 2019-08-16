@@ -105,9 +105,9 @@ init -1500 python:
         as sensitive. This only makes sense when the actions is a list.
         For example::
 
-            # The button is sensitive if mars_flag is True
+            # The button is sensitive only if mars_flag is True
             textbutton "Marsopolis":
-                action [ SelectedIf(SetVariable("mars_flag", True)), SetVariable("on_mars", True) ]
+                action [ SensitiveIf(SetVariable("mars_flag", True)), SetVariable("on_mars", True) ]
         """
 
         def __init__(self, expression):
