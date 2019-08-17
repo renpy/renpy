@@ -74,17 +74,25 @@ init -1500 python:
         """
         :doc: other_action
 
-        This allows to select which action will be used to mark button
-        as selected. This only makes sense when the actions is a list.
-        For example::
+        This indicates that one action in a list of actions should be used
+        to determine if a button is selected. This only makes sense
+        when the button has a list of actions. For example::
 
             # The button is selected only if mars_flag is True
             textbutton "Marsopolis":
                 action [ SelectedIf(SetVariable("mars_flag", True)), SetVariable("on_mars", True) ]
+
+        The action inside SelectedIf is run normally when the button is clicked.
         """
+
+        # Note: This had been documented to take a boolean.
 
         def __init__(self, expression):
             self.expression = expression
+
+            if isinstance(expression, Action):
+                for i in [ "get_selected", "get_sensitive", "get_tooltip", "periodic", "unhovered", "unhovered" ]:
+                    setattr(self, i, getattr(expression, i, None))
 
         def __call__(self):
             if isinstance(self.expression, Action):
@@ -92,8 +100,6 @@ init -1500 python:
             return None
 
         def get_selected(self):
-            if isinstance(self.expression, Action):
-                return self.expression.get_selected()
             return self.expression
 
     @renpy.pure
@@ -101,17 +107,25 @@ init -1500 python:
         """
         :doc: other_action
 
-        This allows to select which action will be used to mark button
-        as sensitive. This only makes sense when the actions is a list.
-        For example::
+        This indicates that one action in a list of actions should be used
+        to determine if a button is sensitive. This only makes sense
+        when the button has a list of actions. For example::
 
             # The button is sensitive only if mars_flag is True
             textbutton "Marsopolis":
                 action [ SensitiveIf(SetVariable("mars_flag", True)), SetVariable("on_mars", True) ]
+
+        The action inside SensitiveIf is run normally when the button is clicked.
         """
+
+        # Note: This had been documented to take a boolean.
 
         def __init__(self, expression):
             self.expression = expression
+
+            if isinstance(expression, Action):
+                for i in [ "get_selected", "get_sensitive", "get_tooltip", "periodic", "unhovered", "unhovered" ]:
+                    setattr(self, i, getattr(expression, i, None))
 
         def __call__(self):
             if isinstance(self.expression, Action):
@@ -119,8 +133,6 @@ init -1500 python:
             return None
 
         def get_sensitive(self):
-            if isinstance(self.expression, Action):
-                return self.expression.get_sensitive()
             return self.expression
 
     @renpy.pure
