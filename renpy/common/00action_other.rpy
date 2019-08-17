@@ -74,22 +74,26 @@ init -1500 python:
         """
         :doc: other_action
 
-        This allows an expression to control if a button should be marked
-        as selected. It should be used as part of a list with one or more
-        actions. For example::
+        This allows to select which action will be used to mark button
+        as selected. This only makes sense when the actions is a list.
+        For example::
 
-            # The button is selected if mars_flag is True
+            # The button is selected only if mars_flag is True
             textbutton "Marsopolis":
-                action [ Jump("mars"), SelectedIf(mars_flag) ]
+                action [ SelectedIf(SetVariable("mars_flag", True)), SetVariable("on_mars", True) ]
         """
 
         def __init__(self, expression):
             self.expression = expression
 
         def __call__(self):
+            if isinstance(self.expression, Action):
+                return self.expression()
             return None
 
         def get_selected(self):
+            if isinstance(self.expression, Action):
+                return self.expression.get_selected()
             return self.expression
 
     @renpy.pure
@@ -97,22 +101,26 @@ init -1500 python:
         """
         :doc: other_action
 
-        This allows an expression to control if a button should be marked
-        as sensitive. It should be used as part of a list with one or more
-        actions. For example::
+        This allows to select which action will be used to mark button
+        as sensitive. This only makes sense when the actions is a list.
+        For example::
 
-            # The button is sensitive if mars_flag is True
+            # The button is sensitive only if mars_flag is True
             textbutton "Marsopolis":
-                action [ Jump("mars"), SensitiveIf(mars_flag) ]
+                action [ SensitiveIf(SetVariable("mars_flag", True)), SetVariable("on_mars", True) ]
         """
 
         def __init__(self, expression):
             self.expression = expression
 
         def __call__(self):
+            if isinstance(self.expression, Action):
+                return self.expression()
             return None
 
         def get_sensitive(self):
+            if isinstance(self.expression, Action):
+                return self.expression.get_sensitive()
             return self.expression
 
     @renpy.pure
