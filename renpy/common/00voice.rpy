@@ -528,7 +528,7 @@ python early hide:
         return fn
 
     def execute_voice(fn):
-        fn = eval(fn)
+        fn = _audio_eval(fn)
         voice(fn)
 
     def lint_voice(fn):
