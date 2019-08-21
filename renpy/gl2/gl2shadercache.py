@@ -3,15 +3,14 @@ import io
 import os
 
 import renpy.display
-from renpy.gl2.gl2shader import Program
 
 # A map from shader part name to ShaderPart
 shader_part = { }
 
 
-class ShaderPart(object):
+def register_shader(name, **kwargs):
     """
-    This represents a part of a shader.
+    This registers a part of a shader. Shader parts have a name, and then
 
     `name`
         A string giving the name of the shader part. Names starting with an
@@ -28,7 +27,6 @@ class ShaderPart(object):
             varying vec2 vTexCoord;
             '''
 
-
     `vertex_functions`
         If given, a string containing functions that will be included in the
         vertex shader.
@@ -40,8 +38,16 @@ class ShaderPart(object):
     Other keyword arguments should start with ``vertex_`` or ``fragment_``,
     and end with an integer priority. So "fragment_120" or "vertex_30". These
     give text that's placed in the appropriate shader at the given priority,
-    with lower priority numbers being insiderted before highter priority
-    numbers.
+    with lower priority numbers inserted before higher priority numbers.
+    """
+
+    ShaderPart(name, **kwargs)
+
+
+class ShaderPart(object):
+    """
+    Arguments are as for register_shader.
+
     """
 
     def __init__(self, name, variables="", vertex_functions="", fragment_functions="", **kwargs):
@@ -237,6 +243,8 @@ class ShaderCache(object):
         vertex = source(vertex_variables, vertex_parts, vertex_functions, False, self.gles)
         fragment = source(fragment_variables, fragment_parts, fragment_functions, True, self.gles)
 
+        from renpy.gl2.gl2shader import Program
+
         rv = Program(sortedpartnames, vertex, fragment)
         rv.load()
 
@@ -316,87 +324,3 @@ class ShaderCache(object):
                 self.missing.add(partnames)
 
         f.close()
-
-
-ShaderPart("renpy.geometry", variables="""
-    uniform mat4 uTransform;
-    attribute vec4 aPosition;
-""", vertex_100="""
-    gl_Position = uTransform * aPosition;
-""")
-
-ShaderPart("renpy.texture", variables="""
-    uniform sampler2D uTex0;
-    attribute vec2 aTexCoord;
-    varying vec2 vTexCoord;
-""", vertex_110="""
-    vTexCoord = aTexCoord;
-""", fragment_110="""
-    gl_FragColor = texture2D(uTex0, vTexCoord.xy);
-""")
-
-ShaderPart("renpy.solid", variables="""
-    uniform vec4 uSolidColor;
-""", fragment_110="""
-    gl_FragColor = uSolidColor;
-""")
-
-ShaderPart("renpy.dissolve", variables="""
-    uniform sampler2D uTex0;
-    uniform sampler2D uTex1;
-    uniform float uDissolve;
-    attribute vec2 aTexCoord;
-    varying vec2 vTexCoord;
-""", vertex_110="""
-    vTexCoord = aTexCoord;
-""", fragment_110="""
-    vec4 color0 = texture2D(uTex0, vTexCoord.st);
-    vec4 color1 = texture2D(uTex1, vTexCoord.st);
-
-    gl_FragColor = mix(color0, color1, uDissolve);
-""")
-
-ShaderPart("renpy.imagedissolve", variables="""
-    uniform sampler2D uTex0;
-    uniform sampler2D uTex1;
-    uniform sampler2D uTex2;
-    uniform float uDissolveOffset;
-    uniform float uDissolveMultiplier;
-    attribute vec2 aTexCoord;
-    varying vec2 vTexCoord;
-""", vertex_110="""
-    vTexCoord = aTexCoord;
-""", fragment_110="""
-    vec4 color0 = texture2D(uTex0, vTexCoord.st);
-    vec4 color1 = texture2D(uTex1, vTexCoord.st);
-    vec4 color2 = texture2D(uTex2, vTexCoord.st);
-
-    float a = clamp((color0.a + uDissolveOffset) * uDissolveMultiplier, 0.0, 1.0);
-    gl_FragColor = mix(color1, color2, a);
-""")
-
-
-ShaderPart("renpy.colormatrix", variables="""
-    uniform mat4 uColorMatrix;
-""", fragment_120="""
-    gl_FragColor = gl_FragColor * uColorMatrix;
-""")
-
-ShaderPart("renpy.alpha", variables="""
-    uniform float uAlpha;
-    uniform float uOver;
-""", fragment_130="""
-    gl_FragColor = gl_FragColor * vec4(uAlpha, uAlpha, uAlpha, uAlpha * uOver);
-""")
-
-ShaderPart("renpy.ftl", variables="""
-    attribute vec4 aPosition;
-    attribute vec2 aTexCoord;
-    varying vec2 vTexCoord;
-    uniform sampler2D uTex0;
-""", vertex_100="""
-    vTexCoord = aTexCoord;
-    gl_Position = aPosition;
-""", fragment_100="""
-    gl_FragColor = texture2D(uTex0, vTexCoord.xy);
-""")
