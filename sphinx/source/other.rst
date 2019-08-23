@@ -61,9 +61,13 @@ it's running on.
 
     True when running on iOS.
 
+.. var:: renpy.emscripten
+
+    True when running in the browser.
+
 .. var:: renpy.mobile
 
-    True when running on Android or iOS.
+    True when running on Android or iOS or in the browser.
 
 These are only set when running on the actual devices, not when running on
 in the emulators. These are more intended for use in platform-specific
