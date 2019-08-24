@@ -91,7 +91,6 @@ from renpy.parser import unelide_filename, get_parse_errors
 from renpy.translation import change_language, known_languages
 from renpy.translation.generation import generic_filter as transform_text
 
-
 from renpy.persistent import register_persistent
 
 from renpy.character import show_display_say, predict_show_display_say, display_say
@@ -115,6 +114,8 @@ from renpy.ast import eval_who
 from renpy.loader import add_python_directory
 
 from renpy.lint import try_compile, try_eval
+
+from renpy.gl2.gl2shadercache import register_shader
 
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")

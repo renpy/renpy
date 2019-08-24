@@ -75,6 +75,8 @@ class BarValue(renpy.object.Object):
     # Alt text.
     alt = "Bar"
 
+    force_step = False
+
     def replaces(self, other):
         return
 

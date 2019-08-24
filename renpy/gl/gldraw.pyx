@@ -65,10 +65,11 @@ cdef bint EGL
 EGL = egl_available()
 
 # Cache various externals, so we can use them more efficiently.
-cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
+cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE, FLATTEN
 DISSOLVE = renpy.display.render.DISSOLVE
 IMAGEDISSOLVE = renpy.display.render.IMAGEDISSOLVE
 PIXELLATE = renpy.display.render.PIXELLATE
+FLATTEN  = renpy.display.render.FLATTEN
 
 cdef object IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
@@ -185,6 +186,10 @@ cdef class GLDraw:
 
         if renpy.android:
             fullscreen = False
+
+        # Refresh fullscreen status (e.g. user pressed Esc. in browser)
+        main_window = pygame.display.get_window()
+        self.old_fullscreen = main_window is not None and bool(main_window.get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP|pygame.WINDOW_FULLSCREEN))
 
         if fullscreen != self.old_fullscreen:
 
@@ -1032,7 +1037,7 @@ cdef class GLDraw:
             return 0
 
 
-        if rend.operation == PIXELLATE:
+        elif rend.operation == PIXELLATE:
             self.set_clip(clip)
 
             p = rend.operation_parameter
@@ -1053,6 +1058,21 @@ cdef class GLDraw:
                 over,
                 self.environ,
                 True)
+
+            return 0
+
+        elif rend.operation == FLATTEN:
+            self.set_clip(clip)
+
+            gltexture.blit(
+                rend.children[0][0].render_to_texture(True),
+                xo,
+                yo,
+                reverse * self.draw_to_virt,
+                alpha,
+                over,
+                self.environ,
+                nearest)
 
             return 0
 

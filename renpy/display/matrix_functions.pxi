@@ -101,8 +101,11 @@ def perspective(float w, float h, float n, float p, float f):
 
 def screen_projection(float w, float h):
     """
-    This generates a matrix that project the Ren'Py space, where (0, 0) is the
-    top left and (`w`, `h`) is the bottom right, into the OpenGL space.
+    This generates a matrix that projects the Ren'Py space, where (0, 0) is the
+    top left and (`w`, `h`) is the bottom right, into the OpenGL viewport, where
+    (-1.0, 1.0) is the top left and (1.0, -1.0) is the bottom.
+
+    Generates the matrix that projects the Ren'Py screen to the OpenGL screen.
     """
 
     cdef Matrix rv = Matrix(None)
@@ -111,6 +114,27 @@ def screen_projection(float w, float h):
     rv.xdw = -1.00000000000000
     rv.ydy = -2/h
     rv.ydw = 1.00000000000000
+    rv.zdz = 1.00000000000000
+    rv.wdw = 1.00000000000000
+
+    return rv
+
+
+def texture_projection(float w, float h):
+    """
+    This generates a matrix that project the Ren'Py space, where (0, 0) is the
+    top left and (`w`, `h`) is the bottom right, into the OpenGL render-to-texture
+    space, where (-1.0, -1.0) is the top left and (1.0, 1.0) is the bottom.
+
+    Generates the matrix that projects the Ren'Py screen to the OpenGL screen.
+    """
+
+    cdef Matrix rv = Matrix(None)
+
+    rv.xdx = 2/w
+    rv.xdw = -1.00000000000000
+    rv.ydy = 2/h
+    rv.ydw = -1.00000000000000
     rv.zdz = 1.00000000000000
     rv.wdw = 1.00000000000000
 

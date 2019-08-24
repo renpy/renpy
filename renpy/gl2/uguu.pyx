@@ -38,7 +38,7 @@ from libc.stdlib cimport calloc, free
 from cpython.buffer cimport PyObject_GetBuffer, PyBuffer_Release, PyBUF_CONTIG, PyBUF_CONTIG_RO
 
 cimport uguugl
-from uguugl import reset_error, get_error, enable_check_error, load
+from uguugl import load
 
 cdef object proxy_return_string(const GLubyte *s):
     """

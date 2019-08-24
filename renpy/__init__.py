@@ -171,6 +171,7 @@ backup_blacklist = {
     "renpy.test.testkey",
     "renpy.test.testmouse",
     "renpy.test.testparser",
+    "renpy.gl2",
     "renpycoverage",
     }
 
@@ -586,7 +587,7 @@ def reload_all():
     renpy.display.render.mark_sweep()
 
     # Get rid of the draw module and interface.
-    renpy.display.draw.deinit()
+    renpy.display.draw.quit()
     renpy.display.draw = None
     renpy.display.interface = None
 

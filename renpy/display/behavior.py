@@ -1428,7 +1428,8 @@ class Adjustment(renpy.object.Object):
 
     """
 
-    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None):  # @ReservedAssignment
+    force_step = False
+    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False):  # @ReservedAssignment
         """
         The following parameters correspond to fields or properties on
         the adjustment object:
@@ -1456,12 +1457,12 @@ class Adjustment(renpy.object.Object):
         The following parameters control the behavior of the adjustment.
 
         `adjustable`
-             If True, this adjustment can be changed by a bar. If False,
-             it can't.
+            If True, this adjustment can be changed by a bar. If False,
+            it can't.
 
-             It defaults to being adjustable if a `changed` function
-             is given or if the adjustment is associated with a viewport,
-             and not adjustable otherwise.
+            It defaults to being adjustable if a `changed` function
+            is given or if the adjustment is associated with a viewport,
+            and not adjustable otherwise.
 
         `changed`
             This function is called with the new value when the value of
@@ -1470,6 +1471,16 @@ class Adjustment(renpy.object.Object):
         `ranged`
             This function is called with the adjustment object when
             the range of the adjustment is set by a viewport.
+
+        `force_step`
+            If True and this adjustment changes by dragging associated
+            viewport or a bar, value will be changed only if the drag
+            reached next step.
+            If "release" and this adjustment changes by dragging associated
+            viewport or a bar, after the release, value will be
+            rounded to the nearest step.
+            If False, this adjustment will changes by dragging, ignoring
+            the step value.
 
         .. method:: change(value)
 
@@ -1490,9 +1501,27 @@ class Adjustment(renpy.object.Object):
         self.changed = changed
         self.adjustable = adjustable
         self.ranged = ranged
+        self.force_step = force_step
+
+    def round_value(self, value, release):
+        # Prevent deadlock border points
+        if value <= 0:
+            return 0
+        elif value >= self._range:
+            return self._range
+
+        if self.force_step is False:
+            return value
+
+        if (not release) and self.force_step == "release":
+            return value
+
+        return type(self.value)(self.step * round(float(value) / self.step))
 
     def get_value(self):
-        if self._value > self._range:
+        if self._value <= 0:
+            return 0
+        if self._value >= self._range:
             return self._range
 
         return self._value
@@ -1907,9 +1936,18 @@ class Bar(renpy.display.core.Displayable):
             renpy.display.tts.speak(renpy.minstore.__("deactivate"))
             self.set_style_prefix("hover_", True)
             renpy.display.focus.set_grab(None)
-            ignore_event = True
+
+            # Invoke rounding adjustment on bar release
+            value = self.adjustment.round_value(value, release=True)
+            if value != old_value:
+                rv = self.adjustment.change(value)
+                if rv is not None:
+                    return rv
+
+            raise renpy.display.core.IgnoreEvent()
 
         if value != old_value:
+            value = self.adjustment.round_value(value, release=False)
             rv = self.adjustment.change(value)
             if rv is not None:
                 return rv

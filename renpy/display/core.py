@@ -1921,6 +1921,10 @@ class Interface(object):
                 renderers = [ "gl", "angle", "sw" ]
             else:
                 renderers = [ "gl", "sw" ]
+
+            if renpy.config.gl2:
+                renderers = [ "gl2", "egl2" ] + renderers
+
         else:
             renderers = [ renderer, "sw" ]
 
@@ -2040,6 +2044,7 @@ class Interface(object):
         for draw in draws:
             if draw.set_mode(virtual_size, physical_size, fullscreen):
                 renpy.display.draw = draw
+                renpy.display.render.models = draw.info.get("models", False)
                 break
             else:
                 # pygame.display.quit()
@@ -3416,6 +3421,11 @@ class Interface(object):
                         continue
 
                     size = (ev.w // self.dpi_scale, ev.h // self.dpi_scale)
+
+                    # Refresh fullscreen status (e.g. user pressed Esc. in browser)
+                    main_window = pygame.display.get_window()
+                    self.fullscreen = main_window is not None and bool(main_window.get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP|pygame.WINDOW_FULLSCREEN))
+                    renpy.game.preferences.fullscreen = self.fullscreen
 
                     if pygame.display.get_surface().get_size() != ev.size:
                         self.set_mode(size)

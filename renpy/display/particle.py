@@ -171,8 +171,7 @@ class SpriteManager(renpy.display.core.Displayable):
         SpriteManagers have the following fields:
 
         `width`, `height`
-
-             The width and height of this SpriteManager, in pixels.
+            The width and height of this SpriteManager, in pixels.
 
 
         SpriteManagers have the following methods:

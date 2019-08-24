@@ -2,7 +2,7 @@ from uguugl cimport *
 from libc.stdlib cimport malloc, free
 
 from renpy.gl2.gl2geometry cimport Polygon, Mesh
-from renpy.gl2.gl2texture cimport GLTextureCore
+from renpy.gl2.gl2texture cimport GLTexture
 from renpy.display.matrix cimport Matrix
 
 class ShaderError(Exception):
@@ -56,6 +56,7 @@ cdef class UniformSampler2D(Uniform):
     cdef int sampler
 
     def __init__(self, program, location):
+        Uniform.__init__(self, program, location)
         self.sampler = program.sampler
         program.sampler += 1
 
@@ -63,7 +64,7 @@ cdef class UniformSampler2D(Uniform):
         glActiveTexture(GL_TEXTURE0 + self.sampler)
         glUniform1i(self.location, self.sampler)
 
-        if isinstance(data, GLTextureCore):
+        if isinstance(data, GLTexture):
             glBindTexture(GL_TEXTURE_2D, data.number)
         else:
             glBindTexture(GL_TEXTURE_2D, data)
@@ -275,6 +276,10 @@ cdef class Program:
 
             glVertexAttribPointer(a.location, a.size, GL_FLOAT, GL_FALSE, mesh.stride * sizeof(float), mesh.get_data(offset))
             glEnableVertexAttribArray(a.location)
+
+        if mesh.polygon_points == 3:
+            glDrawArrays(GL_TRIANGLES, 0, 3 * mesh.polygon_count)
+            return
 
         cdef int i = 0
         cdef Polygon p

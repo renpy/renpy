@@ -954,6 +954,9 @@ ftfont_scale = { }
 # This is used to scale the ascent and descent of a font.
 ftfont_vertical_extent_scale = { }
 
+# The default shader.
+default_shader = "renpy.geometry"
+
 
 def say_attribute_transition_callback(*args):
     """
@@ -992,6 +995,13 @@ disable_input = False
 # If True, the order of substrings in the Side positions will
 # also determine the order of their render.
 keep_side_render_order = True
+
+# Should this game enable and require gl2?
+gl2 = False
+
+# Does this game use the depth buffer? If so, how many bits of depth should
+# it use?
+depth_size = None
 
 del os
 del collections

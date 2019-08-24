@@ -1230,6 +1230,8 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
     nosave = [ 'child' ]
 
+    _duplicatable = True
+
     def after_setstate(self):
         self.child = None
 
@@ -1248,12 +1250,25 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         self.args = args
         self.kwargs = kwargs
 
+    def _duplicate(self, args):
+        rv = self._copy(args)
+
+        if rv.child is not None and rv.child._duplicateable:
+            rv.child = rv.child._duplicate(args)
+
+        return rv
+
     def visit(self):
         return [ ]
 
     def update(self, st, at):
         child, redraw = self.function(st, at, *self.args, **self.kwargs)
         child = renpy.easy.displayable(child)
+
+        if child._duplicatable:
+            child = child._duplicate(self._args)
+            child._unique()
+
         child.visit_all(lambda c : c.per_interact())
 
         self.child = child
@@ -1856,14 +1871,13 @@ class Flatten(Container):
         cr = renpy.display.render.render(self.child, width, height, st, at)
         cw, ch = cr.get_size()
 
-        tex = cr.render_to_texture(True)
-
         rv = renpy.display.render.Render(cw, ch)
-        rv.blit(tex, (0, 0))
-        rv.depends_on(cr, focus=True)
+        rv.blit(cr, (0, 0))
 
-        rv.reverse = renpy.display.draw.draw_to_virt
-        rv.forward = renpy.display.render.IDENTITY
+        rv.operation = renpy.display.render.FLATTEN
+
+        rv.mesh = True
+        rv.shaders = ( "renpy.texture", )
 
         self.offsets = [ (0, 0) ]
 
@@ -1871,6 +1885,7 @@ class Flatten(Container):
 
     def get_placement(self):
         return self.child.get_placement()
+
 
 class AlphaMask(Container):
     """

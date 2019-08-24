@@ -22,24 +22,28 @@
 from uguugl cimport *
 from renpy.gl2.gl2shader cimport Program
 from renpy.gl2.gl2geometry cimport Mesh
+from renpy.gl2.gl2draw cimport GL2Draw
 
 cdef class TextureLoader:
 
-    # The texture generation.
-    cdef int generation
+    # The draw object associated with this TextureLoader
+    cdef GL2Draw draw
 
-    # A map from texture number to the generation that number belongs to.
-    cdef dict texture_generation
+    # All the texture number currently allocated by this loader.
+    cdef set allocated
 
     # A list of (number, generation) pairs for textures that need to be freed.
     cdef list free_list
 
-    # The number of textures that have been allocated but not deallocated.
-    cdef int texture_count
-
     # The total size (in bytes) of all the textures that have been allocated
     # but not deallocated.
     cdef int total_texture_size
+
+    # The color renderbuffer object used for fast texture loading.
+    cdef GLuint ftl_color_renderbuffer
+
+    # The depth renderbuffer object use for fast texture loading.
+    cdef GLuint ftl_depth_renderbuffer
 
     # The framebuffer object used for fast texture loading.
     cdef GLuint ftl_fbo
@@ -47,23 +51,19 @@ cdef class TextureLoader:
     # The program used for fast texture loading
     cdef Program ftl_program
 
-    # The mesh used for fast texture loading.
-    cdef Mesh ftl_mesh
-
     # The queue of textures that need to be loaded.
     cdef object texture_load_queue
 
+    # The maximum size of a texture.
+    cdef GLint max_texture_width
+    cdef GLint max_texture_height
 
 
-cdef class GLTextureCore:
+cdef class GLTexture:
 
-    # The size of the texture.
+    # The size of the texture, in pixels.
     cdef public int width
     cdef public int height
-
-    # A generation number, to prevent stale texture objects from being
-    # retained.
-    cdef public int generation
 
     # The number of the texture in OpenGL.
     cdef public unsigned int number
@@ -71,10 +71,13 @@ cdef class GLTextureCore:
     # Has this texture been loaded yet?
     cdef public bint loaded
 
-    # This is the data required to load a texture, if it has not been
-    # loaded yet.
+    # If we are doing in-place loading, this is the data that's used for
+    # that.
+    cdef object surface
+
+    # If we're not doing in-place loading, this is the data that's used for
+    # that.
     cdef unsigned char *data
 
     # The texture loader associated with this texture.
     cdef TextureLoader loader
-

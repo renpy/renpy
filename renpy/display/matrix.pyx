@@ -66,9 +66,8 @@ cdef class Matrix:
         self.wdw = 1.0
 
         for i in range(16):
-            if fields[i] in self.state:
-                self.m[i] = self.state[fields[i]]
-
+            if fields[i] in state:
+                self.m[i] = state[fields[i]]
 
     def __mul__(Matrix self, Matrix other):
 

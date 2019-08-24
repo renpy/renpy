@@ -3,15 +3,14 @@ import io
 import os
 
 import renpy.display
-from renpy.gl2.gl2shader import Program
 
 # A map from shader part name to ShaderPart
 shader_part = { }
 
 
-class ShaderPart(object):
+def register_shader(name, **kwargs):
     """
-    This represents a part of a shader.
+    This registers a part of a shader. Shader parts have a name, and then
 
     `name`
         A string giving the name of the shader part. Names starting with an
@@ -28,20 +27,39 @@ class ShaderPart(object):
             varying vec2 vTexCoord;
             '''
 
+    `vertex_functions`
+        If given, a string containing functions that will be included in the
+        vertex shader.
+
+    `fragment_functions`
+        If given, a string containing functions that will be included in the
+        fragment shader.
+
     Other keyword arguments should start with ``vertex_`` or ``fragment_``,
     and end with an integer priority. So "fragment_120" or "vertex_30". These
     give text that's placed in the appropriate shader at the given priority,
-    with lower priority numbers being insiderted before highter priority
-    numbers.
+    with lower priority numbers inserted before higher priority numbers.
     """
 
-    def __init__(self, name, variables="", **kwargs):
+    ShaderPart(name, **kwargs)
+
+
+class ShaderPart(object):
+    """
+    Arguments are as for register_shader.
+
+    """
+
+    def __init__(self, name, variables="", vertex_functions="", fragment_functions="", **kwargs):
 
         if not re.match(r'^[\w\.]+$', name):
             raise Exception("The shader name {!r} contains an invalid character. Shader names are limited to ASCII alphanumeric characters, _, and .".format(name))
 
         self.name = name
         shader_part[name] = self
+
+        self.vertex_functions = vertex_functions
+        self.fragment_functions = fragment_functions
 
         # A list of priority, text pairs for each section of the vertex and fragment shaders.
         self.vertex_parts = [ ]
@@ -107,7 +125,7 @@ class ShaderPart(object):
 cache = { }
 
 
-def source(variables, parts, fragment):
+def source(variables, parts, functions, fragment, gles):
     """
     Given lists of variables and parts, converts them into textual source
     code for a shader.
@@ -118,13 +136,22 @@ def source(variables, parts, fragment):
 
     rv = [ ]
 
-    if fragment:
+    if gles:
         rv.append("""
-#ifdef GL_ES
-precision highp float;
-#endif
-
+#version 100 es
 """)
+
+        if fragment:
+            rv.append("""
+precision mediump float;
+""")
+
+    else:
+        rv.append("""
+#version 120
+""")
+
+    rv.extend(functions)
 
     for storage, type_, name in sorted(variables):
         rv.append("{} {} {};\n".format(storage, type_, name))
@@ -148,11 +175,14 @@ class ShaderCache(object):
     loading the shaders back into the cache.
     """
 
-    def __init__(self, filename):
+    def __init__(self, filename, gles):
 
         # The filename that we'll load the list of shaders from, and
         # persist it to.
         self.filename = filename
+
+        # Are we gles?
+        self.gles = gles
 
         # A map from tuples of partnames to the shaders that have been
         # created.
@@ -175,7 +205,9 @@ class ShaderCache(object):
         if rv is not None:
             return rv
 
-        sortedpartnames = tuple(sorted(set(partnames)))
+        partnameset = set(partnames)
+        partnameset.add(renpy.config.default_shader)
+        sortedpartnames = tuple(sorted(partnameset))
 
         rv = self.cache.get(sortedpartnames, None)
         if rv is not None:
@@ -187,9 +219,11 @@ class ShaderCache(object):
 
         vertex_variables = set()
         vertex_parts = [ ]
+        vertex_functions = [ ]
 
         fragment_variables = set()
         fragment_parts = [ ]
+        fragment_functions = [ ]
 
         for i in sortedpartnames:
 
@@ -200,12 +234,16 @@ class ShaderCache(object):
 
             vertex_variables |= p.vertex_variables
             vertex_parts.extend(p.vertex_parts)
+            vertex_functions.append(p.vertex_functions)
 
             fragment_variables |= p.fragment_variables
             fragment_parts.extend(p.fragment_parts)
+            fragment_functions.append(p.fragment_functions)
 
-        vertex = source(vertex_variables, vertex_parts, False)
-        fragment = source(fragment_variables, fragment_parts, True)
+        vertex = source(vertex_variables, vertex_parts, vertex_functions, False, self.gles)
+        fragment = source(fragment_variables, fragment_parts, fragment_functions, True, self.gles)
+
+        from renpy.gl2.gl2shader import Program
 
         rv = Program(sortedpartnames, vertex, fragment)
         rv.load()
@@ -286,47 +324,3 @@ class ShaderCache(object):
                 self.missing.add(partnames)
 
         f.close()
-
-
-ShaderPart("renpy.geometry", variables="""
-    uniform mat4 uTransform;
-    attribute vec4 aPosition;
-""", vertex_100="""
-    gl_Position = uTransform * aPosition;
-""")
-
-ShaderPart("renpy.texture", variables="""
-    uniform sampler2D uTex0;
-    attribute vec2 aTexCoord;
-    varying vec2 vTexCoord;
-""", vertex_110="""
-    vTexCoord = aTexCoord;
-""", fragment_110="""
-    gl_FragColor = texture2D(uTex0, vTexCoord.xy);
-""")
-
-
-ShaderPart("renpy.solid", variables="""
-    uniform vec4 uSolidColor;
-""", fragment_110="""
-    gl_FragColor = uSolidColor;
-""")
-
-ShaderPart("renpy.colormatrix", variables="""
-    uniform mat4 uColorMatrix;
-""", fragment_120="""
-    gl_FragColor = gl_FragColor * uColorMatrix;
-""")
-
-
-ShaderPart("renpy.ftl", variables="""
-    attribute vec4 aPosition;
-    attribute vec2 aTexCoord;
-    varying vec2 vTexCoord;
-    uniform sampler2D uTex0;
-""", vertex_100="""
-    vTexCoord = aTexCoord;
-    gl_Position = aPosition;
-""", fragment_100="""
-    gl_FragColor = texture2D(uTex0, vTexCoord.xy);
-""")
