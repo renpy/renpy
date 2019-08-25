@@ -124,7 +124,7 @@ not edit the files in sphinx/source/inc directly, as they will be overwritten.
 Docstrings may include tags on the first few lines:
 
 \:doc: `section` `kind`
-    Indicates that this functions should be documented. `section` gives
+    Indicates that this function should be documented. `section` gives
     the name of the include file the function will be documented in, while
     `kind` indicates the kind of object to be documented (one of ``function``,
     ``method`` or ``class``. If omitted, `kind` will be auto-detected.
