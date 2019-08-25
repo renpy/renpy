@@ -190,6 +190,10 @@ init -1900 python:
         if version <= (7, 3, 0):
             config.force_sound = False
 
+        if version <= (7, 3, 2):
+            config.audio_directory = None
+
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None
