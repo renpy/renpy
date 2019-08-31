@@ -243,10 +243,8 @@ conflicts.
 Named stores can be accessed by supplying the ``in`` clause to
 ``python`` or ``init python``, all of which run Python in a named
 store. Each store corresponds to a Python module. The default store is
-``store``, while a named store is accessed as ``store.name``. These
-Python modules can be imported using the Python ``import`` statement,
-while names in the modules can be imported using the Python ``from``
-statement.
+``store``, while a named store is accessed as ``store.name``. Names in
+the modules can be imported using the Python ``from`` statement.
 
 For example::
 
@@ -259,9 +257,6 @@ For example::
             global serial_number
             serial_number += 1
             return serial_number
-
-    init python:
-        import store.mystore as mystore
 
     label start:
         $ serial = mystore.serial()
