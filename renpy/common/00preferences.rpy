@@ -200,7 +200,7 @@ init -1500 python:
          * Preference("gl tearing", False) - Skips frames rather than tearing.
 
          * Preference("font transform", "opendyslexic") - Sets the accessibility font transform to opendyslexic.
-         * Preference("font transform", "dejavusans") - Sets the accessibility font trandform to deja vu sans.
+         * Preference("font transform", "dejavusans") - Sets the accessibility font transform to deja vu sans.
          * Preference("font transform", None) - Disables the accessibility font transform.
 
          * Preference("font size", 1.0) - Sets the accessibility font size scaling factor.
