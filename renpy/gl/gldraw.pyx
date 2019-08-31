@@ -1113,7 +1113,7 @@ cdef class GLDraw:
             return 0
 
         if rend.reverse is not None and rend.reverse is not IDENTITY:
-            child_reverse = rend.reverse * reverse
+            child_reverse = reverse * rend.reverse
         else:
             child_reverse = reverse
 

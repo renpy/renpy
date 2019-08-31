@@ -639,8 +639,8 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         cxo, cyo = reverse.transform(cxo, cyo)
 
         if what.forward:
-            child_forward = forward * what.forward
-            child_reverse = what.reverse * reverse
+            child_forward = what.forward * forward
+            child_reverse = reverse * what.reverse
         else:
             child_forward = forward
             child_reverse = reverse
