@@ -33,7 +33,7 @@ translate spanish new_gui_da21de30:
 translate spanish new_gui_45765574:
 
     # e "We've put an extensive guide to customizing the GUI on the Ren'Py website. So if you want to learn more, visit the {a=https://www.renpy.org/doc/html/gui.html}GUI customization guide{/a}."
-    e "Hemos incluido una extensa guía para personalizar la GUI en el sitio web de Ren'Py. Entonces, si desea obtener más información, visite la {a=https://www.renpy.org/doc/html/gui.html} Guía de personalización de la GUI{/a}."
+    e "Hemos incluido una extensa guía para personalizar la GUI en el sitio web de Ren'Py. Entonces, si deseas obtener más información, visita la {a=https://www.renpy.org/doc/html/gui.html} Guía de personalización de la GUI{/a}."
 
 # game/indepth_style.rpy:58
 translate spanish styles_fa345a38:
