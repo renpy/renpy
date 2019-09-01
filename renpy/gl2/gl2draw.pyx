@@ -1092,15 +1092,16 @@ cdef class GL2DrawingContext:
 
             # TODO: Handle r.nearest.
 
-            if (r.reverse is not None) and (r.reverse is not IDENTITY):
-                transform = transform * r.reverse
-
             if r.properties is not None:
                 if "depth" in r.properties:
                     glClear(GL_DEPTH_BUFFER_BIT)
                     glEnable(GL_DEPTH_TEST)
 
             if r.cached_model is not None:
+
+                if (r.reverse is not None) and (r.reverse is not IDENTITY):
+                    transform = transform * r.reverse
+
                 self.draw_model(r.cached_model, transform)
                 return
 
@@ -1110,7 +1111,6 @@ cdef class GL2DrawingContext:
             if r.uniforms is not None:
                 self.uniforms = dict(self.uniforms)
                 self.uniforms.update(r.uniforms)
-
 
             for child, cx, cy, focus, main in r.visible_children:
 
@@ -1125,6 +1125,10 @@ cdef class GL2DrawingContext:
 
                 if (cx or cy):
                     child_transform = child_transform * offset(cx, cy, 0)
+
+                if (r.reverse is not None) and (r.reverse is not IDENTITY):
+                    child_transform = child_transform * r.reverse
+
 
                 self.draw(child, child_transform)
 
