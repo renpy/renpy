@@ -3,7 +3,7 @@
 translate spanish demo_minigame_8f14835c:
 
     # e "You may want to mix Ren'Py with other forms of gameplay. There are a couple of ways to do this."
-    e "Es posible que desee mezclar Ren'Py con otras formas de juego. Hay un par de maneras de hacer esto."
+    e "Es posible que desees mezclar Ren'Py con otras formas de juego. Hay un par de maneras de hacer esto."
 
 # game/indepth_minigame.rpy:222
 translate spanish demo_minigame_9b01503e:
