@@ -183,7 +183,7 @@ translate spanish style_basics_0cdcb8c3:
 translate spanish style_basics_aed05094:
 
     # e "Those are the basics of styles. If GUI customization isn't enough for you, styles let you customize just about everything in Ren'Py."
-    e "Esos son los fundamentos de los estilos. Si la personalización de la GUI no es suficiente para usted, los estilos le permiten personalizar casi todo en Ren'Py."
+    e "Esos son los fundamentos de los estilos. Si la personalización de la GUI no es suficiente para ti, los estilos te permiten personalizar casi todo en Ren'Py."
 
 # game/indepth_style.rpy:253
 translate spanish style_general_81f3c8ff:
@@ -357,7 +357,7 @@ translate spanish style_text_43be63b9:
 translate spanish style_text_343f6d34:
 
     # e "Those are the most common text style properties, but not the only ones. Here are a few more that you might need in special circumstances."
-    e "Esas son las propiedades de estilo text más comunes, pero no las únicas. Aquí hay algunos más que puede necesitar en circunstancias especiales."
+    e "Esas son las propiedades de estilo text más comunes, pero no las únicas. Aquí hay algunos más que puedes necesitar en circunstancias especiales."
 
 # game/indepth_style.rpy:479
 translate spanish style_text_e7204a95:
