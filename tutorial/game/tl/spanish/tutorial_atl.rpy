@@ -219,7 +219,7 @@ translate spanish tutorial_positions_7728dbf9:
 translate spanish tutorial_positions_1b1cedc6:
 
     # e "There are the xoffset and yoffset properties, which are applied after everything else, and offset things to the right or bottom, respectively."
-    e "Existen las propiedades xoffset y yoffset, que se aplican después de todo lo demás, y compensan las cosas a la derecha o al fondo, respectivamente."
+    e "Existen las propiedades xoffset y yoffset, que se aplican después de todo lo demás, y compensan las cosas a la derecha o abajo, respectivamente."
 
 # game/tutorial_atl.rpy:399
 translate spanish tutorial_positions_e6da2798:
