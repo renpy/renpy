@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import os
 import renpy
 
@@ -46,6 +44,21 @@ cdef int glBindFramebufferEXT(GLenum a0, GLuint a1) except? 0:
         error = realGlGetError()
         if error:
             message = 'GL error %x in glBindFramebufferEXT' % error
+            if check_errors & 1:
+                renpy.display.log.write('%s', message)
+            if check_errors & 2:
+                raise Exception(message)
+    return 1
+
+cdef int glBindRenderbufferEXT(GLenum a0, GLuint a1) except? 0:
+    if check_errors & 4:
+        renpy.display.log.write('glBindRenderbufferEXT')
+    cdef GLenum error
+    realGlBindRenderbufferEXT(a0, a1)
+    if check_errors:
+        error = realGlGetError()
+        if error:
+            message = 'GL error %x in glBindRenderbufferEXT' % error
             if check_errors & 1:
                 renpy.display.log.write('%s', message)
             if check_errors & 2:
@@ -128,6 +141,21 @@ cdef int glCompileShaderARB(GLhandleARB a0) except? 0:
                 raise Exception(message)
     return 1
 
+cdef int glCopyTexImage2D(GLenum a0, GLint a1, GLenum a2, GLint a3, GLint a4, GLsizei a5, GLsizei a6, GLint a7) except? 0:
+    if check_errors & 4:
+        renpy.display.log.write('glCopyTexImage2D')
+    cdef GLenum error
+    realGlCopyTexImage2D(a0, a1, a2, a3, a4, a5, a6, a7)
+    if check_errors:
+        error = realGlGetError()
+        if error:
+            message = 'GL error %x in glCopyTexImage2D' % error
+            if check_errors & 1:
+                renpy.display.log.write('%s', message)
+            if check_errors & 2:
+                raise Exception(message)
+    return 1
+
 cdef int glCopyTexSubImage2D(GLenum a0, GLint a1, GLint a2, GLint a3, GLint a4, GLint a5, GLsizei a6, GLsizei a7) except? 0:
     if check_errors & 4:
         renpy.display.log.write('glCopyTexSubImage2D')
@@ -197,6 +225,21 @@ cdef int glDeleteProgram(GLuint a0) except? 0:
         error = realGlGetError()
         if error:
             message = 'GL error %x in glDeleteProgram' % error
+            if check_errors & 1:
+                renpy.display.log.write('%s', message)
+            if check_errors & 2:
+                raise Exception(message)
+    return 1
+
+cdef int glDeleteRenderbuffersEXT(GLsizei a0, GLuint * a1) except? 0:
+    if check_errors & 4:
+        renpy.display.log.write('glDeleteRenderbuffersEXT')
+    cdef GLenum error
+    realGlDeleteRenderbuffersEXT(a0, a1)
+    if check_errors:
+        error = realGlGetError()
+        if error:
+            message = 'GL error %x in glDeleteRenderbuffersEXT' % error
             if check_errors & 1:
                 renpy.display.log.write('%s', message)
             if check_errors & 2:
@@ -323,6 +366,21 @@ cdef int glFinish() except? 0:
                 raise Exception(message)
     return 1
 
+cdef int glFramebufferRenderbufferEXT(GLenum a0, GLenum a1, GLenum a2, GLuint a3) except? 0:
+    if check_errors & 4:
+        renpy.display.log.write('glFramebufferRenderbufferEXT')
+    cdef GLenum error
+    realGlFramebufferRenderbufferEXT(a0, a1, a2, a3)
+    if check_errors:
+        error = realGlGetError()
+        if error:
+            message = 'GL error %x in glFramebufferRenderbufferEXT' % error
+            if check_errors & 1:
+                renpy.display.log.write('%s', message)
+            if check_errors & 2:
+                raise Exception(message)
+    return 1
+
 cdef int glFramebufferTexture2DEXT(GLenum a0, GLenum a1, GLenum a2, GLuint a3, GLint a4) except? 0:
     if check_errors & 4:
         renpy.display.log.write('glFramebufferTexture2DEXT')
@@ -347,6 +405,21 @@ cdef int glGenFramebuffersEXT(GLsizei a0, GLuint * a1) except? 0:
         error = realGlGetError()
         if error:
             message = 'GL error %x in glGenFramebuffersEXT' % error
+            if check_errors & 1:
+                renpy.display.log.write('%s', message)
+            if check_errors & 2:
+                raise Exception(message)
+    return 1
+
+cdef int glGenRenderbuffersEXT(GLsizei a0, GLuint * a1) except? 0:
+    if check_errors & 4:
+        renpy.display.log.write('glGenRenderbuffersEXT')
+    cdef GLenum error
+    realGlGenRenderbuffersEXT(a0, a1)
+    if check_errors:
+        error = realGlGetError()
+        if error:
+            message = 'GL error %x in glGenRenderbuffersEXT' % error
             if check_errors & 1:
                 renpy.display.log.write('%s', message)
             if check_errors & 2:
@@ -512,6 +585,21 @@ cdef int glReadPixels(GLint a0, GLint a1, GLsizei a2, GLsizei a3, GLenum a4, GLe
         error = realGlGetError()
         if error:
             message = 'GL error %x in glReadPixels' % error
+            if check_errors & 1:
+                renpy.display.log.write('%s', message)
+            if check_errors & 2:
+                raise Exception(message)
+    return 1
+
+cdef int glRenderbufferStorageEXT(GLenum a0, GLenum a1, GLsizei a2, GLsizei a3) except? 0:
+    if check_errors & 4:
+        renpy.display.log.write('glRenderbufferStorageEXT')
+    cdef GLenum error
+    realGlRenderbufferStorageEXT(a0, a1, a2, a3)
+    if check_errors:
+        error = realGlGetError()
+        if error:
+            message = 'GL error %x in glRenderbufferStorageEXT' % error
             if check_errors & 1:
                 renpy.display.log.write('%s', message)
             if check_errors & 2:
