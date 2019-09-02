@@ -44,33 +44,6 @@
 #endif
 
 
-#if defined RENPY_GLES_1
-
-#include <GLES/gl.h>
-#include <GLES/glext.h>
-
-#define glOrtho glOrthof
-
-#define GL_SOURCE0_ALPHA GL_SRC0_ALPHA
-#define GL_SOURCE1_ALPHA GL_SRC1_ALPHA
-#define GL_SOURCE2_ALPHA GL_SRC2_ALPHA
-#define GL_SOURCE0_RGB GL_SRC0_RGB
-#define GL_SOURCE1_RGB GL_SRC1_RGB
-#define GL_SOURCE2_RGB GL_SRC2_RGB
-
-#define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER_OES
-#define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0_OES
-#define glBindFramebufferEXT glBindFramebufferOES
-#define glFramebufferTexture2DEXT glFramebufferTexture2DOES
-#define glGenFramebuffersEXT glGenFramebuffersOES
-#define glDeleteFramebuffersEXT glDeleteFramebuffersOES
-#define glCheckFramebufferStatusEXT glCheckFramebufferStatusOES
-
-#define RENPY_THIRD_TEXTURE 0
-
-#endif
-
-
 #if defined RENPY_GLES_2
 
 #ifdef ANGLE
