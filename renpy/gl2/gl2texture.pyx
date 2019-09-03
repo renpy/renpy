@@ -46,6 +46,9 @@ from renpy.gl2.gl2geometry cimport rectangle, texture_rectangle, Mesh
 
 from renpy.display.matrix cimport Matrix
 
+# This has different names in GL and GLES, but the same value.
+cdef GLenum RGBA8 = 0x8058
+
 ################################################################################
 
 cdef class TextureLoader:
@@ -61,7 +64,7 @@ cdef class TextureLoader:
 
         # Generate the framebuffer.
         glGenFramebuffers(1, &self.ftl_fbo)
-        glGenRenderbuffers(1, &self.ftl_color_renderbuffer)
+        glGenTextures(1, &self.ftl_color_texture)
 
         if renpy.config.depth_size:
           glGenRenderbuffers(1, &self.ftl_depth_renderbuffer)
@@ -91,15 +94,14 @@ cdef class TextureLoader:
 
         self.draw.change_fbo(self.ftl_fbo)
 
-        glBindRenderbuffer(GL_RENDERBUFFER, self.ftl_color_renderbuffer)
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, self.max_texture_width, self.max_texture_height)
-
-        glFramebufferRenderbuffer(
+        glBindTexture(GL_TEXTURE_2D, self.ftl_color_texture)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,  GL_RGBA, GL_UNSIGNED_BYTE, NULL)
+        glFramebufferTexture2D(
             GL_FRAMEBUFFER,
             GL_COLOR_ATTACHMENT0,
-            GL_RENDERBUFFER,
-            self.ftl_color_renderbuffer)
-
+            GL_TEXTURE_2D,
+            self.ftl_color_texture,
+            0)
 
         if renpy.config.depth_size:
 
@@ -121,7 +123,7 @@ cdef class TextureLoader:
         cdef GLuint texnums[1]
 
         glDeleteFramebuffers(1, &self.ftl_fbo)
-        glDeleteRenderbuffers(1, &self.ftl_color_renderbuffer)
+        glDeleteTextures(1, &self.ftl_color_texture)
 
         if renpy.config.depth_size:
             glDeleteRenderbuffers(1, &self.ftl_depth_renderbuffer)
