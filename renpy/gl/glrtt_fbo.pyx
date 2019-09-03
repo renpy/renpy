@@ -36,7 +36,7 @@ cdef GLuint fbo
 cdef GLint root_fbo
 
 # The renderbuffer object we use.
-cdef GLuint renderbuffer
+cdef GLuint texture
 
 class FboRtt(Rtt):
     """
@@ -49,7 +49,7 @@ class FboRtt(Rtt):
         renpy.display.log.write("Root FBO is: %d", root_fbo)
 
         glGenFramebuffersEXT(1, &fbo)
-        glGenRenderbuffersEXT(1, &renderbuffer)
+        glGenTextures(1, &texture)
 
         cdef int i
 
@@ -57,15 +57,16 @@ class FboRtt(Rtt):
         self.size_limit = min(i, 2048)
         renpy.display.log.write("FBO Maximum Texture Size: %d", self.size_limit)
 
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, renderbuffer)
-        glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA, self.size_limit, self.size_limit)
+        glBindTexture(GL_TEXTURE_2D, texture)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.size_limit, self.size_limit, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL)
 
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
-        glFramebufferRenderbufferEXT(
+        glFramebufferTexture2DEXT(
             GL_FRAMEBUFFER_EXT,
             GL_COLOR_ATTACHMENT0_EXT,
-            GL_RENDERBUFFER_EXT,
-            renderbuffer)
+            GL_TEXTURE_2D,
+            texture,
+            0)
 
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
 
@@ -77,7 +78,7 @@ class FboRtt(Rtt):
 
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
         glDeleteFramebuffersEXT(1, &fbo)
-        glDeleteRenderbuffersEXT(1, &renderbuffer)
+        glDeleteTextures(1, &texture)
 
     def begin(self):
         """
@@ -95,13 +96,6 @@ class FboRtt(Rtt):
         """
 
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
-
-#         glFramebufferTexture2DEXT(
-#             GL_FRAMEBUFFER_EXT,
-#             GL_COLOR_ATTACHMENT0_EXT,
-#             GL_TEXTURE_2D,
-#             texture,
-#             0)
 
         environ.viewport(0, 0, w, h)
         environ.ortho(x, x + w, y, y + h, -1, 1)
