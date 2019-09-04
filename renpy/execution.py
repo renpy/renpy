@@ -147,6 +147,8 @@ class Context(renpy.object.Object):
 
     temporary_attributes = None
 
+    deferred_translate_identifier = None
+
     def __repr__(self):
 
         if not self.current:
@@ -318,6 +320,10 @@ class Context(renpy.object.Object):
 
         # The alternate identifier of the current translate block.
         self.alternate_translate_identifier = None
+
+        # The translate identifier of the last say statement with
+        # interact = False.
+        self.deferred_translate_identifier = None
 
     def replace_node(self, old, new):
 

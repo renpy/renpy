@@ -1092,6 +1092,8 @@ class ADVCharacter(object):
             if interact:
                 mode = _mode or self.mode
                 renpy.exports.mode(mode)
+            else:
+                renpy.game.context().deferred_translate_identifier = renpy.game.context().translate_identifier
 
             # Figure out the arguments to display.
             display_args = self.display_args.copy()

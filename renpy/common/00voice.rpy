@@ -320,6 +320,7 @@ init -1500 python:
                 for tlid in [
                     renpy.game.context().translate_identifier,
                     renpy.game.context().alternate_translate_identifier,
+                    renpy.game.context().deferred_translate_identifier,
                     ]:
 
                     if tlid is None:
@@ -341,7 +342,7 @@ init -1500 python:
 
                         break
 
-            self.tlid = renpy.game.context().translate_identifier
+            self.tlid = renpy.game.context().translate_identifier or renpy.game.context().deferred_translate_identifier
 
             if self.filename:
                 self.sustain = False
@@ -442,6 +443,8 @@ init -1500 python hide:
             _voice.play = vi.filename
         else:
             _voice.play = None
+
+        renpy.game.context().deferred_translate_identifier = None
 
         _voice.auto_file = vi.auto_filename
         _voice.sustain = vi.sustain
