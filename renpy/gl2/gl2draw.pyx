@@ -302,6 +302,7 @@ cdef class GL2Draw:
 
         if self.did_init:
             self.change_fbo(self.default_fbo)
+            self.quit_fbo()
             self.kill_textures()
 
         if renpy.android:
@@ -456,7 +457,7 @@ cdef class GL2Draw:
         self.did_init = True
 
         # Set the sizes for the texture loader.
-        self.texture_loader.resize()
+        self.init_fbo()
 
         # Prepare a mouse display.
         self.mouse_old_visible = None
@@ -467,7 +468,7 @@ cdef class GL2Draw:
 
         return True
 
-    def quit(self):
+    def quit(GL2Draw self):
         """
         Called when terminating the use of the OpenGL context.
         """
@@ -478,12 +479,18 @@ cdef class GL2Draw:
             self.texture_loader.quit()
             self.texture_loader = None
 
+        glDeleteFramebuffers(1, &self.fbo)
+        glDeleteTextures(1, &self.color_texture)
+
+        if renpy.config.depth_size:
+            glDeleteRenderbuffers(1, &self.depth_renderbuffer)
+
         if not self.old_fullscreen:
             renpy.display.gl_size = self.physical_size
 
         self.old_fullscreen = None
 
-    def init(self):
+    def init(GL2Draw self):
         """
         *Internal*
         This does the first-time initialization of OpenGL, deciding
@@ -533,10 +540,68 @@ cdef class GL2Draw:
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, <GLint *> &self.default_fbo);
         self.current_fbo = self.default_fbo
 
+        # Generate the framebuffer.
+        glGenFramebuffers(1, &self.fbo)
+        glGenTextures(1, &self.color_texture)
+
+        if renpy.config.depth_size:
+            glGenRenderbuffers(1, &self.depth_renderbuffer)
+
         # Initialize the texture loader.
         self.texture_loader = TextureLoader(self)
 
         return True
+
+
+    def init_fbo(GL2Draw self):
+        """
+        *Internal*
+        Create the FBO.
+        """
+
+        # Determine the width and height of textures and the renderbuffer.
+        cdef GLint max_renderbuffer_size
+        cdef GLint max_texture_size
+
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size)
+        glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &max_renderbuffer_size)
+
+        # The number of pixels of addiitonal border, so we can load textures with
+        # higher pitch.
+        BORDER = 64
+
+        width = max(self.virtual_size[0] + BORDER, self.drawable_size[0] + BORDER, 1024)
+        width = min(width, max_texture_size, max_renderbuffer_size)
+        height = max(self.virtual_size[1] + BORDER, self.drawable_size[1] + BORDER, 1024)
+        height = min(height, max_texture_size, max_renderbuffer_size)
+
+        renpy.display.log.write("Maximum texture size: %dx%d", width, height)
+
+        self.texture_loader.max_texture_width = width
+        self.texture_loader.max_texture_height = height
+
+        self.change_fbo(self.fbo)
+
+        glBindTexture(GL_TEXTURE_2D, self.color_texture)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,  GL_RGBA, GL_UNSIGNED_BYTE, NULL)
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER,
+            GL_COLOR_ATTACHMENT0,
+            GL_TEXTURE_2D,
+            self.color_texture,
+            0)
+
+        if renpy.config.depth_size:
+
+            glBindRenderbuffer(GL_RENDERBUFFER, self.depth_renderbuffer)
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height)
+
+            glFramebufferRenderbuffer(
+                GL_FRAMEBUFFER,
+                GL_DEPTH_ATTACHMENT,
+                GL_RENDERBUFFER,
+                self.depth_renderbuffer)
+
 
     def can_block(self):
         """

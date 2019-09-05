@@ -59,6 +59,15 @@ cdef class GL2Draw:
     cdef public int fast_redraw_frames
     cdef public bint gles
 
+    # The color texture object used for offscreen rendering.
+    cdef GLuint color_texture
+
+    # The depth renderbuffer object used for offscreen rendering.
+    cdef GLuint depth_renderbuffer
+
+    # The framebuffer object used for offscreen rendering.
+    cdef GLuint fbo
+
     # The texture_loader singleton.
     cdef public TextureLoader texture_loader
 

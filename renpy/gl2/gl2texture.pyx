@@ -62,71 +62,12 @@ cdef class TextureLoader:
 
         self.ftl_program = draw.shader_cache.get(("renpy.ftl",))
 
-        # Generate the framebuffer.
-        glGenFramebuffers(1, &self.ftl_fbo)
-        glGenTextures(1, &self.ftl_color_texture)
-
-        if renpy.config.depth_size:
-          glGenRenderbuffers(1, &self.ftl_depth_renderbuffer)
-
-    def resize(TextureLoader self):
-
-        # Determine the width and height of textures and the renderbuffer.
-        cdef GLint max_renderbuffer_size
-        cdef GLint max_texture_size
-
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size)
-        glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &max_renderbuffer_size)
-
-        # The number of pixels of addiitonal border, so we can load textures with
-        # higher pitch.
-        BORDER = 64
-
-        width = max(self.draw.virtual_size[0] + BORDER, self.draw.drawable_size[0] + BORDER, 1024)
-        width = min(width, max_texture_size, max_renderbuffer_size)
-        height = max(self.draw.virtual_size[1] + BORDER, self.draw.drawable_size[1] + BORDER, 1024)
-        height = min(height, max_texture_size, max_renderbuffer_size)
-
-        renpy.display.log.write("Maximum texture size: %dx%d", width, height)
-
-        self.max_texture_width = width
-        self.max_texture_height = height
-
-        self.draw.change_fbo(self.ftl_fbo)
-
-        glBindTexture(GL_TEXTURE_2D, self.ftl_color_texture)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,  GL_RGBA, GL_UNSIGNED_BYTE, NULL)
-        glFramebufferTexture2D(
-            GL_FRAMEBUFFER,
-            GL_COLOR_ATTACHMENT0,
-            GL_TEXTURE_2D,
-            self.ftl_color_texture,
-            0)
-
-        if renpy.config.depth_size:
-
-            glBindRenderbuffer(GL_RENDERBUFFER, self.ftl_depth_renderbuffer)
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, self.max_texture_width, self.max_texture_height)
-
-            glFramebufferRenderbuffer(
-                GL_FRAMEBUFFER,
-                GL_DEPTH_ATTACHMENT,
-                GL_RENDERBUFFER,
-                self.ftl_depth_renderbuffer)
-
-
     def quit(self):
         """
         Gets rid of this TextureLoader.
         """
 
         cdef GLuint texnums[1]
-
-        glDeleteFramebuffers(1, &self.ftl_fbo)
-        glDeleteTextures(1, &self.ftl_color_texture)
-
-        if renpy.config.depth_size:
-            glDeleteRenderbuffers(1, &self.ftl_depth_renderbuffer)
 
         for texture_number in self.allocated:
             texnums[0] = texture_number
@@ -366,7 +307,7 @@ cdef class GLTexture:
         glGenTextures(1, &premultiplied)
 
         # Bind the framebuffer.
-        self.loader.draw.change_fbo(self.loader.ftl_fbo)
+        draw.change_fbo(draw.fbo)
 
         # Set up the viewport.
         glViewport(0, 0, tw, th)
@@ -418,12 +359,14 @@ cdef class GLTexture:
         if self.loaded:
             return
 
+        draw = self.loader.draw
+
         # Generate the old textures.
         glGenTextures(1, &tex)
         glGenTextures(1, &premultiplied)
 
         # Bind the framebuffer.
-        self.loader.draw.change_fbo(self.loader.ftl_fbo)
+        draw.change_fbo(draw.fbo)
 
         # Load the pixel data into tex, and set it up for drawing.
         glActiveTexture(GL_TEXTURE0)
