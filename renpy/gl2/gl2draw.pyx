@@ -864,9 +864,38 @@ cdef class GL2Draw:
 
         what = what.subsurface((x, y, 1, 1))
 
-        # TODO: Actually implement.
+        # Compute visible_children.
+        what.is_opaque()
 
-        return True
+        # Load all the textures and RTTs.
+        self.load_all_textures(what)
+
+        # Switch to the right FBO, and the right viewport.
+        self.change_fbo(self.fbo)
+
+        # Set up the viewport.
+        glViewport(0, 0, 1, 1)
+
+        # Clear the screen.
+        glClearColor(0.0, 0.0, 0.0, 0.0)
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+
+        # Project the child from virtual space to the screen space.
+        cdef Matrix transform
+        transform = renpy.display.render.IDENTITY
+
+        # Set up the default modes.
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+
+        # Use the context to draw the surface tree.
+        context = GL2DrawingContext(self)
+        context.draw(what, transform)
+
+        cdef unsigned char pixel[4]
+        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
+
+        return pixel[3]
 
 
     def translate_point(self, x, y):
