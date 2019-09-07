@@ -3790,7 +3790,7 @@ def is_init_phase():
     """
     :doc: other
 
-    Returns True if Ren'Py is currently in loading init code, or False otherwise.
+    Returns True if Ren'Py is currently executing init code, or False otherwise.
     """
 
     return renpy.game.context().init_phase
