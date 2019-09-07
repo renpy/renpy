@@ -3784,3 +3784,13 @@ def is_skipping():
     """
 
     return not not renpy.config.skipping
+
+
+def is_init_phase():
+    """
+    :doc: other
+
+    Returns True if Ren'Py is currently in loading init code, or False otherwise.
+    """
+
+    return renpy.game.context().init_phase
