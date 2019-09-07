@@ -190,9 +190,9 @@
 
     # 00console.rpy:680
     old "short: Shorten the representation of objects on the console (default)."
-    new "corto: Acorta la representación de los objetos en la consola (predeterminado)."
+    new "short: Acorta la representación de los objetos en la consola (predeterminado)."
 
     # 00console.rpy:685
     old "long: Print the full representation of objects on the console."
-    new "largo: imprime la representación completa de los objetos en la consola."
+    new "long: imprime la representación completa de los objetos en la consola."
 

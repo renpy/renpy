@@ -399,7 +399,7 @@ translate spanish demo_pushmove_transitions_b7f33c95:
 translate spanish demo_movetransition_14df0e34:
 
     # e "The most common MoveTransition is move, which slides around images that have changed position on the screen."
-    e "La MoveTransition más común es move, que se desliza imágenes que han cambiado de posición en la pantalla."
+    e "La MoveTransition más común es move, que desliza imágenes que han cambiado de posición en la pantalla."
 
 # game/indepth_transitions.rpy:442
 translate spanish demo_movetransition_84e40422:

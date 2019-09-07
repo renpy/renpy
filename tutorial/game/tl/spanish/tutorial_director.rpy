@@ -3,7 +3,7 @@
 translate spanish director_e4543d9b:
 
     # e "There are a few tools you can access by pressing the right commands on the keyboard."
-    e "Hay algunas herramientas a las que puede acceder presionando los comandos correctos en el teclado."
+    e "Hay algunas herramientas a las que puedes acceder presionando los comandos correctos en el teclado."
 
 # game/tutorial_director.rpy:7
 translate spanish director_ebf40500:
@@ -33,7 +33,7 @@ translate spanish director_43504744:
 translate spanish director_32f8695e:
 
     # e "The idea is that you can use an editor to write the script and logic of your visual novel, and then interactively add images in the right places."
-    e "La idea es que puedas usar el editor para escribir el script y la lógica de su novela visual y luego agregar imágenes de manera interactiva en los lugares correctos."
+    e "La idea es que puedas usar el editor para escribir el script y la lógica de tu novela visual y luego agregar imágenes de manera interactiva en los lugares correctos."
 
 # game/tutorial_director.rpy:21
 translate spanish director_62734181:
@@ -81,7 +81,6 @@ translate spanish director_c7a18979:
 translate spanish director_3dcc4362:
 
     # e "Let's add a background. Click the '+' to pick where to add it, then the 'scene' statement and 'washington' for the image. Finally, click 'Add' to add it."
-    scene bg washington
 
     e "Vamos a añadir un fondo. Haz clic en '+' para elegir dónde agregarlo, luego la sentencia 'scene' y 'washington' para la imagen. Finalmente, haga clic en 'Añadir' para agregarlo."
 
@@ -97,7 +96,7 @@ translate spanish director_292d58b5:
 translate spanish director_c875c1a7:
 
     # e "You can edit or remove statements with the pencil icon. You can move me to the right by editing the show statement, then clicking '(transform)', 'right', and 'Change'."
-    e "Puede editar o eliminar sentencias con el icono de lápiz. Puede moverme a la derecha editando la sentencia del programa, luego haciendo clic en '(transform)', 'right' y 'Cambiar'."
+    e "Puedes editar o eliminar sentencias con el icono de lápiz. Puedes moverme a la derecha editando la sentencia del programa, luego clic en '(transform)', 'right' y 'Cambiar'."
 
 # game/tutorial_director.rpy:54
 translate spanish director_4e04a74e:
@@ -105,7 +104,7 @@ translate spanish director_4e04a74e:
     # e "Finally, you can use the play, queue, stop, and voice statements to manage audio. Try adding 'play', 'music', 'sunflower-slow-drag.ogg'."
     play music 'sunflower-slow-drag.ogg'
 
-    e "Finalmente, puede usar las instrucciones de play, queue, stop y voice para administrar el audio. Intente agregar 'play', 'music', 'sunflower-slow-drag.ogg'."
+    e "Finalmente, puedes usar las instrucciones de play, queue, stop y voice para administrar el audio. Intenta agregar 'play', 'music', 'sunflower-slow-drag.ogg'."
 
 # game/tutorial_director.rpy:61
 translate spanish director_1364b336:
@@ -117,7 +116,7 @@ translate spanish director_1364b336:
 translate spanish director_c6dd0c81:
 
     # e "The changes you make with the director are permanent. They're saved to the script, and you can rollback or repeat this section to see them."
-    e "Los cambios que hagas con el director son permanentes. Se guardan en la secuencia de comandos y puede retroceder o repetir esta sección para verlos."
+    e "Los cambios que hagas con el director son permanentes. Se guardan en la secuencia de comandos y puedes retroceder o repetir esta sección para verlos."
 
 # game/tutorial_director.rpy:71
 translate spanish director_9d03b14b:
@@ -129,5 +128,5 @@ translate spanish director_9d03b14b:
 translate spanish director_dbfa07b2:
 
     # e "I hope these tools make developing your visual novel that much easier."
-    e "Espero que estas herramientas hagan que el desarrollo de su novela visual sea mucho más fácil."
+    e "Espero que estas herramientas hagan que el desarrollo de tu novela visual sea mucho más fácil."
 

@@ -219,7 +219,7 @@ translate spanish tutorial_positions_7728dbf9:
 translate spanish tutorial_positions_1b1cedc6:
 
     # e "There are the xoffset and yoffset properties, which are applied after everything else, and offset things to the right or bottom, respectively."
-    e "Existen las propiedades xoffset y yoffset, que se aplican después de todo lo demás, y compensan las cosas a la derecha o al fondo, respectivamente."
+    e "Existen las propiedades xoffset y yoffset, que se aplican después de todo lo demás, y compensan las cosas a la derecha o abajo, respectivamente."
 
 # game/tutorial_atl.rpy:399
 translate spanish tutorial_positions_e6da2798:
@@ -633,7 +633,7 @@ translate spanish transform_properties_f34abd82:
 translate spanish transform_properties_bfa3b139:
 
     # e "Those are all the transform properties we have to work with. By putting them together in the right order, you can create complex things."
-    e "Esas son todas las propiedades de transformación con las que tenemos que trabajar. Al juntarlos en el orden correcto, puedes crear cosas complejas."
+    e "Esas son todas las propiedades de transformación con las que tenemos que trabajar. Al juntarlas en el orden correcto, puedes crear cosas complejas."
 
 translate spanish strings:
 

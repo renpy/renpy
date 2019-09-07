@@ -33,7 +33,7 @@ translate spanish new_gui_da21de30:
 translate spanish new_gui_45765574:
 
     # e "We've put an extensive guide to customizing the GUI on the Ren'Py website. So if you want to learn more, visit the {a=https://www.renpy.org/doc/html/gui.html}GUI customization guide{/a}."
-    e "Hemos incluido una extensa guía para personalizar la GUI en el sitio web de Ren'Py. Entonces, si desea obtener más información, visite la {a=https://www.renpy.org/doc/html/gui.html} Guía de personalización de la GUI{/a}."
+    e "Hemos incluido una extensa guía para personalizar la GUI en el sitio web de Ren'Py. Entonces, si deseas obtener más información, visita la {a=https://www.renpy.org/doc/html/gui.html} Guía de personalización de la GUI{/a}."
 
 # game/indepth_style.rpy:58
 translate spanish styles_fa345a38:
@@ -183,7 +183,7 @@ translate spanish style_basics_0cdcb8c3:
 translate spanish style_basics_aed05094:
 
     # e "Those are the basics of styles. If GUI customization isn't enough for you, styles let you customize just about everything in Ren'Py."
-    e "Esos son los fundamentos de los estilos. Si la personalización de la GUI no es suficiente para usted, los estilos le permiten personalizar casi todo en Ren'Py."
+    e "Esos son los fundamentos de los estilos. Si la personalización de la GUI no es suficiente para ti, los estilos te permiten personalizar casi todo en Ren'Py."
 
 # game/indepth_style.rpy:253
 translate spanish style_general_81f3c8ff:
@@ -357,7 +357,7 @@ translate spanish style_text_43be63b9:
 translate spanish style_text_343f6d34:
 
     # e "Those are the most common text style properties, but not the only ones. Here are a few more that you might need in special circumstances."
-    e "Esas son las propiedades de estilo text más comunes, pero no las únicas. Aquí hay algunos más que puede necesitar en circunstancias especiales."
+    e "Esas son las propiedades de estilo text más comunes, pero no las únicas. Aquí hay algunos más que puedes necesitar en circunstancias especiales."
 
 # game/indepth_style.rpy:479
 translate spanish style_text_e7204a95:

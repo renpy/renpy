@@ -219,7 +219,7 @@ translate spanish screens_properties_423246a2:
 translate spanish screens_properties_4fde164e:
 
     # e "When the modal property is true, you can't interact with things beneath the screen. You'll have to click 'Close This Screen' before you can continue."
-    e "Cuando la propiedad modal es True, no puedes interactuar con cosas debajo de la pantalla. Tendrá que hacer clic en 'Cerrar esta pantalla' antes de poder continuar."
+    e "Cuando la propiedad modal es True, no puedes interactuar con cosas debajo de la pantalla. Tendrás que hacer clic en 'Cerrar esta pantalla' antes de poder continuar."
 
 # game/tutorial_screens.rpy:398
 translate spanish screens_properties_550c0bea:

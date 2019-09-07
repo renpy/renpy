@@ -103,7 +103,7 @@ For historical reasons, the set can be either a set object or a list.
         "Go to jail.":
             jump go_to_jail
 
-    menu chapter_1_after_places:
+    label chapter_1_after_places:
 
         "Wow, that was one heck of a Tuesday."
 

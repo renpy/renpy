@@ -182,7 +182,7 @@ Init Offset Statement
 The ``init offset`` statement sets a priority offset for all statements
 that run at init time (init, init python, define, default, screen,
 transform, style, and more). The offset applies to all following
-statements in the current block and chold blocks, up to the next
+statements in the current block and child blocks, up to the next
 init priority statement. The statement::
 
     init offset = 42
