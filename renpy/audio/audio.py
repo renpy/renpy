@@ -359,9 +359,6 @@ class Channel(object):
                 self.queue = [ ]
             return
 
-        # Should we do the callback?
-        do_callback = False
-
         topq = None
 
         # This has been modified so we only queue a single sound file
@@ -442,20 +439,20 @@ class Channel(object):
 
             break
 
-        if self.loop and not self.queue:
-            for i in self.loop:
-                if topq is not None:
-                    newq = QueueEntry(i, 0, topq.tight, True)
-                else:
-                    newq = QueueEntry(i, 0, False, True)
-
-                self.queue.append(newq)
-        else:
-            do_callback = True
-
-        # Queue empty callback.
-        if do_callback and self.callback:
-            self.callback()  # E1102
+        # Empty queue?
+        if not self.queue:
+            # Re-loop:
+            if self.loop:
+                for i in self.loop:
+                    if topq is not None:
+                        newq = QueueEntry(i, 0, topq.tight, True)
+                    else:
+                        newq = QueueEntry(i, 0, False, True)
+    
+                    self.queue.append(newq)
+            # Try callback:
+            elif self.callback:
+                self.callback()  # E1102
 
         want_pause = self.context.pause or global_pause
 
