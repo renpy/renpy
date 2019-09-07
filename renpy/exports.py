@@ -470,7 +470,7 @@ def can_show(name, layer=None, tag=None):
         return None
 
 
-def showing(name, layer='master'):
+def showing(name, layer=None):
     """
     :doc: image_func
 
@@ -481,7 +481,6 @@ def showing(name, layer='master'):
         May be a string giving the image name or a tuple giving each
         component of the image name. It may also be a string giving
         only the image tag.
-
 
     `layer`
         The layer to check. If None, uses the default layer for `tag`.
@@ -2671,7 +2670,7 @@ def get_placement(d):
     return placement(p)
 
 
-def get_image_bounds(tag, width=None, height=None, layer='master'):
+def get_image_bounds(tag, width=None, height=None, layer=None):
     """
     :doc: image_func
 
