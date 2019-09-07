@@ -24,22 +24,19 @@ init -1600 python:
    ##########################################################################
     # Functions that set variables or fields.
 
-    __FieldNotFound, __FieldValueUndefined = object(), object()
+    __FieldNotFound = object()
 
-    def __get_field(obj, name, kind, value=__FieldValueUndefined):
+    def __get_field(obj, name, kind):
 
         if not name:
             return obj
 
         rv = obj
 
-        names = name.split(".")
-        for i in names:
+        for i in name.split("."):
             rv = getattr(rv, i, __FieldNotFound)
             if rv is __FieldNotFound:
-                if value is __FieldValueUndefined or i != names[-1]:
-                    raise NameError("The {} {} does not exist.".format(kind, name))
-                return value
+                raise NameError("The {} {} does not exist.".format(kind, name))
 
         return rv
 
@@ -79,7 +76,7 @@ init -1600 python:
             renpy.restart_interaction()
 
         def get_selected(self):
-            return __get_field(self.object, self.field, self.kind, __FieldNotFound) == self.value
+            return __get_field(self.object, self.field, self.kind) == self.value
 
     @renpy.pure
     def SetVariable(name, value):
