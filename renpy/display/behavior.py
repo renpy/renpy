@@ -702,6 +702,9 @@ class Button(renpy.display.layout.Window):
     keysym = None
     alternate_keysym = None
 
+    # This locks the displayable against further change.
+    locked = False
+
     def __init__(self, child=None, style='button', clicked=None,
                  hovered=None, unhovered=None, action=None, role=None,
                  time_policy=None, keymap={}, alternate=None,
@@ -744,6 +747,14 @@ class Button(renpy.display.layout.Window):
             return self._tooltip
 
         return get_tooltip(self.action)
+
+    def _in_current_store(self):
+        rv = self._copy()
+        rv.style = self.style.copy()
+        rv.set_style_prefix(self.style.prefix, True)
+        rv.focusable = False
+        rv.locked = True
+        return rv
 
     def predict_one_action(self):
         predict_action(self.clicked)
@@ -840,40 +851,45 @@ class Button(renpy.display.layout.Window):
 
     def per_interact(self):
 
-        if self.action is not None:
-            if self.is_selected():
-                role = 'selected_'
+        if not self.locked:
+
+            if self.action is not None:
+                if self.is_selected():
+                    role = 'selected_'
+                else:
+                    role = ''
+
+                if self.is_sensitive():
+                    clicked = self.action
+                else:
+                    clicked = None
+                    role = ''
+
             else:
                 role = ''
+                clicked = self.clicked
 
-            if self.is_sensitive():
-                clicked = self.action
+            if self.role_parameter is not None:
+                role = self.role_parameter
+
+            if (role != self.role) or (clicked is not self.clicked):
+                renpy.display.render.invalidate(self)
+                self.role = role
+                self.clicked = clicked
+
+            if self.clicked is not None:
+                self.set_style_prefix(self.role + "idle_", True)
+                self.focusable = True
             else:
-                clicked = None
-                role = ''
-
-        else:
-            role = ''
-            clicked = self.clicked
-
-        if self.role_parameter is not None:
-            role = self.role_parameter
-
-        if (role != self.role) or (clicked is not self.clicked):
-            renpy.display.render.invalidate(self)
-            self.role = role
-            self.clicked = clicked
-
-        if self.clicked is not None:
-            self.set_style_prefix(self.role + "idle_", True)
-            self.focusable = True
-        else:
-            self.set_style_prefix(self.role + "insensitive_", True)
-            self.focusable = False
+                self.set_style_prefix(self.role + "insensitive_", True)
+                self.focusable = False
 
         super(Button, self).per_interact()
 
     def event(self, ev, x, y, st):
+
+        if self.locked:
+            return None
 
         def handle_click(action):
             renpy.exports.play(self.style.activate_sound)
@@ -1429,6 +1445,7 @@ class Adjustment(renpy.object.Object):
     """
 
     force_step = False
+
     def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False):  # @ReservedAssignment
         """
         The following parameters correspond to fields or properties on
