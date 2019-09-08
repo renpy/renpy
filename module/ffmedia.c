@@ -20,7 +20,7 @@
 static int audio_equal_mono = 1;
 
 /* The weight of stereo channels when audio_equal_mono is true. */
-static float stereo_matrix[] = { 1.0, 1.0 };
+static double stereo_matrix[] = { 1.0, 1.0 };
 
 /* The output audio sample rate. */
 static int audio_sample_rate = 44100;
@@ -571,18 +571,29 @@ static void decode_audio(MediaState *ms) {
 				break;
 			}
 
+            converted_frame = av_frame_alloc();
+            converted_frame->sample_rate = audio_sample_rate;
+            converted_frame->channel_layout = AV_CH_LAYOUT_STEREO;
+            converted_frame->format = AV_SAMPLE_FMT_S16;
+
 			if (!ms->audio_decode_frame->channel_layout) {
 				ms->audio_decode_frame->channel_layout = av_get_default_channel_layout(ms->audio_decode_frame->channels);
 
 				if (audio_equal_mono && (ms->audio_decode_frame->channels == 1)) {
+				    swr_alloc_set_opts(
+                        ms->swr,
+                        converted_frame->channel_layout,
+                        converted_frame->format,
+                        converted_frame->sample_rate,
+                        ms->audio_decode_frame->channel_layout,
+                        ms->audio_decode_frame->format,
+                        ms->audio_decode_frame->sample_rate,
+                        0,
+                        NULL);
+
 				    swr_set_matrix(ms->swr, stereo_matrix, 1);
 				}
 			}
-
-			converted_frame = av_frame_alloc();
-			converted_frame->sample_rate = audio_sample_rate;
-			converted_frame->channel_layout = AV_CH_LAYOUT_STEREO;
-			converted_frame->format = AV_SAMPLE_FMT_S16;
 
 			if(swr_convert_frame(ms->swr, converted_frame, ms->audio_decode_frame)) {
 				av_frame_free(&converted_frame);
