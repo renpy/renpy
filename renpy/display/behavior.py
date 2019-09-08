@@ -954,7 +954,7 @@ class Button(renpy.display.layout.Window):
         if (self.clicked is not None) and map_event(ev, "button_ignore"):
             raise renpy.display.core.IgnoreEvent()
 
-        if (self.clicked is not None) and map_event(ev, "button_alternate_ignore"):
+        if (self.alternate is not None) and map_event(ev, "button_alternate_ignore"):
             raise renpy.display.core.IgnoreEvent()
 
         # If clicked,
