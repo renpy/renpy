@@ -88,7 +88,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     When a Drag is first rendered, if it's position cannot be determined
     from the DragGroup it is in, the position of its upper-left corner
     is computed using the standard layout algorithm. Once that position
-
+    has been computed, the layout properties are ignored in favor of the
+    position stored inside the Drag.
 
     `d`
         If present, the child of this Drag. Drags use the child style
