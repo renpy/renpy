@@ -819,8 +819,6 @@ def menu(menuitems,
          default=False,
          **properties):
 
-    # menu is now a conglomeration of other widgets. And bully for it.
-
     renpy.ui.vbox(style=style, **properties)
 
     for label, val in menuitems:
@@ -831,7 +829,10 @@ def menu(menuitems,
             text = choice_style
             button = choice_button_style
 
-            clicked = ChoiceReturn(label, val, location)
+            if isinstance(val, ChoiceReturn):
+                clicked = val
+            else:
+                clicked = ChoiceReturn(label, val, location)
 
             if clicked.get_chosen():
                 text = choice_chosen_style
