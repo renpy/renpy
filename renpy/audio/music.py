@@ -279,6 +279,7 @@ def stop(channel="music", fadeout=None):
             c.last_changed = t
             ctx.last_filenames = [ ]
             ctx.last_tight = False
+            c.callback = None
 
         except:
             if renpy.config.debug_sound:
