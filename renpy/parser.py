@@ -1970,6 +1970,9 @@ def menu_statement(l, loc):
 
     rv.extend(menu)
 
+    for i in rv:
+        i.statement_start = rv[0]
+
     return rv
 
 

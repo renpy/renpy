@@ -598,7 +598,7 @@ class Context(renpy.object.Object):
             except renpy.game.CallException as e:
 
                 if e.from_current:
-                    return_site = node.name
+                    return_site = getattr(node, "statement_start", node).name
                 else:
                     if self.next_node is None:
                         raise Exception("renpy.call can't be used when the next node is undefined.")

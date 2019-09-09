@@ -356,9 +356,10 @@ class Node(object):
     A node in the abstract syntax tree of the program.
 
     @ivar name: The name of this node.
-
     @ivar filename: The filename where this node comes from.
     @ivar linenumber: The line number of the line on which this node is defined.
+    @ivar next: The statement that will execute after this one.
+    @ivar statement_start: If present, the first node that makes up the statement that includes this node.
     """
 
     __slots__ = [
@@ -366,6 +367,7 @@ class Node(object):
         'filename',
         'linenumber',
         'next',
+        'statement_start',
         ]
 
     # True if this node is translatable, false otherwise. (This can be set on
