@@ -685,10 +685,10 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             if self.last_drop is not None:
                 self.last_drop.set_style_prefix("idle_", True)
 
-            if drop is not None:
-                drop.set_style_prefix("selected_idle_", True)
-
             self.last_drop = drop
+
+        if drop is not None:
+            drop.set_style_prefix("selected_idle_", True)
 
         if map_event(ev, 'drag_deactivate'):
 
