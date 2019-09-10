@@ -279,7 +279,7 @@ class Context(renpy.object.Object):
         # executed?
         self.force_checkpoint = False
 
-        # A mapt from a channel to the Movie playing on that channel.
+        # A map from a channel to the Movie playing on that channel.
         self.movie = { }
 
         if context:
@@ -300,6 +300,9 @@ class Context(renpy.object.Object):
             self.images = renpy.display.image.ShownImageInfo(None)
 
         self.scene_lists = renpy.display.core.SceneLists(oldsl, self.images)
+
+        for i in renpy.config.context_copy_remove_screens:
+            self.scene_lists.remove("screens", i, None)
 
         self.make_dynamic([ "_return", "_args", "_kwargs", "mouse_visible", "suppress_overlay", "_side_image_attributes" ])
         self.dynamic_stack.append({ })

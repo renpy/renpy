@@ -319,6 +319,11 @@ Occasionally Used
     This is a callback that is called when Ren'Py enteres a new context,
     such as a menu context.
 
+.. var:: config.context_copy_remove_screens = [ 'notify' ]
+
+    Contains a list of screens that are removed when a context is copied
+    for rollback or saving.
+
 .. var:: config.debug = False
 
     Enables debugging functionality (mostly by turning some missing

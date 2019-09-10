@@ -1003,6 +1003,9 @@ gl2 = False
 # it use?
 depth_size = None
 
+# A list of screens to remove when the context is copied.
+context_copy_remove_screens = [ "notify" ]
+
 del os
 del collections
 
