@@ -1188,6 +1188,8 @@ def display_menu(items,
                 **scope)
 
     else:
+        renpy.exports.shown_window()
+
         renpy.ui.window(style=window_style, focus="menu")
         renpy.ui.menu(items,
                       location=renpy.game.context().current,
