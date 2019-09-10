@@ -1386,7 +1386,10 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             if ev.unicode and ord(ev.unicode[0]) >= 32:
                 raw_text = ev.unicode
             elif renpy.display.interface.text_event_in_queue():
-                raw_text = ''
+                raise renpy.display.core.IgnoreEvent()
+            elif (32 <= ev.key < 127) and not (ev.mod & (pygame.KMOD_ALT | pygame.KMOD_META)):
+                # Ignore printable keycodes without unicode.
+                raise renpy.display.core.IgnoreEvent()
 
         if raw_text is not None:
 
