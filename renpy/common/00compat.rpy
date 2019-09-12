@@ -192,7 +192,7 @@ init -1900 python:
 
         if version <= (7, 3, 2):
             config.audio_directory = None
-
+            config.early_start_store = True
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
