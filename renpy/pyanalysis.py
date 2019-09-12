@@ -53,6 +53,9 @@ pure_functions = {
     "_",
     "_p",
     "absolute",
+    "__renpy__list__",
+    "__renpy__dict__",
+    "__renpy__set__",
 
     # defaultstore.py
     "ImageReference", "Image", "Frame", "Solid", "LiveComposite", "LiveCrop",
