@@ -602,16 +602,20 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
             raise renpy.display.core.IgnoreEvent()
 
-        if ((self.alternate is not None) and
+        if (
+            (self.alternate is not None) and
             renpy.display.touch and
             (self.click_time is not None) and
-                ((st - self.click_time) > renpy.config.longpress_duration)):
+            ((st - self.click_time) > renpy.config.longpress_duration)
+        ):
 
             self.click_time = None
 
             rv = run(self.alternate)
             if rv is not None:
                 return rv
+
+            renpy.exports.vibrate(renpy.config.longpress_vibrate)
 
         # Handle clicking on droppables.
         if not grabbed:
