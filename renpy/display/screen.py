@@ -1071,8 +1071,8 @@ def show_screen(_screen_name, *_args, **kwargs):
         If true, the screen will be automatically hidden at the end of
         the current interaction.
 
-    Keyword arguments not beginning with underscore (_) are used to
-    initialize the screen's scope.
+    Non-keyword arguments, and keyword arguments that do not begin with
+    an underscore, are passed to the screen.
     """
 
     _layer = kwargs.pop("_layer", None)

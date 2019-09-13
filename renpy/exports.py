@@ -2870,8 +2870,8 @@ def call_screen(_screen_name, *args, **kwargs):
     to occur. The screen is hidden at the end of the interaction, and
     the result of the interaction is returned.
 
-    Keyword arguments not beginning with _ are passed to the scope of
-    the screen.
+    Positional arguments, and keyword arguments that do not begin with
+    _ are passed to the screen.
 
     If the keyword argument `_with_none` is false, "with None" is not
     run at the end of end of the interaction.
