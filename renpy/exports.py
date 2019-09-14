@@ -780,7 +780,7 @@ def scene(layer='master'):
         renpy.config.missing_scene(layer)
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None):  # @ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input"):  # @ReservedAssignment
     """
     :doc: input
 
@@ -809,6 +809,10 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
         If not None, the input is limited to being this many pixels wide,
         in the font used by the input to display text.
 
+    `screen`
+        The name of the screen that takes input. If not given, the ``input``
+        screen is used.
+
     If :var:`config.disable_input` is True, this function only returns
     `default`.
     """
@@ -828,13 +832,16 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     fixed = in_fixed_rollback()
 
-    if has_screen("input"):
+    if has_screen(screen):
         widget_properties = { }
         widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width)
 
-        show_screen("input", _transient=True, _widget_properties=widget_properties, prompt=prompt)
+        show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt)
 
     else:
+
+        if screen != "input":
+            raise Exception("The '{}' screen does not exist.".format(screen))
 
         renpy.ui.window(style='input_window')
         renpy.ui.vbox()
