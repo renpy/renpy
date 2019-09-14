@@ -686,6 +686,8 @@ def common(n):
     Returns true if the node is in the common directory.
     """
 
+    return False
+
     filename = n.filename.replace("\\", "/")
 
     if filename.startswith("common/") or filename.startswith("renpy/common/"):

@@ -908,17 +908,25 @@ def prepare_screens():
 
     predict_cache.clear()
 
-    if not analyzed:
-        analyze_screens()
+    old_predicting = renpy.display.predict.predicting
+    renpy.display.predict.predicting = True
 
-    for s in sorted_variants():
-        if s.ast is None:
-            continue
+    try:
 
-        s.ast.unprepare_screen()
-        s.ast.prepare_screen()
+        if not analyzed:
+            analyze_screens()
 
-    prepared = True
+        for s in sorted_variants():
+            if s.ast is None:
+                continue
+
+            s.ast.unprepare_screen()
+            s.ast.prepare_screen()
+
+        prepared = True
+
+    finally:
+        renpy.display.predict.predicting = old_predicting
 
     if renpy.config.developer and use_cycle:
         raise Exception("The following screens use each other in a loop: " + ", ".join(use_cycle) +". This is not allowed.")

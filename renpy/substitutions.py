@@ -250,6 +250,10 @@ def substitute(s, scope=None, force=False, translate=True):
     else:
         kwargs = renpy.store.__dict__  # @UndefinedVariable
 
-    s = formatter.vformat(s, (), kwargs)
+    try:
+        s = formatter.vformat(s, (), kwargs)
+    except:
+        if renpy.display.predict.predicting:  # @UndefinedVariable
+            return " ", True
 
     return s, (s != old_s)
