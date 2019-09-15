@@ -1127,6 +1127,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
     default = u""
     edit_text = u""
     value = None
+    shown = False
 
     def __init__(self,
                  default="",
@@ -1187,14 +1188,9 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             self.content = replaces.content
             self.editable = replaces.editable
             self.caret_pos = replaces.caret_pos
+            self.shown = replaces.shown
 
         self.update_text(self.content, self.editable)
-
-    def _show(self):
-        if self.default != self.content:
-            self.content = self.default
-            self.caret_pos = len(self.content)
-            self.update_text(self.content, self.editable)
 
     def update_text(self, new_content, editable, check_size=False):
 
@@ -1287,6 +1283,18 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
 
             if self.value.default and (default_input_value is None):
                 default_input_value = self.value
+
+        if not self.shown:
+
+            if self.value is not None:
+                default = self.value.get_text()
+                self.default = unicode(default)
+
+            self.content = self.default
+            self.caret_pos = len(self.content)
+            self.update_text(self.content, self.editable)
+
+            self.shown = True
 
     def event(self, ev, x, y, st):
 
