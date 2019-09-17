@@ -87,6 +87,8 @@ def extra_imports():
     import pstats; pstats
     import _ssl; _ssl
     import SimpleHTTPServer; SimpleHTTPServer
+    import wave; wave
+    import sunau; sunau
 
     # Used by requests.
     import cgi; cgi
