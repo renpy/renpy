@@ -36,6 +36,7 @@ import os
 import re
 import threading
 import sys
+import io
 
 # Import the appropriate modules, or set them to None if we cannot.
 
@@ -71,6 +72,24 @@ def load(fn):
 
     rv = renpy.loader.load(fn)
     return rv
+
+
+class AudioData(unicode):
+    """
+    This class wraps audio data, allowing Ren'Py to create and load such
+    data at runtime.
+    """
+
+    def __new__(cls, data, filename):
+        rv = unicode.__new__(cls, filename)
+        rv.data = data
+        return rv
+
+    def __init__(self, data, filename):
+        pass
+
+    def __reduce__(self):
+        return(AudioData, (self.data, unicode(self)))
 
 
 class QueueEntry(object):
@@ -414,7 +433,10 @@ class Channel(object):
                 if (end >= 0) and ((end - start) <= 0) and self.queue:
                     continue
 
-                topf = load(self.file_prefix + filename + self.file_suffix)
+                if isinstance(topq.filename, AudioData):
+                    topf = io.BytesIO(topq.filename.data)
+                else:
+                    topf = load(self.file_prefix + filename + self.file_suffix)
 
                 renpysound.set_video(self.number, self.movie)
 
@@ -448,7 +470,7 @@ class Channel(object):
                         newq = QueueEntry(i, 0, topq.tight, True)
                     else:
                         newq = QueueEntry(i, 0, False, True)
-    
+
                     self.queue.append(newq)
             # Try callback:
             elif self.callback:

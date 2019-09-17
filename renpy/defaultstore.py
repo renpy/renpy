@@ -26,6 +26,7 @@ from renpy.minstore import *
 # But please note that this will not be available in the body
 # of user code, unless we re-import it.
 import renpy.display
+import renpy.audio
 import renpy.text
 
 import renpy.display.im as im
@@ -208,6 +209,7 @@ MultipleTransition = renpy.curry.curry(renpy.display.transition.MultipleTransiti
 ComposeTransition = renpy.curry.curry(renpy.display.transition.ComposeTransition)
 Pause = renpy.curry.curry(renpy.display.transition.NoTransition)
 SubTransition = renpy.curry.curry(renpy.display.transition.SubTransition)
+
 # Misc.
 ADVSpeaker = ADVCharacter = renpy.character.ADVCharacter
 Speaker = Character = renpy.character.Character
@@ -216,6 +218,8 @@ MultiPersistent = renpy.persistent.MultiPersistent
 
 Action = renpy.ui.Action
 BarValue = renpy.ui.BarValue
+
+AudioData = renpy.audio.audio.AudioData
 
 # NOTE: When exporting something from here, decide if we need to add it to
 # renpy.pyanalysis.pure_functions.
