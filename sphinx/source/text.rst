@@ -679,7 +679,7 @@ Artifacts aren't a problem for static text, like the text in menus and
 other parts of the user interface.
 
 Text Overflow Logging
----------------------
+=====================
 
 Ren'Py can log cases where text expands outside of the area allocated
 for it. To enable text overflow logging, the following steps are
