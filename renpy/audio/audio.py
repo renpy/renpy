@@ -76,8 +76,26 @@ def load(fn):
 
 class AudioData(unicode):
     """
-    This class wraps audio data, allowing Ren'Py to create and load such
-    data at runtime.
+    :doc: audio
+
+    This class wraps a bytes object containing audio data, so it can be
+    passed to the audio playback system. The audio data should be contained
+    in some format Ren'Py supports. (For examples RIFF WAV format headers,
+    not unadorned samples.)
+
+    `data`
+        A bytes object containing the audio file data.
+
+    `filename`
+        A synthetic filename associated with this data. It can be used to
+        suggest the format `data` is in, and is reported as part of
+        error messages.
+
+    Once created, this can be used wherever an audio filename is allowed. For
+    example::
+
+        define audio.easteregg = AudioData(b'...', 'sample.wav')
+        play sound easteregg
     """
 
     def __new__(cls, data, filename):
