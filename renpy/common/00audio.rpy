@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1900 python:
-    config.audio_directory = 'images'
+    config.audio_directory = 'audio'
 
     def _scan_audio_directory():
 

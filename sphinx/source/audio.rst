@@ -172,6 +172,22 @@ and then use::
 
     play music sunflower
 
+Ren'Py will also automatically place sound files in the audio name face,
+if found in the ``game/audio`` directory. Files in this directory with a
+supported extension (currently, .wav, .mp2, .mp3, .ogg, and .opus) have the
+extension stripped, the rest of the filename forced to lower case, and are
+placed into the audio namespace.
+
+Note that just because a file is placed into the audio namespace, that doesn't
+mean it can be used. So while you could play a file named "opening_song.ogg"
+by writing::
+
+    play music opening_song
+
+Some filenames can't be accessed this way, as their names are not expressable
+as Python variables. For example, "my song.mp3", "8track.opus", and
+"this-is-a-song.ogg" won't work.
+
 
 Functions
 ---------
