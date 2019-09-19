@@ -34,8 +34,18 @@ as a workaround for the disruption in workflow that Apple's
 notarization process causes. It may be necessary to ctrl-click
 renpy.app and choose "Open" to start Ren'Py.
 
-The Web port of Ren'Py now detects the platform it is run on and
-sets variants properly.
+The web port of Ren'Py has seen a number of changes:
+
+* :ref:`Screen variaants <screen-variants>` are now detected and set.
+* Fullscreen support has been improved, though the user may need to click to enable fullscren.
+* Leaving the web page is detected, so persistent data may be saved.
+* 'game.zip' can now be renamed. 'DEFAULT_GAME_FILENAME' in index.html controls this.
+* Portable HTTP requests (native+renpyweb): see https://github.com/renpy/renpyweb/blob/master/utils/asyncrequest.rpy
+* Enable networking in Python web port for testing WebSockets, transparently available through the Python 'socket' module
+* HTTP Cache-Control allows for for smoother game updates.
+* The pygame.draw module is now included, allowing Canvas support.
+* WebGL compatibility has been improved.
+
 
 Other Changes
 -------------
