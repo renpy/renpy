@@ -145,6 +145,7 @@ init -1500 python:
 
         offset = 0
         action = None
+        force_step = False
 
         identity_fields = [ 'dict' ]
         equality_fields = [ 'key', 'range', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step' ]
@@ -239,6 +240,7 @@ init -1500 python:
 
         offset = 0
         action = None
+        force_step = False
 
         identity_fields = [ 'object', ]
         equality_fields = [ 'range', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step' ]
@@ -362,6 +364,7 @@ init -1500 python:
 
         action = None
         offset = 0
+        force_step = False
 
         identity_fields = [  ]
         equality_fields = [ 'variable', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step' ]
