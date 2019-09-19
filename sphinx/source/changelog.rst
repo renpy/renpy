@@ -2,6 +2,90 @@
 Full Changelog
 ==============
 
+.. _renpy-7.3.3
+
+7.3.3
+=====
+
+Audio
+-----
+
+Ren'Py now supports an ``audio`` directory, which automatically defines
+names in the :ref:`Audio namespace <audio-namespace>`. This makes it
+possible to have a file named ``game/audio/overture.ogg``, and play
+it using::
+
+    play music overture
+
+The new :func:`AudioData` class allows you to provide compressed
+audio data to Ren'Py, either generated programatically or taken
+from a source other than a file. To support this, the Python wave
+and sunau modules are now package with Ren'Py.
+
+An issue with enabling the mixing of mono sound files has been fixed.
+This issue caused many WAV files not to play. (We still don't recommend
+the use of WAV files.)
+
+Platform
+--------
+
+Ren'Py is now distributed as an unsigned binary on the Mac,
+as a workaround for the disruption in workflow that Apple's
+notarization process causes. It may be necessary to ctrl-click
+renpy.app and choose "Open" to start Ren'Py.
+
+The Web port of Ren'Py now detects the platform it is run on and
+sets variants properly.
+
+Other Changes
+-------------
+
+During profiling conducted for the GL Rewrite project, it became
+clear that the switch to framebuffer objects in 7.3.0 was the
+cause of certain performance regressions. By changing how FBOs
+are used, Ren'Py performance has been improved.
+
+The :func:`renpy.input` function can now be given the name of a screen
+that is used to prompt the user for input.
+
+The creation of list, dicts, and sets inside of screen language is now
+analyzed correctly. This will allow more displayables to be analyzed
+as constant, improving screen performance.
+
+The notify screen is now hidden on rollback.
+
+The NVL mode screen indicates that it shows the window, which prevents
+problems when ``window show`` is in effect.
+
+When a :ref:`Call` with `from_current` set to true occurs during a
+multi-part statement (like a menu with dialogue), control is restored
+to the first part of that multi-part statement (thus causing the dialouge
+to be displayed).
+
+More functions now use a tag's default layer.
+
+The :func:`renpy.is_init_phase` function has been added.
+
+Automatic voice now works for dialogue that is part of a menu
+statement.
+
+Support for GLES1 has been dropped. (It hadn't been used for years.)
+
+The :func:`SelectedIf` and :func:`SensitiveIf` actions can now take
+other actions as arguments.
+
+Many BarValues now take a `force_step` argument, which forces changes to
+the bar to be rounded to the nearest step value.
+
+:func:`Frame` now allows the tile argument to be the string "integer",
+which tiles the contents of the frame an integer number of times.
+
+
+Translations
+------------
+
+The Korean and Spanish translations have been updated.
+
 .. _renpy-7.3.2
 
 7.3.2

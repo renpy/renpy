@@ -12,6 +12,19 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+.. _incompatible-7.3.3:
+
+7.3.3
+-----
+
+Callbacks registered with :var:`config.start_callbacks` are now run
+after ``default`` statements in all cases. To restore the old behavior
+(where callbacks were run before ``default`` statements during game
+but not replay start), use::
+
+    define config.early_start_callbacks = True
+
+
 
 .. _incompatible-7.3.0:
 
