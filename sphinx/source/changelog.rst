@@ -34,6 +34,9 @@ as a workaround for the disruption in workflow that Apple's
 notarization process causes. It may be necessary to ctrl-click
 renpy.app and choose "Open" to start Ren'Py.
 
+The minimum version supported by the Android port has been lowered
+to Android 19 (Android 4.4 KitKat).
+
 The web port of Ren'Py has seen a number of changes:
 
 * :ref:`Screen variaants <screen-variants>` are now detected and set.
