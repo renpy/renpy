@@ -39,7 +39,7 @@ to Android 19 (Android 4.4 KitKat).
 
 The web port of Ren'Py has seen a number of changes:
 
-* :ref:`Screen variaants <screen-variants>` are now detected and set.
+* :ref:`Screen variants <screen-variants>` are now detected and set.
 * Fullscreen support has been improved, though the user may need to click to enable fullscren.
 * Leaving the web page is detected, so persistent data may be saved.
 * 'game.zip' can now be renamed. 'DEFAULT_GAME_FILENAME' in index.html controls this.
