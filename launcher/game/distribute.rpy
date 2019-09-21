@@ -1094,6 +1094,7 @@ init python in distribute:
                 self.build["mac_codesign_command"],
                 identity=identity,
                 app=os.path.join(dn, self.app),
+                entitlements=os.path.join(renpy.gamedir, "entitlements.plist"),
                 )
 
             # Rescan the signed app.
