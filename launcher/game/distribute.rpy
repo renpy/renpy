@@ -1094,7 +1094,7 @@ init python in distribute:
                 self.build["mac_codesign_command"],
                 identity=identity,
                 app=os.path.join(dn, self.app),
-                entitlements=os.path.join(renpy.gamedir, "entitlements.plist"),
+                entitlements=os.path.join(config.gamedir, "entitlements.plist"),
                 )
 
             # Rescan the signed app.
@@ -1110,7 +1110,7 @@ init python in distribute:
             identity = self.build.get('mac_identity', None)
 
             if identity is None:
-                raise Exception("Creating an unsigned DMG is not supported. Please set build.mac_identity.")
+                identity = ''
 
             self.run(
                 _("Creating the Macintosh DMG..."),
@@ -1121,14 +1121,16 @@ init python in distribute:
                 dmg=dmg,
             )
 
-            self.run(
-                _("Signing the Macintosh DMG..."),
-                self.build["mac_codesign_dmg_command"],
-                identity=identity,
-                volname=volname,
-                sourcedir=sourcedir,
-                dmg=dmg,
-            )
+            if self.build.get("mac_codesign_dmg_command", None):
+
+                self.run(
+                    _("Signing the Macintosh DMG..."),
+                    self.build["mac_codesign_dmg_command"],
+                    identity=identity,
+                    volname=volname,
+                    sourcedir=sourcedir,
+                    dmg=dmg,
+                )
 
         def prepare_file_list(self, format, file_lists):
             """

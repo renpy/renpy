@@ -395,7 +395,7 @@ init -1500 python in build:
     mac_create_dmg_command = [ "/usr/bin/hdiutil", "create", "-format", "UDBZ", "-volname", "{volname}", "-srcfolder", "{sourcedir}", "-ov", "{dmg}" ]
 
     # The command used to sign a dmg.
-    mac_codesign_dmg_command = [ "/usr/bin/codesign", "-s", "{identity}", "-f", "{dmg}" ]
+    mac_codesign_dmg_command = None # [ "/usr/bin/codesign", "-s", "{identity}", "-f", "{dmg}" ]
 
     # Do we want to add the script_version file?
     script_version = True
