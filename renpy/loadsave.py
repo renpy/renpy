@@ -439,6 +439,8 @@ def save(slotname, extra_info='', mutate_flag=False):
     location.scan()
     clear_slot(slotname)
 
+# The thread used for autosave.
+autosave_thread = None
 
 # Flag that lets us know if an autosave is in progress.
 autosave_not_running = threading.Event()
@@ -448,7 +450,7 @@ autosave_not_running.set()
 autosave_counter = 0
 
 
-def autosave_thread(take_screenshot):
+def autosave_thread_function(take_screenshot):
 
     global autosave_counter
 
@@ -521,12 +523,19 @@ def force_autosave(take_screenshot=False, block=False):
         If True, blocks until the autosave completes.
     """
 
+    global autosave_thread
+
     if renpy.game.after_rollback or renpy.exports.in_rollback():
         return
 
     # That is, autosave is running.
     if not autosave_not_running.isSet():
         return
+
+    # Join the autosave thread to clear resources.
+    if autosave_thread is not None:
+        autosave_thread.join()
+        autosave_thread = None
 
     # Do not save if we're in the main menu.
     if renpy.store.main_menu:
@@ -555,12 +564,12 @@ def force_autosave(take_screenshot=False, block=False):
     autosave_not_running.clear()
 
     if not renpy.emscripten:
-        t = threading.Thread(target=autosave_thread, args=(take_screenshot,))
-        t.daemon = True
-        t.start()
+        autosave_thread = threading.Thread(target=autosave_thread_function, args=(take_screenshot,))
+        autosave_thread.daemon = True
+        autosave_thread.start()
     else:
         import emscripten
-        emscripten.async_call(autosave_thread, take_screenshot, -1)
+        emscripten.async_call(autosave_thread_function, take_screenshot, -1)
 
 
 ################################################################################
