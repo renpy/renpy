@@ -24,4 +24,3 @@ rm -Rf notarized/out/renpy.app || true
 cp -a /tmp/notarize/renpy.app notarized/out/
 
 echo "Done."
-exit 0

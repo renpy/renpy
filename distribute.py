@@ -258,11 +258,10 @@ def main():
     print()
 
     if args.sign and not args.notarized:
-        print("For a final release, run scripts/notarize1.sh and scripts/notarized2.sh on a mac.")
-        print("And then run ./distribute.py --notarized.")
+        shutil.copy(sdk + ".tar.bz2", ROOT + "/notarized/in/renpy.tar.bz2")
 
-#     if not (args.fast or args.sign):
-#         print("For a final-ish release, remember to use --sign so we're signed on the mac.")
+        print("For a final release, run scripts/notarize1.sh and scripts/notarize2.sh on a mac.")
+        print("And then run ./distribute.py --notarized.")
 
 
 if __name__ == "__main__":

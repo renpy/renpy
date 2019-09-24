@@ -1278,7 +1278,7 @@ init python in distribute:
 
             file_hash, old_fl_hash = self.build_cache.get(full_filename, ("", ""))
 
-            if (not directory) and (old_fl_hash == fl_hash) and not(self.renpy and (variant == "sdk")):
+            if (not directory) and (old_fl_hash == fl_hash) and not(self.build['renpy'] and (variant == "sdk")):
 
                 if file_hash:
                     self.build_cache[full_filename] = (file_hash, fl_hash)
