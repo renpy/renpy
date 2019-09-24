@@ -373,7 +373,7 @@ init python in distribute:
         This manages the process of building distributions.
         """
 
-        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None):
             """
             Distributes `project`.
 
@@ -404,6 +404,10 @@ init python in distribute:
 
             `report_success`
                 If true, we report that the build succeeded.
+
+            `macapp`
+                If given, the path to a macapp that's used instead of
+                the macapp
             """
 
             # A map from a package to a unique update version hash.
@@ -436,6 +440,9 @@ init python in distribute:
 
             # Logfile.
             self.log = open(self.temp_filename("distribute.txt"), "w")
+
+            # The path to the mac app.
+            self.macapp = macapp
 
             # Start by scanning the project, to get the data and build
             # dictionaries.
@@ -1059,6 +1066,9 @@ init python in distribute:
             Signs the mac app contained in appzip.
             """
 
+            if self.macapp:
+                return self.rescan(fl, self.macapp)
+
             identity = self.build.get('mac_identity', None)
 
             if identity is None:
@@ -1268,7 +1278,7 @@ init python in distribute:
 
             file_hash, old_fl_hash = self.build_cache.get(full_filename, ("", ""))
 
-            if (not directory) and old_fl_hash == fl_hash:
+            if (not directory) and (old_fl_hash == fl_hash) and not(self.renpy and (variant == "sdk")):
 
                 if file_hash:
                     self.build_cache[full_filename] = (file_hash, fl_hash)
@@ -1479,6 +1489,7 @@ init python in distribute:
         ap.add_argument("--no-update", default=True, action="store_false", dest="build_update", help="Prevents updates from being built.")
         ap.add_argument("--package", action="append", help="If given, a package to build. Defaults to building all packages.")
         ap.add_argument("--no-archive", action="store_true", help="If given, files will not be added to archives.")
+        ap.add_argument("--macapp", default=None, action="store", help="If given, the path to a signed and notarized mac app.")
         ap.add_argument("project", help="The path to the project directory.")
 
         args = ap.parse_args()
@@ -1490,7 +1501,7 @@ init python in distribute:
         else:
             packages = None
 
-        Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update, noarchive=args.no_archive, packagedest=args.packagedest)
+        Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update, noarchive=args.no_archive, packagedest=args.packagedest, macapp=args.macapp)
 
         return False
 

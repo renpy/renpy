@@ -54,6 +54,7 @@ def main():
     ap.add_argument("--variant", action="store")
     ap.add_argument("--sign", action="store_true", default=True)
     ap.add_argument("--nosign", action="store_false", dest="sign")
+    ap.add_argument("--notarized", action="store_true", dest="notarized")
     ap.add_argument("--vc-version-only", action="store_true")
 
     args = ap.parse_args()
@@ -175,6 +176,12 @@ def main():
             destination,
             ]
 
+        if args.notarized:
+            cmd.extend([
+                "--macapp",
+                "notarized/out",
+                ])
+
     print()
     subprocess.check_call(cmd)
 
@@ -249,6 +256,10 @@ def main():
             os.unlink(sdk + ".7z.exe")
 
     print()
+
+    if args.sign and not args.notarized:
+        print("For a final release, run scripts/notarize1.sh and scripts/notarized2.sh on a mac.")
+        print("And then run ./distribute.py --notarized.")
 
 #     if not (args.fast or args.sign):
 #         print("For a final-ish release, remember to use --sign so we're signed on the mac.")
