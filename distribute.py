@@ -260,8 +260,20 @@ def main():
     if args.sign and not args.notarized:
         shutil.copy(sdk + ".tar.bz2", ROOT + "/notarized/in/renpy.tar.bz2")
 
-        print("For a final release, run scripts/notarize1.sh and scripts/notarize2.sh on a mac.")
-        print("And then run ./distribute.py --notarized.")
+        print("Next steps:")
+        print()
+        print("    mac: ./scripts/notarize_app_1.sh")
+        print("    mac: ./scripts/notarize_app_2.sh")
+        print("    linux: ./distribute.py --notarized")
+        print()
+
+    elif args.sign and args.notarized:
+
+        print("Next steps:")
+        print()
+        print("    mac: ./scripts/notarize_dmg_1.sh", args.version)
+        print("    mac: ./scripts/notarize_dmg_2.sh", args.version)
+        print()
 
 
 if __name__ == "__main__":
