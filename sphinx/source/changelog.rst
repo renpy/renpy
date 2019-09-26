@@ -26,13 +26,14 @@ An issue with enabling the mixing of mono sound files has been fixed.
 This issue caused many WAV files not to play. (We still don't recommend
 the use of WAV files.)
 
-Platform
+Platforms
 --------
 
-Ren'Py is now distributed as an unsigned binary on the Mac,
-as a workaround for the disruption in workflow that Apple's
-notarization process causes. It may be necessary to ctrl-click
-renpy.app and choose "Open" to start Ren'Py.
+Ren'Py is now distributed as a signed and notarized binary on the
+Mac. As this process takes a very long time to accomplish, the
+ability to sign macOS binaries has been removed from Ren'Py itself,
+in favor of external scripts that take care of the signing and
+notarization process.
 
 The minimum version supported by the Android port has been lowered
 to Android 19 (Android 4.4 KitKat).
