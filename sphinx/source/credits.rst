@@ -83,6 +83,7 @@ the omission in future versions.
 * Jan Beich
 * Javimat
 * Joshua Fehler
+* Julian Uy
 * Kalawore
 * Kathryn
 * Kevin Turner
@@ -151,7 +152,6 @@ the omission in future versions.
 * Thuong Nguyen Huu
 * Tlm-2501
 * Tmrwiz
-* Uyjulian
 * Viliam Búr
 * Vollschauer
 * William Tumeo
