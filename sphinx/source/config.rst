@@ -290,7 +290,7 @@ Occasionally Used
 
     The number of slots used by autosaves.
 
-.. var:: config.cache_surfaces = True
+.. var:: config.cache_surfaces = False
 
     If True, the underlying data of an image is stored in RAM, allowing
     image manipulators to be applied to that image without reloading it
