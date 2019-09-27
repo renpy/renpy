@@ -346,6 +346,7 @@ class Viewport(renpy.display.layout.Container):
         if not ((0 <= x < self.width) and (0 <= y <= self.height)):
             self.edge_xspeed = 0
             self.edge_yspeed = 0
+            self.edge_last_st = None
 
             inside = False
 
