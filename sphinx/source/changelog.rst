@@ -2,7 +2,7 @@
 Full Changelog
 ==============
 
-.. _renpy-7.3.3
+.. _renpy-7.3.3:
 
 7.3.3
 =====
@@ -11,7 +11,7 @@ Audio
 -----
 
 Ren'Py now supports an ``audio`` directory, which automatically defines
-names in the :ref:`Audio namespace <audio-namespace>`. This makes it
+names in the :ref:`audio namespace <audio-namespace>`. This makes it
 possible to have a file named ``game/audio/overture.ogg``, and play
 it using::
 
@@ -27,7 +27,7 @@ This issue caused many WAV files not to play. (We still don't recommend
 the use of WAV files.)
 
 Platforms
---------
+---------
 
 Ren'Py is now distributed as a signed and notarized binary on the
 Mac. As this process takes a very long time to accomplish, the
@@ -101,7 +101,7 @@ Translations
 The Korean and Spanish translations have been updated.
 
 
-.. _renpy-7.3.2
+.. _renpy-7.3.2:
 
 7.3.2
 =====
