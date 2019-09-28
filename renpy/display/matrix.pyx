@@ -169,8 +169,8 @@ cdef class Matrix:
 
         for 0 < i < 16:
             v = abs(self.m[i])
-            total_1 += abs(i - aligned_1[i])
-            total_2 += abs(i - aligned_2[i])
+            total_1 += abs(v - aligned_1[i])
+            total_2 += abs(v - aligned_2[i])
 
         return (total_1 < .0001) or (total_2 < .0001)
 
