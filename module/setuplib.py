@@ -406,6 +406,7 @@ def copyfile(source, dest, replace=None, replace_with=None):
     import shutil
     shutil.copystat(sfn, dfn)
 
+install_requires = ["sqlite3"]
 
 def setup(name, version):
     """
@@ -417,6 +418,7 @@ def setup(name, version):
         version=version,
         ext_modules=extensions,
         py_modules=py_modules,
+        install_requires=install_requires
         )
 
 
