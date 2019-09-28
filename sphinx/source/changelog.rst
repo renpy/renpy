@@ -20,7 +20,7 @@ it using::
 The new :func:`AudioData` class allows you to provide compressed
 audio data to Ren'Py, either generated programatically or taken
 from a source other than a file. To support this, the Python wave
-and sunau modules are now package with Ren'Py.
+and sunau modules are now packaged with Ren'Py.
 
 An issue with enabling the mixing of mono sound files has been fixed.
 This issue caused many WAV files not to play. (We still don't recommend
@@ -46,7 +46,7 @@ The web port of Ren'Py has seen a number of changes:
 * 'game.zip' can now be renamed. 'DEFAULT_GAME_FILENAME' in index.html controls this.
 * Portable HTTP requests (native+renpyweb): see https://github.com/renpy/renpyweb/blob/master/utils/asyncrequest.rpy
 * Enable networking in Python web port for testing WebSockets, transparently available through the Python 'socket' module
-* HTTP Cache-Control allows for for smoother game updates.
+* HTTP Cache-Control allows for smoother game updates.
 * The pygame.draw module is now included, allowing Canvas support.
 * WebGL compatibility has been improved.
 
