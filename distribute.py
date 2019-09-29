@@ -9,6 +9,7 @@ import compileall
 import shutil
 import subprocess
 import argparse
+import time
 
 if not sys.flags.optimize:
     raise Exception("Optimization disabled.")
@@ -42,6 +43,8 @@ def copy_tutorial_file(src, dest):
 
 
 def main():
+
+    start = time.time()
 
     if not sys.flags.optimize:
         raise Exception("Not running with python optimization.")
@@ -257,23 +260,7 @@ def main():
 
     print()
 
-    if args.sign and not args.notarized:
-        shutil.copy(sdk + ".tar.bz2", ROOT + "/notarized/in/renpy.tar.bz2")
-
-        print("Next steps:")
-        print()
-        print("    mac: ./scripts/notarize_app_1.sh")
-        print("    mac: ./scripts/notarize_app_2.sh")
-        print("    linux: ./distribute.py --notarized")
-        print()
-
-    elif args.sign and args.notarized:
-
-        print("Next steps:")
-        print()
-        print("    mac: ./scripts/notarize_dmg_1.sh", args.version)
-        print("    mac: ./scripts/notarize_dmg_2.sh", args.version)
-        print()
+    print("Distribute took {:.0f} seconds.".format(time.time() - start))
 
 
 if __name__ == "__main__":
