@@ -70,6 +70,7 @@ the omission in future versions.
 * Gustavo Carvalho
 * Helloise
 * Hentai Senshi
+* Herpior
 * HikkeKun
 * Hixbooks
 * Huang Junjie
