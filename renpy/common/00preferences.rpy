@@ -204,7 +204,7 @@ init -1500 python:
          * Preference("font transform", None) - Disables the accessibility font transform.
 
          * Preference("font size", 1.0) - Sets the accessibility font size scaling factor.
-         * Preference("font vertical spacing", 1.0) - Sets the accessibility font vertical spacing scaling factor.
+         * Preference("font line spacing", 1.0) - Sets the accessibility font vertical spacing scaling factor.
 
          Values that can be used with bars are:
 
@@ -215,7 +215,7 @@ init -1500 python:
          * Preference("voice volume")
          * Preference("mixer <mixer> volume")
          * Preference("font size")
-         * Preference("font vertical spacing")
+         * Preference("font line spacing")
 
          The `range` parameter can be given to give the range of certain bars.
          For "text speed", it defaults to 200 cps. For "auto-forward time", it
