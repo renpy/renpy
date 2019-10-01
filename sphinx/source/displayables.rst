@@ -241,7 +241,7 @@ images as appropriate. Placeholders are used automatically when an undefined
 image is used in developer mode. Placeholder displayables can also be used
 manually when the defaults are inappropriate. ::
 
-    # By default, the girl placeholer will be used.
+    # By default, the girl placeholder will be used.
     image sue = Placeholder("boy")
 
     label start:
