@@ -94,6 +94,8 @@ the bar to be rounded to the nearest step value.
 :func:`Frame` now allows the tile argument to be the string "integer",
 which tiles the contents of the frame an integer number of times.
 
+:func:`Character` now allows the `name` argument to be a function or
+callable object when `dynamic` is true.
 
 Translations
 ------------

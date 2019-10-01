@@ -1109,7 +1109,10 @@ class ADVCharacter(object):
 
             # If dynamic is set, evaluate the name expression.
             if self.dynamic:
-                who = renpy.python.py_eval(who)
+                if callable(who):
+                    who = who()
+                else:
+                    who = renpy.python.py_eval(who)
 
             def sub(s, scope=None, force=False, translate=True):
                 return renpy.substitutions.substitute(s, scope=scope, force=force, translate=translate)[0]
@@ -1329,9 +1332,13 @@ def Character(name=NotSet, kind=None, **properties):
     These options help to control the display of the name.
 
     `dynamic`
-        If true, then `name` should be a string containing a Python
-        expression. That string will be evaluated before each line
-        of dialogue, and the result used as the name of the character.
+        If true, then `name` should either be a string containing a Python
+        expression, a function, or a callable object. If it's a string,
+        That string will be evaluated before each line of dialogue, and
+        the result used as the name of the character. Otherwise, the
+        function or callable object will be called with no arguments
+        before each line of dialogue, and the return value of the call will
+        be used as the name of the character.
 
     **Controlling Interactions.**
     These options control if the dialogue is displayed, if an
