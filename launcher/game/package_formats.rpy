@@ -28,10 +28,16 @@ init python in distribute:
     import struct
     import stat
     import shutil
+    import sys
     import threading
 
-    from builtins import int as long
+    from renpy import six
     from zipfile import crc32
+
+
+    # Since the long type doesn't exist on py3, define it here
+    if six.PY3:
+        long = int
 
     zlib.Z_DEFAULT_COMPRESSION = 5
 

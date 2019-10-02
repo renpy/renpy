@@ -55,8 +55,13 @@ import math
 import exceptions
 import string
 import array
-from builtins import int as long
 from renpy import six
+
+
+# Since the long type doesn't exist on py3, define it here
+if six.PY3:
+    long = int
+
 
 sha1, sha256, sha512, md5 = None, None, None, None
 
