@@ -835,9 +835,9 @@ init -1500 python in updater:
                 info.gname = "renpy"
 
                 if xbit or directory:
-                    info.mode = 0777
+                    info.mode = 0o777
                 else:
-                    info.mode = 0666
+                    info.mode = 0o666
 
                 if info.isreg():
                     with open(path, "rb") as f:
@@ -1090,7 +1090,7 @@ init -1500 python in updater:
                         umask = os.umask(0)
                         os.umask(umask)
 
-                        os.chmod(new_path, 0777 & (~umask))
+                        os.chmod(new_path, 0o777 & (~umask))
                     except:
                         pass
 
