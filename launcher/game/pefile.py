@@ -55,6 +55,7 @@ import math
 import exceptions
 import string
 import array
+from builtins import int as long
 from renpy import six
 
 sha1, sha256, sha512, md5 = None, None, None, None
@@ -87,7 +88,7 @@ IMAGE_VXD_SIGNATURE             = 0x454C
 IMAGE_NT_SIGNATURE              = 0x00004550
 IMAGE_NUMBEROF_DIRECTORY_ENTRIES= 16
 IMAGE_ORDINAL_FLAG              = 0x80000000
-IMAGE_ORDINAL_FLAG64            = 0x8000000000000000
+IMAGE_ORDINAL_FLAG64            = long(0x8000000000000000)
 OPTIONAL_HEADER_MAGIC_PE        = 0x10b
 OPTIONAL_HEADER_MAGIC_PE_PLUS   = 0x20b
 
