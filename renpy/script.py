@@ -107,7 +107,7 @@ class Script(object):
         renpy.game.script = self
 
         if os.path.exists(renpy.config.renpy_base + "/lock.txt"):
-            self.key = file(renpy.config.renpy_base + "/lock.txt", "rb").read()
+            self.key = open(renpy.config.renpy_base + "/lock.txt", "rb").read()
         else:
             self.key = None
 
@@ -598,7 +598,7 @@ class Script(object):
             if not renpy.macapp:
 
                 try:
-                    f = file(rpycfn, "wb")
+                    f = open(rpycfn, "wb")
 
                     self.write_rpyc_header(f)
                     self.write_rpyc_data(f, 1, dumps((data, stmts), 2))

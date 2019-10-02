@@ -246,7 +246,7 @@ def dump(error):
     if args.json_dump != "-":
         new = args.json_dump + ".new"
 
-        with file(new, "w") as f:
+        with open(new, "w") as f:
             json.dump(result, f)
 
         if os.path.exists(args.json_dump):
