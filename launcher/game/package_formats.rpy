@@ -30,6 +30,7 @@ init python in distribute:
     import shutil
     import threading
 
+    from builtins import int
     from zipfile import crc32
 
     zlib.Z_DEFAULT_COMPRESSION = 5
@@ -156,9 +157,9 @@ init python in distribute:
             zi.create_system = 3
 
             if xbit:
-                zi.external_attr = long(0100755) << 16
+                zi.external_attr = int(0100755) << 16
             else:
-                zi.external_attr = long(0100644) << 16
+                zi.external_attr = int(0100644) << 16
 
             self.zipfile.write_with_info(zi, path)
 
@@ -170,7 +171,7 @@ init python in distribute:
             zi.date_time = self.get_date_time(path)
             zi.compress_type = zipfile.ZIP_STORED
             zi.create_system = 3
-            zi.external_attr = (long(0040755) << 16) | 0x10
+            zi.external_attr = (int(0040755) << 16) | 0x10
 
             self.zipfile.write_with_info(zi, path)
 
@@ -396,7 +397,3 @@ init python in distribute:
         for i in parallel_threads:
             if i.done:
                 i.done()
-
-
-
-

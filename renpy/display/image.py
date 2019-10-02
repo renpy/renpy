@@ -229,7 +229,7 @@ def get_ordered_image_attributes(tag, attributes=(), sort=None):
 
     for attr in attrcount:
         if attr not in rv:
-            l.append((attrtotalpos[attr] / attrcount[attr], sort(attr), attr))
+            l.append((attrtotalpos[attr] // attrcount[attr], sort(attr), attr))
 
     l.sort()
     for i in l:
