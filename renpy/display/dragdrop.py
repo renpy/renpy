@@ -636,16 +636,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
             handled = True
 
-            if not self.drag_moved and (self.start_x != par_x or self.start_y != par_y):
+            if (not self.drag_moved) and (self.start_x != par_x or self.start_y != par_y):
                 self.drag_moved = True
                 self.click_time = None
-
-                # We may not be in the drag_joined group.
-                self.set_style_prefix("idle_", True)
-
-                # Set the style.
-                for i in joined:
-                    i.set_style_prefix("selected_hover_", True)
 
                 # Raise the joined items.
                 if self.drag_raise and self.drag_group is not None:
@@ -675,6 +668,14 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         else:
             handled = False
+
+        # Set the style for joined_set
+        if self.drag_moved:
+            # We may not be in the drag_joined group.
+            self.set_style_prefix("idle_", True)
+
+            for i in joined:
+                i.set_style_prefix("selected_hover_", True)
 
         if (self.drag_group is not None) and self.drag_moved:
             if self.mouse_drop:
