@@ -409,11 +409,30 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         if self.drag_group is not None:
             self.drag_group.lower_children([ self ])
 
+    def update_style_prefix(self):
+        """
+        This updates the style prefix for all Drag's associated
+        with this drag movement.
+        """
+        # We may not be in the drag_joined group.
+        self.set_style_prefix("idle_", True)
+
+        # Set the style for joined_set
+        for i in [i[0] for i in self.drag_joined(self)]:
+            i.set_style_prefix("selected_hover_", True)
+
+        if self.last_drop is not None:
+            self.last_drop.set_style_prefix("selected_idle_", True)
+
     def visit(self):
         return [ self.child ]
 
     def focus(self, default=False):
         super(Drag, self).focus(default)
+
+        # Update state back after restart_interaction
+        if default and self.drag_moved:
+            self.update_style_prefix()
 
         rv = None
 
@@ -669,14 +688,6 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         else:
             handled = False
 
-        # Set the style for joined_set
-        if self.drag_moved:
-            # We may not be in the drag_joined group.
-            self.set_style_prefix("idle_", True)
-
-            for i in joined:
-                i.set_style_prefix("selected_hover_", True)
-
         if (self.drag_group is not None) and self.drag_moved:
             if self.mouse_drop:
                 drop = self.drag_group.get_drop_at(joined, par_x, par_y)
@@ -692,8 +703,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
             self.last_drop = drop
 
-        if drop is not None:
-            drop.set_style_prefix("selected_idle_", True)
+        if self.drag_moved:
+            self.update_style_prefix()
 
         if map_event(ev, 'drag_deactivate'):
 
