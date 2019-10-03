@@ -95,17 +95,22 @@ class FboRtt(Rtt):
         to render the texture.
         """
 
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
+        cdef GLint old_fbo
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &old_fbo);
 
-        environ.viewport(0, 0, w, h)
-        environ.ortho(x, x + w, y, y + h, -1, 1)
+        try:
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
 
-        draw_func(x, y, w, h)
+            environ.viewport(0, 0, w, h)
+            environ.ortho(x, x + w, y, y + h, -1, 1)
 
-        glBindTexture(GL_TEXTURE_2D, texture)
-        glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, w, h, 0)
+            draw_func(x, y, w, h)
 
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
+            glBindTexture(GL_TEXTURE_2D, texture)
+            glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, w, h, 0)
+
+        finally:
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, old_fbo)
 
 
     def get_size_limit(self, dimension):

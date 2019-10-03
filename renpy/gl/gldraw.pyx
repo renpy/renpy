@@ -1157,7 +1157,15 @@ cdef class GLDraw:
         if isinstance(what, render.Render):
             what.is_opaque()
 
-        rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
+        self.did_render_to_texture = False
+
+        for _i in range(2):
+
+            rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
+
+            if not self.did_render_to_texture:
+                break
+
 
         self.did_render_to_texture = True
 
