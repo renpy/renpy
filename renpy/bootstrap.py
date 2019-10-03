@@ -24,6 +24,7 @@ import os.path
 import sys
 import subprocess
 import io
+import importlib
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
@@ -31,7 +32,7 @@ FSENCODING = sys.getfilesystemencoding() or "utf-8"
 old_stdout = sys.stdout
 old_stderr = sys.stderr
 
-reload(sys)
+importlib.reload(sys)
 sys.setdefaultencoding(FSENCODING)  # @UndefinedVariable
 
 sys.stdout = old_stdout
