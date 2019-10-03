@@ -2,6 +2,20 @@
 Full Changelog
 ==============
 
+.. _renpy-7.3.4:
+
+7.3.4
+=====
+
+This release fixes major graphics glitches that were introduced in 7.3.3.
+
+* On Windows, textures would fail to be reloaded when switching from fullscreen
+  to windowed mode or vice-versa. This would cause the wrong texture to be
+  displayed.
+* On all platforms, graphical glitches could occur when multiple render-to-texture
+  operations occured during a single frame.
+
+
 .. _renpy-7.3.3:
 
 7.3.3
