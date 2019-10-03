@@ -196,6 +196,7 @@ cdef class GLDraw:
             self.did_init = False
 
             if renpy.windows and (self.old_fullscreen is not None):
+                renpy.display.interface.kill_textures_and_surfaces()
                 pygame.display.quit()
 
             pygame.display.init()
