@@ -24,7 +24,11 @@ import os.path
 import sys
 import subprocess
 import io
-import importlib
+try:
+    # reload is built-in in Python 2, in importlib in Python 3
+    reload
+except NameError:
+    from importlib import reload
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
@@ -32,7 +36,7 @@ FSENCODING = sys.getfilesystemencoding() or "utf-8"
 old_stdout = sys.stdout
 old_stderr = sys.stderr
 
-importlib.reload(sys)
+reload(sys)
 sys.setdefaultencoding(FSENCODING)  # @UndefinedVariable
 
 sys.stdout = old_stdout

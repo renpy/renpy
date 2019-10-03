@@ -10,7 +10,12 @@ import shutil
 import subprocess
 import argparse
 import time
-import importlib
+
+try:
+    # reload is built-in in Python 2, in importlib in Python 3
+    reload
+except NameError:
+    from importlib import reload
 
 if not sys.flags.optimize:
     raise Exception("Optimization disabled.")
@@ -96,11 +101,11 @@ def main():
         return
 
     try:
-        importlib.reload(sys.modules['renpy.vc_version'])  # @UndefinedVariable
+        reload(sys.modules['renpy.vc_version'])  # @UndefinedVariable
     except:
         import renpy.vc_version  # @UnusedImport
 
-    importlib.reload(sys.modules['renpy'])
+    reload(sys.modules['renpy'])
 
     # Check that the versions match.
     full_version = renpy.version_only  # @UndefinedVariable
