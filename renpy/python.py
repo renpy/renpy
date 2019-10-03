@@ -2005,7 +2005,7 @@ def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="sto
     if locals is None:
         locals = globals  # @ReservedAssignment
 
-    exec bytecode in globals, locals
+    exec(bytecode, globals, locals)
 
 
 def py_exec(source, hide=False, store=None):
@@ -2018,7 +2018,7 @@ def py_exec(source, hide=False, store=None):
     else:
         locals = store  # @ReservedAssignment
 
-    exec py_compile(source, 'exec') in store, locals
+    exec(py_compile(source, 'exec'), store, locals)
 
 
 def py_eval_bytecode(bytecode, globals=None, locals=None):  # @ReservedAssignment
@@ -2062,7 +2062,7 @@ def raise_at_location(e, loc):
     code = compile(node, filename, 'exec')
 
     # PY3 - need to change to exec().
-    exec code in { "e" : e }
+    exec(code, { "e" : e })
 
 
 # This was used to proxy accesses to the store. Now it's kept around to deal
