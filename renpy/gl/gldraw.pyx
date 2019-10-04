@@ -931,6 +931,9 @@ cdef class GLDraw:
                     p /= 2
                     pc = self.get_half(pc)
 
+            elif rend.operation == FLATTEN:
+                child.render_to_texture(True)
+
         if render_what:
             what.render_to_texture(True)
 
@@ -1158,15 +1161,7 @@ cdef class GLDraw:
         if isinstance(what, render.Render):
             what.is_opaque()
 
-        self.did_render_to_texture = False
-
-        for _i in range(2):
-
-            rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
-
-            if not self.did_render_to_texture:
-                break
-
+        rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
         self.did_render_to_texture = True
 
