@@ -523,6 +523,8 @@ def register_sl_displayable(*args, **kwargs):
         for i in all_statements:
             rv.add(i)
 
+    rv.add(if_statement)
+
     return rv
 
 
@@ -944,6 +946,8 @@ class CustomParser(Parser):
 
             for i in all_statements:
                 self.add(i)
+
+        self.add(if_statement)
 
         global parser
         parser = None
