@@ -275,7 +275,7 @@ def image_exists(name, expression, tag, precise=True):
     if image_exists_precise(name):
         return
 
-    report("'{}' is not an image.".format(" ".join(name)) )
+    report("'%s' is not an image.", " ".join(name))
 
 
 # Only check each file once.
@@ -617,8 +617,8 @@ def check_label(node):
 def check_screen(node):
 
     if (node.screen.parameters is None) and renpy.config.lint_screens_without_parameters:
-        report("The screen {} has not been given a parameter list.".format(node.screen.name))
-        add("This can be fixed by writing 'screen {}():' instead.".format(node.screen.name))
+        report("The screen %s has not been given a parameter list.", node.screen.name)
+        add("This can be fixed by writing 'screen %s():' instead.", node.screen.name)
 
 
 def check_styles():
