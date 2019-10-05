@@ -860,8 +860,9 @@ class DragGroup(renpy.display.layout.MultiBox):
 
     def raise_children(self, l):
         """
-        Raises the children in `l` to the top of this drag_group, using the
-        order given in l for those children.
+        Raises the children in the list `l` to the top of this drag group.
+        Each is raised in the order that it appears in `l`, which means that
+        the last element of `l` will be raised closest to the player.
         """
 
         self.sorted = False
@@ -874,6 +875,10 @@ class DragGroup(renpy.display.layout.MultiBox):
 
     def lower_children(self, l):
         """
+        Lowers the children in the list `l` to the bottom of this drag group.
+        Each is lowered in the order that it appears in `l`, which means that
+        the last element of `l` will be the lowest of the children.
+
         Lowers the children in `l` to the bottom of this drag group, with
         the one at the bottom being the lowest.
         """
