@@ -609,13 +609,23 @@ class DynamicImage(renpy.display.core.Displayable):
         else:
             return self
 
+    def set_style_prefix(self, prefix, root):
+
+        if (prefix != self.style.prefix) and self._duplicatable:
+            self.target = None
+
+        super(DynamicImage, self).set_style_prefix(prefix, root)
+
     def find_target(self, scope=None, update=True):
 
         if self.locked and (self.target is not None):
             return
 
         if self._args.prefix is None:
-            prefix = ""
+            if self._duplicatable:
+                prefix = self.style.prefix
+            else:
+                prefix = ""
         else:
             prefix = self._args.prefix
 
