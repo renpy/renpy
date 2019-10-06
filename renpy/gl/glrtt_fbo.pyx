@@ -95,9 +95,6 @@ class FboRtt(Rtt):
         to render the texture.
         """
 
-        cdef GLint old_fbo
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &old_fbo);
-
         try:
             glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
 
@@ -110,7 +107,7 @@ class FboRtt(Rtt):
             glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, w, h, 0)
 
         finally:
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, old_fbo)
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
 
 
     def get_size_limit(self, dimension):
