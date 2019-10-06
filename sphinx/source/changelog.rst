@@ -7,13 +7,28 @@ Full Changelog
 7.3.4
 =====
 
+Fixes
+-----
+
 This release fixes major graphics glitches that were introduced in 7.3.3.
 
 * On Windows, textures would fail to be reloaded when switching from fullscreen
   to windowed mode or vice-versa. This would cause the wrong texture to be
   displayed.
-* On all platforms, graphical glitches could occur when multiple render-to-texture
-  operations occured during a single frame.
+* On all platforms, graphical glitches could occur when :func:`Flatten`
+  was used.
+
+Other Changes
+-------------
+
+Dynamic images can now include "[prefix_]" everywhere, and especially when
+``add`` has been used to add a dynamic image to buttons, drags, and similar
+focusable objects.
+
+Creator-defined statements may now take if statements as children.
+
+The drag and drop system has been improved to better interact with updated
+screens.
 
 
 .. _renpy-7.3.3:
