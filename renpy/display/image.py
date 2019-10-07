@@ -651,7 +651,8 @@ class DynamicImage(renpy.display.core.Displayable):
 
         if self.raw_target == target:
 
-            # In case we're updated after the prefix change.
+            # In case we're updated after the prefix change and.
+            # refers to equal image.
             if self.target is None:
                 self.target = self.raw_target
 
