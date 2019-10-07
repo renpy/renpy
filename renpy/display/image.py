@@ -731,9 +731,6 @@ class DynamicImage(renpy.display.core.Displayable):
         if self.target is None:
             self.find_target()
 
-        if self.target is None:
-            print(self._duplicatable, self.style.prefix)
-
         return wrap_render(self.target, width, height, st, at)
 
     def get_placement(self):
