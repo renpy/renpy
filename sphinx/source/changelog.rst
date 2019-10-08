@@ -25,7 +25,8 @@ Dynamic images can now include "[prefix_]" everywhere, and especially when
 ``add`` has been used to add a dynamic image to buttons, drags, and similar
 focusable objects.
 
-Creator-defined statements may now take if statements as children.
+Creator-defined screen language statements may now take ``if``
+statements as children.
 
 The drag and drop system has been improved to better interact with updated
 screens.
