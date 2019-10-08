@@ -344,7 +344,7 @@ take a zorder argument.
 Ren'Py will now play a mono sound file with the same volume as a stereo
 sound file, rather than sending half the energy to each ear.
 
-The new :func:`config.load_failed_label` specifies a label that is jumped
+The new :var:`config.load_failed_label` specifies a label that is jumped
 to when a load fails because Ren'Py can no longer find the current statement.
 This makes it possible to a game to implement its own recovery mechanism.
 
