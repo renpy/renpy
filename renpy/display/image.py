@@ -611,8 +611,9 @@ class DynamicImage(renpy.display.core.Displayable):
 
     def set_style_prefix(self, prefix, root):
 
-        if (prefix != self.style.prefix) and self._duplicatable and (not self.locked):
+        if (prefix != self.style.prefix) and self._duplicatable:
             self.target = None
+            self.raw_target = None
 
         super(DynamicImage, self).set_style_prefix(prefix, root)
 
@@ -650,12 +651,6 @@ class DynamicImage(renpy.display.core.Displayable):
             raise Exception(error)
 
         if self.raw_target == target:
-
-            # In case we're updated after the prefix change and.
-            # refers to equal image.
-            if self.target is None:
-                self.target = self.raw_target
-
             return False
 
         if not update:
@@ -691,6 +686,7 @@ class DynamicImage(renpy.display.core.Displayable):
 
         rv = self._copy(args)
         rv.target = None
+        rv.raw_target = None
         # This does not set _duplicatable, since it should always remain the
         # same.
         return rv
