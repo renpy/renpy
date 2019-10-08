@@ -558,12 +558,6 @@ class DynamicImage(renpy.display.core.Displayable):
 
         self.name = name
 
-        if scope is not None:
-            self.find_target(scope)
-            self._uses_scope = True
-        else:
-            self._uses_scope = False
-
         if isinstance(name, basestring) and ("[prefix_" in name):
             self._duplicatable = True
 
@@ -571,6 +565,12 @@ class DynamicImage(renpy.display.core.Displayable):
             for i in name:
                 if ("[prefix_" in i):
                     self._duplicatable = True
+
+        if scope is not None:
+            self.find_target(scope)
+            self._uses_scope = True
+        else:
+            self._uses_scope = False
 
     def _scope(self, scope, update):
         return self.find_target(scope, update)
@@ -613,6 +613,7 @@ class DynamicImage(renpy.display.core.Displayable):
 
         if (prefix != self.style.prefix) and self._duplicatable:
             self.target = None
+            self.raw_target = None
 
         super(DynamicImage, self).set_style_prefix(prefix, root)
 
@@ -685,6 +686,7 @@ class DynamicImage(renpy.display.core.Displayable):
 
         rv = self._copy(args)
         rv.target = None
+        rv.raw_target = None
         # This does not set _duplicatable, since it should always remain the
         # same.
         return rv
