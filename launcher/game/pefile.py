@@ -55,6 +55,13 @@ import math
 import exceptions
 import string
 import array
+from renpy import six
+
+
+# Since the long type doesn't exist on py3, define it here
+if six.PY3:
+    long = int
+
 
 sha1, sha256, sha512, md5 = None, None, None, None
 
@@ -85,8 +92,8 @@ IMAGE_OS2_SIGNATURE_LE          = 0x454C
 IMAGE_VXD_SIGNATURE             = 0x454C
 IMAGE_NT_SIGNATURE              = 0x00004550
 IMAGE_NUMBEROF_DIRECTORY_ENTRIES= 16
-IMAGE_ORDINAL_FLAG              = 0x80000000L
-IMAGE_ORDINAL_FLAG64            = 0x8000000000000000L
+IMAGE_ORDINAL_FLAG              = 0x80000000
+IMAGE_ORDINAL_FLAG64            = long(0x8000000000000000)
 OPTIONAL_HEADER_MAGIC_PE        = 0x10b
 OPTIONAL_HEADER_MAGIC_PE_PLUS   = 0x20b
 
@@ -169,7 +176,7 @@ section_characteristics = [
     ('IMAGE_SCN_MEM_SHARED',                0x10000000),
     ('IMAGE_SCN_MEM_EXECUTE',               0x20000000),
     ('IMAGE_SCN_MEM_READ',                  0x40000000),
-    ('IMAGE_SCN_MEM_WRITE',                 0x80000000L) ]
+    ('IMAGE_SCN_MEM_WRITE',                 0x80000000) ]
 
 SECTION_CHARACTERISTICS = dict([(e[1], e[0]) for e in
     section_characteristics]+section_characteristics)
@@ -816,7 +823,7 @@ class Structure:
             for key in keys:
 
                 val = getattr(self, key)
-                if isinstance(val, int) or isinstance(val, long):
+                if isinstance(val, six.integer_types):
                     val_str = '0x%-8X' % (val)
                     if key == 'TimeDateStamp' or key == 'dwTimeStamp':
                         try:
@@ -1557,7 +1564,7 @@ class PE:
                 'Normal values are never larger than 0x10, the value is: 0x%x' %
                 self.OPTIONAL_HEADER.NumberOfRvaAndSizes )
 
-        for i in xrange(int(0x7fffffffL & self.OPTIONAL_HEADER.NumberOfRvaAndSizes)):
+        for i in xrange(int(0x7fffffff & self.OPTIONAL_HEADER.NumberOfRvaAndSizes)):
 
             if len(self.__data__[offset:]) == 0:
                 break
@@ -2355,13 +2362,13 @@ class PE:
             return None
 
         #resource.NameIsString = (resource.Name & 0x80000000L) >> 31
-        resource.NameOffset = resource.Name & 0x7FFFFFFFL
+        resource.NameOffset = resource.Name & 0x7FFFFFFF
 
-        resource.__pad = resource.Name & 0xFFFF0000L
-        resource.Id = resource.Name & 0x0000FFFFL
+        resource.__pad = resource.Name & 0xFFFF0000
+        resource.Id = resource.Name & 0x0000FFFF
 
-        resource.DataIsDirectory = (resource.OffsetToData & 0x80000000L) >> 31
-        resource.OffsetToDirectory = resource.OffsetToData & 0x7FFFFFFFL
+        resource.DataIsDirectory = (resource.OffsetToData & 0x80000000) >> 31
+        resource.OffsetToDirectory = resource.OffsetToData & 0x7FFFFFFF
 
         return resource
 
@@ -2683,7 +2690,7 @@ class PE:
                                 raw_data[varword_offset+2:varword_offset+4], 0)
                             varword_offset += 4
 
-                            if isinstance(word1, (int, long)) and isinstance(word1, (int, long)):
+                            if isinstance(word1, six.integer_types):
                                 var_struct.entry = {var_string: '0x%04x 0x%04x' % (word1, word2)}
 
                         var_offset = self.dword_align(

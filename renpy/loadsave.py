@@ -116,7 +116,7 @@ def save_dump(roots, log):
             size = 1
 
         elif isinstance(o, (str, unicode)):
-            size = len(o) / 40 + 1
+            size = len(o) // 40 + 1
 
         elif isinstance(o, (tuple, list)):
             size = 1

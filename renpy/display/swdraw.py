@@ -310,11 +310,11 @@ def draw_special(what, dest, x, y):
         ramp = "\x00" * 256
 
         for i in xrange(0, ramplen):
-            ramp += chr(255 * i / ramplen)
+            ramp += chr(255 * i // ramplen)
 
         ramp += "\xff" * 256
 
-        step = int( what.operation_complete * (256 + ramplen) )
+        step = int(what.operation_complete * (256 + ramplen))
         ramp = ramp[step:step+256]
 
         renpy.display.module.imageblend(
