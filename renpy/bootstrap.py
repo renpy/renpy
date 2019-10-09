@@ -24,6 +24,11 @@ import os.path
 import sys
 import subprocess
 import io
+try:
+    # reload is built-in in Python 2, in importlib in Python 3
+    reload
+except NameError:
+    from importlib import reload
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
@@ -173,7 +178,9 @@ def bootstrap(renpy_base):
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
         evars = { }
-        execfile(renpy_base + "/environment.txt", evars)
+        with open(renpy_base + "/environment.txt", "rb") as f:
+            code = compile(f.read(), renpy_base + "/environment.txt", 'exec')
+            exec(code, evars)
         for k, v in evars.iteritems():
             if k not in os.environ:
                 os.environ[k] = str(v)
@@ -186,7 +193,9 @@ def bootstrap(renpy_base):
 
         if os.path.exists(alt_path + "/environment.txt"):
             evars = { }
-            execfile(alt_path + "/environment.txt", evars)
+            with open(alt_path + "/environment.txt", "rb") as f:
+                code = compile(f.read(), alt_path + "/environment.txt", 'exec')
+                exec(code, evars)
             for k, v in evars.iteritems():
                 if k not in os.environ:
                     os.environ[k] = str(v)

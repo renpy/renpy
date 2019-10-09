@@ -11,6 +11,12 @@ import subprocess
 import argparse
 import time
 
+try:
+    # reload is built-in in Python 2, in importlib in Python 3
+    reload
+except NameError:
+    from importlib import reload
+
 if not sys.flags.optimize:
     raise Exception("Optimization disabled.")
 

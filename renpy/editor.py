@@ -130,7 +130,7 @@ def init():
     code = compile(source, path, "exec")
 
     scope = { "__file__" : path }
-    exec code in scope, scope
+    exec(code, scope, scope)
 
     if "Editor" in scope:
         editor = scope["Editor"]()

@@ -146,7 +146,7 @@ def load_rpe(fn):
     zfn.close()
 
     sys.path.insert(0, fn)
-    exec autorun in dict()
+    exec(autorun, dict())
 
 
 def choose_variants():

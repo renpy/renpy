@@ -751,7 +751,7 @@ class RenpyImporter(object):
                 if encoding == "latin-1":
                     raise
 
-        exec code in mod.__dict__
+        exec(code, mod.__dict__)
 
         return sys.modules[fullname]
 
