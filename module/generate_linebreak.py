@@ -73,7 +73,7 @@ print(("cdef char *break_rules = \"" + "".join(rules) + "\""))
 
 cc = [ 'XX' ] * 65536
 
-for l in file("LineBreak.txt"):
+for l in open("LineBreak.txt"):
     m = re.match("(\w+)\.\.(\w+);(\w\w)", l)
     if m:
         start = int(m.group(1), 16)

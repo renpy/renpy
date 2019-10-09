@@ -125,7 +125,7 @@ def index_archives():
 
         try:
             fn = transfn(prefix + ".rpa")
-            f = file(fn, "rb")
+            f = open(fn, "rb")
             l = f.readline()
 
             # 3.0 Branch.
@@ -162,7 +162,7 @@ def index_archives():
             f.close()
 
             fn = transfn(prefix + ".rpi")
-            index = loads(file(fn, "rb").read().decode("zlib"))
+            index = loads(open(fn, "rb").read().decode("zlib"))
             archives.append((prefix, index))
         except:
             raise
@@ -505,7 +505,7 @@ def load_core(name):
 
         # Compatibility path.
         else:
-            f = file(afn, "rb")
+            f = open(afn, "rb")
 
             for offset, dlen in index[name]:
                 f.seek(offset)

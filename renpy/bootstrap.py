@@ -143,7 +143,7 @@ def enable_trace(level):
     global trace_file
     global trace_local
 
-    trace_file = file("trace.txt", "w", 1)
+    trace_file = open("trace.txt", "w", 1)
 
     if level > 1:
         trace_local = trace_function

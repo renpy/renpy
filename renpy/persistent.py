@@ -191,7 +191,7 @@ def load(filename):
 
     # Unserialize the persistent data.
     try:
-        f = file(filename, "rb")
+        f = open(filename, "rb")
         s = f.read().decode("zlib")
         f.close()
         persistent = loads(s)
@@ -435,7 +435,7 @@ class _MultiPersistent(object):
     def save(self):
 
         fn = self._filename
-        f = file(fn + ".new", "wb")
+        f = open(fn + ".new", "wb")
         dump(self, f)
         f.close()
 
@@ -490,7 +490,7 @@ def MultiPersistent(name):
             break
 
     try:
-        rv = loads(file(fn, "rb").read())
+        rv = loads(open(fn, "rb").read())
     except:
         rv = _MultiPersistent()
 
