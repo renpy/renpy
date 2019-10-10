@@ -47,6 +47,20 @@ def call_exception_screen(screen_name, **kwargs):
     finally:
         renpy.config.quit_action = old_quit
 
+def call_exception_handler():
+    try:
+
+        old_quit = renpy.config.quit_action
+        renpy.config.quit_action = renpy.exports.quit
+
+        for i in renpy.config.layers:
+            renpy.game.context().scene_lists.clear(i)
+
+        return renpy.config.exception_handler()
+
+    finally:
+        renpy.config.quit_action = old_quit
+
 
 def rollback_action():
     renpy.exports.rollback(force=True)
@@ -97,15 +111,28 @@ def report_exception(short, full, traceback_fn):
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
         return True
 
-    if not renpy.exports.has_screen("_exception"):
-        return True
-
     try:
         init_display()
     except:
         return True
 
     if renpy.display.draw is None:
+        return True
+
+    if renpy.config.exception_handler is not None:
+        try:
+            rv = renpy.game.invoke_in_new_context(call_exception_handler)
+            if rv is True:
+                return
+
+        except renpy.game.CONTROL_EXCEPTIONS:
+            raise
+
+        except:
+            renpy.display.log.write("While handling exception:")
+            renpy.display.log.exception()
+
+    if not renpy.exports.has_screen("_exception"):
         return True
 
     ignore_action = None
