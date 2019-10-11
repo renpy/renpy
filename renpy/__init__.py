@@ -311,13 +311,15 @@ backup = None
 ################################################################################
 
 
-def update_path(package):
+def update_path():
     """
     Update the __path__ of package, to import binary modules from a libexec
     directory.
     """
 
-    name = package.__name__.split(".")
+    name = sys._getframe(1).f_globals["__name__"]
+    package = sys.modules[name]
+    name = name.split(".")
 
     import _renpy
     if hasattr(_renpy, '__file__'):  # .so/.dll
@@ -348,7 +350,7 @@ def import_all():
 
     import renpy  # @UnresolvedImport
 
-    update_path(renpy)
+    update_path()
 
     import renpy.arguments  # @UnresolvedImport
 
@@ -391,7 +393,6 @@ def import_all():
     plog = renpy.performance.log
 
     import renpy.styledata  # @UnresolvedImport
-    update_path(renpy.styledata)
 
     import renpy.style
     renpy.styledata.import_style_functions()
@@ -408,8 +409,6 @@ def import_all():
 
     import renpy.display  # @UnresolvedImport @Reimport
 
-    update_path(renpy.display)
-
     import renpy.display.presplash
     import renpy.display.pgrender
     import renpy.display.scale
@@ -418,8 +417,6 @@ def import_all():
     import renpy.display.core  # object @UnresolvedImport
 
     import renpy.text
-
-    update_path(renpy.text)
 
     import renpy.text.ftfont
     import renpy.text.font
@@ -431,13 +428,8 @@ def import_all():
     sys.modules['renpy.display.text'] = renpy.text.text
 
     import renpy.gl
-    update_path(renpy.gl)
-
     import renpy.gl2
-    update_path(renpy.gl2)
-
     import renpy.angle
-    update_path(renpy.angle)
 
     import renpy.display.layout
     import renpy.display.viewport
@@ -470,7 +462,6 @@ def import_all():
     # renpy.display.module.
 
     import renpy.audio
-    update_path(renpy.audio)
 
     import renpy.audio.audio
     import renpy.audio.music
@@ -480,8 +471,6 @@ def import_all():
     import renpy.screenlang
 
     import renpy.sl2
-    update_path(renpy.sl2)
-
     import renpy.sl2.slast
     import renpy.sl2.slparser
     import renpy.sl2.slproperties
