@@ -21,7 +21,7 @@
 
 from __future__ import print_function
 
-import pygame
+import pygame_sdl2 as pygame
 
 # The overridden positioning of the mouse.
 mouse_pos = None

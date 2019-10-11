@@ -438,7 +438,7 @@ init python:
             self.template = template
 
         def __call__(self):
-            import pygame.scrap
+            import pygame_sdl2.scrap
 
             with open(self.filename, "rb") as f:
                 f.read(3) # skip the BOM.
@@ -447,7 +447,7 @@ init python:
             s = s.replace("\n", "\r\n")
             s = s.replace("\r\r", "\r")
 
-            pygame.scrap.put(pygame.SCRAP_TEXT, s.encode("utf-8"))
+            pygame_sdl2.scrap.put(pygame_sdl2.SCRAP_TEXT, s.encode("utf-8"))
 
     def __can_open_traceback():
         return True

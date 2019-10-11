@@ -487,7 +487,6 @@ init python:
                     text = repr((x, y))
                     self.clipboard = __("Position copied to clipboard.")
 
-                import pygame.scrap
                 pygame.scrap.put(pygame.scrap.SCRAP_TEXT, text)
 
 screen _image_location_picker(image_files):

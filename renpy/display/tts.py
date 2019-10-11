@@ -25,7 +25,7 @@ import sys
 import os
 import renpy.audio
 import subprocess
-import pygame
+import pygame_sdl2 as pygame
 
 
 class TTSRoot(Exception):
