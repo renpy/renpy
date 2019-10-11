@@ -1006,6 +1006,9 @@ depth_size = None
 # A list of screens to remove when the context is copied.
 context_copy_remove_screens = [ "notify" ]
 
+# An exception handling callback.
+exception_handler = None
+
 del os
 del collections
 
