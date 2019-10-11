@@ -1025,6 +1025,21 @@ Rarely or Internally Used
 
     A list of layers that are cleared when entering a new context.
 
+.. var:: config.exception_handler = None
+
+    If not None, this should be a function that takes three arguments:
+
+    * A string giving the text of a traceback, abbreviated so that it only includes
+      creator-written files.
+    * The full text of the traceback, including both creator-written and Ren'Py
+      files.
+    * The path to a file containing a traceback method.
+
+    This function can present the error to a user in any way fit. If it returns True,
+    the exception is ignored and control is transferred to the next statement. If it
+    returns False, the built-in exception handler is use. This function may also call
+    :func:`renpy.jump` to transfer control to some other label.
+
 .. var:: config.fade_music = 0.0
 
     This is the amount of time in seconds to spend fading the old
