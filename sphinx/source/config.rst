@@ -1524,6 +1524,14 @@ Rarely or Internally Used
     is occurring. It is expected to return a transition, which may or may not
     be the transition supplied as its argument.
 
+.. var:: config.exception_handler = None
+
+    If not None, this should be a function that will be invoked in new context
+    on clear scene. If this function returns True, Ren'Py will try to advance
+    to the next line, otherwise the exception will be passed to default handler.
+    Note that an exception may occur while executing init code, which can be
+    checked by :func:`renpy.is_init_phase`.
+
 
 Garbage Collection
 ------------------
