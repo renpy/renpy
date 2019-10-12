@@ -104,7 +104,7 @@ Building
 
 Building the documentation requires Ren'Py to work. You'll either need to
 link in a nightly build, or compile the modules as described above. You'll
-also need the `Sphinx <http://sphinx-doc.org/>`_ documentation generator.
+also need the `Sphinx <https://www.sphinx-doc.org>`_ documentation generator.
 If you have pip working, install Sphinx using::
 
     pip install -U sphinx
