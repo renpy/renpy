@@ -36,10 +36,12 @@ def generate_gui(p):
     CodeGenerator(p).copy_script("script.rpy")
     CodeGenerator(p).copy_files()
 
-    images = os.path.join(p.prefix, "images")
+    for dn in [ "images", "audio" ]:
 
-    if not os.path.exists(images):
-        os.mkdir(images)
+        fulldn = os.path.join(p.prefix, dn)
+
+        if not os.path.exists(fulldn):
+            os.mkdir(fulldn)
 
 
 def generate_gui_command():
