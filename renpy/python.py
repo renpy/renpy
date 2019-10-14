@@ -859,6 +859,12 @@ class RevertableList(list):
 
     __rmul__ = __mul__
 
+    def copy(self):
+        return self[:]
+
+    def clear(self):
+        self[:] = []
+
     def _clean(self):
         """
         Gets a clean copy of this object before any mutation occurs.
