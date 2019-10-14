@@ -38,6 +38,8 @@ import re
 import sys
 import time
 
+from renpy import six
+
 import renpy.audio
 
 ##############################################################################
@@ -815,7 +817,11 @@ class RevertableList(list):
         list.__init__(self, *args)
 
     __delitem__ = mutator(list.__delitem__)
+    if six.PY2:
+        __delslice__ = mutator(list.__delslice__)
     __setitem__ = mutator(list.__setitem__)
+    if six.PY2:
+        __setslice__ = mutator(list.__setslice__)
     __iadd__ = mutator(list.__iadd__)
     __imul__ = mutator(list.__imul__)
     append = mutator(list.append)
@@ -834,6 +840,8 @@ class RevertableList(list):
         return newmethod
 
     __add__ = wrapper(list.__add__)
+    if six.PY2:
+        __getslice__ = wrapper(list.__getslice__)
 
     def __getitem__(self, index):
         rv = list.__getitem__(self, index)
