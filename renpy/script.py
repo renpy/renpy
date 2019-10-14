@@ -489,7 +489,7 @@ class Script(object):
         f.seek(0, 2)
 
         start = f.tell()
-        data = zlib.compress(data, 9)
+        data = zlib.compress(data, 3)
         f.write(data)
 
         f.seek(len(RPYC2_HEADER) + 12 * (slot - 1), 0)
