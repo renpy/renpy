@@ -788,10 +788,10 @@ class CompressedList(object):
             old_end += 1
 
         # Now that we have this, we can put together the object.
-        self.pre = list.__getslice__(old, 0, old_start)
+        self.pre = list.__getitem__(old, slice(0, old_start))
         self.start = new_start
         self.end = new_end
-        self.post = list.__getslice__(old, old_end, len_old)
+        self.post = list.__getitem__(old, slice(old_end, len_old))
 
     def decompress(self, new):
         return self.pre + new[self.start:self.end] + self.post
@@ -815,7 +815,6 @@ class RevertableList(list):
         list.__init__(self, *args)
 
     __delitem__ = mutator(list.__delitem__)
-    __delslice__ = mutator(list.__delslice__)
     __setitem__ = mutator(list.__setitem__)
     __iadd__ = mutator(list.__iadd__)
     __imul__ = mutator(list.__imul__)
@@ -835,7 +834,14 @@ class RevertableList(list):
         return newmethod
 
     __add__ = wrapper(list.__add__)
-    __getslice__ = wrapper(list.__getslice__)
+
+    def __getitem__(self, index):
+        rv = list.__getitem__(self, index)
+
+        if isinstance(index, slice):
+            return RevertableList(rv)
+        else:
+            return rv
 
     def __mul__(self, other):
         if not isinstance(other, int):
