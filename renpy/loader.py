@@ -23,16 +23,16 @@ from __future__ import print_function
 import renpy
 import os.path
 from pickle import loads
-from cStringIO import StringIO
 import sys
 import types
 import threading
 import zlib
 import re
+import io
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
 # to look up filenames.
-u"".encode("utf-8")
+u"".encode(u"utf-8")
 
 
 # Physical Paths
@@ -129,11 +129,11 @@ def index_archives():
             l = f.readline()
 
             # 3.0 Branch.
-            if l.startswith("RPA-3.0 "):
+            if l.startswith(b"RPA-3.0 "):
                 offset = int(l[8:24], 16)
                 key = int(l[25:33], 16)
                 f.seek(offset)
-                index = loads(f.read().decode("zlib"))
+                index = loads(zlib.decompress(f.read()))
 
                 # Deobfuscate the index.
 
@@ -150,10 +150,10 @@ def index_archives():
                 continue
 
             # 2.0 Branch.
-            if l.startswith("RPA-2.0 "):
+            if l.startswith(b"RPA-2.0 "):
                 offset = int(l[8:], 16)
                 f.seek(offset)
-                index = loads(f.read().decode("zlib"))
+                index = loads(zlib.decompress(f.read()))
                 archives.append((prefix, index))
                 f.close()
                 continue
@@ -162,7 +162,7 @@ def index_archives():
             f.close()
 
             fn = transfn(prefix + ".rpi")
-            index = loads(open(fn, "rb").read().decode("zlib"))
+            index = loads(zlib.decompress(open(fn, "rb").read()))
             archives.append((prefix, index))
         except:
             raise
@@ -497,7 +497,7 @@ def load_core(name):
             t = index[name][0]
             if len(t) == 2:
                 offset, dlen = t
-                start = ''
+                start = b''
             else:
                 offset, dlen, start = t
 
@@ -511,7 +511,7 @@ def load_core(name):
                 f.seek(offset)
                 data.append(f.read(dlen))
 
-            rv = StringIO(''.join(data))
+            rv = io.BytesIO(b''.join(data))
             f.close()
 
         return rv

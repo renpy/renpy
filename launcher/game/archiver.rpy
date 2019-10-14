@@ -28,6 +28,7 @@ init python in archiver:
     import sys
     import random
     import glob
+    import zlib
 
     from cPickle import dumps, HIGHEST_PROTOCOL
 
@@ -76,7 +77,7 @@ init python in archiver:
 
             indexoff = self.f.tell()
 
-            self.f.write(dumps(self.index, HIGHEST_PROTOCOL).encode("zlib"))
+            self.f.write(zlib.compress(dumps(self.index, HIGHEST_PROTOCOL)))
 
             self.f.seek(0)
             self.f.write(b"RPA-3.0 %016x %08x\n" % (indexoff, self.key))
