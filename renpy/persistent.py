@@ -24,6 +24,7 @@ from __future__ import print_function
 import os
 import copy
 import time
+import zlib
 
 import renpy
 
@@ -191,9 +192,8 @@ def load(filename):
 
     # Unserialize the persistent data.
     try:
-        f = open(filename, "rb")
-        s = f.read().decode("zlib")
-        f.close()
+        with open(filename, "rb") as f:
+            s = zlib.decompress(f.read())
         persistent = loads(s)
     except:
         import renpy.display
@@ -403,7 +403,7 @@ def save():
         return
 
     try:
-        data = dumps(renpy.game.persistent).encode("zlib")
+        data = zlib.compress(dumps(renpy.game.persistent), 3)
         renpy.loadsave.location.save_persistent(data)
     except:
         if renpy.config.developer:

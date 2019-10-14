@@ -524,7 +524,7 @@ class Script(object):
             f.seek(0)
             data = f.read()
 
-            return data.decode("zlib")
+            return zlib.decompress(data)
 
         # RPYC2 path.
         pos = len(RPYC2_HEADER)
@@ -783,7 +783,7 @@ class Script(object):
 
         # Load the oldcache.
         try:
-            version, cache = loads(renpy.loader.load(BYTECODE_FILE).read().decode("zlib"))
+            version, cache = loads(zlib.decompress(renpy.loader.load(BYTECODE_FILE).read()))
             if version == BYTECODE_VERSION:
                 self.bytecode_oldcache = cache
 
@@ -868,7 +868,7 @@ class Script(object):
 
                 with open(fn, "wb") as f:
                     data = (BYTECODE_VERSION, self.bytecode_newcache)
-                    f.write(dumps(data, 2).encode("zlib"))
+                    f.write(zlib.compress(dumps(data, 2), 3))
             except:
                 pass
 
