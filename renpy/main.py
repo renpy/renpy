@@ -47,6 +47,10 @@ def log_clock(s):
     if renpy.android and not renpy.config.log_to_stdout:
         print(s)
 
+    # Pump the presplash window to prevent marking
+    # our process as unresponsive by OS
+    renpy.display.presplash.pump_window()
+
     last_clock = now
 
 
