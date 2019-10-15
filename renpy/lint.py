@@ -71,10 +71,11 @@ added = { }
 # occurs.
 
 
-def add(msg):
+def add(msg, *args):
     if not msg in added:
         added[msg] = True
-        print(unicode(msg).encode('utf-8'))
+        msg = unicode(msg) % args
+        print(msg.encode('utf-8'))
 
 
 # Tries to evaluate an expression, announcing an error if it fails.
