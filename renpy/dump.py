@@ -23,7 +23,7 @@
 # information about the game that's used to reflect on the contents,
 # including how to navigate around the game.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import inspect
 import json
@@ -31,6 +31,7 @@ import sys
 import os
 
 import renpy
+import renpy.six as six
 
 
 # A list of (name, filename, linenumber) tuples, for various types of
@@ -123,11 +124,11 @@ def dump(error):
     # Labels.
     label = location["label"] = { }
 
-    for name, n in renpy.game.script.namemap.iteritems():
+    for name, n in six.iteritems(renpy.game.script.namemap):
         filename = n.filename
         line = n.linenumber
 
-        if not isinstance(name, basestring):
+        if not isinstance(name, six.string_types):
             continue
 
         if not filter(name, filename):
@@ -174,10 +175,10 @@ def dump(error):
         """
 
         if inspect.isfunction(o):
-            return inspect.getfile(o), o.func_code.co_firstlineno
+            return inspect.getfile(o), o.__code__.co_firstlineno
 
         if inspect.ismethod(o):
-            return get_line(o.im_func)
+            return get_line(o.__func__)
 
         return None, None
 

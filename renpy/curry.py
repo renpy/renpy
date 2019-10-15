@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 
 class Curry(object):
@@ -39,8 +39,11 @@ class Curry(object):
         self.__doc__ = getattr(self.callable, "__doc__", None)
 
     def __call__(self, *args, **kwargs):
-        return self.callable(*(self.args + args),
-                             **dict(self.kwargs.items() + kwargs.items()))
+
+        merged_kwargs = dict(self.kwargs)
+        merged_kwargs.update(kwargs)
+
+        return self.callable(*(self.args + args), **merged_kwargs)
 
     def __repr__(self):
         return "<curry %s %r %r>" % (self.callable, self.args, self.kwargs)

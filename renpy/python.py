@@ -37,6 +37,7 @@ import weakref
 import re
 import sys
 import time
+import io
 
 import renpy.audio
 
@@ -349,7 +350,7 @@ def reached(obj, reachable, wait):
     if idobj in reachable:
         return
 
-    if isinstance(obj, (NoRollback, real_file)):  # @UndefinedVariable
+    if isinstance(obj, (NoRollback, io.IOBase)):  # @UndefinedVariable
         reachable[idobj] = 0
         return
 

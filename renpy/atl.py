@@ -19,12 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import renpy.display
 import renpy.pyanalysis
 
 import random
+import renpy.six as six
 
 
 def compiling(loc):
@@ -44,7 +45,7 @@ warpers = { }
 
 
 def atl_warper(f):
-    name = f.func_name
+    name = f.__name__
     warpers[name] = f
     return f
 
@@ -162,7 +163,7 @@ def interpolate(t, a, b, type):  # @ReservedAssignment
         return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, type))
 
     # Deal with booleans, nones, etc.
-    elif b is None or isinstance(b, (bool, basestring)):
+    elif b is None or isinstance(b, (bool, six.string_types)):
         if t >= 1.0:
             return b
         else:
@@ -428,7 +429,7 @@ class ATLTransformBase(renpy.object.Object):
             raise Exception("Too many arguments passed to ATL transform.")
 
         # Handle keyword arguments.
-        for k, v in kwargs.iteritems():
+        for k, v in six.iteritems(kwargs):
 
             if k in positional:
                 positional.remove(k)
@@ -1226,7 +1227,7 @@ class Interpolation(Statement):
             linear, revolution, splines = state
 
         # Linearly interpolate between the things in linear.
-        for k, (old, new) in linear.iteritems():
+        for k, (old, new) in six.iteritems(linear):
             value = interpolate(complete, old, new, PROPERTIES[k])
 
             setattr(trans.state, k, value)
@@ -1491,19 +1492,19 @@ class RawOn(RawStatement):
 
         handlers = { }
 
-        for k, v in self.handlers.iteritems():
+        for k, v in six.iteritems(self.handlers):
             handlers[k] = v.compile(ctx)
 
         return On(self.loc, handlers)
 
     def predict(self, ctx):
-        for i in self.handlers.itervalues():
+        for i in six.itervalues(self.handlers):
             i.predict(ctx)
 
     def mark_constant(self):
         constant = GLOBAL_CONST
 
-        for block in self.handlers.itervalues():
+        for block in six.itervalues(self.handlers):
             block.mark_constant()
             constant = min(constant, block.constant)
 
@@ -1593,7 +1594,7 @@ class On(Statement):
                 return "event", (name, arg), None
 
     def visit(self):
-        return [ j for i in self.handlers.itervalues() for j in i.visit() ]
+        return [ j for i in six.itervalues(self.handlers) for j in i.visit() ]
 
 
 # Event statement.

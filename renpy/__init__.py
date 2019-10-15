@@ -22,12 +22,13 @@
 # This file ensures that renpy packages will be imported in the right
 # order.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import sys
 import os
 import copy
 import types
-import cPickle
+import renpy.six.moves.cPickle as cPickle
+import renpy.six as six
 
 ################################################################################
 # Version information
@@ -257,7 +258,7 @@ class Backup():
 
         self.names[mod] = set(vars(mod).keys())
 
-        for k, v in vars(mod).iteritems():
+        for k, v in six.iteritems(vars(mod)):
 
             if k.startswith("__") and k.endswith("__"):
                 continue
@@ -291,14 +292,14 @@ class Backup():
             return
 
         # Remove new variables from the module.
-        for mod, names in self.names.iteritems():
+        for mod, names in six.iteritems(self.names):
             modvars = vars(mod)
             for name in set(modvars.keys()) - names:
                 del modvars[name]
 
         objects = cPickle.loads(self.objects_pickle)
 
-        for k, v in self.variables.iteritems():
+        for k, v in six.iteritems(self.variables):
             mod, field = k
             setattr(mod, field, objects[v])
 
@@ -532,14 +533,14 @@ def post_import():
     import subprocess
     sys.modules['renpy.subprocess'] = subprocess
 
-    for k, v in renpy.defaultstore.__dict__.iteritems():
+    for k, v in six.iteritems(renpy.defaultstore.__dict__):
         renpy.store.__dict__.setdefault(k, v)
 
     renpy.store.eval = renpy.defaultstore.eval
 
     # Import everything into renpy.exports, provided it isn't
     # already there.
-    for k, v in globals().iteritems():
+    for k, v in six.iteritems(globals()):
         vars(renpy.exports).setdefault(k, v)
 
 

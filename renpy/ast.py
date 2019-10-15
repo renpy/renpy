@@ -26,14 +26,14 @@
 # When updating this file, consider if lint.py or warp.py also need
 # updating.
 
-from __future__ import print_function
-
+from __future__ import print_function, absolute_import
 import renpy.display
 import renpy.test
 
 import hashlib
 import re
 import time
+import renpy.six as six
 
 
 def statement_name(name):
@@ -107,7 +107,7 @@ class ParameterInfo(object):
 
         extrapos = tuple(args[len(self.positional):])
 
-        for name, value in kwargs.iteritems():
+        for name, value in six.iteritems(kwargs):
             if name in values:
                 if not ignore_errors:
                     raise Exception("Parameter %s has two values." % name)
@@ -142,7 +142,7 @@ class ParameterInfo(object):
             pass
 
         elif values and (not ignore_errors):
-            raise Exception("Unknown keyword arguments: %s" % ( ", ".join(values.keys())))
+            raise Exception("Unknown keyword arguments: %s" % ( ", ".join(list(values.keys()))))
 
         return rv
 
@@ -224,7 +224,7 @@ def __newobj__(cls, *args):
 pyexpr_list = [ ]
 
 
-class PyExpr(unicode):
+class PyExpr(six.text_type):
     """
     Represents a string containing python code.
     """
@@ -235,7 +235,7 @@ class PyExpr(unicode):
         ]
 
     def __new__(cls, s, filename, linenumber):
-        self = unicode.__new__(cls, s)
+        self = six.text_type.__new__(cls, s)
         self.filename = filename
         self.linenumber = linenumber
 
@@ -246,7 +246,7 @@ class PyExpr(unicode):
         return self
 
     def __getnewargs__(self):
-        return (unicode(self), self.filename, self.linenumber)  # E1101
+        return (six.text_type(self), self.filename, self.linenumber)  # E1101
 
 
 def probably_side_effect_free(expr):
@@ -680,7 +680,7 @@ class Say(Node):
             if not (
                     (who is None) or
                     callable(who) or
-                    isinstance(who, basestring) ):
+                    isinstance(who, six.string_types) ):
 
                 raise Exception("Sayer %s is not a function or string." % self.who.encode("utf-8"))
 
@@ -854,7 +854,7 @@ class Label(Node):
 
         values = apply_arguments(self.parameters, renpy.store._args, renpy.store._kwargs)
 
-        for k, v in values.iteritems():
+        for k, v in six.iteritems(values):
             renpy.exports.dynamic(k)
             setattr(renpy.store, k, v)
 

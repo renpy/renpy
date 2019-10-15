@@ -22,7 +22,7 @@
 # This file contains debugging code that isn't enabled in normal Ren'Py
 # operation.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import renpy
 import __builtin__
@@ -32,7 +32,6 @@ import traceback
 import os
 
 real_open = __builtin__.open
-__builtin__.real_file = __builtin__.file
 
 report = True
 
@@ -70,4 +69,3 @@ def init_main_thread_open():
         return
 
     __builtin__.open = replacement_open
-    __builtin__.file = replacement_open

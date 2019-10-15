@@ -26,7 +26,7 @@
 # the end of the init phase, before the game begins running, and can
 # decide if the game runs or some other action occurs.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import argparse
 import renpy
