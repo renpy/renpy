@@ -25,7 +25,6 @@
 
 from __future__ import print_function
 
-import threading
 import pygame_sdl2
 import os.path
 import sys
@@ -36,27 +35,8 @@ import renpy
 # The window.
 window = None
 
-# Should the event thread keep running?
-keep_running = False
-
 # The start time.
 start_time = time.time()
-
-PRESPLASHEVENT = pygame_sdl2.event.register("PRESPLASHEVENT")
-
-
-def run_event_thread():
-    """
-    Disposes of events while the window is running.
-    """
-
-    pygame_sdl2.time.set_timer(PRESPLASHEVENT, 20)
-
-    while keep_running:
-        pygame_sdl2.event.wait()
-
-    pygame_sdl2.time.set_timer(PRESPLASHEVENT, 0)
-
 
 def start(basedir, gamedir):
     """
@@ -95,7 +75,7 @@ def start(basedir, gamedir):
 
     window = pygame_sdl2.display.Window(
         sys.argv[0],
-        img.get_size(),
+        (sw, sh),
         flags=pygame_sdl2.WINDOW_BORDERLESS,
         pos=(x, y))
 
@@ -104,14 +84,17 @@ def start(basedir, gamedir):
     window.get_surface().blit(img, (0, 0))
     window.update()
 
-    global event_thread
-
-    event_thread = threading.Thread(target=run_event_thread)
-    event_thread.daemon = True
-    event_thread.start()
-
     global start_time
     start_time = time.time()
+
+
+def pump_window():
+    if window is None:
+        return
+
+    for ev in pygame_sdl2.event.get():
+        if ev.type == pygame_sdl2.QUIT:
+            raise renpy.game.QuitException(relaunch=False, status=0)
 
 
 def end():
@@ -119,8 +102,6 @@ def end():
     Called just before we initialize the display to hide the presplash.
     """
 
-    global keep_running
-    global event_thread
     global window
 
     if renpy.emscripten:
@@ -132,23 +113,19 @@ def end():
     if window is None:
         return
 
-    keep_running = False
-
-    event_thread.join()
-
     window.destroy()
     window = None
 
 
 def sleep():
     """
-    Sleep to the end of config.minimum_presplash_time.
+    Pump window to the end of config.minimum_presplash_time.
     """
 
     if not (window or renpy.mobile):
         return
 
-    remaining = start_time + renpy.config.minimum_presplash_time - time.time()
+    end_time = start_time + renpy.config.minimum_presplash_time
 
-    if remaining > 0:
-        time.sleep(remaining)
+    while end_time - time.time() > 0:
+        pump_window()
