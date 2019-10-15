@@ -268,6 +268,10 @@ class Script(object):
                 import emscripten
                 emscripten.sleep(0)
 
+            # Pump the presplash window to prevent marking
+            # our process as unresponsive by OS
+            renpy.display.presplash.pump_window()
+
             self.load_appropriate_file(".rpyc", ".rpy", dir, fn, initcode)
 
         # Make the sort stable.
