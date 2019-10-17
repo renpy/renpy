@@ -2,6 +2,31 @@
 Full Changelog
 ==============
 
+.. _renpy-7.3.5:
+
+7.3.5
+=====
+
+Fixes
+-----
+
+On desktop platforms, the presplash screen has been reworked so that it
+will not cause the window to become nonresponsive if clicked.
+
+The iOS port has been updated to include modules that have been newly
+added to Ren'Py, allowing the compilation of iOS apps.
+
+Other Changes
+-------------
+
+The ``audio`` directory, which automatically defines
+names in the :ref:`audio namespace <audio-namespace>`, has been made
+visible in the launcher, and is added to newly-createrd projects.
+
+The new :var:`config.exception_handler` callback allows an application to
+replace Ren'Py's exception handling system in its entirety.
+
+
 .. _renpy-7.3.4:
 
 7.3.4
