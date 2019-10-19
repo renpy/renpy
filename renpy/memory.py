@@ -22,7 +22,8 @@
 # This file contains functions used to help debug memory leaks. They aren't
 # called by default, but can be used when problems occur.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
+
 import time
 import weakref
 import types
@@ -32,6 +33,7 @@ import gc
 import inspect
 
 import renpy
+import renpy.six as six
 
 memory_log = renpy.log.open("memory")
 
@@ -82,10 +84,10 @@ def cycle_finder(o, name):
 
         paths[ido] = path
 
-        if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType)):
+        if isinstance(o, (int, float, type(None), types.ModuleType, type)):
             o_repr = repr(o)
 
-        elif isinstance(o, (str, unicode)):
+        elif isinstance(o, (str, six.text_type)):
             if len(o) <= 80:
                 o_repr = repr(o).encode("utf-8")
             else:
@@ -98,7 +100,7 @@ def cycle_finder(o, name):
             o_repr = "<" + o.__class__.__name__ + ">"
 
         elif isinstance(o, types.MethodType):
-            o_repr = "<method {0}.{1}>".format(o.im_class.__name__, o.im_func.__name__)
+            o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__func__.__name__)
 
         elif isinstance(o, object):
             o_repr = "<{0}>".format(type(o).__name__)
@@ -113,11 +115,11 @@ def cycle_finder(o, name):
                 visit(ido, oo, "{0}[{1!r}]".format(path, i))
 
         if isinstance(o, dict):
-            for k, v in o.iteritems():
+            for k, v in six.iteritems(o):
                 visit(ido, v, "{0}[{1!r}]".format(path, k))
 
         elif isinstance(o, types.MethodType):
-            visit(ido, o.im_self, path + ".im_self")
+            visit(ido, o.__self__, path + ".im_self")
 
         else:
 
@@ -136,7 +138,7 @@ def cycle_finder(o, name):
 
             state = get(2, { })
             if isinstance(state, dict):
-                for k, v in state.iteritems():
+                for k, v in six.iteritems(state):
                     visit(ido, v, path + "." + k)
             else:
                 visit(ido, state, path + ".__getstate__()")
@@ -229,7 +231,7 @@ def walk_memory(roots, seen=None):
     get_referents = gc.get_referents
     worklist_append = worklist.append
 
-    ignore_types = (types.ModuleType, types.ClassType, types.FunctionType)
+    ignore_types = (types.ModuleType, type, types.FunctionType)
 
     while worklist:
         name, o = worklist.pop(0)
@@ -372,7 +374,7 @@ def diff_memory(update=True):
 
     diff = [ ]
 
-    for k, v in usage.iteritems():
+    for k, v in six.iteritems(usage):
         diff.append((
             v - old_usage.get(k, 0),
             k))
@@ -424,8 +426,8 @@ def profile_rollback():
     # Walk the log, finding new roots and rollback information.
     for rb in log:
 
-        for store_name, store in rb.stores.iteritems():
-            for var_name, o in store.iteritems():
+        for store_name, store in six.iteritems(rb.stores):
+            for var_name, o in six.iteritems(store):
                 name = store_name + "." + var_name
                 id_o = id(o)
 
@@ -449,7 +451,7 @@ def profile_rollback():
 
     sizes = walk_memory(roots, seen)[0]
 
-    usage = [ (v, k) for (k, v) in sizes.iteritems() ]
+    usage = [ (v, k) for (k, v) in six.iteritems(sizes) ]
     usage.sort()
 
     write("Total Bytes".rjust(13) + " " + "Per Rollback".rjust(13))

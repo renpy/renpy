@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import renpy.display
 import renpy.style
 import renpy.sl2
@@ -233,7 +233,8 @@ def choose_variants():
             renpy.config.variants.insert(0, 'small')
 
     elif renpy.emscripten:
-        import emscripten, re
+        import emscripten
+        import re
 
         # web
         renpy.config.variants.insert(0, 'web')

@@ -22,7 +22,8 @@
 # This module contains the parser for the Ren'Py script language. It's
 # called when parsing is necessary, and creates an AST from the script.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
+
 import codecs
 import re
 import os
@@ -34,6 +35,8 @@ import renpy.test
 
 import renpy.ast as ast
 import renpy.sl2
+import six
+from six import unichr
 
 # A list of parse error messages.
 parse_errors = [ ]
@@ -110,7 +113,7 @@ def unicode_filename(fn):
     Converts the supplied filename to unicode.
     """
 
-    if isinstance(fn, unicode):
+    if isinstance(fn, six.text_type):
         return fn
 
     # Windows.
@@ -1294,11 +1297,11 @@ class Lexer(object):
         object, which is called directly.
         """
 
-        if isinstance(thing, basestring):
+        if isinstance(thing, six.string_types):
             name = name or thing
             rv = self.match(thing)
         else:
-            name = name or thing.im_func.func_name
+            name = name or thing.__func__.__name__
             rv = thing()
 
         if rv is None:
@@ -1450,7 +1453,7 @@ def parse_image_name(l, string=False, nodash=False):
         s = l.simple_expression()
 
         if s is not None:
-            rv.append(unicode(s))
+            rv.append(six.text_type(s))
         else:
             points.pop()
 

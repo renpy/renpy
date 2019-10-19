@@ -30,10 +30,11 @@ import sys
 import collections
 import textwrap
 
-import __builtin__
+
+import renpy.six.moves.builtins as builtins
 import renpy.six as six
 
-python_builtins = set(dir(__builtin__))
+python_builtins = set(dir(builtins))
 renpy_builtins = set()
 
 image_prefixes = None

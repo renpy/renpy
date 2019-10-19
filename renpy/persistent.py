@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import os
 import copy
@@ -27,6 +27,7 @@ import time
 import zlib
 
 import renpy
+import renpy.six as six
 
 from renpy.loadsave import dump, dumps, loads
 
@@ -232,7 +233,7 @@ def init():
     # Create the backup of the persistent data.
     v = vars(persistent)
 
-    for k, v in vars(persistent).iteritems():
+    for k, v in six.iteritems(vars(persistent)):
         backup[k] = safe_deepcopy(v)
 
     return persistent
