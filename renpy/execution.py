@@ -22,7 +22,7 @@
 # This file contains code responsible for managing the execution of a
 # renpy object, as well as the context object.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import sys
 import time
 
@@ -376,7 +376,7 @@ class Context(renpy.object.Object):
 
         dynamic = self.dynamic_stack.pop()
 
-        for k, v in dynamic.iteritems():
+        for k, v in six.iteritems(dynamic):
             if isinstance(v, Delete):
                 store.pop(k, None)
             else:
@@ -395,7 +395,7 @@ class Context(renpy.object.Object):
 
         for dynamic in reversed(self.dynamic_stack):
 
-            for k, v in dynamic.iteritems():
+            for k, v in six.iteritems(dynamic):
                 name = "store." + k
 
                 if isinstance(v, Delete) and (name in roots):

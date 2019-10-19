@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
+
 import renpy
 import os.path
 from pickle import loads
@@ -29,6 +30,7 @@ import threading
 import zlib
 import re
 import io
+import renpy.six as six
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
 # to look up filenames.
@@ -268,7 +270,7 @@ def scandirfiles():
     files = game_files
 
     for _prefix, index in archives:
-        for j in index.iterkeys():
+        for j in six.iterkeys(index):
             add(None, j)
 
 
@@ -863,7 +865,7 @@ def auto_thread_function():
             if auto_quit_flag:
                 return
 
-            items = auto_mtimes.items()
+            items = list(auto_mtimes.items())
 
         for fn, mtime in items:
 

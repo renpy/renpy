@@ -21,7 +21,7 @@
 
 # This file contains code for formatting tracebacks.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import traceback
 import sys
 import cStringIO
@@ -31,6 +31,7 @@ import time
 import os
 
 import renpy
+import renpy.six as six
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
@@ -45,8 +46,8 @@ def write_utf8_traceback_list(out, l):
     for filename, line, what, text in l:
 
         # Filename is either unicode or an fsecoded string.
-        if not isinstance(filename, unicode):
-            filename = unicode(filename, FSENCODING, "replace")
+        if not isinstance(filename, six.text_type):
+            filename = six.text_type(filename, FSENCODING, "replace")
 
         # Line is a number.
 
@@ -169,7 +170,7 @@ def report_exception(e, editor=True):
 
     def safe_utf8(e):
         try:
-            m = unicode(e)
+            m = six.text_type(e)
         except:
             try:
                 if len(e.args) == 0:
@@ -184,7 +185,7 @@ def report_exception(e, editor=True):
                 except:
                     m = "<Could not encode exception.>"
 
-        if isinstance(m, unicode):
+        if isinstance(m, six.text_type):
             return m.encode("utf-8", "replace")
         else:
             return m
