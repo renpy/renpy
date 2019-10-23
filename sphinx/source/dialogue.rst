@@ -84,8 +84,8 @@ Character is a Python function that takes a large number of keyword
 arguments. These keyword arguments control the behavior of the
 character.
 
-The define statement causes its expression to be evaluated, and assigned to the
-supplied name. If not inside an ``init`` block, the define statement will
+The ``define`` statement causes its expression to be evaluated, and assigned to the
+supplied name. If not inside an ``init`` block, the ``define`` statement will
 automatically be run with init priority 0.
 
 .. include:: inc/character
@@ -398,7 +398,7 @@ This character can then be used alongside a variable in the default store::
     label start:
 
         # This is a terrible variable name.
-        e = 100
+        $ e = 100
 
         e "Our starting energy is [e] units."
 
@@ -408,11 +408,11 @@ A say with arguments sees the arguments passed to the function. For example::
 
 is equivalent to::
 
-    e("Hello, world.", interact=True, what_size=32)
+    $ e("Hello, world.", interact=True, what_size=32)
 
 When e is a Character, this is further equivalent to::
 
-    Character(kind=e, what_size=32)("Hello, world.", interact=True)
+    $ Character(kind=e, what_size=32)("Hello, world.", interact=True)
 
 But it's possible to use :var:`config.say_arguments_callback` or
 have ``e`` wrap a character to do things differently.
