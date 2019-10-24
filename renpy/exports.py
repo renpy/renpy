@@ -3802,3 +3802,23 @@ def is_init_phase():
     """
 
     return renpy.game.context().init_phase
+
+
+def add_to_all_stores(name, value):
+    """
+    :doc: other
+
+    Adds the `value` by the `name` to all creator defined namespaces. If the name
+    already exist in that namespace - do nothing for it.
+
+    This function may only be run from inside an init block. It is an
+    error to run this function once the game has started.
+    """
+
+    if not is_init_phase():
+        raise Exception("add_to_all_stores is only allowed in init code.")
+
+    for _k, ns in renpy.python.store_dicts.iteritems():
+
+        if name not in ns:
+            ns[name] = value
