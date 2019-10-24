@@ -90,7 +90,7 @@ stacks can return to the proper place when loaded on a changed script. ::
 
     call subroutine(2)
 
-    call expression "subroutine" pass (count=3)
+    call expression "sub" + "routine" pass (count=3)
 
     # ...
 
