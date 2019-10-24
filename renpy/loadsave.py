@@ -570,8 +570,7 @@ def force_autosave(take_screenshot=False, block=False):
         autosave_thread.daemon = True
         autosave_thread.start()
     else:
-        import emscripten
-        emscripten.async_call(autosave_thread_function, take_screenshot, -1)
+        autosave_thread_function(take_screenshot)
 
 
 ################################################################################
