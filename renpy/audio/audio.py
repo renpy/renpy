@@ -28,7 +28,7 @@ from __future__ import print_function
 
 import renpy.audio  # @UnusedImport
 import renpy.display  # @UnusedImport
-from renpy import six
+import renpy.six as six
 
 import time
 import pygame_sdl2  # @UnusedImport

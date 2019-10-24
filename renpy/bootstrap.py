@@ -22,7 +22,7 @@
 from __future__ import print_function, absolute_import
 
 import renpy.six as six
-from six.moves import reload_module as reload
+from renpy.six.moves import reload_module as reload
 
 import os.path
 import sys

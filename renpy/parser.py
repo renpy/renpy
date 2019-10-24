@@ -35,8 +35,8 @@ import renpy.test
 
 import renpy.ast as ast
 import renpy.sl2
-import six
-from six import unichr
+import renpy.six as six
+from renpy.six import unichr
 
 # A list of parse error messages.
 parse_errors = [ ]

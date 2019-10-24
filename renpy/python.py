@@ -39,7 +39,7 @@ import sys
 import time
 import io
 
-from renpy import six
+import renpy.six as six
 
 import renpy.audio
 
