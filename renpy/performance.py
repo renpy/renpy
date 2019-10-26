@@ -88,7 +88,7 @@ def analyze():
     else:
         return
 
-    if (end - start) < renpy.config.profile_time:
+    if (end - start) < renpy.config.profile_time and not renpy.display.interface.profile_once:
         return
 
     s = "\n"

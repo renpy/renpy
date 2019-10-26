@@ -317,8 +317,12 @@ init -1600 python:
         renpy.restart_interaction()
 
     def _profile_once():
+
+        if not config.profile:
+            config.profile_time = 10.0
+            config.profile = True
+
         renpy.display.interface.profile_once = True
-        renpy.restart_interaction()
 
     def _memory_profile():
         import os
