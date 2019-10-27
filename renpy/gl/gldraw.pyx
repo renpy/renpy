@@ -469,6 +469,7 @@ cdef class GLDraw:
             renpy.display.gl_size = self.physical_size
 
         gltexture.dealloc_textures()
+        gltexture.free_texture_numbers()
 
         self.old_fullscreen = None
 
