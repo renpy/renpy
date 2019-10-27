@@ -25,7 +25,7 @@ from __future__ import print_function
 
 from __future__ import absolute_import
 import pickle
-import six.moves.cPickle as cPickle
+import renpy.six.moves.cPickle as cPickle
 
 from cStringIO import StringIO
 
