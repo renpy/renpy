@@ -84,6 +84,29 @@ init python:
         # Use the distributor to make game.zip.
         distribute.Distributor(p, packages=[ "web" ], packagedest=os.path.join(destination, "game"), reporter=reporter, noarchive=True, scan=False)
 
+        # Filter out downloadable resources
+        MIN_REMOTE_SIZE=100*1024
+        # TODO: configurable min_size? use archives to better describe web distribution?
+        shutil.move(
+            os.path.join(destination, 'game.zip'),
+            os.path.join(destination, 'game-old.zip'))
+        import zipfile
+        zin  = zipfile.ZipFile(os.path.join(destination, 'game-old.zip'))
+        zout = zipfile.ZipFile(os.path.join(destination, 'game.zip'), 'w')
+        for m in zin.infolist():
+            base, ext = os.path.splitext(m.filename)
+            if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp')
+                and m.file_size > MIN_REMOTE_SIZE
+                and m.filename.startswith('game/images')):
+                zin.extract(m, path=destination)
+                print("extract:", m.filename)
+            else:
+                zout.writestr(m, zin.read(m))
+                print("keep:", m.filename)
+        zin.close()
+        zout.close()
+        os.unlink(os.path.join(destination, 'game-old.zip'))
+
         # Copy the files from WEB_PATH to destination.
         for fn in os.listdir(WEB_PATH):
             if fn in { "game.zip", "hash.txt", "index.html" }:

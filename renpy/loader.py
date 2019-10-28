@@ -254,6 +254,15 @@ def scandirfiles():
 
             add(None, f)
 
+    # HTML5 remote files
+    # find images/ -type f -print0 | sort -z > renpyweb_files.find0
+    # '\0'.join(sorted(os.path.join(root[2:],filename) for root, dirs, files in os.walk('.') for filename in files))
+    index_filename = os.path.join(renpy.config.gamedir,'renpyweb_files.find0')
+    if os.path.exists(index_filename):
+        files = game_files
+        for f in open(index_filename, 'rb').read().split('\0'):
+            add('/game', f)
+
     for i in renpy.config.searchpath:
 
         if (renpy.config.commondir) and (i == renpy.config.commondir):
