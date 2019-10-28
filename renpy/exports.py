@@ -2264,7 +2264,6 @@ def notl_file(fn):  # @ReservedAssignment
     return renpy.loader.load(fn, tl=False)
 
 
-@renpy_pure
 def image_size(im):
     """
     :doc: file_rare
