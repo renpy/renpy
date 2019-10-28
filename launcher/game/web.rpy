@@ -207,7 +207,7 @@ init python:
         destination = get_web_destination(p)
         display_name = p.dump['build']['display_name']
 
-        # Clean the folder, then remale it.
+        # Clean the folder, then remake it.
         if os.path.exists(destination):
             shutil.rmtree(destination)
 
