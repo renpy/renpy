@@ -43,6 +43,30 @@ import renpy.six as six
 
 import renpy.audio
 
+import copy_reg
+
+##############################################################################
+# Monkeypatch copy_reg to work around a change in the class that RevertableSet
+# is based on.
+
+
+def _reconstructor(cls, base, state):
+    if (cls is RevertableSet) and (base is object):
+        base = set
+        state = [ ]
+
+    if base is object:
+        obj = object.__new__(cls)
+    else:
+        obj = base.__new__(cls, state)
+        if base.__init__ != object.__init__:
+            base.__init__(obj, state)
+
+    return obj
+
+
+copy_reg._reconstructor = _reconstructor
+
 ##############################################################################
 # Code that implements the store.
 
@@ -1667,8 +1691,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                            and data == fwd_data
-                            and (keep_rollback or self.rolled_forward)
+                        and data == fwd_data
+                        and (keep_rollback or self.rolled_forward)
                         ):
                     self.forward.pop(0)
                 else:
