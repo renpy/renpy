@@ -199,8 +199,6 @@ def load(filename):
     except:
         import renpy.display
 
-        raise
-
         try:
             renpy.display.log.write("Loading persistent.")
             renpy.display.log.exception()
