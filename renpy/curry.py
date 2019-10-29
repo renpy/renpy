@@ -37,6 +37,7 @@ class Curry(object):
         self.args = args
         self.kwargs = kwargs
         self.__doc__ = getattr(self.callable, "__doc__", None)
+        self.__name__ = getattr(self.callable, "__name__", None)
 
     def __call__(self, *args, **kwargs):
 
@@ -80,6 +81,7 @@ def curry(fn):
 
     rv = Curry(Curry, fn)
     rv.__doc__ = getattr(fn, "__doc__", None)
+    rv.__name__ = getattr(fn, "__name__", None)
     return rv
 
 
