@@ -63,7 +63,7 @@ class Curry(object):
     def __hash__(self):
 
         if self.hash is None:
-            self.hash ^= hash(self.callable) ^ hash(self.args)
+            self.hash = hash(self.callable) ^ hash(self.args)
 
             for i in self.kwargs.items():
                 self.hash ^= hash(i)
