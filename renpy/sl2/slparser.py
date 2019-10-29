@@ -524,6 +524,7 @@ def register_sl_displayable(*args, **kwargs):
             rv.add(i)
 
     rv.add(if_statement)
+    rv.add(pass_statement)
 
     return rv
 
@@ -826,11 +827,12 @@ class PassParser(Parser):
     def parse(self, loc, l, parent, keyword):
 
         l.expect_eol()
+        l.expect_noblock('pass statement')
 
         return slast.SLPass(loc)
 
 
-PassParser("pass")
+pass_statement = PassParser("pass")
 
 
 class DefaultParser(Parser):
@@ -948,6 +950,7 @@ class CustomParser(Parser):
                 self.add(i)
 
         self.add(if_statement)
+        self.add(pass_statement)
 
         global parser
         parser = None
@@ -1036,6 +1039,7 @@ def init():
             i.add(all_statements)
         else:
             i.add(if_statement)
+            i.add(pass_statement)
 
 
 def parse_screen(l, loc):
