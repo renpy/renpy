@@ -692,6 +692,21 @@ class Context(renpy.object.Object):
 
             if node is None:
 
+                if not pop:
+                    return None
+
+                # If we can't find anything, try to recover.
+
+                if renpy.config.return_not_found_label:
+
+                    while self.return_stack:
+                        self.return_stack.pop()
+                        self.call_location_stack.pop()
+                        self.pop_dynamic()
+                        self.abnormal = self.abnormal_stack.pop()
+
+                    return renpy.game.script.lookup(renpy.config.return_not_found_label)
+
                 if renpy.config.developer:
                     raise Exception("Could not find return label {!r}.".format(self.return_stack[-1]))
 

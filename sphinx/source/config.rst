@@ -767,6 +767,11 @@ Occasionally Used
     A dictionary mapping variables in the default store to the values
     the variables will be given when entering a replay.
 
+.. var:: config.return_not_found_label = None
+
+    If not None, a label that is jumped to when a return site is not found.
+    The call stack is cleared before this jump occurs.
+
 .. var:: config.save_json_callbacks = [ ]
 
     A list of callback functions that are used to create the json object

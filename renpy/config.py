@@ -1009,6 +1009,9 @@ context_copy_remove_screens = [ "notify" ]
 # An exception handling callback.
 exception_handler = None
 
+# A label that is jumped to if return fails.
+return_not_found_label = None
+
 del os
 del collections
 
