@@ -320,11 +320,12 @@ init python in distribute:
                 os.unlink(self.path)
             if renpy.windows:
                 p = subprocess.Popen(
-                    ['C:\\Program Files\\7-Zip\\7z.exe',
-                    'a',
-                    os.path.abspath(self.path),
-                    os.path.abspath(self.directory),
-                    '-mx9']
+                    ['powershell',
+                    'Compress-Archive',
+                    '-Path',
+                    os.path.abspath(self.directory) + '\*',
+                    '-CompressionLevel Optimal -DestinationPath',
+                    os.path.abspath(self.path)]
                 )
             else:
                 p = subprocess.Popen([
