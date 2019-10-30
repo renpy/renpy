@@ -318,14 +318,22 @@ init python in distribute:
 
             if os.path.exists(self.path):
                 os.unlink(self.path)
-
-            p = subprocess.Popen([
-                "zip",
-                "-9rq",
-                os.path.abspath(self.path),
-            ] + os.listdir(self.directory),
-            cwd=os.path.abspath(self.directory)
-            )
+            if renpy.windows:
+                p = subprocess.Popen(
+                    ['C:\\Program Files\\7-Zip\\7z.exe',
+                    'a',
+                    os.path.abspath(self.path),
+                    os.path.abspath(self.directory),
+                    '-mx9']
+                )
+            else:
+                p = subprocess.Popen([
+                    "zip",
+                    "-9rq",
+                    os.path.abspath(self.path),
+                ] + os.listdir(self.directory),
+                cwd=os.path.abspath(self.directory)
+                )
 
             p.wait()
 

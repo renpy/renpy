@@ -1308,7 +1308,7 @@ init python in distribute:
             elif format == "update":
                 pkg = UpdatePackage(path, filename, self.destination)
             elif format == "zip" or format == "app-zip":
-                if self.build['renpy'] and not renpy.windows:
+                if self.build['renpy']:
                     pkg = ExternalZipPackage(path)
                 else:
                     pkg = ZipPackage(path)
