@@ -323,9 +323,10 @@ init python in distribute:
                     ['powershell',
                     'Compress-Archive',
                     '-Path',
-                    os.path.abspath(self.directory) + '\*',
+                    os.path.abspath(self.directory) + '/*',
                     '-CompressionLevel Optimal -DestinationPath',
-                    os.path.abspath(self.path)]
+                    os.path.abspath(self.path),
+                    '-Force']
                 )
             else:
                 p = subprocess.Popen([
