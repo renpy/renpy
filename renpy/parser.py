@@ -2183,7 +2183,20 @@ def define_statement(l, loc):
         store = store + "." + name
         name = l.require(l.word)
 
-    l.require('=')
+    if l.match(r'\['):
+        index = l.delimited_python(r']', True)
+        l.require(r']')
+    else:
+        index = None
+
+    if l.match(r'\+='):
+        operator = "+="
+    elif l.match(r'\|='):
+        operator = "|="
+    else:
+        l.require('=')
+        operator = "="
+
     expr = l.rest()
 
     if not expr:
@@ -2191,7 +2204,7 @@ def define_statement(l, loc):
 
     l.expect_noblock('define statement')
 
-    rv = ast.Define(loc, store, name, expr)
+    rv = ast.Define(loc, store, name, index, operator, expr)
 
     if not l.init:
         rv = ast.Init(loc, [ rv ], priority + l.init_offset)

@@ -2048,6 +2048,9 @@ class StoreNamespace(object):
     def set(self, name, value):
         renpy.python.store_dicts[self.store][name] = value
 
+    def get(self, name):
+        return renpy.python.store_dicts[self.store][name]
+
 
 def get_namespace(store):
     """
@@ -2074,18 +2077,29 @@ class Define(Node):
         'varname',
         'code',
         'store',
+        'operator',
+        'index',
         ]
 
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.store = 'store'
+        self.operator = '='
+        self.index = None
         return self
 
-    def __init__(self, loc, store, name, expr):
+    def __init__(self, loc, store, name, index, operator, expr):
         super(Define, self).__init__(loc)
 
         self.store = store
         self.varname = name
+
+        if index is not None:
+            self.index = PyCode(index, loc=loc, mode='eval')
+        else:
+            self.index = None
+
+        self.operator = operator
         self.code = PyCode(expr, loc=loc, mode='eval')
 
     def diff_info(self):
@@ -2094,7 +2108,14 @@ class Define(Node):
     def early_execute(self):
         create_store(self.store)
 
+        if self.operator != "=":
+            return
+
+        if self.index is not None:
+            return
+
         if self.store == "store.config" and self.varname in EARLY_CONFIG:
+
             value = renpy.python.py_eval_bytecode(self.code.bytecode)
             setattr(renpy.config, self.varname, value)
 
@@ -2105,25 +2126,50 @@ class Define(Node):
 
         define_statements.append(self)
 
-        value = renpy.python.py_eval_bytecode(self.code.bytecode)
-
         if self.store == 'store':
             renpy.exports.pure(self.varname)
             renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
         else:
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
 
-        ns, _special = get_namespace(self.store)
-        ns.set(self.varname, value)
+        self.set()
 
     def redefine(self, stores):
 
         if self.store not in stores:
             return
 
+        self.set()
+
+    def set(self):
+
         value = renpy.python.py_eval_bytecode(self.code.bytecode)
         ns, _special = get_namespace(self.store)
-        ns.set(self.varname, value)
+
+        if (self.index is None) and (self.operator == "="):
+            ns.set(self.varname, value)
+            return
+
+        base = ns.get(self.varname)
+        old = base
+
+        if self.index:
+            key = renpy.python.py_eval_bytecode(self.index.bytecode)
+
+            if self.operator != "=":
+                old = base[key]
+
+        if self.operator == "=":
+            new = value
+        elif self.operator == "+=":
+            new = old + value
+        elif self.operator == "|=":
+            new = old | value
+
+        if self.index:
+            base[key] = new
+        else:
+            ns.set(self.varname, new)
 
 
 def redefine(stores):
