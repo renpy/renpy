@@ -1406,19 +1406,33 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
 
             for c in raw_text:
 
-                # If it doesn't match regex
-                if self.allow and re.search(self.allow, c) is None:
-                    # Whether it matches regular string
-                    if c not in self.allow:
+                # Allow is given
+                if self.allow:
+
+                    # Allow is regex
+                    if isinstance(self.allow, re._pattern_type):
+
+                        # Character doesn't match
+                        if self.allow.search(c) is None:
+                            continue
+
+                    # Allow is string
+                    elif c not in self.allow:
                         continue
 
-                # If it matches regex
-                if self.exclude and re.search(self.exclude, c) is not None:
-                	continue
-                else:
-	                # Whether it matches regular string
-	                if c in self.exclude:
-	                    continue
+                # Exclude is given
+                if self.exclude:
+
+                    # Exclude is regex
+                    if isinstance(self.exclude, re._pattern_type):
+
+                        # Character matches
+                        if self.exclude.search(c) is not None:
+                            continue
+
+                    # Exclude is string
+                    elif c in self.exclude:
+                        continue
 
                 text += c
 
