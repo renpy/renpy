@@ -81,97 +81,96 @@ cdef class Mesh:
         return rv
 
 
-cpdef Mesh untextured_rectangle_mesh(
-        double pl, double pb, double pr, double pt
-        ):
+    @staticmethod
+    def rectangle(
+            double pl, double pb, double pr, double pt
+            ):
 
-    cdef Data data = Data(SOLID_LAYOUT, 4, 2)
+        cdef Data data = Data(SOLID_LAYOUT, 4, 2)
 
-    data.points = 4
+        data.points = 4
 
-    data.point[0].x = pl
-    data.point[0].y = pb
-    data.point[0].z = 0
+        data.point[0].x = pl
+        data.point[0].y = pb
+        data.point[0].z = 0
 
-    data.point[1].x = pr
-    data.point[1].y = pb
-    data.point[1].z = 0
+        data.point[1].x = pr
+        data.point[1].y = pb
+        data.point[1].z = 0
 
-    data.point[2].x = pr
-    data.point[2].y = pt
-    data.point[2].z = 0
+        data.point[2].x = pr
+        data.point[2].y = pt
+        data.point[2].z = 0
 
-    data.point[3].x = pl
-    data.point[3].y = pt
-    data.point[3].z = 0
+        data.point[3].x = pl
+        data.point[3].y = pt
+        data.point[3].z = 0
 
-    data.triangles = 2
+        data.triangles = 2
 
-    data.triangle[0] = 0
-    data.triangle[1] = 1
-    data.triangle[2] = 2
+        data.triangle[0] = 0
+        data.triangle[1] = 1
+        data.triangle[2] = 2
 
-    data.triangle[3] = 0
-    data.triangle[4] = 2
-    data.triangle[5] = 3
+        data.triangle[3] = 0
+        data.triangle[4] = 2
+        data.triangle[5] = 3
 
-    cdef Mesh rv = Mesh()
-    rv.data = data
+        cdef Mesh rv = Mesh()
+        rv.data = data
 
-    return rv
+        return rv
 
-cpdef Mesh texture_rectangle_mesh(
+    def texture_rectangle_mesh(
         double pl, double pb, double pr, double pt,
         double tl, double tb, double tr, double tt
         ):
 
-    cdef Data data = Data(TEXTURE_LAYOUT, 4, 2)
+        cdef Data data = Data(TEXTURE_LAYOUT, 4, 2)
 
-    data.points = 4
+        data.points = 4
 
-    data.point[0].x = pl
-    data.point[0].y = pb
-    data.point[0].z = 0
+        data.point[0].x = pl
+        data.point[0].y = pb
+        data.point[0].z = 0
 
-    data.point[1].x = pr
-    data.point[1].y = pb
-    data.point[1].z = 0
+        data.point[1].x = pr
+        data.point[1].y = pb
+        data.point[1].z = 0
 
-    data.point[2].x = pr
-    data.point[2].y = pt
-    data.point[2].z = 0
+        data.point[2].x = pr
+        data.point[2].y = pt
+        data.point[2].z = 0
 
-    data.point[3].x = pl
-    data.point[3].y = pt
-    data.point[3].z = 0
+        data.point[3].x = pl
+        data.point[3].y = pt
+        data.point[3].z = 0
 
-    data.attribute[0] = tl
-    data.attribute[1] = tb
+        data.attribute[0] = tl
+        data.attribute[1] = tb
 
-    data.attribute[2] = tr
-    data.attribute[3] = tb
+        data.attribute[2] = tr
+        data.attribute[3] = tb
 
-    data.attribute[4] = tr
-    data.attribute[5] = tt
+        data.attribute[4] = tr
+        data.attribute[5] = tt
 
-    data.attribute[6] = tl
-    data.attribute[7] = tt
+        data.attribute[6] = tl
+        data.attribute[7] = tt
 
-    data.triangles = 2
+        data.triangles = 2
 
-    data.triangle[0] = 0
-    data.triangle[1] = 1
-    data.triangle[2] = 2
+        data.triangle[0] = 0
+        data.triangle[1] = 1
+        data.triangle[2] = 2
 
-    data.triangle[3] = 0
-    data.triangle[4] = 2
-    data.triangle[5] = 3
+        data.triangle[3] = 0
+        data.triangle[4] = 2
+        data.triangle[5] = 3
 
-    cdef Mesh rv = Mesh()
-    rv.data = data
+        cdef Mesh rv = Mesh()
+        rv.data = data
 
-    return rv
-
-################################################################################
+        return rv
 
 

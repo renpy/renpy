@@ -210,7 +210,7 @@ def crop_data(Data old, double x0, double y0, double x1, double y1):
         px = old.point[i].x - x0
         py = old.point[i].y - y0
 
-        if (lx * py + ly * px) < 0.000001:
+        if (lx * py - ly * px) > -0.000001:
             all_outside = False
             ci.point[i].inside = True
         else:
@@ -290,14 +290,3 @@ def crop_data(Data old, double x0, double y0, double x1, double y1):
 
     free(ci)
     return new
-
-from mesh import texture_rectangle_mesh
-
-
-cdef Mesh tr = texture_rectangle_mesh(0, 0, 100, 100, 0, 0, 1, 1)
-print("Original", repr(tr))
-
-cdef Mesh cropped = Mesh()
-cropped.data = crop_data(tr.data, 50, 0, 50, 100)
-
-print("Cropped", repr(cropped))
