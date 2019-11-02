@@ -1,5 +1,5 @@
 # Represents a point in three dimensional space.
-cdef struct Point:
+cdef struct Point3:
     float x
     float y
     float z
@@ -31,7 +31,7 @@ cdef class Data:
     cdef int points
 
     # The geometry of the points.
-    cdef Point *point
+    cdef Point3 *point
 
     # An AttributeLayout object controlling how attributes are stored.
     cdef AttributeLayout layout

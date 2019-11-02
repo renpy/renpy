@@ -35,7 +35,7 @@ cdef class Data:
 
         self.allocated_points = points
         self.points = 0
-        self.point = <Point *> malloc(points * sizeof(Point))
+        self.point = <Point3 *> malloc(points * sizeof(Point3))
 
         self.layout = layout
         self.attribute = <float *> malloc(points * layout.stride * sizeof(float))

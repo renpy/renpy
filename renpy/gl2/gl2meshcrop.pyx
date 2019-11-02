@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from gl2mesh cimport Mesh, Point, Data
+from gl2mesh cimport Mesh, Point3, Data
 
 from libc.stdlib cimport malloc, free
 from libc.math cimport hypot
@@ -80,9 +80,9 @@ cdef int split_line(Data old, Data new, CropInfo *ci, int p0idx, int p1idx):
         elif (ci.split[i].p0idx == p1idx) and (ci.split[i].p1idx == p0idx):
             return ci.split[i].npidx
 
-    cdef Point p0 # old point 0
-    cdef Point p1 # old point 1
-    cdef Point np # new point.
+    cdef Point3 p0 # old point 0
+    cdef Point3 p1 # old point 1
+    cdef Point3 np # new point.
 
     p0 = old.point[p0idx]
     p1 = old.point[p1idx]
