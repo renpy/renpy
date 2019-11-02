@@ -5,6 +5,8 @@ cdef struct Point2:
     float x
     float y
 
+cdef object point2str(Point2 p):
+    return "({:.3f}, {:.3f})".format(p.x, p.y)
 
 cdef class Polygon:
     """
@@ -35,7 +37,8 @@ cdef class Polygon:
         rv = "<Polygon"
 
         for 0 <= i < self.points:
-            rv += " ({:.3f}, {:.3f})".format(self.point[i].x, self.point[i].y)
+            rv += " "
+            rv += point2str(self.point[i])
 
         rv += ">"
 
@@ -55,3 +58,124 @@ cdef class Polygon:
             rv.point[i].y = l[i * 2 + 1]
 
         return rv
+
+    @staticmethod
+    def rectangle(float l, float b, float r, float t):
+        cdef Polygon rv = Polygon(4)
+        rv.points = 4
+
+        rv.point[0].x = l
+        rv.point[0].y = b
+
+        rv.point[1].x = r
+        rv.point[1].y = b
+
+        rv.point[2].x = r
+        rv.point[2].y = t
+
+        rv.point[3].x = l
+        rv.point[3].y = t
+
+        return rv
+
+    cpdef Polygon intersect(Polygon self, Polygon p):
+        """
+        Intersects this polygon with `p`.
+
+        This returns a polygon or None. The polygon may be this Polygon in
+        the case where the intersection is the same as this Polygon.
+        """
+
+        cdef int i
+        cdef int j
+
+        rv = self
+
+        j = p.points - 1
+
+        for 0 <= i < p.points:
+            rv = intersectOnce(p.point[j], p.point[i], rv)
+
+            if rv is None:
+                return None
+
+            j = i
+
+        return rv
+
+
+cdef void intersectLines(Point2 a0, Point2 a1, Point2 b0, Point2 b1, Point2 *p):
+    """
+    Given a line that goes through a0 and a1, and a second line that goes through
+    b0 and b1, find the point where the two lines intersect and put it in p.
+    """
+
+    cdef float denom = (a0.x - a1.x) * (b0.y - b1.y) - (a0.y - a1.y) * (b0.x - b1.x)
+    p.x = ((a0.x * a1.y - a0.y * a1.x) * (b0.x - b1.x) - (a0.x - a1.x) * (b0.x * b1.y - b0.y * b1.x)) / denom
+    p.y = ((a0.x * a1.y - a0.y * a1.x) * (b0.y - b1.y) - (a0.y - a1.y) * (b0.x * b1.y - b0.y * b1.x)) / denom
+
+
+
+cdef Polygon intersectOnce(Point2 a0, Point2 a1, Polygon p):
+
+    cdef int i
+    cdef int j
+
+
+    # The vector from a0 to a1.
+    cdef float lx = a1.x - a0.x
+    cdef float ly = a1.y - a0.y
+
+    # The vector from a0 to each point.
+    cdef float px
+    cdef float py
+
+    cdef bint allin = True
+    cdef bint allout = True
+
+    # For each point, are we inside or outside the polygon?
+    # We assume we never have more than 1024 sides to the polygon.
+    cdef bint inside[1024]
+
+    # Figure out which points are 'inside' the wound line.
+    for 0 <= i < p.points:
+        px = p.point[i].x - a0.x
+        py = p.point[i].y - a0.y
+
+        inside[i] = (lx * py - ly * px) > -0.000001
+
+        allin = allin and inside[i]
+        allout = allout and not inside[i]
+
+
+    # If the points are all out, return None.
+    if allout:
+        return None
+
+    # If all the points are inside, just return the polygon intact.
+    if allin:
+        return p
+
+    rv = Polygon(p.points * 2)
+
+    j = p.points - 1
+
+    for 0 <= i < p.points:
+        if inside[i]:
+            if not inside[j]:
+                intersectLines(a0, a1, p.point[j], p.point[i], &rv.point[rv.points])
+                rv.points += 1
+
+            rv.point[rv.points].x = p.point[i].x
+            rv.point[rv.points].y = p.point[i].y
+            rv.points += 1
+
+        else:
+            if inside[j]:
+                intersectLines(a0, a1, p.point[j], p.point[i], &rv.point[rv.points])
+                rv.points += 1
+
+        j = i
+
+    return rv
+
