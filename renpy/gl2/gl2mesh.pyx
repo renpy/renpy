@@ -121,7 +121,8 @@ cdef class Mesh:
 
         return rv
 
-    def texture_rectangle_mesh(
+    @staticmethod
+    def texture_rectangle(
         double pl, double pb, double pr, double pt,
         double tl, double tb, double tr, double tt
         ):
