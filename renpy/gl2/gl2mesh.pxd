@@ -1,3 +1,5 @@
+from renpy.gl2.gl2polygon cimport Polygon
+
 # Represents a point in three dimensional space.
 cdef struct Point3:
     float x
@@ -52,3 +54,6 @@ cdef class Data:
 cdef class Mesh:
 
     cdef Data data
+
+    cpdef Mesh copy(Mesh self)
+    cpdef Mesh crop(Mesh self, Polygon p)

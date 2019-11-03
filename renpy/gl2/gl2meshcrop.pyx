@@ -121,6 +121,7 @@ cdef int split_line(Data old, Data new, CropInfo *ci, int p0idx, int p1idx):
     ci.split[ci.splits % SPLIT_CACHE_LEN].p0idx = p0idx
     ci.split[ci.splits % SPLIT_CACHE_LEN].p1idx = p1idx
     ci.split[ci.splits % SPLIT_CACHE_LEN].npidx = npidx
+    ci.splits += 1
 
     return npidx
 
@@ -179,7 +180,7 @@ cdef void triangle3(Data old, Data new, CropInfo *ci, int p0, int p1, int p2):
     new.triangles += 1
 
 
-cdef Data split(Data old, float x0, float y0, float x1, float y1):
+cdef Data split_data(Data old, float x0, float y0, float x1, float y1):
 
     cdef int i
     cdef int op, np
@@ -241,7 +242,6 @@ cdef Data split(Data old, float x0, float y0, float x1, float y1):
         else:
             ci.point[i].replacement = -1
 
-
     ci.splits = 0
 
     for 0 <= i < SPLIT_CACHE_LEN:
@@ -292,4 +292,25 @@ cdef Data split(Data old, float x0, float y0, float x1, float y1):
     free(ci)
     return new
 
-cdef Data
+cdef Data crop_data(Data d, Polygon p):
+    """
+    Returns a new Data that only the portion of `d` that is entirely
+    contained in `p`.
+    """
+
+    cdef int i
+    cdef int j
+
+    rv = d
+
+    j = p.points - 1
+
+    for 0 <= i < p.points:
+        rv = split_data(rv, p.point[j].x, p.point[j].y, p.point[i].x, p.point[i].y)
+        j = i
+
+    return rv
+
+
+
+

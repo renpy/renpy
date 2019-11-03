@@ -3,6 +3,8 @@ from __future__ import print_function
 from libc.stdlib cimport malloc, free
 from libc.math cimport hypot
 
+from renpy.gl2.gl2meshcrop cimport crop_data
+
 # Information used when cropping.
 cdef class AttributeLayout:
 
@@ -14,9 +16,12 @@ cdef class AttributeLayout:
         self.offset[name] = self.stride
         self.stride += length
 
+
 SOLID_LAYOUT = AttributeLayout()
+
 TEXTURE_LAYOUT = AttributeLayout()
 TEXTURE_LAYOUT.add_attribute("aTexCoord", 2)
+
 
 cdef class Data:
 
@@ -48,8 +53,6 @@ cdef class Data:
         free(self.point)
         free(self.attribute)
         free(self.triangle)
-
-
 
 
 cdef class Mesh:
@@ -174,4 +177,22 @@ cdef class Mesh:
 
         return rv
 
+    cpdef Mesh copy(Mesh self):
+        """
+        Returns a copy of this mesh.
+        """
+
+        rv = Mesh()
+        rv.data = self.data
+
+        return rv
+
+    cpdef Mesh crop(Mesh self, Polygon p):
+        """
+        Crops this mesh against Polygon `p`, and returns a new Mesh.
+        """
+
+        cdef Mesh rv = self.copy()
+        rv.data = crop_data(self.data, p)
+        return rv
 
