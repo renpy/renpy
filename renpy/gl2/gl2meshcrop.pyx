@@ -1,6 +1,7 @@
 from __future__ import print_function
 
-from gl2mesh cimport Mesh, Point3, Data
+from renpy.gl2.gl2mesh cimport Mesh, Point3, Data
+from renpy.gl2.gl2polygon cimport Polygon, Point2
 
 from libc.stdlib cimport malloc, free
 from libc.math cimport hypot
@@ -22,11 +23,11 @@ cdef struct CropSplit:
 # This stores information about the crop operation.
 cdef struct CropInfo:
 
-    double x0
-    double y0
+    float x0
+    float y0
 
-    double x1
-    double y1
+    float x1
+    float y1
 
     # The number of splits.
     int splits
@@ -178,7 +179,7 @@ cdef void triangle3(Data old, Data new, CropInfo *ci, int p0, int p1, int p2):
     new.triangles += 1
 
 
-def crop_data(Data old, double x0, double y0, double x1, double y1):
+cdef Data split(Data old, float x0, float y0, float x1, float y1):
 
     cdef int i
     cdef int op, np
@@ -196,12 +197,12 @@ def crop_data(Data old, double x0, double y0, double x1, double y1):
     cdef bint all_outside
 
     # The vector corresponding to the line.
-    cdef double lx = x1 - x0
-    cdef double ly = y1 - y0
+    cdef float lx = x1 - x0
+    cdef float ly = y1 - y0
 
     # The vector corresponding to the point.
-    cdef double px
-    cdef double py
+    cdef float px
+    cdef float py
 
     all_outside = True
     all_inside = True
@@ -290,3 +291,5 @@ def crop_data(Data old, double x0, double y0, double x1, double y1):
 
     free(ci)
     return new
+
+cdef Data
