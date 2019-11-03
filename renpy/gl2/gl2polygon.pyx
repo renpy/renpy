@@ -1,23 +1,9 @@
 from libc.stdlib cimport calloc, free
 
-# Represents a 2D point inside a polygon.
-cdef struct Point2:
-    float x
-    float y
-
 cdef object point2str(Point2 p):
     return "({:.3f}, {:.3f})".format(p.x, p.y)
 
 cdef class Polygon:
-    """
-    Represents a 2-dimensional polygon.
-    """
-
-    # The number of points in the polygon.
-    cdef int points
-
-    # The points.
-    cdef Point2 *point
 
     def __init__(Polygon self, int allocate_points):
         """
