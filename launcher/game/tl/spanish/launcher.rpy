@@ -310,7 +310,7 @@
 
     # distribute_gui.rpy:194
     old "Add from clauses to calls, once"
-    new "Añadir desde cláusulas a las llamadas, una vez"
+    new "Añadir cláusulas  from a calls, una vez"
 
     # distribute_gui.rpy:195
     old "Refresh"
@@ -1649,4 +1649,8 @@ translate spanish strings:
     # game/web.rpy:151
     old "Open build directory"
     new "Abrir directorio de construcción"
+
+    # game/front_page.rpy:198
+    old "audio"
+    new "audio"
 

@@ -672,3 +672,8 @@ translate spanish strings:
     # screens.rpy:1431
     old "Menu"
     new "Menú"
+
+    # gui/game/screens.rpy:333
+    old "## The quit button is banned on iOS and unnecessary on Android and Web."
+    new "## El botón de salida está prohibido en iOS y no es necesario en Android y Web."
+
