@@ -470,7 +470,7 @@ def can_show(name, layer=None, tag=None):
         return None
 
 
-def showing(name, layer='master'):
+def showing(name, layer=None):
     """
     :doc: image_func
 
@@ -481,7 +481,6 @@ def showing(name, layer='master'):
         May be a string giving the image name or a tuple giving each
         component of the image name. It may also be a string giving
         only the image tag.
-
 
     `layer`
         The layer to check. If None, uses the default layer for `tag`.
@@ -781,7 +780,7 @@ def scene(layer='master'):
         renpy.config.missing_scene(layer)
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None):  # @ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input"):  # @ReservedAssignment
     """
     :doc: input
 
@@ -810,6 +809,10 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
         If not None, the input is limited to being this many pixels wide,
         in the font used by the input to display text.
 
+    `screen`
+        The name of the screen that takes input. If not given, the ``input``
+        screen is used.
+
     If :var:`config.disable_input` is True, this function only returns
     `default`.
     """
@@ -829,13 +832,16 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     fixed = in_fixed_rollback()
 
-    if has_screen("input"):
+    if has_screen(screen):
         widget_properties = { }
         widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width)
 
-        show_screen("input", _transient=True, _widget_properties=widget_properties, prompt=prompt)
+        show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt)
 
     else:
+
+        if screen != "input":
+            raise Exception("The '{}' screen does not exist.".format(screen))
 
         renpy.ui.window(style='input_window')
         renpy.ui.vbox()
@@ -1189,6 +1195,8 @@ def display_menu(items,
                 **scope)
 
     else:
+        renpy.exports.shown_window()
+
         renpy.ui.window(style=window_style, focus="menu")
         renpy.ui.menu(items,
                       location=renpy.game.context().current,
@@ -2256,7 +2264,6 @@ def notl_file(fn):  # @ReservedAssignment
     return renpy.loader.load(fn, tl=False)
 
 
-@renpy_pure
 def image_size(im):
     """
     :doc: file_rare
@@ -2671,7 +2678,7 @@ def get_placement(d):
     return placement(p)
 
 
-def get_image_bounds(tag, width=None, height=None, layer='master'):
+def get_image_bounds(tag, width=None, height=None, layer=None):
     """
     :doc: image_func
 
@@ -2869,8 +2876,8 @@ def call_screen(_screen_name, *args, **kwargs):
     to occur. The screen is hidden at the end of the interaction, and
     the result of the interaction is returned.
 
-    Keyword arguments not beginning with _ are passed to the scope of
-    the screen.
+    Positional arguments, and keyword arguments that do not begin with
+    _ are passed to the screen.
 
     If the keyword argument `_with_none` is false, "with None" is not
     run at the end of end of the interaction.
@@ -3716,8 +3723,8 @@ def get_skipping():
     """
     :doc: other
 
-    Returns true if the Ren'Py is skipping, "fast" if Ren'Py is fast skipping,
-    and false if it is not skipping.
+    Returns "slow" if the Ren'Py is skipping, "fast" if Ren'Py is fast skipping,
+    and None if it is not skipping.
     """
 
     return renpy.config.skipping
@@ -3784,3 +3791,33 @@ def is_skipping():
     """
 
     return not not renpy.config.skipping
+
+
+def is_init_phase():
+    """
+    :doc: other
+
+    Returns True if Ren'Py is currently executing init code, or False otherwise.
+    """
+
+    return renpy.game.context().init_phase
+
+
+def add_to_all_stores(name, value):
+    """
+    :doc: other
+
+    Adds the `value` by the `name` to all creator defined namespaces. If the name
+    already exist in that namespace - do nothing for it.
+
+    This function may only be run from inside an init block. It is an
+    error to run this function once the game has started.
+    """
+
+    if not is_init_phase():
+        raise Exception("add_to_all_stores is only allowed in init code.")
+
+    for _k, ns in renpy.python.store_dicts.iteritems():
+
+        if name not in ns:
+            ns[name] = value

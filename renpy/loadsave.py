@@ -23,8 +23,9 @@
 
 from __future__ import print_function
 
+from __future__ import absolute_import
 import pickle
-import cPickle
+import renpy.six.moves.cPickle as cPickle
 
 from cStringIO import StringIO
 
@@ -37,7 +38,7 @@ import os
 import sys
 
 import renpy
-from renpy import six
+import renpy.six as six
 
 from json import dumps as json_dumps
 
@@ -86,10 +87,10 @@ def save_dump(roots, log):
             f.write("{0: 7d} {1} = alias {2}\n".format(0, path, o_repr_cache[ido]))
             return 0
 
-        if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType)):
+        if isinstance(o, (int, float, type(None), types.ModuleType, type)):
             o_repr = repr(o)
 
-        elif isinstance(o, (str, unicode)):
+        elif isinstance(o, (str, bytes, six.text_type)):
             if len(o) <= 80:
                 o_repr = repr(o).encode("utf-8")
             else:
@@ -102,7 +103,7 @@ def save_dump(roots, log):
             o_repr = "<" + o.__class__.__name__ + ">"
 
         elif isinstance(o, types.MethodType):
-            o_repr = "<method {0}.{1}>".format(o.im_class.__name__, o.im_func.__name__)
+            o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__func__.__name__)
 
         elif isinstance(o, object):
             o_repr = "<{0}>".format(type(o).__name__)
@@ -112,11 +113,11 @@ def save_dump(roots, log):
 
         o_repr_cache[ido] = o_repr
 
-        if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType)):
+        if isinstance(o, (int, float, type(None), types.ModuleType, type)):
             size = 1
 
-        elif isinstance(o, (str, unicode)):
-            size = len(o) / 40 + 1
+        elif isinstance(o, (str, six.text_type)):
+            size = len(o) // 40 + 1
 
         elif isinstance(o, (tuple, list)):
             size = 1
@@ -126,12 +127,12 @@ def save_dump(roots, log):
 
         elif isinstance(o, dict):
             size = 2
-            for k, v in o.iteritems():
+            for k, v in six.iteritems(o):
                 size += 2
                 size += visit(v, "{0}[{1!r}]".format(path, k))
 
         elif isinstance(o, types.MethodType):
-            size = 1 + visit(o.im_self, path + ".im_self")
+            size = 1 + visit(o.__self__, path + ".im_self")
 
         else:
 
@@ -155,7 +156,7 @@ def save_dump(roots, log):
 
             state = get(2, { })
             if isinstance(state, dict):
-                for k, v in state.iteritems():
+                for k, v in six.iteritems(state):
                     size += 2
                     size += visit(v, path + "." + k)
             else:
@@ -202,7 +203,7 @@ def find_bad_reduction(roots, log):
 
         seen.add(ido)
 
-        if isinstance(o, (int, float, types.NoneType, types.ClassType)):
+        if isinstance(o, (int, float, type(None), type)):
             return
 
         if isinstance(o, (tuple, list)):
@@ -212,13 +213,13 @@ def find_bad_reduction(roots, log):
                     return rv
 
         elif isinstance(o, dict):
-            for k, v in o.iteritems():
+            for k, v in six.iteritems(o):
                 rv = visit(v, "{0}[{1!r}]".format(path, k))
                 if rv is not None:
                     return rv
 
         elif isinstance(o, types.MethodType):
-            return visit(o.im_self, path + ".im_self")
+            return visit(o.__self__, path + ".im_self")
 
         elif isinstance(o, types.ModuleType):
 
@@ -250,7 +251,7 @@ def find_bad_reduction(roots, log):
 
             state = get(2, { })
             if isinstance(state, dict):
-                for k, v in state.iteritems():
+                for k, v in six.iteritems(state):
                     rv = visit(v, path + "." + k)
                     if rv is not None:
                         return rv
@@ -440,6 +441,9 @@ def save(slotname, extra_info='', mutate_flag=False):
     clear_slot(slotname)
 
 
+# The thread used for autosave.
+autosave_thread = None
+
 # Flag that lets us know if an autosave is in progress.
 autosave_not_running = threading.Event()
 autosave_not_running.set()
@@ -448,7 +452,7 @@ autosave_not_running.set()
 autosave_counter = 0
 
 
-def autosave_thread(take_screenshot):
+def autosave_thread_function(take_screenshot):
 
     global autosave_counter
 
@@ -521,12 +525,19 @@ def force_autosave(take_screenshot=False, block=False):
         If True, blocks until the autosave completes.
     """
 
+    global autosave_thread
+
     if renpy.game.after_rollback or renpy.exports.in_rollback():
         return
 
     # That is, autosave is running.
     if not autosave_not_running.isSet():
         return
+
+    # Join the autosave thread to clear resources.
+    if autosave_thread is not None:
+        autosave_thread.join()
+        autosave_thread = None
 
     # Do not save if we're in the main menu.
     if renpy.store.main_menu:
@@ -555,12 +566,11 @@ def force_autosave(take_screenshot=False, block=False):
     autosave_not_running.clear()
 
     if not renpy.emscripten:
-        t = threading.Thread(target=autosave_thread, args=(take_screenshot,))
-        t.daemon = True
-        t.start()
+        autosave_thread = threading.Thread(target=autosave_thread_function, args=(take_screenshot,))
+        autosave_thread.daemon = True
+        autosave_thread.start()
     else:
-        import emscripten
-        emscripten.async_call(autosave_thread, take_screenshot, -1)
+        autosave_thread_function(take_screenshot)
 
 
 ################################################################################

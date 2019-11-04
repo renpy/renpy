@@ -19,7 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
+
+# Make six available to Ren'Py games.
+import renpy.six as six  # @UnusedImport
+unicode = six.text_type  # @ReservedAssignment
 
 python_list = _list = list
 python_dict = _dict = dict

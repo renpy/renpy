@@ -26,14 +26,14 @@
 # When updating this file, consider if lint.py or warp.py also need
 # updating.
 
-from __future__ import print_function
-
+from __future__ import print_function, absolute_import
 import renpy.display
 import renpy.test
 
 import hashlib
 import re
 import time
+import renpy.six as six
 
 
 def statement_name(name):
@@ -107,7 +107,7 @@ class ParameterInfo(object):
 
         extrapos = tuple(args[len(self.positional):])
 
-        for name, value in kwargs.iteritems():
+        for name, value in six.iteritems(kwargs):
             if name in values:
                 if not ignore_errors:
                     raise Exception("Parameter %s has two values." % name)
@@ -142,7 +142,7 @@ class ParameterInfo(object):
             pass
 
         elif values and (not ignore_errors):
-            raise Exception("Unknown keyword arguments: %s" % ( ", ".join(values.keys())))
+            raise Exception("Unknown keyword arguments: %s" % ( ", ".join(list(values.keys()))))
 
         return rv
 
@@ -224,7 +224,7 @@ def __newobj__(cls, *args):
 pyexpr_list = [ ]
 
 
-class PyExpr(unicode):
+class PyExpr(six.text_type):
     """
     Represents a string containing python code.
     """
@@ -235,7 +235,7 @@ class PyExpr(unicode):
         ]
 
     def __new__(cls, s, filename, linenumber):
-        self = unicode.__new__(cls, s)
+        self = six.text_type.__new__(cls, s)
         self.filename = filename
         self.linenumber = linenumber
 
@@ -246,7 +246,7 @@ class PyExpr(unicode):
         return self
 
     def __getnewargs__(self):
-        return (unicode(self), self.filename, self.linenumber)  # E1101
+        return (six.text_type(self), self.filename, self.linenumber)  # E1101
 
 
 def probably_side_effect_free(expr):
@@ -356,9 +356,10 @@ class Node(object):
     A node in the abstract syntax tree of the program.
 
     @ivar name: The name of this node.
-
     @ivar filename: The filename where this node comes from.
     @ivar linenumber: The line number of the line on which this node is defined.
+    @ivar next: The statement that will execute after this one.
+    @ivar statement_start: If present, the first node that makes up the statement that includes this node.
     """
 
     __slots__ = [
@@ -366,6 +367,7 @@ class Node(object):
         'filename',
         'linenumber',
         'next',
+        'statement_start',
         ]
 
     # True if this node is translatable, false otherwise. (This can be set on
@@ -678,7 +680,7 @@ class Say(Node):
             if not (
                     (who is None) or
                     callable(who) or
-                    isinstance(who, basestring) ):
+                    isinstance(who, six.string_types) ):
 
                 raise Exception("Sayer %s is not a function or string." % self.who.encode("utf-8"))
 
@@ -852,7 +854,7 @@ class Label(Node):
 
         values = apply_arguments(self.parameters, renpy.store._args, renpy.store._kwargs)
 
-        for k, v in values.iteritems():
+        for k, v in six.iteritems(values):
             renpy.exports.dynamic(k)
             setattr(renpy.store, k, v)
 
@@ -2046,6 +2048,9 @@ class StoreNamespace(object):
     def set(self, name, value):
         renpy.python.store_dicts[self.store][name] = value
 
+    def get(self, name):
+        return renpy.python.store_dicts[self.store][name]
+
 
 def get_namespace(store):
     """
@@ -2072,18 +2077,29 @@ class Define(Node):
         'varname',
         'code',
         'store',
+        'operator',
+        'index',
         ]
 
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.store = 'store'
+        self.operator = '='
+        self.index = None
         return self
 
-    def __init__(self, loc, store, name, expr):
+    def __init__(self, loc, store, name, index, operator, expr):
         super(Define, self).__init__(loc)
 
         self.store = store
         self.varname = name
+
+        if index is not None:
+            self.index = PyCode(index, loc=loc, mode='eval')
+        else:
+            self.index = None
+
+        self.operator = operator
         self.code = PyCode(expr, loc=loc, mode='eval')
 
     def diff_info(self):
@@ -2092,7 +2108,14 @@ class Define(Node):
     def early_execute(self):
         create_store(self.store)
 
+        if self.operator != "=":
+            return
+
+        if self.index is not None:
+            return
+
         if self.store == "store.config" and self.varname in EARLY_CONFIG:
+
             value = renpy.python.py_eval_bytecode(self.code.bytecode)
             setattr(renpy.config, self.varname, value)
 
@@ -2103,25 +2126,50 @@ class Define(Node):
 
         define_statements.append(self)
 
-        value = renpy.python.py_eval_bytecode(self.code.bytecode)
-
         if self.store == 'store':
             renpy.exports.pure(self.varname)
             renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
         else:
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
 
-        ns, _special = get_namespace(self.store)
-        ns.set(self.varname, value)
+        self.set()
 
     def redefine(self, stores):
 
         if self.store not in stores:
             return
 
+        self.set()
+
+    def set(self):
+
         value = renpy.python.py_eval_bytecode(self.code.bytecode)
         ns, _special = get_namespace(self.store)
-        ns.set(self.varname, value)
+
+        if (self.index is None) and (self.operator == "="):
+            ns.set(self.varname, value)
+            return
+
+        base = ns.get(self.varname)
+        old = base
+
+        if self.index:
+            key = renpy.python.py_eval_bytecode(self.index.bytecode)
+
+            if self.operator != "=":
+                old = base[key]
+
+        if self.operator == "=":
+            new = value
+        elif self.operator == "+=":
+            new = old + value
+        elif self.operator == "|=":
+            new = old | value
+
+        if self.index:
+            base[key] = new
+        else:
+            ns.set(self.varname, new)
 
 
 def redefine(stores):

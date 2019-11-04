@@ -302,7 +302,14 @@ class TextSegment(object):
                 tf = font_func(tf)
 
         if not isinstance(tf, font.FontGroup):
-            yield (self, s)
+
+            if self.font is tf:
+                yield (self , s)
+            else:
+                seg = TextSegment(self)
+                seg.font = tf
+                yield (seg, s)
+
             return
 
         segs = { }

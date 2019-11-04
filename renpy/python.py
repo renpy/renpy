@@ -37,8 +37,35 @@ import weakref
 import re
 import sys
 import time
+import io
+
+import renpy.six as six
 
 import renpy.audio
+
+import copy_reg
+
+##############################################################################
+# Monkeypatch copy_reg to work around a change in the class that RevertableSet
+# is based on.
+
+
+def _reconstructor(cls, base, state):
+    if (cls is RevertableSet) and (base is object):
+        base = set
+        state = [ ]
+
+    if base is object:
+        obj = object.__new__(cls)
+    else:
+        obj = base.__new__(cls, state)
+        if base.__init__ != object.__init__:
+            base.__init__(obj, state)
+
+    return obj
+
+
+copy_reg._reconstructor = _reconstructor
 
 ##############################################################################
 # Code that implements the store.
@@ -349,7 +376,7 @@ def reached(obj, reachable, wait):
     if idobj in reachable:
         return
 
-    if isinstance(obj, (NoRollback, real_file)):  # @UndefinedVariable
+    if isinstance(obj, (NoRollback, io.IOBase)):  # @UndefinedVariable
         reachable[idobj] = 0
         return
 
@@ -788,10 +815,10 @@ class CompressedList(object):
             old_end += 1
 
         # Now that we have this, we can put together the object.
-        self.pre = list.__getslice__(old, 0, old_start)
+        self.pre = list.__getitem__(old, slice(0, old_start))
         self.start = new_start
         self.end = new_end
-        self.post = list.__getslice__(old, old_end, len_old)
+        self.post = list.__getitem__(old, slice(old_end, len_old))
 
     def decompress(self, new):
         return self.pre + new[self.start:self.end] + self.post
@@ -815,8 +842,11 @@ class RevertableList(list):
         list.__init__(self, *args)
 
     __delitem__ = mutator(list.__delitem__)
-    __delslice__ = mutator(list.__delslice__)
+    if six.PY2:
+        __delslice__ = mutator(list.__delslice__)
     __setitem__ = mutator(list.__setitem__)
+    if six.PY2:
+        __setslice__ = mutator(list.__setslice__)
     __iadd__ = mutator(list.__iadd__)
     __imul__ = mutator(list.__imul__)
     append = mutator(list.append)
@@ -835,7 +865,16 @@ class RevertableList(list):
         return newmethod
 
     __add__ = wrapper(list.__add__)
-    __getslice__ = wrapper(list.__getslice__)
+    if six.PY2:
+        __getslice__ = wrapper(list.__getslice__)
+
+    def __getitem__(self, index):
+        rv = list.__getitem__(self, index)
+
+        if isinstance(index, slice):
+            return RevertableList(rv)
+        else:
+            return rv
 
     def __mul__(self, other):
         if not isinstance(other, int):
@@ -844,6 +883,12 @@ class RevertableList(list):
         return RevertableList(list.__mul__(self, other))
 
     __rmul__ = __mul__
+
+    def copy(self):
+        return self[:]
+
+    def clear(self):
+        self[:] = []
 
     def _clean(self):
         """
@@ -1646,8 +1691,8 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                            and data == fwd_data
-                            and (keep_rollback or self.rolled_forward)
+                        and data == fwd_data
+                        and (keep_rollback or self.rolled_forward)
                         ):
                     self.forward.pop(0)
                 else:
@@ -2005,7 +2050,7 @@ def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="sto
     if locals is None:
         locals = globals  # @ReservedAssignment
 
-    exec bytecode in globals, locals
+    exec(bytecode, globals, locals)
 
 
 def py_exec(source, hide=False, store=None):
@@ -2018,7 +2063,7 @@ def py_exec(source, hide=False, store=None):
     else:
         locals = store  # @ReservedAssignment
 
-    exec py_compile(source, 'exec') in store, locals
+    exec(py_compile(source, 'exec'), store, locals)
 
 
 def py_eval_bytecode(bytecode, globals=None, locals=None):  # @ReservedAssignment
@@ -2062,7 +2107,7 @@ def raise_at_location(e, loc):
     code = compile(node, filename, 'exec')
 
     # PY3 - need to change to exec().
-    exec code in { "e" : e }
+    exec(code, { "e" : e })
 
 
 # This was used to proxy accesses to the store. Now it's kept around to deal

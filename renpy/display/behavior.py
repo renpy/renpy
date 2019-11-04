@@ -667,7 +667,7 @@ class SayBehavior(renpy.display.layout.Null):
                 elif renpy.game.context().seen_current(True):
                     return True
                 else:
-                    renpy.config.skipping = False
+                    renpy.config.skipping = None
                     renpy.exports.restart_interaction()
 
             else:
@@ -701,6 +701,9 @@ class Button(renpy.display.layout.Window):
 
     keysym = None
     alternate_keysym = None
+
+    # This locks the displayable against further change.
+    locked = False
 
     def __init__(self, child=None, style='button', clicked=None,
                  hovered=None, unhovered=None, action=None, role=None,
@@ -744,6 +747,14 @@ class Button(renpy.display.layout.Window):
             return self._tooltip
 
         return get_tooltip(self.action)
+
+    def _in_current_store(self):
+        rv = self._copy()
+        rv.style = self.style.copy()
+        rv.set_style_prefix(self.style.prefix, True)
+        rv.focusable = False
+        rv.locked = True
+        return rv
 
     def predict_one_action(self):
         predict_action(self.clicked)
@@ -840,40 +851,45 @@ class Button(renpy.display.layout.Window):
 
     def per_interact(self):
 
-        if self.action is not None:
-            if self.is_selected():
-                role = 'selected_'
+        if not self.locked:
+
+            if self.action is not None:
+                if self.is_selected():
+                    role = 'selected_'
+                else:
+                    role = ''
+
+                if self.is_sensitive():
+                    clicked = self.action
+                else:
+                    clicked = None
+                    role = ''
+
             else:
                 role = ''
+                clicked = self.clicked
 
-            if self.is_sensitive():
-                clicked = self.action
+            if self.role_parameter is not None:
+                role = self.role_parameter
+
+            if (role != self.role) or (clicked is not self.clicked):
+                renpy.display.render.invalidate(self)
+                self.role = role
+                self.clicked = clicked
+
+            if self.clicked is not None:
+                self.set_style_prefix(self.role + "idle_", True)
+                self.focusable = True
             else:
-                clicked = None
-                role = ''
-
-        else:
-            role = ''
-            clicked = self.clicked
-
-        if self.role_parameter is not None:
-            role = self.role_parameter
-
-        if (role != self.role) or (clicked is not self.clicked):
-            renpy.display.render.invalidate(self)
-            self.role = role
-            self.clicked = clicked
-
-        if self.clicked is not None:
-            self.set_style_prefix(self.role + "idle_", True)
-            self.focusable = True
-        else:
-            self.set_style_prefix(self.role + "insensitive_", True)
-            self.focusable = False
+                self.set_style_prefix(self.role + "insensitive_", True)
+                self.focusable = False
 
         super(Button, self).per_interact()
 
     def event(self, ev, x, y, st):
+
+        if self.locked:
+            return None
 
         def handle_click(action):
             renpy.exports.play(self.style.activate_sound)
@@ -938,7 +954,7 @@ class Button(renpy.display.layout.Window):
         if (self.clicked is not None) and map_event(ev, "button_ignore"):
             raise renpy.display.core.IgnoreEvent()
 
-        if (self.clicked is not None) and map_event(ev, "button_alternate_ignore"):
+        if (self.alternate is not None) and map_event(ev, "button_alternate_ignore"):
             raise renpy.display.core.IgnoreEvent()
 
         # If clicked,
@@ -1111,6 +1127,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
     default = u""
     edit_text = u""
     value = None
+    shown = False
 
     def __init__(self,
                  default="",
@@ -1171,14 +1188,9 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             self.content = replaces.content
             self.editable = replaces.editable
             self.caret_pos = replaces.caret_pos
+            self.shown = replaces.shown
 
         self.update_text(self.content, self.editable)
-
-    def _show(self):
-        if self.default != self.content:
-            self.content = self.default
-            self.caret_pos = len(self.content)
-            self.update_text(self.content, self.editable)
 
     def update_text(self, new_content, editable, check_size=False):
 
@@ -1271,6 +1283,18 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
 
             if self.value.default and (default_input_value is None):
                 default_input_value = self.value
+
+        if not self.shown:
+
+            if self.value is not None:
+                default = self.value.get_text()
+                self.default = unicode(default)
+
+            self.content = self.default
+            self.caret_pos = len(self.content)
+            self.update_text(self.content, self.editable)
+
+            self.shown = True
 
     def event(self, ev, x, y, st):
 
@@ -1370,7 +1394,10 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             if ev.unicode and ord(ev.unicode[0]) >= 32:
                 raw_text = ev.unicode
             elif renpy.display.interface.text_event_in_queue():
-                raw_text = ''
+                raise renpy.display.core.IgnoreEvent()
+            elif (32 <= ev.key < 127) and not (ev.mod & (pygame.KMOD_ALT | pygame.KMOD_META)):
+                # Ignore printable keycodes without unicode.
+                raise renpy.display.core.IgnoreEvent()
 
         if raw_text is not None:
 
@@ -1429,6 +1456,7 @@ class Adjustment(renpy.object.Object):
     """
 
     force_step = False
+
     def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False):  # @ReservedAssignment
         """
         The following parameters correspond to fields or properties on

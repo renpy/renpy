@@ -166,7 +166,7 @@ def expanded_sl2_properties():
 
 
 def write_keywords():
-    f = file("source/keywords.py", "w")
+    f = open("source/keywords.py", "w")
 
     kwlist = set(keyword.kwlist)
     kwlist |= script_keywords()

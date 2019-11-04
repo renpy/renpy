@@ -24,7 +24,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import os
 import sys
@@ -146,6 +146,7 @@ def path_to_renpy_base():
 
 ##############################################################################
 
+
 # Doing the version check this way also doubles as an import of ast,
 # which helps py2exe et al.
 try:
@@ -193,6 +194,7 @@ def main():
         raise
 
     renpy.bootstrap.bootstrap(renpy_base)
+
 
 if __name__ == "__main__":
     main()

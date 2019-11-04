@@ -27,6 +27,7 @@ def version():
 
 from sdl2 cimport *
 from pygame_sdl2 cimport *
+from pygame_sdl2 import Surface
 
 cdef extern from "renpy.h":
 
@@ -99,9 +100,7 @@ cdef extern from "renpy.h":
     void PyErr_Clear()
 
 
-import pygame
-
-PygameSurface = pygame.Surface
+from pygame_sdl2 import Surface as PygameSurface
 
 def save_png(surf, file, compress=-1):
 

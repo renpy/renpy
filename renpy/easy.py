@@ -21,11 +21,12 @@
 
 # Functions that make the user's life easier.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import renpy.display
 import renpy.styledata
 import contextlib
 import time
+import renpy.six as six
 
 Color = renpy.color.Color
 color = renpy.color.Color
@@ -57,7 +58,7 @@ def displayable_or_none(d, scope=None, dynamic=True):
     if d is None:
         return d
 
-    if isinstance(d, basestring):
+    if isinstance(d, six.string_types):
         if not d:
             raise Exception("An empty string cannot be used as a displayable.")
         elif ("[" in d) and renpy.config.dynamic_images and dynamic:
@@ -103,7 +104,7 @@ def displayable(d, scope=None):
     if isinstance(d, renpy.display.core.Displayable):
         return d
 
-    if isinstance(d, basestring):
+    if isinstance(d, six.string_types):
         if not d:
             raise Exception("An empty string cannot be used as a displayable.")
         elif ("[" in d) and renpy.config.dynamic_images:
@@ -164,7 +165,7 @@ def dynamic_image(d, scope=None, prefix=None, search=None):
 
     for i in d:
 
-        if not isinstance(i, basestring):
+        if not isinstance(i, six.string_types):
             continue
 
         if (prefix is not None) and ("[prefix_" in i):
@@ -247,7 +248,7 @@ def split_properties(properties, *prefixes):
 
     prefix_d = list(zip(prefixes, rv))
 
-    for k, v in properties.iteritems():
+    for k, v in six.iteritems(properties):
         for prefix, d in prefix_d:
             if k.startswith(prefix):
                 d[k[len(prefix):]] = v

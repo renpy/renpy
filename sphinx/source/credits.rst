@@ -19,6 +19,7 @@ the omission in future versions.
 * Aleema
 * Alessio
 * Alexandre Tranchant
+* Alisha Taylor
 * Andy_kl
 * Apricotorange
 * Arda Güler
@@ -27,6 +28,7 @@ the omission in future versions.
 * Auro-Cyanide
 * Baekansi
 * Bbs3223474
+* Ben Wright
 * BlackDragonHunt/Mangagamer
 * Bryan Tsang
 * Carl
@@ -45,6 +47,7 @@ the omission in future versions.
 * Derik
 * Diapolo10
 * Doomfest
+* Donghyeok Tak
 * DragoonHP
 * Duanemoody
 * Edward Betts
@@ -68,6 +71,7 @@ the omission in future versions.
 * Gustavo Carvalho
 * Helloise
 * Hentai Senshi
+* Herpior
 * HikkeKun
 * Hixbooks
 * Huang Junjie
@@ -81,6 +85,7 @@ the omission in future versions.
 * Jan Beich
 * Javimat
 * Joshua Fehler
+* Julian Uy
 * Kalawore
 * Kathryn
 * Kevin Turner
@@ -123,8 +128,10 @@ the omission in future versions.
 * Piroshki
 * Pratomo Asta Nugraha
 * Project Gardares
+* Psunbury
 * Rastagong
 * RangHo Lee
+* Remix
 * Ren
 * Renoa
 * Ria-kon
@@ -132,6 +139,7 @@ the omission in future versions.
 * Rikxz
 * rivvil
 * Robert Penner
+* Roope Herpiö
 * Saltome
 * Sapphi
 * Scout

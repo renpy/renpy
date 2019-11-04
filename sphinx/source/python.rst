@@ -137,6 +137,18 @@ prepending it to the variable name with a dot. For example::
 
     define character.e = Character("Eileen")
 
+The define statement can take an optional index, making it possible
+to add entries to a dictionary::
+
+    define config.tag_layer["eileen"] = "master"
+
+In addition to ``=``, define can take two more operators. The ``+=``
+operator adds, and is generally used for list concatenaton. The ``|=``
+or operator is generally used to concatenate sets. For example::
+
+    define config.keymap["dismiss"] += [ "K_KP_PLUS" ]
+    define endings |= { "best_ending }
+
 One advantage of using the define statement is that it records the
 filename and line number at which the assignment occurred, and
 makes that available to the navigation feature of the launcher.
@@ -243,10 +255,8 @@ conflicts.
 Named stores can be accessed by supplying the ``in`` clause to
 ``python`` or ``init python``, all of which run Python in a named
 store. Each store corresponds to a Python module. The default store is
-``store``, while a named store is accessed as ``store.name``. These
-Python modules can be imported using the Python ``import`` statement,
-while names in the modules can be imported using the Python ``from``
-statement.
+``store``, while a named store is accessed as ``store.name``. Names in
+the modules can be imported using the Python ``from`` statement.
 
 For example::
 
@@ -259,9 +269,6 @@ For example::
             global serial_number
             serial_number += 1
             return serial_number
-
-    init python:
-        import store.mystore as mystore
 
     label start:
         $ serial = mystore.serial()

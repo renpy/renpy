@@ -5,6 +5,7 @@ from renpy.gl2.gl2geometry cimport Polygon, Mesh
 from renpy.gl2.gl2texture cimport GLTexture
 from renpy.display.matrix cimport Matrix
 
+
 class ShaderError(Exception):
     pass
 

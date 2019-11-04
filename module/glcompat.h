@@ -44,33 +44,6 @@
 #endif
 
 
-#if defined RENPY_GLES_1
-
-#include <GLES/gl.h>
-#include <GLES/glext.h>
-
-#define glOrtho glOrthof
-
-#define GL_SOURCE0_ALPHA GL_SRC0_ALPHA
-#define GL_SOURCE1_ALPHA GL_SRC1_ALPHA
-#define GL_SOURCE2_ALPHA GL_SRC2_ALPHA
-#define GL_SOURCE0_RGB GL_SRC0_RGB
-#define GL_SOURCE1_RGB GL_SRC1_RGB
-#define GL_SOURCE2_RGB GL_SRC2_RGB
-
-#define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER_OES
-#define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0_OES
-#define glBindFramebufferEXT glBindFramebufferOES
-#define glFramebufferTexture2DEXT glFramebufferTexture2DOES
-#define glGenFramebuffersEXT glGenFramebuffersOES
-#define glDeleteFramebuffersEXT glDeleteFramebuffersOES
-#define glCheckFramebufferStatusEXT glCheckFramebufferStatusOES
-
-#define RENPY_THIRD_TEXTURE 0
-
-#endif
-
-
 #if defined RENPY_GLES_2
 
 #ifdef ANGLE
@@ -88,6 +61,12 @@ typedef GLchar GLcharARB;
 
 #define GL_MAX_TEXTURE_UNITS GL_MAX_TEXTURE_IMAGE_UNITS
 
+#define GL_RENDERBUFFER_EXT GL_RENDERBUFFER
+#define glGenRenderbuffersEXT glGenRenderbuffers
+#define glBindRenderbufferEXT glBindRenderbuffer
+#define glRenderbufferStorageEXT glRenderbufferStorage
+#define glDeleteRenderbuffersEXT glDeleteRenderbuffers
+
 #define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER
 #define GL_FRAMEBUFFER_BINDING_EXT GL_FRAMEBUFFER_BINDING
 #define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0
@@ -96,6 +75,7 @@ typedef GLchar GLcharARB;
 #define glGenFramebuffersEXT glGenFramebuffers
 #define glDeleteFramebuffersEXT glDeleteFramebuffers
 #define glCheckFramebufferStatusEXT glCheckFramebufferStatus
+#define glFramebufferRenderbufferEXT glFramebufferRenderbuffer
 
 #define GL_OBJECT_INFO_LOG_LENGTH_ARB GL_INFO_LOG_LENGTH
 #define GL_OBJECT_COMPILE_STATUS_ARB GL_COMPILE_STATUS

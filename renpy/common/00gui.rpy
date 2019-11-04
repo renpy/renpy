@@ -39,6 +39,9 @@ init -1100 python in gui:
             The height of the default window.
         """
 
+        if (not renpy.is_init_phase()) and config.developer:
+            raise Exception("gui.init may only be called during the init phase.")
+
         config.screen_width = width
         config.screen_height = height
 

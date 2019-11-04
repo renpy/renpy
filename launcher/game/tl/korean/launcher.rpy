@@ -18,11 +18,11 @@
 
     # add_file.rpy:31
     old "The filename must have the .rpy extension."
-    new "파일 이름에는 반드시 .rpy 확장자가 적혀있어야 합니다."
+    new "파일의 확장자는 반드시 .rpy 이어야 합니다."
 
     # add_file.rpy:39
     old "The file already exists."
-    new "파일 이름이 이미 존재합니다."
+    new "파일이 이미 존재합니다."
 
     # add_file.rpy:42
     old "# Ren'Py automatically loads all script files ending with .rpy. To use this\n# file, define a label and jump to it from another file.\n"
@@ -214,7 +214,7 @@
 
     # androidstrings.rpy:17
     old "The build seems to have failed."
-    new "빌드가 실패했습니다."
+    new "빌드에 실패했습니다."
 
     # androidstrings.rpy:18
     old "Launching app."
@@ -594,7 +594,7 @@
 
     # dmgcheck.rpy:50
     old "Ren'Py is running from a read only folder. Some functionality will not work."
-    new "렌파이가 읽기 전용 폴더로부터 실행되고 있습니다. 일부 기능이 작동하지 않을 수 있습니다."
+    new "렌파이가 읽기 전용 폴더에서 실행되고 있습니다. 일부 기능이 작동하지 않을 수 있습니다."
 
     # dmgcheck.rpy:50
     old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
@@ -1554,7 +1554,7 @@
 
     # web.rpy:194
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
-    new "웹 앱을 패키징하려면 렌파이 렌파이웹(RenpyWeb)이 필요하니다. 지금 내려받으시겠습니까?"
+    new "웹 앱을 패키징하려면 렌파이의 웹 지원인 렌파이웹(RenpyWeb)이 필요합니다. 지금 내려받으시겠습니까?"
 
     # updater.rpy:188
     old "Fetching the list of update channels"

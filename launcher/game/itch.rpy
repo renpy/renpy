@@ -27,7 +27,7 @@ init python:
             platform = "windows-amd64"
             exe = "butler.exe"
         elif renpy.macintosh:
-            plaform = "darwin-amd64"
+            platform = "darwin-amd64"
             exe = "butler"
         else:
             platform = "linux-amd64"

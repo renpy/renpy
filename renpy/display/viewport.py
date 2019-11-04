@@ -278,7 +278,7 @@ class Viewport(renpy.display.layout.Container):
 
         return rv
 
-    def check_edge_redraw(self, st):
+    def check_edge_redraw(self, st, reset_st=True):
         redraw = False
 
         if (self.edge_xspeed > 0) and (self.xadjustment.value < self.xadjustment.range):
@@ -293,7 +293,8 @@ class Viewport(renpy.display.layout.Container):
 
         if redraw:
             renpy.display.render.redraw(self, 0)
-            self.edge_last_st = st
+            if reset_st or self.edge_last_st is None:
+                self.edge_last_st = st
         else:
             self.edge_last_st = None
 
@@ -345,6 +346,7 @@ class Viewport(renpy.display.layout.Container):
         if not ((0 <= x < self.width) and (0 <= y <= self.height)):
             self.edge_xspeed = 0
             self.edge_yspeed = 0
+            self.edge_last_st = None
 
             inside = False
 
@@ -494,7 +496,7 @@ class Viewport(renpy.display.layout.Container):
             self.edge_yspeed = self.edge_speed * self.edge_function(yspeed)
 
             if xspeed or yspeed:
-                self.check_edge_redraw(st)
+                self.check_edge_redraw(st, reset_st=False)
             else:
                 self.edge_last_st = None
 

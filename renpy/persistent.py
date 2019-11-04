@@ -19,13 +19,15 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import os
 import copy
 import time
+import zlib
 
 import renpy
+import renpy.six as six
 
 from renpy.loadsave import dump, dumps, loads
 
@@ -191,9 +193,8 @@ def load(filename):
 
     # Unserialize the persistent data.
     try:
-        f = file(filename, "rb")
-        s = f.read().decode("zlib")
-        f.close()
+        with open(filename, "rb") as f:
+            s = zlib.decompress(f.read())
         persistent = loads(s)
     except:
         import renpy.display
@@ -232,7 +233,7 @@ def init():
     # Create the backup of the persistent data.
     v = vars(persistent)
 
-    for k, v in vars(persistent).iteritems():
+    for k, v in six.iteritems(vars(persistent)):
         backup[k] = safe_deepcopy(v)
 
     return persistent
@@ -403,7 +404,7 @@ def save():
         return
 
     try:
-        data = dumps(renpy.game.persistent).encode("zlib")
+        data = zlib.compress(dumps(renpy.game.persistent), 3)
         renpy.loadsave.location.save_persistent(data)
     except:
         if renpy.config.developer:
@@ -435,7 +436,7 @@ class _MultiPersistent(object):
     def save(self):
 
         fn = self._filename
-        f = file(fn + ".new", "wb")
+        f = open(fn + ".new", "wb")
         dump(self, f)
         f.close()
 
@@ -490,7 +491,7 @@ def MultiPersistent(name):
             break
 
     try:
-        rv = loads(file(fn, "rb").read())
+        rv = loads(open(fn, "rb").read())
     except:
         rv = _MultiPersistent()
 

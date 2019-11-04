@@ -21,4 +21,5 @@
 
 from __future__ import print_function
 
-# This file intentionally left blank.
+import renpy
+renpy.update_path()

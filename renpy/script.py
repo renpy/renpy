@@ -107,7 +107,7 @@ class Script(object):
         renpy.game.script = self
 
         if os.path.exists(renpy.config.renpy_base + "/lock.txt"):
-            self.key = file(renpy.config.renpy_base + "/lock.txt", "rb").read()
+            self.key = open(renpy.config.renpy_base + "/lock.txt", "rb").read()
         else:
             self.key = None
 
@@ -267,6 +267,10 @@ class Script(object):
             if renpy.emscripten:
                 import emscripten
                 emscripten.sleep(0)
+
+            # Pump the presplash window to prevent marking
+            # our process as unresponsive by OS
+            renpy.display.presplash.pump_window()
 
             self.load_appropriate_file(".rpyc", ".rpy", dir, fn, initcode)
 
@@ -489,7 +493,7 @@ class Script(object):
         f.seek(0, 2)
 
         start = f.tell()
-        data = zlib.compress(data, 9)
+        data = zlib.compress(data, 3)
         f.write(data)
 
         f.seek(len(RPYC2_HEADER) + 12 * (slot - 1), 0)
@@ -524,7 +528,7 @@ class Script(object):
             f.seek(0)
             data = f.read()
 
-            return data.decode("zlib")
+            return zlib.decompress(data)
 
         # RPYC2 path.
         pos = len(RPYC2_HEADER)
@@ -598,7 +602,7 @@ class Script(object):
             if not renpy.macapp:
 
                 try:
-                    f = file(rpycfn, "wb")
+                    f = open(rpycfn, "wb")
 
                     self.write_rpyc_header(f)
                     self.write_rpyc_data(f, 1, dumps((data, stmts), 2))
@@ -783,7 +787,7 @@ class Script(object):
 
         # Load the oldcache.
         try:
-            version, cache = loads(renpy.loader.load(BYTECODE_FILE).read().decode("zlib"))
+            version, cache = loads(zlib.decompress(renpy.loader.load(BYTECODE_FILE).read()))
             if version == BYTECODE_VERSION:
                 self.bytecode_oldcache = cache
 
@@ -868,7 +872,7 @@ class Script(object):
 
                 with open(fn, "wb") as f:
                     data = (BYTECODE_VERSION, self.bytecode_newcache)
-                    f.write(dumps(data, 2).encode("zlib"))
+                    f.write(zlib.compress(dumps(data, 2), 3))
             except:
                 pass
 

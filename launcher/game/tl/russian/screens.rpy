@@ -158,8 +158,8 @@ translate russian strings:
     new "Помощь"
 
     # screens.rpy:331
-    old "## The quit button is banned on iOS and unnecessary on Android."
-    new "## Кнопка выхода блокирована в iOS и не нужна на Android."
+    old "## The quit button is banned on iOS and unnecessary on Android and Web."
+    new "## Кнопка выхода блокирована в iOS и не нужна на Android и в веб-версии."
 
     # screens.rpy:332
     old "Quit"
@@ -672,4 +672,3 @@ translate russian strings:
     # screens.rpy:1431
     old "Menu"
     new "Меню"
-

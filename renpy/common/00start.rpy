@@ -59,6 +59,9 @@ init -1600 python hide:
     # Should we profile reloading?
     config.profile_reload = False
 
+    # When should start_store happen?
+    config.early_start_store = False
+
 init -1600 python:
 
     def _init_language():
@@ -180,10 +183,16 @@ label _splashscreen:
 # tell anyone.
 label _start:
 
-    call _start_store
+    if config.early_start_store:
+        call _start_store
 
     python:
         renpy.execute_default_statement(True)
+
+    if not config.early_start_store:
+        call _start_store
+
+    python:
 
         # Predict the main menu. When a load occurs, the loaded data will
         # overwrite the prediction requests.
@@ -191,7 +200,6 @@ label _start:
             renpy.start_predict_screen("main_menu")
 
         renpy.block_rollback()
-
 
     scene black
 

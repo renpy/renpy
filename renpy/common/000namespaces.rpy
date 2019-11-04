@@ -11,6 +11,9 @@
         def set_default(self, name, value):
             raise Exception("The default statement can not be used with the {} namespace.".format(self.name))
 
+        def get(self, name):
+            return getattr(self.nso, name)
+
     class _PersistentNamespace(object):
         def set(self, name, value):
             if getattr(persistent, name) is None:
@@ -19,6 +22,9 @@
         def set_default(self, name, value):
             if getattr(persistent, name) is None:
                 setattr(persistent, name, value)
+
+        def get(self, name):
+            return getattre(persistent, name)
 
     class _PreferencesNamespace(object):
 
@@ -45,6 +51,9 @@
             if hasattr(config, default_field):
                 setattr(config, default_field, value)
 
+        def get(self, name):
+            raise Exception("The define statement can not be used with the preferences namespace.")
+
     class _GuiNamespace(object):
         def set(self, name, value):
             setattr(gui, name, value)
@@ -52,6 +61,8 @@
         def set_default(self, name, value):
             setattr(gui, name, value)
 
+        def get(self, name):
+            return getattr(gui, name)
 
     config.special_namespaces["store.config"] = _ObjectNamespace(config, "config")
     config.special_namespaces["store.persistent"] = _PersistentNamespace()

@@ -137,6 +137,7 @@ init -1500 python in build:
         ("dialogue.tab", None),
         ("profile_screen.txt", None),
         ("files.txt", None),
+        ("memory.txt", None),
 
         ("tmp/", None),
         ("game/saves/", None),
@@ -389,13 +390,13 @@ init -1500 python in build:
     mac_identity = None
 
     # The command used for mac codesigning.
-    mac_codesign_command = [ "/usr/bin/codesign", "-s", "{identity}", "-f", "--deep", "--no-strict", "{app}" ]
+    mac_codesign_command = [ "/usr/bin/codesign", "--entitlements={entitlements}", "--options=runtime", "--timestamp", "-s", "{identity}", "-f", "--deep", "--no-strict", "{app}" ]
 
     # The command used to build a dmg.
     mac_create_dmg_command = [ "/usr/bin/hdiutil", "create", "-format", "UDBZ", "-volname", "{volname}", "-srcfolder", "{sourcedir}", "-ov", "{dmg}" ]
 
     # The command used to sign a dmg.
-    mac_codesign_dmg_command = [ "/usr/bin/codesign", "-s", "{identity}", "-f", "{dmg}" ]
+    mac_codesign_dmg_command = [ "/usr/bin/codesign", "--timestamp", "-s", "{identity}", "-f", "{dmg}" ]
 
     # Do we want to add the script_version file?
     script_version = True

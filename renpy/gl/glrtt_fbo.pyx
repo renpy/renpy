@@ -35,22 +35,41 @@ cdef GLuint fbo
 # The root framebuffer.
 cdef GLint root_fbo
 
+# The renderbuffer object we use.
+cdef GLuint texture
+
 class FboRtt(Rtt):
     """
     This class uses texture copying to implement Render-to-texture.
     """
 
     def init(self):
+
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &root_fbo);
+        renpy.display.log.write("Root FBO is: %d", root_fbo)
+
         glGenFramebuffersEXT(1, &fbo)
+        glGenTextures(1, &texture)
 
         cdef int i
 
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &i)
-        self.size_limit = i
-        renpy.display.log.write("FBO Maximum Texture Size: %d", i)
+        self.size_limit = min(i, 2048)
+        renpy.display.log.write("FBO Maximum Texture Size: %d", self.size_limit)
 
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &root_fbo);
-        renpy.display.log.write("Root FBO is: %d", root_fbo)
+        glBindTexture(GL_TEXTURE_2D, texture)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.size_limit, self.size_limit, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL)
+
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
+        glFramebufferTexture2DEXT(
+            GL_FRAMEBUFFER_EXT,
+            GL_COLOR_ATTACHMENT0_EXT,
+            GL_TEXTURE_2D,
+            texture,
+            0)
+
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
+
 
     def deinit(self):
         """
@@ -59,6 +78,7 @@ class FboRtt(Rtt):
 
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
         glDeleteFramebuffersEXT(1, &fbo)
+        glDeleteTextures(1, &texture)
 
     def begin(self):
         """
@@ -75,21 +95,19 @@ class FboRtt(Rtt):
         to render the texture.
         """
 
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
+        try:
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
 
-        glFramebufferTexture2DEXT(
-            GL_FRAMEBUFFER_EXT,
-            GL_COLOR_ATTACHMENT0_EXT,
-            GL_TEXTURE_2D,
-            texture,
-            0)
+            environ.viewport(0, 0, w, h)
+            environ.ortho(x, x + w, y, y + h, -1, 1)
 
-        environ.viewport(0, 0, w, h)
-        environ.ortho(x, x + w, y, y + h, -1, 1)
+            draw_func(x, y, w, h)
 
-        draw_func(x, y, w, h)
+            glBindTexture(GL_TEXTURE_2D, texture)
+            glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, w, h, 0)
 
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
+        finally:
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
 
 
     def get_size_limit(self, dimension):

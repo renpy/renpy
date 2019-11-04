@@ -9,6 +9,13 @@ import compileall
 import shutil
 import subprocess
 import argparse
+import time
+
+try:
+    # reload is built-in in Python 2, in importlib in Python 3
+    reload
+except NameError:
+    from importlib import reload
 
 if not sys.flags.optimize:
     raise Exception("Optimization disabled.")
@@ -43,6 +50,8 @@ def copy_tutorial_file(src, dest):
 
 def main():
 
+    start = time.time()
+
     if not sys.flags.optimize:
         raise Exception("Not running with python optimization.")
 
@@ -52,8 +61,9 @@ def main():
     ap.add_argument("--pygame", action="store", default=None)
     ap.add_argument("--no-rapt", action="store_true")
     ap.add_argument("--variant", action="store")
-    ap.add_argument("--sign", action="store_true", default=False)
+    ap.add_argument("--sign", action="store_true", default=True)
     ap.add_argument("--nosign", action="store_false", dest="sign")
+    ap.add_argument("--notarized", action="store_true", dest="notarized")
     ap.add_argument("--vc-version-only", action="store_true")
 
     args = ap.parse_args()
@@ -175,6 +185,12 @@ def main():
             destination,
             ]
 
+        if args.notarized:
+            cmd.extend([
+                "--macapp",
+                "notarized/out",
+                ])
+
     print()
     subprocess.check_call(cmd)
 
@@ -250,8 +266,7 @@ def main():
 
     print()
 
-#     if not (args.fast or args.sign):
-#         print("For a final-ish release, remember to use --sign so we're signed on the mac.")
+    print("Distribute took {:.0f} seconds.".format(time.time() - start))
 
 
 if __name__ == "__main__":

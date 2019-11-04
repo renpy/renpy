@@ -680,7 +680,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
         rv.focus_screen = self
 
         hiding = (self.phase == OLD) or (self.phase == HIDE)
-        sensitive = renpy.python.py_eval(self.screen.sensitive, locals=self.scope)
+
+        if self.screen is None:
+            sensitive = False
+        else:
+            sensitive = renpy.python.py_eval(self.screen.sensitive, locals=self.scope)
 
         rv.blit(child, (0, 0), focus=sensitive and not hiding, main=not hiding)
         rv.modal = self.modal and not hiding
@@ -697,6 +701,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         if (self.phase == OLD) or (self.phase == HIDE):
             return
+
+        if not self.screen:
+            return None
 
         if not renpy.python.py_eval(self.screen.sensitive, locals=self.scope):
             ev = renpy.display.interface.time_event
@@ -908,17 +915,25 @@ def prepare_screens():
 
     predict_cache.clear()
 
-    if not analyzed:
-        analyze_screens()
+    old_predicting = renpy.display.predict.predicting
+    renpy.display.predict.predicting = True
 
-    for s in sorted_variants():
-        if s.ast is None:
-            continue
+    try:
 
-        s.ast.unprepare_screen()
-        s.ast.prepare_screen()
+        if not analyzed:
+            analyze_screens()
 
-    prepared = True
+        for s in sorted_variants():
+            if s.ast is None:
+                continue
+
+            s.ast.unprepare_screen()
+            s.ast.prepare_screen()
+
+        prepared = True
+
+    finally:
+        renpy.display.predict.predicting = old_predicting
 
     if renpy.config.developer and use_cycle:
         raise Exception("The following screens use each other in a loop: " + ", ".join(use_cycle) +". This is not allowed.")
@@ -1071,8 +1086,8 @@ def show_screen(_screen_name, *_args, **kwargs):
         If true, the screen will be automatically hidden at the end of
         the current interaction.
 
-    Keyword arguments not beginning with underscore (_) are used to
-    initialize the screen's scope.
+    Non-keyword arguments, and keyword arguments that do not begin with
+    an underscore, are passed to the screen.
     """
 
     _layer = kwargs.pop("_layer", None)

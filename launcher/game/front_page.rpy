@@ -195,8 +195,8 @@ screen front_page_project:
                     textbutton _("game") action OpenDirectory("game")
                     textbutton _("base") action OpenDirectory(".")
                     textbutton _("images") action OpenDirectory("game/images")
+                    textbutton _("audio") action OpenDirectory("game/audio")
                     textbutton _("gui") action OpenDirectory("game/gui")
-                    # textbutton _("save") action None style "l_list"
 
             vbox:
                 if persistent.show_edit_funcs:

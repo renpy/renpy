@@ -5,6 +5,7 @@ from libc.stdlib cimport malloc, free
 from libc.string cimport memcpy
 from libc.math cimport copysign
 
+
 DEF MAX_POINTS = 128
 
 DEF X = 0

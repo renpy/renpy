@@ -3,6 +3,7 @@
 # Given two zip files, shows how files have changed in size between
 # them.
 
+from __future__ import print_function
 import argparse
 import zipfile
 import collections

@@ -1577,7 +1577,7 @@ class SLPython(SLNode):
         analysis.python(self.code.source)
 
     def execute(self, context):
-        exec self.code.bytecode in context.globals, context.scope
+        exec(self.code.bytecode, context.globals, context.scope)
 
     def prepare(self, analysis):
         self.constant = NOT_CONST

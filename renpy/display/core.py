@@ -1652,6 +1652,9 @@ class Interface(object):
         # The last size we were resized to.
         self.last_resize = None
 
+        # Should we profile the next frame?
+        self.profile_once = False
+
         # The thread that can do display operations.
         self.thread = threading.current_thread()
 

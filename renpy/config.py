@@ -23,7 +23,7 @@
 # This includes both simple settings (like the screen dimensions) and
 # methods that perform standard tasks, like the say and menu methods.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import collections
 import os
@@ -1002,6 +1002,15 @@ gl2 = False
 # Does this game use the depth buffer? If so, how many bits of depth should
 # it use?
 depth_size = None
+
+# A list of screens to remove when the context is copied.
+context_copy_remove_screens = [ "notify" ]
+
+# An exception handling callback.
+exception_handler = None
+
+# A label that is jumped to if return fails.
+return_not_found_label = None
 
 del os
 del collections

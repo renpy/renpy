@@ -19,7 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
+
+import renpy.six as six
+from renpy.six.moves import reload_module as reload
+
 import os.path
 import sys
 import subprocess
@@ -87,6 +91,8 @@ def extra_imports():
     import pstats; pstats
     import _ssl; _ssl
     import SimpleHTTPServer; SimpleHTTPServer
+    import wave; wave
+    import sunau; sunau
 
     # Used by requests.
     import cgi; cgi
@@ -136,7 +142,7 @@ def enable_trace(level):
     global trace_file
     global trace_local
 
-    trace_file = file("trace.txt", "w", 1)
+    trace_file = open("trace.txt", "w", 1)
 
     if level > 1:
         trace_local = trace_function
@@ -166,13 +172,15 @@ def bootstrap(renpy_base):
     if os.environ.get(b"SDL_VIDEODRIVER", "") == "windib":
         del os.environ[b"SDL_VIDEODRIVER"]
 
-    renpy_base = unicode(renpy_base, FSENCODING, "replace")
+    renpy_base = six.text_type(renpy_base, FSENCODING, "replace")
 
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
         evars = { }
-        execfile(renpy_base + "/environment.txt", evars)
-        for k, v in evars.iteritems():
+        with open(renpy_base + "/environment.txt", "rb") as f:
+            code = compile(f.read(), renpy_base + "/environment.txt", 'exec')
+            exec(code, evars)
+        for k, v in six.iteritems(evars):
             if k not in os.environ:
                 os.environ[k] = str(v)
 
@@ -184,8 +192,10 @@ def bootstrap(renpy_base):
 
         if os.path.exists(alt_path + "/environment.txt"):
             evars = { }
-            execfile(alt_path + "/environment.txt", evars)
-            for k, v in evars.iteritems():
+            with open(alt_path + "/environment.txt", "rb") as f:
+                code = compile(f.read(), alt_path + "/environment.txt", 'exec')
+                exec(code, evars)
+            for k, v in six.iteritems(evars):
                 if k not in os.environ:
                     os.environ[k] = str(v)
 

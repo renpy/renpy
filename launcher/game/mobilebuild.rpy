@@ -190,13 +190,12 @@ init -1 python:
                 interface.processing(self.info_msg, show_screen=True, cancel=cancel_action)
 
                 kwargs = { }
-                if yes:
-                    kwargs["stdin"] = subprocess.PIPE
 
                 try:
                     self.process = subprocess.Popen(cmd, cwd=renpy.fsencode(RAPT_PATH), stdout=f, stderr=f, stdin=subprocess.PIPE, startupinfo=startupinfo, **kwargs)
                     # avoid SIGTTIN caused by e.g. gradle doing empty read on terminal stdin
-                    self.process.stdin.close()
+                    if not yes:
+                        self.process.stdin.close()
                 except:
                     import traceback
                     traceback.print_exc(file=f)
@@ -217,6 +216,7 @@ init -1 python:
                 if yes and self.yes_thread:
                     self.run_yes = False
                     self.yes_thread.join()
+                    self.process.stdin.close()
 
                 self.process = None
                 self.yes_thread = None

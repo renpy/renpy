@@ -2,7 +2,163 @@
 Full Changelog
 ==============
 
-.. _renpy-7.3.2
+.. _renpy-7.3.5:
+
+7.3.5
+=====
+
+Fixes
+-----
+
+On desktop platforms, the presplash screen has been reworked so that it
+will not cause the window to become nonresponsive if clicked.
+
+The iOS port has been updated to include modules that have been newly
+added to Ren'Py, allowing the compilation of iOS apps.
+
+Other Changes
+-------------
+
+The ``audio`` directory, which automatically defines
+names in the :ref:`audio namespace <audio-namespace>`, has been made
+visible in the launcher, and is added to newly-createrd projects.
+
+The new :var:`config.exception_handler` callback allows an application to
+replace Ren'Py's exception handling system in its entirety.
+
+
+.. _renpy-7.3.4:
+
+7.3.4
+=====
+
+Fixes
+-----
+
+This release fixes major graphics glitches that were introduced in 7.3.3.
+
+* On Windows, textures would fail to be reloaded when switching from fullscreen
+  to windowed mode or vice-versa. This would cause the wrong texture to be
+  displayed.
+* On all platforms, graphical glitches could occur when :func:`Flatten`
+  was used.
+
+Other Changes
+-------------
+
+Dynamic images can now include "[prefix_]" everywhere, and especially when
+``add`` has been used to add a dynamic image to buttons, drags, and similar
+focusable objects.
+
+Creator-defined screen language statements may now take ``if``
+statements as children.
+
+The drag and drop system has been improved to better interact with updated
+screens.
+
+
+.. _renpy-7.3.3:
+
+7.3.3
+=====
+
+Audio
+-----
+
+Ren'Py now supports an ``audio`` directory, which automatically defines
+names in the :ref:`audio namespace <audio-namespace>`. This makes it
+possible to have a file named ``game/audio/overture.ogg``, and play
+it using::
+
+    play music overture
+
+The new :func:`AudioData` class allows you to provide compressed
+audio data to Ren'Py, either generated programatically or taken
+from a source other than a file. To support this, the Python wave
+and sunau modules are now packaged with Ren'Py.
+
+An issue with enabling the mixing of mono sound files has been fixed.
+This issue caused many WAV files not to play. (We still don't recommend
+the use of WAV files.)
+
+Platforms
+---------
+
+Ren'Py is now distributed as a signed and notarized binary on the
+Mac. As this process takes a very long time to accomplish, the
+ability to sign macOS binaries has been removed from Ren'Py itself,
+in favor of external scripts that take care of the signing and
+notarization process.
+
+The minimum version supported by the Android port has been lowered
+to Android 19 (Android 4.4 KitKat).
+
+The web port of Ren'Py has seen a number of changes:
+
+* :ref:`Screen variants <screen-variants>` are now detected and set.
+* Fullscreen support has been improved, though the user may need to click to enable fullscren.
+* Leaving the web page is detected, so persistent data may be saved.
+* 'game.zip' can now be renamed. 'DEFAULT_GAME_FILENAME' in index.html controls this.
+* Portable HTTP requests (native+renpyweb): see https://github.com/renpy/renpyweb/blob/master/utils/asyncrequest.rpy
+* Enable networking in Python web port for testing WebSockets, transparently available through the Python 'socket' module
+* HTTP Cache-Control allows for smoother game updates.
+* The pygame.draw module is now included, allowing Canvas support.
+* WebGL compatibility has been improved.
+
+
+Other Changes
+-------------
+
+During profiling conducted for the GL Rewrite project, it became
+clear that the switch to framebuffer objects in 7.3.0 was the
+cause of certain performance regressions. By changing how FBOs
+are used, Ren'Py performance has been improved.
+
+The :func:`renpy.input` function can now be given the name of a screen
+that is used to prompt the user for input.
+
+The creation of list, dicts, and sets inside of screen language is now
+analyzed correctly. This will allow more displayables to be analyzed
+as constant, improving screen performance.
+
+The notify screen is now hidden on rollback.
+
+The NVL mode screen indicates that it shows the window, which prevents
+problems when ``window show`` is in effect.
+
+When a :ref:`Call` with `from_current` set to true occurs during a
+multi-part statement (like a menu with dialogue), control is restored
+to the first part of that multi-part statement (thus causing the dialouge
+to be displayed).
+
+More functions now use a tag's default layer.
+
+The :func:`renpy.is_init_phase` function has been added.
+
+Automatic voice now works for dialogue that is part of a menu
+statement.
+
+Support for GLES1 has been dropped. (It hadn't been used for years.)
+
+The :func:`SelectedIf` and :func:`SensitiveIf` actions can now take
+other actions as arguments.
+
+Many BarValues now take a `force_step` argument, which forces changes to
+the bar to be rounded to the nearest step value.
+
+:func:`Frame` now allows the tile argument to be the string "integer",
+which tiles the contents of the frame an integer number of times.
+
+:func:`Character` now allows the `name` argument to be a function or
+callable object when `dynamic` is true.
+
+Translations
+------------
+
+The Korean and Spanish translations have been updated.
+
+
+.. _renpy-7.3.2:
 
 7.3.2
 =====
@@ -214,7 +370,7 @@ take a zorder argument.
 Ren'Py will now play a mono sound file with the same volume as a stereo
 sound file, rather than sending half the energy to each ear.
 
-The new :func:`config.load_failed_label` specifies a label that is jumped
+The new :var:`config.load_failed_label` specifies a label that is jumped
 to when a load fails because Ren'Py can no longer find the current statement.
 This makes it possible to a game to implement its own recovery mechanism.
 

@@ -19,10 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import absolute_import
+from __future__ import print_function, unicode_literals, division, absolute_import
 
 import renpy  # @UnusedImport
 from renpy.python import py_compile
@@ -31,7 +28,8 @@ from renpy.python import py_compile
 import ast
 
 import zlib
-from cPickle import loads, dumps
+from renpy.six.moves.cPickle import loads, dumps
+import renpy.six as six
 
 # The set of names that should be treated as constants.
 always_constants = { 'True', 'False', 'None' }
@@ -53,6 +51,9 @@ pure_functions = {
     "_",
     "_p",
     "absolute",
+    "__renpy__list__",
+    "__renpy__dict__",
+    "__renpy__set__",
 
     # defaultstore.py
     "ImageReference", "Image", "Frame", "Solid", "LiveComposite", "LiveCrop",
@@ -148,7 +149,7 @@ def pure(fn):
 
     name = fn
 
-    if not isinstance(name, basestring):
+    if not isinstance(name, six.string_types):
         name = fn.__name__
 
     if name not in not_constants:

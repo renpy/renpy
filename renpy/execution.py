@@ -22,13 +22,13 @@
 # This file contains code responsible for managing the execution of a
 # renpy object, as well as the context object.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import sys
 import time
 
 import renpy.display
 import renpy.test
-from renpy import six
+import renpy.six as six
 
 pyast = __import__("ast", { })
 
@@ -146,6 +146,8 @@ class Context(renpy.object.Object):
     come_from_label = None
 
     temporary_attributes = None
+
+    deferred_translate_identifier = None
 
     def __repr__(self):
 
@@ -277,7 +279,7 @@ class Context(renpy.object.Object):
         # executed?
         self.force_checkpoint = False
 
-        # A mapt from a channel to the Movie playing on that channel.
+        # A map from a channel to the Movie playing on that channel.
         self.movie = { }
 
         if context:
@@ -299,6 +301,9 @@ class Context(renpy.object.Object):
 
         self.scene_lists = renpy.display.core.SceneLists(oldsl, self.images)
 
+        for i in renpy.config.context_copy_remove_screens:
+            self.scene_lists.remove("screens", i, None)
+
         self.make_dynamic([ "_return", "_args", "_kwargs", "mouse_visible", "suppress_overlay", "_side_image_attributes" ])
         self.dynamic_stack.append({ })
 
@@ -318,6 +323,10 @@ class Context(renpy.object.Object):
 
         # The alternate identifier of the current translate block.
         self.alternate_translate_identifier = None
+
+        # The translate identifier of the last say statement with
+        # interact = False.
+        self.deferred_translate_identifier = None
 
     def replace_node(self, old, new):
 
@@ -367,7 +376,7 @@ class Context(renpy.object.Object):
 
         dynamic = self.dynamic_stack.pop()
 
-        for k, v in dynamic.iteritems():
+        for k, v in six.iteritems(dynamic):
             if isinstance(v, Delete):
                 store.pop(k, None)
             else:
@@ -386,7 +395,7 @@ class Context(renpy.object.Object):
 
         for dynamic in reversed(self.dynamic_stack):
 
-            for k, v in dynamic.iteritems():
+            for k, v in six.iteritems(dynamic):
                 name = "store." + k
 
                 if isinstance(v, Delete) and (name in roots):
@@ -574,10 +583,17 @@ class Context(renpy.object.Object):
                     short, full, traceback_fn = renpy.error.report_exception(e, editor=False)
 
                     try:
+                        handled = False
+
                         if self.exception_handler is not None:
                             self.exception_handler(short, full, traceback_fn)
-                        elif renpy.display.error.report_exception(short, full, traceback_fn):
-                            raise
+                            handled = True
+                        elif renpy.config.exception_handler is not None:
+                            handled = renpy.config.exception_handler(short, full, traceback_fn)
+
+                        if not handled:
+                            if renpy.display.error.report_exception(short, full, traceback_fn):
+                                raise
                     except renpy.game.CONTROL_EXCEPTIONS as ce:
                         raise ce
                     except Exception as ce:
@@ -592,7 +608,7 @@ class Context(renpy.object.Object):
             except renpy.game.CallException as e:
 
                 if e.from_current:
-                    return_site = node.name
+                    return_site = getattr(node, "statement_start", node).name
                 else:
                     if self.next_node is None:
                         raise Exception("renpy.call can't be used when the next node is undefined.")
@@ -676,15 +692,29 @@ class Context(renpy.object.Object):
 
             if node is None:
 
-                if renpy.config.developer:
-                    raise Exception("Could not find return label {!r}.".format(self.return_stack[-1]))
+                if not pop:
+                    return None
 
-                self.return_stack.pop()
-                self.call_location_stack.pop()
-                self.pop_dynamic()
-                self.abnormal = self.abnormal_stack.pop()
+                # If we can't find anything, try to recover.
 
-                continue
+                if renpy.config.return_not_found_label:
+
+                    while len(self.return_stack) > 1:
+                        self.pop_call()
+
+                    node = renpy.game.script.lookup(renpy.config.return_not_found_label)
+
+                else:
+
+                    if renpy.config.developer:
+                        raise Exception("Could not find return label {!r}.".format(self.return_stack[-1]))
+
+                    self.return_stack.pop()
+                    self.call_location_stack.pop()
+                    self.pop_dynamic()
+                    self.abnormal = self.abnormal_stack.pop()
+
+                    continue
 
             if pop:
                 self.return_stack.pop()

@@ -21,10 +21,10 @@
 
 
 # Allow pickling NoneType.
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
-import __builtin__
-__builtin__.NoneType = type(None)
+import renpy.six.moves.builtins as builtins
+builtins.NoneType = type(None)
 
 
 class Object(object):

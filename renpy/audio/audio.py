@@ -28,7 +28,7 @@ from __future__ import print_function
 
 import renpy.audio  # @UnusedImport
 import renpy.display  # @UnusedImport
-from renpy import six
+import renpy.six as six
 
 import time
 import pygame_sdl2  # @UnusedImport
@@ -36,6 +36,7 @@ import os
 import re
 import threading
 import sys
+import io
 
 # Import the appropriate modules, or set them to None if we cannot.
 
@@ -71,6 +72,42 @@ def load(fn):
 
     rv = renpy.loader.load(fn)
     return rv
+
+
+class AudioData(unicode):
+    """
+    :doc: audio
+
+    This class wraps a bytes object containing audio data, so it can be
+    passed to the audio playback system. The audio data should be contained
+    in some format Ren'Py supports. (For examples RIFF WAV format headers,
+    not unadorned samples.)
+
+    `data`
+        A bytes object containing the audio file data.
+
+    `filename`
+        A synthetic filename associated with this data. It can be used to
+        suggest the format `data` is in, and is reported as part of
+        error messages.
+
+    Once created, this can be used wherever an audio filename is allowed. For
+    example::
+
+        define audio.easteregg = AudioData(b'...', 'sample.wav')
+        play sound easteregg
+    """
+
+    def __new__(cls, data, filename):
+        rv = unicode.__new__(cls, filename)
+        rv.data = data
+        return rv
+
+    def __init__(self, data, filename):
+        pass
+
+    def __reduce__(self):
+        return(AudioData, (self.data, unicode(self)))
 
 
 class QueueEntry(object):
@@ -359,9 +396,6 @@ class Channel(object):
                 self.queue = [ ]
             return
 
-        # Should we do the callback?
-        do_callback = False
-
         topq = None
 
         # This has been modified so we only queue a single sound file
@@ -417,7 +451,10 @@ class Channel(object):
                 if (end >= 0) and ((end - start) <= 0) and self.queue:
                     continue
 
-                topf = load(self.file_prefix + filename + self.file_suffix)
+                if isinstance(topq.filename, AudioData):
+                    topf = io.BytesIO(topq.filename.data)
+                else:
+                    topf = load(self.file_prefix + filename + self.file_suffix)
 
                 renpysound.set_video(self.number, self.movie)
 
@@ -442,20 +479,20 @@ class Channel(object):
 
             break
 
-        if self.loop and not self.queue:
-            for i in self.loop:
-                if topq is not None:
-                    newq = QueueEntry(i, 0, topq.tight, True)
-                else:
-                    newq = QueueEntry(i, 0, False, True)
+        # Empty queue?
+        if not self.queue:
+            # Re-loop:
+            if self.loop:
+                for i in self.loop:
+                    if topq is not None:
+                        newq = QueueEntry(i, 0, topq.tight, True)
+                    else:
+                        newq = QueueEntry(i, 0, False, True)
 
-                self.queue.append(newq)
-        else:
-            do_callback = True
-
-        # Queue empty callback.
-        if do_callback and self.callback:
-            self.callback()  # E1102
+                    self.queue.append(newq)
+            # Try callback:
+            elif self.callback:
+                self.callback()  # E1102
 
         want_pause = self.context.pause or global_pause
 

@@ -94,14 +94,14 @@ class Surface(pygame.Surface):
         return rv
 
 
-def surface((width, height), alpha):
+def surface(rect, alpha):
     """
     Constructs a new surface. The allocated surface is actually a subsurface
     of a surface that has a 2 pixel border in all directions.
 
     `alpha` - True if the new surface should have an alpha channel.
     """
-
+    (width, height) = rect
     if isinstance(alpha, pygame.Surface):
         alpha = alpha.get_masks()[3]
 

@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import os
 import renpy
@@ -130,7 +130,7 @@ def init():
     code = compile(source, path, "exec")
 
     scope = { "__file__" : path }
-    exec code in scope, scope
+    exec(code, scope, scope)
 
     if "Editor" in scope:
         editor = scope["Editor"]()

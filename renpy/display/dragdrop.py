@@ -88,7 +88,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     When a Drag is first rendered, if it's position cannot be determined
     from the DragGroup it is in, the position of its upper-left corner
     is computed using the standard layout algorithm. Once that position
-
+    has been computed, the layout properties are ignored in favor of the
+    position stored inside the Drag.
 
     `d`
         If present, the child of this Drag. Drags use the child style
@@ -408,11 +409,30 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         if self.drag_group is not None:
             self.drag_group.lower_children([ self ])
 
+    def update_style_prefix(self):
+        """
+        This updates the style prefix for all Drag's associated
+        with this drag movement.
+        """
+        # We may not be in the drag_joined group.
+        self.set_style_prefix("idle_", True)
+
+        # Set the style for joined_set
+        for i in [i[0] for i in self.drag_joined(self)]:
+            i.set_style_prefix("selected_hover_", True)
+
+        if self.last_drop is not None:
+            self.last_drop.set_style_prefix("selected_idle_", True)
+
     def visit(self):
         return [ self.child ]
 
     def focus(self, default=False):
         super(Drag, self).focus(default)
+
+        # Update state back after restart_interaction
+        if default and self.drag_moved:
+            self.update_style_prefix()
 
         rv = None
 
@@ -601,16 +621,20 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
             raise renpy.display.core.IgnoreEvent()
 
-        if ((self.alternate is not None) and
+        if (
+            (self.alternate is not None) and
             renpy.display.touch and
             (self.click_time is not None) and
-                ((st - self.click_time) > renpy.config.longpress_duration)):
+            ((st - self.click_time) > renpy.config.longpress_duration)
+        ):
 
             self.click_time = None
 
             rv = run(self.alternate)
             if rv is not None:
                 return rv
+
+            renpy.exports.vibrate(renpy.config.longpress_vibrate)
 
         # Handle clicking on droppables.
         if not grabbed:
@@ -631,16 +655,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
             handled = True
 
-            if not self.drag_moved and (self.start_x != par_x or self.start_y != par_y):
+            if (not self.drag_moved) and (self.start_x != par_x or self.start_y != par_y):
                 self.drag_moved = True
                 self.click_time = None
-
-                # We may not be in the drag_joined group.
-                self.set_style_prefix("idle_", True)
-
-                # Set the style.
-                for i in joined:
-                    i.set_style_prefix("selected_hover_", True)
 
                 # Raise the joined items.
                 if self.drag_raise and self.drag_group is not None:
@@ -684,10 +701,10 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             if self.last_drop is not None:
                 self.last_drop.set_style_prefix("idle_", True)
 
-            if drop is not None:
-                drop.set_style_prefix("selected_idle_", True)
-
             self.last_drop = drop
+
+        if self.drag_moved:
+            self.update_style_prefix()
 
         if map_event(ev, 'drag_deactivate'):
 
@@ -843,8 +860,9 @@ class DragGroup(renpy.display.layout.MultiBox):
 
     def raise_children(self, l):
         """
-        Raises the children in `l` to the top of this drag_group, using the
-        order given in l for those children.
+        Raises the children in the list `l` to the top of this drag group.
+        Each is raised in the order that it appears in `l`, which means that
+        the last element of `l` will be raised closest to the player.
         """
 
         self.sorted = False
@@ -857,6 +875,10 @@ class DragGroup(renpy.display.layout.MultiBox):
 
     def lower_children(self, l):
         """
+        Lowers the children in the list `l` to the bottom of this drag group.
+        Each is lowered in the order that it appears in `l`, which means that
+        the last element of `l` will be the lowest of the children.
+
         Lowers the children in `l` to the bottom of this drag group, with
         the one at the bottom being the lowest.
         """

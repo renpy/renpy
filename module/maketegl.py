@@ -2755,6 +2755,9 @@ def find_gl_names(dirname, gl1):
     rv = list(names)
     rv.sort()
 
+    for i in rv:
+        print(i)
+
     return rv
 
 

@@ -21,13 +21,14 @@
 
 # The Character object (and friends).
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import renpy.display
 
 import re
 import os
 import collections
+import renpy.six as six
 
 # This matches the dialogue-relevant text tags.
 TAG_RE = re.compile(r'(\{\{)|(\{(p|w|nw|fast)(?:\=([^}]*))?\})', re.S)
@@ -63,12 +64,12 @@ class DialogueTextTags(object):
         while True:
 
             try:
-                self.text += i.next()
+                self.text += next(i)
 
-                quoted = i.next()
-                full_tag = i.next()
-                tag = i.next()
-                value = i.next()
+                quoted = next(i)
+                full_tag = next(i)
+                tag = next(i)
+                value = next(i)
 
                 if value is not None:
                     value = float(value)
@@ -162,7 +163,7 @@ def compute_widget_properties(who_args, what_args, window_args, properties, vari
 
         d = d.copy()
 
-        if isinstance(style, basestring):
+        if isinstance(style, six.string_types):
 
             if multiple is not None:
                 style = "block{}_multiple{}_{}".format(multiple[0], multiple[1], style)
@@ -251,7 +252,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 
     def merge_style(style, properties):
 
-        if isinstance(style, basestring):
+        if isinstance(style, six.string_types):
             style = getattr(renpy.store.style, style)
 
         if variant is not None:
@@ -1023,10 +1024,10 @@ class ADVCharacter(object):
         return renpy.substitutions.substitute(who)[0]
 
     def __str__(self):
-        return unicode(self).encode("utf-8")
+        return six.text_type(self).encode("utf-8")
 
     def __format__(self, spec):
-        return format(unicode(self), spec)
+        return format(six.text_type(self), spec)
 
     def __repr__(self):
         return "<Character: {!r}>".format(self.name)
@@ -1050,7 +1051,7 @@ class ADVCharacter(object):
         if not (self.condition is None or renpy.python.py_eval(self.condition)):
             return True
 
-        if not isinstance(what, basestring):
+        if not isinstance(what, six.string_types):
             raise Exception("Character expects its what argument to be a string, got %r." % (what,))
 
         # Figure out multiple and final. Multiple is None if this is not a multiple
@@ -1092,6 +1093,8 @@ class ADVCharacter(object):
             if interact:
                 mode = _mode or self.mode
                 renpy.exports.mode(mode)
+            else:
+                renpy.game.context().deferred_translate_identifier = renpy.game.context().translate_identifier
 
             # Figure out the arguments to display.
             display_args = self.display_args.copy()
@@ -1107,7 +1110,10 @@ class ADVCharacter(object):
 
             # If dynamic is set, evaluate the name expression.
             if self.dynamic:
-                who = renpy.python.py_eval(who)
+                if callable(who):
+                    who = who()
+                else:
+                    who = renpy.python.py_eval(who)
 
             def sub(s, scope=None, force=False, translate=True):
                 return renpy.substitutions.substitute(s, scope=scope, force=force, translate=translate)[0]
@@ -1145,7 +1151,7 @@ class ADVCharacter(object):
                     self.do_done(who, what)
 
                 # Finally, log this line of dialogue.
-                if who and isinstance(who, (str, unicode)):
+                if who and isinstance(who, (str, six.text_type)):
                     renpy.exports.log(who)
 
                 renpy.exports.log(what)
@@ -1327,9 +1333,13 @@ def Character(name=NotSet, kind=None, **properties):
     These options help to control the display of the name.
 
     `dynamic`
-        If true, then `name` should be a string containing a Python
-        expression. That string will be evaluated before each line
-        of dialogue, and the result used as the name of the character.
+        If true, then `name` should either be a string containing a Python
+        expression, a function, or a callable object. If it's a string,
+        That string will be evaluated before each line of dialogue, and
+        the result used as the name of the character. Otherwise, the
+        function or callable object will be called with no arguments
+        before each line of dialogue, and the return value of the call will
+        be used as the name of the character.
 
     **Controlling Interactions.**
     These options control if the dialogue is displayed, if an

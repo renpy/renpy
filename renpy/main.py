@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import renpy.display
 import renpy.style
 import renpy.sl2
@@ -46,6 +46,10 @@ def log_clock(s):
     renpy.display.log.write(s)
     if renpy.android and not renpy.config.log_to_stdout:
         print(s)
+
+    # Pump the presplash window to prevent marking
+    # our process as unresponsive by OS
+    renpy.display.presplash.pump_window()
 
     last_clock = now
 
@@ -146,7 +150,7 @@ def load_rpe(fn):
     zfn.close()
 
     sys.path.insert(0, fn)
-    exec autorun in dict()
+    exec(autorun, dict())
 
 
 def choose_variants():
@@ -229,7 +233,8 @@ def choose_variants():
             renpy.config.variants.insert(0, 'small')
 
     elif renpy.emscripten:
-        import emscripten, re
+        import emscripten
+        import re
 
         # web
         renpy.config.variants.insert(0, 'web')

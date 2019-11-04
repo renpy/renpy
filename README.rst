@@ -104,7 +104,7 @@ Building
 
 Building the documentation requires Ren'Py to work. You'll either need to
 link in a nightly build, or compile the modules as described above. You'll
-also need the `Sphinx <http://sphinx-doc.org/>`_ documentation generator.
+also need the `Sphinx <https://www.sphinx-doc.org>`_ documentation generator.
 If you have pip working, install Sphinx using::
 
     pip install -U sphinx
@@ -124,7 +124,7 @@ not edit the files in sphinx/source/inc directly, as they will be overwritten.
 Docstrings may include tags on the first few lines:
 
 \:doc: `section` `kind`
-    Indicates that this functions should be documented. `section` gives
+    Indicates that this function should be documented. `section` gives
     the name of the include file the function will be documented in, while
     `kind` indicates the kind of object to be documented (one of ``function``,
     ``method`` or ``class``. If omitted, `kind` will be auto-detected.

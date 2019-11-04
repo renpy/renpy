@@ -22,12 +22,13 @@
 # This file ensures that renpy packages will be imported in the right
 # order.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import sys
 import os
 import copy
 import types
-import cPickle
+import renpy.six.moves.cPickle as cPickle
+import renpy.six as six
 
 ################################################################################
 # Version information
@@ -35,12 +36,12 @@ import cPickle
 
 # Version numbers.
 try:
-    from renpy.vc_version import vc_version; vc_version
+    from renpy.vc_version import vc_version
 except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (7, 3, 3, vc_version)
+version_tuple = (7, 4, 0, vc_version)
 
 # The name of this version.
 version_name = "The world (wide web) is not enough."
@@ -257,7 +258,7 @@ class Backup():
 
         self.names[mod] = set(vars(mod).keys())
 
-        for k, v in vars(mod).iteritems():
+        for k, v in six.iteritems(vars(mod)):
 
             if k.startswith("__") and k.endswith("__"):
                 continue
@@ -291,14 +292,14 @@ class Backup():
             return
 
         # Remove new variables from the module.
-        for mod, names in self.names.iteritems():
+        for mod, names in six.iteritems(self.names):
             modvars = vars(mod)
             for name in set(modvars.keys()) - names:
                 del modvars[name]
 
         objects = cPickle.loads(self.objects_pickle)
 
-        for k, v in self.variables.iteritems():
+        for k, v in six.iteritems(self.variables):
             mod, field = k
             setattr(mod, field, objects[v])
 
@@ -311,13 +312,15 @@ backup = None
 ################################################################################
 
 
-def update_path(package):
+def update_path():
     """
     Update the __path__ of package, to import binary modules from a libexec
     directory.
     """
 
-    name = package.__name__.split(".")
+    name = sys._getframe(1).f_globals["__name__"]
+    package = sys.modules[name]
+    name = name.split(".")
 
     import _renpy
     if hasattr(_renpy, '__file__'):  # .so/.dll
@@ -343,9 +346,12 @@ def import_all():
 
     # Note: If we add a new module, we need to add it to iOS.
 
+    # Note: If we add a new module, it should be added at the bottom of this file so it shows up in
+    # code analysis.
+
     import renpy  # @UnresolvedImport
 
-    update_path(renpy)
+    update_path()
 
     import renpy.arguments  # @UnresolvedImport
 
@@ -388,7 +394,6 @@ def import_all():
     plog = renpy.performance.log
 
     import renpy.styledata  # @UnresolvedImport
-    update_path(renpy.styledata)
 
     import renpy.style
     renpy.styledata.import_style_functions()
@@ -405,8 +410,6 @@ def import_all():
 
     import renpy.display  # @UnresolvedImport @Reimport
 
-    update_path(renpy.display)
-
     import renpy.display.presplash
     import renpy.display.pgrender
     import renpy.display.scale
@@ -415,8 +418,6 @@ def import_all():
     import renpy.display.core  # object @UnresolvedImport
 
     import renpy.text
-
-    update_path(renpy.text)
 
     import renpy.text.ftfont
     import renpy.text.font
@@ -428,13 +429,8 @@ def import_all():
     sys.modules['renpy.display.text'] = renpy.text.text
 
     import renpy.gl
-    update_path(renpy.gl)
-
     import renpy.gl2
-    update_path(renpy.gl2)
-
     import renpy.angle
-    update_path(renpy.angle)
 
     import renpy.display.layout
     import renpy.display.viewport
@@ -467,7 +463,6 @@ def import_all():
     # renpy.display.module.
 
     import renpy.audio
-    update_path(renpy.audio)
 
     import renpy.audio.audio
     import renpy.audio.music
@@ -477,8 +472,6 @@ def import_all():
     import renpy.screenlang
 
     import renpy.sl2
-    update_path(renpy.sl2)
-
     import renpy.sl2.slast
     import renpy.sl2.slparser
     import renpy.sl2.slproperties
@@ -540,14 +533,14 @@ def post_import():
     import subprocess
     sys.modules['renpy.subprocess'] = subprocess
 
-    for k, v in renpy.defaultstore.__dict__.iteritems():
+    for k, v in six.iteritems(renpy.defaultstore.__dict__):
         renpy.store.__dict__.setdefault(k, v)
 
     renpy.store.eval = renpy.defaultstore.eval
 
     # Import everything into renpy.exports, provided it isn't
     # already there.
-    for k, v in globals().iteritems():
+    for k, v in six.iteritems(globals()):
         vars(renpy.exports).setdefault(k, v)
 
 
@@ -646,13 +639,159 @@ def setup_modulefinder(modulefinder):
             modulefinder.AddPackagePath('renpy.' + i, displaypath)
 
 
-def import_cython():
-    """
-    Never called, but necessary to ensure that modulefinder will properly
-    grab the various cython modules.
-    """
+# This is here to help code analysis tools figure out all the modules that get imported.
+# noinspection PyUnreachableCode
+if False:
+
+    import renpy  # @UnresolvedImport
+
+    update_path(renpy)
+
+    import renpy.arguments  # @UnresolvedImport
+
+    import renpy.config
+    import renpy.log
+
+    import renpy.display
+
+    import renpy.debug
+
+    # Should probably be early, as we will add it as a base to serialized things.
+    import renpy.object
+
+    import renpy.game
+    import renpy.preferences
+
+    # Adds in the Ren'Py loader.
+    import renpy.loader
+
+    import renpy.pyanalysis
+
+    import renpy.ast
+    import renpy.atl
+    import renpy.curry
+    import renpy.color
+    import renpy.easy
+    import renpy.execution
+    import renpy.loadsave
+    import renpy.savelocation  # @UnresolvedImport
+    import renpy.persistent
+    import renpy.scriptedit
+    import renpy.parser
+    import renpy.performance
+    import renpy.pydict
+    import renpy.python
+    import renpy.script
+    import renpy.statements
+
+    import renpy.styledata  # @UnresolvedImport
+    import renpy.style
+    import renpy.substitutions
+    import renpy.translation
+    import renpy.translation.scanstrings
+    import renpy.translation.generation
+    import renpy.translation.dialogue
+    import renpy.translation.extract
+    import renpy.translation.merge
+
+    import renpy.display  # @UnresolvedImport @Reimport
+
+    import renpy.display.presplash
+    import renpy.display.pgrender
+    import renpy.display.scale
+    import renpy.display.module
+    import renpy.display.render  # Most display stuff depends on this. @UnresolvedImport
+    import renpy.display.core  # object @UnresolvedImport
+
+    import renpy.text
+    import renpy.text.ftfont
+    import renpy.text.font
+    import renpy.text.textsupport
+    import renpy.text.texwrap
+    import renpy.text.text
+    import renpy.text.extras
+
+    import renpy.gl
+    import renpy.gl2
+    import renpy.angle
+
+    import renpy.display.layout
+    import renpy.display.viewport
+    import renpy.display.transform
+    import renpy.display.motion  # layout @UnresolvedImport
+    import renpy.display.behavior  # layout @UnresolvedImport
+    import renpy.display.transition  # core, layout @UnresolvedImport
+    import renpy.display.movetransition  # core @UnresolvedImport
+    import renpy.display.im
+    import renpy.display.imagelike
+    import renpy.display.image  # core, behavior, im, imagelike @UnresolvedImport
+    import renpy.display.video
+    import renpy.display.focus
+    import renpy.display.anim
+    import renpy.display.particle
+    import renpy.display.joystick
+    import renpy.display.controller
+    import renpy.display.minigame
+    import renpy.display.screen
+    import renpy.display.dragdrop
+    import renpy.display.imagemap
+    import renpy.display.predict
+    import renpy.display.emulator
+    import renpy.display.tts
+    import renpy.display.gesture
+
+    import renpy.display.error
+
+    # Note: For windows to work, renpy.audio.audio needs to be after
+    # renpy.display.module.
+
+    import renpy.audio
+    import renpy.audio.audio
+    import renpy.audio.music
+    import renpy.audio.sound
+
+    import renpy.ui
+    import renpy.screenlang
+
+    import renpy.sl2
+    import renpy.sl2.slast
+    import renpy.sl2.slparser
+    import renpy.sl2.slproperties
+    import renpy.sl2.sldisplayables
+
+    import renpy.lint
+    import renpy.warp
+
+    import renpy.editor
+
+    import renpy.memory
+
+    import renpy.exports
+    import renpy.character  # depends on exports. @UnresolvedImport
+
+    import renpy.add_from
+    import renpy.dump
+
+    import renpy.minstore  # depends on lots. @UnresolvedImport
+    import renpy.defaultstore  # depends on everything. @UnresolvedImport
+
+    import renpy.test
+    import renpy.test.testmouse
+    import renpy.test.testfocus
+    import renpy.test.testkey
+    import renpy.test.testast
+    import renpy.test.testparser
+    import renpy.test.testexecution
+
+    import renpy.main
+
+    import renpy.defaultstore as store
 
     import renpy.arguments
+
+# This is here to help code analysis tools figure out all the cython modules that get imported.
+# noinspection PyUnreachableCode
+if False:
 
     import renpy.display.accelerator
 
@@ -683,7 +822,3 @@ def import_cython():
     import renpy.gl2.gl2texture
     import renpy.gl2.uguu
     import renpy.gl2.uguugl
-
-
-if False:
-    import renpy.defaultstore as store

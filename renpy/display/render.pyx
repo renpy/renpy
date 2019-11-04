@@ -266,6 +266,7 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         raise Exception("{!r}.render() must return a Render.".format(d))
 
     rv.render_of.append(d)
+    rv.cache_killed = False
 
     if d._clipping:
         renpy.plog(4, "before clipping")
@@ -1082,7 +1083,7 @@ cdef class Render:
             if not cache:
                 del render_cache[id_ro]
 
-        self.render_of = None
+        self.render_of = [ ]
         self.focuses = None
         self.pass_focuses = None
 

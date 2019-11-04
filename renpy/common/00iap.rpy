@@ -236,8 +236,8 @@ init -1500 python in iap:
                 if interact:
                     renpy.pause(.1)
                 else:
-                    import pygame
-                    pygame.event.pump()
+                    import pygame_sdl2
+                    pygame_sdl2.event.pump()
                     time.sleep(.1)
 
         def validate_products(self, interact):

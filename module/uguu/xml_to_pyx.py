@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from __future__ import print_function
 from xml.etree.ElementTree import parse, tostring
 import collections
 import itertools

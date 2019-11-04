@@ -168,7 +168,7 @@ These control transitions between various screens.
     This should be a function that takes four arguments, the image tag
     being shown, a `mode` parameter, a `set` containing pre-transition tags
     and a `set` containing post-transition tags. Where the value of the
-    `mode` paramater is one of:
+    `mode` parameter is one of:
 
     * "permanent", for permanent attribute change (one that lasts longer
       than the current say statement).
@@ -179,7 +179,7 @@ These control transitions between various screens.
       part is restored at the end of the current say statement).
     * "restore", for when a temporary (or both) change is being restored.
 
-    This should return a 2-component tuple, consiting of:
+    This should return a 2-component tuple, consisting of:
 
     * The transition to use, or None if no transition should occur.
     * The layer the transition should be on, either a string or None. This is
@@ -290,7 +290,7 @@ Occasionally Used
 
     The number of slots used by autosaves.
 
-.. var:: config.cache_surfaces = True
+.. var:: config.cache_surfaces = False
 
     If True, the underlying data of an image is stored in RAM, allowing
     image manipulators to be applied to that image without reloading it
@@ -316,8 +316,13 @@ Occasionally Used
 
 .. var:: config.context_callback = None
 
-    This is a callback that is called when Ren'Py enteres a new context,
+    This is a callback that is called when Ren'Py enters a new context,
     such as a menu context.
+
+.. var:: config.context_copy_remove_screens = [ 'notify' ]
+
+    Contains a list of screens that are removed when a context is copied
+    for rollback or saving.
 
 .. var:: config.debug = False
 
@@ -348,7 +353,7 @@ Occasionally Used
 
 .. var:: config.default_tag_layer = "master"
 
-    The layer an image is show on if its tag is not found in config.tag_layer.
+    The layer an image is shown on if its tag is not found in config.tag_layer.
 
 .. var:: config.default_transform = ...
 
@@ -356,7 +361,7 @@ Occasionally Used
     the transform properties are taken from this transform and used to
     initialize the values of the displayable's transform.
 
-    The default default transform is :var:`center`.
+    The default transform is :var:`center`.
 
 .. var:: config.defer_styles = False
 
@@ -573,7 +578,7 @@ Occasionally Used
 
     A function that determines the language the game should use,
     based on the the user's locale.
-    It takes 2 arguments strings that give the the ISO code of the locale
+    It takes 2 string arguments that give the ISO code of the locale
     and the ISO code of the region.
 
     It should return a string giving the name of a translation to use, or
@@ -762,6 +767,11 @@ Occasionally Used
     A dictionary mapping variables in the default store to the values
     the variables will be given when entering a replay.
 
+.. var:: config.return_not_found_label = None
+
+    If not None, a label that is jumped to when a return site is not found.
+    The call stack is cleared before this jump occurs.
+
 .. var:: config.save_json_callbacks = [ ]
 
     A list of callback functions that are used to create the json object
@@ -781,7 +791,7 @@ Occasionally Used
 
     If not None, this should be a function that takes the speaking character,
     followed by positional and keyword arguments. It's called whenever a
-    say statement occurs with the arguments to that say statment. This
+    say statement occurs with the arguments to that say statement. This
     always includes an interact argument, and can include others provided
     in the say statement.
 
@@ -1020,6 +1030,21 @@ Rarely or Internally Used
 
     A list of layers that are cleared when entering a new context.
 
+.. var:: config.exception_handler = None
+
+    If not None, this should be a function that takes three arguments:
+
+    * A string giving the text of a traceback, abbreviated so that it only includes
+      creator-written files.
+    * The full text of the traceback, including both creator-written and Ren'Py
+      files.
+    * The path to a file containing a traceback method.
+
+    This function can present the error to a user in any way fit. If it returns True,
+    the exception is ignored and control is transferred to the next statement. If it
+    returns False, the built-in exception handler is use. This function may also call
+    :func:`renpy.jump` to transfer control to some other label.
+
 .. var:: config.fade_music = 0.0
 
     This is the amount of time in seconds to spend fading the old
@@ -1190,7 +1215,7 @@ Rarely or Internally Used
 
 .. var:: config.longpress_duration = 0.5
 
-    The amount of time the player must press the screen for for a longpress
+    The amount of time the player must press the screen for a longpress
     to be recognized on a touch device.
 
 .. var:: config.longpress_radius = 15
@@ -1320,7 +1345,7 @@ Rarely or Internally Used
 
 .. var:: config.rollback_side_size = .2
 
-    If the rollback side is enabled, the fraction of of the screen on the
+    If the rollback side is enabled, the fraction of the screen on the
     rollback side that, when clicked or touched, causes a rollback to
     occur.
 
@@ -1552,5 +1577,5 @@ Ren'Py management of the Python garbage collector.
 
 .. var:: config.gc_print_unreachable = False
 
-    If True, Ren'Py will print to its console and logs informaton about the
+    If True, Ren'Py will print to its console and logs information about the
     objects that are triggering collections.

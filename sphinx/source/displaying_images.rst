@@ -222,7 +222,7 @@ Some example show statements are::
     # Basic show.
     show mary night sad
 
-    # Since 'mary night happy' is showing, the following statement is
+    # Since 'mary night sad' is showing, the following statement is
     # equivalent to:
     # show mary night happy
     show mary happy

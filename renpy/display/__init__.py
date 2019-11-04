@@ -21,6 +21,9 @@
 
 from __future__ import print_function
 
+import renpy
+renpy.update_path()
+
 import renpy.log
 
 # The draw object through which all drawing is routed. This object

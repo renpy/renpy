@@ -456,6 +456,7 @@ init -1500 python:
 
 
         renpy.mode('nvl_menu')
+        renpy.shown_window()
 
         if nvl_list is None:
             store.nvl_list = [ ]

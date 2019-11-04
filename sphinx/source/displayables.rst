@@ -38,6 +38,9 @@ string is given, a dynamic image is created. A dynamic image has
 of each interaction (such as say statements and menus). The resulting
 string is processed according to the rules above.
 
+When a string has "[prefix_"] in it, that iso replaced with each of the
+style prefixes associated with the current displayable.
+
 .. _images:
 
 Images
@@ -241,7 +244,7 @@ images as appropriate. Placeholders are used automatically when an undefined
 image is used in developer mode. Placeholder displayables can also be used
 manually when the defaults are inappropriate. ::
 
-    # By default, the girl placeholer will be used.
+    # By default, the girl placeholder will be used.
     image sue = Placeholder("boy")
 
     label start:

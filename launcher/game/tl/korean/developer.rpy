@@ -102,7 +102,7 @@
 
     # _developer/inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "(디스플레이어블에 적용되는 속성이 없습니다)"
+    new "        (디스플레이어블에 적용되는 속성이 없습니다)"
 
     # _developer/inspector.rpym:147
     old "        (default properties omitted)"
@@ -134,11 +134,11 @@
 
     # 00console.rpy:413
     old " <renpy script statement>: run the statement\n"
-    new "<렌파이 스크립트 명령문>: 명령문을 실행한다\n"
+    new " <렌파이 스크립트 명령문>: 명령문을 실행한다\n"
 
     # 00console.rpy:415
     old " <python expression or statement>: run the expression or statement"
-    new "<파이썬 표현식 또는 명령문>: 표현식이나 명령문을 실행한다"
+    new " <파이썬 표현식 또는 명령문>: 표현식이나 명령문을 실행한다"
 
     # 00console.rpy:423
     old "clear: clear the console history"

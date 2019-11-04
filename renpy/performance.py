@@ -21,8 +21,7 @@
 
 # This file manages the frame performance log.
 
-from __future__ import print_function, unicode_literals
-
+from __future__ import print_function, unicode_literals, absolute_import
 
 import time
 import renpy
@@ -89,7 +88,7 @@ def analyze():
     else:
         return
 
-    if (end - start) < renpy.config.profile_time:
+    if (end - start) < renpy.config.profile_time and not renpy.display.interface.profile_once:
         return
 
     s = "\n"

@@ -44,7 +44,8 @@ Basic Configuration
 
 The build process can be configured by setting variables and calling
 function that live in the build namespace. This must be done from
-inside an ``init python`` block.
+inside an ``init python`` block. The default settings for these configurations are 
+set in ``options.rpy``.
 
 There are a few basic variables and functions that many games will
 use.

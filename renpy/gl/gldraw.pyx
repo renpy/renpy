@@ -196,6 +196,7 @@ cdef class GLDraw:
             self.did_init = False
 
             if renpy.windows and (self.old_fullscreen is not None):
+                renpy.display.interface.kill_textures_and_surfaces()
                 pygame.display.quit()
 
             pygame.display.init()
@@ -468,6 +469,7 @@ cdef class GLDraw:
             renpy.display.gl_size = self.physical_size
 
         gltexture.dealloc_textures()
+        gltexture.free_texture_numbers()
 
         self.old_fullscreen = None
 
@@ -930,6 +932,9 @@ cdef class GLDraw:
                     p /= 2
                     pc = self.get_half(pc)
 
+            elif rend.operation == FLATTEN:
+                child.render_to_texture(True)
+
         if render_what:
             what.render_to_texture(True)
 
@@ -1113,7 +1118,7 @@ cdef class GLDraw:
             return 0
 
         if rend.reverse is not None and rend.reverse is not IDENTITY:
-            child_reverse = rend.reverse * reverse
+            child_reverse = reverse * rend.reverse
         else:
             child_reverse = reverse
 
