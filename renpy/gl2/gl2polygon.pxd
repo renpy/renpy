@@ -1,3 +1,5 @@
+from renpy.display.matrix cimport Matrix
+
 # Represents a 2D point inside a polygon.
 cdef struct Point2:
     float x
@@ -15,3 +17,6 @@ cdef class Polygon:
     cdef Point2 *point
 
     cpdef Polygon intersect(Polygon self, Polygon p)
+    cpdef Polygon copy(Polygon self)
+    cpdef void multiply_matrix_inplace(Polygon self, Matrix m)
+    cpdef Polygon multiply_matrix(Polygon self, Matrix m)
