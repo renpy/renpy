@@ -19,11 +19,10 @@ cdef class AttributeLayout:
     # point.
     cdef int stride
 
-cdef class Data:
+cdef class Mesh:
     """
     This represents the polygon and vertex data that is stored within
-    a mesh. This allows Python's garbage collection system to take care
-    of collecting data that can be shared between multiple Meshes.
+    a Model.
     """
 
     # The number of points that space has been allocated for.
@@ -50,10 +49,6 @@ cdef class Data:
     # The triangle data, where each triangle consists of the index of three
     # points. This is 3 * allocated_triangles in size.
     cdef int *triangle
-
-cdef class Mesh:
-
-    cdef Data data
 
     cpdef Mesh copy(Mesh self)
     cpdef Mesh crop(Mesh self, Polygon p)
