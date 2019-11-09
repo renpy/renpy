@@ -507,6 +507,9 @@ def autosave():
     if renpy.store.main_menu:
         return
 
+    if not renpy.store._autosave:
+        return
+
     force_autosave(True)
 
 

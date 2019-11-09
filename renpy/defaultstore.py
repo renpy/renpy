@@ -71,6 +71,9 @@ _text_rect = None
 _menu = False
 main_menu = False
 
+# Is autosaving allowed?
+_autosave = True
+
 
 class _Config(object):
 
