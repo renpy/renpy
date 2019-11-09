@@ -52,3 +52,4 @@ cdef class Mesh:
 
     cpdef Mesh copy(Mesh self)
     cpdef Mesh crop(Mesh self, Polygon p)
+    cpdef Mesh crop_to_rectangle(Mesh m, float l, float b, float r, float t)

@@ -186,6 +186,21 @@ cdef class Mesh:
 
         return crop_mesh(self, p)
 
+    cpdef Mesh crop_to_rectangle(Mesh m, float l, float b, float r, float t):
+        """
+        Crops this mesh to a rectangle with the given points.
+        """
+
+        cdef Mesh rv
+
+        rv = split_mesh(m, l, b, r, b)
+        rv = split_mesh(rv, r, b, r, t)
+        rv = split_mesh(rv, r, t, l, t)
+        rv = split_mesh(rv, l, t, l, b)
+
+        return rv
+
+
 
 ###############################################################################
 # Mesh cropping.
@@ -476,7 +491,7 @@ cdef Mesh split_mesh(Mesh old, float x0, float y0, float x1, float y1):
     free(ci)
     return new
 
-cdef Mesh crop_mesh(Mesh d, Polygon p):
+cdef Mesh crop_mesh(Mesh m, Polygon p):
     """
     Returns a new Mesh that only the portion of `d` that is entirely
     contained in `p`.
@@ -485,7 +500,7 @@ cdef Mesh crop_mesh(Mesh d, Polygon p):
     cdef int i
     cdef int j
 
-    rv = d
+    rv = m
 
     j = p.points - 1
 
@@ -494,7 +509,5 @@ cdef Mesh crop_mesh(Mesh d, Polygon p):
         j = i
 
     return rv
-
-
 
 
