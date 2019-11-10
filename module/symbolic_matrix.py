@@ -1,5 +1,6 @@
 from __future__ import print_function
 from sympy import symbols, Matrix, pi, cos, sin, simplify
+import io
 
 
 matrix_names = [
@@ -43,6 +44,10 @@ generators = [ ]
 class Generator(object):
 
     def __init__(self, name, docs):
+
+        self.pyd_f = cStringIO.StringIO()
+        self.pyx_f = cStringIO.StringIO()
+
         self.f = cStringIO.StringIO()
 
         self.name = name
@@ -53,10 +58,37 @@ class Generator(object):
         self.first_let = True
 
     def parameters(self, params):
+
+        # PYD.
+        print("    @staticmethod", file=self.pyd_f)
+        print("    cdef Matrix c{}({})".format(
+            self.name,
+            ", ".join("float " + i for i in params.split())), file=self.pyd_f)
+
+        # PYX.
+
+        print("    @staticmethod", file=self.pyx_f)
+        print("    cdef Matrix c{}({}):".format(
+            self.name,
+            ", ".join("float " + i for i in params.split())), file=self.pyx_f)
+        print("        return {}_matrix({})".format(
+            self.name, ", ".join(params.split())), file=self.pyx_f)
+
+        print(file=self.pyx_f)
+
+        print("    @staticmethod", file=self.pyx_f)
+        print("    def {}({}):".format(
+            self.name,
+            ", ".join(params.split())), file=self.pyx_f)
+        print("        return {}_matrix({})".format(
+            self.name, ", ".join(params.split())), file=self.pyx_f)
+
+        # PXI.
+
         print(file=self.f)
         print(file=self.f)
 
-        print("def {}({}):".format(
+        print("cpdef Matrix {}_matrix({}):".format(
             self.name,
             ", ".join("float " + i for i in params.split())), file=self.f)
 
@@ -102,9 +134,20 @@ def generate(func):
 
 
 def write(fn):
+
     with open(fn, "w") as f:
         for i in generators:
             f.write(i.f.getvalue())
+
+    print("pxd ---------------------------------")
+
+    for i in generators:
+        print(i.pyd_f.getvalue())
+
+    print("pyx ---------------------------------")
+
+    for i in generators:
+        print(i.pyx_f.getvalue())
 
 
 @generate

@@ -1,6 +1,6 @@
 
 
-def identity():
+cpdef Matrix identity_matrix():
     """
     Returns an identity matrix.
     """
@@ -15,7 +15,7 @@ def identity():
     return rv
 
 
-def offset(float x, float y, float z):
+cpdef Matrix offset_matrix(float x, float y, float z):
     """
     Returns a matrix that offsets the vertex by a fixed amount.
     """
@@ -33,7 +33,7 @@ def offset(float x, float y, float z):
     return rv
 
 
-def rotate(float x, float y, float z):
+cpdef Matrix rotate_matrix(float x, float y, float z):
     """
     Returns a matrix that rotates the displayable around the
     origin.
@@ -65,7 +65,7 @@ def rotate(float x, float y, float z):
     return rv
 
 
-def perspective(float w, float h, float n, float p, float f):
+cpdef Matrix perspective_matrix(float w, float h, float n, float p, float f):
     """
     Returns the Ren'Py projection matrix. This is a view into a 3d space
     where (0, 0) is the top left corner (`w`/2, `h`/2) is the center, and
@@ -99,7 +99,7 @@ def perspective(float w, float h, float n, float p, float f):
     return rv
 
 
-def screen_projection(float w, float h):
+cpdef Matrix screen_projection_matrix(float w, float h):
     """
     This generates a matrix that projects the Ren'Py space, where (0, 0) is the
     top left and (`w`, `h`) is the bottom right, into the OpenGL viewport, where
@@ -120,7 +120,7 @@ def screen_projection(float w, float h):
     return rv
 
 
-def texture_projection(float w, float h):
+cpdef Matrix texture_projection_matrix(float w, float h):
     """
     This generates a matrix that project the Ren'Py space, where (0, 0) is the
     top left and (`w`, `h`) is the bottom right, into the OpenGL render-to-texture

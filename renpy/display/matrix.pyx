@@ -1,3 +1,24 @@
+# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 from __future__ import print_function
 
 from libc.string cimport memset
@@ -133,7 +154,6 @@ cdef class Matrix:
         elif components == 4:
             return (ox, oy, oz, ow)
 
-
     def __richcmp__(Matrix self, Matrix other, op):
 
         if op != 2:
@@ -174,6 +194,55 @@ cdef class Matrix:
 
         return (total_1 < .0001) or (total_2 < .0001)
 
+    @staticmethod
+    cdef Matrix cidentity():
+        return identity_matrix()
+
+    @staticmethod
+    def identity():
+        return identity_matrix()
+
+    @staticmethod
+    cdef Matrix coffset(float x, float y, float z):
+        return offset_matrix(x, y, z)
+
+    @staticmethod
+    def offset(x, y, z):
+        return offset_matrix(x, y, z)
+
+    @staticmethod
+    cdef Matrix crotate(float x, float y, float z):
+        return rotate_matrix(x, y, z)
+
+    @staticmethod
+    def rotate(x, y, z):
+        return rotate_matrix(x, y, z)
+
+    @staticmethod
+    cdef Matrix cperspective(float w, float h, float n, float p, float f):
+        return perspective_matrix(w, h, n, p, f)
+
+    @staticmethod
+    def perspective(w, h, n, p, f):
+        return perspective_matrix(w, h, n, p, f)
+
+    @staticmethod
+    cdef Matrix cscreen_projection(float w, float h):
+        return screen_projection_matrix(w, h)
+
+    @staticmethod
+    def screen_projection(w, h):
+        return screen_projection_matrix(w, h)
+
+    @staticmethod
+    cdef Matrix ctexture_projection(float w, float h):
+        return texture_projection_matrix(w, h)
+
+    @staticmethod
+    def texture_projection(w, h):
+        return texture_projection_matrix(w, h)
+
+
 cdef class Matrix2D(Matrix):
 
     def __init__(Matrix2D self, double xdx, double xdy, double ydx, double ydy):
@@ -186,6 +255,5 @@ cdef class Matrix2D(Matrix):
 
         self.zdz = 1.0
         self.wdw = 1.0
-
 
 include "matrix_functions.pxi"

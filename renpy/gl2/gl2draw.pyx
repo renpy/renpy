@@ -767,7 +767,7 @@ cdef class GL2Draw:
 
         # Project the child from virtual space to the screen space.
         cdef Matrix transform
-        transform = renpy.display.matrix.screen_projection(self.virtual_size[0], self.virtual_size[1])
+        transform = Matrix.cscreen_projection(self.virtual_size[0], self.virtual_size[1])
 
         # Set up the default modes.
         glEnable(GL_BLEND)
@@ -1218,7 +1218,7 @@ cdef class GL2DrawingContext:
                 child_transform = transform
 
                 if (cx or cy):
-                    child_transform = child_transform * offset(cx, cy, 0)
+                    child_transform = child_transform * Matrix.coffset(cx, cy, 0)
 
                 if (r.reverse is not None) and (r.reverse is not IDENTITY):
                     child_transform = child_transform * r.reverse
