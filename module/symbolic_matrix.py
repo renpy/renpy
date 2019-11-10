@@ -80,6 +80,10 @@ class Generator(object):
         print("    def {}({}):".format(
             self.name,
             ", ".join(params.split())), file=self.pyx_f)
+
+        if self.docs:
+            print('        """' + self.docs.replace("\n", "\n    ") + '"""', file=self.pyx_f)
+
         print("        return {}_matrix({})".format(
             self.name, ", ".join(params.split())), file=self.pyx_f)
 
@@ -91,9 +95,6 @@ class Generator(object):
         print("cpdef Matrix {}_matrix({}):".format(
             self.name,
             ", ".join("float " + i for i in params.split())), file=self.f)
-
-        if self.docs:
-            print('    """' + self.docs + '"""', file=self.f)
 
         if params.split():
             return symbols(params)
@@ -222,6 +223,26 @@ def rotate(g):
         0, 0, 0, 1, ])
 
     g.matrix(rz * ry * rx)
+
+
+@generate
+def scale(g):
+    """
+    Returns a matrix that scales the displayable.
+
+    `x`, `y`, `z`
+        The factor to scale each axis by.
+    """
+
+    x, y, z = g.parameters("x y z")
+
+    m = Matrix(4, 4, [
+        x, 0, 0, 0,
+        0, y, 0, 0,
+        0, 0, z, 0,
+        0, 0, 0, 1 ])
+
+    g.matrix(m)
 
 
 @generate

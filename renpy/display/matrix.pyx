@@ -200,6 +200,9 @@ cdef class Matrix:
 
     @staticmethod
     def identity():
+        """
+        Returns an identity matrix.
+        """
         return identity_matrix()
 
     @staticmethod
@@ -208,6 +211,9 @@ cdef class Matrix:
 
     @staticmethod
     def offset(x, y, z):
+        """
+        Returns a matrix that offsets the vertex by a fixed amount.
+        """
         return offset_matrix(x, y, z)
 
     @staticmethod
@@ -216,7 +222,28 @@ cdef class Matrix:
 
     @staticmethod
     def rotate(x, y, z):
+        """
+        Returns a matrix that rotates the displayable around the
+        origin.
+
+        `x`, `y`, `x`
+            The amount to rotate around the origin, in degrees.
+        """
         return rotate_matrix(x, y, z)
+
+    @staticmethod
+    cdef Matrix cscale(float x, float y, float z):
+        return scale_matrix(x, y, z)
+
+    @staticmethod
+    def scale(x, y, z):
+        """
+        Returns a matrix that scales the displayable.
+
+        `x`, `y`, `z`
+            The factor to scale each axis by.
+        """
+        return scale_matrix(x, y, z)
 
     @staticmethod
     cdef Matrix cperspective(float w, float h, float n, float p, float f):
@@ -224,6 +251,24 @@ cdef class Matrix:
 
     @staticmethod
     def perspective(w, h, n, p, f):
+        """
+        Returns the Ren'Py projection matrix. This is a view into a 3d space
+        where (0, 0) is the top left corner (`w`/2, `h`/2) is the center, and
+        (`w`,`h`) is the bottom right, when the z coordinate is 0.
+
+        `w`, `h`
+            The width and height of the input plane, in pixels.
+
+        `n`
+            The distance of the near plane from the camera.
+
+        `p`
+            The distance of the 1:1 plane from the camera. This is where 1 pixel
+            is one coordinate unit.
+
+        `f`
+            The distance of the far plane from the camera.
+        """
         return perspective_matrix(w, h, n, p, f)
 
     @staticmethod
@@ -232,6 +277,13 @@ cdef class Matrix:
 
     @staticmethod
     def screen_projection(w, h):
+        """
+        This generates a matrix that projects the Ren'Py space, where (0, 0) is the
+        top left and (`w`, `h`) is the bottom right, into the OpenGL viewport, where
+        (-1.0, 1.0) is the top left and (1.0, -1.0) is the bottom.
+
+        Generates the matrix that projects the Ren'Py screen to the OpenGL screen.
+        """
         return screen_projection_matrix(w, h)
 
     @staticmethod
@@ -240,6 +292,13 @@ cdef class Matrix:
 
     @staticmethod
     def texture_projection(w, h):
+        """
+        This generates a matrix that project the Ren'Py space, where (0, 0) is the
+        top left and (`w`, `h`) is the bottom right, into the OpenGL render-to-texture
+        space, where (-1.0, -1.0) is the top left and (1.0, 1.0) is the bottom.
+
+        Generates the matrix that projects the Ren'Py screen to the OpenGL screen.
+        """
         return texture_projection_matrix(w, h)
 
 

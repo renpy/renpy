@@ -50,6 +50,9 @@ cdef class Matrix:
     cdef Matrix crotate(float x, float y, float z)
 
     @staticmethod
+    cdef Matrix cscale(float x, float y, float z)
+
+    @staticmethod
     cdef Matrix cperspective(float w, float h, float n, float p, float f)
 
     @staticmethod
