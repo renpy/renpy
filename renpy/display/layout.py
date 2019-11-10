@@ -1231,6 +1231,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
     nosave = [ 'child' ]
 
     _duplicatable = True
+    raw_child = None
 
     def after_setstate(self):
         self.child = None
@@ -1265,13 +1266,17 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         child, redraw = self.function(st, at, *self.args, **self.kwargs)
         child = renpy.easy.displayable(child)
 
-        if child._duplicatable:
-            child = child._duplicate(self._args)
-            child._unique()
+        if child != self.raw_child:
 
-        child.visit_all(lambda c : c.per_interact())
+            self.raw_child = child
 
-        self.child = child
+            if child._duplicatable:
+                child = child._duplicate(self._args)
+                child._unique()
+
+            child.visit_all(lambda c : c.per_interact())
+
+            self.child = child
 
         if redraw is not None:
             renpy.display.render.redraw(self, redraw)
