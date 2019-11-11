@@ -28,3 +28,4 @@ cdef class Model:
 
 
     cpdef Model copy(Model self)
+    cpdef subsurface(Model self, t)
