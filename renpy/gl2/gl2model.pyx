@@ -2,6 +2,8 @@ from renpy.display.render import IDENTITY
 from renpy.display.matrix import Matrix
 from renpy.gl2.gl2polygon cimport Polygon
 
+import math
+
 cdef class Model:
 
     def __init__(Model self, size, mesh, shaders, uniforms):
@@ -18,8 +20,8 @@ cdef class Model:
         rv = "<Model {} {} {}".format(self.size, self.shaders, self.uniforms)
 
         if self.forward is not IDENTITY:
-            rv += "\n    forward (to screen): " + repr(self.forward).replace("\n", "\n    ")
-            rv += "\n    reverse (to mesh)  : " + repr(self.reverse).replace("\n", "\n    ")
+            rv += "\n    forward (to mesh):\n    " + repr(self.forward).replace("\n", "\n    ")
+            rv += "\n    reverse (to screen):\n    " + repr(self.reverse).replace("\n", "\n    ")
 
         rv += "\n    " + repr(self.mesh).replace("\n", "\n    ")
         rv += ">"
@@ -44,7 +46,10 @@ cdef class Model:
 
         cdef Model rv = self.copy()
 
-        rv.size = (int(w), int(h))
+        rv.size = (
+            int(math.ceil(w)),
+            int(math.ceil(h)),
+            )
 
         rv.reverse = rv.reverse * Matrix.coffset(-x, -y, 0)
         rv.forward = Matrix.coffset(x, y, 0) * rv.forward
@@ -56,4 +61,25 @@ cdef class Model:
 
         return rv
 
+    cpdef scale(Model self, float factor):
 
+        cdef float reciprocal_factor
+
+        cdef Model rv = self.copy()
+
+        rv.size = (
+            int(math.ceil(rv.size[0] * factor)),
+            int(math.ceil(rv.size[1] * factor)),
+            )
+
+        rv.reverse = rv.reverse * Matrix.scale(factor, factor, factor)
+
+        if factor <= 0.0:
+            # Basically, map everything onto the (0, 0, 0) point for the zero-
+            # scale case.
+            rv.forward =  Matrix.cscale(0, 0, 0) * rv.forward
+        else:
+            reciprocal_factor = 1.0 / factor
+            rv.forward = Matrix.cscale(reciprocal_factor, reciprocal_factor, reciprocal_factor) * rv.forward
+
+        return rv
