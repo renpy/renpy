@@ -332,6 +332,9 @@ def update_path():
     libexec = os.path.dirname(encodings.__path__[0])
     package.__path__.append(os.path.join(libexec, *name))
 
+
+update_path()
+
 # Replaced below.
 
 
@@ -351,9 +354,9 @@ def import_all():
 
     import renpy  # @UnresolvedImport
 
-    update_path()
-
     import renpy.arguments  # @UnresolvedImport
+
+    import renpy.patchtype
 
     import renpy.config
     import renpy.log
