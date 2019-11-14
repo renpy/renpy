@@ -27,6 +27,33 @@ import sys
 import os
 import copy
 import types
+
+
+def update_path():
+    """
+    Update the __path__ of package, to import binary modules from a libexec
+    directory.
+    """
+
+    name = sys._getframe(1).f_globals["__name__"]
+    package = sys.modules[name]
+    name = name.split(".")
+
+    import _renpy
+    if hasattr(_renpy, '__file__'):  # .so/.dll
+        libexec = os.path.dirname(_renpy.__file__)
+        package.__path__.append(os.path.join(libexec, *name))
+
+    # Also find encodings, to deal with the way py2exe lays things out.
+    import encodings
+    libexec = os.path.dirname(encodings.__path__[0])
+    package.__path__.append(os.path.join(libexec, *name))
+
+
+update_path()
+
+from renpy.compat import *
+
 import renpy.six.moves.cPickle as cPickle
 import renpy.six as six
 
@@ -312,33 +339,12 @@ backup = None
 ################################################################################
 
 
-def update_path():
-    """
-    Update the __path__ of package, to import binary modules from a libexec
-    directory.
-    """
-
-    name = sys._getframe(1).f_globals["__name__"]
-    package = sys.modules[name]
-    name = name.split(".")
-
-    import _renpy
-    if hasattr(_renpy, '__file__'):  # .so/.dll
-        libexec = os.path.dirname(_renpy.__file__)
-        package.__path__.append(os.path.join(libexec, *name))
-
-    # Also find encodings, to deal with the way py2exe lays things out.
-    import encodings
-    libexec = os.path.dirname(encodings.__path__[0])
-    package.__path__.append(os.path.join(libexec, *name))
-
-
-update_path()
-
-# Replaced below.
-
-
 def plog(level, even, *args):
+    """
+    Empty version of renpy.plog that is replaced by the real implementation
+    in import_all.
+    """
+
     return
 
 
@@ -355,8 +361,6 @@ def import_all():
     import renpy  # @UnresolvedImport
 
     import renpy.arguments  # @UnresolvedImport
-
-    import renpy.patchtype
 
     import renpy.config
     import renpy.log

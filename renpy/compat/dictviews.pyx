@@ -50,6 +50,7 @@ cdef extern from "Python.h":
         CO_FUTURE_DIVISION
         CO_FUTURE_WITH_STATEMENT
 
+
 ###############################################################################
 # Add attributes to built in types.
 
