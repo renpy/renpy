@@ -48,6 +48,7 @@ cdef extern from "Python.h":
 
     enum:
         CO_FUTURE_DIVISION
+        CO_FUTURE_WITH_STATEMENT
 
 ###############################################################################
 # Add attributes to built in types.
@@ -88,14 +89,13 @@ add_attribute(dict, "_items", dict.items)
 add_attribute(dict, "_keys", dict.keys)
 add_attribute(dict, "_values", dict.values)
 
-
 cdef bint use_view():
     """
     Returns true if the methods should use view semantics, or false if
     they should use legacy/list semantics.
     """
 
-    return (PyThreadState_Get().frame.f_code.co_flags) & CO_FUTURE_DIVISION
+    return ((PyThreadState_Get().frame.f_code.co_flags) & (CO_FUTURE_DIVISION | CO_FUTURE_WITH_STATEMENT)) == (CO_FUTURE_DIVISION | CO_FUTURE_WITH_STATEMENT)
 
 
 def items(self):
