@@ -182,6 +182,8 @@ session = { }
 # to backup.
 backup_blacklist = {
     "renpy",
+    "renpy.compat",
+    "renpy.compat.dictviews",
     "renpy.object",
     "renpy.log",
     "renpy.bootstrap",
