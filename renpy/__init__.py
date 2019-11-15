@@ -22,11 +22,9 @@
 # This file ensures that renpy packages will be imported in the right
 # order.
 
-from __future__ import print_function, absolute_import
-import sys
-import os
-import copy
-import types
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+
+# All imports should go below renpy.compat and update_path.
 
 
 def update_path():
@@ -34,6 +32,8 @@ def update_path():
     Update the __path__ of package, to import binary modules from a libexec
     directory.
     """
+    import sys
+    import os.path
 
     name = sys._getframe(1).f_globals["__name__"]
     package = sys.modules[name]
@@ -54,8 +54,11 @@ update_path()
 
 from renpy.compat import *
 
-import renpy.six.moves.cPickle as cPickle
-import renpy.six as six
+import sys
+import os
+import pickle
+import copy
+import types
 
 ################################################################################
 # Version information
@@ -230,7 +233,7 @@ name_blacklist = {
     }
 
 
-class Backup():
+class Backup(object):
     """
     This represents a backup of all of the fields in the python modules
     comprising Ren'Py, shortly after they were imported.
@@ -262,7 +265,7 @@ class Backup():
             self.backup_module(m)
 
         # A pickled version of self.objects.
-        self.objects_pickle = cPickle.dumps(self.objects, cPickle.HIGHEST_PROTOCOL)
+        self.objects_pickle = pickle.dumps(self.objects, pickle.HIGHEST_PROTOCOL)
 
         self.objects = None
 
@@ -287,7 +290,7 @@ class Backup():
 
         self.names[mod] = set(vars(mod).keys())
 
-        for k, v in six.iteritems(vars(mod)):
+        for k, v in vars(mod).items():
 
             if k.startswith("__") and k.endswith("__"):
                 continue
@@ -306,10 +309,10 @@ class Backup():
             # If we have a problem pickling things, uncomment the next block.
 
             try:
-                cPickle.dumps(v, cPickle.HIGHEST_PROTOCOL)
+                pickle.dumps(v, pickle.HIGHEST_PROTOCOL)
             except:
                 print("Cannot pickle", name + "." + k, "=", repr(v))
-                print("Reduce Ex is:", repr(v.__reduce_ex__(cPickle.HIGHEST_PROTOCOL)))
+                print("Reduce Ex is:", repr(v.__reduce_ex__(pickle.HIGHEST_PROTOCOL)))
 
     def restore(self):
         """
@@ -321,14 +324,14 @@ class Backup():
             return
 
         # Remove new variables from the module.
-        for mod, names in six.iteritems(self.names):
+        for mod, names in self.names.items():
             modvars = vars(mod)
             for name in set(modvars.keys()) - names:
                 del modvars[name]
 
-        objects = cPickle.loads(self.objects_pickle)
+        objects = pickle.loads(self.objects_pickle)
 
-        for k, v in six.iteritems(self.variables):
+        for k, v in self.variables.items():
             mod, field = k
             setattr(mod, field, objects[v])
 
@@ -542,14 +545,14 @@ def post_import():
     import subprocess
     sys.modules['renpy.subprocess'] = subprocess
 
-    for k, v in six.iteritems(renpy.defaultstore.__dict__):
+    for k, v in renpy.defaultstore.__dict__.items():
         renpy.store.__dict__.setdefault(k, v)
 
     renpy.store.eval = renpy.defaultstore.eval
 
     # Import everything into renpy.exports, provided it isn't
     # already there.
-    for k, v in six.iteritems(globals()):
+    for k, v in globals().items():
         vars(renpy.exports).setdefault(k, v)
 
 
@@ -640,7 +643,7 @@ def setup_modulefinder(modulefinder):
 
     libexec = os.path.dirname(_renpy.__file__)
 
-    for i in [ "display", "gl", "angle", "text", "styledata" ]:
+    for i in [ "compat", "display", "gl", "gl2", "angle", "text", "styledata" ]:
 
         displaypath = os.path.join(libexec, "renpy", i)
 
@@ -825,7 +828,6 @@ if False:
     import renpy.angle.gltexture
 
     import renpy.gl2.gl2draw
-    import renpy.gl2.gl2ftl
     import renpy.gl2.gl2geometry
     import renpy.gl2.gl2shader
     import renpy.gl2.gl2texture
