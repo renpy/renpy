@@ -40,12 +40,15 @@ Right now, it does the following things:
 * Redefines the text types, so that str is always the unicode type, and
   basestring is the list of string types available on the system.
 
+* Exposes bchr, bord, and tobytes from future.utils.
+
 * Changes the meaning of the .items(), .keys(), and .values() methods of
   dict to return views, rather than lists. (This is a fairly major change,
   and so is only available when with_statement and division are both
   imported.
 
 * Aliases xrange to range on Python 2.
+
 """
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
@@ -72,10 +75,14 @@ PY2 = future.utils.PY2
 from future.builtins import open
 
 ################################################################################
-# Text types.
+# String (text and binary) types and functions.
 
 basestring = future.utils.string_types  # @ReservedAssignment
 str = future.utils.text_type  # @ReservedAssignment
+
+bord = future.utils.bord
+bchr = future.utils.bchr
+tobytes = future.utils.tobytes
 
 ################################################################################
 # Dictionary views.
@@ -89,12 +96,13 @@ except ImportError:
     import sys
     print("Could not import renpy.compat.dictviews.", file=sys.stderr)
 
+
 ################################################################################
 # Range.
 
 range = xrange  # @ReservedAssignment
 
-__all__ = [ "PY2", "open", "basestring", "str", "range" ]
+__all__ = [ "PY2", "open", "basestring", "str", "range", "bord", "bchr", "tobytes" ]
 
 if PY2:
     __all__ = [ bytes(i) for i in __all__ ]

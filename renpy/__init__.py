@@ -600,7 +600,7 @@ def reload_all():
     reload_modules = renpy.config.reload_modules
 
     # Delete the store modules.
-    for i in sys.modules.keys():
+    for i in list(sys.modules.keys()):
         if issubmodule(i, "store") or i == "renpy.store":
             m = sys.modules[i]
 
