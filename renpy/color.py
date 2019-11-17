@@ -19,12 +19,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
-from __future__ import print_function, absolute_import
 
 import renpy.display
 import colorsys
-import renpy.six as six
 
 
 class Color(tuple):
@@ -131,7 +131,7 @@ class Color(tuple):
                 if len(c) == 3:
                     return tuple.__new__(cls, c + (int(255 * alpha),))
 
-            if isinstance(c, six.string_types):
+            if isinstance(c, basestring):
                 if c[0] == '#':
                     c = c[1:]
 
@@ -318,7 +318,7 @@ class Color(tuple):
         `other` may be a string, Color or an HSV tuple.
         """
 
-        if isinstance(other, six.string_types):
+        if isinstance(other, basestring):
             other = Color(other, alpha=self.alpha)
         elif not isinstance(other, Color):
             other = Color(hsv=other, alpha=self.alpha)
@@ -339,7 +339,7 @@ class Color(tuple):
         `other` may be a string, Color or an HLS tuple.
         """
 
-        if isinstance(other, six.string_types):
+        if isinstance(other, basestring):
             other = Color(other, alpha=self.alpha)
         elif not isinstance(other, Color):
             other = Color(hls=other, alpha=self.alpha)

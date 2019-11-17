@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy
 import os.path
@@ -30,7 +31,6 @@ import threading
 import zlib
 import re
 import io
-import renpy.six as six
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
 # to look up filenames.
@@ -270,7 +270,7 @@ def scandirfiles():
     files = game_files
 
     for _prefix, index in archives:
-        for j in six.iterkeys(index):
+        for j in index:
             add(None, j)
 
 
@@ -396,13 +396,15 @@ class SubFile(object):
     def __iter__(self):
         return self
 
-    def next(self):  # @ReservedAssignment
+    def __next__(self):  # @ReservedAssignment
         rv = self.readline()
 
         if not rv:
             raise StopIteration()
 
         return rv
+
+    next = __next__
 
     def flush(self):
         return

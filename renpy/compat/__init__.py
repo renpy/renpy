@@ -58,6 +58,8 @@ renpy.update_path()
 
 import future.standard_library
 import future.utils
+import io
+
 
 ################################################################################
 # Alias the Python 3 standard library.
@@ -72,7 +74,8 @@ PY2 = future.utils.PY2
 ################################################################################
 # Make open mimic Python 3.
 
-from future.builtins import open
+if PY2:
+    open = io.open
 
 ################################################################################
 # String (text and binary) types and functions.
@@ -83,6 +86,8 @@ str = future.utils.text_type  # @ReservedAssignment
 bord = future.utils.bord
 bchr = future.utils.bchr
 tobytes = future.utils.tobytes
+
+from future.builtins import chr
 
 ################################################################################
 # Dictionary views.
@@ -102,7 +107,7 @@ except ImportError:
 
 range = xrange  # @ReservedAssignment
 
-__all__ = [ "PY2", "open", "basestring", "str", "range", "bord", "bchr", "tobytes" ]
+__all__ = [ "PY2", "open", "basestring", "str", "range", "bord", "bchr", "tobytes", "chr", ]
 
 if PY2:
     __all__ = [ bytes(i) for i in __all__ ]

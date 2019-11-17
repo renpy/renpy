@@ -24,7 +24,8 @@
 #
 # The current save location is stored in the location variable in loadsave.py.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import os
 import zipfile
@@ -128,7 +129,7 @@ class FileLocation(object):
 
             self.mtimes = new_mtimes
 
-            for slotname, mtime in new_mtimes.iteritems():
+            for slotname, mtime in new_mtimes.items():
                 if old_mtimes.get(slotname, None) != mtime:
                     clear_slot(slotname)
 

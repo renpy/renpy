@@ -22,7 +22,8 @@
 # This file contains functions used to help debug memory leaks. They aren't
 # called by default, but can be used when problems occur.
 
-from __future__ import print_function, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import time
 import weakref
@@ -33,7 +34,6 @@ import gc
 import inspect
 
 import renpy
-import renpy.six as six
 
 memory_log = renpy.log.open("memory")
 
@@ -87,7 +87,7 @@ def cycle_finder(o, name):
         if isinstance(o, (int, float, type(None), types.ModuleType, type)):
             o_repr = repr(o)
 
-        elif isinstance(o, (str, six.text_type)):
+        elif isinstance(o, basestring):
             if len(o) <= 80:
                 o_repr = repr(o).encode("utf-8")
             else:
@@ -115,7 +115,7 @@ def cycle_finder(o, name):
                 visit(ido, oo, "{0}[{1!r}]".format(path, i))
 
         if isinstance(o, dict):
-            for k, v in six.iteritems(o):
+            for k, v in o.items():
                 visit(ido, v, "{0}[{1!r}]".format(path, k))
 
         elif isinstance(o, types.MethodType):
@@ -138,7 +138,7 @@ def cycle_finder(o, name):
 
             state = get(2, { })
             if isinstance(state, dict):
-                for k, v in six.iteritems(state):
+                for k, v in state.items():
                     visit(ido, v, path + "." + k)
             else:
                 visit(ido, state, path + ".__getstate__()")
@@ -374,7 +374,7 @@ def diff_memory(update=True):
 
     diff = [ ]
 
-    for k, v in six.iteritems(usage):
+    for k, v in usage.items():
         diff.append((
             v - old_usage.get(k, 0),
             k))
@@ -426,8 +426,8 @@ def profile_rollback():
     # Walk the log, finding new roots and rollback information.
     for rb in log:
 
-        for store_name, store in six.iteritems(rb.stores):
-            for var_name, o in six.iteritems(store):
+        for store_name, store in rb.stores.items():
+            for var_name, o in store.items():
                 name = store_name + "." + var_name
                 id_o = id(o)
 
@@ -451,7 +451,7 @@ def profile_rollback():
 
     sizes = walk_memory(roots, seen)[0]
 
-    usage = [ (v, k) for (k, v) in six.iteritems(sizes) ]
+    usage = [ (v, k) for (k, v) in sizes.items() ]
     usage.sort()
 
     write("Total Bytes".rjust(13) + " " + "Per Rollback".rjust(13))

@@ -22,7 +22,8 @@
 # This module contains the parser for the Ren'Py script language. It's
 # called when parsing is necessary, and creates an AST from the script.
 
-from __future__ import print_function, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import codecs
 import re
@@ -35,8 +36,6 @@ import renpy.test
 
 import renpy.ast as ast
 import renpy.sl2
-import renpy.six as six
-from renpy.six import unichr
 
 # A list of parse error messages.
 parse_errors = [ ]
@@ -113,7 +112,7 @@ def unicode_filename(fn):
     Converts the supplied filename to unicode.
     """
 
-    if isinstance(fn, six.text_type):
+    if isinstance(fn, str):
         return fn
 
     # Windows.
@@ -818,7 +817,7 @@ class Lexer(object):
                 group2 = m.group(2)
 
                 if group2:
-                    return unichr(int(m.group(2), 16))
+                    return chr(int(m.group(2), 16))
             else:
                 return c
 
@@ -873,7 +872,7 @@ class Lexer(object):
                 group2 = m.group(2)
 
                 if group2:
-                    return unichr(int(m.group(2), 16))
+                    return chr(int(m.group(2), 16))
             else:
                 return c
 
@@ -1297,7 +1296,7 @@ class Lexer(object):
         object, which is called directly.
         """
 
-        if isinstance(thing, six.string_types):
+        if isinstance(thing, basestring):
             name = name or thing
             rv = self.match(thing)
         else:
@@ -1453,7 +1452,7 @@ def parse_image_name(l, string=False, nodash=False):
         s = l.simple_expression()
 
         if s is not None:
-            rv.append(six.text_type(s))
+            rv.append(str(s))
         else:
             points.pop()
 
@@ -2915,7 +2914,7 @@ def report_parse_errors():
 
     print("I'm sorry, but errors were detected in your script. Please correct the", file=f)
     print("errors listed below, and try again.", file=f)
-    print(file=f)
+    print("", file=f)
 
     for i in parse_errors:
 
@@ -2927,18 +2926,18 @@ def report_parse_errors():
         except:
             pass
 
-        print(file=f)
+        print("", file=f)
         print(i, file=f)
 
         try:
-            print()
+            print("")
             print(i)
         except:
             pass
 
-    print(file=f)
+    print("", file=f)
     print("Ren'Py Version:", renpy.version, file=f)
-    print(time.ctime(), file=f)
+    print(str(time.ctime()), file=f)
 
     f.close()
 

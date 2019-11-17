@@ -26,7 +26,8 @@
 
 # All functions in the is file should be documented in the wiki.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import sys
 import renpy.display
@@ -438,7 +439,10 @@ screen = None
 class Wrapper(renpy.object.Object):
 
     def __reduce__(self):
-        return self.name
+        if PY2:
+            return bytes(self.name)
+        else:
+            return self.name
 
     def __init__(self, function, one=False, many=False, imagemap=False, replaces=False, style=None, **kwargs):
 

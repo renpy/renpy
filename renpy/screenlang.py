@@ -19,7 +19,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 
 import renpy.display
 import contextlib
@@ -229,7 +231,7 @@ class Parser(object):
         and expr instances, and adjusts the line number.
         """
 
-        if isinstance(expr, unicode):
+        if isinstance(expr, str):
             expr = renpy.python.escape_unicode(expr)
 
         try:
@@ -252,7 +254,7 @@ class Parser(object):
         adjusts the line number. Returns a list of statements.
         """
 
-        if isinstance(code, unicode):
+        if isinstance(code, str):
             code = renpy.python.escape_unicode(code)
 
         try:

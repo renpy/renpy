@@ -23,10 +23,10 @@
 # It's purpose is to store in one global all of the data that would
 # be to annoying to lug around otherwise.
 
-from __future__ import print_function, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
-import renpy.six as six
 
 # The basepath.
 basepath = None
@@ -373,10 +373,10 @@ def call_replay(label, scope={}):
     # This has to be here, to ensure the scope stuff works.
     renpy.exports.execute_default_statement()
 
-    for k, v in six.iteritems(renpy.config.replay_scope):
+    for k, v in renpy.config.replay_scope.items():
         setattr(renpy.store, k, v)
 
-    for k, v in six.iteritems(scope):
+    for k, v in scope.items():
         setattr(renpy.store, k, v)
 
     renpy.store._in_replay = label

@@ -23,7 +23,8 @@
 # the Ren'Py source code, given the filename and line number of the
 # location.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy
 

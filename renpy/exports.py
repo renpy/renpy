@@ -24,7 +24,9 @@
 # their behavior, while functions imported in are probably best left
 # alone as part of the api.
 
-from __future__ import print_function
+
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 # Remember the real file.
 _file = file
@@ -1256,7 +1258,7 @@ class TagQuotingDict(object):
         if key in store:
             rv = store[key]
 
-            if isinstance(rv, (str, unicode)):
+            if isinstance(rv, basestring):
                 rv = rv.replace("{", "{{")
 
             return rv
@@ -1279,7 +1281,7 @@ def predict_say(who, what):
     if who is None:
         who = renpy.store.narrator  # E1101 @UndefinedVariable
 
-    if isinstance(who, (str, unicode)):
+    if isinstance(who, basestring):
         return renpy.store.predict_say(who, what)
 
     predict = getattr(who, 'predict', None)
@@ -1339,7 +1341,7 @@ def say(who, what, *args, **kwargs):
     if renpy.config.say_arguments_callback:
         args, kwargs = renpy.config.say_arguments_callback(who, *args, **kwargs)
 
-    if isinstance(who, (str, unicode)):
+    if isinstance(who, basestring):
         renpy.store.say(who, what, *args, **kwargs)
     else:
         who(what, *args, **kwargs)
@@ -1698,7 +1700,7 @@ def get_all_labels():
     """
     rv = [ ]
 
-    for i in renpy.game.script.namemap.iterkeys():
+    for i in renpy.game.script.namemap.keys():
         if isinstance(i, basestring):
             rv.append(i)
 
@@ -2542,7 +2544,7 @@ def load_string(s, filename="<string>"):
         old_locked = renpy.config.locked
         renpy.config.locked = False
 
-        stmts, initcode = renpy.game.script.load_string(filename, unicode(s))
+        stmts, initcode = renpy.game.script.load_string(filename, str(s))
 
         if stmts is None:
             return None
@@ -3201,7 +3203,10 @@ def fsencode(s):
     Converts s from unicode to the filesystem encoding.
     """
 
-    if not isinstance(s, unicode):
+    if not PY2:
+        return s
+
+    if not isinstance(s, str):
         return s
 
     fsencoding = sys.getfilesystemencoding() or "utf-8"
@@ -3216,6 +3221,9 @@ def fsdecode(s):
 
     Converts s from filesystem encoding to unicode.
     """
+
+    if not PY2:
+        return s
 
     if not isinstance(s, str):
         return s
@@ -3817,7 +3825,7 @@ def add_to_all_stores(name, value):
     if not is_init_phase():
         raise Exception("add_to_all_stores is only allowed in init code.")
 
-    for _k, ns in renpy.python.store_dicts.iteritems():
+    for _k, ns in renpy.python.store_dicts.items():
 
         if name not in ns:
             ns[name] = value

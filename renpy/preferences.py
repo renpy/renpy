@@ -19,14 +19,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE
 
-from __future__ import unicode_literals, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import copy
 import renpy.audio
 
-import renpy.six as six
-
-unicode = six.text_type  # @ReservedAssignment
 
 pad_bindings = {
     "pad_leftshoulder_press" : [ "rollback", ],
@@ -127,10 +125,10 @@ Preference("renderer", "auto")
 Preference("performance_test", True)
 
 # The language we use for translations.
-Preference("language", None, (unicode, type(None)) )
+Preference("language", None, (str, type(None)) )
 
 # Should we self-voice?
-Preference("self_voicing", False, (bool, unicode, type(None)))
+Preference("self_voicing", False, (bool, str, type(None)))
 
 # Should we emphasize audio?
 Preference("emphasize_audio", False)
@@ -155,7 +153,7 @@ Preference("gl_framerate", None, (int, type(None)))
 Preference("gl_tearing", False)
 
 # The font transformation used.
-Preference("font_transform", None, (type(None), unicode))
+Preference("font_transform", None, (type(None), str))
 
 # An adjustment applied to font size.
 Preference("font_size", 1.0)

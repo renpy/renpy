@@ -22,7 +22,9 @@
 # This file contains code that is responsible for storing and executing a
 # Ren'Py script.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import renpy
 
 import hashlib
@@ -34,7 +36,7 @@ import marshal
 import struct
 import zlib
 
-from cPickle import loads, dumps
+from pickle import loads, dumps
 import shutil
 
 # The version of the dumped script.

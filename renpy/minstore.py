@@ -19,11 +19,10 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
-# Make six available to Ren'Py games.
-import renpy.six as six  # @UnusedImport
-unicode = six.text_type  # @ReservedAssignment
+unicode = str  # @ReservedAssignment
 
 python_list = _list = list
 python_dict = _dict = dict
@@ -140,3 +139,45 @@ def _p(s):
 
     rv += " ".join(para)
     return rv
+
+
+__all__ = [
+    'PY2',
+    'Set',
+    '_',
+    '__',
+    '__renpy__dict__',
+    '__renpy__list__',
+    '__renpy__set__',
+    '_dict',
+    '_list',
+    '_object',
+    '_p',
+    '_print',
+    '_set',
+    '_type',
+    'absolute',
+    'basestring',
+    'bchr',
+    'bord',
+    'dict',
+    'eval',
+    'list',
+    'object',
+    'open',
+    'print',
+    'python_dict',
+    'python_list',
+    'python_object',
+    'python_set',
+    'range',
+    'set',
+    'sorted',
+    'str',
+    'tobytes',
+    'ui',
+    'unicode',
+    ]
+
+if PY2:
+    __all__ = [ bytes(i) for i in __all__ ]
