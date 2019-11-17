@@ -337,7 +337,7 @@ def merge(other):
 
 
 # The mtime of the most recently processed savefile.
-persistent_mtime = None
+persistent_mtime = 0
 
 
 def check_update():
@@ -370,7 +370,7 @@ def update(force_save=False):
     # A list of (mtime, other) pairs, where other is a persistent file
     # we might want to merge in.
     pairs = renpy.loadsave.location.load_persistent()
-    pairs.sort()
+    pairs.sort(key=lambda a : a[0])
 
     # Deals with the case where we don't have any persistent data for
     # some reason.

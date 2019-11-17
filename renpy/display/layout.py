@@ -1687,7 +1687,7 @@ class Side(Container):
                 pos, x, y, w, h = elem
 
                 if pos not in pos_d:
-                    return
+                    return len(self.positions)
 
                 return self.positions.index(pos)
 

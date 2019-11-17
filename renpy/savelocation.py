@@ -402,9 +402,10 @@ class MultiLocation(object):
 
             slot_mtime = l.mtime(slotname)
 
-            if slot_mtime > mtime:
-                mtime = slot_mtime
-                location = l
+            if slot_mtime is not None:
+                if slot_mtime > mtime:
+                    mtime = slot_mtime
+                    location = l
 
         return location
 

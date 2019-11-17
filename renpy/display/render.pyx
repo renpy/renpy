@@ -331,7 +331,7 @@ def check_redraws():
     Returns true if a redraw is required, and False otherwise.
     """
 
-    redraw_queue.sort()
+    redraw_queue.sort(key=lambda a : a[0])
 
     now = renpy.display.core.get_time()
 
@@ -354,7 +354,7 @@ def process_redraws():
 
     global redraw_queue
 
-    redraw_queue.sort()
+    redraw_queue.sort(key=lambda a : a[0])
 
     now = renpy.display.core.get_time()
     rv = False
