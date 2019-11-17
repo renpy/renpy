@@ -123,8 +123,8 @@ class ImageMapCache(renpy.object.Object):
         if rv is not None:
             return rv
 
-        self.md5.update(repr(d.identity))
-        self.md5.update(repr(rect))
+        self.md5.update(repr(d.identity).encode("utf-8"))
+        self.md5.update(repr(rect).encode("utf-8"))
 
         index = len(self.imagerect)
         rv = ImageCacheCrop(self, index)

@@ -137,7 +137,7 @@ class Script(object):
 
         self.serial = 0
 
-        self.digest = hashlib.md5(renpy.version_only)
+        self.digest = hashlib.md5(renpy.version_only.encode("utf-8"))
 
         self.loaded_rpy = False
         self.backup_list = [ ]
@@ -707,7 +707,7 @@ class Script(object):
 
             if os.path.exists(rpyfn):
                 with open(rpyfn, "rU") as f:
-                    rpydigest = hashlib.md5(f.read()).digest()
+                    rpydigest = hashlib.md5(f.read().encode("utf-8")).digest()
             else:
                 rpydigest = None
 
