@@ -440,20 +440,27 @@ def reached_vars(store, reachable, wait):
 
 # Code that replaces literals will calls to magic constructors.
 
+def b(s):
+    if PY2:
+        return s.encode("utf-8")
+    else:
+        return s
+
+
 class WrapNode(ast.NodeTransformer):
 
     def visit_ClassDef(self, n):
         n = self.generic_visit(n)
 
         if not n.bases:
-            n.bases.append(ast.Name(id="object", ctx=ast.Load()))
+            n.bases.append(ast.Name(id=b("object"), ctx=ast.Load()))
 
         return n
 
     def visit_SetComp(self, n):
         return ast.Call(
             func=ast.Name(
-                id="__renpy__set__",
+                id=b("__renpy__set__"),
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -465,7 +472,7 @@ class WrapNode(ast.NodeTransformer):
 
         return ast.Call(
             func=ast.Name(
-                id="__renpy__set__",
+                id=b("__renpy__set__"),
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -476,7 +483,7 @@ class WrapNode(ast.NodeTransformer):
     def visit_ListComp(self, n):
         return ast.Call(
             func=ast.Name(
-                id="__renpy__list__",
+                id=b("__renpy__list__"),
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -490,7 +497,7 @@ class WrapNode(ast.NodeTransformer):
 
         return ast.Call(
             func=ast.Name(
-                id="__renpy__list__",
+                id=b("__renpy__list__"),
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -501,7 +508,7 @@ class WrapNode(ast.NodeTransformer):
     def visit_DictComp(self, n):
         return ast.Call(
             func=ast.Name(
-                id="__renpy__dict__",
+                id=b("__renpy__dict__"),
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -513,7 +520,7 @@ class WrapNode(ast.NodeTransformer):
 
         return ast.Call(
             func=ast.Name(
-                id="__renpy__dict__",
+                id=b("__renpy__dict__"),
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -544,7 +551,7 @@ _execute_python_hide()
     tree.body = hide.body
 
 
-unicode_re = re.compile(ur'[\u0080-\uffff]')
+unicode_re = re.compile(r'[\u0080-\uffff]')
 
 
 def unicode_sub(m):
@@ -1117,7 +1124,10 @@ class RollbackRandom(random.Random):
         super(RollbackRandom, self).setstate(compressed)
 
     setstate = mutator(random.Random.setstate)
-    jumpahead = mutator(random.Random.jumpahead)
+
+    if PY2:
+        jumpahead = mutator(random.Random.jumpahead)
+
     getrandbits = mutator(random.Random.getrandbits)
     seed = mutator(random.Random.seed)
     random = mutator(random.Random.random)
@@ -1694,9 +1704,9 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                            and data == fwd_data
-                            and (keep_rollback or self.rolled_forward)
-                        ):
+                    and data == fwd_data
+                    and (keep_rollback or self.rolled_forward)
+                    ):
                     self.forward.pop(0)
                 else:
                     del self.forward[:]
