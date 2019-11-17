@@ -473,7 +473,7 @@ class Model(object):
         Loads the textures associated with this model.
         """
 
-        for i in self.uniforms.itervalues():
+        for i in (<dict> self.uniforms).itervalues():
             if isinstance(i, GLTexture):
                 i.load_gltexture()
 

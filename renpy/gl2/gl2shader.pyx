@@ -290,7 +290,7 @@ cdef class Program:
             glDrawArrays(GL_TRIANGLE_FAN, i, p.points)
             i += p.points
 
-    def finish(self):
+    def finish(Program self):
         cdef Attribute a
         cdef Uniform u
 

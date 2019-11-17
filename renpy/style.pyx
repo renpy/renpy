@@ -815,7 +815,7 @@ def backup():
 
     rv = { }
 
-    for k, v in styles.iteritems():
+    for k, v in styles.items():
         rv[k] = (v.parent, copy_properties(v.properties))
 
     return rv
@@ -834,7 +834,7 @@ def restore(o):
             del styles[i]
 
 
-    for k, v in o.iteritems():
+    for k, v in o.items():
 
         s = get_or_create_style(k[0])
 
