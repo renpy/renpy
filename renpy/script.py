@@ -196,9 +196,15 @@ class Script(object):
             short_fn = renpy.exports.fsencode(fn[len(renpy.config.gamedir)+1:])
 
             base, ext = os.path.splitext(short_fn)
+
+            if PY2:
+                hex_checksum = checksum[:8].encode("hex")
+            else:
+                hex_checksum = checksum[:8].hex()
+
             target_fn = os.path.join(
                 backupdir,
-                base + "." + checksum[:8].encode("hex") + ext,
+                base + "." + hex_checksum + ext,
                 )
 
             if os.path.exists(target_fn):
