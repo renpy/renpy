@@ -1839,7 +1839,7 @@ class Interface(object):
 
         # Needed for Unity.
         wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
-        os.environ[b'SDL_VIDEO_X11_WMCLASS'] = wmclass.encode("utf-8")
+        os.environ['SDL_VIDEO_X11_WMCLASS'] = wmclass
 
         self.set_window_caption(force=True)
         self.set_icon()

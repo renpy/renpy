@@ -168,8 +168,8 @@ def bootstrap(renpy_base):
     import renpy.log  # @UnusedImport
 
     # Remove a legacy environment setting.
-    if os.environ.get(b"SDL_VIDEODRIVER", "") == "windib":
-        del os.environ[b"SDL_VIDEODRIVER"]
+    if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
+        del os.environ["SDL_VIDEODRIVER"]
 
     renpy_base = str(renpy_base, FSENCODING, "replace")
 
