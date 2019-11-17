@@ -28,7 +28,7 @@ init -1500 python in updater:
     import threading
     import traceback
     import os
-    import urlparse
+    import urllib.parse as urlparse
     import json
     import subprocess
     import hashlib
@@ -37,7 +37,8 @@ init -1500 python in updater:
     import struct
     import zlib
     import codecs
-    import StringIO
+    import io
+    import future.utils
 
     try:
         import rsa
@@ -94,7 +95,7 @@ init -1500 python in updater:
         try:
             log = file(DEFERRED_UPDATE_LOG, "ab")
         except:
-            log = StringIO.StringIO()
+            log = io.StringIO()
 
         with open(DEFERRED_UPDATE_FILE, "rb") as f:
             for l in f:
@@ -722,7 +723,7 @@ init -1500 python in updater:
                     raise UpdateError(_("Could not verify update signature."))
 
                 if "monkeypatch" in self.updates:
-                    exec self.updates["monkeypatch"] in globals(), globals()
+                    future.utils.exec_(self.updates["monkeypatch"], globals(), globals())
 
         def add_dlc_state(self, name):
             import urllib

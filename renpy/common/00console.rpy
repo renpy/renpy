@@ -126,7 +126,7 @@ init -1500 python in _console:
     import traceback
     import store
 
-    import repr as reprlib
+    import reprlib
     aRepr = reprlib.Repr()
     aRepr.maxtuple = 20
     aRepr.maxlist = 20
