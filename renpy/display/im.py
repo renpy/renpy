@@ -32,97 +32,7 @@ import cStringIO
 import threading
 import time
 import io
-
-if renpy.emscripten:
-    import emscripten, json
-
-    # Space-efficient, copy-less download share
-    # Note: could be reimplement with pyodide's jsproxy, but let's keep things small
-    emscripten.run_script(r"""RenPyWeb = {
-    xhr_id: 0,
-    xhrs: {},
-
-    dl_new: function(path) {
-	var xhr = new XMLHttpRequest();
-	xhr.responseType = 'arraybuffer';
-	xhr.onload = function() {
-	    // Create file reusing XHR's buffer (no-copy)
-	    try { FS.unlink(path); } catch {}
-	    FS.writeFile(path, new Uint8Array(xhr.response), {canOwn:true});
-	}
-	xhr.open('GET', path);
-	xhr.send();
-	RenPyWeb.xhrs[RenPyWeb.xhr_id] = xhr;
-	var ret = RenPyWeb.xhr_id;
-	RenPyWeb.xhr_id++;
-	return ret;
-    },
-
-    dl_get: function(xhr_id) {
-	return RenPyWeb.xhrs[xhr_id];
-    },
-
-    dl_free: function(xhr_id) {
-	delete RenPyWeb.xhrs[xhr_id];
-        // Note: xhr.response kept alive until file is deleted
-    },
-}
-""")
-
-    class XMLHttpRequest(object):
-        def __init__(self, filename):
-            url = 'game/' + filename
-            self.id = emscripten.run_script_int(
-                r'''RenPyWeb.dl_new({})'''.format(json.dumps(url)))
-    
-        def __del__(self):
-            emscripten.run_script(r'''RenPyWeb.dl_free({})'''.format(self.id))
-    
-        @property
-        def readyState(self):
-            return emscripten.run_script_int(r'''RenPyWeb.dl_get({}).readyState'''.format(self.id))
-    
-        @property
-        def status(self):
-            return emscripten.run_script_int(r'''RenPyWeb.dl_get({}).status'''.format(self.id))
-else:
-    # simulate
-    import urllib2, urllib, httplib, os
-    class XMLHttpRequest(object):
-        def __init__(self, filename):
-            self.done = False
-            self.error = None
-            url = 'http://127.0.0.1:8042/game/' + urllib.quote(filename)
-            req = urllib2.Request(url)
-            def thread_main():
-                try:
-                    r = urllib2.urlopen(req)
-                    print("urlopen:", url, os.path.join(renpy.config.gamedir, filename))
-                    with open(os.path.join(renpy.config.gamedir, filename), 'wb') as f:
-                        f.write(r.read())
-                except urllib2.URLError, e:
-                    self.error = str(e.reason)
-                except httplib.HTTPException, e:
-                    self.error = 'HTTPException'
-                except Exception, e:
-                    self.error = 'Error: ' + str(e)
-                print(filename, self.error)
-                self.done = True
-            threading.Thread(target=thread_main, name="XMLHttpRequest").start()
-    
-        @property
-        def readyState(self):
-            if self.done:
-                return 4
-            else:
-                return 0
-    
-        @property
-        def status(self):
-            if self.done:
-                return 'OK'
-            else:
-                return self.error
+import os
 
 
 # This is an entry in the image cache.
@@ -186,7 +96,7 @@ class Cache(object):
         # A lock that must be held when updating the cache.
         self.lock = threading.Condition()
 
-        # A lock that mist be held to notify the preload thread.
+        # A lock that must be held to notify the preload thread.
         self.preload_lock = threading.Condition()
 
         # Is the preload_thread alive?
@@ -537,7 +447,6 @@ class Cache(object):
 
     def preload_thread_pass(self):
 
-        postponed = []
         while self.preloads and self.keep_preloading:
 
             # If the size of the current generation is bigger than the
@@ -556,26 +465,7 @@ class Cache(object):
                     break
 
             try:
-                image = self.preloads.pop()
-
-                # asynchronous download
-                # TODO: create RemoteImageAsync(Image) subclass to avoid growing Image
-                # TODO: unlink more selectively?
-                import os
-                if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
-                    if isinstance(image, Image):
-                        filename = os.path.join(renpy.config.gamedir, image.filename)
-                        if os.path.exists(filename):
-                            # already there or already downloaded, try and load it
-                            pass
-                        elif image.download_completed():
-                            # d/l in progress, come back later
-                            postponed.append(image)
-                            continue
-                        else:
-                            # initiate d/l, come back later
-                            image.download_start()
-                            continue
+                image = self.preloads.pop(0)
 
                 if image not in self.preload_blacklist:
                     try:
@@ -583,10 +473,7 @@ class Cache(object):
                     except:
                         self.preload_blacklist.add(image)
             except:
-                #pass
-                raise
-
-        self.preloads += postponed
+                pass
 
         with self.lock:
             self.cleanout()
@@ -720,7 +607,6 @@ class Image(ImageBase):
 
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
-        self.xhr = None
 
     def __unicode__(self):
         if len(self.filename) < 20:
@@ -731,27 +617,23 @@ class Image(ImageBase):
     def get_hash(self):
         return renpy.loader.get_hash(self.filename)
 
-    def download_start(self):
-        print("download_start:", self.filename)
-        image.xhr = XMLHttpRequest(self.filename)
-
-    def download_completed(self):
-        return self.xhr and self.xhr.readyState == 4
-
     def load(self, unscaled=False):
 
         cache.add_load_log(self.filename)
 
         try:
 
+            filelike = renpy.loader.load(self.filename)
+            filename = self.filename
+            if isinstance(filelike, renpy.loader.ReloadRequest):
+                filelike.image = self
+                filelike = open(os.path.join(renpy.config.commondir,'dl.png'), 'rb')
+                filename = 'dl.png'
+
             if unscaled:
-                surf = renpy.display.pgrender.load_image_unscaled(renpy.loader.load(self.filename), self.filename)
+                surf = renpy.display.pgrender.load_image_unscaled(filelike, filename)
             else:
-                surf = renpy.display.pgrender.load_image(renpy.loader.load(self.filename), self.filename)
-            import os
-            if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
-                print("unlink", renpy.loader.load(self.filename).name)
-                os.unlink(renpy.loader.load(self.filename).name)
+                surf = renpy.display.pgrender.load_image(filelike, filename)
             return surf
 
         except Exception as e:

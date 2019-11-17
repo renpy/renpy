@@ -35,6 +35,144 @@ import re
 u"".encode("utf-8")
 
 
+if renpy.emscripten:
+    import emscripten, json
+
+    # Space-efficient, copy-less download share
+    # Note: could be reimplement with pyodide's jsproxy, but let's keep things small
+    emscripten.run_script(r"""RenPyWeb = {
+    xhr_id: 0,
+    xhrs: {},
+
+    dl_new: function(path) {
+	var xhr = new XMLHttpRequest();
+	xhr.responseType = 'arraybuffer';
+	xhr.onload = function() {
+	    // Create file reusing XHR's buffer (no-copy)
+	    try { FS.unlink(path); } catch {}
+	    FS.writeFile(path, new Uint8Array(xhr.response), {canOwn:true});
+	}
+	xhr.open('GET', path);
+	xhr.send();
+	RenPyWeb.xhrs[RenPyWeb.xhr_id] = xhr;
+	var ret = RenPyWeb.xhr_id;
+	RenPyWeb.xhr_id++;
+	return ret;
+    },
+
+    dl_get: function(xhr_id) {
+	return RenPyWeb.xhrs[xhr_id];
+    },
+
+    dl_free: function(xhr_id) {
+	delete RenPyWeb.xhrs[xhr_id];
+        // Note: xhr.response kept alive until file is deleted
+    },
+}
+""")
+
+    class XMLHttpRequest(object):
+        def __init__(self, filename):
+            url = 'game/' + filename
+            self.id = emscripten.run_script_int(
+                r'''RenPyWeb.dl_new({})'''.format(json.dumps(url)))
+    
+        def __del__(self):
+            emscripten.run_script(r'''RenPyWeb.dl_free({})'''.format(self.id))
+    
+        @property
+        def readyState(self):
+            return emscripten.run_script_int(r'''RenPyWeb.dl_get({}).readyState'''.format(self.id))
+    
+        @property
+        def status(self):
+            return emscripten.run_script_int(r'''RenPyWeb.dl_get({}).status'''.format(self.id))
+
+        @property
+        def statusText(self):
+            return emscripten.run_script_string(r'''RenPyWeb.dl_get({}).statusText'''.format(self.id))
+elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+    # simulate
+    import urllib2, urllib, httplib, os
+    class XMLHttpRequest(object):
+        def __init__(self, filename):
+            self.done = False
+            self.error = None
+            url = 'http://127.0.0.1:8042/game/' + urllib.quote(filename)
+            req = urllib2.Request(url)
+            def thread_main():
+                try:
+                    r = urllib2.urlopen(req)
+                    print("urlopen:", url, os.path.join(renpy.config.gamedir, filename))
+                    with open(os.path.join(renpy.config.gamedir, filename), 'wb') as f:
+                        f.write(r.read())
+                except urllib2.URLError, e:
+                    self.error = str(e.reason)
+                except httplib.HTTPException, e:
+                    self.error = 'HTTPException'
+                except Exception, e:
+                    self.error = 'Error: ' + str(e)
+                self.done = True
+            threading.Thread(target=thread_main, name="XMLHttpRequest").start()
+    
+        @property
+        def readyState(self):
+            if self.done:
+                return 4
+            else:
+                return 0
+    
+        @property
+        def status(self):
+            if self.error:
+                return 0
+            return 200
+
+        @property
+        def statusText(self):
+            return self.error or 'OK'
+
+class ReloadRequest:
+    all = [ ]
+    def __init__(self, filename):
+        ReloadRequest.all.append(self)
+        self.filename = filename
+        #print("download_start:", self.filename)
+        self.xhr = XMLHttpRequest(self.filename)
+        # self.image set by image.load(), context not available right now
+
+    def download_completed(self):
+        return self.xhr is not None and self.xhr.readyState == 4
+
+    @staticmethod
+    def load_downloaded_resources():
+        postponed = []
+        reloaded = False
+
+        for rr in ReloadRequest.all:
+            # TODO: support images and sounds
+            if hasattr(rr, 'image'):
+                if rr.download_completed():
+                    if rr.xhr.status == 0:
+                        raise IOError("Download error: " + rr.xhr.statusText)
+                    #print("reloading", rr.image.filename)
+                    ce = renpy.display.im.cache.cache.get(rr.image)
+                    renpy.display.im.cache.kill(ce)
+                    renpy.display.im.cache.get(rr.image, render=True)
+                    fullpath = os.path.join(renpy.config.gamedir,rr.image.filename)
+                    #print("unlink", fullpath)
+                    os.unlink(fullpath)
+                    reloaded = True
+                else:
+                    postponed.append(rr)
+        ReloadRequest.all = postponed
+
+        if reloaded:
+            #renpy.exports.force_full_redraw()  # no effect on already show-n images
+            #renpy.game.interface.set_mode()  # heavy, don't respect aspect ratio
+            renpy.display.render.free_memory()  # OK?
+
+
 # Physical Paths
 
 def get_path(fn):
@@ -204,6 +342,9 @@ common_files = [ ]
 # A map from filename to if the file is loadable.
 loadable_cache = { }
 
+# A map from filename to if the file is downloadable.
+remote_files = { }
+
 
 def cleardirfiles():
     """
@@ -255,13 +396,12 @@ def scandirfiles():
             add(None, f)
 
     # HTML5 remote files
-    # find images/ -type f -print0 | sort -z > renpyweb_files.find0
-    # '\0'.join(sorted(os.path.join(root[2:],filename) for root, dirs, files in os.walk('.') for filename in files))
-    index_filename = os.path.join(renpy.config.gamedir,'renpyweb_files.find0')
+    index_filename = os.path.join(renpy.config.gamedir,'renpyweb_remote_files.find0')
     if os.path.exists(index_filename):
         files = game_files
         for f in open(index_filename, 'rb').read().split('\0'):
             add('/game', f)
+            remote_files[f.lower()] = True
 
     for i in renpy.config.searchpath:
 
@@ -524,6 +664,10 @@ def load_core(name):
             f.close()
 
         return rv
+
+    if remote_files.has_key(name):
+        #print("load_core: fallback for", name)
+        return ReloadRequest(name)
 
     return None
 

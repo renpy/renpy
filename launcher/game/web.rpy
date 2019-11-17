@@ -93,17 +93,20 @@ init python:
         import zipfile
         zin  = zipfile.ZipFile(os.path.join(destination, 'game-old.zip'))
         zout = zipfile.ZipFile(os.path.join(destination, 'game.zip'), 'w')
+        remote_files = []
         for m in zin.infolist():
             base, ext = os.path.splitext(m.filename)
             if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp')
                 and m.file_size > MIN_REMOTE_SIZE
-                and m.filename.startswith('game/images')):
+                and m.filename.startswith('game/')):
                 zin.extract(m, path=destination)
+                remote_files.append(m.filename[len('game/'):])
                 print("extract:", m.filename)
             else:
                 zout.writestr(m, zin.read(m))
                 print("keep:", m.filename)
         zin.close()
+        zout.writestr('game/renpyweb_remote_files.find0', '\0'.join(sorted(remote_files)))
         zout.close()
         os.unlink(os.path.join(destination, 'game-old.zip'))
 
