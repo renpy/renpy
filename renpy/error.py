@@ -214,7 +214,7 @@ def report_exception(e, editor=True):
 
         f, traceback_fn = open_error_file("traceback.txt", "w")
 
-        f.write(codecs.BOM)
+        f.write("\ufeff")  # BOM
 
         print("I'm sorry, but an uncaught exception occurred.", file=f)
         print('', file=f)

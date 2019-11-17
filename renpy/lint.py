@@ -714,7 +714,7 @@ def lint():
 
     renpy.game.lint = True
 
-    print(codecs.BOM + renpy.version + " lint report, generated at: " + time.ctime())
+    print("\ufeff" + renpy.version + " lint report, generated at: " + time.ctime())
 
     # This supports check_hide.
     global image_prefixes

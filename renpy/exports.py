@@ -2111,10 +2111,10 @@ def log(msg):
 
         if not logfile:
             import codecs
-            logfile = _file(renpy.config.log, "a")
+            logfile = open(renpy.config.log, "a")
 
             if not logfile.tell():
-                logfile.write(codecs.BOM_UTF8)
+                logfile.write("\ufeff")
 
         import textwrap
 
