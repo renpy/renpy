@@ -26,12 +26,13 @@
 # When adding fields to a class in an __init__ method, we need to ensure that
 # field is copied in the copy() method.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import ast
 import collections
 import linecache
-from cPickle import loads, dumps
+from pickle import loads, dumps
 import zlib
 import weakref
 
