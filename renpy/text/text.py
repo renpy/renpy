@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import math
 import renpy.display
@@ -1605,10 +1606,8 @@ class Text(renpy.display.core.Displayable):
                     i, did_sub = renpy.substitutions.substitute(i, scope, substitute)
                     uses_scope = uses_scope or did_sub
 
-                if isinstance(i, str):
-                    i = unicode(i, "utf-8", "replace")
-                else:
-                    i = unicode(i)
+                if isinstance(i, bytes):
+                    i = str(i, "utf-8", "replace")
 
             new_text.append(i)
 
@@ -2160,11 +2159,11 @@ class Text(renpy.display.core.Displayable):
 
         for i in text:
 
-            if isinstance(i, unicode):
+            if isinstance(i, str):
                 tokens.extend(textsupport.tokenize(i))
 
-            elif isinstance(i, str):
-                tokens.extend(textsupport.tokenize(unicode(i)))
+            elif isinstance(i, basestring):
+                tokens.extend(textsupport.tokenize(str(i)))
 
             elif isinstance(i, renpy.display.core.Displayable):
                 tokens.append((DISPLAYABLE, i))
@@ -2187,7 +2186,7 @@ class Text(renpy.display.core.Displayable):
             kind, text = t
 
             if kind == TEXT and renpy.config.replace_text:
-                rv.append((TEXT, unicode(renpy.config.replace_text(text))))
+                rv.append((TEXT, str(renpy.config.replace_text(text))))
 
             elif kind != TAG:
                 rv.append(t)
@@ -2250,8 +2249,8 @@ class Text(renpy.display.core.Displayable):
                 new_tokens = [ ]
 
                 for kind2, text2 in new_contents:
-                    if isinstance(text2, str):
-                        text2 = unicode(text2)
+                    if isinstance(text2, bytes):
+                        text2 = str(text2)
 
                     new_tokens.append((kind2, text2))
 
