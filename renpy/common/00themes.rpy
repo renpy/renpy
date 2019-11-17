@@ -25,7 +25,7 @@ init -1400 python:
 
         # Using theme as a decorator is what we do to create a new theme.
         def __call__(self, func):
-            setattr(self, func.func_name, func)
+            setattr(self, func.__name__, func)
             return func
 
     _theme = theme = _Theme()

@@ -35,7 +35,7 @@ init -1400 python:
 
     class Layout():
         def __call__(self, func):
-            setattr(self, func.func_name, func)
+            setattr(self, func.__name__, func)
             return func
 
     layout = _layout =  Layout()
