@@ -21,10 +21,8 @@
 
 # The public API for sound playback from games.
 
-# TODO: Check to see if SFX are enabled before playing sounds with play or
-# queue.
-
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.audio
 
@@ -53,6 +51,7 @@ def queue(filename, channel="sound", clear_queue=True, fadein=0, tight=False, lo
 def stop(channel="sound", fadeout=0):
     renpy.audio.music.stop(channel=channel,
                            fadeout=fadeout)
+
 
 set_mixer = renpy.audio.music.set_mixer
 set_queue_empty_callback = renpy.audio.music.set_queue_empty_callback
