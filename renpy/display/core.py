@@ -1156,7 +1156,7 @@ class SceneLists(renpy.object.Object):
         be displayed, or everything will be removed.
         """
 
-        for i in reversed(xrange(len(self.layers[layer]))):
+        for i in range(len(self.layers[layer]) - 1, 0, -1):
 
             sle = self.layers[layer][i]
 
@@ -1211,7 +1211,7 @@ class SceneLists(renpy.object.Object):
 
             # Have to iterate in reverse order, since otherwise
             # the indexes might change.
-            for i in reversed(xrange(len(self.layers[layer]))):
+            for i in range(len(self.layers[layer]) - 1, 0, -1):
                 self.hide_or_replace(layer, i, hide)
 
         self.at_list[layer].clear()
