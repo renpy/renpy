@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 import pygame_sdl2 as pygame
@@ -307,12 +308,12 @@ def draw_special(what, dest, x, y):
 
         ramplen = what.operation_parameter
 
-        ramp = "\x00" * 256
+        ramp = b"\x00" * 256
 
-        for i in xrange(0, ramplen):
-            ramp += chr(255 * i // ramplen)
+        for i in range(0, ramplen):
+            ramp += bchr(255 * i // ramplen)
 
-        ramp += "\xff" * 256
+        ramp += b"\xff" * 256
 
         step = int(what.operation_complete * (256 + ramplen))
         ramp = ramp[step:step+256]

@@ -23,7 +23,8 @@
 # screen up as soon as possible, to let the user know something is
 # going on.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import pygame_sdl2
 import os.path
@@ -37,6 +38,7 @@ window = None
 
 # The start time.
 start_time = time.time()
+
 
 def start(basedir, gamedir):
     """

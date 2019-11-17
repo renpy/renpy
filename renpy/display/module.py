@@ -22,7 +22,8 @@
 # This file mediates access to the _renpy module, which is a C module that
 # allows us to enhance the feature set of pygame in a renpy specific way.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import pygame_sdl2; pygame_sdl2
 import renpy.display
@@ -228,8 +229,8 @@ def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, 
         if sw <= dw * 2 and sh <= dh * 2:
             break
 
-        nsw = max(sw / 2, dw)
-        nsh = max(sh / 2, dh)
+        nsw = max(sw // 2, dw)
+        nsh = max(sh // 2, dh)
 
         nsrc = renpy.display.pgrender.surface((nsw, nsh), src.get_masks()[3])
 

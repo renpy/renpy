@@ -22,7 +22,8 @@
 # This file contains classes that handle layout of displayables on
 # the screen.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 from renpy.display.render import render, Render
 import renpy.display
@@ -236,7 +237,7 @@ class Container(renpy.display.core.Displayable):
         if len(offsets) != len(children):
             return None
 
-        for i in xrange(len(offsets) - 1, -1, -1):
+        for i in range(len(offsets) - 1, -1, -1):
 
             d = children[i]
             xo, yo = offsets[i]
@@ -448,9 +449,9 @@ class Grid(Container):
         renheight = height
 
         if self.style.xfill:
-            renwidth = (width - (cols - 1) * xspacing) / cols
+            renwidth = (width - (cols - 1) * xspacing) // cols
         if self.style.yfill:
-            renheight = (height - (rows - 1) * yspacing) / rows
+            renheight = (height - (rows - 1) * yspacing) // rows
 
         renders = [ render(i, renwidth, renheight, st, at) for i in children ]
         sizes = [ i.get_size() for i in renders ]
@@ -827,8 +828,8 @@ class MultiBox(Container):
             yfill = max(0, yfill)
 
             if line:
-                xperchild = xfill / len(line)
-                yperchild = yfill / len(line)
+                xperchild = xfill // len(line)
+                yperchild = yfill // len(line)
             else:
                 xperchild = 0
                 yperchild = 0
@@ -981,7 +982,7 @@ class MultiBox(Container):
             if self.layer_name or (self.layers is not None):
                 self.update_times()
 
-        children_offsets = zip(self.children, self.offsets, self.start_times)
+        children_offsets = list(zip(self.children, self.offsets, self.start_times))
 
         if not self.style.order_reverse:
             children_offsets.reverse()

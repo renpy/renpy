@@ -22,7 +22,8 @@
 # This file contains classes that handle layout of displayables on
 # the screen.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 import pygame_sdl2 as pygame
@@ -579,11 +580,11 @@ class VPGrid(Viewport):
 
         if self.style.xfill:
             tw = child_width
-            cw = (tw - (cols - 1) * xspacing) / cols
+            cw = (tw - (cols - 1) * xspacing) // cols
 
         if self.style.yfill:
             th = child_height
-            ch = (th - (rows - 1) * yspacing) / rows
+            ch = (th - (rows - 1) * yspacing) // rows
 
         cxo, cyo, width, height = self.update_offsets(tw, th, st)
 

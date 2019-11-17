@@ -22,7 +22,8 @@
 # This file was responsible for joystick support in Ren'Py, which has
 # been removed, save for a few compatibility functions.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 import pygame_sdl2
@@ -38,6 +39,7 @@ class JoyBehavior(renpy.display.layout.Null):
     """
 
     pass
+
 
 joysticks = { }
 

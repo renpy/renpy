@@ -323,7 +323,7 @@ def invalidate(d):
         redraw(d, 0)
         return
 
-    for v in render_cache[id(d)].values():
+    for v in list(render_cache[id(d)].values()):
         v.kill_cache()
 
 def check_redraws():
@@ -381,7 +381,7 @@ def process_redraws():
             # render cache. But don't kill them yet, as that will kill the
             # children that we want to reuse.
 
-            for v in render_cache[id_d].values():
+            for v in list(render_cache[id_d].values()):
                 v.kill_cache()
 
             rv = True
@@ -1076,7 +1076,7 @@ cdef class Render:
             id_ro = id(ro)
 
             cache = render_cache[id_ro]
-            for k, v in cache.items():
+            for k, v in list(cache.items()):
                 if v is self:
                     del cache[k]
 

@@ -23,12 +23,13 @@
 # size-based caching and constructing images from operations (like
 # cropping and scaling).
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import renpy.display
 
 import math
 import zipfile
-import cStringIO
 import threading
 import time
 import io
@@ -363,7 +364,7 @@ class Cache(object):
         # If we're outside the cache limit, we need to go and start
         # killing off some of the entries until we're back inside it.
 
-        for ce in sorted(self.cache.itervalues(), key=lambda a : a.time):
+        for ce in sorted(self.cache.values(), key=lambda a : a.time):
 
             if ce.time == self.time:
                 # If we're bigger than the limit, and there's nothing
@@ -484,7 +485,7 @@ class Cache(object):
 
             # Remove things that are not in the workset from the pin cache,
             # and remove things that are in the workset from pin cache.
-            for i in self.pin_cache.keys():
+            for i in list(self.pin_cache.keys()):
 
                 if i in workset:
                     workset.remove(i)
@@ -694,7 +695,7 @@ class ZipFileImage(ImageBase):
         try:
             zf = zipfile.ZipFile(self.zipfilename, 'r')
             data = zf.read(self.filename)
-            sio = cStringIO.StringIO(data)
+            sio = io.BytesIO(data)
             rv = renpy.display.pgrender.load_image(sio, self.filename)
             zf.close()
             return rv
@@ -1028,9 +1029,9 @@ def ramp(start, end):
 
         for i in range(0, 256):
             i = i / 255.0
-            chars.append(chr(int( end * i + start * (1.0 - i) ) ) )
+            chars.append(bchr(int( end * i + start * (1.0 - i) ) ) )
 
-        rv = "".join(chars)
+        rv = b"".join(chars)
         ramp_cache[start, end] = rv
 
     return rv

@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 from renpy.display.render import render, Render, Matrix2D
@@ -283,16 +284,16 @@ class Frame(renpy.display.core.Displayable):
 
         xborder = min(bw, sw - 2, dw)
         if xborder and bw:
-            left = self.left * xborder / bw
-            right = self.right * xborder / bw
+            left = self.left * xborder // bw
+            right = self.right * xborder // bw
         else:
             left = 0
             right = 0
 
         yborder = min(bh, sh - 2, dh)
         if yborder and bh:
-            top = self.top * yborder / bh
-            bottom = self.bottom * yborder / bh
+            top = self.top * yborder // bh
+            bottom = self.bottom * yborder // bh
         else:
             top = 0
             bottom = 0
@@ -379,8 +380,8 @@ class Frame(renpy.display.core.Displayable):
                     newcr.xclipping = True
                     newcr.yclipping = True
 
-                    for x in xrange(0, xtiles):
-                        for y in xrange(0, ytiles):
+                    for x in range(0, xtiles):
+                        for y in range(0, ytiles):
                             newcr.blit(cr, (x * csw, y * csh))
 
                     csw, csh = ctw, cth

@@ -21,7 +21,8 @@
 
 # This file contains the routines that manage image prediction.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 
@@ -122,7 +123,7 @@ def prediction_coroutine(root_widget):
     if len(renpy.game.contexts) >= 2:
         sls = renpy.game.contexts[-2].scene_lists
 
-        for l in sls.layers.itervalues():
+        for l in sls.layers.values():
             for sle in l:
                 try:
                     displayable(sle.displayable)
@@ -139,7 +140,7 @@ def prediction_coroutine(root_widget):
         continue
 
     # Predict screens given with renpy.start_predict_screen.
-    for name, value in renpy.store._predict_screen.items():
+    for name, value in list(renpy.store._predict_screen.items()):
         args, kwargs = value
 
         renpy.display.screen.predict_screen(name, *args, **kwargs)

@@ -22,7 +22,8 @@
 # This module wraps the pygame surface class (and associated functions). It
 # ensures that returned surfaces have a 2px border around them.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import sys
 import pygame_sdl2 as pygame
@@ -118,6 +119,7 @@ def surface(rect, alpha):
     surf = Surface((width + 4, height + 4), 0, sample)
     return surf.subsurface((2, 2, width, height))  # E1101
 
+
 surface_unscaled = surface
 
 
@@ -129,6 +131,7 @@ def copy_surface(surf, alpha=True):
     rv = surface_unscaled(surf.get_size(), alpha)
     renpy.display.accelerator.nogil_copy(surf, rv)  # @UndefinedVariable
     return rv
+
 
 copy_surface_unscaled = copy_surface
 
@@ -164,6 +167,7 @@ def load_image(f, filename):
     rv = copy_surface_unscaled(surf)
     return rv
 
+
 load_image_unscaled = load_image
 
 
@@ -173,6 +177,7 @@ def flip(surf, horizontal, vertical):
     surf = pygame.transform.flip(surf, horizontal, vertical)
     return copy_surface_unscaled(surf)
 
+
 flip_unscaled = flip
 
 
@@ -181,6 +186,7 @@ def rotozoom(surf, angle, zoom):
     surf = pygame.transform.rotozoom(surf, angle, zoom)
     return copy_surface_unscaled(surf)
 
+
 rotozoom_unscaled = rotozoom
 
 
@@ -188,11 +194,13 @@ def transform_scale(surf, size):
     surf = pygame.transform.scale(surf, size)
     return copy_surface_unscaled(surf, surf)
 
+
 transform_scale_unscaled = transform_scale
 
 
 def transform_rotate(surf, angle):
     surf = pygame.transform.rotate(surf, angle)
     return copy_surface(surf)
+
 
 transform_rotate_unscaled = transform_rotate
