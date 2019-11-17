@@ -59,6 +59,7 @@ renpy.update_path()
 import future.standard_library
 import future.utils
 import io
+import builtins
 
 
 ################################################################################
@@ -76,6 +77,8 @@ PY2 = future.utils.PY2
 
 if PY2:
     open = io.open
+else:
+    open = builtins.open
 
 ################################################################################
 # String (text and binary) types and functions.
