@@ -154,7 +154,6 @@ try:
 except:
     print("Ren'Py requires at least python 2.6.")
     raise
-    sys.exit(0)
 
 android = ("ANDROID_PRIVATE" in os.environ)
 
