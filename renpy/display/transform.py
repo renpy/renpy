@@ -30,7 +30,7 @@ import types  # @UnresolvedImport
 import renpy.display  # @UnusedImport
 from renpy.display.layout import Container
 
-import renpy.display.accelerator
+from renpy.display.accelerator import transform_render
 
 # The null object that's used if we don't have a defined child.
 null = None
@@ -854,6 +854,8 @@ class Transform(Container):
         self.active = True
 
     # The render method is now defined in accelerator.pyx.
+    def render(self, width, height, st, at):
+        return transform_render(self, width, height, st, at)
 
     def event(self, ev, x, y, st):
 
@@ -1013,9 +1015,6 @@ class Transform(Container):
 
     def _show(self):
         self.update_state()
-
-
-Transform.render = types.MethodType(renpy.display.accelerator.transform_render, None, Transform)
 
 
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
