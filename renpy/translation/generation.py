@@ -19,15 +19,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.translation
 
 import re
 import os
 import time
-import io
-import codecs
 import collections
 import shutil
 
@@ -87,7 +86,7 @@ def scan_comments(filename):
     comment = [ ]
     start = 0
 
-    with codecs.open(filename, "r", "utf-8") as f:
+    with open(filename, "r", encoding="utf-8") as f:
         lines = [ i.rstrip() for i in f.read().replace(u"\ufeff", "").split('\n') ]
 
     for i, l in enumerate(lines):
@@ -137,11 +136,11 @@ def open_tl_file(fn):
         except:
             pass
 
-        f = io.open(fn, "a", encoding="utf-8")
+        f = open(fn, "a", encoding="utf-8")
         f.write(u"\ufeff")
 
     else:
-        f = io.open(fn, "a", encoding="utf-8")
+        f = open(fn, "a", encoding="utf-8")
 
     if todo:
         f.write(u"# TO" + "DO: Translation updated at {}\n".format(time.strftime("%Y-%m-%d %H:%M")))

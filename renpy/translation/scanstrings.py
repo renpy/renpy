@@ -19,11 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function, unicode_literals
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import os
 import re
-import codecs
 
 import renpy.translation
 
@@ -153,7 +153,7 @@ def scan_comments(filename):
     comment = [ ]
     start = 0
 
-    with codecs.open(filename, "r", "utf-8") as f:
+    with open(filename, "r", encoding="utf-8") as f:
         lines = [ i.rstrip() for i in f.read().replace(u"\ufeff", "").split('\n') ]
 
     for i, l in enumerate(lines):
