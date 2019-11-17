@@ -841,10 +841,8 @@ class Script(object):
                     if text is None:
                         text = ''
 
-                    try:
-                        text = text.decode("utf-8")
-                    except:
-                        text = text.decode("latin-1")
+                    if not isinstance(text, str):
+                        text = text.decode("utf-8", "replace")
 
                     pem = renpy.parser.ParseError(
                         filename=e.filename,

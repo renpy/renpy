@@ -2921,10 +2921,8 @@ def report_parse_errors():
         full_text += i
         full_text += "\n\n"
 
-        try:
-            i = i.encode("utf-8")
-        except:
-            pass
+        if not isinstance(i, str):
+            i = str(i, "utf-8", "replace")
 
         print("", file=f)
         print(i, file=f)

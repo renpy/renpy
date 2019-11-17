@@ -227,13 +227,10 @@ class StdioRedirector(object):
 
     def write(self, s):
 
-        s = s.decode("utf-8", "replace")
+        if not isinstance(s, str):
+            s = str(s, "utf-8", "replace")
 
-        if PY2:
-            self.real_file.write(s.encode("utf-8"))
-        else:
-            self.real_file.write(s)
-
+        self.real_file.write(s)
         self.real_file.flush()
 
         if renpy.ios:

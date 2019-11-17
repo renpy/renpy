@@ -171,12 +171,13 @@ def bootstrap(renpy_base):
     if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
         del os.environ["SDL_VIDEODRIVER"]
 
-    renpy_base = str(renpy_base, FSENCODING, "replace")
+    if not isinstance(renpy_base, str):
+        renpy_base = str(renpy_base, FSENCODING, "replace")
 
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
         evars = { }
-        with open(renpy_base + "/environment.txt", "rb") as f:
+        with open(renpy_base + "/environment.txt", "r") as f:
             code = compile(f.read(), renpy_base + "/environment.txt", 'exec')
             exec(code, evars)
         for k, v in evars.items():
@@ -212,7 +213,9 @@ def bootstrap(renpy_base):
         enable_trace(args.trace)
 
     if args.basedir:
-        basedir = os.path.abspath(args.basedir).decode(FSENCODING)
+        basedir = os.path.abspath(args.basedir)
+        if not isinstance(basedir, str):
+            basedir = basedir.decode(FSENCODING)
     else:
         basedir = renpy_base
 
