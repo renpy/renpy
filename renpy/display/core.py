@@ -44,6 +44,7 @@ import_time = time.time()
 
 try:
     import android  # @UnresolvedImport
+    android.init  # Check to see if we have the right module.
 except:
     android = None
 
