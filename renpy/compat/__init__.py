@@ -105,7 +105,10 @@ except ImportError:
 ################################################################################
 # Range.
 
-range = xrange  # @ReservedAssignment
+if PY2:
+    range = xrange  # @ReservedAssignment
+else:
+    range = builtins.range
 
 __all__ = [ "PY2", "open", "basestring", "str", "range", "bord", "bchr", "tobytes", "chr", ]
 

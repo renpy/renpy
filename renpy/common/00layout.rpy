@@ -139,7 +139,7 @@ init -1400 python hide:
         if renpy.has_screen("joystick_preferences"):
             defaults["joystick_preferences"] = layout.screen_joystick_preferences
 
-        for k, v in defaults.iteritems():
+        for k, v in defaults.items():
             if k not in layout.provided:
                 v()
 

@@ -758,7 +758,7 @@ init -1500 python in updater:
                 return rv
 
             # We update the modules that are in both versions, and that are out of date.
-            for name, data in self.current_state.iteritems():
+            for name, data in self.current_state.items():
 
                 if name not in self.updates:
                     continue
@@ -1126,7 +1126,7 @@ init -1500 python in updater:
             def flatten_path(d, key):
                 rv = set()
 
-                for i in d.itervalues():
+                for i in d.values():
                     for j in i[key]:
                         rv.add(self.path(j))
 

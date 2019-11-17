@@ -781,10 +781,10 @@ def build_styles():
     for i in renpy.config.build_styles_callbacks:
         i()
 
-    for s in styles.values():
+    for s in list(styles.values()):
         unbuild_style(s)
 
-    for s in styles.values():
+    for s in list(styles.values()):
         build_style(s)
 
 def rebuild(prepare_screens=True):

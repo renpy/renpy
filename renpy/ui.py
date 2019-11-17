@@ -1475,6 +1475,6 @@ def screen_id(id_, d):
 
 # Update the wrappers to have names.
 k, v = None, None
-for k, v in globals().iteritems():
+for k, v in globals().items():
     if isinstance(v, Wrapper):
         v.name = k

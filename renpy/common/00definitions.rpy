@@ -247,7 +247,7 @@ init -1400 python:
                 ),
             }
 
-        for k, v in moves.iteritems():
+        for k, v in moves.items():
             setattr(store, prefix + k, v)
 
     def old_move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[ 'master' ], **kwargs):
@@ -315,7 +315,7 @@ init -1400 python:
                 leave_factory=MoveOut((None, 1.0, None, 0.0), time_warp=time_warp, **kwargs)),
             }
 
-        for k, v in moves.iteritems():
+        for k, v in moves.items():
             setattr(store, prefix + k, v)
 
     define.move_transitions = move_transitions

@@ -714,7 +714,7 @@ init -1110 python hide:
 
     @theme
     def image_buttons(d):
-        for k, (idle, hover, selected_idle, selected_hover, insensitive) in d.iteritems():
+        for k, (idle, hover, selected_idle, selected_hover, insensitive) in d.items():
             s = style.button[k]
             s.xpadding = 0
             s.ypadding = 0
@@ -730,7 +730,7 @@ init -1110 python hide:
 
     @theme
     def image_labels(d):
-        for k, l in d.iteritems():
+        for k, l in d.items():
             s = style.label[k]
             s.xpadding = 0
             s.ypadding = 0
