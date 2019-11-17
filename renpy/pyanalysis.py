@@ -438,6 +438,8 @@ class Analysis(object):
             """
             Returns true if the ast node `node` is constant.
             """
+            if not PY2:
+                return NOT_CONST
 
             # This handles children that do not exist.
             if node is None:
