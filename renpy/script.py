@@ -286,7 +286,7 @@ class Script(object):
         initcode = [ (prio, index, code) for index, (prio, code) in
                      enumerate(initcode) ]
 
-        initcode.sort()
+        initcode.sort(key=lambda i: (i[0], i[1]))
 
         self.initcode = [ (prio, code) for prio, index, code in initcode ]
 

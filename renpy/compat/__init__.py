@@ -117,10 +117,8 @@ else:
 ################################################################################
 # Sort key functions.
 
-# This returns the first item in a tuple for use as a sort key.
-item0 = operator.itemgetter(0)
 
-__all__ = [ "PY2", "open", "basestring", "str", "range", "bord", "bchr", "tobytes", "chr", "item0"]
+__all__ = [ "PY2", "open", "basestring", "str", "range", "bord", "bchr", "tobytes", "chr", ]
 
 if PY2:
     __all__ = [ bytes(i) for i in __all__ ]

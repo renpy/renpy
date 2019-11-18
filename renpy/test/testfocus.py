@@ -56,7 +56,7 @@ def find_focus(pattern):
         else:
             return None
 
-    # A list of alt_text_length, focus pairs.
+    # A list of alt_text, focus pairs.
     matching = [ ]
 
     for f in renpy.display.focus.focus_list:
@@ -64,15 +64,15 @@ def find_focus(pattern):
         alt = match(f)
 
         if alt is not None:
-            matching.append((len(alt), f, alt))
+            matching.append((alt, f))
 
     if not matching:
         return None
 
     # This gets the matching displayable with the shortest alt text, which
     # is likely what we want.
-    matching.sort()
-    return matching[0][1]
+    matching.sort(key=lambda a : (len(a[0]), a[0]))
+    return matching[1][1]
 
 
 def relative_position(x, posx, width):
