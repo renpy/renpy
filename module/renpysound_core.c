@@ -33,8 +33,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #ifdef __EMSCRIPTEN__
 
-#define EVAL_LOCK() { }
-#define EVAL_UNLOCK() { }
 #define BEGIN() { }
 #define ENTER() { }
 #define EXIT() { }
@@ -43,13 +41,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #else
 
-#define EVAL_LOCK() { PyEval_AcquireLock(); }
-#define EVAL_UNLOCK() { PyEval_ReleaseLock(); }
-#define BEGIN() PyThreadState *_save;
-#define ENTER() { _save = PyEval_SaveThread(); SDL_LockAudio(); }
-#define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); }
-#define ALTENTER() { _save = PyEval_SaveThread(); }
-#define ALTEXIT() { PyEval_RestoreThread(_save); }
+#define BEGIN() PyGILState_STATE _gilstate;
+#define ENTER() { _gilstate = PyGILState_Ensure(); SDL_LockAudio(); }
+#define EXIT() { SDL_UnlockAudio();  }
+#define ALTENTER() { _gilstate = PyGILState_Ensure(); }
+#define ALTEXIT() { PyGILState_Release(_gilstate); }
 
 #endif
 
