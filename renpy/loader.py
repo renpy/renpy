@@ -45,27 +45,34 @@ if renpy.emscripten:
     xhrs: {},
 
     dl_new: function(path) {
-	var xhr = new XMLHttpRequest();
-	xhr.responseType = 'arraybuffer';
-	xhr.onload = function() {
-	    // Create file reusing XHR's buffer (no-copy)
-	    try { FS.unlink(path); } catch {}
-	    FS.writeFile(path, new Uint8Array(xhr.response), {canOwn:true});
-	}
-	xhr.open('GET', path);
-	xhr.send();
-	RenPyWeb.xhrs[RenPyWeb.xhr_id] = xhr;
-	var ret = RenPyWeb.xhr_id;
-	RenPyWeb.xhr_id++;
-	return ret;
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = 'arraybuffer';
+        xhr.onerror = function() {
+            console.log("Network error", xhr);
+        }
+        xhr.onload = function() {
+            if (xhr.status == 200 || xhr.status == 304 || xhr.status == 206 || (xhr.status == 0 && xhr.response)) {
+                // Create file reusing XHR's buffer (no-copy)
+                try { FS.unlink(path); } catch {}
+                FS.writeFile(path, new Uint8Array(xhr.response), {canOwn:true});
+            } else {
+                console.log("Download error", xhr);
+            }
+        }
+        xhr.open('GET', path);
+        xhr.send();
+        RenPyWeb.xhrs[RenPyWeb.xhr_id] = xhr;
+        var ret = RenPyWeb.xhr_id;
+        RenPyWeb.xhr_id++;
+        return ret;
     },
 
     dl_get: function(xhr_id) {
-	return RenPyWeb.xhrs[xhr_id];
+        return RenPyWeb.xhrs[xhr_id];
     },
 
     dl_free: function(xhr_id) {
-	delete RenPyWeb.xhrs[xhr_id];
+        delete RenPyWeb.xhrs[xhr_id];
         // Note: xhr.response kept alive until file is deleted
     },
 }
@@ -145,7 +152,7 @@ class ReloadRequest:
         return self.xhr is not None and self.xhr.readyState == 4
 
     @staticmethod
-    def load_downloaded_resources():
+    def process_downloaded_resources():
         postponed = []
         reloaded = False
 
@@ -153,13 +160,17 @@ class ReloadRequest:
             # TODO: support images and sounds
             if hasattr(rr, 'image'):
                 if rr.download_completed():
-                    if rr.xhr.status == 0:
-                        raise IOError("Download error: " + rr.xhr.statusText)
+                    fullpath = os.path.join(renpy.config.gamedir,rr.image.filename)
+                    if not os.path.exists(fullpath):
+                        # don't rethrow exception in Ren'Py's error handler
+                        ReloadRequest.all.remove(rr)
+                        # show Ren'Py's error handler
+                        raise IOError("Download error: {}: {}".format(
+                            rr.image.filename, (rr.xhr.statusText or "network error")))
                     #print("reloading", rr.image.filename)
                     ce = renpy.display.im.cache.cache.get(rr.image)
                     renpy.display.im.cache.kill(ce)
                     renpy.display.im.cache.get(rr.image, render=True)
-                    fullpath = os.path.join(renpy.config.gamedir,rr.image.filename)
                     #print("unlink", fullpath)
                     os.unlink(fullpath)
                     reloaded = True
