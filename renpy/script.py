@@ -49,7 +49,7 @@ BYTECODE_VERSION = 1
 MAGIC = imp.get_magic()
 
 # A string at the start of each rpycv2 file.
-RPYC2_HEADER = "RENPY RPC2"
+RPYC2_HEADER = b"RENPY RPC2"
 
 # A string
 BYTECODE_FILE = "cache/bytecode.rpyb"
