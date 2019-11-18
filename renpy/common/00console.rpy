@@ -126,7 +126,7 @@ init -1500 python in _console:
     import traceback
     import store
 
-    import repr as reprlib
+    import reprlib
     aRepr = reprlib.Repr()
     aRepr.maxtuple = 20
     aRepr.maxlist = 20
@@ -525,7 +525,7 @@ init -1500 python in _console:
 
     @command(_("help: show this help"))
     def help(l):
-        keys = list(config.console_commands.iterkeys())
+        keys = list(config.console_commands.keys())
         keys.sort()
 
         rv = __("commands:\n")

@@ -240,7 +240,7 @@ init -1600 python:
             pass
 
     import os
-    config.screenshot_pattern = os.environ.get(b"RENPY_SCREENSHOT_PATTERN", b"screenshot%04d.png")
+    config.screenshot_pattern = os.environ.get("RENPY_SCREENSHOT_PATTERN", "screenshot%04d.png")
     del os
 
     # Called to make a screenshot happen.

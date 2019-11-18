@@ -74,7 +74,7 @@ class ShaderPart(object):
         vertex_used = set()
         fragment_used = set()
 
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
 
             shader, _, priority = k.partition('_')
 

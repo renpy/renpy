@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import print_function
+from builtins import chr
 
 include "linebreak.pxi"
 
@@ -414,9 +415,9 @@ def linebreak_debug(list glyphs):
         if g.split == SPLIT_INSTEAD:
             rv += "|"
         elif g.split == SPLIT_BEFORE:
-            rv += "[" + unichr(g.character)
+            rv += "[" + chr(g.character)
         else:
-            rv += unichr(g.character)
+            rv += chr(g.character)
 
     return rv
 
@@ -438,9 +439,9 @@ def linebreak_list(list glyphs):
             line = u""
         elif g.split == SPLIT_BEFORE:
             rv.append(line)
-            line = unichr(g.character)
+            line = chr(g.character)
         else:
-            line += unichr(g.character)
+            line += chr(g.character)
 
     if line:
         rv.append(line)

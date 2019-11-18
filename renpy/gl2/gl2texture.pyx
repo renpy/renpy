@@ -319,7 +319,7 @@ cdef class GLTexture:
 
         # Project the child from virtual space to the screen space.
         cdef Matrix transform
-        transform = renpy.display.matrix.texture_projection(cw, ch)
+        transform = Matrix.ctexture_projection(cw, ch)
         if what.reverse:
             transform *= what.reverse
 
@@ -473,7 +473,7 @@ class Model(object):
         Loads the textures associated with this model.
         """
 
-        for i in self.uniforms.itervalues():
+        for i in (<dict> self.uniforms).itervalues():
             if isinstance(i, GLTexture):
                 i.load_gltexture()
 

@@ -77,7 +77,7 @@ def adjust_render_cache_times(old_time, new_time):
     old_time, it really started at new_time.
     """
 
-    for id_d, renders in render_cache.iteritems():
+    for id_d, renders in (<dict> render_cache).iteritems():
 
         # Check to see if we have a render with st_base = old_time. If so,
         # we need to rebase it.
@@ -89,7 +89,7 @@ def adjust_render_cache_times(old_time, new_time):
 
         new_renders = { }
 
-        for k, v in renders.iteritems():
+        for k, v in (<dict> renders).iteritems():
             w, h, st_base, at_base = k
 
             if st_base == old_time:
@@ -323,7 +323,7 @@ def invalidate(d):
         redraw(d, 0)
         return
 
-    for v in render_cache[id(d)].values():
+    for v in list(render_cache[id(d)].values()):
         v.kill_cache()
 
 def check_redraws():
@@ -331,7 +331,7 @@ def check_redraws():
     Returns true if a redraw is required, and False otherwise.
     """
 
-    redraw_queue.sort()
+    redraw_queue.sort(key=lambda a : a[0])
 
     now = renpy.display.core.get_time()
 
@@ -354,7 +354,7 @@ def process_redraws():
 
     global redraw_queue
 
-    redraw_queue.sort()
+    redraw_queue.sort(key=lambda a : a[0])
 
     now = renpy.display.core.get_time()
     rv = False
@@ -381,7 +381,7 @@ def process_redraws():
             # render cache. But don't kill them yet, as that will kill the
             # children that we want to reuse.
 
-            for v in render_cache[id_d].values():
+            for v in list(render_cache[id_d].values()):
                 v.kill_cache()
 
             rv = True
@@ -1076,7 +1076,7 @@ cdef class Render:
             id_ro = id(ro)
 
             cache = render_cache[id_ro]
-            for k, v in cache.items():
+            for k, v in list(cache.items()):
                 if v is self:
                     del cache[k]
 

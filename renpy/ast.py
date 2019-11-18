@@ -26,14 +26,16 @@
 # When updating this file, consider if lint.py or warp.py also need
 # updating.
 
-from __future__ import print_function, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
+
 import renpy.display
 import renpy.test
 
 import hashlib
 import re
 import time
-import renpy.six as six
 
 
 def statement_name(name):
@@ -107,7 +109,7 @@ class ParameterInfo(object):
 
         extrapos = tuple(args[len(self.positional):])
 
-        for name, value in six.iteritems(kwargs):
+        for name, value in kwargs.items():
             if name in values:
                 if not ignore_errors:
                     raise Exception("Parameter %s has two values." % name)
@@ -224,7 +226,7 @@ def __newobj__(cls, *args):
 pyexpr_list = [ ]
 
 
-class PyExpr(six.text_type):
+class PyExpr(str):
     """
     Represents a string containing python code.
     """
@@ -235,7 +237,7 @@ class PyExpr(six.text_type):
         ]
 
     def __new__(cls, s, filename, linenumber):
-        self = six.text_type.__new__(cls, s)
+        self = str.__new__(cls, s)
         self.filename = filename
         self.linenumber = linenumber
 
@@ -246,7 +248,7 @@ class PyExpr(six.text_type):
         return self
 
     def __getnewargs__(self):
-        return (six.text_type(self), self.filename, self.linenumber)  # E1101
+        return (str(self), self.filename, self.linenumber)  # E1101
 
 
 def probably_side_effect_free(expr):
@@ -311,7 +313,7 @@ class PyCode(object):
         if isinstance(code, renpy.python.ast.AST):  # @UndefinedVariable
             code = renpy.python.ast.dump(code)  # @UndefinedVariable
 
-        self.hash = chr(renpy.bytecode_version) + hashlib.md5(repr(self.location) + code.encode("utf-8")).digest()
+        self.hash = bchr(renpy.bytecode_version) + hashlib.md5((repr(self.location) + code).encode("utf-8")).digest()
         return self.hash
 
 
@@ -535,7 +537,7 @@ def say_menu_with(expression, callback):
 
     if expression is not None:
         what = renpy.python.py_eval(expression)
-    elif renpy.store.default_transition and renpy.game.preferences.transitions == 2:
+    elif renpy.store.default_transition and renpy.game.preferences.transitions == 2:  # @UndefinedVariable
         what = renpy.store.default_transition
     else:
         return
@@ -543,7 +545,7 @@ def say_menu_with(expression, callback):
     if not what:
         return
 
-    if renpy.game.preferences.transitions:
+    if renpy.game.preferences.transitions:  # @UndefinedVariable
         # renpy.game.interface.set_transition(what)
         callback(what)
 
@@ -651,7 +653,7 @@ class Say(Node):
         if dialogue_filter is not None:
             what = dialogue_filter(what)
 
-        rv.append(renpy.translation.encode_say_string(what))
+        rv.append(renpy.translation.encode_say_string(what))  # @UndefinedVariable
 
         if not self.interact:
             rv.append("nointeract")
@@ -680,7 +682,7 @@ class Say(Node):
             if not (
                     (who is None) or
                     callable(who) or
-                    isinstance(who, six.string_types) ):
+                    isinstance(who, basestring) ):
 
                 raise Exception("Sayer %s is not a function or string." % self.who.encode("utf-8"))
 
@@ -854,7 +856,7 @@ class Label(Node):
 
         values = apply_arguments(self.parameters, renpy.store._args, renpy.store._kwargs)
 
-        for k, v in six.iteritems(values):
+        for k, v in values.items():
             renpy.exports.dynamic(k)
             setattr(renpy.store, k, v)
 

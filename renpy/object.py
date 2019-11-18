@@ -19,12 +19,17 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 
 # Allow pickling NoneType.
-from __future__ import print_function, absolute_import
-
-import renpy.six.moves.builtins as builtins
-builtins.NoneType = type(None)
+if PY2:
+    import __builtin__
+    __builtin__.NoneType = type(None)
+else:
+    import builtins
+    builtins.NoneType = type(None)
 
 
 class Object(object):
@@ -79,7 +84,7 @@ class Sentinel(object):
         rv = sentinels.get(name, None)
 
         if rv is None:
-            rv = object.__new__(cls, name)
+            rv = object.__new__(cls)
             sentinels[name] = rv
 
         return rv

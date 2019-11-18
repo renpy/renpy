@@ -19,10 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function, absolute_import
-
-import renpy.six as six
-from renpy.six.moves import reload_module as reload
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import os.path
 import sys
@@ -35,8 +33,9 @@ FSENCODING = sys.getfilesystemencoding() or "utf-8"
 old_stdout = sys.stdout
 old_stderr = sys.stderr
 
-reload(sys)
-sys.setdefaultencoding(FSENCODING)  # @UndefinedVariable
+if PY2:
+    reload(sys)
+    sys.setdefaultencoding(FSENCODING)  # @UndefinedVariable
 
 sys.stdout = old_stdout
 sys.stderr = old_stderr
@@ -169,18 +168,19 @@ def bootstrap(renpy_base):
     import renpy.log  # @UnusedImport
 
     # Remove a legacy environment setting.
-    if os.environ.get(b"SDL_VIDEODRIVER", "") == "windib":
-        del os.environ[b"SDL_VIDEODRIVER"]
+    if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
+        del os.environ["SDL_VIDEODRIVER"]
 
-    renpy_base = six.text_type(renpy_base, FSENCODING, "replace")
+    if not isinstance(renpy_base, str):
+        renpy_base = str(renpy_base, FSENCODING, "replace")
 
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
         evars = { }
-        with open(renpy_base + "/environment.txt", "rb") as f:
+        with open(renpy_base + "/environment.txt", "r") as f:
             code = compile(f.read(), renpy_base + "/environment.txt", 'exec')
             exec(code, evars)
-        for k, v in six.iteritems(evars):
+        for k, v in evars.items():
             if k not in os.environ:
                 os.environ[k] = str(v)
 
@@ -195,7 +195,7 @@ def bootstrap(renpy_base):
             with open(alt_path + "/environment.txt", "rb") as f:
                 code = compile(f.read(), alt_path + "/environment.txt", 'exec')
                 exec(code, evars)
-            for k, v in six.iteritems(evars):
+            for k, v in evars.items():
                 if k not in os.environ:
                     os.environ[k] = str(v)
 
@@ -213,7 +213,9 @@ def bootstrap(renpy_base):
         enable_trace(args.trace)
 
     if args.basedir:
-        basedir = os.path.abspath(args.basedir).decode(FSENCODING)
+        basedir = os.path.abspath(args.basedir)
+        if not isinstance(basedir, str):
+            basedir = basedir.decode(FSENCODING)
     else:
         basedir = renpy_base
 

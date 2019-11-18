@@ -22,15 +22,17 @@
 # This file contains code responsible for managing the execution of a
 # renpy object, as well as the context object.
 
-from __future__ import print_function, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+from future.utils import reraise
+
 import sys
 import time
 
 import renpy.display
 import renpy.test
-import renpy.six as six
 
-pyast = __import__("ast", { })
+import ast as pyast
 
 # The number of statements that have been run since the last infinite loop
 # check.
@@ -376,7 +378,7 @@ class Context(renpy.object.Object):
 
         dynamic = self.dynamic_stack.pop()
 
-        for k, v in six.iteritems(dynamic):
+        for k, v in dynamic.items():
             if isinstance(v, Delete):
                 store.pop(k, None)
             else:
@@ -395,7 +397,7 @@ class Context(renpy.object.Object):
 
         for dynamic in reversed(self.dynamic_stack):
 
-            for k, v in six.iteritems(dynamic):
+            for k, v in dynamic.items():
                 name = "store." + k
 
                 if isinstance(v, Delete) and (name in roots):
@@ -597,7 +599,7 @@ class Context(renpy.object.Object):
                     except renpy.game.CONTROL_EXCEPTIONS as ce:
                         raise ce
                     except Exception as ce:
-                        six.reraise(exc_info[0], exc_info[1], exc_info[2])
+                        reraise(exc_info[0], exc_info[1], exc_info[2])
 
                 node = self.next_node
 

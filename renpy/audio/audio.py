@@ -24,11 +24,12 @@
 # Invariants: The periodic callback assumes pcm_ok. If we don't have
 # at least pcm_ok, we have no sound whatsoever.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+from future.utils import raise_
 
 import renpy.audio  # @UnusedImport
 import renpy.display  # @UnusedImport
-import renpy.six as six
 
 import time
 import pygame_sdl2  # @UnusedImport
@@ -74,7 +75,7 @@ def load(fn):
     return rv
 
 
-class AudioData(unicode):
+class AudioData(str):
     """
     :doc: audio
 
@@ -99,7 +100,7 @@ class AudioData(unicode):
     """
 
     def __new__(cls, data, filename):
-        rv = unicode.__new__(cls, filename)
+        rv = str.__new__(cls, filename)
         rv.data = data
         return rv
 
@@ -107,7 +108,7 @@ class AudioData(unicode):
         pass
 
     def __reduce__(self):
-        return(AudioData, (self.data, unicode(self)))
+        return(AudioData, (self.data, str(self)))
 
 
 class QueueEntry(object):
@@ -1057,7 +1058,7 @@ def periodic():
             exc = periodic_exc
             periodic_exc = None
 
-            six.reraise(exc[0], exc[1], exc[2])
+            raise_(exc[0], exc[1], exc[2])
 
         run_periodic = True
         periodic_condition.notify()

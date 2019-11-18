@@ -21,7 +21,8 @@
 
 # This file manages the frame performance log.
 
-from __future__ import print_function, unicode_literals, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import time
 import renpy

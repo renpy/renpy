@@ -22,17 +22,21 @@
 # This file contains debugging code that isn't enabled in normal Ren'Py
 # operation.
 
-from __future__ import print_function, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy
 import threading
 import datetime
 import traceback
 import os
+import builtins
+import io
 
-import renpy.six.moves.builtins as builtins
-
-real_open = builtins.open  # @UndefinedVariable
+if PY2:
+    real_open = io.open
+else:
+    real_open = builtins.open
 
 report = True
 

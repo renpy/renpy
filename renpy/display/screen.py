@@ -19,7 +19,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import renpy.display
 import time
 import collections
@@ -783,7 +785,7 @@ def get_all_screen_variants(name):
 
     rv = [ ]
 
-    for k, v in screens.iteritems():
+    for k, v in screens.items():
         if k[0] == name:
             rv.append((k[1], v))
 
@@ -862,7 +864,7 @@ def sort_screens():
         del reverse[name]
 
     # Store the use cycle for later reporting.
-    use_cycle = reverse.keys()
+    use_cycle = list(reverse.keys())
     use_cycle.sort()
 
     sorted_screens = rv
@@ -1341,7 +1343,7 @@ def before_restart():
     longer defined.
     """
 
-    for k, layer in renpy.display.interface.old_scene.iteritems():
+    for k, layer in renpy.display.interface.old_scene.items():
         if k is None:
             continue
 

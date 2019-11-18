@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 from renpy.minstore import *
 
@@ -70,6 +71,9 @@ _text_rect = None
 # Are we in various menus?
 _menu = False
 main_menu = False
+
+# Is autosaving allowed?
+_autosave = True
 
 
 class _Config(object):

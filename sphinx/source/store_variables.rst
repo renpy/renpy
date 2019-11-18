@@ -11,6 +11,10 @@ and rolled-back when rollback occurs.
     This is a template ADV-mode character, and the default character kind
     that is used when :func:`Character` is called.
 
+.. var:: _autosave = True
+
+    This variable can be set to False to disable autosave.
+
 .. var:: _confirm_quit = True
 
     This determines if quitting the game asks for confirmation. It is

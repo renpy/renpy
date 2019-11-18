@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy
 renpy.update_path()
@@ -53,6 +54,7 @@ def get_info():
         info = pygame.display.Info()
 
     return info
+
 
 # Logs we use.
 log = renpy.log.open("log", developer=False, append=False)

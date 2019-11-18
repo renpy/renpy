@@ -93,9 +93,8 @@ def check_error():
     """
 
     e = RPS_get_error();
-
-    if str(e):
-        raise Exception(e)
+    if len(e):
+        raise Exception(unicode(e, "utf-8", "replace"))
 
 def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0):
     """

@@ -21,14 +21,12 @@
 
 # This file contains functions that load and save the game state.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+from future.utils import reraise
 
-from __future__ import absolute_import
 import pickle
-import renpy.six.moves.cPickle as cPickle
-
-from cStringIO import StringIO
-
+import io
 import zipfile
 import re
 import threading
@@ -38,32 +36,20 @@ import os
 import sys
 
 import renpy
-import renpy.six as six
 
 from json import dumps as json_dumps
 
-# Dump that chooses which pickle to use:
-
 
 def dump(o, f):
-    if renpy.config.use_cpickle:
-        cPickle.dump(o, f, cPickle.HIGHEST_PROTOCOL)
-    else:
-        pickle.dump(o, f, pickle.HIGHEST_PROTOCOL)
+    pickle.dump(o, f, pickle.HIGHEST_PROTOCOL)
 
 
 def dumps(o):
-    if renpy.config.use_cpickle:
-        return cPickle.dumps(o, cPickle.HIGHEST_PROTOCOL)
-    else:
-        return pickle.dumps(o, pickle.HIGHEST_PROTOCOL)
+    return pickle.dumps(o, pickle.HIGHEST_PROTOCOL)
 
 
 def loads(s):
-    if renpy.config.use_cpickle:
-        return cPickle.loads(s)
-    else:
-        return pickle.loads(s)
+    return pickle.loads(s)
 
 
 # This is used as a quick and dirty way of versioning savegame
@@ -90,7 +76,7 @@ def save_dump(roots, log):
         if isinstance(o, (int, float, type(None), types.ModuleType, type)):
             o_repr = repr(o)
 
-        elif isinstance(o, (str, bytes, six.text_type)):
+        elif isinstance(o, basestring):
             if len(o) <= 80:
                 o_repr = repr(o).encode("utf-8")
             else:
@@ -116,7 +102,7 @@ def save_dump(roots, log):
         if isinstance(o, (int, float, type(None), types.ModuleType, type)):
             size = 1
 
-        elif isinstance(o, (str, six.text_type)):
+        elif isinstance(o, bytes):
             size = len(o) // 40 + 1
 
         elif isinstance(o, (tuple, list)):
@@ -127,7 +113,7 @@ def save_dump(roots, log):
 
         elif isinstance(o, dict):
             size = 2
-            for k, v in six.iteritems(o):
+            for k, v in o.items():
                 size += 2
                 size += visit(v, "{0}[{1!r}]".format(path, k))
 
@@ -156,7 +142,7 @@ def save_dump(roots, log):
 
             state = get(2, { })
             if isinstance(state, dict):
-                for k, v in six.iteritems(state):
+                for k, v in state.items():
                     size += 2
                     size += visit(v, path + "." + k)
             else:
@@ -213,7 +199,7 @@ def find_bad_reduction(roots, log):
                     return rv
 
         elif isinstance(o, dict):
-            for k, v in six.iteritems(o):
+            for k, v in o.items():
                 rv = visit(v, "{0}[{1!r}]".format(path, k))
                 if rv is not None:
                     return rv
@@ -251,7 +237,7 @@ def find_bad_reduction(roots, log):
 
             state = get(2, { })
             if isinstance(state, dict):
-                for k, v in six.iteritems(state):
+                for k, v in state.items():
                     rv = visit(v, path + "." + k)
                     if rv is not None:
                         return rv
@@ -401,7 +387,7 @@ def save(slotname, extra_info='', mutate_flag=False):
     if renpy.config.save_dump:
         save_dump(roots, renpy.game.log)
 
-    logf = StringIO()
+    logf = io.BytesIO()
     try:
         dump((roots, renpy.game.log), logf)
     except:
@@ -409,18 +395,18 @@ def save(slotname, extra_info='', mutate_flag=False):
         t, e, tb = sys.exc_info()
 
         if mutate_flag:
-            six.reraise(t, e, tb)
+            reraise(t, e, tb)
 
         try:
             bad = find_bad_reduction(roots, renpy.game.log)
         except:
-            six.reraise(t, e, tb)
+            reraise(t, e, tb)
 
         if bad is None:
-            six.reraise(t, e, tb)
+            reraise(t, e, tb)
 
         e.args = ( e.args[0] + ' (perhaps {})'.format(bad), ) + e.args[1:]
-        six.reraise(t, e, tb)
+        reraise(t, e, tb)
 
     if mutate_flag and renpy.python.mutate_flag:
         raise SaveAbort()
@@ -505,6 +491,9 @@ def autosave():
         return
 
     if renpy.store.main_menu:
+        return
+
+    if not renpy.store._autosave:
         return
 
     force_autosave(True)

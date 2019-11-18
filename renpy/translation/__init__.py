@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy
 renpy.update_path()
@@ -265,7 +266,7 @@ class Restructurer(object):
 
         for i in block:
             code = i.get_code()
-            md5.update(code.encode("utf-8") + "\r\n")
+            md5.update((code + "\r\n").encode("utf-8"))
 
         digest = md5.hexdigest()[:8]
 
@@ -383,7 +384,6 @@ class StringTranslator(object):
         if old in self.translations:
 
             if old in self.translation_loc:
-                print(newloc, self.translation_loc[old])
                 fn, line = self.translation_loc[old]
                 raise Exception("A translation for \"{}\" already exists at {}:{}.".format(
                     quote_unicode(old), fn, line))
@@ -626,7 +626,7 @@ def change_language(language, force=False):
     renpy.game.preferences.language = language
     if old_language == language and not force:
         return
-    
+
     tl = renpy.game.script.translator
 
     renpy.style.restore(style_backup)  # @UndefinedVariable
@@ -663,6 +663,7 @@ def change_language(language, force=False):
         renpy.exports.block_rollback()
 
         old_language = language
+
 
 def check_language():
     """

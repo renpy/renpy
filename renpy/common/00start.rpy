@@ -176,6 +176,9 @@ label _splashscreen:
             suppress_overlay = True
             _confirm_quit = False
 
+        renpy.dynamic("_autosave")
+        _autosave = False
+
     jump expression "splashscreen"
 
 

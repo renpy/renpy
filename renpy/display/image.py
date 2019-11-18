@@ -23,7 +23,8 @@
 # Most of the guts of this file have been moved into im.py, with only some
 # of the stuff thar uses images remaining.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 import renpy.text
@@ -634,7 +635,7 @@ class DynamicImage(renpy.display.core.Displayable):
             search = [ ]
             target = renpy.easy.dynamic_image(self.name, scope, prefix=prefix, search=search)
         except KeyError as ke:
-            raise Exception("In DynamicImage %r: Could not find substitution '%s'." % (self.name, unicode(ke.args[0])))
+            raise Exception("In DynamicImage %r: Could not find substitution '%s'." % (self.name, str(ke.args[0])))
         except Exception as e:
             raise Exception("In DynamicImage %r: %r" % (self.name, e))
 
@@ -858,7 +859,7 @@ class ShownImageInfo(renpy.object.Object):
         if layer is None:
             layer = 'master'
 
-        for l, t in self.attributes.keys():
+        for l, t in list(self.attributes.keys()):
             if l == layer:
                 del self.attributes[l, t]
 

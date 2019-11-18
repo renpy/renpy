@@ -28,7 +28,7 @@ init -1500 python in updater:
     import threading
     import traceback
     import os
-    import urlparse
+    import urllib.parse as urlparse
     import json
     import subprocess
     import hashlib
@@ -37,7 +37,8 @@ init -1500 python in updater:
     import struct
     import zlib
     import codecs
-    import StringIO
+    import io
+    import future.utils
 
     try:
         import rsa
@@ -94,7 +95,7 @@ init -1500 python in updater:
         try:
             log = file(DEFERRED_UPDATE_LOG, "ab")
         except:
-            log = StringIO.StringIO()
+            log = io.StringIO()
 
         with open(DEFERRED_UPDATE_FILE, "rb") as f:
             for l in f:
@@ -722,7 +723,7 @@ init -1500 python in updater:
                     raise UpdateError(_("Could not verify update signature."))
 
                 if "monkeypatch" in self.updates:
-                    exec self.updates["monkeypatch"] in globals(), globals()
+                    future.utils.exec_(self.updates["monkeypatch"], globals(), globals())
 
         def add_dlc_state(self, name):
             import urllib
@@ -758,7 +759,7 @@ init -1500 python in updater:
                 return rv
 
             # We update the modules that are in both versions, and that are out of date.
-            for name, data in self.current_state.iteritems():
+            for name, data in self.current_state.items():
 
                 if name not in self.updates:
                     continue
@@ -1126,7 +1127,7 @@ init -1500 python in updater:
             def flatten_path(d, key):
                 rv = set()
 
-                for i in d.itervalues():
+                for i in d.values():
                     for j in i[key]:
                         rv.add(self.path(j))
 

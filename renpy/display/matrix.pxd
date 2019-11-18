@@ -40,5 +40,28 @@ cdef class Matrix:
 
     cpdef bint is_unit_aligned(Matrix self)
 
+    @staticmethod
+    cdef Matrix cidentity()
+
+    @staticmethod
+    cdef Matrix coffset(float x, float y, float z)
+
+    @staticmethod
+    cdef Matrix crotate(float x, float y, float z)
+
+    @staticmethod
+    cdef Matrix cscale(float x, float y, float z)
+
+    @staticmethod
+    cdef Matrix cperspective(float w, float h, float n, float p, float f)
+
+    @staticmethod
+    cdef Matrix cscreen_projection(float w, float h)
+
+    @staticmethod
+    cdef Matrix ctexture_projection(float w, float h)
+
+
+
 cdef class Matrix2D(Matrix):
     pass

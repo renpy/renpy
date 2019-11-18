@@ -21,7 +21,8 @@
 
 # This file contains code to emulate various other devices on the PC.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 

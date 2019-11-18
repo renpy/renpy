@@ -33,8 +33,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #ifdef __EMSCRIPTEN__
 
-#define EVAL_LOCK() { }
-#define EVAL_UNLOCK() { }
 #define BEGIN() { }
 #define ENTER() { }
 #define EXIT() { }
@@ -43,13 +41,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #else
 
-#define EVAL_LOCK() { PyEval_AcquireLock(); }
-#define EVAL_UNLOCK() { PyEval_ReleaseLock(); }
-#define BEGIN() PyThreadState *_save;
-#define ENTER() { _save = PyEval_SaveThread(); SDL_LockAudio(); }
-#define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); }
-#define ALTENTER() { _save = PyEval_SaveThread(); }
-#define ALTEXIT() { PyEval_RestoreThread(_save); }
+#define BEGIN() PyGILState_STATE _gilstate;
+#define ENTER() { _gilstate = PyGILState_Ensure(); SDL_LockAudio(); }
+#define EXIT() { SDL_UnlockAudio();  }
+#define ALTENTER() { _gilstate = PyGILState_Ensure(); }
+#define ALTEXIT() { PyGILState_Release(_gilstate); }
 
 #endif
 
@@ -79,26 +75,6 @@ void media_wait_ready(struct MediaState *ms);
 /* The current Python. */
 PyInterpreterState* interp;
 PyThreadState* thread = NULL;
-
-static void incref(PyObject *ref) {
-    PyThreadState *oldstate;
-
-    EVAL_LOCK();
-    oldstate = PyThreadState_Swap(thread);
-    Py_INCREF(ref);
-    PyThreadState_Swap(oldstate);
-    EVAL_UNLOCK();
-}
-
-static void decref(PyObject *ref) {
-    PyThreadState *oldstate;
-
-    EVAL_LOCK();
-    oldstate = PyThreadState_Swap(thread);
-    Py_DECREF(ref);
-    PyThreadState_Swap(oldstate);
-    EVAL_UNLOCK();
-}
 
 /* A mutex that protects the shared data structures. */
 SDL_mutex *name_mutex;
@@ -445,6 +421,8 @@ static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
 
 static void callback(void *userdata, Uint8 *stream, int length) {
 
+    BEGIN();
+
     int channel = 0;
 
     memset(stream, 0, length);
@@ -508,7 +486,9 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
                 LOCK_NAME();
 
-                decref(c->playing_name);
+                ALTENTER();
+                Py_DECREF(c->playing_name);
+                ALTEXIT();
 
                 c->playing = c->queued;
                 c->playing_name = c->queued_name;
@@ -606,7 +586,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
     if (c->playing) {
         free_sample(c->playing);
         c->playing = NULL;
-        decref(c->playing_name);
+        Py_DECREF(c->playing_name);
         c->playing_name = NULL;
         c->playing_tight = 0;
         c->playing_start_ms = 0;
@@ -615,7 +595,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
     if (c->queued) {
         free_sample(c->queued);
         c->queued = NULL;
-        decref(c->queued_name);
+        Py_DECREF(c->queued_name);
         c->queued_name = NULL;
         c->queued_tight = 0;
         c->queued_start_ms = 0;
@@ -632,7 +612,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
         return;
     }
 
-    incref(name);
+    Py_INCREF(name);
     c->playing_name = name;
 
     c->playing_fadein = fadein;
@@ -677,7 +657,7 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int 
     if (c->queued) {
         free_sample(c->queued);
         c->queued = NULL;
-        decref(c->queued_name);
+        Py_DECREF(c->queued_name);
         c->queued_name = NULL;
         c->queued_tight = 0;
     }
@@ -691,7 +671,7 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int 
         return;
     }
 
-    incref(name);
+    Py_INCREF(name);
     c->queued_name = name;
     c->queued_fadein = fadein;
     c->queued_tight = tight;
@@ -730,7 +710,7 @@ void RPS_stop(int channel) {
     if (c->playing) {
         free_sample(c->playing);
         c->playing = NULL;
-        decref(c->playing_name);
+        Py_DECREF(c->playing_name);
         c->playing_name = NULL;
         c->playing_start_ms = 0;
     }
@@ -738,7 +718,7 @@ void RPS_stop(int channel) {
     if (c->queued) {
         free_sample(c->queued);
         c->queued = NULL;
-        decref(c->queued_name);
+        Py_DECREF(c->queued_name);
         c->queued_name = NULL;
         c->queued_start_ms = 0;
     }
@@ -775,7 +755,7 @@ void RPS_dequeue(int channel, int even_tight) {
     if (c->queued && (! c->playing_tight || even_tight)) {
         free_sample(c->queued);
         c->queued = NULL;
-        decref(c->queued_name);
+        Py_DECREF(c->queued_name);
         c->queued_name = NULL;
     } else {
         c->queued_tight = 0;

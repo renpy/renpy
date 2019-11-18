@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
@@ -29,7 +30,7 @@ import types  # @UnresolvedImport
 import renpy.display  # @UnusedImport
 from renpy.display.layout import Container
 
-import renpy.display.accelerator
+from renpy.display.accelerator import transform_render
 
 # The null object that's used if we don't have a defined child.
 null = None
@@ -582,7 +583,7 @@ class Transform(Container):
             self.arguments = { }
 
             # Fill self.arguments with a
-            for k, v in kwargs.iteritems():
+            for k, v in kwargs.items():
 
                 prefix = ""
                 prop = k
@@ -608,7 +609,7 @@ class Transform(Container):
                         prefix = new_prefix
 
             if "" in self.arguments:
-                for k, v in self.arguments[""].iteritems():
+                for k, v in self.arguments[""].items():
                     setattr(self.state, k, v)
 
         else:
@@ -667,7 +668,7 @@ class Transform(Container):
             if d is None:
                 continue
 
-            for k, v in d.iteritems():
+            for k, v in d.items():
                 setattr(state, k, v)
 
         return None
@@ -853,6 +854,8 @@ class Transform(Container):
         self.active = True
 
     # The render method is now defined in accelerator.pyx.
+    def render(self, width, height, st, at):
+        return transform_render(self, width, height, st, at)
 
     def event(self, ev, x, y, st):
 
@@ -868,7 +871,7 @@ class Transform(Container):
         if not offsets:
             return None
 
-        for i in xrange(len(self.children)-1, -1, -1):
+        for i in range(len(self.children)-1, -1, -1):
 
             d = children[i]
             xo, yo = offsets[i]
@@ -1012,9 +1015,6 @@ class Transform(Container):
 
     def _show(self):
         self.update_state()
-
-
-Transform.render = types.MethodType(renpy.display.accelerator.transform_render, None, Transform)
 
 
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):

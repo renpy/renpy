@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import os
 import copy
@@ -27,7 +28,6 @@ import time
 import zlib
 
 import renpy
-import renpy.six as six
 
 from renpy.loadsave import dump, dumps, loads
 
@@ -233,7 +233,7 @@ def init():
     # Create the backup of the persistent data.
     v = vars(persistent)
 
-    for k, v in six.iteritems(vars(persistent)):
+    for k, v in vars(persistent).items():
         backup[k] = safe_deepcopy(v)
 
     return persistent
@@ -337,7 +337,7 @@ def merge(other):
 
 
 # The mtime of the most recently processed savefile.
-persistent_mtime = None
+persistent_mtime = 0
 
 
 def check_update():
@@ -370,7 +370,7 @@ def update(force_save=False):
     # A list of (mtime, other) pairs, where other is a persistent file
     # we might want to merge in.
     pairs = renpy.loadsave.location.load_persistent()
-    pairs.sort()
+    pairs.sort(key=lambda a : a[0])
 
     # Deals with the case where we don't have any persistent data for
     # some reason.

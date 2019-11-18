@@ -22,9 +22,11 @@
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
-from renpy.display.transform import *  # @UnusedWildImport
+# Some imports are here to handle pickles of a moved class.
+from renpy.display.transform import Transform, Proxy, TransformState, ATLTransform, null  # @UnusedImport
 
 import math
 

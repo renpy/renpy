@@ -22,7 +22,9 @@
 # This file contains code that is responsible for storing and executing a
 # Ren'Py script.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import renpy
 
 import hashlib
@@ -34,7 +36,7 @@ import marshal
 import struct
 import zlib
 
-from cPickle import loads, dumps
+from pickle import loads, dumps
 import shutil
 
 # The version of the dumped script.
@@ -135,7 +137,7 @@ class Script(object):
 
         self.serial = 0
 
-        self.digest = hashlib.md5(renpy.version_only)
+        self.digest = hashlib.md5(renpy.version_only.encode("utf-8"))
 
         self.loaded_rpy = False
         self.backup_list = [ ]
@@ -194,9 +196,15 @@ class Script(object):
             short_fn = renpy.exports.fsencode(fn[len(renpy.config.gamedir)+1:])
 
             base, ext = os.path.splitext(short_fn)
+
+            if PY2:
+                hex_checksum = checksum[:8].encode("hex")
+            else:
+                hex_checksum = checksum[:8].hex()
+
             target_fn = os.path.join(
                 backupdir,
-                base + "." + checksum[:8].encode("hex") + ext,
+                base + "." + hex_checksum + ext,
                 )
 
             if os.path.exists(target_fn):
@@ -705,7 +713,7 @@ class Script(object):
 
             if os.path.exists(rpyfn):
                 with open(rpyfn, "rU") as f:
-                    rpydigest = hashlib.md5(f.read()).digest()
+                    rpydigest = hashlib.md5(f.read().encode("utf-8")).digest()
             else:
                 rpydigest = None
 
@@ -839,10 +847,8 @@ class Script(object):
                     if text is None:
                         text = ''
 
-                    try:
-                        text = text.decode("utf-8")
-                    except:
-                        text = text.decode("latin-1")
+                    if not isinstance(text, str):
+                        text = text.decode("utf-8", "replace")
 
                     pem = renpy.parser.ParseError(
                         filename=e.filename,

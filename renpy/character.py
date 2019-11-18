@@ -21,7 +21,8 @@
 
 # The Character object (and friends).
 
-from __future__ import print_function, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 
@@ -163,7 +164,7 @@ def compute_widget_properties(who_args, what_args, window_args, properties, vari
 
         d = d.copy()
 
-        if isinstance(style, six.string_types):
+        if isinstance(style, basestring):
 
             if multiple is not None:
                 style = "block{}_multiple{}_{}".format(multiple[0], multiple[1], style)
@@ -252,7 +253,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 
     def merge_style(style, properties):
 
-        if isinstance(style, six.string_types):
+        if isinstance(style, basestring):
             style = getattr(renpy.store.style, style)
 
         if variant is not None:
@@ -1024,10 +1025,21 @@ class ADVCharacter(object):
         return renpy.substitutions.substitute(who)[0]
 
     def __str__(self):
-        return six.text_type(self).encode("utf-8")
+
+        who = self.name
+
+        if self.dynamic:
+            who = renpy.python.py_eval(who)
+
+        rv = renpy.substitutions.substitute(who)[0]
+
+        if PY2:
+            rv = rv.encode("utf-8")
+
+        return rv
 
     def __format__(self, spec):
-        return format(six.text_type(self), spec)
+        return format(str(self), spec)
 
     def __repr__(self):
         return "<Character: {!r}>".format(self.name)
@@ -1051,7 +1063,7 @@ class ADVCharacter(object):
         if not (self.condition is None or renpy.python.py_eval(self.condition)):
             return True
 
-        if not isinstance(what, six.string_types):
+        if not isinstance(what, basestring):
             raise Exception("Character expects its what argument to be a string, got %r." % (what,))
 
         # Figure out multiple and final. Multiple is None if this is not a multiple
@@ -1151,7 +1163,7 @@ class ADVCharacter(object):
                     self.do_done(who, what)
 
                 # Finally, log this line of dialogue.
-                if who and isinstance(who, (str, six.text_type)):
+                if who and isinstance(who, basestring):
                     renpy.exports.log(who)
 
                 renpy.exports.log(what)

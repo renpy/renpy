@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import absolute_import, division, print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy
 import json
@@ -38,7 +39,7 @@ def extract_strings_core(language, destination, merge=False, force=False):
         with open(destination, "r") as f:
             result.update(json.load(f, "utf-8"))
 
-    for k, v in st.translations.iteritems():
+    for k, v in st.translations.items():
         if v and v != k:
             result[k] = v
 
@@ -67,5 +68,6 @@ def extract_strings():
     extract_strings_core(language, args.destination, args.merge, args.force)
 
     return False
+
 
 renpy.arguments.register_command("extract_strings", extract_strings)

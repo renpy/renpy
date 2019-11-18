@@ -21,7 +21,8 @@
 
 # This file contains support for state-machine controlled animations.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 import renpy.game
@@ -121,7 +122,7 @@ class Edge(object):
         self.prob = prob
 
     def add(self, sma):
-        for _i in xrange(0, self.prob):
+        for _i in range(0, self.prob):
             sma.edges.setdefault(self.old, []).append(self)
 
 
@@ -202,7 +203,7 @@ class SMAnimation(renpy.display.core.Displayable):
         self.state = None
 
     def visit(self):
-        return [ i.image for i in self.states.itervalues() ]
+        return [ i.image for i in self.states.values() ]
 
     def pick_edge(self, state):
         """
@@ -302,75 +303,14 @@ class SMAnimation(renpy.display.core.Displayable):
 
         args = [ ]
 
-        for state in self.states.itervalues():
+        for state in self.states.values():
             args.append(state.motion_copy(child))
 
-        for edges in self.edges.itervalues():
+        for edges in self.edges.values():
             args.extend(edges)
 
         return SMAnimation(self.initial, delay=self.delay, *args, **self.properties)
 
-
-# class Animation(renpy.display.core.Displayable):
-#     """
-#     A Displayable that draws an animation, which is a series of images
-#     that are displayed with time delays between them.
-#     """
-
-#     def __init__(self, *args, **properties):
-#         """
-#         Odd (first, third, fifth, etc.) arguments to Animation are
-#         interpreted as image filenames, while even arguments are the
-#         time to delay between each image. If the number of arguments
-#         is odd, the animation will stop with the last image (well,
-#         actually delay for a year before looping). Otherwise, the
-#         animation will restart after the final delay time.
-
-#         @param anim_timebase: If True, the default, use the animation
-#         timebase. Otherwise, use the displayable timebase.
-#         """
-
-#         properties.setdefault('style', 'animation')
-#         self.anim_timebase = properties.pop('anim_timebase', True)
-
-#         super(Animation, self).__init__(**properties)
-
-#         self.images = [ ]
-#         self.delays = [ ]
-
-#         for i, arg in enumerate(args):
-
-#             if i % 2 == 0:
-#                 self.images.append(renpy.easy.displayable(arg))
-#             else:
-#                 self.delays.append(arg)
-
-#         if len(self.images) > len(self.delays):
-#             self.delays.append(365.25 * 86400.0) # One year, give or take.
-
-#     def render(self, width, height, st, at):
-
-#         if self.anim_timebase:
-#             t = at % sum(self.delays)
-#         else:
-#             t = st % sum(self.delays)
-
-#         for image, delay in zip(self.images, self.delays):
-#             if t < delay:
-#                 renpy.display.render.redraw(self, delay - t)
-
-#                 im = renpy.display.render.render(image, width, height, t, at)
-#                 width, height = im.get_size()
-#                 rv = renpy.display.render.Render(width, height)
-#                 rv.blit(im, (0, 0))
-
-#                 return rv
-
-#             else:
-#                 t = t - delay
-
-#     def visit(self):
-#         return self.images
 
 def Animation(*args, **kwargs):
     newargs = [ ]

@@ -21,20 +21,20 @@
 
 # This module handles the logging of messages to a file.
 
-from __future__ import print_function, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import os.path
-import codecs
 import traceback
 import platform
 import time
 import tempfile
 import sys
+import io
 
 import encodings.latin_1  # @UnusedImport
 
 import renpy.config
-import renpy.six as six
 
 real_stdout = sys.stdout
 real_stderr = sys.stderr
@@ -116,9 +116,9 @@ class LogFile(object):
             else:
 
                 try:
-                    self.file = codecs.open(fn, mode, "utf-8")
+                    self.file = io.open(fn, mode, encoding="utf-8")
                 except:
-                    self.file = codecs.open(altfn, mode, "utf-8")
+                    self.file = io.open(altfn, mode, encoding="utf-8")
 
             if self.append:
                 self.write('')
@@ -156,7 +156,7 @@ class LogFile(object):
 
                 s += "\n"
 
-            if not isinstance(s, six.text_type):
+            if not isinstance(s, str):
                 s = s.decode("latin-1")
 
             s = s.replace("\n", "\r\n")
@@ -227,12 +227,10 @@ class StdioRedirector(object):
 
     def write(self, s):
 
-        if isinstance(s, six.text_type):
-            es = s.encode("utf-8")
-        else:
-            es = s
+        if not isinstance(s, str):
+            s = str(s, "utf-8", "replace")
 
-        self.real_file.write(es)
+        self.real_file.write(s)
         self.real_file.flush()
 
         if renpy.ios:
@@ -254,7 +252,6 @@ class StdioRedirector(object):
                 try:
                     i(l)
                 except:
-                    # traceback.print_exc(None, real_stderr)
                     pass
 
         self.buffer = lines[-1]

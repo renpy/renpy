@@ -294,6 +294,8 @@ def compile_shader(kind, source):
     Allocates and compiles a shader.
     """
 
+    source = source.encode("utf-8")
+
     cdef char *sourceptr = <char *> source
     cdef int lensource = len(source)
 

@@ -1,4 +1,6 @@
 from libc.stdlib cimport calloc, free
+from libc.string cimport memcpy
+
 
 cdef object point2str(Point2 p):
     return "({:.3f}, {:.3f})".format(p.x, p.y)
@@ -87,6 +89,37 @@ cdef class Polygon:
 
             j = i
 
+        return rv
+
+
+    cpdef Polygon copy(Polygon self):
+        """
+        Returns a copy of this polygon.
+        """
+
+        cdef Polygon rv = Polygon(self.points)
+        memcpy(rv.point, self.point, self.points * sizeof(Point2))
+        return rv
+
+
+    cpdef void multiply_matrix_inplace(Polygon self, Matrix m):
+        """
+        Multiplies each point's position with the matrix `m`, in place.
+        """
+
+        cdef int i
+
+        for 0 <= i < self.points:
+            m.transform2(&self.point[i].x, &self.point[i].y, self.point[i].x, self.point[i].y, 0, 1)
+
+    cpdef Polygon multiply_matrix(Polygon self, Matrix m):
+        """
+        Multiplies each point's position with the matrix `m`, in place,
+        and returns a copy.
+        """
+
+        cdef Polygon rv = self.copy()
+        rv.multiply_matrix_inplace(m)
         return rv
 
 

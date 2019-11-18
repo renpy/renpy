@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import pygame_sdl2 as pygame
 
@@ -123,7 +124,7 @@ class ImageFont(object):
             if not g.width:
                 continue
 
-            c = unichr(g.character)
+            c = chr(g.character)
 
             cxo, cyo = self.offsets[c]
             x = g.x + xo + cxo
@@ -271,7 +272,7 @@ class MudgeFont(ImageFont):
             if char < 0:
                 continue
 
-            c = unichr(char)
+            c = chr(char)
             x = int(e.attrib["x"])
             y = int(e.attrib["y"])
             w = int(e.attrib["width"])
@@ -367,7 +368,7 @@ class BMFont(ImageFont):
             elif kind == "page":
                 pages[int(args["id"])] = renpy.display.im.Image(args["file"]).load(unscaled=True)
             elif kind == "char":
-                c = unichr(int(args["id"]))
+                c = chr(int(args["id"]))
                 x = int(args["x"])
                 y = int(args["y"])
                 w = int(args["width"])
@@ -385,8 +386,8 @@ class BMFont(ImageFont):
                 self.advance[c] = xadvance
                 self.offsets[c] = (xo, yo)
             elif kind == "kerning":
-                first = unichr(int(args["first"]))
-                second = unichr(int(args["second"]))
+                first = chr(int(args["first"]))
+                second = chr(int(args["second"]))
                 self.kerns[first + second] = int(args["amount"])
 
         f.close()
@@ -417,14 +418,14 @@ class ScaledImageFont(ImageFont):
         self.baseline = scale(parent.baseline)
         self.default_kern = scale(parent.default_kern)
 
-        self.width = { k : scale(v) for k, v in parent.width.iteritems() }
-        self.advance = { k : scale(v) for k, v in parent.advance.iteritems() }
-        self.offsets = { k : (scale(v[0]), scale(v[1])) for k, v in parent.offsets.iteritems() }
-        self.kerns = { k : scale(v) for k, v in parent.kerns.iteritems() }
+        self.width = { k : scale(v) for k, v in parent.width.items() }
+        self.advance = { k : scale(v) for k, v in parent.advance.items() }
+        self.offsets = { k : (scale(v[0]), scale(v[1])) for k, v in parent.offsets.items() }
+        self.kerns = { k : scale(v) for k, v in parent.kerns.items() }
 
         self.chars = { }
 
-        for k, v in parent.chars.iteritems():
+        for k, v in parent.chars.items():
             w, h = v.get_size()
             nw = scale(w)
             nh = scale(h)
@@ -622,9 +623,9 @@ def load_face(fn):
 
             pygame.sysfont.initsysfonts()
 
-            for v in pygame.sysfont.Sysfonts.itervalues():
+            for v in pygame.sysfont.Sysfonts.values():
                 if v is not None:
-                    for _flags, ffn in v.iteritems():
+                    for _flags, ffn in v.items():
                         for i in fonts:
                             if ffn.lower().endswith(i):
                                 font_file = open(ffn, "rb")
@@ -714,7 +715,7 @@ def free_memory():
 
 
 def load_fonts():
-    for i in image_fonts.itervalues():
+    for i in image_fonts.values():
         i.load()
 
     for i in renpy.config.preload_fonts:

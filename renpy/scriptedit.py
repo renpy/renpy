@@ -22,7 +22,8 @@
 # This file contains code to add and remove statements from the AST
 # and the textual representation of Ren'Py code.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy
 import re
@@ -124,7 +125,7 @@ def adjust_line_locations(filename, linenumber, char_offset, line_offset):
 
     new_lines = { }
 
-    for key, line in lines.iteritems():
+    for key, line in lines.items():
 
         (fn, ln) = key
 

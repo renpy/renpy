@@ -21,7 +21,8 @@
 
 # This file contains code to manage focus on the display.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import pygame_sdl2 as pygame
 import renpy.display
@@ -292,7 +293,7 @@ def before_interact(roots):
 
         if defaults:
             if len(defaults) > 1:
-                defaults.sort()
+                defaults.sort(key=item0)
 
             _, f, screen = defaults[-1]
 

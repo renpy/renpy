@@ -110,14 +110,14 @@ init -1500 python:
             if len(self.points[segment]) == 2:   # Straight line
                 t_p = 1.0 - t
 
-                result = [ t_p * start[i] + t * end[i] for i in 0,1 ]
+                result = [ t_p * start[i] + t * end[i] for i in (0,1) ]
 
             elif len(self.points[segment]) == 3: # Quadratic Bezier
                 t_pp = (1.0 - t)**2
                 t_p = 2 * t * (1.0 - t)
                 t2 = t**2
 
-                result = [ t_pp * start[i] + t_p * self.points[segment][2][i] + t2 * end[i] for i in 0,1 ]
+                result = [ t_pp * start[i] + t_p * self.points[segment][2][i] + t2 * end[i] for i in (0,1) ]
 
             elif len(self.points[segment]) == 4: # Cubic Bezier
                 t_ppp = (1.0 - t)**3
@@ -125,7 +125,7 @@ init -1500 python:
                 t_p = 3 * t**2 * (1.0 - t)
                 t3 = t**3
 
-                result = [ t_ppp * start[i] + t_pp * self.points[segment][2][i] + t_p * self.points[segment][3][i] + t3 * end[i] for i in 0,1 ]
+                result = [ t_ppp * start[i] + t_pp * self.points[segment][2][i] + t_p * self.points[segment][3][i] + t3 * end[i] for i in (0,1) ]
 
             return ( absolute(result[0]), absolute(result[1]), 0, 0 )
 

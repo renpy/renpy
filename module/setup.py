@@ -28,6 +28,12 @@ import sys
 import os
 import subprocess
 
+# Make sure future is available.
+try:
+    import future
+except ImportError:
+    subprocess.check_call([ "pip", "install", "future" ])
+
 # Change to the directory containing this file.
 BASE=os.path.abspath(os.path.dirname(sys.argv[0]))
 os.chdir(BASE)
@@ -173,6 +179,9 @@ cython("renpy.parsersupport")
 cython("renpy.pydict")
 cython("renpy.style")
 
+# renpy.compat
+cython("renpy.compat.dictviews")
+
 # renpy.styledata
 cython("renpy.styledata.styleclass")
 cython("renpy.styledata.stylesets")
@@ -221,8 +230,8 @@ cython("renpy.gl2.uguugl", libs=sdl)
 cython("renpy.gl2.uguu", libs=sdl)
 cython("renpy.gl2.gl2geometry")
 cython("renpy.gl2.gl2mesh")
-cython("renpy.gl2.gl2meshcrop")
 cython("renpy.gl2.gl2polygon")
+cython("renpy.gl2.gl2model")
 cython("renpy.gl2.gl2draw", libs=sdl)
 cython("renpy.gl2.gl2texture", libs=sdl)
 cython("renpy.gl2.gl2shader", libs=sdl)

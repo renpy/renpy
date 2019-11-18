@@ -23,7 +23,8 @@
 # information about the game that's used to reflect on the contents,
 # including how to navigate around the game.
 
-from __future__ import print_function, absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import inspect
 import json
@@ -31,7 +32,6 @@ import sys
 import os
 
 import renpy
-import renpy.six as six
 
 
 # A list of (name, filename, linenumber) tuples, for various types of
@@ -81,9 +81,9 @@ def dump(error):
     if not args.json_dump:
         return
 
-    def filter(name, filename):  # @ReservedAssignment
+    def name_filter(name, filename):  # @ReservedAssignment
         """
-        Returns true if the name is included by the filter, or false if it is excluded.
+        Returns true if the name is included by the name_filter, or false if it is excluded.
         """
 
         filename = filename.replace("\\", "/")
@@ -124,14 +124,14 @@ def dump(error):
     # Labels.
     label = location["label"] = { }
 
-    for name, n in six.iteritems(renpy.game.script.namemap):
+    for name, n in renpy.game.script.namemap.items():
         filename = n.filename
         line = n.linenumber
 
-        if not isinstance(name, six.string_types):
+        if not isinstance(name, basestring):
             continue
 
-        if not filter(name, filename):
+        if not name_filter(name, filename):
             continue
 
         label[name] = [ filename, line ]
@@ -140,7 +140,7 @@ def dump(error):
     define = location["define"] = { }
 
     for name, filename, line in definitions:
-        if not filter(name, filename):
+        if not name_filter(name, filename):
             continue
 
         define[name] = [ filename, line ]
@@ -149,7 +149,7 @@ def dump(error):
     screen = location["screen"] = { }
 
     for name, filename, line in screens:
-        if not filter(name, filename):
+        if not name_filter(name, filename):
             continue
 
         screen[name] = [ filename, line ]
@@ -158,7 +158,7 @@ def dump(error):
     transform = location["transform"] = { }
 
     for name, filename, line in transforms:
-        if not filter(name, filename):
+        if not name_filter(name, filename):
             continue
 
         transform[name] = [ filename, line ]
@@ -208,7 +208,7 @@ def dump(error):
                     if filename is None:
                         continue
 
-                    if not filter(name, filename):
+                    if not name_filter(name, filename):
                         continue
 
                     code[prefix + name] = [ filename, line ]
@@ -217,7 +217,7 @@ def dump(error):
 
             if inspect.isclass(o):
 
-                for methname, method in o.__dict__.iteritems():
+                for methname, method in o.__dict__.items():
 
                     try:
                         if inspect.getmodule(method) != mod:
@@ -228,10 +228,10 @@ def dump(error):
                         if filename is None:
                             continue
 
-                        if not filter(name, filename):
+                        if not name_filter(name, filename):
                             continue
 
-                        if not filter(methname, filename):
+                        if not name_filter(methname, filename):
                             continue
 
                         code[prefix + name + "." + methname] = [ filename, line ]

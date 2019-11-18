@@ -40,7 +40,7 @@ init -1600 python hide:
 
     # Register 8 channels by default, for compatiblity with older version
     # of Ren'Py.
-    for i in xrange(0, 8):
+    for i in range(0, 8):
         renpy.music.register_channel(i)
 
     # Set up default names for some of the channels.

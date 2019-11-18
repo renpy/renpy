@@ -527,7 +527,7 @@ cdef class GLDraw:
             gltexture.use_gl()
 
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
-        extensions = set(extensions_string.split(" "))
+        extensions = set(i.decode("utf-8") for i in extensions_string.split(b" "))
 
         renpy.display.log.write("Extensions:")
 
@@ -548,6 +548,7 @@ cdef class GLDraw:
                 return False
 
             value = os.environ.get(envvar, "")
+
             if value:
                 if value == envval:
                     return True
@@ -1529,7 +1530,7 @@ cdef class Environ(object):
 # These imports need to be down at the bottom, after the Rtt and Environ
 # classes have been created.
 try:
-    import glrtt_copy
+    from . import glrtt_copy
 except:
     glrtt_copy = None
 
@@ -1538,22 +1539,21 @@ if renpy.ios:
     glrtt_copy = None
 
 try:
-    import glrtt_fbo
+    from . import glrtt_fbo
 except ImportError:
     glrtt_fbo = None
 
 try:
-    import glenviron_fixed
+    from . import glenviron_fixed
 except ImportError:
     glenviron_fixed = None
 
 try:
-    import glenviron_shader
+    from . import glenviron_shader
 except ImportError:
     glenviron_shader = None
 
 try:
-    import glenviron_limited
+    from . import glenviron_limited
 except ImportError:
     glenviron_limited = None
-

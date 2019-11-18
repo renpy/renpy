@@ -22,7 +22,8 @@
 ##############################################################################
 # Definitions of screen language statements.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 import renpy.text.text

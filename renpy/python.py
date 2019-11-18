@@ -23,10 +23,11 @@
 # contained within the script file. It also handles rolling back the
 # game state to some time in the past.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 # Import the python ast module, not ours.
-ast = __import__("ast", { })
+import ast
 
 # Import the future module itself.
 import __future__
@@ -38,12 +39,11 @@ import re
 import sys
 import time
 import io
-
-import renpy.six as six
+import types
+import copyreg
 
 import renpy.audio
 
-import copy_reg
 
 ##############################################################################
 # Monkeypatch copy_reg to work around a change in the class that RevertableSet
@@ -65,7 +65,7 @@ def _reconstructor(cls, base, state):
     return obj
 
 
-copy_reg._reconstructor = _reconstructor
+copyreg._reconstructor = _reconstructor
 
 ##############################################################################
 # Code that implements the store.
@@ -77,7 +77,10 @@ copy_reg._reconstructor = _reconstructor
 class StoreDeleted(object):
 
     def __reduce__(self):
-        return "deleted"
+        if PY2:
+            return b"deleted"
+        else:
+            return "deleted"
 
 
 deleted = StoreDeleted()
@@ -191,7 +194,7 @@ def begin_stores():
     Calls .begin on every store dict.
     """
 
-    for sd in store_dicts.itervalues():
+    for sd in store_dicts.values():
         sd.begin()
 
 
@@ -235,7 +238,7 @@ def create_store(name):
     # Set up the default contents of the store.
     eval("1", d)
 
-    for k, v in renpy.minstore.__dict__.iteritems():
+    for k, v in renpy.minstore.__dict__.items():
         if k not in d:
             d[k] = v
 
@@ -304,7 +307,7 @@ def make_clean_stores():
 
     global clean_store_backup
 
-    for _k, v in store_dicts.iteritems():
+    for _k, v in store_dicts.items():
 
         v.ever_been_changed.clear()
         v.begin()
@@ -391,7 +394,7 @@ def reached(obj, reachable, wait):
 
     try:
         # Treat as fields, indexed by strings.
-        for v in vars(obj).itervalues():
+        for v in vars(obj).values():
             reached(v, reachable, wait)
     except:
         pass
@@ -406,7 +409,7 @@ def reached(obj, reachable, wait):
 
     try:
         # Treat as dict.
-        for v in obj.itervalues():
+        for v in obj.values():
             reached(v, reachable, wait)
     except:
         pass
@@ -424,18 +427,25 @@ def reached_vars(store, reachable, wait):
     the path by which the object was reached.
     """
 
-    for v in store.itervalues():
+    for v in store.values():
         reached(v, reachable, wait)
 
     for c in renpy.game.contexts:
         reached(c.info, reachable, wait)
         reached(c.music, reachable, wait)
         for d in c.dynamic_stack:
-            for v in d.itervalues():
+            for v in d.values():
                 reached(v, reachable, wait)
 
 
 # Code that replaces literals will calls to magic constructors.
+
+def b(s):
+    if PY2:
+        return s.encode("utf-8")
+    else:
+        return s
+
 
 class WrapNode(ast.NodeTransformer):
 
@@ -443,14 +453,14 @@ class WrapNode(ast.NodeTransformer):
         n = self.generic_visit(n)
 
         if not n.bases:
-            n.bases.append(ast.Name(id="object", ctx=ast.Load()))
+            n.bases.append(ast.Name(id=b("object"), ctx=ast.Load()))
 
         return n
 
     def visit_SetComp(self, n):
         return ast.Call(
             func=ast.Name(
-                id="__renpy__set__",
+                id=b("__renpy__set__"),
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -462,7 +472,7 @@ class WrapNode(ast.NodeTransformer):
 
         return ast.Call(
             func=ast.Name(
-                id="__renpy__set__",
+                id=b("__renpy__set__"),
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -473,7 +483,7 @@ class WrapNode(ast.NodeTransformer):
     def visit_ListComp(self, n):
         return ast.Call(
             func=ast.Name(
-                id="__renpy__list__",
+                id=b("__renpy__list__"),
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -487,7 +497,7 @@ class WrapNode(ast.NodeTransformer):
 
         return ast.Call(
             func=ast.Name(
-                id="__renpy__list__",
+                id=b("__renpy__list__"),
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -498,7 +508,7 @@ class WrapNode(ast.NodeTransformer):
     def visit_DictComp(self, n):
         return ast.Call(
             func=ast.Name(
-                id="__renpy__dict__",
+                id=b("__renpy__dict__"),
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -510,7 +520,7 @@ class WrapNode(ast.NodeTransformer):
 
         return ast.Call(
             func=ast.Name(
-                id="__renpy__dict__",
+                id=b("__renpy__dict__"),
                 ctx=ast.Load()
                 ),
             args=[ self.generic_visit(n) ],
@@ -541,7 +551,7 @@ _execute_python_hide()
     tree.body = hide.body
 
 
-unicode_re = re.compile(ur'[\u0080-\uffff]')
+unicode_re = re.compile(r'[\u0080-\uffff]')
 
 
 def unicode_sub(m):
@@ -649,7 +659,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         lineno = source.linenumber
 
     if cache:
-        key = (lineno, filename, unicode(source), mode, renpy.script.MAGIC)
+        key = (lineno, filename, str(source), mode, renpy.script.MAGIC)
 
         rv = py_compile_cache.get(key, None)
         if rv is not None:
@@ -668,7 +678,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
             py_compile_cache[key] = rv
             return rv
 
-    source = unicode(source)
+    source = str(source)
     source = source.replace("\r", "")
     source = escape_unicode(source)
 
@@ -842,10 +852,10 @@ class RevertableList(list):
         list.__init__(self, *args)
 
     __delitem__ = mutator(list.__delitem__)
-    if six.PY2:
+    if PY2:
         __delslice__ = mutator(list.__delslice__)
     __setitem__ = mutator(list.__setitem__)
-    if six.PY2:
+    if PY2:
         __setslice__ = mutator(list.__setslice__)
     __iadd__ = mutator(list.__iadd__)
     __imul__ = mutator(list.__imul__)
@@ -865,7 +875,7 @@ class RevertableList(list):
         return newmethod
 
     __add__ = wrapper(list.__add__)
-    if six.PY2:
+    if PY2:
         __getslice__ = wrapper(list.__getslice__)
 
     def __getitem__(self, index):
@@ -1114,7 +1124,10 @@ class RollbackRandom(random.Random):
         super(RollbackRandom, self).setstate(compressed)
 
     setstate = mutator(random.Random.setstate)
-    jumpahead = mutator(random.Random.jumpahead)
+
+    if PY2:
+        jumpahead = mutator(random.Random.jumpahead)
+
     getrandbits = mutator(random.Random.getrandbits)
     seed = mutator(random.Random.seed)
     random = mutator(random.Random.random)
@@ -1301,15 +1314,15 @@ class Rollback(renpy.object.Object):
 
         # Add objects reachable from the stores. (Objects that might be
         # unreachable at the moment.)
-        for changes in self.stores.itervalues():
-            for _k, v in changes.iteritems():
+        for changes in self.stores.values():
+            for _k, v in changes.items():
                 if v is not deleted:
                     reached(v, reachable, wait)
 
         # Add in objects reachable through the context.
         reached(self.context.info, reachable, wait)
         for d in self.context.dynamic_stack:
-            for v in d.itervalues():
+            for v in d.values():
                 reached(v, reachable, wait)
 
         # Add in objects reachable through displayables.
@@ -1342,19 +1355,19 @@ class Rollback(renpy.object.Object):
             if roll is not None:
                 obj._rollback(roll)
 
-        for name, changes in self.stores.iteritems():
+        for name, changes in self.stores.items():
             store = store_dicts.get(name, None)
             if store is None:
                 continue
 
-            for name, value in changes.iteritems():
+            for name, value in changes.items():
                 if value is deleted:
                     if name in store:
                         del store[name]
                 else:
                     store[name] = value
 
-        for name, changes in self.delta_ebc.iteritems():
+        for name, changes in self.delta_ebc.items():
 
             store = store_dicts.get(name, None)
             if store is None:
@@ -1552,18 +1565,18 @@ class RollbackLog(renpy.object.Object):
 
         # Update self.current.stores with the changes from each store.
         # Also updates .ever_been_changed.
-        for name, sd in store_dicts.iteritems():
+        for name, sd in store_dicts.items():
             self.current.stores[name], self.current.delta_ebc[name] = sd.get_changes(begin)
 
         # Update the list of mutated objects and what we need to do to
         # restore them.
 
-        for _i in xrange(4):
+        for _i in range(4):
 
             del self.current.objects[:]
 
             try:
-                for _k, v in self.mutated.iteritems():
+                for _k, v in self.mutated.items():
 
                     if v is None:
                         continue
@@ -1594,7 +1607,7 @@ class RollbackLog(renpy.object.Object):
 
         rv = { }
 
-        for store_name, sd in store_dicts.iteritems():
+        for store_name, sd in store_dicts.items():
             for name in sd.ever_been_changed:
                 if name in sd:
                     rv[store_name + "." + name] = sd[name]
@@ -1691,9 +1704,9 @@ class RollbackLog(renpy.object.Object):
                 fwd_name, fwd_data = self.forward[0]
 
                 if (self.current.context.current == fwd_name
-                        and data == fwd_data
-                        and (keep_rollback or self.rolled_forward)
-                        ):
+                    and data == fwd_data
+                    and (keep_rollback or self.rolled_forward)
+                    ):
                     self.forward.pop(0)
                 else:
                     del self.forward[:]
@@ -1983,7 +1996,7 @@ class RollbackLog(renpy.object.Object):
         clean_stores()
         renpy.translation.init_translation()
 
-        for name, value in roots.iteritems():
+        for name, value in roots.items():
 
             if "." in name:
                 store_name, name = name.rsplit(".", 1)
@@ -2124,20 +2137,23 @@ class StoreProxy(object):
         delattr(renpy.store, k)  # @UndefinedVariable
 
 
-# Code for pickling bound methods.
-def method_pickle(method):
-    name = method.im_func.__name__
+if PY2:
 
-    obj = method.im_self
+    # Code for pickling bound methods.
+    def method_pickle(method):
+        name = method.im_func.__name__
 
-    if obj is None:
-        obj = method.im_class
+        obj = method.im_self
 
-    return method_unpickle, (obj, name)
+        if obj is None:
+            obj = method.im_class
 
+        return method_unpickle, (obj, name)
 
-def method_unpickle(obj, name):
-    return getattr(obj, name)
+    def method_unpickle(obj, name):
+        return getattr(obj, name)
+
+    copyreg.pickle(types.MethodType, method_pickle)
 
 # Code for pickling modules.
 
@@ -2153,8 +2169,4 @@ def module_unpickle(name):
     return __import__(name)
 
 
-import copy_reg
-import types
-
-copy_reg.pickle(types.MethodType, method_pickle)
-copy_reg.pickle(types.ModuleType, module_pickle)
+copyreg.pickle(types.ModuleType, module_pickle)

@@ -48,11 +48,13 @@ coverage = "RENPY_COVERAGE" in os.environ
 # Are we doing a static build?
 static = "RENPY_STATIC" in os.environ
 
-if coverage:
-    gen = "gen.coverage"
-else:
-    gen = "gen"
+gen = "gen"
 
+if sys.version_info.major > 2:
+    gen += "3"
+
+if coverage:
+    gen += "-coverage"
 
 if static:
     gen += "-static"
@@ -390,14 +392,14 @@ def copyfile(source, dest, replace=None, replace_with=None):
         if os.path.getmtime(sfn) <= os.path.getmtime(dfn):
             return
 
-    sf = open(sfn, "rb")
+    sf = open(sfn, "r")
     data = sf.read()
     sf.close()
 
     if replace:
         data = data.replace(replace, replace_with)
 
-    df = open(dfn, "wb")
+    df = open(dfn, "w")
     df.write("# This file was automatically generated from " + source + "\n")
     df.write("# Modifications will be automatically overwritten.\n\n")
     df.write(data)

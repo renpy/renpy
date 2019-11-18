@@ -19,7 +19,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function, absolute_import
+
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 import renpy.text
@@ -29,10 +31,7 @@ import re
 import sys
 import collections
 import textwrap
-
-
-import renpy.six.moves.builtins as builtins
-import renpy.six as six
+import builtins
 
 python_builtins = set(dir(builtins))
 renpy_builtins = set()
@@ -77,8 +76,8 @@ added = { }
 def add(msg, *args):
     if not msg in added:
         added[msg] = True
-        msg = six.text_type(msg) % args
-        print(msg.encode('utf-8'))
+        msg = str(msg) % args
+        print(msg)
 
 
 # Tries to evaluate an expression, announcing an error if it fails.
@@ -585,7 +584,7 @@ def check_style_property_displayable(name, property, d):
 def check_style(name, s):
 
     for p in s.properties:
-        for k, v in six.iteritems(p):
+        for k, v in p.items():
 
             # Treat font specially.
             if k.endswith("font"):
@@ -626,7 +625,7 @@ def check_screen(node):
 
 
 def check_styles():
-    for full_name, s in six.iteritems(renpy.style.styles):  # @UndefinedVariable
+    for full_name, s in renpy.style.styles.items():  # @UndefinedVariable
         name = "style." + full_name[0]
         for i in full_name[1:]:
             name += "[{!r}]".format(i)
@@ -715,8 +714,7 @@ def lint():
 
     renpy.game.lint = True
 
-    print(codecs.BOM_UTF8)
-    print(six.text_type(renpy.version + " lint report, generated at: " + time.ctime()).encode("utf-8"))
+    print("\ufeff" + renpy.version + " lint report, generated at: " + time.ctime())
 
     # This supports check_hide.
     global image_prefixes

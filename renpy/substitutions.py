@@ -22,7 +22,8 @@
 # This file contains support for string translation and string formatting
 # operations.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy
 import string
@@ -169,17 +170,17 @@ class Formatter(string.Formatter):
         if "r" in conversion:
             value = repr(value)
         elif "s" in conversion:
-            value = unicode(value)
+            value = str(value)
 
         if "t" in conversion:
             if not isinstance(value, basestring):
-                value = unicode(value)
+                value = str(value)
 
             value = renpy.translation.translate_string(value)
 
         if "q" in conversion:
             if not isinstance(value, basestring):
-                value = unicode(value)
+                value = str(value)
 
             value = value.replace("{", "{{")
 
@@ -231,7 +232,7 @@ def substitute(s, scope=None, force=False, translate=True):
     """
 
     if not isinstance(s, basestring):
-        s = unicode(s)
+        s = str(s)
 
     if translate:
         s = renpy.translation.translate_string(s)

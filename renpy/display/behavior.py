@@ -21,7 +21,8 @@
 
 # This contains various Displayables that handle events.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 import renpy.audio
@@ -454,7 +455,7 @@ class Keymap(renpy.display.layout.Null):
 
     def event(self, ev, x, y, st):
 
-        for name, action in self.keymap.iteritems():
+        for name, action in self.keymap.items():
 
             if map_event(ev, name):
 
@@ -468,7 +469,7 @@ class Keymap(renpy.display.layout.Null):
                 raise renpy.display.core.IgnoreEvent()
 
     def predict_one_action(self):
-        for i in self.keymap.itervalues():
+        for i in self.keymap.values():
             predict_action(i)
 
 
@@ -763,7 +764,7 @@ class Button(renpy.display.layout.Window):
         predict_action(self.alternate)
 
         if self.keymap:
-            for v in self.keymap.itervalues():
+            for v in self.keymap.values():
                 predict_action(v)
 
     def render(self, width, height, st, at):
@@ -927,7 +928,7 @@ class Button(renpy.display.layout.Window):
             return None
 
         # Check the keymap.
-        for name, action in self.keymap.iteritems():
+        for name, action in self.keymap.items():
             if map_event(ev, name):
                 return run(action)
 
@@ -1041,7 +1042,7 @@ class ImageButton(Button):
                                           **properties)
 
     def visit(self):
-        return self.state_children.values()
+        return list(self.state_children.values())
 
     def get_child(self):
         return self.style.child or self.state_children[self.style.prefix]
@@ -1153,7 +1154,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             changed = value.set_text
             default = value.get_text()
 
-        self.default = unicode(default)
+        self.default = str(default)
         self.content = self.default
 
         self.length = length
@@ -1288,7 +1289,7 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
 
             if self.value is not None:
                 default = self.value.get_text()
-                self.default = unicode(default)
+                self.default = str(default)
 
             self.content = self.default
             self.caret_pos = len(self.content)
@@ -1779,7 +1780,7 @@ class Bar(renpy.display.core.Displayable):
 
         active = dimension - fore_gutter - aft_gutter
         if range:
-            thumb_dim = active * page / (range + page)
+            thumb_dim = active * page // (range + page)
         else:
             thumb_dim = active
 
@@ -1801,7 +1802,7 @@ class Bar(renpy.display.core.Displayable):
         active -= thumb_dim
 
         if range:
-            fore_size = active * value / range
+            fore_size = active * value // range
         else:
             fore_size = active
 

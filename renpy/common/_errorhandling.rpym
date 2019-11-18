@@ -589,47 +589,50 @@ screen _exception:
             text fmt_short substitute False
             text fmt_full substitute False
 
-        vbox:
-            hbox:
-                spacing gui._scale(25)
+        hbox:
+            vbox:
+                hbox:
+                    spacing gui._scale(25)
+                    box_wrap True
+                    box_wrap_spacing gui._scale(5)
 
-                if rollback_action and _errorhandling.rollback:
-                    textbutton _("Rollback"):
-                        action rollback_action
-                        hovered tt.action(_("Attempts a roll back to a prior time, allowing you to save or choose a different choice."))
+                    if rollback_action and _errorhandling.rollback:
+                        textbutton _("Rollback"):
+                            action rollback_action
+                            hovered tt.action(_("Attempts a roll back to a prior time, allowing you to save or choose a different choice."))
 
-                if ignore_action and _errorhandling.ignore:
-                    textbutton _("Ignore"):
-                        action ignore_action
+                    if ignore_action and _errorhandling.ignore:
+                        textbutton _("Ignore"):
+                            action ignore_action
 
-                        if _ignore_action:
-                            hovered tt.action(_("Ignores the exception, allowing you to continue."))
-                        else:
-                            hovered tt.action(_("Ignores the exception, allowing you to continue. This often leads to additional errors."))
+                            if _ignore_action:
+                                hovered tt.action(_("Ignores the exception, allowing you to continue."))
+                            else:
+                                hovered tt.action(_("Ignores the exception, allowing you to continue. This often leads to additional errors."))
 
-                if config.developer and not renpy.mobile:
-                    if _errorhandling.reload:
-                        textbutton _("Reload"):
-                            action reload_action
-                            hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
+                    if config.developer and not renpy.mobile:
+                        if _errorhandling.reload:
+                            textbutton _("Reload"):
+                                action reload_action
+                                hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
 
-                    if _errorhandling.console:
-                        textbutton _("Console") :
-                            action __EnterConsole()
-                            hovered tt.action(_("Opens a console to allow debugging the problem."))
+                        if _errorhandling.console:
+                            textbutton _("Console") :
+                                action __EnterConsole()
+                                hovered tt.action(_("Opens a console to allow debugging the problem."))
 
-                use _exception_actions(traceback_fn, tt)
+                    use _exception_actions(traceback_fn, tt)
 
-                vbox:
-                    xfill True
+                # Tooltip.
+                text tt.value
 
-                    textbutton _("Quit"):
-                        xalign 1.0
-                        action __ErrorQuit()
-                        hovered tt.action(_("Quits the game."))
+            vbox:
+                xfill True
 
-            # Tooltip.
-            text tt.value
+                textbutton _("Quit"):
+                    xalign 1.0
+                    action __ErrorQuit()
+                    hovered tt.action(_("Quits the game."))
 
     if config.developer and reload_action:
         key "R" action reload_action

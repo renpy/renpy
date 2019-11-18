@@ -1,9 +1,6 @@
 
 
-def identity():
-    """
-    Returns an identity matrix.
-    """
+cpdef Matrix identity_matrix():
 
     cdef Matrix rv = Matrix(None)
 
@@ -15,10 +12,7 @@ def identity():
     return rv
 
 
-def offset(float x, float y, float z):
-    """
-    Returns a matrix that offsets the vertex by a fixed amount.
-    """
+cpdef Matrix offset_matrix(float x, float y, float z):
 
     cdef Matrix rv = Matrix(None)
 
@@ -33,14 +27,7 @@ def offset(float x, float y, float z):
     return rv
 
 
-def rotate(float x, float y, float z):
-    """
-    Returns a matrix that rotates the displayable around the
-    origin.
-
-    `x`, `y`, `x`
-        The amount to rotate around the origin, in degrees.
-    """
+cpdef Matrix rotate_matrix(float x, float y, float z):
 
     cdef float sinx = sin(pi*x/180)
     cdef float cosx = cos(pi*x/180)
@@ -65,25 +52,19 @@ def rotate(float x, float y, float z):
     return rv
 
 
-def perspective(float w, float h, float n, float p, float f):
-    """
-    Returns the Ren'Py projection matrix. This is a view into a 3d space
-    where (0, 0) is the top left corner (`w`/2, `h`/2) is the center, and
-    (`w`,`h`) is the bottom right, when the z coordinate is 0.
+cpdef Matrix scale_matrix(float x, float y, float z):
 
-    `w`, `h`
-        The width and height of the input plane, in pixels.
+    cdef Matrix rv = Matrix(None)
 
-    `n`
-        The distance of the near plane from the camera.
+    rv.xdx = x
+    rv.ydy = y
+    rv.zdz = z
+    rv.wdw = 1
 
-    `p`
-        The distance of the 1:1 plane from the camera. This is where 1 pixel
-        is one coordinate unit.
+    return rv
 
-    `f`
-        The distance of the far plane from the camera.
-    """
+
+cpdef Matrix perspective_matrix(float w, float h, float n, float p, float f):
 
     cdef Matrix rv = Matrix(None)
 
@@ -99,14 +80,7 @@ def perspective(float w, float h, float n, float p, float f):
     return rv
 
 
-def screen_projection(float w, float h):
-    """
-    This generates a matrix that projects the Ren'Py space, where (0, 0) is the
-    top left and (`w`, `h`) is the bottom right, into the OpenGL viewport, where
-    (-1.0, 1.0) is the top left and (1.0, -1.0) is the bottom.
-
-    Generates the matrix that projects the Ren'Py screen to the OpenGL screen.
-    """
+cpdef Matrix screen_projection_matrix(float w, float h):
 
     cdef Matrix rv = Matrix(None)
 
@@ -120,14 +94,7 @@ def screen_projection(float w, float h):
     return rv
 
 
-def texture_projection(float w, float h):
-    """
-    This generates a matrix that project the Ren'Py space, where (0, 0) is the
-    top left and (`w`, `h`) is the bottom right, into the OpenGL render-to-texture
-    space, where (-1.0, -1.0) is the top left and (1.0, 1.0) is the bottom.
-
-    Generates the matrix that projects the Ren'Py screen to the OpenGL screen.
-    """
+cpdef Matrix texture_projection_matrix(float w, float h):
 
     cdef Matrix rv = Matrix(None)
 
