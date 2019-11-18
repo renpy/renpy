@@ -92,7 +92,7 @@ init -1500 python:
 
         if "%" in rv:
             import time
-            rv = time.strftime(rv.encode("utf-8"), t).decode("utf-8")
+            rv = time.strftime(rv, t)
 
         return rv
 
