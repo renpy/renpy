@@ -45,7 +45,7 @@ translate spanish screen_displayable_properties_da5733d1:
 translate spanish screen_displayable_properties_cc09fade:
 
     # e "The style property lets you specify the style of a single displayable."
-    e "La propiedad de estilo te permiten especificar el estilo de un solo visualizable."
+    e "La propiedad style te permiten especificar el estilo de un solo visualizable."
 
 # game/tutorial_screen_displayables.rpy:144
 translate spanish screen_displayable_properties_a7f4e25c:
