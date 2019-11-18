@@ -26,7 +26,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import *
 
 # Some imports are here to handle pickles of a moved class.
-from renpy.display.transform import Transform, Proxy, TransformState, ATLTransform  # @UnusedImport
+from renpy.display.transform import Transform, Proxy, TransformState, ATLTransform, null  # @UnusedImport
 
 import math
 
