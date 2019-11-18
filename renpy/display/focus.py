@@ -293,7 +293,7 @@ def before_interact(roots):
 
         if defaults:
             if len(defaults) > 1:
-                defaults.sort()
+                defaults.sort(key=item0)
 
             _, f, screen = defaults[-1]
 
