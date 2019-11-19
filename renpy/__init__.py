@@ -77,7 +77,7 @@ except ImportError:
 version_tuple = (7, 4, 0, vc_version)
 
 # The name of this version.
-version_name = "The world (wide web) is not enough."
+version_name = "The Big One."
 
 
 # A string giving the version number only (8.0.1.123).
