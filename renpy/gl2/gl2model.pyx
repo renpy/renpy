@@ -1,10 +1,15 @@
 from renpy.display.render import IDENTITY
 from renpy.display.matrix import Matrix
 from renpy.gl2.gl2polygon cimport Polygon
+from renpy.gl2.gl2texture cimport GLTexture
 
 import math
 
 cdef class Model:
+    """
+    A model can be placed as a leaf of the tree of Renders, and contains
+    everything needed to be draw to the screen.
+    """
 
     def __init__(Model self, size, mesh, shaders, uniforms):
         self.size = size
@@ -28,9 +33,33 @@ cdef class Model:
 
         return rv
 
+    def load(self):
+        """
+        Loads the textures associated with this model.
+        """
+
+        for i in self.uniforms.itervalues():
+            if isinstance(i, GLTexture):
+                i.load_gltexture()
+
+    def program_uniforms(self, shader):
+        """
+        Called by the rest of the drawing code to set up the textures associated
+        with this model.
+        """
+
+        shader.set_uniforms(self.uniforms)
+
+    def get_size(self):
+        """
+        Returns the size of this Model.
+        """
+
+        return self.size
+
     cpdef Model copy(Model self):
         """
-        This creates a copy of the current model.
+        Creates an identical copy of the current model.
         """
 
         cdef Model rv = Model(self.size, self.mesh, self.shaders, self.uniforms)
@@ -39,10 +68,15 @@ cdef class Model:
 
         return rv
 
-    cpdef subsurface(Model self, t):
+    cpdef subsurface(Model self, rect):
+        """
+        Given a rectangle `rect`, returns a Model that only contains the
+        portion of the model inside the rectangle.
+        """
+
         cdef float x, y, w, h
 
-        x, y, w, h = t
+        x, y, w, h = rect
 
         cdef Model rv = self.copy()
 
@@ -62,6 +96,9 @@ cdef class Model:
         return rv
 
     cpdef scale(Model self, float factor):
+        """
+        Creates a new model that is this model scaled by a constant factor.
+        """
 
         cdef float reciprocal_factor
 
@@ -75,7 +112,7 @@ cdef class Model:
         rv.reverse = rv.reverse * Matrix.scale(factor, factor, factor)
 
         if factor <= 0.0:
-            # Basically, map everything onto the (0, 0, 0) point for the zero-
+            # Map everything onto the (0, 0, 0) point for the zero-
             # scale case.
             rv.forward =  Matrix.cscale(0, 0, 0) * rv.forward
         else:
@@ -83,3 +120,4 @@ cdef class Model:
             rv.forward = Matrix.cscale(reciprocal_factor, reciprocal_factor, reciprocal_factor) * rv.forward
 
         return rv
+
