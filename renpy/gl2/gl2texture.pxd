@@ -21,7 +21,7 @@
 
 from uguugl cimport *
 from renpy.gl2.gl2shader cimport Program
-from renpy.gl2.gl2geometry cimport Mesh
+from renpy.gl2.gl2model cimport Model
 from renpy.gl2.gl2draw cimport GL2Draw
 
 cdef class TextureLoader:
@@ -50,11 +50,7 @@ cdef class TextureLoader:
     cdef GLint max_texture_height
 
 
-cdef class GLTexture:
-
-    # The size of the texture, in pixels.
-    cdef public int width
-    cdef public int height
+cdef class GLTexture(Model):
 
     # The number of the texture in OpenGL.
     cdef public unsigned int number
@@ -72,3 +68,5 @@ cdef class GLTexture:
 
     # The texture loader associated with this texture.
     cdef TextureLoader loader
+
+    cpdef subsurface(GLTexture self, t)

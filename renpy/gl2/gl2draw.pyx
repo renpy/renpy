@@ -48,15 +48,14 @@ import uguugl
 cimport renpy.display.render as render
 from renpy.display.render cimport Render
 from renpy.display.matrix cimport Matrix
-from renpy.display.matrix import offset
 
 cimport renpy.gl2.gl2texture as gl2texture
-import renpy.gl2.gl2texture as gl2texture
-import renpy.gl2.gl2geometry as gl2geometry
 
-from renpy.gl2.gl2geometry cimport Mesh, Polygon
-from renpy.gl2.gl2geometry import rectangle
-from renpy.gl2.gl2texture import Model, Texture, TextureLoader
+from renpy.gl2.gl2mesh cimport Mesh
+from renpy.gl2.gl2polygon cimport Polygon
+from renpy.gl2.gl2model cimport Model
+
+from renpy.gl2.gl2texture import Texture, TextureLoader
 from renpy.gl2.gl2shadercache import ShaderCache
 
 cdef extern from "gl2debug.h":
@@ -686,8 +685,7 @@ cdef class GL2Draw:
         Returns a texture that represents a solid color.
         """
 
-        mesh = gl2geometry.Mesh()
-        mesh.add_rectangle(0, 0, w, h)
+        mesh = Mesh.rectangle(0, 0, w, h)
 
         a = color[3] / 255.0
         r = a * color[0] / 255.0
@@ -1163,18 +1161,18 @@ cdef class GL2DrawingContext:
                 renpy.display.interface.text_rect = r.screen_rect(0, 0, transform)
 
             # Handle clipping.
-            if (r.xclipping or r.yclipping):
-                new_clip_polygon = rectangle(0, 0, r.width, r.height)
-                new_clip_polygon.multiply_matrix_inplace(transform)
-                new_clip_polygon.perspective_divide_inplace()
-
-                if old_clip_polygon:
-                    new_clip_polygon = old_clip_polygon.intersect(new_clip_polygon)
-
-                if new_clip_polygon is None:
-                    return
-
-                self.clip_polygon = new_clip_polygon
+#             if (r.xclipping or r.yclipping):
+#                 new_clip_polygon = Polygon.rectangle(0, 0, r.width, r.height)
+#                 new_clip_polygon.multiply_matrix_inplace(transform)
+#                 new_clip_polygon.perspective_divide_inplace()
+#
+#                 if old_clip_polygon:
+#                     new_clip_polygon = old_clip_polygon.intersect(new_clip_polygon)
+#
+#                 if new_clip_polygon is None:
+#                     return
+#
+#                 self.clip_polygon = new_clip_polygon
 
             if (r.alpha != 1.0) or (r.over != 1.0):
                 if "renpy.alpha" not in self.shaders:

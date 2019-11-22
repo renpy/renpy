@@ -3,7 +3,7 @@ from renpy.display.matrix import Matrix
 from renpy.gl2.gl2polygon cimport Polygon
 from renpy.gl2.gl2texture cimport GLTexture
 
-import math
+from libc.math cimport ceil
 
 cdef class Model:
     """
@@ -12,7 +12,8 @@ cdef class Model:
     """
 
     def __init__(Model self, size, mesh, shaders, uniforms):
-        self.size = size
+        self.width = size[0]
+        self.height = size[1]
         self.mesh = mesh
         self.shaders = shaders
         self.uniforms = uniforms
@@ -22,7 +23,7 @@ cdef class Model:
         self.reverse = IDENTITY
 
     def __repr__(self):
-        rv = "<Model {} {} {}".format(self.size, self.shaders, self.uniforms)
+        rv = "<Model {}x{} {} {}".format(self.width, self.height, self.shaders, self.uniforms)
 
         if self.forward is not IDENTITY:
             rv += "\n    forward (to mesh):\n    " + repr(self.forward).replace("\n", "\n    ")
@@ -55,14 +56,14 @@ cdef class Model:
         Returns the size of this Model.
         """
 
-        return self.size
+        return (self.width, self.height)
 
     cpdef Model copy(Model self):
         """
         Creates an identical copy of the current model.
         """
 
-        cdef Model rv = Model(self.size, self.mesh, self.shaders, self.uniforms)
+        cdef Model rv = Model((self.width, self.height), self.mesh, self.shaders, self.uniforms)
         rv.forward = self.forward
         rv.reverse = self.reverse
 
@@ -80,10 +81,8 @@ cdef class Model:
 
         cdef Model rv = self.copy()
 
-        rv.size = (
-            int(math.ceil(w)),
-            int(math.ceil(h)),
-            )
+        rv.width = <int> ceil(w)
+        rv.height = <int> ceil(h)
 
         rv.reverse = rv.reverse * Matrix.coffset(-x, -y, 0)
         rv.forward = Matrix.coffset(x, y, 0) * rv.forward
@@ -104,10 +103,8 @@ cdef class Model:
 
         cdef Model rv = self.copy()
 
-        rv.size = (
-            int(math.ceil(rv.size[0] * factor)),
-            int(math.ceil(rv.size[1] * factor)),
-            )
+        rv.width = <int> ceil(rv.width * factor)
+        rv.height = <int> ceil(rv.height * factor)
 
         rv.reverse = rv.reverse * Matrix.scale(factor, factor, factor)
 

@@ -1,7 +1,7 @@
 from uguugl cimport *
 from libc.stdlib cimport malloc, free
 
-from renpy.gl2.gl2geometry cimport Polygon, Mesh
+from renpy.gl2.gl2mesh cimport Mesh
 from renpy.gl2.gl2texture cimport GLTexture
 from renpy.display.matrix cimport Matrix
 
@@ -271,24 +271,19 @@ cdef class Program:
 
         # Set up the attributes.
         for a in self.attributes:
-            offset = mesh.attributes.get(a.name, None)
-            if offset is None:
-                self.missing("mesh attribute", a.ame)
+            if a.name == "aPosition":
+                glVertexAttribPointer(a.location, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), mesh.point)
+            else:
+                offset = mesh.layout.offset.get(a.name, None)
+                if offset is None:
+                    self.missing("mesh attribute", a.name)
 
-            glVertexAttribPointer(a.location, a.size, GL_FLOAT, GL_FALSE, mesh.stride * sizeof(float), mesh.get_data(offset))
+                glVertexAttribPointer(a.location, a.size, GL_FLOAT, GL_FALSE, mesh.layout.stride * sizeof(float), mesh.attribute + <int> offset)
+
             glEnableVertexAttribArray(a.location)
 
-        if mesh.polygon_points == 3:
-            glDrawArrays(GL_TRIANGLES, 0, 3 * mesh.polygon_count)
-            return
+        glDrawElements(GL_TRIANGLES, mesh.triangles, GL_UNSIGNED_SHORT, mesh.triangle)
 
-        cdef int i = 0
-        cdef Polygon p
-
-        for p in mesh.polygons:
-
-            glDrawArrays(GL_TRIANGLE_FAN, i, p.points)
-            i += p.points
 
     def finish(Program self):
         cdef Attribute a

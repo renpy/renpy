@@ -42,7 +42,9 @@ import math
 import renpy
 from renpy.gl2.uguugl cimport *
 from renpy.gl2.gl2draw cimport GL2Draw
-from renpy.gl2.gl2geometry cimport rectangle, texture_rectangle, Mesh
+
+from renpy.gl2.gl2mesh cimport Mesh
+from renpy.gl2.gl2model cimport Model
 
 from renpy.display.matrix cimport Matrix
 
@@ -93,17 +95,18 @@ cdef class TextureLoader:
         if bl or bt or br or bb:
             w, h = size
 
-            mesh = Mesh()
-            mesh.add_attribute("aTexCoord", 2)
-
             pw = w - bl - br
             ph = h - bt - bb
 
             if (w and h):
 
-                mesh.add_texture_rectangle(
+                mesh = Mesh.texture_rectangle(
                     0.0, 0.0, pw, ph,
                     1.0 * bl / w, 1.0 * bt / h, 1.0 - 1.0 * br / w, 1.0 - 1.0 * bb / h)
+            else:
+                mesh = Mesh.texture_rectangle(
+                    0.0, 0.0, pw, ph,
+                    0.0, 0.0, 0.0, 0.0)
 
             rv = Model((pw, ph), mesh, ("renpy.texture",), { "uTex0" : rv })
 
@@ -217,7 +220,7 @@ cdef class TextureLoader:
 
         return False
 
-cdef class GLTexture:
+cdef class GLTexture(Model):
     """
     This class represents an OpenGL texture that needs to be loaded by
     Ren'Py. It's responsible for handling deferred loading of textures,
@@ -231,8 +234,14 @@ cdef class GLTexture:
         cdef unsigned char *data
         cdef unsigned char *p
 
-        # The width and height of this texture.
-        self.width, self.height = size
+        width, height = size
+
+        mesh = Mesh.texture_rectangle(
+            0.0, 0.0, width, height,
+            0.0, 0.0, 1.0, 1.0,
+            )
+
+        Model.__init__(self, size, mesh, ("renpy.texture",), None)
 
         # The number of the OpenGL texture this texture object
         # represents.
@@ -248,6 +257,8 @@ cdef class GLTexture:
         # Update the loader.
         self.loader = loader
         self.loader.total_texture_size += self.width * self.height * 4
+
+
 
     def from_surface(GLTexture self, surface):
         """
@@ -377,17 +388,14 @@ cdef class GLTexture:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
-        mesh = Mesh()
-        mesh.add_attribute("aTexCoord", 2)
-
         # Load the texture through zero-copy and normal paths.
         if self.surface is not None:
             s = PySurface_AsSurface(self.surface)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s.pitch / 4, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, s.pixels)
-            mesh.add_texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 4.0 * s.w / s.pitch, 1.0)
+            mesh = Mesh.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 4.0 * s.w / s.pitch, 1.0)
         else:
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, self.data)
-            mesh.add_texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0)
+            mesh = Mesh.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0)
 
         # Set up the viewport.
         glViewport(0, 0, self.width, self.height)
@@ -442,112 +450,21 @@ cdef class GLTexture:
         except TypeError:
             pass # Let's not error on shutdown.
 
-
-################################################################################
-
-class Model(object):
-    """
-    A Model can be placed in the render tree, and contains the information
-    required to be drawn to a screen.
-    """
-
-    def __init__(self, size, mesh, shaders, uniforms):
-        # The size of this model's bounding box, in virtual pixels.
-        self.size = size
-
-        # The mesh.
-        self.mesh = mesh
-
-        # A tuple giving the shaders used with this model.
-        self.shaders = shaders
-
-        # Either a dictionary giving uniforms associated with this model,
-        # or None.
-        self.uniforms = uniforms
-
-        # The cached_texture that comes from this model.
-        self.cached_texture = None
-
-    def load(self):
-        """
-        Loads the textures associated with this model.
-        """
-
-        for i in (<dict> self.uniforms).itervalues():
-            if isinstance(i, GLTexture):
-                i.load_gltexture()
-
-    def program_uniforms(self, shader):
-        """
-        Called by the rest of the drawing code to set up the textures associated
-        with this model.
-        """
-
-        shader.set_uniforms(self.uniforms)
-
-    def get_size(self):
-        """
-        Returns the size of this Model.
-        """
-
-        return self.size
-
-    def subsurface(self, rect):
-        """
-        Creates Model that fits within `rect`.
-        """
-
-        x, y, w, h = rect
-
-        mesh = self.mesh.crop(rectangle(x, y, x+w, y+h))
-
-        if mesh is self.mesh:
-            if (x == 0) and (y == 0):
-                return self
-
-            mesh = mesh.offset(-x, -y, 0)
-        else:
-            mesh.offset_inplace(-x, -y, 0)
-
-        rv = Model((w, h), self.mesh, self.shaders, self.uniforms)
-        rv.mesh = mesh
-
-        return rv
-
-
-class Texture(GLTexture, Model):
-    """
-    A texture is Model and a GLTexture at the same time.
-
-    This also implies that the Model has texture coordinates that range from
-    (0.0, 0.0) to (1.0, 1.0) - and hence, that the GLTexture can be used to
-    represent it.
-    """
-
-    def __init__(self, size, loader):
-
-        GLTexture.__init__(self, size, loader)
-
-        mesh = Mesh()
-        mesh.add_attribute("aTexCoord", 2)
-
-        w, h = size
-
-        mesh.add_texture_rectangle(
-            0.0, 0.0, w, h,
-            0.0, 0.0, 1.0, 1.0,
-            )
-
-        Model.__init__(self, size, mesh, ("renpy.texture",), None)
-
     def load(self):
         self.load_gltexture()
 
     def program_uniforms(self, shader):
         shader.set_uniform("uTex0", self)
 
-    def subsurface(self, rect):
+    cpdef subsurface(self, rect):
         rv = Model.subsurface(self, rect)
         if rv is not self:
             rv.uniforms = { "uTex0" : self }
         return rv
+
+class Texture(GLTexture):
+    """
+    Use a Python class to make  sure __del__ works.
+    """
+
+    pass

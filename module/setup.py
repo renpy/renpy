@@ -35,7 +35,7 @@ except ImportError:
     subprocess.check_call([ "pip", "install", "future" ])
 
 # Change to the directory containing this file.
-BASE=os.path.abspath(os.path.dirname(sys.argv[0]))
+BASE = os.path.abspath(os.path.dirname(sys.argv[0]))
 os.chdir(BASE)
 
 # Create the gen directory if it doesn't exist.
@@ -150,7 +150,6 @@ cython(
         ("HAVE_CONFIG_H", "1"),
         ])
 
-
 cython("_renpysteam", language="c++", compile_if=steam_sdk, libs=["steam_api"])
 
 # Sound.
@@ -228,7 +227,6 @@ cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 
 cython("renpy.gl2.uguugl", libs=sdl)
 cython("renpy.gl2.uguu", libs=sdl)
-cython("renpy.gl2.gl2geometry")
 cython("renpy.gl2.gl2mesh")
 cython("renpy.gl2.gl2polygon")
 cython("renpy.gl2.gl2model")
@@ -237,6 +235,7 @@ cython("renpy.gl2.gl2texture", libs=sdl)
 cython("renpy.gl2.gl2shader", libs=sdl)
 
 if not (android or ios or emscripten):
+
     # renpy.angle
     def anglecopy(fn):
         copyfile("renpy/gl/" + fn, "renpy/angle/" + fn, "DEF ANGLE = False", "DEF ANGLE = True")
@@ -252,7 +251,7 @@ if not (android or ios or emscripten):
     angle_libs = [ "SDL2", "EGL", "GLESv2" ]
 
     def anglecython(name, source=[]):
-        cython(name, libs=angle_libs, compile_if=has_angle, define_macros=[ ( "ANGLE", None ) ], source=source)
+        cython(name, libs=angle_libs, compile_if=has_angle, define_macros=[ ("ANGLE", None) ], source=source)
 
     anglecython("renpy.angle.gl")
     anglecython("renpy.angle.gldraw", source=[ "egl_angle.c" ])
@@ -277,4 +276,4 @@ sys.path.insert(0, '..')
 
 import renpy
 
-setuplib.setup("Ren'Py", renpy.version[7:])  # @UndefinedVariable
+setuplib.setup("Ren'Py", renpy.version[7:]) # @UndefinedVariable
