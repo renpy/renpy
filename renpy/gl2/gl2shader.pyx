@@ -282,7 +282,7 @@ cdef class Program:
 
             glEnableVertexAttribArray(a.location)
 
-        glDrawElements(GL_TRIANGLES, mesh.triangles, GL_UNSIGNED_SHORT, mesh.triangle)
+        glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_SHORT, mesh.triangle)
 
 
     def finish(Program self):
