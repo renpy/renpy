@@ -43,17 +43,12 @@ if [ -z "$RENPY_PLATFORM" ] ; then
             ROOT1="$ROOT"
             ROOT2="$ROOT"
             ;;
-        *-aarch64)
-            if [ ! -f /lib/linux-armv7l ]; then
+        Linux-*)
+            if RENPY_PLATFORM="linux-aarch64" && [ ! -f /lib/linux-armv7l ]; then
                 RENPY_PLATFORM="linux-armv7l"
             else
                 RENPY_PLATFORM="linux-$(uname -m)"
             fi
-            ROOT1="$ROOT"
-            ROOT2="$ROOT"
-            ;;
-        Linux-*)
-            RENPY_PLATFORM="linux-$(uname -m)"
             ROOT1="$ROOT"
             ROOT2="$ROOT"
             ;;
