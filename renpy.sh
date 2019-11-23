@@ -25,7 +25,7 @@ BASEFILE=$(basename "$SCRIPT" .sh)
 
 if [ -z "$RENPY_PLATFORM" ] ; then
     RENPY_PLATFORM="$(uname -s)-$(uname -m)"
-    
+
     case "$RENPY_PLATFORM" in
         Darwin-*)
             RENPY_PLATFORM="darwin-x86_64"
