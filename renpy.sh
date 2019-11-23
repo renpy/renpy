@@ -25,8 +25,9 @@ BASEFILE=$(basename "$SCRIPT" .sh)
 
 if [ -z "$RENPY_PLATFORM" ] ; then
     RENPY_PLATFORM="$(uname -s)-$(uname -m)"
-    NODE="$(uname -n)"
-
+    if test -r /etc/os-release; then
+        ID=$(grep -oP '(?<=^ID=).+' /etc/os-release | tr -d '"'); fi
+    
     case "$RENPY_PLATFORM" in
         Darwin-*)
             RENPY_PLATFORM="darwin-x86_64"
@@ -45,7 +46,7 @@ if [ -z "$RENPY_PLATFORM" ] ; then
             ROOT2="$ROOT"
             ;;
         Linux-*)
-            if NODE="raspberrypi" && RENPY_PLATFORM="linux-aarch64" && [ ! -f /lib/linux-armv7l ]; then
+            if ID="Raspbian" && RENPY_PLATFORM="linux-aarch64"; then
                 RENPY_PLATFORM="linux-armv7l"
             else
                 RENPY_PLATFORM="linux-$(uname -m)"
