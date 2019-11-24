@@ -1138,10 +1138,12 @@ cdef class GL2DrawingContext:
             The matrix that transforms texture space into drawable space.
         """
 
+        cdef Matrix child_transform
+        cdef Polygon child_clip_polygon
+        cdef Polygon new_clip_polygon
+
         cdef tuple old_shaders = self.shaders
         cdef dict old_uniforms = self.uniforms
-
-        cdef Polygon new_clip_polygon
 
         if isinstance(what, Surface):
             what = self.draw.load_texture(what)
@@ -1189,7 +1191,10 @@ cdef class GL2DrawingContext:
                 if (r.reverse is not None) and (r.reverse is not IDENTITY):
                     transform = transform * r.reverse
 
-                self.draw_model(r.cached_model, transform)
+                    if clip_polygon is not None:
+                        clip_polygon = clip_polygon.multiply_matrix(r.forward)
+
+                self.draw_model(r.cached_model, transform, clip_polygon)
                 return
 
             if r.shaders is not None:
@@ -1209,20 +1214,21 @@ cdef class GL2DrawingContext:
 
 
                 child_transform = transform
+                child_clip_polygon = clip_polygon
 
                 if (cx or cy):
                     child_transform = child_transform * Matrix.coffset(cx, cy, 0)
 
-                    if clip_polygon is not None:
-                        clip_polygon = clip_polygon.multiply_matrix(Matrix.coffset(-cx, -cy, 0))
+                    if child_clip_polygon is not None:
+                        child_clip_polygon = child_clip_polygon.multiply_matrix(Matrix.coffset(-cx, -cy, 0))
 
                 if (r.reverse is not None) and (r.reverse is not IDENTITY):
                     child_transform = child_transform * r.reverse
 
-                    if clip_polygon is not None:
-                        clip_polygon = clip_polygon.multiply_matrix(r.forward)
+                    if child_clip_polygon is not None:
+                        child_clip_polygon = child_clip_polygon.multiply_matrix(r.forward)
 
-                self.draw(child, child_transform, clip_polygon)
+                self.draw(child, child_transform, child_clip_polygon)
 
         finally:
 
