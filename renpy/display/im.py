@@ -627,7 +627,7 @@ class Image(ImageBase):
             filename = self.filename
             if isinstance(filelike, renpy.loader.ReloadRequest):
                 filelike.image = self
-                filelike = open(os.path.join(renpy.config.commondir,'dl.png'), 'rb')
+                filelike = open(os.path.join(renpy.config.commondir,'_dl.png'), 'rb')
                 filename = 'dl.png'
 
             if unscaled:
