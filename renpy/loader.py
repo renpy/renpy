@@ -100,6 +100,7 @@ if renpy.emscripten:
             return emscripten.run_script_string(r'''RenPyWeb.dl_get({}).statusText'''.format(self.id))
 elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
     # simulate
+    # e.g. rm -f the_question/game/images/* the_question/game/gui/*_menu.png && unzip -d the_question the_question-7.0-dists/the_question-7.0-web/game.zip game/renpyweb_remote_files.find0 && RENPY_SIMULATE_DOWNLOAD=1 ./renpy.sh the_question; git checkout the_question/game/images/ the_question/game/gui/*_menu.png
     import urllib2, urllib, httplib, os
     class XMLHttpRequest(object):
         def __init__(self, filename):
@@ -141,11 +142,11 @@ elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
 
 class ReloadRequest:
     all = [ ]
-    def __init__(self, filename):
+    def __init__(self, relpath):
         ReloadRequest.all.append(self)
-        self.filename = filename
+        self.relpath = relpath
         #print("download_start:", self.filename)
-        self.xhr = XMLHttpRequest(self.filename)
+        self.xhr = XMLHttpRequest(self.relpath)
         # self.image set by image.load(), context not available right now
 
     def download_completed(self):
@@ -160,13 +161,13 @@ class ReloadRequest:
             # TODO: support images and sounds
             if hasattr(rr, 'image'):
                 if rr.download_completed():
-                    fullpath = os.path.join(renpy.config.gamedir,rr.image.filename)
+                    fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
                     if not os.path.exists(fullpath):
                         # don't rethrow exception in Ren'Py's error handler
                         ReloadRequest.all.remove(rr)
                         # show Ren'Py's error handler
-                        raise IOError("Download error: {}: {}".format(
-                            rr.image.filename, (rr.xhr.statusText or "network error")))
+                        raise IOError("Download error: {}->{}: {}".format(
+                            rr.relpath, fullpath, (rr.xhr.statusText or "network error")))
                     #print("reloading", rr.image.filename)
                     ce = renpy.display.im.cache.cache.get(rr.image)
                     renpy.display.im.cache.kill(ce)
