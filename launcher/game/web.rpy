@@ -107,7 +107,7 @@ init python:
                 zout.writestr(m, zin.read(m))
                 print("keep:", m.filename)
         zin.close()
-        zout.writestr('game/renpyweb_remote_files.find0', '\0'.join(sorted(remote_files)))
+        zout.writestr('game/renpyweb_remote_files.txt', "\n".join(sorted(remote_files)))
         zout.close()
         os.unlink(os.path.join(destination, 'game-old.zip'))
 

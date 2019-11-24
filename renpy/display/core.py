@@ -2791,7 +2791,7 @@ class Interface(object):
             elif step == 2:
 
                 if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
-                    renpy.loader.ReloadRequest.process_downloaded_resources()
+                    renpy.webloader.process_downloaded_resources()
 
                 step += 1
 

@@ -25,6 +25,7 @@
 
 from __future__ import print_function
 import renpy.display
+import renpy.webloader
 
 import math
 import zipfile
@@ -32,7 +33,7 @@ import cStringIO
 import threading
 import time
 import io
-import os
+import os.path
 
 
 # This is an entry in the image cache.
@@ -623,17 +624,20 @@ class Image(ImageBase):
 
         try:
 
-            filelike = renpy.loader.load(self.filename)
-            filename = self.filename
-            if isinstance(filelike, renpy.loader.ReloadRequest):
-                filelike.image = self
+            try:
+                filelike = renpy.loader.load(self.filename)
+                filename = self.filename
+            except renpy.webloader.DownloadNeeded, e:
+                req = renpy.webloader.enqueue(e.relpath, self)
+                # temporary placeholder:
                 filelike = open(os.path.join(renpy.config.commondir,'_dl.png'), 'rb')
-                filename = 'dl.png'
+                filename = '_dl.png'
 
             if unscaled:
                 surf = renpy.display.pgrender.load_image_unscaled(filelike, filename)
             else:
                 surf = renpy.display.pgrender.load_image(filelike, filename)
+
             return surf
 
         except Exception as e:
