@@ -351,6 +351,12 @@ class Cache(object):
         if renpy.config.debug_image_cache:
             renpy.display.ic_log.write("Removed %r", ce.what)
 
+    # This reloads a cache entry from disk.
+    def reload(self, image_ref, **kwargs):
+        ce = self.cache.get(image_ref)
+        self.kill(ce)
+        self.get(ce.what, **kwargs)
+
     def cleanout(self):
         """
         Cleans out the cache, if it's gotten too large. Returns True
@@ -572,6 +578,12 @@ class ImageBase(renpy.display.core.Displayable):
     def __repr__(self):
         return "<" + " ".join([repr(i) for i in self.identity]) + ">"
 
+    # Minimal image stub to modify the cache (validates __eq__)
+    def cache_ref(self):
+        rv = ImageBase()
+        rv.identity = self.identity
+        return rv
+
     def load(self):
         """
         This function is called by the image cache code to cause this
@@ -628,7 +640,7 @@ class Image(ImageBase):
                 filelike = renpy.loader.load(self.filename)
                 filename = self.filename
             except renpy.webloader.DownloadNeeded, e:
-                req = renpy.webloader.enqueue(e.relpath, self)
+                renpy.webloader.enqueue(e.relpath, self.cache_ref())
                 # temporary placeholder:
                 filelike = open(os.path.join(renpy.config.commondir,'_dl.png'), 'rb')
                 filename = '_dl.png'

@@ -23,9 +23,13 @@ from __future__ import print_function
 import renpy
 import os
 import renpy.display
+import threading
 
-# A list of downloads, in-progress or waiting to be processed
+# A list of downloads, in-progress or waiting to be processed.
 queue = [ ]
+
+# A lock that must be held when updating the queue.
+queue_lock = threading.RLock()
 
 if renpy.emscripten:
     import emscripten, json
@@ -75,14 +79,14 @@ if renpy.emscripten:
             url = 'game/' + filename
             self.id = emscripten.run_script_int(
                 r'''RenPyWeb.dl_new({})'''.format(json.dumps(url)))
-    
+
         def __del__(self):
             emscripten.run_script(r'''RenPyWeb.dl_free({})'''.format(self.id))
-    
+
         @property
         def readyState(self):
             return emscripten.run_script_int(r'''RenPyWeb.dl_get({}).readyState'''.format(self.id))
-    
+
         @property
         def status(self):
             return emscripten.run_script_int(r'''RenPyWeb.dl_get({}).status'''.format(self.id))
@@ -95,7 +99,7 @@ elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
     # simulate
     # Ex: rm -f the_question/game/images/* the_question/game/gui/*_menu.png && unzip -d the_question the_question-7.0-dists/the_question-7.0-web/game.zip game/renpyweb_remote_files.txt && RENPY_SIMULATE_DOWNLOAD=1 ./renpy.sh the_question; git checkout the_question/game/images/ the_question/game/gui/*_menu.png
 
-    import urllib2, urllib, httplib, os, threading
+    import urllib2, urllib, httplib, os, threading, time, random
 
     class XMLHttpRequest(object):
         def __init__(self, filename):
@@ -105,10 +109,12 @@ elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
             req = urllib2.Request(url)
             def thread_main():
                 try:
+                    time.sleep(random.random() * 0.5)
                     r = urllib2.urlopen(req)
                     fullpath = os.path.join(renpy.config.gamedir, filename)
-                    with open(fullpath, 'wb') as f:
-                        f.write(r.read())
+                    with queue_lock:
+                        with open(fullpath, 'wb') as f:
+                            f.write(r.read())
                     #print("downloaded:", url, '>', fullpath)
                 except urllib2.URLError, e:
                     self.error = str(e.reason)
@@ -118,14 +124,14 @@ elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
                     self.error = 'Error: ' + str(e)
                 self.done = True
             threading.Thread(target=thread_main, name="XMLHttpRequest").start()
-    
+
         @property
         def readyState(self):
             if self.done:
                 return 4
             else:
                 return 0
-    
+
         @property
         def status(self):
             if self.error:
@@ -152,46 +158,56 @@ class ReloadRequest:
     def download_completed(self):
         return self.xhr.readyState == 4
 
+    def __repr__(self):
+        return u"<ReloadRequest '{}' {}>".format(self.relpath, self.download_completed())
+
 
 def enqueue(relpath, obj_to_reload):
     global queue
-    queue.append(ReloadRequest(relpath, obj_to_reload))
-    # Note: image: referencing 'obj' directly because:
-    # - no relpath->image mapping in the Cache (esp. with multiple search paths)
-    # - need to update this instance in particular has it will be referenced by the game
-    #   (recreating a new Image with the same path won't work)
+
+    with queue_lock:
+        queue.append(ReloadRequest(relpath, obj_to_reload))
+
 
 def process_downloaded_resources():
     global queue
 
     postponed = []
+    unlink = {}
     reloaded = False
 
-    for rr in queue:
+    with queue_lock:
+        for rr in queue:
 
-        if not rr.download_completed():
-            postponed.append(rr)
-            continue
- 
-        if isinstance(rr.obj, renpy.display.im.Image):
-            fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
-            if not os.path.exists(fullpath):
-                # don't rethrow exception while in Ren'Py's error handler
-                queue.remove(rr)
-                # trigger Ren'Py's error handler
-                raise IOError("Download error: {} ('{}' > '{}')".format(
-                    (rr.xhr.statusText or "network error"), rr.relpath, fullpath))
-            #print("reloading", rr.image.filename)
-            ce = renpy.display.im.cache.cache.get(rr.obj)
-            renpy.display.im.cache.kill(ce)
-            renpy.display.im.cache.get(rr.obj, render=True)
-            #print("unlink", fullpath)
+            if not rr.download_completed():
+                postponed.append(rr)
+                continue
+
+            if isinstance(rr.obj, renpy.display.im.ImageBase):
+                fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
+                if not os.path.exists(fullpath):
+                    # don't rethrow exception while in Ren'Py's error handler
+                    queue.remove(rr)
+                    # trigger Ren'Py's error handler
+                    raise IOError("Download error: {} ('{}' > '{}')".format(
+                        (rr.xhr.statusText or "network error"), rr.relpath, fullpath))
+
+                #print("reloading", rr.relpath)
+                renpy.display.im.cache.reload(rr.obj, render=True)
+
+                unlink[fullpath] = unlink.get(fullpath, 0) + 1
+                reloaded = True
+
+            # TODO: sounds
+
+        # Unlink in a second step to handle dups (multiple Image-s
+        # referencing the same file, same file from different search
+        # paths...)
+        for fullpath in unlink:
+            #print("unlink", fullpath, "- count", unlink[fullpath])
             os.unlink(fullpath)
-            reloaded = True
 
-        # TODO: sounds
-
-    queue = postponed
+        queue = postponed
 
     if reloaded:
         #renpy.exports.force_full_redraw()  # no effect on already show-n images
