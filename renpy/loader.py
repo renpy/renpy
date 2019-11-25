@@ -36,8 +36,8 @@ import io
 # to look up filenames.
 u"".encode(u"utf-8")
 
-
 # Physical Paths
+
 
 def get_path(fn):
     """
@@ -169,11 +169,11 @@ def index_archives():
         except:
             raise
 
-    for dir, fn in listdirfiles():  # @ReservedAssignment
+    for dir, fn in listdirfiles(): # @ReservedAssignment
         lower_map[fn.lower()] = fn
 
 
-def walkdir(dir):  # @ReservedAssignment
+def walkdir(dir): # @ReservedAssignment
     rv = [ ]
 
     if not os.path.exists(dir) and not renpy.config.developer:
@@ -244,9 +244,9 @@ def scandirfiles():
     for apk in apks:
 
         if apk not in game_apks:
-            files = common_files  # @UnusedVariable
+            files = common_files # @UnusedVariable
         else:
-            files = game_files  # @UnusedVariable
+            files = game_files # @UnusedVariable
 
         for f in apk.list():
 
@@ -259,9 +259,9 @@ def scandirfiles():
     for i in renpy.config.searchpath:
 
         if (renpy.config.commondir) and (i == renpy.config.commondir):
-            files = common_files  # @UnusedVariable
+            files = common_files # @UnusedVariable
         else:
-            files = game_files  # @UnusedVariable
+            files = game_files # @UnusedVariable
 
         i = os.path.join(renpy.config.basedir, i)
         for j in walkdir(i):
@@ -396,7 +396,7 @@ class SubFile(object):
     def __iter__(self):
         return self
 
-    def __next__(self):  # @ReservedAssignment
+    def __next__(self): # @ReservedAssignment
         rv = self.readline()
 
         if not rv:
@@ -447,6 +447,7 @@ class SubFile(object):
 open_file = open
 
 if "RENPY_FORCE_SUBFILE" in os.environ:
+
     def open_file(name, mode):
         f = open(name, mode)
 
@@ -547,7 +548,7 @@ def get_prefixes(tl=True):
     rv = [ ]
 
     if tl:
-        language = renpy.game.preferences.language  # @UndefinedVariable
+        language = renpy.game.preferences.language # @UndefinedVariable
     else:
         language = None
 
@@ -563,7 +564,7 @@ def get_prefixes(tl=True):
 
 def load(name, tl=True):
 
-    if renpy.display.predict.predicting:  # @UndefinedVariable
+    if renpy.display.predict.predicting: # @UndefinedVariable
         if threading.current_thread().name == "MainThread":
             raise Exception("Refusing to open {} while predicting.".format(name))
 
@@ -686,8 +687,8 @@ def get_hash(name):
 
     return rv
 
-
 # Module Loading
+
 
 class RenpyImporter(object):
     """
@@ -704,7 +705,11 @@ class RenpyImporter(object):
             prefix = self.prefix
 
         try:
-            fn = (prefix + fullname.replace(".", "/")).decode("utf8")
+            if not isinstance(fullname, str):
+                fullname = fullname.decode("utf-8")
+
+            fn = prefix + fullname.replace(".", "/")
+
         except:
             # raise Exception("Could importer-translate %r + %r" % (prefix, fullname))
             return None
@@ -746,8 +751,7 @@ class RenpyImporter(object):
                 if source and source[0] == u'\ufeff':
                     source = source[1:]
                 source = source.encode("raw_unicode_escape")
-
-                source = source.replace("\r", "")
+                source = source.replace(b"\r", b"")
 
                 code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
                 break
@@ -790,7 +794,6 @@ def init_importer():
 
 def quit_importer():
     sys.meta_path[:] = meta_backup
-
 
 # Auto-Reload
 

@@ -1,24 +1,15 @@
 from __future__ import print_function
-import BaseHTTPServer
-import threading
 
+import threading
 import posixpath
-import urllib
 import os
-import os
-import posixpath
-import BaseHTTPServer
-import urllib
-import urlparse
+import http.server
+import urllib.parse
 import cgi
 import sys
 import shutil
 import mimetypes
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
+import io
 
 # The path to the root of the web server.
 root = ""
@@ -26,7 +17,7 @@ root = ""
 import renpy
 
 
-class WebHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class WebHandler(http.server.BaseHTTPRequestHandler):
 
     """Simple HTTP request handler with GET and HEAD commands.
 
@@ -39,7 +30,7 @@ class WebHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     """
 
-    server_version = "Ren'Py/" + renpy.version_only  # @UndefinedVariable
+    server_version = "Ren'Py/" + renpy.version_only # @UndefinedVariable
 
     def do_GET(self):
         """Serve a GET request."""
@@ -126,8 +117,8 @@ class WebHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_error(404, "No permission to list directory")
             return None
         list.sort(key=lambda a: a.lower())
-        f = StringIO()
-        displaypath = cgi.escape(urllib.unquote(self.path))
+        f = io.StringIO()
+        displaypath = cgi.escape(urllib.parse.unquote(self.path))
         f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
         f.write("<html>\n<title>Directory listing for %s</title>\n" % displaypath)
         f.write("<body>\n<h2>Directory listing for %s</h2>\n" % displaypath)
@@ -143,7 +134,7 @@ class WebHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 displayname = name + "@"
                 # Note: a link to a directory displays with @ and links with /
             f.write('<li><a href="%s">%s</a>\n'
-                    % (urllib.quote(linkname), cgi.escape(displayname)))
+                    % (urllib.parse.quote(linkname), cgi.escape(displayname)))
         f.write("</ul>\n<hr>\n</body>\n</html>\n")
         length = f.tell()
         f.seek(0)
@@ -167,7 +158,7 @@ class WebHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         path = path.split('#', 1)[0]
         # Don't forget explicit trailing slash when normalizing. Issue17324
         trailing_slash = path.rstrip().endswith('/')
-        path = posixpath.normpath(urllib.unquote(path))
+        path = posixpath.normpath(urllib.parse.unquote(path))
         words = path.split('/')
         words = filter(None, words)
 
@@ -224,7 +215,7 @@ class WebHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             return self.extensions_map['']
 
     extensions_map = {
-        '': 'application/octet-stream',  # Default
+        '': 'application/octet-stream', # Default
         '.gz': 'application/gzip',
         '.htm': 'text/html',
         '.html': 'text/html',
@@ -233,7 +224,7 @@ class WebHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
 
 def run():
-    server = BaseHTTPServer.HTTPServer(("127.0.0.1", 8042), WebHandler)
+    server = http.server.HTTPServer(("127.0.0.1", 8042), WebHandler)
     server.serve_forever()
 
 
