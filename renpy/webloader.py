@@ -97,7 +97,7 @@ if renpy.emscripten:
 
 elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
     # simulate
-    # Ex: rm -f the_question/game/images/* the_question/game/gui/*_menu.png && unzip -d the_question the_question-7.0-dists/the_question-7.0-web/game.zip game/renpyweb_remote_files.txt && RENPY_SIMULATE_DOWNLOAD=1 ./renpy.sh the_question; git checkout the_question/game/images/ the_question/game/gui/*_menu.png
+    # Ex: rm -rf odrdtest-simu && unzip -d odrdtest-simu/ odrdtest-1.0-dists/odrdtest-1.0-web/game.zip && RENPY_SIMULATE_DOWNLOAD=1 ./renpy.sh odrdtest-simu
 
     import urllib2, urllib, httplib, os, threading, time, random
 
@@ -172,42 +172,48 @@ def enqueue(relpath, obj_to_reload):
 def process_downloaded_resources():
     global queue
 
-    postponed = []
     unlink = {}
     reloaded = False
 
     with queue_lock:
-        for rr in queue:
 
-            if not rr.download_completed():
-                postponed.append(rr)
-                continue
+        todo = queue[:]
+        postponed = []
 
-            if isinstance(rr.obj, renpy.display.im.ImageBase):
-                fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
-                if not os.path.exists(fullpath):
-                    # don't rethrow exception while in Ren'Py's error handler
-                    queue.remove(rr)
-                    # trigger Ren'Py's error handler
-                    raise IOError("Download error: {} ('{}' > '{}')".format(
-                        (rr.xhr.statusText or "network error"), rr.relpath, fullpath))
+        try:
+            while todo:
+                rr = todo.pop()
 
-                #print("reloading", rr.relpath)
-                renpy.display.im.cache.reload(rr.obj, render=True)
+                if not rr.download_completed():
+                    postponed.append(rr)
+                    continue
 
-                unlink[fullpath] = unlink.get(fullpath, 0) + 1
-                reloaded = True
+                if isinstance(rr.obj, renpy.display.im.ImageBase):
+                    fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
+                    if not os.path.exists(fullpath):
+                        # trigger Ren'Py's error handler
+                        raise IOError("Download error: {} ('{}' > '{}')".format(
+                            (rr.xhr.statusText or "network error"), rr.relpath, fullpath))
 
-            # TODO: sounds
+                    #print("reloading", rr.relpath)
+                    renpy.display.im.cache.reload(rr.obj, render=True)
 
-        # Unlink in a second step to handle dups (multiple Image-s
-        # referencing the same file, same file from different search
-        # paths...)
-        for fullpath in unlink:
-            #print("unlink", fullpath, "- count", unlink[fullpath])
-            os.unlink(fullpath)
+                    unlink[fullpath] = unlink.get(fullpath, 0) + 1
+                    reloaded = True
 
-        queue = postponed
+                # TODO: sounds
+
+            # Unlink in a second step to handle dups (multiple Image-s
+            # referencing the same file, same file from different search
+            # paths...)
+            for fullpath in unlink:
+                #print("unlink", fullpath, "- count", unlink[fullpath])
+                os.unlink(fullpath)
+
+        # make sure the queue doesn't contain a corrupt file so we
+        # don't rethrow an exception while in Ren'Py's error handler
+        finally:
+            queue = postponed + todo
 
     if reloaded:
         #renpy.exports.force_full_redraw()  # no effect on already show-n images
