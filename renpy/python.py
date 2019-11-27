@@ -44,6 +44,8 @@ import copyreg
 
 import renpy.audio
 
+# A set of flags that indicate dict should run in future-compatible mode.
+FUTURE_FLAGS = (__future__.CO_FUTURE_DIVISION | __future__.CO_FUTURE_WITH_STATEMENT)
 
 ##############################################################################
 # Monkeypatch copy_reg to work around a change in the class that RevertableSet
@@ -231,9 +233,11 @@ def create_store(name):
     d = store_dicts.setdefault(name, StoreDict())
     d.reset()
 
+    pyname = pystr(name)
+
     # Set the name.
-    d["__name__"] = name
-    d["__package__"] = name
+    d["__name__"] = pyname
+    d["__package__"] = pyname
 
     # Set up the default contents of the store.
     eval("1", d)
@@ -244,12 +248,12 @@ def create_store(name):
 
     # Create or reuse the corresponding module.
     if name in store_modules:
-        sys.modules[name] = store_modules[name]
+        sys.modules[pyname] = store_modules[name]
     else:
-        store_modules[name] = sys.modules[name] = StoreModule(d)
+        store_modules[name] = sys.modules[pyname] = StoreModule(d)
 
     if parent:
-        store_dicts[parent][var] = sys.modules[name]
+        store_dicts[parent][var] = sys.modules[pyname]
 
 
 class StoreBackup():
@@ -357,8 +361,8 @@ class NoRollback(object):
 
     pass
 
-
 # parents = [ ]
+
 
 def reached(obj, reachable, wait):
     """
@@ -379,7 +383,7 @@ def reached(obj, reachable, wait):
     if idobj in reachable:
         return
 
-    if isinstance(obj, (NoRollback, io.IOBase)):  # @UndefinedVariable
+    if isinstance(obj, (NoRollback, io.IOBase)): # @UndefinedVariable
         reachable[idobj] = 0
         return
 
@@ -437,8 +441,8 @@ def reached_vars(store, reachable, wait):
             for v in d.values():
                 reached(v, reachable, wait)
 
-
 # Code that replaces literals will calls to magic constructors.
+
 
 def b(s):
     if PY2:
@@ -588,16 +592,22 @@ def escape_unicode(s):
 
 
 # Flags used by py_compile.
-old_compile_flags = ( __future__.nested_scopes.compiler_flag
+old_compile_flags = (__future__.nested_scopes.compiler_flag
                       | __future__.with_statement.compiler_flag
                       )
 
-new_compile_flags = (  old_compile_flags
-                       | __future__.absolute_import.compiler_flag
-                       | __future__.print_function.compiler_flag
-                       | __future__.unicode_literals.compiler_flag
-                       )
+new_compile_flags = (old_compile_flags
+                      | __future__.absolute_import.compiler_flag
+                      | __future__.print_function.compiler_flag
+                      | __future__.unicode_literals.compiler_flag
+                      )
 
+py3_compile_flags = (old_compile_flags |
+                      __future__.division.compiler_flag)
+
+# The set of files that should be compiled under Python 2 with Python 3
+# semantics.
+py3_files = set()
 
 # A cache for the results of py_compile.
 py_compile_cache = { }
@@ -690,12 +700,19 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         else:
             py_mode = mode
 
-        try:
-            flags = new_compile_flags
+        if filename in py3_files:
+
+            flags = py3_compile_flags
             tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
-        except:
-            flags = old_compile_flags
-            tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+
+        else:
+
+            try:
+                flags = new_compile_flags
+                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+            except:
+                flags = old_compile_flags
+                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
 
         tree = wrap_node.visit(tree)
 
@@ -742,9 +759,9 @@ def py_compile_eval_bytecode(source, **kwargs):
     code = py_compile(source, 'eval', cache=False, **kwargs)
     return marshal.dumps(code)
 
-
 # Classes that are exported in place of the normal list, dict, and
 # object.
+
 
 # This is set to True whenever a mutation occurs. The save code uses
 # this to check to see if a background-save is valid.
@@ -757,10 +774,10 @@ def mutator(method):
 
         global mutate_flag
 
-        mutated = renpy.game.log.mutated  # @UndefinedVariable
+        mutated = renpy.game.log.mutated # @UndefinedVariable
 
         if id(self) not in mutated:
-            mutated[id(self)] = ( weakref.ref(self), self._clean())
+            mutated[id(self)] = (weakref.ref(self), self._clean())
             mutate_flag = True
 
         return method(self, *args, **kwargs)
@@ -867,7 +884,8 @@ class RevertableList(list):
     reverse = mutator(list.reverse)
     sort = mutator(list.sort)
 
-    def wrapper(method):  # E0213 @NoSelf
+    def wrapper(method): # E0213 @NoSelf
+
         def newmethod(*args, **kwargs):
             l = method(*args, **kwargs)
             return RevertableList(l)
@@ -964,17 +982,31 @@ class RevertableDict(dict):
     setdefault = mutator(dict.setdefault)
     update = mutator(dict.update)
 
-    def list_wrapper(method):  # E0213 @NoSelf
-        def newmethod(*args, **kwargs):
-            return RevertableList(method(*args, **kwargs))  # E1102
+    if PY2:
 
-        return newmethod
+        def keys(self):
+            rv = dict.keys(self)
 
-    keys = list_wrapper(dict.keys)
-    values = list_wrapper(dict.values)
-    items = list_wrapper(dict.items)
+            if (sys._getframe(1).f_code.co_flags & FUTURE_FLAGS) != FUTURE_FLAGS:
+                rv = RevertableList(rv)
 
-    del list_wrapper
+            return rv
+
+        def values(self):
+            rv = dict.values(self)
+
+            if (sys._getframe(1).f_code.co_flags & FUTURE_FLAGS) != FUTURE_FLAGS:
+                rv = RevertableList(rv)
+
+            return rv
+
+        def items(self):
+            rv = dict.items(self)
+
+            if (sys._getframe(1).f_code.co_flags & FUTURE_FLAGS) != FUTURE_FLAGS:
+                rv = RevertableList(rv)
+
+            return rv
 
     def copy(self):
         rv = RevertableDict()
@@ -982,7 +1014,7 @@ class RevertableDict(dict):
         return rv
 
     def _clean(self):
-        return self.items()
+        return list(self.items())
 
     def _compress(self, clean):
         return clean
@@ -1003,7 +1035,7 @@ class RevertableSet(set):
             self.update(state)
 
     def __getstate__(self):
-        rv = ({ i : True for i in self}, )
+        rv = ({ i : True for i in self},)
         return rv
 
     # Required to ensure that getstate and setstate are called.
@@ -1033,7 +1065,8 @@ class RevertableSet(set):
     union_update = mutator(set.update)
     update = mutator(set.update)
 
-    def wrapper(method):  # @NoSelf
+    def wrapper(method): # @NoSelf
+
         def newmethod(*args, **kwargs):
             rv = method(*args, **kwargs)
             if isinstance(rv, (set, frozenset)):
@@ -1988,7 +2021,7 @@ class RollbackLog(renpy.object.Object):
         """
 
         # Fix up old screens.
-        renpy.display.screen.before_restart()  # @UndefinedVariable
+        renpy.display.screen.before_restart() # @UndefinedVariable
 
         # Set us up as the game log.
         renpy.game.log = self
@@ -2052,16 +2085,16 @@ class RollbackLog(renpy.object.Object):
         return self.identifier_cache.get(identifier, None)
 
 
-def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"):  # @ReservedAssignment
+def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"): # @ReservedAssignment
 
     if hide:
-        locals = { }  # @ReservedAssignment
+        locals = { } # @ReservedAssignment
 
     if globals is None:
-        globals = store_dicts[store]  # @ReservedAssignment
+        globals = store_dicts[store] # @ReservedAssignment
 
     if locals is None:
-        locals = globals  # @ReservedAssignment
+        locals = globals # @ReservedAssignment
 
     exec(bytecode, globals, locals)
 
@@ -2072,25 +2105,25 @@ def py_exec(source, hide=False, store=None):
         store = store_dicts["store"]
 
     if hide:
-        locals = { }  # @ReservedAssignment
+        locals = { } # @ReservedAssignment
     else:
-        locals = store  # @ReservedAssignment
+        locals = store # @ReservedAssignment
 
     exec(py_compile(source, 'exec'), store, locals)
 
 
-def py_eval_bytecode(bytecode, globals=None, locals=None):  # @ReservedAssignment
+def py_eval_bytecode(bytecode, globals=None, locals=None): # @ReservedAssignment
 
     if globals is None:
-        globals = store_dicts["store"]  # @ReservedAssignment
+        globals = store_dicts["store"] # @ReservedAssignment
 
     if locals is None:
-        locals = globals  # @ReservedAssignment
+        locals = globals # @ReservedAssignment
 
     return eval(bytecode, globals, locals)
 
 
-def py_eval(code, globals=None, locals=None):  # @ReservedAssignment
+def py_eval(code, globals=None, locals=None): # @ReservedAssignment
     if isinstance(code, basestring):
         code = py_compile(code, 'eval')
 
@@ -2128,13 +2161,13 @@ def raise_at_location(e, loc):
 class StoreProxy(object):
 
     def __getattr__(self, k):
-        return getattr(renpy.store, k)  # @UndefinedVariable
+        return getattr(renpy.store, k) # @UndefinedVariable
 
     def __setattr__(self, k, v):
-        setattr(renpy.store, k, v)  # @UndefinedVariable
+        setattr(renpy.store, k, v) # @UndefinedVariable
 
     def __delattr__(self, k):
-        delattr(renpy.store, k)  # @UndefinedVariable
+        delattr(renpy.store, k) # @UndefinedVariable
 
 
 if PY2:

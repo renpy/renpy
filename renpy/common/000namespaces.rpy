@@ -48,7 +48,12 @@
 
             # This ensures we don't conflict with the old way of doing
             # things.
-            if hasattr(config, default_field):
+            try:
+                has_default_field = hasattr(config, default_field)
+            except:
+                has_default_field = False
+
+            if has_default_field:
                 setattr(config, default_field, value)
 
         def get(self, name):

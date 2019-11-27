@@ -342,7 +342,7 @@ init python in project:
                     except:
                         continue
 
-                    m = re.search(ur".*#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
+                    m = re.search(r".*#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
 
                     if m is None:
                         continue
@@ -791,8 +791,6 @@ init python:
     def get_projects_directory_command():
         ap = renpy.arguments.ArgumentParser()
         args = ap.parse_args()
-
-        print renpy.fsencode(persistent.projects_directory)
 
         return False
 

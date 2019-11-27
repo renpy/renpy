@@ -773,7 +773,7 @@ cdef class GL2Draw:
 
         # Use the context to draw the surface tree.
         context = GL2DrawingContext(self)
-        context.draw(surf, transform)
+        context.draw(surf, transform, None)
 
         self.flip()
 
@@ -1083,10 +1083,6 @@ cdef class GL2DrawingContext:
     # The draw object this context is associated with.
     cdef GL2Draw gl2draw
 
-    # The clipping polygon, if one is defined. This is in viewport
-    # coordinates.
-    cdef Polygon clip_polygon
-
     # The shaders to use.
     cdef tuple shaders
 
@@ -1095,22 +1091,25 @@ cdef class GL2DrawingContext:
 
     def __init__(self, GL2Draw draw):
         self.gl2draw = draw
-        self.clip_polygon = None
 
         self.shaders = tuple()
         self.uniforms = dict()
 
 
-    def draw_model(self, model, Matrix transform):
+    def draw_model(self, model, Matrix transform, Polygon clip_polygon):
 
         cdef Mesh mesh = model.mesh
 
+        if model.reverse is not IDENTITY:
+             transform = transform * model.reverse
+
         # If a clip polygon is in place, clip the mesh with it.
-        if self.clip_polygon is not None:
-            mesh = mesh.multiply_matrix(transform)
-            mesh.perspective_divide_inplace()
-            mesh = mesh.crop(self.clip_polygon)
-            transform = IDENTITY
+        if clip_polygon is not None:
+
+            if model.forward is not IDENTITY:
+                clip_polygon.multiply_matrix(model.forward)
+
+            mesh = mesh.crop(clip_polygon)
 
         if self.shaders:
             shaders = self.shaders + model.shaders
@@ -1130,7 +1129,7 @@ cdef class GL2DrawingContext:
         program.finish()
 
 
-    def draw(self, what, Matrix transform):
+    def draw(self, what, Matrix transform, Polygon clip_polygon):
         """
         This is responsible for walking the surface tree, and drawing any
         Models, Renders, and Surfaces it encounters.
@@ -1139,17 +1138,18 @@ cdef class GL2DrawingContext:
             The matrix that transforms texture space into drawable space.
         """
 
+        cdef Matrix child_transform
+        cdef Polygon child_clip_polygon
+        cdef Polygon new_clip_polygon
+
         cdef tuple old_shaders = self.shaders
         cdef dict old_uniforms = self.uniforms
-        cdef Polygon old_clip_polygon = self.clip_polygon
-
-        cdef Polygon new_clip_polygon
 
         if isinstance(what, Surface):
             what = self.draw.load_texture(what)
 
         if isinstance(what, Model):
-            self.draw_model(what, transform)
+            self.draw_model(what, transform, clip_polygon)
             return
 
         cdef Render r
@@ -1161,18 +1161,15 @@ cdef class GL2DrawingContext:
                 renpy.display.interface.text_rect = r.screen_rect(0, 0, transform)
 
             # Handle clipping.
-#             if (r.xclipping or r.yclipping):
-#                 new_clip_polygon = Polygon.rectangle(0, 0, r.width, r.height)
-#                 new_clip_polygon.multiply_matrix_inplace(transform)
-#                 new_clip_polygon.perspective_divide_inplace()
-#
-#                 if old_clip_polygon:
-#                     new_clip_polygon = old_clip_polygon.intersect(new_clip_polygon)
-#
-#                 if new_clip_polygon is None:
-#                     return
-#
-#                 self.clip_polygon = new_clip_polygon
+            if (r.xclipping or r.yclipping):
+                new_clip_polygon = Polygon.rectangle(0, 0, r.width, r.height)
+
+                if clip_polygon is not None:
+                    clip_polygon = new_clip_polygon.intersect(new_clip_polygon)
+                    if clip_polygon is None:
+                        return
+                else:
+                    clip_polygon = new_clip_polygon
 
             if (r.alpha != 1.0) or (r.over != 1.0):
                 if "renpy.alpha" not in self.shaders:
@@ -1194,7 +1191,10 @@ cdef class GL2DrawingContext:
                 if (r.reverse is not None) and (r.reverse is not IDENTITY):
                     transform = transform * r.reverse
 
-                self.draw_model(r.cached_model, transform)
+                    if clip_polygon is not None:
+                        clip_polygon = clip_polygon.multiply_matrix(r.forward)
+
+                self.draw_model(r.cached_model, transform, clip_polygon)
                 return
 
             if r.shaders is not None:
@@ -1214,15 +1214,21 @@ cdef class GL2DrawingContext:
 
 
                 child_transform = transform
+                child_clip_polygon = clip_polygon
 
                 if (cx or cy):
                     child_transform = child_transform * Matrix.coffset(cx, cy, 0)
 
+                    if child_clip_polygon is not None:
+                        child_clip_polygon = child_clip_polygon.multiply_matrix(Matrix.coffset(-cx, -cy, 0))
+
                 if (r.reverse is not None) and (r.reverse is not IDENTITY):
                     child_transform = child_transform * r.reverse
 
+                    if child_clip_polygon is not None:
+                        child_clip_polygon = child_clip_polygon.multiply_matrix(r.forward)
 
-                self.draw(child, child_transform)
+                self.draw(child, child_transform, child_clip_polygon)
 
         finally:
 
@@ -1233,6 +1239,5 @@ cdef class GL2DrawingContext:
             # Restore the state.
             self.shaders = old_shaders
             self.uniforms = old_uniforms
-            self.clip_polygon = old_clip_polygon
 
         return 0
