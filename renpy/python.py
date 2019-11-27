@@ -44,6 +44,9 @@ import copyreg
 
 import renpy.audio
 
+# A set of flags that indicate dict should run in future-compatible mode.
+FUTURE_FLAGS = (__future__.CO_FUTURE_DIVISION | __future__.CO_FUTURE_WITH_STATEMENT)
+
 ##############################################################################
 # Monkeypatch copy_reg to work around a change in the class that RevertableSet
 # is based on.
@@ -977,18 +980,31 @@ class RevertableDict(dict):
     setdefault = mutator(dict.setdefault)
     update = mutator(dict.update)
 
-    def list_wrapper(method): # E0213 @NoSelf
+    if PY2:
 
-        def newmethod(*args, **kwargs):
-            return RevertableList(method(*args, **kwargs)) # E1102
+        def keys(self):
+            rv = dict.keys(self)
 
-        return newmethod
+            if (sys._getframe(1).f_code.co_flags & FUTURE_FLAGS) != FUTURE_FLAGS:
+                rv = RevertableList(rv)
 
-    keys = list_wrapper(dict.keys)
-    values = list_wrapper(dict.values)
-    items = list_wrapper(dict.items)
+            return rv
 
-    del list_wrapper
+        def values(self):
+            rv = dict.values(self)
+
+            if (sys._getframe(1).f_code.co_flags & FUTURE_FLAGS) != FUTURE_FLAGS:
+                rv = RevertableList(rv)
+
+            return rv
+
+        def items(self):
+            rv = dict.items(self)
+
+            if (sys._getframe(1).f_code.co_flags & FUTURE_FLAGS) != FUTURE_FLAGS:
+                rv = RevertableList(rv)
+
+            return rv
 
     def copy(self):
         rv = RevertableDict()
@@ -996,7 +1012,7 @@ class RevertableDict(dict):
         return rv
 
     def _clean(self):
-        return self.items()
+        return list(self.items())
 
     def _compress(self, clean):
         return clean
