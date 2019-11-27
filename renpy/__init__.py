@@ -409,7 +409,7 @@ def import_all():
     import renpy.style
     renpy.styledata.import_style_functions()
 
-    sys.modules['renpy.styleclass'] = renpy.style
+    sys.modules[pystr('renpy.styleclass')] = renpy.style
 
     import renpy.substitutions
     import renpy.translation
@@ -437,7 +437,7 @@ def import_all():
     import renpy.text.text
     import renpy.text.extras
 
-    sys.modules['renpy.display.text'] = renpy.text.text
+    sys.modules[pystr('renpy.display.text')] = renpy.text.text
 
     import renpy.gl
     import renpy.gl2
@@ -542,7 +542,7 @@ def post_import():
     sys.modules['renpy.store'] = sys.modules['store']
 
     import subprocess
-    sys.modules['renpy.subprocess'] = subprocess
+    sys.modules[pystr('renpy.subprocess')] = subprocess
 
     for k, v in renpy.defaultstore.__dict__.items():
         renpy.store.__dict__.setdefault(k, v)

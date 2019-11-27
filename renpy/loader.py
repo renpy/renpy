@@ -735,8 +735,10 @@ class RenpyImporter(object):
 
         filename = self.translate(fullname, self.prefix)
 
-        mod = sys.modules.setdefault(fullname, types.ModuleType(fullname))
-        mod.__name__ = fullname
+        pyname = pystr(fullname)
+
+        mod = sys.modules.setdefault(pyname, types.ModuleType(pyname))
+        mod.__name__ = pyname
         mod.__file__ = filename
         mod.__loader__ = self
 

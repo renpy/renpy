@@ -233,9 +233,11 @@ def create_store(name):
     d = store_dicts.setdefault(name, StoreDict())
     d.reset()
 
+    pyname = pystr(name)
+
     # Set the name.
-    d["__name__"] = name
-    d["__package__"] = name
+    d["__name__"] = pyname
+    d["__package__"] = pyname
 
     # Set up the default contents of the store.
     eval("1", d)
@@ -246,12 +248,12 @@ def create_store(name):
 
     # Create or reuse the corresponding module.
     if name in store_modules:
-        sys.modules[name] = store_modules[name]
+        sys.modules[pyname] = store_modules[name]
     else:
-        store_modules[name] = sys.modules[name] = StoreModule(d)
+        store_modules[name] = sys.modules[pyname] = StoreModule(d)
 
     if parent:
-        store_dicts[parent][var] = sys.modules[name]
+        store_dicts[parent][var] = sys.modules[pyname]
 
 
 class StoreBackup():
