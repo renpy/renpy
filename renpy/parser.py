@@ -287,7 +287,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
                 lines[loc].end_delim = endpos + 1
 
-                while data[endpos-1] in u' \r':
+                while data[endpos - 1] in u' \r':
                     endpos -= 1
 
                 lines[loc].end = endpos
@@ -310,7 +310,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                 continue
 
             # Backslash/newline.
-            if c == u"\\" and data[pos+1] == u"\n":
+            if c == u"\\" and data[pos + 1] == u"\n":
                 pos += 2
                 number += 1
                 line.append(u"\\\n")
@@ -341,7 +341,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                 escape = False
                 triplequote = False
 
-                if (pos < len_data - 1) and (data[pos] == delim) and (data[pos+1] == delim):
+                if (pos < len_data - 1) and (data[pos] == delim) and (data[pos + 1] == delim):
                     line.append(delim)
                     line.append(delim)
                     pos += 2
@@ -373,7 +373,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                             s.append(c)
                             break
 
-                        if (pos < len_data - 2) and (data[pos+1] == delim) and (data[pos+2] == delim):
+                        if (pos < len_data - 2) and (data[pos + 1] == delim) and (data[pos + 2] == delim):
                             pos += 3
                             s.append(delim)
                             s.append(delim)
@@ -906,7 +906,7 @@ class Lexer(object):
 
         return self.match(r'(\+|\-)?\d+')
 
-    def float(self):  # @ReservedAssignment
+    def float(self): # @ReservedAssignment
         """
         Tries to parse a number (float). Returns a string containing the
         number, or None.
@@ -946,7 +946,7 @@ class Lexer(object):
         rv = self.word()
 
         if (rv == "r") or (rv == "u"):
-            if self.text[self.pos:self.pos+1] in ( '"', "'", "`"):
+            if self.text[self.pos:self.pos + 1] in ('"', "'", "`"):
                 self.pos = oldpos
                 return None
 
@@ -1003,7 +1003,7 @@ class Lexer(object):
         if not local_name:
             return global_name
 
-        return global_name+'.'+local_name
+        return global_name + '.' + local_name
 
     def label_name_declare(self):
         """
@@ -1021,7 +1021,7 @@ class Lexer(object):
         rv = self.match(image_word_regexp)
 
         if (rv == "r") or (rv == "u"):
-            if self.text[self.pos:self.pos+1] in ( '"', "'", "`"):
+            if self.text[self.pos:self.pos + 1] in ('"', "'", "`"):
                 self.pos = oldpos
                 return None
 
@@ -1150,7 +1150,7 @@ class Lexer(object):
         if not pe:
             self.error("expected python_expression")
 
-        rv = self.expr(pe.strip(), expr)  # E1101
+        rv = self.expr(pe.strip(), expr) # E1101
 
         return rv
 
@@ -1502,7 +1502,7 @@ def parse_image_specifier(l):
 
     if l.keyword("expression") or l.keyword("image"):
         expression = l.require(l.simple_expression)
-        image_name = ( expression.strip(), )
+        image_name = (expression.strip(),)
     else:
         image_name = parse_image_name(l, True)
         expression = None
@@ -1592,7 +1592,7 @@ def parse_menu(stmtl, loc, arguments):
     has_caption = False
 
     with_ = None
-    set = None  # @ReservedAssignment
+    set = None # @ReservedAssignment
 
     say_who = None
     say_what = None
@@ -1611,7 +1611,7 @@ def parse_menu(stmtl, loc, arguments):
             continue
 
         if l.keyword('set'):
-            set = l.require(l.simple_expression)  # @ReservedAssignment
+            set = l.require(l.simple_expression) # @ReservedAssignment
             l.expect_eol()
             l.expect_noblock('set menuitem')
 
@@ -1825,9 +1825,9 @@ def parse_arguments(l):
 
     return renpy.ast.ArgumentInfo(arguments, extrapos, extrakw)
 
-
 ##############################################################################
 # The parse trie.
+
 
 class ParseTrie(object):
     """
@@ -1882,9 +1882,9 @@ def statement(keywords):
 
     return wrap
 
-
 ##############################################################################
 # Statement functions.
+
 
 @statement("if")
 def if_statement(l, loc):
@@ -2634,7 +2634,7 @@ def style_statement(l, loc):
         if l.keyword("del"):
             propname = l.require(l.name)
 
-            if propname not in renpy.style.prefixed_all_properties:  # @UndefinedVariable
+            if propname not in renpy.style.prefixed_all_properties: # @UndefinedVariable
                 l.error("style property %s is not known." % propname)
 
             rv.delattr.append(propname)
@@ -2651,7 +2651,7 @@ def style_statement(l, loc):
         propname = l.name()
 
         if propname is not None:
-            if (propname != "properties") and (propname not in renpy.style.prefixed_all_properties):  # @UndefinedVariable
+            if (propname != "properties") and (propname not in renpy.style.prefixed_all_properties): # @UndefinedVariable
                 l.error("style property %s is not known." % propname)
 
             if propname in rv.properties:
@@ -2687,6 +2687,20 @@ def style_statement(l, loc):
 
     l.advance()
 
+    return rv
+
+
+@statement("rpy python")
+def rpy_python_3(l, loc):
+
+    l.require('3')
+
+    l.expect_eol()
+    l.expect_noblock("rpy statement")
+
+    rv = ast.RPY(loc, ("python", "3"))
+
+    l.advance()
     return rv
 
 
@@ -2809,9 +2823,9 @@ def say_statement(l, loc):
     # This reports a parse error for any bad statement.
     l.error('expected statement.')
 
-
 ##############################################################################
 # Functions called to parse things.
+
 
 def parse_statement(l):
     """
@@ -2890,7 +2904,7 @@ def parse(fn, filedata=None, linenumber=1):
         return None
 
     if rv:
-        rv.append(ast.Return( (rv[-1].filename, rv[-1].linenumber), None ))
+        rv.append(ast.Return((rv[-1].filename, rv[-1].linenumber), None))
 
     return rv
 
@@ -2910,7 +2924,7 @@ def report_parse_errors():
     full_text = ""
 
     f, error_fn = renpy.error.open_error_file("errors.txt", "w")
-    f.write("\ufeff")  # BOM
+    f.write("\ufeff") # BOM
 
     print("I'm sorry, but errors were detected in your script. Please correct the", file=f)
     print("errors listed below, and try again.", file=f)
@@ -2942,7 +2956,7 @@ def report_parse_errors():
     renpy.display.error.report_parse_errors(full_text, error_fn)
 
     try:
-        if renpy.game.args.command == "run":  # @UndefinedVariable
+        if renpy.game.args.command == "run": # @UndefinedVariable
             renpy.exports.launch_editor([ error_fn ], 1, transient=1)
     except:
         pass
