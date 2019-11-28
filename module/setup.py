@@ -28,11 +28,7 @@ import sys
 import os
 import subprocess
 
-# Make sure future is available.
-try:
-    import future
-except ImportError:
-    subprocess.check_call([ "pip", "install", "future" ])
+import future
 
 # Change to the directory containing this file.
 BASE = os.path.abspath(os.path.dirname(sys.argv[0]))
