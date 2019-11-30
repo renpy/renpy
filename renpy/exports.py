@@ -24,7 +24,6 @@
 # their behavior, while functions imported in are probably best left
 # alone as part of the api.
 
-
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import *
 
@@ -705,7 +704,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         img._unique()
 
     # Update the list of images we have ever seen.
-    renpy.game.persistent._seen_images[name] = True  # @UndefinedVariable
+    renpy.game.persistent._seen_images[name] = True # @UndefinedVariable
 
     if tag and munge_name:
         name = (tag,) + name[1:]
@@ -779,7 +778,7 @@ def scene(layer='master'):
         renpy.config.missing_scene(layer)
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input"):  # @ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input"): # @ReservedAssignment
     """
     :doc: input
 
@@ -915,9 +914,12 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
         args, kwargs = renpy.config.menu_arguments_callback(*args, **kwargs)
 
     if renpy.config.old_substitutions:
+
         def substitute(s):
             return s % tag_quoting_dict
+
     else:
+
         def substitute(s):
             return s
 
@@ -926,7 +928,7 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
 
     # Filter the list of items on the set_expr:
     if set_expr:
-        set = renpy.python.py_eval(set_expr)  # @ReservedAssignment
+        set = renpy.python.py_eval(set_expr) # @ReservedAssignment
 
         new_items = [ ]
         new_item_arguments = [ ]
@@ -939,14 +941,14 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
         items = new_items
         item_arguments = new_item_arguments
     else:
-        set = None  # @ReservedAssignment
+        set = None # @ReservedAssignment
 
     # Filter the list of items to only include ones for which the
     # condition is true.
 
     if renpy.config.menu_actions:
 
-        location=renpy.game.context().current
+        location = renpy.game.context().current
 
         new_items = [ ]
 
@@ -984,7 +986,7 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
         menu_kwargs = kwargs
 
         if nvl:
-            rv = renpy.store.nvl_menu(new_items)  # @UndefinedVariable
+            rv = renpy.store.nvl_menu(new_items) # @UndefinedVariable
         else:
             rv = renpy.store.menu(new_items)
 
@@ -1065,7 +1067,7 @@ def display_menu(items,
                  scope={ },
                  widget_properties=None,
                  screen="choice",
-                 type="menu",  # @ReservedAssignment
+                 type="menu", # @ReservedAssignment
                  predict_only=False,
                  **kwargs):
     """
@@ -1128,7 +1130,7 @@ def display_menu(items,
                                random.choice(choices))
 
     # The location
-    location=renpy.game.context().current
+    location = renpy.game.context().current
 
     # change behavior for fixed rollback
     if in_fixed_rollback() and renpy.config.fix_rollback_without_choice:
@@ -1276,7 +1278,7 @@ def predict_say(who, what):
     """
 
     if who is None:
-        who = renpy.store.narrator  # E1101 @UndefinedVariable
+        who = renpy.store.narrator # E1101 @UndefinedVariable
 
     if isinstance(who, basestring):
         return renpy.store.predict_say(who, what)
@@ -1333,7 +1335,7 @@ def say(who, what, *args, **kwargs):
         what = what % tag_quoting_dict
 
     if who is None:
-        who = renpy.store.narrator  # E1101 @UndefinedVariable
+        who = renpy.store.narrator # E1101 @UndefinedVariable
 
     if renpy.config.say_arguments_callback:
         args, kwargs = renpy.config.say_arguments_callback(who, *args, **kwargs)
@@ -1779,7 +1781,7 @@ def reload_script():
         utter_restart()
 
 
-def quit(relaunch=False, status=0, save=False):  # @ReservedAssignment
+def quit(relaunch=False, status=0, save=False): # @ReservedAssignment
     """
     :doc: other
 
@@ -1872,7 +1874,7 @@ def screenshot(filename):
 
 
 @renpy_pure
-def version(tuple=False):  # @ReservedAssignment
+def version(tuple=False): # @ReservedAssignment
     """
     :doc: renpy_version
 
@@ -1893,7 +1895,7 @@ version_string = renpy.version
 version_only = renpy.version_only
 version_name = renpy.version_name
 version_tuple = renpy.version_tuple
-license = ""  # @ReservedAssignment
+license = "" # @ReservedAssignment
 
 try:
     import platform as _platform
@@ -2167,7 +2169,7 @@ def last_interact_type():
     return getattr(renpy.game.context().info, "_last_interact_type", None)
 
 
-def dynamic(*vars):  # @ReservedAssignment
+def dynamic(*vars, **kwargs): # @ReservedAssignment
     """
     :doc: other
 
@@ -2175,15 +2177,23 @@ def dynamic(*vars):  # @ReservedAssignment
     the variables dynamically scoped to the current call. The variables will
     be reset to their original value when the call returns.
 
-    An example call is::
+    If the variables are given as keyword arguments, the value of the argument
+    is assigned to the variable name.
+
+    Example calls are::
 
         $ renpy.dynamic("x", "y", "z")
+        $ renpy.dynamic(players=2, score=0)
     """
 
+    vars = vars + tuple(kwargs) # @ReservedAssignment
     renpy.game.context().make_dynamic(vars)
 
+    for k, v in kwargs.items():
+        setattr(renpy.store, k, v)
 
-def context_dynamic(*vars):  # @ReservedAssignment
+
+def context_dynamic(*vars): # @ReservedAssignment
     """
     :doc: other
 
@@ -2207,7 +2217,7 @@ def seen_label(label):
     system, and false otherwise. This can be used to unlock scene galleries, for
     example.
     """
-    return label in renpy.game.persistent._seen_ever  # @UndefinedVariable
+    return label in renpy.game.persistent._seen_ever # @UndefinedVariable
 
 
 def seen_audio(filename):
@@ -2220,7 +2230,7 @@ def seen_audio(filename):
 
     filename = re.sub(r'^<.*?>', '', filename)
 
-    return filename in renpy.game.persistent._seen_audio  # @UndefinedVariable
+    return filename in renpy.game.persistent._seen_audio # @UndefinedVariable
 
 
 def seen_image(name):
@@ -2236,10 +2246,10 @@ def seen_image(name):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    return name in renpy.game.persistent._seen_images  # @UndefinedVariable
+    return name in renpy.game.persistent._seen_images # @UndefinedVariable
 
 
-def file(fn):  # @ReservedAssignment
+def file(fn): # @ReservedAssignment
     """
     :doc: file
 
@@ -2254,7 +2264,7 @@ def file(fn):  # @ReservedAssignment
     return renpy.loader.load(fn)
 
 
-def notl_file(fn):  # @ReservedAssignment
+def notl_file(fn): # @ReservedAssignment
     """
     :undocumented:
 
@@ -2467,8 +2477,8 @@ def scry():
 def munged_filename():
     return renpy.parser.munge_filename(get_filename_line()[0])
 
-
 # Module loading stuff.
+
 
 loaded_modules = set()
 
@@ -2507,9 +2517,9 @@ def load_module(name, **kwargs):
     renpy.game.contexts.append(context)
 
     context.make_dynamic(kwargs)
-    renpy.store.__dict__.update(kwargs)  # @UndefinedVariable
+    renpy.store.__dict__.update(kwargs) # @UndefinedVariable
 
-    for prio, node in initcode:  # @UnusedVariable
+    for prio, node in initcode: # @UnusedVariable
         if isinstance(node, renpy.ast.Node):
             renpy.game.context().run(node)
         else:
@@ -2550,7 +2560,7 @@ def load_string(s, filename="<string>"):
         context.init_phase = True
         renpy.game.contexts.append(context)
 
-        for prio, node in initcode:  # @UnusedVariable
+        for prio, node in initcode: # @UnusedVariable
             if isinstance(node, renpy.ast.Node):
                 renpy.game.context().run(node)
             else:
@@ -2930,7 +2940,7 @@ def list_files(common=False):
 
     rv = [ ]
 
-    for dir, fn in renpy.loader.listdirfiles(common):  # @ReservedAssignment
+    for dir, fn in renpy.loader.listdirfiles(common): # @ReservedAssignment
         if fn.startswith("saves/"):
             continue
 
@@ -3090,7 +3100,7 @@ def vibrate(duration):
     """
 
     try:
-        import android  # @UnresolvedImport
+        import android # @UnresolvedImport
         android.vibrate(duration)
     except:
         pass
@@ -3142,7 +3152,7 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer=None):
 
     attr_layer = default_layer(layer, attrs)
 
-    if not_showing and images.showing(attr_layer, (attrs[0], )):
+    if not_showing and images.showing(attr_layer, (attrs[0],)):
         return None
 
     required = set()
@@ -3229,7 +3239,7 @@ def fsdecode(s):
     return s.decode(fsencoding)
 
 
-from renpy.editor import launch_editor  # @UnusedImport
+from renpy.editor import launch_editor # @UnusedImport
 
 
 def get_image_load_log(age=None):
@@ -3485,7 +3495,7 @@ def cancel_gesture():
     This should be called by displayables that have gesture-like behavior.
     """
 
-    renpy.display.gesture.recognizer.cancel()  # @UndefinedVariable
+    renpy.display.gesture.recognizer.cancel() # @UndefinedVariable
 
 
 def execute_default_statement(start=False):
@@ -3591,7 +3601,7 @@ def add_layer(layer, above=None, below=None, menu_clear=True):
     layers.insert(index, layer)
 
     if menu_clear:
-        renpy.config.menu_clear_layers.append(layer)  # @UndefinedVariable
+        renpy.config.menu_clear_layers.append(layer) # @UndefinedVariable
 
 
 def maximum_framerate(t):
@@ -3759,11 +3769,11 @@ def get_on_battery():
 
     global old_battery
 
-    pi = pygame_sdl2.power.get_power_info()  # @UndefinedVariable
+    pi = pygame_sdl2.power.get_power_info() # @UndefinedVariable
 
-    if pi.state == pygame_sdl2.POWERSTATE_UNKNOWN:  # @UndefinedVariable
+    if pi.state == pygame_sdl2.POWERSTATE_UNKNOWN: # @UndefinedVariable
         return old_battery
-    elif pi.state == pygame_sdl2.POWERSTATE_ON_BATTERY:  # @UndefinedVariable
+    elif pi.state == pygame_sdl2.POWERSTATE_ON_BATTERY: # @UndefinedVariable
         old_battery = True
         return True
     else:

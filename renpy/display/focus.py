@@ -26,6 +26,7 @@ from renpy.compat import *
 
 import pygame_sdl2 as pygame
 import renpy.display
+import operator
 
 
 class Focus(object):
@@ -293,7 +294,7 @@ def before_interact(roots):
 
         if defaults:
             if len(defaults) > 1:
-                defaults.sort(key=item0)
+                defaults.sort(key=operator.itemgetter(0))
 
             _, f, screen = defaults[-1]
 

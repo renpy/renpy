@@ -30,7 +30,7 @@ init python in archiver:
     import glob
     import zlib
 
-    from cPickle import dumps, HIGHEST_PROTOCOL
+    from pickle import dumps, HIGHEST_PROTOCOL
 
 
     class Archive(object):

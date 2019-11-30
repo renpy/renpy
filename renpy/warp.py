@@ -27,6 +27,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import *
 
 import renpy
+import operator
 
 warp_spec = None
 
@@ -141,7 +142,7 @@ def warp():
         raise Exception("Could not find a statement to warp to. ({})".format(spec))
 
     # Sort the list of candidates, so they're ordered by linenumber.
-    candidates.sort()
+    candidates.sort(key=operator.itemgetter(0))
 
     # Pick the candidate immediately before (or on) the line.
     node = candidates[-1][1]

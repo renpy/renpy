@@ -21,7 +21,7 @@
 
 init python:
 
-    import urllib2
+    import urllib.request
     import os
     import threading
     import time
@@ -59,7 +59,7 @@ init python:
 
                 import ssl
                 context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=renpy.loader.transfn("cacert.pem"))
-                self.urlfile = urllib2.urlopen(url, context=context)
+                self.urlfile = urlllib.request.urlopen(url, context=context)
 
                 t = threading.Thread(target=self.thread)
                 t.daemon = True

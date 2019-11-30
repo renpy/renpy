@@ -48,7 +48,7 @@ cdef class Mesh:
 
     # The triangle data, where each triangle consists of the index of three
     # points. This is 3 * allocated_triangles in size.
-    cdef int *triangle
+    cdef short *triangle
 
     cpdef Mesh copy(Mesh self)
     cpdef Mesh crop(Mesh self, Polygon p)

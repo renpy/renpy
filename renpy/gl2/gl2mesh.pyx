@@ -50,7 +50,7 @@ cdef class Mesh:
 
         self.allocated_triangles = triangles
         self.triangles = 0
-        self.triangle = <int *> malloc(triangles * 3 * sizeof(int))
+        self.triangle = <short *> malloc(triangles * 3 * sizeof(int))
 
     def __dealloc__(Mesh self):
         free(self.point)
@@ -59,8 +59,8 @@ cdef class Mesh:
 
     def __repr__(Mesh self):
 
-        cdef int i
-        cdef int j
+        cdef unsigned short i
+        cdef unsigned short j
 
         rv = "<Mesh {!r}".format(self.layout.offset)
 

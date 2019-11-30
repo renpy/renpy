@@ -2065,9 +2065,6 @@ class Timer(renpy.display.layout.Null):
     def __init__(self, delay, action=None, repeat=False, args=(), kwargs={}, replaces=None, **properties):
         super(Timer, self).__init__(**properties)
 
-        if action is None:
-            raise Exception("A timer must have an action supplied.")
-
         if delay <= 0:
             raise Exception("A timer's delay must be > 0.")
 

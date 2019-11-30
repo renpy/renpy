@@ -33,6 +33,13 @@ def none_is_null(o):
         return renpy.easy.displayable(o)
 
 
+def none_is_0(o):
+    if o is None:
+        return 0
+    else:
+        return o
+
+
 def expand_focus_mask(v):
     if v is None:
         return v
@@ -56,6 +63,7 @@ def expand_outlines(l):
             rv.append((i[0], renpy.easy.color(i[1]), i[2], i[3]))
 
     return rv
+
 
 # Names for anchors.
 ANCHORS = dict(

@@ -726,8 +726,8 @@ def lint():
     # Iterate through every statement in the program, processing
     # them. We sort them in filename, linenumber order.
 
-    all_stmts = [ (i.filename, i.linenumber, i) for i in renpy.game.script.all_stmts ]
-    all_stmts.sort()
+    all_stmts = list(renpy.game.script.all_stmts)
+    all_stmts.sort(key=lambda n : (n.filename, n.linenumber) )
 
     # The current count.
     counts = collections.defaultdict(Count)

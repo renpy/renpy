@@ -84,8 +84,9 @@ else:
 ################################################################################
 # String (text and binary) types and functions.
 
-basestring = future.utils.string_types  # @ReservedAssignment
-str = future.utils.text_type  # @ReservedAssignment
+basestring = future.utils.string_types # @ReservedAssignment
+pystr = str
+str = future.utils.text_type # @ReservedAssignment
 
 bord = future.utils.bord
 bchr = future.utils.bchr
@@ -100,27 +101,23 @@ from future.builtins import chr
 # compiled yet, as part of the Ren'Py build process.
 try:
     if PY2:
-        import renpy.compat.dictviews  # @UnresolvedImport
+        import renpy.compat.dictviews # @UnresolvedImport
 except ImportError:
     import sys
     print("Could not import renpy.compat.dictviews.", file=sys.stderr)
-
 
 ################################################################################
 # Range.
 
 if PY2:
-    range = xrange  # @ReservedAssignment
+    range = xrange # @ReservedAssignment
 else:
     range = builtins.range
 
 ################################################################################
 # Sort key functions.
 
-# This returns the first item in a tuple for use as a sort key.
-item0 = operator.itemgetter(0)
-
-__all__ = [ "PY2", "open", "basestring", "str", "range", "bord", "bchr", "tobytes", "chr", "item0"]
+__all__ = [ "PY2", "open", "basestring", "str", "pystr", "range", "bord", "bchr", "tobytes", "chr", ]
 
 if PY2:
     __all__ = [ bytes(i) for i in __all__ ]

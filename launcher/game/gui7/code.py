@@ -280,8 +280,8 @@ class CodeGenerator(object):
 
         for l in self.lines:
 
-            l = re.sub(ur'_\((\".*?\")\)', replace, l)
-            l = re.sub(ur'_\((\'.*?\')\)', replace, l)
+            l = re.sub(r'_\((\".*?\")\)', replace, l)
+            l = re.sub(r'_\((\'.*?\')\)', replace, l)
 
             lines.append(l)
 
@@ -372,7 +372,7 @@ class CodeGenerator(object):
         if os.path.exists(dst):
             return
 
-        language = renpy.store._preferences.language  # @UndefinedVariable
+        language = renpy.store._preferences.language # @UndefinedVariable
 
         if language is None:
             language = "None"
