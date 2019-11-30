@@ -310,7 +310,7 @@
 
     # distribute_gui.rpy:194
     old "Add from clauses to calls, once"
-    new "Añadir cláusulas  from a calls, una vez"
+    new "Añadir cláusulas 'from' a 'calls', una vez"
 
     # distribute_gui.rpy:195
     old "Refresh"
@@ -334,7 +334,7 @@
 
     # distribute_gui.rpy:241
     old "Add from clauses to calls"
-    new "Añadir cláusulas 'from' a las llamadas"
+    new "Añadir cláusulas 'from' a 'calls'"
 
     # distribute_gui.rpy:242
     old "Force Recompile"
