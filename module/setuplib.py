@@ -59,7 +59,6 @@ if coverage:
 if static:
     gen += "-static"
 
-
 # The cython command.
 cython_command = os.environ.get("RENPY_CYTHON", "cython")
 
@@ -151,7 +150,7 @@ def library(name, optional=False):
 
         for ldir in [i, os.path.join(i, "lib"), os.path.join(i, "lib64"), os.path.join(i, "lib32") ]:
 
-            for suffix in ( ".so", ".a", ".dll.a", ".dylib" ):
+            for suffix in (".so", ".a", ".dll.a", ".dylib"):
 
                 fn = os.path.join(ldir, "lib" + name + suffix)
 
@@ -333,9 +332,9 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
                 parent_module_identifier = parent_module.replace('.', '_')
                 with open(c_fn, 'r') as f:
                     ccode = f.read()
-                ccode = re.sub('Py_InitModule4\("([^"]+)"', 'Py_InitModule4("'+parent_module+'.\\1"', ccode)
-                ccode = re.sub('^__Pyx_PyMODINIT_FUNC init', '__Pyx_PyMODINIT_FUNC init'+parent_module_identifier+'_', ccode, 0, re.MULTILINE)  # Cython 0.28.2
-                ccode = re.sub('^PyMODINIT_FUNC init', 'PyMODINIT_FUNC init'+parent_module_identifier+'_', ccode, 0, re.MULTILINE)  # Cython 0.25.2
+                ccode = re.sub('Py_InitModule4\("([^"]+)"', 'Py_InitModule4("' + parent_module + '.\\1"', ccode)
+                ccode = re.sub('^__Pyx_PyMODINIT_FUNC init', '__Pyx_PyMODINIT_FUNC init' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Cython 0.28.2
+                ccode = re.sub('^PyMODINIT_FUNC init', 'PyMODINIT_FUNC init' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Cython 0.25.2
                 with open(c_fn, 'w') as f:
                     f.write(ccode)
 
@@ -413,6 +412,9 @@ def setup(name, version):
     """
     Calls the distutils setup function.
     """
+
+    if (len(sys.argv) >= 2) and (sys.argv[1] == "generate"):
+        return
 
     distutils.core.setup(
         name=name,
