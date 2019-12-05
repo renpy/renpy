@@ -171,6 +171,9 @@ def index_archives():
     for dir, fn in listdirfiles():  # @ReservedAssignment
         lower_map[fn.lower()] = fn
 
+    for fn in remote_files:
+        lower_map[fn.lower()] = fn
+
 
 def walkdir(dir):  # @ReservedAssignment
     rv = [ ]
@@ -266,7 +269,7 @@ def scandirfiles():
             for f in open(index_filename, 'rb'):
                 f = f.rstrip("\r\n")
                 add('/game', f)
-                remote_files[f.lower()] = True
+                remote_files[f] = True
 
     for i in renpy.config.searchpath:
 

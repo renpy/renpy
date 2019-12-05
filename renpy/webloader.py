@@ -152,7 +152,7 @@ class ReloadRequest:
     def __init__(self, relpath, obj):
         self.relpath = relpath
         self.obj = obj
-        #print("download_start:", self.filename)
+        #print("download_start:", self.relpath)
         self.xhr = XMLHttpRequest(self.relpath)
 
     def download_completed(self):
