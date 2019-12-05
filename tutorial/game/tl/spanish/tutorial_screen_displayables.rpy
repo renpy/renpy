@@ -273,13 +273,13 @@ translate spanish button_displayables_ea626553:
 translate spanish button_displayables_372dcc0f:
 
     # e "A button is a displayable that when selected runs an action. Buttons can be selected by clicking with the mouse, by touch, or with the keyboard and controller."
-    e "Un botón es un visualizable button que, cuando se selecciona, ejecuta una acción. Los botones se pueden seleccionar haciendo clic con el mouse, por touch o con el teclado y mando."
+    e "Un 'button' (botón) es un visualizable que cuando se selecciona, ejecuta una acción. Los botones se pueden seleccionar haciendo clic con el mouse, por touch o con el teclado y mando."
 
 # game/tutorial_screen_displayables.rpy:445
 translate spanish button_displayables_a6b270ff:
 
     # e "Actions can do many things, like setting variables, showing screens, jumping to a label, or returning a value. There are many {a=https://www.renpy.org/doc/html/screen_actions.html}actions in the Ren'Py documentation{/a}, and you can also write your own."
-    e "Las 'actions'(acciones) pueden hacer muchas cosas, como establecer variables, mostrar pantallas, saltar a una etiqueta o devolver un valor. Hay muchas acciones {a=https://www.renpy.org/doc/html/screen_actions.html}en la documentación de Ren'Py{/a}, y también puede escribir las tuyas propias."
+    e "Las 'actions' (acciones) pueden hacer muchas cosas, como establecer variables, mostrar pantallas, saltar a una etiqueta o devolver un valor. Hay muchas acciones {a=https://www.renpy.org/doc/html/screen_actions.html}en la documentación de Ren'Py{/a}, y también puede escribir las tuyas propias."
 
 # game/tutorial_screen_displayables.rpy:458
 translate spanish button_displayables_4c600d20:
@@ -351,7 +351,7 @@ translate spanish bar_displayables_946746c2:
 translate spanish bar_displayables_af3a51b8:
 
     # e "The value property gives a BarValue, which is an object that determines the bar's value and range. Here, a StaticValue sets the range to 100 and the value to 66, making a bar that's two thirds full."
-    e "La propiedad 'value' proporciona un 'BarValu'e, que es un objeto que determina el valor y el rango de la barra. Aquí, un 'StaticValue' establece el rango en 100 y el valor en 66, haciendo que una barra esté dos tercios llena."
+    e "La propiedad 'value' proporciona un 'BarValue', que es un objeto que determina el valor y el rango de la barra. Aquí, un 'StaticValue' establece el rango en 100 y el valor en 66, haciendo que una barra esté dos tercios llena."
 
 # game/tutorial_screen_displayables.rpy:581
 translate spanish bar_displayables_62f8b0ab:
@@ -657,7 +657,7 @@ translate spanish strings:
 
     # tutorial_screen_displayables.rpy:9
     old "Boxes and other layouts."
-    new "Cajas y otros desplazadores."
+    new "Cajas y otras disposiciones."
 
     # tutorial_screen_displayables.rpy:9
     old "Windows and frames."
@@ -673,7 +673,7 @@ translate spanish strings:
 
     # tutorial_screen_displayables.rpy:9
     old "Viewports."
-    new "Visor."
+    new "Visores."
 
     # tutorial_screen_displayables.rpy:9
     old "Imagemaps."
