@@ -266,13 +266,13 @@ init 1 python in editor:
             if i.name == persistent.editor:
                 if i.installed and i.name in editors:
                     ei = editors[i.name]
-                    os.environ[b"RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
+                    os.environ["RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
                     error_message = i.error_message
                     break
 
         else:
             persistent.editor = None
-            os.environ.pop(b"RENPY_EDIT_PY", None)
+            os.environ.pop("RENPY_EDIT_PY", None)
 
         renpy.editor.init()
 
@@ -382,7 +382,7 @@ init 1 python in editor:
                 e.open(fn, line=self.line)
                 e.end()
 
-            except Exception, e:
+            except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
                 renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
@@ -428,7 +428,7 @@ init 1 python in editor:
                 e.open(self.filename, line=self.line)
                 e.end()
 
-            except Exception, e:
+            except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
                 renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
@@ -466,7 +466,7 @@ init 1 python in editor:
 
                 e.end()
 
-            except Exception, e:
+            except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
                 renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
@@ -489,7 +489,7 @@ init 1 python in editor:
                 e.open_project(project.current.path)
                 e.end()
 
-            except Exception, e:
+            except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
                 renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 

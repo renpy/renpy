@@ -44,7 +44,13 @@ if [ -z "$RENPY_PLATFORM" ] ; then
             ROOT2="$ROOT"
             ;;
         Linux-*)
-            RENPY_PLATFORM="linux-$(uname -m)"
+            if test -r /etc/os-release; then
+                ID=$(grep -oP '(?<=^ID=).+' /etc/os-release | tr -d '"'); fi
+            if ID="Raspbian"; then
+                RENPY_PLATFORM="linux-armv7l"
+            else
+                RENPY_PLATFORM="linux-$(uname -m)"
+            fi
             ROOT1="$ROOT"
             ROOT2="$ROOT"
             ;;

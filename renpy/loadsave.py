@@ -271,7 +271,6 @@ def find_bad_reduction(roots, log):
 
     return visit(log, "renpy.game.log")
 
-
 ################################################################################
 # Saving
 ################################################################################
@@ -405,7 +404,7 @@ def save(slotname, extra_info='', mutate_flag=False):
         if bad is None:
             reraise(t, e, tb)
 
-        e.args = ( e.args[0] + ' (perhaps {})'.format(bad), ) + e.args[1:]
+        e.args = (e.args[0] + ' (perhaps {})'.format(bad),) + e.args[1:]
         reraise(t, e, tb)
 
     if mutate_flag and renpy.python.mutate_flag:
@@ -561,10 +560,10 @@ def force_autosave(take_screenshot=False, block=False):
     else:
         autosave_thread_function(take_screenshot)
 
-
 ################################################################################
 # Loading and Slot Manipulation
 ################################################################################
+
 
 def scan_saved_game(slotname):
 
@@ -874,7 +873,6 @@ class Cache(object):
         self.get_mtime()
         self.get_json()
         self.get_screenshot()
-
 
 
 # A map from slotname to cache object. This is used to cache savegame scan

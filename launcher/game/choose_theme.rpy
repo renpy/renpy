@@ -24,6 +24,7 @@ init python:
     import codecs
     import re
     import sys
+    import future.utils
 
     def theme_names():
         """
@@ -97,7 +98,7 @@ init python:
             return
 
         renpy.style.restore(style_backup)
-        exec theme_data.THEME[theme][scheme] in globals()
+        future.utils.exec_(theme_data.THEME[theme][scheme], globals(), globals())
 
         # Rebuild the style cache.
         renpy.style.rebuild(False)
