@@ -585,43 +585,43 @@ translate spanish style_bar_f1292000:
 translate spanish style_box_5fd535f4:
 
     # e "The hbox displayable is used to lay its children out horizontally. By default, there's no spacing between children, so they run together."
-    e "El visualizable hbox se usa para colocar a sus hijos horizontalmente. De forma predeterminada, no hay espacio entre los hijos, por lo que se ejecutan juntos."
+    e "El visualizable 'hbox' se usa para colocar a sus hijos horizontalmente. De forma predeterminada, no hay espacio entre los hijos, por lo que se ejecutan juntos."
 
 # game/indepth_style.rpy:967
 translate spanish style_box_0111e5dc:
 
     # e "Similarly, the vbox displayable is used to lay its children out vertically. Both support style properties that control placement."
-    e "Del mismo modo, el visualizable vbox se utiliza para colocar sus hijos verticalmente. Ambos soportan propiedades de estilo que controlan la colocación."
+    e "Del mismo modo, el visualizable 'vbox' se utiliza para colocar sus hijos verticalmente. Ambos soportan propiedades de estilo que controlan la colocación."
 
 # game/indepth_style.rpy:972
 translate spanish style_box_5a44717b:
 
     # e "To make the size of the box displayable obvious, I'll add a highlight to the box itself, and not the frame containing it."
-    e "Para que el tamaño de la caja sea visible, agregaré highlight a la caja, y no al marco que la contiene."
+    e "Para que el tamaño de la caja sea visible, agregaré 'highlight' a la caja, y no al marco que la contiene."
 
 # game/indepth_style.rpy:980
 translate spanish style_box_239e7a8f:
 
     # e "Boxes support the xfill and yfill style properties. These properties make a box expand to fill the available space, rather than the space of the largest child."
-    e "Las cajas admiten las propiedades de estilo xfill y yfill. Estas propiedades hacen que una caja se expanda para llenar el espacio disponible, en lugar del espacio del hijo mayor."
+    e "Las cajas admiten las propiedades de estilo 'xfill' y 'yfill'. Estas propiedades hacen que una caja se expanda para llenar el espacio disponible, en lugar del espacio del hijo mayor."
 
 # game/indepth_style.rpy:990
 translate spanish style_box_e513c946:
 
     # e "The spacing style property takes a value in pixels, and adds that much spacing between each child of the box."
-    e "La propiedad de estilo spacing toma un valor en píxeles y agrega mucho espacio entre cada elemento secundario del cuadro."
+    e "La propiedad de estilo 'spacing' toma un valor en píxeles y agrega mucho espacio entre cada elemento secundario del cuadro."
 
 # game/indepth_style.rpy:1000
 translate spanish style_box_6ae4f94d:
 
     # e "The first_spacing style property is similar, but it only adds space between the first and second children. This is useful when the first child is a title that needs different spacing."
-    e "La propiedad de estilo first_spacing es similar, pero solo agrega espacio entre el primer y el segundo hijo. Esto es útil cuando el primer hijo es un título que necesita espacios diferentes."
+    e "La propiedad de estilo 'first_spacing' es similar, pero solo agrega espacio entre el primer y el segundo hijo. Esto es útil cuando el primer hijo es un título que necesita espacios diferentes."
 
 # game/indepth_style.rpy:1010
 translate spanish style_box_0c518d9f:
 
     # e "The box_reverse style property reverses the order of entries in the box."
-    e "La propiedad de estilo box_reverse invierte el orden de las entradas en el cuadro."
+    e "La propiedad de estilo 'box_reverse' invierte el orden de las entradas en el cuadro."
 
 # game/indepth_style.rpy:1023
 translate spanish style_box_f73c1422:
@@ -633,19 +633,19 @@ translate spanish style_box_f73c1422:
 translate spanish style_box_285592bb:
 
     # e "The box_wrap style property fills the box with children until it's full, then starts again on the next line."
-    e "La propiedad de estilo box_wrap llena la caja con hijos hasta que esté llena, y luego comienza de nuevo en la siguiente línea."
+    e "La propiedad de estilo 'box_wrap' llena la caja con hijos hasta que esté llena, y luego comienza de nuevo en la siguiente línea."
 
 # game/indepth_style.rpy:1046
 translate spanish style_box_a7637552:
 
     # e "Grids bring with them two more style properties. The xspacing and yspacing properties control spacing in the horizontal and vertical directions, respectively."
-    e "Las grids traen consigo dos propiedades de estilo más. Las propiedades xspacing y yspacing controlan el espaciado en las direcciones horizontal y vertical, respectivamente."
+    e "Las 'grids' traen consigo dos propiedades de estilo más. Las propiedades 'xspacing' y 'yspacing' controlan el espaciado en las direcciones horizontal y vertical, respectivamente."
 
 # game/indepth_style.rpy:1053
 translate spanish style_box_4006f74b:
 
     # e "Lastly, we have the fixed layout. The fixed layout usually expands to fill all space, and shows its children from back to front."
-    e "Por último, tenemos el fixed layout. Los fixed layout generalmente se expanden para llenar todo el espacio, y muestran a sus hijos de atrás hacia adelante."
+    e "Por último, tenemos el 'fixed layout'. Los 'fixed layout' generalmente se expanden para llenar todo el espacio, y muestran a sus hijos de atrás hacia adelante."
 
 # game/indepth_style.rpy:1055
 translate spanish style_box_4a2866f0:
@@ -657,13 +657,13 @@ translate spanish style_box_4a2866f0:
 translate spanish style_box_66e042c4:
 
     # e "When the xfit style property is True, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
-    e "Cuando la propiedad de estilo xfit es True, los fixed presenta a todos sus hijos como si fuera de tamaño completo, y luego se reduce en ancho para adaptarse a ellos. El estilo yfit funciona de la misma manera, pero en altura."
+    e "Cuando la propiedad de estilo 'xfit' es 'True', los fixed presenta a todos sus hijos como si fuera de tamaño completo, y luego se reduce en ancho para adaptarse a ellos. El estilo yfit funciona de la misma manera, pero en altura."
 
 # game/indepth_style.rpy:1072
 translate spanish style_box_6a593b10:
 
     # e "The order_reverse style property changes the order in which the children are shown. Instead of back-to-front, they're displayed front-to-back."
-    e "La propiedad de estilo order_reverse cambia el orden en que se muestran los hijos. En lugar de último a primero, se muestran de primero a último."
+    e "La propiedad de estilo 'order_reverse' cambia el orden en que se muestran los hijos. En lugar de último a primero, se muestran de primero a último."
 
 # game/indepth_style.rpy:1084
 translate spanish style_inspector_21bc0709:
