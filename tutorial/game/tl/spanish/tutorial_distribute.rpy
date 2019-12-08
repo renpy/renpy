@@ -9,19 +9,19 @@ translate spanish distribute_7db9b042:
 translate spanish distribute_d373903b:
 
     # e "Before you build distributions, you should use the Lint command to check your game for problems."
-    e "Antes de crear distribuciones, debes usar el comando Lint para verificar si tu juego tiene problemas."
+    e "Antes de crear distribuciones, debes usar el comando 'Lint' para verificar si tu juego tiene problemas."
 
 # game/tutorial_distribute.rpy:7
 translate spanish distribute_2f970565:
 
     # e "While not every potential problem lint reports is a real issue, they generally are, and you should try to understand what might be wrong."
-    e "Si bien no todos los informes de posibles problemas de lint son un verdadero problema, generalmente lo son, debes tratar de entender qué puede estar mal."
+    e "Si bien no todos los informes de posibles problemas de 'lint' son un verdadero problema, generalmente lo son, debes tratar de entender qué puede estar mal."
 
 # game/tutorial_distribute.rpy:12
 translate spanish distribute_29aea017:
 
     # e "After lint has finished, you can choose Build Distributions to build the Windows, Linux, and Mac distributions of your game."
-    e "Después de que lint haya terminado, puedes elegir Construir Distribuciones para construir las distribuciones de Windows, Linux y Mac de tu juego."
+    e "Después de que 'lint' haya terminado, puedes elegir Construir Distribuciones para construir las distribuciones de Windows, Linux y Mac de tu juego."
 
 # game/tutorial_distribute.rpy:14
 translate spanish distribute_821be97b:
