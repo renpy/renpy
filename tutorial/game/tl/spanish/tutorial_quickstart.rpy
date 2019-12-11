@@ -417,7 +417,7 @@ translate spanish tutorial_images_9defda43:
 translate spanish tutorial_images_73d331f7:
 
     # e "Finally, there's the hide statement, which hides the image with the given tag."
-    e "Finalmente, está la sentencia 'hid'e, que oculta la imagen con la etiqueta dada"
+    e "Finalmente, está la sentencia 'hide', que oculta la imagen con la etiqueta dada"
 
 # game/tutorial_quickstart.rpy:266
 translate spanish tutorial_images_f34f62d5:
@@ -735,13 +735,13 @@ translate spanish choice1_done_664fe702:
 translate spanish choice1_done_31d12b1e:
 
     # e "The lines beginning with the dollar sign are lines of python code, which are used to set a flag based on the user's choice."
-    e "Las líneas que comienzan con el signo de dólar son líneas de código Python, que se utilizan para establecer una 'flag' (vandera) en función de la elección del usuario."
+    e "Las líneas que comienzan con el signo de dólar son líneas de código Python, que se utilizan para establecer una 'flag' (bandera) en función de la elección del usuario."
 
 # game/tutorial_quickstart.rpy:544
 translate spanish choice1_done_88398d3e:
 
     # e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag, so the game can remember the user's choices."
-    e "La vandera' se llama 'menu_flag' y se establece en 'True' o 'False' según la elección del usuario. La sentencia 'if' se puede usar para probar una vandera, para que el juego pueda recordar las elecciones del usuario."
+    e "La bandera' se llama 'menu_flag' y se establece en 'True' o 'False' según la elección del usuario. La sentencia 'if' se puede usar para probar una bandera, para que el juego pueda recordar las elecciones del usuario."
 
 # game/tutorial_quickstart.rpy:549
 translate spanish choice1_done_2828dbfc:
@@ -759,7 +759,7 @@ translate spanish choice1_done_503786e4:
 translate spanish choice1_done_819e234a:
 
     # e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
-    e "Aquí hay un ejemplo que muestra cómo podemos probar una vandera y hacer cosas diferentes si es verdad o no."
+    e "Aquí hay un ejemplo que muestra cómo podemos probar una bandera y hacer cosas diferentes si es verdad o no."
 
 # game/tutorial_quickstart.rpy:559
 translate spanish choice1_done_461e6a59:
@@ -783,7 +783,7 @@ translate spanish choice1_done_fbd1dbc1:
 translate spanish menu3_done_47fa2268:
 
     # e "Although we won't demonstrate it here, Ren'Py supports making decisions based on a combinations of points, flags, and other factors."
-    e "Aunque no lo demostraremos aquí, Ren'Py admite la toma de decisiones basadas en una combinación de puntos, vanderas y otros factores."
+    e "Aunque no lo demostraremos aquí, Ren'Py admite la toma de decisiones basadas en una combinación de puntos, banderas y otros factores."
 
 # game/tutorial_quickstart.rpy:576
 translate spanish menu3_done_826a600b:
@@ -831,7 +831,7 @@ translate spanish tutorial_input_f7757a8e:
 translate spanish tutorial_input_0548d3e2:
 
     # e "Variable interpolation also works with other variables. Here, the answer is [answer] and the flag is [flag]."
-    e "La interpolación de variables también funciona con otras variables. Aquí, la respuesta es [answer] y la vandera es [flag]."
+    e "La interpolación de variables también funciona con otras variables. Aquí, la respuesta es [answer] y la bandera es [flag]."
 
 translate spanish strings:
 
