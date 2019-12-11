@@ -375,7 +375,7 @@ translate spanish demo_pushmove_transitions_003e506d:
 translate spanish demo_pushmove_transitions_124f375d:
 
     # "There's pushright..."
-    "'Está pushright'' ..."
+    "'Está pushright' ..."
 
 # game/indepth_transitions.rpy:408
 translate spanish demo_pushmove_transitions_ce380ccb:
