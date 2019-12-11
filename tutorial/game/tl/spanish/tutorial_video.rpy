@@ -21,7 +21,7 @@ translate spanish tutorial_video_b56ccf19:
 translate spanish tutorial_video_fbaa71e4:
 
     # e "Then, we can show the movie displayable, which starts the movie playing."
-    e "Luego, podemos mostrar('show') el visualizable 'movie', que inicia la reproducción de la película."
+    e "Luego, podemos mostrar ('show') el visualizable 'movie', que inicia la reproducción de la película."
 
 # game/tutorial_video.rpy:30
 translate spanish tutorial_video_bbbb242d:
