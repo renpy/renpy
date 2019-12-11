@@ -27,7 +27,7 @@ translate spanish tutorial_video_fbaa71e4:
 translate spanish tutorial_video_bbbb242d:
 
     # e "When we no longer want to play the movie, we can hide it."
-    e "Cuando ya no queremos reproducir el video, podemos ocultarlo('hide')."
+    e "Cuando ya no queremos reproducir el video, podemos ocultarlo ('hide')."
 
 # game/tutorial_video.rpy:34
 translate spanish tutorial_video_a66b154c:
