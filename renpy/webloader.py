@@ -196,7 +196,14 @@ def process_downloaded_resources():
                             (rr.xhr.statusText or "network error"), rr.relpath, fullpath))
 
                     #print("reloading", rr.relpath)
-                    renpy.display.im.cache.reload(rr.obj, render=True)
+                    try:
+                        renpy.display.im.cache.reload(rr.obj, render=True)
+                    except KeyError, e:
+                        print(("Warning: cannot reload {} which is not loaded in the cache"
+                               + " (maybe image is part of a Transform,"
+                               + " or cache was cleared)")
+                              .format(rr.obj.identity))
+
 
                     unlink[fullpath] = unlink.get(fullpath, 0) + 1
                     reloaded = True

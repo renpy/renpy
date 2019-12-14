@@ -354,6 +354,8 @@ class Cache(object):
     # This reloads a cache entry from disk.
     def reload(self, image_ref, **kwargs):
         ce = self.cache.get(image_ref)
+        if ce is None:
+            raise KeyError(image_ref)
         self.kill(ce)
         self.get(ce.what, **kwargs)
 
