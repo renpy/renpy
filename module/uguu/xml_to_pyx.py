@@ -103,7 +103,7 @@ class Command:
         return "(" + ", ".join(self.parameters) + ")"
 
     def typedef(self, name):
-        return "ctypedef {} (*{}){} nogil".format(self.return_type, name, self.format_param_list())
+        return "ctypedef {} (__stdcall *{}){} nogil".format(self.return_type, name, self.format_param_list())
 
 
 class Feature:
