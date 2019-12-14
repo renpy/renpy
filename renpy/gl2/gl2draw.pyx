@@ -27,7 +27,7 @@ DEF ANGLE = False
 
 from libc.stdlib cimport malloc, free
 from sdl2 cimport *
-from uguugl cimport *
+from renpy.uguu.gl cimport *
 
 from pygame_sdl2 cimport *
 import_pygame_sdl2()
@@ -43,7 +43,7 @@ import array
 import time
 import math
 
-import uguugl
+import renpy.uguu.gl as uguugl
 
 cimport renpy.display.render as render
 from renpy.display.render cimport Render

@@ -40,7 +40,7 @@ import weakref
 import math
 
 import renpy
-from renpy.gl2.uguugl cimport *
+from renpy.uguu.gl cimport *
 from renpy.gl2.gl2draw cimport GL2Draw
 
 from renpy.gl2.gl2mesh cimport Mesh

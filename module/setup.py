@@ -211,6 +211,9 @@ else:
     gl2_only = False
     egl = "egl_none.c"
 
+cython("renpy.uguu.gl", libs=sdl)
+cython("renpy.uguu.uguu", libs=sdl)
+
 cython("renpy.gl.gl", libs=glew_libs)
 cython("renpy.gl.gl1", libs=glew_libs, compile_if=not gl2_only)
 cython("renpy.gl.gldraw", libs=glew_libs, source=[ egl ])
@@ -221,8 +224,6 @@ cython("renpy.gl.glenviron_limited", libs=glew_libs, compile_if=not gl2_only)
 cython("renpy.gl.glrtt_copy", libs=glew_libs)
 cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 
-cython("renpy.gl2.uguugl", libs=sdl)
-cython("renpy.gl2.uguu", libs=sdl)
 cython("renpy.gl2.gl2mesh")
 cython("renpy.gl2.gl2polygon")
 cython("renpy.gl2.gl2model")

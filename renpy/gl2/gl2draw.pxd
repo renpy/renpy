@@ -22,7 +22,7 @@
 from renpy.display.matrix cimport Matrix, Matrix2D
 cimport renpy.display.render as render
 from renpy.gl2.gl2texture cimport TextureLoader
-from uguugl cimport *
+from renpy.uguu.gl cimport *
 
 cdef class GL2Draw:
 

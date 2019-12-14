@@ -1,4 +1,4 @@
-from uguugl cimport *
+from renpy.uguu.gl cimport *
 from libc.stdlib cimport malloc, free
 
 from renpy.gl2.gl2mesh cimport Mesh

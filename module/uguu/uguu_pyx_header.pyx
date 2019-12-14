@@ -5,8 +5,9 @@ from libc.stdlib cimport calloc, free
 
 from cpython.buffer cimport PyObject_GetBuffer, PyBuffer_Release, PyBUF_CONTIG, PyBUF_CONTIG_RO
 
-cimport uguugl
-from uguugl import load
+cimport renpy.uguu.gl
+import renpy.uguu.gl
+
 
 cdef object proxy_return_string(const GLubyte *s):
     """
