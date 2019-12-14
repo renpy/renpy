@@ -102,7 +102,8 @@ init python:
             base, ext = os.path.splitext(m.filename)
             if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp')
                 and m.file_size > MIN_REMOTE_SIZE
-                and m.filename.startswith('game/')):
+                and m.filename.startswith('game/')
+                and not m.filename.startswith('game/gui/')):
                 zin.extract(m, path=destination)
                 remote_files.append(m.filename[len('game/'):])
                 print("extract:", m.filename)
