@@ -28,6 +28,8 @@ init python:
     import shutil
     import webserver
     import io
+    import tempfile
+    import time
 
     WEB_PATH = None
 
@@ -95,6 +97,7 @@ init python:
         zin  = zipfile.ZipFile(os.path.join(destination, 'game-old.zip'))
         zout = zipfile.ZipFile(os.path.join(destination, 'game.zip'), 'w')
         remote_files = []
+        tmpdir = tempfile.mkdtemp()
         for m in zin.infolist():
             base, ext = os.path.splitext(m.filename)
             if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp')
@@ -104,10 +107,18 @@ init python:
                 remote_files.append(m.filename[len('game/'):])
                 print("extract:", m.filename)
             else:
-                zout.writestr(m, zin.read(m))
+                # Extract & recompress
+                # Not using zout.writestr(m, zin.read(m)) to avoid MemoryError
+                tmpfile = zin.extract(m, tmpdir)
+                date_time = time.mktime(m.date_time+(0,0,0))
+                os.utime(tmpfile, (date_time,date_time))
+                zout.write(tmpfile, m.filename, m.compress_type)
                 print("keep:", m.filename)
+        shutil.rmtree(tmpdir)
         zin.close()
-        zout.writestr('game/renpyweb_remote_files.txt', "\n".join(sorted(remote_files)))
+        zout.writestr('game/renpyweb_remote_files.txt',
+                      "\n".join(sorted(remote_files)),
+                      zipfile.ZIP_DEFLATED)
         zout.close()
         os.unlink(os.path.join(destination, 'game-old.zip'))
 
