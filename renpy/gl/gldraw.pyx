@@ -33,6 +33,7 @@ from pygame_sdl2 cimport *
 import_pygame_sdl2()
 
 import renpy
+import renpy.uguu.gl
 import pygame_sdl2 as pygame
 import os
 import os.path
@@ -479,14 +480,7 @@ cdef class GLDraw:
         which subsystems to use.
         """
 
-        if not EGL:
-
-            # Init glew.
-            err = glewInit()
-
-            if err != GLEW_OK:
-                renpy.display.log.write("Glew init failed: %s" % <char *> glewGetErrorString(err))
-                return False
+        renpy.uguu.gl.load()
 
         # Log the GL version.
         renderer = <char *> glGetString(GL_RENDERER)
@@ -589,43 +583,8 @@ cdef class GLDraw:
 
         if self.environ is None:
 
-            if allow_fixed and use_subsystem(
-                glenviron_fixed,
-                "RENPY_GL_ENVIRON",
-                "fixed",
-                "GL_ARB_texture_env_crossbar",
-                "GL_ARB_texture_env_combine"):
-
-                renpy.display.log.write("Using fixed-function environment (clause 1).")
-                self.environ = glenviron_fixed.FixedFunctionEnviron()
-                self.info["environ"] = "fixed"
-                self.environ.init()
-
-            elif allow_fixed and use_subsystem(
-                glenviron_fixed,
-                "RENPY_GL_ENVIRON",
-                "fixed",
-                "GL_NV_texture_env_combine4"):
-
-                renpy.display.log.write("Using fixed-function environment (clause 2).")
-                self.environ = glenviron_fixed.FixedFunctionEnviron()
-                self.info["environ"] = "fixed"
-                self.environ.init()
-
-            elif use_subsystem(
-                glenviron_limited,
-                "RENPY_GL_ENVIRON",
-                "limited",
-                "RENPY_bogus_extension"):
-
-                renpy.display.log.write("Using limited environment.")
-                self.environ = glenviron_limited.LimitedEnviron()
-                self.info["environ"] = "limited"
-                self.environ.init()
-
-            else:
-                renpy.display.log.write("Can't find a workable environment.")
-                return False
+            renpy.display.log.write("Can't find a workable environment.")
+            return False
 
         # Pick a Render-to-texture method.
         use_fbo = renpy.ios or renpy.android or renpy.emscripten or EGL or use_subsystem(
@@ -1544,16 +1503,7 @@ except ImportError:
     glrtt_fbo = None
 
 try:
-    from . import glenviron_fixed
-except ImportError:
-    glenviron_fixed = None
-
-try:
     from . import glenviron_shader
 except ImportError:
     glenviron_shader = None
 
-try:
-    from . import glenviron_limited
-except ImportError:
-    glenviron_limited = None
