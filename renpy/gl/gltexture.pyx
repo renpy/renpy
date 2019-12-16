@@ -23,8 +23,6 @@
 
 from __future__ import print_function
 
-DEF ANGLE = False
-
 from renpy.uguu.gl cimport *
 from gldraw cimport *
 

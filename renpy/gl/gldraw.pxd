@@ -26,6 +26,8 @@ cdef class Environ
 
 cdef class GLDraw:
 
+    cdef bint gles
+    cdef bint angle
     cdef bint did_init
     cdef bint did_texture_test
     cdef Environ environ
@@ -47,7 +49,6 @@ cdef class GLDraw:
     cdef object display_info
     cdef tuple clip_cache
     cdef bint fast_dissolve
-    cdef bint allow_fixed
     cdef tuple default_clip
     cdef bint did_render_to_texture
     cdef float dpi_scale

@@ -43,8 +43,8 @@ import gc
 import_time = time.time()
 
 try:
-    import android  # @UnresolvedImport
-    android.init  # Check to see if we have the right module.
+    import android # @UnresolvedImport
+    android.init # Check to see if we have the right module.
 except:
     android = None
 
@@ -54,7 +54,7 @@ REDRAW = pygame.event.register("REDRAW")
 EVENTNAME = pygame.event.register("EVENTNAME")
 
 # All events except for TIMEEVENT and REDRAW
-ALL_EVENTS = set(pygame.event.get_standard_events())  # @UndefinedVariable
+ALL_EVENTS = set(pygame.event.get_standard_events()) # @UndefinedVariable
 ALL_EVENTS.add(PERIODIC)
 ALL_EVENTS.add(EVENTNAME)
 
@@ -325,7 +325,7 @@ class Displayable(renpy.object.Object):
         if (style == "default") and (not properties):
             self.style = default_style
         else:
-            self.style = renpy.style.Style(style, properties)  # @UndefinedVariable
+            self.style = renpy.style.Style(style, properties) # @UndefinedVariable
 
         self.focus_name = focus
         self.default = default or default_focus
@@ -793,7 +793,7 @@ class SceneLists(renpy.object.Object):
 
         if version < 4:
             for k in self.layers:
-                self.layers[k] = [ SceneListEntry(*(i + (None,)) ) for i in self.layers[k] ]
+                self.layers[k] = [ SceneListEntry(*(i + (None,))) for i in self.layers[k] ]
 
             self.additional_transient = [ ]
 
@@ -1488,7 +1488,7 @@ def get_safe_mode():
         if renpy.windows:
             import ctypes
 
-            VK_SHIFT      = 0x10
+            VK_SHIFT = 0x10
 
             ctypes.windll.user32.GetKeyState.restype = ctypes.c_ushort
             if ctypes.windll.user32.GetKeyState(VK_SHIFT) & 0x8000:
@@ -1882,7 +1882,7 @@ class Interface(object):
             iw, ih = im.get_size()
             imax = max(iw, ih)
             square_im = renpy.display.pgrender.surface_unscaled((imax, imax), True)
-            square_im.blit(im, ( (imax - iw) // 2, (imax - ih) // 2 ))
+            square_im.blit(im, ((imax - iw) // 2, (imax - ih) // 2))
             im = square_im
 
             pygame.display.set_icon(im)
@@ -1925,13 +1925,19 @@ class Interface(object):
         renpy.config.renderer = renderer
 
         if renderer == "auto":
-            if renpy.windows:
-                renderers = [ "gl", "angle", "sw" ]
+
+            if renpy.android or renpy.ios or renpy.emscripten:
+                renderers = [ "gles" ]
+            elif renpy.windows:
+                renderers = [ "gl", "angle", "gles", "sw" ]
             else:
-                renderers = [ "gl", "sw" ]
+                renderers = [ "gl", "gles2", "sw" ]
 
             if renpy.config.gl2:
-                renderers = [ "gl2", "egl2" ] + renderers
+
+                for i in [ "gles", "angle", "gl" ]:
+                    if i in renderers:
+                        renderers.insert(0, i + "2")
 
         else:
             renderers = [ renderer, "sw" ]
@@ -1956,14 +1962,14 @@ class Interface(object):
 
                 return False
 
-        if renpy.windows:
-            has_angle = make_draw("angle", "renpy.angle.gldraw", "GLDraw")
-        else:
-            has_angle = False
+        make_draw("gl", "renpy.gl.gldraw", "GLDraw", "gl")
+        make_draw("angle", "renpy.gl.gldraw", "GLDraw", "angle")
+        make_draw("gles", "renpy.gl.gldraw", "GLDraw", "gles")
 
-        make_draw("gl", "renpy.gl.gldraw", "GLDraw", not has_angle)
         make_draw("gl2", "renpy.gl2.gl2draw", "GL2Draw", "gl2", False)
+        make_draw("angle2", "renpy.gl2.gl2draw", "GL2Draw", "angle2", True)
         make_draw("gles2", "renpy.gl2.gl2draw", "GL2Draw", "gles2", True)
+
         make_draw("sw", "renpy.display.swdraw", "SWDraw")
 
         rv = [ ]
@@ -2010,8 +2016,8 @@ class Interface(object):
 
         if self.display_reset:
 
-            pygame.key.stop_text_input()  # @UndefinedVariable
-            pygame.key.set_text_input_rect(None)  # @UndefinedVariable
+            pygame.key.stop_text_input() # @UndefinedVariable
+            pygame.key.set_text_input_rect(None) # @UndefinedVariable
             self.text_rect = None
 
             if renpy.display.draw.info["renderer"] == "angle":
@@ -2029,7 +2035,7 @@ class Interface(object):
         virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
 
         if physical_size is None:
-            if renpy.mobile or renpy.game.preferences.physical_size is None:  # @UndefinedVariable
+            if renpy.mobile or renpy.game.preferences.physical_size is None: # @UndefinedVariable
                 physical_size = (None, None)
             else:
                 physical_size = renpy.game.preferences.physical_size
@@ -2233,7 +2239,7 @@ class Interface(object):
 
         if renpy.config.empty_window:
 
-            old_history = renpy.store._history  # @UndefinedVariable
+            old_history = renpy.store._history # @UndefinedVariable
             renpy.store._history = False
 
             PPP("empty window")
@@ -2626,12 +2632,12 @@ class Interface(object):
         Updates the text input state and text rectangle.
         """
 
-        if renpy.store._text_rect is not None:  # @UndefinedVariable
-            self.text_rect = renpy.store._text_rect  # @UndefinedVariable
+        if renpy.store._text_rect is not None: # @UndefinedVariable
+            self.text_rect = renpy.store._text_rect # @UndefinedVariable
 
         if self.text_rect is not None:
 
-            not_shown = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown()  # @UndefinedVariable
+            not_shown = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown() # @UndefinedVariable
 
             if self.old_text_rect != self.text_rect:
                 x, y, w, h = self.text_rect
@@ -2639,15 +2645,15 @@ class Interface(object):
                 x1, y1 = renpy.display.draw.untranslate_point(x + w, y + h)
                 rect = (x0, y0, x1 - x0, y1 - y0)
 
-                pygame.key.set_text_input_rect(rect)  # @UndefinedVariable
+                pygame.key.set_text_input_rect(rect) # @UndefinedVariable
 
             if not self.old_text_rect or not_shown:
-                pygame.key.start_text_input()  # @UndefinedVariable
+                pygame.key.start_text_input() # @UndefinedVariable
 
         else:
             if self.old_text_rect:
-                pygame.key.stop_text_input()  # @UndefinedVariable
-                pygame.key.set_text_input_rect(None)  # @UndefinedVariable
+                pygame.key.stop_text_input() # @UndefinedVariable
+                pygame.key.set_text_input_rect(None) # @UndefinedVariable
 
         self.old_text_rect = self.text_rect
 
@@ -3197,7 +3203,7 @@ class Interface(object):
                     # Draw the screen.
                     self.frame_time = get_time()
 
-                    renpy.audio.audio.advance_time()  # Sets the time of all video frames.
+                    renpy.audio.audio.advance_time() # Sets the time of all video frames.
 
                     self.draw_screen(root_widget, fullscreen_video, (not fullscreen_video) or video_frame_drawn)
 
@@ -3324,7 +3330,7 @@ class Interface(object):
                         old_timeout_time = self.timeout_time
 
                 if can_block or (frame >= renpy.config.idle_frame):
-                    expensive = not ( needs_redraw or (_redraw_in < .2) or (_timeout_in < .2) or renpy.display.video.playing() )
+                    expensive = not (needs_redraw or (_redraw_in < .2) or (_timeout_in < .2) or renpy.display.video.playing())
                     self.idle_frame(can_block, expensive)
 
                 if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
@@ -3432,7 +3438,7 @@ class Interface(object):
 
                     # Refresh fullscreen status (e.g. user pressed Esc. in browser)
                     main_window = pygame.display.get_window()
-                    self.fullscreen = main_window is not None and bool(main_window.get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP|pygame.WINDOW_FULLSCREEN))
+                    self.fullscreen = main_window is not None and bool(main_window.get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
                     renpy.game.preferences.fullscreen = self.fullscreen
 
                     if pygame.display.get_surface().get_size() != ev.size:
@@ -3517,7 +3523,7 @@ class Interface(object):
                 try:
 
                     if self.touch:
-                        renpy.display.gesture.recognizer.event(ev, x, y)  # @UndefinedVariable
+                        renpy.display.gesture.recognizer.event(ev, x, y) # @UndefinedVariable
 
                     # Handle the event normally.
                     rv = renpy.display.focus.mouse_handler(ev, x, y)

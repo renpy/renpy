@@ -23,11 +23,9 @@
 
 from __future__ import print_function
 
-DEF ANGLE = False
-
 from libc.stdlib cimport malloc, free
 from sdl2 cimport *
-from gl cimport *
+from renpy.uguu.gl cimport *
 
 from pygame_sdl2 cimport *
 import_pygame_sdl2()
@@ -45,25 +43,6 @@ import math
 cimport renpy.display.render as render
 cimport gltexture
 import gltexture
-
-
-cdef extern from "glcompat.h":
-    GLenum glewInit()
-    GLubyte *glewGetErrorString(GLenum)
-    GLboolean glewIsSupported(char *)
-
-    enum:
-        GLEW_OK
-
-cdef extern from "eglsupport.h":
-    int egl_available()
-    char *egl_init(SDL_Window *, int)
-    void egl_swap()
-    void egl_quit()
-
-# EGL is a flag we check to see if we have EGL on this platform.
-cdef bint EGL
-EGL = egl_available()
 
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE, FLATTEN
@@ -83,7 +62,15 @@ frame_times = [ ]
 
 cdef class GLDraw:
 
-    def __init__(self, allow_fixed=True):
+    def __init__(self, name):
+
+        # Are we in gles mode?
+        self.gles = (name == "gles") or (name == "angle")
+
+        # How about angle mode?
+        self.angle = (name == "angle")
+
+        print(name, self.gles, self.angle)
 
         # Did we do the first-time init?
         self.did_init = False
@@ -119,12 +106,7 @@ cdef class GLDraw:
         self.redraw_period = .2
 
         # Info.
-        self.info = { "resizable" : True, "additive" : True }
-
-        if not ANGLE:
-            self.info["renderer"] = "gl"
-        else:
-            self.info["renderer"] = "angle"
+        self.info = { "resizable" : True, "additive" : True, "renderer" : name }
 
         # Old value of fullscreen.
         self.old_fullscreen = None
@@ -138,9 +120,6 @@ cdef class GLDraw:
 
         # Should we use the fast (but incorrect) dissolve mode?
         self.fast_dissolve = False # renpy.android
-
-        # Should we allow the fixed-function environment?
-        self.allow_fixed = allow_fixed
 
         # Did we do the texture test at least once?
         self.did_texture_test = False
@@ -175,8 +154,6 @@ cdef class GLDraw:
         """
 
         global vsync
-
-        cdef char *egl_error
 
         if not renpy.config.gl_enable:
             renpy.display.log.write("GL Disabled.")
@@ -297,15 +274,17 @@ cdef class GLDraw:
 
         # Set the display mode.
 
-        if ANGLE:
-            opengl = 0
-            resizable = pygame.RESIZABLE
+        pygame.display.gl_reset_attributes()
 
-        elif EGL:
-            opengl = 0
-            resizable = 0
+        if self.gles:
+            pygame.display.hint("SDL_OPENGL_ES_DRIVER", "1")
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
+        else:
+            pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
 
-        elif renpy.android:
+        if renpy.android:
             opengl = pygame.OPENGL
             resizable = 0
 
@@ -315,9 +294,6 @@ cdef class GLDraw:
         elif renpy.ios:
             opengl = pygame.OPENGL | pygame.WINDOW_ALLOW_HIGHDPI
             resizable = pygame.RESIZABLE
-
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
 
             pwidth = 0
             pheight = 0
@@ -354,18 +330,6 @@ cdef class GLDraw:
 
             except pygame.error, e:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
-                return False
-
-        # Use EGL to get the OpenGL ES 2 context, if necessary.
-        if EGL:
-
-            # This ensures the display is shown.
-            pygame.display.flip()
-
-            egl_error = egl_init(PyWindow_AsWindow(None), vsync)
-
-            if egl_error is not NULL:
-                renpy.display.log.write("Initializing EGL: %s" % egl_error)
                 return False
 
         # Get the size of the created screen.
@@ -492,33 +456,16 @@ cdef class GLDraw:
         renpy.display.log.write("Display Info: %s", self.display_info)
 
 
-        allow_shader = True
-        allow_fixed = self.allow_fixed
-
-        if not allow_shader:
-            renpy.display.log.write("Shaders are blacklisted.")
-        if not allow_fixed:
-            renpy.display.log.write("Fixed-function is blacklisted.")
-
-        if not allow_shader and not allow_fixed:
-            renpy.display.log.write("GL is totally blacklisted.")
-            return False
-
-        if EGL:
+        if self.gles:
             gltexture.use_gles()
+        else:
+            gltexture.use_gl()
 
-        elif renpy.android or renpy.ios:
+        if renpy.android or renpy.ios:
             self.redraw_period = 1.0
-            gltexture.use_gles()
-
         elif renpy.emscripten:
             # give back control to browser regularly
             self.redraw_period = 0.1
-            # WebGL is GLES
-            gltexture.use_gles()
-
-        else:
-            gltexture.use_gl()
 
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(i.decode("utf-8") for i in extensions_string.split(b" "))
@@ -557,29 +504,22 @@ cdef class GLDraw:
 
         # Count the number of texture units.
         cdef GLint texture_units = 0
-        glGetIntegerv(GL_MAX_TEXTURE_UNITS, &texture_units)
+        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texture_units)
 
         renpy.display.log.write("Number of texture units: %d", texture_units)
 
         # Pick a texture environment subsystem.
 
-        if EGL or renpy.android or renpy.ios or renpy.emscripten or (allow_shader and use_subsystem(
-            glenviron_shader,
-            "RENPY_GL_ENVIRON",
-            "shader",
-            "GL_ARB_vertex_shader",
-            "GL_ARB_fragment_shader")):
+        try:
+            renpy.display.log.write("Using shader environment.")
+            self.environ = glenviron_shader.ShaderEnviron()
+            self.info["environ"] = "shader"
+            self.environ.init()
 
-            try:
-                renpy.display.log.write("Using shader environment.")
-                self.environ = glenviron_shader.ShaderEnviron()
-                self.info["environ"] = "shader"
-                self.environ.init()
-
-            except Exception, e:
-                renpy.display.log.write("Initializing shader environment failed:")
-                renpy.display.log.exception()
-                self.environ = None
+        except Exception, e:
+            renpy.display.log.write("Initializing shader environment failed:")
+            renpy.display.log.exception()
+            self.environ = None
 
         if self.environ is None:
 
@@ -587,7 +527,7 @@ cdef class GLDraw:
             return False
 
         # Pick a Render-to-texture method.
-        use_fbo = renpy.ios or renpy.android or renpy.emscripten or EGL or use_subsystem(
+        use_fbo = self.gles or use_subsystem(
                 glrtt_fbo,
                 "RENPY_GL_RTT",
                 "fbo",
@@ -819,10 +759,7 @@ cdef class GLDraw:
 
             renpy.plog(1, "flip")
 
-            if EGL:
-                egl_swap()
-            else:
-                pygame.display.flip()
+            pygame.display.flip()
 
             end = time.time()
 
