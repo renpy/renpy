@@ -22,13 +22,9 @@ renpy.display.render gen/renpy.display.render.c
 renpy.display.accelerator gen/renpy.display.accelerator.c
 renpy.uguu.gl gen/renpy.uguu.gl.c
 renpy.uguu.uguu gen/renpy.uguu.uguu.c
-renpy.gl.gl gen/renpy.gl.gl.c
-renpy.gl.gl1 gen/renpy.gl.gl1.c
-renpy.gl.gldraw gen/renpy.gl.gldraw.c egl_none.c
+renpy.gl.gldraw gen/renpy.gl.gldraw.c
 renpy.gl.gltexture gen/renpy.gl.gltexture.c
 renpy.gl.glenviron_shader gen/renpy.gl.glenviron_shader.c
-renpy.gl.glenviron_fixed gen/renpy.gl.glenviron_fixed.c
-renpy.gl.glenviron_limited gen/renpy.gl.glenviron_limited.c
 renpy.gl.glrtt_copy gen/renpy.gl.glrtt_copy.c
 renpy.gl.glrtt_fbo gen/renpy.gl.glrtt_fbo.c
 renpy.gl2.gl2mesh gen/renpy.gl2.gl2mesh.c
