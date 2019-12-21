@@ -70,8 +70,6 @@ cdef class GLDraw:
         # How about angle mode?
         self.angle = (name == "angle")
 
-        print(name, self.gles, self.angle)
-
         # Did we do the first-time init?
         self.did_init = False
 
