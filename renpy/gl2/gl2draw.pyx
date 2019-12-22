@@ -75,10 +75,13 @@ frame_times = [ ]
 
 cdef class GL2Draw:
 
-    def __init__(self, renderer_name, gles):
+    def __init__(self, name):
 
-        # Should we use gles or opengl?
-        self.gles = gles
+        # Are we in gles mode?
+        self.gles = (name == "gles2") or (name == "angle2")
+
+        # How about angle mode?
+        self.angle = (name == "angle2")
 
         # Did we do the first-time init?
         self.did_init = False
@@ -108,7 +111,7 @@ cdef class GL2Draw:
         self.redraw_period = .2
 
         # Info.
-        self.info = { "resizable" : True, "additive" : True, "renderer" : renderer_name, "models" : True }
+        self.info = { "resizable" : True, "additive" : True, "renderer" : name, "models" : True }
 
         # The old value of the fullscreen preference.
         self.old_fullscreen = None

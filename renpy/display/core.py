@@ -1966,9 +1966,9 @@ class Interface(object):
         make_draw("angle", "renpy.gl.gldraw", "GLDraw", "angle")
         make_draw("gles", "renpy.gl.gldraw", "GLDraw", "gles")
 
-        make_draw("gl2", "renpy.gl2.gl2draw", "GL2Draw", "gl2", False)
-        make_draw("angle2", "renpy.gl2.gl2draw", "GL2Draw", "angle2", True)
-        make_draw("gles2", "renpy.gl2.gl2draw", "GL2Draw", "gles2", True)
+        make_draw("gl2", "renpy.gl2.gl2draw", "GL2Draw", "gl2")
+        make_draw("angle2", "renpy.gl2.gl2draw", "GL2Draw", "angle2")
+        make_draw("gles2", "renpy.gl2.gl2draw", "GL2Draw", "gles2")
 
         make_draw("sw", "renpy.display.swdraw", "SWDraw")
 
