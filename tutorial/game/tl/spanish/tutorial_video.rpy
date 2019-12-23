@@ -9,25 +9,25 @@ translate spanish tutorial_video_f34a17f5:
 translate spanish tutorial_video_4aefd413:
 
     # e "The first way allows you to show a movie as an image, along with every other image that's displayed on the screen."
-    e "La primera forma le permite mostrar una video como una imagen, junto con todas las demás imágenes que se muestran en la pantalla."
+    e "La primera forma te permite mostrar una video como una imagen, junto con todas las demás imágenes que se muestran en la pantalla."
 
 # game/tutorial_video.rpy:16
 translate spanish tutorial_video_b56ccf19:
 
     # e "To do this, we first have to define an image to be a Movie displayable. Movie displayables take a movie to play, and can be given position properties."
-    e "Para hacer esto, primero tenemos que definir una imagen para que sea un visualizable Movie. Los visualizables Movie toman un video para reproducir, y se le pueden dar propiedades de posición."
+    e "Para hacer esto, primero tenemos que definir una imagen para que sea un visualizable 'Movie'. Los visualizables 'Movie' toman un video para reproducir, y se le pueden dar propiedades de posición."
 
 # game/tutorial_video.rpy:25
 translate spanish tutorial_video_fbaa71e4:
 
     # e "Then, we can show the movie displayable, which starts the movie playing."
-    e "Luego, podemos mostrar el visualizable movie, que inicia la reproducción de la película."
+    e "Luego, podemos mostrar ('show') el visualizable 'movie', que inicia la reproducción de la película."
 
 # game/tutorial_video.rpy:30
 translate spanish tutorial_video_bbbb242d:
 
     # e "When we no longer want to play the movie, we can hide it."
-    e "Cuando ya no queremos reproducir el video, podemos ocultarlo."
+    e "Cuando ya no queremos reproducir el video, podemos ocultarlo ('hide')."
 
 # game/tutorial_video.rpy:34
 translate spanish tutorial_video_a66b154c:

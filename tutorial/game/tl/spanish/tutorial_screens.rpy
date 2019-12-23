@@ -3,7 +3,7 @@
 translate spanish tutorial_screens_2faa22e5:
 
     # e "Screens are the most powerful part of Ren'Py. Screens let you customize the out-of-game interface, and create new in-game interface components."
-    e "Las pantallas(Screens) son la parte más poderosa de Ren'Py. Las pantallas le permiten personalizar la interfaz fuera del juego y crear nuevos componentes de interfaz dentro del juego."
+    e "Las 'screens' (pantallas) son la parte más poderosa de Ren'Py. Las pantallas le permiten personalizar la interfaz fuera del juego y crear nuevos componentes de interfaz dentro del juego."
 
 # game/tutorial_screens.rpy:171
 translate spanish screens_menu_7f31d730:
@@ -27,7 +27,7 @@ translate spanish screens_demo_ce100e07:
 translate spanish screens_demo_1bdfb4bd:
 
     # e "And when the menu statement displays an in-game choice, the 'choice' screen is used. Got it?" nointeract
-    e "Y cuando la sentencia menu muestra una opción dentro del juego, se usa la pantalla de 'choice'. ¿Entendido?" nointeract
+    e "Y cuando la sentencia 'menu' muestra una opción dentro del juego, se usa la pantalla de 'choice'. ¿Entendido?" nointeract
 
 # game/tutorial_screens.rpy:215
 translate spanish screens_demo_31a20e24:
@@ -39,7 +39,7 @@ translate spanish screens_demo_31a20e24:
 translate spanish screens_demo_5a5aa2d5:
 
     # e "More than one screen can be displayed at once. For example, the buttons at the bottom - Back, History, Skip, and so on - are all displayed by a quick_menu screen that's shown all of the time."
-    e "Se puede visualizar más de una pantalla a la vez. Por ejemplo, los botones en la parte inferior (Atrás, Historial, Saltar, etc.) se muestran en una pantalla de menú rápido que se muestra todo el tiempo."
+    e "Se puede visualizar más de una pantalla a la vez. Por ejemplo, los botones en la parte inferior (Atrás, Historial, Saltar, etc.) se muestran en una pantalla 'quick_menu' que se muestra todo el tiempo."
 
 # game/tutorial_screens.rpy:219
 translate spanish screens_demo_58d48fde:
@@ -87,13 +87,13 @@ translate spanish screens_demo_62c184f8:
 translate spanish screens_showing_1b51e9a4:
 
     # e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen, and it's name is simple_screen."
-    e "Aquí hay un ejemplo de una pantalla muy simple. La sentencia screen se usa para decirle a Ren'Py que esto es una pantalla, y su nombre es simple_screen."
+    e "Aquí hay un ejemplo de una pantalla muy simple. La sentencia 'screen' se usa para decirle a Ren'Py que esto es una pantalla, y su nombre es 'simple_screen'."
 
 # game/tutorial_screens.rpy:267
 translate spanish screens_showing_5a6bbad0:
 
     # e "Inside the screen statement, lines introduces displayables such as frame, vbox, text, and textbutton; or properties like action, xalign, and ypos."
-    e "Dentro de la sentencia screen, las líneas introducen visualizables como frame, vbox, text y textbutton; o propiedades como action, xalign, y ypos."
+    e "Dentro de la sentencia 'screen', las líneas introducen visualizables como 'frame', 'vbox', 'text' y 'textbutton'; o propiedades como 'action', 'xalign', y 'ypos'."
 
 # game/tutorial_screens.rpy:272
 translate spanish screens_showing_ae40755c:
@@ -105,25 +105,25 @@ translate spanish screens_showing_ae40755c:
 translate spanish screens_showing_bc320819:
 
     # e "The text statement is used to display the text provided."
-    e "La sentencia text se utiliza para mostrar el texto proporcionado."
+    e "La sentencia 'text' se utiliza para mostrar el texto proporcionado."
 
 # game/tutorial_screens.rpy:276
 translate spanish screens_showing_64f23380:
 
     # e "The textbutton statement introduces a button that can be clicked. When the button is clicked, the provided action is run."
-    e "La sentencia textbutton introduce un botón en el que se puede hacer clic. Cuando se hace clic en el botón, se ejecuta la acción proporcionada."
+    e "La sentencia 'textbutton' introduce un botón en el que se puede hacer clic. Cuando se hace clic en el botón, se ejecuta la acción proporcionada."
 
 # game/tutorial_screens.rpy:278
 translate spanish screens_showing_e8f68c08:
 
     # e "Both are inside a vbox, which means vertical box, statement - that places the text on top of the button."
-    e "Ambos están dentro de un vbox, lo que significa un cuadro vertical, sentencia, que coloca el texto sobre el botón."
+    e "Ambos están dentro de un 'vbox', lo que significa un cuadro vertical, sentencia, que coloca el texto sobre el botón."
 
 # game/tutorial_screens.rpy:280
 translate spanish screens_showing_7e48fc22:
 
     # e "And that is inside a frame that provides the background and borders. The frame has an at property that takes a transform giving its position."
-    e "Y eso está dentro de un frame que proporciona el fondo y los bordes. El marco tiene una propiedad at que toma una transformación dando su posición."
+    e "Y eso está dentro de un 'frame' que proporciona el fondo y los bordes. El 'frame' tiene una propiedad 'at' que toma una transformación dando su posición."
 
 # game/tutorial_screens.rpy:286
 translate spanish screens_showing_80425bf3:
@@ -135,7 +135,7 @@ translate spanish screens_showing_80425bf3:
 translate spanish screens_showing_7d2deb37:
 
     # e "The first is the show screen statement, which displays a screen and lets Ren'Py keep going."
-    e "La primera es la sentencia show screen, que muestra una pantalla y le permite a Ren'Py seguir adelante."
+    e "La primera es la sentencia 'show screen', que muestra una pantalla y le permite a Ren'Py seguir adelante."
 
 # game/tutorial_screens.rpy:293
 translate spanish screens_showing_7626dc8b:
@@ -147,13 +147,13 @@ translate spanish screens_showing_7626dc8b:
 translate spanish screens_showing_c79038a4:
 
     # e "Hiding a screen is done with the hide screen statement."
-    e "La ocultación de una pantalla se hace con la sentencia hide screen."
+    e "La ocultación de una pantalla se hace con la sentencia 'hide screen'."
 
 # game/tutorial_screens.rpy:301
 translate spanish screens_showing_8f78a97d:
 
     # e "The call screen statement stops Ren'Py from executing script until the screen either returns a value, or jumps the script somewhere else."
-    e "La sentencia call screen impide que Ren'Py ejecute el script hasta que la pantalla devuelva un valor o salte el guión en otro lugar."
+    e "La sentencia 'call screen' impide que Ren'Py ejecute el script hasta que la pantalla devuelva un valor o salte el guión en otro lugar."
 
 # game/tutorial_screens.rpy:303
 translate spanish screens_showing_b52e420c:
@@ -165,31 +165,31 @@ translate spanish screens_showing_b52e420c:
 translate spanish screens_showing_c5ca730f:
 
     # e "When a call screen statement ends, the screen is automatically hidden."
-    e "Cuando una sentencia call screen finaliza, la pantalla se oculta automáticamente."
+    e "Cuando una sentencia 'call screen' finaliza, la pantalla se oculta automáticamente."
 
 # game/tutorial_screens.rpy:312
 translate spanish screens_showing_a38d1702:
 
     # e "Generally, you use show screen to show overlays that are up all the time, and call screen to show screens the player interacts with for a little while."
-    e "Por lo general, usas show screen para mostrar overlays que están arriba todo el tiempo, y call screen para mostrar las pantallas con las que el jugador interactúa por un tiempo."
+    e "Por lo general, usas 'show screen' para mostrar capas que están arriba todo el tiempo, y 'call screen' para mostrar las pantallas con las que el jugador interactúa por un tiempo."
 
 # game/tutorial_screens.rpy:335
 translate spanish screens_parameters_0666043d:
 
     # e "Here's an example of a screen that takes three parameters. The message parameter is a message to show, while the okay and cancel actions are run when the appropriate button is chosen."
-    e "Aquí hay un ejemplo de una pantalla que toma tres parámetros. El parámetro message es un mensaje para mostrar, mientras que las acciones de aceptar y cancelar se ejecutan cuando se elige el botón apropiado."
+    e "Aquí hay un ejemplo de una pantalla que toma tres parámetros. El parámetro 'message' es un mensaje para mostrar, mientras que las acciones 'okay' y 'cancel' se ejecutan cuando se elige el botón apropiado."
 
 # game/tutorial_screens.rpy:337
 translate spanish screens_parameters_cf95b914:
 
     # e "While the message parameter always has to be supplied, the okay and cancel parameters have default values that are used if no argument is given."
-    e "Si bien siempre se debe proporcionar el parámetro message, los parámetros de aceptar y cancelar tienen valores predeterminados que se utilizan si no se proporciona ningún argumento."
+    e "Si bien siempre se debe proporcionar el parámetro 'message', los parámetros 'okay' y 'cancel' tienen valores predeterminados que se utilizan si no se proporciona ningún argumento."
 
 # game/tutorial_screens.rpy:339
 translate spanish screens_parameters_4ce03111:
 
     # e "Each parameter is a variable that is defined inside the screen. Inside the screen, these variables take priority over those used in the rest of Ren'Py."
-    e "Cada parámetro es una variable que se define dentro de screen. Dentro de screen, estas variables tienen prioridad sobre las utilizadas en el resto de Ren'Py."
+    e "Cada parámetro es una variable que se define dentro de 'screen'. Dentro de 'screen', estas variables tienen prioridad sobre las utilizadas en el resto de Ren'Py."
 
 # game/tutorial_screens.rpy:343
 translate spanish screens_parameters_106c2a04:
@@ -207,7 +207,7 @@ translate spanish screens_parameters_12ac92d4:
 translate spanish screens_parameters_d143a994:
 
     # e "The call screen statement can also take arguments, much like show screen does."
-    e "La sentencia call screen también puede tomar argumentos, como lo hace show screen."
+    e "La sentencia 'call screen' también puede tomar argumentos, como lo hace 'show screen'."
 
 # game/tutorial_screens.rpy:369
 translate spanish screens_properties_423246a2:
@@ -219,13 +219,13 @@ translate spanish screens_properties_423246a2:
 translate spanish screens_properties_4fde164e:
 
     # e "When the modal property is true, you can't interact with things beneath the screen. You'll have to click 'Close This Screen' before you can continue."
-    e "Cuando la propiedad modal es True, no puedes interactuar con cosas debajo de la pantalla. Tendrás que hacer clic en 'Cerrar esta pantalla' antes de poder continuar."
+    e "Cuando la propiedad 'modal' es True, no puedes interactuar con cosas debajo de la pantalla. Tendrás que hacer clic en 'Cerrar esta pantalla' antes de poder continuar."
 
 # game/tutorial_screens.rpy:398
 translate spanish screens_properties_550c0bea:
 
     # e "When a screen has the tag property, it's treated like the tag part of an image name. Here, I'm showing a_tag_screen."
-    e "Cuando una pantalla tiene la propiedad tag, se trata como la parte de etiqueta de un nombre de imagen. Aquí, estoy mostrando a_tag_screen."
+    e "Cuando una pantalla tiene la propiedad 'tag', se trata como la parte de etiqueta de un nombre de imagen. Aquí, estoy mostrando a_tag_screen."
 
 # game/tutorial_screens.rpy:402
 translate spanish screens_properties_4fcf8af8:
@@ -249,7 +249,7 @@ translate spanish screens_properties_5d51bd1e:
 translate spanish screens_properties_6706e266:
 
     # e "The zorder property controls the order in which screens overlap each other. The larger the zorder number, the closer the screen is to the player."
-    e "La propiedad zorder controla el orden en que las pantallas se superponen entre sí. Cuanto mayor sea el número zorder, más cerca estará la pantalla del jugador."
+    e "La propiedad 'zorder' controla el orden en que las pantallas se superponen entre sí. Cuanto mayor sea el número zorder, más cerca estará la pantalla del jugador."
 
 # game/tutorial_screens.rpy:434
 translate spanish screens_properties_f7a2c73d:
@@ -261,7 +261,7 @@ translate spanish screens_properties_f7a2c73d:
 translate spanish screens_properties_78433eb8:
 
     # e "The variant property selects a screen based on the properties of the device it's running on."
-    e "La propiedad variant selecciona una pantalla basada en las propiedades del dispositivo en el que se está ejecutando."
+    e "La propiedad 'variant' selecciona una pantalla basada en las propiedades del dispositivo en el que se está ejecutando."
 
 # game/tutorial_screens.rpy:456
 translate spanish screens_properties_e6db6d02:
@@ -273,7 +273,7 @@ translate spanish screens_properties_e6db6d02:
 translate spanish screens_properties_d21b5500:
 
     # e "Finally, the style_prefix property specifies a prefix that's applied to the styles in the screen."
-    e "Finalmente, la propiedad style_prefix especifica un prefijo que se aplica a los estilos en la pantalla."
+    e "Finalmente, la propiedad 'style_prefix' especifica un prefijo que se aplica a los estilos en la pantalla."
 
 # game/tutorial_screens.rpy:477
 translate spanish screens_properties_560ca08a:
@@ -321,49 +321,49 @@ translate spanish screens_control_f75fa254:
 translate spanish screens_control_40c12afa:
 
     # e "The default statement lets you set the value of a screen variable the first time the screen runs. This value can be changed with the SetScreenVariable and ToggleScreenVariable actions."
-    e "La sentencia default te permite establecer el valor de una variable de pantalla la primera vez que se ejecuta la pantalla. Este valor se puede cambiar con las acciones SetScreenVariable y ToggleScreenVariable."
+    e "La sentencia 'default' te permite establecer el valor de una variable de pantalla la primera vez que se ejecuta la pantalla. Este valor se puede cambiar con las acciones 'SetScreenVariable' y 'ToggleScreenVariable'."
 
 # game/tutorial_screens.rpy:538
 translate spanish screens_control_39e0f7e6:
 
     # e "The default statement differs from the Python statement in that it is only run once. Python runs each time the screen updates, and hence the variable would never change value."
-    e "La sentencia default se diferencia de la sentencia Python en que solo se ejecuta una vez. Python se ejecuta cada vez que la pantalla se actualiza y, por lo tanto, la variable nunca cambiará de valor."
+    e "La sentencia 'default' se diferencia de la sentencia 'Python' en que solo se ejecuta una vez. 'Python' se ejecuta cada vez que la pantalla se actualiza y, por lo tanto, la variable nunca cambiará de valor."
 
 # game/tutorial_screens.rpy:557
 translate spanish screens_control_87a75fe7:
 
     # e "The if statement works like it does in script, running one block if the condition is true and another if the condition is false."
-    e "La sentencia if funciona igual que en el script, ejecutando un bloque si la condición es verdadera y otra si la condición es falsa."
+    e "La sentencia 'if' funciona igual que en el script, ejecutando un bloque si la condición es verdadera y otra si la condición es falsa."
 
 # game/tutorial_screens.rpy:572
 translate spanish screens_control_6a8c07f6:
 
     # e "The for statement takes a list of values, and iterates through them, running the block inside the for loop with the variable bound to each list item."
-    e "La sentencia for toma una lista de valores y los repite, ejecutando el bloque dentro del bucle for con la variable vinculada a cada elemento de la lista."
+    e "La sentencia 'for' toma una lista de valores y los repite, ejecutando el bloque dentro del bucle for con la variable vinculada a cada elemento de la lista."
 
 # game/tutorial_screens.rpy:588
 translate spanish screens_control_f7b755fa:
 
     # e "The on and key statements probably only make sense at the top level of the screen."
-    e "Las sentencias on y key probablemente solo tengan sentido en el nivel superior de la pantalla."
+    e "Las sentencias 'on' y 'key' probablemente solo tengan sentido en el nivel superior de la pantalla."
 
 # game/tutorial_screens.rpy:590
 translate spanish screens_control_328b0676:
 
     # e "The on statement makes the screen run an action when an event occurs. The 'show' event happens when the screen is first shown, and the 'hide' event happens when it is hidden."
-    e "La sentencia on hace que la pantalla ejecute una acción cuando ocurre un evento. El evento 'show' ocurre cuando se muestra la pantalla por primera vez, y el evento 'hide' ocurre cuando se oculta."
+    e "La sentencia 'on' hace que la pantalla ejecute una acción cuando ocurre un evento. El evento 'show' ocurre cuando se muestra la pantalla por primera vez, y el evento 'hide' ocurre cuando se oculta."
 
 # game/tutorial_screens.rpy:592
 translate spanish screens_control_6768768b:
 
     # e "The key event runs an event when a key is pressed."
-    e "El evento key ejecuta un evento cuando se presiona una tecla."
+    e "El evento 'key' ejecuta un evento cuando se presiona una tecla."
 
 # game/tutorial_screens.rpy:600
 translate spanish screen_use_c6a20a16:
 
     # e "The screen language use statement lets you include a screen inside another. This can be useful to prevent duplication inside screens."
-    e "La sentencia use del lenguaje de pantalla te permite incluir una pantalla dentro de otra. Esto puede ser útil para evitar la duplicación dentro de las pantallas."
+    e "La sentencia 'use' del lenguaje de pantalla te permite incluir una pantalla dentro de otra. Esto puede ser útil para evitar la duplicación dentro de las pantallas."
 
 # game/tutorial_screens.rpy:616
 translate spanish screen_use_95a34d3a:
@@ -381,7 +381,7 @@ translate spanish screen_use_e2c673d9:
 translate spanish screen_use_2efdd2ff:
 
     # e "The name and amount of the stat are passed in as arguments to the screen, just as is done in the call screen statement."
-    e "El nombre y la cantidad de la estadística se pasan como argumentos a la pantalla, tal como se hace en la llamada a la sentencia screen."
+    e "El nombre y la cantidad de la estadística se pasan como argumentos a la pantalla, tal como se hace en la llamada a la sentencia 'screen'."
 
 # game/tutorial_screens.rpy:637
 translate spanish screen_use_f8d1bf9d:
@@ -393,13 +393,13 @@ translate spanish screen_use_f8d1bf9d:
 translate spanish screen_use_4e22c25e:
 
     # e "The transclude statement goes one step further, by letting the use statement take a block of screen language statements."
-    e "La sentencia transclude va un paso más allá, al permitir que la sentencia use tome un bloque de sentencia de lenguaje de pantalla."
+    e "La sentencia 'transclude' va un paso más allá, al permitir que la sentencia use tome un bloque de sentencia de lenguaje de pantalla."
 
 # game/tutorial_screens.rpy:655
 translate spanish screen_use_c83b97e3:
 
     # e "When the included screen reaches the transclude statement it is replaced with the block from the use statement."
-    e "Cuando la pantalla incluida llega a la sentncia transclude, se reemplaza con el bloque de la sentensia use."
+    e "Cuando la pantalla incluida llega a la sentncia transclude, se reemplaza con el bloque de la sentensia 'use'."
 
 # game/tutorial_screens.rpy:657
 translate spanish screen_use_1ad1f358:
@@ -411,7 +411,7 @@ translate spanish screen_use_1ad1f358:
 translate spanish screen_use_f74fab6e:
 
     # e "Use and transclude are complex, but very powerful. If you think about it, 'use boilerplate' is only one step removed from writing your own Screen Language statement."
-    e "Use y transclude son complejas, pero muy potentes. Si lo piensa, 'use boilerplate' es solo un paso menos de escribir tu propia sentencia de Lenguaje de Pantalla."
+    e "'Use' y 'transclude' son complejas, pero muy potentes. Si lo piensa, 'use boilerplate' es solo un paso menos de escribir tu propia sentencia de Lenguaje de Pantalla."
 
 translate spanish strings:
 

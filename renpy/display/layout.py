@@ -274,7 +274,7 @@ def Composite(size, *args, **properties):
     displayables. `size` is a (width, height) tuple.
 
     The remaining positional arguments are used to place images inside
-    the LiveComposite. The remaining positional arguments should come
+    the Composite. The remaining positional arguments should come
     in groups of two, with the first member of each group an (x, y)
     tuple, and the second member of a group is a displayable that
     is composited at that position.

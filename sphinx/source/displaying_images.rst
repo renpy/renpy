@@ -127,7 +127,7 @@ displayable. For example::
 
     image eileen happy = "eileen_happy.png"
     image black = "#000"
-    image bg tiled = LiveTile("tile.jpg")
+    image bg tiled = Tile("tile.jpg")
 
     image eileen happy question = VBox(
         "question.png",

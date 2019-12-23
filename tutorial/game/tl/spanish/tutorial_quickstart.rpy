@@ -123,13 +123,13 @@ translate spanish tutorial_dialogue_d39d1b2b:
 translate spanish tutorial_dialogue_f51ecf1f:
 
     # e "This script demonstrates two kinds of Ren'Py statements, labels and say statements."
-    e "Este script muestra dos tipos de sentencia de Ren'Py, label y say."
+    e "Este script muestra dos tipos de sentencia de Ren'Py, 'label' y 'say'."
 
 # game/tutorial_quickstart.rpy:103
 translate spanish tutorial_dialogue_bc7ec147:
 
     # e "The first line is a label statement. The label statement is used to give a name to a place in the program."
-    e "La primera línea es una sentencia label. La sentencia label se utiliza para dar un nombre a un lugar en el programa."
+    e "La primera línea es una sentencia 'label'. La sentencia 'label' se utiliza para dar un nombre a un lugar en el programa."
 
 # game/tutorial_quickstart.rpy:105
 translate spanish tutorial_dialogue_b20db833:
@@ -141,7 +141,7 @@ translate spanish tutorial_dialogue_b20db833:
 translate spanish tutorial_dialogue_b0afbe96:
 
     # e "The next line is a simple say statement. It consists of a string beginning with a double-quote, and ending at the next double-quote."
-    e "La siguiente línea es una simple sentencia say. Consiste en una cadena que comienza con una comilla doble y termina en la siguiente comilla doble."
+    e "La siguiente línea es una simple sentencia 'say'. Consiste en una cadena que comienza con una comilla doble y termina en la siguiente comilla doble."
 
 # game/tutorial_quickstart.rpy:109
 translate spanish tutorial_dialogue_628c9e4c:
@@ -177,7 +177,7 @@ translate spanish tutorial_dialogue_9dd2d543:
 translate spanish tutorial_dialogue_64ffe685:
 
     # e "This two-argument form of the say statement is used for dialogue, where a character is speaking out loud."
-    e "Esta forma la sentencia say de dos argumentos se usa para diálogo, donde un personaje habla en voz alta."
+    e "Esta forma la sentencia 'say' de dos argumentos se usa para diálogo, donde un personaje habla en voz alta."
 
 # game/tutorial_quickstart.rpy:143
 translate spanish tutorial_dialogue_97a33275:
@@ -213,13 +213,13 @@ translate spanish tutorial_dialogue_9c9d59c2:
 translate spanish tutorial_dialogue_2a2d1e51:
 
     # e "To solve these problems, Ren'Py lets you define Characters."
-    e "Para resolver estos problemas, Ren'Py te permite definir Characters."
+    e "Para resolver estos problemas, Ren'Py te permite definir 'Characters' (Personajes)."
 
 # game/tutorial_quickstart.rpy:159
 translate spanish tutorial_dialogue_16e8c5fd:
 
     # e "Here's an example Character definition. It begins with the word \"define\". That tells Ren'Py that we are defining something."
-    e "Aquí hay un ejemplo de definición de Character. Comienza con la palabra \"define\". Eso le dice a Ren'Py que estamos definiendo algo."
+    e "Aquí hay un ejemplo de definición de 'Character'. Comienza con la palabra \"define\". Eso le dice a Ren'Py que estamos definiendo algo."
 
 # game/tutorial_quickstart.rpy:161
 translate spanish tutorial_dialogue_34fe5aa0:
@@ -285,7 +285,7 @@ translate spanish tutorial_dialogue_56a9936f:
 translate spanish tutorial_dialogue_d5984a21:
 
     # e "The Character object controls who is speaking, the color of their name, and many other properties of the dialogue."
-    e "El objeto Character controla quién está hablando, el color de su nombre y muchas otras propiedades del diálogo."
+    e "El objeto 'Character' controla quién está hablando, el color de su nombre y muchas otras propiedades del diálogo."
 
 # game/tutorial_quickstart.rpy:198
 translate spanish tutorial_dialogue_a5bcac8b:
@@ -375,13 +375,13 @@ translate spanish tutorial_images_6c0c938b:
 translate spanish tutorial_images_1a4660b9:
 
     # e "The scene statement clears the screen, and then adds a background image."
-    e "La sentencia scene borra la pantalla y luego agrega una imagen de fondo."
+    e "La sentencia 'scene' borra la pantalla y luego agrega una imagen de fondo."
 
 # game/tutorial_quickstart.rpy:246
 translate spanish tutorial_images_672c8cb8:
 
     # e "The show statement adds a background image on top of all the other images on the screen."
-    e "La sentencia show agrega una imagen de fondo sobre todas las demás imágenes en la pantalla."
+    e "La sentencia 'show' agrega una imagen de fondo sobre todas las demás imágenes en la pantalla."
 
 # game/tutorial_quickstart.rpy:248
 translate spanish tutorial_images_2fc7baee:
@@ -399,31 +399,31 @@ translate spanish tutorial_images_802825f2:
 translate spanish tutorial_images_b246dfdd:
 
     # e "The second show statement has an at clause, which gives a location on the screen. Common locations are left, right, and center, but you can define many more."
-    e "La segunda sentencia show tiene una cláusula at, que da una ubicación en la pantalla. Las ubicaciones comunes son left, right y center, pero puedes definir muchas más."
+    e "La segunda sentencia 'show' tiene una cláusula at, que da una ubicación en la pantalla. Las ubicaciones comunes son 'left', 'right' y 'center', pero puedes definir muchas más."
 
 # game/tutorial_quickstart.rpy:257
 translate spanish tutorial_images_82fceeb8:
 
     # e "In this example, we show an image named logo base, and we show it at a creator-defined position, rightish."
-    e "En este ejemplo, mostramos una imagen llamada logo base, y la mostramos en una posición definida por el creador, rightish."
+    e "En este ejemplo, mostramos una imagen llamada logo base, y la mostramos en una posición definida por el creador, 'rightish'."
 
 # game/tutorial_quickstart.rpy:259
 translate spanish tutorial_images_9defda43:
 
     # e "We also specify that it should be shown behind another image, in this case eileen. That's me."
-    e "También especificamos que debe mostrarse detrás(behind) de otra imagen, en este caso eileen. Esa soy yo."
+    e "También especificamos que debe mostrarse 'behind' (detrás) de otra imagen, en este caso eileen. Esa soy yo."
 
 # game/tutorial_quickstart.rpy:264
 translate spanish tutorial_images_73d331f7:
 
     # e "Finally, there's the hide statement, which hides the image with the given tag."
-    e "Finalmente, está la sentencia hide, que oculta la imagen con la etiqueta dada"
+    e "Finalmente, está la sentencia 'hide', que oculta la imagen con la etiqueta dada"
 
 # game/tutorial_quickstart.rpy:266
 translate spanish tutorial_images_f34f62d5:
 
     # e "Since the show statement replaces an image, and the scene statement clears the scene, it's pretty rare to hide an image."
-    e "Dado que la sentencia show reemplaza una imagen, y la sentencia scene borra la escena, es bastante raro ocultar una imagen."
+    e "Dado que la sentencia 'show' reemplaza una imagen, y la sentencia 'scene' borra la escena, es bastante raro ocultar una imagen."
 
 # game/tutorial_quickstart.rpy:268
 translate spanish tutorial_images_e06fa53a:
@@ -441,25 +441,25 @@ translate spanish tutorial_simple_positions_b492e793:
 translate spanish tutorial_simple_positions_04e3bc44:
 
     # e "The first way to do it is to show an image followed by a colon. Then indented on the next couple of lines are the xalign and yalign transform properties."
-    e "La primera forma de hacerlo es mostrar una imagen seguida de dos puntos. Luego, en el siguiente par de líneas, están sangradas las propiedades de transformación xalign y yalign."
+    e "La primera forma de hacerlo es mostrar una imagen seguida de dos puntos. Luego, en el siguiente par de líneas, están sangradas las propiedades de transformación 'xalign' y 'yalign'."
 
 # game/tutorial_quickstart.rpy:293
 translate spanish tutorial_simple_positions_3ecad5f8:
 
     # e "Each of the transform properties is a name followed by a value. For xalign and yalign, the values are numbers."
-    e "Cada una de las propiedades de transformación es un nombre seguido de un valor. Para xalign y yalign, los valores son números."
+    e "Cada una de las propiedades de transformación es un nombre seguido de un valor. Para 'xalign' y 'yalign', los valores son números."
 
 # game/tutorial_quickstart.rpy:295
 translate spanish tutorial_simple_positions_61c1b124:
 
     # e "The xalign transform property is the important one, as it controls where the image is placed horizontally on the screen."
-    e "La propiedad de transformación xalign es la importante, ya que controla dónde se coloca la imagen horizontalmente en la pantalla."
+    e "La propiedad de transformación 'xalign' es la importante, ya que controla dónde se coloca la imagen horizontalmente en la pantalla."
 
 # game/tutorial_quickstart.rpy:305
 translate spanish tutorial_simple_positions_67ebea97:
 
     # e "An xalign of 0.0 is the left side."
-    e "Un valor 0.0 en xalign es el lado izquierdo"
+    e "Un valor 0.0 en 'xalign' es el lado izquierdo"
 
 # game/tutorial_quickstart.rpy:315
 translate spanish tutorial_simple_positions_bd4f56d8:
@@ -483,7 +483,7 @@ translate spanish tutorial_simple_positions_8eebc9a7:
 translate spanish tutorial_simple_positions_4cd917f6:
 
     # e "The yalign property is the same way, with 0.0 being the top of the screen and 1.0 being the bottom. Since most sprites stick to the bottom, it's almost always 1.0."
-    e "La propiedad yalign es de la misma manera, siendo 0.0 la parte superior de la pantalla y 1.0 la parte inferior. Como la mayoría de los sprites se adhieren al fondo, casi siempre es 1.0."
+    e "La propiedad 'yalign' es de la misma manera, siendo 0.0 la parte superior de la pantalla y 1.0 la parte inferior. Como la mayoría de los sprites se adhieren al fondo, casi siempre es 1.0."
 
 # game/tutorial_quickstart.rpy:341
 translate spanish tutorial_simple_positions_fbd1a3eb:
@@ -501,7 +501,7 @@ translate spanish tutorial_simple_positions_2377e3b3:
 translate spanish tutorial_simple_positions_3ce7e367:
 
     # e "The transform is given a name, slightleft, and then the xalign and yalign properties."
-    e "Transform recibe un nombre, slightleft y luego las propiedades xalign e yalign."
+    e "'Transform' recibe un nombre, 'slightleft' y luego las propiedades 'xalign' e 'yalign'."
 
 # game/tutorial_quickstart.rpy:355
 translate spanish tutorial_simple_positions_82d640d9:
@@ -525,7 +525,7 @@ translate spanish tutorial_simple_positions_5d5e0cfd:
 translate spanish tutorial_simple_positions_e65da9bf:
 
     # e "But for many visual novels, xalign and yalign are the only properties that matter."
-    e "Pero para muchas novelas visuales, xalign y yalign son las únicas propiedades que importan."
+    e "Pero para muchas novelas visuales, 'xalign' y 'yalign' son las únicas propiedades que importan."
 
 # game/tutorial_quickstart.rpy:381
 translate spanish tutorial_transitions_9b8c714c:
@@ -549,7 +549,7 @@ translate spanish tutorial_transitions_9c0a86c4:
 translate spanish tutorial_transitions_3e490d40:
 
     # e "It uses the with statement. The with statement causes the scene to transition from the last things shown to the things currently being shown."
-    e "Utiliza la sentencia with. La sentencia with hace que la escena pase de las últimas cosas mostradas a las que se muestran actualmente."
+    e "Utiliza la sentencia 'with'. La sentencia 'with' hace que la escena pase de las últimas cosas mostradas a las que se muestran actualmente."
 
 # game/tutorial_quickstart.rpy:406
 translate spanish tutorial_transitions_a43847df:
@@ -567,7 +567,7 @@ translate spanish tutorial_transitions_6fcee414:
 translate spanish tutorial_transitions_033042cc:
 
     # e "We can define a short name for a transition, using the define statement. Here, we're defining slowdissolve to be a dissolve that takes a whole second."
-    e "Podemos definir un nombre corto para una transición, utilizando la sentencia define. Aquí, estamos definiendo slowdissolve como una disolución que toma un segundo."
+    e "Podemos definir un nombre corto para una transición, utilizando la sentencia define. Aquí, estamos definiendo 'slowdissolve' como una disolución que toma un segundo."
 
 # game/tutorial_quickstart.rpy:427
 translate spanish tutorial_transitions_0ba82f00:
@@ -579,7 +579,7 @@ translate spanish tutorial_transitions_0ba82f00:
 translate spanish tutorial_transitions_51ff9600:
 
     # e "Ren'Py defines some transitions for you, like dissolve, fade, and move. For more complex or customized transitions, you'll have to define your own."
-    e "Ren'Py define algunas transiciones por ti, como dissolve, fade y move. Para transiciones más complejas o personalizadas, tendrás que definir las tuyas propias."
+    e "Ren'Py define algunas transiciones por ti, como 'dissolve', 'fade' y 'move'. Para transiciones más complejas o personalizadas, tendrás que definir las tuyas propias."
 
 # game/tutorial_quickstart.rpy:433
 translate spanish tutorial_transitions_1528f73f:
@@ -603,13 +603,13 @@ translate spanish tutorial_music_53910317:
 translate spanish tutorial_music_a1e37712:
 
     # e "When a sound is played on the music channel, it is looped, and it is saved when the game is saved."
-    e "Cuando se reproduce un sonido en el canal music, se reproduce en bucle y se guarda cuando se guarda el juego."
+    e "Cuando se reproduce un sonido en el canal 'music', se reproduce en bucle y se guarda cuando se guarda el juego."
 
 # game/tutorial_quickstart.rpy:445
 translate spanish tutorial_music_d9086d22:
 
     # e "When the channel named sound is used, the sound is played once and then stopped. It isn't saved."
-    e "Cuando se utiliza el canal denominado sound, el sonido se reproduce una vez y luego se detiene. No se guarda."
+    e "Cuando se utiliza el canal denominado 'sound', el sonido se reproduce una vez y luego se detiene. No se guarda."
 
 # game/tutorial_quickstart.rpy:447
 translate spanish tutorial_music_3555b640:
@@ -621,7 +621,7 @@ translate spanish tutorial_music_3555b640:
 translate spanish tutorial_music_8b606a55:
 
     # e "The play music command replaces the currently playing music, and replaces it with the named filename."
-    e "El comando play music reemplaza la música que se está reproduciendo actualmente y la reemplaza con el archivo nombrado."
+    e "El comando 'play music' reemplaza la música que se está reproduciendo actualmente y la reemplaza con el archivo nombrado."
 
 # game/tutorial_quickstart.rpy:456
 translate spanish tutorial_music_18650fe7:
@@ -633,25 +633,25 @@ translate spanish tutorial_music_18650fe7:
 translate spanish tutorial_music_413d91fc:
 
     # e "If the optional fadeout clause is given, it will fade out the currently playing music before starting the new music."
-    e "Si la cláusula opcional fadeout se escribe, se desvanecerá la música que se está reproduciendo en ese momento antes de iniciar la nueva música."
+    e "Si la cláusula opcional 'fadeout' se escribe, se desvanecerá la música que se está reproduciendo en ese momento antes de iniciar la nueva música."
 
 # game/tutorial_quickstart.rpy:463
 translate spanish tutorial_music_a282a0e3:
 
     # e "The queue statement also adds music to the named channel, but it waits until the currently-playing song is finished before playing the new music."
-    e "La sentencia queue también agrega música al canal nombrado, pero espera hasta que la canción que se está reproduciendo se termine antes de reproducir la nueva música."
+    e "La sentencia 'queue' también agrega música al canal nombrado, pero espera hasta que la canción que se está reproduciendo se termine antes de reproducir la nueva música."
 
 # game/tutorial_quickstart.rpy:468
 translate spanish tutorial_music_01ca6bad:
 
     # e "The third statement is the stop statement. It stops the music playing on a channel. It too takes the fadeout clause."
-    e "La tercera sentencia es stop. Detiene la reproducción de música en un canal. También toma la cláusula fadeout."
+    e "La tercera sentencia es 'stop'. Detiene la reproducción de música en un canal. También toma la cláusula 'fadeout'."
 
 # game/tutorial_quickstart.rpy:473
 translate spanish tutorial_music_384937da:
 
     # e "Unlike the music channel, playing a sound on the sound channel causes it to play only once."
-    e "A diferencia del canal music, la reproducción de un sonido en el canal sound hace que se reproduzca solo una vez."
+    e "A diferencia del canal 'music', la reproducción de un sonido en el canal 'sound' hace que se reproduzca solo una vez."
 
 # game/tutorial_quickstart.rpy:480
 translate spanish tutorial_music_1d3e9fd2:
@@ -699,7 +699,7 @@ translate spanish choice1_done_acba9504:
 translate spanish choice1_done_f9fa6889:
 
     # e "Menus are introduced by the menu statement. The menu statement takes an indented block, in which there can be one line of dialogue and multiple choices."
-    e "Los menús son introducidos por la sentencia menu. La sentencia menu toma un bloque con sangría, en el que puede haber una línea de diálogo y múltiples opciones."
+    e "Los menús son introducidos por la sentencia 'menu'. La sentencia 'menu' toma un bloque con sangría, en el que puede haber una línea de diálogo y múltiples opciones."
 
 # game/tutorial_quickstart.rpy:532
 translate spanish choice1_done_ebb2db38:
@@ -711,37 +711,37 @@ translate spanish choice1_done_ebb2db38:
 translate spanish choice1_done_59cac95d:
 
     # e "Here, each block jumps to a label. While you could put small amounts of Ren'Py code inside a menu label, it's probably good practice to usually jump to a bigger block of code."
-    e "Aquí, cada bloque salta(jump) a una label. Si bien puede colocar pequeñas cantidades de código Ren'Py dentro de una label de menú, probablemente sea una buena práctica saltar a un bloque de código más grande."
+    e "Aquí, cada bloque 'jump' (salta) a una 'label'. Si bien puede colocar pequeñas cantidades de código Ren'Py dentro de una label de menú, probablemente sea una buena práctica saltar a un bloque de código más grande."
 
 # game/tutorial_quickstart.rpy:536
 translate spanish choice1_done_2851a313:
 
     # e "Scrolling down past the menu, you can see the labels that the menu jumps to. There are three labels here, named choice1_yes, choice1_no, and choice1_done."
-    e "Desplazándote hacia abajo más allá del menú, puede ver las labels a las que salta el menú. Aquí hay tres labels, denominadas choice1_yes, choice1_no y choice1_done."
+    e "Desplazándote hacia abajo más allá del menú, puede ver las 'label' a las que salta el menú. Aquí hay tres 'label', denominadas 'choice1_yes', 'choice1_no' y 'choice1_done'."
 
 # game/tutorial_quickstart.rpy:538
 translate spanish choice1_done_ff761b03:
 
     # e "When the first menu choice is picked, we jump to the choice1_yes, which runs two lines of script before jumping to choice1_done."
-    e "Cuando se selecciona la primera opción de menú, saltamos a choice1_yes, que ejecuta dos líneas de script antes de saltar a la choice1_done."
+    e "Cuando se selecciona la primera opción de menú, saltamos a 'choice1_yes', que ejecuta dos líneas de script antes de saltar a la 'choice1_done'."
 
 # game/tutorial_quickstart.rpy:540
 translate spanish choice1_done_664fe702:
 
     # e "Similarly, picking the second choice jumps us to choice1_no, which also runs two lines of script."
-    e "De manera similar, elegir la segunda opción nos lleva a choice1_no, que también ejecuta dos líneas de script."
+    e "De manera similar, elegir la segunda opción nos lleva a 'choice1_no', que también ejecuta dos líneas de script."
 
 # game/tutorial_quickstart.rpy:542
 translate spanish choice1_done_31d12b1e:
 
     # e "The lines beginning with the dollar sign are lines of python code, which are used to set a flag based on the user's choice."
-    e "Las líneas que comienzan con el signo de dólar son líneas de código Python, que se utilizan para establecer una flag en función de la elección del usuario."
+    e "Las líneas que comienzan con el signo de dólar son líneas de código Python, que se utilizan para establecer una 'flag' (bandera) en función de la elección del usuario."
 
 # game/tutorial_quickstart.rpy:544
 translate spanish choice1_done_88398d3e:
 
     # e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag, so the game can remember the user's choices."
-    e "La flag se llama menu_flag y se establece en True o False según la elección del usuario. La sentencia if se puede usar para probar una flag, para que el juego pueda recordar las elecciones del usuario."
+    e "La bandera' se llama 'menu_flag' y se establece en 'True' o 'False' según la elección del usuario. La sentencia 'if' se puede usar para probar una bandera, para que el juego pueda recordar las elecciones del usuario."
 
 # game/tutorial_quickstart.rpy:549
 translate spanish choice1_done_2828dbfc:
@@ -759,7 +759,7 @@ translate spanish choice1_done_503786e4:
 translate spanish choice1_done_819e234a:
 
     # e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
-    e "Aquí hay un ejemplo que muestra cómo podemos probar una flag y hacer cosas diferentes si es verdad o no."
+    e "Aquí hay un ejemplo que muestra cómo podemos probar una bandera y hacer cosas diferentes si es verdad o no."
 
 # game/tutorial_quickstart.rpy:559
 translate spanish choice1_done_461e6a59:
@@ -777,13 +777,13 @@ translate spanish choice1_done_a32e30fd:
 translate spanish choice1_done_fbd1dbc1:
 
     # e "If you look at the example, before the first choice, there's an indented say statement."
-    e "Si nos fijamos en el ejemplo, antes de la primera opción, hay una sentencia say con sangría."
+    e "Si nos fijamos en el ejemplo, antes de la primera opción, hay una sentencia 'say' con sangría."
 
 # game/tutorial_quickstart.rpy:574
 translate spanish menu3_done_47fa2268:
 
     # e "Although we won't demonstrate it here, Ren'Py supports making decisions based on a combinations of points, flags, and other factors."
-    e "Aunque no lo demostraremos aquí, Ren'Py admite la toma de decisiones basadas en una combinación de puntos, flags y otros factores."
+    e "Aunque no lo demostraremos aquí, Ren'Py admite la toma de decisiones basadas en una combinación de puntos, banderas y otros factores."
 
 # game/tutorial_quickstart.rpy:576
 translate spanish menu3_done_826a600b:
@@ -801,13 +801,13 @@ translate spanish tutorial_input_066611c5:
 translate spanish tutorial_input_dc3b4560:
 
     # e "That's done with Python, and especially the renpy.input function. The first line of this example prompts the player for some texts, and sticks it in the name variable."
-    e "Eso se hace con Python, y especialmente con la función renpy.input. La primera línea de este ejemplo solicita al jugador algunos textos y lo pega en la variable name."
+    e "Eso se hace con Python, y especialmente con la función 'renpy.input'. La primera línea de este ejemplo solicita al jugador algunos textos y lo pega en la variable 'name'."
 
 # game/tutorial_quickstart.rpy:601
 translate spanish tutorial_input_c88b3f4e:
 
     # e "Often times, you'll want to clean the name up before you use it. The last line does that, by calling the strip method to remove whitespace, and replacing the name with a default if it's missing."
-    e "Muchas veces, querrás limpiar name antes de usarla. La última línea hace eso, llamando al método strip para eliminar los espacios en blanco, y reemplazando el nombre con un valor predeterminado si falta."
+    e "Muchas veces, querrás limpiar 'name' antes de usarla. La última línea hace eso, llamando al método 'strip' para eliminar los espacios en blanco, y reemplazando el nombre con un valor predeterminado si falta."
 
 # game/tutorial_quickstart.rpy:605
 translate spanish tutorial_input_1236e9da:
@@ -831,7 +831,7 @@ translate spanish tutorial_input_f7757a8e:
 translate spanish tutorial_input_0548d3e2:
 
     # e "Variable interpolation also works with other variables. Here, the answer is [answer] and the flag is [flag]."
-    e "La interpolación de variables también funciona con otras variables. Aquí, la respuesta es [answer] y la flag es [flag]."
+    e "La interpolación de variables también funciona con otras variables. Aquí, la respuesta es [answer] y la bandera es [flag]."
 
 translate spanish strings:
 
