@@ -131,7 +131,7 @@ trace_local = None
 
 def trace_function(frame, event, arg):
     fn = os.path.basename(frame.f_code.co_filename)
-    print(fn, frame.f_lineno, frame.f_code.co_name, event, file=trace_file)
+    trace_file.write("{} {} {} {}\n".format(fn, frame.f_lineno, frame.f_code.co_name, event))
     return trace_local
 
 
@@ -139,7 +139,7 @@ def enable_trace(level):
     global trace_file
     global trace_local
 
-    trace_file = open("trace.txt", "w", 1)
+    trace_file = open("trace.txt", "w", buffering=1, encoding="utf-8")
 
     if level > 1:
         trace_local = trace_function
