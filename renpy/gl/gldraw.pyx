@@ -1441,4 +1441,3 @@ try:
     from . import glenviron_shader
 except ImportError:
     glenviron_shader = None
-

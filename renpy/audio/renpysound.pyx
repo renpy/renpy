@@ -54,8 +54,8 @@ import_pygame_sdl2()
 
 cdef extern from "renpysound_core.h":
 
-    void RPS_play(int channel, SDL_RWops *rw, char *ext, object name, int fadein, int tight, int paused, double start, double end)
-    void RPS_queue(int channel, SDL_RWops *rw, char *ext, object name, int fadein, int tight, double start, double end)
+    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int fadein, int tight, int paused, double start, double end)
+    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int fadein, int tight, double start, double end)
     void RPS_stop(int channel)
     void RPS_dequeue(int channel, int even_tight)
     int RPS_queue_depth(int channel)
@@ -139,8 +139,8 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     else:
         tight = 0
 
-    extension = name.encode("utf-8")
-    RPS_play(channel, rw, extension, name, fadein, tight, pause, start, end)
+    name = name.encode("utf-8")
+    RPS_play(channel, rw, name, name, fadein, tight, pause, start, end)
     check_error()
 
 def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
@@ -163,8 +163,8 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
     else:
         tight = 0
 
-    extension = name.encode("utf-8")
-    RPS_queue(channel, rw, extension, name, fadein, tight, start, end)
+    name = name.encode("utf-8")
+    RPS_queue(channel, rw, name, name, fadein, tight, start, end)
     check_error()
 
 def stop(channel):
@@ -201,7 +201,12 @@ def playing_name(channel):
     `play` or `queue`.
     """
 
-    return RPS_playing_name(channel)
+    rv = RPS_playing_name(channel)
+
+    if rv is not None:
+        rv = rv.decode("utf-8")
+
+    return rv
 
 def pause(channel):
     """
@@ -420,4 +425,3 @@ def sample_surfaces(rgb, rgba):
     rgba_surface = rgb
 
     RPS_sample_surfaces(rgb, rgba)
-
