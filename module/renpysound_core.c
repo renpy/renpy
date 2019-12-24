@@ -58,10 +58,6 @@ SDL_mutex *name_mutex;
 
 #endif
 
-/* The current Python. */
-PyInterpreterState* interp;
-PyThreadState* thread = NULL;
-
 /* Declarations of ffdecode functions. */
 struct MediaState;
 typedef struct MediaState MediaState;
@@ -1134,17 +1130,6 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono) {
 #endif
 
     import_pygame_sdl2();
-
-    if (!thread) {
-        thread = PyThreadState_Get();
-        interp = thread->interp;
-        thread = PyThreadState_New(interp);
-    }
-
-    if (!thread) {
-        error(SDL_ERROR);
-        return;
-    }
 
     if (SDL_Init(SDL_INIT_AUDIO)) {
         error(SDL_ERROR);
