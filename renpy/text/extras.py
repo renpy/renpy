@@ -34,6 +34,7 @@ import renpy.text.textsupport as textsupport
 # requires a closing tag.
 text_tags = dict(
     alpha=True,
+    alt=True,
     art=True,
     image=False,
     p=False,

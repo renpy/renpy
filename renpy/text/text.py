@@ -189,12 +189,14 @@ class TextSegment(object):
             self.ruby_bottom = source.ruby_bottom
             self.hinting = source.hinting
             self.outline_color = source.outline_color
+            self.ignore = source.ignore
 
         else:
             self.hyperlink = 0
             self.cps = 0
             self.ruby_top = False
             self.ruby_bottom = False
+            self.ignore = False
 
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}>".format(**self.__dict__)
@@ -239,6 +241,9 @@ class TextSegment(object):
         """
         Return the list of glyphs corresponding to unicode string s.
         """
+
+        if self.ignore:
+            return [ ]
 
         fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample)
         rv = fo.glyphs(s)
@@ -1172,6 +1177,10 @@ class Layout(object):
                 elif tag == "horiz":
                     ts = push()
                     ts.vertical = False
+
+                elif tag == "alt":
+                    ts = push()
+                    ts.ignore = True
 
                 elif tag[0] == "#":
                     pass
