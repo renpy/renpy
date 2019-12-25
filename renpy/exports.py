@@ -2352,6 +2352,18 @@ def free_memory():
     renpy.text.font.free_memory()
 
 
+def flush_cache_file(fn):
+    """
+    :doc: other
+
+    This flushes all image cache entries that refer to the file `fn`.  This
+    may be called when an image file changes on disk to force Ren'Py to
+    use the new version.
+    """
+
+    renpy.display.im.cache.flush_file(fn)
+
+
 @renpy_pure
 def easy_displayable(d, none=False):
     """
