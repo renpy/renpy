@@ -389,6 +389,20 @@ class Cache(object):
 
         return True
 
+    def flush_file(self, fn):
+        """
+        This flushes all cache entries that refer to `fn` from the cache.
+        """
+
+        to_flush = [ ]
+
+        for ce in self.cache.values():
+            if fn in ce.what.predict_files():
+                to_flush.append(ce)
+
+        for ce in to_flush:
+            self.kill(ce)
+
     def preload_texture(self, im):
         """
         Preloads `im` into the cache, and loads the corresponding texture
