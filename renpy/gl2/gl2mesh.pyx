@@ -25,7 +25,6 @@ TEXTURE_LAYOUT = AttributeLayout()
 TEXTURE_LAYOUT.add_attribute("aTexCoord", 2)
 
 
-
 cdef class Mesh:
 
     def __init__(Mesh self, AttributeLayout layout, int points, int triangles):
@@ -185,20 +184,6 @@ cdef class Mesh:
         """
 
         return crop_mesh(self, p)
-
-    cpdef Mesh crop_to_rectangle(Mesh m, float l, float b, float r, float t):
-        """
-        Crops this mesh to a rectangle with the given points.
-        """
-
-        cdef Mesh rv
-
-        rv = split_mesh(m, l, b, r, b)
-        rv = split_mesh(rv, r, b, r, t)
-        rv = split_mesh(rv, r, t, l, t)
-        rv = split_mesh(rv, l, t, l, b)
-
-        return rv
 
 
 
