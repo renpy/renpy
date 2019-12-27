@@ -28,6 +28,8 @@ renpy.gl.glenviron_shader gen/renpy.gl.glenviron_shader.c
 renpy.gl.glrtt_copy gen/renpy.gl.glrtt_copy.c
 renpy.gl.glrtt_fbo gen/renpy.gl.glrtt_fbo.c
 renpy.gl2.gl2mesh gen/renpy.gl2.gl2mesh.c
+renpy.gl2.gl2mesh2 gen/renpy.gl2.gl2mesh2.c
+renpy.gl2.gl2mesh3 gen/renpy.gl2.gl2mesh3.c
 renpy.gl2.gl2polygon gen/renpy.gl2.gl2polygon.c
 renpy.gl2.gl2model gen/renpy.gl2.gl2model.c
 renpy.gl2.gl2draw gen/renpy.gl2.gl2draw.c

@@ -1,10 +1,5 @@
 from renpy.gl2.gl2polygon cimport Polygon
 
-# Represents a point in three dimensional space.
-cdef struct Point3:
-    float x
-    float y
-    float z
 
 cdef class AttributeLayout:
     """
@@ -31,8 +26,8 @@ cdef class Mesh:
     # The number of points that are in use.
     cdef int points
 
-    # The geometry of the points.
-    cdef Point3 *point
+    # The data corresponding to each point.
+    cdef float *point_data
 
     # An AttributeLayout object controlling how attributes are stored.
     cdef AttributeLayout layout
@@ -49,6 +44,3 @@ cdef class Mesh:
     # The triangle data, where each triangle consists of the index of three
     # points. This is 3 * allocated_triangles in size.
     cdef short *triangle
-
-    cpdef Mesh copy(Mesh self)
-    cpdef Mesh crop(Mesh self, Polygon p)

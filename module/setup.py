@@ -199,6 +199,8 @@ cython("renpy.gl.glrtt_copy", libs=sdl)
 cython("renpy.gl.glrtt_fbo", libs=sdl)
 
 cython("renpy.gl2.gl2mesh")
+cython("renpy.gl2.gl2mesh2")
+cython("renpy.gl2.gl2mesh3")
 cython("renpy.gl2.gl2polygon")
 cython("renpy.gl2.gl2model")
 cython("renpy.gl2.gl2draw", libs=sdl)

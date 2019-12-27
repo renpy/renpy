@@ -52,6 +52,7 @@ from renpy.display.matrix cimport Matrix
 cimport renpy.gl2.gl2texture as gl2texture
 
 from renpy.gl2.gl2mesh cimport Mesh
+from renpy.gl2.gl2mesh3 cimport Mesh3
 from renpy.gl2.gl2polygon cimport Polygon
 from renpy.gl2.gl2model cimport Model
 
@@ -675,7 +676,7 @@ cdef class GL2Draw:
         Returns a texture that represents a solid color.
         """
 
-        mesh = Mesh.rectangle(0, 0, w, h)
+        mesh = Mesh3.rectangle(0, 0, w, h)
 
         a = color[3] / 255.0
         r = a * color[0] / 255.0
