@@ -29,6 +29,9 @@ cdef class Mesh:
     # The data corresponding to each point.
     cdef float *point_data
 
+    # The number of floats corresponding to each point.
+    cdef int point_size
+
     # An AttributeLayout object controlling how attributes are stored.
     cdef AttributeLayout layout
 

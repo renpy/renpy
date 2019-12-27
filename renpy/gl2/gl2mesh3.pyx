@@ -26,6 +26,7 @@ cdef class Mesh3(Mesh):
         self.points = 0
         self.point = <Point3 *> malloc(points * sizeof(Point3))
         self.point_data = <float *> self.point
+        self.point_size = 3
 
         self.layout = layout
         self.attribute = <float *> malloc(points * layout.stride * sizeof(float))

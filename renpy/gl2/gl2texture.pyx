@@ -44,7 +44,7 @@ from renpy.uguu.gl cimport *
 from renpy.gl2.gl2draw cimport GL2Draw
 
 from renpy.gl2.gl2mesh cimport Mesh
-from renpy.gl2.gl2mesh3 cimport Mesh3
+from renpy.gl2.gl2mesh2 cimport Mesh2
 from renpy.gl2.gl2model cimport Model
 
 from renpy.display.matrix cimport Matrix
@@ -101,11 +101,11 @@ cdef class TextureLoader:
 
             if (w and h):
 
-                mesh = Mesh3.texture_rectangle(
+                mesh = Mesh2.texture_rectangle(
                     0.0, 0.0, pw, ph,
                     1.0 * bl / w, 1.0 * bt / h, 1.0 - 1.0 * br / w, 1.0 - 1.0 * bb / h)
             else:
-                mesh = Mesh3.texture_rectangle(
+                mesh = Mesh2.texture_rectangle(
                     0.0, 0.0, pw, ph,
                     0.0, 0.0, 0.0, 0.0)
 
@@ -237,7 +237,7 @@ cdef class GLTexture(Model):
 
         width, height = size
 
-        mesh = Mesh3.texture_rectangle(
+        mesh = Mesh2.texture_rectangle(
             0.0, 0.0, width, height,
             0.0, 0.0, 1.0, 1.0,
             )
@@ -393,10 +393,10 @@ cdef class GLTexture(Model):
         if self.surface is not None:
             s = PySurface_AsSurface(self.surface)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s.pitch / 4, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, s.pixels)
-            mesh = Mesh3.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 4.0 * s.w / s.pitch, 1.0)
+            mesh = Mesh2.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 4.0 * s.w / s.pitch, 1.0)
         else:
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, self.data)
-            mesh = Mesh3.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0)
+            mesh = Mesh2.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0)
 
         # Set up the viewport.
         glViewport(0, 0, self.width, self.height)

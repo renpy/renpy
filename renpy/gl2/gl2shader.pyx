@@ -272,7 +272,7 @@ cdef class Program:
         # Set up the attributes.
         for a in self.attributes:
             if a.name == "aPosition":
-                glVertexAttribPointer(a.location, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), mesh.point_data)
+                glVertexAttribPointer(a.location, mesh.point_size, GL_FLOAT, GL_FALSE, mesh.point_size * sizeof(float), mesh.point_data)
             else:
                 offset = mesh.layout.offset.get(a.name, None)
                 if offset is None:
