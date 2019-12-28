@@ -800,8 +800,8 @@ def quit_importer():
 # Auto-Reload
 
 
-# This is set to True if autoreload has detected an autoreload is needed.
-needs_autoreload = False
+# A list of files for which autoreload is needed.
+needs_autoreload = set()
 
 # A map from filename to mtime, or None if the file doesn't exist.
 auto_mtimes = { }
@@ -883,7 +883,29 @@ def auto_thread_function():
 
                 with auto_lock:
                     if auto_mtime(fn) != auto_mtimes[fn]:
-                        needs_autoreload = True
+                        needs_autoreload.add(fn)
+
+
+def check_autoreload():
+    """
+    Checks to see if autoreload is required.
+    """
+
+    while needs_autoreload:
+        fn = next(iter(needs_autoreload))
+        mtime = auto_mtime(fn)
+
+        with auto_lock:
+            needs_autoreload.discard(fn)
+            auto_mtimes[fn] = mtime
+
+        for regex, func in renpy.config.autoreload_functions:
+            if re.search(regex, fn, re.I):
+                fn = os.path.relpath(fn, renpy.config.gamedir).replace("\\", "/")
+                func(fn)
+                break
+        else:
+            renpy.exports.reload_script()
 
 
 def auto_init():
@@ -895,7 +917,7 @@ def auto_init():
     global auto_quit_flag
     global needs_autoreload
 
-    needs_autoreload = False
+    needs_autoreload = set()
 
     if not renpy.autoreload:
         return

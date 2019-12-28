@@ -34,7 +34,7 @@ import renpy
 locked = False
 
 # Contains help for config variables.
-help = [ ]  # @ReservedAssignment
+help = [ ] # @ReservedAssignment
 
 # The title of the game window.
 window_title = None
@@ -238,17 +238,17 @@ frames = 0
 
 # NOT USED: A text editor that is launched at the location of the current
 # statement.
-editor = None  # os.environ.get('RENPY_EDITOR', None)
+editor = None # os.environ.get('RENPY_EDITOR', None)
 
 # NOT USED: Text editor, with arguments to reload or clobber the file - used,
 # for example, to display traceback.txt.
-editor_transient = None  # os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
+editor_transient = None # os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
 
 # NOT USED: The separator used between files in the text editor.
-editor_file_separator = None  # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
+editor_file_separator = None # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
 
 # Enable developer mode?
-developer = False  # Changed to True or False in the init code.
+developer = False # Changed to True or False in the init code.
 
 # The value of developer requested by the creator (True, False, or "auto")
 original_developer = False
@@ -390,7 +390,7 @@ gamedir = None
 basedir = None
 renpy_base = None
 commondir = None
-logdir = None  # Where log and error files go.
+logdir = None # Where log and error files go.
 
 # Should we enable OpenGL mode?
 gl_enable = True
@@ -692,7 +692,7 @@ movie_mixer = "music"
 # * mixer
 # * file prefix
 # * file suffix
-auto_channels = { "audio" : ( "sfx", "", ""  ) }
+auto_channels = { "audio" : ("sfx", "", "") }
 
 # The channel used by renpy.play.
 play_channel = "audio"
@@ -1013,6 +1013,9 @@ exception_handler = None
 # A label that is jumped to if return fails.
 return_not_found_label = None
 
+# A list of (regex, autoreload function) tuples.
+autoreload_functions = [ ]
+
 del os
 del collections
 
@@ -1034,3 +1037,9 @@ def init():
 
     global notify
     notify = renpy.exports.display_notify
+
+    global autoreload_functions
+    autoreload_functions = [
+        (r'\.(png|jpg|jpeg|webp|gif|tif|tiff|bmp)$', renpy.exports.flush_cache_file),
+        ]
+

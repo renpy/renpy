@@ -3175,9 +3175,7 @@ class Interface(object):
                     needs_redraw = True
 
                 # Check for autoreload.
-                if renpy.loader.needs_autoreload:
-                    renpy.loader.needs_autoreload = False
-                    renpy.exports.reload_script()
+                renpy.loader.check_autoreload()
 
                 for i in renpy.config.needs_redraw_callbacks:
                     if i():
