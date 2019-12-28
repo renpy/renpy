@@ -25,7 +25,6 @@ from renpy.compat import *
 import copy
 import renpy.audio
 
-
 pad_bindings = {
     "pad_leftshoulder_press" : [ "rollback", ],
     "pad_lefttrigger_pos" : [ "rollback", ],
@@ -59,7 +58,6 @@ pad_bindings = {
     "pad_righty_pos" : [ "focus_down", "bar_down" ],
 }
 
-
 all_preferences = [ ]
 
 
@@ -92,7 +90,6 @@ Preference("wait_voice", True)
 # Should we disengage auto-forward mode after a click?
 Preference("afm_after_click", False)
 
-
 # 2 - All transitions.
 # 1 - Only non-default transitions.
 # 0 - No transitions.
@@ -104,19 +101,19 @@ Preference("video_image_fallback", False)
 Preference("skip_after_choices", False)
 
 # A map from channel name to the current volume (between 0 and 1).
-Preference("volumes", { } )
+Preference("volumes", { })
 
 # Not used anymore.
-Preference("mute", { } )
+Preference("mute", { })
 
 # Joystick mappings.
-Preference("joymap", { } )
+Preference("joymap", { })
 
 # The size of the window, or None if we don't know it yet.
-Preference("physical_size", None, (tuple, type(None)) )
+Preference("physical_size", None, (tuple, type(None)))
 
 # The virtual size at the time self.physical_size was set.
-Preference("virtual_size", None, (tuple, type(None)) )
+Preference("virtual_size", None, (tuple, type(None)))
 
 # The graphics renderer we use.
 Preference("renderer", "auto")
@@ -125,10 +122,14 @@ Preference("renderer", "auto")
 Preference("performance_test", True)
 
 # The language we use for translations.
-Preference("language", None, (str, type(None)) )
+Preference("language", None, (str, type(None)))
 
 # Should we self-voice?
 Preference("self_voicing", False, (bool, str, type(None)))
+
+# The amount to drop the volume of non-voice mixers when self voicing is
+# enabled.
+Preference("self_voicing_volume_drop", 0.5)
 
 # Should we emphasize audio?
 Preference("emphasize_audio", False)

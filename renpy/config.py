@@ -1016,6 +1016,10 @@ return_not_found_label = None
 # A list of (regex, autoreload function) tuples.
 autoreload_functions = [ ]
 
+# A list of voice mixers (that should not be dropped when self voicing is
+# enabled).
+voice_mixers = [ "voice" ]
+
 del os
 del collections
 
