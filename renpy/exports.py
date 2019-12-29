@@ -2352,6 +2352,18 @@ def free_memory():
     renpy.text.font.free_memory()
 
 
+def flush_cache_file(fn):
+    """
+    :doc: other
+
+    This flushes all image cache entries that refer to the file `fn`.  This
+    may be called when an image file changes on disk to force Ren'Py to
+    use the new version.
+    """
+
+    renpy.display.im.cache.flush_file(fn)
+
+
 @renpy_pure
 def easy_displayable(d, none=False):
     """
@@ -2854,7 +2866,7 @@ def start_predict_screen(_screen_name, *args, **kwargs):
     :doc: screens
 
     Causes Ren'Py to start predicting the screen named `_screen_name`
-    will be shown with the given arguments. This replaces  any previous prediction
+    with the given arguments. This replaces any previous prediction
     of `_screen_name`. To stop predicting a screen, call :func:`renpy.stop_predict_screen`.
     """
 
@@ -2867,7 +2879,7 @@ def stop_predict_screen(name):
     """
     :doc: screens
 
-    Causes Ren'Py to stop predicting the screen named `name` will be shown.
+    Causes Ren'Py to stop predicting the screen named `name`.
     """
 
     new_predict = renpy.python.RevertableDict(renpy.store._predict_screen)

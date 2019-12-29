@@ -29,7 +29,6 @@ BAD_COMMANDS = {
     "glDetachObjectARB",
 }
 
-
 def snarf(fn):
     with open(os.path.join(os.path.dirname(__file__), fn)) as f:
         return f.read() + "\n"
@@ -103,7 +102,7 @@ class Command:
         return "(" + ", ".join(self.parameters) + ")"
 
     def typedef(self, name):
-        return "ctypedef {} (*{}){} nogil".format(self.return_type, name, self.format_param_list())
+        return "ctypedef {} (__stdcall *{}){} nogil".format(self.return_type, name, self.format_param_list())
 
 
 class Feature:
@@ -159,13 +158,13 @@ class XMLToPYX:
         self.find_features()
         self.select_features()
 
-        with open("../../renpy/gl2/uguugl.pxd", "w") as f:
+        with open("../../renpy/uguu/gl.pxd", "w") as f:
             self.generate_uguugl_pxd(f)
 
-        with open("../../renpy/gl2/uguugl.pyx", "w") as f:
+        with open("../../renpy/uguu/gl.pyx", "w") as f:
             self.generate_uguugl_pyx(f)
 
-        with open("../../renpy/gl2/uguu.pyx", "w") as f:
+        with open("../../renpy/uguu/uguu.pyx", "w") as f:
             self.generate_uguu_pyx(f)
 
     def convert_types(self):
@@ -331,13 +330,13 @@ class XMLToPYX:
             f.write(s + "\n")
 
         for l in self.type_names:
-            w(f"from uguugl cimport {l}")
+            w(f"from renpy.uguu.gl cimport {l}")
 
         w(f'')
         f.write(UGUU_PYX_HEADER)
 
         for l in self.type_names:
-            w(f"from uguugl cimport {l}")
+            w(f"from renpy.uguu.gl cimport {l}")
 
         for i in sorted(self.features.commands):
             c = self.commands[i]
@@ -365,11 +364,11 @@ class XMLToPYX:
             rt = c.return_type.strip()
 
             if rt == "void":
-                w(f'    uguugl.{i}({proxy})')
+                w(f'    renpy.uguu.gl.{i}({proxy})')
             elif rt == "const GLubyte *":
-                w(f'    return proxy_return_string(uguugl.{i}({proxy}))')
+                w(f'    return proxy_return_string(renpy.uguu.gl.{i}({proxy}))')
             else:
-                w(f'    return uguugl.{i}({proxy})')
+                w(f'    return renpy.uguu.gl.{i}({proxy})')
 
         # Expose the enums to python.
 
@@ -379,7 +378,7 @@ class XMLToPYX:
         w(f'')
 
         for i in enums:
-            w(f'{i} = uguugl.{i}')
+            w(f'{i} = renpy.uguu.gl.{i}')
 
 
 if __name__ == "__main__":

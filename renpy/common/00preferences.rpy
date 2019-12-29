@@ -177,6 +177,8 @@ init -1500 python:
          * Preference("self voicing", "disable") - Disable self-voicing.
          * Preference("self voicing", "toggle") - Toggles self-voicing.
 
+         * Preference("self voicing volume drop", 0.5) - Drops the volume of non-voice mixers when self voicing is active.
+
          * Preference("clipboard voicing", "enable") - Enables clipboard-voicing.
          * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
          * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
@@ -214,6 +216,7 @@ init -1500 python:
          * Preference("sound volume")
          * Preference("voice volume")
          * Preference("mixer <mixer> volume")
+         * Preference("self voicing volume drop")
          * Preference("font size")
          * Preference("font line spacing")
 
@@ -377,6 +380,14 @@ init -1500 python:
                     return SetField(_preferences, "self_voicing", False)
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing")
+
+            elif name == _("self voicing volume drop"):
+
+                if value is None:
+                    bar_range = range or 1.0
+                    return FieldValue(_preferences, "self_voicing_volume_drop", range=1.0, style="slider")
+
+                return SetField(_preferences, "self_voicing_volume_drop", value)
 
             elif name == _("clipboard voicing"):
 

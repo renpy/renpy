@@ -1,5 +1,11 @@
 #include <Python.h>
+
+#ifdef RENPY_BUILD
+#include <fribidi.h>
+#else
 #include <fribidi-src/lib/fribidi.h>
+#endif
+
 #include <stdlib.h>
 
 #ifndef alloca

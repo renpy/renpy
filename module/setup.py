@@ -189,72 +189,23 @@ cython("renpy.display.matrix")
 cython("renpy.display.render", libs=[ 'z', 'm' ])
 cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
 
-# renpy.gl
-if (android or ios):
-    glew_libs = [ 'GLESv2', 'z', 'm' ]
-    gl2_only = True
-    egl = "egl_none.c"
-elif emscripten:
-    glew_libs = []
-    gl2_only = True
-    egl = "egl_none.c"
-elif raspi:
-    glew_libs = [ 'SDL2', 'GLESv2', 'EGL', 'z', 'm' ]
-    gl2_only = True
-    egl = "egl_x11.c"
-elif has_libglew:
-    glew_libs = [ 'GLEW' ]
-    gl2_only = False
-    egl = "egl_none.c"
-else:
-    glew_libs = [ 'glew32', 'opengl32' ]
-    gl2_only = False
-    egl = "egl_none.c"
+cython("renpy.uguu.gl", libs=sdl)
+cython("renpy.uguu.uguu", libs=sdl)
 
-cython("renpy.gl.gl", libs=glew_libs)
-cython("renpy.gl.gl1", libs=glew_libs, compile_if=not gl2_only)
-cython("renpy.gl.gldraw", libs=glew_libs, source=[ egl ])
-cython("renpy.gl.gltexture", libs=glew_libs)
-cython("renpy.gl.glenviron_shader", libs=glew_libs)
-cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not gl2_only)
-cython("renpy.gl.glenviron_limited", libs=glew_libs, compile_if=not gl2_only)
-cython("renpy.gl.glrtt_copy", libs=glew_libs)
-cython("renpy.gl.glrtt_fbo", libs=glew_libs)
+cython("renpy.gl.gldraw", libs=sdl)
+cython("renpy.gl.gltexture", libs=sdl)
+cython("renpy.gl.glenviron_shader", libs=sdl)
+cython("renpy.gl.glrtt_copy", libs=sdl)
+cython("renpy.gl.glrtt_fbo", libs=sdl)
 
-cython("renpy.gl2.uguugl", libs=sdl)
-cython("renpy.gl2.uguu", libs=sdl)
 cython("renpy.gl2.gl2mesh")
+cython("renpy.gl2.gl2mesh2")
+cython("renpy.gl2.gl2mesh3")
 cython("renpy.gl2.gl2polygon")
 cython("renpy.gl2.gl2model")
 cython("renpy.gl2.gl2draw", libs=sdl)
 cython("renpy.gl2.gl2texture", libs=sdl)
 cython("renpy.gl2.gl2shader", libs=sdl)
-
-if not (android or ios or emscripten):
-
-    # renpy.angle
-    def anglecopy(fn):
-        copyfile("renpy/gl/" + fn, "renpy/angle/" + fn, "DEF ANGLE = False", "DEF ANGLE = True")
-
-    anglecopy("gldraw.pxd")
-    anglecopy("gldraw.pyx")
-    anglecopy("glenviron_shader.pyx")
-    anglecopy("glrtt_fbo.pyx")
-    anglecopy("glrtt_copy.pyx")
-    anglecopy("gltexture.pxd")
-    anglecopy("gltexture.pyx")
-
-    angle_libs = [ "SDL2", "EGL", "GLESv2" ]
-
-    def anglecython(name, source=[]):
-        cython(name, libs=angle_libs, compile_if=has_angle, define_macros=[ ("ANGLE", None) ], source=source)
-
-    anglecython("renpy.angle.gl")
-    anglecython("renpy.angle.gldraw", source=[ "egl_angle.c" ])
-    anglecython("renpy.angle.gltexture")
-    anglecython("renpy.angle.glenviron_shader")
-    anglecython("renpy.angle.glrtt_fbo")
-    anglecython("renpy.angle.glrtt_copy")
 
 # renpy.text
 cython("renpy.text.textsupport")

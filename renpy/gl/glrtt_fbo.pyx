@@ -23,7 +23,7 @@
 
 from __future__ import print_function
 
-from gl cimport *
+from renpy.uguu.gl cimport *
 from gldraw cimport *
 from gldraw import Rtt
 
@@ -45,10 +45,10 @@ class FboRtt(Rtt):
 
     def init(self):
 
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &root_fbo);
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &root_fbo);
         renpy.display.log.write("Root FBO is: %d", root_fbo)
 
-        glGenFramebuffersEXT(1, &fbo)
+        glGenFramebuffers(1, &fbo)
         glGenTextures(1, &texture)
 
         cdef int i
@@ -60,15 +60,15 @@ class FboRtt(Rtt):
         glBindTexture(GL_TEXTURE_2D, texture)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.size_limit, self.size_limit, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL)
 
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
-        glFramebufferTexture2DEXT(
-            GL_FRAMEBUFFER_EXT,
-            GL_COLOR_ATTACHMENT0_EXT,
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo)
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER,
+            GL_COLOR_ATTACHMENT0,
             GL_TEXTURE_2D,
             texture,
             0)
 
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
+        glBindFramebuffer(GL_FRAMEBUFFER, root_fbo)
 
 
     def deinit(self):
@@ -76,8 +76,8 @@ class FboRtt(Rtt):
         Called before changing the GL context.
         """
 
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
-        glDeleteFramebuffersEXT(1, &fbo)
+        glBindFramebuffer(GL_FRAMEBUFFER, root_fbo)
+        glDeleteFramebuffers(1, &fbo)
         glDeleteTextures(1, &texture)
 
     def begin(self):
@@ -96,7 +96,7 @@ class FboRtt(Rtt):
         """
 
         try:
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo)
 
             environ.viewport(0, 0, w, h)
             environ.ortho(x, x + w, y, y + h, -1, 1)
@@ -107,7 +107,7 @@ class FboRtt(Rtt):
             glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, w, h, 0)
 
         finally:
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, root_fbo)
+            glBindFramebuffer(GL_FRAMEBUFFER, root_fbo)
 
 
     def get_size_limit(self, dimension):

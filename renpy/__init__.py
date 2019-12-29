@@ -724,7 +724,6 @@ if False:
 
     import renpy.gl
     import renpy.gl2
-    import renpy.angle
 
     import renpy.display.layout
     import renpy.display.viewport
@@ -809,22 +808,11 @@ if False:
     import renpy.display.matrix
     import renpy.display.render
 
-    import renpy.gl.gl
-    import renpy.gl.gl1
     import renpy.gl.gldraw
-    import renpy.gl.glenviron_fixed
-    import renpy.gl.glenviron_limited
     import renpy.gl.glenviron_shader
     import renpy.gl.glrtt_copy
     import renpy.gl.glrtt_fbo
     import renpy.gl.gltexture
-
-    import renpy.angle.gl
-    import renpy.angle.gldraw
-    import renpy.angle.glenviron_shader
-    import renpy.angle.glrtt_copy
-    import renpy.angle.glrtt_fbo
-    import renpy.angle.gltexture
 
     import renpy.gl2.gl2draw
     import renpy.gl2.gl2mesh
@@ -832,5 +820,3 @@ if False:
     import renpy.gl2.gl2polygon
     import renpy.gl2.gl2shader
     import renpy.gl2.gl2texture
-    import renpy.gl2.uguu
-    import renpy.gl2.uguugl

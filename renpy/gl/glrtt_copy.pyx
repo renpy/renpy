@@ -23,7 +23,7 @@
 
 from __future__ import print_function
 
-from gl cimport *
+from renpy.uguu.gl cimport *
 from gldraw cimport *
 from gldraw import Rtt
 

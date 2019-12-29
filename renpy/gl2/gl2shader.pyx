@@ -1,4 +1,4 @@
-from uguugl cimport *
+from renpy.uguu.gl cimport *
 from libc.stdlib cimport malloc, free
 
 from renpy.gl2.gl2mesh cimport Mesh
@@ -272,7 +272,7 @@ cdef class Program:
         # Set up the attributes.
         for a in self.attributes:
             if a.name == "aPosition":
-                glVertexAttribPointer(a.location, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), mesh.point)
+                glVertexAttribPointer(a.location, mesh.point_size, GL_FLOAT, GL_FALSE, mesh.point_size * sizeof(float), mesh.point_data)
             else:
                 offset = mesh.layout.offset.get(a.name, None)
                 if offset is None:

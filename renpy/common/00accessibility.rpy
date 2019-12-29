@@ -150,6 +150,7 @@ screen _accessibility():
                     bar value Preference("font size")
 
                     textbutton _("Reset"):
+                        alt "reset font size"
                         action Preference("font size", 1.0)
 
                     null height 10
@@ -161,6 +162,7 @@ screen _accessibility():
                     bar value Preference("font line spacing")
 
                     textbutton _("Reset"):
+                        alt "reset font line spacing"
                         action Preference("font line spacing", 1.0)
 
 
@@ -185,6 +187,15 @@ screen _accessibility():
                     textbutton _("Debug"):
                         action Preference("debug voicing", "enable")
                         style_suffix "radio_button"
+
+                    null height 10
+
+                    label _("Self-Voicing Volume Drop")
+
+                    null height 10
+
+                    bar value Preference("self voicing volume drop")
+
 
         vbox:
 

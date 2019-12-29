@@ -29,19 +29,18 @@ import io
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
-# Sets the default encoding to the filesystem encoding.
+# Sets the default encoding to utf-8.
 old_stdout = sys.stdout
 old_stderr = sys.stderr
 
 if PY2:
     reload(sys)
-    sys.setdefaultencoding(FSENCODING)  # @UndefinedVariable
+    sys.setdefaultencoding("utf-8") # @UndefinedVariable
 
 sys.stdout = old_stdout
 sys.stderr = old_stderr
 
 import renpy.error
-
 
 # Extra things used for distribution.
 
@@ -69,7 +68,7 @@ def extra_imports():
     import difflib; difflib
     import shutil; shutil
     import tarfile; tarfile
-    import bz2; bz2  # @UnresolvedImport
+    import bz2; bz2 # @UnresolvedImport
     import webbrowser; webbrowser
     import posixpath; posixpath
     import ctypes; ctypes
@@ -126,14 +125,13 @@ def null_files():
 
 null_files()
 
-
 trace_file = None
 trace_local = None
 
 
 def trace_function(frame, event, arg):
     fn = os.path.basename(frame.f_code.co_filename)
-    print(fn, frame.f_lineno, frame.f_code.co_name, event, file=trace_file)
+    trace_file.write("{} {} {} {}\n".format(fn, frame.f_lineno, frame.f_code.co_name, event))
     return trace_local
 
 
@@ -141,7 +139,7 @@ def enable_trace(level):
     global trace_file
     global trace_local
 
-    trace_file = open("trace.txt", "w", 1)
+    trace_file = open("trace.txt", "w", buffering=1, encoding="utf-8")
 
     if level > 1:
         trace_local = trace_function
@@ -163,9 +161,9 @@ def popen_del(self, *args, **kwargs):
 
 def bootstrap(renpy_base):
 
-    global renpy  # W0602
+    global renpy # W0602
 
-    import renpy.log  # @UnusedImport
+    import renpy.log # @UnusedImport
 
     # Remove a legacy environment setting.
     if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
@@ -188,7 +186,7 @@ def bootstrap(renpy_base):
     # .app file.), if on a mac.
     alt_path = os.path.abspath("renpy_base")
     if ".app" in alt_path:
-        alt_path = alt_path[:alt_path.find(".app")+4]
+        alt_path = alt_path[:alt_path.find(".app") + 4]
 
         if os.path.exists(alt_path + "/environment.txt"):
             evars = { }
@@ -279,7 +277,7 @@ You may be using a system install of python. Please run {0}.sh,
 
     # If we're not given a command, show the presplash.
     if args.command == "run" and not renpy.mobile:
-        import renpy.display.presplash  # @Reimport
+        import renpy.display.presplash # @Reimport
         renpy.display.presplash.start(basedir, gamedir)
 
     # Ditto for the Ren'Py module.
@@ -297,7 +295,7 @@ You may be using a system install of python. Please run {0}.sh,
 
     # Load up all of Ren'Py, in the right order.
 
-    import renpy  # @Reimport
+    import renpy # @Reimport
     renpy.import_all()
 
     renpy.loader.init_importer()

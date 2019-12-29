@@ -27,7 +27,7 @@ DEF ANGLE = False
 
 from libc.stdlib cimport malloc, free
 from sdl2 cimport *
-from uguugl cimport *
+from renpy.uguu.gl cimport *
 
 from pygame_sdl2 cimport *
 import_pygame_sdl2()
@@ -43,7 +43,7 @@ import array
 import time
 import math
 
-import uguugl
+import renpy.uguu.gl as uguugl
 
 cimport renpy.display.render as render
 from renpy.display.render cimport Render
@@ -52,14 +52,12 @@ from renpy.display.matrix cimport Matrix
 cimport renpy.gl2.gl2texture as gl2texture
 
 from renpy.gl2.gl2mesh cimport Mesh
+from renpy.gl2.gl2mesh3 cimport Mesh3
 from renpy.gl2.gl2polygon cimport Polygon
 from renpy.gl2.gl2model cimport Model
 
 from renpy.gl2.gl2texture import Texture, TextureLoader
 from renpy.gl2.gl2shadercache import ShaderCache
-
-cdef extern from "gl2debug.h":
-    void gl2_enable_debug()
 
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
@@ -70,9 +68,6 @@ PIXELLATE = renpy.display.render.PIXELLATE
 cdef object IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
 
-# Should we enable debugging?
-debug = os.environ.get("RENPY_GL_DEBUG", '')
-
 # Should we try to vsync?
 vsync = True
 
@@ -81,10 +76,13 @@ frame_times = [ ]
 
 cdef class GL2Draw:
 
-    def __init__(self, renderer_name, gles):
+    def __init__(self, name):
 
-        # Should we use gles or opengl?
-        self.gles = gles
+        # Are we in gles mode?
+        self.gles = (name == "gles2") or (name == "angle2")
+
+        # How about angle mode?
+        self.angle = (name == "angle2")
 
         # Did we do the first-time init?
         self.did_init = False
@@ -114,7 +112,7 @@ cdef class GL2Draw:
         self.redraw_period = .2
 
         # Info.
-        self.info = { "resizable" : True, "additive" : True, "renderer" : renderer_name, "models" : True }
+        self.info = { "resizable" : True, "additive" : True, "renderer" : name, "models" : True }
 
         # The old value of the fullscreen preference.
         self.old_fullscreen = None
@@ -274,9 +272,6 @@ cdef class GL2Draw:
             pygame.display.gl_set_attribute(pygame.GL_DEPTH_SIZE, renpy.config.depth_size)
 
         pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
-
-#         if debug:
-#             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FLAGS, 1) # SDL_GL_CONTEXT_DEBUG_FLAG
 
         if gles:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "1")
@@ -518,10 +513,6 @@ cdef class GL2Draw:
         for i in sorted(extensions):
             renpy.display.log.write("    %s", i)
 
-        # Enable debug.
-#         if debug:
-#             gl2_enable_debug()
-
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()
 
@@ -685,7 +676,7 @@ cdef class GL2Draw:
         Returns a texture that represents a solid color.
         """
 
-        mesh = Mesh.rectangle(0, 0, w, h)
+        mesh = Mesh3.rectangle(0, 0, w, h)
 
         a = color[3] / 255.0
         r = a * color[0] / 255.0

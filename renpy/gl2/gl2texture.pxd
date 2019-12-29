@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from uguugl cimport *
+from renpy.uguu.gl cimport *
 from renpy.gl2.gl2shader cimport Program
 from renpy.gl2.gl2model cimport Model
 from renpy.gl2.gl2draw cimport GL2Draw

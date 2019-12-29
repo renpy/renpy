@@ -1,4 +1,4 @@
-from uguugl cimport *
+from renpy.uguu.gl cimport *
 
 cdef class Program:
 

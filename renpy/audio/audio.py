@@ -28,11 +28,11 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import *
 from future.utils import raise_
 
-import renpy.audio  # @UnusedImport
-import renpy.display  # @UnusedImport
+import renpy.audio # @UnusedImport
+import renpy.display # @UnusedImport
 
 import time
-import pygame_sdl2  # @UnusedImport
+import pygame_sdl2 # @UnusedImport
 import os
 import re
 import threading
@@ -47,7 +47,6 @@ if not disable:
     import renpy.audio.renpysound as renpysound
 else:
     renpysound = None
-
 
 # This is True if we were able to sucessfully enable the pcm audio.
 pcm_ok = None
@@ -374,7 +373,14 @@ class Channel(object):
         """
 
         # Update the channel volume.
-        vol = self.chan_volume * renpy.game.preferences.volumes.get(self.mixer, 1.0)
+
+        mixer_volume = renpy.game.preferences.volumes.get(self.mixer, 1.0)
+
+        if renpy.game.preferences.self_voicing:
+            if self.mixer not in renpy.config.voice_mixers:
+                mixer_volume = mixer_volume * renpy.game.preferences.self_voicing_volume_drop
+
+        vol = self.chan_volume * mixer_volume
 
         if vol != self.actual_volume:
             renpysound.set_volume(self.number, vol)
@@ -493,7 +499,7 @@ class Channel(object):
                     self.queue.append(newq)
             # Try callback:
             elif self.callback:
-                self.callback()  # E1102
+                self.callback() # E1102
 
         want_pause = self.context.pause or global_pause
 
@@ -549,7 +555,7 @@ class Channel(object):
                                                 0)
 
         if not self.queue and self.callback:
-            self.callback()  # E1102
+            self.callback() # E1102
 
     def fadeout(self, secs):
         """
@@ -576,7 +582,7 @@ class Channel(object):
 
             for filename in filenames:
                 filename, _, _ = self.split_filename(filename, False)
-                renpy.game.persistent._seen_audio[filename] = True  # @UndefinedVariable
+                renpy.game.persistent._seen_audio[filename] = True # @UndefinedVariable
 
             if not pcm_ok:
                 return
@@ -684,9 +690,9 @@ class Channel(object):
 
         return renpysound.video_ready(self.number)
 
-
 # Use unconditional imports so these files get compiled during the build
 # process.
+
 
 try:
     from renpy.audio.androidhw import AndroidVideoChannel
@@ -851,8 +857,8 @@ def init():
         bufsize = 2048
         if renpy.emscripten:
             # Large buffer (and latency) as compromise to avoid sound jittering
-            bufsize = 8192  # works for me
-            #bufsize = 16384  # jitter/silence right after starting a sound
+            bufsize = 8192 # works for me
+            # bufsize = 16384  # jitter/silence right after starting a sound
 
         if 'RENPY_SOUND_BUFSIZE' in os.environ:
             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
@@ -887,7 +893,7 @@ def init():
         periodic_thread.start()
 
 
-def quit():  # @ReservedAssignment
+def quit(): # @ReservedAssignment
 
     global periodic_thread
     global periodic_thread_quit
@@ -921,7 +927,6 @@ def quit():  # @ReservedAssignment
 
     pcm_ok = None
     mix_ok = None
-
 
 
 # The last-set pcm volume.
@@ -1006,7 +1011,6 @@ def periodic_pass():
 
 # The exception that's been thrown by the periodic thread.
 periodic_exc = None
-
 
 # Should we run the periodic thread now?
 run_periodic = False

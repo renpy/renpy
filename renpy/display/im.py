@@ -72,7 +72,6 @@ class CacheEntry(object):
 
         return rv
 
-
 # This is the singleton image cache.
 
 
@@ -167,7 +166,7 @@ class Cache(object):
         else:
             self.cache_limit = int(renpy.config.image_cache_size_mb * 1024 * 1024 // 4)
 
-    def quit(self):  # @ReservedAssignment
+    def quit(self): # @ReservedAssignment
         if not self.preload_thread.isAlive():
             return
 
@@ -380,6 +379,21 @@ class Cache(object):
 
         return True
 
+    def flush_file(self, fn):
+        """
+        This flushes all cache entries that refer to `fn` from the cache.
+        """
+
+        to_flush = [ ]
+
+        for ce in self.cache.values():
+            if fn in ce.what.predict_files():
+                to_flush.append(ce)
+
+        for ce in to_flush:
+            renpy.exports.redraw(ce.what, 0)
+            self.kill(ce)
+
     def preload_texture(self, im):
         """
         Preloads `im` into the cache, and loads the corresponding texture
@@ -556,7 +570,7 @@ class ImageBase(renpy.display.core.Displayable):
         properties.setdefault('style', 'image')
 
         super(ImageBase, self).__init__(**properties)
-        self.identity = (type(self).__name__, ) + args
+        self.identity = (type(self).__name__,) + args
 
     def __hash__(self):
         return hash(self.identity)
@@ -1029,7 +1043,7 @@ def ramp(start, end):
 
         for i in range(0, 256):
             i = i / 255.0
-            chars.append(bchr(int( end * i + start * (1.0 - i) ) ) )
+            chars.append(bchr(int(end * i + start * (1.0 - i))))
 
         rv = b"".join(chars)
         ramp_cache[start, end] = rv
@@ -1325,10 +1339,10 @@ class matrix(tuple):
 
     def vector_mul(self, o):
 
-        return (o[0]*self[0] + o[1]*self[1] + o[2]*self[2] + o[3]*self[3] + self[4],
-                o[0]*self[5] + o[1]*self[6] + o[2]*self[7] + o[3]*self[8] + self[9],
-                o[0]*self[10] + o[1]*self[11] + o[2]*self[12] + o[3]*self[13] + self[14],
-                o[0]*self[15] + o[1]*self[16] + o[2]*self[17] + o[3]*self[18] + self[19],
+        return (o[0] * self[0] + o[1] * self[1] + o[2] * self[2] + o[3] * self[3] + self[4],
+                o[0] * self[5] + o[1] * self[6] + o[2] * self[7] + o[3] * self[8] + self[9],
+                o[0] * self[10] + o[1] * self[11] + o[2] * self[12] + o[3] * self[13] + self[14],
+                o[0] * self[15] + o[1] * self[16] + o[2] * self[17] + o[3] * self[18] + self[19],
                 1)
 
     def __add__(self, other):
@@ -1527,9 +1541,9 @@ im.matrix(%f, %f, %f, %f, %f.
         lumG = 0.715
         lumB = 0.072
         return matrix(
-            lumR+cosVal*(1-lumR)+sinVal*(-lumR), lumG+cosVal*(-lumG)+sinVal*(-lumG), lumB+cosVal*(-lumB)+sinVal*(1-lumB), 0, 0,
-            lumR+cosVal*(-lumR)+sinVal*(0.143), lumG+cosVal*(1-lumG)+sinVal*(0.140), lumB+cosVal*(-lumB)+sinVal*(-0.283), 0, 0,
-            lumR+cosVal*(-lumR)+sinVal*(-(1-lumR)), lumG+cosVal*(-lumG)+sinVal*(lumG), lumB+cosVal*(1-lumB)+sinVal*(lumB), 0, 0,
+            lumR + cosVal * (1 - lumR) + sinVal * (-lumR), lumG + cosVal * (-lumG) + sinVal * (-lumG), lumB + cosVal * (-lumB) + sinVal * (1 - lumB), 0, 0,
+            lumR + cosVal * (-lumR) + sinVal * (0.143), lumG + cosVal * (1 - lumG) + sinVal * (0.140), lumB + cosVal * (-lumB) + sinVal * (-0.283), 0, 0,
+            lumR + cosVal * (-lumR) + sinVal * (-(1 - lumR)), lumG + cosVal * (-lumG) + sinVal * (lumG), lumB + cosVal * (1 - lumB) + sinVal * (lumB), 0, 0,
             0, 0, 0, 1, 0,
             0, 0, 0, 0, 1
             )
@@ -1562,9 +1576,9 @@ im.matrix(%f, %f, %f, %f, %f.
         g1 /= 255.0
         b1 /= 255.0
 
-        return matrix((r1-r0), 0, 0, 0, r0,
-                      0, (g1-g0), 0, 0, g0,
-                      0, 0, (b1-b0), 0, b0,
+        return matrix((r1 - r0), 0, 0, 0, r0,
+                      0, (g1 - g0), 0, 0, g0,
+                      0, 0, (b1 - b0), 0, b0,
                       0, 0, 0, 1, 0)
 
 
