@@ -1045,5 +1045,6 @@ def init():
     global autoreload_functions
     autoreload_functions = [
         (r'\.(png|jpg|jpeg|webp|gif|tif|tiff|bmp)$', renpy.exports.flush_cache_file),
+        (r'\.(mp2|mp3|ogg|opus|wav)$', renpy.audio.audio.autoreload),
         ]
 

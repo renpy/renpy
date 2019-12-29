@@ -576,6 +576,16 @@ class Channel(object):
             else:
                 renpysound.fadeout(self.number, secs)
 
+    def reload(self):
+        """
+        Causes this channel to be stopped in a way that looped audio will be
+        reloaded and restarted.
+        """
+
+        with lock:
+            renpysound.dequeue(self.number, True)
+            renpysound.stop(self.number)
+
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False):
 
         with lock:
@@ -1122,6 +1132,20 @@ def rollback():
         for c in all_channels:
             if not c.loop:
                 c.fadeout(0)
+
+
+def autoreload(_fn):
+    """
+    After a sound file has been changed, stop all sound (and let Ren'Py restart
+    the channels, as needed.)
+    """
+
+    print("Sound autoreload", _fn)
+
+    for c in all_channels:
+        c.reload()
+
+    renpy.exports.restart_interaction()
 
 
 global_pause = False

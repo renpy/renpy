@@ -2,7 +2,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import *
 
 import renpy
-import pyobjus  # @UnresolvedImport
+import pyobjus # @UnresolvedImport
 
 from renpy.audio.audio import MusicContext
 
@@ -171,3 +171,7 @@ class IOSVideoChannel(object):
 
     def set_secondary_volume(self, volume, delay):
         pass
+
+    def reload(self):
+        return
+

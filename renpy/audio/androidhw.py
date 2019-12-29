@@ -23,7 +23,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import *
 
 import renpy
-import jnius  # @UnresolvedImport
+import jnius # @UnresolvedImport
 
 from renpy.audio.audio import MusicContext
 
@@ -195,3 +195,6 @@ class AndroidVideoChannel(object):
     def unpause(self):
         if self.player is not None:
             self.player.unpause()
+
+    def reload(self):
+        return
