@@ -61,6 +61,7 @@ import future.utils
 import builtins
 
 import io
+import sys
 import operator
 
 ################################################################################
@@ -72,6 +73,13 @@ future.standard_library.install_aliases()
 # Determine if this is Python2.
 
 PY2 = future.utils.PY2
+
+################################################################################
+# On Python2, use cPickle as pickle.
+
+if PY2:
+    import cPickle
+    sys.modules['pickle'] = cPickle
 
 ################################################################################
 # Make open mimic Python 3.
