@@ -90,7 +90,7 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
         try:
             c = get_channel(channel)
-            ctx = c.context
+            ctx = c.copy_context()
 
             if loop is None:
                 loop = c.default_loop
@@ -189,7 +189,7 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
         try:
 
             c = get_channel(channel)
-            ctx = c.context
+            ctx = c.copy_context()
 
             if loop is None:
                 loop = c.default_loop
@@ -268,7 +268,7 @@ def stop(channel="music", fadeout=None):
 
         try:
             c = get_channel(channel)
-            ctx = c.context
+            ctx = c.copy_context()
 
             if fadeout is None:
                 fadeout = renpy.config.fade_music
@@ -496,7 +496,7 @@ def set_pause(value, channel="music"):
     """
     try:
         c = renpy.audio.audio.get_channel(channel)
-        c.context.pause = value
+        c.copy_context().pause = value
     except:
         if renpy.config.debug_sound:
             raise
@@ -562,7 +562,6 @@ def channel_defined(channel):
         return True
     except:
         return False
-
 
 # Music change logic:
 
