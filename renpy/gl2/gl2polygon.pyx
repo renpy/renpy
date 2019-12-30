@@ -98,6 +98,7 @@ cdef class Polygon:
         """
 
         cdef Polygon rv = Polygon(self.points)
+        rv.points = self.points
         memcpy(rv.point, self.point, self.points * sizeof(Point2))
         return rv
 
