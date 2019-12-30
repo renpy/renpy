@@ -20,25 +20,39 @@ cdef class Mesh3(Mesh):
 
         `triangles`
             The number of triangles for which space should be allocated.
+
+        If `points` or `triangles` are 0, no allocation takes place. The creator
+        of the Mesh is responsible for setting point, point_data, attribute, and
+        triangle, and for freeing the data when done.
         """
 
-        self.allocated_points = points
         self.points = 0
-        self.point = <Point3 *> malloc(points * sizeof(Point3))
-        self.point_data = <float *> self.point
         self.point_size = 3
 
         self.layout = layout
-        self.attribute = <float *> malloc(points * layout.stride * sizeof(float))
+
+        self.allocated_points = points
+
+        if points:
+            self.point = <Point3 *> malloc(points * sizeof(Point3))
+            self.point_data = <float *> self.point
+
+            self.attribute = <float *> malloc(points * layout.stride * sizeof(float))
 
         self.allocated_triangles = triangles
-        self.triangles = 0
-        self.triangle = <short *> malloc(triangles * 3 * sizeof(int))
+
+        if triangles:
+            self.triangles = 0
+            self.triangle = <short *> malloc(triangles * 3 * sizeof(int))
+
 
     def __dealloc__(Mesh3 self):
-        free(self.point)
-        free(self.attribute)
-        free(self.triangle)
+        if self.allocated_points:
+            free(self.point)
+            free(self.attribute)
+
+        if self.allocated_triangles:
+            free(self.triangle)
 
     def __repr__(Mesh3 self):
 
