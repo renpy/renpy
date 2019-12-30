@@ -166,16 +166,6 @@ cdef class Mesh3(Mesh):
 
         return rv
 
-    cpdef Mesh3 copy(Mesh3 self):
-        """
-        Returns a copy of this mesh.
-        """
-
-        rv = Mesh3()
-        rv.data = self.data
-
-        return rv
-
     cpdef Mesh3 crop(Mesh3 self, Polygon p):
         """
         Crops this mesh against Polygon `p`, and returns a new Mesh3.
