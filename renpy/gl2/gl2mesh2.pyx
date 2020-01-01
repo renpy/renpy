@@ -44,7 +44,7 @@ cdef class Mesh2(Mesh):
         if triangles:
 
             self.triangles = 0
-            self.triangle = <short *> malloc(triangles * 3 * sizeof(int))
+            self.triangle = <unsigned short *> malloc(triangles * 3 * sizeof(int))
 
     def __dealloc__(Mesh2 self):
 
