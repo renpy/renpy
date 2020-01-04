@@ -625,6 +625,10 @@ def loadable_core(name):
             loadable_cache[name] = True
             return True
 
+    if remote_files.has_key(name):
+        loadable_cache[name] = True
+        return name
+
     loadable_cache[name] = False
     return False
 
