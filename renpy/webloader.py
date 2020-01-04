@@ -28,6 +28,9 @@ import threading
 # A list of downloads, in-progress or waiting to be processed.
 queue = [ ]
 
+# A list of downloaded files to free later
+to_unlink = { }
+
 # A lock that must be held when updating the queue.
 queue_lock = threading.RLock()
 
@@ -149,9 +152,11 @@ class DownloadNeeded(Exception):
 
 
 class ReloadRequest:
-    def __init__(self, relpath, obj):
+    def __init__(self, relpath, rtype, data):
         self.relpath = relpath
-        self.obj = obj
+        self.rtype = rtype
+        self.data = data
+        self.gc_gen = 0
         #print("download_start:", self.relpath)
         self.xhr = XMLHttpRequest(self.relpath)
 
@@ -162,18 +167,24 @@ class ReloadRequest:
         return u"<ReloadRequest '{}' {}>".format(self.relpath, self.download_completed())
 
 
-def enqueue(relpath, obj_to_reload):
+def enqueue(relpath, rtype, data):
     global queue
 
     with queue_lock:
-        queue.append(ReloadRequest(relpath, obj_to_reload))
+        # de-dup same .data/image_filename
+        # don't de-dup same .relpath (though we could if .data becomes a growable set)
+        for rr in queue:
+            if rr.rtype == rtype == 'image':
+                image_filename = data
+                if rr.data == image_filename:
+                    return
+        queue.append(ReloadRequest(relpath, rtype, data))
 
 
 def process_downloaded_resources():
-    global queue
+    global queue, to_unlink
 
-    unlink = {}
-    reloaded = False
+    reload_needed = False
 
     with queue_lock:
 
@@ -188,7 +199,7 @@ def process_downloaded_resources():
                     postponed.append(rr)
                     continue
 
-                if isinstance(rr.obj, renpy.display.im.ImageBase):
+                if rr.rtype == 'image':
                     fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
                     if not os.path.exists(fullpath):
                         # trigger Ren'Py's error handler
@@ -196,33 +207,35 @@ def process_downloaded_resources():
                             (rr.xhr.statusText or "network error"), rr.relpath, fullpath))
 
                     #print("reloading", rr.relpath)
-                    try:
-                        renpy.display.im.cache.reload(rr.obj, render=True)
-                    except KeyError, e:
-                        print(("Warning: cannot reload {} which is not loaded in the cache"
-                               + " (maybe image is part of a Transform,"
-                               + " or cache was cleared)")
-                              .format(rr.obj.identity))
+                    image_filename = rr.data
+                    renpy.exports.flush_cache_file(image_filename)
 
-
-                    unlink[fullpath] = unlink.get(fullpath, 0) + 1
-                    reloaded = True
+                    fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
+                    to_unlink[fullpath] = 0
+                    reload_needed = True
 
                 # TODO: sounds
-
-            # Unlink in a second step to handle dups (multiple Image-s
-            # referencing the same file, same file from different search
-            # paths...)
-            for fullpath in unlink:
-                #print("unlink", fullpath, "- count", unlink[fullpath])
-                os.unlink(fullpath)
 
         # make sure the queue doesn't contain a corrupt file so we
         # don't rethrow an exception while in Ren'Py's error handler
         finally:
             queue = postponed + todo
 
-    if reloaded:
+    if reload_needed:
+        # Refresh the screen and re-load images flushed from cache
         #renpy.exports.force_full_redraw()  # no effect on already show-n images
         #renpy.game.interface.set_mode()  # heavy, don't respect aspect ratio
-        renpy.display.render.free_memory()  # TODO: be more precise
+        renpy.display.render.free_memory()  # FIXME: be more precise?
+
+        # Free files from memory once they are loaded
+        # Due to search-path dups and derived images (same file, multiple requests),
+        # files can't be removed right after first reload
+        max_gen = 2  # remove after 2 reloads
+        for fullpath in to_unlink.keys():
+            gen = to_unlink[fullpath]
+            if gen >= max_gen:
+                #print("unlink", fullpath)
+                os.unlink(fullpath)
+                del to_unlink[fullpath]
+            else:
+                to_unlink[fullpath] += 1
