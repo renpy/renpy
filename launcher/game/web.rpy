@@ -87,7 +87,7 @@ init python:
         distribute.Distributor(p, packages=[ "web" ], packagedest=os.path.join(destination, "game"), reporter=reporter, noarchive=True, scan=False)
 
         # Filter out downloadable resources
-        MIN_REMOTE_SIZE=100*1024
+        MIN_REMOTE_SIZE=50*1024
         # TODO: configurable min_size? use archives to better describe web distribution?
         # TODO: predict/include title screen's resources for a smooth start (no black blink)
         shutil.move(
