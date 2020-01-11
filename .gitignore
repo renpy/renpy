@@ -31,8 +31,11 @@ styles.txt
 /*testing*
 /screenshot*
 /renpy.exe
+/renpy.sh
 /lib
 /lib.old
+/lib2
+/lib3
 /doc
 /.pydevproject
 /.pydevproject.bak
