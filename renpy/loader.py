@@ -266,10 +266,21 @@ def scandirfiles():
         index_filename = os.path.join(renpy.config.gamedir,'renpyweb_remote_files.txt')
         if os.path.exists(index_filename):
             files = game_files
-            for f in open(index_filename, 'rb'):
-                f = f.rstrip("\r\n")
-                add('/game', f)
-                remote_files[f] = True
+            with open(index_filename, 'rb') as remote_index:
+                while True:
+                    f = remote_index.readline()
+                    metadata = remote_index.readline()
+                    if f == '' or metadata == '':  # end of file
+                        break
+
+                    f = f.rstrip("\r\n")
+                    metadata = metadata.rstrip("\r\n")
+                    (entry_type,entry_size) = metadata.split(' ')
+                    if entry_type == 'image':
+                        entry_size = [int(i) for i in entry_size.split(',')]
+
+                    add('/game', f)
+                    remote_files[f] = {'type':entry_type,'size':entry_size}
 
     for i in renpy.config.searchpath:
 
@@ -535,7 +546,7 @@ def load_core(name):
 
     if remote_files.has_key(name):
         #print("load_core: fallback for", name)
-        raise DownloadNeeded(relpath=name)
+        raise DownloadNeeded(relpath=name, size=remote_files[name]['size'])
 
     return None
 

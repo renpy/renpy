@@ -147,8 +147,9 @@ elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
 
 
 class DownloadNeeded(Exception):
-    def __init__(self, relpath):
+    def __init__(self, relpath, size):
         self.relpath = relpath
+        self.size = size
 
 
 class ReloadRequest:

@@ -30,6 +30,7 @@ init python:
     import io
     import tempfile
     import time
+    import pygame_sdl2
 
     WEB_PATH = None
 
@@ -87,6 +88,7 @@ init python:
         distribute.Distributor(p, packages=[ "web" ], packagedest=os.path.join(destination, "game"), reporter=reporter, noarchive=True, scan=False)
 
         # Filter out downloadable resources
+        reporter.info(_("Preparing downloadable files"))
         MIN_REMOTE_SIZE=50*1024
         # TODO: configurable min_size? use archives to better describe web distribution?
         # TODO: predict/include title screen's resources for a smooth start (no black blink)
@@ -96,7 +98,7 @@ init python:
         import zipfile
         zin  = zipfile.ZipFile(os.path.join(destination, 'game-old.zip'))
         zout = zipfile.ZipFile(os.path.join(destination, 'game.zip'), 'w')
-        remote_files = []
+        remote_files = {}
         tmpdir = tempfile.mkdtemp()
         for m in zin.infolist():
             base, ext = os.path.splitext(m.filename)
@@ -104,8 +106,12 @@ init python:
                 and m.file_size > MIN_REMOTE_SIZE
                 and m.filename.startswith('game/')
                 and not m.filename.startswith('game/gui/')):
+
                 zin.extract(m, path=destination)
-                remote_files.append(m.filename[len('game/'):])
+                surface = pygame_sdl2.image.load(os.path.join(destination,m.filename))
+                (w,h) = (surface.get_width(),surface.get_height())
+
+                remote_files[m.filename[len('game/'):]] = 'image {},{}'.format(w,h)
                 print("extract:", m.filename)
             else:
                 # Extract & recompress
@@ -117,8 +123,12 @@ init python:
                 print("keep:", m.filename)
         shutil.rmtree(tmpdir)
         zin.close()
+        remote_files_str = ''
+        for f in sorted(remote_files):
+            remote_files_str += f + "\n"
+            remote_files_str += remote_files[f] + "\n"
         zout.writestr('game/renpyweb_remote_files.txt',
-                      "\n".join(sorted(remote_files)),
+                      remote_files_str,
                       zipfile.ZIP_DEFLATED)
         zout.close()
         os.unlink(os.path.join(destination, 'game-old.zip'))

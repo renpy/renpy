@@ -638,11 +638,12 @@ class Image(ImageBase):
 
         try:
 
+            exception = None
             try:
                 filelike = renpy.loader.load(self.filename)
                 filename = self.filename
-            except renpy.webloader.DownloadNeeded, e:
-                renpy.webloader.enqueue(e.relpath, 'image', self.filename)
+            except renpy.webloader.DownloadNeeded, exception:
+                renpy.webloader.enqueue(exception.relpath, 'image', self.filename)
                 # temporary placeholder:
                 filelike = open(os.path.join(renpy.config.commondir,'_dl.png'), 'rb')
                 filename = '_dl.png'
@@ -651,6 +652,10 @@ class Image(ImageBase):
                 surf = renpy.display.pgrender.load_image_unscaled(filelike, filename)
             else:
                 surf = renpy.display.pgrender.load_image(filelike, filename)
+
+            if exception is not None:
+                # avoid size-related exceptions (e.g. Crop on a smaller placeholder)
+                surf = renpy.display.pgrender.transform_scale(surf, exception.size)
 
             return surf
 
