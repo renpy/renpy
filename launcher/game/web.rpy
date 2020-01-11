@@ -113,6 +113,10 @@ init python:
 
                 remote_files[m.filename[len('game/'):]] = 'image {},{}'.format(w,h)
                 print("extract:", m.filename)
+            elif (ext.lower() in ('.ogv', '.webm', '.mp4', '.mkv', '.avi')):
+                # Videos are not currently not supported, strip them if not already
+                pass
+                print("exclude:", m.filename)
             else:
                 # Extract & recompress
                 # Not using zout.writestr(m, zin.read(m)) to avoid MemoryError
