@@ -618,12 +618,12 @@ init python in distribute:
                     if match(match_name, pattern):
                         break
                 else:
-                    print(match_name.encode("utf-8"), "doesn't match anything.", file=self.log)
+                    print(str(match_name), "doesn't match anything.", file=self.log)
 
                     pattern = None
                     file_list = None
 
-                print(match_name.encode("utf-8"), "matches", pattern, "(" + str(file_list) + ").", file=self.log)
+                print(str(match_name), "matches", str(pattern), "(" + str(file_list) + ").", file=self.log)
 
                 if file_list is None:
                     return
@@ -804,7 +804,7 @@ init python in distribute:
 
             tfn = self.temp_filename(list_name + "_hash.txt")
 
-            with open(tfn, "w") as tf:
+            with open(tfn, "wb") as tf:
                 tf.write(self.file_lists[list_name].hash(self))
 
             self.add_file("binary", "launcher/game/" + list_name + "_hash.txt", tfn)
@@ -825,7 +825,7 @@ init python in distribute:
                 data = f.read()
 
             with open(tmp_fn, "wb") as f:
-                f.write("#!/usr/bin/env python2\n")
+                f.write(b"#!/usr/bin/env python2\n")
                 f.write(data)
 
             self.add_file("source_only", "renpy.py", tmp_fn, True)
@@ -909,14 +909,10 @@ init python in distribute:
 
             self.add_file(
                 mac,
-                "lib/darwin-x86_64/" + self.executable_name,
-                os.path.join(config.renpy_base, "lib/darwin-x86_64/pythonw"),
+                "lib/mac-x86_64/" + self.executable_name,
+                os.path.join(config.renpy_base, "lib/mac-x86_64/pythonw"),
                 True)
 
-#             self.add_file(
-#                 windows,
-#                 "lib/windows-i686/" + self.executable_name + ".exe",
-#                 os.path.join(config.renpy_base, "lib/windows-i686/renpy.exe"))
 
         def add_mac_files(self):
             """
@@ -927,6 +923,9 @@ init python in distribute:
                 filelist = "binary"
             else:
                 filelist = "mac"
+
+            # 7.4
+            return
 
             contents = self.app + "/Contents"
 
@@ -968,6 +967,9 @@ init python in distribute:
             """
             Adds windows-specific files.
             """
+
+            # 7.4
+            return
 
             if self.build['renpy']:
                 windows = 'binary'
@@ -1116,6 +1118,9 @@ init python in distribute:
             """
             Packages `sourcedir` as a dmg.
             """
+
+            # 7.4
+            return
 
             identity = self.build.get('mac_identity', None)
 
