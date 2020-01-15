@@ -89,13 +89,16 @@ init -1500 python in build:
         ( "lib/*/renpy.exe", None),
 
         # Windows patterns.
+        ( "lib/windows-i686/pythonw.exe", None),
         ( "lib/windows-i686/**", "windows"),
+
+        ( "lib/windows-x86_64/**", None),
 
         # Linux patterns.
         ( "lib/linux-*/**", "linux"),
 
         # Mac patterns
-        ( "lib/darwin-x86_64/**", "mac"),
+        ( "lib/mac-x86_64/**", "mac"),
 
         # Shared patterns.
         ( "/lib/**", "windows linux mac"),

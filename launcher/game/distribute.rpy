@@ -968,35 +968,32 @@ init python in distribute:
             Adds windows-specific files.
             """
 
-            # 7.4
-            return
-
             if self.build['renpy']:
                 windows = 'binary'
             else:
                 windows = 'windows'
 
             icon_fn = os.path.join(self.project.path, "icon.ico")
-            old_exe_fn = os.path.join(config.renpy_base, "renpy.exe")
-            old_main_fn = os.path.join(config.renpy_base, "lib/windows-i686/renpy.exe")
+            old_exe_fn = os.path.join(config.renpy_base, "lib/windows-i686/launcher.exe")
+            old_python_fn = os.path.join(config.renpy_base, "lib/windows-i686/pythonw.exe")
 
             if os.path.exists(icon_fn) and os.path.exists(old_exe_fn):
                 exe_fn = self.temp_filename("renpy.exe")
-                main_fn = self.temp_filename("main.exe")
+                python_fn = self.temp_filename("pythonw.exe")
 
                 with open(exe_fn, "wb") as f:
                     f.write(change_icons(old_exe_fn, icon_fn))
 
-                with open(main_fn, "wb") as f:
-                    f.write(change_icons(old_main_fn, icon_fn))
+                with open(python_fn, "wb") as f:
+                    f.write(change_icons(old_python_fn, icon_fn))
 
             else:
                 exe_fn = old_exe_fn
-                main_fn = old_main_fn
+                python_fn = old_python_fn
 
             if os.path.exists(exe_fn):
                 self.add_file(windows, self.exe, exe_fn)
-                self.add_file(windows, "lib/windows-i686/" + self.exe, main_fn)
+                self.add_file(windows, "lib/windows-i686/pythonw.exe", python_fn)
 
         def add_main_py(self):
             if self.build['renpy']:
