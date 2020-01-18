@@ -97,13 +97,29 @@ ROT26 – ROT13 applied twice – is just normal text. ::
 
     init python:
 
+        def rot13_transform(s):
+
+            ROT13 = { }
+
+            for i, j in zip("ABCDEFGHIJKLM", "NOPQRSTUVWXYZ"):
+                 ROT13[i] = j
+                 ROT13[j] = i
+
+                 i = i.lower()
+                 j = j.lower()
+
+                 ROT13[i] = j
+                 ROT13[j] = i
+
+            return "".join(ROT13.get(i, i) for i in s)
+
         def rot13_tag(tag, argument, contents):
             rv = [ ]
 
             for kind, text in contents:
 
                 if kind == renpy.TEXT_TEXT:
-                    text = text.encode("rot13")
+                    text = rot13_transfor(text)
 
                 rv.append((kind, text))
 
