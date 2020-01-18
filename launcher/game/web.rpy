@@ -102,6 +102,7 @@ init python:
         tmpdir = tempfile.mkdtemp()
         for m in zin.infolist():
             base, ext = os.path.splitext(m.filename)
+            # Images
             if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp')
                 and m.file_size > MIN_REMOTE_SIZE
                 and m.filename.startswith('game/')
@@ -113,12 +114,19 @@ init python:
 
                 remote_files[m.filename[len('game/'):]] = 'image {},{}'.format(w,h)
                 print("extract:", m.filename)
+            # Musics (but not SFX - no placeholders for short, non-looping sounds)
+            elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
+                and m.file_size > MIN_REMOTE_SIZE
+                and m.filename.startswith('game/music/')):
+                zin.extract(m, path=destination)
+                remote_files[m.filename[len('game/'):]] = 'music -'
+                print("extract:", m.filename)
+            # Videos are currently not supported, strip them if not already
             elif (ext.lower() in ('.ogv', '.webm', '.mp4', '.mkv', '.avi')):
-                # Videos are not currently not supported, strip them if not already
                 pass
                 print("exclude:", m.filename)
+            # Default: extract & recompress
             else:
-                # Extract & recompress
                 # Not using zout.writestr(m, zin.read(m)) to avoid MemoryError
                 tmpfile = zin.extract(m, tmpdir)
                 date_time = time.mktime(m.date_time+(0,0,0))

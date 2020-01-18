@@ -593,7 +593,8 @@ def load(name, tl=True):
 
     if renpy.display.predict.predicting:  # @UndefinedVariable
         if threading.current_thread().name == "MainThread":
-            raise Exception("Refusing to open {} while predicting.".format(name))
+            if not (renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False)):
+                raise Exception("Refusing to open {} while predicting.".format(name))
 
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)

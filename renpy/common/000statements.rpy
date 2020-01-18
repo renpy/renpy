@@ -125,6 +125,12 @@ python early hide:
                          if_changed=p.get("if_changed", False))
 
     def predict_play_music(p):
+        if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+            fn = _audio_eval(p["file"])
+            try:
+                renpy.loader.load(fn)
+            except renpy.webloader.DownloadNeeded, exception:
+                renpy.webloader.enqueue(exception.relpath, 'sound', None)
         return [ ]
 
     def lint_play_music(p, channel="music"):

@@ -172,13 +172,15 @@ def enqueue(relpath, rtype, data):
     global queue
 
     with queue_lock:
-        # de-dup same .data/image_filename
-        # don't de-dup same .relpath (though we could if .data becomes a growable set)
         for rr in queue:
+            # de-dup same .data/image_filename
+            # don't de-dup same .relpath (different .data == different cache entry)
             if rr.rtype == rtype == 'image':
                 image_filename = data
                 if rr.data == image_filename:
                     return
+            elif rr.rtype == rtype == 'music' and rr.relpath == relpath:
+                return
         queue.append(ReloadRequest(relpath, rtype, data))
 
 
@@ -211,11 +213,18 @@ def process_downloaded_resources():
                     image_filename = rr.data
                     renpy.exports.flush_cache_file(image_filename)
 
+                    # mark for deletion
                     fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
                     to_unlink[fullpath] = 0
                     reload_needed = True
 
-                # TODO: sounds
+                elif rr.rtype == 'music':
+                    # - just wait for the 0.5s placeholder to finish,
+                    #   will be reloaded on sound loop
+                    # - no unlink
+                    pass
+
+                # TODO: videos (when web support is implemented)
 
         # make sure the queue doesn't contain a corrupt file so we
         # don't rethrow an exception while in Ren'Py's error handler
@@ -228,8 +237,8 @@ def process_downloaded_resources():
         #renpy.game.interface.set_mode()  # heavy, don't respect aspect ratio
         renpy.display.render.free_memory()  # FIXME: be more precise?
 
-        # Free files from memory once they are loaded
-        # Due to search-path dups and derived images (same file, multiple requests),
+        # Free files from memory once they are loaded (images are resident in GPU)
+        # Due to search-path dups, derived images or image-based animations
         # files can't be removed right after first reload
         max_gen = 2  # remove after 2 reloads
         for fullpath in to_unlink.keys():
