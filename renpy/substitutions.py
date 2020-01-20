@@ -256,5 +256,6 @@ def substitute(s, scope=None, force=False, translate=True):
     except:
         if renpy.display.predict.predicting:  # @UndefinedVariable
             return " ", True
+        raise
 
     return s, (s != old_s)
