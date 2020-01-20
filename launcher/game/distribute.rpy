@@ -308,22 +308,18 @@ init python in distribute:
 
         def mac_lib_transform(self, app, duplicate):
             """
-            Moves the mac lib into position. If duplicate is set, the
-
             Creates a new file list that has lib/darwin-x86_64 and lib/pythonlib2.7
-            copied into the mac app, the latter iff it's not duplicated elsewhere.
+            copied into the mac app, the latter iff it's not duplicated elsewhere or
+            duplicate is set.
             """
 
             for f in list(self):
 
-                if f.name.startswith("lib/darwin-x86_64/lib/python2.7"):
-                    name = app + "/Contents/MacOS/lib/darwin-x86_64/Lib" + f.name[31:]
+                if f.name.startswith("lib/python2.7") and (not duplicate):
+                    name = app + "/Contents/MacOS/lib/python2.7/" + f.name
 
-                elif f.name.startswith("lib/pythonlib2.7") and (not duplicate):
-                    name = app + "/Contents/MacOS/lib/darwin-x86_64/Lib" + f.name[16:]
-
-                elif f.name.startswith("lib/darwin-x86_64"):
-                    name = app + "/Contents/MacOS/" + f.name
+                elif f.name.startswith("lib/mac-x86_64"):
+                    name = app + "/Contents/MacOS/" + f.name[15:]
 
                 else:
                     continue
@@ -924,9 +920,6 @@ init python in distribute:
             else:
                 filelist = "mac"
 
-            # 7.4
-            return
-
             contents = self.app + "/Contents"
 
             self.add_directory(filelist, self.app)
@@ -935,7 +928,9 @@ init python in distribute:
 
             plist_fn = self.write_plist()
             self.add_file(filelist, contents + "/Info.plist", plist_fn)
-            self.add_file(filelist, contents + "/MacOS/" + self.executable_name, os.path.join(config.renpy_base, "renpy.sh"))
+            self.add_file(filelist,
+                contents + "/MacOS/" + self.executable_name,
+                os.path.join(config.renpy_base, "lib/mac-x86_64/renpy"))
 
             custom_fn = os.path.join(self.project.path, "icon.icns")
             default_fn = os.path.join(config.renpy_base, "launcher/icon.icns")
@@ -950,16 +945,11 @@ init python in distribute:
             self.add_directory(filelist, resources)
             self.add_file(filelist, resources + "/icon.icns", icon_fn)
 
-            self.add_directory(filelist, contents + "/MacOS/lib")
-            self.add_directory(filelist, contents + "/MacOS/lib/darwin-x86_64")
-            self.add_directory(filelist, contents + "/MacOS/lib/darwin-x86_64/Lib")
-            self.add_directory(filelist, contents + "/MacOS/lib/darwin-x86_64/Modules")
 
-            sfn = self.temp_filename("Setup")
-            with open(sfn, "wb") as f:
-                pass
-
-            self.add_file(filelist, contents + "/MacOS/lib/darwin-x86_64/Modules/Setup", sfn)
+            if not self.build['renpy']:
+                self.add_directory(filelist, contents + "/MacOS/lib")
+                self.add_directory(filelist, contents + "/MacOS/lib/mac-x86_64")
+                self.add_directory(filelist, contents + "/MacOS/lib/python2.7")
 
             self.file_lists[filelist].mac_lib_transform(self.app, self.build['renpy'])
 
@@ -974,7 +964,7 @@ init python in distribute:
                 windows = 'windows'
 
             icon_fn = os.path.join(self.project.path, "icon.ico")
-            old_exe_fn = os.path.join(config.renpy_base, "lib/windows-i686/launcher.exe")
+            old_exe_fn = os.path.join(config.renpy_base, "lib/windows-i686/renpy.exe")
             old_python_fn = os.path.join(config.renpy_base, "lib/windows-i686/pythonw.exe")
 
             if os.path.exists(icon_fn) and os.path.exists(old_exe_fn):
