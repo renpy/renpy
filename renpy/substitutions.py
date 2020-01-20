@@ -164,8 +164,14 @@ class Formatter(string.Formatter):
 
     def convert_field(self, value, conversion):
 
-        if not conversion:
+        if conversion is None:
             return value
+
+        if not conversion:
+            raise ValueError("Conversion specifier can't be empty.")
+
+        if set(conversion) - set("rstqulc"):
+            raise ValueError("Unknown symbols in conversion specifier.")
 
         if "r" in conversion:
             value = repr(value)
