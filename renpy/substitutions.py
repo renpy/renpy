@@ -175,19 +175,22 @@ class Formatter(string.Formatter):
 
         if "r" in conversion:
             value = repr(value)
+            conversion = conversion.replace("r", "")
         elif "s" in conversion:
+            value = str(value)
+            conversion = conversion.replace("s", "")
+
+        if not conversion:
+            return value
+
+        # All conversion symbols below assume we have a string.
+        if not isinstance(value, basestring):
             value = str(value)
 
         if "t" in conversion:
-            if not isinstance(value, basestring):
-                value = str(value)
-
             value = renpy.translation.translate_string(value)
 
         if "q" in conversion:
-            if not isinstance(value, basestring):
-                value = str(value)
-
             value = value.replace("{", "{{")
 
         if "u" in conversion:
