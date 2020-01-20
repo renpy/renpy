@@ -170,7 +170,7 @@ class Formatter(string.Formatter):
         if not conversion:
             raise ValueError("Conversion specifier can't be empty.")
 
-        if set(conversion) - set("rstqulc"):
+        if set(conversion) - set("rstqulci"):
             raise ValueError("Unknown symbols in conversion specifier.")
 
         if "r" in conversion:
@@ -189,6 +189,9 @@ class Formatter(string.Formatter):
 
         if "t" in conversion:
             value = renpy.translation.translate_string(value)
+
+        if "i" in conversion:
+            value = substitute(value, translate=False)[0]
 
         if "q" in conversion:
             value = value.replace("{", "{{")
