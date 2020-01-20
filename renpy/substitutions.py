@@ -171,7 +171,7 @@ class Formatter(string.Formatter):
             raise ValueError("Conversion specifier can't be empty.")
 
         if set(conversion) - set("rstqulci"):
-            raise ValueError("Unknown symbols in conversion specifier.")
+            raise ValueError("Unknown symbols in conversion specifier, this must use only the \"rstqulci\".")
 
         if "r" in conversion:
             value = repr(value)
