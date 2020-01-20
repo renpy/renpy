@@ -396,7 +396,7 @@ init python in distribute:
                 break
 
             t += 1
-            print(t, " ".join(sorted([ i.what for i in alive ])))
+            print("\r " + str(t) + " " + " ".join(sorted([ i.what for i in alive ])))
 
             time.sleep(1)
 
