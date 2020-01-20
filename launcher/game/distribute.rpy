@@ -1106,9 +1106,6 @@ init python in distribute:
             Packages `sourcedir` as a dmg.
             """
 
-            # 7.4
-            return
-
             identity = self.build.get('mac_identity', None)
 
             if identity is None:
