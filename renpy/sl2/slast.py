@@ -2004,7 +2004,6 @@ class SLScreen(SLBlock):
 
         rv.prepared = False
         rv.analysis = None
-        rv.ast = None
 
         return rv
 
