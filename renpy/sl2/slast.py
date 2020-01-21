@@ -1513,6 +1513,20 @@ class SLFor(SLBlock):
 
             ctx.scope[variable] = v
 
+            children_i = iter(self.children)
+
+            # If we have a variable expression as a tuple, it is necessary
+            # to execute the first child before evaluating the index value,
+            # because the index can be one of this tuple member.
+            if variable == "_sl2_i":
+                sl_python = next(children_i)
+                # It can only fail if the unpacking fails, but it can still
+                try:
+                    sl_python.execute(ctx)
+                except:
+                    if not context.predicting:
+                        raise
+
             if self.index_expression is not None:
                 index = eval(self.index_expression, ctx.globals, ctx.scope)
 
@@ -1530,7 +1544,7 @@ class SLFor(SLBlock):
 
             # Inline of SLBlock.execute.
 
-            for i in self.children:
+            for i in children_i:
                 try:
                     i.execute(ctx)
                 except:
