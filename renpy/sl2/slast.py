@@ -1445,6 +1445,7 @@ class SLFor(SLBlock):
 
         rv.variable = self.variable
         rv.expression = self.expression
+        rv.index_expression = self.index_expression
 
         return rv
 
