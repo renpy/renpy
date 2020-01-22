@@ -183,6 +183,15 @@ def interpolate(t, a, b, type):  # @ReservedAssignment
 
 def interpolate_spline(t, spline):
 
+    uspline = []
+    for k in spline:
+        if isinstance(k, tuple):
+            if not isinstance(spline[-1], tuple) or isinstance(k[0], tuple):
+                uspline.extend(k)
+                continue
+        uspline.append(k)
+    spline = tuple(uspline) # Now with nested inner tuples flattened
+
     if isinstance(spline[-1], tuple):
         return tuple(interpolate_spline(t, i) for i in zip(*spline))
 
@@ -211,10 +220,42 @@ def interpolate_spline(t, spline):
         rv = t_ppp * spline[0] + t_pp * spline[1] + t_p * spline[2] + t3 * spline[3]
 
     else:
-        raise Exception("ATL can't interpolate splines of length %d." % len(spline))
+
+        # Catmull-Rom (re-adjust the control points)
+        spline = ([spline[1], spline[0]]
+                + list(spline[2:-2])
+                + [spline[-1], spline[-2]])
+
+        if t <= 0.0 or t >= 1.0:
+
+            rv = spline[1 if t <= 0.0 else -2]
+
+        else:
+
+            inner_spline_count = float(len(spline) - 3)
+
+            # determine which spline values are relevant
+            sector = int(t // ( 1.0 / inner_spline_count ) + 1)
+
+            # determine t for this sector
+            t = ( t % ( 1.0 / inner_spline_count ) ) * inner_spline_count
+
+            rv = get_catmull_rom_value(t, *spline[sector-1:sector+3])
 
     return correct_type(rv, spline[-1], position)
 
+
+def get_catmull_rom_value(t, p_1, p0, p1, p2):
+    """ 
+    Very basic Catmull-Rom calculation with no alpha or handling 
+    of multi-dimensional points
+    """
+    t = float(max(0.0, min(1.0, t)))
+    return type(p0)(
+        (t * ((2-t)*t - 1) * p_1
+        + (t*t*(3*t - 5) + 2) * p0
+        + t*((4 - 3*t)*t + 1) * p1
+        + (t-1)*t*t * p2 ) / 2)
 
 # A list of atl transforms that may need to be compile.
 compile_queue = [ ]
