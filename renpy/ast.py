@@ -1012,7 +1012,9 @@ class Image(Node):
 
     def analyze(self):
         if getattr(self, 'atl', None) is not None:
-            self.atl.mark_constant()
+            # ATL images must participate with the game defined
+            # constant names. So, we pass empty parameters.
+            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
 
 
 class Transform(Node):
@@ -1058,7 +1060,13 @@ class Transform(Node):
         setattr(renpy.store, self.varname, trans)
 
     def analyze(self):
-        self.atl.mark_constant()
+
+        parameters = getattr(self, "parameters", None)
+
+        if parameters is None:
+            parameters = Transform.default_parameters
+
+        self.atl.analyze(parameters)
 
 
 def predict_imspec(imspec, scene=False, atl=None):
@@ -1182,7 +1190,11 @@ class Show(Node):
 
     def analyze(self):
         if getattr(self, 'atl', None) is not None:
-            self.atl.mark_constant()
+            # ATL block defined for show, scene or show layer statements
+            # can't participate in parameters analysis because of this
+            # ATL will be created at runtime and its compile will be use
+            # current state of variables. So, no matter of this.
+            self.atl.analyze(None)
 
 
 class ShowLayer(Node):
@@ -1222,7 +1234,7 @@ class ShowLayer(Node):
 
     def analyze(self):
         if self.atl is not None:
-            self.atl.mark_constant()
+            self.atl.analyze(None)
 
 
 class Scene(Node):
@@ -1276,7 +1288,7 @@ class Scene(Node):
 
     def analyze(self):
         if getattr(self, 'atl', None) is not None:
-            self.atl.mark_constant()
+            self.atl.analyze(None)
 
 
 class Hide(Node):

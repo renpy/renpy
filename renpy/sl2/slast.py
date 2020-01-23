@@ -391,7 +391,9 @@ class SLBlock(SLNode):
         if self.atl_transform is not None:
             self.has_keyword = True
 
-            self.atl_transform.mark_constant()
+            # We use screen analysis object, since it
+            # have all knowlege about our constants
+            self.atl_transform.mark_constant(analysis)
             const = self.atl_transform.constant
             self.constant = min(self.constant, const)
 
