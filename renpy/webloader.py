@@ -19,6 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+# Trigger remote resource download, following a DownloadNeeded
+# exception, and place it in the game/ in-memory filesystem when done.
+# Placeholders (low-quality images, short silence sounds) are used by
+# the engine meanwhile, and are replaced on completion.
+# To save RAM, files are unlinked as soon as possible (e.g. once
+# uploaded to GPU), and re-downloaded from browser cache if needed.
+
 from __future__ import print_function
 import renpy
 import os
@@ -72,7 +79,7 @@ if renpy.emscripten:
 
     dl_free: function(xhr_id) {
         delete RenPyWeb.xhrs[xhr_id];
-        // Note: xhr.response kept alive until file is deleted
+        // Note: xhr.response kept alive until file is unlinked
     },
 }
 """)
