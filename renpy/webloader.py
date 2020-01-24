@@ -25,12 +25,15 @@
 # the engine meanwhile, and are replaced on completion.
 # To save RAM, files are unlinked as soon as possible (e.g. once
 # uploaded to GPU), and re-downloaded from browser cache if needed.
+# Prediction is used to download resources in advance, but no guarantee.
+# (e.g. won't work when loading a savegame, nor with 'show expression')
 
 from __future__ import print_function
 import renpy
 import os
 import renpy.display
 import threading
+import time
 
 # A list of downloads, in-progress or waiting to be processed.
 queue = [ ]
@@ -222,7 +225,7 @@ def process_downloaded_resources():
 
                     # mark for deletion
                     fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
-                    to_unlink[fullpath] = 0
+                    to_unlink[fullpath] = time.time()
                     reload_needed = True
 
                 elif rr.rtype == 'music':
@@ -244,15 +247,17 @@ def process_downloaded_resources():
         #renpy.game.interface.set_mode()  # heavy, don't respect aspect ratio
         renpy.display.render.free_memory()  # FIXME: be more precise?
 
-        # Free files from memory once they are loaded (images are resident in GPU)
-        # Due to search-path dups, derived images or image-based animations
-        # files can't be removed right after first reload
-        max_gen = 2  # remove after 2 reloads
-        for fullpath in to_unlink.keys():
-            gen = to_unlink[fullpath]
-            if gen >= max_gen:
-                #print("unlink", fullpath)
-                os.unlink(fullpath)
-                del to_unlink[fullpath]
-            else:
-                to_unlink[fullpath] += 1
+        # Reset prediction to preload downloaded images without waiting for next interaction
+        #if len(queue) == 0:
+        #    renpy.exports.restart_interaction()  # TODO: safe?
+
+    # Free files from memory once they are loaded
+    # Due to search-path dups and derived images (including image-based animations)
+    # files can't be removed right after actual load
+    ttl = 60  # remove after 1mn - if your animation is longer than that, use a video
+    for fullpath in to_unlink.keys():
+        delta = time.time() - to_unlink[fullpath]
+        if delta > ttl:
+            #print("unlink", fullpath)
+            os.unlink(fullpath)
+            del to_unlink[fullpath]
