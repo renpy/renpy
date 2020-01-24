@@ -883,16 +883,16 @@ init python in distribute:
             self.add_file(
                 linux,
                 "lib/linux-i686/" + self.executable_name,
-                os.path.join(config.renpy_base, "lib/linux-i686/pythonw"),
+                os.path.join(config.renpy_base, "lib/linux-i686/renpy"),
                 True)
 
             self.add_file(
                 linux,
                 "lib/linux-x86_64/" + self.executable_name,
-                os.path.join(config.renpy_base, "lib/linux-x86_64/pythonw"),
+                os.path.join(config.renpy_base, "lib/linux-x86_64/renpy"),
                 True)
 
-            armfn = os.path.join(config.renpy_base, "lib/linux-armv7l/pythonw")
+            armfn = os.path.join(config.renpy_base, "lib/linux-armv7l/renpy")
 
             if os.path.exists(armfn):
 
@@ -906,7 +906,7 @@ init python in distribute:
             self.add_file(
                 mac,
                 "lib/mac-x86_64/" + self.executable_name,
-                os.path.join(config.renpy_base, "lib/mac-x86_64/pythonw"),
+                os.path.join(config.renpy_base, "lib/mac-x86_64/renpy"),
                 True)
 
 
