@@ -549,7 +549,10 @@ class ATLTransformBase(renpy.object.Object):
 
         old_exception_info = renpy.game.exception_info
 
-        block = self.atl.compile(self.context)
+        if constant and self.atl.compiled_block is not None:
+            block = self.atl.compiled_block
+        else:
+            block = self.atl.compile(self.context)
 
         if all(
             isinstance(statement, Interpolation) and statement.duration == 0
@@ -733,6 +736,10 @@ class RawBlock(RawStatement):
     # Should we use the animation timebase or the showing timebase?
     animation = False
 
+    # If this block uses only constant values we can once compile it
+    # and use this value for all ATLTransform that use us as an atl.
+    compiled_block = None
+
     def __init__(self, loc, statements, animation):
 
         super(RawBlock, self).__init__(loc)
@@ -757,11 +764,29 @@ class RawBlock(RawStatement):
         analysis = Analysis(None)
 
         # Apply the passed parameters to take into account
-        # the names that are constant in this context
+        # the names that are not constant in this context
         if parameters is not None:
             analysis.parameters(parameters)
 
         self.mark_constant(analysis)
+
+        # We can only be a constant if we do not use values
+        # from parameters or do not have them at all.
+        # So we can pass an empty context for compilation.
+        if self.constant == GLOBAL_CONST:
+            # This may failed if we use another transfrom
+            # which use non constant value.
+            # In this case we also non constant.
+            old_exception_info = renpy.game.exception_info
+            try:
+                block = self.compile(Context({}))
+            except RuntimeError:  # PY3: RecursionError
+                raise Exception("This transform refers to itself in the cycle.")
+            except:
+                self.constant = NOT_CONST
+            else:
+                self.compiled_block = block
+            renpy.game.exception_info = old_exception_info
 
     def mark_constant(self, analysis):
 

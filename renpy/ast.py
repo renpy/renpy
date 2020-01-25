@@ -1013,7 +1013,7 @@ class Image(Node):
     def analyze(self):
         if getattr(self, 'atl', None) is not None:
             # ATL images must participate with the game defined
-            # constant names. So, we pass empty parameters.
+            # constant names. So, we pass empty parameters to enable it.
             self.atl.analyze(ParameterInfo([ ], [ ], None, None))
 
 
@@ -1191,10 +1191,9 @@ class Show(Node):
     def analyze(self):
         if getattr(self, 'atl', None) is not None:
             # ATL block defined for show, scene or show layer statements
-            # can't participate in parameters analysis because of this
-            # ATL will be created at runtime and its compile will be use
-            # current state of variables. So, no matter of this.
-            self.atl.analyze(None)
+            # must participate with the game defined constant names.
+            # So, we pass empty parameters to enable it.
+            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
 
 
 class ShowLayer(Node):
@@ -1234,7 +1233,7 @@ class ShowLayer(Node):
 
     def analyze(self):
         if self.atl is not None:
-            self.atl.analyze(None)
+            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
 
 
 class Scene(Node):
@@ -1288,7 +1287,7 @@ class Scene(Node):
 
     def analyze(self):
         if getattr(self, 'atl', None) is not None:
-            self.atl.analyze(None)
+            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
 
 
 class Hide(Node):
