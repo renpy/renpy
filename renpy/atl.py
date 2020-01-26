@@ -774,19 +774,22 @@ class RawBlock(RawStatement):
         # from parameters or do not have them at all.
         # So we can pass an empty context for compilation.
         if self.constant == GLOBAL_CONST:
-            # This may failed if we use another transfrom
-            # which use non constant value.
-            # In this case we also non constant.
-            old_exception_info = renpy.game.exception_info
-            try:
-                block = self.compile(Context({}))
-            except RuntimeError:  # PY3: RecursionError
-                raise Exception("This transform refers to itself in the cycle.")
-            except:
-                self.constant = NOT_CONST
-            else:
-                self.compiled_block = block
-            renpy.game.exception_info = old_exception_info
+            self.compile_block()
+
+    def compile_block(self):
+        # This may failed if we use another transfrom
+        # which use non constant value.
+        # In this case we also non constant.
+        old_exception_info = renpy.game.exception_info
+        try:
+            block = self.compile(Context({}))
+        except RuntimeError:  # PY3: RecursionError
+            raise Exception("This transform refers to itself in the cycle.")
+        except:
+            self.constant = NOT_CONST
+        else:
+            self.compiled_block = block
+        renpy.game.exception_info = old_exception_info
 
     def mark_constant(self, analysis):
 
