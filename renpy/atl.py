@@ -183,15 +183,6 @@ def interpolate(t, a, b, type):  # @ReservedAssignment
 
 def interpolate_spline(t, spline):
 
-    uspline = []
-    for k in spline:
-        if isinstance(k, tuple):
-            if not isinstance(spline[-1], tuple) or isinstance(k[0], tuple):
-                uspline.extend(k)
-                continue
-        uspline.append(k)
-    spline = tuple(uspline) # Now with nested inner tuples flattened
-
     if isinstance(spline[-1], tuple):
         return tuple(interpolate_spline(t, i) for i in zip(*spline))
 
@@ -221,16 +212,16 @@ def interpolate_spline(t, spline):
 
     else:
 
-        # Catmull-Rom (re-adjust the control points)
-        spline = ([spline[1], spline[0]]
-                + list(spline[2:-2])
-                + [spline[-1], spline[-2]])
-
         if t <= 0.0 or t >= 1.0:
 
-            rv = spline[1 if t <= 0.0 else -2]
+            rv = spline[0 if t <= 0.0 else -1]
 
         else:
+
+            # Catmull-Rom (re-adjust the control points)
+            spline = ([spline[1], spline[0]]
+                    + list(spline[2:-2])
+                    + [spline[-1], spline[-2]])
 
             inner_spline_count = float(len(spline) - 3)
 

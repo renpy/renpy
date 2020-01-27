@@ -157,8 +157,7 @@ obtain at the end of the statement. The value can be obtained in several ways:
   is used when there are two and Catmull-Rom is used for three or more knots. 
   In the former two cases, the knot or knots are simply control nodes. For 
   Catmull-Rom, the first and last knot are control nodes (often outside the 
-  displayed path) and the other knots are points the path passes through. 
-  To aid usabilty, it is possible to set a knot value as a tuple of values.
+  displayed path) and the other knots are points the path passes through.
 
 * If the interpolation statement contains a "clockwise" or
   "counterclockwise" clause, circular motion is used, as described below.
