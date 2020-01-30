@@ -64,6 +64,23 @@ init python:
 
         return destination
 
+    def generate_image_placeholder(surface, tmpdir):
+        """
+        Creates a 1/64 thumbnail for small download size.
+        Pixellate first for better graphic results.
+        Will be stretched back when playing.
+        """
+
+        renpy.display.module.pixellate(surface,surface,64,64,64,64)
+        thumbnail = renpy.display.pgrender.transform_scale(surface,
+            (surface.get_width()/64, surface.get_height()/64))
+
+        save_as_png = os.path.join(tmpdir, 'use_png_format.png')
+        best_compression = 9
+        pygame_sdl2.image.save(thumbnail, save_as_png, best_compression)
+
+        return save_as_png
+
     def build_web(p, gui=True):
 
         # Figure out the reporter to use.
@@ -114,6 +131,10 @@ init python:
 
                 remote_files[m.filename[len('game/'):]] = 'image {},{}'.format(w,h)
                 print("extract:", m.filename)
+
+                tmpfile = generate_image_placeholder(surface, tmpdir)
+                placeholder_relpath = os.path.join('_placeholders', m.filename[len('game/'):])
+                zout.write(tmpfile, placeholder_relpath)
             # Musics (but not SFX - no placeholders for short, non-looping sounds)
             elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
                 and m.file_size > MIN_REMOTE_SIZE
