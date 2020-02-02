@@ -127,7 +127,7 @@ init -1500 python in _console:
     import traceback
     import store
 
-    from repr import Repr
+    from reprlib import Repr
     class PrettyRepr(Repr):
         _ellipsis = str("...")
 
