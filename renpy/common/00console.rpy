@@ -168,11 +168,15 @@ init -1500 python in _console:
             iter_x = self._to_shorted_list(x, self.maxlist)
             return self._repr_iterable(iter_x, level, '[', ']')
 
+        repr_RevertableList = repr_list
+
         def repr_set(self, x, level):
             if level <= 0: return "{...}"
 
             iter_x = self._to_shorted_list(x, self.maxset, sort=True)
             return self._repr_iterable(iter_x, level, '{', '}')
+
+        repr_RevertableSet = repr_set
 
         def repr_frozenset(self, x, level):
             if level <= 0: return "frozenset({...})"
@@ -186,6 +190,26 @@ init -1500 python in _console:
             iter_keys = self._to_shorted_list(x, self.maxdict, sort=True)
             iter_x = self._make_pretty_items(x, iter_keys)
             return self._repr_iterable(iter_x, level, '{', '}')
+
+        repr_RevertableDict = repr_dict
+
+        def repr_defaultdict(self, x, level):
+            def_factory = x.default_factory
+            def_factory = self.repr1(def_factory, level)
+            left = "defaultdict(%s, {" % def_factory
+
+            if level <= 0: return left + "...})"
+
+            iter_keys = self._to_shorted_list(x, self.maxdict, sort=True)
+            iter_x = self._make_pretty_items(x, iter_keys)
+            return self._repr_iterable(iter_x, level, left, '})')
+
+        def repr_OrderedDict(self, x, level):
+            if level <= 0: return "OrderedDict({...})"
+
+            iter_keys = self._to_shorted_list(x, self.maxdict)
+            iter_x = self._make_pretty_items(x, iter_keys)
+            return self._repr_iterable(iter_x, level, 'OrderedDict({', '})')
 
 
         class _PrettyDictItem(object):
@@ -284,6 +308,7 @@ init -1500 python in _console:
 
             return [ellipsis if v is x else v for v in iter_x]
 
+
     aRepr = PrettyRepr()
     aRepr.maxtuple = 20
     aRepr.maxlist = 20
@@ -293,12 +318,6 @@ init -1500 python in _console:
     aRepr.maxfrozenset = 20
     aRepr.maxstring = 60
     aRepr.maxother = 200
-
-    aRepr.repr_RevertableList = aRepr.repr_list
-    aRepr.repr_RevertableDict = aRepr.repr_dict
-    aRepr.repr_RevertableSet = aRepr.repr_set
-    aRepr.repr_defaultdict = aRepr.repr_dict
-    aRepr.repr_OrderedDict = aRepr.repr_dict
 
     # The list of traced expressions.
     class TracedExpressionsList(NoRollback, list):
