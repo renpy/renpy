@@ -119,6 +119,7 @@ init -1500 python:
     config.console_callback = None
 
 default persistent._console_short = True
+default persistent._console_unicode_escaping = False
 
 init -1500 python in _console:
     from store import config, persistent, NoRollback
@@ -129,6 +130,23 @@ init -1500 python in _console:
     from repr import Repr
     class PrettyRepr(Repr):
         _ellipsis = str("...")
+
+        def repr_str(self, x, level):
+            s = repr(x)
+            if len(s) > self.maxstring:
+                i = max(0, (self.maxstring - 3) // 2)
+                s = s[:i] + self._ellipsis + s[len(s) - i:]
+            return s
+
+        def repr_unicode(self, x, level):
+            s = repr(x)
+            if not persistent._console_unicode_escaping:
+                s = s.decode("unicode-escape", errors="replace")
+
+            if len(s) > self.maxstring:
+                i = max(0, (self.maxstring - 3) // 2)
+                s = s[:i] + self._ellipsis + s[len(s) - i:]
+            return s
 
         def repr_tuple(self, x, level):
             if level <= 0: return "(...)"
@@ -825,10 +843,17 @@ init -1500 python in _console:
     def short(l):
         persistent._console_short = True
 
-
     @command(_("long: Print the full representation of objects on the console."))
     def long(l):
         persistent._console_short = False
+
+    @command(_("escape: Enables escaping of unicode symbols in unicode strings."))
+    def escape(l):
+        persistent._console_unicode_escaping = True
+
+    @command(_("unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."))
+    def unescape(l):
+        persistent._console_unicode_escaping = False
 
 
 screen _console:
