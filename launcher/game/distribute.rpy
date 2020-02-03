@@ -789,7 +789,7 @@ init python in distribute:
                     script_version_txt = self.temp_filename("script_version.txt")
 
                     with open(script_version_txt, "w") as f:
-                        f.write(repr(renpy.renpy.version_tuple[:-1]))
+                        f.write(unicode(repr(renpy.renpy.version_tuple[:-1])))
 
                     self.add_file("all", "game/script_version.txt", script_version_txt)
 
