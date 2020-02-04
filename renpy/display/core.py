@@ -1849,7 +1849,7 @@ class Interface(object):
             delay, repeat_delay = renpy.config.key_repeat
             pygame.key.set_repeat(int(1000 * delay), int(1000 * repeat_delay))
 
-        if android:
+        if renpy.android:
             android.wakelock(True)
 
         # Block events we don't use.
@@ -2072,7 +2072,7 @@ class Interface(object):
         if renpy.config.save_physical_size and not fullscreen and not old_fullscreen:
             renpy.game.preferences.physical_size = renpy.display.draw.get_physical_size()
 
-        if android:
+        if renpy.android:
             android.init()
 
         # We need to redraw the (now blank) screen.
@@ -2513,7 +2513,7 @@ class Interface(object):
 
         renpy.audio.audio.pause_all()
 
-        if android:
+        if renpy.android:
             android.wakelock(False)
 
         pygame.time.set_timer(PERIODIC, 0)
@@ -2548,7 +2548,7 @@ class Interface(object):
 
         renpy.audio.audio.unpause_all()
 
-        if android:
+        if renpy.android:
             android.wakelock(True)
 
         # Reset the display so we get the GL context back.
@@ -3371,7 +3371,7 @@ class Interface(object):
                 # merge a mouse down and mouse up event with its successor. This
                 # prevents us from getting overwhelmed with too many events on
                 # a multitouch screen.
-                if android and (ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP):
+                if renpy.android and (ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP):
                     pygame.event.clear(ev.type)
 
                 # Handle redraw timeouts.

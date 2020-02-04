@@ -3111,11 +3111,9 @@ def vibrate(duration):
     is only supported on Android.
     """
 
-    try:
+    if renpy.android:
         import android # @UnresolvedImport
         android.vibrate(duration)
-    except:
-        pass
 
 
 def get_say_attributes():
