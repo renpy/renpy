@@ -3242,7 +3242,7 @@ def fsdecode(s):
     if not PY2:
         return s
 
-    if not isinstance(s, str):
+    if not isinstance(s, pystr):
         return s
 
     fsencoding = sys.getfilesystemencoding() or "utf-8"

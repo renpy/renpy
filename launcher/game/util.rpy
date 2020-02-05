@@ -34,7 +34,7 @@ init -1 python in util:
             if not os.path.isdir(d):
                 return [ ]
 
-            return [ i for i in os.listdir(d) if isinstance(i, unicode) ]
+            return [ i for i in os.listdir(d) if isinstance(i, str) ]
 
         except:
             return [ ]
