@@ -344,7 +344,7 @@ init python in project:
                     except:
                         continue
 
-                    m = re.search(r".*#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
+                    m = re.search(r"#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
 
                     if m is None:
                         continue
