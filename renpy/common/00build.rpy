@@ -101,7 +101,7 @@ init -1500 python in build:
         ( "lib/mac-x86_64/**", "mac"),
 
         # Shared patterns.
-        ( "/lib/**", "windows linux mac"),
+        ( "/lib/**", "windows linux mac android"),
         ( "renpy.sh", "linux mac"),
     ])
 
