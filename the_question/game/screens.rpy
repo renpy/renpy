@@ -793,22 +793,24 @@ screen preferences():
                     textbutton _("After Choices") action Preference("after choices", "toggle")
                     textbutton _("Transitions") action InvertSelected(Preference("transitions", "toggle"))
 
+                if renpy.loadable("../../launcher/game/fonts/NanumGothic.ttf"):
+
 #begin language_picker
-                ## Additional vboxes of type "radio_pref" or "check_pref" can be
-                ## added here, to add additional creator-defined preferences.
+                    ## Additional vboxes of type "radio_pref" or "check_pref" can be
+                    ## added here, to add additional creator-defined preferences.
 
-                vbox:
-                    style_prefix "radio"
-                    label _("Language")
+                    vbox:
+                        style_prefix "radio"
+                        label _("Language")
 
-                    textbutton "English" text_font "DejaVuSans.ttf" action Language(None)
-                    textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
-                    textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
-                    textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
-                    textbutton "한국어" text_font "../../launcher/game/fonts/NanumGothic.ttf" action Language("korean")
-                    textbutton "简体中文" text_font "../../launcher/game/fonts/SourceHanSans-Light-Lite.ttf" action Language("simplified_chinese")
-                    textbutton "繁體中文" text_font "../../launcher/game/fonts/SourceHanSans-Light-Lite.ttf" action Language("traditional_chinese")
-                    textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
+                        textbutton "English" text_font "DejaVuSans.ttf" action Language(None)
+                        textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
+                        textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
+                        textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
+                        textbutton "한국어" text_font "../../launcher/game/fonts/NanumGothic.ttf" action Language("korean")
+                        textbutton "简体中文" text_font "../../launcher/game/fonts/SourceHanSans-Light-Lite.ttf" action Language("simplified_chinese")
+                        textbutton "繁體中文" text_font "../../launcher/game/fonts/SourceHanSans-Light-Lite.ttf" action Language("traditional_chinese")
+                        textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
 
 #end language_picker
 
