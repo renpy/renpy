@@ -292,15 +292,15 @@ cdef class GL2Draw:
             renpy.display.log.write("GL Disabled.")
             return False
 
+        if renpy.android:
+            fullscreen = True
+
         print("Using {} renderer.".format(self.info["renderer"]))
 
         if self.did_init:
             self.change_fbo(self.default_fbo)
             self.quit_fbo()
             self.kill_textures()
-
-        if renpy.android:
-            fullscreen = False
 
         # Handle changes in fullscreen mode.
         if fullscreen != self.old_fullscreen:

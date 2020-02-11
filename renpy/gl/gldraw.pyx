@@ -161,7 +161,7 @@ cdef class GLDraw:
             self.kill_textures()
 
         if renpy.android:
-            fullscreen = False
+            fullscreen = True
 
         # Refresh fullscreen status (e.g. user pressed Esc. in browser)
         main_window = pygame.display.get_window()
