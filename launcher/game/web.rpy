@@ -122,8 +122,8 @@ init python:
             # Images
             if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp')
                 and m.file_size > MIN_REMOTE_SIZE
-                and m.filename.startswith('game/')
-                and not m.filename.startswith('game/gui/')):
+                and m.filename.lower().startswith('game/')
+                and not m.filename.lower().startswith('game/gui/')):
 
                 zin.extract(m, path=destination)
                 surface = pygame_sdl2.image.load(os.path.join(destination,m.filename))
@@ -138,7 +138,7 @@ init python:
             # Musics (but not SFX - no placeholders for short, non-looping sounds)
             elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
                 and m.file_size > MIN_REMOTE_SIZE
-                and m.filename.startswith('game/music/')):
+                and m.filename.lower().startswith('game/music/')):
                 zin.extract(m, path=destination)
                 remote_files[m.filename[len('game/'):]] = 'music -'
                 print("extract:", m.filename)
