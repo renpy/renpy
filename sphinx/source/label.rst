@@ -139,7 +139,7 @@ The following labels are used by Ren'Py:
 
 ``splashscreen``
     If it exists, this label is called when the game is first run, before
-    showing the main menu.
+    showing the main menu. Please see :ref:`Adding a Splashscreen <adding_a_splashscreen>`.
 
 ``before_main_menu``
     If it exists, this label is called before the main menu. It is used in
