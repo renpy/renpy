@@ -38,6 +38,7 @@ class Curry(object):
         self.args = args
         self.kwargs = kwargs
         self.__doc__ = getattr(self.callable, "__doc__", None)
+        self.__name__ = getattr(self.callable, "__name__", None)
 
     def __call__(self, *args, **kwargs):
 
@@ -63,7 +64,7 @@ class Curry(object):
     def __hash__(self):
 
         if self.hash is None:
-            self.hash ^= hash(self.callable) ^ hash(self.args)
+            self.hash = hash(self.callable) ^ hash(self.args)
 
             for i in self.kwargs.items():
                 self.hash ^= hash(i)
@@ -81,6 +82,7 @@ def curry(fn):
 
     rv = Curry(Curry, fn)
     rv.__doc__ = getattr(fn, "__doc__", None)
+    rv.__name__ = getattr(fn, "__name__", None)
     return rv
 
 
