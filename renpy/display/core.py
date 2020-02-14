@@ -2502,10 +2502,6 @@ class Interface(object):
 
             renpy.persistent.update(True)
 
-        if ev.type == pygame.APP_TERMINATING:
-            save()
-            sys.exit(0)
-
         if ev.type != pygame.APP_WILLENTERBACKGROUND:
             return False
 
@@ -2534,9 +2530,6 @@ class Interface(object):
 
             if ev.type == pygame.APP_DIDENTERFOREGROUND:
                 break
-
-            if ev.type == pygame.APP_TERMINATING:
-                sys.exit(0)
 
         print("Entering foreground.")
 
@@ -3435,9 +3428,10 @@ class Interface(object):
                     size = (ev.w // self.dpi_scale, ev.h // self.dpi_scale)
 
                     # Refresh fullscreen status (e.g. user pressed Esc. in browser)
-                    main_window = pygame.display.get_window()
-                    self.fullscreen = main_window is not None and bool(main_window.get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
-                    renpy.game.preferences.fullscreen = self.fullscreen
+                    if renpy.emscripten:
+                        main_window = pygame.display.get_window()
+                        self.fullscreen = main_window is not None and bool(main_window.get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+                        renpy.game.preferences.fullscreen = self.fullscreen
 
                     if pygame.display.get_surface().get_size() != ev.size:
                         self.set_mode(size)
