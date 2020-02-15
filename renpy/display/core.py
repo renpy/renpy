@@ -1609,9 +1609,6 @@ class Interface(object):
         # Have we shown the window this interaction?
         self.shown_window = False
 
-        # Are we in fullscren mode?
-        self.fullscreen = False
-
         # Should we ignore the rest of the current touch? Used to ignore the
         # rest of a mousepress after a longpress occurs.
         self.ignore_touch = False
@@ -1653,9 +1650,6 @@ class Interface(object):
 
         # Should we reset the display?
         self.display_reset = False
-
-        # The last size we were resized to.
-        self.last_resize = None
 
         # Should we profile the next frame?
         self.profile_once = False
@@ -2001,18 +1995,12 @@ class Interface(object):
         renpy.display.im.cache.clear()
         renpy.display.module.bo_cache = None
 
-    def set_mode(self, physical_size=None):
+    def before_resize(self):
         """
-        This sets the video mode. It also picks the draw object.
+        This should be called by the draw modules when the screenn resolution
+        changes, before the change occurs.
         """
-
-        # Ensure that we kill off the movie when changing screen res.
-        if renpy.display.draw and renpy.display.draw.info["renderer"] == "sw":
-            renpy.display.video.movie_stop(clear=False)
-
-        renpy.display.render.free_memory()
-        renpy.text.text.layout_cache_clear()
-        renpy.display.module.bo_cache = None
+        self.kill_textures()
 
         if self.display_reset:
 
@@ -2020,62 +2008,11 @@ class Interface(object):
             pygame.key.set_text_input_rect(None) # @UndefinedVariable
             self.text_rect = None
 
-            if renpy.display.draw.info["renderer"] == "angle":
-                renpy.display.draw.quit()
-
-                # This is necessary to fix a bug with restoring a window from
-                # minimized state on windows.
-                pygame.display.quit()
-
             self.kill_textures_and_surfaces()
 
         self.old_text_rect = None
         self.display_reset = False
 
-        virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
-
-        if physical_size is None:
-            if renpy.mobile or renpy.game.preferences.physical_size is None: # @UndefinedVariable
-                physical_size = (None, None)
-            else:
-                physical_size = renpy.game.preferences.physical_size
-
-        # Setup screen.
-        fullscreen = renpy.game.preferences.fullscreen
-
-        old_fullscreen = self.fullscreen
-        self.fullscreen = fullscreen
-
-        if os.environ.get('RENPY_DISABLE_FULLSCREEN', False):
-            fullscreen = False
-            self.fullscreen = renpy.game.preferences.fullscreen
-
-        if renpy.display.draw:
-            draws = [ renpy.display.draw ]
-        else:
-            draws = self.get_draw_constructors()
-
-        for draw in draws:
-            if draw.set_mode(virtual_size, physical_size, fullscreen):
-                renpy.display.draw = draw
-                renpy.display.render.models = draw.info.get("models", False)
-                break
-            else:
-                # pygame.display.quit()
-                pass
-        else:
-            # Ensure we don't get stuck in fullscreen.
-            renpy.game.preferences.fullscreen = False
-            raise Exception("Could not set video mode.")
-
-        # Save the video size.
-        if renpy.config.save_physical_size and not fullscreen and not old_fullscreen:
-            renpy.game.preferences.physical_size = renpy.display.draw.get_physical_size()
-
-        if renpy.android:
-            android.init()
-
-        # We need to redraw the (now blank) screen.
         self.force_redraw = True
 
         # Assume we have focus until told otherwise.
@@ -2093,6 +2030,39 @@ class Interface(object):
 
         # Clear the frame times.
         self.frame_times = [ ]
+
+    def set_mode(self, physical_size=None):
+        """
+        This sets the video mode. It also picks the draw object.
+        """
+
+        virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
+
+        if physical_size is None:
+            if renpy.mobile or renpy.game.preferences.physical_size is None: # @UndefinedVariable
+                physical_size = (None, None)
+            else:
+                physical_size = renpy.game.preferences.physical_size
+
+        if renpy.display.draw:
+            draws = [ renpy.display.draw ]
+        else:
+            draws = self.get_draw_constructors()
+
+        for draw in draws:
+            if draw.set_mode(virtual_size, physical_size):
+                renpy.display.draw = draw
+                renpy.display.render.models = draw.info.get("models", False)
+                break
+            else:
+                pass
+        else:
+            # Ensure we don't get stuck in fullscreen.
+            renpy.game.preferences.fullscreen = False
+            raise Exception("Could not set video mode.")
+
+        if renpy.android:
+            android.init()
 
     def draw_screen(self, root_widget, fullscreen_video, draw):
 
@@ -2549,37 +2519,6 @@ class Interface(object):
         self.restart_interaction = True
 
         return True
-
-    def iconified(self):
-        """
-        Called when we become an icon.
-        """
-
-        if self.minimized:
-            return
-
-        self.minimized = True
-
-        renpy.display.log.write("The window was minimized.")
-
-    def restored(self):
-        """
-        Called when we are restored from being an icon.
-        """
-
-        # This is necessary on Windows/DirectX/Angle, as otherwise we get
-        # a blank screen.
-
-        if not self.minimized:
-            return
-
-        self.minimized = False
-
-        renpy.display.log.write("The window was restored.")
-
-        if renpy.windows:
-            self.display_reset = True
-            self.set_mode(self.last_resize)
 
     def enter_context(self):
         """
@@ -3160,19 +3099,16 @@ class Interface(object):
 
                 renpy.execution.not_infinite_loop(10)
 
-                # Check for a change in fullscreen preference.
-                if ((self.fullscreen != renpy.game.preferences.fullscreen) or
-                        self.display_reset or (renpy.display.draw is None)):
-
-                    self.set_mode()
-                    needs_redraw = True
-
                 # Check for autoreload.
                 renpy.loader.check_autoreload()
 
                 for i in renpy.config.needs_redraw_callbacks:
                     if i():
                         needs_redraw = True
+
+                # Ask if the game has changed size.
+                if renpy.display.draw.check_resize():
+                    needs_redraw = True
 
                 # Redraw the screen.
                 if (self.force_redraw or
@@ -3415,29 +3351,9 @@ class Interface(object):
 
                 # Handle videoresize.
                 if ev.type == pygame.VIDEORESIZE:
-                    evs = pygame.event.get([pygame.VIDEORESIZE])
 
-                    if len(evs):
-                        ev = evs[-1]
-
-                    # We seem to get a spurious event like this when leaving
-                    # fullscreen mode on windows.
-                    if ev.w < 256 or ev.h < 256:
-                        continue
-
-                    size = (ev.w // self.dpi_scale, ev.h // self.dpi_scale)
-
-                    # Refresh fullscreen status (e.g. user pressed Esc. in browser)
-                    if renpy.emscripten:
-                        main_window = pygame.display.get_window()
-                        self.fullscreen = main_window is not None and bool(main_window.get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
-                        renpy.game.preferences.fullscreen = self.fullscreen
-
-                    if pygame.display.get_surface().get_size() != ev.size:
-                        self.set_mode(size)
-
-                    if not self.fullscreen:
-                        self.last_resize = size
+                    renpy.game.interface.full_redraw = True
+                    renpy.game.interface.force_redraw = True
 
                     continue
 
@@ -3480,12 +3396,6 @@ class Interface(object):
 
                     if ev.state & 2:
                         self.keyboard_focused = ev.gain
-
-                    if ev.state & 4:
-                        if ev.gain:
-                            self.restored()
-                        else:
-                            self.iconified()
 
                     pygame.key.set_mods(0)
 
