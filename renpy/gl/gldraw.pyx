@@ -154,7 +154,7 @@ cdef class GLDraw:
         fullscreen = bool(self.window.get_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
 
         # Get the size of the created screen.
-        pwidth, pheight = self.window.get_size()
+        pwidth, pheight = pygame.display.get_size()
         vwidth, vheight = self.virtual_size
 
         renpy.game.preferences.fullscreen = fullscreen
@@ -232,7 +232,7 @@ cdef class GLDraw:
         """
 
         fullscreen = bool(self.window.get_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
-        size =  self.window.get_size()
+        size = pygame.display.get_size()
 
         if (fullscreen != renpy.display.interface.fullscreen) or (size != self.physical_size):
             renpy.display.interface.before_resize()
