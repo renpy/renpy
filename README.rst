@@ -164,3 +164,7 @@ Contributing
 For bug fixes, documentation improvements, and simple changes, just
 make a pull request. For more complex changes, it might make sense
 to file an issue first so we can discuss the design.
+
+.. image:: https://img.shields.io/lgtm/alerts/g/renpy/renpy.svg?logo=lgtm&logoWidth=18
+   :alt: Total alerts on LGTM
+   :target: https://lgtm.com/projects/g/renpy/renpy/alerts/
