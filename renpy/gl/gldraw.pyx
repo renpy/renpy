@@ -551,9 +551,6 @@ cdef class GLDraw:
         else:
             rv = True
 
-        self.rtt.deinit()
-        self.environ.deinit()
-
         if not rv:
             return False
 
