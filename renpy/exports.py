@@ -3190,11 +3190,17 @@ def set_physical_size(size):
     side effect of taking the screen out of fullscreen mode.
     """
 
+    width = int(size[0])
+    height = int(size[1])
+
     renpy.game.preferences.fullscreen = False
 
     if get_renderer_info()["resizable"]:
-        renpy.display.interface.set_mode(size)
-        renpy.display.interface.last_resize = size
+
+        renpy.game.preferences.physical_size = (width, height)
+
+        if renpy.display.draw is not None:
+            renpy.display.draw.resize()
 
 
 def reset_physical_size():
@@ -3206,10 +3212,7 @@ def reset_physical_size():
     side effect of taking the screen out of fullscreen mode.
     """
 
-    renpy.game.preferences.fullscreen = False
-
-    if get_renderer_info()["resizable"]:
-        renpy.display.interface.set_mode((renpy.config.screen_width, renpy.config.screen_height))
+    set_physical_size((renpy.config.screen_width, renpy.config.screen_height))
 
 
 @renpy_pure

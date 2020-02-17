@@ -1555,11 +1555,12 @@ class Renderer(object):
         This shuts dowen the renderer until the next call to ``init``.
         """
 
-    def resize(self, width, height, fullscreen):
+    def resize(self):
         """
-        Attempts to resize the window to `width` and `height`. If (0, 0),
-        the maximum window size is asked for. If `fullscreen` is True, the
-        game is put into fullscreen mode.
+        This is called to implement resizing and changing the fullscreen
+        mode. It is expected to determine the size to use using
+        renpy.game.preferences.physical_size, and the fullscreen mode
+        using renpy.game.preferences.fullscreen.
         """
 
     def can_block(self):
@@ -3308,10 +3309,13 @@ class Interface(object):
                     if i():
                         needs_redraw = True
 
+                # Check for a fullscreen change.
+                if renpy.game.preferences.fullscreen != self.fullscreen:
+                    renpy.display.draw.resize()
+
                 # Ask if the game has changed size.
                 if renpy.display.draw.update(force=self.display_reset):
                     needs_redraw = True
-                    self.display.update = False
 
                 # Redraw the screen.
                 if (self.force_redraw or

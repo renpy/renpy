@@ -143,15 +143,13 @@ cdef class GLDraw:
 
         return gltexture.total_texture_size, gltexture.texture_count
 
-
-
     def on_resize(self):
         """
         This is called after the main window has changed size.
         """
 
         # Are we in fullscreen mode?
-        fullscreen = bool(self.window.get_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+        fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
 
         # Get the size of the created screen.
         pwidth, pheight = pygame.display.get_size()
@@ -225,28 +223,44 @@ cdef class GLDraw:
 
         pass
 
+    def resize(self):
 
-    def check_resize(self):
+        fullscreen = renpy.game.preferences.fullscreen
+
+        if renpy.android or renpy.ios:
+            fullscreen = True
+
+        width = renpy.game.preferences.physical_size[0] or self.virtual_size[0]
+        height = renpy.game.preferences.physical_size[1] or self.virtual_size[1]
+
+        max_w, max_h = self.info["max_window_size"]
+        width = min(width, max_w)
+        height = min(height, max_h)
+        width = max(width, 256)
+        height = max(height, 256)
+
+        pygame.display.get_window().restore()
+        pygame.display.get_window().resize((width, height), opengl=True, fullscreen=fullscreen)
+
+    def update(self, force=False):
         """
-        Called frequently to check to see
+        Documented in renderer.
         """
 
-        fullscreen = bool(self.window.get_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+        fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+
         size = pygame.display.get_size()
 
-        if (fullscreen != renpy.display.interface.fullscreen) or (size != self.physical_size):
+        if force or (fullscreen != renpy.display.interface.fullscreen) or (size != self.physical_size):
             renpy.display.interface.before_resize()
             self.on_resize()
 
             return True
-
         else:
-
             return False
 
 
-
-    def set_mode(self, virtual_size, physical_size):
+    def init(self, virtual_size):
         """
         This changes the video mode. It also initializes OpenGL, if it
         can. It returns True if it was successful, or False if OpenGL isn't
@@ -258,6 +272,11 @@ cdef class GLDraw:
         if not renpy.config.gl_enable:
             renpy.display.log.write("GL Disabled.")
             return False
+
+        if renpy.mobile or renpy.game.preferences.physical_size is None: # @UndefinedVariable
+            physical_size = (None, None)
+        else:
+            physical_size = renpy.game.preferences.physical_size
 
         if renpy.android or renpy.ios:
             fullscreen = True
@@ -402,40 +421,9 @@ cdef class GLDraw:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
                 return False
 
-        self.init()
-        self.on_resize()
-
         if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
+            self.quit()
             return False
-
-        return True
-
-    def quit(self):
-        """
-        This shuts down the module and all use of the GL context.
-        """
-
-        self.kill_textures()
-
-        if self.rtt:
-            self.rtt.deinit()
-
-        if self.environ:
-            self.environ.deinit()
-
-        if not self.old_fullscreen:
-            renpy.display.gl_size = self.physical_size
-
-        gltexture.dealloc_textures()
-        gltexture.free_texture_numbers()
-
-        self.old_fullscreen = None
-
-    def init(self):
-        """
-        This does the first-time initialization of OpenGL, deciding
-        which subsystems to use.
-        """
 
         renpy.uguu.gl.load()
 
@@ -447,7 +435,6 @@ cdef class GLDraw:
         renpy.display.log.write("Renderer: %r", renderer)
         renpy.display.log.write("Version: %r", version)
         renpy.display.log.write("Display Info: %s", self.display_info)
-
 
         if self.gles:
             gltexture.use_gles()
@@ -515,8 +502,8 @@ cdef class GLDraw:
             self.environ = None
 
         if self.environ is None:
-
             renpy.display.log.write("Can't find a workable environment.")
+            self.quit()
             return False
 
         # Pick a Render-to-texture method.
@@ -540,8 +527,8 @@ cdef class GLDraw:
 
         else:
             renpy.display.log.write("Can't find a workable rtt.")
+            self.quit()
             return False
-
 
         renpy.display.log.write("Using {0} renderer.".format(self.info["renderer"]))
 
@@ -559,8 +546,30 @@ cdef class GLDraw:
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()
 
+        self.on_resize()
+
         return True
 
+    def quit(self):
+        """
+        This shuts down the module and all use of the GL context.
+        """
+
+        self.kill_textures()
+
+        if self.rtt:
+            self.rtt.deinit()
+
+        if self.environ:
+            self.environ.deinit()
+
+        if not self.old_fullscreen:
+            renpy.display.gl_size = self.physical_size
+
+        gltexture.dealloc_textures()
+        gltexture.free_texture_numbers()
+
+        self.old_fullscreen = None
 
     def can_block(self):
         """
