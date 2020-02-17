@@ -1503,6 +1503,214 @@ def get_safe_mode():
         return False
 
 
+class Renderer(object):
+    """
+    A Renderer (also known as a draw object) is responsible for drawing a
+    tree of displayables to the window. It also provides other services that
+    involved drawing and the SDL main window, as documented here.
+
+    A Renderer is responsible for updating the renpy.game.preferences.fullscreen
+    and renpy.game.preferencences.physical_size preferences, when these are
+    changed from outside the game.
+
+    A renderer has an info dict, that contains the keys from pygame_sdl2.display.Info(),
+    and then:
+    - "renderer", the name of the Renderer.
+    - "resizable", true if the window can be resized.
+    - "additive", true if additive blendering is supported.
+    - "models", true if model-based rendering is being used.
+    """
+
+    def get_texture_size(self):
+        """
+        This returns a pair contining the total amount of memory consumed by
+        textures, and a count of the number of textures that exist.
+        """
+
+    def update(self, force=False):
+        """
+        This is called before a draw operation to check to see if the state of
+        the draw objects needs to be updated after an external event has occured.
+        Things that require draw updates might be:
+
+        * The window has changed its size.
+        * The window has changed full-screen status.
+        * `force` is given, which generally means that it's likely the GL
+          context has become invalid.
+
+        After this has been called, the system should be in a good state for
+        rendering.
+
+        Returns True if a redraw is required, False otherwise.
+        """
+
+    def init(self, virtual_size):
+        """
+        This creates a renderer with the given `virtual_size`. It returns
+        True of the renderer initialized correctly, False otherwise.
+        """
+
+    def quit(self):
+        """
+        This shuts dowen the renderer until the next call to ``init``.
+        """
+
+    def resize(self, width, height, fullscreen):
+        """
+        Attempts to resize the window to `width` and `height`. If (0, 0),
+        the maximum window size is asked for. If `fullscreen` is True, the
+        game is put into fullscreen mode.
+        """
+
+    def can_block(self):
+        """
+        Returns True if we can block to wait for input, False if the screen
+        needs to be immediately redrawn.
+        """
+
+    def should_redraw(self, needs_redraw, first_pass, can_block):
+        """
+        Determines if the screen needs to be redrawn. Returns True if it
+        does.
+
+        `needs_redraw`
+            True if the needs_redraw flag is set.
+
+        `first_pass`
+            True if this is the first pass through the interact loop.
+
+        `can_block`
+            The value of self.can_block, from above.
+        """
+
+    def mutated_surface(self, surf):
+        """
+        Called to indicated that `surf` has changed and textures based on
+        it should not be used.
+        """
+
+        if surf in self.texture_cache:
+            del self.texture_cache[surf]
+
+    def load_texture(self, surf, transient=False):
+        """
+        Loads a surface into a texture.
+
+        `surf`
+            The pygame.Surface to load.
+
+        `transient`
+            True if the texture is unlikely to be used for more than a single
+            frame.
+        """
+
+    def ready_one_texture(self):
+        """
+        This is called in the main thread to indicate that one texture
+        should be loaded into the GPU.
+        """
+
+    def kill_textures(self):
+        """
+        Removes all cached textures, to free memory.
+        """
+
+    def solid_texture(self, w, h, color):
+        """
+        This is called to create a (`w` x `h`) texture of a single
+        color.
+
+        Returns the texture.
+        """
+
+    def draw_screen(self, surftree, fullscreen_video, flip=True):
+        """
+        This draw the screen.
+
+        `surftree`
+            A Render object (the root of a tree of Render objects) that
+            will be drawn to the screen.
+
+        `fullscreen_video`
+            Ignored.
+
+        `flip`
+            If True, the drawing will be presented to the user.
+        """
+
+    def render_to_texture(self, what, alpha):
+        """
+        Converts `what`, a tree of Renders, to a texture of the same size.
+
+        `alpha`
+            A hint as to if the texture should have an alpha channel.
+        """
+
+    def is_pixel_opaque(self, what, x, y):
+        """
+        Returns true if the pixel is not 100% transparent.
+
+        `what`
+            A tree of renders.
+
+        `x`, `y`
+            The coordinates of the pixels to check.
+        """
+
+    def get_half(self, what):
+        """
+        Gets a texture tat is half the suize of `what`, which may be
+        a texture or a tree of Renders.
+        """
+
+    def translate_point(self, x, y):
+        """
+        Translates (`x`, `y`) from physical to virtual coordinates.
+        """
+
+    def untranslate_point(self, x, y):
+        """
+        Untranslates (`x`, `y`) from virtual to physical coordinates.
+        """
+
+    def mouse_event(self, ev):
+        """
+        This translates the .pos field of `ev` from physical coordinates to
+        virtual coordinates. Returns an (x, y) pait of virtual coordinates.
+        """
+
+    def get_mouse_pos(self):
+        """
+        Returns the x and y coordinates of the mouse, in virtual coordinates.
+        """
+
+    def set_mouse_pos(self, x, y):
+        """
+        Moves the mouse to the virtual coordinates `x` and `y`.
+        """
+
+        x, y = self.untranslate_point(x, y)
+        pygame.mouse.set_pos([x, y])
+
+    def screenshot(self, surftree, fullscreen_video):
+        """
+        This returns a pygame.Surface that is the result of rendering
+        `surftree`, a tree of Renders.
+        """
+        return rv
+
+    def event_peek_sleep(self):
+        """
+        On platforms where CPU usage is gated by the need to redrawe, sleeps
+        a short amount of time to keep the CPU idle.
+        """
+
+    def get_physical_size(self):
+        """
+        Returns the physical size of the window, in physical pixels.
+        """
+
+
 # How long should we be in maximum framerate mode at the start of the game?
 initial_maximum_framerate = 0.0
 
@@ -1980,36 +2188,35 @@ class Interface(object):
         return rv
 
     def kill_textures(self):
+        """
+        Kills all textures that have been loaded.
+        """
+
         if renpy.display.draw is not None:
             renpy.display.draw.kill_textures()
 
         renpy.display.render.free_memory()
         renpy.text.text.layout_cache_clear()
 
-    def kill_textures_and_surfaces(self):
+    def kill_surfaces(self):
         """
-        Kill all textures and surfaces that are loaded.
+        Kills all surfaces that have been loaded.
         """
 
-        self.kill_textures()
         renpy.display.im.cache.clear()
         renpy.display.module.bo_cache = None
 
     def before_resize(self):
         """
-        This should be called by the draw modules when the screenn resolution
-        changes, before the change occurs.
+        This is called when the window has been resized.
         """
+
         self.kill_textures()
 
-        if self.display_reset:
-
-            pygame.key.stop_text_input() # @UndefinedVariable
-            pygame.key.set_text_input_rect(None) # @UndefinedVariable
-            self.text_rect = None
-
-            self.kill_textures_and_surfaces()
-
+        # Stop the resizing.
+        pygame.key.stop_text_input() # @UndefinedVariable
+        pygame.key.set_text_input_rect(None) # @UndefinedVariable
+        self.text_rect = None
         self.old_text_rect = None
         self.display_reset = False
 
@@ -2031,18 +2238,13 @@ class Interface(object):
         # Clear the frame times.
         self.frame_times = [ ]
 
-    def set_mode(self, physical_size=None):
+    def set_mode(self):
         """
-        This sets the video mode. It also picks the draw object.
+        This constructs the draw object and sets the initial size of the
+        window.
         """
 
         virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
-
-        if physical_size is None:
-            if renpy.mobile or renpy.game.preferences.physical_size is None: # @UndefinedVariable
-                physical_size = (None, None)
-            else:
-                physical_size = renpy.game.preferences.physical_size
 
         if renpy.display.draw:
             draws = [ renpy.display.draw ]
@@ -2050,7 +2252,7 @@ class Interface(object):
             draws = self.get_draw_constructors()
 
         for draw in draws:
-            if draw.set_mode(virtual_size, physical_size):
+            if draw.init(virtual_size):
                 renpy.display.draw = draw
                 renpy.display.render.models = draw.info.get("models", False)
                 break
@@ -3107,8 +3309,9 @@ class Interface(object):
                         needs_redraw = True
 
                 # Ask if the game has changed size.
-                if renpy.display.draw.check_resize():
+                if renpy.display.draw.update(force=self.display_reset):
                     needs_redraw = True
+                    self.display.update = False
 
                 # Redraw the screen.
                 if (self.force_redraw or
