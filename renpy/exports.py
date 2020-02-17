@@ -2348,7 +2348,8 @@ def free_memory():
     """
 
     force_full_redraw()
-    renpy.display.interface.kill_textures_and_surfaces()
+    renpy.display.interface.kill_textures()
+    renpy.display.interface.kill_surfaces()
     renpy.text.font.free_memory()
 
 

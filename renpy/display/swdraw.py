@@ -257,7 +257,7 @@ def copy_surface(surf):
     w, h = surf.get_size()
     rv = surface(w, h, True)
 
-    renpy.display.accelerator.nogil_copy(surf, rv)  # @UndefinedVariable
+    renpy.display.accelerator.nogil_copy(surf, rv) # @UndefinedVariable
     return rv
 
 
@@ -316,7 +316,7 @@ def draw_special(what, dest, x, y):
         ramp += b"\xff" * 256
 
         step = int(what.operation_complete * (256 + ramplen))
-        ramp = ramp[step:step+256]
+        ramp = ramp[step:step + 256]
 
         renpy.display.module.imageblend(
             bottom.subsurface((-x, -y, w, h)),
@@ -504,7 +504,7 @@ def draw(dest, clip, what, xo, yo, screen):
 def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
 
     # If our alpha has hit 0, don't do anything.
-    if alpha <= 0.003:  # (1 / 256)
+    if alpha <= 0.003: # (1 / 256)
         return
 
     if forward is None:
@@ -737,7 +737,6 @@ class SWDraw(object):
     def set_mode(self, virtual_size, physical_size, fullscreen):
 
         # Reset before resize.
-        renpy.display.interface.kill_textures_and_surfaces()
         self.reset()
 
         width, height = virtual_size
@@ -870,7 +869,7 @@ class SWDraw(object):
         if self.mouse_location:
             updates.append(self.hide_mouse())
 
-        if tex and pos and renpy.game.interface.mouse_focused:  # @UndefinedVariable
+        if tex and pos and renpy.game.interface.mouse_focused: # @UndefinedVariable
             updates.append(self.show_mouse(pos, info))
 
         return updates
@@ -1120,7 +1119,7 @@ class SWDraw(object):
 
         rle_cache.clear()
 
-    def quit(self):  # @ReservedAssignment
+    def quit(self): # @ReservedAssignment
         """
         Shuts down the drawing system.
         """
