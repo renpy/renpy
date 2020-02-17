@@ -1552,7 +1552,7 @@ class Renderer(object):
 
     def quit(self):
         """
-        This shuts dowen the renderer until the next call to ``init``.
+        This shuts down the renderer until the next call to ``init``.
         """
 
     def resize(self):
@@ -1660,7 +1660,7 @@ class Renderer(object):
 
     def get_half(self, what):
         """
-        Gets a texture tat is half the suize of `what`, which may be
+        Gets a texture that is half the size of `what`, which may be
         a texture or a tree of Renders.
         """
 
@@ -1702,7 +1702,7 @@ class Renderer(object):
 
     def event_peek_sleep(self):
         """
-        On platforms where CPU usage is gated by the need to redrawe, sleeps
+        On platforms where CPU usage is gated by the need to redraw, sleeps
         a short amount of time to keep the CPU idle.
         """
 
