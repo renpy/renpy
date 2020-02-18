@@ -1878,6 +1878,8 @@ class Interface(object):
         except:
             pass
 
+        self.post_init()
+
         # Init timing.
         init_time()
         self.mouse_event_time = get_time()
