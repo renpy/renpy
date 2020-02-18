@@ -221,8 +221,6 @@ cdef class GLDraw:
         # Prepare a mouse display.
         self.mouse_old_visible = None
 
-        pass
-
     def resize(self):
 
         fullscreen = renpy.game.preferences.fullscreen
