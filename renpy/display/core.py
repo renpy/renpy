@@ -1790,6 +1790,9 @@ class Interface(object):
         self.current_context = None
         self.roll_forward = None
 
+        # Are we in fullscreen mode?
+        self.fullscreen = False
+
         # Things to be preloaded.
         self.preloads = [ ]
 
