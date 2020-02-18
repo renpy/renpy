@@ -84,10 +84,6 @@ init -1500:
                         action _SetRenderer("gl")
                         style_suffix "radio_button"
 
-                    textbutton _("Force Software Renderer"):
-                        action _SetRenderer("sw")
-                        style_suffix "radio_button"
-
                     null height 10
 
                     label _("NPOT")
