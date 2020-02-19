@@ -1197,12 +1197,6 @@ cdef class GLDraw:
 
         return x, y
 
-    def update_mouse(self):
-        # The draw routine updates the mouse. There's no need to
-        # redraw it event-by-event.
-
-        return
-
     def mouse_event(self, ev):
         x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
         return self.translate_point(x, y)

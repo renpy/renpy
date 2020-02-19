@@ -3402,9 +3402,6 @@ class Interface(object):
                     if not self.mouse_move.perform():
                         self.mouse_move = None
 
-                # Draw the mouse, if it needs drawing.
-                renpy.display.draw.update_mouse()
-
                 # See if we want to restart the interaction entirely.
                 if self.restart_interaction:
                     return True, None

@@ -773,11 +773,6 @@ class SWDraw(object):
         y *= self.scale_factor
         return (x, y)
 
-    def update_mouse(self):
-        """
-        Draws the mouse, and then updates the screen.
-        """
-
     def mouse_event(self, ev):
         x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
 
