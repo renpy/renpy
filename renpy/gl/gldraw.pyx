@@ -148,6 +148,11 @@ cdef class GLDraw:
         This is called after the main window has changed size.
         """
 
+        self.environ.deinit()
+        self.rtt.deinit()
+
+        pygame.display.get_window().recreate_gl_context()
+
         # Are we in fullscreen mode?
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
 
@@ -220,6 +225,9 @@ cdef class GLDraw:
 
         # Prepare a mouse display.
         self.mouse_old_visible = None
+
+        self.rtt.init()
+        self.environ.init()
 
     def resize(self):
 
@@ -756,7 +764,10 @@ cdef class GLDraw:
 
             renpy.plog(1, "flip")
 
-            pygame.display.flip()
+            try:
+                pygame.display.flip()
+            except pygame.error.error:
+                renpy.game.interface.display_reset = True
 
             end = time.time()
 

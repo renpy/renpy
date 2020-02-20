@@ -325,3 +325,11 @@ class ShaderCache(object):
                 self.missing.add(partnames)
 
         f.close()
+
+    def clear(self):
+        """
+        Clears the shader cache and the shaders inside it.
+        """
+
+        self.cache.clear()
+        self.missing.clear()

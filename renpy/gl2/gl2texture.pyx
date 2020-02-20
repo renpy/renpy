@@ -63,7 +63,9 @@ cdef class TextureLoader:
         self.texture_load_queue = weakref.WeakSet()
         self.draw = draw
 
-        self.ftl_program = draw.shader_cache.get(("renpy.ftl",))
+    def init(self):
+
+        self.ftl_program = self.draw.shader_cache.get(("renpy.ftl",))
 
     def quit(self):
         """

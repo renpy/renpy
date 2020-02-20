@@ -430,6 +430,9 @@ cdef class GL2Draw:
 
         if not first:
             self.quit_fbo()
+            self.shader_cache.clear()
+
+        pygame.display.get_window().recreate_gl_context()
 
         # Are we in fullscreen mode?
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
@@ -502,6 +505,8 @@ cdef class GL2Draw:
         self.draw_to_virt = Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
 
         self.init_fbo()
+        self.texture_loader.init()
+
 
     def resize(self):
         """
@@ -732,7 +737,10 @@ cdef class GL2Draw:
 
         renpy.plog(1, "flip")
 
-        pygame.display.flip()
+        try:
+            pygame.display.flip()
+        except pygame.error.error:
+            renpy.game.interface.display_reset = True
 
         end = time.time()
 
