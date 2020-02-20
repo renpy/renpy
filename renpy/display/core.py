@@ -1624,16 +1624,13 @@ class Renderer(object):
         Returns the texture.
         """
 
-    def draw_screen(self, surftree, fullscreen_video, flip=True):
+    def draw_screen(self, surftree, flip=True):
         """
         This draw the screen.
 
         `surftree`
             A Render object (the root of a tree of Render objects) that
             will be drawn to the screen.
-
-        `fullscreen_video`
-            Ignored.
 
         `flip`
             If True, the drawing will be presented to the user.
@@ -1693,12 +1690,11 @@ class Renderer(object):
         x, y = self.untranslate_point(x, y)
         pygame.mouse.set_pos([x, y])
 
-    def screenshot(self, surftree, fullscreen_video):
+    def screenshot(self, surftree):
         """
         This returns a pygame.Surface that is the result of rendering
         `surftree`, a tree of Renders.
         """
-        return rv
 
     def event_peek_sleep(self):
         """
@@ -2287,7 +2283,7 @@ class Interface(object):
             )
 
         if draw:
-            renpy.display.draw.draw_screen(surftree, fullscreen_video)
+            renpy.display.draw.draw_screen(surftree)
 
         now = time.time()
 
@@ -2330,7 +2326,7 @@ class Interface(object):
 
         else:
 
-            surf = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
+            surf = renpy.display.draw.screenshot(self.surftree)
 
         surf = renpy.display.scale.smoothscale(surf, scale)
 
@@ -2350,7 +2346,7 @@ class Interface(object):
 
         if self.bgscreenshot_needed:
             self.bgscreenshot_needed = False
-            self.bgscreenshot_surface = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
+            self.bgscreenshot_surface = renpy.display.draw.screenshot(self.surftree)
             self.bgscreenshot_event.set()
 
     def get_screenshot(self):
@@ -2387,7 +2383,7 @@ class Interface(object):
         Saves a full-size screenshot in the given filename.
         """
 
-        window = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
+        window = renpy.display.draw.screenshot(self.surftree)
 
         if renpy.config.screenshot_crop:
             window = window.subsurface(renpy.config.screenshot_crop)

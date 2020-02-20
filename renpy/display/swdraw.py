@@ -704,9 +704,6 @@ class SWDraw(object):
         # 1px border around it iff we're scaling.
         self.window = None
 
-        # Did we show fullscreen video in the last frame?
-        self.showing_video = False
-
     def get_texture_size(self):
         return 0, 0
 
@@ -796,7 +793,7 @@ class SWDraw(object):
 
         return pygame.mouse.set_pos([x, y])
 
-    def screenshot(self, surftree, fullscreen_video):
+    def screenshot(self, surftree):
         """
         Returns a pygame surface containing a screenshot.
         """
@@ -842,27 +839,10 @@ class SWDraw(object):
 
         return True
 
-    def draw_screen(self, surftree, fullscreen_video):
+    def draw_screen(self, surftree):
         """
         Draws the screen.
         """
-
-        if fullscreen_video:
-
-            if not self.showing_video:
-                self.window.fill((0, 0, 0, 255))
-
-            w, h = self.window.get_size()
-            frame = renpy.display.video.render_movie("movie", w, h)
-
-            if frame is not None:
-                surftree = frame
-
-            self.full_redraw = True
-            self.showing_video = True
-
-        else:
-            self.showing_video = False
 
         updates = [ ]
 

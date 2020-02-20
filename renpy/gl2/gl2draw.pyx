@@ -413,14 +413,14 @@ cdef class GL2Draw:
             # give back control to browser regularly
             self.redraw_period = 0.1
 
+        # Prepare a mouse display.
+        self.mouse_old_visible = None
+
         self.shader_cache = ShaderCache("cache/shaders.txt", self.gles)
         self.shader_cache.load()
 
         # Initialize the texture loader.
         self.texture_loader = TextureLoader(self)
-
-        # Prepare a mouse display.
-        self.mouse_old_visible = None
 
         self.on_resize(first=True)
 
@@ -753,7 +753,7 @@ cdef class GL2Draw:
                     renpy.plog(1, "after broken vsync sleep")
 
 
-    def draw_screen(self, render_tree, fullscreen_video, flip=True):
+    def draw_screen(self, render_tree, flip=True):
         """
         Draws the screen.
         """
@@ -1011,7 +1011,7 @@ cdef class GL2Draw:
 
         # TODO.
 
-    def screenshot(self, render_tree, fullscreen_video):
+    def screenshot(self, render_tree):
         cdef unsigned char *pixels
         cdef SDL_Surface *surf
 
@@ -1028,7 +1028,7 @@ cdef class GL2Draw:
 
         # Draw the last screen to the back buffer.
         if render_tree is not None:
-            self.draw_screen(render_tree, fullscreen_video, flip=False)
+            self.draw_screen(render_tree, flip=False)
             glFinish()
 
         # Read the pixels.

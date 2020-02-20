@@ -700,7 +700,7 @@ cdef class GLDraw:
         self.environ.set_clip(clip, self)
 
 
-    def draw_screen(self, surftree, fullscreen_video, flip=True):
+    def draw_screen(self, surftree, flip=True):
         """
         Draws the screen.
         """
@@ -1250,7 +1250,7 @@ cdef class GLDraw:
             self.environ,
             False)
 
-    def screenshot(self, surftree, fullscreen_video):
+    def screenshot(self, surftree):
         cdef unsigned char *pixels
         cdef SDL_Surface *surf
 
@@ -1267,7 +1267,7 @@ cdef class GLDraw:
 
         # Draw the last screen to the back buffer.
         if surftree is not None:
-            self.draw_screen(surftree, fullscreen_video, flip=False)
+            self.draw_screen(surftree, flip=False)
             glFinish()
 
         # Read the pixels.
