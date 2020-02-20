@@ -71,9 +71,13 @@ init python:
         Will be stretched back when playing.
         """
 
-        renpy.display.module.pixellate(surface,surface,32,32,32,32)
-        thumbnail = renpy.display.pgrender.transform_scale(surface,
-            (surface.get_width()/64, surface.get_height()/64))
+        if surface.get_width() > 32 and surface.get_height() > 32:
+            renpy.display.module.pixellate(surface,surface,32,32,32,32)
+            thumbnail = renpy.display.pgrender.transform_scale(surface,
+                (surface.get_width()/32, surface.get_height()/32))
+        else:
+            # avoid unsupported 0-width or 0-height picture
+            thumbnail = surface
 
         save_as_png = os.path.join(tmpdir, 'use_png_format.png')
         best_compression = 9
