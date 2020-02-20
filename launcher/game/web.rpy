@@ -109,10 +109,32 @@ init python:
         distribute.Distributor(p, packages=[ "web" ], packagedest=os.path.join(destination, "game"), reporter=reporter, noarchive=True, scan=False)
 
         # Filter out downloadable resources
+        path_filters = []
+        rules_path = os.path.join(p.path,'progressive_download.txt')
+        if not os.path.exists(rules_path):
+            open(rules_path, 'w').write(
+                "# RenPyWeb progressive download rules - first match applies\n"
+                + "# '+' = progressive download, '-' = keep in game.zip (default)\n"
+                + "# See https://www.renpy.org/doc/html/build.html#classifying-and-ignoring-files for matching\n"
+                + "#\n"
+                + "# +/- type path\n"
+                + '- image game/gui/**\n'
+                + '+ image game/**\n'
+                + '+ music game/music/**\n')
+        for line in open(rules_path, 'r').readlines():
+            if line.startswith('#'):
+                continue
+            (f_rule, f_type, f_pattern) = line.rstrip("\r\n").split(' ', 3-1)
+            f_rule = {'+': True, '-': False}.get(f_rule)
+            path_filters.append((f_rule, f_type, f_pattern))
+
+        def filter_match(path, type):
+            for (f_rule, f_type, f_pattern) in path_filters:
+                if type == f_type and distribute.match(path, f_pattern):
+                    return f_rule
+            return False
+
         reporter.info(_("Preparing downloadable files"))
-        MIN_REMOTE_SIZE=50*1024
-        # TODO: configurable min_size? use archives to better describe web distribution?
-        # TODO: predict/include title screen's resources for a smooth start (no black blink)
         shutil.move(
             os.path.join(destination, 'game.zip'),
             os.path.join(destination, 'game-old.zip'))
@@ -125,9 +147,7 @@ init python:
             base, ext = os.path.splitext(m.filename)
             # Images
             if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp')
-                and m.file_size > MIN_REMOTE_SIZE
-                and m.filename.lower().startswith('game/')
-                and not m.filename.lower().startswith('game/gui/')):
+                and filter_match(m.filename, 'image')):
 
                 zin.extract(m, path=destination)
                 surface = pygame_sdl2.image.load(os.path.join(destination,m.filename))
@@ -141,8 +161,7 @@ init python:
                 zout.write(tmpfile, placeholder_relpath)
             # Musics (but not SFX - no placeholders for short, non-looping sounds)
             elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
-                and m.file_size > MIN_REMOTE_SIZE
-                and m.filename.lower().startswith('game/music/')):
+                and filter_match(m.filename, 'music')):
                 zin.extract(m, path=destination)
                 remote_files[m.filename[len('game/'):]] = 'music -'
                 print("extract:", m.filename)
