@@ -66,12 +66,12 @@ init python:
 
     def generate_image_placeholder(surface, tmpdir):
         """
-        Creates a 1/64 thumbnail for small download size.
+        Creates a 1/32 thumbnail for small download size.
         Pixellate first for better graphic results.
         Will be stretched back when playing.
         """
 
-        renpy.display.module.pixellate(surface,surface,64,64,64,64)
+        renpy.display.module.pixellate(surface,surface,32,32,32,32)
         thumbnail = renpy.display.pgrender.transform_scale(surface,
             (surface.get_width()/64, surface.get_height()/64))
 
