@@ -766,7 +766,8 @@ cdef class GLDraw:
 
             try:
                 pygame.display.flip()
-            except pygame.error.error:
+            except pygame.error:
+                print("Flip failed.")
                 renpy.game.interface.display_reset = True
 
             end = time.time()

@@ -739,7 +739,7 @@ cdef class GL2Draw:
 
         try:
             pygame.display.flip()
-        except pygame.error.error:
+        except pygame.error:
             renpy.game.interface.display_reset = True
 
         end = time.time()
