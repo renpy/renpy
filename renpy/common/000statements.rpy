@@ -130,7 +130,7 @@ python early hide:
             try:
                 renpy.loader.load(fn)
             except renpy.webloader.DownloadNeeded, exception:
-                renpy.webloader.enqueue(exception.relpath, 'sound', None)
+                renpy.webloader.enqueue(exception.relpath, 'music', None)
         return [ ]
 
     def lint_play_music(p, channel="music"):

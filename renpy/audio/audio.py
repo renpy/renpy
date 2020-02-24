@@ -73,7 +73,7 @@ def load(fn):
     try:
         rv = renpy.loader.load(fn)
     except renpy.webloader.DownloadNeeded, exception:
-        renpy.webloader.enqueue(exception.relpath, 'sound', None)
+        renpy.webloader.enqueue(exception.relpath, 'music', None)
         # temporary placeholder:
         rv = open(os.path.join(renpy.config.commondir,'_dl_silence.ogg'), 'rb')
     return rv

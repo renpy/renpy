@@ -175,7 +175,7 @@ class ReloadRequest:
         return self.xhr.readyState == 4
 
     def __repr__(self):
-        return u"<ReloadRequest '{}' {}>".format(self.relpath, self.download_completed())
+        return u"<ReloadRequest {} '{}' {}>".format(self.rtype, self.relpath, self.download_completed())
 
 
 def enqueue(relpath, rtype, data):
