@@ -2077,19 +2077,22 @@ class Interface(object):
 
         if icon:
 
-            im = renpy.display.scale.image_load_unscaled(
-                renpy.loader.load(icon),
-                icon,
-                )
+            try:
+                im = renpy.display.scale.image_load_unscaled(
+                    renpy.loader.load(icon),
+                    icon,
+                    )
 
-            # Convert the aspect ratio to be square.
-            iw, ih = im.get_size()
-            imax = max(iw, ih)
-            square_im = renpy.display.pgrender.surface_unscaled((imax, imax), True)
-            square_im.blit(im, ((imax - iw) // 2, (imax - ih) // 2))
-            im = square_im
+                # Convert the aspect ratio to be square.
+                iw, ih = im.get_size()
+                imax = max(iw, ih)
+                square_im = renpy.display.pgrender.surface_unscaled((imax, imax), True)
+                square_im.blit(im, ((imax - iw) // 2, (imax - ih) // 2))
+                im = square_im
 
-            pygame.display.set_icon(im)
+                pygame.display.set_icon(im)
+            except renpy.webloader.DownloadNeeded:
+                pass
 
     def set_window_caption(self, force=False):
 
@@ -2937,13 +2940,21 @@ class Interface(object):
                 self.consider_gc()
                 step += 1
 
-            # Step 2: Push textures to GPU.
+            # Step 2: Load downloaded resources
             elif step == 2:
+
+                if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+                    renpy.webloader.process_downloaded_resources()
+
+                step += 1
+
+            # Step 3: Push textures to GPU.
+            elif step == 3:
                 renpy.display.draw.ready_one_texture()
                 step += 1
 
-            # Step 3: Predict more images.
-            elif step == 3:
+            # Step 4: Predict more images.
+            elif step == 4:
 
                 if not self.prediction_coroutine:
                     step += 1
@@ -2964,16 +2975,16 @@ class Interface(object):
                     if not expensive:
                         step += 1
 
-            # Step 4: Preload images (on emscripten)
-            elif step == 4:
+            # Step 5: Preload images (on emscripten)
+            elif step == 5:
 
                 if expensive and renpy.emscripten:
                     renpy.display.im.cache.preload_thread_pass()
 
                 step += 1
 
-            # Step 5: Autosave.
-            elif step == 5:
+            # Step 6: Autosave.
+            elif step == 6:
 
                 if not self.did_autosave:
                     renpy.loadsave.autosave()

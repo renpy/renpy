@@ -27,12 +27,14 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import *
 
 import renpy.display
+import renpy.webloader
 
 import math
 import zipfile
 import threading
 import time
 import io
+import os.path
 
 
 # This is an entry in the image cache.
@@ -95,7 +97,7 @@ class Cache(object):
         # A lock that must be held when updating the cache.
         self.lock = threading.Condition()
 
-        # A lock that mist be held to notify the preload thread.
+        # A lock that must be held to notify the preload thread.
         self.preload_lock = threading.Condition()
 
         # Is the preload_thread alive?
@@ -637,10 +639,24 @@ class Image(ImageBase):
 
         try:
 
+            exception = None
+            try:
+                filelike = renpy.loader.load(self.filename)
+                filename = self.filename
+            except renpy.webloader.DownloadNeeded, exception:
+                renpy.webloader.enqueue(exception.relpath, 'image', self.filename)
+                # temporary placeholder:
+                filelike = open(os.path.join('_placeholders',exception.relpath), 'rb')
+                filename = 'use_png_format.png'
+
             if unscaled:
-                surf = renpy.display.pgrender.load_image_unscaled(renpy.loader.load(self.filename), self.filename)
+                surf = renpy.display.pgrender.load_image_unscaled(filelike, filename)
             else:
-                surf = renpy.display.pgrender.load_image(renpy.loader.load(self.filename), self.filename)
+                surf = renpy.display.pgrender.load_image(filelike, filename)
+
+            if exception is not None:
+                # avoid size-related exceptions (e.g. Crop on a smaller placeholder)
+                surf = renpy.display.pgrender.transform_scale(surf, exception.size)
 
             return surf
 

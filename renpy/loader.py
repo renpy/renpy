@@ -31,6 +31,7 @@ import threading
 import zlib
 import re
 import io
+from renpy.webloader import DownloadNeeded
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
 # to look up filenames.
@@ -172,6 +173,9 @@ def index_archives():
     for dir, fn in listdirfiles(): # @ReservedAssignment
         lower_map[fn.lower()] = fn
 
+    for fn in remote_files:
+        lower_map[fn.lower()] = fn
+
 
 def walkdir(dir): # @ReservedAssignment
     rv = [ ]
@@ -205,6 +209,9 @@ common_files = [ ]
 
 # A map from filename to if the file is loadable.
 loadable_cache = { }
+
+# A map from filename to if the file is downloadable.
+remote_files = { }
 
 
 def cleardirfiles():
@@ -255,6 +262,27 @@ def scandirfiles():
             f = "/".join(i[2:] for i in f.split("/"))
 
             add(None, f)
+
+    # HTML5 remote files
+    if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+        index_filename = os.path.join(renpy.config.gamedir,'renpyweb_remote_files.txt')
+        if os.path.exists(index_filename):
+            files = game_files
+            with open(index_filename, 'rb') as remote_index:
+                while True:
+                    f = remote_index.readline()
+                    metadata = remote_index.readline()
+                    if f == '' or metadata == '':  # end of file
+                        break
+
+                    f = f.rstrip("\r\n")
+                    metadata = metadata.rstrip("\r\n")
+                    (entry_type,entry_size) = metadata.split(' ')
+                    if entry_type == 'image':
+                        entry_size = [int(i) for i in entry_size.split(',')]
+
+                    add('/game', f)
+                    remote_files[f] = {'type':entry_type,'size':entry_size}
 
     for i in renpy.config.searchpath:
 
@@ -521,6 +549,9 @@ def load_core(name):
 
         return rv
 
+    if remote_files.has_key(name):
+        raise DownloadNeeded(relpath=name, size=remote_files[name]['size'])
+
     return None
 
 
@@ -566,7 +597,8 @@ def load(name, tl=True):
 
     if renpy.display.predict.predicting: # @UndefinedVariable
         if threading.current_thread().name == "MainThread":
-            raise Exception("Refusing to open {} while predicting.".format(name))
+            if not (renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False)):
+                raise Exception("Refusing to open {} while predicting.".format(name))
 
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
@@ -608,6 +640,10 @@ def loadable_core(name):
         if name in index:
             loadable_cache[name] = True
             return True
+
+    if remote_files.has_key(name):
+        loadable_cache[name] = True
+        return name
 
     loadable_cache[name] = False
     return False
