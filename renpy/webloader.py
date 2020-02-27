@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -128,7 +128,6 @@ elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
                     with queue_lock:
                         with open(fullpath, 'wb') as f:
                             f.write(r.read())
-                    #print("downloaded:", url, '>', fullpath)
                 except urllib2.URLError, e:
                     self.error = str(e.reason)
                 except httplib.HTTPException, e:
@@ -168,7 +167,6 @@ class ReloadRequest:
         self.rtype = rtype
         self.data = data
         self.gc_gen = 0
-        #print("download_start:", self.relpath)
         self.xhr = XMLHttpRequest(self.relpath)
 
     def download_completed(self):
@@ -219,7 +217,6 @@ def process_downloaded_resources():
                         raise IOError("Download error: {} ('{}' > '{}')".format(
                             (rr.xhr.statusText or "network error"), rr.relpath, fullpath))
 
-                    #print("reloading", rr.relpath)
                     image_filename = rr.data
                     renpy.exports.flush_cache_file(image_filename)
 
@@ -243,13 +240,8 @@ def process_downloaded_resources():
 
     if reload_needed:
         # Refresh the screen and re-load images flushed from cache
-        #renpy.exports.force_full_redraw()  # no effect on already show-n images
-        #renpy.game.interface.set_mode()  # heavy, don't respect aspect ratio
-        renpy.display.render.free_memory()  # FIXME: be more precise?
-
-        # Reset prediction to preload downloaded images without waiting for next interaction
-        #if len(queue) == 0:
-        #    renpy.exports.restart_interaction()  # TODO: safe?
+        # Note: done at next Ren'Py interaction (prediction reset)
+        renpy.display.render.free_memory()
 
     # Free files from memory once they are loaded
     # Due to search-path dups and derived images (including image-based animations)
@@ -258,6 +250,5 @@ def process_downloaded_resources():
     for fullpath in to_unlink.keys():
         delta = time.time() - to_unlink[fullpath]
         if delta > ttl:
-            #print("unlink", fullpath)
             os.unlink(fullpath)
             del to_unlink[fullpath]

@@ -31,6 +31,7 @@ init python:
     import tempfile
     import time
     import pygame_sdl2
+    import zipfile
 
     WEB_PATH = None
 
@@ -66,7 +67,7 @@ init python:
 
     def generate_image_placeholder(surface, tmpdir):
         """
-        Creates a 1/32 thumbnail for small download size.
+        Creates size-efficient 1/32 thumbnail for use as download preview.
         Pixellate first for better graphic results.
         Will be stretched back when playing.
         """
@@ -84,6 +85,113 @@ init python:
         pygame_sdl2.image.save(thumbnail, save_as_png, best_compression)
 
         return save_as_png
+
+    def load_filters(p, path_filters):
+        """
+        Type- and path-based filtering, following
+        progressive_download.txt rules (created with default rules if
+        not there already).  Assumes prior filtering based on
+        hard-coded list of file extensions.
+        """
+
+        rules_path = os.path.join(p.path,'progressive_download.txt')
+        if not os.path.exists(rules_path):
+            open(rules_path, 'w').write(
+                "# RenPyWeb progressive download rules - first match applies\n"
+                + "# '+' = progressive download, '-' = keep in game.zip (default)\n"
+                + "# See https://www.renpy.org/doc/html/build.html#classifying-and-ignoring-files for matching\n"
+                + "#\n"
+                + "# +/- type path\n"
+                + '- image game/gui/**\n'
+                + '+ image game/**\n'
+                + '+ music game/music/**\n')
+
+        # Parse rules
+        for line in open(rules_path, 'r').readlines():
+            if line.startswith('#'):
+                continue
+            (f_rule, f_type, f_pattern) = line.rstrip("\r\n").split(' ', 3-1)
+            f_rule = {'+': True, '-': False}.get(f_rule)
+            path_filters.append((f_rule, f_type, f_pattern))
+
+    def filters_match(path_filters, path, path_type):
+        """
+        Returns whether path matches a progressive download rule
+        """
+        for (f_rule, f_type, f_pattern) in path_filters:
+            if path_type == f_type and distribute.match(path, f_pattern):
+                return f_rule
+        return False
+
+    def repack_for_progressive_download(p):
+        """
+        Filter out downloadable resources and generate placeholders
+        """
+
+        destination = get_web_destination(p)
+
+        path_filters = []
+        load_filters(p, path_filters)
+
+        shutil.move(
+            os.path.join(destination, 'game.zip'),
+            os.path.join(destination, 'game-old.zip'))
+        zin  = zipfile.ZipFile(os.path.join(destination, 'game-old.zip'))
+        zout = zipfile.ZipFile(os.path.join(destination, 'game.zip'), 'w')
+        remote_files = {}
+        tmpdir = tempfile.mkdtemp()
+
+        for m in zin.infolist():
+
+            base, ext = os.path.splitext(m.filename)
+
+            # Images
+            if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp')
+                and filters_match(path_filters, m.filename, 'image')):
+
+                zin.extract(m, path=destination)
+                surface = pygame_sdl2.image.load(os.path.join(destination,m.filename))
+                (w,h) = (surface.get_width(),surface.get_height())
+
+                remote_files[m.filename[len('game/'):]] = 'image {},{}'.format(w,h)
+
+                tmpfile = generate_image_placeholder(surface, tmpdir)
+                placeholder_relpath = os.path.join('_placeholders', m.filename[len('game/'):])
+                zout.write(tmpfile, placeholder_relpath)
+
+            # Musics (but not SFX - no placeholders for short, non-looping sounds)
+            elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
+                and filters_match(path_filters, m.filename, 'music')):
+                zin.extract(m, path=destination)
+                remote_files[m.filename[len('game/'):]] = 'music -'
+
+            # Videos are currently not supported, strip them if not already
+            elif (ext.lower() in ('.ogv', '.webm', '.mp4', '.mkv', '.avi')):
+                pass
+
+            # Default: keep (extract & recompress to new .zip)
+            else:
+                # Not using zout.writestr(m, zin.read(m)) to avoid MemoryError
+                tmpfile = zin.extract(m, tmpdir)
+                date_time = time.mktime(m.date_time+(0,0,0))
+                os.utime(tmpfile, (date_time,date_time))
+                zout.write(tmpfile, m.filename, m.compress_type)
+
+        # Prepare a list of remote files for renpy.loader
+        remote_files_str = ''
+        for f in sorted(remote_files):
+            remote_files_str += f + "\n"
+            remote_files_str += remote_files[f] + "\n"
+        zout.writestr('game/renpyweb_remote_files.txt',
+                      remote_files_str,
+                      zipfile.ZIP_DEFLATED)
+
+        # Clean-up
+        shutil.rmtree(tmpdir)
+        zout.close()
+        zin.close()
+        os.unlink(os.path.join(destination, 'game-old.zip'))
+
 
     def build_web(p, gui=True):
 
@@ -108,86 +216,8 @@ init python:
         # Use the distributor to make game.zip.
         distribute.Distributor(p, packages=[ "web" ], packagedest=os.path.join(destination, "game"), reporter=reporter, noarchive=True, scan=False)
 
-        # Filter out downloadable resources
-        path_filters = []
-        rules_path = os.path.join(p.path,'progressive_download.txt')
-        if not os.path.exists(rules_path):
-            open(rules_path, 'w').write(
-                "# RenPyWeb progressive download rules - first match applies\n"
-                + "# '+' = progressive download, '-' = keep in game.zip (default)\n"
-                + "# See https://www.renpy.org/doc/html/build.html#classifying-and-ignoring-files for matching\n"
-                + "#\n"
-                + "# +/- type path\n"
-                + '- image game/gui/**\n'
-                + '+ image game/**\n'
-                + '+ music game/music/**\n')
-        for line in open(rules_path, 'r').readlines():
-            if line.startswith('#'):
-                continue
-            (f_rule, f_type, f_pattern) = line.rstrip("\r\n").split(' ', 3-1)
-            f_rule = {'+': True, '-': False}.get(f_rule)
-            path_filters.append((f_rule, f_type, f_pattern))
-
-        def filter_match(path, type):
-            for (f_rule, f_type, f_pattern) in path_filters:
-                if type == f_type and distribute.match(path, f_pattern):
-                    return f_rule
-            return False
-
-        reporter.info(_("Preparing downloadable files"))
-        shutil.move(
-            os.path.join(destination, 'game.zip'),
-            os.path.join(destination, 'game-old.zip'))
-        import zipfile
-        zin  = zipfile.ZipFile(os.path.join(destination, 'game-old.zip'))
-        zout = zipfile.ZipFile(os.path.join(destination, 'game.zip'), 'w')
-        remote_files = {}
-        tmpdir = tempfile.mkdtemp()
-        for m in zin.infolist():
-            base, ext = os.path.splitext(m.filename)
-            # Images
-            if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp')
-                and filter_match(m.filename, 'image')):
-
-                zin.extract(m, path=destination)
-                surface = pygame_sdl2.image.load(os.path.join(destination,m.filename))
-                (w,h) = (surface.get_width(),surface.get_height())
-
-                remote_files[m.filename[len('game/'):]] = 'image {},{}'.format(w,h)
-                print("extract:", m.filename)
-
-                tmpfile = generate_image_placeholder(surface, tmpdir)
-                placeholder_relpath = os.path.join('_placeholders', m.filename[len('game/'):])
-                zout.write(tmpfile, placeholder_relpath)
-            # Musics (but not SFX - no placeholders for short, non-looping sounds)
-            elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
-                and filter_match(m.filename, 'music')):
-                zin.extract(m, path=destination)
-                remote_files[m.filename[len('game/'):]] = 'music -'
-                print("extract:", m.filename)
-            # Videos are currently not supported, strip them if not already
-            elif (ext.lower() in ('.ogv', '.webm', '.mp4', '.mkv', '.avi')):
-                pass
-                print("exclude:", m.filename)
-            # Default: extract & recompress
-            else:
-                # Not using zout.writestr(m, zin.read(m)) to avoid MemoryError
-                tmpfile = zin.extract(m, tmpdir)
-                date_time = time.mktime(m.date_time+(0,0,0))
-                os.utime(tmpfile, (date_time,date_time))
-                zout.write(tmpfile, m.filename, m.compress_type)
-                print("keep:", m.filename)
-        shutil.rmtree(tmpdir)
-        zin.close()
-        remote_files_str = ''
-        for f in sorted(remote_files):
-            remote_files_str += f + "\n"
-            remote_files_str += remote_files[f] + "\n"
-        zout.writestr('game/renpyweb_remote_files.txt',
-                      remote_files_str,
-                      zipfile.ZIP_DEFLATED)
-        zout.close()
-        os.unlink(os.path.join(destination, 'game-old.zip'))
+        reporter.info(_("Preparing progressive download"))
+        repack_for_progressive_download(p)
 
         # Copy the files from WEB_PATH to destination.
         for fn in os.listdir(WEB_PATH):
@@ -285,7 +315,7 @@ screen web():
                         style "l_indent"
                         has vbox
 
-                        text _("Ren'Py web applications require the entire game to be downloaded to the player's computer before it can start.")
+                        text _("Images and musics can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior.")
 
                         add SPACER
 

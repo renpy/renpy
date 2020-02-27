@@ -545,7 +545,6 @@ def load_core(name):
         return rv
 
     if remote_files.has_key(name):
-        #print("load_core: fallback for", name)
         raise DownloadNeeded(relpath=name, size=remote_files[name]['size'])
 
     return None
