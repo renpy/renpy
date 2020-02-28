@@ -239,58 +239,6 @@ init -1500 python:
     # The image that we fill the screen with in GL-test mode.
     config.gl_test_image = "black"
 
-    class __GLTest(renpy.Displayable):
-        """
-         This counts the number of times it's been rendered, and
-         the number of seconds it's been displayed, and uses them
-         to make the decisions as to if OpenGL is working or not.
-         """
-
-        def __init__(self, frames, fps, timeout):
-            super(__GLTest, self).__init__()
-
-            self.target = 1.0 * frames / fps
-            self.frames = frames
-            self.timeout = timeout
-
-            self.times = [ ]
-            self.success = False
-
-            renpy.renpy.display.log.write("- Target is {0} frames in {1} seconds.".format(frames, self.target))
-
-        def render(self, width, height, st, at):
-            rv = renpy.Render(width, height)
-
-            if self.success:
-                return rv
-
-            self.times.append(st)
-
-            renpy.redraw(self, 0)
-
-            renpy.renpy.display.log.write("- Frame drawn at %f seconds." % st)
-
-            if len(self.times) >= self.frames:
-                frames_timing = self.times[-1] - self.times[-self.frames]
-
-                renpy.renpy.display.log.write("- %f seconds to render %d frames.", frames_timing, self.frames)
-
-                if frames_timing <= self.target:
-                    self.success = True
-                    renpy.timeout(0)
-
-            return rv
-
-        def event(self, ev, x, y, st):
-
-            if self.success:
-                return True
-
-            if st > self.timeout:
-                return False
-
-            renpy.timeout(self.timeout - st)
-
     config.performance_test = True
 
     def __gl_test():
