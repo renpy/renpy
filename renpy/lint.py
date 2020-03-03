@@ -618,10 +618,24 @@ def check_label(node):
 
 
 def check_screen(node):
-
     if (node.screen.parameters is None) and renpy.config.lint_screens_without_parameters:
         report("The screen %s has not been given a parameter list.", node.screen.name)
         add("This can be fixed by writing 'screen %s():' instead.", node.screen.name)
+
+
+def check_screen_variable_in_string_format(node):
+    string_format_regex = re.compile(r'^".*%"*\s%*(\w.*)')
+
+    const_ast = node.screen.const_ast
+    if const_ast:
+        for child in const_ast.children:
+            if isinstance(child, renpy.sl2.slast.SLDisplayable):
+                if str(child.displayable) == "<class 'renpy.text.text.Text'>":
+                    match = string_format_regex.search(child.positional[0])
+                    if match:
+                        varname = match.groups()[0]
+                        report("ExpressionNotConst: Text displayables using string format with percentage symbol inside a screen may cause performance issues.")
+                        add("Use text substitution instead: \"[{}]\"".format(varname))
 
 
 def check_styles():
@@ -804,6 +818,7 @@ def lint():
         elif isinstance(node, renpy.ast.Screen):
             screen_count += 1
             check_screen(node)
+            check_screen_variable_in_string_format(node)
 
         elif isinstance(node, renpy.ast.Define):
             check_define(node, "define")
