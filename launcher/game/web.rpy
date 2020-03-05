@@ -104,7 +104,9 @@ init python:
                 + "# +/- type path\n"
                 + '- image game/gui/**\n'
                 + '+ image game/**\n'
-                + '+ music game/music/**\n')
+                + '+ music game/music/**\n'
+                + '+ voice game/voice/**\n'
+            )
 
         # Parse rules
         for line in open(rules_path, 'r').readlines():
@@ -164,6 +166,12 @@ init python:
                 and filters_match(path_filters, m.filename, 'music')):
                 zin.extract(m, path=destination)
                 remote_files[m.filename[len('game/'):]] = 'music -'
+
+            # Voices
+            elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
+                and filters_match(path_filters, m.filename, 'voice')):
+                zin.extract(m, path=destination)
+                remote_files[m.filename[len('game/'):]] = 'voice -'
 
             # Videos are currently not supported, strip them if not already
             elif (ext.lower() in ('.ogv', '.webm', '.mp4', '.mkv', '.avi')):
