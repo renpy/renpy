@@ -550,7 +550,7 @@ def load_core(name):
         return rv
 
     if remote_files.has_key(name):
-        raise DownloadNeeded(relpath=name, size=remote_files[name]['size'])
+        raise DownloadNeeded(relpath=name, rtype=remote_files[name]['type'], size=remote_files[name]['size'])
 
     return None
 

@@ -156,8 +156,9 @@ elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
 
 
 class DownloadNeeded(Exception):
-    def __init__(self, relpath, size):
+    def __init__(self, relpath, rtype, size):
         self.relpath = relpath
+        self.rtype = rtype
         self.size = size
 
 
@@ -189,6 +190,12 @@ def enqueue(relpath, rtype, data):
                     return
             elif rr.rtype == rtype == 'music' and rr.relpath == relpath:
                 return
+            elif rr.rtype == rtype == 'voice':
+                if rr.relpath == relpath:
+                    return
+                if len([True for rr in queue if rr.type == 'voice']) > renpy.config.predict_statements:
+                    # don't stack skipped dialogs
+                    return
         queue.append(ReloadRequest(relpath, rtype, data))
 
 
@@ -230,6 +237,11 @@ def process_downloaded_resources():
                     #   will be reloaded on sound loop
                     # - no unlink
                     pass
+
+                elif rr.rtype == 'voice':
+                    # mark for deletion as it's a one-time usage (a bit delayed)
+                    fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
+                    to_unlink[fullpath] = time.time() + 120
 
                 # TODO: videos (when web support is implemented)
 
