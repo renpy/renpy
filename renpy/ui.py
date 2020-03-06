@@ -655,9 +655,6 @@ soundstopbehavior = Wrapper(renpy.display.behavior.SoundStopBehavior)
 
 def _key(key, action=None, activate_sound=None):
 
-    if action is None:
-        raise Exception("Action is required in ui.key.")
-
     return renpy.display.behavior.Keymap(activate_sound=activate_sound, **{ key : action})
 
 
