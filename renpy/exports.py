@@ -2348,7 +2348,8 @@ def free_memory():
     """
 
     force_full_redraw()
-    renpy.display.interface.kill_textures_and_surfaces()
+    renpy.display.interface.kill_textures()
+    renpy.display.interface.kill_surfaces()
     renpy.text.font.free_memory()
 
 
@@ -3111,11 +3112,9 @@ def vibrate(duration):
     is only supported on Android.
     """
 
-    try:
+    if renpy.android:
         import android # @UnresolvedImport
         android.vibrate(duration)
-    except:
-        pass
 
 
 def get_say_attributes():
@@ -3191,11 +3190,17 @@ def set_physical_size(size):
     side effect of taking the screen out of fullscreen mode.
     """
 
+    width = int(size[0])
+    height = int(size[1])
+
     renpy.game.preferences.fullscreen = False
 
     if get_renderer_info()["resizable"]:
-        renpy.display.interface.set_mode(size)
-        renpy.display.interface.last_resize = size
+
+        renpy.game.preferences.physical_size = (width, height)
+
+        if renpy.display.draw is not None:
+            renpy.display.draw.resize()
 
 
 def reset_physical_size():
@@ -3207,10 +3212,7 @@ def reset_physical_size():
     side effect of taking the screen out of fullscreen mode.
     """
 
-    renpy.game.preferences.fullscreen = False
-
-    if get_renderer_info()["resizable"]:
-        renpy.display.interface.set_mode((renpy.config.screen_width, renpy.config.screen_height))
+    set_physical_size((renpy.config.screen_width, renpy.config.screen_height))
 
 
 @renpy_pure
@@ -3244,7 +3246,7 @@ def fsdecode(s):
     if not PY2:
         return s
 
-    if not isinstance(s, str):
+    if not isinstance(s, pystr):
         return s
 
     fsencoding = sys.getfilesystemencoding() or "utf-8"

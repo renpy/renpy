@@ -6,5 +6,4 @@ cdef class Mesh2(Mesh):
     # The geometry of the points.
     cdef Point2 *point
 
-    cpdef Mesh2 copy(Mesh2 self)
     cpdef Mesh2 crop(Mesh2 self, Polygon p)

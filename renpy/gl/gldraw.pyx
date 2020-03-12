@@ -143,8 +143,130 @@ cdef class GLDraw:
 
         return gltexture.total_texture_size, gltexture.texture_count
 
+    def on_resize(self):
+        """
+        This is called after the main window has changed size.
+        """
 
-    def set_mode(self, virtual_size, physical_size, fullscreen):
+        self.environ.deinit()
+        self.rtt.deinit()
+
+        pygame.display.get_window().recreate_gl_context()
+
+        # Are we in fullscreen mode?
+        fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+
+        # Get the size of the created screen.
+        pwidth, pheight = pygame.display.get_size()
+        vwidth, vheight = self.virtual_size
+
+        renpy.game.preferences.fullscreen = fullscreen
+        renpy.game.interface.fullscreen = fullscreen
+
+        if not fullscreen:
+            renpy.game.preferences.physical_size = pwidth, pheight
+
+        self.physical_size = (pwidth, pheight)
+        self.drawable_size = pygame.display.get_drawable_size()
+
+        renpy.display.log.write("Screen sizes: virtual=%r physical=%r drawable=%r" % (self.virtual_size, self.physical_size, self.drawable_size))
+
+        if renpy.config.adjust_view_size is not None:
+            view_width, view_height = renpy.config.adjust_view_size(pwidth, pheight)
+        else:
+
+            # Figure out the virtual box, which includes padding around
+            # the borders.
+            physical_ar = 1.0 * pwidth / pheight
+
+            ratio = min(1.0 * pwidth / vwidth, 1.0 * pheight / vheight)
+
+            view_width = max(int(vwidth * ratio), 1)
+            view_height = max(int(vheight * ratio), 1)
+
+        px_padding = pwidth - view_width
+        py_padding = pheight - view_height
+
+        x_padding = px_padding * vwidth / view_width
+        y_padding = py_padding * vheight / view_height
+
+        # The position of the physical screen, in virtual pixels
+        # (x, y, w, h). Since the physical screen will always contain
+        # the virtual screen, the corners are often off the virtual
+        # screen.
+        self.virtual_box = (
+            -x_padding / 2.0,
+            -y_padding / 2.0,
+             vwidth + x_padding,
+             vheight + y_padding)
+
+        # The location of the virtual screen on the physical screen, in
+        # physical pixels. (May not be 100% accurate, but it's good
+        # enough for screenshots.)
+        self.physical_box = (
+            int(px_padding / 2),
+            int(py_padding / 2),
+            pwidth - int(px_padding),
+            pheight - int(py_padding),
+            )
+
+        # Scale from the rtt size to the virtual size.
+        if renpy.config.use_drawable_resolution:
+            self.draw_per_virt = (1.0 * self.drawable_size[0] / pwidth) * (1.0 * view_width / vwidth)
+        else:
+            self.draw_per_virt = 1.0
+
+        self.virt_to_draw = Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
+        self.draw_to_virt = Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
+
+        # Set some default settings.
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+
+        # Prepare a mouse display.
+        self.mouse_old_visible = None
+
+        self.rtt.init()
+        self.environ.init()
+
+    def resize(self):
+
+        fullscreen = renpy.game.preferences.fullscreen
+
+        if renpy.android or renpy.ios:
+            fullscreen = True
+
+        width = renpy.game.preferences.physical_size[0] or self.virtual_size[0]
+        height = renpy.game.preferences.physical_size[1] or self.virtual_size[1]
+
+        max_w, max_h = self.info["max_window_size"]
+        width = min(width, max_w)
+        height = min(height, max_h)
+        width = max(width, 256)
+        height = max(height, 256)
+
+        pygame.display.get_window().restore()
+        pygame.display.get_window().resize((width, height), opengl=True, fullscreen=fullscreen)
+
+    def update(self, force=False):
+        """
+        Documented in renderer.
+        """
+
+        fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+
+        size = pygame.display.get_size()
+
+        if force or (fullscreen != renpy.display.interface.fullscreen) or (size != self.physical_size):
+            renpy.display.interface.before_resize()
+            self.on_resize()
+
+            return True
+        else:
+            return False
+
+
+    def init(self, virtual_size):
         """
         This changes the video mode. It also initializes OpenGL, if it
         can. It returns True if it was successful, or False if OpenGL isn't
@@ -157,32 +279,15 @@ cdef class GLDraw:
             renpy.display.log.write("GL Disabled.")
             return False
 
-        if self.did_init:
-            self.kill_textures()
+        if renpy.mobile or renpy.game.preferences.physical_size is None: # @UndefinedVariable
+            physical_size = (None, None)
+        else:
+            physical_size = renpy.game.preferences.physical_size
 
-        if renpy.android:
-            fullscreen = False
-
-        # Refresh fullscreen status (e.g. user pressed Esc. in browser)
-        main_window = pygame.display.get_window()
-        self.old_fullscreen = main_window is not None and bool(main_window.get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP|pygame.WINDOW_FULLSCREEN))
-
-        if fullscreen != self.old_fullscreen:
-
-            self.did_init = False
-
-            if renpy.windows and (self.old_fullscreen is not None):
-                renpy.display.interface.kill_textures_and_surfaces()
-                pygame.display.quit()
-
-            pygame.display.init()
-
-            if self.display_info is None:
-                self.display_info = renpy.display.get_info()
-
-            self.old_fullscreen = fullscreen
-
-            renpy.display.interface.post_init()
+        if renpy.android or renpy.ios:
+            fullscreen = True
+        else:
+            fullscreen = renpy.game.preferences.fullscreen
 
         renpy.display.log.write("")
 
@@ -204,13 +309,6 @@ cdef class GLDraw:
 
         info = renpy.display.get_info()
 
-        old_surface = pygame.display.get_surface()
-        if old_surface is not None:
-            maximized = old_surface.get_flags() & pygame.WINDOW_MAXIMIZED
-        else:
-            maximized = False
-
-
         visible_w = info.current_w
         visible_h = info.current_h
 
@@ -229,17 +327,16 @@ cdef class GLDraw:
         bound_w = min(vwidth, visible_w, head_w)
         bound_h = min(vwidth, visible_h, head_h)
 
-        if (not renpy.mobile) and (not maximized):
+        self.info["max_window_size"] = (
+            int(round(min(bound_h * virtual_ar, bound_w))),
+            int(round(min(bound_w / virtual_ar, bound_h))),
+            )
 
-            pwidth = min(visible_w, pwidth)
-            pheight = min(visible_h, pheight)
+        if renpy.windows or renpy.linux or renpy.macintosh:
 
-            # The first time through.
-            if not self.did_init:
-                pwidth = min(pwidth, head_w)
-                pheight = min(pheight, head_h)
-
-                pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
+            pwidth = min(visible_w, pwidth, head_w)
+            pheight = min(visible_h, pheight, head_h)
+            pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
 
         pwidth = int(round(pwidth))
         pheight = int(round(pheight))
@@ -330,117 +427,9 @@ cdef class GLDraw:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
                 return False
 
-        # Get the size of the created screen.
-        pwidth, pheight = self.window.get_size()
-
-        self.physical_size = (pwidth, pheight)
-        self.drawable_size = pygame.display.get_drawable_size()
-
-        renpy.display.log.write("Screen sizes: virtual=%r physical=%r drawable=%r" % (self.virtual_size, self.physical_size, self.drawable_size))
-
-        if renpy.config.adjust_view_size is not None:
-            view_width, view_height = renpy.config.adjust_view_size(pwidth, pheight)
-        else:
-
-            # Figure out the virtual box, which includes padding around
-            # the borders.
-            physical_ar = 1.0 * pwidth / pheight
-
-            ratio = min(1.0 * pwidth / vwidth, 1.0 * pheight / vheight)
-
-            view_width = max(int(vwidth * ratio), 1)
-            view_height = max(int(vheight * ratio), 1)
-
-        px_padding = pwidth - view_width
-        py_padding = pheight - view_height
-
-        x_padding = px_padding * vwidth / view_width
-        y_padding = py_padding * vheight / view_height
-
-        # The position of the physical screen, in virtual pixels
-        # (x, y, w, h). Since the physical screen will always contain
-        # the virtual screen, the corners are often off the virtual
-        # screen.
-        self.virtual_box = (
-            -x_padding / 2.0,
-            -y_padding / 2.0,
-             vwidth + x_padding,
-             vheight + y_padding)
-
-        # The location of the virtual screen on the physical screen, in
-        # physical pixels. (May not be 100% accurate, but it's good
-        # enough for screenshots.)
-        self.physical_box = (
-            int(px_padding / 2),
-            int(py_padding / 2),
-            pwidth - int(px_padding),
-            pheight - int(py_padding),
-            )
-
-        # Scale from the rtt size to the virtual size.
-        if renpy.config.use_drawable_resolution:
-            self.draw_per_virt = (1.0 * self.drawable_size[0] / pwidth) * (1.0 * view_width / vwidth)
-        else:
-            self.draw_per_virt = 1.0
-
-        self.virt_to_draw = Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
-        self.draw_to_virt = Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
-
-        if not self.did_init:
-            if not self.init():
-                return False
-
         if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
+            self.quit()
             return False
-
-        self.did_init = True
-
-        # Set some default settings.
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
-
-        # Prepare a mouse display.
-        self.mouse_old_visible = None
-
-        self.environ.init()
-        self.rtt.init()
-
-        if self.window.get_flags() & pygame.WINDOW_MAXIMIZED:
-            self.info["max_window_size"] = self.window.get_size()
-        else:
-            self.info["max_window_size"] = (
-                int(round(min(bound_h * virtual_ar, bound_w))),
-                int(round(min(bound_w / virtual_ar, bound_h))),
-                )
-
-        return True
-
-    def quit(self):
-        """
-        This shuts down the module and all use of the GL context.
-        """
-
-        self.kill_textures()
-
-        if self.rtt:
-            self.rtt.deinit()
-
-        if self.environ:
-            self.environ.deinit()
-
-        if not self.old_fullscreen:
-            renpy.display.gl_size = self.physical_size
-
-        gltexture.dealloc_textures()
-        gltexture.free_texture_numbers()
-
-        self.old_fullscreen = None
-
-    def init(self):
-        """
-        This does the first-time initialization of OpenGL, deciding
-        which subsystems to use.
-        """
 
         renpy.uguu.gl.load()
 
@@ -452,7 +441,6 @@ cdef class GLDraw:
         renpy.display.log.write("Renderer: %r", renderer)
         renpy.display.log.write("Version: %r", version)
         renpy.display.log.write("Display Info: %s", self.display_info)
-
 
         if self.gles:
             gltexture.use_gles()
@@ -520,8 +508,8 @@ cdef class GLDraw:
             self.environ = None
 
         if self.environ is None:
-
             renpy.display.log.write("Can't find a workable environment.")
+            self.quit()
             return False
 
         # Pick a Render-to-texture method.
@@ -545,8 +533,8 @@ cdef class GLDraw:
 
         else:
             renpy.display.log.write("Can't find a workable rtt.")
+            self.quit()
             return False
-
 
         renpy.display.log.write("Using {0} renderer.".format(self.info["renderer"]))
 
@@ -556,9 +544,6 @@ cdef class GLDraw:
         else:
             rv = True
 
-        self.rtt.deinit()
-        self.environ.deinit()
-
         if not rv:
             return False
 
@@ -567,8 +552,30 @@ cdef class GLDraw:
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()
 
+        self.on_resize()
+
         return True
 
+    def quit(self):
+        """
+        This shuts down the module and all use of the GL context.
+        """
+
+        self.kill_textures()
+
+        if self.rtt:
+            self.rtt.deinit()
+
+        if self.environ:
+            self.environ.deinit()
+
+        if not self.old_fullscreen:
+            renpy.display.gl_size = self.physical_size
+
+        gltexture.dealloc_textures()
+        gltexture.free_texture_numbers()
+
+        self.old_fullscreen = None
 
     def can_block(self):
         """
@@ -701,7 +708,7 @@ cdef class GLDraw:
         self.environ.set_clip(clip, self)
 
 
-    def draw_screen(self, surftree, fullscreen_video, flip=True):
+    def draw_screen(self, surftree, flip=True):
         """
         Draws the screen.
         """
@@ -757,7 +764,11 @@ cdef class GLDraw:
 
             renpy.plog(1, "flip")
 
-            pygame.display.flip()
+            try:
+                pygame.display.flip()
+            except pygame.error:
+                print("Flip failed.")
+                renpy.game.interface.display_reset = True
 
             end = time.time()
 
@@ -1198,12 +1209,6 @@ cdef class GLDraw:
 
         return x, y
 
-    def update_mouse(self):
-        # The draw routine updates the mouse. There's no need to
-        # redraw it event-by-event.
-
-        return
-
     def mouse_event(self, ev):
         x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
         return self.translate_point(x, y)
@@ -1257,7 +1262,7 @@ cdef class GLDraw:
             self.environ,
             False)
 
-    def screenshot(self, surftree, fullscreen_video):
+    def screenshot(self, surftree):
         cdef unsigned char *pixels
         cdef SDL_Surface *surf
 
@@ -1274,7 +1279,7 @@ cdef class GLDraw:
 
         # Draw the last screen to the back buffer.
         if surftree is not None:
-            self.draw_screen(surftree, fullscreen_video, flip=False)
+            self.draw_screen(surftree, flip=False)
             glFinish()
 
         # Read the pixels.

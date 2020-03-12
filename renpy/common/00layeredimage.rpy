@@ -800,6 +800,8 @@ python early in layeredimage:
 
         if name == "auto" or name == "default" or name == "multiple":
             expr = "True"
+        elif name == "at":
+            expr = l.require(l.comma_expression)
         else:
             expr = l.require(l.simple_expression)
 

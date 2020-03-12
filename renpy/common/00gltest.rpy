@@ -24,10 +24,6 @@
 
 init -1500:
 
-    python hide:
-        import os
-        store.__dxwebsetup = os.path.join(config.renpy_base, "lib", "windows-i686", "dxwebsetup.exe")
-
     python:
         class _SetRenderer(Action):
             """
@@ -75,31 +71,32 @@ init -1500:
                         action _SetRenderer("auto")
                         style_suffix "radio_button"
 
-                    if renpy.renpy.windows:
-                        textbutton _("Force Angle/DirectX Renderer"):
-                            action _SetRenderer("angle")
+                    if not config.gl2:
+
+                        if renpy.renpy.windows:
+                            textbutton _("Force ANGLE Renderer"):
+                                action _SetRenderer("angle")
+                                style_suffix "radio_button"
+
+                        textbutton _("Force GL Renderer"):
+                            action _SetRenderer("gl")
                             style_suffix "radio_button"
 
-                    textbutton _("Force OpenGL Renderer"):
-                        action _SetRenderer("gl")
+                        textbutton _("Force GLES Renderer"):
+                            action _SetRenderer("gles")
+                            style_suffix "radio_button"
+
+                    if renpy.renpy.windows:
+                        textbutton _("Force ANGLE2 Renderer"):
+                            action _SetRenderer("angle2")
+                            style_suffix "radio_button"
+
+                    textbutton _("Force GL2 Renderer"):
+                        action _SetRenderer("gl2")
                         style_suffix "radio_button"
 
-                    textbutton _("Force Software Renderer"):
-                        action _SetRenderer("sw")
-                        style_suffix "radio_button"
-
-                    null height 10
-
-                    label _("NPOT")
-
-                    null height 10
-
-                    textbutton _("Enable"):
-                        action SetField(_preferences, "gl_npot", True)
-                        style_suffix "radio_button"
-
-                    textbutton _("Disable"):
-                        action SetField(_preferences, "gl_npot", False)
+                    textbutton _("Force GLES2 Renderer"):
+                        action _SetRenderer("gles2")
                         style_suffix "radio_button"
 
 
@@ -197,8 +194,6 @@ init -1500:
     #
     # `problem` is the kind of problem that is occuring. It can be:
     # - "sw" if the software renderer was selected.
-    # - "slow" if the performance test failed.
-    # - "fixed" if we're operating w/o shaders.
     # - other things, added in the future.
     #
     # `url` is the url of a web page on renpy.org that will include
@@ -216,26 +211,12 @@ init -1500:
 
             if problem == "sw":
                 text _("This computer is using software rendering.")
-            elif problem == "fixed":
-                text _("This computer is not using shaders.")
-            elif problem == "slow":
-                text _("This computer is displaying graphics slowly.")
             else:
                 text _("This computer has a problem displaying graphics: [problem].") substitute True
 
             null height 10
 
-            if directx_update:
-                text _("Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem.")
-            else:
-                text _("Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display.")
-
-            if directx_update:
-                null height 10
-
-                textbutton _("Update DirectX"):
-                    action directx_update
-                    xfill True
+            text _("Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display.")
 
             null height 10
 
@@ -253,87 +234,10 @@ init -1500:
                 action Quit(confirm=False)
                 xfill True
 
-    # Used while a directx update is ongoing.
-    screen _directx_update:
-
-        frame:
-            style_group ""
-
-            has vbox
-
-            label _("Updating DirectX.")
-
-            null height 10
-
-            text _("DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX.")
-
-            null height 10
-
-            text _("{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box.")
-
-            null height 10
-
-            text _("When setup finishes, please click below to restart this program.")
-
-            textbutton _("Restart") action Return(True)
-
-
 
 init -1500 python:
     # The image that we fill the screen with in GL-test mode.
     config.gl_test_image = "black"
-
-    class __GLTest(renpy.Displayable):
-        """
-         This counts the number of times it's been rendered, and
-         the number of seconds it's been displayed, and uses them
-         to make the decisions as to if OpenGL is working or not.
-         """
-
-        def __init__(self, frames, fps, timeout):
-            super(__GLTest, self).__init__()
-
-            self.target = 1.0 * frames / fps
-            self.frames = frames
-            self.timeout = timeout
-
-            self.times = [ ]
-            self.success = False
-
-            renpy.renpy.display.log.write("- Target is {0} frames in {1} seconds.".format(frames, self.target))
-
-        def render(self, width, height, st, at):
-            rv = renpy.Render(width, height)
-
-            if self.success:
-                return rv
-
-            self.times.append(st)
-
-            renpy.redraw(self, 0)
-
-            renpy.renpy.display.log.write("- Frame drawn at %f seconds." % st)
-
-            if len(self.times) >= self.frames:
-                frames_timing = self.times[-1] - self.times[-self.frames]
-
-                renpy.renpy.display.log.write("- %f seconds to render %d frames.", frames_timing, self.frames)
-
-                if frames_timing <= self.target:
-                    self.success = True
-                    renpy.timeout(0)
-
-            return rv
-
-        def event(self, ev, x, y, st):
-
-            if self.success:
-                return True
-
-            if st > self.timeout:
-                return False
-
-            renpy.timeout(self.timeout - st)
 
     config.performance_test = True
 
@@ -388,47 +292,18 @@ init -1500 python:
 
         renderer_info = renpy.get_renderer_info()
 
-        if config.gl2 and not renderer_info.get("models", False):
-            problem = "fixed"
-
         # Software renderer check.
-        elif config.renderer != "sw" and renderer_info["renderer"] == "sw":
+        if config.renderer != "sw" and renderer_info["renderer"] == "sw":
             problem = "sw"
-
-        # Speed check.
-        if problem is None:
-
-            # The parameters of the performance test. If we do not hit FPS fps
-            # over FRAMES frames before DELAY seconds are up, we fail.
-            FRAMES = 5
-            FPS = 15
-            DELAY = 1.5
-
-            renpy.transition(Dissolve(DELAY), always=True, force=True)
-            ui.add(__GLTest(FRAMES, FPS, DELAY))
-            result = ui.interact(suppress_overlay=True, suppress_underlay=True)
-
-            if not result:
-                problem = "slow"
-
-        # Lack of shaders check.
-        if problem is None:
-            if not "RENPY_GL_ENVIRON" in os.environ:
-                if renderer_info["renderer"] == "gl" and renderer_info["environ"] == "fixed":
-                    problem = "fixed"
 
         if problem is None:
             return
 
-        if renpy.renpy.windows and os.path.exists(__dxwebsetup):
-            directx_update = Jump("_directx_update")
-        else:
-            directx_update = None
+        directx_update = None
 
         # Give the warning message to the user.
         renpy.show_screen("_performance_warning", problem=problem, directx_update=directx_update, _transient=True)
         result = ui.interact(suppress_overlay=True, suppress_underlay=True)
-
 
         # Store the user's choice, and continue.
         _preferences.performance_test = result
@@ -448,27 +323,6 @@ label _gl_test:
     scene black
 
     return
-
-# We can assume we're on windows here. We're also always restart once we
-# make it here.
-label _directx_update:
-
-    if renpy.has_label("directx_update"):
-        jump expression "directx_update"
-
-label _directx_update_main:
-
-    python hide:
-
-        # Start dxsetup. We have to go through startfile to ensure that UAC
-        # doesn't cause problems.
-        import os
-        os.startfile(__dxwebsetup)
-
-        renpy.show_screen("_directx_update")
-        ui.interact(suppress_overlay=True, suppress_underlay=True)
-
-        renpy.quit(relaunch=True)
 
 label _choose_renderer:
     scene expression "#000"

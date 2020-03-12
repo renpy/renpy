@@ -61,7 +61,7 @@ def get_path(fn):
 # Asset Loading
 
 
-try:
+if renpy.android:
     import android.apk
 
     expansion = os.environ.get("ANDROID_EXPANSION", None)
@@ -85,7 +85,7 @@ try:
 
         game_apks = [ apks[0] ]
 
-except ImportError:
+else:
     apks = [ ]
     game_apks = [ ]
 

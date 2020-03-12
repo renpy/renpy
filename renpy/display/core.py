@@ -1156,7 +1156,7 @@ class SceneLists(renpy.object.Object):
         be displayed, or everything will be removed.
         """
 
-        for i in range(len(self.layers[layer]) - 1, 0, -1):
+        for i in range(len(self.layers[layer]) - 1, -1, -1):
 
             sle = self.layers[layer][i]
 
@@ -1211,7 +1211,7 @@ class SceneLists(renpy.object.Object):
 
             # Have to iterate in reverse order, since otherwise
             # the indexes might change.
-            for i in range(len(self.layers[layer]) - 1, 0, -1):
+            for i in range(len(self.layers[layer]) - 1, -1, -1):
                 self.hide_or_replace(layer, i, hide)
 
         self.at_list[layer].clear()
@@ -1503,6 +1503,211 @@ def get_safe_mode():
         return False
 
 
+class Renderer(object):
+    """
+    A Renderer (also known as a draw object) is responsible for drawing a
+    tree of displayables to the window. It also provides other services that
+    involved drawing and the SDL main window, as documented here.
+
+    A Renderer is responsible for updating the renpy.game.preferences.fullscreen
+    and renpy.game.preferencences.physical_size preferences, when these are
+    changed from outside the game.
+
+    A renderer has an info dict, that contains the keys from pygame_sdl2.display.Info(),
+    and then:
+    - "renderer", the name of the Renderer.
+    - "resizable", true if the window can be resized.
+    - "additive", true if additive blendering is supported.
+    - "models", true if model-based rendering is being used.
+    """
+
+    def get_texture_size(self):
+        """
+        This returns a pair contining the total amount of memory consumed by
+        textures, and a count of the number of textures that exist.
+        """
+
+    def update(self, force=False):
+        """
+        This is called before a draw operation to check to see if the state of
+        the draw objects needs to be updated after an external event has occured.
+        Things that require draw updates might be:
+
+        * The window has changed its size.
+        * The window has changed full-screen status.
+        * `force` is given, which generally means that it's likely the GL
+          context has become invalid.
+
+        After this has been called, the system should be in a good state for
+        rendering.
+
+        Returns True if a redraw is required, False otherwise.
+        """
+
+    def init(self, virtual_size):
+        """
+        This creates a renderer with the given `virtual_size`. It returns
+        True of the renderer initialized correctly, False otherwise.
+        """
+
+    def quit(self):
+        """
+        This shuts down the renderer until the next call to ``init``.
+        """
+
+    def resize(self):
+        """
+        This is called to implement resizing and changing the fullscreen
+        mode. It is expected to determine the size to use using
+        renpy.game.preferences.physical_size, and the fullscreen mode
+        using renpy.game.preferences.fullscreen.
+        """
+
+    def can_block(self):
+        """
+        Returns True if we can block to wait for input, False if the screen
+        needs to be immediately redrawn.
+        """
+
+    def should_redraw(self, needs_redraw, first_pass, can_block):
+        """
+        Determines if the screen needs to be redrawn. Returns True if it
+        does.
+
+        `needs_redraw`
+            True if the needs_redraw flag is set.
+
+        `first_pass`
+            True if this is the first pass through the interact loop.
+
+        `can_block`
+            The value of self.can_block, from above.
+        """
+
+    def mutated_surface(self, surf):
+        """
+        Called to indicated that `surf` has changed and textures based on
+        it should not be used.
+        """
+
+        if surf in self.texture_cache:
+            del self.texture_cache[surf]
+
+    def load_texture(self, surf, transient=False):
+        """
+        Loads a surface into a texture.
+
+        `surf`
+            The pygame.Surface to load.
+
+        `transient`
+            True if the texture is unlikely to be used for more than a single
+            frame.
+        """
+
+    def ready_one_texture(self):
+        """
+        This is called in the main thread to indicate that one texture
+        should be loaded into the GPU.
+        """
+
+    def kill_textures(self):
+        """
+        Removes all cached textures, to free memory.
+        """
+
+    def solid_texture(self, w, h, color):
+        """
+        This is called to create a (`w` x `h`) texture of a single
+        color.
+
+        Returns the texture.
+        """
+
+    def draw_screen(self, surftree, flip=True):
+        """
+        This draw the screen.
+
+        `surftree`
+            A Render object (the root of a tree of Render objects) that
+            will be drawn to the screen.
+
+        `flip`
+            If True, the drawing will be presented to the user.
+        """
+
+    def render_to_texture(self, what, alpha):
+        """
+        Converts `what`, a tree of Renders, to a texture of the same size.
+
+        `alpha`
+            A hint as to if the texture should have an alpha channel.
+        """
+
+    def is_pixel_opaque(self, what, x, y):
+        """
+        Returns true if the pixel is not 100% transparent.
+
+        `what`
+            A tree of renders.
+
+        `x`, `y`
+            The coordinates of the pixels to check.
+        """
+
+    def get_half(self, what):
+        """
+        Gets a texture that is half the size of `what`, which may be
+        a texture or a tree of Renders.
+        """
+
+    def translate_point(self, x, y):
+        """
+        Translates (`x`, `y`) from physical to virtual coordinates.
+        """
+
+    def untranslate_point(self, x, y):
+        """
+        Untranslates (`x`, `y`) from virtual to physical coordinates.
+        """
+
+    def mouse_event(self, ev):
+        """
+        This translates the .pos field of `ev` from physical coordinates to
+        virtual coordinates. Returns an (x, y) pait of virtual coordinates.
+        """
+
+    def get_mouse_pos(self):
+        """
+        Returns the x and y coordinates of the mouse, in virtual coordinates.
+        """
+
+    def set_mouse_pos(self, x, y):
+        """
+        Moves the mouse to the virtual coordinates `x` and `y`.
+        """
+
+        x, y = self.untranslate_point(x, y)
+        pygame.mouse.set_pos([x, y])
+
+    def screenshot(self, surftree):
+        """
+        This returns a pygame.Surface that is the result of rendering
+        `surftree`, a tree of Renders.
+        """
+
+    def event_peek_sleep(self):
+        """
+        On platforms where CPU usage is gated by the need to redraw, sleeps
+        a short amount of time to keep the CPU idle.
+        """
+
+    def get_physical_size(self):
+        """
+        Returns the physical size of the window, in physical pixels.
+        """
+
+
 # How long should we be in maximum framerate mode at the start of the game?
 initial_maximum_framerate = 0.0
 
@@ -1581,6 +1786,9 @@ class Interface(object):
         self.current_context = None
         self.roll_forward = None
 
+        # Are we in fullscreen mode?
+        self.fullscreen = False
+
         # Things to be preloaded.
         self.preloads = [ ]
 
@@ -1608,9 +1816,6 @@ class Interface(object):
 
         # Have we shown the window this interaction?
         self.shown_window = False
-
-        # Are we in fullscren mode?
-        self.fullscreen = False
 
         # Should we ignore the rest of the current touch? Used to ignore the
         # rest of a mousepress after a longpress occurs.
@@ -1654,9 +1859,6 @@ class Interface(object):
         # Should we reset the display?
         self.display_reset = False
 
-        # The last size we were resized to.
-        self.last_resize = None
-
         # Should we profile the next frame?
         self.profile_once = False
 
@@ -1671,6 +1873,8 @@ class Interface(object):
             pygame.display.init()
         except:
             pass
+
+        self.post_init()
 
         # Init timing.
         init_time()
@@ -1849,7 +2053,7 @@ class Interface(object):
             delay, repeat_delay = renpy.config.key_repeat
             pygame.key.set_repeat(int(1000 * delay), int(1000 * repeat_delay))
 
-        if android:
+        if renpy.android:
             android.wakelock(True)
 
         # Block events we don't use.
@@ -1986,96 +2190,38 @@ class Interface(object):
         return rv
 
     def kill_textures(self):
+        """
+        Kills all textures that have been loaded.
+        """
+
         if renpy.display.draw is not None:
             renpy.display.draw.kill_textures()
 
         renpy.display.render.free_memory()
         renpy.text.text.layout_cache_clear()
 
-    def kill_textures_and_surfaces(self):
+    def kill_surfaces(self):
         """
-        Kill all textures and surfaces that are loaded.
+        Kills all surfaces that have been loaded.
         """
 
-        self.kill_textures()
         renpy.display.im.cache.clear()
         renpy.display.module.bo_cache = None
 
-    def set_mode(self, physical_size=None):
+    def before_resize(self):
         """
-        This sets the video mode. It also picks the draw object.
+        This is called when the window has been resized.
         """
 
-        # Ensure that we kill off the movie when changing screen res.
-        if renpy.display.draw and renpy.display.draw.info["renderer"] == "sw":
-            renpy.display.video.movie_stop(clear=False)
+        self.kill_textures()
 
-        renpy.display.render.free_memory()
-        renpy.text.text.layout_cache_clear()
-        renpy.display.module.bo_cache = None
-
-        if self.display_reset:
-
-            pygame.key.stop_text_input() # @UndefinedVariable
-            pygame.key.set_text_input_rect(None) # @UndefinedVariable
-            self.text_rect = None
-
-            if renpy.display.draw.info["renderer"] == "angle":
-                renpy.display.draw.quit()
-
-                # This is necessary to fix a bug with restoring a window from
-                # minimized state on windows.
-                pygame.display.quit()
-
-            self.kill_textures_and_surfaces()
-
+        # Stop the resizing.
+        pygame.key.stop_text_input() # @UndefinedVariable
+        pygame.key.set_text_input_rect(None) # @UndefinedVariable
+        self.text_rect = None
         self.old_text_rect = None
         self.display_reset = False
 
-        virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
-
-        if physical_size is None:
-            if renpy.mobile or renpy.game.preferences.physical_size is None: # @UndefinedVariable
-                physical_size = (None, None)
-            else:
-                physical_size = renpy.game.preferences.physical_size
-
-        # Setup screen.
-        fullscreen = renpy.game.preferences.fullscreen
-
-        old_fullscreen = self.fullscreen
-        self.fullscreen = fullscreen
-
-        if os.environ.get('RENPY_DISABLE_FULLSCREEN', False):
-            fullscreen = False
-            self.fullscreen = renpy.game.preferences.fullscreen
-
-        if renpy.display.draw:
-            draws = [ renpy.display.draw ]
-        else:
-            draws = self.get_draw_constructors()
-
-        for draw in draws:
-            if draw.set_mode(virtual_size, physical_size, fullscreen):
-                renpy.display.draw = draw
-                renpy.display.render.models = draw.info.get("models", False)
-                break
-            else:
-                # pygame.display.quit()
-                pass
-        else:
-            # Ensure we don't get stuck in fullscreen.
-            renpy.game.preferences.fullscreen = False
-            raise Exception("Could not set video mode.")
-
-        # Save the video size.
-        if renpy.config.save_physical_size and not fullscreen and not old_fullscreen:
-            renpy.game.preferences.physical_size = renpy.display.draw.get_physical_size()
-
-        if android:
-            android.init()
-
-        # We need to redraw the (now blank) screen.
         self.force_redraw = True
 
         # Assume we have focus until told otherwise.
@@ -2094,6 +2240,34 @@ class Interface(object):
         # Clear the frame times.
         self.frame_times = [ ]
 
+    def set_mode(self):
+        """
+        This constructs the draw object and sets the initial size of the
+        window.
+        """
+
+        virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
+
+        if renpy.display.draw:
+            draws = [ renpy.display.draw ]
+        else:
+            draws = self.get_draw_constructors()
+
+        for draw in draws:
+            if draw.init(virtual_size):
+                renpy.display.draw = draw
+                renpy.display.render.models = draw.info.get("models", False)
+                break
+            else:
+                pass
+        else:
+            # Ensure we don't get stuck in fullscreen.
+            renpy.game.preferences.fullscreen = False
+            raise Exception("Could not set video mode.")
+
+        if renpy.android:
+            android.init()
+
     def draw_screen(self, root_widget, fullscreen_video, draw):
 
         try:
@@ -2109,7 +2283,7 @@ class Interface(object):
             )
 
         if draw:
-            renpy.display.draw.draw_screen(surftree, fullscreen_video)
+            renpy.display.draw.draw_screen(surftree)
 
         now = time.time()
 
@@ -2152,7 +2326,7 @@ class Interface(object):
 
         else:
 
-            surf = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
+            surf = renpy.display.draw.screenshot(self.surftree)
 
         surf = renpy.display.scale.smoothscale(surf, scale)
 
@@ -2172,7 +2346,7 @@ class Interface(object):
 
         if self.bgscreenshot_needed:
             self.bgscreenshot_needed = False
-            self.bgscreenshot_surface = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
+            self.bgscreenshot_surface = renpy.display.draw.screenshot(self.surftree)
             self.bgscreenshot_event.set()
 
     def get_screenshot(self):
@@ -2209,7 +2383,7 @@ class Interface(object):
         Saves a full-size screenshot in the given filename.
         """
 
-        window = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
+        window = renpy.display.draw.screenshot(self.surftree)
 
         if renpy.config.screenshot_crop:
             window = window.subsurface(renpy.config.screenshot_crop)
@@ -2502,10 +2676,6 @@ class Interface(object):
 
             renpy.persistent.update(True)
 
-        if ev.type == pygame.APP_TERMINATING:
-            save()
-            sys.exit(0)
-
         if ev.type != pygame.APP_WILLENTERBACKGROUND:
             return False
 
@@ -2513,7 +2683,7 @@ class Interface(object):
 
         renpy.audio.audio.pause_all()
 
-        if android:
+        if renpy.android:
             android.wakelock(False)
 
         pygame.time.set_timer(PERIODIC, 0)
@@ -2535,9 +2705,6 @@ class Interface(object):
             if ev.type == pygame.APP_DIDENTERFOREGROUND:
                 break
 
-            if ev.type == pygame.APP_TERMINATING:
-                sys.exit(0)
-
         print("Entering foreground.")
 
         # Since we came back to life, we can get rid of the
@@ -2548,7 +2715,7 @@ class Interface(object):
 
         renpy.audio.audio.unpause_all()
 
-        if android:
+        if renpy.android:
             android.wakelock(True)
 
         # Reset the display so we get the GL context back.
@@ -2556,37 +2723,6 @@ class Interface(object):
         self.restart_interaction = True
 
         return True
-
-    def iconified(self):
-        """
-        Called when we become an icon.
-        """
-
-        if self.minimized:
-            return
-
-        self.minimized = True
-
-        renpy.display.log.write("The window was minimized.")
-
-    def restored(self):
-        """
-        Called when we are restored from being an icon.
-        """
-
-        # This is necessary on Windows/DirectX/Angle, as otherwise we get
-        # a blank screen.
-
-        if not self.minimized:
-            return
-
-        self.minimized = False
-
-        renpy.display.log.write("The window was restored.")
-
-        if renpy.windows:
-            self.display_reset = True
-            self.set_mode(self.last_resize)
 
     def enter_context(self):
         """
@@ -3167,19 +3303,20 @@ class Interface(object):
 
                 renpy.execution.not_infinite_loop(10)
 
-                # Check for a change in fullscreen preference.
-                if ((self.fullscreen != renpy.game.preferences.fullscreen) or
-                        self.display_reset or (renpy.display.draw is None)):
-
-                    self.set_mode()
-                    needs_redraw = True
-
                 # Check for autoreload.
                 renpy.loader.check_autoreload()
 
                 for i in renpy.config.needs_redraw_callbacks:
                     if i():
                         needs_redraw = True
+
+                # Check for a fullscreen change.
+                if renpy.game.preferences.fullscreen != self.fullscreen:
+                    renpy.display.draw.resize()
+
+                # Ask if the game has changed size.
+                if renpy.display.draw.update(force=self.display_reset):
+                    needs_redraw = True
 
                 # Redraw the screen.
                 if (self.force_redraw or
@@ -3260,9 +3397,6 @@ class Interface(object):
                 if self.mouse_move is not None:
                     if not self.mouse_move.perform():
                         self.mouse_move = None
-
-                # Draw the mouse, if it needs drawing.
-                renpy.display.draw.update_mouse()
 
                 # See if we want to restart the interaction entirely.
                 if self.restart_interaction:
@@ -3371,7 +3505,7 @@ class Interface(object):
                 # merge a mouse down and mouse up event with its successor. This
                 # prevents us from getting overwhelmed with too many events on
                 # a multitouch screen.
-                if android and (ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP):
+                if renpy.android and (ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP):
                     pygame.event.clear(ev.type)
 
                 # Handle redraw timeouts.
@@ -3422,28 +3556,9 @@ class Interface(object):
 
                 # Handle videoresize.
                 if ev.type == pygame.VIDEORESIZE:
-                    evs = pygame.event.get([pygame.VIDEORESIZE])
 
-                    if len(evs):
-                        ev = evs[-1]
-
-                    # We seem to get a spurious event like this when leaving
-                    # fullscreen mode on windows.
-                    if ev.w < 256 or ev.h < 256:
-                        continue
-
-                    size = (ev.w // self.dpi_scale, ev.h // self.dpi_scale)
-
-                    # Refresh fullscreen status (e.g. user pressed Esc. in browser)
-                    main_window = pygame.display.get_window()
-                    self.fullscreen = main_window is not None and bool(main_window.get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
-                    renpy.game.preferences.fullscreen = self.fullscreen
-
-                    if pygame.display.get_surface().get_size() != ev.size:
-                        self.set_mode(size)
-
-                    if not self.fullscreen:
-                        self.last_resize = size
+                    renpy.game.interface.full_redraw = True
+                    renpy.game.interface.force_redraw = True
 
                     continue
 
@@ -3486,12 +3601,6 @@ class Interface(object):
 
                     if ev.state & 2:
                         self.keyboard_focused = ev.gain
-
-                    if ev.state & 4:
-                        if ev.gain:
-                            self.restored()
-                        else:
-                            self.iconified()
 
                     pygame.key.set_mods(0)
 

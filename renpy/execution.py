@@ -290,9 +290,7 @@ class Context(renpy.object.Object):
 
             vars(self.info).update(vars(context.info))
 
-            for k, v in context.music.items():
-                self.music[k] = v.copy()
-
+            self.music = dict(context.music)
             self.movie = dict(context.movie)
 
             self.images = renpy.display.image.ShownImageInfo(context.images)
@@ -622,7 +620,7 @@ class Context(renpy.object.Object):
                 renpy.store._kwargs = e.kwargs
 
             if self.seen:
-                renpy.game.persistent._seen_ever[self.current] = True  # @UndefinedVariable
+                renpy.game.persistent._seen_ever[self.current] = True # @UndefinedVariable
                 renpy.game.seen_session[self.current] = True
 
             renpy.plog(2, "    end {} ({}:{})", type_node_name, this_node.filename, this_node.linenumber)
@@ -868,7 +866,7 @@ class Context(renpy.object.Object):
             return False
 
         if ever:
-            seen = renpy.game.persistent._seen_ever  # @UndefinedVariable
+            seen = renpy.game.persistent._seen_ever # @UndefinedVariable
         else:
             seen = renpy.game.seen_session
 

@@ -63,7 +63,9 @@ cdef class TextureLoader:
         self.texture_load_queue = weakref.WeakSet()
         self.draw = draw
 
-        self.ftl_program = draw.shader_cache.get(("renpy.ftl",))
+    def init(self):
+
+        self.ftl_program = self.draw.shader_cache.get(("renpy.ftl",))
 
     def quit(self):
         """
@@ -332,8 +334,6 @@ cdef class GLTexture(Model):
         # Project the child from virtual space to the screen space.
         cdef Matrix transform
         transform = Matrix.ctexture_projection(cw, ch)
-        if what.reverse:
-            transform *= what.reverse
 
         # Set up the default modes.
         glEnable(GL_BLEND)

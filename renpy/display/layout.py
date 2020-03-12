@@ -199,7 +199,7 @@ class Container(renpy.display.core.Displayable):
         else:
             return
 
-        self.children.pop(i)  # W0631
+        self.children.pop(i) # W0631
         self.offsets = self._list_type()
 
         if self.children:
@@ -621,7 +621,7 @@ class MultiBox(Container):
         else:
             return "MultiBox"
 
-    def add(self, widget, start_time=None, anim_time=None):  # W0221
+    def add(self, widget, start_time=None, anim_time=None): # W0221
         super(MultiBox, self).add(widget)
         self.start_times.append(start_time)
         self.anim_times.append(anim_time)
@@ -885,7 +885,7 @@ class MultiBox(Container):
                 sw, sh = surf.get_size()
 
                 if box_wrap and remwidth - sw - padding < 0 and line:
-                    maxx, maxy = layout_line(line, target_width - x, 0)
+                    maxx, maxy = layout_line(line, (target_width - x) if xfill else 0, 0)
 
                     y += line_height + box_wrap_spacing
                     x = 0
@@ -898,7 +898,7 @@ class MultiBox(Container):
                 x += sw + padding
                 remwidth -= (sw + padding)
 
-            maxx, maxy = layout_line(line, target_width - x, 0)
+            maxx, maxy = layout_line(line, (target_width - x) if xfill else 0, 0)
 
         elif layout == "vertical":
 
@@ -927,7 +927,7 @@ class MultiBox(Container):
                 sw, sh = surf.get_size()
 
                 if box_wrap and remheight - sh - padding < 0:
-                    maxx, maxy = layout_line(line, 0, target_height - y)
+                    maxx, maxy = layout_line(line, 0, (target_height - y) if yfill else 0)
 
                     x += line_width + box_wrap_spacing
                     y = 0
@@ -940,7 +940,7 @@ class MultiBox(Container):
                 y += sh + padding
                 remheight -= (sh + padding)
 
-            maxx, maxy = layout_line(line, 0, target_height - y)
+            maxx, maxy = layout_line(line, 0, (target_height - y) if yfill else 0)
 
         else:
             raise Exception("Unknown box layout: %r" % layout)
@@ -1123,7 +1123,7 @@ class Window(Container):
 
         # Render the child.
         surf = render(child,
-                      width  - cxmargin - cxpadding,
+                      width - cxmargin - cxpadding,
                       height - cymargin - cypadding,
                       st, at)
 
@@ -1160,14 +1160,14 @@ class Window(Container):
         offsets = child.place(rv,
                               left_margin + left_padding,
                               top_margin + top_padding,
-                              width  - cxmargin - cxpadding,
+                              width - cxmargin - cxpadding,
                               height - cymargin - cypadding,
                               surf)
 
         # Draw the foreground. The background should render at exactly the
         # requested size. (That is, be a Frame or a Solid).
         if style.foreground:
-            bw = width  - cxmargin
+            bw = width - cxmargin
             bh = height - cymargin
 
             back = render(style.foreground, bw, bh, st, at)
@@ -1177,7 +1177,7 @@ class Window(Container):
         if self.child:
             self.offsets = [ offsets ]
 
-        self.window_size = width, height  # W0201
+        self.window_size = width, height # W0201
 
         return rv
 
@@ -1243,7 +1243,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         self.child = None
 
         if isinstance(function, basestring):
-            args = ( function, )
+            args = (function,)
             kwargs = { }
             function = dynamic_displayable_compat
 
@@ -1577,10 +1577,10 @@ class Side(Container):
                 else:
                     return 0, axis
 
-            self.left_space, width = spacer('tl', 'l', 'bl', width)  # W0201
-            self.right_space, width = spacer('tr', 'r', 'br', width)  # W0201
-            self.top_space, height = spacer('tl', 't', 'tr', height)  # W0201
-            self.bottom_space, height = spacer('bl', 'b', 'br', height)  # W0201
+            self.left_space, width = spacer('tl', 'l', 'bl', width) # W0201
+            self.right_space, width = spacer('tr', 'r', 'br', width) # W0201
+            self.top_space, height = spacer('tl', 't', 'tr', height) # W0201
+            self.bottom_space, height = spacer('bl', 'b', 'br', height) # W0201
 
             # The sizes of the various borders.
             left = 0
@@ -1608,13 +1608,13 @@ class Side(Container):
             right, top = sizeit('tr', right, top, right, top)
             right, bottom = sizeit('br', right, bottom, right, bottom)
 
-            self.cwidth = cwidth  # W0201
-            self.cheight = cheight  # W0201
+            self.cwidth = cwidth # W0201
+            self.cheight = cheight # W0201
 
-            self.top = top  # W0201
-            self.bottom = bottom  # W0201
-            self.left = left  # W0201
-            self.right = right  # W0201
+            self.top = top # W0201
+            self.bottom = bottom # W0201
+            self.left = left # W0201
+            self.right = right # W0201
 
         else:
             cwidth = self.cwidth
@@ -1683,6 +1683,7 @@ class Side(Container):
         # This sorts the children for placement according to
         # their order in positions.
         if renpy.config.keep_side_render_order:
+
             def sort(elem):
                 pos, x, y, w, h = elem
 
@@ -1883,7 +1884,7 @@ class Flatten(Container):
         rv.operation = renpy.display.render.FLATTEN
 
         rv.mesh = True
-        rv.shaders = ( "renpy.texture", )
+        rv.shaders = ("renpy.texture",)
 
         self.offsets = [ (0, 0) ]
 

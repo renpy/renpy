@@ -12,5 +12,4 @@ cdef class Mesh3(Mesh):
     # The geometry of the points.
     cdef Point3 *point
 
-    cpdef Mesh3 copy(Mesh3 self)
     cpdef Mesh3 crop(Mesh3 self, Polygon p)

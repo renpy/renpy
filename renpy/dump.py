@@ -33,13 +33,11 @@ import os
 
 import renpy
 
-
 # A list of (name, filename, linenumber) tuples, for various types of
 # name. These are added to as the definitions occur.
 definitions = [ ]
 transforms = [ ]
 screens = [ ]
-
 
 # Does a file exist? We cache the result here.
 file_exists_cache = { }
@@ -81,7 +79,7 @@ def dump(error):
     if not args.json_dump:
         return
 
-    def name_filter(name, filename):  # @ReservedAssignment
+    def name_filter(name, filename): # @ReservedAssignment
         """
         Returns true if the name is included by the name_filter, or false if it is excluded.
         """
@@ -240,15 +238,19 @@ def dump(error):
 
     # Add the build info from 00build.rpy, if it's available.
     try:
-        result["build"] = renpy.store.build.dump()  # @UndefinedVariable
+        result["build"] = renpy.store.build.dump() # @UndefinedVariable
     except:
         pass
 
     if args.json_dump != "-":
         new = args.json_dump + ".new"
 
-        with open(new, "w") as f:
-            json.dump(result, f)
+        if PY2:
+            with open(new, "wb") as f:
+                json.dump(result, f)
+        else:
+            with open(new, "w") as f:
+                json.dump(result, f)
 
         if os.path.exists(args.json_dump):
             os.unlink(args.json_dump)

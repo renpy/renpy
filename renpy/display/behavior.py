@@ -301,7 +301,7 @@ def run(action, *args, **kwargs):
     arguments, a list of actions is run in order using this function, and
     None is ignored.
 
-    Returns the result of the first action to return a value.
+    Returns the result of the last action to return a value.
     """
 
     if action is None:

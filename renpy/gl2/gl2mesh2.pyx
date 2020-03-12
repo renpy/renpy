@@ -20,25 +20,40 @@ cdef class Mesh2(Mesh):
 
         `triangles`
             The number of triangles for which space should be allocated.
+
+        If `points` or `triangles` are 0, no allocation takes place. The creator
+        of the Mesh is responsible for setting point, point_data, attribute, and
+        triangle, and for freeing the data when done.
         """
 
+        self.layout = layout
+
         self.allocated_points = points
-        self.points = 0
-        self.point = <Point2 *> malloc(points * sizeof(Point2))
-        self.point_data = <float *> self.point
         self.point_size = 2
 
-        self.layout = layout
-        self.attribute = <float *> malloc(points * layout.stride * sizeof(float))
+        if points:
+
+            self.points = 0
+            self.point = <Point2 *> malloc(points * sizeof(Point2))
+            self.point_data = <float *> self.point
+
+            self.attribute = <float *> malloc(points * layout.stride * sizeof(float))
 
         self.allocated_triangles = triangles
-        self.triangles = 0
-        self.triangle = <short *> malloc(triangles * 3 * sizeof(int))
+
+        if triangles:
+
+            self.triangles = 0
+            self.triangle = <unsigned short *> malloc(triangles * 3 * sizeof(int))
 
     def __dealloc__(Mesh2 self):
-        free(self.point)
-        free(self.attribute)
-        free(self.triangle)
+
+        if self.allocated_points:
+            free(self.point)
+            free(self.attribute)
+
+        if self.allocated_triangles:
+            free(self.triangle)
 
     def __repr__(Mesh2 self):
 
@@ -141,16 +156,6 @@ cdef class Mesh2(Mesh):
         rv.triangle[3] = 0
         rv.triangle[4] = 2
         rv.triangle[5] = 3
-
-        return rv
-
-    cpdef Mesh2 copy(Mesh2 self):
-        """
-        Returns a copy of this mesh.
-        """
-
-        rv = Mesh2()
-        rv.data = self.data
 
         return rv
 

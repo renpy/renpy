@@ -19,7 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import *
 
@@ -241,8 +240,8 @@ def image_exists_precise(name):
 
             try:
                 da = renpy.display.core.DisplayableArguments()
-                da.name=( im[0], ) + tuple(i for i in name[1:] if i in attrs)
-                da.args=tuple(i for i in name[1:] if i in rest)
+                da.name = (im[0],) + tuple(i for i in name[1:] if i in attrs)
+                da.args = tuple(i for i in name[1:] if i in rest)
                 da.lint = True
                 d._duplicate(da)
             except:
@@ -366,8 +365,8 @@ def precheck_show(node):
     tag = imspec(node.imspec)[2]
     image_prefixes[tag] = True
 
-
 # Lints ast.Hide.
+
 
 def check_hide(node):
 
@@ -484,7 +483,7 @@ def check_say(node):
     if image_exists_imprecise(name):
         return
 
-    if image_exists_imprecise(('side', ) + name):
+    if image_exists_imprecise(('side',) + name):
         return
 
     report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
@@ -625,7 +624,7 @@ def check_screen(node):
 
 
 def check_styles():
-    for full_name, s in renpy.style.styles.items():  # @UndefinedVariable
+    for full_name, s in renpy.style.styles.items(): # @UndefinedVariable
         name = "style." + full_name[0]
         for i in full_name[1:]:
             name += "[{!r}]".format(i)
@@ -727,7 +726,7 @@ def lint():
     # them. We sort them in filename, linenumber order.
 
     all_stmts = list(renpy.game.script.all_stmts)
-    all_stmts.sort(key=lambda n : (n.filename, n.linenumber) )
+    all_stmts.sort(key=lambda n : (n.filename, n.linenumber))
 
     # The current count.
     counts = collections.defaultdict(Count)
@@ -741,11 +740,11 @@ def lint():
 
     global report_node
 
-    for _fn, _ln, node in all_stmts:
+    for node in all_stmts:
         if isinstance(node, (renpy.ast.Show, renpy.ast.Scene)):
             precheck_show(node)
 
-    for _fn, _ln, node in all_stmts:
+    for node in all_stmts:
 
         if common(node):
             continue

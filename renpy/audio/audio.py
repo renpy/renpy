@@ -313,6 +313,18 @@ class Channel(object):
 
     context = property(get_context)
 
+    def copy_context(self):
+        """
+        Copies the MusicContext associated with this channel, updates the
+        ExecutionContext to point to the copy, and returns the copy.
+        """
+
+        mcd = renpy.game.context().music
+
+        ctx = self.get_context().copy()
+        mcd[self.name] = ctx
+        return ctx
+
     def split_filename(self, filename, looped):
         """
         Splits a filename into a filename, start time, and end time.
@@ -575,6 +587,16 @@ class Channel(object):
                 renpysound.stop(self.number)
             else:
                 renpysound.fadeout(self.number, secs)
+
+    def reload(self):
+        """
+        Causes this channel to be stopped in a way that looped audio will be
+        reloaded and restarted.
+        """
+
+        with lock:
+            renpysound.dequeue(self.number, True)
+            renpysound.stop(self.number)
 
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False):
 
@@ -1122,6 +1144,20 @@ def rollback():
         for c in all_channels:
             if not c.loop:
                 c.fadeout(0)
+
+
+def autoreload(_fn):
+    """
+    After a sound file has been changed, stop all sound (and let Ren'Py restart
+    the channels, as needed.)
+    """
+
+    print("Sound autoreload", _fn)
+
+    for c in all_channels:
+        c.reload()
+
+    renpy.exports.restart_interaction()
 
 
 global_pause = False

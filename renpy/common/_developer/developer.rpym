@@ -546,7 +546,7 @@ label _image_location_picker:
             lfn = fn.lower()
 
             for i in extensions:
-                if fn.endswith(i):
+                if lfn.endswith(i):
                     image_files.append(fn)
 
         image_files.sort()

@@ -337,12 +337,14 @@ init python in project:
                 for l, line in enumerate(data):
                     l += 1
 
+                    line = line[:1024]
+
                     try:
                         line = line.decode("utf-8")
                     except:
                         continue
 
-                    m = re.search(r".*#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
+                    m = re.search(r"#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
 
                     if m is None:
                         continue

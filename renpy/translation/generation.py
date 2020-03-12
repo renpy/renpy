@@ -57,7 +57,7 @@ def scan_strings(filename):
 
     rv = [ ]
 
-    for line, s in renpy.game.script.translator.additional_strings[filename]:  # @UndefinedVariable
+    for line, s in renpy.game.script.translator.additional_strings[filename]: # @UndefinedVariable
         rv.append((line, s))
 
     line = 1
@@ -184,7 +184,7 @@ def shorten_filename(filename):
     return fn, common
 
 
-def write_translates(filename, language, filter):  # @ReservedAssignment
+def write_translates(filename, language, filter): # @ReservedAssignment
 
     fn, common = shorten_filename(filename)
 
@@ -245,15 +245,15 @@ def translation_filename(s):
     return filename
 
 
-def write_strings(language, filter, min_priority, max_priority, common_only):  # @ReservedAssignment
+def write_strings(language, filter, min_priority, max_priority, common_only): # @ReservedAssignment
     """
     Writes strings to the file.
     """
 
     if language == "None":
-        stl = renpy.game.script.translator.strings[None]  # @UndefinedVariable
+        stl = renpy.game.script.translator.strings[None] # @UndefinedVariable
     else:
-        stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
+        stl = renpy.game.script.translator.strings[language] # @UndefinedVariable
 
     # If this function changes, count_missing may also need to
     # change.
@@ -380,7 +380,7 @@ def rot13_transform(s):
 
     ROT13 = { }
 
-    for i, j in zip("ABCDEFGHIJKLM", "NMOPQRSTUVWYZ"):
+    for i, j in zip("ABCDEFGHIJKLM", "NOPQRSTUVWXYZ"):
         ROT13[i] = j
         ROT13[j] = i
 
@@ -469,7 +469,7 @@ def count_missing(language, min_priority, max_priority, common_only):
 
     missing_strings = 0
 
-    stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
+    stl = renpy.game.script.translator.strings[language] # @UndefinedVariable
 
     strings = renpy.translation.scanstrings.scan(min_priority, max_priority, common_only)
 
@@ -525,13 +525,13 @@ def translate_command():
         return False
 
     if args.rot13:
-        filter = rot13_filter  # @ReservedAssignment
+        filter = rot13_filter # @ReservedAssignment
     elif args.piglatin:
-        filter = piglatin_filter  # @ReservedAssignment
+        filter = piglatin_filter # @ReservedAssignment
     elif args.empty:
-        filter = empty_filter  # @ReservedAssignment
+        filter = empty_filter # @ReservedAssignment
     else:
-        filter = null_filter  # @ReservedAssignment
+        filter = null_filter # @ReservedAssignment
 
     if not args.strings_only:
         for filename in translate_list_files():

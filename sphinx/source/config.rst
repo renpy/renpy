@@ -1310,7 +1310,7 @@ Rarely or Internally Used
     The name of the audio channel used by :func:`renpy.play`,
     :propref:`hover_sound`, and :propref:`activate_sound`.
 
-.. var:: config.predict_statements = 10
+.. var:: config.predict_statements = 32
 
     This is the number of statements, including the current one, to
     consider when doing predictive image loading. A breadth-first

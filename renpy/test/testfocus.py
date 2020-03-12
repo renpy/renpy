@@ -47,7 +47,7 @@ def find_focus(pattern):
                 return None
 
         if f.x is None:
-            t = renpy.display.tts.root._tts_all()  # @UndefinedVariable
+            t = renpy.display.tts.root._tts_all() # @UndefinedVariable
         else:
             t = f.widget._tts_all()
 
@@ -72,7 +72,7 @@ def find_focus(pattern):
     # This gets the matching displayable with the shortest alt text, which
     # is likely what we want.
     matching.sort(key=lambda a : (len(a[0]), a[0]))
-    return matching[1][1]
+    return matching[0][1]
 
 
 def relative_position(x, posx, width):

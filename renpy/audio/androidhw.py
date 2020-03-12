@@ -23,7 +23,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import *
 
 import renpy
-import jnius  # @UnresolvedImport
+import jnius # @UnresolvedImport
 
 from renpy.audio.audio import MusicContext
 
@@ -91,6 +91,18 @@ class AndroidVideoChannel(object):
         return rv
 
     context = property(get_context)
+
+    def copy_context(self):
+        """
+        Copies the MusicContext associated with this channel, updates the
+        ExecutionContext to point to the copy, and returns the copy.
+        """
+
+        mcd = renpy.game.context().music
+
+        ctx = self.get_context().copy()
+        mcd[self.name] = ctx
+        return ctx
 
     def start(self):
         """
@@ -195,3 +207,6 @@ class AndroidVideoChannel(object):
     def unpause(self):
         if self.player is not None:
             self.player.unpause()
+
+    def reload(self):
+        return
