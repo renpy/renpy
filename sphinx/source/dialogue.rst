@@ -173,7 +173,7 @@ Example Characters
 Here are a few example characters::
 
     # A character that has its dialogue enclosed in parenthesis.
-    define e = Character("Eileen", what_prefix='"', what_suffix='"')
+    define e = Character("Eileen", what_prefix='(', what_suffix=')')
 
     # A character that pulls its name from a variable.
     define p = Character("player_name", dynamic=True)
