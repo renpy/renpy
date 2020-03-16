@@ -148,7 +148,7 @@ def get_windows_version():
 
 if platform.win32_ver()[0]:
     windows = get_windows_version()
-elif "RENPY_IOS" in os.environ:
+elif os.environ.get("RENPY_PLATFORM", "").startswith("ios"):
     ios = True
 elif platform.mac_ver()[0]:
     macintosh = True
