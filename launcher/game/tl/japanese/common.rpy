@@ -742,6 +742,10 @@ translate japanese strings:
     old "Debug"
     new "デバッグ"
 
+    # renpy/common/00accessibility.rpy:191
+    old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
+    new "このメニューのオプションはアクセス性を改善するためのものです。すべてのゲームで動作するわけではなく、特定の組合せではゲームを正常にレンダリングしないでしょう。これはゲームやエンジンの問題ではありません。フォント変更時に最良の結果を得るには、テキストサイズをオリジナルのままにしてください。"
+
     # renpy/common/00preferences.rpy:430
     old "font transform"
     new "フォント変換"
