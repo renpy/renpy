@@ -694,3 +694,7 @@ translate japanese strings:
     old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
     new "## https://www.renpy.org/doc/html/screen_special.html#nvl"
 
+    # gui/game/screens.rpy:333
+    old "## The quit button is banned on iOS and unnecessary on Android and Web."
+    new "## 終了ボタンはiOSでは使用できません。また、AndroidやWebでは必要ありません。"
+

@@ -1011,7 +1011,7 @@ translate japanese strings:
 
     # translations.rpy:170
     old "Merge String Translations"
-    new "文字列の翻訳を併合"
+    new "文字列の翻訳を統合"
 
     # translations.rpy:175
     old "Replace existing translations"
@@ -1027,7 +1027,7 @@ translate japanese strings:
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "抽出コマンドは、既存のプロジェクトから文字列の翻訳（台詞以外の翻訳）を一時ファイルとして抽出します。\n\n併合コマンドは、抽出した翻訳を他のプロジェクトに併合します。"
+    new "抽出コマンドは、このプロジェクトから文字列の翻訳（台詞以外の翻訳）を一時ファイルとして抽出します。\n\n統合コマンドは、抽出した翻訳をこのプロジェクトに統合します。"
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
@@ -1047,11 +1047,11 @@ translate japanese strings:
 
     # translations.rpy:271
     old "Ren'Py is merging string translations..."
-    new "Ren'Py は文字列の翻訳を併合しています…"
+    new "Ren'Py は文字列の翻訳を統合しています…"
 
     # translations.rpy:274
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py は [language] の文字列の翻訳を併合しました。"
+    new "Ren'Py は [language] の文字列の翻訳を統合しました。"
 
     # translations.rpy:282
     old "Updating default interface translations..."
@@ -1612,6 +1612,10 @@ translate japanese strings:
     # game/front_page.rpy:252
     old "(Beta)"
     new "(Beta)"
+
+    # game/front_page.rpy:198
+    old "audio"
+    new "audio"
 
     # game/gui7.rpy:429
     old "creating a new project"

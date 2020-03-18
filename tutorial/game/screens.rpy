@@ -780,6 +780,7 @@ screen preferences():
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
                     textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
                     textbutton "한국어" text_font "../../launcher/game/fonts/NanumGothic.ttf" action Language("korean")
+                    textbutton "Japanese" text_font "../../launcher/game/fonts/MTLc3m.ttf" action Language("japanese")
                     
                     # This should be last.
                     textbutton "Pig Latin" text_font "DejaVuSans.ttf" action Language("piglatin")
