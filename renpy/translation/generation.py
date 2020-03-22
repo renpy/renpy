@@ -322,7 +322,7 @@ def generic_filter(s, function):
             def upper(s):
                 return s.upper()
 
-        $ upper = renpy.transform_text("{b}Not Upper{/b}")
+        $ upper_string = renpy.transform_text("{b}Not Upper{/b}", upper)
 
     """
 
