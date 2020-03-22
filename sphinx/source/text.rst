@@ -171,7 +171,7 @@ Tags that apply to all text are:
     
     * When the argument begins with ``show:``, the rest of the argument is a screen to show.
     
-    * When tha argument begins with ``showmenu:``, the rest of the argument is a game menu
+    * When the argument begins with ``showmenu:``, the rest of the argument is a game menu
       screen to show.
 
     * Otherwise, the argument is a URL that is opened by the system web browser.
