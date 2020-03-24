@@ -57,7 +57,7 @@ Creating an image gallery consists of the following four steps.
 
 4. Add a way to display the image gallery screen to the main or extras menu.
 
-Here's an example of the first three steps::
+Here's an example::
 
     init python:
 
@@ -210,7 +210,7 @@ following four steps:
 
 4. Add the music room screen to the main menu, or an extras menu.
 
-Here's an example of the first three steps::
+Here's an example::
 
     init python:
 

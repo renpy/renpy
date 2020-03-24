@@ -168,6 +168,11 @@ Tags that apply to all text are:
 
     * When the argument begins with ``call_in_new_context:``, the rest of the argument
       is a label to call in a new context (using :func:`renpy.call_in_new_context`).
+    
+    * When the argument begins with ``show:``, the rest of the argument is a screen to show.
+    
+    * When the argument begins with ``showmenu:``, the rest of the argument is a game menu
+      screen to show.
 
     * Otherwise, the argument is a URL that is opened by the system web browser.
 
