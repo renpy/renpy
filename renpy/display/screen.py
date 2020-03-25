@@ -190,8 +190,8 @@ def cache_get(screen, args, kwargs):
 
     return sc.cache
 
-
 # Screens #####################################################################
+
 
 class Screen(renpy.object.Object):
     """
@@ -232,7 +232,7 @@ class Screen(renpy.object.Object):
 
         # If this is a SL2 screen, the SLScreen node at the root of this
         # screen.
-        if isinstance(function, renpy.sl2.slast.SLScreen):  # @UndefinedVariable
+        if isinstance(function, renpy.sl2.slast.SLScreen): # @UndefinedVariable
             self.ast = function
         else:
             self.ast = None
@@ -272,11 +272,11 @@ class Screen(renpy.object.Object):
 
 
 # Phases we can be in.
-PREDICT = 0  # Predicting the screen before it is shown.
-SHOW = 1    # Showing the screen for the first time.
-UPDATE = 2  # Showing the screen for the second and later times.
-HIDE = 3    # After the screen has been hid with "hide screen" (or the end of call screen).
-OLD = 4     # A copy of the screen in the old side of a transition.
+PREDICT = 0 # Predicting the screen before it is shown.
+SHOW = 1 # Showing the screen for the first time.
+UPDATE = 2 # Showing the screen for the second and later times.
+HIDE = 3 # After the screen has been hid with "hide screen" (or the end of call screen).
+OLD = 4 # A copy of the screen in the old side of a transition.
 
 phase_name = [
     "PREDICT",
@@ -938,7 +938,7 @@ def prepare_screens():
         renpy.display.predict.predicting = old_predicting
 
     if renpy.config.developer and use_cycle:
-        raise Exception("The following screens use each other in a loop: " + ", ".join(use_cycle) +". This is not allowed.")
+        raise Exception("The following screens use each other in a loop: " + ", ".join(use_cycle) + ". This is not allowed.")
 
 
 def define_screen(*args, **kwargs):
@@ -1024,7 +1024,7 @@ def get_screen(name, layer=None):
         layer = get_screen_layer(name)
 
     if isinstance(name, basestring):
-        name = (name, )
+        name = (name,)
 
     sl = renpy.exports.scene_lists()
 
@@ -1036,7 +1036,7 @@ def get_screen(name, layer=None):
 
     for tag in name:
 
-        sd = sl.get_displayable_by_name(layer, (tag, ))
+        sd = sl.get_displayable_by_name(layer, (tag,))
         if sd is not None:
             return sd
 
@@ -1274,7 +1274,7 @@ def current_screen():
     return _current_screen
 
 
-def get_widget(screen, id, layer=None):  # @ReservedAssignment
+def get_widget(screen, id, layer=None): # @ReservedAssignment
     """
     :doc: screens
 
@@ -1304,7 +1304,7 @@ def get_widget(screen, id, layer=None):  # @ReservedAssignment
     return rv
 
 
-def get_widget_properties(id, screen=None, layer=None):  # @ReservedAssignment
+def get_widget_properties(id, screen=None, layer=None): # @ReservedAssignment
     """
     :doc: screens
 

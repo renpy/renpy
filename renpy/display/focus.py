@@ -83,7 +83,6 @@ focus_type = "mouse"
 # the focus to change.
 pending_focus_type = "mouse"
 
-
 # The current tooltip and tooltip screen.
 tooltip = None
 
@@ -416,7 +415,7 @@ def mouse_handler(ev, x, y, default=False):
 def focus_extreme(xmul, ymul, wmul, hmul):
 
     max_focus = None
-    max_score = -(65536**2)
+    max_score = -(65536 ** 2)
 
     for f in focus_list:
 
@@ -439,8 +438,8 @@ def focus_extreme(xmul, ymul, wmul, hmul):
 # This calculates the distance between two points, applying
 # the given fudge factors. The distance is left squared.
 def points_dist(x0, y0, x1, y1, xfudge, yfudge):
-    return (( x0 - x1 ) * xfudge ) ** 2 + \
-           (( y0 - y1 ) * yfudge ) ** 2
+    return ((x0 - x1) * xfudge) ** 2 + \
+           ((y0 - y1) * yfudge) ** 2
 
 
 # This computes the distance between two horizontal lines. (So the
