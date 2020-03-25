@@ -236,7 +236,10 @@ def before_interact(roots):
         fwn.append((f, n, renpy.display.screen._current_screen))
 
     for root in roots:
-        root.find_focusable(callback, None)
+        try:
+            root.find_focusable(callback, None)
+        except renpy.display.layout.IgnoreLayers:
+            pass
 
     # Assign a full name to each focusable.
 

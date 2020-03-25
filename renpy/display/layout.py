@@ -502,7 +502,7 @@ class Grid(Container):
 class IgnoreLayers(Exception):
     """
     Raise this to have the event ignored by layers, but reach the
-    underlay.
+    underlay. This can also be used to stop processing focuses.
     """
 
     pass
