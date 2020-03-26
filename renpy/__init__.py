@@ -229,6 +229,7 @@ name_blacklist = {
     "renpy.display.screen.cprof",
     "renpy.audio.audio.lock",
     "renpy.audio.audio.periodic_condition",
+    "renpy.webloader.queue_lock",
     }
 
 
