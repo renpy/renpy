@@ -126,6 +126,9 @@ class IOSVideoChannel(object):
             self.stop()
             return
 
+        if self.player:
+            self.player.periodic()
+
         if self.get_playing():
             return
 
@@ -187,3 +190,8 @@ class IOSVideoChannel(object):
     def reload(self):
         return
 
+    def read_video(self):
+        return None
+
+    def video_ready(self):
+        return 1

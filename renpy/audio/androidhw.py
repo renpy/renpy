@@ -210,3 +210,9 @@ class AndroidVideoChannel(object):
 
     def reload(self):
         return
+
+    def read_video(self):
+        return None
+
+    def video_ready(self):
+        return 1
