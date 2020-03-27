@@ -191,6 +191,7 @@ cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
 
 cython("renpy.uguu.gl", libs=sdl)
 cython("renpy.uguu.uguu", libs=sdl)
+cython("renpy.uguu.angle", libs=sdl)
 
 cython("renpy.gl.gldraw", libs=sdl)
 cython("renpy.gl.gltexture", libs=sdl)
