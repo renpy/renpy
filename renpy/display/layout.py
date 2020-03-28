@@ -1906,6 +1906,9 @@ class AlphaMask(Container):
 
     The `child` and `mask` parameters may be arbitrary displayables. The
     size of the AlphaMask is the size of `child`.
+    
+    Note that this takes different arguments from :func:`im.AlphaMask`,
+    which uses the mask's red channel.
     """
 
     def __init__(self, child, mask, **properties):
