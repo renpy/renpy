@@ -329,6 +329,12 @@ cdef class GL2Draw:
 
         renpy.display.log.write("swap interval: %r frames", vsync)
 
+        # Angle or GL?
+        if self.angle:
+            renpy.uguu.angle.load_angle()
+        else:
+            renpy.uguu.angle.load_gl()
+
         # Determine the GLES mode, the actual window size to request, and the
         # window flags to use. (These are platform dependent.)
         gles = self.gles

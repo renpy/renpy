@@ -4,6 +4,7 @@ cdef bint angle_loaded = False
 
 import sys
 import os
+import renpy
 
 def load_gl():
     """
@@ -11,6 +12,8 @@ def load_gl():
     """
 
     global angle_loaded
+
+    renpy.display.log.write("Using GL DLL.")
 
     if not angle_loaded:
         return
@@ -27,7 +30,7 @@ def load_angle():
 
     global angle_loaded
 
-    if not angle_loaded:
+    if angle_loaded:
         return
 
     for i in sys.path:
@@ -35,7 +38,10 @@ def load_angle():
         if os.path.exists(dll):
             break
     else:
+        renpy.display.log.write("Could not find angle DLL.")
         return
+
+    renpy.display.log.write("Using ANGLE DLL: %s", dll)
 
     SDL_GL_UnloadLibrary()
     SDL_GL_LoadLibrary(dll)
