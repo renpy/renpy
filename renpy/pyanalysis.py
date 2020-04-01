@@ -155,9 +155,10 @@ def pure(fn):
         name = fn.__name__
 
         module = fn.__module__
-        if module.startswith("store."):
-            module = module[6:]
-            name = module + "." + name
+        name = module + "." + name
+
+    if name.startswith("store."):
+        name = name[6:]
 
     if name not in not_constants:
         pure_functions.add(name)
