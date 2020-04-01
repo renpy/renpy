@@ -1434,16 +1434,14 @@ def ShowingSwitch(*args, **kwargs):
         predicted. If None, :var:`config.conditionswitch_predict_all` is
         used.
 
-    One use of ShowingSwitch is to have side images change depending on
+    One use of ShowingSwitch is to have images change depending on
     the current emotion of a character. For example::
 
-       define e = Character("Eileen",
-           show_side_image=ShowingSwitch(
-               "eileen happy", Image("eileen_happy_side.png", xalign=1.0, yalign=1.0),
-               "eileen vhappy", Image("eileen_vhappy_side.png", xalign=1.0, yalign=1.0),
-               None, Image("eileen_happy_default.png", xalign=1.0, yalign=1.0),
-               )
-           )
+    image emotion_indicator = ShowingSwitch(
+       "eileen concerned", "emotion_indicator concerned",
+       "eileen vhappy", "emotion_indicator vhappy",
+       None, "emotion_indicator happy")
+
     """
 
     layer = kwargs.pop('layer', 'master')
@@ -1906,7 +1904,7 @@ class AlphaMask(Container):
 
     The `child` and `mask` parameters may be arbitrary displayables. The
     size of the AlphaMask is the size of `child`.
-    
+
     Note that this takes different arguments from :func:`im.AlphaMask`,
     which uses the mask's red channel.
     """
