@@ -677,7 +677,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
         rv = old_py_compile_cache.get(key, None)
         if rv is not None:
-            old_py_compile_cache[key] = rv
+            py_compile_cache[key] = rv
             return rv
 
         bytecode = renpy.game.script.bytecode_oldcache.get(key, None)
