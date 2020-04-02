@@ -435,9 +435,9 @@ def take_focuses(focuses):
     """
 
     screen_render.take_focuses(
-        0, 0, screen_render.width, screen_render.height,
-        IDENTITY,
         0, 0,
+        screen_render.width, screen_render.height,
+        IDENTITY,
         None,
         focuses)
 
@@ -1115,7 +1115,7 @@ cdef class Render:
         else:
             self.focuses.append(t)
 
-    def take_focuses(self, cminx, cminy, cmaxx, cmaxy, reverse, x, y, screen, focuses): #@DuplicatedSignature
+    def take_focuses(self, cminx, cminy, cmaxx, cmaxy, transform, screen, focuses): #@DuplicatedSignature
         """
         This adds to focuses Focus objects corresponding to the focuses
         added to this object and its children, transformed into screen
@@ -1127,16 +1127,12 @@ cdef class Render:
         `reverse`
             The transform from render to screen coordinates.
 
-        `x`, `y`
-            The offset of the upper-left corner of the render.
-
         `screen`
             The screen this is a render of, or None if this is not part of
             a screen.
 
         `focuses`
             The list of focuses to add to.
-
         """
 
         if self.focus_screen is not None:
@@ -1144,9 +1140,6 @@ cdef class Render:
 
         if self.modal:
             focuses[:] = [ ]
-
-        if self.reverse:
-            reverse = reverse * self.reverse
 
         if self.focuses:
 
@@ -1156,42 +1149,61 @@ cdef class Render:
                     focuses.append(renpy.display.focus.Focus(d, arg, None, None, None, None, screen))
                     continue
 
-                x1, y1 = reverse.transform(xo, yo)
-                x2, y2 = reverse.transform(xo + w, yo + h)
+                x1, y1 = transform.transform(xo, yo)
+                x2, y2 = transform.transform(xo + w, yo + h)
 
-                minx = min(x1, x2) + x
-                miny = min(y1, y2) + y
-                maxx = max(x1, x2) + x
-                maxy = max(y1, y2) + y
+                minx = min(x1, x2)
+                maxx = max(x1, x2)
+                miny = min(y1, y2)
+                maxy = max(y1, y2)
 
                 minx = max(minx, cminx)
-                miny = max(miny, cminy)
                 maxx = min(maxx, cmaxx)
+                miny = max(miny, cminy)
                 maxy = min(maxy, cmaxy)
 
-                if minx >= maxx or miny >= maxy:
+                if maxx <= minx:
+                    continue
+                if maxy <= miny:
                     continue
 
                 focuses.append(renpy.display.focus.Focus(d, arg, minx, miny, maxx - minx, maxy - miny, screen))
 
-        if self.xclipping:
-            cminx = max(cminx, x)
-            cmaxx = min(cmaxx, x + self.width)
+        if self.xclipping or self.yclipping:
 
-        if self.yclipping:
-            cminy = max(cminy, y)
-            cmaxy = min(cmaxx, x + self.height)
+            x1, y1 = transform.transform(0, 0)
+            x2, y2 = transform.transform(self.width, self.height)
 
-        for child, xo, yo, focus, main in self.children:
-            if not focus or not isinstance(child, Render):
+            if self.xclipping:
+                minx = min(x1, x2)
+                maxx = max(x1, x2)
+                cminx = max(minx, cminx)
+                cmaxx = min(maxx, cmaxx)
+
+            if self.yclipping:
+                miny = min(y1, y2)
+                maxy = max(y1, y2)
+                cminy = max(miny, cminy)
+                cmaxy = min(maxy, cmaxy)
+
+        for child, cx, cy, focus, main in self.children:
+
+            if not isinstance(child, Render):
                 continue
 
-            xo, yo = reverse.transform(xo, yo)
-            child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x + xo, y + yo, screen, focuses)
+            child_transform = transform
+
+            if (cx or cy):
+                child_transform = child_transform * Matrix.coffset(cx, cy, 0)
+
+            if (self.reverse is not None) and (self.reverse is not IDENTITY):
+                child_transform = child_transform * self.reverse
+
+            child.take_focuses(cminx, cminy, cmaxx, cmaxy, child_transform, screen, focuses)
 
         if self.pass_focuses:
             for child in self.pass_focuses:
-                child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x, y, screen, focuses)
+                child.take_focuses(cminx, cminy, cmaxx, cmaxy, transform, screen, focuses)
 
     def focus_at_point(self, x, y, screen): #@DuplicatedSignature
         """
