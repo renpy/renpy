@@ -109,11 +109,26 @@ init python:
             )
 
         # Parse rules
+        line_no = 0
         for line in open(rules_path, 'r').readlines():
-            if line.startswith('#'):
+            line_no += 1
+
+            if line.startswith('#') or line.strip() == '':
                 continue
-            (f_rule, f_type, f_pattern) = line.rstrip("\r\n").split(' ', 3-1)
-            f_rule = {'+': True, '-': False}.get(f_rule)
+
+            try:
+                (f_rule, f_type, f_pattern) = line.rstrip("\r\n").split(' ', 3-1)
+            except ValueError:
+                raise RuntimeError("Missing element at progressive_download.txt:%d" % line_no)
+
+            try:
+                f_rule = {'+': True, '-': False}[f_rule]
+            except KeyError:
+                raise RuntimeError("Invalid rule '%s' at progressive_download.txt:%d" % (f_rule, line_no))
+
+            if f_type not in ('image', 'music', 'voice'):
+                raise RuntimeError("Invalid type '%s' at progressive_download.txt:%d" % (f_type, line_no))
+
             path_filters.append((f_rule, f_type, f_pattern))
 
     def filters_match(path_filters, path, path_type):
