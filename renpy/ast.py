@@ -549,9 +549,6 @@ def say_menu_with(expression, callback):
         callback(what)
 
 
-fast_who_pattern = re.compile(r'[a-zA-Z_][a-zA-Z_0-9]*$')
-
-
 def eval_who(who, fast=None):
     """
     Evaluates the `who` parameter to a say statement.
@@ -560,25 +557,21 @@ def eval_who(who, fast=None):
     if who is None:
         return None
 
-    if fast is None:
-        fast = bool(fast_who_pattern.match(who))
+    if 'store.character' in renpy.python.store_dicts:
+        rv = renpy.python.store_dicts['store.character'].get(who, None)
+    else:
+        rv = None
 
-    if fast:
+    if rv is None:
+        rv = renpy.python.store_dicts['store'].get(who, None)
 
-        if 'store.character' in renpy.python.store_dicts:
-            rv = renpy.python.store_dicts['store.character'].get(who, None)
-        else:
-            rv = None
-
-        if rv is None:
-            rv = renpy.python.store_dicts['store'].get(who, None)
-
-        if rv is None:
-            raise Exception("Sayer '%s' is not defined." % who.encode("utf-8"))
-
+    if rv is not None:
         return rv
 
-    return renpy.python.py_eval(who)
+    try:
+        return renpy.python.py_eval(who)
+    except:
+        raise Exception("Sayer '%s' is not defined." % who)
 
 
 class Say(Node):
