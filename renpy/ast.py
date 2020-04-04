@@ -90,7 +90,7 @@ class ParameterInfo(object):
             best job it can.
         """
 
-        values = { }
+        values = renpy.python.RevertableDict()
         rv = { }
 
         if args is None:
