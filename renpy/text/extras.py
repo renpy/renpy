@@ -29,13 +29,13 @@ import renpy.text
 from renpy.text.textsupport import TAG, PARAGRAPH
 import renpy.text.textsupport as textsupport
 
-
 # A list of text tags, mapping from the text tag prefix to if it
 # requires a closing tag.
 text_tags = dict(
     alpha=True,
     alt=True,
     art=True,
+    done=False,
     image=False,
     p=False,
     w=False,
@@ -89,7 +89,7 @@ def check_text_tags(s):
 
     tag_stack = [ ]
 
-    for type, text in tokens:  # @ReservedAssignment
+    for type, text in tokens: # @ReservedAssignment
         if type != TAG:
             continue
 
@@ -228,7 +228,7 @@ def textwrap(s, width=78, asian=False):
 
         eaw = unicodedata.east_asian_width(c)
 
-        if (eaw == "F") or (eaw =="W"):
+        if (eaw == "F") or (eaw == "W"):
             gwidth = 20
         elif (eaw == "A"):
             if asian:

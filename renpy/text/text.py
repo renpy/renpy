@@ -32,7 +32,7 @@ import renpy.text.texwrap as texwrap
 import renpy.text.font as font
 import renpy.text.extras as extras
 
-from _renpybidi import log2vis, WRTL, RTL, ON  # @UnresolvedImport
+from _renpybidi import log2vis, WRTL, RTL, ON # @UnresolvedImport
 
 BASELINE = -65536
 
@@ -647,7 +647,7 @@ class Layout(object):
             self.paragraph_glyphs.append(list(par_glyphs))
 
             if splits_from:
-                textsupport.copy_splits(splits_from.paragraph_glyphs[p_num], par_glyphs)  # @UndefinedVariable
+                textsupport.copy_splits(splits_from.paragraph_glyphs[p_num], par_glyphs) # @UndefinedVariable
 
             else:
 
@@ -754,7 +754,7 @@ class Layout(object):
             elif adjust_spacing == "vertical":
                 target_x_delta = 0.0
 
-            textsupport.tweak_glyph_spacing(all_glyphs, lines, target_x_delta, target_y_delta, maxx, y)  # @UndefinedVariable
+            textsupport.tweak_glyph_spacing(all_glyphs, lines, target_x_delta, target_y_delta, maxx, y) # @UndefinedVariable
 
             maxx = target_x
             y = target_y
@@ -941,7 +941,7 @@ class Layout(object):
 
             line.extend(tss[-1].subsegment(u"\u200B"))
 
-        for type, text in tokens:  # @ReservedAssignment
+        for type, text in tokens: # @ReservedAssignment
 
             try:
 
@@ -1020,6 +1020,9 @@ class Layout(object):
                     pass
 
                 elif tag == "fast":
+                    pass
+
+                elif tag == "done":
                     pass
 
                 elif tag == "nw":
@@ -1336,13 +1339,13 @@ class Layout(object):
             if g.x + g.advance > max_x:
                 max_x = g.x + g.advance
 
-            if g.x  < min_x:
+            if g.x < min_x:
                 min_x = g.x
 
         ly = min(l.y + l.height + self.line_overlap_split, max_height)
 
         if min_x < max_x:
-            rv.append(Blit(min_x, max_y, max_x - min_x, ly - max_y, left=left, right=right, top=top, bottom=(l is self.lines[-1]) ))
+            rv.append(Blit(min_x, max_y, max_x - min_x, ly - max_y, left=left, right=right, top=top, bottom=(l is self.lines[-1])))
 
         return rv
 

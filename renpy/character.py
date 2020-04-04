@@ -32,7 +32,7 @@ import collections
 import renpy.six as six
 
 # This matches the dialogue-relevant text tags.
-TAG_RE = re.compile(r'(\{\{)|(\{(p|w|nw|fast)(?:\=([^}]*))?\})', re.S)
+TAG_RE = re.compile(r'(\{\{)|(\{(p|w|nw|fast|done)(?:\=([^}]*))?\})', re.S)
 
 less_pauses = ("RENPY_LESS_PAUSES" in os.environ)
 
@@ -93,6 +93,9 @@ class DialogueTextTags(object):
                     self.pause_end = [ ]
                     self.pause_delay = [ ]
                     self.no_wait = False
+
+                elif tag == "done":
+                    break
 
                 self.text += full_tag
 
@@ -345,7 +348,7 @@ class SlowDone(object):
     delay = None
     ctc_kwargs = { }
 
-    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs):  # @ReservedAssignment
+    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs): # @ReservedAssignment
         self.ctc = ctc
         self.ctc_position = ctc_position
         self.callback = callback
@@ -380,7 +383,6 @@ class SlowDone(object):
         for c in self.callback:
             c("slow_done", interact=self.interact, type=self.type, **self.cb_args)
 
-
 # This function takes care of repeatably showing the screen as part of
 # an interaction.
 
@@ -399,7 +401,7 @@ def display_say(
         cb_args,
         with_none,
         callback,
-        type,  # @ReservedAssignment
+        type, # @ReservedAssignment
         checkpoint=True,
         ctc_timedpause=None,
         ctc_force=False,
@@ -553,7 +555,7 @@ def display_say(
                 if isinstance(what_text, tuple):
                     what_text = renpy.display.screen.get_widget(what_text[0], what_text[1], what_text[2])
 
-                if not isinstance(what_text, renpy.text.text.Text):  # @UndefinedVariable
+                if not isinstance(what_text, renpy.text.text.Text): # @UndefinedVariable
                     raise Exception("The say screen (or show_function) must return a Text object.")
 
                 if what_ctc:
@@ -654,7 +656,6 @@ class HistoryEntry(renpy.object.Object):
 
 # This is used to flag values that haven't been set by the user.
 NotSet = renpy.object.Sentinel("NotSet")
-
 
 # The number of multiple characters we've seen during the current
 # interaction.
@@ -876,7 +877,7 @@ class ADVCharacter(object):
         else:
             attrs = tuple(attrs)
 
-        tagged_attrs = ( self.image_tag,) + attrs
+        tagged_attrs = (self.image_tag,) + attrs
         images = renpy.game.context().images
 
         layer = renpy.config.tag_layer.get(self.image_tag, "master")
@@ -892,7 +893,7 @@ class ADVCharacter(object):
             if images.showing(layer, new_image, exact=True):
                 return
 
-            show_image = (self.image_tag,) + attrs + tuple(wanted) + tuple( "-" + i for i in remove)
+            show_image = (self.image_tag,) + attrs + tuple(wanted) + tuple("-" + i for i in remove)
 
             if predict:
                 images.predict_show(layer, show_image)
@@ -1189,7 +1190,7 @@ class ADVCharacter(object):
         old_side_image_attributes = renpy.store._side_image_attributes
 
         if self.image_tag:
-            attrs = ( self.image_tag, ) + renpy.game.context().images.get_attributes("master", self.image_tag)
+            attrs = (self.image_tag,) + renpy.game.context().images.get_attributes("master", self.image_tag)
         else:
             attrs = None
 
@@ -1226,10 +1227,10 @@ class ADVCharacter(object):
         if history_length is None:
             return
 
-        if not renpy.store._history:  # @UndefinedVariable
+        if not renpy.store._history: # @UndefinedVariable
             return
 
-        history = renpy.store._history_list  # @UndefinedVariable
+        history = renpy.store._history_list # @UndefinedVariable
 
         h = HistoryEntry()
 
@@ -1274,10 +1275,10 @@ class ADVCharacter(object):
         if history_length is None:
             return
 
-        if not renpy.store._history:  # @UndefinedVariable
+        if not renpy.store._history: # @UndefinedVariable
             return
 
-        renpy.store._history_list.pop()  # @UndefinedVariable
+        renpy.store._history_list.pop() # @UndefinedVariable
 
 
 def Character(name=NotSet, kind=None, **properties):
