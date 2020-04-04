@@ -104,7 +104,7 @@ def path_to_saves(gamedir, save_directory=None):
 
     # No save directory given.
     if not save_directory:
-        return gamedir + "/saves"
+        return os.path.join(gamedir, "saves")
 
     # Search the path above Ren'Py for a directory named "Ren'Py Data".
     # If it exists, then use that for our save directory.
