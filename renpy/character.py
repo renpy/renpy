@@ -60,6 +60,9 @@ class DialogueTextTags(object):
         # True if we've encountered the no-wait tag.
         self.no_wait = False
 
+        # Does this statement have a done tag?
+        self.has_done = False
+
         i = iter(TAG_RE.split(s))
 
         while True:
@@ -95,6 +98,7 @@ class DialogueTextTags(object):
                     self.no_wait = False
 
                 elif tag == "done":
+                    self.has_done = True
                     break
 
                 self.text += full_tag
@@ -406,7 +410,8 @@ def display_say(
         ctc_timedpause=None,
         ctc_force=False,
         advance=True,
-        multiple=None):
+        multiple=None,
+        dtt=None):
 
     # Final is true if this statement should perform an interaction.
 
@@ -477,7 +482,8 @@ def display_say(
     if not interact or renpy.game.preferences.self_voicing:
         all_at_once = True
 
-    dtt = DialogueTextTags(what)
+    if dtt is None:
+        dtt = DialogueTextTags(what)
 
     if all_at_once:
         pause_start = [ dtt.pause_start[0] ]
@@ -1152,11 +1158,13 @@ class ADVCharacter(object):
             else:
                 self.do_add(who, what)
 
+            dtt = DialogueTextTags(what)
+
             # Now, display the damned thing.
-            self.do_display(who, what, cb_args=self.cb_args, **display_args)
+            self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, **display_args)
 
             # Indicate that we're done.
-            if _call_done:
+            if _call_done and not dtt.has_done:
 
                 if multiple is not None:
                     self.do_done(who, what, multiple=multiple)
