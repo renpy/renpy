@@ -149,6 +149,8 @@ init -1500 python in _console:
             return s
 
         def repr_tuple(self, x, level):
+            if not len(x): return "()"
+
             if level <= 0: return "(...)"
 
             if len(x) == 1:
@@ -163,6 +165,8 @@ init -1500 python in _console:
             return self._repr_iterable(iter_x, level, '(', ')')
 
         def repr_list(self, x, level):
+            if not len(x): return "[]"
+
             if level <= 0: return "[...]"
 
             iter_x = self._to_shorted_list(x, self.maxlist)
@@ -171,6 +175,8 @@ init -1500 python in _console:
         repr_RevertableList = repr_list
 
         def repr_set(self, x, level):
+            if not len(x): return "set()"
+
             if level <= 0: return "{...}"
 
             iter_x = self._to_shorted_list(x, self.maxset, sort=True)
@@ -179,12 +185,16 @@ init -1500 python in _console:
         repr_RevertableSet = repr_set
 
         def repr_frozenset(self, x, level):
+            if not len(x): return "frozenset()"
+
             if level <= 0: return "frozenset({...})"
 
             iter_x = self._to_shorted_list(x, self.maxfrozenset, sort=True)
             return self._repr_iterable(iter_x, level, 'frozenset({', '})')
 
         def repr_dict(self, x, level):
+            if not len(x): return "{}"
+
             if level <= 0: return "{...}"
 
             iter_keys = self._to_shorted_list(x, self.maxdict, sort=True)
@@ -198,6 +208,8 @@ init -1500 python in _console:
             def_factory = self.repr1(def_factory, level)
             left = "defaultdict(%s, {" % def_factory
 
+            if not len(x): return left + "})"
+
             if level <= 0: return left + "...})"
 
             iter_keys = self._to_shorted_list(x, self.maxdict, sort=True)
@@ -205,6 +217,8 @@ init -1500 python in _console:
             return self._repr_iterable(iter_x, level, left, '})')
 
         def repr_OrderedDict(self, x, level):
+            if not len(x): return "OrderedDict()"
+
             if level <= 0: return "OrderedDict({...})"
 
             iter_keys = self._to_shorted_list(x, self.maxdict)
