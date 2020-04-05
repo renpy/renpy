@@ -149,7 +149,7 @@ init -1500 python in _console:
             return s
 
         def repr_tuple(self, x, level):
-            if not len(x): return "()"
+            if not x: return "()"
 
             if level <= 0: return "(...)"
 
@@ -165,7 +165,7 @@ init -1500 python in _console:
             return self._repr_iterable(iter_x, level, '(', ')')
 
         def repr_list(self, x, level):
-            if not len(x): return "[]"
+            if not x: return "[]"
 
             if level <= 0: return "[...]"
 
@@ -175,7 +175,7 @@ init -1500 python in _console:
         repr_RevertableList = repr_list
 
         def repr_set(self, x, level):
-            if not len(x): return "set()"
+            if not x: return "set()"
 
             if level <= 0: return "set({...})"
 
@@ -185,7 +185,7 @@ init -1500 python in _console:
         repr_RevertableSet = repr_set
 
         def repr_frozenset(self, x, level):
-            if not len(x): return "frozenset()"
+            if not x: return "frozenset()"
 
             if level <= 0: return "frozenset({...})"
 
@@ -193,7 +193,7 @@ init -1500 python in _console:
             return self._repr_iterable(iter_x, level, 'frozenset({', '})')
 
         def repr_dict(self, x, level):
-            if not len(x): return "{}"
+            if not x: return "{}"
 
             if level <= 0: return "{...}"
 
@@ -208,7 +208,7 @@ init -1500 python in _console:
             def_factory = self.repr1(def_factory, level)
             left = "defaultdict(%s, {" % def_factory
 
-            if not len(x): return left + "})"
+            if not x: return left + "})"
 
             if level <= 0: return left + "...})"
 
@@ -217,7 +217,7 @@ init -1500 python in _console:
             return self._repr_iterable(iter_x, level, left, '})')
 
         def repr_OrderedDict(self, x, level):
-            if not len(x): return "OrderedDict()"
+            if not x: return "OrderedDict()"
 
             if level <= 0: return "OrderedDict({...})"
 
