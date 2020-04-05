@@ -168,9 +168,9 @@ Tags that apply to all text are:
 
     * When the argument begins with ``call_in_new_context:``, the rest of the argument
       is a label to call in a new context (using :func:`renpy.call_in_new_context`).
-    
+
     * When the argument begins with ``show:``, the rest of the argument is a screen to show.
-    
+
     * When the argument begins with ``showmenu:``, the rest of the argument is a game menu
       screen to show.
 
@@ -358,6 +358,20 @@ Dialogue Text Tags
 ------------------
 
 Text tags that only apply to dialogue are:
+
+.. text-tag:: done
+
+    Text after the done tag is not displayed. Why would you want this?
+    It's to allow text to avoid jumping around when :propref:`adjust_spacing`
+    is True.
+
+    When the done tag is present, the line of dialogue is not added to the
+    history buffer. If the nw tag is present, it should be before the done
+    tag.::
+
+        g "Looks like they're{nw}{done} playing with their trebuchet again."
+        show trebuchet
+        g "Looks like they're{fast} playing with their trebuchet again."
 
 .. text-tag:: fast
 
