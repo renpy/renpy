@@ -265,24 +265,24 @@ def scandirfiles():
 
     # HTML5 remote files
     if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
-        index_filename = os.path.join(renpy.config.gamedir,'renpyweb_remote_files.txt')
+        index_filename = os.path.join(renpy.config.gamedir, 'renpyweb_remote_files.txt')
         if os.path.exists(index_filename):
             files = game_files
             with open(index_filename, 'rb') as remote_index:
                 while True:
                     f = remote_index.readline()
                     metadata = remote_index.readline()
-                    if f == '' or metadata == '':  # end of file
+                    if f == '' or metadata == '': # end of file
                         break
 
                     f = f.rstrip("\r\n")
                     metadata = metadata.rstrip("\r\n")
-                    (entry_type,entry_size) = metadata.split(' ')
+                    (entry_type, entry_size) = metadata.split(' ')
                     if entry_type == 'image':
                         entry_size = [int(i) for i in entry_size.split(',')]
 
                     add('/game', f)
-                    remote_files[f] = {'type':entry_type,'size':entry_size}
+                    remote_files[f] = {'type':entry_type, 'size':entry_size}
 
     for i in renpy.config.searchpath:
 
@@ -684,7 +684,7 @@ def transfn(name):
 
         add_auto(fn)
 
-        if os.path.exists(fn):
+        if os.path.isfile(fn):
             return fn
 
     raise Exception("Couldn't find file '%s'." % name)
