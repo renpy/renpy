@@ -177,7 +177,7 @@ init -1500 python in _console:
         def repr_set(self, x, level):
             if not len(x): return "set()"
 
-            if level <= 0: return "{...}"
+            if level <= 0: return "set({...})"
 
             iter_x = self._to_shorted_list(x, self.maxset, sort=True)
             return self._repr_iterable(iter_x, level, '{', '}')
