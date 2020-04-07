@@ -28,6 +28,7 @@ DEF ANGLE = False
 from libc.stdlib cimport malloc, free
 from sdl2 cimport *
 from renpy.uguu.gl cimport *
+import renpy.uguu.angle
 
 from pygame_sdl2 cimport *
 import_pygame_sdl2()
