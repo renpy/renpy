@@ -313,7 +313,7 @@ This can be used to group statements that will repeat.
 
 ::
 
-    label logo base:
+    show logo base:
         alpha 0.0 xalign 0.0 yalign 0.0
         linear 1.0 alpha 1.0
 
