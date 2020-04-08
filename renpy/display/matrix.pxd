@@ -41,6 +41,9 @@ cdef class Matrix:
     cpdef bint is_unit_aligned(Matrix self)
 
     @staticmethod
+    cdef bint is_drawable_aligned(Matrix a, Matrix b)
+
+    @staticmethod
     cdef Matrix cidentity()
 
     @staticmethod

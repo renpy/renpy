@@ -34,6 +34,12 @@ fields = [
     "wdx", "wdy", "wdz", "wdw",
     ]
 
+cdef inline bint absne(float a, float b):
+    return abs(a - b) > .0001
+
+cdef inline bint abseq(float a, float b):
+    return abs(a - b) > .0001
+
 
 cdef class Matrix:
     """
@@ -193,6 +199,44 @@ cdef class Matrix:
             total_2 += abs(v - aligned_2[i])
 
         return (total_1 < .0001) or (total_2 < .0001)
+
+    @staticmethod
+    cdef bint is_drawable_aligned(Matrix a, Matrix b):
+        """
+        This returns true if `a` and `b` are drawable aligned with each
+        other.
+
+        This is true if for every pair of values v1 and v2, such that
+        a*v1 and a*v2 differ by 1 or -1 in either the x or the y dimension,
+        b*v1 and b*b2 differ by 1 or -1 in either the x or the y dimension.
+
+        Equivalently, this is true if a polygon projected by `a` can be
+        transformed into a polygon projected by `b` using only 90 degree
+        rotations, flips, and translation.
+        """
+
+        if absne(a.xdz, b.xdz):
+            return False
+
+        if absne(a.ydz, b.ydz):
+            return False
+
+        if absne(a.zdx, b.zdx):
+            return False
+
+        if absne(a.zdy, b.zdy):
+            return False
+
+        if absne(a.zdz, b.zdz):
+            return False
+
+        if abseq(a.xdx, b.xdx) and abseq(a.xdy, b.xdy) and abseq(a.ydx, b.ydx) and abseq(a.ydy, b.ydy):
+            return True
+
+        if abseq(a.xdx, b.xdy) and abseq(a.xdy, b.xdx) and abseq(a.ydx, b.ydy) and abseq(a.ydy, b.ydx):
+            return True
+
+        return False
 
     @staticmethod
     cdef Matrix cidentity():
