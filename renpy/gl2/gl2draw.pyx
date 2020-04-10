@@ -511,6 +511,8 @@ cdef class GL2Draw:
         self.virt_to_draw = Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
         self.draw_to_virt = Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
 
+        self.draw_transform = Matrix.cscreen_projection(self.drawable_size[0], self.drawable_size[1])
+
         self.init_fbo()
         self.texture_loader.init()
 
@@ -813,7 +815,7 @@ cdef class GL2Draw:
 
         # Use the context to draw the surface tree.
         context = GL2DrawingContext(self)
-        context.draw(surf, transform, None)
+        context.draw(surf, transform, None, False)
 
         self.flip()
 
@@ -928,7 +930,7 @@ cdef class GL2Draw:
 
         # Use the context to draw the surface tree.
         context = GL2DrawingContext(self)
-        context.draw(what, transform)
+        context.draw(what, transform, False)
 
         cdef unsigned char pixel[4]
         glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
@@ -1130,12 +1132,15 @@ cdef class GL2DrawingContext:
         self.uniforms = dict()
 
 
-    def draw_model(self, model, Matrix transform, Polygon clip_polygon):
+    def draw_model(self, model, Matrix transform, Polygon clip_polygon, bint subpixel):
 
         cdef Mesh mesh = model.mesh
 
         if model.reverse is not IDENTITY:
              transform = transform * model.reverse
+
+        if not subpixel and not Matrix.is_drawable_aligned(transform, self.gl2draw.draw_transform):
+            subpixel = True
 
         # If a clip polygon is in place, clip the mesh with it.
         if clip_polygon is not None:
@@ -1163,7 +1168,7 @@ cdef class GL2DrawingContext:
         program.finish()
 
 
-    def draw(self, what, Matrix transform, Polygon clip_polygon):
+    def draw(self, what, Matrix transform, Polygon clip_polygon, bint subpixel):
         """
         This is responsible for walking the surface tree, and drawing any
         Models, Renders, and Surfaces it encounters.
@@ -1183,7 +1188,7 @@ cdef class GL2DrawingContext:
             what = self.draw.load_texture(what)
 
         if isinstance(what, Model):
-            self.draw_model(what, transform, clip_polygon)
+            self.draw_model(what, transform, clip_polygon, subpixel)
             return
 
         cdef Render r
@@ -1228,7 +1233,7 @@ cdef class GL2DrawingContext:
                     if clip_polygon is not None:
                         clip_polygon = clip_polygon.multiply_matrix(r.forward)
 
-                self.draw_model(r.cached_model, transform, clip_polygon)
+                self.draw_model(r.cached_model, transform, clip_polygon, subpixel)
                 return
 
             if r.shaders is not None:
@@ -1240,12 +1245,9 @@ cdef class GL2DrawingContext:
 
             for child, cx, cy, focus, main in r.visible_children:
 
-                # TODO: figure out if subpixel blitting should be done.
-
                 # The type of cx and cy depends on if this is a subpixel blit or not.
-                #             if type(cx) is float:
-                #                 subpixel = True
-
+                if type(cx) is float:
+                    subpixel = True
 
                 child_transform = transform
                 child_clip_polygon = clip_polygon
@@ -1262,7 +1264,7 @@ cdef class GL2DrawingContext:
                     if child_clip_polygon is not None:
                         child_clip_polygon = child_clip_polygon.multiply_matrix(r.forward)
 
-                self.draw(child, child_transform, child_clip_polygon)
+                self.draw(child, child_transform, child_clip_polygon, subpixel)
 
         finally:
 
