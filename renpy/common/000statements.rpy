@@ -63,10 +63,7 @@ python early hide:
         loop = None
         if_changed = False
 
-        while True:
-
-            if l.eol():
-                break
+        while not l.eol():
 
             if l.keyword('fadeout'):
                 fadeout = l.simple_expression()
@@ -101,7 +98,7 @@ python early hide:
                 if_changed = True
                 continue
 
-            renpy.error('could not parse statement.')
+            renpy.error('expected end of line')
 
         return dict(file=file,
                     fadeout=fadeout,
@@ -208,23 +205,26 @@ python early hide:
                               warp=warp_audio)
 
     def parse_stop_music(l):
+        channel = None
         fadeout = "None"
 
-        if l.keyword("fadeout"):
-            fadeout = l.simple_expression()
+        while not l.eol():
 
-        channel = None
+            if l.keyword("fadeout"):
+                fadeout = l.simple_expression()
+                if fadeout is None:
+                    renpy.error('expected simple expression')
 
-        if l.keyword('channel'):
-            channel = l.simple_expression()
-            if channel is None:
-                renpy.error('expected simple expression')
+                continue
 
-        if not l.eol():
+            if l.keyword('channel'):
+                channel = l.simple_expression()
+                if channel is None:
+                    renpy.error('expected simple expression')
+
+                continue
+
             renpy.error('expected end of line')
-
-        if fadeout is None:
-            renpy.error('expected simple expression')
 
         return dict(fadeout=fadeout, channel=channel)
 
