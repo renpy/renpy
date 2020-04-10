@@ -1,0 +1,10 @@
+# RenPyWeb progressive download rules - first match applies
+# '+' = progressive download, '-' = keep in game.zip (default)
+# See https://www.renpy.org/doc/html/build.html#classifying-and-ignoring-files for matching
+#
+# +/- type path
+- image game/gui/**
++ image game/**
++ music game/music/**
++ music game/illurock.opus
++ voice game/voice/**
