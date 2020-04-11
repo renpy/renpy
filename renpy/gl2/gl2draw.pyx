@@ -1155,6 +1155,9 @@ cdef class GL2DrawingContext:
         else:
             shaders = model.shaders
 
+        if not subpixel:
+            shaders += ( renpy.config.drawable_align_shader, )
+
         program = self.gl2draw.shader_cache.get(shaders)
 
         program.start()
@@ -1164,6 +1167,10 @@ cdef class GL2DrawingContext:
             program.set_uniforms(self.uniforms)
 
         program.set_uniform("uTransform", transform)
+
+        if not subpixel:
+            program.set_uniform("uVirtToDraw", self.gl2draw.drawable_viewport[2:])
+
         program.draw(mesh)
         program.finish()
 

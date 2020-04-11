@@ -23,6 +23,12 @@ init python:
         gl_FragColor = uSolidColor;
     """)
 
+    renpy.register_shader("renpy.drawable_align", variables="""
+        uniform vec2 uVirtToDraw;
+    """, vertex_120="""
+        gl_Position.xy =floor(gl_Position.xy * uVirtToDraw) / uVirtToDraw;
+    """)
+
     renpy.register_shader("renpy.dissolve", variables="""
         uniform sampler2D uTex0;
         uniform sampler2D uTex1;
