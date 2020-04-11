@@ -177,6 +177,8 @@ python early hide:
                 if channel is None:
                     renpy.error('expected simple expression')
 
+                continue
+
             if l.keyword('loop'):
                 loop = True
                 continue
