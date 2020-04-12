@@ -1109,7 +1109,7 @@ init -1500 python in updater:
                 if os.path.exists(path):
                     self.log.write("could not rename file %s" % path.encode("utf-8"))
 
-                    with open(DEFERRED_UPDATE_FILE, "wb") as f:
+                    with open(DEFERRED_UPDATE_FILE, "ab") as f:
                         f.write("R " + path.encode("utf-8") + "\n")
 
                     continue
