@@ -466,7 +466,7 @@ Non-English Languages
 The default font for Ren'Py contains characters for English and many
 other languages. For size reasons, it doesn't contain the characters
 required to render other languages, including Chinese, Japanese, and
-Korean. In order to support these language, a project must first
+Korean. In order to support these languages, a project must first
 change the fonts it uses.
 
 Ren'Py should then support most world languages without further
