@@ -78,6 +78,9 @@ cdef class TextureLoader:
             texnums[0] = texture_number
             glDeleteTextures(1, texnums)
 
+        self.allocated = set()
+        self.free_list = [ ]
+
     def get_texture_size(self):
         """
         Returns the amount of memory locked up in textures.
@@ -200,7 +203,11 @@ cdef class TextureLoader:
         for texture_number in self.free_list:
             texnums[0] = texture_number
             glDeleteTextures(1, texnums)
-            self.allocated.remove(texture_number)
+
+            if texture_number not in self.allocated:
+                print("Leaking texture:", texture_number)
+
+            self.allocated.discard(texture_number)
 
         self.free_list = [ ]
 
