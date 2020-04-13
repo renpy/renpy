@@ -992,7 +992,7 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
 
     finally:
         menu_args = old_menu_args
-        old_menu_kwargs = old_menu_kwargs
+        menu_kwargs = old_menu_kwargs
 
     # If we have a set, fill it in with the label of the chosen item.
     if set is not None and rv is not None:
