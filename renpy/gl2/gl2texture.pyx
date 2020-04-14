@@ -67,6 +67,11 @@ cdef class TextureLoader:
 
         self.ftl_program = self.draw.shader_cache.get(("renpy.ftl",))
 
+        self.allocated = set()
+        self.free_list = [ ]
+        self.total_texture_size = 0
+        self.texture_load_queue = weakref.WeakSet()
+
     def quit(self):
         """
         Gets rid of this TextureLoader.
@@ -77,9 +82,6 @@ cdef class TextureLoader:
         for texture_number in self.allocated:
             texnums[0] = texture_number
             glDeleteTextures(1, texnums)
-
-        self.allocated = set()
-        self.free_list = [ ]
 
     def get_texture_size(self):
         """

@@ -646,7 +646,7 @@ class Image(ImageBase):
             except renpy.webloader.DownloadNeeded, exception:
                 renpy.webloader.enqueue(exception.relpath, 'image', self.filename)
                 # temporary placeholder:
-                filelike = open(os.path.join('_placeholders',exception.relpath), 'rb')
+                filelike = open(os.path.join('_placeholders', exception.relpath), 'rb')
                 filename = 'use_png_format.png'
 
             if unscaled:
