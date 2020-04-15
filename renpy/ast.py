@@ -467,8 +467,8 @@ class Node(object):
 
     def predict(self):
         """
-        This is called to predictively load images from this node.  It
-        should cause renpy.display.predict.image and
+        This is called to predictively load images from this node. It
+        should cause renpy.display.predict.displayable and
         renpy.display.predict.screen to be called as necessary.
         """
 
@@ -1448,7 +1448,13 @@ class Call(Node):
             if not probably_side_effect_free(label):
                 return [ ]
 
-            label = renpy.python.py_eval(label)
+            try:
+                label = renpy.python.py_eval(label)
+            except:
+                return [ ]
+
+            if not renpy.game.script.has_label(label):
+                return [ ]
 
         return [ renpy.game.context().predict_call(label, self.next.name) ]
 
@@ -1702,7 +1708,13 @@ class Jump(Node):
             if not probably_side_effect_free(label):
                 return [ ]
 
-            label = renpy.python.py_eval(label)
+            try:
+                label = renpy.python.py_eval(label)
+            except:
+                return [ ]
+
+            if not renpy.game.script.has_label(label):
+                return [ ]
 
         return [ renpy.game.script.lookup(label) ]
 
