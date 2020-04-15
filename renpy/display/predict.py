@@ -141,9 +141,13 @@ def prediction_coroutine(root_widget):
 
     predicting = True
 
+    predicted_screens = [ ]
+
     # Predict screens given with renpy.start_predict_screen.
     for name, value in list(renpy.store._predict_screen.items()):
         args, kwargs = value
+
+        predicted_screens.append((name, args, kwargs))
 
         renpy.display.screen.predict_screen(name, *args, **kwargs)
 
@@ -166,8 +170,6 @@ def prediction_coroutine(root_widget):
             print()
 
     predicting = False
-
-    predicted_screens = [ ]
 
     # Predict the screens themselves.
     for t in screens:
