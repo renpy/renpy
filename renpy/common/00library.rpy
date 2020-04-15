@@ -247,7 +247,7 @@ init -1700 python:
                 renpy.predict_screen(s)
                 return
 
-    config.predict_callbacks.append(_predict_screens)
+    config.expensive_predict_callbacks.append(_predict_screens)
 
 
     ##########################################################################

@@ -141,6 +141,13 @@ def prediction_coroutine(root_widget):
 
     predicting = True
 
+    for i in renpy.config.expensive_predict_callbacks:
+        i()
+
+        predicting = False
+        yield False
+        predicting = True
+
     predicted_screens = [ ]
 
     # Predict screens given with renpy.start_predict_screen.

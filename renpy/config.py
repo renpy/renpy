@@ -414,6 +414,10 @@ imagemap_cache = True
 # Callbacks that are called in order to predict images.
 predict_callbacks = [ ]
 
+# Callbacks that are called on expensive idle_frame one per tick
+# to predict screens or other hard stuff.
+expensive_predict_callbacks = [ ]
+
 # Should screens be predicted?
 predict_screens = True
 
