@@ -1023,6 +1023,9 @@ autoreload_functions = [ ]
 # enabled).
 voice_mixers = [ "voice" ]
 
+# Should the text alignment pattern be drawn?
+debug_text_alignment = False
+
 del os
 del collections
 

@@ -807,6 +807,9 @@ class Layout(object):
             # Create the texture.
             surf = renpy.display.pgrender.surface((sw + o, sh + o), True)
 
+            if renpy.config.debug_text_alignment:
+                self.make_alignment_grid(surf)
+
             di.surface = surf
             di.override_color = color
             di.outline = o
@@ -852,6 +855,14 @@ class Layout(object):
                 renpy.display.to_log.write("File \"%s\", line %d, text overflow:", filename, line)
                 renpy.display.to_log.write("     Available: (%d, %d) Laid-out: (%d, %d)", width, height, sw, sh)
                 renpy.display.to_log.write("     Text: %r", text.text)
+
+    def make_alignment_grid(self, surf):
+        w, h = surf.get_size()
+
+        for x in range(w):
+            for y in range(h):
+                if (x ^ y) & 1:
+                    surf.set_at((x, y), (255, 255, 255, 255))
 
     def scale(self, n):
         if n is None:
