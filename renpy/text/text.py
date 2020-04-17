@@ -807,9 +807,6 @@ class Layout(object):
             # Create the texture.
             surf = renpy.display.pgrender.surface((sw + o, sh + o), True)
 
-            if renpy.config.debug_text_alignment:
-                self.make_alignment_grid(surf)
-
             di.surface = surf
             di.override_color = color
             di.outline = o
@@ -825,6 +822,9 @@ class Layout(object):
                     break
 
                 ts.draw(glyphs, di, self.add_left, self.add_top, self)
+
+            if renpy.config.debug_text_alignment:
+                self.make_alignment_grid(surf)
 
             renpy.display.draw.mutated_surface(surf)
             tex = renpy.display.draw.load_texture(surf)
@@ -861,8 +861,16 @@ class Layout(object):
 
         for x in range(w):
             for y in range(h):
-                if (x ^ y) & 1:
+
+                if surf.get_at((x, y))[3] > 0:
+                    continue
+
+                if x == 0 or y == 0 or x == w - 1 or y == h - 1:
+                    surf.set_at((x, y), (255, 0, 0, 255))
+                elif (x ^ y) & 1:
                     surf.set_at((x, y), (255, 255, 255, 255))
+                else:
+                    surf.set_at((x, y), (0, 0, 0, 255))
 
     def scale(self, n):
         if n is None:
