@@ -144,7 +144,7 @@ cdef class Matrix:
             if y:
                 rv += "\n        "
             for 0 <= x < 4:
-                rv += "{:8.5f}, ".format(self.m[x + y * 4])
+                rv += "{:10.7f}, ".format(self.m[x + y * 4])
 
         return rv + "])"
 
