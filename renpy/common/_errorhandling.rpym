@@ -28,6 +28,8 @@ init python in gui:
     system_font = None
 
 init python:
+    renpy.load_module("_shaders")
+
     style._default = Style(None)
 
 init python hide:
