@@ -108,7 +108,8 @@ def end():
 
     if renpy.emscripten:
         # presplash handled on the JavaScript side, because emscripten
-        # currently does not support destroying/recreating GL contexts
+        # currently does not support destroying/recreating GL contexts;
+        # in addition browsers support animated webp
         import emscripten
         emscripten.run_script(r"""presplashEnd();""")
 

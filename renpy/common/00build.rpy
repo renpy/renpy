@@ -161,6 +161,7 @@ init -1500 python in build:
 
         ("web-presplash.png", "web"),
         ("web-presplash.jpg", "web"),
+        ("web-presplash.webp", "web"),
         ("progressive_download.txt", "web"),
 
         ])
