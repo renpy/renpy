@@ -492,10 +492,10 @@ cdef class GL2Draw:
         # The location of the virtual screen on the physical screen, in
         # physical pixels.
         self.physical_box = (
-            int(px_padding / 2),
-            int(py_padding / 2),
-            pwidth - int(px_padding),
-            pheight - int(py_padding),
+            px_padding / 2,
+            py_padding / 2,
+            pwidth - px_padding,
+            pheight - py_padding,
             )
 
         # The scaling factor of physical_pixels to drawable pixels.
@@ -505,13 +505,13 @@ cdef class GL2Draw:
         self.drawable_viewport = tuple(i * self.draw_per_phys for i in self.physical_box)
 
         # How many drawable pixels there are per virtual pixel?
-        self.draw_per_virt = (1.0 * self.drawable_size[0] / pwidth) * (1.0 * view_width / vwidth)
+        self.draw_per_virt = 1.0 * self.drawable_viewport[2] / vwidth
 
         # Matrices that transform from virtual space to drawable space, and vice versa.
         self.virt_to_draw = Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
         self.draw_to_virt = Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
 
-        self.draw_transform = Matrix.cscreen_projection(self.drawable_size[0], self.drawable_size[1])
+        self.draw_transform = Matrix.cscreen_projection(self.drawable_viewport[2], self.drawable_viewport[3])
 
         self.init_fbo()
         self.texture_loader.init()
