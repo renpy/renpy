@@ -504,12 +504,15 @@ cdef class GL2Draw:
         # The location of the viewport, in drawable pixels.
         self.drawable_viewport = tuple(i * self.draw_per_phys for i in self.physical_box)
 
+        dwidth = self.drawable_viewport[2]
+        dheight = self.drawable_viewport[3]
+
         # How many drawable pixels there are per virtual pixel?
         self.draw_per_virt = 1.0 * self.drawable_viewport[2] / vwidth
 
         # Matrices that transform from virtual space to drawable space, and vice versa.
-        self.virt_to_draw = Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
-        self.draw_to_virt = Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
+        self.virt_to_draw = Matrix2D(1.0 * dwidth / vwidth, 0, 0, 1.0 * dheight / vheight)
+        self.draw_to_virt = Matrix2D(1.0 * vwidth / dwidth, 0, 0, 1.0 * vheight / dheight)
 
         self.draw_transform = Matrix.cscreen_projection(self.drawable_viewport[2], self.drawable_viewport[3])
 
@@ -1166,10 +1169,10 @@ cdef class GL2DrawingContext:
         if self.uniforms:
             program.set_uniforms(self.uniforms)
 
-        program.set_uniform("uTransform", transform)
-
         if not subpixel:
             program.set_uniform("uVirtToDraw", self.gl2draw.drawable_viewport[2:])
+
+        program.set_uniform("uTransform", transform)
 
         program.draw(mesh)
         program.finish()
