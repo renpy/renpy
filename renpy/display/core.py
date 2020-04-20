@@ -2396,7 +2396,7 @@ class Interface(object):
             renpy.display.scale.image_save_unscaled(window, filename)
             if renpy.emscripten:
                 import emscripten
-                emscripten.run_script(r'''FSDownload('%s')''' % filename)
+                emscripten.run_script(r'''FSDownload('%s');''' % filename)
             return True
         except:
             if renpy.config.debug:
