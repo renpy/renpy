@@ -2041,6 +2041,8 @@ class Interface(object):
         """
 
         pygame.display.hint("SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS", "0")
+        pygame.display.hint("SDL_TOUCH_MOUSE_EVENTS", "1")
+        pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
 
         # Needed for Unity.
         wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
