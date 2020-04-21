@@ -1128,12 +1128,22 @@ cdef class GL2DrawingContext:
     # The uniforms to use.
     cdef dict uniforms
 
+    # The value of uHalfDrawableSize for the renpy.aligned shader.
+    cdef tuple uHalfDrawableSize
+
+    # The value of uPixelCenterOffset for the renpy.aligned shader.
+    cdef tuple uPixelCenterOffset
+
     def __init__(self, GL2Draw draw):
         self.gl2draw = draw
 
         self.shaders = tuple()
         self.uniforms = dict()
 
+        dwidth, dheight = self.gl2draw.drawable_viewport[2:]
+
+        self.uHalfDrawableSize = (dwidth / 2, dheight / 2)
+        self.uPixelCenterOffset = ( 0.5 if dwidth % 2 else 0.0, 0.5 if dheight % 2 else 0.0)
 
     def draw_model(self, model, Matrix transform, Polygon clip_polygon, bint subpixel):
 
@@ -1170,7 +1180,8 @@ cdef class GL2DrawingContext:
             program.set_uniforms(self.uniforms)
 
         if not subpixel:
-            program.set_uniform("uVirtToDraw", self.gl2draw.drawable_viewport[2:])
+            program.set_uniform("uHalfDrawableSize", self.uHalfDrawableSize)
+            program.set_uniform("uPixelCenterOffset", self.uPixelCenterOffset)
 
         program.set_uniform("uTransform", transform)
 

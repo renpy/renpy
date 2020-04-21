@@ -24,9 +24,10 @@ init python:
     """)
 
     renpy.register_shader("renpy.drawable_align", variables="""
-        uniform vec2 uVirtToDraw;
+        uniform vec2 uHalfDrawableSize;
+        uniform vec2 uPixelCenterOffset;
     """, vertex_120="""
-        gl_Position.xy =floor(gl_Position.xy * uVirtToDraw) / uVirtToDraw;
+        gl_Position.xy =(floor(gl_Position.xy * uHalfDrawableSize) + uPixelCenterOffset) / uHalfDrawableSize;
     """)
 
     renpy.register_shader("renpy.dissolve", variables="""
