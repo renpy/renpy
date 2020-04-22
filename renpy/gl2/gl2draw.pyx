@@ -1134,6 +1134,9 @@ cdef class GL2DrawingContext:
     # The value of uPixelCenterOffset for the renpy.aligned shader.
     cdef tuple uPixelCenterOffset
 
+    # Should nearest neighbor drawing be used.
+    cdef bint nearest
+
     def __init__(self, GL2Draw draw):
         self.gl2draw = draw
 
@@ -1144,6 +1147,8 @@ cdef class GL2DrawingContext:
 
         self.uHalfDrawableSize = (dwidth / 2, dheight / 2)
         self.uPixelCenterOffset = ( 0.5 if dwidth % 2 else 0.0, 0.5 if dheight % 2 else 0.0)
+
+        self.nearest = False
 
     def draw_model(self, model, Matrix transform, Polygon clip_polygon, bint subpixel):
 
@@ -1174,6 +1179,10 @@ cdef class GL2DrawingContext:
         program = self.gl2draw.shader_cache.get(shaders)
 
         program.start()
+
+        if self.nearest:
+            program.use_nearest()
+
         model.program_uniforms(program)
 
         if self.uniforms:
@@ -1204,6 +1213,7 @@ cdef class GL2DrawingContext:
 
         cdef tuple old_shaders = self.shaders
         cdef dict old_uniforms = self.uniforms
+        cdef bint old_nearest = self.nearest
 
         if isinstance(what, Surface):
             what = self.draw.load_texture(what)
@@ -1239,7 +1249,8 @@ cdef class GL2DrawingContext:
                 self.uniforms["uAlpha"] = r.alpha * self.uniforms.get("uAlpha", 1.0)
                 self.uniforms["uOver"] = r.over * self.uniforms.get("uOver", 1.0)
 
-            # TODO: Handle r.nearest.
+            if r.nearest:
+                self.nearest = True
 
             if r.properties is not None:
                 if "depth" in r.properties:
@@ -1296,5 +1307,6 @@ cdef class GL2DrawingContext:
             # Restore the state.
             self.shaders = old_shaders
             self.uniforms = old_uniforms
+            self.nearest = old_nearest
 
         return 0
