@@ -295,7 +295,7 @@ cdef class Program:
 
         if self.nearest:
 
-            for 0 < i < self.samplers:
+            for 0 <= i < self.samplers:
                 glActiveTexture(GL_TEXTURE0 + i)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
@@ -303,7 +303,7 @@ cdef class Program:
         glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_SHORT, mesh.triangle)
 
         if self.nearest:
-            for 0 < i < self.samplers:
+            for 0 <= i < self.samplers:
                 glActiveTexture(GL_TEXTURE0 + i)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
