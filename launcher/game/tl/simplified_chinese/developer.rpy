@@ -64,3 +64,11 @@ translate simplified_chinese strings:
     # 00console.rpy:639
     old "jump <label>: jumps to label"
     new "jump <标签>：跳转到此标签"
+
+    # 00console.rpy:685
+    old "short: Shorten the representation of objects on the console (default)."
+    new "short：在控制台中缩短对象的表示（默认）。"
+
+    # 00console.rpy:690
+    old "long: Print the full representation of objects on the console."
+    new "long：在控制台中打印出对象的完整表示。"
