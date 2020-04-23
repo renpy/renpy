@@ -231,7 +231,7 @@ translate simplified_chinese strings:
 
     # _errorhandling.rpym:683
     old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new "复制解析错误文件（errors.txt）到剪贴板，，作为 https://lemmasoft.renai.us/ 等论坛的 BBcode。"
+    new "复制解析错误文件（errors.txt）到剪贴板，作为 https://lemmasoft.renai.us/ 等论坛的 BBcode。"
 
     # _errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
