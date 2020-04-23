@@ -63,7 +63,7 @@ translate simplified_chinese strings:
 
     # screens.rpy:215
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
-    new "## 若为True，菜单内的叙述会使用旁白 (narrator) 角色。否则，叙述会显示为菜单内的文字说明。"
+    new "## 若为 True，菜单内的叙述会使用旁白（narrator）角色。否则，叙述会显示为菜单内的文字说明。"
 
     # screens.rpy:238
     old "## Quick Menu screen"
@@ -151,7 +151,7 @@ translate simplified_chinese strings:
 
     # screens.rpy:328
     old "## Help isn't necessary or relevant to mobile devices."
-    new "## “帮助”对移动设备来说并非必须或相关。"
+    new "## “帮助”对移动设备来说并非必需或相关。"
 
     # screens.rpy:329
     old "Help"
@@ -159,7 +159,7 @@ translate simplified_chinese strings:
 
     # screens.rpy:331
     old "## The quit button is banned on iOS and unnecessary on Android."
-    new "## “退出”按钮在 iOS 上被禁止使用，在安卓上也不是必需的。"
+    new "## “退出”按钮在 iOS 上被禁止设置，在安卓和网页上也不是必需的。"
 
     # screens.rpy:332
     old "Quit"
@@ -303,7 +303,7 @@ translate simplified_chinese strings:
 
     # screens.rpy:671
     old "## range(1, 10) gives the numbers from 1 to 9."
-    new "## “range(1, 10)”给出1到9之间的数字。"
+    new "## “range(1, 10)”给出 1 到 9 之间的数字。"
 
     # screens.rpy:675
     old ">"
