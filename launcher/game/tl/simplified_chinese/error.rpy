@@ -157,6 +157,22 @@ translate simplified_chinese strings:
     old "Copies the traceback.txt file to the clipboard."
     new "复制追溯报告（traceback.txt）的内容到剪贴板。"
 
+    # _errorhandling.rpym:542
+    old "Copy BBCode"
+    new "复制 BBCode"
+
+    # _errorhandling.rpym:544
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "复制追溯报告（traceback.txt）的内容到剪贴板，作为 https://lemmasoft.renai.us/ 等论坛的 BBcode。"
+
+    # _errorhandling.rpym:546
+    old "Copy Markdown"
+    new "复制 Markdown"
+
+    # _errorhandling.rpym:548
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new "复制追溯报告（traceback.txt）的内容到剪贴板，作为 Discord 的 Markdown。"
+
     # _errorhandling.rpym:562
     old "An exception has occurred."
     new "发生异常。"
@@ -212,3 +228,11 @@ translate simplified_chinese strings:
     # _errorhandling.rpym:668
     old "Copies the errors.txt file to the clipboard."
     new "复制解析错误文件（errors.txt）到剪贴板。"
+
+    # _errorhandling.rpym:683
+    old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "复制解析错误文件（errors.txt）到剪贴板，，作为 https://lemmasoft.renai.us/ 等论坛的 BBcode。"
+
+    # _errorhandling.rpym:687
+    old "Copies the errors.txt file to the clipboard as Markdown for Discord."
+    new "复制解析错误文件（errors.txt）到剪贴板，作为 Discord 的 Markdown。"
