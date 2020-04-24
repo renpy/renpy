@@ -2741,7 +2741,7 @@ class Displayable(renpy.display.core.Displayable, renpy.python.RevertableObject)
     pass
 
 
-class Container(renpy.display.core.Displayable, renpy.python.RevertableObject):
+class Container(renpy.display.layout.Container, renpy.python.RevertableObject):
     _list_type = renpy.python.RevertableList
 
 
