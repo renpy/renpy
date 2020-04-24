@@ -158,7 +158,7 @@ translate simplified_chinese strings:
     new "帮助"
 
     # screens.rpy:331
-    old "## The quit button is banned on iOS and unnecessary on Android."
+    old "## The quit button is banned on iOS and unnecessary on Android and Web."
     new "## “退出”按钮在 iOS 上被禁止设置，在安卓和网页上也不是必需的。"
 
     # screens.rpy:332
