@@ -75,7 +75,7 @@ translate simplified_chinese strings:
 
     # screens.rpy:555
     old "Updated Character Art"
-    new "更新角色作画"
+    new "新版角色图"
 
     # screens.rpy:556
     old "Deji"
@@ -83,7 +83,7 @@ translate simplified_chinese strings:
 
     # screens.rpy:560
     old "Original Character Art"
-    new "原版角色作画"
+    new "原版角色图"
 
     # screens.rpy:561
     old "Derik"
@@ -91,7 +91,7 @@ translate simplified_chinese strings:
 
     # screens.rpy:567
     old "Updated Background Art"
-    new "更新背景作画"
+    new "新版背景图"
 
     # screens.rpy:568
     old "Mugenjohncel"
@@ -99,7 +99,7 @@ translate simplified_chinese strings:
 
     # screens.rpy:572
     old "Original Background Art"
-    new "原版角色作画"
+    new "原版背景图"
 
     # screens.rpy:573
     old "DaFool"
@@ -115,7 +115,7 @@ translate simplified_chinese strings:
 
     # screens.rpy:586
     old "Update Written By"
-    new "更新剧本"
+    new "新版剧本"
 
     # screens.rpy:587
     old "Lore"
