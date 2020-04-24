@@ -1,6 +1,54 @@
 ﻿
 translate simplified_chinese strings:
 
+    # 00accessibility.rpy:128
+    old "Font Override"
+    new "字体替代"
+
+    # 00accessibility.rpy:132
+    old "Default"
+    new "默认"
+
+    # 00accessibility.rpy:136
+    old "DejaVu Sans"
+    new "DejaVu Sans"
+
+    # 00accessibility.rpy:140
+    old "Opendyslexic"
+    new "Opendyslexic"
+
+    # 00accessibility.rpy:146
+    old "Text Size Scaling"
+    new "字号缩放"
+
+    # 00accessibility.rpy:152
+    old "Reset"
+    new "重置"
+
+    # 00accessibility.rpy:157
+    old "Line Spacing Scaling"
+    new "行距缩放"
+
+    # 00accessibility.rpy:169
+    old "Self-Voicing"
+    new "自动朗读"
+
+    # 00accessibility.rpy:173
+    old "Off"
+    new "关闭"
+
+    # 00accessibility.rpy:177
+    old "Text-to-speech"
+    new "文字转语音"
+
+    # 00accessibility.rpy:181
+    old "Clipboard"
+    new "剪贴板"
+
+    # 00accessibility.rpy:191
+    old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
+    new "此菜单上的选项旨在改善辅助功能。这些选项可能不适用于所有游戏，并且某些选项组合可能会导致游戏无法游玩。这不是游戏或引擎的问题。为了在更改字体时获得最佳效果，请尝试保持文字大小与原始大小相同。"
+
     # 00action_file.rpy:26
     old "{#weekday}Monday"
     new "{#weekday}星期一"
@@ -545,6 +593,18 @@ translate simplified_chinese strings:
     old "mute all"
     new "mute all"
 
+    # 00preferences.rpy:430
+    old "font transform"
+    new "font transform"
+
+    # 00preferences.rpy:433
+    old "font size"
+    new "font size"
+
+    # 00preferences.rpy:441
+    old "font line spacing"
+    new "font line spacing"
+
     # 00preferences.rpy:500
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "剪贴板朗读已开启。按 Shift+C 来关闭。"
@@ -624,6 +684,14 @@ translate simplified_chinese strings:
     # _developer\developer.rpym:137
     old "Nothing to inspect."
     new "无对象可查验。"
+
+    # _developer/developer.rpym:154
+    old "Hide deleted"
+    new "隐藏已删除"
+
+    # _developer/developer.rpym:154
+    old "Show deleted"
+    new "显示已删除"
 
     # _developer\developer.rpym:265
     old "Return to the developer menu"
