@@ -51,7 +51,7 @@ translate simplified_chinese strings:
 
     # 00gltest.rpy:163
     old "Tearing"
-    new "画面割裂"
+    new "画面撕裂"
 
     # 00gltest.rpy:179
     old "Changes will take effect the next time this program is run."
