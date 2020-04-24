@@ -687,11 +687,11 @@ translate simplified_chinese strings:
 
     # _developer/developer.rpym:154
     old "Hide deleted"
-    new "隐藏已删除"
+    new "隐藏已删除项"
 
     # _developer/developer.rpym:154
     old "Show deleted"
-    new "显示已删除"
+    new "显示已删除项"
 
     # _developer\developer.rpym:265
     old "Return to the developer menu"
