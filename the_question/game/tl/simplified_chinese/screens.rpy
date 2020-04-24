@@ -131,7 +131,7 @@ translate simplified_chinese strings:
 
     # screens.rpy:595
     old "\nMade with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only]"
-    new "\n基于 {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only]"
+    new "\n使用 {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only] 制作"
 
     # screens.rpy:597
     old "[renpy.license!t]"
