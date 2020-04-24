@@ -51,7 +51,7 @@ translate traditional_chinese strings:
 
     # screens.rpy:317
     old "Main Menu"
-    new "標題界面"
+    new "標題介面"
 
     # screens.rpy:319
     old "About"
