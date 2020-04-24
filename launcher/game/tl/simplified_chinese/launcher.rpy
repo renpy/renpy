@@ -21,6 +21,10 @@ translate simplified_chinese strings:
     old "The filename must have the .rpy extension."
     new "文件必须以 .rpy 为扩展名。"
 
+    # add_file.rpy:37
+    old "The file name may not be empty."
+    new "文件名不能为空。"
+
     # add_file.rpy:39
     old "The file already exists."
     new "文件已存在。"
@@ -34,8 +38,8 @@ translate simplified_chinese strings:
     new "要生成安卓应用包，请下载 RAPT，并解压到 Ren'Py 目录中。之后重启 Ren'Py。"
 
     # android.rpy:31
-    old "A Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "要在 Windows 中创建安卓应用包，您需要 Java 8 开发套件（JDK）。JDK 不同于 JRE，所以您可能已安装过 Java 但尚未安装 JDK。\n\n请{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}下载并安装 JDK{/a}，然后重启 Ren'Py。"
+    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "要在 Windows 中创建安卓应用包，您需要 64 位/x64 Java 8 开发套件（JDK）。JDK 不同于 JRE，所以您可能已安装过 Java 但尚未安装 JDK。\n\n请{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}下载并安装 JDK{/a}，然后重启 Ren'Py。"
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -167,7 +171,7 @@ translate simplified_chinese strings:
 
     # android.rpy:452
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
-    new "在为安卓应用打包之前，您需要先下载 RAPT，即 Ren'Py 安卓打包工具。您希望现在就开始下载 RAPT 吗？"
+    new "在打包安卓应用之前，您需要先下载 RAPT，即 Ren'Py 安卓打包工具。您希望现在就开始下载 RAPT 吗？"
 
     # android.rpy:505
     old "Retrieving logcat information from device."
@@ -226,8 +230,8 @@ translate simplified_chinese strings:
     new "构建似乎已成功。"
 
     # androidstrings.rpy:20
-    old "The armeabi-v7a version works on most phones or tablets, while the x86_64 version works on the simulator and chromebooks."
-    new "armeabi-v7a 版用于多数手机或平板，而 x86_64 版用于模拟器和 Chromebook。"
+    old "The arm64-v8a version works on newer Android devices, the armeabi-v7a version works on older devices, and the x86_64 version works on the simulator and chromebooks."
+    new "arm64-v8a 版用于较新的安卓设备，armeabi-v7a 版用于较旧的设备，而 x86_64 版用于模拟器和 Chromebook。"
 
     # androidstrings.rpy:21
     old "What is the full name of your application? This name will appear in the list of installed applications."
@@ -358,7 +362,7 @@ translate simplified_chinese strings:
     new "无法使用 javac 编译测试文件。如果您尚未安装 Java 开发套件（JDK）。如果您尚未安装 JDK，请从以下地址安装：\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nJDK 不同于 JRE，所以您可能已安装过 Java 但尚未安装 JDK。若缺乏可用的 JDK，程序将无法继续。"
 
     # androidstrings.rpy:53
-    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variabe to use a different version of Java."
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
     new "您计算机上的 Java 版本似乎不是 JDK 8，这是 Android SDK 支持的唯一版本。如果您需要安装 JDK 8，您可以从以下地址下载：\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\n您还可以设置 JAVA_HOME 环境变量来使用不同版本的 Java。"
 
     # androidstrings.rpy:54
@@ -465,13 +469,17 @@ translate simplified_chinese strings:
     old "Continue"
     new "继续"
 
+    # choose_theme.rpy:507 此处与 While 连用
+    old "changing the theme"
+    new "更改主题"
+
     # consolecommand.rpy:84
     old "INFORMATION"
     new "信息"
 
     # consolecommand.rpy:84
     old "The command is being run in a new operating system console window."
-    new "此命令正在一个新打开的系统控制台中运行。"
+    new "此命令正在新的操作系统控制台窗口中运行。"
 
     # distribute.rpy:444
     old "Scanning project files..."
@@ -479,7 +487,7 @@ translate simplified_chinese strings:
 
     # distribute.rpy:460
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
-    new "生成分发版失败：\n\n参数 build.directory_name 不能包含空格、冒号和分号。"
+    new "生成分发版失败：\n\n变量 build.directory_name 不能包含空格、冒号和分号。"
 
     # distribute.rpy:505
     old "No packages are selected, so there's nothing to do."
@@ -726,6 +734,10 @@ translate simplified_chinese strings:
     new "images"
 
     # front_page.rpy:198
+    old "audio"
+    new "audio"
+
+    # front_page.rpy:198
     old "gui"
     new "gui"
 
@@ -776,6 +788,14 @@ translate simplified_chinese strings:
     # front_page.rpy:251
     old "iOS"
     new "iOS"
+
+    # front_page.rpy:252
+    old "Web"
+    new "网页"
+
+    # front_page.rpy:252
+    old "(Beta)"
+    new "（测试版）"
 
     # front_page.rpy:252
     old "Generate Translations"
@@ -877,6 +897,14 @@ translate simplified_chinese strings:
     old "Updating the project..."
     new "正在更新工程……"
 
+    # gui7.rpy:429 此处与 While 连用
+    old "creating a new project"
+    new "创建新工程"
+
+    # gui7.rpy:433 此处与 While 连用
+    old "activating the new project"
+    new "激活新工程"
+
     # interface.rpy:119
     old "Documentation"
     new "说明文档"
@@ -912,6 +940,18 @@ translate simplified_chinese strings:
     # interface.rpy:354
     old "ERROR"
     new "错误"
+
+    # interface.rpy:372 此处与 While 连用
+    old "opening the log file"
+    new "打开日志文件"
+
+    # interface.rpy:394
+    old "While [what!qt], an error occured:"
+    new "[what!qt]时出错："
+
+    # interface.rpy:394
+    old "[exception!q]"
+    new "[exception!q]"
 
     # interface.rpy:400
     old "Text input may not contain the {{ or [[ characters."
@@ -1019,7 +1059,7 @@ translate simplified_chinese strings:
 
     # ios.rpy:345
     old "Before packaging iOS apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"
-    new "在为 iOS 应用打包之前，您需要先下载 renios，即 Ren'Py iOS 支持套件。您希望现在就开始下载 renios 吗？"
+    new "在打包 iOS 应用之前，您需要先下载 renios，即 Ren'Py iOS 支持包。您希望现在就开始下载 renios 吗？"
 
     # ios.rpy:354
     old "XCODE PROJECTS DIRECTORY"
@@ -1032,6 +1072,10 @@ translate simplified_chinese strings:
     # ios.rpy:359
     old "Ren'Py has set the Xcode Projects Directory to:"
     new "Ren'Py 已将 Xcode 工程目录设置为："
+
+    # itch.rpy:43
+    old "Downloading the itch.io butler."
+    new "正在下载 itch.io 工具 butler。"
 
     # itch.rpy:60
     old "The built distributions could not be found. Please choose 'Build' and try again."
@@ -1053,9 +1097,9 @@ translate simplified_chinese strings:
     old "The name of the itch project has not been set."
     new "Itch 工程名尚未设置。"
 
-    # itch.rpy:115
+    # itch.rpy:149
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
-    new "请{a=https://itch.io/game/new}创建您的工程{/a}，并在 options.rpy 里新增诸如\n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} 的内容。"
+    new "请{a=https://itch.io/game/new}创建您的工程{/a}，并在 options.rpy 里添加诸如以下内容的语句：\n{vspace=5}define build.itch_project = \"user-name/game-name\""
 
     # mobilebuild.rpy:110
     old "{a=%s}%s{/a}"
@@ -1150,8 +1194,8 @@ translate simplified_chinese strings:
     new "工程目录无法设定。操作取消。"
 
     # new_project.rpy:71
-    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
-    new "您将创建一个 [new_project_language] 语言的工程。要创建其他语言的工程，请在设置里更改启动器语言。"
+    old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
+    new "即将创建 [new_project_language]{#this substitution may be localized} 语言的工程。要创建其他语言的工程，请在设置中更改启动器语言。"
 
     # new_project.rpy:79
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
@@ -1504,3 +1548,58 @@ translate simplified_chinese strings:
     # updater.rpy:188
     old "Fetching the list of update channels"
     new "正在获取更新通道列表"
+
+    # updater.rpy:194 此处与 While 连用
+    old "downloading the list of update channels"
+    new "下载更新通道列表"
+
+    # updater.rpy:198 此处与 While 连用
+    old "parsing the list of update channels"
+    new "解析更新通道列表"
+
+    # web.rpy:119
+    old "Web: [project.current.display_name!q]"
+    new "网页：[project.current.display_name!q]"
+
+    # web.rpy:149
+    old "Build Web Application"
+    new "生成网页应用"
+
+    # web.rpy:150
+    old "Build and Open in Browser"
+    new "生成应用并在浏览器中打开"
+
+    # web.rpy:151
+    old "Open in Browser"
+    new "在浏览器中打开"
+
+    # web.rpy:152
+    old "Open build directory"
+    new "打开生成目录"
+
+    # web.rpy:156
+    old "Support:"
+    new "支持："
+
+    # web.rpy:164
+    old "RenPyWeb Home"
+    new "RenPyWeb 主页"
+
+    # web.rpy:165
+    old "Beuc's Patreon"
+    new "Beuc 的 Patreon"
+
+    # web.rpy:183
+    old "Ren'Py web applications require the entire game to be downloaded to the player's computer before it can start."
+    new "Ren'Py 网页应用要求将整个游戏下载到玩家的计算机上之后才能启动。"
+
+    # web.rpy:187
+    old "Current limitations in the web platform mean that loading large images, audio files, or movies may cause audio or framerate glitches, and lower performance in general."
+    new "当前在网页平台中的限制意味着加载较大图像、音频文件或视频时可能会导致声音或帧数抖动，并且通常会降低性能。"
+
+    # web.rpy:196
+    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
+    new "在打包网页应用之前，您需要先下载 RenPyWeb，即 Ren'Py 网页支持包。您希望现在就开始下载 RenPyWeb 吗？"
+
+    old "Web (Beta)"
+    new "网页（测试版）"
