@@ -370,6 +370,8 @@ zoomout
 
         renpy.lint.renpy_builtins.remove(i)
 
+    del i
+
 # After init, make some changes based on if config.developer is True.
 init 1700 python hide:
 
