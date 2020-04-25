@@ -1131,6 +1131,31 @@ init python in distribute:
                     dmg=dmg,
                 )
 
+        def workaround_mac_notarization(self, fl):
+            """
+            This works around mac notarization by compressing the unsigned,
+            un-notarized, binaries in lib/mac-x86_64.
+            """
+
+            fl = fl.copy()
+
+            for f in fl:
+                if "/lib/mac-x86_64/" in f.name:
+                    with open(f.path, "rb") as inf:
+                        data = inf.read()
+
+                    tempfile = self.temp_filename(os.path.basename(f.name) + ".macho")
+
+                    with open(tempfile, "wb") as outf:
+                        outf.write(b"RENPY" + data)
+
+                    f.name += ".macho"
+                    f.path = tempfile
+
+                    print(repr(f))
+
+            return fl
+
         def prepare_file_list(self, format, file_lists):
             """
             Prepares a master list of files, given the format and file lists.
@@ -1308,6 +1333,9 @@ init python in distribute:
                     shutil.rmtree(path)
 
                 pkg = DMGPackage(path, make_dmg)
+
+                fl = self.workaround_mac_notarization(fl)
+
             elif directory:
                 pkg = DirectoryPackage(path)
 
