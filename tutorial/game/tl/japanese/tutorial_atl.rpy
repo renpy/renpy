@@ -423,7 +423,7 @@ translate japanese tutorial_atl_d3416d4f:
 translate japanese tutorial_atl_4e7512ec:
 
     # e "The interpolation statement allows you to smoothly vary the value of a transform property, from an old to a new value."
-    e "補間ステートメントを使うと、変換プロパティーの値を古い値から新しい値に徐々に変化させることができます。"
+    e "補間ステートメントを使うと、変換プロパティーの値を古い値から新しい値に少しずつ変化させることができます。"
 
 # game/tutorial_atl.rpy:588
 translate japanese tutorial_atl_685eeeaa:
@@ -495,7 +495,7 @@ translate japanese tutorial_atl_5d0f8f9d:
 translate japanese tutorial_atl_28a7d27e:
 
     # e "Finally, the choice statement makes Ren'Py randomly pick a block of ATL code. This allows you to add some variation as to what Ren'Py shows."
-    e "最後に、choiceステートメントはRen'PyにATLコードのブロックをランダムに選択させます。これにより、Ren'Pyの表示を様々なバリエーションにできます。"
+    e "最後に、choiceステートメントはRen'PyにATLコードのブロックをランダムに選択させます。これにより、Ren'Pyの表示を多様なバリエーションにできます。"
 
 # game/tutorial_atl.rpy:675
 translate japanese tutorial_atl_2265254b:
@@ -567,7 +567,7 @@ translate japanese transform_properties_7af037a5:
 translate japanese transform_properties_b6527546:
 
     # e "The xzoom and yzoom properties allow the displayable to be scaled in the X and Y directions independently."
-    e "xzoomとyzoomプロパティーを使うと、画像をX方向とY方向、別々にスケールできます。"
+    e "xzoomとyzoomプロパティーを使うと、画像をX方向とY方向、それぞれにスケールできます。"
 
 # game/tutorial_atl.rpy:809
 translate japanese transform_properties_b98b780b:

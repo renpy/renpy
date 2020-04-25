@@ -1,6 +1,6 @@
 ﻿# TODO: Translation updated at 2020-02-12 23:03
 translate japanese python:
-    gui.system_font = gui.main_font = gui.text_font = gui.name_text_font = gui.interface_text_font = gui.button_text_font = gui.choice_button_text_font = "../../launcher/game/fonts/MTLc3m.ttf"
+    gui.system_font = gui.main_font = gui.text_font = gui.name_text_font = gui.interface_text_font = gui.button_text_font = gui.choice_button_text_font = "../../launcher/game/fonts/SourceHanSansCJLite.ttf"
 
 translate japanese strings:
 
