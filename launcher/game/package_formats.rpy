@@ -278,6 +278,10 @@ init python in distribute:
 
         def __init__(self, path):
             self.path = path
+
+            if os.path.isdir(path):
+                shutil.rmtree(path)
+
             self.mkdir(path)
 
         def add_file(self, name, path, xbit):
