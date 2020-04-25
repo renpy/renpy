@@ -692,6 +692,9 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
     source = source.replace("\r", "")
     source = escape_unicode(source)
 
+    if mode == "eval":
+        source = source.replace("\n", "\\\n").replace("\\\\\n", "\\\n")
+
     try:
         line_offset = lineno - 1
 
