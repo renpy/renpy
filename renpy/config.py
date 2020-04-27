@@ -1026,6 +1026,10 @@ voice_mixers = [ "voice" ]
 # Should the text alignment pattern be drawn?
 debug_text_alignment = False
 
+# Init blocks taking longer than this amount of time to run are
+# reported to log.txt.
+profile_init = 0.0
+
 del os
 del collections
 
