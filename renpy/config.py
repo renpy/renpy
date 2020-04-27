@@ -317,7 +317,7 @@ show = None
 # The callback that is used by the hide statement.
 hide = None
 
-# Should we use cPickle or pickle for load/save?
+# Python 2.x only: Should we use cPickle or pickle for load/save?
 use_cpickle = True
 
 # The function to call as the inspector.

@@ -59,7 +59,6 @@ from renpy.compat import *
 
 import sys
 import os
-import pickle
 import copy
 import types
 
