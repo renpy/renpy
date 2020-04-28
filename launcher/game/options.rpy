@@ -375,8 +375,6 @@ init python:
     # all-platforms binary.
     build.classify_renpy("lib/**/_renpysteam*", None)
     build.classify_renpy("lib/**/*steam_api*", None)
-    build.classify_renpy("lib/*/renpy", None)
-    build.classify_renpy("lib/*/renpy.exe", None)
     build.classify_renpy("lib/linux-armv7l/", "raspi")
     build.classify_renpy("lib/linux-armv7l/**", "raspi")
     build.classify_renpy("lib/**", "binary")
