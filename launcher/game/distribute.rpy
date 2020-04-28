@@ -967,7 +967,7 @@ init python in distribute:
             old_exe_fn = os.path.join(config.renpy_base, "lib/windows-i686/renpy.exe")
             old_python_fn = os.path.join(config.renpy_base, "lib/windows-i686/pythonw.exe")
 
-            if False and os.path.exists(icon_fn) and os.path.exists(old_exe_fn):
+            if os.path.exists(icon_fn) and os.path.exists(old_exe_fn):
                 exe_fn = self.temp_filename("renpy.exe")
                 python_fn = self.temp_filename("pythonw.exe")
 
