@@ -45,3 +45,6 @@ init python hide:
         except:
             pass
 
+    renpyexe = os.path.join(maclib, "renpy")
+    if os.path.exists(renpyexe):
+        sys.executable = renpyexe
