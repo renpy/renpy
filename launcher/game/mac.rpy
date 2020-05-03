@@ -37,8 +37,9 @@ init python hide:
                     data = f.read()
 
                 with open(nfn, "wb") as f:
-                    f.write(nfn, data)
+                    f.write(data)
 
+                os.chmod(nfn, 0o755)
                 os.unlink(fn)
 
         except:
