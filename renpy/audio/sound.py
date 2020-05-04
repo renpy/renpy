@@ -30,22 +30,24 @@ import renpy.audio
 # channel set to "sound".
 
 
-def play(filename, channel="sound", fadeout=0, fadein=0, tight=False, loop=False):
+def play(filename, channel="sound", fadeout=0, fadein=0, tight=False, loop=False, relative_volume=1.0):
     renpy.audio.music.play(filename,
                            channel=channel,
                            fadeout=fadeout,
                            fadein=fadein,
                            tight=tight,
-                           loop=loop)
+                           loop=loop,
+                           relative_volume=relative_volume)
 
 
-def queue(filename, channel="sound", clear_queue=True, fadein=0, tight=False, loop=False):
+def queue(filename, channel="sound", clear_queue=True, fadein=0, tight=False, loop=False, relative_volume=1.0):
     renpy.audio.music.queue(filename,
                             channel=channel,
                             clear_queue=clear_queue,
                             fadein=fadein,
                             tight=tight,
-                            loop=loop)
+                            loop=loop,
+                            relative_volume=relative_volume)
 
 
 def stop(channel="sound", fadeout=0):
