@@ -22,6 +22,7 @@
 init python hide:
     import os
 
+    macapp = os.path.join(config.renpy_base, "renpy.app/Contents/MacOS")
     maclib = os.path.join(config.renpy_base, "lib/mac-x86_64")
 
     for fn in os.listdir(maclib):
@@ -45,6 +46,8 @@ init python hide:
         except:
             pass
 
-    renpyexe = os.path.join(maclib, "renpy")
-    if os.path.exists(renpyexe):
+
+    macrenpyexe = os.path.join(maclib, "renpy")
+
+    if sys.executable.startswith(macapp) and os.path.exists(macrenpyexe):
         sys.executable = renpyexe
