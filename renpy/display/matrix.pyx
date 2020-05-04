@@ -38,7 +38,7 @@ cdef inline bint absne(float a, float b):
     return abs(a - b) > .0001
 
 cdef inline bint abseq(float a, float b):
-    return abs(a - b) > .0001
+    return abs(a - b) < .0001
 
 
 cdef class Matrix:
