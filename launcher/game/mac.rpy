@@ -50,4 +50,4 @@ init python hide:
     macrenpyexe = os.path.join(maclib, "renpy")
 
     if sys.executable.startswith(macapp) and os.path.exists(macrenpyexe):
-        sys.executable = renpyexe
+        sys.executable = macrenpyexe
