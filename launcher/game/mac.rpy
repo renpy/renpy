@@ -25,29 +25,31 @@ init python hide:
     macapp = os.path.join(config.renpy_base, "renpy.app/Contents/MacOS")
     maclib = os.path.join(config.renpy_base, "lib/mac-x86_64")
 
-    for fn in os.listdir(maclib):
-        try:
+    if os.path.exists(maclib):
 
-            fn = os.path.join(maclib, fn)
+        for fn in os.listdir(maclib):
+            try:
 
-            if fn.endswith(".macho"):
-                nfn = fn.rpartition(".")[0]
+                fn = os.path.join(maclib, fn)
 
-                with open(fn, "rb") as f:
-                    f.read(5)
-                    data = f.read()
+                if fn.endswith(".macho"):
+                    nfn = fn.rpartition(".")[0]
 
-                with open(nfn, "wb") as f:
-                    f.write(data)
+                    with open(fn, "rb") as f:
+                        f.read(5)
+                        data = f.read()
 
-                os.chmod(nfn, 0o755)
-                os.unlink(fn)
+                    with open(nfn, "wb") as f:
+                        f.write(data)
 
-        except:
-            pass
+                    os.chmod(nfn, 0o755)
+                    os.unlink(fn)
+
+            except:
+                pass
 
 
-    macrenpyexe = os.path.join(maclib, "renpy")
+        macrenpyexe = os.path.join(maclib, "renpy")
 
-    if sys.executable.startswith(macapp) and os.path.exists(macrenpyexe):
-        sys.executable = macrenpyexe
+        if sys.executable.startswith(macapp) and os.path.exists(macrenpyexe):
+            sys.executable = macrenpyexe
