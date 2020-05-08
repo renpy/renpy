@@ -215,6 +215,7 @@ def choose_variants():
             renpy.config.variants.insert(0, 'small')
 
     elif renpy.ios:
+        renpy.config.variants.insert(0, 'mobile')
         renpy.config.variants.insert(0, 'ios')
         renpy.config.variants.insert(0, 'touch')
 
