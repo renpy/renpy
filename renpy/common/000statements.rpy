@@ -129,7 +129,7 @@ python early hide:
                          channel=channel,
                          loop=p.get("loop", None),
                          if_changed=p.get("if_changed", False),
-                         relative_volume=eval(p["volume"]))
+                         relative_volume=eval(p.get("volume", "1.0")))
 
     def predict_play_music(p):
         if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
@@ -213,7 +213,7 @@ python early hide:
             _audio_eval(p["file"]),
             channel=channel,
             loop=p.get("loop", None),
-            relative_volume=eval(p["volume"]))
+            relative_volume=eval(p.get("volume", "1.0")))
 
 
     renpy.register_statement('queue music',
@@ -291,7 +291,7 @@ python early hide:
                          fadein=eval(p["fadein"]),
                          loop=loop,
                          channel=channel,
-                         relative_volume=eval(p["volume"]))
+                         relative_volume=eval(p.get("volume", "1.0")))
 
     def lint_play_sound(p, lint_play_music=lint_play_music):
         return lint_play_music(p, channel="sound")
