@@ -142,6 +142,7 @@ class MusicContext(renpy.python.RevertableObject):
     __version__ = 0
 
     pause = False
+    tertiary_volume = 1.0
 
     def __init__(self):
 
