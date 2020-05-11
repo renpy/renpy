@@ -313,7 +313,7 @@ python early hide:
         if loop is None:
             loop = config.default_sound_loop
 
-        renpy.sound.queue(_audio_eval(p["file"]), channel=channel, loop=loop, relative_volume=eval(p["volume"]))
+        renpy.sound.queue(_audio_eval(p["file"]), channel=channel, loop=loop, relative_volume=eval(p.get("volume", "1.0")))
 
 
     renpy.register_statement('queue sound',
