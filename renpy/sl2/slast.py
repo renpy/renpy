@@ -2022,7 +2022,7 @@ class SLScreen(SLBlock):
         if self.const_ast:
             return
 
-        key = (self.name, self.variant)
+        key = (self.name, self.variant, self.location)
 
         if key in scache.const_analyzed:
             self.const_ast = scache.const_analyzed[key]
