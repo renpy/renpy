@@ -1145,7 +1145,7 @@ cdef class GL2DrawingContext:
 
         dwidth, dheight = self.gl2draw.drawable_viewport[2:]
 
-        self.uHalfDrawableSize = (dwidth / 2, dheight / 2)
+        self.uHalfDrawableSize = ((dwidth - .01) / 2, (dheight - .01) / 2)
         self.uPixelCenterOffset = ( 0.5 if dwidth % 2 else 0.0, 0.5 if dheight % 2 else 0.0)
 
         self.nearest = False
