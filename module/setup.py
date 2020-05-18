@@ -114,6 +114,10 @@ if steam_sdk:
     setuplib.library_dirs.append("{}/redistributable_bin/{}".format(steam_sdk, steam_platform))
     setuplib.include_dirs.append("{}/public".format(steam_sdk))
 
+cubism = os.environ.get("CUBISM", None)
+if cubism:
+    setuplib.include_dirs.append("{}/Core/include".format(cubism))
+
 # Modules directory.
 cython(
     "_renpy",
@@ -207,6 +211,9 @@ cython("renpy.gl2.gl2model")
 cython("renpy.gl2.gl2draw", libs=sdl)
 cython("renpy.gl2.gl2texture", libs=sdl)
 cython("renpy.gl2.gl2shader", libs=sdl)
+
+if cubism:
+    cython("renpy.gl2.live2dmodel", libs=sdl)
 
 # renpy.text
 cython("renpy.text.textsupport")
