@@ -27,16 +27,16 @@ import renpy.gl2.live2dmodel
 import renpy.gl2.live2dmotion
 import json
 
-did_init = False
+did_onetime_init = False
 
 
-def init():
-    global did_init
+def onetime_init():
+    global did_onetime_init
 
-    if did_init:
+    if did_onetime_init:
         return
 
-    did_init = True
+    did_onetime_init = True
 
     if renpy.windows:
         dll = "Live2DCubismCore.dll"
@@ -47,6 +47,73 @@ def init():
 
     if not renpy.gl2.live2dmodel.load(dll):
         raise Exception("Could not load Live2D. {} was not found.".format(dll))
+
+
+did_init = False
+
+
+def init():
+    """
+    Called to initialize Live2D, if needed.
+    """
+
+    global did_init
+
+    if did_init:
+        return
+
+    onetime_init()
+
+    renpy.exports.register_shader("live2d.mask", variables="""
+        uniform sampler2D uTex0;
+        uniform sampler2D uTex1;
+        attribute vec4 vPosition;
+        attribute vec2 aTexCoord;
+        varying vec2 vTexCoord;
+        varying vec2 vMaskCoord;
+    """, vertex_110="""
+        vTexCoord = aTexCoord;
+        vMaskCoord = vec2(aPosition.x / 2 + .5, -aPosition.y / 2 + .5);
+    """, fragment_110="""
+        vec4 color = texture2D(uTex0, vTexCoord);
+        vec4 mask = texture2D(uTex1, vMaskCoord);
+        gl_FragColor = color * mask.a;
+    """)
+
+    renpy.exports.register_shader("live2d.inverted_mask", variables="""
+        uniform sampler2D uTex0;
+        uniform sampler2D uTex1;
+        attribute vec4 vPosition;
+        attribute vec2 aTexCoord;
+        varying vec2 vTexCoord;
+        varying vec2 vMaskCoord;
+    """, vertex_110="""
+        vTexCoord = aTexCoord;
+        vMaskCoord = vec2(aPosition.x / 2 + .5, -aPosition.y / 2 + .5);
+    """, fragment_110="""
+        vec4 color = texture2D(uTex0, vTexCoord);
+        vec4 mask = texture2D(uTex1, vMaskCoord);
+        gl_FragColor = color * (1.0 - mask.a);
+    """)
+
+    renpy.exports.register_shader("live2d.flip_texture", variables="""
+        varying vec2 vTexCoord;
+    """, vertex_120="""
+        vTexCoord.y = 1.0 - vTexCoord.y;
+    """)
+
+    did_init = True
+
+
+def reset():
+    """
+    Resets this module when Ren'Py restarts.
+    """
+
+    global did_init
+    did_init = False
+
+    common_cache.clear()
 
 
 class Live2DCommon(object):
@@ -135,7 +202,7 @@ class Live2DCommon(object):
 common_cache = { }
 
 
-class Live2D(renpy.exports.Displayable):
+class Live2D(renpy.display.core.Displayable):
 
     nosave = [ "common_cache" ]
 
@@ -278,10 +345,3 @@ class Live2D(renpy.exports.Displayable):
     def visit(self):
         return self.common.textures
 
-
-def reset():
-    """
-    Resets this module when Ren'Py restarts.
-    """
-
-    common_cache.clear()

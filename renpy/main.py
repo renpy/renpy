@@ -596,6 +596,12 @@ def main():
 
             finally:
 
+                # Reset if it exists.
+                try:
+                    renpy.gl2.live2d.reset()
+                except:
+                    pass
+
                 # Flush any pending interface work.
                 renpy.display.interface.finish_pending()
 
