@@ -191,7 +191,10 @@ class Formatter(string.Formatter):
             value = renpy.translation.translate_string(value)
 
         if "i" in conversion:
-            value = substitute(value, translate=False)[0]
+            try:
+                value = substitute(value, translate=False)[0]
+            except RuntimeError:  # PY3 RecursionError
+                raise ValueError("Substitution {!r} refers to itself in a loop.".format(value))
 
         if "q" in conversion:
             value = value.replace("{", "{{")
