@@ -129,6 +129,21 @@ screen preferences:
 
                     add SPACER
 
+                    add SEPARATOR2
+
+                    frame:
+                        style "l_indent"
+                        yminimum 75
+                        has vbox
+
+                        text _("Actions:")
+
+                        add HALF_SPACER
+
+                        textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
+
+
+
                 frame:
                     style "l_indent"
                     xmaximum ONETHIRD
@@ -181,29 +196,15 @@ screen preferences:
 
                         textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 
-                frame:
-                    style "l_indent"
-                    xmaximum ONETHIRD
-                    xfill True
 
-                    has vbox
-
-                    add SEPARATOR2
+                if translations:
 
                     frame:
                         style "l_indent"
-                        yminimum 75
+                        xmaximum ONETHIRD
+                        xfill True
+
                         has vbox
-
-                        text _("Actions:")
-
-                        add HALF_SPACER
-
-                        textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
-
-                    if translations:
-
-                        add SPACER
 
                         # Text editor selection.
                         add SEPARATOR2
