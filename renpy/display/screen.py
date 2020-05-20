@@ -786,13 +786,15 @@ def get_all_screen_variants(name):
     order.
     """
 
-    rv = [ ]
+    if isinstance(name, basestring):
+        name = tuple(name.split())
 
-    for k, v in screens.items():
-        if k[0] == name:
-            rv.append((k[1], v))
+    name = name[0]
 
-    return rv
+    if name not in screens_by_name:
+        return [ ]
+
+    return list(screens_by_name[name].items())
 
 
 # Have all screens been analyzed?
