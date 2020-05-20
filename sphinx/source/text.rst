@@ -117,6 +117,7 @@ The ``!i`` flag will make additional interpolate for the interpolated string::
     g "I'm happy to see you you have [earned_points_info!ti]."
 
 This should be used to substitute the text that has a substitution inside.
+It's often useful in screen language, see :ref:`Const Text <const-text>`.
 
 The ``!u`` flag forces the text to uppercase and the ``!l`` flag forces the
 text to lowercase. The ``!c`` flag acts only on the first character,
