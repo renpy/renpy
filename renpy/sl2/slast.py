@@ -1701,7 +1701,7 @@ class SLUse(SLNode):
             else:
                 const = False
         else:
-            const = False
+            const = True
 
         if isinstance(self.target, renpy.ast.PyExpr):
 
