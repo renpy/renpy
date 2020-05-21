@@ -19,6 +19,66 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+init python:
+    import fnmatch
+    import re
+    import zipfile
+
+    def install_from_zip(name, zipglob, patterns):
+
+        # Determine the filename matching the zipglob, and put it into filename.
+        filenames = [ i for i in os.listdir(config.renpy_base) if fnmatch.fnmatch(i.lower(), zipglob.lower()) ]
+
+        if not filenames:
+            interface.error(
+                _("Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."),
+                label="install",
+                name=name,
+                zipglob=zipglob,
+            )
+
+        filenames.sort(key=lambda a : a.lower())
+        filename = filenames[-1]
+
+        # The zipfile.
+        zf = zipfile.ZipFile(os.path.join(config.renpy_base, filename))
+
+        for fn in zf.namelist():
+            dstfn = None
+
+            renpy.write_log(fn)
+
+            for src, dst in patterns:
+                if re.match(src, fn):
+                    dstfn = re.sub(src, dst, fn)
+                    break
+
+            if not dstfn:
+                continue
+
+            dstfn = os.path.join(config.renpy_base, dstfn)
+
+            renpy.write_log(fn + " -> " + dstfn)
+
+            zf.extract(fn, path=dstfn)
+
+        interface.info(_("Successfully installed [name!t]."), name=name)
+
+
+label install_live2d:
+    python hide:
+
+        patterns = [
+            (r".*/Core/dll/linux/x86_64/(libLive2DCubismCore.so)", r"lib/linux-x86_64/\1"),
+            (r".*/Core/dll/windows/x86_64/(Live2DCubismCore.dll)", r"lib/windows-x86_64/\1"),
+            (r".*/Core/dll/windows/x86/(Live2DCubismCore.dll)", r"lib/windows-i686/\1"),
+            (r".*/Core/dll/macos/(libLive2DCubismCore.dylib)", r"lib/mac-x86_64/\1"),
+            (r".*/Core/dll/experimental/rpi/(libLive2DCubismCore.so)", r"lib/linux-armv7l/\1"),
+        ]
+
+        install_from_zip("Live2D Cubism SDK for Native", "CubismSdkForNative-4-*.zip", patterns)
+
+    jump front_page
 
 screen install():
 
@@ -52,7 +112,7 @@ screen install():
                         add SPACER
 
                         textbutton "Install Live2D Cubism SDK for Native":
-                            action NullAction()
+                            action Jump("install_live2d")
 
                         add HALF_SPACER
 
