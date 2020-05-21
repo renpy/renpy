@@ -44,13 +44,14 @@ init python:
         zf = zipfile.ZipFile(os.path.join(config.renpy_base, filename))
 
         for fn in zf.namelist():
+            matchfn = fn.replace("\\", "/")
             dstfn = None
 
             renpy.write_log(fn)
 
             for src, dst in patterns:
-                if re.match(src, fn):
-                    dstfn = re.sub(src, dst, fn)
+                if re.match(src, matchfn):
+                    dstfn = re.sub(src, dst, matchfn)
                     break
 
             if not dstfn:
@@ -60,7 +61,14 @@ init python:
 
             renpy.write_log(fn + " -> " + dstfn)
 
-            zf.extract(fn, path=dstfn)
+            data = zf.read(fn)
+            with open(dstfn, "wb") as f:
+                f.write(data)
+
+            try:
+                os.chmod(dstfn, 0o755)
+            except:
+                pass
 
         interface.info(_("Successfully installed [name!t]."), name=name)
 
