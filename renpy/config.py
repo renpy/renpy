@@ -1028,7 +1028,7 @@ debug_text_alignment = False
 
 # Init blocks taking longer than this amount of time to run are
 # reported to log.txt.
-profile_init = 0.0
+profile_init = 0.25
 
 del os
 del collections
