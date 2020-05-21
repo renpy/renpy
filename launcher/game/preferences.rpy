@@ -140,8 +140,8 @@ screen preferences:
 
                         add HALF_SPACER
 
+                        textbutton _("Install libraries") style "l_nonbox" action Jump("install")
                         textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
-
 
 
                 frame:
