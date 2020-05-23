@@ -180,6 +180,8 @@ DragGroup = renpy.display.dragdrop.DragGroup
 Sprite = renpy.display.particle.Sprite
 SpriteManager = renpy.display.particle.SpriteManager
 
+Live2D = renpy.gl2.live2d.Live2D
+
 # Currying things.
 Alpha = renpy.curry.curry(renpy.display.layout.Alpha)
 Position = renpy.curry.curry(renpy.display.layout.Position)
@@ -337,15 +339,6 @@ def At(d, *args):
             rv = i(rv)
 
     return rv
-
-
-def Live2D(*args, **kwargs):
-    global Live2D
-
-    import renpy.gl2.live2d
-
-    Live2D = renpy.gl2.live2d.Live2D
-    return Live2D(*args, **kwargs)
 
 
 # The color class/function.
