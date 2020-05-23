@@ -63,6 +63,9 @@ def init():
     if did_init:
         return
 
+    if not renpy.config.gl2:
+        raise Exception("Live2D requires that config.gl2 be True.")
+
     onetime_init()
 
     register_shader("live2d.mask", variables="""
@@ -347,3 +350,17 @@ class Live2D(renpy.display.core.Displayable):
     def visit(self):
         return self.common.textures
 
+
+def has_live2d():
+    """
+    :doc: live2d
+
+    Returns True if Live2d is supported on the current platform, and
+    False otherwise.
+    """
+
+    try:
+        init()
+        return True
+    except:
+        return False
