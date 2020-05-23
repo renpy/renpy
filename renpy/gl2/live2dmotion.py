@@ -96,7 +96,7 @@ class Bezier(object):
 class Motion(object):
 
     def __init__(self, filename):
-        j = json.load(renpy.exports.file(filename))
+        j = json.load(renpy.loader.load(filename))
 
         self.duration = j["Meta"]["Duration"]
         self.curves = { }

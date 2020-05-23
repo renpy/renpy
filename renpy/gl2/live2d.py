@@ -21,10 +21,11 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import *
-import renpy.exports
 
 import renpy.gl2.live2dmodel
 import renpy.gl2.live2dmotion
+from renpy.gl2.gl2shadercache import register_shader
+
 import json
 
 did_onetime_init = False
@@ -64,7 +65,7 @@ def init():
 
     onetime_init()
 
-    renpy.exports.register_shader("live2d.mask", variables="""
+    register_shader("live2d.mask", variables="""
         uniform sampler2D uTex0;
         uniform sampler2D uTex1;
         attribute vec4 vPosition;
@@ -80,7 +81,7 @@ def init():
         gl_FragColor = color * mask.a;
     """)
 
-    renpy.exports.register_shader("live2d.inverted_mask", variables="""
+    register_shader("live2d.inverted_mask", variables="""
         uniform sampler2D uTex0;
         uniform sampler2D uTex1;
         attribute vec4 vPosition;
@@ -96,7 +97,7 @@ def init():
         gl_FragColor = color * (1.0 - mask.a);
     """)
 
-    renpy.exports.register_shader("live2d.flip_texture", variables="""
+    register_shader("live2d.flip_texture", variables="""
         varying vec2 vTexCoord;
     """, vertex_120="""
         vTexCoord.y = 1.0 - vTexCoord.y;
@@ -135,7 +136,7 @@ class Live2DCommon(object):
 
         renpy.display.log.write("Loading Live2D from %r.", filename)
 
-        if not renpy.exports.loadable(filename):
+        if not renpy.loader.loadable(filename):
             raise Exception("Live2D model {} does not exist.".format(filename))
 
         # A short name for the model.
@@ -148,7 +149,7 @@ class Live2DCommon(object):
             self.base += "/"
 
         # The contents of the .model3.json file.
-        self.model_json = json.load(renpy.exports.file(filename))
+        self.model_json = json.load(renpy.loader.load(filename))
 
         # The model created from the moc3 file.
         self.model = renpy.gl2.live2dmodel.Live2DModel(self.base + self.model_json["FileReferences"]["Moc"])
@@ -157,7 +158,7 @@ class Live2DCommon(object):
         self.textures = [ ]
 
         for i in self.model_json["FileReferences"]["Textures"]:
-            self.textures.append(renpy.exports.displayable(self.base + i))
+            self.textures.append(renpy.easy.displayable(self.base + i))
 
         # The motion information.
         self.motions = { }
@@ -192,10 +193,11 @@ class Live2DCommon(object):
             if prefix == model_name:
                 name = suffix
 
-            renpy.display.log.write(" - motion %s -> %s", name, i)
+            if renpy.loader.loadable(self.base + i):
+                renpy.display.log.write(" - motion %s -> %s", name, i)
 
-            self.motions[name] = renpy.gl2.live2dmotion.Motion(self.base + i)
-            self.attributes.add(name)
+                self.motions[name] = renpy.gl2.live2dmotion.Motion(self.base + i)
+                self.attributes.add(name)
 
 
 # This maps a filename to a Live2DCommon object.

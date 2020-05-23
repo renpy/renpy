@@ -30,8 +30,6 @@ from renpy.gl2.gl2mesh2 cimport Mesh2
 from renpy.display.matrix cimport Matrix
 from renpy.display.render cimport Render
 
-from renpy.exports import register_shader
-
 cdef extern from "SDL.h" nogil:
     void* SDL_LoadObject(const char* sofile)
     void* SDL_LoadFunction(void* handle, const char* name)
@@ -185,9 +183,7 @@ cdef class Live2DModel:
 
         cdef int i
 
-        import renpy.exports
-
-        data = renpy.exports.file(fn).read()
+        data = renpy.loader.load(fn).read()
 
         # Load the MOC.
         self.moc_data = AlignedMemory(len(data), csmAlignofMoc, data)
