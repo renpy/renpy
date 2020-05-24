@@ -396,14 +396,21 @@ class SLBlock(SLNode):
             const = self.atl_transform.constant
             self.constant = min(self.constant, const)
 
+        was_last_keyword = False
         for i in self.children:
             if i.has_keyword:
+
+                if was_last_keyword:
+                    raise Exception("Properties are not allowed here.")
+
                 self.keyword_children.append(i)
                 self.has_keyword = True
 
             if i.last_keyword:
                 self.last_keyword = True
-                break
+                was_last_keyword = True
+                if not renpy.config.developer:
+                    break
 
     def execute(self, context):
 
@@ -1303,7 +1310,6 @@ class SLIf(SLNode):
                     except:
                         pass
 
-            # Not-taken branches, only if not already predicted.
             else:
                 false_blocks.append(block)
 
@@ -1314,6 +1320,7 @@ class SLIf(SLNode):
 
         context.predicted.add(self.serial)
 
+        # Not-taken branches.
         for block in false_blocks:
             ctx = SLContext(context)
             ctx.children = [ ]
@@ -1977,6 +1984,8 @@ class SLCustomUse(SLNode):
         return rv
 
     def analyze(self, analysis):
+
+        self.last_keyword = True
 
         self.block.analyze(analysis)
 
