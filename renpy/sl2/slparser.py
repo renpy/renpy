@@ -616,10 +616,7 @@ class DisplayableParser(Parser):
         self.parse_contents(l, rv, layout_mode=layout_mode, can_has=can_has, can_tag=False)
 
         if len(rv.positional) != len(self.positional):
-            for i in rv.keyword:
-                if i[0] == 'arguments':
-                    break
-            else:
+            if not rv.keyword_exist("arguments"):
                 l.error("{} statement expects {} positional arguments, got {}.".format(self.name, len(self.positional), len(rv.positional)))
 
         return rv
@@ -981,10 +978,7 @@ class CustomParser(Parser):
         self.parse_contents(l, block, can_has=can_has, can_tag=False)
 
         if len(arguments) != len(self.positional):
-            for i in block.keyword:
-                if i[0] == 'arguments':
-                    break
-            else:
+            if not block.keyword_exist("arguments"):
                 l.error("{} statement expects {} positional arguments, got {}.".format(self.name, len(self.positional), len(arguments)))
 
         return slast.SLCustomUse(loc, self.screen, arguments, block)

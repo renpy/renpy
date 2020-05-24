@@ -485,6 +485,23 @@ class SLBlock(SLNode):
 
         return False
 
+    def keyword_exist(self, name):
+        """
+        Returns true if this block or it's SLIf children have parsed `name` keyword,
+        or false otherwise.
+        """
+
+        if name in dict(self.keyword):
+            return True
+
+        for n in self.children:
+
+            if isinstance(n, SLIf):
+                if n.keyword_exist(name):
+                    return True
+
+        return False
+
 
 list_or_tuple = (list, tuple)
 
@@ -665,8 +682,8 @@ class SLDisplayable(SLBlock):
             for k, v in self.keyword:
                 const = min(self.constant, analysis.is_constant_expr(v))
 
-                if k == "id":
-                    const = NOT_CONST
+            if self.keyword_exist("id"):
+                const = NOT_CONST
 
             if const == LOCAL_CONST:
                 analysis.mark_constant(self.variable)
@@ -721,9 +738,8 @@ class SLDisplayable(SLBlock):
         # If we have the id property, we're not constant - since we may get
         # additional keywords via id. (It's unlikely, but id should be pretty
         # rare.)
-        for k, _expr in self.keyword:
-            if k == "id":
-                self.constant = NOT_CONST
+        if self.keyword_exist("id"):
+            self.constant = NOT_CONST
 
         if self.variable is not None:
             self.constant = NOT_CONST
@@ -1331,6 +1347,9 @@ class SLIf(SLNode):
 
     def has_python(self):
         return any(i[1].has_python() for i in self.entries)
+
+    def keyword_exist(self, name):
+        return any(i[1].keyword_exist(name) for i in self.entries)
 
 
 class SLShowIf(SLNode):
@@ -1982,13 +2001,7 @@ class SLCustomUse(SLNode):
 
         # If we have the id property, we're not constant - since we may get
         # our state via other screen on replace.
-        for k, _expr in block.keyword:
-            if k == "id":
-                self.constant = NOT_CONST
-                const = False
-                break
-        else:
-            const = True
+        const = not block.keyword_exist("id")
 
         if const and block.constant == GLOBAL_CONST:
             self.ast = target.ast.const_ast
