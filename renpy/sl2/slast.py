@@ -336,6 +336,7 @@ class SLBlock(SLNode):
         rv = SLNode.instantiate(self, transclude)
         rv.keyword = self.keyword
         rv.children = [ i.copy(transclude) for i in self.children ]
+        rv.atl_transform = self.atl_transform
 
         return rv
 
