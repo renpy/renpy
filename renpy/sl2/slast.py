@@ -1882,7 +1882,8 @@ class SLUse(SLNode):
             self.ast.copy_on_change(c)
 
     def used_screens(self, callback):
-        callback(self.target)
+        if not isinstance(self.target, renpy.ast.PyExpr):
+            callback(self.target)
 
 
 class SLTransclude(SLNode):
