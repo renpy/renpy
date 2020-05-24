@@ -1284,12 +1284,8 @@ class SLIf(SLNode):
         # True if no block has been the main choice yet.
         first = True
 
-        # Has any instance of this node been predicted? We only predict
-        # once per node, for performance reasons.
-        predicted = self.serial in context.predicted
-
-        if not predicted:
-            context.predicted.add(self.serial)
+        # Other blocks that we predict if not predicted.
+        false_blocks = [ ]
 
         for cond, block in self.prepared_entries:
             try:
@@ -1308,20 +1304,29 @@ class SLIf(SLNode):
                         pass
 
             # Not-taken branches, only if not already predicted.
-            elif not predicted:
+            else:
+                false_blocks.append(block)
 
-                ctx = SLContext(context)
-                ctx.children = [ ]
-                ctx.unlikely = True
+        # Has any instance of this node been predicted? We only predict
+        # once per node, for performance reasons.
+        if self.serial in context.predicted:
+            return
 
-                for i in block.children:
-                    try:
-                        i.execute(ctx)
-                    except:
-                        pass
+        context.predicted.add(self.serial)
 
-                for i in ctx.children:
-                    predict_displayable(i)
+        for block in false_blocks:
+            ctx = SLContext(context)
+            ctx.children = [ ]
+            ctx.unlikely = True
+
+            for i in block.children:
+                try:
+                    i.execute(ctx)
+                except:
+                    pass
+
+            for i in ctx.children:
+                predict_displayable(i)
 
     def keywords(self, context):
 
