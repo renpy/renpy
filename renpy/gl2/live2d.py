@@ -22,9 +22,14 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import *
 
-import renpy.gl2.live2dmodel
+import renpy.display
 import renpy.gl2.live2dmotion
 from renpy.gl2.gl2shadercache import register_shader
+
+try:
+    import renpy.gl2.live2dmodel as live2dmodel
+except ImportError:
+    live2dmodel = None
 
 import json
 
@@ -62,6 +67,9 @@ def init():
 
     if did_init:
         return
+
+    if live2dmodel is None:
+        raise Exception("Live2D has not been built.")
 
     if not renpy.config.gl2:
         raise Exception("Live2D requires that config.gl2 be True.")
