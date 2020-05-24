@@ -577,7 +577,7 @@ class SLDisplayable(SLBlock):
             The base name of the main style.
 
         `pass_context`
-            If given, the context is passed in as the first positonal argument
+            If given, the context is passed in as the first positional argument
             of the displayable.
 
         `imagemap`
@@ -820,21 +820,20 @@ class SLDisplayable(SLBlock):
 
             SLBlock.keywords(self, ctx)
 
+            arguments = keywords.pop("arguments", None)
+            if arguments:
+                positional += arguments
+
+            properties = keywords.pop("properties", None)
+            if properties:
+                keywords.update(properties)
+
             # Get the widget id and transform, if any.
             widget_id = keywords.pop("id", None)
             transform = keywords.pop("at", None)
 
-            arguments = keywords.pop("arguments", None)
-            properties = keywords.pop("properties", None)
-            style_suffix = keywords.pop("style_suffix", None) or self.style
-
-            if arguments:
-                positional += arguments
-
-            if properties:
-                keywords.update(properties)
-
             # If we don't know the style, figure it out.
+            style_suffix = keywords.pop("style_suffix", None) or self.style
             if ("style" not in keywords) and style_suffix:
                 if ctx.style_prefix is None:
                     keywords["style"] = style_suffix
@@ -1247,8 +1246,8 @@ class SLIf(SLNode):
             self.constant = min(self.constant, block.constant)
             self.prepared_entries.append((cond, block))
 
-            self.has_keyword = self.has_keyword or block.has_keyword
-            self.last_keyword = self.last_keyword or block.last_keyword
+            self.has_keyword |= block.has_keyword
+            self.last_keyword |= block.last_keyword
 
     def execute(self, context):
 
