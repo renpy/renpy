@@ -1918,6 +1918,194 @@ class SLTransclude(SLNode):
         return True
 
 
+class SLCustomUse(SLNode):
+    """This represents special use screen statement defined
+    by renpy.register_sl_statement.
+    """
+
+    def __init__(self, loc, target, positional, block):
+
+        SLNode.__init__(self, loc)
+
+        # The name of the screen we're accessing.
+        self.target = target
+
+        # The SL2 SLScreen node at the root of the ast for that screen.
+        self.ast = None
+
+        # Positional argument expressions.
+        self.positional = positional
+
+        # A block for transclusion, from which we also take kwargs.
+        self.block = block
+
+    def copy(self, transclude):
+
+        rv = self.instantiate(transclude)
+
+        rv.target = self.target
+        rv.ast = None
+
+        rv.positional = self.positional
+        rv.block = self.block.copy(transclude)
+
+        return rv
+
+    def analyze(self, analysis):
+
+        self.block.analyze(analysis)
+
+    def prepare(self, analysis):
+
+        block = self.block
+
+        block.prepare(analysis)
+
+        # Figure out the ast we want to use.
+        target = renpy.display.screen.get_screen_variant(self.target)
+
+        if target is None:
+            self.constant = NOT_CONST
+
+            if renpy.config.developer:
+                raise Exception("A screen named {} does not exist.".format(self.target))
+            else:
+                return
+
+        if target.ast is None:
+            self.constant = NOT_CONST
+
+            if renpy.config.developer:
+                raise Exception("A screen used in CD SLS should be a SL-based screen.")
+            else:
+                return
+
+        # If we have the id property, we're not constant - since we may get
+        # our state via other screen on replace.
+        for k, _expr in block.keyword:
+            if k == "id":
+                self.constant = NOT_CONST
+                const = False
+                break
+        else:
+            const = True
+
+        if const and block.constant == GLOBAL_CONST:
+            self.ast = target.ast.const_ast
+        else:
+            self.ast = target.ast.not_const_ast
+
+        self.constant = min(self.constant, self.ast.constant)
+
+    def execute(self, context):
+
+        # Figure out the cache to use.
+        ctx = SLContext(context)
+        ctx.new_cache = context.new_cache[self.serial] = { }
+        ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
+        ctx.uses_scope = [ ]
+
+        # Evaluate the arguments to use in screen.
+        try:
+            args = [eval(i, context.globals, context.scope) for i in self.positional]
+
+            kwargs = ctx.keywords = {}
+
+            self.block.keywords(ctx)
+
+            arguments = kwargs.pop("arguments", None)
+            if arguments:
+                args += arguments
+
+            properties = kwargs.pop("properties", None)
+            if properties:
+                kwargs.update(properties)
+
+            # If we don't know the style, figure it out.
+            style_suffix = kwargs.pop("style_suffix", None)
+            if ("style" not in kwargs) and style_suffix:
+                if ctx.style_prefix is None:
+                    kwargs["style"] = style_suffix
+                else:
+                    kwargs["style"] = ctx.style_prefix + "_" + style_suffix
+
+        except:
+            if not context.predicting:
+                raise
+
+            args = [ ]
+            kwargs = { }
+
+        # Get the id and deal with replacement algorithm.
+        id = kwargs.pop("id", None)
+        if id is not None:
+
+            use_id = (self.target, id)
+
+            ctx.old_cache = context.old_use_cache.get(use_id, None) or context.old_cache.get(self.serial, None) or { }
+
+            if use_id in ctx.old_use_cache:
+                ctx.updating = True
+
+            ctx.new_use_cache[use_id] = ctx.new_cache
+
+        else:
+
+            ctx.old_cache = context.old_cache.get(self.serial, None) or { }
+
+        if not isinstance(ctx.old_cache, dict):
+            ctx.old_cache = { }
+        if not isinstance(ctx.miss_cache, dict):
+            ctx.miss_cache = { }
+
+        ast = self.ast
+
+        # Apply the arguments to the parameters (if present) or to the scope of the used screen.
+        if ast.parameters is not None:
+            new_scope = ast.parameters.apply(args, kwargs, ignore_errors=context.predicting)
+
+            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+            scope.update(new_scope)
+
+        else:
+
+            if args:
+                raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
+
+            scope = context.scope.copy()
+            scope.update(kwargs)
+
+        scope["_scope"] = scope
+        ctx.new_cache["scope"] = scope
+
+        # Run the child screen.
+        ctx.scope = scope
+        ctx.parent = weakref.ref(context)
+
+        # If we have any children, pass them to (possible) transclude
+        if self.block.children:
+            ctx.transclude = self.block
+
+        try:
+            ast.execute(ctx)
+        finally:
+            del scope["_scope"]
+
+        if ctx.fail:
+            context.fail = True
+
+    def copy_on_change(self, cache):
+
+        c = cache.get(self.serial, None)
+        if c is None:
+            return
+
+        self.ast.copy_on_change(c)
+
+    def used_screens(self, callback):
+        callback(self.target)
+
+
 class SLScreen(SLBlock):
     """
     This represents a screen defined in the screen language 2.
