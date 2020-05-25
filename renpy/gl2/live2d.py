@@ -32,6 +32,7 @@ except ImportError:
     live2dmodel = None
 
 import json
+import collections
 
 did_onetime_init = False
 
@@ -114,6 +115,8 @@ def init():
         vTexCoord.y = 1.0 - vTexCoord.y;
     """)
 
+    renpy.config.interact_callbacks.append(update_states)
+
     did_init = True
 
 
@@ -126,6 +129,7 @@ def reset():
     did_init = False
 
     common_cache.clear()
+    states.clear()
 
 
 class Live2DCommon(object):
@@ -215,6 +219,51 @@ class Live2DCommon(object):
 common_cache = { }
 
 
+class Live2DState(object):
+
+    def __init__(self, layer, name):
+
+        # The layer and name given as parameters.
+        self.layer = layer
+        self.name = name
+
+        # The attributes that had been displaying, and those that are now.
+        self.old_attributes = None
+        self.new_attributes = None
+
+        # The time at which the old_attributes and new_attributes were last
+        # updated.
+        self.old_base_time = 0
+        self.new_base_time = 0
+
+        self.update()
+
+    def update(self):
+
+        attributes = renpy.exports.get_attributes(self.name, self.layer)
+
+        if attributes is None:
+            self.old_attributes = None
+            self.new_attributes = None
+
+        elif attributes != self.new_attributes:
+            self.old_attributes = self.new_attributes
+            self.old_base_time = self.new_base_time
+
+            self.new_attributes = attributes
+            self.new_frame_time = renpy.display.interface.frame_time
+
+
+# A map from (layer, name) to Live2DState object.
+states = { }
+
+
+# Update states.
+def update_states():
+    for i in states.values():
+        i.update()
+
+
 class Live2D(renpy.display.core.Displayable):
 
     nosave = [ "common_cache" ]
@@ -236,7 +285,7 @@ class Live2D(renpy.display.core.Displayable):
         self.common_cache = rv
         return rv
 
-    def __init__(self, filename, motion=None, zoom=None, top=0.0, base=1.0, **properties):
+    def __init__(self, filename, motion=None, zoom=None, top=0.0, base=1.0, layer=None, **properties):
 
         if base is not None:
             properties.setdefault("yanchor", base)
@@ -249,6 +298,10 @@ class Live2D(renpy.display.core.Displayable):
         self.zoom = zoom
         self.top = top
         self.base = base
+        self.layer = layer
+
+        # The name of this displayable.
+        self.name = None
 
         # Load the common data.
         _ = self.common
@@ -271,6 +324,7 @@ class Live2D(renpy.display.core.Displayable):
 
         rv = Live2D(self.filename, motion=motion, zoom=self.zoom, top=self.top, base=self.base)
         rv._duplicatable = False
+        rv.name = args.name[0] if args.name else None
         return rv
 
     def _list_attributes(self, tag, attributes):
@@ -305,6 +359,14 @@ class Live2D(renpy.display.core.Displayable):
         return (motion,)
 
     def render(self, width, height, st, at):
+
+        state_key = (self.layer, self.name)
+        state = states.get(state_key, None)
+
+        if state is None:
+            states[state_key] = state = Live2DState(self.layer, self.name)
+
+        print(state.old_attributes, state.new_attributes)
 
         if self.motion is not None:
             renpy.exports.redraw(self, 0)
