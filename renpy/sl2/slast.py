@@ -2016,9 +2016,11 @@ class SLCustomUse(SLNode):
 
         # If we have the id property, we're not constant - since we may get
         # our state via other screen on replace.
-        const = not block.keyword_exist("id")
+        if block.keyword_exist("id")
+            self.constant = NOT_CONST
+            self.ast = target.ast.not_const_ast
 
-        if const and block.constant == GLOBAL_CONST:
+        elif block.constant == GLOBAL_CONST:
             self.ast = target.ast.const_ast
         else:
             self.ast = target.ast.not_const_ast
