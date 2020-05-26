@@ -285,7 +285,8 @@ class Live2D(renpy.display.core.Displayable):
         self.common_cache = rv
         return rv
 
-    def __init__(self, filename, motion=None, zoom=None, top=0.0, base=1.0, layer=None, **properties):
+    # Note: When adding new parameters, make sure to add them to _duplicate, too.
+    def __init__(self, filename, motion=None, zoom=None, top=0.0, base=1.0, interpolate=None, layer=None, **properties):
 
         if base is not None:
             properties.setdefault("yanchor", base)
@@ -299,6 +300,8 @@ class Live2D(renpy.display.core.Displayable):
         self.top = top
         self.base = base
         self.layer = layer
+
+        self.interpolate = interpolate
 
         # The name of this displayable.
         self.name = None
@@ -322,7 +325,15 @@ class Live2D(renpy.display.core.Displayable):
 
             raise Exception("When showing {}, {} is not a known attribute.".format(args.name, i))
 
-        rv = Live2D(self.filename, motion=motion, zoom=self.zoom, top=self.top, base=self.base)
+        rv = Live2D(
+            self.filename,
+            motion=motion,
+            zoom=self.zoom,
+            top=self.top,
+            base=self.base,
+            interpolate=self.interpolate,
+            layer=self.layer)
+
         rv._duplicatable = False
         rv.name = args.name[0] if args.name else None
         return rv
@@ -358,23 +369,14 @@ class Live2D(renpy.display.core.Displayable):
 
         return (motion,)
 
-    def render(self, width, height, st, at):
-
+    def update_interpolate(self, common, st):
         state_key = (self.layer, self.name)
         state = states.get(state_key, None)
 
         if state is None:
             states[state_key] = state = Live2DState(self.layer, self.name)
 
-        print(state.old_attributes, state.new_attributes)
-
-        if self.motion is not None:
-            renpy.exports.redraw(self, 0)
-
-        common = self.common
-        model = common.model
-
-        textures = [ renpy.exports.render(d, width, height, st, at) for d in common.textures ]
+    def update_nointerpolate(self, common, st):
 
         motion = common.motions.get(self.motion, None)
 
@@ -388,6 +390,25 @@ class Live2D(renpy.display.core.Displayable):
                     common.model.set_parameter(key, v)
                 else:
                     common.model.set_part_opacity(key, v)
+
+            renpy.exports.redraw(self, 0)
+
+    def render(self, width, height, st, at):
+
+        common = self.common
+        model = common.model
+
+        interpolate = self.interpolate
+
+        if interpolate is None:
+            interpolate = None
+
+        if interpolate:
+            self.update_interpolate(common, st)
+        else:
+            self.update_nointerpolate(common, st)
+
+        textures = [ renpy.exports.render(d, width, height, st, at) for d in common.textures ]
 
         rend = model.render(textures)
         sw, sh = rend.get_size()

@@ -1030,6 +1030,9 @@ debug_text_alignment = False
 # reported to log.txt.
 profile_init = 0.25
 
+# Should live2d interpolate movements?
+live2d_interpolate = False
+
 del os
 del collections
 
