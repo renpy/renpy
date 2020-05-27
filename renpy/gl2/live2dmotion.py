@@ -156,17 +156,7 @@ class Motion(object):
 
     def get(self, st):
 
-        fadein = 0.5
-        fadeout = 0.5
-
         st = st % self.duration
-
-        if st < fadein:
-            factor = st / fadeout
-        elif st > self.duration - fadeout:
-            factor = 1.0 - (st - (self.duration - fadeout)) / fadeout
-        else:
-            factor = 1.0
 
         rv = { }
 
@@ -177,7 +167,7 @@ class Motion(object):
             for i in segments:
                 if t < i.duration:
                     if k[0] == "Parameter":
-                        rv[k] = i.get(t) * factor
+                        rv[k] = i.get(t)
                     else:
                         rv[k] = i.get(t)
 
