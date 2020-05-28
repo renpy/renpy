@@ -236,8 +236,6 @@ class Live2DState(object):
         self.old_base_time = 0
         self.new_base_time = 0
 
-        self.update()
-
     def update(self):
 
         attributes = renpy.exports.get_attributes(self.name, self.layer)
@@ -260,8 +258,18 @@ states = { }
 
 # Update states.
 def update_states():
-    for i in states.values():
-        i.update()
+
+    def print_live2d(d):
+        if not isinstance(d, Live2D):
+            return
+
+        print("L2D!", d.motions, id(d))
+
+    sls = renpy.display.core.scene_lists()
+
+    for d in sls.get_all_displayables(current=True):
+        if d is not None:
+            d.visit_all(print_live2d)
 
 
 class Live2D(renpy.display.core.Displayable):
@@ -286,7 +294,7 @@ class Live2D(renpy.display.core.Displayable):
         return rv
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
-    def __init__(self, filename, motion=None, zoom=None, top=0.0, base=1.0, interpolate=None, layer=None, **properties):
+    def __init__(self, filename, motions=None, zoom=None, top=0.0, base=1.0, **properties):
 
         if base is not None:
             properties.setdefault("yanchor", base)
@@ -294,14 +302,11 @@ class Live2D(renpy.display.core.Displayable):
         super(Live2D, self).__init__(**properties)
 
         self.filename = filename
-        self.motion = motion
+        self.motions = motions
 
         self.zoom = zoom
         self.top = top
         self.base = base
-        self.layer = layer
-
-        self.interpolate = interpolate
 
         # The name of this displayable.
         self.name = None
@@ -315,30 +320,24 @@ class Live2D(renpy.display.core.Displayable):
             return self
 
         common = self.common
-        motion = self.motion
+        motions = [ ]
 
         for i in args.args:
             if i in common.motions:
-                if motion is not None:
-                    raise Exception("When showing {}, {} and {} are both motions.".format(args.name, motion, i))
-                else:
-                    motion = i
-
+                motions.append(i)
                 continue
 
             raise Exception("When showing {}, {} is not a known attribute.".format(args.name, i))
 
         rv = Live2D(
             self.filename,
-            motion=motion,
+            motions=motions,
             zoom=self.zoom,
             top=self.top,
-            base=self.base,
-            interpolate=self.interpolate,
-            layer=self.layer)
+            base=self.base)
 
         rv._duplicatable = False
-        rv.name = args.name[0] if args.name else None
+        rv.name = args.name
         return rv
 
     def _list_attributes(self, tag, attributes):
@@ -347,10 +346,7 @@ class Live2D(renpy.display.core.Displayable):
 
         available = set(common.attributes)
 
-        for i in attributes:
-
-            if i in common.motions:
-                available -= set(common.motions)
+        # Todo: Expressions
 
         available |= set(attributes)
 
@@ -358,19 +354,14 @@ class Live2D(renpy.display.core.Displayable):
 
     def _choose_attributes(self, tag, attributes, optional):
 
-        motion = None
-
         common = self.common
 
-        for i in optional:
-            if i in common.motions:
-                motion = i
+        motions = [ i for i in optional if i in common.motions ]
 
-        for i in attributes:
-            if i in common.motions:
-                motion = i
+        if not motions:
+            motions = [ i for i in optional if i in common.motions ][:-1]
 
-        return (motion,)
+        return tuple(motions)
 
     def update_interpolate(self, common, st):
         state_key = (self.layer, self.name)
@@ -381,7 +372,18 @@ class Live2D(renpy.display.core.Displayable):
 
     def update_nointerpolate(self, common, st):
 
-        motion = common.motions.get(self.motion, None)
+        if not self.motions:
+            return
+
+        for m in self.motions:
+            motion = common.motions.get(m, None)
+
+            if motion.duration > st:
+                break
+
+            st -= motion.duration
+
+        print(m)
 
         if motion is not None:
 
@@ -401,10 +403,7 @@ class Live2D(renpy.display.core.Displayable):
         common = self.common
         model = common.model
 
-        interpolate = self.interpolate
-
-        if interpolate is None:
-            interpolate = None
+        interpolate = False
 
         if interpolate:
             self.update_interpolate(common, st)
