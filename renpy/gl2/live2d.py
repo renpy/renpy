@@ -311,6 +311,9 @@ class Live2D(renpy.display.core.Displayable):
 
     def _duplicate(self, args):
 
+        if not self._duplicatable:
+            return self
+
         common = self.common
         motion = self.motion
 
