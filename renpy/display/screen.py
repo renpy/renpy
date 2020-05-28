@@ -433,7 +433,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         try:
             push_current_screen(self)
-            self.child.visit_all(callback, seen=None)
+            if self.child is not None:
+                self.child.visit_all(callback, seen=None)
         finally:
             pop_current_screen()
 

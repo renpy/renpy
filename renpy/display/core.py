@@ -1137,14 +1137,22 @@ class SceneLists(renpy.object.Object):
 
         l.pop(index)
 
-    def get_all_displayables(self):
+    def get_all_displayables(self, current=False):
         """
         Gets all displayables reachable from this scene list.
+
+        `current`
+            If true, only returns displayables that are not in the process
+            of being hidden.
         """
 
         rv = [ ]
         for l in self.layers.values():
             for sle in l:
+
+                if current and sle.tag and ("$" in sle.tag):
+                    continue
+
                 rv.append(sle.displayable)
 
         return rv
