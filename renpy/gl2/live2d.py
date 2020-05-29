@@ -214,6 +214,12 @@ class Live2DCommon(object):
                 self.motions[name] = renpy.gl2.live2dmotion.Motion(self.base + i)
                 self.attributes.add(name)
 
+    def apply_aliases(self, aliases):
+
+        for k, v in aliases.items():
+            if v in self.motions:
+                self.motions[k] = self.motions[v]
+
 
 # This maps a filename to a Live2DCommon object.
 common_cache = { }
@@ -294,7 +300,7 @@ class Live2D(renpy.display.core.Displayable):
         return rv
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
-    def __init__(self, filename, motions=None, zoom=None, top=0.0, base=1.0, **properties):
+    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, **properties):
 
         if base is not None:
             properties.setdefault("yanchor", base)
@@ -307,12 +313,18 @@ class Live2D(renpy.display.core.Displayable):
         self.zoom = zoom
         self.top = top
         self.base = base
+        self.height = height
+        self.loop = loop
+        self.fade = fade
 
         # The name of this displayable.
         self.name = None
 
-        # Load the common data.
-        _ = self.common
+        # Load the common data. Needed!
+        common = self.common
+
+        if aliases:
+            common.apply_aliases(aliases)
 
     def _duplicate(self, args):
 
@@ -323,6 +335,7 @@ class Live2D(renpy.display.core.Displayable):
         motions = [ ]
 
         for i in args.args:
+
             if i in common.motions:
                 motions.append(i)
                 continue
@@ -334,7 +347,10 @@ class Live2D(renpy.display.core.Displayable):
             motions=motions,
             zoom=self.zoom,
             top=self.top,
-            base=self.base)
+            base=self.base,
+            height=self.height,
+            loop=self.loop,
+            fade=self.fade)
 
         rv._duplicatable = False
         rv.name = args.name
@@ -375,6 +391,8 @@ class Live2D(renpy.display.core.Displayable):
         if not self.motions:
             return
 
+        done = False
+
         for m in self.motions:
             motion = common.motions.get(m, None)
 
@@ -383,7 +401,13 @@ class Live2D(renpy.display.core.Displayable):
 
             st -= motion.duration
 
-        print(m)
+        else:
+            if not self.loop:
+                st = motion.duration
+                done = True
+
+        if not done:
+            renpy.exports.redraw(self, 0)
 
         if motion is not None:
 
@@ -395,8 +419,6 @@ class Live2D(renpy.display.core.Displayable):
                     common.model.set_parameter(key, v)
                 else:
                     common.model.set_part_opacity(key, v)
-
-            renpy.exports.redraw(self, 0)
 
     def render(self, width, height, st, at):
 
@@ -428,8 +450,7 @@ class Live2D(renpy.display.core.Displayable):
             base = s(self.base)
 
             size = max(base - top, 1.0)
-
-            zoom = 1.0 * height / size
+            zoom = 1.0 * self.height * renpy.config.screen_height / size
 
         rv = renpy.exports.Render(sw * zoom, sh * zoom)
         rv.blit(rend, (0, 0))
