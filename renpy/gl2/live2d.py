@@ -302,9 +302,6 @@ class Live2D(renpy.display.core.Displayable):
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
     def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, **properties):
 
-        if base is not None:
-            properties.setdefault("yanchor", base)
-
         super(Live2D, self).__init__(**properties)
 
         self.filename = filename
@@ -451,9 +448,12 @@ class Live2D(renpy.display.core.Displayable):
 
             size = max(base - top, 1.0)
             zoom = 1.0 * self.height * renpy.config.screen_height / size
+        else:
+            size = sh
+            top = 0
 
-        rv = renpy.exports.Render(sw * zoom, sh * zoom)
-        rv.blit(rend, (0, 0))
+        rv = renpy.exports.Render(sw * zoom, size * zoom)
+        rv.blit(rend, (0, -top * zoom))
 
         if zoom != 1.0:
             rv.reverse = renpy.display.matrix.Matrix.scale(zoom, zoom, 1.0)
