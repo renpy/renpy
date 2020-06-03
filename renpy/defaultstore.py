@@ -75,6 +75,9 @@ main_menu = False
 # Is autosaving allowed?
 _autosave = True
 
+# Should live2d fading happen?
+_live2d_fade = True
+
 
 class _Config(object):
 

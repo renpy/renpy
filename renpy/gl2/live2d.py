@@ -227,55 +227,77 @@ common_cache = { }
 
 class Live2DState(object):
 
-    def __init__(self, layer, name):
+    def __init__(self):
 
-        # The layer and name given as parameters.
-        self.layer = layer
-        self.name = name
+        # Used to mark this state as having been seen in the current
+        # iteration.
+        self.mark = False
 
-        # The attributes that had been displaying, and those that are now.
-        self.old_attributes = None
-        self.new_attributes = None
+        # Should we cycle new into old?
+        self.cycle_new = False
 
-        # The time at which the old_attributes and new_attributes were last
-        # updated.
+        # The displayable in the old and new state. Both can be None if
+        # it's not being shown.
+        self.old = None
+        self.new = None
+
+        # The time at which the old and new displayables were last updated.
         self.old_base_time = 0
         self.new_base_time = 0
 
-    def update(self):
 
-        attributes = renpy.exports.get_attributes(self.name, self.layer)
-
-        if attributes is None:
-            self.old_attributes = None
-            self.new_attributes = None
-
-        elif attributes != self.new_attributes:
-            self.old_attributes = self.new_attributes
-            self.old_base_time = self.new_base_time
-
-            self.new_attributes = attributes
-            self.new_frame_time = renpy.display.interface.frame_time
+# A map from name to Live2DState object.
+states = collections.defaultdict(Live2DState)
 
 
-# A map from (layer, name) to Live2DState object.
-states = { }
-
-
-# Update states.
 def update_states():
+    """
+    Called once per interact to walk the tree of
+    """
 
-    def print_live2d(d):
+    def visit(d):
         if not isinstance(d, Live2D):
             return
 
-        print("L2D!", d.motions, id(d))
+        if d.name is None:
+            return
+
+        state = states[d.name]
+
+        if state.mark:
+            return
+
+        state.mark = True
+
+        if state.new is d:
+            return
+
+        # Shouldn't happen, but stop thrashing if it does.
+        if state.old is d:
+            return
+
+        if state.cycle_new:
+            state.old = state.new
+            state.old_base_time = state.new_base_time
+        else:
+            state.old = None
+            state.old_base_time = 0
+
+        state.new = d
+        state.new_base_time = renpy.display.interface.frame_time
+        state.cycle_new = True
 
     sls = renpy.display.core.scene_lists()
 
     for d in sls.get_all_displayables(current=True):
         if d is not None:
-            d.visit_all(print_live2d)
+            d.visit_all(visit)
+
+    for s in states.values():
+        if not s.mark:
+            s.cycle_new = False
+
+        s.mark = False
 
 
 class Live2D(renpy.display.core.Displayable):
@@ -422,12 +444,18 @@ class Live2D(renpy.display.core.Displayable):
         common = self.common
         model = common.model
 
-        interpolate = False
+        fade = self.fade if (self.fade is not None) else renpy.store._live2d_fade
 
-        if interpolate:
-            self.update_interpolate(common, st)
-        else:
-            self.update_nointerpolate(common, st)
+        if not self.name:
+            fade = False
+
+        if fade:
+            state = states[self.name]
+            if state.old:
+                print("OLD", state.old.motions)
+
+            if state.new:
+                print("NEW", state.new.motions)
 
         textures = [ renpy.exports.render(d, width, height, st, at) for d in common.textures ]
 
