@@ -95,16 +95,17 @@ class Bezier(object):
 
 class Motion(object):
 
-    def __init__(self, filename):
+    def __init__(self, filename, fadein, fadeout):
         j = json.load(renpy.loader.load(filename))
 
         self.duration = j["Meta"]["Duration"]
         self.curves = { }
+        self.fades = { }
 
-        for i in j["Curves"]:
-            target = i["Target"]
-            name = i["Id"]
-            s = i["Segments"]
+        for curve in j["Curves"]:
+            target = curve["Target"]
+            name = curve["Id"]
+            s = curve["Segments"]
 
             x0 = s.pop(0)
             y0 = s.pop(0)
@@ -153,33 +154,43 @@ class Motion(object):
                 y0 = y
 
             self.curves[target, name] = segments
+            self.fades[target, name] = (
+                curve.get("FadeInTime", fadein),
+                curve.get("FadeOutTime", fadeout),
+                )
 
-    def get(self, st):
-
-        fadein = 0.5
-        fadeout = 0.5
+    def get(self, st, fade_st):
+        """
+        Returns a dictionary where the keys are the type of parameter and the
+        parameter name, and the values are the
+        """
 
         st = st % self.duration
-
-        if st < fadein:
-            factor = st / fadeout
-        elif st > self.duration - fadeout:
-            factor = 1.0 - (st - (self.duration - fadeout)) / fadeout
-        else:
-            factor = 1.0
 
         rv = { }
 
         for k, segments in self.curves.items():
 
+            fadein, fadeout = self.fades[k]
+
+            factor = 1.0
+
+            if st < fadein:
+                factor = min(factor, st / fadein)
+
+            if st > self.duration - fadeout:
+                factor = min(factor, 1.0 - (st - (self.duration - fadeout)) / fadeout)
+
+            if (fade_st is not None) and (fadeout > 0):
+                factor = min(factor, 1.0 - fade_st / fadeout)
+
+            factor = max(factor, 0.0)
+
             t = st
 
             for i in segments:
                 if t < i.duration:
-                    if k[0] == "Parameter":
-                        rv[k] = i.get(t) * factor
-                    else:
-                        rv[k] = i.get(t)
+                    rv[k] = (factor, i.get(t))
 
                     break
 

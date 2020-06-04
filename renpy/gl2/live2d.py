@@ -185,7 +185,7 @@ class Live2DCommon(object):
                 return
 
             if "File" in o:
-                l.append(o["File"])
+                l.append(o)
                 return
 
             for i in o.values():
@@ -201,17 +201,21 @@ class Live2DCommon(object):
         self.motions = { }
 
         for i in motion_files:
-            name = i.lower().rpartition("/")[2].partition(".")[0]
+            name = i["File"].lower().rpartition("/")[2].partition(".")[0]
 
             prefix, _, suffix = name.partition("_")
 
             if prefix == model_name:
                 name = suffix
 
-            if renpy.loader.loadable(self.base + i):
-                renpy.display.log.write(" - motion %s -> %s", name, i)
+            if renpy.loader.loadable(self.base + i["File"]):
+                renpy.display.log.write(" - motion %s -> %s", name, i["File"])
 
-                self.motions[name] = renpy.gl2.live2dmotion.Motion(self.base + i)
+                self.motions[name] = renpy.gl2.live2dmotion.Motion(
+                    self.base + i["File"],
+                    i.get("FadeInTime", 0.0),
+                    i.get("FadeOutTime", 0.0))
+
                 self.attributes.add(name)
 
     def apply_aliases(self, aliases):
@@ -405,7 +409,7 @@ class Live2D(renpy.display.core.Displayable):
         if state is None:
             states[state_key] = state = Live2DState(self.layer, self.name)
 
-    def update_nointerpolate(self, common, st):
+    def update_nointerpolate(self, common, st, st_fade):
 
         if not self.motions:
             return
@@ -425,19 +429,13 @@ class Live2D(renpy.display.core.Displayable):
                 st = motion.duration
                 done = True
 
-        if not done:
+        if (not done) and (st_fade is None):
             renpy.exports.redraw(self, 0)
 
-        if motion is not None:
+        if motion is None:
+            return { }
 
-            for k, v in motion.get(st).items():
-
-                kind, key = k
-
-                if kind == "Parameter":
-                    common.model.set_parameter(key, v)
-                else:
-                    common.model.set_part_opacity(key, v)
+        return motion.get(st, st_fade)
 
     def render(self, width, height, st, at):
 
@@ -457,9 +455,26 @@ class Live2D(renpy.display.core.Displayable):
             if state.new:
                 print("NEW", state.new.motions)
 
+        # Determine what the motion data should be.
+        motion_data = self.update_nointerpolate(common, st, None)
+
+        for k, v in motion_data.items():
+
+            kind, key = k
+            factor, value = v
+
+            if kind == "Parameter":
+                common.model.set_parameter(key, factor * value)
+            else:
+                common.model.set_part_opacity(key, value)
+
+        # Render the textures.
         textures = [ renpy.exports.render(d, width, height, st, at) for d in common.textures ]
 
+        # Render the model.
         rend = model.render(textures)
+
+        # Figure out zoom.
         sw, sh = rend.get_size()
 
         zoom = self.zoom
@@ -480,6 +495,7 @@ class Live2D(renpy.display.core.Displayable):
             size = sh
             top = 0
 
+        # Apply scaling as needed.
         rv = renpy.exports.Render(sw * zoom, size * zoom)
         rv.blit(rend, (0, -top * zoom))
 
