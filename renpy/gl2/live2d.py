@@ -458,13 +458,15 @@ class Live2D(renpy.display.core.Displayable):
         # Determine what the motion data should be.
         motion_data = self.update_nointerpolate(common, st, None)
 
+        common.model.reset_parameters()
+
         for k, v in motion_data.items():
 
             kind, key = k
             factor, value = v
 
             if kind == "Parameter":
-                common.model.set_parameter(key, factor * value)
+                common.model.set_parameter(key, value, factor)
             else:
                 common.model.set_part_opacity(key, value)
 

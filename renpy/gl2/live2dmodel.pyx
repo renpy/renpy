@@ -280,13 +280,29 @@ cdef class Live2DModel:
 
         csmUpdateModel(self.model)
 
+        for k, v in self.parameters.items():
+            print(k, v.default)
+
+    def reset_parameters(self):
+        for i in self.parameters.values():
+            self.parameter_values[i.index] = i.default
+
     def set_part_opacity(self, name, value):
-        part = self.parts[name]
+        part = self.parts.get(name, None)
+
+        if part is None:
+            return
+
         self.part_opacities[part.index] = value
 
-    def set_parameter(self, name, value):
-        parameter = self.parameters[name]
-        self.parameter_values[parameter.index] = value
+    def set_parameter(self, name, value, weight=1.0):
+        parameter = self.parameters.get(name, None)
+
+        if parameter is None:
+            return
+
+        old = self.parameter_values[parameter.index]
+        self.parameter_values[parameter.index] = old + weight * (value - old)
 
     def render(self, textures):
 
