@@ -285,10 +285,10 @@ def update_states():
             state.old_base_time = state.new_base_time
         else:
             state.old = None
-            state.old_base_time = 0
+            state.old_base_time = None
 
         state.new = d
-        state.new_base_time = renpy.display.interface.frame_time
+        state.new_base_time = None
         state.cycle_new = True
 
     sls = renpy.display.core.scene_lists()
@@ -402,19 +402,16 @@ class Live2D(renpy.display.core.Displayable):
 
         return tuple(motions)
 
-    def update_interpolate(self, common, st):
-        state_key = (self.layer, self.name)
-        state = states.get(state_key, None)
-
-        if state is None:
-            states[state_key] = state = Live2DState(self.layer, self.name)
-
-    def update_nointerpolate(self, common, st, st_fade):
+    def update(self, common, st, st_fade):
+        """
+        This updates the common model with the infromation taken from the
+        motions associated with this object. It returns the delay until
+        Ren'Py needs to cause a redraw to occur, or None if no delay
+        should occur.
+        """
 
         if not self.motions:
             return
-
-        done = False
 
         for m in self.motions:
             motion = common.motions.get(m, None)
@@ -427,38 +424,11 @@ class Live2D(renpy.display.core.Displayable):
         else:
             if not self.loop:
                 st = motion.duration
-                done = True
-
-        if (not done) and (st_fade is None):
-            renpy.exports.redraw(self, 0)
 
         if motion is None:
-            return { }
+            return None
 
-        return motion.get(st, st_fade)
-
-    def render(self, width, height, st, at):
-
-        common = self.common
-        model = common.model
-
-        fade = self.fade if (self.fade is not None) else renpy.store._live2d_fade
-
-        if not self.name:
-            fade = False
-
-        if fade:
-            state = states[self.name]
-            if state.old:
-                print("OLD", state.old.motions)
-
-            if state.new:
-                print("NEW", state.new.motions)
-
-        # Determine what the motion data should be.
-        motion_data = self.update_nointerpolate(common, st, None)
-
-        common.model.reset_parameters()
+        motion_data = motion.get(st, st_fade)
 
         for k, v in motion_data.items():
 
@@ -470,8 +440,59 @@ class Live2D(renpy.display.core.Displayable):
             else:
                 common.model.set_part_opacity(key, value)
 
+        return motion.wait(st, st_fade)
+
+    def render(self, width, height, st, at):
+
+        common = self.common
+        model = common.model
+
+        # Determine if we should fade.
+        fade = self.fade if (self.fade is not None) else renpy.store._live2d_fade
+
+        if not self.name:
+            fade = False
+
+        if fade:
+
+            state = states[self.name]
+
+            if state.new is not self:
+                fade = False
+
+            state.new_base_time = renpy.display.interface.frame_time - st
+
+            if state.old is None:
+                fade = False
+
+            if state.old_base_time is None:
+                fade = False
+
+        if fade:
+
+            if state.old.common is not self.common:
+                fade = False
+
+        # Reset the parameter, and update.
+        common.model.reset_parameters()
+
+        if fade:
+            old_redraw = state.old.update(common, renpy.display.interface.frame_time - state.old_base_time, st)
+        else:
+            old_redraw = None
+
+        new_redraw = self.update(common, st, None)
+
+        # Apply the redraws.
+        if (new_redraw is not None) and (old_redraw is not None):
+            renpy.display.render.redraw(self, min(new_redraw, old_redraw))
+        elif new_redraw is not None:
+            renpy.display.render.redraw(self, new_redraw)
+        elif old_redraw is not None:
+            renpy.display.render.redraw(self, old_redraw)
+
         # Render the textures.
-        textures = [ renpy.exports.render(d, width, height, st, at) for d in common.textures ]
+        textures = [ renpy.display.render.render(d, width, height, st, at) for d in common.textures ]
 
         # Render the model.
         rend = model.render(textures)

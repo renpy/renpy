@@ -3096,7 +3096,7 @@ class Interface(object):
         start_time = get_time()
         end_time = start_time
 
-        # frames = 0
+        self.frame_time = start_time
 
         for i in renpy.config.interact_callbacks:
             i()

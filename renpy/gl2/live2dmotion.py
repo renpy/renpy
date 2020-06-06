@@ -37,6 +37,9 @@ class Linear(object):
         done = t / self.duration
         return self.y0 + (self.y1 - self.y0) * done
 
+    def wait(self, t):
+        return 0
+
 
 class Step(object):
 
@@ -49,6 +52,9 @@ class Step(object):
     def get(self, t):
         return self.y0
 
+    def wait(self, t):
+        return max(self.duration - t, 0.0)
+
 
 class InvStep(object):
 
@@ -60,6 +66,9 @@ class InvStep(object):
 
     def get(self, t):
         return self.y1
+
+    def wait(self, t):
+        return max(self.duration - t, 0.0)
 
 
 class Bezier(object):
@@ -92,10 +101,16 @@ class Bezier(object):
 
         return lerp(p012, p123)
 
+    def wait(self, t):
+        return 0
+
 
 class Motion(object):
 
     def __init__(self, filename, fadein, fadeout):
+
+        self.filename = filename
+
         j = json.load(renpy.loader.load(filename))
 
         self.duration = j["Meta"]["Duration"]
@@ -197,3 +212,58 @@ class Motion(object):
                 t -= i.duration
 
         return rv
+
+    def wait(self, st, fade_st):
+        """
+        Returns how much time should pass until this displayable needs to be
+        redrawn.
+        """
+
+        st = st % self.duration
+
+        rv = 86400.0
+
+        for k, segments in self.curves.items():
+
+            fadeout = self.fades[k][1]
+
+            factor = 1.0
+
+            if st > self.duration - fadeout:
+                factor = min(factor, 1.0 - (st - (self.duration - fadeout)) / fadeout)
+
+            if (fade_st is not None) and (fadeout > 0):
+                factor = min(factor, 1.0 - fade_st / fadeout)
+
+            factor = max(factor, 0.0)
+
+            if factor == 0.0:
+                continue
+
+            t = st
+
+            for i in segments:
+                if t < i.duration:
+                    rv = min(rv, i.wait(t))
+                    break
+
+                t -= i.duration
+
+        if rv == 86400.0:
+            rv = None
+
+        return rv
+
+
+class NullMotion(object):
+    """
+    A motion that is added by default,
+    """
+
+    duration = 1.0
+
+    def get(self, st, fade_st):
+        return { }
+
+    def wait(self, st, fade_st):
+        return max(1.0 - st, 0)

@@ -280,9 +280,6 @@ cdef class Live2DModel:
 
         csmUpdateModel(self.model)
 
-        for k, v in self.parameters.items():
-            print(k, v.default)
-
     def reset_parameters(self):
         for i in self.parameters.values():
             self.parameter_values[i.index] = i.default
