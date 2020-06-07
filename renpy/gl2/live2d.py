@@ -198,7 +198,7 @@ class Live2DCommon(object):
         self.attributes = set()
 
         # A map from a motion name to a motion identifier.
-        self.motions = { }
+        self.motions = { "still" : renpy.gl2.live2dmotion.NullMotion() }
 
         for i in motion_files:
             name = i["File"].lower().rpartition("/")[2].partition(".")[0]
