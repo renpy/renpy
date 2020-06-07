@@ -363,7 +363,7 @@ class Live2D(renpy.display.core.Displayable):
                 motions.append(i)
                 continue
 
-            raise Exception("When showing {}, {} is not a known attribute.".format(args.name, i))
+            raise Exception("When showing {}, {} is not a known attribute.".format(" ".join(args.name), i))
 
         rv = Live2D(
             self.filename,
