@@ -1204,6 +1204,9 @@ class Layout(object):
                     ts = push()
                     ts.ignore = True
 
+                elif tag == "noalt":
+                    ts = push()
+
                 elif tag[0] == "#":
                     pass
 
@@ -1762,7 +1765,7 @@ class Text(renpy.display.core.Displayable):
         rv = "".join(rv)
         _, _, rv = rv.rpartition("{fast}")
 
-        rv = renpy.translation.dialogue.notags_filter(rv)
+        rv = renpy.text.extras.filter_alt_text(rv)
 
         alt = self.style.alt
 

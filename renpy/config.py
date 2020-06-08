@@ -1033,6 +1033,9 @@ profile_init = 0.25
 # Should live2d interpolate movements?
 live2d_interpolate = False
 
+# A list of text tags with contents that should be filtered by the TTS system.
+tts_filter_tags = [ "noalt", "rt", "art" ]
+
 del os
 del collections
 
