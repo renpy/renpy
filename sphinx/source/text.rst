@@ -214,6 +214,15 @@ Tags that apply to all text are:
         "{alpha=-0.1}This text is 10 percent more transparent than the default.{/alpha}"
         "{alpha=*0.5}This text is half as opaque as the default.{/alpha}"
 
+.. text-tag:: alt
+
+    The alt tag prevents text from being rendered, while still maing the
+    text available for the text-to-speech system. ::
+
+       g "Good to see you! {image=heart.png}{alt}heart{/alt}"
+
+    See also the :var:`alt` character.
+
 .. text-tag:: art
 
    The alternate ruby top tag marks text between itself and its closing tag as
@@ -267,7 +276,7 @@ Tags that apply to all text are:
    argument should be either the image filename, or the name of an
    image defined with the image statement. ::
 
-       g "Good to see you! {image=heart.png}"
+       g "Good to see you! {image=heart.png}{alt}heart{/alt}"
 
 .. text-tag:: k
 
@@ -279,6 +288,13 @@ Tags that apply to all text are:
 
        "{k=-.5}Negative{/k} Normal {k=.5}Positive{/k}"
 
+.. text-tag:: noalt
+
+    The noalt tag prevents text from being spoken by the text-to-speech
+    system. This is often used in conjuction with the alt tag, to provide
+    accessible and visual optiopns  ::
+
+       g "Good to see you! {noalt}<3{/noalt}{alt}heart{/alt}"
 
 .. text-tag:: outlinecolor
 
