@@ -933,7 +933,7 @@ cdef class GL2Draw:
 
         # Use the context to draw the surface tree.
         context = GL2DrawingContext(self)
-        context.draw(what, transform, False)
+        context.draw(what, transform, None, False)
 
         cdef unsigned char pixel[4]
         glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
