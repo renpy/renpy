@@ -135,9 +135,6 @@ class Motion(object):
                     x = s.pop(0)
                     y = s.pop(0)
 
-                    self.x0 = x0
-                    self.x1 = x1
-
                     segments.append(Linear(x0, y0, x, y))
 
                 elif kind == 1:

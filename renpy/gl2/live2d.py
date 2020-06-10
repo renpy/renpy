@@ -178,20 +178,29 @@ class Live2DCommon(object):
         # The motion information.
         self.motions = { }
 
-        def walk_json_files(o, l):
+        # A map from the motion file name to the information about it.
+        motion_files = { }
+
+        motions_dir = self.base + "motions/"
+
+        for i in renpy.exports.list_files():
+            if i.startswith(motions_dir):
+                i = i[len(self.base):]
+                motion_files[i] = { "File" : i }
+
+        def walk_json_files(o, d):
             if isinstance(o, list):
                 for i in o:
-                    walk_json_files(i, l)
+                    walk_json_files(i, d)
                 return
 
             if "File" in o:
-                l.append(o)
+                d[o["File"]] = o
                 return
 
             for i in o.values():
-                walk_json_files(i, l)
+                walk_json_files(i, d)
 
-        motion_files = [ ]
         walk_json_files(self.model_json["FileReferences"].get("Motions", { }), motion_files)
 
         # A list of attributes that are known.
@@ -200,7 +209,7 @@ class Live2DCommon(object):
         # A map from a motion name to a motion identifier.
         self.motions = { "still" : renpy.gl2.live2dmotion.NullMotion() }
 
-        for i in motion_files:
+        for i in motion_files.values():
             name = i["File"].lower().rpartition("/")[2].partition(".")[0]
 
             prefix, _, suffix = name.partition("_")
