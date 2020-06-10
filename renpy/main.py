@@ -106,7 +106,9 @@ def run(restart):
 
     # Handle arguments and commands.
     if not renpy.arguments.post_init():
-        renpy.exports.quit()
+        # We use 'exception' instead of exports.quit
+        # to not call quit label since it's not nessesary.
+        raise renpy.game.QuitException()
 
     if renpy.config.clear_lines:
         renpy.scriptedit.lines.clear()
