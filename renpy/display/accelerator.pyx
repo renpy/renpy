@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -202,11 +202,18 @@ def transform_render(self, widtho, heighto, st, at):
     # Size.
     size = state.size
     maxsize = state.maxsize
+    minsize = state.minsize
 
-    if (maxsize is not None) and (width != 0) and (height != 0):
-        maxsizex, maxsizey = maxsize
-        mul = min(maxsizex / width, maxsizey / height)
-        size = (width * mul, height * mul)
+    if (width != 0) and (height != 0):
+        mul = None
+        if (maxsize is not None):
+            maxsizex, maxsizey = maxsize
+            mul = min(maxsizex / width, maxsizey / height)
+        elif (minsize is not None):
+            minsizex, minsizey = minsize
+            mul = max(minsizex / width, minsizey / height)
+        if mul is not None:
+            size = (width * mul, height * mul)
 
     if (size is not None) and (size != (width, height)) and (width != 0) and (height != 0):
         nw, nh = size

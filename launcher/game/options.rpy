@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -374,9 +374,8 @@ init python:
 
     # all-platforms binary.
     build.classify_renpy("lib/**/_renpysteam*", None)
+    build.classify_renpy("lib/**/*Live2D*", None)
     build.classify_renpy("lib/**/*steam_api*", None)
-    build.classify_renpy("lib/*/renpy", None)
-    build.classify_renpy("lib/*/renpy.exe", None)
     build.classify_renpy("lib/linux-armv7l/", "raspi")
     build.classify_renpy("lib/linux-armv7l/**", "raspi")
     build.classify_renpy("lib/**", "binary")

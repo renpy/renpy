@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,7 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 # http://www.csn.ul.ie/~caolan/publink/winresdump/winresdump/doc/pefile.html
 # Contains a reasonable description of the format.
 
@@ -28,7 +27,7 @@ from __future__ import print_function
 import struct
 import sys
 import array
-import pefile  # @UnresolvedImport
+import pefile # @UnresolvedImport
 
 # This class performs various operations on memory-loaded binary files,
 # including modifications.
@@ -37,24 +36,24 @@ import pefile  # @UnresolvedImport
 class BinFile(object):
 
     def set_u32(self, addr, value):
-        self.a[addr+0] = (value >> 0) & 0xff
-        self.a[addr+1] = (value >> 8) & 0xff
-        self.a[addr+2] = (value >> 16) & 0xff
-        self.a[addr+3] = (value >> 24) & 0xff
+        self.a[addr + 0] = (value >> 0) & 0xff
+        self.a[addr + 1] = (value >> 8) & 0xff
+        self.a[addr + 2] = (value >> 16) & 0xff
+        self.a[addr + 3] = (value >> 24) & 0xff
 
     def u32(self):
         addr = self.addr
         rv = self.a[addr]
-        rv |= self.a[addr+1] << 8
-        rv |= self.a[addr+2] << 16
-        rv |= self.a[addr+3] << 24
+        rv |= self.a[addr + 1] << 8
+        rv |= self.a[addr + 2] << 16
+        rv |= self.a[addr + 3] << 24
         self.addr += 4
         return rv
 
     def u16(self):
         addr = self.addr
         rv = self.a[addr]
-        rv |= self.a[addr+1] << 8
+        rv |= self.a[addr + 1] << 8
         self.addr += 2
         return rv
 
@@ -78,8 +77,8 @@ class BinFile(object):
     def tostring(self):
         return self.a.tostring()
 
-    def substring(self, start, len):  # @ReservedAssignment
-        return self.a[start:start+len].tostring()
+    def substring(self, start, len): # @ReservedAssignment
+        return self.a[start:start + len].tostring()
 
     def __init__(self, data):
         self.a = array.array(b'B')
@@ -88,6 +87,7 @@ class BinFile(object):
 ##############################################################################
 # These functions parse data out of the file. In these functions, offset is
 # relative to the start of the file.
+
 
 # The virtual address of the resource segment.
 resource_virtual = 0
@@ -116,10 +116,10 @@ def parse_data(bf, offset):
 def parse_directory(bf, offset):
 
     bf.seek(offset)
-    char = bf.u32()  # @UnusedVariable
-    timedate = bf.u32()  # @UnusedVariable
-    major = bf.u16()  # @UnusedVariable
-    minor = bf.u16()  # @UnusedVariable
+    char = bf.u32() # @UnusedVariable
+    timedate = bf.u32() # @UnusedVariable
+    major = bf.u16() # @UnusedVariable
+    minor = bf.u16() # @UnusedVariable
     n_named = bf.u16()
     n_id = bf.u16()
 
@@ -302,8 +302,9 @@ def change_icons(oldexe, icofn):
     virsize = rsrc_section.Misc_VirtualSize
 
     f = open(oldexe, "rb")
-    f.seek(base)
+    basedata = f.read(base)
     data = f.read(physize)
+
     f.close()
 
     bf = BinFile(data)
@@ -315,41 +316,43 @@ def change_icons(oldexe, icofn):
 
     rsrc = Packer().pack(resources)
 
-    alignment = pe.OPTIONAL_HEADER.SectionAlignment
-
-    # print("Alignment is", alignment)
-
-    if len(rsrc) % alignment:
-        pad = alignment - (len(rsrc) % alignment)
-        padding = b"RENPYVNE" * (pad / 8 + 1)
-        padding = padding[:pad]
-        rsrc += padding
-
     newsize = len(rsrc)
 
-    rsrc_section.Misc_VirtualSize += newsize - virsize
-    rsrc_section.Misc_PhysicalAddress += newsize - virsize
-    rsrc_section.Misc += newsize - virsize
-    rsrc_section.SizeOfRawData += newsize - physize
+    if newsize < physize:
 
-    pe.OPTIONAL_HEADER.SizeOfInitializedData += newsize - physize
+        rsrc += b"\0" * (physize - newsize)
 
-    # Resource size.
-    pe.OPTIONAL_HEADER.DATA_DIRECTORY[2].Size += newsize - virsize
+        return basedata + rsrc
 
-    # Compute the total size of the image.
-    total_size = 0
+    else:
 
-    for i in pe.sections:
+        alignment = pe.OPTIONAL_HEADER.SectionAlignment
 
-        sec_size = i.Misc_VirtualSize
-        sec_size = sec_size - (sec_size % alignment) + alignment
+        # print("Alignment is", alignment)
 
-        total_size += sec_size
+        if len(rsrc) % alignment:
+            pad = alignment - (len(rsrc) % alignment)
+            padding = b"\0" * (pad / 8 + 1)
+            padding = padding[:pad]
+            rsrc += padding
 
-    pe.OPTIONAL_HEADER.SizeOfImage = total_size
+        newsize = len(rsrc)
+        delta = newsize - physize
 
-    return pe.write()[:base] + rsrc
+        rsrc_section.Misc_VirtualSize += delta
+        rsrc_section.Misc_PhysicalAddress += delta
+        rsrc_section.Misc += delta
+        rsrc_section.SizeOfRawData += delta
+
+        pe.OPTIONAL_HEADER.SizeOfInitializedData += delta
+
+        # Resource size.
+        pe.OPTIONAL_HEADER.DATA_DIRECTORY[2].Size += delta
+
+        pe.OPTIONAL_HEADER.SizeOfImage += delta
+
+        return pe.write()[:base] + rsrc
+
 
 if __name__ == "__main__":
 

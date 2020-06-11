@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -433,7 +433,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         try:
             push_current_screen(self)
-            self.child.visit_all(callback, seen=None)
+            if self.child is not None:
+                self.child.visit_all(callback, seen=None)
         finally:
             pop_current_screen()
 

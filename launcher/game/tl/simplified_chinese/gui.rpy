@@ -1,4 +1,4 @@
-﻿
+
 translate simplified_chinese strings:
 
     # gui.rpy:2
@@ -159,19 +159,19 @@ translate simplified_chinese strings:
 
     # gui.rpy:145
     old "## These variables, along with the image files in gui/button, control aspects of how buttons are displayed."
-    new "## These variables, along with the image files in gui/button, control aspects of how buttons are displayed."
+    new "## 这些变量以及 gui/button 中的图像文件控制着按钮显示方式。"
 
     # gui.rpy:148
     old "## The width and height of a button, in pixels. If None, Ren'Py computes a size."
-    new "## The width and height of a button, in pixels. If None, Ren'Py computes a size."
+    new "## 按钮的宽度和高度像素数。如果为 None，则 Ren'Py 将计算大小。"
 
     # gui.rpy:152
     old "## The borders on each side of the button, in left, top, right, bottom order."
-    new "## The borders on each side of the button, in left, top, right, bottom order."
+    new "## 按钮两侧的边框，按左、上、右、下的顺序排列。"
 
     # gui.rpy:155
     old "## If True, the background image will be tiled. If False, the background image will be linearly scaled."
-    new "## If True, the background image will be tiled. If False, the background image will be linearly scaled."
+    new "## 若为 True，则平铺背景图像。若为False，则背景图像将线性缩放。"
 
     # gui.rpy:159
     old "## The font used by the button."
@@ -183,23 +183,23 @@ translate simplified_chinese strings:
 
     # gui.rpy:165
     old "## The color of button text in various states."
-    new "## The color of button text in various states."
+    new "## 按钮文本在各种状态下的颜色。"
 
     # gui.rpy:171
     old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
-    new "## 按钮文本的水平对齐方式。（0.0 为左对齐，0.5 为居中显示，1.0 为右对齐）。"
+    new "## 按钮文本的水平对齐方式。（0.0 为左侧对齐，0.5 为居中对齐，而 1.0 为右侧对齐）。"
 
     # gui.rpy:176
     old "## These variables override settings for different kinds of buttons. Please see the gui documentation for the kinds of buttons available, and what each is used for."
-    new "## These variables override settings for different kinds of buttons. Please see the gui documentation for the kinds of buttons available, and what each is used for."
+    new "## 这些变量将覆盖不同类型按钮的设置。请参阅 gui 文档，了解可用的按钮种类以及每个按钮的用途。"
 
     # gui.rpy:180
     old "## These customizations are used by the default interface:"
-    new "## These customizations are used by the default interface:"
+    new "## 这些定制由默认界面使用："
 
     # gui.rpy:195
     old "## You can also add your own customizations, by adding properly-named variables. For example, you can uncomment the following line to set the width of a navigation button."
-    new "## You can also add your own customizations, by adding properly-named variables. For example, you can uncomment the following line to set the width of a navigation button."
+    new "## 您还可以通过添加正确命名的变量来添加自己的自定义项。例如，您可以将以下几行取消注释来设置导航按钮的宽度。"
 
     # gui.rpy:202
     old "## Choice Buttons"
@@ -209,226 +209,226 @@ translate simplified_chinese strings:
     old "## Choice buttons are used in the in-game menus."
     new "## 用于游戏内菜单的选项按钮。"
 
-    # gui.rpy:217
+    # gui.rpy:218
     old "## File Slot Buttons"
     new "## 存档按钮"
 
-    # gui.rpy:219
+    # gui.rpy:220
     old "## A file slot button is a special kind of button. It contains a thumbnail image, and text describing the contents of the save slot. A save slot uses image files in gui/button, like the other kinds of buttons."
-    new "## A file slot button is a special kind of button. It contains a thumbnail image, and text describing the contents of the save slot. A save slot uses image files in gui/button, like the other kinds of buttons."
+    new "## 存档按钮是一种特殊的按钮。它包含一个缩略图和描述该存档内容的文本。存档使用 gui/button 中的图像文件，就像其他类型的按钮一样。"
 
-    # gui.rpy:223
+    # gui.rpy:224
     old "## The save slot button."
     new "## 存档位按钮。"
 
-    # gui.rpy:233
+    # gui.rpy:234
     old "## The width and height of thumbnails used by the save slots."
-    new "## The width and height of thumbnails used by the save slots."
+    new "## 存档所用缩略图的宽度和高度。"
 
-    # gui.rpy:237
+    # gui.rpy:238
     old "## The number of columns and rows in the grid of save slots."
-    new "## The number of columns and rows in the grid of save slots."
+    new "## 存档网格中的列数和行数。"
 
-    # gui.rpy:242
+    # gui.rpy:243
     old "## Positioning and Spacing"
-    new "## Positioning and Spacing"
+    new "## 定位和间距"
 
-    # gui.rpy:244
+    # gui.rpy:245
     old "## These variables control the positioning and spacing of various user interface elements."
-    new "## These variables control the positioning and spacing of various user interface elements."
+    new "## 这些变量控制各种用户界面元素的位置和间距。"
 
-    # gui.rpy:247
+    # gui.rpy:248
     old "## The position of the left side of the navigation buttons, relative to the left side of the screen."
-    new "## The position of the left side of the navigation buttons, relative to the left side of the screen."
+    new "## 导航按钮左侧相对于屏幕左侧的位置。"
 
-    # gui.rpy:251
+    # gui.rpy:252
     old "## The vertical position of the skip indicator."
-    new "## The vertical position of the skip indicator."
+    new "## 快进指示器的垂直位置。"
 
-    # gui.rpy:254
+    # gui.rpy:255
     old "## The vertical position of the notify screen."
-    new "## The vertical position of the notify screen."
+    new "## 通知界面的垂直位置。"
 
-    # gui.rpy:257
+    # gui.rpy:258
     old "## The spacing between menu choices."
-    new "## The spacing between menu choices."
+    new "## 菜单选项之间的间距。"
 
-    # gui.rpy:260
+    # gui.rpy:261
     old "## Buttons in the navigation section of the main and game menus."
-    new "## Buttons in the navigation section of the main and game menus."
+    new "## 标题菜单和游戏菜单的导航部分中的按钮。"
 
-    # gui.rpy:263
+    # gui.rpy:264
     old "## Controls the amount of spacing between preferences."
-    new "## Controls the amount of spacing between preferences."
+    new "## 控制设置项目之间的间隔量。"
 
-    # gui.rpy:266
+    # gui.rpy:267
     old "## Controls the amount of spacing between preference buttons."
-    new "## Controls the amount of spacing between preference buttons."
+    new "## 控制设置按钮之间的间距。"
 
-    # gui.rpy:269
+    # gui.rpy:270
     old "## The spacing between file page buttons."
-    new "## The spacing between file page buttons."
+    new "## 存档页面按钮之间的间距。"
 
-    # gui.rpy:272
+    # gui.rpy:273
     old "## The spacing between file slots."
-    new "## The spacing between file slots."
+    new "## 存档按钮之间的间距。"
 
-    # gui.rpy:275
+    # gui.rpy:276
     old "## The position of the main menu text."
     new "## 标题菜单文本的位置。"
 
-    # gui.rpy:279
+    # gui.rpy:280
     old "## Frames"
-    new "## Frames"
+    new "## 框架"
 
-    # gui.rpy:281
+    # gui.rpy:282
     old "## These variables control the look of frames that can contain user interface components when an overlay or window is not present."
-    new "## These variables control the look of frames that can contain user interface components when an overlay or window is not present."
+    new "## 这些变量控制在不存在覆盖层或窗口时可以包含用户界面组件的框架的外观。"
 
-    # gui.rpy:284
+    # gui.rpy:285
     old "## Generic frames."
-    new "## Generic frames."
+    new "## 通用框架。"
 
-    # gui.rpy:287
+    # gui.rpy:288
     old "## The frame that is used as part of the confirm screen."
-    new "## The frame that is used as part of the confirm screen."
+    new "## 用作确认界面部分的框架。"
 
-    # gui.rpy:290
+    # gui.rpy:291
     old "## The frame that is used as part of the skip screen."
-    new "## The frame that is used as part of the skip screen."
+    new "## 用作快进界面部分的框架。"
 
-    # gui.rpy:293
+    # gui.rpy:294
     old "## The frame that is used as part of the notify screen."
-    new "## The frame that is used as part of the notify screen."
+    new "## 用作通知界面部分的框架。"
 
-    # gui.rpy:296
+    # gui.rpy:297
     old "## Should frame backgrounds be tiled?"
-    new "## Should frame backgrounds be tiled?"
+    new "## 框架背景是否应平铺？"
 
-    # gui.rpy:300
+    # gui.rpy:301
     old "## Bars, Scrollbars, and Sliders"
-    new "## Bars, Scrollbars, and Sliders"
+    new "## 条，滚动条和滑块"
 
-    # gui.rpy:302
+    # gui.rpy:303
     old "## These control the look and size of bars, scrollbars, and sliders."
-    new "## These control the look and size of bars, scrollbars, and sliders."
+    new "## 这些语句控制条，滚动条和滑块的外观和大小。"
 
-    # gui.rpy:304
+    # gui.rpy:305
     old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
-    new "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
+    new "## 默认的GUI仅使用滑块和垂直滚动条。所有其他栏仅在创建者编写的屏幕中使用。"
 
-    # gui.rpy:307
+    # gui.rpy:308
     old "## The height of horizontal bars, scrollbars, and sliders. The width of vertical bars, scrollbars, and sliders."
-    new "## The height of horizontal bars, scrollbars, and sliders. The width of vertical bars, scrollbars, and sliders."
+    new "## 水平条，滚动条和滑块的高度。垂直条，滚动条和滑块的宽度。"
 
-    # gui.rpy:313
+    # gui.rpy:314
     old "## True if bar images should be tiled. False if they should be linearly scaled."
-    new "## True if bar images should be tiled. False if they should be linearly scaled."
+    new "## 如果条图应平铺，则为 True。 如果应该线性缩放，则为 False。"
 
-    # gui.rpy:318
+    # gui.rpy:319
     old "## Horizontal borders."
-    new "## Horizontal borders."
+    new "## 水平边框。"
 
-    # gui.rpy:323
+    # gui.rpy:324
     old "## Vertical borders."
-    new "## Vertical borders."
+    new "## 垂直边框。"
 
-    # gui.rpy:328
+    # gui.rpy:329
     old "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
-    new "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
+    new "## 如何处理 GUI 中不可滚动的滚动条。“hide”隐藏，“None”显示。"
 
-    # gui.rpy:333
+    # gui.rpy:334
     old "## History"
     new "## 历史"
 
-    # gui.rpy:335
+    # gui.rpy:336
     old "## The history screen displays dialogue that the player has already dismissed."
     new "## 历史记录屏幕显示玩家已经阅读过的对话。"
 
-    # gui.rpy:337
+    # gui.rpy:338
     old "## The number of blocks of dialogue history Ren'Py will keep."
     new "## Ren'Py 将保留的对话历史块数。"
 
-    # gui.rpy:340
+    # gui.rpy:341
     old "## The height of a history screen entry, or None to make the height variable at the cost of performance."
     new "## 历史屏幕条目的高度，或设置为“None”以使高度变量自适应。"
 
-    # gui.rpy:344
+    # gui.rpy:345
     old "## The position, width, and alignment of the label giving the name of the speaking character."
     new "## 所指定叙述角色的标签的坐标、宽度和对齐方式。"
 
-    # gui.rpy:351
+    # gui.rpy:352
     old "## The position, width, and alignment of the dialogue text."
     new "## 对话文本的坐标、宽度和对齐方式。"
 
-    # gui.rpy:358
+    # gui.rpy:359
     old "## NVL-Mode"
     new "## NVL 模式"
 
-    # gui.rpy:360
+    # gui.rpy:361
     old "## The NVL-mode screen displays the dialogue spoken by NVL-mode characters."
     new "## NVL 模式屏幕显示 NVL 模式的角色所产生的对话。"
 
-    # gui.rpy:362
+    # gui.rpy:363
     old "## The borders of the background of the NVL-mode background window."
-    new "## The borders of the background of the NVL-mode background window."
+    new "## NVL 模式背景窗口的背景边框。"
 
-    # gui.rpy:365
+    # gui.rpy:366
     old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
-    new "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
+    new "## Ren'Py 所显示的 NVL 模式条目的最大数量。如果要显示更多条目，则最早的条目将被删除。"
 
-    # gui.rpy:369
+    # gui.rpy:370
     old "## The height of an NVL-mode entry. Set this to None to have the entries dynamically adjust height."
-    new "## The height of an NVL-mode entry. Set this to None to have the entries dynamically adjust height."
+    new "## NVL 模式条目的高度。将此设置为 None 可使条目动态调整高度。"
 
-    # gui.rpy:373
+    # gui.rpy:374
     old "## The spacing between NVL-mode entries when gui.nvl_height is None, and between NVL-mode entries and an NVL-mode menu."
-    new "## The spacing between NVL-mode entries when gui.nvl_height is None, and between NVL-mode entries and an NVL-mode menu."
+    new "## 当 gui.nvl_height 为 None 时，NVL 模式条目之间的间距，以及 NVL 模式条目和 NVL 模式菜单之间的间距。"
 
-    # gui.rpy:390
+    # gui.rpy:391
     old "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"
-    new "## The position, width, and alignment of nvl_thought text (the text said by the nvl_narrator character.)"
+    new "## nvl_thought 文本（由 nvl_narrator 字符表示的文本）的位置，宽度和对齐方式。"
 
-    # gui.rpy:397
+    # gui.rpy:398
     old "## The position of nvl menu_buttons."
-    new "## The position of nvl menu_buttons."
+    new "## NVL menu_buttons 的位置。"
 
-    # gui.rpy:401
+    # gui.rpy:402
     old "## Localization"
     new "## 本地化"
 
-    # gui.rpy:403
+    # gui.rpy:404
     old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
     new "## 该变量控制允许在何时换行。默认值适用于大多数语言。可用的值请参见 https://www.renpy.org/doc/html/style_properties.html#style-property-language"
 
-    # gui.rpy:411
+    # gui.rpy:412
     old "## Mobile devices"
     new "## 移动设备"
 
-    # gui.rpy:416
+    # gui.rpy:417
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
     new "## 该变量增加快捷菜单按钮的尺寸来使它们在平板和手机上更容易按到。"
 
-    # gui.rpy:422
+    # gui.rpy:423
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
     new "## 该变量更改各个 GUI 元素的尺寸和间距来确保它们在手机上更容易识别。"
 
-    # gui.rpy:426
+    # gui.rpy:427
     old "## Font sizes."
     new "## 字体大小。"
 
-    # gui.rpy:434
+    # gui.rpy:435
     old "## Adjust the location of the textbox."
     new "## 调整对话框的位置。"
 
-    # gui.rpy:440
+    # gui.rpy:441
     old "## Change the size and spacing of various things."
     new "## 更改各元素的尺寸和间距。"
 
-    # gui.rpy:453
+    # gui.rpy:454
     old "## File button layout."
     new "## 文件按钮布局。"
 
-    # gui.rpy:457
+    # gui.rpy:458
     old "## NVL-mode."
     new "## NVL 模式。"

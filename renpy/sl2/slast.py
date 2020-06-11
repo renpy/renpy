@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -2022,7 +2022,7 @@ class SLScreen(SLBlock):
         if self.const_ast:
             return
 
-        key = (self.name, self.variant)
+        key = (self.name, self.variant, self.location)
 
         if key in scache.const_analyzed:
             self.const_ast = scache.const_analyzed[key]

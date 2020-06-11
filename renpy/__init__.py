@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -59,7 +59,6 @@ from renpy.compat import *
 
 import sys
 import os
-import pickle
 import copy
 import types
 
@@ -502,6 +501,14 @@ def import_all():
     import renpy.add_from
     import renpy.dump
 
+    import renpy.gl2.gl2draw
+    import renpy.gl2.gl2mesh
+    import renpy.gl2.gl2model
+    import renpy.gl2.gl2polygon
+    import renpy.gl2.gl2shader
+    import renpy.gl2.gl2texture
+    import renpy.gl2.live2d
+
     import renpy.minstore # depends on lots. @UnresolvedImport
     import renpy.defaultstore # depends on everything. @UnresolvedImport
 
@@ -750,6 +757,8 @@ if False:
     import renpy.display.emulator
     import renpy.display.tts
     import renpy.display.gesture
+    import renpy.display.matrix
+    import renpy.display.render
 
     import renpy.display.error
 
@@ -806,18 +815,9 @@ if False:
 
     import renpy.display.accelerator
 
-    import renpy.display.matrix
-    import renpy.display.render
-
     import renpy.gl.gldraw
     import renpy.gl.glenviron_shader
     import renpy.gl.glrtt_copy
     import renpy.gl.glrtt_fbo
     import renpy.gl.gltexture
 
-    import renpy.gl2.gl2draw
-    import renpy.gl2.gl2mesh
-    import renpy.gl2.gl2model
-    import renpy.gl2.gl2polygon
-    import renpy.gl2.gl2shader
-    import renpy.gl2.gl2texture

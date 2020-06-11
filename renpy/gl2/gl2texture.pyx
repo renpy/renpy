@@ -1,6 +1,6 @@
 #@PydevCodeAnalysisIgnore
 #cython: profile=False
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -65,7 +65,7 @@ cdef class TextureLoader:
 
     def init(self):
 
-        self.ftl_program = self.draw.shader_cache.get(("renpy.ftl",))
+        self.ftl_program = self.draw.shader_cache.get(("renpy.ftl",), geometry=False)
 
         self.allocated = set()
         self.free_list = [ ]

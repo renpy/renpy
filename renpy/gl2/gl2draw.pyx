@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -274,6 +274,9 @@ cdef class GL2Draw:
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
         else:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 1);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_COMPATIBILITY)
 
     def init(self, virtual_size):
         """
@@ -933,7 +936,7 @@ cdef class GL2Draw:
 
         # Use the context to draw the surface tree.
         context = GL2DrawingContext(self)
-        context.draw(what, transform, False)
+        context.draw(what, transform, None, False)
 
         cdef unsigned char pixel[4]
         glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
@@ -1145,7 +1148,7 @@ cdef class GL2DrawingContext:
 
         dwidth, dheight = self.gl2draw.drawable_viewport[2:]
 
-        self.uHalfDrawableSize = (dwidth / 2, dheight / 2)
+        self.uHalfDrawableSize = ((dwidth - .01) / 2, (dheight - .01) / 2)
         self.uPixelCenterOffset = ( 0.5 if dwidth % 2 else 0.0, 0.5 if dheight % 2 else 0.0)
 
         self.nearest = False

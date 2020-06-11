@@ -193,7 +193,7 @@ class ShaderCache(object):
         # in the past, but do not exist now.
         self.missing = set()
 
-    def get(self, partnames):
+    def get(self, partnames, geometry=True):
         """
         Gets a shader, creating it if necessary.
 
@@ -207,7 +207,8 @@ class ShaderCache(object):
             return rv
 
         partnameset = set(partnames)
-        partnameset.add(renpy.config.default_shader)
+        if geometry:
+            partnameset.add(renpy.config.default_shader)
         sortedpartnames = tuple(sorted(partnameset))
 
         rv = self.cache.get(sortedpartnames, None)

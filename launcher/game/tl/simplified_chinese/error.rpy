@@ -9,21 +9,29 @@ translate simplified_chinese strings:
     old "Automatically Choose"
     new "自动选择"
 
-    # 00gltest.rpy:79
-    old "Force Angle/DirectX Renderer"
-    new "强制 Angle/DirectX 渲染"
+    # 00gltest.rpy:77
+    old "Force ANGLE Renderer"
+    new "强制 ANGLE 渲染"
 
-    # 00gltest.rpy:83
-    old "Force OpenGL Renderer"
-    new "强制 OpenGL 渲染"
+    # 00gltest.rpy:81
+    old "Force GL Renderer"
+    new "强制 GL 渲染"
 
-    # 00gltest.rpy:87
-    old "Force Software Renderer"
-    new "强制软件渲染"
+    # 00gltest.rpy:85
+    old "Force GLES Renderer"
+    new "强制 GLES 渲染"
 
-    # 00gltest.rpy:93
-    old "NPOT"
-    new "NPOT"
+    # 00gltest.rpy:90
+    old "Force ANGLE2 Renderer"
+    new "强制 ANGLE2 渲染"
+
+    # 00gltest.rpy:94
+    old "Force GL2 Renderer"
+    new "强制 GL2 渲染"
+
+    # 00gltest.rpy:98
+    old "Force GLES2 Renderer"
+    new "强制 GLES2 渲染"
 
     # 00gltest.rpy:97
     old "Enable"
@@ -51,7 +59,7 @@ translate simplified_chinese strings:
 
     # 00gltest.rpy:163
     old "Tearing"
-    new "画面割裂"
+    new "画面撕裂"
 
     # 00gltest.rpy:179
     old "Changes will take effect the next time this program is run."
@@ -141,74 +149,86 @@ translate simplified_chinese strings:
     old "Back (B)"
     new "返回（B）"
 
-    # _errorhandling.rpym:529
+    # _errorhandling.rpym:538
     old "Open"
     new "打开"
 
-    # _errorhandling.rpym:531
+    # _errorhandling.rpym:540
     old "Opens the traceback.txt file in a text editor."
     new "在文本编辑器中打开追溯报告（traceback.txt）。"
 
-    # _errorhandling.rpym:533
-    old "Copy"
-    new "复制"
+    # _errorhandling.rpym:542
+    old "Copy BBCode"
+    new "复制 BBCode"
 
-    # _errorhandling.rpym:535
-    old "Copies the traceback.txt file to the clipboard."
-    new "复制追溯报告（traceback.txt）的内容到剪贴板。"
+    # _errorhandling.rpym:544
+    old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "复制追溯报告（traceback.txt）的内容到剪贴板，作为 https://lemmasoft.renai.us/ 等论坛的 BBcode。"
 
-    # _errorhandling.rpym:562
+    # _errorhandling.rpym:546
+    old "Copy Markdown"
+    new "复制 Markdown"
+
+    # _errorhandling.rpym:548
+    old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
+    new "复制追溯报告（traceback.txt）的内容到剪贴板，作为 Discord 的 Markdown。"
+
+    # _errorhandling.rpym:577
     old "An exception has occurred."
     new "发生异常。"
 
-    # _errorhandling.rpym:582
+    # _errorhandling.rpym:597
     old "Rollback"
     new "回滚"
 
-    # _errorhandling.rpym:584
+    # _errorhandling.rpym:599
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "尝试回滚到先前的状态，使您可以存档或者选择不同选项。"
 
-    # _errorhandling.rpym:587
+    # _errorhandling.rpym:602
     old "Ignore"
     new "忽略"
 
-    # _errorhandling.rpym:591
+    # _errorhandling.rpym:606
     old "Ignores the exception, allowing you to continue."
     new "忽略异常，让您可以继续。"
 
-    # _errorhandling.rpym:593
+    # _errorhandling.rpym:608
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "忽略异常，让您可以继续。但这通常会引起更多错误。"
 
-    # _errorhandling.rpym:597
+    # _errorhandling.rpym:612
     old "Reload"
     new "重新加载"
 
-    # _errorhandling.rpym:599
+    # _errorhandling.rpym:614
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "从硬盘重新加载游戏，尝试保存和恢复游戏状态。"
 
-    # _errorhandling.rpym:602
+    # _errorhandling.rpym:617
     old "Console"
     new "控制台"
 
-    # _errorhandling.rpym:604
+    # _errorhandling.rpym:619
     old "Opens a console to allow debugging the problem."
     new "打开控制台，允许您对问题进行调试。"
 
-    # _errorhandling.rpym:614
+    # _errorhandling.rpym:629
     old "Quits the game."
     new "退出游戏。"
 
-    # _errorhandling.rpym:638
+    # _errorhandling.rpym:653
     old "Parsing the script failed."
     new "解析脚本失败。"
 
-    # _errorhandling.rpym:664
+    # _errorhandling.rpym:679
     old "Opens the errors.txt file in a text editor."
-    new "在文本编辑器中打开解析错误文件（errors.txt）。"
+    new "在文本编辑器中打开追溯报告（traceback.txt）。"
 
-    # _errorhandling.rpym:668
-    old "Copies the errors.txt file to the clipboard."
-    new "复制解析错误文件（errors.txt）到剪贴板。"
+    # _errorhandling.rpym:683
+    old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
+    new "复制解析错误文件（errors.txt）到剪贴板，作为 https://lemmasoft.renai.us/ 等论坛的 BBcode。"
+
+    # _errorhandling.rpym:687
+    old "Copies the errors.txt file to the clipboard as Markdown for Discord."
+    new "复制解析错误文件（errors.txt）到剪贴板，作为 Discord 的 Markdown。"

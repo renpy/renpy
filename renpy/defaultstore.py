@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -75,6 +75,9 @@ main_menu = False
 # Is autosaving allowed?
 _autosave = True
 
+# Should live2d fading happen?
+_live2d_fade = True
+
 
 class _Config(object):
 
@@ -84,7 +87,7 @@ class _Config(object):
     def __setstate__(self, data):
         return
 
-    def register(self, name, default, cat=None, help=None):  # @ReservedAssignment
+    def register(self, name, default, cat=None, help=None): # @ReservedAssignment
         setattr(self, name, default)
         _config.help.append((cat, name, help))
 
@@ -103,7 +106,7 @@ class _Config(object):
             raise Exception('config.%s is not a known configuration variable.' % (name))
 
         if name == "script_version":
-            renpy.store._set_script_version(value)  # E1101 @UndefinedVariable
+            renpy.store._set_script_version(value) # E1101 @UndefinedVariable
 
         if name == "developer":
             if value == "auto":
@@ -126,7 +129,7 @@ style = None
 config = _Config()
 library = config
 
-eval = renpy.python.py_eval  # @ReservedAssignment
+eval = renpy.python.py_eval # @ReservedAssignment
 
 # Displayables.
 Bar = renpy.display.behavior.Bar
@@ -180,6 +183,7 @@ DragGroup = renpy.display.dragdrop.DragGroup
 Sprite = renpy.display.particle.Sprite
 SpriteManager = renpy.display.particle.SpriteManager
 
+Live2D = renpy.gl2.live2d.Live2D
 
 # Currying things.
 Alpha = renpy.curry.curry(renpy.display.layout.Alpha)
@@ -199,7 +203,6 @@ AlphaDissolve = renpy.curry.curry(renpy.display.transition.AlphaDissolve)
 CropMove = renpy.curry.curry(renpy.display.transition.CropMove)
 PushMove = renpy.curry.curry(renpy.display.transition.PushMove)
 Pixellate = renpy.curry.curry(renpy.display.transition.Pixellate)
-
 
 OldMoveTransition = renpy.curry.curry(renpy.display.movetransition.OldMoveTransition)
 MoveTransition = renpy.curry.curry(renpy.display.movetransition.MoveTransition)
@@ -228,7 +231,7 @@ AudioData = renpy.audio.audio.AudioData
 # NOTE: When exporting something from here, decide if we need to add it to
 # renpy.pyanalysis.pure_functions.
 
-Style = renpy.style.Style  # @UndefinedVariable
+Style = renpy.style.Style # @UndefinedVariable
 
 NoRollback = renpy.python.NoRollback
 
@@ -346,7 +349,7 @@ Color = renpy.color.Color
 color = renpy.color.Color
 
 # Conveniently get rid of all the packages we had imported before.
-import renpy.exports as renpy  # @Reimport
+import renpy.exports as renpy # @Reimport
 
 # The default menu functions.
 menu = renpy.display_menu

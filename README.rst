@@ -164,3 +164,10 @@ Contributing
 For bug fixes, documentation improvements, and simple changes, just
 make a pull request. For more complex changes, it might make sense
 to file an issue first so we can discuss the design.
+
+License
+=======
+
+For the complete licensing terms, please read:
+
+https://www.renpy.org/doc/html/license.html

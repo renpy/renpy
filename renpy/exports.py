@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -114,6 +114,7 @@ from renpy.loader import add_python_directory
 from renpy.lint import try_compile, try_eval
 
 from renpy.gl2.gl2shadercache import register_shader
+from renpy.gl2.live2d import has_live2d
 
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
@@ -184,6 +185,7 @@ def public_api():
     is_selected, is_sensitive
     add_python_directory
     try_compile, try_eval
+    register_shader, has_live2d
 
 
 del public_api

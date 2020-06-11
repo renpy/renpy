@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -655,10 +655,12 @@ soundstopbehavior = Wrapper(renpy.display.behavior.SoundStopBehavior)
 
 def _key(key, action=None, activate_sound=None):
 
-    if action is None:
-        raise Exception("Action is required in ui.key.")
+    if isinstance(key, (list, tuple)):
+        keymap = {k: action for k in key}
+    else:
+        keymap = {key: action}
 
-    return renpy.display.behavior.Keymap(activate_sound=activate_sound, **{ key : action})
+    return renpy.display.behavior.Keymap(activate_sound=activate_sound, **keymap)
 
 
 key = Wrapper(_key)

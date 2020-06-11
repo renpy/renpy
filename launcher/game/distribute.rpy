@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -967,7 +967,7 @@ init python in distribute:
             old_exe_fn = os.path.join(config.renpy_base, "lib/windows-i686/renpy.exe")
             old_python_fn = os.path.join(config.renpy_base, "lib/windows-i686/pythonw.exe")
 
-            if False and os.path.exists(icon_fn) and os.path.exists(old_exe_fn):
+            if os.path.exists(icon_fn) and os.path.exists(old_exe_fn):
                 exe_fn = self.temp_filename("renpy.exe")
                 python_fn = self.temp_filename("pythonw.exe")
 

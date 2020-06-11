@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -124,11 +124,12 @@ class QueueEntry(object):
     A queue entry object.
     """
 
-    def __init__(self, filename, fadein, tight, loop):
+    def __init__(self, filename, fadein, tight, loop, relative_volume):
         self.filename = filename
         self.fadein = fadein
         self.tight = tight
         self.loop = loop
+        self.relative_volume = relative_volume
 
 
 class MusicContext(renpy.python.RevertableObject):
@@ -141,6 +142,7 @@ class MusicContext(renpy.python.RevertableObject):
     __version__ = 0
 
     pause = False
+    tertiary_volume = 1.0
 
     def __init__(self):
 
@@ -157,6 +159,9 @@ class MusicContext(renpy.python.RevertableObject):
 
         # The secondary volume.
         self.secondary_volume = 1.0
+
+        # The tertiary volume.
+        self.tertiary_volume = 1.0
 
         # The time the channel was ordered last changed.
         self.last_changed = 0
@@ -476,6 +481,8 @@ class Channel(object):
             try:
                 filename, start, end = self.split_filename(topq.filename, topq.loop)
 
+                self.set_tertiary_volume(topq.relative_volume)
+
                 if (end >= 0) and ((end - start) <= 0) and self.queue:
                     continue
 
@@ -513,9 +520,9 @@ class Channel(object):
             if self.loop:
                 for i in self.loop:
                     if topq is not None:
-                        newq = QueueEntry(i, 0, topq.tight, True)
+                        newq = QueueEntry(i, 0, topq.tight, True, topq.relative_volume)
                     else:
-                        newq = QueueEntry(i, 0, False, True)
+                        newq = QueueEntry(i, 0, False, True, topq.relative_volume)
 
                     self.queue.append(newq)
             # Try callback:
@@ -607,7 +614,7 @@ class Channel(object):
             renpysound.dequeue(self.number, True)
             renpysound.stop(self.number)
 
-    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False):
+    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False, relative_volume=1.0):
 
         with lock:
 
@@ -626,7 +633,7 @@ class Channel(object):
                 self.keep_queue += 1
 
                 for filename in filenames:
-                    qe = QueueEntry(filename, int(fadein * 1000), tight, False)
+                    qe = QueueEntry(filename, int(fadein * 1000), tight, False, relative_volume)
                     self.queue.append(qe)
 
                     # Only fade the first thing in.
@@ -694,11 +701,15 @@ class Channel(object):
 
             now = get_serial()
             self.context.secondary_volume_time = now
-            self.context.secondary_volume = volume
+            self.context.secondary_volume = volume * self.context.tertiary_volume
 
             if pcm_ok:
                 self.secondary_volume_time = self.context.secondary_volume_time
                 renpysound.set_secondary_volume(self.number, self.context.secondary_volume, delay)
+
+    def set_tertiary_volume(self, volume):
+        self.context.tertiary_volume = volume
+        self.set_secondary_volume(1.0, 0)
 
     def pause(self):
         with lock:

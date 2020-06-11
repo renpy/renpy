@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -119,6 +119,7 @@ PROPERTIES = {
     "crop_relative" : bool,
     "size" : (int, int),
     "maxsize" : (int, int),
+    "minsize" : (int, int),
     "corner1" : (float, float),
     "corner2" : (float, float),
     "subpixel" : bool,

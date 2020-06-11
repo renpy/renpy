@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -97,7 +97,7 @@ def get_tag_method(tag, method):
     it returns None.
     """
 
-    ti =  images.get((tag,), None)
+    ti = images.get((tag,), None)
 
     if ti is None:
         return None
@@ -406,7 +406,6 @@ class ImageReference(renpy.display.core.Displayable):
         try:
 
             a = self._args.copy(name=name, args=args)
-
             self.target = target._duplicate(a)
 
         except Exception as e:
@@ -415,6 +414,7 @@ class ImageReference(renpy.display.core.Displayable):
                 raise
 
             error(str(e))
+            return False
 
         # Copy the old transform over.
         new_transform = self.target._target()
@@ -983,7 +983,7 @@ class ShownImageInfo(renpy.object.Object):
                     max_len = len_attrs
                     matches = [ ]
 
-                matches.append((tag, ) + attrs)
+                matches.append((tag,) + attrs)
 
         if matches is None:
             return None
@@ -998,7 +998,6 @@ class ShownImageInfo(renpy.object.Object):
 
 
 renpy.display.core.ImagePredictInfo = ShownImageInfo
-
 
 # Functions that have moved from this module to other modules,
 # that live here for the purpose of backward-compatibility.

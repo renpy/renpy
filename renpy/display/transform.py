@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -112,6 +112,7 @@ class TransformState(renpy.object.Object):
     ytile = 1
     last_angle = None
     maxsize = None
+    minsize = None
 
     def __init__(self):
         self.alpha = 1
@@ -149,6 +150,7 @@ class TransformState(renpy.object.Object):
         self.corner2 = None
         self.size = None
         self.maxsize = None
+        self.minsize = None
 
         self.delay = 0
 
@@ -194,6 +196,7 @@ class TransformState(renpy.object.Object):
         self.corner2 = ts.corner2
         self.size = ts.size
         self.maxsize = ts.maxsize
+        self.minsize = ts.minsize
 
         self.xpan = ts.xpan
         self.ypan = ts.ypan
@@ -266,6 +269,7 @@ class TransformState(renpy.object.Object):
         diff2("corner2", newts.corner2, self.corner2)
         diff2("size", newts.size, self.size)
         diff2("maxsize", newts.maxsize, self.maxsize)
+        diff2("minsize", newts.minsize, self.minsize)
 
         diff4("xpos", newts.xpos, newts.inherited_xpos, self.xpos, self.inherited_xpos)
         diff4("xanchor", newts.xanchor, newts.inherited_xanchor, self.xanchor, self.inherited_xanchor)
@@ -479,6 +483,7 @@ class Transform(Container):
     corner2 = Proxy("corner2")
     size = Proxy("size")
     maxsize = Proxy("maxsize")
+    minsize = Proxy("minsize")
 
     delay = Proxy("delay")
 

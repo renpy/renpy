@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -33,6 +33,9 @@ Right now, it does the following things:
   to be used in Python 2.
 
 * Defines PY2 in the current context, to make Python 2 conditional.
+
+* Aliases pickle to cPickle on Python 3, to support Python 2 code
+  choosing between the implementations, where the choice is meaningful
 
 * Replaces open with a function that mimics the Python 3 behavior, of
   opening files in a unicode-friendly mode by default.
@@ -75,11 +78,14 @@ future.standard_library.install_aliases()
 PY2 = future.utils.PY2
 
 ################################################################################
-# On Python2, use cPickle as pickle.
+# Make both cPickle and pickle available to support config.use_cpickle on
+# Python 2 (on Python 3 it's a no-op)
 
 if PY2:
     import cPickle
-    sys.modules['pickle'] = cPickle
+    import pickle
+else:
+    import pickle, pickle as cPickle
 
 ################################################################################
 # Make open mimic Python 3.
@@ -125,7 +131,8 @@ else:
 ################################################################################
 # Sort key functions.
 
-__all__ = [ "PY2", "open", "basestring", "str", "pystr", "range", "bord", "bchr", "tobytes", "chr", ]
+__all__ = [ "PY2", "open", "basestring", "str", "pystr", "range",
+            "bord", "bchr", "tobytes", "chr", "pickle", "cPickle"]
 
 if PY2:
     __all__ = [ bytes(i) for i in __all__ ]
