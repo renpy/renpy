@@ -896,7 +896,7 @@ class Transform(Container):
         if (child is not None) and (child._duplicatable):
             child = child._duplicate(_args)
 
-        rv = Transform(
+        rv = self.__class__(
             child=child,
             function=self.function,
             style=self.style_arg,
