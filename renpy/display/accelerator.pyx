@@ -205,14 +205,14 @@ def transform_render(self, widtho, heighto, st, at):
     minsize = state.minsize
 
     if (width != 0) and (height != 0):
-        mul = False
+        mul = None
         if (maxsize is not None):
             maxsizex, maxsizey = maxsize
             mul = min(maxsizex / width, maxsizey / height)
         elif (minsize is not None):
             minsizex, minsizey = minsize
             mul = max(minsizex / width, minsizey / height)
-        if mul:
+        if mul is not None:
             size = (width * mul, height * mul)
 
     if (size is not None) and (size != (width, height)) and (width != 0) and (height != 0):
