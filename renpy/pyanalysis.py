@@ -143,6 +143,8 @@ def pure(fn):
     `fn`
         The name of the function to declare pure. This may either be a string
         containing the name of the function, or the function itself.
+        If a string is passed and the function is inside the module,
+        this string should contain the module name with the dot.
 
     Returns `fn`, allowing this function to be used as a decorator.
     """
@@ -151,6 +153,12 @@ def pure(fn):
 
     if not isinstance(name, basestring):
         name = fn.__name__
+
+        module = fn.__module__
+        name = module + "." + name
+
+    if name.startswith("store."):
+        name = name[6:]
 
     if name not in not_constants:
         pure_functions.add(name)
