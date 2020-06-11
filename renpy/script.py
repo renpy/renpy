@@ -35,7 +35,6 @@ import time
 import marshal
 import struct
 import zlib
-import traceback
 
 from pickle import loads, dumps
 import shutil
