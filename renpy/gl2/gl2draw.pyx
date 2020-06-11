@@ -274,6 +274,9 @@ cdef class GL2Draw:
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
         else:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 1);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_COMPATIBILITY)
 
     def init(self, virtual_size):
         """
