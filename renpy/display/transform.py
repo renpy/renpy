@@ -111,8 +111,10 @@ class TransformState(renpy.object.Object):
     xtile = 1
     ytile = 1
     last_angle = None
+    xsize = None
+    ysize = None
+    fit = None
     maxsize = None
-    minsize = None
 
     def __init__(self):
         self.alpha = 1
@@ -148,9 +150,11 @@ class TransformState(renpy.object.Object):
         self.crop_relative = False
         self.corner1 = None
         self.corner2 = None
-        self.size = None
+
+        self.xsize = None
+        self.ysize = None
+        self.fit = None
         self.maxsize = None
-        self.minsize = None
 
         self.delay = 0
 
@@ -194,9 +198,11 @@ class TransformState(renpy.object.Object):
         self.crop_relative = ts.crop_relative
         self.corner1 = ts.corner1
         self.corner2 = ts.corner2
-        self.size = ts.size
+
+        self.xsize = ts.xsize
+        self.ysize = ts.ysize
+        self.fit = ts.fit
         self.maxsize = ts.maxsize
-        self.minsize = ts.minsize
 
         self.xpan = ts.xpan
         self.ypan = ts.ypan
@@ -267,9 +273,11 @@ class TransformState(renpy.object.Object):
         diff2("crop_relative", newts.crop_relative, self.crop_relative)
         diff2("corner1", newts.corner1, self.corner1)
         diff2("corner2", newts.corner2, self.corner2)
-        diff2("size", newts.size, self.size)
+
+        diff2("xsize", newts.xsize, self.xsize)
+        diff2("ysize", newts.ysize, self.ysize)
+        diff2("fit", newts.fit, self.fit)
         diff2("maxsize", newts.maxsize, self.maxsize)
-        diff2("minsize", newts.minsize, self.minsize)
 
         diff4("xpos", newts.xpos, newts.inherited_xpos, self.xpos, self.inherited_xpos)
         diff4("xanchor", newts.xanchor, newts.inherited_xanchor, self.xanchor, self.inherited_xanchor)
@@ -403,6 +411,14 @@ class TransformState(renpy.object.Object):
 
     offset = property(get_offset, set_offset)
 
+    def get_size(self):
+        return self.xsize, self.ysize
+
+    def set_size(self, value):
+        self.xsize, self.ysize = value
+
+    size = property(get_size, set_size)
+
     def set_xcenter(self, value):
         self.xpos = value
         self.xanchor = 0.5
@@ -481,9 +497,12 @@ class Transform(Container):
     crop_relative = Proxy("crop_relative")
     corner1 = Proxy("corner1")
     corner2 = Proxy("corner2")
+
+    xsize = Proxy("xsize")
+    ysize = Proxy("ysize")
     size = Proxy("size")
+    fit = Proxy("fit")
     maxsize = Proxy("maxsize")
-    minsize = Proxy("minsize")
 
     delay = Proxy("delay")
 
