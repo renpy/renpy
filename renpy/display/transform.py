@@ -111,8 +111,9 @@ class TransformState(renpy.object.Object):
     xtile = 1
     ytile = 1
     last_angle = None
-    maxsize = None
-    minsize = None
+    # maxsize = None
+    # minsize = None
+    size_type = None # not sure that's useful
 
     def __init__(self):
         self.alpha = 1
@@ -149,8 +150,9 @@ class TransformState(renpy.object.Object):
         self.corner1 = None
         self.corner2 = None
         self.size = None
-        self.maxsize = None
-        self.minsize = None
+        # self.maxsize = None
+        # self.minsize = None
+        self.size_type = None
 
         self.delay = 0
 
@@ -195,8 +197,9 @@ class TransformState(renpy.object.Object):
         self.corner1 = ts.corner1
         self.corner2 = ts.corner2
         self.size = ts.size
-        self.maxsize = ts.maxsize
-        self.minsize = ts.minsize
+        # self.maxsize = ts.maxsize
+        # self.minsize = ts.minsize
+        self.size_type = ts.size_type
 
         self.xpan = ts.xpan
         self.ypan = ts.ypan
@@ -268,8 +271,9 @@ class TransformState(renpy.object.Object):
         diff2("corner1", newts.corner1, self.corner1)
         diff2("corner2", newts.corner2, self.corner2)
         diff2("size", newts.size, self.size)
-        diff2("maxsize", newts.maxsize, self.maxsize)
-        diff2("minsize", newts.minsize, self.minsize)
+        # diff2("maxsize", newts.maxsize, self.maxsize)
+        # diff2("minsize", newts.minsize, self.minsize)
+        diff2("size_type", newts.size_type, self.size_type)
 
         diff4("xpos", newts.xpos, newts.inherited_xpos, self.xpos, self.inherited_xpos)
         diff4("xanchor", newts.xanchor, newts.inherited_xanchor, self.xanchor, self.inherited_xanchor)
@@ -482,8 +486,9 @@ class Transform(Container):
     corner1 = Proxy("corner1")
     corner2 = Proxy("corner2")
     size = Proxy("size")
-    maxsize = Proxy("maxsize")
-    minsize = Proxy("minsize")
+    # maxsize = Proxy("maxsize")
+    # minsize = Proxy("minsize")
+    size_type = Proxy("size_type")
 
     delay = Proxy("delay")
 
