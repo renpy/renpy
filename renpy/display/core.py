@@ -3568,11 +3568,10 @@ class Interface(object):
                 if ev.type == pygame.VIDEOEXPOSE:
                     # Needed to force the display to redraw after expose in
                     # the software renderer.
-                    renpy.game.interface.full_redraw = True
-                    renpy.game.interface.force_redraw = True
 
                     if isinstance(renpy.display.draw, renpy.display.swdraw.SWDraw):
                         renpy.display.draw.full_redraw = True
+                        renpy.game.interface.force_redraw = True
 
                     continue
 
