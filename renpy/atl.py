@@ -120,6 +120,8 @@ PROPERTIES = {
     "size" : (int, int),
     # "maxsize" : (int, int),
     # "minsize" : (int, int),
+    "xsize" : int,
+    "ysize" : int,
     "size_type" : str,
     "corner1" : (float, float),
     "corner2" : (float, float),
