@@ -114,6 +114,8 @@ class TransformState(renpy.object.Object):
     # maxsize = None
     # minsize = None
     size_type = None # not sure that's useful
+    xsize = None
+    ysize = None
 
     def __init__(self):
         self.alpha = 1
@@ -152,6 +154,8 @@ class TransformState(renpy.object.Object):
         self.size = None
         # self.maxsize = None
         # self.minsize = None
+        self.xsize = None
+        self.ysize = None
         self.size_type = None
 
         self.delay = 0
@@ -199,6 +203,8 @@ class TransformState(renpy.object.Object):
         self.size = ts.size
         # self.maxsize = ts.maxsize
         # self.minsize = ts.minsize
+        self.xsize = ts.xsize
+        self.ysize = ts.ysize
         self.size_type = ts.size_type
 
         self.xpan = ts.xpan
@@ -273,6 +279,8 @@ class TransformState(renpy.object.Object):
         diff2("size", newts.size, self.size)
         # diff2("maxsize", newts.maxsize, self.maxsize)
         # diff2("minsize", newts.minsize, self.minsize)
+        diff2("xsize", newts.xsize, self.xsize)
+        diff2("ysize", newts.ysize, self.ysize)
         diff2("size_type", newts.size_type, self.size_type)
 
         diff4("xpos", newts.xpos, newts.inherited_xpos, self.xpos, self.inherited_xpos)
@@ -488,6 +496,8 @@ class Transform(Container):
     size = Proxy("size")
     # maxsize = Proxy("maxsize")
     # minsize = Proxy("minsize")
+    xsize = Proxy("xsize")
+    ysize = Proxy("ysize")
     size_type = Proxy("size_type")
 
     delay = Proxy("delay")
