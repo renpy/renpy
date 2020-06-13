@@ -31,6 +31,8 @@ try:
 except ImportError:
     live2dmodel = None
 
+import sys
+import os
 import json
 import collections
 
@@ -51,6 +53,10 @@ def onetime_init():
         dll = "libLive2DCubismCore.dylib"
     else:
         dll = "libLive2DCubismCore.so"
+
+    fn = os.path.join(os.path.dirname(sys.executable), dll)
+    if os.path.exists(fn):
+        dll = fn
 
     if not renpy.gl2.live2dmodel.load(dll):
         raise Exception("Could not load Live2D. {} was not found.".format(dll))
