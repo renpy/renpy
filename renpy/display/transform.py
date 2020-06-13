@@ -415,6 +415,8 @@ class TransformState(renpy.object.Object):
         return self.xsize, self.ysize
 
     def set_size(self, value):
+        if value is None:
+            value = (None, None)
         self.xsize, self.ysize = value
 
     size = property(get_size, set_size)
