@@ -159,8 +159,6 @@ class LogFile(object):
             if not isinstance(s, str):
                 s = s.decode("latin-1")
 
-            s = s.replace("\n", "\r\n")
-
             self.file.write(s)
 
             if self.flush:
