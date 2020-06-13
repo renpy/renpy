@@ -59,6 +59,9 @@ init python:
 
             dstfn = os.path.join(config.renpy_base, dstfn)
 
+            if not os.path.exists(os.path.dirname(dstfn)):
+                continue
+
             renpy.write_log(fn + " -> " + dstfn)
 
             data = zf.read(fn)
