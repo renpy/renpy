@@ -1,74 +1,74 @@
-ctypedef csmVersion (* csmGetVersionType)()
+ctypedef csmVersion (__stdcall * csmGetVersionType)()
 cdef csmGetVersionType csmGetVersion
-ctypedef csmMocVersion (* csmGetLatestMocVersionType)()
+ctypedef csmMocVersion (__stdcall * csmGetLatestMocVersionType)()
 cdef csmGetLatestMocVersionType csmGetLatestMocVersion
-ctypedef csmMocVersion (* csmGetMocVersionType)(const void*, const unsigned int)
+ctypedef csmMocVersion (__stdcall * csmGetMocVersionType)(const void*, const unsigned int)
 cdef csmGetMocVersionType csmGetMocVersion
-ctypedef csmLogFunction (* csmGetLogFunctionType)()
+ctypedef csmLogFunction (__stdcall * csmGetLogFunctionType)()
 cdef csmGetLogFunctionType csmGetLogFunction
-ctypedef void (* csmSetLogFunctionType)(csmLogFunction)
+ctypedef void (__stdcall * csmSetLogFunctionType)(csmLogFunction)
 cdef csmSetLogFunctionType csmSetLogFunction
-ctypedef csmMoc* (* csmReviveMocInPlaceType)(void*, const unsigned int)
+ctypedef csmMoc* (__stdcall * csmReviveMocInPlaceType)(void*, const unsigned int)
 cdef csmReviveMocInPlaceType csmReviveMocInPlace
-ctypedef unsigned int (* csmGetSizeofModelType)(const csmMoc*)
+ctypedef unsigned int (__stdcall * csmGetSizeofModelType)(const csmMoc*)
 cdef csmGetSizeofModelType csmGetSizeofModel
-ctypedef csmModel* (* csmInitializeModelInPlaceType)(const csmMoc*, void*, const unsigned int)
+ctypedef csmModel* (__stdcall * csmInitializeModelInPlaceType)(const csmMoc*, void*, const unsigned int)
 cdef csmInitializeModelInPlaceType csmInitializeModelInPlace
-ctypedef void (* csmUpdateModelType)(csmModel*)
+ctypedef void (__stdcall * csmUpdateModelType)(csmModel*)
 cdef csmUpdateModelType csmUpdateModel
-ctypedef void (* csmReadCanvasInfoType)(const csmModel*, csmVector2*, csmVector2*, float*)
+ctypedef void (__stdcall * csmReadCanvasInfoType)(const csmModel*, csmVector2*, csmVector2*, float*)
 cdef csmReadCanvasInfoType csmReadCanvasInfo
-ctypedef int (* csmGetParameterCountType)(const csmModel*)
+ctypedef int (__stdcall * csmGetParameterCountType)(const csmModel*)
 cdef csmGetParameterCountType csmGetParameterCount
-ctypedef const char** (* csmGetParameterIdsType)(const csmModel*)
+ctypedef const char** (__stdcall * csmGetParameterIdsType)(const csmModel*)
 cdef csmGetParameterIdsType csmGetParameterIds
-ctypedef const float* (* csmGetParameterMinimumValuesType)(const csmModel*)
+ctypedef const float* (__stdcall * csmGetParameterMinimumValuesType)(const csmModel*)
 cdef csmGetParameterMinimumValuesType csmGetParameterMinimumValues
-ctypedef const float* (* csmGetParameterMaximumValuesType)(const csmModel*)
+ctypedef const float* (__stdcall * csmGetParameterMaximumValuesType)(const csmModel*)
 cdef csmGetParameterMaximumValuesType csmGetParameterMaximumValues
-ctypedef const float* (* csmGetParameterDefaultValuesType)(const csmModel*)
+ctypedef const float* (__stdcall * csmGetParameterDefaultValuesType)(const csmModel*)
 cdef csmGetParameterDefaultValuesType csmGetParameterDefaultValues
-ctypedef float* (* csmGetParameterValuesType)(csmModel*)
+ctypedef float* (__stdcall * csmGetParameterValuesType)(csmModel*)
 cdef csmGetParameterValuesType csmGetParameterValues
-ctypedef int (* csmGetPartCountType)(const csmModel*)
+ctypedef int (__stdcall * csmGetPartCountType)(const csmModel*)
 cdef csmGetPartCountType csmGetPartCount
-ctypedef const char** (* csmGetPartIdsType)(const csmModel*)
+ctypedef const char** (__stdcall * csmGetPartIdsType)(const csmModel*)
 cdef csmGetPartIdsType csmGetPartIds
-ctypedef float* (* csmGetPartOpacitiesType)(csmModel*)
+ctypedef float* (__stdcall * csmGetPartOpacitiesType)(csmModel*)
 cdef csmGetPartOpacitiesType csmGetPartOpacities
-ctypedef const int* (* csmGetPartParentPartIndicesType)(const csmModel*)
+ctypedef const int* (__stdcall * csmGetPartParentPartIndicesType)(const csmModel*)
 cdef csmGetPartParentPartIndicesType csmGetPartParentPartIndices
-ctypedef int (* csmGetDrawableCountType)(const csmModel*)
+ctypedef int (__stdcall * csmGetDrawableCountType)(const csmModel*)
 cdef csmGetDrawableCountType csmGetDrawableCount
-ctypedef const char** (* csmGetDrawableIdsType)(const csmModel*)
+ctypedef const char** (__stdcall * csmGetDrawableIdsType)(const csmModel*)
 cdef csmGetDrawableIdsType csmGetDrawableIds
-ctypedef const csmFlags* (* csmGetDrawableConstantFlagsType)(const csmModel*)
+ctypedef const csmFlags* (__stdcall * csmGetDrawableConstantFlagsType)(const csmModel*)
 cdef csmGetDrawableConstantFlagsType csmGetDrawableConstantFlags
-ctypedef const csmFlags* (* csmGetDrawableDynamicFlagsType)(const csmModel*)
+ctypedef const csmFlags* (__stdcall * csmGetDrawableDynamicFlagsType)(const csmModel*)
 cdef csmGetDrawableDynamicFlagsType csmGetDrawableDynamicFlags
-ctypedef const int* (* csmGetDrawableTextureIndicesType)(const csmModel*)
+ctypedef const int* (__stdcall * csmGetDrawableTextureIndicesType)(const csmModel*)
 cdef csmGetDrawableTextureIndicesType csmGetDrawableTextureIndices
-ctypedef const int* (* csmGetDrawableDrawOrdersType)(const csmModel*)
+ctypedef const int* (__stdcall * csmGetDrawableDrawOrdersType)(const csmModel*)
 cdef csmGetDrawableDrawOrdersType csmGetDrawableDrawOrders
-ctypedef const int* (* csmGetDrawableRenderOrdersType)(const csmModel*)
+ctypedef const int* (__stdcall * csmGetDrawableRenderOrdersType)(const csmModel*)
 cdef csmGetDrawableRenderOrdersType csmGetDrawableRenderOrders
-ctypedef const float* (* csmGetDrawableOpacitiesType)(const csmModel*)
+ctypedef const float* (__stdcall * csmGetDrawableOpacitiesType)(const csmModel*)
 cdef csmGetDrawableOpacitiesType csmGetDrawableOpacities
-ctypedef const int* (* csmGetDrawableMaskCountsType)(const csmModel*)
+ctypedef const int* (__stdcall * csmGetDrawableMaskCountsType)(const csmModel*)
 cdef csmGetDrawableMaskCountsType csmGetDrawableMaskCounts
-ctypedef const int** (* csmGetDrawableMasksType)(const csmModel*)
+ctypedef const int** (__stdcall * csmGetDrawableMasksType)(const csmModel*)
 cdef csmGetDrawableMasksType csmGetDrawableMasks
-ctypedef const int* (* csmGetDrawableVertexCountsType)(const csmModel*)
+ctypedef const int* (__stdcall * csmGetDrawableVertexCountsType)(const csmModel*)
 cdef csmGetDrawableVertexCountsType csmGetDrawableVertexCounts
-ctypedef const csmVector2** (* csmGetDrawableVertexPositionsType)(const csmModel*)
+ctypedef const csmVector2** (__stdcall * csmGetDrawableVertexPositionsType)(const csmModel*)
 cdef csmGetDrawableVertexPositionsType csmGetDrawableVertexPositions
-ctypedef const csmVector2** (* csmGetDrawableVertexUvsType)(const csmModel*)
+ctypedef const csmVector2** (__stdcall * csmGetDrawableVertexUvsType)(const csmModel*)
 cdef csmGetDrawableVertexUvsType csmGetDrawableVertexUvs
-ctypedef const int* (* csmGetDrawableIndexCountsType)(const csmModel*)
+ctypedef const int* (__stdcall * csmGetDrawableIndexCountsType)(const csmModel*)
 cdef csmGetDrawableIndexCountsType csmGetDrawableIndexCounts
-ctypedef const unsigned short** (* csmGetDrawableIndicesType)(const csmModel*)
+ctypedef const unsigned short** (__stdcall * csmGetDrawableIndicesType)(const csmModel*)
 cdef csmGetDrawableIndicesType csmGetDrawableIndices
-ctypedef void (* csmResetDrawableDynamicFlagsType)(csmModel*)
+ctypedef void (__stdcall * csmResetDrawableDynamicFlagsType)(csmModel*)
 cdef csmResetDrawableDynamicFlagsType csmResetDrawableDynamicFlags
 
 

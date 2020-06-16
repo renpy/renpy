@@ -74,13 +74,13 @@ cdef extern from "Live2DCubismCore.h":
         float X
         float Y
 
-    ctypedef void (*csmLogFunction)(const char* message)
+    ctypedef void (__stdcall *csmLogFunction)(const char* message)
 
 include "live2dcsm.pxi"
 
 
 # Enable logging.
-cdef void log_function(const char *message):
+cdef void __stdcall log_function(const char *message):
     print(message)
 
 def post_init():
