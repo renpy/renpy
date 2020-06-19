@@ -168,7 +168,7 @@ def report_exception(e, editor=True):
 
     import codecs
 
-    type, _value, tb = sys.exc_info()  # @ReservedAssignment
+    type, _value, tb = sys.exc_info() # @ReservedAssignment
 
     # Return values - which can be displayed to the user.
     simple = io.StringIO()
@@ -177,7 +177,7 @@ def report_exception(e, editor=True):
     full_tl = traceback_list(tb)
     simple_tl = filter_traceback_list(full_tl)
 
-    print(renpy.game.exception_info, file=simple)
+    print(str(renpy.game.exception_info), file=simple)
     write_traceback_list(simple, simple_tl)
     print(type.__name__ + ":", end=' ', file=simple)
     print(str(e), file=simple)
@@ -214,7 +214,7 @@ def report_exception(e, editor=True):
 
         f, traceback_fn = open_error_file("traceback.txt", "w")
 
-        f.write("\ufeff")  # BOM
+        f.write("\ufeff") # BOM
 
         print("I'm sorry, but an uncaught exception occurred.", file=f)
         print('', file=f)
@@ -229,7 +229,7 @@ def report_exception(e, editor=True):
         f.close()
 
         try:
-            if editor and renpy.game.args.command == "run":  # @UndefinedVariable
+            if editor and renpy.game.args.command == "run": # @UndefinedVariable
                 renpy.exports.launch_editor([ traceback_fn ], 1, transient=1)
         except:
             pass
