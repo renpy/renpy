@@ -173,14 +173,18 @@
     new "무시"
 
     # _errorhandling.rpym:591
+    old "Ignores the exception, allowing you to continue."
+    new "예외를 무시하고 게임을 계속합니다."
+
+    # _errorhandling.rpym:593
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "예외를 무시하고 게임을 계속합니다. 간혹 오류가 추가 발생할 수 있습니다."
 
-    # _errorhandling.rpym:593
+    # _errorhandling.rpym:597
     old "Reload"
     new "다시 불러오기"
 
-    # _errorhandling.rpym:597
+    # _errorhandling.rpym:599
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "현재 상태를 저장한 뒤 복원하여 게임을 디스크에서 다시 불러옵니다."
 
