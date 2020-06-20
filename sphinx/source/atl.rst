@@ -883,6 +883,59 @@ both horizontal and vertical positions.
     If not None, causes the displayable to be scaled to the given
     size.
 
+    This is affected by the :tpref:`fit` property.
+
+.. transform-property:: xsize
+
+    :type: None or int
+    :default: None
+
+    If not None, causes the displayable to be scaled to the given width.
+
+    This is affected by the :tpref:`fit` property.
+
+.. transform-property:: ysize
+
+    :type: None or int
+    :default: None
+
+    If not None, causes the displayable to be scaled to the given height.
+
+    This is affected by the :tpref:`fit` property.
+
+.. transform-property:: fit
+
+   :type: None or string
+   :default: None
+
+   If not None, causes the displayable to be sized according to the
+   table below. When None, if both xsize and ysize are not None,
+   ``fill`` will be used, otherwise ``contain``.
+
+   In this context "dimensions" refers to one or more of ``xsize`` and
+   ``ysize`` that are not None.
+
+   .. list-table::
+      :widths: 15 85
+      :header-rows: 1
+
+      * - Value
+        - Description
+      * - ``contain``
+        - As large as possible, without exceeding any dimensions.
+          Maintains aspect ratio.
+      * - ``cover``
+        - As small as possible, while matching or exceeding all
+          dimensions. Maintains aspect ratio.
+      * - ``fill``
+        - Stretches/squashes displayable to exactly match dimensions.
+      * - ``scale-down``
+        - As for ``contain``, but will never increase the size of the
+          displayable.
+      * - ``scale-up``
+        - As for ``cover``, but will never decrease the size of the
+          displayable.
+
 .. transform-property:: maxsize
 
     :type: None or (int, int)
@@ -892,6 +945,11 @@ both horizontal and vertical positions.
     within a box of this size, while preserving aspect ratio. (Note that
     this means that one of the dimensions may be smaller than the size
     of this box.)
+
+    .. warning::
+
+        This property is deprecated. Consider using :tpref:`size` in
+        conjuction with :tpref:`fit` and the value ``contain``.
 
 .. transform-property:: subpixel
 

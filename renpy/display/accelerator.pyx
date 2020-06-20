@@ -104,8 +104,16 @@ def transform_render(self, widtho, heighto, st, at):
 
     state = self.state
 
-    if state.size:
-        widtho, heighto = state.size
+    xsize = state.xsize
+    ysize = state.ysize
+    fit = state.fit
+
+    if fit is None:
+        fit = 'contain' if (xsize is None) or (ysize is None) else 'fill'
+
+    if (xsize is not None) and (ysize is not None) and fit == 'fill':
+        widtho = xsize
+        heighto = ysize
 
     cr = render(child, widtho, heighto, st - self.child_st_base, at)
 
@@ -200,34 +208,54 @@ def transform_render(self, widtho, heighto, st, at):
             clipping = True
 
     # Size.
-    size = state.size
-    maxsize = state.maxsize
-    minsize = state.minsize
-
     if (width != 0) and (height != 0):
+        maxsize = state.maxsize
         mul = None
+
         if (maxsize is not None):
             maxsizex, maxsizey = maxsize
             mul = min(maxsizex / width, maxsizey / height)
-        elif (minsize is not None):
-            minsizex, minsizey = minsize
-            mul = max(minsizex / width, minsizey / height)
+
+        scale = []
+        if xsize is not None:
+            scale.append(xsize / width)
+        if ysize is not None:
+            scale.append(ysize / height)
+
+        if scale:
+            if fit == 'scale-up':
+                mul = max(1, *scale)
+            elif fit == 'scale-down':
+                mul = min(1, *scale)
+            elif fit == 'contain':
+                mul = min(scale)
+            elif fit == 'cover':
+                mul = max(scale)
+            else:
+                if xsize is None:
+                    xsize = width
+                if ysize is None:
+                    ysize = width
+
         if mul is not None:
-            size = (width * mul, height * mul)
+            xsize = mul * width
+            ysize = mul * height
 
-    if (size is not None) and (size != (width, height)) and (width != 0) and (height != 0):
-        nw, nh = size
+        if (xsize is not None) and (ysize is not None) and ((xsize, ysize) != (width, height)):
+            nw = xsize
+            nh = ysize
 
-        xzoom = 1.0 * nw / width
-        yzoom = 1.0 * nh / height
+            xzoom = 1.0 * nw / width
+            yzoom = 1.0 * nh / height
 
-        rxdx = xzoom
-        rydy = yzoom
+            rxdx = xzoom
+            rydy = yzoom
 
-        xo *= xzoom
-        yo *= yzoom
+            xo *= xzoom
+            yo *= yzoom
 
-        width, height = size
+            width = xsize
+            height = ysize
 
     # zoom
     zoom = state.zoom
