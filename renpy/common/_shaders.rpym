@@ -67,8 +67,9 @@
 
     renpy.register_shader("renpy.colormatrix", variables="""
         uniform mat4 uColorMatrix;
+        uniform vec4 uColorOffset;
     """, fragment_120="""
-        gl_FragColor = gl_FragColor * uColorMatrix;
+        gl_FragColor = gl_FragColor * uColorMatrix + uColorOffset;
     """)
 
     renpy.register_shader("renpy.alpha", variables="""
