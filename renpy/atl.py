@@ -184,6 +184,13 @@ def interpolate(t, a, b, type): # @ReservedAssignment
 
         return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, type))
 
+    # If something is callable, call it and return the result.
+    elif callable(b):
+        a_origin = getattr(a, "origin", None)
+        rv = b(a_origin, t)
+        rv.origin = b
+        return rv
+
     # Interpolate everything else.
     else:
         if a is None:
