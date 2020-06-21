@@ -25,9 +25,9 @@ from renpy.compat import *
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
 import math
-import types  # @UnresolvedImport
+import types # @UnresolvedImport
 
-import renpy.display  # @UnusedImport
+import renpy.display # @UnusedImport
 from renpy.display.layout import Container
 
 from renpy.display.accelerator import transform_render
@@ -115,6 +115,7 @@ class TransformState(renpy.object.Object):
     ysize = None
     fit = None
     maxsize = None
+    matrixcolor = None
 
     def __init__(self):
         self.alpha = 1
@@ -155,6 +156,8 @@ class TransformState(renpy.object.Object):
         self.ysize = None
         self.fit = None
         self.maxsize = None
+
+        self.matrixcolor = None
 
         self.delay = 0
 
@@ -208,6 +211,8 @@ class TransformState(renpy.object.Object):
         self.ypan = ts.ypan
         self.xtile = ts.xtile
         self.ytile = ts.ytile
+
+        self.matrixcolor = ts.matrixcolor
 
         self.last_angle = ts.last_angle
 
@@ -292,6 +297,8 @@ class TransformState(renpy.object.Object):
 
         diff2("xtile", newts.xtile, self.xtile)
         diff2("ytile", newts.ytile, self.ytile)
+
+        diff2("matrixcolor", newts.matrixcolor, self.matrixcolor)
 
         diff2("debug", newts.debug, self.debug)
         diff2("events", newts.events, self.events)
@@ -897,7 +904,7 @@ class Transform(Container):
         if not offsets:
             return None
 
-        for i in range(len(self.children)-1, -1, -1):
+        for i in range(len(self.children) - 1, -1, -1):
 
             d = children[i]
             xo, yo = offsets[i]
