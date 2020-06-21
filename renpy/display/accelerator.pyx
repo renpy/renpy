@@ -357,6 +357,17 @@ def transform_render(self, widtho, heighto, st, at):
 
     rv = Render(width, height)
 
+    if state.matrixcolor:
+        if rv.shaders:
+            rv.shaders += ( "renpy.matrixcolor", )
+        else:
+            rv.shaders = ("renpy.matrixcolor",)
+
+        if rv.uniforms:
+            rv.uniforms.update(state.matrixcolor.uniforms())
+        else:
+            rv.uniforms = state.matrixcolor.uniforms()
+
     # Default case - no transformation matrix.
     if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:
         self.forward = IDENTITY
