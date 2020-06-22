@@ -1012,6 +1012,16 @@ both horizontal and vertical positions.
     The number of times to tile the image vertically. (This is ignored when
     ypan is given.)
 
+.. transform-property:: matrixcolor
+
+    :type: None or im.matrix or MatrixColor
+    :default: none
+
+    If not None, the value of this property is used to recolor everything
+    that children of this transform draw. See :ref:`matricolor` for more
+    information.
+
+
 These properties are applied in the following order:
 
 #. tile
@@ -1021,6 +1031,7 @@ These properties are applied in the following order:
 #. pan
 #. rotate
 #. position properties
+#. matrixcolor
 
 
 Circular Motion

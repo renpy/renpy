@@ -54,6 +54,7 @@ Text, Displayables, Transforms, and Transitions
    transforms
    transitions
    atl
+   matrixcolor
    layeredimage
 
 Customizing Ren'Py

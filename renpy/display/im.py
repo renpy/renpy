@@ -1301,7 +1301,7 @@ class MatrixColor(ImageBase):
 
 class matrix(tuple):
     """
-    :doc: im_matrixcolor
+    :doc: im_matrix
 
     Constructs an im.matrix object from `matrix`. im.matrix objects
     support The operations supported are matrix multiplication, scalar
@@ -1418,7 +1418,7 @@ im.matrix(%f, %f, %f, %f, %f.
     @staticmethod
     def identity():
         """
-        :doc: im_matrixcolor
+        :doc: im_matrix
         :name: im.matrix.identity
 
         Returns an identity matrix, one that does not change color or
@@ -1433,7 +1433,7 @@ im.matrix(%f, %f, %f, %f, %f.
     @staticmethod
     def saturation(level, desat=(0.2126, 0.7152, 0.0722)):
         """
-        :doc: im_matrixcolor
+        :doc: im_matrix
         :name: im.matrix.saturation
 
         Returns an im.matrix that alters the saturation of an
@@ -1466,7 +1466,7 @@ im.matrix(%f, %f, %f, %f, %f.
     @staticmethod
     def desaturate():
         """
-        :doc: im_matrixcolor
+        :doc: im_matrix
         :name: im.matrix.desaturate
 
         Returns an im.matrix that desaturates the image (makes it
@@ -1479,7 +1479,7 @@ im.matrix(%f, %f, %f, %f, %f.
     @staticmethod
     def tint(r, g, b):
         """
-        :doc: im_matrixcolor
+        :doc: im_matrix
         :name: im.matrix.tint
 
         Returns an im.matrix that tints an image, without changing
@@ -1498,7 +1498,7 @@ im.matrix(%f, %f, %f, %f, %f.
     @staticmethod
     def invert():
         """
-        :doc: im_matrixcolor
+        :doc: im_matrix
         :name: im.matrix.invert
 
         Returns an im.matrix that inverts the red, green, and blue
@@ -1513,7 +1513,7 @@ im.matrix(%f, %f, %f, %f, %f.
     @staticmethod
     def brightness(b):
         """
-        :doc: im_matrixcolor
+        :doc: im_matrix
         :name: im.matrix.brightness
 
         Returns an im.matrix that alters the brightness of an image.
@@ -1532,7 +1532,7 @@ im.matrix(%f, %f, %f, %f, %f.
     @staticmethod
     def opacity(o):
         """
-        :doc: im_matrixcolor
+        :doc: im_matrix
         :name: im.matrix.opacity
 
         Returns an im.matrix that alters the opacity of an image. An
@@ -1547,7 +1547,7 @@ im.matrix(%f, %f, %f, %f, %f.
     @staticmethod
     def contrast(c):
         """
-        :doc: im_matrixcolor
+        :doc: im_matrix
         :name: im.matrix.contrast
 
         Returns an im.matrix that alters the contrast of an image. `c` should
@@ -1561,7 +1561,7 @@ im.matrix(%f, %f, %f, %f, %f.
     @staticmethod
     def hue(h):
         """
-        :doc: im_matrixcolor
+        :doc: im_matrix
         :name: im.matrix.hue
 
         Returns an im.matrix that rotates the hue by `h` degrees, while
@@ -1585,7 +1585,7 @@ im.matrix(%f, %f, %f, %f, %f.
     @staticmethod
     def colorize(black_color, white_color):
         """
-        :doc: im_matrixcolor
+        :doc: im_matrix
         :name: im.matrix.colorize
 
         Returns an im.matrix that colorizes a black and white image.
