@@ -25,7 +25,7 @@ displayed to the user. ::
     define pov = Character("[povname]")
 
     python:
-        povname = renpy.input("What is your name?")
+        povname = renpy.input("What is your name?", length=32)
         povname = povname.strip()
 
         if not povname:
@@ -33,3 +33,7 @@ displayed to the user. ::
 
     pov "My name is [povname]!"
 
+In this, the length of the input is limited to 32 characters. It's important
+to test your game with long names, to makes sure that those names do not break
+text layout. At the same time, too short fields may prevent people from entering
+their preferred name.
