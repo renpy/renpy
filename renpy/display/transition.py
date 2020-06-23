@@ -45,12 +45,12 @@ class Transition(renpy.display.core.Displayable):
     def event(self, ev, x, y, st):
 
         if self.events or ev.type == renpy.display.core.TIMEEVENT:
-            return self.new_widget.event(ev, x, y, st)  # E1101
+            return self.new_widget.event(ev, x, y, st) # E1101
         else:
             return None
 
     def visit(self):
-        return [ self.new_widget, self.old_widget ]  # E1101
+        return [ self.new_widget, self.old_widget ] # E1101
 
 
 def null_render(d, width, height, st, at):
@@ -380,7 +380,7 @@ class Dissolve(Transition):
                 bottom = bottom.subsurface((0, 0, width, height))
 
             rv.mesh = True
-            rv.shaders = ( "renpy.dissolve", )
+            rv.shaders = ("renpy.dissolve",)
             rv.uniforms = { "uDissolve" : complete }
 
         rv.blit(bottom, (0, 0), focus=False, main=False)
@@ -482,7 +482,7 @@ class ImageDissolve(Transition):
                 0, 0, 0, 0, 1,
                 0, 0, 0, 0, 1,
                 0, 0, 0, 0, 1,
-                - 1, 0, 0, 0, 1)
+                -1, 0, 0, 0, 1)
 
         self.image = renpy.display.im.MatrixColor(image, matrix)
 
@@ -543,10 +543,10 @@ class ImageDissolve(Transition):
             # Compute the offset to apply to the alpha.
             start = -1.0
             end = ramp / 256.0
-            offset = start + ( end - start) * complete
+            offset = start + (end - start) * complete
 
             rv.mesh = True
-            rv.shaders = ( "renpy.imagedissolve", )
+            rv.shaders = ("renpy.imagedissolve",)
             rv.uniforms = { "uDissolveOffset" : offset, "uDissolveMultiplier" : 256.0 / ramp }
 
         rv.blit(image, (0, 0), focus=False, main=False)
@@ -630,6 +630,11 @@ class AlphaDissolve(Transition):
         rv.operation_alpha = self.alpha or renpy.config.dissolve_force_alpha
         rv.operation_complete = 256.0 / (256.0 + 256.0)
         rv.operation_parameter = 256
+
+        if renpy.display.render.models:
+            rv.mesh = True
+            rv.shaders = ("renpy.imagedissolve",)
+            rv.uniforms = { "uDissolveOffset" : 0, "uDissolveMultiplier" : 1.0 }
 
         rv.blit(control, (0, 0), focus=False, main=False)
 
