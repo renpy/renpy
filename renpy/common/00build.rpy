@@ -232,21 +232,11 @@ init -1500 python in build:
 
     xbit_patterns = [
         "**.sh",
-        "**/*.so.*",
-        "**/*.so",
-        "**/*.dylib",
 
-        "lib/**/python",
-        "lib/**/pythonw",
-        "lib/**/zsync",
-        "lib/**/zsyncmake",
+        "lib/linux-*/*",
+        "lib/mac-*/*",
 
         "**.app/Contents/MacOS/*",
-
-        "**.app/Contents/MacOS/lib/**/python",
-        "**.app/Contents/MacOS/lib/**/pythonw",
-        "**.app/Contents/MacOS/lib/**/zsync",
-        "**.app/Contents/MacOS/lib/**/zsyncmake",
         ]
 
     def executable(pattern):
