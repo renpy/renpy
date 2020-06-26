@@ -1219,7 +1219,7 @@ cdef class GL2DrawingContext:
         cdef bint old_nearest = self.nearest
 
         if isinstance(what, Surface):
-            what = self.draw.load_texture(what)
+            what = self.gl2draw.load_texture(what)
 
         if isinstance(what, Model):
             self.draw_model(what, transform, clip_polygon, subpixel)
