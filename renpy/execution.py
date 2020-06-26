@@ -805,7 +805,7 @@ class Context(renpy.object.Object):
         for label in renpy.config.predict_statements_callback(self.current):
 
             if not renpy.game.script.has_label(label):
-                return
+                continue
 
             node = renpy.game.script.lookup(label)
 
@@ -841,9 +841,9 @@ class Context(renpy.object.Object):
                 if renpy.config.debug_image_cache:
                     import traceback
 
-                    print()
-                    traceback.print_exc()
                     print("While predicting images.")
+                    traceback.print_exc()
+                    print()
 
             self.images = old_images
             self.predict_return_stack = None

@@ -180,7 +180,7 @@ def cache_get(screen, args, kwargs):
     for sc in pc:
 
         # Reuse w/ same arguments.
-        if sc.args == args and sc.args == kwargs:
+        if sc.args == args and sc.kwargs == kwargs:
             pc.remove(sc)
             break
     else:
@@ -1179,6 +1179,9 @@ def predict_screen(_screen_name, *_args, **kwargs):
     if screen is None:
         return
 
+    if not screen.predict:
+        return
+
     if _layer is None:
         _layer = get_screen_layer(name)
 
@@ -1193,12 +1196,6 @@ def predict_screen(_screen_name, *_args, **kwargs):
 
     try:
 
-        if screen is None:
-            raise Exception("Screen %s is not known.\n" % (name[0],))
-
-        if not screen.predict:
-            return
-
         d = ScreenDisplayable(screen, None, None, _widget_properties, scope)
         d.cache = cache_get(screen, _args, kwargs)
         d.update()
@@ -1212,6 +1209,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
 
             print("While predicting screen", _screen_name)
             traceback.print_exc()
+            print()
 
     finally:
         del scope["_scope"]
