@@ -643,7 +643,7 @@ class Image(ImageBase):
             try:
                 filelike = renpy.loader.load(self.filename)
                 filename = self.filename
-            except renpy.webloader.DownloadNeeded, exception:
+            except renpy.webloader.DownloadNeeded as exception:
                 renpy.webloader.enqueue(exception.relpath, 'image', self.filename)
                 # temporary placeholder:
                 filelike = open(os.path.join('_placeholders', exception.relpath), 'rb')
