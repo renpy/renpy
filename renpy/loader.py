@@ -549,7 +549,7 @@ def load_core(name):
 
         return rv
 
-    if remote_files.has_key(name):
+    if name in remote_files:
         raise DownloadNeeded(relpath=name, rtype=remote_files[name]['type'], size=remote_files[name]['size'])
 
     return None
@@ -641,7 +641,7 @@ def loadable_core(name):
             loadable_cache[name] = True
             return True
 
-    if remote_files.has_key(name):
+    if name in remote_files:
         loadable_cache[name] = True
         return name
 
