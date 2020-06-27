@@ -139,7 +139,7 @@ def source(variables, parts, functions, fragment, gles):
 
     if gles:
         rv.append("""
-#version 100 es
+#version 100
 """)
 
         if fragment:
