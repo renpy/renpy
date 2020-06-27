@@ -152,7 +152,8 @@ cdef class GLDraw:
         self.environ.deinit()
         self.rtt.deinit()
 
-        pygame.display.get_window().recreate_gl_context()
+        if renpy.android or renpy.ios:
+            pygame.display.get_window().recreate_gl_context()
 
         # Are we in fullscreen mode?
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
