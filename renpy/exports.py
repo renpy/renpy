@@ -2303,7 +2303,7 @@ def get_at_list(name, layer=None):
     :doc: se_images
 
     Returns the list of transforms being applied to the image with tag `name`
-    on `layer`. Returns an empty list if no transofrms are being applied, or
+    on `layer`. Returns an empty list if no transforms are being applied, or
     None if the image is not shown.
 
     If `layer` is None, uses the default layer for the given tag.
