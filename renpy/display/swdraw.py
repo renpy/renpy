@@ -709,6 +709,13 @@ class SWDraw(object):
 
     def init(self, virtual_size):
 
+        # These disable a failed load of ANGLE.
+        import renpy.uguu.angle
+        renpy.uguu.angle.load_gl()
+
+        pygame.display.gl_reset_attributes()
+        pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
+
         # Reset before resize.
         self.reset()
 
