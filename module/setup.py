@@ -121,7 +121,7 @@ if cubism:
 # Modules directory.
 cython(
     "_renpy",
-    [ "IMG_savepng.c", "core.c", "subpixel.c"],
+    [ "IMG_savepng.c", "core.c" ],
     sdl + [ png, 'z', 'm' ])
 
 FRIBIDI_SOURCES = """

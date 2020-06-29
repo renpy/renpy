@@ -32,7 +32,6 @@ from pygame_sdl2 import Surface
 cdef extern from "renpy.h":
 
     void core_init()
-    void subpixel_init()
 
     void save_png_core(object, SDL_RWops *, int)
 
@@ -94,8 +93,6 @@ cdef extern from "renpy.h":
 
     void staticgray_core(object, object,
                          int, int, int, int, int, char *)
-
-    int subpixel32(object, object, float, float, int)
 
     void PyErr_Clear()
 
@@ -458,10 +455,6 @@ def staticgray(pysrc, pydst, rmul, gmul, bmul, amul, shift, vmap):
 
 
 def subpixel(pysrc, pydst, xoffset, yoffset, shift):
-
-    if subpixel32(pysrc, pydst, xoffset, yoffset, shift):
-        return
-
     pydst.blit(pysrc, (int(xoffset), int(yoffset)))
 
 
@@ -469,4 +462,3 @@ def subpixel(pysrc, pydst, xoffset, yoffset, shift):
 
 import_pygame_sdl2()
 core_init()
-subpixel_init()
