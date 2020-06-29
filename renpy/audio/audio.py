@@ -522,7 +522,7 @@ class Channel(object):
                     if topq is not None:
                         newq = QueueEntry(i, 0, topq.tight, True, topq.relative_volume)
                     else:
-                        newq = QueueEntry(i, 0, False, True, topq.relative_volume)
+                        newq = QueueEntry(i, 0, False, True, 1.0)
 
                     self.queue.append(newq)
             # Try callback:
