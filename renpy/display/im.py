@@ -1329,24 +1329,6 @@ class matrix(tuple):
 
         return tuple.__new__(cls, args)
 
-    def uniforms(self):
-        """
-        Returns this matrix, converted to a set of uniform that can be given
-        to the renpy.colormatrix shader.
-        """
-
-        return {
-            "uColorMatrix" : renpy.display.matrix.Matrix([
-                self[0], self[1], self[2], self[3],
-                self[5], self[6], self[7], self[8],
-                self[10], self[11], self[12], self[13],
-                self[15], self[16], self[17], self[18],
-                ]),
-            "uColorOffset" : (
-                self[4], self[9], self[14], self[19]
-                )
-            }
-
     def mul(self, a, b):
 
         if not isinstance(a, matrix):

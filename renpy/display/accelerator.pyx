@@ -363,10 +363,18 @@ def transform_render(self, widtho, heighto, st, at):
         else:
             rv.shaders = ("renpy.matrixcolor",)
 
+        matrix = state.matrixcolor
+
+        if callable(matrix):
+            matrix = matrix(None, 1.0)
+
+        if not isinstance(matrix, renpy.display.matrix.Matrix):
+            raise Exception("matrixcolor reqires a Matrix (not im.matrix, got %r)" % (matrix,))
+
         if rv.uniforms:
-            rv.uniforms.update(state.matrixcolor.uniforms())
+            rv.uniforms["matrixcolor"] = matrix
         else:
-            rv.uniforms = state.matrixcolor.uniforms()
+            rv.uniforms = { "matrixcolor" : matrix }
 
     # Default case - no transformation matrix.
     if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:

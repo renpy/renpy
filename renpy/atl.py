@@ -88,12 +88,10 @@ def float_or_none(x):
 def matrixcolor(x):
     if x is None:
         return None
-    elif isinstance(x, renpy.display.im.matrix):
-        return x
     elif callable(x):
         return x
     else:
-        return renpy.display.im.matrix(x)
+        return renpy.display.matrix.Matrix(x)
 
 
 # A dictionary giving property names and the corresponding default
