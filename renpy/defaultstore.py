@@ -183,6 +183,8 @@ DragGroup = renpy.display.dragdrop.DragGroup
 Sprite = renpy.display.particle.Sprite
 SpriteManager = renpy.display.particle.SpriteManager
 
+Matrix = renpy.display.matrix.Matrix # @UndefinedVariable
+
 Live2D = renpy.gl2.live2d.Live2D
 
 # Currying things.
