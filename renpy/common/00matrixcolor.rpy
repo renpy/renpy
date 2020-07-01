@@ -22,30 +22,44 @@
 # This contains ColorMatrix and the various *Matrix classes.
 
 init -1500 python:
-
+    import math as _math
 
     class ColorMatrix(object):
-        pass
+        """
+        :undocumented:
 
-    # from http://www.gskinner.com/blog/archives/2005/09/flash_8_source.html
-    class HueMatrix(ColorMatrix):
-        def __init__(self, rotation):
-            # The amount to rotate the hue, in degrees.
-            self.value = rotation
+        Documented in text. The base class for various *Matrix classes
+        that are intended to return a Matrix that transforms colors.
+        """
+
+        def __init__(self, value=1.0):
+            self.value = value
 
         def __call__(self, other, done):
 
-            import math
+            if type(other) is not type(self):
+                return self.get(self.value)
 
-            if isinstance(other, HueMatrix):
-                value = other.value + (self.value - other.value) * done
-            else:
-                value = self.value
+            value = other.value + (self.value - other.value) * done
+            return self.get(value)
 
-            h = value * math.pi / 180
+    class HueMatrix(ColorMatrix):
+        """
+        :doc: colormatrix
 
-            cosVal = math.cos(h)
-            sinVal = math.sin(h)
+        Returns a matrix that can be used with :tpref:`matrixcolor` to
+        rotate the hue by `value` degrees. While `value` can be any number,
+        positive or negative, 360 degrees makes a complete rotation.
+        """
+
+        # from http://www.gskinner.com/blog/archives/2005/09/flash_8_source.html
+
+        def get(self, value):
+
+            h = _math.pi * value / 180.0
+
+            cosVal = _math.cos(h)
+            sinVal = _math.sin(h)
 
             lumR = 0.213
             lumG = 0.715
