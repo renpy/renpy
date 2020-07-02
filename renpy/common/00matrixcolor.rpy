@@ -347,3 +347,16 @@ init -1500 python:
                             0, d, 0, v,
                             0, 0, d, v,
                             0, 0, 0, 1, ])
+
+    def SepiaMatrix(tint="#ffeec2", desat=(0.2126, 0.7152, 0.0722)):
+        """
+        :doc: colormatrix
+
+        A function that returns a ColorMatrix that can be used with :tpref:`matrixcolor`
+        to sepia-tone a displayable. This is the equivalent of::
+
+            TintMatrix(tint) * SaturationMatrix(0.0, desat)
+        """
+
+        return TintMatrix(tint) * SaturationMatrix(0.0, desat)
+
