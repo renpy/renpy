@@ -46,6 +46,15 @@ init -1500 python:
         def __mul__(self, other):
             return _MultiplyMatrix(self, other)
 
+        def __eq__(self, other):
+            if type(self) != type(other):
+                return False
+
+            return self.__dict__ == other.__dict__
+
+        def __ne__(self, other):
+            return not (self == other)
+
     class _MultiplyMatrix(ColorMatrix):
         """
         :undocumented:
