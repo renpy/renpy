@@ -116,7 +116,7 @@ cdef class TextureLoader:
                     0.0, 0.0, pw, ph,
                     0.0, 0.0, 0.0, 0.0)
 
-            rv = Model((pw, ph), mesh, ("renpy.texture",), { "uTex0" : rv })
+            rv = Model((pw, ph), mesh, ("renpy.texture",), { "tex0" : rv })
 
         return rv
 
@@ -417,7 +417,7 @@ cdef class GLTexture(Model):
         # Draw.
         program = self.loader.ftl_program
         program.start()
-        program.set_uniform("uTex0", tex)
+        program.set_uniform("tex0", tex)
         program.draw(mesh)
         program.finish()
 
@@ -464,12 +464,12 @@ cdef class GLTexture(Model):
         self.load_gltexture()
 
     def program_uniforms(self, shader):
-        shader.set_uniform("uTex0", self)
+        shader.set_uniform("tex0", self)
 
     cpdef subsurface(self, rect):
         rv = Model.subsurface(self, rect)
         if rv is not self:
-            rv.uniforms = { "uTex0" : self }
+            rv.uniforms = { "tex0" : self }
         return rv
 
 class Texture(GLTexture):

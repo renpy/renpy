@@ -19,13 +19,13 @@ def register_shader(name, **kwargs):
 
     `variables`
         The variables used by the shader part. These should be listed one per
-        line, a storage (uniform, attribute, or varing) followed by a type,
+        line, a storage (uniform, attribute, or varying) followed by a type,
         name, and semicolon. For example::
 
             variables='''
-            uniform sampler2D uTex0;
-            attribute vec2 aTexCoord;
-            varying vec2 vTexCoord;
+            uniform sampler2D tex0;
+            attribute vec2 tex_coord;
+            varying vec2 v_tex_coord;
             '''
 
     `vertex_functions`
@@ -37,7 +37,7 @@ def register_shader(name, **kwargs):
         fragment shader.
 
     Other keyword arguments should start with ``vertex_`` or ``fragment_``,
-    and end with an integer priority. So "fragment_120" or "vertex_30". These
+    and end with an integer priority. So "fragment_200" or "vertex_300". These
     give text that's placed in the appropriate shader at the given priority,
     with lower priority numbers inserted before higher priority numbers.
     """

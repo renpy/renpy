@@ -84,41 +84,41 @@ def init():
     onetime_init()
 
     register_shader("live2d.mask", variables="""
-        uniform sampler2D uTex0;
-        uniform sampler2D uTex1;
-        attribute vec4 vPosition;
-        attribute vec2 aTexCoord;
-        varying vec2 vTexCoord;
-        varying vec2 vMaskCoord;
-    """, vertex_110="""
-        vTexCoord = aTexCoord;
-        vMaskCoord = vec2(aPosition.x / 2 + .5, -aPosition.y / 2 + .5);
-    """, fragment_110="""
-        vec4 color = texture2D(uTex0, vTexCoord);
-        vec4 mask = texture2D(uTex1, vMaskCoord);
+        uniform sampler2D tex0;
+        uniform sampler2D tex1;
+        attribute vec4 position;
+        attribute vec2 tex_coord;
+        varying vec2 v_tex_coord;
+        varying vec2 v_mask_coord;
+    """, vertex_200="""
+        v_tex_coord = tex_coord
+        v_mask_coord = vec2(position.x / 2 + .5, -position.y / 2 + .5);
+    """, fragment_200="""
+        vec4 color = texture2D(tex0, v_tex_coord);
+        vec4 mask = texture2D(tex1, v_mask_coord);
         gl_FragColor = color * mask.a;
     """)
 
     register_shader("live2d.inverted_mask", variables="""
-        uniform sampler2D uTex0;
-        uniform sampler2D uTex1;
-        attribute vec4 vPosition;
-        attribute vec2 aTexCoord;
-        varying vec2 vTexCoord;
-        varying vec2 vMaskCoord;
-    """, vertex_110="""
-        vTexCoord = aTexCoord;
-        vMaskCoord = vec2(aPosition.x / 2 + .5, -aPosition.y / 2 + .5);
-    """, fragment_110="""
-        vec4 color = texture2D(uTex0, vTexCoord);
-        vec4 mask = texture2D(uTex1, vMaskCoord);
+        uniform sampler2D tex0;
+        uniform sampler2D tex1;
+        attribute vec4 position;
+        attribute vec2 tex_coord;
+        varying vec2 v_tex_coord;
+        varying vec2 v_mask_coord;
+    """, vertex_200="""
+        v_tex_coord = tex_coord
+        v_mask_coord = vec2(position.x / 2 + .5, -position.y / 2 + .5);
+    """, fragment_200="""
+        vec4 color = texture2D(tex0, v_tex_coord);
+        vec4 mask = texture2D(tex1, v_mask_coord);
         gl_FragColor = color * (1.0 - mask.a);
     """)
 
     register_shader("live2d.flip_texture", variables="""
-        varying vec2 vTexCoord;
-    """, vertex_120="""
-        vTexCoord.y = 1.0 - vTexCoord.y;
+        varying vec2 v_tex_coord;
+    """, vertex_250="""
+        vTexCoord.y = 1.0 - v_tex_coord.y;
     """)
 
     renpy.config.interact_callbacks.append(update_states)

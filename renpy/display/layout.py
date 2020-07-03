@@ -1886,7 +1886,7 @@ class Flatten(Container):
         rv.operation = renpy.display.render.FLATTEN
 
         rv.mesh = True
-        rv.shaders = ("renpy.texture",)
+        rv.add_shader("renpy.texture")
 
         self.offsets = [ (0, 0) ]
 
@@ -1940,10 +1940,10 @@ class AlphaMask(Container):
         rv.operation_complete = 256.0 / (256.0 + 256.0)
         rv.operation_parameter = 256
 
-        if renpy.display.render.models:
-            rv.mesh = True
-            rv.shaders = ("renpy.imagedissolve",)
-            rv.uniforms = { "uDissolveOffset" : 0, "uDissolveMultiplier" : 1.0 }
+        rv.mesh = True
+        rv.add_shader("renpy.imagedissolve")
+        rv.add_uniform("renpy_dissolve_offset", 0)
+        rv.add_uniform("renpy_dissolve_multiplier", 1.0)
 
         rv.blit(mr, (0, 0), focus=False, main=False)
         rv.blit(nr, (0, 0), focus=False, main=False)

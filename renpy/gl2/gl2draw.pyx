@@ -740,7 +740,7 @@ cdef class GL2Draw:
 
         color = (r, g, b, a)
 
-        return Model((w, h), mesh, ("renpy.solid", ), { "uSolidColor" : color })
+        return Model((w, h), mesh, ("renpy.solid", ), { "renpy_solid_color" : color })
 
     def flip(self):
         """
@@ -865,10 +865,10 @@ cdef class GL2Draw:
                 uniforms.update(r.uniforms)
 
             for i, c in enumerate(r.children):
-                uniforms["uTex" + str(i)] = self.render_to_texture(c[0])
+                uniforms["tex" + str(i)] = self.render_to_texture(c[0])
 
             if r.mesh is True:
-                mesh = uniforms["uTex0"].mesh
+                mesh = uniforms["tex0"].mesh
             else:
                 mesh = r.mesh
 
@@ -1132,11 +1132,11 @@ cdef class GL2DrawingContext:
     # The uniforms to use.
     cdef dict uniforms
 
-    # The value of uHalfDrawableSize for the renpy.aligned shader.
-    cdef tuple uHalfDrawableSize
+    # The value of half_drawable_size for the renpy.aligned shader.
+    cdef tuple half_drawable_size
 
-    # The value of uPixelCenterOffset for the renpy.aligned shader.
-    cdef tuple uPixelCenterOffset
+    # The value of pixel_center_offset for the renpy.aligned shader.
+    cdef tuple pixel_center_offset
 
     # Should nearest neighbor drawing be used.
     cdef bint nearest
@@ -1149,8 +1149,8 @@ cdef class GL2DrawingContext:
 
         dwidth, dheight = self.gl2draw.drawable_viewport[2:]
 
-        self.uHalfDrawableSize = ((dwidth - .01) / 2, (dheight - .01) / 2)
-        self.uPixelCenterOffset = ( 0.5 if dwidth % 2 else 0.0, 0.5 if dheight % 2 else 0.0)
+        self.half_drawable_size = ((dwidth - .01) / 2, (dheight - .01) / 2)
+        self.pixel_center_offset = ( 0.5 if dwidth % 2 else 0.0, 0.5 if dheight % 2 else 0.0)
 
         self.nearest = False
 
@@ -1193,10 +1193,10 @@ cdef class GL2DrawingContext:
             program.set_uniforms(self.uniforms)
 
         if not subpixel:
-            program.set_uniform("uHalfDrawableSize", self.uHalfDrawableSize)
-            program.set_uniform("uPixelCenterOffset", self.uPixelCenterOffset)
+            program.set_uniform("renpy_half_drawable_size", self.half_drawable_size)
+            program.set_uniform("renpy_pixel_center_offset", self.pixel_center_offset)
 
-        program.set_uniform("uTransform", transform)
+        program.set_uniform("transform", transform)
 
         program.draw(mesh)
         program.finish()
