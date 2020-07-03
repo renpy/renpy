@@ -1473,6 +1473,32 @@ cdef class Render:
         else:
             self.forward *= Matrix2D(0, 0, 0, 0)
 
+    def add_shader(self, shader):
+        """
+        Adds a shader to the list of shaders that will be used to render
+        this Render and its children.
+        """
+
+        if self.shaders is None:
+            self.shaders = (shader,)
+            return
+
+        if shader in self.shaders:
+            return
+
+        self.shaders = self.shaders + (shader,)
+
+    def add_uniform(self, name, value):
+        """
+        Adds a uniform with the given name and value that will be passed
+        to the shaders that render this Render and its children.
+        """
+
+        if self.uniforms is None:
+            self.uniforms = { name : value }
+        else:
+            self.uniforms[name] = value
+
 class Canvas(object):
 
     def __init__(self, surf): #@DuplicatedSignature
