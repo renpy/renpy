@@ -1747,6 +1747,10 @@ class Alpha(renpy.display.core.Displayable):
         rv.blit(rend, (0, 0))
         rv.alpha = alpha
 
+        rv.add_shader("renpy.alpha")
+        rv.add_uniform("renpy_alpha", alpha)
+        rv.add_uniform("renpy_over", 1.0)
+
         return rv
 
 

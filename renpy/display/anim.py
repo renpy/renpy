@@ -370,7 +370,7 @@ class TransitionAnimation(renpy.display.core.Displayable):
                 transitions.append(arg)
 
         if len(images) > len(delays):
-            delays.append(365.25 * 86400.0)  # One year, give or take.
+            delays.append(365.25 * 86400.0) # One year, give or take.
         if len(images) > len(transitions):
             transitions.append(None)
 
@@ -414,7 +414,7 @@ class Blink(renpy.display.core.Displayable):
     """
     """
 
-    def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5,  # @ReservedAssignment
+    def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5, # @ReservedAssignment
                  high=1.0, low=0.0, offset=0.0, anim_timebase=False, **properties):
         """
         This takes as an argument an image or widget, and blinks that image
@@ -499,6 +499,10 @@ class Blink(renpy.display.core.Displayable):
 
         rv.blit(rend, (0, 0))
         rv.alpha = alpha
+
+        rv.add_shader("renpy.alpha")
+        rv.add_uniform("renpy_alpha", alpha)
+        rv.add_uniform("renpy_over", 1.0)
 
         if not renpy.game.less_updates:
             renpy.display.render.redraw(self, delay)

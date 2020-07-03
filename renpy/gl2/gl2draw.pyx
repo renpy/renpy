@@ -1201,7 +1201,6 @@ cdef class GL2DrawingContext:
         program.draw(mesh)
         program.finish()
 
-
     def draw(self, what, Matrix transform, Polygon clip_polygon, bint subpixel):
         """
         This is responsible for walking the surface tree, and drawing any
@@ -1244,14 +1243,6 @@ cdef class GL2DrawingContext:
                         return
                 else:
                     clip_polygon = new_clip_polygon
-
-            if (r.alpha != 1.0) or (r.over != 1.0):
-                if "renpy.alpha" not in self.shaders:
-                    self.shaders = self.shaders + ("renpy.alpha", )
-
-                self.uniforms = dict(self.uniforms)
-                self.uniforms["uAlpha"] = r.alpha * self.uniforms.get("uAlpha", 1.0)
-                self.uniforms["uOver"] = r.over * self.uniforms.get("uOver", 1.0)
 
             if r.nearest:
                 self.nearest = True
@@ -1319,3 +1310,4 @@ cdef class GL2DrawingContext:
             self.nearest = old_nearest
 
         return 0
+

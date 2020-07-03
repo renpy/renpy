@@ -358,23 +358,16 @@ def transform_render(self, widtho, heighto, st, at):
     rv = Render(width, height)
 
     if state.matrixcolor:
-        if rv.shaders:
-            rv.shaders += ( "renpy.matrixcolor", )
-        else:
-            rv.shaders = ("renpy.matrixcolor",)
-
         matrix = state.matrixcolor
 
         if callable(matrix):
             matrix = matrix(None, 1.0)
 
         if not isinstance(matrix, renpy.display.matrix.Matrix):
-            raise Exception("matrixcolor reqires a Matrix (not im.matrix, got %r)" % (matrix,))
+            raise Exception("matrixcolor requires a Matrix (not im.matrix, got %r)" % (matrix,))
 
-        if rv.uniforms:
-            rv.uniforms["matrixcolor"] = matrix
-        else:
-            rv.uniforms = { "matrixcolor" : matrix }
+        rv.add_shader("renpy.matrixcolor")
+        rv.add_uniform("renpy_matrixcolor", matrix)
 
     # Default case - no transformation matrix.
     if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:
@@ -408,6 +401,12 @@ def transform_render(self, widtho, heighto, st, at):
     rv.alpha = alpha
 
     rv.over = 1.0 - state.additive
+
+    if (rv.alpha != 1.0) or (rv.over != 1.0):
+        rv.add_shader("renpy.alpha")
+        rv.add_uniform("renpy_alpha", rv.alpha)
+        rv.add_uniform("renpy_over", rv.over)
+
     rv.xclipping = clipping
     rv.yclipping = clipping
 

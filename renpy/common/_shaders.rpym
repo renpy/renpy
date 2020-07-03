@@ -66,16 +66,16 @@
 
 
     renpy.register_shader("renpy.matrixcolor", variables="""
-        uniform mat4 matrixcolor;
+        uniform mat4 renpy_matrixcolor;
     """, fragment_120="""
-        gl_FragColor = matrixcolor * gl_FragColor;
+        gl_FragColor = renpy_matrixcolor * gl_FragColor;
     """)
 
     renpy.register_shader("renpy.alpha", variables="""
-        uniform float uAlpha;
-        uniform float uOver;
+        uniform float renpy_alpha;
+        uniform float renpy_over;
     """, fragment_130="""
-        gl_FragColor = gl_FragColor * vec4(uAlpha, uAlpha, uAlpha, uAlpha * uOver);
+        gl_FragColor = gl_FragColor * vec4(renpy_alpha, renpy_alpha, renpy_alpha, renpy_alpha * renpy_over);
     """)
 
     renpy.register_shader("renpy.ftl", variables="""
@@ -89,3 +89,12 @@
     """, fragment_100="""
         gl_FragColor = texture2D(uTex0, vTexCoord.xy);
     """)
+
+init python hide:
+
+    def multiply(old, new):
+        return old * new
+
+    config.merge_uniforms["renpy_alpha"] = multiply
+    config.merge_uniforms["renpy_over"] = multiply
+    config.merge_uniforms["renpy_matrixcolor"] = multiply
