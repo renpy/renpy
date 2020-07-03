@@ -1040,6 +1040,10 @@ live2d_interpolate = False
 # A list of text tags with contents that should be filtered by the TTS system.
 tts_filter_tags = [ "noalt", "rt", "art" ]
 
+# A function that merges uniforms together. This is a map from uniform name
+# to a function that takes the two values and merges them.
+merge_uniforms = { }
+
 del os
 del collections
 

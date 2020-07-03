@@ -1277,7 +1277,12 @@ cdef class GL2DrawingContext:
 
             if r.uniforms is not None:
                 self.uniforms = dict(self.uniforms)
-                self.uniforms.update(r.uniforms)
+
+                for k, v in r.uniforms.items():
+                    if (k in self.uniforms) and (k in renpy.config.merge_uniforms):
+                        self.uniforms[k] = renpy.config.merge_uniforms[k](self.uniforms[k], v)
+                    else:
+                        self.uniforms[k] = v
 
             for child, cx, cy, focus, main in r.visible_children:
 
