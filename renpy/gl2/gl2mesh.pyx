@@ -26,7 +26,7 @@ SOLID_LAYOUT = AttributeLayout()
 
 # The layout of a mesh used with a texture.
 TEXTURE_LAYOUT = AttributeLayout()
-TEXTURE_LAYOUT.add_attribute("tex_coord", 2)
+TEXTURE_LAYOUT.add_attribute("a_tex_coord", 2)
 
 
 

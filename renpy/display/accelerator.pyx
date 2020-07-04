@@ -367,7 +367,7 @@ def transform_render(self, widtho, heighto, st, at):
             raise Exception("matrixcolor requires a Matrix (not im.matrix, got %r)" % (matrix,))
 
         rv.add_shader("renpy.matrixcolor")
-        rv.add_uniform("renpy_matrixcolor", matrix)
+        rv.add_uniform("u_renpy_matrixcolor", matrix)
 
     # Default case - no transformation matrix.
     if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:
@@ -404,8 +404,8 @@ def transform_render(self, widtho, heighto, st, at):
 
     if (rv.alpha != 1.0) or (rv.over != 1.0):
         rv.add_shader("renpy.alpha")
-        rv.add_uniform("renpy_alpha", rv.alpha)
-        rv.add_uniform("renpy_over", rv.over)
+        rv.add_uniform("u_renpy_alpha", rv.alpha)
+        rv.add_uniform("u_renpy_over", rv.over)
 
     if state.shader is not None:
 

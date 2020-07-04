@@ -1748,8 +1748,8 @@ class Alpha(renpy.display.core.Displayable):
         rv.alpha = alpha
 
         rv.add_shader("renpy.alpha")
-        rv.add_uniform("renpy_alpha", alpha)
-        rv.add_uniform("renpy_over", 1.0)
+        rv.add_uniform("u_renpy_alpha", alpha)
+        rv.add_uniform("u_renpy_over", 1.0)
 
         return rv
 
@@ -1942,8 +1942,8 @@ class AlphaMask(Container):
 
         rv.mesh = True
         rv.add_shader("renpy.imagedissolve")
-        rv.add_uniform("renpy_dissolve_offset", 0)
-        rv.add_uniform("renpy_dissolve_multiplier", 1.0)
+        rv.add_uniform("u_renpy_dissolve_offset", 0)
+        rv.add_uniform("u_renpy_dissolve_multiplier", 1.0)
 
         rv.blit(mr, (0, 0), focus=False, main=False)
         rv.blit(nr, (0, 0), focus=False, main=False)

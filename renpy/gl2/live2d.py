@@ -86,13 +86,13 @@ def init():
     register_shader("live2d.mask", variables="""
         uniform sampler2D tex0;
         uniform sampler2D tex1;
-        attribute vec4 position;
-        attribute vec2 tex_coord;
+        attribute vec4 a_position;
+        attribute vec2 a_tex_coord;
         varying vec2 v_tex_coord;
         varying vec2 v_mask_coord;
     """, vertex_200="""
-        v_tex_coord = tex_coord
-        v_mask_coord = vec2(position.x / 2 + .5, -position.y / 2 + .5);
+        v_tex_coord = a_tex_coord
+        v_mask_coord = vec2(a_position.x / 2 + .5, -a_position.y / 2 + .5);
     """, fragment_200="""
         vec4 color = texture2D(tex0, v_tex_coord);
         vec4 mask = texture2D(tex1, v_mask_coord);
@@ -102,13 +102,13 @@ def init():
     register_shader("live2d.inverted_mask", variables="""
         uniform sampler2D tex0;
         uniform sampler2D tex1;
-        attribute vec4 position;
-        attribute vec2 tex_coord;
+        attribute vec4 a_position;
+        attribute vec2 a_tex_coord;
         varying vec2 v_tex_coord;
         varying vec2 v_mask_coord;
     """, vertex_200="""
-        v_tex_coord = tex_coord
-        v_mask_coord = vec2(position.x / 2 + .5, -position.y / 2 + .5);
+        v_tex_coord = a_tex_coord
+        v_mask_coord = vec2(a_position.x / 2 + .5, -a_position.y / 2 + .5);
     """, fragment_200="""
         vec4 color = texture2D(tex0, v_tex_coord);
         vec4 mask = texture2D(tex1, v_mask_coord);

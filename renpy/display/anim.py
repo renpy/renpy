@@ -501,8 +501,8 @@ class Blink(renpy.display.core.Displayable):
         rv.alpha = alpha
 
         rv.add_shader("renpy.alpha")
-        rv.add_uniform("renpy_alpha", alpha)
-        rv.add_uniform("renpy_over", 1.0)
+        rv.add_uniform("u_renpy_alpha", alpha)
+        rv.add_uniform("u_renpy_over", 1.0)
 
         if not renpy.game.less_updates:
             renpy.display.render.redraw(self, delay)

@@ -43,6 +43,7 @@ import weakref
 import array
 import time
 import math
+import random
 
 import renpy.uguu.gl as uguugl
 
@@ -742,7 +743,7 @@ cdef class GL2Draw:
 
         color = (r, g, b, a)
 
-        return Model((w, h), mesh, ("renpy.solid", ), { "renpy_solid_color" : color })
+        return Model((w, h), mesh, ("renpy.solid", ), { "u_renpy_solid_color" : color })
 
     def flip(self):
         """
@@ -1195,10 +1196,12 @@ cdef class GL2DrawingContext:
             program.set_uniforms(self.uniforms)
 
         if not subpixel:
-            program.set_uniform("renpy_half_drawable_size", self.half_drawable_size)
-            program.set_uniform("renpy_pixel_center_offset", self.pixel_center_offset)
+            program.set_uniform("u_renpy_half_drawable_size", self.half_drawable_size)
+            program.set_uniform("u_renpy_pixel_center_offset", self.pixel_center_offset)
 
-        program.set_uniform("transform", transform)
+        program.set_uniform("u_transform", transform)
+        program.set_uniform("u_time", renpy.display.interface.frame_time)
+        program.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
 
         program.draw(mesh)
         program.finish()
@@ -1313,3 +1316,5 @@ cdef class GL2DrawingContext:
 
         return 0
 
+# A set of uniforms that are defined by Ren'Py, and shouldn't be set in ATL.
+standard_uniforms = { "u_transform", "u_time", "u_random" }

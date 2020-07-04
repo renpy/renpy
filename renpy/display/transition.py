@@ -381,7 +381,7 @@ class Dissolve(Transition):
 
             rv.mesh = True
             rv.add_shader("renpy.dissolve")
-            rv.add_uniform("renpy_dissolve", complete)
+            rv.add_uniform("u_renpy_dissolve", complete)
 
         rv.blit(bottom, (0, 0), focus=False, main=False)
         rv.blit(top, (0, 0), focus=True, main=True)
@@ -548,8 +548,8 @@ class ImageDissolve(Transition):
             rv.mesh = True
 
             rv.add_shader("renpy.imagedissolve",)
-            rv.add_uniform("renpy_dissolve_offset", offset)
-            rv.add_uniform("renpy_dissolve_multiplier", 256.0 / ramp)
+            rv.add_uniform("u_renpy_dissolve_offset", offset)
+            rv.add_uniform("u_renpy_dissolve_multiplier", 256.0 / ramp)
 
         rv.blit(image, (0, 0), focus=False, main=False)
         rv.blit(bottom, (0, 0), focus=False, main=False)
@@ -636,8 +636,8 @@ class AlphaDissolve(Transition):
         if renpy.display.render.models:
             rv.mesh = True
             rv.add_shader("renpy.imagedissolve",)
-            rv.add_uniform("renpy_dissolve_offset", 0)
-            rv.add_uniform("renpy_dissolve_multiplier", 1.0)
+            rv.add_uniform("u_renpy_dissolve_offset", 0)
+            rv.add_uniform("u_renpy_dissolve_multiplier", 1.0)
 
         rv.blit(control, (0, 0), focus=False, main=False)
 
