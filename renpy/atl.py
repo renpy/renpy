@@ -147,6 +147,7 @@ PROPERTIES = {
     "ytile" : int,
     "matrixcolor" : matrixcolor,
     "shader" : any_object,
+    "flatten" : bool,
     }
 
 

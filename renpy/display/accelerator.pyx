@@ -104,6 +104,12 @@ def transform_render(self, widtho, heighto, st, at):
 
     state = self.state
 
+    if state.flatten:
+        child = self.flatten_cache
+
+        if child is None:
+            child = self.flatten_cache = renpy.display.layout.Flatten(self.child)
+
     xsize = state.xsize
     ysize = state.ysize
     fit = state.fit

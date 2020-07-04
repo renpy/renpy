@@ -117,6 +117,7 @@ class TransformState(renpy.object.Object):
     maxsize = None
     matrixcolor = None
     shader = None
+    flatten = False
 
     def __init__(self):
         self.alpha = 1
@@ -160,6 +161,7 @@ class TransformState(renpy.object.Object):
 
         self.matrixcolor = None
         self.shader = None
+        self.flatten = False
 
         self.delay = 0
 
@@ -219,6 +221,7 @@ class TransformState(renpy.object.Object):
 
         self.matrixcolor = ts.matrixcolor
         self.shader = ts.shader
+        self.flatten = ts.flatten
 
         self.last_angle = ts.last_angle
 
@@ -309,6 +312,7 @@ class TransformState(renpy.object.Object):
 
         diff2("matrixcolor", newts.matrixcolor, self.matrixcolor)
         diff2("shader", newts.shader, self.shader)
+        diff2("flatten", newts.flatten, self.flatten)
 
         diff2("debug", newts.debug, self.debug)
         diff2("events", newts.events, self.events)
@@ -481,6 +485,7 @@ class Transform(Container):
 
     __version__ = 5
     transform_event_responder = True
+    flatten_cache = None
 
     # Proxying things over to our state.
     nearest = Proxy("nearest")
@@ -543,6 +548,7 @@ class Transform(Container):
     ytile = Proxy("ytile")
 
     shader = Proxy("shader")
+    flatten = Proxy("flatten")
 
     debug = Proxy("debug")
     events = Proxy("events")
@@ -747,6 +753,7 @@ class Transform(Container):
         if (self.child is None) and (t.child is not None):
             self.add(t.child)
             self.child_st_base = t.child_st_base
+            self.flatten_cache = t.flatten_cache
 
         # The arguments will be applied when the default function is
         # called.
@@ -870,8 +877,12 @@ class Transform(Container):
         if child._duplicatable:
             self._duplicatable = True
 
-        self.child = child
-        self.children = [ child ]
+            if child is not self.child:
+                self.flatten_cache = None
+
+            self.child = child
+            self.children = [ child ]
+
         self.child_st_base = self.st
 
         child.per_interact()
