@@ -112,6 +112,7 @@ class ShaderPart(object):
                 print("Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(l))
 
             a = tuple(a)
+            kind = a[0]
             name = a[2]
 
             if name in vertex_used:
@@ -119,6 +120,9 @@ class ShaderPart(object):
 
             if name in fragment_used:
                 self.fragment_variables.add(a)
+
+            if kind == "uniform":
+                renpy.display.transform.add_uniform(name)
 
 
 # A map from a tuple giving the parts that comprise a shader, to the Shader

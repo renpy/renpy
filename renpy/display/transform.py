@@ -116,6 +116,7 @@ class TransformState(renpy.object.Object):
     fit = None
     maxsize = None
     matrixcolor = None
+    shader = None
 
     def __init__(self):
         self.alpha = 1
@@ -158,6 +159,7 @@ class TransformState(renpy.object.Object):
         self.maxsize = None
 
         self.matrixcolor = None
+        self.shader = None
 
         self.delay = 0
 
@@ -179,6 +181,9 @@ class TransformState(renpy.object.Object):
         self.inherited_ypos = None
         self.inherited_xanchor = None
         self.inherited_yanchor = None
+
+        for i in uniforms:
+            setattr(self, i, None)
 
     def take_state(self, ts):
 
@@ -213,11 +218,15 @@ class TransformState(renpy.object.Object):
         self.ytile = ts.ytile
 
         self.matrixcolor = ts.matrixcolor
+        self.shader = ts.shader
 
         self.last_angle = ts.last_angle
 
         self.debug = ts.debug
         self.events = ts.events
+
+        for i in uniforms:
+            setattr(self, i, getattr(ts, i))
 
         # Take the computed position properties, not the
         # raw ones.
@@ -299,9 +308,13 @@ class TransformState(renpy.object.Object):
         diff2("ytile", newts.ytile, self.ytile)
 
         diff2("matrixcolor", newts.matrixcolor, self.matrixcolor)
+        diff2("shader", newts.shader, self.shader)
 
         diff2("debug", newts.debug, self.debug)
         diff2("events", newts.events, self.events)
+
+        for i in uniforms:
+            diff2(i, getattr(newts, i), getattr(self, i))
 
         return rv
 
@@ -528,6 +541,8 @@ class Transform(Container):
     ypan = Proxy("ypan")
     xtile = Proxy("xtile")
     ytile = Proxy("ytile")
+
+    shader = Proxy("shader")
 
     debug = Proxy("debug")
     events = Proxy("events")
@@ -1080,3 +1095,24 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
     def _show(self):
         super(ATLTransform, self)._show()
         self.execute(self, self.st, self.at)
+
+
+uniforms = set()
+
+
+def add_uniform(name):
+    """
+    Adds a uniform with `name` to Transform and ATL.
+    """
+
+    if name in uniforms:
+        return
+
+    if not name.startswith("u_"):
+        return
+
+    uniforms.add(name)
+    setattr(TransformState, name, None)
+    setattr(Transform, name, Proxy(name))
+    renpy.atl.PROPERTIES[name] = renpy.atl.any_object
+

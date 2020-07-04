@@ -407,6 +407,20 @@ def transform_render(self, widtho, heighto, st, at):
         rv.add_uniform("renpy_alpha", rv.alpha)
         rv.add_uniform("renpy_over", rv.over)
 
+    if state.shader is not None:
+
+        if isinstance(state.shader, basestring):
+            rv.add_shader(state.shader)
+        else:
+            for name in state.shader:
+                rv.add_shader(name)
+
+        for name in renpy.display.transform.uniforms:
+            value = getattr(state, name, None)
+
+            if value is not None:
+                rv.add_uniform(name, value)
+
     rv.xclipping = clipping
     rv.yclipping = clipping
 

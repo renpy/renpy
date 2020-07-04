@@ -146,6 +146,7 @@ PROPERTIES = {
     "xtile" : int,
     "ytile" : int,
     "matrixcolor" : matrixcolor,
+    "shader" : any_object,
     }
 
 
@@ -1856,7 +1857,7 @@ def parse_atl(l):
 
                 prop = l.name()
 
-                if prop in PROPERTIES:
+                if (prop in PROPERTIES) or (prop and prop.startswith("u_")):
 
                     expr = l.require(l.simple_expression)
 
