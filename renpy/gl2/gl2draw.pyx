@@ -576,6 +576,8 @@ cdef class GL2Draw:
 
         self.quit_fbo()
 
+        self.shader_cache.save()
+
 
     def init_fbo(GL2Draw self):
         """

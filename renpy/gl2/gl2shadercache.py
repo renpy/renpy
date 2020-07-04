@@ -193,6 +193,9 @@ class ShaderCache(object):
         # in the past, but do not exist now.
         self.missing = set()
 
+        # True if this is dirty, and should be saved to the cache.
+        self.dirty = False
+
     def get(self, partnames, geometry=True):
         """
         Gets a shader, creating it if necessary.
@@ -252,6 +255,9 @@ class ShaderCache(object):
 
         self.cache[partnames] = rv
         self.cache[sortedpartnames] = rv
+
+        self.dirty = True
+
         return rv
 
     def check(self, partnames):
@@ -271,10 +277,16 @@ class ShaderCache(object):
         Saves the list of shaders to the file.
         """
 
+        if not self.dirty:
+            return
+
+        if not renpy.config.developer:
+            return
+
         fn = "<unknown>"
 
         try:
-            fn = renpy.loader.get_path(self.filename)
+            fn = os.path.join(renpy.config.gamedir, renpy.loader.get_path(self.filename))
 
             tmp = fn + ".tmp"
 
@@ -290,6 +302,8 @@ class ShaderCache(object):
                 pass
 
             os.rename(tmp, fn)
+
+            self.dirty = False
 
         except:
             renpy.display.log.write("Saving shaders to {!r}:".format(fn))
