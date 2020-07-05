@@ -424,6 +424,11 @@ class Grid(Container):
         if yspacing is None:
             yspacing = self.style.spacing
 
+        left_margin = scale(self.style.left_margin, width)
+        right_margin = scale(self.style.right_margin, width)
+        top_margin = scale(self.style.top_margin, height)
+        bottom_margin = scale(self.style.bottom_margin, height)
+
         # For convenience and speed.
         cols = self.cols
         rows = self.rows
@@ -449,9 +454,9 @@ class Grid(Container):
         renheight = height
 
         if self.style.xfill:
-            renwidth = (width - (cols - 1) * xspacing) // cols
+            renwidth = (width - (cols - 1) * xspacing - left_margin - right_margin) // cols
         if self.style.yfill:
-            renheight = (height - (rows - 1) * yspacing) // rows
+            renheight = (height - (rows - 1) * yspacing - top_margin - bottom_margin) // rows
 
         renders = [ render(i, renwidth, renheight, st, at) for i in children ]
         sizes = [ i.get_size() for i in renders ]
@@ -469,8 +474,8 @@ class Grid(Container):
         if self.style.yfill:
             cheight = renheight
 
-        width = cwidth * cols + xspacing * (cols - 1)
-        height = cheight * rows + yspacing * (rows - 1)
+        width = cwidth * cols + xspacing * (cols - 1) + left_margin + right_margin
+        height = cheight * rows + yspacing * (rows - 1) + top_margin + bottom_margin
 
         rv = renpy.display.render.Render(width, height)
 
@@ -482,8 +487,8 @@ class Grid(Container):
                 child = children[ x + y * cols ]
                 surf = renders[x + y * cols]
 
-                xpos = x * (cwidth + xspacing)
-                ypos = y * (cheight + yspacing)
+                xpos = x * (cwidth + xspacing) + left_margin
+                ypos = y * (cheight + yspacing) + top_margin
 
                 offset = child.place(rv, xpos, ypos, cwidth, cheight, surf)
                 offsets.append(offset)
