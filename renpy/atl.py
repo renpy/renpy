@@ -94,6 +94,13 @@ def matrixcolor(x):
         return renpy.display.matrix.Matrix(x)
 
 
+def mesh(x):
+    if isinstance(x, (renpy.gl2.gl2mesh2.Mesh2, renpy.gl2mesh3.Mesh3, tuple)):
+        return x
+
+    return bool(x)
+
+
 # A dictionary giving property names and the corresponding default
 # values.
 PROPERTIES = {
@@ -147,7 +154,7 @@ PROPERTIES = {
     "ytile" : int,
     "matrixcolor" : matrixcolor,
     "shader" : any_object,
-    "flatten" : bool,
+    "mesh" : mesh,
     }
 
 

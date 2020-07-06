@@ -104,12 +104,6 @@ def transform_render(self, widtho, heighto, st, at):
 
     state = self.state
 
-    if state.flatten:
-        child = self.flatten_cache
-
-        if child is None:
-            child = self.flatten_cache = renpy.display.layout.Flatten(self.child)
-
     xsize = state.xsize
     ysize = state.ysize
     fit = state.fit
@@ -362,6 +356,23 @@ def transform_render(self, widtho, heighto, st, at):
         yo += height / 2.0
 
     rv = Render(width, height)
+
+    if state.mesh:
+
+        rv.operation = renpy.display.render.FLATTEN
+        rv.add_shader("renpy.texture")
+
+
+        if isinstance(state.mesh, tuple):
+            mesh_width, mesh_height = state.mesh
+
+            rv.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_grid_mesh(
+                mesh_width, mesh_height,
+                0.0, 0.0, cr.width, cr.height,
+                0.0, 0.0, 1.0, 1.0)
+        else:
+            rv.mesh = True
+
 
     if state.matrixcolor:
         matrix = state.matrixcolor
