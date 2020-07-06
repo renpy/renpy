@@ -91,7 +91,7 @@ def init():
         varying vec2 v_tex_coord;
         varying vec2 v_mask_coord;
     """, vertex_200="""
-        v_tex_coord = a_tex_coord
+        v_tex_coord = a_tex_coord;
         v_mask_coord = vec2(a_position.x / 2 + .5, -a_position.y / 2 + .5);
     """, fragment_200="""
         vec4 color = texture2D(tex0, v_tex_coord);
@@ -107,7 +107,7 @@ def init():
         varying vec2 v_tex_coord;
         varying vec2 v_mask_coord;
     """, vertex_200="""
-        v_tex_coord = a_tex_coord
+        v_tex_coord = a_tex_coord;
         v_mask_coord = vec2(a_position.x / 2 + .5, -a_position.y / 2 + .5);
     """, fragment_200="""
         vec4 color = texture2D(tex0, v_tex_coord);
@@ -118,7 +118,7 @@ def init():
     register_shader("live2d.flip_texture", variables="""
         varying vec2 v_tex_coord;
     """, vertex_250="""
-        vTexCoord.y = 1.0 - v_tex_coord.y;
+        v_tex_coord.y = 1.0 - v_tex_coord.y;
     """)
 
     renpy.config.interact_callbacks.append(update_states)
