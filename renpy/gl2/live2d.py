@@ -390,8 +390,11 @@ class Live2D(renpy.display.core.Displayable):
             loop=self.loop,
             fade=self.fade)
 
-        rv._duplicatable = False
         rv.name = args.name
+
+        if args.args:
+            rv._dupicatable = False
+
         return rv
 
     def _list_attributes(self, tag, attributes):
