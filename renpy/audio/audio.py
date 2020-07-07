@@ -78,7 +78,7 @@ def load(fn):
         elif exception.rtype == 'voice':
             # prediction failed, too late
             pass
-        # temporary placeholder:
+        # temporary 1s placeholder, will retry loading when looping:
         rv = open(os.path.join(renpy.config.commondir,'_dl_silence.ogg'), 'rb')
     return rv
 
