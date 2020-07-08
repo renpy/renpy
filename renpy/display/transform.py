@@ -876,8 +876,9 @@ class Transform(Container):
 
         if child._duplicatable:
             self._duplicatable = True
-            self.child = child
-            self.children = [ child ]
+
+        self.child = child
+        self.children = [ child ]
 
         self.child_st_base = self.st
 
