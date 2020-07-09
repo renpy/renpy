@@ -33,6 +33,7 @@ import pygame_sdl2 as pygame
 
 import math
 
+import re
 
 def compile_event(key, keydown):
     """
@@ -1406,10 +1407,33 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
 
             for c in raw_text:
 
-                if self.allow and c not in self.allow:
-                    continue
-                if self.exclude and c in self.exclude:
-                    continue
+                # Allow is given
+                if self.allow:
+
+                    # Allow is regex
+                    if isinstance(self.allow, re._pattern_type):
+
+                        # Character doesn't match
+                        if self.allow.search(c) is None:
+                            continue
+
+                    # Allow is string
+                    elif c not in self.allow:
+                        continue
+
+                # Exclude is given
+                if self.exclude:
+
+                    # Exclude is regex
+                    if isinstance(self.exclude, re._pattern_type):
+
+                        # Character matches
+                        if self.exclude.search(c) is not None:
+                            continue
+
+                    # Exclude is string
+                    elif c in self.exclude:
+                        continue
 
                 text += c
 
