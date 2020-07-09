@@ -166,7 +166,7 @@ translate japanese demo_character_e2811c1c:
 translate japanese demo_character_baa52234:
 
     # e7 "Setting what_layout to 'subtitle' puts Ren'Py in subtitle mode, which tries to even out the length of every line of text in a block."
-    e7 "what_layoutを'subtitle'にするとRen'Pyはサブタイトルモードになり、ブロック中のすべてのテキスト行の長さを揃えようとします。"
+    e7 "what_layoutを'subtitle'にするとRen'Pyはサブタイトルモードになり、ブロック中のすべてのテキスト行の長さをそろえようとします。"
 
 # game/indepth_character.rpy:110
 translate japanese demo_character_41190f01:

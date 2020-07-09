@@ -28,7 +28,7 @@ translate japanese demo_simple_transitions_4b235ac2:
 translate japanese demo_simple_transitions_af0431ac:
 
     # e "The 'dissolve' transition is probably the most useful, blending one scene into another."
-    e "「dissolve」トランジションは多分一番便利で、一つの場面から他の場面に徐々に変化させます。"
+    e "「dissolve」トランジションは多分一番便利で、一つの場面から他の場面に少しずつ変化させます。"
 
 # game/indepth_transitions.rpy:109
 translate japanese demo_simple_transitions_5b9f711f:
@@ -214,7 +214,7 @@ translate japanese demo_imagedissolve_transitions_72ba11d4:
 translate japanese demo_imagedissolve_transitions_fc3b3339:
 
     # e "When we use an ImageDissolve, the white will dissolve in first, followed by progressively darker colors. Let's try it."
-    e "ImageDissolveを使うとき、白色の部分がまず始めにディゾルブされ、徐々に暗い色に移ります。試してみましょう。"
+    e "ImageDissolveを使うとき、白色の部分がまず始めにディゾルブされ、少しずつ暗い色に移ります。試してみましょう。"
 
 # game/indepth_transitions.rpy:255
 translate japanese demo_imagedissolve_transitions_4327dca2:
@@ -232,7 +232,7 @@ translate japanese demo_imagedissolve_transitions_3a401ee7:
 translate japanese demo_imagedissolve_transitions_20d9cf6c:
 
     # e "The teleport transition uses a different image, one that dissolves things in one line at a time."
-    e "teleportトランジションは、別の画像を使っています。これで線を使って徐々にディゾルブをします。"
+    e "teleportトランジションは、別の画像を使っています。これで線を使って少しずつディゾルブをします。"
 
 # game/indepth_transitions.rpy:272
 translate japanese demo_imagedissolve_transitions_906f7800:
