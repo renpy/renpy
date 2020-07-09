@@ -95,6 +95,7 @@ text.::
          color "#fff"
          selected_color "#ff0"
 
+
 Style Property Values
 =====================
 
@@ -229,6 +230,7 @@ List of All Style Properties
 The style properties control the look of the various displayables. Not all
 style properties apply to all displayables, so we've divided them up into
 groups.
+
 
 .. _position-style-properties:
 
@@ -596,7 +598,7 @@ Text Style Properties
 
     Outlines only work with TrueType fonts.
 
-.. style-property: outline_scaling string
+.. style-property:: outline_scaling string
 
     This determines how outline suzels or offsets are scaled when the
     window is scaled.
@@ -644,7 +646,6 @@ Text Style Properties
     The speed of the text is multiplied by this number. This can be
     used to have a character that speaks at a faster-than-normal rate
     of speed.
-
 
 .. style-property:: strikethrough boolean
 
@@ -696,6 +697,7 @@ Text Style Properties
         Uses bytecode hinting information found in the font.
     "none"
         Does not hint the font.
+
 
 .. _window-style-properties:
 
