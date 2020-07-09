@@ -185,7 +185,10 @@ transform reset:
     yzoom 1.0
 
     crop None
-    size None
+
+    xsize None
+    ysize None
+    fit None
 
     alpha 1.0
 

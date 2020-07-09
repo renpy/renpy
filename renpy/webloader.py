@@ -58,16 +58,16 @@ if renpy.emscripten:
         xhr.responseType = 'arraybuffer';
         xhr.onerror = function() {
             console.log("Network error", xhr);
-        }
+        };
         xhr.onload = function() {
             if (xhr.status == 200 || xhr.status == 304 || xhr.status == 206 || (xhr.status == 0 && xhr.response)) {
                 // Create file reusing XHR's buffer (no-copy)
-                try { FS.unlink(path); } catch {}
+                try { FS.unlink(path); } catch(error) {}
                 FS.writeFile(path, new Uint8Array(xhr.response), {canOwn:true});
             } else {
                 console.log("Download error", xhr);
             }
-        }
+        };
         xhr.open('GET', path);
         xhr.send();
         RenPyWeb.xhrs[RenPyWeb.xhr_id] = xhr;
@@ -84,7 +84,7 @@ if renpy.emscripten:
         delete RenPyWeb.xhrs[xhr_id];
         // Note: xhr.response kept alive until file is unlinked
     },
-}
+};
 """)
 
     class XMLHttpRequest(object):
@@ -94,7 +94,7 @@ if renpy.emscripten:
                 r'''RenPyWeb.dl_new({})'''.format(json.dumps(url)))
 
         def __del__(self):
-            emscripten.run_script(r'''RenPyWeb.dl_free({})'''.format(self.id))
+            emscripten.run_script(r'''RenPyWeb.dl_free({});'''.format(self.id))
 
         @property
         def readyState(self):

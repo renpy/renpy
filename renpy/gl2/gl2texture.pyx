@@ -1,6 +1,6 @@
 #@PydevCodeAnalysisIgnore
 #cython: profile=False
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -65,7 +65,12 @@ cdef class TextureLoader:
 
     def init(self):
 
-        self.ftl_program = self.draw.shader_cache.get(("renpy.ftl",))
+        self.ftl_program = self.draw.shader_cache.get(("renpy.ftl",), geometry=False)
+
+        self.allocated = set()
+        self.free_list = [ ]
+        self.total_texture_size = 0
+        self.texture_load_queue = weakref.WeakSet()
 
     def quit(self):
         """
@@ -111,7 +116,7 @@ cdef class TextureLoader:
                     0.0, 0.0, pw, ph,
                     0.0, 0.0, 0.0, 0.0)
 
-            rv = Model((pw, ph), mesh, ("renpy.texture",), { "uTex0" : rv })
+            rv = Model((pw, ph), mesh, ("renpy.texture",), { "tex0" : rv })
 
         return rv
 
@@ -200,7 +205,11 @@ cdef class TextureLoader:
         for texture_number in self.free_list:
             texnums[0] = texture_number
             glDeleteTextures(1, texnums)
-            self.allocated.remove(texture_number)
+
+            if texture_number not in self.allocated:
+                print("Leaking texture:", texture_number)
+
+            self.allocated.discard(texture_number)
 
         self.free_list = [ ]
 
@@ -408,7 +417,7 @@ cdef class GLTexture(Model):
         # Draw.
         program = self.loader.ftl_program
         program.start()
-        program.set_uniform("uTex0", tex)
+        program.set_uniform("tex0", tex)
         program.draw(mesh)
         program.finish()
 
@@ -455,12 +464,12 @@ cdef class GLTexture(Model):
         self.load_gltexture()
 
     def program_uniforms(self, shader):
-        shader.set_uniform("uTex0", self)
+        shader.set_uniform("tex0", self)
 
     cpdef subsurface(self, rect):
         rv = Model.subsurface(self, rect)
         if rv is not self:
-            rv.uniforms = { "uTex0" : self }
+            rv.uniforms = { "tex0" : self }
         return rv
 
 class Texture(GLTexture):

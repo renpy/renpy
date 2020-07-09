@@ -234,6 +234,9 @@ intermediate image is not needed, multiplying matrices is far
 more efficient, in both time and image cache space, than using
 two im.MatrixColors.
 
+The im.MatrixColor image manipulator has been replaced by Transforms
+and ATL transforms that specify the matrixcolor property.
+
 .. include:: inc/im_matrixcolor
 
 Placeholders

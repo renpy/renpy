@@ -47,6 +47,12 @@ if [ -e "$ROOT/pygame_sdl2" ]; then
     setup "$ROOT/pygame_sdl2/"
 fi
 
+if [ -e "$ROOT/cubism" ]; then
+    export CUBISM="$ROOT/cubism"
+    export CUBISM_PLATFORM=${CUBISM_PLATFORM:-linux/x86_64}
+    export LD_LIBRARY_PATH="$CUBISM/Core/dll/$CUBISM_PLATFORM"
+fi
+
 setup "$ROOT/module/"
 
 if  [ "$1" = "--build" ] ; then

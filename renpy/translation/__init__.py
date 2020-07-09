@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -229,7 +229,7 @@ class Restructurer(object):
         if identifier in self.identifiers:
             return True
 
-        if identifier in renpy.game.script.translator.default_translates:  # @UndefinedVariable
+        if identifier in renpy.game.script.translator.default_translates: # @UndefinedVariable
             return True
 
         return False
@@ -340,10 +340,10 @@ class Restructurer(object):
 def restructure(children):
     Restructurer(children)
 
-
 ################################################################################
 # String Translation
 ################################################################################
+
 
 update_translations = ("RENPY_UPDATE_STRINGS" in os.environ)
 
@@ -467,20 +467,20 @@ def translate_string(s, language=Default):
     if language is Default:
         language = renpy.game.preferences.language
 
-    stl = renpy.game.script.translator.strings[language]  # @UndefinedVariable
+    stl = renpy.game.script.translator.strings[language] # @UndefinedVariable
     return stl.translate(s)
 
 
 def write_updated_strings():
-    stl = renpy.game.script.translator.strings[renpy.game.preferences.language]  # @UndefinedVariable
+    stl = renpy.game.script.translator.strings[renpy.game.preferences.language] # @UndefinedVariable
     stl.write_updated_strings(renpy.game.preferences.language)
-
 
 ################################################################################
 # RPT Support
 #
 # RPT was the translation format used before 6.15.
 ################################################################################
+
 
 def load_rpt(fn):
     """
@@ -552,11 +552,11 @@ def init_translation():
     """
 
     global style_backup
-    style_backup = renpy.style.backup()  # @UndefinedVariable
+    style_backup = renpy.style.backup() # @UndefinedVariable
 
     load_all_rpts()
 
-    renpy.store._init_language()  # @UndefinedVariable
+    renpy.store._init_language() # @UndefinedVariable
 
 
 old_language = "language never set"
@@ -623,14 +623,18 @@ def change_language(language, force=False):
 
     global old_language
 
+    if old_language != language:
+        renpy.store._history_list = renpy.store.list()
+        renpy.store.nvl_list = renpy.store.list()
+
     renpy.game.preferences.language = language
     if old_language == language and not force:
         return
 
     tl = renpy.game.script.translator
 
-    renpy.style.restore(style_backup)  # @UndefinedVariable
-    renpy.style.rebuild()  # @UndefinedVariable
+    renpy.style.restore(style_backup) # @UndefinedVariable
+    renpy.style.rebuild() # @UndefinedVariable
 
     for i in renpy.config.translate_clean_stores:
         renpy.python.clean_store(i)
@@ -640,9 +644,6 @@ def change_language(language, force=False):
     else:
         old_change_language(tl, language)
 
-    renpy.store._history_list = renpy.store.list()
-    renpy.store.nvl_list = renpy.store.list()
-
     for i in renpy.config.change_language_callbacks:
         i()
 
@@ -651,7 +652,7 @@ def change_language(language, force=False):
     renpy.exports.free_memory()
 
     # Rebuild the styles.
-    renpy.style.rebuild()  # @UndefinedVariable
+    renpy.style.rebuild() # @UndefinedVariable
 
     for i in renpy.config.translate_clean_stores:
         renpy.python.reset_store_changes(i)
@@ -681,7 +682,7 @@ def check_language():
         tid = ctx.translate_identifier
 
         if tid is not None:
-            node = renpy.game.script.translator.lookup_translate(tid)  # @UndefinedVariable
+            node = renpy.game.script.translator.lookup_translate(tid) # @UndefinedVariable
 
             if node is not None:
                 raise renpy.game.JumpException(node.name)
@@ -695,7 +696,7 @@ def known_languages():
     language, None.
     """
 
-    return { i for i in renpy.game.script.translator.languages if i is not None }  # @UndefinedVariable
+    return { i for i in renpy.game.script.translator.languages if i is not None } # @UndefinedVariable
 
 ################################################################################
 # Detect language

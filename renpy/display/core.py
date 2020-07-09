@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1137,14 +1137,22 @@ class SceneLists(renpy.object.Object):
 
         l.pop(index)
 
-    def get_all_displayables(self):
+    def get_all_displayables(self, current=False):
         """
         Gets all displayables reachable from this scene list.
+
+        `current`
+            If true, only returns displayables that are not in the process
+            of being hidden.
         """
 
         rv = [ ]
         for l in self.layers.values():
             for sle in l:
+
+                if current and sle.tag and ("$" in sle.tag):
+                    continue
+
                 rv.append(sle.displayable)
 
         return rv
@@ -2041,6 +2049,8 @@ class Interface(object):
         """
 
         pygame.display.hint("SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS", "0")
+        pygame.display.hint("SDL_TOUCH_MOUSE_EVENTS", "1")
+        pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
 
         # Needed for Unity.
         wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
@@ -2126,7 +2136,7 @@ class Interface(object):
         if self.safe_mode:
             renderer = "sw"
 
-        if (renderer == "angle") and (not renpy.windows):
+        if (renderer == "angle" or renderer == "angle2") and (not renpy.windows):
             renderer = "auto"
 
         renpy.config.renderer = renderer
@@ -2200,6 +2210,7 @@ class Interface(object):
         if renpy.display.draw is not None:
             renpy.display.draw.kill_textures()
 
+        renpy.display.im.cache.clear()
         renpy.display.render.free_memory()
         renpy.text.text.layout_cache_clear()
 
@@ -2395,7 +2406,7 @@ class Interface(object):
             renpy.display.scale.image_save_unscaled(window, filename)
             if renpy.emscripten:
                 import emscripten
-                emscripten.run_script(r'''FSDownload('%s')''' % filename)
+                emscripten.run_script(r'''FSDownload('%s');''' % filename)
             return True
         except:
             if renpy.config.debug:
@@ -3087,7 +3098,7 @@ class Interface(object):
         start_time = get_time()
         end_time = start_time
 
-        # frames = 0
+        self.frame_time = start_time
 
         for i in renpy.config.interact_callbacks:
             i()
@@ -3557,11 +3568,10 @@ class Interface(object):
                 if ev.type == pygame.VIDEOEXPOSE:
                     # Needed to force the display to redraw after expose in
                     # the software renderer.
-                    renpy.game.interface.full_redraw = True
-                    renpy.game.interface.force_redraw = True
 
                     if isinstance(renpy.display.draw, renpy.display.swdraw.SWDraw):
                         renpy.display.draw.full_redraw = True
+                        renpy.game.interface.force_redraw = True
 
                     continue
 

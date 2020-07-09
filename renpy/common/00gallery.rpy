@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -41,8 +41,6 @@ init -1500 python:
 
         def check(self, all_prior):
             for i in self.images:
-
-                print(i, renpy.seen_image(i))
 
                 if not renpy.seen_image(i):
                     return False

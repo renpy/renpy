@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -152,7 +152,8 @@ cdef class GLDraw:
         self.environ.deinit()
         self.rtt.deinit()
 
-        pygame.display.get_window().recreate_gl_context()
+        if renpy.android or renpy.ios:
+            pygame.display.get_window().recreate_gl_context()
 
         # Are we in fullscreen mode?
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
@@ -1406,7 +1407,7 @@ cdef class Environ(object):
         Sets the array of texture coordinates for unit `unit`.
         """
 
-    cdef void set_color(self, double r, double g, double b, double a):
+    cdef void set_color(self, float r, float g, float b, float a):
         """
         Sets the color to be shown.
         """

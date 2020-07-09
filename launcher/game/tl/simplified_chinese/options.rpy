@@ -1,4 +1,5 @@
-﻿translate simplified_chinese strings:
+
+translate simplified_chinese strings:
 
     # options.rpy:1
     old "## This file contains options that can be changed to customize your game."
@@ -26,7 +27,7 @@
 
     # options.rpy:20
     old "## Determines if the title given above is shown on the main menu screen. Set this to False to hide the title."
-    new "## 决定上面给出的标题是否显示在主界面屏幕。设置为 False 来隐藏标题。"
+    new "## 决定上面给出的标题是否显示在标题界面屏幕。设置为 False 来隐藏标题。"
 
     # options.rpy:26
     old "## The version of the game."
@@ -54,7 +55,7 @@
 
     # options.rpy:63
     old "## Uncomment the following line to set an audio file that will be played while the player is at the main menu. This file will continue playing into the game, until it is stopped or another file is played."
-    new "## 将以下语句取消注释就可以设置主界面播放的背景音乐文件。此文件将在整个游戏中持续播放，直至音乐停止或其他文件开始播放。"
+    new "## 将以下语句取消注释就可以设置标题界面播放的背景音乐文件。此文件将在整个游戏中持续播放，直至音乐停止或其他文件开始播放。"
 
     # options.rpy:70
     old "## Transitions"
@@ -186,16 +187,12 @@
 
     # options.rpy:196
     old "## Files matching documentation patterns are duplicated in a mac app build, so they appear in both the app and the zip file."
-    new "## 匹配为文档模式的文件，将在 Mac 应用的生成中复制，因此它们同时存在于 app 和 zip 文件中。"
+    new "## 匹配为文档模式的文件会在 Mac 应用生成中重复出现，所以它们同时出现在 app 和 zip 文件中。"
 
-    # options.rpy:202
-    old "## Set this to a string containing your Apple Developer ID Application to enable codesigning on the Mac. Be sure to change it to your own Apple-issued ID."
-    new "## 在 Mac 上将此设置为包含有您 Apple Developer ID Application 的字符串来启用代码签名。确保将其更改为您自己的，由苹果签发的 ID。"
-
-    # options.rpy:209
+    # options.rpy:203
     old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
     new "## 需要一个 Google Play 授权密钥来下载扩展文件并执行应用内购。授权密钥可以在 Google Play 开发者控制台的“服务和 API”页面找到。"
 
-    # options.rpy:216
+    # options.rpy:210
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## 与 itch.io 工程关联的用户名和工程名，以斜杠分隔。"

@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -467,8 +467,8 @@ class Node(object):
 
     def predict(self):
         """
-        This is called to predictively load images from this node.  It
-        should cause renpy.display.predict.image and
+        This is called to predictively load images from this node. It
+        should cause renpy.display.predict.displayable and
         renpy.display.predict.screen to be called as necessary.
         """
 
@@ -1448,7 +1448,13 @@ class Call(Node):
             if not probably_side_effect_free(label):
                 return [ ]
 
-            label = renpy.python.py_eval(label)
+            try:
+                label = renpy.python.py_eval(label)
+            except:
+                return [ ]
+
+            if not renpy.game.script.has_label(label):
+                return [ ]
 
         return [ renpy.game.context().predict_call(label, self.next.name) ]
 
@@ -1702,7 +1708,13 @@ class Jump(Node):
             if not probably_side_effect_free(label):
                 return [ ]
 
-            label = renpy.python.py_eval(label)
+            try:
+                label = renpy.python.py_eval(label)
+            except:
+                return [ ]
+
+            if not renpy.game.script.has_label(label):
+                return [ ]
 
         return [ renpy.game.script.lookup(label) ]
 
@@ -2121,10 +2133,12 @@ class Define(Node):
         define_statements.append(self)
 
         if self.store == 'store':
-            renpy.exports.pure(self.varname)
             renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
         else:
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
+
+        if self.operator == "=" and self.index is None:
+            renpy.exports.pure(self.store + "." + self.varname)
 
         self.set()
 

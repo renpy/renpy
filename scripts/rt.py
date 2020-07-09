@@ -58,7 +58,7 @@ def selected_command(args):
 
 
 def edit_command(args):
-    subprocess.call([ "atom", CURRENT.resolve(), CURRENT.resolve() / "game/script.rpy" ])
+    subprocess.call([ "code", CURRENT.resolve(), CURRENT.resolve() / "game/script.rpy" ])
 
 
 def new_command(args):

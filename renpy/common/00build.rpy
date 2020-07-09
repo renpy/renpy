@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -161,6 +161,8 @@ init -1500 python in build:
 
         ("web-presplash.png", "web"),
         ("web-presplash.jpg", "web"),
+        ("web-presplash.webp", "web"),
+        ("progressive_download.txt", "web"),
 
         ])
 
@@ -230,21 +232,11 @@ init -1500 python in build:
 
     xbit_patterns = [
         "**.sh",
-        "**/*.so.*",
-        "**/*.so",
-        "**/*.dylib",
 
-        "lib/**/python",
-        "lib/**/pythonw",
-        "lib/**/zsync",
-        "lib/**/zsyncmake",
+        "lib/linux-*/*",
+        "lib/mac-*/*",
 
         "**.app/Contents/MacOS/*",
-
-        "**.app/Contents/MacOS/lib/**/python",
-        "**.app/Contents/MacOS/lib/**/pythonw",
-        "**.app/Contents/MacOS/lib/**/zsync",
-        "**.app/Contents/MacOS/lib/**/zsyncmake",
         ]
 
     def executable(pattern):

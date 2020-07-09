@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -370,7 +370,7 @@ class TransitionAnimation(renpy.display.core.Displayable):
                 transitions.append(arg)
 
         if len(images) > len(delays):
-            delays.append(365.25 * 86400.0)  # One year, give or take.
+            delays.append(365.25 * 86400.0) # One year, give or take.
         if len(images) > len(transitions):
             transitions.append(None)
 
@@ -414,7 +414,7 @@ class Blink(renpy.display.core.Displayable):
     """
     """
 
-    def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5,  # @ReservedAssignment
+    def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5, # @ReservedAssignment
                  high=1.0, low=0.0, offset=0.0, anim_timebase=False, **properties):
         """
         This takes as an argument an image or widget, and blinks that image
@@ -499,6 +499,10 @@ class Blink(renpy.display.core.Displayable):
 
         rv.blit(rend, (0, 0))
         rv.alpha = alpha
+
+        rv.add_shader("renpy.alpha")
+        rv.add_uniform("u_renpy_alpha", alpha)
+        rv.add_uniform("u_renpy_over", 1.0)
 
         if not renpy.game.less_updates:
             renpy.display.render.redraw(self, delay)

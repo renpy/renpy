@@ -1,4 +1,4 @@
-_renpy gen/_renpy.c IMG_savepng.c core.c subpixel.c
+_renpy gen/_renpy.c IMG_savepng.c core.c
 _renpybidi gen/_renpybidi.c renpybidicore.c
 renpy.audio.renpysound gen/renpy.audio.renpysound.c renpysound_core.c ffmedia.c
 renpy.parsersupport gen/renpy.parsersupport.c
@@ -36,6 +36,7 @@ renpy.gl2.gl2model gen/renpy.gl2.gl2model.c
 renpy.gl2.gl2draw gen/renpy.gl2.gl2draw.c
 renpy.gl2.gl2texture gen/renpy.gl2.gl2texture.c
 renpy.gl2.gl2shader gen/renpy.gl2.gl2shader.c
+renpy.gl2.live2dmodel gen/renpy.gl2.live2dmodel.c
 renpy.text.textsupport gen/renpy.text.textsupport.c
 renpy.text.texwrap gen/renpy.text.texwrap.c
 renpy.text.ftfont gen/renpy.text.ftfont.c ftsupport.c ttgsubtable.c

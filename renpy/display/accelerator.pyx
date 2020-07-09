@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -104,8 +104,16 @@ def transform_render(self, widtho, heighto, st, at):
 
     state = self.state
 
-    if state.size:
-        widtho, heighto = state.size
+    xsize = state.xsize
+    ysize = state.ysize
+    fit = state.fit
+
+    if fit is None:
+        fit = 'contain' if (xsize is None) or (ysize is None) else 'fill'
+
+    if (xsize is not None) and (ysize is not None) and fit == 'fill':
+        widtho = xsize
+        heighto = ysize
 
     cr = render(child, widtho, heighto, st - self.child_st_base, at)
 
@@ -200,27 +208,54 @@ def transform_render(self, widtho, heighto, st, at):
             clipping = True
 
     # Size.
-    size = state.size
-    maxsize = state.maxsize
+    if (width != 0) and (height != 0):
+        maxsize = state.maxsize
+        mul = None
 
-    if (maxsize is not None) and (width != 0) and (height != 0):
-        maxsizex, maxsizey = maxsize
-        mul = min(maxsizex / width, maxsizey / height)
-        size = (width * mul, height * mul)
+        if (maxsize is not None):
+            maxsizex, maxsizey = maxsize
+            mul = min(maxsizex / width, maxsizey / height)
 
-    if (size is not None) and (size != (width, height)) and (width != 0) and (height != 0):
-        nw, nh = size
+        scale = []
+        if xsize is not None:
+            scale.append(xsize / width)
+        if ysize is not None:
+            scale.append(ysize / height)
 
-        xzoom = 1.0 * nw / width
-        yzoom = 1.0 * nh / height
+        if scale:
+            if fit == 'scale-up':
+                mul = max(1, *scale)
+            elif fit == 'scale-down':
+                mul = min(1, *scale)
+            elif fit == 'contain':
+                mul = min(scale)
+            elif fit == 'cover':
+                mul = max(scale)
+            else:
+                if xsize is None:
+                    xsize = width
+                if ysize is None:
+                    ysize = width
 
-        rxdx = xzoom
-        rydy = yzoom
+        if mul is not None:
+            xsize = mul * width
+            ysize = mul * height
 
-        xo *= xzoom
-        yo *= yzoom
+        if (xsize is not None) and (ysize is not None) and ((xsize, ysize) != (width, height)):
+            nw = xsize
+            nh = ysize
 
-        width, height = size
+            xzoom = 1.0 * nw / width
+            yzoom = 1.0 * nh / height
+
+            rxdx = xzoom
+            rydy = yzoom
+
+            xo *= xzoom
+            yo *= yzoom
+
+            width = xsize
+            height = ysize
 
     # zoom
     zoom = state.zoom
@@ -322,6 +357,35 @@ def transform_render(self, widtho, heighto, st, at):
 
     rv = Render(width, height)
 
+    if state.mesh:
+
+        rv.operation = renpy.display.render.FLATTEN
+        rv.add_shader("renpy.texture")
+
+
+        if isinstance(state.mesh, tuple):
+            mesh_width, mesh_height = state.mesh
+
+            rv.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_grid_mesh(
+                mesh_width, mesh_height,
+                0.0, 0.0, cr.width, cr.height,
+                0.0, 0.0, 1.0, 1.0)
+        else:
+            rv.mesh = True
+
+
+    if state.matrixcolor:
+        matrix = state.matrixcolor
+
+        if callable(matrix):
+            matrix = matrix(None, 1.0)
+
+        if not isinstance(matrix, renpy.display.matrix.Matrix):
+            raise Exception("matrixcolor requires a Matrix (not im.matrix, got %r)" % (matrix,))
+
+        rv.add_shader("renpy.matrixcolor")
+        rv.add_uniform("u_renpy_matrixcolor", matrix)
+
     # Default case - no transformation matrix.
     if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:
         self.forward = IDENTITY
@@ -354,6 +418,26 @@ def transform_render(self, widtho, heighto, st, at):
     rv.alpha = alpha
 
     rv.over = 1.0 - state.additive
+
+    if (rv.alpha != 1.0) or (rv.over != 1.0):
+        rv.add_shader("renpy.alpha")
+        rv.add_uniform("u_renpy_alpha", rv.alpha)
+        rv.add_uniform("u_renpy_over", rv.over)
+
+    if state.shader is not None:
+
+        if isinstance(state.shader, basestring):
+            rv.add_shader(state.shader)
+        else:
+            for name in state.shader:
+                rv.add_shader(name)
+
+        for name in renpy.display.transform.uniforms:
+            value = getattr(state, name, None)
+
+            if value is not None:
+                rv.add_uniform(name, value)
+
     rv.xclipping = clipping
     rv.yclipping = clipping
 

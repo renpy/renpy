@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -38,7 +38,7 @@ cdef inline bint absne(float a, float b):
     return abs(a - b) > .0001
 
 cdef inline bint abseq(float a, float b):
-    return abs(a - b) > .0001
+    return abs(a - b) < .0001
 
 
 cdef class Matrix:
@@ -144,7 +144,7 @@ cdef class Matrix:
             if y:
                 rv += "\n        "
             for 0 <= x < 4:
-                rv += "{:8.5f}, ".format(self.m[x + y * 4])
+                rv += "{:10.7f}, ".format(self.m[x + y * 4])
 
         return rv + "])"
 

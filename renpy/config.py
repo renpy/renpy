@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -317,7 +317,7 @@ show = None
 # The callback that is used by the hide statement.
 hide = None
 
-# Should we use cPickle or pickle for load/save?
+# Python 2.x only: Should we use cPickle or pickle for load/save?
 use_cpickle = True
 
 # The function to call as the inspector.
@@ -413,6 +413,10 @@ imagemap_cache = True
 
 # Callbacks that are called in order to predict images.
 predict_callbacks = [ ]
+
+# Callbacks that are called on expensive idle_frame one per tick
+# to predict screens or other hard stuff.
+expensive_predict_callbacks = [ ]
 
 # Should screens be predicted?
 predict_screens = True
@@ -958,6 +962,9 @@ ftfont_vertical_extent_scale = { }
 # The default shader.
 default_shader = "renpy.geometry"
 
+# The shader that is used to align pixels to a drawable pixel.
+drawable_align_shader = "renpy.drawable_align"
+
 
 def say_attribute_transition_callback(*args):
     """
@@ -1019,6 +1026,23 @@ autoreload_functions = [ ]
 # A list of voice mixers (that should not be dropped when self voicing is
 # enabled).
 voice_mixers = [ "voice" ]
+
+# Should the text alignment pattern be drawn?
+debug_text_alignment = False
+
+# Init blocks taking longer than this amount of time to run are
+# reported to log.txt.
+profile_init = 0.25
+
+# Should live2d interpolate movements?
+live2d_interpolate = False
+
+# A list of text tags with contents that should be filtered by the TTS system.
+tts_filter_tags = [ "noalt", "rt", "art" ]
+
+# A function that merges uniforms together. This is a map from uniform name
+# to a function that takes the two values and merges them.
+merge_uniforms = { }
 
 del os
 del collections

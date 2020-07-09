@@ -22,6 +22,8 @@ cdef class Matrix:
     cdef public float wdz
     cdef public float wdw
 
+    # When this matrix is generated, where it was generated from.
+    cdef public object origin
 
     cdef inline void transform4(Matrix self, float *ox, float *oy, float *oz, float *ow, float x, float y, float z, float w):
         ox[0] = x * self.xdx + y * self.xdy + z * self.xdz + w * self.xdw

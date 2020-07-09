@@ -19,13 +19,13 @@ def register_shader(name, **kwargs):
 
     `variables`
         The variables used by the shader part. These should be listed one per
-        line, a storage (uniform, attribute, or varing) followed by a type,
+        line, a storage (uniform, attribute, or varying) followed by a type,
         name, and semicolon. For example::
 
             variables='''
-            uniform sampler2D uTex0;
-            attribute vec2 aTexCoord;
-            varying vec2 vTexCoord;
+            uniform sampler2D tex0;
+            attribute vec2 tex_coord;
+            varying vec2 v_tex_coord;
             '''
 
     `vertex_functions`
@@ -37,7 +37,7 @@ def register_shader(name, **kwargs):
         fragment shader.
 
     Other keyword arguments should start with ``vertex_`` or ``fragment_``,
-    and end with an integer priority. So "fragment_120" or "vertex_30". These
+    and end with an integer priority. So "fragment_200" or "vertex_300". These
     give text that's placed in the appropriate shader at the given priority,
     with lower priority numbers inserted before higher priority numbers.
     """
@@ -112,6 +112,7 @@ class ShaderPart(object):
                 print("Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(l))
 
             a = tuple(a)
+            kind = a[0]
             name = a[2]
 
             if name in vertex_used:
@@ -119,6 +120,9 @@ class ShaderPart(object):
 
             if name in fragment_used:
                 self.fragment_variables.add(a)
+
+            if kind == "uniform":
+                renpy.display.transform.add_uniform(name)
 
 
 # A map from a tuple giving the parts that comprise a shader, to the Shader
@@ -139,7 +143,7 @@ def source(variables, parts, functions, fragment, gles):
 
     if gles:
         rv.append("""
-#version 100 es
+#version 100
 """)
 
         if fragment:
@@ -193,7 +197,10 @@ class ShaderCache(object):
         # in the past, but do not exist now.
         self.missing = set()
 
-    def get(self, partnames):
+        # True if this is dirty, and should be saved to the cache.
+        self.dirty = False
+
+    def get(self, partnames, geometry=True):
         """
         Gets a shader, creating it if necessary.
 
@@ -207,7 +214,8 @@ class ShaderCache(object):
             return rv
 
         partnameset = set(partnames)
-        partnameset.add(renpy.config.default_shader)
+        if geometry:
+            partnameset.add(renpy.config.default_shader)
         sortedpartnames = tuple(sorted(partnameset))
 
         rv = self.cache.get(sortedpartnames, None)
@@ -251,6 +259,9 @@ class ShaderCache(object):
 
         self.cache[partnames] = rv
         self.cache[sortedpartnames] = rv
+
+        self.dirty = True
+
         return rv
 
     def check(self, partnames):
@@ -270,10 +281,16 @@ class ShaderCache(object):
         Saves the list of shaders to the file.
         """
 
+        if not self.dirty:
+            return
+
+        if not renpy.config.developer:
+            return
+
         fn = "<unknown>"
 
         try:
-            fn = renpy.loader.get_path(self.filename)
+            fn = os.path.join(renpy.config.gamedir, renpy.loader.get_path(self.filename))
 
             tmp = fn + ".tmp"
 
@@ -289,6 +306,8 @@ class ShaderCache(object):
                 pass
 
             os.rename(tmp, fn)
+
+            self.dirty = False
 
         except:
             renpy.display.log.write("Saving shaders to {!r}:".format(fn))

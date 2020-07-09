@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -691,6 +691,9 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
     source = str(source)
     source = source.replace("\r", "")
     source = escape_unicode(source)
+
+    if mode == "eval":
+        source = source.replace("\n", "\\\n").replace("\\\\\n", "\\\n")
 
     try:
         line_offset = lineno - 1

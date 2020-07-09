@@ -269,7 +269,7 @@ letter, and contain letters, numbers, and underscores. For example:
 * In the first show statement on line 16, the tag is "sylvie", and the
   attributes are "green" and "smile".
 
-* In the second show statement on line 26, the tage is "sylvie", and the
+* In the second show statement on line 26, the tag is "sylvie", and the
   attributes are "green" and "surprised".
 
 Only one image with a given tag can be shown at the same time. When a

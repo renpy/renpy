@@ -61,6 +61,7 @@ on is located in one of the following repositories:
 * https://github.com/renpy/python-for-android (Android)
 * https://github.com/renpy/rapt (Android Build Tools)
 * https://github.com/renpy/renios (iOS)
+* https://github.com/renpy/renpyweb (Web)
 
 Although we are unable to provide legal advice, we believe compliance can be
 achieved by including a copy of this license with every copy of Ren'Py you

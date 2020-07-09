@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,7 +25,6 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import *
 from future.utils import reraise
 
-import pickle
 import io
 import zipfile
 import re
@@ -39,17 +38,27 @@ import renpy
 
 from json import dumps as json_dumps
 
+# Dump that chooses which pickle to use:
 
 def dump(o, f):
-    pickle.dump(o, f, pickle.HIGHEST_PROTOCOL)
+    if renpy.config.use_cpickle:
+        cPickle.dump(o, f, cPickle.HIGHEST_PROTOCOL)
+    else:
+        pickle.dump(o, f, pickle.HIGHEST_PROTOCOL)
 
 
 def dumps(o):
-    return pickle.dumps(o, pickle.HIGHEST_PROTOCOL)
+    if renpy.config.use_cpickle:
+        return cPickle.dumps(o, cPickle.HIGHEST_PROTOCOL)
+    else:
+        return pickle.dumps(o, pickle.HIGHEST_PROTOCOL)
 
 
 def loads(s):
-    return pickle.loads(s)
+    if renpy.config.use_cpickle:
+        return cPickle.loads(s)
+    else:
+        return pickle.loads(s)
 
 
 # This is used as a quick and dirty way of versioning savegame

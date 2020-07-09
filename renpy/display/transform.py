@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,9 +25,9 @@ from renpy.compat import *
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
 import math
-import types  # @UnresolvedImport
+import types # @UnresolvedImport
 
-import renpy.display  # @UnusedImport
+import renpy.display # @UnusedImport
 from renpy.display.layout import Container
 
 from renpy.display.accelerator import transform_render
@@ -111,7 +111,13 @@ class TransformState(renpy.object.Object):
     xtile = 1
     ytile = 1
     last_angle = None
+    xsize = None
+    ysize = None
+    fit = None
     maxsize = None
+    matrixcolor = None
+    shader = None
+    mesh = False
 
     def __init__(self):
         self.alpha = 1
@@ -147,8 +153,15 @@ class TransformState(renpy.object.Object):
         self.crop_relative = False
         self.corner1 = None
         self.corner2 = None
-        self.size = None
+
+        self.xsize = None
+        self.ysize = None
+        self.fit = None
         self.maxsize = None
+
+        self.matrixcolor = None
+        self.shader = None
+        self.mesh = False
 
         self.delay = 0
 
@@ -171,6 +184,9 @@ class TransformState(renpy.object.Object):
         self.inherited_xanchor = None
         self.inherited_yanchor = None
 
+        for i in uniforms:
+            setattr(self, i, None)
+
     def take_state(self, ts):
 
         self.nearest = ts.nearest
@@ -192,7 +208,10 @@ class TransformState(renpy.object.Object):
         self.crop_relative = ts.crop_relative
         self.corner1 = ts.corner1
         self.corner2 = ts.corner2
-        self.size = ts.size
+
+        self.xsize = ts.xsize
+        self.ysize = ts.ysize
+        self.fit = ts.fit
         self.maxsize = ts.maxsize
 
         self.xpan = ts.xpan
@@ -200,10 +219,17 @@ class TransformState(renpy.object.Object):
         self.xtile = ts.xtile
         self.ytile = ts.ytile
 
+        self.matrixcolor = ts.matrixcolor
+        self.shader = ts.shader
+        self.mesh = ts.mesh
+
         self.last_angle = ts.last_angle
 
         self.debug = ts.debug
         self.events = ts.events
+
+        for i in uniforms:
+            setattr(self, i, getattr(ts, i))
 
         # Take the computed position properties, not the
         # raw ones.
@@ -264,7 +290,10 @@ class TransformState(renpy.object.Object):
         diff2("crop_relative", newts.crop_relative, self.crop_relative)
         diff2("corner1", newts.corner1, self.corner1)
         diff2("corner2", newts.corner2, self.corner2)
-        diff2("size", newts.size, self.size)
+
+        diff2("xsize", newts.xsize, self.xsize)
+        diff2("ysize", newts.ysize, self.ysize)
+        diff2("fit", newts.fit, self.fit)
         diff2("maxsize", newts.maxsize, self.maxsize)
 
         diff4("xpos", newts.xpos, newts.inherited_xpos, self.xpos, self.inherited_xpos)
@@ -281,8 +310,17 @@ class TransformState(renpy.object.Object):
         diff2("xtile", newts.xtile, self.xtile)
         diff2("ytile", newts.ytile, self.ytile)
 
+        diff2("matrixcolor", newts.matrixcolor, self.matrixcolor)
+
+        # It doesn't make sense to interpolate these.
+        # diff2("shader", newts.shader, self.shader)
+        # diff2("mesh", newts.mesh, self.mesh)
+
         diff2("debug", newts.debug, self.debug)
         diff2("events", newts.events, self.events)
+
+        for i in uniforms:
+            diff2(i, getattr(newts, i), getattr(self, i))
 
         return rv
 
@@ -399,6 +437,16 @@ class TransformState(renpy.object.Object):
 
     offset = property(get_offset, set_offset)
 
+    def get_size(self):
+        return self.xsize, self.ysize
+
+    def set_size(self, value):
+        if value is None:
+            value = (None, None)
+        self.xsize, self.ysize = value
+
+    size = property(get_size, set_size)
+
     def set_xcenter(self, value):
         self.xpos = value
         self.xanchor = 0.5
@@ -477,7 +525,11 @@ class Transform(Container):
     crop_relative = Proxy("crop_relative")
     corner1 = Proxy("corner1")
     corner2 = Proxy("corner2")
+
+    xsize = Proxy("xsize")
+    ysize = Proxy("ysize")
     size = Proxy("size")
+    fit = Proxy("fit")
     maxsize = Proxy("maxsize")
 
     delay = Proxy("delay")
@@ -495,6 +547,9 @@ class Transform(Container):
     ypan = Proxy("ypan")
     xtile = Proxy("xtile")
     ytile = Proxy("ytile")
+
+    shader = Proxy("shader")
+    mesh = Proxy("mesh")
 
     debug = Proxy("debug")
     events = Proxy("events")
@@ -824,6 +879,7 @@ class Transform(Container):
 
         self.child = child
         self.children = [ child ]
+
         self.child_st_base = self.st
 
         child.per_interact()
@@ -871,7 +927,7 @@ class Transform(Container):
         if not offsets:
             return None
 
-        for i in range(len(self.children)-1, -1, -1):
+        for i in range(len(self.children) - 1, -1, -1):
 
             d = children[i]
             xo, yo = offsets[i]
@@ -1047,3 +1103,30 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
     def _show(self):
         super(ATLTransform, self)._show()
         self.execute(self, self.st, self.at)
+
+
+uniforms = set()
+
+
+def add_uniform(name):
+    """
+    Adds a uniform with `name` to Transform and ATL.
+    """
+
+    if name in uniforms:
+        return
+
+    if not name.startswith("u_"):
+        return
+
+    if name.startswith("u_renpy"):
+        return
+
+    if name in renpy.gl2.gl2draw.standard_uniforms:
+        return
+
+    uniforms.add(name)
+    setattr(TransformState, name, None)
+    setattr(Transform, name, Proxy(name))
+    renpy.atl.PROPERTIES[name] = renpy.atl.any_object
+

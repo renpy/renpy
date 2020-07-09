@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -247,7 +247,7 @@ init -1700 python:
                 renpy.predict_screen(s)
                 return
 
-    config.predict_callbacks.append(_predict_screens)
+    config.expensive_predict_callbacks.append(_predict_screens)
 
 
     ##########################################################################
@@ -369,6 +369,8 @@ zoomout
 """.split():
 
         renpy.lint.renpy_builtins.remove(i)
+
+    del i
 
 # After init, make some changes based on if config.developer is True.
 init 1700 python hide:

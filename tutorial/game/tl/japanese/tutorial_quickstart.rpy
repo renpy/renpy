@@ -670,7 +670,7 @@ translate japanese tutorial_music_1d3e9fd2:
 translate japanese tutorial_music_aa01c19d:
 
     # e "Ren'Py has separate mixers for sound, music, and voices, so the player can adjust them as they like."
-    e "Ren'Pyは sound、music、voices に別々のミキサーを持っているので、プレイヤーは好みに合わせてそれらを調整できます。"
+    e "Ren'Pyは sound、music、voices に独立したミキサーを持っているので、プレイヤーは好みに合わせてそれらを調整できます。"
 
 # game/tutorial_quickstart.rpy:492
 translate japanese tutorial_menus_0426904b:

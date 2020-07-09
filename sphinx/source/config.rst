@@ -1246,9 +1246,10 @@ Rarely or Internally Used
 .. var:: config.missing_label_callback = None
 
     If not None, this function is called when Ren'Py attempts to access
-    a label that does not exist in the game. It should return the name of
-    a label to use as a replacement for the missing label, or None to cause
-    Ren'Py to raise an exception.
+    a label that does not exist in the game. The callback should take a
+    single parameter, the name of the missing label. It should return the
+    name of a label to use as a replacement for the missing label, or None
+    to cause Ren'Py to raise an exception.
 
 .. var:: config.mouse_hide_time = 30
 

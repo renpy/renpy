@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -43,6 +43,7 @@ import weakref
 import array
 import time
 import math
+import random
 
 import renpy.uguu.gl as uguugl
 
@@ -274,6 +275,9 @@ cdef class GL2Draw:
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
         else:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 1);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_COMPATIBILITY)
 
     def init(self, virtual_size):
         """
@@ -439,7 +443,8 @@ cdef class GL2Draw:
             self.quit_fbo()
             self.shader_cache.clear()
 
-        pygame.display.get_window().recreate_gl_context()
+        if renpy.android or renpy.ios:
+            pygame.display.get_window().recreate_gl_context()
 
         # Are we in fullscreen mode?
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
@@ -492,10 +497,10 @@ cdef class GL2Draw:
         # The location of the virtual screen on the physical screen, in
         # physical pixels.
         self.physical_box = (
-            int(px_padding / 2),
-            int(py_padding / 2),
-            pwidth - int(px_padding),
-            pheight - int(py_padding),
+            px_padding / 2,
+            py_padding / 2,
+            pwidth - px_padding,
+            pheight - py_padding,
             )
 
         # The scaling factor of physical_pixels to drawable pixels.
@@ -504,14 +509,17 @@ cdef class GL2Draw:
         # The location of the viewport, in drawable pixels.
         self.drawable_viewport = tuple(i * self.draw_per_phys for i in self.physical_box)
 
+        dwidth = self.drawable_viewport[2]
+        dheight = self.drawable_viewport[3]
+
         # How many drawable pixels there are per virtual pixel?
-        self.draw_per_virt = (1.0 * self.drawable_size[0] / pwidth) * (1.0 * view_width / vwidth)
+        self.draw_per_virt = 1.0 * self.drawable_viewport[2] / vwidth
 
         # Matrices that transform from virtual space to drawable space, and vice versa.
-        self.virt_to_draw = Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
-        self.draw_to_virt = Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
+        self.virt_to_draw = Matrix2D(1.0 * dwidth / vwidth, 0, 0, 1.0 * dheight / vheight)
+        self.draw_to_virt = Matrix2D(1.0 * vwidth / dwidth, 0, 0, 1.0 * vheight / dheight)
 
-        self.draw_transform = Matrix.cscreen_projection(self.drawable_size[0], self.drawable_size[1])
+        self.draw_transform = Matrix.cscreen_projection(self.drawable_viewport[2], self.drawable_viewport[3])
 
         self.init_fbo()
         self.texture_loader.init()
@@ -568,6 +576,8 @@ cdef class GL2Draw:
             self.texture_loader = None
 
         self.quit_fbo()
+
+        self.shader_cache.save()
 
 
     def init_fbo(GL2Draw self):
@@ -733,7 +743,7 @@ cdef class GL2Draw:
 
         color = (r, g, b, a)
 
-        return Model((w, h), mesh, ("renpy.solid", ), { "uSolidColor" : color })
+        return Model((w, h), mesh, ("renpy.solid", ), { "u_renpy_solid_color" : color })
 
     def flip(self):
         """
@@ -858,10 +868,10 @@ cdef class GL2Draw:
                 uniforms.update(r.uniforms)
 
             for i, c in enumerate(r.children):
-                uniforms["uTex" + str(i)] = self.render_to_texture(c[0])
+                uniforms["tex" + str(i)] = self.render_to_texture(c[0])
 
             if r.mesh is True:
-                mesh = uniforms["uTex0"].mesh
+                mesh = uniforms["tex0"].mesh
             else:
                 mesh = r.mesh
 
@@ -930,7 +940,7 @@ cdef class GL2Draw:
 
         # Use the context to draw the surface tree.
         context = GL2DrawingContext(self)
-        context.draw(what, transform, False)
+        context.draw(what, transform, None, False)
 
         cdef unsigned char pixel[4]
         glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
@@ -1125,12 +1135,27 @@ cdef class GL2DrawingContext:
     # The uniforms to use.
     cdef dict uniforms
 
+    # The value of half_drawable_size for the renpy.aligned shader.
+    cdef tuple half_drawable_size
+
+    # The value of pixel_center_offset for the renpy.aligned shader.
+    cdef tuple pixel_center_offset
+
+    # Should nearest neighbor drawing be used.
+    cdef bint nearest
+
     def __init__(self, GL2Draw draw):
         self.gl2draw = draw
 
         self.shaders = tuple()
         self.uniforms = dict()
 
+        dwidth, dheight = self.gl2draw.drawable_viewport[2:]
+
+        self.half_drawable_size = ((dwidth - .01) / 2, (dheight - .01) / 2)
+        self.pixel_center_offset = ( 0.5 if dwidth % 2 else 0.0, 0.5 if dheight % 2 else 0.0)
+
+        self.nearest = False
 
     def draw_model(self, model, Matrix transform, Polygon clip_polygon, bint subpixel):
 
@@ -1155,18 +1180,31 @@ cdef class GL2DrawingContext:
         else:
             shaders = model.shaders
 
+        if not subpixel:
+            shaders += ( renpy.config.drawable_align_shader, )
+
         program = self.gl2draw.shader_cache.get(shaders)
 
         program.start()
+
+        if self.nearest:
+            program.use_nearest()
+
         model.program_uniforms(program)
 
         if self.uniforms:
             program.set_uniforms(self.uniforms)
 
-        program.set_uniform("uTransform", transform)
+        if not subpixel:
+            program.set_uniform("u_renpy_half_drawable_size", self.half_drawable_size)
+            program.set_uniform("u_renpy_pixel_center_offset", self.pixel_center_offset)
+
+        program.set_uniform("u_transform", transform)
+        program.set_uniform("u_time", renpy.display.interface.frame_time)
+        program.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
+
         program.draw(mesh)
         program.finish()
-
 
     def draw(self, what, Matrix transform, Polygon clip_polygon, bint subpixel):
         """
@@ -1183,9 +1221,10 @@ cdef class GL2DrawingContext:
 
         cdef tuple old_shaders = self.shaders
         cdef dict old_uniforms = self.uniforms
+        cdef bint old_nearest = self.nearest
 
         if isinstance(what, Surface):
-            what = self.draw.load_texture(what)
+            what = self.gl2draw.load_texture(what)
 
         if isinstance(what, Model):
             self.draw_model(what, transform, clip_polygon, subpixel)
@@ -1210,15 +1249,8 @@ cdef class GL2DrawingContext:
                 else:
                     clip_polygon = new_clip_polygon
 
-            if (r.alpha != 1.0) or (r.over != 1.0):
-                if "renpy.alpha" not in self.shaders:
-                    self.shaders = self.shaders + ("renpy.alpha", )
-
-                self.uniforms = dict(self.uniforms)
-                self.uniforms["uAlpha"] = r.alpha * self.uniforms.get("uAlpha", 1.0)
-                self.uniforms["uOver"] = r.over * self.uniforms.get("uOver", 1.0)
-
-            # TODO: Handle r.nearest.
+            if r.nearest:
+                self.nearest = True
 
             if r.properties is not None:
                 if "depth" in r.properties:
@@ -1241,7 +1273,12 @@ cdef class GL2DrawingContext:
 
             if r.uniforms is not None:
                 self.uniforms = dict(self.uniforms)
-                self.uniforms.update(r.uniforms)
+
+                for k, v in r.uniforms.items():
+                    if (k in self.uniforms) and (k in renpy.config.merge_uniforms):
+                        self.uniforms[k] = renpy.config.merge_uniforms[k](self.uniforms[k], v)
+                    else:
+                        self.uniforms[k] = v
 
             for child, cx, cy, focus, main in r.visible_children:
 
@@ -1275,5 +1312,9 @@ cdef class GL2DrawingContext:
             # Restore the state.
             self.shaders = old_shaders
             self.uniforms = old_uniforms
+            self.nearest = old_nearest
 
         return 0
+
+# A set of uniforms that are defined by Ren'Py, and shouldn't be set in ATL.
+standard_uniforms = { "u_transform", "u_time", "u_random" }

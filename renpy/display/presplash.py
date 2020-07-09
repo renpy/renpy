@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -108,7 +108,8 @@ def end():
 
     if renpy.emscripten:
         # presplash handled on the JavaScript side, because emscripten
-        # currently does not support destroying/recreating GL contexts
+        # currently does not support destroying/recreating GL contexts;
+        # in addition browsers support animated webp
         import emscripten
         emscripten.run_script(r"""presplashEnd();""")
 

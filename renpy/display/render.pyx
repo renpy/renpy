@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1472,6 +1472,32 @@ cdef class Render:
             self.forward *= Matrix2D(1.0 / xzoom, 0, 0, 1.0 / yzoom)
         else:
             self.forward *= Matrix2D(0, 0, 0, 0)
+
+    def add_shader(self, shader):
+        """
+        Adds a shader to the list of shaders that will be used to render
+        this Render and its children.
+        """
+
+        if self.shaders is None:
+            self.shaders = (shader,)
+            return
+
+        if shader in self.shaders:
+            return
+
+        self.shaders = self.shaders + (shader,)
+
+    def add_uniform(self, name, value):
+        """
+        Adds a uniform with the given name and value that will be passed
+        to the shaders that render this Render and its children.
+        """
+
+        if self.uniforms is None:
+            self.uniforms = { name : value }
+        else:
+            self.uniforms[name] = value
 
 class Canvas(object):
 

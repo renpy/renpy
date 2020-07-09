@@ -147,8 +147,11 @@ There are certain types that cannot be pickled:
 * Inner functions and lambdas.
 
 By default, Ren'Py uses the cPickle module to save the game. Setting
-:var:`config.use_cpickle` will make Ren'Py use the pickle module instead. This
-makes the game slower, but is better at reporting save errors.
+:var:`config.use_cpickle` to False will make Ren'Py use the pickle
+module instead. This makes the game slower, but is better at reporting
+save errors under Python 2.x. Note that this setting has no effect on
+Python 3, as the system chooses the implementation transparently in
+that case.
 
 
 Save Functions and Variables

@@ -70,7 +70,7 @@ translate japanese screen_displayable_properties_8a3a8635:
 translate japanese add_displayable_ec121c5c:
 
     # e "Sometimes you'll have a displayable, like an image, that you want to add to a screen."
-    e "時々、displayableをimageのようにスクリーンに追加したい場合があるでしょう。"
+    e "時にdisplayableをimageのようにスクリーンに追加したい場合があるでしょう。"
 
 # game/tutorial_screen_displayables.rpy:165
 translate japanese add_displayable_7ec3e2b0:
@@ -280,7 +280,7 @@ translate japanese button_displayables_372dcc0f:
 translate japanese button_displayables_a6b270ff:
 
     # e "Actions can do many things, like setting variables, showing screens, jumping to a label, or returning a value. There are many {a=https://www.renpy.org/doc/html/screen_actions.html}actions in the Ren'Py documentation{/a}, and you can also write your own."
-    e "アクションによって、変数の設定やスクリーンの表示、ラベルへの移動、値を返すなど様々なことができます。{a=https://ja.renpy.org/doc/html/screen_actions.html}Ren'pyドキュメンテーション{/a}にはたくさんのアクションが掲載されていますし、あなた自身のアクションを記述もできます。"
+    e "アクションによって、変数の設定やスクリーンの表示、ラベルへの移動、値を返すなど多様なことができます。{a=https://ja.renpy.org/doc/html/screen_actions.html}Ren'pyドキュメンテーション{/a}にはたくさんのアクションが掲載されていますし、あなた自身のアクションを記述もできます。"
 
 # game/tutorial_screen_displayables.rpy:458
 translate japanese button_displayables_4c600d20:
@@ -574,7 +574,7 @@ translate japanese imagemap_done_b6cebf2b:
 translate japanese viewport_displayables_e509d50d:
 
     # e "Sometimes, you'll want to display something bigger than the screen. That's what the viewport displayable is for."
-    e "時々、スクリーンより大きなものを表示したくなることがあるかと思います。そのようなときに使えるのがビューポートです。"
+    e "時にスクリーンより大きなものを表示したくなることがあるかと思います。そのようなときに使えるのがビューポートです。"
 
 # game/tutorial_screen_displayables.rpy:803
 translate japanese viewport_displayables_9853b0e3:
@@ -586,7 +586,7 @@ translate japanese viewport_displayables_9853b0e3:
 translate japanese viewport_displayables_778668c8:
 
     # e "By default the viewport can't be moved, so we give the draggable, mousewheel, and arrowkeys properties to allow it to be moved in multiple ways."
-    e "デフォルトのままではビューポートが動かせないので、draggableプロパティやmousewheelプロパティ、arrowkeysプロパティを与えて様々な方法で動かせるようにします。"
+    e "デフォルトのままではビューポートが動かせないので、draggableプロパティやmousewheelプロパティ、arrowkeysプロパティを与えて多様な方法で動かせるようにします。"
 
 # game/tutorial_screen_displayables.rpy:820
 translate japanese viewport_displayables_bbd63377:

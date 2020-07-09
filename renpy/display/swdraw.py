@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -708,6 +708,13 @@ class SWDraw(object):
         return 0, 0
 
     def init(self, virtual_size):
+
+        # These disable a failed load of ANGLE.
+        import renpy.uguu.angle
+        renpy.uguu.angle.load_gl()
+
+        pygame.display.gl_reset_attributes()
+        pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
 
         # Reset before resize.
         self.reset()

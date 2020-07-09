@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1747,6 +1747,10 @@ class Alpha(renpy.display.core.Displayable):
         rv.blit(rend, (0, 0))
         rv.alpha = alpha
 
+        rv.add_shader("renpy.alpha")
+        rv.add_uniform("u_renpy_alpha", alpha)
+        rv.add_uniform("u_renpy_over", 1.0)
+
         return rv
 
 
@@ -1882,7 +1886,7 @@ class Flatten(Container):
         rv.operation = renpy.display.render.FLATTEN
 
         rv.mesh = True
-        rv.shaders = ("renpy.texture",)
+        rv.add_shader("renpy.texture")
 
         self.offsets = [ (0, 0) ]
 
@@ -1935,6 +1939,11 @@ class AlphaMask(Container):
         rv.operation_alpha = 1.0
         rv.operation_complete = 256.0 / (256.0 + 256.0)
         rv.operation_parameter = 256
+
+        rv.mesh = True
+        rv.add_shader("renpy.imagedissolve")
+        rv.add_uniform("u_renpy_dissolve_offset", 0)
+        rv.add_uniform("u_renpy_dissolve_multiplier", 1.0)
 
         rv.blit(mr, (0, 0), focus=False, main=False)
         rv.blit(nr, (0, 0), focus=False, main=False)

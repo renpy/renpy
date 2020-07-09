@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -179,7 +179,6 @@ init -1500 python:
 
             text = "\n".join(self.name)
 
-            # Figure out the child.
             rv = Fixed(
                 Transform(image, crop=crop, size=size, xzoom=xzoom),
                 Text(text, pos=textpos, xanchor=0.5, yanchor=0.5, style="_default", color="#aaa", text_align=0.5),
@@ -193,10 +192,15 @@ init -1500 python:
         _duplicatable = True
 
         def _duplicate(self, args):
+            if not self._duplicatable:
+                return False
+
             args = args or self._args
 
             rv = Placeholder(self.base, self.full, self.flip)
             rv.name = list(args.name) + list(args.args)
+            rv._duplicatable = False
+
             return rv
 
         def visit(self):

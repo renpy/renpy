@@ -58,7 +58,7 @@ translate japanese styles_menu_a4a6913e:
 translate japanese style_basics_9a79ef89:
 
     # e "Styles let a displayable look different from game to game, or even inside the same game."
-    e "スタイルはDisplayableにゲームごとや同じゲーム内で様々な外見をとらせます。"
+    e "スタイルはDisplayableにゲームごとや同じゲーム内で多様な外見をとらせます。"
 
 # game/indepth_style.rpy:103
 translate japanese style_basics_48777f2c:
@@ -298,7 +298,7 @@ translate japanese style_text_1a46cd43:
 translate japanese style_text_472f382d:
 
     # e "The justify property makes the text justified, lining all but the last line up on the left and the right side."
-    e "justifyプロパティーはテキストをすべてに両端揃えで並べますが、最終行は左または右側に寄せます。"
+    e "justifyプロパティーはテキストをすべてに両端ぞろえで並べますが、最終行は左または右側に寄せます。"
 
 # game/indepth_style.rpy:405
 translate japanese style_text_87b075f8:
@@ -388,7 +388,7 @@ translate japanese style_text_acf8a0e1:
 translate japanese style_text_785729cf:
 
     # e "When the layout property is set to 'subtitle', the line breaking algorithm is changed to try to make all lines even in length, as subtitles usually are."
-    e "layoutプロパティーが'subtitle'ではサイブタイトルが通常するようにすべての行の長さを揃えようとするアルゴリズムに変更します。"
+    e "layoutプロパティーが'subtitle'ではサイブタイトルが通常するようにすべての行の長さをそろえようとするアルゴリズムに変更します。"
 
 # game/indepth_style.rpy:524
 translate japanese style_text_9c26f218:

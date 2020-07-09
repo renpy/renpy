@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -334,7 +334,8 @@ init -1500 python:
             store.nvl_list.append((who, what, kwargs))
 
         def pop_nvl_list(self):
-            store.nvl_list.pop()
+            if store.nvl_list:
+                store.nvl_list.pop()
 
         def do_add(self, who, what, multiple=None):
 
@@ -366,6 +367,8 @@ init -1500 python:
             else:
                 checkpoint = True
 
+            print("PUSH!")
+
             if multiple is not None:
                 self.push_nvl_list(who, what, multiple=multiple)
             else:
@@ -379,6 +382,7 @@ init -1500 python:
                 multiple=multiple,
                 **display_args)
 
+            print("POP!")
             self.pop_nvl_list()
 
         def do_done(self, who, what, multiple=None):

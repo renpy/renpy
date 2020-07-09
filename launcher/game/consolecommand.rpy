@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -74,11 +74,13 @@ init python:
             self.f.close()
             os.chmod(self.fn, 0o755)
 
+            command = renpy.fsencode('"{}"'.format(self.fn.replace("\"", "\\\"")))
+
             if renpy.windows:
-                subprocess.Popen([ renpy.fsencode(self.fn) ], shell=True)
+                subprocess.Popen([ command ], shell=True)
             elif renpy.macintosh:
-                subprocess.Popen([ "open", "-a", "Terminal", renpy.fsencode(self.fn) ])
+                subprocess.Popen([ "open", "-a", "Terminal", command ])
             else:
-                subprocess.Popen([ "x-terminal-emulator", "-e", renpy.fsencode(self.fn) ])
+                subprocess.Popen([ "x-terminal-emulator", "-e", command ])
 
             interface.interaction(_("INFORMATION"), _("The command is being run in a new operating system console window."), pause=2.5)

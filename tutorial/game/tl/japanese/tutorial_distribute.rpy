@@ -46,7 +46,7 @@ translate japanese distribute_dd1af4dd:
 translate japanese distribute_0b547b7b:
 
     # e "These mobile platforms can be a bit more complicated. While Android apps can be built everywhere, iOS requires a Mac."
-    e "これらのモバイルプラットフォームは少々複雑です。Androidアプリはどこでも生成できますが、iOS向けであればMacが必要です。"
+    e "これらのモバイルプラットフォームは少し複雑です。Androidアプリはどこでも生成できますが、iOS向けであればMacが必要です。"
 
 # game/tutorial_distribute.rpy:25
 translate japanese distribute_50a57bcf:

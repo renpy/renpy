@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -278,6 +278,10 @@ init python in distribute:
 
         def __init__(self, path):
             self.path = path
+
+            if os.path.isdir(path):
+                shutil.rmtree(path)
+
             self.mkdir(path)
 
         def add_file(self, name, path, xbit):

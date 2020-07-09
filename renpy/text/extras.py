@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -49,6 +49,7 @@ text_tags = dict(
     color=True,
     outlinecolor=True,
     size=True,
+    noalt=True,
     nw=False,
     s=True,
     rt=True,
@@ -165,6 +166,45 @@ def filter_text_tags(s, allow=None, deny=None):
                     rv.append("{" + text + "}")
         else:
             rv.append(text)
+
+    return "".join(rv)
+
+
+def filter_alt_text(s):
+    """
+    Returns a copy of `s` with the contents of text tags that shouldn't be in
+    alt text filtered. This returns just the text to say, with no text tags
+    at all in it.
+    """
+
+    tokens = textsupport.tokenize(str(s))
+
+    rv = [ ]
+
+    active = set()
+
+    for tokentype, text in tokens:
+
+        if tokentype == PARAGRAPH:
+            rv.append("\n")
+        elif tokentype == TAG:
+            kind = text.partition("=")[0]
+
+            if kind.startswith("/"):
+                kind = kind[1:]
+                end = True
+            else:
+                end = False
+
+            if kind in renpy.config.tts_filter_tags:
+                if end:
+                    active.discard(kind)
+                else:
+                    active.add(kind)
+
+        else:
+            if not active:
+                rv.append(text)
 
     return "".join(rv)
 

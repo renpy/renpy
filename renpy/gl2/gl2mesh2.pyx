@@ -159,13 +159,65 @@ cdef class Mesh2(Mesh):
 
         return rv
 
+
+    @staticmethod
+    def texture_grid_mesh(
+        int width, int height,
+        double pl, double pb, double pr, double pt,
+        double tl, double tb, double tr, double tt
+        ):
+
+        cdef Mesh2 rv = Mesh2(TEXTURE_LAYOUT, width * height, 2 * (width - 1) * (height - 1))
+
+        cdef int x
+        cdef int y
+        cdef int i
+
+        cdef int p0
+        cdef int p1
+        cdef int p2
+        cdef int p3
+
+        rv.points = width * height
+
+        for 0 <= y < height:
+            for 0 <= x < width:
+                i = x + y * width
+
+                rv.point[i].x = pl + (pr - pl) * (1.0 * x / (width - 1))
+                rv.point[i].y = pb + (pt - pb) * (1.0 * y / (height - 1))
+
+                rv.attribute[i * 2] = tl + (tr - tl) * (1.0 * x / (width - 1))
+                rv.attribute[i * 2 + 1] = tb + (tt - tb) * (1.0 * y / (height - 1))
+
+        rv.triangles = 2 * (width - 1) * (height - 1)
+
+        for 0 <= y < height - 1:
+            for 0 <= x < width - 1:
+
+                i = 6 * (x + y * (width - 1))
+
+                p0 = x + y * width
+                p1 = p0 + 1
+                p2 = p0 + width + 1
+                p3 = p0 + width
+
+                rv.triangle[i + 0] = p0
+                rv.triangle[i + 1] = p1
+                rv.triangle[i + 2] = p2
+
+                rv.triangle[i + 3] = p0
+                rv.triangle[i + 4] = p2
+                rv.triangle[i + 5] = p3
+
+        return rv
+
     cpdef Mesh2 crop(Mesh2 self, Polygon p):
         """
         Crops this mesh against Polygon `p`, and returns a new Mesh2.
         """
 
         return crop_mesh(self, p)
-
 
 
 ###############################################################################

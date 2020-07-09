@@ -31,6 +31,7 @@ cdef class Uniform:
         return
 
     cdef void finish(self):
+        self.ready = False
         return
 
 cdef class UniformFloat(Uniform):
@@ -58,8 +59,8 @@ cdef class UniformSampler2D(Uniform):
 
     def __init__(self, program, location):
         Uniform.__init__(self, program, location)
-        self.sampler = program.sampler
-        program.sampler += 1
+        self.sampler = program.samplers
+        program.samplers += 1
 
     cdef void assign(self, data):
         glActiveTexture(GL_TEXTURE0 + self.sampler)
@@ -70,9 +71,6 @@ cdef class UniformSampler2D(Uniform):
         else:
             glBindTexture(GL_TEXTURE_2D, data)
 
-    cdef void finish(self):
-        glActiveTexture(GL_TEXTURE0 + self.sampler)
-        return
 
 
 UNIFORM_TYPES = {
@@ -118,8 +116,11 @@ cdef class Program:
         # A list of Attribute objects
         self.attributes = [ ]
 
-        # The index of the next sampler to be added.
-        self.sampler = 0
+        # The number of samplers that have been added.
+        self.samplers = 0
+
+        # Should the next draw use nearest neighbor?
+        self.nearest = False
 
     def find_variables(self, source):
 
@@ -244,6 +245,10 @@ cdef class Program:
 
     def start(self):
         glUseProgram(self.program)
+        self.nearest = False
+
+    def use_nearest(self):
+        self.nearest = True
 
     def set_uniform(self, name, value):
         cdef Uniform u
@@ -268,10 +273,12 @@ cdef class Program:
     def draw(self, Mesh mesh):
 
         cdef Attribute a
+        cdef Uniform u
+        cdef int i
 
         # Set up the attributes.
         for a in self.attributes:
-            if a.name == "aPosition":
+            if a.name == "a_position":
                 glVertexAttribPointer(a.location, mesh.point_size, GL_FLOAT, GL_FALSE, mesh.point_size * sizeof(float), mesh.point_data)
             else:
                 offset = mesh.layout.offset.get(a.name, None)
@@ -282,7 +289,24 @@ cdef class Program:
 
             glEnableVertexAttribArray(a.location)
 
+        for name, u in self.uniforms.iteritems():
+            if not u.ready:
+                self.missing("uniform", name)
+
+        if self.nearest:
+
+            for 0 <= i < self.samplers:
+                glActiveTexture(GL_TEXTURE0 + i)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
         glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_SHORT, mesh.triangle)
+
+        if self.nearest:
+            for 0 <= i < self.samplers:
+                glActiveTexture(GL_TEXTURE0 + i)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
 
 
     def finish(Program self):

@@ -1,4 +1,4 @@
-# Copyright 2004-2019 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -823,6 +823,9 @@ class Layout(object):
 
                 ts.draw(glyphs, di, self.add_left, self.add_top, self)
 
+            if renpy.config.debug_text_alignment:
+                self.make_alignment_grid(surf)
+
             renpy.display.draw.mutated_surface(surf)
             tex = renpy.display.draw.load_texture(surf)
 
@@ -852,6 +855,22 @@ class Layout(object):
                 renpy.display.to_log.write("File \"%s\", line %d, text overflow:", filename, line)
                 renpy.display.to_log.write("     Available: (%d, %d) Laid-out: (%d, %d)", width, height, sw, sh)
                 renpy.display.to_log.write("     Text: %r", text.text)
+
+    def make_alignment_grid(self, surf):
+        w, h = surf.get_size()
+
+        for x in range(w):
+            for y in range(h):
+
+                if surf.get_at((x, y))[3] > 0:
+                    continue
+
+                if x == 0 or y == 0 or x == w - 1 or y == h - 1:
+                    surf.set_at((x, y), (255, 0, 0, 255))
+                elif (x ^ y) & 1:
+                    surf.set_at((x, y), (255, 255, 255, 255))
+                else:
+                    surf.set_at((x, y), (0, 0, 0, 255))
 
     def scale(self, n):
         if n is None:
@@ -1184,6 +1203,9 @@ class Layout(object):
                 elif tag == "alt":
                     ts = push()
                     ts.ignore = True
+
+                elif tag == "noalt":
+                    ts = push()
 
                 elif tag[0] == "#":
                     pass
@@ -1743,7 +1765,7 @@ class Text(renpy.display.core.Displayable):
         rv = "".join(rv)
         _, _, rv = rv.rpartition("{fast}")
 
-        rv = renpy.translation.dialogue.notags_filter(rv)
+        rv = renpy.text.extras.filter_alt_text(rv)
 
         alt = self.style.alt
 
