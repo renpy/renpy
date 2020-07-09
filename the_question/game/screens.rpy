@@ -811,7 +811,7 @@ screen preferences():
                         textbutton "简体中文" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("simplified_chinese")
                         textbutton "繁體中文" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("traditional_chinese")
                         textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
-                        textbutton "Japanese" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("japanese")
+                        textbutton "日本語" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("japanese")
 
 #end language_picker
 
