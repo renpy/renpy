@@ -66,6 +66,18 @@ def init():
     if error:
         raise FreetypeError(error)
 
+cdef bint is_vs(unsigned int char):
+    if 0xfe00 <= char <= 0xfe0f: # VS1-16
+        return True
+
+    elif 0xe0100 <= char <= 0xe01ef: # VS17-256
+        return True
+
+    elif 0x180b <= char <= 0x180d: # FVS1-3
+        return True
+
+    return False
+
 cdef bint is_zerowidth(unsigned int char):
     if char == 0x200b: # Zero-width space.
         return True
@@ -80,6 +92,9 @@ cdef bint is_zerowidth(unsigned int char):
         return True
 
     if char == 0xfeff: # Zero width non-breaking space.
+        return True
+
+    if is_vs(char): # Variation sequences
         return True
 
     return False
@@ -482,7 +497,7 @@ cdef class FTFont:
         cdef FT_Face face
         cdef list rv
         cdef int len_s
-        cdef Py_UNICODE c, next_c
+        cdef Py_UNICODE c, next_c, vs
         cdef FT_UInt index, next_index
         cdef int error
         cdef Glyph gl
@@ -507,7 +522,12 @@ cdef class FTFont:
 
             next_min_advance = 0
             next_c = s[0]
-            next_index = FT_Get_Char_Index(face, next_c)
+
+            if len_s > 1 and is_vs(s[1]):
+                vs = s[1]
+                next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
+            else:
+                next_index = FT_Get_Char_Index(face, next_c)
 
         for i from 0 <= i < len_s:
 
@@ -527,7 +547,12 @@ cdef class FTFont:
 
             if i < len_s - 1:
                 next_c = s[i + 1]
-                next_index = FT_Get_Char_Index(face, next_c)
+
+                if i < len_s - 2 and is_vs(s[i + 2]):
+                    vs = s[i + 2]
+                    next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
+                else:
+                    next_index = FT_Get_Char_Index(face, next_c)
 
                 error = FT_Get_Kerning(face, index, next_index, FT_KERNING_DEFAULT, &kerning)
                 if error:

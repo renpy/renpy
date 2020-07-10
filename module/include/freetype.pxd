@@ -423,6 +423,7 @@ cdef extern from "pyfreetype.h":
 
     FT_Int FT_Get_Charmap_Index(FT_CharMap charmap)
     FT_UInt FT_Get_Char_Index(FT_Face face, FT_ULong charcode)
+    FT_UInt FT_Face_GetCharVariantIndex(FT_Face face, FT_ULong charcode, FT_ULong variantSelector)
     FT_ULong FT_Get_First_Char(FT_Face face, FT_UInt *glyph_index)
     FT_ULong FT_Get_Next_Char(FT_Face face, FT_ULong charcode, FT_UInt *glyph_index)
     FT_UInt FT_Get_Name_Index(FT_Face face, FT_String *glyph_name)
