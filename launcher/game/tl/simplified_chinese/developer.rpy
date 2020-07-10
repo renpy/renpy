@@ -72,3 +72,11 @@ translate simplified_chinese strings:
     # 00console.rpy:690
     old "long: Print the full representation of objects on the console."
     new "long：在控制台中打印出对象的完整表示。"
+
+    # 00console.rpy:883
+    old "escape: Enables escaping of unicode symbols in unicode strings."
+    new "escape: 启用转义 Unicode 字符串中的 Unicode 符号。"
+
+    # 00console.rpy:887
+    old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
+    new "unescape: 禁止转义 Unicode 字符串中的 Unicode 符号，并按原样显示（默认）。"
