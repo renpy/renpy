@@ -30,5 +30,22 @@ TEXTURE_LAYOUT.add_attribute("a_tex_coord", 2)
 
 
 
+cdef class Mesh:
 
+    def get_triangles(self):
+        """
+        Returns the triangles that make up this mesh as triples.
+        """
 
+        cdef int i
+
+        rv = [ ]
+
+        for 0 <= i <= self.triangless:
+            rv.append((
+                self.triangle[i * 3 + 0],
+                self.triangle[i * 3 + 1],
+                self.triangle[i * 3 + 2],
+                ))
+
+        return rv
