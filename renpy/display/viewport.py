@@ -572,21 +572,28 @@ class VPGrid(Viewport):
         if yspacing is None:
             yspacing = self.style.spacing
 
+        left_margin = renpy.display.layout.scale(self.style.left_margin, width)
+        right_margin = renpy.display.layout.scale(self.style.right_margin, width)
+        top_margin = renpy.display.layout.scale(self.style.top_margin, height)
+        bottom_margin = renpy.display.layout.scale(self.style.bottom_margin, height)
+
         rend = renpy.display.render.render(self.children[0], child_width, child_height, st, at)
         cw, ch = rend.get_size()
 
-        tw = (cw + xspacing) * cols - xspacing
-        th = (ch + yspacing) * rows - yspacing
+        tw = (cw + xspacing) * cols - xspacing + left_margin + right_margin
+        th = (ch + yspacing) * rows - yspacing + top_margin + bottom_margin
 
         if self.style.xfill:
             tw = child_width
-            cw = (tw - (cols - 1) * xspacing) // cols
+            cw = (tw - (cols - 1) * xspacing - left_margin - right_margin) // cols
 
         if self.style.yfill:
             th = child_height
-            ch = (th - (rows - 1) * yspacing) // rows
+            ch = (th - (rows - 1) * yspacing - top_margin - bottom_margin) // rows
 
         cxo, cyo, width, height = self.update_offsets(tw, th, st)
+        cxo += left_margin
+        cyo += top_margin
 
         self.offsets = [ ]
 

@@ -104,9 +104,7 @@ text_property_names = [
 text_properties = [ Style(i) for i in text_property_names ]
 text_text_properties = [ PrefixStyle("text_", i) for i in text_property_names ]
 
-window_properties = [ Style(i) for i in [
-    "background",
-    "foreground",
+margin_properties = [ Style(i) for i in [
     "left_margin",
     "right_margin",
     "bottom_margin",
@@ -114,6 +112,9 @@ window_properties = [ Style(i) for i in [
     "xmargin",
     "ymargin",
     "margin",
+    ] ]
+
+padding_properties = [ Style(i) for i in [
     "left_padding",
     "right_padding",
     "top_padding",
@@ -121,8 +122,13 @@ window_properties = [ Style(i) for i in [
     "xpadding",
     "ypadding",
     "padding",
-    "size_group",
     ] ]
+
+window_properties = [ Style(i) for i in [
+    "background",
+    "foreground",
+    "size_group",
+    ] ] + margin_properties + padding_properties
 
 button_properties = [ Style(i) for i in [
     "sound",
@@ -188,7 +194,7 @@ grid_properties = [ Style(i) for i in [
     "spacing",
     "xspacing",
     "yspacing",
-    ] ]
+    ] ] + margin_properties
 
 
 ui_properties = [

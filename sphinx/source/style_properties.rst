@@ -95,6 +95,7 @@ text.::
          color "#fff"
          selected_color "#ff0"
 
+
 Style Property Values
 =====================
 
@@ -229,6 +230,7 @@ List of All Style Properties
 The style properties control the look of the various displayables. Not all
 style properties apply to all displayables, so we've divided them up into
 groups.
+
 
 .. _position-style-properties:
 
@@ -596,7 +598,7 @@ Text Style Properties
 
     Outlines only work with TrueType fonts.
 
-.. style-property: outline_scaling string
+.. style-property:: outline_scaling string
 
     This determines how outline suzels or offsets are scaled when the
     window is scaled.
@@ -644,7 +646,6 @@ Text Style Properties
     The speed of the text is multiplied by this number. This can be
     used to have a character that speaks at a faster-than-normal rate
     of speed.
-
 
 .. style-property:: strikethrough boolean
 
@@ -697,12 +698,14 @@ Text Style Properties
     "none"
         Does not hint the font.
 
+
 .. _window-style-properties:
 
 Window Style Properties
 -----------------------
 
-Window properties are used to specify the look of windows, frames, and buttons.
+Window properties are used to specify the look of windows, frames, and
+buttons. :ref:`margin-style-properties` also form part of this group.
 
 .. style-property:: background displayable or None
 
@@ -717,41 +720,6 @@ Window properties are used to specify the look of windows, frames, and buttons.
 
     If not None, this displayable is drawn above the contents of the
     window.
-
-.. style-property:: left_margin int
-
-    The amount of transparent space to the left of the background, in
-    pixels.
-
-.. style-property:: right_margin int
-
-    The amount of transparent space to the right of the background, in
-    pixels.
-
-.. style-property:: xmargin int
-
-    Equivalent to setting left_margin and right_margin to the same
-    value.
-
-.. style-property:: top_margin int
-
-    The amount of transparent space above the background, in pixels.
-
-.. style-property:: bottom_margin int
-
-    The amount of transparent space below the background, in pixels.
-
-.. style-property:: ymargin int
-
-    Equivalent to setting top_margin and bottom_margin to the same
-    value.
-
-.. style-property:: margin tuple
-
-    When given a two-item tuple, equivalent to setting xmargin and
-    ymargin to the two items. When given a four-item tuple, equivalent
-    to setting left_margin, top_margin, right_margin, and bottom_margin
-    to the four items.
 
 .. style-property:: left_padding int
 
@@ -1017,7 +985,8 @@ These are used for the horizontal and vertical box layouts.
 Grid Style Properties
 ---------------------
 
-These are the use by the grid and vpgrid displayables.
+These are the properties used by the grid and vpgrid displayables.
+:ref:`margin-style-properties` also form part of this group.
 
 .. style-property:: spacing int
 
@@ -1064,3 +1033,47 @@ These are used with the fixed layout.
     with the first item in the box being below the second, and so on. If True,
     this order will be reversed, and the first item in the box will be above
     all other items in the box.
+
+
+.. _margin-style-properties:
+
+Margin Style Properties
+-----------------------
+
+Margin properties are used to add transparent space around some
+displyables. Most notably: windows, frames, buttons and grids.
+
+.. style-property:: left_margin int
+
+    The amount of transparent space to the left of the displayable, in
+    pixels.
+
+.. style-property:: right_margin int
+
+    The amount of transparent space to the right of the displayable, in
+    pixels.
+
+.. style-property:: xmargin int
+
+    Equivalent to setting left_margin and right_margin to the same
+    value.
+
+.. style-property:: top_margin int
+
+    The amount of transparent space above the displayable, in pixels.
+
+.. style-property:: bottom_margin int
+
+    The amount of transparent space below the displayable, in pixels.
+
+.. style-property:: ymargin int
+
+    Equivalent to setting top_margin and bottom_margin to the same
+    value.
+
+.. style-property:: margin tuple
+
+    When given a two-item tuple, equivalent to setting xmargin and
+    ymargin to the two items. When given a four-item tuple, equivalent
+    to setting left_margin, top_margin, right_margin, and bottom_margin
+    to the four items.
