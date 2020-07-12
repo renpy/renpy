@@ -2855,12 +2855,12 @@ class Interface(object):
         self.preloads = [ ]
 
         try:
+            self.start_interact = True
+
             for i in renpy.config.start_interact_callbacks:
                 i()
 
             repeat = True
-
-            self.start_interact = True
 
             while repeat:
                 repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, **kwargs)
