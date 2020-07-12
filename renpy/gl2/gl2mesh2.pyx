@@ -228,7 +228,7 @@ cdef class Mesh2(Mesh):
 
         rv = [ ]
 
-        for 0 <= i <= self.points:
+        for 0 <= i < self.points:
             rv.append((self.point[i].x, self.point[i].y, 0.0, 1.0))
 
         return rv

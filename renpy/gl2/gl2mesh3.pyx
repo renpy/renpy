@@ -182,7 +182,7 @@ cdef class Mesh3(Mesh):
 
         rv = [ ]
 
-        for 0 <= i <= self.points:
+        for 0 <= i < self.points:
             rv.append((self.point[i].x, self.point[i].y, self.point[i].z, 1.0))
 
         return rv

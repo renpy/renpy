@@ -41,7 +41,7 @@ cdef class Mesh:
 
         rv = [ ]
 
-        for 0 <= i <= self.triangless:
+        for 0 <= i < self.triangles:
             rv.append((
                 self.triangle[i * 3 + 0],
                 self.triangle[i * 3 + 1],
