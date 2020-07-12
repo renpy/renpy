@@ -71,7 +71,12 @@ init python:
 
             try:
 
-                cmd = [ "/usr/bin/python", os.path.join(config.gamedir, "tkaskdir.py"), renpy.fsencode(default_path) ]
+                if os.path.exists("/usr/bin/python3"):
+                    system_python = "/usr/bin/python3"
+                else:
+                    system_python = "/usr/bin/python"
+
+                cmd = [ system_python, os.path.join(config.gamedir, "tkaskdir.py"), renpy.fsencode(default_path) ]
 
                 p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
                 choice = p.stdout.read()
@@ -85,10 +90,10 @@ init python:
                 choice = ""
                 path = None
 
-                interface.error(_("Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."), label=None)
+                interface.error(_("Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."), label=None)
 
             if code:
-                interface.error(_("Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."), label=None)
+                interface.error(_("Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."), label=None)
 
             elif choice:
                 path = choice.decode("utf-8")
