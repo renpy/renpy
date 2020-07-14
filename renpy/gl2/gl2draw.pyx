@@ -1170,8 +1170,8 @@ cdef class GL2DrawingContext:
         # If a clip polygon is in place, clip the mesh with it.
         if clip_polygon is not None:
 
-            if model.forward is not IDENTITY:
-                clip_polygon.multiply_matrix(model.forward)
+            if model.reverse is not IDENTITY:
+                clip_polygon.multiply_matrix_inplace(model.forward)
 
             mesh = mesh.crop(clip_polygon)
 
