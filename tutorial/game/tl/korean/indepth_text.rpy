@@ -15,7 +15,7 @@ translate korean text_578c4060:
 translate korean text_60750345:
 
     # e "For example, we might want to have text that is {b}bold{/b}, {i}italic{/i}, {s}struckthrough{/s}, or {u}underlined{/u}."
-    e "예를 들자면, {b}굵게{/b}, {i}기움꼴{/i}, {s}취소선{/s} 또는 밑줄({u}underlined{/u}) 등의 글자가 필요할 수도 있잖아."
+    e "예를 들자면, {b}굵게{/b}, {i}기움꼴{/i}, {s}취소선{/s} 또는 {u}밑줄{/u} 등의 글자가 필요할 수도 있잖아."
 
 # game/indepth_text.rpy:33
 translate korean text_5e1a6ee8:
