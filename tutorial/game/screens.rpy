@@ -1,4 +1,4 @@
-﻿################################################################################
+﻿n################################################################################
 ## Initialization
 ################################################################################
 
@@ -779,7 +779,7 @@ screen preferences():
                     textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
                     textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
-                    textbutton "한국어" text_font "../../launcher/game/fonts/NanumGothic.ttf" action Language("korean")
+                    textbutton "한국어" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("korean")
                     textbutton "日本語" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("japanese")
                     
                     # This should be last.
