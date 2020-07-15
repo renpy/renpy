@@ -65,7 +65,7 @@ cdef class TextureLoader:
 
     def init(self):
 
-        self.ftl_program = self.draw.shader_cache.get(("renpy.ftl",), geometry=False)
+        self.ftl_program = self.draw.shader_cache.get(("renpy.ftl",))
 
         self.allocated = set()
         self.free_list = [ ]

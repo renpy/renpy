@@ -200,7 +200,7 @@ class ShaderCache(object):
         # True if this is dirty, and should be saved to the cache.
         self.dirty = False
 
-    def get(self, partnames, geometry=True):
+    def get(self, partnames):
         """
         Gets a shader, creating it if necessary.
 
@@ -214,8 +214,10 @@ class ShaderCache(object):
             return rv
 
         partnameset = set(partnames)
-        if geometry:
+
+        if "renpy.ftl" not in partnameset:
             partnameset.add(renpy.config.default_shader)
+
         sortedpartnames = tuple(sorted(partnameset))
 
         rv = self.cache.get(sortedpartnames, None)
