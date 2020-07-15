@@ -44,6 +44,9 @@ def geometry(mesh, transform):
 
     print(" ".join(l))
 
+    sxlist = [ ]
+    sylist = [ ]
+
     for i, p in enumerate(points):
 
         px, py, pz, pw = p
@@ -61,3 +64,13 @@ def geometry(mesh, transform):
             tx, ty, tz, tw,
             sx, sy))
 
+        sxlist.append(sx)
+        sylist.append(sy)
+
+    if sxlist:
+        minsx = min(sxlist)
+        minsy = min(sylist)
+        maxsx = max(sxlist)
+        maxsy = max(sylist)
+
+        print("     ({:> 9.4f}, {:< 9.4f}) - ({:> 9.4f}, {:< 9.4f})".format(minsx, minsy, maxsx, maxsy))
