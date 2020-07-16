@@ -825,7 +825,7 @@ cdef class GL2Draw:
 
         # Use the context to draw the surface tree.
         context = GL2DrawingContext(self)
-        context.draw(surf, transform, None, False)
+        context.draw(surf, transform)
 
         self.flip()
 
@@ -940,7 +940,7 @@ cdef class GL2Draw:
 
         # Use the context to draw the surface tree.
         context = GL2DrawingContext(self)
-        context.draw(what, transform, None, False)
+        context.draw(what, transform)
 
         cdef unsigned char pixel[4]
         glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
@@ -1129,43 +1129,23 @@ cdef class GL2DrawingContext:
     # The draw object this context is associated with.
     cdef GL2Draw gl2draw
 
-    # The shaders to use.
-    cdef tuple shaders
-
-    # The uniforms to use.
-    cdef dict uniforms
-
-    # The value of half_drawable_size for the renpy.aligned shader.
-    cdef tuple half_drawable_size
-
-    # The value of pixel_center_offset for the renpy.aligned shader.
-    cdef tuple pixel_center_offset
-
-    # Should nearest neighbor drawing be used.
-    cdef bint nearest
-
     def __init__(self, GL2Draw draw):
         self.gl2draw = draw
 
-        self.shaders = tuple()
-        self.uniforms = dict()
-
         dwidth, dheight = self.gl2draw.drawable_viewport[2:]
 
-        self.half_drawable_size = ((dwidth - .01) / 2, (dheight - .01) / 2)
-        self.pixel_center_offset = ( 0.5 if dwidth % 2 else 0.0, 0.5 if dheight % 2 else 0.0)
+#         self.half_drawable_size = ((dwidth - .01) / 2, (dheight - .01) / 2)
+#         self.pixel_center_offset = ( 0.5 if dwidth % 2 else 0.0, 0.5 if dheight % 2 else 0.0)
 
-        self.nearest = False
-
-    def draw_model(self, model, Matrix transform, Polygon clip_polygon, bint subpixel):
+    def draw_model(self, model, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, bint nearest):
 
         cdef Mesh mesh = model.mesh
 
         if model.reverse is not IDENTITY:
              transform = transform * model.reverse
 
-        if not subpixel and not Matrix.is_drawable_aligned(transform, self.gl2draw.draw_transform):
-            subpixel = True
+#         if not subpixel and not Matrix.is_drawable_aligned(transform, self.gl2draw.draw_transform):
+#             subpixel = True
 
         # If a clip polygon is in place, clip the mesh with it.
         if clip_polygon is not None:
@@ -1175,59 +1155,62 @@ cdef class GL2DrawingContext:
 
             mesh = mesh.crop(clip_polygon)
 
-        if self.shaders:
-            shaders = self.shaders + model.shaders
-        else:
-            shaders = model.shaders
+        if model.shaders:
+            shaders = shaders + model.shaders
 
-        if not subpixel:
-            shaders += ( renpy.config.drawable_align_shader, )
+#         if not subpixel:
+#             shaders += ( renpy.config.drawable_align_shader, )
 
         program = self.gl2draw.shader_cache.get(shaders)
 
         program.start()
 
-        if self.nearest:
+        if nearest:
             program.use_nearest()
-
-        model.program_uniforms(program)
-
-        if self.uniforms:
-            program.set_uniforms(self.uniforms)
-
-        if not subpixel:
-            program.set_uniform("u_renpy_half_drawable_size", self.half_drawable_size)
-            program.set_uniform("u_renpy_pixel_center_offset", self.pixel_center_offset)
 
         program.set_uniform("u_transform", transform)
         program.set_uniform("u_time", renpy.display.interface.frame_time)
         program.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
 
+        model.program_uniforms(program)
+
+        if uniforms:
+            program.set_uniforms(uniforms)
+
+#         if not subpixel:
+#             program.set_uniform("u_renpy_half_drawable_size", self.half_drawable_size)
+#             program.set_uniform("u_renpy_pixel_center_offset", self.pixel_center_offset)
+
         program.draw(mesh)
         program.finish()
 
-    def draw(self, what, Matrix transform, Polygon clip_polygon, bint subpixel):
+    def draw_one(self, what, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, bint nearest):
         """
         This is responsible for walking the surface tree, and drawing any
         Models, Renders, and Surfaces it encounters.
 
         `transform`
             The matrix that transforms texture space into drawable space.
+
+        `clip_polygon`
+            The polygon used to clip children, if known.
+
+        `shaders`
+            A tuple giving the shaders to use.
+
+        `uniforms`
+            A dictionary of uniforms.
         """
 
         cdef Matrix child_transform
         cdef Polygon child_clip_polygon
         cdef Polygon new_clip_polygon
 
-        cdef tuple old_shaders = self.shaders
-        cdef dict old_uniforms = self.uniforms
-        cdef bint old_nearest = self.nearest
-
         if isinstance(what, Surface):
             what = self.gl2draw.load_texture(what)
 
         if isinstance(what, Model):
-            self.draw_model(what, transform, clip_polygon, subpixel)
+            self.draw_model(what, transform, clip_polygon, shaders, uniforms, nearest)
             return
 
         cdef Render r
@@ -1250,41 +1233,31 @@ cdef class GL2DrawingContext:
                     clip_polygon = new_clip_polygon
 
             if r.nearest:
-                self.nearest = True
+                nearest = True
 
             if r.properties is not None:
                 if "depth" in r.properties:
                     glClear(GL_DEPTH_BUFFER_BIT)
                     glEnable(GL_DEPTH_TEST)
 
-            if r.cached_model is not None:
-
-                if (r.reverse is not None) and (r.reverse is not IDENTITY):
-                    transform = transform * r.reverse
-
-                    if clip_polygon is not None:
-                        clip_polygon = clip_polygon.multiply_matrix(r.forward)
-
-                self.draw_model(r.cached_model, transform, clip_polygon, subpixel)
-                return
-
             if r.shaders is not None:
-                self.shaders = self.shaders + r.shaders
+                shaders = shaders + r.shaders
 
             if r.uniforms is not None:
-                self.uniforms = dict(self.uniforms)
+                uniforms = dict(uniforms)
 
                 for k, v in r.uniforms.items():
-                    if (k in self.uniforms) and (k in renpy.config.merge_uniforms):
-                        self.uniforms[k] = renpy.config.merge_uniforms[k](self.uniforms[k], v)
+                    if (k in uniforms) and (k in renpy.config.merge_uniforms):
+                        uniforms[k] = renpy.config.merge_uniforms[k](uniforms[k], v)
                     else:
-                        self.uniforms[k] = v
+                        uniforms[k] = v
 
-            for child, cx, cy, focus, main in r.visible_children:
+            children = r.visible_children
 
-                # The type of cx and cy depends on if this is a subpixel blit or not.
-                if type(cx) is float:
-                    subpixel = True
+            if r.cached_model is not None:
+                children = [ (r.cached_model, 0, 0, False, False) ]
+
+            for child, cx, cy, focus, main in children:
 
                 child_transform = transform
                 child_clip_polygon = clip_polygon
@@ -1301,7 +1274,7 @@ cdef class GL2DrawingContext:
                     if child_clip_polygon is not None:
                         child_clip_polygon = child_clip_polygon.multiply_matrix(r.forward)
 
-                self.draw(child, child_transform, child_clip_polygon, subpixel)
+                self.draw_one(child, child_transform, child_clip_polygon, shaders, uniforms, nearest)
 
         finally:
 
@@ -1309,12 +1282,20 @@ cdef class GL2DrawingContext:
                 if "depth" in r.properties:
                     glDisable(GL_DEPTH_TEST)
 
-            # Restore the state.
-            self.shaders = old_shaders
-            self.uniforms = old_uniforms
-            self.nearest = old_nearest
 
         return 0
+
+
+    def draw(self, what, Matrix transform):
+
+        clip_polygon = None
+        shaders = ()
+        uniforms = {}
+        nearest = False
+
+        self.draw_one(what, transform, clip_polygon, shaders, uniforms, nearest)
+
+
 
 # A set of uniforms that are defined by Ren'Py, and shouldn't be set in ATL.
 standard_uniforms = { "u_transform", "u_time", "u_random" }
