@@ -219,7 +219,7 @@ cdef class Mesh2(Mesh):
 
         return crop_mesh(self, p)
 
-    def get_points(self):
+    def get_points(Mesh2 self):
         """
         Returns the points that make up this mesh as tuples.
         """
@@ -232,6 +232,18 @@ cdef class Mesh2(Mesh):
             rv.append((self.point[i].x, self.point[i].y, 0.0, 1.0))
 
         return rv
+
+    def get_point0(Mesh2 self):
+        """
+        Returns the coordinates of the first point.
+        """
+
+        if self.points == 0:
+            return (0.0, 0.0, 0.0, 1.0)
+        else:
+            return (self.point[0].x, self.point[0].y, 0.0, 1.0)
+
+
 
 
 

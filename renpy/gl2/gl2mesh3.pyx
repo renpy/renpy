@@ -173,7 +173,7 @@ cdef class Mesh3(Mesh):
 
         return crop_mesh(self, p)
 
-    def get_points(self):
+    def get_points(Mesh3 self):
         """
         Returns the points that make up this mesh as tuples.
         """
@@ -187,6 +187,15 @@ cdef class Mesh3(Mesh):
 
         return rv
 
+    def get_point0(Mesh3 self):
+        """
+        Returns the coordinates of one point.
+        """
+
+        if self.points == 0:
+            return (0.0, 0.0, 0.0, 1.0)
+        else:
+            return (self.point[0].x, self.point[0].y, self.point[0].z, 1.0)
 
 
 ###############################################################################
