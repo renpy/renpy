@@ -1132,20 +1132,34 @@ cdef class GL2DrawingContext:
     def __init__(self, GL2Draw draw):
         self.gl2draw = draw
 
+    def correct_pixel_perfect(self, Matrix transform):
+
+        # TODO: How to get the drawable width and height? This could vary
+        # during a render-to-texture, etc.
+
         dwidth, dheight = self.gl2draw.drawable_viewport[2:]
+        halfwidth = dwidth / 2.0
+        halfheight = dheight / 2.0
 
-#         self.half_drawable_size = ((dwidth - .01) / 2, (dheight - .01) / 2)
-#         self.pixel_center_offset = ( 0.5 if dwidth % 2 else 0.0, 0.5 if dheight % 2 else 0.0)
+        sx, sy = transform.transform(0, 0)
 
-    def draw_model(self, model, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, bint nearest):
+        sx = sx * halfwidth + halfwidth
+        sy = sy * halfheight + halfheight
+
+        xoff = round(sx) - sx
+        yoff = round(sy) - sy
+
+        return Matrix.coffset(xoff / halfwidth, yoff / halfheight, 0) * transform
+
+    def draw_model(self, model, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, bint nearest, pixel_perfect):
 
         cdef Mesh mesh = model.mesh
 
         if model.reverse is not IDENTITY:
              transform = transform * model.reverse
 
-#         if not subpixel and not Matrix.is_drawable_aligned(transform, self.gl2draw.draw_transform):
-#             subpixel = True
+        if pixel_perfect:
+            transform = self.correct_pixel_perfect(transform)
 
         # If a clip polygon is in place, clip the mesh with it.
         if clip_polygon is not None:
@@ -1157,9 +1171,6 @@ cdef class GL2DrawingContext:
 
         if model.shaders:
             shaders = shaders + model.shaders
-
-#         if not subpixel:
-#             shaders += ( renpy.config.drawable_align_shader, )
 
         program = self.gl2draw.shader_cache.get(shaders)
 
@@ -1177,14 +1188,10 @@ cdef class GL2DrawingContext:
         if uniforms:
             program.set_uniforms(uniforms)
 
-#         if not subpixel:
-#             program.set_uniform("u_renpy_half_drawable_size", self.half_drawable_size)
-#             program.set_uniform("u_renpy_pixel_center_offset", self.pixel_center_offset)
-
         program.draw(mesh)
         program.finish()
 
-    def draw_one(self, what, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, bint nearest):
+    def draw_one(self, what, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, bint nearest, pixel_perfect):
         """
         This is responsible for walking the surface tree, and drawing any
         Models, Renders, and Surfaces it encounters.
@@ -1200,6 +1207,11 @@ cdef class GL2DrawingContext:
 
         `uniforms`
             A dictionary of uniforms.
+
+        `pixel_perfect`
+            Should this displayable be rendered in "pixel perfect" mode? This
+            is False if any sort of subpixel location has been done, otherwise
+            True if pixel perfect drawing has been requested, otherwise None.
         """
 
         cdef Matrix child_transform
@@ -1210,7 +1222,7 @@ cdef class GL2DrawingContext:
             what = self.gl2draw.load_texture(what)
 
         if isinstance(what, Model):
-            self.draw_model(what, transform, clip_polygon, shaders, uniforms, nearest)
+            self.draw_model(what, transform, clip_polygon, shaders, uniforms, nearest, pixel_perfect)
             return
 
         cdef Render r
@@ -1240,6 +1252,10 @@ cdef class GL2DrawingContext:
                     glClear(GL_DEPTH_BUFFER_BIT)
                     glEnable(GL_DEPTH_TEST)
 
+                if "pixel_perfect" in r.properties:
+                    if pixel_perfect is None:
+                        pixel_perfect = True
+
             if r.shaders is not None:
                 shaders = shaders + r.shaders
 
@@ -1257,24 +1273,33 @@ cdef class GL2DrawingContext:
             if r.cached_model is not None:
                 children = [ (r.cached_model, 0, 0, False, False) ]
 
+            has_reverse = (r.reverse is not None) and (r.reverse is not IDENTITY)
+
+            if has_reverse and (pixel_perfect is None):
+                pixel_perfect = False
+
             for child, cx, cy, focus, main in children:
 
                 child_transform = transform
                 child_clip_polygon = clip_polygon
+                child_pixel_perfect = pixel_perfect
 
                 if (cx or cy):
+                    if isinstance(cx, float) and not pixel_perfect:
+                        child_pixel_perfect = False
+
                     child_transform = child_transform * Matrix.coffset(cx, cy, 0)
 
                     if child_clip_polygon is not None:
                         child_clip_polygon = child_clip_polygon.multiply_matrix(Matrix.coffset(-cx, -cy, 0))
 
-                if (r.reverse is not None) and (r.reverse is not IDENTITY):
+                if has_reverse:
                     child_transform = child_transform * r.reverse
 
                     if child_clip_polygon is not None:
                         child_clip_polygon = child_clip_polygon.multiply_matrix(r.forward)
 
-                self.draw_one(child, child_transform, child_clip_polygon, shaders, uniforms, nearest)
+                self.draw_one(child, child_transform, child_clip_polygon, shaders, uniforms, nearest, child_pixel_perfect)
 
         finally:
 
@@ -1293,7 +1318,7 @@ cdef class GL2DrawingContext:
         uniforms = {}
         nearest = False
 
-        self.draw_one(what, transform, clip_polygon, shaders, uniforms, nearest)
+        self.draw_one(what, transform, clip_polygon, shaders, uniforms, nearest, None)
 
 
 

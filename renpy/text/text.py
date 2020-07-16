@@ -521,12 +521,16 @@ class Layout(object):
 
             self.outline_step = text.style.outline_scaling != "linear"
 
+            self.pixel_perfect = True
+
         else:
 
             self.oversample = 1.0
             self.reverse = renpy.display.render.IDENTITY
             self.forward = renpy.display.render.IDENTITY
             self.outline_step = True
+
+            self.pixel_perfect = False
 
         style = text.style
 
@@ -2181,6 +2185,9 @@ class Text(renpy.display.core.Displayable):
             vrv.reverse = VERT_REVERSE
             vrv.blit(rv, (rv.height, 0))
             rv = vrv
+
+        if layout.pixel_perfect:
+            rv.properties = { "pixel_perfect" : True }
 
         return rv
 

@@ -962,9 +962,6 @@ ftfont_vertical_extent_scale = { }
 # The default shader.
 default_shader = "renpy.geometry"
 
-# The shader that is used to align pixels to a drawable pixel.
-drawable_align_shader = "renpy.drawable_align"
-
 
 def say_attribute_transition_callback(*args):
     """

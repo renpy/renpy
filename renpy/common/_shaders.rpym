@@ -44,13 +44,6 @@ init python:
         gl_FragColor = u_renpy_solid_color;
     """)
 
-    renpy.register_shader("renpy.drawable_align", variables="""
-        uniform vec2 u_renpy_half_drawable_size;
-        uniform vec2 u_renpy_pixel_center_offset;
-    """, vertex_300="""
-        gl_Position.xy = (floor(gl_Position.xy * u_renpy_half_drawable_size) + u_renpy_pixel_center_offset) / u_renpy_half_drawable_size;
-    """)
-
     renpy.register_shader("renpy.dissolve", variables="""
         uniform sampler2D tex0;
         uniform sampler2D tex1;
