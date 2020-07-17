@@ -337,8 +337,16 @@ cdef class Live2DModel:
             r.reverse = self.reverse
             r.forward = self.forward
             r.mesh = mesh
-            r.shaders = shaders
-            r.alpha = self.drawable_opacities[i]
+
+            alpha = self.drawable_opacities[i]
+
+            for s in shaders:
+                r.add_shader(s)
+
+            r.add_shader("renpy.alpha")
+            r.add_uniform("u_renpy_alpha", alpha)
+            r.add_uniform("u_renpy_over", 1.0)
+            print(i, alpha)
 
             r.blit(textures[self.drawable_texture_indices[i]], (0, 0))
 
